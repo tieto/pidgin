@@ -4,9 +4,6 @@ THE CORE:
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
 	Moving GTK/GDK and related things out of the prpls
-		ICQ and Yahoo: checkbox in convo window (haven't though about it)
-		Jabber: user registration (this is buggy anyway and should probably
-		        just be removed?)
 		Oscar: some stuff for DirectIM
 		TOC: file transfer (move into the core)
 	Away needs to be modified to include "show" and "status", i.e. you can have
@@ -68,6 +65,7 @@ Jabber:
 	Rework how subscriptions are handled
 	Browsing
 	Stop using libjabber
+	New User Registration
 
 Napster:
 	File Transfer
