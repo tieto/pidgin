@@ -3677,7 +3677,8 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	focus_gtkconv = GAIM_GTK_CONVERSATION(focus_conv);
 	gtk_widget_grab_focus(focus_gtkconv->entry);
 
-	gaim_gtkconv_update_buddy_icon(conv);
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gaim_gtkconv_update_buddy_icon(conv);
 
 	if (!new_ui)
 		g_object_unref(gtkconv->tab_cont);
@@ -4432,7 +4433,10 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 	if (type == GAIM_CONV_UPDATE_ACCOUNT) {
 		gaim_conversation_autoset_title(conv);
-		gaim_gtkconv_update_buddy_icon(conv);
+
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+			gaim_gtkconv_update_buddy_icon(conv);
+
 		gaim_gtkconv_update_buttons_by_protocol(conv);
 
 		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
@@ -5300,7 +5304,14 @@ static void
 show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
 						 gpointer data)
 {
-	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+	GList *l;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		GaimConversation *conv = l->data;
+
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+			gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+	}
 }
 
 static void

@@ -170,11 +170,19 @@ static void
 create_joinchat_menu(GtkWidget *box)
 {
 	GaimAccount *account;
+	GtkWidget *hbox;
+	GtkWidget *label;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *scale;
+	GtkSizeGroup *sg;
 	GList *c;
 	GaimConnection *g;
+	const char *proto_name;
+	char *filename;
 	char buf[2048];
 
 	optmenu = gtk_option_menu_new();
@@ -183,10 +191,22 @@ create_joinchat_menu(GtkWidget *box)
 	menu = gtk_menu_new();
 	joinchatgc = NULL;
 
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
 	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		GaimPlugin *plugin;
+
 		g = (GaimConnection *)c->data;
 
-		if (!GAIM_PLUGIN_PROTOCOL_INFO(g->prpl)->join_chat)
+		plugin = g->prpl;
+
+		if (plugin == NULL)
+			continue;
+
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		if (prpl_info == NULL || prpl_info->join_chat == NULL)
 			continue;
 
 		if (!joinchatgc)
@@ -196,7 +216,53 @@ create_joinchat_menu(GtkWidget *box)
 
 		g_snprintf(buf, sizeof(buf), "%s (%s)",
 				   gaim_account_get_username(account), g->prpl->info->name);
-		opt = gtk_menu_item_new_with_label(buf);
+
+		opt = gtk_menu_item_new();
+
+		/* Create the hbox. */
+		hbox = gtk_hbox_new(FALSE, 4);
+		gtk_container_add(GTK_CONTAINER(opt), hbox);
+		gtk_widget_show(hbox);
+
+		/* Load the image. */
+		if (prpl_info != NULL) {
+			proto_name = prpl_info->list_icon(NULL, NULL);
+			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+										"default", buf, NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+			if (pixbuf != NULL) {
+				/* Scale and insert the image */
+				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+												GDK_INTERP_BILINEAR);
+				image = gtk_image_new_from_pixbuf(scale);
+
+				g_object_unref(G_OBJECT(pixbuf));
+				g_object_unref(G_OBJECT(scale));
+			}
+			else
+				image = gtk_image_new();
+		}
+		else
+			image = gtk_image_new();
+
+		gtk_size_group_add_widget(sg, image);
+
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+		gtk_widget_show(image);
+
+		g_snprintf(buf, sizeof(buf), "%s (%s)",
+				   gaim_account_get_username(account), plugin->info->name);
+
+		/* Create the label. */
+		label = gtk_label_new(buf);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
 
 		g_object_set_data(G_OBJECT(opt), "gaim_connection", g);
 
@@ -209,6 +275,8 @@ create_joinchat_menu(GtkWidget *box)
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+
+	g_object_unref(sg);
 }
 
 static void
