@@ -2210,7 +2210,7 @@ static gchar *jabber_track_queries(GHashTable *queries, gchar *key, gboolean del
 
 static void jabber_handlepacket(gjconn gjc, jpacket p)
 {
-	char *id;
+	char *id, *from, *to;
 	switch (p->type) {
 	case JPACKET_MESSAGE:
 		jabber_handlemessage(gjc, p);
@@ -2231,7 +2231,9 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 		if (jpacket_subtype(p) == JPACKET__SET) {
 			xmlnode querynode;
 			querynode = xmlnode_get_tag(p->x, "query");
-			if (NSCHECK(querynode, "jabber:iq:roster")) {
+			from = xmlnode_get_attrib(p->x, "from");
+			to = xmlnode_get_attrib(p->x, "to");
+			if (NSCHECK(querynode, "jabber:iq:roster") && !strcmp(from, to)) {
 				jabber_handlebuddy(gjc, xmlnode_get_firstchild(querynode));
 			} else if(NSCHECK(querynode, "jabber:iq:oob")) {
 				jabber_handleoob(gjc, p->x);
