@@ -618,7 +618,7 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 									 G_CALLBACK(method_toggle_cb), "method_string");
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
-									 G_CALLBACK(options_entry_cb), NULL);
+									 G_CALLBACK(options_entry_cb), "method_string");
 
 	/* Count method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Insert c_ount of new messages into window title"));
