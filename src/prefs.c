@@ -469,6 +469,8 @@ void gaim_prefs_set_string_list(const char *name, GList *value) {
 			pref->value.stringlist = g_list_append(pref->value.stringlist,
 					g_strdup(tmp->data));
 
+		do_callbacks(name, pref);
+
 	} else {
 		gaim_prefs_add_string_list(name, value);
 	}
