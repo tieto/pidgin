@@ -226,12 +226,15 @@ struct conversation {
 	GtkWidget *underline;
 	GtkWidget *palette;
 	GtkWidget *link;
-        GtkWidget *add_button;
-        GtkWidget *log_button;
+    GtkWidget *add_button;
+    GtkWidget *log_button;
 	GtkWidget *strike;
+	GtkWidget *font;
 
-        int makesound;
-        time_t sent_away;
+	char *current_fontface;
+	char *current_fontname;
+	int makesound;
+ 	time_t sent_away;
 };
 
 struct file_header {
@@ -334,7 +337,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 240 $"
+#define REVISION "gaim:$Revision: 244 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -358,10 +361,6 @@ extern struct aim_conn_t *gaim_conn;
 
 /* Globals in server.c */
 extern int correction_time;
-
-/* Globals in dialog.c */
-extern char *fontface;
-extern char *fontname;
 
 /* Globals in dialog.c */
 extern char *fontface;
@@ -547,6 +546,7 @@ extern void remove_tags(GtkWidget *entry, char *tag);
 extern void update_log_convs();
 extern void update_transparency();
 extern void update_font_buttons();
+extern void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /* Functions in network.c */
 extern unsigned int *get_address(char *);

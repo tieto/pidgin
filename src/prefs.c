@@ -334,6 +334,7 @@ void build_prefs()
 	GtkWidget *sw2;
 	GtkWidget *away_page;
 	GtkWidget *select_font;
+	GtkWidget *font_face_for_text;
 	
 	GtkWidget *list_item;
 
@@ -728,13 +729,16 @@ void build_prefs()
 	gaim_button("Italics Text", &font_options, OPT_FONT_ITALIC, fontbox);
 	gaim_button("Underlined Text", &font_options, OPT_FONT_UNDERLINE, fontbox);
 	gaim_button("Strike Text", &font_options, OPT_FONT_STRIKE, fontbox);
-	gaim_button("Font Face for Text", &font_options, OPT_FONT_FACE, fontbox);
-	
+	font_face_for_text = gaim_button("Font Face for Text", &font_options, OPT_FONT_FACE, fontbox);
+		
 	select_font = gtk_button_new_with_label("Select Font");
 	gtk_box_pack_start(GTK_BOX(fontbox), select_font, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(select_font), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
+	if (!(font_options & OPT_FONT_FACE))
+	    gtk_widget_set_sensitive(GTK_WIDGET(select_font), FALSE);
 	gtk_widget_show(select_font);
-
+	gtk_signal_connect(GTK_OBJECT(font_face_for_text), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select_font);
+	
 	gtk_widget_show(appearance_page);
 	gtk_widget_show(fontbox);
 	gtk_widget_show(fontframe);

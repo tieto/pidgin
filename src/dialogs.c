@@ -284,6 +284,9 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 
 	if (dest == linkdialog)
 		linkdialog = NULL;
+	
+	if (dest == fontdialog)
+		fontdialog = NULL;
 
         dialogwindows = g_list_remove(dialogwindows, dest);
         gtk_widget_destroy(dest);
@@ -334,6 +337,10 @@ void destroy_all_dialogs()
 		logdialog = NULL;
 	}
 
+	if (fontdialog) {
+		destroy_dialog(NULL, fontdialog);
+		fontdialog = NULL;
+	}
 }
 
 static void do_warn(GtkWidget *widget, struct warning *w)
@@ -1943,15 +1950,8 @@ void show_color_dialog(GtkWidget *entry, GtkWidget *color)
 /*  Font Selection Dialog                                                 */
 /*------------------------------------------------------------------------*/
 
-void cancel_font(GtkWidget *widget, GtkWidget *font)
-{
-	if (font)
-    {
-		set_state_lock(1);
-        gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(font), FALSE);
-        set_state_lock(0);
-	}
-	
+void cancel_font(GtkWidget *widget, GtkWidget *window)
+{	
 	destroy_dialog(NULL, fontdialog);
 }
 
@@ -1960,34 +1960,67 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
 	int i, j = 0, k = 0;
-
-	fontface = g_malloc(64);
-	fontname = gtk_font_selection_get_font_name(fontsel);
+    struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(fontsel));
 	
-	for (i = 0; i < strlen(fontname); i++)
+	if (c)
 	{
-		if (fontname[i] == '-')
+		g_free(c->current_fontname);
+		g_free(c->current_fontface);
+		c->current_fontface = g_malloc(64);
+		c->current_fontname = gtk_font_selection_get_font_name(fontsel);
+
+		for (i = 0; i < strlen(c->current_fontname); i++)
 		{
-			if (++j > 2)
-				break;	
-		}		
-		else if (j == 2)
-			fontface[k++] = fontname[i];
+			if (c->current_fontname[i] == '-')
+			{
+				if (++j > 2)
+					break;	
+			}		
+			else if (j == 2)
+				c->current_fontface[k++] = c->current_fontname[i];
+		}
+		c->current_fontface[k] = '\0';
+
+		set_font_face(NULL, c);
 	}
-	fontface[k] = '\0';
+	else
+	{
+		if (fontface)
+			g_free(fontface);
+		
+		fontface = g_malloc(64);
+		fontname = gtk_font_selection_get_font_name(fontsel);
 	
-	save_prefs();
+		for (i = 0; i < strlen(fontname); i++)
+		{
+			if (fontname[i] == '-')
+			{
+				if (++j > 2)
+					break;	
+			}		
+			else if (j == 2)
+				fontface[k++] = fontname[i];
+		}
+		fontface[k] = '\0';
 	
-	cancel_font(widget, NULL);	
+		save_prefs();
+	}
+	
+	cancel_font(widget, NULL);
 }
 
 void show_font_dialog(GtkWidget *widget, GtkWidget *font)
 {
 	GtkWidget *fontsel;
-
+	
 	fontdialog = gtk_font_selection_dialog_new("Select Font");
 	fontsel = GTK_FONT_SELECTION_DIALOG(fontdialog)->fontsel;
-	
+
+	if (font)
+		gtk_object_set_user_data(GTK_OBJECT(fontsel), gtk_object_get_user_data(GTK_OBJECT(font)));
+	else
+		gtk_object_set_user_data(GTK_OBJECT(fontsel), NULL);
+			
 	gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, DEFAULT_FONT_NAME);	
 	gtk_window_set_modal(GTK_WINDOW(fontdialog), TRUE);
 	gtk_signal_connect(GTK_OBJECT(fontdialog), "delete_event", GTK_SIGNAL_FUNC(cancel_font), font);

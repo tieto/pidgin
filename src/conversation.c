@@ -37,7 +37,7 @@
 #include "pixmaps/small.xpm"
 #include "pixmaps/normal.xpm"
 #include "pixmaps/big.xpm"
-/* #include "pixmaps/fontface.xpm" */
+#include "pixmaps/fontface.xpm"
 #include "pixmaps/speaker.xpm"
 /* #include "pixmaps/aimicon2.xpm" */
 #include "pixmaps/wood.xpm"
@@ -54,7 +54,6 @@ char *fontface;
 
 void check_everything(GtkWidget *entry);
 gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
-void set_font_face(GtkWidget *widget, struct conversation *c);
 
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
@@ -72,6 +71,18 @@ void quiet_set(GtkWidget *tb, int state)
 void set_state_lock(int i)
 {
         state_lock = i;
+}
+
+void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
+{
+	gboolean sensitivity = GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(to_toggle));
+	
+	if (sensitivity == TRUE)
+		gtk_widget_set_sensitive(GTK_WIDGET(to_toggle), FALSE);
+	else
+		gtk_widget_set_sensitive(GTK_WIDGET(to_toggle), TRUE);
+		
+	return;
 }
 
 struct conversation *new_conversation(char *name)
@@ -209,6 +220,9 @@ void update_font_buttons()
                 if (c->strike)
                         gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
 
+                if (c->font)
+                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);
+		
 		cnv = cnv->next;
 	}
 }
@@ -264,13 +278,20 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 	if (!(font_options & OPT_FONT_FACE))
 		return;
 
-	if (fontface)
+	if (c->current_fontface && strcmp(c->current_fontface, "(null)"))
 	{
-		pre_fontface = g_strconcat("<FONT FACE=\"", fontface, "\">", '\0');
+		pre_fontface = g_strconcat("<FONT FACE=\"", c->current_fontface, "\">", '\0');
 		alloc++;
 	}
 	else
 		pre_fontface = "<FONT FACE=\"Helvetica\">";
+	
+	if (!strcmp(pre_fontface, "<FONT FACE=\"\">"))
+	{
+		g_free(pre_fontface);
+		alloc--;
+		pre_fontface = "<FONT FACE=\"Helvetica\">";
+	}
 		
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
@@ -613,6 +634,13 @@ static void toggle_color(GtkWidget *color, GtkWidget *entry)
 		advance_past(entry, "<FONT COLOR>", "</FONT>" );
 }
 
+static void toggle_font(GtkWidget *font, GtkWidget *entry)
+{
+	show_font_dialog(entry, font);
+	
+	return;
+}
+
 static void do_link(GtkWidget *linky, GtkWidget *entry)
 {
 	if (state_lock)
@@ -887,9 +915,9 @@ void show_conv(struct conversation *c)
 	GtkWidget *vbox2;
 	GtkWidget *paned;
         GtkWidget *add;
-        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i;
-        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p;
-        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link;
+        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i, *font_i;
+        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p, *font_p;
+        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link, *font;
         GdkBitmap *mask;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -979,7 +1007,10 @@ void show_conv(struct conversation *c)
              &win->style->white, big_xpm );
 	big_p = gtk_pixmap_new(big_i, mask);
 	gtk_widget_show(big_p);
-
+	font_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, fontface_xpm );
+	font_p = gtk_pixmap_new(font_i, mask);
+	gtk_widget_show(font_p);
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
@@ -1001,6 +1032,11 @@ void show_conv(struct conversation *c)
 	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Small", "Decrease font size", "Small", small_p, GTK_SIGNAL_FUNC(do_small), entry);
 	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Normal", "Normal font size", "Normal", normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), entry);
+	font = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Font", "Select Font", "Font", font_p, GTK_SIGNAL_FUNC(toggle_font), entry);
+	gtk_object_set_user_data(GTK_OBJECT(font), c);
+	if (!(font_options & OPT_FONT_FACE))
+		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
+	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
                                             GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, "Link", "Insert Link",
@@ -1019,7 +1055,7 @@ void show_conv(struct conversation *c)
 					    "Sound", speaker_p, GTK_SIGNAL_FUNC(set_option), &c->makesound);
 	c->makesound=0;
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
-
+	
         state_lock = 1;
 	if (find_log_info(c->name))
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), TRUE);
@@ -1038,6 +1074,7 @@ void show_conv(struct conversation *c)
 	c->palette = palette;
 	c->link = link;  
         c->add_button = add;
+    c->font = font;
 
         gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
         
@@ -1136,7 +1173,10 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
-
+	
+	c->current_fontface = g_strdup(fontface);
+	c->current_fontname = g_strdup(fontname);
+	
 	set_font_face(NULL, c);
 	
 	gtk_widget_show(win);

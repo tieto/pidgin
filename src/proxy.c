@@ -174,9 +174,46 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 	        
                 return ret;
                 break;
-        case PROXY_SOCKS:
-                fprintf(stderr,"Socks proxy is not yet implemented.\n");
-                return(-1);
+        case PROXY_SOCKS: /* Socks v4 proxy (? I'm not a proxy hacker) */
+		/* this is going to be a cross between the HTTP proxy code
+		 * above and the TiK proxy code, translated from tcl->C */
+		/*
+		{
+			struct hostent *hostinfo;
+			unsigned short shortport = proxy_port;
+
+			memset(&name, 0, sizeof (name));
+			name.sin_family = AF_INET;
+			name.sin_port = htons (shortport);
+			hostinfo = gethostbyname (proxy_host);
+			if (hostinfo == NULL) {
+				fprintf (stderr, "Unknown host %s.\n", proxy_host);
+				return (-1);
+			}
+			name.sin_addr = *(struct in_addr *) hostinfo->h_addr;
+		}
+		sprintf(debug_buff,"Trying to connect ...\n");
+		debug_print(debug_buff);
+		if ((ret = connect(sockfd,(struct sockaddr *)&name,sizeof(name)))<0)
+			return(ret);
+*/
+		/* here's where it's no longer http proxy and is now tik */
+/*		{
+			char cmd[80];
+			char *inputline;
+
+			snprintf(cmd, 80, "\0x4\0x1%d%d%d%d%d", toc_port,
+					toc_server_1,
+					toc_server_2, /* the second part of the
+							 ip address: 1.this.1.1
+						      *//*
+					toc_server_3,
+					toc_server_4);
+                        if (send(sockfd,cmd,strlen(cmd),0)<0)
+                                return(-1);
+                        if (proxy_recv_line(sockfd,&inputline) < 0) {
+                                return(-1);
+                        }*/
                 break;
         default:
                 fprintf(stderr,"Unknown proxy type : %d.\n",proxy_type);
