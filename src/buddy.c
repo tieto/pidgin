@@ -1424,6 +1424,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		play_sound(BUDDY_LEAVE);
 		gs = find_group_show(g->name);
 		bs = find_buddy_show(gs, b->name);
+		if (!bs)
+			return;
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		if (bs->log_timer > 0)
 			gtk_timeout_remove(bs->log_timer);
