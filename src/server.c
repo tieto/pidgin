@@ -40,6 +40,8 @@
 #include "gtkutils.h"
 #include "ui.h"
 
+#define SECS_BEFORE_RESENDING_AUTORESPONSE 600
+
 void serv_login(GaimAccount *account)
 {
 	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
@@ -201,9 +203,7 @@ gboolean expire_last_auto_responses(gpointer data)
 		tmp = tmp->next;
 		lar = (struct last_auto_response *)cur->data;
 
-		if ((time(NULL) - lar->sent) >
-				gaim_prefs_get_int("/core/away/auto_response/sec_before_resend")) {
-
+		if ((time(NULL) - lar->sent) > SECS_BEFORE_RESENDING_AUTORESPONSE) {
 			last_auto_responses = g_slist_remove(last_auto_responses, lar);
 			g_free(lar);
 		}
@@ -219,8 +219,7 @@ struct last_auto_response *get_last_auto_response(GaimConnection *gc, const char
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	gaim_timeout_add((gaim_prefs_get_int("/core/away/auto_response/sec_before_resend") + 1) * 1000,
-			expire_last_auto_responses, NULL);
+	gaim_timeout_add((SECS_BEFORE_RESENDING_AUTORESPONSE + 1) * 1000, expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;
 
@@ -279,10 +278,8 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (!(imflags & GAIM_CONV_IM_AUTO_RESP))
 		serv_touch_idle(gc);
 
-	if (gc->away &&
-		(gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
-		gaim_prefs_get_bool("/core/away/auto_response/enabled") &&
-		!gaim_prefs_get_bool("/core/away/auto_response/in_active_conv")) {
+	if (gc->away &&	(gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
+		gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
 
 		struct last_auto_response *lar;
 		lar = get_last_auto_response(gc, name);
@@ -1018,9 +1015,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * if necessary.
 		 */
 		lar = get_last_auto_response(gc, name);
-		if ((t - lar->sent) <
-			gaim_prefs_get_int("/core/away/auto_response/sec_before_resend")) {
-
+		if ((t - lar->sent) < SECS_BEFORE_RESENDING_AUTORESPONSE) {
 			g_free(name);
 			g_free(message);
 			return;

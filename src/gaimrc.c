@@ -1122,10 +1122,6 @@ static void gaimrc_read_options(FILE *f)
 					away_options & OPT_AWAY_IDLE_RESP);
 			gaim_prefs_set_bool("/plugins/gtk/docklet/queue_messages",
 					away_options & OPT_AWAY_QUEUE_UNREAD);
-			gaim_prefs_set_bool("/core/away/auto_response/in_active_conv",
-					!(away_options & OPT_AWAY_DELAY_IN_USE));
-			gaim_prefs_set_int("/core/away/auto_response/sec_before_resend",
-					atoi(p->value[1]));
 		} else if (!strcmp(p->option, "font_face")) {
 			gaim_prefs_set_string("/gaim/gtk/conversations/font_face",
 								  p->value[0]);

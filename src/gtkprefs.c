@@ -1554,18 +1554,6 @@ GtkWidget *sound_page() {
 	return ret;
 }
 
-#if 0 /* PREFSLASH04 */
-static void
-auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
-{
-	GtkWidget *hbox = data;
-	gboolean enabled = GPOINTER_TO_INT(value);
-
-	gtk_widget_set_sensitive(hbox, enabled);
-}
-#endif /* PREFSLASH04 */
-
 GtkWidget *away_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1586,26 +1574,10 @@ GtkWidget *away_page() {
 				   "/gaim/gtk/away/queue_messages", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-response"));
-#if 0 /* PREFSLASH04 */
-	  hbox = gtk_hbox_new(FALSE, 0);
-	  gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	  gaim_gtk_prefs_labeled_spin_button(hbox, _("Seconds before _resending:"),
-	  "/core/away/auto_response/sec_before_resend",
-	  1, 24 * 60 * 60, sg);
-#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Send auto-response"),
 				  "/core/away/auto_response/enabled", vbox);
 	gaim_gtk_prefs_checkbox(_("_Only send auto-response when idle"),
 				  "/core/away/auto_response/idle_only", vbox);
-#if 0 /* PREFSLASH04 */
-	  gaim_gtk_prefs_checkbox(_("Send auto-response in _active conversations"),
-				  "/core/away/auto_response/in_active_conv", vbox);
-	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
-		gtk_widget_set_sensitive(hbox, FALSE);
-
-	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
-												  auto_resp_changed_cb, hbox);
-#endif /* PREFSLASH04 */
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),

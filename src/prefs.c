@@ -115,9 +115,7 @@ void gaim_prefs_init() {
 	/* Away -> Auto Response */
 	gaim_prefs_add_none("/core/away/auto_response");
 	gaim_prefs_add_bool("/core/away/auto_response/enabled", TRUE);
-	gaim_prefs_add_bool("/core/away/auto_response/in_active_conv", TRUE);
 	gaim_prefs_add_bool("/core/away/auto_response/idle_only", FALSE);
-	gaim_prefs_add_int("/core/away/auto_response/sec_before_resend", 60);
 
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
@@ -984,6 +982,8 @@ gboolean gaim_prefs_load() {
 
 void gaim_prefs_update_old() {
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/core/away/auto_response/in_active_conv");
+	gaim_prefs_remove("/core/away/auto_response/sec_before_resend");
 	gaim_prefs_remove("/core/conversations/away_back_on_send");
 	gaim_prefs_remove("/core/conversations/send_urls_as_links");
 	gaim_prefs_remove("/core/conversations/im/show_login");
