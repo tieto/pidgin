@@ -2204,7 +2204,6 @@ void gaim_gtk_prefs_show(void)
 
 	/* The notebook */
 	prefsnotebook = notebook = gtk_notebook_new ();
-	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_LEFT);
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
 	gtk_box_pack_start (GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
@@ -2315,6 +2314,7 @@ void gaim_gtk_prefs_update_old() {
 
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 	gaim_prefs_rename("/gaim/gtk/conversations/ignore_colors", "/gaim/gtk/conversations/ignore_formatting");
+	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/x11/notify/method/raise");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
@@ -2339,9 +2339,10 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
 	gaim_prefs_remove("/gaim/gtk/conversations/im/hide_on_send");
-	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/color_nicks");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
+	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
+	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");

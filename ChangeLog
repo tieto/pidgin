@@ -46,12 +46,16 @@ version 2.0.0
 	  defaulted to "Yes".
 	* Removed "Auto-expand contacts" default to "No"
 	* Removed conversation buttons
-	* Removed "Raise conversation window" preferences, default to "no"
+	* Removed "Raise conversation window" preferences, moved feature to notify
+	  plugin
 	* Removed "Show alias in tabs/titles," default to "Yes".
 	* Removed "Show formatting toolbars," made the option in the
 	  conversation menu affect the global preference.
 	* Removed "Show timestamps," defaulted to yes but made timestamp plugin
 	  override this.
+	* Removed protocol options.
+	* Consolidated three ignore formatting options into a single one.
+	* Removed "Escape closes windows," defaulted to Ctrl-W.
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:

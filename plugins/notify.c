@@ -64,10 +64,14 @@
  *  -Re-added Urgent option
  *  -Re-added unnotify on focus option (still needs work, as it will only
  *  react to focus-in events when the entry or history widgets are focused)
+ *
+ * Sean, 08 January, 2005:
+ *  -Added Raise option, formally in Gaim proper
  */
 
 #include "internal.h"
 #include "gtkgaim.h"
+#include "gtkprefs.h"
 
 #include "debug.h"
 #include "prefs.h"
@@ -98,6 +102,9 @@ static void notify_toggle_cb(GtkWidget *widget, gpointer data);
 static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event, gpointer data);
 static void apply_method();
 static void apply_notify();
+
+/* raise function */
+static void handle_raise(GaimConvWindow *window);
 
 /* string function */
 static void handle_string(GaimConvWindow *window);
@@ -175,6 +182,8 @@ notify_win(GaimConvWindow *gaimwin)
 		handle_string(gaimwin);
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"))
 		handle_urgent(gaimwin, TRUE);
+	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_raise"))
+		handle_raise(gaimwin);
 }
 
 static void
@@ -459,6 +468,13 @@ handle_string(GaimConvWindow *gaimwin)
 }
 
 static void
+handle_raise(GaimConvWindow *gaimwin)
+{
+	GtkWindow *window = GTK_WINDOW(GAIM_GTK_WINDOW(gaimwin)->window);
+	gtk_window_present(window);
+}
+
+static void
 handle_count(GaimConvWindow *gaimwin)
 {
 	GtkWindow *window;
@@ -628,6 +644,9 @@ get_config_frame(GaimPlugin *plugin)
 	frame = gaim_gtk_make_frame(ret, _("Notification Methods"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	
+	/* Raise method button */
+	gaim_gtk_prefs_checkbox("R_aise window", "/plugins/gtk/X11/notify/method_raise", vbox);
 
 	/* String method button */
 	hbox = gtk_hbox_new(FALSE, 18);
@@ -828,6 +847,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_raise", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
