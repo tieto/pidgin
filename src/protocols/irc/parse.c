@@ -118,7 +118,7 @@ static struct _irc_user_cmd {
 	{ "kick", "n:", irc_cmd_kick, N_("kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a channel operator to do this.") },
 	{ "list", ":", irc_cmd_list, N_("list:  Display a list of chat rooms on the network. <i>Warning, some servers may disconnect you upon doing this.</i>") },
 	{ "me", ":", irc_cmd_ctcp_action, N_("me &lt;action to perform&gt;:  Perform an action.") },
-	{ "mode", ":", irc_cmd_mode, N_("mode &lt;nick|channel&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a channel or user mode.") },
+	{ "mode", ":", irc_cmd_mode, N_("mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel or user mode.") },
 	{ "msg", "t:", irc_cmd_privmsg, N_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as opposed to a channel).") },
 	{ "names", "c", irc_cmd_names, N_("names [channel]:  List the users currently in a channel.") },
 	{ "nick", "n", irc_cmd_nick, N_("nick &lt;new nickname&gt;:  Change your nickname.") },
@@ -135,7 +135,7 @@ static struct _irc_user_cmd {
 	{ "umode", ":", irc_cmd_mode, N_("umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode.") },
 	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this.") },
 	{ "wallops", ":", irc_cmd_wallops, N_("wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
-	{ "whois", "n", irc_cmd_whois, N_("whois &lt;nick&gt;:  Get information on a user.") },
+	{ "whois", "tt", irc_cmd_whois, N_("whois [server] &lt;nick&gt;:  Get information on a user.") },
 	{ NULL, NULL, NULL }
 };
 

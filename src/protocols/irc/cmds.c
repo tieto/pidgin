@@ -503,10 +503,16 @@ int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	buf = irc_format(irc, "vn", "WHOIS", args[0]);
+	if (args[1]) {
+		buf = irc_format(irc, "vvn", "WHOIS", args[0], args[1]);
+		irc->whois.nick = g_strdup(args[1]);
+	} else {
+		buf = irc_format(irc, "vn", "WHOIS", args[0]);
+		irc->whois.nick = g_strdup(args[0]);
+	}
+
 	irc_send(irc, buf);
 	g_free(buf);
-	irc->whois.nick = g_strdup(args[0]);
 
 	return 0;
 }
