@@ -177,7 +177,7 @@ extern "C" {
 	 * @param account             The account
 	 * @return                    The size in bytes
 	 */
-	 int gaim_log_get_total_log_size(const char *name, GaimAccount *account);
+	 int gaim_log_get_total_size(const char *name, GaimAccount *account);
 	/******************************************
 	 ** LOGGER FUNCTIONS **********************
 	 ******************************************/
