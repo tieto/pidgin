@@ -536,20 +536,20 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 	if (!sscanf(c, "%02d", &t->tm_mday)) return 0;
 	c += 2;
 	if (*c == 'T' || *c == '.') { /* we have more than a date, keep going */
-	c++; /* skip the "T" */
+		c++; /* skip the "T" */
 
-	/* 2 digit hour */
-	if (sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 ||
-		sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3) {
-		int tzhrs, tzmins;
-		c += 8;
-		if (*c == '.') /* dealing with precision we don't care about */
-			c += 4;
-		if ((*c == '+' || *c == '-') &&
-			sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
-			tzoff = tzhrs*60*60 + tzmins*60;
-			if (*c == '+')
-				tzoff *= -1;
+		/* 2 digit hour */
+		if (sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 ||
+			sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3) {
+			int tzhrs, tzmins;
+			c += 8;
+			if (*c == '.') /* dealing with precision we don't care about */
+				c += 4;
+			if ((*c == '+' || *c == '-') &&
+				sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
+				tzoff = tzhrs*60*60 + tzmins*60;
+				if (*c == '+')
+					tzoff *= -1;
 			}
 
 			if (tzoff || utc) {
