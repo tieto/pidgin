@@ -810,6 +810,7 @@ static void gjab_start(gjconn gjc)
 {
 	GaimAccount *account;
 	int port, rc;
+	const char *connect_server;
 	const char *server;
 
 	if (!gjc || gjc->state != JCONN_STATE_OFF)
@@ -817,8 +818,9 @@ static void gjab_start(gjconn gjc)
 
 	account = GJ_GC(gjc)->account;
 	port = gaim_account_get_int(account, "port", DEFAULT_PORT);
-	server = gaim_account_get_string(account, "connect_server",
-			gjc->user->server);
+	connect_server = gaim_account_get_string(account, "connect_server", "");
+	server = connect_server[0] ? connect_server : gjc->user->server;
+
 
 	gjc->parser = XML_ParserCreate(NULL);
 	XML_SetUserData(gjc->parser, (void *)gjc);
