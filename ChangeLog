@@ -5,7 +5,7 @@ version 0.73cvs:
 		* fixes i18n issues with logs
 		* compatable with old logs
 		* hopefully fixes segfault in viewing logs
-	* New disconnection account dialog (with bug fixes from Daniel Atallah)
+	* New disconnected account dialog (Thanks, Daniel Atallah)
 	* Fixes several Jabber bugs
 	* Fixes the bug where some dialogs would crash when spell checking was
 	  enabled. Closes #827930.
