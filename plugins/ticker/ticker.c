@@ -243,7 +243,7 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 }
 
 G_MODULE_EXPORT void gaim_plugin_remove() {
-	buddy_ticker_destroy_window(tickerwindow, NULL, NULL);
+	gtk_widget_destroy(tickerwindow);
 }
 
 struct gaim_plugin_description desc;
