@@ -494,6 +494,15 @@ gpointer gaim_prefs_get_generic(const char *name) {
 	return pref->value.generic;
 }
 
+GaimPrefType gaim_prefs_get_type(const char *name) {
+	struct gaim_pref *pref = find_pref(name);
+
+	if (pref == NULL)
+		return GAIM_PREF_NONE;
+
+	return (pref->type);
+}
+
 gboolean gaim_prefs_get_bool(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 

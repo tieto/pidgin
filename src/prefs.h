@@ -152,6 +152,14 @@ void gaim_prefs_set_string(const char *name, const char *value);
 void gaim_prefs_set_string_list(const char *name, GList *value);
 
 /**
+ * Get pref type
+ *
+ * @param name The name of the pref
+ * @return The type of the pref
+ */
+GaimPrefType gaim_prefs_get_type(const char *name);
+
+/**
  * Get boolean pref value
  *
  * @param name The name of the pref
