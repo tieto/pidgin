@@ -535,7 +535,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 	mem = delg->members;
 
 	if (c)
-		update_convo_add_button(c);
+		update_buttons_by_protocol(c);
 
 	// flush buddy list to cache
 

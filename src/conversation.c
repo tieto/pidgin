@@ -1653,19 +1653,30 @@ void update_convo_add_button(struct conversation *c)
 	GtkWidget *parent = c->add->parent;
 	gtk_widget_destroy(c->add);
 
-	if (c->gc && find_buddy(c->gc, c->name)) {
+	if (find_buddy(c->gc, c->name)) {
 		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
-		if (c->gc->prpl->remove_buddy == NULL)
-			gtk_widget_set_sensitive(c->add, FALSE);
-		else
-			gtk_widget_set_sensitive(c->add, TRUE);
+
+		if (c->gc) 
+		{
+			if (c->gc->prpl->remove_buddy == NULL)
+				gtk_widget_set_sensitive(c->add, FALSE);
+			else
+				gtk_widget_set_sensitive(c->add, TRUE);
+		}
 	} else {
 		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
-		if (c->gc->prpl->add_buddy == NULL)
-			gtk_widget_set_sensitive(c->add, FALSE);
-		else
-			gtk_widget_set_sensitive(c->add, TRUE);
+		if (c->gc) 
+		{
+			if (c->gc->prpl->add_buddy == NULL)
+				gtk_widget_set_sensitive(c->add, FALSE);
+			else
+				gtk_widget_set_sensitive(c->add, TRUE);
+		}
 	}
+
+	if (!c->gc)
+		gtk_widget_set_sensitive(c->add, FALSE);
+
 	gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 	gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
 	gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
@@ -1719,7 +1730,7 @@ void redo_convo_menus()
 		else
 			C->gc = NULL;
 
-		update_convo_add_button(C);
+		update_buttons_by_protocol(C);
 
 		c = c->next;
 	}
@@ -1727,6 +1738,17 @@ void redo_convo_menus()
 
 void update_buttons_by_protocol(struct conversation *c)
 {
+	if (!c->gc)
+	{
+		gtk_widget_set_sensitive(c->info, FALSE);
+		gtk_widget_set_sensitive(c->send, FALSE);
+		gtk_widget_set_sensitive(c->warn, FALSE);
+		gtk_widget_set_sensitive(c->block, FALSE);
+		gtk_widget_set_sensitive(c->add, FALSE);
+
+		return;
+	}
+	
 	if (c->gc->prpl->set_info == NULL && c->info)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else

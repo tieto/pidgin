@@ -774,7 +774,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 	}
 
         if (c != NULL) {
-		update_convo_add_button(c);
+		update_buttons_by_protocol(c);
 	}
         
         build_edit_tree();
