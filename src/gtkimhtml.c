@@ -551,7 +551,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 						       &redraw_rect.x,
 						       &redraw_rect.y);
 		
-		if (GTK_IMHTML(widget)->wbfo) {
+		if (GTK_IMHTML(widget)->editable || GTK_IMHTML(widget)->wbfo) {
 			gdk_color_parse(GTK_IMHTML(widget)->edit.backcolor, &color);
 			gdk_gc_set_rgb_fg_color(gc, &color);
 			gdk_draw_rectangle(event->window,
