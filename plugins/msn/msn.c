@@ -340,7 +340,8 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 		g_free(ms->user);
 	if (ms->txqueue)
 		g_free(ms->txqueue);
-	ms->txqueue = NULL;
+	if (ms->chat)
+		serv_got_chat_left(gc, ms->chat->id);
 
 	md->switches = g_slist_remove(md->switches, ms);
 
@@ -1163,6 +1164,19 @@ static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
 	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
 }
 
+static void msn_chat_invite(struct gaim_connection *gc, int id, char *msg, char *who)
+{
+	struct msn_switchboard *ms = msn_find_switch_by_id(gc, id);
+	char buf[MSN_BUF_LEN];
+
+	if (!ms)
+		return;
+
+	g_snprintf(buf, sizeof(buf), "CAL %d %s\n", ++ms->trId, who);
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+		msn_kill_switch(ms);
+}
+
 static void msn_chat_leave(struct gaim_connection *gc, int id)
 {
 	struct msn_switchboard *ms = msn_find_switch_by_id(gc, id);
@@ -1396,6 +1410,7 @@ static void msn_init(struct prpl *ret)
 	ret->add_buddy = msn_add_buddy;
 	ret->remove_buddy = msn_rem_buddy;
 	ret->chat_send = msn_chat_send;
+	ret->chat_invite = msn_chat_invite;
 	ret->chat_leave = msn_chat_leave;
 	ret->normalize = msn_normalize;
 
