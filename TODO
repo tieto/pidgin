@@ -4,7 +4,6 @@
 		sound events.  Make a PC Speaker Beep (^G / Char 7)
 	Save Buddy Pounces 
 	Save Buddy Chats
-	Default colors (foreground and background) in prefs
 	Execute Command on Buddy Pounce
 	Possibly make it so that you can create 'aliases' for buddies
 		on your buddy list.  This won't be too hard it'll just

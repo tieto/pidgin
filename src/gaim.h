@@ -268,8 +268,6 @@ struct conversation {
 	GtkWidget *link_dialog;
 	GtkWidget *log_dialog;
 	int makesound;
-	char current_fontface[64];
-	char current_fontname[64];
 
 	/* stuff used just for IM */
 	GtkWidget *add_button;
@@ -388,7 +386,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 670 $"
+#define REVISION "gaim:$Revision: 676 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -416,8 +414,9 @@ extern GList *oscar_chats;
 extern int correction_time;
 
 /* Globals in dialog.c */
-extern char *fontface;
-extern char *fontname;
+extern char fontface[64];
+extern int bgcolor;
+extern int fgcolor;
 extern int smiley_array[FACE_TOTAL];
 
 /* Globals in network.c */
@@ -503,6 +502,8 @@ extern int font_options;
 #define OPT_FONT_UNDERLINE       0x00000008
 #define OPT_FONT_STRIKE          0x00000010
 #define OPT_FONT_FACE            0x00000020
+#define OPT_FONT_FGCOL           0x00000040
+#define OPT_FONT_BGCOL           0x00000080
 
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
 
@@ -636,7 +637,7 @@ extern void toggle_link(GtkWidget *, struct conversation *);
 extern int invert_tags(GtkWidget *, char *, char *, int);
 extern void quiet_set(GtkWidget *, int);
 extern int count_tag(GtkWidget *, char *, char *);
-extern void set_font_face(GtkWidget *, struct conversation *);
+extern void set_font_face(char *, struct conversation *);
 
 /* Functions in network.c */
 extern unsigned int *get_address(char *);

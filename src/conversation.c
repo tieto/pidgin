@@ -81,10 +81,11 @@ int state_lock=0;
 GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
-char *fontface;
+char fontface[64];
+int bgcolor = 0;
+int fgcolor = 0;
 
 void check_everything(GtkWidget *entry);
-char *get_tag_by_prefix(GtkWidget *entry, const char *prefix);
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
 
 /*------------------------------------------------------------------------*/
@@ -165,31 +166,6 @@ struct conversation *find_conversation(char *name)
         }
         g_free(cuser);
         return NULL;
-}
-
-/* given the first part of a tag, returns the length up to the final '>';
-   useful for 'remove_tags' calls on variable data, such as <font face>
-   tags */
-char *get_tag_by_prefix(GtkWidget *entry, const char *prefix)
-{
-	char *s, *t;
-	int i = 0;
-	
-	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	t = s;
-		
-	if ((t = strstr(s, prefix)) != NULL)
-	{
-		for (i = 1; t[i] != '\0'; i++)
-		{
-	
-			if (t[i] == '>')
-				break;
-		}
-		
-		t = gtk_editable_get_chars(GTK_EDITABLE(entry), (t-s), (t-s) + i + 1);		
-	}
-	return t;
 }
 
 void make_direct(struct conversation *c, gboolean direct, struct aim_conn_t *conn, gint watcher)
@@ -415,18 +391,12 @@ int close_callback(GtkWidget *widget, struct conversation *c)
         return TRUE;
 }
 
-void set_font_face(GtkWidget *widget, struct conversation *c)
+void set_font_face(char *newfont, struct conversation *c)
 {
-	char *pre_fontface, *old_font_face;
-	int alloc = 0;
+	char *pre_fontface;
+	int alloc = 1;
 
-	if (c->current_fontface[0] && strcmp(c->current_fontface, "(null)"))
-	{
-		pre_fontface = g_strconcat("<FONT FACE=\"", c->current_fontface, "\">", '\0');
-		alloc++;
-	}
-	else
-		pre_fontface = "<FONT FACE=\"Helvetica\">";
+	pre_fontface = g_strconcat("<FONT FACE=\"", newfont, "\">", '\0');
 	
 	if (!strcmp(pre_fontface, "<FONT FACE=\"\">"))
 	{
@@ -435,20 +405,11 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 		pre_fontface = "<FONT FACE=\"Helvetica\">";
 	}
 
-	if ((old_font_face = get_tag_by_prefix(c->entry, "<FONT FACE")) != NULL)
-	{	
-		remove_tags(c->entry, old_font_face);
-		remove_tags(c->entry, "</FONT>");
-	}
-
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);
 	
 	if (alloc)
 		g_free(pre_fontface);
-		
-	g_free(old_font_face); /* mem allocated in get_tag_by_prefix() */
-	return;
 }
 
 static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation *c)
@@ -614,9 +575,19 @@ void send_callback(GtkWidget *widget, struct conversation *c)
         }
 
         if (font_options & OPT_FONT_FACE) {
-                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", c->current_fontface, buf);
+                g_snprintf(buf2, BUF_LONG, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
                 strcpy(buf, buf2);
         }
+
+	if (font_options & OPT_FONT_FGCOL) {
+		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"#%x\">%s</FONT>", fgcolor, buf);
+		strcpy(buf, buf2);
+	}
+
+	if (font_options & OPT_FONT_BGCOL) {
+		g_snprintf(buf2, BUF_LONG, "<BODY BGCOLOR=\"#%x\">%s</BODY>", bgcolor, buf);
+		strcpy(buf, buf2);
+	}
 
 #ifdef GAIM_PLUGINS
 	{
@@ -1630,12 +1601,7 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
-	
-	if (fontface)
-		strncpy(c->current_fontface, fontface, sizeof(c->current_fontface));
-	if (fontname)
-		strncpy(c->current_fontname, fontname, sizeof(c->current_fontname));
-	
+
 	gtk_widget_show(win);
 }
 

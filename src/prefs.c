@@ -40,6 +40,7 @@
 #include "pixmaps/refresh.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/palette.xpm"
 
 struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
@@ -156,10 +157,16 @@ static GtkWidget *connect_radio(char *label, int which, GtkWidget *box, GtkWidge
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_connect), (void *)which);
 	gtk_widget_show(opt);
-	if (web_browser == which)
+	if (proxy_type == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	return opt;
+}
+
+static void connect_destroy(GtkWidget *n, gpointer d)
+{
+	proxy_host_entry = NULL;
+	proxy_port_entry = NULL;
 }
 
 static void connect_page()
@@ -179,6 +186,7 @@ static void connect_page()
 
 	prefdialog = gtk_frame_new(_("Connection Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
@@ -727,15 +735,39 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-/*
-	label = gtk_label_new(_("FIXME : This is where bg/fg color should go"));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+	
+	button = gaim_button(_("Text Color"), &font_options, OPT_FONT_FGCOL, hbox);
+
+	select = picture_button(prefs, _("Select"), palette_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
+	if (!(font_options & OPT_FONT_FGCOL))
+		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
+	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_color_dialog), (void *)1);
+	gtk_widget_show(select);
+
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+	
+	button = gaim_button(_("Background Color"), &font_options, OPT_FONT_BGCOL, hbox);
+
+	select = picture_button(prefs, _("Select"), palette_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
+	if (!(font_options & OPT_FONT_BGCOL))
+		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
+	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_color_dialog), (void *)2);
+	gtk_widget_show(select);
+
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
-*/
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);

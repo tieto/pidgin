@@ -44,8 +44,6 @@ int general_options;
 int display_options;
 int sound_options;
 int font_options;
-char *fontface;
-char *fontname;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
@@ -452,16 +450,15 @@ static void gaimrc_read_options(FILE *f)
                         display_options = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "sound_options")) {
                         sound_options = atoi(p->value[0]);
-				} else if (!strcmp(p->option, "font_options")) {
-						font_options = atoi(p->value[0]);
-				} else if (!strcmp(p->option, "font_face")) {
-						if (p->value[0] != NULL)
-							fontface = g_strconcat(p->value[0], '\0');
-				} else if (!strcmp(p->option, "font_name")) {
-						if (p->value[0] != NULL)
-							fontname = g_strconcat(p->value[0], '\0');
-				} else if (!strcmp(p->option, "latest_ver")) {
-						g_snprintf(latest_ver, BUF_LONG, "%s", p->value[0]);
+		} else if (!strcmp(p->option, "font_options")) {
+			font_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "font_face")) {
+			if (p->value[0] != NULL)
+					g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
+		} else if (!strcmp(p->option, "foreground")) {
+			fgcolor = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "background")) {
+			bgcolor = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "report_idle")) {
                         report_idle = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "web_browser")) {
@@ -502,11 +499,11 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\tgeneral_options { %d }\n", general_options);
         fprintf(f, "\tdisplay_options { %d }\n", display_options);
         fprintf(f, "\tsound_options { %d }\n", sound_options);
-		fprintf(f, "\tfont_options { %d }\n", font_options);
+	fprintf(f, "\tfont_options { %d }\n", font_options);
 	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
-	if (fontname)
-		fprintf(f, "\tfont_name { %s }\n", fontname);
+	fprintf(f, "\tforeground { %d }\n", fgcolor);
+	fprintf(f, "\tbackground { %d }\n", bgcolor);
         fprintf(f, "\treport_idle { %d }\n", report_idle);
         fprintf(f, "\tweb_browser { %d }\n", web_browser);
         fprintf(f, "\tweb_command { %s }\n", web_command);

@@ -66,8 +66,6 @@
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
-char *fontface;
-char *fontname;
 int smiley_array[FACE_TOTAL];
 
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
@@ -2361,14 +2359,26 @@ static void destroy_colorsel(GtkWidget *w, gpointer d)
 static void apply_color_dlg(GtkWidget *w, gpointer d)
 {
 	gdouble color[3];
+	int red, green, blue;
 	if ((int)d == 1) {
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION(fgcseld), color);
+		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), color);
 		destroy_colorsel(NULL, (void *)1);
+
+		red = ((guint16)(color[0]*65535))>>8;
+		green = ((guint16)(color[1]*65535))>>8;
+		blue = ((guint16)(color[2]*65535))>>8;
+
+		fgcolor = ((red & 0xff) << 16) | ((green & 0xff) < 8) | (blue & 0xff);
 	} else {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION(bgcseld), color);
 		destroy_colorsel(NULL, (void *)2);
+
+		red = ((guint16)(color[0]*65535))>>8;
+		green = ((guint16)(color[1]*65535))>>8;
+		blue = ((guint16)(color[2]*65535))>>8;
+
+		bgcolor = ((red & 0xff) << 16) | ((green & 0xff) < 8) | (blue & 0xff);
 	}
-	/* FIXME ! here we need to set the preferences, etc */
 }
 
 void show_color_dialog(struct conversation *c, GtkWidget *color)
@@ -2440,36 +2450,33 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
 	int i, j = 0, k = 0;
-    struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(fontsel));
+	char *fontname;
+	char font[64];
+	struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(fontsel));
 	
 	if (c)
 	{
-		char *tmp = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-		strncpy(c->current_fontname, tmp, sizeof(c->current_fontname));
+		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
 
-		for (i = 0; i < strlen(c->current_fontname); i++)
+		for (i = 0; i < strlen(fontname); i++)
 		{
-			if (c->current_fontname[i] == '-')
+			if (fontname[i] == '-')
 			{
 				if (++j > 2)
 					break;	
 			}		
 			else if (j == 2)
-				c->current_fontface[k++] = c->current_fontname[i];
+				font[k++] = fontname[i];
 		}
-		c->current_fontface[k] = '\0';
+		font[k] = '\0';
 
-		sprintf(debug_buff, "Setting font face %s\n", c->current_fontface);
+		sprintf(debug_buff, "Setting font face %s\n", font);
 		debug_print(debug_buff);
 
-		set_font_face(NULL, c);
+		set_font_face(font, c);
 	}
 	else
 	{
-		if (fontface)
-			g_free(fontface);
-		
-		fontface = g_malloc(64);
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
 	
 		for (i = 0; i < strlen(fontname); i++)
@@ -2497,10 +2504,8 @@ void destroy_fontsel(GtkWidget *w, gpointer d) {
 
 void apply_font_dlg(GtkWidget *w, GtkWidget *f) {
 	int i, j = 0, k = 0;
-	if (fontface)
-		g_free(fontface);
+	char *fontname;
 
-	fontface = g_malloc(64);
 	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontseld));
 	destroy_fontsel(0, 0);
 	for (i = 0; i < strlen(fontname); i++) {
@@ -2518,10 +2523,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 	if (!font) { /* we came from the prefs dialog */
 		if (fontseld) return;
 		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
-		if (fontname)
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld), fontname);
-		else
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld), DEFAULT_FONT_NAME);
+		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld), DEFAULT_FONT_NAME);
 
 		gtk_object_set_user_data(GTK_OBJECT(fontseld), NULL);
 		gtk_signal_connect(GTK_OBJECT(fontseld), "delete_event", GTK_SIGNAL_FUNC(destroy_fontsel), NULL);
@@ -2549,10 +2551,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_font), c->font_dialog);
 		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_font), c);
 	
-		if (fontname)
-			gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, fontname);
-		else
-			gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, DEFAULT_FONT_NAME);		
+		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, DEFAULT_FONT_NAME);		
 		
 		gtk_widget_realize(c->font_dialog);
 	
@@ -2972,7 +2971,7 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 		case (FACE_SMILE): smiley_text = g_strndup(":-)", strlen(":-)")); break;
 		case (FACE_SMILE8): smiley_text = g_strndup("8-)", strlen("8-)")); break;
 		case (FACE_THINK): smiley_text = g_strndup(":-/", strlen(":-/")); break;
-		case (FACE_TONGUE): smiley_text = g_strndup(":-p", strlen(":-p")); break;
+		case (FACE_TONGUE): smiley_text = g_strndup(":-P", strlen(":-p")); break;
 		case (FACE_WINK): smiley_text = g_strndup(";-)", strlen(";-)")); break;
 		case (FACE_YELL): smiley_text = g_strndup(">:o", strlen(">:o")); break;
 		default: smiley_text = g_strndup(":-)", strlen(":-)")); break;
