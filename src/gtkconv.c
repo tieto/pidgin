@@ -69,43 +69,24 @@
 #define SEND_COLOR "#0d005d"
 #define RECV_COLOR "#fd4100"
 
-static char nick_colors[][8] = {
-	"#ba55d3",              /* Medium Orchid */
-	"#ee82ee",              /* Violet */
-	"#c715b4",              /* Medium Violet Red */
-	"#ff69b4",              /* Hot Pink */
-	"#ff6347",              /* Tomato */
-	"#fa8c00",              /* Dark Orange */
-	"#fa8072",              /* Salmon */
-	"#b22222",              /* Fire Brick */
-	"#f4a460",              /* Sandy Brown */
-	"#cd5c5c",              /* Indian Red */
-	"#bc8f8f",              /* Rosy Brown */
-	"#f0e68c",              /* Khaki */
-	"#bdb76b",              /* Dark Khaki */
-	"#228b22",              /* Forest Green */
-	"#9acd32",              /* Yellow Green */
-	"#32cd32",              /* Lime Green */
-	"#3cb371",              /* Medium Sea Green (Medium Sea Green?!  What are we women?!) */
-	"#2e8b57",              /* Sea Green */
-	"#8fbc8f",              /* Dark Sea Green */
-	"#66cdaa",              /* Medium Aquamarine */
-	"#5f9ea0",              /* Cadet Blue */
-	"#48d1cc",              /* Medium Turquoise */
-	"#00ced1",              /* Dark Turquoise */
-	"#4682b4",              /* Stell Blue */
-	"#00bfff",              /* Deep Sky Blue */
-	"#1690ff",              /* Dodger Blue */
-	"#4169ff",              /* Royal Blue */
-	"#6a5acd",              /* Slate Blue */
-	"#6495ed",              /* Cornflower Blue */
-	"#708090",              /* Slate gray */
-	"#2f4f4f",              /* Dark Slate Gray */
-	"#ff8c00",              /* Dark Orange */
-	"#006400",              /* DarkGreen */
-	"#8b4513",              /* SaddleBrown */
-	"#8b8989",              /* snow4 */
-	"#7d26cd",              /* purple3 */
+#define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
+
+/* These colors come from the default GNOME palette */
+static GdkColor nick_colors[] = {
+	{0, 47616, 46336, 43776},      /* Basic 3D Medium */
+	{0, 33536, 42496, 32512},      /* Green Medium */
+	{0, 49408, 26112, 23040},      /* Red Medium */
+	{0, 23808, 29952, 21760},      /* Green Dark */
+	{0, 34816, 17920, 12544},      /* Red Dark */
+	{0, 45824, 37120, 26880},      /* Face skin Dark */
+	{0, 32768, 32000, 29696},      /* Basic 3D Dark */
+	{0, 33280, 26112, 18176},      /* Face Skin Shadow */
+	{0, 57088, 16896, 7680},       /* Accent Red */
+	{0, 17920, 40960, 17920},      /* Accent Green */
+	{0, 39168, 0, 0},              /* Accent Red Dark */
+	{0, 9728, 50944, 9728},        /* Accent Green Dark */
+	{0, 34816, 32512, 41728},     /* Purple Medium */
+	{0, 49408, 14336, 8704}        /* Red Shadow */
 };
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
@@ -5223,9 +5204,20 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else if (flags & GAIM_MESSAGE_RECV) {
-					if (flags & GAIM_MESSAGE_COLORIZE) 
-						strcpy(color, nick_colors[g_str_hash(who) % NUM_NICK_COLORS]);
-					else
+					if (flags & GAIM_MESSAGE_COLORIZE) {
+						GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
+						GdkColor col = nick_colors[g_str_hash(who) % NUM_NICK_COLORS];
+						float scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
+							       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
+						if (scale > 1) { /* The colors are chosen to look fine on white; we should never have to darken */
+							col.red = col.red * scale;
+							col.green = col.green * scale;
+							col.blue = col.blue * scale;
+						}
+						
+						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
+							   col.red >> 8, col.green >> 8, col.blue >> 8);
+					} else
 						strcpy(color, RECV_COLOR);
 				}
 				else if (flags & GAIM_MESSAGE_SEND)
@@ -6334,8 +6326,6 @@ gaim_gtk_conversations_init(void)
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_formatting", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
@@ -6350,8 +6340,6 @@ gaim_gtk_conversations_init(void)
 #else
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_formatting", FALSE);
 #endif
-	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 
@@ -6369,7 +6357,6 @@ gaim_gtk_conversations_init(void)
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");
-	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/color_nicks", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);

@@ -120,6 +120,7 @@ enum {
 	TOGGLE_FORMAT,
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
+	MESSAGE_SEND,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -522,13 +523,14 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case GDK_Home:
 			return TRUE;
 			break;
-
+			
 		case GDK_End:
 			return TRUE;
 			break;
-
+			
 #endif /* !(Gtk+ >= 2.2.0) */
 		}
+	
 	return FALSE;
 }
 static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
@@ -888,6 +890,11 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 	return FALSE;
 }
 
+static gboolean imhtml_message_send(GtkIMHtml *imhtml)
+{
+	return FALSE;
+}
+
 static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
 {
 	switch (buttons) {
@@ -1007,9 +1014,17 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					      0,
 					      g_cclosure_marshal_VOID__VOID,
 					      G_TYPE_NONE, 0);
+	signals[MESSAGE_SEND] = g_signal_new("message_send",
+					     G_TYPE_FROM_CLASS(gobject_class),
+					     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+					     G_STRUCT_OFFSET(GtkIMHtmlClass, message_send),
+					     NULL,
+					     0, g_cclosure_marshal_VOID__VOID,
+					     G_TYPE_NONE, 0);
 
 	klass->toggle_format = imhtml_toggle_format;
-
+	klass->message_send = imhtml_message_send;
+	
 	gobject_class->finalize = gtk_imhtml_finalize;
       	widget_class->drag_motion = gtk_text_view_drag_motion;
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
@@ -1024,6 +1039,9 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_plus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
 	gtk_binding_entry_add_signal (binding_set, GDK_equal, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
 	gtk_binding_entry_add_signal (binding_set, GDK_minus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_SHRINK);
+	binding_set = gtk_binding_set_by_class(klass);
+	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)

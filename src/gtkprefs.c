@@ -875,12 +875,6 @@ GtkWidget *hotkeys_page() {
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	vbox = gaim_gtk_make_frame(ret, _("Send Message"));
-	gaim_gtk_prefs_checkbox(_("Enter _sends message"),
-			"/gaim/gtk/conversations/enter_sends", vbox);
-	gaim_gtk_prefs_checkbox(_("C_ontrol-Enter sends message"),
-			"/gaim/gtk/conversations/ctrl_enter_sends", vbox);
-
 	vbox = gaim_gtk_make_frame (ret, _("Window Closing"));
 	gaim_gtk_prefs_checkbox(_("_Escape closes window"),
 			"/gaim/gtk/conversations/escape_closes", vbox);
@@ -990,8 +984,6 @@ GtkWidget *conv_page() {
 
 	gaim_gtk_prefs_checkbox(_("Raise chat _window on events"),
 			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
-	gaim_gtk_prefs_checkbox(_("Use _multi-colored screen names in chats"),
-			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
 	/* All the tab options! */
 	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));

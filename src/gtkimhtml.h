@@ -132,6 +132,7 @@ struct _GtkIMHtmlClass {
 	void (*toggle_format)(GtkIMHtml *, GtkIMHtmlButtons);
 	void (*clear_format)(GtkIMHtml *);
 	void (*update_format)(GtkIMHtml *);
+	gboolean (*message_send)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {
