@@ -35,7 +35,6 @@ plugins/ticker/ticker.c
 plugins/timestamp.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
-src/about.c
 src/account.c
 src/away.c
 src/blist.c
