@@ -61,6 +61,20 @@
 #include "win32dep.h"
 #endif
 
+/*
+ * I really want to switch all our networking code to using IPv6 only,
+ * but that really isn't a good idea at all.  Evan S. of Adium says
+ * OS X sets all connections as "AF_INET6/PF_INET6," even if there is
+ * nothing inherently IPv6 about them.  And I feel like Linux kernel
+ * 2.6.5 is doing the same thing.  So we REALLY should accept
+ * connections if they're showing up as IPv6.  Old OSes (Solaris?)
+ * that might not have full IPv6 support yet will fail if we try
+ * to use PF_INET6 but it isn't defined.  --Mark Doliner
+ */
+#ifndef PF_INET6
+#define PF_INET6 PF_INET
+#endif
+
 struct aim_odc_intdata {
 	fu8_t cookie[8];
 	char sn[MAXSNLEN+1];
@@ -180,8 +194,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 	if ((acceptfd = accept(cur->fd, &addr, &addrlen)) == -1)
 		return 0; /* not an error */
 
-	/* Also accept inet6? */
-	if (addr.sa_family != AF_INET) {
+	if ((addr.sa_family != PF_INET) && (addr.sa_family != PF_INET6)) {
 		close(acceptfd);
 		aim_conn_close(cur);
 		return -1;
