@@ -61,6 +61,10 @@ void serv_close(struct gaim_connection *gc)
 		gtk_timeout_remove(gc->idle_timer);
         gc->idle_timer = -1;
 
+	if (gc->keepalive > 0)
+		gtk_timeout_remove(gc->keepalive);
+	gc->keepalive = -1;
+
 	if (gc->prpl && gc->prpl->close)
 		(*gc->prpl->close)(gc);
 
