@@ -349,7 +349,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					g_string_sprintfa(str, "<br>At %s since %s", locs.host,
 									locs.time);
 				}
-				g_show_info_text(NULL, NULL, FALSE, str->str, NULL);
+				g_show_info_text(NULL, NULL, 2, str->str, NULL);
 				g_string_free(str, TRUE);
 			} else
 				serv_got_update(zgc, b->name, nlocs, 0, 0, 0, 0, 0);

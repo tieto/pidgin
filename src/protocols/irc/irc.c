@@ -639,7 +639,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 318:
 		if (id->in_whois && id->whois_str) {
 			GString *str = decode_html(id->whois_str->str);
-			g_show_info_text(gc, NULL, FALSE, str->str, NULL);
+			g_show_info_text(gc, NULL, 2, str->str, NULL);
 			g_string_free(str, TRUE);
 			g_string_free(id->whois_str, TRUE);
 			id->whois_str = NULL;

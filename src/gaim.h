@@ -332,7 +332,7 @@ extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
 extern struct conversation *find_conversation(char *);
 
 /* Functions in dialogs.c */
-extern void g_show_info_text(struct gaim_connection *, char *, gboolean, char *, ...);
+extern void g_show_info_text(struct gaim_connection *, char *, int, char *, ...);
 extern GtkWidget *do_error_dialog(char *, char *);
 extern void show_change_passwd(struct gaim_connection *);
 extern void show_set_dir(struct gaim_connection *);

@@ -1772,7 +1772,13 @@ gchar **info_img_handler(gchar *url)
 	return NULL;
 }
 
-void g_show_info_text(struct gaim_connection *gc, char *who, gboolean away, char *info, ...)
+/* if away is 0, show regardless and try to get away message
+ *            1, don't show if regular info isn't shown
+ *            2, show regardless but don't try to get away message
+ *
+ * i wish this were my client. if i were i wouldn't have to deal with this shit.
+ */
+void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *info, ...)
 {
 	GtkWidget *ok;
 	GtkWidget *label;
@@ -1784,7 +1790,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, gboolean away, char
 	va_list ap;
 
 	struct info_dlg *b = find_info_dlg(gc, who);
-	if (!b && away)
+	if (!b && (away == 1))
 		return;
 	if (!b) {
 		b = g_new0(struct info_dlg, 1);

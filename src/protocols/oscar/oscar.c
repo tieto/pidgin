@@ -99,6 +99,7 @@ struct oscar_data {
 
 	gboolean killme;
 	gboolean icq;
+	GSList *evilhack;
 };
 
 struct chat_connection {
@@ -519,6 +520,10 @@ static void oscar_close(struct gaim_connection *gc) {
 		g_free(n->user);
 		odata->hasicons = g_slist_remove(odata->hasicons, n);
 		g_free(n);
+	}
+	while (odata->evilhack) {
+		g_free(odata->evilhack->data);
+		odata->evilhack = g_slist_remove(odata->evilhack, odata->evilhack->data);
 	}
 	if (odata->create_name)
 		g_free(odata->create_name);
@@ -1555,9 +1560,12 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_userinfo_t *info;
 	char *prof_enc = NULL, *prof = NULL;
 	fu16_t infotype;
-	char buf[BUF_LONG];
+	char header[BUF_LONG];
 	char legend[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	GSList *l = od->evilhack;
+	gboolean evilhack = FALSE;
 	gboolean away;
 	va_list ap;
 	char *asc;
@@ -1577,17 +1585,13 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
 
 	away = infotype != AIM_GETINFO_GENERALINFO;
-	if (away && (!prof || !*prof)) {
-		g_show_info_text(gc, info->sn, away, legend, NULL);
-		return 1;
-	}
 
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
 				asctime(localtime(&info->membersince)));
 	else
 		asc = g_strdup("");
-	g_snprintf(buf, sizeof buf,
+	g_snprintf(header, sizeof header,
 			_("Username : <B>%s</B>  %s <BR>\n"
 			"%s"
 			"Warning Level : <B>%d %%</B><BR>\n"
@@ -1600,15 +1604,37 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			info->idletime);
 	g_free(asc);
 
-	g_show_info_text(gc, info->sn, away, away ? "<br><hr>" : buf,
-			 (prof && strlen(prof)) ?
-				away_subs(prof, gc->username)
-				:
-			 away ?
-				_("<i>User has no away message</i>") :
-				_("<i>No Information Provided</i>"),
-			 legend,
-			 NULL);
+	while (l) {
+		char *x = l->data;
+		if (!strcmp(x, normalize(info->sn))) {
+			evilhack = TRUE;
+			g_free(x);
+			od->evilhack = g_slist_remove(od->evilhack, x);
+			break;
+		}
+		l = l->next;
+	}
+
+	if (away) {
+		if (evilhack) {
+			g_show_info_text(gc, info->sn, 2,
+					 header,
+					 (prof && *prof) ? prof :
+						_("<i>User has no away message</i>"),
+					 legend, NULL);
+		} else {
+			g_show_info_text(gc, info->sn, 0,
+					 header,
+					 (prof && *prof) ? prof : NULL,
+					 NULL);
+		}
+	} else {
+		g_show_info_text(gc, info->sn, 1,
+				 "<BR><HR><BR>",
+				 (prof && *prof) ? prof : _("<i>No Information Provided</i>"),
+				 legend,
+				 NULL);
+	}
 
 	return 1;
 }
@@ -2266,16 +2292,17 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 	if (odata->icq)
 		aim_icq_getsimpleinfo(odata->sess, name);
 	else
-		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
-}
-
-/*
-static void oscar_get_away_msg(struct gaim_connection *g, char *name) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	if (!odata->icq)
+		/* people want the away message on the top, so we get the away message
+		 * first and then get the regular info, since it's too difficult to
+		 * insert in the middle. i hate people. */
 		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
-*/
+
+static void oscar_get_away(struct gaim_connection *g, char *name) {
+	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	if (!odata->icq)
+		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
+}
 
 static void oscar_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
 			  char *maiden, char *city, char *state, char *country, int web) {
@@ -2692,6 +2719,12 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	do_ask_dialog(buf, data, oscar_direct_im, oscar_cancel_direct_im);
 }
 
+static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = gc->proto_data;
+	od->evilhack = g_slist_append(od->evilhack, g_strdup(normalize(who)));
+	oscar_get_info(gc, who);
+}
+
 static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -2700,6 +2733,12 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Get Info");
 	pbm->callback = oscar_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Away Msg");
+	pbm->callback = oscar_get_away_msg;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
@@ -2915,7 +2954,7 @@ void oscar_init(struct prpl *ret) {
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;
-	ret->get_away = NULL;
+	ret->get_away = oscar_get_away;
 	ret->set_dir = oscar_set_dir;
 	ret->get_dir = NULL; /* Oscar really doesn't have this */
 	ret->dir_search = oscar_dir_search;

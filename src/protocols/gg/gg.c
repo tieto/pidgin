@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2786 2001-11-20 01:01:22Z warmenhoven $
+ * $Id: gg.c 2804 2001-11-26 20:39:54Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -790,7 +790,7 @@ static void search_results(gpointer data, gint source, GaimInputCondition cond)
 
 	g_strfreev(webdata_tbl);
 
-	g_show_info_text(gc, NULL, FALSE, buf, NULL);
+	g_show_info_text(gc, NULL, 2, buf, NULL);
 
 	g_free(buf);
 }
