@@ -4060,7 +4060,7 @@ msgstr "Vyžadovaný zásuvný modul %s nebylo možné načíst."
 
 #: src/prefs.c:111 src/status.c:270
 msgid "Slightly less boring default"
-msgstr "Trošhu měné nudné implicitní"
+msgstr "Trošku méně nudné implicitní"
 
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:109
 #: src/protocols/msn/msn.c:344 src/protocols/msn/state.c:27
@@ -6817,7 +6817,7 @@ msgstr "<b>Stav:</b> "
 
 #: src/protocols/oscar/oscar.c:5388
 msgid "<b>Logged In:</b> "
-msgstr "<b>Přihlášen v:</b> "
+msgstr "<b>Přihlášen:</b> "
 
 #: src/protocols/oscar/oscar.c:5400
 msgid "<b>IP Address:</b> "
