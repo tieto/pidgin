@@ -75,6 +75,25 @@ struct _NMSSLConn
 };
 
 /**
+ * Allocate a new NMConn struct
+ *
+ * @param 	The address of the server that we are connecting to.
+ * @param 	The port that we are connecting to.
+ *
+ * @return		A pointer to a newly allocated NMConn struct, should
+ *				be freed by calling nm_release_conn()
+ */
+NMConn *nm_create_conn(const char *addr, int port);
+
+/**
+ * Release an NMConn
+ *
+ * @param 	Pointer to the NMConn to release.
+ *
+ */
+void nm_release_conn(NMConn *conn);
+
+/**
  * Write len bytes from the given buffer.
  *
  * @param conn	The connection to write to.
@@ -135,12 +154,15 @@ nm_read_uint16(NMConn *conn, guint16 *val);
  * @param conn		The connection.
  * @param cmd		The request to dispatch.
  * @param fields	The field list for the request.
+ * @param cb		The response callback for the new request object.
+ * @param data		The user defined data for the request (to be passed to the resp cb).
  * @param req		The request. Should be freed with nm_release_request.
  *
  * @return			NM_OK on success.
  */
-NMERR_T nm_send_request(NMConn * conn, char *cmd, NMField * fields,
-						NMRequest ** req);
+NMERR_T
+nm_send_request(NMConn *conn, char *cmd, NMField *fields,
+				nm_response_cb cb, gpointer data, NMRequest **request);
 
 /**
  * Write out the given field list.

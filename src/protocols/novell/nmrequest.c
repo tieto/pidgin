@@ -20,6 +20,8 @@
 
 #include "nmrequest.h"
 
+static int count = 0;
+
 struct _NMRequest
 {
 	int trans_id;
@@ -32,9 +34,8 @@ struct _NMRequest
 	NMERR_T ret_code;
 };
 
-
-NMRequest *
-nm_create_request(const char *cmd, int trans_id, int gmt)
+NMRequest *nm_create_request(const char *cmd, int trans_id, int gmt, nm_response_cb cb,
+							 gpointer resp_data, gpointer user_define)
 {
 	NMRequest *req;
 
@@ -45,7 +46,12 @@ nm_create_request(const char *cmd, int trans_id, int gmt)
 	req->cmd = g_strdup(cmd);
 	req->trans_id = trans_id;
 	req->gmt = gmt;
+	req->callback = cb;
+	req->data = resp_data;
+	req->user_define = user_define;
 	req->ref_count = 1;
+
+	gaim_debug_info("novell", "Creating NMRequest instance, total=%d\n", ++count);
 
 	return req;
 }
@@ -57,7 +63,11 @@ nm_release_request(NMRequest * req)
 		if (req->cmd)
 			g_free(req->cmd);
 		g_free(req);
+
+		gaim_debug_info("novell",
+						"Releasing NMRequest instance, total=%d\n", --count);
 	}
+
 }
 
 void

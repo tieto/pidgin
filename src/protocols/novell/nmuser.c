@@ -57,7 +57,7 @@ nm_initialize_user(const char *name, const char *server_addr,
 
 	user = g_new0(NMUser, 1);
 
-	user->conn = g_new0(NMConn, 1);
+
 
 	user->contacts =
 		g_hash_table_new_full(g_str_hash, nm_utf8_str_equal,
@@ -71,6 +71,7 @@ nm_initialize_user(const char *name, const char *server_addr,
 												   g_free, g_free);
 
 	user->name = g_strdup(name);
+	user->conn = nm_create_conn(server_addr, port);
 	user->conn->addr = g_strdup(server_addr);
 	user->conn->port = port;
 	user->evt_callback = event_callback;
@@ -83,10 +84,7 @@ nm_initialize_user(const char *name, const char *server_addr,
 void
 nm_deinitialize_user(NMUser * user)
 {
-	NMConn *conn = user->conn;
-
-	g_free(conn->addr);
-	g_free(conn);
+	nm_release_conn(user->conn);
 
 	if (user->contacts) {
 		g_hash_table_destroy(user->contacts);
@@ -120,7 +118,6 @@ nm_send_login(NMUser * user, const char *pwd, const char *my_addr,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 
 	if (user == NULL || pwd == NULL || user_agent == NULL) {
 		return NMERR_BAD_PARM;
@@ -143,21 +140,9 @@ nm_send_login(NMUser * user, const char *pwd, const char *my_addr,
 	}
 
 	/* Send the login */
-	rc = nm_send_request(user->conn, "login", fields, &req);
-	if (rc == NM_OK && req != NULL) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "login", fields, callback, data, NULL);
 
-	if (fields) {
-		nm_free_fields(&fields);
-	}
-
-	if (req) {
-		nm_release_request(req);
-	}
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -167,7 +152,6 @@ nm_send_set_status(NMUser * user, int status, const char *text,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 
 	if (user == NULL)
 		return NMERR_BAD_PARM;
@@ -189,21 +173,9 @@ nm_send_set_status(NMUser * user, int status, const char *text,
 									  NMFIELD_TYPE_UTF8);
 	}
 
-	rc = nm_send_request(user->conn, "setstatus", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "setstatus", fields, callback, data, NULL);
 
-	if (fields) {
-		nm_free_fields(&fields);
-	}
-
-	if (req) {
-		nm_release_request(req);
-	}
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -213,7 +185,6 @@ nm_send_multiple_get_details(NMUser * user, GSList *names,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 	GSList *node;
 
 	if (user == NULL || names == NULL)
@@ -225,19 +196,9 @@ nm_send_multiple_get_details(NMUser * user, GSList *names,
 									  g_strdup(node->data), NMFIELD_TYPE_UTF8);
 	}
 
-	rc = nm_send_request(user->conn, "getdetails", fields, &req);
-	if (rc == NM_OK) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "getdetails", fields, callback, data, NULL);
 
-	if (fields)
-		nm_free_fields(&fields);
-
-	if (req)
-		nm_release_request(req);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -247,7 +208,6 @@ nm_send_get_details(NMUser * user, const char *name,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 
 	if (user == NULL || name == NULL)
 		return NMERR_BAD_PARM;
@@ -259,7 +219,6 @@ nm_send_get_details(NMUser * user, const char *name,
 	} else {
 
 		const char *dn = nm_lookup_dn(user, name);
-
 		if (dn) {
 			fields = nm_field_add_pointer(fields, NM_A_SZ_DN, 0, NMFIELD_METHOD_VALID, 0,
 										  g_strdup(name), NMFIELD_TYPE_DN);
@@ -271,25 +230,15 @@ nm_send_get_details(NMUser * user, const char *name,
 
 	}
 
-	rc = nm_send_request(user->conn, "getdetails", fields, &req);
-	if (rc == NM_OK) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "getdetails", fields, callback, data, NULL);
 
-	if (fields)
-		nm_free_fields(&fields);
-
-	if (req)
-		nm_release_request(req);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
 NMERR_T
 nm_send_create_conference(NMUser * user, NMConference * conference,
-						  nm_response_cb callback, gpointer message)
+						  nm_response_cb callback, gpointer data)
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
@@ -333,29 +282,23 @@ nm_send_create_conference(NMUser * user, NMConference * conference,
 									  NMFIELD_TYPE_DN);
 	}
 
-	rc = nm_send_request(user->conn, "createconf", fields, &req);
+	rc = nm_send_request(user->conn, "createconf", fields, callback, data, &req);
 	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
 		nm_conference_add_ref(conference);
 		nm_request_set_data(req, conference);
-		nm_request_set_user_define(req, message);
-		nm_conn_add_request_item(user->conn, req);
 	}
 
 	if (req)
 		nm_release_request(req);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
 NMERR_T
 nm_send_leave_conference(NMUser * user, NMConference * conference,
-						 nm_response_cb callback, gpointer message)
+						 nm_response_cb callback, gpointer data)
 {
-
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
 	NMField *tmp = NULL;
@@ -375,20 +318,14 @@ nm_send_leave_conference(NMUser * user, NMConference * conference,
 	tmp = NULL;
 
 	/* Send the request to the server */
-	rc = nm_send_request(user->conn, "leaveconf", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "leaveconf", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, conference);
-		nm_request_set_user_define(req, message);
-		nm_conn_add_request_item(user->conn, req);
-	}
 
 	if (req)
 		nm_release_request(req);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -414,24 +351,14 @@ nm_send_join_conference(NMUser * user, NMConference * conference,
 	tmp = NULL;
 
 	/* Send the request to the server */
-	rc = nm_send_request(user->conn, "joinconf", fields, &req);
-
-	/* Set up the request object so that we know what to do
-	 * when we get a response
-	 */
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "joinconf", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, conference);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
 
 	if (req)
 		nm_release_request(req);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -458,24 +385,14 @@ nm_send_reject_conference(NMUser * user, NMConference * conference,
 	tmp = NULL;
 
 	/* Send the request to the server */
-	rc = nm_send_request(user->conn, "rejectconf", fields, &req);
-
-	/* Set up the request object so that we know what to do
-	 * when we get a response
-	 */
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "rejectconf", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, conference);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
 
 	if (req)
 		nm_release_request(req);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -512,24 +429,14 @@ nm_send_conference_invite(NMUser *user, NMConference *conference, NMUserRecord *
 									  g_strdup(message), NMFIELD_TYPE_UTF8);
 
 	/* Send the request to the server */
-	rc = nm_send_request(user->conn, "sendinvite", fields, &req);
-
-	/* Set up the request object so that we know what to do
-	 * when we get a response
-	 */
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "sendinvite", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, conference);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
 
 	if (req)
 		nm_release_request(req);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -539,7 +446,6 @@ nm_send_message(NMUser * user, NMMessage * message, nm_response_cb callback)
 	NMERR_T rc = NM_OK;
 	char *text, *rtfized;
 	NMField *fields = NULL, *tmp = NULL;
-	NMRequest *req = NULL;
 	NMConference *conf;
 	NMUserRecord *user_record;
 	int count, i;
@@ -600,21 +506,10 @@ nm_send_message(NMUser * user, NMMessage * message, nm_response_cb callback)
 		}
 
 		/* Send the request */
-		rc = nm_send_request(user->conn, "sendmessage", fields, &req);
-		if (rc == NM_OK && req) {
-			nm_request_set_callback(req, callback);
-			nm_conn_add_request_item(user->conn, req);
-		}
+		rc = nm_send_request(user->conn, "sendmessage", fields, callback, NULL, NULL);
 	}
 
-	if (fields) {
-		nm_free_fields(&fields);
-	}
-
-	if (req) {
-		nm_release_request(req);
-	}
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -625,7 +520,6 @@ nm_send_typing(NMUser * user, NMConference * conf,
 	NMERR_T rc = NM_OK;
 	char *str = NULL;
 	NMField *fields = NULL, *tmp = NULL;
-	NMRequest *req = NULL;
 
 	if (user == NULL || conf == NULL) {
 		return NMERR_BAD_PARM;
@@ -652,19 +546,10 @@ nm_send_typing(NMUser * user, NMConference * conf,
 								 tmp, NMFIELD_TYPE_ARRAY);
 		tmp = NULL;
 
-		rc = nm_send_request(user->conn, "sendtyping", fields, &req);
-		if (rc == NM_OK && req) {
-			nm_request_set_callback(req, callback);
-			nm_conn_add_request_item(user->conn, req);
-		}
+		rc = nm_send_request(user->conn, "sendtyping", fields, callback, NULL, NULL);
 	}
 
-	if (req)
-		nm_release_request(req);
-
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -712,20 +597,14 @@ nm_send_create_contact(NMUser * user, NMFolder * folder,
 									  g_strdup(display_name), NMFIELD_TYPE_UTF8);
 
 	/* Dispatch the request */
-	rc = nm_send_request(user->conn, "createcontact", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "createcontact", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, contact);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
-
-	if (fields)
-		nm_free_fields(&fields);
 
 	if (req)
 		nm_release_request(req);
 
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -753,20 +632,14 @@ nm_send_remove_contact(NMUser * user, NMFolder * folder,
 								  NMFIELD_TYPE_UTF8);
 
 	/* Dispatch the request */
-	rc = nm_send_request(user->conn, "deletecontact", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "deletecontact", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, contact);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
-
-	if (fields)
-		nm_free_fields(&fields);
 
 	if (req)
 		nm_release_request(req);
 
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -797,20 +670,14 @@ nm_send_create_folder(NMUser * user, const char *name,
 							 g_strdup("-1"), NMFIELD_TYPE_UTF8);
 
 	/* Dispatch the request */
-	rc = nm_send_request(user->conn, "createfolder", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "createfolder", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, g_strdup(name));
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
-
-	if (fields)
-		nm_free_fields(&fields);
 
 	if (req)
 		nm_release_request(req);
 
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -832,20 +699,14 @@ nm_send_remove_folder(NMUser * user, NMFolder * folder,
 								  NMFIELD_TYPE_UTF8);
 
 	/* Dispatch the request */
-	rc = nm_send_request(user->conn, "deletecontact", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "deletecontact", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, folder);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
-
-	if (fields)
-		nm_free_fields(&fields);
 
 	if (req)
 		nm_release_request(req);
 
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -870,20 +731,14 @@ nm_send_get_status(NMUser * user, NMUserRecord * user_record,
 								  g_strdup(dn), NMFIELD_TYPE_UTF8);
 
 	/* Dispatch the request */
-	rc = nm_send_request(user->conn, "getstatus", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
+	rc = nm_send_request(user->conn, "getstatus", fields, callback, data, &req);
+	if (rc == NM_OK && req)
 		nm_request_set_data(req, user_record);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
-
-	if (fields)
-		nm_free_fields(&fields);
 
 	if (req)
 		nm_release_request(req);
 
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -925,15 +780,14 @@ nm_send_rename_contact(NMUser * user, NMContact * contact,
 									 0, fields, NMFIELD_TYPE_ARRAY);
 			fields = NULL;
 
-			rc = nm_send_request(user->conn, "updateitem", list, &req);
-			if (rc == NM_OK && req) {
-				nm_request_set_callback(req, callback);
+			rc = nm_send_request(user->conn, "updateitem", list, callback, data, &req);
+			if (rc == NM_OK && req)
 				nm_request_set_data(req, contact);
-				nm_request_set_user_define(req, data);
-				nm_conn_add_request_item(user->conn, req);
-			}
 		}
 	}
+
+	if (req)
+		nm_release_request(req);
 
 	if (list)
 		nm_free_fields(&list);
@@ -979,15 +833,14 @@ nm_send_rename_folder(NMUser * user, NMFolder * folder, const char *new_name,
 										0, fields, NMFIELD_TYPE_ARRAY);
 			fields = NULL;
 
-			rc = nm_send_request(user->conn, "updateitem", list, &req);
-			if (rc == NM_OK && req) {
-				nm_request_set_callback(req, callback);
+			rc = nm_send_request(user->conn, "updateitem", list, callback, data, &req);
+			if (rc == NM_OK && req)
 				nm_request_set_data(req, folder);
-				nm_request_set_user_define(req, data);
-				nm_conn_add_request_item(user->conn, req);
-			}
 		}
 	}
+
+	if (req)
+		nm_release_request(req);
 
 	if (list)
 		nm_free_fields(&list);
@@ -1029,15 +882,14 @@ nm_send_move_contact(NMUser * user, NMContact * contact, NMFolder * folder,
 									NMFIELD_TYPE_UTF8);
 
 		/* Dispatch the request */
-		rc = nm_send_request(user->conn, "movecontact", list, &req);
-		if (rc == NM_OK && req) {
-			nm_request_set_callback(req, callback);
+		rc = nm_send_request(user->conn, "movecontact", list, callback, data, &req);
+		if (rc == NM_OK && req)
 			nm_request_set_data(req, contact);
-			nm_request_set_user_define(req, data);
-			nm_conn_add_request_item(user->conn, req);
 
-		}
 	}
+
+	if (req)
+		nm_release_request(req);
 
 	if (list)
 		nm_free_fields(&list);
@@ -1052,7 +904,6 @@ nm_send_create_privacy_item(NMUser *user, const char *who, gboolean allow_list,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 	const char *tag;
 
 	if (user == NULL || who == NULL)
@@ -1066,16 +917,9 @@ nm_send_create_privacy_item(NMUser *user, const char *who, gboolean allow_list,
     fields = nm_field_add_pointer(fields, tag, 0, NMFIELD_METHOD_ADD, 0,
 								  g_strdup(who), NMFIELD_TYPE_UTF8);
 
-	rc = nm_send_request(user->conn, "createblock", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "createblock", fields, callback, data, NULL);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -1085,7 +929,6 @@ nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 	const char *tag;
 	GSList **list_ptr, *node;
 
@@ -1109,16 +952,9 @@ nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
     fields = nm_field_add_pointer(fields, tag, 0, NMFIELD_METHOD_DELETE, 0,
 								  g_strdup(dn), NMFIELD_TYPE_DN);
 
-	rc = nm_send_request(user->conn, "updateblocks", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "updateblocks", fields, callback, data, NULL);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 
 }
@@ -1129,7 +965,6 @@ nm_send_set_privacy_default(NMUser *user, gboolean default_deny,
 {
 	NMERR_T rc = NM_OK;
 	NMField *fields = NULL;
-	NMRequest *req = NULL;
 
 	if (user == NULL)
 		return NMERR_BAD_PARM;
@@ -1138,16 +973,9 @@ nm_send_set_privacy_default(NMUser *user, gboolean default_deny,
 								  (default_deny ? g_strdup("1") : g_strdup("0")),
 								  NMFIELD_TYPE_UTF8);
 
-	rc = nm_send_request(user->conn, "updateblocks", fields, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "updateblocks", fields, callback, data, NULL);
 
-	if (fields)
-		nm_free_fields(&fields);
-
+	nm_free_fields(&fields);
 	return rc;
 }
 
@@ -1155,17 +983,11 @@ NMERR_T
 nm_send_keepalive(NMUser *user, nm_response_cb callback, gpointer data)
 {
 	NMERR_T rc = NM_OK;
-	NMRequest *req = NULL;
 
 	if (user == NULL)
 		return NMERR_BAD_PARM;
 
-	rc = nm_send_request(user->conn, "ping", NULL, &req);
-	if (rc == NM_OK && req) {
-		nm_request_set_callback(req, callback);
-		nm_request_set_user_define(req, data);
-		nm_conn_add_request_item(user->conn, req);
-	}
+	rc = nm_send_request(user->conn, "ping", NULL, callback, data, NULL);
 
 	return rc;
 }

@@ -33,6 +33,7 @@ version 0.79cvs:
 	  support the URGENT hint (Etan Reisner)
 	* Better handling of character sets in RTF for Novell (Mike Stoddard of
 	  Novell)
+	* Contact list sync problems in Novell fixed (Mike Stoddard of Novell)
 	* Fixed a crash in SILC that sometimes happened when resolving
 	  the buddy list (Pekka Riikonen)
 	* Parallel compiles of the perl plugin should work better

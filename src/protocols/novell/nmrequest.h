@@ -34,7 +34,8 @@ typedef struct _NMRequest NMRequest;
  *
  *	@return The new request object
  */
-NMRequest *nm_create_request(const char *cmd, int trans_id, int gmt);
+NMRequest *nm_create_request(const char *cmd, int trans_id, int gmt, nm_response_cb cb,
+							 gpointer resp_data, gpointer user_define);
 
 /**
  *	Release a request object.

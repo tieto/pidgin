@@ -168,6 +168,35 @@ encode_method(guint8 method)
 	return str;
 }
 
+NMConn *
+nm_create_conn(const char *addr, int port)
+{
+	NMConn *conn = 	g_new0(NMConn, 1);
+	conn->addr = g_strdup(addr);
+	conn->port = port;
+	return conn;
+}
+
+void nm_release_conn(NMConn *conn)
+{
+	if (conn) {
+		GSList *node;
+		for (node = conn->requests; node; node = node->next) {
+			if (node->data)
+				nm_release_request(node->data);
+		}
+		g_slist_free(conn->requests);
+		conn->requests = NULL;
+		if (conn->ssl_conn) {
+			g_free(conn->ssl_conn);
+			conn->ssl_conn = NULL;
+		}
+		g_free(conn->addr);
+		conn->addr = NULL;
+		g_free(conn);
+	}
+}
+
 int
 nm_tcp_write(NMConn * conn, const void *buff, int len)
 {
@@ -376,13 +405,14 @@ nm_write_fields(NMConn * conn, NMField * fields)
 }
 
 NMERR_T
-nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
+nm_send_request(NMConn *conn, char *cmd, NMField *fields,
+				nm_response_cb cb, gpointer data, NMRequest **request)
 {
 	NMERR_T rc = NM_OK;
 	char buffer[512];
 	int bytes_to_send;
 	int ret;
-	NMField *request = NULL;
+	NMField *request_fields = NULL;
 	char *str = NULL;
 
 	if (conn == NULL || cmd == NULL)
@@ -417,17 +447,17 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 	/* Add the transaction id to the request fields */
 	if (rc == NM_OK) {
 		if (fields)
-			request = nm_copy_field_array(fields);
+			request_fields = nm_copy_field_array(fields);
 
 		str = g_strdup_printf("%d", ++(conn->trans_id));
-		request = nm_field_add_pointer(request, NM_A_SZ_TRANSACTION_ID, 0,
-									   NMFIELD_METHOD_VALID, 0,
-									   str, NMFIELD_TYPE_UTF8);
+		request_fields = nm_field_add_pointer(request_fields, NM_A_SZ_TRANSACTION_ID, 0,
+											  NMFIELD_METHOD_VALID, 0,
+											  str, NMFIELD_TYPE_UTF8);
 	}
 
 	/* Send the request to the server */
 	if (rc == NM_OK) {
-		rc = nm_write_fields(conn, request);
+		rc = nm_write_fields(conn, request_fields);
 	}
 
 	/* Write the CRLF to terminate the data */
@@ -438,14 +468,21 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 		}
 	}
 
-	/* Create a request struct and return it */
+	/* Create a request struct, add it to our queue, and return it */
 	if (rc == NM_OK) {
-		*req = nm_create_request(cmd, conn->trans_id, time(0));
+		NMRequest *new_request = nm_create_request(cmd, conn->trans_id,
+												   time(0), cb, NULL, data);
+		nm_conn_add_request_item(conn, new_request);
+
+		/* Set the out param if it was sent in, otherwise release the request */
+		if (request)
+			*request = new_request;
+		else
+			nm_release_request(new_request);
 	}
 
-	if (request != NULL) {
-		nm_free_fields(&request);
-	}
+	if (request_fields != NULL)
+		nm_free_fields(&request_fields);
 
 	return rc;
 }

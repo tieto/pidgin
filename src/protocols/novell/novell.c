@@ -101,11 +101,11 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				gaim_account_set_alias(user->client_data, alias);
 		}
 
-		_sync_contact_list(user);
-
 		/* Tell Gaim that we are connected */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
+
+		_sync_contact_list(user);
 
 		rc = nm_send_set_status(user, NM_STATUS_AVAILABLE, NULL, NULL, NULL,
 								NULL);
@@ -1316,6 +1316,7 @@ _sync_contact_list(NMUser *user)
 	 */
 	_remove_gaim_buddies(user);
 	_add_gaim_buddies(user);
+	user->clist_synched = TRUE;
 }
 
 static void
@@ -2445,6 +2446,12 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 	if (user == NULL)
 		return;
 
+	/* If we haven't synched the contact list yet, ignore
+	 * the add_buddy calls. Server side list is the master.
+	 */
+	if (!user->clist_synched)
+		return;
+
 	contact = nm_create_contact();
 	nm_contact_set_dn(contact, buddy->name);
 
@@ -2477,7 +2484,7 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 }
 
 static void
-novell_remove_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup *group)
+novell_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	NMContact *contact;
 	NMFolder *folder;
@@ -2490,7 +2497,6 @@ novell_remove_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup *group)
 
 	user = (NMUser *) gc->proto_data;
 	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
-
 		folder = nm_find_folder(user, group->name);
 		if (folder) {
 			contact = nm_folder_find_contact(folder, dn);

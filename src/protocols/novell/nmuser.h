@@ -127,6 +127,8 @@ struct _NMUser
 	/* Have the privacy lists been synched yet */
 	gboolean privacy_synched;
 
+	/* Has the contact list been synched */
+	gboolean clist_synched;
 };
 
 #define	NM_STATUS_UNKNOWN			0
