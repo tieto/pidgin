@@ -737,19 +737,30 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 		return;
 	}
 
+	if (group != NULL)
+		msn_group = msn_groups_find_with_name(session->groups, group->name);
+
+	/* We should check if the user isn't alredy there. */
 	for (l = session->lists.forward; l != NULL; l = l->next)
 	{
 		MsnUser *user = l->data;
 
 		if (!gaim_utf8_strcasecmp(who, msn_user_get_passport(user)))
-			break;
+		{
+			if (group == NULL)
+				break;
+			else if (msn_group != NULL)
+			{
+				/* Now we should check if it's in the group. */
+				if (g_list_find(user->group_ids,
+								GINT_TO_POINTER(msn_group->id)))
+					break;
+			}
+		}
 	}
 
 	if (l != NULL)
 		return;
-
-	if (group != NULL)
-		msn_group = msn_groups_find_with_name(session->groups, group->name);
 
 	if (msn_group != NULL)
 	{
@@ -768,6 +779,7 @@ msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnGroup *group;
+	GSList *l;
 
 	session = gc->proto_data;
 	cmdproc = session->notification_conn->cmdproc;
@@ -779,6 +791,28 @@ msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 	}
 
 	group = msn_groups_find_with_name(session->groups, group_name);
+
+	/* We should check if the user is there. */
+	for (l = session->lists.forward; l != NULL; l = l->next)
+	{
+		MsnUser *user = l->data;
+
+		if (!gaim_utf8_strcasecmp(who, msn_user_get_passport(user)))
+		{
+			if (group_name == NULL)
+				break;
+			else if (group != NULL)
+			{
+				/* Now we should check if it's in the group. */
+				if (g_list_find(user->group_ids,
+								GINT_TO_POINTER(group->id)))
+					break;
+			}
+		}
+	}
+
+	if (l == NULL)
+		return;
 
 	if (group == NULL)
 	{
