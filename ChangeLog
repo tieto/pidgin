@@ -2,6 +2,8 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.46:
 	* New applet icons (courtesy David Raeman)
+	* ICQ works on big-endian platforms, e.g. sparc and ppc
+	  (thanks to Nathan Walp and Ben Miller)
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite

@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: udp.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: udp.c 2487 2001-10-10 19:58:11Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -108,23 +108,29 @@ void icq_UDPEncode(icq_Packet *p, char *buffer)
   DWORD checkcode = icq_UDPCalculateCheckCode(p);
   DWORD code1, code2, code3;
   DWORD pos;
+  DWORD tmp;
 
   memcpy(buffer, p->data, p->length);
 
-  *(DWORD *)(buffer+0x14)=htoicql(checkcode);
+  tmp = htoicql(checkcode);
+  memcpy((buffer+0x14),&tmp,sizeof(DWORD));
   code1 = p->length * 0x68656c6cL;
   code2 = code1 + checkcode;
   pos = 0x0A;
 
   for(; pos < p->length; pos+=4)
   {
-    DWORD data = icqtohl(*(DWORD *)((p->data)+pos));
+    DWORD data;
+    memcpy(&data, (p->data)+pos, sizeof(DWORD));
+    data = icqtohl(data);
     code3 = code2 + icq_UDPTable[pos & 0xFF];
     data ^= code3;
-    *(DWORD*)(buffer+pos)=htoicql(data);
+    data = htoicql(data);
+    memcpy((buffer+pos),&data,sizeof(DWORD));
   }
   checkcode = icq_UDPScramble(checkcode);
-  *(DWORD *)(buffer+0x14)=htoicql(checkcode);
+  tmp = htoicql(checkcode);
+  memcpy((buffer+0x14),&tmp,sizeof(DWORD));
 }
 
 /*********************************************************

@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: icqpacket.c 2096 2001-07-31 01:00:39Z warmenhoven $
+ * $Id: icqpacket.c 2487 2001-10-10 19:58:11Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -59,7 +59,8 @@ void icq_PacketAppend32(icq_Packet *p, DWORD i)
 {
   DWORD val=i;
 
-  *(unsigned long*)((p->data)+(p->cursor))=htoicql(val);
+  val = htoicql(val);
+  memcpy((p->data)+(p->cursor),&val,sizeof(DWORD));
   icq_PacketAdvance(p, sizeof(DWORD));
 }
 
@@ -67,7 +68,7 @@ void icq_PacketAppend32n(icq_Packet *p, DWORD i)
 {
   DWORD val=i;
 
-  *(DWORD *)((p->data)+(p->cursor)) = val;
+  memcpy((p->data)+(p->cursor),&val,sizeof(DWORD));
   icq_PacketAdvance(p, sizeof(DWORD));
 }
 
@@ -75,7 +76,8 @@ DWORD icq_PacketRead32(icq_Packet *p)
 {
   DWORD val;
 
-  val = icqtohl(*(DWORD *)((p->data)+(p->cursor)));
+  memcpy(&val,(p->data)+(p->cursor),sizeof(DWORD));
+  val = icqtohl(val);
   icq_PacketAdvance(p, sizeof(DWORD));
 
   return val;
@@ -85,7 +87,7 @@ DWORD icq_PacketRead32n(icq_Packet *p)
 {
   DWORD val;
 
-  val = *(DWORD*)((p->data)+(p->cursor));
+  memcpy(&val,(p->data)+(p->cursor),sizeof(DWORD));
   icq_PacketAdvance(p, sizeof(DWORD));
 
   return val;
@@ -95,7 +97,8 @@ void icq_PacketAppend16(icq_Packet *p, WORD i)
 {
   WORD val=i;
 
-  *(WORD *)((p->data)+(p->cursor)) = htoicqs(val);
+  val = htoicqs(val);
+  memcpy((p->data)+(p->cursor),&val,sizeof(WORD));
   icq_PacketAdvance(p, sizeof(WORD));
 }
 
@@ -103,7 +106,7 @@ void icq_PacketAppend16n(icq_Packet *p, WORD i)
 {
   WORD val=i;
 
-  *(WORD *)((p->data)+(p->cursor)) = val;
+  memcpy((p->data)+(p->cursor),&val,sizeof(WORD));
   icq_PacketAdvance(p, sizeof(WORD));
 }
 
@@ -111,7 +114,8 @@ WORD icq_PacketRead16(icq_Packet *p)
 {
   WORD val;
 
-  val = icqtohs(*(WORD *)((p->data)+(p->cursor)));
+  memcpy(&val,(p->data)+(p->cursor),sizeof(WORD));
+  val = icqtohs(val);
   icq_PacketAdvance(p, sizeof(WORD));
 
   return val;
@@ -121,7 +125,7 @@ WORD icq_PacketRead16n(icq_Packet *p)
 {
   WORD val;
 
-  val = *(WORD*)((p->data)+(p->cursor));
+  memcpy(&val,(p->data)+(p->cursor),sizeof(WORD));
   icq_PacketAdvance(p, sizeof(WORD));
 
   return val;
