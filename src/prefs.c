@@ -2210,6 +2210,7 @@ static gboolean program_is_valid(const char *program)
 {
 	GError *error = NULL;
 	char **argv; 
+	gchar *progname;
 	gboolean is_valid = FALSE;
 
 	if (program == NULL || *program == '\0') {
@@ -2226,10 +2227,12 @@ static gboolean program_is_valid(const char *program)
 		return FALSE;
 	}
 
-	is_valid = g_find_program_in_path(argv[0]) != NULL;
+	progname = g_find_program_in_path(argv[0]);
+	is_valid = (progname != NULL);
 
 	g_strfreev(argv);
-
+	g_free(progname);
+	
 	return is_valid;
 }
 
