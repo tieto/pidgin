@@ -466,7 +466,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
                 jid = xmlnode_get_attrib(x, "jid");
                 name = xmlnode_get_attrib(x, "name");
                 if (name)
-                        printf("name = %s\n", name);
+                        debug_printf("name = %s\n", name);
                 sub = xmlnode_get_attrib(x, "subscription");
                 ask = xmlnode_get_attrib(x, "ask");
 
@@ -483,10 +483,10 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 
                                         groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
                                         if (!(b = find_buddy(GJ_GC(j), jid))) {
-                                                printf("adding buddy: %s\n", jid);
+                                                debug_printf("adding buddy: %s\n", jid);
                                                 b = add_buddy(GJ_GC(j), groupname, jid, name?name:jid);
                                         } else {
-                                                printf("updating buddy: %s/%s\n", jid, name);
+                                                debug_printf("updating buddy: %s/%s\n", jid, name);
                                                 g_snprintf(b->name, sizeof(b->name), "%s", jid);
                                                 g_snprintf(b->show, sizeof(b->show), "%s", name?name:jid);
                                         }
