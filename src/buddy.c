@@ -55,7 +55,9 @@
 #include "pixmaps/plugins_small.xpm"
 #endif
 #include "pixmaps/prefs_small.xpm"
-/*#include "pixmaps/search_small.xpm"*/
+#ifdef NO_MULTI
+#include "pixmaps/search_small.xpm"
+#endif
 #ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
 #else
@@ -2610,7 +2612,8 @@ void show_buddy_list()
 #ifdef NO_MULTI
 	findmenu = gtk_menu_new();
 	gtk_widget_show(findmenu);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Search for Buddy"), search_small_xpm, NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Search for Buddy"), search_small_xpm,
+			NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), findmenu);
 	gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("by Email"));
@@ -2624,10 +2627,8 @@ void show_buddy_list()
 
 	setmenu = gtk_menu_new();
 	gtk_widget_show(setmenu);
-	//menuitem = gaim_new_item(menu, _("Settings"), NULL);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Settings"), prefs_small_xpm, NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Settings"), prefs_small_xpm, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), setmenu);
-	//gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("User Info"));
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_info), NULL);
