@@ -7,7 +7,7 @@ version 0.71
 	  Smock)
 	* Display AIM away messages in the tooltip for buddies when
 	  they are away
-	* Support for Buddy Comments for AIM buddies
+	* Support for Buddy Comments for AIM and ICQ buddies
 	* Window icons are now set as buddy icons or status icons
 	* Get User Info in MSN and Yahoo now return an error indicating that
 	  the information doesn't exist if the profile is empty (parts by
@@ -15,7 +15,7 @@ version 0.71
 	* Added startup notification support for window managers that support it.
 	* The protocol icon for an account in the accounts window will now
 	  "pulse" when signing the account on.
-	* Zephyr formatting fixes (Arun A Tharuvai)
+	* Zephyr formatting fixes (Arun A. Tharuvai)
 	* Zephyr can connect to chats (Karsten Huneycutt)
 	* SSL support can now be provided by third party plugins.
 	* Multiple copies of gaim installed at different locations no
