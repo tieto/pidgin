@@ -569,7 +569,6 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_NO_PASSWORD | OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,
-	NULL,
 	rendezvous_prpl_list_icon,
 	rendezvous_prpl_list_emblems,
 	rendezvous_prpl_status_text,
