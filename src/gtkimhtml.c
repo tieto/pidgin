@@ -114,7 +114,7 @@ void gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 		GtkSmileyTree *t = list->data;
 		gint i;
 		list = g_slist_remove(list, t);
-		if (t->values) {
+		if (t && t->values) {
 			for (i = 0; i < t->values->len; i++)
 				list = g_slist_append (list, t->children [i]);
 			g_string_free (t->values, TRUE);
