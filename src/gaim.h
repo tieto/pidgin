@@ -158,6 +158,16 @@ enum gaim_event {
 	event_buddy_away,
 	event_buddy_back,
 	event_blist_update,
+	event_chat_invited,
+	event_chat_join,
+	event_chat_leave,
+	event_chat_buddy_join,
+	event_chat_buddy_leave,
+	event_chat_recv,
+	event_chat_send,
+	event_warned,
+	event_error,
+	event_quit,
 	/* any others? it's easy to add... */
 };
 
@@ -376,7 +386,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 385 $"
+#define REVISION "gaim:$Revision: 401 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

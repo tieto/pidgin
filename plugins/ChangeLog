@@ -1,0 +1,23 @@
+version 0.9.20:
+	It's 3 am the night before finals, it's obviously a good time to hack
+	gaim.
+
+	The first thing to note is that there are about 9 new events plugins
+	can attach to, most of them dealing with chat, since I know that was a
+	big thing that was missing. Please note that I was nice and decided to
+	tack these extra events onto the end of the enum, which means that
+	plugins do not have to be recompiled in order for them to still work.
+
+	The big thing to note is that gaim_plugin_init no longer returns void,
+	but int.  If it returns 0, gaim interprets this as there being no
+	error, and continues with loading as normal. (This should be backwards-
+	compatible: returning 0 is the equivalent of returning void.) If it
+	returns a non-zero number, there was an error loading detected by the
+	plugin. At that point, gaim will try to clean things up by removing any
+	callbacks that have been added by the plugin. It will then try to call
+	the plugin's gaim_plugin_error function, if there is one. The function
+	should take an int (the int returned by gaim_plugin_init) and return a
+	char*. If the char* is not NULL, it is displayed by gaim as an error
+	message.  The plugin is then unloaded and closed and life goes back to
+	normal. If any of that was confusing, it was confusing to me, too. I
+	added a plugin, error.c, which should help clear things up.

@@ -631,18 +631,22 @@ void serv_got_im(char *name, char *message, int away)
 	GList *c = callbacks;
 	struct gaim_callback *g;
 	void (*function)(char **, char **, void *);
+	char *buffy = g_strdup(message);
+	char *angel = g_strdup(name);
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->event == event_im_recv && g->function != NULL) {
 			function = g->function;
-			/* I can guarantee you this is wrong */
-			(*function)(&name, &message, g->data);
+			(*function)(&angel, &buffy, g->data);
 		}
 		c = c->next;
 	}
-	/* make sure no evil plugin is trying to crash gaim */
-	if (message == NULL)
+	if (!buffy || !angel)
 		return;
+	g_snprintf(message, strlen(message) + 1, "%s", buffy);
+	g_free(buffy);
+	g_snprintf(name, strlen(name) + 1, "%s", angel);
+	g_free(angel);
 #endif
 
 	nname = g_strdup(normalize(name));
@@ -834,6 +838,20 @@ void serv_got_eviled(char *name, int lev)
         GtkWidget *d, *label, *close;
 
 
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, int, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_warned && g->function != NULL) {
+			function = g->function;
+			(*function)(name, lev, g->data);
+		}
+		c = c->next;
+	}
+#endif
+
         g_snprintf(buf2, 1023, "You have just been warned by %s.\nYour new warning level is %d./%%",
                    ((name == NULL) ? "an anonymous person" : name) , lev);
 
@@ -889,6 +907,20 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         char buf2[BUF_LONG];
 
 
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, char *, char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_invited && g->function != NULL) {
+			function = g->function;
+			(*function)(who, name, message, g->data);
+		}
+		c = c->next;
+	}
+#endif
+
         g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n%s", who, name, message);
 
         d = gtk_dialog_new();
@@ -930,6 +962,20 @@ void serv_got_joined_chat(int id, char *name)
 {
         struct buddy_chat *b;
 
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_join && g->function != NULL) {
+			function = g->function;
+			(*function)(name, g->data);
+		}
+		c = c->next;
+	}
+#endif
+
         b = (struct buddy_chat *)g_new0(struct buddy_chat, 1);
         buddy_chats = g_list_append(buddy_chats, b);
 
@@ -958,6 +1004,22 @@ void serv_got_chat_left(int id)
         if (!b)
                 return;
 
+#ifdef GAIM_PLUGINS
+	{
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_leave && g->function != NULL) {
+			function = g->function;
+			(*function)(b->name, g->data);
+		}
+		c = c->next;
+	}
+	}
+#endif
+
 	sprintf(debug_buff, "Leaving room %s.\n", b->name);
 	debug_print(debug_buff);
 
@@ -983,6 +1045,22 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
         if (!b)
                 return;
         
+#ifdef GAIM_PLUGINS
+	{
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, char *, char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_recv && g->function != NULL) {
+			function = g->function;
+			(*function)(b->name, who, message, g->data);
+		}
+		c = c->next;
+	}
+	}
+#endif
+
         if (whisper)
                 w = WFLAG_WHISPER;
         else

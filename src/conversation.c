@@ -473,18 +473,21 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 		GList *ca = callbacks;
 		struct gaim_callback *g;
 		void (*function)(char *, char **, void *);
+		char *buffy = g_strdup(buf);
 		while (ca) {
 			g = (struct gaim_callback *)(ca->data);
 			if (g->event == event_im_send && g->function != NULL) {
 				function = g->function;
-				(*function)(c->name, &buf, g->data);
+				(*function)(c->name, &buffy, g->data);
 			}
 			ca = ca->next;
 		}
-		if (buf == NULL) {
+		if (!buffy) {
 			g_free(buf2);
 			return;
 		}
+		g_snprintf(buf, BUF_LONG, "%s", buffy);
+		g_free(buffy);
 	}
 #endif
         

@@ -13,5 +13,6 @@ plugindir = $(libdir)/gaim
 clean distclean clean-recursive distclean-recursive:
 	$(RM) $(plugin_DATA)
 endif
-EXTRA_DIST = CRAZY HOWTO SIGNALS autorecon.c filectl.c gaiminc.c \
-	iconaway.c lagmeter.c notify.c simple.c spellchk.c toc_commands.c
+EXTRA_DIST = ChangeLog CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
+	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
+	toc_commands.c

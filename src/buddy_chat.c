@@ -399,6 +399,28 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 		linkify_text(buf);
 	}
 
+#ifdef GAIM_PLUGINS
+	{
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, char **, void *);
+	char *buffy = g_strdup(buf);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_send && g->function != NULL) {
+			function = g->function;
+			(*function)(b->name, &buffy, g->data);
+		}
+		c = c->next;
+	}
+	if (!buffy)
+		return;
+	g_snprintf(buf, sizeof buf, "%s", buffy);
+	g_free(buffy);
+	}
+#endif
+
+
         escape_text(buf);
         serv_chat_send(b->id, buf);
         
@@ -518,6 +540,20 @@ void add_chat_buddy(struct buddy_chat *b, char *buddy)
 {
         char *name = g_strdup(buddy);
 
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_buddy_join && g->function != NULL) {
+			function = g->function;
+			(*function)(b->name, name, g->data);
+		}
+		c = c->next;
+	}
+#endif
+
         b->in_room = g_list_append(b->in_room, name);
 
         update_chat_list(b);
@@ -532,6 +568,20 @@ void add_chat_buddy(struct buddy_chat *b, char *buddy)
 void remove_chat_buddy(struct buddy_chat *b, char *buddy)
 {	
         GList *names = b->in_room;
+
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(char *, char *, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_chat_buddy_leave && g->function != NULL) {
+			function = g->function;
+			(*function)(b->name, buddy, g->data);
+		}
+		c = c->next;
+	}
+#endif
 
         while(names) {
                 if (!strcasecmp((char *)names->data, buddy)) {

@@ -140,6 +140,7 @@ void gaim_plugin_init(void *handle) {
 	load_conf();
 
 	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
+	gaim_signal_connect(handle, event_chat_send, substitute_words, NULL);
 }
 
 void gaim_plugin_remove() {

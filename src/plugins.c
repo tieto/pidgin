@@ -138,9 +138,12 @@ static void load_which_plugin(GtkWidget *w, gpointer data) {
 
 void load_plugin(char *filename) {
 	struct gaim_plugin *plug;
-	void (*gaim_plugin_init)();
+	int (*gaim_plugin_init)();
+	char *(*gaim_plugin_error)(int);
 	char *(*cfunc)();
 	char *error;
+	int retval;
+	char *plugin_error;
 
 	if (filename == NULL) return;
 	plug = g_malloc(sizeof *plug);
@@ -172,8 +175,39 @@ void load_plugin(char *filename) {
 		return;
 	}
 
+	retval = (*gaim_plugin_init)(plug->handle);
+	sprintf(debug_buff, "loaded plugin returned %d\n", retval);
+	debug_print(debug_buff);
+	if (retval) {
+		GList *c = callbacks;
+		struct gaim_callback *g;
+		while (c) {
+			g = (struct gaim_callback *)c->data;
+			if (g->handle == plug->handle) {
+				callbacks = g_list_remove(callbacks, c->data);
+				sprintf(debug_buff, "Removing callback, %d remain\n",
+						g_list_length(callbacks));
+				debug_print(debug_buff);
+				c = callbacks;
+				if (c == NULL) {
+					break;
+				}
+			} else {
+				c = c->next;
+			}
+		}
+		gaim_plugin_error = dlsym(plug->handle, "gaim_plugin_error");
+		if ((error = (char *)dlerror()) == NULL) {
+			plugin_error = (*gaim_plugin_error)(retval);
+			if (plugin_error)
+				do_error_dialog(plugin_error, _("Plugin Error"));
+		}
+		dlclose(plug->handle);
+		g_free(plug);
+		return;
+	}
+
 	plugins = g_list_append(plugins, plug);
-	(*gaim_plugin_init)(plug->handle);
 
 	cfunc = dlsym(plug->handle, "name");
 	if ((error = (char *)dlerror()) == NULL)

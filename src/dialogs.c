@@ -309,7 +309,8 @@ void destroy_all_dialogs()
         g_list_free(dialogwindows);
         dialogwindows = NULL;
 
-	do_im_back(NULL, NULL);
+	if (awaymessage)
+		do_im_back(NULL, NULL);
 
         if (imdialog) {
                 destroy_dialog(NULL, imdialog);
@@ -450,14 +451,28 @@ do_error_dialog(char *message, char *title)
 
 
 
-void show_error_dialog(char *c)
+void show_error_dialog(char *d)
 {
 
-	int no = atoi(c);
+	int no = atoi(d);
 	char *w = strtok(NULL, ":");
 	char buf[256];
 	char buf2[32];
  	
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+	void (*function)(int, void *);
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_error && g->function != NULL) {
+			function = g->function;
+			(*function)(no, g->data);
+		}
+		c = c->next;
+	}
+#endif
+
 	
         switch(no) {
         case 69:

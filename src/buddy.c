@@ -27,6 +27,9 @@
 #include <applet-widget.h>
 #include "gnome_applet_mgr.h"
 #endif /* USE_APPLET */
+#ifdef GAIM_PLUGINS
+#include <dlfcn.h>
+#endif /* GAIM_PLUGINS */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1069,6 +1072,40 @@ void export_callback(GtkWidget *widget, void *null)
 
 void do_quit()
 {
+#ifdef GAIM_PLUGINS
+	GList *c;
+	struct gaim_callback *g;
+	struct gaim_plugin *p;
+	void (*function)(void *);
+	void (*gaim_plugin_remove)();
+	char *error;
+
+	/* first we tell those who have requested it we're quitting */
+	c = callbacks;
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_quit && g->function != NULL) {
+			function = g->function;
+			(*function)(g->data);
+		}
+		c = c->next;
+	}
+
+	/* then we remove everyone in a mass suicide */
+	c = plugins;
+	while (c) {
+		p = (struct gaim_plugin *)c->data;
+		gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
+		if ((error = (char *)dlerror()) == NULL)
+			(*gaim_plugin_remove)();
+		/* we don't need to worry about removing callbacks since
+		 * there won't be any more chance to call them back :) */
+		dlclose(p->handle);
+		g_free(p->filename); /* why do i bother? */
+		g_free(p);
+	}
+#endif
+
 	exit(0);
 }
 

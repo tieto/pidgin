@@ -9,7 +9,17 @@ enum gaim_event {
 	event_buddy_signoff,
 	event_buddy_away,
 	event_buddy_back,
-	event_blist_update
+	event_blist_update,
+	event_chat_invited,
+	event_chat_join,
+	event_chat_leave,
+	event_chat_buddy_join,
+	event_chat_buddy_leave,
+	event_chat_recv,
+	event_chat_send,
+	event_warned,
+	event_error,
+	event_quit
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -103,3 +113,72 @@ event_blist_update:
 	
 	This event is called when the buddylist is updated (automatically every
 	20 seconds)
+
+event_chat_invited:
+	char *who, char *room, char *message
+
+	'who' is who invited you to a chat room.
+	'room' is the room they invited you to.
+	'message' is the (optional) message they sent to invite you, and may be
+	an empty string.
+
+event_chat_join:
+	char *room
+
+	'room' is the chat room that you have just joined.
+
+event_chat_leave:
+	char *room
+
+	'room' is the chat room that you have just left.
+
+event_chat_buddy_join:
+	char *room, char *who
+
+	'room' is the room the person joined.
+	'who' is the screenname of the person who joined.
+
+event_chat_buddy_leave:
+	char *room, char *who
+
+	'room' is the room the person left.
+	'who' is the screenname of the person who left.
+
+event_chat_recv:
+	char *room, char *who, char *text
+
+	'room' should be obvious by now.
+	'who' should be too.
+	'text' is the message that got sent.
+
+	Note that because of the bizarre way chat works, you also receive
+	messages that you send. I didn't design it, AOL did.
+
+event_chat_send:
+	char *room, char **text
+
+	'room'. Need I say more.
+	'text' is what you're about to say, linkified/HTML-ized, but not
+	TOC-escaped.
+
+event_warned:
+	char *who, int level
+
+	'who' is who warned you. Note that this can be NULL, indicating either
+	an anonymous warning, or your warning level has dropped.
+	'level' is your new warning level.
+
+event_error:
+	int error
+
+	'error' is the number of the error as defined by the TOC PROTOCOL
+	document, which can be found in the docs/ directory of the source
+	tree. Note that if the person is using Oscar, this number can often
+	be misleading, as not all the errors have been worked out, and some
+	do not translate to TOC error codes cleanly.
+
+event_quit:
+	(none)
+
+	Called when gaim quits normally. If gaim dies or is killed, this won't
+	be called. It's not my fault, it's Seg's.
