@@ -5,10 +5,9 @@ We have released them hoping to give you guys enough information to
 go on.  We'll continue developing them in our free time but we ask you
 to do the same.  If you have any suggestions for them, let us know.
 
-To make it so that gaim can use plugins, instead of plain ol' ./configure,
-give it the option --enable-plugins. Then all kinds of good things will be
-added, like buttons to let you actually load the plugins and things like
-that.
+If you do not wish to enable the plugin support within GAIM, run the
+./configure script with the --disable-plugins option and recompile your
+source code.  This will stop any plugins from loading.
 
 Currently, they are not compiled when you perform a make and make install.
 If you wish to make use of the gaim plugins, enter the directory where you
