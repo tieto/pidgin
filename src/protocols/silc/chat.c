@@ -340,12 +340,10 @@ silcgaim_chat_chauth_ok(SilcGaimChauth sgc, GaimRequestFields *fields)
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "+a", val, NULL);
 		gaim_blist_node_set_string((GaimBlistNode *)sgc->c, "passphrase", val);
-		gaim_blist_save();
 	} else if (set == 0) {
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "-a", NULL);
 		gaim_blist_node_remove_setting((GaimBlistNode *)sgc->c, "passphrase");
-		gaim_blist_save();
 	}
 
 	silc_buffer_free(sgc->pubkeys);
@@ -516,7 +514,6 @@ silcgaim_chat_prv_add(SilcGaimCharPrv p, GaimRequestFields *fields)
 
 	/* Associate to a real channel */
 	gaim_blist_node_set_string((GaimBlistNode *)cn, "parentch", p->channel);
-	gaim_blist_save();
 
 	/* Join the group */
 	silcgaim_chat_join(sg->gc, comp);

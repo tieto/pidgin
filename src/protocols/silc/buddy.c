@@ -961,7 +961,6 @@ silcgaim_add_buddy_save(bool success, void *context)
 		   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
 		   silcgaim_silcdir(), fingerprint);
 	gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
-	gaim_blist_save();
 
 	/* Update online status on the buddy list */
 	gaim_blist_update_buddy_presence(b, GAIM_BUDDY_ONLINE);
