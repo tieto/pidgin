@@ -312,11 +312,6 @@ struct group {
 	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
-struct chat_room {
-        char name[128];
-        int exchange;
-};
-
 struct debug_window {
 	GtkWidget *window;
 	GtkWidget *entry;
@@ -447,7 +442,6 @@ extern GList *log_conversations;
 extern GList *buddy_pounces;
 extern GSList *away_messages;
 extern GList *conversations;
-extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
 extern int opt_away;
 extern char *opt_away_arg;
@@ -605,7 +599,6 @@ extern void rename_chat_buddy(struct conversation *, char *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
 extern void show_new_buddy_chat(struct conversation *);
 extern void delete_chat(struct conversation *);
-extern void setup_buddy_chats();
 extern void build_imchat_box(gboolean);
 extern void do_quit();
 extern void update_chat_button_pix();

@@ -153,8 +153,6 @@ static int gaimrc_parse_tag(FILE *f)
 		return 3;
 	} else if (!strcmp(tag, "pounce")) {
 		return 4;
-	} else if (!strcmp(tag, "chat")) {
-		return 5;
 	} else if (!strcmp(tag, "sound_files")) {
 		return 6;
 	} else if (!strcmp(tag, "proxy")) {
@@ -340,62 +338,6 @@ static void gaimrc_write_pounce(FILE *f)
 		free(str4);
 
 		pnc = pnc->next;
-	}
-
-	fprintf(f, "}\n");
-}
-
-static void gaimrc_read_chat(FILE *f)
-{
-	struct parse *p;
-	char buf[4096];
-	struct chat_room *b;
-
-	buf[0] = 0;
-
-	while (buf[0] != '}') {
-		if (!fgets(buf, sizeof(buf), f))
-			return;
-
-		if (buf[0] == '}')
-			return;
-
-		p = parse_line(buf);
-		if (!strcmp(p->option, "entry")) {
-			b = g_new0(struct chat_room, 1);
-
-			g_snprintf(b->name, sizeof(b->name), "%s", p->value[0]);
-			filter_break(b->name);
-
-			b->exchange = atoi(p->value[1]);
-
-			chat_rooms = g_list_append(chat_rooms, b);
-		}
-	}
-}
-
-static void gaimrc_write_chat(FILE *f)
-{
-	GList *pnc = chat_rooms;
-	struct chat_room *b;
-
-	fprintf(f, "chat {\n");
-
-	if (pnc) {
-		while (pnc) {
-			char *str1;
-
-			b = (struct chat_room *)pnc->data;
-
-			str1 = escape_text2(b->name);
-
-			fprintf(f, "\tentry { %s } { %d }\n", str1, b->exchange);
-
-			/* escape_text2 uses malloc(), so we don't want to g_free these */
-			free(str1);
-
-			pnc = pnc->next;
-		}
 	}
 
 	fprintf(f, "}\n");
@@ -968,9 +910,6 @@ void load_prefs()
 			case 4:
 				gaimrc_read_pounce(f);
 				break;
-			case 5:
-				gaimrc_read_chat(f);
-				break;
 			case 6:
 				gaimrc_read_sounds(f);
 				break;
@@ -1012,7 +951,6 @@ void save_prefs()
 		gaimrc_write_sounds(f);
 		gaimrc_write_away(f);
 		gaimrc_write_pounce(f);
-		gaimrc_write_chat(f);
 #ifdef GAIM_PLUGINS
 		gaimrc_write_plugins(f);
 #endif

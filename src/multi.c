@@ -73,6 +73,8 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	gc->permit = NULL;
 	gc->deny = NULL;
 
+	gc->iconfile = "/home/ewarmenhoven/peng.gif";
+
 	connections = g_slist_append(connections, gc);
 
 	user->gc = gc;
@@ -917,7 +919,6 @@ void account_online(struct gaim_connection *gc)
 	show_buddy_list();
 	refresh_buddy_window();
 #endif
-	setup_buddy_chats();
 
 	update_connection_dependent_prefs();
 	do_away_menu();

@@ -1016,14 +1016,6 @@ void chat_set_topic(struct conversation *b, char* who, char* topic)
 
 
 
-void handle_click_chat(GtkWidget *widget, GdkEventButton * event, struct chat_room *cr)
-{
-	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-		/* FIXME : double click on chat in buddy list */
-		serv_join_chat(connections->data, cr->exchange, cr->name);
-	}
-}
-
 void delete_chat(struct conversation *b)
 {
 	while (b->in_room) {
@@ -1036,58 +1028,6 @@ void delete_chat(struct conversation *b)
 	}
 	g_string_free(b->history, TRUE);
 	g_free(b);
-}
-
-void setup_buddy_chats()
-{
-	GList *list;
-	struct chat_room *cr;
-	GList *crs = chat_rooms;
-	GtkWidget *w;
-	GtkWidget *item;
-	GtkWidget *tree;
-
-	if (buddies == NULL)
-		return;
-
-	list = GTK_TREE(buddies)->children;
-
-	while (list) {
-		w = (GtkWidget *)list->data;
-		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Buddy Chat"))) {
-			gtk_tree_remove_items(GTK_TREE(buddies), list);
-			list = GTK_TREE(buddies)->children;
-			if (!list)
-				break;
-		}
-		list = list->next;
-	}
-
-	if (crs == NULL)
-		return;
-
-	item = gtk_tree_item_new_with_label(_("Buddy Chat"));
-	tree = gtk_tree_new();
-	gtk_widget_show(item);
-	gtk_widget_show(tree);
-	gtk_tree_append(GTK_TREE(buddies), item);
-	gtk_tree_item_set_subtree(GTK_TREE_ITEM(item), tree);
-	gtk_tree_item_expand(GTK_TREE_ITEM(item));
-
-	while (crs) {
-		cr = (struct chat_room *)crs->data;
-
-		item = gtk_tree_item_new_with_label(cr->name);
-		gtk_object_set_user_data(GTK_OBJECT(item), cr);
-		gtk_tree_append(GTK_TREE(tree), item);
-		gtk_widget_show(item);
-		gtk_signal_connect(GTK_OBJECT(item), "button_press_event",
-				   GTK_SIGNAL_FUNC(handle_click_chat), cr);
-
-		crs = crs->next;
-
-	}
-
 }
 
 static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm, int chat)
