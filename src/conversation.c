@@ -1365,7 +1365,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	}
 
 	/* XXX CUI: this is really bad and should be moved somewhere else later. */
-	if (c->gc) {
+	if (!c->is_chat && c->gc) {
 		int index = g_slist_index(connections, c->gc);
 		int sname = strlen(who);
 		int swhat = strlen(what);
