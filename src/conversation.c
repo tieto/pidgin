@@ -849,8 +849,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	if (!c->is_chat) {
 		char *buffy;
 
-		write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
-
 		buffy = g_strdup(buf);
 		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
 		if (buffy) {
@@ -859,8 +857,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 
 
-		if (c->makesound && (sound_options & OPT_SOUND_SEND))
-			play_sound(SEND);
+		if (err >= 0) {
+			write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
+
+			if (c->makesound && (sound_options & OPT_SOUND_SEND))
+				play_sound(SEND);
+		}
 	} else {
 		serv_chat_send(c->gc, c->id, buf);
 
