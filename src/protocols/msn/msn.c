@@ -354,34 +354,34 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 	char buf[MSN_BUF_LEN];
 	struct msn_data *md = gc->proto_data;
 
-	g_snprintf(buf, sizeof(buf), "URL %d INBOX\r\n", ++md->trId);
+	if (!md->passport) {
+		g_snprintf(buf, sizeof(buf), "URL %d INBOX\r\n", ++md->trId);
 
-	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		return;
-	}
-
-	debug_printf("\n");
-
-	snprintf(login_url, sizeof(login_url), "%s", md->passport);
-
-	if (strstr(data, "Content-Type: text/x-msmsgsinitialemailnotification;")) {
-		char *x = strstr(data, "Inbox-Unread:");
-		if (!x) return;
-		x += strlen("Inbox-Unread: ");
-		connection_has_mail(gc, atoi(x), NULL, NULL, login_url);
-	} else if (strstr(data, "Content-Type: text/x-msmsgsemailnotification;")) {
-		char *from = strstr(data, "From:");
-		char *subject = strstr(data, "Subject:");
-		char *x;
-		if (!from || !subject) {
-			connection_has_mail(gc, 1, NULL, NULL, login_url);
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			return;
 		}
-		from += strlen("From: ");
-		x = strstr(from, "\r\n"); *x = 0;
-		subject += strlen("Subject: ");
-		x = strstr(subject, "\r\n"); *x = 0;
-		connection_has_mail(gc, -1, from, subject, login_url);
+	} else {
+		g_snprintf(login_url, sizeof(login_url), "%s", md->passport);
+
+		if (strstr(data, "Content-Type: text/x-msmsgsinitialemailnotification;")) {
+			char *x = strstr(data, "Inbox-Unread:");
+			if (!x) return;
+			x += strlen("Inbox-Unread: ");
+			connection_has_mail(gc, atoi(x), NULL, NULL, login_url);
+		} else if (strstr(data, "Content-Type: text/x-msmsgsemailnotification;")) {
+			char *from = strstr(data, "From:");
+			char *subject = strstr(data, "Subject:");
+			char *x;
+			if (!from || !subject) {
+				connection_has_mail(gc, 1, NULL, NULL, login_url);
+				return;
+			}
+			from += strlen("From: ");
+			x = strstr(from, "\r\n"); *x = 0;
+			subject += strlen("Subject: ");
+			x = strstr(subject, "\r\n"); *x = 0;
+			connection_has_mail(gc, -1, from, subject, login_url);
+		}
 	}
 }
 
@@ -572,9 +572,74 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 	return 1;
 }
 
+static void msn_unescape(char *text) {
+	char *cpy = g_strdup(text);
+	char *cur = cpy;
+	int c = 0;
+
+
+	while (*cur) {
+		if (*cur == '%') {
+			if (sscanf (cur, "%%%x;", &c) == 1 && c != 0) {
+				*text = c;
+				cur = cur + 3;
+			} 
+		} else {
+			*text = *cur;
+			cur++;
+		}
+		text++;
+	}
+	*text = 0;
+	g_free(cpy);
+}
+
+static char *msn_parse_format(char *mime)
+{
+	char *cur;
+	GString *ret = g_string_new(NULL);
+	char colors[3];
+
+	cur = strstr(mime, "FN=");
+	if (cur && (*(cur = cur + 3) != ';')) {
+		ret = g_string_append(ret, "<FONT FACE=\"");
+		while (*cur && *cur != ';') {
+			ret = g_string_append_c(ret, *cur);
+			cur++;
+		}
+		ret = g_string_append(ret, "\">");
+	}
+	
+	cur = strstr(mime, "EF=");
+	if (cur && (*(cur = cur + 3) != ';')) {
+		while (*cur && *cur != ';') {
+			ret = g_string_append_c(ret, '<');
+			ret = g_string_append_c(ret, *cur);
+			ret = g_string_append_c(ret, '>');
+			cur++;
+		}
+	}
+	
+	cur = strstr(mime, "CO=");
+	if (cur && (*(cur = cur + 3) != ';')) {
+		if (sscanf (cur, "%x;", (int*)(&colors)) == 1) {
+			char tag[MSN_BUF_LEN];
+			g_snprintf(tag, sizeof(tag), "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">", colors[0], colors[1], colors[2]);
+			ret = g_string_append(ret, tag);
+		}
+	}
+	
+	msn_unescape(ret->str);
+	cur = ret->str;
+	g_string_free(ret, FALSE);
+	return cur;
+}
+			
+	
 static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 {
-	char *content, *agent, *utf;
+	char *content, *agent, *format, *utf;
+	char *message = NULL;
 	int flags = 0;
 
 	agent = strstr(msg, "User-Agent: ");
@@ -582,6 +647,14 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		if (!g_strncasecmp(agent, "User-Agent: Gaim", strlen("User-Agent: Gaim")))
 			flags |= IM_FLAG_GAIMUSER;
 	}
+
+	format = strstr(msg, "X-MMS-IM-Format: ");
+	if (format) {
+		format = msn_parse_format(format);
+	} else {
+		format = NULL;
+	}
+
 	content = strstr(msg, "Content-Type: ");
 	if (!content)
 		return;
@@ -594,6 +667,9 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 
 	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
 				  strlen("Content-Type: text/plain"))) {
+		
+	
+		
 		char *skiphead;
 		skiphead = strstr(msg, "\r\n\r\n");
 		if (!skiphead || !skiphead[4]) {
@@ -603,12 +679,24 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		utf = utf8_to_str(skiphead);
 		strip_linefeed(utf);
 		
+		if (format) { 
+			int len = strlen(utf) + strlen(format) + 1;
+			message = g_malloc(len);
+			g_snprintf(message, len, "%s%s", format, utf);
+		} else {
+			message = utf;
+		}
+		
 		if (ms->chat)
-			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, utf, time(NULL));
+			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, message, time(NULL));
 		else
-			serv_got_im(ms->gc, ms->msguser, utf, flags, time(NULL), -1);
+			serv_got_im(ms->gc, ms->msguser, message, flags, time(NULL), -1);
 
-		g_free(utf);
+		g_free(message);
+		if (format) {
+			g_free(format);
+			g_free(utf);
+		}
 	}
 }
 
@@ -618,7 +706,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	char buf[MSN_BUF_LEN];
 	int cont = 1;
 	int len;
-
+	
 	/* This is really stupid and I hate to put this here. */
 	if (ms->fd != source)
 		ms->fd = source;
@@ -1174,7 +1262,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			strcat(sendbuf, buf2);
 		}
 
-		md->passport = tmpnam(NULL);
+		if (md->passport) {
+			unlink(md->passport);
+			free(md->passport);
+		}
+		md->passport = tempnam(NULL, NULL);
 
 		fd = fopen(md->passport, "w");
 		fprintf(fd, "<html>\n");
@@ -1686,6 +1778,10 @@ static void msn_close(struct gaim_connection *gc)
 	g_free(md->rxqueue);
 	if (md->msg)
 		g_free(md->msguser);
+	if (md->passport) {
+		unlink(md->passport);
+      		free(md->passport);
+	}
 	while (md->switches)
 		msn_kill_switch(md->switches->data);
 	while (md->fl) {

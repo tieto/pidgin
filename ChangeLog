@@ -5,6 +5,7 @@ version 0.58:
 	* Taiwanese translation added (Thanks, Paladin Liu)
 	* Better applet transparency
 	* Option to raise buddy list on signons/signoffs
+	* Formatting of incoming MSN messages	
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
