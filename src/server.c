@@ -35,7 +35,6 @@
 /* XXX UI Stuff */
 #include "gaim.h"
 #include "gtkimhtml.h"
-#include "gtkconv.h"
 #include "gtkutils.h"
 #include "ui.h"
 
@@ -102,10 +101,6 @@ void serv_close(GaimConnection *gc)
 		GaimConversation *b = gc->buddy_chats->data;
 
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
-
-		/* TODO: Nuke the UI-specific code here. */
-		if (GAIM_IS_GTK_CONVERSATION(b))
-			gaim_gtkconv_update_buttons_by_protocol(b);
 	}
 
 	if (gc->idle_timer > 0)
