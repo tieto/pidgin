@@ -246,7 +246,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 		if(!stat(old_icon, &st))
 			unlink(old_icon);
 		else {
-			filename = g_build_filename(dirname, random, NULL);
+			filename = g_build_filename(dirname, old_icon, NULL);
 			if(!stat(filename, &st))
 				unlink(filename);
 			g_free(filename);

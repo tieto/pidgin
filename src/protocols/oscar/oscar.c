@@ -2763,7 +2763,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
 		const char *filename = NULL, *saved_b16 = NULL;
-		char *b16 = NULL;
+		char *b16 = NULL, *filepath = NULL;
 		GaimBuddy *b = NULL;
 
 		b16 = gaim_base16_encode(info->iconcsum, info->iconcsumlen);
@@ -2777,6 +2777,14 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (g_file_test(filename, G_FILE_TEST_EXISTS))
 				saved_b16 = gaim_blist_node_get_string((GaimBlistNode*)b,
 						"icon_checksum");
+			else {
+				filepath = g_build_filename(gaim_buddy_icons_get_cache_dir(),
+											filename, NULL);
+				if (g_file_test(filepath, G_FILE_TEST_EXISTS))
+					saved_b16 = gaim_blist_node_get_string((GaimBlistNode*)b,
+															"icon_checksum");
+				g_free(filepath);
+			}
 		} else
 			saved_b16 = NULL;
 
