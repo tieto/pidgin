@@ -1867,7 +1867,7 @@ msgstr "På lunch"
 #: src/protocols/msn/msn.c:1359 src/protocols/msn/msn.c:1391
 #: src/protocols/zephyr/zephyr.c:859 src/protocols/zephyr/zephyr.c:874
 msgid "Hidden"
-msgstr "Dåld"
+msgstr "Dold"
 
 #: src/gtkpounce.c:505 src/prefs.c:1085 src/protocols/msn/msn.c:1456
 #: src/protocols/yahoo/yahoo.c:1088
