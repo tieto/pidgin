@@ -100,7 +100,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	for (v = 0; v < NUM_SOUNDS; v++) {
 		if (sound_file_new[v]) {
 			g_free(sound_file_new[v]);
-			sound_file_new[v] = NULL;
+		sound_file_new[v] = NULL;
 		}
 	}
 	sound_entry = NULL;
@@ -847,6 +847,198 @@ GtkWidget *away_page() {
 	return ret;
 }
 
+#if USE_PLUGINS
+GtkWidget *plugin_description=NULL, *plugin_details=NULL;
+static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
+{
+	gchar buf[1024];
+	GtkTreeIter  iter;
+	GValue val = { 0, };
+	struct gaim_plugin *plug;
+
+	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+		return;
+	gtk_tree_model_get_value (model, &iter, 2, &val);
+	plug = g_value_get_pointer(&val);
+	
+	g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n%s"), 
+		   plug->desc.name, plug->desc.version, plug->desc.description);
+	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
+	g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n"
+				       "<span weight=\"bold\">Written by:</span>\t%s\n"
+				       "<span weight=\"bold\">URL:</span>\t%s\n"
+				       "<span weight=\"bold\">File name:</span>\t %s"),
+		   plug->desc.name, plug->desc.version, plug->desc.authors, plug->desc.url, plug->path);
+	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
+	g_value_unset (&val);
+}
+
+static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
+{
+	GtkTreeModel *model = (GtkTreeModel *)data;
+	GtkTreeIter iter;
+	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
+	struct gaim_plugin *plug;
+	gchar buf[1024];
+	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
+	gdk_window_set_cursor(prefs->window, wait);
+	gdk_cursor_unref(wait);
+  
+	gtk_tree_model_get_iter (model, &iter, path);
+	gtk_tree_model_get (model, &iter, 2, &plug, -1);
+	
+	if (!plug->handle)
+
+		if (plug->type == plugin)
+#ifdef GAIM_PLUGINS
+			load_plugin(plug->path);
+#else
+	        {}	
+#endif
+		else
+#ifdef USE_PERL
+			perl_load_file(plug->path);
+#else
+	        {}
+#endif 
+	else
+		if (plug->type == plugin)
+#ifdef GAIM_PLUGINS
+			unload_plugin(plug);
+#else
+	                {} 
+#endif
+		else
+#ifdef USE_PERL
+			perl_unload_file(plug);
+#else
+	                {}
+#endif
+	gdk_window_set_cursor(prefs->window, NULL);
+	
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, plug->handle, -1);
+	g_snprintf(buf, sizeof(buf), _("<span size=\"larger\">%s %s</span>\n\n%s"), 
+		   plug->desc.name, plug->desc.version, plug->desc.description);
+	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
+	gtk_tree_path_free(path);
+}
+
+static GtkWidget *plugin_page ()
+{
+	GtkWidget *ret;
+
+	GtkWidget *sw, *vp;
+	GtkTreeIter iter;
+	GtkWidget *event_view;
+	GtkListStore *ls;
+	GtkCellRenderer *rend, *rendt;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreePath *path;
+	
+	GtkWidget *nb;
+
+	GList *probes = probed_plugins;
+	struct gaim_plugin *plug;
+	
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+
+	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
+
+	ls = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+	while (probes) {
+		plug = probes->data;
+		gtk_list_store_append (ls, &iter);
+		gtk_list_store_set(ls, &iter,
+				   0, plug->handle,
+				   1, plug->desc.name ? plug->desc.name : plug->path, 
+				   2, plug, -1);
+		probes = probes->next;
+	}
+	
+	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
+
+	rend = gtk_cell_renderer_toggle_new();
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
+
+	
+	col = gtk_tree_view_column_new_with_attributes ("Load",
+							rend,
+							"active", 0,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+
+	rendt = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes ("Name",
+							rendt,
+							"text", 1,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	g_object_unref(G_OBJECT(ls));
+	gtk_container_add(GTK_CONTAINER(sw), event_view);
+	
+
+	nb = gtk_notebook_new();
+	gtk_notebook_set_tab_pos (GTK_NOTEBOOK(nb), GTK_POS_BOTTOM);
+	gtk_notebook_popup_disable(GTK_NOTEBOOK(nb));
+	
+	/* Description */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	plugin_description = gtk_label_new(NULL);
+	
+	vp = gtk_viewport_new(NULL, NULL);
+	gtk_viewport_set_shadow_type(vp, GTK_SHADOW_NONE);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
+
+	gtk_container_add(vp, plugin_description);
+	gtk_container_add(sw, vp);
+
+	gtk_label_set_selectable(plugin_description, TRUE);  
+	gtk_label_set_line_wrap(plugin_description, TRUE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_description), 0, 0);
+	gtk_misc_set_padding(GTK_MISC(plugin_description), 6, 6);
+	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Description")));
+
+	/* Details */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	plugin_details = gtk_label_new(NULL);
+	
+	vp = gtk_viewport_new(NULL, NULL);
+	gtk_viewport_set_shadow_type(vp, GTK_SHADOW_NONE);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
+
+	gtk_container_add(vp, plugin_details);
+	gtk_container_add(sw, vp);
+
+	gtk_label_set_selectable(plugin_details, TRUE);  
+	gtk_label_set_line_wrap(plugin_details, TRUE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_details), 0, 0);
+	gtk_misc_set_padding(GTK_MISC(plugin_details), 6, 6);	
+	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Details")));
+	gtk_box_pack_start(GTK_BOX(ret), nb, TRUE, TRUE, 0);
+
+	g_signal_connect (G_OBJECT (sel), "changed",
+			  G_CALLBACK (prefs_plugin_sel),
+			  NULL); 
+	g_signal_connect (G_OBJECT(rend), "toggled",
+			  G_CALLBACK(plugin_load), ls);
+
+	path = gtk_tree_path_new_first();
+	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+#endif
+
 static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
 	GtkTreeModel *model = (GtkTreeModel *)data;
@@ -1233,6 +1425,9 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, a++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, a++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, a++);
+#if USE_PLUGINS
+	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &p, NULL, a++);
+#endif
 }
 
 void show_prefs()

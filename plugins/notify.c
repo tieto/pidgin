@@ -261,7 +261,7 @@ void save_notify_prefs() {
 
 	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
 	if (!(fp = fopen(buf, "w"))) {
-		do_error_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
+		do_eror_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
 		return;
 	}
 
@@ -403,6 +403,17 @@ void gaim_plugin_remove() {
 /*  		} */
 			c = c->next;
 	}
+}
+
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Message Notification");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Provides a variety of ways of notifying you of unread messages.");
+	desc.authors = g_strdup("Etan Reisner &lt;deryni@eden.rutgers.edu>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
 }
 
 char *name() {

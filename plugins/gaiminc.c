@@ -53,6 +53,23 @@ char *gaim_plugin_init(GModule *handle) {
 	return NULL;
 }
 
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Demonstration");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup(
+                "This is a really cool plugin that does a lot of stuff:\n"
+		"- It tells you who wrote the program when you log in\n"
+		"- It reverses all incoming text\n"
+		"- It sends a message to people on your list immediately"
+		" when they sign on";);
+	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+
+
 char *name() {
 	return "Gaim Demonstration Plugin";
 }

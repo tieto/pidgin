@@ -1,4 +1,4 @@
-GAIM::register("gaim test", "0.0.1", "goodbye", "");
+GAIM::register("Example", "1.0", "goodbye", "");
 
 $ver = GAIM::get_info(0);
 @ids = GAIM::get_info(1);
@@ -30,3 +30,9 @@ sub notify {
 sub goodbye {
 	GAIM::print("You Bastard!", "You killed Kenny!");
 }
+
+sub description {
+	my($a, $b, $c, $d, $e, $f) = @_;
+		("Example", "1.0", "An example Gaim perl script that does nothing particularly useful:\n\t-Show a dialog on load\n\t-Set user idle for 6,000 seconds\n\t-Greets people signing on with \"Hello\"\n\t-Informs you when script has been loaded for one minute.", "Eric Warmenhoven &lt;eric\@warmenhoven.org>", "http://gaim.sf.net", "/dev/null");
+		}
+		

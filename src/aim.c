@@ -217,9 +217,7 @@ void show_login()
 {
 	GtkWidget *signon_all;
 	GtkWidget *options;
-#ifdef GAIM_PLUGINS
 	GtkWidget *plugs;
-#endif
 #ifndef NO_MULTI
 	GtkWidget *accts;
 #endif
@@ -340,32 +338,24 @@ void show_login()
 
 	reg = gtk_button_new_with_label(_("Auto-login"));
 	options = gtk_button_new_with_label(_("Options"));
-#ifdef GAIM_PLUGINS
-	plugs = gtk_button_new_with_label(_("Plugins"));
-#endif
+	plugs = gtk_button_new_with_label(_("About"));
 	if (misc_options & OPT_MISC_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
-#ifdef GAIM_PLUGINS
 		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
-#endif
 	}
 
 	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(dologin_all), NULL);
 	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
-#ifdef GAIM_PLUGINS
-	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
+	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_about), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
-#endif
 
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
 
 	gtk_widget_show(reg);
 	gtk_widget_show(options);
-#ifdef GAIM_PLUGINS
 	gtk_widget_show(plugs);
-#endif
 
 	if (aim_users) {
 		struct aim_user *c = (struct aim_user *)aim_users->data;
@@ -724,9 +714,11 @@ int main(int argc, char *argv[])
 		printf("Gaim %s\n",VERSION);
 		return 0;
 	}
-
+	
+#if GAIM_PLUGINS || USE_PERL
+	gaim_probe_plugins();
+#endif
 	load_prefs();
-
 	core_main();
 	ui_main();
 
@@ -752,9 +744,7 @@ int main(int argc, char *argv[])
 			debug_printf("gtkspell started with ispell\n");
 		}
 	}
-#ifdef USE_PERL
-	perl_autoload();
-#endif
+
 	static_proto_init();
 
 	/* deal with --login */

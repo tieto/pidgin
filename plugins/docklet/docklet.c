@@ -147,10 +147,6 @@ static void docklet_menu(GdkEventButton *event) {
 	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(show_prefs), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 
-	entry = gtk_menu_item_new_with_label(_("Plugins"));
-	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(show_plugins), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
-
 	entry = gtk_separator_menu_item_new();
 	gtk_menu_append(GTK_MENU(menu), entry);
 
@@ -331,6 +327,7 @@ char *gaim_plugin_init(GModule *handle) {
 	gaim_signal_connect(handle, event_signoff, gaim_signoff, NULL);
 	gaim_signal_connect(handle, event_connecting, gaim_connecting, NULL);
 	gaim_signal_connect(handle, event_away, gaim_away, NULL);
+	gaim_signal_connect(handle, event_im_displayed_rcvd, gaim_im_recv, NULL);
 	gaim_signal_connect(handle, event_im_recv, gaim_im_recv, NULL);
 	gaim_signal_connect(handle, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(handle, event_buddy_signoff, gaim_buddy_signoff, NULL);
@@ -378,6 +375,18 @@ void gaim_plugin_remove() {
 
 	debug_printf("Docklet: removed\n");
 }
+      
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("System Tray Docklet");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window.");
+	desc.authors = g_strdup("Robert McQueen &lt;robot101@debian.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+ 
 
 const char *name() {
 	return _("System Tray Docklet");

@@ -118,6 +118,17 @@ void gaim_plugin_remove() {
 	gtk_timeout_remove(check);
 }
 
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Gaim File Control");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Allows you to control Gaim by entering commands in aa file.");
+	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+ 
 char *name() {
 	return "Gaim File Control";
 }

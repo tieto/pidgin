@@ -1,33 +1,42 @@
-This is really the wrong place for a HOWTO on writing perl scripts for gaim,
-but there didn't seem to be a much better place.
+So, you wanna write a perl script.
 
-If you've ever written a perl script for X-Chat then you've basically written
-one for gaim as well. perl.c in gaim's source is basically an exact copy of
-X-Chat's perl.c file, with small modifications to suit Gaim rather than IRC.
+Perl scripts in Gaim can be very useful.  Although they can't directly manipulate
+Gaim data like a plugin, or provide any sort of UI, they're portable, easy to develop
+rapidly and extremely powerful when manipulating incoming and outgoing messages.
 
-Basically the reason for including perl is based on the experience with the
-plugins. X-Chat's docs on Perl Scripting sums it up nicely:
-   it's not quite as simple to stick a module together in C and make it
-   stable compared to the development time of perl code
+This document assumes you know perl--Gaim perl scripts work exactly like normal perl
+scripts, with a few extra commands you can use.
 
-Plugins are more powerful as they can directly access gaim's functions and
-variables; as such they should be used for things like modifying the UI or
-when something takes quite a bit of trickery not offered by perl. But for
-the most part things should be written in Perl. It's more stable than
-plugins.
+The first thing Gaim will do with your plugin (provided it's in $prefix/lib/gaim or
+$HOME/.gaim/) is look for and call a function called "description".  description()
+gives Gaim the information it will use in the plugins dialog--script name, version,
+your name--all sorts of good things.  Let's look at an example:
 
-There's a really quick simple perl script in this directory, gaim.pl, that
-should show most of the functions. Most things should be self-explanatory.
+	sub description {
+		my($a, $b, $c, $d, $e, $f) = @_;
+		("Example", "1.0", "An example Gaim perl script that does nothing 
+		particularly useful:\n\t-Show a dialog on load\n\t-Set user idle for 
+		6,000 seconds\n\t-Greets people signing on with \"Hello\"\n\t-Informs 
+		you when script has been loaded for one minute.", 
+		"Eric Warmenhoven &lt;eric\@warmenhoven.org>", "http://gaim.sf.net", 
+		"/dev/null");
+	}
 
-There's one thing you need to be aware of in perl scripts for gaim. Gaim
-supports multiple connections, and perl deals with them by using a unique
-identifier for each of them (that's a fancy way of saying that perl scripts
-use the memory address of the connection). 
+This pushes what's needed to the perl stack.  What is all that stuff?
+	$a - Name 
+	$b - Version
+	$c - Description
+	$d - Authors
+	$e - Webpage
+	$f - Icon (this is the path to an icon Gaim will use for your script)
 
-Everything available in normal perl scripts should be available in gaim's
-perl interface, so I'm not going to bother describing that. The important
-things are the functions provided by gaim's internal GAIM module, which is
-what most of this document is about. So, onto the functions.
+It should be noted that this information will be formatted according to Pango's
+markup language--a language akin to HTML.  This is neat in that it lets you bold
+and italicize your description and stuff, but it's important you take care to 
+properly escape stuff (notice the &lt; in $d).
+
+Now, for the Gaim-specific perl functions (if you know x-chat scripts, you'll
+feel right at home):
 
 GAIM::register(name, version, shutdownroutine, unused)
 	Just like X-Chat. This is the first function your script should call.

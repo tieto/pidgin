@@ -408,7 +408,6 @@ char *gaim_plugin_init(GModule *h) {
 	gaim_signal_connect(h, event_signoff, signoff_cb, NULL);
 	gaim_signal_connect(h, event_buddy_signoff, buddy_signoff_cb, NULL);
 	gaim_signal_connect(h, event_buddy_away, away_cb, NULL);
-	gaim_signal_connect(h, event_buddy_back, away_cb, NULL);
 
 	if (connections)
 		BuddyTickerShow();
@@ -417,4 +416,14 @@ char *gaim_plugin_init(GModule *h) {
 
 void gaim_plugin_remove() {
 	gtk_widget_destroy(tickerwindow);
+}
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Ticker");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("A horizontal scrolling version of the buddy list.");
+	desc.authors = g_strdup("Syd Logan");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
 }

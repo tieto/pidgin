@@ -73,12 +73,14 @@ struct perlscript {
 struct _perl_event_handlers {
 	char *event_type;
 	char *handler_name;
+	char *handle;
 };
 
 struct _perl_timeout_handlers {
 	char *handler_name;
 	char *handler_args;
 	gint iotag;
+	char *handle;
 };
 
 static GList *perl_list = NULL; /* should probably extern this at some point */
@@ -115,7 +117,31 @@ XS(XS_GAIM_play_sound); /*play a sound*/
 void xs_init()
 {
 	char *file = __FILE__;
+
+	/* This one allows dynamic loading of perl modules in perl
+           scripts by the 'use perlmod;' construction*/
 	newXS ("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
+	
+	/* load up all the custom Gaim perl functions */
+		newXS ("GAIM::register", XS_GAIM_register, "GAIM");
+	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
+	newXS ("GAIM::print", XS_GAIM_print, "GAIM");
+	newXS ("GAIM::write_to_conv", XS_GAIM_write_to_conv, "GAIM");
+
+	newXS ("GAIM::buddy_list", XS_GAIM_buddy_list, "GAIM");
+	newXS ("GAIM::online_list", XS_GAIM_online_list, "GAIM");
+
+	newXS ("GAIM::command", XS_GAIM_command, "GAIM");
+	newXS ("GAIM::user_info", XS_GAIM_user_info, "GAIM");
+	newXS ("GAIM::print_to_conv", XS_GAIM_print_to_conv, "GAIM");
+	newXS ("GAIM::print_to_chat", XS_GAIM_print_to_chat, "GAIM");
+	newXS ("GAIM::serv_send_im", XS_GAIM_serv_send_im, "GAIM");
+
+	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
+	newXS ("GAIM::remove_event_handler", XS_GAIM_remove_event_handler, "GAIM");
+	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
+
+	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
 }
 
 static char *escape_quotes(char *buf)
@@ -136,119 +162,243 @@ static char *escape_quotes(char *buf)
 	return (tmp_buf);
 }
 
-static SV *execute_perl(char *function, char *args)
-{
-	static char *perl_cmd = NULL;
-	SV *i;
+/*
+  2001/06/14: execute_perl replaced by Martin Persson <mep@passagen.se>
+              previous use of perl_eval leaked memory, replaced with
+              a version that uses perl_call instead
+*/
 
-	if (perl_cmd)
-		g_free(perl_cmd);
-	perl_cmd = g_malloc(strlen(function) + strlen(args) + 4);
-	sprintf(perl_cmd, "&%s(%s)", function, args);
-#ifndef HAVE_PERL_EVAL_PV
-	i = (perl_eval_pv(perl_cmd, TRUE));
-#else
-	i = (Perl_eval_pv(perl_cmd, TRUE));
-#endif
-	return i;
+static int 
+execute_perl(char *function, char *args)
+{
+	char *perl_args[2] = { args, NULL }, buf[512];
+	int count, ret_value = 1;
+	SV *sv;
+
+	dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(sp);
+        count = perl_call_argv(function, G_EVAL | G_SCALAR, perl_args);
+        SPAGAIN;
+
+        sv = GvSV(gv_fetchpv("@", TRUE, SVt_PV));
+        if (SvTRUE(sv)) {
+                snprintf(buf, 512, "Perl error: %s\n", SvPV(sv, count));
+                debug_printf(buf);
+                POPs;
+        } else if (count != 1) {
+                snprintf(buf, 512, "Perl error: expected 1 value from %s, "
+                        "got: %d\n", function, count);
+                debug_printf(buf);
+        } else {
+                ret_value = POPi;
+        }
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+
+        return ret_value;
+
+}
+
+/* This function is so incredibly broken and should never, ever, ever
+   be trusted to work */
+void perl_unload_file(struct gaim_plugin *plug) {
+	struct perlscript *scp = NULL;
+	struct _perl_timeout_handlers *thn;
+	struct _perl_event_handlers *ehn;
+
+	GList *pl = perl_list;
+
+	debug_printf("Unloading %s\n", plug->handle);
+	while (pl) {
+		scp = pl->data;
+		/* This is so broken */
+		if (!strcmp(scp->name, plug->desc.name) &&
+		    !strcmp(scp->version, plug->desc.version))
+			break;
+		pl = pl->next;
+		scp = NULL;
+	}
+	if (scp) {
+		perl_list = g_list_remove(perl_list, scp);
+		if (scp->shutdowncallback[0])
+			execute_perl(scp->shutdowncallback, "");
+		perl_list = g_list_remove(perl_list, scp);
+		g_free(scp->name);
+		g_free(scp->version);
+		g_free(scp->shutdowncallback);
+		g_free(scp);
+	}
+
+	pl = perl_timeout_handlers;
+	while (pl) {
+		thn = pl->data;
+		if (thn && thn->handle == plug->handle) {
+			g_list_remove(perl_timeout_handlers, thn);
+			g_source_remove(thn->iotag);
+			g_free(thn->handler_args);
+			g_free(thn->handler_name);
+			g_free(thn);
+		}
+		pl = pl->next;
+	}
+
+	pl = perl_event_handlers;
+	while (pl) {
+		ehn = pl->data;
+		if (ehn && ehn->handle == plug->handle) {
+			perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
+			g_free(ehn->event_type);
+			g_free(ehn->handler_name);
+			g_free(ehn);
+		}
+		pl = pl->next;
+	}
+
+	plug->handle=NULL;
 }
 
 int perl_load_file(char *script_name)
 {
-	char *name = g_strdup_printf("'%s'", escape_quotes(script_name));
-	SV *return_val;
+	struct gaim_plugin *plug;
+	GList *p = probed_plugins;
+	GList *e = perl_event_handlers;
+	GList *t = perl_timeout_handlers;
+	int num_e, num_t, ret;
+
 	if (my_perl == NULL)
 		perl_init();
-	return_val = execute_perl("load_file", name);
-	g_free(name);
-	return SvNV (return_val);
-}
-
-static int is_pl_file(char *filename)
-{
-	int len;
-	if (!filename) return 0;
-	if (!filename[0]) return 0;
-	len = strlen(filename);
-	len -= 3;
-	if (len < 0) return 0;
-	return (!strncmp(filename + len, ".pl", 3));
-}
-
-void perl_autoload()
-{
-	DIR *dir;
-	struct dirent *ent;
-	struct dirent dirent_buf;
-	char *buf;
-	char *path;
-
-	path = gaim_user_dir();
-	dir = opendir(path);
-	if (dir) {
-		while ((readdir_r(dir,&dirent_buf,&ent),ent)) {
-			if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")) {
-				if (is_pl_file(ent->d_name)) {
-					buf = g_malloc(strlen(path) + strlen(ent->d_name) + 2);
-					sprintf(buf, "%s/%s", path, ent->d_name);
-					perl_load_file(buf);
-					g_free(buf);
-				}
-			}
-		}
-		closedir(dir);
+	
+	while (p) {
+		plug = (struct gaim_plugin *)p->data;
+		if (!strcmp(script_name, plug->path)) 
+			break;
+		p = p->next;
 	}
-	g_free(path);
+	
+	if (!plug) {
+		probe_perl(script_name);
+	}
+	
+	plug->handle = plug->path;
+	
+	/* This is such a terrible hack-- if I weren't tired and annoyed
+	 * with perl, I'm sure I wouldn't even be considering this. */
+	num_e=g_list_length(e);
+	num_t=g_list_length(t);
+
+	ret = execute_perl("load_n_eval", script_name);
+
+	t = g_list_nth(perl_timeout_handlers, num_t++);
+	while (t) {
+		struct _perl_timeout_handlers *h = t->data;
+		h->handle = plug->handle;
+		t = t->next;
+	}
+
+	e = g_list_nth(perl_event_handlers, num_e++);
+	while (e) {
+		struct _perl_event_handlers *h = e->data;
+		h->handle = plug->handle;
+		e = e->next;
+	}
+	return ret;
+}
+
+struct gaim_plugin *probe_perl(const char *filename) {
+
+	/* XXX This woulld be much faster if I didn't create a new
+	 *     PerlInterpreter every time I did probed a plugin */
+
+	PerlInterpreter *prober = perl_alloc();
+	struct gaim_plugin * plug = NULL;
+	char *argv[] = {"", filename};
+	int count;
+	perl_construct(prober);
+	perl_parse(prober, NULL, 2, argv, NULL);
+	
+	{
+		dSP;
+		ENTER;
+		SAVETMPS;
+		PUSHMARK(SP);
+		count =perl_call_pv("description", G_NOARGS | G_ARRAY);
+		SPAGAIN;
+		
+		if (count = sizeof(struct gaim_plugin_description) / sizeof(char*)) {
+			plug = g_new0(struct gaim_plugin, 1);
+			plug->type = perl_script;
+			g_snprintf(plug->path, sizeof(plug->path), filename);
+			plug->desc.iconfile = g_strdup(POPp);
+			plug->desc.url = g_strdup(POPp);
+			plug->desc.authors = g_strdup(POPp);
+			plug->desc.description = g_strdup(POPp);
+			plug->desc.version = g_strdup(POPp);
+			plug->desc.name = g_strdup(POPp);
+		}
+			
+		PUTBACK;
+		FREETMPS;
+		LEAVE;
+	}
+	perl_destruct(prober);
+	perl_free(prober);
+	return plug;
 }
 
 static void perl_init()
-{
-	char *perl_args[] = {"", "-e", "0", "-w"};
-	char load_file[] =
-"sub load_file()\n"
-"{\n"
-"	(my $file_name) = @_;\n"
-"	open FH, $file_name or return 2;\n"
-"	my $is = $/;\n"
-"	local($/) = undef;\n"
-"	$file = <FH>;\n"
-"	close FH;\n"
-"	$/ = $is;\n"
-"	$file = \"\\@ISA = qw(Exporter DynaLoader);\\n\" . $file;\n"
-"	eval $file;\n"
-"	eval $file if $@;\n"
-"	return 1 if $@;\n"
-"	return 0;\n"
-"}";
+{        /*changed the name of the variable from load_file to
+	   perl_definitions since now it does much more than defining
+	   the load_file sub. Moreover, deplaced the initialisation to
+	   the xs_init function. (TheHobbit)*/
+        char *perl_args[] = { "", "-e", "0", "-w" };
+        char perl_definitions[] =
+        {
+		/* We use to function one to load a file the other to
+		   execute the string obtained from the first and holding
+		   the file conents. This allows to have a realy local $/
+		   without introducing temp variables to hold the old
+		   value. Just a question of style:) */ 
+		"sub load_file{"
+		  "my $f_name=shift;"
+		  "local $/=undef;"
+		  "open FH,$f_name or return \"__FAILED__\";"
+		  "$_=<FH>;"
+		  "close FH;"
+		  "return $_;"
+		"}"
+		"sub load_n_eval{"
+		  "my $f_name=shift;"
+		  "my $strin=load_file($f_name);"
+		  "return 2 if($strin eq \"__FAILED__\");"
+		  "eval $strin;"
+		  "if($@){"
+		    /*"  #something went wrong\n"*/
+		    "GAIM::print\"Errors loading file $f_name:\\n\";"
+		    "GAIM::print\"$@\\n\";"
+		    "return 1;"
+		  "}"
+		  "return 0;"
+		"}"
+	};
 
 	my_perl = perl_alloc();
 	perl_construct(my_perl);
+#ifdef DEBUG
 	perl_parse(my_perl, xs_init, 4, perl_args, NULL);
-#ifndef HAVE_PERL_EVAL_PV
-	perl_eval_pv(load_file, TRUE);
 #else
-	Perl_eval_pv(load_file, TRUE);
+	perl_parse(my_perl, xs_init, 3, perl_args, NULL);
+#endif
+#ifndef HAVE_PERL_EVAL_PV
+	eval_pv(perl_definitions, TRUE);
+#else
+	perl_eval_pv(perl_definitions, TRUE); /* deprecated */
 #endif
 
-	newXS ("GAIM::register", XS_GAIM_register, "GAIM");
-	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
-	newXS ("GAIM::print", XS_GAIM_print, "GAIM");
-	newXS ("GAIM::write_to_conv", XS_GAIM_write_to_conv, "GAIM");
 
-	newXS ("GAIM::buddy_list", XS_GAIM_buddy_list, "GAIM");
-	newXS ("GAIM::online_list", XS_GAIM_online_list, "GAIM");
-
-	newXS ("GAIM::command", XS_GAIM_command, "GAIM");
-	newXS ("GAIM::user_info", XS_GAIM_user_info, "GAIM");
-	newXS ("GAIM::print_to_conv", XS_GAIM_print_to_conv, "GAIM");
-	newXS ("GAIM::print_to_chat", XS_GAIM_print_to_chat, "GAIM");
-	newXS ("GAIM::serv_send_im", XS_GAIM_serv_send_im, "GAIM");
-
-	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
-	newXS ("GAIM::remove_event_handler", XS_GAIM_remove_event_handler, "GAIM");
-	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
-
-	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
 }
 
 void perl_end()
@@ -281,6 +431,7 @@ void perl_end()
 		ehn = perl_event_handlers->data;
 		perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
 		g_free(ehn->event_type);
+		debug_printf("handler_name: %s\n", ehn->handler_name);
 		g_free(ehn->handler_name);
 		g_free(ehn);
 	}
@@ -412,7 +563,7 @@ XS (XS_GAIM_print)
 
 	title = SvPV(ST(0), junk);
 	message = SvPV(ST(1), junk);
-	do_error_dialog(message, NULL, GAIM_INFO);
+	do_error_dialog(title, message, GAIM_INFO);
 	XSRETURN(0);
 }
 

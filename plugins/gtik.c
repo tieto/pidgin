@@ -593,7 +593,27 @@
 
 
 	/*-----------------------------------------------------------------*/
-	char *description() {
+	
+        struct gaim_plugin_description desc;  
+        struct gaim_plugin_description *gaim_plugin_desc() {
+		desc.api_version = PLUGIN_API_VERSION;
+		desc.name = g_strdup("Stock Ticker");
+		desc.version = g_strdup(VERSION);
+		desc.description = g_strdup(
+					    " This program uses ghttp to connect to "
+					    "a popular stock quote site, then downloads "
+					    "and parses the html returned from the "
+					    "site to scroll delayed quotes"
+					    "\n\n The Gnome Stock Ticker is a free, Internet based application. These quotes are not "
+					    "guaranteed to be timely or accurate. "
+					    "Do not use the Gnome Stock Ticker for making investment decisions; it is for "
+					    "informational purposes only.");
+		desc.authors = g_strdup("Jayson Lorenzen, Jim Garrison, Rached Blili");
+		desc.url = g_strdup(WEBSITE);
+		return &desc;
+	}
+
+        char *description() {
 		return
 		" This program uses ghttp to connect to "
 		"a popular stock quote site, then downloads "

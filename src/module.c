@@ -36,8 +36,6 @@
 
 #include "gaim.h"
 
-#ifdef GAIM_PLUGINS
-
 #include <string.h>
 #include <sys/time.h>
 
@@ -51,6 +49,7 @@
 /* ------------------ Global Variables ----------------------- */
 
 GList *plugins = NULL;
+GList *probed_plugins = NULL;
 GList *callbacks = NULL;
 
 char *last_dir = NULL;
@@ -58,9 +57,9 @@ char *last_dir = NULL;
 /* --------------- Function Declarations --------------------- */
 
 struct gaim_plugin *  load_plugin(const char *);
+#ifdef GAIM_PLUGINS
               void  unload_plugin(struct gaim_plugin *p);
 struct gaim_plugin *reload_plugin(struct gaim_plugin *p);
-
 void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
 void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 void gaim_plugin_unload(GModule *);
@@ -68,50 +67,141 @@ void gaim_plugin_unload(GModule *);
 /* --------------- Static Function Declarations ------------- */
 
 static void plugin_remove_callbacks(GModule *);
-
+#endif
 /* ------------------ Code Below ---------------------------- */
 
+static int is_so_file(char *filename, char *ext)
+{
+	int len;
+	if (!filename) return 0;
+	if (!filename[0]) return 0;
+	len = strlen(filename);
+	len -= strlen(ext);
+	if (len < 0) return 0;
+	return (!strncmp(filename + len, ext, strlen(ext)));
+}
+
+void gaim_probe_plugins() {
+	GDir *dir;
+	const gchar *file;
+	gchar *path;
+	struct gaim_plugin_description *plugdes;
+	struct gaim_plugin *plug;
+	char userspace[128];
+	char *probedirs[] = {LIBDIR, &userspace, 0};
+#if GAIM_PLUGINS     
+	char *(*gaim_plugin_init)(GModule *);
+	char *(*cfunc)();
+	int l;
+	struct gaim_plugin_description *(*desc)();
+	GModule *handle;
+#endif
+
+	g_snprintf(userspace, sizeof(userspace), "%s" G_DIR_SEPARATOR_S ".gaim", g_get_home_dir());
+
+	for (l=0; probedirs[l]; l++) {
+		dir = g_dir_open(probedirs[l], 0, NULL);
+		if (dir) {
+			while ((file = g_dir_read_name(dir))) {
+#ifdef GAIM_PLUGINS
+				if (is_so_file(file, ".so") && g_module_supported()) {
+					path = g_build_filename(probedirs[l], file, NULL);
+					handle = g_module_open(path, 0);
+					if (!handle) {
+						debug_printf("%s is unloadable: %s\n", file, g_module_error());
+						continue;
+					}
+					if (!g_module_symbol(handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
+						debug_printf("%s is unloadable %s\n", file, g_module_error());
+						g_module_close(handle);
+						continue;
+					}
+					plug = g_new0(struct gaim_plugin, 1);
+					g_snprintf(plug->path, sizeof(plug->path), path);
+					plug->type = plugin;
+					g_free(path);
+					if (g_module_symbol(handle, "gaim_plugin_desc", (gpointer *)&desc)) {
+						memcpy(&(plug->desc), desc(), sizeof(plug->desc));
+					} else {
+						if (g_module_symbol(handle, "name", (gpointer *)&cfunc)) {
+							plug->desc.name = g_strdup(cfunc());
+						}
+						if (g_module_symbol(handle, "description", (gpointer *)&cfunc)) {
+							plug->desc.description = g_strdup(cfunc());
+						}
+					}
+					probed_plugins = g_list_append(probed_plugins, plug);
+					g_module_close(handle);
+				}
+#endif
+#ifdef USE_PERL
+				if (is_so_file(file, ".pl")) {
+					path = g_build_filename(LIBDIR, file, NULL);
+					plug = probe_perl(path);
+					if (plug) 
+						probed_plugins = g_list_append(probed_plugins, plug);
+					g_free(path);
+				}
+#endif
+			}
+			g_dir_close(dir);
+		}
+	}
+}
+
+#ifdef GAIM_PLUGINS
 struct gaim_plugin *load_plugin(const char *filename)
 {
 	struct gaim_plugin *plug;
-	GList *c = plugins;
-	char *(*gaim_plugin_init)(GModule *);
+	struct gaim_plugin_description *desc;
+	struct gaim_plugin_description *(*gaim_plugin_desc)();
 	char *(*cfunc)();
-	char *error;
-	char *retval;
+	GList *c = plugins;
+	GList *p = probed_plugins;
+	char *(*gaim_plugin_init)(GModule *);
+	char *error, *retval, *tmp;
+	gboolean newplug = FALSE;
 
 	if (!g_module_supported())
 		return NULL;
-	if (filename && !strlen(filename))
+	if (!filename || !strlen(filename))
 		return NULL;
 
-	while (filename && c) {
-		plug = (struct gaim_plugin *)c->data;
-		if (!strcmp(filename, g_module_name(plug->handle))) {
-			/* just need to reload plugin */
-			return reload_plugin(plug);
-		} else
-			c = g_list_next(c);
+	while (filename && p) {
+		plug = (struct gaim_plugin *)p->data;
+		if (!strcmp(filename, plug->path)) 
+			break;
+		p = p->next;
 	}
-	plug = g_malloc(sizeof *plug);
-
-	if (last_dir)
-		g_free(last_dir);
-	last_dir = g_dirname(filename);
-
+	
+	if (plug && plug->handle) {
+		reload_plugin(plug);
+		return NULL;
+	}
+	    
+	if (!plug) {
+		plug = g_new0(struct gaim_plugin, 1);
+		g_snprintf(plug->path, sizeof(plug->path), filename);
+		newplug = TRUE;
+	}
+			
 	debug_printf("Loading %s\n", filename);
 	plug->handle = g_module_open(filename, 0);
 	if (!plug->handle) {
 		error = (char *)g_module_error();
-		do_error_dialog(_("Gaim was unable to load your plugin."), error, GAIM_ERROR);
-		g_free(plug);
+		plug->handle = NULL;
+		tmp = plug->desc.description;
+		plug->desc.description = g_strdup_printf("<span weight=\"bold\" foreground=\"red\">%s</span>\n\n%s", error, tmp);
+		g_free(tmp);
 		return NULL;
 	}
-
+	
 	if (!g_module_symbol(plug->handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
-		do_error_dialog(_("Gaim was unable to load your plugin."), g_module_error(), GAIM_ERROR);
 		g_module_close(plug->handle);
-		g_free(plug);
+		plug->handle = NULL;
+		tmp = plug->desc.description;
+		plug->desc.description = g_strdup_printf("<span foreground=\"red\">%s</span>\n\n%s", g_module_error(), tmp);
+		g_free(tmp);
 		return NULL;
 	}
 
@@ -121,25 +211,31 @@ struct gaim_plugin *load_plugin(const char *filename)
 		plugin_remove_callbacks(plug->handle);
 		do_error_dialog("Gaim was unable to load your plugin.", retval, GAIM_ERROR);
 		g_module_close(plug->handle);
-		g_free(plug);
+		plug->handle = NULL;
 		return NULL;
 	}
 
 	plugins = g_list_append(plugins, plug);
 
-	if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc)) {
-		plug->name = cfunc();
-	} else {
-		plug->name = NULL;
+	if (newplug) {
+		g_snprintf(plug->path, sizeof(plug->path), filename);
+		if (g_module_symbol(plug->handle, "gaim_plugin_desc", (gpointer *)&gaim_plugin_desc)) {
+			desc = gaim_plugin_desc();
+			plug->desc.name = desc->name;
+		} else {
+			if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc)) {
+				plug->desc.name = g_strdup(cfunc());
+			}
+			if (g_module_symbol(plug->handle, "description", (gpointer *)&cfunc)) {
+				plug->desc.description = g_strdup(cfunc());
+			}
+		}
+		probed_plugins = g_list_append(probed_plugins, plug);
 	}
-
-	if (g_module_symbol(plug->handle, "description", (gpointer *)&cfunc))
-		plug->description = cfunc();
-	else
-		plug->description = NULL;
-
+	
 	save_prefs();
 	return plug;
+
 }
 
 static void unload_gaim_plugin(struct gaim_plugin *p)
@@ -155,7 +251,7 @@ static void unload_gaim_plugin(struct gaim_plugin *p)
 	plugin_remove_callbacks(p->handle);
 
 	plugins = g_list_remove(plugins, p);
-	g_free(p);
+	p->handle = NULL;
 	save_prefs();
 }
 
@@ -194,8 +290,8 @@ void gaim_plugin_unload(GModule *handle)
 	plugin_remove_callbacks(p->handle);
 	plugins = g_list_remove(plugins, p);
 	g_free(p);
-	/* XXX CUI need to tell UI what happened, but not like this */
-	update_show_plugins();
+	/* XXX CUI need to tell UI what happened, but not like this 
+	   update_show_plugins(); */
 
 	g_timeout_add(5000, unload_timeout, handle);
 }
@@ -381,13 +477,14 @@ int plugin_event(enum gaim_event event, ...)
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
+#endif
 	va_list arrg;
 	void    *arg1 = NULL, 
 		*arg2 = NULL,
 		*arg3 = NULL, 
 		*arg4 = NULL,
 		*arg5 = NULL;
-#endif
+
 
 	debug_printf("%s\n", event_name(event));
 

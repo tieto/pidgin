@@ -147,6 +147,17 @@ char *gaim_plugin_init(GModule *handle) {
 void gaim_plugin_remove() {
 }
 
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Text replacement");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Replaces text in outgoing messages according to user-defined rules.");
+	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+ 
 char *name() {
 	return "IM Spell Check";
 }

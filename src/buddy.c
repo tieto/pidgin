@@ -2729,32 +2729,6 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("View System Log"), prefs_small_xpm,
 				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
 
-	gaim_separator(menu);
-
-#ifdef GAIM_PLUGINS
-	gaim_new_item_with_pixmap(menu, _("Plugins"), plugins_small_xpm, GTK_SIGNAL_FUNC(show_plugins), NULL,
-				  0, 0, 0);
-#endif
-#ifdef USE_PERL
-	perlmenu = gtk_menu_new();
-	gtk_widget_show(perlmenu);
-	menuitem = gaim_new_item_with_pixmap(menu, _("Perl"), plugins_small_xpm, NULL, NULL, 0, 0, 0);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), perlmenu);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("Load Script"));
-	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(load_perl_script), NULL);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("Unload All Scripts"));
-	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(unload_perl_scripts), NULL);
-	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label(_("List Scripts"));
-	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
-	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(list_perl_scripts), NULL);
-	gtk_widget_show(menuitem);
-#endif
-
 	menu = gtk_menu_new();
 
 	menuitem = gaim_new_item(NULL, _("Help"));

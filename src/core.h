@@ -109,21 +109,37 @@ struct UI {
 	guint inpa;
 };
 
-#ifdef GAIM_PLUGINS
-
-struct gaim_plugin {
-	GModule *handle;
-	char *name;
-	char *description;
+#define USE_PLUGINS GAIM_PLUGINS || USE_PERL
+#define PLUGIN_API_VERSION 1
+enum gaim_plugin_type {
+	perl_script,
+	plugin
 };
 
+struct gaim_plugin_description {	
+	int api_version;
+	gchar *name;
+	gchar *version;
+	gchar *description;
+	gchar *authors;
+	gchar *url;
+	gchar *iconfile;
+};
+
+struct gaim_plugin {
+	enum gaim_plugin_type type;
+	void *handle;
+	gchar path[128];
+	struct gaim_plugin_description desc;
+};
+
+#ifdef GAIM_PLUGINS
 struct gaim_callback {
 	GModule *handle;
 	enum gaim_event event;
 	void *function;
 	void *data;
 };
-
 #endif
 
 #define BUDDY_ALIAS_MAXLEN 388	/* because MSN names can be 387 characters */
@@ -155,6 +171,7 @@ extern int gaim_session;
 
 /* Globals in plugins.c */
 extern GList *plugins;
+extern GList *probed_plugins;
 extern GList *callbacks;
 
 /* Functions in buddy.c */
@@ -188,12 +205,13 @@ extern void save_prefs();
 
 /* Functions in perl.c */
 #ifdef USE_PERL
-extern void perl_autoload();
 extern void perl_end();
 extern int perl_event(enum gaim_event, void *, void *, void *, void *, void *);
 extern int perl_load_file(char *);
+extern void perl_unload_file(struct gaim_plugin *);
 extern void unload_perl_scripts();
 extern void list_perl_scripts();
+extern struct gaim_plugin *probe_perl(const char *);
 #endif
 
 /* Functions in plugins.c */
@@ -206,6 +224,7 @@ extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 extern void gaim_plugin_unload(GModule *);
 extern void remove_all_plugins();
 #endif
+extern void gaim_probe_plugins();
 extern int plugin_event(enum gaim_event, ...);
 extern char *event_name(enum gaim_event);
 

@@ -17,6 +17,18 @@ static GModule *me = NULL;
  * gc->proto_data for MSN, TOC, and IRC connections can be cast to an int *.
  */
 
+struct gaim_plugin_description desc; 
+struct gaim_plugin_description *gaim_plugin_desc() {
+	desc.api_version = PLUGIN_API_VERSION;
+	desc.name = g_strdup("Raw Input");
+	desc.version = g_strdup(VERSION);
+	desc.description = g_strdup("Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC).  Hit 'Enter' in the entry box to send.  Watch the debug window.");
+	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
+	desc.url = g_strdup(WEBSITE);
+	return &desc;
+}
+
+
 char *name()
 {
 	return "Raw";
