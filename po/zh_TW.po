@@ -9041,7 +9041,7 @@ msgid ""
 "Founder Key Babbleprint:\n"
 "%s"
 msgstr ""
-"\n"
+""
 "創立者之公鑰指紋可讀版本 (Babbleprint)：\n"
 "%s"
 
