@@ -1189,34 +1189,23 @@ gaim_user_dir(void)
 
 int gaim_build_dir (const char *path, int mode)
 {
-	struct stat st;
 	char *dir, **components, delim[] = { G_DIR_SEPARATOR, '\0' };
 	int cur, len;
 
-	if (path == NULL || path[0] != G_DIR_SEPARATOR)
-		return -1;
+	g_return_val_if_fail(path != NULL, -1);
 
 	dir = g_new0(char, strlen(path) + 1);
 	components = g_strsplit(path, delim, -1);
 	len = 0;
 	for (cur = 0; components[cur] != NULL; cur++) {
-		if(*components[cur] == '\0')
-			continue;
-		if(cur != 0)
-			dir[len++] = G_DIR_SEPARATOR;
 		strcpy(dir + len, components[cur]);
 		len += strlen(components[cur]);
-		if (stat(dir, &st) == 0) {
-			if ((st.st_mode & S_IFMT) == S_IFDIR)
-				continue;
-			else {
-				gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "bad path: %s\n", path);
-				g_strfreev(components);
-				g_free(dir);
-				return -1;
-			}
-		} else if (errno != ENOENT) {
-			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "stat: %s\n", strerror(errno));
+		dir[len++] = G_DIR_SEPARATOR;
+
+		if(g_file_test(dir, G_FILE_TEST_IS_DIR)) {
+			continue;
+		} else if(g_file_test(dir, G_FILE_TEST_EXISTS)) {
+			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "bad path: %s\n", path);
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
