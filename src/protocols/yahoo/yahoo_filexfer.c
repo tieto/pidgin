@@ -66,7 +66,8 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 	if (!(xd = xfer->data))
 		return;
 	if (source < 0) {
-		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who, _("Unable to connect."));
+		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer),
+				xfer->who, _("Unable to connect."));
 		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
@@ -109,7 +110,8 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 
 
 	if (source < 0) {
-		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who, _("Unable to connect."));
+		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer),
+				xfer->who, _("Unable to connect."));
 		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
@@ -165,7 +167,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
 		if (0 && gaim_xfer_get_size(xfer) >= 1048577) {
-			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+			gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 			                  _("Gaim cannot send files over Yahoo! that are bigger than "
 			                    "One Megabyte (1,048,576 bytes)."));
 			gaim_xfer_cancel_local(xfer);
@@ -175,7 +177,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 				                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 				                       yahoo_sendfile_connected, xfer) == -1)
 				{
-					gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+					gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 					                _("Unable to establish file descriptor."));
 					gaim_xfer_cancel_remote(xfer);
 				}
@@ -184,7 +186,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 				                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 				                       yahoo_sendfile_connected, xfer) == -1)
 				{
-					gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+					gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 					                _("Unable to establish file descriptor."));
 					gaim_xfer_cancel_remote(xfer);
 				}
@@ -194,7 +196,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 		xfer->fd = gaim_proxy_connect(account, xfer_data->host, xfer_data->port,
 		                              yahoo_receivefile_connected, xfer);
 		if (xfer->fd == -1) {
-			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+			gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 			             _("Unable to establish file descriptor."));
 			gaim_xfer_cancel_remote(xfer);
 		}

@@ -2022,12 +2022,12 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 		oft_info->conn->fd = xfer->fd = gaim_proxy_connect(gaim_connection_get_account(gc),
 					xfer->remote_ip, xfer->remote_port,	oscar_sendfile_connected, xfer);
 		if (xfer->fd == -1) {
-			gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who,
+			gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer), xfer->who,
 							_("Unable to establish file descriptor."));
 			gaim_xfer_cancel_local(xfer);
 		}
 	} else {
-		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who,
+		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer), xfer->who,
 						_("Unable to create new connection."));
 		gaim_xfer_cancel_local(xfer);
 		/* Try a different port? Ask them to connect to us? /join #gaim and whine? */
@@ -2106,7 +2106,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 		aim_im_sendch2_sendfile_ask(od->sess, oft_info);
 		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_estblsh, 0);
 	} else {
-		gaim_xfer_error(GAIM_XFER_SEND, xfer->who,
+		gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
 						_("Unable to establish listener socket."));
 		gaim_xfer_cancel_local(xfer);
 	}

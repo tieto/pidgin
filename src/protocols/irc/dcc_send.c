@@ -269,7 +269,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	sock = gaim_network_listen_range(0, 0);
 
 	if (sock < 0) {
-		gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
+		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 		                  _("Gaim could not open a listening port."));
 		gaim_xfer_cancel_local(xfer);
 		return;

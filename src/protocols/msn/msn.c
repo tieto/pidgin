@@ -367,7 +367,7 @@ t_msn_xfer_init(GaimXfer *xfer)
 
 		msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
 							  filename, strerror(errno));
-		gaim_xfer_error(gaim_xfer_get_type(xfer), who, msg);
+		gaim_xfer_error(gaim_xfer_get_type(xfer), account, xfer->who, msg);
 		gaim_xfer_cancel_local(xfer);
 		g_free(msg);
 

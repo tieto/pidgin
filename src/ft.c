@@ -142,6 +142,7 @@ static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 {
 	gchar *msg = NULL;
 	GaimXferType xfer_type = gaim_xfer_get_type(xfer);
+	GaimAccount *account = gaim_xfer_get_account(xfer);
 
 	switch(xfer_type) {
 		case GAIM_XFER_SEND:
@@ -159,7 +160,7 @@ static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 		}
 
 	gaim_xfer_conversation_write(xfer, msg, TRUE);
-	gaim_xfer_error(xfer_type, xfer->who, msg);
+	gaim_xfer_error(xfer_type, account, xfer->who, msg);
 	g_free(msg);
 }
 
@@ -253,20 +254,23 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_ACCEPTED) {
+		GaimBuddy *buddy = gaim_find_buddy(xfer->account, xfer->who);
+
 		if (gaim_xfer_get_filename(xfer) != NULL)
 		{
 			size = gaim_xfer_get_size(xfer);
 			size_buf = gaim_str_size_to_units(size);
 			escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 			buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
-					      xfer->who, escaped,
-					      size_buf);
+					      buddy ? gaim_buddy_get_alias(buddy) : xfer->who,
+					      escaped, size_buf);
 			g_free(size_buf);
 			g_free(escaped);
 		}
 		else
 		{
-			buf = g_strdup_printf(_("%s wants to send you a file"), xfer->who);
+			buf = g_strdup_printf(_("%s wants to send you a file"),
+						buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
 		}
 
 		if (xfer->message != NULL)
@@ -304,9 +308,10 @@ static void
 gaim_xfer_ask_accept(GaimXfer *xfer)
 {
 	char *buf, *buf2 = NULL;
+	GaimBuddy *buddy = gaim_find_buddy(xfer->account, xfer->who);
 
 	buf = g_strdup_printf(_("Accept file transfer request from %s?"),
-			      xfer->who);
+			      buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
 	if (gaim_xfer_get_remote_ip(xfer) &&
 	    gaim_xfer_get_remote_port(xfer))
 		buf2 = g_strdup_printf(_("A file is available for download from:\n"
@@ -344,11 +349,15 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 {
 	GaimXferType type;
 	struct stat st;
+	char *msg;
+	GaimAccount *account;
+	GaimBuddy *buddy;
 
 	if (xfer == NULL)
 		return;
 
 	type = gaim_xfer_get_type(xfer);
+	account = gaim_xfer_get_account(xfer);
 
 	if (!filename && type == GAIM_XFER_RECEIVE) {
 		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
@@ -356,14 +365,14 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		return;
 	}
 
-	if (type == GAIM_XFER_SEND) {
-		char *msg;
+	buddy = gaim_find_buddy(account, xfer->who);
 
+	if (type == GAIM_XFER_SEND) {
 		/* Check the filename. */
 		if (g_strrstr(filename, "..")) {
 
 			msg = g_strdup_printf(_("%s is not a valid filename.\n"), filename);
-			gaim_xfer_error(type, xfer->who, msg);
+			gaim_xfer_error(type, account, xfer->who, msg);
 			g_free(msg);
 
 			gaim_xfer_unref(xfer);
@@ -381,13 +390,18 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		gaim_xfer_set_size(xfer, st.st_size);
 
 		msg = g_strdup_printf(_("Offering to send %s to %s"),
-							  filename, xfer->who);
+				filename, buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
 		gaim_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
 	}
 	else {
 		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
 		gaim_xfer_set_local_filename(xfer, filename);
+
+		msg = g_strdup_printf(_("Starting transfer of %s from %s"),
+				xfer->filename, buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
+		gaim_xfer_conversation_write(xfer, msg, FALSE);
+		g_free(msg);
 	}
 
 	gaim_xfer_add(xfer);
@@ -533,8 +547,18 @@ gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed)
 
 	g_return_if_fail(xfer != NULL);
 
-	if (completed == TRUE)
+	if (completed == TRUE) {
+		char *msg = NULL;
 		gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_DONE);
+
+		if (gaim_xfer_get_filename(xfer) != NULL)
+			msg = g_strdup_printf(_("Transfer of file %s complete"),
+								gaim_xfer_get_filename(xfer));
+		else
+			msg = g_strdup_printf(_("File transfer complete"));
+		gaim_xfer_conversation_write(xfer, msg, FALSE);
+		g_free(msg);
+	}
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -863,8 +887,6 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 void
 gaim_xfer_end(GaimXfer *xfer)
 {
-	char *msg = NULL;
-
 	g_return_if_fail(xfer != NULL);
 
 	/* See if we are actually trying to cancel this. */
@@ -872,14 +894,6 @@ gaim_xfer_end(GaimXfer *xfer)
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-
-	if (gaim_xfer_get_filename(xfer) != NULL)
-		msg = g_strdup_printf(_("Transfer of file %s complete"),
-							  gaim_xfer_get_filename(xfer));
-	else
-		msg = g_strdup_printf(_("File transfer complete"));
-	gaim_xfer_conversation_write(xfer, msg, FALSE);
-	g_free(msg);
 
 	if (xfer->ops.end != NULL)
 		xfer->ops.end(xfer);
@@ -976,25 +990,31 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
 	gchar *msg, *escaped;
+	GaimAccount *account;
+	GaimBuddy *buddy;
 
 	g_return_if_fail(xfer != NULL);
 
 	gaim_request_close_with_handle(xfer);
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 
+	account = gaim_xfer_get_account(xfer);
+	buddy = gaim_find_buddy(account, xfer->who);
+
 	if (gaim_xfer_get_filename(xfer) != NULL)
 	{
 		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 		msg = g_strdup_printf(_("%s canceled the transfer of %s"),
-							  xfer->who, escaped);
+				buddy ? gaim_buddy_get_alias(buddy) : xfer->who, escaped);
 		g_free(escaped);
 	}
 	else
 	{
-		msg = g_strdup_printf(_("%s canceled the file transfer"), xfer->who);
+		msg = g_strdup_printf(_("%s canceled the file transfer"),
+				buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
 	}
 	gaim_xfer_conversation_write(xfer, msg, TRUE);
-	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
+	gaim_xfer_error(gaim_xfer_get_type(xfer), account, xfer->who, msg);
 	g_free(msg);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
@@ -1032,17 +1052,24 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 }
 
 void
-gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
+gaim_xfer_error(GaimXferType type, GaimAccount *account, const char *who, const char *msg)
 {
 	char *title;
 
 	g_return_if_fail(msg  != NULL);
 	g_return_if_fail(type != GAIM_XFER_UNKNOWN);
 
+	if (account) {
+		GaimBuddy *buddy;
+		buddy = gaim_find_buddy(account, who);
+		if (buddy)
+			who = gaim_buddy_get_alias(buddy);
+	}
+
 	if (type == GAIM_XFER_SEND)
-		title = g_strdup_printf(_("File transfer to %s aborted.\n"), who);
+		title = g_strdup_printf(_("File transfer to %s failed.\n"), who);
 	else
-		title = g_strdup_printf(_("File transfer from %s aborted.\n"), who);
+		title = g_strdup_printf(_("File transfer from %s failed.\n"), who);
 
 	gaim_notify_error(NULL, NULL, title, msg);
 

@@ -913,7 +913,7 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 									GAIM_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
-	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL)
+	if (gaim_xfer_is_canceled(xfer))
 		status = _("Canceled");
 	else
 		status = _("Failed");

@@ -522,14 +522,15 @@ void gaim_xfer_cancel_remote(GaimXfer *xfer);
  * Displays a file transfer-related error message.
  *
  * This is a wrapper around gaim_notify_error(), which automatically
- * specifies a title ("File transfer to <i>user</i> aborted" or
- * "File Transfer from <i>user</i> aborted").
+ * specifies a title ("File transfer to <i>user</i> failed" or
+ * "File Transfer from <i>user</i> failed").
  *
- * @param type The type of file transfer.
- * @param who  The user on the other end of the transfer.
- * @param msg  The message to display.
+ * @param type    The type of file transfer.
+ * @param account The account sending or receiving the file.
+ * @param who     The user on the other end of the transfer.
+ * @param msg     The message to display.
  */
-void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
+void gaim_xfer_error(GaimXferType type, GaimAccount *account, const char *who, const char *msg);
 
 /**
  * Updates file transfer progress.
