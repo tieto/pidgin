@@ -360,7 +360,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	w->window = gtk_dialog_new_with_buttons(_("Warn User"), GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
+	w->window = gtk_dialog_new_with_buttons(_("Warn User"), GTK_WINDOW(c->window), 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 
@@ -623,7 +623,7 @@ void show_ee_dialog(int ee)
 		gtk_label_set_markup(GTK_LABEL(label), 
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
 	
-	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 	
@@ -673,7 +673,7 @@ void show_im_dialog()
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
 		info->gc = connections->data;
-		imdialog = gtk_dialog_new_with_buttons(_("New Message"), gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
+		imdialog = gtk_dialog_new_with_buttons(_("New Message"), gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(imdialog), 6);
@@ -775,7 +775,7 @@ void show_info_dialog()
 
 	info->gc = connections->data;
 
-	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL, 
+	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -971,7 +971,7 @@ void show_add_group(struct gaim_connection *gc)
 
 	a->gc = gc;
 
-	a->window =  gtk_dialog_new_with_buttons(_("Add Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
+	a->window =  gtk_dialog_new_with_buttons(_("Add Group"), GTK_WINDOW(gtkblist->window), 0, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
@@ -1079,7 +1079,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	GAIM_DIALOG(a->window);
-	a->window = gtk_dialog_new_with_buttons(_("Add Buddy"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
+	a->window = gtk_dialog_new_with_buttons(_("Add Buddy"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
@@ -2561,7 +2561,7 @@ void show_insert_link(GtkWidget *linky, struct gaim_conversation *c)
 
 		a->c = c;
 		a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
-				GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL,
+				GTK_WINDOW(gtkwin->window), 0, GTK_STOCK_CANCEL,
 				GTK_RESPONSE_CANCEL, _("Insert"), GTK_RESPONSE_OK, NULL);
 
 		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
@@ -3901,7 +3901,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	if (!rename_dialog) {
-		rename_dialog =  gtk_dialog_new_with_buttons(_("Rename Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
+		rename_dialog =  gtk_dialog_new_with_buttons(_("Rename Group"), GTK_WINDOW(gtkblist->window), 0, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(rename_dialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(rename_dialog), 6);
