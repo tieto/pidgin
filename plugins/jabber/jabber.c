@@ -477,7 +477,7 @@ static void gjab_start(gjconn j)
 			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
 			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			gjab_connected, j);
-	if (j->fd < 0) {
+	if (user->gc && (j->fd < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}
@@ -913,6 +913,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 			buddyname = g_strdup_printf("%s@%s", who->user, who->server);
 			if (strcasecmp(sub, "from") && strcasecmp(sub, "none") &&
 					!(b = find_buddy(GJ_GC(j), buddyname))) {
+				debug_printf("adding buddy: %s\n", buddyname);
 				b = add_buddy(GJ_GC(j), "Buddies", buddyname, name ? name : Jid);
 				do_export(GJ_GC(j));
 			}
@@ -963,6 +964,12 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	g_free(buddy);
 }
 
+static gboolean jabber_disconnect(gpointer data)
+{
+	signoff(data);
+	return FALSE;
+}
+
 static void jabber_handleauthresp(gjconn j, jpacket p)
 {
 	if (jpacket_subtype(p) == JPACKET__RESULT) {
@@ -997,7 +1004,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 			hide_login_progress(GJ_GC(j), "Unknown login error");
 		}
 
-		signoff(GJ_GC(j));
+		gtk_timeout_add(50, jabber_disconnect, GJ_GC(j));
 	}
 }
 

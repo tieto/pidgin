@@ -476,13 +476,13 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, " ", 0);
 
-		// Kill the old one
+		/* Kill the old one */
 		g_free(md->friendly);
 
-		// Set the new one
+		/* Set the new one */
 		md->friendly = g_strdup(res[4]);
 
-		// And free up some memory.  That's all, folks.
+		/* And free up some memory.  That's all, folks. */
 		g_strfreev(res);
 	} else if (!strncmp("BYE ", buf, 4)) {
 		char **res;
@@ -552,6 +552,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar **address;
 		gchar **res;
 		struct msn_conn *mc = g_new0(struct msn_conn, 1);
+		struct aim_user *user = gc->user;
 		mc->gc = gc;
 
 		res = g_strsplit(buf, " ", 0);
@@ -570,7 +571,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 			msn_answer_callback, mc);
 		g_strfreev(address);
 		g_strfreev(res);
-		if (mc->fd < 0) {
+		if (user->gc && (mc->fd < 0)) {
 			/* Looks like we had an error connecting. */
 			g_free(mc->session);
 			g_free(mc->secret);
@@ -785,6 +786,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		return;
 	} else if (!strncmp("XFR ", buf, 4)) {
 		char **res;
+		struct aim_user *user = gc->user;
 
 		res = g_strsplit(buf, " ", 0);
 
@@ -811,7 +813,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
 			gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
 			msn_login_callback, gc);
-		if (md->fd < 0) {
+		if (user->gc && (md->fd < 0)) {
 			g_strfreev(res);
 			hide_login_progress(gc, "Error connecting to server");
 			signoff(gc);
@@ -917,7 +919,7 @@ void msn_login(struct aim_user *user)
 			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
 			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			msn_login_callback, gc);
-	if (md->fd < 0) {
+	if (user->gc && (md->fd < 0)) {
 		hide_login_progress(gc, "Error connecting to server");
 		signoff(gc);
 		return;

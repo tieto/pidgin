@@ -1286,7 +1286,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char *str;
 	FILE *fd;
 	char colour[10];
-	int colorv = -1;
 	char *clr;
 	struct buddy *b;
 	int gtk_font_options = 0;
@@ -1381,10 +1380,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 
 	} else {
-		if ((clr = strstr(what, "<BODY BGCOLOR=\"#")) != NULL) {
-			sscanf(clr + strlen("<BODY BGCOLOR=\"#"), "%x", &colorv);
-		}
-
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
 			if (meify(what)) {
