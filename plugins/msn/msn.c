@@ -50,7 +50,6 @@ struct msn_switchboard {
 	int trId;
 	int total;
 	char *user;
-	char *friend;
 	char *txqueue;
 };
 
@@ -339,8 +338,6 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	g_free(ms->auth);
 	if (ms->user)
 		g_free(ms->user);
-	if (ms->friend)
-		g_free(ms->friend);
 	if (ms->txqueue)
 		g_free(ms->txqueue);
 	ms->txqueue = NULL;
@@ -376,14 +373,14 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 			add_chat_buddy(ms->chat, gc->username);
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
 		if (ms->chat) {
-			char *friend, *tmp = buf;
+			char *user, *tmp = buf;
 			GET_NEXT(tmp);
-			friend = url_decode(tmp);
-			remove_chat_buddy(ms->chat, friend);
+			user = tmp;
+			remove_chat_buddy(ms->chat, user);
 		}
 	} else if (!g_strncasecmp(buf, "CAL", 3)) {
 	} else if (!g_strncasecmp(buf, "IRO", 3)) {
-		char *tot, *friend, *tmp = buf;
+		char *tot, *user, *tmp = buf;
 
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
@@ -391,32 +388,29 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 		tot = tmp;
 		GET_NEXT(tmp);
 		ms->total = atoi(tot);
+		user = tmp;
 		GET_NEXT(tmp);
-		friend = url_decode(tmp);
 
 		if (ms->total > 1) {
 			if (!ms->chat)
 				ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, friend);
+			add_chat_buddy(ms->chat, user);
 		} 
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
-		char *user, *friend, *tmp = buf;
+		char *user, *tmp = buf;
 		GET_NEXT(tmp);
 		user = tmp;
 		GET_NEXT(tmp);
-		friend = url_decode(tmp);
 
 		if (ms->total == 1) {
 			ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, ms->friend);
+			add_chat_buddy(ms->chat, ms->user);
 			add_chat_buddy(ms->chat, gc->username);
 			g_free(ms->user);
 			ms->user = NULL;
-			g_free(ms->friend);
-			ms->friend = NULL;
 		}
 		if (ms->chat)
-			add_chat_buddy(ms->chat, friend);
+			add_chat_buddy(ms->chat, user);
 		ms->total++;
 		if (ms->txqueue) {
 			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
@@ -424,7 +418,6 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 					MIME_HEADER, ms->txqueue);
 			g_free(ms->txqueue);
 			ms->txqueue = NULL;
-			ms->friend = g_strdup(friend);
 			if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 				msn_kill_switch(ms);
 			debug_printf("\n");
@@ -791,7 +784,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
 	} else if (!g_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
-		char *sessid, *ssaddr, *auth, *user, *friend;
+		char *sessid, *ssaddr, *auth, *user;
 		int port, i = 0;
 		char *tmp = buf;
 
@@ -808,9 +801,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 
 		GET_NEXT(tmp);
 		user = tmp;
-
 		GET_NEXT(tmp);
-		friend = url_decode(tmp);
 
 		while (ssaddr[i] && ssaddr[i] != ':') i++;
 		if (ssaddr[i] == ':') {
@@ -822,7 +813,6 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 
 		ms = g_new0(struct msn_switchboard, 1);
 		ms->user = g_strdup(user);
-		ms->friend = g_strdup(friend);
 		ms->sessid = g_strdup(sessid);
 		ms->auth = g_strdup(auth);
 		ms->gc = gc;
@@ -1170,6 +1160,7 @@ static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 		msn_kill_switch(ms);
 	debug_printf("\n");
+	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
 }
 
 static void msn_chat_leave(struct gaim_connection *gc, int id)
