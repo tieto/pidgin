@@ -36,9 +36,9 @@
 #include "proxy.h"
 #include "util.h"
 
-static GaimProxyInfo *global_proxy_info = NULL;
+#include "gaim.h"
 
-static int opt_debug = 0;
+static GaimProxyInfo *global_proxy_info = NULL;
 
 struct PHB {
 	GaimInputFunction func;
@@ -418,7 +418,7 @@ static void cope_with_gdb_brokenness()
 }
 
 static void
-gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
+gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboolean show_debug)
 {
 	const int zero = 0;
 	int rc;
@@ -448,7 +448,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
 			FD_SET(child_in, &fds);
 			rc = select(child_in + 1, &fds, NULL, NULL, &tv);
 			if (!rc) {
-				if (opt_debug)
+				if (show_debug)
 					fprintf(stderr,"dns[%d]: nobody needs me... =(\n", getpid());
 				break;
 			}
@@ -458,7 +458,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
 				break;
 			}
 			if (rc==0) {
-				if(opt_debug)
+				if (show_debug)
 					fprintf(stderr,"dns[%d]: Ops, father has gone, wait for me, wait...!\n", getpid());
 				_exit(0);
 			}
@@ -481,10 +481,10 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
 		 */
 		hints.ai_socktype = SOCK_STREAM;
 		rc = getaddrinfo(dns_params->hostname, servname, &hints, &res);
-		if(rc) {
+		if (rc) {
 			write(child_out, &rc, sizeof(int));
 			close(child_out);
-			if(opt_debug)
+			if (show_debug)
 				fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
 					getpid(), rc);
 			dns_params->hostname[0] = '\0';
@@ -503,10 +503,10 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
 #else
 		if (!inet_aton(hostname, &sin.sin_addr)) {
 			struct hostent *hp;
-			if(!(hp = gethostbyname(dns_params->hostname))) {
+			if (!(hp = gethostbyname(dns_params->hostname))) {
 				write(child_out, &h_errno, sizeof(int));
 				close(child_out);
-				if(opt_debug)
+				if (show_debug)
 					fprintf(stderr,"DNS Error: %d\n", h_errno);
 				_exit(0);
 			}
@@ -595,12 +595,12 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 		req->dns_pid = fork();
 
 		/* If we are the child process... */
-		if (req->dns_pid==0) {
+		if (req->dns_pid == 0) {
 			/* We should not access the parent's side of the pipe, so close them... */
 			close(child_out[0]);
 			close(child_in[1]);
 
-			gaim_dns_childthread(child_out[1], child_in[0], &dns_params);
+			gaim_dns_childthread(child_out[1], child_in[0], &dns_params, opt_debug);
 			/* The thread calls _exit() rather than returning, so we never get here */
 		}
 
