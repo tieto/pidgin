@@ -1,4 +1,4 @@
-/* $Id: libgg.c 11615 2004-12-16 03:50:54Z faceprint $ */
+/* $Id: libgg.c 12166 2005-03-02 11:54:08Z nosnilmot $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -70,7 +70,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 11615 2004-12-16 03:50:54Z faceprint $";
+= "$Id: libgg.c 12166 2005-03-02 11:54:08Z nosnilmot $";
 
 #endif 
 
@@ -1055,7 +1055,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 		if (h->length >= sizeof(*s)) {
 			e->type = GG_EVENT_STATUS;
-			memcpy(&e->event.status, p, h->length);
+			memcpy(&e->event.status, p, sizeof(*s));
 			e->event.status.uin = fix32(e->event.status.uin);
 			e->event.status.status = fix32(e->event.status.status);
 		}
