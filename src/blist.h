@@ -775,6 +775,9 @@ void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key);
  * @param g      The group the data is associated with
  * @param key    The key used to retrieve the data
  * @param value  The data to set
+ * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
+ * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value);
 
@@ -784,6 +787,9 @@ void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value);
  * @param g      The group to retrieve data from
  * @param key    The key to retrieve the data with
  * @return       The associated data or NULL if no data is associated
+ * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
+ * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 const char *gaim_group_get_setting(GaimGroup *g, const char *key);
 
@@ -793,6 +799,9 @@ const char *gaim_group_get_setting(GaimGroup *g, const char *key);
  * @param c      The chat the data is associated with
  * @param key    The key used to retrieve the data
  * @param value  The data to set
+ * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
+ * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 void gaim_chat_set_setting(GaimChat *c, const char *key, const char *value);
 
@@ -803,6 +812,9 @@ void gaim_chat_set_setting(GaimChat *c, const char *key, const char *value);
  * @param key    The key to retrieve the data with
  *
  * @return       The associated data or NULL if no data is associated
+ * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
+ * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 const char *gaim_chat_get_setting(GaimChat *c, const char *key);
 
@@ -812,6 +824,9 @@ const char *gaim_chat_get_setting(GaimChat *c, const char *key);
  * @param b      The buddy the data is associated with
  * @param key    The key used to retrieve the data
  * @param value  The data to set
+ * @deprecated   Replaced by gaim_blist_node_set_bool(), gaim_blist_node_set_int()
+ * 		 and gaim_blist_node_set_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 void gaim_buddy_set_setting(GaimBuddy *b, const char *key, const char *value);
 
@@ -821,6 +836,9 @@ void gaim_buddy_set_setting(GaimBuddy *b, const char *key, const char *value);
  * @param b      The buddy to retrieve data from
  * @param key    The key to retrieve the data with
  * @return       The associated data or NULL if no data is associated
+ * @deprecated   Replaced by gaim_blist_node_get_bool(), gaim_blist_node_get_int()
+ * 		 and gaim_blist_node_get_string() to enable types and consolidate functionality.
+ * 		 This function is scheduled to be removed in the near future.
  */
 const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 
