@@ -79,6 +79,12 @@ struct gaim_connection {
 	GtkWidget *email_label;
 };
 
+struct proto_user_opt {
+	char *label;
+	char *def;
+	int pos;
+};
+
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 

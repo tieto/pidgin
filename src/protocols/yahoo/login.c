@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include <string.h>
 
 int yahoo_send_login(struct yahoo_session *session, const char *name, const char *password)
 {

@@ -233,6 +233,7 @@ static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, 
 
 static void ok_mod(GtkWidget *w, struct aim_user *u)
 {
+	GList *tmp;
 	const char *txt;
 	int i;
 
@@ -249,6 +250,18 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		gtk_clist_set_text(GTK_CLIST(list), i, 2,
 				   (u->options & OPT_USR_AUTO) ? "True" : "False");
 		gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(u->protocol));
+
+		tmp = u->opt_entries;
+		while (tmp) {
+			GtkEntry *entry = tmp->data;
+			int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+			g_snprintf(u->proto_opt[pos], sizeof(u->proto_opt[pos]), "%s",
+						gtk_entry_get_text(entry));
+			tmp = tmp->next;
+		}
+		if (u->opt_entries)
+			g_list_free(tmpusr.opt_entries);
+		u->opt_entries = NULL;
 	} else {
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
 		u = new_user(txt, tmpusr.protocol, tmpusr.options);
@@ -256,8 +269,17 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.pass));
 		g_snprintf(u->password, sizeof(u->password), "%s", txt);
 
-		for (i = 0; i < 6; i++)
-			g_snprintf(u->proto_opt[i], sizeof(u->proto_opt[i]), "%s", tmpusr.proto_opt[i]);
+		tmp = tmpusr.opt_entries;
+		while (tmp) {
+			GtkEntry *entry = tmp->data;
+			int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+			g_snprintf(u->proto_opt[pos], sizeof(u->proto_opt[pos]), "%s",
+						gtk_entry_get_text(entry));
+			tmp = tmp->next;
+		}
+		if (tmpusr.opt_entries)
+			g_list_free(tmpusr.opt_entries);
+		tmpusr.opt_entries = NULL;
 
 		gtk_widget_destroy(newmod);
 	}
@@ -267,8 +289,14 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 static void cancel_mod(GtkWidget *w, struct aim_user *u)
 {
 	if (u) {
+		if (u->opt_entries)
+			g_list_free(u->opt_entries);
+		u->opt_entries = NULL;
 		gtk_widget_destroy(u->mod);
 	} else {
+		if (tmpusr.opt_entries)
+			g_list_free(tmpusr.opt_entries);
+		tmpusr.opt_entries = NULL;
 		gtk_widget_destroy(newmod);
 	}
 }
@@ -457,10 +485,53 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 	gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
 
 	if (p && p->user_opts) {
-		if (u)
-			(*p->user_opts)(book, u);
-		else
-			(*p->user_opts)(book, &tmpusr);
+		GList *op = (*p->user_opts)();
+		GList *tmp = op;
+
+		GtkWidget *vbox;
+		GtkWidget *hbox;
+		GtkWidget *label;
+		GtkWidget *entry;
+
+		char buf[256];
+
+		vbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+		g_snprintf(buf, sizeof(buf), "%s Options", (*p->name)());
+		gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new(buf));
+		gtk_widget_show(vbox);
+
+		while (op) {
+			struct proto_user_opt *puo = op->data;
+
+			hbox = gtk_hbox_new(FALSE, 5);
+			gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+			gtk_widget_show(hbox);
+
+			label = gtk_label_new(puo->label);
+			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+			gtk_widget_show(label);
+
+			entry = gtk_entry_new();
+			gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+			gtk_object_set_user_data(GTK_OBJECT(entry), (void *)puo->pos);
+			if (u->proto_opt[puo->pos][0]) {
+				debug_printf("setting text %s\n", u->proto_opt[puo->pos]);
+				gtk_entry_set_text(GTK_ENTRY(entry), u->proto_opt[puo->pos]);
+			} else {
+				gtk_entry_set_text(GTK_ENTRY(entry), puo->def);
+			}
+			gtk_widget_show(entry);
+
+			if (u)
+				u->opt_entries = g_list_append(u->opt_entries, entry);
+			else
+				tmpusr.opt_entries = g_list_append(tmpusr.opt_entries, entry);
+
+			g_free(puo);
+			op = op->next;
+		}
+		g_list_free(tmp);
 	}
 }
 

@@ -445,51 +445,17 @@ static void icq_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);
 }
 
-static void icq_print_option(GtkEntry *entry, struct aim_user *user) {
-	int entrynum;
+static GList *icq_user_opts() {
+	GList *m = NULL;
+	struct proto_user_opt *puo;
 
-	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Nick:";
+	puo->def = "Gaim User";
+	puo->pos = USEROPT_NICK;
+	m = g_list_append(m, puo);
 
-	if (entrynum == USEROPT_NICK)
-		g_snprintf(user->proto_opt[USEROPT_NICK],
-				sizeof(user->proto_opt[USEROPT_NICK]),
-				"%s", gtk_entry_get_text(entry));
-}
-
-static void icq_user_opts(GtkWidget *book, struct aim_user *user) {
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
-			gtk_label_new("ICQ Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Nick");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_NICK);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			GTK_SIGNAL_FUNC(icq_print_option), user);
-	if (user->proto_opt[USEROPT_NICK][0])
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_NICK]);
-	else
-		gtk_entry_set_text(GTK_ENTRY(entry), "gaim user");
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	return m;
 }
 
 static GList *icq_away_states() {

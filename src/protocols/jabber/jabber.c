@@ -1957,54 +1957,18 @@ static void jabber_keepalive(struct gaim_connection *gc) {
 	gjab_send_raw(jd->jc, "  \t  ");
 }
 
-static void jabber_print_option(GtkEntry *entry, struct aim_user *user)
+static GList *jabber_user_opts()
 {
-	int entrynum;
+	GList *m = NULL;
+	struct proto_user_opt *puo;
 
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Port:";
+	puo->def = "5222";
+	puo->pos = USEROPT_PORT;
+	m = g_list_append(m, puo);
 
-	if (entrynum == USEROPT_PORT) {
-		g_snprintf(user->proto_opt[USEROPT_PORT],
-			   sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
-	}
-}
-
-static void jabber_user_opts(GtkWidget *book, struct aim_user *user)
-{
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Jabber Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
-	if (isdigit(user->proto_opt[USEROPT_PORT][0])) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
-	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "5222");
-
-	label = gtk_label_new("To set the server, make your username be user@server.org.");
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	gtk_widget_show(entry);
+	return m;
 }
 
 static struct prpl *my_protocol = NULL;

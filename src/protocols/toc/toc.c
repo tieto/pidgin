@@ -1043,72 +1043,24 @@ static void toc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);
 }
 
-static void toc_print_option(GtkEntry *entry, struct aim_user *user)
+static GList *toc_user_opts()
 {
-	int entrynum;
+	GList *m = NULL;
+	struct proto_user_opt *puo;
 
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "TOC Host:";
+	puo->def = "toc.oscar.aol.com";
+	puo->pos = USEROPT_AUTH;
+	m = g_list_append(m, puo);
 
-	if (entrynum == USEROPT_AUTH) {
-		g_snprintf(user->proto_opt[USEROPT_AUTH],
-			   sizeof(user->proto_opt[USEROPT_AUTH]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_AUTHPORT) {
-		g_snprintf(user->proto_opt[USEROPT_AUTHPORT],
-			   sizeof(user->proto_opt[USEROPT_AUTHPORT]), "%s", gtk_entry_get_text(entry));
-	}
-}
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "TOC Port:";
+	puo->def = "9898";
+	puo->pos = USEROPT_AUTHPORT;
+	m = g_list_append(m, puo);
 
-static void toc_user_opts(GtkWidget *book, struct aim_user *user)
-{
-	/* so here, we create the new notebook page */
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("TOC Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("TOC Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(toc_print_option), user);
-	if (user->proto_opt[USEROPT_AUTH][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTH]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTH]);
-	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "toc.oscar.aol.com");
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("TOC Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTHPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(toc_print_option), user);
-	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
-	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
-
-	gtk_widget_show(entry);
+	return m;
 }
 
 static void toc_add_permit(struct gaim_connection *gc, char *who)

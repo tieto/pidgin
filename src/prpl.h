@@ -71,6 +71,8 @@ struct prpl {
 	GList *(* away_states)();
 	GList *(* actions)();
 	void   (* do_action)(struct gaim_connection *, char *);
+	/* user_opts returns a GList* of g_malloc'd struct proto_user_opts */
+	GList *(* user_opts)();
 
 	/* when UI plugins come, these will have to be reconciled by returning
 	 * structs indicating what kinds of information they want displayed. */
@@ -79,7 +81,6 @@ struct prpl {
 	 * then have a prpl-base and prpl-UI stuff. people don't need to change
 	 * their UIs all that often anyway. */
 	void (* buddy_menu)(GtkWidget *, struct gaim_connection *, char *);
-	void (* user_opts)(GtkWidget *, struct aim_user *);
 	void (* draw_new_user)(GtkWidget *);
 	void (* do_new_user)();
 	void (* draw_join_chat)(struct gaim_connection *, GtkWidget *);

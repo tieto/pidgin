@@ -137,6 +137,7 @@ struct aim_user {
 	GtkWidget *rempass;
 	int tmp_options;
 	int tmp_protocol;
+	GList *opt_entries;
 
 	/* stuff for password prompt */
 	GtkWidget *passprmt;

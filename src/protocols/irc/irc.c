@@ -1951,71 +1951,24 @@ static void irc_login(struct aim_user *user)
 	}
 }
 
-static void irc_print_option(GtkEntry *entry, struct aim_user *user)
+static GList *irc_user_opts()
 {
-	int entrynum;
+	GList *m = NULL;
+	struct proto_user_opt *puo;
 
-	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Server:";
+	puo->def = "irc.mozilla.org";
+	puo->pos = USEROPT_SERV;
+	m = g_list_append(m, puo);
 
-	if (entrynum == USEROPT_SERV) {
-		g_snprintf(user->proto_opt[USEROPT_SERV],
-			   sizeof(user->proto_opt[USEROPT_SERV]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PORT) {
-		g_snprintf(user->proto_opt[USEROPT_PORT],
-			   sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
-	}
-}
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Port:";
+	puo->def = "6667";
+	puo->pos = USEROPT_PORT;
+	m = g_list_append(m, puo);
 
-static void irc_user_opts(GtkWidget *book, struct aim_user *user)
-{
-	/* so here, we create the new notebook page */
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("IRC Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Server:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SERV);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
-	if (user->proto_opt[USEROPT_SERV][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SERV]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SERV]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
-	if (user->proto_opt[USEROPT_PORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
-	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "6667");
-
-	gtk_widget_show(entry);
+	return m;
 }
 
 static char **irc_list_icon(int uc)

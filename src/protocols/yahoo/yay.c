@@ -47,8 +47,6 @@
 #include "pixmaps/status-here.xpm"
 #include "pixmaps/status-idle.xpm"
 
-#include "pixmaps/cancel.xpm"
-
 #define USEROPT_MAIL 0
 
 #define USEROPT_AUTHHOST 1
@@ -657,129 +655,36 @@ static GList *yahoo_actions() {
 	return m;
 }
 
-static void yahoo_print_option(GtkEntry *entry, struct aim_user *user) {
-	int entrynum;
-	
-	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	if (entrynum == USEROPT_AUTHHOST) {
-		g_snprintf(user->proto_opt[USEROPT_AUTHHOST],
-				sizeof(user->proto_opt[USEROPT_AUTHHOST]),
-				"%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_AUTHPORT) {
-		g_snprintf(user->proto_opt[USEROPT_AUTHPORT],
-				sizeof(user->proto_opt[USEROPT_AUTHPORT]),
-				"%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PAGERHOST) {
-		g_snprintf(user->proto_opt[USEROPT_PAGERHOST],
-				sizeof(user->proto_opt[USEROPT_PAGERHOST]),
-				"%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_PAGERPORT) {
-		g_snprintf(user->proto_opt[USEROPT_PAGERPORT],
-				sizeof(user->proto_opt[USEROPT_PAGERPORT]),
-				"%s", gtk_entry_get_text(entry));
-	}
-}
-
-static void yahoo_user_opts(GtkWidget *book, struct aim_user *user)
+static GList *yahoo_user_opts()
 {
-	GtkWidget *vbox;
-	GtkWidget *hbox; 
-	GtkWidget *label;
-	GtkWidget *entry;
+	GList *m = NULL;
+	struct proto_user_opt *puo;
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Yahoo Options"));
-	gtk_widget_show(vbox);
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Auth Host:";
+	puo->def = YAHOO_AUTH_HOST;
+	puo->pos = USEROPT_AUTHHOST;
+	m = g_list_append(m, puo);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Auth Port:";
+	puo->def = "80";
+	puo->pos = USEROPT_AUTHPORT;
+	m = g_list_append(m, puo);
 
-	label = gtk_label_new("Yahoo Auth Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Pager Host:";
+	puo->def = YAHOO_PAGER_HOST;
+	puo->pos = USEROPT_PAGERHOST;
+	m = g_list_append(m, puo);
 
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTHHOST);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_AUTHHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHHOST]);
-	} else {
-		gtk_entry_set_text(GTK_ENTRY(entry), YAHOO_AUTH_HOST);
-	}
-	gtk_widget_show(entry);
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Pager Port:";
+	puo->def = "5050";
+	puo->pos = USEROPT_PAGERHOST;
+	m = g_list_append(m, puo);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Yahoo Auth Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTHPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
-	} else {
-		g_snprintf(user->proto_opt[USEROPT_AUTHPORT], sizeof(user->proto_opt[USEROPT_AUTHPORT]),
-					"%d", YAHOO_AUTH_PORT);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Yahoo Pager Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PAGERHOST);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_PAGERHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PAGERHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PAGERHOST]);
-	} else {
-		gtk_entry_set_text(GTK_ENTRY(entry), YAHOO_PAGER_HOST);
-	}
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Yahoo Pager Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PAGERPORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
-	if (user->proto_opt[USEROPT_PAGERPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PAGERPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PAGERPORT]);
-	} else {
-		g_snprintf(user->proto_opt[USEROPT_PAGERPORT], sizeof(user->proto_opt[USEROPT_PAGERPORT]),
-					"%d", YAHOO_PAGER_PORT);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PAGERPORT]);
-	}
-	gtk_widget_show(entry);
+	return m;
 }
 
 static void toggle_offline(GtkToggleButton *button, struct conversation *c)

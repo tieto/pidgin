@@ -21,6 +21,7 @@
 
 #include "internal.h"
 #include <ctype.h>
+#include <string.h>
 
 char *yahoo_urlencode(const char *str)
 {
