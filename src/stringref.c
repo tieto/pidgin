@@ -55,6 +55,7 @@ GaimStringref *gaim_stringref_printf(const char *format, ...)
 	newref = g_malloc(sizeof(GaimStringref) + g_printf_string_upper_bound(format, ap));
 	vsprintf(newref->value, format, ap);
 	va_end(ap);
+	newref->ref = 1;
 
 	return newref;
 }
