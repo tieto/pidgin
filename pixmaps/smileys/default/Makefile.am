@@ -112,6 +112,7 @@ EXTRA_DIST = angel.png		\
 			yahoo_pig.gif		\
 			yahoo_pray.gif		\
 			yahoo_pumpkin.gif	\
+			yahoo_question.gif	\
 			yahoo_sad.gif		\
 			yahoo_shame.gif		\
 			yahoo_shamrock.gif	\
@@ -245,6 +246,7 @@ gaimsmileypix_DATA = 	angel.png		\
 			yahoo_pig.gif		\
 			yahoo_pray.gif		\
 			yahoo_pumpkin.gif	\
+			yahoo_question.gif	\
 			yahoo_sad.gif		\
 			yahoo_shame.gif		\
 			yahoo_shamrock.gif	\
