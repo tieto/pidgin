@@ -533,6 +533,8 @@ Section Uninstall
     RMDir /r "$INSTDIR\pixmaps"
     Delete "$INSTDIR\plugins\autorecon.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
+    Delete "$INSTDIR\plugins\docklet.dll"
+    Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
