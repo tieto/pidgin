@@ -1940,6 +1940,7 @@ void show_import_dialog()
 
         }
 
+	g_free(buf);
         gtk_widget_show(importdialog);
         gdk_window_raise(importdialog->window);
 }
