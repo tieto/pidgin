@@ -73,6 +73,7 @@ C_SRC =			yahoo.c \
 			yahoochat.c \
 			yahoo_filexfer.c \
 			yahoo_profile.c \
+			yahoo_friend.c \
 			crypt.c \
 			util.c
 

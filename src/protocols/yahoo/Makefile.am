@@ -14,6 +14,8 @@ YAHOOSOURCES = \
 	util.c \
 	yahoo_filexfer.h \
 	yahoo_filexfer.c \
+	yahoo_friend.h \
+	yahoo_friend.c \
 	yahoo_profile.c
 
 AM_CFLAGS = $(st)

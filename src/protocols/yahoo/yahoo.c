@@ -36,6 +36,7 @@
 
 #include "sha.h"
 #include "yahoo.h"
+#include "yahoo_friend.h"
 #include "yahoochat.h"
 #include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
@@ -47,25 +48,6 @@ extern char *yahoo_crypt(const char *, const char *);
 
 static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *);
 
-static struct yahoo_friend *yahoo_friend_new(void)
-{
-	struct yahoo_friend *ret;
-
-	ret = g_new0(struct yahoo_friend, 1);
-	ret->status = YAHOO_STATUS_OFFLINE;
-
-	return ret;
-}
-
-static void yahoo_friend_free(gpointer p)
-{
-	struct yahoo_friend *f = p;
-	if (f->msg)
-		g_free(f->msg);
-	if (f->game)
-		g_free(f->game);
-	g_free(f);
-}
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
 {
@@ -274,7 +256,7 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 	g_free(pkt);
 }
 
-static void yahoo_update_status(GaimConnection *gc, const char *name, struct yahoo_friend *f)
+static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
 {
 	int online = 1;
 
@@ -292,7 +274,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 	struct yahoo_data *yd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GSList *l = pkt->hash;
-	struct yahoo_friend *f = NULL;
+	YahooFriend *f = NULL;
 	char *name = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
@@ -553,7 +535,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	gboolean got_serv_list = FALSE;
 	GaimBuddy *b;
 	GaimGroup *g;
-	struct yahoo_friend *f = NULL;
+	YahooFriend *f = NULL;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GHashTable *ht;
@@ -666,7 +648,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *from = NULL;
 	char *stat = NULL;
 	char *game = NULL;
-	struct yahoo_friend *f = NULL;
+	YahooFriend *f = NULL;
 	GSList *l = pkt->hash;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = (struct yahoo_data*) gc->proto_data;
@@ -1772,7 +1754,7 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *group = NULL;
 	char *decoded_group;
 	char *buf;
-	struct yahoo_friend *f;
+	YahooFriend *f;
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 
@@ -2341,7 +2323,7 @@ static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 	GaimAccount *account;
 	GaimConnection *gc;
 	struct yahoo_data *yd;
-	struct yahoo_friend *f;
+	YahooFriend *f;
 
 	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
 	  				     !(yd = gc->proto_data))
@@ -2438,7 +2420,7 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 	char *game = NULL;
 	char *t;
 	char url[256];
-	struct yahoo_friend *f;
+	YahooFriend *f;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
@@ -2466,7 +2448,7 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 static char *yahoo_status_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	struct yahoo_friend *f = NULL;
+	YahooFriend *f = NULL;
 
 	f = g_hash_table_lookup(yd->friends, b->name);
 	if (!f)
@@ -2492,7 +2474,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	struct yahoo_friend *f;
+	YahooFriend *f;
 	char *escaped, *status, *ret;
 
 	f = g_hash_table_lookup(yd->friends, b->name);
@@ -2574,7 +2556,7 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	static char buf2[1024];
-	struct yahoo_friend *f;
+	YahooFriend *f;
 
 	f = g_hash_table_lookup(yd->friends, buddy->name);
 
@@ -2933,7 +2915,7 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct yahoo_friend *f;
+	YahooFriend *f;
         struct yahoo_packet *pkt;
 	GSList *buddies, *l;
 	GaimGroup *g;

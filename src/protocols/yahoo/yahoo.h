@@ -160,17 +160,6 @@ struct yahoo_packet {
 	GSList *hash;
 };
 
-struct yahoo_friend { /* we'll call them friends, so we don't confuse them with GaimBuddy */
-	enum yahoo_status status;
-	char *msg;
-	char *game;
-	int idle;
-	int away;
-	gboolean sms;
-	char *ip;
-	guint bicon_checksum;
-	gboolean bicon_have;
-};
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (48)
 
