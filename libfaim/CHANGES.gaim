@@ -1,4 +1,19 @@
 
+Tue May 30 04:04:40 UTC 2000 EWarmenhoven
+	- Well, after trying to screw around with the permit/deny stuff a bit,
+	  I finally decided that having a permit list was for people who didn't
+	  want AIM in the first place. Therefore, I only need to implement the
+	  deny list. This made things work much better. I'm declaring the deny
+	  list as working.
+	- Chat isn't working, and hasn't for a while. I don't know why; I've
+	  been playing with it for a few days now without much luck. I finally
+	  decided it was time to move it to the UNSUPPORTED section in the
+	  README.gaim file. I actually got it to work once; I don't know how.
+	- Oscar support in gaim (since I started working on it) is now 10 days
+	  old, and already I've had more than 5 people (not counting Rob) ask
+	  me about it; one person even filed bugs against it. I'm not sure if
+	  that's a good thing or not.
+
 Mon May 29 20:24:24 UTC 2000 EWarmenhoven
 	- Updated the libfaim code to the latest that's in libfaim's CVS. The
 	  new code has one nice feature and one feature that may or may not

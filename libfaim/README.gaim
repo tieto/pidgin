@@ -29,39 +29,51 @@ Being idle
 Being away/coming back
 Setting your info
 Getting users' info
+Getting users' away messages (PLEASE do not use oscar/libfaim just because of
+	this, gaim with libfaim is still really buggy, none of you will listen
+	to me anyway)
+Telling the server who's on your permit/deny lists
+
+CURRENTLY UNSUPPORTED FEATURES
+==============================
+Warning users/getting warned
 Chat:
  - joining rooms
  - leaving rooms
  - talking
  - getting invited
  - inviting someone
-Getting users' away messages (PLEASE do not use oscar/libfaim just because of
-	this, gaim with libfaim is still really buggy, none of you will listen
-	to me anyway)
-
-CURRENTLY UNSUPPORTED FEATURES
-==============================
-Warning users/getting warned
-Chat:
- - whispering
+ - whispering (this will never happen)
  - refreshing the chatlist in the preferences dialog
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
-Telling the server who's on your permit/deny lists
 
 KNOWN ISSUES
 ============
-- The permit/deny stuff is really funny. If I don't put it there, everything
-works great, if I do, it occasionally works, but not well. I've commented it out
-(again - I swear, this is the most on-again-off-again feature).
-
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
 - Chat is really funny. I have no idea what's going on with it. I'm not sure I
 want to know. I'm not worried about it, I never use chat. It's not exactly high-
 priority.
+
+- Gaim/TOC can do file transfers, but Gaim/Faim cannot. This is not because
+there is any difference in the two protocols as far as the actual transfer is
+concerned. The only thing preventing this is it is currently not possible to
+recognize when we've received a file transfer request using libfaim. Once
+libfaim can tell us that we've received the request, the only thing we should
+need to change is to have oscar.c wait for one of those notifications and then
+call accept_file_transfer() from rvous.c. No modification of rvous.c should be
+necessary at that point. (The same should apply to IM Images and Voice Chat and
+all the other RVOUS stuff - they are all protocol-independent.)
+
+- What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
+request RVOUS actions, though both can receive them. However, libfaim cannot
+yet make the requests, so there is no difference between Gaim/TOC and Gaim/Faim
+there.
+
+- Warnings and Dir Info are not in libfaim yet, and so are not in Gaim/Faim yet.
 
 - There are also FIXME's scattered about oscar.c. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed

@@ -344,11 +344,11 @@ void serv_add_deny(char *name)
 
 void serv_set_permit_deny()
 {
-#ifndef USE_OSCAR
 	char buf[MSG_LEN];
 	int at;
 	GList *list;
 
+#ifndef USE_OSCAR
         /* FIXME!  We flash here. */
         if (permdeny == 1 || permdeny == 3) {
         	g_snprintf(buf, sizeof(buf), "toc_add_permit");
@@ -379,26 +379,14 @@ void serv_set_permit_deny()
 #else
 	/* oscar requires us to do everyone at once (?) */
 	/* I think this code is OK now. */
-	/* FIXME : I changed my mind
-	if (!(permdeny == 1 || permdeny == 4)) {
-		list = permit; at = 0;
-		while (list) {
-			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
-			list = list->next;
-		}
-		aim_bos_changevisibility(gaim_sess, gaim_conn,
-				AIM_VISIBILITYCHANGE_PERMITADD, buf);
-	} else {
-		list = deny; at = 0;
-		if (list == NULL) return;
-		while (list) {
-			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
-			list = list->next;
-		}
-		aim_bos_changevisibility(gaim_sess, gaim_conn,
-				AIM_VISIBILITYCHANGE_DENYADD, buf);
+	list = deny; at = 0;
+	if (list == NULL) return;
+	while (list) {
+		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
+		list = list->next;
 	}
-	*/
+	aim_bos_changevisibility(gaim_sess, gaim_conn,
+				AIM_VISIBILITYCHANGE_DENYADD, buf);
 #endif
 }
 
