@@ -203,7 +203,6 @@ static void ref_list_callback(gpointer data, char *text)
 		c++;
 	}
 	gtk_list_append_items(GTK_LIST(cp->list1), items);
-	g_free(text);
 }
 
 static void refresh_list(GtkWidget *w, gpointer *m)
