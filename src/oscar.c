@@ -469,8 +469,28 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		va_end(ap);
 
 		serv_got_im(userinfo->sn, msg, icbmflags & AIM_IMFLAGS_AWAY);
+	} else if (channel == 2) {
+		struct aim_userinfo_s *userinfo;
+		int rendtype = va_arg(ap, int);
+		if (rendtype == 0) {
+			char *msg, *encoding, *lang;
+			struct aim_chat_roominfo *roominfo;
+
+			userinfo = va_arg(ap, struct aim_userinfo_s *);
+			roominfo = va_arg(ap, struct aim_chat_roominfo *);
+			msg      = va_arg(ap, char *);
+			encoding = va_arg(ap, char *);
+			lang     = va_arg(ap, char *);
+			va_end(ap);
+
+			serv_got_chat_invite(roominfo->name,
+					     roominfo->instance,
+					     userinfo->sn,
+					     msg);
+		} else if (rendtype == 1) {
+			/* FIXME : voice chat */
+		}
 	}
-	/* FIXME : channel == 2 is RVOUS requests, including chat invitations */
 
 	return 1;
 }
@@ -526,7 +546,8 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (prof == NULL || !strlen(prof)) {
-		do_error_dialog("User has no away message.", "Gaim - Away Msg");
+		do_error_dialog("User has no info/away message.",
+				"Gaim - User Info");
 		return 1;
 	}
 

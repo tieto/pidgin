@@ -377,6 +377,8 @@ void serv_set_permit_deny()
 	sflap_send(buf, -1, TYPE_DATA);
 #else
 	/* oscar requires us to do everyone at once (?) */
+/* FIXME : there's nothing wrong with this code, but it causes the entire buddy
+ * list to update, and can cause other people's buddy lists to improperly update
 	list = permit; at = 0;
 	while (list) {
 		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
@@ -391,6 +393,7 @@ void serv_set_permit_deny()
 	}
 	aim_bos_changevisibility(gaim_sess, gaim_conn,
 			AIM_VISIBILITYCHANGE_DENYADD, buf);
+*/
 #endif
 }
 
@@ -443,6 +446,9 @@ void serv_accept_chat(int i)
         g_snprintf(buf, 255, "toc_chat_accept %d",  i);
         sflap_send(buf, -1, TYPE_DATA);
         g_free(buf);
+#else
+	/* this should never get called because libfaim doesn't use the id
+	 * (i'm not even sure Oscar does). go through serv_join_chat instead */
 #endif
 }
 
@@ -774,9 +780,15 @@ static void close_invite(GtkWidget *w, GtkWidget *w2)
 
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
+#ifndef USE_OSCAR
         int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
         serv_accept_chat(i);
 	gtk_widget_destroy(w2);
+#else
+	char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+	serv_join_chat(0, i); /* for oscar, it doesn't use the id anyway */
+	gtk_widget_destroy(w2);
+#endif
 }
 
 
@@ -813,7 +825,11 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
 
         /*		gtk_widget_set_usize(d, 200, 110); */
+#ifndef USE_OSCAR
         gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
+#else
+	gtk_object_set_user_data(GTK_OBJECT(d), (void *)name);
+#endif
 
 
         gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
