@@ -59,7 +59,7 @@ typedef enum
 
 #define GAIM_PLUGIN_FLAG_INVISIBLE 0x01
 
-#define GAIM_PLUGIN_MAGIC 0xc0cac01a /* this must be greater than 4 */
+#define GAIM_PLUGIN_MAGIC 5 /* once we hit 6.0.0 I think we can remove this */
 
 /**
  * Detailed information about a plugin.
