@@ -1,5 +1,6 @@
 EXTRA_DIST = \
-		Makefile.mingw
+		Makefile.mingw \
+		docklet-win32.c
 
 plugindir = $(libdir)/gaim
 
