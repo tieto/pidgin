@@ -73,6 +73,8 @@ static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args1
 		size = va_arg(args2, int);
 	}
 
+	pos -= sizeof(guchar) * 2 + 4;
+
 	/* now we do size */
 	memcpy(buffer + sizeof(guchar) * 2, &pos, 4);
 
@@ -83,14 +85,9 @@ static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args1
 
 gint UI_write(struct UI *ui, guchar *data, gint len)
 {
-	guchar *send = g_new0(guchar, len + 6);
 	gint sent;
-	send[0] = 'f';
-	send[1] = 1;
-	memcpy(send + 2, &len, sizeof(len));
-	memcpy(send + 6, data, len);
 	/* we'll let the write silently fail because the read will pick it up as dead */
-	g_io_channel_write(ui->channel, send, len + 6, &sent);
+	g_io_channel_write(ui->channel, data, len, &sent);
 	return sent;
 }
 

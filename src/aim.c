@@ -37,8 +37,13 @@
 #include <gdk/gdkx.h>
 #include <gdk/gdk.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <errno.h>
+#include <sys/un.h>
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
@@ -415,6 +420,86 @@ void sighandler(int sig)
 }
 #endif
 
+static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer ud)
+{
+	guchar type;
+	guchar subtype;
+	guint32 len;
+	guchar *data;
+	guint32 x;
+
+	debug_printf("Core says: ");
+	g_io_channel_read(source, &type, sizeof(type), &x);
+	if (x == 0) {
+		debug_printf("CORE IS GONE!\n");
+		g_io_channel_close(source);
+		return FALSE;
+	}
+	debug_printf("%d ", type);
+	g_io_channel_read(source, &subtype, sizeof(subtype), &x);
+	if (x == 0) {
+		debug_printf("CORE IS GONE!\n");
+		g_io_channel_close(source);
+		return FALSE;
+	}
+	debug_printf("%d ", subtype);
+	g_io_channel_read(source, (guchar *)&len, sizeof(len), &x);
+	if (x == 0) {
+		debug_printf("CORE IS GONE!\n");
+		g_io_channel_close(source);
+		return FALSE;
+	}
+	debug_printf("(%d bytes)\n", len);
+
+	data = g_malloc(len);
+	g_io_channel_read(source, data, len, &x);
+	if (x != len) {
+		debug_printf("CORE IS GONE! (read %d/%d bytes)\n", x, len);
+		g_free(data);
+		g_io_channel_close(source);
+		return FALSE;
+	}
+
+	g_free(data);
+	return TRUE;
+}
+
+static int open_socket(char *name)
+{
+	struct sockaddr_un saddr;
+	gint fd;
+
+	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
+		saddr.sun_family = AF_UNIX;
+		g_snprintf(saddr.sun_path, 108, "%s", name);
+		if (connect(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
+			return fd;
+		else
+			debug_printf("Failed to assign %s to a socket (Error: %s)",
+					saddr.sun_path, strerror(errno));
+	} else
+		debug_printf("Unable to open socket: %s", strerror(errno));
+	close(fd);
+	return -1;
+}
+
+static int ui_main()
+{
+	GIOChannel *channel;
+	int UI_fd;
+	char name[256];
+
+	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
+
+	UI_fd = open_socket(name);
+	if (UI_fd < 0)
+		return 1;
+
+	channel = g_io_channel_unix_new(UI_fd);
+	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
+	return 0;
+}
+
 static void set_first_user(char *name)
 {
 	struct aim_user *u;
@@ -623,6 +708,7 @@ int main(int argc, char *argv[])
 	load_prefs();
 
 	core_main();
+	ui_main();
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {
@@ -685,6 +771,7 @@ int main(int argc, char *argv[])
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_stop();
 	core_quit();
+	/* don't need ui_quit here because ui doesn't create anything */
 
 	return 0;
 
