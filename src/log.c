@@ -446,9 +446,9 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			date, from, message);
 	else if (type & GAIM_MESSAGE_AUTO_RESP) {
 		if (type & GAIM_MESSAGE_SEND)
-			fprintf(log->logger_data, "<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n", date, from, message);
+			fprintf(log->logger_data, _("<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
 		else if (type & GAIM_MESSAGE_RECV)
-			fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n", date, from, message);
+			fprintf(log->logger_data, _("<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
 	} else if (type & GAIM_MESSAGE_RECV)
 		fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
 			date, from, gc->prpl->info->name, message);
@@ -570,7 +570,7 @@ static void txt_logger_write(GaimLog *log,
 	else if (type & GAIM_MESSAGE_SYSTEM)
 		fprintf(log->logger_data, "(%s) %s\n", date, stripped);
 	else if (type & GAIM_MESSAGE_AUTO_RESP)
-		fprintf(log->logger_data, "(%s) %s <AUTO-REPLY>: %s\n", date, from, stripped);
+		fprintf(log->logger_data, _("(%s) %s <AUTO-REPLY>: %s\n"), date, from, stripped);
 	else if (type & GAIM_MESSAGE_NO_LOG) {
 		/* This shouldn't happen */
 		g_free(stripped);
