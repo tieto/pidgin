@@ -375,7 +375,7 @@ void destroy_all_dialogs()
         }
 
         if (importdialog) {
-                destroy_dialog(NULL, exportdialog);
+                destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
         }
 	
