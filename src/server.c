@@ -1124,11 +1124,11 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (!b->idle && idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", account, b);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	} else if (b->idle && !idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", account, b);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 

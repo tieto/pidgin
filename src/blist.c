@@ -2107,9 +2107,9 @@ gaim_blist_init(void)
 	gaim_signal_register(handle, "buddy-back", gaim_marshal_VOID__POINTER);
 
 	gaim_signal_register(handle, "buddy-idle",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER);
 	gaim_signal_register(handle, "buddy-unidle",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER);
 
 	gaim_signal_register(handle, "buddy-signed-on",
 						 gaim_marshal_VOID__POINTER);
