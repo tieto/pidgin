@@ -764,6 +764,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	GSList *fonts = NULL;
 
+	GdkRectangle rect;
+	int y, height;
+
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
 	g_return_val_if_fail (text != NULL, NULL);
@@ -780,6 +783,15 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 	mark = gtk_text_buffer_create_mark (imhtml->text_buffer, NULL, &iter, /* right grav */ FALSE);
+
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);	
+	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+
+	if(((y + height) - (rect.y + rect.height)) > height 
+	   && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
+		options |= GTK_IMHTML_NO_SCROLL;
+	}
+
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
 			c++;
