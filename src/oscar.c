@@ -253,7 +253,7 @@ static void oscar_callback(gpointer data, gint source,
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
 	struct gaim_connection *gc = find_gaim_conn_by_oscar_conn(conn);
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	if (!gc) {
+	if (!g_slist_find(connections, gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we can really do
 		 * is return? */
 		debug_print("oscar callback for closed connection.\n");
@@ -1049,8 +1049,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			while (i < exchangecount)
 				debug_printf("chat info: \t\t%d\n", exchanges[i++].number);
 			if (odata->create_exchange) {
-				sprintf(debug_buff, "creating room %s\n", odata->create_name);
-				debug_print(debug_buff);
+				debug_printf("creating room %s\n", odata->create_name);
 				aim_chatnav_createroom(sess, command->conn, odata->create_name,
 						odata->create_exchange);
 				odata->create_exchange = 0;
