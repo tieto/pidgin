@@ -565,12 +565,12 @@ void open_url(GtkWidget *w, char *url)
 {
 
 	if (web_browser == BROWSER_NETSCAPE) {
-		char *command = g_malloc(1024);
+		char *command;
 
 		if (misc_options & OPT_MISC_BROWSER_POPUP)
-			g_snprintf(command, 1024, "OpenURL(%s, new-window)", url);
+			command = g_strdup_printf("OpenURL(%s, new-window)", url);
 		else
-			g_snprintf(command, 1024, "OpenURL(%s)", url);
+			command = g_strdup_printf("OpenURL(%s)", url);
 
 		netscape_command(command);
 		g_free(command);
