@@ -1450,7 +1450,7 @@ void show_privacy_options() {
 	current_is_deny = TRUE;
 
 	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
+	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, FALSE, TRUE);
 	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
 	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
 	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
@@ -1519,7 +1519,7 @@ void show_privacy_options() {
 
 	build_allow_list();
 
-	bbox = gtk_hbox_new(TRUE, 5);
+	bbox = gtk_hbox_new(TRUE, 0);
 	gtk_widget_show(bbox);
 	gtk_table_attach(GTK_TABLE(table), bbox, 0, 1, 4, 5, GTK_FILL, 0, 0, 0);
 
@@ -1527,13 +1527,13 @@ void show_privacy_options() {
 	gtk_size_group_add_widget(sg2, button);
 	gtk_widget_show(button);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), (void *)TRUE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
 	gtk_size_group_add_widget(sg2, button);
 	gtk_widget_show(button);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), (void *)TRUE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	deny_type = deny_opt(_("Deny all users"), 2, deny_type);
 	gtk_size_group_add_widget(sg1, deny_type);
@@ -1561,7 +1561,7 @@ void show_privacy_options() {
 
 	build_block_list();
 
-	bbox = gtk_hbox_new(TRUE, 5);
+	bbox = gtk_hbox_new(TRUE, 0);
 	gtk_table_attach(GTK_TABLE(table), bbox, 1, 2, 4, 5, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(bbox);
 
@@ -1569,13 +1569,13 @@ void show_privacy_options() {
 	gtk_size_group_add_widget(sg2, button);
 	gtk_widget_show(button);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), FALSE);	
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
 	gtk_size_group_add_widget(sg2, button);
 	gtk_widget_show(button);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), FALSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
