@@ -2384,11 +2384,11 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		case 0x0001: { /* Paused typing */
-			serv_got_typing_stopped(gc, sn);
+			serv_got_typing(gc, sn, 0, TYPED);
 		} break;
 
 		case 0x0002: { /* Typing */
-			serv_got_typing(gc, sn, 0);
+			serv_got_typing(gc, sn, 0, TYPING);
 		} break;
 
 		default: {
@@ -4323,7 +4323,7 @@ static int gaim_directim_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (typing) {
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
 		debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
-		serv_got_typing(gc,sn,0);
+		serv_got_typing(gc,sn,0, TYPING);
 	} else
 		serv_got_typing_stopped(gc,sn);
 	return 1;

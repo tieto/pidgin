@@ -1348,7 +1348,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			/* a non-message message! */
 			from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
 			if(typing)
-				serv_got_typing(GJ_GC(gjc), from, 0);
+				serv_got_typing(GJ_GC(gjc), from, 0, TYPING);
 			else
 				serv_got_typing_stopped(GJ_GC(gjc), from);
 			g_free(from);

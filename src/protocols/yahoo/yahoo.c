@@ -538,7 +538,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	
 	if (!g_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
 		if (*stat == '1')
-			serv_got_typing(gc, from, 0);
+			serv_got_typing(gc, from, 0, TYPING);
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {

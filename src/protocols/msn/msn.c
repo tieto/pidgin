@@ -656,7 +656,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 	if (!g_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
 			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
 		if (strstr(content,"TypingUser: ") && !ms->chat) {
-			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT);
+			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT, TYPING);
 			return;
 		} 
 

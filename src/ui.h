@@ -419,7 +419,7 @@ extern void update_convo_font();
 extern void set_hide_icons();
 extern void set_convo_titles();
 extern void update_progress(struct conversation *, float);
-extern void show_typing(struct conversation *);
+extern void update_convo_status(struct conversation *, int);
 extern gboolean reset_typing(char *);
 extern void set_anim();
 

@@ -2068,18 +2068,15 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	if (!flags & WFLAG_NOLOG && ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
 				     (!c->is_chat && (im_options & OPT_IM_POPUP))))
 		gdk_window_show(c->window->window);
-	if (flags & WFLAG_RECV)
-		reset_typing(g_strdup(c->name));
 
 	/* tab highlighting */
 	if (c->is_chat && !(chat_options & OPT_CHAT_ONE_WINDOW)) /* if chat but not tabbed chat */
-		return;
-	if (!c->is_chat && !(im_options & OPT_IM_ONE_WINDOW)) /* if convo but not tabbed convo */
 		return;
 	if (!(flags & WFLAG_RECV) && !(flags & WFLAG_SYSTEM))
 		return;
 	if ((c->unseen == 2) || ((c->unseen == 1) && !(flags & WFLAG_NICK)))
 		return;
+
 
 	if (c->is_chat) {
 		int offs;
@@ -2095,41 +2092,15 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				g_list_index(conversations, c))
 			unhighlight = 1;
 	}
-	if ((c->unseen != -1) && unhighlight) /* If there's no typing message
-						 and we're on the same tab, don't bother
-						 changing the color. */
-		return;
 
-	{
-		GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
-		int offs = ((convo_options & OPT_CONVO_COMBINE) &&
-			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
-			g_list_length(conversations) : 0;
-		GList *ws = (c->is_chat ? chats : conversations);
-		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
-							      gtk_notebook_get_nth_page(notebook,
-											offs + g_list_index(ws, c)));
-		GtkStyle *style;
-		style = gtk_style_new();
-		if (!GTK_WIDGET_REALIZED(label))
-			gtk_widget_realize(label);
-		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-		if (!unhighlight && flags & WFLAG_NICK) {
-			style->fg[0].red = 0x0000;
-			style->fg[0].green = 0x0000;
-			style->fg[0].blue = 0xcccc;
-			c->unseen = 2;
-		} else if (!unhighlight) {
-			style->fg[0].red = 0xcccc;
-			style->fg[0].green = 0x0000;
-			style->fg[0].blue = 0x0000;
-			c->unseen = 1;
-		} else {
-			c->unseen = 0;
-		}
-		gtk_widget_set_style(label, style);
-		gtk_style_unref(style);
+	if (!unhighlight && flags & WFLAG_NICK) {
+		c->unseen = 2;
+	} else if (!unhighlight) {
+		c->unseen = 1;
+	} else {
+		c->unseen = 0;
 	}
+	update_convo_status(c, FALSE);
 }
 
 void update_progress(struct conversation *c, float percent) {
@@ -2682,10 +2653,10 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 	gtk_imhtml_to_bottom(c->text);
 }
 
-void show_typing(struct conversation *c) {
-	
-	if (c->is_chat) /* We shouldn't be getting typing notifications from chats. */
+void update_convo_status(struct conversation *c, int typing_state) {
+	if(!c)
 		return;
+	debug_printf("update_convo_status called for %s\n", c->name);
 	if (im_options & OPT_IM_ONE_WINDOW) { /* We'll make the tab green */
 		GtkStyle *style;
 		GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
@@ -2700,26 +2671,54 @@ void show_typing(struct conversation *c) {
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-		style->fg[0].red = 0x0000;
-		style->fg[0].green = 0x9999;
-		style->fg[0].blue = 0x0000;
+		if(typing_state == TYPING) {
+			style->fg[0].red = 0x0000;
+			style->fg[0].green = 0x9999;
+			style->fg[0].blue = 0x0000;
+		} else if(typing_state == TYPED) {
+			style->fg[0].red = 0xfffff;
+			style->fg[0].green = 0xbbbb;
+			style->fg[0].blue = 0x2222;
+		} else if(c->unseen == 2) {
+			style->fg[0].red = 0x0000;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0xcccc;
+		} else if(c->unseen == 1) {
+			style->fg[0].red = 0xcccc;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0x0000;
+		}
 		gtk_widget_set_style(label, style);
 			debug_printf("setting style\n");
 		gtk_style_unref(style);
-		c->unseen = -1;
 	} else {
 		GtkWindow *win = (GtkWindow *)c->window;
-		char *buf;
-		if (strstr(win->title, " [TYPING]"))
-			return;
-		buf = g_malloc(strlen(win->title) + strlen(" [TYPING]") + 1);
-		g_snprintf(buf, 
-			   strlen(win->title) + strlen(" [TYPING]") + 1, "%s [TYPING]", 
-			   win->title);
+		char *buf, *buf2;
+		int len;
+		if(strstr(win->title, _(" [TYPING]"))) {
+			debug_printf("title had TYPING in it\n");
+			len = strlen(win->title) - strlen(_(" [TYPING]"));
+		} else if(strstr(win->title, _(" [TYPED]"))) {
+			debug_printf("title had TYPED in it\n");
+			len = strlen(win->title) - strlen(_(" [TYPED]"));
+		} else {
+			debug_printf("title was free of typing information\n");
+			len = strlen(win->title);
+		}
+		buf = g_malloc(len+1);
+		g_snprintf(buf, len+1, win->title);
+		if(typing_state == TYPING) {
+			buf2 = g_strconcat(buf,_(" [TYPING]"));
+			g_free(buf);
+			buf = buf2;
+		} else if(typing_state == TYPED) {
+			buf2 = g_strconcat(buf,_(" [TYPED]"));
+			g_free(buf);
+			buf = buf2;
+		}
 		gtk_window_set_title(win, buf);
 		g_free(buf);
 	}
-	
 }
 
 /* This returns a boolean, so that it can timeout */
@@ -2729,40 +2728,10 @@ gboolean reset_typing(char *name) {
 		g_free(name);
 		return FALSE;
 	}
-		/* Reset the title (if necessary) */
-	if (c->is_chat) {
-		g_free(name);
-		c->typing_timeout = 0;
-		return FALSE;
-	}
-	if (!(im_options & OPT_IM_ONE_WINDOW)) {
-		GtkWindow *win = (GtkWindow*)c->window;
-		char *new_title;
-		if (strstr(win->title, " [TYPING]")) {
-			new_title = g_malloc(strlen(win->title) - strlen("[TYPING]"));
-			g_snprintf(new_title, strlen(win->title) - strlen("[TYPING]"), win->title);
-			gtk_window_set_title(win, new_title);
-			g_free(new_title);
-			
-		}
-	} else if (c->unseen == -1) {
-		GtkNotebook *notebook = GTK_NOTEBOOK(convo_notebook);
-		int offs = ((convo_options & OPT_CONVO_COMBINE) &&
-			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
-			g_list_length(conversations) : 0;
-		GList *ws = (conversations);
-		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
-							      gtk_notebook_get_nth_page(notebook,
-								      offs + g_list_index(ws, c)));
-		GtkStyle *style;
-		style = gtk_style_new();
-		if (!GTK_WIDGET_REALIZED(label))
-			gtk_widget_realize(label);
-		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-		c->unseen = 0;
-		gtk_widget_set_style(label, style);
-		gtk_style_unref(style);
-	}
+
+	/* Reset the title (if necessary) */
+	update_convo_status(c, FALSE);
+
 	g_free(name);
 	c->typing_timeout = 0;
 	return FALSE;
