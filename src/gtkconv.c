@@ -2793,7 +2793,7 @@ gray_stuff_out(GaimConversation *conv)
 	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
-		
+
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.send_file, FALSE);
@@ -2822,7 +2822,8 @@ gray_stuff_out(GaimConversation *conv)
 		window_icon = get_tab_icon(conv, FALSE);
 	}
 	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
-	g_object_unref(G_OBJECT(window_icon));
+	if (window_icon != NULL)
+		g_object_unref(G_OBJECT(window_icon));
 }
 
 static void
