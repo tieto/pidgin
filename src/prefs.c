@@ -1602,22 +1602,22 @@ void prefs_notebook_init() {
 	GtkCTreeNode *p = NULL;
 	GtkCTreeNode *c = NULL;
 #endif	
-	prefs_notebook_add_page("Interface", NULL, interface_page(), &p, NULL, a++);
-	prefs_notebook_add_page("Fonts", NULL, font_page(), &c, &p, a++);
-	prefs_notebook_add_page("Messages", NULL, messages_page(), &c, &p, a++);
-	prefs_notebook_add_page("Shortcuts", NULL, hotkeys_page(), &c, &p, a++);
-	prefs_notebook_add_page("Buddy List", NULL, list_page(), &c, &p, a++);
-	prefs_notebook_add_page("IM", NULL, im_page(), &c, &p, a++);
-	prefs_notebook_add_page("Chat", NULL, chat_page(), &c, &p, a++);
-	prefs_notebook_add_page("Tabs", NULL, tab_page(), &c, &p, a++);
-	prefs_notebook_add_page("Proxy", NULL, proxy_page(), &p, NULL, a++);
-	prefs_notebook_add_page("Browser", NULL, browser_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("IM Window"), NULL, im_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Chat Window"), NULL, chat_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, a++);
 
-	prefs_notebook_add_page("Logging", NULL, logging_page(), &p, NULL, a++);
-	prefs_notebook_add_page("Sounds", NULL, sound_page(), &p, NULL, a++);
-	prefs_notebook_add_page("Sound Events", NULL, sound_events_page(), &c, &p, a++);
-	prefs_notebook_add_page("Away / Idle", NULL, away_page(), &p, NULL, a++);
-	prefs_notebook_add_page("Away Messages", NULL, away_message_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, a++);
+	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, a++);
+	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, a++);
 }
 
 void show_prefs() 

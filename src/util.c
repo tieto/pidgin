@@ -1132,7 +1132,7 @@ char *convert_string(char *str, const char *destset, const char *srcset)
 	char *ret;
 
 	if (!str) 
-		return g_strdup("");
+		return NULL; 
 	buf = g_malloc(strlen(str)*4);
 	insize = strlen(str);
 	inptr = str;
