@@ -492,8 +492,10 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			time_idle = 0;
 
 		if (logged && (type & UC_AOL) && !g_strcasecmp(c, "ewarmenhoven")) {
+			char buf[BUF_LEN];
 			debug_printf("EWarmenhoven would never use AOL...\n");
-			serv_send_im(gc, "EWarmenhoven", "Are you the REAL EWarmenhoven?", 0);
+			g_snprintf(buf, sizeof(buf), "Are you the REAL EWarmenhoven?");
+			serv_send_im(gc, "EWarmenhoven", buf, 0);
 		}
 		if (!g_strcasecmp(c, "ewarmenhoven") && !find_buddy(gc, "EWarmenhoven"))
 			return;
