@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -223,20 +223,21 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	char *new_msg = NULL;
 	char *new_domain = NULL;
 
-	if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_ERROR)
+	if ((flags & G_LOG_LEVEL_ERROR) == G_LOG_LEVEL_ERROR)
 		level = GAIM_DEBUG_ERROR;
-	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_CRITICAL)
+	else if ((flags & G_LOG_LEVEL_CRITICAL) == G_LOG_LEVEL_CRITICAL)
 		level = GAIM_DEBUG_FATAL;
-	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_WARNING)
+	else if ((flags & G_LOG_LEVEL_WARNING) == G_LOG_LEVEL_WARNING)
 		level = GAIM_DEBUG_WARNING;
-	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_MESSAGE)
+	else if ((flags & G_LOG_LEVEL_MESSAGE) == G_LOG_LEVEL_MESSAGE)
 		level = GAIM_DEBUG_INFO;
-	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_INFO)
+	else if ((flags & G_LOG_LEVEL_INFO) == G_LOG_LEVEL_INFO)
 		level = GAIM_DEBUG_INFO;
-	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_DEBUG)
+	else if ((flags & G_LOG_LEVEL_DEBUG) == G_LOG_LEVEL_DEBUG)
 		level = GAIM_DEBUG_MISC;
-	else {
-		gaim_debug(GAIM_DEBUG_WARNING, "gtkdebug",
+	else
+	{
+		gaim_debug_warning("gtkdebug",
 				   "Unknown glib logging level in %d\n", flags);
 
 		level = GAIM_DEBUG_MISC; /* This will never happen. */
@@ -248,9 +249,10 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	if (domain != NULL)
 		new_domain = gaim_utf8_try_convert(domain);
 
-	if (new_msg != NULL) {
-		gaim_debug(GAIM_DEBUG_MISC, new_domain ? new_domain : "g_log", 
-			   "%s\n", new_msg);
+	if (new_msg != NULL)
+	{
+		gaim_debug(level, (new_domain != NULL ? new_domain : "g_log"),
+				   "%s\n", new_msg);
 
 		g_free(new_msg);
 	}
@@ -382,7 +384,6 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 		if (level == GAIM_DEBUG_FATAL) {
 			gchar *temp = s;
 
-			g_free(s);
 			s = g_strdup_printf("<b>%s</b>", temp);
 			g_free(temp);
 		}
