@@ -398,6 +398,9 @@ gaim_signal_emit(void *instance, const char *signal, ...)
 {
 	va_list args;
 
+	g_return_if_fail(instance != NULL);
+	g_return_if_fail(signal   != NULL);
+
 	va_start(args, signal);
 	gaim_signal_emit_vargs(instance, signal, args);
 	va_end(args);
