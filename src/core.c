@@ -76,7 +76,7 @@ gaim_core_init(const char *ui)
 	gaim_proxy_init();
 	gaim_sound_init();
 	gaim_pounces_init();
-	gaim_xfer_init();
+	gaim_xfers_init();
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
