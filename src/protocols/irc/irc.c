@@ -41,7 +41,7 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
 static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne);
 static GList *irc_away_states(GaimConnection *gc);
-static GList *irc_actions(GaimConnection *gc);
+static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
@@ -59,8 +59,9 @@ static GaimPlugin *_irc_plugin = NULL;
 
 static const char *status_chars = "@+%&";
 
-static void irc_view_motd(GaimConnection *gc)
+static void irc_view_motd(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	struct irc_conn *irc;
 	char *title;
 
@@ -131,16 +132,13 @@ static GList *irc_away_states(GaimConnection *gc)
 	return g_list_append(NULL, (gpointer)GAIM_AWAY_CUSTOM);
 }
 
-static GList *irc_actions(GaimConnection *gc)
+static GList *irc_actions(GaimPlugin *plugin, gpointer context)
 {
-	struct proto_actions_menu *pam;
 	GList *list = NULL;
+	GaimPluginAction *act = NULL;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("View MOTD");
-	pam->callback = irc_view_motd;
-	pam->gc = gc;
-	list = g_list_append(list, pam);
+	act = gaim_plugin_action_new(_("View MOTD"), irc_view_motd);
+	list = g_list_append(list, act);
 
 	return list;
 }
@@ -547,7 +545,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	irc_away_states,
-	irc_actions,
 	irc_buddy_menu,
 	irc_chat_join_info,
 	irc_login,
@@ -621,7 +618,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	irc_actions
 };
 
 static void _init_plugin(GaimPlugin *plugin)

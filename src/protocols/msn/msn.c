@@ -182,8 +182,9 @@ close_mobile_page_cb(MsnMobileData *data, const char *entry)
 /* -- */
 
 static void
-msn_show_set_friendly_name(GaimConnection *gc)
+msn_show_set_friendly_name(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Set your friendly name."),
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
@@ -193,8 +194,9 @@ msn_show_set_friendly_name(GaimConnection *gc)
 }
 
 static void
-msn_show_set_home_phone(GaimConnection *gc)
+msn_show_set_home_phone(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your home phone number."), NULL,
@@ -204,8 +206,9 @@ msn_show_set_home_phone(GaimConnection *gc)
 }
 
 static void
-msn_show_set_work_phone(GaimConnection *gc)
+msn_show_set_work_phone(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your work phone number."), NULL,
@@ -215,8 +218,9 @@ msn_show_set_work_phone(GaimConnection *gc)
 }
 
 static void
-msn_show_set_mobile_phone(GaimConnection *gc)
+msn_show_set_mobile_phone(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
@@ -226,8 +230,9 @@ msn_show_set_mobile_phone(GaimConnection *gc)
 }
 
 static void
-msn_show_set_mobile_pages(GaimConnection *gc)
+msn_show_set_mobile_pages(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
@@ -368,52 +373,38 @@ msn_away_states(GaimConnection *gc)
 }
 
 static GList *
-msn_actions(GaimConnection *gc)
+msn_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Friendly Name");
-	pam->callback = msn_show_set_friendly_name;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
-
+	act = gaim_plugin_action_new(_("Set Friendly Name"),
+			msn_show_set_friendly_name);
+	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Home Phone Number");
-	pam->callback = msn_show_set_home_phone;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set Home Phone Number"),
+			msn_show_set_home_phone);
+	m = g_list_append(m, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Work Phone Number");
-	pam->callback = msn_show_set_work_phone;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set Work Phone Number"),
+			msn_show_set_work_phone);
+	m = g_list_append(m, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Mobile Phone Number");
-	pam->callback = msn_show_set_mobile_phone;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
-
+	act = gaim_plugin_action_new(_("Set Mobile Phone Number"),
+			msn_show_set_mobile_phone);
+	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
 #if 0
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Enable/Disable Mobile Devices");
-	pam->callback = msn_show_set_mobile_support;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Enable/Disable Mobile Devices"),
+			msn_show_set_mobile_support);
+	m = g_list_append(m, act);
 #endif
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Allow/Disallow Mobile Pages");
-	pam->callback = msn_show_set_mobile_pages;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Allow/Disallow Mobile Pages"),
+			msn_show_set_mobile_pages);
+	m = g_list_append(m, act);
 
 	return m;
 }
@@ -1635,7 +1626,6 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_status_text,
 	msn_tooltip_text,
 	msn_away_states,
-	msn_actions,
 	msn_buddy_menu,
 	NULL,
 	msn_login,
@@ -1710,7 +1700,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	&prefs_info,                                      /**< prefs_info     */
-	NULL
+	msn_actions
 };
 
 static void

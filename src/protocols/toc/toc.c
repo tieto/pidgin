@@ -1519,41 +1519,37 @@ static GList *toc_away_states(GaimConnection *gc)
 }
 
 static void
-show_set_info(GaimConnection *gc)
+show_set_info(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
 }
 
 static void
-change_pass(GaimConnection *gc)
+change_pass(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_account_request_change_password(gaim_connection_get_account(gc));
 }
 
-static GList *toc_actions(GaimConnection *gc)
+static GList *toc_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set User Info");
-	pam->callback = show_set_info;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set User Info"),
+			show_set_info);
+	m = g_list_append(m, act);
 
 #if 0
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Dir Info");
-	pam->callback = show_set_dir;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set Dir Info"),
+			show_set_dir);
+	m = g_list_append(m, act);
 #endif
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Change Password");
-	pam->callback = change_pass;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Change Password"),
+			change_pass);
+	m = g_list_append(m, act);
 
 	return m;
 }
@@ -2107,7 +2103,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	toc_away_states,
-	toc_actions,
 	toc_buddy_menu,
 	toc_chat_info,
 	toc_login,
@@ -2182,7 +2177,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	toc_actions
 };
 
 static void

@@ -572,7 +572,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	nap_buddy_menu,
 	nap_chat_info,
 	nap_login,

@@ -446,7 +446,10 @@ static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const cha
 	gboolean onlist = 0;
 	char *oname = NULL;
 
-	if (!g_hash_table_lookup_extended(ht, gaim_normalize(account, name), (gpointer *) &oname, (gpointer *) &list))
+	char **oname_p = &oname;
+	GSList **list_p = &list;
+
+	if (!g_hash_table_lookup_extended(ht, gaim_normalize(account, name), (gpointer *) oname_p, (gpointer *) list_p))
 		list = gaim_find_buddies(account, name);
 	else
 		g_hash_table_steal(ht, name);
@@ -2497,37 +2500,35 @@ static void yahoo_act_id(GaimConnection *gc, const char *entry)
 	gaim_connection_set_display_name(gc, entry);
 }
 
-static void yahoo_show_act_id(GaimConnection *gc)
+static void yahoo_show_act_id(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Active which ID?"), NULL,
 					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL, gc);
 }
 
-static void yahoo_show_chat_goto(GaimConnection *gc)
+static void yahoo_show_chat_goto(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Join who in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL, gc);
 }
 
-static GList *yahoo_actions(GaimConnection *gc) {
+static GList *yahoo_actions(GaimPlugin *plugin, gpointer context) {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Activate ID...");
-	pam->callback = yahoo_show_act_id;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Activate ID..."),
+			yahoo_show_act_id);
+	m = g_list_append(m, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Join user in chat...");
-	pam->callback = yahoo_show_chat_goto;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Join user in chat..."),
+			yahoo_show_chat_goto);
+	m = g_list_append(m, act);
 
 	return m;
 }
@@ -3222,7 +3223,6 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_status_text,
 	yahoo_tooltip_text,
 	yahoo_away_states,
-	yahoo_actions,
 	yahoo_buddy_menu,
 	yahoo_c_info,
 	yahoo_login,
@@ -3302,7 +3302,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	yahoo_actions
 };
 
 static void

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9772 2004-05-21 12:07:26Z lschiere $
+ * $Id: gg.c 9791 2004-05-22 17:33:38Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -924,9 +924,11 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 }
 
 static void
-change_pass(GaimConnection *gc)
+change_pass(GaimPluginAction *action)
 {
-	gaim_account_request_change_password(gaim_connection_get_account(gc));
+	GaimConnection *gc = (GaimConnection *) action->context;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	gaim_account_request_change_password(account);
 }
 
 #if 0
@@ -1391,46 +1393,32 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 	}
 }
 
-static GList *agg_actions(GaimConnection *gc)
+static GList *agg_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act = NULL;
 
 #if 0
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Directory Search");
-	pam->callback = show_find_info;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
-
+	act = gaim_plugin_action_new(_("Directory Search"), show_find_info);
+	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 #endif
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Change Password");
-	pam->callback = change_pass;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Change Password"), change_pass);
+	m = g_list_append(m, act);
 
 #if 0
-	m = g_list_append(m, NULL);
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Import Buddy List from Server");
-	pam->callback = import_buddies_server;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Import Buddy List from Server"),
+			import_buddies_server);
+	m = g_list_append(m, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Export Buddy List to Server");
-	pam->callback = export_buddies_server;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Export Buddy List to Server"),
+			export_buddies_server);
+	m = g_list_append(m, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Delete Buddy List from Server");
-	pam->callback = delete_buddies_server;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Delete Buddy List from Server"),
+			delete_buddies_server);
+	m = g_list_append(m, act);
 #endif
 
 	return m;
@@ -1542,7 +1530,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	agg_away_states,
-	agg_actions,
 	agg_buddy_menu,
 	NULL,
 	agg_login,
@@ -1617,7 +1604,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	agg_actions
 };
 
 static void

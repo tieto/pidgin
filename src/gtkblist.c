@@ -23,6 +23,7 @@
 #include "gtkinternal.h"
 
 #include "account.h"
+#include "connection.h"
 #include "core.h"
 #include "debug.h"
 #include "multi.h"
@@ -4930,117 +4931,108 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 
 #endif
 
+
 static void
-proto_act(GtkObject *obj, struct proto_actions_menu *pam)
+plugin_act(GtkObject *obk, GaimPluginAction *pam)
 {
-	if (pam->callback && pam->gc)
-		pam->callback(pam->gc);
+	if (pam->callback) pam->callback(pam);
 }
 
 
+
 static void
-plugin_act(GtkObject *obk, struct plugin_actions_menu *pam)
+build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 {
-	if (pam->callback && pam->plugin)
-		pam->callback(pam->plugin);
+	GtkWidget *menuitem = NULL;
+	GaimPluginAction *action = NULL;
+	GList *l, *ll;
+
+	for (l = ll = GAIM_PLUGIN_ACTIONS(plugin, context); l; l = l->next) {
+		if (l->data) {
+			action = (GaimPluginAction *) l->data;
+			action->plugin = plugin;
+			action->context = context;
+
+			menuitem = gtk_menu_item_new_with_label(action->label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(plugin_act), action);
+			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
+			gtk_widget_show(menuitem);
+		}
+		else
+			gaim_separator(menu);
+	}
+
+	g_list_free(ll);
 }
 
 
 void
 gaim_gtk_blist_update_protocol_actions(void)
 {
-	GtkWidget *menuitem;
-	GtkWidget *submenu;
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	GtkWidget *menuitem, *submenu;
 	GList *l;
-	GList *c;
-	struct proto_actions_menu *pam;
 	GaimConnection *gc = NULL;
+	GaimPlugin *plugin = NULL;
 	int count = 0;
-	char buf[256];
 
-	if (!protomenu)
+	if (! protomenu)
 		return;
 
-	for (l = gtk_container_get_children(GTK_CONTAINER(protomenu));
-		 l != NULL;
-		 l = l->next) {
-
+	for (l = gtk_container_get_children(GTK_CONTAINER(protomenu)); l; l = l->next) {
+		GaimPluginAction *action;
+		
 		menuitem = l->data;
-		pam = g_object_get_data(G_OBJECT(menuitem), "proto_actions_menu");
-
-		if (pam)
-			g_free(pam);
+		action = (GaimPluginAction *) g_object_get_data(G_OBJECT(menuitem),
+				"plugin_action");
+		g_free(action);
 
 		gtk_container_remove(GTK_CONTAINER(protomenu), GTK_WIDGET(menuitem));
 	}
 
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-		gc = c->data;
+	for (l = gaim_connections_get_all(); l; l = l->next) {
+		gc = l->data;
+		plugin = gc->prpl;
 
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		if (prpl_info->actions && gc->login_time)
-			count++;
+		/* no need to count past 2, so don't */
+		if (gc->login_time && GAIM_PLUGIN_HAS_ACTIONS(plugin) && count++)
+			break;
 	}
 
-	if (!count) {
-		g_snprintf(buf, sizeof(buf), _("No actions available"));
-		menuitem = gtk_menu_item_new_with_label(buf);
+	
+	if (count == 0) {
+		menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
+		gtk_widget_set_sensitive(menuitem, FALSE);
 		gtk_widget_show(menuitem);
-		return;
+
 	}
-
+	else
 	if (count == 1) {
-		GList *act;
-
-		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-			gc = c->data;
-
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-			if (prpl_info->actions && gc->login_time)
-				break;
-		}
-
-		for (act = prpl_info->actions(gc); act != NULL; act = act->next) {
-			if (act->data) {
-				struct proto_actions_menu *pam = act->data;
-				menuitem = gtk_menu_item_new_with_label(pam->label);
-				gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
-				g_signal_connect(G_OBJECT(menuitem), "activate",
-								 G_CALLBACK(proto_act), pam);
-				g_object_set_data(G_OBJECT(menuitem), "proto_actions_menu", pam);
-				gtk_widget_show(menuitem);
-			}
-			else
-				gaim_separator(protomenu);
-		}
+		/* plugin and gc will be set from the counting loop already */
+		build_plugin_actions(protomenu, plugin, gc);
 	}
 	else {
-		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		for (l = gaim_connections_get_all(); l; l = l->next) {
 			GaimAccount *account;
-			GList *act;
 			GdkPixbuf *pixbuf, *scale;
 			GtkWidget *image;
+			char *buf;
 
-			gc = c->data;
+			gc = l->data;
+			plugin = gc->prpl;
 
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-			if (!prpl_info->actions || !gc->login_time)
+			if (gc->login_time == 0	|| !GAIM_PLUGIN_HAS_ACTIONS(plugin))
 				continue;
 
 			account = gaim_connection_get_account(gc);
-
-			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gaim_account_get_username(account),
-					   gc->prpl->info->name);
-
+			buf = g_strconcat(gaim_account_get_username(account), " (",
+					plugin->info->name, ")", NULL);
 			menuitem = gtk_image_menu_item_new_with_label(buf);
+			g_free(buf);
 
-			pixbuf = create_prpl_icon(gc->account);
+			pixbuf = create_prpl_icon(account);
 			if(pixbuf) {
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 						GDK_INTERP_BILINEAR);
@@ -5048,8 +5040,7 @@ gaim_gtk_blist_update_protocol_actions(void)
 				g_object_unref(G_OBJECT(pixbuf));
 				g_object_unref(G_OBJECT(scale));
 				gtk_widget_show(image);
-				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
-											  image);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 			}
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
@@ -5059,99 +5050,64 @@ gaim_gtk_blist_update_protocol_actions(void)
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
-			for (act = prpl_info->actions(gc); act != NULL; act = act->next) {
-				if (act->data) {
-					struct proto_actions_menu *pam = act->data;
-					menuitem = gtk_menu_item_new_with_label(pam->label);
-					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-					g_signal_connect(G_OBJECT(menuitem), "activate",
-									 G_CALLBACK(proto_act), pam);
-					g_object_set_data(G_OBJECT(menuitem), "proto_actions_menu",
-									  pam);
-					gtk_widget_show(menuitem);
-				}
-				else
-					gaim_separator(submenu);
-			}
+			build_plugin_actions(submenu, plugin, gc);
 		}
 	}
 }
 
 
-
 void
 gaim_gtk_blist_update_plugin_actions(void)
 {
-	GtkWidget *menuitem;
-	GtkWidget *submenu;
-	GaimPluginInfo *plugin_info = NULL;
+	GtkWidget *menuitem, *submenu;
+	GaimPlugin *plugin = NULL;
 	GList *l;
-	GList *c;
-	struct plugin_actions_menu *pam;
 	int count = 0;
 
-	if (pluginmenu == NULL)
+	if (! pluginmenu)
 		return;
 
-	for (l = gtk_container_get_children(GTK_CONTAINER(pluginmenu));
-		 l != NULL;
-		 l = l->next) {
+	for (l = gtk_container_get_children(GTK_CONTAINER(pluginmenu)); l; l = l->next) {
+		GaimPluginAction *action;
 
 		menuitem = l->data;
-		pam = g_object_get_data(G_OBJECT(menuitem), "plugin_actions_menu");
-		g_free(pam);
+		action = g_object_get_data(G_OBJECT(menuitem), "plugin_action");
+		g_free(action);
 
 		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(menuitem));
 	}
 
-	for (c = gaim_plugins_get_loaded(); c != NULL; c = c->next) {
-		plugin_info = ((GaimPlugin *)c->data)->info;
-		if (plugin_info->actions)
-			count++;
+	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
+		plugin = (GaimPlugin *) l->data;
+
+		if( !GAIM_IS_PROTOCOL_PLUGIN(plugin) &&
+				GAIM_PLUGIN_HAS_ACTIONS(plugin) && count++)
+			break;
 	}
 
 	if (count == 0) {
 		menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
+		gtk_widget_set_sensitive(menuitem, FALSE);
 		gtk_widget_show(menuitem);
 
 	}
-	else if (count == 1) {
-		GList *act;
-		GaimPlugin *plugin = NULL;
-
-		for (c = gaim_plugins_get_loaded(); c != NULL; c = c->next) {
-			plugin = (GaimPlugin *) c->data;
-			plugin_info = plugin->info;
-			if (plugin_info->actions != NULL)
-				break;
-		}
-
-		for (act = plugin_info->actions(plugin); act != NULL; act = act->next) {
-			if (act->data) {
-				struct plugin_actions_menu *pam = act->data;
-				menuitem = gtk_menu_item_new_with_label(pam->label);
-				gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
-				g_signal_connect(G_OBJECT(menuitem), "activate",
-						G_CALLBACK(plugin_act), pam);
-				g_object_set_data(G_OBJECT(menuitem), "plugin_actions_menu", pam);
-				gtk_widget_show(menuitem);
-			}
-			else
-				gaim_separator(pluginmenu);
-		}
+	else
+	if (count == 1) {
+		/* plugin is already set */
+		build_plugin_actions(pluginmenu, plugin, NULL);
 	}
 	else {
-		for (c = gaim_plugins_get_loaded(); c != NULL; c = c->next) {
-			GList *act;
-			GaimPlugin *plugin;
+		for (l = gaim_plugins_get_loaded(); l; l = l->next) {
+			plugin = (GaimPlugin *) l->data;
 
-			plugin = (GaimPlugin *) c->data;
-			plugin_info = plugin->info;
-			if (plugin_info->actions == NULL)
+			if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
 				continue;
 
-			menuitem = gtk_image_menu_item_new_with_label(plugin_info->name);
+			if (! GAIM_PLUGIN_HAS_ACTIONS(plugin))
+				continue;
+
+			menuitem = gtk_image_menu_item_new_with_label(plugin->info->name);
 			gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
 			gtk_widget_show(menuitem);
 
@@ -5159,20 +5115,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
-			for (act = plugin_info->actions(plugin); act != NULL; act = act->next) {
-				if (act->data) {
-					struct plugin_actions_menu *pam = act->data;
-					menuitem = gtk_menu_item_new_with_label(pam->label);
-					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-					g_signal_connect(G_OBJECT(menuitem), "activate",
-							G_CALLBACK(plugin_act), pam);
-					g_object_set_data(G_OBJECT(menuitem), "plugin_actions_menu", pam);
-					gtk_widget_show(menuitem);
-				}
-				else {
-					gaim_separator(submenu);
-				}
-			}
+			build_plugin_actions(submenu, plugin, NULL);
 		}
 	}
 }

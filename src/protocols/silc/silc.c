@@ -525,8 +525,9 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 }
 
 static void
-silcgaim_attrs(GaimConnection *gc)
+silcgaim_attrs(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	SilcGaim sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
@@ -689,8 +690,9 @@ silcgaim_attrs(GaimConnection *gc)
 }
 
 static void
-silcgaim_detach(GaimConnection *gc)
+silcgaim_detach(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	SilcGaim sg;
 
 	if (!gc)
@@ -705,8 +707,9 @@ silcgaim_detach(GaimConnection *gc)
 }
 
 static void
-silcgaim_view_motd(GaimConnection *gc)
+silcgaim_view_motd(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	SilcGaim sg;
 
 	if (!gc)
@@ -727,30 +730,24 @@ silcgaim_view_motd(GaimConnection *gc)
 }
 
 static GList *
-silcgaim_actions(GaimConnection *gc)
+silcgaim_actions(GaimPlugin *plugin, gpointer context)
 {
-	struct proto_actions_menu *pam;
 	GList *list = NULL;
+	GaimPluginAction *act;
 
 	if (!gaim_account_get_bool(gc->account, "reject-attrs", FALSE)) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Online Status");
-		pam->callback = silcgaim_attrs;
-		pam->gc = gc;
-		list = g_list_append(list, pam);
+		act = gaim_plugin_action_new(_("Online Status"),
+				silcgaim_attrs);
+		list = g_list_append(list, act);
 	}
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Detach From Server");
-	pam->callback = silcgaim_detach;
-	pam->gc = gc;
-	list = g_list_append(list, pam);
+	act = gaim_plugin_action_new(_("Detach From Server"),
+			silcgaim_detach);
+	list = g_list_append(list, act);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("View Message of the Day");
-	pam->callback = silcgaim_view_motd;
-	pam->gc = gc;
-	list = g_list_append(list, pam);
+	act = gaim_plugin_action_new(_("View Message of the Day"),
+			silcgaim_view_motd);
+	list = g_list_append(list, act);
 
 	return list;
 }
@@ -951,7 +948,6 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_status_text,
 	silcgaim_tooltip_text,
 	silcgaim_away_states,
-	silcgaim_actions,
 	silcgaim_buddy_menu,
 	silcgaim_chat_info,
 	silcgaim_login,
@@ -1026,7 +1022,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	&prefs_info,                                      /**< prefs_info     */
-	NULL
+	silcgaim_actions
 };
 
 static void

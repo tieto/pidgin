@@ -3298,7 +3298,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_status_text,
 	novell_tooltip_text,
 	novell_away_states,
-	NULL,						/* prpl_actions */
 	novell_buddy_menu,
 	NULL,						/* chat_info */
 	novell_login,

@@ -7,7 +7,6 @@
 
 #include "connection.h"
 #include "debug.h"
-#include "multi.h"
 #include "plugin.h"
 #include "request.h"
 #include "server.h"
@@ -39,7 +38,7 @@ idle_action_ok(void *ignored, GaimRequestFields *fields)
 
 
 static void
-idle_action(GaimPlugin *plugin)
+idle_action(GaimPluginAction *action)
 {
 	/* Use the super fancy request API */
 
@@ -59,7 +58,7 @@ idle_action(GaimPlugin *plugin)
 	request = gaim_request_fields_new();
 	gaim_request_fields_add_group(request, group);
 
-	gaim_request_fields(plugin,
+	gaim_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Set Account Idle Time"),
 			NULL,
@@ -71,16 +70,14 @@ idle_action(GaimPlugin *plugin)
 
 
 static GList *
-actions(GaimPlugin *plugin)
+actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *l = NULL;
-	struct plugin_actions_menu *pam;
+	GaimPluginAction *act = NULL;
 
-	pam = g_new0(struct plugin_actions_menu, 1);
-	pam->label = _("Set Account Idle Time");
-	pam->callback = idle_action;
-	pam->plugin = plugin;
-	l = g_list_append(l, pam);
+	act = gaim_plugin_action_new(_("Set Account Idle Time"),
+			idle_action);
+	l = g_list_append(l, act);
 
 	return l;
 }

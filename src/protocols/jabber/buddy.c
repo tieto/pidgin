@@ -446,8 +446,9 @@ jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
  * string (if any) into GSLists for the (multi-entry) edit dialog and
  * calls the set_vcard dialog.
  */
-void jabber_setup_set_info(GaimConnection *gc)
+void jabber_setup_set_info(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;

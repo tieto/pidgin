@@ -25,19 +25,6 @@
 #define _MULTI_H_
 
 #include "account.h"
-#include "plugin.h"
-
-struct proto_actions_menu {
-	char *label;
-	void (*callback)(GaimConnection *);
-	GaimConnection *gc;
-};
-
-struct plugin_actions_menu {
-	char *label;
-	void (*callback)(GaimPlugin *);
-	GaimPlugin *plugin;
-};
 
 struct proto_buddy_menu {
 	char *label;

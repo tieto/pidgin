@@ -1017,8 +1017,10 @@ static void jabber_password_change_cb(JabberStream *js,
 	gaim_account_set_password(js->gc->account, p1);
 }
 
-static void jabber_password_change(GaimConnection *gc)
+static void jabber_password_change(GaimPluginAction *action)
 {
+
+	GaimConnection *gc = (GaimConnection *) action->context;
 	JabberStream *js = gc->proto_data;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -1044,23 +1046,19 @@ static void jabber_password_change(GaimConnection *gc)
 			_("Cancel"), NULL, js);
 }
 
-static GList *jabber_actions(GaimConnection *gc)
+static GList *jabber_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set User Info");
-	pam->callback = jabber_setup_set_info;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set User Info"),
+			jabber_setup_set_info);
+	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Password");
-		pam->callback = jabber_password_change;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Change Password"),
+				jabber_password_change);
+		m = g_list_append(m, act);
 	/* } */
 
 	return m;
@@ -1299,7 +1297,6 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_status_text,
 	jabber_tooltip_text,
 	jabber_away_states,
-	jabber_actions,
 	jabber_buddy_menu,
 	jabber_chat_info,
 	jabber_login,
@@ -1374,7 +1371,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	&prefs_info,                                      /**< prefs_info     */
-	NULL
+	jabber_actions
 };
 
 static void

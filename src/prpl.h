@@ -238,7 +238,6 @@ struct _GaimPluginProtocolInfo
 	char *(*tooltip_text)(GaimBuddy *buddy);
 
 	GList *(*away_states)(GaimConnection *gc);
-	GList *(*actions)(GaimConnection *gc);
 
 	GList *(*buddy_menu)(GaimConnection *, const char *);
 	GList *(*chat_info)(GaimConnection *);
@@ -328,7 +327,7 @@ struct _GaimPluginProtocolInfo
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
-#define GAIM_PRPL_API_VERSION 3
+#define GAIM_PRPL_API_VERSION 4
 
 #ifdef __cplusplus
 extern "C" {

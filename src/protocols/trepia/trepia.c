@@ -430,16 +430,14 @@ trepia_tooltip_text(GaimBuddy *b)
 }
 
 static GList *
-trepia_actions(GaimConnection *gc)
+trepia_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	struct proto_actions_menu *pam;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Profile");
-	pam->callback = set_profile;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set Profile"),
+			set_profile);
+	m = g_list_append(m, act);
 
 	return m;
 }
@@ -1215,7 +1213,6 @@ static GaimPluginProtocolInfo prpl_info =
 	trepia_status_text,
 	trepia_tooltip_text,
 	NULL,
-	trepia_actions,
 	trepia_buddy_menu,
 	NULL,
 	trepia_login,
@@ -1290,7 +1287,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	trepia_actions
 };
 
 static void

@@ -1307,7 +1307,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	zephyr_away_states,
-	NULL,
 	zephyr_buddy_menu,
 	zephyr_chat_info,
 	zephyr_login,

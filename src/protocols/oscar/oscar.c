@@ -6737,8 +6737,9 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 	}
 }
 
-static void oscar_show_format_screenname(GaimConnection *gc)
+static void oscar_show_format_screenname(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("New screen name formatting:"), NULL,
 					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_format_screenname),
@@ -6746,8 +6747,9 @@ static void oscar_show_format_screenname(GaimConnection *gc)
 					   gc);
 }
 
-static void oscar_confirm_account(GaimConnection *gc)
+static void oscar_confirm_account(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	OscarData *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
@@ -6759,8 +6761,9 @@ static void oscar_confirm_account(GaimConnection *gc)
 	}
 }
 
-static void oscar_show_email(GaimConnection *gc)
+static void oscar_show_email(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	OscarData *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
@@ -6786,8 +6789,9 @@ static void oscar_change_email(GaimConnection *gc, const char *email)
 	}
 }
 
-static void oscar_show_change_email(GaimConnection *gc)
+static void oscar_show_change_email(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
 					   FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_change_email),
@@ -6795,8 +6799,9 @@ static void oscar_show_change_email(GaimConnection *gc)
 					   gc);
 }
 
-static void oscar_show_awaitingauth(GaimConnection *gc)
+static void oscar_show_awaitingauth(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	OscarData *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
 	GaimBlistNode *gnode, *cnode, *bnode;
@@ -6850,8 +6855,9 @@ static void search_by_email_cb(GaimConnection *gc, const char *email)
 	aim_search_address(od->sess, od->conn, email);
 }
 
-static void oscar_show_find_email(GaimConnection *gc)
+static void oscar_show_find_email(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, _("Find Buddy by E-mail"),
 					   _("Search for a buddy by e-mail address"),
 					   _("Type the e-mail address of the buddy you are "
@@ -6880,31 +6886,36 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 }
 #endif
 
-static void oscar_show_set_info(GaimConnection *gc)
+static void oscar_show_set_info(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
 }
 
-static void oscar_show_set_info_icqurl(GaimConnection *gc)
+static void oscar_show_set_info_icqurl(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_notify_uri(gc, "http://web.icq.com/whitepages/login/1,,,00.html");
 }
 
-static void oscar_change_pass(GaimConnection *gc)
+static void oscar_change_pass(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_account_request_change_password(gaim_connection_get_account(gc));
 }
 
-static void oscar_show_chpassurl(GaimConnection *gc)
+static void oscar_show_chpassurl(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	OscarData *od = gc->proto_data;
 	gchar *substituted = gaim_strreplace(od->sess->authinfo->chpassurl, "%s", gaim_account_get_username(gaim_connection_get_account(gc)));
 	gaim_notify_uri(gc, substituted);
 	g_free(substituted);
 }
 
-static void oscar_show_imforwardingurl(GaimConnection *gc)
+static void oscar_show_imforwardingurl(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
 }
 
@@ -6941,107 +6952,80 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 }
 
 
-static GList *oscar_actions(GaimConnection *gc)
+static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 {
+	GaimConnection *gc = (GaimConnection *) context;
 	OscarData *od = gc->proto_data;
-	struct proto_actions_menu *pam;
 	GList *m = NULL;
+	GaimPluginAction *act;
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set User Info...");
-	pam->callback = oscar_show_set_info;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set User Info..."),
+			oscar_show_set_info);
+	m = g_list_append(m, act);
 
 	if (od->icq) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Set User Info (URL)...");
-		pam->callback = oscar_show_set_info_icqurl;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Set User Info (URL)..."),
+				oscar_show_set_info_icqurl);
+		m = g_list_append(m, act);
 	}
 
 #if 0
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Set Available Message...");
-	pam->callback = oscar_show_setavailmsg;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Set Available Message..."),
+			oscar_show_setavailmsg);
+	m = g_list_append(m, act);
 #endif
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Change Password...");
-	pam->callback = oscar_change_pass;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Change Password..."),
+			oscar_change_pass);
+	m = g_list_append(m, act);
 
 	if (od->sess->authinfo->chpassurl) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Password (URL)");
-		pam->callback = oscar_show_chpassurl;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
-	}
+		act = gaim_plugin_action_new(_("Change Password (URL)"),
+				oscar_show_chpassurl);
+		m = g_list_append(m, act);
 
-	if (od->sess->authinfo->chpassurl) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Configure IM Forwarding (URL)");
-		pam->callback = oscar_show_imforwardingurl;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Configure IM Forwarding (URL)"),
+				oscar_show_imforwardingurl);
+		m = g_list_append(m, act);
 	}
 
 	if (!od->icq) {
 		/* AIM actions */
 		m = g_list_append(m, NULL);
 
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Format Screen Name...");
-		pam->callback = oscar_show_format_screenname;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Format Screen Name..."),
+				oscar_show_format_screenname);
+		m = g_list_append(m, act);
 
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Confirm Account");
-		pam->callback = oscar_confirm_account;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Confirm Account"),
+				oscar_confirm_account);
+		m = g_list_append(m, act);
 
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Display Currently Registered Address");
-		pam->callback = oscar_show_email;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Display Currently Registered Address"),
+				oscar_show_email);
+		m = g_list_append(m, act);
 
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Currently Registered Address...");
-		pam->callback = oscar_show_change_email;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
+		act = gaim_plugin_action_new(_("Change Currently Registered Address..."),
+				oscar_show_change_email);
+		m = g_list_append(m, act);
 	}
 
 	m = g_list_append(m, NULL);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Show Buddies Awaiting Authorization");
-	pam->callback = oscar_show_awaitingauth;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Show Buddies Awaiting Authorization"),
+			oscar_show_awaitingauth);
+	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
 
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Search for Buddy by Email...");
-	pam->callback = oscar_show_find_email;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Search for Buddy by Email..."),
+			oscar_show_find_email);
+	m = g_list_append(m, act);
 
 #if 0
-	pam = g_new0(struct proto_actions_menu, 1);
-	pam->label = _("Search for Buddy by Information");
-	pam->callback = show_find_info;
-	pam->gc = gc;
-	m = g_list_append(m, pam);
+	act = gaim_plugin_action_new(_("Search for Buddy by Information"),
+			show_find_info);
+	m = g_list_append(m, act);
 #endif
 
 	return m;
@@ -7088,7 +7072,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_status_text,
 	oscar_tooltip_text,
 	oscar_away_states,
-	oscar_actions,
 	oscar_buddy_menu,
 	oscar_chat_info,
 	oscar_login,
@@ -7169,7 +7152,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	NULL
+	oscar_actions
 };
 
 static void
