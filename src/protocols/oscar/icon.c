@@ -59,6 +59,7 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	aim_rxcallback_t userfunc;
 	int i;
 	char *sn;
+	int ret = 0;
 	fu16_t flags, iconlen;
 	fu8_t number, iconcsumlen, *iconcsum, *icon;
 
@@ -71,13 +72,13 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	icon = aimbs_getraw(bs, iconlen);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, sn, iconcsum, iconcsumlen, icon, iconlen);
+		ret = userfunc(sess, rx, sn, iconcsum, iconcsumlen, icon, iconlen);
 
 	free(sn);
 	free(iconcsum);
 	free(icon);
 
-	return 0;
+	return ret;
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
