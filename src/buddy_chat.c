@@ -306,6 +306,33 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
         
         gtk_html_thaw(GTK_HTML(b->text));
         
+	if (general_options & OPT_GEN_POPUP_CHAT)
+		gdk_window_show(b->window->window);
+
+	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(b->name)) {
+		char *t1;
+		FILE *fd;
+
+		t1 = g_malloc(256);
+		snprintf(t1, 256, "%s.chat", b->name);
+		fd = open_log_file(t1);
+		g_free(t1);
+		if (general_options & OPT_GEN_STRIP_HTML) {
+			t1 = strip_html(message);
+			if (display_options & OPT_DISP_SHOW_TIME)
+				fprintf(fd, "%s %s %s\n", date(), str, t1);
+			else
+				fprintf(fd, "%s %s\n", str, t1);
+			g_free(t1);
+		} else {
+			if (display_options & OPT_DISP_SHOW_TIME)
+				fprintf(fd, "%s %s %s\n", date(), str, message);
+			else
+				fprintf(fd, "%s %s\n", str, message);
+		}
+		fclose(fd);
+	}
+
 	g_free(str);
 	g_free(buf);
 }

@@ -376,7 +376,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 381 $"
+#define REVISION "gaim:$Revision: 383 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -454,6 +454,7 @@ extern int general_options;
 #define OPT_GEN_DISCARD_WHEN_AWAY 0x00002000
 #define OPT_GEN_NEAR_APPLET	0x00004000
 #define OPT_GEN_CHECK_SPELLING	0x00008000
+#define OPT_GEN_POPUP_CHAT	0x00010000
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME       0x00000001
@@ -533,7 +534,7 @@ extern gint linkify_text(char *);
 extern void aol_icon(GdkWindow *);
 extern int query_state();
 extern void set_state(int);
-extern FILE *open_log_file (struct conversation *c);
+extern FILE *open_log_file (char *);
 extern char *sec_to_text(int);
 extern struct aim_user *find_user(const char *);
 extern char *full_date();

@@ -108,7 +108,7 @@ struct conversation *new_conversation(char *name)
 	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
 		FILE *fd;
 
-		fd = open_log_file(c);
+		fd = open_log_file(c->name);
 		if (!(general_options & OPT_GEN_STRIP_HTML))
 			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", full_date()); 
 		else
@@ -870,7 +870,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                         } else {
                                 t1 = what;
                         }
-                        fd = open_log_file(c);
+                        fd = open_log_file(c->name);
                         fprintf(fd, "%s\n", t1);
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {
@@ -1008,7 +1008,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                                 t1 = buf;
                                 t2 = what;
                         }
-                        fd = open_log_file(c);
+                        fd = open_log_file(c->name);
                         fprintf(fd, "%s%s\n", t1, t2);
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {

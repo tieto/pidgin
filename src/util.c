@@ -305,7 +305,7 @@ gint linkify_text(char *text)
 }
 
 
-FILE *open_log_file (struct conversation *c)
+FILE *open_log_file (char *name)
 {
         char *buf;
         char *buf2;
@@ -318,7 +318,7 @@ FILE *open_log_file (struct conversation *c)
 
         if (!(general_options & OPT_GEN_LOG_ALL)) {
 
-                l = find_log_info(c->name);
+                l = find_log_info(name);
                 if (!l)
                         return NULL;
 
@@ -329,7 +329,7 @@ FILE *open_log_file (struct conversation *c)
 
                 if (flag) { /* is a new file */
                         fprintf(fd, "<HTML><HEAD><TITLE>" );
-                        fprintf(fd, "IM Sessions with %s", c->name );
+                        fprintf(fd, "IM Sessions with %s", name );
                         fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n" );
                 }
 
@@ -381,7 +381,7 @@ FILE *open_log_file (struct conversation *c)
                 fclose(fd);
 
         
-        g_snprintf(log_all_file, 256, "%s/.gaim/%s/%s.log", getenv("HOME"), current_user->username, normalize(c->name));
+        g_snprintf(log_all_file, 256, "%s/.gaim/%s/%s.log", getenv("HOME"), current_user->username, normalize(name));
 
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
@@ -393,7 +393,7 @@ FILE *open_log_file (struct conversation *c)
 
         if (flag) { /* is a new file */
 		fprintf(fd, "<HTML><HEAD><TITLE>" );
-		fprintf(fd, "IM Sessions with %s", c->name );
+		fprintf(fd, "IM Sessions with %s", name );
 		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n" );
         }
 
