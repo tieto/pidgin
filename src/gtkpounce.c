@@ -866,7 +866,6 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		}
 	}
 
-#ifndef _WIN32
 	if (gaim_pounce_action_is_enabled(pounce, "execute-command")) {
 		const char *command;
 
@@ -874,6 +873,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 												   "command");
 
 		if (command != NULL) {
+#ifndef _WIN32
 			int pid = fork();
 
 			if (pid == 0) {
@@ -888,9 +888,19 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 				_exit(0);
 			}
+#else
+			STARTUPINFO StartInfo;
+			PROCESS_INFORMATION ProcInfo;
+
+			memset(&ProcInfo, 0, sizeof(ProcInfo));
+			memset(&StartInfo, 0 , sizeof(StartInfo));
+			StartInfo.cb = sizeof(StartInfo);
+			CreateProcess(NULL, (char *)command, NULL, NULL, 0, 0, NULL, NULL, &StartInfo, &ProcInfo);
+                        gaim_debug(GAIM_DEBUG_INFO, "pounce", "Pounce execute command called for: %s\n", command);
+
+#endif
 		}
 	}
-#endif /* _WIN32 */
 
 	if (gaim_pounce_action_is_enabled(pounce, "play-sound")) {
 		const char *sound;
