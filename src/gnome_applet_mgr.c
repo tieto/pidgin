@@ -68,6 +68,8 @@ GdkPixmap *icon_away_bm=NULL;
 
 static GtkAllocation get_applet_pos(gboolean);
 
+gint sizehint=48;
+
 /***************************************************************
 **
 ** function load_applet_icon
@@ -119,6 +121,27 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 	free(path);
 	return result;
 }
+/***************************************************************
+**
+** function applet_change_pixel_size
+** visibility - private
+**
+** input:
+**	w - applet that called the signal
+**	size - size of panel
+**	data - extra data (in this case NULL)
+**
+** description - changes the size of the applet when the panel size
+**	changes
+**
+***************************************************************/
+#ifdef HAVE_PANEL_PIXEL_SIZE
+void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
+{
+	sizehint = size;
+	update_pixmaps();
+}
+#endif
 
 /***************************************************************
 **
@@ -191,13 +214,14 @@ void update_pixmaps() {
 		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_PENGUIN_CONNECT);
 		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_ONLINE);
 	}
-	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 32, 34,
+	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_offline_pm, &icon_offline_bm );
-	load_applet_icon( GAIM_GNOME_CONNECT_ICON, 32, 34,
+	load_applet_icon( GAIM_GNOME_CONNECT_ICON, (sizehint-16), (sizehint-12),
 			&icon_connect_pm, &icon_connect_bm );
-	load_applet_icon( GAIM_GNOME_ONLINE_ICON, 32, 34,
+	load_applet_icon( GAIM_GNOME_ONLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_online_pm, &icon_online_bm );
 	update_applet((gpointer *)applet);
+	gtk_widget_set_usize(appletframe, sizehint, sizehint);
 }
 
 
@@ -530,9 +554,11 @@ gint init_applet_mgr(int argc, char *argv[]) {
 				GDK_BUTTON_PRESS_MASK);
 
         appletframe = gtk_frame_new(NULL);
-        
+#ifdef HAVE_PANEL_PIXEL_SIZE
+	gtk_widget_set_usize(appletframe, 5, 5);
+#else
         gtk_widget_set_usize(appletframe, 48, 48);
-        
+#endif   
 	
 	/*load offline icon*/
 	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 32, 32,
@@ -590,6 +616,11 @@ gint init_applet_mgr(int argc, char *argv[]) {
 					      
 	gtk_signal_connect( GTK_OBJECT(applet), "button_press_event", GTK_SIGNAL_FUNC( AppletClicked), NULL);
 
+#ifdef HAVE_PANEL_PIXEL_SIZE
+	gtk_signal_connect(GTK_OBJECT(applet), "change_pixel_size",
+			GTK_SIGNAL_FUNC(applet_change_pixel_size), NULL);
+#endif
+	
         gtk_widget_show(icon);
         gtk_widget_show(applet);
         return 0;
