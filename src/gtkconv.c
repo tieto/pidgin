@@ -3466,7 +3466,8 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 						  struct gaim_conversation *conv)
 {
 	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_gtk_conversation *gtkconv, *focus_gtkconv;
+	struct gaim_conversation *focus_conv;
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;
@@ -3646,11 +3647,10 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
 	}
 
-	if ((gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)) == 0) ||
-		(conv == g_list_nth_data(gaim_window_get_conversations(win), 0))) {
-
-		gtk_widget_grab_focus(gtkconv->entry);
-	}
+	focus_conv = g_list_nth_data(gaim_window_get_conversations(win),
+			gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)));
+	focus_gtkconv = GAIM_GTK_CONVERSATION(focus_conv);
+	gtk_widget_grab_focus(focus_gtkconv->entry);
 
 	gaim_gtkconv_update_buddy_icon(conv);
 
