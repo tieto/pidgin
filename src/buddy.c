@@ -2036,12 +2036,9 @@ void hide_buddy_list() {
 void unhide_buddy_list() {
 	if (blist) {
 		gtk_window_present(GTK_WINDOW(blist));
-		if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
-			if (blist_pos.width != 0) {	/* Sanity check! */
-				gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
-							 blist_pos.y - blist_pos.yoff);
-				gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
-			}
+		if (blist_options & OPT_BLIST_SAVED_WINDOWS && blist_pos.width != 0) {
+			gtk_window_move(GTK_WINDOW(blist), blist_pos.x, blist_pos.y);
+			gtk_window_resize(GTK_WINDOW(blist), blist_pos.width, blist_pos.height);
 		}
 	}
 }
@@ -2448,34 +2445,18 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 	}
 }
 
-
-static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
-{
-	int x, y, width, height;
-	int save = 0;
-	gdk_window_get_position(blist->window, &x, &y);
-	gdk_window_get_size(blist->window, &width, &height);
-
-	if (e->send_event) {	/* Is a position event */
-		if (blist_pos.x != x || blist_pos.y != y)
-			save = 1;
-		blist_pos.x = x;
-		blist_pos.y = y;
-	} else {		/* Is a size event */
-		if (blist_pos.xoff != x || blist_pos.yoff != y || blist_pos.width != width || blist_pos.height != height)
-			save = 1;
-
-		blist_pos.width = width;
-		blist_pos.height = height;
-		blist_pos.xoff = x;
-		blist_pos.yoff = y;
-	}
-
-	if (save)
+static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void *data) {
+	if (event->x != blist_pos.x ||
+	    event->y != blist_pos.y ||
+	    event->width != blist_pos.width ||
+	    event->height != blist_pos.height) {
+		blist_pos.x = event->x;
+		blist_pos.y = event->y;
+		blist_pos.width = event->width;
+		blist_pos.height = event->height;
 		save_prefs();
-
+	}
 }
-
 
 /*******************************************************************
  *
@@ -2671,6 +2652,7 @@ void show_buddy_list()
 
 	gtk_widget_realize(blist);
 
+	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_STATIC);
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 
 	accel = gtk_accel_group_new();
@@ -2909,7 +2891,7 @@ void show_buddy_list()
 	gtk_signal_connect(GTK_OBJECT(blist), "delete_event", GTK_SIGNAL_FUNC(close_buddy_list),
 			   NULL);
 
-	gtk_signal_connect(GTK_OBJECT(blist), "configure_event", GTK_SIGNAL_FUNC(move_blist_window),
+	gtk_signal_connect(GTK_OBJECT(blist), "configure_event", GTK_SIGNAL_FUNC(configure_blist_window),
 			   NULL);
 
 
