@@ -76,6 +76,7 @@ version 0.60:
 	  Panel Notification Area applet for GNOME 2, or the kicker for
 	  KDE 3.1. (Thanks Robert McQueen, Ari Pollak, Patrick Aussems)
 	* Plugins dialog and perl script menu merged into preferences.
+	* Auto-loading protocol plugins.
 	* use snprintf instead of sprintf (Thanks William T. Mahan).
 	* Non-direct connect typing notification for AIM over oscar 
 	  (Thanks Mark Doliner)
