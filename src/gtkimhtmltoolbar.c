@@ -753,6 +753,18 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 		toolbar->smiley_dialog = NULL;
 	}
 
+	if (toolbar->link_dialog != NULL)
+	{
+		gaim_request_close(GAIM_REQUEST_FIELDS, toolbar->link_dialog);
+		toolbar->link_dialog = NULL;
+	}
+
+	if (toolbar->image_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->image_dialog);
+		toolbar->image_dialog = NULL;
+	}
+
 	if (toolbar->sml)
 		free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
