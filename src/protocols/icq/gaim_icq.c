@@ -18,6 +18,7 @@
 struct icq_data {
 	icq_Link *link;
 	int cur_status;
+	gboolean connected;
 };
 
 static guint ack_timer = 0;
@@ -79,8 +80,8 @@ static void icq_online(icq_Link *link) {
 	struct gaim_connection *gc = link->icq_UserData;
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
+	id->connected = TRUE;
 	account_online(gc);
-	/*gc->options |= OPT_USR_KEEPALV; this is always-on now */
 	serv_finish_login(gc);
 
 	icq_ChangeStatus(id->link, STATUS_ONLINE);
@@ -89,6 +90,12 @@ static void icq_online(icq_Link *link) {
 static void icq_logged_off(icq_Link *link) {
 	struct gaim_connection *gc = link->icq_UserData;
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
+
+	if (!id->connected) {
+		hide_login_progress(gc, "Unable to connect");
+		signoff(gc);
+		return;
+	}
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");
