@@ -5,7 +5,7 @@
 %define prefix     /usr
 %define sysconfdir /etc
 
-Summary:	A client compatible with AOL's 'Instant Messenger'
+Summary:	A Gtk+ based multiprotocol instant messaging client
 Name:		%{name}
 Version:	%{version}
 Release:	%{release}
@@ -20,6 +20,8 @@ BuildRoot:	/var/tmp/%{name}-%{version}-root
 Requires:	gtk+ >= 1.2.3
 
 %description
+Gaim is NOT affiliated with or endorsed by AOL.
+
 Gaim allows you to talk to anyone using AOL's 
 Instant Messenger service (you can sign up at http://www.aim.aol.com).  
 
