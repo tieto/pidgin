@@ -88,7 +88,7 @@ void show_about(GtkWidget *w, void *null)
 	if (!about) {
 
 		GAIM_DIALOG(about);
-		gtk_widget_set_usize(GTK_WIDGET(about), 450, -1);
+		gtk_window_set_default_size(GTK_WINDOW(about), 450, -1);
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About Gaim v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
 		gtk_window_set_wmclass(GTK_WINDOW(about), "about", "Gaim");
