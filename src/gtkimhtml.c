@@ -1377,7 +1377,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
 	g_return_val_if_fail (text != NULL, NULL);
-	printf("Appending: %s\n", text);
 	c = text;
 	len = strlen(text);
 	ws = g_malloc(len + 1);
@@ -1913,7 +1912,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			if (url)
 				gtk_imhtml_insert_link(imhtml, url, ws);
 			else {
-				printf("Inserting %s\n", ws);
 				gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 			}
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
@@ -2885,7 +2883,6 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		closers = g_list_remove(closers, span);
 
 	}
-	printf("Gotten: %s\n", str->str);
 	return g_string_free(str, FALSE);
 }
 

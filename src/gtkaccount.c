@@ -252,9 +252,6 @@ buddy_icon_filesel_choose(GtkWidget *w, AccountPrefsDialog *dialog)
 		return;
 	}
 
-	if (dialog->account != NULL)
-		gaim_account_set_buddy_icon(dialog->account, filename);
-
 	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), filename);
 	gtk_widget_destroy(dialog->buddy_icon_filesel);
 }
@@ -349,8 +346,6 @@ static void
 buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
 	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), "");
-	if (dialog->account)
-		gaim_account_set_buddy_icon(dialog->account, NULL);
 }
 
 static void

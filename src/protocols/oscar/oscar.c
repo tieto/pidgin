@@ -3616,7 +3616,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		struct stat st;
 		const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
 		if (iconfile == NULL) {
-			/* Set an empty icon, or something */
+			aim_ssi_delicon(od->sess);
 		} else if (!stat(iconfile, &st)) {
 			char *buf = g_malloc(st.st_size);
 			FILE *file = fopen(iconfile, "rb");
@@ -5792,7 +5792,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 					struct stat st;
 					const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
 					if (iconfile == NULL) {
-						/* Set an empty icon, or something */
+						aim_ssi_delicon(od->sess);
 					} else if (!stat(iconfile, &st)) {
 						char *buf = g_malloc(st.st_size);
 						FILE *file = fopen(iconfile, "rb");
@@ -5811,8 +5811,13 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 							   "Can't stat buddy icon file!\n");
 					}
 				}
-			} else if (flags == 0x81)
-				aim_ssi_seticon(od->sess, md5, length); 
+			} else if (flags == 0x81) {
+				const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+				if (iconfile == NULL)
+					aim_ssi_delicon(od->sess);
+				else
+					aim_ssi_seticon(od->sess, md5, length);
+			}
 		} break;
 
 		case 0x0002: { /* We just set an "available" message? */
@@ -6684,7 +6689,7 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 	struct stat st;
 
 	if (iconfile == NULL) {
-		/* Set an empty icon, or something */
+		aim_ssi_delicon(od->sess);
 	} else if (!stat(iconfile, &st)) {
 		char *buf = g_malloc(st.st_size);
 		file = fopen(iconfile, "rb");
