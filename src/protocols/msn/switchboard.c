@@ -91,7 +91,7 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	//send_clientcaps(swboard);
 
-	if (session->protocol_ver >= 9)
+	if (0 && session->protocol_ver >= 9)
 	{
 		MsnUser *local_user, *remote_user;
 
