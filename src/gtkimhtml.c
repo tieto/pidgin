@@ -578,6 +578,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 
 #define NEW_TEXT_BIT 0
 #define NEW_HR_BIT 1
+#define NEW_COMMENT_BIT 2
 #define NEW_BIT(x)	ws [wpos] = '\0'; \
                         mark2 = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE); \
                         gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, -1); \
@@ -629,16 +630,13 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                         wpos = 0; \
                         ws[0] = 0; \
                         gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
-
-
-/*                        if (x == NEW_HR_BIT) { \
-	                         sep = gtk_hseparator_new(); \
-                                 gtk_widget_size_request(GTK_WIDGET(imhtml), &req); \
-                                 gtk_widget_set_size_request(sep, 20, -1); \
-	                         anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter); \
+                        if (x == NEW_HR_BIT) { \
+                                 GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter); \
+                                 GtkWidget *sep = gtk_hseparator_new(); \
+                                 gtk_widget_set_size_request(GTK_WIDGET(sep), 5000, 2); \
                                  gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), sep, anchor); \
                                  gtk_widget_show(sep); \
-			  } */
+                        } \
 
 GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				 const gchar      *text,
@@ -785,6 +783,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 42:        /* HR (opt) */
 					ws[wpos++] = '\n';
 					NEW_BIT(NEW_HR_BIT);
+					ws[wpos++] = '\n';
 					break;
 				case 27:	/* /FONT */
 					if (fonts) {
