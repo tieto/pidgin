@@ -2246,6 +2246,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						    font->underline = oldfont->underline;
 						}
 						if (textdec && font->underline != 1
+							&& size
 							&& g_ascii_strcasecmp(size, "underline") == 0
 							&& (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
 						{

@@ -3483,7 +3483,8 @@ static void topic_callback(GtkWidget *w, GaimConversation *conv)
 	GaimConnection *gc;
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
-	const char *topic;
+	const char *new_topic;
+	const char *current_topic;
 
 	gc      = gaim_conversation_get_gc(conv);
 
@@ -3495,12 +3496,14 @@ static void topic_callback(GtkWidget *w, GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
-	topic = gtk_entry_get_text(GTK_ENTRY(gtkchat->topic_text));
+	new_topic = gtk_entry_get_text(GTK_ENTRY(gtkchat->topic_text));
+	current_topic = gaim_conv_chat_get_topic(GAIM_CONV_CHAT(conv));
 
-	if(!g_utf8_collate(topic, gaim_conv_chat_get_topic(GAIM_CONV_CHAT(conv))))
+	if(current_topic && !g_utf8_collate(new_topic, current_topic))
 		return;
 
-	prpl_info->set_chat_topic(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), topic);
+	prpl_info->set_chat_topic(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)),
+			new_topic);
 }
 
 static GtkWidget *
