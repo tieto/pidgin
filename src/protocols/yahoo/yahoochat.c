@@ -357,10 +357,10 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		switch (pair->key) {
 
 		case 104:
-			room = yahoo_string_decode(gc, pair->value, FALSE);
+			room = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 105:
-			topic = yahoo_string_decode(gc, pair->value, FALSE);
+			topic = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 128:
 			someid = pair->value;
@@ -457,7 +457,7 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 
 		if (pair->key == 104)
-			room = yahoo_string_decode(gc, pair->value, FALSE);
+			room = yahoo_string_decode(gc, pair->value, TRUE);
 		if (pair->key == 109)
 			who = pair->value;
 	}
@@ -476,7 +476,7 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	char *room = NULL, *who = NULL, *msg = NULL, *msg2;
-	int msgtype = 1, utf8 = 0;
+	int msgtype = 1, utf8 = 1; /* default to utf8 */
 	GaimConversation *c = NULL;
 	GSList *l;
 
@@ -489,7 +489,7 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			utf8 = strtol(pair->value, NULL, 10);
 			break;
 		case 104:
-			room = yahoo_string_decode(gc, pair->value, FALSE);
+			room = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 109:
 			who = pair->value;
@@ -544,7 +544,7 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		switch (pair->key) {
 		case 104:
-			room = yahoo_string_decode(gc, pair->value, FALSE);
+			room = yahoo_string_decode(gc, pair->value, TRUE);
 			break;
 		case 129: /* room id? */
 			break;
@@ -714,8 +714,9 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	struct yahoo_packet *pkt;
 	GaimConversation *c;
 	char *eroom;
+	gboolean utf8 = 1;
 
-	eroom = yahoo_string_encode(gc, room, NULL);
+	eroom = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -834,8 +835,11 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *room2;
+	gboolean utf8 = TRUE;
 
-	room2 = yahoo_string_encode(gc, room, NULL);
+	/* apparently room names are always utf8, or else always not utf8,
+	 * so we don't have to actually pass the flag in the packet. Or something. */
+	room2 = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -856,8 +860,9 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *room2, *msg2 = NULL;
+	gboolean utf8 = TRUE;
 
-	room2 = yahoo_string_encode(gc, room, NULL);
+	room2 = yahoo_string_encode(gc, room, &utf8);
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
