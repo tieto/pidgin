@@ -1215,6 +1215,7 @@ void remove_away_message(GtkWidget *widget, void *dummy)
 
         i = GTK_LIST(prefs_away_list)->selection;
 
+	if (!i) return;
 	if (!i->next) {
 		int text_len = gtk_text_get_length(GTK_TEXT(away_text));
 		gtk_text_set_point(GTK_TEXT(away_text), 0 );
