@@ -104,6 +104,7 @@ char *br_prepend_prefix	(void *symbol, char *path);
 #define br_strcat BR_NAMESPACE(br_strcat)
 #define br_extract_dir BR_NAMESPACE(br_extract_dir)
 #define br_extract_prefix BR_NAMESPACE(br_extract_prefix)
+#define br_set_locate_fallback_func BR_NAMESPACE(br_set_locate_fallback_func)
 
 #ifndef BR_NO_MACROS
 	/* Convenience functions for concatenating paths */
@@ -124,6 +125,8 @@ char *br_prepend_prefix	(void *symbol, char *path);
 char *br_strcat	(const char *str1, const char *str2);
 char *br_extract_dir	(const char *path);
 char *br_extract_prefix(const char *path);
+typedef char *(*br_locate_fallback_func) (void *symbol, void *data);
+void br_set_locate_fallback_func (br_locate_fallback_func func, void *data);
 
 
 #ifdef __cplusplus

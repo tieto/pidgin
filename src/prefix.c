@@ -63,6 +63,25 @@ extern "C" {
 #include <unistd.h>
 
 
+static br_locate_fallback_func fallback_func = NULL;
+static void *fallback_data = NULL;
+/**
+ * br_set_fallback_function:
+ * func: A function to call to find the binary.
+ * data: User data to pass to func.
+ *
+ * Sets a function to call to find the path to the binary, in
+ * case "/proc/self/maps" can't be opened. The function set should
+ * return a string that is safe to free with free().
+ */
+void
+br_set_locate_fallback_func (br_locate_fallback_func func, void *data)
+{
+	fallback_func = func;
+	fallback_data = data;
+}
+
+
 /**
  * br_locate:
  * symbol: A symbol that belongs to the app/library you want to locate.
@@ -104,8 +123,12 @@ br_locate (void *symbol)
 	br_return_val_if_fail (symbol != NULL, NULL);
 
 	f = fopen ("/proc/self/maps", "r");
-	if (!f)
-		return NULL;
+	if (!f) {
+		if (fallback_func)
+			return fallback_func(symbol, fallback_data);
+		else
+			return NULL;
+	}
 
 	while (!feof (f))
 	{
