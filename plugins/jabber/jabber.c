@@ -1960,6 +1960,11 @@ static void jabber_set_idle(struct gaim_connection *gc, int idle) {
    	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
+static void jabber_keepalive(struct gaim_connection *gc) {
+	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
+	gjab_send_raw(jd->jc, "  \t  ");
+}
+
 static void jabber_print_option(GtkEntry *entry, struct aim_user *user)
 {
 	int entrynum;
@@ -2052,7 +2057,7 @@ void Jabber_init(struct prpl *ret)
 	ret->chat_whisper = jabber_chat_whisper;
 	ret->chat_set_topic = jabber_chat_set_topic;
 	ret->chat_send = jabber_chat_send;
-	ret->keepalive = NULL;
+	ret->keepalive = jabber_keepalive;
 	ret->normalize = jabber_normalize;
 
 	my_protocol = ret;
