@@ -618,7 +618,7 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 {
 	struct pieceofcrap *pos = data;
 	struct oscar_data *od = pos->gc->proto_data;
-	char in;
+	char in = '\0';
 	int x = 0;
 	char m[17];
 	if (c == GDK_INPUT_WRITE) {
@@ -642,6 +642,16 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 			x = 0;
 		if (x == 2)
 			break;
+		in = '\0';
+	}
+	if (in != '\n') {
+		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
+				" You may be disconnected shortly.", "Login Error");
+		gdk_input_remove(pos->inpa);
+		close(pos->conn->fd);
+		aim_conn_kill(od->sess, &pos->conn);
+		g_free(pos);
+		return;
 	}
 	read(pos->conn->fd, m, 16);
 	m[16] = '\0';
