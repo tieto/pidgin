@@ -23,7 +23,6 @@ src/html.c
 src/module.c
 src/multi.c
 src/perl.c
-src/plugins.c
 src/prefs.c
 src/prpl.c
 src/server.c
