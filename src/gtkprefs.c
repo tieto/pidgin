@@ -2752,7 +2752,8 @@ static void
 smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					 gpointer data)
 {
-	load_smiley_theme((const char *)value, TRUE);
+	if (strcmp(name, ""))
+		load_smiley_theme((const char *)value, TRUE);
 }
 
 void
@@ -2816,7 +2817,7 @@ gaim_gtk_prefs_init(void)
 
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
-	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
+	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");
 
 	/* Smiley Callbacks */
 	gaim_prefs_connect_callback("/gaim/gtk/smileys/theme",
