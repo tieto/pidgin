@@ -1221,6 +1221,24 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	return NULL;
 }
 
+GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
+		GaimGroup *group)
+{
+	struct _gaim_hbuddy hb;
+
+	if (!gaimbuddylist)
+		return NULL;
+
+	if (!name)
+		return NULL;
+
+	hb.name = normalize(name);
+	hb.account = account;
+	hb.group = (GaimBlistNode*)group;
+
+	return g_hash_table_lookup(gaimbuddylist->buddies, &hb);
+}
+
 GSList *gaim_find_buddies(GaimAccount *account, const char *name)
 {
 	struct buddy *buddy;
@@ -2028,8 +2046,10 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "buddy")) {
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(account) {
-			GaimBuddy *b = gaim_buddy_new(account, blist_parser_buddy_name, blist_parser_buddy_alias);
+		if(account && !gaim_find_buddy_in_group(account,
+					blist_parser_buddy_name, blist_parser_group)) {
+			GaimBuddy *b = gaim_buddy_new(account, blist_parser_buddy_name,
+					blist_parser_buddy_alias);
 			gaim_blist_add_buddy(b,blist_parser_contact, blist_parser_group,
 					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_contact));
 			if(blist_parser_buddy_settings) {

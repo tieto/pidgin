@@ -278,7 +278,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	/* Setup the descriptive label */
 	g_snprintf(label_text, sizeof(label_text),
-		   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
+		   "<span weight=\"bold\" size=\"larger\">%s</span>\n%s",
 		   primary, (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
@@ -311,7 +311,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gtk_widget_destroy), window);
 
 	/* Add the text to the gtkimhtml */

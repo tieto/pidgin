@@ -505,12 +505,22 @@ const char *gaim_blist_chat_get_name(GaimBlistChat *chat);
 /**
  * Finds the buddy struct given a screenname and an account
  *
- * @param name    The buddy's screenname or NULL to search for more buddies with the same screenname
- *                as the previous search
+ * @param name    The buddy's screenname
  * @param account The account this buddy belongs to
  * @return        The buddy or NULL if the buddy does not exist
  */
 GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name);
+
+/**
+ * Finds the buddy struct given a screenname, an account, and a group
+ *
+ * @param name    The buddy's screenname
+ * @param account The account this buddy belongs to
+ * @param group   The group to look in
+ * @return        The buddy or NULL if the buddy does not exist in the group
+ */
+GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
+		GaimGroup *group);
 
 /**
  * Finds all buddies struct given a screenname and an account

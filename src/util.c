@@ -319,47 +319,33 @@ static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
-/* This was borrowed from the Kame source, and then tweaked to our needs */
-char *tobase64(const unsigned char *buf, size_t len)
+char *tobase64(const unsigned char *in, size_t inlen)
 {
-	char *s = NULL, *rv = NULL;
-	unsigned long tmp;
+	char *out, *rv;
 
-	s = g_malloc((4 * (len + 1)) / 3 + 1);
+	rv = out = g_malloc((4 * (inlen + 1)) / 3 + 1);
 
-	rv = s;
-	while (len >= 3) {
-		tmp = buf[0] << 16 | buf[1] << 8 | buf[2];
-		s[0] = alphabet[tmp >> 18];
-		s[1] = alphabet[(tmp >> 12) & 077];
-		s[2] = alphabet[(tmp >> 6) & 077];
-		s[3] = alphabet[tmp & 077];
-		len -= 3;
-		buf += 3;
-		s += 4;
-	}
+    for (; inlen >= 3; inlen -= 3)
+        {
+            *out++ = alphabet[in[0] >> 2];
+            *out++ = alphabet[((in[0] << 4) & 0x30) | (in[1] >> 4)];
+            *out++ = alphabet[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
+            *out++ = alphabet[in[2] & 0x3f];
+            in += 3;
+        }
+    if (inlen > 0)
+        {
+            unsigned char fragment;
 
-	/* RFC 1521 enumerates these three possibilities... */
-	switch(len) {
-		case 2:
-			tmp = buf[0] << 16 | buf[1] << 8;
-			s[0] = alphabet[(tmp >> 18) & 077];
-			s[1] = alphabet[(tmp >> 12) & 077];
-			s[2] = alphabet[(tmp >> 6) & 077];
-			s[3] = '=';
-			s[4] = '\0';
-			break;
-		case 1:
-			tmp = buf[0] << 16;
-			s[0] = alphabet[(tmp >> 18) & 077];
-			s[1] = alphabet[(tmp >> 12) & 077];
-			s[2] = s[3] = '=';
-			s[4] = '\0';
-			break;
-		case 0:
-			s[0] = '\0';
-			break;
-	}
+            *out++ = alphabet[in[0] >> 2];
+            fragment = (in[0] << 4) & 0x30;
+            if (inlen > 1)
+                fragment |= in[1] >> 4;
+            *out++ = alphabet[fragment];
+            *out++ = (inlen < 2) ? '=' : alphabet[(in[1] << 2) & 0x3c];
+            *out++ = '=';
+        }
+    *out = '\0';
 
 	return rv;
 }
