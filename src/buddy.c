@@ -959,26 +959,26 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	rend = gtk_cell_renderer_pixbuf_new();
 	column = gtk_tree_view_column_new_with_attributes("Status", rend, "pixbuf", STATUS_ICON_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
-	g_object_set(rend, "ypad", 0.0, NULL);
+	g_object_set(rend, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	column = gtk_tree_view_column_new_with_attributes("Name", rend, "markup", NAME_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
-	g_object_set(rend, "ypad", 0.0, NULL);
+	g_object_set(rend, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->warning_column);
-	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
+	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtkblist->idle_column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->idle_column);
-	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
+	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtkblist->buddy_icon_column = gtk_tree_view_column_new_with_attributes("Buddy Icon", rend, "pixbuf", BUDDY_ICON_COLUMN, NULL);
-	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
+	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->buddy_icon_column);
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
