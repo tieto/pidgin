@@ -95,7 +95,7 @@ void show_about(GtkWidget *w, void *null)
 "Rob Flynn <rflynn@blueridge.net> <IM: RobFlynn> (Maintainer)\n"
 "Eric Warmenhoven <warmenhoven@yahoo.com> <IM: EWarmenhoven> (Second in Command)\n"
 "Syd Logan (Designated Driver and Super Hacker *OoOoO*)\n"
-"Todd Kulesza <fflewddur@linuxfreak.com> - Misc Code and Caffeine Consumer\n"
+"Todd Kulesza <fflewddur@linuxfreak.com> <IM: semblanceofself> (Caffeine Consumer)\n"
 "Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
 "Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
 "\n"
