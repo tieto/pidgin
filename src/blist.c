@@ -1983,6 +1983,8 @@ static void parse_chat(GaimGroup *group, xmlnode *cnode)
 	}
 
 	chat = gaim_chat_new(account, alias, components);
+	gaim_blist_add_chat(chat, group,
+			gaim_blist_get_last_child((GaimBlistNode*)group));
 
 	for(x = cnode->child; x; x = x->next) {
 		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "setting"))
