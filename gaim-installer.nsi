@@ -1,7 +1,8 @@
 ; Installer script for win32 Gaim
 ; Herman Bloggs <hermanator12002@yahoo.com>
 
-; NOTE: this .NSI script is designed for NSIS v2.0b4+
+; NOTE: this .NSI script is designed for NSIS 2.0 release candidate 3 and
+; higher.
 
 ;--------------------------------
 ;Global Variables
@@ -27,8 +28,7 @@ OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
 !endif
 !endif
 
-SetCompressor bzip2
-DirShow show
+SetCompressor lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
