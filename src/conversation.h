@@ -312,7 +312,7 @@ void gaim_window_raise(GaimWindow *win);
 
 /**
  * Causes the window to flash for IM notification, if the UI supports this.
- * 
+ *
  * @param win The window.
  */
 void gaim_window_flash(GaimWindow *win);
@@ -461,7 +461,7 @@ GaimWindow *gaim_get_last_window_with_type(GaimConversationType type);
  *
  * @return The new conversation.
  */
-GaimConversation *gaim_conversation_new(GaimConversationType type, 
+GaimConversation *gaim_conversation_new(GaimConversationType type,
 										GaimAccount *account,
 										const char *name);
 
@@ -496,7 +496,7 @@ void gaim_conversation_set_ui_ops(GaimConversation *conv,
 
 /**
  * Returns the specified conversation's UI operations structure.
- * 
+ *
  * @param conv The conversation.
  *
  * @return The operations structure.
@@ -679,7 +679,7 @@ GaimChat *gaim_conversation_get_chat_data(const GaimConversation *conv);
 
 /**
  * Sets extra data for a conversation.
- * 
+ *
  * @param conv The conversation.
  * @param key  The unique key.
  * @param data The data to assign.
