@@ -5,7 +5,7 @@
  *
  *	$Source$
  *	$Author: warmenhoven $
- *	$Id: zephyr.h 2096 2001-07-31 01:00:39Z warmenhoven $
+ *	$Id: zephyr.h 2432 2001-10-03 19:38:28Z warmenhoven $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
@@ -21,9 +21,6 @@
 #include <sys/time.h>
 
 #include <zephyr/zephyr_err.h>
-#ifdef ZEPHYR_USES_KERBEROS
-#include <krb.h>
-#endif
 
 #ifndef IPPROTO_MAX	/* Make sure not already included */
 #include <netinet/in.h>
@@ -166,6 +163,7 @@ Code_t ZFormatRawNoticeList ZP((ZNotice_t *notice, char *list[], int nitems,
 Code_t ZLocateUser ZP((char *, int *, Z_AuthProc));
 Code_t ZRequestLocations ZP((char *, ZAsyncLocateData_t *,
 			     ZNotice_Kind_t, Z_AuthProc));
+Code_t ZhmStat ZP((struct in_addr *, ZNotice_t *));
 Code_t ZInitialize ZP((void));
 Code_t ZSetServerState ZP((int));
 Code_t ZSetFD ZP((int));
@@ -178,10 +176,9 @@ Code_t ZMakeAscii32 ZP((char *, int, unsigned long));
 Code_t ZMakeAscii16 ZP((char *, int, unsigned int));
 Code_t ZReceivePacket ZP((ZPacket_t, int*, struct sockaddr_in*));
 Code_t ZCheckAuthentication ZP((ZNotice_t*, struct sockaddr_in*));
+Code_t ZSetLocation ZP((char *exposure));
+Code_t ZUnsetLocation ZP((void));
 Code_t ZFlushMyLocations ZP((void));
-#ifdef ZEPHYR_USES_KERBEROS
-Code_t ZFormatAuthenticNotice ZP((ZNotice_t*, char*, int, int*, C_Block));
-#endif
 Code_t ZFormatRawNotice ZP((ZNotice_t *, char**, int *));
 Code_t ZRetrieveSubscriptions ZP((unsigned short, int*));
 Code_t ZOpenPort ZP((unsigned short *port));
@@ -229,15 +226,6 @@ extern char __Zephyr_realm[];
 #define ZQLength()	__Q_CompleteLength
 #define ZGetDestAddr()	__HM_addr
 #define ZGetRealm()	__Zephyr_realm
-
-#ifdef ZEPHYR_USES_KERBEROS
-/* Session key for last parsed packet - server only */
-extern C_Block __Zephyr_session;
-#define ZGetSession() (__Zephyr_session)
-#else
-#define __Zephyr_realm ("local-realm")
-#endif
-
 
 #ifdef Z_DEBUG
 void ZSetDebug ZP((void (*)(ZCONST char *, va_list, void *), void *));
@@ -338,5 +326,6 @@ void ZSetDebug ZP((void (*)(ZCONST char *, va_list, void *), void *));
 #define USER_REREAD		"REREAD"	/* Opcode: Reread desc file */
 #define USER_SHUTDOWN		"SHUTDOWN"	/* Opcode: Go catatonic */
 #define USER_STARTUP		"STARTUP"	/* Opcode: Come out of it */
+#define USER_EXIT		"EXIT"		/* Opcode: Exit the client */
 
 #endif /* __ZEPHYR_H__ */

@@ -20,7 +20,7 @@ static char rcsid_ZSendPacket_c[] =
 #include <internal.h>
 #include <sys/socket.h>
 
-static int wait_for_ack();
+static int wait_for_hmack();
 
 Code_t ZSendPacket(packet, len, waitforack)
     char *packet;
@@ -53,7 +53,7 @@ Code_t ZSendPacket(packet, len, waitforack)
     if ((retval = ZParseNotice(packet, len, &notice)) != ZERR_NONE)
 	return (retval);
     
-    retval = Z_WaitForNotice (&acknotice, wait_for_ack, &notice.z_uid,
+    retval = Z_WaitForNotice (&acknotice, wait_for_hmack, &notice.z_uid,
 			      HM_TIMEOUT);
     if (retval == ETIMEDOUT)
       return ZERR_HMDEAD;
@@ -62,12 +62,9 @@ Code_t ZSendPacket(packet, len, waitforack)
     return retval;
 }
 
-static int wait_for_ack(notice, uid)
+static int wait_for_hmack(notice, uid)
     ZNotice_t *notice;
     ZUnique_Id_t *uid;
 {
-  return (ZCompareUID(&notice->z_uid, uid) &&
-	  (notice->z_kind == HMACK     ||
-	   notice->z_kind == SERVACK   ||
-	   notice->z_kind == CLIENTACK ));
+    return (notice->z_kind == HMACK && ZCompareUID(&notice->z_uid, uid));
 }

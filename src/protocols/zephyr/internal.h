@@ -69,6 +69,7 @@ extern int __subscriptions_num;
 extern int __subscriptions_next;
 
 extern int __Zephyr_port;		/* Port number */
+extern struct in_addr __My_addr;
 
 typedef Code_t (*Z_SendProc) __P((ZNotice_t *, char *, int, int));
 

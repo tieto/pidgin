@@ -55,7 +55,7 @@ Code_t Z_SendLocation(class, opcode, auth, format)
     int retval;
     time_t ourtime;
     ZNotice_t notice, retnotice;
-    char *bptr[3];
+    char *bptr[3], *p;
 #ifndef X_DISPLAY_MISSING
     char *display;
 #endif
@@ -89,36 +89,29 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	      (void) strncpy(host, hent->h_name, sizeof(host));
 	      host[sizeof(host) - 1] = '\0';
 	    }
-	    bptr[0] = host;
 #ifndef X_DISPLAY_MISSING
 	    if ((display = getenv("DISPLAY")) && *display) {
 		    (void) strcpy(mytty, display);
-		    bptr[2] = mytty;
 	    } else {
 #endif
 		    ttyp = ttyname(0);
-		    if (ttyp) {
-			bptr[2] = strrchr(ttyp, '/');
-			if (bptr[2])
-			    bptr[2]++;
-			else
-			    bptr[2] = ttyp;
+		    if (ttyp && *ttyp) {
+			p = strchr(ttyp + 1, '/');
+			strcpy(mytty, (p) ? p + 1 : ttyp);
+		    } else {
+			strcpy(mytty, "unknown");
 		    }
-		    else
-			bptr[2] = "unknown";
-		    (void) strcpy(mytty, bptr[2]);
 #ifndef X_DISPLAY_MISSING
 	    }
 #endif
 	    reenter = 1;
-    } else {
-	    bptr[0] = host;
-	    bptr[2] = mytty;
     }
 
     ourtime = time((time_t *)0);
+    bptr[0] = host;
     bptr[1] = ctime(&ourtime);
     bptr[1][strlen(bptr[1])-1] = '\0';
+    bptr[2] = mytty;
 
 	
     if ((retval = ZSendList(&notice, bptr, 3, auth)) != ZERR_NONE)

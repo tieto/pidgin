@@ -49,6 +49,7 @@ ZSetSrv.lo
 ZSubs.lo
 ZVariables.lo
 ZWait4Not.lo
+ZhmStat.lo
 Zinternal.lo
 error_message.lo
 et_name.lo

@@ -16,7 +16,7 @@
 #include <internal.h>
 
 #ifndef lint
-static const char rcsid_ZSubscriptions_c[] = "$Id: ZSubs.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+static const char rcsid_ZSubscriptions_c[] = "$Id: ZSubs.c 2432 2001-10-03 19:38:28Z warmenhoven $";
 #endif
 
 static Code_t Z_Subscriptions __P((register ZSubscription_t *sublist,
@@ -103,7 +103,7 @@ Z_Subscriptions(sublist, nitems, port, opcode, authit)
     retval = Z_FormatHeader(&notice, header, sizeof(header), &hdrlen, ZAUTH);
     if (retval != ZERR_NONE && !authit)
 	retval = Z_FormatHeader(&notice, header, sizeof(header),
-				&hdrlen, ZAUTH);
+				&hdrlen, ZNOAUTH);
     if (retval != ZERR_NONE) {
 	free((char *)list);
 	return(retval);

@@ -20,7 +20,7 @@
 
 #ifndef lint
 static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+  "$Id: Zinternal.c 2432 2001-10-03 19:38:28Z warmenhoven $";
 static const char copyright[] =
   "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif
@@ -30,8 +30,7 @@ extern char *inet_ntoa ();
 int __Zephyr_fd = -1;
 int __Zephyr_open;
 int __Zephyr_port = -1;
-int __My_length;
-char *__My_addr;
+struct in_addr __My_addr;
 int __Q_CompleteLength;
 int __Q_Size;
 struct _Z_InputQ *__Q_Head, *__Q_Tail;
@@ -45,11 +44,12 @@ int __locate_next;
 ZSubscription_t *__subscriptions_list;
 int __subscriptions_num;
 int __subscriptions_next;
+int Z_discarded_packets = 0;
 
 #ifdef ZEPHYR_USES_KERBEROS
 C_Block __Zephyr_session;
-char __Zephyr_realm[REALM_SZ];
 #endif
+char __Zephyr_realm[REALM_SZ];
 
 #ifdef Z_DEBUG
 void (*__Z_debug_print) __P((const char *fmt, va_list args, void *closure));
@@ -132,35 +132,6 @@ static int find_or_insert_uid(uid, kind)
 
     return 0;
 }
-
-/* Get the address of the local host and cache it */
-
-Code_t Z_GetMyAddr()
-{
-    register struct hostent *myhost;
-    char hostname[MAXHOSTNAMELEN];
-	
-    if (__My_length > 0)
-	return (ZERR_NONE);
-
-    if (gethostname(hostname, MAXHOSTNAMELEN) < 0)
-	return (errno);
-
-    if (!(myhost = gethostbyname(hostname)))
-	return (errno);
-
-    /* If h_length is 0, that is a serious problem and it doesn't
-       make it worse for malloc(0) to return NULL, so don't worry
-       about that case. */
-    if (!(__My_addr = (char *)malloc((unsigned)myhost->h_length)))
-	return (ENOMEM);
-
-    __My_length = myhost->h_length;
-
-    (void) memcpy(__My_addr, myhost->h_addr, myhost->h_length);
-
-    return (ZERR_NONE);
-} 
 
 
 /* Return 1 if there is a packet waiting, 0 otherwise */
@@ -254,14 +225,25 @@ Code_t Z_ReadWait()
     ZNotice_t notice;
     ZPacket_t packet;
     struct sockaddr_in olddest, from;
-    int from_len, packet_len, part, partof;
+    int from_len, packet_len, zvlen, part, partof;
     char *slash;
     Code_t retval;
-    register int i;
+    fd_set fds;
+    struct timeval tv;
 
     if (ZGetFD() < 0)
 	return (ZERR_NOPORT);
 	
+    FD_ZERO(&fds);
+    FD_SET(ZGetFD(), &fds);
+    tv.tv_sec = 60;
+    tv.tv_usec = 0;
+
+    if (select(ZGetFD() + 1, &fds, NULL, NULL, &tv) < 0)
+      return (errno);
+    if (!FD_ISSET(ZGetFD(), &fds))
+      return ETIMEDOUT;
+
     from_len = sizeof(struct sockaddr_in);
 
     packet_len = recvfrom(ZGetFD(), packet, sizeof(packet), 0, 
@@ -273,15 +255,12 @@ Code_t Z_ReadWait()
     if (!packet_len)
 	return (ZERR_EOF);
 
-    /* XXX Check for null data (debugging) */
-    for (i = packet_len - 1; i >= 0; i--)
-      if (packet[i])
-	goto not_all_null;
-#ifdef Z_DEBUG
-    Z_debug ("got null packet from %s", inet_ntoa (from.sin_addr));
-#endif
-    return ZERR_NONE;
-  not_all_null:
+    /* Ignore obviously non-Zephyr packets. */
+    zvlen = sizeof(ZVERSIONHDR) - 1;
+    if (packet_len < zvlen || memcmp(packet, ZVERSIONHDR, zvlen) != 0) {
+	Z_discarded_packets++;
+	return (ZERR_NONE);
+    }	
 
     /* Parse the notice */
     if ((retval = ZParseNotice(packet, packet_len, &notice)) != ZERR_NONE)
@@ -631,10 +610,7 @@ Code_t Z_FormatHeader(notice, buffer, buffer_len, len, cert_routine)
     notice->z_uid.tv.tv_sec = htonl((u_long) notice->z_uid.tv.tv_sec);
     notice->z_uid.tv.tv_usec = htonl((u_long) notice->z_uid.tv.tv_usec);
     
-    if ((retval = Z_GetMyAddr()) != ZERR_NONE)
-	return (retval);
-
-    (void) memcpy((char *)&notice->z_uid.zuid_addr, __My_addr, __My_length);
+    (void) memcpy(&notice->z_uid.zuid_addr, &__My_addr, sizeof(__My_addr));
 
     notice->z_multiuid = notice->z_uid;
 
@@ -742,8 +718,8 @@ Code_t Z_FormatRawHeader(notice, buffer, buffer_len, len, cstart, cend)
     }
     else {
 	if (strlen(notice->z_recipient) + strlen(__Zephyr_realm) + 2 >
-		sizeof(newrecip))
-	    return (ZERR_HEADERLEN);            
+	    sizeof(newrecip))
+	    return (ZERR_HEADERLEN);
 	(void) sprintf(newrecip, "%s@%s", notice->z_recipient, __Zephyr_realm);
 	if (Z_AddField(&ptr, newrecip, end))
 	    return (ZERR_HEADERLEN);
@@ -905,10 +881,8 @@ Code_t Z_SendFragmentedNotice(notice, len, cert_func, send_func)
 		htonl((u_long) partnotice.z_uid.tv.tv_sec);
 	    partnotice.z_uid.tv.tv_usec =
 		htonl((u_long) partnotice.z_uid.tv.tv_usec);
-	    if ((retval = Z_GetMyAddr()) != ZERR_NONE)
-		return (retval);
-	    (void) memcpy((char *)&partnotice.z_uid.zuid_addr, __My_addr, 
-			   __My_length);
+	    (void) memcpy((char *)&partnotice.z_uid.zuid_addr, &__My_addr, 
+			  sizeof(__My_addr));
 	}
 	message_len = min(notice->z_message_len-offset, fragsize);
 	partnotice.z_message = notice->z_message+offset;
