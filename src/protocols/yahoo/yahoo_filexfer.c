@@ -266,6 +266,11 @@ ssize_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 		xd->rxlen += len;
 
 		length = g_strstr_len(xd->rxqueue, len, "Content-length:");
+		/* some proxies re-write this header, changing the capitalization :(
+		 * technically that's allowed since headers are case-insensitive
+		 * [RFC 2616, section 4.2] */
+		if (length == NULL)
+			length = g_strstr_len(xd->rxqueue, len, "Content-Length:");
 		if (length) {
 			end = g_strstr_len(length, length - xd->rxqueue, "\r\n");
 			if (!end)
