@@ -977,10 +977,15 @@ GtkWidget *conv_page() {
 	                                           "/gaim/gtk/conversations/placement_number",
 	                                           1, 50, sg);
 
+	if (strcmp("number",
+				gaim_prefs_get_string("/gaim/gtk/conversations/placement")))
+		gtk_widget_set_sensitive(label, FALSE);
+	else
+		gtk_widget_set_sensitive(label, TRUE);
+
 	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
 	                                                conversation_placement_cb,
 	                                                label);
-	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
