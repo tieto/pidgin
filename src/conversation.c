@@ -422,6 +422,22 @@ gaim_conv_window_flash(GaimConvWindow *win)
 	ops->flash(win);
 }
 
+gboolean
+gaim_conv_window_has_focus(GaimConvWindow *win)
+{
+	gboolean ret = FALSE;
+	GaimConvWindowUiOps *ops;
+
+	g_return_val_if_fail(win != NULL, FALSE);
+
+	ops = gaim_conv_window_get_ui_ops(win);
+
+	if (ops != NULL && ops->has_focus != NULL)
+		ret = ops->has_focus(win);
+
+	return ret;
+}
+
 void
 gaim_conv_window_set_ui_ops(GaimConvWindow *win, GaimConvWindowUiOps *ops)
 {
@@ -1485,6 +1501,27 @@ gaim_conversation_update_progress(GaimConversation *conv, float percent)
 
 	if (ops != NULL && ops->update_progress != NULL)
 		ops->update_progress(conv, percent);
+}
+
+gboolean
+gaim_conversation_has_focus(GaimConversation *conv)
+{
+	gboolean ret = FALSE;
+	GaimConvWindow *win;
+	GaimConversationUiOps *ops;
+
+	g_return_val_if_fail(conv != NULL, FALSE);
+
+	win = gaim_conversation_get_window(conv);
+	if (gaim_conv_window_get_active_conversation(win) != conv)
+		return FALSE;
+
+	ops = gaim_conversation_get_ui_ops(conv);
+
+	if (ops != NULL && ops->has_focus != NULL)
+		ret = ops->has_focus(conv);
+
+	return ret;
 }
 
 /*

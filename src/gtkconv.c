@@ -4601,6 +4601,18 @@ gaim_gtk_get_active_index(const GaimConvWindow *win)
 	return (index == -1 ? 0 : index);
 }
 
+static gboolean
+gaim_gtk_has_focus(GaimConvWindow *win)
+{
+	GaimGtkWindow *gtkwin;
+	gboolean has_focus = FALSE;
+
+	gtkwin = GAIM_GTK_WINDOW(win);
+	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
+
+	return has_focus;
+}
+
 static GaimConvWindowUiOps window_ui_ops =
 {
 	gaim_gtk_conversations_get_conv_ui_ops,
@@ -4614,7 +4626,8 @@ static GaimConvWindowUiOps window_ui_ops =
 	gaim_gtk_add_conversation,
 	gaim_gtk_remove_conversation,
 	gaim_gtk_move_conversation,
-	gaim_gtk_get_active_index
+	gaim_gtk_get_active_index,
+	gaim_gtk_has_focus
 };
 
 GaimConvWindowUiOps *
@@ -5208,6 +5221,21 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 }
 
+static gboolean
+gaim_gtkconv_has_focus(GaimConversation *conv)
+{
+	GaimConvWindow *win;
+	GaimGtkWindow *gtkwin;
+	gboolean has_focus;
+
+	win = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(win);
+
+	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
+
+	return has_focus;
+}
+
 static void
 gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 {
@@ -5345,6 +5373,7 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_chat_remove_user,   /* chat_remove_user     */
 	gaim_gtkconv_chat_remove_users,  /* chat_remove_users    */
 	NULL,                            /* update_progress      */
+	gaim_gtkconv_has_focus,          /* has_focus            */
 	gaim_gtkconv_updated             /* updated              */
 };
 

@@ -4,6 +4,9 @@ version 0.79:
 	Gaim API:
 	* gaim_url_parse() now takes two additional parameters, which are used
 	  for returning the username and password from the URL, if they exist.
+	* Added: has_focus UI op to GaimConversationUiOps and
+	  GaimConvWindowUiOps.
+	* Added: gaim_conversation_has_focus() and gaim_conv_window_has_focus().
 
 version 0.78 (05/30/2004):
 	Plugin API: v4

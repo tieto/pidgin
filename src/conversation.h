@@ -147,6 +147,7 @@ struct _GaimConvWindowUiOps
 	void (*move_conversation)(GaimConvWindow *win, GaimConversation *conv,
 	                          unsigned int newIndex);
 	int (*get_active_index)(const GaimConvWindow *win);
+	gboolean (*has_focus)(GaimConvWindow *win);
 };
 
 /**
@@ -177,8 +178,11 @@ struct _GaimConversationUiOps
 
 	void (*update_progress)(GaimConversation *conv, float percent);
 
+	gboolean (*has_focus)(GaimConversation *conv);
+
 	/* Events */
 	void (*updated)(GaimConversation *conv, GaimConvUpdateType type);
+
 };
 
 /**
@@ -420,6 +424,16 @@ void gaim_conv_window_switch_conversation(GaimConvWindow *win,
  */
 GaimConversation *gaim_conv_window_get_active_conversation(
 		const GaimConvWindow *win);
+
+/**
+ * Determines if a conversation window has focus
+ *
+ * @param win The window.
+ *
+ * @return @c TRUE if the conversation window has focus, @c FALSE if
+ * it does not or the UI does not have a concept of window focus
+ */
+gboolean gaim_conv_window_has_focus(GaimConvWindow *win);
 
 /**
  * Returns the list of conversations in the specified window.
@@ -796,6 +810,16 @@ void gaim_conversation_write(GaimConversation *conv, const char *who,
  * @param percent The percentage.
  */
 void gaim_conversation_update_progress(GaimConversation *conv, float percent);
+
+/**
+ * Determines if a conversation has focus
+ *
+ * @param conv    The conversation.
+ *
+ * @return @c TRUE if the conversation has focus, @c FALSE if
+ * it does not or the UI does not have a concept of conversation focus
+ */
+gboolean gaim_conversation_has_focus(GaimConversation *conv);
 
 /**
  * Updates the visual status and UI of a conversation.
