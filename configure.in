@@ -333,6 +333,11 @@ AC_OUTPUT([Makefile
            pixmaps/protocols/msn/Makefile
            pixmaps/protocols/yahoo/Makefile
 	   pixmaps/protocols/oscar/Makefile
+	   pixmaps/protocols/napster/Makefile
+	   pixmaps/protocols/jabber/Makefile
+	   pixmaps/protocols/irc/Makefile
+	   pixmaps/protocols/icq/Makefile
+	   pixmaps/protocols/gg/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/ticker/Makefile

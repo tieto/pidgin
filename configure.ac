@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.60cvs])
+AM_INIT_AUTOMAKE([gaim], [20021005])
 
 AC_PREREQ([2.50])
 
@@ -335,6 +335,11 @@ AC_OUTPUT([Makefile
            pixmaps/protocols/msn/Makefile
            pixmaps/protocols/yahoo/Makefile
 	   pixmaps/protocols/oscar/Makefile
+	   pixmaps/protocols/napster/Makefile
+	   pixmaps/protocols/jabber/Makefile
+	   pixmaps/protocols/irc/Makefile
+	   pixmaps/protocols/icq/Makefile
+	   pixmaps/protocols/gg/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/ticker/Makefile
