@@ -1390,6 +1390,7 @@ mdns_read(int fd)
 	DNSPacket *dns = NULL;
 	int offset; /* Current position in datagram */
 	/* XXX - Find out what to use as a maximum incoming UDP packet size */
+	/* XXX - Would making this static increase performance? */
 	/* char data[512]; */
 	char data[10096];
 	unsigned int datalen;

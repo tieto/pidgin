@@ -28,6 +28,7 @@
 #include "debug.h"
 #include "network.h"
 #include "prpl.h"
+#include "sha.h"
 
 #include "mdns.h"
 #include "util.h"
@@ -451,13 +452,56 @@ static void rendezvous_add_to_txt(RendezvousData *rd, const char *name, const ch
 	rd->mytxtdata = g_slist_append(rd->mytxtdata, node);
 }
 
+static guchar *rendezvous_read_icon_data(const char *filename, unsigned short *length)
+{
+	struct stat st;
+	FILE *file;
+	guchar *data;
+
+	*length = 0;
+
+	g_return_val_if_fail(filename != NULL, NULL);
+
+	if (stat(filename, &st))
+		return NULL;
+
+	if (!(file = fopen(filename, "rb")))
+		return NULL;
+
+	*length = st.st_size;
+	data = g_malloc(*length);
+	fread(data, 1, *length, file);
+	fclose(file);
+
+	return data;
+}
+
+static void rendezvous_add_to_txt_iconhash(RendezvousData *rd, const char *iconfile)
+{
+	guchar *icondata;
+	unsigned short iconlength;
+	unsigned char hash[20];
+	gchar *base16;
+
+	g_return_if_fail(rd != NULL);
+
+	if (iconfile == NULL)
+		return;
+
+	icondata = rendezvous_read_icon_data(iconfile, &iconlength);
+	shaBlock((unsigned char *)icondata, iconlength, hash);
+	g_free(icondata);
+
+	base16 = gaim_base16_encode(hash, 20);
+	rendezvous_add_to_txt(rd, "phsh", base16);
+	g_free(base16);
+}
+
 static void rendezvous_send_icon(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const char *iconfile = gaim_account_get_buddy_icon(account);
-	struct stat st;
-	FILE *file;
 	unsigned char *rdata;
 	unsigned short rdlength;
 	gchar *myname;
@@ -465,16 +509,7 @@ static void rendezvous_send_icon(GaimConnection *gc)
 	if (iconfile == NULL)
 		return;
 
-	if (stat(iconfile, &st))
-		return;
-
-	if (!(file = fopen(iconfile, "rb")))
-		return;
-
-	rdlength = st.st_size;
-	rdata = g_malloc(rdlength);
-	fread(rdata, 1, rdlength, file);
-	fclose(file);
+	rdata = rendezvous_read_icon_data(iconfile, &rdlength);
 
 	myname = g_strdup_printf("%s._presence._tcp.local", gaim_account_get_username(account));
 	mdns_advertise_null(rd->fd, myname, rdata, rdlength);
@@ -507,7 +542,7 @@ static void rendezvous_send_online(GaimConnection *gc)
 	rendezvous_add_to_txt(rd, "txtvers", "1");
 	rendezvous_add_to_txt(rd, "status", "avail");
 	/* rendezvous_add_to_txt(rd, "vc", "A!"); */
-	/* rendezvous_add_to_txt(rd, "phsh", "96f15dec163cf4a8cfa0cf08109cc9766f7bd5a0"); */
+	rendezvous_add_to_txt_iconhash(rd, gaim_account_get_buddy_icon(account));
 	rendezvous_add_to_txt(rd, "1st", gaim_account_get_string(account, "first", "Gaim"));
 	if (gaim_account_get_bool(account, "shareaim", FALSE)) {
 		GList *l;
