@@ -48,6 +48,12 @@ typedef struct
 
 		} input;
 
+		struct
+		{
+			GaimRequestFields *fields;
+
+		} multifield;
+
 	} u;
 
 } GaimGtkRequestData;
@@ -84,6 +90,26 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 		((GaimRequestActionCb)data->cbs[id])(data->user_data, id);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
+}
+
+static void
+multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
+{
+	if (data->cbs[0] != NULL)
+		((GaimRequestFieldsCb)data->cbs[0])(data->user_data,
+											data->u.multifield.fields);
+
+	gaim_request_close(GAIM_REQUEST_FIELDS, data);
+}
+
+static void
+multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
+{
+	if (data->cbs[1] != NULL)
+		((GaimRequestFieldsCb)data->cbs[1])(data->user_data,
+											data->u.multifield.fields);
+
+	gaim_request_close(GAIM_REQUEST_FIELDS, data);
 }
 
 #define STOCK_ITEMIZE(r, l) \
@@ -353,6 +379,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	data            = g_new0(GaimGtkRequestData, 1);
 	data->type      = GAIM_REQUEST_FIELDS;
 	data->user_data = user_data;
+	data->u.multifield.fields = fields;
 
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
@@ -361,7 +388,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(win), "fields request");
+	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
@@ -581,10 +608,16 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(multifield_cancel_cb), data);
+
 	/* OK button */
 	button = gtk_button_new_from_stock(text_to_stock(ok_text));
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(multifield_ok_cb), data);
 
 	gtk_widget_show(win);
 
@@ -598,6 +631,9 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 
 	if (data->cbs != NULL)
 		g_free(data->cbs);
+
+	if (type == GAIM_REQUEST_FIELDS)
+		gaim_request_fields_destroy(data->u.multifield.fields);
 
 	gtk_widget_destroy(data->dialog);
 
