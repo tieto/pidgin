@@ -307,10 +307,10 @@ static void oscar_free_buddyinfo(void *data) {
 	g_free(bi);
 }
 
-static fu32_t oscar_encoding_check(const char *utf8)
+static fu32_t oscar_charset_check(const char *utf8)
 {
 	int i = 0;
-	fu32_t encodingflag = 0;
+	int charset = AIM_IMCHARSET_ASCII;
 
 	/* Determine how we can send this message.  Per the warnings elsewhere 
 	 * in this file, these little checks determine the simplest encoding 
@@ -318,7 +318,7 @@ static fu32_t oscar_encoding_check(const char *utf8)
 	while (utf8[i]) {
 		if ((unsigned char)utf8[i] > 0x7f) {
 			/* not ASCII! */
-			encodingflag = AIM_IMFLAGS_ISO_8859_1;
+			charset = AIM_IMCHARSET_CUSTOM;
 			break;
 		}
 		i++;
@@ -334,11 +334,11 @@ static fu32_t oscar_encoding_check(const char *utf8)
 			i += 2;
 			continue;
 		}
-		encodingflag = AIM_IMFLAGS_UNICODE;
+		charset = AIM_IMCHARSET_UNICODE;
 		break;
 	}
 
-	return encodingflag;
+	return charset;
 }
 
 /*
@@ -3041,7 +3041,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 		case AIM_IMCHARSET_UNICODE: /* UCS-2BE */
 			ret = g_convert(data, datalen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 			if (err != NULL) {
-				gaim_debug_warn("oscar",
+				gaim_debug_warning("oscar",
 						   "UCS-2BE conversation failed: %s\n", err->message);
 				g_error_free(err);
 				ret = g_strdup(_("(There was an error receiving this message)"));
@@ -3049,9 +3049,10 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 		break;
 
 		case AIM_IMCHARSET_CUSTOM: /* Use the value specified for this account */
+			/* XXX - Make the encoding user customizable */
 			ret = g_convert(data, datalen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 			if (err != NULL) {
-				gaim_debug_warn("oscar",
+				gaim_debug_warning("oscar",
 						   "UCS-2BE conversation failed: %s\n", err->message);
 				g_error_free(err);
 				ret = g_strdup(_("(There was an error receiving this message)"));
@@ -3063,7 +3064,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 			if (g_utf8_validate(data, datalen, NULL)) {
 				ret = g_strndup(data, datalen);
 			} else {
-				gaim_debug_warn("oscar",
+				gaim_debug_warning("oscar",
 						   "Received invalid UTF-8.\n");
 				ret = g_strdup(_("(There was an error receiving this message)"));
 			}
@@ -5295,10 +5296,9 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		}
 		len = strlen(tmpmsg);
 
-		args.flags |= oscar_encoding_check(tmpmsg);
-		if (args.flags & AIM_IMFLAGS_UNICODE) {
+		args.charset = oscar_charset_check(tmpmsg);
+		if (args.charset == AIM_IMCHARSET_UNICODE) {
 			gaim_debug_info("oscar", "Sending Unicode IM\n");
-			args.charset = AIM_IMCHARSET_UNICODE;
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
@@ -5310,10 +5310,8 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				 * IM now, but I'm not sure what to do */
 				g_error_free(err);
 			}
-		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
-			gaim_debug_info("oscar",
-					   "Sending ISO-8859-1 IM\n");
-			args.charset = AIM_IMCHARSET_CUSTOM;
+		} else if (args.charset == AIM_IMCHARSET_CUSTOM) {
+			gaim_debug_info("oscar", "Sending ISO-8859-1 IM\n");
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
@@ -5321,7 +5319,6 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 						   "conversion error: %s\n", err->message);
 				gaim_debug_error("oscar",
 						   "Someone tell Ethan his 8859-1 detection is wrong\n");
-				args.flags ^= AIM_IMFLAGS_ISO_8859_1 | AIM_IMFLAGS_UNICODE;
 				len = strlen(tmpmsg);
 				g_error_free(err);
 				args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF8", NULL, &len, &err);
@@ -5375,7 +5372,7 @@ static void oscar_set_idle(GaimConnection *gc, int time) {
 
 static void oscar_set_info(GaimConnection *gc, const char *text) {
 	OscarData *od = (OscarData *)gc->proto_data;
-	fu32_t flags = 0;
+	int charset = 0;
 	char *text_html = NULL;
 	char *msg = NULL;
 	gsize msglen = 0;
@@ -5393,12 +5390,12 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	}
 		
 	text_html = gaim_strdup_withhtml(text);
-	flags = oscar_encoding_check(text_html);
-	if (flags & AIM_IMFLAGS_UNICODE) {
+	charset = oscar_charset_check(text_html);
+	if (charset == AIM_IMCHARSET_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
 		g_free(msg);
-	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
+	} else if (charset == AIM_IMCHARSET_CUSTOM) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
 		g_free(msg);
@@ -5425,7 +5422,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 
 static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *state, const char *text)
 {
-	fu32_t flags = 0;
+	int charset = 0;
 	gchar *text_html = NULL;
 	char *msg = NULL;
 	gsize msglen = 0;
@@ -5466,14 +5463,14 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *st
 	}
 
 	text_html = gaim_strdup_withhtml(text);
-	flags = oscar_encoding_check(text_html);
-	if (flags & AIM_IMFLAGS_UNICODE) {
+	charset = oscar_charset_check(text_html);
+	if (charset == AIM_IMCHARSET_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
 		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
-	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
+	} else if (charset == AIM_IMCHARSET_CUSTOM) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
@@ -6350,8 +6347,8 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	GaimConversation *conv = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2;
-	char *charset = NULL;
-	int encoding;
+	int charset;
+	char *charsetstr = NULL;
 	gsize len;
 
 	if (!(conv = gaim_find_chat(gc, id)))
@@ -6369,19 +6366,19 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 		                        "You cannot send IM Images in AIM chats."),
 		                        GAIM_MESSAGE_ERROR, time(NULL));
 
-	encoding = oscar_encoding_check(buf);
-	if (encoding & AIM_IMFLAGS_UNICODE) {
+	charset = oscar_charset_check(buf);
+	if (charset == AIM_IMCHARSET_UNICODE) {
 		gaim_debug_info("oscar", "Sending Unicode chat\n");
-		charset = "unicode-2-0";
+		charsetstr = "unicode-2-0";
 		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 		if (err) {
 			gaim_debug_error("oscar",
 					   "Error converting to unicode-2-0: %s\n", err->message);
 			g_error_free(err);
 		}
-	} else if (encoding & AIM_IMFLAGS_ISO_8859_1) {
+	} else if (charset == AIM_IMCHARSET_CUSTOM) {
 		gaim_debug_info("oscar", "Sending ISO-8859-1 chat\n");
-		charset = "iso-8859-1";
+		charsetstr = "iso-8859-1";
 		buf2 = g_convert(buf, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 		if (err) {
 			gaim_debug_error("oscar",
@@ -6390,7 +6387,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 			err = NULL;
 
 			gaim_debug_info("oscar", "Falling back to Unicode\n");
-			charset = "unicode-2-0";
+			charsetstr = "unicode-2-0";
 			buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				gaim_debug_error("oscar",
@@ -6400,7 +6397,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 			}
 		}
 	} else {
-	  charset = "us-ascii";
+	  charsetstr = "us-ascii";
 	  buf2 = g_strdup(buf);
 	}
 	g_free(buf);
@@ -6410,7 +6407,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 		return -E2BIG;
 	}
 
-	aim_chat_send_im(od->sess, c->conn, 0, buf2, len, charset, "en");
+	aim_chat_send_im(od->sess, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
 
 	return 0;

@@ -201,12 +201,6 @@ static int aim_im_paraminfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  *                        when the message is received (of type 0x0004/0x000c)
  *   AIM_IMFLAGS_OFFLINE--If destination is offline, store it until they are
  *                        online (probably ICQ only).
- *   AIM_IMFLAGS_UNICODE--Instead of ASCII7, the passed message is
- *                        made up of UNICODE duples.  If you set
- *                        this, you'd better be damn sure you know
- *                        what you're doing.
- *   AIM_IMFLAGS_ISO_8859_1 -- The message contains the ASCII8 subset
- *                        known as ISO-8859-1.  
  *
  * Generally, you should use the lowest encoding possible to send
  * your message.  If you only use basic punctuation and the generic
@@ -1389,15 +1383,6 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 			args->charsubset = sec->charsubset;
 
 			/* Set up the simple flags */
-			if (args->charset == AIM_IMCHARSET_ASCII)
-				; /* ASCII */
-			else if (args->charset == AIM_IMCHARSET_UNICODE)
-				args->icbmflags |= AIM_IMFLAGS_UNICODE;
-			else if (args->charset == AIM_IMCHARSET_CUSTOM)
-				args->icbmflags |= AIM_IMFLAGS_ISO_8859_1;
-			else if (args->charset == 0xffff)
-				; /* no encoding (yeep!) */
-
 			if (args->charsubset == 0x0000)
 				; /* standard subencoding? */
 			else if (args->charsubset == 0x000b)

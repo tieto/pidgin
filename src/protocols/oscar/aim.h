@@ -683,8 +683,6 @@ struct aim_chat_roominfo {
 
 #define AIM_IMFLAGS_AWAY				0x0001 /* mark as an autoreply */
 #define AIM_IMFLAGS_ACK					0x0002 /* request a receipt notice */
-#define AIM_IMFLAGS_UNICODE				0x0004
-#define AIM_IMFLAGS_ISO_8859_1			0x0008
 #define AIM_IMFLAGS_BUDDYREQ			0x0010 /* buddy icon requested */
 #define AIM_IMFLAGS_HASICON				0x0020 /* already has icon */
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
