@@ -288,7 +288,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
-		static int i = 0;
+		static int i = 1;
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_STATE_ERROR) {
