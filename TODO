@@ -27,12 +27,12 @@ gtk2/new prefs
 	ignore font faces doesn't ignore the font faces in a person's info
 	kicking someone in #name-extention causes a kick to display in #name as well
 		and vice-versa
-	the preference for the width of a chat is being used when chats and 
+	the preference for the width of a chat is not being used when chats and 
 		conversations are in the same window.
 	resizing text entry area below default doesn't work well.
 		some people report being unable to shrink it at all
 	escape to close window pref or function doesn't work right
-		has to do with loss of focus and incorrect initial focus.
+		has to do with incorrect initial focus.
 	there is a blank line in the blist for a couple seconds after someone
 		signs off. [gtk2 bug with the deprecated gtklist?]
 	themes don't set background correctly in the blist. (reported, not verified)
@@ -44,7 +44,7 @@ GAIM-REMOTE:
 PORTABILITY/i18n
 icq i18n
 info dialog
-irc (patch pending?)
+irc (patch pending?)(done?)
 	
 DISCUSSION:
 	protocol action to log into webmail for those that support such
@@ -54,7 +54,8 @@ DISCUSSION:
 		for different events, or at least give some way to allow
 		this behavior. 
 	do we really need some of the preferences? (Ignore TIK messages.
-	   Does anyone use that method of retrieving Away messages anymore?)
+		Does anyone use that method of retrieving Away messages anymore?)
+		toc does?
 	show alias in list of people in chat
 	tab complete to alias, translate to nick on send for chat
 	disable x on blist when docklet loaded?
@@ -83,7 +84,6 @@ DISCUSSION:
 
 
 IN GENERAL:
-	prefs need to be saved when set, get rid of apply button.
 	add a way for a plugin to store/retrive config values
 	segfault on pressing back with messages in queue if coming back
 		for the second time in a given instance of gaim
@@ -187,7 +187,7 @@ AIM(via oscar):
 	in non-tabed conversations, clicking the x to close the
 		window does not close the direct connection.
 		using escape and the close button do.
-	STILL have blist corruption troubles
+	STILL have blist corruption troubles?
 	canceled direct im should still allow new attempt
 	failed direct im attempt should allow new attempt
 		some way to cancel an attempt that isn't happening
@@ -274,9 +274,9 @@ IRC:
 		around this second issue.
 	fix segfault on attempted send after having been /remove'ed
 	multi word remove messages
-	auto reply to /msg on away
+	auto reply to /msg on away 
 	no list of people on /join 
-	display target of +b and +q
+	display target of +b and +q (done)?
 
 Jabber:
 	Segfault on account creation, esp. on register new account
@@ -321,6 +321,7 @@ Jabber:
 Napster: (should this even exist?)
 	File Transfer (do we really want this?)
 	New User Registration
+	remove this protocol?
 
 Zephyr:
 	God help us.
@@ -347,7 +348,6 @@ GTK1.2(some of this applies to gtk2 also):
 	tooltip for mute sound is wrong. should read "Mute" not "Sound" when sounds are on
 	bug report: The pixmaps arrow_down.xpm and arrow_right.xpm don't have proper 
 		transparency... it only causes problems if your GTK theme is pixmap based
-	sendas menu for im dialog. like get info has.
 	bug: if you remove a group in one prpl, it disappears from the online tab
 		even if there are still buddies in that group online
 	make it so that same sn entries don't merge. use gc's to do this
