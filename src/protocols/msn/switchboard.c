@@ -17,518 +17,535 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "switchboard.h"
+#include "utils.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+static GHashTable *switchboard_commands  = NULL;
+static GHashTable *switchboard_msg_types = NULL;
 
-G_MODULE_IMPORT GSList *connections;
 
-static char *
-msn_parse_format(char *mime)
+/**************************************************************************
+ * Catch-all commands
+ **************************************************************************/
+static gboolean
+__blank_cmd(MsnServConn *servconn, const char *command, const char **params,
+			size_t param_count)
 {
-	char *cur;
-	GString *ret = g_string_new(NULL);
-	guint colorbuf;
-	char *colors = (char *)(&colorbuf);
-	
-
-	cur = strstr(mime, "FN=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		ret = g_string_append(ret, "<FONT FACE=\"");
-		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, *cur);
-			cur++;
-		}
-		ret = g_string_append(ret, "\">");
-	}
-	
-	cur = strstr(mime, "EF=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		while (*cur && *cur != ';') {
-			ret = g_string_append_c(ret, '<');
-			ret = g_string_append_c(ret, *cur);
-			ret = g_string_append_c(ret, '>');
-			cur++;
-		}
-	}
-	
-	cur = strstr(mime, "CO=");
-	if (cur && (*(cur = cur + 3) != ';')) {
-		if (sscanf (cur, "%x;", &colorbuf) == 1) {
-			char tag[64];
-			g_snprintf(tag, sizeof(tag), "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">", colors[0], colors[1], colors[2]);
-			ret = g_string_append(ret, tag);
-		}
-	}
-	
-	cur = url_decode(ret->str);
-	g_string_free(ret, TRUE);
-	return cur;
+	return TRUE;
 }
 
-static int
-msn_process_switch(struct msn_switchboard *ms, char *buf)
+static gboolean
+__unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
+			  size_t param_count)
 {
-	struct gaim_connection *gc = ms->gc;
-	char sendbuf[MSN_BUF_LEN];
-	static int id = 0;
+	gaim_debug(GAIM_DEBUG_ERROR, "msg",
+			   "Handled switchboard message: %s\n", command);
 
-	if (!g_ascii_strncasecmp(buf, "ACK", 3)) {
-	} else if (!g_ascii_strncasecmp(buf, "ANS", 3)) {
-		if (ms->chat)
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
-	} else if (!g_ascii_strncasecmp(buf, "BYE", 3)) {
-		char *user, *tmp = buf;
-		GET_NEXT(tmp);
-		user = tmp;
-
-		if (ms->chat) {
-			gaim_chat_remove_user(GAIM_CHAT(ms->chat), user, NULL);
-		} else {
-			char msgbuf[256];
-			const char *username;
-			struct gaim_conversation *cnv;
-			struct buddy *b;
-
-			if ((b = gaim_find_buddy(gc->account, user)) != NULL)
-				username = gaim_get_buddy_alias(b);
-			else
-				username = user;
-
-			g_snprintf(msgbuf, sizeof(msgbuf),
-					   _("%s has closed the conversation window"), username);
-
-			if ((cnv = gaim_find_conversation(user)))
-				gaim_conversation_write(cnv, NULL, msgbuf, -1,
-							WFLAG_SYSTEM, time(NULL));
-
-			msn_kill_switch(ms);
-			return 0;
-		}
-	} else if (!g_ascii_strncasecmp(buf, "CAL", 3)) {
-	} else if (!g_ascii_strncasecmp(buf, "IRO", 3)) {
-		char *tot, *user, *tmp = buf;
-
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		tot = tmp;
-		GET_NEXT(tmp);
-		ms->total = atoi(tot);
-		user = tmp;
-		GET_NEXT(tmp);
-
-		if (ms->total > 1) {
-			if (!ms->chat)
-				ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
-		} 
-	} else if (!g_ascii_strncasecmp(buf, "JOI", 3)) {
-		char *user, *tmp = buf;
-		GET_NEXT(tmp);
-		user = tmp;
-		GET_NEXT(tmp);
-
-		if (ms->total == 1) {
-			ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), ms->user, NULL);
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
-			g_free(ms->user);
-			ms->user = NULL;
-		}
-		if (ms->chat)
-			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
-		ms->total++;
-		while (ms->txqueue) {
-			char *send = add_cr(ms->txqueue->data);
-			g_snprintf(sendbuf, sizeof(sendbuf),
-					   "MSG %u N %d\r\n%s%s", ++ms->trId,
-					   strlen(MIME_HEADER) + strlen(send),
-					   MIME_HEADER, send);
-
-			g_free(ms->txqueue->data);
-			ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
-
-			if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
-				msn_kill_switch(ms);
-				return 0;
-			}
-		}
-	} else if (!g_ascii_strncasecmp(buf, "MSG", 3)) {
-		char *user, *tmp = buf;
-		int length;
-
-		GET_NEXT(tmp);
-		user = tmp;
-
-		GET_NEXT(tmp);
-
-		GET_NEXT(tmp);
-		length = atoi(tmp);
-
-		ms->msg = TRUE;
-		ms->msguser = g_strdup(user);
-		ms->msglen = length;
-	} else if (!g_ascii_strncasecmp(buf, "NAK", 3)) {
-		do_error_dialog(_("An MSN message may not have been received."), NULL, GAIM_ERROR);
-	} else if (!g_ascii_strncasecmp(buf, "NLN", 3)) {
-	} else if (!g_ascii_strncasecmp(buf, "OUT", 3)) {
-		if (ms->chat)
-			serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
-		msn_kill_switch(ms);
-		return 0;
-	} else if (!g_ascii_strncasecmp(buf, "USR", 3)) {
-		/* good, we got USR, now we need to find out who we want to talk to */
-		struct msn_switchboard *ms = msn_find_writable_switch(gc);
-
-		if (!ms)
-			return 0;
-
-		g_snprintf(sendbuf, sizeof(sendbuf), "CAL %u %s\r\n",
-				   ++ms->trId, ms->user);
-
-		if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
-			msn_kill_switch(ms);
-			return 0;
-		}
-	} else if (isdigit(*buf)) {
-		handle_errcode(buf, TRUE);
-
-		if (atoi(buf) == 217)
-			msn_kill_switch(ms);
-
-	} else {
-		gaim_debug(GAIM_DEBUG_WARNING, "msn", "Unhandled message!\n");
-	}
-
-	return 1;
+	return FALSE;
 }
 
-static void
-msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
+/**************************************************************************
+ * Switchboard Commands
+ **************************************************************************/
+static gboolean
+__ans_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
 {
-	char *content, *agent, *format;
-	char *message = NULL;
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+
+	if (swboard->chat != NULL)
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+
+	return TRUE;
+}
+
+static gboolean
+__bye_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+	const char *user = params[0];
+
+	if (swboard->chat != NULL)
+		gaim_chat_remove_user(GAIM_CHAT(swboard->chat), user, NULL);
+	else {
+		const char *username;
+		struct gaim_conversation *conv;
+		struct buddy *b;
+		char buf[MSN_BUF_LEN];
+
+		if ((b = gaim_find_buddy(gc->account, user)) != NULL)
+			username = gaim_get_buddy_alias(b);
+		else
+			username = user;
+
+		g_snprintf(buf, sizeof(buf),
+				   _("%s has closed the conversation window."), username);
+
+		if ((conv = gaim_find_conversation(user)) != NULL)
+			gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM,
+									time(NULL));
+
+		msn_switchboard_destroy(swboard);
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+__iro_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+
+	swboard->total_users = atoi(params[2]);
+
+	if (swboard->total_users > 1) {
+		if (swboard->chat == NULL)
+			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
+												 "MSN Chat");
+
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat), params[3], NULL);
+	}
+
+	if (swboard->chat != NULL)
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+
+	return TRUE;
+}
+
+static gboolean
+__joi_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+	const char *passport;
+
+	passport = params[0];
+
+	if (swboard->total_users == 1) {
+		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
+											 "MSN Chat");
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+						   msn_user_get_passport(swboard->user), NULL);
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+
+		msn_user_unref(swboard->user);
+	}
+
+	if (swboard->chat != NULL)
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat), passport, NULL);
+
+	swboard->total_users++;
+
+	while (servconn->txqueue) {
+		char *buf = servconn->txqueue->data;
+
+		servconn->txqueue = g_slist_remove(servconn->txqueue, buf);
+
+		if (msn_servconn_write(swboard->servconn, buf, strlen(buf)) < 0) {
+			msn_switchboard_destroy(swboard);
+
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+static gboolean
+__msg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
+
+	servconn->parsing_msg = TRUE;
+	servconn->msg_passport = g_strdup(params[0]);
+	servconn->msg_friendly = g_strdup(params[1]);
+	servconn->msg_len      = atoi(params[2]);
+
+	return TRUE;
+}
+
+static gboolean
+__nak_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	/*
+	 * TODO: Investigate this, as it seems to occur frequently with
+	 *       the old prpl.
+	 */
+	do_error_dialog(_("An MSN message may not have been received."),
+					NULL, GAIM_ERROR);
+
+	return TRUE;
+}
+
+static gboolean
+__out_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+
+	if (swboard->chat != NULL)
+		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)));
+
+	msn_switchboard_destroy(swboard);
+
+	return FALSE;
+}
+
+static gboolean
+__usr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSwitchBoard *swboard = servconn->data;
+
+	if (!msn_switchboard_send_command(swboard, "CAL",
+									  msn_user_get_passport(swboard->user))) {
+		msn_switchboard_destroy(swboard);
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/**************************************************************************
+ * Message Types
+ **************************************************************************/
+static gboolean
+__plain_msg(MsnServConn *servconn, const MsnMessage *msg)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+	char *body;
+	const char *value;
+	char *format;
 	int flags = 0;
 
-	agent = strstr(msg, "User-Agent: ");
-	if (agent) {
-		if (!g_ascii_strncasecmp(agent, "User-Agent: Gaim",
-						   strlen("User-Agent: Gaim")))
+	body = g_strdup(msn_message_get_body(msg));
+
+	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL) {
+		if (!g_ascii_strncasecmp(value, "Gaim", 4))
 			flags |= IM_FLAG_GAIMUSER;
 	}
 
-	format = strstr(msg, "X-MMS-IM-Format: ");
-	if (format) {
-		format = msn_parse_format(format);
-	} else {
-		format = NULL;
+	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL) {
+		format = msn_parse_format(value);
+
+		body = g_strdup_printf("%s%s", format, body);
+
+		g_free(format);
 	}
 
-	content = strstr(msg, "Content-Type: ");
-	if (!content)
-		return;
-	if (!g_ascii_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
-			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
-		if (strstr(content,"TypingUser: ") && !ms->chat) {
-			serv_got_typing(ms->gc, ms->msguser,
-							MSN_TYPING_RECV_TIMEOUT, TYPING);
-			return;
-		} 
+	if (swboard->chat != NULL)
+		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)),
+						 servconn->msg_passport, flags, body, time(NULL));
+	else
+		serv_got_im(gc, servconn->msg_passport, body, flags, time(NULL), -1);
 
-	} else if (!g_ascii_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
-							  strlen("Content-Type: text/x-msmsgsinvite;"))) {
+	g_free(body);
 
-		/*
-		 * NOTE: Other things, such as voice communication, would go in
-		 *       here too (since they send the same Content-Type). However,
-		 *       this is the best check for file transfer messages, so I'm
-		 *       calling msn_process_ft_invite_msg(). If anybody adds support
-		 *       for anything else that sends a text/x-msmsgsinvite, perhaps
-		 *       this should be changed. For now, it stays.
-		 */
-		msn_process_ft_msg(ms, content);
+	return TRUE;
+}
 
-	} else if (!g_ascii_strncasecmp(content, "Content-Type: text/plain",
-				  strlen("Content-Type: text/plain"))) {
+static gboolean
+__control_msg(MsnServConn *servconn, const MsnMessage *msg)
+{
+	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSwitchBoard *swboard = servconn->data;
+	const char *value;
 
-		char *skiphead = strstr(msg, "\r\n\r\n");
+	if (swboard->chat == NULL &&
+		(value = msn_message_get_attr(msg, "TypingUser")) != NULL) {
 
-		if (!skiphead || !skiphead[4]) {
-			return;
-		}
-
-		skiphead += 4;
-		strip_linefeed(skiphead);
-		
-		if (format) { 
-			message = g_strdup_printf("%s%s", format, skiphead);
-		} else {
-			message = g_strdup(skiphead);
-		}
-		
-		if (ms->chat)
-			serv_got_chat_in(ms->gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)),
-							 ms->msguser, flags, message, time(NULL));
-		else
-			serv_got_im(ms->gc, ms->msguser, message, flags, time(NULL), -1);
-
-		g_free(message);
+		serv_got_typing(gc, servconn->msg_passport, MSN_TYPING_RECV_TIMEOUT,
+						TYPING);
 	}
+
+	return TRUE;
+}
+
+/**************************************************************************
+ * Connect stuff
+ **************************************************************************/
+static gboolean
+__connect_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnServConn *servconn = data;
+	MsnSwitchBoard *swboard = servconn->data;
+	char outparams[MSN_BUF_LEN];
+
+	if (servconn->fd != source)
+		servconn->fd = source;
+
+	swboard->in_use = TRUE;
+
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Connecting to switchboard...\n");
+
+	if (msn_switchboard_is_invited(swboard)) {
+		g_snprintf(outparams, sizeof(outparams), "%s %s %s",
+				   servconn->session->account->gc->username,
+				   swboard->auth_key, swboard->session_id);
+
+		if (!msn_switchboard_send_command(swboard, "ANS", outparams)) {
+			msn_switchboard_destroy(swboard);
+
+			return FALSE;
+		}
+	}
+	else {
+		g_snprintf(outparams, sizeof(outparams), "%s %s",
+				   servconn->session->account->gc->username, swboard->auth_key);
+
+		if (!msn_switchboard_send_command(swboard, "USR", outparams)) {
+			msn_switchboard_destroy(swboard);
+
+			return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 static void
-msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
+__failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct msn_switchboard *ms = data;
-	char buf[MSN_BUF_LEN];
-	int cont = 1;
-	int len;
-	
-	ms->fd = source;
-	len = read(ms->fd, buf, sizeof(buf));
-	if (len <= 0) {
-		msn_kill_switch(ms);
-		return;
+	MsnServConn *servconn = data;
+
+	msn_switchboard_destroy(servconn->data);
+}
+
+MsnSwitchBoard *
+msn_switchboard_new(MsnSession *session)
+{
+	MsnSwitchBoard *swboard;
+	MsnServConn *servconn;
+
+	g_return_val_if_fail(session != NULL, NULL);
+
+	swboard = g_new0(MsnSwitchBoard, 1);
+
+	swboard->servconn = servconn = msn_servconn_new(session);
+	msn_servconn_set_connect_cb(servconn, __connect_cb);
+	msn_servconn_set_failed_read_cb(servconn, __failed_read_cb);
+
+	servconn->data = swboard;
+
+	session->switches = g_list_append(session->switches, swboard);
+
+	if (switchboard_commands == NULL) {
+		/* Register the command callbacks. */
+		msn_servconn_register_command(servconn, "ACK",       __blank_cmd);
+		msn_servconn_register_command(servconn, "ANS",       __ans_cmd);
+		msn_servconn_register_command(servconn, "BYE",       __bye_cmd);
+		msn_servconn_register_command(servconn, "CAL",       __blank_cmd);
+		msn_servconn_register_command(servconn, "IRO",       __iro_cmd);
+		msn_servconn_register_command(servconn, "JOI",       __joi_cmd);
+		msn_servconn_register_command(servconn, "MSG",       __msg_cmd);
+		msn_servconn_register_command(servconn, "NAK",       __nak_cmd);
+		msn_servconn_register_command(servconn, "NLN",       __blank_cmd);
+		msn_servconn_register_command(servconn, "OUT",       __out_cmd);
+		msn_servconn_register_command(servconn, "USR",       __usr_cmd);
+		msn_servconn_register_command(servconn, "_unknown_", __unknown_cmd);
+
+		/* Register the message type callbacks. */
+		msn_servconn_register_msg_type(servconn, "text/plain", __plain_msg);
+		msn_servconn_register_msg_type(servconn, "text/x-msmsgscontrol",
+									   __control_msg);
+
+		/* Save these for future use. */
+		switchboard_commands  = servconn->commands;
+		switchboard_msg_types = servconn->msg_types;
+	}
+	else {
+		g_hash_table_destroy(servconn->commands);
+		g_hash_table_destroy(servconn->msg_types);
+
+		servconn->commands  = switchboard_commands;
+		servconn->msg_types = switchboard_msg_types;
 	}
 
-	ms->rxqueue = g_realloc(ms->rxqueue, len + ms->rxlen);
-	memcpy(ms->rxqueue + ms->rxlen, buf, len);
-	ms->rxlen += len;
-
-	while (cont) {
-		if (!ms->rxlen)
-			return;
-
-		if (ms->msg) {
-			char *msg;
-			if (ms->msglen > ms->rxlen)
-				return;
-			msg = ms->rxqueue;
-			ms->rxlen -= ms->msglen;
-			if (ms->rxlen) {
-				ms->rxqueue = g_memdup(msg + ms->msglen, ms->rxlen);
-			} else {
-				ms->rxqueue = NULL;
-				msg = g_realloc(msg, ms->msglen + 1);
-			}
-			msg[ms->msglen] = 0;
-			ms->msglen = 0;
-			ms->msg = FALSE;
-
-			msn_process_switch_msg(ms, msg);
-
-			g_free(ms->msguser);
-			g_free(msg);
-		} else {
-			char *end = ms->rxqueue;
-			int cmdlen;
-			char *cmd;
-			int i = 0;
-
-			while (i + 1 < ms->rxlen) {
-				if (*end == '\r' && end[1] == '\n')
-					break;
-				end++; i++;
-			}
-			if (i + 1 == ms->rxlen)
-				return;
-
-			cmdlen = end - ms->rxqueue + 2;
-			cmd = ms->rxqueue;
-			ms->rxlen -= cmdlen;
-			if (ms->rxlen) {
-				ms->rxqueue = g_memdup(cmd + cmdlen, ms->rxlen);
-			} else {
-				ms->rxqueue = NULL;
-				cmd = g_realloc(cmd, cmdlen + 1);
-			}
-			cmd[cmdlen] = 0;
-
-			gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s", cmd);
-			g_strchomp(cmd);
-			cont = msn_process_switch(ms, cmd);
-
-			g_free(cmd);
-		}
-	}
+	return swboard;
 }
 
 void
-msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
+msn_switchboard_destroy(MsnSwitchBoard *swboard)
 {
-	struct msn_switchboard *ms = data;
-	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md;
-	char buf[MSN_BUF_LEN];
+	MsnSession *session;
 
-	if (source == -1 || !g_slist_find(connections, gc)) {
-		close(source);
-		g_free(ms->sessid);
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
+	g_return_if_fail(swboard != NULL);
 
-	md = gc->proto_data;
+	session = swboard->servconn->session;
 
-	if (ms->fd != source)
-		ms->fd = source;
+	if (swboard->servconn->connected)
+		msn_switchboard_disconnect(swboard);
 
-	g_snprintf(buf, sizeof(buf), "ANS %u %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-		close(ms->fd);
-		g_free(ms->sessid);
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
+	if (swboard->user != NULL)
+		msn_user_unref(swboard->user);
 
-	md->switches = g_slist_append(md->switches, ms);
-	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ,
-							  msn_switchboard_callback, ms);
-}
+	if (swboard->auth_key != NULL)
+		g_free(swboard->auth_key);
 
-static void
-msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition cond)
-{
-	struct msn_switchboard *ms = data;
-	struct gaim_connection *gc = ms->gc;
-	char buf[MSN_BUF_LEN];
+	if (swboard->session_id != NULL)
+		g_free(swboard->session_id);
 
-	if (source == -1 || !g_slist_find(connections, gc)) {
-		close(source);
-		if (g_slist_find(connections, gc)) {
-			msn_kill_switch(ms);
-			do_error_dialog(_("Gaim was unable to send an MSN message"),
-					_("Gaim encountered an error communicating with the "
-					  "MSN switchboard server.  Please try again later."),
-					GAIM_ERROR);
-		}
+	session->switches = g_list_remove(session->switches, swboard);
 
-		return;
-	}
+	msn_servconn_destroy(swboard->servconn);
 
-	if (ms->fd != source)
-		ms->fd = source;
-
-	g_snprintf(buf, sizeof(buf), "USR %u %s %s\r\n",
-			   ++ms->trId, gc->username, ms->auth);
-
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-		g_free(ms->auth);
-		g_free(ms);
-		return;
-	}
-
-	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ,
-							  msn_switchboard_callback, ms);
-}
-
-struct msn_switchboard *
-msn_find_switch(struct gaim_connection *gc, const char *username)
-{
-	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	GSList *m = md->switches;
-
-	for (m = md->switches; m != NULL; m = m->next) {
-		struct msn_switchboard *ms = (struct msn_switchboard *)m->data;
-
-		if (ms->total <= 1 && !gaim_utf8_strcasecmp(ms->user, username))
-			return ms;
-	}
-
-	return NULL;
-}
-
-struct msn_switchboard *
-msn_find_switch_by_id(struct gaim_connection *gc, int chat_id)
-{
-	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	GSList *m;
-
-	for (m = md->switches; m != NULL; m = m->next) {
-		struct msn_switchboard *ms = (struct msn_switchboard *)m->data;
-
-		if (ms->chat && gaim_chat_get_id(GAIM_CHAT(ms->chat)) == chat_id)
-			return ms;
-	}
-
-	return NULL;
-}
-
-struct msn_switchboard *
-msn_find_writable_switch(struct gaim_connection *gc)
-{
-	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	GSList *m;
-	
-	for (m = md->switches; m != NULL; m = m->next) {
-		struct msn_switchboard *ms = (struct msn_switchboard *)m->data;
-
-		if (ms->txqueue != NULL)
-			return ms;
-	}
-
-	return NULL;
+	g_free(swboard);
 }
 
 void
-msn_kill_switch(struct msn_switchboard *ms)
+msn_switchboard_set_user(MsnSwitchBoard *swboard, MsnUser *user)
 {
-	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md = gc->proto_data;
+	g_return_if_fail(swboard != NULL);
 
-	if (ms->inpa)
-		gaim_input_remove(ms->inpa);
+	swboard->user = user;
 
-	close(ms->fd);
-	g_free(ms->rxqueue);
-
-	if (ms->msg)    g_free(ms->msguser);
-	if (ms->user)   g_free(ms->user);
-	if (ms->sessid) g_free(ms->sessid);
-
-	g_free(ms->auth);
-
-	while (ms->txqueue) {
-		g_free(ms->txqueue->data);
-		ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
-	}
-
-	if (ms->chat)
-		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
-
-	md->switches = g_slist_remove(md->switches, ms);
-
-	g_free(ms);
+	msn_user_ref(user);
 }
 
-struct msn_switchboard *
-msn_switchboard_connect(struct gaim_connection *gc, const char *host, int port)
+MsnUser *
+msn_switchboard_get_user(const MsnSwitchBoard *swboard)
 {
-	struct msn_switchboard *ms;
+	g_return_val_if_fail(swboard != NULL, NULL);
 
-	if (host == NULL || port == 0)
-		return NULL;
+	return swboard->user;
+}
 
-	ms = msn_find_writable_switch(gc);
+void
+msn_switchboard_set_auth_key(MsnSwitchBoard *swboard, const char *key)
+{
+	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(key != NULL);
 
-	if (ms == NULL)
-		return NULL;
+	swboard->auth_key = g_strdup(key);
+}
 
-	if (proxy_connect(gc->account, (char *)host, port, msn_ss_xfr_connect,
-				ms) != 0) {
-		msn_kill_switch(ms);
+const char *
+msn_switchboard_get_auth_key(const MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, NULL);
 
-		return NULL;
+	return swboard->auth_key;
+}
+
+void
+msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id)
+{
+	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(id != NULL);
+
+	if (swboard->session_id != NULL)
+		g_free(swboard->session_id);
+
+	swboard->session_id = g_strdup(id);
+}
+
+const char *
+msn_switchboard_get_session_id(const MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, NULL);
+
+	return swboard->session_id;
+}
+
+void
+msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited)
+{
+	g_return_if_fail(swboard != NULL);
+
+	swboard->invited = invited;
+}
+
+gboolean
+msn_switchboard_is_invited(const MsnSwitchBoard *swboard)
+{
+	g_return_val_if_fail(swboard != NULL, FALSE);
+
+	return swboard->invited;
+}
+
+gboolean
+msn_switchboard_connect(MsnSwitchBoard *swboard, const char *server, int port)
+{
+	g_return_val_if_fail(swboard != NULL, FALSE);
+
+	msn_servconn_set_server(swboard->servconn, server, port);
+
+	if (msn_servconn_connect(swboard->servconn))
+		swboard->in_use = TRUE;
+
+	return swboard->in_use;
+}
+
+void
+msn_switchboard_disconnect(MsnSwitchBoard *swboard)
+{
+	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(swboard->servconn->connected);
+
+	msn_servconn_disconnect(swboard->servconn);
+
+	swboard->in_use = FALSE;
+}
+
+gboolean
+msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
+{
+	char *buf;
+	int ret;
+
+	g_return_val_if_fail(swboard != NULL, FALSE);
+	g_return_val_if_fail(msg != NULL, FALSE);
+
+	msn_message_set_transaction_id(msg, ++swboard->trId);
+	buf = msn_message_build_string(msg);
+
+	if (swboard->servconn->txqueue != NULL || !swboard->in_use) {
+		gaim_debug(GAIM_DEBUG_INFO, "msn", "Appending message to queue.\n");
+
+		swboard->servconn->txqueue =
+			g_slist_append(swboard->servconn->txqueue, buf);
+
+		return TRUE;
 	}
 
-	return ms;
+	ret = msn_servconn_write(swboard->servconn, buf, strlen(buf));
+
+	g_free(buf);
+
+	return (ret > 0);
+}
+
+gboolean
+msn_switchboard_send_command(MsnSwitchBoard *swboard, const char *command,
+							 const char *params)
+{
+	char buf[MSN_BUF_LEN];
+
+	g_return_val_if_fail(swboard != NULL, FALSE);
+	g_return_val_if_fail(command != NULL, FALSE);
+
+	if (params == NULL)
+		g_snprintf(buf, sizeof(buf), "%s %u\r\n", command,
+				   ++swboard->trId);
+	else
+		g_snprintf(buf, sizeof(buf), "%s %u %s\r\n",
+				   command, ++swboard->trId, params);
+
+	return (msn_servconn_write(swboard->servconn, buf, strlen(buf)) > 0);
 }

@@ -3,7 +3,7 @@
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,81 +18,164 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 #ifndef _MSN_SWITCHBOARD_H_
 #define _MSN_SWITCHBOARD_H_
 
-struct msn_switchboard {
-	struct gaim_connection *gc;
-	struct gaim_conversation *chat;
-	int fd;
-	int inpa;
+typedef struct _MsnSwitchBoard MsnSwitchBoard;
 
-	char *rxqueue;
-	int rxlen;
+#include "servconn.h"
+#include "msg.h"
+#include "user.h"
+
+struct _MsnSwitchBoard
+{
+	MsnServConn *servconn;
+	MsnUser *user;
+
+	char *auth_key;
+	char *session_id;
+
+	gboolean invited;
+
+	struct gaim_conversation *chat;
+
+	gboolean in_use;
+
+	int total_users;
+
 	gboolean msg;
-	char *msguser;
 	int msglen;
 
-	char *sessid;
-	char *auth;
-	guint32 trId;
-	int total;
-	char *user;
-	GSList *txqueue;
+	int chat_id;
+	int trId;
 };
 
 /**
- * Finds a switch with the given username.
+ * Creates a new switchboard.
  *
- * @param gc       The gaim connection.
- * @param username The username to search for.
+ * @param session The MSN session.
  *
- * @return The switchboard, if found.
+ * @return The new switchboard.
  */
-struct msn_switchboard *msn_find_switch(struct gaim_connection *gc,
-										const char *username);
+MsnSwitchBoard *msn_switchboard_new(MsnSession *session);
 
 /**
- * Finds a switchboard with the given chat ID.
+ * Destroys a switchboard.
  *
- * @param gc      The gaim connection.
- * @param chat_id The chat ID to search for.
- *
- * @return The switchboard, if found.
+ * @param swboard The switchboard to destroy.
  */
-struct msn_switchboard *msn_find_switch_by_id(struct gaim_connection *gc,
-											  int chat_id);
+void msn_switchboard_destroy(MsnSwitchBoard *swboard);
 
 /**
- * Finds the first writable switchboard.
+ * Sets the user the switchboard is supposed to connect to.
  *
- * @param gc The gaim connection.
- *
- * @return The first writable switchboard, if found.
+ * @param swboard The switchboard.
+ * @param user    The user.
  */
-struct msn_switchboard *msn_find_writable_switch(struct gaim_connection *gc);
+void msn_switchboard_set_user(MsnSwitchBoard *swboard, MsnUser *user);
+
+/**
+ * Returns the user the switchboard is supposed to connect to.
+ *
+ * @param swboard The switchboard.
+ *
+ * @return The user.
+ */
+MsnUser *msn_switchboard_get_user(const MsnSwitchBoard *swboard);
+
+/**
+ * Sets the auth key the switchboard must use when connecting.
+ *
+ * @param swboard The switchboard.
+ * @param key     The auth key.
+ */
+void msn_switchboard_set_auth_key(MsnSwitchBoard *swboard, const char *key);
+
+/**
+ * Returns the auth key the switchboard must use when connecting.
+ *
+ * @param swboard The switchboard.
+ *
+ * @return The auth key.
+ */
+const char *msn_switchboard_get_auth_key(const MsnSwitchBoard *swboard);
+
+/**
+ * Sets the session ID the switchboard must use when connecting.
+ *
+ * @param swboard The switchboard.
+ * @param id      The session ID.
+ */
+void msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id);
+
+/**
+ * Returns the session ID the switchboard must use when connecting.
+ *
+ * @param swboard The switchboard.
+ *
+ * @return The session ID.
+ */
+const char *msn_switchboard_get_session_id(const MsnSwitchBoard *swboard);
+
+/**
+ * Sets whether or not the user was invited to this switchboard.
+ *
+ * @param swboard The switchboard.
+ * @param invite  @c TRUE if invited, @c FALSE otherwise.
+ */
+void msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited);
+
+/**
+ * Returns whether or not the user was invited to this switchboard.
+ *
+ * @param swboard The switchboard.
+ *
+ * @return @c TRUE if invited, @c FALSE otherwise.
+ */
+gboolean msn_switchboard_is_invited(const MsnSwitchBoard *swboard);
 
 /**
  * Connects to a switchboard.
  *
- * @param gc   The gaim connection.
- * @param host The hostname.
- * @param port The port.
+ * @param swboard The switchboard.
+ * @param server  The server.
+ * @param port    The port.
  *
- * @return The new switchboard.
+ * @return @c TRUE if able to connect, or @c FALSE otherwise.
  */
-struct msn_switchboard *msn_switchboard_connect(struct gaim_connection *gc,
-												const char *host, int port);
+gboolean msn_switchboard_connect(MsnSwitchBoard *swboard,
+								 const char *server, int port);
 
 /**
- * Kills a switchboard.
+ * Disconnects from a switchboard.
  *
- * @param ms The switchboard to kill.
+ * @param swboard The switchboard.
  */
-void msn_kill_switch(struct msn_switchboard *ms);
+void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
 
-void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond);
+/**
+ * Sends a message to a switchboard.
+ *
+ * @param swboard The switchboard.
+ * @param msg     The message to send.
+ *
+ * @return @c TRUE if successful, or @c FALSE otherwise.
+ */
+gboolean msn_switchboard_send_msg(MsnSwitchBoard *swboard,
+								  MsnMessage *msg);
+
+/**
+ * Sends a command to the switchboard.
+ *
+ * @param swboard The switchboard.
+ * @param command The command.
+ * @param params  The parameters.
+ *
+ * @return @c TRUE if successful, or @c FALSE otherwise.
+ */
+gboolean msn_switchboard_send_command(MsnSwitchBoard *swboard,
+									  const char *command,
+									  const char *params);
 
 #endif /* _MSN_SWITCHBOARD_H_ */
