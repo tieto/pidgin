@@ -2900,33 +2900,30 @@ static void gtk_html_add_text(GtkHtml * html,
 		 * we print the first half up to the whitespace char, then the second half. if we
 		 * didn't find a whitespace char, we search backwards for one. if we still don't find
 		 * one, we just print the two halves; it would have wrapped anyway */
-		/* FIXME: we should probably look for the previous whitespace character first, but eh. */
-		char *tmp1, *tmp2;
 		int pos = num / 2;
 		static int count = 0;
 		count ++;
-		while (pos < num && !isspace(text[pos])) pos++;
+		while (pos < num && (!isspace(text[pos]) || text[pos] == '\n')) pos++;
 		if (pos == num) {
 			pos = num/2;
-			while (pos > 0 && !isspace(text[pos])) pos--;
+			while (pos > 0 && (!isspace(text[pos]) || text[pos] == '\n')) pos--;
 			if (!pos) pos = num / 2;
 		}
-		tmp1 = g_malloc(pos + 1);
-		tmp2 = g_malloc(num - pos + 1);
-		g_snprintf(tmp1, pos + 1, "%s", text);
-		g_snprintf(tmp2, num - pos + 1, "%s", text + pos + 1);
-		gtk_html_add_text(html, cfont, fore, back, tmp1, pos + 1, uline, strike, url);
-		gtk_html_add_text(html, cfont, fore, back, text + pos, 1, uline, strike, url);
-		gtk_html_add_text(html, cfont, fore, back, tmp2, num - pos + 1, uline, strike, url);
-		g_free(tmp1);
-		g_free(tmp2);
+		gtk_html_add_text(html, cfont, fore, back, text, pos + 1, uline, strike, url);
+		gtk_html_add_text(html, cfont, fore, back, &text[pos+1], 1, uline, strike, url);
+		gtk_html_add_text(html, cfont, fore, back, &text[pos+2], num - pos + 1, uline, strike, url);
 		g_free(text);
 		count--;
 		if (!count) {
 			hbits = g_list_last(html->html_bits);
 			if (!hbits) return; /* does this ever happen? */
 			hb = (GtkHtmlBit *)hbits->data;
-			hb->newline = 1;
+			hb->newline++;
+			if (html->current_x > 0)
+				html->current_x = 0;
+			else
+				html->current_y += cfont->ascent + cfont->descent + 5;
+			return;
 		}
 		return;
 	}
