@@ -947,7 +947,7 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "USR %d MD5 I %s\n", ++md->trId, gc->username);
+	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Unable to talk to Notification Server");
 		signoff(gc);
@@ -978,8 +978,8 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "VER", 3)) {
-		/* we got VER, check to see that MSNP2 is in the list, then send INF */
-		if (!strstr(buf, "MSNP2")) {
+		/* we got VER, check to see that MSNP5 is in the list, then send INF */
+		if (!strstr(buf, "MSNP5")) {
 			hide_login_progress(gc, "Protocol not supported");
 			signoff(gc);
 			return;
@@ -1133,7 +1133,7 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "VER %d MSNP2\n", ++md->trId);
+	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Unable to write to server");
 		signoff(gc);
