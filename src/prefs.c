@@ -843,7 +843,7 @@ GtkWidget *browser_page() {
 	gtk_widget_show (frame);
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add (GTK_CONTAINER (frame), vbox);
-	gaim_dropdown(vbox, "Broswer", &web_browser_new, -1, 
+	gaim_dropdown(vbox, "Browser", &web_browser_new, -1, 
 		      "Netscape", BROWSER_NETSCAPE,
 		      "Konqueror", BROWSER_KONQ,
 		      "Mozilla", BROWSER_MOZILLA,
@@ -1035,7 +1035,6 @@ GtkWidget *away_page() {
 	gaim_button(_("Sending messages removes away status"), &away_options_new, OPT_AWAY_BACK_ON_IM, vbox);
 	gaim_button(_("Queue new messages when away"), &away_options_new, OPT_AWAY_QUEUE, vbox);
 	gaim_button(_("Ignore new conversations when away"), &away_options_new, OPT_AWAY_DISCARD, vbox);
-	gaim_button(_("Sounds while away"), &sound_options_new, OPT_SOUND_WHEN_AWAY, vbox);
 	gtk_widget_show (vbox);
 
 
@@ -1221,7 +1220,7 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	sound_row_sel = g_value_get_uint(&val);
 	if (sound_entry)
-		gtk_entry_set_text(sound_entry, sound_file_new[sound_row_sel] ? sound_file_new[sound_row_sel] : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file_new[sound_row_sel] ? sound_file_new[sound_row_sel] : "(default)");
 	g_value_unset (&val);
 	if (sounddialog)
 		gtk_widget_destroy(sounddialog);
@@ -1363,13 +1362,14 @@ void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 	gchar *message;
 	gchar buffer[BUF_LONG];
 	char *tmp;
+	struct away_message *am;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 1, &val);
-	message = g_value_get_string(&val);
+	am = g_value_get_pointer(&val);
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
-	strcpy(buffer, message);
+	strncpy(buffer, am->message, BUF_LONG);
 	tmp = stylize(buffer, BUF_LONG);
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, -1, GTK_IMHTML_NO_TITLE |
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
@@ -1390,7 +1390,7 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	
 	if (! gtk_tree_selection_get_selected (sel, &prefs_away_store, &iter))
 		return;
-	gtk_tree_model_get_value (prefs_away_store, &iter, 2, &val);
+	gtk_tree_model_get_value (prefs_away_store, &iter, 1, &val);
 	am = g_value_get_pointer (&val);
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
 	rem_away_mess(NULL, am);
@@ -1400,8 +1400,41 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 }
 
 #else
-void away_message_sel(GtkWidget *w, GtkWidget *list) {}
-void remove_away_message(GtkWidget *widget, GtkWidget *list) {}
+static struct away_message *cur_message;
+void away_message_sel(GtkWidget *w, struct away_message *a) {
+	gchar buffer[BUF_LONG];
+	char *tmp;
+
+	cur_message = a;
+
+	/* Clear the Box */
+	gtk_imhtml_clear(GTK_IMHTML(away_text));
+
+	/* Fill the text box with new message */
+	strncpy(buffer, a->message, BUF_LONG);
+	tmp = stylize(buffer, BUF_LONG);
+
+	debug_printf("FSD: %s\n", tmp);
+	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, -1, GTK_IMHTML_NO_TITLE |
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
+	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", -1, GTK_IMHTML_NO_TITLE |
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
+	g_free(tmp);
+}
+void remove_away_message(GtkWidget *widget, GtkWidget *list) {
+	GList *i;
+	struct away_message *a;
+
+	i = GTK_LIST(prefs_away_list)->selection;
+
+	if (!i)
+		return;
+	if (!i->next) {
+		gtk_imhtml_clear(GTK_IMHTML(away_text));
+	}
+	a = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	rem_away_mess(NULL, a);
+}
 #endif
 
 GtkWidget *away_message_page() {
@@ -1418,8 +1451,6 @@ GtkWidget *away_message_page() {
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
-#else
-	GtkWidget *list;
 #endif
 	GSList *awy = away_messages;
 	struct away_message *a;
@@ -1439,14 +1470,13 @@ GtkWidget *away_message_page() {
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
       
 #if GTK_CHECK_VERSION(1,3,0)
-	prefs_away_store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		gtk_list_store_append (prefs_away_store, &iter);
 		gtk_list_store_set(prefs_away_store, &iter,
-				   0, a->name, 
-				   1, a->message,
-				   2, a, -1);
+				   0, a->name,
+				   1, a, -1);
 		awy = awy->next;
 	}
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(prefs_away_store));
@@ -1462,16 +1492,32 @@ GtkWidget *away_message_page() {
 	gtk_widget_show(event_view);
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 #else
-	list = gtk_clist_new(1);
+	prefs_away_list = gtk_list_new();
 	while (awy) {
-		char *msg;
+		GtkWidget *ambox = gtk_hbox_new(FALSE, 5);
+		GtkWidget *list_item =gtk_list_item_new();
+		GtkWidget *label;
 		a = (struct away_message *)awy->data;
-		msg = a->name;
-		gtk_clist_append(GTK_CLIST(list), &msg);
+		gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_message_sel),
+				   a);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), a);
+
+		gtk_widget_show(list_item);
+
+		ambox = gtk_hbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(list_item), ambox);
+		gtk_widget_show(ambox);
+
+		label = gtk_label_new(a->name);
+		gtk_box_pack_start(GTK_BOX(ambox), label, FALSE, FALSE, 5);
+		gtk_widget_show(label);
+
 		awy = awy->next;
+		
 	}
-	gtk_widget_show(list);
-	gtk_container_add(GTK_CONTAINER(sw), list);
+	gtk_widget_show(prefs_away_list);
+	gtk_container_add(GTK_CONTAINER(sw), prefs_away_list);
 #endif
 
 	gtk_widget_show (vbox);
@@ -1504,8 +1550,6 @@ GtkWidget *away_message_page() {
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (away_message_sel),
 			  NULL);
-#else
-	gtk_signal_connect(GTK_OBJECT(list), "changed", GTK_SIGNAL_FUNC(away_message_sel), NULL);
 #endif	
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_widget_show(hbox);
@@ -1526,7 +1570,7 @@ GtkWidget *away_message_page() {
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), event_view);
 #else
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
-	//gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), event_view);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), prefs_away_list);
 #endif	
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	if (misc_options & OPT_MISC_COOL_LOOK)
@@ -1535,6 +1579,7 @@ GtkWidget *away_message_page() {
 	
 #if GTK_CHECK_VERSION (1,3,0)
 	button = pixbuf_button(_("_Edit"), "edit.png");
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), event_view);
 #else
 	button = picture_button(prefs, _("Edit"), save_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), button);

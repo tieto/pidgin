@@ -2601,7 +2601,9 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		return;
 	if (c->unseen == -1) return;
 	style = gtk_style_new();
+#if !GTK_CHECK_VERSION(1,3,0)
 	gdk_font_unref(gtk_style_get_font(style));
+#endif
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
@@ -3574,7 +3576,8 @@ void remove_icon(struct conversation *c)
 		gtk_timeout_remove(c->icon_timer);
 	c->icon_timer = 0;
 #if GTK_CHECK_VERSION(1,3,0)
-	g_object_unref(c->iter);
+	if(c->iter)
+		g_object_unref(c->iter);
 #else
 	c->frame = 0;
 #endif

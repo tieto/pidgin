@@ -22,6 +22,12 @@ version 0.60:
 	* Optionally uniquely colorize nicks in chats
 	* Changed some default options
 	* Updated desktop icon.
+	* GTK2 Goodness:
+		- Preferences dialog
+		- Plugins dialog (Ari Pollak)
+		- GtkIMHtml, sorta (Ari Pollak, Christian Hammond)
+	* Notify.c plugin rewritten; check its configure dialog (Thanks,
+	  Etan Reisner)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

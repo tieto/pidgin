@@ -556,7 +556,30 @@ GtkWidget *do_error_dialog(char *message, char *title)
 	GtkWidget *d;
 	GtkWidget *label;
 	GtkWidget *close;
-
+	GtkWidget *img = NULL;
+	/*
+#if GTK_CHECK_VERSION(1,3,0)
+	char *filename;
+	switch (type){
+	case GAIM_LOGO:
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "gaim.png", NULL);
+		break;
+	case GAIM_INFO:
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_info.png", NULL);
+		break;
+	case GAIM_WARNING:
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_warning.png", NULL);
+		break;
+	case GAIM_ERROR:
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_error.png", NULL);
+		break;
+	case GAIM_QUESTION:
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+		break;
+	}
+	img = gtk_image_new_from_file(filename);
+#endif
+	*/
 
 	d = gtk_dialog_new();
 	gtk_window_set_policy(GTK_WINDOW(d), FALSE, FALSE, TRUE);
@@ -3524,7 +3547,27 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 	gtk_widget_show(ca->text);
 
-	if (dummy && GTK_LIST(prefs_away_list)->selection) {
+       
+#if GTK_CHECK_VERSION(1,3,0)
+	if (dummy) {
+		struct away_message *amt;
+		GtkTreeIter iter;
+		int pos = 0;
+		GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dummy)));
+		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
+		GValue val = { 0, };
+
+		if (! gtk_tree_selection_get_selected (sel, &ls, &iter))
+			return;
+		gtk_tree_model_get_value (ls, &iter, 1, &val);
+		amt = g_value_get_pointer (&val);
+		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
+		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message,
+					 strlen(amt->message), &pos);
+		ca->mess = amt;
+	}
+#else
+	if (dummy && GTK_LIST(prefs_away_list)->selection) {	
 		GtkWidget *item = GTK_LIST(prefs_away_list)->selection->data;
 		struct away_message *amt = gtk_object_get_user_data(GTK_OBJECT(item));
 		int pos = 0;
@@ -3533,6 +3576,8 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 					 strlen(amt->message), &pos);
 		ca->mess = amt;
 	}
+#endif	
+	
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);

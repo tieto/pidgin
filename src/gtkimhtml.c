@@ -1660,7 +1660,7 @@ save_img (GtkObject *object,
 {
 	struct imgsv *is = data;
 	struct im_image *img = is->img;
-	gchar *filename;
+	const gchar *filename;
 	FILE *f;
 	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(is->savedialog));
 	g_print("Saving %s\n", filename);
@@ -2076,11 +2076,11 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 #define RGSTRY 13
 #define ENCDNG 14
 
-static gchar*
+static const gchar*
 gtk_imhtml_get_font_name (GdkFont *font)
 {
 #if GTK_CHECK_VERSION(1,3,0)
-	return "--*-helvetica-medium-r-normal--10-*-*-*-*-*-*-*";
+	return gdk_x11_font_get_name(font);
 #else
 	GdkFontPrivate *fontpriv = (GdkFontPrivate *) font;
 	return fontpriv->names->data;
@@ -2095,7 +2095,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		      gint       fontsize)
 {
 	GdkFont *default_font = imhtml->default_font;
-	gchar *default_name;
+	const gchar *default_name;
 	gchar **xnames;
 	gchar **pos;
 	gchar *tmp = NULL;

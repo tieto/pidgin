@@ -2233,7 +2233,9 @@ static void update_idle_time(struct buddy_show *bs)
 		gtk_widget_show(bs->idle);
 
 	style = gtk_style_new();
+#if !GTK_CHECK_VERSION(1,3,0)
 	gdk_font_unref(gtk_style_get_font(style));
+#endif
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(bs->label->style)));
 	for (i = 0; i < 5; i++)
 		style->fg[i] = bs->idle->style->fg[i];
