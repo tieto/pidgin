@@ -30,6 +30,8 @@
 extern "C" {
 #endif
 
+#define DEFAULT_FONT_FACE "Helvetica 12"
+
 #define GTK_TYPE_IMHTMLTOOLBAR            (gtk_imhtmltoolbar_get_type ())
 #define GTK_IMHTMLTOOLBAR(obj)            (GTK_CHECK_CAST ((obj), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbar))
 #define GTK_IMHTMLTOOLBAR_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTMLTOOLBAR, GtkIMHtmlToolbarClass))

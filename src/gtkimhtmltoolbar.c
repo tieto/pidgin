@@ -125,6 +125,18 @@ destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 }
 
 static void
+realize_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+{
+	GtkFontSelection *sel;
+
+	sel = GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->fontsel);
+	gtk_widget_hide_all(gtk_widget_get_parent(sel->size_entry));
+	gtk_widget_show_all(sel->family_list);
+	gtk_widget_show(gtk_widget_get_parent(sel->family_list));
+	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(sel->family_list)));
+}
+
+static void
 cancel_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
 	destroy_toolbar_font(widget, NULL, toolbar);
@@ -164,7 +176,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 		toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
 		g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
-
+		
 		if(fontname) {
 			char fonttif[128];
 			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontname);
@@ -181,6 +193,8 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 						 G_CALLBACK(apply_font), toolbar->font_dialog);
 		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
 						 G_CALLBACK(cancel_toolbar_font), toolbar);
+		g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
+						 G_CALLBACK(realize_toolbar_font), toolbar);
 
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
