@@ -67,12 +67,79 @@ msn_act_id(gpointer data, char *entry)
 }
 
 static void
+msn_set_phone_number(gpointer data, const char *type, const char *entry)
+{
+	struct gaim_connection *gc = data;
+	MsnSession *session = gc->proto_data;
+	char outparams[MSN_BUF_LEN];
+
+	if (entry == NULL || *entry == '\0')
+		g_snprintf(outparams, sizeof(outparams), "%s  ", type);
+	else
+		g_snprintf(outparams, sizeof(outparams), "%s %s", type, entry);
+
+	if (!msn_servconn_send_command(session->notification_conn,
+								   "PRP", outparams)) {
+
+		hide_login_progress(gc, _("Write error"));
+		signoff(gc);
+	}
+}
+
+static void
+msn_set_home_phone_cb(gpointer data, char *entry)
+{
+	msn_set_phone_number(data, "PHH", entry);
+}
+
+static void
+msn_set_work_phone_cb(gpointer data, char *entry)
+{
+	msn_set_phone_number(data, "PHW", entry);
+}
+
+static void
+msn_set_mobile_phone_cb(gpointer data, char *entry)
+{
+	msn_set_phone_number(data, "PHM", entry);
+}
+
+static void
 msn_show_set_friendly_name(struct gaim_connection *gc)
 {
 	do_prompt_dialog(_("Set Friendly Name:"), gc->displayname,
 					 gc, msn_act_id, NULL);
 }
 
+static void
+msn_show_set_home_phone(struct gaim_connection *gc)
+{
+	MsnSession *session = gc->proto_data;
+
+	do_prompt_dialog(_("Set Home Phone Number:"),
+					 msn_user_get_home_phone(session->user),
+					 gc, msn_set_home_phone_cb, NULL);
+}
+
+static void
+msn_show_set_work_phone(struct gaim_connection *gc)
+{
+	MsnSession *session = gc->proto_data;
+
+	do_prompt_dialog(_("Set Work Phone Number:"),
+					 msn_user_get_work_phone(session->user),
+					 gc, msn_set_work_phone_cb, NULL);
+}
+
+static void
+msn_show_set_mobile_phone(struct gaim_connection *gc)
+{
+	MsnSession *session = gc->proto_data;
+
+	do_prompt_dialog(_("Set Mobile Phone Number:"),
+					 msn_user_get_mobile_phone(session->user),
+					 gc, msn_set_mobile_phone_cb, NULL);
+}
 
 /**************************************************************************
  * Protocol Plugin ops
@@ -120,12 +187,15 @@ msn_status_text(struct buddy *b)
 static char *
 msn_tooltip_text(struct buddy *b)
 {
+	char *text = NULL;
+	/* MsnUser *user = b->proto_data; */
+
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
-		return g_strdup_printf(_("<b>Status:</b> %s"),
+		text = g_strdup_printf(_("<b>Status:</b> %s"),
 							   msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
 	}
 
-	return NULL;
+	return text;
 }
 
 static GList *
@@ -153,6 +223,24 @@ msn_actions(struct gaim_connection *gc)
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Friendly Name");
 	pam->callback = msn_show_set_friendly_name;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Home Phone Number");
+	pam->callback = msn_show_set_home_phone;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Work Phone Number");
+	pam->callback = msn_show_set_work_phone;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Mobile Phone Number");
+	pam->callback = msn_show_set_mobile_phone;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
@@ -844,8 +932,10 @@ msn_rename_group(struct gaim_connection *gc, const char *old_group,
 static void
 msn_buddy_free(struct buddy *b)
 {
-	if (b->proto_data != NULL)
-		g_free(b->proto_data);
+	if (b->proto_data != NULL) {
+		msn_user_destroy(b->proto_data);
+		b->proto_data = NULL;
+	}
 }
 
 static void

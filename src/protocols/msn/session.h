@@ -31,6 +31,7 @@ typedef struct _MsnSession MsnSession;
 struct _MsnSession
 {
 	struct gaim_account *account;
+	MsnUser *user;
 
 	char *dispatch_server;
 	int dispatch_port;

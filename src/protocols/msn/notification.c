@@ -431,25 +431,37 @@ static gboolean
 __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSession *session = servconn->session;
+	struct gaim_connection *gc = session->account->gc;
 	struct buddy *b;
 	const char *passport, *type, *value;
 	int status = 0;
+	MsnUser *user;
 
 	passport = params[1];
 	type     = params[2];
 	value    = params[3];
 
-	if (!strcmp(type, "MOB")) {
-		if (value != NULL && !strcmp(value, "Y")) {
-			gaim_debug(GAIM_DEBUG_MISC, "msn",
-					   "%s has a pager\n", passport);
-			if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
-				status = b->uc | (1 << 5);
+	user = msn_users_find_with_passport(session->users, passport);
 
-				serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
+	if (value != NULL) {
+		if (!strcmp(type, "MOB")) {
+			if (!strcmp(value, "Y")) {
+				gaim_debug(GAIM_DEBUG_MISC, "msn",
+						   "%s has a pager\n", passport);
+				if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
+					status = b->uc | (1 << 5);
+
+					serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
+				}
 			}
 		}
+		else if (!strcmp(type, "PHH"))
+			msn_user_set_home_phone(user, msn_url_decode(value));
+		else if (!strcmp(type, "PHW"))
+			msn_user_set_work_phone(user, msn_url_decode(value));
+		else if (!strcmp(type, "PHM"))
+			msn_user_set_mobile_phone(user, msn_url_decode(value));
 	}
 
 	return TRUE;
@@ -696,13 +708,13 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 				b = gaim_buddy_new(gc->account,
 								   msn_user_get_passport(user), NULL);
 
+				b->proto_data = user;
+
 				gaim_blist_add_buddy(b, g, NULL);
 			}
 
 			serv_got_alias(gc, (char *)msn_user_get_passport(user),
 						   (char *)msn_user_get_name(user));
-
-			msn_user_destroy(user);
 		}
 	}
 
@@ -740,6 +752,28 @@ __nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
 	serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
+
+	return TRUE;
+}
+
+static gboolean
+__prp_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSession *session = servconn->session;
+	const char *type, *value;
+
+	type  = params[2];
+	value = params[3];
+
+	if (param_count == 4) {
+		if (!strcmp(type, "PHH"))
+			msn_user_set_home_phone(session->user, msn_url_decode(value));
+		else if (!strcmp(type, "PHW"))
+			msn_user_set_work_phone(session->user, msn_url_decode(value));
+		else if (!strcmp(type, "PHM"))
+			msn_user_set_mobile_phone(session->user, msn_url_decode(value));
+	}
 
 	return TRUE;
 }
@@ -1196,6 +1230,8 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		return FALSE;
 	}
 
+	session->user = msn_user_new(session, gc->username, NULL);
+
 	set_login_progress(session->account->gc, 4, _("Syncing with server"));
 
 	return TRUE;
@@ -1241,7 +1277,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "MSG",       __msg_cmd);
 		msn_servconn_register_command(notification, "NLN",       __nln_cmd);
 		msn_servconn_register_command(notification, "OUT",       __out_cmd);
-		msn_servconn_register_command(notification, "PRP",       __blank_cmd);
+		msn_servconn_register_command(notification, "PRP",       __prp_cmd);
 		msn_servconn_register_command(notification, "QNG",       __blank_cmd);
 		msn_servconn_register_command(notification, "QRY",       __blank_cmd);
 		msn_servconn_register_command(notification, "REA",       __rea_cmd);

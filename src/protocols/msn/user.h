@@ -37,6 +37,14 @@ struct _MsnUser
 	char *passport;         /**< The passport account.   */
 	char *name;             /**< The friendly name.      */
 
+	struct
+	{
+		char *home;         /**< Home phone number.      */
+		char *work;         /**< Work phone number.      */
+		char *mobile;       /**< Mobile phone number.    */
+
+	} phone;
+
 	int group_id;           /**< The group ID.           */
 
 	size_t ref_count;       /**< The reference count.    */
@@ -116,6 +124,30 @@ void msn_user_set_name(MsnUser *user, const char *name);
 void msn_user_set_group_id(MsnUser *user, int id);
 
 /**
+ * Sets the home phone number for a user.
+ *
+ * @param user   The user.
+ * @param number The home phone number.
+ */
+void msn_user_set_home_phone(MsnUser *user, const char *number);
+
+/**
+ * Sets the work phone number for a user.
+ *
+ * @param user   The user.
+ * @param number The work phone number.
+ */
+void msn_user_set_work_phone(MsnUser *user, const char *number);
+
+/**
+ * Sets the mobile phone number for a user.
+ *
+ * @param user   The user.
+ * @param number The mobile phone number.
+ */
+void msn_user_set_mobile_phone(MsnUser *user, const char *number);
+
+/**
  * Returns the passport account for a user.
  *
  * @param user The user.
@@ -141,6 +173,33 @@ const char *msn_user_get_name(const MsnUser *user);
  * @return The group ID.
  */
 int msn_user_get_group_id(const MsnUser *user);
+
+/**
+ * Returns the home phone number for a user.
+ *
+ * @param user The user.
+ *
+ * @return The user's home phone number.
+ */
+const char *msn_user_get_home_phone(const MsnUser *user);
+
+/**
+ * Returns the work phone number for a user.
+ *
+ * @param user The user.
+ *
+ * @return The user's work phone number.
+ */
+const char *msn_user_get_work_phone(const MsnUser *user);
+
+/**
+ * Returns the mobile phone number for a user.
+ *
+ * @param user The user.
+ *
+ * @return The user's mobile phone number.
+ */
+const char *msn_user_get_mobile_phone(const MsnUser *user);
 
 /**
  * Sets the client information for a user.

@@ -72,11 +72,12 @@ msn_user_destroy(MsnUser *user)
 	if (user->clientinfo != NULL)
 		g_hash_table_destroy(user->clientinfo);
 
-	if (user->passport != NULL)
-		g_free(user->passport);
+	if (user->passport != NULL) g_free(user->passport);
+	if (user->name     != NULL) g_free(user->name);
 
-	if (user->name != NULL)
-		g_free(user->name);
+	if (user->phone.home   != NULL) g_free(user->phone.home);
+	if (user->phone.work   != NULL) g_free(user->phone.work);
+	if (user->phone.mobile != NULL) g_free(user->phone.mobile);
 
 	g_free(user);
 }
@@ -140,6 +141,40 @@ msn_user_set_group_id(MsnUser *user, int id)
 	user->group_id = id;
 }
 
+void
+msn_user_set_home_phone(MsnUser *user, const char *number)
+{
+	g_return_if_fail(user != NULL);
+
+	if (user->phone.home != NULL)
+		g_free(user->phone.home);
+
+	user->phone.home = (number == NULL ? NULL : g_strdup(number));
+}
+
+void
+msn_user_set_work_phone(MsnUser *user, const char *number)
+{
+	g_return_if_fail(user != NULL);
+
+	if (user->phone.work != NULL)
+		g_free(user->phone.work);
+
+	user->phone.work = (number == NULL ? NULL : g_strdup(number));
+}
+
+void
+msn_user_set_mobile_phone(MsnUser *user, const char *number)
+{
+	g_return_if_fail(user != NULL);
+
+	if (user->phone.mobile != NULL)
+		g_free(user->phone.mobile);
+
+	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
+}
+
+
 const char *
 msn_user_get_passport(const MsnUser *user)
 {
@@ -162,6 +197,30 @@ msn_user_get_group_id(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, -1);
 
 	return user->group_id;
+}
+
+const char *
+msn_user_get_home_phone(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->phone.home;
+}
+
+const char *
+msn_user_get_work_phone(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->phone.work;
+}
+
+const char *
+msn_user_get_mobile_phone(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->phone.mobile;
 }
 
 void
