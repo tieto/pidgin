@@ -1,5 +1,5 @@
 #include "resource.h"
 
-IDI_ICON2		ICON "../pixmaps/gaim.ico"
-IDI_ICON3		ICON "../pixmaps/gaim-conn.ico"
-IDI_ICON4		ICON "../pixmaps/gaim-away.ico"
+GAIM_ICON		ICON "../pixmaps/gaim.ico"
+GAIM_OFFLINE_ICON	ICON "../pixmaps/gaim_offline.ico"
+GAIM_AWAY_ICON		ICON "../pixmaps/gaim_away.ico"
