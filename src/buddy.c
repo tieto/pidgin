@@ -2016,7 +2016,7 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 {
         int x, y, width, height;
         int save = 0;
-        gdk_window_get_root_origin(blist->window, &x, &y);
+        gdk_window_get_position(blist->window, &x, &y);
         gdk_window_get_size(blist->window, &width, &height);
 
         if(e->send_event) { /* Is a position event */
@@ -2025,10 +2025,13 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
                 blist_pos.x = x;
                 blist_pos.y = y;
         } else { /* Is a size event */
-                if (blist_pos.width != width || blist_pos.width != width)
+                if (blist_pos.xoff != x || blist_pos.yoff != y || blist_pos.width != width)
                         save = 1;
+
                 blist_pos.width = width;
                 blist_pos.height = height;
+		blist_pos.xoff = x;
+		blist_pos.yoff = y;
         }
 
         if (save)
@@ -2458,7 +2461,8 @@ void show_buddy_list()
 
         if (general_options & OPT_GEN_SAVED_WINDOWS) {
                 if (blist_pos.width != 0) { /* Sanity check! */
-                        gtk_widget_set_uposition(blist, blist_pos.x, blist_pos.y);
+                        gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
+						 blist_pos.y - blist_pos.yoff);
                         gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
                 }
         }
