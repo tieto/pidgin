@@ -92,6 +92,7 @@ version 0.60:
 	* File send/receive support for Oscar (Thanks, William T. Mahan)
 	* Option to have AIM over oscar notify you if you have 
 	  unread mail (Thanks, Mark Doliner)
+	* Fix first message in tab not displaying bug (Thanks Etan Reisner)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

@@ -189,6 +189,7 @@ struct conversation *new_conversation(char *name)
 	update_checkbox(c);
 	update_smilies(c);
 	plugin_event(event_new_conversation, name);
+	gtk_imhtml_to_bottom(c->text);
 	return c;
 }
 
@@ -2666,6 +2667,8 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		gtk_widget_destroy(convo_menubar);
 		convo_menubar = NULL;
 	}
+
+	gtk_imhtml_to_bottom(c->text);
 }
 
 void show_typing(struct conversation *c) {

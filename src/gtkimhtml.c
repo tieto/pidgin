@@ -3665,3 +3665,16 @@ gtk_imhtml_page_down (GtkIMHtml *imhtml)
 					     vadj->upper - vadj->page_size));
 	gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
 }
+
+void
+gtk_imhtml_to_bottom (GtkIMHtml *imhtml)
+{
+				GtkAdjustment *vadj;
+				
+				g_return_if_fail (imhtml != NULL);
+				g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+				vadj = GTK_LAYOUT (imhtml)->vadjustment;
+        gtk_adjustment_set_value (vadj, vadj->upper - vadj->page_size);
+				gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
+}
