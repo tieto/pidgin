@@ -41,10 +41,16 @@ struct prpl *find_prpl(int prot)
 	return NULL;
 }
 
+static gint proto_compare(struct prpl *a, struct prpl *b) {
+	/* neg if a before b, 0 if equal, pos if a after b */
+	return a->protocol - b->protocol;
+}
+
 void load_protocol(proto_init pi)
 {
 	struct prpl *p = g_new0(struct prpl, 1);
 	struct prpl *old;
+	GSList *n = protocols;
 	pi(p);
 	if (old = find_prpl(p->protocol)) {
 		GSList *c = connections;
@@ -65,7 +71,7 @@ void load_protocol(proto_init pi)
 		protocols = g_slist_remove(protocols, old);
 		g_free(old);
 	}
-	protocols = g_slist_append(protocols, p);
+	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 }
 
 void static_proto_init()
