@@ -1209,7 +1209,7 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 								imhtml);
 			diff = (yy < 0) ? (yy / 2) : ((yy - height) / 2);
 			gtk_adjustment_set_value (vadj,
-						  MIN (vadj->value + diff, vadj->upper - height + 20));
+						  MIN (vadj->value + diff, vadj->upper - height));
 		}
 
 		if (imhtml->selection) {
