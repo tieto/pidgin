@@ -889,6 +889,9 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Show Formatting Toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 
+	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
+			"/core/conversations/use_alias_for_title", vbox);
+
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
 	label = gaim_gtk_prefs_dropdown(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
@@ -984,8 +987,6 @@ GtkWidget *im_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 	gaim_gtk_prefs_checkbox(_("Show _logins in window"),
 			"/core/conversations/im/show_login", vbox);
-	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
-			"/core/conversations/use_alias_for_title", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Typing Notification"));
 	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),

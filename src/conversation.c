@@ -1085,19 +1085,25 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 {
 	GaimAccount *account;
 	GaimBuddy *b;
-	const char *text, *name;
+	GaimChat *chat;
+	const char *text = NULL, *name;
 
 	g_return_if_fail(conv != NULL);
 
 	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title") &&
-		account != NULL && ((b = gaim_find_buddy(account, name)) != NULL)) {
-
-		text = gaim_get_buddy_alias(b);
+	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title")) {
+		if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			if(account && ((b = gaim_find_buddy(account, name)) != NULL))
+				text = gaim_get_buddy_alias(b);
+		} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
+				text = chat->alias;
+		}
 	}
-	else
+
+	if(!text)
 		text = name;
 
 	gaim_conversation_set_title(conv, text);
