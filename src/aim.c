@@ -148,6 +148,7 @@ void gaim_setup(struct gaim_connection *gc)
 	}
 #ifdef USE_APPLET
 	set_user_state(online);
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), "autologin");
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"signoff", _("Signoff"), (AppletCallbackFunc)signoff_all, NULL);
 #endif /* USE_APPLET */
@@ -833,6 +834,9 @@ int main(int argc, char *argv[])
 					"plugins", _("Plugins"), GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif /* GAIM_PLUGINS */
 
+	applet_widget_register_callback(APPLET_WIDGET(applet),
+					"autologin", _("Auto-login"), (AppletCallbackFunc)auto_login, NULL);
+ 
 	if (!opt_acct)
 		auto_login();
 

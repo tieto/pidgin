@@ -1468,6 +1468,8 @@ void signoff(struct gaim_connection *gc)
 	if (applet) {
 		/* These don't have any purpose if the applet is gone :-P */
 		applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
+		applet_widget_register_callback(APPLET_WIDGET(applet),
+						"autologin", _("Auto-login"), (AppletCallbackFunc)auto_login, NULL);
 		remove_applet_away();
 	}
 #else

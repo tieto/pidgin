@@ -234,6 +234,7 @@ AC_SUBST(UI_LIBS)
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
+	AC_PATH_X
 	old_LIBS="$LIBS"
 	LIBS="$LIBS $UI_LIBS -L$x_libraries"
 	XSS_LIBS="no"
