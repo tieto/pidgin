@@ -658,7 +658,6 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		debug_printf("Latest WinAIM released version %s, build %d, at %s (%s)\n",
 				latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo);
 	debug_printf("Closing auth connection...\n");
-	gdk_input_remove(gc->inpa);
 	aim_conn_kill(sess, &command->conn);
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, NULL);
@@ -711,6 +710,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		return -1;
 	}
 	aim_auth_sendcookie(sess, bosconn, cookie);
+	gdk_input_remove(gc->inpa);
 	return 1;
 }
 
