@@ -3046,9 +3046,9 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = text_color.red * 256 / 65535;
-	text_color.green = text_color.green * 256 /65535;
-	text_color.blue = text_color.blue * 256 / 65535;
+	text_color.red = text_color.red / 256;
+	text_color.green = text_color.green / 256;
+	text_color.blue = text_color.blue / 256;
 	
 	c->fgcol = text_color;
 	c->hasfg = 1;
@@ -3073,9 +3073,9 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
-	text_color.red = text_color.red * 256 / 65535;
-	text_color.green = text_color.green * 256 /65535;
-	text_color.blue = text_color.blue * 256 / 65535;
+	text_color.red = text_color.red / 256;
+	text_color.green = text_color.green / 256;
+	text_color.blue = text_color.blue / 256;
 
 	c->bgcol = text_color;
 	c->hasbg = 1;
