@@ -193,6 +193,10 @@ static void icq_info_reply(struct icq_link *link, unsigned long uin, const char 
 	g_show_info_text(buf);
 }
 
+static void icq_req_notify(struct icq_link *link, unsigned long id, int result,
+				unsigned int length, void *data) {
+}
+
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
@@ -214,6 +218,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_WrongPassword = icq_wrong_passwd;
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
+	link->icq_RequestNotify = icq_req_notify;
 	link->icq_SetTimeout = icq_set_timeout;
 
 	icq_UnsetProxy(link);
