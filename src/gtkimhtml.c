@@ -2530,7 +2530,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				   !g_strcasecmp (tag, "<PRE>") ||
 				   !g_strcasecmp (tag, "</PRE>") ||
 				   !g_strcasecmp (tag, "<H3>") ||
-				   !g_strcasecmp (tag, "<H3 ") ||
+				   !g_strncasecmp (tag, "<H3 ", strlen ("<H3 ")) ||
 				   !g_strcasecmp (tag, "</H3>") ||
 				   !g_strcasecmp (tag, "<HTML>") ||
 				   !g_strcasecmp (tag, "</HTML>") ||

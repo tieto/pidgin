@@ -125,7 +125,7 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 		gtk_widget_destroy(acctedit);
 	}
 	acctedit = NULL;
-	if (d == NULL && blist == NULL && mainwindow == NULL)
+	if (d == NULL && blist == NULL && mainwindow == NULL && g_slist_length(connections) < 1)
 		gtk_main_quit();
 }
 
