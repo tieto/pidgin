@@ -64,7 +64,7 @@
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 #define SEND_COLOR "#267726"
-#define RECV_COLOR "#A82F22F"
+#define RECV_COLOR "#A82F2F"
 
 static char nick_colors[][8] = {
 	"#ba55d3",              /* Medium Orchid */
