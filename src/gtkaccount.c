@@ -320,6 +320,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Remember Password */
 	dialog->remember_pass_check =
 		gtk_check_button_new_with_label(_("Remember password"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
+								 TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->remember_pass_check);
