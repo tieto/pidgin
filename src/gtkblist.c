@@ -1478,7 +1478,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 	gtknode = node->ui_data;
 
-	if (node->child && node->child->next && GAIM_BLIST_NODE_IS_CONTACT(node) && !gtknode->contact_expanded) {
+	if (node->child && GAIM_BLIST_NODE_IS_CONTACT(node) && ((GaimContact*)node)->online > 1 && !gtknode->contact_expanded) {
 		GtkTreeIter i;
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
 		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.  We'll draw the tip above
