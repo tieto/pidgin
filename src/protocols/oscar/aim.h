@@ -883,8 +883,8 @@ struct aim_incomingim_ch2_args {
 	fu16_t status;
 	fu8_t cookie[8];
 	fu16_t reqclass;
+	const char *proxyip;
 	const char *clientip;
-	const char *clientip2;
 	const char *verifiedip;
 	fu16_t port;
 	fu16_t errorcode;

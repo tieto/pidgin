@@ -1644,8 +1644,8 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	fu8_t *cookie2;
 	int ret = 0;
 
-	char clientip1[30] = {""};
-	char clientip2[30] = {""};
+	char proxyip[30] = {""};
+	char clientip[30] = {""};
 	char verifiedip[30] = {""};
 
 	memset(&args, 0, sizeof(args));
@@ -1687,7 +1687,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	list2 = aim_readtlvchain(&bbs);
 
 	/*
-	 * IP address from the perspective of the client.
+	 * IP address to proxy the file transfer through.
 	 *
 	 * XXX - I don't like this.  Maybe just read in an int?  Or inet_ntoa...
 	 */
@@ -1696,7 +1696,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		iptlv = aim_gettlv(list2, 0x0002, 1);
 
-		snprintf(clientip1, sizeof(clientip1), "%d.%d.%d.%d",
+		snprintf(proxyip, sizeof(proxyip), "%d.%d.%d.%d",
 				aimutil_get8(iptlv->value+0),
 				aimutil_get8(iptlv->value+1),
 				aimutil_get8(iptlv->value+2),
@@ -1704,14 +1704,14 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	}
 
 	/*
-	 * Secondary IP address from the perspective of the client.
+	 * IP address from the perspective of the client.
 	 */
 	if (aim_gettlv(list2, 0x0003, 1)) {
 		aim_tlv_t *iptlv;
 
 		iptlv = aim_gettlv(list2, 0x0003, 1);
 
-		snprintf(clientip2, sizeof(clientip2), "%d.%d.%d.%d",
+		snprintf(clientip, sizeof(clientip), "%d.%d.%d.%d",
 				aimutil_get8(iptlv->value+0),
 				aimutil_get8(iptlv->value+1),
 				aimutil_get8(iptlv->value+2),
@@ -1773,14 +1773,24 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	if (aim_gettlv(list2, 0x000e, 1))
 		args.language = aim_gettlv_str(list2, 0x000e, 1);
 
-	/* Unknown -- no value */
+	/*
+	 * Unknown -- no value
+	 */
 	if (aim_gettlv(list2, 0x000f, 1))
 		;
 
-	if (strlen(clientip1))
-		args.clientip = (char *)clientip1;
-	if (strlen(clientip2))
-		args.clientip2 = (char *)clientip2;
+	/*
+	 * Unknown -- no value
+	 *
+	 * Maybe means we should proxy the file transfer through an AIM server?
+	 */
+	if (aim_gettlv(list2, 0x0010, 1))
+		;
+
+	if (strlen(proxyip))
+		args.proxyip = (char *)proxyip;
+	if (strlen(clientip))
+		args.clientip = (char *)clientip;
 	if (strlen(verifiedip))
 		args.verifiedip = (char *)verifiedip;
 

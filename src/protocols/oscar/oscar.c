@@ -163,8 +163,9 @@ struct ask_direct {
 /* BBB */
 struct oscar_xfer_data {
 	fu8_t cookie[8];
+	gchar *proxyip;
 	gchar *clientip;
-	gchar *clientip2;
+	gchar *verifiedip;
 	fu32_t modtime;
 	fu32_t checksum;
 	aim_conn_t *conn;
@@ -846,8 +847,9 @@ oscar_xfer_end(struct gaim_xfer *xfer)
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
 		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x02, xfer->size, xfer_data->checksum);
 
+	g_free(xfer_data->proxyip);
 	g_free(xfer_data->clientip);
-	g_free(xfer_data->clientip2);
+	g_free(xfer_data->verifiedip);
 
 	if ((gc = xfer_data->gc)) {
 		if ((od = gc->proto_data))
@@ -877,8 +879,9 @@ oscar_xfer_cancel_send(struct gaim_xfer *xfer)
 				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
 	}
 
+	g_free(xfer_data->proxyip);
 	g_free(xfer_data->clientip);
-	g_free(xfer_data->clientip2);
+	g_free(xfer_data->verifiedip);
 
 	if ((gc = xfer_data->gc))
 		if ((od = gc->proto_data))
@@ -907,8 +910,9 @@ oscar_xfer_cancel_recv(struct gaim_xfer *xfer)
 				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
 	}
 
+	g_free(xfer_data->proxyip);
 	g_free(xfer_data->clientip);
-	g_free(xfer_data->clientip2);
+	g_free(xfer_data->verifiedip);
 
 	if ((gc = xfer_data->gc))
 		if ((od = gc->proto_data))
@@ -2252,10 +2256,12 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
 			xfer->remote_port = args->port;
 			xfer->remote_ip = g_strdup(args->verifiedip);
+			if (args->proxyip)
+				xfer_data->proxyip = g_strdup(args->proxyip);
 			if (args->clientip)
 				xfer_data->clientip = g_strdup(args->clientip);
-			if (args->clientip2)
-				xfer_data->clientip2 = g_strdup(args->clientip2);
+			if (args->verifiedip)
+				xfer_data->verifiedip = g_strdup(args->verifiedip);
 
 			 /* Setup our I/O op functions */
 			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
@@ -2946,7 +2952,7 @@ static char *caps_string(guint caps)
 				tmp = _("Voice");
 				break;
 			case 0x4:
-				tmp = _("IM Image");
+				tmp = _("Direct IM");
 				break;
 			case 0x8:
 				tmp = _("Chat");
@@ -2962,7 +2968,7 @@ static char *caps_string(guint caps)
 				tmp = _("Games");
 				break;
 			case 0x80:
-				tmp = _("Stocks");
+				tmp = _("Add-Ins");
 				break;
 			case 0x100:
 				tmp = _("Send Buddy List");
@@ -3018,6 +3024,14 @@ static char *oscar_tooltip_text(struct buddy *b) {
 		yay = g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), tstr, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
 		free(tstr);
+
+		if (isdigit(b->name[0])) {
+			char *tmp, *status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
+			tmp = yay;
+			yay = g_strconcat(tmp, _("\n<b>Status:</b> "), status, NULL);
+			g_free(tmp);
+			g_free(status);
+		}
 		return yay;
 	} else {
 		return NULL;

@@ -307,9 +307,13 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/*
-	 * Setting this lets AIM users receive messages from 
-	 * ICQ users, and ICQ users receive messages from AIM 
-	 * users.
+	 * Setting this lets AIM users receive messages from ICQ users, and ICQ 
+	 * users receive messages from AIM users.  It also lets ICQ users show 
+	 * up in buddy lists for AIM users, and AIM users show up in buddy lists 
+	 * for ICQ users.  And ICQ privacy/invisibility acts like AIM privacy, 
+	 * in that if you add a user to your deny list, you will not be able to 
+	 * see them as online (previous you could still see them, but they 
+	 * couldn't see you.
 	 */
 	{AIM_CAPS_INTEROPERATE,
 	 {0x09, 0x46, 0x13, 0x4d, 0x4c, 0x7f, 0x11, 0xd1,

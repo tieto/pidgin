@@ -1398,7 +1398,8 @@ void load_prefs()
 void save_prefs()
 {
 	FILE *f;
-	char buf[BUF_LONG];
+	gchar *filename;
+	gchar *filename_temp;
 
 	debug_printf("enter save_prefs\n");  
 	if (is_loading_prefs) {
@@ -1407,16 +1408,15 @@ void save_prefs()
 		return;
 	}
 
-	if (opt_rcfile_arg) {
-		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
-	}
-	else if (gaim_home_dir()) {
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
-	}
-	else {
+	if (opt_rcfile_arg)
+		filename = g_build_filename(opt_rcfile_arg, NULL);
+	else if (gaim_home_dir())
+		filename = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
+	else
 		return;
-	}
-	if ((f = fopen(buf, "w"))) {
+	filename_temp = g_strdup_printf("%s.save", filename);
+
+	if ((f = fopen(filename_temp, "w"))) {
 		is_saving_prefs = 1;
 		fprintf(f, "# .gaimrc v%d\n", 4);
 		gaimrc_write_users(f);
@@ -1429,20 +1429,23 @@ void save_prefs()
 #endif
 		gaimrc_write_proxy(f);
 		fclose(f);
-
-		chmod(buf, S_IRUSR | S_IWUSR);
+		chmod(filename, S_IRUSR | S_IWUSR);
+		if (rename(filename_temp, filename) < 0)
+			debug_printf("error renaming %s to %s\n", filename_temp, filename);
 		is_saving_prefs = 0;
-	}
-	else
-	  debug_printf("Error opening .gaimrc\n");
+	} else
+		debug_printf("error opening %s\n", filename_temp);
+
 	if (request_load_prefs) {
 		debug_printf("loading prefs on request\n");
 		load_prefs();
 		request_load_prefs = 0;
 	}
+
+	g_free(filename);
+	g_free(filename_temp);
 	debug_printf("exit save_prefs\n");
 }
-
 
 
 /* This function is called by g_slist_insert_sorted to compare the item
