@@ -2670,6 +2670,18 @@ static void stop_anim(GtkObject *obj, struct conversation *c)
 	c->icon_timer = 0;
 }
 
+static void start_anim(GtkObject *obj, struct conversation *c)
+{
+	GList *frames;
+	GdkPixbufFrame *frame;
+	int delay;
+
+	frames = gdk_pixbuf_animation_get_frames(c->anim);
+	frame = g_list_nth_data(frames, c->frame);
+	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
+	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+}
+
 static int des_save_icon(GtkObject *obj, GdkEvent *e, struct conversation *c)
 {
 	gtk_widget_destroy(c->save_icon);
@@ -2743,6 +2755,11 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 	if (c->icon_timer) {
 		button = gtk_menu_item_new_with_label(_("Disable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+	} else if (c->anim) {
+		button = gtk_menu_item_new_with_label(_("Enable Animation"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 	}
