@@ -1618,19 +1618,19 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
 		type |= UC_AB;
 
-	if ((!od->icq) && (info->present & AIM_USERINFO_PRESENT_FLAGS)) {
-			if (info->flags & AIM_FLAG_UNCONFIRMED)
-				type |= UC_UNCONFIRMED;
-			if (info->flags & AIM_FLAG_ADMINISTRATOR)
-				type |= UC_ADMIN;
-			if (info->flags & AIM_FLAG_AOL)
-				type |= UC_AOL;
-			if (info->flags & AIM_FLAG_FREE)
-				type |= UC_NORMAL;
-			if (info->flags & AIM_FLAG_AWAY)
-				type |= UC_UNAVAILABLE;
-			if (info->flags & AIM_FLAG_WIRELESS)
-				type |= UC_WIRELESS;
+	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
+		if (info->flags & AIM_FLAG_UNCONFIRMED)
+			type |= UC_UNCONFIRMED;
+		if (info->flags & AIM_FLAG_ADMINISTRATOR)
+			type |= UC_ADMIN;
+		if (info->flags & AIM_FLAG_AOL)
+			type |= UC_AOL;
+		if (info->flags & AIM_FLAG_FREE)
+			type |= UC_NORMAL;
+		if (info->flags & AIM_FLAG_AWAY)
+			type |= UC_UNAVAILABLE;
+		if (info->flags & AIM_FLAG_WIRELESS)
+			type |= UC_WIRELESS;
 	}
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
 		type = (info->icqinfo.status << 16);
@@ -4883,7 +4883,7 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 }
 
 static const char *oscar_list_icon(struct gaim_account *a, struct buddy *b) {
-	if (!b) {
+	if (!b || (b && b->name && b->name[0] == '+')) {
 		if (isdigit(a->username[0]))
 			return "icq";
 		else
@@ -4900,8 +4900,27 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
-	if (b->uc & UC_UNAVAILABLE) 
-		emblems[i++] = "away";
+	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
+/*		int uc = b->uc >> 16;
+		if (uc & AIM_ICQ_STATE_INVISIBLE)
+			emblems[i++] = "icq_invisible";
+		else if (uc & AIM_ICQ_STATE_CHAT)
+			emblems[i++] = "icq_chat";
+		else if (uc & AIM_ICQ_STATE_DND)
+			emblems[i++] = "icq_dnd";
+		else if (uc & AIM_ICQ_STATE_OUT)
+			emblems[i++] = "icq_out";
+		else if (uc & AIM_ICQ_STATE_BUSY)
+			emblems[i++] = "icq_busy";
+		else if (uc & AIM_ICQ_STATE_AWAY)
+			emblems[i++] = "icq_away";
+*/
+		if (b->uc & UC_UNAVAILABLE) 
+			emblems[i++] = "away";
+	} else {
+		if (b->uc & UC_UNAVAILABLE) 
+			emblems[i++] = "away";
+	}
 	if (b->uc & UC_WIRELESS)
 		emblems[i++] = "wireless";
 	if (b->uc & UC_AOL)
@@ -4910,47 +4929,13 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 		emblems[i++] = "admin";
 	if (b->uc & UC_AB && i < 4)
 		emblems[i++] = "activebuddy";
+/*	if (b->uc & UC_UNCONFIRMED && i < 4)
+		emblems[i++] = "unconfirmed"; */
 	*se = emblems[0];
 	*sw = emblems[1];
 	*nw = emblems[2];
 	*ne = emblems[3];
 }
-
-/*	if (uc == 0)
-		return (char **)icon_online_xpm;
-	if (uc & 0xffff0000) {
-		uc >>= 16;
-		if (uc & AIM_ICQ_STATE_INVISIBLE)
-			return icon_offline_xpm;
-		if (uc & AIM_ICQ_STATE_CHAT)
-			return icon_ffc_xpm;
-		if (uc & AIM_ICQ_STATE_DND)
-		 	return icon_dnd_xpm;
-		if (uc & AIM_ICQ_STATE_OUT)
-			return icon_na_xpm;
-		if (uc & AIM_ICQ_STATE_BUSY)
-		 	return icon_occ_xpm;
-		if (uc & AIM_ICQ_STATE_AWAY)
-			return icon_away_xpm;
-		return icon_online_xpm;
-	}
-	if (uc & UC_UNAVAILABLE)
-		return (char **)away_icon_xpm;
-	if (uc & UC_WIRELESS)
-		return (char **)wireless_icon_xpm;
-	if (uc & UC_AB)
-		return (char **)ab_xpm;
-	if (uc & UC_AOL)
-		return (char **)aol_icon_xpm;
-	if (uc & UC_ADMIN)
-		return (char **)admin_icon_xpm;
-	if (uc & UC_UNCONFIRMED)
-		return (char **)dt_icon_xpm;
-	if (uc & UC_NORMAL)
-		return (char **)free_icon_xpm;
-	return NULL;
-*/
-
 
 /*
  * We have just established a socket with the other dude, so set up some handlers.
