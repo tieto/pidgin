@@ -91,7 +91,7 @@ src/protocols/msn/directconn.c
 src/protocols/msn/error.c
 src/protocols/msn/group.c
 src/protocols/msn/history.c
-src/protocols/msn/httpmethod.c
+src/protocols/msn/httpconn.c
 src/protocols/msn/msg.c
 src/protocols/msn/msn.c
 src/protocols/msn/nexus.c
