@@ -35,7 +35,7 @@
 #include "gaim.h"
 #include "proxy.h"
 #include "gnome_applet_mgr.h"
-#include "pixmaps/close.xpm"
+#include "pixmaps/cancel.xpm"
 
 struct prefs_data *pd = NULL;
 struct debug_window *dw = NULL;
@@ -823,7 +823,7 @@ void build_prefs()
 	close = gtk_button_new();
 
 	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, close_xpm);
+	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, cancel_xpm);
 
 	icon_i = gtk_pixmap_new(icon, mask);
 	
@@ -838,6 +838,7 @@ void build_prefs()
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(close), button_box);
+	gtk_widget_set_usize(close, 75, 30);
 	
 	/* End of close button */
 
