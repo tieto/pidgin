@@ -2,13 +2,16 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.62
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
-	 Clarke).
+	  Clarke).
 	* Support for Jabber XHTML messages
 	* Updated a number of translations. Thanks to everyone who submitted
 	  a translation update.
-	* Ability to re-request authorization from ICQ users by right 
+	* Ability to re-request authorization from ICQ and Jabber users by right 
 	  clicking on them in your buddy list.
 	* Improved Zephyr internationalization.
+	* Bug causing 'Hide on Send' windows to be lost forever fixed.
+	* Iconified windows are now raised properly.
+	* Dates printed for old/offline messages.
 
 version 0.61 (04/07/2003):
 	* Split the buddy pounce core and UI, and rewrote the UI for it.
