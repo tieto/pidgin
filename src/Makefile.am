@@ -46,7 +46,6 @@ EXTRA_DIST = \
 SUBDIRS = protocols
 
 CORESOURCES = \
-	$(SSLSOURCES) \
 	account.c \
 	account.h \
 	accountopt.c \
