@@ -1837,8 +1837,12 @@ populate_accounts_list(AccountsWindow *dialog)
 static void
 account_selected_cb(GtkTreeSelection *sel, AccountsWindow *dialog)
 {
-	gtk_widget_set_sensitive(dialog->modify_button, TRUE);
-	gtk_widget_set_sensitive(dialog->delete_button, TRUE);
+	gboolean sensitive;
+
+	sensitive = gtk_tree_selection_get_selected(sel, NULL, NULL);
+
+	gtk_widget_set_sensitive(dialog->modify_button, sensitive);
+	gtk_widget_set_sensitive(dialog->delete_button, sensitive);
 }
 
 static GtkWidget *
