@@ -104,16 +104,19 @@ void join_chat()
 	GtkWidget *icon_i;
 	GdkBitmap *mask;
 	GdkPixmap *icon;
+	GtkWidget *frame;
 
 	if (!joinchat) {
-		joinchat = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_widget_set_usize(joinchat, 280, 85);
+		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
+		gtk_widget_set_usize(joinchat, 300, 95);
+		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, FALSE, TRUE);
 		gtk_widget_show(joinchat);
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
 		entry = gtk_entry_new();
 
+		frame = gtk_frame_new(_("Buddy Chat"));
        /* Build Join Button */
 
         join = gtk_button_new();
@@ -168,7 +171,7 @@ void join_chat()
 	
 		/* And the boxes in the box */
 		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 		
 		/* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
@@ -187,9 +190,12 @@ void join_chat()
 		gtk_widget_show(topbox);
 		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
+		gtk_widget_show(frame);
+		gtk_container_add(GTK_CONTAINER(frame), vbox);
 		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
 		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
-                gtk_container_add(GTK_CONTAINER(joinchat), vbox);
+                gtk_container_add(GTK_CONTAINER(joinchat), frame);
+		gtk_container_set_border_width(GTK_CONTAINER(joinchat), 5);
                 gtk_widget_realize(joinchat);
 		aol_icon(joinchat->window);
 
