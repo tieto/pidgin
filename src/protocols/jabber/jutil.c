@@ -171,7 +171,7 @@ gboolean jabber_resourceprep_validate(const char *str)
 	c = str;
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
-		if(!g_unichar_isgraph(ch))
+		if(!g_unichar_isgraph(ch) && ch != ' ')
 			return FALSE;
 
 		c = g_utf8_next_char(c);
