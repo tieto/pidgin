@@ -68,6 +68,12 @@ msn_change_status(MsnSession *session, MsnAwayType state)
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
 						 MSN_CLIENT_ID, gaim_url_encode(msnobj_str));
 
+		/*
+		 * We need to set this just in case someone tries to set icon
+		 * quickly on us - Justin
+		 */
+		session->state = state;
+
 		g_free(msnobj_str);
 	}
 }
