@@ -268,9 +268,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_attrib(y, "xmlns");
 			if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
-				/* this is where we'd normally get the "op" status of the
-				 * user, but since we don't have a good way to show that yet
-				 * we'll ignore it */
 				xmlnode *z;
 
 				muc = TRUE;
@@ -294,6 +291,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					real_jid = xmlnode_get_attrib(z, "jid");
 					affiliation = xmlnode_get_attrib(z, "affiliation");
 					role = xmlnode_get_attrib(z, "role");
+					if (role != NULL) {
+						if (!strcmp(role, "moderator"))
+							flags = GAIM_CBFLAGS_OP;
+						else if (!strcmp(role, "participant"))
+							flags = GAIM_CBFLAGS_VOICE;
+					}
 				}
 			}
 		}
@@ -402,11 +405,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					status);
 
 			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
-
-			if (!strcmp(role, "moderator"))
-				flags = GAIM_CBFLAGS_OP;
-			else if (!strcmp(role, "participant"))
-				flags = GAIM_CBFLAGS_VOICE;
 
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
