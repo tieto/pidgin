@@ -2631,27 +2631,27 @@ void make_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm,
+	gaim_new_item_from_stock(menu, _("Add A Buddy"), GTK_STOCK_ADD,
 				  GTK_SIGNAL_FUNC(add_buddy_callback), NULL,  'b', GDK_CONTROL_MASK, "Ctl+B");
-	gaim_new_item_with_pixmap(menu, _("Join A Chat"), pounce_small_xpm,
+	gaim_new_item_from_stock(menu, _("Join A Chat"), GTK_STOCK_JUMP_TO,
 				  GTK_SIGNAL_FUNC(chat_callback), NULL, 'c', GDK_CONTROL_MASK, "Ctl+C");
-	gaim_new_item_with_pixmap(menu, _("New Instant Message"), send_small_xpm,
+	gaim_new_item_from_stock(menu, _("New Instant Message"), GTK_STOCK_CONVERT,
 				  GTK_SIGNAL_FUNC(show_im_dialog), NULL, 'i', GDK_CONTROL_MASK, "Ctl+I");
-	gaim_new_item_with_pixmap(menu, _("Get User Info"), search_small_xpm,
+	gaim_new_item_from_stock(menu, _("Get User Info"), GTK_STOCK_FIND,
 				  GTK_SIGNAL_FUNC(show_info_dialog), NULL, 'j', GDK_CONTROL_MASK, "Ctl+J");
 
 	gaim_separator(menu);
 
-	gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm,
+	gaim_new_item_from_stock(menu, _("Import Buddy List"), GTK_STOCK_EXECUTE,
 				  GTK_SIGNAL_FUNC(import_callback), NULL, 0, 0, 0);
 
 	gaim_separator(menu);
 
-	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_menu_xpm,
+	gaim_new_item_from_stock(menu, _("Signoff"), NULL,
 				  GTK_SIGNAL_FUNC(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
-	gaim_new_item_with_pixmap(menu, _("Hide"), close_small_xpm,
+	gaim_new_item_from_stock(menu, _("Hide"), NULL,
 				  GTK_SIGNAL_FUNC(hide_buddy_list), NULL, 'h', GDK_CONTROL_MASK, "Ctl+H");
-	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm,
+	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT,
 				  GTK_SIGNAL_FUNC(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
 
 	menu = gtk_menu_new();
