@@ -477,7 +477,7 @@ static void gjab_start(gjconn j)
 			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
 			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			gjab_connected, j);
-	if (user->gc && (j->fd < 0)) {
+	if (!user->gc || (j->fd < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}

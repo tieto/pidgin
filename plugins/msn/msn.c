@@ -571,7 +571,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 			msn_answer_callback, mc);
 		g_strfreev(address);
 		g_strfreev(res);
-		if (user->gc && (mc->fd < 0)) {
+		if (!user->gc || (mc->fd < 0)) {
 			/* Looks like we had an error connecting. */
 			g_free(mc->session);
 			g_free(mc->secret);
@@ -813,7 +813,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
 			gc->user->proto_opt[USEROPT_USER], gc->user->proto_opt[USEROPT_PASS],
 			msn_login_callback, gc);
-		if (user->gc && (md->fd < 0)) {
+		if (!user->gc || (md->fd < 0)) {
 			g_strfreev(res);
 			hide_login_progress(gc, "Error connecting to server");
 			signoff(gc);
@@ -919,7 +919,7 @@ void msn_login(struct aim_user *user)
 			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
 			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			msn_login_callback, gc);
-	if (user->gc && (md->fd < 0)) {
+	if (!user->gc || (md->fd < 0)) {
 		hide_login_progress(gc, "Error connecting to server");
 		signoff(gc);
 		return;

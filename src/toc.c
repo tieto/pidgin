@@ -156,7 +156,7 @@ static void toc_login(struct aim_user *user)
 			  user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			  toc_login_callback, gc);
 
-	if (user->gc && (tdt->toc_fd < 0)) {
+	if (!user->gc || (tdt->toc_fd < 0)) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed", user->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
 		signoff(gc);

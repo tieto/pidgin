@@ -1863,7 +1863,7 @@ static void irc_login(struct aim_user *user)
 			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
 			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
 			irc_login_callback, gc);
-	if (user->gc && (idata->fd < 0)) {
+	if (!user->gc || (idata->fd < 0)) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
 		return;
