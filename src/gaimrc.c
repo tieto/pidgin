@@ -688,7 +688,9 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 				strchr(gaim_account_get_username(account), '@') == NULL) {
 
 				tmp = g_strdup_printf("%s@%s",
-					gaim_account_get_username(account), p->value[0]);
+					gaim_account_get_username(account),
+					(!strcmp(p->value[0], "irc.openprojects.net")
+					 ? "irc.freenode.net" : p->value[0]));
 				gaim_account_set_username(account, tmp);
 				g_free(tmp);
 			}
