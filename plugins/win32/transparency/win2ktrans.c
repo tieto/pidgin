@@ -124,7 +124,7 @@ static GtkWidget *wintrans_slider(GtkWidget *win) {
 	GtkWidget *frame;
 
 	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 	gtk_widget_show(frame);
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -194,6 +194,8 @@ static void add_slider(GtkWidget *win) {
 	if(!find_slidwin(win)) {
 		GtkWidget *slider_box=NULL;
 		slider_win *slidwin=NULL;
+		GtkRequisition slidereq;
+		gint width, height;
 
 		/* Get top vbox */
 		for ( wl1 = wl = gtk_container_get_children(GTK_CONTAINER(win));
@@ -209,9 +211,14 @@ static void add_slider(GtkWidget *win) {
 		g_list_free(wl1);
 
 		slider_box = wintrans_slider(win);
+		/* Figure out how tall the slider wants to be */
+		gtk_widget_size_request(slider_box, &slidereq);
+		gtk_window_get_size(GTK_WINDOW(win), &width, &height);
 		gtk_box_pack_start(GTK_BOX(vbox),
 						   slider_box,
 						   FALSE, FALSE, 0);
+		/* Make window taller so we don't slowly collapse its message area */
+		gtk_window_resize(GTK_WINDOW(win), width, (height + slidereq.height));
 		/* Add window to list, to track that it has a slider */
 		slidwin = g_new0( slider_win, 1 );
 		slidwin->win = win;
@@ -227,8 +234,17 @@ static void remove_sliders() {
 		GList *tmp=window_list;
 		while(tmp) {
 			slider_win *slidwin = (slider_win*)tmp->data;
-			if (slidwin != NULL && GTK_IS_WINDOW(slidwin->win))
+			if (slidwin != NULL && GTK_IS_WINDOW(slidwin->win)) {
+				GtkRequisition slidereq;
+				gint width, height;
+				/* Figure out how tall the slider was */
+				gtk_widget_size_request(slidwin->slider, &slidereq);
+				gtk_window_get_size(GTK_WINDOW(slidwin->win), &width, &height);
+
 				gtk_widget_destroy(slidwin->slider);
+
+				gtk_window_resize(GTK_WINDOW(slidwin->win), width, (height - slidereq.height));
+			}
 			g_free(slidwin);
 			tmp=tmp->next;
 		}
