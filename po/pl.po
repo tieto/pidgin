@@ -1,6 +1,7 @@
-# Gaim polish translation .
-# Copyright (C) 2001 Free Software Foundation, Inc.
-# Przemys³aw Su³ek <pbs@linux.net.pl> <psulek@plo.pl>, 2001.
+# Gaim Polish translation
+# Copyright (C) 2001, Przemys³aw Su³ek <pbs@linux.net.pl> <psulek@plo.pl>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

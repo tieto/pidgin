@@ -1,9 +1,8 @@
-# Italian Translation for "Gaim"
-# Copyright (C) 2001-2003 Free Software Foundation, Inc.
-# This file is distributed under the same license as the "Gaim" package.
+# Gaim Italian translation
+# Copyright (C) 2002, Salvatore di Maggio <titanicus@libero.it>
+# Copyright (C) 2003, Claudio Satriano <satriano@na.infn.it>
 #
-# Current Translator: Claudio Satriano <satriano@na.infn.it>, 2003.
-# Former Translator: Salvatore di Maggio <titanicus@libero.it>, 2002.
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

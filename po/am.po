@@ -1,8 +1,7 @@
-# Translations into the Amharic Language.
-# Copyright (C) 2002 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gaim package.
-# Ge'ez Frontier Foundation <locales@geez.org>, 2003.
+# Gaim Amharic translation
+# Copyright (C) 2003, Ge'ez Frontier Foundation <locales@geez.org>
 #
+# This file is distributed under the same license as the gaim package.
 #
 msgid ""
 msgstr ""

@@ -1,6 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# Daniel Re¾ný <daniel@rezny.sk>, 2002.
+# Gaim Slovak translation
+# Copyright (C) 2002, Daniel Re¾ný <daniel@rezny.sk>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

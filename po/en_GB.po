@@ -1,8 +1,7 @@
-# translation of en_GB.po to British English
-# translation of gaim.po to British English
-# This file is distributed under the same license as the PACKAGE package.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# Sam Halliday <fommil@yahoo.ie>, 2003
+# Gaim English (British) translation
+# Copyright (C) 2003, Sam Halliday <fommil@yahoo.ie>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

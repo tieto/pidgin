@@ -1,13 +1,13 @@
-# French translation for "Gaim"
-# Copyright (C) 2001-2003 Free Software Foundation, Inc.
-# 
-# First translator: sebfrance <sebfrance@ifrance.com>, 2001-2002.
-# Stéphane Pontier <stephane.pontier@free.fr>, 2002.
-# Stéphane Wirtel <stephane.wirtel@belgacom.net>, 2002.
-# Loïc Jeannin <loic.jeannin@free.fr>, 12/2022.
-# Éric Boumaour <zongo_fr@users.sourceforge.net>, 2002-2003.
+# Gaim French translation
+# Copyright (C) 2001-2002, sebfrance <sebfrance@ifrance.com>
+# Copyright (C) 2002, Stéphane Pontier <stephane.pontier@free.fr>
+# Copyright (C) 2002, Stéphane Wirtel <stephane.wirtel@belgacom.net>
+# Copyright (C) December 2002, Loïc Jeannin <loic.jeannin@free.fr>
+# Copyright (C) 2002-2003, Éric Boumaour <zongo_fr@users.sourceforge.net>
 #
+# This file is distributed under the same license as the Gaim package.
 #
+
 # Avant de soumettre des changements ou des conseils de traduction,
 # consultez le document des règles de traduction en français de Mozilla.
 # Ces règles servent de base pour ce fichier.

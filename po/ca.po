@@ -1,7 +1,7 @@
-# Catalan translation of Gaim
-# Copyright (C) 2003 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gaim package.
-# JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>, 2003.
+# Gaim Catalan translation
+# Copyright (C) 2003, JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

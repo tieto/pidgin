@@ -1,9 +1,9 @@
-# gaim japanese message catalog
-# Copyright (C) 2002 Free Software Foundation, Inc.
-# Ryosuke Kutsuna <ryosuke@cool.email.ne.jp>, 2002.
-# Taku YASUI <tach@debian.or.jp>, 2002.
-# Junichi Uekawa <dancer@debian.org>, 2003.
+# Gaim Japanese translation
+# Copyright (C) 2002, Ryosuke Kutsuna <ryosuke@cool.email.ne.jp>
+# Copyright (C) 2002, Taku YASUI <tach@debian.or.jp>
+# Copyright (C) 2003, Junichi Uekawa <dancer@debian.org>
 #
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

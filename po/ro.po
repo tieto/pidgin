@@ -1,6 +1,7 @@
-# Romanian translation for Gaim
-# Copyright (C) 2002, 2003 Free Software Foundation, Inc.
-# Miºu Moldovan <dumol@go.ro>, 2002, 2003.
+# Gaim Romanian translation
+# Copyright (C) 2002-2003, Miºu Moldovan <dumol@go.ro>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

@@ -1,9 +1,10 @@
-# Traditional Chinese translation for Gaim.
-# Copyright (C) 2001-2003 Free Software Foundation, Inc.
+# Gaim Traditional Chinese translation
+# Copyright (C) 2002-2003, Paladin R. Liu <paladin@ms1.hinet.net>
+# Copyright (C) May-August 2003, Ambrose C. Li <acli@ada.dhs.org>
 #
-# Ambrose C. Li <acli@ada.dhs.org>, May-August 2003
-# Paladin R. Liu <paladin@ms1.hinet.net>, 2002-2003
+# This file is distributed under the same license as the Gaim package.
 #
+
 # ----------------------------------------------------------
 # For internal use only:
 # FIXME 表示發現了問題，遲早要解決

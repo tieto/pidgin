@@ -1,6 +1,8 @@
-# Portuguese (Brazilian) translation for Gaim. 
+# Gaim Portuguese (Brazilian) translation
+# Copyright (C) 2003, Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>
 #
-# Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>, 2003
+# This file is distributed under the same license as the Gaim package.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"

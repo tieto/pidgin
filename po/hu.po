@@ -1,6 +1,7 @@
-# translation of hu.po to Hungarian
-# Copyright (C) 2003 Free Software Foundation, Inc.
-# Zoltan Sutto <suttozoltan@chello.hu>, 2003
+# Gaim Hungarian translation
+# Copyright (C) 2003, Zoltan Sutto <suttozoltan@chello.hu>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

@@ -1,14 +1,14 @@
-# Spanish translation of Gaim.
-# Copyright (C) 2002 Free Software Foundation, Inc.
-# Amaya Rodrigo <amaya@debian.org>, March 2002.
-# Alejandro G Villar <alx5000@terra.es>, April 2002
-# Updated by Javier Fernández-Sanguino Peña <jfs@debian.org> June 2002.
-# Nicolás Lichtmaier <nick@technisys.com.ar>, November 2002 - January 2003
-# JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>, April 2003
-# Rechecked by Javier Fernández-Sanguino Peña <jfs@debian.org> April 2003
-#   - fixed fuzzy entries, translated incorrect entries and added notes
-#   - for translators
+# Gaim Spanish translation
+# Copyright (C) March 2002, Amaya Rodrigo <amaya@debian.org>
+# Copyright (C) April 2002, Alejandro G Villar <alx5000@terra.es>
+# Copyright (C) June 2002, Javier Fernández-Sanguino Peña <jfs@debian.org>
+# Copyright (C) November 2002-January 2003, Nicolás Lichtmaier <nick@technisys.com.ar>
+# Copyright (C) April 2003, JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>
+# Copyright (C) April 2003, Javier Fernández-Sanguino Peña <jfs@debian.org>
 #
+# This file is distributed under the same license as the Gaim package.
+#
+
 # Nota para los traductores:
 # - Un chat no es una conversación, es un chat. La analogía de "conversación"
 #   no permite traducir las metáforas de "chat room". Sólo debería utilizarse

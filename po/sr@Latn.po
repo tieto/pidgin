@@ -1,7 +1,7 @@
-# Gaim Serbian translation.
-# Copyright (C) 2003 Danilo Segan
-# This file is distributed under the same license as the gaim package.
-# Danilo Segan <dsegan@gmx.net>, 2003.
+# Gaim Serbian translation
+# Copyright (C) 2003, Danilo Segan <dsegan@gmx.net>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

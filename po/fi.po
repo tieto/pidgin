@@ -1,6 +1,7 @@
-# Gaim - finnish translation.
-# Copyright (C) 2002 Free Software Foundation, Inc.
-# Tero Kuusela <teroajk@subdimension.com>, 2002.
+# Gaim Finnish translation
+# Copyright (C) 2002 Tero Kuusela <teroajk@subdimension.com>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

@@ -1,6 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# Hristo Todorov <igel@bofh.bg>, 2002.
+# Gaim Bulgarian translation
+# Copyright (C) 2002, Hristo Todorov <igel@bofh.bg>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

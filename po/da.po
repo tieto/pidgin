@@ -1,6 +1,9 @@
-# Danish translation of GAIM.
-# Copyright (C) 2002, 2003 Free Software Foundation, Inc.
+# Gaim Danish translation
+# Copyright (C) 2003, ???
 #
+# This file is distributed under the same license as the Gaim package.
+#
+
 # Konventioner:
 # Buddy list = venneliste
 # Contact list = venneliste

@@ -1,8 +1,7 @@
-# translation of he.po to Hebrew
-# translation of gaim.po to Hebrew
-# This file is distributed under the same license as the PACKAGE package.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# Pavel Bibergal <cyberkm@barak-online.net>, 2003
+# Gaim Hewbrew translation
+# Copyright (C) 2003, Pavel Bibergal <cyberkm@barak-online.net>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

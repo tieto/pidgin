@@ -1,8 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# S, Sang-hyun <artsilly@kuls.korea.ac.kr>, YEAR.
-# A Ho-seok Lee <alee@debian.org>, YEAR.
-# Son, Kyung-uk <vvs740@chol.com>, 2003.
+# Gaim Korean translation
+# Copyright (C) YYYY, S, Sang-hyun <artsilly@kuls.korea.ac.kr>
+# Copyright (C) YYYY, A Ho-seok Lee <alee@debian.org>
+# Copyright (C) 2003, Son, Kyung-uk <vvs740@chol.com>
+#
+# This file is distributed under the same license as the Gaim package.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.65cvs\n"

@@ -1,5 +1,7 @@
 Translation README
 
+
+
 Updated: 19-April-2003
 ------------------
 
@@ -24,3 +26,26 @@ New or updated translations should be sent to the gaim-devel listserv
 Please check your translations carefully. Make sure you have the same
 number of newlines and %s or other formatting codes in the translation as
 you have in the original.
+
+
+
+Updated: 05-August-2003
+------------------
+
+All translations should be in UTF-8.  You can use the following command to 
+convert from one encoding to another, if needed:
+> iconv -f iso-8859-1 -t utf-8 xx.po > xx.po.new
+
+Before submitting updated or new translations, please run the following 
+command to ensure the file does not contain errors:
+> msgfmt -c --statistics xx.po
+
+The comments at the top of each .po file should appear as follows:
+# Gaim Xxxxx translation
+# Copyright (C) 2002, Another Name <email@something.com>
+# Copyright (C) 2003, Your Name <email@whatever.com>
+#
+# This file is distributed under the same license as the Gaim package.
+#
+
+Thank you for flying Valu-Jet.

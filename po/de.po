@@ -1,9 +1,11 @@
-# German translation for "Gaim"
-# Copyright (C) 2001-2003 Free Software Foundation, Inc.
-# Daniel Seifert <gaim-translation@dseifert.de>, 2001.
-# Karsten Weiss <knweiss@gmx.de>, 2002.
-# Björn Voigt <bjoern@cs.tu-berlin.de>, 2002-2003.
+# Gaim German translation
+# Copyright (C) 2001, Daniel Seifert <gaim-translation@dseifert.de>
+# Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
+# Copyright (C) 2002-2003, Björn Voigt <bjoern@cs.tu-berlin.de>
 #
+# This file is distributed under the same license as the Gaim package.
+#
+
 # TODO:
 #
 # 2002-01-30  Karsten Weiss <knweiss@gmx.de>

@@ -1,7 +1,7 @@
-# Norwegian messages for gaim.
-# Copyright (C) 2003 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gaim package.
-# Petter Johan Olsen <petter.olsen@cc.uit.no>, 2003.
+# Gaim Norwegian tranlation
+# Copyright (C) 2003, Petter Johan Olsen <petter.olsen@cc.uit.no>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""
