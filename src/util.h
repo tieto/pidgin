@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "account.h"
+#include "xmlnode.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -393,6 +394,23 @@ int gaim_build_dir(const char *path, int mode);
  */
 gboolean gaim_util_write_data_to_file(const char *filename, const char *data,
 									  size_t size);
+
+/**
+ * Read the contents of a given file and parse the results into an
+ * xmlnode tree structure.  This is intended to be used to read
+ * Gaim's configuration xml files (prefs.xml, pounces.xml, etc.)
+ *
+ * @param filename    The basename of the file to open in the gaim_user_dir.
+ * @param description A very short description of the contents of this
+ *                    file.  This is used in error messages shown to the
+ *                    user when the file can not be opened.  For example,
+ *                    "preferences," or "buddy pounces."
+ *
+ * @return An xmlnode tree of the contents of the given file.  Or NULL, if
+ *         the file does not exist or there was an error reading the file.
+ */
+xmlnode *gaim_util_read_xml_from_file(const char *filename,
+									  const char *description);
 
 /**
  * Creates a temporary file and returns a file pointer to it.

@@ -148,7 +148,7 @@ xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 	xmlnode_insert_child(node, attrib_node);
 }
 
-const char*
+const char *
 xmlnode_get_attrib(xmlnode *node, const char *attr)
 {
 	xmlnode *x;
@@ -231,7 +231,6 @@ xmlnode_get_data(xmlnode *node)
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-
 	for(c = node->child; c; c = c->next) {
 		if(c->type == XMLNODE_TYPE_DATA) {
 			if(!str)
@@ -246,7 +245,7 @@ xmlnode_get_data(xmlnode *node)
 	return g_string_free(str, FALSE);
 }
 
-static gchar *
+static char *
 xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 {
 	GString *text = g_string_new("");
@@ -317,16 +316,16 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	return g_string_free(text, FALSE);
 }
 
-gchar *
+char *
 xmlnode_to_str(xmlnode *node, int *len)
 {
 	return xmlnode_to_str_helper(node, len, FALSE, 0);
 }
 
-gchar *
+char *
 xmlnode_to_formatted_str(xmlnode *node, int *len)
 {
-	gchar *xml, *xml_with_declaration;
+	char *xml, *xml_with_declaration;
 
 	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
 	xml_with_declaration =

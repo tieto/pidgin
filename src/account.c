@@ -36,22 +36,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-typedef enum
-{
-	TAG_NONE = 0,
-	TAG_PROTOCOL,
-	TAG_NAME,
-	TAG_PASSWORD,
-	TAG_ALIAS,
-	TAG_USERINFO,
-	TAG_BUDDYICON,
-	TAG_SETTING,
-	TAG_TYPE,
-	TAG_HOST,
-	TAG_PORT
-
-} AccountParserTag;
-
 typedef struct
 {
 	GaimPrefType type;
@@ -67,24 +51,6 @@ typedef struct
 	} value;
 
 } GaimAccountSetting;
-
-typedef struct
-{
-	AccountParserTag tag;
-
-	GaimAccount *account;
-	GaimProxyInfo *proxy_info;
-	char *protocol_id;
-
-	GString *buffer;
-
-	GaimPrefType setting_type;
-	char *setting_ui;
-	char *setting_name;
-
-	gboolean in_proxy;
-
-} AccountParserData;
 
 
 static GaimAccountUiOps *account_ui_ops = NULL;
@@ -1052,305 +1018,252 @@ gaim_account_destroy_log(GaimAccount *account)
 	}
 }
 
-/* XML Stuff */
 static void
-free_parser_data(gpointer user_data)
+parse_settings(xmlnode *node, GaimAccount *account)
 {
-	AccountParserData *data = user_data;
+	const char *ui;
+	xmlnode *child;
 
-	if (data->buffer != NULL)
-		g_string_free(data->buffer, TRUE);
+	/* Get the UI string, if these are UI settings */
+	ui = xmlnode_get_attrib(node, "ui");
 
-	if (data->setting_name != NULL)
-		g_free(data->setting_name);
+	/* Read settings, one by one */
+	for (child = xmlnode_get_child(node, "setting"); child != NULL;
+			child = xmlnode_get_next_twin(child))
+	{
+		const char *name, *str_type;
+		GaimPrefType type;
+		char *data;
 
-	g_free(data);
+		name = xmlnode_get_attrib(child, "name");
+		if (name == NULL)
+			/* Ignore this setting */
+			continue;
+
+		str_type = xmlnode_get_attrib(child, "type");
+		if (!strcmp(str_type, "string"))
+			type = GAIM_PREF_STRING;
+		else if (!strcmp(str_type, "int"))
+			type = GAIM_PREF_INT;
+		else if (!strcmp(str_type, "bool"))
+			type = GAIM_PREF_BOOLEAN;
+		else
+			/* Ignore this setting */
+			continue;
+
+		data = xmlnode_get_data(child);
+		if (data == NULL)
+			/* Ignore this setting */
+			continue;
+
+		if (ui == NULL)
+		{
+			if (type == GAIM_PREF_STRING)
+				gaim_account_set_string(account, name, data);
+			else if (type == GAIM_PREF_INT)
+				gaim_account_set_int(account, name, atoi(data));
+			else if (type == GAIM_PREF_BOOLEAN)
+				gaim_account_set_bool(account, name,
+									  (*data == '0' ? FALSE : TRUE));
+		} else {
+			if (type == GAIM_PREF_STRING)
+				gaim_account_set_ui_string(account, ui, name, data);
+			else if (type == GAIM_PREF_INT)
+				gaim_account_set_ui_int(account, ui, name, atoi(data));
+			else if (type == GAIM_PREF_BOOLEAN)
+				gaim_account_set_ui_bool(account, ui, name,
+										 (*data == '0' ? FALSE : TRUE));
+		}
+
+		g_free(data);
+	}
 }
 
 static void
-start_element_handler(GMarkupParseContext *context,
-					  const gchar *element_name,
-					  const gchar **attribute_names,
-					  const gchar **attribute_values,
-					  gpointer user_data, GError **error)
+parse_proxy_info(xmlnode *node, GaimAccount *account)
 {
-	const char *value;
-	AccountParserData *data = user_data;
-	GHashTable *atts;
-	int i;
+	GaimProxyInfo *proxy_info;
+	xmlnode *child;
+	char *data;
 
-	atts = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	proxy_info = gaim_proxy_info_new();
 
-	for (i = 0; attribute_names[i] != NULL; i++) {
-		g_hash_table_insert(atts, g_strdup(attribute_names[i]),
-							g_strdup(attribute_values[i]));
-	}
+	/* Use the global proxy settings, by default */
+	gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_USE_GLOBAL);
 
-	if (data->buffer != NULL) {
-		g_string_free(data->buffer, TRUE);
-		data->buffer = NULL;
-	}
-
-	if (!strcmp(element_name, "protocol"))
-		data->tag = TAG_PROTOCOL;
-	else if (!strcmp(element_name, "name") || !strcmp(element_name, "username"))
-		data->tag = TAG_NAME;
-	else if (!strcmp(element_name, "password"))
-		data->tag = TAG_PASSWORD;
-	else if (!strcmp(element_name, "alias"))
-		data->tag = TAG_ALIAS;
-	else if (!strcmp(element_name, "userinfo"))
-		data->tag = TAG_USERINFO;
-	else if (!strcmp(element_name, "buddyicon"))
-		data->tag = TAG_BUDDYICON;
-	else if (!strcmp(element_name, "proxy")) {
-		data->in_proxy = TRUE;
-
-		data->proxy_info = gaim_proxy_info_new();
-	}
-	else if (!strcmp(element_name, "type"))
-		data->tag = TAG_TYPE;
-	else if (!strcmp(element_name, "host"))
-		data->tag = TAG_HOST;
-	else if (!strcmp(element_name, "port"))
-		data->tag = TAG_PORT;
-	else if (!strcmp(element_name, "settings")) {
-		if ((value = g_hash_table_lookup(atts, "ui")) != NULL) {
-			data->setting_ui = g_strdup(value);
+	/* Read proxy type */
+	child = xmlnode_get_child(node, "type");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		if (!strcmp(data, "global"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_USE_GLOBAL);
+		else if (!strcmp(data, "none"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_NONE);
+		else if (!strcmp(data, "http"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_HTTP);
+		else if (!strcmp(data, "socks4"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_SOCKS4);
+		else if (!strcmp(data, "socks5"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_SOCKS5);
+		else if (!strcmp(data, "envvar"))
+			gaim_proxy_info_set_type(proxy_info, GAIM_PROXY_USE_ENVVAR);
+		else
+		{
+			gaim_debug_error("account", "Invalid proxy type found when "
+							 "loading account information for %s\n",
+							 gaim_account_get_username(account));
 		}
-	}
-	else if (!strcmp(element_name, "setting")) {
-		data->tag = TAG_SETTING;
-
-		if ((value = g_hash_table_lookup(atts, "name")) != NULL)
-			data->setting_name = g_strdup(value);
-
-		if ((value = g_hash_table_lookup(atts, "type")) != NULL) {
-			if (!strcmp(value, "string"))
-				data->setting_type = GAIM_PREF_STRING;
-			else if (!strcmp(value, "int"))
-				data->setting_type = GAIM_PREF_INT;
-			else if (!strcmp(value, "bool"))
-				data->setting_type = GAIM_PREF_BOOLEAN;
-		}
+		g_free(data);
 	}
 
-	g_hash_table_destroy(atts);
+	/* Read proxy host */
+	child = xmlnode_get_child(node, "host");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_proxy_info_set_host(proxy_info, data);
+		g_free(data);
+	}
+
+	/* Read proxy port */
+	child = xmlnode_get_child(node, "port");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_proxy_info_set_port(proxy_info, atoi(data));
+		g_free(data);
+	}
+
+	/* Read proxy username */
+	child = xmlnode_get_child(node, "username");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_proxy_info_set_username(proxy_info, data);
+		g_free(data);
+	}
+
+	/* Read proxy password */
+	child = xmlnode_get_child(node, "password");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_proxy_info_set_password(proxy_info, data);
+		g_free(data);
+	}
+
+	/* If there are no values set then proxy_infourn NULL */
+	if ((gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_GLOBAL) &&
+		(gaim_proxy_info_get_host(proxy_info) == NULL) &&
+		(gaim_proxy_info_get_port(proxy_info) == 0) &&
+		(gaim_proxy_info_get_username(proxy_info) == NULL) &&
+		(gaim_proxy_info_get_password(proxy_info) == NULL))
+	{
+		gaim_proxy_info_destroy(proxy_info);
+		return;
+	}
+
+	gaim_account_set_proxy_info(account, proxy_info);
+}
+
+static GaimAccount *
+parse_account(xmlnode *node)
+{
+	GaimAccount *ret;
+	xmlnode *child;
+	char *protocol_id = NULL;
+	char *name = NULL;
+	char *data;
+
+	child = xmlnode_get_child(node, "protocol");
+	if (child != NULL)
+		protocol_id = xmlnode_get_data(child);
+
+	child = xmlnode_get_child(node, "name");
+	if (child != NULL)
+		name = xmlnode_get_data(child);
+	if (name == NULL)
+	{
+		/* Do we really need to do this? */
+		child = xmlnode_get_child(node, "username");
+		if (child != NULL)
+			name = xmlnode_get_data(child);
+	}
+
+	if ((protocol_id == NULL) || (name == NULL))
+	{
+		free(protocol_id);
+		free(name);
+		return NULL;
+	}
+
+	ret = gaim_account_new(name, protocol_id);
+	free(name);
+	free(protocol_id);
+
+	/* Read the password */
+	child = xmlnode_get_child(node, "password");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_account_set_password(ret, data);
+		gaim_account_set_remember_password(ret, TRUE);
+		g_free(data);
+	}
+
+	/* Read the alias */
+	child = xmlnode_get_child(node, "alias");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_account_set_alias(ret, data);
+		g_free(data);
+	}
+
+	/* Read the userinfo */
+	child = xmlnode_get_child(node, "userinfo");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_account_set_user_info(ret, data);
+		g_free(data);
+	}
+
+	/* Read the buddyicon */
+	child = xmlnode_get_child(node, "buddyicon");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		gaim_account_set_buddy_icon(ret, data);
+		g_free(data);
+	}
+
+	/* Read settings (both core and UI) */
+	for (child = xmlnode_get_child(node, "settings"); child != NULL;
+			child = xmlnode_get_next_twin(child))
+	{
+		parse_settings(child, ret);
+	}
+
+	/* Read proxy */
+	child = xmlnode_get_child(node, "proxy");
+	if (child != NULL)
+	{
+		parse_proxy_info(child, ret);
+	}
+
+	return ret;
 }
 
 static void
-end_element_handler(GMarkupParseContext *context, const gchar *element_name,
-					gpointer user_data,  GError **error)
+load_accounts(void)
 {
-	AccountParserData *data = user_data;
-	gchar *buffer;
+	xmlnode *node, *child;
 
-	if (data->buffer == NULL)
+	node = gaim_util_read_xml_from_file("accounts.xml", _("accounts"));
+
+	if (node == NULL)
 		return;
 
-	buffer = g_string_free(data->buffer, FALSE);
-	data->buffer = NULL;
-
-	if (data->tag == TAG_PROTOCOL) {
-		data->protocol_id = g_strdup(buffer);
+	for (child = xmlnode_get_child(node, "account"); child != NULL;
+			child = xmlnode_get_next_twin(child))
+	{
+		GaimAccount *new;
+		new = parse_account(child);
+		gaim_accounts_add(new);
 	}
-	else if (data->tag == TAG_NAME) {
-		if (data->in_proxy) {
-			gaim_proxy_info_set_username(data->proxy_info, buffer);
-		}
-		else {
-			data->account = gaim_account_new(buffer, data->protocol_id);
-
-			gaim_accounts_add(data->account);
-
-			g_free(data->protocol_id);
-
-			data->protocol_id = NULL;
-		}
-	}
-	else if (data->tag == TAG_PASSWORD) {
-		if (*buffer != '\0') {
-			if (data->in_proxy) {
-				gaim_proxy_info_set_password(data->proxy_info, buffer);
-			}
-			else {
-				gaim_account_set_password(data->account, buffer);
-				gaim_account_set_remember_password(data->account, TRUE);
-			}
-		}
-	}
-	else if (data->tag == TAG_ALIAS) {
-		if (*buffer != '\0')
-			gaim_account_set_alias(data->account, buffer);
-	}
-	else if (data->tag == TAG_USERINFO) {
-		if (*buffer != '\0')
-			gaim_account_set_user_info(data->account, buffer);
-	}
-	else if (data->tag == TAG_BUDDYICON) {
-		if (*buffer != '\0')
-			gaim_account_set_buddy_icon(data->account, buffer);
-	}
-	else if (data->tag == TAG_TYPE) {
-		if (data->in_proxy) {
-			if (!strcmp(buffer, "global"))
-				gaim_proxy_info_set_type(data->proxy_info,
-										 GAIM_PROXY_USE_GLOBAL);
-			else if (!strcmp(buffer, "none"))
-				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_NONE);
-			else if (!strcmp(buffer, "http"))
-				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_HTTP);
-			else if (!strcmp(buffer, "socks4"))
-				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS4);
-			else if (!strcmp(buffer, "socks5"))
-				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS5);
-			else if (!strcmp(buffer, "envvar"))
-				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_USE_ENVVAR);
-			else
-				gaim_debug_error("account",
-						   "Invalid proxy type found when loading account "
-						   "information for %s\n",
-						   gaim_account_get_username(data->account));
-		}
-	}
-	else if (data->tag == TAG_HOST) {
-		if (data->in_proxy && *buffer != '\0')
-			gaim_proxy_info_set_host(data->proxy_info, buffer);
-	}
-	else if (data->tag == TAG_PORT) {
-		if (data->in_proxy && *buffer != '\0')
-			gaim_proxy_info_set_port(data->proxy_info, atoi(buffer));
-	}
-	else if (data->tag == TAG_SETTING) {
-		if (*buffer != '\0') {
-			if (data->setting_ui != NULL) {
-				if (data->setting_type == GAIM_PREF_STRING)
-					gaim_account_set_ui_string(data->account, data->setting_ui,
-											   data->setting_name, buffer);
-				else if (data->setting_type == GAIM_PREF_INT)
-					gaim_account_set_ui_int(data->account, data->setting_ui,
-											data->setting_name, atoi(buffer));
-				else if (data->setting_type == GAIM_PREF_BOOLEAN)
-					gaim_account_set_ui_bool(data->account, data->setting_ui,
-											 data->setting_name,
-											 (*buffer == '0' ? FALSE : TRUE));
-			}
-			else {
-				if (data->setting_type == GAIM_PREF_STRING)
-					gaim_account_set_string(data->account, data->setting_name,
-											buffer);
-				else if (data->setting_type == GAIM_PREF_INT)
-					gaim_account_set_int(data->account, data->setting_name,
-										 atoi(buffer));
-				else if (data->setting_type == GAIM_PREF_BOOLEAN)
-					gaim_account_set_bool(data->account, data->setting_name,
-										  (*buffer == '0' ? FALSE : TRUE));
-			}
-		}
-
-		g_free(data->setting_name);
-		data->setting_name = NULL;
-	}
-	else if (!strcmp(element_name, "proxy")) {
-		data->in_proxy = FALSE;
-
-		if (gaim_proxy_info_get_type(data->proxy_info) == GAIM_PROXY_USE_GLOBAL) {
-			gaim_proxy_info_destroy(data->proxy_info);
-			data->proxy_info = NULL;
-		}
-		else if (*buffer != '\0') {
-			gaim_account_set_proxy_info(data->account, data->proxy_info);
-		}
-	}
-	else if (!strcmp(element_name, "settings")) {
-		if (data->setting_ui != NULL) {
-			g_free(data->setting_ui);
-			data->setting_ui = NULL;
-		}
-	}
-
-	data->tag = TAG_NONE;
-
-	g_free(buffer);
-}
-
-static void
-text_handler(GMarkupParseContext *context, const gchar *text,
-			 gsize text_len, gpointer user_data, GError **error)
-{
-	AccountParserData *data = user_data;
-
-	if (data->buffer == NULL)
-		data->buffer = g_string_new_len(text, text_len);
-	else
-		g_string_append_len(data->buffer, text, text_len);
-}
-
-static GMarkupParser accounts_parser =
-{
-	start_element_handler,
-	end_element_handler,
-	text_handler,
-	NULL,
-	NULL
-};
-
-gboolean
-gaim_accounts_load()
-{
-	gchar *filename = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
-	gchar *contents = NULL;
-	gsize length;
-	GMarkupParseContext *context;
-	GError *error = NULL;
-	AccountParserData *parser_data;
-
-	if (filename == NULL) {
-		accounts_loaded = TRUE;
-		return FALSE;
-	}
-
-	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug_error("accounts",
-				   "Error reading accounts: %s\n", error->message);
-		g_error_free(error);
-		g_free(filename);
-		accounts_loaded = TRUE;
-
-		return FALSE;
-	}
-
-	parser_data = g_new0(AccountParserData, 1);
-
-	context = g_markup_parse_context_new(&accounts_parser, 0,
-										 parser_data, free_parser_data);
-
-	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
-		g_markup_parse_context_free(context);
-		g_free(contents);
-		g_free(filename);
-		accounts_loaded = TRUE;
-
-		return TRUE;
-	}
-
-	if (!g_markup_parse_context_end_parse(context, NULL)) {
-		gaim_debug_error("accounts", "Error parsing %s\n",
-				   filename);
-		g_markup_parse_context_free(context);
-		g_free(contents);
-		g_free(filename);
-		accounts_loaded = TRUE;
-
-		return TRUE;
-	}
-
-	g_markup_parse_context_free(context);
-	g_free(contents);
-	g_free(filename);
-	accounts_loaded = TRUE;
-
-	return TRUE;
 }
 
 static void
@@ -1395,9 +1308,12 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	table = (GHashTable *)value;
 	node  = (xmlnode *)user_data;
 
-	child = xmlnode_new_child(node, "settings");
-	xmlnode_set_attrib(child, "ui", ui);
-	g_hash_table_foreach(table, setting_to_xmlnode, child);
+	if (g_hash_table_size(table) > 0)
+	{
+		child = xmlnode_new_child(node, "settings");
+		xmlnode_set_attrib(child, "ui", ui);
+		g_hash_table_foreach(table, setting_to_xmlnode, child);
+	}
 }
 
 static xmlnode *
@@ -1496,10 +1412,16 @@ account_to_xmlnode(GaimAccount *account)
 		xmlnode_insert_data(child, tmp, -1);
 	}
 
-	child = xmlnode_new_child(node, "settings");
-	g_hash_table_foreach(account->settings, setting_to_xmlnode, child);
+	if (g_hash_table_size(account->settings) > 0)
+	{
+		child = xmlnode_new_child(node, "settings");
+		g_hash_table_foreach(account->settings, setting_to_xmlnode, child);
+	}
 
-	g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
+	if (g_hash_table_size(account->ui_settings) > 0)
+	{
+		g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
+	}
 
 	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL)
 	{
@@ -1727,6 +1649,8 @@ void
 gaim_accounts_init(void)
 {
 	void *handle = gaim_accounts_get_handle();
+
+	load_accounts();
 
 	gaim_signal_register(handle, "account-connecting",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

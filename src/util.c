@@ -24,6 +24,7 @@
 
 #include "conversation.h"
 #include "debug.h"
+#include "notify.h"
 #include "prpl.h"
 #include "prefs.h"
 #include "util.h"
@@ -2046,6 +2047,75 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	g_free(filename_temp);
 
 	return TRUE;
+}
+
+xmlnode *
+gaim_util_read_xml_from_file(const char *filename, const char *description)
+{
+	const char *user_dir = gaim_user_dir();
+	gchar *filename_full;
+	GError *error;
+	gchar *contents = NULL;
+	gsize length;
+	xmlnode *node = NULL;
+
+	g_return_val_if_fail(user_dir != NULL, NULL);
+
+	gaim_debug_info("util", "Reading file %s from directory %s\n",
+					filename, user_dir);
+
+	filename_full = g_build_filename(user_dir, filename, NULL);
+
+	if (!g_file_test(filename_full, G_FILE_TEST_EXISTS))
+	{
+		gaim_debug_info("util", "File %s does not exist (this is not "
+						"necessarily an error)\n", filename_full);
+		g_free(filename_full);
+		return NULL;
+	}
+
+	if (!g_file_get_contents(filename_full, &contents, &length, &error))
+	{
+		gaim_debug_error("util", "Error reading file %s: %s\n",
+						 filename_full, error->message);
+		g_error_free(error);
+	}
+
+	if ((contents != NULL) && (length > 0))
+	{
+		node = xmlnode_from_str(contents, length);
+
+		/* If we were unable to parse the file then save its contents to a backup file */
+		if (node == NULL)
+		{
+			gchar *filename_temp;
+
+			filename_temp = g_strdup_printf("%s~", filename);
+			gaim_debug_error("util", "Error parsing file %s.  Rrenaming old "
+							 "file to %s\n", filename_full, filename_temp);
+			gaim_util_write_data_to_file(filename_temp, contents, length);
+			g_free(filename_temp);
+		}
+
+		g_free(contents);
+	}
+
+	/* If we could not parse the file then show the user an error message */
+	if (node == NULL)
+	{
+		gchar *title, *msg;
+		title = g_strdup_printf(_("Error Reading %s"), filename);
+		msg = g_strdup_printf(_("An error was encountered reading your "
+					"%s.  They have not been loaded, and the old file "
+					"been renamed to %s~."), description, filename_full);
+		gaim_notify_error(NULL, NULL, title, msg);
+		g_free(title);
+		g_free(msg);
+	}
+
+	g_free(filename_full);
+
+	return node;
 }
 
 /*

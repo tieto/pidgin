@@ -161,7 +161,7 @@ void xmlnode_remove_attrib(xmlnode *node, const char *attr);
  * @return The node repersented as a string.  You must
  *         g_free this string when finished using it.
  */
-gchar *xmlnode_to_str(xmlnode *node, int *len);
+char *xmlnode_to_str(xmlnode *node, int *len);
 
 /**
  * Returns the node in a string of human readable xml.
@@ -173,7 +173,7 @@ gchar *xmlnode_to_str(xmlnode *node, int *len);
  *         tab and new line characters.  You must
  *         g_free this string when finished using it.
  */
-gchar *xmlnode_to_formatted_str(xmlnode *node, int *len);
+char *xmlnode_to_formatted_str(xmlnode *node, int *len);
 
 /**
  * Creates a node from a string of XML.  Calling this on the

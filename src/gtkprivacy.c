@@ -123,6 +123,7 @@ find_permit_block_by_name(GSList *list, const char *name)
 	for (l = list; l != NULL; l = l->next) {
 		temp_name = (const char *)l->data;
 
+		/* Should this use gaim_normalize()? */
 		if (!gaim_utf8_strcasecmp(name, temp_name))
 			return temp_name;
 	}

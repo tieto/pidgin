@@ -627,8 +627,6 @@ int main(int argc, char *argv[])
 	g_free(gaimrc);
 	g_free(accountsxml);
 
-	gaim_accounts_load();
-
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
 

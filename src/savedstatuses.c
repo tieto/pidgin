@@ -101,7 +101,7 @@ free_statussaved(GaimSavedStatus *status)
 
 
 /**************************************************************************
-* Saved status writting to disk
+* Writting to disk
 **************************************************************************/
 
 static xmlnode *
@@ -206,14 +206,14 @@ schedule_save(void)
 
 
 /**************************************************************************
-* Saved status reading from disk
+* Reading from disk
 **************************************************************************/
 static GaimSavedStatusSub *
 parse_substatus(xmlnode *substatus)
 {
 	GaimSavedStatusSub *ret;
 	xmlnode *node;
-	char *data = NULL;
+	char *data;
 
 	ret = g_new0(GaimSavedStatusSub, 1);
 
@@ -238,21 +238,19 @@ parse_substatus(xmlnode *substatus)
 
 	/* Read the state */
 	node = xmlnode_get_child(substatus, "state");
-	if (node != NULL)
-		data = xmlnode_get_data(node);
-	if (data != NULL) {
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	{
 		ret->type = gaim_status_type_find_with_id(
-									ret->account->status_types, data);
+							ret->account->status_types, data);
 		g_free(data);
-		data = NULL;
 	}
 
 	/* Read the message */
 	node = xmlnode_get_child(substatus, "message");
-	if (node != NULL)
-		data = xmlnode_get_data(node);
-	if (data != NULL)
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	{
 		ret->message = data;
+	}
 
 	return ret;
 }
@@ -287,7 +285,7 @@ parse_status(xmlnode *status)
 	GaimSavedStatus *ret;
 	xmlnode *node;
 	const char *attrib;
-	char *data = NULL;
+	char *data;
 	int i;
 
 	ret = g_new0(GaimSavedStatus, 1);
@@ -308,20 +306,18 @@ parse_status(xmlnode *status)
 
 	/* Read the primitive status type */
 	node = xmlnode_get_child(status, "state");
-	if (node != NULL)
-		data = xmlnode_get_data(node);
-	if (data != NULL) {
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	{
 		ret->type = gaim_primitive_get_type_from_id(data);
 		g_free(data);
-		data = NULL;
 	}
 
 	/* Read the message */
 	node = xmlnode_get_child(status, "message");
-	if (node != NULL)
-		data = xmlnode_get_data(node);
-	if (data != NULL)
+	if ((node != NULL) && ((data = xmlnode_get_data(node)) == NULL))
+	{
 		ret->message = data;
+	}
 
 	/* Read substatuses */
 	for (node = xmlnode_get_child(status, "status"); node != NULL;
@@ -342,48 +338,15 @@ parse_status(xmlnode *status)
  * @return TRUE on success, FALSE on failure (if the file can not
  *         be opened, or if it contains invalid XML).
  */
-static gboolean
-read_statuses(const char *filename)
+static void
+load_statuses(void)
 {
-	GError *error;
-	gchar *contents = NULL;
-	gsize length;
 	xmlnode *statuses, *status;
 
-	gaim_debug_info("status", "Reading %s\n", filename);
-
-	if (!g_file_get_contents(filename, &contents, &length, &error))
-	{
-		gaim_debug_error("status", "Error reading statuses: %s\n",
-						 error->message);
-		g_error_free(error);
-		return FALSE;
-	}
-
-	statuses = xmlnode_from_str(contents, length);
+	statuses = gaim_util_read_xml_from_file("status.xml", _("saved statuses"));
 
 	if (statuses == NULL)
-	{
-		FILE *backup;
-		gchar *name;
-		gaim_debug_error("status", "Error parsing statuses\n");
-		name = g_strdup_printf("%s~", filename);
-		if ((backup = fopen(name, "w")))
-		{
-			fwrite(contents, length, 1, backup);
-			fclose(backup);
-			chmod(name, S_IRUSR | S_IWUSR);
-		}
-		else
-		{
-			gaim_debug_error("status", "Unable to write backup %s\n", name);
-		}
-		g_free(name);
-		g_free(contents);
-		return FALSE;
-	}
-
-	g_free(contents);
+		return;
 
 	for (status = xmlnode_get_child(statuses, "status"); status != NULL;
 			status = xmlnode_get_next_twin(status))
@@ -393,40 +356,7 @@ read_statuses(const char *filename)
 		saved_statuses = g_list_append(saved_statuses, new);
 	}
 
-	gaim_debug_info("status", "Finished reading statuses\n");
-
 	xmlnode_free(statuses);
-
-	return TRUE;
-}
-
-static void
-load_statuses(void)
-{
-	const char *user_dir = gaim_user_dir();
-	gchar *filename;
-	gchar *msg;
-
-	g_return_if_fail(user_dir != NULL);
-
-	statuses_loaded = TRUE;
-
-	filename = g_build_filename(user_dir, "status.xml", NULL);
-
-	if (g_file_test(filename, G_FILE_TEST_EXISTS))
-	{
-		if (!read_statuses(filename))
-		{
-			msg = g_strdup_printf(_("An error was encountered parsing the "
-						"file containing your saved statuses (%s).  They "
-						"have not been loaded, and the old file has been "
-						"renamed to status.xml~."), filename);
-			gaim_notify_error(NULL, NULL, _("Saved Statuses Error"), msg);
-			g_free(msg);
-		}
-	}
-
-	g_free(filename);
 }
 
 
