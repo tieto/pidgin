@@ -141,8 +141,6 @@ static int can_play_esd()
 {
 	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
 
-	if (!check_dev("/dev/dsp")) return 0;
-	
         esd_fd = esd_play_stream(format, 8012, NULL, "gaim");
 
         if (esd_fd < 0) {
@@ -266,6 +264,8 @@ void play(unsigned char *data, int size)
                         play_audio(data, size);
                         _exit(0);
                 }
+
+		_exit(0);
         } else {
                 gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
         }
