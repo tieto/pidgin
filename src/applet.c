@@ -117,7 +117,7 @@ static gboolean update_applet(){
 				icon_offline_bm );
 		gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
 		applet_set_tooltips(_("Offilne. Click to bring up login box."));
-	} else if (!awaymessage) {
+	} else if (awaymessage) { /* fucked up, i know */
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
 				icon_online_bm );                
