@@ -567,7 +567,7 @@ gaim_gtkxfer_dialog_new(void)
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(window), 390, 400);
 #endif
-	//gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
 	gtk_widget_realize(window);
 
@@ -587,7 +587,8 @@ gaim_gtkxfer_dialog_new(void)
 	/* Setup the listbox */
 	sw = setup_tree(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
-
+	gtk_widget_set_size_request(sw,-1, 140);
+	
 	/* "Keep the dialog open" */
 	checkbox = gtk_check_button_new_with_mnemonic(
 			_("_Keep the dialog open"));
