@@ -547,7 +547,7 @@ int escape_text(char *msg)
 	return cnt;
 }
 
-char *escape_text2(char *msg)
+char *escape_text2(const char *msg)
 {
 	char *c, *cpy;
 	char *woo;
