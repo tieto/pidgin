@@ -567,8 +567,6 @@ static void toggle_color(GtkWidget *color, GtkWidget *entry)
                 return;
         if (GTK_TOGGLE_BUTTON(color)->active)
 		show_color_dialog(entry, color);
-        else
-                advance_past(entry, "<FONT COLOR>", "</FONT>");
 }
 
 static void do_link(GtkWidget *linky, GtkWidget *entry)
