@@ -114,21 +114,6 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 			b->proto_data = user;
 	}
 
-	/* Find all occurrences of this buddy in the wrong place. */
-	for (sl = buddies; sl != NULL; sl = sl->next)
-	{
-		b = sl->data;
-
-		if (b->proto_data == NULL)
-		{
-			gaim_debug_warning("msn",
-				"Deleting misplaced user %s (%s) during sync with server.\n",
-				b->name, gaim_find_buddys_group(b)->name);
-
-			gaim_blist_remove_buddy(b);
-		}
-	}
-
 	g_slist_free(buddies);
 
 	serv_got_alias(gc, (char *)msn_user_get_passport(user),
@@ -1260,11 +1245,34 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			while (session->lists.forward != NULL)
 			{
 				MsnUser *user = session->lists.forward->data;
+				GSList *buddies;
+				GSList *sl;
 
 				session->lists.forward =
 					g_slist_remove(session->lists.forward, user);
 
 				add_buddy(servconn, user);
+
+				buddies = gaim_find_buddies(account,
+											msn_user_get_passport(user));
+
+				/* Find all occurrences of this buddy in the wrong place. */
+				for (sl = buddies; sl != NULL; sl = sl->next)
+				{
+					GaimBuddy *b = sl->data;
+
+					if (b->proto_data == NULL)
+					{
+						gaim_debug_warning("msn",
+							"Deleting misplaced user %s (%s) during sync "
+							"with server.\n",
+							b->name, gaim_find_buddys_group(b)->name);
+
+						gaim_blist_remove_buddy(b);
+					}
+				}
+
+				g_slist_free(buddies);
 			}
 
 			session->syncing_lists = FALSE;
