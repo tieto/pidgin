@@ -85,6 +85,8 @@ version 0.60:
 	  Yahoo! (Thanks Nathan Walp)
 	* Generic File Transfer PRPL interface (Thanks William T. Mahan)
 	* DCC File Send / Receive support for IRC
+	* File receive support for Jabber (Thanks, Nathan Walp)
+	* File send/receive support for Oscar (Thanks, William T. Mahan)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
