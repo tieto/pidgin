@@ -1,6 +1,7 @@
 version 0.60 alpha 3:
 	* Improved UI
 	* Plugin for transparent conversation windows
+	* Gtkspell/aspell working
 
 version 0.60 alpha 2 (10/9/02):
 	* Perl functionality added
