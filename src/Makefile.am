@@ -45,14 +45,6 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
-if USE_NSS
-SSLSOURCES = ssl-nss.c
-endif
-
-if USE_GNUTLS
-SSLSOURCES = ssl-gnutls.c
-endif
-
 CORESOURCES = \
 	$(SSLSOURCES) \
 	account.c \
@@ -100,6 +92,8 @@ CORESOURCES = \
 	status.h \
 	sound.c \
 	sound.h \
+	ssl-gnutls.c \
+	ssl-nss.c \
 	sslconn.c \
 	sslconn.h \
 	util.c \

@@ -20,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+
+#ifdef HAVE_GNUTLS
+
 #include "debug.h"
 #include "sslconn.h"
 
@@ -147,3 +151,5 @@ gaim_ssl_gnutls_get_ops()
 {
 	return &ssl_ops;
 }
+
+#endif /* HAVE_GNUTLS */
