@@ -173,6 +173,7 @@ void show_about(GtkWidget *w, void *null)
 	/* Let's give'em something to talk about -- woah woah woah */
 	gtk_widget_show(about);
 
+	gdk_window_raise(about->window);
 }
 
 static void destroy_help()
