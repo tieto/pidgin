@@ -4134,9 +4134,9 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 			style->fg[0].blue  = 0x0C0C;
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK) {
-			style->fg[0].red   = 0x4B4B;
-			style->fg[0].green = 0x6969;
-			style->fg[0].blue  = 0x8383;
+			style->fg[0].red   = 0x3131;
+			style->fg[0].green = 0x4E4E;
+			style->fg[0].blue  = 0x6C6C;
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
 			style->fg[0].red   = 0xDFDF;
