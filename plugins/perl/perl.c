@@ -374,7 +374,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 		LEAVE;
 	}
 
-	gaim_signals_disconnect_by_handle(plugin);
+	gaim_perl_signal_clear_for_plugin(plugin);
 	gaim_perl_timeout_clear_for_plugin(plugin);
 
 	return TRUE;

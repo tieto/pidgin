@@ -6,15 +6,34 @@
 typedef struct
 {
 	char *name;
-	char *args;
+	void *args;
 	GaimPlugin *plugin;
 	int iotag;
 
 } GaimPerlTimeoutHandler;
 
+typedef struct
+{
+	char *signal;
+	char *func;
+	void *data;
+	void *instance;
+	GaimPlugin *plugin;
+
+} GaimPerlSignalHandler;
+
+
 void gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, const char *func,
 						   void *args);
 void gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin);
 void gaim_perl_timeout_clear(void);
+
+void gaim_perl_signal_connect(GaimPlugin *plugin, void *handle,
+							  const char *signal, const char *func,
+							  void *data);
+void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *handle,
+								 const char *signal, const char *func);
+void gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin);
+void gaim_perl_signal_clear(void);
 
 #endif /* _GAIM_PERL_HANDLERS_H_ */
