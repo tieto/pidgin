@@ -758,8 +758,6 @@ static void oscar_close(GaimConnection *gc) {
 	if (od->icopa > 0)
 		gaim_input_remove(od->icopa);
 	if (od->icopa > 0)
-		gaim_input_remove(od->icopa);
-	if (od->icontimer)
 		g_source_remove(od->icontimer);
 	if (od->getblisttimer)
 		g_source_remove(od->getblisttimer);
@@ -1375,7 +1373,7 @@ static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_conn_addhandler(sess, fr->conn, 0x000e, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
@@ -1487,7 +1485,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "chatnav: connected\n");
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "admin: connected\n");
 }
 
 static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition cond)
@@ -1619,9 +1617,6 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_admin, 0);
-		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0003, gaim_info_change, 0);
-		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
-		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
@@ -3765,6 +3760,10 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
+
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0003, gaim_info_change, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0005, gaim_info_change, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0007, gaim_account_confirm, 0);
 
 	aim_clientready(sess, fr->conn);
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "connected to admin\n");
