@@ -37,7 +37,9 @@ Section "" ; (default section)
   ; Install Aspell
   SetOutPath "$INSTDIR"
   File ..\win32-dev\aspell-15\bin\aspell-0.50.2.exe
-  ExecWait '"$INSTDIR\aspell-0.50.2.exe" /S' $R0
+  ; Don't do this silently (i.e /S switch).. because some people wish to specify
+  ; the location of the Aspell install directory. (
+  ExecWait '"$INSTDIR\aspell-0.50.2.exe"' $R0
   ; cleanup aspell installer file
   Delete "$INSTDIR\aspell-0.50.2.exe"
   ; Check if aspell installer completed ok
