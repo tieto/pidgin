@@ -1310,6 +1310,88 @@ static GaimCmdRet jabber_cmd_chat_part(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
+static GaimCmdRet jabber_cmd_chat_ban(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	if(!jabber_chat_ban_user(chat, args[0], args[1])) {
+		*error = g_strdup_printf(_("Unable to ban user %s"), args[0]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_invite(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	jabber_chat_invite(gaim_conversation_get_gc(conv),
+			gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), args[1] ? args[1] : "",
+			args[0]);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_join(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	GHashTable *components;
+
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+
+	g_hash_table_replace(components, "room", args[0]);
+	g_hash_table_replace(components, "server", chat->server);
+	g_hash_table_replace(components, "handle", chat->handle);
+	if(args[1])
+		g_hash_table_replace(components, "password", args[1]);
+
+	jabber_chat_join(gaim_conversation_get_gc(conv), components);
+
+	g_hash_table_destroy(components);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_kick(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	if(!jabber_chat_kick_user(chat, args[0], args[1])) {
+		*error = g_strdup_printf(_("Unable to kick user %s"), args[0]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_msg(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	char *who;
+
+	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
+
+	jabber_message_send_im(gaim_conversation_get_gc(conv), who, args[1], 0);
+
+	g_free(who);
+	return GAIM_CMD_RET_OK;
+}
+
 static void jabber_register_commands(void)
 {
 	gaim_cmd_register("config", "", GAIM_CMD_P_PRPL,
@@ -1333,6 +1415,26 @@ static void jabber_register_commands(void)
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 			jabber_cmd_chat_topic, _("View or change the topic"));
+	gaim_cmd_register("ban", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_ban, _("Ban a user from the room"));
+	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_invite, _("Invite a user to the room"));
+	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_join, _("Join a chat on this server"));
+	gaim_cmd_register("kick", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_kick, _("Kick a user from the room"));
+	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-jabber",
+			jabber_cmd_chat_msg, _("Send a private message to another user"));
 }
 
 static GaimPluginPrefFrame *

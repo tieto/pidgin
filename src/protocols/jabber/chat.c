@@ -151,6 +151,8 @@ void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 	g_free(room_jid);
 }
 
+void jabber_chat_member_free(JabberChatMember *jcm);
+
 void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;
@@ -202,6 +204,9 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	chat->server = g_strdup(server);
 	chat->handle = g_strdup(handle);
 
+	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+			(GDestroyNotify)jabber_chat_member_free);
+
 	g_hash_table_insert(js->chats, room_jid, chat);
 
 	presence = jabber_presence_create(gc->away_state, gc->away);
@@ -231,6 +236,8 @@ void jabber_chat_leave(GaimConnection *gc, int id)
 		return;
 
 	jabber_chat_part(chat, NULL);
+
+	chat->conv = NULL;
 }
 
 void jabber_chat_destroy(JabberChat *chat)
@@ -719,6 +726,94 @@ void jabber_roomlist_cancel(GaimRoomlist *list)
 		js->roomlist = NULL;
 		gaim_roomlist_unref(list);
 	}
+}
+
+void jabber_chat_member_free(JabberChatMember *jcm)
+{
+	g_free(jcm->handle);
+	g_free(jcm->jid);
+	g_free(jcm);
+}
+
+void jabber_chat_track_handle(JabberChat *chat, const char *handle,
+		const char *jid, const char *affiliation, const char *role)
+{
+	JabberChatMember *jcm = g_new0(JabberChatMember, 1);
+
+	jcm->handle = g_strdup(handle);
+	jcm->jid = g_strdup(jid);
+
+	g_hash_table_replace(chat->members, jcm->handle, jcm);
+
+	/* XXX: keep track of role and affiliation */
+}
+
+void jabber_chat_remove_handle(JabberChat *chat, const char *handle)
+{
+	g_hash_table_remove(chat->members, handle);
+}
+
+gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why)
+{
+	JabberIq *iq;
+	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
+	char *to;
+	xmlnode *query, *item, *reason;
+
+	if(!jcm || !jcm->jid)
+		return FALSE;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#admin");
+
+	to = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "affiliation", "outcast");
+	if(why) {
+		reason = xmlnode_new_child(item, "reason");
+		xmlnode_insert_data(reason, why, -1);
+	}
+
+	jabber_iq_send(iq);
+
+	return TRUE;
+}
+
+
+gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *why)
+{
+	JabberIq *iq;
+	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
+	char *to;
+	xmlnode *query, *item, *reason;
+
+	if(!jcm || !jcm->jid)
+		return FALSE;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#admin");
+
+	to = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "role", "none");
+	if(why) {
+		reason = xmlnode_new_child(item, "reason");
+		xmlnode_insert_data(reason, why, -1);
+	}
+
+	jabber_iq_send(iq);
+
+	return TRUE;
 }
 
 

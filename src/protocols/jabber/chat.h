@@ -30,6 +30,11 @@
 
 #include "jabber.h"
 
+typedef struct _JabberChatMember {
+	char *handle;
+	char *jid;
+} JabberChatMember;
+
 
 typedef struct _JabberChat {
 	JabberStream *js;
@@ -42,6 +47,7 @@ typedef struct _JabberChat {
 	gboolean xhtml;
 	GaimRequestType config_dialog_type;
 	void *config_dialog_handle;
+	GHashTable *members;
 } JabberChat;
 
 GList *jabber_chat_info(GaimConnection *gc);
@@ -64,6 +70,13 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic);
 void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 void jabber_chat_change_nick(JabberChat *chat, const char *nick);
 void jabber_chat_part(JabberChat *chat, const char *msg);
+void jabber_chat_track_handle(JabberChat *chat, const char *handle,
+		const char *jid, const char *affiliation, const char *role);
+void jabber_chat_remove_handle(JabberChat *chat, const char *handle);
+gboolean jabber_chat_ban_user(JabberChat *chat, const char *who,
+		const char *why);
+gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
+		const char *why);
 
 GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc);
 void jabber_roomlist_cancel(GaimRoomlist *list);

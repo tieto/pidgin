@@ -190,6 +190,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *real_jid = NULL;
+	const char *affiliation = NULL;
+	const char *role = NULL;
 	char *status = NULL;
 	int priority = 0;
 	JabberID *jid;
@@ -286,6 +288,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 				if((z = xmlnode_get_child(y, "item"))) {
 					real_jid = xmlnode_get_attrib(z, "jid");
+					affiliation = xmlnode_get_attrib(z, "affiliation");
+					role = xmlnode_get_attrib(z, "role");
 				}
 			}
 		}
@@ -320,8 +324,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(type && !strcmp(type, "unavailable")) {
 			gboolean nick_change = FALSE;
 
-			/* If we haven't joined the chat yet, we don't care that someone left */
+			/* If we haven't joined the chat yet, we don't care that someone
+			 * left, or it was us leaving after we closed the chat */
 			if(!chat->conv) {
+				if(!strcmp(jid->resource, chat->handle))
+					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);
 				g_free(room_jid);
@@ -339,28 +346,42 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						continue;
 					if(!(stat = xmlnode_get_child(x, "status")))
 						continue;
-					if(!(code = xmlnode_get_attrib(stat, "code")) || strcmp(code, "303"))
+					if(!(code = xmlnode_get_attrib(stat, "code")))
 						continue;
-					if(!(item = xmlnode_get_child(x, "item")))
-						continue;
-					if(!(nick = xmlnode_get_attrib(item, "nick")))
-						continue;
-					nick_change = TRUE;
-					if(!strcmp(jid->resource, chat->handle)) {
-						g_free(chat->handle);
-						chat->handle = g_strdup(nick);
+					if(!strcmp(code, "301")) {
+						/* XXX: we got banned */
+					} else if(!strcmp(code, "303")) {
+						if(!(item = xmlnode_get_child(x, "item")))
+							continue;
+						if(!(nick = xmlnode_get_attrib(item, "nick")))
+							continue;
+						nick_change = TRUE;
+						if(!strcmp(jid->resource, chat->handle)) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(nick);
+						}
+						gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
+						jabber_chat_remove_handle(chat, jid->resource);
+						break;
+					} else if(!strcmp(code, "307")) {
+						/* XXX: we got kicked */
+					} else if(!strcmp(code, "321")) {
+						/* XXX: removed due to an affiliation change */
+					} else if(!strcmp(code, "322")) {
+						/* XXX: removed because room is now members-only */
+					} else if(!strcmp(code, "332")) {
+						/* XXX: removed due to system shutdown */
 					}
-					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
-					break;
 				}
 			}
 			if(!nick_change) {
-				if(!g_utf8_collate(jid->resource, gaim_conv_chat_get_nick(GAIM_CONV_CHAT(chat->conv)))) {
+				if(!g_utf8_collate(jid->resource, chat->handle)) {
 					serv_got_chat_left(js->gc, chat->id);
 					jabber_chat_destroy(chat);
 				} else {
 					gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
 							status);
+					jabber_chat_remove_handle(chat, jid->resource);
 				}
 			}
 		} else {
@@ -375,6 +396,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
 					status);
+
+			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
 
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
