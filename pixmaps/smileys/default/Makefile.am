@@ -3397,4 +3397,7 @@ yahoo_tongue.gif \
 yahoo_whistling.gif \
 yahoo_wink.gif \
 yahoo_worried.gif \
-yell.png \
+yell.png
+
+smileydir = $(datadir)/pixmaps/gaim/smileys/default
+smiley_DATA = $(EXTRA_DIST)
