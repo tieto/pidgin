@@ -59,9 +59,7 @@
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
 
-#define DEFAULT_FONT_NAME "helvetica"
 #define MAX_SIZE 7
-#define MAX_FONTS 32767
 
 gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
@@ -1853,45 +1851,33 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 	layout_class->set_scroll_adjustments = gtk_imhtml_set_scroll_adjustments;
 }
 
-static gchar**
-get_font_names ()
+static gchar*
+gtk_imhtml_get_font_name (GdkFont *font)
 {
-	gint num_fonts = 0;
-	gchar **xfontnames;
-	static gchar **fonts = NULL;
-	gint i;
-
-	if (fonts)
-		return fonts;
-
-	xfontnames = XListFonts (GDK_DISPLAY (), "-*", MAX_FONTS, &num_fonts);
-
-	if (!num_fonts) {
-		XFreeFontNames(xfontnames);
-		return g_new0 (char *, 1);
-	}
-
-	fonts = g_new0 (char *, num_fonts + 1);
-
-	for (i = 0; i < num_fonts; i++) {
-		gint countdown = 1, num_dashes = 1;
-		const gchar *t1 = xfontnames [i];
-		const gchar *t2;
-
-		while (*t1 && (countdown >= 0))
-			if (*t1++ == '-')
-				countdown--;
-
-		for (t2 = t1; *t2; t2++)
-			if (*t2 == '-' && --num_dashes == 0)
-				break;
-
-		fonts [i] = g_strndup (t1, (long) t2 - (long) t1);
-	}
-
-	XFreeFontNames(xfontnames);
-	return fonts;
+#if GTK_CHECK_VERSION(1,3,0)
+	return "--*-helvetica-medium-r-normal--10-*-*-*-*-*-*-*";
+#else
+	GdkFontPrivate *fontpriv = (GdkFontPrivate *) font;
+	return fontpriv->names->data;
+#endif
 }
+
+#define TRY_FONT	{ \
+				gchar *tmp = g_strjoinv ("-", newvals); \
+				GdkFont *ret_font; \
+				if (default_font->type == GDK_FONT_FONT) \
+					ret_font = gdk_font_load (tmp); \
+				else \
+					ret_font = gdk_fontset_load (tmp); \
+				g_free (tmp); \
+				if (ret_font) { \
+					g_strfreev (xflds); \
+					g_strfreev (names); \
+					g_strfreev (csvals); \
+					return ret_font; \
+				} \
+			}
+
 
 static GdkFont*
 gtk_imhtml_font_load (GtkIMHtml *imhtml,
@@ -1900,178 +1886,106 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		      gboolean   italics,
 		      gint       fontsize)
 {
-	gchar buf [16 * 1024];
-	GdkFont *font = NULL;
-	XFontStruct *xfs;
-	static gchar **fontnames = NULL;
-	gchar *choice = NULL;
-	gint size = fontsize ? font_sizes [MIN (fontsize, MAX_SIZE) - 1] : 120;
-	gint i, j;
+	GdkFont *default_font = GTK_IMHTML_GET_STYLE_FONT (GTK_WIDGET (imhtml)->style);
+	gchar *default_name;
+	gchar **xflds;
 
-	if (!fontnames)
-		fontnames = get_font_names ();
+	gchar *newvals[15];
+	gint i;
+	gchar **names;
+	gchar fs[10];
+	gchar *charset;
+	gchar **csvals;
 
-	if (name) {
-		gchar **choices = g_strsplit (name, ",", -1);
+	if (!name && !bold && !italics && !fontsize)
+		return gdk_font_ref (default_font);
 
-		for (i = 0; choices [i]; i++) {
-			for (j = 0; fontnames [j]; j++)
-				if (!g_strcasecmp (fontnames [j], choices [i]))
-					break;
-			if (fontnames [j])
-				break;
-		}
+	default_name = gtk_imhtml_get_font_name (default_font);
+	xflds = g_strsplit (default_name, "-", -1);
 
-		if (choices [i])
-			choice = g_strdup (choices [i]);
+#define NAME 2
+#define BOLD 3
+#define ITALICS 4
+#define SIZE 6
+#define PTSZ 7
+#define REG 13
+#define ENC 14
+#define END 15
 
-		g_strfreev (choices);
-	} else if (!bold && !italics && !fontsize && imhtml->default_font)
-		return gdk_font_ref (imhtml->default_font);
+	if (name)
+		names = g_strsplit (name, ",", -1);
+	else {
+		names = g_new0 (gchar *, 2);
+		names [0] = g_strdup (xflds [NAME]);
+	}
+	charset = getcharset ();
+	csvals = g_strsplit (charset, "-", 2);
 
-	if (!choice) {
-		for (i = 0; fontnames [i]; i++)
-			if (!g_strcasecmp (fontnames [i], DEFAULT_FONT_NAME))
-				break;
-		if (fontnames [i])
-			choice = g_strdup (DEFAULT_FONT_NAME);
+	for (i = 0; xflds [i]; i++)
+		newvals [i] = xflds [i];
+
+	if (bold)
+		newvals [BOLD] = "bold";
+	if (italics)
+		newvals [ITALICS] = "i";
+	if (fontsize) {
+		g_snprintf (fs, sizeof (fs), "%d", font_sizes [MIN (fontsize, MAX_SIZE) - 1]);
+		newvals [SIZE] = fs;
+		newvals [PTSZ] = "";
+	}
+	newvals [REG] = csvals [0];
+	newvals [ENC] = csvals [1];
+	newvals [END] = NULL;
+
+	TRY_FONT;
+
+	for (i = 0; italics && names [i]; i++) {
+		newvals [NAME] = names [i];
+
+		newvals [ITALICS] = "o";
+		TRY_FONT;
+
+		newvals [ITALICS] = xflds [ITALICS];
+		TRY_FONT;
 	}
 
-	if (!choice) {
-		if (imhtml->default_font)
-			return gdk_font_ref (imhtml->default_font);
-		return gdk_fontset_load ("-*-*-*-*-*-*-*-*-*-*-*-*-*-*,*");
+	for (i = 0; fontsize && names [i]; i++) {
+		newvals [NAME] = names [i];
+
+		if (xflds [PTSZ][0]) {
+			g_snprintf (fs, sizeof (fs), "%d",
+				    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
+			newvals [PTSZ] = fs;
+			newvals [SIZE] = "";
+			TRY_FONT;
+
+			newvals [PTSZ] = xflds [PTSZ];
+		} else
+			newvals [SIZE] = xflds [SIZE];
+		TRY_FONT;
 	}
 
-	g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-%d-*-*-*-*-%s",
-		    choice,
-		    bold ? "bold" : "medium",
-		    italics ? 'i' : 'r',
-		    size,
-		    getcharset());
-	font = gdk_font_load (buf);
+	for (i = 0; bold && names [i]; i++) {
+		newvals [NAME] = names [i];
 
-	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-%d-*-*-*-*-%s",
-			    choice,
-			    bold ? "bold" : "medium",
-			    size,
-			    getcharset());
-		font = gdk_font_load (buf);
+		newvals [BOLD] = xflds [BOLD];
+		TRY_FONT;
 	}
 
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-*-*-*-*-*-%s",
-			    choice,
-			    bold ? "bold" : "medium",
-			    italics ? 'i' : 'r',
-			    getcharset());
-		font = gdk_font_load (buf);
-	}
+#undef NAME
+#undef BOLD
+#undef ITALICS
+#undef SIZE
+#undef PTSZ
+#undef REG
+#undef ENC
+#undef END
 
-	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-*-*-*-*-*-%s",
-			    choice,
-			    bold ? "bold" : "medium",
-			    getcharset());
-		font = gdk_font_load (buf);
-	}
+	g_strfreev (xflds);
+	g_strfreev (names);
+	g_strfreev (csvals);
 
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-%s",
-			    choice,
-			    italics ? 'i' : 'r',
-			    getcharset());
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-%s",
-			    choice,
-			    italics ? 'o' : '*',
-			    getcharset());
-		font = gdk_font_load (buf);
-	}
-
-	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-*-*-*-*-*-*-*-*-*-%s",
-			    choice,
-			    getcharset());
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-%d-*-*-*-*-*-*",
-			    choice,
-			    bold ? "bold" : "medium",
-			    italics ? 'i' : 'r',
-			    size);
-		font = gdk_font_load (buf);
-	}
-
-	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-%d-*-*-*-*-*-*",
-			    choice,
-			    bold ? "bold" : "medium",
-			    size);
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-*-*-*-*-*-*-*",
-			    choice,
-			    bold ? "bold" : "medium",
-			    italics ? 'i' : 'r');
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-*-*-*-*-*-*-*",
-			    choice,
-			    bold ? "bold" : "medium");
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-*-*",
-			    choice,
-			    italics ? 'i' : 'r');
-		font = gdk_font_load (buf);
-	}
-
-	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-*-*",
-			    choice,
-			    italics ? 'o' : '*');
-		font = gdk_font_load (buf);
-	}
-
-	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-*-*-*-*-*-*-*-*-*-*-*",
-			    choice);
-		font = gdk_font_load (buf);
-	}
-
-	g_free (choice);
-
-	if (!font && imhtml->default_font)
-		return gdk_font_ref (imhtml->default_font);
-
-	xfs = font ? GDK_FONT_XFONT (font) : NULL;
-	if (xfs && (xfs->min_byte1 != 0 || xfs->max_byte1 != 0)) {
-		gchar *tmp_name;
-
-		gdk_font_unref (font);
-		tmp_name = g_strconcat (buf, ",*", NULL);
-		font = gdk_fontset_load (tmp_name);
-		g_free (tmp_name);
-	}
-
-	if (!font)
-		return gdk_fontset_load ("-*-*-*-*-*-*-*-*-*-*-*-*-*-*,*");
-
-
-	return font;
+	return gdk_font_ref (default_font);
 }
 
 static void
@@ -2593,7 +2507,7 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 			}
 		} else if (bold || italics || pre) {
 			if (pre) {
-				bit->font = gtk_imhtml_font_load (imhtml, "Courier", bold, italics, 0);
+				bit->font = gtk_imhtml_font_load (imhtml, "courier", bold, italics, 0);
 			} else {
 				bit->font = gtk_imhtml_font_load (imhtml, NULL, bold, italics, 0);
 			}
@@ -3114,7 +3028,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					FontDetail *oldfont = fonts->data;
 					if (!font->size)
 						font->size = oldfont->size;
-					if (!font->face)
+					if (!font->face && oldfont->face)
 						font->face = g_strdup (oldfont->face);
 					if (!font->fore && oldfont->fore)
 						font->fore = gdk_color_copy (oldfont->fore);
@@ -3123,8 +3037,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				} else {
 					if (!font->size)
 						font->size = 3;
-					if (!font->face)
-						font->face = g_strdup (DEFAULT_FONT_NAME);
 				}
 
 				fonts = g_slist_prepend (fonts, font);
@@ -3137,7 +3049,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					NEW_BIT (NEW_TEXT_BIT);
 					font = fonts->data;
 					fonts = g_slist_remove (fonts, font);
-					g_free (font->face);
+					if (font->face)
+						g_free (font->face);
 					if (font->fore)
 						gdk_color_free (font->fore);
 					if (font->back)
@@ -3313,7 +3226,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 				g_free (copy);
 
-				if (!fonts || ((clr = ((FontDetail *)fonts->data)->back) == NULL))
+				if (!fonts || ((clr = ((FontDetail *) fonts->data)->back) == NULL))
 					clr = (bg != NULL) ? bg : imhtml->default_bg_color;
 
 				if (!GTK_WIDGET_REALIZED (imhtml))
@@ -3542,7 +3455,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	while (fonts) {
 		FontDetail *font = fonts->data;
 		fonts = g_slist_remove (fonts, font);
-		g_free (font->face);
+		if (font->face)
+			g_free (font->face);
 		if (font->fore)
 			gdk_color_free (font->fore);
 		if (font->back)
