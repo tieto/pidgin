@@ -5,13 +5,13 @@ MODULE = Gaim  PACKAGE = Gaim
 PROTOTYPES: ENABLE
 
 void
-timeout_add(plugin, seconds, func, arg)
+timeout_add(plugin, seconds, func, data)
 	Gaim::Plugin plugin
 	int seconds
 	const char *func
-	void *arg
+	SV *data
 CODE:
-	gaim_perl_timeout_add(plugin, seconds, func, arg);
+	gaim_perl_timeout_add(plugin, seconds, func, data);
 
 void
 debug(level, category, string)
@@ -38,7 +38,7 @@ signal_connect(instance, signal, plugin, func, data)
 	const char *signal
 	Gaim::Plugin plugin
 	const char *func
-	void *data
+	SV *data
 CODE:
 	gaim_perl_signal_connect(plugin, instance, signal, func, data);
 
