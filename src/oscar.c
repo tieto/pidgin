@@ -151,6 +151,7 @@ struct icon_req {
 	gpointer data;
 	gboolean request;
 	GdkPixbufAnimation *anim;
+	GdkPixbuf *unanim;
 	struct conversation *cnv;
 	GtkWidget *pix;
 	int curframe;
@@ -525,7 +526,10 @@ static void oscar_close(struct gaim_connection *gc) {
 #if USE_PIXBUF
 	while (odata->hasicons) {
 		struct icon_req *n = odata->hasicons->data;
-		gdk_pixbuf_animation_unref(n->anim);
+		if (n->anim)
+			gdk_pixbuf_animation_unref(n->anim);
+		if (n->unanim)
+			gdk_pixbuf_unref(n->unanim);
 		if (n->timer)
 			gtk_timeout_remove(n->timer);
 		if (n->cnv)
@@ -1762,32 +1766,50 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			if (ir->anim)
 				gdk_pixbuf_animation_unref(ir->anim);
 			ir->anim = NULL;
+			if (ir->unanim)
+				gdk_pixbuf_unref(ir->unanim);
+			ir->unanim = NULL;
 			if (ir->timer)
 				gtk_timeout_remove(ir->timer);
 			ir->timer = 0;
 
 			ir->cnv = c;
 			ir->length = args->info.icon.length;
+
+			if (!ir->length)
+				return 1;
+
 			ir->data = g_memdup(args->info.icon.icon, args->info.icon.length);
 
 			load = gdk_pixbuf_loader_new();
 			gdk_pixbuf_loader_write(load, ir->data, ir->length);
 			ir->anim = gdk_pixbuf_loader_get_animation(load);
-			gdk_pixbuf_loader_close(load);
 
-			frames = gdk_pixbuf_animation_get_frames(ir->anim);
-			buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+			if (ir->anim) {
+				frames = gdk_pixbuf_animation_get_frames(ir->anim);
+				buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+				gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+
+				if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
+					int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+					ir->curframe = 1;
+					ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+				}
+			} else {
+				ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
+				if (!ir->unanim) {
+					gdk_pixbuf_loader_close(load);
+					return 1;
+				}
+				gdk_pixbuf_render_pixmap_and_mask(ir->unanim, &pm, &bm, 0);
+			}
 
 			ir->pix = gtk_pixmap_new(pm, bm);
 			gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
 			gtk_widget_show(ir->pix);
 
-			if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-				int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
-				ir->curframe = 1;
-				ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
-			}
+			gdk_pixbuf_loader_close(load);
+
 #endif
 		} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 			struct ask_direct *d = g_new0(struct ask_direct, 1);
@@ -3153,21 +3175,31 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 	load = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(load, ir->data, ir->length);
 	ir->anim = gdk_pixbuf_loader_get_animation(load);
-	gdk_pixbuf_loader_close(load);
 
-	frames = gdk_pixbuf_animation_get_frames(ir->anim);
-	buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-	gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+	if (ir->anim) {
+		frames = gdk_pixbuf_animation_get_frames(ir->anim);
+		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+		gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+
+		if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
+			int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+			ir->curframe = 1;
+			ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+		}
+	} else {
+		ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
+		if (!ir->unanim) {
+			gdk_pixbuf_loader_close(load);
+			return;
+		}
+		gdk_pixbuf_render_pixmap_and_mask(ir->unanim, &pm, &bm, 0);
+	}
 
 	ir->pix = gtk_pixmap_new(pm, bm);
 	gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
 	gtk_widget_show(ir->pix);
 
-	if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-		int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
-		ir->curframe = 1;
-		ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
-	}
+	gdk_pixbuf_loader_close(load);
 #endif
 }
 
