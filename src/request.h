@@ -733,6 +733,15 @@ gboolean gaim_request_field_list_get_multi_select(
 void gaim_request_field_list_add(GaimRequestField *field, const char *item);
 
 /**
+ * Sets a list of selected items in a list field.
+ *
+ * @param field The field.
+ * @param items The list of selected items.
+ */
+void gaim_request_field_list_set_selected(GaimRequestField *field,
+										  GList *items);
+
+/**
  * Returns a list of selected items in a list field.
  *
  * @param field The field.
