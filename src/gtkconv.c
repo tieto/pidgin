@@ -3,7 +3,7 @@
  * @ingroup gtkui
  *
  * Copyright (C) 2002-2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -206,7 +206,7 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	im      = GAIM_IM(conv);
 	name    = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	id      = g_slist_length(im->images) + 1;
-	
+
 	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(wid)))
 		return;
 
@@ -222,7 +222,7 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	}
 
 	filename = name;
-	while (strchr(filename, '/')) 
+	while (strchr(filename, '/'))
 		filename = strchr(filename, '/') + 1;
 
 	buf = g_strdup_printf("<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
@@ -1381,7 +1381,7 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	}
 	else if ((event->state & GDK_MOD1_MASK) &&
 			 event->keyval > '0' && event->keyval <= '9') {
-		
+
 		gaim_window_switch_conversation(win, event->keyval - '1');
 
 		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
@@ -1392,10 +1392,10 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 /*
  * NOTE:
- *   This guy just kills a single right click from being propagated any 
- *   further.  I  have no idea *why* we need this, but we do ...  It 
+ *   This guy just kills a single right click from being propagated any
+ *   further.  I  have no idea *why* we need this, but we do ...  It
  *   prevents right clicks on the GtkTextView in a convo dialog from
- *   going all the way down to the notebook.  I suspect a bug in 
+ *   going all the way down to the notebook.  I suspect a bug in
  *   GtkTextView, but I'm not ready to point any fingers yet.
  */
 static gboolean
@@ -1685,7 +1685,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimWindow *win)
 		return TRUE;
 	}
 
-	/* 
+	/*
 	 * Make sure a tab was actually clicked. The arrow buttons
 	 * mess things up.
 	 */
@@ -2543,7 +2543,7 @@ tab_complete(GaimConversation *conv)
 	/* if there's nothing there just return */
 	if (!gtk_text_iter_compare(&cursor, &start_buffer))
 		return;
-	
+
 	text = gtk_text_buffer_get_text(gtkconv->entry_buffer, &start_buffer,
 									&cursor, FALSE);
 
@@ -2817,7 +2817,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 };
 
-static const int menu_item_count = 
+static const int menu_item_count =
 	sizeof(menu_items) / sizeof(*menu_items);
 
 static char *
@@ -3923,7 +3923,7 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 		gtk_widget_show(pane);
 
 		new_ui = TRUE;
-		
+
 		gtkconv->make_sound = TRUE;
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
@@ -4414,7 +4414,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	}
 	else {
 		char *new_message = g_memdup(message, length);
-		
+
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
 
@@ -4695,7 +4695,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 
 				g_free(val);
 			}
-			
+
 			break;
 		}
 	}
@@ -5171,7 +5171,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 		gtk_widget_show(button);
 	}
 	else if (gtkconv->u.im->anim &&
-			 !(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))) 
+			 !(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
 	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
 		g_signal_connect(G_OBJECT(button), "activate",
@@ -5375,10 +5375,10 @@ void
 gaim_gtkconv_update_font_colors(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
-	
+
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
-	
+
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
@@ -5747,7 +5747,7 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	GtkSpell *spell;
 
 	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		
+
 		conv = (GaimConversation *)cl->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
@@ -5879,7 +5879,7 @@ chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 			if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
 				continue;
-			
+
 			if (!GAIM_IS_GTK_CONVERSATION(conv))
 				continue;
 
@@ -5992,7 +5992,7 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/tab_side",
 								tab_side_pref_cb, NULL);
 
-	
+
 	/* IM callbacks */
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/button_type",
 								im_button_type_pref_cb, NULL);
