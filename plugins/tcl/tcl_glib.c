@@ -70,6 +70,8 @@ static gboolean tcl_kick(gpointer data);
 static gboolean tcl_file_callback(GIOChannel *source, GIOCondition condition, gpointer data);
 static int tcl_file_event_callback(Tcl_Event *event, int flags);
 
+#undef Tcl_InitNotifier
+
 ClientData Tcl_InitNotifier()
 {
 	return NULL;

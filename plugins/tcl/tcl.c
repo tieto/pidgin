@@ -53,6 +53,8 @@ static GHashTable *tcl_plugins = NULL;
 
 GaimPlugin *_tcl_plugin;
 
+static gboolean tcl_loaded = FALSE;
+
 GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
 {
 	struct tcl_plugin_data *data;
@@ -304,6 +306,8 @@ static void tcl_destroy_plugin(GaimPlugin *plugin)
 
 static gboolean tcl_load(GaimPlugin *plugin)
 {
+        if(!tcl_loaded)
+                return FALSE;
 	tcl_glib_init();
 	tcl_signal_init();
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
@@ -354,12 +358,47 @@ static GaimPluginInfo tcl_info =
 	&tcl_loader_info
 };
 
+#ifdef _WIN32
+extern Tcl_Interp* (CALLBACK* wtcl_CreateInterp)();
+extern void (CALLBACK* wtk_Init)(Tcl_Interp*);
+#undef Tcl_CreateInterp
+#define Tcl_CreateInterp wtcl_CreateInterp
+#undef Tk_Init
+#define Tk_Init wtk_Init
+#endif /* _WIN32 */
+
 static void tcl_init_plugin(GaimPlugin *plugin)
 {
+#ifdef USE_TCL_STUBS
+        Tcl_Interp *interp=NULL;
+#endif
 	_tcl_plugin = plugin;
+
+#ifdef USE_TCL_STUBS
+        if(!(interp=Tcl_CreateInterp()))
+                return;
+
+        if(!Tcl_InitStubs(interp, TCL_VERSION, 0)) {
+                gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Tcl_InitStubs: %s\n", interp->result);
+                return;
+        }
+#endif
 
 	Tcl_FindExecutable("gaim");
 
+#if defined(USE_TK_STUBS) && defined(HAVE_TK)
+        Tk_Init(interp);
+
+        if(!Tk_InitStubs(interp, TK_VERSION, 0)) {
+                gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Error Tk_InitStubs: %s\n", interp->result);
+                Tcl_DeleteInterp(interp);
+                return;
+        }
+#endif
+        tcl_loaded = TRUE;
+#ifdef USE_TCL_STUBS
+        Tcl_DeleteInterp(interp);
+#endif
 	tcl_loader_info.exts = g_list_append(tcl_loader_info.exts, "tcl");
 }
 
