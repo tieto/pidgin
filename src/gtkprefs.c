@@ -1541,7 +1541,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
-	gtk_tree_model_get_value (model, &iter, 2, &val);
+	gtk_tree_model_get_value (model, &iter, 3, &val);
 	plug = g_value_get_pointer(&val);
 	
 	pname = g_markup_escape_text(_(plug->info->name), -1);
@@ -1602,7 +1602,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gdk_cursor_unref(wait);
 
 	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter, 2, &plug, -1);
+	gtk_tree_model_get (model, &iter, 3, &plug, -1);
 
 	if (!gaim_plugin_is_loaded(plug)) {
 		gaim_plugin_load(plug);
@@ -1718,7 +1718,8 @@ update_plugin_list(void *data)
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
 				   1, plug->info->name ? _(plug->info->name) : plug->path,
-				   2, plug, -1);
+				   2, plug->info->summary,
+				   3, plug, -1);
 	}
 }
 
@@ -1738,12 +1739,12 @@ static GtkWidget *plugin_page ()
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
-	ls = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+	ls = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
 										 1, GTK_SORT_ASCENDING);
 
@@ -1766,6 +1767,14 @@ static GtkWidget *plugin_page ()
 							"text", 1,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	
+	rendt = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Summary"),
+							rendt,
+							"text", 2,
+							NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(event_view), col);
+	
 	g_object_unref(G_OBJECT(ls));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 	
@@ -2718,4 +2727,3 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_connect_callback("/gaim/gtk/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 }
-
