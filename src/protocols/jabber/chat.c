@@ -681,14 +681,29 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 static void roomlist_ok_cb(JabberStream *js, const char *server)
 {
 	JabberIq *iq;
-
-	if(!js->roomlist)
-		return;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
 
 	if(!server || !*server) {
 		gaim_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
 		return;
 	}
+
+	if(js->roomlist)
+		gaim_roomlist_unref(js->roomlist);
+
+	js->roomlist = gaim_roomlist_new(gaim_connection_get_account(js->gc));
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "server", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Description"), "description", FALSE);
+	fields = g_list_append(fields, f);
+
+	gaim_roomlist_set_fields(js->roomlist, fields);
 
 	gaim_roomlist_set_in_progress(js->roomlist, TRUE);
 
@@ -704,24 +719,6 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
-	GList *fields = NULL;
-	GaimRoomlistField *f;
-
-	if(js->roomlist)
-		gaim_roomlist_unref(js->roomlist);
-
-	js->roomlist = gaim_roomlist_new(gaim_connection_get_account(gc));
-
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
-	fields = g_list_append(fields, f);
-
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "server", TRUE);
-	fields = g_list_append(fields, f);
-
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Description"), "description", FALSE);
-	fields = g_list_append(fields, f);
-
-	gaim_roomlist_set_fields(js->roomlist, fields);
 
 	gaim_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
