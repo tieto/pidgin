@@ -77,7 +77,7 @@ struct smiley_theme {
 	char *desc;
 	char *icon;
 	char *author;
-	
+
 	struct smiley_list *list;
 };
 

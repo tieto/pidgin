@@ -58,14 +58,10 @@
 GtkListStore *prefs_away_store = NULL;
 GtkWidget *prefs_away_menu = NULL;
 
-static GtkWidget *tree_v = NULL;
-
-
 static int sound_row_sel = 0;
 static GtkWidget *prefsnotebook;
 
 static GtkWidget *sound_entry = NULL;
-static GtkWidget *away_text = NULL;
 static GtkListStore *smiley_theme_store = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
 
@@ -363,7 +359,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	gaim_prefs_disconnect_by_handle(prefs);
 
 	prefs = NULL;
-	tree_v = NULL;
 	sound_entry = NULL;
 	debugbutton = NULL;
 	prefs_away_menu = NULL;
@@ -2176,93 +2171,6 @@ static GtkWidget *plugin_page ()
 	return ret;
 }
 
-static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
-{
-	GtkTreeIter  iter;
-	GValue val = { 0, };
-	gchar buffer[BUF_LONG];
-	char *tmp;
-/* XXX CORE/UI
-	struct away_message *am;
-*/
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value (model, &iter, 1, &val);
-
-/* XXX CORE/UI
-	am = g_value_get_pointer(&val);
-*/
-
-	gtk_imhtml_clear(GTK_IMHTML(away_text));
-
-/* XXX CORE/UI
-	strncpy(buffer, am->message, BUF_LONG);
-*/
-
-	tmp = stylize(buffer, BUF_LONG);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-	g_free(tmp);
-	g_value_unset (&val);
-
-}
-
-static void away_edit_sel (GtkWidget *dummy, void *tv)
-{
-	struct away_message *amt;
-	GtkTreeIter iter;
-	GtkTreeModel *ls = gtk_tree_view_get_model(GTK_TREE_VIEW(tv));
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-	GValue val = { 0, };
-
-	/* Get the pointer to the away message and pass that */
-	if (! gtk_tree_selection_get_selected (sel, &ls, &iter))
-		return;
-	gtk_tree_model_get_value (ls, &iter, 1, &val);
-	amt = g_value_get_pointer (&val);
-/* XXX CORE/UI
-	create_away_mess(NULL, amt);
-*/
-}
-
-static gboolean away_message_click_cb(GtkWidget *tv, GdkEventButton *event, gpointer null)
-{
-	/* Only respond to double click on button 1 */
-	if ((event->button != 1) || (event->type != GDK_2BUTTON_PRESS))
-		return FALSE;
-
-	away_edit_sel (NULL, tv);
-
-	return FALSE;
-}
-
-void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
-/* XXX CORE/UI
-	struct away_message *am;
-*/
-	GtkTreeIter iter;
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
-	GtkTreeModel *model = GTK_TREE_MODEL(prefs_away_store);
-	GValue val = { 0, };
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(prefs_away_store), &iter, 1, &val);
-
-/* XXX CORE/UI
-	am = g_value_get_pointer (&val);
-*/
-
-	gtk_imhtml_clear(GTK_IMHTML(away_text));
-
-/* XXX CORE/UI
-	rem_away_mess(NULL, am);
-*/
-}
-
 GtkTreeIter *prefs_notebook_add_page(const char *text,
 				     GdkPixbuf *pixbuf,
 				     GtkWidget *page,
@@ -2406,7 +2314,6 @@ void gaim_gtk_prefs_show(void)
 	prefs_notebook_init();
 
 	/* Show everything. */
-	gtk_tree_view_expand_all (GTK_TREE_VIEW(tree_v));
 	gtk_widget_show_all(prefs);
 }
 
@@ -2566,6 +2473,8 @@ void gaim_gtk_prefs_update_old() {
 			"/gaim/gtk/conversations/button_type");
 
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/gaim/gtk/blist/button_style");
+	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
