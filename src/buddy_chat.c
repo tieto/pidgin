@@ -1113,7 +1113,7 @@ void show_new_buddy_chat(struct conversation *b)
 			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
 				all_convos = all_chats;
 			gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
-			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
 			aol_icon(win->window);
