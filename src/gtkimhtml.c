@@ -132,8 +132,11 @@ gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
 
-	g_hash_table_foreach_remove(imhtml->smiley_data, gtk_smiley_tree_destroy, NULL);
+	g_hash_table_foreach_remove(imhtml->smiley_data, (GHRFunc)gtk_smiley_tree_destroy, NULL);
+	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
+	gdk_cursor_unref(imhtml->hand_cursor);
+	gdk_cursor_unref(imhtml->arrow_cursor);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -902,6 +905,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				}
 			c += tlen;
 			pos += tlen;
+			if(tag)
+				g_free(tag); /* This was allocated back in VALID_TAG() */
 		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
 			ws [wpos++] = amp;
 			c += tlen;

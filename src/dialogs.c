@@ -582,6 +582,7 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 	
 	destroy_dialog(NULL, imdialog);
 	imdialog = NULL;
+	g_free(info);
 }
 
 static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
@@ -602,6 +603,7 @@ static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
 		g_free(who);
 	}
 	gtk_widget_destroy(GTK_WIDGET(widget));
+	g_free(info);
 }
 
 void show_ee_dialog(int ee)
@@ -680,6 +682,8 @@ void show_im_dialog()
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	struct getuserinfo *info = NULL;
+
+	g_free(filename);
 
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
@@ -781,6 +785,7 @@ void show_info_dialog()
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
 	char buf[256];
 
+	g_free(filename);
 	info->gc = connections->data;
 
 	window = gtk_dialog_new_with_buttons("", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
@@ -944,8 +949,9 @@ void show_add_group(struct gaim_connection *gc)
 	GtkWidget *label;
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
-
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
+
+	g_free(filename);
 	a->gc = gc;
 
 	a->window =  gtk_dialog_new_with_buttons("", GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
