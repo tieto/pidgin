@@ -1346,6 +1346,16 @@ int gaim_parse_locerr(struct aim_session_t *sess,
 	return 1;
 }
 
+static char *images(int flags) {
+	static char buf[1024];
+	g_snprintf(buf, sizeof(buf), "%s%s%s%s",
+			(flags & AIM_FLAG_UNCONFIRMED) ? "<IMG SRC=\"dt_icon.gif\">" : "",
+			(flags & AIM_FLAG_AOL) ? "<IMG SRC=\"aol_icon.gif\">" : "",
+			(flags & AIM_FLAG_ADMINISTRATOR) ? "<IMG SRC=\"admin_icon.gif\">" : "",
+			(flags & AIM_FLAG_FREE) ? "<IMG SRC=\"free_icon.gif\">" : "");
+	return buf;
+}
+
 int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_userinfo_s *info;
@@ -1372,12 +1382,17 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 		return 1;
 	}
 
-	snprintf(buf, sizeof buf, _("Username : <B>%s</B>\n<BR>"
-				  "Warning Level : <B>%d %%</B>\n<BR>"
-				  "Online Since : <B>%s</B><BR>"
-				  "Idle Minutes : <B>%d</B>\n<BR><HR><BR>"
-				  "%s\n"),
-				  info->sn,
+	g_snprintf(buf, sizeof buf, _("Username : <B>%s</B>  %s <BR>\n"
+				  "Warning Level : <B>%d %%</B><BR>\n"
+				  "Online Since : <B>%s</B><BR>\n"
+				  "Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
+				  "%s"
+				  "<br><hr><I>Legend:</I><br><br>"
+				  "<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
+				  "<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
+				  "<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
+				  "<IMG SRC=\"admin_icon.gif\"> : Administrator"),
+				  info->sn, images(info->flags),
 				  info->warnlevel/10,
 				  asctime(localtime(&info->onlinesince)),
 				  info->idletime,

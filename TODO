@@ -1,21 +1,26 @@
 --- STUFF FOR 0.11.0 RELEASE ---
 
-	File transfer for IRC?  Maybe later?
+	Oscar blocking
+	Actions (e.g. /op) for IRC
+	Fix MSN signon process
+	Write a better yahoo library
 	Chat for Yahoo/ICQ
 	File transfer for Yahoo/ICQ/Oscar/Napster
 	Other RVOUS actions for TOC/Oscar
+	File transfer for IRC?  Maybe later?
 	Jabber Transports
-	Fix MSN signon process
 	Jabber/ICQ/Napster user registration
 
-	Oscar blocking
 	Rename for groups/buddies
 	Status labels in buddy list (mostly just for yahoo)
 	Border for GtkIMHtml
+	Tooltips for links in GtkIMHtml
 	Sounds on buddy pounce
 	Implement system logging
+	GPG Encryption of messages
 
 	ICQ through Oscar plugin (requires hacking libfaim :-/)
+	Zephyr
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
