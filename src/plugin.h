@@ -36,12 +36,10 @@
 
 #ifdef _WIN32
 # define GAIM_PLUGIN_EXT GAIM_PLUGIN_EXT_WIN32
+#elif __hpux
+# define GAIM_PLUGIN_EXT GAIM_PLUGIN_EXT_HPUX
 #else
-# ifdef __hpux
-#  define GAIM_PLUGIN_EXT GAIM_PLUGIN_EXT_HPUX
-# else
-#  define GAIM_PLUGIN_EXT GAIM_PLUGIN_EXT_UNIX
-# endif
+# define GAIM_PLUGIN_EXT GAIM_PLUGIN_EXT_UNIX
 #endif
 
 typedef struct _GaimPlugin           GaimPlugin;
