@@ -1317,7 +1317,8 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCo
 	yrl->fd = source;
 
 	cookie = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
-	buf = g_strdup_printf("GET /%s HTTP/1.0\r\nHost: %s\r\nCookie: %s\r\n\r\n", yrl->path, yrl->host, cookie);
+	buf = g_strdup_printf("GET http://%s/%s HTTP/1.0\r\nHost: %s\r\nCookie: %s\r\n\r\n",
+						  yrl->host, yrl->path, yrl->host, cookie);
 	write(yrl->fd, buf, strlen(buf));
 	g_free(cookie);
 	g_free(buf);

@@ -74,7 +74,8 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 	xfer->fd = source;
 	gaim_xfer_start(xfer, source, NULL, 0);
 
-	buf = g_strdup_printf("GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n", xd->path, xd->host);
+	buf = g_strdup_printf("GET http://%s:%d/%s HTTP/1.0\r\nHost: %s\r\n\r\n",
+			      xd->host, xd->port, xd->path, xd->host);
 	write(xfer->fd, buf, strlen(buf));
 	g_free(buf);
 
@@ -87,7 +88,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	struct yahoo_xfer_data *xd;
 	struct yahoo_packet *pkt;
 	gchar *size, *post, *buf;
-	int content_length;
+	int content_length, port;
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;
@@ -128,15 +129,16 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 
 	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
-	post = g_strdup_printf("POST /notifyft HTTP/1.0\r\n"
+	port = gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
+	post = g_strdup_printf("POST http://%s:%d/notifyft HTTP/1.0\r\n"
 	                       "Content-length: %" G_GSIZE_FORMAT "\r\n"
 	                       "Host: %s:%d\r\n"
 	                       "Cookie: %s\r\n"
 	                       "\r\n",
-	                       content_length + 4 + gaim_xfer_get_size(xfer),
 			       gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST),
-			       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-			       buf);
+			       port, content_length + 4 + gaim_xfer_get_size(xfer),
+			       gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST),
+			       port, buf);
 	write(xfer->fd, post, strlen(post));
 
 	yahoo_packet_send_special(pkt, xfer->fd, 8);

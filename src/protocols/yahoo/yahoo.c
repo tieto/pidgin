@@ -2151,7 +2151,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	const char *sn = gaim_account_get_username(account);
 	const char *pass = gaim_account_get_password(account);
 	GHashTable *hash = yahoo_login_page_hash(buf, len);
-	GString *url = g_string_new("GET /config/login?login=");
+	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;
 	int i;
 	md5_byte_t result[16];
