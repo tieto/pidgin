@@ -2729,13 +2729,6 @@ gaim_conv_placement_get_current_func(void)
 	return place_conv;
 }
 
-static void
-update_titles_pref_cb(const char *name, GaimPrefType type,
-					  gpointer value, gpointer data)
-{
-	gaim_conversation_foreach(gaim_conversation_autoset_title);
-}
-
 void
 gaim_conversations_set_win_ui_ops(GaimConvWindowUiOps *ops)
 {
