@@ -1460,6 +1460,10 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		    x += alen - strlen(amp);
 		    pos = strchr (t->values->str, *amp);
 		}
+		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' 
+				     * char should only appear as the start of a tag.  Perhaps a safer (but costlier)
+				     * check would be to call gtk_imhtml_is_tag on it */
+			return 0;
 		else
 		    pos = strchr (t->values->str, *x);
 
