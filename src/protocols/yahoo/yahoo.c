@@ -134,6 +134,7 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 				break;
 			if (x >= sizeof(key)-1) {
 				x++;
+				pos++;
 				continue;
 			}
 			key[x++] = data[pos++];

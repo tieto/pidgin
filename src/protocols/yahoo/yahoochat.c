@@ -407,15 +407,33 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 
-	if (!c && members && ((g_list_length(members) > 1) ||
-				!g_ascii_strcasecmp(members->data,
-				gaim_connection_get_display_name(gc)))) {
-		c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
-		if (topic)
-			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
-		yd->in_chat = 1;
-		yd->chat_name = g_strdup(room);
-		gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
+	if ((!c || gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) && members &&
+	   ((g_list_length(members) > 1) ||
+	     !g_ascii_strcasecmp(members->data, gaim_connection_get_display_name(gc)))) {
+		if (c && gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) {
+			/* this might be a hack, but oh well, it should nicely */
+			char *tmpmsg;
+
+			gaim_conversation_set_name(c, room);
+
+			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
+			if (topic)
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
+			yd->in_chat = 1;
+			yd->chat_name = g_strdup(room);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
+
+			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
+			gaim_conv_chat_write(GAIM_CONV_CHAT(c), "", tmpmsg, GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmpmsg);
+		} else {
+			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
+			if (topic)
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
+			yd->in_chat = 1;
+			yd->chat_name = g_strdup(room);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
+		}
 	} else if (c) {
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
