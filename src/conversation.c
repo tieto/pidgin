@@ -3414,11 +3414,6 @@ void toggle_smileys()
 
 void im_tabize()
 {
-	if (convo_menubar) {
-			gtk_widget_destroy(convo_menubar);
-			convo_menubar = NULL;
-	}
-
 	/* evil, evil i tell you! evil! */
 	if (im_options & OPT_IM_ONE_WINDOW) {
 		GList *x = conversations;
