@@ -1,0 +1,2 @@
+msgid "About GAIM v%s"
+msgstr "Über GAIM v%s"
