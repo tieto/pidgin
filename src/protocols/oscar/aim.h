@@ -1032,7 +1032,8 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t
 #define AIM_CAPS_ICQUNKNOWN	0x00008000
 #define AIM_CAPS_TRILLIANCRYPT	0x00010000
 #define AIM_CAPS_ICQUTF8	0x00020000
-#define AIM_CAPS_LAST		0x00040000
+#define AIM_CAPS_INTEROPERATE	0x00040000
+#define AIM_CAPS_LAST		0x00080000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 
