@@ -645,13 +645,13 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			}
 		}
 		if (display_options & OPT_DISP_ONE_WINDOW) {
-			if (event->keyval == GDK_Left) {
+			/* if (event->keyval == GDK_Left) {
 				gtk_notebook_prev_page(GTK_NOTEBOOK(convo_notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			} else if (event->keyval == GDK_Right) {
 				gtk_notebook_next_page(GTK_NOTEBOOK(convo_notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			} else if (event->keyval == GDK_Tab) {
+			} else */ if (event->keyval == GDK_Tab) {
 				GList *cnv = conversations;
 				struct conversation *c;
 				while (cnv) {
