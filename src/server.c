@@ -852,7 +852,7 @@ void serv_got_eviled(char *name, int lev)
 	}
 #endif
 
-        g_snprintf(buf2, 1023, "You have just been warned by %s.\nYour new warning level is %d./%%",
+        g_snprintf(buf2, 1023, "You have just been warned by %s.\nYour new warning level is %d%%",
                    ((name == NULL) ? "an anonymous person" : name) , lev);
 
 
