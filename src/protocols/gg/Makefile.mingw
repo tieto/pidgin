@@ -70,7 +70,6 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =			libgg.c \
 		  	common.c \
-		  	iconv_string.c \
 		  	gg.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
