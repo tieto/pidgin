@@ -464,7 +464,7 @@ faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, co
  * passed in should be a bitwise %OR of any of the %AIM_CAPS constants:
  *
  *     %AIM_CAPS_BUDDYICON   Supports Buddy Icons
- *     %AIM_CAPS_VOICE       Supports Voice Chat
+ *     %AIM_CAPS_TALK        Supports Voice Chat
  *     %AIM_CAPS_IMIMAGE     Supports DirectIM/IMImage
  *     %AIM_CAPS_CHAT        Supports Chat
  *     %AIM_CAPS_GETFILE     Supports Get File functions

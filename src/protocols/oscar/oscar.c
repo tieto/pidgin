@@ -2383,7 +2383,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					   "unknown rendezvous status!\n");
 		}
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
-	} else if (args->reqclass & AIM_CAPS_VOICE) {
+	} else if (args->reqclass & AIM_CAPS_TALK) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
 									  userinfo->sn, args->info.icon.icon,
@@ -3077,7 +3077,7 @@ static char *caps_string(guint caps)
 			case AIM_CAPS_BUDDYICON:
 				tmp = _("Buddy Icon");
 				break;
-			case AIM_CAPS_VOICE:
+			case AIM_CAPS_TALK:
 				tmp = _("Voice");
 				break;
 			case AIM_CAPS_DIRECTIM:
@@ -3096,7 +3096,7 @@ static char *caps_string(guint caps)
 			case AIM_CAPS_GAMES2:
 				tmp = _("Games");
 				break;
-			case AIM_CAPS_SAVESTOCKS:
+			case AIM_CAPS_ADDINS:
 				tmp = _("Add-Ins");
 				break;
 			case AIM_CAPS_SENDBUDDYLIST:
@@ -3135,8 +3135,15 @@ static char *caps_string(guint caps)
 			case AIM_CAPS_VIDEO:
 				tmp = _("Video Chat");
 				break;
+			/* Not actually sure about this one... WinAIM doesn't show anything */
 			case AIM_CAPS_ICHATAV:
 				tmp = _("iChat AV");
+				break;
+			case AIM_CAPS_LIVEVIDEO:
+				tmp = _("Live Video");
+				break;
+			case AIM_CAPS_CAMERA:
+				tmp = _("Camera");
 				break;
 			default:
 				tmp = NULL;
@@ -4650,6 +4657,16 @@ static void oscar_dir_search(GaimConnection *gc, const char *first, const char *
 
 static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
 	OscarData *od = (OscarData *)gc->proto_data;
+
+	if (!aim_snvalid(name)) {
+		gchar *buf;
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers.  The buddy will be removed from your buddy list."), name);
+		gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
+		g_free(buf);
+		/* ABC - Remove from locate list! */
+		return;
+	}
+
 #ifdef NOSSI
 	aim_add_buddy(od->sess, od->conn, name);
 #else
@@ -4684,7 +4701,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			oscar_add_buddy(gc, (const char *)buddies->data, NULL);
+			oscar_add_buddy(gc, buddies->data, NULL);
 			buddies = buddies->next;
 		}
 	}
@@ -4978,7 +4995,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							} else {
 								gaim_debug(GAIM_DEBUG_INFO, "oscar",
 										"ssi: adding buddy %s from local list to server list\n", buddy->name);
-								aim_ssi_addbuddy(sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+								oscar_add_buddy(gc, buddy->name, group);
 							}
 						}
 					}

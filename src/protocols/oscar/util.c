@@ -157,6 +157,37 @@ faim_export int aim_util_getlocalip(fu8_t *ip)
 	return 0;
 }
 
+/**
+ * Check if the given screen name is a valid AIM or ICQ screen name.
+ *
+ * @return 1 if the screen name is valid, 0 if not.
+ */
+faim_export int aim_snvalid(const char *sn)
+{
+	int isICQ = 0;
+	int i = 0;
+
+	if (!sn)
+		return 0;
+
+	if (isdigit(sn[0]))
+		isICQ = 1;
+
+	while (sn[i] != '\0') {
+		/* If it started with a digit then it betta be all digits, ho */
+		if (isICQ) {
+			if (!isdigit(sn[i]))
+				return 0;
+		} else {
+			if (!isalnum(sn[i]) && (sn[i] != ' '))
+				return 0;
+		}
+		i++;
+	}
+
+	return 1;
+}
+
 /*
 * int snlen(const char *)
 * 

@@ -1013,13 +1013,13 @@ typedef struct aim_userinfo_s {
 } aim_userinfo_t;
 
 #define AIM_CAPS_BUDDYICON		0x00000001
-#define AIM_CAPS_VOICE			0x00000002
+#define AIM_CAPS_TALK			0x00000002
 #define AIM_CAPS_DIRECTIM		0x00000004
 #define AIM_CAPS_CHAT			0x00000008
 #define AIM_CAPS_GETFILE		0x00000010
 #define AIM_CAPS_SENDFILE		0x00000020
 #define AIM_CAPS_GAMES			0x00000040
-#define AIM_CAPS_SAVESTOCKS		0x00000080
+#define AIM_CAPS_ADDINS			0x00000080
 #define AIM_CAPS_SENDBUDDYLIST	0x00000100
 #define AIM_CAPS_GAMES2			0x00000200
 #define AIM_CAPS_ICQ_DIRECT		0x00000400
@@ -1038,7 +1038,9 @@ typedef struct aim_userinfo_s {
 #define AIM_CAPS_GENERICUNKNOWN	0x00800000
 #define AIM_CAPS_VIDEO			0x01000000
 #define AIM_CAPS_ICHATAV		0x02000000
-#define AIM_CAPS_LAST			0x04000000
+#define AIM_CAPS_LIVEVIDEO		0x04000000
+#define AIM_CAPS_CAMERA			0x08000000
+#define AIM_CAPS_LAST			0x10000000
 
 #define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
 #define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
@@ -1472,6 +1474,7 @@ faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl);
 faim_export int aimutil_itemcnt(char *toSearch, char dl);
 faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
+faim_export int aim_snvalid(const char *sn);
 faim_export int aim_snlen(const char *sn);
 faim_export int aim_sncmp(const char *sn1, const char *sn2);
 
