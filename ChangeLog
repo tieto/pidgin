@@ -57,7 +57,8 @@ version 0.60:
 	  Reisner)
 	* Nice Oscar changes--mostly internal (Thanks Mark Doliner)
 	* event_del_conversation for plugins (Thanks Bill Tompkins)
-	* Code cleanups and fixes (Thanks Federico Mena Quintero)
+	* Code cleanups and fixes (Thanks: Federico Mena Quintero,
+	  Ka-Hing Cheung)
 	* aim:// URI's supported with gaim-remote command
 	* Quit Gaim remotely with gaim-remote (Thanks John Silvestri)
 	* Don't auto-login if an existing Gaim session is already
