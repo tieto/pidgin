@@ -80,7 +80,9 @@ static GtkTreeIter proto_iter, plugin_iter;
 static guint browser_pref1_id = 0;
 static guint browser_pref2_id = 0;
 static guint proxy_pref_id = 0;
-static guint sound_pref_id = 0;
+static guint sound_pref1_id = 0;
+static guint sound_pref2_id = 0;
+static guint sound_pref3_id = 0;
 static guint auto_resp_pref_id = 0;
 static guint placement_pref_id = 0;
 
@@ -383,7 +385,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	gaim_prefs_disconnect_callback(browser_pref1_id);
 	gaim_prefs_disconnect_callback(browser_pref2_id);
 	gaim_prefs_disconnect_callback(proxy_pref_id);
-	gaim_prefs_disconnect_callback(sound_pref_id);
+	gaim_prefs_disconnect_callback(sound_pref1_id);
+	gaim_prefs_disconnect_callback(sound_pref2_id);
+	gaim_prefs_disconnect_callback(sound_pref3_id);
 	gaim_prefs_disconnect_callback(auto_resp_pref_id);
 	gaim_prefs_disconnect_callback(placement_pref_id);
 
@@ -1487,13 +1491,23 @@ static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 }
 
 static void
-sound_changed_cb(const char *name, GaimPrefType type, gpointer value,
+sound_changed1_cb(const char *name, GaimPrefType type, gpointer value,
 				   gpointer data)
 {
 	GtkWidget *hbox = data;
 	const char *method = value;
 
 	gtk_widget_set_sensitive(hbox, !strcmp(method, "custom"));
+}
+
+static void
+sound_changed2_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *vbox = data;
+	const char *method = value;
+
+	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
 #endif
 
@@ -1645,12 +1659,6 @@ GtkWidget *sound_page() {
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
-	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
-				   "/gaim/gtk/sound/conv_focus", vbox);
-	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
-				   "/core/sound/while_away", vbox);
-
 #ifndef _WIN32
 	vbox = gaim_gtk_make_frame (ret, _("Sound Method"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("_Method:"), GAIM_PREF_STRING,
@@ -1665,6 +1673,7 @@ GtkWidget *sound_page() {
 			"NAS", "nas",
 #endif
 			_("Command"), "custom",
+			_("No sounds"), "none",
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
@@ -1693,11 +1702,22 @@ GtkWidget *sound_page() {
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
 					"custom"));
-	sound_pref_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-												  sound_changed_cb, hbox);
+	sound_pref1_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+												  sound_changed1_cb, hbox);
 
 	gaim_set_accessible_label (entry, label);
 #endif /* _WIN32 */
+
+	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
+	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
+				   "/gaim/gtk/sound/conv_focus", vbox);
+	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
+				   "/core/sound/while_away", vbox);
+
+	gtk_widget_set_sensitive(vbox,
+			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
+	sound_pref2_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+												  sound_changed2_cb, vbox);
 
 	vbox = gaim_gtk_make_frame(ret, _("Sound Events"));
 
@@ -1788,6 +1808,11 @@ GtkWidget *sound_page() {
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
+
+	gtk_widget_set_sensitive(vbox,
+			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
+	sound_pref3_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+												  sound_changed2_cb, vbox);
 
 	return ret;
 }

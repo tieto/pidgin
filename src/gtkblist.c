@@ -48,6 +48,7 @@
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
+#include "gtksound.h"
 #include "gtkutils.h"
 
 #include "gaim.h"
@@ -1540,6 +1541,27 @@ static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_a
 	}
 }
 
+static void gaim_gtk_blist_mute_sounds_cb(gpointer data, guint action, GtkWidget *item)
+{
+	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(item)->active);
+}
+
+static void gaim_gtk_blist_mute_pref_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+{
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item(gtkblist->ift,
+						N_("/Tools/Mute Sounds"))),	(gboolean)GPOINTER_TO_INT(value));
+}
+
+static void gaim_gtk_blist_sound_method_pref_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+{
+	gboolean sensitive = TRUE;
+
+	if(!strcmp(value, "none"))
+		sensitive = FALSE;
+
+	gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), sensitive);
+}
+
 static void
 add_buddies_from_vcard(const char *prpl_id, GaimGroup *group, GList *list,
 					   const char *alias)
@@ -2423,6 +2445,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, NULL },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, NULL },
+	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
 
@@ -3299,6 +3322,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Empty Groups"))),
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
+			gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
+	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
+		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE); 
 
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
@@ -3422,6 +3449,16 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			GINT_TO_POINTER(
 				gaim_prefs_connect_callback("/gaim/gtk/blist/show_warning_level",
 					gaim_gtk_blist_update_columns, NULL)));
+
+	/* menus */
+	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
+			GINT_TO_POINTER(
+				gaim_prefs_connect_callback("/gaim/gtk/sound/mute",
+					gaim_gtk_blist_mute_pref_cb, NULL)));
+	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
+			GINT_TO_POINTER(
+				gaim_prefs_connect_callback("/gaim/gtk/sound/method",
+					gaim_gtk_blist_sound_method_pref_cb, NULL)));
 
 	/* Setup some gaim signal handlers. */
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",

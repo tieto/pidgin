@@ -37,20 +37,6 @@
 GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
 
 /**
- * Mutes or un-mutes sounds.
- *
- * @param mute The mute state.
- */
-void gaim_gtk_sound_set_mute(gboolean mute);
-
-/**
- * Gets mute state for sounds.
- *
- * @return The mute state.
- */
-gboolean gaim_gtk_sound_get_mute();
-
-/**
  * Mutes or un-mutes login sounds.
  *
  * @param mute The mute state.

@@ -53,10 +53,9 @@ struct gaim_sound_event {
 	char *def;
 };
 
-
+#define PLAY_SOUND_TIMEOUT 15000
 
 static gboolean mute_login_sounds = FALSE;
-static gboolean mute_sounds = FALSE;
 static gboolean sound_initialized = FALSE;
 
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
@@ -109,6 +108,7 @@ static void gaim_gtk_sound_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/pounce_default", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/sound/file/pounce_default", "");
 	gaim_prefs_add_bool("/gaim/gtk/sound/conv_focus", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/sound/mute", FALSE);
 	gaim_prefs_add_string("/gaim/gtk/sound/command", "");
 	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");
 
@@ -131,6 +131,23 @@ static void gaim_gtk_sound_shutdown(void)
 	sound_initialized = FALSE;
 }
 
+#if defined(USE_NAS_AUDIO) || defined(USE_AO)
+gboolean expire_old_child(gpointer data)
+{
+	int ret;
+	pid_t pid = GPOINTER_TO_INT(data);
+
+	ret = waitpid(pid, NULL, WNOHANG | WUNTRACED);
+
+	if(ret == 0) {
+		if(kill(pid, SIGKILL) < 0)
+			gaim_debug_error("gtksound", "Killing process %d failed (%s)\n", pid, strerror(errno));
+	}
+
+    return FALSE; /* do not run again */
+}
+#endif
+
 static void gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
@@ -144,12 +161,14 @@ static void gaim_gtk_sound_play_file(const char *filename)
 	if (!sound_initialized)
 		gaim_prefs_trigger_callback("/gaim/gtk/sound/method");
 
-	if (mute_sounds)
+	if (gaim_prefs_get_bool("/gaim/gtk/sound/mute"))
 		return;
 
 	method = gaim_prefs_get_string("/gaim/gtk/sound/method");
 
-	if (!strcmp(method, "beep")) {
+	if (!strcmp(method, "none")) {
+		return;
+	} else if (!strcmp(method, "beep")) {
 		gdk_beep();
 		return;
 	}
@@ -256,6 +275,8 @@ static void gaim_gtk_sound_play_file(const char *filename)
 		ao_shutdown();
 #endif /* USE_AO */
 		_exit(0);
+	} else {
+		gaim_timeout_add(PLAY_SOUND_TIMEOUT, expire_old_child, GINT_TO_POINTER(pid));
 	}
 #else /* USE_NAS_AUDIO || USE_AO */
 	gdk_beep();
@@ -363,16 +384,6 @@ static gboolean play_file_nas(const char *filename)
 }
 
 #endif /* USE_NAS_AUDIO */
-
-void gaim_gtk_sound_set_mute(gboolean mute)
-{
-	mute_sounds = mute;
-}
-
-gboolean gaim_gtk_sound_get_mute()
-{
-	return mute_sounds;
-}
 
 void gaim_gtk_sound_set_login_mute(gboolean mute)
 {

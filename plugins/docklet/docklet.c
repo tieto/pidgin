@@ -72,7 +72,7 @@ __declspec(dllimport) GSList *message_queue;
 static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
-	gaim_gtk_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
+	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
@@ -201,7 +201,9 @@ static void docklet_menu() {
 	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_gtk_sound_get_mute());
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
+	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
+		gtk_widget_set_sensitive(GTK_WIDGET(entry), FALSE);
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
@@ -514,9 +516,6 @@ plugin_unload(GaimPlugin *plugin)
 {
 	if (ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
-
-	/* XXX: do this while gaim has no other way to toggle the global mute */
-	gaim_gtk_sound_set_mute(FALSE);
 
 	docklet_remove_callbacks();
 
