@@ -1341,15 +1341,17 @@ gaim_markup_linkify(const char *text)
 			}
 		} else if(*c == '<') {
 			inside_html = TRUE;
-		} else if (!g_ascii_strncasecmp(c, "<A", 2)) {
-			while (1) {
-				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
-					break;
+			if (!g_ascii_strncasecmp(c, "<A", 2)) {
+				while (1) {
+					if (!g_ascii_strncasecmp(c, "/A>", 3)) {
+						inside_html = FALSE;
+						break;
+					}
+					ret = g_string_append_c(ret, *c);
+					c++;
+					if (!(*c))
+						break;
 				}
-				ret = g_string_append_c(ret, *c);
-				c++;
-				if (!(*c))
-					break;
 			}
 		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
 					(!g_ascii_strncasecmp(c, "https://", 8)))) {
