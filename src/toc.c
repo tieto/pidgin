@@ -915,7 +915,8 @@ permit = NULL;
 				}
 				g_free(n);
 				if (!d)
-				permit = g_list_append(permit, name);
+					permit = g_list_append(permit, name);
+				g_free(name);
 			} else if (*c == 'd') {
 				GList *d = deny;
 				char *n;
@@ -930,6 +931,7 @@ permit = NULL;
 				g_free(n);
 				if (!d)
 					deny = g_list_append(deny, name);
+				g_free(name);
 			} else if (*c == 't') {
 				sscanf(c + strlen(c) - 2, "%d", &permdeny);
 				if (permdeny == 0)
