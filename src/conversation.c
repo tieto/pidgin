@@ -2008,7 +2008,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 						strcpy(colour, "#a82f2f");
 					}
 				} else if (flags & WFLAG_SEND)
-					strcpy(colour, "#6b839e");
+					strcpy(colour, "#16569e");
 			}
 		}
 
