@@ -1893,62 +1893,61 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 
 		if (gaim_conv_window_get_conversation_count(win) > 1) {
 			/* Make a new window to stick this to. */
-			GaimConvWindow *new_win;
-			GaimGtkWindow *new_gtkwin;
 			GaimGtkConversation *gtkconv;
 			gint win_width, win_height;
 
 			gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-			new_win = gaim_conv_window_new();
+			dest_win = gaim_conv_window_new();
 
-			gaim_conv_window_add_conversation(new_win,
+			gaim_conv_window_add_conversation(dest_win,
 					gaim_conv_window_remove_conversation(win,
 							gaim_conversation_get_index(conv)));
 
-			new_gtkwin = GAIM_GTK_WINDOW(new_win);
+			dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
 
-			gtk_window_get_size(GTK_WINDOW(new_gtkwin->window),
+			gtk_window_get_size(GTK_WINDOW(dest_gtkwin->window),
 								&win_width, &win_height);
 
-			gtk_window_move(GTK_WINDOW(new_gtkwin->window),
+			gtk_window_move(GTK_WINDOW(dest_gtkwin->window),
 							e->x_root - (win_width  / 2),
 							e->y_root - (win_height / 2));
 
-			gaim_conv_window_show(new_win);
+			gaim_conv_window_show(dest_win);
+		}
+	} else {
+		dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
+
+		/* Get the destination notebook. */
+		dest_notebook = GTK_NOTEBOOK(gtkwin->notebook);
+
+		/* Get the destination page number. */
+		dest_page_num = gaim_gtkconv_get_dest_tab_at_xy(dest_win,
+								e->x_root, e->y_root);
+
+		if (win == dest_win) {
+			gaim_conv_window_move_conversation(win,
+				gaim_conversation_get_index(conv), dest_page_num);
+		}
+		else {
+			size_t pos;
+
+			gaim_conv_window_remove_conversation(win,
+				gaim_conversation_get_index(conv));
+
+			pos = gaim_conv_window_add_conversation(dest_win, conv);
+
+			if (pos != dest_page_num)
+				gaim_conv_window_move_conversation(dest_win, pos, dest_page_num);
+
+			gaim_conv_window_switch_conversation(dest_win, dest_page_num);
 		}
 
-		return TRUE;
+		gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 	}
 
-	dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
-
-	/* Get the destination notebook. */
-	dest_notebook = GTK_NOTEBOOK(gtkwin->notebook);
-
-	/* Get the destination page number. */
-	dest_page_num = gaim_gtkconv_get_dest_tab_at_xy(dest_win,
-							e->x_root, e->y_root);
-
-	if (win == dest_win) {
-		gaim_conv_window_move_conversation(win,
-			gaim_conversation_get_index(conv), dest_page_num);
-	}
-	else {
-		size_t pos;
-
-		gaim_conv_window_remove_conversation(win,
-			gaim_conversation_get_index(conv));
-
-		pos = gaim_conv_window_add_conversation(dest_win, conv);
-
-		if (pos != dest_page_num)
-			gaim_conv_window_move_conversation(dest_win, pos, dest_page_num);
-
-		gaim_conv_window_switch_conversation(dest_win, dest_page_num);
-	}
-
-	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-drag-ended",
+	                 win, dest_win);
 
 	return TRUE;
 }
@@ -5728,9 +5727,19 @@ conv_placement_pref_cb(const char *name, GaimPrefType type,
 	gaim_conv_placement_set_current_func(func);
 }
 
+void *
+gaim_gtk_conversations_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
 void
 gaim_gtk_conversations_init(void)
 {
+	void *handle = gaim_gtk_conversations_get_handle();
+
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
 	gaim_prefs_add_bool("/gaim/gtk/conversations/icons_on_tabs", TRUE);
@@ -5828,4 +5837,20 @@ gaim_gtk_conversations_init(void)
 	/* Chat callbacks */
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/chat/button_type",
 								chat_button_type_pref_cb, NULL);
+
+	/**********************************************************************
+	 * Register signals
+	 **********************************************************************/
+	gaim_signal_register(handle, "conversation-drag-ended",
+	                     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_CONV_WINDOW),
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_CONV_WINDOW));
+}
+
+void
+gaim_gtk_conversations_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_gtk_conversations_get_handle());
 }

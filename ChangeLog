@@ -3,6 +3,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 0.77cvs
 	New Features:
 	* The System Log returns (Ka-Hing Cheung)
+	* Added a conversation-drag-ended signal (Etan Reisner)
 
 	Bug Fixes:
 	* Save Conversation works again (Kevin Stange)

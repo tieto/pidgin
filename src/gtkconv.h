@@ -198,11 +198,6 @@ struct _GaimGtkConversation
 /*@{*/
 
 /**
- * Initializes the GTK+ conversation system.
- */
-void gaim_gtk_conversations_init(void);
-
-/**
  * Returns the UI operations structure for GTK windows.
  *
  * @return The GTK window operations structure.
@@ -307,6 +302,30 @@ int gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y);
  * @return The index of the tab at the location.
  */
 int gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name GTK+ Conversations Subsystem                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the gtk conversations subsystem handle.
+ *
+ * @return The conversations subsystem handle.
+ */
+void *gaim_gtk_conversations_get_handle(void);
+
+/**
+ * Initializes the GTK+ conversations subsystem.
+ */
+void gaim_gtk_conversations_init(void);
+
+/**
+ * Uninitialized the GTK+ conversation subsystem.
+ */
+void gaim_gtk_conversations_uninit(void);
 
 /*@}*/
 
