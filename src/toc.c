@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 980 $"
+#define REVISION "gaim:$Revision: 981 $"
 
 
 static unsigned int peer_ver=0;
@@ -177,9 +177,6 @@ struct gaim_connection *toc_login(char *username, char *password)
 void toc_close(struct gaim_connection *gc)
 {
 	if (gc->protocol != PROTO_TOC) return; /* how did this happen? */
-#ifdef USE_APPLET
-	set_user_state(offline);
-#endif /* USE_APPLET */
         if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = -1;

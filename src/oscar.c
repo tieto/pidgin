@@ -318,9 +318,6 @@ struct gaim_connection *oscar_login(char *username, char *password) {
 
 void oscar_close(struct gaim_connection *gc) {
 	if (gc->protocol != PROTO_OSCAR) return;
-#ifdef USE_APPLET
-	set_user_state(offline);
-#endif
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = -1;
