@@ -144,6 +144,13 @@ gint linkify_text(char *text)
                         t = c;
                         while(1) {
                                 if (badchar(*t)) {
+
+					if (*(t) == ',' && (*(t+1) != ' '))
+					{
+						t++;
+						continue;
+					}
+
                                         if (*(t-1) == '.')
                                                 t--;
                                         strncpy(url_buf, c, t-c);
@@ -166,6 +173,13 @@ gint linkify_text(char *text)
                                         if (t-c == 4) {
                                                 break;
                                         }
+
+					if (*(t) == ',' && (*(t+1) != ' '))
+					{
+						t++;
+						continue;
+					}
+					
                                         if (*(t-1) == '.')
                                                 t--;
                                         strncpy(url_buf, c, t-c);
