@@ -1,5 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.9.19:
+
 version 0.9.18 (06/02/2000):
 	* Logging in works better for oscar
 	* Double error bug when sending message to an offline user is
