@@ -1263,19 +1263,76 @@ void show_set_dir()
 {
 	GtkWidget *label;
 	GtkWidget *bot;
-	GtkWidget *top;
-	GtkWidget *table;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
+	GtkWidget *frame;
+	GtkWidget *fbox;
 
 	struct set_dir_dlg *b = g_new0(struct set_dir_dlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	
-	b->cancel = gtk_button_new_with_label(_("Cancel"));
-	b->save = gtk_button_new_with_label(_("Save"));
+	gtk_widget_set_usize(b->window, 300, 320);
+	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
+	gtk_widget_show(b->window);
 
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	fbox = gtk_vbox_new(FALSE, 5);
+
+	frame = gtk_frame_new(_("Directory Info"));	
+
+	/* Build Save Button */
+
+	b->save = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, save_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Save"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(b->save), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	b->cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
+	
+	/* End of Cancel Button */
 	bot = gtk_hbox_new(TRUE, 10);
-	top = gtk_vbox_new(FALSE, 10);
+
+	gtk_widget_set_usize(b->save, 75, 30);
+	gtk_widget_set_usize(b->cancel, 75, 30);
 
 	gtk_widget_show(b->save);
 	gtk_widget_show(b->cancel);
@@ -1285,8 +1342,6 @@ void show_set_dir()
 
 	gtk_widget_show(bot);
 
-	table = gtk_table_new(10, 2, FALSE);
-	
 	b->first = gtk_entry_new();
 	b->middle = gtk_entry_new();
 	b->last = gtk_entry_new();
@@ -1295,48 +1350,102 @@ void show_set_dir()
 	b->state = gtk_entry_new();
 	b->country = gtk_entry_new();
 	b->web = gtk_check_button_new_with_label(_("Allow Web Searches To Find Your Info"));
-	
+
+	/* Line 1 */	
 	label = gtk_label_new(_("First Name"));
 	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), b->first, 1, 2, 0, 1);
 	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->first, FALSE, FALSE, 2);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+	/* Line 2 */
         label = gtk_label_new(_("Middle Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->middle, 1, 2, 1, 2);  
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->middle, FALSE, FALSE, 2);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+
+	/* Line 3 */
         label = gtk_label_new(_("Last Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->last, 1, 2, 2, 3);  
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->last, FALSE, FALSE, 2);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+	/* Line 4 */
         label = gtk_label_new(_("Maiden Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->maiden, 1, 2, 3, 4);  
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->maiden, FALSE, FALSE, 2);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+	/* Line 5 */
         label = gtk_label_new(_("City"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 4, 5);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->city, 1, 2, 4, 5);  
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->city, FALSE, FALSE, 2);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+	/* Line 6 */
 	label = gtk_label_new(_("State"));        
 	gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 5, 6);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->state, 1, 2, 5, 6);
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->state, FALSE, FALSE, 2);
 
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
+
+	/* Line 7 */
         label = gtk_label_new(_("Country"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 6, 7);
-        gtk_table_attach_defaults(GTK_TABLE(table), b->country, 1, 2, 6, 7);
+	
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(hbox), b->country, FALSE, FALSE, 2);
 
-	gtk_table_attach_defaults(GTK_TABLE(table), b->web, 0, 2, 8, 9);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+	gtk_widget_show(hbox);
 
-	gtk_widget_show(table);
-	gtk_box_pack_start(GTK_BOX(top), table, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(top), bot, FALSE, FALSE, 5);
+	/* Line 8 */
 
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), b->web, TRUE, TRUE, 2);
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
+
+	/* And add the buttons */
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(fbox), bot, FALSE, FALSE, 2);
+
+
+	gtk_widget_show(vbox);
+	gtk_widget_show(fbox);
+
+	gtk_widget_show(frame);
         gtk_widget_show(b->first); 
         gtk_widget_show(b->middle);
         gtk_widget_show(b->last); 
@@ -1346,17 +1455,15 @@ void show_set_dir()
 	gtk_widget_show(b->country);
 	gtk_widget_show(b->web);
 
-	gtk_widget_show(top);
-
         gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
         gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
         gtk_signal_connect(GTK_OBJECT(b->save), "clicked",                                                      GTK_SIGNAL_FUNC(do_set_dir), b);   	
 	
-	gtk_container_add(GTK_CONTAINER(b->window), top);
-	gtk_container_border_width(GTK_CONTAINER(b->window), 10);
- 	gtk_widget_set_usize(b->window, 530, 280); 
+	gtk_container_add(GTK_CONTAINER(b->window), fbox);
+	gtk_container_border_width(GTK_CONTAINER(b->window), 5);
+
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->first);
         gtk_widget_realize(b->window);
