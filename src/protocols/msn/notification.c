@@ -34,6 +34,7 @@ typedef struct
 
 static GHashTable *notification_commands  = NULL;
 static GHashTable *notification_msg_types = NULL;
+G_MODULE_IMPORT GSList *connections;
 
 /**************************************************************************
  * Callbacks

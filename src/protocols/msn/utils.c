@@ -1,5 +1,5 @@
 /**
- * @file utils.h Utility functions
+ * @file utils.c Utility functions
  *
  * gaim
  *

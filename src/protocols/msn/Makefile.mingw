@@ -68,10 +68,17 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			ft.c \
+C_SRC =			away.c \
+			dispatch.c \
+			error.c \
 			msg.c \
 			msn.c \
-			switchboard.c
+			notification.c \
+			servconn.c \
+			session.c \
+			switchboard.c \
+			user.c \
+			utils.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
