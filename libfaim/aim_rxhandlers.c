@@ -188,31 +188,31 @@ faim_export int aim_conn_addhandler(struct aim_session_t *sess,
 			rxcallback_t newhandler,
 			u_short flags)
 {
-  struct aim_rxcblist_t *new,*cur;
+  struct aim_rxcblist_t *newcb,*cur;
 
   if (!conn)
     return -1;
 
   faimdprintf(1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
 
-  new = (struct aim_rxcblist_t *)calloc(1, sizeof(struct aim_rxcblist_t));
-  new->family = family;
-  new->type = type;
-  new->flags = flags;
+  newcb = (struct aim_rxcblist_t *)calloc(1, sizeof(struct aim_rxcblist_t));
+  newcb->family = family;
+  newcb->type = type;
+  newcb->flags = flags;
   if (!newhandler)
-    new->handler = &bleck;
+    newcb->handler = &bleck;
   else
-    new->handler = newhandler;
-  new->next = NULL;
+    newcb->handler = newhandler;
+  newcb->next = NULL;
   
   cur = conn->handlerlist;
   if (!cur)
-    conn->handlerlist = new;
+    conn->handlerlist = newcb;
   else 
     {
       while (cur->next)
 	cur = cur->next;
-      cur->next = new;
+      cur->next = newcb;
     }
 
   return 0;

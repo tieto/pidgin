@@ -397,7 +397,6 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
     {	
       struct aim_tlv_t *block1;
       struct aim_tlvlist_t *list2;
-      struct aim_tlv_t *tmptlv;
       unsigned short reqclass = 0;
       unsigned short status = 0;
       
@@ -618,11 +617,8 @@ faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
 	  free(lang);
       } else if (reqclass & AIM_CAPS_GETFILE) {
 	char ip[30];
-	char *desc = NULL;
 	struct aim_msgcookie_t *cachedcook;
-	struct aim_filetransfer_priv *ft;
 	struct aim_tlv_t *miscinfo;
-	struct aim_conn_t *newconn;
 
 	if (!(cachedcook = calloc(1, sizeof(struct aim_msgcookie_t))))
 	  return 0;

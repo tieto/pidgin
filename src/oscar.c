@@ -542,15 +542,15 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	info = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
-	if (info->class & AIM_CLASS_TRIAL)
+	if (info->flags & AIM_FLAG_UNCONFIRMED)
 		type |= UC_UNCONFIRMED;
-	else if (info->class & AIM_CLASS_ADMINISTRATOR)
+	else if (info->flags & AIM_FLAG_ADMINISTRATOR)
 		type |= UC_ADMIN;
-	else if (info->class & AIM_CLASS_AOL)
+	else if (info->flags & AIM_FLAG_AOL)
 		type |= UC_AOL;
-	else if (info->class & AIM_CLASS_FREE)
+	else if (info->flags & AIM_FLAG_FREE)
 		type |= UC_NORMAL;
-	if (info->class & AIM_CLASS_AWAY)
+	if (info->flags & AIM_FLAG_AWAY)
 		type |= UC_UNAVAILABLE;
 
 	if (info->idletime) {
@@ -1093,7 +1093,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_reqicbmparaminfo(sess, command->conn);
 
 		aim_bos_reqrights(sess, command->conn);
-		aim_bos_setgroupperm(sess, command->conn, AIM_CLASS_ALLUSERS);
+		aim_bos_setgroupperm(sess, command->conn, AIM_FLAG_ALLUSERS);
 		aim_bos_setprivacyflags(sess, command->conn, AIM_PRIVFLAGS_ALLOWIDLE |
 							     AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
 

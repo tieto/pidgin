@@ -97,93 +97,93 @@ faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list)
 
 faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len)
 {
-  struct aim_tlvlist_t *new;
+  struct aim_tlvlist_t *newtlv;
   struct aim_tlvlist_t *cur;
 
   if (!list)
     return 0;
 
-  new = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
-  memset(new, 0x00, sizeof(struct aim_tlvlist_t));
+  newtlv = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+  memset(newtlv, 0x00, sizeof(struct aim_tlvlist_t));
 
-  new->tlv = aim_createtlv();	
-  new->tlv->type = type;
-  new->tlv->length = len;
-  new->tlv->value = (u_char *)malloc(new->tlv->length*sizeof(u_char));
-  memcpy(new->tlv->value, str, new->tlv->length);
+  newtlv->tlv = aim_createtlv();	
+  newtlv->tlv->type = type;
+  newtlv->tlv->length = len;
+  newtlv->tlv->value = (unsigned char *)malloc(newtlv->tlv->length*sizeof(unsigned char));
+  memcpy(newtlv->tlv->value, str, newtlv->tlv->length);
 
-  new->next = NULL;
+  newtlv->next = NULL;
 
   if (*list == NULL) {
-    *list = new;
+    *list = newtlv;
   } else if ((*list)->next == NULL) {
-    (*list)->next = new;
+    (*list)->next = newtlv;
   } else {
     for(cur = *list; cur->next; cur = cur->next)
       ;
-    cur->next = new;
+    cur->next = newtlv;
   }
-  return new->tlv->length;
+  return newtlv->tlv->length;
 }
 
 faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val)
 {
-  struct aim_tlvlist_t *new;
+  struct aim_tlvlist_t *newtl;
   struct aim_tlvlist_t *cur;
 
   if (!list)
     return 0;
 
-  new = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
-  memset(new, 0x00, sizeof(struct aim_tlvlist_t));
+  newtl = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+  memset(newtl, 0x00, sizeof(struct aim_tlvlist_t));
 
-  new->tlv = aim_createtlv();	
-  new->tlv->type = type;
-  new->tlv->length = 2;
-  new->tlv->value = (u_char *)malloc(new->tlv->length*sizeof(u_char));
-  aimutil_put16(new->tlv->value, val);
+  newtl->tlv = aim_createtlv();	
+  newtl->tlv->type = type;
+  newtl->tlv->length = 2;
+  newtl->tlv->value = (unsigned char *)malloc(newtl->tlv->length*sizeof(unsigned char));
+  aimutil_put16(newtl->tlv->value, val);
 
-  new->next = NULL;
+  newtl->next = NULL;
 
   if (*list == NULL) {
-    *list = new;
+    *list = newtl;
   } else if ((*list)->next == NULL) {
-    (*list)->next = new;
+    (*list)->next = newtl;
   } else {
     for(cur = *list; cur->next; cur = cur->next)
       ;
-    cur->next = new;
+    cur->next = newtl;
   }
   return 2;
 }
 
 faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val)
 {
-  struct aim_tlvlist_t *new;
+  struct aim_tlvlist_t *newtl;
   struct aim_tlvlist_t *cur;
 
   if (!list)
     return 0;
 
-  new = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
-  memset(new, 0x00, sizeof(struct aim_tlvlist_t));
+  newtl = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+  memset(newtl, 0x00, sizeof(struct aim_tlvlist_t));
 
-  new->tlv = aim_createtlv();	
-  new->tlv->type = type;
-  new->tlv->length = 4;
-  new->tlv->value = (u_char *)malloc(new->tlv->length*sizeof(u_char));
-  aimutil_put32(new->tlv->value, val);
+  newtl->tlv = aim_createtlv();	
+  newtl->tlv->type = type;
+  newtl->tlv->length = 4;
+  newtl->tlv->value = (unsigned char *)malloc(newtl->tlv->length*sizeof(unsigned char));
+  aimutil_put32(newtl->tlv->value, val);
 
-  new->next = NULL;
+  newtl->next = NULL;
 
   if (*list == NULL) {
-    *list = new;
+    *list = newtl;
   } else if ((*list)->next == NULL) {
-    (*list)->next = new;
+    (*list)->next = newtl;
   } else {
     for(cur = *list; cur->next; cur = cur->next)
       ;
-    cur->next = new;
+    cur->next = newtl;
   }
   return 4;
 }

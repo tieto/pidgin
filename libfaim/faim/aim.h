@@ -32,6 +32,7 @@
 #else
 #include <sys/time.h>
 #include <unistd.h>
+#include <netinet/in.h>
 #endif
 
 #ifdef FAIM_USEPTHREADS
@@ -341,23 +342,23 @@ struct aim_userinfo_s {
   char sn[MAXSNLEN+1];
   u_short warnlevel;
   u_short idletime;
-  u_short class;
+  u_short flags;
   u_long membersince;
   u_long onlinesince;
   u_long sessionlen;  
   u_short capabilities;
 };
 
-#define AIM_CLASS_TRIAL 	0x0001 /* "damned transients" */
-#define AIM_CLASS_ADMINISTRATOR	0x0002
-#define AIM_CLASS_AOL		0x0004
-#define AIM_CLASS_OSCAR_PAY	0x0008
-#define AIM_CLASS_FREE 		0x0010
-#define AIM_CLASS_AWAY		0x0020
-#define AIM_CLASS_UNKNOWN40	0x0040
-#define AIM_CLASS_UNKNOWN80	0x0080
+#define AIM_FLAG_UNCONFIRMED 	0x0001 /* "damned transients" */
+#define AIM_FLAG_ADMINISTRATOR	0x0002
+#define AIM_FLAG_AOL		0x0004
+#define AIM_FLAG_OSCAR_PAY	0x0008
+#define AIM_FLAG_FREE 		0x0010
+#define AIM_FLAG_AWAY		0x0020
+#define AIM_FLAG_UNKNOWN40	0x0040
+#define AIM_FLAG_UNKNOWN80	0x0080
 
-#define AIM_CLASS_ALLUSERS      0x001f
+#define AIM_FLAG_ALLUSERS	0x001f
 
 /*
  * TLV handling

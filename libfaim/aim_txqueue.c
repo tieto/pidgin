@@ -25,37 +25,37 @@
  */
 faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int chan, struct aim_conn_t *conn, int datalen)
 {
-  struct command_tx_struct *new;
+  struct command_tx_struct *newtx;
 
   if (!conn) {
     printf("aim_tx_new: ERROR: no connection specified\n");
     return NULL;
   }
 
-  new = (struct command_tx_struct *)malloc(sizeof(struct command_tx_struct));
-  if (!new)
+  newtx = (struct command_tx_struct *)malloc(sizeof(struct command_tx_struct));
+  if (!newtx)
     return NULL;
-  memset(new, 0, sizeof(struct command_tx_struct));
+  memset(newtx, 0, sizeof(struct command_tx_struct));
 
-  new->conn = conn; 
+  newtx->conn = conn; 
 
   if(datalen) {
-    new->data = (u_char *)malloc(datalen);
-    new->commandlen = datalen;
+    newtx->data = (unsigned char *)malloc(datalen);
+    newtx->commandlen = datalen;
   } else
-    new->data = NULL;
+    newtx->data = NULL;
 
-  new->hdrtype = framing;
-  if (new->hdrtype == AIM_FRAMETYPE_OSCAR) {
-    new->hdr.oscar.type = chan;
-  } else if (new->hdrtype == AIM_FRAMETYPE_OFT) {
-    new->hdr.oft.type = chan;
-    new->hdr.oft.hdr2len = 0; /* this will get setup by caller */
+  newtx->hdrtype = framing;
+  if (newtx->hdrtype == AIM_FRAMETYPE_OSCAR) {
+    newtx->hdr.oscar.type = chan;
+  } else if (newtx->hdrtype == AIM_FRAMETYPE_OFT) {
+    newtx->hdr.oft.type = chan;
+    newtx->hdr.oft.hdr2len = 0; /* this will get setup by caller */
   } else { 
     printf("tx_new: unknown framing\n");
   }
 
-  return new;
+  return newtx;
 }
 
 /*

@@ -1,6 +1,11 @@
 
 No release numbers
 ------------------
+ - Wed Sep 13 22:01:35 UTC 2000
+   - Remove references to "new" and "class" for dumb C++ compilers
+   - Renamed userinfo->class to userinfo->flags both for clarity and C++
+   - Remove some extraneous variables
+
  - Tue Sep 12 20:16:51 UTC 2000
    - Add aim_flap_nop() from my work tree 
 

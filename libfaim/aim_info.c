@@ -259,7 +259,7 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
       break;
 
       /*
-       * Type = 0x0001: Member Class.   
+       * Type = 0x0001: User flags
        * 
        * Specified as any of the following bitwise ORed together:
        *      0x0001  Trial (user less than 60days)
@@ -277,7 +277,7 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
     case 0x0001:
       if (tlv1) /* use only the first */
 	break;
-      outinfo->class = aimutil_get16(&buf[i+4]);
+      outinfo->flags = aimutil_get16(&buf[i+4]);
       tlv1++;
       break;
       
@@ -563,12 +563,12 @@ faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s
 
   /* XXX: we only put down five */
   i += aimutil_put16(buf+i, 5);
-  aim_addtlvtochain16(&tlvlist, 0x0001, info->class);
+  aim_addtlvtochain16(&tlvlist, 0x0001, info->flags);
   aim_addtlvtochain32(&tlvlist, 0x0002, info->membersince);
   aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
   aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
   /* XXX: should put caps here */
-  aim_addtlvtochain32(&tlvlist, (unsigned short)((info->class)&AIM_CLASS_AOL?0x0010:0x000f), info->sessionlen);
+  aim_addtlvtochain32(&tlvlist, (unsigned short)((info->flags)&AIM_FLAG_AOL?0x0010:0x000f), info->sessionlen);
   
   i += aim_writetlvchain(buf+i, buflen-i, &tlvlist);
   aim_freetlvchain(&tlvlist);
