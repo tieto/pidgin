@@ -21,6 +21,7 @@
  */
 #include "msn.h"
 #include "servconn.h"
+#include "error.h"
 
 typedef struct
 {
@@ -84,7 +85,10 @@ process_single_line(MsnServConn *servconn, char *str)
 		cb = g_hash_table_lookup(servconn->commands, "_unknown_");
 
 		if (cb == NULL) {
-			gaim_debug(GAIM_DEBUG_WARNING, "msn",
+			if (isdigit(*str))
+				msn_error_handle(session, atoi(str));
+			else
+				gaim_debug(GAIM_DEBUG_WARNING, "msn",
 					   "Unhandled command '%s'\n", str);
 
 			if (params != NULL)

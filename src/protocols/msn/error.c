@@ -28,16 +28,19 @@ msn_error_get_text(unsigned int type)
 	static char msg[MSN_BUF_LEN];
 
 	switch (type) {
+		case 0:
+			g_snprintf(msg, sizeof(msg),
+					   _("Unable to parse message"));
 		case 200:
 			g_snprintf(msg, sizeof(msg),
 					   _("Syntax Error (probably a Gaim bug)"));
 			break;
 		case 201:
 			g_snprintf(msg, sizeof(msg),
-					   _("Invalid Parameter (probably a Gaim bug)"));
+					   _("Invalid email address"));
 			break;
 		case 205:
-			g_snprintf(msg, sizeof(msg), _("Invalid User"));
+			g_snprintf(msg, sizeof(msg), _("User does not exist"));
 			break;
 		case 206:
 			g_snprintf(msg, sizeof(msg),
@@ -166,7 +169,7 @@ msn_error_get_text(unsigned int type)
 			g_snprintf(msg, sizeof(msg), _("Too many sessions"));
 			break;
 		case 715:
-			g_snprintf(msg, sizeof(msg), _("Not expected"));
+			g_snprintf(msg, sizeof(msg), _("Passport not verified"));
 			break;
 		case 717:
 			g_snprintf(msg, sizeof(msg), _("Bad friend file"));
@@ -226,9 +229,10 @@ msn_error_get_text(unsigned int type)
 void
 msn_error_handle(MsnSession *session, unsigned int type)
 {
-	const char *text;
+	char buf[MSN_BUF_LEN];
 
-	text = msn_error_get_text(type);
+	g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
+					msn_error_get_text(type));
 
-	gaim_notify_error(session->account->gc, NULL, text, NULL);
+	gaim_notify_error(session->account->gc, NULL, buf, NULL);
 }

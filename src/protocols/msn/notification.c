@@ -198,10 +198,10 @@ static gboolean
 unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			size_t param_count)
 {
-	char buf[MSN_BUF_LEN];
-
+	int errnum = 0;
+	
 	if (isdigit(*command)) {
-		int errnum = atoi(command);
+		errnum = atoi(command);
 
 		if (errnum == 225) {
 			/*
@@ -211,15 +211,9 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			 */
 			return TRUE;
 		}
-
-		g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
-				   msn_error_get_text(errnum));
 	}
-	else {
-		g_snprintf(buf, sizeof(buf), "MSN Error: Unable to parse message\n");
-	}
-
-	gaim_notify_error(servconn->session->account->gc, NULL, buf, NULL);
+	
+	msn_error_handle(servconn->session, errnum);
 
 	return TRUE;
 }

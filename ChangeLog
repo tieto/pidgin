@@ -1,8 +1,10 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.77cvs
+	Bug Fixes:
 	* Save Conversation works again (Kevin Stange)
 	* The Clear button in privacy works (Robert Mibus)
+	* MSN error reporting works again (Stu Tomlinson)
 
 version 0.76 (04/01/2004):
 	New Features:
