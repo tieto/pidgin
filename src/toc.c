@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1218 $"
+#define REVISION "gaim:$Revision: 1244 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -221,8 +221,15 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen) {
 	}
 
 	if (ntohs(hdr->len) > 0) {
-		ret = read(tdt->toc_fd, buffer + sizeof(struct sflap_hdr), ntohs(hdr->len));
-		buffer[sizeof(struct sflap_hdr) + ret] = '\0';
+		int count = 0;
+		ret = 0;
+		do {
+			count += ret;
+			ret = read(tdt->toc_fd,
+				   buffer + sizeof(struct sflap_hdr) + count,
+				   ntohs(hdr->len));
+		} while (count + ret < ntohs(hdr->len) && ret > 0);
+		buffer[sizeof(struct sflap_hdr) + count + ret] = '\0';
 		return ret;
 	} else return 0;
 }
