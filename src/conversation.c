@@ -2994,5 +2994,8 @@ gaim_conversations_init(void)
 void
 gaim_conversations_uninit(void)
 {
+	
 	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
+	while (conversations) 
+		gaim_conversation_destroy((GaimConversation*)conversations->data);
 }

@@ -111,9 +111,6 @@ gaim_core_quit(void)
 
 	ops = gaim_core_get_ui_ops();
 
-	if (ops != NULL && ops->quit != NULL)
-		ops->quit();
-
 	/* The self destruct sequence has been initiated */
 	gaim_signal_emit(gaim_get_core(), "quitting");
 
@@ -121,7 +118,6 @@ gaim_core_quit(void)
 	gaim_connections_disconnect_all();
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
-	gaim_plugins_destroy_all();
 
 	/* Save .xml files, remove signals, etc. */
 	gaim_ssl_uninit();
@@ -135,6 +131,8 @@ gaim_core_quit(void)
 
 	gaim_signals_uninit();
 
+	gaim_plugins_destroy_all();
+
 	if (core->ui != NULL) {
 		g_free(core->ui);
 		core->ui = NULL;
@@ -143,6 +141,10 @@ gaim_core_quit(void)
 	g_free(core);
 
 	_core = NULL;
+	
+	if (ops != NULL && ops->quit != NULL)
+		ops->quit();
+
 }
 
 gboolean
