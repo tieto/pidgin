@@ -9,10 +9,10 @@
  * For copyright info, see "mit-sipb-copyright.h".
  */
 
-#include <sysdep.h>
 #include "error_table.h"
 #include "mit-sipb-copyright.h"
 #include "com_err.h"
+#include <sysdep.h>
 
 static const char rcsid[] =
     "$Header$";
