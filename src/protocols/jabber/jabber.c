@@ -1300,16 +1300,20 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			return;
 
 		if (conference_room) {
-			GList *m = NULL;
+			GHashTable *components = g_hash_table_new_full(g_str_hash,
+					g_str_equal, g_free, g_free);
 			char **data;
 
 			data = g_strsplit(conference_room, "@", 2);
-			m = g_list_append(m, g_strdup(data[0]));
-			m = g_list_append(m, g_strdup(data[1]));
-			m = g_list_append(m, g_strdup(gjc->user->user));
+			g_hash_table_replace(components, g_strdup("room"),
+					g_strdup(data[0]));
+			g_hash_table_replace(components, g_strdup("server"),
+					g_strdup(data[1]));
+			g_hash_table_replace(components, g_strdup("handle"),
+					g_strdup(gjc->user->user));
 			g_strfreev(data);
 
-			serv_got_chat_invite(GJ_GC(gjc), conference_room, from, msg, m);
+			serv_got_chat_invite(GJ_GC(gjc), conference_room, from, msg, components);
 		} else if (msg) { /* whisper */
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
@@ -2894,35 +2898,43 @@ static GList *jabber_chat_info(struct gaim_connection *gc)
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Room:");
+	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Server:");
+	pce->identifier = "server";
 	pce->def = confserv;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Handle:");
+	pce->identifier = "handle";
 	pce->def = gjc->user->user;
 	m = g_list_append(m, pce);
 
 	return m;
 }
 
-static void jabber_join_chat(struct gaim_connection *gc, GList *data)
+static void jabber_join_chat(struct gaim_connection *gc, GHashTable *data)
 {
 	xmlnode x;
+	char *room, *server, *handle;
 	char *realwho;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	GSList *jcs = ((struct jabber_data *)gc->proto_data)->chats;
 	struct jabber_chat *jc;
 	gaim_jid gjid;
 
-	if (!data || !data->next || !data->next->next)
+	room = g_hash_table_lookup(data, "room");
+	server = g_hash_table_lookup(data, "server");
+	handle = g_hash_table_lookup(data, "handle");
+
+	if (!room || !server || !handle)
 		return;
 
-	realwho = create_valid_jid(data->data, data->next->data, data->next->next->data);
-	gaim_debug(GAIM_DEBUG_INFO, "%s\n", realwho);
+	realwho = create_valid_jid(room, server, handle);
+	gaim_debug(GAIM_DEBUG_INFO, "jabber", "%s\n", realwho);
 
 	if((gjid = gaim_jid_new(realwho)) == NULL) {
 		char *msg = g_strdup_printf("The Jabber I.D. %s is invalid.", realwho);

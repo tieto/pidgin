@@ -32,7 +32,7 @@
 #include "gaim.h"
 #include "sound.h"
 #include "eggtrayicon.h"
-#include "gtklist.h"
+#include "gtkblist.h"
 
 #define DOCKLET_PLUGIN_ID "gtk-docklet"
 

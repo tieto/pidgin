@@ -1089,7 +1089,7 @@ const char *handle_uri(char *uri) {
 			g_free(group);
 	} else if (!g_ascii_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
 		char *room;
-		GList *chat=NULL;
+		GHashTable *components;
 		int exch = 5;
 		
 		uri = uri + strlen("aim:gochat?");
@@ -1106,11 +1106,14 @@ const char *handle_uri(char *uri) {
 		}
 		room = g_strdup(str->str);
 		g_string_free(str, TRUE);
-		chat = g_list_append(NULL, room);
-		chat = g_list_append(chat, &exch);
-		serv_join_chat(gc, chat);
-		g_free(room);
-		g_list_free(chat);
+		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				g_free);
+		g_hash_table_replace(components, g_strdup("room"), room);
+		g_hash_table_replace(components, g_strdup("exchange"),
+				g_strdup_printf("%d", exch));
+
+		serv_join_chat(gc, components);
+		g_hash_table_destroy(components);
 	} else {
 		return _("Invalid AIM URI");
 	}

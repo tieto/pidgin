@@ -101,6 +101,7 @@ struct proto_buddy_menu {
 
 struct proto_chat_entry {
 	char *label;
+	char *identifier;
 	char *def;
 	gboolean is_int;
 	int min;

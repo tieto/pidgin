@@ -882,20 +882,23 @@ static GList *zephyr_chat_info(struct gaim_connection *gc) {
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Class:");
+	pce->identifier = "class";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Instance:");
+	pce->identifier = "instance";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Recipient:");
+	pce->identifier = "recipient";
 	m = g_list_append(m, pce);
 
 	return m;
 }
 
-static void zephyr_join_chat(struct gaim_connection *gc, GList *data)
+static void zephyr_join_chat(struct gaim_connection *gc, GHashTable *data)
 {
 	ZSubscription_t sub;
 	zephyr_triple *zt1, *zt2;
@@ -903,12 +906,13 @@ static void zephyr_join_chat(struct gaim_connection *gc, GList *data)
 	const char *instname;
 	const char *recip;
 
-	if (!data || !data->next || !data->next->next)
+	classname = g_hash_table_lookup(data, "class");
+	instname = g_hash_table_lookup(data, "instance");
+	recip = g_hash_table_lookup(data, "recipient");
+
+	if (!classname || !instname || !recip)
 		return;
 
-	classname = data->data;
-	instname = data->next->data;
-	recip = data->next->next->data;
 	if (!g_ascii_strcasecmp(recip, "%me%"))
 		recip = ZGetSender();
 

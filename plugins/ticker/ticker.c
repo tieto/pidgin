@@ -30,8 +30,8 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "gtkplugin.h"
-#include "list.h"
-#include "gtklist.h"
+#include "blist.h"
+#include "gtkblist.h"
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
@@ -111,7 +111,8 @@ static void buddy_ticker_set_pixmap(struct buddy *b) {
 	if(!td->icon)
 		td->icon = gtk_image_new();
 
-	pixbuf = gaim_gtk_blist_get_status_icon(b, GAIM_STATUS_ICON_SMALL);
+	pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
+			GAIM_STATUS_ICON_SMALL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(td->icon), pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 }

@@ -245,10 +245,12 @@ extern void show_xfer_dialog();
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
+extern void alias_dialog_chat(struct chat *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_add_buddy(struct gaim_connection *, char *, char *, char *);
+extern void show_add_chat(struct gaim_account *, struct group *);
 extern void show_add_group(struct gaim_connection *);
 extern void show_add_perm(struct gaim_connection *, char *, gboolean);
 extern void destroy_all_dialogs();

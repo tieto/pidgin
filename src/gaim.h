@@ -358,6 +358,7 @@ extern void show_find_info(struct gaim_connection *);
 extern void show_set_info(struct gaim_connection *);
 extern void show_confirm_del(struct gaim_connection *, gchar *);
 extern void show_confirm_del_group(struct group *);
+extern void show_confirm_del_chat(struct chat *);
 
 /* Functions in gaimrc.c */
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
@@ -403,7 +404,7 @@ extern void serv_set_permit_deny(struct gaim_connection *);
 extern void serv_warn(struct gaim_connection *, char *, int);
 extern void serv_set_dir(struct gaim_connection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, int);
 extern void serv_dir_search(struct gaim_connection *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-extern void serv_join_chat(struct gaim_connection *, GList *);
+extern void serv_join_chat(struct gaim_connection *, GHashTable *);
 extern void serv_chat_invite(struct gaim_connection *, int, const char *, const char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);

@@ -198,6 +198,20 @@ void  gaim_blist_rename_buddy (struct buddy *buddy, const char *name)
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
+
+void gaim_blist_alias_chat(struct chat *chat, const char *alias)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+
+	if(!alias || !strlen(alias))
+		return;
+
+	g_free(chat->alias);
+	chat->alias = g_strdup(alias);
+	if(ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)chat);
+}
+
 void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
@@ -227,6 +241,30 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)group);
 }
+
+struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHashTable *components)
+{
+	struct chat *chat;
+	struct gaim_blist_ui_ops *ops;
+
+	if(!alias || !strlen(alias) || !components)
+		return NULL;
+
+	chat = g_new0(struct chat, 1);
+	chat->account = account;
+	chat->alias = g_strdup(alias);
+	chat->components = components;
+
+	((GaimBlistNode*)chat)->type = GAIM_BLIST_CHAT_NODE;
+
+	ops = gaim_get_blist_ui_ops();
+
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((GaimBlistNode *)chat);
+
+	return chat;
+}
+
 struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screenname, const char *alias)
 {
 	struct buddy *b;
@@ -246,6 +284,62 @@ struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screennam
 
 	return b;
 }
+void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *node)
+{
+	GaimBlistNode *n = node, *cnode = (GaimBlistNode*)chat;
+	struct group *g = group;
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	gboolean save = FALSE;
+
+	if (!n) {
+		if (!g) {
+			g = gaim_group_new(_("Chats"));
+			gaim_blist_add_group(g, NULL);
+		}
+		n = gaim_blist_get_last_child((GaimBlistNode*)g);
+	} else {
+		g = (struct group*)n->parent;
+	}
+
+	/* if we're moving to overtop of ourselves, do nothing */
+	if(cnode == n)
+		return;
+
+	if (cnode->parent) {
+		/* This chat was already in the list and is
+		 * being moved.
+		 */
+		if(cnode->next)
+			cnode->next->prev = cnode->prev;
+		if(cnode->prev)
+			cnode->prev->next = cnode->next;
+		if(cnode->parent->child == cnode)
+			cnode->parent->child = cnode->next;
+
+		ops->remove(gaimbuddylist, cnode);
+
+		save = TRUE;
+	}
+
+	if (n) {
+		if(n->next)
+			n->next->prev = cnode;
+		cnode->next = n->next;
+		cnode->prev = n;
+		cnode->parent = n->parent;
+		n->next = cnode;
+	} else {
+		((GaimBlistNode*)g)->child = cnode;
+		cnode->next = cnode->prev = NULL;
+		cnode->parent = (GaimBlistNode*)g;
+	}
+
+	if (ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)cnode);
+	if (save)
+		gaim_blist_save();
+}
+
 void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistNode *node)
 {
 	GaimBlistNode *n = node, *bnode = (GaimBlistNode*)buddy;
@@ -402,6 +496,29 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 	g_free(buddy);
 }
 
+void  gaim_blist_remove_chat (struct chat *chat)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+
+	GaimBlistNode *gnode, *node = (GaimBlistNode*)chat;
+	struct group *group;
+
+	gnode = node->parent;
+	group = (struct group *)gnode;
+
+	if(gnode->child == node)
+		gnode->child = node->next;
+	if (node->prev)
+		node->prev->next = node->next;
+	if (node->next)
+		node->next->prev = node->prev;
+
+	ops->remove(gaimbuddylist, node);
+	g_hash_table_destroy(chat->components);
+	g_free(chat->alias);
+	g_free(chat);
+}
+
 void  gaim_blist_remove_group (struct group *group)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
@@ -470,9 +587,11 @@ struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name)
 	while (group) {
 		buddy = group->child;
 		while (buddy) {
-			if (!gaim_utf8_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
-				g_free(norm_name);
-				return (struct buddy*)buddy;
+			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
+				if (!gaim_utf8_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
+					g_free(norm_name);
+					return (struct buddy*)buddy;
+				}
 			}
 			buddy = buddy->next;
 		}
@@ -515,24 +634,58 @@ GSList *gaim_group_get_accounts(struct group *g)
 	return l;
 }
 
+void gaim_blist_add_account(struct gaim_account *account)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistNode *group, *buddy;
+
+	if(!gaimbuddylist)
+		return;
+
+	for(group = gaimbuddylist->root; group; group = group->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+			continue;
+		for(buddy = group->child; buddy; buddy = buddy->next) {
+			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
+				if (account == ((struct buddy*)buddy)->account) {
+					if(ops)
+						ops->update(gaimbuddylist, buddy);
+				}
+			} else if(GAIM_BLIST_NODE_IS_CHAT(buddy)) {
+				if (account == ((struct chat*)buddy)->account) {
+					if(ops)
+						ops->update(gaimbuddylist, buddy);
+				}
+			}
+		}
+	}
+}
+
 void gaim_blist_remove_account(struct gaim_account *account)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *group = gaimbuddylist->root;
-	GaimBlistNode *buddy;
+	GaimBlistNode *group, *buddy;
+
 	if (!gaimbuddylist)
 		return;
-	while (group) {
-		buddy = group->child;
-		while (buddy) {
-			if (account == ((struct buddy*)buddy)->account) {
-				((struct buddy*)buddy)->present = GAIM_BUDDY_OFFLINE;
-				if(ops)
-					ops->remove(gaimbuddylist, buddy);
+
+	for(group = gaimbuddylist->root; group; group = group->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+			continue;
+		for(buddy = group->child; buddy; buddy = buddy->next) {
+			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
+				if (account == ((struct buddy*)buddy)->account) {
+					((struct buddy*)buddy)->present = GAIM_BUDDY_OFFLINE;
+					if(ops)
+						ops->remove(gaimbuddylist, buddy);
+				}
+			} else if(GAIM_BLIST_NODE_IS_CHAT(buddy)) {
+				if (account == ((struct chat*)buddy)->account) {
+					if(ops)
+						ops->remove(gaimbuddylist, buddy);
+				}
 			}
-			buddy = buddy->next;
 		}
-		group = group->next;
 	}
 }
 
@@ -918,18 +1071,24 @@ static char *blist_parser_group_name = NULL;
 static char *blist_parser_person_name = NULL;
 static char *blist_parser_account_name = NULL;
 static int blist_parser_account_protocol = 0;
+static char *blist_parser_chat_alias = NULL;
+static char *blist_parser_component_name = NULL;
+static char *blist_parser_component_value = NULL;
 static char *blist_parser_buddy_name = NULL;
 static char *blist_parser_buddy_alias = NULL;
 static char *blist_parser_setting_name = NULL;
 static char *blist_parser_setting_value = NULL;
 static GHashTable *blist_parser_buddy_settings = NULL;
 static GHashTable *blist_parser_group_settings = NULL;
+static GHashTable *blist_parser_chat_components = NULL;
 static int blist_parser_privacy_mode = 0;
 static GList *tag_stack = NULL;
 enum {
 	BLIST_TAG_GAIM,
 	BLIST_TAG_BLIST,
 	BLIST_TAG_GROUP,
+	BLIST_TAG_CHAT,
+	BLIST_TAG_COMPONENT,
 	BLIST_TAG_PERSON,
 	BLIST_TAG_BUDDY,
 	BLIST_TAG_NAME,
@@ -967,6 +1126,16 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			struct group *g = gaim_group_new(blist_parser_group_name);
 			gaim_blist_add_group(g,NULL);
 		}
+	} else if(!strcmp(element_name, "chat")) {
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_CHAT));
+		for(i=0; attribute_names[i]; i++) {
+			if(!strcmp(attribute_names[i], "account")) {
+				g_free(blist_parser_account_name);
+				blist_parser_account_name = g_strdup(attribute_values[i]);
+			} else if(!strcmp(attribute_names[i], "protocol")) {
+				blist_parser_account_protocol = atoi(attribute_values[i]);
+			}
+		}
 	} else if(!strcmp(element_name, "person")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PERSON));
 		for(i=0; attribute_names[i]; i++) {
@@ -997,6 +1166,15 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 				blist_parser_setting_name = g_strdup(attribute_values[i]);
 			}
 		}
+	} else if(!strcmp(element_name, "component")) {
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_COMPONENT));
+		for(i=0; attribute_names[i]; i++) {
+			if(!strcmp(attribute_names[i], "name")) {
+				g_free(blist_parser_component_name);
+				blist_parser_component_name = g_strdup(attribute_values[i]);
+			}
+		}
+
 	} else if(!strcmp(element_name, "privacy")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PRIVACY));
 	} else if(!strcmp(element_name, "account")) {
@@ -1034,6 +1212,20 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		}
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 		blist_parser_group_settings = NULL;
+	} else if(!strcmp(element_name, "chat")) {
+		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
+				blist_parser_account_protocol);
+		if(account && blist_parser_chat_alias) {
+			struct chat *chat = gaim_chat_new(account, blist_parser_chat_alias, blist_parser_chat_components);
+			struct group *g = gaim_find_group(blist_parser_group_name);
+			gaim_blist_add_chat(chat,g,NULL);
+		}
+		g_free(blist_parser_chat_alias);
+		blist_parser_chat_alias = NULL;
+		g_free(blist_parser_account_name);
+		blist_parser_account_name = NULL;
+		blist_parser_chat_components = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "person")) {
 		g_free(blist_parser_person_name);
 		blist_parser_person_name = NULL;
@@ -1061,6 +1253,20 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "name")) {
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "alias")) {
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
+	} else if(!strcmp(element_name, "component")) {
+		if(!blist_parser_chat_components)
+			blist_parser_chat_components = g_hash_table_new_full(g_str_hash,
+					g_str_equal, g_free, g_free);
+		if(blist_parser_component_name && blist_parser_component_value) {
+			g_hash_table_replace(blist_parser_chat_components,
+					g_strdup(blist_parser_component_name),
+					g_strdup(blist_parser_component_value));
+		}
+		g_free(blist_parser_component_name);
+		g_free(blist_parser_component_value);
+		blist_parser_component_name = NULL;
+		blist_parser_component_value = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "setting")) {
 		if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY) {
@@ -1129,12 +1335,20 @@ static void blist_text_handler(GMarkupParseContext *context, const gchar *text,
 			blist_parser_buddy_name = g_strndup(text, text_len);
 			break;
 		case BLIST_TAG_ALIAS:
-			blist_parser_buddy_alias = g_strndup(text, text_len);
+			if(tag_stack->next &&
+					GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY)
+				blist_parser_buddy_alias = g_strndup(text, text_len);
+			else if(tag_stack->next &&
+					GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_CHAT)
+				blist_parser_chat_alias = g_strndup(text, text_len);
 			break;
 		case BLIST_TAG_PERMIT:
 		case BLIST_TAG_BLOCK:
 		case BLIST_TAG_IGNORE:
 			blist_parser_buddy_name = g_strndup(text, text_len);
+			break;
+		case BLIST_TAG_COMPONENT:
+			blist_parser_component_value = g_strndup(text, text_len);
 			break;
 		case BLIST_TAG_SETTING:
 			blist_parser_setting_value = g_strndup(text, text_len);
@@ -1281,6 +1495,24 @@ static void blist_print_buddy_settings(gpointer key, gpointer data,
 	g_free(data_val);
 }
 
+static void blist_print_chat_components(gpointer key, gpointer data,
+		gpointer user_data) {
+	char *key_val;
+	char *data_val;
+	FILE *file = user_data;
+
+	if(!key || !data)
+		return;
+
+	key_val = g_markup_escape_text(key, -1);
+	data_val = g_markup_escape_text(data, -1);
+
+	fprintf(file, "\t\t\t\t<component name=\"%s\">%s</component>\n", key_val,
+			data_val);
+	g_free(key_val);
+	g_free(data_val);
+}
+
 static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 	GSList *accounts, *buds;
 	GaimBlistNode *gnode,*bnode;
@@ -1299,32 +1531,43 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
 			g_hash_table_foreach(group->settings, blist_print_group_settings, file);
 			for(bnode = gnode->child; bnode; bnode = bnode->next) {
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				bud = (struct buddy *)bnode;
-				if(!exp_acct || bud->account == exp_acct) {
-					char *bud_name = g_markup_escape_text(bud->name, -1);
-					char *bud_alias = NULL;
-					char *acct_name = g_markup_escape_text(bud->account->username, -1);
-					if(bud->alias)
-						bud_alias= g_markup_escape_text(bud->alias, -1);
-					fprintf(file, "\t\t\t<person name=\"%s\">\n",
-							bud_alias ? bud_alias : bud_name);
-					fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
-							"account=\"%s\">\n", bud->account->protocol,
-							acct_name);
-					fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
-					if(bud_alias) {
-						fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n",
-								bud_alias);
+				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					bud = (struct buddy *)bnode;
+					if(!exp_acct || bud->account == exp_acct) {
+						char *bud_name = g_markup_escape_text(bud->name, -1);
+						char *bud_alias = NULL;
+						char *acct_name = g_markup_escape_text(bud->account->username, -1);
+						if(bud->alias)
+							bud_alias= g_markup_escape_text(bud->alias, -1);
+						fprintf(file, "\t\t\t<person name=\"%s\">\n",
+								bud_alias ? bud_alias : bud_name);
+						fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
+								"account=\"%s\">\n", bud->account->protocol,
+								acct_name);
+						fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
+						if(bud_alias) {
+							fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n",
+									bud_alias);
+						}
+						g_hash_table_foreach(bud->settings,
+								blist_print_buddy_settings, file);
+						fprintf(file, "\t\t\t\t</buddy>\n");
+						fprintf(file, "\t\t\t</person>\n");
+						g_free(bud_name);
+						g_free(bud_alias);
+						g_free(acct_name);
 					}
-					g_hash_table_foreach(bud->settings,
-							blist_print_buddy_settings, file);
-					fprintf(file, "\t\t\t\t</buddy>\n");
-					fprintf(file, "\t\t\t</person>\n");
-					g_free(bud_name);
-					g_free(bud_alias);
-					g_free(acct_name);
+				} else if(GAIM_BLIST_NODE_IS_CHAT(bnode)) {
+					struct chat *chat = (struct chat *)bnode;
+					if(!exp_acct || chat->account == exp_acct) {
+						char *chat_alias = g_markup_escape_text(chat->alias, -1);
+						char *acct_name = g_markup_escape_text(chat->account->username, -1);
+						fprintf(file, "\t\t\t<chat protocol=\"%d\" account=\"%s\">\n", chat->account->protocol, acct_name);
+						fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
+						g_hash_table_foreach(chat->components,
+								blist_print_chat_components, file);
+						fprintf(file, "\t\t\t</chat>\n");
+					}
 				}
 			}
 			fprintf(file, "\t\t</group>\n");
@@ -1519,6 +1762,10 @@ int gaim_blist_get_group_size(struct group *group, gboolean offline) {
 			struct buddy *b = (struct buddy *)node;
 			if(b->account->gc || offline)
 				count++;
+		} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+			struct chat *chat = (struct chat *)node;
+			if(chat->account->gc || offline)
+				count++;
 		}
 	}
 
@@ -1537,6 +1784,8 @@ int gaim_blist_get_group_online_count(struct group *group) {
 			struct buddy *b = (struct buddy *)node;
 			if(GAIM_BUDDY_IS_ONLINE(b))
 				count++;
+		} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+			count++;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /**
- * @file blist.h Buddy List API
+ * @file list.h Buddy List API
  * @ingroup core
  *
  * gaim
@@ -34,9 +34,11 @@
 enum gaim_blist_node_type {
 	GAIM_BLIST_GROUP_NODE,
 	GAIM_BLIST_BUDDY_NODE,
+	GAIM_BLIST_CHAT_NODE,
 	GAIM_BLIST_OTHER_NODE,
 };
 
+#define GAIM_BLIST_NODE_IS_CHAT(n) ((n)->type == GAIM_BLIST_CHAT_NODE)
 #define GAIM_BLIST_NODE_IS_BUDDY(n) ((n)->type == GAIM_BLIST_BUDDY_NODE)
 #define GAIM_BLIST_NODE_IS_GROUP(n) ((n)->type == GAIM_BLIST_GROUP_NODE)
 
@@ -95,6 +97,17 @@ struct group {
 	GaimBlistNode node;                    /**< The node that this group inherits from */
 	char *name;                            /**< The name of this group. */
 	GHashTable *settings;                  /**< per-group settings from the XML buddy list, set by plugins and the likes. */
+};
+
+/**
+ * A group.  This contains everything Gaim needs to put a chat room in the
+ * buddy list.
+ */
+struct chat {
+	GaimBlistNode node;      /**< The node that this chat inherits from */
+	char *alias;             /**< The display name of this chat. */
+	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
+	struct gaim_account *account; /**< The account this chat is attached to */
 };
 
 
@@ -174,7 +187,7 @@ void gaim_blist_set_visible(gboolean show);
 
 /**
  * Updates a buddy's status.
- * 
+ *
  * This needs to not take an int.
  *
  * @param buddy   The buddy whose status has changed
@@ -235,6 +248,13 @@ void gaim_blist_rename_buddy(struct buddy *buddy, const char *name);
  */
 void gaim_blist_alias_buddy(struct buddy *buddy, const char *alias);
 
+/**
+ * Aliases a chat in the buddy list.
+ *
+ * @param chat  The chat whose alias will be changed.
+ * @param alias The chat's new alias.
+ */
+void gaim_blist_alias_chat(struct chat *chat, const char *alias);
 
 /**
  * Renames a group
@@ -244,6 +264,28 @@ void gaim_blist_alias_buddy(struct buddy *buddy, const char *alias);
  */
 void gaim_blist_rename_group(struct group *group, const char *name);
 
+/**
+ * Creates a new chat for the buddy list
+ *
+ * @param account    The account this chat will get added to
+ * @param alias      The alias of the new chat
+ * @param components The info the prpl needs to join the chat
+ * @return           A newly allocated chat
+ */
+struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHashTable *components);
+
+/**
+ * Adds a new chat to the buddy list.
+ *
+ * The chat will be inserted right after node or appended to the end
+ * of group if node is NULL.  If both are NULL, the buddy will be added to
+ * the "Chats" group.
+ *
+ * @param chat  The new chat who gets added
+ * @param group  The group to add the new chat to.
+ * @param node   The insertion point
+ */
+void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *node);
 
 /**
  * Creates a new buddy
@@ -296,6 +338,13 @@ void gaim_blist_add_group(struct group *group, GaimBlistNode *node);
  * @param buddy   The buddy to be removed
  */
 void gaim_blist_remove_buddy(struct buddy *buddy);
+
+/**
+ * Removes a chat from the buddy list and frees the memory allocated to it.
+ *
+ * @param chat   The chat to be removed
+ */
+void gaim_blist_remove_chat(struct chat *chat);
 
 /**
  * Removes a group from the buddy list and frees the memory allocated to it and to
@@ -363,6 +412,15 @@ GSList *gaim_group_get_accounts(struct group *g);
  * @param account The account.
  */
 gboolean gaim_group_on_account(struct group *g, struct gaim_account *account);
+
+/**
+ * Called when an account gets signed on.  Tells the UI to update all the
+ * buddies.
+ *
+ * @param account   The account
+ */
+void gaim_blist_add_account(struct gaim_account *account);
+
 
 /**
  * Called when an account gets signed off.  Sets the presence of all the buddies to 0

@@ -30,10 +30,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
-#ifdef USE_GTKSPELL
-#include <gtkspell/gtkspell.h>
-#endif
-#include <gdk/gdkkeysyms.h>
 
 #include "prpl.h"
 
@@ -50,29 +46,27 @@ static void
 do_join_chat()
 {
 	if (joinchat) {
-		GList *data = NULL;
+		GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, g_free);
 		GList *tmp;
-		int *ival;
-		char *sval;
 
 		for (tmp = chatentries; tmp != NULL; tmp = tmp->next) {
 			if (g_object_get_data(tmp->data, "is_spin")) {
-				ival = g_new0(int, 1);
-				*ival = gtk_spin_button_get_value_as_int(tmp->data);
-				data = g_list_append(data, ival);
+				g_hash_table_replace(components,
+						g_strdup(g_object_get_data(tmp->data, "identifier")),
+						g_strdup_printf("%d",
+							gtk_spin_button_get_value_as_int(tmp->data)));
 			}
 			else {
-				sval = g_strdup(gtk_entry_get_text(tmp->data));
-				data = g_list_append(data, sval);
+				g_hash_table_replace(components,
+						g_strdup(g_object_get_data(tmp->data, "identifier")),
+						g_strdup(gtk_entry_get_text(tmp->data)));
 			}
 		}
 
-		serv_join_chat(joinchatgc, data);
+		serv_join_chat(joinchatgc, components);
 
-		for (tmp = data; tmp != NULL; tmp = tmp->next)
-			g_free(tmp->data);
-
-		g_list_free(data);
+		g_hash_table_destroy(components);
 
 		gtk_widget_destroy(joinchat);
 
@@ -126,6 +120,7 @@ rebuild_jc()
 										pce->max, 1, 10, 10);
 			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 			g_object_set_data(G_OBJECT(spin), "is_spin", GINT_TO_POINTER(TRUE));
+			g_object_set_data(G_OBJECT(spin), "identifier", pce->identifier);
 			chatentries = g_list_append(chatentries, spin);
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
@@ -149,6 +144,7 @@ rebuild_jc()
 
 			g_signal_connect(G_OBJECT(entry), "activate",
 							 G_CALLBACK(do_join_chat), NULL);
+			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
 
 			gtk_widget_show(entry);
 		}
@@ -165,9 +161,12 @@ joinchat_choose(GtkWidget *w, struct gaim_connection *g)
 	if (joinchatgc == g)
 		return;
 
-	joinchatgc = g;
-
-	rebuild_jc();
+	if(joinchatgc->account->protocol == g->account->protocol) {
+		joinchatgc = g;
+	} else {
+		joinchatgc = g;
+		rebuild_jc();
+	}
 }
 
 static void

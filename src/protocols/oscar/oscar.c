@@ -2260,21 +2260,20 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name;
-		int *exch;
-		GList *m = NULL;
-		
+		GHashTable *components;
+
 		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange || !args->msg)
 			return 1;
+		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				g_free);
 		name = extract_name(args->info.chat.roominfo.name);
-		exch = g_new0(int, 1);
-		m = g_list_append(m, g_strdup(name ? name : args->info.chat.roominfo.name));
-		*exch = args->info.chat.roominfo.exchange;
-		m = g_list_append(m, exch);
+		g_hash_table_replace(components, g_strdup("room"), g_strdup(name ? name : args->info.chat.roominfo.name));
+		g_hash_table_replace(components, g_strdup("exchange"), g_strdup_printf("%d", args->info.chat.roominfo.exchange));
 		serv_got_chat_invite(gc,
 				     name ? name : args->info.chat.roominfo.name,
 				     userinfo->sn,
 				     (char *)args->msg,
-				     m);
+				     components);
 		if (name)
 			g_free(name);
 	} else if (args->reqclass & AIM_CAPS_SENDFILE) {
@@ -4831,8 +4830,12 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		/* Buddies */
 		if ((blist = gaim_get_blist()))
 			for (gnode = blist->root; gnode; gnode = gnode->next) {
+				if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+					continue;
 				group = (struct group *)gnode;
 				for (bnode = gnode->child; bnode; bnode = bnode->next) {
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
 					buddy = (struct buddy *)bnode;
 					if (buddy->account == gc->account) {
 						gchar *servernick = gaim_buddy_get_setting(buddy, "servernick");
@@ -5098,10 +5101,12 @@ static GList *oscar_chat_info(struct gaim_connection *gc) {
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Join what group:");
+	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Exchange:");
+	pce->identifier = "exchange";
 	pce->is_int = TRUE;
 	pce->min = 4;
 	pce->max = 20;
@@ -5110,30 +5115,26 @@ static GList *oscar_chat_info(struct gaim_connection *gc) {
 	return m;
 }
 
-static void oscar_join_chat(struct gaim_connection *g, GList *data) {
+static void oscar_join_chat(struct gaim_connection *g, GHashTable *data) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	aim_conn_t *cur;
-	char *name;
-	int *exchange;
+	char *name, *exchange;
 
-	if (!data || !data->next)
-		return;
-
-	name = data->data;
-	exchange = data->next->data;
+	name = g_hash_table_lookup(data, "room");
+	exchange = g_hash_table_lookup(data, "exchange");
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Attempting to join chat room %s.\n", name);
 	if ((cur = aim_getconn_type(od->sess, AIM_CONN_TYPE_CHATNAV))) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "chatnav exists, creating room\n");
-		aim_chatnav_createroom(od->sess, cur, name, *exchange);
+		aim_chatnav_createroom(od->sess, cur, name, atoi(exchange));
 	} else {
 		/* this gets tricky */
 		struct create_room *cr = g_new0(struct create_room, 1);
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "chatnav does not exist, opening chatnav\n");
-		cr->exchange = *exchange;
+		cr->exchange = atoi(exchange);
 		cr->name = g_strdup(name);
 		od->create_rooms = g_slist_append(od->create_rooms, cr);
 		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_CHATNAV);

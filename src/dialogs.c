@@ -403,6 +403,12 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	gtk_widget_show_all(w->window);
 }
 
+void do_remove_chat(struct chat *chat)
+{
+	gaim_blist_remove_chat(chat);
+	gaim_blist_save();
+}
+
 void do_remove_buddy(struct buddy *b)
 {
 	struct group *g;
@@ -433,14 +439,16 @@ void do_remove_group(struct group *g)
 {
 	GaimBlistNode *b = ((GaimBlistNode*)g)->child;
 	while (b) {
-		struct buddy *bd = (struct buddy *)b;
-		struct gaim_conversation *c = gaim_find_conversation(bd->name);
-		if(bd->account->gc) {
-			serv_remove_buddy(bd->account->gc, bd->name, g->name);
-			gaim_blist_remove_buddy(bd);
+		if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
+			struct buddy *bd = (struct buddy *)b;
+			struct gaim_conversation *c = gaim_find_conversation(bd->name);
+			if(bd->account->gc) {
+				serv_remove_buddy(bd->account->gc, bd->name, g->name);
+				gaim_blist_remove_buddy(bd);
 
-			if (c != NULL)
-				gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+				if (c != NULL)
+					gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+			}
 		}
 		b = b->next;
 	}
@@ -457,6 +465,13 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), name);
 	do_ask_dialog(_("Remove Buddy"), text, bd, _("Remove Buddy"), do_remove_buddy, _("Cancel"), NULL, NULL, FALSE);
+	g_free(text);
+}
+
+void show_confirm_del_chat(struct chat *chat)
+{
+	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), chat->alias);
+	do_ask_dialog(_("Remove Chat"), text, chat, _("Remove Chat"), do_remove_chat, _("Cancel"), NULL, NULL, FALSE);
 	g_free(text);
 }
 
@@ -1162,7 +1177,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
 
 	create_online_user_names(a);
-	
+
 	/* End of account box */
 
 	g_signal_connect(G_OBJECT(a->window), "response", G_CALLBACK(do_add_buddy), a);
@@ -1172,6 +1187,278 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	if (group != NULL) 
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 }
+
+struct addchat {
+    struct gaim_account *account;
+    GtkWidget *window;
+	GtkWidget *account_menu;
+	GtkWidget *alias_entry;
+	GtkWidget *group_combo;
+	GtkWidget *entries_box;
+	GtkSizeGroup *sg;
+	GList *entries;
+};
+
+static void do_add_chat(GtkWidget *w, struct addchat *ac) {
+	GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	GList *tmp;
+
+	struct chat *chat;
+	struct group *group;
+	const char *group_name;
+
+	for(tmp = ac->entries; tmp; tmp = tmp->next) {
+		if(g_object_get_data(tmp->data, "is_spin")) {
+			g_hash_table_replace(components,
+					g_strdup(g_object_get_data(tmp->data, "identifier")),
+					g_strdup_printf("%d",
+						gtk_spin_button_get_value_as_int(tmp->data)));
+		} else {
+			g_hash_table_replace(components,
+					g_strdup(g_object_get_data(tmp->data, "identifier")),
+					g_strdup(gtk_entry_get_text(tmp->data)));
+		}
+	}
+
+	chat = gaim_chat_new(ac->account, gtk_entry_get_text(GTK_ENTRY(ac->alias_entry)), components);
+
+	group_name = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(ac->group_combo)->entry));
+	if (!(group = gaim_find_group(group_name))) {
+		group = gaim_group_new(group_name);
+		gaim_blist_add_group(group, NULL);
+	}
+
+	gaim_blist_add_chat(chat, group, NULL);
+	gaim_blist_save();
+
+	gtk_widget_destroy(ac->window);
+	g_list_free(ac->entries);
+
+	g_free(ac);
+}
+
+static void do_add_chat_resp(GtkWidget *w, int resp, struct addchat *ac) {
+	if(resp == GTK_RESPONSE_OK) {
+		do_add_chat(NULL, ac);
+	} else {
+		gtk_widget_destroy(ac->window);
+		g_list_free(ac->entries);
+		g_free(ac);
+	}
+}
+
+
+static void rebuild_addchat_entries(struct addchat *ac) {
+	GList *list, *tmp;
+	struct proto_chat_entry *pce;
+
+	while(GTK_BOX(ac->entries_box)->children)
+		gtk_container_remove(GTK_CONTAINER(ac->entries_box),
+				((GtkBoxChild *)GTK_BOX(ac->entries_box)->children->data)->widget);
+
+	if(ac->entries)
+		g_list_free(ac->entries);
+
+	ac->entries = NULL;
+
+	list = GAIM_PLUGIN_PROTOCOL_INFO(ac->account->gc->prpl)->chat_info(ac->account->gc);
+
+	for(tmp = list; tmp; tmp = tmp->next) {
+		GtkWidget *label;
+		GtkWidget *rowbox;
+		pce = tmp->data;
+
+		rowbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(ac->entries_box), rowbox, FALSE, FALSE, 0);
+
+		label = gtk_label_new(pce->label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_size_group_add_widget(ac->sg, label);
+		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+
+		if(pce->is_int) {
+			GtkObject *adjust;
+			GtkWidget *spin;
+			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
+					1, 10, 10);
+			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+			g_object_set_data(G_OBJECT(spin), "is_spin", GINT_TO_POINTER(TRUE));
+			g_object_set_data(G_OBJECT(spin), "identifier", pce->identifier);
+			ac->entries = g_list_append(ac->entries, spin);
+			gtk_widget_set_size_request(spin, 50, -1);
+			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
+		} else {
+			GtkWidget *entry = gtk_entry_new();
+			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
+			ac->entries = g_list_append(ac->entries, entry);
+
+			if(pce->def)
+				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
+
+			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
+
+			g_signal_connect(G_OBJECT(entry), "activate",
+					G_CALLBACK(do_add_chat), ac);
+		}
+	}
+
+	gtk_widget_show_all(ac->entries_box);
+}
+
+static void addchat_select_account(GObject *w, struct gaim_connection *gc)
+{
+	struct addchat *ac = g_object_get_data(w, "addchat");
+
+	if(ac->account->protocol == gc->account->protocol) {
+		ac->account = gc->account;
+	} else {
+		ac->account = gc->account;
+		rebuild_addchat_entries(ac);
+	}
+}
+
+static void create_online_account_menu_for_add_chat(struct addchat *ac)
+{
+	char buf[2048]; /* Never hurts to be safe ;-) */
+	GSList *g = connections;
+	struct gaim_connection *c;
+	GtkWidget *menu, *opt;
+	int count = 0;
+	int place = 0;
+
+	menu = gtk_menu_new();
+
+	while (g) {
+		c = (struct gaim_connection *)g->data;
+		g_snprintf(buf, sizeof(buf), "%s (%s)", 
+				c->username, c->prpl->info->name);
+		opt = gtk_menu_item_new_with_label(buf);
+		g_object_set_data(G_OBJECT(opt), "addchat", ac);
+		g_signal_connect(GTK_OBJECT(opt), "activate",
+				G_CALLBACK(addchat_select_account),
+				c);
+		gtk_widget_show(opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+
+		/* Now check to see if it's our current menu */
+		if (c->account == ac->account) {
+			place = count;
+			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
+			gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), count);
+
+			/* Do the cha cha cha */
+		}
+
+		count++;
+
+		g = g->next;
+	}
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(ac->account_menu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(ac->account_menu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), place);
+}
+
+void show_add_chat(struct gaim_account *account, struct group *group) {
+    struct addchat *ac = g_new0(struct addchat, 1);
+    struct gaim_gtk_buddy_list *gtkblist;
+
+	GtkWidget *label;
+	GtkWidget *rowbox;
+	GtkWidget *hbox;
+	GtkWidget *vbox;
+	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+			GTK_ICON_SIZE_DIALOG);
+
+    gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
+    ac->account = account ? account :
+		((struct gaim_connection *)connections->data)->account;
+
+	ac->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+    ac->window = gtk_dialog_new_with_buttons(_("Add Chat"),
+            GTK_WINDOW(gtkblist->window), 0,
+            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+            GTK_STOCK_ADD, GTK_RESPONSE_OK,
+            NULL);
+
+    gtk_dialog_set_default_response(GTK_DIALOG(ac->window), GTK_RESPONSE_OK);
+    gtk_container_set_border_width(GTK_CONTAINER(ac->window), 6);
+    gtk_window_set_resizable(GTK_WINDOW(ac->window), FALSE);
+    gtk_dialog_set_has_separator(GTK_DIALOG(ac->window), FALSE);
+    gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(ac->window)->vbox), 12);
+    gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(ac->window)->vbox),
+            6);
+	gtk_window_set_role(GTK_WINDOW(ac->window), "add_chat");
+
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(ac->window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	label = gtk_label_new(_("Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"));
+	gtk_widget_set_size_request(label, 400, -1);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Account:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_size_group_add_widget(ac->sg, label);
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+
+	ac->account_menu = gtk_option_menu_new();
+	gtk_box_pack_end(GTK_BOX(rowbox), ac->account_menu, TRUE, TRUE, 0);
+
+	create_online_account_menu_for_add_chat(ac);
+
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Alias:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_size_group_add_widget(ac->sg, label);
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+
+	ac->alias_entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(rowbox), ac->alias_entry, TRUE, TRUE, 0);
+
+	ac->entries_box = gtk_vbox_new(FALSE, 5);
+    gtk_container_set_border_width(GTK_CONTAINER(ac->entries_box), 0);
+	gtk_box_pack_start(GTK_BOX(vbox), ac->entries_box, TRUE, TRUE, 0);
+
+	rebuild_addchat_entries(ac);
+
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+    label = gtk_label_new(_("Group:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_size_group_add_widget(ac->sg, label);
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+
+    ac->group_combo = gtk_combo_new();
+    gtk_combo_set_popdown_strings(GTK_COMBO(ac->group_combo), groups_tree());
+	gtk_box_pack_end(GTK_BOX(rowbox), ac->group_combo, TRUE, TRUE, 0);
+
+	if (group)
+		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(ac->group_combo)->entry), group->name);
+
+	g_signal_connect(G_OBJECT(ac->window), "response", G_CALLBACK(do_add_chat_resp), ac);
+
+	gtk_widget_grab_focus(ac->alias_entry);
+
+	gtk_widget_show_all(ac->window);
+}
+
 
 
 /*------------------------------------------------------------------------*
@@ -3277,6 +3564,19 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 	return;
 }
 
+static void do_alias_chat(GtkWidget *w, int resp, struct chat *chat)
+{
+	if(resp == GTK_RESPONSE_OK) {
+		GtkWidget *entry = g_object_get_data(G_OBJECT(w), "alias_entry");
+		const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+		if(text && strlen(text)) {
+			gaim_blist_alias_chat(chat, text);
+			gaim_blist_save();
+		}
+	}
+	gtk_widget_destroy(w);
+}
+
 static void
 do_alias_buddy(GtkWidget *w, int resp, struct alias_dialog_info *info)
 {
@@ -3294,6 +3594,75 @@ do_alias_buddy(GtkWidget *w, int resp, struct alias_dialog_info *info)
 	alias_dialog = NULL;
 
 	g_free(info);
+}
+
+void alias_dialog_chat(struct chat *chat) {
+	GtkWidget *dialog;
+	GtkWidget *hbox;
+	GtkWidget *img;
+	GtkWidget *vbox;
+	GtkWidget *label;
+	GtkWidget *alias_entry;
+
+	dialog = gtk_dialog_new_with_buttons(_("Alias Buddy"), NULL,
+			GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
+										GTK_RESPONSE_OK);
+
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
+	gtk_container_set_border_width(
+			GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+
+	/* The main hbox container. */
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
+
+	/* The dialog image. */
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+			GTK_ICON_SIZE_DIALOG);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	/* The main vbox container. */
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	/* Setup the label containing the description. */
+	label = gtk_label_new(_("Please enter an aliased name for this chat.\n"));
+	gtk_widget_set_size_request(GTK_WIDGET(label), 350, -1);
+
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+	/* The "Alias:" label. */
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Alias:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	/* The alias entry field. */
+	alias_entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), alias_entry, FALSE, FALSE, 0);
+	gtk_entry_set_activates_default(GTK_ENTRY(alias_entry), TRUE);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), alias_entry);
+
+	gtk_entry_set_text(GTK_ENTRY(alias_entry), chat->alias);
+
+	g_object_set_data(G_OBJECT(dialog), "alias_entry", alias_entry);
+
+	g_signal_connect(G_OBJECT(dialog), "response",
+			G_CALLBACK(do_alias_chat), chat);
+
+	gtk_widget_show_all(dialog);
 }
 
 void

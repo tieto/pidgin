@@ -458,20 +458,16 @@ static GList *nap_chat_info(struct gaim_connection *gc)
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Join what group:");
+	pce->identifier = "name";
 	m = g_list_append(m, pce);
 
 	return m;
 }
 
-static void nap_join_chat(struct gaim_connection *gc, GList *data)
+static void nap_join_chat(struct gaim_connection *gc, GHashTable *data)
 {
 	gchar buf[NAP_BUF_LEN];
-	char *name;
-
-	if (!data)
-		return;
-
-	name = data->data;
+	char *name = g_hash_table_lookup(data, "name");
 
 	/* Make sure the name has a # preceeding it */
 	if (name[0] != '#') 

@@ -498,9 +498,11 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group,
 		GaimBlistNode *b = ((GaimBlistNode*)old_group)->child;
 
 		while (b) {
-			struct buddy *bd = (struct buddy *)b;
-			if (bd->account == g->account)
-				tobemoved = g_list_append(tobemoved, bd->name);
+			if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
+				struct buddy *bd = (struct buddy *)b;
+				if (bd->account == g->account)
+					tobemoved = g_list_append(tobemoved, bd->name);
+			}
 			b = b->next;
 		}
 
@@ -601,7 +603,7 @@ void serv_warn(struct gaim_connection *g, char *name, int anon)
 		prpl_info->warn(g, name, anon);
 }
 
-void serv_join_chat(struct gaim_connection *g, GList *data)
+void serv_join_chat(struct gaim_connection *g, GHashTable *data)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -1194,25 +1196,19 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 
 struct chat_invite_data {
 	struct gaim_connection *gc;
-	GList *str;
+	GHashTable *components;
 };
 
 static void chat_invite_data_free(struct chat_invite_data *cid)
 {
-	GList *tmp = cid->str;
-	while (tmp) {
-		/* this is either a g_malloc'd char* or g_malloc'd int* */
-		g_free(tmp->data);
-		tmp = tmp->next;
-	}
-	if (cid->str)
-		g_list_free(cid->str);
+	if (cid->components)
+		g_hash_table_destroy(cid->components);
 	g_free(cid);
 }
 
 static void chat_invite_accept(struct chat_invite_data *cid)
 {
-	serv_join_chat(cid->gc, cid->str);
+	serv_join_chat(cid->gc, cid->components);
 
 	chat_invite_data_free(cid);
 }
@@ -1220,7 +1216,7 @@ static void chat_invite_accept(struct chat_invite_data *cid)
 
 
 void serv_got_chat_invite(struct gaim_connection *gc, char *name,
-						  char *who, char *message, GList *data)
+						  char *who, char *message, GHashTable *data)
 {
 	char buf2[BUF_LONG];
 	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
@@ -1238,7 +1234,7 @@ void serv_got_chat_invite(struct gaim_connection *gc, char *name,
 				   who, gc->username, name);
 
 	cid->gc = gc;
-	cid->str = data;
+	cid->components = data;
 
 	do_ask_dialog(_("Buddy Chat Invite"), buf2, cid, _("Accept"), chat_invite_accept, _("Cancel"), chat_invite_data_free, NULL, FALSE);
 }

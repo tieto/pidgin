@@ -1579,8 +1579,12 @@ irc_parse(struct gaim_connection *gc, char *buf)
 	}
 
 	if (!strcmp(cmd, "INVITE")) {
-		char *chan = g_strdup(word[4]);
-		serv_got_chat_invite(gc, chan + 1, nick, NULL, g_list_append(NULL, chan));
+		GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, g_free);
+
+		g_hash_table_replace(components, g_strdup("channel"), g_strdup(word[4]));
+
+		serv_got_chat_invite(gc, word[4] + 1, nick, NULL, components);
 	} else if (!strcmp(cmd, "JOIN")) {
 		irc_parse_join(gc, nick, word, word_eol);
 	} else if (!strcmp(cmd, "KICK")) {
@@ -2471,17 +2475,19 @@ irc_chat_info(struct gaim_connection *gc)
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Channel:");
+	pce->identifier = "channel";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Password:");
+	pce->identifier = "password";
 	m = g_list_append(m, pce);
 
 	return m;
 }
 
-static void 
-irc_join_chat(struct gaim_connection *gc, GList *data)
+static void
+irc_join_chat(struct gaim_connection *gc, GHashTable *data)
 {
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];
@@ -2489,9 +2495,10 @@ irc_join_chat(struct gaim_connection *gc, GList *data)
 
 	if (!data)
 		return;
-	name = data->data;
-	if (data->next) {
-		pass = data->next->data;
+
+	name = g_hash_table_lookup(data, "channel");
+	pass = g_hash_table_lookup(data, "password");
+	if (pass) {
 		g_snprintf(buf, sizeof(buf), "JOIN %s %s\r\n", name, pass);
 	} else
 		g_snprintf(buf, sizeof(buf), "JOIN %s\r\n", name);

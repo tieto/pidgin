@@ -167,11 +167,11 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 			continue;
 		m = (struct group *)gnode;
 		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-				continue;
-			n = (struct buddy *)bnode;
-			if(n->account == gc->account) {
-				n->present = GAIM_BUDDY_OFFLINE;
+			if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+				n = (struct buddy *)bnode;
+				if(n->account == gc->account) {
+					n->present = GAIM_BUDDY_OFFLINE;
+				}
 			}
 		}
 	}
@@ -1463,11 +1463,14 @@ static void do_del_acct(struct gaim_account *account)
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			struct buddy *b = (struct buddy *)bnode;
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-				continue;
-			if(b->account == account) {
-				gaim_blist_remove_buddy(b);
+			if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+				struct buddy *b = (struct buddy *)bnode;
+				if(b->account == account)
+					gaim_blist_remove_buddy(b);
+			} else if(GAIM_BLIST_NODE_IS_CHAT(bnode)) {
+				struct chat *chat = (struct chat *)bnode;
+				if(chat->account == account)
+					gaim_blist_remove_chat(chat);
 			}
 		}
 		if(!gnode->child) {
@@ -1706,6 +1709,8 @@ void account_online(struct gaim_connection *gc)
 	do_away_menu();
 	do_proto_menu();
 
+	gaim_blist_add_account(gc->account);
+
 	/*
 	 * XXX This is a hack! Remove this and replace it with a better event
 	 *     notification system.
@@ -1744,11 +1749,11 @@ void account_online(struct gaim_connection *gc)
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			struct buddy *b = (struct buddy *)bnode;
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-				continue;
-			if(b->account == gc->account) {
-				add_buds = g_list_append(add_buds, b->name);
+			if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+				struct buddy *b = (struct buddy *)bnode;
+				if(b->account == gc->account) {
+					add_buds = g_list_append(add_buds, b->name);
+				}
 			}
 		}
 	}

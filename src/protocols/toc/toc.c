@@ -818,14 +818,18 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				gaim_chat_remove_user(chat, buddy, NULL);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
-		int *id = g_new0(int, 1);
+		int id;
+		GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, g_free);
 
 		name = strtok(NULL, ":");
-		sscanf(strtok(NULL, ":"), "%d", id);
+		sscanf(strtok(NULL, ":"), "%d", &id);
 		who = strtok(NULL, ":");
 		message = strtok(NULL, ":");
 
-		serv_got_chat_invite(gc, name, who, message, g_list_append(NULL, id));
+		g_hash_table_replace(components, g_strdup("id"), g_strdup_printf("%d", id));
+
+		serv_got_chat_invite(gc, name, who, message, components);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_LEFT")) {
 		GSList *bcs = gc->buddy_chats;
 		struct gaim_conversation *b = NULL;
@@ -1185,10 +1189,12 @@ static GList *toc_chat_info(struct gaim_connection *gc)
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Join what group:");
+	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Exchange:");
+	pce->identifier = "exchange";
 	pce->is_int = TRUE;
 	pce->min = 4;
 	pce->max = 20;
@@ -1197,23 +1203,20 @@ static GList *toc_chat_info(struct gaim_connection *gc)
 	return m;
 }
 
-static void toc_join_chat(struct gaim_connection *g, GList *data)
+static void toc_join_chat(struct gaim_connection *g, GHashTable *data)
 {
 	char buf[BUF_LONG];
-	int *exchange;
-	char *name;
-	int *i;
+	char *name, *exchange;
+	char *id;
 
-	if (!data)
-		return;
+	name = g_hash_table_lookup(data, "room");
+	exchange = g_hash_table_lookup(data, "exchange");
+	id = g_hash_table_lookup(data, "id");
 
-	if (!data->next) {
-		i = data->data;
-		g_snprintf(buf, 255, "toc_chat_accept %d", *i);
+	if (id) {
+		g_snprintf(buf, 255, "toc_chat_accept %d", atoi(id));
 	} else {
-		name = data->data;
-		exchange = data->next->data;
-		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", *exchange, name);
+		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", atoi(exchange), name);
 	}
 
 	sflap_send(g, buf, -1, TYPE_DATA);
