@@ -926,7 +926,7 @@ GtkWidget *conv_page() {
 	button = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
 
-	close_checkbox = prefs_checkbox(_("Show _close button on tabs."),
+	close_checkbox = prefs_checkbox(_("Show _close button on tabs"),
 									"/gaim/gtk/conversations/close_on_tabs",
 									vbox);
 
@@ -937,7 +937,7 @@ GtkWidget *conv_page() {
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
 
-	icons_checkbox = prefs_checkbox(_("Show status _icons on tabs."),
+	icons_checkbox = prefs_checkbox(_("Show status _icons on tabs"),
 									"/gaim/gtk/conversations/icons_on_tabs",
 									vbox);
 

@@ -6145,11 +6145,11 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "IMs und Chats im _selben Reiter-Fenster anzeigen"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "_Beenden-Button in Reitern zeigen."
 
 #: src/gtkprefs.c:950
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "Zeige Status-_Icons in Reitern."
 
 #: src/gtkprefs.c:977 src/gtkprefs.c:1033

@@ -6003,7 +6003,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "IM とチャットを同じタブウィンドウで表示する (_S)"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "タブに閉じるボタンを表示する (_C)"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

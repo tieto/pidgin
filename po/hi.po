@@ -5957,7 +5957,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "आईएम IM और चैट को एक ही बटनदार खिड़की में दिखाएं ( _t)"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "टैब्स में बन्द बटन दिखाएं (_c)."
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

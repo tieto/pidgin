@@ -5992,7 +5992,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Afficher les messages et les discussions dans des fenêtres à onglets"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Afficher le bouton de fermeture (_X) sur les onglets"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

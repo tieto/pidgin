@@ -6118,11 +6118,11 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "即時訊息和聊天均以標籤視窗顯示(_T)"
 
 #: src/gtkprefs.c:929
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "在標籤上顯示關閉鍵(_C)。"
 
 #: src/gtkprefs.c:940
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "在標籤上顯示好友狀態(_I)。"
 
 #: src/gtkprefs.c:967 src/gtkprefs.c:1023

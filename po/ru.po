@@ -6028,7 +6028,7 @@ msgstr "Показывать все чаты в одном окне"
 
 #: src/gtkprefs.c:939
 #, fuzzy
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Показывать кнопки как:"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

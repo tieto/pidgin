@@ -5889,7 +5889,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Visa snabbmeddelanden och chattar i _samma fönster."
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Visa stängningsknapp på fliken"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

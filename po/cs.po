@@ -5896,7 +5896,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Zobrazovat IM a chaty v oknech se zá_ložkami."
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Zobrazovat na záložkách tlačítko z_avřít."
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

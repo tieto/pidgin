@@ -6168,7 +6168,7 @@ msgstr "Zobraz v¹etky chaty v jednom okne so zálo¾kami"
 
 #: src/gtkprefs.c:939
 #, fuzzy
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Zobraz tlaèítka ako:"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

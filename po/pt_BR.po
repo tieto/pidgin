@@ -6086,11 +6086,11 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Mostrar mensagens instantâneas e chats em janelas com _abas"
 
 #: src/gtkprefs.c:929
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Mostrar o botão de _fechar nas abas."
 
 #: src/gtkprefs.c:940
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "Mostrar os í_cones de status nas abas."
 
 #: src/gtkprefs.c:967 src/gtkprefs.c:1023

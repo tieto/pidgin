@@ -6131,7 +6131,7 @@ msgstr "Näytä ryhmäkeskustelut samassa jaetussa ikkunassa"
 
 #: src/gtkprefs.c:939
 #, fuzzy
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Näytä painikkeissa: "
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

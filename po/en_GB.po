@@ -5919,8 +5919,8 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Show IMs and chats in _tabbed windows"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
-msgstr "Show _close button on tabs."
+msgid "Show _close button on tabs"
+msgstr "Show _close button on tabs"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022
 msgid "Window"

@@ -5980,7 +5980,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "_Mostrar MIs y chats en una única ventana con pestañas."
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Mostrar botones de _cerrado en las pestañas."
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

@@ -6139,7 +6139,7 @@ msgstr "Чат-овете в един прозорец с етикети"
 
 #: src/gtkprefs.c:939
 #, fuzzy
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Бутоните като:"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

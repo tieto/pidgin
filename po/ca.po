@@ -6101,7 +6101,7 @@ msgstr ""
 "Mostrar Misstages Instantanis i Converses a la _mateixa finestra en fiches."
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Mostar el botó de _tancar a les fiches."
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

@@ -5905,11 +5905,11 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Gesprekken en chats in venster met tabbleden plaatsen"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "_SluitKnoppen weergeven op tabbladen"
 
 #: src/gtkprefs.c:950
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "Status_pictogrammen weergeven op tabbladen."
 
 #: src/gtkprefs.c:977

@@ -6084,11 +6084,11 @@ msgstr ""
 "nella _stessa finestra."
 
 #: src/gtkprefs.c:929
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Mostra il pulsante di _chiusura sulle linguette."
 
 #: src/gtkprefs.c:940
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "Mostra le _icone di stato sulle linguette."
 
 #: src/gtkprefs.c:967 src/gtkprefs.c:1023

@@ -5778,7 +5778,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "메신저와 채팅을 탭 창에서 보여줌(_T)"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "탭에서 닫기 단추를 보여주기(_C): "
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

@@ -5997,7 +5997,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Prikaži brze poruke i razgovore u prozorima pomoću _listova"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Prikaži dugmiće za _zatvaranje na jezičcima."
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

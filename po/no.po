@@ -6033,7 +6033,7 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Vis direktemeldinger og samtalegrupper i samme vindu"
 
 #: src/gtkprefs.c:939
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "Vis lukkeknapp på faner"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022

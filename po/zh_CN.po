@@ -5922,11 +5922,11 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "在同一标签窗口内显示即时消息和聊天(_T)"
 
 #: src/gtkprefs.c:929
-msgid "Show _close button on tabs."
+msgid "Show _close button on tabs"
 msgstr "在标签上显示关闭按钮(_C)。"
 
 #: src/gtkprefs.c:940
-msgid "Show status _icons on tabs."
+msgid "Show status _icons on tabs"
 msgstr "在标签上显示状态图标(_I)。"
 
 #: src/gtkprefs.c:967 src/gtkprefs.c:1023
