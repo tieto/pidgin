@@ -1,399 +1,61 @@
-WINGAIM:
-	font issues?
-	resizing windows does not work correctly [what's the problem here?]
-		resizing blist only updates window when you let go of mouse,
-		i can't think of what else i might have ment after having 
-		deryni test things
-	Gtk windows that appear when you hover over a button, and just stay there and never close until you click on them once
-	sounds while away?	
 
-gtk2/new prefs
-	when a conversation has been manually resized, it should not be 
-		resized to the default on: 1)buddy icon. 2)im image 3)new tab
-	blist shortcuts apparently not working
-	better gtk2-ified icons: maybe a send icon? review the ones we're using now. do they make sense?
-	sound player preference not being saved
-	resize blist doesn't work on some systems.
-	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
-		smiles and links do not.
-	buddy ticker stays arou+nd when you sign off - showing the 
-		buddies who were online
-	text like <font color=blah>with only some text</font> being colored causes the whole line to be colored. 
-	lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
-	on away tab, if you set the time between responces, you 
-		reset the type of idle time reporting. similar
-		problems may exist in other combinations.
-	when auto-away (by idle time) is activated, away message window 
-		does not pop up.
-	pressing save on new away message dialog does not immediately add 
-		away message to list of away messages. 
-	ignore font faces doesn't ignore the font faces in a person's info
-	kicking someone in #name-extention causes a kick to display in #name as well
-		and vice-versa
-	the preference for the width of a chat is not being used when chats and 
-		conversations are in the same window.
-	resizing text entry area below default doesn't work well.
-		some people report being unable to shrink it at all
-	escape to close window pref or function doesn't work right
-		has to do with incorrect initial focus.
-	there is a blank line in the blist for a couple seconds after someone
-		signs off. [gtk2 bug with the deprecated gtklist?]
-	themes don't set background correctly in the blist. (reported, not verified)
+Gaim TODO List- UI stuff
+  (added Wed Oct 30 21:03:36 2002, incomplete, priority high)
 
-GAIM-REMOTE:
-	need a doc written up for gaim-remote on usage
-	need to implement everything listed in gaim-remote --help
+- Prefs stuff
+  (added Wed Oct 30 21:05:23 2002, incomplete, priority high)
 
-PORTABILITY/i18n
-icq i18n
-info dialog
-	
-DISCUSSION:
-	protocol action to log into webmail for those that support such
-		(aim, yahoo, msn)
-		maybe a r-click option to send to user(yahoo, msn)
-	"console beep" sound option should use different frequency beeps
-		for different events, or at least give some way to allow
-		this behavior. 
-	do we really need some of the preferences? (Ignore TIK messages.
-		Does anyone use that method of retrieving Away messages anymore?)
-		toc does?
-	show alias in list of people in chat
-	tab complete to alias, translate to nick on send for chat
-	disable x on blist when docklet loaded?
-	timestamp on debug messages?
-	ximian serial numbers in rpms cause... problems.
-	sorting of conversation tabs, if the ordering of left-to-right
-		order by opening isn't good enough for you
-	msn auth expires (better, but still not perfect)
-	rpm and deb installs should create menu items in kde if possible
-	gaim should detect if message is sent and only log on success
-		for protocols capable of offline messaging, this would
-		always log, but aim messages would only be logged if
-		sent to an online person. this would essentially entail
-		making logging dependent on the return status of the
-		serv send msg command. 
-	option to disable close for x seconds after recieve im. this would
-		short circuit missing messages as you close the window.
-		make it an option that's off by default. 
-	the privacy dialog has five different options now.  this looks
-		rather ugly.  When we redesign the dialog, perhaps we should
-		change the privacy setting to a combobox? 
-	options on key bindings. (differnet window managers map different things. 
-		make the control key switchable with the alt key or similar)
-		maybe make control/alt+arrow optionally replace control+bracket
-		is this a good idea?
+- Core stuff
+  (added Wed Oct 30 21:09:25 2002, incomplete, priority high)
 
+- away rethink
+  (added Wed Oct 30 23:56:48 2002, incomplete, priority high)
 
-IN GENERAL:
-	Do we still want 'import'?  If so, it should be under 'tools', not 'file'
-	add a way for a plugin to store/retrive config values (fixed?)
-	segfault on pressing back with messages in queue if coming back
-		for the second time in a given instance of gaim
-	stack trace should exit instead of just sitting there
-	documentation needed. (both online and not)
-	check to make sure gaimrc properly unescapes things like a " in 
-		a password as the .gaimrc file is read in.
-	PERMIT ONLY PEOPLE ON MY LIST TO IM ME IS NEEDED ASAP!!!!!!!!
-		this is now possible for aim, but not for yahoo et al
-	automake 1.4 support bug, non-root users can't get gaim to compile
-		by putting the gtk2 and glib2 m4 files in the m4 dir
-	automake 1.6 support not perfect.
-	add ircproxy option to proxy preferences.
-	per-sn controls on how to compute idle time
-	self alias does not display in irc chat. (and maybe other chats)
-	adding and removing buddies needs cleaned up.
-		basically, add_buddy should be calling ui_add_buddy 
-		and serv_add_buddy as needed (require an extra arg to 
-		add_buddy to tell it what needs done) and the various
-		ways a buddy can come to be needing added should be
-		calling some type of request_add_buddy (this would be
-		part of both the core<->ui interface and the core<->prpl
-		interface
-	convert from licq and eb to gaim
-		licq has a directory with one file per buddy
-		eb i don't know. but the trick there would be 
-		converting to several accounts at once.
-		we have a perl script for licq and c code for eb.
-	fix memory leaks
-	block buddy option from right click menu in blist
-	sounds/Makefile needs to use host CC, not target 
-		(thats the only part that seems broken for cross-compiling)
-		--Disconnect
-	screenshot plugin
-	xmms remote plugin
-	statusimage plugin
-	status report w/out being on own list
-	SEARCH FUNCTION FOR LOG FILES
-	preference to set logfile path. (i think there is a patch to add this)
-	gzip storage of logs
-	fix crash when someone writes just as you close the chat window.
-	make the option to have escape close a window be global (error messages, account editor, ect)
-	throw-away away message (unsaved) for single account (vrs set all away)
+- gtk1-stable
+  (added Sun Nov 10 20:28:19 2002, incomplete, priority high)
 
-----
-THE CORE:
-	Need to write the core side of the core-ui protocol
-	Non-blocking gethostbyname()
-	Cancelable proxy_connect
-	remember previous state better. both away, and allow start to invisible.
-	better privacy controls.
-	networking code rethink (libgnet?)
-	netbsd gethostbyname() problem
-	GPG Encryption of messages (gaim-e plugin included with gaim would satify this)
-	Separate core functions from UI stuff.
-		about.c, applet.[ch], away.c, browser.c, buddy.c, conversation.c,
-		convo.h, dialogs.c, gtk*, plugins.c, prefs.c, prpl.c, sound.c,
-		ticker.c, ui.h
-			little to no work (mostly GTK)
+- zephyr
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-		core.[ch], html.c, list.c, module.c, multi.h, proxy.[ch], perl.c,
-		prpl.h, util.c
-			little to no work (mostly CORE)
+- yahoo
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-		buddy_chat.c, gaim.h, idle.c, multi.c, server.c
-			standard splitting (for idleness, core needs to be in
-			charge of gaim-use idleness)
+- oscar
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-		aim.c - need to redo main() completely
-			- current main should be moved mostly to core
-			- GTK main should connect to core
-		gaimrc.c - Need to figure out how to save UI preferences
+- napster
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-		Ideally at the end of this the prpls should only need to include
-		prpl.h and they'll get everything they need without anything
-		*cough*GTK*cough* that they don't.
+- msn
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-----
-THE PROTOCOLS:
+- jabber
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-TOC:
-	Other RVOUS Actions
+- irc
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-AIM(via oscar):
-	watch for aol's upcoming increased aim/icq merge
-	groups are read off server in a different order from
-		winaim. this is a problem for people who use
-		both and want thier list to be in a certain 
-		order. along the same lines, because we
-		don't read in the same order i'd bet, 
-		we don't write to the server in a way
-		that would cause winaim to produce the
-		ordering gaim has. 
-	option to ignore chat room invitations. (this is something you 
-		could vary concievably want to be done per account, 
-		so perhaps a protocol action would be best)
-	some way to close direct connect w/out closing convo.
-	idle time display in get_info displays in minutes instead
-		of computing hours and days as the blist does
-	in non-tabed conversations, clicking the x to close the
-		window does not close the direct connection.
-		using escape and the close button do.
-	STILL have blist corruption troubles?
-	canceled direct im should still allow new attempt
-	failed direct im attempt should allow new attempt
-		some way to cancel an attempt that isn't happening
-	Colors in Chat room are wrong (using Gold too much)
-	away message when directly connected bug 
-		only displays on one side
-		if direct connected to winaim, lockup when 
-			winaim goes away, unlocks when winaim returns
-	Voice Chat
+- gg
+  (added Wed Dec 31 19:00:00 1969, incomplete, priority medium)
 
-ICQ(via oscar, who cares about the icq prpl):
-	get info on offline user incorrectly says user is online.
-	typing notification
-	set the Nickname to be the self-alias
-	Chat (this is different from aim chat)
-	File Transfer (do we really want this?)
-	New User Registration
-	color support
-	more privacy options
-	more info support
-	increased authorization support
-	set status message 
-		and of course when gaim can set them, it needs to
-		be able to get the ones it sets. (yes this is 
-		redundent. its a reflection of my current mood)
-	search for users
-	option to set alias to nick
+- WinGaim specific stuff
+  (added Wed Oct 30 21:02:06 2002, incomplete, priority medium)
 
-Yahoo:
-	new mail message with no info in it ie ()
-	web cam support
-	bug: won't allow me to delete myself from my list past sign on
-	Chat
-	File Transfer (do we really want this?)
-	color (is this possible)?
-		<fade> tags need parsed.
-	encrypted conversations
-	show idle time on blist
-	display profile
-	make away message display like that of aim/icq/jabber
-	auto reply on away
-	privacy options (block, unblock)
-	voice chat
+- gaim-remote stuff
+  (added Wed Oct 30 21:07:09 2002, incomplete, priority medium)
 
-MSN:
-	typing notification is broken in gtk1-stable
-	spaces in friendly names not always unescaped for display, and so displaying
-		as %20 (this may be fixed)
-	bug: some people recieve blank messages. clicking to ignore font faces
-		works around this problem. gaim should detect and use the default
-		font when the requested font isn't found.
-	Majortool says to tell sean about "already in opposite list" 
-		errors are still happening, now whenever you start
-		gaim. follow from prior conversation. 
-		javabsp|away: the (C) and (R) works
-		(23:02:54) MajorTool: LSchiere: yeah what javabsp|away 
-		is talking about but its certain ones
-	bug: doesn't save blist to file on read from server
-		as this could be introducing new people,
-		esp if there is no existing file, it shold.
-	store group name that buddy is in on server
-	set the friendly name to be the self alias
-	typing notification in group chats
-	start group chat support
-	better group chat support in general
-		lots of reports of problems.
-	font face and color send support
-	International freindly name support
-	Need some way of indicating "invite" in IM window
-	File Transfer (do we really want this?)
-	auto reply on away
-	people search function.
-	voice chat
+- In General (i don't know where this should be)
+  (added Wed Oct 30 21:12:16 2002, incomplete, priority medium)
 
-IRC:
-	gaim generates ~5 popups when it fails to sign on
-		an irc server because the nick is already
-		in use.
-	Error 421, unknown command when going away. sometimes.
-	/ban, /kickban, /names
-	CTCP version generates an autoreply when person is away or idle. 
-		the error box used vy it also binds the focus (like
-		all other error popups). i'm not sure there is a way
-		around this second issue. (fixed?)
-	fix segfault on attempted send after having been /remove'ed
-	multi word remove messages
-	auto reply to /msg on away 
-	no list of people on /join 
+- Plugins/Scripts
+  (added Wed Oct 30 21:14:10 2002, incomplete, priority medium)
 
-Jabber:
-	Segfault on account creation, esp. on register new account
-	problem seeing buddies with long blist?
-	make password change take effect w/out restart
-	*sigh* file transfer (do we really need/want this?)
-	Jabber Transports (having them show up on the buddy list should be
-		fairly easy; having an appropriate right-click menu for
-		them should also be somewhat easy. Providing a UI for adding
-		transports should be rather difficult.)
-	Browsing
-	Bug: Opening/closing/re-opening conferences (to the same "room"?)
-		and changing conf. rm. nicks results in wrong nick re-appearing
-		(to other clients) and crash on close of conference dialog.
-	Server Admin operations (messages, etc.)
-	Add option for user info to be published or not in JUD.
-	Ability to "IM" conference room "buddies"
-	Some way to see/list roster items to which you have no subscription
-		yourself?  Some way to delete them or subscribe to them if you want?
-	Show self on buddylist
-	Delete server account.
-	Messaging an "Away" Jabber user doesn't get an away message back?
-	Permit/Deny buddy support.
-	List of users on Jabber server?
-	SSL support
-	show idle time on blist
-	a populate roster from local blist. most useful if you want to migrate a 
-		blist from one account to another, also useful if something freaky
-		happens and the server blist is lost.
-	conferenceing needs straightening out in general
-		some s2s issues, maybe
-		join room 2x issues, maybe
-		colors for nicks
+- i18n/portability stuff
+  (added Wed Oct 30 21:07:43 2002, incomplete, priority low)
 
-Napster: (should this even exist?)
-	File Transfer (do we really want this?)
-	New User Registration
-	remove this protocol?
+- DISCUSSION: entries here are things i'm not sure are desirable or doable.
+  (added Wed Oct 30 20:07:13 2002, incomplete, priority verylow)
 
-Zephyr:
-	God help us.
-
-Gadu-Gadu:
-	New User Registration
-	There's probably 100 other things but since I've hardly used the Windows
-		client before I'm not sure what any of them are
-
-----
-THE UIS:
-
-GTK1.2(some of this applies to gtk2 also):
-	preference to ignore colors not being used or not being saved. in 0.59.5
-	GLib-CRITICAL **: file gstrfuncs.c: line 1194 (g_strcasecmp): assertion `s1 != NULL' failed. 
-		warnings in latest release.
-		it seems that when a certain packet is received, the assertion fails. something 
-		about SIGNON without PAUSE.
-	choose a browser you don't have installed, click a link 2x, crash.
-	option to have input box scroll instead of line wrap. input box only.
-	BUG: hidden smilies don't always work right in protocols with specific smilies. even aim.
-		this is somewhat transitory, and very annoying.
-	copy grabs html as well as text. 
-	bug report: The pixmaps arrow_down.xpm and arrow_right.xpm don't have proper 
-		transparency... it only causes problems if your GTK theme is pixmap based
-	bug: if you remove a group in one prpl, it disappears from the online tab
-		even if there are still buddies in that group online
-	make it so that same sn entries don't merge. use gc's to do this
-	right click on url gives browser choice (preference option)
-	option to choose person on blist when adding to permit/deny lists
-	prpl specfic smiles in group chats.
-	make output of /list searchable
-	option not to raise windows on event while away
-	make entry widget height preference a relative size, that is it doesn't change the
-		overall height of the window.
-	Only show one instance of each gaim_account at a time in the sign on dialog. 
-		reset the progress bar on disconnect instead of creating a new entry.
-	Status labels in buddy list (mostly just for yahoo/msn)
-	buddy pounce -> drop down list of buddies
-	buddy pounce -> add service to list of accounts
-	buddy pounce -> add chooser to sound
-	fix buddy ticker resize bug.
-		can't shrink it below default
-	Transparency for GtkIMHtml
-	Rewrite the HTML parser in GtkIMHtml
-	Moving GTK/GDK and related things out of the prpls
-		TOC: file transfer (move into the core)
-	Better way of showing away state - and possibly in main window
-	Away needs to be modified to include "show" and "status", i.e. you can have
-		an away state, and an away message. This is exactly what ICQ does -
-		you're "N/A" (show in Jabber) and your away message is "I'm gone."
-		(status in Jabber). Since it only applies to ICQ and Jabber (and
-		actually, currently only Jabber, since icqlib doesn't handle away
-		messages yet), there should be some way of indicating that it can
-		do both without breaking the others. My suggestion is to put "/" at
-		the end of the "state", and when that's there, have it be a menu with
-		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
-		of the states, and you'd see "Away" with a menu of all the away
-		messages you have.
-
-	Need to write the ui side of the core-ui protocol
-
-	Syd is cool and gave all of these ideas:
-		Have multiple tickers in the same window, one for buddies
-			like it is now, one for who just came online/offline
-			(scrolled faster possibly because that doesn't
-			happen very often), etc.
-		Have tooltips on the passing buddies on the ticker
-		Have a stock ticker (a plugin could easily make use of
-			GtkTicker)
-
-
-
-Then, of course, are all the Bugs that need to be fixed
-	http://sourceforge.net/tracker/?atid=100235&group_id=235&func=browse
-	
-
-and the Feature Requests. SourceForge should really allow users
-to vote on feature requests and bugs.....
-	http://sourceforge.net/tracker/?atid=350235&group_id=235&func=browse
+- autotools/gettext
+  (added Wed Oct 30 20:19:03 2002, incomplete, priority verylow)
 
