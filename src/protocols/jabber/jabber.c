@@ -2190,7 +2190,7 @@ static void jabber_close(struct gaim_connection *gc)
 		gaim_input_remove(gc->inpa);
 
 	if(jd) {
-		g_timeout_add(50, jabber_free, jd);
+		g_timeout_add(0, jabber_free, jd);
 		if(jd->gjc != NULL)
 			xmlnode_free(jd->gjc->current);
 	}
