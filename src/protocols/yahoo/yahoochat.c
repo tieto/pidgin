@@ -1331,7 +1331,7 @@ GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)
 	rl = gaim_roomlist_new(gaim_connection_get_account(gc));
 	yrl->list = rl;
 
-	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path));
+	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
 	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
@@ -1408,7 +1408,7 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	yrl->cat = category;
 	list->proto_data = g_list_append(list->proto_data, yrl);
 
-	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path));
+	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
 	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);

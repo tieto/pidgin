@@ -39,6 +39,8 @@ typedef struct
 
 	struct
 	{
+		char *user;
+		char *passwd;
 		char *address;
 		int port;
 		char *page;
@@ -2388,18 +2390,21 @@ gaim_str_seconds_to_string(guint sec)
  */
 gboolean
 gaim_url_parse(const char *url, char **ret_host, int *ret_port,
-			   char **ret_path)
+			   char **ret_path, char **ret_user, char **ret_passwd)
 {
 	char scan_info[255];
 	char port_str[6];
 	int f;
+	const char *at;
 	const char *turl;
-	char host[256], path[256];
+	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
 	/* hyphen at end includes it in control set */
 	static char addr_ctrl[] = "A-Za-z0-9.-";
 	static char port_ctrl[] = "0-9";
 	static char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
+	static char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+	static char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
 
 	g_return_val_if_fail(url != NULL, FALSE);
 
@@ -2408,6 +2413,26 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	{
 		turl += 7;
 		url = turl;
+	}
+
+	/* parse out authentication information if supplied */
+	if (at = strchr(url, '@')) {
+		g_snprintf(scan_info, sizeof(scan_info),
+					"%%255[%s]:%%255[%s]^@", user_ctrl, passwd_ctrl);
+		f = sscanf(url, scan_info, user, passwd);
+
+		if (f ==1 ) {
+			/* No passwd, possibly just username supplied */
+			g_snprintf(scan_info, sizeof(scan_info),
+						"%%255[%s]^@", user_ctrl);
+			f = sscanf(url, scan_info, user);
+			*passwd = '\0';
+		}
+
+		url = strdup(at+1); /* move pointer after the @ char */
+	} else {
+		*user = '\0';
+		*passwd = '\0';
 	}
 
 	g_snprintf(scan_info, sizeof(scan_info),
@@ -2432,6 +2457,8 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_host != NULL) *ret_host = g_strdup(host);
 	if (ret_port != NULL) *ret_port = port;
 	if (ret_path != NULL) *ret_path = g_strdup(path);
+	if (ret_user != NULL) *ret_user = g_strdup(user);
+	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
 	return TRUE;
 }
@@ -2444,6 +2471,8 @@ destroy_fetch_url_data(GaimFetchUrlData *gfud)
 	if (gfud->user_agent      != NULL) g_free(gfud->user_agent);
 	if (gfud->website.address != NULL) g_free(gfud->website.address);
 	if (gfud->website.page    != NULL) g_free(gfud->website.page);
+	if (gfud->website.user    != NULL) g_free(gfud->website.user);
+	if (gfud->website.passwd    != NULL) g_free(gfud->website.passwd);
 
 	g_free(gfud);
 }
@@ -2700,7 +2729,7 @@ gaim_url_fetch(const char *url, gboolean full,
 	gfud->full       = full;
 
 	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
-				   &gfud->website.page);
+				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if ((sock = gaim_proxy_connect(NULL, gfud->website.address,
 								   gfud->website.port, url_fetched_cb,

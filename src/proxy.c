@@ -1446,16 +1446,24 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp= g_getenv("HTTPPROXY")) != NULL) {
-			char *proxyhost,*proxypath;
+			char *proxyhost,*proxypath,*proxyuser,*proxypasswd;
 			int proxyport;
 
 			/* http_proxy-format:
-			 * export http_proxy="http://your.proxy.server:port/"
+			 * export http_proxy="http://user:passwd@your.proxy.server:port/"
 			 */
-			if(gaim_url_parse(tmp, &proxyhost, &proxyport, &proxypath)) {
+			if(gaim_url_parse(tmp, &proxyhost, &proxyport, &proxypath, &proxyuser, &proxypasswd)) {
 				gaim_proxy_info_set_host(phb->gpi, proxyhost);
 				g_free(proxyhost);
 				g_free(proxypath);
+				if (proxyuser != NULL) {
+					gaim_proxy_info_set_username(phb->gpi, proxyuser);
+					g_free(proxyuser);
+				}
+				if (proxypasswd != NULL) {
+					gaim_proxy_info_set_password(phb->gpi, proxypasswd);
+					g_free(proxypasswd);
+				}
 
 				/* only for backward compatibility */
 				if (proxyport == 80 &&
@@ -1468,6 +1476,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 			}
 		}
 
+		/* XXX: Do we want to skip this step if user/password were part of url? */
 		if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
 			(tmp = g_getenv("http_proxy_user")) != NULL ||
 			(tmp = g_getenv("HTTPPROXYUSER")) != NULL)

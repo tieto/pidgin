@@ -165,7 +165,7 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	gaim_url_parse(url, &jox->address, &jox->port, &jox->page);
+	gaim_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
 	g_free(url);
 	jox->js = js;
 	jox->headers = g_string_new("");

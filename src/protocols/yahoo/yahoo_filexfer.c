@@ -441,7 +441,7 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	/* Setup the Yahoo-specific file transfer data */
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
 	xfer_data->gc = gc;
-	if (!gaim_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path))) {
+	if (!gaim_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
 		g_free(xfer_data);
 		return;
 	}

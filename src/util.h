@@ -576,7 +576,7 @@ char *gaim_str_seconds_to_string(guint sec);
 /*@{*/
 
 /**
- * Parses a URL, returning its host, port, and file path.
+ * Parses a URL, returning its host, port, file path, username and password.
  *
  * The returned data must be freed.
  *
@@ -584,9 +584,11 @@ char *gaim_str_seconds_to_string(guint sec);
  * @param ret_host The returned host.
  * @param ret_port The returned port.
  * @param ret_path The returned path.
+ * @param ret_user The returned username.
+ * @param ret_passwd The returned password.
  */
 gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
-						char **ret_path);
+						char **ret_path, char **ret_user, char **ret_passwd);
 
 /**
  * Fetches the data from a URL, and passes it to a callback function.
