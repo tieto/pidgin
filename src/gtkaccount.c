@@ -79,8 +79,6 @@ typedef struct
 {
 	GaimGtkAccountDialogType type;
 
-	AccountsWindow *accounts_window;
-
 	GaimAccount *account;
 	GaimProtocol protocol;
 	char *protocol_id;
@@ -1125,19 +1123,19 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Adds the account to the list, or modify the existing entry. */
-	if (dialog->accounts_window != NULL) {
+	if (accounts_window != NULL) {
 		index = g_list_index(gaim_accounts_get_all(), dialog->account);
 
 		if (index != -1 &&
 			(gtk_tree_model_iter_nth_child(
-					GTK_TREE_MODEL(dialog->accounts_window->model), &iter,
+					GTK_TREE_MODEL(accounts_window->model), &iter,
 					NULL, index))) {
 
-			set_account(dialog->accounts_window->model, &iter,
+			set_account(accounts_window->model, &iter,
 						dialog->account);
 		}
 		else {
-			add_account(dialog->accounts_window, dialog->account);
+			add_account(accounts_window, dialog->account);
 			gaim_accounts_add(dialog->account);
 		}
 	}
@@ -1173,7 +1171,6 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	dialog = g_new0(AccountPrefsDialog, 1);
 
-	dialog->accounts_window = accounts_window;
 	dialog->account = account;
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1454,6 +1451,7 @@ static gint
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
 	gaim_gtk_accounts_window_hide();
+
 	return 0;
 }
 
@@ -1573,7 +1571,7 @@ close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 {
 	gtk_widget_destroy(dialog->window);
 
-	accedit_win_destroy_cb(NULL, NULL, dialog);
+	gaim_gtk_accounts_window_hide();
 }
 
 static void
