@@ -61,9 +61,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((GaimConnection *)(x)->priv)
 /* Confused? That makes three of us. -Robot101 */
@@ -689,7 +686,7 @@ static void gjab_recv(gjconn gjc)
 				   "input (len %d): %s\n", len, buf);
 		XML_Parse(gjc->parser, buf, len, 0);
 		if (jd->die)
-			signoff(GJ_GC(gjc));
+			gaim_connection_destroy(GJ_GC(gjc));
 	} else if (len < 0 || errno != EAGAIN) {
 		STATE_EVT(JCONN_STATE_OFF)
 	}
@@ -772,7 +769,7 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	struct jabber_data *jd;
 	gjconn gjc;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1668,7 +1665,7 @@ static void jabber_accept_deny_add(struct jabber_add_permit *jap, const char *ty
  */
 static void jabber_accept_add(struct jabber_add_permit *jap)
 {
-	if(g_slist_find(connections, jap->gc)) {
+	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
 		jabber_accept_deny_add(jap, "subscribed");
 		/*
 		 * If we don't already have the buddy on *our* buddylist,
@@ -1689,7 +1686,7 @@ static void jabber_accept_add(struct jabber_add_permit *jap)
  */
 static void jabber_deny_add(struct jabber_add_permit *jap)
 {
-	if(g_slist_find(connections, jap->gc)) {
+	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
 		jabber_accept_deny_add(jap, "unsubscribed");
 	}
 
@@ -2343,7 +2340,6 @@ static void jabber_handlestate(gjconn gjc, int state)
 		} else {
 			gaim_connection_error(GJ_GC(gjc), _("Unable to connect"));
 		}
-		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
 		gjc->was_connected = 1;
@@ -2377,7 +2373,6 @@ static void jabber_login(GaimAccount *account)
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
 				   "unable to connect (jab_new failed)\n");
 		gaim_connection_error(gc, _("Unable to connect"));
-		signoff(gc);
 		return;
 	}
 
@@ -4179,12 +4174,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 					   "registration successful!\n");
 
 			gaim_connection_notice(GJ_GC(gjc), _("Server Registration successful!"));
-			/*
-			 * TBD: is this the correct way to do away with a
-			 * gaim_connection and all its associated memory
-			 * allocs, etc.?
-			 */
-			signoff(GJ_GC(gjc));
+			gaim_connection_destroy(GJ_GC(gjc));
 		}
 
 	} else {
@@ -4253,7 +4243,6 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 		} else {
 			gaim_connection_error(GJ_GC(gjc), _("Unable to connect"));
 		}
-		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
 		gjc->was_connected = 1;
@@ -4299,7 +4288,6 @@ void jabber_register_user(GaimAccount *account)
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
 				   "unable to connect (jab_new failed)\n");
 		gaim_connection_error(gc, _("Unable to connect"));
-		signoff(gc);
 	} else {
 		gjab_state_handler(jd->gjc, jabber_handle_registration_state);
 		gjab_packet_handler(jd->gjc, jabber_handleregresp);
