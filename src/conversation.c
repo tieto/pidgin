@@ -1244,7 +1244,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			else
 				g_snprintf(nm, 256, "%s", c->name);
                         fd = open_log_file(nm);
-                        fprintf(fd, "%s\n", t1);
+			if (general_options & OPT_GEN_STRIP_HTML) {
+				fprintf(fd, "%s\n", t1);
+			} else {
+				fprintf(fd, "%s<BR>\n", t1);
+			}
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {
                                 g_free(t1);
@@ -1335,7 +1339,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                                 t2 = what;
                         }
                         fd = open_log_file(nm);
-                        fprintf(fd, "%s%s\n", t1, t2);
+			if (general_options & OPT_GEN_STRIP_HTML) {
+				fprintf(fd, "%s%s\n", t1, t2);
+			} else {
+				fprintf(fd, "%s%s<BR>\n", t1, t2);
+			}
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {
                                 g_free(t1);

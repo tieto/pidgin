@@ -3,6 +3,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.10.2:
 	* A few fixes to the URL parser.
 	* Better placement of smiley dialog
+	* Improved log file readibility
 
 version 0.10.1 (09/15/2000):
 	* Better chatroom logging
