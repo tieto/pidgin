@@ -177,60 +177,47 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 	        
                 return ret;
                 break;
-        case PROXY_SOCKS4: /* Socks v4 proxy (? I'm not a proxy hacker) */
-		/* this is going to be a cross between the HTTP proxy code
-		 * above and the TiK proxy code, translated from tcl->C */
-		{
-			struct hostent *hostinfo;
-			unsigned short shortport = proxy_port;
+        case PROXY_SOCKS4:
+		/* code shamelessly stolen from everybuddy */
+	{
+		struct sockaddr_in sa;
+		unsigned char packet[12];
+		struct hostent *hp;
 
-			memset(&name, 0, sizeof (name));
-			name.sin_family = AF_INET;
-			name.sin_port = htons (shortport);
-			hostinfo = gethostbyname (proxy_host);
-			if (hostinfo == NULL) {
-				fprintf (stderr, "Unknown host %s.\n", proxy_host);
-				return (-1);
-			}
-			name.sin_addr = *(struct in_addr *) hostinfo->h_addr;
-		}
-		sprintf(debug_buff,"Trying to connect ...\n");
-		debug_print(debug_buff);
-		if ((ret = connect(sockfd,(struct sockaddr *)&name,sizeof(name)))<0)
-			return(ret);
+		debug_print("connecting with socks4.\n");
 
-		/* here's where it's no longer http proxy and is now tik */
-		{
-			char cmd[80];
-			char *inputline;
-                        unsigned short realport=((struct sockaddr_in *)serv_addr)->sin_port;
-                        unsigned long realhost=((struct sockaddr_in *)serv_addr)->sin_addr.s_addr;
+		if (!(hp = gethostbyname(proxy_host)))
+			return -1;
 
-			cmd[0] = 4; cmd[0] = 1;
-			memcpy(cmd + 2, &realport, 2);
-			memcpy(cmd + 4, &realhost, 4);
-			cmd[8] = 0;
-                        if (send(sockfd,cmd,8,0)<0)
-                                return(-1);
-                        if (proxy_recv_line(sockfd,&inputline) < 0) {
-                                return(-1);
-                        }
-			if (inputline[1] != 90) {
-				sprintf(debug_buff, "request failed: %d\n",
-						inputline[1]);
-				debug_print(debug_buff);
-				if (inputline[1] == 91)
-					do_error_dialog("The SOCKS proxy denied"
-							"your request.",
-							"Gaim - Proxy Error");
-				else
-					do_error_dialog("Unknown SOCKS error.",
-							"Gaim - Proxy Error");
+		bzero(&sa, sizeof(sa));
+		sa.sin_family = AF_INET;
+		sa.sin_port = htons(proxy_port);
+		bcopy(hp->h_addr, (char *) &sa.sin_addr, hp->h_length);
+
+		if (connect(sockfd, (struct sockaddr *) &sa, sizeof (sa)) != -1) {
+			unsigned short realport = htons(((struct sockaddr_in *)serv_addr)->sin_port);
+			
+			if (!(hp = gethostbyname(proxy_realhost)))
 				return -1;
+			packet[0] = 4;
+			packet[1] = 1;
+			packet[2] = (((unsigned short) realport) >> 8);
+			packet[3] = (((unsigned short) realport) & 0xff);
+			packet[4] = (unsigned char) (hp->h_addr_list[0])[0];
+			packet[5] = (unsigned char) (hp->h_addr_list[0])[1];
+			packet[6] = (unsigned char) (hp->h_addr_list[0])[2];
+			packet[7] = (unsigned char) (hp->h_addr_list[0])[3];
+			packet[8] = 0;
+			if (write(sockfd, packet, 9) == 9) {
+				bzero(packet, sizeof(packet));
+				if (read(sockfd, packet, 9) >= 4 && packet[1] == 90)
+					return 0;
 			}
+			close(sockfd);
 		}
-		return ret;
-                break;
+		return -1;
+	}
+		break;
 	case PROXY_SOCKS5:
 		return -1;
 		break;
