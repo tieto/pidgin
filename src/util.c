@@ -1115,20 +1115,37 @@ char *stylize(gchar *text, int length)
 	buf = g_malloc(length);
 	g_snprintf(buf, length, "%s", text);
 
-	if (font_options & OPT_FONT_FACE)
-	{
+	if (font_options & OPT_FONT_BOLD) {
+		g_snprintf(tmp, length, "<B>%s</B>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (font_options & OPT_FONT_ITALIC) {
+		g_snprintf(tmp, length, "<I>%s</I>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (font_options & OPT_FONT_UNDERLINE) {
+		g_snprintf(tmp, length, "<U>%s</U>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (font_options & OPT_FONT_STRIKE) {
+		g_snprintf(tmp, length, "<S>%s</S>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (font_options & OPT_FONT_FACE) {
 		g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_FGCOL)
-	{
+	if (font_options & OPT_FONT_FGCOL) {
 		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red, fgcolor.green, fgcolor.blue, buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_BGCOL)
-	{
+	if (font_options & OPT_FONT_BGCOL) {
 		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red, bgcolor.green, bgcolor.blue, buf);
 		strcpy(buf, tmp);
 	}

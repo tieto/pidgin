@@ -635,7 +635,9 @@ void serv_got_im(char *name, char *message, int away)
 	if ((general_options & OPT_GEN_TIK_HACK) && awaymessage &&
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<"))
 	{
-	    	serv_send_im(name, awaymessage->message, 1);
+		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
+	    	serv_send_im(name, tmpmsg, 1);
+		g_free(tmpmsg);
 	    	return;
 	}
 	
@@ -699,6 +701,8 @@ void serv_got_im(char *name, char *message, int away)
 		escape_text(tmpmsg);
 		escape_message(tmpmsg);
 		serv_send_im(name, away_subs(tmpmsg, name), 1);
+		g_free(tmpmsg);
+		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 
 		if (is_idle == -1)
 			is_idle = 1;
