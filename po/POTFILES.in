@@ -94,6 +94,7 @@ src/protocols/msn/servconn.c
 src/protocols/msn/state.c
 src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
+src/protocols/novell/nmuser.c
 src/protocols/novell/novell.c
 src/protocols/oscar/oscar.c
 src/protocols/silc/buddy.c

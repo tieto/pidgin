@@ -274,22 +274,22 @@ void silcgaim_show_public_key(SilcGaim sg,
 
 	s = g_string_new("");
 	if (ident->realname)
-		g_string_append_printf(s, "Real Name: \t%s\n", ident->realname);
+		g_string_append_printf(s, "%s: \t%s\n", _("Real Name"), ident->realname);
 	if (ident->username)
-		g_string_append_printf(s, "User Name: \t%s\n", ident->username);
+		g_string_append_printf(s, "%s: \t%s\n", _("User Name"), ident->username);
 	if (ident->email)
-		g_string_append_printf(s, "EMail: \t\t%s\n", ident->email);
+		g_string_append_printf(s, "%s: \t\t%s\n", _("EMail"), ident->email);
 	if (ident->host)
-		g_string_append_printf(s, "Host Name: \t%s\n", ident->host);
+		g_string_append_printf(s, "%s: \t%s\n", _("Host Name"), ident->host);
 	if (ident->org)
-		g_string_append_printf(s, "Organization: \t%s\n", ident->org);
+		g_string_append_printf(s, "%s: \t%s\n", _("Organization"), ident->org);
 	if (ident->country)
-		g_string_append_printf(s, "Country: \t%s\n", ident->country);
-	g_string_append_printf(s, "Algorithm: \t\t%s\n", public_key->name);
-	g_string_append_printf(s, "Key Length: \t%d bits\n", (int)key_len);
+		g_string_append_printf(s, "%s: \t%s\n", _("Country"), ident->country);
+	g_string_append_printf(s, "%s: \t\t%s\n", _("Algorithm"), public_key->name);
+	g_string_append_printf(s, "%s: \t%d bits\n", _("Key Length"), (int)key_len);
 	g_string_append_printf(s, "\n");
-	g_string_append_printf(s, "Public Key Fingerprint:\n%s\n\n", fingerprint);
-	g_string_append_printf(s, "Public Key Babbleprint:\n%s", babbleprint);
+	g_string_append_printf(s, "%s:\n%s\n\n", _("Public Key Fingerprint"), fingerprint);
+	g_string_append_printf(s, "%s:\n%s", _("Public Key Babbleprint"), babbleprint);
 
 	buf = g_string_free(s, FALSE);
 

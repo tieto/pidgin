@@ -725,7 +725,7 @@ silcgaim_view_motd(GaimPluginAction *action)
 		return;
 	}
 
-	gaim_notify_formatted(gc, "Message of the Day", "Message of the Day", NULL,
+	gaim_notify_formatted(gc, _("Message of the Day"), _("Message of the Day"), NULL,
 			      sg->motd, NULL, NULL);
 }
 

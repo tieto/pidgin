@@ -764,55 +764,70 @@ silcgaim_whois_more(SilcClientEntry client_entry, gint id)
 			if (!silc_attribute_get_object(attr, (void *)&vcard,
 						       sizeof(vcard)))
 				continue;
-			g_string_append_printf(s, _("Personal Information:\n\n"));
+			g_string_append_printf(s, "%s:\n\n", _("Personal Information"));
 			if (vcard.full_name)
-				g_string_append_printf(s, _("Full Name:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Full Name"),
 						       vcard.full_name);
 			if (vcard.first_name)
-				g_string_append_printf(s, _("First Name:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("First Name"),
 						       vcard.first_name);
 			if (vcard.middle_names)
-				g_string_append_printf(s, _("Middle Names:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("Middle Name"),
 						       vcard.middle_names);
 			if (vcard.family_name)
-				g_string_append_printf(s, _("Family Name:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("Family Name"),
 						       vcard.family_name);
 			if (vcard.nickname)
-				g_string_append_printf(s, _("Nickname:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Nickname"),
 						       vcard.nickname);
 			if (vcard.bday)
-				g_string_append_printf(s, _("Birth Day:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Birth Day"),
 						       vcard.bday);
 			if (vcard.title)
-				g_string_append_printf(s, _("Job Title:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Job Title"),
 						       vcard.title);
 			if (vcard.role)
-				g_string_append_printf(s, _("Job Role:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Job Role"),
 						       vcard.role);
 			if (vcard.org_name)
-				g_string_append_printf(s, _("Organization:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("Organization"),
 						       vcard.org_name);
 			if (vcard.org_unit)
-				g_string_append_printf(s, _("Unit:\t\t%s\n"),
+				g_string_append_printf(s, "%s:\t\t%s\n",
+						       _("Unit"),
 						       vcard.org_unit);
 			if (vcard.url)
-				g_string_append_printf(s, _("Homepage:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("Homepage"),
 						       vcard.url);
 			if (vcard.label)
-				g_string_append_printf(s, _("Address:\t%s\n"),
+				g_string_append_printf(s, "%s:\t%s\n",
+						       _("Address"),
 						       vcard.label);
 			for (i = 0; i < vcard.num_tels; i++) {
 				if (vcard.tels[i].telnum)
-					g_string_append_printf(s, _("Tel:\t\t\t%s\n"),
+					g_string_append_printf(s, "%s:\t\t\t%s\n",
+							       _("Phone"),
 							       vcard.tels[i].telnum);
 			}
 			for (i = 0; i < vcard.num_emails; i++) {
 				if (vcard.emails[i].address)
-					g_string_append_printf(s, _("EMail:\t\t%s\n"),
+					g_string_append_printf(s, "%s:\t\t%s\n",
+							       _("EMail"),
 							       vcard.emails[i].address);
 			}
 			if (vcard.note)
-				g_string_append_printf(s, _("\nNote:\t\t%s\n"),
+				g_string_append_printf(s, "\n%s:\t\t%s\n",
+						       _("Note"),
 						       vcard.note);
 			break;
 		}
@@ -909,20 +924,20 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			user_modes = va_arg(vp, SilcBuffer);
 
 			s = g_string_new("");
-			g_string_append_printf(s, _("Nickname:\t\t%s\n"), client_entry->nickname);
+			g_string_append_printf(s, "%s:\t\t%s\n", _("Nickname"), client_entry->nickname);
 			if (client_entry->realname)
-				g_string_append_printf(s, _("Real Name:\t%s\n"), client_entry->realname);
+				g_string_append_printf(s, "%s:\t%s\n", _("Realname"), client_entry->realname);
 			if (client_entry->username)
-				g_string_append_printf(s, _("Username:\t\t%s\n"), client_entry->username);
+				g_string_append_printf(s, "%s:\t\t%s\n", _("Username"), client_entry->username);
 			if (client_entry->hostname)
-				g_string_append_printf(s, _("Hostname:\t\t%s\n"), client_entry->hostname);
+				g_string_append_printf(s, "%s:\t\t%s\n", _("Hostname"), client_entry->hostname);
 			if (client_entry->server)
-				g_string_append_printf(s, _("Server:\t\t%s\n"), client_entry->server);
+				g_string_append_printf(s, "%s:\t\t%s\n", _("Server"), client_entry->server);
 
 			if (mode) {
 				memset(tmp, 0, sizeof(tmp));
 				silcgaim_get_umode_string(mode, tmp, sizeof(tmp) - 1);
-				g_string_append_printf(s, _("User Mode:\t%s\n"), tmp);
+				g_string_append_printf(s, "%s:\t%s\n", _("User Mode"), tmp);
 			}
 
 			if (channels && user_modes) {
@@ -936,7 +951,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 					SilcChannelPayload entry;
 					int i = 0;
 
-					g_string_append_printf(s, _("\nChannels:\n"));
+					g_string_append_printf(s, "\n%s:\n", _("Channels"));
 					memset(tmp, 0, sizeof(tmp));
 					silc_dlist_start(list);
 					while ((entry = silc_dlist_get(list))
@@ -963,8 +978,8 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
 				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				g_string_append_printf(s, _("\nPublic Key Fingerprint:\n%s\n\n"), fingerprint);
-				g_string_append_printf(s, _("Public Key Babbleprint:\n%s"), babbleprint);
+				g_string_append_printf(s, "\n%s:\n%s\n\n", _("Public Key Fingerprint"), fingerprint);
+				g_string_append_printf(s, "%s:\n%s", _("Public Key Babbleprint"), babbleprint);
 				silc_free(fingerprint);
 				silc_free(babbleprint);
 				silc_free(pk);
@@ -1207,7 +1222,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
-		gaim_connection_error(gc, _("Connection timeout"));
+		gaim_connection_error(gc, _("Connection Timeout"));
 		break;
 	}
 

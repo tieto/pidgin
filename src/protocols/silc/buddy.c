@@ -1462,13 +1462,13 @@ char *silcgaim_tooltip_text(GaimBuddy *b)
 	  return NULL;
 
 	if (client_entry->nickname)
-	  g_string_append_printf(s, "<b>Nickname:</b> %s\n",
+	  g_string_append_printf(s, "<b>%s:</b> %s\n", _("Nickname"),
 				 client_entry->nickname);
 	if (client_entry->username && client_entry->hostname)
-	  g_string_append_printf(s, "<b>Username:</b> %s@%s\n",
+	  g_string_append_printf(s, "<b>%s:</b> %s@%s\n", _("Username"),
 				 client_entry->username, client_entry->hostname);
 	if (client_entry->mode) {
-	  g_string_append_printf(s, "<b>Modes:</b> ");
+	  g_string_append_printf(s, "<b>%s:</b> ", _("Modes"));
 	  memset(tmp, 0, sizeof(tmp));
 	  silcgaim_get_umode_string(client_entry->mode,
 				    tmp, sizeof(tmp) - strlen(tmp));
@@ -1478,29 +1478,29 @@ char *silcgaim_tooltip_text(GaimBuddy *b)
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_STATUS_MOOD);
 	if (attr && silc_attribute_get_object(attr, &mood, sizeof(mood))) {
 		if (mood)
-			g_string_append_printf(s, "<b>Mood:</b> ");
+			g_string_append_printf(s, "<b>%s:</b> ", _("Mood"));
 		if (mood & SILC_ATTRIBUTE_MOOD_HAPPY)
-			g_string_append_printf(s, "[Happy] ");
+			g_string_append_printf(s, "[%s] ", _("Happy"));
 		if (mood & SILC_ATTRIBUTE_MOOD_SAD)
-			g_string_append_printf(s, "[Sad] ");
+			g_string_append_printf(s, "[%s] ", _("Sad"));
 		if (mood & SILC_ATTRIBUTE_MOOD_ANGRY)
-			g_string_append_printf(s, "[Angry] ");
+			g_string_append_printf(s, "[%s] ", _("Angry"));
 		if (mood & SILC_ATTRIBUTE_MOOD_JEALOUS)
-			g_string_append_printf(s, "[Jealous] ");
+			g_string_append_printf(s, "[%s] ", _("Jealous"));
 		if (mood & SILC_ATTRIBUTE_MOOD_ASHAMED)
-			g_string_append_printf(s, "[Ashamed] ");
+			g_string_append_printf(s, "[%s] ", _("Ashamed"));
 		if (mood & SILC_ATTRIBUTE_MOOD_INVINCIBLE)
-			g_string_append_printf(s, "[Invincible] ");
+			g_string_append_printf(s, "[%s] ", _("Invincible"));
 		if (mood & SILC_ATTRIBUTE_MOOD_INLOVE)
-			g_string_append_printf(s, "[In Love] ");
+			g_string_append_printf(s, "[%s] ", _("In Love"));
 		if (mood & SILC_ATTRIBUTE_MOOD_SLEEPY)
-			g_string_append_printf(s, "[Sleepy] ");
+			g_string_append_printf(s, "[%s] ", _("Sleepy"));
 		if (mood & SILC_ATTRIBUTE_MOOD_BORED)
-			g_string_append_printf(s, "[Bored] ");
+			g_string_append_printf(s, "[%s] ", _("Bored"));
 		if (mood & SILC_ATTRIBUTE_MOOD_EXCITED)
-			g_string_append_printf(s, "[Excited] ");
+			g_string_append_printf(s, "[%s] ", _("Excited"));
 		if (mood & SILC_ATTRIBUTE_MOOD_ANXIOUS)
-			g_string_append_printf(s, "[Anxious] ");
+			g_string_append_printf(s, "[%s] ", _("Anxious"));
 		if (mood)
 			g_string_append_printf(s, "\n");
 	}
@@ -1508,46 +1508,46 @@ char *silcgaim_tooltip_text(GaimBuddy *b)
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_STATUS_FREETEXT);
 	memset(tmp, 0, sizeof(tmp));
 	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
-		g_string_append_printf(s, "<b>Status Text:</b> %s\n", tmp);
+		g_string_append_printf(s, "<b>%s:</b> %s\n", _("Status Text"), tmp);
 
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_PREFERRED_CONTACT);
 	if (attr && silc_attribute_get_object(attr, &contact, sizeof(contact))) {
 		if (contact)
-			g_string_append_printf(s, "<b>Preferred Contact:</b> ");
+			g_string_append_printf(s, "<b>%s:</b> ", _("Preferred Contact"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_CHAT)
-			g_string_append_printf(s, "[chat] ");
+			g_string_append_printf(s, "[%s] ", _("Chat"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_EMAIL)
-			g_string_append_printf(s, "[email] ");
+			g_string_append_printf(s, "[%s] ", _("Email"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_CALL)
-			g_string_append_printf(s, "[phone] ");
+			g_string_append_printf(s, "[%s] ", _("Phone"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_PAGE)
-			g_string_append_printf(s, "[paging] ");
+			g_string_append_printf(s, "[%s] ", _("Paging"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_SMS)
-			g_string_append_printf(s, "[SMS] ");
+			g_string_append_printf(s, "[%s] ", _("SMS"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_MMS)
-			g_string_append_printf(s, "[MMS] ");
+			g_string_append_printf(s, "[%s] ", _("MMS"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_VIDEO)
-			g_string_append_printf(s, "[video conferencing] ");
+			g_string_append_printf(s, "[%s] ", _("Video Conferencing"));
 		g_string_append_printf(s, "\n");
 	}
 
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_PREFERRED_LANGUAGE);
 	memset(tmp, 0, sizeof(tmp));
 	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
-		g_string_append_printf(s, "<b>Preferred Language:</b> %s\n", tmp);
+		g_string_append_printf(s, "<b>%s:</b> %s\n", _("Preferred Language"), tmp);
 
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_DEVICE_INFO);
 	memset(&device, 0, sizeof(device));
 	if (attr && silc_attribute_get_object(attr, &device, sizeof(device))) {
-		g_string_append_printf(s, "<b>Device:</b> ");
+		g_string_append_printf(s, "<b>%s:</b> ", _("Device"));
 		if (device.type == SILC_ATTRIBUTE_DEVICE_COMPUTER)
-		    g_string_append_printf(s, "Computer: ");
+		    g_string_append_printf(s, "%s: ", _("Computer"));
 		if (device.type == SILC_ATTRIBUTE_DEVICE_MOBILE_PHONE)
-		    g_string_append_printf(s, "Mobile Phone: ");
+		    g_string_append_printf(s, "%s: ", _("Mobile Phone"));
 		if (device.type == SILC_ATTRIBUTE_DEVICE_PDA)
-		    g_string_append_printf(s, "PDA: ");
+		    g_string_append_printf(s, "%s: ", _("PDA"));
 		if (device.type == SILC_ATTRIBUTE_DEVICE_TERMINAL)
-		    g_string_append_printf(s, "Terminal: ");
+		    g_string_append_printf(s, "%s: ", _("Terminal"));
 		g_string_append_printf(s, "%s %s %s %s\n",
 				       device.manufacturer ? device.manufacturer : "",
 				       device.version ? device.version : "",
@@ -1558,12 +1558,13 @@ char *silcgaim_tooltip_text(GaimBuddy *b)
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_TIMEZONE);
 	memset(tmp, 0, sizeof(tmp));
 	if (attr && silc_attribute_get_object(attr, tmp, sizeof(tmp)))
-		g_string_append_printf(s, "<b>Timezone:</b> %s\n", tmp);
+		g_string_append_printf(s, "<b>%s:</b> %s\n", _("Timezone"), tmp);
 
 	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_GEOLOCATION);
 	memset(&geo, 0, sizeof(geo));
 	if (attr && silc_attribute_get_object(attr, &geo, sizeof(geo)))
-		g_string_append_printf(s, "<b>Geolocation:</b> %s %s %s (%s)\n",
+		g_string_append_printf(s, "<b>%s:</b> %s %s %s (%s)\n",
+				       _("Geolocation"),
 				       geo.longitude ? geo.longitude : "",
 				       geo.latitude ? geo.latitude : "",
 				       geo.altitude ? geo.altitude : "",
