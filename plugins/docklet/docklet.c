@@ -197,6 +197,7 @@ static gboolean
 docklet_blink_icon()
 {
 	static gboolean blinked = FALSE;
+	gboolean ret = FALSE; /* by default, don't keep blinking */
 
 	blinked = !blinked;
 
@@ -210,7 +211,7 @@ docklet_blink_icon()
 				if (ui_ops && ui_ops->update_icon)
 					ui_ops->update_icon(status);
 			}
-			return TRUE; /* keep blinking */
+			ret = TRUE; /* keep blinking */
 			break;
 		case offline:
 		case offline_connecting:
@@ -218,11 +219,10 @@ docklet_blink_icon()
 		case online_connecting:
 		case away:
 			blinked = FALSE;
-			return FALSE; /* no more blinking */
 			break;
 	}
 
-	return FALSE;
+	return ret;
 }
 
 static gboolean
