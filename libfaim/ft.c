@@ -39,7 +39,7 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
   int acceptfd = 0;
   rxcallback_t userfunc;
   struct sockaddr cliaddr;
-  socklen_t clilen = sizeof(cliaddr);
+  int clilen = sizeof(cliaddr);
   int ret = 0;
   struct aim_conn_t *newconn;
 
