@@ -357,7 +357,7 @@ static void yahoo_close(struct gaim_connection *gc) {
 static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
-	if (away) return;
+	if (away || !strlen(message)) return;
 
 	yahoo_send_message(yd->sess, yd->active_id, who, message);
 }
@@ -414,6 +414,7 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
 				yahoo_away(yd->sess, YAHOO_STATUS_AVAILABLE, NULL);
 				yd->current_status = YAHOO_STATUS_AVAILABLE;
 			}
+			gc->away = NULL;
 		}
 	} else if (gc->is_idle) {
 		yahoo_away(yd->sess, YAHOO_STATUS_IDLE, NULL);

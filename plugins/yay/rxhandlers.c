@@ -47,6 +47,7 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 			YAHOO_PRINT(session, YAHOO_LOG_DEBUG, session->cookie);
 			if (!session->cookie) {
 				yahoo_close(session, conn);
+				YAHOO_PRINT(session, YAHOO_LOG_ERROR, "did not get cookie");
 				CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 				return 1;
 			}
@@ -225,7 +226,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			error = errno;
 		if (error) {
 			yahoo_close(session, conn);
-			YAHOO_PRINT(session, YAHOO_LOG_ERROR, "unable to connect");
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "unable to connect");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 			return;
 		}
@@ -259,12 +260,15 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		if (pos == 1) {
 			g_free(buf);
 			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read auth response");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 			return;
 		}
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
-		if (yahoo_parse_config(session, conn, buf))
+		if (yahoo_parse_config(session, conn, buf)) {
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not parse auth response");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+		}
 		g_free(buf);
 	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
 		struct yahoo_packet pkt;
@@ -272,12 +276,14 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 
 		if ((read(socket, &pkt, 8) != 8) || strcmp(pkt.version, "YHOO1.0")) {
 			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "invalid version type");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 			return;
 		}
 
 		if (read(socket, &pkt.len, 4) != 4) {
 			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read length");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 			return;
 		}
@@ -285,6 +291,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 
 		if (read(socket, &pkt.service, len - 12) != len - 12) {
 			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read data");
 			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
 			return;
 		}

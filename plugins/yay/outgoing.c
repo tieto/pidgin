@@ -30,7 +30,7 @@ int yahoo_write(struct yahoo_session *session, struct yahoo_conn *conn, void *bu
 	if (!g_list_find(session->connlist, conn))
 		return 0;
 
-	if (write(conn->socket, buf, len) != len) {
+	if (send(conn->socket, buf, len, 0) != len) {
 		int type = conn->type;
 		yahoo_close(session, conn);
 		YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "error sending");
