@@ -1996,6 +1996,10 @@ static void parse_contact(GaimGroup *group, xmlnode *cnode)
 		else if(strcmp(x->name, "setting"))
 			parse_setting((GaimBlistNode*)contact, x);
 	}
+
+	/* if the contact is empty, don't keep it around.  it causes problems */
+	if(!((GaimBlistNode*)contact)->child)
+		gaim_blist_remove_contact(contact);
 }
 
 static void parse_chat(GaimGroup *group, xmlnode *cnode)
