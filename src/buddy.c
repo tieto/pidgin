@@ -2476,19 +2476,18 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 	 * call get_position and get_size because they do pay attention to  *
 	 * the gravity. this is inefficient and I agree it sucks, but it's  *
 	 * more likely to work correctly.                        - Robot101 */
-	gint x, y, width, height;
+	gint x, y;
 
 	gtk_window_get_position(GTK_WINDOW(blist), &x, &y);
-	gtk_window_get_size(GTK_WINDOW(blist), &width, &height);
 
 	if (x != blist_pos.x ||
 	    y != blist_pos.y ||
-	    width != blist_pos.width ||
-	    height != blist_pos.height) {
+	    event->width != blist_pos.width ||
+	    event->height != blist_pos.height) {
 		blist_pos.x = x;
 		blist_pos.y = y;
-		blist_pos.width = width;
-		blist_pos.height = height;
+		blist_pos.width = event->width;
+		blist_pos.height = event->height;
 		save_prefs();
 	}
 }
