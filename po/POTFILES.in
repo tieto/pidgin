@@ -1,6 +1,11 @@
 plugins/docklet/docklet.c
 plugins/chatlist.c
 plugins/gtik.c
+plugins/notify.c
+plugins/autorecon.c
+plugins/timestamp.c
+plugins/history.c
+plugins/iconaway.c
 src/protocols/gg/gg.c
 src/protocols/icq/gaim_icq.c
 src/protocols/irc/irc.c

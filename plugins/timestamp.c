@@ -65,9 +65,9 @@ void gaim_plugin_remove() {
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Timestamp");
+	desc.name = g_strdup(_("Timestamp"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Adds iChat-style timestamps to conversations every 5 minutes.");
+	desc.description = g_strdup(_("Adds iChat-style timestamps to conversations every 5 minutes."));
 	desc.authors = g_strdup("Sean Egan &lt;bj91704@binghamton.edu>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;

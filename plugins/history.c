@@ -64,9 +64,9 @@ char *gaim_plugin_init(GModule *h) {
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("History");
+	desc.name = g_strdup(_("History"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Shows recently logged conversations in new conversations ");
+	desc.description = g_strdup(_("Shows recently logged conversations in new conversations "));
 	desc.authors = g_strdup("Sean Egan &lt;bj91704@binghamton.edu>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;

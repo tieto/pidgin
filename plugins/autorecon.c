@@ -46,18 +46,18 @@ G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup("Autoreconnect");
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("When you are kicked offline, this reconnects you.");
+	desc.description = g_strdup(_("When you are kicked offline, this reconnects you."));
 	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }
 
 G_MODULE_EXPORT char *name() {
-	return "Auto Reconnect";
+	return _("Auto Reconnect");
 }
 
 G_MODULE_EXPORT char *description() {
-	return "When you are kicked offline, this reconnects you.";
+	return _("When you are kicked offline, this reconnects you.");
 }
 
 G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
