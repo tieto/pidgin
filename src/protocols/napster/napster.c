@@ -50,8 +50,6 @@
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
-#define NAP_BUF_LEN 4096
-
 #define USEROPT_NAPSERVER 3
 #define NAP_SERVER "64.124.41.187"
 #define USEROPT_NAPPORT 4
@@ -68,51 +66,21 @@ struct nap_channel {
 
 struct nap_data {
 	int fd;
-	int inpa;
-
 	gchar *email;
 	GSList *channels;
 };
 
-/* FIXME: Make this use va_arg stuff */
-static void nap_write_packet(struct gaim_connection *gc, unsigned short command, const char *message)
-{
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
-	unsigned short size;
-
-	size = strlen(message);
-
-	write(ndata->fd, &size, 2);
-	write(ndata->fd, &command, 2);
-	write(ndata->fd, message, size);
-}
-
-static int nap_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
-{
-	gchar buf[NAP_BUF_LEN];
-
-	g_snprintf(buf, NAP_BUF_LEN, "%s %s", who, message);
-	nap_write_packet(gc, 0xCD, buf);
-
-	return 1;
-}
-
 static struct nap_channel *find_channel_by_name(struct gaim_connection *gc, char *name)
 {
-	struct nap_channel *channel;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	struct nap_channel *channel;
 	GSList *channels;
 
 	channels = ndata->channels;
-
 	while (channels) {
 		channel = (struct nap_channel *)channels->data;
-
-		if (channel) {
-			if (!gaim_utf8_strcasecmp(name, channel->name)) {
-				return channel;
-			}
-		}
+		if ((channel) && (!gaim_utf8_strcasecmp(name, channel->name)))
+			return channel;
 		channels = g_slist_next(channels);
 	}
 
@@ -121,18 +89,15 @@ static struct nap_channel *find_channel_by_name(struct gaim_connection *gc, char
 
 static struct nap_channel *find_channel_by_id(struct gaim_connection *gc, int id)
 {
-	struct nap_channel *channel;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	struct nap_channel *channel;
 	GSList *channels;
 
 	channels = ndata->channels;
-
 	while (channels) {
 		channel = (struct nap_channel *)channels->data;
-		if (id == channel->id) {
+		if (id == channel->id)
 			return channel;
-		}
-
 		channels = g_slist_next(channels);
 	}
 
@@ -141,277 +106,449 @@ static struct nap_channel *find_channel_by_id(struct gaim_connection *gc, int id
 
 static struct gaim_conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
-	GSList *bc = gc->buddy_chats;
 	struct gaim_conversation *b = NULL;
+	GSList *bc;
 
+	bc = gc->buddy_chats;
 	while (bc) {
 		b = (struct gaim_conversation *)bc->data;
 		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
-			break;
-
-		bc = bc->next;
-		b = NULL;
+			return b;
+		bc = g_slist_next(bc);
 	}
 
-	return b;
+	return NULL;
+}
+
+static void nap_write_packet(struct gaim_connection *gc, unsigned short command, const char *format, ...)
+{
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	va_list ap;
+	gchar *message;
+	unsigned short size;
+
+	va_start(ap, format);
+	message = g_strdup_vprintf(format, ap);
+	va_end(ap);
+
+	size = strlen(message);
+	gaim_debug(GAIM_DEBUG_MISC, "napster", "S %3hd: %s\n", command, message);
+
+	write(ndata->fd, &size, 2);
+	write(ndata->fd, &command, 2);
+	write(ndata->fd, message, size);
+
+	g_free(message);
+}
+
+static int nap_do_irc_style(struct gaim_connection *gc, const char *message, const char *channelname)
+{
+	gchar **res;
+
+        gaim_debug(GAIM_DEBUG_MISC, "napster", "C %s\n", message);
+
+	res = g_strsplit(message, " ", 2);
+
+	if (!strcasecmp(res[0], "/ME")) { /* MSG_CLIENT_PUBLIC */
+		nap_write_packet(gc, 824, "%s \"%s\"", channelname, res[1]);
+
+	} else if (!strcasecmp(res[0], "/MSG")) { /* MSG_CLIENT_PUBLIC */
+		nap_write_packet(gc, 205, "%s", res[1]);
+
+	} else if (!strcasecmp(res[0], "/JOIN")) { /* join chatroom MSG_CLIENT_JOIN */
+		if (!res[1]) {
+			g_strfreev(res);
+			return 1;
+		}
+		if (res[1][0] != '#')
+			nap_write_packet(gc, 400, "#%s", res[1]);
+		else
+			nap_write_packet(gc, 400, "%s", res[1]);
+
+	} else if (!strcasecmp(res[0], "/PART")) { /* partchatroom MSG_CLIENT_PART */
+		nap_write_packet(gc, 401, "%s", res[1] ? res[1] : channelname);
+
+	} else if (!strcasecmp(res[0], "/TOPIC")) { /* set topic MSG_SERVER_TOPIC */
+		nap_write_packet(gc, 410, "%s", res[1] ? res[1] : channelname);
+
+	} else if (!strcasecmp(res[0], "/WHOIS")) { /* whois request MSG_CLIENT_WHOIS */
+		nap_write_packet(gc, 603, "%s", res[1]);
+
+	} else if (!strcasecmp(res[0], "/PING")) { /* send ping MSG_CLIENT_PING */
+		nap_write_packet(gc, 751, "%s", res[1]);
+
+	} else if (!strcasecmp(res[0], "/KICK")) { /* kick asswipe MSG_CLIENT_KICK */
+		nap_write_packet(gc, 829, "%s", res[1]);
+
+	} else {
+		g_strfreev(res);
+		return 1;
+	}
+
+	g_strfreev(res);
+	return 0;
+}
+
+/* 205 - MSG_CLIENT_PRIVMSG */
+static int nap_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
+{
+
+	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
+		/* Actually send a chat message */
+		nap_write_packet(gc, 205, "%s %s", who, message);
+	} else {
+		/* user typed an IRC-style command */
+		nap_do_irc_style(gc, message, who);
+	}
+
+	return 1;
+}
+
+/* 207 - MSG_CLIENT_ADD_HOTLIST */
+static void nap_add_buddy(struct gaim_connection *gc, const char *name)
+{
+	nap_write_packet(gc, 207, "%s", name);
+}
+
+/* 208 - MSG_CLIENT_ADD_HOTLIST_SEQ */
+static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
+{
+	while (buddies) {
+		nap_write_packet(gc, 208, "%s", (char *)buddies->data);
+		buddies = buddies -> next;
+	}
+}
+
+/* 303 - MSG_CLIENT_REMOVE_HOTLIST */
+static void nap_remove_buddy(struct gaim_connection *gc, char *name, char *group)
+{
+	nap_write_packet(gc, 303, "%s", name);
+}
+
+/* 400 - MSG_CLIENT_JOIN */
+static void nap_join_chat(struct gaim_connection *gc, GHashTable *data)
+{
+	char *name;
+
+	if (!data)
+		return;
+
+	name = g_hash_table_lookup(data, "group");
+
+	/* Make sure the name has a # preceeding it */
+	if (name[0] != '#')
+		nap_write_packet(gc, 400, "#%s", name);
+	else
+		nap_write_packet(gc, 400, "%s", name);
+}
+
+/* 401 - MSG_CLIENT_PART */
+static void nap_chat_leave(struct gaim_connection *gc, int id)
+{
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	struct nap_channel *channel = NULL;
+
+	channel = find_channel_by_id(gc, id);
+
+	if (!channel) /* Again, I'm not sure how this would happen */
+		return;
+
+	serv_got_chat_left(gc, id);
+
+	nap_write_packet(gc, 401, "%s", channel->name);
+
+	ndata->channels = g_slist_remove(ndata->channels, channel);
+	g_free(channel->name);
+	g_free(channel);
+}
+
+/* 402 - MSG_CLIENT_PUBLIC */
+static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
+{
+	struct nap_channel *channel = NULL;
+
+	channel = find_channel_by_id(gc, id);
+
+	if (!channel) {
+		/* This shouldn't happen */
+		return -EINVAL;
+	}
+
+	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
+		/* Actually send a chat message */
+		nap_write_packet(gc, 402, "%s %s", channel->name, message);
+	} else {
+		/* user typed an IRC-style command */
+		nap_do_irc_style(gc, message, channel->name);
+	}
+
+	return 0;
+}
+
+/* 603 - MSG_CLIENT_WHOIS */
+static void nap_get_info(struct gaim_connection *gc, const char *who)
+{
+	nap_write_packet(gc, 603, "%s", who);
 }
 
 static void nap_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
-	gchar *buf;
+	struct nap_channel *channel;
+	struct gaim_conversation *convo;
+	gchar *buf, *buf2, *buf3;
+	gchar **res;
 	unsigned short header[2];
 	int len;
 	int command;
-	gchar **res;
 	int i;
 
-	if (recv(source, (void*)header, 4, 0) != 4) {
-		hide_login_progress(gc, "Unable to read");
+	if (read(source, (void*)header, 4) != 4) {
+		hide_login_progress(gc, _("Unable to read header from server"));
 		signoff(gc);
 		return;
 	}
 
 	len = header[0];
 	command = header[1];	
-
-	buf = (gchar *)g_malloc(sizeof(gchar) * (len + 1));
+	buf = (gchar *)g_malloc((len + 1) * sizeof(gchar));
+	buf[len] = '\0';
 
 	i = 0;
 	do {
-		int tmp = recv(source, buf + i, len - i, 0);
+		int tmp = read(source, buf + i, len - i);
 		if (tmp <= 0) {
 			g_free(buf);
-			hide_login_progress(gc, "Unable to read");
+			buf = g_strdup_printf("Unable to read mesage from server.  Command is %hd, length is %hd.", len, command);
+			hide_login_progress(gc, buf);
+			g_free(buf);
 			signoff(gc);
 			return;
 		}
 		i += tmp;
 	} while (i != len);
 
-	buf[len] = 0;
-	
-	gaim_debug(GAIM_DEBUG_MISC, "napster", "DEBUG: %s\n", buf);
+	gaim_debug(GAIM_DEBUG_MISC, "napster", "R %3hd: %s\n", command, buf);
 
-	if (command == 0xd6) {
-		res = g_strsplit(buf, " ", 0);
-		/* Do we want to report what the users are doing? */ 
-		printf("users: %s, files: %s, size: %sGB\n", res[0], res[1], res[2]);
-		g_strfreev(res);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x26d) {
-		/* Do we want to use the MOTD? */
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0xCD) {
-		res = g_strsplit(buf, " ", 1);
-		serv_got_im(gc, res[0], res[1], 0, time(NULL), -1);
-		g_strfreev(res);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x195) {
-		struct nap_channel *channel;
-	
-		channel = find_channel_by_name(gc, buf);
-
-		if (!channel) {
-			chat_id++;
-
-			channel = g_new0(struct nap_channel, 1);
-
-			channel->id = chat_id;
-			channel->name = g_strdup(buf);
-
-			ndata->channels = g_slist_append(ndata->channels, channel);
-
-			serv_got_joined_chat(gc, chat_id, buf);
-		}
-
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x198 || command == 0x196) {
-		struct nap_channel *channel;
-		struct gaim_conversation *convo;
-		gchar **res;
-
-		res = g_strsplit(buf, " ", 0);
-
-		channel = find_channel_by_name(gc, res[0]);
-		convo = find_conversation_by_id(gc, channel->id);
-
-		gaim_chat_add_user(GAIM_CHAT(convo), res[1], NULL);
-
-		g_strfreev(res);
-
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x197) {
-		struct nap_channel *channel;
-		struct gaim_conversation *convo;
-		gchar **res;
-
-		res = g_strsplit(buf, " ", 0);
-		
-		channel = find_channel_by_name(gc, res[0]);
-		convo = find_conversation_by_id(gc, channel->id);
-
-		gaim_chat_remove_user(GAIM_CHAT(convo), res[1], NULL);
-		
-		g_strfreev(res);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x193) {
-		gchar **res;
-		struct nap_channel *channel;
-
-		res = g_strsplit(buf, " ", 2);
-
-		channel = find_channel_by_name(gc, res[0]);
-
-		if (channel)
-			serv_got_chat_in(gc, channel->id, res[1], 0, res[2], time((time_t)NULL));
-
-		g_strfreev(res);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x194) {
+	switch (command) {
+	case 000: /* MSG_SERVER_ERROR */
 		do_error_dialog(buf, NULL, GAIM_ERROR);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x12e) {
-		gchar buf2[NAP_BUF_LEN];
-
-		g_snprintf(buf2, NAP_BUF_LEN, "Unable to add '%s' to your Napster hotlist", buf);
-		do_error_dialog(buf2, NULL, GAIM_ERROR);
-
-		g_free(buf);
-		return;
-
-	}
-
-	if (command == 0x191) {
-		struct nap_channel *channel;
-
-		channel = find_channel_by_name(gc, buf);
-
-		if (!channel) /* I'm not sure how this would happen =) */
-			return;
-
-		serv_got_chat_left(gc, channel->id);
-		ndata->channels = g_slist_remove(ndata->channels, channel);
-
-		g_free(buf);
-		return;
-
-	}
-
-	if (command == 0xd1) {
-		gchar **res;
-
-		res = g_strsplit(buf, " ", 0);
-
-		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
-
-		g_strfreev(res);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0xd2) {
-		serv_got_update(gc, buf, 0, 0, 0, 0, 0);
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x12d) {
-		/* Our buddy was added successfully */
-		g_free(buf);
-		return;
-	}
-
-	if (command == 0x2ec) {
-		/* Looks like someone logged in as us! =-O */
-		g_free(buf);
-
-		signoff(gc);
-		return;
-	}
-
-	gaim_debug(GAIM_DEBUG_MISC, "napster",
-			   "NAP: [COMMAND: 0x%04x] %s\n", command, buf);
-
-	g_free(buf);
-}
-
-
-static void nap_login_callback(gpointer data, gint source, GaimInputCondition condition)
-{
-	struct gaim_connection *gc = data;
-	struct nap_data *ndata = gc->proto_data;
-	gchar buf[NAP_BUF_LEN];
-	unsigned short header[2];
-	int len;
-	int command;
-
-	read(source, header, 4);
-	len = header[0];
-	command = header[1];	
-
-	read(source, buf, len);
-	buf[len] = 0;
-
-	/* If we have some kind of error, get outta here */
-	if (command == 0x00)
-	{
-		do_error_dialog(buf, NULL, GAIM_ERROR);
-		gaim_input_remove(ndata->inpa);
-		ndata->inpa = 0;
+		gaim_input_remove(gc->inpa);
+		gc->inpa = 0;
 		close(source);
 		signoff(gc);
-		return;
-	}
+		break;
 
-	if (command == 0x03) {
-		printf("Registered with E-Mail address of: %s\n", buf);
+	case 003: /* MSG_SERVER_EMAIL */
+		gaim_debug(GAIM_DEBUG_MISC, "napster", "Registered with e-mail address: %s\n", buf);
 		ndata->email = g_strdup(buf);
-
-		/* Remove old inpa, add new one */
-		gaim_input_remove(ndata->inpa);
-		ndata->inpa = 0;
-		gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);
 
 		/* Our signon is complete */
 		account_online(gc);
 		serv_finish_login(gc);
 
-		return;
+		break;
+
+	case 201: /* MSG_SERVER_SEARCH_RESULT */
+		res = g_strsplit(buf, " ", 0);
+		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
+		g_strfreev(res);
+		break;
+
+	case 202: /* MSG_SERVER_SEARCH_END */
+		serv_got_update(gc, buf, 0, 0, 0, 0, 0);
+		break;
+
+	case 205: /* MSG_CLIENT_PRIVMSG */
+		res = g_strsplit(buf, " ", 2);
+		serv_got_im(gc, res[0], res[1], 0, time(NULL), -1);
+		g_strfreev(res);
+		break;
+
+	case 209: /* MSG_SERVER_USER_SIGNON */
+		/* USERNAME SPEED */
+		res = g_strsplit(buf, " ", 2);
+		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
+		g_strfreev(res);
+		break;
+
+	case 210: /* MSG_SERVER_USER_SIGNOFF */
+		/* USERNAME SPEED */
+		res = g_strsplit(buf, " ", 2);
+		serv_got_update(gc, res[0], 0, 0, 0, 0, 0);
+		g_strfreev(res);
+		break;
+
+	case 214: /* MSG_SERVER_STATS */
+		res = g_strsplit(buf, " ", 3);
+		buf2 = g_strdup_printf(_("users: %s, files: %s, size: %sGB"), res[0], res[1], res[2]);
+		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		g_free(buf2);
+		g_strfreev(res);
+		break;
+
+	case 301: /* MSG_SERVER_HOTLIST_ACK */
+		/* Our buddy was added successfully */
+		break;
+
+	case 302: /* MSG_SERVER_HOTLIST_ERROR */
+		buf2 = g_strdup_printf(_("Unable to add \"%s\" to your Napster hotlist"), buf);
+		do_error_dialog(buf2, NULL, GAIM_ERROR);
+		g_free(buf2);
+		break;
+
+	case 316: /* MSG_SERVER_DISCONNECTING */
+		/* we have been kicked off =^( */
+		do_error_dialog(_("You were disconnected from the server."), NULL, GAIM_ERROR);
+                signoff(gc);
+		break;
+
+	case 401: /* MSG_CLIENT_PART */
+		/* XXX - this is not handled correctly now: a kick fails to get through here! */
+		channel = find_channel_by_name(gc, buf);
+		// convo = find_conversation_by_id(gc, channel->id);
+		// gaim_conversation_destroy(convo);
+		if (!channel) /* in case we closed the chat window */
+			break;
+		serv_got_chat_left(gc, channel->id);
+		ndata->channels = g_slist_remove(ndata->channels, channel);
+		// g_free(channel->name);
+		g_free(channel);
+		break;
+
+	case 403: /* MSG_SERVER_PUBLIC */
+		res = g_strsplit(buf, " ", 3);
+		channel = find_channel_by_name(gc, res[0]);
+		if (channel)
+			serv_got_chat_in(gc, channel->id, res[1], 0, res[2], time((time_t)NULL));
+		g_strfreev(res);
+		break;
+
+	case 404: /* MSG_SERVER_NOSUCH */
+		/* abused by opennap servers to broadcast stuff */
+		serv_got_im(gc, "server", buf, 0, time(NULL), -1);
+		break;
+
+	case 405: /* MSG_SERVER_JOIN_ACK */
+		channel = find_channel_by_name(gc, buf);
+		if (!channel) {
+			chat_id++;
+			channel = g_new0(struct nap_channel, 1);
+			channel->id = chat_id;
+			channel->name = g_strdup(buf); /* XXX - This doesn't get freed when parting */
+			ndata->channels = g_slist_append(ndata->channels, channel);
+			serv_got_joined_chat(gc, chat_id, buf);
+		}
+		break;
+
+	case 407: /* MSG_SERVER_PART */
+		res = g_strsplit(buf, " ", 0);
+		channel = find_channel_by_name(gc, res[0]);
+		convo = find_conversation_by_id(gc, channel->id);
+		// remove_chat_buddy(convo, res[1], NULL);
+		gaim_chat_remove_user(GAIM_CHAT(convo), res[1], NULL);
+		g_strfreev(res);
+		break;
+
+	case 406: /* MSG_SERVER_JOIN */
+	case 408: /* MSG_SERVER_CHANNEL_USER_LIST */
+		res = g_strsplit(buf, " ", 4);
+		channel = find_channel_by_name(gc, res[0]);
+		convo = find_conversation_by_id(gc, channel->id);
+		// add_chat_buddy(convo, res[1], NULL);
+		gaim_chat_add_user(GAIM_CHAT(convo), res[1], NULL);
+		g_strfreev(res);
+		break;
+
+	case 409: /* MSG_SERVER_CHANNEL_USER_LIST_END */
+		break;
+
+	case 410: /* MSG_SERVER_TOPIC */
+		/* display the topic in the channel */
+		res = g_strsplit(buf, " ", 2);
+		channel = find_channel_by_name(gc, res[0]);
+		convo = find_conversation_by_id(gc, channel->id);
+		gaim_chat_set_topic(GAIM_CHAT(convo), res[0], res[1]);
+		g_strfreev(res);
+		break;
+
+	case 603: /* MSG_CLIENT_WHOIS */
+		buf2 = g_strdup_printf(_("%s requested your information"), buf);
+		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		g_free(buf2);
+		break;
+
+	case 604: /* MSG_SERVER_WHOIS_RESPONSE */
+		/* XXX - Format is:   "Elite" 37 " " "Active" 0 0 0 0 "gaim 0.63cvs" 0 0 192.168.1.41 32798 0 unknown flounder */
+		res = g_strsplit(buf, " ", 2);
+		g_show_info_text(gc, res[0], 2, res[1], NULL);
+		g_strfreev(res);
+		break;
+
+	case 621:
+	case 622: /* MSG_CLIENT_MOTD */
+		/* also replaces MSG_SERVER_MOTD, so we should display it */
+		serv_got_im(gc, "motd", buf, 0, time(NULL), -1);
+		break;
+
+	case 627: /* MSG_CLIENT_WALLOP */
+		/* abused by opennap server maintainers to broadcast stuff */
+		serv_got_im(gc, "wallop", buf, 0, time(NULL), -1);
+		break;
+
+	case 628: /* MSG_CLIENT_ANNOUNCE */
+		serv_got_im(gc, "announce", buf, 0, time(NULL), -1);
+		break;
+
+	case 748: /* MSG_SERVER_GHOST */
+		/* Looks like someone logged in as us! =-O */
+		do_error_dialog(_("You were disconnected from the server, because you logged on from a different location"), NULL, GAIM_ERROR);
+		signoff(gc);
+		break;
+
+	case 751: /* MSG_CLIENT_PING */
+		buf2 = g_strdup_printf(_("%s requested a PING"), buf);
+		serv_got_im(gc, "server", buf2, 0, time(NULL), -1);
+		g_free(buf2);
+		/* send back a pong */
+		/* MSG_CLIENT_PONG */
+		nap_write_packet(gc, 752, "%s", buf);
+		break;
+
+	case 752: /* MSG_CLIENT_PONG */
+		buf2 = g_strdup_printf("Received pong from %s", buf);
+		do_error_dialog(buf2, NULL, GAIM_INFO);
+		g_free(buf2);
+		break;
+
+	case 824: /* MSG_CLIENT_EMOTE */
+		res = g_strsplit(buf, " ", 3);
+		buf2 = g_strndup(res[2]+1, strlen(res[2]) - 2); /* chomp off the surround quotes */
+		buf3 = g_strdup_printf("/me %s", buf2);
+		g_free(buf2);
+		if ((channel = find_channel_by_name(gc, res[0]))) {
+			convo = find_conversation_by_id(gc, channel->id);
+			gaim_chat_write(GAIM_CHAT(convo), res[1], buf3, WFLAG_NICK, time(NULL));
+		}
+		g_free(buf3);
+		g_strfreev(res);
+		break;
+
+	default:
+	        gaim_debug(GAIM_DEBUG_MISC, "napster", "Unknown packet %hd: %s\n", command, buf);
+		break;
 	}
+
+	g_free(buf);
 }
 
-
+/* 002 - MSG_CLIENT_LOGIN */
 static void nap_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct nap_data *ndata;
-	char buf[NAP_BUF_LEN];
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	gchar *buf;
 
 	if (!g_slist_find(connections, gc)) {
 		close(source);
@@ -424,129 +561,56 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	ndata = gc->proto_data;
 	ndata->fd = source;
 
-	/* And write our signon data */
-	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"gaimster\" 0", gc->username, gc->password);
-	nap_write_packet(gc, 0x02, buf);
-	
-	/* And set up the input watcher */
-	ndata->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_login_callback, gc);
-}
+	/* Update the login progress status display */
+	buf = g_strdup_printf("Logging in: %s", gc->username);
+	set_login_progress(gc, 4, buf);
+	g_free(buf);
 
+	/* Write our signon data */
+	nap_write_packet(gc, 2, "%s %s 0 \"gaim %s\" 0", gc->username, gc->password, VERSION);
+
+	/* And set up the input watcher */
+	gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);
+}
 
 static void nap_login(struct gaim_account *account)
 {
 	struct gaim_connection *gc = new_gaim_conn(account);
-	gc->proto_data = g_new0(struct nap_data, 1);
 
+	set_login_progress(gc, 2, _("Connecting"));
+
+	gc->proto_data = g_new0(struct nap_data, 1);
 	if (proxy_connect(account, account->proto_opt[USEROPT_NAPSERVER][0] ?
 				account->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER,
 				account->proto_opt[USEROPT_NAPPORT][0] ?
 				atoi(account->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,
 				nap_login_connect, gc) != 0) {
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	}
-}
-
-static GList *nap_chat_info(struct gaim_connection *gc)
-{
-	GList *m = NULL;
-	struct proto_chat_entry *pce;
-
-	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Join what group:");
-	pce->identifier = "name";
-	m = g_list_append(m, pce);
-
-	return m;
-}
-
-static void nap_join_chat(struct gaim_connection *gc, GHashTable *data)
-{
-	gchar buf[NAP_BUF_LEN];
-	char *name = g_hash_table_lookup(data, "name");
-
-	/* Make sure the name has a # preceeding it */
-	if (name[0] != '#') 
-		g_snprintf(buf, NAP_BUF_LEN, "#%s", name);
-	else
-		g_snprintf(buf, NAP_BUF_LEN, "%s", name);
-
-	nap_write_packet(gc, 0x190, buf);
-}
-
-static void nap_chat_leave(struct gaim_connection *gc, int id)
-{
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
-	struct nap_channel *channel = NULL;
-	
-	channel = find_channel_by_id(gc, id);
-
-	if (!channel) /* Again, I'm not sure how this would happen */
-		return;
-
-	nap_write_packet(gc, 0x191, channel->name);
-	
-	ndata->channels = g_slist_remove(ndata->channels, channel);
-	g_free(channel->name);
-	g_free(channel);
-	
-}
-
-static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
-{
-	struct nap_channel *channel = NULL;
-	gchar buf[NAP_BUF_LEN];
-	
-	channel = find_channel_by_id(gc, id);
-
-	if (!channel) {
-		/* This shouldn't happen */
-		return -EINVAL;
-	}
-
-	g_snprintf(buf, NAP_BUF_LEN, "%s %s", channel->name, message);
-	nap_write_packet(gc, 0x192, buf);
-	return 0;
-}
-
-static void nap_add_buddy(struct gaim_connection *gc, const char *name)
-{
-	nap_write_packet(gc, 0xCF, name);
-}
-
-static void nap_remove_buddy(struct gaim_connection *gc, char *name, char *group)
-{
-	nap_write_packet(gc, 0x12F, name);
 }
 
 static void nap_close(struct gaim_connection *gc)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	struct nap_channel *channel;
-	
+
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 
+	if (!ndata)
+		return;
+
+	g_free(ndata->email);
 	while (ndata->channels) {
 		channel = (struct nap_channel *)ndata->channels->data;
 		g_free(channel->name);
 		ndata->channels = g_slist_remove(ndata->channels, channel);
 		g_free(channel);
 	}
-
-	g_free(gc->proto_data);
-}
-
-static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
-{
-	while (buddies) {
-		nap_write_packet(gc, 0xd0, (char *)buddies->data);
-		buddies = buddies -> next;
-	}
+	g_free(ndata);
 }
 
 static const char* nap_list_icon(struct gaim_account *a, struct buddy *b)
@@ -560,80 +624,39 @@ static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		*se = "offline";
 }
 
+static GList *nap_buddy_menu(struct gaim_connection *gc, const char *who)
+{
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = nap_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
+}
+
+static GList *nap_chat_info(struct gaim_connection *gc)
+{
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Join what group:");
+	pce->identifier = "group";
+	m = g_list_append(m, pce);
+
+	return m;
+}
+
 static GaimPlugin *my_protocol = NULL;
-
-#if 0
-G_MODULE_EXPORT void napster_init(struct prpl *ret)
-{
-	struct proto_user_opt *puo;
-	ret->add_buddies = nap_add_buddies;
-	ret->remove_buddy = nap_remove_buddy;
-//	ret->add_permit = NULL;
-//	ret->rem_permit = NULL;
-//	ret->add_deny = NULL;
-//	ret->rem_deny = NULL;
-//	ret->warn = NULL;
-//	ret->chat_invite = NULL;
-	ret->chat_leave = nap_chat_leave;
-//	ret->chat_whisper = NULL;
-//	ret->keepalive = NULL;
-	ret->protocol = PROTO_NAPSTER;
-	ret->name = g_strdup("Napster");
-	ret->list_icon = nap_list_icon;
-	ret->list_emblems = nap_list_emblems;
-	ret->login = nap_login;
-	ret->close = nap_close;
-	ret->send_im = nap_send_im;
-//	ret->set_info = NULL;
-//	ret->get_info = NULL;
-//	ret->set_away = NULL;
-//	ret->set_dir = NULL;
-//	ret->get_dir = NULL;
-//	ret->dir_search = NULL;
-//	ret->set_idle = NULL;
-//	ret->change_passwd = NULL;
-	ret->add_buddy = nap_add_buddy;
-//	ret->add_permit = NULL;
-//	ret->rem_permit = NULL;
-//	ret->add_deny = NULL;
-//	ret->rem_deny = NULL;
-//	ret->warn = NULL;
-	ret->chat_info = nap_chat_info;
-	ret->join_chat = nap_join_chat;
-//	ret->chat_invite = NULL;
-//	ret->chat_whisper = NULL;
-	ret->chat_send = nap_chat_send;
-//	ret->keepalive = NULL;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Server:"));
-	puo->def = g_strdup(NAP_SERVER);
-	puo->pos = USEROPT_NAPSERVER;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup("8888");
-	puo->pos = USEROPT_NAPPORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
-
-	my_protocol = ret;
-}
-
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	napster_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-#endif
-#endif
 
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_NAPSTER,
-	0,
+	OPT_PROTO_CHAT_TOPIC,
 	NULL,
 	NULL,
 	nap_list_icon,
@@ -642,14 +665,14 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	nap_buddy_menu,
 	nap_chat_info,
 	nap_login,
 	nap_close,
 	nap_send_im,
 	NULL,
 	NULL,
-	NULL,
+	nap_get_info,
 	NULL,
 	NULL,
 	NULL,
@@ -693,8 +716,8 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	"prpl-napster",                                     /**< id             */
-	"NAPSTER",                                        /**< name           */
+	"prpl-napster",                                   /**< id             */
+	"Napster",                                        /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
 	N_("NAPSTER Protocol Plugin"),
@@ -711,19 +734,18 @@ static GaimPluginInfo info =
 	&prpl_info                                        /**< extra_info     */
 };
 
-static void
-__init_plugin(GaimPlugin *plugin)
+static void __init_plugin(GaimPlugin *plugin)
 {
 	struct proto_user_opt *puo;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Server");
+	puo->label = g_strdup(_("Server"));
 	puo->def   = g_strdup(NAP_SERVER);
 	puo->pos   = USEROPT_NAPSERVER;
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Port:");
+	puo->label = g_strdup(_("Port:"));
 	puo->def   = g_strdup("8888");
 	puo->pos   = USEROPT_NAPPORT;
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);

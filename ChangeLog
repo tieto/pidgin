@@ -10,7 +10,8 @@ version 0.63:
 	* MSN protocol plugin was rewritten, has experimental buddy icon
 	  support, and MSN Mobile support.
 	* Thanks to all the various people who submitted translation updates.
-	* Speed enhancements (Thanks Ethan Blanton).
+	* Buddy list speed enhancements (Thanks Ethan Blanton).
+	* Napster protocol updates (Thanks Auke Kok).
 
 version 0.62 (04/23/2003):
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 

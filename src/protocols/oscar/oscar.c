@@ -6070,13 +6070,13 @@ __init_plugin(GaimPlugin *plugin)
 	struct proto_user_opt *puo;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Auth Host:");
+	puo->label = g_strdup(_("Auth Host:"));
 	puo->def   = g_strdup("login.oscar.aol.com");
 	puo->pos   = USEROPT_AUTH;
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Auth Port:");
+	puo->label = g_strdup(_("Auth Port:"));
 	puo->def   = g_strdup("5190");
 	puo->pos   = USEROPT_AUTHPORT;
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);

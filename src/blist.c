@@ -618,6 +618,7 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 	hb.account = buddy->account;
 	if (g_hash_table_lookup_extended(gaimbuddylist->buddies, &hb, (gpointer *)&key, (gpointer *)&val)) {
 		g_hash_table_remove(gaimbuddylist->buddies, &hb);
+		/* XXX - Is hb freed anywhere? */
 		g_free(key->name);
 		g_free(key);
 	}
