@@ -102,8 +102,11 @@ msn_transaction_queue_cmd(MsnTransaction *trans, MsnCommand *cmd)
 void
 msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc)
 {
+	MsnCommand *cmd;
+
 	gaim_debug_info("msn", "unqueueing command.\n");
-	MsnCommand *cmd = trans->pendent_cmd;
+	cmd = trans->pendent_cmd;
+
 	g_return_if_fail(cmd != NULL);
 
 	msn_cmdproc_process_cmd(cmdproc, cmd);

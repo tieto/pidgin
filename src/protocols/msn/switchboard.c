@@ -824,9 +824,9 @@ static void
 got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSwitchBoard *swboard;
-	swboard = cmd->trans->data;
 	char *host;
 	int port;
+	swboard = cmd->trans->data;
 
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 

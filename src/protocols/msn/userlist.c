@@ -163,9 +163,10 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
+	MsnMoveBuddy *data;
 
 	cmdproc = userlist->session->notification->cmdproc;
-	MsnMoveBuddy *data = g_new0(MsnMoveBuddy, 1);
+	data = g_new0(MsnMoveBuddy, 1);
 
 	data->who = g_strdup(who);
 
