@@ -21,12 +21,15 @@
  *
  */
 #include <gdk/gdkwin32.h>
-#include <gmodule.h>
-#include "gaim.h"
+#include "internal.h"
+
+#include "prefs.h"
+#include "debug.h"
+
+#include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkblist.h"
-#include "prefs.h"
-#include "win32dep.h"
+#include "gtkutils.h"
 
 /*
  *  MACROS & DEFINES

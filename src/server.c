@@ -118,7 +118,7 @@ void serv_close(GaimConnection *gc)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (prpl_info->close)
-			prpl_info->close(gc);
+			(prpl_info->close)(gc);
 	}
 
 	prpl = gc->prpl;

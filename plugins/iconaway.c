@@ -7,10 +7,9 @@
 
 #define ICONAWAY_PLUGIN_ID "gtk-iconaway"
 
-G_MODULE_IMPORT GtkWidget *imaway;
-/*G_MODULE_IMPORT GtkWidget *blist;*/
-/* XXX G_MODULE_IMPORT GtkWidget *all_chats; */
-/*G_MODULE_IMPORT GtkWidget *all_convos;*/
+#ifdef _WIN32
+__declspec(dllimport) GtkWidget *imaway;
+#endif
 
 #ifdef USE_APPLET
 extern void applet_destroy_buddy();

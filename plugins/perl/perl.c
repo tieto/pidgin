@@ -77,6 +77,9 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 # undef pipe
 #endif
 
+#ifdef _WIN32
+#define _WIN32DEP_H_
+#endif
 #include "internal.h"
 
 #include "debug.h"

@@ -54,7 +54,9 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
+#endif
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -79,14 +81,7 @@
 # endif
 #endif
 
-#ifdef _WIN32
-# include <gdk/gdkwin32.h>
-# include <winsock.h>
-# include "win32dep.h"
-# include <direct.h>
-# include <winsock.h>
-# include <io.h>
-#else
+#ifndef _WIN32
 # include <arpa/inet.h>
 # include <netinet/in.h>
 # include <sys/socket.h>
@@ -110,6 +105,11 @@
 
 #include <gtk/gtk.h>
 #include <glib.h>
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 
 #define WEBSITE "http://gaim.sourceforge.net/"
 

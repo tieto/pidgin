@@ -21,10 +21,14 @@
 #include <windows.h>
 #include <winreg.h>
 #include <winerror.h>
-#include "gaim.h"
-#include "gtkplugin.h"
+
+#include "internal.h"
+
 #include "prefs.h"
-#include "win32dep.h"
+#include "debug.h"
+
+#include "gtkplugin.h"
+#include "gtkutils.h"
 
 /*
  *  MACROS & DEFINES
