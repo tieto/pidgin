@@ -66,6 +66,11 @@
 
 #define TOOLTIP_TIMEOUT 500
 
+/* GTK+ 2.0 hack */
+#if (!GTK_CHECK_VERSION(2,2,0))
+#define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
+#endif
+
 static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
@@ -536,7 +541,6 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 	return FALSE;
 }
 
-#if GTK_CHECK_VERSION(2,2,0)
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
 	char *text;
 	gboolean primary;
@@ -806,7 +810,6 @@ static void imhtml_destroy_add_primary(GtkIMHtml *imhtml, gpointer unused)
 	gtk_text_buffer_add_selection_clipboard(GTK_IMHTML(imhtml)->text_buffer,
 	                                        gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY));
 }
-#endif
 
 static void mark_set_so_update_selection_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark, GtkIMHtml *imhtml)
 {
@@ -989,14 +992,12 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			  GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(imhtml), "drag_data_received", G_CALLBACK(gtk_imhtml_link_drag_rcv_cb), imhtml);
 
-#if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "cut-clipboard", G_CALLBACK(cut_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	//g_signal_connect_after(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
-#endif                                                                             
 
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
