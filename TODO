@@ -12,6 +12,8 @@
 	Rename for groups/buddies
 	Status labels in buddy list (mostly just for yahoo)
 	Border for GtkIMHtml
+	Sounds on buddy pounce
+	Implement system logging
 
 	I have an updated copy of libfaim. It adds a few new features
 		(change password, confirm, req. email, change email,

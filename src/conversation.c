@@ -1719,7 +1719,7 @@ void update_buttons_by_protocol(struct conversation *c)
 		return;
 	}
 	
-	if (c->gc->prpl->set_info == NULL && c->info)
+	if (c->gc->prpl->get_info == NULL && c->info)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else if (c->info)
 		gtk_widget_set_sensitive(c->info, TRUE);
