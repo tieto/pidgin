@@ -64,6 +64,7 @@ typedef struct _JabberStream
 	gboolean roster_parsed;
 
 	GHashTable *chats;
+	GList *chat_servers;
 
 	GHashTable *callbacks;
 	int next_id;
@@ -90,5 +91,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet);
 void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
+
+void jabber_iq_disco_server(JabberStream *js);
 
 #endif /* _GAIM_JABBER_H_ */

@@ -23,6 +23,7 @@
 #define _GAIM_JABBER_JUTIL_H_
 
 #include "account.h"
+#include "conversation.h"
 
 
 typedef struct _JabberID {
@@ -45,5 +46,7 @@ const char *jabber_normalize(const GaimAccount *account, const char *in);
 gboolean jabber_nodeprep_validate(const char *);
 gboolean jabber_nameprep_validate(const char *);
 gboolean jabber_resourceprep_validate(const char *);
+
+GaimConversation *jabber_find_unnormalized_conv(const char *name, GaimAccount *account);
 
 #endif /* _GAIM_JABBER_JUTIL_H_ */

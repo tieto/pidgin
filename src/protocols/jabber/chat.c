@@ -41,12 +41,10 @@ GList *jabber_chat_info(GaimConnection *gc)
 	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
-	/* we're gonna default to a conference server I know is true, until
-	 * I can figure out how to disco for a chat server */
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Server:");
 	pce->identifier = "server";
-	pce->def = "conference.jabber.org";
+	pce->def = js->chat_servers ? js->chat_servers->data : "conference.jabber.org";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);

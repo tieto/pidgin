@@ -20,6 +20,7 @@
  */
 #include "internal.h"
 #include "server.h"
+#include "util.h"
 
 #include "chat.h"
 #include "presence.h"
@@ -300,3 +301,21 @@ const char *jabber_normalize(const GaimAccount *account, const char *in)
 	return buf;
 }
 
+GaimConversation *
+jabber_find_unnormalized_conv(const char *name, GaimAccount *account)
+{
+	GaimConversation *c = NULL;
+	GList *cnv;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	for(cnv = gaim_get_conversations(); cnv; cnv = cnv->next) {
+		c = (GaimConversation*)cnv->data;
+		if(gaim_conversation_get_type(c) == GAIM_CONV_IM &&
+				!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
+				account == gaim_conversation_get_account(c))
+			return c;
+	}
+
+	return NULL;
+}

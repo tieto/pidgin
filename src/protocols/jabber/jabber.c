@@ -380,6 +380,7 @@ jabber_login(GaimAccount *account)
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
+	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();
 
@@ -777,20 +778,15 @@ static void jabber_close(GaimConnection *gc)
 		g_hash_table_destroy(js->buddies);
 	if(js->chats)
 		g_hash_table_destroy(js->chats);
+	while(js->chat_servers) {
+		g_free(js->chat_servers->data);
+		js->chat_servers = g_list_delete_link(js->chat_servers, js->chat_servers);
+	}
 	if(js->stream_id)
 		g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
 	g_free(js);
-}
-
-static void jabber_server_probe(JabberStream *js)
-{
-	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET,
-			"http://jabber.org/protocol/disco#items");
-
-	xmlnode_set_attrib(iq->node, "to", js->user->domain);
-	jabber_iq_send(iq);
 }
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
@@ -828,7 +824,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
 			jabber_presence_send(js->gc, js->gc->away_state, js->gc->away);
-			jabber_server_probe(js);
+			jabber_iq_disco_server(js);
 			serv_finish_login(js->gc);
 			break;
 	}

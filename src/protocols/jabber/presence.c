@@ -153,9 +153,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *y;
 	gboolean muc = FALSE;
 
-	jb = jabber_buddy_find(js, from, TRUE);
 
-	if(!jb)
+	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
+	if(!(jid = jabber_id_new(from)))
 		return;
 
 	if(jb->error_msg) {
@@ -188,9 +190,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				_("Authorize"), G_CALLBACK(authorize_add_cb),
 				_("Deny"), G_CALLBACK(deny_add_cb));
 		g_free(msg);
+		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
 		/* we've been allowed to see their presence, but we don't care */
+		jabber_id_free(jid);
 		return;
 	} else {
 		if((y = xmlnode_get_child(packet, "show"))) {
@@ -212,8 +216,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	if(!(jid = jabber_id_new(from)))
-		return;
 
 	for(y = packet->child; y; y = y->next) {
 		if(y->type != NODE_TYPE_TAG)
@@ -377,7 +379,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_STATE_ERROR ||
 				(type && (!strcmp(type, "unavailable") ||
 						  !strcmp(type, "unsubscribed")))) {
+			GaimConversation *conv;
+
 			jabber_buddy_remove_resource(jb, jid->resource);
+			if((conv = jabber_find_unnormalized_conv(from, js->gc->account)))
+				gaim_conversation_set_name(conv, buddy_name);
+
 		} else {
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
 					status);

@@ -52,25 +52,6 @@ void jabber_message_free(JabberMessage *jm)
 	g_free(jm);
 }
 
-static GaimConversation *
-find_unnormalized_im(const char *name, GaimAccount *account)
-{
-	GaimConversation *c = NULL;
-	GList *cnv;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	for(cnv = gaim_get_conversations(); cnv; cnv = cnv->next) {
-		c = (GaimConversation*)cnv->data;
-		if(gaim_conversation_get_type(c) == GAIM_CONV_IM &&
-				!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
-				account == gaim_conversation_get_account(c))
-			return c;
-	}
-
-	return NULL;
-}
-
 static void handle_chat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
@@ -85,13 +66,13 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(find_unnormalized_im(jm->from, jm->js->gc->account)) {
+	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		GaimConversation *conv;
 
 		from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-		conv = find_unnormalized_im(from, jm->js->gc->account);
+		conv = jabber_find_unnormalized_conv(from, jm->js->gc->account);
 		if(conv)
 			gaim_conversation_set_name(conv, jm->from);
 		g_free(from);
@@ -491,6 +472,9 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	js = gc->proto_data;
 	chat = jabber_chat_find_by_id(js, id);
 
+	if(!chat)
+		return 0;
+
 	if(!strcmp(msg, "/configure") || !strcmp(msg, "/config")) {
 		jabber_chat_request_room_configure(chat);
 		return 1;
@@ -507,8 +491,6 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	} else if(!strncmp(msg, "/part", 5)) {
 		jabber_chat_part(chat, strlen(msg) > 6 ? msg+6 : NULL);
 		return 1;
-	} else if(!strncmp(msg, "/ban", 4)) {
-	} else if(!strncmp(msg, "/kick", 5)) {
 	}
 
 	jm = g_new0(JabberMessage, 1);
