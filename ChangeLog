@@ -13,6 +13,7 @@ version 0.45:
 	* Large internal reworkings
 	* New Protocol: Gadu-Gadu, written by Arkadiusz Miskiewicz
 	* Can choose buddy icon to send (for Oscar)
+	* New Translation: Polish translation by Przemysaw Suek
 
 version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to
