@@ -454,7 +454,6 @@ msn_send_im(struct gaim_connection *gc, const char *who, const char *message,
 		user = msn_user_new(session, who, NULL);
 
 		msg = msn_message_new();
-		msn_message_set_flag(msg, 'D');
 		msn_message_set_receiver(msg, user);
 		msn_message_set_attr(msg, "X-MMS-IM-Format",
 							 "FN=Arial; EF=; CO=0; PF=0");
