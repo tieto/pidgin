@@ -289,7 +289,6 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 	GtkTreeSelection *sel = NULL;
 	GtkTreeModel *model = NULL;
 	GaimAccount *account = NULL;
-	GaimConnection *gc = NULL;
 	
 	switch(id) {
 	case GTK_RESPONSE_DELETE_EVENT:
@@ -314,18 +313,16 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 		}
 		gtk_tree_model_get_value(model, &iter, 4, &val);
 		account = g_value_get_pointer(&val);
-		gc = gaim_account_connect(account);
 		g_value_unset(&val);
-		if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
-			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-			if (!gtk_tree_model_get_iter_first(model, &iter))
-				disconnect_window_hide();
-			else {
-				gtk_tree_selection_select_iter(sel, &iter);
-				if (!gtk_tree_model_iter_next(model, &iter))
-					gtk_widget_hide_all(disconnect_window->sw);
-			}
+		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+		if (!gtk_tree_model_get_iter_first(model, &iter))
+			disconnect_window_hide();
+		else {
+			gtk_tree_selection_select_iter(sel, &iter);
+			if (!gtk_tree_model_iter_next(model, &iter))
+				gtk_widget_hide_all(disconnect_window->sw);
 		}
+		gaim_account_connect(account);
 		break;
 	}
 }
