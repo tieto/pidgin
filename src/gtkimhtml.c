@@ -3769,6 +3769,9 @@ void gtk_imhtml_insert_link(GtkIMHtml *imhtml, GtkTextMark *mark, const char *ur
 {
 	GtkTextIter iter;
 
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
+		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
+
 	gtk_imhtml_toggle_link(imhtml, url);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
 	gtk_text_buffer_insert(imhtml->text_buffer, &iter, text, -1);

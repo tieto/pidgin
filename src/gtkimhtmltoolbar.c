@@ -382,7 +382,9 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
 		GaimRequestField *field;
+		GtkTextIter start, end;
 		char *msg;
+		char *desc = NULL;
 
 		fields = gaim_request_fields_new();
 
@@ -394,8 +396,11 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		gaim_request_field_group_add_field(group, field);
 
 		if(GTK_IMHTML(toolbar->imhtml)->format_functions & GTK_IMHTML_LINKDESC) {
+			if (gtk_text_buffer_get_selection_bounds(GTK_IMHTML(toolbar->imhtml)->text_buffer, &start, &end)) {
+				desc = gtk_imhtml_get_text(GTK_IMHTML(toolbar->imhtml), &start, &end);
+			}
 			field = gaim_request_field_string_new("description", _("_Description"),
-							      NULL, FALSE);
+							      desc, FALSE);
 			gaim_request_field_group_add_field(group, field);
 			msg = g_strdup(_("Please enter the URL and description of the "
 							 "link that you want to insert. The description "
@@ -414,6 +419,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
 					    toolbar);
 		g_free(msg);
+		g_free(desc);
 	} else {
 		close_link_dialog(toolbar);
 	}
