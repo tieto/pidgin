@@ -400,8 +400,8 @@ static void gaimrc_write_plugins(FILE *f)
 
 		p = (struct gaim_plugin *)pl->data;
 
-		path = escape_text2(g_module_name(p->handle));
-
+		path = escape_text2(p->path);
+			
 		fprintf(f, "\tplugin { %s }\n", path);
 
 		free(path);

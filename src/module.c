@@ -136,7 +136,7 @@ void gaim_probe_plugins() {
 #endif
 #ifdef USE_PERL
 				if (is_so_file(file, ".pl")) {
-					path = g_build_filename(LIBDIR, file, NULL);
+					path = g_build_filename(probedirs[l], file, NULL);
 					plug = probe_perl(path);
 					if (plug) 
 						probed_plugins = g_list_append(probed_plugins, plug);
@@ -159,13 +159,17 @@ struct gaim_plugin *load_plugin(const char *filename)
 	GList *c = plugins;
 	GList *p = probed_plugins;
 	char *(*gaim_plugin_init)(GModule *);
-	char *error, *retval, *tmp;
+	char *error, *retval;
 	gboolean newplug = FALSE;
 
 	if (!g_module_supported())
 		return NULL;
 	if (!filename || !strlen(filename))
 		return NULL;
+
+	if (is_so_file(filename, ".pl")) {
+		return perl_load_file(filename);
+	}
 
 	while (filename && p) {
 		plug = (struct gaim_plugin *)p->data;
@@ -190,21 +194,18 @@ struct gaim_plugin *load_plugin(const char *filename)
 	if (!plug->handle) {
 		error = (char *)g_module_error();
 		plug->handle = NULL;
-		tmp = plug->desc.description;
-		plug->desc.description = g_strdup_printf("<span weight=\"bold\" foreground=\"red\">%s</span>\n\n%s", error, tmp);
-		g_free(tmp);
+		g_snprintf(plug->error, sizeof(plug->error), error);
 		return NULL;
 	}
 	
 	if (!g_module_symbol(plug->handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
 		g_module_close(plug->handle);
 		plug->handle = NULL;
-		tmp = plug->desc.description;
-		plug->desc.description = g_strdup_printf("<span foreground=\"red\">%s</span>\n\n%s", g_module_error(), tmp);
-		g_free(tmp);
+		g_snprintf(plug->error, sizeof(plug->error), error);
 		return NULL;
 	}
 
+	plug->error[0] = '\0';
 	retval = gaim_plugin_init(plug->handle);
 	debug_printf("loaded plugin returned %s\n", retval ? retval : "NULL");
 	if (retval) {
@@ -632,8 +633,10 @@ void remove_all_plugins()
 
 	while (c) {
 		p = (struct gaim_plugin *)c->data;
-		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-			gaim_plugin_remove();
+		if (p->type == plugin) {
+			if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
+				gaim_plugin_remove();
+		}
 		g_free(p);
 		c = c->next;
 	}

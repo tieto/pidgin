@@ -42,7 +42,15 @@ GAIM::register(name, version, shutdownroutine, unused)
 	Just like X-Chat. This is the first function your script should call.
 	shutdownroutine is a function that will be called when the script
 	gets unloaded (like when gaim gets closed). This function returns
-	gaim's version number.
+	gaim's version number.  This function MUST use the same Name and Version
+	given in description()--the plugin won't work otherwise.  This returns a
+	handle--you want to hold on to this.
+
+	The handle is what Gaim will use to distinguish your script from any others
+	running.  It's actually a string--the path to the script, but you'll probably
+	never need to know that.  As long as you just hold on to it and don't change it
+	everything should work fine.  You need it for GAIM::add_event_handler and 
+	GAIM::add_timeout_handler.
 
 GAIM::get_info(integer, ...)
 	This function returns different information based on the integer passed
@@ -125,11 +133,12 @@ GAIM::print_to_conv(index, who, what, auto)
 GAIM::print_to_chat(index, room, what)
 	Room is actually an int. Read SIGNALS to find out why.
 
-GAIM::add_event_handler(event, function)
+GAIM::add_event_handler(handle, event, function)
 	This is the most important of them all. This is basically exactly like
-	gaim_signal_connect for plugins. You pass which event you want to connect to
-	(a string with the same name as the events for plugins, see SIGNALS), and a
-	string with the name of the function you want called. Simple enough?
+	gaim_signal_connect for plugins. You pass the handle returned by GAIM::register,
+	which event you want to connect to (a string with the same name as the events for 
+	plugins, see SIGNALS), and a string with the name of the function you want called. 
+	Simple enough?
 
 	When this is triggered, the arguments will be passed in @_ and are broken
 	into a list. This is different from all previous versions of Gaim, where you
@@ -150,11 +159,11 @@ GAIM::remove_event_handler(event, function)
 	calls "function" as its handler.  The event handler must have been
 	previously added with GAIM::add_event_handler.
 
-GAIM::add_timeout_handler(integer, function, args)
+GAIM::add_timeout_handler(handle, integer, function, args)
 	This calls function after integer number of seconds. It only calls function
 	once, so if you want to keep calling function, keep readding the handler.
 	Args is a string that you'd like to have passed to your timeout handler; it's
-	optional.
+	optional.  Handle is the handle returned by GAIM::register--it is not optional.
 
 GAIM::play_sound(int sound)
 	Plays a sound using whatever method the user has selected. The argument is

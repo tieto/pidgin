@@ -68,19 +68,20 @@ struct perlscript {
 	char *name;
 	char *version;
 	char *shutdowncallback; /* bleh */
+	struct gaim_plugin *plug;
 };
 
 struct _perl_event_handlers {
 	char *event_type;
 	char *handler_name;
-	char *handle;
+	struct gaim_plugin *plug;
 };
 
 struct _perl_timeout_handlers {
 	char *handler_name;
 	char *handler_args;
 	gint iotag;
-	char *handle;
+	struct gaim_plugin *plug;
 };
 
 static GList *perl_list = NULL; /* should probably extern this at some point */
@@ -203,8 +204,6 @@ execute_perl(char *function, char *args)
 
 }
 
-/* This function is so incredibly broken and should never, ever, ever
-   be trusted to work */
 void perl_unload_file(struct gaim_plugin *plug) {
 	struct perlscript *scp = NULL;
 	struct _perl_timeout_handlers *thn;
@@ -215,29 +214,24 @@ void perl_unload_file(struct gaim_plugin *plug) {
 	debug_printf("Unloading %s\n", plug->handle);
 	while (pl) {
 		scp = pl->data;
-		/* This is so broken */
-		if (!strcmp(scp->name, plug->desc.name) &&
-		    !strcmp(scp->version, plug->desc.version))
+		if (scp->plug == plug) {
+			perl_list = g_list_remove(perl_list, scp);
+			if (scp->shutdowncallback[0])
+				execute_perl(scp->shutdowncallback, "");
+			perl_list = g_list_remove(perl_list, scp);
+			g_free(scp->name);
+			g_free(scp->version);
+			g_free(scp->shutdowncallback);
+			g_free(scp);	
 			break;
-		pl = pl->next;
-		scp = NULL;
-	}
-	if (scp) {
-		perl_list = g_list_remove(perl_list, scp);
-		if (scp->shutdowncallback[0])
-			execute_perl(scp->shutdowncallback, "");
-		perl_list = g_list_remove(perl_list, scp);
-		g_free(scp->name);
-		g_free(scp->version);
-		g_free(scp->shutdowncallback);
-		g_free(scp);
+		}
 	}
 
 	pl = perl_timeout_handlers;
 	while (pl) {
 		thn = pl->data;
-		if (thn && thn->handle == plug->handle) {
-			g_list_remove(perl_timeout_handlers, thn);
+		if (thn && thn->plug == plug) {
+			perl_timeout_handlers = g_list_remove(perl_timeout_handlers, thn);
 			g_source_remove(thn->iotag);
 			g_free(thn->handler_args);
 			g_free(thn->handler_name);
@@ -249,7 +243,7 @@ void perl_unload_file(struct gaim_plugin *plug) {
 	pl = perl_event_handlers;
 	while (pl) {
 		ehn = pl->data;
-		if (ehn && ehn->handle == plug->handle) {
+		if (ehn && ehn->plug == plug) {
 			perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
 			g_free(ehn->event_type);
 			g_free(ehn->handler_name);
@@ -259,15 +253,17 @@ void perl_unload_file(struct gaim_plugin *plug) {
 	}
 
 	plug->handle=NULL;
+	plugins = g_list_remove(plugins, plug);
+	save_prefs();
 }
 
 int perl_load_file(char *script_name)
 {
 	struct gaim_plugin *plug;
 	GList *p = probed_plugins;
-	GList *e = perl_event_handlers;
-	GList *t = perl_timeout_handlers;
-	int num_e, num_t, ret;
+	GList *s;
+	struct perlscript *scp;
+	int ret;
 
 	if (my_perl == NULL)
 		perl_init();
@@ -282,36 +278,35 @@ int perl_load_file(char *script_name)
 	if (!plug) {
 		probe_perl(script_name);
 	}
-	
+
 	plug->handle = plug->path;
-	
-	/* This is such a terrible hack-- if I weren't tired and annoyed
-	 * with perl, I'm sure I wouldn't even be considering this. */
-	num_e=g_list_length(e);
-	num_t=g_list_length(t);
+	plugins = g_list_append(plugins, plug);
 
 	ret = execute_perl("load_n_eval", script_name);
 
-	t = g_list_nth(perl_timeout_handlers, num_t++);
-	while (t) {
-		struct _perl_timeout_handlers *h = t->data;
-		h->handle = plug->handle;
-		t = t->next;
+	s = perl_list;
+	while (s) {
+		scp = s->data;
+	
+		if (!strcmp(scp->name, plug->desc.name) &&
+		    !strcmp(scp->version, plug->desc.version))
+			break;
+		s = s->next;
 	}
 
-	e = g_list_nth(perl_event_handlers, num_e++);
-	while (e) {
-		struct _perl_event_handlers *h = e->data;
-		h->handle = plug->handle;
-		e = e->next;
+	if (!s) {
+		g_snprintf(plug->error, sizeof(plug->error), _("GAIM::register not called with proper arguments.  Consult PERL-HOWTO."));
+		return 0;
 	}
+	
+	plug->error[0] = '\0';
 	return ret;
 }
 
 struct gaim_plugin *probe_perl(const char *filename) {
 
 	/* XXX This woulld be much faster if I didn't create a new
-	 *     PerlInterpreter every time I did probed a plugin */
+	 *     PerlInterpreter every time I probed a plugin */
 
 	PerlInterpreter *prober = perl_alloc();
 	struct gaim_plugin * plug = NULL;
@@ -328,7 +323,6 @@ struct gaim_plugin *probe_perl(const char *filename) {
 
 		count = perl_call_pv("description", G_NOARGS | G_ARRAY | G_EVAL);
 		SPAGAIN;
-		debug_printf("desc: %d  char: %d  count: %d\n", sizeof(struct gaim_plugin_description), sizeof(char*), count);
 		if (count == (sizeof(struct gaim_plugin_description) - sizeof(int)) / sizeof(char*)) {
 			plug = g_new0(struct gaim_plugin, 1);
 			plug->type = perl_script;
@@ -449,6 +443,9 @@ XS (XS_GAIM_register)
 	char *name, *ver, *callback, *unused; /* exactly like X-Chat, eh? :) */
 	unsigned int junk;
 	struct perlscript *scp;
+	struct gaim_plugin *plug;
+	GList *pl = plugins;
+	
 	dXSARGS;
 	items = 0;
 
@@ -457,13 +454,25 @@ XS (XS_GAIM_register)
 	callback = SvPV (ST (2), junk);
 	unused = SvPV (ST (3), junk);
 
-	scp = g_new0(struct perlscript, 1);
-	scp->name = g_strdup(name);
-	scp->version = g_strdup(ver);
-	scp->shutdowncallback = g_strdup(callback);
-	perl_list = g_list_append(perl_list, scp);
+	while (pl) {
+		plug = pl->data;
 
-	XST_mPV (0, VERSION);
+		if (!strcmp(name, plug->desc.name) &&
+		    !strcmp(ver, plug->desc.version)) {
+			break;
+		}
+		pl = pl->next;
+	}
+
+	if (plug) {
+		scp = g_new0(struct perlscript, 1);
+		scp->name = g_strdup(name);
+		scp->version = g_strdup(ver);
+		scp->shutdowncallback = g_strdup(callback);
+		scp->plug = plug; 
+		perl_list = g_list_append(perl_list, scp);
+	}
+	XST_mPV (0, plug->path);
 	XSRETURN (1);
 }
 
@@ -963,14 +972,31 @@ XS (XS_GAIM_add_event_handler)
 {
 	unsigned int junk;
 	struct _perl_event_handlers *handler;
+	char *handle;
+	struct gaim_plugin *plug;
+	GList *p = plugins;
 	dXSARGS;
 	items = 0;
+	
+	handle = SvPV(ST(0), junk);
+	while (p) {
+		plug = p->data;
+		if (!strcmp(handle, plug->path))
+			break;
+		p = p->next;
+	}
 
-	handler = g_new0(struct _perl_event_handlers, 1);
-	handler->event_type = g_strdup(SvPV(ST(0), junk));
-	handler->handler_name = g_strdup(SvPV(ST(1), junk));
-	perl_event_handlers = g_list_append(perl_event_handlers, handler);
-	debug_printf("registered perl event handler for %s\n", handler->event_type);
+	if (p) {
+		handler = g_new0(struct _perl_event_handlers, 1);
+		handler->event_type = g_strdup(SvPV(ST(1), junk));
+		handler->handler_name = g_strdup(SvPV(ST(2), junk));
+		handler->plug = plug;
+		perl_event_handlers = g_list_append(perl_event_handlers, handler);
+		debug_printf("registered perl event handler for %s\n", handler->event_type);
+	} else {
+		debug_printf("Invalid handle (%s) registering perl event handler\n", handle);
+	}
+	
 	XSRETURN_EMPTY;
 }
 
@@ -1015,16 +1041,33 @@ XS (XS_GAIM_add_timeout_handler)
 	unsigned int junk;
 	long timeout;
 	struct _perl_timeout_handlers *handler;
+	char *handle;
+	struct gaim_plugin *plug;
+	GList *p = plugins;
+	
 	dXSARGS;
 	items = 0;
+	
+	handle = SvPV(ST(0), junk);
+	while (p) {
+		plug = p->data;
+		if (!strcmp(handle, plug->path))
+			break;
+		p = p->next;
+	}
 
-	handler = g_new0(struct _perl_timeout_handlers, 1);
-	timeout = 1000 * SvIV(ST(0));
-	debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
-	handler->handler_name = g_strdup(SvPV(ST(1), junk));
-	handler->handler_args = g_strdup(SvPV(ST(2), junk));
-	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
-	handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
+	if (p) {
+		handler = g_new0(struct _perl_timeout_handlers, 1);
+		timeout = 1000 * SvIV(ST(1));
+		debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
+		handler->plug = plug;
+		handler->handler_name = g_strdup(SvPV(ST(2), junk));
+		handler->handler_args = g_strdup(SvPV(ST(3), junk));
+		perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
+		handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
+	} else {
+		debug_printf("Invalid handle (%s) in adding perl timeout handler.", handle);
+	}
 	XSRETURN_EMPTY;
 }
 
@@ -1046,21 +1089,5 @@ extern void unload_perl_scripts()
 	perl_init();
 }
 
-extern void list_perl_scripts()
-{
-	GList *s = perl_list;
-	struct perlscript *p;
-	char buf[BUF_LONG * 4];
-	int at = 0;
-
-	at += g_snprintf(buf + at, sizeof(buf) - at, "Loaded scripts:\n");
-	while (s) {
-		p = (struct perlscript *)s->data;
-		at += g_snprintf(buf + at, sizeof(buf) - at, "%s\n", p->name);
-		s = s->next;
-	}
-
-	do_error_dialog(buf, NULL, GAIM_INFO);
-}
 
 #endif /* USE_PERL */
