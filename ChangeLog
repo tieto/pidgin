@@ -32,7 +32,7 @@ version 0.76cvs:
 	* Moved translation news to po/ChangeLog
 
 	Bug Fixes:
-	* Significant work on the Zepher plugin (Arun A. Tharuvai)
+	* Significant work on the Zephyr plugin (Arun A. Tharuvai)
 	* You can now use :/ as a smiley safely (Nathan Owens)
 	* Various buffer overflow fixes (Stefan Esser)
 	* Tabs now stay green when they are supposed to (Etan Reisner)
