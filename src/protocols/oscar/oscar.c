@@ -1339,6 +1339,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	} else
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
 
+	strip_linefeed(tmp);
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
@@ -2063,9 +2064,12 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (msg->type == 0x0001) {
 		char sender[32];
+		char *tmp = g_strdup(msg->msg);
 		time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
 		g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
-		serv_got_im(gc, sender, msg->msg, 0, t);
+		strip_linefeed(tmp);
+		serv_got_im(gc, sender, tmp, 0, t);
+		g_free(tmp);
 	} else {
 		debug_printf("unknown offline message type 0x%04x\n", msg->type);
 	}
