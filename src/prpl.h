@@ -36,46 +36,6 @@ typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
 /**************************************************************************/
 /*@{*/
 
-/**
- * Protocol types and numbers.
- *
- * Do not assume a new protocol number without talking to
- * Rob Flynn or Sean Egan first!
- */
-typedef enum
-{
-	GAIM_PROTO_TOC = 0,     /**< AIM TOC protocol          */
-	GAIM_PROTO_OSCAR,       /**< AIM OSCAR protocol        */
-	GAIM_PROTO_YAHOO,       /**< Yahoo Messenger protocol  */
-	GAIM_PROTO_ICQ,         /**< Outdated ICQ protocol     */
-	GAIM_PROTO_MSN,         /**< MSN Messenger protocol    */
-	GAIM_PROTO_IRC,         /**< IRC protocol              */
-	GAIM_PROTO_FTP,         /**< FTP protocol              */
-	GAIM_PROTO_VGATE,       /**< VGATE protocol            */
-	GAIM_PROTO_JABBER,      /**< Jabber protocol           */
-	GAIM_PROTO_NAPSTER,     /**< Napster/OpenNAP protocol  */
-	GAIM_PROTO_ZEPHYR,      /**< MIT Zephyr protocol       */
-	GAIM_PROTO_GADUGADU,    /**< Gadu-Gadu protocol        */
-	GAIM_PROTO_SAMETIME,    /**< SameTime protocol         */
-	GAIM_PROTO_TLEN,        /**< TLEN protocol             */
-	GAIM_PROTO_RVP,         /**< RVP protocol              */
-	GAIM_PROTO_BACKRUB,     /**< Instant Massager protocol */
-	GAIM_PROTO_MOO,         /**< MOO protocol              */
-	GAIM_PROTO_ELVIN,       /**< Elvin Protocol            */
-	GAIM_PROTO_TREPIA,      /**< Trepia IM protocol        */
-	GAIM_PROTO_BATTLENET,   /**< Battle.NET protocol       */
-	GAIM_PROTO_SSCP,	/**< SSCP (ConfMgr) protocol   */
-	GAIM_PROTO_BLOGGER,	/**< Blogger xml-rpc protocol  */
-	/* If you add any more prpl numbers,  then a curse will
-	 * be placed upon your keyboard the likes of which the
-	 * world has never known. prpl numbers are no longer
-	 * necessary.  --Nathan
-	 * */
-	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
-
-} GaimProtocol;
-
-
 /** Default protocol plugin description */
 #define GAIM_PRPL_DESC(x) \
 		"Allows gaim to use the " (x) " protocol.\n\n"      \
@@ -342,24 +302,6 @@ struct _GaimPluginProtocolInfo
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * Returns the plugin ID for a protocol number.
- *
- * @param protocol The protocol number.
- *
- * @return The plugin ID for those numbers that support it.
- */
-const char *gaim_prpl_num_to_id(GaimProtocol protocol);
-
-/**
- * Returns the plugin number for a protocol ID.
- *
- * @param id The protocol ID.
- *
- * @return The protocol ID for valid protocol plugin IDs.
- */
-GaimProtocol gaim_prpl_id_to_num(const char *id);
 
 /**
  * Finds a protocol plugin structure of the specified type.

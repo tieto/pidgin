@@ -753,8 +753,8 @@ static void
 joinchat_select_account_cb(GObject *w, GaimAccount *account,
 							GaimGtkJoinChatData *data)
 {
-	if (gaim_account_get_protocol(data->account) ==
-		gaim_account_get_protocol(account))
+	if (strcmp(gaim_account_get_protocol_id(data->account),
+				gaim_account_get_protocol_id(account)) == 0)
 	{
 		data->account = account;
 	}
@@ -4183,8 +4183,8 @@ static void
 add_chat_select_account_cb(GObject *w, GaimAccount *account,
 						   GaimGtkAddChatData *data)
 {
-	if (gaim_account_get_protocol(data->account) ==
-		gaim_account_get_protocol(account))
+	if (strcmp(gaim_account_get_protocol_id(data->account),
+		gaim_account_get_protocol_id(account)) == 0)
 	{
 		data->account = account;
 	}

@@ -71,7 +71,6 @@ typedef struct
 	AccountParserTag tag;
 
 	GaimAccount *account;
-	GaimProtocol protocol;
 	GaimProxyInfo *proxy_info;
 	char *protocol_id;
 
@@ -450,14 +449,6 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 }
 
 void
-gaim_account_set_protocol(GaimAccount *account, GaimProtocol protocol)
-{
-	g_return_if_fail(account != NULL);
-
-	gaim_account_set_protocol_id(account, gaim_prpl_num_to_id(protocol));
-}
-
-void
 gaim_account_set_protocol_id(GaimAccount *account, const char *protocol_id)
 {
 	g_return_if_fail(account     != NULL);
@@ -726,14 +717,6 @@ gaim_account_get_buddy_icon(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->buddy_icon;
-}
-
-GaimProtocol
-gaim_account_get_protocol(const GaimAccount *account)
-{
-	g_return_val_if_fail(account != NULL, -1);
-
-	return gaim_prpl_id_to_num(gaim_account_get_protocol_id(account));
 }
 
 const char *
@@ -1543,37 +1526,6 @@ gaim_accounts_get_all(void)
 	return accounts;
 }
 
-static GaimAccount *
-gaim_accounts_find_with_prpl_num(const char *name, GaimProtocol protocol)
-{
-	GaimAccount *account = NULL;
-	GList *l;
-	char *who;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	who = g_strdup(gaim_normalize(NULL, name));
-
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		account = (GaimAccount *)l->data;
-
-		if (!strcmp(gaim_normalize(NULL, gaim_account_get_username(account)), who)) {
-			if (protocol != -1) {
-				if (gaim_account_get_protocol(account) == protocol)
-					break;
-			}
-			else
-				break;
-		}
-
-		account = NULL;
-	}
-
-	g_free(who);
-
-	return account;
-}
-
 GaimAccount *
 gaim_accounts_find(const char *name, const char *protocol_id)
 {
@@ -1596,9 +1548,6 @@ gaim_accounts_find(const char *name, const char *protocol_id)
 
 		account = NULL;
 	}
-
-	if(!account && protocol_id)
-		account = gaim_accounts_find_with_prpl_num(name, atoi(protocol_id));
 
 	g_free(who);
 

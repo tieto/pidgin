@@ -78,7 +78,7 @@ gaim_remote_handle_uri(const char *uri)
 		account = gaim_connection_get_account(gc);
 		username = gaim_account_get_username(account);
 
-		if (gaim_account_get_protocol(account) == GAIM_PROTO_OSCAR &&
+		if (strcmp(gaim_account_get_protocol_id(account), "prpl-oscar") == 0 &&
 			username != NULL && isalpha(*username)) {
 
 			break;

@@ -1822,19 +1822,48 @@ static void do_import(GaimAccount *account, const char *filename)
 		char *g_screenname = get_screenname_filename(account->username);
 		const char *username;
 		char *file = gaim_user_dir();
-		GaimProtocol prpl_num;
-		int protocol;
+		const char *prpl_id;
+		int protocol = -1;
 
-		prpl_num = gaim_account_get_protocol(account);
+		prpl_id = gaim_account_get_protocol_id(account);
 
-		protocol = prpl_num;
-
-		/* XXX - Somehow move this checking into the PRPLs */
-		if (prpl_num == GAIM_PROTO_OSCAR) {
+		/* XXX - Somehow move this checking into the PRPLs
+		 * Load old GaimProtocol numbers that have been eliminated */
+		if (strcmp(prpl_id, "prpl-toc") == 0) {
+			protocol = 0;
+		} else if (strcmp(prpl_id, "prpl-oscar") == 0) {
+			protocol = 1;
 			if ((username = gaim_account_get_username(account)) != NULL) {
-				protocol = (isalpha(*username)
-							? GAIM_PROTO_TOC : GAIM_PROTO_ICQ);
+				/*
+				 * Old values from when Protocols had to have an assigned ID:
+				 * 
+				 * GAIM_PROTO_TOC = 0
+				 * GAIM_PROTO_ICQ = 3
+				 */
+				protocol = (isalpha(*username) ? 0 : 3);
 			}
+		} else if (strcmp(prpl_id, "prpl-yahoo") == 0) {
+			protocol = 2;
+		} else if (strcmp(prpl_id, "prpl-icq") == 0) {
+			protocol = 3;
+		} else if (strcmp(prpl_id, "prpl-msn") == 0) {
+			protocol = 4;
+		} else if (strcmp(prpl_id, "prpl-irc") == 0) {
+			protocol = 5;
+		} else if (strcmp(prpl_id, "prpl-jabber") == 0) {
+			protocol = 8;
+		} else if (strcmp(prpl_id, "prpl-napster") == 0) {
+			protocol = 9;
+		} else if (strcmp(prpl_id, "prpl-zephyr") == 0) {
+			protocol = 10;
+		} else if (strcmp(prpl_id, "prpl-gg") == 0) {
+			protocol = 11;
+		} else if (strcmp(prpl_id, "prpl-moo") == 0) {
+			protocol = 16;
+		} else if (strcmp(prpl_id, "prpl-trepia") == 0) {
+			protocol = 18;
+		} else if (strcmp(prpl_id, "prpl-blogger") == 0) {
+			protocol = 21;
 		}
 
 		if (file != (char *)NULL) {
@@ -2323,14 +2352,10 @@ static void print_buddy(FILE *file, GaimBuddy *buddy)
 	char *bud_name = g_markup_escape_text(buddy->name, -1);
 	char *bud_alias = NULL;
 	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
-	int proto_num = gaim_account_get_protocol(buddy->account);
 	if (buddy->alias)
 		bud_alias= g_markup_escape_text(buddy->alias, -1);
-	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\"", acct_name,
+	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\">\n", acct_name,
 			gaim_account_get_protocol_id(buddy->account));
-	if (proto_num != -1)
-		fprintf(file, " protocol=\"%d\"", proto_num);
-	fprintf(file, ">\n");
 
 	fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
 	if (bud_alias) {
@@ -2392,13 +2417,9 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
 					GaimChat *chat = (GaimChat *)cnode;
 					if (!exp_acct || chat->account == exp_acct) {
 						char *acct_name = g_markup_escape_text(chat->account->username, -1);
-						int proto_num = gaim_account_get_protocol(chat->account);
-						fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\"",
+						fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\">\n",
 								gaim_account_get_protocol_id(chat->account),
 								acct_name);
-						if (proto_num != -1)
-							fprintf(file, " protocol=\"%d\"", proto_num);
-						fprintf(file, ">\n");
 
 						if (chat->alias) {
 							char *chat_alias = g_markup_escape_text(chat->alias, -1);
@@ -2428,14 +2449,10 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
 
 		GaimAccount *account = accounts->data;
 		char *acct_name = g_markup_escape_text(account->username, -1);
-		int proto_num = gaim_account_get_protocol(account);
 		if (!exp_acct || account == exp_acct) {
 			fprintf(file, "\t\t<account proto=\"%s\" name=\"%s\" "
-					"mode=\"%d\"", gaim_account_get_protocol_id(account),
+					"mode=\"%d\">\n", gaim_account_get_protocol_id(account),
 					acct_name, account->perm_deny);
-			if (proto_num != -1)
-				fprintf(file, " protocol=\"%d\"", proto_num);
-			fprintf(file, ">\n");
 
 			for (buds = account->permit; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);

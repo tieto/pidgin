@@ -33,6 +33,7 @@ text_sent_cb(GtkEntry *entry)
 {
 	const char *txt;
 	GaimConnection *gc;
+	const char *prpl_id;
 
 	if (account == NULL)
 		return;
@@ -41,45 +42,36 @@ text_sent_cb(GtkEntry *entry)
 
 	txt = gtk_entry_get_text(entry);
 
-	gaim_debug_misc("raw", "prpl num = %d\n", gaim_account_get_protocol(account));
-	switch (gaim_account_get_protocol(account)) {
-		case GAIM_PROTO_TOC:
-			{
-				int *a = (int *)gc->proto_data;
-				unsigned short seqno = htons(a[1]++ & 0xffff);
-				unsigned short len = htons(strlen(txt) + 1);
-				write(*a, "*\002", 2);
-				write(*a, &seqno, 2);
-				write(*a, &len, 2);
-				write(*a, txt, ntohs(len));
-				gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
-			}
-			break;
+	prpl_id = gaim_account_get_protocol_id(account);
+	
+	gaim_debug_misc("raw", "prpl_id = %s\n", prpl_id);
+	
+	if (strcmp(prpl_id, "prpl-toc") == 0) {
+		int *a = (int *)gc->proto_data;
+		unsigned short seqno = htons(a[1]++ & 0xffff);
+		unsigned short len = htons(strlen(txt) + 1);
+		write(*a, "*\002", 2);
+		write(*a, &seqno, 2);
+		write(*a, &len, 2);
+		write(*a, txt, ntohs(len));
+		gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
+		
+	} else if (strcmp(prpl_id, "prpl-msn") == 0) {
+		MsnSession *session = gc->proto_data;
+		char buf[strlen(txt) + 3];
 
-		case GAIM_PROTO_MSN:
-			{
-				MsnSession *session = gc->proto_data;
-				char buf[strlen(txt) + 3];
+		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
+		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
+		
+	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
+		write(*(int *)gc->proto_data, txt, strlen(txt));
+		write(*(int *)gc->proto_data, "\r\n", 2);
+		gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
-				g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
-				msn_servconn_write(session->notification_conn, buf, strlen(buf));
-			}
-			break;
-
-		case GAIM_PROTO_IRC:
-			write(*(int *)gc->proto_data, txt, strlen(txt));
-			write(*(int *)gc->proto_data, "\r\n", 2);
-			gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
-			break;
-
-		case GAIM_PROTO_JABBER:
-			jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
-			break;
-
-		default:
-			gaim_debug_error("raw", "Unknown protocol ID %d\n",
-							 gaim_account_get_protocol(account));
-			break;
+	} else if (strcmp(prpl_id, "prpl-jabber") == 0) {
+		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
+	} else {
+		gaim_debug_error("raw", "Unknown protocol ID %s\n", prpl_id);
 	}
 
 	gtk_entry_set_text(entry, "");

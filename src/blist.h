@@ -163,7 +163,7 @@ struct _GaimBuddyList {
 /**
  * Buddy list UI operations.
  *
- * Any UI representing a buddy list must assign a filled-out gaim_blist_window_ops
+ * Any UI representing a buddy list must assign a filled-out GaimBlistUiOps
  * structure to the buddy list core.
  */
 struct _GaimBlistUiOps

@@ -522,6 +522,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	char user_info[2048];
 	int flags;
 	char *tmp;
+	const char *protocol_id;
 
 	if (!fgets(buf, sizeof(buf), f))
 		return NULL;
@@ -591,7 +592,28 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (!(flags & OPT_ACCT_REM_PASS))
 		gaim_account_set_remember_password(account, FALSE);
 
-	gaim_account_set_protocol(account, atoi(p->value[1]));
+	/* convert the old GaimProtocol to the protocol_id */
+	switch(atoi(p->value[1])) {
+		case 0:	tmp = g_strdup("prpl-toc");	break;
+		case 1: tmp = g_strdup("prpl-oscar");	break;
+		case 2: tmp = g_strdup("prpl-yahoo");	break;
+		case 3: tmp = g_strdup("prpl-icq");	break;
+		case 4: tmp = g_strdup("prpl-msn");	break;
+		case 5: tmp = g_strdup("prpl-irc");	break;
+		case 8: tmp = g_strdup("prpl-jabber");	break;
+		case 9: tmp = g_strdup("prpl-napster");	break;
+		case 10:tmp = g_strdup("prpl-zephyr");	break;
+		case 11:tmp = g_strdup("prpl-gg");	break;
+		case 16:tmp = g_strdup("prpl-moo");	break;
+		case 18:tmp = g_strdup("prpl-trepia");	break;
+		case 21:tmp = g_strdup("prpl-blogger");	break;
+		default:
+			tmp = NULL;
+	}
+	if (tmp) {
+		gaim_account_set_protocol_id(account, tmp);
+		g_free(tmp);
+	}
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -605,9 +627,11 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 		return account;
 
 	/* I hate this part. We must convert the protocol options. */
-	switch (gaim_account_get_protocol(account)) {
-		/* TOC */
-		case GAIM_PROTO_TOC:
+	protocol_id = gaim_account_get_protocol_id(account);
+
+	/* TOC */
+	if (protocol_id) {	
+		if (strcmp(protocol_id, "prpl-toc") == 0) {
 			if (*p->value[0] == '\0')
 				gaim_account_set_string(account, "server", "toc.oscar.aol.com");
 			else
@@ -618,13 +642,11 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			else
 				gaim_account_set_int(account, "port", atoi(p->value[1]));
 
-			break;
-
 		/* OSCAR */
-		case GAIM_PROTO_OSCAR:
+		} else if (strcmp(protocol_id, "prpl-oscar") == 0) {
 			if (*p->value[0] == '\0')
 				gaim_account_set_string(account, "server",
-										"login.oscar.aol.com");
+				       	"login.oscar.aol.com");
 			else
 				gaim_account_set_string(account, "server", p->value[0]);
 
@@ -633,10 +655,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			else
 				gaim_account_set_int(account, "port", atoi(p->value[1]));
 
-			break;
-
 		/* Jabber */
-		case GAIM_PROTO_JABBER:
+		} else if (strcmp(protocol_id, "prpl-jabber") == 0) {
 			if (*p->value[0] == '\0')
 				gaim_account_set_int(account, "port", 5222);
 			else
@@ -645,10 +665,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			if (*p->value[1] != '\0')
 				gaim_account_set_string(account, "connect_server", p->value[1]);
 
-			break;
-
 		/* Napster */
-		case GAIM_PROTO_NAPSTER:
+		} else if (strcmp(protocol_id, "prpl-napster") == 0) {
 			if (*p->value[3] == '\0')
 				gaim_account_set_string(account, "server", "64.124.41.187");
 			else
@@ -659,10 +677,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			else
 				gaim_account_set_int(account, "port", atoi(p->value[4]));
 
-			break;
-
 		/* Yahoo! */
-		case GAIM_PROTO_YAHOO:
+		} else if (strcmp(protocol_id, "prpl-yahoo") == 0) {
 			if (*p->value[3] == '\0')
 				gaim_account_set_string(account, "server", "scs.yahoo.com");
 			else
@@ -673,13 +689,11 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			else
 				gaim_account_set_int(account, "port", atoi(p->value[4]));
 
-			break;
-
 		/* MSN */
-		case GAIM_PROTO_MSN:
+		} else if (strcmp(protocol_id, "prpl-msn") == 0) {
 			if (*p->value[3] == '\0')
 				gaim_account_set_string(account, "server",
-										"messenger.hotmail.com");
+				       "messenger.hotmail.com");
 			else
 				gaim_account_set_string(account, "server", p->value[3]);
 
@@ -688,10 +702,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			else
 				gaim_account_set_int(account, "port", atoi(p->value[4]));
 
-			break;
-
 		/* IRC */
-		case GAIM_PROTO_IRC:
+		} else if (strcmp(protocol_id, "prpl-irc") == 0) {
 			if (*p->value[0] != '\0' &&
 				strchr(gaim_account_get_username(account), '@') == NULL) {
 
@@ -712,11 +724,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 				gaim_account_set_string(account, "charset", "ISO-8859-1");
 			else
 				gaim_account_set_string(account, "charset", p->value[2]);
-
-			break;
-
-		default:
-			break;
+		}
 	}
 
 	if (!fgets(buf, sizeof(buf), f))
