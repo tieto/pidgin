@@ -198,6 +198,7 @@ extern void away_list_unclicked(GtkWidget *, struct away_message *);
 extern void away_list_clicked(GtkWidget *, struct away_message *);
 extern void toggle_away_queue();
 extern void purge_away_queue(GSList**);
+extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
