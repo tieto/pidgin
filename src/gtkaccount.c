@@ -1570,7 +1570,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 		/* Select the first prpl in the list*/
 		GList *prpl_list = gaim_plugins_get_protocols();
 		if (prpl_list != NULL)
-			dialog->protocol_id = ((GaimPlugin *) prpl_list->data)->info->id;
+			dialog->protocol_id = g_strdup(((GaimPlugin *) prpl_list->data)->info->id);
 	}
 	else
 	{
