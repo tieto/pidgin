@@ -12,8 +12,8 @@
 !define GTK_INSTALLER_NEEDED			"找不到符合的 GTK+ 執行環境。$\r請安裝 v${GTK_VERSION} 以上版本的 GTK+ 執行環境。"
 
 ; License Page
-!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BUTTON			"下一步 >"
-!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) 係以 GPL 方式授權發佈，在此列出授權書，純綷係作為參考之用。$_CLICK"
+!define GAIM_LICENSE_BUTTON			"下一步 >"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) 係以 GPL 方式授權發佈，在此列出授權書，純綷係作為參考之用。$_CLICK"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim 主程式 (必需)"
