@@ -2,7 +2,7 @@
 
 	Oscar blocking
 	Actions (e.g. /op) for IRC
-	Chat for Yahoo/ICQ
+	Chat for Yahoo/ICQ/MSN(??)
 	File transfer for Yahoo/ICQ/Oscar/Napster
 	Other RVOUS actions for TOC/Oscar
 	File transfer for IRC?  Maybe later?
@@ -17,6 +17,7 @@
 
 	ICQ through Oscar plugin (requires hacking libfaim :-/)
 	Zephyr
+	Hotline (Or is this a waste of time?.  Ill decide soon enough, heh)
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies

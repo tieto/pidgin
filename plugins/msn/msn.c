@@ -226,8 +226,6 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 	
 	fcntl(source, F_SETFL, 0);
 
-	printf("GOT HERE|\n");
-
 	if (condition == GDK_INPUT_WRITE)
 	{
 		/* We just got in here */

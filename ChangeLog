@@ -2,6 +2,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.11.0:
 	* Fixed a problem with MSN not detecting signoffs and buddy updates.
+	* Implemented away options in MSN
 
 version 0.11.0-pre7 (03/16/2001):
 	* Can build RPMs as non-root
