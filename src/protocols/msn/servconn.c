@@ -54,14 +54,18 @@ process_message(MsnServConn *servconn, MsnMessage *msg)
 static gboolean
 process_single_line(MsnServConn *servconn, char *str)
 {
+	MsnSession *session = servconn->session;
 	MsnServConnCommandCb cb;
-	GSList *l, *l_next;
+	GSList *l, *l_next = NULL;
 	gboolean result;
 	size_t param_count = 0;
 	char *command, *param_start;
 	char **params = NULL;
+	MsnServConn *old_notification_conn;
 
 	command = str;
+
+	old_notification_conn = session->notification_conn;
 
 	/**
 	 * See how many spaces we have in this.
@@ -98,7 +102,19 @@ process_single_line(MsnServConn *servconn, char *str)
 	if (params != NULL)
 		g_strfreev(params);
 
-	
+	/*
+	 * We're checking here if the old notification server was replaced
+	 * with a new one, and if the current servconn here is the old
+	 * notification server. If so, we're going to have a bit of trouble
+	 * in the upcoming loop, as servconn will be a freed variable, so
+	 * we'll just return early.
+	 */
+	if (servconn == old_notification_conn &&
+		old_notification_conn != session->notification_conn) {
+
+		return result;
+	}
+
 	/* Process all queued messages that are waiting on this command. */
 	for (l = servconn->msg_queue; l != NULL; l = l_next) {
 		MsnQueueEntry *entry = l->data;
