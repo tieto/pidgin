@@ -1152,7 +1152,7 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 	g_list_free(list);
 
 	/* moving on to the old ui-specific plugin menus */
-	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
+	gaim_signal_emit(gaim_gtk_blist_get_handle(),
 			"drawing-menu", menu, b);
 
 	gaim_separator(menu);
