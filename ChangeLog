@@ -17,6 +17,8 @@ version 0.77cvs
 	* MSN error reporting works again (Stu Tomlinson)
 	* MSN e-mail notifications should no longer cause Gaim to crash
 	  (Felipe Contreras)
+	* Fixed an infinite loop bug that would sometimes cause MSN to lock
+	  up (Nickolai Zeldovich)
 	* All away messages should now show up in tooltips
 	* Removing zephyr buddies no longer crashes (Arun A. Tharuvai)
 

@@ -65,7 +65,13 @@ msn_session_destroy(MsnSession *session)
 		msn_switchboard_destroy(session->switches->data);
 
 	while (session->lists.forward)
-		msn_user_destroy(session->lists.forward->data);
+	{
+		MsnUser *user = (MsnUser *)session->lists.forward->data;
+
+		msn_user_destroy(user);
+
+		session->lists.forward = g_slist_remove(session->lists.forward, user);
+	}
 
 	if (session->lists.allow != NULL)
 		g_slist_free(session->lists.allow);
