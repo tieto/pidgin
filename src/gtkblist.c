@@ -923,7 +923,6 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy;
-		GaimConversation *conv;
 
 		if(GAIM_BLIST_NODE_IS_CONTACT(node))
 			buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
