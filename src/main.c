@@ -656,7 +656,7 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
 	opt_debug = 1;
 #endif
-
+abort();
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
