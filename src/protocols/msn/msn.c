@@ -533,17 +533,15 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		MsnMessage *msg;
 		MsnUser *user;
 		/*char *msgformat;*/
-		char *msgtext;
-
+		
 		user = msn_user_new(session, who, NULL);
 
 		msg = msn_message_new();
 		msn_message_set_receiver(msg, user);
 		/*msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);*/
-		msn_message_set_body(msg, msgtext);
+		msn_message_set_body(msg, message);
 
 		/*g_free(msgformat);*/
-		g_free(msgtext);
 
 		if (swboard != NULL) {
 			if (!msn_switchboard_send_msg(swboard, msg))
