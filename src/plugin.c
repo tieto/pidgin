@@ -86,18 +86,11 @@ is_so_file(const char *filename, const char *ext)
 static gboolean
 loader_supports_file(GaimPlugin *loader, const char *filename)
 {
-	GList *l, *exts;
-	GaimPlugin *plugin;
+	GList *exts;
 
-	for (l = plugin_loaders; l != NULL; l = l->next) {
-		plugin = l->data;
-
-		for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
-			 exts != NULL;
-			 exts = exts->next) {
-
-			if (is_so_file(filename, (char *)exts->data))
-				return TRUE;
+	for (exts = GAIM_PLUGIN_LOADER_INFO(loader)->exts; exts != NULL; exts = exts->next) {
+		if (is_so_file(filename, (char *)exts->data)) {
+			return TRUE;
 		}
 	}
 
