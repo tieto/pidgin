@@ -34,8 +34,15 @@ and send it off; either post it on sf.net/projects/gaim in the patches
 section, or email it to gaim@marko.net.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-10-16 19:37:11 -0400 (Tue, 16 Oct 2001) $. Do not expect any information contained
+$Date: 2001-11-01 13:50:39 -0500 (Thu, 01 Nov 2001) $. Do not expect any information contained
 within to be current or correct.
+
+Here's something new. Someone requested that I comment the code. No. I'm
+a lazy bastard, and I understand most of the code, so I don't need the
+comments. I understand that some of you do though. So give me the names
+of specific functions that you'd like commented and I'll see what I can
+do. It's more likely that those comments will be updated with the code
+than this file is, though even that is still unlikely.
 
 
 CODING STYLE

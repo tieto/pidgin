@@ -296,6 +296,7 @@ struct url_widget {
 	gint y;
 	gint width;
 	gint height;
+	GtkIMHtml *imhtml;
 	GtkIMHtmlBit *bit;
 };
 
@@ -1475,6 +1476,33 @@ gtk_imhtml_leave_notify_event (GtkWidget        *widget,
 	return TRUE;
 }
 
+static void
+menu_open_url (GtkObject *object,
+	       gpointer   data)
+{
+	struct url_widget *uw = data;
+
+	gtk_signal_emit (GTK_OBJECT (uw->imhtml), signals [URL_CLICKED], uw->bit->url);
+}
+
+static void
+menu_copy_link (GtkObject *object,
+		gpointer   data)
+{
+	struct url_widget *uw = data;
+	GtkIMHtml *imhtml = uw->imhtml;
+
+	if (imhtml->selected_text)
+		g_string_free (imhtml->selected_text, TRUE);
+
+	gtk_imhtml_select_none (uw->imhtml);
+
+	imhtml->selection = TRUE;
+	imhtml->selected_text = g_string_new (uw->bit->url);
+
+	gtk_selection_owner_set (GTK_WIDGET (imhtml), GDK_SELECTION_PRIMARY, GDK_CURRENT_TIME);
+}
+
 static gint
 gtk_imhtml_button_press_event (GtkWidget      *widget,
 			       GdkEventButton *event)
@@ -1484,14 +1512,55 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 	GtkAdjustment *hadj = GTK_LAYOUT (widget)->hadjustment;
 	gint x, y;
 
-	if (event->button == 1) {
-		x = event->x + hadj->value;
-		y = event->y + vadj->value;
+	x = event->x + hadj->value;
+	y = event->y + vadj->value;
 
+	if (event->button == 1) {
 		imhtml->sel_startx = x;
 		imhtml->sel_starty = y;
 		imhtml->selection = TRUE;
 		gtk_imhtml_select_none (imhtml);
+	}
+
+	if (event->button == 3) {
+		GList *urls = imhtml->urls;
+		struct url_widget *uw;
+
+		while (urls) {
+			uw = urls->data;
+			if ((x > uw->x) && (x < uw->x + uw->width) &&
+			    (y > uw->y) && (y < uw->y + uw->height)) {
+				GtkWidget *menu = gtk_menu_new ();
+
+				GtkWidget *button = gtk_menu_item_new_with_label ("Open URL");
+				gtk_signal_connect (GTK_OBJECT (button), "activate",
+						    GTK_SIGNAL_FUNC (menu_open_url), uw);
+				gtk_menu_append (GTK_MENU (menu), button);
+				gtk_widget_show (button);
+
+				button = gtk_menu_item_new_with_label ("Copy Link Location");
+				gtk_signal_connect (GTK_OBJECT (button), "activate",
+						    GTK_SIGNAL_FUNC (menu_copy_link), uw);
+				gtk_menu_append (GTK_MENU (menu), button);
+				gtk_widget_show (button);
+
+				gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+						3, event->time);
+
+				if (imhtml->tip_timer) {
+					gtk_timeout_remove (imhtml->tip_timer);
+					imhtml->tip_timer = 0;
+				}
+				if (imhtml->tip_window) {
+					gtk_widget_destroy (imhtml->tip_window);
+					imhtml->tip_window = NULL;
+				}
+				imhtml->tip_bit = NULL;
+
+				return TRUE;
+			}
+			urls = g_list_next (urls);
+		}
 	}
 
 	return TRUE;
@@ -2226,6 +2295,7 @@ add_text_renderer (GtkIMHtml    *imhtml,
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
+		uw->imhtml = imhtml;
 		uw->bit = bit;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
 	}
@@ -2258,6 +2328,7 @@ add_img_renderer (GtkIMHtml    *imhtml,
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
+		uw->imhtml = imhtml;
 		uw->bit = bit;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
 	}
