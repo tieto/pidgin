@@ -522,6 +522,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *vpaned;
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
+
 	gboolean dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -536,6 +537,7 @@ void show_new_buddy_chat(struct conversation *b)
 	dispstyle = (display_options & OPT_DISP_CHAT_SHOW_TEXT) ? TRUE : FALSE;
 
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
+	
 	invite_btn = picture_button2(win, _("Invite"), join_xpm, dispstyle);
 	whisper = picture_button2(win, _("Whisper"), tb_forward_xpm, dispstyle);
         send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
@@ -562,7 +564,7 @@ void show_new_buddy_chat(struct conversation *b)
 	list = gtk_list_new();
 	b->list = list;
 
-        bbox = gtk_hbox_new(TRUE, 0);
+        bbox = gtk_hbox_new(FALSE, 5);
         bbox2 = gtk_hbox_new(TRUE, 0);
         vbox = gtk_vbox_new(FALSE, 0);
         lbox = gtk_vbox_new(FALSE, 4);
@@ -628,14 +630,15 @@ void show_new_buddy_chat(struct conversation *b)
         gtk_signal_connect(GTK_OBJECT(ignore), "clicked", GTK_SIGNAL_FUNC(ignore_callback), b);
         gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), b);
 
-	gtk_box_pack_start(GTK_BOX(bbox), send, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), whisper, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(bbox), invite_btn, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(bbox), close, TRUE, TRUE, 5);
 
-        gtk_box_pack_start(GTK_BOX(bbox2), im, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(bbox2), ignore, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(bbox2), info, TRUE, TRUE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), invite_btn, dispstyle, dispstyle, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), whisper, dispstyle, dispstyle, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 5);
+
+        gtk_box_pack_start(GTK_BOX(bbox2), im, dispstyle, dispstyle, 5);
+        gtk_box_pack_start(GTK_BOX(bbox2), ignore, dispstyle, dispstyle, 5);
+        gtk_box_pack_start(GTK_BOX(bbox2), info, dispstyle, dispstyle, 5);
 	
 	/* pack and fill the rest */
 	
