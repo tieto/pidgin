@@ -232,8 +232,9 @@ gaim_plugin_probe(const char *filename)
 
 	if (plugin->info->api_version != GAIM_PLUGIN_API_VERSION)
 	{
+		gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
+				   plugin->path, plugin->info->api_version, GAIM_PLUGIN_API_VERSION);
 		gaim_plugin_destroy(plugin);
-
 		return NULL;
 	}
 
@@ -941,6 +942,8 @@ gaim_plugin_register(GaimPlugin *plugin)
 		if (loader_info == NULL ||
 			loader_info->api_version != GAIM_LOADER_API_VERSION)
 		{
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
+							   plugin->path, loader_info->api_version, GAIM_LOADER_API_VERSION);
 			return FALSE;
 		}
 
@@ -955,6 +958,8 @@ gaim_plugin_register(GaimPlugin *plugin)
 		if (prpl_info == NULL ||
 			prpl_info->api_version != GAIM_PRPL_API_VERSION)
 		{
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
+							   plugin->path, prpl_info->api_version, GAIM_PRPL_API_VERSION);
 			return FALSE;
 		}
 
