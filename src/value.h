@@ -50,6 +50,24 @@ typedef enum
 } GaimType;
 
 /**
+ * Gaim-specific subtype values.
+ */
+typedef enum
+{
+	GAIM_SUBTYPE_UNKNOWN = 0,
+	GAIM_SUBTYPE_ACCOUNT,
+	GAIM_SUBTYPE_BLIST,
+	GAIM_SUBTYPE_BLIST_BUDDY,
+	GAIM_SUBTYPE_BLIST_GROUP,
+	GAIM_SUBTYPE_BLIST_CHAT,
+	GAIM_SUBTYPE_CONNECTION,
+	GAIM_SUBTYPE_CONVERSATION,
+	GAIM_SUBTYPE_CONV_WINDOW,
+	GAIM_SUBTYPE_PLUGIN
+
+} GaimSubType;
+
+/**
  * A wrapper for a type, subtype, and specific type of value.
  */
 typedef struct
@@ -86,6 +104,10 @@ typedef struct
 	} u;
 
 } GaimValue;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Creates a new GaimValue.
@@ -442,5 +464,9 @@ int gaim_value_get_enum(const GaimValue *value);
  * @return The boxed data.
  */
 void *gaim_value_get_boxed(const GaimValue *value);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_VALUE_H_ */
