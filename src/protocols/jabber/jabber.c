@@ -1464,61 +1464,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	jabber_list_icon,
-	jabber_list_emblems,
-	jabber_status_text,
-	jabber_tooltip_text,
-	jabber_away_states,
-	jabber_blist_node_menu,
-	jabber_chat_info,
-	jabber_login,
-	jabber_close,
-	jabber_message_send_im,
-	jabber_set_info,
-	jabber_send_typing,
-	jabber_buddy_get_info,
-	jabber_presence_send,
-	jabber_idle_set,
-	NULL,
-	jabber_roster_add_buddy,
-	NULL,
-	jabber_roster_remove_buddy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	jabber_chat_join,
-	NULL,
-	jabber_chat_invite,
-	jabber_chat_leave,
-	NULL,
-	jabber_message_send_chat,
-	jabber_keepalive,
-	jabber_register_account,
-	jabber_buddy_get_info_chat,
-	NULL,
-	jabber_roster_alias_change,
-	jabber_roster_group_change,
-	jabber_roster_group_rename,
-	NULL,
-	jabber_convo_closed,
-	jabber_normalize,
-	NULL, /* set_buddy_icon */
-	NULL, /* remove_group */
-	jabber_chat_buddy_real_name,
-	jabber_chat_set_topic,
-	jabber_find_blist_chat,
-	jabber_roomlist_get_list,
-	jabber_roomlist_cancel,
-	NULL,
-	NULL,
-	jabber_si_xfer_send
+	NULL,							/* user_splits */
+	NULL,							/* protocol_options */
+	NO_BUDDY_ICONS,					/* icon_spec */
+	jabber_list_icon,				/* list_icon */
+	jabber_list_emblems,			/* list_emblems */
+	jabber_status_text,				/* status_text */
+	jabber_tooltip_text,			/* tooltip_text */
+	jabber_away_states,				/* away_states */
+	jabber_blist_node_menu,			/* blist_node_menu */
+	jabber_chat_info,				/* chat_info */
+	jabber_login,					/* login */
+	jabber_close,					/* close */
+	jabber_message_send_im,			/* send_im */
+	jabber_set_info,				/* set_info */
+	jabber_send_typing,				/* send_typing */
+	jabber_buddy_get_info,			/* get_info */
+	jabber_presence_send,			/* set_away */
+	jabber_idle_set,				/* set_idle */
+	NULL,							/* change_passwd */
+	jabber_roster_add_buddy,		/* add_buddy */
+	NULL,							/* add_buddies */
+	jabber_roster_remove_buddy,		/* remove_buddy */
+	NULL,							/* remove_buddies */
+	NULL,							/* add_permit */
+	NULL,							/* add_deny */
+	NULL,							/* rem_permit */
+	NULL,							/* rem_deny */
+	NULL,							/* set_permit_deny */
+	NULL,							/* warn */
+	jabber_chat_join,				/* join_chat */
+	NULL,							/* reject_chat */
+	jabber_chat_invite,				/* chat_invite */
+	jabber_chat_leave,				/* chat_leave */
+	NULL,							/* chat_whisper */
+	jabber_message_send_chat,		/* chat_send */
+	jabber_keepalive,				/* keepalive */
+	jabber_register_account,		/* register_user */
+	jabber_buddy_get_info_chat,		/* get_cb_info */
+	NULL,							/* get_cb_away */
+	jabber_roster_alias_change,		/* alias_buddy */
+	jabber_roster_group_change,		/* group_buddy */
+	jabber_roster_group_rename,		/* rename_group */
+	NULL,							/* buddy_free */
+	jabber_convo_closed,			/* convo_closed */
+	jabber_normalize,				/* normalize */
+	NULL,							/* set_buddy_icon */
+	NULL,							/* remove_group */
+	jabber_chat_buddy_real_name,	/* get_cb_real_name */
+	jabber_chat_set_topic,			/* set_chat_topic */
+	jabber_find_blist_chat,			/* find_blist_chat */
+	jabber_roomlist_get_list,		/* roomlist_get_list */
+	jabber_roomlist_cancel,			/* roomlist_cancel */
+	NULL,							/* roomlist_expand_category */
+	NULL,							/* can_receive_file */
+	jabber_si_xfer_send				/* send_file */
 };
 
 static GaimPluginInfo info =

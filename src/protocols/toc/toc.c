@@ -2096,61 +2096,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	0,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	toc_list_icon,
-	toc_list_emblems,
-	NULL,
-	NULL,
-	toc_away_states,
-	toc_blist_node_menu,
-	toc_chat_info,
-	toc_login,
-	toc_close,
-	toc_send_im,
-	toc_set_info,
-	NULL,
-	toc_get_info,
-	toc_set_away,
-	toc_set_idle,
-	toc_change_passwd,
-	toc_add_buddy,
-	toc_add_buddies,
-	toc_remove_buddy,
-	toc_remove_buddies,
-	toc_add_permit,
-	toc_add_deny,
-	toc_rem_permit,
-	toc_rem_deny,
-	toc_set_permit_deny,
-	toc_warn,
-	toc_join_chat,
-	NULL, /* reject chat invite */
-	toc_chat_invite,
-	toc_chat_leave,
-	toc_chat_whisper,
-	toc_chat_send,
-	toc_keepalive,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, /* can_receive_file */
-	NULL  /* send_file */
+	NULL,					/* user_splits */
+	NULL,					/* protocol_options */
+	NO_BUDDY_ICONS,			/* icon_spec */
+	toc_list_icon,			/* list_icon */
+	toc_list_emblems,		/* list_emblems */
+	NULL,					/* status_text */
+	NULL,					/* tooltip_text */
+	toc_away_states,		/* away_states */
+	toc_blist_node_menu,	/* blist_node_menu */
+	toc_chat_info,			/* chat_info */
+	toc_login,				/* login */
+	toc_close,				/* close */
+	toc_send_im,			/* send_im */
+	toc_set_info,			/* set_info */
+	NULL,					/* send_typing */
+	toc_get_info,			/* get_info */
+	toc_set_away,			/* set_away */
+	toc_set_idle,			/* set_idle */
+	toc_change_passwd,		/* change_passwd */
+	toc_add_buddy,			/* add_buddy */
+	toc_add_buddies,		/* add_buddies */
+	toc_remove_buddy,		/* remove_buddy */
+	toc_remove_buddies,		/* remove_buddies */
+	toc_add_permit,			/* add_permit */
+	toc_add_deny,			/* add_deny */
+	toc_rem_permit,			/* rem_permit */
+	toc_rem_deny,			/* rem_deny */
+	toc_set_permit_deny,	/* set_permit_deny */
+	toc_warn,				/* warn */
+	toc_join_chat,			/* join_chat */
+	NULL,					/* reject_chat */
+	toc_chat_invite,		/* chat_invite */
+	toc_chat_leave,			/* chat_leave */
+	toc_chat_whisper,		/* chat_whisper */
+	toc_chat_send,			/* chat_send */
+	toc_keepalive,			/* keepalive */
+	NULL,					/* register_user */
+	NULL,					/* get_cb_info */
+	NULL,					/* get_cb_away */
+	NULL,					/* alias_buddy */
+	NULL,					/* group_buddy */
+	NULL,					/* rename_group */
+	NULL,					/* buddy_free */
+	NULL,					/* convo_closed */
+	NULL,					/* normalize */
+	NULL,					/* set_buddy_icon */
+	NULL,					/* remove_group */
+	NULL,					/* get_cb_real_name */
+	NULL,					/* set_chat_topic */
+	NULL,					/* find_blist_chat */
+	NULL,					/* roomlist_get_list */
+	NULL,					/* roomlist_cancel */
+	NULL,					/* roomlist_expand_category */
+	NULL,					/* can_receive_file */
+	NULL					/* send_file */
 };
 
 static GaimPluginInfo info =

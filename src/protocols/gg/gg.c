@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10298 2004-07-07 14:02:07Z lschiere $
+ * $Id: gg.c 10300 2004-07-07 16:32:05Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1613,61 +1613,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	0,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	agg_list_icon,
-	agg_list_emblems,
-	NULL,
-	NULL,
-	agg_away_states,
-	agg_blist_node_menu,
-	NULL,
-	agg_login,
-	agg_close,
-	agg_send_im,
-	NULL,
-	NULL,
-	agg_get_info,
-	agg_set_away,
-	NULL,
-	agg_change_passwd,
-	agg_add_buddy,
-	agg_add_buddies,
-	agg_rem_buddy,
-	NULL,
-	agg_permit_deny_dummy,
-	agg_permit_deny_dummy,
-	agg_permit_deny_dummy,
-	agg_permit_deny_dummy,
-	agg_set_permit_deny_dummy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	agg_keepalive,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	agg_group_buddy,
-	agg_rename_group,
-	agg_buddy_free,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,					/* can_receive_file */
-	NULL					/* send_file */
+	NULL,						/* user_splits */
+	NULL,						/* protocol_options */
+	NO_BUDDY_ICONS,				/* icon_spec */
+	agg_list_icon,				/* list_icon */
+	agg_list_emblems,			/* list_emblems */
+	NULL,						/* status_text */
+	NULL,						/* tooltip_text */
+	agg_away_states,			/* away_states */
+	agg_blist_node_menu,		/* blist_node_menu */
+	NULL,						/* chat_info */
+	agg_login,					/* login */
+	agg_close,					/* close */
+	agg_send_im,				/* send_im */
+	NULL,						/* set_info */
+	NULL,						/* send_typing */
+	agg_get_info,				/* get_info */
+	agg_set_away,				/* set_away */
+	NULL,						/* set_idle */
+	agg_change_passwd,			/* change_passwd */
+	agg_add_buddy,				/* add_buddy */
+	agg_add_buddies,			/* add_buddies */
+	agg_rem_buddy,				/* remove_buddy */
+	NULL,						/* remove_buddies */
+	agg_permit_deny_dummy,		/* add_permit */
+	agg_permit_deny_dummy,		/* add_deny */
+	agg_permit_deny_dummy,		/* rem_permit */
+	agg_permit_deny_dummy,		/* rem_deny */
+	agg_set_permit_deny_dummy,	/* set_permit_deny */
+	NULL,						/* warn */
+	NULL,						/* join_chat */
+	NULL,						/* reject_chat */
+	NULL,						/* chat_invite */
+	NULL,						/* chat_leave */
+	NULL,						/* chat_whisper */
+	NULL,						/* chat_send */
+	agg_keepalive,				/* keepalive */
+	NULL,						/* register_user */
+	NULL,						/* get_cb_info */
+	NULL,						/* get_cb_away */
+	NULL,						/* alias_buddy */
+	agg_group_buddy,			/* group_buddy */
+	agg_rename_group,			/* rename_group */
+	agg_buddy_free,				/* buddy_free */
+	NULL,						/* convo_closed */
+	NULL,						/* normalize */
+	NULL,						/* set_buddy_icon */
+	NULL,						/* remove_group */
+	NULL,						/* get_cb_real_name */
+	NULL,						/* set_chat_topic */
+	NULL,						/* find_blist_chat */
+	NULL,						/* roomlist_get_list */
+	NULL,						/* roomlist_cancel */
+	NULL,						/* roomlist_expand_category */
+	NULL,						/* can_receive_file */
+	NULL						/* send_file */
 };
 
 static GaimPluginInfo info =

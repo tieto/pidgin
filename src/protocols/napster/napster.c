@@ -551,61 +551,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	nap_list_icon,
-	nap_list_emblems,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	nap_chat_info,
-	nap_login,
-	nap_close,
-	nap_send_im,
-	NULL,
-	NULL,
-	nap_get_info,
-	NULL,
-	NULL,
-	NULL,
-	nap_add_buddy,
-	nap_add_buddies,
-	nap_remove_buddy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	nap_join_chat,
-	NULL, /* reject chat invite */
-	NULL,
-	nap_chat_leave,
-	NULL,
-	nap_chat_send,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,				/* can_receive_file */
-	NULL				/* send_file */
+	NULL,					/* user_splits */
+	NULL,					/* protocol_options */
+	NO_BUDDY_ICONS,			/* icon_spec */
+	nap_list_icon,			/* list_icon */
+	nap_list_emblems,		/* list_emblems */
+	NULL,					/* status_text */
+	NULL,					/* tooltip_text */
+	NULL,					/* away_states */
+	NULL,					/* blist_node_menu */
+	nap_chat_info,			/* chat_info */
+	nap_login,				/* login */
+	nap_close,				/* close */
+	nap_send_im,			/* send_im */
+	NULL,					/* set_info */
+	NULL,					/* send_typing */
+	nap_get_info,			/* get_info */
+	NULL,					/* set_away */
+	NULL,					/* set_idle */
+	NULL,					/* change_passwd */
+	nap_add_buddy,			/* add_buddy */
+	nap_add_buddies,		/* add_buddies */
+	nap_remove_buddy,		/* remove_buddy */
+	NULL,					/* remove_buddies */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* rem_permit */
+	NULL,					/* rem_deny */
+	NULL,					/* set_permit_deny */
+	NULL,					/* warn */
+	nap_join_chat,			/* join_chat */
+	NULL,					/* reject chat invite */
+	NULL,					/* chat_invite */
+	nap_chat_leave,			/* chat_leave */
+	NULL,					/* chat_whisper */
+	nap_chat_send,			/* chat_send */
+	NULL,					/* keepalive */
+	NULL,					/* register_user */
+	NULL,					/* get_cb_info */
+	NULL,					/* get_cb_away */
+	NULL,					/* alias_buddy */
+	NULL,					/* group_buddy */
+	NULL,					/* rename_group */
+	NULL,					/* buddy_free */
+	NULL,					/* convo_closed */
+	NULL,					/* normalize */
+	NULL,					/* set_buddy_icon */
+	NULL,					/* remove_group */
+	NULL,					/* get_cb_real_name */
+	NULL,					/* set_chat_topic */
+	NULL,					/* find_blist_chat */
+	NULL,					/* roomlist_get_list */
+	NULL,					/* roomlist_cancel */
+	NULL,					/* roomlist_expand_category */
+	NULL,					/* can_receive_file */
+	NULL					/* send_file */
 };
 
 static GaimPluginInfo info =

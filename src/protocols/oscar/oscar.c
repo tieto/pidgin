@@ -7161,67 +7161,67 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
-	NULL,
-	NULL,
-	{"jpeg,gif,bmp,ico", 48, 48, 50, 50, GAIM_ICON_SCALE_DISPLAY},
-	oscar_list_icon,
-	oscar_list_emblems,
-	oscar_status_text,
-	oscar_tooltip_text,
-	oscar_away_states,
-	oscar_blist_node_menu,
-	oscar_chat_info,
-	oscar_login,
-	oscar_close,
-	oscar_send_im,
-	oscar_set_info,
-	oscar_send_typing,
-	oscar_get_info,
-	oscar_set_away,
-	oscar_set_idle,
-	oscar_change_passwd,
-	oscar_add_buddy,
-	oscar_add_buddies,
-	oscar_remove_buddy,
-	oscar_remove_buddies,
-	oscar_add_permit,
-	oscar_add_deny,
-	oscar_rem_permit,
-	oscar_rem_deny,
-	oscar_set_permit_deny,
-	oscar_warn,
-	oscar_join_chat,
-	NULL, /* reject chat invite */
-	oscar_chat_invite,
-	oscar_chat_leave,
-	NULL,
-	oscar_send_chat,
-	oscar_keepalive,
-	NULL,
-	NULL,
-	NULL,
+	NULL,					/* user_splits */
+	NULL,					/* protocol_options */
+	{"jpeg,gif,bmp,ico", 48, 48, 50, 50, GAIM_ICON_SCALE_DISPLAY},	/* icon_spec */
+	oscar_list_icon,		/* list_icon */
+	oscar_list_emblems,		/* list_emblems */
+	oscar_status_text,		/* status_text */
+	oscar_tooltip_text,		/* tooltip_text */
+	oscar_away_states,		/* away_states */
+	oscar_blist_node_menu,	/* blist_node_menu */
+	oscar_chat_info,		/* chat_info */
+	oscar_login,			/* login */
+	oscar_close,			/* close */
+	oscar_send_im,			/* send_im */
+	oscar_set_info,			/* set_info */
+	oscar_send_typing,		/* send_typing */
+	oscar_get_info,			/* get_info */
+	oscar_set_away,			/* set_away */
+	oscar_set_idle,			/* set_idle */
+	oscar_change_passwd,	/* change_passwd */
+	oscar_add_buddy,		/* add_buddy */
+	oscar_add_buddies,		/* add_buddies */
+	oscar_remove_buddy,		/* remove_buddy */
+	oscar_remove_buddies,	/* remove_buddies */
+	oscar_add_permit,		/* add_permit */
+	oscar_add_deny,			/* add_deny */
+	oscar_rem_permit,		/* rem_permit */
+	oscar_rem_deny,			/* rem_deny */
+	oscar_set_permit_deny,	/* set_permit_deny */
+	oscar_warn,				/* warn */
+	oscar_join_chat,		/* join_chat */
+	NULL,					/* reject_chat */
+	oscar_chat_invite,		/* chat_invite */
+	oscar_chat_leave,		/* chat_leave */
+	NULL,					/* chat_whisper */
+	oscar_send_chat,		/* chat_send */
+	oscar_keepalive,		/* keepalive */
+	NULL,					/* register_user */
+	NULL,					/* get_cb_info */
+	NULL,					/* get_cb_away */
 #ifndef NOSSI
-	oscar_alias_buddy,
-	oscar_move_buddy,
-	oscar_rename_group,
+	oscar_alias_buddy,		/* alias_buddy */
+	oscar_move_buddy,		/* group_buddy */
+	oscar_rename_group,		/* rename_group */
 #else
-	NULL,
-	NULL,
-	NULL,
+	NULL,					/* alias_buddy */
+	NULL,					/* group_buddy */
+	NULL,					/* rename_group */
 #endif
-	NULL,
-	oscar_convo_closed,
-	NULL,
-	oscar_set_icon,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	oscar_can_receive_file,
-	oscar_send_file
+	NULL,					/* buddy_free */
+	oscar_convo_closed,		/* convo_closed */
+	NULL,					/* normalize */
+	oscar_set_icon,			/* set_buddy_icon */
+	NULL,					/* remove_group */
+	NULL,					/* get_cb_real_name */
+	NULL,					/* set_chat_topic */
+	NULL,					/* find_blist_chat */
+	NULL,					/* roomlist_get_list */
+	NULL,					/* roomlist_cancel */
+	NULL,					/* roomlist_expand_category */
+	oscar_can_receive_file,	/* can_receive_file */
+	oscar_send_file			/* send_file */
 };
 
 static GaimPluginInfo info =

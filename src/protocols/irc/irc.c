@@ -555,61 +555,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	irc_blist_icon,
-	irc_blist_emblems,
-	NULL,
-	NULL,
-	irc_away_states,
-	NULL, /*irc_blist_node_menu, */
-	irc_chat_join_info,
-	irc_login,
-	irc_close,
-	irc_im_send,
-	NULL,
-	NULL,
-	irc_get_info,
-	irc_set_away,
-	NULL,
-	NULL,
-	irc_add_buddy,
-	NULL,
-	irc_remove_buddy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	irc_chat_join,
-	NULL,  /* reject chat invite */
-	irc_chat_invite,
-	irc_chat_leave,
-	NULL,
-	irc_chat_send,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, /*irc_convo_closed,*/
-	NULL, /* normalize */
-	NULL, /* set buddy icon */
-	NULL, /* remove group */
-	NULL, /* get_cb_real_name */
-	irc_chat_set_topic,
-	NULL,
-	irc_roomlist_get_list,
-	irc_roomlist_cancel,
-	NULL,
-	NULL,
-	irc_dccsend_send_file
+	NULL,					/* user_splits */
+	NULL,					/* protocol_options */
+	NO_BUDDY_ICONS,			/* icon_spec */
+	irc_blist_icon,			/* list_icon */
+	irc_blist_emblems,		/* list_emblems */
+	NULL,					/* status_text */
+	NULL,					/* tooltip_text */
+	irc_away_states,		/* away_states */
+	NULL,					/* blist_node_menu */
+	irc_chat_join_info,		/* chat_info */
+	irc_login,				/* login */
+	irc_close,				/* close */
+	irc_im_send,			/* send_im */
+	NULL,					/* set_info */
+	NULL,					/* send_typing */
+	irc_get_info,			/* get_info */
+	irc_set_away,			/* set_away */
+	NULL,					/* set_idle */
+	NULL,					/* change_passwd */
+	irc_add_buddy,			/* add_buddy */
+	NULL,					/* add_buddies */
+	irc_remove_buddy,		/* remove_buddy */
+	NULL,					/* remove_buddies */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* rem_permit */
+	NULL,					/* rem_deny */
+	NULL,					/* set_permit_deny */
+	NULL,					/* warn */
+	irc_chat_join,			/* join_chat */
+	NULL,					/* reject_chat */
+	irc_chat_invite,		/* chat_invite */
+	irc_chat_leave,			/* chat_leave */
+	NULL,					/* chat_whisper */
+	irc_chat_send,			/* chat_send */
+	NULL,					/* keepalive */
+	NULL,					/* register_user */
+	NULL,					/* get_cb_info */
+	NULL,					/* get_cb_away */
+	NULL,					/* alias_buddy */
+	NULL,					/* group_buddy */
+	NULL,					/* rename_group */
+	NULL,					/* buddy_free */
+	NULL,					/* convo_closed */
+	NULL,					/* normalize */
+	NULL,					/* set_buddy_icon */
+	NULL,					/* remove_group */
+	NULL,					/* get_cb_real_name */
+	irc_chat_set_topic,		/* set_chat_topic */
+	NULL,					/* find_blist_chat */
+	irc_roomlist_get_list,	/* roomlist_get_list */
+	irc_roomlist_cancel,	/* roomlist_cancel */
+	NULL,					/* roomlist_expand_category */
+	NULL,					/* can_receive_file */
+	irc_dccsend_send_file	/* send_file */
 };
 
 

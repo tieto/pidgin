@@ -3267,12 +3267,12 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_set_buddy_icon,
 	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
 	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */
-	NULL,
-	NULL,
+	NULL, /* set_chat_topic */
+	NULL, /* find_blist_chat */
 	yahoo_roomlist_get_list,
 	yahoo_roomlist_cancel,
 	yahoo_roomlist_expand_category,
-	NULL,
+	NULL, /* can_receive_file */
 	yahoo_send_file
 };
 

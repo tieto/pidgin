@@ -3318,59 +3318,59 @@ novell_keepalive(GaimConnection *gc)
 static GaimPluginProtocolInfo prpl_info = {
 	GAIM_PRPL_API_VERSION,
 	0,
-	NULL,
-	NULL,
-	NO_BUDDY_ICONS,
-	novell_list_icon,
-	novell_list_emblems,
-	novell_status_text,
-	novell_tooltip_text,
-	novell_away_states,
-	novell_blist_node_menu,
+	NULL,						/* user_splits */
+	NULL,						/* protocol_options */
+	NO_BUDDY_ICONS,				/* icon_spec */
+	novell_list_icon,			/* list_icon */
+	novell_list_emblems,		/* list_emblems */
+	novell_status_text,			/* status_text */
+	novell_tooltip_text,		/* tooltip_text */
+	novell_away_states,			/* away_states */
+	novell_blist_node_menu,		/* blist_node_menu */
 	NULL,						/* chat_info */
-	novell_login,
-	novell_close,
-	novell_send_im,
+	novell_login,				/* login */
+	novell_close,				/* close */
+	novell_send_im,				/* send_im */
 	NULL,						/* set_info */
-	novell_send_typing,
-	novell_get_info,
-	novell_set_away,
-	novell_set_idle,
-	NULL,						/* change pwd */
-	novell_add_buddy,
+	novell_send_typing,			/* send_typing */
+	novell_get_info,			/* get_info */
+	novell_set_away,			/* set_away */
+	novell_set_idle,			/* set_idle */
+	NULL,						/* change_passwd */
+	novell_add_buddy,			/* add_buddy */
 	NULL,						/* add_buddies */
-	novell_remove_buddy,
+	novell_remove_buddy,		/* remove_buddy */
 	NULL,						/* remove_buddies */
-	novell_add_permit,
-	novell_add_deny,
-	novell_rem_permit,
-	novell_rem_deny,
-	novell_set_permit_deny,
+	novell_add_permit,			/* add_permit */
+	novell_add_deny,			/* add_deny */
+	novell_rem_permit,			/* rem_permit */
+	novell_rem_deny,			/* rem_deny */
+	novell_set_permit_deny,		/* set_permit_deny */
 	NULL,						/* warn */
 	NULL,						/* join_chat */
 	NULL,						/* reject_chat */
 	novell_chat_invite,			/* chat_invite */
-	novell_chat_leave,
+	novell_chat_leave,			/* chat_leave */
 	NULL,						/* chat_whisper */
-	novell_chat_send,
-	novell_keepalive,
+	novell_chat_send,			/* chat_send */
+	novell_keepalive,			/* keepalive */
 	NULL,						/* register_user */
 	NULL,						/* get_cb_info */
-	NULL,						/* get_cb_away_msg */
-	novell_alias_buddy,
-	novell_group_buddy,
-	novell_rename_group,
+	NULL,						/* get_cb_away */
+	novell_alias_buddy,			/* alias_buddy */
+	novell_group_buddy,			/* group_buddy */
+	novell_rename_group,		/* rename_group */
 	NULL,						/* buddy_free */
-	novell_convo_closed,
+	novell_convo_closed,		/* convo_closed */
 	NULL,						/* normalize */
 	NULL,						/* set_buddy_icon */
-	novell_remove_group,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	novell_remove_group,		/* remove_group */
+	NULL,						/* get_cb_real_name */
+	NULL,						/* set_chat_topic */
+	NULL,						/* find_blist_chat */
+	NULL,						/* roomlist_get_list */
+	NULL,						/* roomlist_cancel */
+	NULL,						/* roomlist_expand_category */
 	NULL,						/* can_receive_file */
 	NULL						/* send_file */
 };

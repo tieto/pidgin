@@ -1642,61 +1642,61 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_MAIL_CHECK,
-	NULL,
-	NULL,
-	{"png", 0, 0, 0, 0, 0},
-	msn_list_icon,
-	msn_list_emblems,
-	msn_status_text,
-	msn_tooltip_text,
-	msn_away_states,
-	msn_blist_node_menu,
-	NULL,
-	msn_login,
-	msn_close,
-	msn_send_im,
-	NULL,
-	msn_send_typing,
-	msn_get_info,
-	msn_set_away,
-	msn_set_idle,
-	NULL,
-	msn_add_buddy,
-	NULL,
-	msn_rem_buddy,
-	NULL,
-	msn_add_permit,
-	msn_add_deny,
-	msn_rem_permit,
-	msn_rem_deny,
-	msn_set_permit_deny,
-	NULL,
-	NULL,
-	NULL, /* reject chat invite */
-	msn_chat_invite,
-	msn_chat_leave,
-	NULL,
-	msn_chat_send,
-	msn_keepalive,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	msn_group_buddy,
-	msn_rename_group,
-	NULL, /* msn_buddy_free */
-	msn_convo_closed,
-	msn_normalize,
-	msn_set_buddy_icon,
-	msn_remove_group,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	msn_send_file
+	NULL,					/* user_splits */
+	NULL,					/* protocol_options */
+	{"png", 0, 0, 0, 0, 0},	/* icon_spec */
+	msn_list_icon,			/* list_icon */
+	msn_list_emblems,		/* list_emblems */
+	msn_status_text,		/* status_text */
+	msn_tooltip_text,		/* tooltip_text */
+	msn_away_states,		/* away_states */
+	msn_blist_node_menu,	/* blist_node_menu */
+	NULL,					/* chat_info */
+	msn_login,				/* login */
+	msn_close,				/* close */
+	msn_send_im,			/* send_im */
+	NULL,					/* set_info */
+	msn_send_typing,		/* send_typing */
+	msn_get_info,			/* get_info */
+	msn_set_away,			/* set_away */
+	msn_set_idle,			/* set_idle */
+	NULL,					/* change_passwd */
+	msn_add_buddy,			/* add_buddy */
+	NULL,					/* add_buddies */
+	msn_rem_buddy,			/* remove_buddy */
+	NULL,					/* remove_buddies */
+	msn_add_permit,			/* add_permit */
+	msn_add_deny,			/* add_deny */
+	msn_rem_permit,			/* rem_permit */
+	msn_rem_deny,			/* rem_deny */
+	msn_set_permit_deny,	/* set_permit_deny */
+	NULL,					/* warn */
+	NULL,					/* join_chat */
+	NULL,					/* reject chat invite */
+	msn_chat_invite,		/* chat_invite */
+	msn_chat_leave,			/* chat_leave */
+	NULL,					/* chat_whisper */
+	msn_chat_send,			/* chat_send */
+	msn_keepalive,			/* keepalive */
+	NULL,					/* register_user */
+	NULL,					/* get_cb_info */
+	NULL,					/* get_cb_away */
+	NULL,					/* alias_buddy */
+	msn_group_buddy,		/* group_buddy */
+	msn_rename_group,		/* rename_group */
+	NULL,					/* buddy_free */
+	msn_convo_closed,		/* convo_closed */
+	msn_normalize,			/* normalize */
+	msn_set_buddy_icon,		/* set_buddy_icon */
+	msn_remove_group,		/* remove_group */
+	NULL,					/* get_cb_real_name */
+	NULL,					/* set_chat_topic */
+	NULL,					/* find_blist_chat */
+	NULL,					/* roomlist_get_list */
+	NULL,					/* roomlist_cancel */
+	NULL,					/* roomlist_expand_category */
+	NULL,					/* can_receive_file */
+	msn_send_file			/* send_file */
 };
 
 static GaimPluginInfo info =
