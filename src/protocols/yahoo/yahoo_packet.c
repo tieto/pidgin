@@ -38,12 +38,48 @@ struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_sta
 	return pkt;
 }
 
-void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value)
+void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value)
 {
 	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
 	pair->value = g_strdup(value);
 	pkt->hash = g_slist_append(pkt->hash, pair);
+}
+
+void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value)
+{
+	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
+
+	pair->key = key;
+	pair->value = g_strdup_printf("%d", value);
+	pkt->hash = g_slist_append(pkt->hash, pair);
+}
+
+void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...)
+{
+	char *strval;
+	int key, intval;
+	const char *cur;
+	va_list ap;
+
+	va_start(ap, fmt);
+	for (cur = fmt; *cur; cur++) {
+		key = va_arg(ap, int);
+		switch (*cur) {
+		case 'i':
+			intval = va_arg(ap, int);
+			yahoo_packet_hash_int(pkt, key, intval);
+			break;
+		case 's':
+			strval = va_arg(ap, char *);
+			yahoo_packet_hash_str(pkt, key, strval);
+			break;
+		default:
+			gaim_debug_error("yahoo", "Invalid format character '%c'\n", *cur);
+			break;
+		}
+	}
+	va_end(ap);
 }
 
 int yahoo_packet_length(struct yahoo_packet *pkt)

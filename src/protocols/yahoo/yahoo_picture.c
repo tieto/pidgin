@@ -232,7 +232,6 @@ void yahoo_send_picture_info(GaimConnection *gc, const char *who)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	char *buf;
 
 	if (!yd->picture_url) {
 		gaim_debug_warning("yahoo", "Attempted to send picture info without a picture\n");
@@ -240,16 +239,10 @@ void yahoo_send_picture_info(GaimConnection *gc, const char *who)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 13, "2");
-	yahoo_packet_hash(pkt, 20, yd->picture_url);
-	buf = g_strdup_printf("%d", yd->picture_checksum);
-	yahoo_packet_hash(pkt, 192, buf);
-
+	yahoo_packet_hash(pkt, "sssssi", 1, gaim_connection_get_display_name(gc),
+	                  4, gaim_connection_get_display_name(gc), 5, who,
+	                  13, "2", 20, yd->picture_url, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
-	g_free(buf);
 }
 
 void yahoo_send_picture_request(GaimConnection *gc, const char *who)
@@ -258,9 +251,9 @@ void yahoo_send_picture_request(GaimConnection *gc, const char *who)
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc)); /* me */
-	yahoo_packet_hash(pkt, 5, who); /* the other guy */
-	yahoo_packet_hash(pkt, 13, "1"); /* 1 = request, 2 = reply */
+	yahoo_packet_hash_str(pkt, 4, gaim_connection_get_display_name(gc)); /* me */
+	yahoo_packet_hash_str(pkt, 5, who); /* the other guy */
+	yahoo_packet_hash_str(pkt, 13, "1"); /* 1 = request, 2 = reply */
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -268,29 +261,21 @@ void yahoo_send_picture_checksum(GaimConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	char *cksum = g_strdup_printf("%d", yd->picture_checksum);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 212, "1");
-	yahoo_packet_hash(pkt, 192, cksum);
+	yahoo_packet_hash(pkt, "ssd", 1, gaim_connection_get_display_name(gc),
+			  212, "1", 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
-	g_free(cksum);
 }
 
 void yahoo_send_picture_update_to_user(GaimConnection *gc, const char *who, int type)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	char *typestr = g_strdup_printf("%d", type);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 206, typestr);
+	yahoo_packet_hash(pkt, "ssd", 1, gaim_connection_get_display_name(gc), 5, who, 206, type);
 	yahoo_packet_send_and_free(pkt, yd);
-
-	g_free(typestr);
 }
 
 struct yspufe {
@@ -406,13 +391,13 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 
 	size = g_strdup_printf("%" G_GSIZE_FORMAT, d->str->len);
 	/* 1 = me, 38 = expire time(?), 0 = me, 28 = size, 27 = filename, 14 = NULL, 29 = data */
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 38, "604800"); /* time til expire */
+	yahoo_packet_hash_str(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash_str(pkt, 38, "604800"); /* time til expire */
 	gaim_account_set_int(account, YAHOO_PICEXPIRE_SETTING, time(NULL) + 604800);
-	yahoo_packet_hash(pkt, 0, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 28, size);
-	yahoo_packet_hash(pkt, 27, d->filename);
-	yahoo_packet_hash(pkt, 14, "");
+	yahoo_packet_hash_str(pkt, 0, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash_str(pkt, 28, size);
+	yahoo_packet_hash_str(pkt, 27, d->filename);
+	yahoo_packet_hash_str(pkt, 14, "");
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
 

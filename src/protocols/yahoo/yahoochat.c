@@ -60,9 +60,8 @@ static void yahoo_chat_online(GaimConnection *gc)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE,0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 109, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 6, "abcde");
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	                  109, gaim_connection_get_display_name(gc), 6, "abcde");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -593,13 +592,13 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, dn);
+	yahoo_packet_hash_str(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
 		const char *name = gaim_conv_chat_cb_get_name(w->data);
-		yahoo_packet_hash(pkt, 3, name);
+		yahoo_packet_hash_str(pkt, 3, name);
 	}
 
-	yahoo_packet_hash(pkt, 57, room);
+	yahoo_packet_hash_str(pkt, 57, room);
 
 	yahoo_packet_send_and_free(pkt, yd);
 }
@@ -619,15 +618,14 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, dn);
+	yahoo_packet_hash_str(pkt, 1, dn);
 	for (who = members; who; who = who->next) {
 		const char *name = gaim_conv_chat_cb_get_name(who->data);
-		yahoo_packet_hash(pkt, 53, name);
+		yahoo_packet_hash_str(pkt, 53, name);
 	}
-	yahoo_packet_hash(pkt, 57, room);
-	yahoo_packet_hash(pkt, 14, msg2);
+	yahoo_packet_hash(pkt, "ss", 57, room, 14, msg2);
 	if (utf8)
-		yahoo_packet_hash(pkt, 97, "1"); /* utf-8 */
+		yahoo_packet_hash_str(pkt, 97, "1"); /* utf-8 */
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg);
@@ -649,14 +647,12 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGON, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_packet_hash(pkt, 3, dn);
-	yahoo_packet_hash(pkt, 57, room);
+	yahoo_packet_hash(pkt, "sss", 1, dn, 3, dn, 57, room);
 	if (memarr) {
 		for(i = 0 ; memarr[i]; i++) {
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
-			yahoo_packet_hash(pkt, 3, memarr[i]);
+			yahoo_packet_hash_str(pkt, 3, memarr[i]);
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE, TRUE);
 		}
 	}
@@ -681,17 +677,12 @@ static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_packet_hash(pkt, 51, buddy);
-	yahoo_packet_hash(pkt, 57, room);
-	yahoo_packet_hash(pkt, 58, msg?msg2:"");
-	yahoo_packet_hash(pkt, 13, "0");
+	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
 	for(; members; members = members->next) {
 		const char *name = gaim_conv_chat_cb_get_name(members->data);
 		if (!strcmp(name, dn))
 			continue;
-		yahoo_packet_hash(pkt, 52, name);
-		yahoo_packet_hash(pkt, 53, name);
+		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);
 	}
 	
 	yahoo_packet_send_and_free(pkt, yd);
@@ -721,10 +712,8 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 104, eroom);
-	yahoo_packet_hash(pkt, 109, dn);
-	yahoo_packet_hash(pkt, 108, "1");
-	yahoo_packet_hash(pkt, 112, "0"); /* what does this one mean? */
+	yahoo_packet_hash(pkt, "sss", 104, eroom, 109, dn, 108, "1");
+	yahoo_packet_hash_str(pkt, 112, "0"); /* what does this one mean? */
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -742,7 +731,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATLOGOUT,
 			YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, dn);
+	yahoo_packet_hash_str(pkt, 1, dn);
 	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->chat_online = 0;
@@ -815,16 +804,14 @@ static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room,
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_packet_hash(pkt, 104, room2);
-	yahoo_packet_hash(pkt, 117, msg1);
+	yahoo_packet_hash(pkt, "sss", 1, dn, 104, room2, 117, msg1);
 	if (me)
-		yahoo_packet_hash(pkt, 124, "2");
+		yahoo_packet_hash_str(pkt, 124, "2");
 	else
-		yahoo_packet_hash(pkt, 124, "1");
+		yahoo_packet_hash_str(pkt, 124, "1");
 	/* fixme: what about /think? (124=3) */
 	if (utf8)
-		yahoo_packet_hash(pkt, 97, "1");
+		yahoo_packet_hash_str(pkt, 97, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg1);
@@ -852,12 +839,8 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 	room2 = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
-
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 62, "2");
-	yahoo_packet_hash(pkt, 104, room2);
-	yahoo_packet_hash(pkt, 129, "0");
-
+	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	                  62, "2", 104, room2, 129, "0");
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(room2);
 }
@@ -880,14 +863,9 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	room2 = yahoo_string_encode(gc, room, &utf8);
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, NULL);
+	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
-
-	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_packet_hash(pkt, 118, buddy);
-	yahoo_packet_hash(pkt, 104, room2);
-	yahoo_packet_hash(pkt, 117, (msg2?msg2:""));
-	yahoo_packet_hash(pkt, 129, "0");
-
+	yahoo_packet_hash(pkt, "sssss", 1, dn, 118, buddy, 104, room2, 117, (msg2?msg2:""), 129, "0");
 	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(room2);
@@ -912,11 +890,7 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
 		yahoo_chat_online(gc);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, 0);
-
-	yahoo_packet_hash(pkt, 109, name);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 62, "2");
-
+	yahoo_packet_hash(pkt, "sss", 109, name, 1, gaim_connection_get_display_name(gc), 62, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 /*

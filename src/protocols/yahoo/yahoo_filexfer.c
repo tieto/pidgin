@@ -119,13 +119,10 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	size = g_strdup_printf("%" G_GSIZE_FORMAT, gaim_xfer_get_size(xfer));
-
-	yahoo_packet_hash(pkt, 0, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 5, xfer->who);
-	yahoo_packet_hash(pkt, 14, "");
 	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
-	yahoo_packet_hash(pkt, 27, filename);
-	yahoo_packet_hash(pkt, 28, size);
+	
+	yahoo_packet_hash(pkt, "sssss", 0, gaim_connection_get_display_name(gc),
+	                  5, xfer->who, 14, "", 27, filename, 28, size);
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
 

@@ -1015,11 +1015,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	to_y64(result96, result, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pack, 0, name);
-	yahoo_packet_hash(pack, 6, result6);
-	yahoo_packet_hash(pack, 96, result96);
-	yahoo_packet_hash(pack, 1, name);
-
+	yahoo_packet_hash(pack, "ssss", 0, name, 6, result6, 96, result96, 1, name);
 	yahoo_packet_send_and_free(pack, yd);
 
 	g_free(hash_string_p);
@@ -1470,16 +1466,11 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	}
 	
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pack, 0, name);
-	yahoo_packet_hash(pack, 6, resp_6);
-	yahoo_packet_hash(pack, 96, resp_96);
-	yahoo_packet_hash(pack, 1, name);
-	yahoo_packet_hash(pack, 135, "6,0,0,1710");
-	if (yd->picture_checksum) {
-		char *cksum = g_strdup_printf("%d", yd->picture_checksum);
-		yahoo_packet_hash(pack, 192, cksum);
-		g_free(cksum);
-	}
+	yahoo_packet_hash(pack, "sssss", 0, name, 6, resp_6, 96, resp_96, 1,
+	                  name, 135, "6,0,0,1710");
+	if (yd->picture_checksum) 
+		yahoo_packet_hash_int(pack, 192, yd->picture_checksum);
+	
 	yahoo_packet_send_and_free(pack, yd);
 
 	g_free(password_hash);
@@ -2022,7 +2013,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash_str(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
 
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
@@ -2049,9 +2040,10 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
 
-	yahoo_packet_hash(pkt, 0, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
-	yahoo_packet_hash(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
-	yahoo_packet_hash(pkt, 6, yd->auth);
+	yahoo_packet_hash(pkt, "sss", 0,
+	                  gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))),
+	                  1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))),
+	                  6, yd->auth);
 	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(yd->auth);
@@ -2610,7 +2602,7 @@ static void yahoo_act_id(GaimConnection *gc, const char *entry)
 	struct yahoo_data *yd = gc->proto_data;
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 3, entry);
+	yahoo_packet_hash_str(pkt, 3, entry);
 	yahoo_packet_send_and_free(pkt, yd);
 
 	gaim_connection_set_display_name(gc, entry);
@@ -2660,19 +2652,18 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, "ss", 1, gaim_connection_get_display_name(gc), 5, who);
 	if (utf8)
-		yahoo_packet_hash(pkt, 97, "1");
-	yahoo_packet_hash(pkt, 14, msg2);
+		yahoo_packet_hash_str(pkt, 97, "1");
+	yahoo_packet_hash_str(pkt, 14, msg2);
 
-	yahoo_packet_hash(pkt,   63, ";0"); /* IMvironment */
-	yahoo_packet_hash(pkt,   64, "0"); /* no idea */
-	yahoo_packet_hash(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
+	yahoo_packet_hash_str(pkt,   63, ";0"); /* IMvironment */
+	yahoo_packet_hash_str(pkt,   64, "0"); /* no idea */
+	yahoo_packet_hash_str(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
 	if (!yd->picture_url)
-		yahoo_packet_hash(pkt, 206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
+		yahoo_packet_hash_str(pkt, 206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
 	else
-		yahoo_packet_hash(pkt, 206, "2");
+		yahoo_packet_hash_str(pkt, 206, "2");
 
 	/* We may need to not send any packets over 2000 bytes, but I'm not sure yet. */
 	if ((YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt)) <= 2000)
@@ -2692,12 +2683,9 @@ int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
-	yahoo_packet_hash(pkt, 49, "TYPING");
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 14, " ");
-	yahoo_packet_hash(pkt, 13, typ == GAIM_TYPING ? "1" : "0");
-	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 1002, "1");
+	yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, gaim_connection_get_display_name(gc),
+	                  14, " ", 13, typ == GAIM_TYPING ? "1" : "0",
+	                  5, who, 1002, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -2710,7 +2698,6 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	int old_status = yd->current_status;
-	char s[4];
 	const char *id;
 	char *conv_msg = NULL;
 	char *conv_msg2 = NULL;
@@ -2752,15 +2739,14 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
-		yahoo_packet_hash(pkt, 13, "2");
+		yahoo_packet_hash_str(pkt, 13, "2");
 		yahoo_packet_send_and_free(pkt, yd);
 
 		return;
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
-	g_snprintf(s, sizeof(s), "%d", yd->current_status);
-	yahoo_packet_hash(pkt, 10, s);
+	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *msg = gaim_status_get_attr_string(status, "message");
@@ -2772,16 +2758,16 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 
 		conv_msg = yahoo_string_encode(gc, msg, NULL);
 		conv_msg2 = gaim_markup_strip_html(conv_msg);
-		yahoo_packet_hash(pkt, 19, conv_msg2);
+		yahoo_packet_hash_str(pkt, 19, conv_msg2);
 
 	} else {
-		yahoo_packet_hash(pkt, 19, "");
+		yahoo_packet_hash_str(pkt, 19, "");
 	}
 
 	if (gc->is_idle)
-		yahoo_packet_hash(pkt, 47, "2");
+		yahoo_packet_hash_str(pkt, 47, "2");
 	else if (!gaim_status_type_is_available(gaim_status_get_type(status)))
-		yahoo_packet_hash(pkt, 47, "1");
+		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -2790,7 +2776,7 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 
 	if (old_status == YAHOO_STATUS_INVISIBLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
-		yahoo_packet_hash(pkt, 13, "1");
+		yahoo_packet_hash_str(pkt, 13, "1");
 		yahoo_packet_send_and_free(pkt, yd);
 	}
 }
@@ -2800,7 +2786,6 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
-	char buf[4];
 
 	if (idle && yd->current_status == YAHOO_STATUS_AVAILABLE)
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -2810,22 +2795,20 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
 
-
-	g_snprintf(buf, sizeof(buf), "%d", yd->current_status);
-	yahoo_packet_hash(pkt, 10, buf);
+	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		GaimStatus *status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
 		msg = yahoo_string_encode(gc, gaim_status_get_attr_string(status, "message"), NULL); //this line crashes, fix it
 		msg2 = gaim_unescape_html(msg);
-		yahoo_packet_hash(pkt, 19, msg2);
+		yahoo_packet_hash_str(pkt, 19, msg2);
 	} else {
-		yahoo_packet_hash(pkt, 19, "");
+		yahoo_packet_hash_str(pkt, 19, "");
 	}
 
 	if (idle)
-		yahoo_packet_hash(pkt, 47, "2");
+		yahoo_packet_hash_str(pkt, 47, "2");
 	else if (!gaim_presence_is_available(gaim_account_get_presence(gaim_connection_get_account(gc))))
-		yahoo_packet_hash(pkt, 47, "1");
+		yahoo_packet_hash_str(pkt, 47, "1");
 
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -2916,8 +2899,8 @@ static void yahoo_keepalive(GaimConnection *gc)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 109, gaim_connection_get_display_name(gc));
-	yahoo_packet_send_and_free(yd, pkt);
+	yahoo_packet_hash_str(pkt, 109, gaim_connection_get_display_name(gc));
+	yahoo_packet_send_and_free(pkt, yd);
 }
 
 /* XXX - What's the deal with GaimGroup *foo? */
@@ -2944,10 +2927,8 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, buddy->name);
-	yahoo_packet_hash(pkt, 65, group2);
-	yahoo_packet_hash(pkt, 14, "");
+	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	                  7, buddy->name, 65, group2, 14, "");
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
@@ -2981,9 +2962,8 @@ static void yahoo_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *
 
 	cg = yahoo_string_encode(gc, group->name, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, buddy->name);
-	yahoo_packet_hash(pkt, 65, cg);
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	                  7, buddy->name, 65, cg);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(cg);
 }
@@ -3003,9 +2983,8 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 13, "1");
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	                  7, who, 13, "1");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -3020,9 +2999,7 @@ static void yahoo_rem_deny(GaimConnection *gc, const char *who) {
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 13, "2");
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc), 7, who, 13, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -3090,17 +3067,13 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 
 	/* Step 1:  Add buddy to new group. */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, gpn);
-	yahoo_packet_hash(pkt, 14, "");
+	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	                  7, who, 65, gpn, 14, "");
 	yahoo_packet_send_and_free(pkt, yd);
 
 	/* Step 2:  Remove buddy from old group */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, gpo);
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc), 7, who, 65, gpo);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
@@ -3122,9 +3095,8 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 65, gpo);
-	yahoo_packet_hash(pkt, 67, gpn);
+	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	                  65, gpo, 67, gpn);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
