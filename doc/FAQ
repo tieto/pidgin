@@ -109,10 +109,17 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 1.4  I can't compile Gaim CVS.
 
-  Make sure you have gettext <= 0.10.40, autoconf 2.11 or 2.53, and
-  automake 1.4px. If you are still having problems, make sure that your
-  gettext package includes the program gettextize. If it does not, look for
+  Make sure you have gettext <= 0.10.40 or gettext >= 0.11.3, autoconf 2.11
+  or 2.53, and automake 1.4px. If you are still having problems, make sure
+  that your gettext package includes the program gettextize (for gettext <=
+  0.10.40) or autopoint (for gettext >= 0.11.3). If it does not, look for
   another package.
+
+  We don't support gettext 0.11.0 through 0.11.2. It may work for you, but
+  we make no promises.
+
+  If you are using autoconf 2.50+, do not use a version of gettext lower
+  than 0.10.39. You will get errors in the po/ directory. 
 
   If you have Slackware, you need to get non-slack packages for autoconf,
   automake, gettext, and libtool. You also have to copy the contents of
