@@ -1157,8 +1157,6 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	text = gtk_imhtml_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), text);
-	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(text);
 
 	hbox = gtk_hbox_new(FALSE, 5);

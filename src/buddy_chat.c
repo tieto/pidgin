@@ -1316,8 +1316,6 @@ void show_new_buddy_chat(struct conversation *b)
 	text = gtk_imhtml_new(NULL, NULL);
 	b->text = text;
 	gtk_container_add(GTK_CONTAINER(sw), text);
-	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
 	gaim_setup_imhtml(text);

@@ -1325,8 +1325,6 @@ GtkWidget *away_message_page() {
 	gtk_box_pack_start(GTK_BOX(ret), sw2, TRUE, TRUE, 0);
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), away_text);
-	GTK_LAYOUT(away_text)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(away_text)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(away_text);
 	gtk_imhtml_set_defaults(GTK_IMHTML(away_text), NULL, NULL, NULL);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));

@@ -191,7 +191,7 @@ struct conversation *new_conversation(char *name)
 	update_checkbox(c);
 	update_smilies(c);
 	plugin_event(event_new_conversation, name);
-	gtk_imhtml_to_bottom(GTK_IMHTML(c->text));
+	/*gtk_imhtml_to_bottom(c->text);*/
 	return c;
 }
 
@@ -2620,7 +2620,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 
 	update_convo_status(c);
 
-	gtk_imhtml_to_bottom(GTK_IMHTML(c->text));
+	/*gtk_imhtml_to_bottom(c->text);*/
 }
 
 void update_convo_status(struct conversation *c) {
@@ -2848,8 +2848,6 @@ void show_conv(struct conversation *c)
 	text = gtk_imhtml_new(NULL, NULL);
 	c->text = text;
 	gtk_container_add(GTK_CONTAINER(sw), text);
-	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
 	gaim_setup_imhtml(text);

@@ -2365,8 +2365,6 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		text = gtk_imhtml_new(NULL, NULL);
 		b->text = text;
 		gtk_container_add(GTK_CONTAINER(sw), text);
-		GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
-		GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 		gtk_widget_set_usize(sw, 300, 250);
 		gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
 		gaim_setup_imhtml(text);
@@ -4227,8 +4225,6 @@ void show_log(char *nm)
 
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
-	GTK_LAYOUT(layout)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(layout)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(layout);
 
 	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);

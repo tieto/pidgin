@@ -203,8 +203,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 		awaytext = gtk_imhtml_new(NULL, NULL);
 		gtk_container_add(GTK_CONTAINER(sw), awaytext);
-		GTK_LAYOUT(awaytext)->hadjustment->step_increment = 10.0;
-		GTK_LAYOUT(awaytext)->vadjustment->step_increment = 10.0;
 		gaim_setup_imhtml(awaytext);
 		gtk_widget_show(awaytext);
 		buf = stylize(a->message, BUF_LONG);

@@ -23,7 +23,7 @@
 #define __GTK_IMHTML_H
 
 #include <gdk/gdk.h>
-#include <gtk/gtklayout.h>
+#include <gtk/gtktextview.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,50 +43,16 @@ typedef struct _GtkIMHtml      GtkIMHtml;
 typedef struct _GtkIMHtmlClass GtkIMHtmlClass;
 
 struct _GtkIMHtml {
-	GtkLayout layout;
-
-	PangoContext *context;
-	PangoFontDescription *default_font;
-	//GdkFont *default_font;
-	GdkColor *default_fg_color;
-	GdkColor *default_bg_color;
-	GdkColor *default_hl_color;
-	GdkColor *default_hlfg_color;
-
+	GtkTextView text_view;
+	GtkTextBuffer *text_buffer;
+	GtkTextMark *end;
+	gboolean comments, smileys;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
-
-	GList *bits;
-	GList *click;
-	struct _GtkIMHtmlBit *tip_bit;
-	GList *im_images;
-	GtkWidget *tip_window;
-	guint tip_timer;
-
-	guint sel_startx, sel_starty;
-	guint sel_endx, sel_endy;
-	gboolean selection;
-	guint sel_mode;
-	GString *selected_text;
-	struct line_info *sel_endchunk;
-	guint scroll_timer;
-
-	guint x, y;
-	guint xsize;
-	guint llheight;
-	guint llascent;
-	GList *line;
-
-	GtkIMHtmlImage img;
-
-	gboolean smileys;
-	gboolean comments;
-
-	GtkSmileyTree *smiley_data;
 };
 
 struct _GtkIMHtmlClass {
-	GtkLayoutClass parent_class;
+	GtkTextViewClass parent_class;
 
 	void (*url_clicked) (GtkIMHtml *, const gchar *);
 };
@@ -104,8 +70,7 @@ typedef enum
 } GtkIMHtmlOptions;
 
 GtkType    gtk_imhtml_get_type         (void);
-GtkWidget* gtk_imhtml_new              (GtkAdjustment    *hadj,
-					GtkAdjustment    *vadj);
+GtkWidget* gtk_imhtml_new              (void *, void *);
 
 void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
 					GtkAdjustment    *hadj,
