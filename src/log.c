@@ -332,6 +332,60 @@ struct generic_logger_data {
 	FILE *file;
 };
 
+static void log_writer_common(GaimLog *log, GaimMessageFlags type,
+							  const char *prpl, time_t time,
+							  const char *ext)
+{
+	char date[64];
+	struct generic_logger_data *data = log->logger_data;
+
+	if(!data) {
+		/* This log is new */
+		char *ud = gaim_user_dir();
+		char *acct_name = g_strdup(gaim_normalize(log->account,
+												  gaim_account_get_username(log->account)));
+		char *target;
+		char *dir;
+		char *filename, *path;
+
+		printf("%s\n", acct_name);
+
+		if (log->type == GAIM_LOG_CHAT) {
+			target = g_strdup_printf("%s.chat", gaim_normalize(log->account,
+															   log->name));
+		} else if(log->type == GAIM_LOG_SYSTEM) {
+			target = g_strdup(".system");
+		} else {
+			target = g_strdup(gaim_normalize(log->account, log->name));
+		}
+
+		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S", localtime(&log->time));
+
+		dir = g_build_filename(ud, "logs",
+				       prpl, acct_name, target, NULL);
+		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(target);
+		g_free(acct_name);
+
+		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
+
+		path = g_build_filename(dir, filename, NULL);
+		g_free(dir);
+		g_free(filename);
+
+		log->logger_data = data = g_new0(struct generic_logger_data, 1);
+
+		data->file = fopen(path, "a");
+		if (!data->file) {
+			gaim_debug(GAIM_DEBUG_ERROR, "log",
+					"Could not create log file %s\n", filename);
+			g_free(path);
+			return;
+		}
+		g_free(path);
+	}	
+}
+
 static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
 {
 	GDir *dir;
@@ -505,47 +559,23 @@ static GaimLogLogger xml_logger =  {
 static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		const char *from, time_t time, const char *message)
 {
-	char date[64];
 	char *msg_fixed;
-	struct generic_logger_data *data = log->logger_data;
+	char date[64];
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	const char *prpl_name = plugin->info->name;
+	struct generic_logger_data *data = log->logger_data;
 
 	if(!data) {
-		/* This log is new */
-		char *ud = gaim_user_dir();
-		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
-		char *chat;
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		char *dir;
-		char *filename;
+		const char *prpl =
+			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
+		log_writer_common(log, type, prpl, time, ".html");
 
-		if (log->type == GAIM_LOG_CHAT) {
-			chat = g_strdup_printf("%s.chat", guy);
-			g_free(guy);
-			guy = chat;
-		}
+		data = log->logger_data;
 
-		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.html", localtime(&log->time));
-
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(guy);
-
-		filename = g_build_filename(dir, date, NULL);
-		g_free(dir);
-
-		log->logger_data = data = g_new0(struct generic_logger_data, 1);
-
-		data->file = fopen(filename, "a");
-		if (!data->file) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log",
-					"Could not create log file %s\n", filename);
-			g_free(filename);
+		/* if we can't write to the file, give up before we hurt ourselves */
+		if(!data->file)
 			return;
-		}
-		g_free(filename);
+
 		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(data->file, "<html><head><title>");
 		fprintf(data->file, "Conversation with %s at %s on %s (%s)",
@@ -554,11 +584,8 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		fprintf(data->file,
 			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
-	}
 
-	/* if we can't write to the file, give up before we hurt ourselves */
-	if(!data->file)
-		return;
+	}
 
 	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
 
@@ -642,35 +669,6 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 
 static void html_logger_create(GaimLog *log)
 {
-	if(log->type == GAIM_LOG_SYSTEM){
-		char date[64];
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
-		char *ud = gaim_user_dir();
-		char *dir = g_build_filename(ud, "logs", prpl, log->name, ".system", NULL);
-		char *filename;
-		struct generic_logger_data *data;
-
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.html", localtime(&log->time));
-		filename = g_build_filename(dir, date, NULL);
-		g_free(dir);
-
-		log->logger_data = data = g_new0(struct generic_logger_data, 1);
-
-		data->file = fopen(filename, "a");
-		if (!data->file) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log",
-					"Could not create log file %s\n", filename);
-			g_free(filename);
-			return;
-		}
-		fprintf(data->file, "<html><head><title>");
-		fprintf(data->file, "System Log for %s (%s)",
-				gaim_account_get_username(log->account), prpl);
-		fprintf(data->file, "</title></head><body>");
-		g_free(filename);
-	}
 }
 
 static GaimLogLogger html_logger = {
@@ -697,49 +695,25 @@ static void txt_logger_write(GaimLog *log,
 			     const char *from, time_t time, const char *message)
 {
 	char date[64];
-	char *stripped = NULL;
+	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	struct generic_logger_data *data = log->logger_data;
-	if (!data) {
+	char *stripped = NULL;
+
+	if(!data) {
 		/* This log is new.  We could use the loggers 'new' function, but
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
-		 *
-		 * The log is also not a system log. Because if it is, data would
-		 * be created in txt_logger_create
 		 */
-		char *ud = gaim_user_dir();
-		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
-		char *chat;
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
-		char *dir;
-		char *filename;
+		const char *prpl =
+			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
+		log_writer_common(log, type, prpl, time, ".txt");
 
-		if (log->type == GAIM_LOG_CHAT) {
-			chat = g_strdup_printf("%s.chat", guy);
-			g_free(guy);
-			guy = chat;
-		}
+		data = log->logger_data;
 
-		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
-
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(guy);
-
-		filename = g_build_filename(dir, date, NULL);
-		g_free(dir);
-
-		log->logger_data = data = g_new0(struct generic_logger_data, 1);
-
-		data->file = fopen(filename, "a");
-		if (!data->file) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
-			g_free(filename);
+		/* if we can't write to the file, give up before we hurt ourselves */
+		if(!data->file)
 			return;
-		}
-		g_free(filename);
+
 		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
@@ -831,31 +805,6 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 
 static void txt_logger_create(GaimLog *log)
 {
-	if(log->type == GAIM_LOG_SYSTEM){
-		char date[64];
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
-		char *ud = gaim_user_dir();
-		char *dir = g_build_filename(ud, "logs", prpl, log->name, ".system", NULL);
-		char *filename;
-		struct generic_logger_data *data;
-
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
-		filename = g_build_filename(dir, date, NULL);
-		g_free(dir);
-
-		log->logger_data = data = g_new0(struct generic_logger_data, 1);
-
-		data->file = fopen(filename, "a");
-		if (!data->file) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log",
-					"Could not create log file %s\n", filename);
-			g_free(filename);
-			return;
-		}
-		g_free(filename);
-	}
 }
 
 static GaimLogLogger txt_logger = {
