@@ -41,7 +41,7 @@ of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2000-12-12 07:56:53 -0500 (Tue, 12 Dec 2000) $.
+$Date: 2001-03-10 04:34:31 -0500 (Sat, 10 Mar 2001) $.
 
 
 PROGRAM FLOW
@@ -117,10 +117,20 @@ aim.c:
   pointless functions, like gaim_setup, which optionally turns off sounds
   on signon. A lot of this file should actually be part of other files.
 
+applet.c:
+  This controls most things that are related to the applet. I don't like
+  looking at this file because it still has functionsLikeThis. But at
+  least it doesn't have many of them anymore. Anyway, this file isn't
+  very big because there's really not much difference between the panel
+  version and the app version.
+
 away.c:
   This takes care of most of the away stuff: setting the away message
   (do_away_message); coming back (do_im_back); drawing the away window;
-  etc.
+  etc. Away messages work really oddly due to multiple connections and
+  multiple protocols; I think there are really only two or three people
+  who know it all they work and I don't think any of us know why it works
+  that way.
 
 browser.c:
   Code for opening a browser window. Most of the code is trying to deal
@@ -162,25 +172,17 @@ gaimrc.c:
   to say about it; this is probably one of the better designed and easier
   to follow files in gaim. The important functions are towards the bottom.
 
-gnome_applet_mgr.c:
-  This controls most things that are related to the applet. I don't like
-  looking at this file because it still has functionsLikeThis. But at
-  least it doesn't have many of them anymore. Anyway, this file isn't
-  very big because there's really not much difference between the panel
-  version and the app version.
+gtkimhtml.c:
+  This is gaim's HTML widget. It replaced the old widget, GtkHtml (which
+  was different than GNOME's GtkHTML). It's self-contained (it doesn't
+  use any of gaim's code) and is actually a separate project from gaim
+  (but is maintained by Eric).
 
-gtkhtml.c:
-  This is really just one big hack. I recommend not looking at this
-  file if you want to save your sanity. (It's going to be replaced
-  eventually anyway.)  People have asked why we don't replace this with
-  GNOME's GtkHTML, or embed mozilla (yes, they were serious). There
-  are two reasons. The first is that doing that would cause gaim to
-  require 6 extra libraries that nobody needs or wants or has. The
-  second is that we really don't need, or even want, a full-fledged
-  HTML viewer. We don't even want a normal HTML viewer because the text
-  that gets sent gets parsed and displayed different than normal HTML.
-  (Try inserting a newline and you'll see what I mean.) We should only
-  support about 12 tags, not the 50 that normal HTML supports.
+gtkspell.c:
+  This controls spell checking. It's not a widget per se but it does have
+  some influence over the GtkText widget. It's a separate project from
+  gaim; if you have a patch for this file send it to the author (the
+  contact info is in the file).
 
 gtkticker.c:
   Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
