@@ -130,6 +130,7 @@ DLL_C_SRC =		about.c \
 			sslconn.c \
 			status.c \
 			stock.c \
+			stringref.c \
 			themes.c \
 			util.c \
 			value.c \
