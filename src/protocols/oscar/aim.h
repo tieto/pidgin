@@ -1012,7 +1012,8 @@ faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap);
 #define AIM_CAPS_ICQUTF8	0x00020000
 #define AIM_CAPS_INTEROPERATE	0x00040000
 #define AIM_CAPS_ICHAT		0x00080000
-#define AIM_CAPS_LAST		0x00100000
+#define AIM_CAPS_HIPTOP		0x00100000
+#define AIM_CAPS_LAST		0x00200000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 

@@ -54,6 +54,7 @@
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
 #define UC_WIRELESS	0x40
+#define UC_HIPTOP	0x80
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -1759,6 +1760,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		caps = info->capabilities;
 	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
 		type |= UC_AB;
+	if (caps & AIM_CAPS_HIPTOP)
+		type |= UC_HIPTOP;
 
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
 		if (info->flags & AIM_FLAG_UNCONFIRMED)
@@ -3071,7 +3074,7 @@ static char *caps_string(guint caps)
 
 	if (!caps) {
 		return NULL;
-	} else while (bit <= 0x20000) {
+	} else while (bit <= AIM_CAPS_LAST) {
 		if (bit & caps) {
 			switch (bit) {
 			case 0x1:
@@ -3125,6 +3128,9 @@ static char *caps_string(guint caps)
 				break;
 			case 0x20000:
 				tmp = _("ICQ UTF8");
+				break;
+			case AIM_CAPS_HIPTOP:
+				tmp = _("Hiptop");
 				break;
 			default:
 				tmp = NULL;
@@ -5395,6 +5401,8 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 		emblems[i++] = "admin";
 	if (b->uc & UC_AB && i < 4)
 		emblems[i++] = "activebuddy";
+	if (b->uc & UC_HIPTOP && i < 4)
+		emblems[i++] = "hiptop";
 /*	if (b->uc & UC_UNCONFIRMED && i < 4)
 		emblems[i++] = "unconfirmed"; */
 	*se = emblems[0];
