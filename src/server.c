@@ -367,6 +367,8 @@ void serv_set_permit_deny()
 		}
 */
 	}
+	do_export(0, 0);
+	serv_save_config();
 }
 
 void serv_set_idle(struct gaim_connection *g, int time)

@@ -474,6 +474,7 @@ static void do_del_perm(GtkWidget *w, GtkTree *ptree)
 		gtk_tree_clear_items(GTK_TREE(ptree), 0, -1);
                 build_permit_tree();
                 serv_save_config();
+		do_export(0, 0);
 	}
 }
 
@@ -510,6 +511,8 @@ static GtkWidget *deny_radio(char *label, int which, GtkWidget *box, GtkWidget *
 
 static void permdest(GtkWidget *m, gpointer n)
 {
+	do_export(0, 0);
+	serv_save_config();
 	gtk_widget_destroy(permtree);
 	permtree = NULL;
 }
