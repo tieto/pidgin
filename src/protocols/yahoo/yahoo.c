@@ -496,7 +496,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		struct buddy *bud = find_buddy(gc, from);
 		void *free1=NULL, *free2=NULL;
-		if (!bud)
+		if (!bud) 
 			debug_printf("%s is playing a game, and doesn't want you to know.\n");
 		if (*stat == '1') {
 			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
@@ -504,14 +504,16 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 				g_free(free2);
 			}
 			g_hash_table_insert (yd->games, g_strdup(from), g_strdup(game));
-			serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME, 0);
+			if (bud)
+				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME, 0);
 		} else {
 			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
 				g_free(free1);
 				g_free(free2);
 				g_hash_table_remove (yd->games, from);
 			}
-			serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME, 0);
+			if (bud)
+				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME, 0);
 		}
 	}
 }

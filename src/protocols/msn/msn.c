@@ -1813,6 +1813,11 @@ static void msn_act_id(gpointer data, char *entry)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
+	if (strlen(url_encode(entry)) > 387) {
+		do_error_dialog("Friendly name too long.", "MSN Error");
+		return;
+	}
+	
 	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, url_encode(entry));
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
