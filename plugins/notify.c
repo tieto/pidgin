@@ -19,7 +19,12 @@ void received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 	g_free(me);
 
 	if (cnv == NULL)
+	{
+		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
+			return;
+
 		cnv = new_conversation(*who);
+	}
 
 	win = (GtkWindow *)cnv->window;
 
