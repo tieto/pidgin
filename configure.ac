@@ -344,7 +344,7 @@ if test "$enable_tcl" = yes; then
 			AC_MSG_RESULT([yes ($TCLCONFIG)])
 		fi
 	done
-	if test "$TCLONFIG" = "no"; then
+	if test "$TCLCONFIG" = "no"; then
 		AC_MSG_RESULT([no])
 		enable_tcl=no
 	else
