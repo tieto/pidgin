@@ -13,6 +13,7 @@ version 0.9.20:
 	* "You are sending messages too quickly" error is now fixed
 	   when you have a large buddylist.
 	* Dialog windows are now prettier
+	* Fixed the LC_ALL compile problem on Solaris boxes 
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces

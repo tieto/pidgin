@@ -49,7 +49,7 @@
 #ifndef USE_APPLET
 #include "pixmaps/logo.xpm"
 #endif /* USE_APPLET */
-
+#include "locale.h"
 #include "gtkticker.h"
 
 static GtkWidget *name;
