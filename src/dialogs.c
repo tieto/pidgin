@@ -2511,11 +2511,16 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
+	gdouble fgclr[3];
 
 	if (color == NULL) { /* we came from the prefs */
 		if (fgcseld) return;
+		fgclr[0]=(gdouble)(fgcolor.red)/255;
+		fgclr[1]=(gdouble)(fgcolor.green)/255;
+		fgclr[2]=(gdouble)(fgcolor.blue)/255;
+
 		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
-		
+		gtk_color_selection_set_color (GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), fgclr);
 		gtk_signal_connect(GTK_OBJECT(fgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_color_dlg), (void *)1);
@@ -2527,12 +2532,15 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 	}
 
 	if (!c->fg_color_dialog) {
-		c->fg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-		
-		colorsel = GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->colorsel;
+		fgclr[0]=(gdouble)(c->fgcol.red)/255;
+		fgclr[1]=(gdouble)(c->fgcol.green)/255;
+		fgclr[2]=(gdouble)(c->fgcol.blue)/255;
 
+		c->fg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+		colorsel = GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->colorsel;
+		gtk_color_selection_set_color (GTK_COLOR_SELECTION(colorsel), fgclr);
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
-		
+
 		gtk_signal_connect(GTK_OBJECT(c->fg_color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_fgcolor), colorsel);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_fgcolor), c);
@@ -2548,11 +2556,16 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
+	gdouble bgclr[3];
 
 	if (color == NULL) { /* we came from the prefs */
 		if (bgcseld) return;
-		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
+		bgclr[0]=(gdouble)(bgcolor.red)/255;
+		bgclr[1]=(gdouble)(bgcolor.green)/255;
+		bgclr[2]=(gdouble)(bgcolor.blue)/255;
 
+		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
+		gtk_color_selection_set_color (GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), bgclr);
 		gtk_signal_connect(GTK_OBJECT(bgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_color_dlg), (void *)2);
@@ -2564,12 +2577,15 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 	}
 
 	if (!c->bg_color_dialog) {
-		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
-		
-		colorsel = GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->colorsel;
+		bgclr[0]=(gdouble)(c->bgcol.red)/255;
+		bgclr[1]=(gdouble)(c->bgcol.green)/255;
+		bgclr[2]=(gdouble)(c->bgcol.blue)/255;
 
+		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+		colorsel = GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->colorsel;
+		gtk_color_selection_set_color (GTK_COLOR_SELECTION(colorsel), bgclr);
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
-		
+
 		gtk_signal_connect(GTK_OBJECT(c->bg_color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_bgcolor), colorsel);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_bgcolor), c);
