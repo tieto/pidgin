@@ -227,7 +227,7 @@ if test "$enable_esd" = yes ; then
         if test "$no_esd" != yes ; then
 		old_CFLAGS="$CFLAGS"
         	CFLAGS="$CFLAGS $ESD_CFLAGS"
-		AC_CHECK_HEADER(esd.h,
+		AC_TRY_COMPILE(,[#include <esd.h>],
 			[
 				AC_DEFINE(ESD_SOUND)
 				SOUND_LIBS="$SOUND_LIBS $ESD_LIBS"
@@ -244,7 +244,7 @@ if test "x$enable_artsc" = "xyes"; then
 	if test "x$no_artsc" != "xyes" ; then
 		old_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $ARTSC_CFLAGS"
-		AC_CHECK_HEADER(artsc.h,
+		AC_TRY_COMPILE(,[#include <artsc.h>],
 			[
 				AC_DEFINE(ARTSC_SOUND)
 				SOUND_LIBS="$SOUND_LIBS $ARTSC_LIBS"
