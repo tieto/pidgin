@@ -44,6 +44,7 @@
 #include "pixmaps/save.xpm"
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
+#include "pixmaps/warn.xpm"
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
@@ -367,35 +368,94 @@ void show_warn_dialog(char *who)
 	GtkWidget *label;
 	GtkWidget *vbox;
         GtkWidget *bbox;
+	GtkWidget *button_box;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *frame;
+	GtkWidget *fbox;
 
         struct warning *w = g_new0(struct warning, 1);
         
         char *buf = g_malloc(128);
         w->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        dialogwindows = g_list_prepend(dialogwindows, w->window);
+	gtk_window_set_policy(GTK_WINDOW(w->window), FALSE, FALSE, TRUE);
+	gtk_widget_show(w->window);
+	dialogwindows = g_list_prepend(dialogwindows, w->window);
         cancel = gtk_button_new_with_label(_("Cancel"));
         warn = gtk_button_new_with_label(_("Warn"));
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
+	fbox = gtk_vbox_new(FALSE, 5);
 
+	frame = gtk_frame_new(_("Warn"));
+
+	/* Build Warn Button */
+
+	warn = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( w->window->window, &mask, NULL, warn_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Warn"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(warn), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( w->window->window, &mask, NULL, cancel_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
         /* Put the buttons in the box */
-        gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+
+	gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, TRUE, TRUE, 5);
 
         g_snprintf(buf, 127, _("Do you really want to warn %s?"), who);
         label = gtk_label_new(buf);
-        gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         gtk_widget_show(label);
         w->anon = gtk_check_button_new_with_label(_("Warn anonymously?"));
-        gtk_box_pack_start(GTK_BOX(vbox), w->anon, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox), w->anon, TRUE, TRUE, 5);
 
         label = gtk_label_new(_("Anonymous warnings are less harsh."));
-        gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         gtk_widget_show(label);
 
         w->who = who;
-		
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
+	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(fbox), bbox, FALSE, FALSE, 5);
 
         /* Handle closes right */
         gtk_signal_connect(GTK_OBJECT(w->window), "delete_event",
@@ -410,9 +470,13 @@ void show_warn_dialog(char *who)
         gtk_widget_show(w->anon);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
-        gtk_window_set_title(GTK_WINDOW(w->window), _("Gaim - Warn user?"));
-        gtk_container_add(GTK_CONTAINER(w->window), vbox);
-        gtk_widget_realize(w->window);
+	gtk_widget_show(frame);
+	gtk_widget_show(fbox);
+
+	gtk_window_set_title(GTK_WINDOW(w->window), _("Gaim - Warn user?"));
+        gtk_container_add(GTK_CONTAINER(w->window), fbox);
+	gtk_container_set_border_width(GTK_CONTAINER(w->window), 5);
+	gtk_widget_realize(w->window);
         aol_icon(w->window->window);
 
         gtk_widget_show(w->window);
@@ -602,9 +666,9 @@ static void do_im(GtkWidget *widget, GtkWidget *imentry)
 {
         char *who;
         struct conversation *c;
-
+	char *test;
+	
         who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(imentry))));
-        
 	destroy_dialog(NULL, imdialog);
         imdialog = NULL;
         
@@ -691,6 +755,8 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 		fbox = gtk_vbox_new(TRUE, 10);
 
 		frame = gtk_frame_new(_("Send Instant Message"));
+	
+		imentry = gtk_entry_new();
 
 	/* Build OK Button */
 
@@ -755,7 +821,6 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
                 gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
                 gtk_widget_show(label);
 
-                imentry = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(ebox), imentry, TRUE, TRUE, 10);
 
                 gtk_box_pack_start(GTK_BOX(vbox), ebox, FALSE, FALSE, 5);

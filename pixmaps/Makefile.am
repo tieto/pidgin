@@ -17,7 +17,7 @@ EXTRA_DIST = gaim.xpm admin_icon.xpm aimicon.xpm \
 	daemon-im.xpm daemon-info.xpm daemon-permadd.xpm \
 	daemon-permdel.xpm daemon.xpm fontface.xpm smile_happy.xpm \
 	smile_sad.xpm smile_wink.xpm save.xpm cancel.xpm ok.xpm \
-	join.xpm add.xpm
+	join.xpm add.xpm warn.xpm
 
 pixmapdir = $(datadir)/pixmaps
 pixmap_DATA = gaim.xpm
