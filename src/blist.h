@@ -863,6 +863,12 @@ const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 GList *gaim_buddy_get_extended_menu(GaimBuddy *b);
 
 /**
+ * Retrieves the extended menu items for a chat.
+ * @param c      The chat to obtain the extended menu items for
+*/
+GList *gaim_chat_get_extended_menu(GaimChat *c);
+
+/**
  * Retrieves the extended menu items for a group.
  * @param g      The group to obtain the extended menu items for
 */

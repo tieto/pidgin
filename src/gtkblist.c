@@ -1065,13 +1065,6 @@ static void gaim_proto_menu_cb(GtkMenuItem *item, GaimBuddy *b)
 		pbm->callback(pbm->gc, b->name);
 }
 
-static void gaim_proto_group_menu_cb(GtkMenuItem *item, GaimGroup *g)
-{
-	struct proto_group_menu *pgm = g_object_get_data(G_OBJECT(item), "gaimcallback");
-	if (pgm->callback)
-		pgm->callback(g);
-}
-
 static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, GaimBuddy *b)
 {
 	GList *list = NULL, *l = NULL;
@@ -1095,9 +1088,8 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 		for(l = list; l; l = l->next) {
 			struct proto_buddy_menu *pbm = l->data;
 
-			/* draw NULL menu items as a separator. Since the
-			   pbm is not being used in a callback, it needs to be
-			   freed. Also, do some simple checking to prevent
+			/* draw NULL menu items as a separator.
+			   Also, do some simple checking to prevent
 			   doubled-up separators */
 			if(pbm == NULL) {
 				if(! dup_separator) {
@@ -1131,7 +1123,6 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 				gaim_separator(menu);
 				dup_separator = TRUE;
 			}
-			g_free(pbm);
 			continue;
 		} else {
 			dup_separator = FALSE;
@@ -1189,6 +1180,13 @@ static gboolean gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event,
 	}
 
 	return FALSE;
+}
+
+static void gaim_proto_group_menu_cb(GtkMenuItem *item, GaimGroup *g)
+{
+	struct proto_group_menu *pgm = g_object_get_data(G_OBJECT(item), "gaimcallback");
+	if (pgm->callback)
+		pgm->callback(g);
 }
 
 static GtkWidget *
@@ -1250,8 +1248,9 @@ create_chat_menu (GaimBlistNode *node,
 		  GaimPluginProtocolInfo *prpl_info)
 {
 	GtkWidget *menu;
-	GList *list;
+	GList *list, *l;
 	GtkWidget *menuitem;
+	gboolean dup_separator = FALSE;
 	gboolean autojoin = (gaim_blist_node_get_bool(node,
 						     "gtk-autojoin") || (gaim_blist_node_get_string(node,
 									 "gtk-autojoin") != NULL));
@@ -1267,6 +1266,20 @@ create_chat_menu (GaimBlistNode *node,
 		list = prpl_info->chat_menu(c->account->gc, c->components);
 		while (list) {
 			struct proto_chat_menu *pcm = list->data;
+
+			/* draw NULL menu items as a separator.
+			   Also, do some simple checking to prevent
+			   doubled-up separators */
+			if(pcm == NULL) {
+				if(! dup_separator) {
+					gaim_separator(menu);
+					dup_separator = TRUE;
+				}
+				continue;
+			} else {
+				dup_separator = FALSE;
+			}
+
 			menuitem = gtk_menu_item_new_with_mnemonic(pcm->label);
 			g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pcm);
 			g_signal_connect(G_OBJECT(menuitem), "activate",
@@ -1275,6 +1288,34 @@ create_chat_menu (GaimBlistNode *node,
 			list = list->next;
 		}
 	}
+
+	/* check for additional menu items which may be added by other
+	   plugins. */
+	list = gaim_chat_get_extended_menu(c);
+	for(l = list; l; l = l->next) {
+		struct proto_chat_menu *pcm = l->data;
+
+		/* draw NULL menu items as a separator.  see previous,
+		   identical-looking code. */
+		if(pcm == NULL) {
+			if(! dup_separator) {
+				gaim_separator(menu);
+				dup_separator = TRUE;
+			}
+			continue;
+		} else {
+			dup_separator = FALSE;
+		}
+
+		menuitem = gtk_menu_item_new_with_mnemonic(pcm->label);
+		g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pcm);
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+			G_CALLBACK(gaim_proto_chat_menu_cb), c);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	}
+	g_list_free(list);
+
+	/* moving on to the old ui-specific plugin menus */
 	gaim_signal_emit(gaim_gtk_blist_get_handle(),
 			"drawing-menu", menu, c);
 

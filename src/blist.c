@@ -2727,6 +2727,13 @@ GList *gaim_buddy_get_extended_menu(GaimBuddy *b) {
 	return menu;
 }
 
+GList *gaim_chat_get_extended_menu(GaimChat *c) {
+	GList *menu = NULL;
+	gaim_signal_emit(gaim_blist_get_handle(), "chat-extended-menu",
+		c, &menu);
+	return menu;
+}
+
 GList *gaim_group_get_extended_menu(GaimGroup *g) {
 	GList *menu = NULL;
 	gaim_signal_emit(gaim_blist_get_handle(), "group-extended-menu",
@@ -2809,6 +2816,11 @@ gaim_blist_init(void)
 			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     gaim_value_new(GAIM_TYPE_SUBTYPE,
 					    GAIM_SUBTYPE_BLIST_BUDDY),
+			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
+	gaim_signal_register(handle, "chat-extended-menu",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE,
+					    GAIM_SUBTYPE_BLIST_CHAT),
 			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
 	gaim_signal_register(handle, "group-extended-menu",
 			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
