@@ -21,6 +21,8 @@ plugins/signals-test.c
 plugins/simple.c
 plugins/spellchk.c
 plugins/statenotify.c
+plugins/tcl/tcl.c
+plugins/tcl/tcl_cmds.c
 plugins/ticker/gtkticker.c
 plugins/ticker/ticker.c
 plugins/timestamp.c
@@ -168,6 +170,7 @@ src/protocols/toc/toc.c
 src/protocols/trepia/trepia.c
 src/protocols/yahoo/crypt.c
 src/protocols/yahoo/yahoo.c
+src/protocols/yahoo/yahoochat.c
 src/protocols/zephyr/ZAsyncLocate.c
 src/protocols/zephyr/ZCkAuth.c
 src/protocols/zephyr/ZCkIfNot.c
