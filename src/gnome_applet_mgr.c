@@ -285,6 +285,7 @@ void insert_applet_away() {
 			a);
 
 		awy = awy->next;
+		free(awayname);
 	}
 }
 
@@ -305,6 +306,7 @@ void remove_applet_away() {
 		applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
 
 		awy = awy->next;
+		free(awayname);
 	}
 	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away");
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
