@@ -2362,6 +2362,8 @@ static void build_debug()
 	gtk_window_set_title(GTK_WINDOW(dw->window), _("Gaim debug output window"));
 	gtk_window_set_wmclass(GTK_WINDOW(dw->window), "debug_out", "Gaim");
 	gtk_signal_connect(GTK_OBJECT(dw->window), "delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);
+	gtk_widget_realize(dw->window);
+	aol_icon(dw->window->window);
 
 	box = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(dw->window), box);

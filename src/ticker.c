@@ -79,6 +79,8 @@ BuddyTickerCreateWindow()
         gtk_window_set_title (GTK_WINDOW(tickerwindow), "Gaim - Buddy Ticker");
         gtk_window_set_wmclass (GTK_WINDOW(tickerwindow), 
                                 "ticker", "Gaim");
+	gtk_widget_realize(tickerwindow);
+	aol_icon(tickerwindow->window);
 
         ticker = gtk_ticker_new();
         gtk_ticker_set_spacing( GTK_TICKER( ticker ), 20 );
