@@ -21,12 +21,13 @@
 static void historize(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
-	const char *name = gaim_conversation_get_name(c);
 	char *history = NULL;
-	int flags;
+	guint flags;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	GtkTextIter end;
-	GList *logs = gaim_log_get_logs(gaim_conversation_get_name(c), gaim_conversation_get_account(c));
+	GList *logs = gaim_log_get_logs(gaim_conversation_get_name(c),
+			gaim_conversation_get_account(c));
+
 	if (!logs)
 		return;
 	history = gaim_log_read((GaimLog*)logs->data, &flags);

@@ -38,17 +38,25 @@ struct log_viewer_hash_t {
 	GaimAccount *account;
 };
 
-static guint log_viewer_hash(const struct log_viewer_hash_t *viewer)
+static guint log_viewer_hash(gconstpointer data)
 {
+	const struct log_viewer_hash_t *viewer = data;
 	return g_str_hash(viewer->screenname) + g_str_hash(gaim_account_get_username(viewer->account));
-	
+
 }
 
-static gint log_viewer_equal(const struct log_viewer_hash_t *a, const struct log_viewer_hash_t *b)
+static gint log_viewer_equal(gconstpointer y, gconstpointer z)
 {
+	const struct log_viewer_hash_t *a, *b;
 	int ret;
-	char *normal = g_strdup(gaim_normalize(a->account, a->screenname));
-	ret = (a->account == b->account) && !strcmp(normal, gaim_normalize(b->account, b->screenname));
+	char *normal;
+
+	a = y;
+	b = z;
+
+	normal = g_strdup(gaim_normalize(a->account, a->screenname));
+	ret = (a->account == b->account) &&
+		!strcmp(normal, gaim_normalize(b->account, b->screenname));
 	g_free(normal);
 	return ret;
 }
@@ -96,7 +104,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
      /* Logs are made from trees in real life. 
         This is a tree made from logs */
 {
-	char *title[64];
+	char title[64];
 	GtkTreeIter iter;
 	GList *logs = lv->logs;
 	while (logs) {

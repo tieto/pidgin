@@ -42,8 +42,8 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account, 
 	log->account = account;
 	log->time = time;
 	log->logger = gaim_log_logger_get();
-	if (log->logger && log->logger->new)
-		log->logger->new(log);
+	if (log->logger && log->logger->create)
+		log->logger->create(log);
 	return log;
 }
 
@@ -99,14 +99,14 @@ static void logger_pref_cb(const char *name, GaimPrefType type,
 }
 
 
-GaimLogLogger *gaim_log_logger_new(void(*new)(GaimLog *),
+GaimLogLogger *gaim_log_logger_new(void(*create)(GaimLog *),
 				   void(*write)(GaimLog *, GaimMessageFlags, const char *,
 						time_t, const char *),
 				   void(*finalize)(GaimLog *), GList*(*list)(const char*, GaimAccount*),
 				   char*(*read)(GaimLog*, GaimLogReadFlags*))
 {
 	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
-	logger->new = new;
+	logger->create = create;
 	logger->write = write;
 	logger->finalize = finalize;
 	logger->list = list;
