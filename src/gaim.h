@@ -283,7 +283,7 @@ extern guint sound_options;
 #define OPT_SOUND_ARTSC			0x00008000
 #define OPT_SOUND_ESD			0x00010000
 #define OPT_SOUND_CMD			0x00020000
-#define OPT_SOUND_NICK                  0x00040000
+#define OPT_SOUND_CHAT_NICK                  0x00040000
 /* remember to also change the struct in sound.c */
 #define SND_BUDDY_ARRIVE 0
 #define SND_BUDDY_LEAVE 1
@@ -295,7 +295,8 @@ extern guint sound_options;
 #define SND_CHAT_YOU_SAY 7
 #define SND_CHAT_SAY 8
 #define SND_POUNCE_DEFAULT 9
-#define NUM_SOUNDS 10
+#define SND_CHAT_NICK 10
+#define NUM_SOUNDS 11
 extern char *sound_file[NUM_SOUNDS];
 
 /* global sound struct */
