@@ -1,6 +1,15 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.81 (08/05/2004)
+version 0.82cvs:
+	Gaim API:
+	* Removed multi.h
+	* Renamed ui.h to gtkdialogs.h
+	* Renamed show_warn_dialog to gaim_gtkdialogs_warn
+	* Renamed show_im_dialog to gaim_gtkdialogs_im
+	* Renamed show_info_dialog to gaim_gtkdialogs_info
+	* Renamed show_log_dialog to gaim_gtkdialogs_log
+
+version 0.81 (08/05/2004):
 	Commands API:
 	* Most functions now have a void *data argument.
 
@@ -8,7 +17,7 @@ version 0.81 (08/05/2004)
 	* Added gaim_buddy_get_contact_alias
 	* Renamed gaim_get_buddy_alias to gaim_buddy_get_alias
 	* Renamed gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
-	
+
 	Conversation API:
 	* Changed: gaim_conv_chat_add_user() (added flags parameter)
 	gaim_conv_chat_add_users() now (added GList of flags parameter)
