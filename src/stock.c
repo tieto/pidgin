@@ -93,11 +93,6 @@ const GtkStockItem stock_items[] =
 	{ GAIM_STOCK_WARN,      N_("_Warn"),      0, 0, NULL }
 };
 
-static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
-static gint stock_item_count = sizeof(stock_items) / sizeof(*stock_items);
-
-static gboolean stock_inited = FALSE;
-
 static gchar *
 find_file(const char *dir, const char *base)
 {
@@ -109,9 +104,13 @@ find_file(const char *dir, const char *base)
 	if (!strcmp(dir, "gaim"))
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", base, NULL);
 	else
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", dir, base, NULL);
+	{
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", dir,
+									base, NULL);
+	}
 
-	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+	{
 		g_critical("Unable to load stock pixmap %s\n", base);
 
 		g_free(filename);
@@ -125,12 +124,15 @@ find_file(const char *dir, const char *base)
 void
 gaim_gtk_stock_init(void)
 {
+	static gboolean stock_initted = FALSE;
 	GtkIconFactory *icon_factory;
 	int i;
 	GtkWidget *win;
 
-	if (stock_inited)
+	if (stock_initted)
 		return;
+
+	stock_initted = TRUE;
 
 	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
@@ -141,18 +143,20 @@ gaim_gtk_stock_init(void)
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(win);
 
-	for (i = 0; i < stock_icon_count; i++) {
+	for (i = 0; i < G_N_ELEMENTS(stock_icons); i++)
+	{
 		GdkPixbuf *pixbuf;
 		GtkIconSet *iconset;
 		gchar *filename;
 
-		if (stock_icons[i].dir == NULL) {
-
+		if (stock_icons[i].dir == NULL)
+		{
 			/* GTK+ Stock icon */
 			iconset = gtk_style_lookup_icon_set(gtk_widget_get_style(win),
 												stock_icons[i].filename);
 		}
-		else {
+		else
+		{
 			filename = find_file(stock_icons[i].dir, stock_icons[i].filename);
 
 			if (filename == NULL)
@@ -180,7 +184,5 @@ gaim_gtk_stock_init(void)
 	g_object_unref(G_OBJECT(icon_factory));
 
 	/* Register the stock items. */
-	gtk_stock_add_static(stock_items, stock_item_count);
-
-	stock_inited = TRUE;
+	gtk_stock_add_static(stock_items, G_N_ELEMENTS(stock_items));
 }
