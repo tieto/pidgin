@@ -212,37 +212,11 @@ struct gaim_window_ui_ops *gaim_get_gtk_window_ui_ops(void);
 struct gaim_conversation_ui_ops *gaim_get_gtk_conversation_ui_ops(void);
 
 /**
- * Toggles the display of smileys.
- */
-void gaim_gtkconv_toggle_smileys(void);
-
-/**
- * Toggles the display of timestamps.
- */
-void gaim_gtkconv_toggle_timestamps(void);
-
-/**
- * Toggles spell checking.
- */
-void gaim_gtkconv_toggle_spellchk(void);
-
-/**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.
  */
 void gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv);
-
-/**
- * Hides buddy icons on all conversations.
- */
-void gaim_gtkconv_hide_buddy_icons(void);
-
-/**
- * Enables or disables animation on all conversations, based off
- * preferences.
- */
-void gaim_gtkconv_set_anim(void);
 
 /**
  * Updates the font buttons on all conversations to reflect any changed

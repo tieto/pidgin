@@ -4529,76 +4529,6 @@ gaim_get_gtk_conversation_ui_ops(void)
 /**************************************************************************
  * Public conversation utility functions
  **************************************************************************/
-void
-gaim_gtkconv_toggle_smileys(void)
-{
-	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-
-	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		
-		conv = (struct gaim_conversation *)cl->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml),
-				gaim_prefs_get_bool("/gaim/gtk/conversations/show_smileys"));
-	}
-}
-
-void
-gaim_gtkconv_toggle_timestamps(void)
-{
-	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-
-	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		
-		conv = (struct gaim_conversation *)cl->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-				gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
-	}
-}
-
-void
-gaim_gtkconv_toggle_spellchk(void)
-{
-#ifdef USE_GTKSPELL
-	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	GtkSpell *spell;
-
-	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		
-		conv = (struct gaim_conversation *)cl->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-			gtkspell_new_attach(GTK_TEXT_VIEW(gtkconv->entry), NULL, NULL);
-		else {
-			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
-			gtkspell_detach(spell);
-		}
-	}
-#endif
-}
-
 static void
 remove_icon(struct gaim_gtk_conversation *gtkconv)
 {
@@ -4905,29 +4835,6 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 
 	if (bm)
 		g_object_unref(G_OBJECT(bm));
-}
-
-void
-gaim_gtkconv_hide_buddy_icons(void)
-{
-	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
-}
-
-void
-gaim_gtkconv_set_anim(void)
-{
-	GList *l;
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
-		return;
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons")) {
-		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			stop_anim(NULL, (struct gaim_conversation *)l->data);
-	} else {
-		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			start_anim(NULL, (struct gaim_conversation *)l->data);
-	}
 }
 
 void
@@ -5344,12 +5251,107 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
-		gtkconv= GAIM_GTK_CONVERSATION(conv);
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if (value)
 			gtk_widget_show(gtkconv->close);
 		else
 			gtk_widget_hide(gtkconv->close);
+	}
+}
+
+static void
+show_timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
+						gpointer data)
+{
+	GList *l;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		conv = (struct gaim_conversation *)l->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), (gboolean)value);
+	}
+}
+
+static void
+spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+#ifdef USE_GTKSPELL
+	GList *cl;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+	GtkSpell *spell;
+
+	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
+		
+		conv = (struct gaim_conversation *)cl->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (value)
+			gtkspell_new_attach(GTK_TEXT_VIEW(gtkconv->entry), NULL, NULL);
+		else {
+			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
+			gtkspell_detach(spell);
+		}
+	}
+#endif
+}
+
+static void
+show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
+					 gpointer data)
+{
+	GList *cl;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+
+	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
+		conv = (struct gaim_conversation *)cl->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml), (gboolean)value);
+	}
+}
+
+static void
+show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
+						 gpointer data)
+{
+	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+}
+
+static void
+animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
+							gpointer value, gpointer data)
+{
+	GList *l;
+
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
+		return;
+
+	if (value) {
+		for (l = gaim_get_ims(); l != NULL; l = l->next)
+			start_anim(NULL, (struct gaim_conversation *)l->data);
+	}
+	else {
+		for (l = gaim_get_ims(); l != NULL; l = l->next)
+			stop_anim(NULL, (struct gaim_conversation *)l->data);
 	}
 }
 
@@ -5416,5 +5418,16 @@ gaim_gtk_conversation_init(void)
 	/* Connect callbacks. */
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_smileys",
+								show_smileys_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",
+								show_timestamps_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/spellcheck",
+								spellcheck_pref_cb, NULL);
+
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/animate_buddy_icons",
+								animate_buddy_icons_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/im/show_buddy_icons",
+								show_buddy_icons_pref_cb, NULL);
 }
 
