@@ -62,7 +62,8 @@
 #define MAX_FONT_SIZE 7
 #define DEFAULT_FONT_SIZE 3
 
-gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
+#define POINT_SIZE(x) (_point_sizes [(x) - 1])
+static gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
 #define DEFAULT_PRE_FACE "courier"
 
@@ -1930,7 +1931,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		if (italics)
 			newvals [SLANT] = "i";
 		if (fontsize) {
-			g_snprintf (fs, sizeof (fs), "%d", _point_sizes [MIN (fontsize, MAX_FONT_SIZE) - 1]);
+			g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (MIN (fontsize, MAX_FONT_SIZE)));
 			newvals [PXLSZ] = "*";
 			newvals [PTSZ] = fs;
 		}
@@ -1961,7 +1962,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			newvals [FMLY] = names [i];
 
 			g_snprintf (fs, sizeof (fs), "%d",
-				    _point_sizes [MIN (fontsize, MAX_FONT_SIZE) - 1] / 10);
+				    POINT_SIZE (MIN (fontsize, MAX_FONT_SIZE) - 1) / 10);
 			newvals [PXLSZ] = fs;
 			newvals [PTSZ] = "*";
 
