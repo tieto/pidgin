@@ -178,12 +178,12 @@ gaim_network_do_listen(unsigned short port)
 	 * XXX - Try IPv6 addresses first?
 	 */
 	for (next = res; next != NULL; next = next->ai_next) {
-		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		listenfd = socket(next->ai_family, next->ai_socktype, next->ai_protocol);
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
 			gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
-		if (bind(listenfd, res->ai_addr, res->ai_addrlen) == 0)
+		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		close(listenfd);
 	}

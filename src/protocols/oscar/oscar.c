@@ -1309,7 +1309,8 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 
 	listenfd = gaim_network_listen_range(5190, 5199);
 	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-	dim->conn = aim_odc_initiate(od->sess, who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), cookie);
+	if (listenfd >= 0)
+		dim->conn = aim_odc_initiate(od->sess, who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), cookie);
 	if (dim->conn != NULL) {
 		char *tmp;
 		GaimConversation *conv;
