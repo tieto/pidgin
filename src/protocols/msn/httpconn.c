@@ -166,7 +166,7 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 }
 
 static gboolean
-poll(gpointer data)
+do_poll(gpointer data)
 {
 	MsnHttpConn *httpconn;
 
@@ -194,7 +194,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		httpconn->inpa = gaim_input_add(httpconn->fd, GAIM_INPUT_READ,
 										read_cb, data);
 
-		httpconn->timer = gaim_timeout_add(2000, poll, httpconn);
+		httpconn->timer = gaim_timeout_add(2000, do_poll, httpconn);
 
 		httpconn->waiting_response = FALSE;
 		msn_httpconn_process_queue(httpconn);
