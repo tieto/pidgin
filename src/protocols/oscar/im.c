@@ -1316,10 +1316,11 @@ faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
  */
 static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, struct aim_incomingim_ch1_args *args)
 {
+	/* Should this be ASCII -> UNICODE -> Custom */
 	static const fu16_t charsetpri[] = {
-		0x0000, /* ASCII first */
-		0x0003, /* then ISO-8859-1 */
-		0x0002, /* UNICODE as last resort */
+		AIM_IMCHARSET_ASCII, /* ASCII first */
+		AIM_IMCHARSET_CUSTOM, /* then ISO-8859-1 */
+		AIM_IMCHARSET_UNICODE, /* UNICODE as last resort */
 	};
 	static const int charsetpricount = 3;
 	int i;
@@ -1388,11 +1389,11 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 			args->charsubset = sec->charsubset;
 
 			/* Set up the simple flags */
-			if (args->charset == 0x0000)
+			if (args->charset == AIM_IMCHARSET_ASCII)
 				; /* ASCII */
-			else if (args->charset == 0x0002)
+			else if (args->charset == AIM_IMCHARSET_UNICODE)
 				args->icbmflags |= AIM_IMFLAGS_UNICODE;
-			else if (args->charset == 0x0003)
+			else if (args->charset == AIM_IMCHARSET_CUSTOM)
 				args->icbmflags |= AIM_IMFLAGS_ISO_8859_1;
 			else if (args->charset == 0xffff)
 				; /* no encoding (yeep!) */

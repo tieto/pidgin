@@ -3025,16 +3025,67 @@ static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 0;
 }
 
+static gchar *
+gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+{
+	gchar *ret;
+	gsize convlen;
+	GError *err = NULL;
+
+	gaim_debug_misc("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%hd\n", charset, charsubset, datalen);
+
+	if ((datalen == 0) || (data == NULL))
+		return NULL;
+
+	switch (charset) {
+		case AIM_IMCHARSET_UNICODE: /* UCS-2BE */
+			ret = g_convert(data, datalen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
+			if (err != NULL) {
+				gaim_debug_warn("oscar",
+						   "UCS-2BE conversation failed: %s\n", err->message);
+				g_error_free(err);
+				ret = g_strdup(_("(There was an error receiving this message)"));
+			}
+		break;
+
+		case AIM_IMCHARSET_CUSTOM: /* Use the value specified for this account */
+			ret = g_convert(data, datalen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
+			if (err != NULL) {
+				gaim_debug_warn("oscar",
+						   "UCS-2BE conversation failed: %s\n", err->message);
+				g_error_free(err);
+				ret = g_strdup(_("(There was an error receiving this message)"));
+			}
+		break;
+
+		case AIM_IMCHARSET_ASCII:
+		default: /* Unknown, hope for valid UTF-8... */
+			if (g_utf8_validate(data, datalen, NULL)) {
+				ret = g_strndup(data, datalen);
+			} else {
+				gaim_debug_warn("oscar",
+						   "Received invalid UTF-8.\n");
+				ret = g_strdup(_("(There was an error receiving this message)"));
+			}
+			break;
+	}
+
+	return ret;
+}
+
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	gchar *tmp;
 	GaimConvImFlags flags = 0;
-	gsize convlen;
-	GError *err = NULL;
 	struct buddyinfo *bi;
 	const char *iconfile;
+	GString *message;
+	gchar *tmp;
+	aim_mpmsg_section_t *curpart;
+
+	gaim_debug_misc("oscar", "Recived IM from %s with %d parts\n",
+					userinfo->sn, args->mpmsg.numparts);
 
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 	if (!bi) {
@@ -3088,53 +3139,19 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					   "Can't stat buddy icon file!\n");
 	}
 
-	gaim_debug_misc("oscar",
-			   "Received message from %s with charset %hu %hu\n",
-			   userinfo->sn, args->charset, args->charsubset);
-
-	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
-		/* This message is marked as UNICODE, so we have to
-		 * convert it to utf-8 before handing it to the gaim core.
-		 * This conversion should *never* fail, if it does it
-		 * means that either the incoming ICBM is corrupted or
-		 * there is something we don't understand about it.
-		 * For the record, AIM Unicode is big-endian UCS-2 */
-
-		gaim_debug_info("oscar", "Received UNICODE IM\n");
-
-		if (!args->msg || !args->msglen)
-			return 1;
-
-		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
-		if (err) {
-			gaim_debug_info("oscar",
-					   "Unicode IM conversion: %s\n", err->message);
-			tmp = g_strdup(_("(There was an error receiving this message)"));
-			g_error_free(err);
+	message = g_string_new("");
+	curpart = args->mpmsg.parts;
+	while (curpart != NULL) {
+		tmp = gaim_plugin_oscar_parse_im_part(curpart->charset, curpart->charsubset,
+											curpart->data, curpart->datalen);
+		if (tmp != NULL) {
+			g_string_append(message, tmp);
+			g_free(tmp);
 		}
-	} else {
-		/* This will get executed for both AIM_IMFLAGS_ISO_8859_1 and
-		 * unflagged messages, which are ASCII.  That's OK because
-		 * ASCII is a strict subset of ISO-8859-1; this should
-		 * help with compatibility with old, broken versions of
-		 * gaim (everything before 0.60) and other broken clients
-		 * that will happily send ISO-8859-1 without marking it as
-		 * such */
-		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1)
-			gaim_debug_info("oscar",
-					   "Received ISO-8859-1 IM\n");
 
-		if (!args->msg || !args->msglen)
-			return 1;
-
-		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
-		if (err) {
-			gaim_debug_info("oscar",
-					   "ISO-8859-1 IM conversion: %s\n", err->message);
-			tmp = g_strdup(_("(There was an error receiving this message)"));
-			g_error_free(err);
-		}
+		curpart = curpart->next;
 	}
+	tmp = g_string_free(message, FALSE);
 
 	/*
 	 * If the message is being received by an ICQ user then escape any HTML,
@@ -5281,7 +5298,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		args.flags |= oscar_encoding_check(tmpmsg);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			gaim_debug_info("oscar", "Sending Unicode IM\n");
-			args.charset = 0x0002;
+			args.charset = AIM_IMCHARSET_UNICODE;
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
@@ -5296,7 +5313,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
 			gaim_debug_info("oscar",
 					   "Sending ISO-8859-1 IM\n");
-			args.charset = 0x0003;
+			args.charset = AIM_IMCHARSET_CUSTOM;
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {

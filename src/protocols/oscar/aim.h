@@ -681,19 +681,23 @@ struct aim_chat_roominfo {
 	fu16_t instance;
 };
 
-#define AIM_IMFLAGS_AWAY		0x0001 /* mark as an autoreply */
-#define AIM_IMFLAGS_ACK			0x0002 /* request a receipt notice */
-#define AIM_IMFLAGS_UNICODE		0x0004
-#define AIM_IMFLAGS_ISO_8859_1		0x0008
-#define AIM_IMFLAGS_BUDDYREQ		0x0010 /* buddy icon requested */
-#define AIM_IMFLAGS_HASICON		0x0020 /* already has icon */
+#define AIM_IMFLAGS_AWAY				0x0001 /* mark as an autoreply */
+#define AIM_IMFLAGS_ACK					0x0002 /* request a receipt notice */
+#define AIM_IMFLAGS_UNICODE				0x0004
+#define AIM_IMFLAGS_ISO_8859_1			0x0008
+#define AIM_IMFLAGS_BUDDYREQ			0x0010 /* buddy icon requested */
+#define AIM_IMFLAGS_HASICON				0x0020 /* already has icon */
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
-#define AIM_IMFLAGS_CUSTOMFEATURES 	0x0080 /* features field present */
-#define AIM_IMFLAGS_EXTDATA		0x0100
-#define AIM_IMFLAGS_X			0x0200
-#define AIM_IMFLAGS_MULTIPART		0x0400 /* ->mpmsg section valid */
-#define AIM_IMFLAGS_OFFLINE		0x0800 /* send to offline user */
-#define AIM_IMFLAGS_TYPINGNOT		0x1000 /* typing notification */
+#define AIM_IMFLAGS_CUSTOMFEATURES 		0x0080 /* features field present */
+#define AIM_IMFLAGS_EXTDATA				0x0100
+#define AIM_IMFLAGS_X					0x0200
+#define AIM_IMFLAGS_MULTIPART			0x0400 /* ->mpmsg section valid */
+#define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
+#define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
+
+#define AIM_IMCHARSET_ASCII		0x0000
+#define AIM_IMCHARSET_UNICODE	0x0002 /* UCS-2BE */
+#define AIM_IMCHARSET_CUSTOM	0x0003
 
 /*
  * Multipart message structures.
