@@ -2115,8 +2115,8 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 /*
 	c->sendfile_btn = gaim_new_item_from_pixbuf(menu, _("Send File"), "send-file-small.png", NULL, NULL, 0, 0, NULL); */
 
-	gaim_new_item_from_pixbuf(menu, _("Insert URL"), "insert-link-small.png", GTK_SIGNAL_FUNC(insert_link_cb), c, 0, 0, NULL); 
-	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert Image"), "insert-image-small.png", GTK_SIGNAL_FUNC(insert_image), c, 0, 0, NULL); 
+	gaim_new_item_from_pixbuf(menu, _("Insert _URL"), "insert-link-small.png", GTK_SIGNAL_FUNC(insert_link_cb), c, 0, 0, NULL); 
+	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert _Image"), "insert-image-small.png", GTK_SIGNAL_FUNC(insert_image), c, 0, 0, NULL); 
 
 	menuitem = gtk_menu_item_new();
 	gtk_menu_append(GTK_MENU(menu), menuitem);
