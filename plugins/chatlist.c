@@ -99,16 +99,13 @@ static void save_chat_prefs()
 
 	g_snprintf(path, sizeof(path), "%s/%s", x, "chats");
 	f = fopen(path, "w");
-	if (!f) {
-		g_free(x);
+	if (!f)
 		return;
-	}
 	while (crs) {
 		struct chat_room *cr = crs->data;
 		crs = crs->next;
 		fprintf(f, "%s\n%d\n", cr->name, cr->exchange);
 	}
-	g_free(x);
 	fclose(f);
 }
 
@@ -121,10 +118,8 @@ static void restore_chat_prefs()
 
 	g_snprintf(path, sizeof(path), "%s/%s", x, "chats");
 	f = fopen(path, "r");
-	if (!f) {
-		g_free(x);
+	if (!f)
 		return;
-	}
 	while (fgets(buf, 1024, f)) {
 		struct chat_room *cr = g_new0(struct chat_room, 1);
 		g_snprintf(cr->name, sizeof(cr->name), "%s", g_strchomp(buf));
