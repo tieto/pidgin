@@ -593,11 +593,8 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 			bnode->next->prev = bnode->prev;
 		if(bnode->prev)
 			bnode->prev->next = bnode->next;
-		if(bnode->parent->child == bnode) {
+		if(bnode->parent->child == bnode)
 			bnode->parent->child = bnode->next;
-			if(!bnode->parent->child)
-				gaim_blist_remove_contact((GaimContact*)bnode->parent);
-		}
 
 		ops->remove(gaimbuddylist, bnode);
 
@@ -611,6 +608,10 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 			g_hash_table_remove(gaimbuddylist->buddies, hb);
 			g_free(hb);
 		}
+
+		if(!bnode->parent->child)
+			gaim_blist_remove_contact((GaimContact*)bnode->parent);
+
 	}
 
 	if(node && GAIM_BLIST_NODE_IS_BUDDY(node)) {
