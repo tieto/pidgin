@@ -304,7 +304,7 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
 	if ((cnv = find_conversation(sn)))
-		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -1202,7 +1202,7 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	if (!(cnv = find_conversation(dim->name))) 
 		cnv = new_conversation(dim->name);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
-	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 
@@ -1342,7 +1342,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
 
 	strip_linefeed(tmp);
-	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
+	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL), -1);
 	g_free(tmp);
 
 	return 1;
@@ -2070,7 +2070,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 		time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
 		g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
 		strip_linefeed(tmp);
-		serv_got_im(gc, sender, tmp, 0, t);
+		serv_got_im(gc, sender, tmp, 0, t, -1);
 		g_free(tmp);
 	} else {
 		debug_printf("unknown offline message type 0x%04x\n", msg->type);
@@ -2640,7 +2640,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 					oscar_callback, dim->conn);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
-	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
 				gaim_directim_incoming, 0);
@@ -2662,7 +2662,7 @@ static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("Got DirectIM message from %s\n", sn);
 
-	serv_got_im(gc, sn, msg, 0, time((time_t)NULL));
+	serv_got_im(gc, sn, msg, 0, time(NULL), -1);
 
 	return 1;
 }

@@ -451,14 +451,12 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		}
 	} else {
 		if (chat_options & OPT_CHAT_ONE_WINDOW) {
-			if ((convo_options & OPT_CONVO_COMBINE) &&
-					 (im_options & OPT_IM_ONE_WINDOW) && conversations) {
+			if ((g_list_length(chats) > 1) ||
+					((convo_options & OPT_CONVO_COMBINE) &&
+					 (im_options & OPT_IM_ONE_WINDOW) && conversations)) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
 							 g_list_index(chats, c) +
 								g_list_length(conversations));
-			} else if (g_list_length(chats) > 1) {
-				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
-							 g_list_index(chats, c));
 			} else {
 				if (c->window)
 					gtk_widget_destroy(c->window);
@@ -1005,7 +1003,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 
 		if (err > 0) {
-			write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL));
+			write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL), -1);
 
 			if (c->makesound && (sound_options & OPT_SOUND_SEND))
 				play_sound(SEND);
@@ -1443,7 +1441,7 @@ void check_everything(GtkWidget *entry)
 
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
-void write_to_conv(struct conversation *c, char *what, int flags, char *who, time_t mtime)
+void write_to_conv(struct conversation *c, char *what, int flags, char *who, time_t mtime, gint length)
 {
 	char buf[BUF_LONG];
 	char *str;
@@ -1455,7 +1453,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 
-	if (c->is_chat && !g_list_find(chats, c))
+	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
 
 	if (!c->is_chat && !g_list_find(conversations, c))
@@ -1492,7 +1490,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		int index = g_slist_index(connections, c->gc);
 		int sconv = strlen(c->name);
 		int sname = strlen(who);
-		int swhat = strlen(what);
+		int swhat = length == -1 ? strlen(what) : length;
 		UI_build_broadcast(CUI_TYPE_MESSAGE, CUI_MESSAGE_RECV,
 				sizeof(index), &index,
 				sizeof(sconv), &sconv,
@@ -1529,7 +1527,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
 			   mdate, what);
 
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, -1, 0);
 
 		if (logging_options & OPT_LOG_STRIP_HTML) {
 			char *t1 = strip_html(buf);
@@ -1569,11 +1567,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 	} else if (flags & WFLAG_NOLOG) {
 		g_snprintf(buf, BUF_LONG, "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>", what);
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, -1, 0);
 	} else {
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
-			if (meify(what)) {
+			if (meify(what, length)) {
 				str = g_malloc(1024);
 				g_snprintf(str, 1024, "***%s", who);
 				strcpy(colour, "#6C2585");
@@ -1583,7 +1581,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				strcpy(colour, "#00ff00");
 			}
 		} else {
-			if (meify(what)) {
+			if (meify(what, length)) {
 				str = g_malloc(1024);
 				if (flags & WFLAG_AUTO)
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
@@ -1618,11 +1616,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, -1, 0);
 
-		logstr = gtk_imhtml_append_text(GTK_IMHTML(c->text), what, gtk_font_options);
+		logstr = gtk_imhtml_append_text(GTK_IMHTML(c->text), what, length, gtk_font_options);
 
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", -1, 0);
 
 		if (logging_options & OPT_LOG_STRIP_HTML) {
 			char *t1, *t2;

@@ -85,7 +85,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $l
 
 AC_ARG_ENABLE(gtk2,    [  --enable-gtk2           compile using GTK 2 (BROKEN)],,enable_gtk2=no)
 AC_ARG_ENABLE(gnome,   [  --disable-gnome         compile without Gnome bits],,enable_gnome=yes)
-AC_ARG_ENABLE(pixbuf,  [  --disable-pixbuf        compile without GdkPixbuf (needed for Buddy Icons)],,enable_pixbuf=yes)
+AC_ARG_ENABLE(pixbuf,  [  --disable-pixbuf        compile without GdkPixbuf],,enable_pixbuf=yes)
 AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,enable_panel=$enable_distrib)
 
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
@@ -428,9 +428,9 @@ else
 	echo UI Library.................... : GTK+ 1.2
 fi
 if test "x$enable_gtk2" = "xyes" ; then
-	echo Use GdkPixbuf for Buddy Icons. : yes
+	echo Use GdkPixbuf................. : yes
 else
-	echo Use GdkPixbuf for Buddy Icons. : $use_pixbuf
+	echo Use GdkPixbuf................. : $use_pixbuf
 fi
 echo
 echo Build with Plugin support..... : $enable_plugins

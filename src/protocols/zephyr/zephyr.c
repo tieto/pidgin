@@ -374,7 +374,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					away = TRUE;
 				else
 					away = FALSE;
-				serv_got_im(zgc, notice.z_sender, buf2, 0, time((time_t)NULL));
+				serv_got_im(zgc, notice.z_sender, buf2, 0, time(NULL), -1);
 			} else {
 				zephyr_triple *zt1, *zt2;
 				zt1 = new_triple(notice.z_class, notice.z_class_inst,

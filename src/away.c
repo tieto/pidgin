@@ -74,7 +74,7 @@ void purge_away_queue()
 		if (g_slist_index(connections, qm->gc) >= 0)
 			set_convo_gc(cnv, qm->gc);
 
-		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm);
+		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 
 		message_queue = g_slist_remove(message_queue, qm);
 
@@ -111,7 +111,7 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 				if (g_slist_index(connections, qm->gc) >= 0)
 					set_convo_gc(cnv, qm->gc);
 				
-				write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm);
+				write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 				g_free(qm->message);
 				g_free(qm);
 				templist = message_queue = g_slist_remove(message_queue, qm);
@@ -222,10 +222,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gaim_setup_imhtml(awaytext);
 		gtk_widget_show(awaytext);
 		buf = stylize(a->message, BUF_LONG);
-		gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, GTK_IMHTML_NO_TITLE |
+		gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, -1, GTK_IMHTML_NO_TITLE |
 				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 		g_free(buf);
-		gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", GTK_IMHTML_NO_TITLE |
+		gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", -1, GTK_IMHTML_NO_TITLE |
 				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 
 		clistqueuesw = gtk_scrolled_window_new(NULL, NULL);

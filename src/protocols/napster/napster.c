@@ -201,7 +201,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	if (command == 0xCD) {
 		res = g_strsplit(buf, " ", 1);
-		serv_got_im(gc, res[0], res[1], 0, time((time_t)NULL));
+		serv_got_im(gc, res[0], res[1], 0, time(NULL), -1);
 		g_strfreev(res);
 		g_free(buf);
 		return;

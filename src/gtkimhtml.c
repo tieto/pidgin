@@ -36,10 +36,10 @@
 #endif
 
 #if GTK_CHECK_VERSION(1,3,0)
-#define GTK_IMHTML_GET_STYLE_FONT(style) gtk_style_get_font (style)
+#  define GTK_IMHTML_GET_STYLE_FONT(style) gtk_style_get_font (style)
 #else
-#define GTK_IMHTML_GET_STYLE_FONT(style) (style)->font
-#define GTK_CLASS_TYPE(class) (class)->type
+#  define GTK_IMHTML_GET_STYLE_FONT(style) (style)->font
+#  define GTK_CLASS_TYPE(class) (class)->type
 #endif
 
 #include "pixmaps/angel.xpm"
@@ -289,7 +289,7 @@ struct line_info {
 	GtkIMHtmlBit *bit;
 };
 
-struct url_widget {
+struct clickable {
 	gint x;
 	gint y;
 	gint width;
@@ -327,55 +327,10 @@ gtk_imhtml_destroy (GtkObject *object)
 
 	imhtml = GTK_IMHTML (object);
 
-	while (imhtml->bits) {
-		GtkIMHtmlBit *bit = imhtml->bits->data;
-		imhtml->bits = g_list_remove (imhtml->bits, bit);
-		if (bit->text)
-			g_free (bit->text);
-		if (bit->font)
-			gdk_font_unref (bit->font);
-		if (bit->fore)
-			gdk_color_free (bit->fore);
-		if (bit->back)
-			gdk_color_free (bit->back);
-		if (bit->bg)
-			gdk_color_free (bit->bg);
-		if (bit->url)
-			g_free (bit->url);
-		if (bit->pm)
-			gdk_pixmap_unref (bit->pm);
-		if (bit->bm)
-			gdk_bitmap_unref (bit->bm);
-		while (bit->chunks) {
-			struct line_info *li = bit->chunks->data;
-			if (li->text)
-				g_free (li->text);
-			bit->chunks = g_list_remove (bit->chunks, li);
-			g_free (li);
-		}
-		g_free (bit);
-	}
-
-	if (imhtml->line)
-		g_list_free (imhtml->line);
-
-	while (imhtml->urls) {
-		g_free (imhtml->urls->data);
-		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
-	}
+	gtk_imhtml_clear (imhtml);
 
 	if (imhtml->selected_text)
 		g_string_free (imhtml->selected_text, TRUE);
-
-	if (imhtml->tip_timer) {
-		gtk_timeout_remove (imhtml->tip_timer);
-		imhtml->tip_timer = 0;
-	}
-	if (imhtml->tip_window) {
-		gtk_widget_destroy (imhtml->tip_window);
-		imhtml->tip_window = NULL;
-	}
-	imhtml->tip_bit = NULL;
 
 	if (imhtml->default_font)
 		gdk_font_unref (imhtml->default_font);
@@ -831,9 +786,9 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	g_list_free (imhtml->line);
 	imhtml->line = NULL;
 
-	while (imhtml->urls) {
-		g_free (imhtml->urls->data);
-		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
+	while (imhtml->click) {
+		g_free (imhtml->click->data);
+		imhtml->click = g_list_remove (imhtml->click, imhtml->click->data);
 	}
 
 	imhtml->x = 0;
@@ -1454,11 +1409,11 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 				gtk_imhtml_select_in_chunk (imhtml, chunk);
 		}
 	} else {
-		GList *urls = imhtml->urls;
-		struct url_widget *uw;
+		GList *click = imhtml->click;
+		struct clickable *uw;
 
-		while (urls) {
-			uw = (struct url_widget *) urls->data;
+		while (click) {
+			uw = (struct clickable *) click->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
 				if (imhtml->tip_bit != uw->bit) {
@@ -1477,7 +1432,7 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 						       imhtml->hand_cursor);
 				return TRUE;
 			}
-			urls = g_list_next (urls);
+			click = g_list_next (click);
 		}
 	}
 
@@ -1519,7 +1474,7 @@ static void
 menu_open_url (GtkObject *object,
 	       gpointer   data)
 {
-	struct url_widget *uw = data;
+	struct clickable *uw = data;
 
 	gtk_signal_emit (GTK_OBJECT (uw->imhtml), signals [URL_CLICKED], uw->bit->url);
 }
@@ -1528,7 +1483,7 @@ static void
 menu_copy_link (GtkObject *object,
 		gpointer   data)
 {
-	struct url_widget *uw = data;
+	struct clickable *uw = data;
 	GtkIMHtml *imhtml = uw->imhtml;
 
 	if (imhtml->selected_text)
@@ -1562,29 +1517,31 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 	}
 
 	if (event->button == 3) {
-		GList *urls = imhtml->urls;
-		struct url_widget *uw;
+		GList *click = imhtml->click;
+		struct clickable *uw;
 
-		while (urls) {
-			uw = urls->data;
+		while (click) {
+			uw = click->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
 				GtkWidget *menu = gtk_menu_new ();
+				GtkWidget *button;
 
-				GtkWidget *button = gtk_menu_item_new_with_label ("Open URL");
-				gtk_signal_connect (GTK_OBJECT (button), "activate",
-						    GTK_SIGNAL_FUNC (menu_open_url), uw);
-				gtk_menu_append (GTK_MENU (menu), button);
-				gtk_widget_show (button);
+				if (uw->bit->url) {
+					button = gtk_menu_item_new_with_label ("Open URL");
+					gtk_signal_connect (GTK_OBJECT (button), "activate",
+							    GTK_SIGNAL_FUNC (menu_open_url), uw);
+					gtk_menu_append (GTK_MENU (menu), button);
+					gtk_widget_show (button);
 
-				button = gtk_menu_item_new_with_label ("Copy Link Location");
-				gtk_signal_connect (GTK_OBJECT (button), "activate",
-						    GTK_SIGNAL_FUNC (menu_copy_link), uw);
-				gtk_menu_append (GTK_MENU (menu), button);
-				gtk_widget_show (button);
+					button = gtk_menu_item_new_with_label ("Copy Link Location");
+					gtk_signal_connect (GTK_OBJECT (button), "activate",
+							    GTK_SIGNAL_FUNC (menu_copy_link), uw);
+					gtk_menu_append (GTK_MENU (menu), button);
+					gtk_widget_show (button);
+				}
 
-				gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
-						3, event->time);
+				gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, event->time);
 
 				if (imhtml->tip_timer) {
 					gtk_timeout_remove (imhtml->tip_timer);
@@ -1598,7 +1555,7 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 
 				return TRUE;
 			}
-			urls = g_list_next (urls);
+			click = g_list_next (click);
 		}
 	}
 
@@ -1632,18 +1589,18 @@ gtk_imhtml_button_release_event (GtkWidget      *widget,
 	}
 
 	if ((event->button == 1) && (imhtml->sel_startx == 0)) {
-		GList *urls = imhtml->urls;
-		struct url_widget *uw;
+		GList *click = imhtml->click;
+		struct clickable *uw;
 
-		while (urls) {
-			uw = (struct url_widget *) urls->data;
+		while (click) {
+			uw = (struct clickable *) click->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
 				gtk_signal_emit (GTK_OBJECT (imhtml), signals [URL_CLICKED],
 						 uw->bit->url);
 				return TRUE;
 			}
-			urls = g_list_next (urls);
+			click = g_list_next (click);
 		}
 	}
 
@@ -2092,7 +2049,7 @@ gtk_imhtml_new (GtkAdjustment *hadj,
 	gtk_imhtml_set_adjustments (imhtml, hadj, vadj);
 
 	imhtml->bits = NULL;
-	imhtml->urls = NULL;
+	imhtml->click = NULL;
 
 	imhtml->x = 0;
 	imhtml->y = TOP_BORDER;
@@ -2222,7 +2179,7 @@ backwards_update (GtkIMHtml    *imhtml,
 	gint diff;
 	GList *ls = NULL;
 	struct line_info *li;
-	struct url_widget *uw;
+	struct clickable *uw;
 
 	if (height > imhtml->llheight) {
 		diff = height - imhtml->llheight;
@@ -2238,7 +2195,7 @@ backwards_update (GtkIMHtml    *imhtml,
 			ls = g_list_next (ls);
 		}
 
-		ls = imhtml->urls;
+		ls = imhtml->click;
 		while (ls) {
 			uw = ls->data;
 			if (uw->y + diff > imhtml->y)
@@ -2260,7 +2217,7 @@ add_text_renderer (GtkIMHtml    *imhtml,
 		   gchar        *text)
 {
 	struct line_info *li;
-	struct url_widget *uw;
+	struct clickable *uw;
 	gint width;
 
 	if (text)
@@ -2281,14 +2238,14 @@ add_text_renderer (GtkIMHtml    *imhtml,
 	li->bit = bit;
 
 	if (bit->url) {
-		uw = g_new0 (struct url_widget, 1);
+		uw = g_new0 (struct clickable, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
 		uw->imhtml = imhtml;
 		uw->bit = bit;
-		imhtml->urls = g_list_append (imhtml->urls, uw);
+		imhtml->click = g_list_append (imhtml->click, uw);
 	}
 
 	bit->chunks = g_list_append (bit->chunks, li);
@@ -2300,7 +2257,7 @@ add_img_renderer (GtkIMHtml    *imhtml,
 		  GtkIMHtmlBit *bit)
 {
 	struct line_info *li;
-	struct url_widget *uw;
+	struct clickable *uw;
 	gint width;
 
 	gdk_window_get_size (bit->pm, &width, NULL);
@@ -2314,14 +2271,14 @@ add_img_renderer (GtkIMHtml    *imhtml,
 	li->bit = bit;
 
 	if (bit->url) {
-		uw = g_new0 (struct url_widget, 1);
+		uw = g_new0 (struct clickable, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
 		uw->imhtml = imhtml;
 		uw->bit = bit;
-		imhtml->urls = g_list_append (imhtml->urls, uw);
+		imhtml->click = g_list_append (imhtml->click, uw);
 	}
 
 	bit->chunks = g_list_append (bit->chunks, li);
@@ -2482,11 +2439,13 @@ gtk_imhtml_get_color (const gchar *color)
 	return gdk_color_copy (&c);
 }
 
-static gint
+static gboolean
 gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
-		      const gchar *text)
+		      const gchar *text,
+		      gint        *len)
 {
-	return gtk_smiley_tree_lookup (imhtml->smiley_data, text);
+	*len = gtk_smiley_tree_lookup (imhtml->smiley_data, text);
+	return (*len > 0);
 }
 
 static GtkIMHtmlBit *
@@ -2500,7 +2459,9 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 		    FontDetail *font,
 		    GdkColor   *bg,
 		    gchar      *url,
-		    gint	pre)
+		    gint        pre,
+		    gint        sub,
+		    gint        sup)
 {
 	GtkIMHtmlBit *bit = NULL;
 
@@ -2571,17 +2532,19 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 }
 
 #define NEW_TEXT_BIT    gtk_imhtml_new_bit (imhtml, TYPE_TEXT, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url, pre)
+				fonts ? fonts->data : NULL, bg, url, pre, sub, sup)
 #define NEW_SMILEY_BIT  gtk_imhtml_new_bit (imhtml, TYPE_SMILEY, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url, pre)
-#define NEW_SEP_BIT     gtk_imhtml_new_bit (imhtml, TYPE_SEP, NULL, 0, 0, 0, 0, NULL, bg, NULL, 0)
+				fonts ? fonts->data : NULL, bg, url, pre, sub, sup)
+#define NEW_SEP_BIT     gtk_imhtml_new_bit (imhtml, TYPE_SEP, NULL, 0, 0, 0, 0, NULL, bg, NULL, 0, 0, 0)
 #define NEW_BR_BIT      gtk_imhtml_new_bit (imhtml, TYPE_BR, NULL, 0, 0, 0, 0, \
-				fonts ? fonts->data : NULL, bg, NULL, 0)
+				fonts ? fonts->data : NULL, bg, NULL, 0, 0, 0)
 #define NEW_COMMENT_BIT gtk_imhtml_new_bit (imhtml, TYPE_COMMENT, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url, pre)
+				fonts ? fonts->data : NULL, bg, url, pre, sub, sup)
 
-#define NEW_BIT(bit) { GtkIMHtmlBit *tmp = bit; if (tmp != NULL) \
-				newbits = g_list_append (newbits, tmp); }
+#define NEW_BIT(bit)	ws [wpos] = '\0';				\
+			{ GtkIMHtmlBit *tmp = bit; if (tmp != NULL)	\
+			  newbits = g_list_append (newbits, tmp); }	\
+			wpos = 0; ws [wpos] = '\0'
 
 #define UPDATE_BG_COLORS \
 	{ \
@@ -2614,9 +2577,9 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 	}
 
 static gboolean
-is_amp_escape (const gchar *string,
-	       gchar       *replace,
-	       gint        *length)
+gtk_imhtml_is_amp_escape (const gchar *string,
+			  gchar       *replace,
+			  gint        *length)
 {
 	g_return_val_if_fail (string != NULL, FALSE);
 	g_return_val_if_fail (replace != NULL, FALSE);
@@ -2662,20 +2625,169 @@ is_amp_escape (const gchar *string,
 	return TRUE;
 }
 
+#define VALID_TAG(x)	if (!g_strncasecmp (string, x ">", strlen (x ">"))) {	\
+				*tag = g_strndup (string, strlen (x));		\
+				*len = strlen (x) + 1;				\
+				return TRUE;					\
+			}							\
+			(*type)++
+
+#define VALID_OPT_TAG(x)	if (!g_strncasecmp (string, x " ", strlen (x " "))) {	\
+					const gchar *c = string + strlen (x " ");	\
+					gchar e = '"';					\
+					gboolean quote = FALSE;				\
+					while (*c) {					\
+						if (*c == '"' || *c == '\'') {		\
+							if (quote && (*c == e))		\
+								quote = !quote;		\
+							else if (!quote) {		\
+								quote = !quote;		\
+								e = *c;			\
+							}				\
+						} else if (!quote && (*c == '>'))	\
+							break;				\
+						c++;					\
+					}						\
+					if (*c) {					\
+						*tag = g_strndup (string, c - string);	\
+						*len = c - string + 1;			\
+						return TRUE;				\
+					}						\
+				}							\
+				(*type)++
+
+static gboolean
+gtk_imhtml_is_tag (const gchar *string,
+		   gchar      **tag,
+		   gint        *len,
+		   gint        *type)
+{
+	*type = 1;
+
+	if (!strchr (string, '>'))
+		return FALSE;
+
+	VALID_TAG ("B");
+	VALID_TAG ("BOLD");
+	VALID_TAG ("/B");
+	VALID_TAG ("/BOLD");
+	VALID_TAG ("I");
+	VALID_TAG ("ITALIC");
+	VALID_TAG ("/I");
+	VALID_TAG ("/ITALIC");
+	VALID_TAG ("U");
+	VALID_TAG ("UNDERLINE");
+	VALID_TAG ("/U");
+	VALID_TAG ("/UNDERLINE");
+	VALID_TAG ("S");
+	VALID_TAG ("STRIKE");
+	VALID_TAG ("/S");
+	VALID_TAG ("/STRIKE");
+	VALID_TAG ("SUB");
+	VALID_TAG ("/SUB");
+	VALID_TAG ("SUP");
+	VALID_TAG ("/SUP");
+	VALID_TAG ("PRE");
+	VALID_TAG ("/PRE");
+	VALID_TAG ("TITLE");
+	VALID_TAG ("/TITLE");
+	VALID_TAG ("BR");
+	VALID_TAG ("HR");
+	VALID_TAG ("/FONT");
+	VALID_TAG ("/A");
+	VALID_TAG ("P");
+	VALID_TAG ("/P");
+	VALID_TAG ("H3");
+	VALID_TAG ("/H3");
+	VALID_TAG ("HTML");
+	VALID_TAG ("/HTML");
+	VALID_TAG ("BODY");
+	VALID_TAG ("/BODY");
+	VALID_TAG ("FONT");
+	VALID_TAG ("HEAD");
+	VALID_TAG ("HEAD");
+
+	VALID_OPT_TAG ("HR");
+	VALID_OPT_TAG ("FONT");
+	VALID_OPT_TAG ("BODY");
+	VALID_OPT_TAG ("A");
+	VALID_OPT_TAG ("IMG");
+	VALID_OPT_TAG ("P");
+	VALID_OPT_TAG ("H3");
+
+	if (!g_strncasecmp(string, "!--", strlen ("!--"))) {
+		gchar *e = strstr (string, "-->");
+		if (e) {
+			*len = e - string + strlen ("-->");
+			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+static gchar*
+gtk_imhtml_get_html_opt (gchar       *tag,
+			 const gchar *opt)
+{
+	gchar *t = tag;
+	gchar *e, *a;
+
+	while (g_strncasecmp (t, opt, strlen (opt))) {
+		gboolean quote = FALSE;
+		if (*t == '\0') break;
+		while (*t && !((*t == ' ') && !quote)) {
+			if (*t == '\"')
+				quote = ! quote;
+			t++;
+		}
+		while (*t && (*t == ' ')) t++;
+	}
+
+	if (!g_strncasecmp (t, opt, strlen (opt))) {
+		t += strlen (opt);
+	} else {
+		return NULL;
+	}
+
+	if ((*t == '\"') || (*t == '\'')) {
+		e = a = ++t;
+		while (*e && (*e != *(t - 1))) e++;
+		if (*e != '\0') {
+			*e = '\0';
+			return g_strdup (a);
+		} else {
+			return NULL;
+		}
+	} else {
+		e = a = t;
+		while (*e && !isspace ((gint) *e)) e++;
+		*e = '\0';
+		return g_strdup (a);
+	}
+}
+
 GString*
 gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			const gchar      *text,
+			gint              len,
 			GtkIMHtmlOptions  options)
 {
 	const gchar *c;
-	gboolean intag = FALSE;
-	gint tagquote = 0;
-	gboolean incomment = FALSE;
+	gboolean binary = TRUE;
 	gchar *ws;
-	gchar *tag;
+	gint pos = 0;
 	gint wpos = 0;
-	gint tpos = 0;
+
+	gchar *tag;
+	gint tlen;
+	gint type;
+
+	gchar amp;
+
 	int smilelen;
+
 	GList *newbits = NULL;
 
 	guint	bold = 0,
@@ -2708,345 +2820,184 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		scrolldown = FALSE;
 
 	c = text;
-	ws = g_malloc (strlen (text) + 1);
-	tag = g_malloc (strlen (text) + 1);
+	if (len == -1) {
+		binary = FALSE;
+		len = strlen (text);
+	}
 
+	ws = g_malloc (len + 1);
 	ws [0] = '\0';
 
-	while (*c) {
-		if (*c == '<') {
-			if (intag && (tagquote != 1)) {
-				char *d;
-				tag [tpos] = 0;
-				d = tag;
-				while (*d) {
-					if ((smilelen = gtk_imhtml_is_smiley (imhtml, d)) != 0) {
-						ws [wpos] = 0;
-						wpos = 0;
-						NEW_BIT (NEW_TEXT_BIT);
-						g_snprintf (ws, smilelen + 1, "%s", d);
-						NEW_BIT (NEW_SMILEY_BIT);
-						d += smilelen;
-					} else if (*d == '&') {
-						gchar replace;
-						gint length;
-						if (is_amp_escape (d, &replace, &length)) {
-							ws [wpos++] = replace;
-							d += length;
-						} else {
-							ws [wpos++] = *d++;
-						}
-					} else if (*d == '\n') {
-						if (!(options & GTK_IMHTML_NO_NEWLINE)) {
-							ws [wpos] = 0;
-							wpos = 0;
-							NEW_BIT (NEW_TEXT_BIT);
-							NEW_BIT (NEW_BR_BIT);
-						}
-						d++;
-					} else {
-						ws [wpos++] = *d++;
-					}
-				}
-				tpos = 0;
-			}
-
-			if (incomment) {
-				ws [wpos++] = *c++;
-				continue;
-			}
-
-			if (!g_strncasecmp (c, "<!--", strlen ("<!--"))) {
-				if (!(options & GTK_IMHTML_NO_COMMENTS)) {
-					ws [wpos] = 0;
-					wpos = 0;
-					tag [tpos] = 0;
-					strcat (tag, ws);
-					incomment = TRUE;
-					intag = FALSE;
-				}
-				ws [wpos++] = *c++;
-				ws [wpos++] = *c++;
-				ws [wpos++] = *c++;
-				ws [wpos++] = *c++;
-				continue;
-			}
-
-			tag [tpos++] = *c++;
-			intag = TRUE;
-			tagquote = 0;
-		} else if (incomment && (*c == '-') && !g_strncasecmp (c, "-->", strlen ("-->"))) {
-			gchar *tmp;
-			ws [wpos] = 0;
-			wpos = 0;
-			tmp = g_strdup (ws);
-			ws [wpos] = 0;
-			strcat (ws, tag);
-			NEW_BIT (NEW_TEXT_BIT);
-			ws [wpos] = 0;
-			strcat (ws, tmp + strlen ("<!--"));
-			g_free (tmp);
-			NEW_BIT (NEW_COMMENT_BIT);
-			incomment = FALSE;
-			c += strlen ("-->");
-		} else if (*c == '>' && intag && (tagquote != 1)) {
-			gboolean got_tag = FALSE;
-			tag [tpos++] = *c++;
-			tag [tpos] = 0;
-			ws [wpos] = 0;
-
-			if (!g_strcasecmp (tag, "<B>") || !g_strcasecmp (tag, "<BOLD>")) {
-				got_tag = TRUE;
+	while (pos < len) {
+		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
+			c++;
+			pos++;
+			switch (type) {
+			case 1:		/* B */
+			case 2:		/* BOLD */
 				NEW_BIT (NEW_TEXT_BIT);
 				bold++;
-			} else if (!g_strcasecmp (tag, "</B>") || !g_strcasecmp (tag, "</BOLD>")) {
-				got_tag = TRUE;
+				break;
+			case 3:		/* /B */
+			case 4:		/* /BOLD */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (bold) {
+				if (bold)
 					bold--;
-				}
-			} else if (!g_strcasecmp (tag, "<I>") || !g_strcasecmp (tag, "<ITALIC>")) {
-				got_tag = TRUE;
+				break;
+			case 5:		/* I */
+			case 6:		/* ITALIC */
 				NEW_BIT (NEW_TEXT_BIT);
 				italics++;
-			} else if (!g_strcasecmp (tag, "</I>") || !g_strcasecmp (tag, "</ITALIC>")) {
-				got_tag = TRUE;
+				break;
+			case 7:		/* /I */
+			case 8:		/* /ITALIC */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (italics) {
+				if (italics)
 					italics--;
-				}
-			} else if (!g_strcasecmp (tag, "<U>") || !g_strcasecmp (tag, "<UNDERLINE>")) {
-				got_tag = TRUE;
+				break;
+			case 9:		/* U */
+			case 10:	/* UNDERLINE */
 				NEW_BIT (NEW_TEXT_BIT);
 				underline++;
-			} else if (!g_strcasecmp (tag, "</U>") || !g_strcasecmp (tag, "</UNDERLINE>")) {
-				got_tag = TRUE;
+				break;
+			case 11:	/* /U */
+			case 12:	/* /UNDERLINE */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (underline) {
+				if (underline)
 					underline--;
-				}
-			} else if (!g_strcasecmp (tag, "<S>") || !g_strcasecmp (tag, "<STRIKE>")) {
-				got_tag = TRUE;
+				break;
+			case 13:	/* S */
+			case 14:	/* STRIKE */
 				NEW_BIT (NEW_TEXT_BIT);
 				strike++;
-			} else if (!g_strcasecmp (tag, "</S>") || !g_strcasecmp (tag, "</STRIKE>")) {
-				got_tag = TRUE;
+				break;
+			case 15:	/* /S */
+			case 16:	/* /STRIKE */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (strike) {
+				if (strike)
 					strike--;
-				}
-			} else if (!g_strcasecmp (tag, "<SUB>")) {
-				got_tag = TRUE;
+				break;
+			case 17:	/* SUB */
 				NEW_BIT (NEW_TEXT_BIT);
 				sub++;
-			} else if (!g_strcasecmp (tag, "</SUB>")) {
-				got_tag = TRUE;
+				break;
+			case 18:	/* /SUB */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (sub) {
+				if (sub)
 					sub--;
-				}
-			} else if (!g_strcasecmp (tag, "<SUP>")) {
-				got_tag = TRUE;
+				break;
+			case 19:	/* SUP */
 				NEW_BIT (NEW_TEXT_BIT);
 				sup++;
-			} else if (!g_strcasecmp (tag, "</SUP>")) {
-				got_tag = TRUE;
+				break;
+			case 20:	/* /SUP */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (sup) {
+				if (sup)
 					sup--;
-				}
-			} else if (!g_strcasecmp (tag, "<PRE>")) {
-				got_tag = TRUE;
+				break;
+			case 21:	/* PRE */
 				NEW_BIT (NEW_TEXT_BIT);
 				pre++;
-			} else if (!g_strcasecmp (tag, "</PRE>")) {
-				got_tag = TRUE;
+				break;
+			case 22:	/* /PRE */
 				NEW_BIT (NEW_TEXT_BIT);
-				if (pre) {
+				if (pre)
 					pre--;
-				}
-			} else if (!g_strcasecmp (tag, "<TITLE>")) {
-				if (options & GTK_IMHTML_NO_TITLE) {
-					got_tag = TRUE;
-					NEW_BIT (NEW_TEXT_BIT);
-					title++;
-				} else {
-					intag = FALSE;
-					tpos = 0;
-					continue;
-				}
-			} else if (!g_strcasecmp (tag, "</TITLE>")) {
+				break;
+			case 23:	/* TITLE */
+				NEW_BIT (NEW_TEXT_BIT);
+				title++;
+				break;
+			case 24:	/* /TITLE */
 				if (title) {
-					got_tag = TRUE;
-					wpos = 0;
-					ws [wpos] = '\0';
+					if (options & GTK_IMHTML_NO_TITLE) {
+						wpos = 0;
+						ws [wpos] = '\0';
+					}
 					title--;
-				} else {
-					intag = FALSE;
-					tpos = 0;
-					continue;
 				}
-			} else if (!g_strcasecmp (tag, "<BR>")) {
-				got_tag = TRUE;
+				break;
+			case 25:	/* BR */
 				NEW_BIT (NEW_TEXT_BIT);
 				NEW_BIT (NEW_BR_BIT);
-			} else if (!g_strcasecmp (tag, "<HR>") ||
-				   !g_strncasecmp (tag, "<HR ", strlen ("<HR "))) {
-				got_tag = TRUE;
+				break;
+			case 26:	/* HR */
 				NEW_BIT (NEW_TEXT_BIT);
 				NEW_BIT (NEW_SEP_BIT);
-			} else if (!g_strncasecmp (tag, "<FONT ", strlen ("<FONT "))) {
-				gchar *t, *e, *a, *value;
-				FontDetail *font = NULL;
-				GdkColor *clr;
-				gint saw;
-				gint i;
-
-				t = tag + strlen ("<FONT ");
-
-				while (*t != '\0') {
-					value = NULL;
-					saw = 0;
-
-					while (g_strncasecmp (t, "COLOR=", strlen ("COLOR="))
-					    && g_strncasecmp (t, "BACK=", strlen ("BACK="))
-					    && g_strncasecmp (t, "FACE=", strlen ("FACE="))
-					    && g_strncasecmp (t, "SIZE=", strlen ("SIZE="))) {
-						gboolean quote = FALSE;
-						if (*t == '\0') break;
-						while (*t && !((*t == ' ') && !quote)) {
-							if (*t == '\"')
-								quote = ! quote;
-							t++;
-						}
-						while (*t && (*t == ' ')) t++;
-					}
-
-					if (!g_strncasecmp (t, "COLOR=", strlen ("COLOR="))) {
-						t += strlen ("COLOR=");
-						saw = 1;
-					} else if (!g_strncasecmp (t, "BACK=", strlen ("BACK="))) {
-						t += strlen ("BACK=");
-						saw = 2;
-					} else if (!g_strncasecmp (t, "FACE=", strlen ("FACE="))) {
-						t += strlen ("FACE=");
-						saw = 3;
-					} else if (!g_strncasecmp (t, "SIZE=", strlen ("SIZE="))) {
-						t += strlen ("SIZE=");
-						saw = 4;
-					}
-
-					if (!saw)
-						continue;
-
-					if ((*t == '\"') || (*t == '\'')) {
-						e = a = ++t;
-						while (*e && (*e != *(t - 1))) e++;
-						if (*e != '\0') {
-							*e = '\0';
-							t = e + 1;
-							value = g_strdup (a);
-						} else {
-							*t = '\0';
-						}
-					} else {
-						e = a = t;
-						while (*e && !isspace ((gint) *e)) e++;
-						if (*e == '\0') e--;
-						*e = '\0';
-						t = e + 1;
-						value = g_strdup (a);
-					}
-
-					if (value == NULL)
-						continue;
-
-					if (font == NULL)
-						font = g_new0 (FontDetail, 1);
-
-					switch (saw) {
-					case 1:
-						clr = gtk_imhtml_get_color (value);
-						if (clr != NULL) {
-							if ( (font->fore == NULL) &&
-							    !(options & GTK_IMHTML_NO_COLOURS))
-								font->fore = clr;
-						}
-						break;
-					case 2:
-						clr = gtk_imhtml_get_color (value);
-						if (clr != NULL) {
-							if ( (font->back == NULL) &&
-							    !(options & GTK_IMHTML_NO_COLOURS))
-								font->back = clr;
-						}
-						break;
-					case 3:
-						if ( (font->face == NULL) &&
-						    !(options & GTK_IMHTML_NO_FONTS))
-							font->face = g_strdup (value);
-						break;
-					case 4:
-						if ((font->size != 0) ||
-						    (options & GTK_IMHTML_NO_SIZES))
-							break;
-
-						if (isdigit ((gint) value [0])) {
-							for (i = 0; i < strlen (value); i++)
-								if (!isdigit ((gint) value [i]))
-									break;
-							if (i != strlen (value))
-								break;
-
-							sscanf (value, "%hd", &font->size);
-							break;
-						}
-
-						if ((value [0] == '+') && (value [1] != '\0')) {
-							for (i = 1; i < strlen (value); i++)
-								if (!isdigit ((gint) value [i]))
-									break;
-							if (i != strlen (value))
-								break;
-
-							sscanf (value + 1, "%hd", &font->size);
-							font->size += DEFAULT_FONT_SIZE;
-							break;
-						}
-
-						if ((value [0] == '-') && (value [1] != '\0')) {
-							for (i = 1; i < strlen (value); i++)
-								if (!isdigit ((gint) value [i]))
-									break;
-							if (i != strlen (value))
-								break;
-
-							sscanf (value + 1, "%hd", &font->size);
-							font->size = MIN (font->size, 2);
-							font->size = DEFAULT_FONT_SIZE - font->size;
-							break;
-						}
-
-						break;
-					}
-
-					g_free (value);
-				}
-
-				if (!font || !(font->size || font->face || font->fore || font->back)) {
+				break;
+			case 27:	/* /FONT */
+				if (fonts) {
+					FontDetail *font = fonts->data;
+					NEW_BIT (NEW_TEXT_BIT);
+					fonts = g_slist_remove (fonts, font);
+					if (font->face)
+						g_free (font->face);
+					if (font->fore)
+						gdk_color_free (font->fore);
+					if (font->back)
+						gdk_color_free (font->back);
 					g_free (font);
-					intag = FALSE;
-					tpos = 0;
-					continue;
 				}
+				break;
+			case 28:	/* /A */
+				if (url) {
+					NEW_BIT (NEW_TEXT_BIT);
+					g_free (url);
+					url = NULL;
+				}
+				break;
+			case 29:	/* P */
+			case 30:	/* /P */
+			case 31:	/* H3 */
+			case 32:	/* /H3 */
+			case 33:	/* HTML */
+			case 34:	/* /HTML */
+			case 35:	/* BODY */
+			case 36:	/* /BODY */
+			case 37:	/* FONT */
+			case 38:	/* HEAD */
+			case 39:	/* /HEAD */
+				break;
+
+			case 40:	/* HR (opt) */
+				NEW_BIT (NEW_TEXT_BIT);
+				NEW_BIT (NEW_SEP_BIT);
+				break;
+			case 41:	/* FONT (opt) */
+			{
+				gchar *color, *back, *face, *size;
+				FontDetail *font;
+
+				color = gtk_imhtml_get_html_opt (tag, "COLOR=");
+				back = gtk_imhtml_get_html_opt (tag, "BACK=");
+				face = gtk_imhtml_get_html_opt (tag, "FACE=");
+				size = gtk_imhtml_get_html_opt (tag, "SIZE=");
+
+				if (!(color || back || face || size))
+					break;
 
 				NEW_BIT (NEW_TEXT_BIT);
+
+				font = g_new0 (FontDetail, 1);
+				if (color && !(options & GTK_IMHTML_NO_COLOURS))
+					font->fore = gtk_imhtml_get_color (color);
+				if (back && !(options & GTK_IMHTML_NO_COLOURS))
+					font->back = gtk_imhtml_get_color (back);
+				if (face && !(options & GTK_IMHTML_NO_FONTS))
+					font->face = g_strdup (face);
+				if (size && !(options & GTK_IMHTML_NO_SIZES))
+					sscanf (size, "%hd", &font->size);
+
+				g_free (color);
+				g_free (back);
+				g_free (face);
+				g_free (size);
 
 				if (fonts) {
 					FontDetail *oldfont = fonts->data;
 					if (!font->size)
 						font->size = oldfont->size;
-					if (!font->face && oldfont->face)
+					if (!font->face && oldfont->face) 
 						font->face = g_strdup (oldfont->face);
 					if (!font->fore && oldfont->fore)
 						font->fore = gdk_color_copy (oldfont->fore);
@@ -3058,191 +3009,46 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				}
 
 				fonts = g_slist_prepend (fonts, font);
-				got_tag = TRUE;
-			} else if (!g_strcasecmp (tag, "</FONT>")) {
-				FontDetail *font;
-
-				if (fonts) {
-					got_tag = TRUE;
-					NEW_BIT (NEW_TEXT_BIT);
-					font = fonts->data;
-					fonts = g_slist_remove (fonts, font);
-					if (font->face)
-						g_free (font->face);
-					if (font->fore)
-						gdk_color_free (font->fore);
-					if (font->back)
-						gdk_color_free (font->back);
-					g_free (font);
-				} else {
-					intag = FALSE;
-					tpos = 0;
-					continue;
-				}
-			} else if (!g_strncasecmp (tag, "<BODY ", strlen ("<BODY "))) {
-				gchar *t, *e, *color = NULL;
-				GdkColor *tmp;
-
-				got_tag = TRUE;
-
-				if (!(options & GTK_IMHTML_NO_COLOURS)) {
-					t = tag + strlen ("<BODY");
-					do {
-						gboolean quote = FALSE;
-						if (*t == '\0') break;
-						while (*t && !((*t == ' ') && !quote)) {
-							if (*t == '\"')
-								quote = ! quote;
-							t++;
-						}
-						while (*t && (*t == ' ')) t++;
-					} while (g_strncasecmp (t, "BGCOLOR=", strlen ("BGCOLOR=")));
-
-					if (!g_strncasecmp (t, "BGCOLOR=", strlen ("BGCOLOR="))) {
-						t += strlen ("BGCOLOR=");
-						if ((*t == '\"') || (*t == '\'')) {
-							e = ++t;
-							while (*e && (*e != *(t - 1))) e++;
-							if (*e != '\0') {
-								*e = '\0';
-								color = g_strdup (t);
-							}
-						} else {
-							e = t;
-							while (*e && !isspace ((gint) *e)) e++;
-							if (*e == '\0') e--;
-							*e = '\0';
-							color = g_strdup (t);
-						}
-
-						if (color != NULL) {
-							tmp = gtk_imhtml_get_color (color);
-							g_free (color);
-							if (tmp != NULL) {
-								NEW_BIT (NEW_TEXT_BIT);
-								bg = tmp;
-								UPDATE_BG_COLORS;
-							}
-						}
+			}
+				break;
+			case 42:	/* BODY (opt) */
+			{
+				gchar *bgcolor = gtk_imhtml_get_html_opt (tag, "BGCOLOR=");
+				if (bgcolor) {
+					GdkColor *tmp = gtk_imhtml_get_color (bgcolor);
+					g_free (bgcolor);
+					if (tmp) {
+						NEW_BIT (NEW_TEXT_BIT);
+						bg = tmp;
+						UPDATE_BG_COLORS;
 					}
 				}
-			} else if (!g_strncasecmp (tag, "<A ", strlen ("<A "))) {
-				gchar *t, *e;
-
-				got_tag = TRUE;
-				NEW_BIT (NEW_TEXT_BIT);
-
-				if (url != NULL)
-					g_free (url);
-				url = NULL;
-
-				t = tag + strlen ("<A");
-				do {
-					gboolean quote = FALSE;
-					if (*t == '\0') break;
-					while (*t && !((*t == ' ') && !quote)) {
-						if (*t == '\"')
-							quote = ! quote;
-						t++;
-					}
-					while (*t && (*t == ' ')) t++;
-				} while (g_strncasecmp (t, "HREF=", strlen ("HREF=")));
-
-				if (!g_strncasecmp (t, "HREF=", strlen ("HREF="))) {
-					t += strlen ("HREF=");
-					if ((*t == '\"') || (*t == '\'')) {
-						e = ++t;
-						while (*e && (*e != *(t - 1))) e++;
-						if (*e != '\0') {
-							*e = '\0';
-							url = g_strdup (t);
-						}
-					} else {
-						e = t;
-						while (*e && !isspace ((gint) *e)) e++;
-						if (*e == '\0') e--;
-						*e = '\0';
-						url = g_strdup (t);
-					}
-				}
-			} else if (!g_strcasecmp (tag, "</A>")) {
-				if (url != NULL) {
-					got_tag = TRUE;
+			}
+				break;
+			case 43:	/* A (opt) */
+			{
+				gchar *href = gtk_imhtml_get_html_opt (tag, "HREF=");
+				if (href) {
 					NEW_BIT (NEW_TEXT_BIT);
 					g_free (url);
-					url = NULL;
-				} else {
-					intag = FALSE;
-					tpos = 0;
-					continue;
+					url = href;
 				}
-			} else if (!g_strncasecmp (tag, "<IMG ", strlen ("<IMG "))) {
-				gchar *t, *e, *src = NULL;
-				gchar *copy = g_strdup (tag);
+			}
+				break;
+			case 44:	/* IMG (opt) */
+			{
+				gchar *src = gtk_imhtml_get_html_opt (tag, "SRC=");
 				gchar **xpm;
-				GdkColor *clr = NULL;
+				GdkColor *clr;
 				GtkIMHtmlBit *bit;
 
-				intag = FALSE;
-				tpos = 0;
+				if (!src)
+					break;
 
-				if (imhtml->img == NULL) {
-					ws [wpos] = 0;
-					strcat (ws, copy);
-					wpos = strlen (ws);
-					g_free (copy);
-					continue;
-				}
-
-				t = tag + strlen ("<IMG");
-				do {
-					gboolean quote = FALSE;
-					if (*t == '\0') break;
-					while (*t && !((*t == ' ') && !quote)) {
-						if (*t == '\"')
-							quote = ! quote;
-						t++;
-					}
-					while (*t && (*t == ' ')) t++;
-				} while (g_strncasecmp (t, "SRC=", strlen ("SRC=")));
-
-				if (!g_strncasecmp (t, "SRC=", strlen ("SRC="))) {
-					t += strlen ("SRC=");
-					if ((*t == '\"') || (*t == '\'')) {
-						e = ++t;
-						while (*e && (*e != *(t - 1))) e++;
-						if (*e != '\0') {
-							*e = '\0';
-							src = g_strdup (t);
-						}
-					} else {
-						e = t;
-						while (*e && !isspace ((gint) *e)) e++;
-						if (*e == '\0') e--;
-						*e = '\0';
-						src = g_strdup (t);
-					}
-				}
-
-				if (src == NULL) {
-					ws [wpos] = 0;
-					strcat (ws, copy);
-					wpos = strlen (ws);
-					g_free (copy);
-					continue;
-				}
-
-				xpm = (* imhtml->img) (src);
-				if (xpm == NULL) {
+				if (!imhtml->img || ((xpm = imhtml->img (src)) == NULL)) {
 					g_free (src);
-					ws [wpos] = 0;
-					strcat (ws, copy);
-					wpos = strlen (ws);
-					g_free (copy);
-					continue;
+					break;
 				}
-
-				g_free (copy);
 
 				if (!fonts || ((clr = ((FontDetail *) fonts->data)->back) == NULL))
 					clr = (bg != NULL) ? bg : imhtml->default_bg_color;
@@ -3253,96 +3059,33 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				bit = g_new0 (GtkIMHtmlBit, 1);
 				bit->type = TYPE_IMG;
 				bit->pm = gdk_pixmap_create_from_xpm_d (GTK_WIDGET (imhtml)->window,
-									&bit->bm,
-									clr,
-									xpm);
+									&bit->bm, clr, xpm);
 				if (url)
 					bit->url = g_strdup (url);
 
 				NEW_BIT (bit);
 
 				g_free (src);
-
-				continue;
-			} else if (!g_strcasecmp (tag, "<P>") ||
-				   !g_strcasecmp (tag, "</P>") ||
-				   !g_strncasecmp (tag, "<P ", strlen ("<P ")) ||
-				   !g_strcasecmp (tag, "<H3>") ||
-				   !g_strncasecmp (tag, "<H3 ", strlen ("<H3 ")) ||
-				   !g_strcasecmp (tag, "</H3>") ||
-				   !g_strcasecmp (tag, "<HTML>") ||
-				   !g_strcasecmp (tag, "</HTML>") ||
-				   !g_strcasecmp (tag, "<BODY>") ||
-				   !g_strcasecmp (tag, "</BODY>") ||
-				   !g_strcasecmp (tag, "<FONT>") ||
-				   !g_strcasecmp (tag, "<HEAD>") ||
-				   !g_strcasecmp (tag, "</HEAD>")) {
-				intag = FALSE;
-				tpos = 0;
-				continue;
 			}
-
-			if (!got_tag) {
-				char *d;
-				tag [tpos] = 0;
-				d = tag;
-				while (*d) {
-					if ((smilelen = gtk_imhtml_is_smiley (imhtml, d)) != 0) {
-						ws [wpos] = 0;
-						wpos = 0;
-						NEW_BIT (NEW_TEXT_BIT);
-						g_snprintf (ws, smilelen + 1, "%s", d);
-						NEW_BIT (NEW_SMILEY_BIT);
-						d += smilelen;
-					} else if (*d == '&') {
-						gchar replace;
-						gint length;
-						if (is_amp_escape (d, &replace, &length)) {
-							ws [wpos++] = replace;
-							d += length;
-						} else {
-							ws [wpos++] = *d++;
-						}
-					} else if (*d == '\n') {
-						if (!(options & GTK_IMHTML_NO_NEWLINE)) {
-							ws [wpos] = 0;
-							wpos = 0;
-							NEW_BIT (NEW_TEXT_BIT);
-							NEW_BIT (NEW_BR_BIT);
-						}
-						d++;
-					} else {
-						ws [wpos++] = *d++;
-					}
-				}
-				tpos = 0;
-			} else {
-				wpos = 0;
+				break;
+			case 45:	/* P (opt) */
+			case 46:	/* H3 (opt) */
+				break;
+			case 47:	/* comment */
+				NEW_BIT (NEW_TEXT_BIT);
+				wpos = g_snprintf (ws, len, "%s", tag);
+				NEW_BIT (NEW_COMMENT_BIT);
+				break;
+			default:
+				break;
 			}
-			intag = FALSE;
-			tpos = 0;
-		} else if (*c == '&' && !intag) {
-			gchar replace;
-			gint length;
-			if (is_amp_escape (c, &replace, &length)) {
-				ws [wpos++] = replace;
-				c += length;
-			} else {
-				ws [wpos++] = *c++;
-			}
-		} else if (intag) {
-			if (*c == '\"')
-				tagquote++;
-			tag [tpos++] = *c++;
-		} else if (incomment) {
-			ws [wpos++] = *c++;
-		} else if (((smilelen = gtk_imhtml_is_smiley (imhtml, c)) != 0)) {
-			ws [wpos] = 0;
-			wpos = 0;
-			NEW_BIT (NEW_TEXT_BIT);
-			g_snprintf (ws, smilelen + 1, "%s", c);
-			NEW_BIT (NEW_SMILEY_BIT);
-			c += smilelen;
+			g_free (tag);
+			c += tlen;
+			pos += tlen;
+		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
+			ws [wpos++] = amp;
+			c += tlen;
+			pos += tlen;
 		} else if (*c == '\n') {
 			if (!(options & GTK_IMHTML_NO_NEWLINE)) {
 				ws [wpos] = 0;
@@ -3351,77 +3094,21 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				NEW_BIT (NEW_BR_BIT);
 			}
 			c++;
-		} else {
+			pos++;
+		} else if (gtk_imhtml_is_smiley (imhtml, c, &smilelen)) {
+			ws [wpos] = 0;
+			wpos = 0;
+			NEW_BIT (NEW_TEXT_BIT);
+			g_snprintf (ws, smilelen + 1, "%s", c);
+			wpos = smilelen + 1;
+			NEW_BIT (NEW_SMILEY_BIT);
+			c += smilelen;
+			pos += smilelen;
+		} else if (*c) {
 			ws [wpos++] = *c++;
-		}
-	}
-
-	if (intag) {
-		tag [tpos] = 0;
-		c = tag;
-		while (*c) {
-			if ((smilelen = gtk_imhtml_is_smiley (imhtml, c)) != 0) {
-				ws [wpos] = 0;
-				wpos = 0;
-				NEW_BIT (NEW_TEXT_BIT);
-				g_snprintf (ws, smilelen + 1, "%s", c);
-				NEW_BIT (NEW_SMILEY_BIT);
-				c += smilelen;
-			} else if (*c == '&') {
-				gchar replace;
-				gint length;
-				if (is_amp_escape (c, &replace, &length)) {
-					ws [wpos++] = replace;
-					c += length;
-				} else {
-					ws [wpos++] = *c++;
-				}
-			} else if (*c == '\n') {
-				if (!(options & GTK_IMHTML_NO_NEWLINE)) {
-					ws [wpos] = 0;
-					wpos = 0;
-					NEW_BIT (NEW_TEXT_BIT);
-					NEW_BIT (NEW_BR_BIT);
-				}
-				c++;
-			} else {
-				ws [wpos++] = *c++;
-			}
-		}
-	} else if (incomment) {
-		ws [wpos] = 0;
-		wpos = 0;
-		strcat (tag, ws);
-		ws [wpos] = 0;
-		c = tag;
-		while (*c) {
-			if ((smilelen = gtk_imhtml_is_smiley (imhtml, c)) != 0) {
-				ws [wpos] = 0;
-				wpos = 0;
-				NEW_BIT (NEW_TEXT_BIT);
-				g_snprintf (ws, smilelen + 1, "%s", c);
-				NEW_BIT (NEW_SMILEY_BIT);
-				c += smilelen;
-			} else if (*c == '&') {
-				gchar replace;
-				gint length;
-				if (is_amp_escape (c, &replace, &length)) {
-					ws [wpos++] = replace;
-					c += length;
-				} else {
-					ws [wpos++] = *c++;
-				}
-			} else if (*c == '\n') {
-				if (!(options & GTK_IMHTML_NO_NEWLINE)) {
-					ws [wpos] = 0;
-					wpos = 0;
-					NEW_BIT (NEW_TEXT_BIT);
-					NEW_BIT (NEW_BR_BIT);
-				}
-				c++;
-			} else {
-				ws [wpos++] = *c++;
-			}
+			pos++;
+		} else {
+			break;
 		}
 	}
 
@@ -3518,7 +3205,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		}
 	}
 	g_free (ws);
-	g_free (tag);
 
 	return retval;
 }
@@ -3562,9 +3248,9 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		g_free (bit);
 	}
 
-	while (imhtml->urls) {
-		g_free (imhtml->urls->data);
-		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
+	while (imhtml->click) {
+		g_free (imhtml->click->data);
+		imhtml->click = g_list_remove (imhtml->click, imhtml->click->data);
 	}
 
 	if (imhtml->selected_text) {
@@ -3593,8 +3279,6 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->scroll_timer = 0;
 	}
 
-	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
-
 	imhtml->x = 0;
 	imhtml->y = TOP_BORDER;
 	imhtml->xsize = 0;
@@ -3616,11 +3300,12 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	layout->vadjustment->upper = imhtml->y;
 	gtk_adjustment_set_value (layout->vadjustment, 0);
 
-	gtk_signal_emit_by_name (GTK_OBJECT (layout->hadjustment), "changed");
-	gtk_signal_emit_by_name (GTK_OBJECT (layout->vadjustment), "changed");
-
-	if (GTK_WIDGET_REALIZED (GTK_WIDGET (imhtml)))
+	if (GTK_WIDGET_REALIZED (GTK_WIDGET (imhtml))) {
+		gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
 		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
+		gtk_signal_emit_by_name (GTK_OBJECT (layout->hadjustment), "changed");
+		gtk_signal_emit_by_name (GTK_OBJECT (layout->vadjustment), "changed");
+	}
 }
 
 void

@@ -622,10 +622,10 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				if (xmlnode_get_tag(p->x, "gaim"))
 					flags = IM_FLAG_GAIMUSER;
 				if (find_conversation(jid_full(p->from)))
-					serv_got_im(GJ_GC(j), jid_full(p->from), m, flags, time(NULL));
+					serv_got_im(GJ_GC(j), jid_full(p->from), m, flags, time(NULL), -1);
 				else {
 					from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
-					serv_got_im(GJ_GC(j), from, m, flags, time(NULL));
+					serv_got_im(GJ_GC(j), from, m, flags, time(NULL), -1);
 					g_free(from);
 				}
 			}
@@ -690,7 +690,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 					msg = xmlnode_get_data(y);
 					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
-					write_to_conv(jc->b, buf, WFLAG_SYSTEM, NULL, time(NULL));
+					write_to_conv(jc->b, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 				}
 			} else if (jc->b && msg) {
 				char buf[8192];
@@ -847,7 +847,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 					char *msg = xmlnode_get_data(y);
 					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
-					write_to_conv(jc->b, buf, WFLAG_SYSTEM, NULL, time(NULL));
+					write_to_conv(jc->b, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 				}
 			}
 		}

@@ -520,7 +520,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		if (ms->chat)
 			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, utf, time(NULL));
 		else
-			serv_got_im(ms->gc, ms->msguser, utf, flags, time(NULL));
+			serv_got_im(ms->gc, ms->msguser, utf, flags, time(NULL), -1);
 
 		g_free(utf);
 	}
@@ -1084,7 +1084,7 @@ static void msn_process_main_msg(struct gaim_connection *gc, char *msg)
 	utf = utf8_to_str(skiphead);
 	strip_linefeed(utf);
 
-	serv_got_im(gc, md->msguser, utf, 0, time(NULL));
+	serv_got_im(gc, md->msguser, utf, 0, time(NULL), -1);
 
 	g_free(utf);
 }
@@ -1498,7 +1498,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		ms->fd = -1;
 	} else
 		/* in msn you can't send messages to yourself, so we'll fake like we received it ;) */
-		serv_got_im(gc, who, message, flags | IM_FLAG_GAIMUSER, time(NULL));
+		serv_got_im(gc, who, message, flags | IM_FLAG_GAIMUSER, time(NULL), -1);
 	return 1;
 }
 

@@ -1499,7 +1499,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 
 					set_convo_gc(c, u->gc);
 
-					write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t) NULL));
+					write_to_conv(c, b->message, WFLAG_SEND, NULL, time(NULL), -1);
 					serv_send_im(u->gc, name, b->message, 0);
 				}
 			}
@@ -2110,7 +2110,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				if (c) {
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->name);
-					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time((time_t) NULL));
+					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 				}
 			}
 			bs->sound = 2;
@@ -2165,7 +2165,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			if (c) {
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->name);
-				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time((time_t) NULL));
+				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 			}
 		}
 

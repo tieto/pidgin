@@ -564,7 +564,7 @@ XS (XS_GAIM_write_to_conv)
 	if (!c)
 		c = new_conversation(nick);
 		
-	write_to_conv(c, what, wflags, who, time((time_t)NULL));
+	write_to_conv(c, what, wflags, who, time(NULL), -1);
 	XSRETURN(0);
 }
 
@@ -612,7 +612,7 @@ XS (XS_GAIM_print_to_conv)
 	if (!c)
 		c = new_conversation(nick);
 	set_convo_gc(c, gc);
-	write_to_conv(c, what, WFLAG_SEND | (isauto ? WFLAG_AUTO : 0), NULL, time((time_t)NULL));
+	write_to_conv(c, what, WFLAG_SEND | (isauto ? WFLAG_AUTO : 0), NULL, time(NULL), -1);
 	serv_send_im(c->gc, nick, what, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
 }

@@ -331,7 +331,7 @@ extern void rename_chat_buddy(struct conversation *, char *, char *);
 extern void remove_chat_buddy(struct conversation *, char *, char *);
 
 /* Functions in conversation.c */
-extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
+extern void write_to_conv(struct conversation *, char *, int, char *, time_t, int);
 extern struct conversation *find_conversation(char *);
 
 /* Functions in dialogs.c */

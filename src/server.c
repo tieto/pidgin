@@ -427,7 +427,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 }
 
 /* woo. i'm actually going to comment this function. isn't that fun. make sure to follow along, kids */
-void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 flags, time_t mtime)
+void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 flags, time_t mtime, gint len)
 {
 	char *buffy;
 	char *angel;
@@ -457,26 +457,32 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically
-	 * just to avoid segfaults. */
-	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
-	strcpy(buffy, message);
-	angel = g_strdup(name);
-	plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)flags);
+	 * just to avoid segfaults. of course, if the data is binary, plugins don't see it.
+	 * bitch all you want; i really don't want you to be dealing with it. */
+	if (len < 0) {
+		buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
+		strcpy(buffy, message);
+		angel = g_strdup(name);
+		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)flags);
 
-	if (!buffy || !angel || plugin_return) {
-		if (buffy)
-			g_free(buffy);
-		if (angel)
-			g_free(angel);
-		return;
+		if (!buffy || !angel || plugin_return) {
+			if (buffy)
+				g_free(buffy);
+			if (angel)
+				g_free(angel);
+			return;
+		}
+		name = angel;
+		message = buffy;
+	} else {
+		name = g_strdup(name);
+		message = g_memdup(message, len);
 	}
-	name = angel;
-	message = buffy;
 
 	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
 	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
 	 * TiK, we're going to give users the option to ignore it. */
-	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away && strlen(gc->away) &&
+	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away && strlen(gc->away) && (len < 0) &&
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		serv_send_im(gc, name, tmpmsg, IM_FLAG_AWAY);
@@ -488,7 +494,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 	/* if you can't figure this out, stop reading right now.
 	 * "we're not worthy! we're not worthy!" */
-	if (convo_options & OPT_CONVO_SEND_LINKS)
+	if ((len < 0) && (convo_options & OPT_CONVO_SEND_LINKS))
 		linkify_text(message);
 
 	/* um. when we call write_to_conv with the message we received, it's nice to pass whether
@@ -523,10 +529,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(message);
+			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
 			qm->gc = gc;
 			qm->tm = mtime;
 			qm->flags = WFLAG_RECV | away;
+			qm->len = len;
 			message_queue = g_slist_append(message_queue, qm);
 
 #ifdef USE_APPLET
@@ -572,7 +579,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 
-			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
+			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 		}
 
 		/* regardless of whether we queue it or not, we should send an auto-response. That is,
@@ -616,7 +623,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
 			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL,
-				      mtime);
+				      mtime, len);
 		g_free(tmpmsg);
 	} else {
 		/* we're not away. this is easy. if the convo window doesn't exist, create and update
@@ -631,7 +638,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 			play_sound(RECEIVE);
 
-		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
+		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 	}
 
 	plugin_event(event_im_displayed_rcvd, gc, name, message, (void *)flags);
@@ -986,5 +993,5 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	gtk_widget_show_all(window);
 
-	gtk_imhtml_append_text(GTK_IMHTML(text), msg, GTK_IMHTML_NO_NEWLINE);
+	gtk_imhtml_append_text(GTK_IMHTML(text), msg, -1, GTK_IMHTML_NO_NEWLINE);
 }

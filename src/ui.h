@@ -202,6 +202,7 @@ struct queued_message {
 	time_t tm;
 	struct gaim_connection *gc;
 	int flags;
+	int len;
 };
 
 struct mod_user {

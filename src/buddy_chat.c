@@ -605,7 +605,7 @@ void tab_complete(struct conversation *c)
 			g_free(tmp);
 			matches = g_list_remove(matches, matches->data);
 		}
-		write_to_conv(c, addthis, WFLAG_NOLOG, NULL, time(NULL));
+		write_to_conv(c, addthis, WFLAG_NOLOG, NULL, time(NULL), -1);
 		gtk_editable_insert_text(GTK_EDITABLE(c->entry), partial, strlen(partial), &start);
 		if (t == start) {
 			t = start + strlen(partial);
@@ -618,7 +618,7 @@ void tab_complete(struct conversation *c)
 	g_free(partial);
 }
 
-gboolean meify(char *message)
+gboolean meify(char *message, int len)
 {
 	/* read /me-ify : if the message (post-HTML) starts with /me, remove
 	 * the "/me " part of it (including that space) and return TRUE */
@@ -626,6 +626,8 @@ gboolean meify(char *message)
 	int inside_HTML = 0;	/* i really don't like descriptive names */
 	if (!c)
 		return FALSE;	/* um... this would be very bad if this happens */
+	if (len == -1)
+		len = strlen(message);
 	while (*c) {
 		if (inside_HTML) {
 			if (*c == '>')
@@ -637,12 +639,13 @@ gboolean meify(char *message)
 				break;
 		}
 		c++;		/* i really don't like c++ either */
+		len--;
 	}
 	/* k, so now we've gotten past all the HTML crap. */
 	if (!*c)
 		return FALSE;
 	if (!g_strncasecmp(c, "/me ", 4)) {
-		sprintf(c, "%s", c + 4);
+		memmove(c, c + 4, len - 4);
 		return TRUE;
 	} else
 		return FALSE;
@@ -721,7 +724,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 	if ((flag & WFLAG_RECV) && find_nick(b->gc, message))
 		flag |= WFLAG_NICK;
 
-	write_to_conv(b, message, flag, who, mtime);
+	write_to_conv(b, message, flag, who, mtime, -1);
 }
 
 
@@ -884,7 +887,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }
 
@@ -958,7 +961,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s is now known as %s"), old, new);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }
 
@@ -1007,7 +1010,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 			g_snprintf(tmp, sizeof(tmp), _("%s left the room (%s)."), buddy, reason);
 		else
 			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }
 

@@ -53,7 +53,7 @@ struct _GtkIMHtml {
 	GdkCursor *arrow_cursor;
 
 	GList *bits;
-	GList *urls;
+	GList *click;
 	struct _GtkIMHtmlBit *tip_bit;
 	GtkWidget *tip_window;
 	guint tip_timer;
@@ -127,6 +127,7 @@ void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 
 GString*   gtk_imhtml_append_text      (GtkIMHtml        *imhtml,
 					const gchar      *text,
+					gint              len,
 					GtkIMHtmlOptions  options);
 
 void       gtk_imhtml_clear            (GtkIMHtml        *imhtml);

@@ -1846,14 +1846,14 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 
-	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, options);
+	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, -1, options);
 
 	va_start(ap, info);
 	while ((more_info = va_arg(ap, char *)) != NULL)
-		 gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, options);
+		 gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, -1, options);
 	va_end(ap);
 
-	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", 0);
+	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", -1, 0);
 
 	if (away)
 		info_dlgs = g_slist_remove(info_dlgs, b);
@@ -3584,7 +3584,7 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 		g_string_append(string, buf);
 
 		if (i == 30) {
-			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
+			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, -1, view->options);
 			g_string_free(string, TRUE);
 			string = g_string_new("");
 			/* you can't have these anymore. if someone clicks on another item while one is
@@ -3596,8 +3596,8 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 		}
 
 	}
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", view->options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, -1, view->options);
+	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", -1, view->options);
 
 	gtk_widget_set_sensitive(view->bbox, TRUE);
 	gtk_signal_disconnect(GTK_OBJECT(view->window), block);

@@ -322,7 +322,7 @@ static GString *decode_html(char *msg)
 static void irc_got_im(struct gaim_connection *gc, char *who, char *what, int flags, time_t t)
 {
 	GString *str = decode_html(what);
-	serv_got_im(gc, who, str->str, flags, t);
+	serv_got_im(gc, who, str->str, flags, t, -1);
 	g_string_free(str, TRUE);
 }
 
@@ -428,7 +428,7 @@ static void handle_topic(struct gaim_connection *gc, char *text)
 		chat_set_topic(c, NULL, po);
 		g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
 				text, po);
-		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	}
 }
 
@@ -961,7 +961,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			chat_set_topic(c, nick, topic);
 			g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
 					nick, topic);
-			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL));
+			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 		}
 	} else if (!strcmp(cmd, "WALLOPS")) { /* */
 	}
@@ -1377,7 +1377,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 				 "JOIN PART TOPIC KICK<BR>"
 				 "OP DEOP VOICE DEVOICE<BR>"
 				 "ME MSG QUOTE SAY</B>",
-				 WFLAG_NOLOG, NULL, time(NULL));
+				 WFLAG_NOLOG, NULL, time(NULL), -1);
 	} else {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1387,7 +1387,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		}
 		if (!c)
 			return -EINVAL;
-		write_to_conv(c, "<B>Unknown command</B>", WFLAG_NOLOG, NULL, time(NULL));
+		write_to_conv(c, "<B>Unknown command</B>", WFLAG_NOLOG, NULL, time(NULL), -1);
 	}
 
 	return 0;

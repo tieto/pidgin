@@ -488,7 +488,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 			msg[j++] = m[i];
 		}
 		msg[j] = 0;
-		serv_got_im(gc, from, msg, 0, tm);
+		serv_got_im(gc, from, msg, 0, tm, -1);
 	} else if (pkt->status == 2) {
 		do_error_dialog(_("Your message did not get sent."), _("Gaim - Error"));
 	}

@@ -78,6 +78,6 @@ extern GtkWidget *build_conv_toolbar(struct conversation *);
 extern void send_callback(GtkWidget *, struct conversation *);
 extern int close_callback(GtkWidget *, struct conversation *);
 
-extern gboolean meify(char *);
+extern gboolean meify(char *, int);
 
 #endif /* _CONVO_H_ */

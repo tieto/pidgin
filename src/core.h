@@ -191,7 +191,7 @@ extern char *event_name(enum gaim_event);
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
-extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t);
+extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t, gint);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);
 extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
