@@ -4647,15 +4647,12 @@ static void oscar_set_away_icq(GaimConnection *gc, OscarData *od, const char *st
 		gc->away = NULL;
 	}
 
-	if (strcmp(state, _("Invisible"))) {
-		if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
-			aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
+	if (strcmp(state, _("Invisible")))
 		account->perm_deny = 4;
-	} else {
-		if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03))
-			aim_ssi_setpermdeny(od->sess, 0x03, 0xffffffff);
+	else
 		account->perm_deny = 3;
-	}
+	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
+		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
 
 	if (!strcmp(state, _("Online")))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
