@@ -92,8 +92,10 @@ static char nick_colors[][8] = {
 	"#6a5acd",              /* Slate Blue */
 	"#6495ed",              /* Cornflower Blue */
 	"#708090",              /* Slate gray */
-	"#ffdead",              /* Navajo White */
+	"#2f4f4f",		/* Dark Slate Gray */
+	"#ff8c00",		/* Dark Orange */
 };
+
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
 
 #define SCALE(x) \
