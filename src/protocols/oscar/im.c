@@ -1696,7 +1696,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		iptlv = aim_tlv_gettlv(list2, 0x0002, 1);
 		if (iptlv->length == 4)
-			snprintf(proxyip, sizeof(proxyip), "%hhd.%hhd.%hhd.%hhd",
+			snprintf(proxyip, sizeof(proxyip), "%hhu.%hhu.%hhu.%hhu",
 				iptlv->value[0], iptlv->value[1],
 				iptlv->value[2], iptlv->value[3]);
 	}
@@ -1709,7 +1709,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		iptlv = aim_tlv_gettlv(list2, 0x0003, 1);
 		if (iptlv->length == 4)
-			snprintf(clientip, sizeof(clientip), "%hhd.%hhd.%hhd.%hhd",
+			snprintf(clientip, sizeof(clientip), "%hhu.%hhu.%hhu.%hhu",
 				iptlv->value[0], iptlv->value[1],
 				iptlv->value[2], iptlv->value[3]);
 	}
@@ -1724,7 +1724,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		iptlv = aim_tlv_gettlv(list2, 0x0004, 1);
 		if (iptlv->length == 4)
-			snprintf(verifiedip, sizeof(verifiedip), "%hhd.%hhd.%hhd.%hhd",
+			snprintf(verifiedip, sizeof(verifiedip), "%hhu.%hhu.%hhu.%hhu",
 				iptlv->value[0], iptlv->value[1],
 				iptlv->value[2], iptlv->value[3]);
 	}
