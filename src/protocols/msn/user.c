@@ -29,7 +29,8 @@ msn_user_new(MsnSession *session, const char *passport, const char *name)
 
 	user = msn_users_find_with_passport(session->users, passport);
 
-	if (user == NULL) {
+	if (user == NULL)
+	{
 		user = g_new0(MsnUser, 1);
 
 		user->session = session;
@@ -135,6 +136,82 @@ msn_user_set_name(MsnUser *user, const char *name)
 		g_free(user->name);
 
 	user->name = g_strdup(name);
+}
+
+void
+msn_user_set_buddy_icon(MsnUser *user, const char *filename)
+{
+	struct stat st;
+	FILE *fp;
+	MsnObject *msnobj = msn_user_get_object(user);
+
+	g_return_if_fail(user != NULL);
+
+	if (filename == NULL || stat(filename, &st) == -1)
+		msn_user_set_object(user, NULL);
+	else if ((fp = fopen(filename, "rb")) != NULL)
+	{
+		unsigned char *buf;
+		SHA_CTX ctx;
+		size_t len;
+		char *base64;
+		unsigned char digest[20];
+
+		if (msnobj == NULL)
+		{
+			msnobj = msn_object_new();
+			msn_object_set_type(msnobj, MSN_OBJECT_EMOTICON);
+			msn_object_set_location(msnobj, "TFR2C.tmp");
+			msn_object_set_creator(msnobj, msn_user_get_passport(user));
+
+			msn_user_set_object(user, msnobj);
+		}
+
+		buf = g_malloc(st.st_size);
+		len = fread(buf, 1, st.st_size, fp);
+
+		fclose(fp);
+
+		/* Compute the SHA1D field. */
+		memset(digest, 0, sizeof(digest));
+
+		shaInit(&ctx);
+		shaUpdate(&ctx, buf, st.st_size);
+		shaFinal(&ctx, digest);
+		g_free(buf);
+
+		base64 = gaim_base64_encode(digest, sizeof(digest));
+		msn_object_set_sha1d(msnobj, base64);
+		g_free(base64);
+
+		msn_object_set_size(msnobj, st.st_size);
+
+		/* Compute the SHA1C field. */
+		buf = g_strdup_printf(
+			"Creator%sSize%dType%dLocation%sFriendly%sSHA1D%s",
+			msn_object_get_creator(msnobj),
+			msn_object_get_size(msnobj),
+			msn_object_get_type(msnobj),
+			msn_object_get_location(msnobj),
+			msn_object_get_friendly(msnobj),
+			msn_object_get_sha1d(msnobj));
+
+		memset(digest, 0, sizeof(digest));
+
+		shaInit(&ctx);
+		shaUpdate(&ctx, buf, strlen(buf));
+		shaFinal(&ctx, digest);
+		g_free(buf);
+
+		base64 = gaim_base64_encode(digest, sizeof(digest));
+		msn_object_set_sha1c(msnobj, base64);
+		g_free(base64);
+	}
+	else
+	{
+		gaim_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
+		msn_user_set_object(user, NULL);
+	}
 }
 
 void

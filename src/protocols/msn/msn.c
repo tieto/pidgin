@@ -608,16 +608,19 @@ msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 	MsnSession *session = gc->proto_data;
 	const char *away;
 
-	if (gc->away != NULL) {
+	if (gc->away != NULL)
+	{
 		g_free(gc->away);
 		gc->away = NULL;
 	}
 
-	if (msg != NULL) {
+	if (msg != NULL)
+	{
 		gc->away = g_strdup("");
 		away = "AWY";
 	}
-	else if (state) {
+	else if (state)
+	{
 		gc->away = g_strdup("");
 
 		if (!strcmp(state, _("Away From Computer")))
@@ -632,7 +635,8 @@ msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 			away = "LUN";
 		else if (!strcmp(state, _("Hidden")))
 			away = "HDN";
-		else {
+		else
+		{
 			g_free(gc->away);
 			gc->away = NULL;
 			away = "NLN";
@@ -643,10 +647,7 @@ msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 	else
 		away = "NLN";
 
-	if (!msn_servconn_send_command(session->notification_conn, "CHG", away)) {
-		gaim_connection_error(gc, _("Write error"));
-		return;
-	}
+	msn_session_change_status(session, away);
 }
 
 static void
@@ -657,12 +658,7 @@ msn_set_idle(GaimConnection *gc, int idle)
 	if (gc->away != NULL)
 		return;
 
-	if (!msn_servconn_send_command(session->notification_conn, "CHG",
-								   (idle ? "IDL" : "NLN"))) {
-
-		gaim_connection_error(gc, _("Write error"));
-		return;
-	}
+	msn_session_change_status(session, (idle ? "IDL" : "NLN"));
 }
 
 static void
@@ -1234,6 +1230,17 @@ msn_normalize(const GaimAccount *account, const char *str)
 }
 
 static void
+msn_set_buddy_icon(GaimConnection *gc, const char *filename)
+{
+	MsnSession *session = (MsnSession *)gc->proto_data;
+	MsnUser *user = session->user;
+
+	msn_user_set_buddy_icon(user, filename);
+
+	msn_session_change_status(session, session->away_state);
+}
+
+static void
 msn_remove_group(GaimConnection *gc, const char *name)
 {
 	MsnSession *session = (MsnSession *)gc->proto_data;
@@ -1605,7 +1612,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_buddy_free,
 	msn_convo_closed,
 	msn_normalize,
-	NULL,
+	msn_set_buddy_icon,
 	msn_remove_group
 };
 

@@ -157,11 +157,14 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	GET_NEXT(tmp); /* Skip the username or flag */
 	msg->size = atoi(tmp);
 
+#if 0
+	/* Put this back when we intelligently handle binary strings. */
 	if (msg->size != strlen(strchr(str, '\n') + 1)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "Incoming message size (%d) and string length (%d) "
 				   "do not match!\n", msg->size, strlen(str));
 	}
+#endif
 
 	/*
 	 * We're going to make sure this is incoming by checking field1.

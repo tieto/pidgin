@@ -1278,12 +1278,11 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		if (session->num_users == session->total_users)
 		{
-			if (!msn_servconn_send_command(servconn, "CHG", "NLN"))
-			{
-				gaim_connection_error(gc, _("Unable to write"));
+			msn_user_set_buddy_icon(session->user,
+				gaim_account_get_buddy_icon(session->account));
 
+			if (!msn_session_change_status(session, "NLN"))
 				return FALSE;
-			}
 
 			gaim_connection_set_state(gc, GAIM_CONNECTED);
 			serv_finish_login(gc);
@@ -1446,12 +1445,8 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			/* Now we're at the last one, so we can do final work. */
 			if (!session->lists_synced)
 			{
-				if (!msn_servconn_send_command(servconn, "CHG", "NLN"))
-				{
-					gaim_connection_error(gc, _("Unable to write"));
-
+				if (!msn_session_change_status(session, "NLN"))
 					return FALSE;
-				}
 
 				gaim_connection_set_state(gc, GAIM_CONNECTED);
 				serv_finish_login(gc);

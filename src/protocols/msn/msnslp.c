@@ -214,6 +214,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	char *branch;
 	char *content;
 	char *body;
+	char *c;
 
 	g_return_if_fail(slpsession  != NULL);
 	g_return_if_fail(local_user  != NULL);
@@ -224,10 +225,8 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	msnobj_base64 = gaim_base64_encode(msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
-#if 0
 	if ((c = strchr(msnobj_base64, '=')) != NULL)
 		*c = '\0';
-#endif
 
 	session_id = rand() % 0xFFFFFF00 + 4;
 

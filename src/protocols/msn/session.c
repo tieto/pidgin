@@ -37,6 +37,8 @@ msn_session_new(GaimAccount *account, const char *server, int port)
 	session->dispatch_server = g_strdup(server);
 	session->dispatch_port   = port;
 
+	session->away_state = NULL;
+
 	session->users  = msn_users_new();
 	session->groups = msn_groups_new();
 
@@ -92,6 +94,9 @@ msn_session_destroy(MsnSession *session)
 
 	if (session->passport_info.file != NULL)
 		g_free(session->passport_info.file);
+
+	if (session->away_state != NULL)
+		g_free(session->away_state);
 
 	g_free(session);
 }
@@ -155,14 +160,57 @@ msn_session_open_switchboard(MsnSession *session)
 
 	g_return_val_if_fail(session != NULL, NULL);
 
-	if (msn_servconn_send_command(session->notification_conn,
-								  "XFR", "SB") < 0) {
+	if (msn_servconn_send_command(session->notification_conn, "XFR", "SB") < 0)
+	{
 		return NULL;
 	}
 
 	swboard = msn_switchboard_new(session);
 
 	return swboard;
+}
+
+gboolean
+msn_session_change_status(MsnSession *session, const char *state)
+{
+	MsnUser *user = session->user;
+	MsnObject *msnobj;
+	char buf[MSN_BUF_LEN];
+
+	g_return_val_if_fail(session != NULL, FALSE);
+	g_return_val_if_fail(state   != NULL, FALSE);
+
+	msnobj = msn_user_get_object(user);
+
+	if (state != session->away_state)
+	{
+		if (session->away_state != NULL)
+			g_free(session->away_state);
+
+		session->away_state = g_strdup(state);
+	}
+
+	if (msnobj == NULL)
+		g_snprintf(buf, sizeof(buf), "%s %d", state, MSN_CLIENT_ID);
+	else
+	{
+		char *msnobj_str = msn_object_to_string(msnobj);
+
+		g_snprintf(buf, sizeof(buf), "%s %d %s", state, MSN_CLIENT_ID,
+				   gaim_url_encode(msnobj_str));
+
+		g_free(msnobj_str);
+	}
+
+	if (!msn_servconn_send_command(session->notification_conn, "CHG", buf))
+	{
+		gaim_connection_error(gaim_account_get_connection(session->account),
+							  _("Write error"));
+
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 MsnSwitchBoard *
@@ -224,4 +272,3 @@ msn_session_find_unused_switch(const MsnSession *session)
 
 	return NULL;
 }
-

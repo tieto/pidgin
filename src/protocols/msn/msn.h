@@ -37,6 +37,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
+#include "sha.h"
 #include "sslconn.h"
 #include "util.h"
 
@@ -82,5 +83,37 @@ typedef enum
 	MSN_LIST_RL_OP = 0x08
 
 } MsnListOp;
+
+typedef enum
+{
+	MSN_CLIENT_CAP_WIN_MOBILE = 0x01,
+	MSN_CLIENT_CAP_UNKNOWN_1  = 0x02,
+	MSN_CLIENT_CAP_VIEW_INK   = 0x04,
+	MSN_CLIENT_CAP_SEND_INK   = 0x08,
+	MSN_CLIENT_CAP_VIDEO_CHAT = 0x10,
+	MSN_CLIENT_CAP_BASE       = 0x20,
+	MSN_CLIENT_CAP_UNKNOWN_2  = 0x40,
+	MSN_CLIENT_CAP_UNKNOWN_3  = 0x80
+
+} MsnClientCaps;
+
+typedef enum
+{
+	MSN_CLIENT_VER_5_0 = 0x00,
+	MSN_CLIENT_VER_6_0 = 0x10,
+	MSN_CLIENT_VER_6_1 = 0x20
+
+} MsnClientVerId;
+
+#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_6_0
+#define MSN_CLIENT_ID_RESERVED_1   0x00
+#define MSN_CLIENT_ID_RESERVED_2   0x00
+#define MSN_CLIENT_ID_CAPABILITIES (MSN_CLIENT_CAP_BASE | MSN_CLIENT_CAP_VIEW_INK)
+
+#define MSN_CLIENT_ID \
+	((MSN_CLIENT_ID_VERSION    << 24) | \
+	 (MSN_CLIENT_ID_RESERVED_1 << 16) | \
+	 (MSN_CLIENT_ID_RESERVED_2 <<  8) | \
+	 (MSN_CLIENT_ID_CAPABILITIES))
 
 #endif /* _MSN_H_ */

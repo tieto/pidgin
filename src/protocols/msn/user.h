@@ -129,6 +129,14 @@ void msn_user_set_passport(MsnUser *user, const char *passport);
 void msn_user_set_name(MsnUser *user, const char *name);
 
 /**
+ * Sets the buddy icon for a local user.
+ *
+ * @param user     The user.
+ * @param filename The path to the buddy icon.
+ */
+void msn_user_set_buddy_icon(MsnUser *user, const char *filename);
+
+/**
  * Sets the group ID list for a user.
  *
  * @param user The user.

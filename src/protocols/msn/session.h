@@ -35,6 +35,7 @@ struct _MsnSession
 {
 	GaimAccount *account;
 	MsnUser *user;
+	char *away_state;
 
 	int protocol_ver;
 
@@ -148,6 +149,14 @@ void msn_session_disconnect(MsnSession *session);
  * @return The new switchboard connection.
  */
 MsnSwitchBoard *msn_session_open_switchboard(MsnSession *session);
+
+/**
+ * Changes the status of the user.
+ *
+ * @param session The MSN session.
+ * @param state   The new state.
+ */
+gboolean msn_session_change_status(MsnSession *session, const char *state);
 
 /**
  * Finds a switch with the given passport.
