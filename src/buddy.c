@@ -523,19 +523,18 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
 	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 	if (*type == EDIT_GROUP) {
-		/*struct group *group = (struct group *)type;*/
+		/*struct group *group = (struct group *)type;
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Rename"));
-		/*
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(rename_group), node);
-		*/
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
+		*/
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
 		menu = gtk_menu_new();
