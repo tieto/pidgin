@@ -1328,9 +1328,6 @@ static void browser_page()
 	gtk_widget_show(box);
 
 	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
-#ifdef USE_GNOME
-	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, box, opt);
-#endif /* USE_GNOME */
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
@@ -1338,6 +1335,9 @@ static void browser_page()
 	opt = browser_radio(_("KFM"), BROWSER_KFM, box, opt);
 	opt = browser_radio(_("Internal HTML Widget (Quite likely a bad idea!)"), BROWSER_INTERNAL, box, opt);
 	opt = browser_radio(_("Manual"), BROWSER_MANUAL, box, opt);
+#ifdef USE_GNOME
+	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, box, opt);
+#endif /* USE_GNOME */
 
 	browser_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(box), browser_entry, FALSE, FALSE, 0);
