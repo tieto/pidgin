@@ -3,6 +3,9 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.53:
 	* Updated Polish Translation (thanks Przemyslaw Sulek)
 	* Slovak translation added (Thanks Daniel Rezny)
+	* Minor bug fixes re: queued away messages
+	* Better buddy icon transparency (for real this time ;-))
+	* Ability to change formatting of Oscar screen name
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)
