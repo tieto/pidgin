@@ -58,7 +58,7 @@ void run_commands() {
 			struct gaim_connection *gc = NULL;
 			GSList *c = connections;
 			arg1 = getarg(buffer, 1, 1);
-			while (c) {
+			while (arg1 && c) {
 				gc = c->data;
 				if (!strcmp(gc->username, arg1)) {
 					break;
