@@ -269,7 +269,6 @@ extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *clistqueue; 
-extern GtkWidget *imaway;
 
 /* Globals in buddy.c */
 extern GtkWidget *buddies;

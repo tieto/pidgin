@@ -157,10 +157,10 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 		g_free(qar);
 	}
 
-	serv_set_away_all(NULL);
 	awaymessage = NULL;
 	clistqueue = NULL;
 	clistqueuesw = NULL;
+	serv_set_away_all(NULL);
 }
 
 

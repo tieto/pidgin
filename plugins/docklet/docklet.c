@@ -239,7 +239,7 @@ static void docklet_update_status() {
 	oldstatus = status;
 
 	if (connections) {
-		if (imaway) {
+		if (awaymessage) {
 			if (message_queue) {
 				status = away_pending;
 			} else {
