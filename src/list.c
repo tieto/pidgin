@@ -751,6 +751,7 @@ static enum {
 	BLIST_TAG_BLOCK,
 	BLIST_TAG_IGNORE
 } blist_parser_current_tag;
+static gboolean blist_parser_error_occurred = FALSE;
 
 static void blist_start_element_handler (GMarkupParseContext *context,
 		const gchar *element_name,
@@ -917,12 +918,18 @@ static void blist_text_handler(GMarkupParseContext *context, const gchar *text,
 	}
 }
 
+static void blist_error_handler(GMarkupParseContext *context, GError *error,
+		gpointer user_data) {
+	blist_parser_error_occurred = TRUE;
+	debug_printf("error parsing blist.xml: %s\n", error->message);
+}
+
 static GMarkupParser blist_parser = {
 	blist_start_element_handler,
 	blist_end_element_handler,
 	blist_text_handler,
 	NULL,
-	NULL
+	blist_error_handler
 };
 
 static gboolean gaim_blist_read(const char *filename) {
@@ -950,6 +957,9 @@ static gboolean gaim_blist_read(const char *filename) {
 	}
 
 	g_markup_parse_context_free(context);
+	if(blist_parser_error_occurred)
+		return FALSE;
+
 	return TRUE;
 }
 
