@@ -183,11 +183,13 @@ common_send(GaimConversation *conv, const char *message)
 	GaimConversationType type;
 	GaimConnection *gc;
 	GaimConversationUiOps *ops;
-	char *buf, *buf2, *buffy = NULL;
+	char *buffy = NULL;
 	int plugin_return;
-	int limit;
 	int err = 0;
 	GList *first;
+
+	if (strlen(message) == 0)
+		return;
 
 	gc = gaim_conversation_get_gc(conv);
 
@@ -196,36 +198,22 @@ common_send(GaimConversation *conv, const char *message)
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	limit = 32 * 1024; /* You shouldn't be sending more than 32K in your
-						  messages. That's a book. */
-
-	buf = g_malloc(limit);
-	strncpy(buf, message, limit);
-
-	if (strlen(buf) == 0) {
-		g_free(buf);
-
-		return;
-	}
-
 	first = g_list_first(conv->send_history);
 
 	if (first->data)
 		g_free(first->data);
 
-	first->data = g_strdup(buf);
+	first->data = g_strdup(message);
 
 	conv->send_history = g_list_prepend(first, NULL);
-
-	buf2 = g_malloc(limit);
 
 	if ((gc->flags & GAIM_CONNECTION_HTML) &&
 		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
 
-		buffy = gaim_markup_linkify(buf);
+		buffy = gaim_markup_linkify(message);
 	}
 	else
-		buffy = g_strdup(buf);
+		buffy = g_strdup(message);
 
 	plugin_return =
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
@@ -234,21 +222,13 @@ common_send(GaimConversation *conv, const char *message)
 			 ? "displaying-im-msg" : "displaying-chat-msg"),
 			gaim_conversation_get_account(conv), conv, &buffy));
 
-	if (buffy == NULL) {
-		g_free(buf2);
-		g_free(buf);
+	if (buffy == NULL)
 		return;
-	}
 
 	if (plugin_return) {
 		g_free(buffy);
-		g_free(buf2);
-		g_free(buf);
 		return;
 	}
-
-	strncpy(buf, buffy, limit);
-	g_free(buffy);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 		(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
@@ -257,12 +237,11 @@ common_send(GaimConversation *conv, const char *message)
 	if (type == GAIM_CONV_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
 
-		buffy = g_strdup(buf);
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
 						 gaim_conversation_get_account(conv),
 						 gaim_conversation_get_name(conv), &buffy);
 
-		if (buffy != NULL) {
+		if (buffy != NULL && buffy[0] != '\0') {
 			GaimConvImFlags imflags = 0;
 			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
 
@@ -275,7 +254,7 @@ common_send(GaimConversation *conv, const char *message)
 							    buffy, imflags);
 
 			if (err > 0)
-				gaim_conv_im_write(im, NULL, buf, msgflags, time(NULL));
+				gaim_conv_im_write(im, NULL, buffy, msgflags, time(NULL));
 
 			if (im->images != NULL) {
 				GSList *tempy;
@@ -296,30 +275,21 @@ common_send(GaimConversation *conv, const char *message)
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
 							 gaim_conversation_get_account(conv),
 							 gaim_conversation_get_name(conv), buffy);
-
-			g_free(buffy);
 		}
 	}
 	else {
-		buffy = g_strdup(buf);
-
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-chat-msg",
 						 gaim_conversation_get_account(conv), &buffy,
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
-		if (buffy != NULL) {
+		if (buffy != NULL && buffy[0] != '\0') {
 			err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), buffy);
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
-							 gaim_conversation_get_account(conv), buf,
+							 gaim_conversation_get_account(conv), buffy,
 							 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
-
-			g_free(buffy);
 		}
 	}
-
-	g_free(buf2);
-	g_free(buf);
 
 	if (err < 0) {
 		if (err == -E2BIG) {
