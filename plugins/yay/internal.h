@@ -36,6 +36,7 @@ struct yahoo_conn {
 	int type;
 	int socket;
 	int magic_id;
+	gboolean connected;
 	char *txqueue;
 };
 

@@ -246,6 +246,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 
 		YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "connected");
 
+		conn->connected = TRUE;
 		if (yahoo_socket_notify)
 			(*yahoo_socket_notify)(session, socket, YAHOO_SOCKET_WRITE, FALSE);
 		if (yahoo_socket_notify)

@@ -196,8 +196,12 @@ void yahoo_close(struct yahoo_session *session, struct yahoo_conn *conn)
 	if (!g_list_find(session->connlist, conn))
 		return;
 
-	if (yahoo_socket_notify)
-		(*yahoo_socket_notify)(session, conn->socket, YAHOO_SOCKET_READ, FALSE);
+	if (yahoo_socket_notify) {
+		if (conn->connected)
+			(*yahoo_socket_notify)(session, conn->socket, YAHOO_SOCKET_READ, FALSE);
+		else
+			(*yahoo_socket_notify)(session, conn->socket, YAHOO_SOCKET_WRITE, FALSE);
+	}
 	close(conn->socket);
 
 	session->connlist = g_list_remove(session->connlist, conn);
