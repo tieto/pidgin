@@ -54,7 +54,7 @@ G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.name = g_strdup(_("Transparency"));
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup(_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP.")); 
-	desc.authors = g_strdup(_("Rob Flynn <rob@marko.net>"));
+	desc.authors = g_strdup(_("Rob Flynn &lt;rob@marko.net&gt;"));
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }
