@@ -1922,8 +1922,8 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GString *s;
 
 	len = read(source, buf, sizeof(buf)-1);
-	if (len <= 0  || (strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302") &&
-			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302"))))) {
+	if (len <= 0  || (strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
+			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
 		gaim_connection_error(gc, _("Unable to read"));
 		return;
 	}
