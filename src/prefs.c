@@ -1509,7 +1509,7 @@ void set_display_option(GtkWidget *w, int *option)
 {
         display_options = display_options ^ (int)option;
 
-	build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
+	if (blist) build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
 
 	if (blist) update_button_pix();
 
