@@ -598,7 +598,7 @@ static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick)
 				who++;
 			if (!g_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(b, r->data);
+				remove_chat_buddy(b, tmp);
 				g_free(tmp);
 				break;
 			}
@@ -774,7 +774,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 				who++;
 			if (!g_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(c, r->data);
+				remove_chat_buddy(c, tmp);
 				g_free(tmp);
 				break;
 			}
