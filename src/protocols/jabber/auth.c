@@ -111,14 +111,18 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if(type && !strcmp(type, "error")) {
+	if(type && !strcmp(type, "result")) {
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+	} else {
 		xmlnode *error = xmlnode_get_child(packet, "error");
-		const char *err_code;
-		char *err_text;
+		const char *err_code = NULL;
+		char *err_text = NULL;
 		char *buf;
 
-		err_code = xmlnode_get_attrib(error, "code");
-		err_text = xmlnode_get_data(error);
+		if(error) {
+			err_code = xmlnode_get_attrib(error, "code");
+			err_text = xmlnode_get_data(error);
+		}
 
 		if(!err_code)
 			err_code = "";
@@ -135,7 +139,6 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		g_free(err_text);
 		g_free(buf);
 	}
-	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 }
 
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
