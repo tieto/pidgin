@@ -388,7 +388,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		account_online(gc);
 		serv_finish_login(gc);
 
-		serv_add_buddy(gc, "EWarmenhoven");
 		do_import(0, gc);
 
 		/* Client sends TOC toc_init_done message */
@@ -490,15 +489,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			time_idle -= idle * 60;
 		} else
 			time_idle = 0;
-
-		if (logged && !g_strcasecmp(c, "ewarmenhoven")) {
-			char buf[BUF_LEN];
-			debug_printf("EWarmenhoven had his account stolen...\n");
-			g_snprintf(buf, sizeof(buf), "Are you the REAL EWarmenhoven?");
-			serv_send_im(gc, "EWarmenhoven", buf, 0);
-		}
-		if (!g_strcasecmp(c, "ewarmenhoven") && !find_buddy(gc, "EWarmenhoven"))
-			return;
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
