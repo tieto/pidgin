@@ -43,13 +43,13 @@ extern void applet_destroy_buddy();
 static void
 iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 {
+#if 0 /* STATUS */
 	GaimConvWindow *win;
 	GList *windows;
 	GaimConnection *gc;
 
 	gc = gaim_account_get_connection(account);
 
-#if 0 /* STATUS */
 	if (!imaway || !gc->away)
 		return;
 
