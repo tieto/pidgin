@@ -1,6 +1,47 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.82-1(08/27/2004)
+version 2.0.0:
+	* English (Canadian) tranlation updated (Adam Weinberger)
+
+version 1.0.2 (10/19/2004):
+	* Dutch translation updated (Vincent van Adrighem)
+
+version 1.0.1 (10/07/2004):
+	* Catalan translation under new translator, and updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Dutch translation updated (Vincent van Adrighem)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Romanian translation updated (Misu Moldovan)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+
+version 1.0.0 (09/17/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (Australian) transation added (Peter (Bleeter) Lawler)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+
+version 0.82.1 (08/27/2004):
 	* Finnish translation updated (Arto Alakulju)
 
 version 0.82 (08/26/2004):
