@@ -116,6 +116,7 @@ DLL_C_SRC =		about.c \
 			request.c \
 			server.c \
 			sound.c \
+			status.c \
 			stock.c \
 			themes.c \
 			util.c \
