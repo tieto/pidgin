@@ -74,7 +74,7 @@ gint check_idle(struct gaim_connection *gc)
 		if (!gc->away) {
 			if (g_slist_length(connections) == 1)
 				do_away_message(NULL, default_away);
-			else
+			else if (default_away)
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
 			gc->is_auto_away = 1;
 		} else
