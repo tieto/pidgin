@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2694 2001-11-06 23:58:24Z warmenhoven $
+ * $Id: gg.c 2719 2001-11-10 08:02:40Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -534,6 +534,8 @@ static void agg_login(struct aim_user *user)
 	struct agg_data *gd = gc->proto_data = g_new0(struct agg_data, 1);
 	char buf[80];
 
+	gc->checkbox = _("Send as message");
+
 	gd->sess = g_new0(struct gg_session, 1);
 
 	if (user->proto_opt[USEROPT_NICK][0])
@@ -957,7 +959,6 @@ void gg_init(struct prpl *ret)
 	ret->protocol = PROTO_GADUGADU;
 	ret->options = 0;
 	ret->name = agg_name;
-	ret->checkbox = _("Send as message");
 	ret->list_icon = agg_list_icon;
 	ret->away_states = agg_away_states;
 	ret->actions = agg_actions;

@@ -240,6 +240,8 @@ static int gaim_icbm_param_info  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_genericerr (aim_session_t *, aim_frame_t *, ...);
 static int gaim_memrequest       (aim_session_t *,  aim_frame_t*, ...);
 static int gaim_selfinfo         (aim_session_t *,  aim_frame_t*, ...);
+static int gaim_offlinemsg       (aim_session_t *,  aim_frame_t*, ...);
+static int gaim_offlinemsgdone   (aim_session_t *,  aim_frame_t*, ...);
 
 static int gaim_directim_initiate  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_incoming  (aim_session_t *, aim_frame_t *, ...);
@@ -445,8 +447,11 @@ static void oscar_login(struct aim_user *user) {
 		odata->icq = TRUE;
 		/* this is odd but it's necessary for a proper do_import and do_export */
 		gc->protocol = PROTO_ICQ;
-	} else
+		gc->checkbox = _("Send offline message");
+	} else {
 		gc->protocol = PROTO_TOC;
+		gc->flags |= OPT_CONN_HTML;
+	}
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -645,6 +650,8 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	for (i = 0; i < (int)strlen(info->bosip); i++) {
@@ -1979,8 +1986,37 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 
+	aim_icq_reqofflinemsgs(sess);
+
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
 
+	return 1;
+}
+
+static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
+	va_list ap;
+	struct aim_icq_offlinemsg *msg;
+	struct gaim_connection *gc = sess->aux_data;
+
+	va_start(ap, fr);
+	msg = va_arg(ap, struct aim_icq_offlinemsg *);
+	va_end(ap);
+
+	if (msg->type == 0x0001) {
+		char sender[32];
+		time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
+		g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
+		serv_got_im(gc, sender, msg->msg, 0, t);
+	} else {
+		debug_printf("unknown offline message type 0x%04x\n", msg->type);
+	}
+
+	return 1;
+}
+
+static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	aim_icq_ackofflinemsgs(sess);
 	return 1;
 }
 
@@ -2088,9 +2124,11 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	if (dim) {
 		ret = aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
-		if (imflags & IM_FLAG_AWAY)
+		if (imflags & IM_FLAG_AWAY) {
 			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
-		else {
+		} else if (imflags & IM_FLAG_CHECKBOX) {
+			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_OFFLINE, message);
+		} else {
 			struct aim_sendimext_args args;
 			GSList *h = odata->hasicons;
 			struct icon_req *ir = NULL;
@@ -2771,7 +2809,7 @@ static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_HTML | OPT_PROTO_BUDDY_ICON;
+	ret->options = OPT_PROTO_BUDDY_ICON;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;

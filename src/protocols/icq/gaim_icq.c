@@ -302,6 +302,8 @@ static void icq_login(struct aim_user *user) {
 	icq_Link *link;
 	char ps[9];
 
+	gc->checkbox = _("Send message through server");
+
 	icq_LogLevel = ICQ_LOG_MESSAGE;
 
 	g_snprintf(ps, sizeof(ps), "%s", user->password);
@@ -500,7 +502,6 @@ static struct prpl *my_protocol = NULL;
 
 void icq_init(struct prpl *ret) {
 	ret->protocol = PROTO_ICQ;
-	ret->checkbox = "Send message through server";
 	ret->name = icq_name;
 	ret->list_icon = icq_list_icon;
 	ret->away_states = icq_away_states;

@@ -23,6 +23,7 @@
 #define AIM_CB_FAM_TRN 0x000c
 #define AIM_CB_FAM_CTN 0x000d /* ChatNav */
 #define AIM_CB_FAM_CHT 0x000e /* Chat */
+#define AIM_CB_FAM_ICQ 0x0015
 #define AIM_CB_FAM_ATH 0x0017
 #define AIM_CB_FAM_OFT 0xfffe /* OFT/Rvous */
 #define AIM_CB_FAM_SPECIAL 0xffff /* Internal libfaim use */
@@ -170,6 +171,16 @@
 #define AIM_CB_CHT_OUTGOINGMSG 0x0005
 #define AIM_CB_CHT_INCOMINGMSG 0x0006
 #define AIM_CB_CHT_DEFAULT 0xffff
+
+/*
+ * SNAC Family: ICQ
+ *
+ * Most of these are actually special.
+ */ 
+#define AIM_CB_ICQ_ERROR 0x0001
+#define AIM_CB_ICQ_OFFLINEMSG 0x00f0
+#define AIM_CB_ICQ_OFFLINEMSGCOMPLETE 0x00f1
+#define AIM_CB_ICQ_DEFAULT 0xffff
 
 /*
  * SNAC Family: Authorizer

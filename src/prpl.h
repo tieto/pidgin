@@ -55,7 +55,7 @@
 
 /* These should all be stuff that some plugins can do and others can't */
 /* TOC/Oscar send HTML-encoded messages; most other protocols don't */
-#define OPT_PROTO_HTML            0x00000001
+/* #define OPT_PROTO_HTML            0x00000001 this should be per-connection */
 /* TOC/Oscar have signon time, and the server's time needs to be adjusted to match
  * your computer's time. We wouldn't need this if everyone used NTP. */
 #define OPT_PROTO_CORRECT_TIME    0x00000002
@@ -81,7 +81,7 @@ struct prpl {
 	char *(* name)();
 
 	/* for ICQ and Yahoo, who have off/on per-conversation options */
-	char *checkbox;
+	/* char *checkbox; this should be per-connection */
 
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);

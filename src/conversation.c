@@ -812,7 +812,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 	buf2 = g_malloc(limit);
 
-	if (c->gc->prpl->options & OPT_PROTO_HTML) {
+	if (c->gc->flags & OPT_CONN_HTML) {
 		if (convo_options & OPT_CONVO_SEND_LINKS)
 			linkify_text(buf);
 
@@ -2926,10 +2926,10 @@ static void update_checkbox(struct conversation *c)
 	if (!c->gc)
 		return;
 
-	if (!c->gc->prpl->checkbox)
+	if (!c->gc->checkbox)
 		return;
 
-	c->check = gtk_check_button_new_with_label(c->gc->prpl->checkbox);
+	c->check = gtk_check_button_new_with_label(c->gc->checkbox);
 	gtk_box_pack_start(GTK_BOX(c->lbox), c->check, FALSE, FALSE, 5);
 	gtk_widget_show(c->check);
 }

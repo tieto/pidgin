@@ -149,6 +149,39 @@ faim_internal fu32_t aimbs_get32(aim_bstream_t *bs)
 	return aimutil_get32(bs->data + bs->offset - 4);
 }
 
+faim_internal fu8_t aimbs_getle8(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 1)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset++;
+	
+	return aimutil_getle8(bs->data + bs->offset - 1);
+}
+
+faim_internal fu16_t aimbs_getle16(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 2)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset += 2;
+	
+	return aimutil_getle16(bs->data + bs->offset - 2);
+}
+
+faim_internal fu32_t aimbs_getle32(aim_bstream_t *bs)
+{
+	
+	if (aim_bstream_empty(bs) < 4)
+		return 0; /* XXX throw an exception */
+	
+	bs->offset += 4;
+	
+	return aimutil_getle32(bs->data + bs->offset - 4);
+}
+
 faim_internal int aimbs_put8(aim_bstream_t *bs, fu8_t v)
 {
 
@@ -178,6 +211,39 @@ faim_internal int aimbs_put32(aim_bstream_t *bs, fu32_t v)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_put32(bs->data + bs->offset, v);
+
+	return 1;
+}
+
+faim_internal int aimbs_putle8(aim_bstream_t *bs, fu8_t v)
+{
+
+	if (aim_bstream_empty(bs) < 1)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_putle8(bs->data + bs->offset, v);
+
+	return 1;
+}
+
+faim_internal int aimbs_putle16(aim_bstream_t *bs, fu16_t v)
+{
+
+	if (aim_bstream_empty(bs) < 2)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_putle16(bs->data + bs->offset, v);
+
+	return 2;
+}
+
+faim_internal int aimbs_putle32(aim_bstream_t *bs, fu32_t v)
+{
+
+	if (aim_bstream_empty(bs) < 4)
+		return 0; /* XXX throw an exception */
+
+	bs->offset += aimutil_putle32(bs->data + bs->offset, v);
 
 	return 1;
 }

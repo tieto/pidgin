@@ -403,5 +403,6 @@ extern unsigned char *utf8_to_str(unsigned char *);
 extern char *str_to_utf8(unsigned char *);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
+extern time_t get_time(int, int, int, int, int, int);
 
 #endif /* _GAIM_H_ */

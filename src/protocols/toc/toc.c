@@ -144,6 +144,7 @@ static void toc_login(struct aim_user *user)
 
 	gc = new_gaim_conn(user);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
+	gc->flags |= OPT_CONN_HTML;
 
 	g_snprintf(buf, sizeof buf, "Looking up %s",
 		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
@@ -1363,7 +1364,7 @@ static struct prpl *my_protocol = NULL;
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
-	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
+	ret->options = OPT_PROTO_CORRECT_TIME;
 	ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
 	ret->away_states = toc_away_states;

@@ -3,6 +3,9 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.48:
 	* Right-click on links to open/copy URL
 	* Yahoo changes
+	* Oscar can send/receive offline messages in ICQ. Since the "real"
+	  ICQ protocol isn't working too well it's recommended that you
+	  use Oscar for ICQ.
 
 version 0.47 (11/01/2001):
 	* Better font loading (pays attention to charset now)

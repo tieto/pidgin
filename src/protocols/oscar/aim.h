@@ -966,6 +966,17 @@ faim_export int aim_ssi_enable(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
 
+struct aim_icq_offlinemsg {
+	fu32_t sender;
+	fu16_t year;
+	fu8_t month, day, hour, minute;
+	fu16_t type;
+	char *msg;
+};
+
+faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
+faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
+
 /* aim_util.c */
 /*
  * These are really ugly.  You'd think this was LISP.  I wish it was.
@@ -991,6 +1002,34 @@ faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
 		(((*((buf)+1))<<16)&0x00ff0000) + \
 		(((*((buf)+2))<< 8)&0x0000ff00) + \
 		(((*((buf)+3)    )&0x000000ff)))
+
+/* Little-endian versions (damn ICQ) */
+#define aimutil_putle8(buf, data) ( \
+		(*(buf) = (unsigned char)(data) & 0xff), \
+		1)
+#define aimutil_getle8(buf) ( \
+		(*(buf)) & 0xff \
+		)
+#define aimutil_putle16(buf, data) ( \
+		(*((buf)+0) = (unsigned char)((data) >> 0) & 0xff),  \
+		(*((buf)+1) = (unsigned char)((data) >> 8) & 0xff), \
+		2)
+#define aimutil_getle16(buf) ( \
+		(((*((buf)+0)) << 0) & 0x00ff) + \
+		(((*((buf)+1)) << 8) & 0xff00) \
+		)
+#define aimutil_putle32(buf, data) ( \
+		(*((buf)+0) = (unsigned char)((data) >>  0) & 0xff), \
+		(*((buf)+1) = (unsigned char)((data) >>  8) & 0xff), \
+		(*((buf)+2) = (unsigned char)((data) >> 16) & 0xff), \
+		(*((buf)+3) = (unsigned char)((data) >> 24) & 0xff), \
+		4)
+#define aimutil_getle32(buf) ( \
+		(((*((buf)+0)) <<  0) & 0x000000ff) + \
+		(((*((buf)+1)) <<  8) & 0x0000ff00) + \
+		(((*((buf)+2)) << 16) & 0x00ff0000) + \
+		(((*((buf)+3)) << 24) & 0xff000000))
+
 
 faim_export int aimutil_putstr(u_char *, const char *, int);
 faim_export int aimutil_tokslen(char *toSearch, int index, char dl);

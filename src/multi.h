@@ -32,6 +32,10 @@ struct gaim_connection {
 	/* we make this as an int in case if we want to add more protocols later */
 	int protocol;
 	struct prpl *prpl;
+	guint32 flags;
+
+	/* erg. */
+	char *checkbox;
 
 	/* all connections need an input watcher */
 	int inpa;
@@ -68,6 +72,8 @@ struct gaim_connection {
 	int evil;
 	gboolean wants_to_die; /* defaults to FALSE */
 };
+
+#define OPT_CONN_HTML		0x00000001
 
 struct proto_user_opt {
 	char *label;
