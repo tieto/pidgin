@@ -552,25 +552,25 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		ihrs = (t - b->idle) / 3600;
 		imin = ((t - b->idle) / 60) % 60;
 		if (ihrs)
-			idletime = g_strdup_printf(_("<b>Idle:</b> %dh%02dm"), ihrs, imin);
+			idletime = g_strdup_printf(_("%dh%02dm"), ihrs, imin);
 		else
-			idletime = g_strdup_printf(_("<b>Idle:</b> %dm"), imin);
+			idletime = g_strdup_printf(_("%dm"), imin);
 	}
 
 	if (b->evil > 0)
-		warning = g_strdup_printf(_("<b>Warned:</b> %d%%"), b->evil);
+		warning = g_strdup_printf(_("%d%%"), b->evil);
 
 	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-			       "%s%s %s"  /* Alias */
-			       "%s%s %s"  /* Nickname */
-			       "%s%s"     /* Idle */
-			       "%s%s"     /* Warning */
+			       "%s %s"  /* Alias */
+			       "%s %s"  /* Nickname */
+			       "%s %s"     /* Idle */
+			       "%s %s"     /* Warning */
 			       "%s%s",    /* Status */
 			       b->name,
-			       b->alias && b->alias[0] ? "\n" : "", b->alias && b->alias[0] ? _("<b>Alias:</b> ") : "", b->alias ? b->alias : "", 
-			       b->server_alias ? "\n" : "", b->server_alias ? _("<b>Nickname:</b> ") : "", b->server_alias ? b->server_alias : "", 
-			       b->idle ? "\n" : "", b->idle ? idletime : "", 
-			       b->evil ? "\n" : "", b->evil ? warning : "",
+			       b->alias && b->alias[0] ? _("\n<b>Alias:</b>") : "", b->alias ? b->alias : "", 
+			       b->server_alias ? _("\n<b>Nickname:</b>") : "", b->server_alias ? b->server_alias : "", 
+			       b->idle ? _("\n<b>Idle:</b>") : "", b->idle ? idletime : "", 
+			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       statustext ? "\n" : "", statustext ? statustext : "");
 	if(warning)
 		g_free(warning);

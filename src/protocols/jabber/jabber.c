@@ -3202,6 +3202,15 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 
 }
 
+static char *jabber_tooltip_text(struct buddy *b)
+{
+	struct jabber_data *jd = b->account->gc->proto_data;
+	char *text = jabber_lookup_away(jd->gjc, b->name);
+	if (text)
+		return strip_html(text);
+	return NULL;
+}
+
 static char *jabber_status_text(struct buddy *b)
 {
 	struct jabber_data *jd = b->account->gc->proto_data;
@@ -4162,6 +4171,7 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->name = g_strdup("Jabber");
 	ret->list_icon = jabber_list_icon;
 	ret->status_text = jabber_status_text;
+	ret->tooltip_text = jabber_tooltip_text;
 	ret->away_states = jabber_away_states;
 	ret->actions = jabber_actions;
 	ret->buddy_menu = jabber_buddy_menu;

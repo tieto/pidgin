@@ -2785,7 +2785,7 @@ static char *caps_string(guint caps)
 	guint bit = 1;
 
 	if (!caps) {
-		strncpy(buf, _("<i>none advertised</i>"), sizeof(buf));
+		return NULL;
 	} else while (bit <= 0x20000) {
 		if (bit & caps) {
 			switch (bit) {
@@ -2852,7 +2852,7 @@ static char *caps_string(guint caps)
 		}
 		bit <<= 1;
 	}
-	return buf;
+	return buf; 
 }
 
 static char *oscar_tooltip_text(struct buddy *b) {
@@ -2860,10 +2860,16 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	struct oscar_data *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
-	if (bi)
-		return g_strdup_printf(_("<b>Online Since:</b> %s<b>Capabilities:</b> %s"), asctime(localtime(&bi->signon)), caps_string(bi->caps));
-	else
+	if (bi) {
+		char *caps = caps_string(bi->caps);
+		char *time = asctime(localtime(&bi->signon));
+		*(strchr(time, '\n')) = '\0';
+		return g_strdup_printf(_("<b>Online Since:</b> %s%s%s"), 
+				       time, 
+				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
+	} else {
 		return NULL;
+	}
 }
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
