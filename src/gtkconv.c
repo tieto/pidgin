@@ -1167,7 +1167,8 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		return FALSE;
 	}
-	else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm')) {
+	else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm' ||
+				event->keyval == 'M')) {
 		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
 		gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, "\n", 1);
 	}
@@ -1248,10 +1249,10 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
 					break;
-					
+
 				case '-':
 					do_small(NULL, gtkconv);
-					
+
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
 					break;
