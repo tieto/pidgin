@@ -1097,7 +1097,7 @@ gtk_imhtml_button_release_event (GtkWidget      *widget,
 		gtk_selection_owner_set (widget, GDK_SELECTION_PRIMARY, event->time);
 	}
 
-	if ((event->button == 1) && (imhtml->selected_text->len == 0)) {
+	if ((event->button == 1) && (imhtml->sel_startx == 0)) {
 		GList *urls = imhtml->urls;
 		struct url_widget *uw;
 
