@@ -228,7 +228,6 @@ extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
-extern int file_is_dir(const char *, GtkFileSelection *);
 extern void update_privacy_connections();
 extern void show_privacy_options();
 extern void build_allow_list();

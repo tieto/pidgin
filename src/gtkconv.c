@@ -149,7 +149,7 @@ do_save_convo(GObject *obj, GtkWidget *wid)
 
 	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 
-	if (file_is_dir(filename, GTK_FILE_SELECTION(wid)))
+	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(wid)))
 		return;
 
 	if (!((gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
@@ -189,7 +189,7 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	name    = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	id      = g_slist_length(im->images) + 1;
 	
-	if (file_is_dir(name, GTK_FILE_SELECTION(wid)))
+	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(wid)))
 		return;
 
 	gtk_widget_destroy(wid);

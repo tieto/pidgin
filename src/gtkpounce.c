@@ -117,7 +117,7 @@ pounce_update_entryfields(GtkWidget *w, gpointer data)
 
 	filename = gtk_file_selection_get_filename(filesel);
 
-	if (file_is_dir(filename, filesel))
+	if (gaim_gtk_check_if_dir(filename, filesel))
 		return;
 
 	if (filename != NULL)

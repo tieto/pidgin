@@ -265,7 +265,7 @@ do_save_icon(GtkObject *obj, GaimConversation *c)
 	f = gtk_file_selection_get_filename(
 		GTK_FILE_SELECTION(gtkconv->u.im->save_icon));
 
-	if (file_is_dir(f, GTK_FILE_SELECTION(gtkconv->u.im->save_icon)))
+	if (gaim_gtk_check_if_dir(f, GTK_FILE_SELECTION(gtkconv->u.im->save_icon)))
 		return;
 
 	if ((file = fopen(f, "w")) != NULL) {
@@ -808,6 +808,26 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	g_object_unref(sg);
 
 	return optmenu;
+}
+
+gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
+{
+	struct stat st;
+	char *name;
+
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
+		/* append a / if needed */
+		if (path[strlen(path) - 1] != '/') {
+			name = g_strconcat(path, "/", NULL);
+		} else {
+			name = g_strdup(path);
+		}
+		gtk_file_selection_set_filename(filesel, name);
+		g_free(name);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 char *stylize(const gchar *text, int length)

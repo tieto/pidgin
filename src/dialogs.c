@@ -2495,7 +2495,7 @@ void do_log(GtkWidget *w, GaimConversation *c)
 
 		strncpy(path, file, PATHSIZE - 1);
 
-		if (file_is_dir(path, GTK_FILE_SELECTION(gtkconv->dialogs.log)))
+		if (gaim_gtk_check_if_dir(path, GTK_FILE_SELECTION(gtkconv->dialogs.log)))
 			return;
 
 		l = (struct log_conversation *)g_new0(struct log_conversation, 1);
@@ -3806,7 +3806,7 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 
 	file = (const char*)gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	strncpy(path, file, PATHSIZE - 1);
-	if (file_is_dir(path, GTK_FILE_SELECTION(filesel)))
+	if (gaim_gtk_check_if_dir(path, GTK_FILE_SELECTION(filesel)))
 		return;
 
 	if ((fp_new = fopen(path, "w")) == NULL) {
@@ -4502,26 +4502,6 @@ GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonOrientation 
 
 	gtk_widget_show_all(bbox);
 	return button;
-}
-
-int file_is_dir(const char *path, GtkFileSelection *w)
-{
-	struct stat st;
-	char *name;
-
-	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
-		/* append a / if needed */
-		if (path[strlen(path) - 1] != '/') {
-			name = g_strconcat(path, "/", NULL);
-		} else {
-			name = g_strdup(path);
-		}
-		gtk_file_selection_set_filename(w, name);
-		g_free(name);
-		return 1;
-	}
-
-	return 0;
 }
 
 /*------------------------------------------------------------------------*/

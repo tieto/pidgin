@@ -206,6 +206,18 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 											gpointer user_data);
 
 /**
+ * Check if the given path is a directory or not.  If it is, then modify 
+ * the given GtkFileSelection dialog so that it displays the given path.
+ * If the given path is not a directory, then do nothing.
+ *
+ * @param path    The path entered in the file selection window by the user.
+ * @param filesel The file selection window.
+ *
+ * @return TRUE if given path is a directory, FALSE otherwise.
+ */
+gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
+
+/**
  * Stylizes the specified text using HTML, according to the current
  * font options.
  *

@@ -32,6 +32,7 @@
 #include "gaim-disclosure.h"
 #include "gtkcellrendererprogress.h"
 #include "gtkft.h"
+#include "gtkutils.h"
 #include "stock.h"
 
 #define GAIM_GTKXFER(xfer) \
@@ -996,7 +997,7 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
 
-	if (file_is_dir(name, GTK_FILE_SELECTION(data->filesel)))
+	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->filesel)))
 		return;
 
 	if (stat(name, &st) != 0) {

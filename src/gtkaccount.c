@@ -218,7 +218,7 @@ static void buddy_icon_filesel_choose (GtkWidget *w, AccountPrefsDialog *dialog)
 	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog->buddy_icon_filesel));
 
 	/* If they typed in a directory, change there */
-	if (file_is_dir(filename, GTK_FILE_SELECTION(dialog->buddy_icon_filesel)))
+	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(dialog->buddy_icon_filesel)))
 		return;
 
 	if (dialog->account) {
