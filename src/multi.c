@@ -999,6 +999,8 @@ static void do_pass_dlg(struct aim_user *u)
 	g_signal_connect(GTK_OBJECT(p->win), "destroy", G_CALLBACK(pass_des), p);
 	gtk_widget_realize(p->win);
 
+	vbox = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 	frame = make_frame(p->win, _("Enter Password"));
 	gtk_widget_show(frame);
 
@@ -1034,7 +1036,7 @@ static void do_pass_dlg(struct aim_user *u)
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pass_signon), p);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 
-	gtk_widget_show(p->win);
+	gtk_widget_show_all(p->win);
 }
 
 static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
