@@ -163,7 +163,7 @@ struct conversation *new_conversation(char *name)
 
 struct conversation *find_conversation(char *name)
 {
-	char *cuser = g_malloc(64);
+	char *cuser = g_malloc(1024);
 	struct conversation *c;
 	GList *cnv = conversations;
 
@@ -207,7 +207,7 @@ void rm_log(struct log_conversation *a)
 
 struct log_conversation *find_log_info(char *name)
 {
-	char *pname = g_malloc(64);
+	char *pname = g_malloc(1024);
 	GList *lc = log_conversations;
 	struct log_conversation *l;
 
@@ -1395,28 +1395,28 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
 			if (meify(what)) {
-				str = g_malloc(64);
-				g_snprintf(str, 62, "***%s", who);
+				str = g_malloc(1024);
+				g_snprintf(str, 1024, "***%s", who);
 				strcpy(colour, "#6C2585\0");
 			} else {
-				str = g_malloc(64);
-				g_snprintf(str, 62, "*%s*:", who);
+				str = g_malloc(1024);
+				g_snprintf(str, 1024, "*%s*:", who);
 				strcpy(colour, "#00ff00\0");
 			}
 		} else {
 			if (meify(what)) {
-				str = g_malloc(64);
+				str = g_malloc(1024);
 				if (flags & WFLAG_AUTO)
-					g_snprintf(str, 62, "%s ***%s", AUTO_RESPONSE, who);
+					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
 				else
-					g_snprintf(str, 62, "***%s", who);
+					g_snprintf(str, 1024, "***%s", who);
 				strcpy(colour, "#062585\0");
 			} else {
-				str = g_malloc(64);
+				str = g_malloc(1024);
 				if (flags & WFLAG_AUTO)
-					g_snprintf(str, 62, "%s %s", who, AUTO_RESPONSE);
+					g_snprintf(str, 1024, "%s %s", who, AUTO_RESPONSE);
 				else
-					g_snprintf(str, 62, "%s:", who);
+					g_snprintf(str, 1024, "%s:", who);
 				if (flags & WFLAG_RECV)
 					strcpy(colour, "#ff0000");
 				else if (flags & WFLAG_SEND)

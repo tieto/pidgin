@@ -24,25 +24,6 @@ struct icq_data {
 
 static guint ack_timer = 0;
 
-static struct gaim_connection *find_gaim_conn_by_icq_link(icq_Link *link) {
-	GSList *c = connections;
-	struct gaim_connection *gc = NULL;
-	struct icq_data *id;
-
-	while (c) {
-		gc = (struct gaim_connection *)c->data;
-		if (gc->protocol == PROTO_ICQ) {
-			id = (struct icq_data *)gc->proto_data;
-			if (id->link == link)
-				break;
-		}
-		gc = NULL;
-		c = c->next;
-	}
-
-	return gc;
-}
-
 static char *icq_name() {
 	return "ICQ";
 }
@@ -97,7 +78,7 @@ static void icq_sock_notify(int socket, int type, int status) {
 }
 
 static void icq_online(icq_Link *link) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
 	account_online(gc);
@@ -108,7 +89,7 @@ static void icq_online(icq_Link *link) {
 }
 
 static void icq_logged_off(icq_Link *link) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
@@ -137,7 +118,7 @@ void strip_linefeed(gchar *text)
 
 static void icq_msg_incoming(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	char buf[256], *tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", data);
 	g_snprintf(buf, sizeof buf, "%lu", uin);
@@ -149,7 +130,7 @@ static void icq_msg_incoming(icq_Link *link, unsigned long uin, unsigned char ho
 static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 				unsigned long ip, unsigned short port, unsigned long real_ip,
 				unsigned char tcp_flags) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	guint status;
 	char buf[256];
 
@@ -159,13 +140,13 @@ static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 }
 
 static void icq_user_offline(icq_Link *link, unsigned long uin) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
 	serv_got_update(gc, buf, 0, 0, 0, 0, 0, 0);
 }
 
 static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	guint status;
 	char buf[256];
 
@@ -193,7 +174,7 @@ static void icq_set_timeout(long interval) {
 static void icq_url_incoming(icq_Link *link, unsigned long uin, unsigned char hour,
 				unsigned char minute, unsigned char day, unsigned char month,
 				unsigned short year, const char *url, const char *descr) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	char *msg = g_malloc(BUF_LONG), buf[256];
 	g_snprintf(msg, BUF_LONG, "<A HREF=\"%s\">%s</A>", url, descr);
 	g_snprintf(buf, 256, "%lu", uin);
@@ -202,13 +183,13 @@ static void icq_url_incoming(icq_Link *link, unsigned long uin, unsigned char ho
 }
 
 static void icq_wrong_passwd(icq_Link *link) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	hide_login_progress(gc, "Invalid password.");
 	signoff(gc);
 }
 
 static void icq_invalid_uin(icq_Link *link) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	hide_login_progress(gc, "Invalid UIN.");
 	signoff(gc);
 }
@@ -232,7 +213,7 @@ static void icq_info_reply(icq_Link *link, unsigned long uin, const char *nick,
 static void icq_web_pager(icq_Link *link, unsigned char hour, unsigned char minute,
 		unsigned char day, unsigned char month, unsigned short year, const char *nick,
 		const char *email, const char *msg) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	char *who = g_strdup_printf("ICQ Web Pager: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
 	g_snprintf(what, BUF_LONG, "%s", msg);
@@ -244,7 +225,7 @@ static void icq_web_pager(icq_Link *link, unsigned char hour, unsigned char minu
 static void icq_mail_express(icq_Link *link, unsigned char hour, unsigned char minute,
 		unsigned char day, unsigned char month, unsigned short year, const char *nick,
 		const char *email, const char *msg) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	struct gaim_connection *gc = link->icq_UserData;
 	char *who = g_strdup_printf("ICQ Mail Express: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
 	g_snprintf(what, BUF_LONG, "%s", msg);
@@ -317,6 +298,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
 	link->icq_RequestNotify = icq_req_not;
+	link->icq_UserData = gc;
 
 	if (proxytype == PROXY_SOCKS5)
 		icq_SetProxy(link, proxyhost, proxyport, proxyuser[0], proxyuser, proxypass);
