@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4808 2003-02-05 13:47:28Z lschiere $
+ * $Id: gg.c 4894 2003-02-23 02:21:17Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -691,7 +691,7 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 			ibuf = g_strconcat("---------------------------------<BR>\n", NULL);
 			oldibuf = ibuf;
 			ibuf = g_strconcat(oldibuf, "<B>", _("Active"), ":</B> ",
-					   (atoi(p) == 2) ? _("yes") : _("no"), "<BR>\n", NULL);
+					   (atoi(p) == 2) ? _("Yes") : _("No"), "<BR>\n", NULL);
 			g_free(oldibuf);
 			break;
 		case 1:

@@ -1599,13 +1599,13 @@ static char *msn_get_away_text(int s)
 		case MSN_BUSY :
 			return _("Busy");
 		case MSN_BRB :
-			return _("Be right back");
+			return _("Be Right Back");
 		case MSN_AWAY :
-			return _("Away from the computer");
+			return _("Away From Computer");
 		case MSN_PHONE :
-			return _("On the phone");
+			return _("On The Phone");
 		case MSN_LUNCH :
-			return _("Out to lunch");
+			return _("Out To Lunch");
 		case MSN_IDLE :
 			return _("Idle");
 		default:

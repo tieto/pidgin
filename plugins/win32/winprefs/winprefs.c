@@ -144,7 +144,7 @@ G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.name = g_strdup(_("WinGaim Options"));
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup(_("Options specific to Windows Gaim.")); 
-	desc.authors = g_strdup(_("Herman Bloggs &lt;hermanator12002@yahoo.com&gt;"));
+	desc.authors = g_strdup("Herman Bloggs &lt;hermanator12002@yahoo.com&gt;");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }

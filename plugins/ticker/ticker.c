@@ -415,7 +415,7 @@ G_MODULE_EXPORT char *name() {
 }
 
 G_MODULE_EXPORT char *description() {
-	return _("A horizontal scrolling version of the buddy list");
+	return _("A horizontal scrolling version of the buddy list.");
 }
 
 G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {

@@ -1034,7 +1034,7 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	case YAHOO_STATUS_NOTINOFFICE:
 		return _("Not In Office");
 	case YAHOO_STATUS_ONPHONE:
-		return _("On Phone");
+		return _("On The Phone");
 	case YAHOO_STATUS_ONVACATION:
 		return _("On Vacation");
 	case YAHOO_STATUS_OUTTOLUNCH:
@@ -1212,7 +1212,7 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 			yd->current_status = YAHOO_STATUS_NOTATDESK;
 		} else if (!strcmp(state, _("Not In Office"))) {
 			yd->current_status = YAHOO_STATUS_NOTINOFFICE;
-		} else if (!strcmp(state, _("On Phone"))) {
+		} else if (!strcmp(state, _("On The Phone"))) {
 			yd->current_status = YAHOO_STATUS_ONPHONE;
 		} else if (!strcmp(state, _("On Vacation"))) {
 			yd->current_status = YAHOO_STATUS_ONVACATION;
@@ -1283,7 +1283,7 @@ static GList *yahoo_away_states(struct gaim_connection *gc)
 	m = g_list_append(m, _("Not At Home"));
 	m = g_list_append(m, _("Not At Desk"));
 	m = g_list_append(m, _("Not In Office"));
-	m = g_list_append(m, _("On Phone"));
+	m = g_list_append(m, _("On The Phone"));
 	m = g_list_append(m, _("On Vacation"));
 	m = g_list_append(m, _("Out To Lunch"));
 	m = g_list_append(m, _("Stepped Out"));
