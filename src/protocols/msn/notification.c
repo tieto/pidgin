@@ -666,8 +666,8 @@ bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (value != NULL) {
 		if (!strcmp(type, "MOB")) {
-			if (!strcmp(value, "Y")) {
-				user->mobile = TRUE;
+			if (!strcmp(value, "Y") || !strcmp(value, "N")) {
+				user->mobile = (!strcmp(value, "Y") ? TRUE : FALSE);
 
 				if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
 					if (GAIM_BUDDY_IS_ONLINE(b)) {

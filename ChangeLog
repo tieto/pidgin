@@ -15,6 +15,9 @@ version 0.76cvs:
 	* TCL Plugin API changed
 	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
+	* The mobile icon on MSN users is now removed when the person disables
+	  mobile paging (Stu Tomlinson)
+	* Added new MSN error codes and fixed an incorrect one (Stu Tomlinson)
 	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
 	* Buddy pounces for an account are removed when the account is
 	  deleted (Gary Kramlich)

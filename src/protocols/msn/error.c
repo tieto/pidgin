@@ -108,10 +108,13 @@ msn_error_get_text(unsigned int type)
 			break;
 
 		case 500:
-			g_snprintf(msg, sizeof(msg), _("Internal server error"));
+			g_snprintf(msg, sizeof(msg), _("Service Temporarily Unavailable"));
 			break;
 		case 501:
 			g_snprintf(msg, sizeof(msg), _("Database server error"));
+			break;
+		case 502:
+			g_snprintf(msg, sizeof(msg), _("Command disabled"));
 			break;
 		case 510:
 			g_snprintf(msg, sizeof(msg), _("File operation error"));
@@ -197,16 +200,19 @@ msn_error_get_text(unsigned int type)
 		case 916:
 			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
 			break;
-        case 920:
+		case 920:
 			g_snprintf(msg, sizeof(msg), _("Not accepting new users"));
 			break;
-        case 923:
+		case 923:
 			g_snprintf(msg, sizeof(msg),
 					   _("Kids Passport without parental consent"));
 			break;
-        case 924:
+		case 924:
 			g_snprintf(msg, sizeof(msg),
 					   _("Passport account not yet verified"));
+			break;
+		case 928:
+			g_snprintf(msg, sizeof(msg), _("Bad ticket"));
 			break;
 
 		default:
