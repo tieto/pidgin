@@ -3397,7 +3397,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
     			 _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
-			 G_CALLBACK(close_conv_cb), conv);
+					 G_CALLBACK(close_conv_cb), conv);
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
@@ -3589,6 +3589,8 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);
+
+	gtk_widget_destroy(gtkconv->tab_cont);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		if (gtkconv->u.im->save_icon != NULL)
