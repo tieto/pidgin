@@ -914,26 +914,25 @@ static void ignore_buddy(GaimBuddy *b) {
 	GaimAccount *account;
 	gchar *name;
 
-        if (!b)
-                return;
+	if (!b)
+		return;
 
-        g = gaim_find_buddys_group(b);
-        name = g_strdup(b->name);
-        account = b->account;
+	g = gaim_find_buddys_group(b);
+	name = g_strdup(b->name);
+	account = b->account;
 
-        gaim_debug(GAIM_DEBUG_INFO, "blist",
-                           "Removing '%s' from buddy list.\n", b->name);
-        serv_remove_buddy(account->gc, name, g->name);
-        gaim_blist_remove_buddy(b);
+	gaim_debug(GAIM_DEBUG_INFO, "blist",
+		"Removing '%s' from buddy list.\n", b->name);
+	serv_remove_buddy(account->gc, name, g->name);
+	gaim_blist_remove_buddy(b);
 
-	gaim_privacy_deny_add(account, name, 0);
+	serv_add_deny(account->gc, name);
+	gaim_blist_save();
 
-        gaim_blist_save();
+	c = gaim_find_conversation_with_account(name, account);
 
-        c = gaim_find_conversation_with_account(name, account);
-
-        if (c != NULL)
-                gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+	if (c != NULL)
+		gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
 
 	g_free(name);
 }
