@@ -835,6 +835,8 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	msn_switchboard_connect(swboard, host, port);
+
+	g_free(host);
 }
 
 void

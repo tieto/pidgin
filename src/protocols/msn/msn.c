@@ -459,9 +459,12 @@ msn_tooltip_text(GaimBuddy *buddy)
 							   _("Idle") : gaim_status_get_name(status));
 	}
 
-	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
-						   (user->list_op & (1 << MSN_LIST_RL)) ?
-						   _("Yes") : _("No"));
+	if (user)
+	{
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
+							   (user->list_op & (1 << MSN_LIST_RL)) ?
+							   _("Yes") : _("No"));
+	}
 
 	return g_string_free(s, FALSE);
 }
@@ -1247,7 +1250,6 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 
 	if (b)
 	{
-		MsnUser *user;
 		GaimPresence *presence;
 		char *statustext = msn_tooltip_text(b);
 
@@ -1280,15 +1282,13 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 
 		if (statustext)
 		{
-			g_string_append_printf(s, "%s<br>", statustext);
+			char *tmp;
+			tmp = gaim_strreplace((*statustext == '\n' ? statustext + 1 : statustext),
+								  "\n", "<br>");
 			g_free(statustext);
+			g_string_append_printf(s, "%s<br>", tmp);
+			g_free(tmp);
 		}
-
-		user = b->proto_data;
-
-		g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Has you"),
-							   (user->list_op & (1 << MSN_LIST_RL)) ?
-							   _("Yes") : _("No"));
 	}
 
 	return g_string_free(s, FALSE);

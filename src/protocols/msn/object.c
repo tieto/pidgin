@@ -28,6 +28,8 @@
 	{ \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
+		if (obj->field != NULL) \
+			g_free(obj->field); \
 		obj->field = g_strndup(tag, c - tag); \
 	}
 
