@@ -15,6 +15,7 @@ gaim_SOURCES =	about.c \
 		conversation.c \
 		convo.h \
 		core.c \
+		core.h \
 		dialogs.c \
 		ft.c \
 		gaim.h \
