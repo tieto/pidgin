@@ -1,5 +1,3 @@
-EXTRA_DIST = AUTHORS
-
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
