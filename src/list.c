@@ -218,6 +218,8 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 			gaim_blist_add_group(g, NULL);
 		}
 		n = gaim_blist_get_last_child((GaimBlistNode*)g);
+	} else {
+		g = (struct group*)n->parent;
 	}
 
 	/* if we're moving to overtop of ourselves, do nothing */
@@ -237,9 +239,8 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		if (node3)
 			node3->next = node2;
 
-		if (((GaimBlistNode*)buddy)->parent != n->parent)
-			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent,
-					(struct group*)n->parent);
+		if (((GaimBlistNode*)buddy)->parent != ((GaimBlistNode*)g))
+			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent, g);
 		save = TRUE;
 	}
 
