@@ -18,6 +18,7 @@ ASPELL_TOP :=		../../win32-dev/aspell-15
 GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.2
 IDLETRACKER_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
 
 ##
 ## VARIABLE DEFINITIONS
@@ -48,6 +49,7 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(INCLUDE_DIR)/win32 \
+			-I$(MINGW_PLUS_DIR) \
 			-I$(IDLETRACKER_TOP) \
 			-I$(GAIM_TOP) \
 			-I$(GTK_TOP)/include \
@@ -67,7 +69,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(IDLETRACKER_TOP) \
 			-L$(PERL_LIB_DIR) \
 			-L$(ASPELL_TOP)/lib \
-			-L$(GTKSPELL_TOP)/gtkspell
+			-L$(GTKSPELL_TOP)/gtkspell \
+			-L$(MINGW_PLUS_DIR)
 
 
 ##
@@ -81,6 +84,8 @@ SOUND_H_FILES =		$(GAIM_TOP)/sounds/BuddyArrive.h \
 			$(GAIM_TOP)/sounds/Send.h
 
 HEADER_DEPS =		$(SOUND_H_FILES)
+
+LIB_DEPS =		$(MINGW_PLUS_DIR)/user32plus.lib
 
 DLL_C_SRC =		aim.c \
 			about.c \
@@ -136,6 +141,7 @@ DLL_LIBS =		-lgtkspell \
 			-lws2_32 \
 			-liberty \
 			-lwinmm \
+			-luser32plus \
 			-lperl56 \
 			-laspell-15 \
 			-lIdleTrac
@@ -175,6 +181,13 @@ $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll:
 	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw
 
 #
+# BUILD DEPS
+#
+
+$(MINGW_PLUS_DIR)/user32plus.lib: $(MINGW_PLUS_DIR)/user32plus.def
+	$(MAKE) -C $(MINGW_PLUS_DIR) -f Makefile.mingw user32plus.lib
+
+#
 # BUILD DLL
 #
 
@@ -182,7 +195,7 @@ $(TARGET).def: $(HEADER_DEPS) $(DLL_OBJECTS)
 	dlltool -D $(TARGET).dll -z $(TARGET).def --export-all-symbols \
 		--exclude-symbols WinMain@16 $^
 
-$(TARGET).base: $(HEADER_DEPS) $(DLL_OBJECTS)
+$(TARGET).base: $(HEADER_DEPS) $(LIB_DEPS) $(DLL_OBJECTS)
 	$(CC) -mdll $(LDFLAGS) -o junk.tmp -Wl,--base-file,$@ $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf junk.tmp
 
@@ -190,12 +203,12 @@ $(TARGET).exp: $(TARGET).base $(TARGET).def
 	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
 		--output-exp $(TARGET).exp --def $(TARGET).def
 
-$(TARGET).dll: $(HEADER_DEPS) $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
+$(TARGET).dll: $(HEADER_DEPS) $(LIB_DEPS) $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
 	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
 
 $(TARGET).lib: $(TARGET).def
-	dlltool -D $(TARGET).dll -d $(TARGET).def -l $(TARGET).lib	
+	dlltool -D $(TARGET).dll -d $(TARGET).def -l $(TARGET).lib
 
 #
 # BUILD EXE
