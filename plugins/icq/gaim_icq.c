@@ -56,6 +56,7 @@ static void icq_online(ICQLINK *link) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
 	account_online(gc);
+	gc->options |= OPT_USR_KEEPALV;
 	serv_finish_login(gc);
 
 	if (bud_list_cache_exists(gc))

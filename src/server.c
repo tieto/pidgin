@@ -67,11 +67,11 @@ void serv_close(struct gaim_connection *gc)
 
 	if (gc->idle_timer > 0)
 		gtk_timeout_remove(gc->idle_timer);
-        gc->idle_timer = -1;
+        gc->idle_timer = 0;
 
 	if (gc->keepalive > 0)
 		gtk_timeout_remove(gc->keepalive);
-	gc->keepalive = -1;
+	gc->keepalive = 0;
 
 	if (gc->prpl && gc->prpl->close)
 		(*gc->prpl->close)(gc);
@@ -111,6 +111,8 @@ void serv_finish_login(struct gaim_connection *gc)
         time(&gc->login_time);
 
         serv_add_buddy(gc, gc->username);
+
+	update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
 }
 
 
@@ -704,18 +706,17 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 
 void send_keepalive(gpointer d) {
 	struct gaim_connection *gc = (struct gaim_connection *)d;
-	debug_print("sending oscar NOP\n");
 	if (gc->prpl && gc->prpl->keepalive)
 		(*gc->prpl->keepalive)(gc);
 }
 
 void update_keepalive(struct gaim_connection *gc, gboolean on) {
-	if (on && gc->keepalive < 0 && blist) {
+	if (on && !gc->keepalive && blist) {
 		debug_print("allowing NOP\n");
 		gc->keepalive = gtk_timeout_add(60000, (GtkFunction)send_keepalive, gc);
-	} else if (!on && gc->keepalive > -1) {
+	} else if (!on && gc->keepalive > 0) {
 		debug_print("removing NOP\n");
 		gtk_timeout_remove(gc->keepalive);
-		gc->keepalive = -1;
+		gc->keepalive = 0;
 	}
 }

@@ -383,9 +383,6 @@ void oscar_login(struct aim_user *user) {
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
 
-	gc->options = user->options;
-	save_prefs(); /* is this necessary anymore? */
-
 	debug_print(_("Password sent, waiting for response\n"));
 }
 
@@ -1013,9 +1010,6 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	if (id != 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
-
-	if (gc->keepalive < 0)
-		update_keepalive(gc, gc->keepalive);
 
 	return 1;
 }

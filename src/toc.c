@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1156 $"
+#define REVISION "gaim:$Revision: 1163 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -311,7 +311,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		 * version of the config and then the toc_init_done message. we'll come back to
 		 * the callback in a better state if we get CONFIG anyway */
 
-		gc->options = gc->user->options;
 		tdt->state = STATE_ONLINE;
 
 		account_online(gc);
@@ -327,9 +326,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_snprintf(snd, sizeof snd, "toc_set_caps %s %s %s %s %s",
 			FILE_SEND_UID, FILE_GET_UID, B_ICON_UID, IMAGE_UID, VOICE_UID);
 		sflap_send(gc, snd, -1, TYPE_DATA);
-
-		if (gc->keepalive < 0)
-			update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
 
 		return;
 	}

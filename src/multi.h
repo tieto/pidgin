@@ -54,10 +54,10 @@ struct gaim_connection {
 	char password[32];
 	char g_screenname[64];
 	int options; /* same as aim_user options */
-	int keepalive;
+	guint keepalive;
 	int correction_time;
 	/* stuff needed for per-connection idle times */
-	int idle_timer;
+	guint idle_timer;
 	time_t login_time;
 	time_t lastsent;
 	int is_idle;
