@@ -129,7 +129,7 @@ if test "x$STATIC_PRPLS" = "xall" ; then
 	STATIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | sed 's/silc//'`
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -178,7 +178,7 @@ if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | sed 's/silc//'`
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
