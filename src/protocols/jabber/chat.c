@@ -537,7 +537,7 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 		char *buf;
 
 		if(cur)
-			buf = g_strdup_printf(_("current topic is: %s"), topic);
+			buf = g_strdup_printf(_("current topic is: %s"), cur);
 		else
 			buf = g_strdup(_("No topic is set"));
 		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", buf,
