@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9768 2004-05-21 00:32:52Z lschiere $
+ * $Id: gg.c 9771 2004-05-21 12:02:27Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -291,7 +291,7 @@ static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
 
 		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
 		name = data_tbl[6];
-		
+
 		if (invalid_uin(name)) {
 			continue;
 		}
@@ -319,19 +319,19 @@ static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
 			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
 			gaim_blist_add_buddy(b,NULL,g,NULL);
 			gaim_blist_save();
-			
+
 			userlist_size++;
 			userlist = g_renew(uin_t, userlist, userlist_size);
 			userlist[userlist_size - 1] =
 			    (uin_t) strtol((char *)name, (char **)NULL, 10);
-			
+
 			g_free(group);
 		}
 		g_free(show);
 		g_strfreev(data_tbl);
 	}
 	g_strfreev(users_tbl);
-	
+
 	if (userlist) {
 	    gg_notify(gd->sess, userlist, userlist_size);
 	    g_free(userlist);
@@ -369,17 +369,17 @@ static void agg_save_buddy_list (GaimConnection *gc, char *existlist)
 
 					newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
 							show, show, show, show, "", gname, name, "", "");
-							
+
 					ptr = buddylist;
 					buddylist = g_strconcat(ptr, newdata, NULL);
-					
+
 					g_free(newdata);
 					g_free(ptr);
 				}
 			}
 		}
 	}
-	
+
 	/* save the list to the gadu gadu server */
 	gg_userlist_request(gd->sess, GG_USERLIST_PUT, buddylist);
 }
@@ -553,7 +553,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	    switch (e->event.userlist.type) {
 		case GG_USERLIST_GET_REPLY:
 		{
-			
+
 			if (e->event.userlist.reply) {
 			    agg_load_buddy_list(gc, e->event.userlist.reply);
 			}
