@@ -542,7 +542,7 @@ static void do_im(GtkWidget *widget, GtkWidget *imentry)
         char *who;
         struct conversation *c;
 	
-        who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(imentry))));
+        who = g_strdup(gtk_entry_get_text(GTK_ENTRY(imentry)));
 	destroy_dialog(NULL, imdialog);
         imdialog = NULL;
         
