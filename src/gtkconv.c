@@ -117,6 +117,15 @@ typedef struct
 
 static GtkWidget *invite_dialog = NULL;
 
+enum {
+	TARGET_XURL=0,
+	TARGET_URI_LIST,
+	TARGET_BLIST_NODE,
+	TARGET_STRING,
+	TARGET_NETSCAPE_URL,
+	TARGET_PLAIN_TEXT 
+};
+
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void check_everything(GtkTextBuffer *buffer);
 static void set_toggle(GtkWidget *tb, gboolean active);
@@ -3792,6 +3801,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 {
 	GaimConvWindow *win = conv->window;
 	GaimConversation *c;
+	gchar* uri;
 
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GaimBlistNode *n = NULL;
@@ -3808,6 +3818,64 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 
 		gaim_conv_window_add_conversation(win, c);
+	}
+	if (info == TARGET_NETSCAPE_URL)
+	{
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gchar* p=(gchar*) sd->data;
+		gchar* q;
+		gchar* link;
+
+		if (p==NULL)
+			return;
+		g_strchomp(p);
+		q = strchr(p,'\n');
+		if (q==NULL)
+		{
+			link=g_strconcat("<a href=\"",p,"\">",p,"</a>",NULL);
+		}
+		else
+		{
+			uri = g_strndup(p,q-p);
+			q++;
+			link=g_strconcat("<a href=\"",uri,"\">",q,"</a>",NULL);
+			g_free(uri);
+		}
+		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
+		g_free(link);
+	}
+	if (info == TARGET_XURL)
+	{
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gchar* link;
+		uri=g_strdup((gchar*) sd->data);
+		g_strstrip(uri);
+		link=g_strconcat("<a href=\"",uri,"\">",uri,"</a>",NULL);
+		g_free(uri);
+		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
+		g_free(link);
+	}
+	if (info == TARGET_URI_LIST && (gchar*)sd->data != NULL 
+	&& g_ascii_strncasecmp((gchar*)sd->data,"file:",5)!=0)
+	{
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gchar *p, *q, *link;
+		q=g_strdup((gchar*) sd->data);
+		g_strstrip(q);
+		p=strchr(q,'\n');
+		if (p==NULL)
+		{
+			uri=g_strdup(q);	/* strdup'ing this to make it match the else */
+		}
+		else
+		{
+			uri=g_strndup(q,q-p);
+		}
+		g_free(q);
+		link=g_strconcat("<a href=\"",uri,"\">",uri,"</a>",NULL);
+		g_free(uri);
+		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
+		g_free(link);
 	}
 }
 
@@ -3957,10 +4025,13 @@ gaim_gtk_switch_conversation(GaimConvWindow *win, unsigned int index)
 
 static const GtkTargetEntry te[] =
 {
-	{"text/plain", 0, 0},
-	{"text/uri-list", 0, 1},
-	{"GAIM_BLIST_NODE", 0, 2},
-	{"STRING", 0, 3}
+	{"x-url/ftp", 0, TARGET_XURL},
+	{"x-url/http", 0, TARGET_XURL},
+	{"text/uri-list", 0, TARGET_URI_LIST},
+	{"GAIM_BLIST_NODE", 0, TARGET_BLIST_NODE},
+	{"STRING", 0, TARGET_STRING},
+	{"_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL},
+	{"text/plain", 0, TARGET_PLAIN_TEXT}
 };
 
 static void
@@ -4034,20 +4105,15 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 				                  GTK_DEST_DEFAULT_DROP,
 						  te, sizeof(te) / sizeof(GtkTargetEntry),
 						  GDK_ACTION_DEFAULT | GDK_ACTION_COPY | GDK_ACTION_MOVE);
-		gtk_drag_dest_set(gtkconv->entry,
-						  GTK_DEST_DEFAULT_MOTION |
-						  GTK_DEST_DEFAULT_DROP,
-						  te, sizeof(te) / sizeof(GtkTargetEntry),
-						  GDK_ACTION_COPY);
-
+		gtk_drag_dest_set(gtkconv->entry, 0,
+                			          te, sizeof(te) / sizeof(GtkTargetEntry),
+                			          GDK_ACTION_COPY);
 		g_signal_connect(G_OBJECT(pane), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
-#if 0
 		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
-#endif
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);

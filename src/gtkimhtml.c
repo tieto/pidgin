@@ -59,6 +59,8 @@
 
 #define TOOLTIP_TIMEOUT 500
 
+static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
+
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
 #define MAX_FONT_SIZE 7
@@ -268,7 +270,10 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 			gtk_widget_destroy(GTK_IMHTML(imhtml)->tip_window);
 			GTK_IMHTML(imhtml)->tip_window = NULL;
 		}
-		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
+		if (GTK_IMHTML(imhtml)->editable)
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->text_cursor);
+		else
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
 		if (GTK_IMHTML(imhtml)->tip_timer)
 			g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 		GTK_IMHTML(imhtml)->tip_timer = 0;
@@ -296,7 +301,10 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 		g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
-	gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->arrow_cursor);
+	if (GTK_IMHTML(imhtml)->editable) 
+		gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->text_cursor);
+	else
+		gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->arrow_cursor);
 
 	/* propogate the event normally */
 	return FALSE;
@@ -416,6 +424,7 @@ gtk_imhtml_finalize (GObject *object)
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
 	gdk_cursor_unref(imhtml->arrow_cursor);
+	gdk_cursor_unref(imhtml->text_cursor);
 	if(imhtml->tip_window){
 		gtk_widget_destroy(imhtml->tip_window);
 	}
@@ -466,9 +475,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, FALSE);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(imhtml), FALSE);
 	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 5);
-	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), FALSE);
 	/*gtk_text_view_set_justification(GTK_TEXT_VIEW(imhtml), GTK_JUSTIFY_FILL);*/
 	
 	/* These tags will be used often and can be reused--we create them on init and then apply them by name
@@ -485,6 +492,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	imhtml->text_cursor = gdk_cursor_new (GDK_XTERM);
 
 	imhtml->show_smileys = TRUE;
 	imhtml->show_comments = TRUE;
@@ -497,6 +505,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
+	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
 #if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
@@ -507,10 +516,16 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->tip_timer = 0;
 	imhtml->tip_window = NULL;
 
+	imhtml->edit.bold = NULL;
+	imhtml->edit.italic = NULL;
+	imhtml->edit.underline = NULL;
+	imhtml->format_spans = NULL;
+	
 	imhtml->scalables = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
 	imhtml->copyables = NULL;
 #endif
+	gtk_imhtml_set_editable(imhtml, FALSE);
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -600,7 +615,10 @@ gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIte
 				g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 				GTK_IMHTML(imhtml)->tip_timer = 0;
 			}
-			gdk_window_set_cursor(event_button->window, GTK_IMHTML(imhtml)->arrow_cursor);
+			if (GTK_IMHTML(imhtml)->editable)
+				gdk_window_set_cursor(event_button->window, GTK_IMHTML(imhtml)->text_cursor);
+			else
+				gdk_window_set_cursor(event_button->window, GTK_IMHTML(imhtml)->arrow_cursor);
 			menu = gtk_menu_new();
 
 			/* buttons and such */
@@ -1600,6 +1618,19 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
 	gtk_text_buffer_delete(imhtml->text_buffer, &start, &end);
+	
+	while (imhtml->format_spans) {
+		GtkIMHtmlFormatSpan *span = imhtml->format_spans->data;
+		if (span->start_tag)
+			g_free(span->start_tag);
+		if (span->end_tag)
+			g_free(span->end_tag);
+		g_free(span);
+		imhtml->format_spans = imhtml->format_spans->next;
+	}
+	imhtml->edit.bold = NULL;
+	imhtml->edit.italic = NULL;
+	imhtml->edit.underline = NULL;
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
@@ -1918,4 +1949,208 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml)
 	if (imhtml->search_string)
 		g_free(imhtml->search_string);
 	imhtml->search_string = NULL;
+}
+
+/* Editable stuff */
+static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span = NULL;
+
+	if (!imhtml->editable)
+		return;
+
+	if ((span = imhtml->edit.bold)) {
+		GtkTextIter bold;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &bold, span->start);
+		gtk_text_iter_forward_chars(iter, len);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &bold, iter);
+	}
+	
+	if ((span = imhtml->edit.italic)) {
+		GtkTextIter italic;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &italic, span->start);
+		gtk_text_iter_forward_chars(iter, len);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &italic, iter);
+	}
+	
+		
+	if ((span = imhtml->edit.underline)) {
+		GtkTextIter underline;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &underline, span->start);
+		gtk_text_iter_forward_chars(iter, len);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &underline, iter);
+	}
+}
+
+void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable) 
+{
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(imhtml), editable);
+	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable);
+	imhtml->editable = editable;
+}
+
+gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml) 
+{
+	return imhtml->editable;
+}
+
+gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.bold) {
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup("<b>");
+		span->end = NULL;
+		span->end_tag = g_strdup("</b>");
+		span->buffer = imhtml->text_buffer;
+		imhtml->edit.bold = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.bold;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.bold = NULL;
+	}
+	return imhtml->edit.bold != NULL;
+}
+
+gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.italic) {
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup("<i>");
+		span->end = NULL;
+		span->end_tag = g_strdup("</i>");
+		span->buffer = imhtml->text_buffer;
+		imhtml->edit.italic = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.italic;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.italic = NULL;
+	}
+	return imhtml->edit.italic != NULL;
+}
+gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.underline) {
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup("<u>");
+		span->end = NULL;
+		span->end_tag = g_strdup("</u>");
+		span->buffer = imhtml->text_buffer;
+		imhtml->edit.underline = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.italic;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.underline = NULL;
+	}
+	return imhtml->edit.underline != NULL;
+}
+
+int span_compare_begin(const GtkIMHtmlFormatSpan *a, const GtkIMHtmlFormatSpan *b, GtkTextBuffer *buffer)
+{
+	GtkTextIter ia, ib;
+	gtk_text_buffer_get_iter_at_mark(buffer, &ia, a->start);
+	gtk_text_buffer_get_iter_at_mark(buffer, &ib, b->start);
+	return gtk_text_iter_compare(&ia, &ib);
+}
+
+int span_compare_end(GtkIMHtmlFormatSpan *a, GtkIMHtmlFormatSpan *b)
+{
+	GtkTextIter ia, ib;
+	gtk_text_buffer_get_iter_at_mark(a->buffer, &ia, a->start);
+	gtk_text_buffer_get_iter_at_mark(b->buffer, &ib, b->start);
+	return gtk_text_iter_compare(&ia, &ib);
+}
+
+/* Basic notion here: traverse through the text buffer one-by-one, non-character elements, such
+ * as smileys and IM images are represented by the Unicode "unknown" character.  Handle them.  Else
+ * check the list of formatted strings, sorted by the position of the starting tags and apply them as
+ * needed.  After applying the start tags, add the end tags to the "closers" list, which is sorted by
+ * location of ending tags.  These get applied in a similar fashion.  Finally, replace <, >, &, and "
+ * with their HTML equivilent. */
+char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
+{
+	gunichar c;
+	GtkIMHtmlFormatSpan *sspan = NULL, *espan = NULL;
+	GtkTextIter iter, siter, eiter;
+	GList *starters = imhtml->format_spans;
+	GList *closers = NULL;;
+	GString *str = g_string_new("");
+	g_list_sort_with_data(starters, (GCompareDataFunc)span_compare_begin, imhtml->text_buffer);
+	
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+	
+	/* Initialize these to the end iter */
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &siter);
+	eiter = siter;
+
+	if (starters) {
+		sspan = (GtkIMHtmlFormatSpan*)starters->data;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);
+	}
+
+	while ((c = gtk_text_iter_get_char(&iter)) != 0) {
+		if (c == 0xFFFC) {
+			/* This is an image or a smiley */
+		} else {
+			while (gtk_text_iter_equal(&eiter, &iter)) {
+				/* This is where we shall insert the ending tag of
+				 * this format span */
+				str = g_string_append(str, espan->end_tag);
+				closers = g_list_remove(closers, espan);
+				if (closers) {
+					espan = (GtkIMHtmlFormatSpan*)closers->data;
+					gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
+				} else {
+					espan = NULL;
+					gtk_text_buffer_get_end_iter(imhtml->text_buffer, &eiter);
+				}
+			}
+			while (gtk_text_iter_equal(&siter, &iter)) {
+				/* This is where we shall insert the starting tag of
+				 * this format span */
+				str = g_string_append(str, sspan->start_tag);
+				if (sspan->end) {
+					espan = sspan;
+					gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
+					closers = g_list_insert_sorted(closers, sspan, (GCompareFunc)span_compare_end);
+				}
+				starters = starters->next;
+				if (starters) {
+					sspan = (GtkIMHtmlFormatSpan*)starters->data;
+					gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);
+				} else {
+					sspan = NULL;
+					gtk_text_buffer_get_end_iter(imhtml->text_buffer, &siter);
+				}
+			 
+			}
+			
+			str = g_string_append_unichar(str, c);
+		}
+		gtk_text_iter_forward_char(&iter);
+	}
+	return g_string_free(str, FALSE);
+}
+
+char *gtk_imhtml_get_text(GtkIMHtml *imhtml)
+{
+	GtkTextIter start_iter, end_iter;
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start_iter);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end_iter);
+	return gtk_text_buffer_get_text(imhtml->text_buffer, &start_iter, &end_iter, FALSE);
+	
 }

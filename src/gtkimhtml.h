@@ -49,6 +49,15 @@ typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlCopyable       GtkIMHtmlCopyable;
 
+
+typedef struct {
+	GtkTextMark *start;
+	GtkTextMark *end;
+	char *start_tag;
+	char *end_tag;
+	GtkTextBuffer *buffer;
+} GtkIMHtmlFormatSpan;
+
 struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
@@ -56,6 +65,7 @@ struct _GtkIMHtml {
 	gboolean comments, smileys;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
+	GdkCursor *text_cursor;
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
 
@@ -72,6 +82,14 @@ struct _GtkIMHtml {
 	GSList *copyables;
 
 	gchar *search_string;
+
+	gboolean editable;
+	struct {
+		GtkIMHtmlFormatSpan *bold;
+		GtkIMHtmlFormatSpan *italic;
+		GtkIMHtmlFormatSpan *underline;
+	} edit;
+	GList *format_spans;
 };
 
 struct _GtkIMHtmlClass {
@@ -181,6 +199,15 @@ void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 /* Search functions */
 gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text);
 void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
+
+/* Editable stuff */
+void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
+gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
+gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
+gboolean gtk_imthml_toggle_italic(GtkIMHtml *imhtml);
+gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
+char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
+char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
 
 #ifdef __cplusplus
 }
