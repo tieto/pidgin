@@ -132,7 +132,7 @@ static int num_words(const char *m) {
 	for (pos = 0; pos < strlen(m); pos++) {
 		switch (state) {
 		case 0: /* expecting word */
-			if (!isspace(m[pos]) && !ispunct(m[pos])) {
+			if (!g_ascii_isspace(m[pos]) && !g_ascii_ispunct(m[pos])) {
 				count++;
 				state = 1;
 			} else if (m[pos] == '<')
@@ -141,7 +141,7 @@ static int num_words(const char *m) {
 		case 1: /* inside word */
 			if (m[pos] == '<')
 				state = 2;
-			else if (isspace(m[pos]) || ispunct(m[pos]))
+			else if (g_ascii_isspace(m[pos]) || g_ascii_ispunct(m[pos]))
 				state = 0;
 			break;
 		case 2: /* inside HTML tag */
@@ -161,7 +161,7 @@ static int get_word(char *m, int word) {
 	for (pos = 0; pos < strlen(m) && count <= word; pos++) {
 		switch (state) {
 		case 0:
-			if (!isspace(m[pos]) && !ispunct(m[pos])) {
+			if (!g_ascii_isspace(m[pos]) && !g_ascii_ispunct(m[pos])) {
 				count++;
 				state = 1;
 			} else if (m[pos] == '<')
@@ -170,7 +170,7 @@ static int get_word(char *m, int word) {
 		case 1:
 			if (m[pos] == '<')
 				state = 2;
-			else if (isspace(m[pos]) || ispunct(m[pos]))
+			else if (g_ascii_isspace(m[pos]) || g_ascii_ispunct(m[pos]))
 				state = 0;
 			break;
 		case 2:
@@ -349,7 +349,7 @@ static void on_selection_changed(GtkTreeSelection *sel,
 
 static gboolean non_empty(const char *s)
 {
-	while(*s && isspace(*s))
+	while(*s && g_ascii_isspace(*s))
 		s++;
 	return *s;
 }
