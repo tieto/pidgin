@@ -166,10 +166,6 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat), params[3], NULL);
 	}
 
-	if (swboard->chat != NULL)
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
-						   gaim_account_get_username(account), NULL);
-
 	return TRUE;
 }
 
@@ -189,8 +185,6 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 											 "MSN Chat");
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 						   msn_user_get_passport(swboard->user), NULL);
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
-						   gaim_account_get_username(account), NULL);
 
 		msn_user_unref(swboard->user);
 	}
@@ -348,8 +342,10 @@ clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 
-	if ((value = g_hash_table_lookup(clientcaps, "Buddy-Icons")) != NULL)
-		msn_buddy_icon_invite(swboard);
+	if (swboard->chat == NULL) {
+		if ((value = g_hash_table_lookup(clientcaps, "Buddy-Icons")) != NULL)
+			msn_buddy_icon_invite(swboard);
+	}
 
 	return TRUE;
 }
