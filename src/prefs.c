@@ -2378,7 +2378,7 @@ static GtkWidget *gaim_dropdown_from_list(GtkWidget *box, const gchar *title, in
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
-		if (((clear > -1) && ((*option & value) == value)) || *option == value) {
+		if (((clear > -1) && ((*option & clear) == value)) || *option == value) {
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
 		o++;
