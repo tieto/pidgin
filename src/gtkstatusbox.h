@@ -31,6 +31,14 @@
 #include "gtkimhtml.h"
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeview.h>
+#if !GTK_CHECK_VERSION(2,6,0)
+#	include "gtkcellview.h"
+#	include "gtkcellviewmenuitem.h"
+#	if !GTK_CHECK_VERSION(2,4,0)
+#		include "gtkcelllayout.h"
+#		include "gtkcombobox.h"
+#	endif /* Gtk 2.4 */
+#endif /* Gtk 2.6 */
 
 G_BEGIN_DECLS
 
