@@ -14,6 +14,8 @@ version 0.11.0-pre12:
 	  packet logs, aechols)
 	* More IRC improvements [colors, etc] (Thanks Sean Egan)
 	* Improved proxy options for TOC, IRC, MSN, Jabber
+	* Fixed a small issue with HTML not being stripped from
+	  log files properly (Thanks, faceprint)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)

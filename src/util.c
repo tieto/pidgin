@@ -439,9 +439,13 @@ FILE *open_log_file(char *name)
 		fd = fopen(l->filename, "a");
 
 		if (flag) {	/* is a new file */
-			fprintf(fd, "<HTML><HEAD><TITLE>");
-			fprintf(fd, "IM Sessions with %s", name);
-			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+			if (logging_options & OPT_LOG_STRIP_HTML) {
+			   fprintf(fd, "IM Sessions with %s\n", name);
+			}else {
+			   fprintf(fd, "<HTML><HEAD><TITLE>");
+			   fprintf(fd, "IM Sessions with %s", name);
+			   fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+			}
 		}
 
 		return fd;
@@ -451,9 +455,13 @@ FILE *open_log_file(char *name)
 	fd = open_gaim_log_file(realname, &flag);
 
 	if (fd && flag) {	/* is a new file */
-		fprintf(fd, "<HTML><HEAD><TITLE>");
-		fprintf(fd, "IM Sessions with %s", name);
-		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+		if (logging_options & OPT_LOG_STRIP_HTML) {
+		   fprintf(fd, "IM Sessions with %s\n", name);
+		}else {
+		   fprintf(fd, "<HTML><HEAD><TITLE>");
+		   fprintf(fd, "IM Sessions with %s", name);
+		   fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+		}
 	}
 
 	return fd;
