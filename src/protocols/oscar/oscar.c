@@ -46,6 +46,7 @@
 #include "aim.h"
 #include "md5.h"
 
+#define OSCAR_STATUS_ID_AVAILABLE	"available"
 #define OSCAR_STATUS_ID_INVISIBLE	"invisible"
 #define OSCAR_STATUS_ID_OFFLINE		"offline"
 #define OSCAR_STATUS_ID_ONLINE		"online"
@@ -5529,12 +5530,17 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	return;
 }
 
-static void oscar_set_status_aim(GaimConnection *gc, OscarData *od, const char *state, const char *text)
+static void oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 {
+	OscarData *od;
 	int charset = 0;
 	gchar *text_html = NULL;
+	const gchar *state;
 	char *msg = NULL;
 	gsize msglen = 0;
+
+	od = (OscarData *)account->gc->proto_data;
+	state = gaim_status_get_name(status);
 
 	if (!strcmp(state, _("Visible"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
@@ -5554,18 +5560,14 @@ static void oscar_set_status_aim(GaimConnection *gc, OscarData *od, const char *
 	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	if (od->rights.maxawaymsglen == 0)
-		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
+		gaim_notify_warning(account->gc, NULL, _("Unable to set AIM away message."),
 							_("You have probably requested to set your "
 							  "away message before the login procedure "
 							  "completed.  You remain in a \"present\" "
 							  "state; try setting it again when you are "
 							  "fully connected."));
 
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
-
+#if 0 /* this needs to be fixed when we have the custom away messages setup below */
 	if (!text) {
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 		return;
@@ -5605,17 +5607,15 @@ static void oscar_set_status_aim(GaimConnection *gc, OscarData *od, const char *
 	}
 	
 	g_free(text_html);
+#endif
 
 	return;
 }
 
-static void oscar_set_status_icq(GaimConnection *gc, OscarData *od, const char *state, const char *message)
+static void oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
+	OscarData *od = (OscarData *)account->gc->proto_data;
+	const gchar *state = gaim_status_get_name(status);
 
 	if (strcmp(state, _("Invisible")))
 		account->perm_deny = 4;
@@ -5628,42 +5628,37 @@ static void oscar_set_status_icq(GaimConnection *gc, OscarData *od, const char *
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 	else if (!strcmp(state, _("Away"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
-		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Do Not Disturb"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
-		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Not Available"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Occupied"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
-		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Free For Chat"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_CHAT);
-		gc->away = g_strdup("");
 	} else if (!strcmp(state, _("Invisible"))) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-		gc->away = g_strdup("");
+#if 0 /* XXX fix me!! */
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 	 	if (message) {
 			aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-			gc->away = g_strdup("");
 		} else {
 			aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 		}
+#endif
 	}
 
 	return;
 }
 
-static void oscar_set_status(GaimConnection *gc, const char *state, const char *message)
+static void oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
-	OscarData *od = (OscarData *)gc->proto_data;
+	OscarData *od = (OscarData *)account->gc->proto_data;
 
 	if (od->icq)
-		oscar_set_status_icq(gc, od, state, message);
+		oscar_set_status_icq(account, status);
 	else
-		oscar_set_status_aim(gc, od, state, message);
+		oscar_set_status_aim(account, status);
 
 	return;
 }
@@ -5893,6 +5888,7 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimStatus *status;
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimGroup *g;
 	GaimBuddy *b;
@@ -6083,7 +6079,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
 						if (od->icq && account->perm_deny == 0x03) {
-							serv_set_status(gc, "Invisible", "");
+							gaim_presence_switch_status(account->presence,
+														OSCAR_STATUS_ID_INVISIBLE);	
 						}
 					}
 				}
