@@ -386,6 +386,10 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 			}
 			ca = ca->next;
 		}
+		if (buf == NULL) {
+			g_free(buf2);
+			return;
+		}
 	}
 #endif
         
