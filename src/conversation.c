@@ -3030,7 +3030,8 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(win);
 
 	if (!(im_options & OPT_IM_ONE_WINDOW)
-			|| gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) == 0)
+			|| ((gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) == 0)
+				&& (c == g_list_nth_data(conversations, 0))))
 		gtk_widget_grab_focus(c->entry);
 }
 
