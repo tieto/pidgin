@@ -9,7 +9,7 @@ that kinda stuff and I don't log all my conversations.  Enjoy gaim!
 
 I. The Protocol
 	1. Is it the same protocol as the Windows client uses?
-	2. Where can I find info on it?
+	2. Where can I find info on TOC?
 	3. What other clients use this protocol?
 	4. TCP or UDP?
 	5. So the buddy list is stored on the server?
@@ -66,8 +66,10 @@ I. The Protocol
 and undocumented.  Some people have used network tools and such to figure
 it mostly out -- Look for 'faim'.  We use TOC, which is completely open and
 documented. 
+		There is some support for libfaim now, which allows gaim to
+use Oscar, but DON'T USE IT! It's seriously buggy.
 
-	2. Where can I find info on it?
+	2. Where can I find info on TOC?
 		In the document called PROTOCOL. It's the version that was
 published with AOL's TiK client version 0.75, which appears to be the last
 one ever published.
@@ -75,12 +77,14 @@ one ever published.
 	3. What other clients use this protocol?
 		There are a few other Unix programs that use it, I think. I
 really couldn't tell you though. AOL used to keep a list of them, but no more.
+I think some of them are Everybuddy and Jabber. Oh yeah, TiK is still around.
 
 	4. TCP or UDP?
 		TCP.
 
 	5. So the buddy list is stored on the server?
-		Yep.
+		Yep. Fortunately for you, when the server decides to *not* store
+it any more, gaim keeps a cached copy.
 
 
 II. The Client
@@ -94,8 +98,9 @@ Girls, Godzilla, GTK, graham crackers, whatever.
 Future versions intend to handle this and renaming groups better.
 
 	3. How come there's no file transfer?
-		The TOC server doesn't (yet) support file transfer. Be
-patient!  It is coming.
+		There is, it's just that you can't request for the transfer to
+take place. Only people who use the Oscar protocol can, so you're out of luck
+there. At least you can get and send files.
 
 	4. Why no AOL logo?
 		AOL's legal staff told us no-no.
@@ -125,10 +130,10 @@ translation for us, I'd greatly appreciate it!  Just let me know and I'll
 give you detailed instructions on how to do it.
  
 	8. I'm behind a proxy, and I'd like to use GAIM.
-		Well, I'm planning to add more 'real' proxy support in the
-future, but it's not all that high on my priority list.  For now, try
-changing the two PORT defines in gaim.h to 21 -- The TOC server listens on
-ALL ports, and a lot of proxy servers allow port 21 to pass through.
+		I *think* HTTP and SOCKS v4 proxy support is completely working.
+But since I don't have a SOCKS proxy to test it on, I really couldn't tell you.
+If it doesn't work, a temporary solution is to try setting the TOC port to 21,
+since a lot of proxies will allow that to pass.
 
 
 III. Problems
@@ -146,8 +151,9 @@ configurable.)
 	2. My buddy list disappeared!
 		You didn't back up your buddy list, did you?  You never back
 anything up!  Oh well.  The TOC server loses lists from time to time, it
-happens to me as well.  (And no, I never have a backup ;).  I intend to
-support saving lists on your own computer in the future.
+happens to me as well.  (And no, I never have a backup ;).  Gaim should have
+kept a cache of your buddy list, though, so you shouldn't have this problem any
+more.
 
         3. I click on URLs, but Netscape doesn't popup!
 		Netscape either needs to be running on the current display
@@ -282,11 +288,9 @@ cygwin and I think other windows compilers set).
 		I like the GPL.  
 
 	8. I use *BSD and I hate the penguin!  I want daemon images!
-		I do have a nice pixmap of the daemon, and one of these days
-I will do a second set of buttons.  You'll have to wait (or send me button
-pixmaps yourself).  I still don't understand why ya'll hate the penguin
-though, maybe it's just jealousy cause our OS gets all the media attention? 
-I kinda like the daemon :)
+		Quit your complaining! They're there already! I stukk don't
+understand why ya'll hate the penguin though, maybe it's just jealousy cause
+our OS gets all the media attention? I kinda like the daemon :)
 
 	9. Can I design a logo for you?
 		Sure!  Do your best.  Entries may be emailed to: 
