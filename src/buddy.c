@@ -486,6 +486,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			}
 
 			gtk_tree_path_free(path);
+			gaim_blist_save();
 		}
 	}
 }
