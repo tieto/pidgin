@@ -421,13 +421,14 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
+	if (!USE_OSCAR) {
 		button = gtk_menu_item_new_with_label(_("Dir Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+	} else {
 
-	if (USE_OSCAR) {
 		button = gtk_menu_item_new_with_label(_("Direct IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(serv_do_imimage), b->name);
