@@ -135,17 +135,17 @@ typedef struct
  */
 struct _GaimStatusSaved
 {
-	char *name;
-	GaimStatusType *type;
+	char *title;
+	GaimStatusPrimitive type;
 	char *message;
 
-	GList *individual;      /**< A list of GaimStatusSavedSub's. */
+	GList *substatuses;      /**< A list of GaimStatusSavedSub's. */
 };
 
 struct _GaimStatusSavedSub
 {
 	GaimAccount *account;
-	GaimStatusType *type;
+	const GaimStatusType *type;
 	char *message;
 };
 
@@ -168,6 +168,37 @@ static GList *saved_statuses = NULL;
 
 #define SCORE_IDLE      5
 #define SCORE_IDLE_TIME 6
+
+/**
+ * Elements of this array correspond to the GaimStatusPrimitive
+ * enumeration.
+ */
+static const char *primitive_names[] =
+{
+	"unset",
+	"offline",
+	"available",
+	"unavailable",
+	"hidden",
+	"away",
+	"extended_away"
+};
+
+static GaimStatusPrimitive
+gaim_primitive_get_type(const char *name)
+{
+	int i;
+
+	g_return_val_if_fail(name != NULL, GAIM_STATUS_UNSET);
+
+	for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+	{
+		if (!strcmp(name, primitive_names[i]))
+			return i;
+	}
+
+	return GAIM_STATUS_UNSET;
+}
 
 /**************************************************************************
  * GaimStatusType API
@@ -432,6 +463,24 @@ gaim_status_type_get_attrs(const GaimStatusType *status_type)
 	return status_type->attrs;
 }
 
+const GaimStatusType *
+gaim_status_type_find_with_id(GList *status_types, const char *id)
+{
+	GaimStatusType *status_type;
+
+	g_return_val_if_fail(id != NULL, NULL);
+
+	while (status_types != NULL)
+	{
+		status_type = status_types->data;
+
+		if (!strcmp(id, status_type->id))
+			return status_type;
+	}
+
+	return NULL;
+}
+
 
 /**************************************************************************
 * GaimStatusAttr API
@@ -613,12 +662,31 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 	}
 	else if (context == GAIM_PRESENCE_CONTEXT_CONV)
 	{
-/* TODO */
 #if 0
 		GaimConversationUiOps *ops;
 		GaimConversation *conv;
 
 		conv = gaim_status_get_conversation(new_status);
+/*
+ * TODO: Probably need to do some of the following here?  This is copied
+ *       from some old status code that was removed.
+ *
+ *           char *tmp = g_strdup_printf(_("%s logged in."), alias);
+ *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+ *           g_free(tmp);
+ *
+ *           char *tmp = g_strdup_printf(_("%s logged out."), alias);
+ *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+ *           g_free(tmp); 
+ *
+ *           char *tmp = g_strdup_printf(_("%s signed off"), alias);
+ *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
+ *           g_free(tmp);
+ *
+ *           serv_got_typing_stopped(gc, name);
+ *
+ *           gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
+ */
 #endif
 	}
 	else if (context == GAIM_PRESENCE_CONTEXT_BUDDY)
@@ -630,6 +698,14 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 			notify_buddy_status_update((GaimBuddy *)l->data, presence,
 					old_status, new_status);
 		}
+
+/*
+ * TODO: Maybe we should do this here?
+ *           GaimLog *log = gaim_account_get_log(account);
+ *           char *tmp = g_strdup_printf(_("%s signed on"), alias);
+ *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
+ *           g_free(tmp);
+ */
 	}
 }
 
@@ -1168,35 +1244,6 @@ gaim_presence_add_presence(GaimPresence *presence, const GList *source_list)
 		gaim_presence_add_status(presence, (GaimStatus *)l->data);
 }
 
-/*
- * TODO: Should we g_return_if_fail(active == status_id->active); ?
- *
- * TODO: If a buddy signed on or off, should we do any of the following?
- *       (Note: We definitely need to do some of this somewhere, I'm just 
- *        not sure if here is the correct place.)
- *
- *           char *tmp = g_strdup_printf(_("%s logged in."), alias);
- *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
- *           g_free(tmp);
- *
- *           GaimLog *log = gaim_account_get_log(account);
- *           char *tmp = g_strdup_printf(_("%s signed on"), alias);
- *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
- *           g_free(tmp);
- *
- *           char *tmp = g_strdup_printf(_("%s logged out."), alias);
- *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
- *           g_free(tmp); 
- *
- *           char *tmp = g_strdup_printf(_("%s signed off"), alias);
- *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
- *           g_free(tmp);
- *
- *           serv_got_typing_stopped(gc, name);
- *
- *           gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
- *
- */
 void
 gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 		gboolean active)
@@ -1209,6 +1256,8 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 	status = gaim_presence_get_status(presence, status_id);
 
 	g_return_if_fail(status != NULL);
+	/* TODO: Should we do the following? */
+	/* g_return_if_fail(active == status->active); */
 
 	if (gaim_status_is_exclusive(status))
 	{
@@ -1656,7 +1705,7 @@ gaim_statuses_get_saved(void)
 }
 
 GaimStatusSaved *
-gaim_statuses_find_saved(const char *name)
+gaim_statuses_find_saved(const char *title)
 {
 	GList *l;
 	GaimStatusSaved *status;
@@ -1664,7 +1713,7 @@ gaim_statuses_find_saved(const char *name)
 	for (l = saved_statuses; l != NULL; l = g_list_next(l))
 	{
 		status = (GaimStatusSaved *)l->data;
-		if (!strcmp(status->name, name))
+		if (!strcmp(status->title, title))
 			return status;
 	}
 
@@ -1672,12 +1721,12 @@ gaim_statuses_find_saved(const char *name)
 }
 
 const char *
-gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status)
+gaim_statuses_saved_get_title(const GaimStatusSaved *saved_status)
 {
-	return saved_status->name;
+	return saved_status->title;
 }
 
-const GaimStatusType *
+GaimStatusPrimitive
 gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status)
 {
 	return saved_status->type;
@@ -1751,10 +1800,49 @@ gaim_statuses_uninit(void)
 	}
 }
 
-void
-gaim_statuses_sync(void)
+static GaimStatusSavedSub *
+gaim_statuses_read_parse_substatus(xmlnode *substatus)
 {
-	/* TODO: Write me, baby. */
+	GaimStatusSavedSub *ret;
+	xmlnode *node;
+	const char *tmp;
+
+	ret = g_new0(GaimStatusSavedSub, 1);
+
+	/* Read the account */
+	node = xmlnode_get_child(substatus, "account");
+	if (node != NULL)
+	{
+		const char *acct_name;
+		const char *protocol;
+		acct_name = xmlnode_get_data(node);
+		protocol = xmlnode_get_attrib(node, "protocol");
+		if ((acct_name != NULL) && (protocol != NULL))
+			ret->account = gaim_accounts_find(acct_name, protocol);
+	}
+
+	if (ret->account == NULL)
+	{
+		g_free(ret);
+		return NULL;
+	}
+
+	/* Read the state */
+	node = xmlnode_get_child(substatus, "state");
+	if (node != NULL)
+		tmp = xmlnode_get_data(node);
+	if (tmp != NULL)
+		ret->type = gaim_status_type_find_with_id(ret->account->status_types,
+												  tmp);
+
+	/* Read the message */
+	node = xmlnode_get_child(substatus, "message");
+	if (node != NULL)
+		tmp = xmlnode_get_data(node);
+	if (tmp != NULL)
+		ret->message = g_strdup(tmp);
+
+	return ret;
 }
 
 /**
@@ -1767,58 +1855,76 @@ gaim_statuses_sync(void)
  *   And it's chill to hear them talk
  *   And I can always make them smile
  *   From White Castle to the Nile</message>
+ *       <substatus>
+ *           <account protocol='prpl-oscar'>markdoliner</account>
+ *           <state>available</state>
+ *           <message>The ladies man is here to answer your queries.</message>
+ *       </substatus>
+ *       <substatus>
+ *           <account protocol='prpl-oscar'>giantgraypanda</account>
+ *           <state>away</state>
+ *           <message>A.C. ain't in charge no more.</message>
+ *       </substatus>
  *   </status>
  *
  * I know.  Moving, huh?
  */
-static void
+static GaimStatusSaved *
 gaim_statuses_read_parse_status(xmlnode *status)
 {
+	GaimStatusSaved *ret;
 	xmlnode *node;
-	const char *name, *state, *message;
-	GaimStatusSaved *new;
+	const char *tmp;
 	int i;
 
-	name = xmlnode_get_attrib(status, "name");
-	if (name == NULL)
-		name = "No Title";
+	ret = g_new0(GaimStatusSaved, 1);
 
-	node = xmlnode_get_child(status, "state");
-	if (node != NULL) {
-		state = xmlnode_get_data(node);
-	}
-
-	node = xmlnode_get_child(status, "message");
-	if (node != NULL) {
-		message = xmlnode_get_data(node);
-	}
-
-	/* TODO: Need to read in substatuses here */
-
-	new = g_new0(GaimStatusSaved, 1);
-
-	new->name = g_strdup(name);
-	/* TODO: Need to set type based on "state" */
-	new->type = NULL;
-	if (message != NULL)
-		new->message = g_strdup(message);
-
+	/* Read the title */
+	tmp = xmlnode_get_attrib(status, "name");
+	if (tmp == NULL)
+		tmp = "No Title";
 	/* Ensure the title is unique */
+	ret->title = g_strdup(tmp);
 	i = 2;
-	while (gaim_statuses_find_saved(new->name) != NULL) {
-		g_free(new->name);
-		new->name = g_strdup_printf("%s %d", name, i);
+	while (gaim_statuses_find_saved(ret->title) != NULL)
+	{
+		g_free(ret->title);
+		ret->title = g_strdup_printf("%s %d", tmp, i);
 		i++;
 	}
 
-	saved_statuses = g_list_append(saved_statuses, new);
+	/* Read the primitive status type */
+	node = xmlnode_get_child(status, "state");
+	if (node != NULL)
+		tmp = xmlnode_get_data(node);
+	if (tmp != NULL)
+		ret->type = gaim_primitive_get_type(tmp);
+
+	/* Read the message */
+	node = xmlnode_get_child(status, "message");
+	if (node != NULL)
+		tmp = xmlnode_get_data(node);
+	if (tmp != NULL)
+		ret->message = g_strdup(tmp);
+
+	/* Read substatuses */
+	for (node = xmlnode_get_child(status, "status"); node != NULL;
+			node = xmlnode_get_next_twin(node))
+	{
+		GaimStatusSavedSub *new;
+		new = gaim_statuses_read_parse_substatus(node);
+		if (new != NULL)
+			ret->substatuses = g_list_append(ret->substatuses, new);
+	}
+
+	return ret;
 }
 
 /**
  * @return TRUE on success, FALSE on failure (if the file can not
  *         be opened, or if it contains invalid XML).
  */
-gboolean
+static gboolean
 gaim_statuses_read(const char *filename)
 {
 	GError *error;
@@ -1828,7 +1934,8 @@ gaim_statuses_read(const char *filename)
 
 	gaim_debug_info("status", "Reading %s\n", filename);
 
-	if (!g_file_get_contents(filename, &contents, &length, &error)) {
+	if (!g_file_get_contents(filename, &contents, &length, &error))
+	{
 		gaim_debug_error("status", "Error reading statuses: %s\n",
 						 error->message);
 		g_error_free(error);
@@ -1837,16 +1944,20 @@ gaim_statuses_read(const char *filename)
 
 	statuses = xmlnode_from_str(contents, length);
 
-	if (statuses == NULL) {
+	if (statuses == NULL)
+	{
 		FILE *backup;
 		gchar *name;
 		gaim_debug_error("status", "Error parsing statuses\n");
 		name = g_strdup_printf("%s~", filename);
-		if ((backup = fopen(name, "w"))) {
+		if ((backup = fopen(name, "w")))
+		{
 			fwrite(contents, length, 1, backup);
 			fclose(backup);
 			chmod(name, S_IRUSR | S_IWUSR);
-		} else {
+		}
+		else
+		{
 			gaim_debug_error("status", "Unable to write backup %s\n", name);
 		}
 		g_free(name);
@@ -1857,8 +1968,11 @@ gaim_statuses_read(const char *filename)
 	g_free(contents);
 
 	for (status = xmlnode_get_child(statuses, "status"); status != NULL;
-			status = xmlnode_get_next_twin(status)) {
-		gaim_statuses_read_parse_status(status);
+			status = xmlnode_get_next_twin(status))
+	{
+		GaimStatusSaved *new;
+		new = gaim_statuses_read_parse_status(status);
+		saved_statuses = g_list_append(saved_statuses, new);
 	}
 
 	gaim_debug_info("status", "Finished reading statuses\n");
@@ -1880,8 +1994,10 @@ gaim_statuses_load(void)
 
 	filename = g_build_filename(user_dir, "status.xml", NULL);
 
-	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		if (!gaim_statuses_read(filename)) {
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+	{
+		if (!gaim_statuses_read(filename))
+		{
 			msg = g_strdup_printf(_("An error was encountered parsing the "
 						"file containing your saved statuses (%s).  They "
 						"have not been loaded, and the old file has been "
@@ -1892,4 +2008,10 @@ gaim_statuses_load(void)
 	}
 
 	g_free(filename);
+}
+
+void
+gaim_statuses_sync(void)
+{
+	/* TODO: Write me, baby. */
 }

@@ -5029,9 +5029,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
 	} else if (flags & GAIM_MESSAGE_RAW) {
-		g_snprintf(buf, BUF_LONG, "%s", message);
-
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, 0);
 	} else {
 		char *new_message = g_memdup(message, length);
 		char *who_escaped = (who ? g_markup_escape_text(who, strlen(who)) : g_strdup(""));

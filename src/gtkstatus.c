@@ -432,7 +432,7 @@ populate_saved_status_list(StatusWindow *dialog)
 		saved_status = (GaimStatusSaved *)saved_statuses->data;
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter, 0,
-						   gaim_statuses_saved_get_name(saved_status), -1);
+						   gaim_statuses_saved_get_title(saved_status), -1);
 	}
 }
 

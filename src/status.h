@@ -58,7 +58,8 @@ typedef enum
 	GAIM_STATUS_UNAVAILABLE,
 	GAIM_STATUS_HIDDEN,
 	GAIM_STATUS_AWAY,
-	GAIM_STATUS_EXTENDED_AWAY
+	GAIM_STATUS_EXTENDED_AWAY,
+	GAIM_STATUS_NUM_PRIMITIVES
 
 } GaimStatusPrimitive;
 
@@ -295,6 +296,18 @@ GaimStatusAttr *gaim_status_type_get_attr(const GaimStatusType *status_type,
  * @return The list of attributes.
  */
 const GList *gaim_status_type_get_attrs(const GaimStatusType *status_type);
+
+/**
+ * Find the GaimStatusType with the given id.
+ *
+ * @param status_types A list of status types.  Often account->status_types.
+ * @param id The unique ID of the status type you wish to find.
+ *
+ * @return The status type with the given ID, or NULL if one could
+ *         not be found.
+ */
+const GaimStatusType *gaim_status_type_find_with_id(GList *status_types,
+													const char *id);
 
 /*@}*/
 
@@ -896,11 +909,20 @@ const GList *gaim_statuses_get_saved(void);
 /**
  * Finds a saved status with the specified title.
  *
- * @param name The name of the saved status.
+ * @param title The name of the saved status.
  *
  * @return The saved status if found, or NULL.
  */
-GaimStatusSaved *gaim_statuses_find_saved(const char *name);
+GaimStatusSaved *gaim_statuses_find_saved(const char *title);
+
+/**
+ * Return the name of a given saved status.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return The title.
+ */
+const char *gaim_statuses_saved_get_title(const GaimStatusSaved *saved_status);
 
 /**
  * Return the name of a given saved status.
@@ -909,16 +931,7 @@ GaimStatusSaved *gaim_statuses_find_saved(const char *name);
  *
  * @return The name.
  */
-const char *gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status);
-
-/**
- * Return the name of a given saved status.
- *
- * @param saved_status The saved status.
- *
- * @return The name.
- */
-const GaimStatusType *gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status);
+GaimStatusPrimitive gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status);
 
 /**
  * Return the name of a given saved status.
@@ -947,14 +960,14 @@ void gaim_statuses_init(void);
 void gaim_statuses_uninit(void);
 
 /**
- * Syncs status information to the file.
- */
-void gaim_statuses_sync(void);
-
-/**
  * Syncs status information from a file.
  */
 void gaim_statuses_load(void);
+
+/**
+ * Syncs status information to the file.
+ */
+void gaim_statuses_sync(void);
 
 /*@}*/
 

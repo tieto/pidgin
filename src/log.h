@@ -38,11 +38,11 @@ typedef struct _GaimLogLogger GaimLogLogger;
 typedef enum {
 	GAIM_LOG_IM,
 	GAIM_LOG_CHAT,
-	GAIM_LOG_SYSTEM,
+	GAIM_LOG_SYSTEM
 } GaimLogType;
 
 typedef enum {
-	GAIM_LOG_READ_NO_NEWLINE = 1,
+	GAIM_LOG_READ_NO_NEWLINE = 1
 } GaimLogReadFlags;
 
 #include "account.h"

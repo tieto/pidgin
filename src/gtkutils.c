@@ -1507,10 +1507,11 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 
 			if (gc)
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
 
-			if (prpl_info && prpl_info->send_file)
+			if (prpl_info && prpl_info->can_receive_file)
 				ft = prpl_info->can_receive_file(gc, who);
 
 			if (im && ft)
