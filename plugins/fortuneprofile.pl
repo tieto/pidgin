@@ -89,7 +89,7 @@ sub plugin_load {
 	# output the first message and start the timers...
 	# This is done as a timeout to prevent attempts to set the
 	# profile before logging in.
-	Gaim::timeout_add($plugin, $seconds, "update_away", NULL);
+	Gaim::timeout_add($plugin, $seconds, \&update_away, 0);
 }
 
 sub update_away {
@@ -122,7 +122,5 @@ sub update_away {
     }
   }
 
-  Gaim::timeout_add($plugin, $seconds, "update_away", NULL);
+  Gaim::timeout_add($plugin, $seconds, \&update_away, 0);
 }
-
-
