@@ -1462,8 +1462,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Tab:
-				if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-					gaim_prefs_get_bool("/gaim/gtk/conversations/chat/tab_completion"))
+				if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
 				{
 					tab_complete(conv);
 					return TRUE;
@@ -2992,14 +2991,6 @@ tab_complete(GaimConversation *conv)
 	entered = gtk_text_buffer_get_text(gtkconv->entry_buffer, &word_start,
 									   &cursor, FALSE);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/chat/old_tab_complete")) {
-		if (strlen(entered) >= 2 &&
-			!strncmp(": ", entered + strlen(entered) - 2, 2)) {
-
-			entered[strlen(entered) - 2] = 0;
-		}
-	}
-
 	if (!g_utf8_strlen(entered, -1)) {
 		g_free(entered);
 		return;
@@ -3020,41 +3011,6 @@ tab_complete(GaimConversation *conv)
 
 		/* if we're here, it's a possible completion */
 
-		/* if we're doing old-style, just fill in the completion */
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/chat/old_tab_complete")) {
-			gtk_text_buffer_delete(gtkconv->entry_buffer,
-								   &word_start, &cursor);
-
-			if (strlen(nick) == strlen(entered)) {
-				nicks = (nicks->next
-						 ? nicks->next
-						 : gaim_conv_chat_get_users(chat));
-
-				nick = nicks->data;
-			}
-
-			gtk_text_buffer_get_start_iter(gtkconv->entry_buffer,
-										   &start_buffer);
-			gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &cursor,
-					gtk_text_buffer_get_insert(gtkconv->entry_buffer));
-
-			if (!gtk_text_iter_compare(&cursor, &start_buffer)) {
-				char *tmp = g_strdup_printf("%s: ", nick);
-				gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer,
-												 tmp, -1);
-				g_free(tmp);
-			}
-			else
-				gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer,
-												 nick, -1);
-
-			g_free(nick_partial);
-			g_free(entered);
-
-			return;
-		}
-
-		/* we're only here if we're doing new style */
 		if (most_matched == -1) {
 			/*
 			 * this will only get called once, since from now
@@ -5919,9 +5875,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/button_type",
 					   GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/color_nicks", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/old_tab_complete", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/tab_completion", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);

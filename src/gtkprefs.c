@@ -1050,20 +1050,8 @@ GtkWidget *chat_page() {
 
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("New window _width:"),
-			"/gaim/gtk/conversations/chat/default_width", 25, 9999, sg);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("New window _height:"),
-			"/gaim/gtk/conversations/chat/default_height", 25, 9999, sg);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("_Entry field height:"),
-			"/gaim/gtk/conversations/chat/entry_height", 25, 9999, sg);
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
-
-	vbox = gaim_gtk_make_frame (ret, _("Tab Completion"));
-	gaim_gtk_prefs_checkbox(_("_Tab-complete nicks"),
-			"/gaim/gtk/conversations/chat/tab_completion", vbox);
-	gaim_gtk_prefs_checkbox(_("_Old-style tab completion"),
-			"/gaim/gtk/conversations/chat/old_tab_complete", vbox);
 #endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 #if 0 /* PREFSLASH04 */
@@ -3016,4 +3004,6 @@ void gaim_gtk_prefs_update_old() {
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 }

@@ -118,7 +118,6 @@
 #define OPT_CHAT_POPUP			0x00000010
 #define OPT_CHAT_SIDE_TAB		0x00000020
 #define OPT_CHAT_BR_TAB			0x00000040
-#define OPT_CHAT_TAB_COMPLETE		0x00000080
 #define OPT_CHAT_OLD_STYLE_TAB		0x00000100
 #define OPT_CHAT_COLORIZE               0x00000200
 
@@ -1072,10 +1071,6 @@ static void gaimrc_read_options(FILE *f)
 					chat_options & OPT_CHAT_LOGON);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",
 					chat_options & OPT_CHAT_POPUP);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/tab_completion",
-					chat_options & OPT_CHAT_TAB_COMPLETE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/old_tab_complete",
-					chat_options & OPT_CHAT_OLD_STYLE_TAB);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/color_nicks",
 					chat_options & OPT_CHAT_COLORIZE);
 
@@ -1401,7 +1396,6 @@ static void set_defaults()
 	chat_options =
 		OPT_CHAT_LOGON |
 		OPT_CHAT_BUTTON_XPM |
-		OPT_CHAT_TAB_COMPLETE |
 		OPT_CHAT_ONE_WINDOW;
 
 	font_options = 0;
