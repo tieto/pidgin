@@ -2286,7 +2286,7 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	if ((dupl = g_slist_find(gc->deny, who))) {
+	if ((dupl = g_slist_find_custom(gc->deny, who, strcmp))) {
 		debug_printf("MSN: Moving %s from BL to AL\n", who);
 		gc->deny = g_slist_remove(gc->deny, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
@@ -2338,7 +2338,7 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	if ((dupl = g_slist_find(gc->permit, who))) {
+	if ((dupl = g_slist_find_custom(gc->permit, who, strcmp))) {
 		debug_printf("MSN: Moving %s from AL to BL\n", who);
 		gc->permit = g_slist_remove(gc->permit, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
