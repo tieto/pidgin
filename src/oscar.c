@@ -538,7 +538,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		debug_printf("Error URL: %s\n", errurl);
 		aim_conn_kill(sess, &command->conn);
 		signoff(gc);
-		return 0;
+		return -1;
 	}
 
 
