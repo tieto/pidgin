@@ -94,6 +94,7 @@ EXTRA_DIST =	ab.xpm				\
 		smile_icon.xpm			\
 		speaker.xpm			\
 		status-away.xpm			\
+		status-game.xpm			\
 		status-here.xpm			\
 		status-idle.xpm			\
 		strike.xpm			\
