@@ -386,13 +386,6 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
     perl_done:
 
-    ; If we don't have install rights and no hklm GTK install.. then Start in lnk property should
-    ; remain gaim dir.. otherwise it should be set to the GTK bin dir. (to avoid dll hell)
-    StrCmp $R0 "NONE" 0 startin_gtk
-      StrCmp $R1 "" startin_gaim
-    startin_gtk:
-      SetOutPath "$R1\bin"
-    startin_gaim:
     CreateDirectory "$SMPROGRAMS\Gaim"
     CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
     CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
