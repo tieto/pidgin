@@ -220,6 +220,8 @@ static int point_to_html(int x)
 		return 6;
 	return 7;
 }
+
+/* The Yahoo size tag is actually an absz tag; convert it to an HTML size, and include both tags */
 static void _font_tags_fix_size(GString *tag, GString *dest)
 {
 	char *x, *end;
@@ -229,10 +231,13 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 		while (*x && !g_ascii_isdigit(*x))
 			x++;
 		if (*x) {
+			int htmlsize;
+
 			size = strtol(x, &end, 10);
-			size = point_to_html(size);
+			htmlsize = point_to_html(size);
 			g_string_append_len(dest, tag->str, x - tag->str);
-			g_string_append_printf(dest, "%d", size);
+			g_string_append_printf(dest, "%d", htmlsize);
+			g_string_append_printf(dest, "\" absz=\"%d", size);
 			g_string_append(dest, end);
 		} else {
 			g_string_append(dest, tag->str);
@@ -249,7 +254,6 @@ char *yahoo_codes_to_html(const char *x)
 	GString *s, *tmp;
 	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
 	char *match, *ret;
-
 
 	s = g_string_sized_new(strlen(x));
 
