@@ -12,6 +12,18 @@ General
 - Make sure when including win32dep.h that it is the last header to
   be included.
 
+Paths
+-----
+
+- DATADIR, LOCALEDIR & LIBDIR are defined in wingaim as functions.
+  Doing the following will therefore break the windows build:
+
+  printf("File in DATADIR is: %s\n", DATADIR G_DIR_SEPARATOR_S "pic.png");
+
+  it should be:
+
+  printf("File in DATADIR is: %s%s%s\n", DATADIR, G_DIR_SEPARATOR_S, "pic.png");
+
 PLUGINS & PROTOS
 ----------------
 
