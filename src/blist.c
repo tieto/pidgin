@@ -965,7 +965,6 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimGroup *g;
 	GaimBlistNode *gnode, *cnode, *bnode;
-	gboolean empty_contact = FALSE;
 
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT((GaimBlistNode*)contact));
@@ -995,19 +994,10 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		if (cnode->next)
 			cnode->next->prev = cnode->prev;
 
-
-		if (contact->online > 0)
-			((GaimGroup*)cnode->parent)->online--;
-		if (contact->currentsize > 0)
-			((GaimGroup*)cnode->parent)->currentsize--;
-		((GaimGroup*)cnode->parent)->totalsize--;
-
-		ops->remove(gaimbuddylist, cnode);
-
-		schedule_blist_save();
-
 		if (cnode->parent != gnode) {
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+			bnode = cnode->child;
+			while (bnode) {
+				GaimBlistNode *next_bnode = bnode->next;
 				GaimBuddy *b = (GaimBuddy*)bnode;
 
 				struct _gaim_hbuddy *hb = g_new(struct _gaim_hbuddy, 1);
@@ -1024,6 +1014,8 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 					if (b->account->gc)
 						serv_move_buddy(b, (GaimGroup *)cnode->parent, g);
 				} else {
+					gboolean empty_contact = FALSE;
+
 					/* this buddy already exists in the group, so we're
 					 * gonna delete it instead */
 					g_free(hb->name);
@@ -1034,14 +1026,27 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 					if (!cnode->child->next)
 						empty_contact = TRUE;
 					gaim_blist_remove_buddy(b);
+
+					/** in gaim_blist_remove_buddy(), if the last buddy in a
+					 * contact is removed, the contact is cleaned up and
+					 * g_free'd, so we mustn't try to reference bnode->next */
+					if (empty_contact)
+						return;
 				}
+				bnode = next_bnode;
 			}
 		}
+
+		if (contact->online > 0)
+			((GaimGroup*)cnode->parent)->online--;
+		if (contact->currentsize > 0)
+			((GaimGroup*)cnode->parent)->currentsize--;
+		((GaimGroup*)cnode->parent)->totalsize--;
+
+		ops->remove(gaimbuddylist, cnode);
+
+		schedule_blist_save();
 	}
-
-	if (empty_contact)
-		return;
-
 
 	if (node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
 				GAIM_BLIST_NODE_IS_CHAT(node))) {
