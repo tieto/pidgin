@@ -44,7 +44,7 @@ msn_error_get_text(unsigned int type)
 					   _("Fully Qualified Domain Name missing"));
 			break;
 		case 207:
-			g_snprintf(msg, sizeof(msg), _("Already Login"));
+			g_snprintf(msg, sizeof(msg), _("Already Logged In"));
 			break;
 		case 208:
 			g_snprintf(msg, sizeof(msg), _("Invalid Username"));
