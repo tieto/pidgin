@@ -231,6 +231,9 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 		buddy->present = GAIM_BUDDY_ONLINE;
 	} else if(buddy->present == GAIM_BUDDY_SIGNING_OFF) {
 		buddy->present = GAIM_BUDDY_OFFLINE;
+		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online--;
+		if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 0)
+			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online--;
 	}
 
 	buddy->timer = 0;
@@ -264,9 +267,6 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
 		do_timer = TRUE;
-		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online--;
-		if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 0)
-			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online--;
 	}
 
 	if(do_timer) {
