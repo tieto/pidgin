@@ -123,6 +123,7 @@ struct buddy_icon {
 
 struct toc_data {
 	int toc_fd;
+	char toc_ip[20];
 	int seqno;
 	int state;
 };
@@ -215,6 +216,8 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	struct gaim_connection *gc = data;
 	struct toc_data *tdt;
 	char buf[80];
+	struct sockaddr_in name;
+	socklen_t namelen;
 
 	if (!g_slist_find(connections, data)) {
 		toc_soc_close(source);
@@ -230,6 +233,18 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 		return;
 	}
 	tdt->toc_fd = source;
+
+	/*
+	 * Copy the IP that we're connected to.  We need this because "GOTO_URL"'s 
+	 * should open on the exact server we're connected to.  toc.oscar.aol.com 
+	 * doesn't work because that hostname resolves to multiple IP addresses.
+	 */
+	if (getpeername(tdt->toc_fd, (struct sockaddr *)&name, &namelen) == 0)
+		strncpy(tdt->toc_ip, inet_ntoa(name.sin_addr), sizeof(tdt->toc_ip));
+	else if (gc->account && gc->account->proto_opt[USEROPT_AUTH][0])
+		strncpy(tdt->toc_ip, gc->account->proto_opt[USEROPT_AUTH], sizeof(tdt->toc_ip));
+	else
+		strncpy(tdt->toc_ip, TOC_HOST, sizeof(tdt->toc_ip));
 
 	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
@@ -808,9 +823,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		name = strtok(NULL, ":");
 		url = strtok(NULL, ":");
 
-		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s",
-				gc->account->proto_opt[USEROPT_AUTH][0] ?
-					gc->account->proto_opt[USEROPT_AUTH] : TOC_HOST,
+		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", tdt->toc_ip,
 				gc->account->proto_opt[USEROPT_AUTHPORT][0] ?
 					atoi(gc->account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
 				url);
