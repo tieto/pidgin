@@ -599,18 +599,17 @@ void show_new_buddy_chat(struct conversation *b)
         bbox2 = gtk_hbox_new(TRUE, 0);
         vbox = gtk_vbox_new(FALSE, 0);
         lbox = gtk_vbox_new(FALSE, 4);
+
 	chatentry = gtk_text_new( NULL, NULL );
 	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
-
 	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
+	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
+	b->entry = chatentry;
 
 	gtk_widget_realize(win);
 
 	toolbar = build_conv_toolbar(b);
 
-	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
-	b->entry = chatentry;
-	
 	/* Hack something so we know have an entry click event */
 
 	gtk_signal_connect(GTK_OBJECT(chatentry), "activate", GTK_SIGNAL_FUNC(send_callback),b);
