@@ -831,12 +831,14 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_PASSWORD) {
-		if (data->in_proxy) {
-			gaim_proxy_info_set_password(data->proxy_info, buffer);
-		}
-		else {
-			gaim_account_set_password(data->account, buffer);
-			gaim_account_set_remember_password(data->account, TRUE);
+		if (strcmp(buffer, "")) {
+			if (data->in_proxy) {
+				gaim_proxy_info_set_password(data->proxy_info, buffer);
+			}
+			else {
+				gaim_account_set_password(data->account, buffer);
+				gaim_account_set_remember_password(data->account, TRUE);
+			}
 		}
 	}
 	else if (data->tag == TAG_ALIAS)
@@ -864,38 +866,38 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_HOST) {
-		if (data->in_proxy) {
+		if (data->in_proxy && strcmp(buffer, ""))
 			gaim_proxy_info_set_host(data->proxy_info, buffer);
-		}
 	}
 	else if (data->tag == TAG_PORT) {
-		if (data->in_proxy) {
+		if (data->in_proxy && strcmp(buffer, ""))
 			gaim_proxy_info_set_port(data->proxy_info, atoi(buffer));
-		}
 	}
 	else if (data->tag == TAG_SETTING) {
-		if (data->setting_ui != NULL) {
-			if (data->setting_type == GAIM_PREF_STRING)
-				gaim_account_set_ui_string(data->account, data->setting_ui,
-										   data->setting_name, buffer);
-			else if (data->setting_type == GAIM_PREF_INT)
-				gaim_account_set_ui_int(data->account, data->setting_ui,
-										data->setting_name, atoi(buffer));
-			else if (data->setting_type == GAIM_PREF_BOOLEAN)
-				gaim_account_set_ui_bool(data->account, data->setting_ui,
-										 data->setting_name,
-										 (*buffer == '0' ? FALSE : TRUE));
-		}
-		else {
-			if (data->setting_type == GAIM_PREF_STRING)
-				gaim_account_set_string(data->account, data->setting_name,
-										buffer);
-			else if (data->setting_type == GAIM_PREF_INT)
-				gaim_account_set_int(data->account, data->setting_name,
-									 atoi(buffer));
-			else if (data->setting_type == GAIM_PREF_BOOLEAN)
-				gaim_account_set_bool(data->account, data->setting_name,
-									  (*buffer == '0' ? FALSE : TRUE));
+		if (strcmp(buffer, "")) {
+			if (data->setting_ui != NULL) {
+				if (data->setting_type == GAIM_PREF_STRING)
+					gaim_account_set_ui_string(data->account, data->setting_ui,
+											   data->setting_name, buffer);
+				else if (data->setting_type == GAIM_PREF_INT)
+					gaim_account_set_ui_int(data->account, data->setting_ui,
+											data->setting_name, atoi(buffer));
+				else if (data->setting_type == GAIM_PREF_BOOLEAN)
+					gaim_account_set_ui_bool(data->account, data->setting_ui,
+											 data->setting_name,
+											 (*buffer == '0' ? FALSE : TRUE));
+			}
+			else {
+				if (data->setting_type == GAIM_PREF_STRING)
+					gaim_account_set_string(data->account, data->setting_name,
+											buffer);
+				else if (data->setting_type == GAIM_PREF_INT)
+					gaim_account_set_int(data->account, data->setting_name,
+										 atoi(buffer));
+				else if (data->setting_type == GAIM_PREF_BOOLEAN)
+					gaim_account_set_bool(data->account, data->setting_name,
+										  (*buffer == '0' ? FALSE : TRUE));
+			}
 		}
 
 		g_free(data->setting_name);
@@ -908,7 +910,7 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			gaim_proxy_info_destroy(data->proxy_info);
 			data->proxy_info = NULL;
 		}
-		else {
+		else if (strcmp(buffer, "")) {
 			gaim_account_set_proxy_info(data->account, data->proxy_info);
 		}
 	}
