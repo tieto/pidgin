@@ -2953,19 +2953,21 @@ static void gtk_html_add_text(GtkHtml * html,
 	}
 
 
-	if (url != NULL)
-		fore = get_color(3355647, gdk_window_get_colormap(html->html_area));
 
 
 	hb = g_new0(GtkHtmlBit, 1);
 
 	hb->text = g_strdup(text);
 
-	if (fore)
-		hb->fore = gdk_color_copy(fore);
-	else
-		hb->fore = NULL;
-
+        if (url != NULL) {
+		hb->fore = get_color(3355647, gdk_window_get_colormap(html->html_area));
+	} else {
+		if (fore)
+			hb->fore = gdk_color_copy(fore);
+		else
+			hb->fore = NULL;
+	}
+	
 	if (back)
 		hb->back = gdk_color_copy(back);
 	else
