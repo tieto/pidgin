@@ -2417,14 +2417,16 @@ int set_dispstyle(int chat)
 
 void update_convo_add_button(struct conversation *c)
 {
-	/*int dispstyle = set_dispstyle(0);*/
+	int dispstyle = set_dispstyle(0);
 	GtkWidget *parent = c->add->parent;
 	gboolean rebuild = FALSE;
 
 	if (find_buddy(c->gc, c->name)) {
 		if (!gtk_object_get_user_data(GTK_OBJECT(c->add))) {
 			gtk_widget_destroy(c->add);
-			c->add = gaim_pixbuf_button_from_stock(_("Remove"), "gtk-remove", GAIM_BUTTON_VERTICAL);
+			c->add = gaim_pixbuf_button_from_stock(dispstyle == 0 ? NULL : _("Remove"),
+												   dispstyle == 1 ? NULL : "gtk-remove",
+												   GAIM_BUTTON_VERTICAL);
 			rebuild = TRUE;
 		}
 		if (c->gc) {
@@ -2438,7 +2440,9 @@ void update_convo_add_button(struct conversation *c)
 	} else {
 		if (gtk_object_get_user_data(GTK_OBJECT(c->add))) {
 			gtk_widget_destroy(c->add);
-			c->add = gaim_pixbuf_button_from_stock(_("Add"), "gtk-add", GAIM_BUTTON_VERTICAL);
+			c->add = gaim_pixbuf_button_from_stock(dispstyle == 0 ? NULL : _("Add"),
+												   dispstyle == 1 ? NULL : "gtk-add",
+												   GAIM_BUTTON_VERTICAL);
 			rebuild = TRUE;
 		}
 		if (c->gc) {

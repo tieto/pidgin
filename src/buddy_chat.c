@@ -1571,18 +1571,26 @@ void update_im_button_pix()
 		c->send = change_text(c->window, _("Send"), c->send, "gtk-convert", opt);
 		gtk_box_pack_end(GTK_BOX(parent), c->send, FALSE, FALSE, 0);
 
-		c->warn = change_text(c->window, _("Warn"), c->warn, "gtk-dialog-warning", opt);
-		gtk_box_pack_start(GTK_BOX(parent), c->warn, FALSE, FALSE, 0);
-		c->block = change_text(c->window, _("Block"), c->block, "gtk-stop", opt);
-		gtk_box_pack_start(GTK_BOX(parent), c->block, FALSE, FALSE, 0);
+		gtk_widget_destroy(c->sep2);
+		c->sep2 = gtk_vseparator_new();
+		gtk_box_pack_end(GTK_BOX(parent), c->sep2, FALSE, TRUE, 0);
+		gtk_widget_show(c->sep2);
 
 		if (find_buddy(c->gc, c->name) == NULL)
-			 c->add = change_text(c->window, _("Add"), c->add, "gtk-add", opt);
+			c->add = change_text(c->window, _("Add"), c->add, "gtk-add", opt);
 		else
 			c->add = change_text(c->window, _("Remove"), c->add, "gtk-remove", opt);
+
 		gtk_box_pack_start(GTK_BOX(parent), c->add, FALSE, FALSE, 0);
+
+		c->warn = change_text(c->window, _("Warn"), c->warn, "gtk-dialog-warning", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->warn, FALSE, FALSE, 0);
+
 		c->info = change_text(c->window, _("Info"), c->info, "gtk-find", opt);
 		gtk_box_pack_start(GTK_BOX(parent), c->info, FALSE, FALSE, 0);
+
+		c->block = change_text(c->window, _("Block"), c->block, "gtk-stop", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->block, FALSE, FALSE, 0);
 
 		gtk_button_set_relief(GTK_BUTTON(c->info), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(c->add), GTK_RELIEF_NONE);
@@ -1598,16 +1606,12 @@ void update_im_button_pix()
 
 		gtk_box_reorder_child(GTK_BOX(parent), c->warn, 1);
 		gtk_box_reorder_child(GTK_BOX(parent), c->block, 2);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add, 3);
 		gtk_box_reorder_child(GTK_BOX(parent), c->info, 4);
-		gtk_box_reorder_child(GTK_BOX(parent), c->sep2, 5);
 
 
 		update_buttons_by_protocol(c);
 
-		/* XXX gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c); */
 		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
-		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
