@@ -214,68 +214,69 @@ static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
 	GtkTreeIter iter;
+	const char *status_type_id;
+	char *text;
+	GList *l;
 
-	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
 									  &iter))
 	{
-		const char *status_type_id;
-		char *text;
-		GList *l;
+		return;
+	}
 
-		gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
-						   COLUMN_NAME, &text,
-						   COLUMN_STATUS_TYPE_ID, &status_type_id,
-						   -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
+					   COLUMN_NAME, &text,
+					   COLUMN_STATUS_TYPE_ID, &status_type_id,
+					   -1);
 
-		if (!strcmp(text, _("New status")))
+	if (!strcmp(text, _("New status")))
+	{
+		/* TODO */
+	}
+	else
+	{
+		const char *message = "";
+		GtkTextBuffer *buffer;
+		gboolean allow_message = FALSE;
+
+		buffer =
+			gtk_text_view_get_buffer(GTK_TEXT_VIEW(selector->priv->entry));
+
+		gtk_text_buffer_set_text(buffer, message, -1);
+
+		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
 		{
-			/* TODO */
-		}
-		else
-		{
-			const char *message = "";
-			GtkTextBuffer *buffer;
-			gboolean allow_message = FALSE;
+			GaimConnection *gc = (GaimConnection *)l->data;
+			GaimAccount *account = gaim_connection_get_account(gc);
+			GaimStatusType *status_type;
 
-			buffer =
-				gtk_text_view_get_buffer(GTK_TEXT_VIEW(selector->priv->entry));
+			status_type = gaim_account_get_status_type(account,
+													   status_type_id);
 
-			gtk_text_buffer_set_text(buffer, message, -1);
+			if (status_type == NULL)
+				continue;
 
-			for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+			if (gaim_status_type_get_attr(status_type, "message") != NULL)
 			{
-				GaimConnection *gc = (GaimConnection *)l->data;
-				GaimAccount *account = gaim_connection_get_account(gc);
-				GaimStatusType *status_type;
+				gaim_account_set_status(account,
+										"away", TRUE,
+										"message", message,
+										NULL);
 
-				status_type = gaim_account_get_status_type(account,
-														   status_type_id);
-
-				if (status_type == NULL)
-					continue;
-
-				if (gaim_status_type_get_attr(status_type, "message") != NULL)
-				{
-					gaim_account_set_status(account,
-											"away", TRUE,
-											"message", message,
-											NULL);
-
-					allow_message = TRUE;
-				}
-				else
-				{
-					gaim_account_set_status(gaim_connection_get_account(gc),
-											"away", TRUE,
-											NULL);
-				}
+				allow_message = TRUE;
 			}
-
-			if (allow_message)
-				gtk_widget_show(selector->priv->sw);
 			else
-				gtk_widget_hide(selector->priv->sw);
+			{
+				gaim_account_set_status(account,
+										"away", TRUE,
+										NULL);
+			}
 		}
+
+		if (allow_message)
+			gtk_widget_show(selector->priv->sw);
+		else
+			gtk_widget_hide(selector->priv->sw);
 	}
 }
 
