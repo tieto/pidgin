@@ -1307,3 +1307,14 @@ char *gaim_try_conv_to_utf8(const char *str)
 
 	return(NULL);
 }
+
+char *gaim_getip_from_fd(int fd)
+{
+	struct sockaddr addr;
+	socklen_t namelen = sizeof(addr);
+
+	if (getsockname(fd, &addr, &namelen))
+		return NULL;
+
+	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+}

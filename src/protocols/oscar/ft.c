@@ -113,7 +113,7 @@ static void aim_oft_dirconvert_fromstupid(char *name)
  * @param bufsize Size of buffer.
  * @param prevcheck Previous checksum.
  */
-faim_export fu32_t aim_oft_checksum(const unsigned char *buffer, int bufferlen, fu32_t prevcheck)
+faim_export fu32_t aim_oft_checksum_chunk(const unsigned char *buffer, int bufferlen, fu32_t prevcheck)
 {
 	fu32_t check = (prevcheck >> 16) & 0xffff, oldcheck;
 	int i;
@@ -136,6 +136,22 @@ faim_export fu32_t aim_oft_checksum(const unsigned char *buffer, int bufferlen, 
 	check = ((check & 0x0000ffff) + (check >> 16));
 	check = ((check & 0x0000ffff) + (check >> 16));
 	return check << 16;
+}
+
+faim_export fu32_t aim_oft_checksum_file(char *filename) {
+	FILE *fd;
+	fu32_t checksum = 0xffff0000;
+
+	if ((fd = fopen(filename, "rb"))) {
+		int bytes;
+		char buffer[1024];
+
+		while ((bytes = fread(buffer, 1, 1024, fd)))
+			checksum = aim_oft_checksum_chunk(buffer, bytes, checksum);
+		fclose(fd);
+	}
+
+	return checksum;
 }
 
 /**

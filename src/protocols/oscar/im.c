@@ -711,7 +711,8 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, 
 /*		aim_addtlvtochain_raw(&subtl, 0x000e, 2, "en");
 		aim_addtlvtochain_raw(&subtl, 0x000d, 8, "us-ascii");
 		aim_addtlvtochain_raw(&subtl, 0x000c, 24, "Please accept this file."); */
-		aim_addtlvtochain_raw(&subtl, 0x0003, 4, ip);
+		if (ip[0])
+			aim_addtlvtochain_raw(&subtl, 0x0003, 4, ip);
 		aim_addtlvtochain16(&subtl, 0x0005, port);
 
 		/* TLV t(2711) */

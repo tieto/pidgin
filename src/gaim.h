@@ -454,6 +454,7 @@ extern const char *handle_uri(char *);
  * encoding by checking the locale and trying some sane defaults ...
  * if everything fails it returns NULL. */
 char *gaim_try_conv_to_utf8(const char *str);
+char *gaim_getip_from_fd(int fd);
 
 /* Functions in log.h */
 extern FILE *open_log_file (const char *, int);
