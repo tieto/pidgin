@@ -74,6 +74,7 @@ struct msn_data {
 	gchar *policy;
 	int inpa;
 	int status;
+	int away;
 	time_t last_trid;
 };
 
@@ -1082,7 +1083,7 @@ static char **msn_list_icon(int uc)
 	else if (uc == UC_NORMAL)
 		return msn_online_xpm;
 	
-	return msn_online_xpm;
+	return msn_away_xpm;
 }
 
 static struct prpl *my_protocol = NULL;
