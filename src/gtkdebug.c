@@ -409,7 +409,7 @@ gaim_gtk_debug_init(void)
 	REGISTER_G_LOG_HANDLER("GThread");
 
 #ifdef _WIN32
-	if (!opt_debug)
+	if (!gaim_debug_is_enabled())
 		g_set_print_handler(gaim_glib_dummy_print_handler);
 #endif
 }
