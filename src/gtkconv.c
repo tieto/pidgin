@@ -2016,7 +2016,8 @@ update_send_as_selection(GaimWindow *win)
 
 	conv = gaim_window_get_active_conversation(win);
 
-	g_return_val_if_fail(conv != NULL, FALSE);
+	if (conv == NULL)
+		return FALSE;
 
 	account = gaim_conversation_get_account(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
@@ -3682,7 +3683,6 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 
 	if (gaim_window_get_conversation_count(win) == 1)
 		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
-
 }
 
 static void

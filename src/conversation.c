@@ -454,12 +454,12 @@ gaim_window_new(void)
 
 	win = g_malloc0(sizeof(GaimWindow));
 
+	windows = g_list_append(windows, win);
+
 	win->ui_ops = gaim_get_win_ui_ops();
 
 	if (win->ui_ops != NULL && win->ui_ops->new_window != NULL)
 		win->ui_ops->new_window(win);
-
-	windows = g_list_append(windows, win);
 
 	return win;
 }
