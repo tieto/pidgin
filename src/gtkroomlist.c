@@ -54,6 +54,10 @@ struct _GaimGtkRoomlistDialog {
 
 	GaimAccount *account;
 	GaimRoomlist *roomlist;
+
+	gboolean pg_needs_pulse;
+	gboolean pg_to_active;
+	guint pg_update_to;
 };
 
 enum {
@@ -72,6 +76,15 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 
 	if (dialog->roomlist && gaim_roomlist_get_in_progress(dialog->roomlist))
 		gaim_roomlist_cancel_get_list(dialog->roomlist);
+
+	if (dialog->roomlist) {
+		if (dialog->pg_to_active) {
+			g_source_remove(dialog->pg_update_to);
+			dialog->pg_to_active = FALSE;
+			/* yes, that's right, unref it twice. */
+			gaim_roomlist_unref(dialog->roomlist);
+		}
+	}
 
 	/* free stuff here */
 	if (dialog->roomlist)
@@ -565,6 +578,22 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	g_signal_connect(G_OBJECT(tree), "row-activated", G_CALLBACK(row_activated_cb), list);
 }
 
+static gboolean gaim_gtk_progress_bar_pulse(gpointer data)
+{
+	GaimRoomlist *list = data;
+	GaimGtkRoomlist *rl = list->ui_data;
+
+	if (!rl || !rl->dialog || !rl->dialog->pg_needs_pulse) {
+		rl->dialog->pg_to_active = FALSE;
+		gaim_roomlist_unref(list);
+		return FALSE;
+	}
+
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
+	rl->dialog->pg_needs_pulse = FALSE;
+	return TRUE;
+}
+
 static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 {
 	GaimGtkRoomlist *rl= list->ui_data;
@@ -580,10 +609,14 @@ static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *roo
 		rl->num_rooms++;
 
 	if (rl->dialog) {
-		if (rl->total_rooms > 100)
-			gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(rl->dialog->progress),
-			                                0.01);
-		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
+		if (!rl->dialog->pg_to_active) {
+			rl->dialog->pg_to_active = TRUE;
+			gaim_roomlist_ref(list);
+			rl->dialog->pg_update_to = g_timeout_add(100, gaim_gtk_progress_bar_pulse, list);
+			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
+		} else {
+			rl->dialog->pg_needs_pulse = TRUE;
+		}
 	}
 	if (room->parent) {
 		parentrr = g_hash_table_lookup(rl->cats, room->parent);
@@ -643,6 +676,7 @@ static void gaim_gtk_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
 		gtk_widget_set_sensitive(rl->dialog->stop_button, TRUE);
 		gtk_widget_set_sensitive(rl->dialog->list_button, FALSE);
 	} else {
+		rl->dialog->pg_needs_pulse = FALSE;
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(rl->dialog->progress), 0.0);
 		if (rl->dialog->account_widget)
 			gtk_widget_set_sensitive(rl->dialog->account_widget, TRUE);
