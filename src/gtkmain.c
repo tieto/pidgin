@@ -617,16 +617,22 @@ int main(int argc, char *argv[])
 
 	gaim_plugins_probe(NULL);
 
-	/* XXX - Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */
+	/* TODO: Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */
 	gaimrc = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
 	accountsxml = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
 	if (g_file_test(gaimrc, G_FILE_TEST_EXISTS) &&
-		!g_file_test(accountsxml, G_FILE_TEST_EXISTS)) {
-		gaim_notify_error(NULL, NULL, _("Unable to load preferences"), _("Gaim was not able to load your preferences because they are stored in an old format that is no longer used.  Please reconfigure your settings using the Preferences window."));
+		!g_file_test(accountsxml, G_FILE_TEST_EXISTS))
+	{
+		gaim_notify_error(NULL, NULL, _("Unable to load preferences"),
+						  _("Gaim was not able to load your preferences "
+							"because they are stored in an old format "
+							"that is no longer used.  Please reconfigure "
+							"your settings using the Preferences window."));
 	}
 	g_free(gaimrc);
 	g_free(accountsxml);
 
+	/* TODO: Move blist loading into gaim_blist_init() */
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
 

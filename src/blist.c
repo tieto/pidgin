@@ -51,13 +51,14 @@ struct gaim_blist_node_setting {
 static GaimBlistUiOps *blist_ui_ops = NULL;
 
 static GaimBuddyList *gaimbuddylist = NULL;
-static guint          blist_save_timer = 0;
+static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
 
 
-/*****************************************************************************
- * Private Utility functions                                                 *
- *****************************************************************************/
+/*********************************************************************
+ * Private utility functions                                         *
+ *********************************************************************/
+
 static GaimBlistNode *gaim_blist_get_last_sibling(GaimBlistNode *node)
 {
 	GaimBlistNode *n = node;
@@ -97,14 +98,605 @@ static void _gaim_blist_hbuddy_free_key(struct _gaim_hbuddy *hb)
 	g_free(hb);
 }
 
-void gaim_contact_invalidate_priority_buddy(GaimContact *contact)
-{
-	g_return_if_fail(contact != NULL);
 
-	contact->priority_valid = FALSE;
+/*********************************************************************
+ * Writting to disk                                                  *
+ *********************************************************************/
+
+static void
+blist_print_setting(const char *key,
+		struct gaim_blist_node_setting *setting, FILE *file, int indent)
+{
+	char *key_val, *data_val = NULL;
+	const char *type = NULL;
+	int i;
+
+	if (!key)
+		return;
+
+	switch(setting->type) {
+		case GAIM_BLIST_NODE_SETTING_BOOL:
+			type = "bool";
+			data_val = g_strdup_printf("%d", setting->value.boolean);
+			break;
+		case GAIM_BLIST_NODE_SETTING_INT:
+			type = "int";
+			data_val = g_strdup_printf("%d", setting->value.integer);
+			break;
+		case GAIM_BLIST_NODE_SETTING_STRING:
+			if (!setting->value.string)
+				return;
+
+			type = "string";
+			data_val = g_markup_escape_text(setting->value.string, -1);
+			break;
+	}
+
+	/* this can't happen */
+	if (!type || !data_val)
+		return;
+
+	for (i=0; i<indent; i++) fprintf(file, "\t");
+
+	key_val = g_markup_escape_text(key, -1);
+	fprintf(file, "<setting name=\"%s\" type=\"%s\">%s</setting>\n", key_val, type,
+			data_val);
+
+	g_free(key_val);
+	g_free(data_val);
 }
 
-static void gaim_contact_compute_priority_buddy(GaimContact *contact)
+static void
+blist_print_group_settings(gpointer key, gpointer data,
+		gpointer user_data)
+{
+	blist_print_setting(key, data, user_data, 3);
+}
+
+static void
+blist_print_buddy_settings(gpointer key, gpointer data,
+		gpointer user_data)
+{
+	blist_print_setting(key, data, user_data, 5);
+}
+
+static void
+blist_print_cnode_settings(gpointer key, gpointer data,
+		gpointer user_data)
+{
+	blist_print_setting(key, data, user_data, 4);
+}
+
+static void
+blist_print_chat_components(gpointer key, gpointer data,
+		gpointer user_data)
+{
+	char *key_val;
+	char *data_val;
+	FILE *file = user_data;
+
+	if (!key || !data)
+		return;
+
+	key_val = g_markup_escape_text(key, -1);
+	data_val = g_markup_escape_text(data, -1);
+
+	fprintf(file, "\t\t\t\t<component name=\"%s\">%s</component>\n", key_val,
+			data_val);
+	g_free(key_val);
+	g_free(data_val);
+}
+
+static void
+print_buddy(FILE *file, GaimBuddy *buddy)
+{
+	char *bud_name = g_markup_escape_text(buddy->name, -1);
+	char *bud_alias = NULL;
+	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
+	if (buddy->alias)
+		bud_alias= g_markup_escape_text(buddy->alias, -1);
+	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\">\n", acct_name,
+			gaim_account_get_protocol_id(buddy->account));
+
+	fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
+	if (bud_alias) {
+		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
+	}
+	g_hash_table_foreach(buddy->node.settings, blist_print_buddy_settings, file);
+	fprintf(file, "\t\t\t\t</buddy>\n");
+	g_free(bud_name);
+	g_free(bud_alias);
+	g_free(acct_name);
+}
+
+/* check for flagging and account exclusion on buddy */
+static gboolean
+blist_buddy_should_save(GaimAccount *exp_acct, GaimBuddy *buddy)
+{
+	if (! GAIM_BLIST_NODE_SHOULD_SAVE((GaimBlistNode *) buddy))
+		return FALSE;
+
+	if (exp_acct && buddy->account != exp_acct)
+		return FALSE;
+
+	return TRUE;
+}
+
+static void
+blist_write_buddy(FILE *file, GaimAccount *exp_acct, GaimBuddy *buddy)
+{
+	if (blist_buddy_should_save(exp_acct, buddy))
+		print_buddy(file, buddy);
+}
+
+/* check for flagging and account exclusion on contact and all members */
+static gboolean
+blist_contact_should_save(GaimAccount *exp_acct, GaimContact *contact)
+{
+	GaimBlistNode *bnode, *cnode = (GaimBlistNode *) contact;
+
+	if (! GAIM_BLIST_NODE_SHOULD_SAVE(cnode))
+		return FALSE;
+
+	for (bnode = cnode->child; bnode; bnode = bnode->next) {
+		if (! GAIM_BLIST_NODE_IS_BUDDY(bnode))
+			continue;
+
+		if (blist_buddy_should_save(exp_acct, (GaimBuddy *) bnode))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+blist_write_contact(FILE *file, GaimAccount *exp_acct, GaimContact *contact)
+{
+	GaimBlistNode *bnode, *cnode = (GaimBlistNode *) contact;
+
+	if (!blist_contact_should_save(exp_acct, contact))
+		return;
+
+	fprintf(file, "\t\t\t<contact");
+	if (contact->alias) {
+		char *alias = g_markup_escape_text(contact->alias, -1);
+		fprintf(file, " alias=\"%s\"", alias);
+		g_free(alias);
+	}
+	fprintf(file, ">\n");
+
+	for (bnode = cnode->child; bnode; bnode = bnode->next) {
+		if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+			blist_write_buddy(file, exp_acct, (GaimBuddy *) bnode);
+		}
+	}
+
+	g_hash_table_foreach(cnode->settings, blist_print_cnode_settings, file);
+	fprintf(file, "\t\t\t</contact>\n");
+}
+
+static void
+blist_write_chat(FILE *file, GaimAccount *exp_acct, GaimChat *chat)
+{
+	char *acct_name;
+
+	if (! GAIM_BLIST_NODE_SHOULD_SAVE((GaimBlistNode *) chat))
+		return;
+
+	if (exp_acct && chat->account != exp_acct)
+		return;
+
+	acct_name = g_markup_escape_text(chat->account->username, -1);
+	fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\">\n",
+			gaim_account_get_protocol_id(chat->account), acct_name);
+	g_free(acct_name);
+
+	if (chat->alias) {
+		char *chat_alias = g_markup_escape_text(chat->alias, -1);
+		fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
+		g_free(chat_alias);
+	}
+
+	g_hash_table_foreach(chat->components, blist_print_chat_components, file);
+	g_hash_table_foreach(chat->node.settings, blist_print_cnode_settings, file);
+
+	fprintf(file, "\t\t\t</chat>\n");
+}
+
+static void
+blist_write_group(FILE *file, GaimAccount *exp_acct, GaimGroup *group)
+{
+	GaimBlistNode *cnode, *gnode = (GaimBlistNode *) group;
+	char *group_name;
+
+	if (! GAIM_BLIST_NODE_SHOULD_SAVE(gnode))
+		return;
+
+	if (exp_acct && ! gaim_group_on_account(group, exp_acct))
+		return;
+
+	group_name = g_markup_escape_text(group->name, -1);
+	fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
+	g_free(group_name);
+
+	g_hash_table_foreach(group->node.settings,
+			blist_print_group_settings, file);
+
+	for (cnode = gnode->child; cnode; cnode = cnode->next) {
+		if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+			blist_write_contact(file, exp_acct, (GaimContact *) cnode);
+		} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+			blist_write_chat(file, exp_acct, (GaimChat *) cnode);
+		}
+	}
+
+	fprintf(file, "\t\t</group>\n");
+}
+
+static void
+blist_write_privacy_account(FILE *file, GaimAccount *exp_acct, GaimAccount *account)
+{
+	char *acct_name;
+	GSList *buds;
+
+	if(exp_acct && exp_acct != account)
+		return;
+
+	acct_name = g_markup_escape_text(account->username, -1);
+	fprintf(file, "\t\t<account proto=\"%s\" name=\"%s\" mode=\"%d\">\n",
+			gaim_account_get_protocol_id(account),
+			acct_name, account->perm_deny);
+	g_free(acct_name);
+
+	for (buds = account->permit; buds; buds = buds->next) {
+		char *bud_name = g_markup_escape_text(buds->data, -1);
+		fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
+		g_free(bud_name);
+	}
+
+	for (buds = account->deny; buds; buds = buds->next) {
+		char *bud_name = g_markup_escape_text(buds->data, -1);
+		fprintf(file, "\t\t\t<block>%s</block>\n", bud_name);
+		g_free(bud_name);
+	}
+
+	fprintf(file, "\t\t</account>\n");
+}
+
+static void
+gaim_blist_write(FILE *file, GaimAccount *exp_acct)
+{
+	GList *accounts;
+	GaimBlistNode *gnode;
+
+	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
+	fprintf(file, "<gaim version='1.0'>\n");
+	fprintf(file, "\t<blist>\n");
+
+	for (gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
+		if (GAIM_BLIST_NODE_IS_GROUP(gnode))
+			blist_write_group(file, exp_acct, (GaimGroup *) gnode);
+	}
+
+	fprintf(file, "\t</blist>\n");
+	fprintf(file, "\t<privacy>\n");
+
+	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
+		blist_write_privacy_account(file, exp_acct, (GaimAccount *) accounts->data);
+	}
+
+	fprintf(file, "\t</privacy>\n");
+	fprintf(file, "</gaim>\n");
+}
+
+void
+gaim_blist_sync()
+{
+	FILE *file;
+	struct stat st;
+	const char *user_dir = gaim_user_dir();
+	char *filename;
+	char *filename_real;
+
+	g_return_if_fail(user_dir != NULL);
+
+	if (!blist_loaded) {
+		gaim_debug_warning("blist save",
+				   "AHH!! Tried to write the blist before we read it!\n");
+		return;
+	}
+
+	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
+		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+
+	filename = g_build_filename(user_dir, "blist.xml.save", NULL);
+
+	if ((file = fopen(filename, "w"))) {
+		gaim_blist_write(file, NULL);
+		fclose(file);
+		chmod(filename, S_IRUSR | S_IWUSR);
+	} else {
+		gaim_debug_error("blist", "Unable to write %s\n", filename);
+		g_free(filename);
+		return;
+	}
+
+	if (stat(filename, &st) || (st.st_size == 0)) {
+		gaim_debug_error("blist", "Failed to save blist\n");
+		unlink(filename);
+		g_free(filename);
+		return;
+	}
+
+	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
+
+	if (rename(filename, filename_real) < 0)
+		gaim_debug_error("blist",
+				   "Error renaming %s to %s\n", filename, filename_real);
+
+	g_free(filename);
+	g_free(filename_real);
+}
+
+static gboolean
+save_cb(gpointer data)
+{
+	gaim_blist_sync();
+	save_timer = 0;
+	return FALSE;
+}
+
+static void
+schedule_blist_save()
+{
+	if (save_timer == 0)
+		save_timer = gaim_timeout_add(5000, save_cb, NULL);
+}
+
+
+/*********************************************************************
+ * Reading from disk                                                 *
+ *********************************************************************/
+
+static void
+parse_setting(GaimBlistNode *node, xmlnode *setting)
+{
+	const char *name = xmlnode_get_attrib(setting, "name");
+	const char *type = xmlnode_get_attrib(setting, "type");
+	char *value = xmlnode_get_data(setting);
+
+	if (!value)
+		return;
+
+	if (!type || !strcmp(type, "string"))
+		gaim_blist_node_set_string(node, name, value);
+	else if (!strcmp(type, "bool"))
+		gaim_blist_node_set_bool(node, name, atoi(value));
+	else if (!strcmp(type, "int"))
+		gaim_blist_node_set_int(node, name, atoi(value));
+
+	g_free(value);
+}
+
+static void
+parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
+{
+	GaimAccount *account;
+	GaimBuddy *buddy;
+	char *name = NULL, *alias = NULL;
+	const char *acct_name, *proto, *protocol;
+	xmlnode *x;
+
+	acct_name = xmlnode_get_attrib(bnode, "account");
+	protocol = xmlnode_get_attrib(bnode, "protocol");
+	proto = xmlnode_get_attrib(bnode, "proto");
+
+	if (!acct_name || (!proto && !protocol))
+		return;
+
+	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
+
+	if (!account)
+		return;
+
+	if ((x = xmlnode_get_child(bnode, "name")))
+		name = xmlnode_get_data(x);
+
+	if (!name)
+		return;
+
+	if ((x = xmlnode_get_child(bnode, "alias")))
+		alias = xmlnode_get_data(x);
+
+	buddy = gaim_buddy_new(account, name, alias);
+	gaim_blist_add_buddy(buddy, contact, group,
+			gaim_blist_get_last_child((GaimBlistNode*)contact));
+
+	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
+		parse_setting((GaimBlistNode*)buddy, x);
+	}
+
+	g_free(name);
+	if (alias)
+		g_free(alias);
+}
+
+static void
+parse_contact(GaimGroup *group, xmlnode *cnode)
+{
+	GaimContact *contact = gaim_contact_new();
+	xmlnode *x;
+	const char *alias;
+
+	gaim_blist_add_contact(contact, group,
+			gaim_blist_get_last_child((GaimBlistNode*)group));
+
+	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
+		gaim_contact_set_alias(contact, alias);
+	}
+
+	for (x = cnode->child; x; x = x->next) {
+		if (x->type != XMLNODE_TYPE_TAG)
+			continue;
+		if (!strcmp(x->name, "buddy"))
+			parse_buddy(group, contact, x);
+		else if (!strcmp(x->name, "setting"))
+			parse_setting((GaimBlistNode*)contact, x);
+	}
+
+	/* if the contact is empty, don't keep it around.  it causes problems */
+	if (!((GaimBlistNode*)contact)->child)
+		gaim_blist_remove_contact(contact);
+}
+
+static void
+parse_chat(GaimGroup *group, xmlnode *cnode)
+{
+	GaimChat *chat;
+	GaimAccount *account;
+	const char *acct_name, *proto, *protocol;
+	xmlnode *x;
+	char *alias = NULL;
+	GHashTable *components;
+
+	acct_name = xmlnode_get_attrib(cnode, "account");
+	protocol = xmlnode_get_attrib(cnode, "protocol");
+	proto = xmlnode_get_attrib(cnode, "proto");
+
+	if (!acct_name || (!proto && !protocol))
+		return;
+
+	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
+
+	if (!account)
+		return;
+
+	if ((x = xmlnode_get_child(cnode, "alias")))
+		alias = xmlnode_get_data(x);
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for (x = xmlnode_get_child(cnode, "component"); x; x = xmlnode_get_next_twin(x)) {
+		const char *name;
+		char *value;
+
+		name = xmlnode_get_attrib(x, "name");
+		value = xmlnode_get_data(x);
+		g_hash_table_replace(components, g_strdup(name), value);
+	}
+
+	chat = gaim_chat_new(account, alias, components);
+	gaim_blist_add_chat(chat, group,
+			gaim_blist_get_last_child((GaimBlistNode*)group));
+
+	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
+		parse_setting((GaimBlistNode*)chat, x);
+	}
+
+	if (alias)
+		g_free(alias);
+}
+
+static void
+parse_group(xmlnode *groupnode)
+{
+	const char *name = xmlnode_get_attrib(groupnode, "name");
+	GaimGroup *group;
+	xmlnode *cnode;
+
+	if (!name)
+		name = _("Buddies");
+
+	group = gaim_group_new(name);
+	gaim_blist_add_group(group,
+			gaim_blist_get_last_sibling(gaimbuddylist->root));
+
+	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
+		if (cnode->type != XMLNODE_TYPE_TAG)
+			continue;
+		if (!strcmp(cnode->name, "setting"))
+			parse_setting((GaimBlistNode*)group, cnode);
+		else if (!strcmp(cnode->name, "contact") ||
+				!strcmp(cnode->name, "person"))
+			parse_contact(group, cnode);
+		else if (!strcmp(cnode->name, "chat"))
+			parse_chat(group, cnode);
+	}
+}
+
+/* TODO: Make static and rename to load_blist */
+void
+gaim_blist_load()
+{
+	xmlnode *gaim, *blist, *privacy;
+
+	blist_loaded = TRUE;
+
+	gaim = gaim_util_read_xml_from_file("blist.xml", _("buddy list"));
+
+	if (gaim == NULL)
+		return;
+
+	blist = xmlnode_get_child(gaim, "blist");
+	if (blist) {
+		xmlnode *groupnode;
+		for (groupnode = xmlnode_get_child(blist, "group"); groupnode != NULL;
+				groupnode = xmlnode_get_next_twin(groupnode)) {
+			parse_group(groupnode);
+		}
+	}
+
+	privacy = xmlnode_get_child(gaim, "privacy");
+	if (privacy) {
+		xmlnode *anode;
+		for (anode = privacy->child; anode; anode = anode->next) {
+			xmlnode *x;
+			GaimAccount *account;
+			const char *acct_name, *proto, *mode, *protocol;
+
+			acct_name = xmlnode_get_attrib(anode, "name");
+			protocol = xmlnode_get_attrib(anode, "protocol");
+			proto = xmlnode_get_attrib(anode, "proto");
+			mode = xmlnode_get_attrib(anode, "mode");
+
+			if (!acct_name || (!proto && !protocol) || !mode)
+				continue;
+
+			account = gaim_accounts_find(acct_name, proto ? proto : protocol);
+
+			if (!account)
+				continue;
+
+			account->perm_deny = atoi(mode);
+
+			for (x = anode->child; x; x = x->next) {
+				char *name;
+				if (x->type != XMLNODE_TYPE_TAG)
+					continue;
+
+				if (!strcmp(x->name, "permit")) {
+					name = xmlnode_get_data(x);
+					gaim_privacy_permit_add(account, name, TRUE);
+					g_free(name);
+				} else if (!strcmp(x->name, "block")) {
+					name = xmlnode_get_data(x);
+					gaim_privacy_deny_add(account, name, TRUE);
+					g_free(name);
+				}
+			}
+		}
+	}
+
+	xmlnode_free(gaim);
+}
+
+
+/*********************************************************************
+ * Stuff                                                             *
+ *********************************************************************/
+
+static void
+gaim_contact_compute_priority_buddy(GaimContact *contact)
 {
 	GaimBlistNode *bnode;
 	GaimBuddy *new_priority = NULL;
@@ -144,20 +736,6 @@ static void gaim_contact_compute_priority_buddy(GaimContact *contact)
 
 	contact->priority = new_priority;
 	contact->priority_valid = TRUE;
-}
-
-static gboolean blist_save_callback(gpointer data)
-{
-	gaim_blist_sync();
-	blist_save_timer = 0;
-	return FALSE;
-}
-
-static void schedule_blist_save()
-{
-	if (blist_save_timer != 0)
-		gaim_timeout_remove(blist_save_timer);
-	blist_save_timer = gaim_timeout_add(1000, blist_save_callback, NULL);
 }
 
 
@@ -339,7 +917,7 @@ void gaim_blist_update_buddy_icon(GaimBuddy *buddy)
 }
 
 /*
- * XXX - Maybe remove the call to this from server.c and call it
+ * TODO: Maybe remove the call to this from server.c and call it
  * from oscar.c and toc.c instead?
  */
 void gaim_blist_rename_buddy(GaimBuddy *buddy, const char *name)
@@ -435,7 +1013,7 @@ void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 }
 
 /*
- * XXX - If merging, prompt the user if they want to merge.
+ * TODO: If merging, prompt the user if they want to merge.
  */
 void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 {
@@ -460,7 +1038,7 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 		child = ((GaimBlistNode*)source)->child;
 
 		/*
-		 * XXX - This seems like a dumb way to do this... why not just
+		 * TODO: This seems like a dumb way to do this... why not just
 		 * append all children from the old group to the end of the new
 		 * one?  PRPLs might be expecting to receive an add_buddy() for
 		 * each moved buddy...
@@ -915,6 +1493,13 @@ gboolean gaim_contact_on_account(GaimContact *c, GaimAccount *account)
 			return TRUE;
 	}
 	return FALSE;
+}
+
+void gaim_contact_invalidate_priority_buddy(GaimContact *contact)
+{
+	g_return_if_fail(contact != NULL);
+
+	contact->priority_valid = FALSE;
 }
 
 GaimGroup *gaim_group_new(const char *name)
@@ -1742,8 +2327,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
 
 						((GaimBuddy*)bnode)->uc = 0;
-						/* XXX ((GaimBuddy*)bnode)->idle = 0; */
-
+						/* TODO: ((GaimBuddy*)bnode)->idle = 0; */
 
 						if (ops && ops->remove)
 							ops->remove(gaimbuddylist, bnode);
@@ -1782,231 +2366,6 @@ gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account)
 	return FALSE;
 }
 
-static void parse_setting(GaimBlistNode *node, xmlnode *setting)
-{
-	const char *name = xmlnode_get_attrib(setting, "name");
-	const char *type = xmlnode_get_attrib(setting, "type");
-	char *value = xmlnode_get_data(setting);
-
-	if (!value)
-		return;
-
-	if (!type || !strcmp(type, "string"))
-		gaim_blist_node_set_string(node, name, value);
-	else if (!strcmp(type, "bool"))
-		gaim_blist_node_set_bool(node, name, atoi(value));
-	else if (!strcmp(type, "int"))
-		gaim_blist_node_set_int(node, name, atoi(value));
-
-	g_free(value);
-}
-
-static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
-{
-	GaimAccount *account;
-	GaimBuddy *buddy;
-	char *name = NULL, *alias = NULL;
-	const char *acct_name, *proto, *protocol;
-	xmlnode *x;
-
-	acct_name = xmlnode_get_attrib(bnode, "account");
-	protocol = xmlnode_get_attrib(bnode, "protocol");
-	proto = xmlnode_get_attrib(bnode, "proto");
-
-	if (!acct_name || (!proto && !protocol))
-		return;
-
-	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
-
-	if (!account)
-		return;
-
-	if ((x = xmlnode_get_child(bnode, "name")))
-		name = xmlnode_get_data(x);
-
-	if (!name)
-		return;
-
-	if ((x = xmlnode_get_child(bnode, "alias")))
-		alias = xmlnode_get_data(x);
-
-	buddy = gaim_buddy_new(account, name, alias);
-	gaim_blist_add_buddy(buddy, contact, group,
-			gaim_blist_get_last_child((GaimBlistNode*)contact));
-
-	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
-		parse_setting((GaimBlistNode*)buddy, x);
-	}
-
-	g_free(name);
-	if (alias)
-		g_free(alias);
-}
-
-static void parse_contact(GaimGroup *group, xmlnode *cnode)
-{
-	GaimContact *contact = gaim_contact_new();
-	xmlnode *x;
-	const char *alias;
-
-	gaim_blist_add_contact(contact, group,
-			gaim_blist_get_last_child((GaimBlistNode*)group));
-
-	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
-		gaim_contact_set_alias(contact, alias);
-	}
-
-	for (x = cnode->child; x; x = x->next) {
-		if (x->type != XMLNODE_TYPE_TAG)
-			continue;
-		if (!strcmp(x->name, "buddy"))
-			parse_buddy(group, contact, x);
-		else if (!strcmp(x->name, "setting"))
-			parse_setting((GaimBlistNode*)contact, x);
-	}
-
-	/* if the contact is empty, don't keep it around.  it causes problems */
-	if (!((GaimBlistNode*)contact)->child)
-		gaim_blist_remove_contact(contact);
-}
-
-static void parse_chat(GaimGroup *group, xmlnode *cnode)
-{
-	GaimChat *chat;
-	GaimAccount *account;
-	const char *acct_name, *proto, *protocol;
-	xmlnode *x;
-	char *alias = NULL;
-	GHashTable *components;
-
-	acct_name = xmlnode_get_attrib(cnode, "account");
-	protocol = xmlnode_get_attrib(cnode, "protocol");
-	proto = xmlnode_get_attrib(cnode, "proto");
-
-	if (!acct_name || (!proto && !protocol))
-		return;
-
-	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
-
-	if (!account)
-		return;
-
-	if ((x = xmlnode_get_child(cnode, "alias")))
-		alias = xmlnode_get_data(x);
-
-	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-
-	for (x = xmlnode_get_child(cnode, "component"); x; x = xmlnode_get_next_twin(x)) {
-		const char *name;
-		char *value;
-
-		name = xmlnode_get_attrib(x, "name");
-		value = xmlnode_get_data(x);
-		g_hash_table_replace(components, g_strdup(name), value);
-	}
-
-	chat = gaim_chat_new(account, alias, components);
-	gaim_blist_add_chat(chat, group,
-			gaim_blist_get_last_child((GaimBlistNode*)group));
-
-	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
-		parse_setting((GaimBlistNode*)chat, x);
-	}
-
-	if (alias)
-		g_free(alias);
-}
-
-static void parse_group(xmlnode *groupnode)
-{
-	const char *name = xmlnode_get_attrib(groupnode, "name");
-	GaimGroup *group;
-	xmlnode *cnode;
-
-	if (!name)
-		name = _("Buddies");
-
-	group = gaim_group_new(name);
-	gaim_blist_add_group(group,
-			gaim_blist_get_last_sibling(gaimbuddylist->root));
-
-	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
-		if (cnode->type != XMLNODE_TYPE_TAG)
-			continue;
-		if (!strcmp(cnode->name, "setting"))
-			parse_setting((GaimBlistNode*)group, cnode);
-		else if (!strcmp(cnode->name, "contact") ||
-				!strcmp(cnode->name, "person"))
-			parse_contact(group, cnode);
-		else if (!strcmp(cnode->name, "chat"))
-			parse_chat(group, cnode);
-	}
-}
-
-void gaim_blist_load()
-{
-	xmlnode *gaim, *blist, *privacy;
-
-	blist_loaded = TRUE;
-
-	gaim = gaim_util_read_xml_from_file("blist.xml", _("buddy list"));
-
-	if (gaim == NULL)
-		return;
-
-	blist = xmlnode_get_child(gaim, "blist");
-	if (blist) {
-		xmlnode *groupnode;
-		for (groupnode = xmlnode_get_child(blist, "group"); groupnode != NULL;
-				groupnode = xmlnode_get_next_twin(groupnode)) {
-			parse_group(groupnode);
-		}
-	}
-
-	privacy = xmlnode_get_child(gaim, "privacy");
-	if (privacy) {
-		xmlnode *anode;
-		for (anode = privacy->child; anode; anode = anode->next) {
-			xmlnode *x;
-			GaimAccount *account;
-			const char *acct_name, *proto, *mode, *protocol;
-
-			acct_name = xmlnode_get_attrib(anode, "name");
-			protocol = xmlnode_get_attrib(anode, "protocol");
-			proto = xmlnode_get_attrib(anode, "proto");
-			mode = xmlnode_get_attrib(anode, "mode");
-
-			if (!acct_name || (!proto && !protocol) || !mode)
-				continue;
-
-			account = gaim_accounts_find(acct_name, proto ? proto : protocol);
-
-			if (!account)
-				continue;
-
-			account->perm_deny = atoi(mode);
-
-			for (x = anode->child; x; x = x->next) {
-				char *name;
-				if (x->type != XMLNODE_TYPE_TAG)
-					continue;
-
-				if (!strcmp(x->name, "permit")) {
-					name = xmlnode_get_data(x);
-					gaim_privacy_permit_add(account, name, TRUE);
-					g_free(name);
-				} else if (!strcmp(x->name, "block")) {
-					name = xmlnode_get_data(x);
-					gaim_privacy_deny_add(account, name, TRUE);
-					g_free(name);
-				}
-			}
-		}
-	}
-
-	xmlnode_free(gaim);
-}
-
 void
 gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
 							 const char *group, const char *alias)
@@ -2042,335 +2401,6 @@ gaim_blist_request_add_group(void)
 		ui_ops->request_add_group();
 }
 
-static void blist_print_setting(const char *key,
-		struct gaim_blist_node_setting *setting, FILE *file, int indent)
-{
-	char *key_val, *data_val = NULL;
-	const char *type = NULL;
-	int i;
-
-	if (!key)
-		return;
-
-	switch(setting->type) {
-		case GAIM_BLIST_NODE_SETTING_BOOL:
-			type = "bool";
-			data_val = g_strdup_printf("%d", setting->value.boolean);
-			break;
-		case GAIM_BLIST_NODE_SETTING_INT:
-			type = "int";
-			data_val = g_strdup_printf("%d", setting->value.integer);
-			break;
-		case GAIM_BLIST_NODE_SETTING_STRING:
-			if (!setting->value.string)
-				return;
-
-			type = "string";
-			data_val = g_markup_escape_text(setting->value.string, -1);
-			break;
-	}
-
-	/* this can't happen */
-	if (!type || !data_val)
-		return;
-
-	for (i=0; i<indent; i++) fprintf(file, "\t");
-
-	key_val = g_markup_escape_text(key, -1);
-	fprintf(file, "<setting name=\"%s\" type=\"%s\">%s</setting>\n", key_val, type,
-			data_val);
-
-	g_free(key_val);
-	g_free(data_val);
-}
-
-static void blist_print_group_settings(gpointer key, gpointer data,
-		gpointer user_data)
-{
-	blist_print_setting(key, data, user_data, 3);
-}
-
-static void blist_print_buddy_settings(gpointer key, gpointer data,
-		gpointer user_data)
-{
-	blist_print_setting(key, data, user_data, 5);
-}
-
-static void blist_print_cnode_settings(gpointer key, gpointer data,
-		gpointer user_data)
-{
-	blist_print_setting(key, data, user_data, 4);
-}
-
-static void blist_print_chat_components(gpointer key, gpointer data,
-		gpointer user_data) {
-	char *key_val;
-	char *data_val;
-	FILE *file = user_data;
-
-	if (!key || !data)
-		return;
-
-	key_val = g_markup_escape_text(key, -1);
-	data_val = g_markup_escape_text(data, -1);
-
-	fprintf(file, "\t\t\t\t<component name=\"%s\">%s</component>\n", key_val,
-			data_val);
-	g_free(key_val);
-	g_free(data_val);
-}
-
-static void print_buddy(FILE *file, GaimBuddy *buddy)
-{
-	char *bud_name = g_markup_escape_text(buddy->name, -1);
-	char *bud_alias = NULL;
-	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
-	if (buddy->alias)
-		bud_alias= g_markup_escape_text(buddy->alias, -1);
-	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\">\n", acct_name,
-			gaim_account_get_protocol_id(buddy->account));
-
-	fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
-	if (bud_alias) {
-		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
-	}
-	g_hash_table_foreach(buddy->node.settings, blist_print_buddy_settings, file);
-	fprintf(file, "\t\t\t\t</buddy>\n");
-	g_free(bud_name);
-	g_free(bud_alias);
-	g_free(acct_name);
-}
-
-
-/* check for flagging and account exclusion on buddy */
-static gboolean blist_buddy_should_save(GaimAccount *exp_acct, GaimBuddy *buddy)
-{
-	if (! GAIM_BLIST_NODE_SHOULD_SAVE((GaimBlistNode *) buddy))
-		return FALSE;
-
-	if (exp_acct && buddy->account != exp_acct)
-		return FALSE;
-
-	return TRUE;
-}
-
-
-static void blist_write_buddy(FILE *file, GaimAccount *exp_acct, GaimBuddy *buddy)
-{
-	if (blist_buddy_should_save(exp_acct, buddy))
-		print_buddy(file, buddy);
-}
-
-
-/* check for flagging and account exclusion on contact and all members */
-static gboolean blist_contact_should_save(GaimAccount *exp_acct, GaimContact *contact)
-{
-	GaimBlistNode *bnode, *cnode = (GaimBlistNode *) contact;
-
-	if (! GAIM_BLIST_NODE_SHOULD_SAVE(cnode))
-		return FALSE;
-
-	for (bnode = cnode->child; bnode; bnode = bnode->next) {
-		if (! GAIM_BLIST_NODE_IS_BUDDY(bnode))
-			continue;
-
-		if (blist_buddy_should_save(exp_acct, (GaimBuddy *) bnode))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-
-static void blist_write_contact(FILE *file, GaimAccount *exp_acct, GaimContact *contact)
-{
-	GaimBlistNode *bnode, *cnode = (GaimBlistNode *) contact;
-
-	if (!blist_contact_should_save(exp_acct, contact))
-		return;
-
-	fprintf(file, "\t\t\t<contact");
-	if (contact->alias) {
-		char *alias = g_markup_escape_text(contact->alias, -1);
-		fprintf(file, " alias=\"%s\"", alias);
-		g_free(alias);
-	}
-	fprintf(file, ">\n");
-
-	for (bnode = cnode->child; bnode; bnode = bnode->next) {
-		if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-			blist_write_buddy(file, exp_acct, (GaimBuddy *) bnode);
-		}
-	}
-
-	g_hash_table_foreach(cnode->settings, blist_print_cnode_settings, file);
-	fprintf(file, "\t\t\t</contact>\n");
-}
-
-
-static void blist_write_chat(FILE *file, GaimAccount *exp_acct, GaimChat *chat)
-{
-	char *acct_name;
-
-	if (! GAIM_BLIST_NODE_SHOULD_SAVE((GaimBlistNode *) chat))
-		return;
-
-	if (exp_acct && chat->account != exp_acct)
-		return;
-
-	acct_name = g_markup_escape_text(chat->account->username, -1);
-	fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\">\n",
-			gaim_account_get_protocol_id(chat->account), acct_name);
-	g_free(acct_name);
-
-	if (chat->alias) {
-		char *chat_alias = g_markup_escape_text(chat->alias, -1);
-		fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
-		g_free(chat_alias);
-	}
-
-	g_hash_table_foreach(chat->components, blist_print_chat_components, file);
-	g_hash_table_foreach(chat->node.settings, blist_print_cnode_settings, file);
-
-	fprintf(file, "\t\t\t</chat>\n");
-}
-
-
-static void blist_write_group(FILE *file, GaimAccount *exp_acct, GaimGroup *group)
-{
-	GaimBlistNode *cnode, *gnode = (GaimBlistNode *) group;
-	char *group_name;
-
-	if (! GAIM_BLIST_NODE_SHOULD_SAVE(gnode))
-		return;
-
-	if (exp_acct && ! gaim_group_on_account(group, exp_acct))
-		return;
-
-	group_name = g_markup_escape_text(group->name, -1);
-	fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
-	g_free(group_name);
-
-	g_hash_table_foreach(group->node.settings,
-			blist_print_group_settings, file);
-
-	for (cnode = gnode->child; cnode; cnode = cnode->next) {
-		if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-			blist_write_contact(file, exp_acct, (GaimContact *) cnode);
-		} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-			blist_write_chat(file, exp_acct, (GaimChat *) cnode);
-		}
-	}
-
-	fprintf(file, "\t\t</group>\n");
-}
-
-
-static void blist_write_privacy_account(FILE *file, GaimAccount *exp_acct, GaimAccount *account)
-{
-	char *acct_name;
-	GSList *buds;
-
-	if(exp_acct && exp_acct != account)
-		return;
-
-	acct_name = g_markup_escape_text(account->username, -1);
-	fprintf(file, "\t\t<account proto=\"%s\" name=\"%s\" mode=\"%d\">\n",
-			gaim_account_get_protocol_id(account),
-			acct_name, account->perm_deny);
-	g_free(acct_name);
-
-	for (buds = account->permit; buds; buds = buds->next) {
-		char *bud_name = g_markup_escape_text(buds->data, -1);
-		fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
-		g_free(bud_name);
-	}
-
-	for (buds = account->deny; buds; buds = buds->next) {
-		char *bud_name = g_markup_escape_text(buds->data, -1);
-		fprintf(file, "\t\t\t<block>%s</block>\n", bud_name);
-		g_free(bud_name);
-	}
-
-	fprintf(file, "\t\t</account>\n");
-}
-
-
-static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
-{
-	GList *accounts;
-	GaimBlistNode *gnode;
-
-	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-	fprintf(file, "<gaim version='1.0'>\n");
-	fprintf(file, "\t<blist>\n");
-
-	for (gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
-		if (GAIM_BLIST_NODE_IS_GROUP(gnode))
-			blist_write_group(file, exp_acct, (GaimGroup *) gnode);
-	}
-
-	fprintf(file, "\t</blist>\n");
-	fprintf(file, "\t<privacy>\n");
-
-	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
-		blist_write_privacy_account(file, exp_acct, (GaimAccount *) accounts->data);
-	}
-
-	fprintf(file, "\t</privacy>\n");
-	fprintf(file, "</gaim>\n");
-}
-
-
-void gaim_blist_sync()
-{
-	FILE *file;
-	struct stat st;
-	const char *user_dir = gaim_user_dir();
-	char *filename;
-	char *filename_real;
-
-	g_return_if_fail(user_dir != NULL);
-
-	if (!blist_loaded) {
-		gaim_debug_warning("blist save",
-				   "AHH!! Tried to write the blist before we read it!\n");
-		return;
-	}
-
-	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
-
-	filename = g_build_filename(user_dir, "blist.xml.save", NULL);
-
-	if ((file = fopen(filename, "w"))) {
-		gaim_blist_write(file, NULL);
-		fclose(file);
-		chmod(filename, S_IRUSR | S_IWUSR);
-	} else {
-		gaim_debug_error("blist", "Unable to write %s\n", filename);
-		g_free(filename);
-		return;
-	}
-
-	if (stat(filename, &st) || (st.st_size == 0)) {
-		gaim_debug_error("blist", "Failed to save blist\n");
-		unlink(filename);
-		g_free(filename);
-		return;
-	}
-
-	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
-
-	if (rename(filename, filename_real) < 0)
-		gaim_debug_error("blist",
-				   "Error renaming %s to %s\n", filename, filename_real);
-
-	g_free(filename);
-	g_free(filename_real);
-}
-
-
 static void gaim_blist_node_setting_free(struct gaim_blist_node_setting *setting)
 {
 	switch(setting->type) {
@@ -2403,7 +2433,6 @@ void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key)
 
 	schedule_blist_save();
 }
-
 
 void gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean value)
 {
@@ -2523,7 +2552,6 @@ GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n)
 	return menu;
 }
 
-
 GaimBlistNodeAction *
 gaim_blist_node_action_new(char *label,
 			   void (*callback)(GaimBlistNode *, gpointer),
@@ -2535,7 +2563,6 @@ gaim_blist_node_action_new(char *label,
 	act->data = data;
 	return act;
 }
-
 
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline)
 {
@@ -2624,9 +2651,10 @@ gaim_blist_init(void)
 void
 gaim_blist_uninit(void)
 {
-	if (blist_save_timer != 0) {
-		gaim_timeout_remove(blist_save_timer);
-		blist_save_timer = 0;
+	if (save_timer != 0)
+	{
+		gaim_timeout_remove(save_timer);
+		save_timer = 0;
 		gaim_blist_sync();
 	}
 

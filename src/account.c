@@ -56,13 +56,13 @@ typedef struct
 static GaimAccountUiOps *account_ui_ops = NULL;
 
 static GList   *accounts = NULL;
-static guint    accounts_save_timer = 0;
+static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
 
-/**************************************************************************
-* Writting to disk
-**************************************************************************/
+/*********************************************************************
+ * Writting to disk                                                  *
+ *********************************************************************/
 
 static void
 setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
@@ -254,7 +254,8 @@ sync_accounts(void)
 	xmlnode *node;
 	char *data;
 
-	if (!accounts_loaded) {
+	if (!accounts_loaded)
+	{
 		gaim_debug_error("accounts", "Attempted to save accounts before they "
 						 "were read!\n");
 	}
@@ -270,21 +271,21 @@ static gboolean
 save_cb(gpointer data)
 {
 	sync_accounts();
-	accounts_save_timer = 0;
+	save_timer = 0;
 	return FALSE;
 }
 
 static void
 schedule_accounts_save()
 {
-	if (accounts_save_timer == 0)
-		accounts_save_timer = gaim_timeout_add(5000, save_cb, NULL);
+	if (save_timer == 0)
+		save_timer = gaim_timeout_add(5000, save_cb, NULL);
 }
 
 
-/**************************************************************************
-* Reading from disk
-**************************************************************************/
+/*********************************************************************
+ * Reading from disk                                                 *
+ *********************************************************************/
 
 static void
 parse_settings(xmlnode *node, GaimAccount *account)
@@ -1168,7 +1169,7 @@ gaim_account_is_connected(const GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 
-	/* XXX - The first way is better... but it doesn't work quite right yet */
+	/* TODO: The first way is better... but it doesn't work quite right yet */
 	/* return ((gc != NULL) && GAIM_CONNECTION_IS_CONNECTED(gc)); */
 	return ((gc != NULL) && gaim_connection_get_state(gc) != GAIM_DISCONNECTED);
 }
@@ -1707,10 +1708,10 @@ gaim_accounts_init(void)
 void
 gaim_accounts_uninit(void)
 {
-	if (accounts_save_timer != 0)
+	if (save_timer != 0)
 	{
-		gaim_timeout_remove(accounts_save_timer);
-		accounts_save_timer = 0;
+		gaim_timeout_remove(save_timer);
+		save_timer = 0;
 		sync_accounts();
 	}
 

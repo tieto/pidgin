@@ -65,13 +65,13 @@ struct _GaimSavedStatusSub
 };
 
 static GList   *saved_statuses = NULL;
-static guint    statuses_save_timer = 0;
+static guint    save_timer = 0;
 static gboolean statuses_loaded = FALSE;
 
 
-/**************************************************************************
-* Helper functions
-**************************************************************************/
+/*********************************************************************
+ * Private utility functions                                         *
+ *********************************************************************/
 
 static void
 free_statussavedsub(GaimSavedStatusSub *substatus)
@@ -100,10 +100,9 @@ free_statussaved(GaimSavedStatus *status)
 	g_free(status);
 }
 
-
-/**************************************************************************
-* Writting to disk
-**************************************************************************/
+/*********************************************************************
+ * Writting to disk                                                  *
+ *********************************************************************/
 
 static xmlnode *
 substatus_to_xmlnode(GaimSavedStatusSub *substatus)
@@ -176,7 +175,8 @@ sync_statuses(void)
 	xmlnode *node;
 	char *data;
 
-	if (!statuses_loaded) {
+	if (!statuses_loaded)
+	{
 		gaim_debug_error("status", "Attempted to save statuses before they "
 						 "were read!\n");
 		return;
@@ -190,24 +190,25 @@ sync_statuses(void)
 }
 
 static gboolean
-save_callback(gpointer data)
+save_cb(gpointer data)
 {
 	sync_statuses();
-	statuses_save_timer = 0;
+	save_timer = 0;
 	return FALSE;
 }
 
 static void
 schedule_save(void)
 {
-	if (statuses_save_timer == 0)
-		statuses_save_timer = gaim_timeout_add(5000, save_callback, NULL);
+	if (save_timer == 0)
+		save_timer = gaim_timeout_add(5000, save_cb, NULL);
 }
 
 
-/**************************************************************************
-* Reading from disk
-**************************************************************************/
+/*********************************************************************
+ * Reading from disk                                                 *
+ *********************************************************************/
+
 static GaimSavedStatusSub *
 parse_substatus(xmlnode *substatus)
 {
@@ -461,10 +462,10 @@ gaim_savedstatuses_init(void)
 void
 gaim_savedstatuses_uninit(void)
 {
-	if (statuses_save_timer != 0)
+	if (save_timer != 0)
 	{
-		gaim_timeout_remove(statuses_save_timer);
-		statuses_save_timer = 0;
+		gaim_timeout_remove(save_timer);
+		save_timer = 0;
 		sync_statuses();
 	}
 
