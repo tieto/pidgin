@@ -1075,6 +1075,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 
 struct signon_meter {
 	struct gaim_connection *gc;
+	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *progress;
 	GtkWidget *status;
@@ -1111,6 +1112,12 @@ void kill_meter(struct signon_meter *meter) {
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), 1);
 	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
 	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, "Done.");
+
+	gtk_widget_hide(meter->label);
+	gtk_widget_hide(meter->button);
+	gtk_widget_hide(meter->progress);
+	gtk_widget_hide(meter->status);
+
 	meter_win->active_count--;
 	if (meter_win->active_count == 0) {
 		gtk_widget_destroy(meter_win->window);
@@ -1234,7 +1241,6 @@ static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct signon_meter 
 static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget *widget, GtkTable *table, gint *rows)
 {
 	GtkWidget *graphic;
-	GtkWidget *label;
 	GtkWidget *nest_vbox;
 	GString *name_to_print;
 	struct signon_meter *meter;
@@ -1251,8 +1257,8 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	nest_vbox = gtk_vbox_new (FALSE, 0);
 	
 	name_to_print = g_string_prepend(name_to_print, "Signon: ");
-	label = gtk_label_new (name_to_print->str);
-	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+	meter->label = gtk_label_new (name_to_print->str);
+	gtk_misc_set_alignment (GTK_MISC (meter->label), 0, 0.5);
 		
 	meter->status = gtk_statusbar_new();
 	gtk_widget_set_usize(meter->status, 250, 0);
@@ -1264,7 +1270,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 		
 	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_table_attach (GTK_TABLE (table), nest_vbox, 1, 2, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (label), FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (meter->label), FALSE, FALSE, 0);
 		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (meter->status), FALSE, FALSE, 0);
 	gtk_table_attach (GTK_TABLE (table), meter->progress, 2, 3, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_table_attach (GTK_TABLE (table), meter->button, 3, 4, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
