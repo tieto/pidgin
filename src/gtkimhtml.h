@@ -82,9 +82,13 @@ struct _GtkIMHtml {
 	GdkCursor *text_cursor;
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
+	char *protocol_name;
 
 	gboolean show_smileys;
 	gboolean show_comments;
+
+	gboolean html_shortcuts;
+	gboolean smiley_shortcuts;
 
 	GtkWidget *tip_window;
 	char *tip;
@@ -190,6 +194,12 @@ void       gtk_imhtml_remove_smileys   (GtkIMHtml *imhtml);
 void       gtk_imhtml_show_smileys     (GtkIMHtml *imhtml, gboolean show);
 
 void       gtk_imhtml_show_comments    (GtkIMHtml *imhtml, gboolean show);
+
+void       gtk_imhtml_html_shortcuts(GtkIMHtml *imhtml, gboolean allow);
+
+void       gtk_imhtml_smiley_shortcuts (GtkIMHtml *imhtml, gboolean allow);
+
+void       gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name);
 
 #define    gtk_imhtml_append_text(x, y, z) \
  gtk_imhtml_append_text_with_images(x, y, z, NULL)

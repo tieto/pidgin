@@ -1494,10 +1494,17 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	GaimConvWindow *win = g_object_get_data(m, "user_data");
 	GaimAccount *account = g_object_get_data(m, "gaim_account");
 	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimPlugin *protocol;
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
 	gaim_conversation_set_account(conv, account);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	protocol = gaim_find_prpl(conv->account->protocol_id);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
+								 protocol->info->name);
 }
 
 static void
@@ -3453,6 +3460,7 @@ setup_chat_pane(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
+	GaimPlugin *protocol;
 	GtkWidget *vpaned, *hpaned;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *lbox, *bbox;
@@ -3655,6 +3663,14 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
+	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
+	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
+
+	protocol = gaim_find_prpl(conv->account->protocol_id);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
+								 protocol->info->name);
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	gaim_setup_imhtml(gtkconv->entry);
@@ -3696,6 +3712,7 @@ setup_im_pane(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkImPane *gtkim;
+	GaimPlugin *protocol;
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -3765,6 +3782,15 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
+
+	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
+	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
+			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
+
+	protocol = gaim_find_prpl(conv->account->protocol_id);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
+								 protocol->info->name);
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	gaim_setup_imhtml(gtkconv->entry);
@@ -5534,6 +5560,48 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
+html_shortcuts_pref_cb(const char *name, GaimPrefType type,
+					   gpointer value, gpointer data)
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	
+	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
+		conv = (GaimConversation *)l->data;
+		
+		if(!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+		
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		
+		gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
+								  (gboolean)GPOINTER_TO_INT(value));
+	}
+}
+
+static void
+smiley_shortcuts_pref_cb(const char *name, GaimPrefType type,
+						 gpointer value, gpointer data)
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	
+	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
+		conv = (GaimConversation *)l->data;
+		
+		if(!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+		
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		
+		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry), 
+									(gboolean)GPOINTER_TO_INT(value));
+	}
+}
+
+static void
 show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 								gpointer value, gpointer data)
 {
@@ -5728,6 +5796,10 @@ gaim_gtk_conversations_init(void)
 								show_smileys_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",
 								show_timestamps_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/html_shortcuts",
+								html_shortcuts_pref_cb, NULL);
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/smiley_shortcuts",
+								smiley_shortcuts_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_formatting_toolbar",
 								show_formatting_toolbar_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/spellcheck",

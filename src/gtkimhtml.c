@@ -388,10 +388,12 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
 		case 'B':
 			if (imhtml->format_functions & GTK_IMHTML_BOLD) {
-				gtk_imhtml_toggle_bold(imhtml);
-				object = g_object_ref(G_OBJECT(imhtml));
-				g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
-				g_object_unref(object);
+				if(imhtml->html_shortcuts) {
+					gtk_imhtml_toggle_bold(imhtml);
+					object = g_object_ref(G_OBJECT(imhtml));
+					g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
+					g_object_unref(object);
+				}
 			}
 			return TRUE;
 			break;
@@ -408,14 +410,16 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case 'i':
 		case 'I':
 			if (imhtml->format_functions & GTK_IMHTML_ITALIC)
-				gtk_imhtml_toggle_italic(imhtml);
+				if(imhtml->html_shortcuts)
+					gtk_imhtml_toggle_italic(imhtml);
 			return TRUE;
 			break;
 			
 		case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
 		case 'U':
 			if (imhtml->format_functions & GTK_IMHTML_UNDERLINE)
-				gtk_imhtml_toggle_underline(imhtml);
+				if(imhtml->html_shortcuts)
+					gtk_imhtml_toggle_underline(imhtml);
 			return TRUE;
 			break;
 			
@@ -449,8 +453,8 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case '&': strcpy(buf, ":-X");  break;
 		case '*': strcpy(buf, ":-D");  break;
 		}
-	if (*buf) {
-		gtk_imhtml_insert_smiley(imhtml, NULL, buf);//->account->protocol_id, buf);
+	if (*buf && imhtml->smiley_shortcuts) {
+		gtk_imhtml_insert_smiley(imhtml, imhtml->protocol_name, buf);
 		return TRUE;
 	}	
 	return FALSE;
@@ -584,6 +588,7 @@ gtk_imhtml_finalize (GObject *object)
 	gdk_cursor_unref(imhtml->hand_cursor);
 	gdk_cursor_unref(imhtml->arrow_cursor);
 	gdk_cursor_unref(imhtml->text_cursor);
+	
 	if(imhtml->tip_window){
 		gtk_widget_destroy(imhtml->tip_window);
 	}
@@ -2056,6 +2061,23 @@ void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 	imhtml->show_comments = show;
 }
 
+void       gtk_imhtml_html_shortcuts   (GtkIMHtml        *imhtml,
+                    gboolean allow)
+{
+	imhtml->html_shortcuts = allow;
+}
+
+void       gtk_imhtml_smiley_shortcuts (GtkIMHtml        *imhtml,
+                    gboolean allow)
+{
+	imhtml->smiley_shortcuts = allow;
+}
+
+void 
+gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name) {
+	imhtml->protocol_name = protocol_name;
+}
+
 void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
@@ -3018,4 +3040,3 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml)
 	return gtk_text_buffer_get_text(imhtml->text_buffer, &start_iter, &end_iter, FALSE);
 
 }
-

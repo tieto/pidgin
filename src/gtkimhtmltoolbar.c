@@ -481,9 +481,10 @@ static void
 insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	//GaimPlugin *proto = gaim_find_prpl(gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
 
-	gtk_imhtml_insert_smiley(GTK_IMHTML(toolbar->imhtml), NULL, smiley_text); //proto->info->name, smiley_text);
+	gtk_imhtml_insert_smiley(GTK_IMHTML(toolbar->imhtml),
+							 GTK_IMHTML(toolbar->imhtml)->protocol_name,
+							 smiley_text);
 
 	close_smiley_dialog(NULL, NULL, toolbar);
 }
