@@ -441,7 +441,7 @@ unsigned char *tobase16(const unsigned char *data, int length)
 	if (!data || !length)
 		return NULL;
 
-	ascii = malloc(length*2 + 1);
+	ascii = g_malloc(length*2 + 1);
 
 	for (i=0; i<length; i++)
 		snprintf(&ascii[i*2], 3, "%02hhx", data[i]);
@@ -460,7 +460,7 @@ int frombase16(const char *ascii, unsigned char **raw)
 	if (!ascii || !(len = strlen(ascii)) || (len % 2))
 		return 0;
 
-	data = malloc(len/2);
+	data = g_malloc(len/2);
 	for (i=0; i<len; i++) {
 		if (!(i % 2))
 			accumulator = 0;

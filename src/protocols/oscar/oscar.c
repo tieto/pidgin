@@ -1834,8 +1834,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
 			}
 		}
-		free(saved_b16);
-		free(b16);
+		g_free(saved_b16);
+		g_free(b16);
 	}
 
 	serv_got_update(gc, info->sn, 1, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
