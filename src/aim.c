@@ -401,7 +401,9 @@ void sighandler(int sig)
 		abort();
 		break;
 	case SIGPIPE:
-		/* should we do something here? */
+		/* FIXME: we should be checking to see which connection died. maybe add
+		 * something to struct prpl to have it check its connections? */
+		break;
 	default:
 		gtk_main_quit();
 		exit(0);
