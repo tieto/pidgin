@@ -53,8 +53,6 @@
 #include "pixmaps/buddychat.xpm"
 #include "pixmaps/im.xpm"
 #include "pixmaps/info.xpm"
-#include "pixmaps/permadd.xpm"
-#include "pixmaps/permdel.xpm"
 #include "pixmaps/away_icon.xpm"
 
 #include "pixmaps/daemon-buddyadd.xpm"
@@ -62,25 +60,22 @@
 #include "pixmaps/daemon-buddychat.xpm"
 #include "pixmaps/daemon-im.xpm"
 #include "pixmaps/daemon-info.xpm"
-#include "pixmaps/daemon-permadd.xpm"
-#include "pixmaps/daemon-permdel.xpm"
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
 #include "pixmaps/export_small.xpm"
+#ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
+#endif
 #include "pixmaps/exit_small.xpm"
 
 static GtkTooltips *tips;
 static GtkWidget *editpane;
 static GtkWidget *buddypane;
 static GtkWidget *imchatbox;
-static GtkWidget *permitpane;
 static GtkWidget *edittree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
 static GtkWidget *addbutton, *groupbutton, *rembutton;
-
-static int last_lag_us;
 
 extern int ticker_prefs;
 
@@ -1792,7 +1787,6 @@ void show_buddy_list()
         GtkWidget *notebook;
         GtkWidget *label;
         GtkWidget *bbox;
-        GtkWidget *permopt;
         GtkWidget *tbox;
 
 

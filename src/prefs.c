@@ -711,7 +711,7 @@ struct chat_page {
 
 static struct chat_page *cp = NULL;
 
-static refresh_list(GtkWidget *w, gpointer *m)
+static void refresh_list(GtkWidget *w, gpointer *m)
 {
         char *text = grab_url("http://www.aol.com/community/chat/allchats.html");
         char *c;

@@ -2405,7 +2405,6 @@ void set_color_selection(GtkWidget *selection, GdkColor color)
 void show_color_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
-	gdouble colors[4];
 
 	if ((int)color == 1) { /* foreground */
 		if (fgcseld) return;
@@ -2701,7 +2700,6 @@ void show_export_dialog()
 void do_import(GtkWidget *w, void *dummy)
 {
 	gint show_dialog = (int) dummy;
-        GList *grp, *grp2;
         char *buf = g_malloc(BUF_LONG);
         char *buf2;
         char *first = g_malloc(64);
