@@ -1226,9 +1226,10 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 /* The following are probably reasonable changes:
  * - \n should be converted to a normal space
  * - in addition to <br>, <p> and <div> etc. should also be converted into \n
- * - We want to turn </td>#whitespace<td> sequences into a single blank
+ * - We want to turn </td>#whitespace<td> sequences into a single tab
+ * - We want to turn <td> into a single tab (for msn profile "parsing")
  * - We want to turn </tr>#whitespace<tr> sequences into a single \n
- * We should remove all <script>...</script> etc. This should be fixed some time
+ * - <script>...</script> and <style>...</style> should be completely removed
  */
 
 char *
@@ -1238,6 +1239,7 @@ gaim_markup_strip_html(const char *str)
 	gboolean visible = TRUE;
 	gboolean closing_td_p = FALSE;
 	gchar *str2;
+	const gchar *cdata_close_tag = NULL;
 
 	if(!str)
 		return NULL;
@@ -1248,9 +1250,20 @@ gaim_markup_strip_html(const char *str)
 	{
 		if (str2[i] == '<')
 		{
-			if (strncasecmp(str2 + i, "<td", 3) == 0 && closing_td_p)
+			if (cdata_close_tag)
 			{
-				str2[j++] = ' ';
+				/* Note: Don't even assume any other tag is a tag in CDATA */
+				if (strncasecmp(str2 + i, cdata_close_tag,
+						strlen(cdata_close_tag)) == 0)
+				{
+					i += strlen(cdata_close_tag) - 1;
+					cdata_close_tag = NULL;
+				}
+				continue;
+			}
+			else if (strncasecmp(str2 + i, "<td", 3) == 0 && closing_td_p)
+			{
+				str2[j++] = '\t';
 				visible = TRUE;
 			}
 			else if (strncasecmp(str2 + i, "</td>", 5) == 0)
@@ -1278,6 +1291,7 @@ gaim_markup_strip_html(const char *str)
 				{
 					k++;
 				}
+
 				/* Check for tags which should be mapped to newline */
 				if (strncasecmp(str2 + i, "<p>", 3) == 0
 				 || strncasecmp(str2 + i, "<tr", 3) == 0
@@ -1288,10 +1302,30 @@ gaim_markup_strip_html(const char *str)
 				{
 					str2[j++] = '\n';
 				}
+				/* Check for tags which begin CDATA and need to be closed */
+#if 0 /* FIXME.. option is end tag optional, we can't handle this right now */
+				else if (strncasecmp(str2 + i, "<option", 7) == 0)
+				{
+					/* FIXME: We should not do this if the OPTION is SELECT'd */
+					cdata_close_tag = "</option>";
+				}
+#endif
+				else if (strncasecmp(str2 + i, "<script", 7) == 0)
+				{
+					cdata_close_tag = "</script>";
+				}
+				else if (strncasecmp(str2 + i, "<style", 6) == 0)
+				{
+					cdata_close_tag = "</style>";
+				}
 				/* Update the index and continue checking after the tag */
 				i = (str2[k] == '<')? k - 1: k;
 				continue;
 			}
+		}
+		else if (cdata_close_tag)
+		{
+			continue;
 		}
 		else if (!g_ascii_isspace(str2[i]))
 		{
