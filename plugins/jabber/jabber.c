@@ -116,6 +116,7 @@ struct jabber_data {
 	gboolean did_import;
 	GSList *pending_chats;
 	GSList *existing_chats;
+	GHashTable *hash;
 };
 
 static char *jabber_name()
@@ -717,10 +718,20 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				serv_got_update(GJ_GC(j), buddy, 0, 0, 0, 0, 0, 0);
 			}
 		} else {
+			/* keep track of away msg same as yahoo plugin */
+			struct jabber_data *jd = GJ_GC(j)->proto_data;
+			gpointer val = g_hash_table_lookup(jd->hash, b->name);
+			if (val)
+			   	g_free(val);
+			g_hash_table_insert(jd->hash, g_strdup(b->name), g_strdup(xmlnode_get_tag_data(p->x, "status")));
+
+
 			if (!resources) {
 				b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
 			}
+
 			serv_got_update(GJ_GC(j), buddy, 1, 0, 0, 0, state, 0);
+
 		}
 	} else {
 		if (who->resource) {
@@ -857,6 +868,42 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 	xmlnode_free(x);
 }
 
+static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
+	char buf[1024];
+	char *fn, *url, *email, *nickname, *status;
+	jid who;
+	char *buddy;
+	struct jabber_data *jd = GJ_GC(j)->proto_data;
+	int at = 0;
+
+	who = jid_new(j->p, from);
+	buddy = g_strdup_printf("%s@%s", who->user, who->server);
+	
+	fn = xmlnode_get_tag_data(querynode, "FN");
+	url = xmlnode_get_tag_data(querynode, "URL");
+	email = xmlnode_get_tag_data(querynode, "EMAIL");
+	nickname = xmlnode_get_tag_data(querynode, "NICKNAME");
+	status = g_hash_table_lookup(jd->hash, buddy);
+	if (!status)
+		status = "Online";
+
+	at = g_snprintf(buf, sizeof buf, "<B>Jabber ID:</B> %s<BR>", buddy);
+	if (fn)
+		at += g_snprintf(buf + at, sizeof(buf) - at, "<B>Full Name:</B> %s<BR>", fn);
+	if (nickname)
+		at += g_snprintf(buf + at, sizeof(buf) - at, "<B>Nickname:</B> %s<BR>", nickname);
+	if (url)
+		at += g_snprintf(buf + at, sizeof(buf) - at, "<B>URL:</B> <A HREF=\"%s\">%s</A><BR>",
+				url, url);
+	if (email)
+		at += g_snprintf(buf + at, sizeof(buf) - at,
+				"<B>Email:</B> <A HREF=\"mailto:%s\">%s</A><BR>", email, email);
+	at += g_snprintf(buf + at, sizeof(buf) - at, "<B>Status:</B> %s\n", status);
+	
+	g_show_info_text(buf);
+	g_free(buddy);
+}
+
 static void jabber_handlepacket(gjconn j, jpacket p)
 {
 	switch (p->type) {
@@ -872,12 +919,13 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		} else if (jpacket_subtype(p) == JPACKET__RESULT) {
-			xmlnode querynode;
+			xmlnode querynode, vcard;
 			char *xmlns, *from;
 
 			from = xmlnode_get_attrib(p->x, "from");
 			querynode = xmlnode_get_tag(p->x, "query");
 			xmlns = xmlnode_get_attrib(querynode, "xmlns");
+			vcard = xmlnode_get_tag(p->x, "vCard");
 
 			if ((!xmlns && !from) || NSCHECK(querynode, NS_AUTH)) {
 				debug_printf("auth success\n");
@@ -894,6 +942,10 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 
 			} else if (NSCHECK(querynode, NS_ROSTER)) {
 				jabber_handleroster(j, querynode);
+			} else if (NSCHECK(querynode, NS_VCARD)) {
+			   	jabber_handlevcard(j, querynode, from);
+			} else if(vcard) {
+				jabber_handlevcard(j, vcard, from);
 			} else {
 				/* debug_printf("jabber:iq:query: %s\n", xmlns); */
 			}
@@ -952,6 +1004,8 @@ static void jabber_login(struct aim_user *user)
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(user->username, DEFAULT_SERVER, "GAIM");
 
+	jd->hash = g_hash_table_new(g_str_hash, g_str_equal);
+
 	set_login_progress(gc, 1, "Connecting");
 
 	if (!(jd->jc = gjab_new(loginname, user->password, gc))) {
@@ -974,9 +1028,17 @@ static void jabber_login(struct aim_user *user)
 	return;
 }
 
+static gboolean jabber_destroy_hash(gpointer key, gpointer val, gpointer data) {
+   	g_free(key);
+	g_free(val);
+	return TRUE;
+}
+
 static void jabber_close(struct gaim_connection *gc)
 {
 	struct jabber_data *jd = gc->proto_data;
+	g_hash_table_foreach_remove(jd->hash, jabber_destroy_hash, NULL);
+	g_hash_table_destroy(jd->hash);
 	gdk_input_remove(gc->inpa);
 	gjab_delete(jd->jc);
 	jd->jc = NULL;
@@ -1353,7 +1415,6 @@ static void regstate(jconn j, int state)
 static void regpacket(jconn j, jpacket p)
 {
 	static int here = 0;
-	g_print("here\n");
 	switch (p->type) {
 		case JPACKET_MESSAGE:
 			break;
@@ -1380,7 +1441,6 @@ static void regpacket(jconn j, jpacket p)
 					gtk_entry_set_text(GTK_ENTRY(newname), "");
 					gtk_entry_set_text(GTK_ENTRY(newpass1), "");
 					gtk_entry_set_text(GTK_ENTRY(newpass2), "");
-					g_print("reg\n");
 					return;
 				} else if (here == 1) {
 					x = jutil_iqnew(JPACKET__SET, NS_AUTH);
@@ -1508,6 +1568,52 @@ static char *jabber_normalize(const char *s)
 	return buf;
 }
 
+static void jabber_get_info(struct gaim_connection *gc, char *who) {
+	xmlnode x;
+	char *id;
+	struct jabber_data *jd = gc->proto_data;
+	gjconn j = jd->jc;
+
+	x = jutil_iqnew(JPACKET__GET, NS_VCARD);
+	xmlnode_put_attrib(x, "to", who);
+	id = gjab_getid(j);
+	xmlnode_put_attrib(x, "id", id);
+
+	gjab_send(j, x);
+
+	xmlnode_free(x);
+	
+}
+
+static void jabber_info(GtkObject *obj, char *who) {
+   	serv_get_info(gtk_object_get_user_data(obj), who);
+}
+
+static void jabber_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+	GtkWidget *button;
+	char buf[1024];
+	struct buddy *b = find_buddy(gc, who);
+	struct jabber_data *jd = gc->proto_data;
+	char *status;
+	
+	button = gtk_menu_item_new_with_label(_("Get Info"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+	      		   GTK_SIGNAL_FUNC(jabber_info), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+	
+	status = g_hash_table_lookup(jd->hash, b->name);
+	if (!status || !strcasecmp("Online", status))
+	   return;
+
+	g_snprintf(buf, sizeof buf, "Status: %s",status);
+
+	button = gtk_menu_item_new_with_label(buf);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
 static GList *jabber_away_states() {
 	GList *m = NULL;
 
@@ -1579,7 +1685,7 @@ void Jabber_init(struct prpl *ret)
 	ret->name = jabber_name;
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;
-	ret->buddy_menu = NULL;
+	ret->buddy_menu = jabber_buddy_menu;
 	ret->user_opts = NULL;
 	ret->draw_new_user = jabber_draw_new_user;
 	ret->do_new_user = jabber_do_new_user;
@@ -1587,7 +1693,7 @@ void Jabber_init(struct prpl *ret)
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;
 	ret->set_info = NULL;
-	ret->get_info = NULL;
+	ret->get_info = jabber_get_info;
 	ret->set_away = jabber_set_away;
 	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;

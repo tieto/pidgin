@@ -20,6 +20,7 @@ version 0.11.0-pre11 (04/30/2001):
 	* Redesigned Preferences pages (design by DennisR)
 	* Can select where tabs are for tabbed IM/Chat windows
 	* Option to queue away messages while away
+	* Jabber got good updates (from faceprint)
 	* Oh yes, and Oscar works, yet again. (gee... that's what, 4
 	  releases that have "fixed" it now?)
 
