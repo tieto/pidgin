@@ -162,10 +162,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	if(type && !strcasecmp(type, "error")) {
 		state = JABBER_STATE_ERROR;
 		if((y = xmlnode_get_child(packet, "error")) != NULL) {
+			/* XXX: need to handle new XMPP-style errors */
 			char *txt = xmlnode_get_data(y);
 			jb->error_msg = g_strdup_printf(_("%s (Code %s)"),
-					txt, xmlnode_get_attrib(y, "code"));
-			g_free(txt);
+					txt ? txt : "Error", xmlnode_get_attrib(y, "code"));
+			if(txt)
+				g_free(txt);
 		} else {
 			jb->error_msg = g_strdup(_("Unknown Error in presence"));
 		}
