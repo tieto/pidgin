@@ -342,6 +342,7 @@ void urgent_add(struct conversation *c) {
 	XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window));
 	hints->flags |= XUrgencyHint;
 	XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+	XFree(hints);
 }
 
 gboolean urgent_remove(struct conversation *c) {
@@ -354,8 +355,10 @@ gboolean urgent_remove(struct conversation *c) {
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
 				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				XFree(hints);
 				return TRUE;
 			}
+			XFree(hints);
 			return FALSE;
 		} else {
 			struct conversation *c = (struct conversation *)conversations->data;
@@ -365,8 +368,10 @@ gboolean urgent_remove(struct conversation *c) {
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
 				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				XFree(hints);
 				return TRUE;
 			}
+			XFree(hints);
 			return FALSE;
 		}
 	} else {
@@ -374,8 +379,10 @@ gboolean urgent_remove(struct conversation *c) {
 		if (hints->flags & XUrgencyHint) {
 			hints->flags &= ~XUrgencyHint;
 			XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+			XFree(hints);
 			return TRUE;
 		}
+		XFree(hints);
 		return FALSE;
 	}
 }
