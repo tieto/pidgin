@@ -112,6 +112,7 @@ static GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
 
 static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
 	GaimBlistNode *bnode;
+	contact->priority = NULL;
 
 	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
 		GaimBuddy *buddy;
