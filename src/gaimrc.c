@@ -1586,10 +1586,14 @@ void save_prefs()
 			gaimrc_write_plugins(f);
 
 		gaimrc_write_proxy(f);
-		fclose(f);
-		if (rename(filename_temp, filename) < 0)
-			gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+		if (fprintf(f, "\n") == 1) {
+			if (rename(filename_temp, filename) < 0)
+				gaim_debug(GAIM_DEBUG_ERROR, "gaimrc", 
 					   "Error renaming %s to %s\n", filename_temp, filename);
+		} else
+			gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+				   "Unable to create new .gaimrc file.  Preferences not updated.");
+		fclose(f);
 		is_saving_prefs = 0;
 	} else
 		gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
