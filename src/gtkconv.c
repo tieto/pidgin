@@ -3936,21 +3936,25 @@ setup_chat_pane(GaimConversation *conv)
 	gtkconv->toolbar = gtk_imhtmltoolbar_new();
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar, FALSE, FALSE, 0);
 
+	gtkconv->lower_hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, TRUE, TRUE, 0);
+	gtk_widget_show(gtkconv->lower_hbox);
+
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox, TRUE, TRUE, 0);
+	gtk_widget_show(vbox);
+
 	/* Setup the entry widget.
 	 * We never show the horizontal scrollbar because it was causing weird
 	 * lockups when typing text just as you type the character that would 
 	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
 	 */
-	gtkconv->entrybox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->entrybox, TRUE, TRUE, 0);
-	gtk_widget_show(gtkconv->entrybox);
-
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
@@ -4002,7 +4006,7 @@ setup_chat_pane(GaimConversation *conv)
 	 *   user list buttons -> entry -> buttons at bottom
 	 */
 	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
-	focus_chain = g_list_prepend(focus_chain, gtkconv->entrybox);
+	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
 
 	return vpaned;
@@ -4075,16 +4079,20 @@ setup_im_pane(GaimConversation *conv)
 	 * lockups when typing text just as you type the character that would
 	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
 	 */
-	gtkconv->entrybox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->entrybox, TRUE, TRUE, 0);
-	gtk_widget_show(gtkconv->entrybox);
+	gtkconv->lower_hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->lower_hbox, TRUE, TRUE, 0);
+	gtk_widget_show(gtkconv->lower_hbox);
+
+	vbox2 = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox2, TRUE, TRUE, 0);
+	gtk_widget_show(vbox2);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
@@ -4144,7 +4152,7 @@ setup_im_pane(GaimConversation *conv)
 	 * Tab title -> conversation scrollback -> entry -> buttons at bottom
 	 */
 	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
-	focus_chain = g_list_prepend(focus_chain, gtkconv->entrybox);
+	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox2), focus_chain);
 
 	return paned;
@@ -5437,6 +5445,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	int scale_width, scale_height;
+	GtkRequisition requisition;
 
 	GaimAccount *account;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -5529,23 +5538,11 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 
 	vbox = gtk_vbox_new(FALSE, 0);
-	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	if(button_type == GAIM_BUTTON_NONE) {
-		gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), vbox, FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(gtkconv->entrybox), vbox, 0);
-	} else {
-		gtk_box_pack_start(GTK_BOX(gtkconv->bbox), vbox, FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), vbox, 0);
-	}
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame),
 							  (bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-
-
-	gtk_widget_show(vbox);
-	gtk_widget_show(frame);
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(frame), event);
@@ -5562,6 +5559,19 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (bm)
 		g_object_unref(G_OBJECT(bm));
+
+	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
+	gtk_widget_size_request(gtkconv->bbox, &requisition);
+	if(button_type == GAIM_BUTTON_NONE || requisition.height < scale_height) {
+		gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), vbox, FALSE, FALSE, 0);
+/*		gtk_box_reorder_child(GTK_BOX(gtkconv->lower_hbox), vbox, 0); */
+	} else {
+		gtk_box_pack_start(GTK_BOX(gtkconv->bbox), vbox, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), vbox, 0);
+	}
+
+	gtk_widget_show(vbox);
+	gtk_widget_show(frame);
 
 	/* The buddy icon code needs badly to be fixed. */
 	buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
