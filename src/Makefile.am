@@ -28,6 +28,7 @@ gaim_applet_SOURCES =	about.c \
 			toc.c \
 			util.c
 gaim_applet_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_applet_LDFLAGS = -export-dynamic
 gaim_applet_LDADD = @LDADD@ @LIBOBJS@
 else
 bin_PROGRAMS = gaim
@@ -59,6 +60,7 @@ gaim_SOURCES =	about.c \
 		toc.c \
 		util.c
 gaim_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
