@@ -145,7 +145,7 @@ version 0.60:
 	* Code cleanups and fixes (Thanks, Federico Mena Quintero and 
 	  Ka-Hing Cheung)
 	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
-	* Generic File Transfer PRPL interface (Thanks, William T. Mahan)
+	* Generic File Transfer PRPL interface (Thanks, Christian Hammond)
 	* Better supression of auto-responses (Thanks, Joshua Blanton)
 	* Drag-and-drop tabs in conversations, and multiple windows with tabs
 	  in each (Thanks, Christian Hammond)

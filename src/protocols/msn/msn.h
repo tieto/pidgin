@@ -101,6 +101,7 @@ struct msn_xfer_data {
 	uint32_t authcookie;
 
 	gboolean transferring;
+	gboolean do_cancel;
 
 	char *rxqueue;
 	int rxlen;

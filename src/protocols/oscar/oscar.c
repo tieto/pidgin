@@ -780,7 +780,7 @@ oscar_xfer_init(struct gaim_xfer *xfer)
 		} else {
 			do_error_dialog(_("File Transfer Aborted"), _("Unable to establish listener socket."), GAIM_ERROR);
 			/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
-			/* gaim_xfer_cancel(xfer); */
+			/* gaim_xfer_cancel_remote(xfer); */
 		}
 	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 		xfer_data->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
@@ -790,11 +790,11 @@ oscar_xfer_init(struct gaim_xfer *xfer)
 			xfer_data->conn->fd = xfer->fd = proxy_connect(gc->account, xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
 			if (xfer->fd == -1) {
 				do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
-				/* gaim_xfer_cancel(xfer); */
+				/* gaim_xfer_cancel_remote(xfer); */
 			}
 		} else {
 			do_error_dialog(_("File Transfer Aborted"), _("Unable to create new connection."), GAIM_ERROR);
-			/* gaim_xfer_cancel(xfer); */
+			/* gaim_xfer_cancel_remote(xfer); */
 			/* Try a different port? Ask them to connect to us? */
 		}
 
@@ -849,7 +849,12 @@ oscar_xfer_end(struct gaim_xfer *xfer)
 }
 
 static void
-oscar_xfer_cancel(struct gaim_xfer *xfer)
+oscar_xfer_cancel_send(struct gaim_xfer *xfer)
+{
+}
+
+static void
+oscar_xfer_cancel_recv(struct gaim_xfer *xfer)
 {
 	struct gaim_connection *gc;
 	struct oscar_data *od;
@@ -969,7 +974,8 @@ static void oscar_ask_sendfile(struct gaim_connection *gc, char *destsn) {
 	gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
 	gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
 	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
-	gaim_xfer_set_cancel_fnc(xfer, oscar_xfer_cancel);
+	gaim_xfer_set_cancel_send_fnc(xfer, oscar_xfer_cancel_send);
+	gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
 	gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
 
 	/* Keep track of this transfer for later */
@@ -2125,7 +2131,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
 			gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
 			gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
-			gaim_xfer_set_cancel_fnc(xfer, oscar_xfer_cancel);
+			gaim_xfer_set_cancel_send_fnc(xfer, oscar_xfer_cancel_send);
+			gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
 			gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
 
 			/*
@@ -2143,7 +2150,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			struct gaim_xfer *xfer;
 			debug_printf("AAA - File transfer canceled by remote user\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie)))
-				gaim_xfer_cancel(xfer);
+				gaim_xfer_cancel_remote(xfer);
 		} else if (args->status == AIM_RENDEZVOUS_ACCEPT) {
 			/*
 			 * This gets sent by the receiver of a file 
@@ -2584,7 +2591,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_
 			struct gaim_xfer *xfer;
 			debug_printf("AAA - Other user declined file transfer\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
-				gaim_xfer_cancel(xfer);
+				gaim_xfer_cancel_remote(xfer);
 		} break;
 
 		default: {
@@ -2711,7 +2718,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 #if 0
 	/* If this was a file transfer request, data is a cookie */
 	if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, data))) {
-		gaim_xfer_cancel(xfer);
+		gaim_xfer_cancel_remote(xfer);
 		return 1;
 	}
 #endif

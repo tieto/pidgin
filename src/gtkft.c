@@ -330,10 +330,10 @@ selection_changed_cb(GtkTreeSelection *selection,
 					 struct gaim_gtkxfer_dialog *dialog)
 {
 	GtkTreeIter iter;
+	struct gaim_xfer *xfer = NULL;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		GValue val = {0, };
-		struct gaim_xfer *xfer;
 
 		gtk_widget_set_sensitive(dialog->disclosure, TRUE);
 
@@ -382,7 +382,7 @@ remove_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
 static void
 stop_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
 {
-	gaim_xfer_cancel(dialog->selected_xfer);
+	gaim_xfer_cancel_local(dialog->selected_xfer);
 }
 
 /**************************************************************************
@@ -1123,14 +1123,15 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 }
 
 static void
-gaim_gtkxfer_cancel(struct gaim_xfer *xfer)
+gaim_gtkxfer_cancel_local(struct gaim_xfer *xfer)
 {
 	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
+}
 
-	/* See if it's removed. */
-	/* XXX - This caused some looping, and I don't see a point to it */
-/*	if (xfer->ui_data == NULL)
-		gaim_xfer_destroy(xfer); */
+static void
+gaim_gtkxfer_cancel_remote(struct gaim_xfer *xfer)
+{
+	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 struct gaim_xfer_ui_ops ops =
@@ -1140,7 +1141,8 @@ struct gaim_xfer_ui_ops ops =
 	gaim_gtkxfer_ask_cancel,
 	gaim_gtkxfer_add_xfer,
 	gaim_gtkxfer_update_progress,
-	gaim_gtkxfer_cancel
+	gaim_gtkxfer_cancel_local,
+	gaim_gtkxfer_cancel_remote
 };
 
 /**************************************************************************

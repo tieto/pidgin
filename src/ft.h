@@ -26,7 +26,7 @@
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
-struct gaim_xfer *xfer;
+struct gaim_xfer;
 
 /**
  * Types of file transfers.
@@ -52,7 +52,8 @@ struct gaim_xfer_ui_ops
 	void (*ask_cancel)(struct gaim_xfer *xfer);
 	void (*add_xfer)(struct gaim_xfer *xfer);
 	void (*update_progress)(struct gaim_xfer *xfer, double percent);
-	void (*cancel)(struct gaim_xfer *xfer);
+	void (*cancel_local)(struct gaim_xfer *xfer);
+	void (*cancel_remote)(struct gaim_xfer *xfer);
 };
 
 /**
@@ -92,7 +93,8 @@ struct gaim_xfer
 		void (*init)(struct gaim_xfer *xfer);
 		void (*start)(struct gaim_xfer *xfer);
 		void (*end)(struct gaim_xfer *xfer);
-		void (*cancel)(struct gaim_xfer *xfer);
+		void (*cancel_send)(struct gaim_xfer *xfer);
+		void (*cancel_recv)(struct gaim_xfer *xfer);
 		size_t (*read)(char **buffer, struct gaim_xfer *xfer);
 		size_t (*write)(const char *buffer, size_t size,
 						struct gaim_xfer *xfer);
@@ -372,13 +374,22 @@ void gaim_xfer_set_end_fnc(struct gaim_xfer *xfer,
 						   void (*fnc)(struct gaim_xfer *));
 
 /**
- * Sets the cancel transfer function for the file transfer.
+ * Sets the cancel send function for the file transfer.
  *
  * @param xfer The file transfer.
- * @param fnc  The cancel transfer function.
+ * @param fnc  The cancel send function.
  */
-void gaim_xfer_set_cancel_fnc(struct gaim_xfer *xfer,
-							  void (*fnc)(struct gaim_xfer *));
+void gaim_xfer_set_cancel_send_fnc(struct gaim_xfer *xfer,
+								   void (*fnc)(struct gaim_xfer *));
+
+/**
+ * Sets the cancel receive function for the file transfer.
+ *
+ * @param xfer The file transfer.
+ * @param fnc  The cancel receive function.
+ */
+void gaim_xfer_set_cancel_recv_fnc(struct gaim_xfer *xfer,
+								   void (*fnc)(struct gaim_xfer *));
 
 /**
  * Reads in data from a file transfer stream.
@@ -425,11 +436,18 @@ void gaim_xfer_start(struct gaim_xfer *xfer, int fd, const char *ip,
 void gaim_xfer_end(struct gaim_xfer *xfer);
 
 /**
- * Cancels a file transfer.
+ * Cancels a file transfer on the local end.
  *
  * @param xfer The file transfer.
  */
-void gaim_xfer_cancel(struct gaim_xfer *xfer);
+void gaim_xfer_cancel_local(struct gaim_xfer *xfer);
+
+/**
+ * Cancels a file transfer from the remote end.
+ *
+ * @param xfer The file transfer.
+ */
+void gaim_xfer_cancel_remote(struct gaim_xfer *xfer);
 
 /**
  * Displays a file transfer-related error message.

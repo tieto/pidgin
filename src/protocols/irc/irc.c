@@ -1268,7 +1268,19 @@ irc_xfer_end(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_cancel(struct gaim_xfer *xfer)
+irc_xfer_cancel_send(struct gaim_xfer *xfer)
+{
+	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
+
+	data->idata->file_transfers = g_slist_remove(data->idata->file_transfers,
+												 xfer);
+
+	g_free(data);
+	xfer->data = NULL;
+}
+
+static void
+irc_xfer_cancel_recv(struct gaim_xfer *xfer)
 {
 	struct irc_xfer_data *data = (struct irc_xfer_data *)xfer->data;
 
@@ -1377,10 +1389,11 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		g_free(filename);
 
 		/* Setup our I/O op functions. */
-		gaim_xfer_set_init_fnc(xfer,   irc_xfer_init);
-		gaim_xfer_set_end_fnc(xfer,    irc_xfer_end);
-		gaim_xfer_set_cancel_fnc(xfer, irc_xfer_cancel);
-		gaim_xfer_set_ack_fnc(xfer,    irc_xfer_ack);
+		gaim_xfer_set_init_fnc(xfer,        irc_xfer_init);
+		gaim_xfer_set_end_fnc(xfer,         irc_xfer_end);
+		gaim_xfer_set_cancel_send_fnc(xfer, irc_xfer_cancel_send);
+		gaim_xfer_set_cancel_recv_fnc(xfer, irc_xfer_cancel_recv);
+		gaim_xfer_set_ack_fnc(xfer,         irc_xfer_ack);
 
 		/* Keep track of this transfer for later. */
 		id->file_transfers = g_slist_append(id->file_transfers, xfer);

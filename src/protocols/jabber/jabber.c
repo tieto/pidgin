@@ -2015,7 +2015,10 @@ static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
 	return 0;
 }
 
-static void jabber_xfer_cancel(struct gaim_xfer *xfer) {
+static void jabber_xfer_cancel_send(struct gaim_xfer *xfer) {
+}
+
+static void jabber_xfer_cancel_recv(struct gaim_xfer *xfer) {
 	struct jabber_xfer_data *data = xfer->data;
 	xmlnode x,y;
 
@@ -2038,6 +2041,7 @@ static void jabber_xfer_cancel(struct gaim_xfer *xfer) {
 static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
 	struct jabber_xfer_data *xfer_data;
 	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
+	struct gaim_xfer *xfer;
 	char *msg = NULL;
 	char *filename;
 	xmlnode querynode = xmlnode_get_tag(iqnode, "query");
@@ -2072,7 +2076,8 @@ static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
 
 	gaim_xfer_set_init_fnc(xfer,   jabber_xfer_init);
 	gaim_xfer_set_end_fnc(xfer,    jabber_xfer_end);
-	gaim_xfer_set_cancel_fnc(xfer, jabber_xfer_cancel);
+	gaim_xfer_set_cancel_send_fnc(xfer, jabber_xfer_cancel_send);
+	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_xfer_cancel_recv);
 	gaim_xfer_set_read_fnc(xfer,   jabber_xfer_read);
 	gaim_xfer_set_start_fnc(xfer,  jabber_xfer_start);
 

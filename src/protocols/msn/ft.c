@@ -109,7 +109,7 @@ msn_xfer_start(struct gaim_xfer *xfer)
 		g_snprintf(sendbuf, sizeof(sendbuf), "TFR\r\n");
 
 		if (msn_write(xfer->fd, sendbuf, strlen(sendbuf)) < 0) {
-			gaim_xfer_cancel(xfer);
+			gaim_xfer_cancel_remote(xfer);
 		}
 	}
 }
@@ -140,7 +140,27 @@ msn_xfer_end(struct gaim_xfer *xfer)
 }
 
 static void
-msn_xfer_cancel(struct gaim_xfer *xfer)
+msn_xfer_cancel_send(struct gaim_xfer *xfer)
+{
+	struct gaim_account *account;
+	struct msn_xfer_data *xfer_data;
+	struct msn_data *md;
+
+	xfer_data = (struct msn_xfer_data *)xfer->data;
+
+	xfer_data->do_cancel = TRUE;
+
+	account   = gaim_xfer_get_account(xfer);
+	md        = (struct msn_data *)account->gc->proto_data;
+
+	md->file_transfers = g_slist_remove(md->file_transfers, xfer);
+
+	g_free(xfer_data);
+	xfer->data = NULL;
+}
+
+static void
+msn_xfer_cancel_recv(struct gaim_xfer *xfer)
 {
 	struct gaim_account *account;
 	struct msn_xfer_data *xfer_data;
@@ -150,19 +170,27 @@ msn_xfer_cancel(struct gaim_xfer *xfer)
 	xfer_data = (struct msn_xfer_data *)xfer->data;
 	md        = (struct msn_data *)account->gc->proto_data;
 
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		md->file_transfers = g_slist_remove(md->file_transfers, xfer);
+	md->file_transfers = g_slist_remove(md->file_transfers, xfer);
 
-		g_free(xfer_data);
-		xfer->data = NULL;
-	}
+	g_free(xfer_data);
+	xfer->data = NULL;
 }
 
 static size_t
 msn_xfer_read(char **buffer, struct gaim_xfer *xfer)
 {
+	struct msn_xfer_data *xfer_data;
 	unsigned char header[3];
 	size_t len, size;
+
+	xfer_data = (struct msn_xfer_data *)xfer->data;
+
+	if (xfer_data->do_cancel)
+	{
+		write(xfer->fd, "CCL\n", 4);
+
+		return 0;
+	}
 
 	if (read(xfer->fd, header, sizeof(header)) < 3) {
 		gaim_xfer_set_completed(xfer, TRUE);
@@ -193,6 +221,31 @@ msn_xfer_read(char **buffer, struct gaim_xfer *xfer)
 static size_t
 msn_xfer_write(const char *buffer, size_t size, struct gaim_xfer *xfer)
 {
+	struct gaim_account *account;
+	struct msn_xfer_data *xfer_data;
+	struct msn_data *md;
+	unsigned char header[3];
+
+	xfer_data = (struct msn_xfer_data *)xfer->data;
+	account   = gaim_xfer_get_account(xfer);
+	md        = (struct msn_data *)account->gc->proto_data;
+
+	if (xfer_data->do_cancel)
+	{
+		header[0] = 1;
+		header[1] = 0;
+		header[2] = 0;
+
+		if (write(xfer->fd, header, sizeof(header)) < 3) {
+			gaim_xfer_cancel_remote(xfer);
+			return 0;
+		}
+	}
+	else
+	{
+		/* Not implemented yet. */
+	}
+
 	return 0;
 }
 
@@ -213,7 +266,7 @@ msn_process_msnftp(struct gaim_xfer *xfer, gint source, const char *buf)
 				   (unsigned long)xfer_data->authcookie);
 
 		if (msn_write(source, sendbuf, strlen(sendbuf)) < 0) {
-			gaim_xfer_cancel(xfer); /* ? */
+			gaim_xfer_cancel_remote(xfer); /* ? */
 
 			return 0;
 		}
@@ -262,7 +315,7 @@ msn_msnftp_cb(gpointer data, gint source, GaimInputCondition cond)
 	len = read(source, buf, sizeof(buf));
 
 	if (len <= 0) {
-		gaim_xfer_cancel(xfer);
+		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 
@@ -326,7 +379,7 @@ msn_msnftp_connect(gpointer data, gint source, GaimInputCondition cond)
 		debug_printf("MSNFTP: Error establishing connection\n");
 		close(source);
 
-		gaim_xfer_cancel(xfer);
+		gaim_xfer_cancel_remote(xfer);
 
 		return;
 	}
@@ -334,7 +387,7 @@ msn_msnftp_connect(gpointer data, gint source, GaimInputCondition cond)
 	g_snprintf(buf, sizeof(buf), "VER MSNFTP\r\n");
 
 	if (msn_write(source, buf, strlen(buf)) < 0) {
-		gaim_xfer_cancel(xfer);
+		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 
@@ -391,12 +444,13 @@ msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 		gaim_xfer_set_size(xfer, atoi(filesize_s));
 
 		/* Setup our I/O op functions */
-		gaim_xfer_set_init_fnc(xfer,   msn_xfer_init);
-		gaim_xfer_set_start_fnc(xfer,  msn_xfer_start);
-		gaim_xfer_set_end_fnc(xfer,    msn_xfer_end);
-		gaim_xfer_set_cancel_fnc(xfer, msn_xfer_cancel);
-		gaim_xfer_set_read_fnc(xfer,   msn_xfer_read);
-		gaim_xfer_set_write_fnc(xfer,  msn_xfer_write);
+		gaim_xfer_set_init_fnc(xfer,        msn_xfer_init);
+		gaim_xfer_set_start_fnc(xfer,       msn_xfer_start);
+		gaim_xfer_set_end_fnc(xfer,         msn_xfer_end);
+		gaim_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel_send);
+		gaim_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel_recv);
+		gaim_xfer_set_read_fnc(xfer,        msn_xfer_read);
+		gaim_xfer_set_write_fnc(xfer,       msn_xfer_write);
 
 		/* Keep track of this transfer for later. */
 		md->file_transfers = g_slist_append(md->file_transfers, xfer);
@@ -452,7 +506,7 @@ msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 			if (proxy_connect(xfer->account, ip_s, atoi(port_s),
 							  msn_msnftp_connect, xfer) != 0) {
 
-				gaim_xfer_cancel(xfer);
+				gaim_xfer_cancel_remote(xfer);
 
 				return;
 			}
