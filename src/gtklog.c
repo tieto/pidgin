@@ -533,7 +533,6 @@ void gaim_gtk_syslog_show()
 		if(gaim_find_prpl(gaim_account_get_protocol_id(account)) == NULL)
 			continue;
 
-		logs = gaim_log_get_system_logs(account);
 		logs = g_list_concat(logs, gaim_log_get_system_logs(account));
 	}
 	logs = g_list_sort(logs, gaim_log_compare);
