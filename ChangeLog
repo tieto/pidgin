@@ -4,6 +4,8 @@ version 0.49:
 	* Can compile against GTK+ 2.0 (version 1.3.10)
 	* Confirm before removing buddies
 	* Updated Russian translation (thanks Grigory Bakunov)
+	* Updated Korean translation (thanks Ho-seok Lee, also for
+	  resized ICQ icons)
 
 version 0.48 (11/18/2001):
 	* Right-click on links to open/copy URL
