@@ -53,6 +53,7 @@ struct _GaimGtkWindow
 
 		GtkWidget *view_log;
 
+		GtkWidget *send_file;
 		GtkWidget *add_pounce;
 		GtkWidget *get_info;
 		GtkWidget *warn;
@@ -96,6 +97,7 @@ struct _GaimGtkImPane
 {
 	GtkWidget *warn;
 	GtkWidget *block;
+	GtkWidget *send_file;
 	GtkWidget *sep1;
 	GtkWidget *sep2;
 	GtkWidget *check;

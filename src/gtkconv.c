@@ -683,6 +683,13 @@ block_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static void
+send_file_cb(GtkWidget *widget, GaimConversation *conv)
+{
+	serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), NULL);
+	
+}
+
+static void
 do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 {
 	const char *buddy, *message;
@@ -953,6 +960,18 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 
 	gtk_widget_show_all(gtkconv->dialogs.search);
 	gtk_widget_grab_focus(s->entry);
+}
+
+static void
+menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
+
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), NULL);
+	}
+
 }
 
 static void
@@ -1267,6 +1286,15 @@ menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
+menu_chat_send_file_cb(GtkWidget *w, GaimConversation *conv)
+{
+	const char *who = g_object_get_data(G_OBJECT(w), "user_data");
+	GaimConnection *gc  = gaim_conversation_get_gc(conv);
+
+	serv_send_file(gc, who, NULL);
+}
+
+static void
 menu_chat_info_cb(GtkWidget *w, GaimConversation *conv)
 {
 	char *who;
@@ -1343,6 +1371,16 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
+	if (gc && prpl_info && prpl_info->send_file
+			&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
+		button = gtk_menu_item_new_with_label(_("Send File"));
+		g_signal_connect(G_OBJECT(button), "activate",
+						 G_CALLBACK(menu_chat_send_file_cb), conv);
+		g_object_set_data(G_OBJECT(button), "user_data", who);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+		gtk_widget_show(button);
+	}
+	
 	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
 		button = gtk_menu_item_new_with_label(_("Un-Ignore"));
 	else
@@ -2557,9 +2595,11 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->send);
 		gtk_widget_show(gtkconv->u.im->warn);
 		gtk_widget_show(gtkconv->u.im->block);
+		gtk_widget_show(gtkconv->u.im->send_file);
 
 		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
+		gtk_widget_show(gtkwin->menu.send_file);
 		gtk_widget_show(gtkwin->menu.add_pounce);
 		gtk_widget_show(gtkwin->menu.get_info);
 		gtk_widget_show(gtkwin->menu.warn);
@@ -2592,6 +2632,7 @@ gray_stuff_out(GaimConversation *conv)
 
 		/* Deal with menu items */
 		gtk_widget_hide(gtkwin->menu.view_log);
+		gtk_widget_hide(gtkwin->menu.send_file);
 		gtk_widget_hide(gtkwin->menu.add_pounce);
 		gtk_widget_hide(gtkwin->menu.get_info);
 		gtk_widget_hide(gtkwin->menu.warn);
@@ -2638,6 +2679,10 @@ gray_stuff_out(GaimConversation *conv)
 									 (prpl_info->warn != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->block,
 									 (prpl_info->add_deny != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.im->send_file,
+					(prpl_info->send_file
+					 && (!prpl_info->can_receive_file
+						 || prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
 		{
@@ -2676,6 +2721,10 @@ gray_stuff_out(GaimConversation *conv)
 								 (prpl_info->chat_invite != NULL));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			gtk_widget_set_sensitive(gtkwin->menu.send_file,
+					(gc && prpl_info->send_file != NULL 
+					 && (!prpl_info->can_receive_file 
+						 || prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
 			if (gaim_find_buddy(gaim_conversation_get_account(conv),
 					    gaim_conversation_get_name(conv)) == NULL)
 				gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
@@ -2709,12 +2758,14 @@ gray_stuff_out(GaimConversation *conv)
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			gtk_widget_set_sensitive(gtkconv->u.im->warn, FALSE);
 			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.im->send_file, FALSE);
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
 		}
 
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.send_file, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.warn, FALSE);
@@ -3392,6 +3443,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 
+	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 		0, NULL },
 	{ N_("/Conversation/_Get Info"), NULL, menu_get_info_cb, 0,
@@ -3474,6 +3526,10 @@ setup_menubar(GaimConvWindow *win)
 									N_("/Conversation/View Log"));
 	/* --- */
 
+	gtkwin->menu.send_file =
+		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+									N_("/Conversation/Send File..."));
+				
 	gtkwin->menu.add_pounce =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/Add Buddy Pounce..."));
@@ -3586,6 +3642,13 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 						 _("Block the user"), NULL);
 	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, FALSE, FALSE, 0);
 
+	/* Block button */
+	gtkim->send_file = gaim_gtk_change_text(_("Send File"), gtkim->send_file,
+										GAIM_STOCK_FILE_TRANSFER, GAIM_CONV_IM);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->send_file,
+						 _("Send a file to the user"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkim->send_file, FALSE, FALSE, 0);
+
 	/* Add button */
 	gtkconv->add = gaim_gtk_change_text(_("Add"), gtkconv->add,
 									  GTK_STOCK_ADD, GAIM_CONV_IM);
@@ -3609,6 +3672,7 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	gtk_button_set_relief(GTK_BUTTON(gtkim->warn),   GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkim->block),  GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkim->send_file),  GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->add),    GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->remove), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->info), GTK_RELIEF_NONE);
@@ -3616,6 +3680,7 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->warn);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->block);
+	gtk_size_group_add_widget(gtkconv->sg, gtkim->send_file);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->info);
@@ -3623,9 +3688,10 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	gtk_box_reorder_child(GTK_BOX(parent), gtkim->warn,     1);
 	gtk_box_reorder_child(GTK_BOX(parent), gtkim->block,    2);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->add,    3);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->remove, 4);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->info,   5);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkim->send_file,3);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->add,    4);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->remove, 5);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->info,   6);
 
 	gaim_gtkconv_update_buttons_by_protocol(conv);
 
@@ -3640,6 +3706,8 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 					 G_CALLBACK(warn_cb), conv);
 	g_signal_connect(G_OBJECT(gtkim->block), "clicked",
 					 G_CALLBACK(block_cb), conv);
+	g_signal_connect(G_OBJECT(gtkim->send_file), "clicked",
+					 G_CALLBACK(send_file_cb), conv);
 	g_signal_connect(G_OBJECT(gtkconv->add), "clicked",
 					 G_CALLBACK(add_remove_cb), conv);
 	g_signal_connect(G_OBJECT(gtkconv->remove), "clicked",
