@@ -3768,6 +3768,7 @@ alias_dialog_bud(struct buddy *b)
 		gtk_entry_set_activates_default(GTK_ENTRY(info->name_entry), TRUE);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->name_entry);
 		gtk_entry_set_text(GTK_ENTRY(info->name_entry), info->buddy->name);
+		gtk_editable_set_editable(GTK_EDITABLE(info->name_entry), FALSE);
 
 		/* The "Alias:" label. */
 		label = gtk_label_new(NULL);
