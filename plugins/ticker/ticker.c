@@ -196,9 +196,23 @@ void signon_cb(struct gaim_connection *gc, char *who) {
 
 void signoff_cb(struct gaim_connection *gc) {
 	if (!connections) {
+		while(tickerbuds) {
+			g_free(tickerbuds->data);
+			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
+		}
 		gtk_widget_destroy(tickerwindow);
 		tickerwindow = NULL;
 		ticker = NULL;
+	} else {
+		GList *t = tickerbuds;
+		while(t) {
+			TickerData *td = t->data;
+			t = t->next;
+			if(td->buddy->account == gc->account) {
+				g_free(td);
+				tickerbuds = g_list_remove(tickerbuds, td);
+			}
+		}
 	}
 }
 
@@ -206,6 +220,8 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 
 	buddy_ticker_remove_buddy(b);
+	if(!tickerbuds)
+		gtk_widget_hide(tickerwindow);
 }
 
 void away_cb(struct gaim_connection *gc, char *who) {
@@ -243,6 +259,10 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 }
 
 G_MODULE_EXPORT void gaim_plugin_remove() {
+	while(tickerbuds) {
+		g_free(tickerbuds->data);
+		g_list_delete_link(tickerbuds, tickerbuds);
+	}
 	gtk_widget_destroy(tickerwindow);
 }
 
