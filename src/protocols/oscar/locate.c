@@ -316,6 +316,8 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 
 		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQUESTINFOTIMEOUT)))
 			userfunc(sess, NULL);
+		else
+			aim_locate_dorequest(sess);
 	}
 
 	return was_explicit;
