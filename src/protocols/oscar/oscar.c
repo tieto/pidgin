@@ -4380,6 +4380,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct aim_ssi_item *curitem;
 	int tmp;
+	gboolean export = FALSE;
 	/* XXX - use these?
 	va_list ap;
 
@@ -4393,10 +4394,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
-	aim_ssi_cleanlist(sess, fr->conn);
+	/* aim_ssi_cleanlist(sess, fr->conn); */
 
 	/* Add from server list to local list */
-	tmp = 0;
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
@@ -4426,7 +4426,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
 						gaim_blist_add_buddy(buddy, g, NULL);
-						tmp++;
+						export = TRUE;
 					}
 					free(gname_utf8);
 					free(alias_utf8);
@@ -4446,7 +4446,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						debug_printf("ssi: adding permit buddy %s to local list\n", curitem->name);
 						gaim_privacy_permit_add(gc->account, curitem->name);
 						build_allow_list();
-						tmp++;
+						export = TRUE;
 					}
 				}
 			} break;
@@ -4459,7 +4459,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						debug_printf("ssi: adding deny buddy %s to local list\n", curitem->name);
 						gaim_privacy_deny_add(gc->account, curitem->name);
 						build_block_list();
-						tmp++;
+						export = TRUE;
 					}
 				}
 			} break;
@@ -4473,7 +4473,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						if (od->icq && gc->account->permdeny == 0x03) {
 							serv_set_away(gc, "Invisible", "");
 						}
-						tmp++;
+						export = TRUE;
 					}
 				}
 			} break;
@@ -4485,7 +4485,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} /* End of for loop */
 
 	/* If changes were made, then flush buddy list to file */
-	if (tmp)
+	if (export)
 		gaim_blist_save();
 
 	{ /* Add from local list to server list */
@@ -4493,7 +4493,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		struct group *group;
 		struct buddy *buddy;
 		struct gaim_buddy_list *blist;
-		GSList *groups = gaim_blist_groups();
 		GSList *cur;
 
 		/* Buddies */
@@ -4544,8 +4543,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
 			if (report_idle && !(tmp & 0x400))
 				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
+	} /* end adding buddies from local list to server list */
 
-		/* Check for maximum number of buddies */
+	{ /* Check for maximum number of buddies */
+		GSList *groups = gaim_blist_groups(), *cur;
 		for (cur=groups, tmp=0; cur; cur=g_slist_next(cur)) {
 			struct group* gr = (struct group*)cur->data;
 			GSList *buds = gaim_blist_members(gr);
@@ -4567,9 +4568,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			do_error_dialog(_("Maximum buddy list length exceeded."), dialog_msg, GAIM_WARNING);
 			g_free(dialog_msg);
 		}
+	}
 		
-	} /* end adding buddies from local list to server list */
-
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */

@@ -493,7 +493,7 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 		g_free(filename);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
-	d = gtk_dialog_new_with_buttons("Gaim", NULL, 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
+	d = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
 	g_signal_connect(d, "response", G_CALLBACK(gtk_widget_destroy), NULL);
 	
 	gtk_container_set_border_width (GTK_CONTAINER(d), 6);

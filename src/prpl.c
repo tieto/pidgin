@@ -211,7 +211,7 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	STOCK_ITEMIZE("Yes", GTK_STOCK_YES);
 	STOCK_ITEMIZE("No", GTK_STOCK_NO);
 
-	window = gtk_dialog_new_with_buttons("Gaim", NULL, 0, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
+	window = gtk_dialog_new_with_buttons("", NULL, 0, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
 
 	if (modal) {
 		gtk_window_set_modal(GTK_WINDOW(window), TRUE);
