@@ -19,6 +19,12 @@
  */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
+# ifdef HAVE_LIMITS_H
+#  include <limits.h>
+#  ifndef NAME_MAX
+#   define NAME_MAX _POSIX_NAME_MAX
+#  endif
+# endif
 #endif
 
 #ifdef DEBUG
