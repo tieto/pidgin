@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <gtk/gtk.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"

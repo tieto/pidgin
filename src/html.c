@@ -27,9 +27,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkprivate.h>
-#include <gdk/gdkx.h>
 #include "gaim.h"
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -114,19 +111,19 @@ struct grab_url_data {
 	gpointer data;
 	struct g_url website;
 	char *url;
+
+	int inpa;
+
+	gboolean sentreq;
+	char *webdata;
+	int len;
+	gboolean startsaving;
 };
 
-static void grab_url_callback(gpointer dat, gint sock, GdkInputCondition cond)
+static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 {
 	struct grab_url_data *gunk = dat;
-	char *webdata = NULL;
-	int len;
-	int read_rv;
-	int datalen = 0;
-	char buf[256];
 	char data;
-	int startsaving = 0;
-	GtkWidget *pw = NULL, *pbar = NULL, *label;
 
 	if (sock == -1) {
 		gunk->callback(gunk->data, NULL);
@@ -135,90 +132,57 @@ static void grab_url_callback(gpointer dat, gint sock, GdkInputCondition cond)
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", gunk->website.page);
-	debug_printf("Request: %s\n", buf);
-	write(sock, buf, strlen(buf));
-	fcntl(sock, F_SETFL, O_NONBLOCK);
-
-	webdata = NULL;
-	len = 0;
-
-	/*
-	 * avoid fgetc(), it causes problems on solaris
-	 while ((data = fgetc(sockfile)) != EOF) {
-	 */
-	/* read_rv will be 0 on EOF and < 0 on error, so this should be fine */
-	while ((read_rv = read(sock, &data, 1)) > 0 || errno == EWOULDBLOCK) {
-		if (errno == EWOULDBLOCK) {
-			errno = 0;
-			continue;
-		}
-
-		if (!data)
-			continue;
-
-		if (!startsaving && data == '<') {
-#ifdef HAVE_STRSTR
-			char *cs = strstr(webdata, "Content-Length");
-			if (cs) {
-				char tmpbuf[1024];
-				sscanf(cs, "Content-Length: %d", &datalen);
-
-				g_snprintf(tmpbuf, 1024, _("Getting %d bytes from %s"),
-						datalen, gunk->url);
-				pw = gtk_dialog_new();
-
-				label = gtk_label_new(tmpbuf);
-				gtk_widget_show(label);
-				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->vbox),
-						   label, FALSE, FALSE, 5);
-
-				pbar = gtk_progress_bar_new();
-				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->action_area),
-						   pbar, FALSE, FALSE, 5);
-				gtk_widget_show(pbar);
-
-				gtk_window_set_title(GTK_WINDOW(pw), _("Getting Data"));
-
-				gtk_widget_realize(pw);
-				aol_icon(pw->window);
-
-				gtk_widget_show(pw);
-			} else
-				datalen = 0;
-#else
-			datalen = 0;
-#endif
-			g_free(webdata);
-			webdata = NULL;
-			len = 0;
-			startsaving = 1;
-		}
-
-		len++;
-		webdata = g_realloc(webdata, len);
-		webdata[len - 1] = data;
-
-		if (pbar)
-			gtk_progress_bar_update(GTK_PROGRESS_BAR(pbar), ((100 * len) / datalen) / 100.0);
-
-		while (gtk_events_pending())
-			gtk_main_iteration();
+	if (!gunk->sentreq) {
+		char buf[256];
+		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", gunk->website.page);
+		debug_printf("Request: %s\n", buf);
+		write(sock, buf, strlen(buf));
+		fcntl(sock, F_SETFL, O_NONBLOCK);
+		gunk->sentreq = TRUE;
+		gunk->inpa = gaim_input_add(sock, GAIM_INPUT_READ, grab_url_callback, dat);
+		return;
 	}
 
-	webdata = g_realloc(webdata, len + 1);
-	webdata[len] = 0;
+	if (read(sock, &data, 1) > 0 || errno == EWOULDBLOCK) {
+		if (errno == EWOULDBLOCK) {
+			errno = 0;
+			return;
+		}
 
+		if (!gunk->startsaving && data == '<') {
+			if (gunk->webdata)
+				g_free(gunk->webdata);
+			gunk->webdata = NULL;
+			gunk->len = 0;
+			gunk->startsaving = 1;
+		}
 
-	debug_printf(_("Receieved: '%s'\n"), webdata);
+		gunk->len++;
+		gunk->webdata = g_realloc(gunk->webdata, gunk->len);
+		gunk->webdata[gunk->len - 1] = data;
+	} else if (errno != ETIMEDOUT) {
 
-	if (pw)
-		gtk_widget_destroy(pw);
+		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
+		gunk->webdata[gunk->len] = 0;
 
-	close(sock);
-	gunk->callback(gunk->data, webdata);
-	g_free(gunk->url);
-	g_free(gunk);
+		debug_printf(_("Receieved: '%s'\n"), gunk->webdata);
+
+		gaim_input_remove(gunk->inpa);
+		close(sock);
+		gunk->callback(gunk->data, gunk->webdata);
+		if (gunk->webdata)
+			g_free(gunk->webdata);
+		g_free(gunk->url);
+		g_free(gunk);
+	} else {
+		gaim_input_remove(gunk->inpa);
+		close(sock);
+		gunk->callback(gunk->data, NULL);
+		if (gunk->webdata)
+			g_free(gunk->webdata);
+		g_free(gunk->url);
+		g_free(gunk);
+	}
 }
 
 void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
