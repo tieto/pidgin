@@ -482,12 +482,13 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 {
 	JabberChat *chat;
 	JabberMessage *jm;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js;
 	char *buf, *xhtml;
 
-	if(!msg)
+	if(!msg || !gc)
 		return 0;
 
+	js = gc->proto_data;
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!strcmp(msg, "/configure") || !strcmp(msg, "/config")) {
