@@ -2767,12 +2767,21 @@ bud_list_cache_exists(struct gaim_connection *gc)
 
 	file = gaim_user_dir();
 	if ( file != (char *) NULL ) {
-		sprintf(path, "%s/%s.blist", file, g_screenname); 
+		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname, gc->protocol); 
 		if ( !stat(path, &sbuf) ) {
 			debug_printf("%s exists.\n", path);
 			ret = TRUE;
 		} else {
+			char path2[PATHSIZE];
 			debug_printf("%s does not exist.\n", path);
+			g_snprintf(path2, sizeof path2, "%s/%s.blist", file, g_screenname);
+			if (!stat(path2, &sbuf)) {
+				debug_printf("%s exists, moving to %s\n", path2, path);
+				if (rename(path2, path))
+					debug_printf("rename didn't work!\n");
+				else
+					ret = TRUE;
+			}
 		}
 		g_free(file);
 	}
@@ -2830,7 +2839,7 @@ void do_export(GtkWidget *w, void *dummy)
 				for (i = 0; i < strlen(g->username); i++)
 					g_screenname[i] = toupper(g->username[i]);
 				g_screenname[i] = '\0';
-				sprintf(path, "%s/%s.blist", file, g_screenname);
+				sprintf(path, "%s/%s.%d.blist", file, g_screenname, g->protocol);
 				if ((f = fopen(path,"w"))) {
 					debug_printf("writing %s\n", path);
 					toc_build_config(g, buf, 8192 - 1, TRUE);
@@ -2907,15 +2916,14 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 		/* FIXME : import buddy list file. moderately important */
 		gc = connections->data;
 		from_dialog = TRUE;
-	}
-	else {
+	} else {
 		for (i = 0; i < strlen(gc->username); i++)
 			g_screenname[i] = toupper(gc->username[i]);
 		g_screenname[i] = '\0';
 
 		file = gaim_user_dir();
 		if ( file != (char *) NULL ) {
-			sprintf( path, "%s/%s.blist", file, g_screenname);
+			sprintf( path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
 			g_free(file);
 		} else {
 			return;

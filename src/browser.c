@@ -398,7 +398,7 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 			/* Print to warn user... */
 			debug_printf("%s: window 0x%x was destroyed.\n", progname, (unsigned int)window);
 			result = 6;
-			goto DONE;
+			done = True;
 		} else if (event->type == GDK_PROPERTY_NOTIFY &&
 			   event->property.state == GDK_PROPERTY_NEW_VALUE &&
 			   event->property.window == window &&
@@ -470,8 +470,6 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 		}
 		gdk_event_free(event);
 	}
-
-      DONE:
 
 	if (new_command)
 		g_free(new_command);
