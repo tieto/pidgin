@@ -60,8 +60,6 @@
 #include "pixmaps/mrt.xpm"
 #include "pixmaps/download.xpm"
 
-static GtkTooltips *tabtips = NULL;
-
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
 
 int state_lock = 0;
@@ -2158,7 +2156,6 @@ void show_conv(struct conversation *c)
 	c->hasfg = 0;
 
 	if (im_options & OPT_IM_ONE_WINDOW) {
-		GtkWidget *page;
 		if (!all_convos) {
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
@@ -2171,11 +2168,6 @@ void show_conv(struct conversation *c)
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
-			if (!tabtips) {
-				tabtips = gtk_tooltips_new();
-				if (!(im_options & OPT_IM_ALIAS_TAB))
-					gtk_tooltips_disable(tabtips);
-			}
 			if (im_options & OPT_IM_SIDE_TAB) {
 				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
@@ -2207,11 +2199,6 @@ void show_conv(struct conversation *c)
 		/* this doesn't actually matter since we're resetting it once we're out of the if/else */
 		gtk_notebook_append_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name));
 		gtk_widget_show(cont);
-
-		page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
-						 g_list_index(conversations, c));
-		page = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook), page);
-		gtk_tooltips_set_tip(tabtips, page->parent, c->name, c->name);
 	} else {
 		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		c->window = win;
