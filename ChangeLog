@@ -7,7 +7,7 @@ version 0.78cvs
 
 	Bug Fixes:
 	* Gadu-Gadu updates (Andrew Wellington)
-
+	* Compiles again with gcc 2.96 (Ignacio J. Elia)
 
 version 0.77 (04/22/2004):
 	New Features:

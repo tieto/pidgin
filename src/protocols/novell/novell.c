@@ -893,6 +893,7 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 	NMUserRecord *user_record = NULL;
 	NMContact *contact = NULL;
 	GaimBuddy *buddy = NULL;
+	GaimGroup *group;
 	NMERR_T cnt = 0, i;
 	const char *text = NULL;
 	const char *name = NULL;
@@ -912,7 +913,7 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 									   nm_contact_get_display_name(contact));
 
 				/* Does the Gaim group exist already? */
-				GaimGroup *group = gaim_find_group(nm_folder_get_name(folder));
+				group = gaim_find_group(nm_folder_get_name(folder));
 
 				if (group == NULL) {
 					group = gaim_group_new(nm_folder_get_name(folder));
@@ -2061,6 +2062,7 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 					const char *new_name, GList * tobemoved)
 {
 	NMERR_T rc = NM_OK;
+	NMFolder *folder;
 	NMUser *user;
 
 	if (gc == NULL || old_name == NULL || new_name == NULL || tobemoved == NULL) {
@@ -2078,7 +2080,7 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 			return;
 		}
 
-		NMFolder *folder = nm_find_folder(user, old_name);
+		folder = nm_find_folder(user, old_name);
 
 		if (folder) {
 			rc = nm_send_rename_folder(user, folder, new_name,

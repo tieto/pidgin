@@ -539,13 +539,14 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 #if GTK_CHECK_VERSION(2,2,0)
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
 	char *text;
+	gboolean primary;
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
-	gboolean primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
+	primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
 
 	if (info == TARGET_HTML) {
 		int len;

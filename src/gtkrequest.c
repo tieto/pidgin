@@ -260,6 +260,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *img;
+	GtkWidget *toolbar;
 	char *label_text;
 
 	data            = g_new0(GaimGtkRequestData, 1);
@@ -338,7 +339,6 @@ gaim_gtk_request_input(const char *title, const char *primary,
 		gtk_widget_set_size_request(sw, 320, 130);
 
 		/* Toolbar */
-		GtkWidget *toolbar;
 		toolbar = gtk_imhtmltoolbar_new();
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
