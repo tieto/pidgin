@@ -83,6 +83,10 @@ struct _GaimLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	 * this returns the size of the log in bytes */
 	int (*size)(GaimLog *log);
+
+	/** Returns the total size of all the logs. If this is undefined a default
+	 * implementation is used */
+	int (*total_size)(const char *name, GaimAccount *account);
 };
 
 /**

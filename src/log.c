@@ -31,6 +31,8 @@
 #include "util.h"
 #include "stringref.h"
 
+static GSList *loggers = NULL;
+
 static GaimLogLogger html_logger;
 static GaimLogLogger txt_logger;
 static GaimLogLogger old_logger;
@@ -45,6 +47,7 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account, 
 	log->name = g_strdup(name);
 	log->account = account;
 	log->time = time;
+	log->logger_data = NULL;
 	log->logger = gaim_log_logger_get();
 	if (log->logger && log->logger->create)
 		log->logger->create(log);
@@ -88,6 +91,7 @@ char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 int gaim_log_get_size(GaimLog *log)
 {
 	g_return_val_if_fail(log && log->logger, 0);
+
 	if (log->logger->size)
 		return log->logger->size(log);
 	return 0;
@@ -95,17 +99,29 @@ int gaim_log_get_size(GaimLog *log)
 
 int gaim_log_get_total_size(const char *name, GaimAccount *account)
 {
-	GList *logs = gaim_log_get_logs(name, account);
 	int size = 0;
+	GSList *n;
 
+	for (n = loggers; n; n = n->next) {
+		GaimLogLogger *logger = n->data;
 
-	while (logs) {
-		GList *logs2 = logs->next;
-		GaimLog *log = (GaimLog*)(logs->data);
-		size += gaim_log_get_size(log);
-		gaim_log_free(log);
-		g_list_free_1(logs);
-		logs = logs2;
+		if(logger->total_size){
+			size += (logger->total_size)(name, account);
+		} else if(logger->list) {
+			GList *logs = (logger->list)(name, account);
+			int this_size = 0;
+
+			while (logs) {
+				GList *logs2 = logs->next;
+				GaimLog *log = (GaimLog*)(logs->data);
+				this_size += gaim_log_get_size(log);
+				gaim_log_free(log);
+				g_list_free_1(logs);
+				logs = logs2;
+			}
+
+			size += this_size;
+		}
 	}
 
 	return size;
@@ -116,7 +132,6 @@ int gaim_log_get_total_size(const char *name, GaimAccount *account)
  ****************************************************************************/
 
 static GaimLogLogger *current_logger = NULL;
-static GSList *loggers = NULL;
 
 static void logger_pref_cb(const char *name, GaimPrefType type,
 			   gpointer value, gpointer data)
@@ -412,6 +427,7 @@ static GaimLogLogger xml_logger =  {
 	xml_logger_write,
 	xml_logger_finalize,
 	xml_logger_list,
+	NULL,
 	NULL
 };
 #endif
@@ -553,7 +569,8 @@ static GaimLogLogger html_logger = {
 	html_logger_finalize,
 	html_logger_list,
 	html_logger_read,
-	log_sizer_common
+	log_sizer_common,
+	NULL
 };
 
 
@@ -688,7 +705,8 @@ static GaimLogLogger txt_logger = {
 	txt_logger_finalize,
 	txt_logger_list,
 	txt_logger_read,
-	log_sizer_common
+	log_sizer_common,
+	NULL
 };
 
 /****************
@@ -831,6 +849,24 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	return list;
 }
 
+static int old_logger_total_size(const char *name, GaimAccount *account)
+{
+	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, name));
+	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
+	int size;
+	struct stat st;
+
+	if (stat(pathstr, &st))
+		size = 0;
+	else
+		size = st.st_size;
+
+	g_free(logfile);
+	g_free(pathstr);
+
+	return size;
+}
+
 static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
@@ -864,5 +900,6 @@ static GaimLogLogger old_logger = {
 	old_logger_finalize,
 	old_logger_list,
 	old_logger_read,
-	old_logger_size
+	old_logger_size,
+	old_logger_total_size
 };
