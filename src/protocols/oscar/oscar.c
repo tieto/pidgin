@@ -2650,6 +2650,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
 			break;
 		default:
+			utf8 = g_strdup(_("<I>Unable to display information because it was sent in an unknown encoding.</I>"));
 			debug_printf("Encountered an unknown encoding parsing userinfo\n");
 		}
 	}
