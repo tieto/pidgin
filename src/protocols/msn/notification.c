@@ -1052,6 +1052,8 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport = params[2];
 	friend   = msn_url_decode(params[3]);
 
+	serv_got_alias(gc, (char *)passport, (char *)friend);
+
 	if (session->protocol_ver >= 9 && param_count == 6)
 	{
 		user = msn_users_find_with_passport(session->users, passport);
@@ -1059,8 +1061,6 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
 		msn_user_set_object(user, msnobj);
 	}
-
-	serv_got_alias(gc, (char *)passport, (char *)friend);
 
 	if ((b = gaim_find_buddy(gc->account, passport)) != NULL)
 		status |= ((((b->uc) >> 1) & 0xF0) << 1);
@@ -1471,6 +1471,8 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport = params[1];
 	friend   = msn_url_decode(params[2]);
 
+	serv_got_alias(gc, (char *)passport, (char *)friend);
+
 	if (session->protocol_ver >= 9 && param_count == 5)
 	{
 		user = msn_users_find_with_passport(session->users, passport);
@@ -1478,8 +1480,6 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		msnobj = msn_object_new_from_string(msn_url_decode(params[4]));
 		msn_user_set_object(user, msnobj);
 	}
-
-	serv_got_alias(gc, (char *)passport, (char *)friend);
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
