@@ -397,23 +397,6 @@ static void st_im_recieve(struct gaim_connection *gc, void *data) {
  *  PUBLIC CODE
  */
 
-/*
- * GAIM WINDOW FILTERS 
- **********************/
-
-GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_CLOSE:
-		wgaim_systray_minimize(mainwindow);
-		gtk_widget_hide(mainwindow);
-		return GDK_FILTER_REMOVE;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
 /* Create a hidden window and associate it with the systray icon.
    We use this hidden window to proccess WM_TRAYMESSAGE msgs. */
 void wgaim_systray_init(void) {
