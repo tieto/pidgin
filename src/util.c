@@ -304,6 +304,106 @@ gaim_mime_decode_word(const char *charset, const char *encoding, const char *str
 char *
 gaim_mime_decode_field(const char *str)
 {
+	/*
+	 * This is revo/shx's version.  It has had some problems with 
+	 * crashing, but it's probably a better implementation.
+	 */
+	const char *cur, *mark;
+	const char *unencoded, *encoded;
+	char *n, *new;
+
+	n = new = g_malloc(strlen(str) + 1);
+
+	/* Here we will be looking for encoded words and if they seem to be
+	 * valid then decode them.
+	 * They are of this form: =?charset?encoding?text?=
+	 */
+
+	for (unencoded = cur = str; (encoded = cur = strstr(cur, "=?")); unencoded = cur) {
+		gboolean found_word = FALSE;
+		int i, num, len, dec_len;
+		char *decoded, *converted;
+		char *tokens[3];
+
+		/* Let's look for tokens, they are between ?'s */
+		for (cur += 2, mark = cur, num = 0; *cur; cur++) {
+			if (*cur == '?') {
+				if (num > 2)
+					/* No more than 3 tokens. */
+					break;
+
+				tokens[num++] = g_strndup(mark, cur - mark);
+
+				mark = (cur + 1);
+
+				if (*mark == '=') {
+					found_word = TRUE;
+					break;
+				}
+			}
+#if 0
+			/* I think this is rarely going to happend, if at all */
+			else if ((num < 2) && (strchr("()<>@,;:/[]", *cur)))
+				/* There can't be these characters in the first two tokens. */
+				break;
+			else if ((num == 2) && (*cur == ' '))
+				/* There can't be spaces in the third token. */
+				break;
+#endif
+		}
+
+		cur += 2;
+
+		if (found_word) {
+			/* We found an encoded word. */
+			/* =?charset?encoding?text?= */
+
+			/* Some unencoded text. */
+			len = encoded - unencoded;
+			n = strncpy(n, unencoded, len) + len;
+
+			if (g_ascii_strcasecmp(tokens[1], "Q") == 0)
+				gaim_quotedp_decode(tokens[2], &decoded, &dec_len);
+			else if (g_ascii_strcasecmp(tokens[1], "B") == 0)
+				gaim_base64_decode(tokens[2], &decoded, &dec_len);
+			else
+				decoded = NULL;
+
+			if (decoded) {
+				converted = g_convert(decoded, dec_len, "utf-8", tokens[0], NULL, &len, NULL);
+
+				if (converted) {
+					n = strncpy(n, converted, len) + len;
+					g_free(converted);
+				} else if (len) {
+					converted = g_convert(decoded, len, "utf-8", tokens[0], NULL, &len, NULL);
+					n = strncpy(n, converted, len) + len;
+					g_free(converted);
+				}
+				g_free(decoded);
+			}
+		} else {
+			/* Some unencoded text. */
+			len = cur - unencoded;
+			n = strncpy(n, unencoded, len) + len;
+		}
+
+		for (i = 0; i < num; i++)
+			g_free(tokens[i]);
+	}
+
+	*n = '\0';
+
+	/* There is unencoded text at the end. */
+	if (*unencoded)
+		n = strcpy(n, unencoded);
+
+	return new;
+#if 0
+	/*
+	 * This is KingAnt's function.  It should work, but I don't know if it 
+	 * follows the RFC fully.
+	 */
 	GString *donedeal;
 	char *orig, *start, *end, *end_of_last, *tmp;
 	char **encoded_word;
@@ -319,7 +419,9 @@ gaim_mime_decode_field(const char *str)
 	while ((start = strstr(end_of_last, "=?"))) {
 		/*
 		 * Get to the end of the encoded word by finding the first ?, 
-		 * the second ?, then finally the ?=
+		 * the second ?, then finally the ?=  If we can't find any of 
+		 * these, then break out of here because this isn't actually an 
+		 * encoded word.
 		 */
 		if (((end = strstr(start + 2, "?")) == NULL) || 
 			((end = strstr(end + 1, "?")) == NULL) ||
@@ -363,6 +465,7 @@ gaim_mime_decode_field(const char *str)
 	g_free(orig);
 
 	return tmp;
+#endif
 }
 
 
