@@ -1043,8 +1043,6 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 
 	a->combo = gtk_combo_new();
 	gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(a->gc));
-	if (group != NULL)
-		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 	gtk_table_attach_defaults(GTK_TABLE(table), a->combo, 1, 2, 2, 3);
 
 	/* Set up stuff for the account box */
@@ -1070,6 +1068,8 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_add_buddy), a);
 
 	gtk_widget_show_all(a->window);
+	if (group != NULL) 
+		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 }
 
 

@@ -398,7 +398,7 @@ void play_file(char *filename)
 	else if (pid == 0) {
 		alarm(30);
 		if (sound_options & OPT_SOUND_BEEP) {
-			g_print("\a");
+			gdk_beep();
 			_exit(0);
 		}
 
@@ -462,7 +462,7 @@ void play(unsigned char *data, int size)
 	else if (pid == 0) {
 		alarm(30);
 		if (sound_options & OPT_SOUND_BEEP) {
-			g_print("\a");
+			gdk_beep();
 			_exit(0);
 		}
 #ifdef ESD_SOUND

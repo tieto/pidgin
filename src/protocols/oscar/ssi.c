@@ -227,7 +227,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 	}
 
 	aim_ssi_delitems(sess, conn, items, num);
-	free(items[num]);
+	free(items);
 	aim_ssi_dispatch(sess, conn);
 	aim_ssi_freelist(sess);
 
