@@ -366,7 +366,7 @@ static gchar *oscar_encoding_extract(const char *encoding)
 static fu32_t oscar_encoding_parse(const char *encoding)
 {
 	if ((encoding == NULL) || encoding[0] == '\0') {
-		gaim_debug(GAIM_DEBUG_WARNING, "oscar", "Empty encoding, assuming ASCII\n");
+		gaim_debug_warning("oscar", "Empty encoding, assuming ASCII\n");
 		return 0;
 	}
 
@@ -378,7 +378,7 @@ static fu32_t oscar_encoding_parse(const char *encoding)
 	} else if (!strcmp(encoding, "unicode-2-0")) {
 		return AIM_IMFLAGS_UNICODE;
 	} else {
-		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+		gaim_debug_warning("oscar",
 				   "Unrecognized character encoding '%s', attempting to convert to utf8 anyway\n", encoding);
 		return 99;
 	}
@@ -510,7 +510,7 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 
 	sn = g_strdup(aim_odc_getsn(conn));
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "%s disconnected Direct IM.\n", sn);
 
 	dim = find_direct_im(od, sn);
@@ -541,7 +541,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	OscarData *od;
 
 	if (!gc) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "oscar callback for closed connection (1).\n");
 		return;
 	}
@@ -551,18 +551,18 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we 
 		 * can really do is return? */
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "oscar callback for closed connection (2).\n");
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "gc = %p\n", gc);
+		gaim_debug_misc("oscar", "gc = %p\n", gc);
 		return;
 	}
 
 	if (condition & GAIM_INPUT_READ) {
 		if (conn->type == AIM_CONN_TYPE_LISTENER) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "got information on rendezvous listener\n");
 			if (aim_handlerendconnect(od->sess, conn) < 0) {
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "connection error (rendezvous listener)\n");
 				aim_conn_kill(od->sess, &conn);
 				/* AAA - Don't we need to gaim_xfer_cancel here? --marv */
@@ -571,19 +571,19 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 			if (aim_get_command(od->sess, conn) >= 0) {
 				aim_rxdispatch(od->sess);
 				if (od->killme) {
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar", "Waiting to be destroyed\n");
+					gaim_debug_error("oscar", "Waiting to be destroyed\n");
 					return;
 				}
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS))) {
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					gaim_debug_error("oscar",
 							   "major connection error\n");
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
 					char *buf;
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "disconnected from chat room %s\n", c->name);
 					c->conn = NULL;
 					if (c->inpa > 0)
@@ -598,7 +598,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					if (od->cnpa > 0)
 						gaim_input_remove(od->cnpa);
 					od->cnpa = 0;
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "removing chatnav input watcher\n");
 					while (od->create_rooms) {
 						struct create_room *cr = od->create_rooms->data;
@@ -615,21 +615,21 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					if (od->paspa > 0)
 						gaim_input_remove(od->paspa);
 					od->paspa = 0;
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "removing authconn input watcher\n");
 					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
 					if (od->emlpa > 0)
 						gaim_input_remove(od->emlpa);
 					od->emlpa = 0;
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "removing email input watcher\n");
 					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_ICON) {
 					if (od->icopa > 0)
 						gaim_input_remove(od->icopa);
 					od->icopa = 0;
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "removing icon input watcher\n");
 					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
@@ -637,7 +637,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 						gaim_odc_disconnect(od->sess, conn);
 					aim_conn_kill(od->sess, &conn);
 				} else {
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					gaim_debug_error("oscar",
 							   "holy crap! generic connection error! %hu\n",
 							   conn->type);
 					aim_conn_kill(od->sess, &conn);
@@ -653,9 +653,9 @@ static void oscar_debug(aim_session_t *sess, int level, const char *format, va_l
 	gchar *buf;
 
 	buf = g_strdup_printf("%s %d: %s", gaim_account_get_username(gaim_connection_get_account(gc)), level, s);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", buf);
+	gaim_debug_info("oscar", buf);
 	if (buf[strlen(buf)-1] != '\n')
-		gaim_debug(GAIM_DEBUG_INFO, NULL, "\n");
+		gaim_debug_info(NULL, "\n");
 	g_free(buf);
 	g_free(s);
 }
@@ -686,7 +686,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ, oscar_callback, conn);
 	aim_request_login(sess, conn, gaim_account_get_username(gaim_connection_get_account(gc)));
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Screen name sent, waiting for response\n");
 	gaim_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
 	ck[1] = 0x65;
@@ -698,7 +698,7 @@ static void oscar_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	OscarData *od = gc->proto_data = g_new0(OscarData, 1);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar", "oscar_login: gc = %p\n", gc);
+	gaim_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
 
 	if (!aim_snvalid(gaim_account_get_username(account))) {
 		gchar *buf;
@@ -728,7 +728,7 @@ static void oscar_login(GaimAccount *account) {
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "internal connection error\n");
 		gaim_connection_error(gc, _("Unable to login to AIM"));
 		return;
@@ -814,7 +814,7 @@ static void oscar_close(GaimConnection *gc) {
 	od->sess = NULL;
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "Signed off.\n");
+	gaim_debug_info("oscar", "Signed off.\n");
 }
 
 static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition cond) {
@@ -922,7 +922,7 @@ static void oscar_xfer_end(GaimXfer *xfer)
 	GaimConnection *gc = oft_info->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_end\n");
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_end\n");
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 		oft_info->fh.nrecvd = gaim_xfer_get_bytes_sent(xfer);
@@ -945,7 +945,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	GaimConnection *gc = oft_info->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_recv_init\n");
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_recv_init\n");
 
 	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
 	if (oft_info->conn) {
@@ -973,7 +973,7 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 	GaimConnection *gc = oft_info->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_cancel_recv\n");
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_recv\n");
 
 	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
 
@@ -1002,7 +1002,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 	OscarData *od = gc->proto_data;
 	int listenfd;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_send_init\n");
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_send_init\n");
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
 	strncpy(oft_info->fh.name, xfer->filename, 64);
@@ -1022,7 +1022,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "port is %hu, ip is %s\n",
 			   xfer->local_port, oft_info->clientip);
 	if (oft_info->conn) {
@@ -1042,7 +1042,7 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
 	GaimConnection *gc = oft_info->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_cancel_send\n");
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_send\n");
 
 	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
 
@@ -1127,7 +1127,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, struct aim_authresp_info *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "inside auth_resp (Screen name: %s)\n", info->sn);
 
 	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
@@ -1162,26 +1162,26 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_connection_error(gc, _("Authentication failed"));
 			break;
 		}
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "Login Error Code 0x%04hx\n", info->errorcode);
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "Error URL: %s\n", info->errorurl);
 		od->killme = TRUE;
 		return 1;
 	}
 
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "Reg status: %hu\n", info->regstatus);
 
 	if (info->email) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Email: %s\n", info->email);
+		gaim_debug_misc("oscar", "Email: %s\n", info->email);
 	} else {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Email is NULL\n");
+		gaim_debug_misc("oscar", "Email is NULL\n");
 	}
 	
-	gaim_debug(GAIM_DEBUG_MISC, "oscar", "BOSIP: %s\n", info->bosip);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
+	gaim_debug_info("oscar",
 			   "Closing auth connection...\n");
 	aim_conn_kill(sess, &fr->conn);
 
@@ -1307,11 +1307,11 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	}
 	read(pos->fd, m, 16);
 	m[16] = '\0';
-	gaim_debug(GAIM_DEBUG_MISC, "oscar", "Sending hash: ");
+	gaim_debug_misc("oscar", "Sending hash: ");
 	for (x = 0; x < 16; x++)
-		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02hhx ", (unsigned char)m[x]);
+		gaim_debug_misc(NULL, "%02hhx ", (unsigned char)m[x]);
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+	gaim_debug_misc(NULL, "\n");
 	gaim_input_remove(pos->inpa);
 	close(pos->fd);
 	aim_sendmemblock(od->sess, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
@@ -1362,12 +1362,12 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "offset: %u, len: %u, file: %s\n",
 			   offset, len, (modname ? modname : "aim.exe"));
 
 	if (len == 0) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "len is 0, hashing NULL\n");
+		gaim_debug_misc("oscar", "len is 0, hashing NULL\n");
 		aim_sendmemblock(sess, fr->conn, offset, len, NULL,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
@@ -1392,7 +1392,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		buf[i++] = (len >> 8) & 0xff;
 		buf[i++] = (len >> 16) & 0xff;
 		buf[i++] = (len >> 24) & 0xff;
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "len + offset is invalid, "
+		gaim_debug_misc("oscar", "len + offset is invalid, "
 		           "hashing request\n");
 		aim_sendmemblock(sess, command->conn, offset, i, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		g_free(buf);
@@ -1535,14 +1535,14 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "unable to connect to chatnav server\n");
 		return;
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->cnpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "chatnav: connected\n");
+	gaim_debug_info("oscar", "chatnav: connected\n");
 }
 
 static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition cond)
@@ -1564,14 +1564,14 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "unable to connect to authorizer\n");
 		return;
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "admin: connected\n");
+	gaim_debug_info("oscar", "admin: connected\n");
 }
 
 static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition cond)
@@ -1626,14 +1626,14 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "unable to connect to email server\n");
 		return;
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "email: connected\n");
 }
 
@@ -1655,14 +1655,14 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "unable to connect to icon server\n");
 		return;
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->icopa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "icon: connected\n");
+	gaim_debug_info("oscar", "icon: connected\n");
 }
 
 /* Hrmph. I don't know how to make this look better. --mid */
@@ -1692,11 +1692,11 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	switch(redir->group) {
 	case 0x7: /* Authorizer */
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "Reconnecting with authorizor...\n");
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 		if (tstconn == NULL) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to reconnect with authorizer\n");
 			g_free(host);
 			return 1;
@@ -1707,7 +1707,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to reconnect with authorizer\n");
 			g_free(host);
 			return 1;
@@ -1718,7 +1718,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	case 0xd: /* ChatNav */
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
 		if (tstconn == NULL) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to chatnav server\n");
 			g_free(host);
 			return 1;
@@ -1729,7 +1729,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_chatnav_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to chatnav server\n");
 			g_free(host);
 			return 1;
@@ -1742,7 +1742,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, NULL);
 		if (tstconn == NULL) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to chat server\n");
 			g_free(host);
 			return 1;
@@ -1763,7 +1763,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_chat_connect, ccon) != 0) {
 			aim_conn_kill(sess, &tstconn);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to chat server\n");
 			g_free(host);
 			g_free(ccon->show);
@@ -1772,14 +1772,14 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "Connected to chat room %s exchange %hu\n",
 				   ccon->name, ccon->exchange);
 	} break;
 
 	case 0x0010: { /* icon */
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON, NULL))) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to icon server\n");
 			g_free(host);
 			return 1;
@@ -1790,7 +1790,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_icon_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to icon server\n");
 			g_free(host);
 			return 1;
@@ -1800,7 +1800,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	case 0x0018: { /* email */
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL, NULL))) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to email server\n");
 			g_free(host);
 			return 1;
@@ -1811,7 +1811,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_email_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unable to connect to email server\n");
 			g_free(host);
 			return 1;
@@ -1820,7 +1820,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	default: /* huh? */
-		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+		gaim_debug_warning("oscar",
 				   "got redirect for unknown service 0x%04hx\n",
 				   redir->group);
 		break;
@@ -1967,7 +1967,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static void cancel_direct_im(struct ask_direct *d) {
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "Freeing DirectIM prompts.\n");
+	gaim_debug_info("oscar", "Freeing DirectIM prompts.\n");
 
 	g_free(d->sn);
 	g_free(d);
@@ -2021,7 +2021,7 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "AAA - in oscar_sendfile_estblsh\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
@@ -2059,7 +2059,7 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "AAA - in oscar_sendfile_connected\n");
 	if (!(xfer = data))
 		return;
@@ -2098,7 +2098,7 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "AAA - in oscar_sendfile_prompt\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
@@ -2142,7 +2142,7 @@ static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_sendfile_ack\n");
+	gaim_debug_info("oscar", "AAA - in oscar_sendfile_ack\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -2174,7 +2174,7 @@ static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_sendfile_done\n");
+	gaim_debug_info("oscar", "AAA - in oscar_sendfile_done\n");
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -2203,7 +2203,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 
 	od = (OscarData *)gc->proto_data;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "Accepted DirectIM.\n");
+	gaim_debug_info("oscar", "Accepted DirectIM.\n");
 
 	dim = find_direct_im(od, d->sn);
 	if (dim) {
@@ -2274,7 +2274,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		bi->typingnot = FALSE;
 
 	if ((args->icbmflags & AIM_IMFLAGS_HASICON) && (args->iconlen) && (args->iconsum) && (args->iconstamp)) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar",
+		gaim_debug_misc("oscar",
 				   "%s has an icon\n", userinfo->sn);
 		if ((args->iconlen != bi->ico_len) || (args->iconsum != bi->ico_csum) || (args->iconstamp != bi->ico_time)) {
 			bi->ico_need = TRUE;
@@ -2294,7 +2294,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			file = fopen(iconfile, "rb");
 			if (file) {
 				int len = fread(buf, 1, st.st_size, file);
-				gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				gaim_debug_info("oscar",
 						   "Sending buddy icon to %s (%d bytes, "
 						   "%lu reported)\n",
 						   userinfo->sn, len, st.st_size);
@@ -2302,15 +2302,15 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					st.st_mtime, aimutil_iconsum(buf, st.st_size));
 				fclose(file);
 			} else
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "Can't open buddy icon file!\n");
 			g_free(buf);
 		} else
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "Can't stat buddy icon file!\n");
 	}
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "Received message from %s with charset %hu %hu\n",
 			   userinfo->sn, args->charset, args->charsubset);
 
@@ -2322,14 +2322,14 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * there is something we don't understand about it.
 		 * For the record, AIM Unicode is big-endian UCS-2 */
 
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Received UNICODE IM\n");
+		gaim_debug_info("oscar", "Received UNICODE IM\n");
 
 		if (!args->msg || !args->msglen)
 			return 1;
 
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Unicode IM conversion: %s\n", err->message);
 			tmp = g_strdup(_("(There was an error receiving this message)"));
 			g_error_free(err);
@@ -2343,7 +2343,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * that will happily send ISO-8859-1 without marking it as
 		 * such */
 		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1)
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Received ISO-8859-1 IM\n");
 
 		if (!args->msg || !args->msglen)
@@ -2351,7 +2351,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ISO-8859-1 IM conversion: %s\n", err->message);
 			tmp = g_strdup(_("(There was an error receiving this message)"));
 			g_error_free(err);
@@ -2380,7 +2380,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (!args)
 		return 0;
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "rendezvous with %s, status is %hu\n",
 			   userinfo->sn, args->status);
 
@@ -2412,11 +2412,11 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			if (!args->cookie || !args->port || !args->verifiedip || 
 			    !args->info.sendfile.filename || !args->info.sendfile.totsize || 
 			    !args->info.sendfile.totfiles || !args->reqclass) {
-				gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+				gaim_debug_warning("oscar",
 						   "%s tried to send you a file with incomplete "
 						   "information.\n", userinfo->sn);
 				if (args->proxyip)
-					gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+					gaim_debug_warning("oscar",
 							   "IP for a proxy server was given.  Gaim "
 							   "does not support this yet.\n");
 				return 1;
@@ -2430,7 +2430,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				if (tmp && (tmp[1] == '*')) {
 					tmp[0] = '\0';
 				}
-				gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+				gaim_debug_warning("oscar",
 						   "We're receiving a whole directory! What fun! "
 						   "Especially since we don't support that!\n");
 			}
@@ -2470,7 +2470,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} else if (args->status == AIM_RENDEZVOUS_CANCEL) {
 			/* The other user wants to cancel a file transfer */
 			GaimXfer *xfer;
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "AAA - File transfer canceled by remote user\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie)))
 				gaim_xfer_cancel_remote(xfer);
@@ -2482,7 +2482,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			 * to us, and we shouldn't send them anything.
 			 */
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "unknown rendezvous status!\n");
 		}
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
@@ -2496,12 +2496,12 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		char buf[256];
 
 		if (!args->verifiedip) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "directim kill blocked (%s)\n", userinfo->sn);
 			return 1;
 		}
 
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "%s received direct im request from %s (%s)\n",
 				   username, userinfo->sn, args->verifiedip);
 
@@ -2520,7 +2520,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 							_("Connect"), G_CALLBACK(accept_direct_im),
 							_("Cancel"), G_CALLBACK(cancel_direct_im));
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 				   "Unknown reqclass %hu\n", args->reqclass);
 	}
 
@@ -2541,7 +2541,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 		GaimBuddy *buddy = gaim_find_buddy(gc->account, data->name);
 		GaimGroup *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ssi: adding buddy %s to group %s\n",
 					   buddy->name, group->name);
 			aim_ssi_sendauthrequest(od->sess, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
@@ -2660,7 +2660,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (!args->type || !args->msg || !args->uin)
 		return 1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Received a channel 4 message of type 0x%02hhx.\n", args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
@@ -2671,7 +2671,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		gaim_str_strip_cr(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "Error converting a string from ISO-8859-1 to "
 					   "UTF-8 in oscar ICBM channel 4 parsing\n");
 			g_error_free(err);
@@ -2717,7 +2717,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
 				gchar *dialog_msg = g_strdup_printf(_("The user %u wants to add you to their buddy list for the following reason:\n%s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
-				gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				gaim_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
 						   args->uin);
 				data->gc = gc;
@@ -2811,7 +2811,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} break;
 
 		default: {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Received a channel 4 message of unknown type "
 					   "(type 0x%02hhx).\n", args->type);
 		} break;
@@ -2853,7 +2853,7 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+			gaim_debug_warning("oscar",
 					   "ICBM received on unsupported channel (channel "
 					   "0x%04hx).", channel);
 		} break;
@@ -2967,14 +2967,14 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_
 	switch (reason) {
 		case 3: { /* Decline sendfile. */
 			GaimXfer *xfer;
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "AAA - Other user declined file transfer\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
 				gaim_xfer_cancel_remote(xfer);
 		} break;
 
 		default: {
-			gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+			gaim_debug_warning("oscar",
 					   "Received an unknown rendezvous client auto-response "
 					   "from %s.  Type 0x%04hx\n", who, reason);
 		}
@@ -3004,7 +3004,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 		} break;
 
 		default: {
-			gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+			gaim_debug_warning("oscar",
 					   "Received an unknown client auto-response from %s.  "
 					   "Type 0x%04hx\n", who, reason);
 		} break;
@@ -3050,7 +3050,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	reason = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+	gaim_debug_error("oscar",
 			   "snac threw error (reason 0x%04hx: %s)\n", reason,
 			   (reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
 
@@ -3077,7 +3077,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+	gaim_debug_error("oscar",
 			   "Message error with data %s and reason %hu\n", data, reason);
 
 /* BBB */
@@ -3124,7 +3124,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
+			gaim_debug_error("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
 		} break;
 	}
 
@@ -3351,7 +3351,7 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...)
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
 	if (id < 4)
 		gaim_notify_warning(sess->aux_data, NULL,
@@ -3379,19 +3379,19 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
-			gaim_debug(GAIM_DEBUG_MISC, "oscar",
+			gaim_debug_misc("oscar",
 					   "chat info: Chat Rights:\n");
-			gaim_debug(GAIM_DEBUG_MISC, "oscar",
+			gaim_debug_misc("oscar",
 					   "chat info: \tMax Concurrent Rooms: %hhd\n", maxrooms);
-			gaim_debug(GAIM_DEBUG_MISC, "oscar",
+			gaim_debug_misc("oscar",
 					   "chat info: \tExchange List: (%d total)\n", exchangecount);
 			for (i = 0; i < exchangecount; i++)
-				gaim_debug(GAIM_DEBUG_MISC, "oscar",
+				gaim_debug_misc("oscar",
 						   "chat info: \t\t%hu    %s\n",
 						   exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
 			while (od->create_rooms) {
 				struct create_room *cr = od->create_rooms->data;
-				gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				gaim_debug_info("oscar",
 						   "creating room %s\n", cr->name);
 				aim_chatnav_createroom(sess, fr->conn, cr->name, cr->exchange);
 				g_free(cr->name);
@@ -3418,7 +3418,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			name = va_arg(ap, char *);
 			ck = va_arg(ap, char *);
 
-			gaim_debug(GAIM_DEBUG_MISC, "oscar",
+			gaim_debug_misc("oscar",
 					   "created room: %s %hu %hu %hu %u %hu %hu %hhu %hu %s %s\n",
 					fqcn,
 					exchange, instance, flags,
@@ -3429,7 +3429,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			}
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+			gaim_debug_warning("oscar",
 					   "chatnav info: unknown type (%04hx)\n", type);
 			break;
 	}
@@ -3511,7 +3511,7 @@ static int gaim_conv_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...)
 	maxvisiblemsglen = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "inside chat_info_update (maxmsglen = %hu, maxvislen = %hu)\n",
 			   maxmsglen, maxvisiblemsglen);
 
@@ -3567,7 +3567,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	
 	if (alertitle)
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Got an alert '%s' %s\n", alertitle, alerturl ? alerturl : "");
+		gaim_debug_misc("oscar", "Got an alert '%s' %s\n", alertitle, alerturl ? alerturl : "");
 
 	return 1;
 }
@@ -3578,7 +3578,7 @@ static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 
 	sn = od->requesticon->data;
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "removing %s from hash table\n", sn);
 	od->requesticon = g_slist_remove(od->requesticon, sn);
 	free(sn);
@@ -3664,22 +3664,22 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 			if (file) {
 				fread(buf, 1, st.st_size, file);
 				fclose(file);
-				gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				gaim_debug_info("oscar",
 					   "Uploading icon to icon server\n");
 				aim_bart_upload(od->sess, buf, st.st_size);
 			} else
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 					   "Can't open buddy icon file!\n");
 			g_free(buf);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 				   "Can't stat buddy icon file!\n");
 		}
 		od->set_icon = FALSE;
 	}
 
 	if (!od->requesticon) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar",
+		gaim_debug_misc("oscar",
 				   "no more icons to request\n");
 		return FALSE;
 	}
@@ -3710,7 +3710,7 @@ static int gaim_parse_msgack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sent message to %s.\n", sn);
+	gaim_debug_info("oscar", "Sent message to %s.\n", sn);
 
 	return 1;
 }
@@ -3739,7 +3739,7 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	maxavg = va_arg(ap, fu32_t);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "rate %s (param ID 0x%04hx): curavg = %u, maxavg = %u, alert at %u, "
 		     "clear warning at %u, limit at %u, disconnect at %u (window size = %u)\n",
 		     (code < 5) ? codes[code] : codes[0],
@@ -3815,7 +3815,7 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
@@ -3836,7 +3836,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_reqpersonalinfo(sess, fr->conn);
 
 #ifndef NOSSI
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: requesting rights and list\n");
+	gaim_debug_info("oscar", "ssi: requesting rights and list\n");
 	aim_ssi_reqrights(sess);
 	aim_ssi_reqdata(sess);
 #endif
@@ -3847,7 +3847,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi */
 
 #ifdef NOSSI
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "bos: requesting rights\n");
+	gaim_debug_info("oscar", "bos: requesting rights\n");
 	aim_bos_reqrights(sess, fr->conn);
 	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
 	aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
@@ -3867,10 +3867,10 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ADM, 0x0007, gaim_account_confirm, 0);
 
 	aim_clientready(sess, fr->conn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "connected to admin\n");
+	gaim_debug_info("oscar", "connected to admin\n");
 
 	if (od->chpass) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "changing password\n");
+		gaim_debug_info("oscar", "changing password\n");
 		aim_admin_changepasswd(sess, fr->conn, od->newp, od->oldp);
 		g_free(od->oldp);
 		od->oldp = NULL;
@@ -3879,24 +3879,24 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->chpass = FALSE;
 	}
 	if (od->setnick) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "formatting screen name\n");
+		gaim_debug_info("oscar", "formatting screen name\n");
 		aim_admin_setnick(sess, fr->conn, od->newsn);
 		g_free(od->newsn);
 		od->newsn = NULL;
 		od->setnick = FALSE;
 	}
 	if (od->conf) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "confirming account\n");
+		gaim_debug_info("oscar", "confirming account\n");
 		aim_admin_reqconfirm(sess, fr->conn);
 		od->conf = FALSE;
 	}
 	if (od->reqemail) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "requesting email\n");
+		gaim_debug_info("oscar", "requesting email\n");
 		aim_admin_getinfo(sess, fr->conn, 0x0011);
 		od->reqemail = FALSE;
 	}
 	if (od->setemail) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "setting email\n");
+		gaim_debug_info("oscar", "setting email\n");
 		aim_admin_setemail(sess, fr->conn, od->email);
 		g_free(od->email);
 		od->email = NULL;
@@ -3915,7 +3915,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	/* XXX - evidently this crashes on solaris. i have no clue why
-	gaim_debug(GAIM_DEBUG_MISC, "oscar", "ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
+	gaim_debug_misc("oscar", "ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
 			"max sender evil = %f, max receiver evil = %f, min msg interval = %u\n",
 			params->maxchan, params->flags, params->maxmsglen,
 			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
@@ -3943,7 +3943,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	maxsiglen = (fu16_t) va_arg(ap, int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "locate rights: max sig len = %d\n", maxsiglen);
 
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
@@ -3968,7 +3968,7 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	maxwatchers = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "buddy list rights: Max buddies = %hu / Max watchers = %hu\n", maxbuddies, maxwatchers);
 
 	od->rights.maxbuddies = (guint)maxbuddies;
@@ -3988,7 +3988,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	maxdenies = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "BOS rights: Max permit = %hu / Max deny = %hu\n", maxpermits, maxdenies);
 
 	od->rights.maxpermits = (guint)maxpermits;
@@ -3997,7 +3997,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 	serv_finish_login(gc);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "buddy list loaded\n");
+	gaim_debug_info("oscar", "buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
 	aim_srv_setavailmsg(sess, NULL);
@@ -4025,7 +4025,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, struct aim_icq_offlinemsg *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Received offline message.  Converting to channel 4 ICBM...\n");
 	args.uin = msg->sender;
 	args.type = msg->type;
@@ -4309,7 +4309,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	status = (fu16_t) va_arg(ap, unsigned int); /* status code of confirmation request */
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "account confirmation returned status 0x%04x (%s)\n", status,
 			status ? "unknown" : "email sent");
 	if (!status) {
@@ -4337,7 +4337,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	email = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+	gaim_debug_misc("oscar",
 			   "account info: because of %s, perms=0x%04x, err=0x%04x, url=%s, sn=%s, email=%s\n",
 		change ? "change" : "request", perms, err, url, sn, email);
 
@@ -4466,7 +4466,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		}
 
 		if (bi->ico_need) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Sending buddy icon request with message\n");
 			args.flags |= AIM_IMFLAGS_BUDDYREQ;
 			bi->ico_need = FALSE;
@@ -4489,7 +4489,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				}
 
 				if (!bi->ico_informed) {
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							   "Claiming to have a buddy icon\n");
 					args.flags |= AIM_IMFLAGS_HASICON;
 					bi->ico_me_len = args.iconlen;
@@ -4513,36 +4513,36 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		args.flags |= oscar_encoding_check(tmpmsg);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode IM\n");
+			gaim_debug_info("oscar", "Sending Unicode IM\n");
 			args.charset = 0x0002;
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "Error converting a unicode message: %s\n", err->message);
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "This really shouldn't happen!\n");
 				/* We really shouldn't try to send the
 				 * IM now, but I'm not sure what to do */
 				g_error_free(err);
 			}
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Sending ISO-8859-1 IM\n");
 			args.charset = 0x0003;
 			args.charsubset = 0x0000;
 			args.msg = g_convert(tmpmsg, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "conversion error: %s\n", err->message);
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "Someone tell Ethan his 8859-1 detection is wrong\n");
 				args.flags ^= AIM_IMFLAGS_ISO_8859_1 | AIM_IMFLAGS_UNICODE;
 				len = strlen(tmpmsg);
 				g_error_free(err);
 				args.msg = g_convert(tmpmsg, len, "UCS-2BE", "UTF8", NULL, &len, &err);
 				if (err) {
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					gaim_debug_error("oscar",
 							   "Error in unicode fallback: %s\n", err->message);
 					g_error_free(err);
 				}
@@ -4816,7 +4816,7 @@ static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) 
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
 		if (b && g) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ssi: adding buddy %s to group %s\n", name, g->name);
 			aim_ssi_addbuddy(od->sess, b->name, g->name, gaim_get_buddy_alias_only(b), NULL, NULL, 0);
 		}
@@ -4857,7 +4857,7 @@ static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char 
 	aim_buddylist_removebuddy(od->sess, od->conn, name);
 #else
 	if (od->sess->ssi.received_data) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "ssi: deleting buddy %s from group %s\n", name, group);
 		aim_ssi_delbuddy(od->sess, name, group);
 	}
@@ -4884,7 +4884,7 @@ static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char 
 static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->sess->ssi.received_data && strcmp(old_group, new_group)) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "ssi: moving buddy %s from group %s to group %s\n", name, old_group, new_group);
 		aim_ssi_movebuddy(od->sess, old_group, new_group, name);
 	}
@@ -4895,7 +4895,7 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 	if (od->sess->ssi.received_data) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, name);
 		if (gname) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ssi: changing the alias for buddy %s to %s\n", name, alias);
 			aim_ssi_aliasbuddy(od->sess, gname, name, alias);
 		}
@@ -4909,11 +4909,11 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_group, const 
 		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, new_group, NULL, AIM_SSI_TYPE_GROUP)) {
 			oscar_remove_buddies(gc, members, old_group);
 			oscar_add_buddies(gc, members);
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_group, new_group);
 		} else {
 			aim_ssi_rename_group(od->sess, old_group, new_group);
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "ssi: renamed group %s to %s\n", old_group, new_group);
 		}
 	}
@@ -4935,7 +4935,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	reason = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: SNAC error %hu\n", reason);
+	gaim_debug_error("oscar", "ssi: SNAC error %hu\n", reason);
 
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
@@ -4946,7 +4946,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: activating server-stored buddy list\n");
+	gaim_debug_info("oscar", "ssi: activating server-stored buddy list\n");
 	aim_ssi_enable(od->sess);
 
 	return 1;
@@ -4964,13 +4964,13 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	maxitems = va_arg(ap, fu16_t *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_MISC, "oscar", "ssi rights:");
+	gaim_debug_misc("oscar", "ssi rights:");
 
 	for (i=0; i<numtypes; i++)
-		gaim_debug(GAIM_DEBUG_MISC, NULL, " max type 0x%04x=%hd,",
+		gaim_debug_misc(NULL, " max type 0x%04x=%hd,",
 				   i, maxitems[i]);
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+	gaim_debug_misc(NULL, "\n");
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];
@@ -5004,11 +5004,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	timestamp = va_arg(ap, fu32_t);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: syncing local list and server list\n");
 
 	if ((timestamp == 0) || (numitems == 0)) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.", NULL);
+		gaim_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.", NULL);
 		return 1;
 	}
 
@@ -5048,7 +5048,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 									aim_ssi_aliasbuddy(sess, g->name, b->name, b->alias);
 								free(alias);
 							} else {
-								gaim_debug(GAIM_DEBUG_INFO, "oscar",
+								gaim_debug_info("oscar",
 										"ssi: removing buddy %s from local list\n", b->name);
 								/* We can't actually remove now because it will screw up our looping */
 								cur = g_slist_prepend(cur, b);
@@ -5069,7 +5069,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (gc->account->permit) {
 			for (cur=gc->account->permit; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							"ssi: removing permit %s from local list\n", (const char *)cur->data);
 					gaim_privacy_permit_remove(account, cur->data, TRUE);
 					cur = gc->account->permit;
@@ -5080,7 +5080,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (gc->account->deny) {
 			for (cur=gc->account->deny; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					gaim_debug_info("oscar",
 							"ssi: removing deny %s from local list\n", (const char *)cur->data);
 					gaim_privacy_deny_remove(account, cur->data, TRUE);
 					cur = gc->account->deny;
@@ -5120,7 +5120,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							gaim_blist_add_group(g, NULL);
 						}
 
-						gaim_debug(GAIM_DEBUG_INFO, "oscar",
+						gaim_debug_info("oscar",
 								   "ssi: adding b %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
 						gaim_blist_add_buddy(b, NULL, g, NULL);
 					}
@@ -5144,7 +5144,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					GSList *list;
 					for (list=account->permit; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
 					if (!list) {
-						gaim_debug(GAIM_DEBUG_INFO, "oscar",
+						gaim_debug_info("oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
 						gaim_privacy_permit_add(account, curitem->name, TRUE);
 					}
@@ -5156,7 +5156,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					GSList *list;
 					for (list=account->deny; (list && aim_sncmp(curitem->name, list->data)); list=list->next);
 					if (!list) {
-						gaim_debug(GAIM_DEBUG_INFO, "oscar",
+						gaim_debug_info("oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
 						gaim_privacy_deny_add(account, curitem->name, TRUE);
 					}
@@ -5167,7 +5167,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (curitem->data) {
 					fu8_t permdeny;
 					if ((permdeny = aim_ssi_getpermdeny(sess->ssi.local)) && (permdeny != account->perm_deny)) {
-						gaim_debug(GAIM_DEBUG_INFO, "oscar",
+						gaim_debug_info("oscar",
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
 						if (od->icq && account->perm_deny == 0x03) {
@@ -5191,7 +5191,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: activating server-stored buddy list\n");
 	aim_ssi_enable(sess);
 
@@ -5208,7 +5208,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	while (retval) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar",
+		gaim_debug_misc("oscar",
 				   "ssi: status is 0x%04hx for a 0x%04hx action with name %s\n", retval->ack,  retval->action, retval->item ? (retval->item->name ? retval->item->name : "no name") : "no item");
 
 		if (retval->ack != 0xffff)
@@ -5230,7 +5230,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 			default: { /* La la la */
 				gchar *buf;
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
+				gaim_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
 				gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
@@ -5281,7 +5281,7 @@ static int gaim_ssi_parseadd(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_blist_add_group(g, NULL);
 		}
 
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "ssi: adding b %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 	}
@@ -5304,7 +5304,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: %s has given you permission to add him to your buddy list\n", sn);
 
 	buddy = gaim_find_buddy(gc->account, sn);
@@ -5343,7 +5343,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: received authorization request from %s\n", sn);
 
 	buddy = gaim_find_buddy(gc->account, sn);
@@ -5383,7 +5383,7 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
 
 	buddy = gaim_find_buddy(gc->account, sn);
@@ -5418,7 +5418,7 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	buddy = gaim_find_buddy(gc->account, sn);
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "ssi: %s added you to their buddy list\n", sn);
 	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
 
@@ -5454,7 +5454,7 @@ static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 	name = g_hash_table_lookup(data, "room");
 	exchange = g_hash_table_lookup(data, "exchange");
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Attempting to join chat room %s.\n", name);
 
 	if ((name == NULL) || (*name == '\0')) {
@@ -5463,13 +5463,13 @@ static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 	}
 
 	if ((cur = aim_getconn_type(od->sess, AIM_CONN_TYPE_CHATNAV))) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "chatnav exists, creating room\n");
 		aim_chatnav_createroom(od->sess, cur, name, atoi(exchange));
 	} else {
 		/* this gets tricky */
 		struct create_room *cr = g_new0(struct create_room, 1);
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "chatnav does not exist, opening chatnav\n");
 		cr->exchange = atoi(exchange);
 		cr->name = g_strdup(name);
@@ -5508,7 +5508,7 @@ static void oscar_chat_leave(GaimConnection *gc, int id) {
 	if (!b)
 		return;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
 	
 	c = find_oscar_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
@@ -5548,29 +5548,29 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 
 	encoding = oscar_encoding_check(buf);
 	if (encoding & AIM_IMFLAGS_UNICODE) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode chat\n");
+		gaim_debug_info("oscar", "Sending Unicode chat\n");
 		charset = "unicode-2-0";
 		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "Error converting to unicode-2-0: %s\n", err->message);
 			g_error_free(err);
 		}
 	} else if (encoding & AIM_IMFLAGS_ISO_8859_1) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending ISO-8859-1 chat\n");
+		gaim_debug_info("oscar", "Sending ISO-8859-1 chat\n");
 		charset = "iso-8859-1";
 		buf2 = g_convert(buf, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 					   "Error converting to iso-8859-1: %s\n", err->message);
 			g_error_free(err);
 			err = NULL;
 
-			gaim_debug(GAIM_DEBUG_INFO, "oscar", "Falling back to Unicode\n");
+			gaim_debug_info("oscar", "Falling back to Unicode\n");
 			charset = "unicode-2-0";
 			buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				gaim_debug_error("oscar",
 						   "Error converting to unicode-2-0: %s\n",
 						   err->message);
 				g_error_free(err);
@@ -5811,15 +5811,15 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 						if (file) {
 							fread(buf, 1, st.st_size, file);
 							fclose(file);
-							gaim_debug(GAIM_DEBUG_INFO, "oscar",
+							gaim_debug_info("oscar",
 								   "Uploading icon to icon server\n");
 							aim_bart_upload(od->sess, buf, st.st_size);
 						} else
-							gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+							gaim_debug_error("oscar",
 								   "Can't open buddy icon file!\n");
 						g_free(buf);
 					} else {
-						gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+						gaim_debug_error("oscar",
 							   "Can't stat buddy icon file!\n");
 					}
 				}
@@ -5864,7 +5864,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	sn = g_strdup(aim_odc_getsn(newconn));
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "DirectIM: initiate success to %s\n", sn);
 	dim = find_direct_im(od, sn);
 
@@ -5968,7 +5968,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 	msgend = msg + len;
 
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
+	gaim_debug_info("oscar",
 			   "Got DirectIM message from %s\n", sn);
 
 	if (isawaymsg)
@@ -6088,7 +6088,7 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (typing == 0x0002) {
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+		gaim_debug_info("oscar",
 				   "ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
 		serv_got_typing(gc, sn, 0, GAIM_TYPING);
 	} else if (typing == 0x0001)
@@ -6213,7 +6213,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 			od->direct_ims = g_slist_remove(od->direct_ims, dim);
 			gaim_input_remove(dim->watcher);
 			g_free(dim);
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
+			gaim_debug_info("oscar",
 					   "Gave up on old direct IM, trying again\n");
 		} else {
 			gaim_notify_error(gc, NULL, "DirectIM already open.", NULL);
@@ -6328,7 +6328,7 @@ static void oscar_add_permit(GaimConnection *gc, const char *who) {
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to add a permit\n");
+	gaim_debug_info("oscar", "ssi: About to add a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_addpermit(od->sess, who);
 #endif
@@ -6340,7 +6340,7 @@ static void oscar_add_deny(GaimConnection *gc, const char *who) {
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to add a deny\n");
+	gaim_debug_info("oscar", "ssi: About to add a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_adddeny(od->sess, who);
 #endif
@@ -6352,7 +6352,7 @@ static void oscar_rem_permit(GaimConnection *gc, const char *who) {
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to delete a permit\n");
+	gaim_debug_info("oscar", "ssi: About to delete a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_delpermit(od->sess, who);
 #endif
@@ -6364,7 +6364,7 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: About to delete a deny\n");
+	gaim_debug_info("oscar", "ssi: About to delete a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_deldeny(od->sess, who);
 #endif
@@ -6723,11 +6723,11 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 			g_free(state);
 			aim_ssi_seticon(sess, md5, 16);
 		} else
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			gaim_debug_error("oscar",
 				   "Can't open buddy icon file!\n");
 		g_free(buf);
 	} else
-		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+		gaim_debug_error("oscar",
 			   "Can't stat buddy icon file!\n");
 }
 
