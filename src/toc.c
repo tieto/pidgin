@@ -172,8 +172,8 @@ int toc_login(char *username, char *password)
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
 	sflap_send(buf2, -1, TYPE_DATA);
 
-	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s",
-		   FILETRANS_UID);
+	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s %s",
+		   FILE_SEND_UID, FILE_GET_UID);
 	sflap_send(buf2, -1, TYPE_DATA);
 
         serv_finish_login();
@@ -580,7 +580,6 @@ void toc_callback( gpointer          data,
 
 
         } else if (!strcasecmp(c, "RVOUS_PROPOSE")) {
-                /* File trans.  Yummy. */
                 char *user;
                 char *uuid;
                 char *cookie;
@@ -614,46 +613,61 @@ void toc_callback( gpointer          data,
                 
                 tmp = frombase64(strtok(NULL, ":"));
 
-                subtype = tmp[1];
-                files = tmp[3]; /* These are fine */
+		if (!strcmp(uuid, FILE_GET_UID)) {
+			/* we're getting a file */
+	                subtype = tmp[1];
+	                files = tmp[3]; /* These are fine */
 
-		temp = tmp[4];
-		temp <<= 24;
-		temp &= 0xff000000;
-		totalsize = temp;
-		temp = tmp[5];
-		temp <<= 16;
-		temp &= 0x00ff0000;
-		totalsize |= temp;
-		temp = tmp[6];
-		temp <<= 8;
-		temp &= 0x0000ff00;
-		totalsize |= temp;
-		temp = tmp[7];
-		temp &= 0x000000ff;
-		totalsize |= temp;
+			totalsize = 0;
+			totalsize |= (tmp[4] << 24) & 0xff000000;
+			totalsize |= (tmp[5] << 16) & 0x00ff0000;
+			totalsize |= (tmp[6] <<  8) & 0x0000ff00;
+			totalsize |= (tmp[7] <<  0) & 0x000000ff;
 
-                name = tmp + 8;
+	                name = tmp + 8;
 
-                ft = g_new0(struct file_transfer, 1);
+	                ft = g_new0(struct file_transfer, 1);
 
-                ft->cookie = frombase64(cookie);
-                ft->ip = g_strdup(pip);
-                ft->port = port;
-                if (i)
-                        ft->message = g_strdup(messages[0]);
-                else
-                        ft->message = NULL;
-                ft->filename = g_strdup(name);
-                ft->user = g_strdup(user);
-                ft->size = totalsize;
+	                ft->cookie = frombase64(cookie);
+	                ft->ip = g_strdup(pip);
+	                ft->port = port;
+	                if (i)
+	                        ft->message = g_strdup(messages[0]);
+	                else
+	                        ft->message = NULL;
+	                ft->filename = g_strdup(name);
+	                ft->user = g_strdup(user);
+	                ft->size = totalsize;
                 
-                g_free(tmp);
+	                g_free(tmp);
 
-                for (i--; i >= 0; i--)
-                        g_free(messages[i]);
+	                for (i--; i >= 0; i--)
+	                        g_free(messages[i]);
                 
-                accept_file_dialog(ft);
+	                accept_file_dialog(ft);
+		} else if (!strcmp(uuid, FILE_SEND_UID)) {
+			/* we're sending a file */
+			/* FIXME */
+			/* here's what needs to happen:
+			 * 1. dialog to accept/reject transfer
+			 * 2. if cancel, toc_rvous_cancel
+			 * 3. if accept, first open a socket, then accept
+			 *    a. on connect, send header
+			 *    b. wait for header
+			 *    c. send file
+			 *    d. wait for info
+			 */
+		/*
+		} else if (!strcmp(uuid, VOICE_UID)) {
+		} else if (!strcmp(uuid, B_ICON_UID)) {
+		} else if (!strcmp(uuid, IMAGE_UID)) {
+		*/
+
+		} else {
+			sprintf(debug_buff,"don't know what to do with %s\n",
+					uuid);
+			debug_print(debug_buff);
+		}
 	} else {
 		sprintf(debug_buff,"don't know what to do with %s\n", c);
 		debug_print(debug_buff);

@@ -2207,7 +2207,7 @@ static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 		return;
 	}
 	
-	g_snprintf(send, 255, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, FILETRANS_UID);
+	g_snprintf(send, 255, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
 	sflap_send(send, strlen(send), TYPE_DATA);
 	g_free(send);
 	destroy_dialog(NULL, ft->window);
@@ -2296,7 +2296,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	ft->accepted = 1;
 	
 	destroy_dialog(NULL, ft->window);
-	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILETRANS_UID);
+	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
 	sflap_send(send, strlen(send), TYPE_DATA);
 	g_free(send);
 
@@ -2420,7 +2420,6 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 			gtk_main_iteration();
 	}
 
-	gtk_widget_destroy(fw);
 	fclose(ft->f);
 	memset(header + 18, 0, 4);
 	header[94] = 0;
@@ -2433,6 +2432,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 
 	g_free(buf);
 	g_free(header);
+	gtk_widget_destroy(fw);
 }
 
 

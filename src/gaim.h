@@ -268,7 +268,11 @@ struct signon {
 #define CONVERSATION_TITLE "Gaim - Conversation with %s"
 #define LOG_CONVERSATION_TITLE "Gaim - Conversation with %s (logged)"
 
-#define FILETRANS_UID "09461343-4C7F-11D1-8222-444553540000"
+#define VOICE_UID     "09461341-4C7F-11D1-8222-444553540000"
+#define FILE_GET_UID  "09461343-4C7F-11D1-8222-444553540000"
+#define IMAGE_UID     "09461345-4C7F-11D1-8222-444553540000"
+#define B_ICON_UID    "09461346-4C7F-11D1-8222-444553540000"
+#define FILE_SEND_UID "09461348-4C7F-11D1-8222-444553540000"
 
 #define LAGOMETER_STR "123CHECKLAG456"
 
@@ -296,7 +300,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 190 $"
+#define REVISION "gaim:$Revision: 206 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

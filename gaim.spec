@@ -31,7 +31,7 @@ the same time incorporating many new features.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --enable-plugins
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
 make
 
 %install
