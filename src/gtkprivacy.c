@@ -171,12 +171,15 @@ build_list(GaimGtkPrivacyDialog *dialog, GtkListStore *model,
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), treeview);
+
 	gtk_widget_show(treeview);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(user_selected_cb), dialog);
+
+	gtk_widget_set_size_request(sw, -1, 200);
 
 	return sw;
 }
