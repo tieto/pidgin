@@ -3541,7 +3541,7 @@ void show_log(char *name)
 		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), list);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-		gtk_widget_set_usize(sw, 190, 220);
+		gtk_widget_set_usize(sw, 220, 220);
 		gtk_container_add(GTK_CONTAINER(frame), sw);
 		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
