@@ -505,15 +505,15 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 
-	GAIM_DIALOG(win);
-	dialog->window = win;
-
+	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "account");
 
 	if (type == ADD_ACCOUNT_DIALOG)
 		gtk_window_set_title(GTK_WINDOW(win), _("Add Account"));
 	else
 		gtk_window_set_title(GTK_WINDOW(win), _("Modify Account"));
+
+	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 
@@ -540,7 +540,6 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	/* Setup the box that the disclosure will cover. */
 	dbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
-	gtk_widget_show(dbox);
 
 	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
 
