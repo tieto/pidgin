@@ -118,6 +118,14 @@
 #define FAIM_USEFAKELOCKS
 #endif
 
+/*
+ * Size of the SNAC caching hash.
+ *
+ * Default: 16
+ *
+ */
+#define FAIM_SNAC_HASH_SIZE 16
+
 #endif /* __FAIMCONFIG_H__ */
 
 

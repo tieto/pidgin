@@ -28,6 +28,7 @@ u_long aim_add_buddy(struct aim_session_t *sess,
 
    aim_tx_enqueue(sess, newpacket );
 
+#if 0 /* do we really need this code? */
    {
       struct aim_snac_t snac;
     
@@ -41,6 +42,7 @@ u_long aim_add_buddy(struct aim_session_t *sess,
 
       aim_newsnac(sess, &snac);
    }
+#endif
 
    return( sess->snac_nextid++ );
 }

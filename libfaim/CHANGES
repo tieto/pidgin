@@ -1,6 +1,19 @@
 
 No release numbers
 ------------------
+ - Thu Aug 17 23:19:40 UTC 2000
+   - A few more leak fixes (only a few left to go...)
+
+ - Thu Aug 17 23:08:08 UTC 2000
+   - More leak fixes (eric, eric, eric...)
+
+ - Thu Aug 17 22:53:03 UTC 2000
+   - Change the SNAC cache to a hash instead of list
+   - Fixed a few leaks relating to aim_gettlv_str()
+
+ - Thu Aug 17 14:04:18 UTC 2000
+   - Fix the fd closing bug introduced last week
+
  - Tue Aug  8 04:25:35 UTC 2000
    - Preserve subtype and priv after aim_conn_close
 

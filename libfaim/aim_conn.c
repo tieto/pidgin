@@ -13,7 +13,7 @@
  */
 void aim_connrst(struct aim_session_t *sess)
 {
-  faim_mutex_init(&sess->connlistlock, NULL);
+  faim_mutex_init(&sess->connlistlock);
   if (sess->connlist) {
     struct aim_conn_t *cur = sess->connlist, *tmp;
 
@@ -68,8 +68,8 @@ static void aim_conn_init(struct aim_conn_t *deadconn)
   deadconn->forcedlatency = 0;
   deadconn->handlerlist = NULL;
   deadconn->priv = NULL;
-  faim_mutex_init(&deadconn->active, NULL);
-  faim_mutex_init(&deadconn->seqnum_lock, NULL);
+  faim_mutex_init(&deadconn->active);
+  faim_mutex_init(&deadconn->seqnum_lock);
   
   return;
 }
@@ -373,7 +373,7 @@ void aim_session_init(struct aim_session_t *sess)
   sess->queue_outgoing = NULL;
   sess->queue_incoming = NULL;
   sess->pendingjoin = NULL;
-  sess->outstanding_snacs = NULL;
+  aim_initsnachash(sess);
   sess->snac_nextid = 0x00000001;
 
   /*

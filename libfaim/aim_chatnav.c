@@ -68,6 +68,7 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
   struct aim_snac_t *snac;
   u_long snacid;
   rxcallback_t userfunc;
+  int ret=1;
   
   snacid = aimutil_get32(command->data+6);
   snac = aim_remsnac(sess, snacid);
@@ -96,7 +97,6 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 	  int curexchange = 0;
 	  struct aim_tlv_t *exchangetlv;
 	  u_char maxrooms = 0;
-	  int ret = 1;
 	  struct aim_tlvlist_t *innerlist;
 	 
 	  tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10);
@@ -215,7 +215,8 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 		exchanges[curexchange-1].lang2 = aim_gettlv_str(innerlist, 0x00d9, 1);
 	      else
 		exchanges[curexchange-1].lang2 = NULL;
-
+	      
+	      aim_freetlvchain(&innerlist);
 	    }
 	  
 	  /*
@@ -245,33 +246,38 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 	      curexchange--;
 	    }
 	  free(exchanges);
-	  aim_freetlvchain(&innerlist);
 	  aim_freetlvchain(&tlvlist);
-	  return ret;
+	  
+	  break;
       }
     case 0x0003: /* request exchange info */
       printf("faim: chatnav_parse_info: resposne to exchange info\n");
-      return 1;
+      break;
     case 0x0004: /* request room info */
       printf("faim: chatnav_parse_info: response to room info\n");
-      return 1;
+      break;
     case 0x0005: /* request more room info */
       printf("faim: chatnav_parse_info: response to more room info\n");
-      return 1;
+      break;
     case 0x0006: /* request occupant list */
       printf("faim: chatnav_parse_info: response to occupant info\n");
-      return 1;
+      break;
     case 0x0007: /* search for a room */
       printf("faim: chatnav_parse_info: search results\n");
-      return 1;
+      break;
     case 0x0008: /* create room */
       printf("faim: chatnav_parse_info: response to create room\n");
-      return 1;
+      break;
     default: /* unknown */
       printf("faim: chatnav_parse_info: unknown request subtype (%04x)\n", snac->type);
     }
 
-  return 1; /* shouldn't get here */
+  if (snac && snac->data)
+    free(snac->data);
+  if (snac)
+    free(snac);
+  
+  return ret;
 }
 
 u_long aim_chatnav_createroom(struct aim_session_t *sess,

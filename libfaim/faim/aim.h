@@ -40,10 +40,10 @@
 #ifdef FAIM_USEPTHREADS
 #include <pthread.h>
 #define faim_mutex_t pthread_mutex_t 
-#define faim_mutex_init pthread_mutex_init
-#define faim_mutex_lock pthread_mutex_lock
-#define faim_mutex_unlock pthread_mutex_unlock
-#define faim_mutex_destroy pthread_mutex_destroy
+#define faim_mutex_init(x) pthread_mutex_init(x, NULL)
+#define faim_mutex_lock(x) pthread_mutex_lock(x)
+#define faim_mutex_unlock(x) pthread_mutex_unlock(x)
+#define faim_mutex_destroy(x) pthread_mutex_destroy(x)
 #elif defined(FAIM_USEFAKELOCKS)
 /*
  * For platforms without pthreads, we also assume
@@ -306,8 +306,9 @@ struct aim_session_t {
    * Outstanding snac handling 
    *
    * XXX: Should these be per-connection? -mid
-   **/
-  struct aim_snac_t *outstanding_snacs;
+   */
+  struct aim_snac_t *snac_hash[FAIM_SNAC_HASH_SIZE];
+  faim_mutex_t snac_hash_locks[FAIM_SNAC_HASH_SIZE];
   u_long snac_nextid;
 
   struct aim_msgcookie_t *msgcookies;
@@ -457,6 +458,7 @@ struct aim_snac_t {
   time_t issuetime;
   struct aim_snac_t *next;
 };
+void aim_initsnachash(struct aim_session_t *sess);
 u_long aim_newsnac(struct aim_session_t *, struct aim_snac_t *newsnac);
 struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
 int aim_cleansnacs(struct aim_session_t *, int maxage);
@@ -510,6 +512,8 @@ int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
 int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 
 /* aim_im.c */
 struct aim_directim_priv {

@@ -639,7 +639,6 @@ int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct
 int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
-  int i = 10; /* skip SNAC */
   int ret = 1;
   unsigned long newrate;
 
@@ -673,18 +672,22 @@ int aim_parsemotd_middle(struct aim_session_t *sess,
   /* 
    * TLVs follow 
    */
-  tlvlist = aim_readtlvchain(command->data+12, command->commandlen-12);
-  
-  msg = aim_gettlv_str(tlvlist, 0x000b, 1);
+  if (!(tlvlist = aim_readtlvchain(command->data+12, command->commandlen-12)))
+    return ret;
+
+  if (!(msg = aim_gettlv_str(tlvlist, 0x000b, 1))) {
+    aim_freetlvchain(&tlvlist);
+    return ret;
+  }
   
   userfunc = aim_callhandler(command->conn, 0x0001, 0x0013);
   if (userfunc)
     ret =  userfunc(sess, command, id, msg);
 
   aim_freetlvchain(&tlvlist);
+  free(msg);
 
-  return ret;
-  
+  return ret;  
 }
 
 int aim_handleredirect_middle(struct aim_session_t *sess,
@@ -715,6 +718,7 @@ int aim_handleredirect_middle(struct aim_session_t *sess,
   if (!(ip = aim_gettlv_str(tlvlist, 0x0005, 1))) 
     {
       printf("libfaim: major bug: no IP in tlvchain from redirect (service 0x%02x)\n", serviceid);
+      free(ip);
       aim_freetlvchain(&tlvlist);
       return ret;
     }
@@ -722,6 +726,7 @@ int aim_handleredirect_middle(struct aim_session_t *sess,
   if (!(tmptlv = aim_gettlv(tlvlist, 0x0006, 1)))
     {
       printf("libfaim: major bug: no cookie in tlvchain from redirect (service 0x%02x)\n", serviceid);
+      free(ip);
       aim_freetlvchain(&tlvlist);
       return ret;
     }
@@ -746,9 +751,7 @@ int aim_handleredirect_middle(struct aim_session_t *sess,
 	ret =  userfunc(sess, command, serviceid, ip, cookie);
     }
 
-  /*
-   * XXX: Is there a leak here?  Where does IP get freed?
-   */
+  free(ip);
   aim_freetlvchain(&tlvlist);
 
   return ret;
