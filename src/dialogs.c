@@ -1976,7 +1976,7 @@ static void show_clear_log(GtkWidget *w, struct view_log *view)
 {
 	char *text;
 
-	if (view->clear_handle != NULL)
+	if ((view != NULL ) && (view->clear_handle != NULL))
 		return;
 
 	text = g_strdup_printf(_("You are about to remove the log file for %s.  Do you want to continue?"),
