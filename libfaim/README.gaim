@@ -87,6 +87,10 @@ may cause you to segfault.
 
 - Warnings are there now. Yes, I know it says the wrong value.
 
+- I have reason to believe that if a libfaim user invites a TOC user, the TOC
+user will get a fucked up message. Receiving invitations work well, and sending
+invitations to Oscar users works well.
+
 - There are also FIXME's scattered about gaim. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed
 in KNOWN ISSUES above, or any other bugs you happen to find, is a very good use

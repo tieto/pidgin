@@ -102,6 +102,11 @@ static struct gaim_connection *find_gaim_conn_by_oscar_conn(struct aim_conn_t *c
 	struct aim_conn_t *s;
 	while (g) {
 		c = (struct gaim_connection *)g->data;
+		if (c->protocol != PROTO_OSCAR) {
+			c = NULL;
+			g = g->next;
+			continue;
+		}
 		s = c->oscar_sess->connlist;
 		while (s) {
 			if (conn == s)
