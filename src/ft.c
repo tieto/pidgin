@@ -77,17 +77,10 @@ gaim_xfer_destroy(GaimXfer *xfer)
 	if (ui_ops != NULL && ui_ops->destroy != NULL)
 		ui_ops->destroy(xfer);
 
-	if( xfer->who != NULL )
-		g_free(xfer->who);
-
-	if( xfer->filename != NULL )
-		g_free(xfer->filename);
-
-	if (xfer->remote_ip != NULL) 
-		g_free(xfer->remote_ip);
-
-	if (xfer->local_filename != NULL)
-		g_free(xfer->local_filename);
+	g_free(xfer->who);
+	g_free(xfer->filename);
+	g_free(xfer->remote_ip);
+	g_free(xfer->local_filename);
 
 	g_free(xfer);
 }
@@ -119,12 +112,15 @@ gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 	xfer->status = status;
 }
 
-
+/*
+ * XXX - I REALLY feel like this should be using strerror.
+ * Also, should this use gaim_xfer_error?
+ */
 static void gaim_xfer_show_file_error(const char *filename)
 {
-	char *msg = NULL;
+	gchar *msg = NULL;
 
-	switch(errno) 
+	switch (errno) 
 	{
 		case ENOENT: 
 			msg = g_strdup_printf(_("%s does not exist.\n"), filename);
@@ -167,7 +163,7 @@ static void gaim_xfer_show_file_error(const char *filename)
 			break;
 	}
 
-	if( msg != NULL ) {
+	if (msg != NULL) {
 		gaim_notify_error(NULL, NULL, msg, NULL);
 		g_free(msg);
 	}
