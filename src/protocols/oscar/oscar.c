@@ -56,9 +56,7 @@
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 static int gaim_caps = AIM_CAPS_CHAT |
-#if USE_PIXBUF
 		       AIM_CAPS_BUDDYICON |
-#endif
 		       AIM_CAPS_IMIMAGE;
 
 static GtkWidget *join_chat_spin = NULL;
