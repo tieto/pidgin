@@ -636,6 +636,36 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 	} else if (!g_strncasecmp(buf, "BPR", 3)) {
 	} else if (!g_strncasecmp(buf, "CHG", 3)) {
+	} else if (!g_strncasecmp(buf, "CHL", 3)) {
+		char *hash = buf;
+		char buf2[MSN_BUF_LEN];
+		md5_state_t st;
+		md5_byte_t di[16];
+		int i;
+
+		GET_NEXT(hash);
+		GET_NEXT(hash);
+	
+		md5_init(&st);
+
+		printf("Hashing: %s\n", hash);
+		md5_append(&st, (const md5_byte_t *)hash, strlen(hash));
+		md5_append(&st, (const md5_byte_t *)"Q1P7W2E4J9R8U3S5", strlen("Q1P7W2E4J9R8U3S5"));
+		md5_finish(&st, di);
+
+		g_snprintf(buf, sizeof(buf), "QRY %d msmsgs@msnmsgr.com 32\r\n", ++md->trId);
+		for (i = 0; i < 16; i++) {
+			g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
+			strcat(buf, buf2);
+		}
+
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			printf("Couldnt write it");
+			return;
+		}
+
+		debug_printf("\n");
+		
 	} else if (!g_strncasecmp(buf, "FLN", 3)) {
 		char *usr = buf;
 
@@ -786,6 +816,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 	} else if (!g_strncasecmp(buf, "PRP", 3)) {
+	} else if (!g_strncasecmp(buf, "QRY", 3)) {
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
 	} else if (!g_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
