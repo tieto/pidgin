@@ -81,6 +81,10 @@ struct nap_file_request {
 	int status;
 	int inpa;
 	FILE *mp3;
+	GtkWidget *window;
+	GtkWidget *progress;
+	GtkWidget *ok;
+	GtkWidget *cancel;
 };
 
 struct nap_data {
@@ -118,10 +122,10 @@ void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *
 	unsigned short size;
 
 	size = strlen(message);
-
 	write(ndata->fd, &size, 2);
 	write(ndata->fd, &command, 2);
 	write(ndata->fd, message, size);
+
 }
 
 void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
@@ -338,7 +342,10 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 		long filesize;
 		gchar **parse_name;
 		gchar path[2048];
-
+		GtkWidget *hbox;
+		GtkWidget *vbox;
+		GtkWidget *label;
+		gchar *buf2;
 
 		recv(source, buf, 1, 0);
 
@@ -403,6 +410,36 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 		g_strfreev(parse_name);
 		
 		req->mp3 = fopen(path, "w");
+
+		req->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+		vbox = gtk_vbox_new(FALSE, 5);
+
+		buf2 = (gchar *)g_malloc(sizeof(gchar) * (strlen(req->file) + 33));
+		g_snprintf(buf2, strlen(req->file) + 32, "Downloading File: %s", req->file);
+		label = gtk_label_new(buf2);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+
+		req->progress = gtk_progress_bar_new();
+		gtk_progress_bar_update(GTK_PROGRESS_BAR(req->progress), 0);
+		gtk_progress_set_format_string(GTK_PROGRESS(req->progress), "%P %%");
+		gtk_progress_set_show_text(GTK_PROGRESS(req->progress), TRUE);
+		gtk_box_pack_start(GTK_BOX(vbox), req->progress, FALSE, FALSE, 5);
+
+		hbox = gtk_hbox_new(TRUE, 5);
+	
+		req->ok = gtk_button_new_with_label("Ok");
+		req->cancel = gtk_button_new_with_label("Cancel");
+
+		gtk_box_pack_end(GTK_BOX(hbox), req->cancel, FALSE, FALSE, 5);
+		gtk_box_pack_end(GTK_BOX(hbox), req->ok, FALSE, FALSE, 5);
+		
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+		gtk_container_add(GTK_CONTAINER(req->window), vbox);
+		
+		gtk_widget_show_all(req->window);
+		
 		free(buf);
 		return;
 	}
@@ -412,7 +449,12 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 
 	req->size += i; /* Lets add up the total */
 
-	printf("Downloaded %ld of %ld\n", req->size, req->total);
+//	printf("Downloaded %ld of %ld (%f)\n", req->size, req->total, (float)req->size/(float)req->total);
+	
+	gtk_progress_bar_update(GTK_PROGRESS_BAR(req->progress), (float)req->size/(float)req->total);
+
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
 	fwrite(buf, i, sizeof(char), req->mp3);
 
@@ -422,9 +464,15 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 		printf("Download complete.\n");
 		nap_write_packet(gc, 0xdb, "\n"); /* Tell the server we're finished */
 		gdk_input_remove(req->inpa);
+
 		ndata->requests = g_slist_remove(ndata->requests, req);
-		g_free(req->name);
-		g_free(req->file);
+
+		if (req->name != NULL)
+			g_free(req->name);
+
+		if (req->file != NULL)
+			g_free(req->file);
+
 		g_free(req);
 		fclose(req->mp3);
 		close(source);
@@ -465,9 +513,12 @@ void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, unsigned
 	req->status = 0;
 	req->total = 0;
 
+	send(fd, "GET", 3, 0);
+
 	/* Send our request to the user */
-	g_snprintf(buf, sizeof(buf), "GET%s \"%s\" 0\n", user, file);
-	write(fd, buf, strlen(buf));
+	g_snprintf(buf, sizeof(buf), "%s \"%s\" 0",gc->username, file);
+
+	send(fd, buf, strlen(buf), 0);
 
 	/* Add our request */
 	ndata->requests = g_slist_append(ndata->requests, req);
@@ -845,7 +896,7 @@ static void nap_login(struct aim_user *user)
 	int i;
 	int status;
 
-	host = gethostbyname("208.184.216.87");
+	host = gethostbyname("64.124.41.175");
 
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
