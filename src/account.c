@@ -44,7 +44,10 @@ typedef enum
 	TAG_ALIAS,
 	TAG_USERINFO,
 	TAG_BUDDYICON,
-	TAG_SETTING
+	TAG_SETTING,
+	TAG_TYPE,
+	TAG_HOST,
+	TAG_PORT
 
 } AccountParserTag;
 
@@ -68,12 +71,15 @@ typedef struct
 
 	GaimAccount *account;
 	GaimProtocol protocol;
+	GaimProxyInfo *proxy_info;
 	char *protocol_id;
 
 	GString *buffer;
 
 	GaimPrefType setting_type;
 	char *setting_name;
+
+	gboolean in_proxy;
 
 } AccountParserData;
 
@@ -549,7 +555,7 @@ __start_element_handler(GMarkupParseContext *context,
 
 	if (!strcmp(element_name, "protocol"))
 		data->tag = TAG_PROTOCOL;
-	else if (!strcmp(element_name, "name"))
+	else if (!strcmp(element_name, "name") || !strcmp(element_name, "username"))
 		data->tag = TAG_NAME;
 	else if (!strcmp(element_name, "password"))
 		data->tag = TAG_PASSWORD;
@@ -559,6 +565,17 @@ __start_element_handler(GMarkupParseContext *context,
 		data->tag = TAG_USERINFO;
 	else if (!strcmp(element_name, "buddyicon"))
 		data->tag = TAG_BUDDYICON;
+	else if (!strcmp(element_name, "proxy")) {
+		data->in_proxy = TRUE;
+
+		data->proxy_info = gaim_proxy_info_new();
+	}
+	else if (!strcmp(element_name, "type"))
+		data->tag = TAG_TYPE;
+	else if (!strcmp(element_name, "host"))
+		data->tag = TAG_HOST;
+	else if (!strcmp(element_name, "port"))
+		data->tag = TAG_PORT;
 	else if (!strcmp(element_name, "setting")) {
 		data->tag = TAG_SETTING;
 
@@ -613,14 +630,24 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_NAME) {
-		data->account = gaim_account_new(buffer, data->protocol);
-		data->account->protocol_id = data->protocol_id;
+		if (data->in_proxy) {
+			gaim_proxy_info_set_username(data->proxy_info, buffer);
+		}
+		else {
+			data->account = gaim_account_new(buffer, data->protocol);
+			data->account->protocol_id = data->protocol_id;
 
-		data->protocol_id = NULL;
+			data->protocol_id = NULL;
+		}
 	}
 	else if (data->tag == TAG_PASSWORD) {
-		gaim_account_set_password(data->account, buffer);
-		gaim_account_set_remember_password(data->account, TRUE);
+		if (data->in_proxy) {
+			gaim_proxy_info_set_password(data->proxy_info, buffer);
+		}
+		else {
+			gaim_account_set_password(data->account, buffer);
+			gaim_account_set_remember_password(data->account, TRUE);
+		}
 	}
 	else if (data->tag == TAG_ALIAS)
 		gaim_account_set_alias(data->account, buffer);
@@ -628,6 +655,34 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		gaim_account_set_user_info(data->account, buffer);
 	else if (data->tag == TAG_BUDDYICON)
 		gaim_account_set_buddy_icon(data->account, buffer);
+	else if (data->tag == TAG_TYPE) {
+		if (data->in_proxy) {
+			if (!strcmp(buffer, "global"))
+				gaim_proxy_info_set_type(data->proxy_info,
+										 GAIM_PROXY_USE_GLOBAL);
+			else if (!strcmp(buffer, "http"))
+				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_HTTP);
+			else if (!strcmp(buffer, "socks4"))
+				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS4);
+			else if (!strcmp(buffer, "socks5"))
+				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS5);
+			else
+				gaim_debug(GAIM_DEBUG_ERROR, "account",
+						   "Invalid proxy type found when loading account "
+						   "information for %s\n",
+						   gaim_account_get_username(data->account));
+		}
+	}
+	else if (data->tag == TAG_HOST) {
+		if (data->in_proxy) {
+			gaim_proxy_info_set_host(data->proxy_info, buffer);
+		}
+	}
+	else if (data->tag == TAG_PORT) {
+		if (data->in_proxy) {
+			gaim_proxy_info_set_port(data->proxy_info, atoi(buffer));
+		}
+	}
 	else if (data->tag == TAG_SETTING) {
 		if (data->setting_type == GAIM_PREF_STRING)
 			gaim_account_set_string(data->account, data->setting_name,
@@ -641,6 +696,17 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 
 		g_free(data->setting_name);
 		data->setting_name = NULL;
+	}
+	else if (!strcmp(element_name, "proxy")) {
+		data->in_proxy = FALSE;
+
+		if (gaim_proxy_info_get_type(data->proxy_info) == GAIM_PROXY_NONE) {
+			gaim_proxy_info_destroy(data->proxy_info);
+			data->proxy_info = NULL;
+		}
+		else {
+			gaim_account_set_proxy_info(data->account, data->proxy_info);
+		}
 	}
 
 	data->tag = TAG_NONE;
@@ -761,6 +827,8 @@ __write_setting(gpointer key, gpointer value, gpointer user_data)
 static void
 gaim_accounts_write(FILE *fp, GaimAccount *account)
 {
+	GaimProxyInfo *proxy_info;
+	GaimProxyType proxy_type;
 	const char *password, *alias, *user_info, *buddy_icon;
 	char *esc;
 
@@ -798,6 +866,36 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 	fprintf(fp, "  <settings>\n");
 	g_hash_table_foreach(account->settings, __write_setting, fp);
 	fprintf(fp, "  </settings>\n");
+
+	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL &&
+		(proxy_type = gaim_proxy_info_get_type(proxy_info)) != GAIM_PROXY_NONE)
+	{
+		const char *value;
+		int int_value;
+
+		fprintf(fp, "  <proxy>\n");
+		fprintf(fp, "   <type>%s</type>\n",
+				(proxy_type == GAIM_PROXY_USE_GLOBAL ? "global" :
+				 proxy_type == GAIM_PROXY_HTTP       ? "http"   :
+				 proxy_type == GAIM_PROXY_SOCKS4     ? "socks4" :
+				 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" : "unknown"));
+
+		if (proxy_type != GAIM_PROXY_USE_GLOBAL) {
+			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
+				fprintf(fp, "   <host>%s</host>\n", value);
+
+			if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
+				fprintf(fp, "   <port>%d</port>\n", int_value);
+
+			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+				fprintf(fp, "   <username>%s</username>\n", value);
+
+			if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+				fprintf(fp, "   <password>%s</password>\n", value);
+		}
+
+		fprintf(fp, "  </proxy>\n");
+	}
 
 	fprintf(fp, " </account>\n");
 }
