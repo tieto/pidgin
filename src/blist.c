@@ -1635,6 +1635,8 @@ void gaim_blist_load() {
 			g_free(msg);
 		}
 	} else if(g_list_length(gaim_accounts_get_all())) {
+		GMainContext *ctx;
+
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
@@ -1644,8 +1646,10 @@ void gaim_blist_load() {
 		g_free(msg);
 
 		/* now, let gtk actually display the dialog before we start anything */
-		while(gtk_events_pending())
-			gtk_main_iteration();
+		ctx = g_main_context_default();
+
+		while(g_main_context_pending(ctx))
+			g_main_context_iteration(ctx, FALSE);
 
 		/* read in the old lists, then save to the new format */
 		for(accts = gaim_accounts_get_all(); accts; accts = accts->next) {
