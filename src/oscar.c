@@ -855,7 +855,7 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 	char buf[256];
 
 	if (!(dim->cnv = find_conversation(dim->name))) dim->cnv = new_conversation(dim->name);
-	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), dim->name);
+	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
 
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
@@ -2122,7 +2122,7 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	dim->conn = newconn;
 	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, dim->conn);
-	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), priv->sn);
+	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), priv->sn);
 	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
@@ -2179,7 +2179,7 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 	gdk_input_remove(dim->watcher);
 	gtk_signal_disconnect_by_data(GTK_OBJECT(dim->cnv->window), dim);
 
-	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s closed</B>"), sn);
+	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
 	if (dim->cnv)
 		write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
 

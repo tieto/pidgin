@@ -560,7 +560,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					char buf[8192];
 					msg = xmlnode_get_data(y);
-					g_snprintf(buf, sizeof(buf), "<B>%s now has status: %s</B>",
+					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
 					write_to_conv(b, buf, WFLAG_SYSTEM, NULL);
 				}
@@ -698,7 +698,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					char buf[8192];
 					char *msg = xmlnode_get_data(y);
-					g_snprintf(buf, sizeof(buf), "<B>%s now has status: %s</B>",
+					g_snprintf(buf, sizeof(buf), "%s now has status: %s",
 							p->from->resource, msg);
 					write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL);
 				}

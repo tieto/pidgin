@@ -1266,16 +1266,16 @@ void check_everything(GtkWidget *entry)
  * normal IM conversation or a chat window. but hopefully it won't matter */
 void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 {
-	char *buf = g_malloc(BUF_LONG);
+	char buf[BUF_LONG];
 	char *str;
 	FILE *fd;
 	char colour[10];
 	int colorv = -1;
 	char *clr;
-	char *smiley = g_malloc(7);
 	struct buddy *b;
 	int gtk_font_options = 0;
 	GString *logstr;
+	char buf2[BUF_LONG];
 
 	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
 
@@ -1312,18 +1312,22 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	}
 
 	if (flags & WFLAG_SYSTEM) {
+		if (general_options & OPT_DISP_SHOW_TIME)
+			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", date(), what);
+		else
+			g_snprintf(buf, BUF_LONG, "<B>%s</B>", date(), what);
+		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
+			date(), what);
 
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), what, 0);
-
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
 
 		if (logging_options & OPT_LOG_STRIP_HTML) {
-			char *t1 = strip_html(what);
+			char *t1 = strip_html(buf);
 			c->history = g_string_append(c->history, t1);
 			c->history = g_string_append(c->history, "\n");
 			g_free(t1);
 		} else {
-			c->history = g_string_append(c->history, what);
+			c->history = g_string_append(c->history, buf);
 			c->history = g_string_append(c->history, "<BR>\n");
 		}
 
@@ -1332,9 +1336,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			char nm[256];
 
 			if (logging_options & OPT_LOG_STRIP_HTML) {
-				t1 = strip_html(what);
+				t1 = strip_html(buf);
 			} else {
-				t1 = what;
+				t1 = buf;
 			}
 			if (c->is_chat)
 				g_snprintf(nm, 256, "%s.chat", c->name);
@@ -1355,7 +1359,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		}
 
 	} else {
-		char buf2[BUF_LONG];
 		if ((clr = strstr(what, "<BODY BGCOLOR=\"#")) != NULL) {
 			sscanf(clr + strlen("<BODY BGCOLOR=\"#"), "%x", &colorv);
 		}
@@ -1497,9 +1500,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		gtk_style_unref(style);
 		c->unseen = TRUE;
 	}
-
-	g_free(smiley);
-	g_free(buf);
 }
 
 

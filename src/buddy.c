@@ -2250,9 +2250,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
 					char tmp[1024];
-					g_snprintf(tmp, sizeof(tmp), _("<B>%s logged in%s%s.</B>"), b->name,
-							((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
-							((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
+					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->name);
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 				}
 			}
@@ -2304,9 +2302,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			struct conversation *c = find_conversation(b->name);
 			if (c) {
 				char tmp[1024];
-				g_snprintf(tmp, sizeof(tmp), _("<B>%s logged out%s%s.</B>"), b->name,
-						((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
-						((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
+				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->name);
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 			}
 		}
