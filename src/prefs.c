@@ -89,7 +89,6 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	gaim_button(_("Show Lagometer"), &general_options, OPT_GEN_SHOW_LAGMETER, box);
 	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options, OPT_DISP_COOL_LOOK, box);
 	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER, box);
 	if (!dw && (general_options & OPT_GEN_DEBUG))
@@ -1233,8 +1232,6 @@ void set_general_option(GtkWidget *w, int *option)
 {
 	general_options = general_options ^ (int)option;
 
-       	if ((int)option == OPT_GEN_SHOW_LAGMETER)
-       		update_lagometer(-1);
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
 	save_prefs();

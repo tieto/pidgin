@@ -74,8 +74,6 @@ static GtkWidget *permtree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
 static GtkWidget *addbutton, *groupbutton, *rembutton;
 static GtkWidget *addpermbutton, *rempermbutton;
-static GtkWidget *lagometer = NULL;
-static GtkWidget *lagometer_box = NULL;
 
 static int last_lag_us;
 
@@ -203,44 +201,6 @@ void update_all_buddies()
         }
 
 
-}
-
-void update_lagometer(int us)
-{
-        double pct;
-        
-
-        
-        if (us != -1)
-                last_lag_us = us;
-
-
-        if (lagometer_box == NULL)
-                return;
-
-        
-        if (!(general_options & OPT_GEN_SHOW_LAGMETER))
-                gtk_widget_hide(lagometer_box);
-        else
-                gtk_widget_show(lagometer_box);
-
-                
-        pct = last_lag_us/100000;
-
-	if (pct > 0)
-		pct = 25 * log(pct);
-
-        if (pct < 0)
-                pct = 0;
-
-        if (pct > 100)
-                pct = 100;
-
-
-        pct /= 100;
-
-
-        gtk_progress_bar_update(GTK_PROGRESS_BAR(lagometer), pct);
 }
 
 static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
@@ -1980,25 +1940,6 @@ void show_buddy_list()
 
         gtk_widget_show(menubar);
 
-        lagometer_box = gtk_hbox_new(FALSE, 0);
-
-        
-        lagometer = gtk_progress_bar_new();
-        gtk_widget_show(lagometer);
-
-        label = gtk_label_new("Lag-O-Meter: ");
-        gtk_widget_show(label);
-        
-        gtk_box_pack_start(GTK_BOX(lagometer_box), label, FALSE, FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(lagometer_box), lagometer, TRUE, TRUE, 5);
-
-        gtk_widget_set_usize(lagometer, 5, 5);
-        
-
-        if ((general_options & OPT_GEN_SHOW_LAGMETER))
-                gtk_widget_show(lagometer_box);
-
-        
 	vbox       = gtk_vbox_new(FALSE, 10);
         
         notebook = gtk_notebook_new();
@@ -2211,7 +2152,6 @@ void show_buddy_list()
         gtk_signal_connect(GTK_OBJECT(addpermbutton), "clicked", GTK_SIGNAL_FUNC(add_perm_callback), NULL);
         gtk_signal_connect(GTK_OBJECT(rempermbutton), "clicked", GTK_SIGNAL_FUNC(do_del_perm), permtree);
         gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox), lagometer_box, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
 
         gtk_container_add(GTK_CONTAINER(blist), vbox);

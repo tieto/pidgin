@@ -87,8 +87,6 @@ static gint check_idle()
 	time(&t);
 
         gettimeofday(&lag_tv, NULL);
-	if (general_options & OPT_GEN_SHOW_LAGMETER)
-		serv_send_im(current_user->username, LAGOMETER_STR, 1);
 
 	if (report_idle != IDLE_GAIM)
                 return TRUE;
@@ -661,26 +659,6 @@ void serv_got_im(char *name, char *message, int away)
 	g_snprintf(name, strlen(name) + 1, "%s", angel);
 	g_free(angel);
 #endif
-
-	nname = g_strdup(normalize(name));
-
-	if (!strcasecmp(normalize(current_user->username), nname)) {
-		if (!strcmp(message, LAGOMETER_STR)) {
-			struct timeval tv;
-                        int ms;
-
-			gettimeofday(&tv, NULL);
-
-			ms = 1000000 * (tv.tv_sec - lag_tv.tv_sec);
-
-			ms += tv.tv_usec - lag_tv.tv_usec;
-
-                        update_lagometer(ms);
-			g_free(nname);
-                        return;
-		}
-	}
-	g_free(nname);
 	
         cnv = find_conversation(name);
 

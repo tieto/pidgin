@@ -12,6 +12,7 @@ version 0.10.0:
 	* Background colors
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
+	* Removed the Lag-O-Meter
 	
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

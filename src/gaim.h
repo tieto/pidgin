@@ -364,8 +364,6 @@ struct signon {
 #define B_ICON_UID    "09461346-4C7F-11D1-8222-444553540000"
 #define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
 
-#define LAGOMETER_STR "123CHECKLAG456"
-
 #define AOL_SRCHSTR "/community/aimcheck.adp/url="
 
 /* These should all be runtime selectable */
@@ -390,7 +388,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 662 $"
+#define REVISION "gaim:$Revision: 670 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -458,7 +456,6 @@ extern int general_options;
 #define OPT_GEN_APP_BUDDY_SHOW   0x00000010
 #define OPT_GEN_POPUP_WINDOWS    0x00000020
 #define OPT_GEN_SEND_LINKS       0x00000040
-#define OPT_GEN_SHOW_LAGMETER    0x00000080
 #define OPT_GEN_DEBUG            0x00000100
 #define OPT_GEN_REMEMBER_PASS    0x00000200
 #define OPT_GEN_REGISTERED       0x00000400
