@@ -403,6 +403,19 @@ void pressed_im(GtkWidget *widget, struct buddy *b)
 	}
 }
 
+void pressed_ticker(char *buddy)
+{
+	struct conversation *c;
+
+	c = find_conversation(buddy);
+
+	if (c != NULL) {
+		gdk_window_show(c->window->window);
+	} else {
+		c = new_conversation(buddy);
+	}
+}
+
 void pressed_info(GtkWidget *widget, struct buddy *b)
 {
         serv_get_info(b->name);

@@ -30,6 +30,7 @@ GtkWidget *ticker;
 typedef struct {
 	char buddy[ 128 ];
 	GtkWidget *hbox;
+	GtkWidget *ebox;
 	GtkWidget *label;
 	GtkWidget *pix;
 } TickerData;
@@ -98,6 +99,14 @@ BuddyTickerCreateWindow()
 
 }
 
+gint 
+ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data ) 
+{
+	TickerData *p = (TickerData *) callback_data;
+
+	pressed_ticker( p->buddy );
+}
+
 void
 BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 {
@@ -127,8 +136,20 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 
 	BuddyTickerSetPixmap( name, pm, bm );
 
+	p->ebox = gtk_event_box_new();
+
+	// click detection
+
+        gtk_widget_set_events (p->ebox, GDK_BUTTON_PRESS_MASK);
+        gtk_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",
+                GTK_SIGNAL_FUNC(ButtonPressCallback), (gpointer) p);
+
+	gtk_box_pack_start_defaults( GTK_BOX( p->hbox ), p->ebox );
+	gtk_widget_show( p->ebox );
+
 	p->label = gtk_label_new( name );
-	gtk_box_pack_start_defaults( GTK_BOX( p->hbox ), p->label );
+	gtk_container_add( GTK_CONTAINER(p->ebox), p->label ); 
+
 	gtk_widget_show( p->label );
 
         gtk_widget_show( tickerwindow );
