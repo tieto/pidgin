@@ -1,14 +1,13 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.19:
-	* Oscar can sign in to ICQ now
 	* Graphical Smiley Faces
 	* Applet got a bit of a makeover (inside & out)
-	* Applet sounds not necessarily through GNOME
 	* Compile-time options affect Preferences dialog
 	* Whispering works (does anyone even use this?)
 	* HTML-tag buttons in chat
 	* Locale support
+	* Many many bugfixes
 
 version 0.9.18 (06/02/2000):
 	* Logging in works better for oscar
