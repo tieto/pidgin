@@ -247,15 +247,9 @@ shadow_paint(GaimGtkBuddyList *blist, GdkRectangle *area, enum side shadow)
 	    width = gdk_pixbuf_get_width (gtkblist->east);
 	    height = gdk_pixbuf_get_height (gtkblist->east);
 
-#if GTK_CHECK_VERSION(2,2,0)
 	    gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->east_shadow), gc,
 				gtkblist->east, 0, 0, 0, 0, width, height, GDK_RGB_DITHER_NONE,
 				0, 0);
-#else
-	    gdk_pixbuf_render_to_drawable(gtkblist->east,
-				GDK_DRAWABLE(gtkblist->east_shadow), gc, 0, 0, 0, 0,
-				width, height, GDK_RGB_DITHER_NONE, 0, 0);
-#endif
 
 	    if (area)
 	      gdk_gc_set_clip_rectangle (gc, NULL);
@@ -269,13 +263,9 @@ shadow_paint(GaimGtkBuddyList *blist, GdkRectangle *area, enum side shadow)
 
 	    width = gdk_pixbuf_get_width (gtkblist->south);
 	    height = gdk_pixbuf_get_height (gtkblist->south);
-#if GTK_CHECK_VERSION(2,2,0)
 	    gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->south_shadow), gc, gtkblist->south,
 			    0, 0, 0, 0, width, height, GDK_RGB_DITHER_NONE, 0, 0);
-#else
-	    gdk_pixbuf_render_to_drawable(gtkblist->south, GDK_DRAWABLE(gtkblist->south_shadow), gc, 
-					  0, 0, 0, 0, width, height, GDK_RGB_DITHER_NONE, 0, 0);
-#endif
+
 	    if (area)
 		    gdk_gc_set_clip_rectangle (gc, NULL);
 	  }
@@ -1444,8 +1434,8 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	g_free(tooltiptext);
 
 #ifdef WANT_DROP_SHADOW
-	shadow_paint(gtkblist, NULL, EAST_SIDE);	
-	shadow_paint(gtkblist, NULL, SOUTH_SIDE);	
+	shadow_paint(gtkblist, NULL, EAST_SIDE);
+	shadow_paint(gtkblist, NULL, SOUTH_SIDE);
 #endif
 
 	return;
