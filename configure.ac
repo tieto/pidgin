@@ -318,6 +318,9 @@ dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
 AC_CHECK_LIB(nsl, gethostent)
 
+dnl checks for yahoo
+AC_CHECK_HEADERS(crypt.h)
+
 dnl checks for zephyr
 AC_DEFINE(ZEPHYR_INT32, long)
 AC_SUBST(KRB4_CFLAGS)

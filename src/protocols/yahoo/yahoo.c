@@ -37,7 +37,9 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#if HAVE_CRYPT_H
 #include <crypt.h>
+#endif
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
