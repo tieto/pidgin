@@ -136,7 +136,7 @@ struct conversation *new_conversation(char *name)
 		FILE *fd;
 
 		fd = open_log_file(c->name);
-		if (fd > 0) {
+		if (fd) {
 			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,
 					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
@@ -1372,7 +1372,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			else
 				g_snprintf(nm, 256, "%s", c->name);
 			fd = open_log_file(nm);
-			if (fd > 0) {
+			if (fd) {
 				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s\n", t1);
 				} else {
@@ -1472,7 +1472,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				t2 = html_logize(what);
 			}
 			fd = open_log_file(nm);
-			if (fd > 0) {
+			if (fd) {
 				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s%s\n", t1, t2);
 				} else {
