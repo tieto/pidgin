@@ -33,7 +33,7 @@
 
 #include <libebook/e-book.h>
 
-#if 0 && !EBOOK_CHECK_VERSION(0, 0, 95)
+#if !EBOOK_CHECK_VERSION(0, 0, 95)
 # include <libebook/e-book-async.h>
 #endif
 
