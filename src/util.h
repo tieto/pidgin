@@ -356,7 +356,7 @@ const gchar *gaim_home_dir(void);
  *
  * @see gaim_home_dir()
  */
-char *gaim_user_dir(void);
+const char *gaim_user_dir(void);
 
 /**
  * Define a custom gaim settings directory, overriding the default (user's home directory/.gaim)

@@ -1861,7 +1861,7 @@ gaim_home_dir(void)
 
 /* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
  * dir. Note that there is no trailing slash after .gaim. */
-char *
+const char *
 gaim_user_dir(void)
 {
 	if (custom_home_dir != NULL && strlen(custom_home_dir) > 0) {

@@ -2048,7 +2048,7 @@ static gboolean gaim_blist_read(const char *filename)
 
 void gaim_blist_load()
 {
-	char *user_dir = gaim_user_dir();
+	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *msg;
 
@@ -2390,7 +2390,7 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
 void gaim_blist_sync()
 {
 	FILE *file;
-	char *user_dir = gaim_user_dir();
+	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *filename_real;
 
