@@ -141,6 +141,11 @@ static void irc_login(GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 
+	if (strpbrk(username, " \t\v\r\n") != NULL) {
+		gaim_connection_error(gc, _("IRC nicks may not contain whitespace"));
+		return;
+	}
+
 	gc->proto_data = irc = g_new0(struct irc_conn, 1);
 	irc->account = account;
 
@@ -219,6 +224,9 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 static void irc_close(GaimConnection *gc)
 {
 	struct irc_conn *irc = gc->proto_data;
+
+	if (irc == NULL)
+		return;
 
 	irc_cmd_quit(irc, "quit", NULL, NULL);
 
