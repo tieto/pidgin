@@ -719,7 +719,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Gives Gaim the ability to be remote-controlled through third-party "
 	   "applications or through the gaim-remote tool."),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	"Sean Egan <sean.egan@binghamton.edu>",
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
