@@ -639,6 +639,7 @@ if test "x$enable_nss" != "xno"; then
 			else
 				NSPR_CFLAGS=""
 				NSPR_LIBS=""
+				enable_nss="no"
 			fi
 		else
 			AC_MSG_CHECKING(for Mozilla nss3 includes)
