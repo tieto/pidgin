@@ -816,7 +816,11 @@ static void addbuddy_select_account(GtkObject *w, struct gaim_connection *gc)
 {
 	struct addbuddy *b = gtk_object_get_user_data(w);
 
+	/* Save our account */
 	b->gc = gc;
+
+	/* We also want to update our group list */	
+	gtk_combo_set_popdown_strings(GTK_COMBO(b->combo), groups_tree(gc ? gc : connections->data));
 }
 
 static void create_online_user_names(struct addbuddy *b)
