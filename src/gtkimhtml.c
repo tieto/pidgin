@@ -393,9 +393,10 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 					object = g_object_ref(G_OBJECT(imhtml));
 					g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
 					g_object_unref(object);
+					return TRUE;
 				}
 			}
-			return TRUE;
+			return FALSE;
 			break;
 			
 		case 'f':
@@ -410,17 +411,27 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case 'i':
 		case 'I':
 			if (imhtml->format_functions & GTK_IMHTML_ITALIC)
-				if(imhtml->html_shortcuts)
+				if(imhtml->html_shortcuts) {
 					gtk_imhtml_toggle_italic(imhtml);
-			return TRUE;
+					object = g_object_ref(G_OBJECT(imhtml));
+					g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_ITALIC);
+					g_object_unref(object);
+					return TRUE;
+				}
+			return FALSE;
 			break;
 			
 		case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
 		case 'U':
 			if (imhtml->format_functions & GTK_IMHTML_UNDERLINE)
-				if(imhtml->html_shortcuts)
+				if(imhtml->html_shortcuts) {
 					gtk_imhtml_toggle_underline(imhtml);
-			return TRUE;
+					object = g_object_ref(G_OBJECT(imhtml));
+					g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_UNDERLINE);
+					g_object_unref(object);
+					return TRUE;
+				}
+			return FALSE;
 			break;
 			
 		case '-':
