@@ -1072,6 +1072,138 @@ static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_a
 	}
 }
 
+static void
+add_buddies_from_vcard(const char *prpl_id, GaimGroup *group, GList *list,
+					   const char *alias)
+{
+	GList *l;
+	GaimAccount *account = NULL;
+	GaimConnection *gc;
+
+	if (list == NULL)
+		return;
+
+	for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+	{
+		gc = (GaimConnection *)l->data;
+		account = gaim_connection_get_account(gc);
+
+		if (!strcmp(gaim_account_get_protocol_id(account), prpl_id))
+			break;
+
+		account = NULL;
+	}
+
+	if (account != NULL)
+	{
+		for (l = list; l != NULL; l = l->next)
+		{
+			gaim_blist_request_add_buddy(account, l->data,
+										 (group ? group->name : NULL),
+										 alias);
+		}
+	}
+
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
+static gboolean
+parse_vcard(const char *vcard, GaimGroup *group)
+{
+	char *temp_vcard;
+	char *s, *c;
+	char *alias    = NULL;
+	GList *aims    = NULL;
+	GList *icqs    = NULL;
+	GList *yahoos  = NULL;
+	GList *msns    = NULL;
+	GList *jabbers = NULL;
+
+	s = temp_vcard = g_strdup(vcard);
+
+	while (*s != '\0' && strncmp(s, "END:vCard", strlen("END:vCard")))
+	{
+		char *field, *value;
+
+		field = s;
+
+		/* Grab the field */
+		while (*s != '\r' && *s != '\n' && *s != '\0' && *s != ':')
+			s++;
+
+		if (*s == '\r') s++;
+		if (*s == '\n')
+		{
+			s++;
+			continue;
+		}
+
+		if (*s != '\0') *s++ = '\0';
+
+		if ((c = strchr(field, ';')) != NULL)
+			*c = '\0';
+
+		/* Proceed to the end of the line */
+		value = s;
+
+		while (*s != '\r' && *s != '\n' && *s != '\0')
+			s++;
+
+		if (*s == '\r') *s++ = '\0';
+		if (*s == '\n') *s++ = '\0';
+
+		/* We only want to worry about a few fields here. */
+		if (!strcmp(field, "FN"))
+			alias = g_strdup(value);
+		else if (!strcmp(field, "X-AIM") || !strcmp(field, "X-ICQ") ||
+				 !strcmp(field, "X-YAHOO") || !strcmp(field, "X-MSN") ||
+				 !strcmp(field, "X-JABBER"))
+		{
+			char **values = g_strsplit(value, ":", 0);
+			char **im;
+
+			for (im = values; *im != NULL; im++)
+			{
+				if (!strcmp(field, "X-AIM"))
+					aims = g_list_append(aims, g_strdup(*im));
+				else if (!strcmp(field, "X-ICQ"))
+					icqs = g_list_append(icqs, g_strdup(*im));
+				else if (!strcmp(field, "X-YAHOO"))
+					yahoos = g_list_append(yahoos, g_strdup(*im));
+				else if (!strcmp(field, "X-MSN"))
+					msns = g_list_append(msns, g_strdup(*im));
+				else if (!strcmp(field, "X-JABBER"))
+					jabbers = g_list_append(jabbers, g_strdup(*im));
+			}
+
+			g_strfreev(values);
+		}
+	}
+
+	g_free(temp_vcard);
+
+	if (aims == NULL && icqs == NULL && yahoos == NULL &&
+		msns == NULL && jabbers == NULL)
+	{
+		if (alias != NULL)
+			g_free(alias);
+
+		return FALSE;
+	}
+
+	add_buddies_from_vcard("prpl-oscar",  group, aims,    alias);
+	add_buddies_from_vcard("prpl-oscar",  group, icqs,    alias);
+	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
+	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
+	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
+
+	if (alias != NULL)
+		g_free(alias);
+
+	return TRUE;
+}
+
 static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 					     GdkDragContext *dc,
 					     GtkSelectionData *data,
@@ -1079,7 +1211,8 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 					     guint time,
 					     gpointer *null)
 {
-	if (data->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
+	if (data->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
+	{
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
@@ -1098,9 +1231,8 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 
 		gtk_tree_path_free(sourcerow);
 	}
-	else if (data->target == gdk_atom_intern("application/x-im-contact",
-											 FALSE)) {
-
+	else if (data->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	{
 		GtkTreeRowReference *ref;
 		GtkTreePath *sourcerow;
 		GtkTreeIter iter;
@@ -1399,6 +1531,45 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			gtk_tree_path_free(path);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	}
+	else if (sd->target == gdk_atom_intern("text/x-vcard", FALSE) && sd->data)
+	{
+		gboolean result;
+		GaimGroup *group = NULL;
+		GtkTreePath *path = NULL;
+		GtkTreeViewDropPosition position;
+
+		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget),
+											  x, y, &path, &position))
+		{
+			GtkTreeIter iter;
+			GaimBlistNode *node;
+			GValue val = {0};
+
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
+									&iter, path);
+			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
+									  &iter, NODE_COLUMN, &val);
+			node = g_value_get_pointer(&val);
+
+			if (GAIM_BLIST_NODE_IS_BUDDY(node))
+			{
+				group = (GaimGroup *)node->parent->parent;
+			}
+			else if (GAIM_BLIST_NODE_IS_CHAT(node) ||
+					 GAIM_BLIST_NODE_IS_CONTACT(node))
+			{
+				group = (GaimGroup *)node->parent;
+			}
+			else if (GAIM_BLIST_NODE_IS_GROUP(node))
+			{
+				group = (GaimGroup *)node;
+			}
+		}
+
+		result = parse_vcard(sd->data, group);
+
+		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
 	}
 }
 
@@ -2335,7 +2506,7 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
-enum {DRAG_BUDDY, DRAG_ROW};
+enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD};
 
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
@@ -2374,7 +2545,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
-				{"application/x-im-contact", 0, DRAG_BUDDY}};
+				{"application/x-im-contact", 0, DRAG_BUDDY},
+				{"text/x-vcard", 0, DRAG_VCARD }};
 
 	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);
@@ -2440,10 +2612,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
-										   GDK_BUTTON1_MASK, gte, 2, 
+										   GDK_BUTTON1_MASK, gte, 3, 
 										   GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
-										 gte, 2,
+										 gte, 3,
 										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);

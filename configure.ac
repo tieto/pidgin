@@ -238,6 +238,18 @@ PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
 AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
 AC_SUBST(STARTUP_NOTIFICATION_LIBS)
 
+
+dnl Check for stuff needed by the evolution integration plugin.
+build_gevo=no
+
+evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
+PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+
+AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
+AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
+
+AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
+
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
@@ -1011,6 +1023,7 @@ AC_OUTPUT([Makefile
 		   pixmaps/status/default/Makefile
 		   plugins/Makefile
 		   plugins/docklet/Makefile
+		   plugins/gevolution/Makefile
 		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
 		   plugins/perl/Makefile

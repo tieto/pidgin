@@ -1,0 +1,28 @@
+plugindir = $(libdir)/gaim
+
+gevolution_la_LDFLAGS = \
+	-module -avoid-version \
+	$(EVOLUTION_ADDRESSBOOK_LIBS)
+
+if PLUGINS
+
+plugin_LTLIBRARIES = gevolution.la
+
+gevolution_la_SOURCES = \
+	add_buddy_dialog.c \
+	assoc-buddy.c \
+	gevolution.c \
+	gevo-util.c \
+	new_person_dialog.c
+
+endif
+
+gevolution_la_LIBADD = 
+
+AM_CPPFLAGS = \
+	-DDATADIR=\"$(datadir)\" \
+	-DVERSION=\"$(VERSION)\" \
+	-I$(top_srcdir)/src \
+	$(EVOLUTION_ADDRESSBOOK_CFLAGS) \
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS)
