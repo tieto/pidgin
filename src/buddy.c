@@ -1451,6 +1451,19 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 
 				set_convo_gc(c, u->gc);
 			}
+			if (b->options & OPT_POUNCE_NOTIFY) {
+				char tmp[1024];
+
+				/* I know the line below is really ugly. I only did it this way
+				 * because I thought it'd be funny :-) */
+
+				g_snprintf(tmp, sizeof(tmp), "%s has %s", name, 
+					(b->options & OPT_POUNCE_SIGNON) ? "signed on" : 
+					(b->options & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
+					"returned from being away");
+
+				do_error_dialog(tmp, _("Buddy Pounce"));
+			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
 				c = find_conversation(name);
 				if (c == NULL)
@@ -1458,8 +1471,10 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 
 				set_convo_gc(c, u->gc);
 
-				write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t) NULL));
-				serv_send_im(u->gc, name, b->message, 0);
+				if (strlen(b->message) > 0) {
+					write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t) NULL));
+					serv_send_im(u->gc, name, b->message, 0);
+				}
 			}
 			if (b->options & OPT_POUNCE_COMMAND) {
 				int pid = fork();

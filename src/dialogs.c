@@ -134,6 +134,7 @@ struct addbp {
 	GtkWidget *command;
 	GtkWidget *sendim;
 	GtkWidget *openwindow;
+	GtkWidget *popupnotify;
 	GtkWidget *p_signon;
 	GtkWidget *p_unaway;
 	GtkWidget *p_unidle;
@@ -978,6 +979,9 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 	bp->options = 0;
 
+	if (GTK_TOGGLE_BUTTON(b->popupnotify)->active)
+		bp->options |= OPT_POUNCE_NOTIFY;
+
 	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
 		bp->options |= OPT_POUNCE_POPUP;
 
@@ -1018,27 +1022,15 @@ static void pounce_choose(GtkWidget *opt, struct addbp *b)
 	b->user = u;
 }
 
-static void pounce_user_menu(struct addbp *b, GtkWidget *box)
+static GtkWidget *pounce_user_menu(struct addbp *b)
 {
-	GtkWidget *hbox;
-	GtkWidget *label;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
 	GSList *u = aim_users;
 	struct aim_user *a;
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Pounce buddy as:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	optmenu = gtk_option_menu_new();
-	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 0);
-	gtk_widget_show(optmenu);
 
 	menu = gtk_menu_new();
 
@@ -1065,6 +1057,8 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 	b->user = ((struct gaim_connection *)connections->data)->user;
 
 	b->menu = optmenu;
+
+	return optmenu;
 }
 
 
@@ -1076,6 +1070,9 @@ void show_new_bp(char *name)
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *sep;
+	GtkWidget *frame;
+	GtkWidget *table;
+	GtkWidget *optmenu;
 
 	struct addbp *b = g_new0(struct addbp, 1);
 
@@ -1093,85 +1090,111 @@ void show_new_bp(char *name)
 	gtk_container_add(GTK_CONTAINER(b->window), vbox);
 	gtk_widget_show(vbox);
 
-	pounce_user_menu(b, vbox);
+	/* <pounce type="who"> */
+	frame = gtk_frame_new(_("Pounce Who"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(frame));
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-	gtk_widget_show(hbox);
+	table = gtk_table_new(2, 2, FALSE);
+	gtk_container_add(GTK_CONTAINER(frame), table);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+	gtk_widget_show(table);
 
-	label = gtk_label_new(_("Buddy:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Account"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, .5);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_widget_show(label);
+
+	optmenu = pounce_user_menu(b);
+	gtk_table_attach(GTK_TABLE(table), optmenu, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_widget_show(optmenu);
+
+	label = gtk_label_new(_("Buddy"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, .5);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(label);
 
 	b->nameentry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), b->nameentry, TRUE, TRUE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->nameentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	if (name !=NULL)
 		gtk_entry_set_text(GTK_ENTRY(b->nameentry), name);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->nameentry);
 	gtk_widget_show(b->nameentry);
+	/* </pounce type="who"> */
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
+	/* <pounce type="when"> */
+	frame = gtk_frame_new(_("Pounce When"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(frame));
+
+	table = gtk_table_new(2, 2, FALSE);
+	gtk_container_add(GTK_CONTAINER(frame), table);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_widget_show(table);
+	
 	b->p_signon = gtk_check_button_new_with_label(_("Pounce on sign on"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->p_signon, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->p_signon, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_signon);
 
 	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
-	gtk_box_pack_start(GTK_BOX(vbox), b->p_unaway, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->p_unaway, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_unaway);
 
 	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
-	gtk_box_pack_start(GTK_BOX(vbox), b->p_unidle, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_unidle);
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
+	label = gtk_label_new(NULL);
+	gtk_table_attach(GTK_TABLE(table), label, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_widget_show(label);
+	/* </pounce type="when"> */
+	
+	/* <pounce type="action"> */
+	frame = gtk_frame_new(_("Pounce Action"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(frame));
 
-	b->openwindow = gtk_check_button_new_with_label(_("Open IM window on pounce"));
+	table = gtk_table_new(4, 2, FALSE);
+	gtk_container_add(GTK_CONTAINER(frame), table);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+	gtk_widget_show(table);
+	
+	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->openwindow, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->openwindow, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->openwindow);
 
-	b->sendim = gtk_check_button_new_with_label(_("Send IM on pounce"));
+	b->popupnotify = gtk_check_button_new_with_label(_("Popup Notification"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
+	gtk_table_attach(GTK_TABLE(table), b->popupnotify, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_widget_show(b->popupnotify);
+
+	b->sendim = gtk_check_button_new_with_label(_("Send Message"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->sendim, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->sendim, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sendim);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Message:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	b->messentry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), b->messentry, TRUE, TRUE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->messentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->messentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
 	gtk_widget_show(b->messentry);
 
-	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),
-			   b->messentry);
+	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), 
+			b->messentry);
 
 	b->command = gtk_check_button_new_with_label(_("Execute command on pounce"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command), FALSE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->command, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->command, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->command);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Command:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	b->commentry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), b->commentry, TRUE, TRUE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->commentry, 1, 2, 2, 3, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->commentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
 	gtk_widget_show(b->commentry);
 
@@ -1181,38 +1204,24 @@ void show_new_bp(char *name)
 
 	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), FALSE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->sound, FALSE, FALSE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->sound, 0, 1, 3, 4, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sound);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Sound:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	b->soundentry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), b->soundentry, TRUE, TRUE, 0);
+	gtk_table_attach(GTK_TABLE(table), b->soundentry, 1, 2, 3, 4, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->soundentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
 	gtk_widget_show(b->soundentry);
 
 	gtk_widget_set_sensitive(b->soundentry, FALSE);
 	gtk_signal_connect(GTK_OBJECT(b->sound), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),
 			   b->soundentry);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
+	/* </pounce type="action"> */
 
 	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation"));
+	gtk_container_set_border_width(GTK_CONTAINER(b->save), 7);
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
 	gtk_widget_show(b->save);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);

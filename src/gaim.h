@@ -141,16 +141,18 @@ enum log_event {
 	log_quit
 };
 
-#define OPT_POUNCE_POPUP    0x001
-#define OPT_POUNCE_SEND_IM  0x002
-#define OPT_POUNCE_COMMAND  0x004
-#define OPT_POUNCE_SOUND		0x008
+#define OPT_POUNCE_POPUP  	0x001
+#define OPT_POUNCE_SEND_IM	0x002
+#define OPT_POUNCE_COMMAND	0x004
+#define OPT_POUNCE_SOUND	0x008
 
-#define OPT_POUNCE_SIGNON   0x010
-#define OPT_POUNCE_UNAWAY   0x020
-#define OPT_POUNCE_UNIDLE   0x040
+#define OPT_POUNCE_SIGNON 	0x010
+#define OPT_POUNCE_UNAWAY	0x020
+#define OPT_POUNCE_UNIDLE	0x040
 
-#define OPT_POUNCE_SAVE     0x100
+#define OPT_POUNCE_SAVE		0x100
+
+#define OPT_POUNCE_NOTIFY	0x200
 
 struct buddy_pounce {
         char name[80];

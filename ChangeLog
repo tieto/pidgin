@@ -5,6 +5,7 @@ version 0.47:
 	  (thanks Arkadiusz Miskiewicz)
 	* Better recoding in Gadu-Gadu (thanks Arkadiusz Miskiewicz)
 	* Open Mail button for when you get new mail (Yahoo and MSN)
+	* New buddy pounce option: Popup Notification
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)
