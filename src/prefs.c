@@ -976,6 +976,89 @@ static void room_page()
 	gtk_widget_show(prefdialog);
 }
 
+static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
+{
+	/* more stuff stolen from X-Chat */
+	GtkWidget *swid;
+	GdkColor c;
+	GtkStyle *style;
+	c.pixel = 0;
+	if (fgc) {
+		if (font_options & OPT_FONT_FGCOL) {
+			c.red = fgcolor.red << 8;
+			c.blue = fgcolor.blue << 8;
+			c.green = fgcolor.green << 8;
+		} else {
+			c.red = 0;
+			c.blue = 0;
+			c.green = 0;
+		}
+	} else {
+		if (font_options & OPT_FONT_BGCOL) {
+			c.red = bgcolor.red << 8;
+			c.blue = bgcolor.blue << 8;
+			c.green = bgcolor.green << 8;
+		} else {
+			c.red = 0xffff;
+			c.blue = 0xffff;
+			c.green = 0xffff;
+		}
+	}
+
+	style = gtk_style_new();
+	style->bg[0] = c;
+
+	swid = gtk_event_box_new();
+	gtk_widget_set_style(GTK_WIDGET(swid), style);
+	gtk_style_unref(style);
+	gtk_widget_set_usize(GTK_WIDGET(swid), 40, -1);
+	gtk_box_pack_start(GTK_BOX(box), swid, FALSE, FALSE, 5);
+	gtk_widget_show(swid);
+	return swid;
+}
+
+GtkWidget *pref_fg_picture = NULL;
+GtkWidget *pref_bg_picture = NULL;
+
+static fgbgdes(GtkWidget *w, gpointer d)
+{
+	pref_fg_picture = NULL;
+	pref_bg_picture = NULL;
+}
+
+void update_color(GtkWidget *w, GtkWidget *pic)
+{
+	GdkColor c;
+	GtkStyle *style;
+	c.pixel = 0;
+	if (pic == pref_fg_picture) {
+		if (font_options & OPT_FONT_FGCOL) {
+			c.red = fgcolor.red << 8;
+			c.blue = fgcolor.blue << 8;
+			c.green = fgcolor.green << 8;
+		} else {
+			c.red = 0;
+			c.blue = 0;
+			c.green = 0;
+		}
+	} else {
+		if (font_options & OPT_FONT_BGCOL) {
+			c.red = bgcolor.red << 8;
+			c.blue = bgcolor.blue << 8;
+			c.green = bgcolor.green << 8;
+		} else {
+			c.red = 0xffff;
+			c.blue = 0xffff;
+			c.green = 0xffff;
+		}
+	}
+
+	style = gtk_style_new();
+	style->bg[0] = c;
+	gtk_widget_set_style(pic, style);
+	gtk_style_unref(style);
+}
+
 static void font_page()
 {
 	GtkWidget *parent;
@@ -1013,6 +1096,7 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 	
+	pref_fg_picture = show_color_pref(hbox, TRUE);
 	button = gaim_button(_("Text Color"), &font_options, OPT_FONT_FGCOL, hbox);
 
 	select = picture_button(prefs, _("Select"), fgcolor_xpm);
@@ -1023,11 +1107,13 @@ static void font_page()
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color), pref_fg_picture);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 	
+	pref_bg_picture = show_color_pref(hbox, FALSE);
 	button = gaim_button(_("Background Color"), &font_options, OPT_FONT_BGCOL, hbox);
 
 	select = picture_button(prefs, _("Select"), bgcolor_xpm);
@@ -1038,6 +1124,7 @@ static void font_page()
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color), pref_bg_picture);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);

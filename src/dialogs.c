@@ -2425,6 +2425,7 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 		fgcolor.red = ((guint16)(color[0]*65535))>>8;
 		fgcolor.green = ((guint16)(color[1]*65535))>>8;
 		fgcolor.blue = ((guint16)(color[2]*65535))>>8;
+		update_color(NULL, pref_fg_picture);
 	} else {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
 		destroy_colorsel(NULL, (void *)0);
@@ -2432,6 +2433,7 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 		bgcolor.red = ((guint16)(color[0]*65535))>>8;
 		bgcolor.green = ((guint16)(color[1]*65535))>>8;
 		bgcolor.blue = ((guint16)(color[2]*65535))>>8;
+		update_color(NULL, pref_bg_picture);
 	}
 }
 
