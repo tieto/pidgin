@@ -281,6 +281,7 @@ struct _GaimPluginProtocolInfo
 	void (*set_permit_deny)(GaimConnection *);
 	void (*warn)(GaimConnection *, const char *who, int anonymous);
 	void (*join_chat)(GaimConnection *, GHashTable *components);
+	void (*reject_chat)(GaimConnection *, GHashTable *components);
 	void (*chat_invite)(GaimConnection *, int id,
 						const char *who, const char *message);
 	void (*chat_leave)(GaimConnection *, int id);

@@ -599,6 +599,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	nap_join_chat,
+	NULL, /* reject chat invite */
 	NULL,
 	nap_chat_leave,
 	NULL,

@@ -3248,6 +3248,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_set_permit_deny,
 	NULL, /* warn */
 	yahoo_c_join,
+	NULL, /* reject chat invite */
 	yahoo_c_invite,
 	yahoo_c_leave,
 	NULL, /* chat whisper */

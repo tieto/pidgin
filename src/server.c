@@ -714,6 +714,18 @@ void serv_join_chat(GaimConnection *g, GHashTable *data)
 		prpl_info->join_chat(g, data);
 }
 
+
+void serv_reject_chat(GaimConnection *g, GHashTable *data)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->reject_chat)
+		prpl_info->reject_chat(g, data);
+}
+
 void serv_chat_invite(GaimConnection *g, int id, const char *message, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1323,10 +1335,17 @@ static void chat_invite_data_free(struct chat_invite_data *cid)
 	g_free(cid);
 }
 
+
+static void chat_invite_reject(struct chat_invite_data *cid)
+{
+	serv_reject_chat(cid->gc, cid->components);
+	chat_invite_data_free(cid);
+}
+
+
 static void chat_invite_accept(struct chat_invite_data *cid)
 {
 	serv_join_chat(cid->gc, cid->components);
-
 	chat_invite_data_free(cid);
 }
 
@@ -1359,7 +1378,7 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	gaim_request_accept_cancel(gc, NULL, _("Accept chat invitation?"),
 							   buf2, 0, cid,
 							   G_CALLBACK(chat_invite_accept),
-							   G_CALLBACK(chat_invite_data_free));
+							   G_CALLBACK(chat_invite_reject));
 }
 
 GaimConversation *serv_got_joined_chat(GaimConnection *gc,

@@ -6946,6 +6946,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_set_permit_deny,
 	oscar_warn,
 	oscar_join_chat,
+	NULL, /* reject chat invite */
 	oscar_chat_invite,
 	oscar_chat_leave,
 	NULL,

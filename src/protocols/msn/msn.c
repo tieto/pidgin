@@ -1633,6 +1633,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_set_permit_deny,
 	NULL,
 	NULL,
+	NULL, /* reject chat invite */
 	msn_chat_invite,
 	msn_chat_leave,
 	NULL,

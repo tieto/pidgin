@@ -1298,6 +1298,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 	trepia_register_user,
 	NULL,
 	NULL,

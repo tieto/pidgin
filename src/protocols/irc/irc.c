@@ -571,6 +571,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	irc_chat_join,
+	NULL,  /* reject chat invite */
 	irc_chat_invite,
 	irc_chat_leave,
 	NULL,

@@ -2127,6 +2127,7 @@ static GaimPluginProtocolInfo prpl_info =
 	toc_set_permit_deny,
 	toc_warn,
 	toc_join_chat,
+	NULL, /* reject chat invite */
 	toc_chat_invite,
 	toc_chat_leave,
 	toc_chat_whisper,

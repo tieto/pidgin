@@ -1308,6 +1308,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	jabber_chat_join,
+	NULL,
 	jabber_chat_invite,
 	jabber_chat_leave,
 	NULL,

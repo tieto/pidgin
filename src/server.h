@@ -68,6 +68,7 @@ void serv_dir_search(GaimConnection *, const char *, const char *,
 					 const char *, const char *, const char *, const char *,
 					 const char *, const char *);
 void serv_join_chat(GaimConnection *, GHashTable *);
+void serv_reject_chat(GaimConnection *, GHashTable *);
 void serv_chat_invite(GaimConnection *, int, const char *, const char *);
 void serv_chat_leave(GaimConnection *, int);
 void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
