@@ -277,7 +277,7 @@ gboolean plugin_load(GaimPlugin *plugin) {
         plugin_id = plugin;
 
         /* blist docking init */
-        if(gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist())) {
+        if(gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist()) && GAIM_GTK_BLIST(gaim_get_blist())->window) {
                 blist = GAIM_GTK_BLIST(gaim_get_blist())->window;
                 /* Set Dockable */
                 if(gaim_prefs_get_bool(OPT_WINPREFS_DBLIST_DOCKABLE))
