@@ -500,6 +500,23 @@ static void irc_buddy_free(struct irc_buddy *ib)
 	g_free(ib);
 }
 
+static void irc_chat_set_topic(GaimConnection *gc, int id, const char *topic)
+{
+	char *buf;
+	const char *name = NULL;
+	struct irc_conn *irc;
+
+	irc = gc->proto_data;
+	name = gaim_conversation_get_name(gaim_find_chat(gc, id));
+
+	if (name == NULL)
+		return;
+
+	buf = irc_format(irc, "vt:", "TOPIC", name, topic);
+	irc_send(irc, buf);
+	g_free(buf);
+}
+
 static GaimRoomlist *irc_roomlist_get_list(GaimConnection *gc)
 {
 	struct irc_conn *irc;
@@ -601,7 +618,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* set buddy icon */
 	NULL, /* remove group */
 	NULL, /* get_cb_real_name */
-	NULL,
+	irc_chat_set_topic,
 	NULL,
 	irc_roomlist_get_list,
 	irc_roomlist_cancel,
