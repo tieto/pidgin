@@ -50,6 +50,14 @@
 #include "pixmaps/permdel.xpm"
 #include "pixmaps/away_icon.xpm"
 
+#include "pixmaps/daemon-buddyadd.xpm"
+#include "pixmaps/daemon-buddydel.xpm"
+#include "pixmaps/daemon-buddychat.xpm"
+#include "pixmaps/daemon-im.xpm"
+#include "pixmaps/daemon-info.xpm"
+#include "pixmaps/daemon-permadd.xpm"
+#include "pixmaps/daemon-permdel.xpm"
+
 static GtkTooltips *tips;
 static GtkWidget *editpane;
 static GtkWidget *buddypane;
@@ -242,14 +250,23 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 void update_button_pix()
 {
 
-        adjust_pic(addbutton, "Add", (gchar **)buddyadd_xpm);
-	adjust_pic(rembutton, "Remove", (gchar **)buddydel_xpm);
-	adjust_pic(chatbutton, "Chat", (gchar **)buddychat_xpm);
-        adjust_pic(imbutton, "IM", (gchar **)im_xpm);
-        adjust_pic(infobutton, "Info", (gchar **)info_xpm);
-        adjust_pic(addpermbutton, "Add", (gchar **)permadd_xpm);
-        adjust_pic(rempermbutton, "Remove", (gchar **)permdel_xpm);
-
+	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
+	        adjust_pic(addbutton, "Add", (gchar **)daemon_buddyadd_xpm);
+		adjust_pic(rembutton, "Remove", (gchar **)daemon_buddydel_xpm);
+		adjust_pic(chatbutton, "Chat", (gchar **)daemon_buddychat_xpm);
+	        adjust_pic(imbutton, "IM", (gchar **)daemon_im_xpm);
+	        adjust_pic(infobutton, "Info", (gchar **)daemon_info_xpm);
+	        adjust_pic(addpermbutton, "Add", (gchar **)daemon_permadd_xpm);
+	        adjust_pic(rempermbutton, "Remove", (gchar **)daemon_permdel_xpm);
+	} else {
+	        adjust_pic(addbutton, "Add", (gchar **)buddyadd_xpm);
+		adjust_pic(rembutton, "Remove", (gchar **)buddydel_xpm);
+		adjust_pic(chatbutton, "Chat", (gchar **)buddychat_xpm);
+	        adjust_pic(imbutton, "IM", (gchar **)im_xpm);
+	        adjust_pic(infobutton, "Info", (gchar **)info_xpm);
+	        adjust_pic(addpermbutton, "Add", (gchar **)permadd_xpm);
+	        adjust_pic(rempermbutton, "Remove", (gchar **)permdel_xpm);
+	}
 }
 
 

@@ -713,9 +713,8 @@ void build_prefs()
 	gaim_button("Transparent text window (experimental)", &transparent, appbox );
 #endif
 	gaim_button("Show logon/logoffs in conversation windows", &display_options, OPT_DISP_SHOW_LOGON, appbox );
-#ifdef USE_APPLET
-	gaim_button("Use devil icons in applet", &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
-#endif
+	gaim_button("Use devil icons", &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
+	
 	
 	
 	gaim_button("Bold Text", &font_options, OPT_FONT_BOLD, fontbox);

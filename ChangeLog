@@ -1,8 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.14:
-	* Using devil pictures in applet is now easily configurable (no devil
-	  pixmaps for the stand-alone still though, sorry)
 	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,
 	  etc)
 	* Paned Conversation Windows (Thanks Syd)
@@ -13,6 +11,7 @@ version 0.9.14:
 	* PLUGIN SUPPORT!! (Lots of cool goodies here)
 	* Fixed another leak or two
 	* Added ability to change your screenname password
+	* Devil pixmaps
 
 version 0.9.13 (03/27/2000):
 	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)
