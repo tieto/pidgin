@@ -561,7 +561,6 @@ void serv_chat_leave(int id)
 					b->name, count);
 		debug_print(debug_buff);
 
-//		aim_chat_leaveroom(gaim_sess, b->name);
 		c = find_oscar_chat(b->name);
 		if (c != NULL) {
 			oscar_chats = g_list_remove(oscar_chats, c);
