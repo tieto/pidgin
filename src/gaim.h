@@ -233,6 +233,7 @@ struct buddy_show {
 	char *show;
 	GSList *connlist;
 	guint log_timer;
+	gint sound;
 };
 
 struct log_conversation {

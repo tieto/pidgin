@@ -1573,6 +1573,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	int pos = buddy_number(gs->name, buddy->name);
+	b->sound = 0;
 
 	b->name = g_strdup(buddy->name);
 	b->show = g_strdup(buddy->show);
@@ -1689,6 +1690,7 @@ static gint log_timeout(struct buddy_show *b) {
 		gdk_bitmap_unref(bm);
 		gtk_timeout_remove(b->log_timer);
 		b->log_timer = 0;
+		b->sound = 0;
 	}
 	return 0;
 }
@@ -1841,7 +1843,9 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (!g_slist_find(bs->connlist, gc))
 			bs->connlist = g_slist_append(bs->connlist, gc);
 		if (b->present == 1) {
-			play_sound(BUDDY_ARRIVE);
+			if (bs->sound != 2)
+				play_sound(BUDDY_ARRIVE);
+			bs->sound = 2;
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 							NULL, (char **)login_icon_xpm);
 			gtk_widget_hide(bs->pix);
@@ -1891,7 +1895,9 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (!bs->connlist) return; /* we won't do signoff updates for
 					      buddies that have already signed
 					      off */
-		play_sound(BUDDY_LEAVE);
+		if (bs->sound != 1)
+			play_sound(BUDDY_LEAVE);
+		bs->sound = 1;
 
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		if (bs->log_timer > 0)
