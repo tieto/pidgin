@@ -874,12 +874,14 @@ static char *yahoo_decode(const char *text)
 {
 	char *converted;
 	char *p, *n, *new;
+	int i;
 	
 	n = new = g_malloc(strlen (text) + 1);
 
 	for (p = (char *)text; *p; p++, n++) {
 		if (*p == '\\') {
-			sscanf(p + 1, "%3o\n", (int *)n);
+			sscanf(p + 1, "%3o\n", &i);
+			*n = (char)i;
 			p += 3;
 		}
 		else
