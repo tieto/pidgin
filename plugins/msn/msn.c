@@ -894,6 +894,13 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 				return;
 			}
 
+			g_snprintf(buf, sizeof(buf), "BLP %d AL\n", ++md->trId);
+			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				hide_login_progress(gc, "Unable to write");
+				signoff(gc);
+				return;
+			}
+
 			account_online(gc);
 			serv_finish_login(gc);
 
