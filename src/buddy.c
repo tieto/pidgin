@@ -1188,7 +1188,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	rend = gtk_cell_renderer_pixbuf_new();
 	column = gtk_tree_view_column_new_with_attributes("Status", rend, "pixbuf", STATUS_ICON_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
-	g_object_set(rend, "ypad", 0, NULL);
+	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	column = gtk_tree_view_column_new_with_attributes("Name", rend, "markup", NAME_COLUMN, NULL);
