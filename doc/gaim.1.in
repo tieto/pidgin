@@ -407,17 +407,54 @@ Foundation, Inc., 59 Temple PLace, Suite 330, Boston, MA  02111-1307  USA
 .SH AUTHORS
 \fBGaim\fR's active developers are:
 
- Rob Flynn (maintainer) <\fIrob@marko.net\fR>
+ Rob Flynn (maintainer) <\fIgaim@robflynn.com\fR>
 .br
- Sean Egan (coder) <\fIbj91704@binghamton.edu\fR>
+ Sean Egan (lead developer) <\fIbj91704@binghamton.edu\fR>
+.br
+ Christian 'ChipX86' Hammond (developer & webmaster)
+.br
+ Herman Bloggs (win32 port) <\fIhermanator12002@yahoo.com\fR>
+.br
+ Nathan 'faceprint' Walp (developer)
+.br
+ Mark 'KingAnt' Doliner (developer)
+.br
+ Ethan 'Paco-Paco' Blanton (developer)
+.br
+ Tim 'marv' Ringenbach (developer)
+.br
+ Luke 'LSchiere' Schierer (support)
+
+Our crazy patch writers include:
+
+ Benjamin Miller
+.br
+ Decklin Foster
+.br
+ Etan 'deryni' Reisner
+.br
+ Robert 'Robot101' McQueen
+.br
+ Kevin 'SimGuy' Stange
+.br
+ Stu 'nosnilmot' Tomlinson
+.br
+ Gary 'xgrimx' Kramlich
+.br
+ Ka-Hing 'javabsp' Cheung
 
 The retired developers of \fBgaim\fR are:
 
- Jim Duchek
+ Adam Fritzler (former libfaim maintainer)
 .br
- Eric Warmenhoven <\fIwarmenhoven@yahoo.com\fR>
+ Eric Warmenhoven (former lead developer) <\fIwarmenhoven@yahoo.com\fR>
+.br
+ Jim Duchek (former maintainer)
+.br
+ Jim Seymour (former Jabber developer)
 .br
  Mark Spencer (original author) <\fImarkster@marko.net\fR>
-
+.br
+ Syd Logan (hacker and designated driver [lazy bum])
 
 This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIbj91704@binghamton.edu\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
