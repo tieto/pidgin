@@ -11,9 +11,6 @@
         <note priority="veryhigh" time="1036028214">
             SEARCH FUNCTION FOR LOG FILES
         </note>
-        <note priority="veryhigh" time="1036039364">
-            choose a browser you don't have installed, click a link 2x, crash.
-        </note>
         <note priority="high" time="1036028245">
             fix crash when someone writes just as you close the chat window.
         </note>
@@ -45,9 +42,6 @@
             buddy pounce stuff
             <note priority="medium" time="1036040050">
                 drop down list of buddies
-            </note>
-            <note priority="medium" time="1036040064">
-                add chooser to sound
             </note>
         </note>
         <note priority="medium" time="1036210515">
