@@ -336,6 +336,7 @@ THE UIS:
 	make timestamp same size as nicks (optional?)
 
 GTK1.2(some of this applies to gtk2 also):
+	preference to ignore colors not being used or not being saved. in 0.59.5
 	GLib-CRITICAL **: file gstrfuncs.c: line 1194 (g_strcasecmp): assertion `s1 != NULL' failed. 
 		warnings in latest release.
 		it seems that when a certain packet is received, the assertion fails. something 
