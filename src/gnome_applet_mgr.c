@@ -110,6 +110,8 @@ static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
 
 static gboolean update_applet(gboolean force_update){
 	static enum gaim_user_states old_user_status = offline;
+	char buf[BUF_LONG];
+	GSList *c = connections;
 
 	if( MRI_user_status != old_user_status || force_update) {
 
@@ -133,6 +135,13 @@ static gboolean update_applet(gboolean force_update){
 					icon_online_pm,
 					icon_online_bm );                
 			gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
+			g_snprintf(buf, sizeof buf, "Online: ");
+			while (c) {
+				strcat(buf, ((struct gaim_connection *)c->data)->username);
+				c = g_slist_next(c);
+				if (c) strcat(buf, ", ");
+			}
+			applet_set_tooltips(buf);
 			break;
 		case away:
 			gtk_pixmap_set( GTK_PIXMAP(icon),
