@@ -2004,6 +2004,41 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		result = parse_vcard(sd->data, group);
 
 		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
+	} else if (sd->target == gdk_atom_intern("text/plain", FALSE) && sd->data) {
+		GtkTreePath *path = NULL;
+		GtkTreeViewDropPosition position;
+
+		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget),
+						      x, y, &path, &position))
+			{
+				GtkTreeIter iter;
+				GaimBlistNode *node;
+				GValue val = {0};
+				
+				gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
+							&iter, path);
+				gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
+							  &iter, NODE_COLUMN, &val);
+				node = g_value_get_pointer(&val);
+				
+				if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
+					GaimBuddy *b = GAIM_BLIST_NODE_IS_BUDDY(node) ? (GaimBuddy*)node : gaim_contact_get_priority_buddy((GaimContact*)node);
+					if (!g_ascii_strncasecmp(sd->data, "file://", 7)) {
+						GError *converr = NULL;
+						gchar *file;
+						if(!(file = g_filename_from_uri(sd->data, NULL, &converr))) {
+							gaim_debug(GAIM_DEBUG_ERROR, "conv dnd", "%s\n",
+								   (converr ? converr->message :
+								    "g_filename_from_uri error"));
+							return;
+						}
+						file = g_strchomp(file);
+						/* XXX - Handle dragging more than one file.  Make ft API support creating a transfer with more than one file */
+						serv_send_file(gaim_account_get_connection(b->account), b->name, file);
+						g_free(file);
+					}
+				}
+			}	
 	}
 }
 
@@ -2966,7 +3001,7 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
-enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD};
+enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD, DRAG_TEXT, NUM_TARGETS};
 
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
@@ -3006,7 +3041,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkTreeSelection *selection;
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY},
-				{"text/x-vcard", 0, DRAG_VCARD }};
+				{"text/x-vcard", 0, DRAG_VCARD },
+	                        {"text/plain", 0, DRAG_TEXT}};
 
 	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);
@@ -3076,11 +3112,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
-										   GDK_BUTTON1_MASK, gte, 3,
-										   GDK_ACTION_COPY);
+					       GDK_BUTTON1_MASK, gte, NUM_TARGETS,
+					       GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
-										 gte, 3,
-										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
+					     gte, NUM_TARGETS,
+					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);

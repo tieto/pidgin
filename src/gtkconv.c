@@ -4365,7 +4365,27 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
-		gtk_drag_finish(dc, FALSE, FALSE, t);
+	else if (sd->target == gdk_atom_intern("text/plain", FALSE)) {
+		if (!g_ascii_strncasecmp(sd->data, "file://", 7)) {
+			GError *converr = NULL;
+			gchar *file;
+			if(!(file = g_filename_from_uri(sd->data, NULL, &converr))) {
+				gaim_debug(GAIM_DEBUG_ERROR, "conv dnd", "%s\n",
+					   (converr ? converr->message :
+					    "g_filename_from_uri error"));
+				return;
+			}
+			file = g_strchomp(file);
+			/* XXX - Handle dragging more than one file.  Make ft API support creating a transfer with more than one file */
+			/* XXX - Attempt to load this file into gdk_pixbuf, or otherwise determine if it is an image.  If it is, offer
+			 * the choice of a) sending this file b) inserting this file as an IM image or c) setting this file as a custom
+			 * buddy icon for this buddy */
+			if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+				serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), file);
+			g_free(file);
+		}
+	}
+	gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
 /**************************************************************************
