@@ -1751,10 +1751,40 @@ void check_everything(GtkWidget *entry)
 /*  Takin care of the window..                                            */
 /*------------------------------------------------------------------------*/
 
-static char* nick_colors[] = {"#ff0000", "#ff00ff", "#00ffff", "#04a241",
-			      "#ffae00", "#bd008a", "#4c9f9c", "#7f0000",
-			      "#6477a2"};
-#define NUM_NICK_COLORS 9
+static char* nick_colors[] = {
+	"#ba55d3",              /* Medium Orchid */
+	"#ee82ee",              /* Violet */
+	"#c715b4",              /* Medium Violet Red */
+	"#ff69b4",              /* Hot Pink */
+	"#ff6347",              /* Tomato */
+	"#fa8c00",              /* Dark Orange */
+	"#fa8072"               /* Salmon */
+	"#b22222",              /* Fire Brick */
+	"#f4a460",              /* Sandy Brown */
+	"#cd5c5c",              /* Indian Red */
+	"#bc8f8f",              /* Rosy Brown */
+	"#f0e68c",              /* Khaki */
+	"#bdb76b",              /* Dark Khaki */
+	"#228b22",              /* Forest Green */
+	"#9acd32",              /* Yellow Green */
+	"#32cd32",              /* Lime Green */
+	"#3cb371",              /* Medium Sea Green */
+	"#2e8b57",              /* Sea Green */
+	"#8fbc8f",              /* Dark Sea Green */
+	"#66cdaa",              /* Medium Aquamarine */
+	"#5f9ea0",              /* Cadet Blue */
+	"#48d1cc",              /* Medium Turquoise */
+	"#00ced1",              /* Dark Turquoise */
+	"#4682b4",              /* Stell Blue */
+	"#00bfff",              /* Deep Sky Blue */
+	"#1690ff",              /* Dodger Blue */
+	"#4169ff",              /* Royal Blue */
+	"#6a5acd",              /* Slate Blue */
+	"#6495ed",              /* Cornflower Blue */
+	"#708090",              /* Slate gray */
+	"#ffdead",              /* Navajo White */
+};
+#define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(char *)) 
 
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
