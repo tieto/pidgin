@@ -178,30 +178,18 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if(type && !strcmp(type, "result")) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 	} else {
-		xmlnode *error = xmlnode_get_child(packet, "error");
-		const char *err_code = NULL;
-		char *err_text = NULL;
-		char *buf;
+		char *msg = jabber_parse_error(js, packet);
+		xmlnode *error;
+		const char *err_code;
 
-		if(error) {
-			err_code = xmlnode_get_attrib(error, "code");
-			err_text = xmlnode_get_data(error);
+		if((error = xmlnode_get_child(packet, "error")) &&
+					(err_code = xmlnode_get_attrib(error, "code")) &&
+					!strcmp(err_code, "401")) {
+			js->gc->wants_to_die = TRUE;
 		}
 
-		if(!err_code)
-			err_code = "";
-		if(!err_text)
-			err_text = g_strdup(_("Unknown"));
-
-		if(!strcmp(err_code, "401"))
-			js->gc->wants_to_die = TRUE;
-
-		buf = g_strdup_printf("Error %s: %s",
-				err_code, err_text);
-
-		gaim_connection_error(js->gc, buf);
-		g_free(err_text);
-		g_free(buf);
+		gaim_connection_error(js->gc, msg);
+		g_free(msg);
 	}
 }
 
@@ -216,20 +204,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		gaim_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	} else if(!strcmp(type, "error")) {
-		/* XXX: still need to handle XMPP-style errors */
-		xmlnode *error;
-		char *buf, *err_txt = NULL;
-		const char *code = NULL;
-		if((error = xmlnode_get_child(packet, "error"))) {
-			code = xmlnode_get_attrib(error, "code");
-			err_txt = xmlnode_get_data(error);
-		}
-		buf = g_strdup_printf("%s%s%s", code ? code : "", code ? ": " : "",
-				err_txt ? err_txt : _("Unknown Error"));
-		gaim_connection_error(js->gc, buf);
-		if(err_txt)
-			g_free(err_txt);
-		g_free(buf);
+		char *msg = jabber_parse_error(js, packet);
+		gaim_connection_error(js->gc, msg);
+		g_free(msg);
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
@@ -481,35 +458,12 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 {
-	const char *ns = xmlnode_get_attrib(packet, "xmlns");
+	char *msg = jabber_parse_error(js, packet);
 
-	if(!ns)
+	if(!msg) {
 		gaim_connection_error(js->gc, _("Invalid response from server."));
-	else if(!strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
-		if(xmlnode_get_child(packet, "bad-protocol")) {
-			gaim_connection_error(js->gc, _("Bad Protocol"));
-		} else if(xmlnode_get_child(packet, "encryption-required")) {
-			js->gc->wants_to_die = TRUE;
-			gaim_connection_error(js->gc, _("Encryption Required"));
-		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
-			js->gc->wants_to_die = TRUE;
-			gaim_connection_error(js->gc, _("Invalid authzid"));
-		} else if(xmlnode_get_child(packet, "invalid-mechanism")) {
-			js->gc->wants_to_die = TRUE;
-			gaim_connection_error(js->gc, _("Invalid Mechanism"));
-		} else if(xmlnode_get_child(packet, "invalid-realm")) {
-			gaim_connection_error(js->gc, _("Invalid Realm"));
-		} else if(xmlnode_get_child(packet, "mechanism-too-weak")) {
-			js->gc->wants_to_die = TRUE;
-			gaim_connection_error(js->gc, _("Mechanism Too Weak"));
-		} else if(xmlnode_get_child(packet, "not-authorized")) {
-			js->gc->wants_to_die = TRUE;
-			gaim_connection_error(js->gc, _("Not Authorized"));
-		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
-			gaim_connection_error(js->gc,
-					_("Temporary Authentication Failure"));
-		} else {
-			gaim_connection_error(js->gc, _("Authentication Failure"));
-		}
+	} else {
+		gaim_connection_error(js->gc, msg);
+		g_free(msg);
 	}
 }

@@ -39,11 +39,12 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 {
 	JabberChat *chat = val;
 	xmlnode *presence = user_data;
-	const char *chat_bare_jid = key;
+	char *chat_full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
+			chat->handle);
 
-	/* XXX: FIXME! */
-	xmlnode_set_attrib(presence, "to", chat_bare_jid);
+	xmlnode_set_attrib(presence, "to", chat_full_jid);
 	jabber_send(chat->js, presence);
+	g_free(chat_full_jid);
 }
 
 void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, const char *msg) {
@@ -209,20 +210,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if(type && !strcmp(type, "error")) {
-		const char *code = NULL;
-		char *err_txt = NULL;
+		char *msg = jabber_parse_error(js, packet);
 
 		state = JABBER_STATE_ERROR;
-		if((y = xmlnode_get_child(packet, "error")) != NULL) {
-			/* XXX: need to handle new XMPP-style errors */
-			code = xmlnode_get_attrib(y, "code");
-			err_txt = xmlnode_get_data(y);
-		}
-		jb->error_msg = g_strdup_printf("%s%s%s", code ? code : "",
-				code ? ": " : "", err_txt ? err_txt :
-				_("Unknown Error in presence"));
-		if(err_txt)
-			g_free(err_txt);
+		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		char *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."), from);
@@ -301,35 +292,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_STATE_ERROR) {
-			const char *code = NULL;
-			char *text = NULL;
-			char *buf;
-			xmlnode *error = xmlnode_get_child(packet, "error");
-			if(error) {
-				/* I should make my own messages so they can be
-				 * translated, but i'm tired */
-				code = xmlnode_get_attrib(error, "code");
-				text = xmlnode_get_data(error);
-			}
-
-			if(!code)
-				code = "";
+			char *title, *msg = jabber_parse_error(js, packet);
 
 			if(chat->conv) {
-				if(!text)
-					text = g_strdup(_("Unknown error"));
-				buf = g_strdup_printf("Error %s in chat %s: %s",
-						code, from, text);
+				title = g_strdup_printf(_("Error in chat %s"), from);
 				serv_got_chat_left(js->gc, chat->id);
 			} else {
-				if(!text)
-					text = g_strdup(_("Unable to join chat"));
-				buf = g_strdup_printf("Error %s joining chat %s: %s",
-						code, from, text);
+				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
-			gaim_notify_error(js->gc, _("Error"), _("Error"), buf);
-			g_free(text);
-			g_free(buf);
+			gaim_notify_error(js->gc, title, title, msg);
+			g_free(title);
+			g_free(msg);
 
 			jabber_chat_destroy(chat);
 			jabber_id_free(jid);
@@ -368,6 +341,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					if(!(nick = xmlnode_get_attrib(item, "nick")))
 						continue;
 					nick_change = TRUE;
+					if(!strcmp(jid->resource, chat->handle)) {
+						g_free(chat->handle);
+						chat->handle = g_strdup(nick);
+					}
 					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
 					break;
 				}
@@ -386,6 +363,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				chat->id = i++;
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
+				g_free(chat->handle);
+				chat->handle = g_strdup(jid->resource);
 				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
 			}
 

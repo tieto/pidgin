@@ -327,27 +327,12 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		xmlnode *errnode = xmlnode_get_child(packet, "error");
-		const char *code = NULL;
-		char *code_txt = NULL;
-		char *msg;
-		char *text = NULL;
+		char *msg = jabber_parse_error(js, packet);
 
-		if(errnode) {
-			code = xmlnode_get_attrib(errnode, "code");
-			text = xmlnode_get_data(errnode);
-		}
-
-		if(code)
-			code_txt = g_strdup_printf(_(" (Code %s)"), code);
-
-		msg = g_strdup_printf("%s%s", text ? text : "", code_txt ? code_txt : "");
 		gaim_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
 
-		g_free(msg);
-		if(code_txt)
-			g_free(code_txt);
-
+		if(msg)
+			g_free(msg);
 		return;
 	}
 
@@ -418,7 +403,13 @@ static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *pac
 	const char *type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "error")) {
-		/* XXX: handle an error (you'll get a 409 if the nick is already registered) */
+		char *msg = jabber_parse_error(js, packet);
+
+		gaim_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+
+		if(msg)
+			g_free(msg);
+		return;
 	}
 }
 
@@ -481,28 +472,12 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		/* XXX: how many places is this code duplicated?  Fix it, immediately */
-		xmlnode *errnode = xmlnode_get_child(packet, "error");
-		const char *code = NULL;
-		char *code_txt = NULL;
-		char *msg;
-		char *text = NULL;
+		char *msg = jabber_parse_error(js, packet);
 
-		if(errnode) {
-			code = xmlnode_get_attrib(errnode, "code");
-			text = xmlnode_get_data(errnode);
-		}
-
-		if(code)
-			code_txt = g_strdup_printf(_(" (Code %s)"), code);
-
-		msg = g_strdup_printf("%s%s", text ? text : "", code_txt ? code_txt : "");
 		gaim_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
-		g_free(msg);
-		if(code_txt)
-			g_free(code_txt);
-
+		if(msg)
+			g_free(msg);
 		return;
 	}
 
@@ -620,18 +595,24 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
-		/* XXX: error msg */
+		char *err = jabber_parse_error(js,packet);
+		gaim_notify_error(js->gc, _("Roomlist Error"),
+				_("Error retreiving roomlist"), err);
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
 		gaim_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
+		g_free(err);
 		return;
 	}
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
-		/* XXX: error msg */
+		char *err = jabber_parse_error(js, packet);
+		gaim_notify_error(js->gc, _("Roomlist Error"),
+				_("Error retreiving roomlist"), err);
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
 		gaim_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
+		g_free(err);
 		return;
 	}
 

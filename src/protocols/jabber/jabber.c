@@ -90,7 +90,24 @@ static void jabber_session_init(JabberStream *js)
 static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 		gpointer data)
 {
-	/* XXX: check for errors, re-set our own js->user JID */
+	const char *type = xmlnode_get_attrib(packet, "type");
+	xmlnode *bind;
+
+	if(type && !strcmp(type, "result") &&
+			(bind = xmlnode_get_child_with_namespace(packet, "bind", "urn:ietf:params:xml:ns:xmpp-bind"))) {
+		xmlnode *jid;
+		char *full_jid;
+		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
+			jabber_id_free(js->user);
+			if(!(js->user = jabber_id_new(full_jid))) {
+				gaim_connection_error(js->gc, _("Invalid response from server."));
+			}
+		}
+	} else {
+		char *msg = jabber_parse_error(js, packet);
+		gaim_connection_error(js->gc, msg);
+		g_free(msg);
+	}
 
 	jabber_session_init(js);
 }
@@ -127,74 +144,10 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 
 static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 {
-	xmlnode *textnode;
-	char *error_text = NULL;
-	const char *text;
-	char *buf;
+	char *msg = jabber_parse_error(js, packet);
 
-	if(xmlnode_get_child(packet, "bad-format")) {
-		text = _("Bad Format");
-	} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
-		text = _("Bad Namespace Prefix");
-	} else if(xmlnode_get_child(packet, "conflict")) {
-		js->gc->wants_to_die = TRUE;
-		text = _("Resource Conflict");
-	} else if(xmlnode_get_child(packet, "connection-timeout")) {
-		text = _("Connection Timeout");
-	} else if(xmlnode_get_child(packet, "host-gone")) {
-		text = _("Host Gone");
-	} else if(xmlnode_get_child(packet, "host-unknown")) {
-		text = _("Host Unknown");
-	} else if(xmlnode_get_child(packet, "improper-addressing")) {
-		text = _("Improper Addressing");
-	} else if(xmlnode_get_child(packet, "internal-server-error")) {
-		text = _("Internal Server Error");
-	} else if(xmlnode_get_child(packet, "invalid-id")) {
-		text = _("Invalid ID");
-	} else if(xmlnode_get_child(packet, "invalid-namespace")) {
-		text = _("Invalid Namespace");
-	} else if(xmlnode_get_child(packet, "invalid-xml")) {
-		text = _("Invalid XML");
-	} else if(xmlnode_get_child(packet, "nonmatching-hosts")) {
-		text = _("Non-matching Hosts");
-	} else if(xmlnode_get_child(packet, "not-authorized")) {
-		text = _("Not Authorized");
-	} else if(xmlnode_get_child(packet, "policy-violation")) {
-		text = _("Policy Violation");
-	} else if(xmlnode_get_child(packet, "remote-connection-failed")) {
-		text = _("Remote Connection Failed");
-	} else if(xmlnode_get_child(packet, "resource-constraint")) {
-		text = _("Resource Constraint");
-	} else if(xmlnode_get_child(packet, "restricted-xml")) {
-		text = _("Restricted XML");
-	} else if(xmlnode_get_child(packet, "see-other-host")) {
-		text = _("See Other Host");
-	} else if(xmlnode_get_child(packet, "system-shutdown")) {
-		text = _("System Shutdown");
-	} else if(xmlnode_get_child(packet, "undefined-condition")) {
-		text = _("Undefined Condition");
-	} else if(xmlnode_get_child(packet, "unsupported-encoding")) {
-		text = _("Unsupported Encoding");
-	} else if(xmlnode_get_child(packet, "unsupported-stanza-type")) {
-		text = _("Unsupported Stanza Type");
-	} else if(xmlnode_get_child(packet, "unsupported-version")) {
-		text = _("Unsupported Version");
-	} else if(xmlnode_get_child(packet, "xml-not-well-formed")) {
-		text = _("XML Not Well Formed");
-	} else {
-		text = _("Stream Error");
-	}
-
-	if((textnode = xmlnode_get_child(packet, "text")))
-		error_text = xmlnode_get_data(textnode);
-
-	buf = g_strdup_printf("%s%s%s", text,
-			error_text ? ": " : "",
-			error_text ? error_text : "");
-	gaim_connection_error(js->gc, buf);
-	g_free(buf);
-	if(error_text)
-		g_free(error_text);
+	gaim_connection_error(js->gc, msg);
+	g_free(msg);
 }
 
 static void tls_init(JabberStream *js);
@@ -235,7 +188,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t"))
-		gaim_debug(GAIM_DEBUG_MISC, "jabber", "Sending%s: %s\n", 
+		gaim_debug(GAIM_DEBUG_MISC, "jabber", "Sending%s: %s\n",
 				js->gsc ? " (ssl)" : "", data);
 
 	if(js->gsc) {
@@ -475,21 +428,14 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				_("Registration Successful"), buf);
 		g_free(buf);
 	} else {
-		char *error;
-		xmlnode *y;
+		char *msg = jabber_parse_error(js, packet);
 
-		if((y = xmlnode_get_child(packet, "error"))) {
-			error = xmlnode_get_data(y);
-		} else {
-			error = g_strdup(_("Unknown Error"));
-		}
+		if(!msg)
+			msg = g_strdup(_("Unknown Error"));
 
-		buf = g_strdup_printf(_("Registration of %s@%s failed: %s"),
-				js->user->node, js->user->domain, error);
 		gaim_notify_error(NULL, _("Registration Failed"),
-				_("Registration Failed"), buf);
-		g_free(buf);
-		g_free(error);
+				_("Registration Failed"), msg);
+		g_free(msg);
 	}
 	jabber_connection_schedule_close(js);
 }
@@ -1033,23 +979,11 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 		gaim_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 	} else {
-		xmlnode *error;
-		char *buf, *error_txt = NULL;
+		char *msg = jabber_parse_error(js, packet);
 
-
-		if((error = xmlnode_get_child(packet, "error")))
-			error_txt = xmlnode_get_data(error);
-
-		if(error_txt) {
-			buf = g_strdup_printf(_("Error changing password: %s"),
-					error_txt);
-			g_free(error_txt);
-		} else {
-			buf = g_strdup(_("Unknown error occurred changing password"));
-		}
-
-		gaim_notify_error(js->gc, _("Error"), _("Error"), buf);
-		g_free(buf);
+		gaim_notify_error(js->gc, _("Error changing password"),
+				_("Error changing password"), msg);
+		g_free(msg);
 	}
 }
 
@@ -1190,6 +1124,99 @@ static void jabber_convo_closed(GaimConnection *gc, const char *who)
 	jabber_id_free(jid);
 }
 
+
+char *jabber_parse_error(JabberStream *js, xmlnode *packet)
+{
+	xmlnode *error;
+	const char *code = NULL, *text = NULL;
+	const char *xmlns = xmlnode_get_attrib(packet, "xmlns");
+	char *cdata = NULL;
+
+	if((error = xmlnode_get_child(packet, "error"))) {
+		cdata = xmlnode_get_data(error);
+		code = xmlnode_get_attrib(error, "code");
+
+		/* Stanza errors */
+		if(xmlnode_get_child(error, "bad-request")) {
+			text = _("Bad Request");
+		} else if(xmlnode_get_child(error, "conflict")) {
+			text = _("Conflict");
+		} else if(xmlnode_get_child(error, "feature-not-implemented")) {
+			text = _("Feature Not Implemented");
+		} else if(xmlnode_get_child(error, "forbidden")) {
+			text = _("Forbidden");
+		} else if(xmlnode_get_child(error, "gone")) {
+			text = _("Gone");
+		} else if(xmlnode_get_child(error, "internal-server-error")) {
+			text = _("Internal Server Error");
+		} else if(xmlnode_get_child(error, "item-not-found")) {
+			text = _("Item Not Found");
+		} else if(xmlnode_get_child(error, "jid-malformed")) {
+			text = _("Malformed Jabber ID");
+		} else if(xmlnode_get_child(error, "not-acceptable")) {
+			text = _("Not Acceptable");
+		} else if(xmlnode_get_child(error, "not-allowed")) {
+			text = _("Not Allowed");
+		} else if(xmlnode_get_child(error, "not-authorized")) {
+			text = _("Not Authorized");
+		} else if(xmlnode_get_child(error, "payment-required")) {
+			text = _("Payment Required");
+		} else if(xmlnode_get_child(error, "recipient-unavailable")) {
+			text = _("Recipient Unavailable");
+		} else if(xmlnode_get_child(error, "redirect")) {
+			/* XXX */
+		} else if(xmlnode_get_child(error, "registration-required")) {
+			text = _("Registration Required");
+		} else if(xmlnode_get_child(error, "remote-server-not-found")) {
+			text = _("Remote Server Not Found");
+		} else if(xmlnode_get_child(error, "remote-server-timeout")) {
+			text = _("Remote Server Timeout");
+		} else if(xmlnode_get_child(error, "resource-constraint")) {
+			text = _("Server Overloaded");
+		} else if(xmlnode_get_child(error, "service-unavailable")) {
+			text = _("Service Unavailable");
+		} else if(xmlnode_get_child(error, "subscription-required")) {
+			text = _("Subscription Required");
+		} else if(xmlnode_get_child(error, "unexpected-request")) {
+			text = _("Unexpected Request");
+		} else if(xmlnode_get_child(error, "undefined-condition")) {
+			text = _("Unknown Error");
+		}
+	} else if(xmlns && !strcmp(xmlns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+		if(xmlnode_get_child(packet, "aborted")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Authorization Aborted");
+		} else if(xmlnode_get_child(error, "incorrect-encoding")) {
+			text = _("Incorrect encoding in authorization");
+		} else if(xmlnode_get_child(error, "invalid-authzid")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Invalid authzid");
+		} else if(xmlnode_get_child(error, "invalid-mechanism")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Invalid Authorization Mechanism");
+		} else if(xmlnode_get_child(error, "mechanism-too-weak")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Authorization mechanism too weak");
+		} else if(xmlnode_get_child(error, "not-authorized")) {
+			js->gc->wants_to_die = TRUE;
+			text = _("Not Authorized");
+		} else if(xmlnode_get_child(error, "temporary-auth-failure")) {
+			text = _("Temporary Authentication Failure");
+		} else {
+			text = _("Authentication Failure");
+		}
+	}
+
+	if(text || cdata) {
+		char *ret = g_strdup_printf("%s%s%s", code ? code : "",
+				code ? ": " : "", text ? text : cdata);
+		g_free(cdata);
+		return ret;
+	} else {
+		return NULL;
+	}
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
@@ -1328,7 +1355,7 @@ init_plugin(GaimPlugin *plugin)
 
 	ppref = g_new0(struct proto_pref, 1);
 	ppref->key = "/plugins/prpl/jabber/hide_os";
-	ppref->label = _("Hide Operating System"); /* XXX: come up with a better name for this */
+	ppref->label = _("Hide Operating System");
 	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
 }
 

@@ -30,7 +30,7 @@ time_t str_to_time(const char *timestamp)
 {
 	struct tm t;
 	time_t retval = 0;
-	char buf[32]; 
+	char buf[32];
 	char *c;
 	int tzoff = 0;
 
@@ -319,3 +319,4 @@ jabber_find_unnormalized_conv(const char *name, GaimAccount *account)
 
 	return NULL;
 }
+

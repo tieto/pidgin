@@ -108,4 +108,6 @@ void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
 
+char *jabber_parse_error(JabberStream *js, xmlnode *packet);
+
 #endif /* _GAIM_JABBER_H_ */

@@ -24,6 +24,7 @@
 
 #include "account.h"
 #include "conversation.h"
+#include "xmlnode.h"
 
 
 typedef struct _JabberID {
