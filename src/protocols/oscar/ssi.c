@@ -125,11 +125,11 @@ static int aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item **list, struct aim_
 		if (parentgroup->gid == 0x0000) {
 			for (cur=*list; cur; cur=cur->next)
 				if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP))
-						aimutil_put16(newdata+newlen*2, cur->gid);
+						newlen += aimutil_put16(newdata+newlen, cur->gid);
 		} else {
 			for (cur=*list; cur; cur=cur->next)
 				if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
-						aimutil_put16(newdata+newlen*2, cur->bid);
+						newlen += aimutil_put16(newdata+newlen, cur->bid);
 		}
 		aim_addtlvtochain_raw((aim_tlvlist_t **)&(parentgroup->data), 0x00c8, newlen, newdata);
 
