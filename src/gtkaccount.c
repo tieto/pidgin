@@ -224,32 +224,8 @@ static void buddy_icon_filesel_choose (GtkWidget *w, AccountPrefsDialog *dialog)
 	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(dialog->buddy_icon_filesel)))
 		return;
 
-	if (dialog->account) {
-		const char *username;
-		struct buddy *b;
-
+	if (dialog->account)
 		gaim_account_set_buddy_icon(dialog->account, filename);
-
-		username = gaim_account_get_username(dialog->account);
-
-		b = gaim_find_buddy(dialog->account, username);
-
-		if (b != NULL) {
-			GaimConversation *conv;
-
-			gaim_buddy_set_setting(b, "buddy_icon", filename);
-			gaim_blist_save();
-			gaim_blist_update_buddy_icon(b);
-
-			conv = gaim_find_conversation(username);
-
-			if (conv != NULL &&
-				gaim_conversation_get_account(conv) == dialog->account) {
-
-				gaim_gtkconv_update_buddy_icon(conv);
-			}
-		}
-	}
 
 	gtk_entry_set_text(GTK_ENTRY(dialog->buddy_icon_entry), filename);
 	gtk_widget_destroy(dialog->buddy_icon_filesel);
