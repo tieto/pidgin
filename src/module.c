@@ -420,10 +420,11 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 					(char *)arg3 ? (char *)arg3 : "");
 			break;
 		case event_chat_recv:
-			debug_printf("%s: %s %s %s\n", event_name(event),
+			debug_printf("%s: %s %d %s\n", event_name(event),
 					((struct gaim_connection *)arg1)->username,
-					(char *)arg2 ? (char *)arg2 : "",
-					(char *)arg3 ? (char *)arg3 : "");
+					(int)arg2,
+					(char *)arg3 ? (char *)arg3 : "",
+					(char *)arg4 ? (char *)arg4 : "");
 			break;
 		case event_chat_send_invite:
 			debug_printf("%s: %s %d %s %s\n", event_name(event),
