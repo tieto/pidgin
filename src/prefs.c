@@ -547,7 +547,7 @@ GtkWidget *list_page() {
 	gaim_button(_("_Save window size/position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
 	gaim_button(_("_Raise window on events"), &blist_options, OPT_BLIST_POPUP, vbox);
 
-	vbox = make_frame (ret, _("Group Display"));
+	/* vbox = make_frame (ret, _("Group Display")); */
 	/* gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox); */
 	/* gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox); */
 
