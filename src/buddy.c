@@ -2316,6 +2316,11 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 	}
 }
 
+static gboolean delayed_save_prefs(gpointer data) {
+	save_prefs();
+	return FALSE;
+}
+
 static gboolean configure_blist_window(GtkWidget *w, GdkEventConfigure *event, gpointer data) {
 	/* unfortunately GdkEventConfigure ignores the window gravity, but  *
 	 * the only way we have of setting the position doesn't. we have to *
@@ -2337,9 +2342,14 @@ static gboolean configure_blist_window(GtkWidget *w, GdkEventConfigure *event, g
 	    blist_pos.y = y;
 	    blist_pos.width = event->width;
 	    blist_pos.height = event->height;
-	    save_prefs();
+
+	    if (!g_main_context_find_source_by_user_data(NULL, &delayed_save_prefs)) {
+	      debug_printf("queueing save of blist prefs\n");
+	      g_timeout_add(5000, delayed_save_prefs, &delayed_save_prefs);
+	    }
 	  }
 	}
+
 	return FALSE;
 }
 
