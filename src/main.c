@@ -50,6 +50,7 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
+#include "prefs.h"
 #include "notify.h"
 #include "gtkblist.h"
 #include "gtkdebug.h"
@@ -896,6 +897,8 @@ int main(int argc, char *argv[])
 	wgaim_init();
 #endif
 
+	gaim_prefs_init();
+	gaim_prefs_load();
 	load_prefs();
 	core_main();
 	load_pounces();

@@ -176,7 +176,6 @@ extern GtkWidget *bgcseld;
 extern GtkWidget *bpmenu;
 
 /* Globals in prefs.c */
-extern GtkWidget *prefs;
 extern struct debug_window *dw;
 extern GtkWidget *fontseld;
 

@@ -26,6 +26,8 @@ CORESOURCES = \
 	pounce.h \
 	proxy.c \
 	proxy.h \
+	prefs.c \
+	prefs.h \
 	prpl.c \
 	prpl.h \
 	server.c \
@@ -65,6 +67,7 @@ gaim_SOURCES = \
 	gtknotify.h \
 	gtkplugin.c \
 	gtkplugin.h \
+	gtkprefs.c \
 	gtkpounce.c \
 	gtkpounce.h \
 	gtkutils.c \
@@ -77,7 +80,6 @@ gaim_SOURCES = \
 	md5.h \
 	multi.c \
 	multi.h \
-	prefs.c \
 	privacy.h \
 	session.c \
 	socket.c \
