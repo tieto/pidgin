@@ -46,6 +46,8 @@
 
 #define TREPIA_VERSION "2.52"
 
+#define TREPIA_CONNECT_STEPS 3
+
 static GaimPlugin *my_protocol = NULL;
 
 typedef enum
@@ -660,6 +662,9 @@ __parse_data(TrepiaSession *session, char *buf)
 	if (info != NULL) {
 		switch (type) {
 			case TREPIA_USER_LIST:
+				gaim_connection_update_progress(session->gc,
+						_("Retrieving buddy list"), 2, TREPIA_CONNECT_STEPS);
+
 				gaim_connection_set_state(session->gc, GAIM_CONNECTED);
 				serv_finish_login(session->gc);
 				break;
@@ -1039,6 +1044,9 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_free(mac);
 #endif
 
+	gaim_connection_update_progress(session->gc, _("Logging in"), 1,
+									TREPIA_CONNECT_STEPS);
+
 	if (trepia_write(session->fd, buffer, strlen(buffer)) < 0) {
 		gaim_connection_error(session->gc, _("Write error"));
 		return;
@@ -1072,6 +1080,9 @@ trepia_login(GaimAccount *account)
 												   g_free, NULL);
 
 	__clear_user_list(session);
+
+	gaim_connection_update_progress(gc, _("Connecting"), 0,
+									TREPIA_CONNECT_STEPS);
 
 	i = gaim_proxy_connect(account, server, port, __login_cb, session);
 
