@@ -25,6 +25,8 @@ NAPSTER = $(GAIM_PROTOS)/napster
 GG = $(GAIM_PROTOS)/gg
 PO = ./po
 
+VERSION := $(shell cat ./VERSION)
+
 NEEDED_DLLS = 		$(GTK_LIBS)/libgdk-win32-2.0-0.dll \
 			$(GTK_LIBS)/libglib-2.0-0.dll \
 			$(GTK_LIBS)/libintl-1.dll \
@@ -153,7 +155,7 @@ install: all
 	cp $(GAIM_SRC)/win32/themes/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
 
 installer:
-	makensis.exe gaim-installer.nsi
+	makensis.exe /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
 
 clean:
 	$(MAKE) -C $(PO) -f Makefile.mingw clean
