@@ -231,7 +231,7 @@ void gaim_help(GtkWidget *w, void *x)
 					"you can talk to one of the Gaim developers for more "
 					"assistance; their contact information is in the "
 					"AUTHORS file in the Gaim source, or at "
-					WEBSITE "contact.shtml. If you can't get online and "
+					WEBSITE "contactinfo.php. If you can't get online and "
 					"still need more assistance, feel free to email us "
 					"at gaim@marko.net. Thanks for using Gaim!"));
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
