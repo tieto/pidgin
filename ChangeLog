@@ -7,6 +7,9 @@ version 0.28:
 	* Auto-reconnect plugin has exponential timeout (i.e. it
 	  tries after 8 seconds, then 16, then 32, etc. up to 17
 	  minutes)
+	* Removed file transfer things from Napster. It didn't work
+	  well anyway. It'll be back eventually. (Does anyone even
+	  use napster anymore?)
 
 version 0.11.0-pre15 (08/28/2001):
 	* MSN works again
