@@ -129,6 +129,16 @@ GtkWidget *gaim_gtk_change_text(const char *text, GtkWidget *button,
 void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
+ * Checks if text has been entered into a GtkTextEntry widget.  If 
+ * so, the GTK_RESPONSE_OK on the given dialog is set to TRUE.  
+ * Otherwise GTK_RESPONSE_OK is set to FALSE.
+ *
+ * @param entry  The text entry widget.
+ * @param dialog The dialog containing the text entry widget.
+ */
+void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
+
+/**
  * Toggles the sensitivity of all widgets in a pointer array.
  *
  * @param w    @c NULL. Used for signal handlers.

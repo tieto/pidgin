@@ -629,12 +629,6 @@ show_info_select_account(GObject *w, GaimAccount *account,
 	info->gc = gaim_account_get_connection(account);
 }
 
-static void dialog_set_ok_sensitive(GtkWidget *entry, GtkWidget *dlg) {
-	const char *txt = gtk_entry_get_text(GTK_ENTRY(entry));
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(dlg), GTK_RESPONSE_OK,
-			(*txt != '\0'));
-}
-
 void show_im_dialog()
 {
 	GtkWidget *hbox, *vbox;
@@ -692,7 +686,7 @@ void show_im_dialog()
 		gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
 		g_signal_connect(G_OBJECT(info->entry), "changed",
-				G_CALLBACK(dialog_set_ok_sensitive), imdialog);
+				G_CALLBACK(gaim_gtk_set_sensitive_if_input), imdialog);
 
 		if (gaim_connections_get_all()->next) {
 
@@ -770,7 +764,7 @@ void show_info_dialog()
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
 
 	g_signal_connect(G_OBJECT(info->entry), "changed",
-			G_CALLBACK(dialog_set_ok_sensitive), window);
+			G_CALLBACK(gaim_gtk_set_sensitive_if_input), window);
 
 	if (gaim_connections_get_all()->next) {
 
