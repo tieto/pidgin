@@ -27,3 +27,7 @@ This is just for the buddy list window now. Everything else is nearing completio
 7. Need to do Buddy Pounces on a per-connection basis
 
 8. Need to report logins/outs to convo window
+
+9. Need to get the permit/deny stuff put back
+
+10. Need to have per-connection protocol options (e.g. which server to connect to for IRC)

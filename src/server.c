@@ -198,32 +198,37 @@ void serv_remove_buddy(struct gaim_connection *g, char *name)
 		(*g->prpl->remove_buddy)(g, name);
 }
 
-void serv_add_permit(struct gaim_connection *gc, char *name)
+void serv_add_permit(struct gaim_connection *g, char *name)
 {
-	/* FIXME */
+	if (g->prpl && g->prpl->add_permit)
+		(*g->prpl->add_permit)(g, name);
 }
 
-void serv_add_deny(struct gaim_connection *gc, char *name)
+void serv_add_deny(struct gaim_connection *g, char *name)
 {
-	/* FIXME */
+	if (g->prpl && g->prpl->add_deny)
+		(*g->prpl->add_deny)(g, name);
 }
 
-void serv_rem_permit(struct gaim_connection *gc, char *name)
+void serv_rem_permit(struct gaim_connection *g, char *name)
 {
-	/* FIXME */
+	if (g->prpl && g->prpl->rem_permit)
+		(*g->prpl->rem_permit)(g, name);
 }
 
-void serv_rem_deny(struct gaim_connection *gc, char *name)
+void serv_rem_deny(struct gaim_connection *g, char *name)
 {
-	/* FIXME */
+	if (g->prpl && g->prpl->rem_deny)
+		(*g->prpl->rem_deny)(g, name);
 }
 
-void serv_set_permit_deny(struct gaim_connection *gc)
+void serv_set_permit_deny(struct gaim_connection *g)
 {
-	/* FIXME */
 	/* this is called when some other function has modified the permit/deny list and
 	 * now wants to register that change with the server. if you're just adding/removing
 	 * one name, use the add/remove functions above */
+	if (g->prpl && g->prpl->set_permit_deny)
+		(*g->prpl->set_permit_deny)(g);
 }
 
 
@@ -406,8 +411,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
                 return;
         }
 
-	debug_printf("got update for %s\n", b->name);
-
         /* This code will 'align' the name from the TOC */
         /* server with what's in our record.  We want to */
         /* store things how THEY want it... */
@@ -442,16 +445,16 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
         }
 
-	if (!b->idle && idle) plugin_event(event_buddy_idle, b->name, 0, 0, 0);
-	if (b->idle && !idle) plugin_event(event_buddy_unidle, b->name, 0, 0, 0);
+	if (!b->idle && idle) plugin_event(event_buddy_idle, gc, b->name, 0, 0);
+	if (b->idle && !idle) plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
 
         b->idle = idle;
         b->evil = evil;
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-		plugin_event(event_buddy_back, b->name, 0, 0, 0);
+		plugin_event(event_buddy_back, gc, b->name, 0, 0);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
-		plugin_event(event_buddy_away, b->name, 0, 0, 0);
+		plugin_event(event_buddy_away, gc, b->name, 0, 0);
 	}
 
         b->uc = type;
@@ -463,11 +466,11 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
                 if (!b->present) {
                         b->present = 1;
                         do_pounce(b->name);
-			plugin_event(event_buddy_signon, b->name, 0, 0, 0);
+			plugin_event(event_buddy_signon, gc, b->name, 0, 0);
                 }
         } else {
 		if (b->present)
-			plugin_event(event_buddy_signoff, b->name, 0, 0, 0);
+			plugin_event(event_buddy_signoff, gc, b->name, 0, 0);
                 b->present = 0;
 	}
 

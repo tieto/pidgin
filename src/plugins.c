@@ -577,9 +577,6 @@ char *event_name(enum gaim_event event)
 		case event_buddy_unidle:
 			sprintf(buf, "event_buddy_unidle");
 			break;
-		case event_blist_update:
-			sprintf(buf, "event_blist_update");
-			break;
 		case event_chat_invited:
 			sprintf(buf, "event_chat_invited");
 			break;
@@ -646,7 +643,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 			/* no args */
 			case event_away:
 			case event_back:
-			case event_blist_update:
 			case event_quit:
 				{
 					void (*function)(void *) = g->function;
@@ -779,9 +775,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 			break;
 		case event_buddy_unidle:
 			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
-			break;
-		case event_blist_update:
-			buf[0] = 0;
 			break;
 		case event_chat_invited:
 			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);

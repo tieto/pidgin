@@ -47,8 +47,6 @@ gint check_idle(struct gaim_connection *gc)
 #endif
 
         /* Not idle, really...  :) */
-
-	plugin_event(event_blist_update, 0, 0, 0, 0);
         
 	time(&t);
 

@@ -75,6 +75,9 @@ struct prpl {
 	void (* remove_buddy)	(struct gaim_connection *, char *name);
 	void (* add_permit)	(struct gaim_connection *, char *name);
 	void (* add_deny)	(struct gaim_connection *, char *name);
+	void (* rem_permit)	(struct gaim_connection *, char *name);
+	void (* rem_deny)	(struct gaim_connection *, char *name);
+	void (* set_permit_deny)(struct gaim_connection *);
 	void (* warn)		(struct gaim_connection *, char *who, int anonymous);
 	void (* accept_chat)	(struct gaim_connection *, int id);
 	void (* join_chat)	(struct gaim_connection *, int id, char *name);

@@ -11,7 +11,6 @@ enum gaim_event {
 	event_buddy_back,
 	event_buddy_idle,
 	event_buddy_unidle,
-	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
 	event_chat_leave,
@@ -101,41 +100,35 @@ event_im_send:
 		do so ;-) .)
 
 event_buddy_signon:
-	char *who
+	struct gaim_connection *gc, char *who
 	
 	'who' is who signed on. (There is currently no way to see which connection
 	reported that the buddy came online. Hopefully this will happen soon.)
 
 event_buddy_signoff:
-	char *who
+	struct gaim_connection *gc, char *who
 
 	'who' is who signed off.
 
 event_buddy_away:
-	char *who
+	struct gaim_connection *gc, char *who
 
 	'who' is who went away.
 
 event_buddy_back:
-	char *who
+	struct gaim_connection *gc, char *who
 
 	'who' is who is no longer away.
 
 event_buddy_idle:
-	char *who
+	struct gaim_connection *gc, char *who
 
 	'who' is who went idle.
 
 event_buddy_unidle:
-	char *who
+	struct gaim_connection *gc, char *who
 
 	'who' is who is no longer idle.
-
-event_blist_update:
-	(none)
-	
-	This event is called when the buddylist is updated (automatically every
-	20 seconds for every connection, though the updates are usually syncopated)
 
 event_chat_invited:
 	struct gaim_connection *gc, char *who, char *room, char *message

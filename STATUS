@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-27 03:53:32 -0400 (Fri, 27 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-31 05:49:53 -0500 (Tue, 31 Oct 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -64,9 +64,10 @@ the rest of gaim) but it is at least functional now.
 Plugins
 =======
 
-The plugin system is mostly up and running again, with multi-connectivity added in
-appropriate places. There may still be some bugginess and it lacks some features
-that I want to add, but at least it's mostly working again.
+Plugins are more or less done. There may be some back-end reworking, but if you
+want to start porting plugins from 0.10 to 0.11 then now's a good time to start
+that. I don't think it's going to change much (if at all).
+
 
 Perl
 ====

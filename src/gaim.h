@@ -181,7 +181,6 @@ enum gaim_event {
 	event_buddy_back,
 	event_buddy_idle,
 	event_buddy_unidle,
-	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
 	event_chat_leave,

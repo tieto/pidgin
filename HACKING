@@ -34,19 +34,20 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-12 14:59:36 -0400 (Thu, 12 Oct 2000) $.
+This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-31 05:49:53 -0500 (Tue, 31 Oct 2000) $.
 
 
 PROGRAM FLOW
 ============
 
 Before gaim does anything you can see, it initializes itself, which is
-mostly just reading .gaimrc (handled by the functions in gaimrc.c). It
-then draws the login window by calling show_login, and waits for input.
+mostly just reading .gaimrc (handled by the functions in gaimrc.c) and
+parsing command-line options. It then draws the login window by calling
+show_login, and waits for input.
 
 At the login window, when "Accounts" is clicked, account_editor() is
-called. (NOTE: the login window will probably be changed soon.) This
-then displays all of the users and various information about them.
+called. This then displays all of the users and various information about
+them. If the user clicks the "Signon" button instead, serv_login is called.
 
 When the "Sign on/off" button is clicked, serv_login is passed the
 username and the password for the account. If the password length is
@@ -61,7 +62,7 @@ After you're signed in (I'll skip that discussion - I doubt many people
 are going to change the login process, since it pretty much just follows
 PROTOCOL), Gaim draws the buddy list by calling show_buddy_list, and
 waits for input from two places: the server and the user. The first place
-it gets input from after signon is invariably the server, when the server
+it gets input from after signon is usually the server, when the server
 tells Gaim which buddies are signed on.
 
 When there is information ready to be read from the server, toc_callback
@@ -69,13 +70,6 @@ is called (by GDK) to parse the incoming information. On an UPDATE,
 serv_got_update is called, which takes care of things like notifying
 conversation windows of the update if need be; notifying the plugins;
 and finally, calling set_buddy.
-
-set_buddy is one of the most frequently called functions in gaim, one of
-the largest functions in gaim, and probably one of the buggiest functions
-in gaim. It is responsible for updating the pixmaps in the buddy list;
-notifying plugins of various events; updating the tooltips for buddies;
-making sounds; and updating the ticker. It's also called once per online
-buddy every 20 seconds per connection (by GTK through update_all_buddies).
 
 New connections happen the exact same way as described above. Each aim_user
 can have one gaim_connection associated with it. aim_user and gaim_connection
@@ -88,9 +82,7 @@ When the user opens a new conversation window, new_conversation is called.
 That's easy enough. If there isn't a conversation with the person already
 open (checked by calling find_conversation), show_conv is called to
 create the new window. All sorts of neat things happen there, but it's
-mostly drawing the window. show_conv is the best place to edit the UI. Be
-prepared for some incredibly bad GTK programming. (Rob's fixing this as
-we speak no doubt.)
+mostly drawing the window. show_conv is the best place to edit the UI.
 
 That's pretty much it for the quick tutorial. I know it wasn't much but
 it's enough to get you started. Make sure you know GTK before you get too
@@ -176,10 +168,9 @@ html.c:
   GtkHTML widget.  http.c would be a more appropriate name, but that's OK.
 
 idle.c:
-  There is a very good reason why this file is still on version 1.1
-  in CVS.  The entire thing is #if 0'd out. I haven't ever really taken
-  a good look at it, but I think what it was supposed to have done is
-  set you as being away when a screensaver came on.
+  This file used to be entirely #if 0'd out of existance. However, thanks
+  to some very generous people who submitted patches, this takes care of
+  reporting idle time (imagine that). It's a pretty straight-forward file.
 
 multi.c:
   This is the file that tries to take care of most of the major issues
@@ -190,9 +181,7 @@ multi.c:
   concerned with. If you want to remove multiconnectivity from gaim,
   all you would really need to do is comment out any lines that make
   reference to this function (there are only two - one in aim.c and one
-  in buddy.c). The login window UI would have to be changed but it would
-  be simple to take an old version of gaim and copy code (it won't drop-in
-  because there were other changes, but it should be simple to hand-edit).
+  in buddy.c). Or you could just run ./configure --disable-multi.
 
 network.c:
   This has two functions: get_address and connect_address, both of which
@@ -229,6 +218,12 @@ prefs.c:
   preferences. It's very simple, and if you look at a couple of the
   calls to gaim_button you'll figure it out right away.
 
+prpl.c:
+  This file is what lets gaim dynamically load protocols, sort of. All of
+  the actual dlopen(), dlsym() stuff is in plugins.c. But this contains
+  all of the functions that the protocol plugin needs to call, and manages
+  all of the protocols. It's a pretty simple file actually.
+
 proxy.c:
   This is where the bulk of the actual networking code is done. The big
   function here is proxy_connect, which will connect through the proxy
@@ -247,11 +242,11 @@ server.c:
   serv_got_update. Most of it should be pretty self-explanatory.
 
 sound.c:
-  The big important function is play_sound, which plays one of 4 (actually
-  6) sounds. One of the sounds is called in 3 different events, which
-  is why there are actually 6 sounds. This then calls play which then
-  checks for esd, then nas if that's not available, then falls back
-  to /dev/audio.
+  The main function in this file is play_sound, which plays one of 8
+  (maybe 9?) sounds based on preferences. All that the rest of the
+  code should have to do is call play_sound(BUDDY_ARRIVE), for example,
+  and this file will take care of determining if a sound should be played
+  and which file should be played.
 
 ticker.c:
   Syd is just so cool. I really can't get over it. He let me come

@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1042 $"
+#define REVISION "gaim:$Revision: 1048 $"
 
 struct toc_data {
 	int toc_fd;
@@ -1165,6 +1165,9 @@ void toc_init(struct prpl *ret) {
         ret->remove_buddy = toc_remove_buddy;
         ret->add_permit = NULL; /* FIXME */
         ret->add_deny = NULL;
+	ret->rem_permit = NULL;
+	ret->rem_deny = NULL;
+	ret->set_permit_deny = NULL;
         ret->warn = toc_warn;
         ret->accept_chat = toc_accept_chat;
         ret->join_chat = toc_join_chat;

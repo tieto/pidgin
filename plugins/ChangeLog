@@ -10,7 +10,10 @@ version 0.11.0:
 	Look at the updates SIGNALS file to see what the new arguments passed
 	to your handlers are. In some cases the only change necessary will be
 	to modify the function declaration; in many cases the changes will be
-	much more substantial.
+	much more substantial. The only thing really to say here is that there
+	is no more event_blist_update. This event may make a comeback, but
+	that seems doubtful at this point. The good news is that you shouldn't
+	need it anymore anyway.
 
 	The new system allows for protocol plugins. New protocols (including
 	Yahoo, MSN, IRC, ICQ, etc) can be loaded dynamically. However, most

@@ -353,18 +353,21 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		switch (sess->logininfo.errorcode) {
 		case 0x18:
 			/* connecting too frequently */
-			do_error_dialog(_("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."), _("Gaim - Error"));
+			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			plugin_event(event_error, (void *)983, 0, 0, 0);
 			break;
 		case 0x05:
 			/* Incorrect nick/password */
-			do_error_dialog(_("Incorrect nickname or password."), _("Gaim - Error"));
+			hide_login_progress(gc, _("Incorrect nickname or password."));
 			plugin_event(event_error, (void *)980, 0, 0, 0);
 			break;
 		case 0x1c:
 			/* client too old */
-			do_error_dialog(_("The client version you are using is too old. Please upgrade at http://www.marko.net/gaim/"), _("Gaim - Error"));
+			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at http://www.marko.net/gaim/"));
 			plugin_event(event_error, (void *)989, 0, 0, 0);
+			break;
+		default:
+			hide_login_progress(gc, _("Authentication Failed"));
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -376,8 +379,6 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
-		gdk_input_remove(gc->inpa);
-		hide_login_progress(gc, _("Authentication Failed"));
 		signoff(gc);
 		return 0;
 	}
@@ -1395,6 +1396,9 @@ void oscar_init(struct prpl *ret) {
 	ret->remove_buddy = oscar_remove_buddy;
 	ret->add_permit = NULL; /* Oscar's permit/deny stuff is messed up */
 	ret->add_deny = NULL; /* at least, i can't figure it out :-P */
+	ret->rem_permit = NULL;
+	ret->rem_deny = NULL;
+	ret->set_permit_deny = NULL;
 	ret->warn = oscar_warn;
 	ret->accept_chat = NULL; /* oscar doesn't have accept, it just joins */
 	ret->join_chat = oscar_join_chat;
