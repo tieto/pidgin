@@ -92,6 +92,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "SimpChinese"
   !insertmacro MUI_LANGUAGE "Serbian"
   !insertmacro MUI_LANGUAGE "PortugueseBR"
+  !insertmacro MUI_LANGUAGE "Hungarian"
 
 ;--------------------------------
 ;Translations
@@ -103,16 +104,19 @@ SetDateSave on
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
 
 ;--------------------------------
 ;Data
   
-  LicenseData /LANG=${LANG_ENGLISH}	"./COPYING"
-  LicenseData /LANG=${LANG_GERMAN}	"./COPYING"
-  LicenseData /LANG=${LANG_DUTCH}	"./COPYING"
-  LicenseData /LANG=${LANG_FRENCH}	"./COPYING"
-  LicenseData /LANG=${LANG_SIMPCHINESE} "./COPYING"
-  LicenseData /LANG=${LANG_SERBIAN}	"./COPYING"
+  LicenseData /LANG=${LANG_ENGLISH}		"./COPYING"
+  LicenseData /LANG=${LANG_GERMAN}		"./COPYING"
+  LicenseData /LANG=${LANG_DUTCH}		"./COPYING"
+  LicenseData /LANG=${LANG_FRENCH}		"./COPYING"
+  LicenseData /LANG=${LANG_SIMPCHINESE} 	"./COPYING"
+  LicenseData /LANG=${LANG_SERBIAN}		"./COPYING"
+  LicenseData /LANG=${LANG_PORTUGUESEBR}	"./COPYING"
+  LicenseData /LANG=${LANG_HUNGARIAN}		"./COPYING"
 
 ;--------------------------------
 ;Reserve Files
