@@ -727,7 +727,9 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                         if (x == NEW_HR_BIT) { \
                                  GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter); \
                                  GtkWidget *sep = gtk_hseparator_new(); \
-                                 gtk_widget_set_size_request(GTK_WIDGET(sep), 5000, 2); \
+                                 GdkRectangle rect; \
+                                 gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect); \
+                                 gtk_widget_set_size_request(GTK_WIDGET(sep), rect.width, 2); \
                                  gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), sep, anchor); \
                                  gtk_widget_show(sep); \
                         } \
