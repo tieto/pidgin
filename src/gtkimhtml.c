@@ -95,7 +95,7 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 		x++;
 	}
 	
-	t->image = path;
+	t->image = g_strdup(path);
 }
 
 gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
