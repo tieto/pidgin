@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gaim-remote gestures perl tcl ticker
+DIST_SUBDIRS = docklet gaim-remote gestures perl ssl tcl ticker
 
 if USE_PERL
 PERL_DIR = perl
@@ -45,7 +45,7 @@ timestamp_la_SOURCES   = timestamp.c
 endif # PLUGINS
 
 EXTRA_DIST = \
-	ChangeLog HOWTO SIGNALS \
+	ChangeLog HOWTO \
 	filectl.c \
 	mailchk.c \
 	gtik.c \
