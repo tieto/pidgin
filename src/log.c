@@ -8,6 +8,10 @@
 #include "prpl.h"
 #include <sys/stat.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 void rm_log(struct log_conversation *a)
 {
 	struct conversation *cnv = find_conversation(a->name);
