@@ -3,13 +3,9 @@ SUFFIXES = .c .so
 .c.so:
 	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) $(PLUGIN_LIBS)
-	rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	if test -f .libs/libtmp$@.so ; then \
-		cp .libs/libtmp$@.so $@ ; \
-	elif test -f .libs/libtmp$@.so.0.0 ; then \
-		cp .libs/libtmp$@.so.0.0 $@ ; \
-	fi
-	rm -f .libs/libtmp$@.*
+	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
+	@cp .libs/libtmp$@.so $@
+	@rm -f .libs/libtmp$@.*
 
 if PLUGINS
 
@@ -20,7 +16,7 @@ plugin_DATA = autorecon.so chatlist.so iconaway.so lagmeter.so notify.so spellch
 $(plugin_DATA): $(top_srcdir)/src/gaim.h
 
 clean distclean:
-	$(RM) $(plugin_DATA)
+	rm -rf $(plugin_DATA) .libs
 
 else
 
