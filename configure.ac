@@ -1080,6 +1080,7 @@ AC_OUTPUT([Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
 		   pixmaps/smileys/default/Makefile
+		   pixmaps/smileys/none/Makefile
 		   pixmaps/status/Makefile
 		   pixmaps/status/default/Makefile
 		   plugins/Makefile

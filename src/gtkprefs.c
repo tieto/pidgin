@@ -719,7 +719,7 @@ GtkWidget *font_page() {
 	imhtml = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), TRUE);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
-	gtk_imhtml_set_whole_buffer_formatting_only(imhtml, TRUE);
+	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 
 	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(imhtml),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
@@ -731,6 +731,18 @@ GtkWidget *font_page() {
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), "This is preview text", 0);
 	gtk_container_add(GTK_CONTAINER(sw), imhtml);
 	
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
+
+	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"));
+	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+
 	gtk_widget_show_all(ret);
 	return ret;
 }
