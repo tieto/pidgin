@@ -550,20 +550,15 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimBuddy *buddy = gaim_find_buddy(irc->account, name);
-	GaimPresence *presence;
 
 	if (!gc || !buddy)
 		return;
 
-	presence = gaim_buddy_get_presence(buddy);
-
 	if (ib->online && !ib->flag) {
-		gaim_presence_switch_status(presence, "online");
+		gaim_prpl_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
-	}
-
-	if (!ib->online && ib->flag) {
-		gaim_presence_switch_status(presence, "offline");
+	} else if (!ib->online && ib->flag) {
+		gaim_prpl_got_user_status(irc->account, name, "online", NULL);
 		ib->online = TRUE;
 	}
 }
