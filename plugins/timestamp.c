@@ -44,7 +44,8 @@ static GSList *timestamp_timeouts = NULL;
 static gboolean do_timestamp (gpointer data)
 {
 	GaimConversation *c = (GaimConversation *)data;
-	char *buf;
+	GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
+	GtkTextIter iter;
 	char mdate[6];
 	int is_conversation_active;
 	time_t tim = time(NULL);
@@ -56,11 +57,11 @@ static gboolean do_timestamp (gpointer data)
 	is_conversation_active = GPOINTER_TO_INT(gaim_conversation_get_data(c, "timestamp-conv-active"));
 	
 	if (is_conversation_active){
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(conv->imhtml));
+		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gaim_conversation_set_data(c, "timestamp-conv-active", GINT_TO_POINTER(FALSE));
 		strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
-		buf = g_strdup_printf("            %s", mdate);
-		gaim_conversation_write(c, NULL, buf, GAIM_MESSAGE_NO_LOG, tim);
-		g_free(buf);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
 	}
 	else
 		gaim_conversation_set_data(c, "timestamp-enabled", GINT_TO_POINTER(FALSE));
@@ -103,18 +104,25 @@ timestamp_receiving_msg(GaimAccount *account, char **sender, char **buffer,
 
 static void timestamp_new_convo(GaimConversation *conv)
 {
+	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
+	
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return;
 	
+	gtk_imhtml_show_comments(GTK_IMHTML(c->imhtml), FALSE);
+
 	/*
 	This if statement stops conversations that have already been initialized for timestamps
 	from being reinitialized.  This prevents every active conversation from immediately being spammed
 	with a new timestamp when the user modifies the timer interval.
 	*/
 	if (!gaim_conversation_get_data(conv, "timestamp-initialized")){
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(c->imhtml));
 		gaim_conversation_set_data(conv, "timestamp-initialized", GINT_TO_POINTER(TRUE));
 		gaim_conversation_set_data(conv, "timestamp-enabled", GINT_TO_POINTER(TRUE));
 		gaim_conversation_set_data(conv, "timestamp-conv-active", GINT_TO_POINTER(TRUE));
+		gtk_text_buffer_create_tag (buffer, "TIMESTAMP", "foreground", "#888888", "justification", GTK_JUSTIFY_CENTER, 
+					    "weight", PANGO_WEIGHT_BOLD, NULL);
 		do_timestamp(conv);
 	}
 
@@ -235,6 +243,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
+	GList *cnvs;
 	void *conv_handle = gaim_conversations_get_handle();
 
 	gaim_signal_disconnect(conv_handle, "conversation-created",
@@ -245,6 +254,13 @@ plugin_unload(GaimPlugin *plugin)
 					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg));
 	
 	destroy_timer_list();
+
+	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
+		GaimConversation *c = cnvs->data;
+		GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
+		gtk_imhtml_show_comments(GTK_IMHTML(conv->imhtml), TRUE);
+	}
+
 	return TRUE;
 }
 

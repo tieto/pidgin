@@ -1031,4 +1031,5 @@ void gaim_prefs_update_old() {
 	gaim_prefs_remove("/core/conversations/chat/show_join");
 	gaim_prefs_remove("/core/conversations/chat/show_leave");
 	gaim_prefs_remove("/core/conversations/combine_chat_im");
+	gaim_prefs_remove("/core/conversations/use_alias_for_title");
 }

@@ -96,31 +96,6 @@ static void _gaim_blist_hbuddy_free_key(struct _gaim_hbuddy *hb)
 	g_free(hb);
 }
 
-static void blist_pref_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
-{
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *gnode, *cnode, *bnode;
-
-	if (!ops || !ops->update)
-		return;
-
-	for (gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-				for (bnode = cnode->child; bnode; bnode = bnode->next) {
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					ops->update(gaimbuddylist, bnode);
-				}
-			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-				ops->update(gaimbuddylist, cnode);
-			}
-		}
-	}
-}
-
 void gaim_contact_invalidate_priority_buddy(GaimContact *contact)
 {
 	g_return_if_fail(contact != NULL);
@@ -201,9 +176,6 @@ GaimBuddyList *gaim_blist_new()
 
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
-
-	gaim_prefs_connect_callback(gaim_blist_get_handle(), "/core/buddies/use_server_alias",
-								blist_pref_cb, NULL);
 
 	return gbl;
 }
@@ -1413,8 +1385,7 @@ const char *gaim_buddy_get_alias_only(GaimBuddy *buddy)
 	if ((buddy->alias != NULL) && (*buddy->alias != '\0')) {
 		return buddy->alias;
 	} else if ((buddy->server_alias != NULL) &&
-			   (*buddy->server_alias != '\0') &&
-			   (gaim_prefs_get_bool("/core/buddies/use_server_alias"))) {
+		   (*buddy->server_alias != '\0')) {
 
 		return buddy->server_alias;
 	}
@@ -1458,8 +1429,7 @@ const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 		return buddy->alias;
 
 	/* The server alias, if preferences say so */
-	if ((buddy->server_alias) && (*buddy->server_alias) &&
-			(gaim_prefs_get_bool("/core/buddies/use_server_alias")))
+	if ((buddy->server_alias) && (*buddy->server_alias))
 		return buddy->server_alias;
 
 	/* The buddy's user name (i.e. no alias) */

@@ -3778,8 +3778,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* Setup gtkihmtml. */
 	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
 	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
 	gtk_widget_show(frame);
 
@@ -3967,8 +3966,7 @@ setup_im_pane(GaimConversation *conv)
 	/* Setup the gtkimhtml widget */
 	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -4355,11 +4353,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		else
 			gtk_widget_hide(gtkconv->toolbar);
 
-		gtkconv->show_timestamps = gaim_prefs_get_bool(
-				"/gaim/gtk/conversations/show_timestamps");
-
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-				gtkconv->show_timestamps);
+		gtkconv->show_timestamps = TRUE;
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
 								 G_CALLBACK(gtk_widget_grab_focus),
@@ -4717,12 +4712,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	}
 
 	if (flags & GAIM_MESSAGE_SYSTEM) {
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
-			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
+		g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
 				   mdate, message);
-		else
-			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
-
+	
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib, mdate, message);
@@ -4734,12 +4726,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		conv->history = g_string_append(conv->history, "<BR>\n");
 
 	} else if (flags & GAIM_MESSAGE_ERROR) {
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
-			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
+		g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
 				   mdate, message);
-		else
-			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><B>%s</B></FONT>", message);
-
+		
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib, mdate, message);
@@ -4820,17 +4809,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if(who_escaped)
 				g_free(who_escaped);
 		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
-			g_snprintf(buf, BUF_LONG,
+		g_snprintf(buf, BUF_LONG,
 				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\">(%s)</FONT> "
 				   "<B>%s</B></FONT> ", color,
 				   sml_attrib ? sml_attrib : "", mdate, str);
-		else
-			g_snprintf(buf, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s><B>%s</B></FONT> ", color,
-				   sml_attrib ? sml_attrib : "", str);
-
+		
 		g_snprintf(buf2, BUF_LONG,
 			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 			   "<B>%s</B></FONT> ",
@@ -5659,26 +5642,6 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-show_timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
-						gpointer data)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), (gboolean)GPOINTER_TO_INT(value));
-	}
-}
-
-static void
 spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 				   gpointer data)
 {
@@ -5841,7 +5804,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
 #if 1
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_colors", FALSE);
@@ -5883,8 +5845,6 @@ gaim_gtk_conversations_init(void)
 								escape_closes_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_timestamps",
-								show_timestamps_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_formatting_toolbar",
 								show_formatting_toolbar_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/spellcheck",

@@ -45,6 +45,8 @@ version 2.0.0
 	* Removed "Show alias in tabs/titles," default to "Yes".
 	* Removed "Show formatting toolbars," made the option in the
 	  conversation menu affect the global preference.
+	* Removed "Show timestamps," defaulted to yes but made timestamp plugin
+	  override this.
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:

@@ -755,8 +755,6 @@ GtkWidget *messages_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	gaim_gtk_prefs_checkbox(_("Show _timestamp on messages"),
-			"/gaim/gtk/conversations/show_timestamps", vbox);
 #ifdef USE_GTKSPELL
 	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
@@ -2354,7 +2352,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
-	gaim_prefs_remove("/core/conversations/use_alias_for_title");
+	gaim_prefs_remove("/gaim/gtk/conversations/show_timestamps");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
