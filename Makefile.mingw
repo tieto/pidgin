@@ -146,9 +146,11 @@ install: all
 	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
 	cp -R $(GTK_TOP)/etc $(GAIM_INSTALL_DIR)
-	cp $(GTKRC_TOP)/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
+	mkdir -p $(GAIM_INSTALL_DIR)/share/themes/NativeWin/gtk-2.0
+	cp $(GTKRC_TOP)/nativewin.gtkrc $(GAIM_INSTALL_DIR)/share/themes/NativeWin/gtk-2.0/gtkrc
 	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
 	cp $(GTKRC_ENGINES) $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
+	cp $(GAIM_SRC)/win32/themes/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
 
 installer:
 	makensis.exe gaim-installer.nsi
