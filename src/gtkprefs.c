@@ -77,7 +77,8 @@ static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
 
-static guint browser_pref_id = 0;
+static guint browser_pref1_id = 0;
+static guint browser_pref2_id = 0;
 static guint proxy_pref_id = 0;
 static guint sound_pref_id = 0;
 static guint auto_resp_pref_id = 0;
@@ -323,7 +324,8 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_away_store = NULL;
 
 	/* Unregister callbacks. */
-	gaim_prefs_disconnect_callback(browser_pref_id);
+	gaim_prefs_disconnect_callback(browser_pref1_id);
+	gaim_prefs_disconnect_callback(browser_pref2_id);
 	gaim_prefs_disconnect_callback(proxy_pref_id);
 	gaim_prefs_disconnect_callback(sound_pref_id);
 	gaim_prefs_disconnect_callback(auto_resp_pref_id);
@@ -1319,7 +1321,17 @@ static GList *get_available_browsers()
 }
 
 static void
-browser_changed_cb(const char *name, GaimPrefType type, gpointer value,
+browser_changed1_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *hbox = data;
+	const char *browser = value;
+
+	gtk_widget_set_sensitive(hbox, strcmp(browser, "custom"));
+}
+
+static void
+browser_changed2_cb(const char *name, GaimPrefType type, gpointer value,
 				   gpointer data)
 {
 	GtkWidget *hbox = data;
@@ -1348,9 +1360,25 @@ GtkWidget *browser_page() {
 		label = gaim_gtk_prefs_dropdown_from_list(vbox,_("_Browser:"), GAIM_PREF_STRING,
 										 "/gaim/gtk/browsers/browser",
 										 browsers);
-
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_size_group_add_widget(sg, label);
+
+		hbox = gtk_hbox_new(FALSE, 0);
+		label = gaim_gtk_prefs_dropdown(hbox, _("_Open link in:"), GAIM_PREF_INT,
+			"/gaim/gtk/browsers/place",
+			_("Browser default"), GAIM_BROWSER_DEFAULT,
+			_("Existing window"), GAIM_BROWSER_CURRENT,
+			_("New window"), GAIM_BROWSER_NEW_WINDOW,
+			_("New tab"), GAIM_BROWSER_NEW_TAB,
+			NULL);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_size_group_add_widget(sg, label);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+		if (!strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
+			gtk_widget_set_sensitive(hbox, FALSE);
+		browser_pref1_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
+													  browser_changed1_cb, hbox);
 	}
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -1365,8 +1393,8 @@ GtkWidget *browser_page() {
 
 	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
-	browser_pref_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
-												  browser_changed_cb, hbox);
+	browser_pref2_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
+												  browser_changed2_cb, hbox);
 
 	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
@@ -1375,17 +1403,6 @@ GtkWidget *browser_page() {
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
 	gaim_set_accessible_label (entry, label);
-
-	if (browsers != NULL) {
-		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
-		gaim_gtk_prefs_dropdown(vbox, _("_Open link in:"), GAIM_PREF_INT,
-			"/gaim/gtk/browsers/place",
-			_("Browser default"), GAIM_BROWSER_DEFAULT,
-			_("Existing window"), GAIM_BROWSER_CURRENT,
-			_("New window"), GAIM_BROWSER_NEW_WINDOW,
-			_("New tab"), GAIM_BROWSER_NEW_TAB,
-			NULL);
-	}
 
 	gtk_widget_show_all(ret);
 	return ret;

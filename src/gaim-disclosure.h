@@ -23,6 +23,8 @@
 #ifndef __GAIM_DISCLOSURE_H__
 #define __GAIM_DISCLOSURE_H__
 
+#include "eventloop.h"
+
 #include <gtk/gtkcheckbutton.h>
 
 #ifdef __cplusplus
