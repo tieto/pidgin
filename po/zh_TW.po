@@ -2990,11 +2990,10 @@ msgstr "儲存影像"
 msgid "_Save Image..."
 msgstr "儲存影像(_S)..."
 
-# XXX 這很不通順，但很難把它譯成通順的中文（或日文，或芬蘭文）
-# XXX deryni知道了，但大概不會有改善 :-(
+# NOTE 這個處理的手法係由芬蘭文現任譯者Arto Alakulju提供的
 #: src/gtklog.c:184
 msgid "Conversations with"
-msgstr "與右列使用者的交談"
+msgstr "交談："
 
 #: src/gtknotify.c:211
 #, c-format
@@ -7662,7 +7661,7 @@ msgstr "酷連結(三)"
 # TODO 譯文有待改進
 #: src/protocols/yahoo/yahoo.c:2793
 msgid "Member Since"
-msgstr "自右列日期起為成員"
+msgstr "成為成員的時間"
 
 #. *< api_version
 #. *< type
