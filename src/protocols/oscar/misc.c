@@ -651,7 +651,7 @@ faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t 
 
 	data = 0x00030000 | status; /* yay for error checking ;^) */
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);

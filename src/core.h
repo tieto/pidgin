@@ -35,11 +35,8 @@
 
 #include "multi.h"
 
-#define UC_AOL		1
-#define UC_ADMIN 	2
-#define UC_UNCONFIRMED	4
-#define UC_NORMAL	8
-#define UC_UNAVAILABLE  16
+/* Really user states are controlled by the PRPLs now. We just use this for event_away */
+#define UC_UNAVAILABLE  1
 
 struct aim_user {
 	char username[64];

@@ -383,7 +383,7 @@ void do_away_menu()
 				con = g_slist_next(con);
 			}
 
-			tmp = msgs = (*gc->prpl->away_states)();
+			tmp = msgs = (*gc->prpl->away_states)(gc);
 
 			if ((g_list_length(msgs) == 1) && !strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
 				awy = away_messages;
@@ -459,7 +459,7 @@ void do_away_menu()
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 				gtk_widget_show(submenu);
 
-				tmp = msgs = (*gc->prpl->away_states)();
+				tmp = msgs = (*gc->prpl->away_states)(gc);
 
 				if ((g_list_length(msgs) == 1) &&
 				    (!strcmp(msgs->data, GAIM_AWAY_CUSTOM))) {

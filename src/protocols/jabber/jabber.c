@@ -65,10 +65,10 @@
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
 
-#define UC_AWAY 0x38
-#define UC_CHAT 0x48
-#define UC_XA   0x98
-#define UC_DND  0x118
+#define UC_AWAY (0x02 | UC_UNAVAILABLE)
+#define UC_CHAT  0x04
+#define UC_XA   (0x08 | UC_UNAVAILABLE)
+#define UC_DND  (0x10 | UC_UNAVAILABLE)
 
 #define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
@@ -700,7 +700,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	char *buddy;
 	xmlnode y;
 	char *show;
-	int state = UC_NORMAL;
+	int state = 0;
 	GSList *resources;
 	char *res;
 	struct conversation *cnv = NULL;
@@ -713,7 +713,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	if ((y = xmlnode_get_tag(p->x, "show"))) {
 		show = xmlnode_get_data(y);
 		if (!show) {
-			state = UC_NORMAL;
+			state = 0;
 		} else if (!strcasecmp(show, "away")) {
 			state = UC_AWAY;
 		} else if (!strcasecmp(show, "chat")) {
@@ -724,7 +724,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 			state = UC_DND;
 		}
 	} else {
-		state = UC_NORMAL;
+		state = 0;
 	}
 
 	who = jid_new(j->p, from);
@@ -1647,7 +1647,7 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 	return m;
 }
 
-static GList *jabber_away_states() {
+static GList *jabber_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
 	m = g_list_append(m, "Online");

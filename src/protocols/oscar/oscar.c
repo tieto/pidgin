@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,7 +43,6 @@
 #include "aim.h"
 #include "proxy.h"
 
-/*#include "pixmaps/cancel.xpm"*/
 #include "pixmaps/ab.xpm"
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
@@ -50,11 +50,31 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
+#include "pixmaps/gnomeicu-online.xpm"
+#include "pixmaps/gnomeicu-offline.xpm"
+#include "pixmaps/gnomeicu-away.xpm"
+#include "pixmaps/gnomeicu-dnd.xpm"
+#include "pixmaps/gnomeicu-na.xpm"
+#include "pixmaps/gnomeicu-occ.xpm"
+#include "pixmaps/gnomeicu-ffc.xpm"
+
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
 
-#define UC_AB 32
+#define UC_AOL		0x02
+#define UC_ADMIN	0x04
+#define UC_UNCONFIRMED	0x08
+#define UC_NORMAL	0x10
+#define UC_AB		0x20
+
+#define ICQ_ONLINE	0x0000
+#define ICQ_AWAY	0x0001
+#define ICQ_DND		0x0002
+#define ICQ_NA		0x0004
+#define ICQ_OCCUPIED	0x0010
+#define ICQ_CHAT	0x0020
+#define ICQ_INVISIBLE	0x0100
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -83,7 +103,8 @@ struct oscar_data {
 	GSList *direct_ims;
 	GSList *hasicons;
 
-        gboolean killme;
+	gboolean killme;
+	gboolean icq;
 };
 
 struct chat_connection {
@@ -427,6 +448,8 @@ static void oscar_login(struct aim_user *user) {
 	odata->create_exchange = 0;
 
 	debug_printf(_("Logging in %s\n"), user->username);
+	if (isdigit(*user->username))
+		odata->icq = TRUE;
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -1125,6 +1148,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	time_t time_idle;
 	int type = 0;
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	char *tmp;
 
 	va_list ap;
@@ -1132,18 +1156,27 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
-		type |= UC_AB;
-	if (info->flags & AIM_FLAG_UNCONFIRMED)
-		type |= UC_UNCONFIRMED;
-	if (info->flags & AIM_FLAG_ADMINISTRATOR)
-		type |= UC_ADMIN;
-	if (info->flags & AIM_FLAG_AOL)
-		type |= UC_AOL;
-	if (info->flags & AIM_FLAG_FREE)
-		type |= UC_NORMAL;
-	if (info->flags & AIM_FLAG_AWAY)
-		type |= UC_UNAVAILABLE;
+	if (!od->icq) {
+		if (info->flags & AIM_FLAG_ACTIVEBUDDY)
+			type |= UC_AB;
+		if (info->flags & AIM_FLAG_UNCONFIRMED)
+			type |= UC_UNCONFIRMED;
+		if (info->flags & AIM_FLAG_ADMINISTRATOR)
+			type |= UC_ADMIN;
+		if (info->flags & AIM_FLAG_AOL)
+			type |= UC_AOL;
+		if (info->flags & AIM_FLAG_FREE)
+			type |= UC_NORMAL;
+		if (info->flags & AIM_FLAG_AWAY)
+			type |= UC_UNAVAILABLE;
+	} else {
+		if (info->icqinfo.status) {
+			type = (info->icqinfo.status << 6);
+			if (!(info->icqinfo.status & ICQ_CHAT))
+				type |= UC_UNAVAILABLE;
+		}
+		debug_printf("icq status: %d\n", info->icqinfo.status);
+	}
 
 	if (info->idletime) {
 		time(&time_idle);
@@ -2180,21 +2213,55 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 	aim_bos_setprofile(odata->sess, odata->conn, inforeal, g->away ? NULL : "", gaim_caps);
 }
 
-static void oscar_set_away(struct gaim_connection *g, char *state, char *message) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	char info[1025], away[1025];
-	g_snprintf(info, sizeof(info), "%s", g->user->user_info);
-	if (message)
-		g_snprintf(away, sizeof(away), "%s", message);
-	aim_bos_setprofile(odata->sess, odata->conn, NULL, message ? away : "", gaim_caps);
-	if (g->away)
-		g_free (g->away);
-	g->away = NULL;
-	if (message) {
-		if (strlen(message) > 1024)
-			do_error_dialog("Maximum away length (1024) exceeded, truncating",
-					"Info Too Long");
-		g->away = g_strdup (message);
+static void oscar_set_away(struct gaim_connection *gc, char *state, char *message) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	char away[1025];
+	if (!od->icq) {
+		if (message)
+			g_snprintf(away, sizeof(away), "%s", message);
+		aim_bos_setprofile(od->sess, od->conn, NULL, message ? away : "", gaim_caps);
+		if (gc->away)
+			g_free (gc->away);
+		gc->away = NULL;
+		if (message) {
+			if (strlen(message) > 1024)
+				do_error_dialog("Maximum away length (1024) exceeded, truncating",
+						"Info Too Long");
+			gc->away = g_strdup (message);
+		}
+		return;
+	}
+
+	if (gc->away)
+		gc->away = NULL;
+
+	if (!strcmp(state, "Online"))
+		aim_icq_setstatus(od->sess, od->conn, ICQ_ONLINE);
+	else if (!strcmp(state, "Away")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_AWAY);
+		gc->away = "";
+	} else if (!strcmp(state, "Do Not Disturb")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_DND);
+		gc->away = "";
+	} else if (!strcmp(state, "Not Available")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_NA);
+		gc->away = "";
+	} else if (!strcmp(state, "Occupied")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_OCCUPIED);
+		gc->away = "";
+	} else if (!strcmp(state, "Free For Chat")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_CHAT);
+		gc->away = "";
+	} else if (!strcmp(state, "Invisible")) {
+		aim_icq_setstatus(od->sess, od->conn, ICQ_INVISIBLE);
+		gc->away = "";
+	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+		if (message) {
+			aim_icq_setstatus(od->sess, od->conn, ICQ_NA);
+			gc->away = "";
+		} else {
+			aim_icq_setstatus(od->sess, od->conn, ICQ_ONLINE);
+		}
 	}
 }
 
@@ -2384,6 +2451,24 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 }
 
 static char **oscar_list_icon(int uc) {
+	if (uc == 0)
+		return (char **)icon_online_xpm;
+	if (uc & 0x7fc0) {
+		uc >>= 6;
+		if (uc & ICQ_AWAY)
+			return icon_away_xpm;
+		if (uc & ICQ_DND)
+			return icon_dnd_xpm;
+		if (uc & ICQ_NA)
+			return icon_na_xpm;
+		if (uc & ICQ_OCCUPIED)
+			return icon_occ_xpm;
+		if (uc & ICQ_CHAT)
+			return icon_ffc_xpm;
+		if (uc & ICQ_INVISIBLE)
+			return icon_offline_xpm;
+		return icon_online_xpm;
+	}
 	if (uc & UC_AB)
 		return (char **)ab_xpm;
 	if (uc & UC_UNAVAILABLE)
@@ -2623,9 +2708,23 @@ static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
 	oscar_set_permit_deny(gc);
 }
 
-static GList *oscar_away_states()
+static GList *oscar_away_states(struct gaim_connection *gc)
 {
-	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
+	struct oscar_data *od = gc->proto_data;
+	GList *m = NULL;
+
+	if (!od->icq)
+		return g_list_append(m, GAIM_AWAY_CUSTOM);
+
+	m = g_list_append(m, "Online");
+	m = g_list_append(m, "Away");
+	m = g_list_append(m, "Do Not Disturb");
+	m = g_list_append(m, "Not Available");
+	m = g_list_append(m, "Occupied");
+	m = g_list_append(m, "Free For Chat");
+	m = g_list_append(m, "Invisible");
+
+	return m;
 }
 
 static void oscar_do_action(struct gaim_connection *gc, char *act)

@@ -1309,7 +1309,7 @@ static int irc_chat_send(struct gaim_connection *gc, int id, char *what)
 	return 0;
 }
 
-static GList *irc_away_states()
+static GList *irc_away_states(struct gaim_connection *gc)
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }

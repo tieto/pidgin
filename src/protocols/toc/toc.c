@@ -79,6 +79,11 @@
 #define FILE_GET_UID  "09461348-4C7F-11D1-8222-444553540000"
 #define GAMES_UID     "0946134a-4C7F-11D1-8222-444553540000"
 
+#define UC_AOL		0x02
+#define UC_ADMIN	0x04
+#define UC_UNCONFIRMED	0x08
+#define UC_NORMAL	0x10
+
 struct ft_request {
 	struct gaim_connection *gc;
         char *user;
@@ -1321,7 +1326,7 @@ static void toc_rem_deny(struct gaim_connection *gc, char *who)
 	toc_set_permit_deny(gc);
 }
 
-static GList *toc_away_states()
+static GList *toc_away_states(struct gaim_connection *gc)
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }

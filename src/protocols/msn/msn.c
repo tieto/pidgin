@@ -688,7 +688,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 	} else if (!g_strncasecmp(buf, "ILN", 3)) {
 		char *state, *user, *tmp = buf;
-		int status = UC_NORMAL;
+		int status = 0;
 
 		GET_NEXT(tmp);
 
@@ -701,17 +701,17 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		GET_NEXT(tmp);
 
 		if (!g_strcasecmp(state, "BSY")) {
-			status |= (MSN_BUSY << 5);
+			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
 		} else if (!g_strcasecmp(state, "IDL")) {
-			status |= (MSN_IDLE << 5);
+			status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
 		} else if (!g_strcasecmp(state, "BRB")) {
-			status |= (MSN_BRB << 5);
+			status |= UC_UNAVAILABLE | (MSN_BRB << 1);
 		} else if (!g_strcasecmp(state, "AWY")) {
-			status = UC_UNAVAILABLE;
+			status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
 		} else if (!g_strcasecmp(state, "PHN")) {
-			status |= (MSN_PHONE << 5);
+			status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
 		} else if (!g_strcasecmp(state, "LUN")) {
-			status |= (MSN_LUNCH << 5);
+			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
@@ -804,7 +804,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		g_free(msg);
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 		char *state, *user, *tmp = buf;
-		int status = UC_NORMAL;
+		int status = 0;
 
 		GET_NEXT(tmp);
 		state = tmp;
@@ -815,17 +815,17 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		GET_NEXT(tmp);
 
 		if (!g_strcasecmp(state, "BSY")) {
-			status |= (MSN_BUSY << 5);
+			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
 		} else if (!g_strcasecmp(state, "IDL")) {
-			status |= (MSN_IDLE << 5);
+			status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
 		} else if (!g_strcasecmp(state, "BRB")) {
-			status |= (MSN_BRB << 5);
+			status |= UC_UNAVAILABLE | (MSN_BRB << 1);
 		} else if (!g_strcasecmp(state, "AWY")) {
-			status = UC_UNAVAILABLE;
+			status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
 		} else if (!g_strcasecmp(state, "PHN")) {
-			status |= (MSN_PHONE << 5);
+			status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
 		} else if (!g_strcasecmp(state, "LUN")) {
-			status |= (MSN_LUNCH << 5);
+			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
@@ -1261,7 +1261,7 @@ static void msn_chat_leave(struct gaim_connection *gc, int id)
 		msn_kill_switch(ms);
 }
 
-static GList *msn_away_states()
+static GList *msn_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 
@@ -1339,7 +1339,7 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 
 static char **msn_list_icon(int uc)
 {
-	if (uc == UC_NORMAL)
+	if (uc == 0)
 		return msn_online_xpm;
 
 	return msn_away_xpm;
@@ -1372,11 +1372,11 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	struct buddy *b = find_buddy(gc, who);
 	static char buf[MSN_BUF_LEN];
 
-	if (!b || !(b->uc >> 5))
+	if (!b || !(b->uc >> 1))
 		return m;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
-	g_snprintf(buf, sizeof(buf), "Status: %s", msn_get_away_text(b->uc >> 5));
+	g_snprintf(buf, sizeof(buf), "Status: %s", msn_get_away_text(b->uc >> 1));
 	pbm->label = buf;
 	pbm->callback = NULL;
 	pbm->gc = gc;

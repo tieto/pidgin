@@ -796,7 +796,7 @@ static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = g_strdup(msg);
 }
 
-static GList *zephyr_away_states()
+static GList *zephyr_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 

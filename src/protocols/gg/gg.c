@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2436 2001-10-04 05:45:18Z warmenhoven $
+ * $Id: gg.c 2514 2001-10-14 11:36:36Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -69,6 +69,8 @@
 #define AGG_STATUS_INVISIBLE          _("Invisible")
 #define AGG_STATUS_INVISIBLE_FRIENDS  _("Invisible for friends only")
 #define AGG_STATUS_NOT_AVAIL          _("Unavailable")
+
+#define UC_NORMAL 2
 
 struct agg_data {
 	struct gg_session *sess;
@@ -299,7 +301,7 @@ static gchar *get_away_text(int uc)
 	}
 }
 
-static GList *agg_away_states()
+static GList *agg_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 

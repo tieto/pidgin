@@ -133,7 +133,7 @@ static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 	char buf[256];
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
-	status = (st == STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE | (st << 5);
+	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
 	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
@@ -149,7 +149,7 @@ static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st)
 	char buf[256];
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
-	status = (st == STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE | (st << 5);
+	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
 	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
@@ -400,9 +400,9 @@ static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 
 static char **icq_list_icon(int uc) {
 	guint status;
-	if (uc == UC_NORMAL)
+	if (uc == 0)
 		return icon_online_xpm;
-	status = uc >> 5;
+	status = uc >> 1;
 	if (status & STATUS_NA)
 		return icon_na_xpm;
 	if (status & STATUS_DND)
@@ -453,7 +453,7 @@ static GList *icq_user_opts() {
 	return m;
 }
 
-static GList *icq_away_states() {
+static GList *icq_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
 	m = g_list_append(m, "Online");

@@ -85,7 +85,7 @@ struct prpl {
 
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
-	GList *(* away_states)();
+	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)();
 	void   (* do_action)(struct gaim_connection *, char *);
 	/* user_opts returns a GList* of g_malloc'd struct proto_user_opts */

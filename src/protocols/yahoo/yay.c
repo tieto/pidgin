@@ -107,14 +107,12 @@ static int yahoo_status(struct yahoo_session *sess, ...) {
 		serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 	else {
 		if (status == YAHOO_STATUS_AVAILABLE)
-			serv_got_update(gc, b->name, 1, 0, 0, 0, UC_NORMAL, 0);
+			serv_got_update(gc, b->name, 1, 0, 0, 0, 0, 0);
 		else if (status == YAHOO_STATUS_IDLE) {
 			time(&tmptime);
-			serv_got_update(gc, b->name, 1, 0, 0, tmptime - 600,
-					(status << 5) | UC_NORMAL, 0);
+			serv_got_update(gc, b->name, 1, 0, 0, tmptime - 600, (status << 1), 0);
 		} else
-			serv_got_update(gc, b->name, 1, 0, 0, 0,
-					(status << 5) | UC_UNAVAILABLE, 0);
+			serv_got_update(gc, b->name, 1, 0, 0, 0, (status << 1) | UC_UNAVAILABLE, 0);
 		if (status == YAHOO_STATUS_CUSTOM) {
 			gpointer val = g_hash_table_lookup(yd->hash, b->name);
 			if (val)
@@ -545,9 +543,9 @@ static void gyahoo_remove_buddy(struct gaim_connection *gc, char *name) {
 }
 
 static char **yahoo_list_icon(int uc) {
-	if ((uc >> 5) == YAHOO_STATUS_IDLE)
+	if ((uc >> 1) == YAHOO_STATUS_IDLE)
 		return status_idle_xpm;
-	else if (uc == UC_NORMAL)
+	else if (uc == 0)
 		return status_here_xpm;
 	return status_away_xpm;
 }
@@ -585,12 +583,12 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who) {
 						  segfault and get the bug report. */
 	static char buf[1024];
 
-	if (b->uc & UC_NORMAL)
+	if (!(b->uc & UC_UNAVAILABLE))
 		return NULL;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
-	if ((b->uc >> 5) != YAHOO_STATUS_CUSTOM)
-		g_snprintf(buf, sizeof buf, "Status: %s", yahoo_get_status_string(b->uc >> 5));
+	if ((b->uc >> 1) != YAHOO_STATUS_CUSTOM)
+		g_snprintf(buf, sizeof buf, "Status: %s", yahoo_get_status_string(b->uc >> 1));
 	else
 		g_snprintf(buf, sizeof buf, "Custom Status: %s",
 			   (char *)g_hash_table_lookup(yd->hash, b->name));
@@ -602,7 +600,7 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who) {
 	return m;
 }
 
-static GList *yahoo_away_states() {
+static GList *yahoo_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
 	m = g_list_append(m, "Available");

@@ -49,6 +49,7 @@ EXTRA_DIST =	ab.xpm				\
 		gnomeicu-ffc.xpm		\
 		gnomeicu-na.xpm			\
 		gnomeicu-occ.xpm		\
+		gnomeicu-offline.xpm		\
 		gnomeicu-online.xpm		\
 		group.xpm			\
 		import_small.xpm		\
