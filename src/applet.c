@@ -448,7 +448,11 @@ gint init_applet_mgr(int argc, char *argv[])
 		pm = gdk_pixmap_create_from_xpm_d(applet->window, NULL,
 				&applet->style->bg[GTK_WIDGET_STATE(applet)], aimicon_xpm);
 	icon = gtk_pixmap_new(pm, NULL);
-	gtk_widget_set_usize(icon, sizehint, sizehint);
+#ifdef HAVE_PANEL_PIXEL_SIZE
+	gtk_widget_set_usize(icon, 5, 5);
+#else
+	gtk_widget_set_usize(icon, 48, 48);
+#endif
 	gdk_pixmap_unref(pm);
 	applet_widget_add(APPLET_WIDGET(applet), icon);
 
