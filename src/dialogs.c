@@ -1994,11 +1994,16 @@ void show_add_perm(char *who)
 	GdkPixmap *icon;
 	GtkWidget *icon_i;
 	GtkWidget *button_box;
-
+	GtkWidget *frame;
+	
 	struct addperm *p = g_new0(struct addperm, 1);
 
         p->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(p->window), 5);
+	gtk_widget_set_usize(p->window, 310, 130);
+	gtk_window_set_policy(GTK_WINDOW(p->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(p->window);
+
 	dialogwindows = g_list_prepend(dialogwindows, p->window);
 
 	bbox = gtk_hbox_new(TRUE, 10);
@@ -2006,6 +2011,8 @@ void show_add_perm(char *who)
         vbox = gtk_vbox_new(FALSE, 5);
         rbox = gtk_vbox_new(FALSE, 5);
         p->entry = gtk_entry_new();
+
+	frame = gtk_frame_new(_("Permit / Deny"));
 
 	/* Build Add Button */
 
@@ -2080,6 +2087,7 @@ void show_add_perm(char *who)
         /* And the boxes in the box */
         gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
         gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 
         p->buttons = gtk_radio_button_group(GTK_RADIO_BUTTON(which));
@@ -2101,9 +2109,10 @@ void show_add_perm(char *who)
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
         gtk_widget_show(rbox);
+	gtk_widget_show(frame);
         gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit/Deny"));
         gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
-        gtk_container_add(GTK_CONTAINER(p->window), vbox);
+        gtk_container_add(GTK_CONTAINER(p->window), frame);
         gtk_widget_realize(p->window);
         aol_icon(p->window->window);
 
