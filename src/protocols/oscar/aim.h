@@ -38,7 +38,7 @@
 /* XXX adjust these based on autoconf-detected platform */
 typedef unsigned char fu8_t;
 typedef unsigned short fu16_t;
-typedef unsigned long fu32_t;
+typedef unsigned int fu32_t;
 typedef fu32_t aim_snacid_t;
 typedef fu16_t flap_seqnum_t;
 
@@ -342,7 +342,7 @@ typedef struct aim_frame_s {
 } aim_frame_t;
 
 typedef struct aim_msgcookie_s {
-	unsigned char cookie[8];
+	fu8_t cookie[8];
 	int type;
 	void *data;
 	time_t addtime;
@@ -524,7 +524,7 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
-faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest);
+faim_export int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest);
 faim_export void aim_purge_rxqueue(aim_session_t *);
 faim_export void aim_cleansnacs(aim_session_t *, int maxage);
 
@@ -554,7 +554,7 @@ faim_export int aim_conn_isconnecting(aim_conn_t *conn);
 
 typedef void (*faim_debugging_callback_t)(aim_session_t *sess, int level, const char *format, va_list va);
 faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t);
-faim_export void aim_session_init(aim_session_t *, unsigned long flags, int debuglevel);
+faim_export void aim_session_init(aim_session_t *, fu32_t flags, int debuglevel);
 faim_export void aim_session_kill(aim_session_t *);
 faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password);
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
@@ -596,7 +596,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status);
 #define AIM_CLIENTTYPE_WINAIM   0x0002
 #define AIM_CLIENTTYPE_WINAIM41 0x0003
 #define AIM_CLIENTTYPE_AOL_TOC  0x0004
-faim_export unsigned short aim_im_fingerprint(unsigned char *msghdr, int len);
+faim_export unsigned short aim_im_fingerprint(const fu8_t *msghdr, int len);
 
 #define AIM_RATE_CODE_CHANGE     0x0001
 #define AIM_RATE_CODE_WARNING    0x0002
@@ -647,9 +647,9 @@ struct aim_icbmparameters {
 };
 
 struct aim_chat_roominfo {
-	unsigned short exchange;
+	fu16_t exchange;
 	char *name;
-	unsigned short instance;
+	fu16_t instance;
 };
 
 #define AIM_IMFLAGS_AWAY		0x0001 /* mark as an autoreply */
@@ -831,7 +831,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0002 */ faim_export int aim_im_setparams(aim_session_t *sess, struct aim_icbmparameters *params);
 /* 0x0004 */ faim_export int aim_im_reqparams(aim_session_t *sess);
 /* 0x0006 */ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch1(aim_session_t *, const char *destsn, unsigned short flags, const char *msg);
+/* 0x0006 */ faim_export int aim_im_sendch1(aim_session_t *, const char *destsn, fu16_t flags, const char *msg);
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
 /* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port);
@@ -841,7 +841,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type);
 /* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
-/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, unsigned short code);
+/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, fu16_t code);
 /* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2);
 
 
@@ -999,7 +999,7 @@ faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char 
 #define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
 #define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
 
-faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, unsigned long offset, unsigned long len, const unsigned char *buf, unsigned char flag);
+faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t offset, fu32_t len, const fu8_t *buf, fu8_t flag);
 
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
@@ -1029,7 +1029,7 @@ struct aim_invite_priv {
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-/* 0x0005 */ faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, unsigned short);
+/* 0x0005 */ faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, fu16_t);
 
 
 
@@ -1380,24 +1380,24 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
 
 /* Little-endian versions (damn ICQ) */
 #define aimutil_putle8(buf, data) ( \
-		(*(buf) = (unsigned char)(data) & 0xff), \
+		(*(buf) = (fu8_t)(data) & 0xff), \
 		1)
 #define aimutil_getle8(buf) ( \
 		(*(buf)) & 0xff \
 		)
 #define aimutil_putle16(buf, data) ( \
-		(*((buf)+0) = (unsigned char)((data) >> 0) & 0xff),  \
-		(*((buf)+1) = (unsigned char)((data) >> 8) & 0xff), \
+		(*((buf)+0) = (fu8_t)((data) >> 0) & 0xff),  \
+		(*((buf)+1) = (fu8_t)((data) >> 8) & 0xff), \
 		2)
 #define aimutil_getle16(buf) ( \
 		(((*((buf)+0)) << 0) & 0x00ff) + \
 		(((*((buf)+1)) << 8) & 0xff00) \
 		)
 #define aimutil_putle32(buf, data) ( \
-		(*((buf)+0) = (unsigned char)((data) >>  0) & 0xff), \
-		(*((buf)+1) = (unsigned char)((data) >>  8) & 0xff), \
-		(*((buf)+2) = (unsigned char)((data) >> 16) & 0xff), \
-		(*((buf)+3) = (unsigned char)((data) >> 24) & 0xff), \
+		(*((buf)+0) = (fu8_t)((data) >>  0) & 0xff), \
+		(*((buf)+1) = (fu8_t)((data) >>  8) & 0xff), \
+		(*((buf)+2) = (fu8_t)((data) >> 16) & 0xff), \
+		(*((buf)+3) = (fu8_t)((data) >> 24) & 0xff), \
 		4)
 #define aimutil_getle32(buf) ( \
 		(((*((buf)+0)) <<  0) & 0x000000ff) + \

@@ -76,7 +76,7 @@ static int aim_im_puticbm(aim_bstream_t *bs, const fu8_t *c, fu16_t ch, const ch
  * the rest will always be the same.
  *
  */
-faim_export fu16_t aim_im_fingerprint(fu8_t *msghdr, int len)
+faim_export fu16_t aim_im_fingerprint(const fu8_t *msghdr, int len)
 {
 	static const struct {
 		fu16_t clientid;

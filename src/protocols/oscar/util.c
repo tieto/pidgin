@@ -168,16 +168,14 @@ faim_export int aim_util_getlocalip(fu8_t *ip)
 faim_export int aim_snlen(const char *sn)
 {
 	int i = 0;
-	const char *curPtr = NULL;
 
 	if (!sn)
 		return 0;
 
-	curPtr = sn;
-	while ( (*curPtr) != (char) NULL) {
-		if ((*curPtr) != ' ')
-		i++;
-		curPtr++;
+	while (*sn != '\0') {
+		if (*sn != ' ')
+			i++;
+		sn++;
 	}
 
 	return i;
@@ -197,29 +195,25 @@ faim_export int aim_snlen(const char *sn)
 */
 faim_export int aim_sncmp(const char *sn1, const char *sn2)
 {
-	const char *curPtr1 = NULL, *curPtr2 = NULL;
 
 	if (aim_snlen(sn1) != aim_snlen(sn2))
 		return 1;
 
-	curPtr1 = sn1;
-	curPtr2 = sn2;
-	while ( (*curPtr1 != (char) NULL) && (*curPtr2 != (char) NULL) ) {
-		if ( (*curPtr1 == ' ') || (*curPtr2 == ' ') ) {
-			if (*curPtr1 == ' ')
-				curPtr1++;
-			if (*curPtr2 == ' ')
-				curPtr2++;
-		} else {
-			if ( toupper(*curPtr1) != toupper(*curPtr2))
-				return 1;
-			curPtr1++;
-			curPtr2++;
-		}
+	/* XXX - Should be able to only check if sn1 != '\0', right?  Is that faster? */
+	while ((*sn1 != '\0') && (*sn2 != '\0')) {
+		while (*sn2 == ' ')
+			*sn2++;
+		while (*sn1 == ' ')
+			*sn1++;
+		if (toupper(*sn1) != toupper(*sn2))
+			return 1;
+		sn1++;
+		sn2++;
 	}
 
 	/* Should both be NULL */
-	if (*curPtr1 != *curPtr2)
+	/* XXX - I think this check is not necessary, but I'm afeared to take it out */
+	if (*sn1 != *sn2)
 		return 1;
 
 	return 0;

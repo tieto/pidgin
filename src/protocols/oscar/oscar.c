@@ -1291,7 +1291,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug(GAIM_DEBUG_MISC, "oscar",
-			   "offset: %lu, len: %lu, file: %s\n",
+			   "offset: %u, len: %u, file: %s\n",
 			   offset, len, (modname ? modname : "aim.exe"));
 
 	if (len == 0) {
@@ -2563,7 +2563,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	switch (args->type) {
 		case 0x01: { /* MacICQ message or basic offline message */
 			if (i >= 1) {
-				gchar *uin = g_strdup_printf("%lu", args->uin);
+				gchar *uin = g_strdup_printf("%u", args->uin);
 				if (t) { /* This is an offline message */
 					/* I think this timestamp is in UTC, or something */
 					serv_got_im(gc, uin, msg2[0], 0, t, -1);
@@ -2576,7 +2576,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x04: { /* Someone sent you a URL */
 			if (i >= 2) {
-				gchar *uin = g_strdup_printf("%lu", args->uin);
+				gchar *uin = g_strdup_printf("%u", args->uin);
 				gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>", msg2[1], msg2[0]);
 				serv_got_im(gc, uin, message, 0, time(NULL), -1);
 				g_free(uin);
@@ -2587,12 +2587,12 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
-				gchar *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason:\n%s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %u wants to add you to their buddy list for the following reason:\n%s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
 				gaim_debug(GAIM_DEBUG_INFO, "oscar",
-						   "Received an authorization request from UIN %lu\n",
+						   "Received an authorization request from UIN %u\n",
 						   args->uin);
 				data->gc = gc;
-				data->name = g_strdup_printf("%lu", args->uin);
+				data->name = g_strdup_printf("%u", args->uin);
 				data->nick = NULL;
 
 				gaim_request_action(gc, NULL, _("Authorization Request"),
@@ -2607,7 +2607,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
-				gchar *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %u has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
 				gaim_notify_info(gc, NULL, _("ICQ authorization denied."),
 								 dialog_msg);
 				g_free(dialog_msg);
@@ -2615,7 +2615,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} break;
 
 		case 0x08: { /* Someone has granted you authorization */
-			gchar *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
+			gchar *dialog_msg = g_strdup_printf(_("The user %u has granted your request to add them to your contact list."), args->uin);
 			gaim_notify_info(gc, NULL, "ICQ authorization accepted.",
 							 dialog_msg);
 			g_free(dialog_msg);
@@ -2660,7 +2660,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					num = num*10 + text[0][i]-48;
 				for (i=0; i<num; i++) {
 					struct name_data *data = g_new(struct name_data, 1);
-					gchar *message = g_strdup_printf(_("ICQ user %lu has sent you a contact: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
+					gchar *message = g_strdup_printf(_("ICQ user %u has sent you a contact: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
@@ -3162,12 +3162,12 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		onlinesince = g_strdup_printf(_("Online Since : <b>%s</b><br>\n"),
-					asctime(localtime(&info->onlinesince)));
+					asctime(localtime((time_t *)&info->onlinesince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		membersince = g_strdup_printf(_("Member Since : <b>%s</b><br>\n"),
-					asctime(localtime(&info->membersince)));
+					asctime(localtime((time_t *)&info->membersince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
@@ -3314,7 +3314,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			ck = va_arg(ap, char *);
 
 			gaim_debug(GAIM_DEBUG_MISC, "oscar",
-					   "created room: %s %hu %hu %hu %lu %hu %hu %hhu %hu %s %s\n",
+					   "created room: %s %hu %hu %hu %u %hu %hu %hhu %hu %s %s\n",
 					fqcn,
 					exchange, instance, flags,
 					createtime,
@@ -3594,8 +3594,8 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug(GAIM_DEBUG_MISC, "oscar",
-			   "rate %s (param ID 0x%04hx): curavg = %lu, maxavg = %lu, alert at %lu, "
-		     "clear warning at %lu, limit at %lu, disconnect at %lu (window size = %lu)\n",
+			   "rate %s (param ID 0x%04hx): curavg = %u, maxavg = %u, alert at %u, "
+		     "clear warning at %u, limit at %u, disconnect at %u (window size = %u)\n",
 		     (code < 5) ? codes[code] : codes[0],
 		     rateclass,
 		     currentavg, maxavg,
@@ -3758,7 +3758,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* XXX - evidently this crashes on solaris. i have no clue why
 	gaim_debug(GAIM_DEBUG_MISC, "oscar", "ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
-			"max sender evil = %f, max receiver evil = %f, min msg interval = %lu\n",
+			"max sender evil = %f, max receiver evil = %f, min msg interval = %u\n",
 			params->maxchan, params->flags, params->maxmsglen,
 			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
 			params->minmsginterval);
@@ -3900,7 +3900,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (!info->uin)
 		return 0;
 
-	g_snprintf(who, sizeof(who), "%lu", info->uin);
+	g_snprintf(who, sizeof(who), "%u", info->uin);
 	buf = g_strdup_printf("<b>%s</b> %s", _("UIN:"), who);
 	if (info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Nick:"), "</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
@@ -4017,7 +4017,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_end(ap);
 
 	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
-		g_snprintf(who, sizeof(who), "%lu", info->uin);
+		g_snprintf(who, sizeof(who), "%u", info->uin);
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
 			gaim_buddy_set_setting(b, "servernick", utf8);
