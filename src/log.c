@@ -454,7 +454,8 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 		data->file = fopen(filename, "a");
 		if (!data->file) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			gaim_debug(GAIM_DEBUG_ERROR, "log",
+					"Could not create log file %s\n", filename);
 			g_free(filename);
 			return;
 		}
@@ -468,6 +469,11 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
 	}
+
+	/* if we can't write to the file, give up before we hurt ourselves */
+	if(!data->file)
+		return;
+
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	if (type & GAIM_MESSAGE_SYSTEM)
 		fprintf(data->file, "(%s)<b> %s</b><br/>\n", date, message);
@@ -602,6 +608,10 @@ static void txt_logger_write(GaimLog *log,
 		fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
 	}
+
+	/* if we can't write to the file, give up before we hurt ourselves */
+	if(!data->file)
+		return;
 
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	stripped = gaim_markup_strip_html(message);
