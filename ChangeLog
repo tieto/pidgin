@@ -49,7 +49,7 @@ version 0.78cvs
 	* Documentation updates (Gary Kramlich, Stu Tomlinson)
 	* Control-F works right in the System Log Viewer (Stu Tomlinson)
 
-	Preference Changes(Stu Tomlinson):
+	Preference Changes:
 	* Added a "none" smiley theme to replace the "Show graphical
 	  smileys" option
 	* Removed "Show logins in window," default to yes
