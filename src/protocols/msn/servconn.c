@@ -421,6 +421,7 @@ void
 msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = (MsnServConn *)data;
+	MsnSession *session = servconn->session;
 	char buf[MSN_BUF_LEN];
 	gboolean cont = TRUE;
 	int len;
@@ -465,9 +466,18 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 
 			process_multi_line(servconn, msg);
 
-			servconn->msg_len = 0;
-			g_free(servconn->msg_passport);
-			g_free(servconn->msg_friendly);
+			if (g_list_find(session->servconns, servconn) != NULL) {
+				servconn->msg_len = 0;
+
+				if (servconn->msg_passport != NULL)
+					g_free(servconn->msg_passport);
+
+				if (servconn->msg_friendly != NULL)
+					g_free(servconn->msg_friendly);
+			}
+			else
+				cont = 0;
+
 			g_free(msg);
 		}
 		else {
