@@ -153,8 +153,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *entry;
-	GaimPlugin *plugin = NULL;
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GList *user_splits;
 	GList *split_entries = NULL;
 	GList *l, *l2;
@@ -189,10 +187,10 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
 
 	/* Do the user split thang */
-	if (plugin == NULL) /* Yeah right. */
+	if (dialog->plugin == NULL) /* Yeah right. */
 		user_splits = NULL;
 	else
-		user_splits = prpl_info->user_splits;
+		user_splits = dialog->prpl_info->user_splits;
 
 	if (dialog->account != NULL)
 		username = g_strdup(gaim_account_get_username(dialog->account));
@@ -288,7 +286,9 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				GTK_TOGGLE_BUTTON(dialog->auto_login_check), FALSE);
 	}
 
-	if (prpl_info != NULL && (prpl_info->options & OPT_PROTO_NO_PASSWORD)) {
+	if (dialog->prpl_info != NULL &&
+		(dialog->prpl_info->options & OPT_PROTO_NO_PASSWORD)) {
+
 		gtk_widget_hide(dialog->password_entry);
 		gtk_widget_hide(dialog->remember_pass_check);
 	}
