@@ -175,6 +175,7 @@ void prepare_regbox_for_next()
 
 static void reg_prpl(gpointer a, struct prpl *p)
 {
+	prepare_regbox_for_next();
 	regprpl = p;
 	(*regprpl->draw_new_user)(regbox);
 }
