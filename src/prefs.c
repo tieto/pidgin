@@ -190,6 +190,34 @@ static void connect_page()
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("TOC Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("AOL has two protocols for connecting to AIM. One of them is Oscar and the other is TOC.\n\nTOC is a published protocol; AOL allows people to use the TOC protocol in their clients to connect. It is a simplified version of Oscar; it is capable of most tasks, but cannot perform all of the functions of Oscar. Because TOC is published, using TOC in gaim tends to be more stable and reliable.\n\nOscar is a proprietary protocol. AOL has not published any information about it. Gaim is able to use Oscar thanks to libfaim, which reverse-engineered the Oscar protocol and is able to emulate it. While libfaim has not decoded or implemented all of the functions of Oscar, it is still able to perform most functions TOC provides as well as several others. However, using Oscar in gaim tends to be less stable and reliable, though more useable.\n\nChanging this option takes effect at signon time."));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gaim_button(_("Use Oscar Protocol"), &general_options, OPT_GEN_USE_OSCAR, box);
+
+	gtk_widget_show(prefdialog);
+}
+
+static void toc_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
 	GtkWidget *sep;
 	GtkWidget *hbox;
 	GtkWidget *opt;
@@ -198,27 +226,13 @@ static void connect_page()
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
-	prefdialog = gtk_frame_new(_("Connection Options"));
+	prefdialog = gtk_frame_new(_("TOC Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
-
-	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	gaim_button(_("Use Oscar Protocol (experimental; only takes effect before signon)"), &general_options, OPT_GEN_USE_OSCAR, box);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	label = gtk_label_new(_("The following options do not apply if you use Oscar."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
@@ -311,6 +325,31 @@ static void connect_page()
 		gtk_widget_set_sensitive(proxy_host_entry, FALSE);
 		gtk_widget_set_sensitive(proxy_port_entry, FALSE);
 	}
+
+	gtk_widget_show(prefdialog);
+}
+
+static void oscar_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Buddy List Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gaim_button(_("Send Keep-Alive Packet (6 bytes/minute)"), &general_options, OPT_GEN_KEEPALIVE, box);
 
 	gtk_widget_show(prefdialog);
 }
@@ -1692,6 +1731,9 @@ void set_general_option(GtkWidget *w, int *option)
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
 
+	if ((int)option == OPT_GEN_KEEPALIVE)
+		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
+
 	if (prefrem)
 		gtk_signal_handler_block_by_data(GTK_OBJECT(prefrem), (int *)OPT_GEN_REMEMBER_PASS);
 	if (remember)
@@ -1777,13 +1819,23 @@ void prefs_build_general(GtkWidget *preftree)
 
 void prefs_build_connect(GtkWidget *preftree)
 {
-	GtkCTreeNode *parent;
+	GtkCTreeNode *parent, *node;
 	char *text[1];
 
 	text[0] = _("Connection");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, connect_page);
+
+	text[0] = _("TOC Options");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
+					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, toc_page);
+
+	text[0] = _("Oscar Options");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
+					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, oscar_page);
 }
 
 void prefs_build_buddy(GtkWidget *preftree)

@@ -52,6 +52,7 @@ struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
 int USE_OSCAR = 0;
+int keepalv = -1;
 
 GList *oscar_chats = NULL;
 
@@ -861,6 +862,9 @@ int gaim_parse_motd(struct aim_session_t *sess,
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
 
+	if (keepalv < 0)
+		update_keepalive(TRUE);
+
 	return 1;
 }
 
@@ -1216,4 +1220,23 @@ void oscar_do_directim(char *name) {
 	cnv->conn = newconn;
 	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
 	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
+}
+
+void send_keepalive(gpointer d) {
+	debug_print("sending oscar NOP\n");
+	if (USE_OSCAR) { /* keeping it open for TOC */
+		aim_flap_nop(gaim_sess, gaim_conn);
+	} else {
+	}
+}
+
+void update_keepalive(gboolean on) {
+	if (on && keepalv < 0 && blist) {
+		debug_print("allowing NOP\n");
+		keepalv = gtk_timeout_add(60000, (GtkFunction)send_keepalive, 0);
+	} else if (!on && keepalv > -1) {
+		debug_print("removing NOP\n");
+		gtk_timeout_remove(keepalv);
+		keepalv = -1;
+	}
 }

@@ -408,7 +408,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 895 $"
+#define REVISION "gaim:$Revision: 901 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -491,6 +491,7 @@ extern int general_options;
 #define OPT_GEN_CTL_CHARS	0x00080000
 #define OPT_GEN_TIK_HACK        0x00100000
 #define OPT_GEN_CTL_SMILEYS     0x00200000
+#define OPT_GEN_KEEPALIVE       0x00400000
 extern int USE_OSCAR;
 
 extern int display_options;
@@ -684,6 +685,7 @@ extern int oscar_login(char *, char *);
 extern void oscar_close();
 extern struct chat_connection *find_oscar_chat(char *name);
 extern void oscar_do_directim(char *);
+extern void update_keepalive(gboolean);
 
 /* Functions in toc.c */
 extern void toc_close();

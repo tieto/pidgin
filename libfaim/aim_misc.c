@@ -540,6 +540,29 @@ faim_export unsigned long aim_bos_nop(struct aim_session_t *sess,
 }
 
 /*
+ * aim_flap_nop()
+ *
+ * No-op.  WinAIM 4.x sends these _every minute_ to keep
+ * the connection alive.  
+ */
+faim_export unsigned long aim_flap_nop(struct aim_session_t *sess,
+				       struct aim_conn_t *conn)
+{
+  struct command_tx_struct *newpacket;
+
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0005, conn, 0)))
+    return sess->snac_nextid;
+
+  newpacket->lock = 1;
+  newpacket->commandlen = 0;
+  newpacket->lock = 0;
+
+  aim_tx_enqueue(sess, newpacket);
+
+  return (sess->snac_nextid);
+}
+
+/*
  * aim_bos_reqrights()
  *
  * Request BOS rights.

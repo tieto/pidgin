@@ -1,6 +1,21 @@
 
 No release numbers
 ------------------
+ - Tue Sep 12 20:16:51 UTC 2000
+   - Add aim_flap_nop() from my work tree 
+
+ - Tue Sep 12 05:06:53 UTC 2000
+   - Revert the two-byte change in aim_misc, clientready
+
+ - Tue Sep  5 04:41:45 GMT 2000
+   - Few more minor things
+   - Added the changes needed for faimtest.
+   - Removed aimdebugd from default build
+
+ - Tue Sep  5 03:47:26 GMT 2000
+   - More ANSIfication for win32
+   - Forgot aim_misc last time.
+
  - Mon Sep  4 22:08:35 GMT 2000
    - Forgot aim_snac and aim_search
 

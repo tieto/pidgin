@@ -294,6 +294,7 @@ void signoff()
 
 	sprintf(debug_buff, "date: %s\n", full_date());
 	debug_print(debug_buff);
+	update_keepalive(FALSE);
 	serv_close();
         destroy_all_dialogs();
         destroy_buddy();

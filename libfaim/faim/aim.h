@@ -503,6 +503,7 @@ faim_export void aim_session_init(struct aim_session_t *);
 
 faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon);
 faim_export unsigned long aim_bos_nop(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_flap_nop(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export unsigned long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
 faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
 faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);

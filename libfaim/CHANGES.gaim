@@ -1,4 +1,7 @@
 
+Tue Sep 12 22:58:13 UTC 2000 EWarmenhoven
+	- Added option to send flap_nop every minute
+
 Tue Sep 12 20:20:07 UTC 2000 EWarmenhoven
 	- Oscar works again. :)
 	- I'm updating to the latest libfaim. Everything should theoretically
