@@ -19,7 +19,7 @@ gtk2/new prefs
 	on away tab, if you set the time between responces, you 
 		reset the type of idle time reporting. similar
 		problems may exist in other combinations.
-	selecting debug window in prefs doesn't stick (isn't saved).
+	selecting debug window in prefs doesn't stick (isn't saved). (is this fixed?)
 	when auto-away (by idle time) is activated, away message window 
 		does not pop up.
 	pressing save on new away message dialog does not immediately add 
@@ -44,7 +44,6 @@ GAIM-REMOTE:
 PORTABILITY/i18n
 icq i18n
 info dialog
-irc (patch pending?)(done?)
 	
 DISCUSSION:
 	protocol action to log into webmail for those that support such
@@ -84,7 +83,7 @@ DISCUSSION:
 
 
 IN GENERAL:
-	add a way for a plugin to store/retrive config values
+	add a way for a plugin to store/retrive config values (fixed?)
 	segfault on pressing back with messages in queue if coming back
 		for the second time in a given instance of gaim
 	stack trace should exit instead of just sitting there
@@ -272,7 +271,7 @@ IRC:
 	CTCP version generates an autoreply when person is away or idle. 
 		the error box used vy it also binds the focus (like
 		all other error popups). i'm not sure there is a way
-		around this second issue.
+		around this second issue. (fixed?)
 	fix segfault on attempted send after having been /remove'ed
 	multi word remove messages
 	auto reply to /msg on away 
@@ -281,12 +280,6 @@ IRC:
 
 Jabber:
 	Segfault on account creation, esp. on register new account
-	in 0.59.3, not replicated by me in cvs, timestamp
-		is having a font size tag set (value of 10, obviously a point
-		size), but the rest of the line isn't. 3 issues here:
-		why is the size a point size, and why is only the tag around the 
-		timestamp being set, and lastly why is it only happening in jabber
-		for the reporter, and only jabber chats at that.
 	problem seeing buddies with long blist?
 	make password change take effect w/out restart
 	*sigh* file transfer (do we really need/want this?)
