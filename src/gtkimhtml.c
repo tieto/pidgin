@@ -1018,6 +1018,11 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					break; 
 				case 40:        /* BINARY */
 					NEW_BIT (NEW_TEXT_BIT);
+					while (pos < len && g_ascii_strncasecmp("</BINARY>", c, strlen("</BINARY>"))) {
+						c++;
+						pos++;
+					}
+					c = c - tlen; /* Because it will add this later */
 					break;
 				case 41:        /* /BINARY */
 					break;
