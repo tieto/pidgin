@@ -29,7 +29,7 @@
 }
 
 # Thanks decklin
-if autoconf --version | grep -q '2\.[01]'; then
+if autoconf --version | grep '2\.[01]' > /dev/null 2>&1 ; then
 	ln -sf configure.ac configure.in
 fi
 
