@@ -63,8 +63,36 @@ static GHashTable *prefs_hash = NULL;
 static struct gaim_pref prefs = { GAIM_PREF_NONE, NULL, {NULL}, NULL,
 	NULL, NULL, NULL };
 
+static guint prefs_save_timer = 0;
+static gboolean prefs_is_loaded = FALSE;
+
+
+static gboolean prefs_save_callback(gpointer who_cares) {
+	gaim_prefs_sync();
+	prefs_save_timer = 0;
+	return FALSE;
+}
+
+static void schedule_prefs_save() {
+	if(!prefs_save_timer)
+		prefs_save_timer = g_timeout_add(5000, prefs_save_callback, NULL);
+}
+
+static void prefs_save_cb(const char *name, GaimPrefType type, gpointer val,
+		gpointer user_data) {
+
+	if(!prefs_is_loaded)
+		return;
+
+	gaim_debug(GAIM_DEBUG_MISC, "prefs", "%s changed, scheduling save.\n", name);
+
+	schedule_prefs_save();
+}
+
 void gaim_prefs_init() {
 	prefs_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	gaim_prefs_connect_callback("/", prefs_save_cb, NULL);
 
 	gaim_prefs_add_none("/core");
 
@@ -444,19 +472,22 @@ static void gaim_prefs_write(FILE *f, struct gaim_pref *pref, int depth) {
 	}
 }
 
-void gaim_prefs_save() {
-	/* FIXME: do this with timers so we don't save so damn often */
-	gaim_prefs_sync();
-}
-
 void gaim_prefs_sync() {
 	FILE *file;
 	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *filename_real;
 
+	if(!prefs_is_loaded) {
+		gaim_debug(GAIM_DEBUG_WARNING, "prefs", "prefs saved before loading!  scheduling save.\n");
+		schedule_prefs_save(); /* schedule a save for after we read in */
+		return;
+	}
+
 	if(!user_dir)
 		return;
+
+	gaim_debug(GAIM_DEBUG_INFO, "prefs", "writing prefs out to disk.\n");
 
 	file = fopen(user_dir, "r");
 	if(!file)
@@ -570,8 +601,11 @@ void gaim_prefs_load() {
 	GMarkupParseContext *context;
 	GError *error = NULL;
 
-	if(!filename)
+
+	if(!filename) {
+		prefs_is_loaded = TRUE;
 		return;
+	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Reading %s\n", filename);
 
@@ -579,6 +613,7 @@ void gaim_prefs_load() {
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error reading prefs: %s\n",
 				error->message);
 		g_error_free(error);
+		prefs_is_loaded = TRUE;
 		return;
 	}
 
@@ -587,6 +622,7 @@ void gaim_prefs_load() {
 	if(!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		prefs_is_loaded = TRUE;
 		return;
 	}
 
@@ -594,6 +630,7 @@ void gaim_prefs_load() {
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error parsing %s\n", filename);
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		prefs_is_loaded = TRUE;
 		return;
 	}
 
@@ -602,6 +639,7 @@ void gaim_prefs_load() {
 
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Finished reading %s\n", filename);
 	g_free(filename);
+	prefs_is_loaded = TRUE;
 }
 
 

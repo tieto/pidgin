@@ -1628,7 +1628,6 @@ void save_prefs()
 	g_free(filename_temp);
 
 	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Exiting save_prefs\n");
-	gaim_prefs_save(); /* put this here for now */
 }
 
 

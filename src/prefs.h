@@ -168,11 +168,6 @@ void gaim_prefs_disconnect_callback(guint callback_id);
 void gaim_prefs_load();
 
 /**
- * Write preferences
- */
-void gaim_prefs_save();
-
-/**
  * Force an immediate write of preferences
  */
 void gaim_prefs_sync();

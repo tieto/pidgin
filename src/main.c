@@ -123,6 +123,7 @@ void do_quit()
 
 	/* record what we have before we blow it away... */
 	save_prefs();
+	gaim_prefs_sync();
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
