@@ -48,6 +48,11 @@ GSList *nap_connections = NULL;
 
 static unsigned int chat_id = 0;
 
+struct search_window {
+	GtkWidget *window;
+	GtkWidget *list;
+};
+
 struct browse_window {
 	GtkWidget *window;
 	GtkWidget *list;
@@ -88,6 +93,8 @@ struct nap_data {
 	GSList *browses;
 };
 
+static struct search_window *search_dialog = NULL;
+
 static char *nap_name()
 {
 	return "Napster";
@@ -124,18 +131,39 @@ void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s \"%s\"", who, file);
 
+	printf("%s\n", buf);
+	printf("%d\n", ndata->fd);
 	nap_write_packet(gc, 0xCB, buf);
 }
+
+// FIXME: These next two windows should really be together
+// and should use the same clist style look too.  
 
 void nap_handle_download(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
 {
 	gchar **results;
 	struct browse_window *bw = (struct browse_window *)user_data;
 
-	gtk_clist_get_text(GTK_CLIST(bw->list), row, 0, results);	
+	gtk_clist_get_text(GTK_CLIST(clist), row, 0, results);	
 
 	nap_send_download_req(bw->gc, bw->name, results[0]);
 
+}
+
+void nap_handle_download_search(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
+{
+	gchar *filename;
+	gchar *nick;
+	
+	int i = 0;
+	struct gaim_connection *gc = (struct gaim_connection *)user_data;
+	
+	filename = (gchar *)gtk_clist_get_row_data(GTK_CLIST(clist), row);
+	
+	gtk_clist_get_text(GTK_CLIST(clist), row, 1, &nick);
+
+	printf("Trying to download: %s from %s\n", filename, nick);
+	nap_send_download_req(gc, nick, filename);
 }
 
 struct browse_window *browse_window_new(struct gaim_connection *gc, char *name)
@@ -468,6 +496,8 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 	read(source, buf, len);
 
 	buf[len] = 0;
+	
+	printf("DEBUG: %s\n", buf);
 
 	if (command == 0xd6) {
 		res = g_strsplit(buf, " ", 0);
@@ -651,6 +681,54 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		
 	}
 
+	if (command == 0xc9) {
+		/* We've received a search response */
+		gchar *file = (gchar *)g_malloc(sizeof(gchar) * (NAP_BUF_LEN+1));
+		gchar *tmp;
+		gchar rest[NAP_BUF_LEN];
+		gchar *data[5];
+		gchar **parse_name;
+
+		int i, j;
+
+		for (i = 1, j = 0; buf[i] != '\"'; i++, j++)
+		{
+			file[j] = buf[i];
+		}
+		
+		file[j] = 0; i++;
+
+		tmp = (gchar *)g_malloc(sizeof(gchar) * (strlen(file) + 1));
+		strcpy(tmp, rindex(file, '\\')+1);
+		
+		strcpy(rest, buf+i);
+
+		parse_name = g_strsplit(rest, " ", 0);
+		
+		data[0] = g_strdup(tmp);
+		data[1] = g_strdup(parse_name[6]);
+		data[2] = g_strdup(parse_name[2]);
+		data[3] = g_strdup(parse_name[3]);
+		data[4] = g_strdup(parse_name[8]);
+
+//		printf("File: %s, 1: %s, 2: %s, 3: %s\n", data[0], data[1], data[2], data[3]);
+		i = gtk_clist_append(GTK_CLIST(search_dialog->list), data);
+
+		gtk_clist_set_row_data(GTK_CLIST(search_dialog->list), i, file);
+		g_strfreev(parse_name);
+	//	g_free(file);
+		g_free(tmp);
+		g_free(buf);
+		return;
+	}
+
+	if (command == 0xca)
+	{
+		/* End of search */
+		g_free(buf);
+		return;
+	}
+
 	if (command == 0x12d) {
 		/* Our buddy was added successfully */
 		free(buf);
@@ -767,7 +845,7 @@ static void nap_login(struct aim_user *user)
 	int i;
 	int status;
 
-	host = gethostbyname("n184.napster.com");
+	host = gethostbyname("208.184.216.87");
 
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
@@ -796,7 +874,7 @@ static void nap_login(struct aim_user *user)
 	ndata->fd = fd;
 	
 	/* And write our signon data */
-	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"Gaim - Napster Plugin\" 0", gc->username, gc->password);
+	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"gaimster\" 0", gc->username, gc->password);
 	nap_write_packet(gc, 0x02, buf);
 	
 	/* And set up the input watcher */
@@ -943,12 +1021,119 @@ void nap_send_browse(GtkObject *w, char *who)
 	nap_write_packet(gc, 0xd3, buf);
 }
 
+void nap_find_callback(GtkObject *w, GtkWidget *entry)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
+	gchar *search;
+	gchar buf[NAP_BUF_LEN];
+		
+	search = gtk_entry_get_text(GTK_ENTRY(entry));
+	g_snprintf(buf, NAP_BUF_LEN, "FILENAME CONTAINS \"%s\" MAX_RESULTS 50", search);
+	
+	nap_write_packet(gc, 0xc8, buf);
+}
+
+void destroy_window(GtkObject *w, GtkWidget *win)
+{
+	gtk_widget_destroy(win);
+}
+
+void nap_show_search(GtkObject *w, void *omit)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
+
+	if (!search_dialog)
+	{
+		GtkWidget *window;
+		GtkWidget *sw;
+		GtkWidget *vbox;
+		GtkWidget *hbox;
+		GtkWidget *label;
+		GtkWidget *button;
+		GtkWidget *entry;
+		GtkWidget *list;
+		gchar *titles[5] = {"Mp3 Name", "Nick", "Size", "Bitrate", "Connection"};
+		search_dialog = g_new0(struct search_window, 1);
+
+		window = gtk_window_new(GTK_WINDOW_DIALOG);
+
+		vbox = gtk_vbox_new(FALSE, 0);
+
+		/* First Line */
+		hbox = gtk_hbox_new(FALSE, 5);
+		label = gtk_label_new("Search for:");
+		gtk_widget_show(label);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+
+		entry = gtk_entry_new();
+		gtk_widget_show(entry);
+		gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+
+		button = gtk_button_new_with_label("Find");
+		gtk_widget_show(button);
+		gtk_object_set_user_data(GTK_OBJECT(button), gc);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(nap_find_callback), entry);
+
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+
+		button = gtk_button_new_with_label("Cancel");
+		gtk_widget_show(button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+		
+		
+		gtk_widget_show(hbox);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+		/* End First List */
+
+		/* Second Line */
+
+		sw = gtk_scrolled_window_new(NULL, NULL);
+			
+		list = gtk_clist_new_with_titles(5, titles);
+
+		gtk_clist_column_titles_show(GTK_CLIST(list));
+
+		gtk_signal_connect(GTK_OBJECT(list), "select-row", GTK_SIGNAL_FUNC(nap_handle_download_search), gc);
+		
+		gtk_container_add(GTK_CONTAINER(sw), list);
+		gtk_widget_show(list);
+
+		gtk_box_pack_start(GTK_BOX(vbox), sw, FALSE, FALSE, 5);
+
+		gtk_widget_show(sw);
+		
+		/* End Second Line */
+		
+		gtk_widget_show(vbox);	
+
+		gtk_container_add(GTK_CONTAINER(window), vbox);
+		gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+
+		gtk_widget_set_usize(GTK_WIDGET(list), 500, 350);
+		gtk_widget_set_usize(GTK_WIDGET(window), 500, 400);
+
+		gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(destroy_window), window);
+		gtk_widget_show(window);
+
+		search_dialog->window = window;
+		search_dialog->list = list;
+	}
+
+	gtk_widget_show(search_dialog->window);
+}	
+
 static void nap_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
 {
 	GtkWidget *button;
 
-	button = gtk_menu_item_new_with_label("List Files");
+	button = gtk_menu_item_new_with_label("Browse Files");
 	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(nap_send_browse), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label("Search Napster");
+	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(nap_show_search), NULL);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
