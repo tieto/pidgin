@@ -870,21 +870,22 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			accounttext = g_markup_escape_text(b->account->username, -1);
 
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-				   "%s %s"     /* Account */
-			       "%s %s"  /* Alias */
-				   "%s %s"  /* Nickname */
-			       "%s %s"     /* Idle */
-			       "%s %s"     /* Warning */
-			       "%s%s"     /* Status */
-				   "%s",
-			       b->name,
-				   accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
-			       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
-			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
-			       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
-			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-			       statustext ? "\n" : "", statustext ? statustext : "",
-				   !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") : "");
+				       "%s %s"     /* Account */
+				       "%s %s"  /* Alias */
+				       "%s %s"  /* Nickname */
+				       "%s %s"     /* Idle */
+				       "%s %s"     /* Warning */
+				       "%s%s"     /* Status */
+				       "%s",
+				       b->name,
+				       accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
+				       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
+				       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
+				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
+				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
+				       statustext ? "\n" : "", statustext ? statustext : "",
+				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") : 
+				       !g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") : "");
 
 		if(warning)
 			g_free(warning);
@@ -1319,11 +1320,11 @@ item_factory_translate_func (const char *path, gpointer func_data)
 
 void gaim_gtk_blist_setup_sort_methods()
 {
-	gaim_gtk_blist_sort_method_reg("None", sort_method_none);
-	gaim_gtk_blist_sort_method_reg("Alphabetical", sort_method_alphabetical);
-	gaim_gtk_blist_sort_method_reg("By status", sort_method_status);
-	gaim_gtk_blist_sort_method_reg("By log size", sort_method_log);
-	gaim_gtk_blist_sort_method_set(sort_method[0] ? sort_method : "None");
+	gaim_gtk_blist_sort_method_reg(_("None"), sort_method_none);
+	gaim_gtk_blist_sort_method_reg(_("Alphabetical"), sort_method_alphabetical);
+	gaim_gtk_blist_sort_method_reg(_("By status"), sort_method_status);
+	gaim_gtk_blist_sort_method_reg(_("By log size"), sort_method_log);
+	gaim_gtk_blist_sort_method_set(sort_method[0] ? sort_method : _("None"));
 }		
 
 
@@ -2229,15 +2230,23 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, struct gaim_buddy_lis
 		
 		if (n && GAIM_BLIST_NODE_IS_BUDDY(n)) {
 			struct buddy *new = (struct buddy*)node, *it = (struct buddy*)n;
-			if (it->idle > new->idle)
+			printf("Add %s (%d) before %s (%d)... ", new->name, new->idle, it->name, it->idle);
+			/* This is the worst if statement ever. */
+			if ((it->present < new->present) ||
+			    ((it->present == new->present) && (it->uc & UC_UNAVAILABLE) > (new->uc & UC_UNAVAILABLE)) ||
+			    ((it->present == new->present) && ((it->uc & UC_UNAVAILABLE) == (new->uc & UC_UNAVAILABLE)) && 
+			     ((it->idle && !new->idle) || (it->idle && (it->idle < new->idle)))) ||
+			    ((it->present == new->present) && (it->uc & UC_UNAVAILABLE) == (new->uc & UC_UNAVAILABLE) && (it->idle == new->idle) &&
+			     (gaim_utf8_strcasecmp(gaim_get_buddy_alias((struct buddy*)node), gaim_get_buddy_alias((struct buddy*)n)) < 0)))
 				{
-					printf("Inserting %s before %s\n", new->name, it->name);
+					printf("yes\n");
 					gtk_tree_store_insert_before(gtkblist->treemodel, &iter, &groupiter, &more_z);
 						newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 						gtknode->row = gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel), newpath);
 						gtk_tree_path_free(newpath);
 						return iter;
 				}
+			printf("no\n");
 			g_value_unset(&val);
 		}
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
