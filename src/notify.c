@@ -88,13 +88,23 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 }
 
 void *
-gaim_notify_emails(void *handle, size_t count, const char **subjects,
-				   const char **froms, const char **tos, const char **urls,
+gaim_notify_emails(void *handle, size_t count, gboolean detailed,
+				   const char **subjects, const char **froms,
+				   const char **tos, const char **urls,
 				   GCallback cb, void *user_data)
 {
 	GaimNotifyUiOps *ops;
 
 	g_return_val_if_fail(count != 0, NULL);
+
+	if (count == 1) {
+		return gaim_notify_email(handle,
+								 (subjects == NULL ? NULL : *subjects),
+								 (froms    == NULL ? NULL : *froms),
+								 (tos      == NULL ? NULL : *tos),
+								 (urls     == NULL ? NULL : *urls),
+								 cb, user_data);
+	}
 
 	ops = gaim_get_notify_ui_ops();
 
@@ -104,8 +114,8 @@ gaim_notify_emails(void *handle, size_t count, const char **subjects,
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_EMAILS;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_emails(count, subjects, froms, tos,
-											 urls, cb, user_data);
+		info->ui_handle = ops->notify_emails(count, detailed, subjects,
+											 froms, tos, urls, cb, user_data);
 
 		handles = g_list_append(handles, info);
 

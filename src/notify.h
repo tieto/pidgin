@@ -60,10 +60,10 @@ typedef struct
 	void *(*notify_email)(const char *subject, const char *from,
 						  const char *to, const char *url,
 						  GCallback cb, void *user_data);
-	void *(*notify_emails)(size_t count, const char **subjects,
-						   const char **froms, const char **tos,
-						   const char **urls, GCallback cb,
-						   void *user_data);
+	void *(*notify_emails)(size_t count, gboolean detailed,
+						   const char **subjects, const char **froms,
+						   const char **tos, const char **urls,
+						   GCallback cb, void *user_data);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
@@ -117,6 +117,8 @@ void *gaim_notify_email(void *handle, const char *subject,
  *
  * @param handle    The plugin or connection handle.
  * @param count     The number of e-mails.
+ * @param detailed  @c TRUE if there is information for each e-mail in the
+ *                  arrays.
  * @param subjects  The array of subjects.
  * @param froms     The array of from addresses.
  * @param tos       The array of destination addresses.
@@ -127,7 +129,7 @@ void *gaim_notify_email(void *handle, const char *subject,
  *
  * @return A UI-specific handle.
  */
-void *gaim_notify_emails(void *handle, size_t count,
+void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 						 const char **subjects, const char **froms,
 						 const char **tos, const char **urls,
 						 GCallback cb, void *user_data);
