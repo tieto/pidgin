@@ -379,7 +379,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	menu = gtk_menu_new();
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		gaim_new_item_from_stock(menu, _("_Add a Buddy"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD, G_CALLBACK(gaim_gtk_blist_add_chat_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE, G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Rename"), NULL, G_CALLBACK(show_rename_group), node, 0, 0, NULL);
