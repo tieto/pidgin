@@ -32,37 +32,46 @@ silcgaim_list_icon(GaimAccount *a, GaimBuddy *b)
 }
 
 static void
-silcgaim_list_emblems(GaimBuddy *b, char **se, char **sw,
-		      char **nw, char **ne)
+silcgaim_list_emblems(GaimBuddy *b, const char **se, const char **sw,
+		      const char **nw, const char **ne)
 {
 }
 
 static GList *
-silcgaim_away_states(GaimConnection *gc)
+silcgaim_away_states(GaimAccount *account)
 {
-	GList *st = NULL;
+	GaimStatusType *type;
+	GList *types = NULL;
 
-	st = g_list_append(st, _("Online"));
-	st = g_list_append(st, _("Hyper Active"));
-	st = g_list_append(st, _("Away"));
-	st = g_list_append(st, _("Busy"));
-	st = g_list_append(st, _("Indisposed"));
-	st = g_list_append(st, _("Wake Me Up"));
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "offline", _("Online"), FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, "hyper", _("Hyper Active"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away", _("Away"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy", _("Busy"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "indisposed", _("Indisposed"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "page", _("Wake Me Up"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
 
-	return st;
+	return types;
 }
 
 static void
-silcgaim_set_away(GaimConnection *gc, const char *state, const char *msg)
+silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc = gaim_account_get_connection(account);
 	SilcGaim sg = gc->proto_data;
 	SilcUInt32 mode;
 	SilcBuffer idp;
 	unsigned char mb[4];
+	const char *state;
 
-	if (!state)
-		return;
-	if (!sg->conn)
+	if ((status == NULL) || (sg->conn == NULL))
 		return;
 
 	mode = sg->conn->local_entry->mode;
@@ -72,15 +81,20 @@ silcgaim_set_away(GaimConnection *gc, const char *state, const char *msg)
 		  SILC_UMODE_INDISPOSED |
 		  SILC_UMODE_PAGE);
 
-	if (!strcmp(state, _("Hyper Active")))
+	state = gaim_status_get_id(status);
+
+	if (state == NULL)
+		return;
+
+	if (!strcmp(state, "hyper"))
 		mode |= SILC_UMODE_HYPER;
-	else if (!strcmp(state, _("Away")))
+	else if (!strcmp(state, "away"))
 		mode |= SILC_UMODE_GONE;
-	else if (!strcmp(state, _("Busy")))
+	else if (!strcmp(state, "busy"))
 		mode |= SILC_UMODE_BUSY;
-	else if (!strcmp(state, _("Indisposed")))
+	else if (!strcmp(state, "indisposed"))
 		mode |= SILC_UMODE_INDISPOSED;
-	else if (!strcmp(state, _("Wake Me Up")))
+	else if (!strcmp(state, "page"))
 		mode |= SILC_UMODE_PAGE;
 
 	/* Send UMODE */
@@ -1500,7 +1514,7 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_set_info,			/* set_info */
 	NULL,						/* send_typing */
 	silcgaim_get_info,			/* get_info */
-	silcgaim_set_away,			/* set_away */
+	silcgaim_set_status,		/* set_status */
 	silcgaim_idle_set,			/* set_idle */
 	silcgaim_change_passwd,		/* change_passwd */
 	silcgaim_add_buddy,			/* add_buddy */
