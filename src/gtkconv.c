@@ -703,6 +703,12 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static void
+menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	show_im_dialog();
+}
+
+static void
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
@@ -1479,11 +1485,6 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 			g_string_free(conv->history, TRUE);
 			conv->history = g_string_new("");
-		}
-		else if (event->keyval == 'n') {
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-			show_im_dialog();
 		}
 		else if (event->keyval == 'z') {
 			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
@@ -2882,6 +2883,11 @@ static GtkItemFactoryEntry menu_items[] =
 {
 	/* Conversation menu */
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
+
+	{ N_("/Conversation/_New Conversation..."), NULL, menu_new_conv_cb,
+	  0, "<StockItem>", GTK_STOCK_NEW },
+
+        { "/Conversation/sep0", NULL, NULL, 0, "<Separator>" },
 
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
