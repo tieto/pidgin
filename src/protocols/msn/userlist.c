@@ -267,8 +267,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 						"%s has added you to his or her contact list.\n",
 						passport);
 
-		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP |
-							   MSN_LIST_FL_OP)))
+		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
 			got_new_entry(gc, passport, friendly);
 		}
@@ -388,8 +387,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		/* These are users who have us on their contact list. */
 		/* TODO: what does store name is when this happens? */
 
-		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP |
-						 MSN_LIST_FL_OP)))
+		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
 			got_new_entry(gc, passport, store);
 		}
