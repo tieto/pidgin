@@ -4,6 +4,7 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([gaim], [0.11.0pre7])
 
 dnl Checks for programs.
+AC_ENABLE_STATIC(no)
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_CC
