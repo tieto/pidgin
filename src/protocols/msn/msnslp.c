@@ -438,6 +438,7 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 	}
 
 	msg->msnslp_header.total_size_1 = slpsession->orig_len;
+	msg->msnslp_header.length = slpsession->orig_len;
 
 	send_msg_part(slpsession, msg);
 }

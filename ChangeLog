@@ -36,7 +36,8 @@ version 0.78cvs
 	* Fixed a privacy-related bug in MSN that affected blocking/permitting,
 	  which was due to case-sensitive string comparisons (Gudmundur Olafsson)
 	* Fixed an MSN HTTP method bug where MSN would queue data indefinitely.
-	  (Andrew Wellington).
+	  (Andrew Wellington)
+	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay Dobbie)
 	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Dialogs opened from a conversation window are now closed when

@@ -39,6 +39,7 @@
 		if (c != NULL) \
 		{ \
 			strncpy(buf, tag, c - tag); \
+			buf[c - tag] = '\0'; \
 			obj->field = atoi(buf); \
 		} \
 	}
