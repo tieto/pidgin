@@ -57,7 +57,7 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
-gaim_core_SOURCES = \
+gaim_coresources = \
 	account.c \
 	accountopt.c \
 	blist.c \
@@ -136,7 +136,7 @@ gaim_coreheaders = \
 bin_PROGRAMS = gaim gaim-remote
 
 gaim_SOURCES = \
-	$(gaim_core_SOURCES) \
+	$(gaim_coresources) \
 	about.c \
 	away.c \
 	dialogs.c \
