@@ -802,7 +802,10 @@ int main(int argc, char *argv[])
 	 *  ignore messages by setting dummy log handlers, or redirect messages.
 	 *  This requires setting handlers for all domains (any lib which uses g_logging).
 	 */
-	
+
+	g_log_set_handler (NULL, G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
+			   NULL);	
 	g_log_set_handler ("Gdk", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
 			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
 			   NULL);
