@@ -1414,7 +1414,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show(chatentry);
 #ifdef USE_GTKSPELL
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_attach(GTK_TEXT(chatentry));
+		gtkspell_attach(GTK_TEXT_VIEW(chatentry));
 #endif
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
