@@ -3466,6 +3466,10 @@ static char *jabber_status_text(GaimBuddy *b)
 	return ret;
 }
 
+static void jabber_rereq_auth(GaimConnection *gc, const char *who) {
+	jabber_add_buddy(gc, who, NULL);
+}
+
 static GList *jabber_buddy_menu(GaimConnection *gc, const char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -3512,7 +3516,7 @@ static GList *jabber_buddy_menu(GaimConnection *gc, const char *who) {
 				!(jbd->subscription & JABBER_SUB_TO)) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Re-request authorization");
-			pbm->callback = jabber_add_buddy;
+			pbm->callback = jabber_rereq_auth;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
 		}
