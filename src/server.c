@@ -158,16 +158,16 @@ void serv_finish_login()
 void serv_send_im(char *name, char *message, int away)
 {
 	if (!USE_OSCAR) {
-	char buf[MSG_LEN - 7];
+		char buf[MSG_LEN - 7];
 
-        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-                   message, ((away) ? " auto" : ""));
-	sflap_send(buf, strlen(buf), TYPE_DATA);
+	        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
+	                   message, ((away) ? " auto" : ""));
+		sflap_send(buf, strlen(buf), TYPE_DATA);
 	} else {
-	if (away)
-		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
-	else
-		aim_send_im(gaim_sess, gaim_conn, name, 0, message);
+		if (away)
+			aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
+		else
+			aim_send_im(gaim_sess, gaim_conn, name, 0, message);
 	}
         if (!away)
                 serv_touch_idle();
@@ -520,10 +520,10 @@ void serv_chat_invite(int id, char *message, char *name)
 	        sflap_send(buf, -1, TYPE_DATA);
 	} else {
 		GList *bcs = buddy_chats;
-		struct buddy_chat *b = NULL;
+		struct conversation *b = NULL;
 
 		while (bcs) {
-			b = (struct buddy_chat *)bcs->data;
+			b = (struct conversation *)bcs->data;
 			if (id == b->id)
 				break;
 			bcs = bcs->next;
@@ -546,13 +546,13 @@ void serv_chat_leave(int id)
 	        g_free(buf);
 	} else {
 	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
 	int count = 0;
 
 	while (bcs) {
 		count++;
-		b = (struct buddy_chat *)bcs->data;
+		b = (struct conversation *)bcs->data;
 		if (id == b->id)
 			break;
 		bcs = bcs->next;
@@ -600,10 +600,10 @@ void serv_chat_send(int id, char *message)
 	} else {
 		struct aim_conn_t *cn;
 		GList *bcs = buddy_chats;
-		struct buddy_chat *b = NULL;
+		struct conversation *b = NULL;
 
 		while (bcs) {
-			b = (struct buddy_chat *)bcs->data;
+			b = (struct conversation *)bcs->data;
 			if (id == b->id)
 				break;
 			bcs = bcs->next;
@@ -615,6 +615,7 @@ void serv_chat_send(int id, char *message)
 		cn = aim_chat_getconn(gaim_sess, b->name);
 		aim_chat_send_im(gaim_sess, cn, message);
 	}
+	serv_touch_idle();
 }
 
 
@@ -682,7 +683,7 @@ void serv_got_im(char *name, char *message, int away)
 		if (cnv != NULL) {
 			if (sound_options & OPT_SOUND_WHEN_AWAY)
 				play_sound(AWAY);
-			write_to_conv(cnv, message, away | WFLAG_RECV);
+			write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
 		}
 
 	} else {
@@ -696,7 +697,7 @@ void serv_got_im(char *name, char *message, int away)
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 		}
-		write_to_conv(cnv, message, away | WFLAG_RECV);
+		write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
 	}
 
 
@@ -726,7 +727,7 @@ void serv_got_im(char *name, char *message, int away)
 			is_idle = 1;
 		
                 if (cnv != NULL)
-			write_to_conv(cnv, awaymessage->message, WFLAG_SEND | WFLAG_AUTO);
+			write_to_conv(cnv, awaymessage->message, WFLAG_SEND | WFLAG_AUTO, NULL);
         }
 }
 
@@ -963,7 +964,7 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
 void serv_got_joined_chat(int id, char *name)
 {
-        struct buddy_chat *b;
+        struct conversation *b;
 
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
@@ -979,9 +980,10 @@ void serv_got_joined_chat(int id, char *name)
 	}
 #endif
 
-        b = (struct buddy_chat *)g_new0(struct buddy_chat, 1);
+        b = (struct conversation *)g_new0(struct conversation, 1);
         buddy_chats = g_list_append(buddy_chats, b);
 
+	b->is_chat = TRUE;
         b->ignored = NULL;
         b->in_room = NULL;
         b->id = id;
@@ -992,11 +994,11 @@ void serv_got_joined_chat(int id, char *name)
 void serv_got_chat_left(int id)
 {
         GList *bcs = buddy_chats;
-        struct buddy_chat *b = NULL;
+        struct conversation *b = NULL;
 
 
         while(bcs) {
-                b = (struct buddy_chat *)bcs->data;
+                b = (struct conversation *)bcs->data;
                 if (id == b->id) {
                         break;
                         }
@@ -1035,10 +1037,10 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
 {
         int w;
         GList *bcs = buddy_chats;
-        struct buddy_chat *b = NULL;
+        struct conversation *b = NULL;
 
         while(bcs) {
-                b = (struct buddy_chat *)bcs->data;
+                b = (struct conversation *)bcs->data;
                 if (id == b->id)
                         break;
                 bcs = bcs->next;

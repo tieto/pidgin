@@ -1289,7 +1289,7 @@ void do_pounce(char *name)
                         	if (c == NULL)
                                 	c = new_conversation(name);
 
-                        	write_to_conv(c, b->message, WFLAG_SEND);
+                        	write_to_conv(c, b->message, WFLAG_SEND, NULL);
 
                         	escape_text(b->message);
 
@@ -1542,7 +1542,7 @@ void set_buddy(struct buddy *b)
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
 
 
-					write_to_conv(c, tmp, WFLAG_SYSTEM);
+					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 
 				}
 			}
@@ -1682,7 +1682,7 @@ void set_buddy(struct buddy *b)
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
 
 
-					write_to_conv(c, tmp, WFLAG_SYSTEM);
+					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 
 				}
 			}

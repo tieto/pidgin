@@ -720,7 +720,7 @@ int gaim_chat_join(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 
 	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	struct conversation *b = NULL;
 
 	va_start(ap, command);
 	count = va_arg(ap, int);
@@ -728,7 +728,7 @@ int gaim_chat_join(struct aim_session_t *sess,
 	va_end(ap);
 
 	while(bcs) {
-		b = (struct buddy_chat *)bcs->data;
+		b = (struct conversation *)bcs->data;
 		if (!strcasecmp(b->name, (char *)command->conn->priv))
 			break;	
 		bcs = bcs->next;
@@ -750,7 +750,7 @@ int gaim_chat_leave(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 
 	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	struct conversation *b = NULL;
 
 	va_start(ap, command);
 	count = va_arg(ap, int);
@@ -758,7 +758,7 @@ int gaim_chat_leave(struct aim_session_t *sess,
 	va_end(ap);
 
 	while(bcs) {
-		b = (struct buddy_chat *)bcs->data;
+		b = (struct conversation *)bcs->data;
 		if (!strcasecmp(b->name, (char *)command->conn->priv))
 			break;	
 		bcs = bcs->next;
@@ -787,14 +787,14 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	char *msg;
 
 	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	struct conversation *b = NULL;
 
 	va_start(ap, command);
 	info = va_arg(ap, struct aim_userinfo_s *);
 	msg  = va_arg(ap, char *);
 
 	while(bcs) {
-		b = (struct buddy_chat *)bcs->data;
+		b = (struct conversation *)bcs->data;
 		if (!strcasecmp(b->name, (char *)command->conn->priv))
 			break;
 		bcs = bcs->next;

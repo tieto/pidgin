@@ -15,6 +15,7 @@ version 0.9.20:
 	* Dialog windows are now prettier
 	* Fixed the LC_ALL compile problem on Solaris boxes 
 	* Fixed PPC and ARM compile problem with oscar.c
+	* /me in IM window; font/color dialogs and smileys in chat window
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces

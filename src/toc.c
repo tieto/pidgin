@@ -517,14 +517,14 @@ void toc_callback( gpointer          data,
 		char *in;
 		char *buddy;
                 GList *bcs = buddy_chats;
-		struct buddy_chat *b = NULL;
+		struct conversation *b = NULL;
 		
 		sscanf(strtok(NULL, ":"), "%d", &id);
 
 		in = strtok(NULL, ":");
 
 		while(bcs) {
-			b = (struct buddy_chat *)bcs->data;
+			b = (struct conversation *)bcs->data;
 			if (id == b->id)
 				break;	
 			bcs = bcs->next;

@@ -223,28 +223,6 @@ struct group {
 	GList *members;
 };
 
-struct buddy_chat {
-	GtkWidget *window;
-	GtkWidget *text;
-	GtkWidget *list;
-        GtkWidget *entry;
-	GtkWidget *italic;
-	GtkWidget *bold;
-	GtkWidget *underline;
-	GtkWidget *palette;
-	GtkWidget *link;
-	GtkWidget *strike;
-	GtkWidget *font;
-	GtkWidget *wood;
-	GtkWidget *color_dialog;
-	GtkWidget *font_dialog;
-        GList *in_room;
-        GList *ignored;
-	int makesound;
-        int id;
-	char name[80];
-};
-
 struct chat_room {
         char name[128];
         int exchange;
@@ -262,7 +240,9 @@ struct debug_window {
 	GtkWidget *entry;
 };
 
+/* struct buddy_chat went away and got merged with this. */
 struct conversation {
+	/* stuff used for both IM and chat */
 	GtkWidget *window;
 	char name[80];
 	GtkWidget *text;
@@ -272,17 +252,27 @@ struct conversation {
 	GtkWidget *underline;
 	GtkWidget *palette;
 	GtkWidget *link;
-	GtkWidget *add_button;
 	GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
 	GtkWidget *color_dialog;
 	GtkWidget *font_dialog;
-
+	int makesound;
 	char current_fontface[64];
 	char current_fontname[64];
-	int makesound;
+
+	/* stuff used just for IM */
+	GtkWidget *add_button;
  	time_t sent_away;
+
+	/* stuff used just for chat */
+        GList *in_room;
+        GList *ignored;
+        int id;
+	GtkWidget *list;
+
+	/* something to distinguish */
+	gboolean is_chat;
 };
 
 struct file_header {
@@ -385,7 +375,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 446 $"
+#define REVISION "gaim:$Revision: 482 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -519,10 +509,10 @@ extern void show_about(GtkWidget *, void *);
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
-extern void chat_write(struct buddy_chat *, char *, int, char *);
-extern void add_chat_buddy(struct buddy_chat *, char *);
-extern void remove_chat_buddy(struct buddy_chat *, char *);
-extern void show_new_buddy_chat(struct buddy_chat *);
+extern void chat_write(struct conversation *, char *, int, char *);
+extern void add_chat_buddy(struct conversation *, char *);
+extern void remove_chat_buddy(struct conversation *, char *);
+extern void show_new_buddy_chat(struct conversation *);
 extern void setup_buddy_chats();
 extern void do_quit();
 
@@ -597,7 +587,7 @@ extern void serv_rvous_accept(char *, char *, char *);
 extern void serv_rvous_cancel(char *, char *, char *);
 
 /* Functions in conversation.c */
-extern void write_to_conv(struct conversation *, char *, int);
+extern void write_to_conv(struct conversation *, char *, int, char *);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
 extern struct conversation *find_conversation(char *);

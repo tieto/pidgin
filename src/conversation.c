@@ -31,26 +31,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <gtk/gtk.h>
-#include "gaim.h"
 #include "gtkhtml.h"
 #include <gdk/gdkkeysyms.h>
-#include "pixmaps/underline.xpm"
-#include "pixmaps/bold.xpm"
-#include "pixmaps/italic.xpm"
-#include "pixmaps/small.xpm"
-#include "pixmaps/normal.xpm"
-#include "pixmaps/big.xpm"
-#include "pixmaps/fontface.xpm"
-#include "pixmaps/speaker.xpm"
-/* #include "pixmaps/aimicon2.xpm" */
-#include "pixmaps/wood.xpm"
-#include "pixmaps/palette.xpm"
-#include "pixmaps/link.xpm"
-#include "pixmaps/strike.xpm"
-
-#include "pixmaps/smile_happy.xpm"
-#include "pixmaps/smile_sad.xpm"
-#include "pixmaps/smile_wink.xpm"
+#include "convo.h"
 
 int state_lock=0;
 
@@ -61,7 +44,7 @@ char *fontface;
 
 void check_everything(GtkWidget *entry);
 char *get_tag_by_prefix(GtkWidget *entry, const char *prefix);
-gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
+gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);
 
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
@@ -235,6 +218,16 @@ void update_log_convs()
 
 		cnv = cnv->next;
 	}
+
+	cnv = buddy_chats;
+	while(cnv) {
+		c = (struct conversation *)cnv->data;
+
+		if (c->log_button)
+			gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
+
+		cnv = cnv->next;
+	}
 }
 
 void update_font_buttons()
@@ -300,10 +293,17 @@ void toggle_loggle(GtkWidget *w, struct conversation *p)
 		show_log_dialog(p->name);
 }
 
-static int close_callback(GtkWidget *widget, struct conversation *c)
+int close_callback(GtkWidget *widget, struct conversation *c)
 {
-        gtk_widget_destroy(c->window);
-        delete_conversation(c);
+	if (c->window)
+	        gtk_widget_destroy(c->window);
+	c->window = NULL;
+
+	if (c->is_chat)
+		serv_chat_leave(c->id);
+	else
+	        delete_conversation(c);
+
         return TRUE;
 }
 
@@ -358,7 +358,7 @@ static void color_callback(GtkWidget *widget, struct conversation *c)
 	gtk_widget_grab_focus(c->entry);
 }
 
-static void add_callback(GtkWidget *widget, struct conversation *c)
+void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (find_buddy(c->name) != NULL) {
 		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
@@ -376,25 +376,38 @@ static void add_callback(GtkWidget *widget, struct conversation *c)
 }
 
 
-static void block_callback(GtkWidget *widget, struct conversation *c)
+void block_callback(GtkWidget *widget, struct conversation *c)
 {
         show_add_perm(c->name);
 	gtk_widget_grab_focus(c->entry);
 }
 
-static void warn_callback(GtkWidget *widget, struct conversation *c)
+void warn_callback(GtkWidget *widget, struct conversation *c)
 {
         show_warn_dialog(c->name);
 	gtk_widget_grab_focus(c->entry);
 }
 
-static void info_callback(GtkWidget *widget, struct conversation *c)
+void info_callback(GtkWidget *w, struct conversation *c)
 {
-        serv_get_info(c->name);
-	gtk_widget_grab_focus(c->entry);
+	if (c->is_chat) {
+	        char *name;
+	        GList *i;
+
+	        i = GTK_LIST(c->list)->selection;
+	        if (i)
+	                name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
+	        else
+	                return;
+
+	        serv_get_info(name);
+	} else {
+	        serv_get_info(c->name);
+		gtk_widget_grab_focus(c->entry);
+	}
 }
 
-gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c)
+gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c)
 {
   int pos;
   if(event->keyval==GDK_Return) {
@@ -415,10 +428,11 @@ gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct co
 }
 
 
-static void send_callback(GtkWidget *widget, struct conversation *c)
+void send_callback(GtkWidget *widget, struct conversation *c)
 {
         char *buf = g_malloc(BUF_LEN * 4);
 	char *buf2;
+	char *buf3;
 	gchar *buf4;
         int hdrlen;
 
@@ -432,6 +446,8 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
         if (!strlen(buf)) {
                 return;
         }
+
+	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 
         if (general_options & OPT_GEN_SEND_LINKS) {
                 linkify_text(buf);
@@ -474,9 +490,10 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 		struct gaim_callback *g;
 		void (*function)(char *, char **, void *);
 		char *buffy = g_strdup(buf);
+		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
 		while (ca) {
 			g = (struct gaim_callback *)(ca->data);
-			if (g->event == event_im_send && g->function != NULL) {
+			if (g->event == evnt && g->function != NULL) {
 				function = g->function;
 				(*function)(c->name, &buffy, g->data);
 			}
@@ -491,16 +508,27 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 #endif
         
-	write_to_conv(c, buf, WFLAG_SEND);
-
-	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
+	if (!c->is_chat) {
+		buf3 = g_strdup(buf);
+		write_to_conv(c, buf3, WFLAG_SEND, NULL);
+		g_free(buf3);
+	}
 
 	escape_text(buf);
 	if (escape_message(buf) > MSG_LEN - hdrlen) {
 		do_error_dialog(_("Message too long, some data truncated."), _("Error"));
 	}
 
-        serv_send_im(c->name, buf, 0);
+	if (c->is_chat) {
+		serv_chat_send(c->id, buf);
+
+		/* no sound because we do that when we receive our message */
+	} else {
+	        serv_send_im(c->name, buf, 0);
+
+		if (c->makesound && (sound_options & OPT_SOUND_SEND))
+			play_sound(SEND);
+	}
         
 	quiet_set(c->bold, FALSE);
 	quiet_set(c->strike, FALSE);
@@ -510,14 +538,11 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	quiet_set(c->palette, FALSE);
 	quiet_set(c->link, FALSE);
         
-	if (c->makesound && (sound_options & OPT_SOUND_SEND))
-		play_sound(SEND);
-
 	if ((general_options & OPT_GEN_BACK_ON_IM) && awaymessage != NULL) {
 		do_im_back();
 	}
 
-    set_font_face(NULL, c);
+	set_font_face(NULL, c);
 	
 	gtk_widget_grab_focus(c->entry);
 
@@ -684,7 +709,7 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 	gtk_widget_grab_focus(entry);
 }
 
-static void toggle_color(GtkWidget *color, struct conversation *c)
+void toggle_color(GtkWidget *color, struct conversation *c)
 {
 	if (state_lock)
                 return;
@@ -694,7 +719,7 @@ static void toggle_color(GtkWidget *color, struct conversation *c)
 		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
 }
 
-static void toggle_font(GtkWidget *font, struct conversation *c)
+void toggle_font(GtkWidget *font, struct conversation *c)
 {
 	if (state_lock)
 		return;
@@ -841,11 +866,14 @@ void check_everything(GtkWidget *entry)
 /*------------------------------------------------------------------------*/
 
 
-void write_to_conv(struct conversation *c, char *what, int flags)
+/* this is going to be interesting since the conversation could either be a
+ * normal IM conversation or a chat window. but hopefully it won't matter */
+void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 {
 	char *buf = g_malloc(BUF_LONG);
         char *buf2 = g_malloc(BUF_LONG);
-        char *who = NULL;
+	char *buf3;
+	char *str;
         FILE *fd;
         char colour[10];
 	GdkBitmap *mask;
@@ -854,6 +882,8 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 	int y;
 	int i;
 	char *smiley = g_malloc(7);
+
+	if (!who) who = c->name;
 	
         if (flags & WFLAG_SYSTEM) {
 
@@ -883,23 +913,44 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                 
         } else {
 
-                if (flags & WFLAG_RECV) {
-                        strcpy(colour, "#ff0000");
-			who = c->name;
-                } else if (flags & WFLAG_SEND) {
-                        strcpy(colour, "#0000ff");
-                        who = current_user->username;
-                }
+		buf3 = g_malloc(BUF_LONG);
+		
+		if (flags & WFLAG_WHISPER) {
+			/* if we're whispering, it's not an autoresponse */
+			if (meify(what)) {
+				str = g_malloc(64);
+				g_snprintf(str, 62, "***%s", who);
+				strcpy(colour, "#6C2585\0");
+			} else {
+				str = g_malloc(64);
+				g_snprintf(str, 62, "*%s*:", who);
+				strcpy(colour, "#00ff00\0");
+			}
+		} else {
+			if (meify(what)) {
+				str = g_malloc(64);
+				if (flags & WFLAG_AUTO)
+					g_snprintf(str, 62, "%s ***%s", AUTO_RESPONSE, who);
+				else
+					g_snprintf(str, 62, "***%s", who);
+				strcpy(colour, "#062585\0");
+			} else {
+				str = g_malloc(64);
+				if (flags & WFLAG_AUTO)
+					g_snprintf(str, 62, "%s %s", who, AUTO_RESPONSE);
+				else
+					g_snprintf(str, 62, "%s:", who);
+		                if (flags & WFLAG_RECV)
+		                        strcpy(colour, "#ff0000");
+				else if (flags & WFLAG_SEND)
+		                        strcpy(colour, "#0000ff");
+			}
+		}
 
-                if (flags & WFLAG_AUTO)
-                        sprintf(buf2, " %s", AUTO_RESPONSE);
-                else
-                        buf2[0]=0; /* sprintf(buf2, ""); */
-
-                if (display_options & OPT_DISP_SHOW_TIME)
-                        g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s %s:%s</B></FONT> ", colour, date(), who, buf2);
-                else
-                        g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s:%s</B></FONT> ", colour, who, buf2);
+		if (display_options & OPT_DISP_SHOW_TIME)
+			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s %s</B></FONT> ", colour, date(), str);
+		else
+			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT>", colour, str);
 
                 gtk_html_freeze(GTK_HTML(c->text));
 
@@ -917,7 +968,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                			buf2[y] = what[i];
                			y++;
 
-		                if ( (what[i] == ':') || (what[i] == ';') || (what[i] == 'O') )
+		                if ( (what[i] == ':') || (what[i] == ';') || (what[i] == '8') )
                			{
                        			if (state < 2)
                         	  	{
@@ -1007,6 +1058,11 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
                         char *t1, *t2;
+			char *nm = g_malloc(256);
+			if (c->is_chat)
+				g_snprintf(nm, 256, "%s.chat", c->name);
+			else
+				g_snprintf(nm, 256, "%s", c->name);
 
                         if (general_options & OPT_GEN_STRIP_HTML) {
                                 t1 = strip_html(buf);
@@ -1015,13 +1071,14 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                                 t1 = buf;
                                 t2 = what;
                         }
-                        fd = open_log_file(c->name);
+                        fd = open_log_file(nm);
                         fprintf(fd, "%s%s\n", t1, t2);
                         fclose(fd);
                         if (general_options & OPT_GEN_STRIP_HTML) {
                                 g_free(t1);
                                 g_free(t2);
                         }
+			g_free(nm);
                 }
         }
 
@@ -1034,7 +1091,8 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 	}
 */
 
-        if (general_options & OPT_GEN_POPUP_WINDOWS)
+        if ((c->is_chat && (general_options & OPT_GEN_POPUP_CHAT)) ||
+	   (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
                 gdk_window_show(c->window->window);
 
 	g_free(smiley);        
@@ -1067,69 +1125,18 @@ static void check_spelling( GtkEditable * editable, gchar * new_text,
 }
 
 
-void show_conv(struct conversation *c)
-{
-	GtkWidget *win;
-        char buf[256];
-        GtkWidget *text;
-        GtkWidget *sw;
-	GtkWidget *send;
-	GtkWidget *info;
-        GtkWidget *warn;
-        GtkWidget *block;
-	/* GtkWidget *color; */
-	GtkWidget *close;
-	GtkWidget *entry;
-	GtkWidget *toolbar;
-	GtkWidget *bbox;
-        GtkWidget *vbox;
-	GtkWidget *vbox2;
-	GtkWidget *paned;
-        GtkWidget *add;
+GtkWidget *build_conv_toolbar(struct conversation *c) {
         GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i, *font_i;
         GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p, *font_p;
         GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link, *font;
         GdkBitmap *mask;
-	
-	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+	GtkWidget *toolbar;
+	GtkWidget *win;
+	GtkWidget *entry;
 
-        gtk_widget_realize(win);
-        aol_icon(win->window);
- 
-        
-        c->window = win;
-        
-	send = gtk_button_new_with_label(_("Send"));
-	info = gtk_button_new_with_label(_("Info"));
-	warn = gtk_button_new_with_label(_("Warn"));
-	/* color = gtk_button_new_with_label("Color"); */
-	close = gtk_button_new_with_label(_("Close"));
-	if (find_buddy(c->name) != NULL) {
-       		add = gtk_button_new_with_label(_("Remove"));
-	}
-	else {
-		add = gtk_button_new_with_label(_("Add"));
-	}
-        block = gtk_button_new_with_label(_("Block"));
-
-
-        bbox = gtk_hbox_new(TRUE, 0);
-	vbox = gtk_vbox_new(FALSE, 0);
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	paned = gtk_vpaned_new();
-
-	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
-	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
-	gtk_widget_show(vbox2);
-	gtk_widget_show(paned);
-	
-	entry = gtk_text_new(NULL, NULL);
-	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
-	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
-
-	/* Toolbar */
 	toolbar = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+	win = c->window;
+	entry = c->entry;
 
 	link_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
 	     &win->style->white, link_xpm );
@@ -1239,7 +1246,6 @@ void show_conv(struct conversation *c)
         
 	gtk_widget_show(toolbar);
 	
-	c->entry = entry;
 	c->bold = bold;
 	c->strike = strike;
         c->italic = italic;
@@ -1247,7 +1253,6 @@ void show_conv(struct conversation *c)
         c->log_button = wood;
 	c->palette = palette;
 	c->link = link;  
-        c->add_button = add;
 	c->font = font;
 
         gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
@@ -1256,9 +1261,75 @@ void show_conv(struct conversation *c)
 	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->underline, ((font_options & OPT_FONT_UNDERLINE)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
-        
-	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 
+	return toolbar;
+}
+
+
+void show_conv(struct conversation *c)
+{
+	GtkWidget *win;
+        char buf[256];
+        GtkWidget *text;
+        GtkWidget *sw;
+	GtkWidget *send;
+	GtkWidget *info;
+        GtkWidget *warn;
+        GtkWidget *block;
+	/* GtkWidget *color; */
+	GtkWidget *close;
+	GtkWidget *entry;
+	GtkWidget *toolbar;
+	GtkWidget *bbox;
+        GtkWidget *vbox;
+	GtkWidget *vbox2;
+	GtkWidget *paned;
+        GtkWidget *add;
+	
+	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+
+        gtk_widget_realize(win);
+        aol_icon(win->window);
+ 
+        
+        c->window = win;
+        
+	send = gtk_button_new_with_label(_("Send"));
+	info = gtk_button_new_with_label(_("Info"));
+	warn = gtk_button_new_with_label(_("Warn"));
+	/* color = gtk_button_new_with_label("Color"); */
+	close = gtk_button_new_with_label(_("Close"));
+	if (find_buddy(c->name) != NULL) {
+       		add = gtk_button_new_with_label(_("Remove"));
+	}
+	else {
+		add = gtk_button_new_with_label(_("Add"));
+	}
+        block = gtk_button_new_with_label(_("Block"));
+
+
+        bbox = gtk_hbox_new(TRUE, 0);
+	vbox = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	paned = gtk_vpaned_new();
+
+	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
+	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
+	gtk_widget_show(vbox2);
+	gtk_widget_show(paned);
+	
+	entry = gtk_text_new(NULL, NULL);
+	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
+	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
+	gtk_object_set_user_data(GTK_OBJECT(entry), c);
+	c->entry = entry;
+
+	/* Toolbar */
+	toolbar = build_conv_toolbar(c);
+        
+
+        c->add_button = add;
 	
 
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
@@ -1300,7 +1371,7 @@ void show_conv(struct conversation *c)
         gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
 	/* gtk_signal_connect(GTK_OBJECT(color), "clicked", GTK_SIGNAL_FUNC(color_callback), c); */
        
-	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(user_keypress_callback), c);
+	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_widget_set_usize(entry, 300, 25);
 
 	gtk_box_pack_start(GTK_BOX(bbox), send, TRUE, TRUE, 5);
