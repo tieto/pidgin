@@ -1846,18 +1846,6 @@ static struct group_show *new_group_show(char *group)
 
 	gtk_container_add(GTK_CONTAINER(g->item), g->label);
 
-	style = gtk_style_copy(gtk_widget_get_style(GTK_WIDGET(g->label)));
-
-//	style->font = gdk_font_load("-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
-
-	style->fg[0].red = 104 * 255;
-	style->fg[0].green = 20 * 255;
-	style->fg[0].blue = 20* 255;
-	
-	gtk_widget_set_style(GTK_WIDGET(g->label), style);
-	gtk_style_unref(style);
-
-
 	shows = g_slist_insert(shows, g, pos);
 
 	/* Rob does drugs - this is still evil, damn you becausse I SAID SO! */
