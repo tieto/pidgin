@@ -81,6 +81,7 @@ AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,en
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
+AC_ARG_ENABLE(artsc,   [  --disable-artsc         Turn off ArtsC (default=auto)],,enable_artsc=yes)
 
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
@@ -221,12 +222,36 @@ fi
 if test "$enable_esd" = yes ; then
 	AM_PATH_GESD
         if test "$no_esd" != yes ; then
+		old_CFLAGS="$CFLAGS"
         	CFLAGS="$CFLAGS $ESD_CFLAGS"
-		AC_DEFINE(ESD_SOUND)
-                SOUND_LIBS="$SOUND_LIBS $ESD_LIBS"
+		AC_CHECK_HEADER(esd.h,
+			[
+				AC_DEFINE(ESD_SOUND)
+				SOUND_LIBS="$SOUND_LIBS $ESD_LIBS"
+			],[
+				enable_esd=no
+				CFLAGS="$old_CFLAGS"
+			])
 	else
 		enable_esd=no
         fi
+fi
+if test "x$enable_artsc" = "xyes"; then
+	AM_PATH_ARTSC
+	if test "x$no_artsc" != "xyes" ; then
+		old_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $ARTSC_CFLAGS"
+		AC_CHECK_HEADER(artsc.h,
+			[
+				AC_DEFINE(ARTSC_SOUND)
+				SOUND_LIBS="$SOUND_LIBS $ARTSC_LIBS"
+			],[
+				enable_artsc=no
+				CFLAGS="$old_CFLAGS"
+			])
+	else
+		enable_artsc=no
+	fi
 fi
 AC_SUBST(SOUND_LIBS)
 
@@ -352,6 +377,7 @@ echo Use XScreenSaver Extension.. : $enable_xss
 echo
 echo Build with ESD.............. : $enable_esd
 echo Build with NAS.............. : $enable_nas
+echo Build with ArtsC............ : $enable_artsc
 echo
 echo Print debugging messages.... : $enable_debug
 echo

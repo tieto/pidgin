@@ -39,6 +39,10 @@
 #include <esd.h>
 #endif
 
+#ifdef ARTSC_SOUND
+#include <artsc.h>
+#endif
+
 #ifdef NAS_SOUND
 #include <audio/audiolib.h>
 #endif
@@ -120,7 +124,8 @@ static int can_play_audio()
 }
 
 
-#ifdef ESD_SOUND
+#if defined(ESD_SOUND) || defined(ARTSC_SOUND)
+
 /*
 ** This routine converts from ulaw to 16 bit linear.
 **
@@ -154,6 +159,9 @@ static int _af_ulaw2linear(unsigned char ulawbyte)
 	return (sample);
 }
 
+#endif
+
+#ifdef ESD_SOUND
 
 int esd_fd;
 
@@ -190,6 +198,86 @@ static int can_play_esd()
 }
 
 #endif
+
+#ifdef ARTSC_SOUND
+
+static int play_artsc(unsigned char *data, int size)
+{
+	arts_stream_t stream;
+	guint16* lineardata;
+	int result = 1;
+	int error;
+	int i;
+
+	lineardata = g_malloc(size * 2);
+
+	for (i = 0; i < size; i++) {
+		lineardata[i] = _af_ulaw2linear(data[i]);
+	}
+
+	stream = arts_play_stream(8012, 16, 1, "gaim");
+
+	error = arts_write(stream, lineardata, size);
+	if (error < 0) {
+		result = 0;
+	}
+
+	arts_close_stream(stream);
+
+	g_free(lineardata);
+
+	arts_free();
+
+	return result;
+}
+
+static int can_play_artsc()
+{
+	int error;
+
+	error = artsc_init();
+	if (error < 0)
+		return 0;
+
+	return 1;
+}
+
+static int play_artsc_file(char *file)
+{
+	struct stat stat_buf;
+	unsigned char* buf = NULL;
+	int result = 0;
+	int fd = -1;
+
+	fd = open(file, O_RDONLY);
+	if (fd < 0)
+		goto out;
+
+	if (!can_play_artsc())
+		goto out;
+
+	if (fstat(fd, &stat_buf))
+		goto out;
+
+	if (!stat_buf.st_size)
+		goto out;
+
+	buf = g_malloc(stat_buf.st_size);
+	if (!buf)
+		goto out;
+	
+	if (read(fd, buf, stat_buf.st_size) < 0)
+		goto out;
+
+	result = play_artsc(buf, stat_buf.st_size);
+
+	out:
+	if (buf) g_free(buf);
+	if (fd != -1) close(fd);
+	return result;
+}
+
+#endif /* ARTSC_SOUND */
 
 #ifdef NAS_SOUND
 
@@ -361,6 +449,14 @@ void play(unsigned char *data, int size)
 		 * go there? */
 		if (can_play_esd()) {
 			if (play_esd(data, size))
+				_exit(0);
+		}
+#endif
+
+#ifdef ARTSC_SOUND
+		/* ArtsC is the new second choice. */
+		if (can_play_artsc()) {
+			if (play_artsc(data, size))
 				_exit(0);
 		}
 #endif
