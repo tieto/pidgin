@@ -240,7 +240,7 @@ if test "x$enable_xss" = "xyes" ; then
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
-	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L%x_libraries -lXss"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-Li$x_libraries -lXss"],[],[-lX11 -lXext -lm])
 	if test \! "$XSS_LIBS" = "no"; then
 		AC_TRY_COMPILE([
 #include <X11/extensions/scrnsaver.h>
