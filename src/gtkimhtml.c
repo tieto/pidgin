@@ -1638,6 +1638,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	imhtml->edit.italic = NULL;
 	imhtml->edit.underline = NULL;
 	imhtml->edit.fontface = NULL;
+	imhtml->edit.forecolor = NULL;
+	imhtml->edit.backcolor = NULL;
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
