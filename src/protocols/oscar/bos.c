@@ -1,6 +1,7 @@
 /*
  * Family 0x0009 - Basic Oscar Service.
  *
+ * The functionality of this family has been replaced by SSI.
  */
 
 #define FAIM_INTERNAL

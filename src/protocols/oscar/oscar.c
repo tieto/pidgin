@@ -3717,7 +3717,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_bos_reqlocaterights(sess, fr->conn);
 	aim_bos_reqbuddyrights(sess, fr->conn);
 	aim_im_reqparams(sess);
-	aim_bos_reqrights(sess, fr->conn);
+	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi? */
 
 #ifdef NOSSI
 	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
@@ -3816,7 +3816,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (od->icq)
 		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else
-		oscar_set_info(gc, gc->account->user_info);
+		oscar_set_info(gc, gc->account->user_info); /* XXX - unneeded? */
 
 	return 1;
 }
@@ -3864,7 +3864,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
-/*	aim_srv_setavailmsg(sess, NULL); */
+	aim_srv_setavailmsg(sess, NULL);
 	aim_bos_setidle(sess, fr->conn, 0);
 
 	if (od->icq) {
@@ -5390,7 +5390,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 				free(tmp);
 			}
 
-			if (bi->availablemsg) {
+			if (bi->availablemsg && !(b->uc & UC_UNAVAILABLE)) {
 				tmp = yay;
 				yay = g_strconcat(tmp, _("<b>Available:</b> "), bi->availablemsg, "\n", NULL);
 				free(tmp);

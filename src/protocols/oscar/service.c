@@ -788,14 +788,18 @@ faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg)
 		return -EINVAL;
 
 	if (msg) {
-		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 2)))
+		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 8)))
 			return -ENOMEM;
 
 		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
 		aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
 
 		aimbs_put16(&fr->data, 0x001d);
-		aimbs_put16(&fr->data, strlen(msg)+2);
+		aimbs_put16(&fr->data, strlen(msg)+8);
+		aimbs_put16(&fr->data, 0x0002);
+		aimbs_put8(&fr->data, 0x04);
+		aimbs_put8(&fr->data, strlen(msg)+4);
+		aimbs_put16(&fr->data, strlen(msg));
 		aimbs_putraw(&fr->data, msg, strlen(msg));
 		aimbs_put16(&fr->data, 0x0000);
 	} else {
