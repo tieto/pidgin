@@ -306,6 +306,8 @@ msn_switchboard_report_user(MsnSwitchBoard *swboard, GaimMessageFlags flags, con
 static void
 swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 {
+	g_return_if_fail(swboard != NULL);
+
 	gaim_debug_info("msg", "Error: Unable to call the user %s\n", passport);
 
 	if (swboard->total_users == 0)
@@ -365,7 +367,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		if (error == MSN_MSG_ERROR_TIMEOUT)
 		{
 			str_reason = _("Message may have not been sent "
-						   "because a time out occurred:");
+						   "because a timeout occurred:");
 		}
 		else if (error == MSN_MSG_ERROR_SB)
 		{
@@ -962,8 +964,15 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	int reason = MSN_SB_ERROR_UNKNOWN;
 
-	if (error == 217)
+	if (error == 215)
+	{
+		gaim_debug_info("msn", "Invited user already in switchboard\n");
+		return;
+	}
+	else if (error == 217)
+	{
 		reason = MSN_SB_ERROR_USER_OFFLINE;
+	}
 
 	cal_error_helper(trans, reason);
 }

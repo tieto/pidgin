@@ -45,7 +45,7 @@ typedef enum
 	MSN_SB_ERROR_OFFLINE, /**< The account is offline. */
 	MSN_SB_ERROR_USER_OFFLINE, /**< The user to call is offline. */
 	MSN_SB_ERROR_CONNECTION, /**< There was a connection error. */
-	MSN_SB_ERROR_UNKNOWN /**< An unknown error occured. */
+	MSN_SB_ERROR_UNKNOWN /**< An unknown error occurred. */
 
 } MsnSBErrorType;
 
@@ -86,7 +86,7 @@ struct _MsnSwitchBoard
 	GQueue *im_queue; /**< Queue of messages to send. */
 	GList *ack_list; /**< List of messages waiting for an ack. */
 
-	MsnSBErrorType error; /**< The error that occured in this switchboard
+	MsnSBErrorType error; /**< The error that occurred in this switchboard
 							(if applicable). */
 	MsnSlpLink *slplink; /**< The slplink that is using this switchboard. */
 };

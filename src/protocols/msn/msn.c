@@ -448,8 +448,7 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	else if (gaim_presence_is_status_active(presence, "busy") ||
 			 gaim_presence_is_status_active(presence, "phone"))
 		emblems[i++] = "occupied";
-	else if (gaim_presence_is_status_active(presence, "away") ||
-			 gaim_presence_is_idle(presence))
+	else if (!gaim_presence_is_available(presence))
 		emblems[i++] = "away";
 
 	if (user == NULL)
@@ -1332,15 +1331,6 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 			g_string_append_printf(s, "<font sml=\"msn\">%s</font><br>",
 					nicktext);
 			g_free(nicktext);
-		}
-
-		if (gaim_presence_is_idle(presence))
-		{
-			char *idletime = gaim_str_seconds_to_string(time(NULL) -
-										gaim_presence_get_idle_time(presence));
-			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
-					idletime);
-			g_free(idletime);
 		}
 
 		if (statustext)

@@ -96,7 +96,7 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 
 		g_return_if_fail(slpmsg != NULL);
 
-		gaim_debug_info("msn", "slpcall destroy: tryping slp_msg (%p)\n",
+		gaim_debug_info("msn", "slpcall destroy: trying slp_msg (%p)\n",
 						slpmsg);
 
 		if (slpmsg->slpcall == slpcall)

@@ -86,6 +86,49 @@ msn_user_destroy(MsnUser *user)
 }
 
 void
+msn_user_update(MsnUser *user)
+{
+	GaimAccount *account;
+	GaimConnection *gc;
+
+	account = user->userlist->session->account;
+	gc = gaim_account_get_connection(account);
+
+	gaim_prpl_got_user_status(account, user->passport, user->status, NULL);
+
+	if (user->idle)
+		gaim_prpl_got_user_idle(account, user->passport, TRUE, -1);
+	else
+		gaim_prpl_got_user_idle(account, user->passport, FALSE, 0);
+}
+
+void
+msn_user_set_state(MsnUser *user, const char *state)
+{
+	const char *status;
+
+	if (!g_ascii_strcasecmp(state, "BSY"))
+		status = "busy";
+	else if (!g_ascii_strcasecmp(state, "BRB"))
+		status = "brb";
+	else if (!g_ascii_strcasecmp(state, "AWY"))
+		status = "away";
+	else if (!g_ascii_strcasecmp(state, "PHN"))
+		status = "phone";
+	else if (!g_ascii_strcasecmp(state, "LUN"))
+		status = "lunch";
+	else
+		status = "available";
+
+	if (!g_ascii_strcasecmp(state, "IDL"))
+		user->idle = TRUE;
+	else
+		user->idle = FALSE;
+
+	user->status = status;
+}
+
+void
 msn_user_set_passport(MsnUser *user, const char *passport)
 {
 	g_return_if_fail(user != NULL);
@@ -221,6 +264,12 @@ msn_user_add_group_id(MsnUser *user, int id)
 	group_name = msn_userlist_find_group_name(userlist, id);
 
 	g = gaim_find_group(group_name);
+
+	if ((id == 0) && (g == NULL))
+	{
+		g = gaim_group_new(group_name);
+		gaim_blist_add_group(g, NULL);
+	}
 
 	b = gaim_find_buddy_in_group(account, passport, g);
 

@@ -99,6 +99,11 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	group = msn_group_new(session->userlist, group_id, name);
 
+	/* HACK */
+	if (group_id == 0)
+		/* Group of ungroupped buddies */
+		return;
+
 	if ((g = gaim_find_group(name)) == NULL)
 	{
 		g = gaim_group_new(name);
