@@ -133,20 +133,16 @@ void show_about(GtkWidget *w, void *data)
 
 		/* Just because */
 		str = g_strconcat(
-				"<FONT SIZE=\"3\">", _(Just Because"), ":</FONT><BR>"
-				"  Rachel Shelton (Vampire & Dark Lord)"
-				"<BR>", NULL);
+			"<FONT SIZE=\"3\">", "Just Because", ":</FONT><BR>"
+			"  Rachel Shelton (Vampire & Dark Lord)<br>"
+			"<BR>", NULL);
 		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
 		/* Retired Developers */
 		str = g_strconcat(
 				"<FONT SIZE=\"3\">", _("Retired Developers"), ":</FONT><BR>"
-				ROLL);
-
-                gtk_imhtml_append_text(GTK_IMHTML(text),
-                                _("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.fre
-enode.net"
-                 
+				"  Adam Fritzler (", _("former libfaim maintainer"), ")<BR>"
 				"  Eric Warmenhoven (", _("former lead developer"), ") "
 				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
 				"warmenhoven@yahoo.com</A>&gt;<BR>"
