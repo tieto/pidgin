@@ -56,7 +56,7 @@ char sound_cmd[2048];
 
 struct parse {
 	char option[256];
-	char value[MAX_VALUES][256];
+	char value[MAX_VALUES][4096];
 };
 
 static struct parse *parse_line(char *line)
