@@ -73,11 +73,15 @@ Section "" ; (default section)
   Call AddSharedDLL
 
   ; Set Start Menu icons
+  SetShellVarContext "all"
   SetOutPath "$SMPROGRAMS\Gaim"
   CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" \
                  "$INSTDIR\gaim.exe"
   CreateShortCut "$SMPROGRAMS\Gaim\Unistall.lnk" \
                  "$INSTDIR\gaim-uninst.exe"
+  ; Set Desktop icon
+  CreateShortCut "$DESKTOP\Gaim.lnk" \
+                 "$INSTDIR\gaim.exe"
 
   ; write out uninstaller
   WriteUninstaller "$INSTDIR\gaim-uninst.exe"
@@ -89,7 +93,11 @@ UninstallText "This will uninstall Gaim from your system"
 Section Uninstall
   ; Delete Gaim Dir
   RMDir /r "$INSTDIR"
+
+  ; Delete Start Menu group & Desktop icon
+  SetShellVarContext "all"
   RMDir /r "$SMPROGRAMS\Gaim"
+  Delete "$DESKTOP\Gaim.lnk"
 
   ; Read in Aspell install path
   ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\Gaim" "AspellPath"
