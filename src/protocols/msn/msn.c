@@ -323,10 +323,12 @@ static char *handle_errcode(char *buf, gboolean show)
 		case 913:
 			g_snprintf(msg, sizeof(msg), "Not allowed when offline");
 			break;
-		case 920:
+	        case 920:
 			g_snprintf(msg, sizeof(msg), "Not accepting new users");
 			break;
-
+	        case 924:
+			g_snprintf(msg, sizeof(msg), "User unverified");
+			break;
 		default:
 			g_snprintf(msg, sizeof(msg), "Unknown Error Code");
 			break;
