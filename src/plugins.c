@@ -983,6 +983,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 }
 
 /* Calls the gaim_plugin_remove function in any loaded plugin that has one */
+#ifdef GAIM_PLUGINS
 void remove_all_plugins()
 {
 	GList *c = plugins;
@@ -997,3 +998,4 @@ void remove_all_plugins()
 		c = c->next;
 	}
 }
+#endif

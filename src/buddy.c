@@ -1372,10 +1372,10 @@ void do_quit()
 	applet = NULL;
 #endif
 
-#ifdef GAIM_PLUGINS
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
 
+#ifdef GAIM_PLUGINS
 	/* then we remove everyone in a mass suicide */
 	remove_all_plugins();
 #endif

@@ -395,7 +395,9 @@ void sighandler(int sig)
 	default:
 		debug_printf("caught signal %d\n", sig);
 		gtkspell_stop();
+#ifdef GAIM_PLUGINS
 		remove_all_plugins();
+#endif
 		if (gtk_main_level())
 			gtk_main_quit();
 		exit(0);
