@@ -739,20 +739,25 @@ struct _search {
 	GtkWidget *entry;
 };
 
-static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
+static void do_search_cb(GtkWidget *widget, struct _search *s)
 {
-	switch (resp) {
-	case GTK_RESPONSE_OK:
-		gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(s->entry)));
-		break;
-	case GTK_RESPONSE_DELETE_EVENT:
-	case GTK_RESPONSE_CLOSE:
-		gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
-		gtk_widget_destroy(s->gtkconv->dialogs.search);
-		s->gtkconv->dialogs.search = NULL;
-		g_free(s);
-		break;
-	}
+    gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(s->entry)));
+}
+
+static void find_dlg_set_sensitive(GtkWidget *entry, GtkWidget *button)
+{
+    if(*gtk_entry_get_text(GTK_ENTRY(entry)))
+        gtk_widget_set_sensitive(button, TRUE);
+    else
+        gtk_widget_set_sensitive(button, FALSE);
+}
+
+static gboolean find_dlg_close_cb(GtkWidget *w, struct _search *s)
+{
+    gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
+    s->gtkconv->dialogs.search = NULL;
+    g_free(s);
+    return TRUE;
 }
 
 static void
@@ -762,49 +767,80 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
 	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	GtkWidget *hbox;
+    GtkWidget *table;
+    GtkWidget *labelbox, *bbox;
+    GtkWidget *button, *align;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	GtkWidget *label, *entry;
 	struct _search *s;
+	gint signal_id;
+	GClosure *closure;
 
 	if (gtkconv->dialogs.search) {
 		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.search));
 		return;
 	}
 
-	gtkconv->dialogs.search = gtk_dialog_new_with_buttons(_("Find"), GTK_WINDOW(gtkwin->window),
-							      GTK_DIALOG_DESTROY_WITH_PARENT,
-							      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-							      GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK);
-	gtk_container_set_border_width (GTK_CONTAINER(gtkconv->dialogs.search), 6);
+    gtkconv->dialogs.search = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(gtkconv->dialogs.search), _("Find"));
+    gtk_window_set_transient_for(GTK_WINDOW(gtkconv->dialogs.search),
+                                 GTK_WINDOW(gtkwin->window));
+    gtk_window_set_destroy_with_parent(GTK_WINDOW(gtkconv->dialogs.search), TRUE);
+    gtk_window_set_position(GTK_WINDOW(gtkconv->dialogs.search), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_container_set_border_width (GTK_CONTAINER(gtkconv->dialogs.search), 12);
 	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(gtkconv->dialogs.search), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 6);
 
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+    table = gtk_table_new(2, 2, FALSE);
+    gtk_container_add(GTK_CONTAINER(gtkconv->dialogs.search), table);
+    gtk_table_set_row_spacings(GTK_TABLE(table), 12);
+    gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+
+    labelbox = gtk_hbox_new(FALSE, 12);
+    gtk_box_pack_start(GTK_BOX(labelbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK, FALSE);
+    gtk_table_attach_defaults(GTK_TABLE(table), labelbox, 0, 1, 0, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Search for:"));
+    gtk_box_pack_start(GTK_BOX(labelbox), label, FALSE, FALSE, 0);
+
 	entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
-	g_signal_connect(G_OBJECT(entry), "changed", 
-					 G_CALLBACK(gaim_gtk_set_sensitive_if_input), 
-					 gtkconv->dialogs.search);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+    gtk_table_attach_defaults(GTK_TABLE(table), entry, 1, 2, 0, 1);
 
 	s = g_malloc(sizeof(struct _search));
 	s->gtkconv = gtkconv;
 	s->entry = entry;
 
-	g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "response", G_CALLBACK(do_search_cb), s);
+    bbox = gtk_hbutton_box_new();
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_EDGE);
+    gtk_box_set_spacing(GTK_BOX(bbox), 12);
+    gtk_table_attach_defaults(GTK_TABLE(table), bbox, 1, 2, 1, 2);
+
+    button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+    gtk_container_add(GTK_CONTAINER(bbox), button);
+    GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+    g_signal_connect_swapped(G_OBJECT(button), "clicked",
+                             G_CALLBACK(gtk_widget_destroy), gtkconv->dialogs.search);
+
+    button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+    gtk_container_add(GTK_CONTAINER(bbox), button);
+    gtk_widget_set_sensitive(button, FALSE);
+    GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+/*
+	signal_id = g_signal_lookup ("clicked", GTK_TYPE_BUTTON);
+    closure = g_cclosure_new_object (G_CALLBACK (action_widget_activated),
+                                     G_OBJECT (dialog));
+	g_signal_connect_closure_by_id (child, signal_id, 0, closure, FALSE);
+*/
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(do_search_cb), s);
+
+    gtk_window_set_default(GTK_WINDOW(gtkconv->dialogs.search), button);
+    g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "destroy",
+                     G_CALLBACK(find_dlg_close_cb), s);
+	g_signal_connect(G_OBJECT(entry), "changed", 
+					 G_CALLBACK(find_dlg_set_sensitive), button);
 
 	gtk_widget_show_all(gtkconv->dialogs.search);
 }
