@@ -46,6 +46,7 @@ typedef struct
 	void (*connected)(GaimConnection *gc);
 	void (*request_pass)(GaimConnection *gc);
 	void (*disconnected)(GaimConnection *gc, const char *reason);
+	void (*notice)(GaimConnection *gc, const char *text);
 
 } GaimConnectionUiOps;
 
@@ -176,6 +177,14 @@ const char *gaim_connection_get_display_name(const GaimConnection *gc);
  */
 void gaim_connection_update_progress(GaimConnection *gc, const char *text,
 									 size_t step, size_t count);
+
+/**
+ * Displays a connection-specific notice.
+ *
+ * @param gc   The connection.
+ * @param text The notice text.
+ */
+void gaim_connection_notice(GaimConnection *gc, const char *text);
 
 /**
  * Closes a connection with an error.

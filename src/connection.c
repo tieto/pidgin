@@ -301,6 +301,20 @@ gaim_connection_update_progress(GaimConnection *gc, const char *text,
 }
 
 void
+gaim_connection_notice(GaimConnection *gc, const char *text)
+{
+	GaimConnectionUiOps *ops;
+
+	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(text != NULL);
+
+	ops = gaim_get_connection_ui_ops();
+
+	if (ops != NULL && ops->notice != NULL)
+		ops->notice(gc, text);
+}
+
+void
 gaim_connection_error(GaimConnection *gc, const char *text)
 {
 	GaimConnectionUiOps *ops;
