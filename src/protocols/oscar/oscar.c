@@ -378,13 +378,12 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	if ((encoding == NULL) || encoding[0] == '\0') {
 		gaim_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
 
-	} else if (!strcmp(encoding, "iso-8859-1")
-                   || !strcmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1")) {
+	} else if (!strcmp(encoding, "iso-8859-1")) {
+		utf8 = g_convert(text, textlen, "UTF-8", "iso-8859-1", NULL, NULL, NULL);
+	} else if (!strcmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
-
 	} else if (!strcmp(encoding, "unicode-2-0")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
-
 	} else if (strcmp(encoding, "us-ascii") && strcmp(encoding, "utf-8")) {
 		gaim_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
