@@ -1231,9 +1231,6 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	hb.account = account;
 	hb.name = g_strdup(gaim_normalize(account, name));
 
-	if(!hb.name)
-		return NULL;
-
 	for(group = gaimbuddylist->root; group; group = group->next) {
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb))) {

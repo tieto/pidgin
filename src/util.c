@@ -1301,6 +1301,7 @@ gaim_normalize(const GaimAccount *account, const char *s)
 {
 	GaimPlugin *prpl = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	const char *ret = NULL;
 
 	if(account)
 		prpl = gaim_find_prpl(gaim_account_get_protocol(account));
@@ -1308,9 +1309,10 @@ gaim_normalize(const GaimAccount *account, const char *s)
 	if(prpl)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(prpl_info && prpl_info->normalize) {
-		return prpl_info->normalize(account, s);
-	} else {
+	if(prpl_info && prpl_info->normalize)
+		ret = prpl_info->normalize(account, s);
+
+	if(!ret) {
 		static char buf[BUF_LEN];
 		char *tmp;
 		int i, j;
@@ -1332,8 +1334,9 @@ gaim_normalize(const GaimAccount *account, const char *s)
 		g_snprintf(buf, sizeof(buf), "%s", tmp);
 		g_free(tmp);
 
-		return buf;
+		ret = buf;
 	}
+	return ret;
 }
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
