@@ -712,7 +712,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		}
 	}
 
-	if (b->idle) {
+	if (b->idle > 0) {
 		int ihrs, imin;
 		time_t t;
 		time(&t);
@@ -744,7 +744,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       b->name,
 			       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
 			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
-			       b->idle ? _("\n<b>Idle:</b>") : "", b->idle ? idletime : "",
+			       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       !b->present ? _("\n<b>Status:</b> Offline") : "",
 			       statustext ? "\n" : "", statustext ? statustext : "",
@@ -959,7 +959,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if ((b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || b->present == 0) {
+		if ((b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || b->present == 0) {
 			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);
@@ -1013,7 +1013,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 		}
 	}
 
-	if (b->idle) {
+	if (b->idle > 0) {
 		if (ihrs)
 			idletime = g_strdup_printf(_("Idle (%dh%02dm) "), ihrs, imin);
 		else

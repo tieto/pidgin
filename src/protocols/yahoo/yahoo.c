@@ -425,6 +425,8 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			}
 			if (state == YAHOO_STATUS_AVAILABLE)
 				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
+			else if (state == YAHOO_STATUS_IDLE)
+				serv_got_update(gc, name, 1, 0, 0, -1, (state << 2) | UC_UNAVAILABLE | gamestate);
 			else
 				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate);
 			break;
@@ -606,7 +608,7 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 			who = pair->value;
 		else if (pair->key == 14)
 			msg = pair->value;
-		else if (pair->key == 7)
+		else if (pair->key == 7) 
 			name = pair->value;
 		else if (pair->key == 10)
 			state = strtol(pair->value, NULL, 10);
@@ -621,7 +623,7 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 		if (state == YAHOO_STATUS_AVAILABLE)
 			serv_got_update(gc, name, 1, 0, 0, 0, 0);
 		else if (state == YAHOO_STATUS_IDLE)
-			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 2));
+			serv_got_update(gc, name, 1, 0, 0, -1, (state << 2));
 		else
 			serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE);
 		if (state == YAHOO_STATUS_CUSTOM) {
@@ -1024,8 +1026,6 @@ static void yahoo_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 		*se = "offline";
 		return;
 	} else {
-		if ((b->uc >> 2) == YAHOO_STATUS_IDLE)
-			emblems[i++] = "idle";
 		if (b->uc & UC_UNAVAILABLE)
 			emblems[i++] = "away";
 		if (b->uc & YAHOO_STATUS_GAME)
