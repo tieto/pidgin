@@ -356,8 +356,11 @@ static gchar *oscar_encoding_extract(const char *encoding)
 	g_return_val_if_fail(encoding != NULL, NULL);
 
 	/* Make sure encoding begins with charset= */
-	if (strncmp(encoding, "text/aolrtf; charset=", 21))
+	if (strncmp(encoding, "text/aolrtf; charset=", 21) &&
+		strncmp(encoding, "text/x-aolrtf; charset=", 23))
+	{
 		return NULL;
+	}
 
 	begin = strchr(encoding, '"');
 	end = strrchr(encoding, '"');
