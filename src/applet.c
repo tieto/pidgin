@@ -54,89 +54,7 @@ static PanelBackType backtype = PANEL_BACK_NONE;
 static GdkColor *backcolor = NULL;
 static char *backfile = NULL;
 
-static void make_background(guchar *dest)
-{
-	guchar *p;
-	int r,g,b,i;
 
-	if (backcolor && (backtype == PANEL_BACK_COLOR)) {
-		guchar *p;
-		int r,g,b,i;
-
-		r = backcolor->red>>8;
-		g = backcolor->green>>8;
-		b = backcolor->blue>>8;
-		p = dest;
-		for (i = 0; i < sizehint * sizehint; i++) {
-			*p++ = r;
-			*p++ = g;
-			*p++ = b;
-		}
-		return;
-	} else if (backfile && (backtype == PANEL_BACK_PIXMAP)) {
-		GdkPixbuf *pb = gdk_pixbuf_new_from_file(backfile);
-		if (pb) {
-			int dw = sizehint;
-			int dh = sizehint;
-			int offx = applet->allocation.x;
-			int offy = applet->allocation.y;
-			int drs = dw * 3;
-			guchar *tile = gdk_pixbuf_get_pixels(pb);
-			int w = gdk_pixbuf_get_width(pb);
-			int h = gdk_pixbuf_get_height(pb);
-			int rowstride = gdk_pixbuf_get_rowstride(pb);
-			int has_alpha = gdk_pixbuf_get_has_alpha(pb);
-
-			guchar *p;
-			int i,j,x,y,a;
-			guchar *imgrow;
-			int off;
-
-			p = dest;
-			y = offy % h;            
-			off = drs - (dw*3); /*the space after width ends until next row*/
-			for(j=0;j<dh;j++) {      
-				x = offx % w;    
-				imgrow = tile + y * rowstride + (has_alpha?/*x*4*/x<<2:x*3);
-				for(i=0;i<dw;i++) {
-					*(p++) = *(imgrow++);
-					*(p++) = *(imgrow++);
-					*(p++) = *(imgrow++);
-					if(has_alpha) {
-						a = *(imgrow++);
-						if(a!=255) {
-							guchar *pp = p-3;
-							pp[0] = (pp[0]*a)>>8;
-							pp[1] = (pp[1]*a)>>8;
-							pp[2] = (pp[2]*a)>>8;
-						}
-					}
-					x++;
-					if(x>=w) {
-						x = 0;
-						imgrow = tile + y * rowstride;
-					}
-				}
-				p += off; 
-				y++;
-				if(y>=h)
-					y = 0;
-			}
-			gdk_pixbuf_unref(pb);
-			return;
-		}
-	}
-
-	r = applet->style->bg[GTK_WIDGET_STATE(applet)].red>>8;
-	g = applet->style->bg[GTK_WIDGET_STATE(applet)].green>>8;
-	b = applet->style->bg[GTK_WIDGET_STATE(applet)].blue>>8;
-	p = dest;
-	for (i = 0; i < sizehint * sizehint; i++) {
-		*p++ = r;
-		*p++ = g;
-		*p++ = b;
-	}
-}
 
 static GdkPixmap *get_applet_icon(const char *name)
 {
@@ -145,11 +63,11 @@ static GdkPixmap *get_applet_icon(const char *name)
 	char *path;
 	GdkPixbuf *pb, *scale = NULL;
 	guchar *dst;
+	int w, h, rowstride;
 	double affine[6];
 
 	if (!applet)
 		return NULL;
-
 	cache = gdk_pixmap_new(applet->window, sizehint, sizehint,
 			gtk_widget_get_visual(applet)->depth); 
 	gc = gdk_gc_new(cache);
@@ -165,23 +83,16 @@ static GdkPixmap *get_applet_icon(const char *name)
 	gdk_pixbuf_unref(scale);
 
 	dst = g_new0(guchar, sizehint*sizehint*3);
-	make_background(dst);
+	applet_widget_get_rgb_bg(applet, &dst, &w, &h, &rowstride);
 
 	art_affine_identity(affine);
-	if (gdk_pixbuf_get_has_alpha(pb))
-		art_rgb_rgba_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
-				gdk_pixbuf_get_pixels(pb), gdk_pixbuf_get_width(pb),
-				gdk_pixbuf_get_height(pb), gdk_pixbuf_get_rowstride(pb),
-				affine, ART_FILTER_NEAREST, NULL);
-	else
-		art_rgb_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
-				gdk_pixbuf_get_pixels(pb), gdk_pixbuf_get_width(pb),
-				gdk_pixbuf_get_height(pb), gdk_pixbuf_get_rowstride(pb),
-				affine, ART_FILTER_NEAREST, NULL);
-
+	art_rgb_rgba_affine(dst, 0, 0, w, h, rowstride,
+			    gdk_pixbuf_get_pixels(pb), gdk_pixbuf_get_width(pb),
+			    gdk_pixbuf_get_height(pb), gdk_pixbuf_get_rowstride(pb),
+			    affine, ART_FILTER_NEAREST, NULL);
 	gdk_pixbuf_unref(pb);
-	gdk_draw_rgb_image(cache, gc, 0, 0, sizehint, sizehint,
-			GDK_RGB_DITHER_NORMAL, dst, sizehint * 3);
+	gdk_draw_rgb_image(cache, gc, 0, 0, w, h,
+			GDK_RGB_DITHER_NORMAL, dst, rowstride);
 	g_free(dst);
 
 	gdk_gc_unref(gc);
@@ -238,26 +149,8 @@ static gboolean update_applet()
 		gtk_pixmap_set(GTK_PIXMAP(icon), newpix, NULL);
 		gdk_pixmap_unref(newpix);
 	}
-
+	
 	return TRUE;
-}
-
-static void back_changed(AppletWidget *applet, PanelBackType type, char *file, GdkColor *clr)
-{
-	backtype = type;
-	if (backfile)
-		g_free(backfile);
-	if (file)
-		backfile = g_strdup(file);
-	else
-		backfile = NULL;
-	if (backcolor)
-		gdk_color_free(backcolor);
-	if (clr)
-		backcolor = gdk_color_copy(clr);
-	else
-		backcolor = NULL;
-	update_applet();
 }
 
 #ifdef HAVE_PANEL_PIXEL_SIZE
@@ -442,7 +335,8 @@ gint init_applet_mgr(int argc, char *argv[])
 	applet = applet_widget_new("gaim_applet");
 	if (!applet)
 		g_error(_("Can't create Gaim applet!"));
-	gtk_signal_connect(GTK_OBJECT(applet), "back_change", GTK_SIGNAL_FUNC(back_changed), NULL);
+	applet_widget_send_draw(applet, TRUE);
+	gtk_signal_connect(GTK_OBJECT(applet), "do-draw", GTK_SIGNAL_FUNC(update_applet), NULL);
 	gtk_widget_set_events(applet, gtk_widget_get_events(applet) | GDK_BUTTON_PRESS_MASK);
 	gtk_widget_realize(applet);
 
