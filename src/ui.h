@@ -95,6 +95,7 @@ typedef enum
 
 typedef enum
 {
+	GAIM_BUTTON_NONE = 0,
 	GAIM_BUTTON_TEXT,
 	GAIM_BUTTON_IMAGE,
 	GAIM_BUTTON_TEXT_IMAGE

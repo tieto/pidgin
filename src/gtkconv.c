@@ -4536,7 +4536,7 @@ gaim_gtkconv_toggle_smileys(void)
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml),
-				gaim_prefs_get_bool("/gaim/gtk/conversations/show_smilies"));
+				gaim_prefs_get_bool("/gaim/gtk/conversations/show_smileys"));
 	}
 }
 

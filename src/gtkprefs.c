@@ -210,16 +210,18 @@ dropdown_set(GObject *w, const char *key)
 }
 
 static GtkWidget *
-prefs_dropdown_from_list(GtkWidget *box, const gchar *title, const char *key,
-						 GList *menuitems)
+prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
+						 const char *key, GList *menuitems)
 {
-	GtkWidget *dropdown, *opt, *menu;
-	GtkWidget *label;
-	gchar     *text;
-	int       value;
-	int       stored_value;
-	int       o = 0;
-	GtkWidget *hbox;
+	GtkWidget  *dropdown, *opt, *menu;
+	GtkWidget  *label;
+	GtkWidget  *hbox;
+	gchar      *text;
+	const char *stored_str;
+	int         stored_int;
+	int         int_value;
+	const char *str_value;
+	int         o = 0;
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
@@ -236,12 +238,20 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, const char *key,
 
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
 
-	stored_value = gaim_prefs_get_int(key);
+	if (type == GAIM_PREF_INT)
+		stored_int = gaim_prefs_get_int(key);
+	else if (type == GAIM_PREF_STRING)
+		stored_str = gaim_prefs_get_string(key);
 
 	while (menuitems != NULL && (text = (char *) menuitems->data) != NULL) {
 		menuitems = g_list_next(menuitems);
 		g_return_val_if_fail(menuitems != NULL, NULL);
-		value = GPOINTER_TO_INT(menuitems->data);
+
+		if (type == GAIM_PREF_INT)
+			int_value = GPOINTER_TO_INT(menuitems->data);
+		else
+			str_value = (const char *)menuitems->data;
+
 		menuitems = g_list_next(menuitems);
 
 		opt = gtk_menu_item_new_with_label(text);
@@ -252,8 +262,13 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, const char *key,
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
-		if (clear > -1 && stored_value == value)
+		if (clear > -1 &&
+			((type == GAIM_PREF_INT && stored_int == int_value) ||
+			 (type == GAIM_PREF_STRING && !strcmp(stored_str, str_value)))) {
+
 			gtk_menu_set_active(GTK_MENU(menu), o);
+		}
+
 #if 0
 		if (option == (int*)sort_method) {
 			/* Now Entering Hacksville, Estd. May 17, 2003 */
@@ -273,20 +288,29 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, const char *key,
 }
 
 static GtkWidget *
-prefs_dropdown(GtkWidget *box, const gchar *title, int *option, int clear, ...)
+prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
+			   const char *key, int clear, ...)
 {
 	va_list ap;
 	GList *menuitems = NULL;
 	GtkWidget *dropdown = NULL;
 	char *name;
-	int id;
+	int int_value;
+	const char *str_value;
 
 	va_start(ap, clear);
 	while ((name = va_arg(ap, char *)) != NULL) {
-		id = va_arg(ap, int);
 
 		menuitems = g_list_prepend(menuitems, name);
-		menuitems = g_list_prepend(menuitems, GINT_TO_POINTER(id));
+
+		if (type == GAIM_PREF_INT) {
+			int_value = va_arg(ap, int);
+			menuitems = g_list_prepend(menuitems, GINT_TO_POINTER(int_value));
+		}
+		else {
+			str_value = va_arg(ap, const char *);
+			menuitems = g_list_prepend(menuitems, str_value);
+		}
 	}
 	va_end(ap);
 
@@ -294,7 +318,8 @@ prefs_dropdown(GtkWidget *box, const gchar *title, int *option, int clear, ...)
 
 	menuitems = g_list_reverse(menuitems);
 
-	dropdown = prefs_dropdown_from_list(box, title, option, clear, menuitems);
+	dropdown = prefs_dropdown_from_list(box, title, type, key,
+										clear, menuitems);
 
 	g_list_free(menuitems);
 
@@ -763,7 +788,7 @@ GtkWidget *messages_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 	prefs_checkbox(_("Show graphical _smileys"),
-				  "/gaim/gtk/conversations/show_smilies", vbox);
+				  "/gaim/gtk/conversations/show_smileys", vbox);
 	prefs_checkbox(_("Show _timestamp on messages"),
 				  "/gaim/gtk/conversations/show_timestamps", vbox);
 	prefs_checkbox(_("Show _URLs as links"),
@@ -834,17 +859,21 @@ GtkWidget *list_page() {
 			sl = sl->next;
 		if (!fnd) r++;
 	}
-	prefs_dropdown_from_list(vbox, _("Sorting:"),
-				(int*)&sort_method, r, l);
-	
+
+	prefs_dropdown_from_list(vbox, _("Sorting:"), GAIM_PREF_STRING,
+							 "/gaim/gtk/blist/sort_type", r, l);
+
 	g_list_free(l);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Toolbar"));
-	prefs_dropdown(vbox, _("Show _buttons as:"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT,
-		      _("Pictures"), OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT, 
-		      _("Text"), 0,
-		      _("Pictures and text"), OPT_BLIST_SHOW_BUTTON_XPM,
-		      _("None"), OPT_BLIST_NO_BUTTON_TEXT, NULL);
+	prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREFS_INT,
+				   "/gaim/gtk/blist/button_style",
+				   GAIM_BUTTON_IMAGE,
+		      _("Pictures"), GAIM_BUTTON_IMAGE,
+		      _("Text"), GAIM_BUTTON_TEXT,
+		      _("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+		      _("None"), GAIM_BUTTON_NONE,
+			  NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
 	prefs_checkbox(_("_Raise window on events"),
@@ -1185,7 +1214,7 @@ static GList *get_available_browsers()
 	for (i = 0; i < num_possible_browsers; i++) {
 		if (program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers, 
-						  GINT_TO_POINTER(possible_browsers[i].id));
+									  possible_browsers[i].id);
 			browsers = g_list_prepend(browsers, possible_browsers[i].name);
 		}
 	}
@@ -2553,6 +2582,7 @@ gaim_gtk_prefs_init(void)
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
 	gaim_prefs_add_bool("/gaim/gtk/browsers/new_window", FALSE);
+	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 
 	/* Buddy List */
 	gaim_prefs_add_none("/gaim/gtk/blist");
@@ -2566,6 +2596,7 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
+	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
 
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
@@ -2579,7 +2610,7 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_strikethrough", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_smilies", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_smileys", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
@@ -2628,8 +2659,8 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_string("/gaim/gtk/logging/strip_html", TRUE);
 
 	/* Smiley Themes */
-	gaim_prefs_add_none("/gaim/gtk/smilies");
-	gaim_prefs_add_string("/gaim/gtk/smilies/theme", "");
+	gaim_prefs_add_none("/gaim/gtk/smileys");
+	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");
 
 	/* Sound */
 	gaim_prefs_add_none("/gaim/gtk/sound");
