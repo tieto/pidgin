@@ -1028,7 +1028,7 @@ gaim_plugins_find_with_basename(const char *basename)
 				g_free(tmp);
 				return plugin;
 			}
-			g_free(tmp)
+			g_free(tmp);
 		}
 	}
 
