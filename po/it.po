@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "POT-Creation-Date: 2003-11-12 02:00-0500\n"
-"PO-Revision-Date: 2003-11-12 11:00--100\n"
+"PO-Revision-Date: 2003-11-13 11:00--100\n"
 "Last-Translator: Claudio Satriano <satriano@na.infn.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2969,6 +2969,10 @@ msgstr "Salva l'Immagine"
 #: src/gtkimhtml.c:1784
 msgid "_Save Image..."
 msgstr "_Salva l'Immagine..."
+
+#: src/gtklog.c:184
+msgid "Conversations with"
+msgstr "Conversazioni con"
 
 #: src/gtknotify.c:211
 #, c-format
@@ -7854,91 +7858,3 @@ msgstr "Notifica"
 #: src/win32/win32dep.c:388
 msgid "Moving Gaim user settings directory to:"
 msgstr "Sto spostando la directory con le impostazioni utente di Gaim in:"
-
-#~ msgid "Log Conversation"
-#~ msgstr "Fai il Log della Conversazione"
-
-#~ msgid "%s has been disconnected"
-#~ msgstr "%s si è disconnesso"
-
-#~ msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
-#~ msgstr ""
-#~ "<HR><BR><H3 Align=Center> ---- Nuova Conversazione %s ----</H3><BR>\n"
-
-#~ msgid "---- New Conversation @ %s ----\n"
-#~ msgstr "---- Nuova Conversazione %s ----\n"
-
-#~ msgid "Strip _HTML from logs"
-#~ msgstr "Elimina i tag HT_ML dai log"
-
-#~ msgid "Error in specifying buddy conversation."
-#~ msgstr "Errore di specifica della conversazione tra contatti."
-
-#~ msgid "Unable to find conversation log"
-#~ msgstr "Impossibile trovare il log della conversazione"
-
-#~ msgid "Unable to make directory %s for logging"
-#~ msgstr "Impossibile creare la directory %s per i log"
-
-#~ msgid "IM Sessions with %s\n"
-#~ msgstr "Messaggi Istantanei con %s\n"
-
-#~ msgid "IM Sessions with %s"
-#~ msgstr "Messaggi Istantanei con %s"
-
-#~ msgid "+++ %s (%s) signed on @ %s"
-#~ msgstr "+++ %s (%s) si è connesso %s"
-
-#~ msgid "+++ %s (%s) signed off @ %s"
-#~ msgstr "+++ %s (%s) si è disconnesso %s"
-
-#~ msgid "+++ %s (%s) changed away state @ %s"
-#~ msgstr "+++ %s (%s) ha modificato il suo stato di assente %s"
-
-#~ msgid "+++ %s (%s) came back @ %s"
-#~ msgstr "+++ %s (%s) è ritornato %s"
-
-#~ msgid "+++ %s (%s) became idle @ %s"
-#~ msgstr "+++ %s (%s) è diventato inattivo %s"
-
-#~ msgid "+++ %s (%s) returned from idle @ %s"
-#~ msgstr "+++ %s (%s) è tornato attivo %s"
-
-#~ msgid "+++ Program exit @ %s"
-#~ msgstr "+++ Il programma è stato terminato %s"
-
-#~ msgid "%s (%s) reported that %s (%s) signed on @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) si è connesso %s"
-
-#~ msgid "%s (%s) reported that %s (%s) signed off @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) si è disconnesso %s"
-
-#~ msgid "%s (%s) reported that %s (%s) went away @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) è andato via %s"
-
-#~ msgid "%s (%s) reported that %s (%s) came back @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) è tornato %s"
-
-#~ msgid "%s (%s) reported that %s (%s) became idle @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) è diventato inattivo %s"
-
-#~ msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
-#~ msgstr "%s (%s) ha riportato che %s (%s) è ritornato attivo %s"
-
-#~ msgid "%s (%s) reported that %s signed on @ %s"
-#~ msgstr "%s (%s) ha riportato che %s si è connesso %s"
-
-#~ msgid "%s (%s) reported that %s signed off @ %s"
-#~ msgstr "%s (%s) ha riportato che %s si è disconnesso %s"
-
-#~ msgid "%s (%s) reported that %s went away @ %s"
-#~ msgstr "%s (%s) ha riportato che %s è andato via %s"
-
-#~ msgid "%s (%s) reported that %s came back @ %s"
-#~ msgstr "%s (%s) ha riportato che %s è tornato %s"
-
-#~ msgid "%s (%s) reported that %s became idle @ %s"
-#~ msgstr "%s (%s) ha riportato che %s è diventato inattivo %s"
-
-#~ msgid "%s (%s) reported that %s returned from idle @ %s"
-#~ msgstr "%s (%s) ha riportato che %s è ritornato attivo %s"
