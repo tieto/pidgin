@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.72
+version 0.72 (10/31/2003):
 	* Added a search feature to conversations.
 	* Added an option to remove the formatting toolbar, both globally and
 	  on a per-window basis (Nathan Fredrickson)
