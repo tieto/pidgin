@@ -430,6 +430,9 @@ void frombase64(const char *text, char **data, int *size)
 			tmp = 62;
 		} else if (*c == '/') {
 			tmp = 63;
+		} else if (*c == '\r' || *c == '\n') {
+			c++;
+			continue;
 		} else if (*c == '=') {
 			if (n == 3) {
 				out = g_realloc(out, len + 2);
