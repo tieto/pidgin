@@ -9,7 +9,7 @@ PROTOTYPES: ENABLE
 INCLUDE: const-xs.inc
 
 void
-timeout_add(plugin, seconds, callback, data)
+timeout_add(plugin, seconds, callback, data = 0)
 	Gaim::Plugin plugin
 	int seconds
 	SV *callback
@@ -18,7 +18,7 @@ CODE:
 	gaim_perl_timeout_add(plugin, seconds, callback, data);
 
 void
-signal_connect(instance, signal, plugin, callback, data)
+signal_connect(instance, signal, plugin, callback, data = 0)
 	void *instance
 	const char *signal
 	Gaim::Plugin plugin
