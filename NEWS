@@ -23,11 +23,17 @@
 	can page your mobile device. You can also page other MSN Mobile users.
 	Groups are now stored on server. Oh, and due to the nature of MSNP7,
 	conversations are timed out after 5 minutes, so you'll unfortunately
-	see a message indicating that. Sorry! Also, we have a rewrite of the
-	plugin interface, so rewrite your plugins! Things are going to get
-	very cool from it. The debug API was core/UI split, and some
-	enhancements were made to the debug window. I think that's all from me.
-	It's been a fun release. Stay tuned, I have some great things coming up!
+	see a message indicating that. Sorry! I wrote experimental support
+	for my own implementation of MSN buddy icons. You can set them in your
+	account settings much like with AIM, and when you talk to other gaim
+	users, they'll get your buddy icon. This will last for a few releases,
+	until the buddy icon implementation in the upcoming MSNP9 protocol is
+	figured out, and we have support for that. That'll be a couple months
+	away at least. Also, we have a rewrite of the plugin interface, so
+	rewrite your plugins! Things are going to get very cool from it. The
+	debug API was core/UI split, and some enhancements were made to the
+	debug window. I think that's all from me.  It's been a fun release.
+	Stay tuned, I have some great things coming up!
 
 0.62 (04/23/2003):
 	Sean: This is just another standard bi-weekly Gaim release.  Nothing
