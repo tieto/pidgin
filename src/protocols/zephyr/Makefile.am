@@ -89,6 +89,7 @@ libzephyr_la_LIBADD  = $(ZEPHYRLIBS)
 endif
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/protocols \
 	-DCONFDIR=\"$(confdir)\" \
