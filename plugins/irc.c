@@ -89,6 +89,7 @@ static void irc_join_chat(struct gaim_connection *gc, int id, char *name)
 
 	g_snprintf(buf, IRC_BUF_LEN, "JOIN %s\n", name);
 	write(idata->fd, buf, strlen(buf));
+	write(idata->fd, buf, strlen(buf));
 
 	g_free(buf);
 }
@@ -170,7 +171,7 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 static void irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 
-	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+        struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
 	/* Before we actually send this, we should check to see if they're trying
@@ -288,10 +289,11 @@ static struct irc_channel *find_channel_by_id(struct gaim_connection *gc, int id
 static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 
-	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+        struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	struct irc_channel *channel = NULL;
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-
+	char **kick; 
+	gboolean is_command = FALSE;
 	/* First lets get our current channel */
 	channel = find_channel_by_id(gc, id);
 
@@ -307,38 +309,164 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	 * To issue a command and handle it properly. */
 
 	if (message[0] == '/')
-	{
-		if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
-			/* We have /me!! We have /me!! :-) */
-
-			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-			strcpy(temp, message + 4);
-			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
-				   '\001');
-			g_free(temp);
+	  {
+	   
+	    if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
+	      /* We have /me!! We have /me!! :-) */
+	      
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 4);
+	      
+	      g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
+			 '\001');
+	      g_free(temp);
+	    }
+	    else if ((g_strncasecmp(message, "/op ", 4) == 0) && (strlen(message) > 4)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 4);
+	      
+	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +o %s\n", channel->name, temp);
+	      
+	      g_free(temp);
+	      is_command = TRUE;
+	      
+	    }
+	    else if ((g_strncasecmp(message, "/deop ", 6) == 0) && (strlen(message) > 6)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 6);
+	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -o %s\n", channel->name, temp);
+	      
+	      g_free(temp);
+	      is_command = TRUE;
 		}
-		else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
-			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	    
+	    else if ((g_strncasecmp(message, "/voice ", 7) == 0) && (strlen(message) > 7)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 7);
+	      
+	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s +v %s\n", channel->name, temp);
+	      
+	      g_free(temp);
+	      is_command = TRUE;
+	      
+	    }
+	    else if ((g_strncasecmp(message, "/devoice ", 9) == 0) && (strlen(message) > 9)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 6);
+	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s -v %s\n", channel->name, temp);
+	      
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
+	    else if ((g_strncasecmp(message, "/mode ", 6) == 0) && (strlen(message) > 6)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 6);
+	      g_snprintf(buf, IRC_BUF_LEN, "MODE #%s %s\n", channel->name, temp);
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
+	    
+	    else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      
+	      strcpy(temp, message + 7);
+	      irc_get_info(gc, temp);
+	      g_free(temp);
+	      
+	      
+	    }	
+	    
+	    else if (!g_strncasecmp(message, "/raw ", 5) && (strlen(message) > 5)){
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 5);
+	      g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
 
-			strcpy(temp, message + 7);
-			irc_get_info(gc, temp);
-			g_free(temp);
+	    else if (!g_strncasecmp(message, "/quote ", 7) && (strlen(message) >7)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 7);
+	      g_snprintf(buf, IRC_BUF_LEN, "%s\r\n", temp);
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
+	    
+	    else if (!g_strncasecmp(message, "/kick ", 6) && (strlen(message) > 6)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 6);
+	      kick =  g_strsplit(temp, " ", 2);
+	      g_snprintf(buf, IRC_BUF_LEN, "KICK #%s %s :%s\r\n", channel->name, kick[0], kick[1]);
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
 
-			return;
-		}	
-	}
+/* FIXME: I'll go back in and grab this later.   -- Rob */
+/*
+I THOUGHT THIS WOULD WORK, BUT I WAS WRONG.  WOULD SOMEONE KINDLY FIX IT?
+
+	    
+	    else if (!g_strncasecmp(message, "/help", 5)) {
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      strcpy(temp, message + 5);
+	      	  if (temp == "") {
+	     
+	      serv_got_chat_in(gc, id, "gAIM", 0, "Available Commands:");
+	      		    serv_got_chat_in(gc, id, "gAIM", 0, " ");
+				    serv_got_chat_in(gc, id, "gAIM", 0, "<b>op     voice     kick </b>");
+				    serv_got_chat_in(gc, id, "gAIM", 0, "<b>deop   devoice   whois</b>");
+				    serv_got_chat_in(gc, id, "gAIM", 0, "<b>me     raw       quote</b>");
+				    serv_got_chat_in(gc, id, "gAIM", 0, "<b>mode</b>");
+		      }
+		      else {
+		    serv_got_chat_in(gc, id, "gAIM", 0, "Usage: ");
+		    if (temp == "op")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/op <nick></b> - Gives operator status to user.");
+		    else if (temp == "deop")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/deop <nick></b> - Removes operator status from user.");
+		    else if (temp == "me")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/me <action></b> - Sends an action to the channel.");
+		    else if (temp == "mode")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/mode {[+|-}|o|p|s|i|t|n|b|v} [<limit][<nick>][<ban mask]</b> - Changes channel and user modes.");
+		      else if (temp == "voice")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/voice <nick></b> - Gives voice status to user.");
+		    else if (temp == "devoice")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/devoice <nick></b> - Removes voice status from user.");
+		    else if (temp == "raw")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/raw <text></b> - Sends raw text to the server.");
+		    else if (temp == "kick")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/kick [<comment>]</b> - Kicks a user out of the channel.");
+		    else if (temp ==  "whois")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/whois <nick></b> - Gets information about user.");
+		    else if (temp == "quote")
+		      serv_got_chat_in(gc, id, "gAIM", 0, "<b>/raw <text></b> - Sends raw text to the server.");
+		    else
+		      serv_got_chat_in(gc, id, "gAIM", 0, "No such command.");
+		  }      
+		    
+	      g_free(temp);
+	      is_command = TRUE;
+	    }
+*/
+	    
+	  }
+	
 	else {
-		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
-	}
-
+	  g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
+	  
+	    }
+	
+	
 	write(idata->fd, buf, strlen(buf));
-
+	
 	/* Since AIM expects us to receive the message we send, we gotta fake it */
-	serv_got_chat_in(gc, id, gc->username, 0, message);
-
+	if (is_command==FALSE)
+	  serv_got_chat_in(gc, id, gc->username, 0, message);
+	
 	g_free(buf);
+	
+	
 }
-
 static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
@@ -394,8 +522,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	gchar buf[4096];
 	gchar **buf2;
 	struct irc_data *idata;
-
+	
 	idata = (struct irc_data *)gc->proto_data;
+
 
 	do {
 		if (read(idata->fd, buf + i, 1) < 0) {
