@@ -159,7 +159,12 @@ void
 BuddyTickerRemoveUser( char *name )
 {
 	GList *p = (GList *) BuddyTickerFindUser( name );
-	TickerData *data = (TickerData *) p->data;
+	TickerData *data;
+
+	if ( !p )
+		return;
+
+	data = (TickerData *) p->data;
 
 	if ( userclose == TRUE )
 		return;
