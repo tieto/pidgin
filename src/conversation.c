@@ -631,14 +631,14 @@ gaim_window_remove_conversation(struct gaim_window *win, unsigned int index)
 	node = g_list_nth(gaim_window_get_conversations(win), index);
 	conv = (struct gaim_conversation *)node->data;
 
+	if (ops != NULL && ops->remove_conversation != NULL)
+		ops->remove_conversation(win, conv);
+
 	win->conversations = g_list_remove_link(win->conversations, node);
 
 	g_list_free_1(node);
 
 	win->conversation_count--;
-
-	if (ops != NULL && ops->remove_conversation != NULL)
-		ops->remove_conversation(win, conv);
 
 	conv->window = NULL;
 

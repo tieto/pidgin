@@ -1990,7 +1990,8 @@ update_send_as_selection(struct gaim_window *win)
 }
 
 static void
-generate_send_as_items(struct gaim_window *win)
+generate_send_as_items(struct gaim_window *win,
+					   struct gaim_conversation *deleted_conv)
 {
 	struct gaim_gtk_window *gtkwin;
 	GtkWidget *menu;
@@ -2077,6 +2078,10 @@ generate_send_as_items(struct gaim_window *win)
 		struct aim_user *user;
 
 		conv = (struct gaim_conversation *)convs->data;
+
+		if (conv == deleted_conv)
+			continue;
+
 		user = gaim_conversation_get_user(conv);
 
 		if (user->gc == NULL) {
@@ -2087,8 +2092,6 @@ generate_send_as_items(struct gaim_window *win)
 
 				first_offline = FALSE;
 			}
-
-			printf("Adding '%s'\n", user->username);
 
 			menuitem = gtk_radio_menu_item_new_with_label(group,
 														  user->username);
@@ -2442,7 +2445,7 @@ setup_menubar(struct gaim_window *win)
 	gtkwin->menu.sounds = gtk_item_factory_get_widget(item_factory,
 			"/Options/Enable Sounds");
 
-	generate_send_as_items(win);
+	generate_send_as_items(win, NULL);
 
 	gtk_container_add(GTK_CONTAINER(hb), gtkwin->menu.menubar);
 
@@ -3410,14 +3413,10 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 	gaim_gtk_set_state_lock(FALSE);
 
 	/* If this window is setup with an inactive gc, regenerate the menu. */
-	debug_printf("remove_conv: user == %p\n", gaim_conversation_get_user(conv));
-	debug_printf("remove_conv: user->gc == %p\n", gaim_conversation_get_user(conv)->gc);
-	debug_printf("remove_conv: gc == %p\n", gaim_conversation_get_gc(conv));
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
 		gaim_conversation_get_gc(conv) == NULL) {
 
-		debug_printf("Going to generate send as items.\n");
-		generate_send_as_items(win);
+		generate_send_as_items(win, conv);
 	}
 }
 
@@ -4124,7 +4123,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
-		generate_send_as_items(win);
+		generate_send_as_items(win, NULL);
 	}
 }
 
