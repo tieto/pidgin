@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.15:
+version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)
 	* Some plugins built/installed by default
 	* Option to automagically check for new releases
