@@ -1,3 +1,6 @@
+version 0.73:
+	* Fix the close button on the first tab in each window.
+
 version 0.72 (10/31/2003):
 	* Fix for bug #808562 - LANG needs to be set before gtk_init, when 
 	  setting text widgets to RTL or LTR.
