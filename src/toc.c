@@ -1008,7 +1008,7 @@ static void toc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);
 }
 
-static void toc_print_option(GtkEntry * entry, struct aim_user *user)
+static void toc_print_option(GtkEntry *entry, struct aim_user *user)
 {
 	int entrynum;
 
@@ -1053,7 +1053,6 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("TOC Options"));
 	gtk_widget_show(vbox);
 
-
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
@@ -1077,14 +1076,13 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-
 	label = gtk_label_new("TOC Port:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTHPORT);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(toc_print_option), user);
 	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
@@ -1093,7 +1091,6 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
 
 	gtk_widget_show(entry);
-
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1113,7 +1110,6 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 	}
 	gtk_widget_show(entry);
 
-
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
@@ -1131,7 +1127,6 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
 	}
 	gtk_widget_show(entry);
-
 
 	first = gtk_radio_button_new_with_label(NULL, "No proxy");
 	gtk_box_pack_start(GTK_BOX(vbox), first, FALSE, FALSE, 0);

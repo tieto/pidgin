@@ -39,10 +39,18 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
+#include "proxy.h"
 
 #include "pixmaps/free_icon.xpm"
 
 #define IRC_BUF_LEN 4096
+
+
+#define USEROPT_SERV      0
+#define USEROPT_PORT      1
+#define USEROPT_PROXYSERV 2
+#define USEROPT_PROXYPORT 3
+#define USEROPT_PROXYTYPE 4
 
 
 static int chat_id = 0;
@@ -1173,21 +1181,18 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 	struct gaim_connection *gc = data;
 	struct irc_data *idata = gc->proto_data;
 	char buf[4096];
-	int len, error = ETIMEDOUT;
 
-	len = sizeof(error);
-	if (getsockopt(idata->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
-		error = errno;
-	if (error) {
-		hide_login_progress(gc, "Couldn't connect");
+	if (source == -1) {
+		hide_login_progress(gc, "Write error");
 		signoff(gc);
 		return;
 	}
 
-	fcntl(idata->fd, F_SETFL, 0);
+	if (idata->fd == 0)
+		idata->fd = source;
 
 	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n",
-		   gc->username, g_get_user_name(), gc->user->proto_opt[0]);
+		   gc->username, g_get_user_name(), gc->user->proto_opt[USEROPT_SERV]);
 
 	if (write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1195,7 +1200,7 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 		return;
 	}
 
-	gdk_input_remove(idata->inpa);
+	idata->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_callback, gc);
 	idata->inpa = 0;
 
 	/* Now lets sign ourselves on */
@@ -1211,71 +1216,54 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 
 static void irc_login(struct aim_user *user)
 {
-	int fd;
-	struct hostent *host;
-	struct sockaddr_in site;
 	char buf[4096];
 
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
 
-	host = gethostbyname(user->proto_opt[0]);
-	if (!host) {
-		hide_login_progress(gc, "Unable to resolve hostname");
-		signoff(gc);
-		return;
-	}
+	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
+	set_login_progress(gc, 2, buf);
 
-	site.sin_family = AF_INET;
-	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	
-	if (user->proto_opt[1][0])
-		site.sin_port = htons(atoi(user->proto_opt[1]));
-	else {
-		site.sin_port = htons(6667);
-		g_snprintf(user->proto_opt[1], 5, "6667");
-	}
-
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (fd < 0) {
+	idata->fd = proxy_connect(user->proto_opt[USEROPT_SERV],
+			user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : 6667,
+			user->proto_opt[USEROPT_PROXYSERV], atoi(user->proto_opt[USEROPT_PROXYPORT]),
+			atoi(user->proto_opt[USEROPT_PROXYTYPE]), irc_login_callback, gc);
+	if (idata->fd < 0) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
 		return;
 	}
-
-	fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
-		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			idata->inpa = gdk_input_add(idata->fd, GDK_INPUT_WRITE, irc_login_callback, gc);
-		} else {
-			hide_login_progress(gc, "Unable to connect.");
-			signoff(gc);
-			return;
-		}
-	}
-
-	idata->fd = fd;
-
-	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
-	set_login_progress(gc, 2, buf);
-
-	/* This is where we will attempt to sign on */
-
-	if (!idata->inpa)
-		irc_login_callback(gc, idata->fd, GDK_INPUT_READ);
-
-	gc->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_callback, gc);
 }
 
-static void irc_print_option(GtkEntry * entry, struct aim_user *user)
+static void irc_print_option(GtkEntry *entry, struct aim_user *user)
 {
-	if (gtk_object_get_user_data(GTK_OBJECT(entry))) {
-		g_snprintf(user->proto_opt[1], sizeof(user->proto_opt[1]), "%s",
-			   gtk_entry_get_text(entry));
-	} else {
-		g_snprintf(user->proto_opt[0], sizeof(user->proto_opt[0]), "%s",
-			   gtk_entry_get_text(entry));
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_SERV) {
+		g_snprintf(user->proto_opt[USEROPT_SERV],
+			sizeof(user->proto_opt[USEROPT_SERV]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PORT) {
+		g_snprintf(user->proto_opt[USEROPT_PORT],
+			sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYSERV) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYSERV],
+			sizeof(user->proto_opt[USEROPT_PROXYSERV]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYPORT) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
+			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
 	}
+}
+
+static void irc_print_optionrad(GtkRadioButton * entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
+			sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
 }
 
 static void irc_user_opts(GtkWidget * book, struct aim_user *user)
@@ -1285,47 +1273,120 @@ static void irc_user_opts(GtkWidget * book, struct aim_user *user)
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *entry;
+	GtkWidget *first, *opt;
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("IRC Options"));
 	gtk_widget_show(vbox);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Server:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SERV);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
-	if (user->proto_opt[0][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[0]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[0]);
+	if (user->proto_opt[USEROPT_SERV][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SERV]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SERV]);
 	}
 	gtk_widget_show(entry);
 
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
-	if (user->proto_opt[1][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[1]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[1]);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
+	if (user->proto_opt[USEROPT_PORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(entry), "6667");
 	}
-	gtk_object_set_user_data(GTK_OBJECT(entry), user);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
 	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYSERV);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYSERV][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYSERV]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYSERV]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
+	}
+	gtk_widget_show(entry);
+
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(vbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4"); 
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5"); 
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 }
 
 static char **irc_list_icon(int uc)
