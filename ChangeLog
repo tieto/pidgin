@@ -2,10 +2,12 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.80cvs:
 	New Features:
+	* Ability to send files from the conversation window (Daniel Atallah)
 	* Yet more new commands and features for SILC (Stu Tomlinson)
+	* Gaim uses the new file chooser when compiled for GTK+ 2.4
+	  (Fernando Herrera)
 	* Support for the Epiphany web browser (Leonardo Serra)
 	* Status messages in Gadu-Gadu (Andrew (proton) Wellington)
-	* Ability to send files from the conversation window (Daniel Atallah)
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
 	* Zephyr typing notification (Arun A Tharuvai)
