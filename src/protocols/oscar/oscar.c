@@ -4801,6 +4801,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Add from server list to local list */
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
+		if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
