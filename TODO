@@ -44,6 +44,8 @@ info dialog
 irc (patch pending?)
 	
 DISCUSSION:
+	do we really need some of the preferences? (Ignore TIK messages.
+	   Does anyone use that method of retrieving Away messages anymore?)
 	show alias in list of people in chat
 	tab complete to alias, translate to nick on send for chat
 	disable x on blist when docklet loaded?
