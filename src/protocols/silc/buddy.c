@@ -145,7 +145,7 @@ silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
 	SilcGaim sg = gc->proto_data;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
-	char *local_ip = NULL, *remote_ip = NULL;;
+	char *local_ip = NULL, *remote_ip = NULL;
 	gboolean local = TRUE;
 	char *nickname;
 	SilcGaimKeyAgr a;
@@ -684,8 +684,8 @@ silcgaim_add_buddy_pk_no(SilcGaimBuddyRes r)
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not trusted"),
 		   r->b->name);
 	gaim_notify_error(r->client->application, _("Add Buddy"), tmp,
-			  _("You cannot receive buddy notifications untill you "
-			    "import its public key.  You can use the Get Public Key "
+			  _("You cannot receive buddy notifications until you "
+			    "import his/her public key.  You can use the Get Public Key "
 			    "command to get the public key."));
 	gaim_blist_update_buddy_presence(r->b, GAIM_BUDDY_OFFLINE);
 }
@@ -987,7 +987,7 @@ silcgaim_add_buddy_ask_pk(SilcGaimBuddyRes r)
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not present in the network"),
 		   r->b->name);
 	gaim_request_action(NULL, _("Add Buddy"), tmp,
-			    _("To add the buddy you must import its public key. "
+			    _("To add the buddy you must import his/her public key. "
 			      "Press Import to import a public key."), 0, r, 2,
 			    _("Cancel"), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb),
 			    _("Import..."), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb));

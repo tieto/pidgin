@@ -48,9 +48,10 @@ gboolean silcgaim_ip_is_private(const char *ip)
 			return TRUE;
 		} else if (!strncmp(ip, "172.", 4) && strlen(ip) > 6) {
 			char tmp[3];
+			int s;
 			memset(tmp, 0, sizeof(tmp));
 			strncpy(tmp, ip + 4, 2);
-			int s = atoi(tmp);
+			s = atoi(tmp);
 			if (s >= 16 && s <= 31)
 				return TRUE;
 		} else if (!strncmp(ip, "192.168.", 8)) {

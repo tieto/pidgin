@@ -1200,7 +1200,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR_RESUME:
 		gaim_connection_error(gc,
-				      _("Resuming detached session failed."
+				      _("Resuming detached session failed. "
 					"Press Reconnect to create new connection."));
 		unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 		break;

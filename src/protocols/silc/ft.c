@@ -289,7 +289,7 @@ silcgaim_ftp_send(GaimXfer *x)
 {
 	SilcGaimXfer xfer = x->data;
 	const char *name;
-	char *local_ip = NULL, *remote_ip = NULL;;
+	char *local_ip = NULL, *remote_ip = NULL;
 	gboolean local = TRUE;
 
 	name = gaim_xfer_get_local_filename(x);
