@@ -71,5 +71,7 @@ libjabber_la_SOURCES = $(JABBERSOURCES)
 endif
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS)

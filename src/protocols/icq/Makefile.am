@@ -63,5 +63,7 @@ pkg_LTLIBRARIES = libicq.la
 libicq_la_SOURCES =	$(ICQSOURCES)
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir)c \
 	-I$(top_srcdir)/src \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS)

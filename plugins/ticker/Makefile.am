@@ -16,10 +16,10 @@ ticker_la_SOURCES = \
 
 endif
 
-CFLAGS += $(DEBUG_CFLAGS) -DDATADIR=\"$(datadir)\"
-
-
-INCLUDES = \
+AM_CPPFLAGS = \
+	-DDATADIR=\"$(datadir)\" \
+	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
-	-DVERSION=\"$(VERSION)\"
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS)

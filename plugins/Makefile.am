@@ -52,10 +52,12 @@ EXTRA_DIST = \
 	fortuneprofile.pl
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/src \
-	-DVERSION=\"$(VERSION)\" \
 	-DDATADIR=\"$(datadir)\" \
+	-DVERSION=\"$(VERSION)\" \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
 #

@@ -19,8 +19,8 @@ ALL_LINGUAS="am bg ca cs da de en_GB es fi fr he hi hu it ja ko nl no pl pt_BR r
 AM_GNU_GETTEXT_VERSION(0.10.40)
 AM_GNU_GETTEXT
 
-AC_CYGWIN
-
+dnl we don't use autobreak on cygwin!!
+dnl AC_CYGWIN
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -77,9 +77,6 @@ AC_TRY_COMPILE([
 	])
 ])
 
-dnl This is a bad, bad hack.  I am a bad, bad man.
-CFLAGS="$CFLAGS -I/opt/include -I\$(top_srcdir)"
-
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
@@ -135,7 +132,7 @@ AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session mana
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
-	CFLAGS="$CFLAGS -Wall -g3 -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+	DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall -g3 -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
@@ -149,7 +146,7 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 *** always available at http://www.gtk.org/.]))
 
 AC_PATH_PROG(gaimpath, gaim)
-CFLAGS="$CFLAGS $GTK_CFLAGS" 
+AC_SUBST(GTK_CFLAGS)
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -313,11 +310,11 @@ fi
 
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
-	CFLAGS="$CFLAGS -Wall -g"
+	DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall -g"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi                           
 
-AC_SUBST(CFLAGS)
+AC_SUBST(DEBUG_CFLAGS)
 AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 

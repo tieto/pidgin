@@ -156,11 +156,13 @@ gaim_remote_LDADD = \
 	-L$(top_builddir)/plugins/gaim-remote -lgaim-remote
 
 AM_CPPFLAGS = \
-	$(GTKSPELL_CFLAGS) \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/gaim/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/plugins \
 	$(AUDIOFILE_CFLAGS) \
 	$(AO_CFLAGS) \
-	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-DLIBDIR=\"$(libdir)/gaim/\" \
-	-DDATADIR=\"$(datadir)\" \
 	$(DEBUG_CFLAGS) \
-	-I$(top_srcdir)/plugins
+	$(GTK_CFLAGS) \
+	$(GTKSPELL_CFLAGS)

@@ -15,8 +15,10 @@ gestures_la_SOURCES = \
 
 endif
 
-INCLUDES = \
-	-I$(top_srcdir)/src \
-	-DVERSION=\"$(VERSION)\" \
+AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
-	$(DEBUG_CFLAGS)
+	-DVERSION=\"$(VERSION)\" \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/src \
+	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS)

@@ -67,5 +67,7 @@ liboscar_la_SOURCES = $(OSCARSOURCES)
 endif
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
+	$(GTK_CFLAGS) \
 	$(DEBUG_CFLAGS)

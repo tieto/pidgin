@@ -10,8 +10,10 @@ plugin_LTLIBRARIES = perl.la
 perl_la_SOURCES = perl.c
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/src \
 	-DVERSION=\"$(VERSION)\" \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
+	$(GTK_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(PERL_CFLAGS)
