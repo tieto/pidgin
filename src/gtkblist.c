@@ -131,6 +131,8 @@ static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node
 
 static void show_rename_group(GtkWidget *unused, GaimGroup *g);
 
+static gboolean xcomposite_is_present();
+
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
@@ -181,6 +183,20 @@ const double top_left_corner[25] = {
   .941, .847, .698, .521, .215
 };
 
+
+static gboolean xcomposite_is_present()
+{
+	static gboolean known = FALSE, result = FALSE;
+	int i, j, k;
+
+	if (!known) {
+		/* I don't actually care about versions/etc. */
+		if (XQueryExtension(GDK_DISPLAY(), "Composite", &i, &j, &k) == True)
+			result = TRUE;
+	}
+
+	return result;
+}
 
 static GdkPixbuf *
 get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
@@ -2086,8 +2102,10 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	g_free(tooltiptext);
 
 #ifdef WANT_DROP_SHADOW
-	shadow_paint(gtkblist, NULL, EAST_SIDE);
-	shadow_paint(gtkblist, NULL, SOUTH_SIDE);
+	if (!xcomposite_is_present()) {
+		shadow_paint(gtkblist, NULL, EAST_SIDE);
+		shadow_paint(gtkblist, NULL, SOUTH_SIDE);
+	}
 #endif
 
 	return;
@@ -2101,13 +2119,15 @@ static void gaim_gtk_blist_tooltip_destroy()
 	gtk_widget_destroy(gtkblist->tipwindow);
 	gtkblist->tipwindow = NULL;
 #ifdef WANT_DROP_SHADOW
-	gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-	gdk_window_destroy (gtkblist->east_shadow);
-	gtkblist->east_shadow = NULL;
+	if (!xcomposite_is_present()) {
+		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
+		gdk_window_destroy (gtkblist->east_shadow);
+		gtkblist->east_shadow = NULL;
 
-	gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-	gdk_window_destroy (gtkblist->south_shadow);
-	gtkblist->south_shadow = NULL;
+		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
+		gdk_window_destroy (gtkblist->south_shadow);
+		gtkblist->south_shadow = NULL;
+	}
 #endif
 }
 
@@ -2195,37 +2215,39 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_widget_ensure_style (gtkblist->tipwindow);
 
 #ifdef WANT_DROP_SHADOW
-	attr.window_type = GDK_WINDOW_TEMP;
-	attr.override_redirect = TRUE;
-	attr.x = gtkblist->tipwindow->allocation.x;
-	attr.y = gtkblist->tipwindow->allocation.y;
-	attr.width = gtkblist->tipwindow->allocation.width;
-	attr.height = gtkblist->tipwindow->allocation.height;
-	attr.wclass = GDK_INPUT_OUTPUT;
-	attr.visual = gtk_widget_get_visual (gtkblist->window);
-	attr.colormap = gtk_widget_get_colormap (gtkblist->window);
+	if (!xcomposite_is_present()) {
+		attr.window_type = GDK_WINDOW_TEMP;
+		attr.override_redirect = TRUE;
+		attr.x = gtkblist->tipwindow->allocation.x;
+		attr.y = gtkblist->tipwindow->allocation.y;
+		attr.width = gtkblist->tipwindow->allocation.width;
+		attr.height = gtkblist->tipwindow->allocation.height;
+		attr.wclass = GDK_INPUT_OUTPUT;
+		attr.visual = gtk_widget_get_visual (gtkblist->window);
+		attr.colormap = gtk_widget_get_colormap (gtkblist->window);
 
-	attr.event_mask = gtk_widget_get_events (gtkblist->tipwindow);
+		attr.event_mask = gtk_widget_get_events (gtkblist->tipwindow);
 
-	attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
-			  GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
-	if(gtkblist->east_shadow) {
-		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-		gdk_window_destroy (gtkblist->east_shadow);
-	}
-	gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
+		attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
+				    GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
+		if(gtkblist->east_shadow) {
+			gdk_window_set_user_data (gtkblist->east_shadow, NULL);
+			gdk_window_destroy (gtkblist->east_shadow);
+		}
+		gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 										   GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
-	gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
-	gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
+		gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
+		gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
 
-	if(gtkblist->south_shadow) {
-		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-		gdk_window_destroy (gtkblist->south_shadow);
-	}
-	gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
+		if(gtkblist->south_shadow) {
+			gdk_window_set_user_data (gtkblist->south_shadow, NULL);
+			gdk_window_destroy (gtkblist->south_shadow);
+		}
+		gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 											GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
-	gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
-	gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
+		gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
+		gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
+	}
 #endif
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
@@ -2296,7 +2318,9 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_widget_show(gtkblist->tipwindow);
 
 #ifdef WANT_DROP_SHADOW
-	map_shadow_windows(gtkblist);
+	if (!xcomposite_is_present()) {
+		map_shadow_windows(gtkblist);
+	}
 #endif
 
 	return FALSE;
