@@ -225,14 +225,20 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 
 		if (froms != NULL)
 		{
+			char *from_enc;
+			from_enc = g_markup_escape_text(*froms, -1);
 			from_text = g_strdup_printf(
-				_("<span weight=\"bold\">From:</span> %s\n"), *froms);
+				_("<span weight=\"bold\">From:</span> %s\n"), from_enc);
+			g_free(from_enc);
 		}
 
 		if (subjects != NULL)
 		{
+			char *subject_enc;
+			subject_enc = g_markup_escape_text(*subjects, -1);
 			subject_text = g_strdup_printf(
-				_("<span weight=\"bold\">Subject:</span> %s\n"), *subjects);
+				_("<span weight=\"bold\">Subject:</span> %s\n"), subject_enc);
+			g_free(subject_enc);
 		}
 
 		label_text = g_strdup_printf(
