@@ -2180,7 +2180,7 @@ static void zephyr_subscribe_failed(GaimConnection *gc,char * z_class, char *z_i
 	g_free(subscribe_failed);
 }
 
-static char *zephyr_get_chat_name(GaimConnection *gc, GHashTable *data) {
+static char *zephyr_get_chat_name(GHashTable *data) {
 	/** XXX someone who uses zephyr should verify this */
 	return g_strdup(g_hash_table_lookup(data, "recipient"));
 }
