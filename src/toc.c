@@ -792,11 +792,14 @@ char *toc_wait_config()
         res = wait_reply(buf, sizeof(buf));
 	if (res < 0)
 		return NULL;
+/* Apparently, the toc_config is optional.  *VERY* Optional 
 	if (state != STATE_CONFIG) {
         sprintf(debug_buff , "State should be %d, but is %d instead\n",STATE_CONFIG, state);
 		debug_print(debug_buff);
+ 
 		return NULL;
 	}
+*/
 	/* At this point, it's time to setup automatic handling of incoming packets */
         state = STATE_ONLINE;
 #ifdef _WIN32

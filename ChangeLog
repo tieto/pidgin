@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.16:
+version 0.9.16: (05/24/2000)
 	* Paned buddy chat window (Thanks Syd)
 	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
 	  where <sn> is your screen name. If for some reason, you log
