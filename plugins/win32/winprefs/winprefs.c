@@ -3,7 +3,6 @@
  *
  * File: winprefs.c
  * Date: December 12, 2002
- * Description: Gaim Plugin interface
  *
  * copyright (c) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
@@ -22,9 +21,6 @@
  * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1307  usa
  *
  */
-#include <windows.h>
-#include <winreg.h>
-#include <winerror.h>
 #include <gdk/gdkwin32.h>
 
 #include "internal.h"
@@ -33,12 +29,12 @@
 #include "core.h"
 #include "prefs.h"
 #include "debug.h"
+#include "signals.h"
 
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #include "gtkblist.h"
 #include "gtkappbar.h"
-#include "signals.h"
 
 /*
  *  MACROS & DEFINES
@@ -104,12 +100,12 @@ static void blist_set_ontop(gboolean val) {
 
 static void blist_dock_cb(gboolean val) {
         if(val) {
-                gaim_debug(GAIM_DEBUG_INFO, "winprefs", "Blist Docking..\n");
+                gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking..\n");
                 if(gaim_prefs_get_bool(OPT_WINPREFS_DBLIST_ON_TOP))
                         blist_set_ontop(TRUE);
         }
         else {
-                gaim_debug(GAIM_DEBUG_INFO, "winprefs", "Blist Undocking..\n");
+                gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking..\n");
                 if(gaim_prefs_get_bool(OPT_WINPREFS_DBLIST_ON_TOP) &&
                    !gaim_prefs_get_bool(OPT_WINPREFS_BLIST_ON_TOP))
                         blist_set_ontop(FALSE);
@@ -137,14 +133,14 @@ static void blist_set_dockable(gboolean val) {
 /* We need this because the blist destroy cb won't be called before the
    plugin is unloaded, when quitting */
 static void gaim_quit_cb() {
-        gaim_debug(GAIM_DEBUG_INFO, WINPREFS_PLUGIN_ID, "gaim_quit_cb: removing appbar\n");
+        gaim_debug_info(WINPREFS_PLUGIN_ID, "gaim_quit_cb: removing appbar\n");
         blist_save_state();
         blist_set_dockable(FALSE);
 }
 
 /* Needed when the last account is signed off.. and we get the login window */
 static void blist_destroy_cb() {
-        gaim_debug(GAIM_DEBUG_INFO, "winprefs", "blist_destroy_cb\n");
+        gaim_debug_info(WINPREFS_PLUGIN_ID, "blist_destroy_cb\n");
         blist_save_state();
         blist_set_dockable(FALSE);
         gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
@@ -156,7 +152,7 @@ static gboolean blist_create_cb_remove(gpointer data) {
 }
 
 static void blist_create_cb() {
-        gaim_debug(GAIM_DEBUG_INFO, WINPREFS_PLUGIN_ID, "event_signon\n");
+        gaim_debug_info(WINPREFS_PLUGIN_ID, "event_signon\n");
 
         blist = GAIM_GTK_BLIST(gaim_get_blist())->window;
         g_signal_connect(blist, "destroy", blist_destroy_cb, NULL);
@@ -190,7 +186,7 @@ static int open_run_key(PHKEY phKey, REGSAM samDesired) {
 					      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
 					      0,  samDesired,  phKey));
 	else {
-		gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
+		gaim_debug_error(WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
 		return 0;
 	}
 	return 1;
@@ -210,7 +206,7 @@ static void winprefs_set_autostart(GtkWidget *w) {
                 if((size = GetModuleFileName(wgaim_hinstance(),
                                              (LPBYTE)buffer,
                                              sizeof(buffer)))==0) {
-                        gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
+                        gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
                         RegCloseKey(hKey);
                         return;
                 }
@@ -221,11 +217,11 @@ static void winprefs_set_autostart(GtkWidget *w) {
                                                   REG_SZ,
                                                   buffer,
                                                   size))
-                        gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
+                        gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
         }
         else {
                 if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
-                        gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
+                        gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
         }
         RegCloseKey(hKey);
 }
@@ -399,7 +395,7 @@ static GaimGtkPluginUiInfo ui_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,
+	2,
 	GAIM_PLUGIN_STANDARD,
 	GAIM_GTK_PLUGIN_TYPE,
 	0,
