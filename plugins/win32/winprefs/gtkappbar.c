@@ -37,17 +37,123 @@
 
 #define APPBAR_CALLBACK 	WM_USER + 1010
 
+typedef HMONITOR WINAPI gaim_MonitorFromPoint(POINT, DWORD);
+typedef HMONITOR WINAPI gaim_MonitorFromWindow(HWND, DWORD);
+typedef BOOL WINAPI gaim_GetMonitorInfo(HMONITOR, LPMONITORINFO);
+
+/* Retrieve the rectangular display area from the specified monitor
+ * Return TRUE if successful, otherwise FALSE
+ */
+static gboolean
+get_rect_from_monitor(HMODULE hmod, HMONITOR monitor, RECT *rect) {
+	gaim_GetMonitorInfo *the_GetMonitorInfo;
+
+	if (!(the_GetMonitorInfo = (gaim_GetMonitorInfo*)
+		GetProcAddress(hmod, "GetMonitorInfoA"))) {
+		return FALSE;
+	}
+
+	MONITORINFO info;
+	info.cbSize = sizeof(info);
+	if (!the_GetMonitorInfo(monitor, &info)) {
+		return FALSE;
+	}
+
+	CopyRect(rect, &(info.rcMonitor));
+
+	return TRUE;
+}
+
+/**
+ * This will only work on Win98+ and Win2K+
+ * Return TRUE if successful, otherwise FALSE
+ */
+static gboolean
+get_rect_at_point_multimonitor(POINT pt, RECT *rect) {
+	HMODULE hmod;
+
+	if (!(hmod = GetModuleHandle("user32"))) {
+		return FALSE;
+	}
+
+	gaim_MonitorFromPoint *the_MonitorFromPoint;
+	if (!(the_MonitorFromPoint = (gaim_MonitorFromPoint*)
+		GetProcAddress(hmod, "MonitorFromPoint"))) {
+		return FALSE;
+	}
+
+	HMONITOR monitor =
+		the_MonitorFromPoint(pt, MONITOR_DEFAULTTOPRIMARY);
+
+	return get_rect_from_monitor(hmod, monitor, rect);
+}
+
+/**
+ * This will only work on Win98+ and Win2K+
+ * Return TRUE if successful, otherwise FALSE
+ */
+static gboolean
+get_rect_of_window_multimonitor(HWND window, RECT *rect) {
+	HMODULE hmod;
+
+	if (!(hmod = GetModuleHandle("user32"))) {
+		return FALSE;
+	}
+
+	gaim_MonitorFromWindow *the_MonitorFromWindow;
+	if (!(the_MonitorFromWindow = (gaim_MonitorFromWindow*)
+		GetProcAddress(hmod, "MonitorFromWindow"))) {
+		return FALSE;
+	}
+
+	HMONITOR monitor =
+		the_MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
+
+	return get_rect_from_monitor(hmod, monitor, rect);
+}
+
+/*
+ * Fallback if cannot get the RECT from the monitor directly
+ */
+static void get_default_workarea(RECT *rect) {
+	if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, FALSE)) {
+		/* I don't think this will ever happen */
+		rect->left = 0;
+		rect->top = 0;
+		rect->bottom = GetSystemMetrics(SM_CYSCREEN);
+		rect->right = GetSystemMetrics(SM_CXSCREEN);
+	}
+}
+
+/* Retrieve the rectangle of the active work area at a point */
+static RECT get_rect_at_point(POINT pt) {
+	RECT rc;
+	if (!get_rect_at_point_multimonitor(pt, &rc)) {
+		get_default_workarea(&rc);
+	}
+	return rc;
+}
+
+/* Retrieve the rectangle of the active work area of a window*/
+static RECT get_rect_of_window(HWND window) {
+	RECT rc;
+	if (!get_rect_of_window_multimonitor(window, &rc)) {
+		get_default_workarea(&rc);
+	}
+	return rc;
+}
+
 static void get_window_normal_rc(HWND hwnd, RECT *rc) {
          WINDOWPLACEMENT wplc;
          GetWindowPlacement(hwnd, &wplc);
          CopyRect(rc, &wplc.rcNormalPosition);
 }
-
+#if 0
 static void print_rect(RECT *rc) {
         gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "RECT: L:%ld R:%ld T:%ld B:%ld\n",
                    rc->left, rc->right, rc->top, rc->bottom);
 }
-
+#endif
 static void set_toolbar(HWND hwnd, gboolean val) {
 	LONG style=0;
 
@@ -59,7 +165,13 @@ static void set_toolbar(HWND hwnd, gboolean val) {
         else
                 return;
         SetWindowLong(hwnd, GWL_EXSTYLE, style);
-        SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	SetWindowPos(hwnd, 0, 0, 0, 0, 0,
+		SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	
+/*	This really should be the following, but SWP_FRAMECHANGED strangely causes initermittent problems "Show Desktop" done more than once.
+ *	Not having SWP_FRAMECHANGED *should* cause the Style not to be applied, but i haven't noticed any problems
+ *			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED); 
+ */
 }
 
 static gboolean gtk_appbar_register(GtkAppBar *ab, HWND hwnd) {
@@ -92,32 +204,31 @@ static gboolean gtk_appbar_unregister(GtkAppBar *ab, HWND hwnd) {
 	return !ab->registered;
 }
 
-static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT *rc) {
+static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT rcWorkspace) {
 	APPBARDATA abd;
-	int iWidth = 0;
+	guint iWidth = 0;
 
         if(!ab->registered)
                 gtk_appbar_register(ab, hwnd);
 
 	abd.hWnd = hwnd;
 	abd.cbSize = sizeof(APPBARDATA);
-        CopyRect(&abd.rc, rc);
 	abd.uEdge = ab->side;
 
-        iWidth = abd.rc.right - abd.rc.left;
+	iWidth = ab->docked_rect.right - ab->docked_rect.left;
         
-        abd.rc.top = 0;
-        abd.rc.bottom = GetSystemMetrics(SM_CYSCREEN);
+	abd.rc.top = rcWorkspace.top;
+	abd.rc.bottom = rcWorkspace.bottom;
 	switch (abd.uEdge)
 	{
 		case ABE_LEFT:
-                        abd.rc.left = 0;
-			abd.rc.right = iWidth;
+			abd.rc.left = rcWorkspace.left;
+			abd.rc.right = rcWorkspace.left + iWidth;
 			break;
 
 		case ABE_RIGHT:
-                        abd.rc.right = GetSystemMetrics(SM_CXSCREEN);
-			abd.rc.left = abd.rc.right - iWidth;
+			abd.rc.right = rcWorkspace.right;
+			abd.rc.left = rcWorkspace.right - iWidth;
 			break;
 	}
 
@@ -135,7 +246,7 @@ static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT *rc) {
 			break;
 	}
 
-	CopyRect(rc, &abd.rc);
+	CopyRect(&(ab->docked_rect), &abd.rc);
 }
 
 static void gtk_appbar_setpos(GtkAppBar *ab, HWND hwnd) {
@@ -165,27 +276,30 @@ static void gtk_appbar_dispatch_dock_cbs(GtkAppBar *ab, gboolean val) {
 static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
         POINT cp;
-        LONG cxScreen;
         RECT *rc = (RECT*)msg->lParam;
+	RECT monRect;
         int side = -1;
+	long dockAreaWidth = 0;
 
         gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_moving\n");
 
-        cxScreen = GetSystemMetrics(SM_CXSCREEN);
         GetCursorPos(&cp);
+	monRect = get_rect_at_point(cp);
 
+	dockAreaWidth = (monRect.right - monRect.left) / 10;
         /* Which part of the screen are we in ? */
-        if( cp.x > (cxScreen - (cxScreen / 10)) )
+	if (cp.x > (monRect.right - dockAreaWidth)) {
                 side = ABE_RIGHT;
-        else if( cp.x < (cxScreen / 10) )
+	} else if (cp.x < (monRect.left + dockAreaWidth)) {
                 side = ABE_LEFT;
+	}
 
         if(!ab->docked) {
                 if( (side == ABE_RIGHT || side == ABE_LEFT) ) {
                         if( !ab->docking ) {
                                 ab->side = side;
                                 GetWindowRect(msg->hwnd, &(ab->docked_rect));
-                                gtk_appbar_querypos(ab, msg->hwnd, &(ab->docked_rect));
+				gtk_appbar_querypos(ab, msg->hwnd, monRect);
 
                                 /* save pre-docking height */
                                 ab->undocked_height = rc->bottom - rc->top;
@@ -226,6 +340,30 @@ static GdkFilterReturn wnd_sizing(GtkAppBar *ab, GdkXEvent *xevent) {
                 return GDK_FILTER_REMOVE;
         }
         return GDK_FILTER_CONTINUE;
+}
+
+static GdkFilterReturn wnd_activate(GdkXEvent *xevent) {
+	APPBARDATA abd;
+	MSG *msg = (MSG*)xevent;
+	gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_activate\n");
+
+	abd.hWnd = msg->hwnd;
+	abd.cbSize = sizeof(APPBARDATA);
+
+	SHAppBarMessage(ABM_ACTIVATE, &abd);
+	return GDK_FILTER_CONTINUE;
+}
+
+static GdkFilterReturn wnd_poschanged(GdkXEvent *xevent) {
+	APPBARDATA abd;
+	MSG *msg = (MSG*)xevent;
+	gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
+
+	abd.hWnd = msg->hwnd;
+	abd.cbSize = sizeof(APPBARDATA);
+
+	SHAppBarMessage(ABM_WINDOWPOSCHANGED, &abd);
+	return GDK_FILTER_CONTINUE;
 }
 
 static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
@@ -351,8 +489,8 @@ static GdkFilterReturn wnd_initmenupopup(GtkAppBar *ab, GdkXEvent *xevent) {
 
 static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
+	RECT orig;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback\n");
         switch (msg->wParam) {
         case ABN_STATECHANGE:
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_STATECHANGE\n");
@@ -360,16 +498,31 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 
         case ABN_FULLSCREENAPP:
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
+		if ((BOOL)msg->lParam) {
+			SetWindowPos(msg->hwnd, HWND_BOTTOM, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		} else {
+			SetWindowPos(msg->hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		}
+
                 break;
         
     	case ABN_POSCHANGED:
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_POSCHANGED\n");
-                gtk_appbar_querypos(ab, msg->hwnd, &(ab->docked_rect));
-                MoveWindow(msg->hwnd, ab->docked_rect.left, ab->docked_rect.top, 
-                           ab->docked_rect.right - ab->docked_rect.left,
-                           ab->docked_rect.bottom - ab->docked_rect.top, TRUE);
+        	CopyRect(&orig, &(ab->docked_rect));
+		gtk_appbar_querypos(ab, msg->hwnd, get_rect_of_window(msg->hwnd));
+		if (EqualRect(&orig, &(ab->docked_rect)) == 0) {
+			MoveWindow(msg->hwnd, ab->docked_rect.left, ab->docked_rect.top, 
+				ab->docked_rect.right - ab->docked_rect.left,
+				ab->docked_rect.bottom - ab->docked_rect.top, TRUE);
+		}
                 gtk_appbar_setpos(ab, msg->hwnd);
         	break;
+#if 0
+	default:
+		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: %d\n", msg->wParam);
+#endif
         }
         return GDK_FILTER_CONTINUE;
 }
@@ -383,6 +536,10 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
                 return wnd_exitsizemove(data, xevent);
         case WM_WINDOWPOSCHANGING:
                 return wnd_poschanging(data, xevent);
+	case WM_WINDOWPOSCHANGED:
+		return wnd_poschanged(xevent);
+	case WM_ACTIVATE:
+		return wnd_activate(xevent);
         case WM_SIZING:
                 return wnd_sizing(data, xevent);
         case WM_MOVING:
@@ -399,6 +556,10 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
                 return wnd_size(data, xevent);
         case APPBAR_CALLBACK:
                 return gtk_appbar_callback(data, xevent);
+#if 0
+	default:
+		gaim_debug_info("gtkappbar", "gtk_appbar_event_filter %d\n", msg->message);
+#endif
         }
         return GDK_FILTER_CONTINUE;
 }
@@ -414,8 +575,8 @@ void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
         ab->side = side;
         get_window_normal_rc(GDK_WINDOW_HWND(ab->win->window), &(ab->docked_rect));
         CopyRect(&orig, &(ab->docked_rect));
-        print_rect(&(ab->docked_rect));
-        gtk_appbar_querypos(ab, GDK_WINDOW_HWND(ab->win->window), &(ab->docked_rect));
+	gtk_appbar_querypos(ab, GDK_WINDOW_HWND(ab->win->window),
+			get_rect_of_window(GDK_WINDOW_HWND(ab->win->window)));
         if(EqualRect(&orig, &(ab->docked_rect)) == 0)
                 MoveWindow(GDK_WINDOW_HWND(ab->win->window),
                            ab->docked_rect.left,
