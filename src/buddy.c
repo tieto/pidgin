@@ -1123,7 +1123,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 	gtk_widget_realize(gtkblist->window);
 
-	gtkblist->vbox = gtk_vbox_new(FALSE, 6);
+	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
 	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
