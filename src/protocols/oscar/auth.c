@@ -481,6 +481,10 @@ static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	keylen = aimbs_get16(bs);
 	keystr = aimbs_getstr(bs, keylen);
 
+	/* XXX - When GiantGrayPanda signed on AIM I got a thing asking me to register 
+	 * for the netscape network.  This SNAC had a type 0x0058 TLV with length 10.  
+	 * Data is 0x0007 0004 3e19 ae1e 0006 0004 0000 0005 */
+
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, keystr);
 
