@@ -302,8 +302,8 @@ gaimrc_plugin_load(GaimPlugin *plugin)
 {
 	gaimrc_make_changes();
 
-	gaim_prefs_connect_callback(plugin, "/plugins/gtk/gaimrc",
-	                            gaimrc_pref_changed_cb, NULL);
+	pref_callback = gaim_prefs_connect_callback(plugin, "/plugins/gtk/gaimrc",
+	                                            gaimrc_pref_changed_cb, NULL);
 
 	return TRUE;
 }

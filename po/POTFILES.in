@@ -7,6 +7,7 @@ plugins/extplacement.c
 plugins/filectl.c
 plugins/gaim-remote/remote.c
 plugins/gaiminc.c
+plugins/gaimrc.c
 plugins/gestures/gestures.c
 plugins/gevolution/add_buddy_dialog.c
 plugins/gevolution/assoc-buddy.c
