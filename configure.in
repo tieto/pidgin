@@ -103,25 +103,26 @@ if test "x$enable_gnome" != "xyes" ; then
 	LIBS="$LIBS $GTK_LIBS"
 	AC_PATH_PROG(gaimpath, gaim)
 fi
+CFLAGS="$CFLAGS $GTK_CFLAGS"
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
-       XSS_LIBS="no"
-       XSS_HEADERS="no"
-       AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
-       AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-lXss"],[],[-lX11 -lXext -lm])
-       if test \! "$XSS_LIBS" = "no"; then
-               AC_CHECK_HEADER(X11/extensions/scrnsaver.h,[XSS_HEADERS="yes"])
-               if test "$XSS_HEADERS" = "yes"; then
-                       dnl Found the libs and the headers
-                       AC_DEFINE(USE_SCREENSAVER)
-                       LIBS="$LIBS $XSS_LIBS"
-               fi
-       else
-               XSS_LIBS=""
-       fi
+	XSS_LIBS="no"
+	XSS_HEADERS="no"
+	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-lXss"],[],[-lX11 -lXext -lm])
+	if test \! "$XSS_LIBS" = "no"; then
+		AC_TRY_COMPILE([
+#include <X11/extensions/scrnsaver.h>
+				],[],[],[
+				AC_DEFINE(USE_SCREENSAVER)
+				LIBS="$LIBS $XSS_LIBS"
+				])
+	else
+	       XSS_LIBS=""
+	fi
 else
-       XSS_LIBS=""
+	XSS_LIBS=""
 fi
 
 
@@ -130,8 +131,6 @@ fi
 if test "x$enable_multi" != "xyes" ; then
 	AC_DEFINE(NO_MULTI)
 fi
-
-CFLAGS="$CFLAGS $GTK_CFLAGS"
 
 if test "x$enable_plugins" = xyes ; then
 	AC_DEFINE(GAIM_PLUGINS)
