@@ -25,6 +25,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "ft.h"
 #include "plugin.h"
 #include "pounce.h"
 #include "prefs.h"
@@ -75,6 +76,7 @@ gaim_core_init(const char *ui)
 	gaim_proxy_init();
 	gaim_sound_init();
 	gaim_pounces_init();
+	gaim_xfer_init();
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();

@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "ft.h"
 #include "notify.h"
+#include "prefs.h"
 #include "proxy.h"
 
 static GaimXferUiOps *xfer_ui_ops = NULL;
@@ -694,6 +695,13 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 	gaim_notify_error(NULL, NULL, title, msg);
 
 	g_free(title);
+}
+
+void
+gaim_xfer_init(void)
+{
+	gaim_prefs_add_none("/core/ft");
+	gaim_prefs_add_string("/core/ft/public_ip", "");
 }
 
 void

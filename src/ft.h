@@ -462,6 +462,11 @@ void gaim_xfer_cancel_remote(GaimXfer *xfer);
  */
 void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
 
+/**
+ * Initializes the file transfer subsystem.
+ */
+void gaim_xfer_init(void);
+
 /*@}*/
 
 /**************************************************************************/
