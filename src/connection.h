@@ -20,10 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * @signal signing-on (GaimConnection *gc)
- * @signal signed-on (GaimConnection *gc)
- * @signal signing-off (GaimConnection *gc)
- * @signal signed-off (GaimConnection *gc)
+ * @see @ref connection-signals
  */
 #ifndef _GAIM_CONNECTION_H_
 #define _GAIM_CONNECTION_H_

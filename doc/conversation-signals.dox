@@ -1,0 +1,268 @@
+/** @page conversation-signals Conversation Signals
+
+ @signals
+  @signal displaying-im-msg
+  @signal displayed-im-msg
+  @signal sending-im-msg
+  @signal sent-im-msg
+  @signal received-im-msg
+  @signal displaying-chat-msg
+  @signal displayed-chat-msg
+  @signal sending-chat-msg
+  @signal sent-chat-msg
+  @signal received-chat-msg
+  @signal conversation-switching
+  @signal conversation-switched
+  @signal conversation-created
+  @signal deleting-conversation
+  @signal buddy-typing
+  @signal chat-buddy-joining
+  @signal chat-buddy-joined
+  @signal chat-buddy-leaving
+  @signal chat-buddy-left
+  @signal chat-inviting-user
+  @signal chat-invited-user
+  @signal chat-invited
+  @signal chat-joined
+  @signal chat-left
+ @endsignals
+
+ @signaldef displaying-im-msg
+  @signalproto
+gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
+  @endsignalproto
+  @param account The account the message is being displayed on.
+  @param message A pointer to the message that will be displayed.
+  @signaldesc
+   Emitted just before a message is displayed in an IM conversation.
+   @a message is a pointer to a string, so the plugin can replace the
+   message that will be displayed. This can also be used to cancel displaying
+   a message by returning @c TRUE.
+  @note
+   Make sure to free @a *message before you replace it!
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+ @endsignaldef
+
+ @signaldef displayed-im-msg
+  @signalproto
+void (*displayed_im_msg)(GaimAccount *account, const char *message);
+  @endsignalproto
+  @param account The account the message was displayed on.
+  @param message The message that was displayed.
+  @signaldesc
+   Emitted after a message is displayed in an IM conversation.
+ @endsignaldef
+
+ @signaldef sending-im-msg
+  @signalproto
+void (*sending_im_msg)(GaimAccount *account, const char *receiver, char **message);
+  @endsignalproto
+  @param conv     The account the message is being sent on.
+  @param receiver The username of the receiver.
+  @param message  A pointer to the outgoing message. This can be modified.
+  @signaldesc
+   Emitted before sending an IM to a user. @a message is a pointer to the
+   message string, so the plugin can replace the message before being sent.
+  @note
+   Make sure to free @a *message before you replace it!
+ @endsignaldef
+
+ @signaldef sent-im-msg
+  @signalproto
+void (*sent_im_msg)(GaimAccount *account, const char *receiver, const char *message);
+  @endsignalproto
+  @param account  The account the message was sent on.
+  @param receiver The username of the receiver.
+  @param message  The message that was sent.
+  @signaldesc
+   Emitted after sending an IM to a user.
+ @endsignaldef
+
+ @signaldef received-im-msg
+  @signalproto
+gboolean (*received_im_msg)(GaimAccount *account, char **sender, char **message, int *flags);
+  @endsignalproto
+  @param account The account the message was received on.
+  @param sender  A pointer to the username of the sender.
+  @param message A pointer to the message that was sent.
+  @signaldesc
+   Emitted when an IM is received. The callback can replace the name of the
+   sender, the message, or the flags by modifying the pointer to the
+   strings and integer. This can also be used to cancel a message by
+   returning @c TRUE.
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+ @endsignaldef
+
+ @signaldef displaying-chat-msg
+  @signalproto
+void (*displaying-chat-msg)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef displayed-chat-msg
+  @signalproto
+void (*displayed-chat-msg)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef sending-chat-msg
+  @signalproto
+void (*sending-chat-msg)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef sent-chat-msg
+  @signalproto
+void (*sent-chat-msg)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef received-chat-msg
+  @signalproto
+void (*received-chat-msg)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef conversation-switching
+  @signalproto
+void (*conversation-switching)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef conversation-switched
+  @signalproto
+void (*conversation-switched)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef conversation-created
+  @signalproto
+void (*conversation-created)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef deleting-conversation
+  @signalproto
+void (*deleting-conversation)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef buddy-typing
+  @signalproto
+void (*buddy-typing)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-buddy-joining
+  @signalproto
+void (*chat-buddy-joining)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-buddy-joined
+  @signalproto
+void (*chat-buddy-joined)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-buddy-leaving
+  @signalproto
+void (*chat-buddy-leaving)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-buddy-left
+  @signalproto
+void (*chat-buddy-left)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-inviting-user
+  @signalproto
+void (*chat-inviting-user)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-invited-user
+  @signalproto
+void (*chat-invited-user)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-invited
+  @signalproto
+void (*chat-invited)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-joined
+  @signalproto
+void (*chat-joined)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+ @signaldef chat-left
+  @signalproto
+void (*chat-left)(GaimConversation *conv);
+  @endsignalproto
+  @param conv The conversation.
+  @signaldesc
+   
+ @endsignaldef
+
+*/
+// vim: syntax=c tw=75 et

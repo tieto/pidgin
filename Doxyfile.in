@@ -262,7 +262,14 @@ GENERATE_DEPRECATEDLIST= YES
 # will result in a user-defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = "signal=@xrefitem signal \"Signals\" \"Signals\" @b"
+ALIASES                = "signal=- @ref"
+ALIASES               += "signaldef=@section"
+ALIASES               += "endsignaldef=@endsection"
+ALIASES               += "signalproto=@code"
+ALIASES               += "endsignalproto=@endcode"
+ALIASES               += "signaldesc=@par Description:\n"
+ALIASES               += "signals=@b Signals:\n"
+ALIASES               += "endsignals="
 
 # The ENABLED_SECTIONS tag can be used to enable conditional 
 # documentation sections, marked by \if sectionname ... \endif.

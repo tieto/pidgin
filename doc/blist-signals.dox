@@ -1,0 +1,78 @@
+/** @page blist-signals Buddy List Signals
+
+ @signals
+  @signal buddy-away
+  @signal buddy-back
+  @signal buddy-idle
+  @signal buddy-unidle
+  @signal buddy-signed-on
+  @signal buddy-signed-off
+  @signal update-idle
+ @endsignals
+
+ <hr>
+
+ @signaldef buddy-away
+  @signalproto
+void (*buddy_away)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that went away.
+  @signaldesc
+   Emitted when a buddy on your buddy list goes away.
+ @endsignaldef
+
+ @signaldef buddy-back
+  @signalproto
+void (*buddy_back)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that came back from being away.
+  @signaldesc
+   Emitted when a buddy on your buddy list comes back from being away.
+ @endsignaldef
+
+ @signaldef buddy-idle
+  @signalproto
+void (*buddy_idle)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that became idle.
+  @signaldesc
+   Emitted when a buddy on your buddy list becomes idle.
+ @endsignaldef
+
+ @signaldef buddy-unidle
+  @signalproto
+void (*buddy_unidle)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that returned from being idle.
+  @signaldesc
+   Emitted when a buddy on your buddy list returns from being idle.
+ @endsignaldef
+
+ @signaldef buddy-signed-on
+  @signalproto
+void (*buddy_signed_on)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that signed on.
+  @signaldesc
+   Emitted when a buddy on your buddy list signs on.
+ @endsignaldef
+
+ @signaldef buddy-signed-off
+  @signalproto
+void (*buddy_signed_off)(struct buddy *buddy);
+  @endsignalproto
+  @param buddy The buddy that signed off.
+  @signaldesc
+   Emitted when a buddy on your buddy list signs off.
+ @endsignaldef
+
+ @signaldef update-idle
+  @signalproto
+void (*update_idle)();
+  @endsignalproto
+  @signaldesc
+   Emitted when the buddy list is refreshed and the idle times are updated.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et
