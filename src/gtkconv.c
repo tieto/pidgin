@@ -1876,16 +1876,17 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
+			gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
 		}
 		else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
+			gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
 
 		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 
-		gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 
 		gtk_widget_hide(gtkwin->menu.invite);
 
