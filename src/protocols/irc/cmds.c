@@ -197,7 +197,7 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 		return 0;
 
 	if (!strcmp(cmd, "mode")) {
-		if (!args[0] && (*target == '#' || *target == '&'))
+		if (!args[0] && irc_ischannel(target))
 			buf = irc_format(irc, "vc", "MODE", target);
 		else if (args[0] && (*args[0] == '+' || *args[0] == '-'))
 			buf = irc_format(irc, "vcv", "MODE", target, args[0]);
@@ -224,7 +224,7 @@ int irc_cmd_names(struct irc_conn *irc, const char *cmd, const char *target, con
 {
 	char *buf;
 
-	if (!args)
+	if (!args || (!args[0] && !irc_ischannel(target)))
 		return 0;
 
 	buf = irc_format(irc, "vc", "NAMES", args[0] ? args[0] : target);
@@ -317,7 +317,7 @@ int irc_cmd_ping(struct irc_conn *irc, const char *cmd, const char *target, cons
 	char *buf;
 
 	if (args && args[0]) {
-		if (*args[0] == '#' || *args[0] == '&')
+		if (irc_ischannel(args[0]))
 			return 0;
 		stamp = g_strdup_printf("\001PING %lu\001", time(NULL));
 		buf = irc_format(irc, "vn:", "PRIVMSG", args[0], stamp);
@@ -414,7 +414,7 @@ int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, co
 	if (!args || !args[0])
 		return 0;
 
-	if (*target != '#' && *target != '&') /* not a channel, punt */
+	if (!irc_ischannel(target)) /* not a channel, punt */
 		return 0;
 
 	if (args[1])

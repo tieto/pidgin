@@ -366,6 +366,11 @@ char *irc_mirc2txt (const char *string)
         return result;
 }
 
+gboolean irc_ischannel(const char *string)
+{
+	return (string[0] == '#' || string[0] == '&');
+}
+
 char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, const char *msg, int notice)
 {
 	GaimConnection *gc;

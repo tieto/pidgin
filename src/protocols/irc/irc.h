@@ -87,6 +87,8 @@ gboolean irc_blist_timeout(struct irc_conn *irc);
 char *irc_mirc2html(const char *string);
 char *irc_mirc2txt(const char *string);
 
+gboolean irc_ischannel(const char *string);
+
 void irc_register_commands(void);
 void irc_msg_table_build(struct irc_conn *irc);
 void irc_parse_msg(struct irc_conn *irc, char *input);
