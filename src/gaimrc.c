@@ -202,7 +202,8 @@ static int gaimrc_parse_tag(FILE *f)
 	if (feof(f))
 		return -1;
 
-	sscanf(buf, "%s {", tag);
+	if (sscanf(buf, "%s {", tag) != 1)
+		return -1;
 
 	if (!strcmp(tag, "users")) {
 		return 0;
@@ -1507,7 +1508,7 @@ void load_prefs()
 					   "starting read tag %d\n", tag);
 			switch (tag) {
 			case -1:
-				/* Let the loop end, EOF */
+				/* Do nothing--either EOF or empty line */
 				break;
 			case 0:
 				gaimrc_read_users(f);
