@@ -809,7 +809,9 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 			} else
 				hide_login_progress(GJ_GC(j), "unknown error");
 
+			xmlnode_free(p->x);
 			signoff(GJ_GC(j));
+			return;
 		}
 		break;
 	case JPACKET_S10N:
