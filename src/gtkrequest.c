@@ -1358,12 +1358,77 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 	g_free(data);
 }
 
+static void
+file_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
+{
+	const char *name;
+
+	if (!GTK_WIDGET_HAS_FOCUS(button))
+		gtk_widget_grab_focus(button);
+
+	if (data->cbs[0] != NULL) {
+		name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
+		if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
+			name = NULL;
+
+		((GaimRequestInputCb)data->cbs[0])(data->user_data, name);
+	}
+
+	gaim_request_close(GAIM_REQUEST_INPUT, data);
+}
+
+static void
+file_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
+{
+	if (data->cbs[1] != NULL)
+		((GaimRequestInputCb)data->cbs[1])(data->user_data, NULL);
+
+	gaim_request_close(GAIM_REQUEST_INPUT, data);
+}
+
+static void *
+gaim_gtk_request_file(const char *title, const char *filename,
+		      GCallback ok_cb, GCallback cancel_cb,
+		      void *user_data)
+{
+	GaimGtkRequestData *data;
+	GtkWidget *filesel;
+	char *cur_dir, *init_str, tmp[512];
+
+	data = g_new0(GaimGtkRequestData, 1);
+	data->type = GAIM_REQUEST_INPUT;
+	data->user_data = user_data;
+	data->cb_count = 2;
+	data->cbs = g_new0(GCallback, 2);
+	data->cbs[0] = ok_cb;
+	data->cbs[1] = cancel_cb;
+
+	filesel = gtk_file_selection_new(title ? title : _(""));
+	cur_dir = g_get_current_dir();
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S, cur_dir);
+	init_str = g_build_filename(tmp, filename, NULL);
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), init_str);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)),
+			 "delete_event", G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
+			 "clicked", G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+			 "clicked", G_CALLBACK(file_ok_cb), data);
+	gtk_widget_show(filesel);
+	g_free(cur_dir);
+	g_free(init_str);
+
+	data->dialog = filesel;
+	return (void *)data;
+}
+
 static GaimRequestUiOps ops =
 {
 	gaim_gtk_request_input,
 	gaim_gtk_request_choice,
 	gaim_gtk_request_action,
 	gaim_gtk_request_fields,
+	gaim_gtk_request_file,
 	gaim_gtk_close_request
 };
 

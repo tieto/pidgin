@@ -191,8 +191,10 @@ typedef struct
 							const char *cancel_text, GCallback cancel_cb,
 							void *user_data);
 
+	void *(*request_file)(const char *title, const char *filename,
+			      GCallback ok_cb, GCallback cancel_cb,
+			      void *user_data);
 	void (*close_request)(GaimRequestType type, void *ui_handle);
-
 } GaimRequestUiOps;
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
@@ -1250,6 +1252,24 @@ void gaim_request_close_with_handle(void *handle);
 						_("Accept"), (accept_cb), _("Cancel"), (cancel_cb))
 
 /*@}*/
+
+/**
+ * Displays file selector request dialog.  Returns the selected filename into
+ * the callback.
+ *
+ * @param handle      The plugin or connection handle.
+ * @param title       The title for the dialog (may be NULL)
+ * @param filename    The default filename (may be NULL)
+ * @param ok_cb       The callback for the OK button.
+ * @param cancel_cb   The callback for the cancel button.
+ * @param user_data   The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_request_file(void *handle, const char *title, const char *filename,
+			GCallback ok_cb, GCallback cancel_cb,
+			void *user_data);
+
 
 /**************************************************************************/
 /** @name UI Operations API                                               */
