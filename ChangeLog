@@ -1,5 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.9.13:
+
 version 0.9.12 (03/25/2000):
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
 	  Thanks to Todd Cohen for this one.
