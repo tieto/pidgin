@@ -670,6 +670,7 @@ static void im_page()
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, box);
 	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, box);
+	gaim_button(_("Ignore TiK Automated Messages"), &general_options, OPT_GEN_TIK_HACK, box);
 
 	gtk_widget_show(prefdialog);
 }

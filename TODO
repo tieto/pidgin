@@ -13,32 +13,6 @@
 		You know, I really like the gnome look to some apps
 		but I dont want to tie gnome into gaim.  oh life sucks
 		sometimes hehe.
-	A TiK Compatiblity Fix:  Make GAIM (optional) Ignore anything that
-		begins with: >>> Automated Message:
-	---------
-		Rob says:
-		Also, we can make a TiK Compatiblity option (when using TOC)
-		to send: >>>Automated Message: Getting Away Message<<
-		This will take the away message thats sent back from the
-		responding client and display it.
-
-			Eric replies:
-			I think the above is a bad idea and should not be
-			implemented. If people want to get away messages,
-			they should send their own message rather than
-			an automated message. Ignoring TiK's automated
-			message is a good idea though.
-			
-			Gaim and TiK are the most popular (are they?) Unix
-			clients, but the number of winaim users still greatly
-			outnumbers us. winaim won't be ignoring the automated
-			message. IMHO, sending an automated message makes the
-			client look weak and incapable.
-	---------
-		Not sure how we want
-		to implement this but since TiK and GAIM are two of the
-		most popular, I figured we might as well make them compatible.
-	
 		
 	Oscar can send messages longer than TOC, and DirectIM has no limit.
 

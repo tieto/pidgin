@@ -232,6 +232,7 @@ void oscar_close() {
 		gdk_input_remove(inpa);
 	inpa = -1;
 	aim_logoff(gaim_sess);
+	g_free(gaim_sess);
 	debug_print(_("Signed off.\n"));
 }
 

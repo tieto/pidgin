@@ -21,6 +21,7 @@ version 0.10.0:
 	  alias him as 'Loser'.
 	* Added GNOME Url Handler as an available web-browser 
 	* Added the S html tag. 		
+	* Optionally Ignore TiK's Automated Messages
 
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

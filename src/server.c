@@ -672,6 +672,12 @@ void serv_got_im(char *name, char *message, int away)
 	g_free(angel);
 #endif
 	
+	if ((general_options & OPT_GEN_TIK_HACK) && awaymessage &&
+	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
+	    	serv_send_im(name, awaymessage->message, 1);
+	    	return;
+	}
+	
         cnv = find_conversation(name);
 
 	if (general_options & OPT_GEN_SEND_LINKS) {
