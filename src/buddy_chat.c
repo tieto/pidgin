@@ -1256,8 +1256,8 @@ void show_new_buddy_chat(struct conversation *b)
 
 		gtk_signal_connect(GTK_OBJECT(b->close), "clicked", GTK_SIGNAL_FUNC(close_callback), b);
 
-		gtk_box_pack_start(GTK_BOX(tabby), b->close, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(tabby), b->tab_label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(tabby), b->close, FALSE, FALSE, 0);
 		gtk_widget_show_all(tabby);
 		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, tabby);
 		gtk_widget_show(cont);
