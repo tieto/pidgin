@@ -1881,15 +1881,15 @@ test_sound(GtkWidget *button, gpointer i_am_NULL)
 	pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
 			gaim_gtk_sound_get_event_option(sound_row_sel));
 
-	temp_value1 = gaim_prefs_get_bool("/gaim/gtk/sound/while_away");
+	temp_value1 = gaim_prefs_get_bool("/core/sound/while_away");
 	temp_value2 = gaim_prefs_get_bool(pref);
 
-	if (!temp_value1) gaim_prefs_set_bool("/gaim/gtk/sound/while_away", TRUE);
+	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", TRUE);
 	if (!temp_value2) gaim_prefs_set_bool(pref, TRUE);
 
 	gaim_sound_play_event(sound_row_sel);
 
-	if (!temp_value1) gaim_prefs_set_bool("/gaim/gtk/sound/while_away", FALSE);
+	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", FALSE);
 	if (!temp_value2) gaim_prefs_set_bool(pref, FALSE);
 
 	g_free(pref);
