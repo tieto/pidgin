@@ -2623,7 +2623,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkwin->menu.insert_link);
 		gtk_widget_show(gtkwin->menu.insert_image);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-		/* Show stuff that applies to IMs, hide stuff that applies to chats */
+		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
 
 		/* Deal with buttons */
 		gtk_widget_show(gtkconv->info);
@@ -2642,11 +2642,13 @@ gray_stuff_out(GaimConversation *conv)
 
 		if (gaim_blist_find_chat(gaim_conversation_get_account(conv),
 								 gaim_conversation_get_name(conv)) == NULL) {
+		/* If the chat is NOT in the buddy list */
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
 			gtk_widget_show(gtkconv->add);
 			gtk_widget_hide(gtkconv->remove);
 		} else {
+		/* If the chat IS in the buddy list */
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
 			gtk_widget_hide(gtkconv->add);
@@ -2722,7 +2724,7 @@ gray_stuff_out(GaimConversation *conv)
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			gtk_widget_set_sensitive(gtkwin->menu.send_file,
-					(gc && prpl_info->send_file != NULL 
+					(gc && prpl_info->send_file != NULL
 					 && (!prpl_info->can_receive_file 
 						 || prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
 			if (gaim_find_buddy(gaim_conversation_get_account(conv),
