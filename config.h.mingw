@@ -74,7 +74,6 @@
 /* #undef USE_GNOME */
 /* #undef USE_PIXBUF */
 #define USE_SCREENSAVER 1
-/* #undef NO_MULTI */
 /* #define DEBUG 1 */
 #define GAIM_PLUGINS 1
 #define USE_PERL 1

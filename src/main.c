@@ -326,10 +326,6 @@ void show_login()
 					 G_CALLBACK(gaim_gtk_accounts_window_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-#ifdef NO_MULTI
-	gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
-#endif
-
 	button = gaim_pixbuf_button_from_stock(_("Preferences"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",

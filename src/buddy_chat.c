@@ -335,7 +335,6 @@ join_chat()
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
 
-#ifndef NO_MULTI
 		rowbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
 
@@ -348,9 +347,6 @@ join_chat()
 		gtk_container_add(GTK_CONTAINER(fbox), jc_vbox);
 		gtk_container_set_border_width(GTK_CONTAINER(jc_vbox), 0);
 
-#else
-		joinchatgc = gaim_connections_get_all()->data;
-#endif
 		rebuild_jc();
 		/* buttons */
 

@@ -94,7 +94,6 @@ AC_TRY_COMPILE([
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
-AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
 AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="")
 if test "x$STATIC_PRPLS" = "xall" ; then
@@ -924,11 +923,6 @@ AC_SUBST(DEBUG_CFLAGS)
 AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 
-if test "x$enable_multi" != "xyes" ; then
-	AC_DEFINE(NO_MULTI, 1, [Define if multiple connections is disabled.])
-	enable_multi=no
-fi
-
 if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(GAIM_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
@@ -1041,7 +1035,6 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Allow Multiple Connections.... : $enable_multi
 echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
