@@ -1,8 +1,8 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2804 2001-11-26 20:39:54Z warmenhoven $
+ * $Id: gg.c 2805 2001-11-26 21:22:56Z warmenhoven $
  *
- * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
+ * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,9 @@
 
 #define AGG_GENDER_NONE -1
 
-#define AGG_PUBDIR_FORM "/appsvc/fmpubquery2.asp"
+#define AGG_PUBDIR_USERLIST_EXPORT_FORM "/appsvc/fmcontactsput.asp"
+#define AGG_PUBDIR_USERLIST_IMPORT_FORM "/appsvc/fmcontactsget.asp"
+#define AGG_PUBDIR_SEARCH_FORM "/appsvc/fmpubquery2.asp"
 #define AGG_PUBDIR_MAX_ENTRIES 200
 
 #define AGG_STATUS_AVAIL              _("Available")
@@ -73,16 +75,24 @@
 #define AGG_STATUS_INVISIBLE_FRIENDS  _("Invisible for friends only")
 #define AGG_STATUS_NOT_AVAIL          _("Unavailable")
 
+#define AGG_HTTP_NONE			0
+#define AGG_HTTP_SEARCH			1
+#define AGG_HTTP_USERLIST_IMPORT	2
+#define AGG_HTTP_USERLIST_EXPORT	3
+
 #define UC_NORMAL 2
 
 struct agg_data {
 	struct gg_session *sess;
 };
 
-struct agg_search {
+struct agg_http {
 	struct gaim_connection *gc;
-	gchar *search_data;
+	gchar *request;
+	gchar *form;
+	gchar *host;
 	int inpa;
+	int type;
 };
 
 static char *agg_name()
@@ -94,7 +104,7 @@ static gchar *charset_convert(const gchar *locstr, char *encsrc, char *encdst)
 {
 #ifdef HAVE_ICONV
 	gchar *result = NULL;
-	if (iconv_string(encdst, encsrc, locstr, locstr+strlen(locstr)+1, &result, NULL) >= 0)
+	if (iconv_string(encdst, encsrc, locstr, locstr + strlen(locstr) + 1, &result, NULL) >= 0)
 		return result;
 #endif
 	return g_strdup(locstr);
@@ -202,8 +212,7 @@ static gchar *encode_postdata(const gchar *data)
 		if ((data[i] >= 'a' && data[i] <= 'z')
 		    || (data[i] >= 'A' && data[i] <= 'Z')
 		    || (data[i] >= '0' && data[i] <= '9')
-		    || data[i] == '=' || data[i] == '&'
-		    || data[i] == '\n' || data[i] == '\r' || data[i] == '\t' || data[i] == '\014') {
+		    || data[i] == '=' || data[i] == '&') {
 			p = g_realloc(p, j + 1);
 			p[j] = data[i];
 			j++;
@@ -371,10 +380,11 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			gchar *imsg;
 			gchar user[20];
 
-			g_snprintf(user, sizeof(user), "%u", e->event.msg.sender);
+			g_snprintf(user, sizeof(user), "%lu", e->event.msg.sender);
 			if (!allowed_uin(gc, user))
 				break;
 			imsg = charset_convert(e->event.msg.message, "CP1250", find_local_charset());
+			/* e->event.msg.time - we don't know what this time is for */
 			serv_got_im(gc, user, imsg, 0, time((time_t) NULL));
 			g_free(imsg);
 		}
@@ -401,7 +411,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 					break;
 				}
 
-				g_snprintf(user, sizeof(user), "%u", n->uin);
+				g_snprintf(user, sizeof(user), "%lu", n->uin);
 				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
 						status, 0);
 				n++;
@@ -428,7 +438,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				break;
 			}
 
-			g_snprintf(user, sizeof(user), "%u", e->event.status.uin);
+			g_snprintf(user, sizeof(user), "%lu", e->event.status.uin);
 			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0, status,
 					0);
 		}
@@ -648,49 +658,12 @@ static void agg_add_buddies(struct gaim_connection *gc, GList *whos)
 	}
 }
 
-static void search_results(gpointer data, gint source, GaimInputCondition cond)
+static void search_results(struct gaim_connection *gc, gchar *webdata)
 {
-	struct agg_search *srch = data;
-	struct gaim_connection *gc = srch->gc;
+	gchar **webdata_tbl;
 	gchar *buf;
 	char *ptr;
-	char *webdata;
-	int len;
-	char read_data;
-	gchar **webdata_tbl;
 	int i, j;
-
-	if (!g_slist_find(connections, gc)) {
-		debug_printf("search_callback: g_slist_find error\n");
-		gaim_input_remove(srch->inpa);
-		g_free(srch);
-		close(source);
-		return;
-	}
-
-	webdata = NULL;
-	len = 0;
-
-	while (read(source, &read_data, 1) > 0 || errno == EWOULDBLOCK) {
-		if (errno == EWOULDBLOCK) {
-			errno = 0;
-			continue;
-		}
-
-		if (!read_data)
-			continue;
-
-		len++;
-		webdata = g_realloc(webdata, len);
-		webdata[len - 1] = read_data;
-	}
-
-	webdata = g_realloc(webdata, len + 1);
-	webdata[len] = 0;
-
-	gaim_input_remove(srch->inpa);
-	g_free(srch);
-	close(source);
 
 	if ((ptr = strstr(webdata, "query_results:")) == NULL || (ptr = strchr(ptr, '\n')) == NULL) {
 		debug_printf("search_callback: pubdir result [%s]\n", webdata);
@@ -795,87 +768,294 @@ static void search_results(gpointer data, gint source, GaimInputCondition cond)
 	g_free(buf);
 }
 
-static void search_callback(gpointer data, gint source, GaimInputCondition cond)
+static void agg_import_buddies_results(struct gaim_connection *gc, gchar *webdata)
 {
-	struct agg_search *srch = data;
-	struct gaim_connection *gc = srch->gc;
-	gchar *search_data = srch->search_data;
-	gchar *buf;
-	char *ptr;
+	gchar *ptr;
+	gchar **users_tbl;
+	int i;
+	if (strstr(webdata, "no_data:")) {
+		g_free(webdata);
+		do_error_dialog(_("There is no Buddy List stored on server. Sorry!"),
+				_("Gadu-Gadu Error"));
+		return;
+	}
 
-	debug_printf("search_callback enter: begin\n");
+	if ((ptr = strstr(webdata, "get_results:")) == NULL || (ptr = strchr(ptr, ':')) == NULL) {
+		debug_printf("agg_import_buddies_list: import buddies result [%s]\n", webdata);
+		g_free(webdata);
+		do_error_dialog(_("Couldn't Import Buddies List from Server"), _("Gadu-Gadu Error"));
+		return;
+	}
+	ptr++;
+
+	users_tbl = g_strsplit(ptr, "\n", AGG_PUBDIR_MAX_ENTRIES);
+	g_free(webdata);
+
+	/* Parse array of Buddies List */
+	for (i = 0; users_tbl[i] != NULL; i++) {
+		gchar **data_tbl;
+		gchar *name, *show;
+
+		g_strdelimit(users_tbl[i], "\r\t\n\015", ' ');
+		data_tbl = g_strsplit(users_tbl[i], ";", 8);
+
+		show = data_tbl[3];
+		name = data_tbl[6];
+
+		if (invalid_uin(name)) {
+			continue;
+		}
+
+		debug_printf("uin: %s\n", name);
+		if (!find_buddy(gc, name)) {
+			/* Default group if none specified on server */
+			gchar *group = g_strdup("Gadu-Gadu");
+			if (strlen(data_tbl[5])) {
+				gchar **group_tbl = g_strsplit(data_tbl[5], ",", 2);
+				if (strlen(group_tbl[0])) {
+					g_free(group);
+					group = g_strdup(group_tbl[0]);
+				}
+				g_strfreev(group_tbl);
+			}
+			/* Add Buddy to our userlist */
+			add_buddy(gc, group, name, strlen(show) ? show : name);
+			do_export(gc);
+			g_free(group);
+		}
+		g_strfreev(data_tbl);
+	}
+	g_strfreev(users_tbl);
+}
+
+static void agg_export_buddies_results(struct gaim_connection *gc, gchar *webdata)
+{
+	if (strstr(webdata, "put_success:")) {
+		g_free(webdata);
+		do_error_dialog(_("Buddies List sucessfully transfered into Server"),
+				_("Gadu-Gadu Information"));
+		return;
+	}
+
+	debug_printf("agg_export_buddies_results: webdata [%s]\n", webdata);
+	g_free(webdata);
+	do_error_dialog(_("Couldn't transfer Buddies List into Server"), _("Gadu-Gadu Error"));
+}
+
+static void http_results(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct agg_http *hdata = data;
+	struct gaim_connection *gc = hdata->gc;
+	char *webdata;
+	int len;
+	char read_data;
+
+	debug_printf("http_results: begin\n");
 
 	if (!g_slist_find(connections, gc)) {
 		debug_printf("search_callback: g_slist_find error\n");
-		g_free(search_data);
-		g_free(srch);
+		gaim_input_remove(hdata->inpa);
+		g_free(hdata);
+		close(source);
+		return;
+	}
+
+	webdata = NULL;
+	len = 0;
+
+	while (read(source, &read_data, 1) > 0 || errno == EWOULDBLOCK) {
+		if (errno == EWOULDBLOCK) {
+			errno = 0;
+			continue;
+		}
+
+		if (!read_data)
+			continue;
+
+		len++;
+		webdata = g_realloc(webdata, len);
+		webdata[len - 1] = read_data;
+	}
+
+	webdata = g_realloc(webdata, len + 1);
+	webdata[len] = 0;
+
+	gaim_input_remove(hdata->inpa);
+	close(source);
+
+	debug_printf("http_results: type %d, webdata [%s]\n", hdata->type, webdata);
+
+	switch (hdata->type) {
+	case AGG_HTTP_SEARCH:
+		search_results(gc, webdata);
+		break;
+	case AGG_HTTP_USERLIST_IMPORT:
+		agg_import_buddies_results(gc, webdata);
+		break;
+	case AGG_HTTP_USERLIST_EXPORT:
+		agg_export_buddies_results(gc, webdata);
+		break;
+	case AGG_HTTP_NONE:
+	default:
+		debug_printf("http_results: unsupported type %d\n", hdata->type);
+		break;
+	}
+
+	g_free(hdata);
+}
+
+static void http_req_callback(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct agg_http *hdata = data;
+	struct gaim_connection *gc = hdata->gc;
+	gchar *request = hdata->request;
+	gchar *buf;
+	char *ptr;
+
+	debug_printf("http_req_callback: begin\n");
+
+	if (!g_slist_find(connections, gc)) {
+		debug_printf("http_req_callback: g_slist_find error\n");
+		g_free(request);
+		g_free(hdata);
 		close(source);
 		return;
 	}
 
 	if (source == -1) {
-		g_free(search_data);
-		g_free(srch);
+		g_free(request);
+		g_free(hdata);
 		return;
 	}
 
-	ptr = encode_postdata(search_data);
-	g_free(search_data);
+	ptr = encode_postdata(request);
+	g_free(request);
 
-	debug_printf("search_callback: pubdir request [%s]\n", ptr);
+	debug_printf("http_req_callback: http request [%s]\n", ptr);
 
-	buf = g_strdup_printf("POST " AGG_PUBDIR_FORM " HTTP/1.0\r\n"
-			      "Host: " GG_PUBDIR_HOST "\r\n"
+	buf = g_strdup_printf("POST %s HTTP/1.0\r\n"
+			      "Host: %s\r\n"
 			      "Content-Type: application/x-www-form-urlencoded\r\n"
-			      "User-Agent: Mozilla/4.7 [en] (Win98; I)\r\n"
+			      "User-Agent: " GG_HTTP_USERAGENT "\r\n"
 			      "Content-Length: %d\r\n"
-			      "Pragma: no-cache\r\n" "\r\n" "%s\r\n", strlen(ptr), ptr);
+			      "Pragma: no-cache\r\n" "\r\n" "%s\r\n",
+			      hdata->form, hdata->host, strlen(ptr), ptr);
 
 	g_free(ptr);
 
 	if (write(source, buf, strlen(buf)) < strlen(buf)) {
 		g_free(buf);
-		g_free(srch);
+		g_free(hdata);
 		close(source);
-		do_error_dialog(_("Couldn't send search request"), _("Gadu-Gadu Error"));
+		do_error_dialog(_("Couldn't send http request"), _("Gadu-Gadu Error"));
 		return;
 	}
 
 	g_free(buf);
 
-	srch->inpa = gaim_input_add(source, GAIM_INPUT_READ, search_results, srch);
+	hdata->inpa = gaim_input_add(source, GAIM_INPUT_READ, http_results, hdata);
+}
+
+static void agg_import_buddies(struct gaim_connection *gc)
+{
+	struct agg_http *hi = g_new0(struct agg_http, 1);
+	static char msg[AGG_BUF_LEN];
+
+	hi->gc = gc;
+	hi->type = AGG_HTTP_USERLIST_IMPORT;
+	hi->form = AGG_PUBDIR_USERLIST_IMPORT_FORM;
+	hi->host = GG_PUBDIR_HOST;
+	hi->request = g_strdup_printf("FmNum=%s&Pass=%s", gc->username, gc->password);
+
+	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
+		g_snprintf(msg, sizeof(msg), _("Buddies List import from Server failed (%s)"),
+			   GG_PUBDIR_HOST);
+		do_error_dialog(msg, _("Gadu-Gadu Error"));
+		g_free(hi->request);
+		g_free(hi);
+		return;
+	}
+}
+
+static void agg_export_buddies(struct gaim_connection *gc)
+{
+	struct agg_http *he = g_new0(struct agg_http, 1);
+	static char msg[AGG_BUF_LEN];
+	gchar *ptr;
+	GSList *gr = gc->groups;
+
+	he->gc = gc;
+	he->type = AGG_HTTP_USERLIST_EXPORT;
+	he->form = AGG_PUBDIR_USERLIST_EXPORT_FORM;
+	he->host = GG_PUBDIR_HOST;
+	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Contacts=", gc->username, gc->password);
+
+	while (gr) {
+		struct group *g = gr->data;
+		GSList *m = g->members;
+		while (m) {
+			struct buddy *b = m->data;
+			gchar *newdata;
+			/* GG Number */
+			gchar *name = b->name;
+			/* GG Pseudo */
+			gchar *show = strlen(b->show) ? b->show : b->name;
+
+			ptr = he->request;
+			newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s\r\n",
+						  show, show, show, show, "", g->name, name);
+			he->request = g_strconcat(ptr, newdata, NULL);
+			g_free(newdata);
+			g_free(ptr);
+
+			m = g_slist_next(m);
+		}
+		gr = g_slist_next(gr);
+	}
+
+	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+		g_snprintf(msg, sizeof(msg), _("Buddies List export to Server failed (%s)"),
+			   GG_PUBDIR_HOST);
+		do_error_dialog(msg, _("Gadu-Gadu Error"));
+		g_free(he->request);
+		g_free(he);
+		return;
+	}
 }
 
 static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle,
 			   char *last, char *maiden, char *city, char *state, char *country, char *email)
 {
-	struct agg_search *srch = g_new0(struct agg_search, 1);
+	struct agg_http *srch = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
 
 	srch->gc = gc;
+	srch->type = AGG_HTTP_SEARCH;
+	srch->form = AGG_PUBDIR_SEARCH_FORM;
+	srch->host = GG_PUBDIR_HOST;
 
 	if (email && strlen(email)) {
-		srch->search_data = g_strdup_printf("Mode=1&Email=%s", email);
+		srch->request = g_strdup_printf("Mode=1&Email=%s", email);
 	} else {
 		gchar *new_first = charset_convert(first, find_local_charset(), "CP1250");
 		gchar *new_last = charset_convert(last, find_local_charset(), "CP1250");
 		gchar *new_city = charset_convert(city, find_local_charset(), "CP1250");
 
 		/* For active only add &ActiveOnly= */
-		srch->search_data = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
-						    "&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
-						    new_first, new_last, AGG_GENDER_NONE,
-						    "", new_city, 0, 0);
+		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
+						"&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
+						new_first, new_last, AGG_GENDER_NONE,
+						"", new_city, 0, 0);
 
 		g_free(new_first);
 		g_free(new_last);
 		g_free(new_city);
 	}
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, search_callback, srch) < 0) {
+	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"), GG_PUBDIR_HOST);
 		do_error_dialog(msg, _("Gadu-Gadu Error"));
-		g_free(srch->search_data);
+		g_free(srch->request);
 		g_free(srch);
 		return;
 	}
@@ -885,6 +1065,10 @@ static void agg_do_action(struct gaim_connection *gc, char *action)
 {
 	if (!strcmp(action, _("Directory Search"))) {
 		show_find_info(gc);
+	} else if (!strcmp(action, _("Import Buddies List from Server"))) {
+		agg_import_buddies(gc);
+	} else if (!strcmp(action, _("Export Buddies List to Server"))) {
+		agg_export_buddies(gc);
 	}
 }
 
@@ -893,33 +1077,38 @@ static GList *agg_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Directory Search"));
+	m = g_list_append(m, _("Import Buddies List from Server"));
+	m = g_list_append(m, _("Export Buddies List to Server"));
 
 	return m;
 }
 
 static void agg_get_info(struct gaim_connection *gc, char *who)
 {
-	struct agg_search *srch = g_new0(struct agg_search, 1);
+	struct agg_http *srch = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
 
 	srch->gc = gc;
+	srch->type = AGG_HTTP_SEARCH;
+	srch->form = AGG_PUBDIR_SEARCH_FORM;
+	srch->host = GG_PUBDIR_HOST;
 
 	/* If it's invalid uin then maybe it's nickname? */
 	if (invalid_uin(who)) {
 		gchar *new_who = charset_convert(who, find_local_charset(), "CP1250");
 
-		srch->search_data = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
-						    "&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
-						    "", "", AGG_GENDER_NONE, new_who, "", 0, 0);
+		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
+						"&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
+						"", "", AGG_GENDER_NONE, new_who, "", 0, 0);
 
 		g_free(new_who);
 	} else
-		srch->search_data = g_strdup_printf("Mode=3&UserId=%s", who);
+		srch->request = g_strdup_printf("Mode=3&UserId=%s", who);
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, search_callback, srch) < 0) {
+	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"), GG_PUBDIR_HOST);
 		do_error_dialog(msg, _("Gadu-Gadu Error"));
-		g_free(srch->search_data);
+		g_free(srch->request);
 		g_free(srch);
 		return;
 	}
