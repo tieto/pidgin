@@ -77,7 +77,7 @@ all: plugins
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
 
 install:
-	cp $(GAIM_PLUGINS)/*.dll $(GAIM_PLUGINS)/*.pl $(GAIM_INSTALL_DIR)/plugins
+	cp $(GAIM_PLUGINS)/*.dll $(GAIM_PLUGINS)/gaim.pl $(GAIM_INSTALL_DIR)/plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw install
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
 
