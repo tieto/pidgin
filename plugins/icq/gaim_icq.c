@@ -284,7 +284,8 @@ static struct prpl *my_protocol = NULL;
 
 static void icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int away) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	icq_SendMessage(id->link, atol(who), msg, ICQ_SEND_BESTWAY);
+	if (!away && (strlen(msg) > 0))
+		icq_SendMessage(id->link, atol(who), msg, ICQ_SEND_BESTWAY);
 }
 
 static void icq_keepalive(struct gaim_connection *gc) {
@@ -317,25 +318,36 @@ static void icq_rem_buddy(struct gaim_connection *gc, char *who) {
 static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
+	if (gc->away)
+		gc->away = NULL;
+
 	if (!strcmp(state, "Online"))
 		icq_ChangeStatus(id->link, STATUS_ONLINE);
-	else if (!strcmp(state, "Away"))
+	else if (!strcmp(state, "Away")) {
 		icq_ChangeStatus(id->link, STATUS_AWAY);
-	else if (!strcmp(state, "Do Not Disturb"))
+		gc->away = "";
+	} else if (!strcmp(state, "Do Not Disturb")) {
 		icq_ChangeStatus(id->link, STATUS_DND);
-	else if (!strcmp(state, "Not Available"))
+		gc->away = "";
+	} else if (!strcmp(state, "Not Available")) {
 		icq_ChangeStatus(id->link, STATUS_NA);
-	else if (!strcmp(state, "Occupied"))
+		gc->away = "";
+	} else if (!strcmp(state, "Occupied")) {
 		icq_ChangeStatus(id->link, STATUS_OCCUPIED);
-	else if (!strcmp(state, "Free For Chat"))
+		gc->away = "";
+	} else if (!strcmp(state, "Free For Chat")) {
 		icq_ChangeStatus(id->link, STATUS_FREE_CHAT);
-	else if (!strcmp(state, "Invisible"))
+		gc->away = "";
+	} else if (!strcmp(state, "Invisible")) {
 		icq_ChangeStatus(id->link, STATUS_INVISIBLE);
-	else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
-		if (msg)
+		gc->away = "";
+	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+		if (msg) {
 			icq_ChangeStatus(id->link, STATUS_NA);
-		else
+			gc->away = "";
+		} else {
 			icq_ChangeStatus(id->link, STATUS_ONLINE);
+		}
 	}
 }
 

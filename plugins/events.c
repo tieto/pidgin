@@ -21,9 +21,9 @@ static void evt_signoff(struct gaim_connection *gc, void *data)
 	printf("event_signoff\n");
 }
 
-static void evt_away(void *data)
+static void evt_away(struct gaim_connection *gc, char *state, char *message, void *data)
 {
-	printf("event_away\n");
+	printf("event_away: %s %s %s\n", gc->username, state, message);
 }
 
 static void evt_back(void *data)

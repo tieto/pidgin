@@ -642,8 +642,6 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				break;
 
 				/* no args */
-			case event_away:
-			case event_back:
 			case event_blist_update:
 			case event_quit:
 				{
@@ -708,6 +706,8 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				/* struct gaim_connection *, char *, char * */
 			case event_chat_buddy_join:
 			case event_chat_buddy_leave:
+			case event_away:
+			case event_back:
 				{
 					void (*function)(struct gaim_connection *, char *, char *,
 							  void *) = g->function;
@@ -748,10 +748,10 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
 		break;
 	case event_away:
-		buf[0] = 0;
+		g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
 		break;
 	case event_back:
-		buf[0] = 0;
+		g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
 		break;
 	case event_im_recv:
 		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",

@@ -1,12 +1,13 @@
 #define GAIM_PLUGINS
 #include "gaim.h"
+#include "prpl.h"
 #include <gtk/gtk.h>
 
 extern GtkWidget *imaway;
 
 static int away_state;
 static int forced_off = 0;
-static struct away_message *last_away = NULL;
+static char *last_away = NULL;
 GSList *reconnects = NULL;
 GSList *recontim = NULL;
 
@@ -27,7 +28,7 @@ static void now_online(struct gaim_connection *gc, void *m) {
 	recon = (guint)g_slist_nth(recontim, place);
 	reconnects = g_slist_remove(reconnects, gc->user);
 	recontim = g_slist_remove(recontim, (void *)recon);
-	if (away_state) do_away_message(NULL, last_away);
+	if (away_state) serv_set_away(gc, GAIM_AWAY_CUSTOM, last_away);
 }
 
 static void do_signon(struct aim_user *u) {
@@ -50,25 +51,30 @@ static void reconnect(struct gaim_connection *gc, void *m) {
 	forced_off = 1;
 }
 
-static void away_toggle(void *m) {
-	if ((int)m == 1) {
-		last_away = awaymessage;
+static void away_toggle(struct gaim_connection *gc, char *state, char *message, gpointer data) {
+	if (gc->away) {
+		if (last_away)
+			g_free(last_away);
+		last_away = g_strdup(gc->away);
 		away_state = 1;
 	} else if (!forced_off)
 		away_state = 0;
 }
 
 char *gaim_plugin_init(GModule *handle) {
-	if (imaway) {
+	if (awaymessage) {
 		away_state = 1;
-		last_away = awaymessage;
+		last_away = g_strdup(awaymessage->message);
 	} else
 		away_state = 0;
 
-	gaim_signal_connect(handle, event_away, away_toggle, (void *)1);
-	gaim_signal_connect(handle, event_back, away_toggle, (void *)0);
+	gaim_signal_connect(handle, event_away, away_toggle, NULL);
 	gaim_signal_connect(handle, event_signoff, reconnect, NULL);
 	gaim_signal_connect(handle, event_signon, now_online, NULL);
 
 	return NULL;
+}
+
+void gaim_plugin_remove() {
+	g_free(last_away);
 }

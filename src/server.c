@@ -160,8 +160,10 @@ void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char 
 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
-	if (gc && gc->prpl && gc->prpl->set_away)
+	if (gc && gc->prpl && gc->prpl->set_away) {
 		(*gc->prpl->set_away)(gc, state, message);
+		plugin_event(event_away, gc, state, message, 0);
+	}
 }
 
 void serv_set_away_all(char *message)
@@ -171,8 +173,10 @@ void serv_set_away_all(char *message)
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
-		if (g->prpl && g->prpl->set_away)
+		if (g->prpl && g->prpl->set_away) {
 			(*g->prpl->set_away)(g, GAIM_AWAY_CUSTOM, message);
+			plugin_event(event_away, g, GAIM_AWAY_CUSTOM, message, 0);
+		}
 		c = c->next;
 	}
 }
@@ -348,7 +352,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	if (away)
 		away = WFLAG_AUTO;
 
-	if (awaymessage != NULL) {
+	if (gc->away) {
 		if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
 			if (cnv == NULL) {
 				new_conv = 1;
@@ -387,7 +391,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 
 
-	if (awaymessage != NULL) {
+	if (gc->away) {
 		time_t t;
 		char *tmpmsg;
 		struct buddy *b = find_buddy(gc, name);
@@ -402,7 +406,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		cnv->sent_away = t;
 
 		/* apply default fonts and colors */
-		tmpmsg = stylize(awaymessage->message, MSG_LEN);
+		tmpmsg = stylize(gc->away, MSG_LEN);
 
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
 

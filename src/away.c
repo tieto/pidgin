@@ -57,7 +57,6 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 		GtkWidget *tmp = imaway;
 		imaway = NULL;
 		gtk_widget_destroy(tmp);
-		plugin_event(event_back, 0, 0, 0, 0);
 	}
 
 	serv_set_away_all(NULL);
@@ -160,7 +159,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	serv_set_away_all(buf2);
 	g_free(buf2);
 	gtk_widget_show(imaway);
-	plugin_event(event_away, 0, 0, 0, 0);
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)

@@ -64,14 +64,28 @@ event_signoff:
 	serv_close is, so you still have a chance to get one last message out.
 
 event_away:
-	(none)
+	struct gaim_connection *gc, char *state, char *message
 
-	This is fucked up for now. Currently all connections are told to use the
-	same away message when the user wants to be Away. The away message that
-	is used can be obtained from global variables.
+	'gc' is the connection. Duh.
+	'state' is confusing. We'll save that for now.
+	'message' is the away message to be used.
+
+	Each protocol sets up what away states it can have. These are all char *,
+	and when the connection goes away it uses one of those. That's what state
+	is.
+
+	There's no way of telling from state and message whether you're actually
+	away; it only gives state information, and a possible message.
+
+	However, the protocols also are very nice (usually) and will set gc->away
+	if they're in an away-like state (e.g. Away or N/A for ICQ, etc). You can
+	use that for a more rigid (read "boolean") way of checking away-ness.
 
 event_back:
 	(none)
+
+	This is deprecated and will not be called again. It will probably be
+	removed eventually.
 
 event_im_recv:
 	struct gaim_connection *gc, char **who, char **text

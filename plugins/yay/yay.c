@@ -302,9 +302,14 @@ static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, 
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
+	if (gc->away)
+		g_free(gc->away);
+	gc->away = NULL;
+
 	if (msg) {
 		yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_CUSTOM, msg);
 		yd->current_status = YAHOO_STATUS_CUSTOM;
+		gc->away = g_strdup(msg);
 	} else if (state) {
 		if (!strcmp(state, "Available")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_AVAILABLE, msg);
@@ -312,33 +317,43 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
 		} else if (!strcmp(state, "Be Right Back")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_BRB, msg);
 			yd->current_status = YAHOO_STATUS_BRB;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_BRB));
 		} else if (!strcmp(state, "Busy")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_BUSY, msg);
 			yd->current_status = YAHOO_STATUS_BUSY;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_BUSY));
 		} else if (!strcmp(state, "Not At Home")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTATHOME, msg);
 			yd->current_status = YAHOO_STATUS_NOTATHOME;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_NOTATHOME));
 		} else if (!strcmp(state, "Not At Desk")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTATDESK, msg);
 			yd->current_status = YAHOO_STATUS_NOTATDESK;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_NOTATDESK));
 		} else if (!strcmp(state, "Not In Office")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTINOFFICE, msg);
 			yd->current_status = YAHOO_STATUS_NOTINOFFICE;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_NOTINOFFICE));
 		} else if (!strcmp(state, "On Phone")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_ONPHONE, msg);
 			yd->current_status = YAHOO_STATUS_ONPHONE;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_ONPHONE));
 		} else if (!strcmp(state, "On Vacation")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_ONVACATION, msg);
 			yd->current_status = YAHOO_STATUS_ONVACATION;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_ONVACATION));
 		} else if (!strcmp(state, "Out To Lunch")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_OUTTOLUNCH, msg);
 			yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_OUTTOLUNCH));
 		} else if (!strcmp(state, "Stepped Out")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_STEPPEDOUT, msg);
 			yd->current_status = YAHOO_STATUS_STEPPEDOUT;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_STEPPEDOUT));
 		} else if (!strcmp(state, "Invisible")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_INVISIBLE, msg);
 			yd->current_status = YAHOO_STATUS_INVISIBLE;
+			gc->away = g_strdup(yahoo_get_status_string(YAHOO_STATUS_INVISIBLE));
 		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 			if (gc->is_idle) {
 				yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_IDLE, NULL);

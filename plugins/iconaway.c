@@ -13,10 +13,11 @@ extern GtkWidget *blist;
 extern void applet_destroy_buddy();
 #endif
 
-void iconify_windows(void *data) {
-	XIconifyWindow(GDK_DISPLAY(),
-			GDK_WINDOW_XWINDOW(imaway->window),
-			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
+	if (imaway)
+		XIconifyWindow(GDK_DISPLAY(),
+				GDK_WINDOW_XWINDOW(imaway->window),
+				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #ifdef USE_APPLET
 	applet_destroy_buddy();
 #else

@@ -1742,6 +1742,11 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 static void oscar_set_away(struct gaim_connection *g, char *state, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	aim_bos_setprofile(odata->sess, odata->conn, g->user->user_info, message, gaim_caps);
+	if (g->away)
+		g_free (g->away);
+	g->away = NULL;
+	if (message)
+		g->away = g_strdup (message);
 }
 
 static void oscar_warn(struct gaim_connection *g, char *name, int anon) {

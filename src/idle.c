@@ -37,9 +37,6 @@
 #include "prpl.h"
 
 
-int auto_is_away = 0;
-
-
 gint check_idle(struct gaim_connection *gc)
 {
 	time_t t;
@@ -70,15 +67,13 @@ gint check_idle(struct gaim_connection *gc)
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
 
-	if ((general_options & OPT_GEN_AUTO_AWAY) &&
-	    (idle_time > (60 * auto_away)) && (awaymessage == NULL) && (auto_is_away == 0)) {
-		set_default_away((GtkWidget*)NULL, 
-				 (gpointer)g_slist_index(away_messages,
-							 default_away));
+	if ((general_options & OPT_GEN_AUTO_AWAY) && (idle_time > (60 * auto_away)) &&
+			(!gc->away) && (!gc->is_auto_away)) {
+		set_default_away((GtkWidget*)NULL, (gpointer)g_slist_index(away_messages, default_away));
 		serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
-		auto_is_away = 1;
-	} else if (auto_is_away == 1 && idle_time < 60 * auto_away) {
-		auto_is_away = 0;
+		gc->is_auto_away = TRUE;
+	} else if (gc->is_auto_away && idle_time < 60 * auto_away) {
+		gc->is_auto_away = FALSE;
 		if (awaymessage != NULL)
 			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 	}
