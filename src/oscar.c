@@ -455,7 +455,8 @@ void oscar_close(struct gaim_connection *gc) {
 	
 	while (c) {
 		n = (struct chat_connection *)c->data;
-		gdk_input_remove(n->inpa);
+		if (n->inpa > 0)
+			gdk_input_remove(n->inpa);
 		g_free(n->name);
 		c = g_slist_remove(c, n);
 		g_free(n);
@@ -2030,7 +2031,8 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	if (c != NULL) {
 		if (odata)
 			odata->oscar_chats = g_slist_remove(odata->oscar_chats, c);
-		gdk_input_remove(c->inpa);
+		if (c->inpa > 0)
+			gdk_input_remove(c->inpa);
 		if (g && odata->sess)
 			aim_conn_kill(odata->sess, &c->conn);
 		g_free(c->name);

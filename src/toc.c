@@ -181,7 +181,7 @@ static void toc_close(struct gaim_connection *gc)
 {
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
-	gc->inpa = -1;
+	gc->inpa = 0;
 	close(((struct toc_data *)gc->proto_data)->toc_fd);
 }
 
