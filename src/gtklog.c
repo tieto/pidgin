@@ -265,15 +265,12 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);
 			gtk_tree_store_set(lv->treestore, &toplevel, 0, month, 1, NULL, -1);
 
-			/* sub */
-			gtk_tree_store_append(lv->treestore, &child, &toplevel);
-			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
-
 			strncpy(prev_top_month, month, sizeof(prev_top_month));
-		} else {
-			gtk_tree_store_append(lv->treestore, &child, &toplevel);
-			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
 		}
+
+		/* sub */
+		gtk_tree_store_append(lv->treestore, &child, &toplevel);
+		gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
 
 		logs = logs->next;
 	}
