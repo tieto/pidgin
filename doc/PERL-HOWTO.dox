@@ -140,7 +140,7 @@ sub plugin_load {
 
 
   @code
-sub connection_signed_on_cb {
+sub signed_on_cb {
     my ($gc, $data) = @_;
     my $account = $gc->get_account();
 
