@@ -390,6 +390,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 
 	if (event->state & GDK_CONTROL_MASK)
 		switch (event->keyval) {
+#if (!GTK_CHECK_VERSION(2,2,0))
 		case 'a':
 			return TRUE;
 			break;
@@ -401,6 +402,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case GDK_End:
 			return TRUE;
 			break;
+#endif /* Gtk+ >= 2.2.0 */
 		
 		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
 		case 'B':
