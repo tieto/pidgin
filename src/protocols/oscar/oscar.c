@@ -1506,7 +1506,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	reason = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
-	debug_printf("snac threw error (reason 0x%04x: %s\n", reason,
+	debug_printf("snac threw error (reason 0x%04x: %s)\n", reason,
 			(reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
 
 	return 1;
