@@ -1935,11 +1935,13 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	params = va_arg(ap, struct aim_icbmparameters *);
 	va_end(ap);
 
+	/* evidently this crashes on solaris. i have no clue why
 	debug_printf("ICBM Parameters: maxchannel = %d, default flags = 0x%08lx, max msg len = %d, "
 			"max sender evil = %f, max receiver evil = %f, min msg interval = %ld\n",
 			params->maxchan, params->flags, params->maxmsglen,
 			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
 			params->minmsginterval);
+	*/
 
 	/* Maybe senderwarn and recverwarn should be user preferences... */
 	params->maxmsglen = 8000;
