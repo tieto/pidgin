@@ -1460,6 +1460,8 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
+	MsnUser *user;
+	MsnObject *msnobj;
 	const char *state;
 	const char *passport;
 	const char *friend;
@@ -1468,6 +1470,14 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	state    = params[0];
 	passport = params[1];
 	friend   = msn_url_decode(params[2]);
+
+	if (session->protocol_ver >= 9 && param_count == 5)
+	{
+		user = msn_users_find_with_passport(session->users, passport);
+
+		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
+		msn_user_set_object(user, msnobj);
+	}
 
 	serv_got_alias(gc, (char *)passport, (char *)friend);
 
