@@ -2116,7 +2116,7 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	}
 
 	serv_change_passwd(b->gc, orig, new1);
-	g_snprintf(b->gc->account->password, sizeof(b->gc->account->password), "%s", new1);
+	gaim_account_set_password(gaim_connection_get_account(b->gc), new1);
 
 	destroy_dialog(NULL, b->window);
 	g_free(b);
