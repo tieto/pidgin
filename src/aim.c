@@ -410,7 +410,7 @@ void show_login()
 		
 		gtk_combo_set_value_in_list(GTK_COMBO(name), length, 0);
                 if ((general_options & OPT_GEN_REMEMBER_PASS)) {
-                        gtk_entry_set_text(GTK_ENTRY(pass), current_user->password);
+                        combo_changed(NULL, name);
                 }
 
 
