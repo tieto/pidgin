@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "prefs.h"
 #include "proxy.h"
 #include "sound.h"
 #include "pounce.h"
