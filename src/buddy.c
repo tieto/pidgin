@@ -1719,7 +1719,10 @@ void show_buddy_list()
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_dir), NULL);	
 	gtk_widget_show(menuitem);
-
+	menuitem = gtk_menu_item_new_with_label("Change Password");
+	gtk_menu_append(GTK_MENU(setmenu), menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
+	gtk_widget_show(menuitem);
 	gaim_seperator(menu);
 
         gaim_new_item(menu, "Preferences", GTK_SIGNAL_FUNC(show_prefs));

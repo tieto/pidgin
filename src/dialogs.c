@@ -140,6 +140,14 @@ struct linkdlg {
 	GtkWidget *entry;
 };
 
+struct passwddlg {
+	GtkWidget *window;
+	GtkWidget *ok;
+	GtkWidget *cancel;
+	GtkWidget *original;
+	GtkWidget *new1;
+	GtkWidget *new2;
+};
 
 /*------------------------------------------------------------------------*/
 /*  Function to Send an Email                                             */
@@ -1033,6 +1041,47 @@ void show_set_dir()
 	aol_icon(b->window->window);
 
 	gtk_widget_show(b->window);	
+}
+
+void show_change_passwd()
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *vbox;
+	struct passwddlg *b = g_new0(struct passwddlg, 1);
+
+	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
+	b->cancel = gtk_button_new_with_label("Cancel");
+	b->ok = gtk_button_new_with_label("Ok");
+
+	vbox = gtk_vbox_new(FALSE, 10);
+	label = gtk_label_new("Changing Password");
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 10);
+	gtk_widget_show(label);
+
+	hbox = gtk_hbox_new(FALSE, 10);
+	label = gtk_label_new("Original Password");
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 10);
+
+	b->original = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), b->original, FALSE, FALSE, 10);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 10);
+	gtk_widget_show(hbox);
+
+
+        label = gtk_label_new("Got sleepy, Will add the rest later.");
+        gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 10);
+        gtk_widget_show(label);
+	
+	gtk_container_add(GTK_CONTAINER(b->window), vbox);
+	gtk_widget_show(vbox);
+	gtk_widget_show(b->original);
+	aol_icon(b->window->window);
+	gtk_widget_realize(b->window);
+	gtk_widget_show(b->window);
 }
 
 void show_set_info()

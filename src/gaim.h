@@ -296,7 +296,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 152 $"
+#define REVISION "gaim:$Revision: 156 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -610,7 +610,7 @@ extern void accept_file_dialog(struct file_transfer *);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
-
+extern void show_change_passwd();
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
