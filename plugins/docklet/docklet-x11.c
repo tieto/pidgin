@@ -28,7 +28,7 @@
 #include "stock.h"
 
 #include "gaim.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 #include "eggtrayicon.h"
 #include "docklet.h"

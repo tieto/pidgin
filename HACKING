@@ -184,7 +184,7 @@ conversation.c:
 core.c:
   This is the start of what will become the main() for gaim-core.
 
-dialogs.c:
+gtkdialogs.c:
   A massive file with a lot of little utility functions. This is where all
   of those little dialog windows are created. Things like the warn dialog
   and the add buddy dialog are here. Not all of the dialogs in gaim are in

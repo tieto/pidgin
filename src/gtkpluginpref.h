@@ -30,9 +30,9 @@
 # include <config.h>
 #endif
 
-#include <gtk/gtk.h>
-
 #include "pluginpref.h"
+
+#include "gtkinternal.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -51,6 +51,7 @@
 #include "dnd-hints.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
@@ -58,8 +59,6 @@
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 /* XXX */
 #include "gaim.h"

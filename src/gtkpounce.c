@@ -33,13 +33,12 @@
 #include "request.h"
 #include "server.h"
 #include "sound.h"
+#include "util.h"
 
 #include "gtkblist.h"
+#include "gtkdialogs.h"
 #include "gtkpounce.h"
 #include "gtkutils.h"
-
-#include "ui.h"
-#include "util.h"
 
 typedef struct
 {

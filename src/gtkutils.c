@@ -50,9 +50,9 @@
 #include "util.h"
 
 #include "gtkconv.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
-#include "ui.h"
 
 guint accels_save_timer = 0;
 

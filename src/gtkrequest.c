@@ -26,12 +26,12 @@
 
 #include "prefs.h"
 
+#include "gtkdialogs.h"
+#include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "stock.h"
-#include "ui.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 
 #include <gdk/gdkkeysyms.h>
 

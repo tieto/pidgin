@@ -59,7 +59,7 @@
 
 #include <pango/pango-font.h>
 
-/* GTK+ < 2.2.2 hack, see ui.h for details. */
+/* GTK+ < 2.2.2 hack, see gtkdialogs.h for details. */
 #ifndef GTK_WRAP_WORD_CHAR
 #define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
 #endif

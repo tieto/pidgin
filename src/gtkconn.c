@@ -23,6 +23,7 @@
 
 #include "account.h"
 #include "debug.h"
+#include "gtkdialogs.h"
 #include "notify.h"
 #include "prefs.h"
 #include "stock.h"
@@ -30,8 +31,6 @@
 
 #include "gtkblist.h"
 #include "gtkutils.h"
-
-#include "ui.h"
 
 /*
  * The next couple of functions deal with the connection dialog

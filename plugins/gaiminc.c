@@ -7,7 +7,7 @@
 
 /* include UI for show_about() */
 #include "gtkplugin.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 #define GAIMINC_PLUGIN_ID "core-gaiminc"
 

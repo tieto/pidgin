@@ -41,6 +41,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
+#include "gtkdialogs.h"
 #include "gtkft.h"
 #include "gtklog.h"
 #include "gtkpounce.h"
@@ -48,8 +49,6 @@
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
 #include "gtkutils.h"
-
-#include "ui.h"
 
 #include "gaim.h"
 

@@ -35,9 +35,9 @@
 
 /* XXX UI Stuff */
 #include "gaim.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
-#include "ui.h"
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"

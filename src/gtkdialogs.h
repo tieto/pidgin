@@ -1,5 +1,5 @@
 /**
- * @file ui.h Main GTK+ UI include file
+ * @file gtkdialogs.h Assorted GTK+ dialogs
  * @defgroup gtkui GTK+ User Interface
  *
  * gaim
@@ -23,11 +23,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _UI_H_
-#define _UI_H_
+#ifndef _GTKDIALOGS_H_
+#define _GTKDIALOGS_H_
 
 #include "account.h"
 #include "conversation.h"
+
+#include "gtkinternal.h"
 
 /**
  * Our UI's identifier.
@@ -135,4 +137,4 @@ extern void smiley_theme_probe();
 extern void load_smiley_theme(const char *file, gboolean load);
 extern GSList *get_proto_smileys(const char *id);
 
-#endif /* _UI_H_ */
+#endif /* _GTKDIALOGS_H_ */

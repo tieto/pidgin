@@ -38,6 +38,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkplugin.h"
@@ -46,8 +47,6 @@
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 #define PROXYHOST 0
 #define PROXYPORT 1

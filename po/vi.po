@@ -679,7 +679,7 @@ msgstr "Thời gian nghỉ"
 msgid "_Set"
 msgstr "_Thiết lập"
 
-#: plugins/idle.c:67 src/dialogs.c:786
+#: plugins/idle.c:67 src/gtkdialogs.c:786
 #, fuzzy
 msgid "_Cancel"
 msgstr "Bỏ qua"
@@ -1534,8 +1534,8 @@ msgstr "Hãy nhập mật khẩu hiện tại và mật khẩu mới của bạn
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:197 src/dialogs.c:462 src/dialogs.c:518
-#: src/dialogs.c:571 src/gtkblist.c:2391 src/gtkrequest.c:242
+#: src/account.c:342 src/connection.c:197 src/gtkdialogs.c:462 src/gtkdialogs.c:518
+#: src/gtkdialogs.c:571 src/gtkblist.c:2391 src/gtkrequest.c:242
 #: src/protocols/jabber/jabber.c:1048 src/protocols/jabber/xdata.c:337
 #: src/protocols/msn/msn.c:226 src/protocols/msn/msn.c:241
 #: src/protocols/msn/msn.c:256 src/protocols/msn/msn.c:271
@@ -1552,9 +1552,9 @@ msgid "OK"
 msgstr "Đồng ý"
 
 #: src/account.c:343 src/account.c:381 src/away.c:334 src/connection.c:198
-#: src/dialogs.c:299 src/dialogs.c:311 src/dialogs.c:324 src/dialogs.c:345
-#: src/dialogs.c:463 src/dialogs.c:519 src/dialogs.c:572 src/dialogs.c:808
-#: src/dialogs.c:824 src/dialogs.c:842 src/gtkaccount.c:2002
+#: src/gtkdialogs.c:299 src/gtkdialogs.c:311 src/gtkdialogs.c:324 src/gtkdialogs.c:345
+#: src/gtkdialogs.c:463 src/gtkdialogs.c:519 src/gtkdialogs.c:572 src/gtkdialogs.c:808
+#: src/gtkdialogs.c:824 src/gtkdialogs.c:842 src/gtkaccount.c:2002
 #: src/gtkaccount.c:2498 src/gtkblist.c:2392 src/gtkblist.c:4412
 #: src/gtkconn.c:168 src/gtkimhtmltoolbar.c:414 src/gtkprivacy.c:587
 #: src/gtkprivacy.c:600 src/gtkprivacy.c:625 src/gtkprivacy.c:636
@@ -1746,11 +1746,11 @@ msgstr "Theo nhóm"
 msgid "By account"
 msgstr "Theo tài khoản"
 
-#: src/dialogs.c:149
+#: src/gtkdialogs.c:149
 msgid "Warn User"
 msgstr "Cảnh báo người dùng"
 
-#: src/dialogs.c:168
+#: src/gtkdialogs.c:168
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1763,36 +1763,36 @@ msgstr ""
 "Điều này sẽ tăng mức độ cảnh báo của %s và họ sẽ là đối tượng bị hạn chế "
 "khắt khe.\n"
 
-#: src/dialogs.c:177
+#: src/gtkdialogs.c:177
 msgid "Warn _anonymously?"
 msgstr "Cảnh báo _nặc danh?"
 
-#: src/dialogs.c:184
+#: src/gtkdialogs.c:184
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Cảnh báo nặc danh là ít nghiêm trọng.</b>"
 
-#: src/dialogs.c:295
+#: src/gtkdialogs.c:295
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Bạn sắp xóa %s khỏi danh sách buddy của bạn. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:297 src/dialogs.c:298
+#: src/gtkdialogs.c:297 src/gtkdialogs.c:298
 msgid "Remove Buddy"
 msgstr "Xóa bỏ Buddy"
 
-#: src/dialogs.c:307
+#: src/gtkdialogs.c:307
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Bạn sắp xóa Chat %s khỏi danh sách buddy. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:309 src/dialogs.c:310
+#: src/gtkdialogs.c:309 src/gtkdialogs.c:310
 msgid "Remove Chat"
 msgstr "Xóa Chat"
 
-#: src/dialogs.c:319
+#: src/gtkdialogs.c:319
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1801,11 +1801,11 @@ msgstr ""
 "Bạn sắp xóa nhóm %s và mọi thành viên ra khỏi danh sách buddy của bạn. Bạn "
 "muốn thực hiện không?"
 
-#: src/dialogs.c:322 src/dialogs.c:323
+#: src/gtkdialogs.c:322 src/gtkdialogs.c:323
 msgid "Remove Group"
 msgstr "Xóa nhóm"
 
-#: src/dialogs.c:340
+#: src/gtkdialogs.c:340
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1814,116 +1814,116 @@ msgstr ""
 "Bạn sắp xóa liên lạc có chứa %s và %d các buddy khác ra khỏi danh sách buddy "
 "của bạn. Bạn muốn thực hiện không?"
 
-#: src/dialogs.c:343 src/dialogs.c:344
+#: src/gtkdialogs.c:343 src/gtkdialogs.c:344
 msgid "Remove Contact"
 msgstr "Xóa Liên Lạc"
 
-#: src/dialogs.c:444 src/dialogs.c:500 src/dialogs.c:552
+#: src/gtkdialogs.c:444 src/gtkdialogs.c:500 src/gtkdialogs.c:552
 #, fuzzy
 msgid "_Screen name"
 msgstr "Tên _hiển thị"
 
-#: src/dialogs.c:450 src/dialogs.c:506 src/dialogs.c:558
+#: src/gtkdialogs.c:450 src/gtkdialogs.c:506 src/gtkdialogs.c:558
 #, fuzzy
 msgid "_Account"
 msgstr "Tài _khoản:"
 
-#: src/dialogs.c:457
+#: src/gtkdialogs.c:457
 msgid "New Instant Message"
 msgstr "Tin nhắn nhanh mới"
 
-#: src/dialogs.c:459
+#: src/gtkdialogs.c:459
 #, fuzzy
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Hãy nhập tên hiển thị của người mà bạn muốn trò chuyện bằng Nhắn Tin Nhanh.\n"
 
-#: src/dialogs.c:513
+#: src/gtkdialogs.c:513
 msgid "Get User Info"
 msgstr "Thông tin buddy"
 
-#: src/dialogs.c:515
+#: src/gtkdialogs.c:515
 #, fuzzy
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr "Hãy nhập tên hiển thị của người mà bạn muốn xem thông tin về họ.\n"
 
-#: src/dialogs.c:566
+#: src/gtkdialogs.c:566
 #, fuzzy
 msgid "Get User Log"
 msgstr "Thông tin buddy"
 
-#: src/dialogs.c:568
+#: src/gtkdialogs.c:568
 #, fuzzy
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr "Hãy nhập tên hiển thị của người mà bạn muốn xem thông tin về họ.\n"
 
-#: src/dialogs.c:623
+#: src/gtkdialogs.c:623
 msgid "You cannot save an away message with a blank title"
 msgstr "Bạn không thể lưu thông báo trạng thái mà không có tiêu đề"
 
-#: src/dialogs.c:625
+#: src/gtkdialogs.c:625
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Hãy nhập tiêu đề thông báo, hoặc chọn \"Dùng\" để sử dụng mà không lưu."
 
-#: src/dialogs.c:635
+#: src/gtkdialogs.c:635
 msgid "You cannot create an empty away message"
 msgstr "Không thể tạo thông báo trạng thái mà không có nội dung"
 
-#: src/dialogs.c:697
+#: src/gtkdialogs.c:697
 msgid "New away message"
 msgstr "Thông báo trạng thái mới"
 
-#: src/dialogs.c:718
+#: src/gtkdialogs.c:718
 msgid "Away title: "
 msgstr "Tiêu đề:"
 
-#: src/dialogs.c:774
+#: src/gtkdialogs.c:774
 #, fuzzy
 msgid "_Save"
 msgstr "Lưu"
 
-#: src/dialogs.c:778
+#: src/gtkdialogs.c:778
 #, fuzzy
 msgid "Sa_ve & Use"
 msgstr "Lưu Lại & Dùng"
 
-#: src/dialogs.c:782
+#: src/gtkdialogs.c:782
 #, fuzzy
 msgid "_Use"
 msgstr "Dùng"
 
-#: src/dialogs.c:804
+#: src/gtkdialogs.c:804
 msgid "Alias Chat"
 msgstr "Bí danh Chat"
 
-#: src/dialogs.c:805
+#: src/gtkdialogs.c:805
 msgid "Enter an alias for this chat."
 msgstr "Nhập bí danh cho cuộc Chat này."
 
-#: src/dialogs.c:807 src/dialogs.c:823 src/dialogs.c:841 src/gtkrequest.c:250
+#: src/gtkdialogs.c:807 src/gtkdialogs.c:823 src/gtkdialogs.c:841 src/gtkrequest.c:250
 #: src/protocols/silc/chat.c:572
 #, fuzzy
 msgid "Alias"
 msgstr "Bí danh:"
 
-#: src/dialogs.c:820
+#: src/gtkdialogs.c:820
 msgid "Alias Contact"
 msgstr "Bí danh liên lạc"
 
-#: src/dialogs.c:821
+#: src/gtkdialogs.c:821
 msgid "Enter an alias for this contact."
 msgstr "Hãy nhập bí danh cho liên lạc này."
 
-#: src/dialogs.c:837
+#: src/gtkdialogs.c:837
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Nhập bí danh cho %s."
 
-#: src/dialogs.c:839
+#: src/gtkdialogs.c:839
 msgid "Alias Buddy"
 msgstr "Bí danh Buddy"
 

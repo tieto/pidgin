@@ -25,8 +25,8 @@
 #ifndef _GAIM_GTK_UTILS_H_
 #define _GAIM_GTK_UTILS_H_
 
-#include <gtk/gtk.h>
 #include "gtkconv.h"
+#include "gtkinternal.h"
 #include "prpl.h"
 
 typedef enum

@@ -25,11 +25,11 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkutils.h"
 
+#include "gtkdialogs.h"
 #include "imgstore.h"
 #include "notify.h"
 #include "request.h"
 #include "stock.h"
-#include "ui.h"
 #include "util.h"
 
 static GtkVBoxClass *parent_class = NULL;

@@ -25,8 +25,9 @@
 #ifndef _GAIM_GTK_PLUGIN_H_
 #define _GAIM_GTK_PLUGIN_H_
 
-#include <gtk/gtk.h>
 #include "plugin.h"
+
+#include "gtkinternal.h"
 
 typedef struct _GaimGtkPluginUiInfo GaimGtkPluginUiInfo;
 

@@ -87,7 +87,6 @@ DLL_C_SRC =		about.c \
 			conversation.c \
 			core.c \
 			debug.c \
-			dialogs.c \
 			dnd-hints.c \
 			eventloop.c \
 			ft.c \
@@ -98,6 +97,7 @@ DLL_C_SRC =		about.c \
 			gtkconv.c \
 			gtkcellrendererprogress.c \
 			gtkdebug.c \
+			gtkdialogs.c \
 			gtkeventloop.c \
 			gtkft.c \
 			gtkimhtml.c \

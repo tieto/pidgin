@@ -28,6 +28,8 @@
 
 #include "conversation.h"
 
+#include "gtkinternal.h"
+
 enum {
 	CHAT_USERS_ICON_COLUMN,
 	CHAT_USERS_NAME_COLUMN,

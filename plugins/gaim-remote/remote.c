@@ -39,9 +39,9 @@
 
 /* XXX */
 #include "gtkconv.h"
+#include "gtkdialogs.h"
 #include "gtkplugin.h"
 #include "gaim.h"
-#include "ui.h"
 #include "prefs.h"
 
 #include <gaim-remote/remote.h>

@@ -654,7 +654,7 @@ msgstr "Set Account Idle Time"
 msgid "_Set"
 msgstr "_Set"
 
-#: plugins/idle.c:67 src/dialogs.c:808
+#: plugins/idle.c:67 src/gtkdialogs.c:808
 msgid "_Cancel"
 msgstr "_Cancel"
 
@@ -1504,8 +1504,8 @@ msgstr "Please enter your current password and your new password."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:197 src/dialogs.c:473 src/dialogs.c:529
-#: src/dialogs.c:582 src/gtkblist.c:2380 src/gtkrequest.c:242
+#: src/account.c:342 src/connection.c:197 src/gtkdialogs.c:473 src/gtkdialogs.c:529
+#: src/gtkdialogs.c:582 src/gtkblist.c:2380 src/gtkrequest.c:242
 #: src/protocols/jabber/jabber.c:1048 src/protocols/jabber/xdata.c:337
 #: src/protocols/msn/msn.c:226 src/protocols/msn/msn.c:241
 #: src/protocols/msn/msn.c:256 src/protocols/msn/msn.c:271
@@ -1522,9 +1522,9 @@ msgid "OK"
 msgstr "OK"
 
 #: src/account.c:343 src/account.c:381 src/away.c:349 src/connection.c:198
-#: src/dialogs.c:299 src/dialogs.c:311 src/dialogs.c:324 src/dialogs.c:345
-#: src/dialogs.c:474 src/dialogs.c:530 src/dialogs.c:583 src/dialogs.c:830
-#: src/dialogs.c:846 src/dialogs.c:864 src/gtkaccount.c:2005
+#: src/gtkdialogs.c:299 src/gtkdialogs.c:311 src/gtkdialogs.c:324 src/gtkdialogs.c:345
+#: src/gtkdialogs.c:474 src/gtkdialogs.c:530 src/gtkdialogs.c:583 src/gtkdialogs.c:830
+#: src/gtkdialogs.c:846 src/gtkdialogs.c:864 src/gtkaccount.c:2005
 #: src/gtkaccount.c:2501 src/gtkblist.c:2381 src/gtkblist.c:4412
 #: src/gtkconn.c:168 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:585
 #: src/gtkprivacy.c:598 src/gtkprivacy.c:623 src/gtkprivacy.c:634
@@ -1710,11 +1710,11 @@ msgstr "By group"
 msgid "By account"
 msgstr "By account"
 
-#: src/dialogs.c:149
+#: src/gtkdialogs.c:149
 msgid "Warn User"
 msgstr "Warn User"
 
-#: src/dialogs.c:168
+#: src/gtkdialogs.c:168
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1727,26 +1727,26 @@ msgstr ""
 "This will increase %s's warning level and he or she will be subject to "
 "harsher rate limiting.\n"
 
-#: src/dialogs.c:177
+#: src/gtkdialogs.c:177
 msgid "Warn _anonymously?"
 msgstr "Warn _anonymously?"
 
-#: src/dialogs.c:184
+#: src/gtkdialogs.c:184
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Anonymous warnings are less severe.</b>"
 
-#: src/dialogs.c:295
+#: src/gtkdialogs.c:295
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 
-#: src/dialogs.c:297 src/dialogs.c:298
+#: src/gtkdialogs.c:297 src/gtkdialogs.c:298
 msgid "Remove Buddy"
 msgstr "Remove Buddy"
 
-#: src/dialogs.c:307
+#: src/gtkdialogs.c:307
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -1755,11 +1755,11 @@ msgstr ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 
-#: src/dialogs.c:309 src/dialogs.c:310
+#: src/gtkdialogs.c:309 src/gtkdialogs.c:310
 msgid "Remove Chat"
 msgstr "Remove Chat"
 
-#: src/dialogs.c:319
+#: src/gtkdialogs.c:319
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1768,11 +1768,11 @@ msgstr ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"
 
-#: src/dialogs.c:322 src/dialogs.c:323
+#: src/gtkdialogs.c:322 src/gtkdialogs.c:323
 msgid "Remove Group"
 msgstr "Remove Group"
 
-#: src/dialogs.c:340
+#: src/gtkdialogs.c:340
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1781,107 +1781,107 @@ msgstr ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 
-#: src/dialogs.c:343 src/dialogs.c:344
+#: src/gtkdialogs.c:343 src/gtkdialogs.c:344
 msgid "Remove Contact"
 msgstr "Remove Contact"
 
-#: src/dialogs.c:455 src/dialogs.c:511 src/dialogs.c:563
+#: src/gtkdialogs.c:455 src/gtkdialogs.c:511 src/gtkdialogs.c:563
 msgid "_Screen name"
 msgstr "_Screen name"
 
-#: src/dialogs.c:461 src/dialogs.c:517 src/dialogs.c:569
+#: src/gtkdialogs.c:461 src/gtkdialogs.c:517 src/gtkdialogs.c:569
 msgid "_Account"
 msgstr "_Account"
 
-#: src/dialogs.c:468
+#: src/gtkdialogs.c:468
 msgid "New Instant Message"
 msgstr "New Instant Message"
 
-#: src/dialogs.c:470
+#: src/gtkdialogs.c:470
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr "Please enter the screen name of the person you would like to IM."
 
-#: src/dialogs.c:524
+#: src/gtkdialogs.c:524
 msgid "Get User Info"
 msgstr "Get User Info"
 
-#: src/dialogs.c:526
+#: src/gtkdialogs.c:526
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Please enter the screen name of the person whose info you would like to view."
 
-#: src/dialogs.c:577
+#: src/gtkdialogs.c:577
 msgid "Get User Log"
 msgstr "Get User Log"
 
-#: src/dialogs.c:579
+#: src/gtkdialogs.c:579
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Please enter the screen name of the person whose log you would like to view."
 
-#: src/dialogs.c:645
+#: src/gtkdialogs.c:645
 msgid "You cannot save an away message with a blank title"
 msgstr "You cannot save an away message with a blank title"
 
-#: src/dialogs.c:647
+#: src/gtkdialogs.c:647
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 
-#: src/dialogs.c:657
+#: src/gtkdialogs.c:657
 msgid "You cannot create an empty away message"
 msgstr "You cannot create an empty away message"
 
-#: src/dialogs.c:719
+#: src/gtkdialogs.c:719
 msgid "New away message"
 msgstr "New away message"
 
-#: src/dialogs.c:740
+#: src/gtkdialogs.c:740
 msgid "Away title: "
 msgstr "Away title: "
 
-#: src/dialogs.c:796
+#: src/gtkdialogs.c:796
 msgid "_Save"
 msgstr "_Save"
 
-#: src/dialogs.c:800
+#: src/gtkdialogs.c:800
 msgid "Sa_ve & Use"
 msgstr "Sa_ve & Use"
 
-#: src/dialogs.c:804
+#: src/gtkdialogs.c:804
 msgid "_Use"
 msgstr "_Use"
 
-#: src/dialogs.c:826
+#: src/gtkdialogs.c:826
 msgid "Alias Chat"
 msgstr "Alias Chat"
 
-#: src/dialogs.c:827
+#: src/gtkdialogs.c:827
 msgid "Enter an alias for this chat."
 msgstr "Enter an alias for this chat."
 
-#: src/dialogs.c:829 src/dialogs.c:845 src/dialogs.c:863 src/gtkrequest.c:250
+#: src/gtkdialogs.c:829 src/gtkdialogs.c:845 src/gtkdialogs.c:863 src/gtkrequest.c:250
 #: src/protocols/silc/chat.c:572
 msgid "Alias"
 msgstr "Alias"
 
-#: src/dialogs.c:842
+#: src/gtkdialogs.c:842
 msgid "Alias Contact"
 msgstr "Alias Contact"
 
-#: src/dialogs.c:843
+#: src/gtkdialogs.c:843
 msgid "Enter an alias for this contact."
 msgstr "Enter an alias for this contact."
 
-#: src/dialogs.c:859
+#: src/gtkdialogs.c:859
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Enter an alias for %s."
 
-#: src/dialogs.c:861
+#: src/gtkdialogs.c:861
 msgid "Alias Buddy"
 msgstr "Alias Buddy"
 

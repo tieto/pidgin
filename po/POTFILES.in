@@ -41,7 +41,6 @@ src/away.c
 src/blist.c
 src/connection.c
 src/conversation.c
-src/dialogs.c
 src/ft.c
 src/gaim-disclosure.c
 src/gaim-remote.c
@@ -50,6 +49,7 @@ src/gtkblist.c
 src/gtkconn.c
 src/gtkconv.c
 src/gtkdebug.c
+src/gtkdialogs.c
 src/gtkft.c
 src/gtkimhtml.c
 src/gtkimhtmltoolbar.c

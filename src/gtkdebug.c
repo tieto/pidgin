@@ -30,11 +30,10 @@
 #include "util.h"
 
 #include "gtkdebug.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 extern int opt_debug;
 

@@ -673,7 +673,7 @@ msgstr "Време в състояние Бездействие"
 msgid "_Set"
 msgstr "_Задаване"
 
-#: plugins/idle.c:67 src/dialogs.c:786
+#: plugins/idle.c:67 src/gtkdialogs.c:786
 #, fuzzy
 msgid "_Cancel"
 msgstr "Забрави"
@@ -1535,8 +1535,8 @@ msgstr "Моля, въведете настоящата и новата си п�
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:197 src/dialogs.c:462 src/dialogs.c:518
-#: src/dialogs.c:571 src/gtkblist.c:2391 src/gtkrequest.c:242
+#: src/account.c:342 src/connection.c:197 src/gtkdialogs.c:462 src/gtkdialogs.c:518
+#: src/gtkdialogs.c:571 src/gtkblist.c:2391 src/gtkrequest.c:242
 #: src/protocols/jabber/jabber.c:1048 src/protocols/jabber/xdata.c:337
 #: src/protocols/msn/msn.c:226 src/protocols/msn/msn.c:241
 #: src/protocols/msn/msn.c:256 src/protocols/msn/msn.c:271
@@ -1553,9 +1553,9 @@ msgid "OK"
 msgstr "ОК"
 
 #: src/account.c:343 src/account.c:381 src/away.c:334 src/connection.c:198
-#: src/dialogs.c:299 src/dialogs.c:311 src/dialogs.c:324 src/dialogs.c:345
-#: src/dialogs.c:463 src/dialogs.c:519 src/dialogs.c:572 src/dialogs.c:808
-#: src/dialogs.c:824 src/dialogs.c:842 src/gtkaccount.c:2002
+#: src/gtkdialogs.c:299 src/gtkdialogs.c:311 src/gtkdialogs.c:324 src/gtkdialogs.c:345
+#: src/gtkdialogs.c:463 src/gtkdialogs.c:519 src/gtkdialogs.c:572 src/gtkdialogs.c:808
+#: src/gtkdialogs.c:824 src/gtkdialogs.c:842 src/gtkaccount.c:2002
 #: src/gtkaccount.c:2498 src/gtkblist.c:2392 src/gtkblist.c:4412
 #: src/gtkconn.c:168 src/gtkimhtmltoolbar.c:414 src/gtkprivacy.c:587
 #: src/gtkprivacy.c:600 src/gtkprivacy.c:625 src/gtkprivacy.c:636
@@ -1750,11 +1750,11 @@ msgstr "По групи"
 msgid "By account"
 msgstr "По абонаменти"
 
-#: src/dialogs.c:149
+#: src/gtkdialogs.c:149
 msgid "Warn User"
 msgstr "Предупреждаване на потребител"
 
-#: src/dialogs.c:168
+#: src/gtkdialogs.c:168
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1763,15 +1763,15 @@ msgid ""
 "harsher rate limiting.\n"
 msgstr ""
 
-#: src/dialogs.c:177
+#: src/gtkdialogs.c:177
 msgid "Warn _anonymously?"
 msgstr "_Анонимно предупреждаване?"
 
-#: src/dialogs.c:184
+#: src/gtkdialogs.c:184
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Анонимните предупреждения са по-малко строги.</b>"
 
-#: src/dialogs.c:295
+#: src/gtkdialogs.c:295
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
@@ -1779,11 +1779,11 @@ msgstr ""
 " Вие се опитвате да изтриете %s от списъка си с познати. Желаете ли да "
 "продължите с операцията?"
 
-#: src/dialogs.c:297 src/dialogs.c:298
+#: src/gtkdialogs.c:297 src/gtkdialogs.c:298
 msgid "Remove Buddy"
 msgstr "Изтриване на потребител"
 
-#: src/dialogs.c:307
+#: src/gtkdialogs.c:307
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -1792,11 +1792,11 @@ msgstr ""
 "Вие се опитвате да изтриете разговор %s от списъка си с познати.Желаете ли "
 "да продължите с операцията?"
 
-#: src/dialogs.c:309 src/dialogs.c:310
+#: src/gtkdialogs.c:309 src/gtkdialogs.c:310
 msgid "Remove Chat"
 msgstr "Изтриване на разговор"
 
-#: src/dialogs.c:319
+#: src/gtkdialogs.c:319
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1805,11 +1805,11 @@ msgstr ""
 "Вие се опитвате да изтриете %s група и всички потребители в нея от своя лист "
 "с приятели. Желаете ли да продължите с операцията?"
 
-#: src/dialogs.c:322 src/dialogs.c:323
+#: src/gtkdialogs.c:322 src/gtkdialogs.c:323
 msgid "Remove Group"
 msgstr "Изтриване на група"
 
-#: src/dialogs.c:340
+#: src/gtkdialogs.c:340
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1818,119 +1818,119 @@ msgstr ""
 "Вие се опитвате да премахнете контакт, съдържащ %s и %d други приятели от "
 "вашия лист с приятели.Желаете ли да продължите с операцията?"
 
-#: src/dialogs.c:343 src/dialogs.c:344
+#: src/gtkdialogs.c:343 src/gtkdialogs.c:344
 msgid "Remove Contact"
 msgstr "Изтриване на контакт"
 
-#: src/dialogs.c:444 src/dialogs.c:500 src/dialogs.c:552
+#: src/gtkdialogs.c:444 src/gtkdialogs.c:500 src/gtkdialogs.c:552
 #, fuzzy
 msgid "_Screen name"
 msgstr "_Потребителско име (ICQ номер):"
 
-#: src/dialogs.c:450 src/dialogs.c:506 src/dialogs.c:558
+#: src/gtkdialogs.c:450 src/gtkdialogs.c:506 src/gtkdialogs.c:558
 #, fuzzy
 msgid "_Account"
 msgstr "_Абонамент:"
 
-#: src/dialogs.c:457
+#: src/gtkdialogs.c:457
 msgid "New Instant Message"
 msgstr "Ново съобщение"
 
-#: src/dialogs.c:459
+#: src/gtkdialogs.c:459
 #, fuzzy
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Моля, въведете име на лицето, на което желаете да изпратите съобщение.\n"
 
-#: src/dialogs.c:513
+#: src/gtkdialogs.c:513
 msgid "Get User Info"
 msgstr "Получаване на информация за потребител"
 
-#: src/dialogs.c:515
+#: src/gtkdialogs.c:515
 #, fuzzy
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Моля, въведете име на лицето, на което желаете да изпратите съобщение.\n"
 
-#: src/dialogs.c:566
+#: src/gtkdialogs.c:566
 #, fuzzy
 msgid "Get User Log"
 msgstr "Получаване на информация за потребител"
 
-#: src/dialogs.c:568
+#: src/gtkdialogs.c:568
 #, fuzzy
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Моля, въведете име на лицето, на което желаете да изпратите съобщение.\n"
 
-#: src/dialogs.c:623
+#: src/gtkdialogs.c:623
 msgid "You cannot save an away message with a blank title"
 msgstr "Не можете да съхранявате съобщения за състояние Няма ме без заглавие"
 
-#: src/dialogs.c:625
+#: src/gtkdialogs.c:625
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Моля, задайте заглавие за съобщението или изберете \"Use\", за да използвате "
 "съобщението, без да го запазвате."
 
-#: src/dialogs.c:635
+#: src/gtkdialogs.c:635
 msgid "You cannot create an empty away message"
 msgstr "Не можете да създавате празно съобщение за състояние Няма ме"
 
-#: src/dialogs.c:697
+#: src/gtkdialogs.c:697
 msgid "New away message"
 msgstr "Ново съобщение за състояние Няма ме"
 
-#: src/dialogs.c:718
+#: src/gtkdialogs.c:718
 msgid "Away title: "
 msgstr "Заглавие на състоянието Няма ме:"
 
-#: src/dialogs.c:774
+#: src/gtkdialogs.c:774
 #, fuzzy
 msgid "_Save"
 msgstr "Запазва"
 
-#: src/dialogs.c:778
+#: src/gtkdialogs.c:778
 #, fuzzy
 msgid "Sa_ve & Use"
 msgstr "Съхраняване и използване"
 
-#: src/dialogs.c:782
+#: src/gtkdialogs.c:782
 #, fuzzy
 msgid "_Use"
 msgstr "Използване"
 
-#: src/dialogs.c:804
+#: src/gtkdialogs.c:804
 msgid "Alias Chat"
 msgstr "Заглавие за разговор"
 
-#: src/dialogs.c:805
+#: src/gtkdialogs.c:805
 msgid "Enter an alias for this chat."
 msgstr "Въвеждане заглавие за този разговор."
 
-#: src/dialogs.c:807 src/dialogs.c:823 src/dialogs.c:841 src/gtkrequest.c:250
+#: src/gtkdialogs.c:807 src/gtkdialogs.c:823 src/gtkdialogs.c:841 src/gtkrequest.c:250
 #: src/protocols/silc/chat.c:572
 #, fuzzy
 msgid "Alias"
 msgstr "Псевдоним:"
 
-#: src/dialogs.c:820
+#: src/gtkdialogs.c:820
 msgid "Alias Contact"
 msgstr "Заглавие на контакт"
 
-#: src/dialogs.c:821
+#: src/gtkdialogs.c:821
 msgid "Enter an alias for this contact."
 msgstr "Въвеждане заглавие за този контакт."
 
-#: src/dialogs.c:837
+#: src/gtkdialogs.c:837
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Въвеждане на име за %s."
 
-#: src/dialogs.c:839
+#: src/gtkdialogs.c:839
 msgid "Alias Buddy"
 msgstr "Псевдоним за познат"
 

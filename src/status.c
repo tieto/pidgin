@@ -27,7 +27,7 @@
 
 /* XXX CORE/UI */
 #include "gtkinternal.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 
 /* for people like myself who are too lazy to add an away msg :) */

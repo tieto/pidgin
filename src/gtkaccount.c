@@ -40,10 +40,9 @@
 #include "gaim-disclosure.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
+#include "gtkdialogs.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 enum
 {

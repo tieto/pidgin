@@ -140,7 +140,6 @@ gaim_SOURCES = \
 	$(gaim_coresources) \
 	about.c \
 	away.c \
-	dialogs.c \
 	dnd-hints.c \
 	gaim-disclosure.c \
 	gtkaccount.c \
@@ -149,6 +148,7 @@ gaim_SOURCES = \
 	gtkconn.c \
 	gtkconv.c \
 	gtkdebug.c \
+	gtkdialogs.c \
 	gtkeventloop.c \
 	gtkft.c \
 	gtkimhtml.c \
@@ -182,6 +182,7 @@ gaim_headers = \
 	gtkconn.h \
 	gtkconv.h \
 	gtkdebug.h \
+	gtkdialogs.h \
 	gtkeventloop.h \
 	gtkft.h \
 	gtkimhtml.h \
@@ -200,8 +201,7 @@ gaim_headers = \
 	gtksourceiter.h \
 	gtkutils.h \
 	internal.h \
-	stock.h \
-	ui.h
+	stock.h
 
 gaimincludedir=$(includedir)/gaim
 gaiminclude_HEADERS = \

@@ -32,7 +32,7 @@
 #include "debug.h"
 
 #include "gaim.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 #include "resource.h"
 #include "MinimizeToTray.h"

@@ -169,9 +169,9 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	char buf[1024];
 	xmlnode *query;
 	time_t now_t;
-	struct tm now;
+	struct tm *now;
 	time(&now_t);
-	localtime_r(&now_t, &now);
+	now = localtime(&now_t);
 
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
@@ -185,11 +185,11 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		strftime(buf, sizeof(buf), "%Y%m%dT%T", &now);
+		strftime(buf, sizeof(buf), "%Y%m%dT%T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
-		strftime(buf, sizeof(buf), "%Z", &now);
+		strftime(buf, sizeof(buf), "%Z", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
-		strftime(buf, sizeof(buf), "%d %b %Y %T", &now);
+		strftime(buf, sizeof(buf), "%d %b %Y %T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "display"), buf, -1);
 
 		jabber_iq_send(iq);

@@ -43,6 +43,7 @@
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
+#include "gtkdialogs.h"
 #include "gtkeventloop.h"
 #include "gtkft.h"
 #include "gtknotify.h"
@@ -55,8 +56,6 @@
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 #if HAVE_SIGNAL_H
 # include <signal.h>

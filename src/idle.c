@@ -39,7 +39,8 @@
 #include "prefs.h"
 #include "signals.h"
 
-#include "ui.h"
+/* XXX - Get this out of here! */
+#include "gtkdialogs.h"
 
 /* XXX For the away stuff */
 #include "gaim.h"

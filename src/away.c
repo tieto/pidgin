@@ -35,10 +35,10 @@
 #include "gaim.h"
 #include "gtkinternal.h"
 #include "gtkblist.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
-#include "ui.h"
 
 GtkWidget *imaway = NULL;
 GtkWidget *awaymenu = NULL;

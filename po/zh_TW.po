@@ -732,7 +732,7 @@ msgstr "自定個別賬號的閒置時間"
 msgid "_Set"
 msgstr "設定(_S)"
 
-#: plugins/idle.c:67 src/dialogs.c:808
+#: plugins/idle.c:67 src/gtkdialogs.c:808
 msgid "_Cancel"
 msgstr "取消(_C)"
 
@@ -1621,8 +1621,8 @@ msgstr "請輸入您目前的密碼以及希望使用的新密碼。"
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:197 src/dialogs.c:473 src/dialogs.c:529
-#: src/dialogs.c:582 src/gtkblist.c:2380 src/gtkrequest.c:242
+#: src/account.c:342 src/connection.c:197 src/gtkdialogs.c:473 src/gtkdialogs.c:529
+#: src/gtkdialogs.c:582 src/gtkblist.c:2380 src/gtkrequest.c:242
 #: src/protocols/jabber/jabber.c:1048 src/protocols/jabber/xdata.c:337
 #: src/protocols/msn/msn.c:226 src/protocols/msn/msn.c:241
 #: src/protocols/msn/msn.c:256 src/protocols/msn/msn.c:271
@@ -1639,9 +1639,9 @@ msgid "OK"
 msgstr "確定"
 
 #: src/account.c:343 src/account.c:381 src/away.c:349 src/connection.c:198
-#: src/dialogs.c:299 src/dialogs.c:311 src/dialogs.c:324 src/dialogs.c:345
-#: src/dialogs.c:474 src/dialogs.c:530 src/dialogs.c:583 src/dialogs.c:830
-#: src/dialogs.c:846 src/dialogs.c:864 src/gtkaccount.c:2005
+#: src/gtkdialogs.c:299 src/gtkdialogs.c:311 src/gtkdialogs.c:324 src/gtkdialogs.c:345
+#: src/gtkdialogs.c:474 src/gtkdialogs.c:530 src/gtkdialogs.c:583 src/gtkdialogs.c:830
+#: src/gtkdialogs.c:846 src/gtkdialogs.c:864 src/gtkaccount.c:2005
 #: src/gtkaccount.c:2501 src/gtkblist.c:2381 src/gtkblist.c:4412
 #: src/gtkconn.c:168 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:585
 #: src/gtkprivacy.c:598 src/gtkprivacy.c:623 src/gtkprivacy.c:634
@@ -1836,11 +1836,11 @@ msgstr "依群組"
 msgid "By account"
 msgstr "依帳號"
 
-#: src/dialogs.c:149
+#: src/gtkdialogs.c:149
 msgid "Warn User"
 msgstr "警告使用者"
 
-#: src/dialogs.c:168
+#: src/gtkdialogs.c:168
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1852,37 +1852,37 @@ msgstr ""
 "\n"
 "這個動作將會增加 %s 的警告等級，同時他（她）將被限制以更嚴格的速率限制。\n"
 
-#: src/dialogs.c:177
+#: src/gtkdialogs.c:177
 msgid "Warn _anonymously?"
 msgstr "以匿名的身份發出警告？(_A)"
 
-#: src/dialogs.c:184
+#: src/gtkdialogs.c:184
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>匿名的警告比較上沒有那麼嚴重。</b>"
 
-#: src/dialogs.c:295
+#: src/gtkdialogs.c:295
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "您正試著將 %s  從您的好友清單中移除。您要繼續這個動作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Gaim無法析別；可能有改進的空間
-#: src/dialogs.c:297 src/dialogs.c:298
+#: src/gtkdialogs.c:297 src/gtkdialogs.c:298
 msgid "Remove Buddy"
 msgstr "移除好友"
 
-#: src/dialogs.c:307
+#: src/gtkdialogs.c:307
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "您正試著將 %s 從您的好友清單中移除。您要繼續這個動作嗎？"
 
-#: src/dialogs.c:309 src/dialogs.c:310
+#: src/gtkdialogs.c:309 src/gtkdialogs.c:310
 msgid "Remove Chat"
 msgstr "移除聊天室"
 
-#: src/dialogs.c:319
+#: src/gtkdialogs.c:319
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1890,11 +1890,11 @@ msgid ""
 msgstr ""
 "您正試著將群組 %s 及相關的成員從您的好友清單中移除。您要繼續這個動作嗎？"
 
-#: src/dialogs.c:322 src/dialogs.c:323
+#: src/gtkdialogs.c:322 src/gtkdialogs.c:323
 msgid "Remove Group"
 msgstr "移除群組"
 
-#: src/dialogs.c:340
+#: src/gtkdialogs.c:340
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1904,107 +1904,107 @@ msgstr ""
 "作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Gaim無法析別；可能有改進的空間
-#: src/dialogs.c:343 src/dialogs.c:344
+#: src/gtkdialogs.c:343 src/gtkdialogs.c:344
 msgid "Remove Contact"
 msgstr "移除好友"
 
-#: src/dialogs.c:455 src/dialogs.c:511 src/dialogs.c:563
+#: src/gtkdialogs.c:455 src/gtkdialogs.c:511 src/gtkdialogs.c:563
 msgid "_Screen name"
 msgstr "帳號(_S)"
 
-#: src/dialogs.c:461 src/dialogs.c:517 src/dialogs.c:569
+#: src/gtkdialogs.c:461 src/gtkdialogs.c:517 src/gtkdialogs.c:569
 msgid "_Account"
 msgstr "帳號(_A)"
 
-#: src/dialogs.c:468
+#: src/gtkdialogs.c:468
 msgid "New Instant Message"
 msgstr "新即時訊息"
 
-#: src/dialogs.c:470
+#: src/gtkdialogs.c:470
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr "請輸入您所想要發送即時訊息對象的帳號。"
 
-#: src/dialogs.c:524
+#: src/gtkdialogs.c:524
 msgid "Get User Info"
 msgstr "取得使用者資訊"
 
-#: src/dialogs.c:526
+#: src/gtkdialogs.c:526
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr "請輸入您所想要查詢對象的帳號。"
 
 #  NOTE 此處譯「讀取」似乎較「取得」好一點
-#: src/dialogs.c:577
+#: src/gtkdialogs.c:577
 msgid "Get User Log"
 msgstr "讀取使用者日誌"
 
-#: src/dialogs.c:579
+#: src/gtkdialogs.c:579
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr "請輸入您所想要讀取日誌的使用者的帳號。"
 
-#: src/dialogs.c:645
+#: src/gtkdialogs.c:645
 msgid "You cannot save an away message with a blank title"
 msgstr "您不能儲存一個沒有原因的離開訊息"
 
-#: src/dialogs.c:647
+#: src/gtkdialogs.c:647
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr "請給予訊息一個標題；或按「使用」來使用，同時不儲存它。"
 
-#: src/dialogs.c:657
+#: src/gtkdialogs.c:657
 msgid "You cannot create an empty away message"
 msgstr "您無法建立一個空白的離開訊息"
 
-#: src/dialogs.c:719
+#: src/gtkdialogs.c:719
 msgid "New away message"
 msgstr "新的離開訊息"
 
-#: src/dialogs.c:740
+#: src/gtkdialogs.c:740
 msgid "Away title: "
 msgstr "離開原因："
 
-#: src/dialogs.c:796
+#: src/gtkdialogs.c:796
 msgid "_Save"
 msgstr "儲存(_S)"
 
-#: src/dialogs.c:800
+#: src/gtkdialogs.c:800
 msgid "Sa_ve & Use"
 msgstr "儲存並使用(_V)"
 
-#: src/dialogs.c:804
+#: src/gtkdialogs.c:804
 msgid "_Use"
 msgstr "使用(_U)"
 
-#: src/dialogs.c:826
+#: src/gtkdialogs.c:826
 msgid "Alias Chat"
 msgstr "給聊天室改別名"
 
-#: src/dialogs.c:827
+#: src/gtkdialogs.c:827
 msgid "Enter an alias for this chat."
 msgstr "請為這個聊天室輸入一個別名。"
 
-#: src/dialogs.c:829 src/dialogs.c:845 src/dialogs.c:863 src/gtkrequest.c:250
+#: src/gtkdialogs.c:829 src/gtkdialogs.c:845 src/gtkdialogs.c:863 src/gtkrequest.c:250
 #: src/protocols/silc/chat.c:572
 msgid "Alias"
 msgstr "別名"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: src/dialogs.c:842
+#: src/gtkdialogs.c:842
 msgid "Alias Contact"
 msgstr "給好友改別名"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: src/dialogs.c:843
+#: src/gtkdialogs.c:843
 msgid "Enter an alias for this contact."
 msgstr "請為這個好友輸入一個別名。"
 
-#: src/dialogs.c:859
+#: src/gtkdialogs.c:859
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "請為 %s 輸入一個別名"
 
-#: src/dialogs.c:861
+#: src/gtkdialogs.c:861
 msgid "Alias Buddy"
 msgstr "為好友加上別名"
 

@@ -49,7 +49,7 @@
 #include "docklet.h"
 
 #include "gaim.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 /* globals */
 

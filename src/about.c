@@ -25,7 +25,7 @@
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 #include "stock.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 /* XXX For WEBSITE */
 #include "gaim.h"

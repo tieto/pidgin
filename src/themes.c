@@ -28,9 +28,8 @@
 #include "util.h"
 
 #include "gtkconv.h"
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
-
-#include "ui.h"
 
 struct smiley_list {
 	char *sml;

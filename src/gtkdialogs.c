@@ -29,13 +29,12 @@
 #include "status.h"
 #include "util.h"
 
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
 #include "stock.h"
-
-#include "ui.h"
 
 /* XXX */
 #include "gaim.h"

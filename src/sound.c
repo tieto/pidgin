@@ -27,7 +27,7 @@
 
 /* XXX CORE/UI: this goes away when away messages become sane */
 #include "gtkinternal.h"
-#include "ui.h"
+#include "gtkdialogs.h"
 
 
 static GaimSoundUiOps *sound_ui_ops = NULL;
