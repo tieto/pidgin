@@ -504,10 +504,13 @@ msn_close(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
-	if (session->http_method)
-		msn_http_session_uninit(session);
+	if (session != NULL)
+	{
+		if (session->http_method)
+			msn_http_session_uninit(session);
 
-	msn_session_destroy(session);
+		msn_session_destroy(session);
+	}
 
 	gc->proto_data = NULL;
 }
