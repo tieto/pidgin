@@ -1158,14 +1158,14 @@ static void gaimrc_read_options(FILE *f)
 					atoi(p->value[0]));
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height",
 					atoi(p->value[1]));
-			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_hight",
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height",
 					atoi(p->value[2]));
 		} else if (!strcmp(p->option, "buddy_chat_size")) {
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width",
 					atoi(p->value[0]));
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height",
 					atoi(p->value[1]));
-			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_hight",
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height",
 					atoi(p->value[2]));
 		} else if (!strcmp(p->option, "blist_pos")) {
 			gaim_prefs_set_int("/gaim/gtk/blist/x", atoi(p->value[0]));
