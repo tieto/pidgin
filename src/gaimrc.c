@@ -423,22 +423,31 @@ static void gaimrc_read_plugins(FILE *f)
 {
 	struct parse *p;
 	char buf[4096];
+	GSList *load = NULL;
 
 	buf[0] = 0;
 	
 	while (buf[0] != '}')
 	{
 		if (!fgets(buf, sizeof(buf), f))
-			return;
+			break;
 		
 		if (buf[0] == '}')
-			return;
+			break;
 
 		p = parse_line(buf);
 		if (!strcmp(p->option, "plugin"))
 		{
-			load_plugin(p->value[0]);
+			load = g_slist_append(load, g_strdup(p->value[0]));
 		}
+	}
+	/* this is such a fucked up hack. the reason we do this is because after
+	 * we load a plugin the gaimrc file gets rewrit. so we have to remember
+	 * which ones to load before loading them. */
+	while (load) {
+		load_plugin(load->data);
+		g_free(load->data);
+		load = g_slist_remove(load, load->data);
 	}
 }
 #endif /* GAIM_PLUGINS */

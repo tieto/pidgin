@@ -150,10 +150,10 @@ void load_plugin(char *filename) {
 	char *(*cfunc)();
 	char *error;
 	char *retval;
-	char *tmp_filename;
 
 	if (!g_module_supported()) return;
 	if (filename == NULL) return;
+	if (strlen(filename) == 0) return;
 
 	while (c) {
 		plug = (struct gaim_plugin *)c->data;
@@ -168,19 +168,13 @@ void load_plugin(char *filename) {
 			c = g_list_next(c);
 	}
 	plug = g_malloc(sizeof *plug);
-	if (!g_path_is_absolute(filename))
-		tmp_filename = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S,
-			PLUGIN_DIR, filename, NULL);
-	else
-		tmp_filename = g_strdup(filename);
 
 	if (last_dir)
 		g_free(last_dir);
-	last_dir = g_dirname(tmp_filename);
+	last_dir = g_dirname(filename);
 
-	debug_printf("Loading %s\n", tmp_filename);
-	plug->handle = g_module_open(tmp_filename, 0);
-	g_free(tmp_filename);
+	debug_printf("Loading %s\n", filename);
+	plug->handle = g_module_open(filename, 0);
 	if (!plug->handle) {
 		error = (char *)g_module_error();
 		do_error_dialog(error, _("Plugin Error"));
