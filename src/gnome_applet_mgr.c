@@ -298,7 +298,7 @@ void remove_applet_away() {
 	while (awy) {
 		a = (struct away_message *)awy->data;
 
-		awayname = malloc(sizeof *awayname * (5 + strlen(a->name)));
+		awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
 		awayname[0] = '\0';
 		strcat(awayname, "away/");
 		strcat(awayname, a->name);
