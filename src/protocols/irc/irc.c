@@ -996,6 +996,7 @@ irc_change_nick(void *a, char *b) {
 	char buf[IRC_BUF_LEN];	
 	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", b);
 	irc_write(id->fd, buf, strlen(buf));
+	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", b);
 }
 
 static void 
