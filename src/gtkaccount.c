@@ -1933,7 +1933,10 @@ add_user_cb(GaimGtkAccountAddUserData *data)
 	GaimConnection *gc = gaim_account_get_connection(data->account);
 
 	if (g_list_find(gaim_connections_get_all(), gc))
-		show_add_buddy(gc, data->username, NULL, data->alias);
+	{
+		gaim_blist_request_add_buddy(data->account, data->username,
+									 NULL, data->alias);
+	}
 
 	free_add_user_data(data);
 }

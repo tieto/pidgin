@@ -479,18 +479,18 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 static void
 add_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	GaimConnection *gc;
+	GaimAccount *account;
 	GaimBuddy *b;
 	const char *name;
 
-	gc   = gaim_conversation_get_gc(conv);
-	name = gaim_conversation_get_name(conv);
-	b    = gaim_find_buddy(gc->account, name);
+	account = gaim_conversation_get_account(conv);
+	name    = gaim_conversation_get_name(conv);
+	b       = gaim_find_buddy(account, name);
 
 	if (b != NULL)
 		show_confirm_del(b);
-	else if (gc != NULL)
-		show_add_buddy(gc, (char *)name, NULL, NULL);
+	else if (account != NULL && gaim_account_is_connected(account))
+		gaim_blist_request_add_buddy(account, (char *)name, NULL, NULL);
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
@@ -1014,18 +1014,18 @@ menu_chat_get_away_cb(GtkWidget *w, GaimConversation *conv)
 static void
 menu_chat_add_cb(GtkWidget *w, GaimConversation *conv)
 {
-	GaimConnection *gc;
+	GaimAccount *account;
 	GaimBuddy *b;
 	char *name;
 
-	gc   = gaim_conversation_get_gc(conv);
-	name = g_object_get_data(G_OBJECT(w), "user_data");
-	b    = gaim_find_buddy(gc->account, name);
+	account = gaim_conversation_get_account(conv);
+	name    = g_object_get_data(G_OBJECT(w), "user_data");
+	b       = gaim_find_buddy(account, name);
 
 	if (b != NULL)
 		show_confirm_del(b);
-	else if (gc != NULL)
-		show_add_buddy(gc, name, NULL, NULL);
+	else if (account != NULL && gaim_account_is_connected(account))
+		gaim_blist_request_add_buddy(account, name, NULL, NULL);
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }

@@ -2539,7 +2539,7 @@ static void gaim_icq_buddyadd(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
-		show_add_buddy(gc, data->name, NULL, data->nick);
+		gaim_blist_request_add_buddy(gaim_connection_get_account(gc), data->name, NULL, data->nick);
 	}
 
 	oscar_free_name_data(data);

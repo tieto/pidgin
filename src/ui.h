@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,23 +23,6 @@
 
 #ifndef _UI_H_
 #define _UI_H_
-
-#if 0
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <gtk/gtk.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
-
-#include "core.h"
-#include "gtkconv.h"
-#include "pounce.h"
-#include "gtkft.h"
-#include "gtkprefs.h"
-#include "gtkutils.h"
-#include "stock.h"
-#endif
 
 #include "account.h"
 #include "conversation.h"
@@ -144,9 +127,6 @@ extern void alias_dialog_blist_chat(GaimBlistChat *);
 extern void show_warn_dialog(GaimConnection *, char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
-extern void show_add_buddy(GaimConnection *, char *, char *, char *);
-extern void show_add_chat(GaimAccount *, GaimGroup *);
-extern void show_add_group(GaimConnection *);
 extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();

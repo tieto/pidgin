@@ -170,7 +170,10 @@ struct gaim_blist_ui_ops
 	void (*destroy)(struct gaim_buddy_list *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
 	void (*set_visible)(struct gaim_buddy_list *list,
 			    gboolean show);             /**< Hides or unhides the buddy list */
-
+	void (*request_add_buddy)(GaimAccount *account, const char *username,
+							  const char *group, const char *alias);
+	void (*request_add_chat)(GaimAccount *account, GaimGroup *group);
+	void (*request_add_group)(void);
 };
 
 #ifdef __cplusplus
@@ -667,6 +670,33 @@ void parse_toc_buddy_list(GaimAccount *account, char *config);
  * Loads the buddy list from ~/.gaim/blist.xml.
  */
 void gaim_blist_load();
+
+/**
+ * Requests from the user information needed to add a buddy to the
+ * buddy list.
+ *
+ * @param account  The account the buddy is added to.
+ * @param username The username of the buddy.
+ * @param group    The name of the group to place the buddy in.
+ * @param alias    The optional alias for the buddy.
+ */
+void gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
+								  const char *group, const char *alias);
+
+/**
+ * Requests from the user information needed to add a chat to the
+ * buddy list.
+ *
+ * @param account The account the buddy is added to.
+ * @param group   The optional group to add the chat to.
+ */
+void gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group);
+
+/**
+ * Requests from the user information needed to add a group to the
+ * buddy list.
+ */
+void gaim_blist_request_add_group(void);
 
 /**
  * Associates some data with the group in the xml buddy list

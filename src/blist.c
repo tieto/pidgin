@@ -2274,6 +2274,40 @@ void gaim_blist_load() {
 	g_free(filename);
 }
 
+void
+gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
+							 const char *group, const char *alias)
+{
+	struct gaim_blist_ui_ops *ui_ops;
+
+	ui_ops = gaim_blist_get_ui_ops();
+
+	if (ui_ops != NULL && ui_ops->request_add_buddy != NULL)
+		ui_ops->request_add_buddy(account, username, group, alias);
+}
+
+void
+gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group)
+{
+	struct gaim_blist_ui_ops *ui_ops;
+
+	ui_ops = gaim_blist_get_ui_ops();
+
+	if (ui_ops != NULL && ui_ops->request_add_chat != NULL)
+		ui_ops->request_add_chat(account, group);
+}
+
+void
+gaim_blist_request_add_group(void)
+{
+	struct gaim_blist_ui_ops *ui_ops;
+
+	ui_ops = gaim_blist_get_ui_ops();
+
+	if (ui_ops != NULL && ui_ops->request_add_group != NULL)
+		ui_ops->request_add_group();
+}
+
 static void blist_print_group_settings(gpointer key, gpointer data,
 		gpointer user_data) {
 	char *key_val;
