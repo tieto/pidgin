@@ -4,7 +4,7 @@
  *	Created by:	Marc Horowitz
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1990,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -12,10 +12,10 @@
  */
 /* $Header$ */
 
-#include <internal.h>
+#include "internal.h"
 
 #ifndef lint
-static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 8088 2003-11-11 07:08:13Z thekingant $";
+static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 9553 2004-04-24 09:00:37Z chipx86 $";
 #endif
 
 Code_t ZRequestLocations(user, zald, kind, auth)

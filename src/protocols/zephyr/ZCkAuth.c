@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: lschiere $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -17,7 +17,7 @@ static char rcsid_ZCheckAuthentication_c[] =
     "$Zephyr: /mit/zephyr/src/lib/RCS/ZCheckAuthentication.c,v 1.14 89/03/24 14:17:38 jtkohl Exp Locker: raeburn $";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 
 /* Check authentication of the notice.
    If it looks authentic but fails the Kerberos check, return -1.
