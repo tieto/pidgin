@@ -20,6 +20,8 @@ version 0.65:
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
 	* Fixed the MSN add buddy crash.
+	* Fixed the MSN empty buddy list bug.
+	* MSN Alerts and incoming MSN pages no longer pop up several error dialogs.
 	* Ability to view iChat "Available" messages for AIM
 	* Stores your buddy icon on the server for AIM
 
