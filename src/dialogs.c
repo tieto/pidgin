@@ -48,7 +48,6 @@ static GList *dialogwindows = NULL;
 static GtkWidget *importdialog;
 static GaimConnection *importgc;
 static GtkWidget *icondlg;
-static GtkWidget *alias_dialog = NULL;
 static GtkWidget *rename_dialog = NULL;
 static GtkWidget *fontseld = NULL;
 
@@ -122,14 +121,6 @@ struct getuserinfo {
 	GtkWidget *entry;
 	GtkWidget *account;
 	GaimConnection *gc; 
-};
-
-struct alias_dialog_info
-{
-	GtkWidget *window;
-	GtkWidget *name_entry;
-	GtkWidget *alias_entry;
-	struct buddy *buddy;
 };
 
 static GSList *info_dlgs = NULL;
@@ -3608,25 +3599,6 @@ static void do_alias_chat(GtkWidget *w, int resp, struct chat *chat)
 	gtk_widget_destroy(w);
 }
 
-static void
-do_alias_buddy(GtkWidget *w, int resp, struct alias_dialog_info *info)
-{
-	if (resp == GTK_RESPONSE_OK) {
-		const char *alias;
-	
-		alias = gtk_entry_get_text(GTK_ENTRY(info->alias_entry));
-
-		gaim_blist_alias_buddy(info->buddy, (alias && *alias) ? alias : NULL);
-		serv_alias_buddy(info->buddy);
-		gaim_blist_save();
-	}
-
-	destroy_dialog(NULL, alias_dialog);
-	alias_dialog = NULL;
-
-	g_free(info);
-}
-
 void alias_dialog_chat(struct chat *chat) {
 	GtkWidget *dialog;
 	GtkWidget *hbox;
@@ -3696,114 +3668,48 @@ void alias_dialog_chat(struct chat *chat) {
 	gtk_widget_show_all(dialog);
 }
 
+static void
+alias_buddy_cb(struct buddy *buddy, GaimRequestFields *fields)
+{
+	const char *alias;
+
+	alias = gaim_request_fields_get_string(fields, "alias");
+
+	gaim_blist_alias_buddy(buddy,
+						   (alias != NULL && *alias != '\0') ? alias : NULL);
+	serv_alias_buddy(buddy);
+	gaim_blist_save();
+}
+
 void
 alias_dialog_bud(struct buddy *b)
 {
-	struct alias_dialog_info *info = NULL;
-	struct gaim_gtk_buddy_list *gtkblist;
-	GtkWidget *hbox;
-	GtkWidget *vbox;
-	GtkWidget *label;
-	GtkWidget *table;
-	GtkWidget *img;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
 
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+	fields = gaim_request_fields_new();
 
-	if (!alias_dialog) {
-		info = g_new0(struct alias_dialog_info, 1);
-		info->buddy = b;
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
 
-		alias_dialog = gtk_dialog_new_with_buttons(_("Alias Buddy"),
-			(gtkblist ? GTK_WINDOW(gtkblist->window) : NULL),
-			GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			NULL);
+	field = gaim_request_field_string_new("screenname", _("_Screenname"),
+										  b->name, FALSE);
+	gaim_request_field_group_add_field(group, field);
 
-		gtk_dialog_set_default_response(GTK_DIALOG(alias_dialog),
-										GTK_RESPONSE_OK);
-		gtk_container_set_border_width(GTK_CONTAINER(alias_dialog), 6);
-		gtk_window_set_resizable(GTK_WINDOW(alias_dialog), FALSE);
-		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(alias_dialog)->vbox), 12);
-		gtk_container_set_border_width(
-				GTK_CONTAINER(GTK_DIALOG(alias_dialog)->vbox), 6);
+	field = gaim_request_field_string_new("alias", _("_Alias"),
+										  b->alias, FALSE);
+	gaim_request_field_group_add_field(group, field);
 
-		/* The main hbox container. */
-		hbox = gtk_hbox_new(FALSE, 12);
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(alias_dialog)->vbox), hbox);
-
-		/* The dialog image. */
-		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-									   GTK_ICON_SIZE_DIALOG);
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-		/* The main vbox container. */
-		vbox = gtk_vbox_new(FALSE, 0);
-		gtk_container_add(GTK_CONTAINER(hbox), vbox);
-
-		/* Setup the label containing the description. */
-		label = gtk_label_new(_("Please enter an aliased name for the "
-								"person below, or rename this contact "
-								"in your buddy list.\n"));
-		gtk_widget_set_size_request(GTK_WIDGET(label), 350, -1);
-
-		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-		hbox = gtk_hbox_new(FALSE, 6);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-		/* The table containing the entry widgets and labels. */
-		table = gtk_table_new(2, 2, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-		gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-		gtk_container_set_border_width(GTK_CONTAINER(table), 12);
-		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-
-		/* The "Screenname:" label. */
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-
-		/* The Screen name entry field. */
-		info->name_entry = gtk_entry_new();
-		gtk_table_attach_defaults(GTK_TABLE(table), info->name_entry,
-								  1, 2, 0, 1);
-		gtk_entry_set_activates_default(GTK_ENTRY(info->name_entry), TRUE);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->name_entry);
-		gtk_entry_set_text(GTK_ENTRY(info->name_entry), info->buddy->name);
-		gtk_editable_set_editable(GTK_EDITABLE(info->name_entry), FALSE);
-
-		/* The "Alias:" label. */
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Alias:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-
-		/* The alias entry field. */
-		info->alias_entry = gtk_entry_new();
-		gtk_table_attach_defaults(GTK_TABLE(table), info->alias_entry,
-								  1, 2, 1, 2);
-		gtk_entry_set_activates_default(GTK_ENTRY(info->alias_entry), TRUE);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->alias_entry);
-
-		if (info->buddy->alias != NULL)
-			gtk_entry_set_text(GTK_ENTRY(info->alias_entry),
-							   info->buddy->alias);
-
-		g_signal_connect(G_OBJECT(alias_dialog), "response",
-						 G_CALLBACK(do_alias_buddy), info);
-	}
-
-	gtk_widget_show_all(alias_dialog);
-
-	if (info)
-		gtk_widget_grab_focus(info->alias_entry);
+	gaim_request_fields(NULL, _("Alias Buddy"),
+						_("Alias buddy"),
+						_("Please enter an aliased name for the person "
+						  "below, or rename this contact in your buddy list."),
+						fields,
+						_("OK"), G_CALLBACK(alias_buddy_cb),
+						_("Cancel"), NULL,
+						b);
 }
-
 
 static gboolean dont_destroy(gpointer a, gpointer b, gpointer c)
 {
