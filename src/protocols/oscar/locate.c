@@ -755,7 +755,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 					} break;
 
 					case 0x0002: { /* An available message */
-						if (length2 > 4) {
+						if (length2 >= 4) {
 							free(outinfo->avail);
 							outinfo->avail_len = aimbs_get16(bs);
 							outinfo->avail = aimbs_getstr(bs, outinfo->avail_len);

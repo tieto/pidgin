@@ -3023,12 +3023,21 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	bi->ico_informed = FALSE;
 	bi->ipaddr = info->icqinfo.ipaddr;
 
-	/* Available message stuff */
-	free(bi->availmsg);
+	/*
+	 * Handle the available message.  If info->avail is NULL then the user
+	 * may or may not have an available message, so don't do anything.  If
+	 * info->avail is set to the empty string, then the user's client DOES
+	 * support available messages and the user DOES NOT have one set.
+	 * Otherwise info->avail contains the available message.
+	 */
 	if (info->avail != NULL)
-		bi->availmsg = oscar_encoding_to_utf8(info->avail_encoding, info->avail, info->avail_len);
-	else
-		bi->availmsg = NULL;
+	{
+		free(bi->availmsg);
+		if (info->avail[0] != '\0')
+			bi->availmsg = oscar_encoding_to_utf8(info->avail_encoding, info->avail, info->avail_len);
+		else
+			bi->availmsg = NULL;
+	}
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
