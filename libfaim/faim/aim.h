@@ -368,6 +368,8 @@ struct aim_userinfo_s {
   u_short capabilities;
   struct {
     unsigned short status;
+    unsigned int ipaddr;
+    char crap[0x25]; /* until we figure it out... */
   } icqinfo;
 };
 
@@ -416,6 +418,7 @@ faim_internal int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_
 faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val);
 faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
 faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len);
+faim_internal int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned short type, unsigned short caps);
 faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list);
 
 /*
@@ -439,6 +442,8 @@ faim_internal unsigned long aim_genericreq_l(struct aim_session_t *, struct aim_
 faim_internal unsigned long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
 faim_internal struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
+faim_export int aim_oft_registerlisting(struct aim_session_t *sess, FILE *file, char* listingdir);
+faim_export int aim_getfile_send(struct aim_conn_t *conn, FILE *tosend, struct aim_fileheader_t *fh);
 
 /* aim_login.c */
 faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);

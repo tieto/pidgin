@@ -164,27 +164,6 @@ struct conversation *find_conversation(char *name)
         return NULL;
 }
 
-void make_direct(struct conversation *c, gboolean direct, struct aim_conn_t *conn, gint watcher)
-{
-	char buf[BUF_LONG];
-	if (c == NULL) return;
-	c->is_direct = direct;
-	if (direct) {
-		c->conn = conn;
-		c->watcher = watcher;
-		g_snprintf(buf, sizeof buf, _("<HR><B>Direct Connection with %s established.</B><BR><HR>"),
-			c->name);
-		write_to_conv(c, buf, WFLAG_SYSTEM, NULL);
-	} else {
-		c->conn = NULL;
-		gdk_input_remove(c->watcher);
-		c->watcher = -1;
-		g_snprintf(buf, sizeof buf, _("<HR><B>Direct Connection with %s closed.</B><BR><HR>"),
-			c->name);
-		write_to_conv(c, buf, WFLAG_SYSTEM, NULL);
-	}
-}
-
 /* ---------------------------------------------------
  * Function to remove a log file entry
  * ---------------------------------------------------
@@ -390,19 +369,6 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	if (c->is_chat) {
 		serv_chat_leave(c->gc, c->id);
 	} else {
-		if (c->is_direct) {
-			/* FIXME
-			if (c->gc->protocol == PROTO_OSCAR) {
-				gdk_input_remove(c->watcher);
-				sprintf(debug_buff, "Closing DirectIM conversation (%p)\n", c->conn);
-				debug_print(debug_buff);
-				aim_conn_kill(((struct oscar_data *)c->gc->proto_data)->sess,
-						&c->conn);
-			} else {
-				Direct IM TOC FIXME
-			}
-			*/
-		}
 	        delete_conversation(c);
 	}
 
@@ -615,11 +581,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	int hdrlen, limit;
 
 	if (!c->gc) return;
-	if (c->is_direct) limit = 0x8000; /* 32 k */
-	else if (c->is_chat && c->gc->protocol == PROTO_OSCAR) limit = MAXCHATMSGLEN;
-	else if (c->gc->protocol == PROTO_OSCAR) limit = MAXMSGLEN;
-	else limit = MSG_LEN;
-	limit <<= 2;
+	/* FIXME! this used to have limits based on protocol limits (oscar chat was 512,
+	 * oscar im was 7985, toc was 4k). we shouldn't be using PROTO_whatever here. it
+	 * should be gotten from the PRPL somehow */
+	limit = 7985 << 2;
 
 	buf = g_malloc(limit);
 	
@@ -641,10 +606,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
          * toc_send_im is 11 chars long + 2 quotes.
          * + 2 spaces + 6 for the header + 2 for good
          * measure = 23 bytes + the length of normalize c->name */
-	if (c->gc->protocol == PROTO_TOC)
-		hdrlen = 23 + strlen(normalize(c->name));
-	else
-		hdrlen = 0;
+	/* FIXME: the hdrlen is for how long the header is going to cut off the limit.
+	 * but since we don't know on a protocol basis anymore we can't do this. so we'll
+	 * just assume it's 23 + strlen(normalize(c->name)) for all protocols */
+	hdrlen = 23 + strlen(normalize(c->name));
 
         if (font_options & OPT_FONT_BOLD) {
                 g_snprintf(buf2, limit, "<B>%s</B>", buf);

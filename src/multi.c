@@ -57,28 +57,6 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 	gc->inpa = -1;
 	gc->buddy_chats = NULL;
 
-	/* this got moved to the void *proto_data, and each protocol can set this up
-	 * itself, thank you very much
-	switch(proto) {
-		case PROTO_TOC:
-			gc->toc_fd = -1;
-			gc->seqno = 0;
-			gc->state = 0;
-			gc->inpa = -1;
-			break;
-		case PROTO_OSCAR:
-			gc->oscar_sess = NULL;
-			gc->oscar_conn = NULL;
-			gc->inpa = -1;
-			gc->cnpa = -1;
-			gc->paspa = -1;
-			gc->create_exchange = 0;
-			gc->create_name = NULL;
-			gc->oscar_chats = NULL;
-			break;
-	}
-	*/
-
 	connections = g_slist_append(connections, gc);
 
 	return gc;
@@ -624,15 +602,45 @@ void account_online(struct gaim_connection *gc)
 {
 	struct aim_user *u;
 	int i;
+
+	/* first we hide the login progress meter */
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;
+	
+	/* then we do the buddy list stuff */
+	if (mainwindow)
+		gtk_widget_hide(mainwindow);
+	show_buddy_list();
+	
+#ifdef USE_APPLET
+	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+		refresh_buddy_window();
+		createOnlinePopup();
+		applet_buddy_show = TRUE;
+	} else {
+		gtk_widget_hide(blist);
+		applet_buddy_show = FALSE;
+	}
+	set_user_state(online);
+#else
+	refresh_buddy_window();
+#endif
+	setup_buddy_chats();
+
+	redo_convo_menus();
+	gaim_setup(gc);
+
+	plugin_event(event_signon, gc, 0, 0, 0);
+
+	/* everything for the account editor */
 	if (!acctedit) return;
 	u = find_user(gc->username);
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(gc->protocol));
-	redo_convo_menus();
+
+	return;
 }
 
 void account_offline(struct gaim_connection *gc)

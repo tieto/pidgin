@@ -137,12 +137,6 @@ void gaim_setup(struct gaim_connection *gc) {
 			(AppletCallbackFunc)signoff_all,
 			NULL);
 #endif /* USE_APPLET */
-
-	account_online(gc);
-
-	plugin_event(event_signon, gc, 0, 0, 0);
-
-	return;
 }
 
 

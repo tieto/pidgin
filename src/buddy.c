@@ -394,6 +394,9 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
                         c = new_conversation(b->name);
                 }
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+		/* FIXME: first, create a menu of each signed on name. then for each of those,
+		 * make a submenu based on which protocol is being used. this will help clarify
+		 * a lot of the UI and connection issues */
                 GtkWidget *menu, *button;
 		/* We're gonna make us a menu right here */
 
@@ -420,12 +423,6 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		button = gtk_menu_item_new_with_label(_("Dir Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
-		button = gtk_menu_item_new_with_label(_("Direct IM"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(serv_do_imimage), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 

@@ -189,7 +189,6 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 
 void serv_set_away(char *message)
 {
-	/* FIXME: for now, setting away sets *everyone* to away */
 	GSList *c = connections;
 	struct gaim_connection *g;
 
@@ -855,31 +854,6 @@ void serv_rvous_cancel(struct gaim_connection *g, char *name, char *cookie, char
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(g, buf, -1, TYPE_DATA);
-}
-
-void serv_do_imimage(GtkWidget *w, char *name) {
-	struct conversation *cnv = find_conversation(name);
-	if (!cnv) cnv = new_conversation(name);
-
-	if (cnv->gc->protocol == PROTO_TOC) {
-		/* Direct IM TOC FIXME */
-	} else if (cnv->gc->protocol == PROTO_OSCAR) {
-		/* PRPL
-		oscar_do_directim(cnv->gc, name);
-		*/
-	}
-}
-
-void serv_got_imimage(struct gaim_connection *gc, char *name, char *cookie, char *ip,
-			struct aim_conn_t *conn, int watcher)
-{
-	if (gc->protocol == PROTO_TOC) {
-		/* Direct IM TOC FIXME */
-	} else if (gc->protocol == PROTO_OSCAR) {
-		struct conversation *cnv = find_conversation(name);
-		if (!cnv) cnv = new_conversation(name);
-		make_direct(cnv, TRUE, conn, watcher);
-	}
 }
 
 void send_keepalive(gpointer d) {

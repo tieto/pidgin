@@ -26,9 +26,6 @@
 #include "gaim.h"
 #include "aim.h"
 
-#define PROTO_TOC 0
-#define PROTO_OSCAR 1
-
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
 	/* we need to do either oscar or TOC */

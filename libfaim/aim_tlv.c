@@ -95,6 +95,21 @@ faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list)
   return count;
 }
 
+faim_export int aim_sizetlvchain(struct aim_tlvlist_t **list)
+{
+  struct aim_tlvlist_t *cur;
+  int size = 0;
+
+  if (!list || !(*list))
+    return 0;
+
+  for (cur = *list; cur; cur = cur->next)
+    size += (4 + cur->tlv->length);
+ 
+  return size;
+}
+
+
 faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len)
 {
   struct aim_tlvlist_t *newtlv;
@@ -186,6 +201,39 @@ faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned shor
     cur->next = newtl;
   }
   return 4;
+}
+
+faim_internal int aim_addtlvtochain_caps(struct aim_tlvlist_t **list, unsigned short type, unsigned short caps)
+{
+  unsigned char buf[128]; /* icky fixed length buffer */
+  struct aim_tlvlist_t *newtl;
+  struct aim_tlvlist_t *cur;
+
+  if(!list)
+    return 0;
+
+  newtl = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+  memset(newtl, 0x00, sizeof(struct aim_tlvlist_t));
+
+  newtl->tlv = aim_createtlv();	
+  newtl->tlv->type = type;
+
+  newtl->tlv->length = aim_putcap(buf, sizeof(buf), caps);
+  newtl->tlv->value = (unsigned char *)calloc(1, newtl->tlv->length);
+  memcpy(newtl->tlv->value, buf, newtl->tlv->length);
+
+  newtl->next = NULL;
+
+  if (*list == NULL) {
+    *list = newtl;
+  } else if ((*list)->next == NULL) {
+    (*list)->next = newtl;
+  } else {
+    for(cur = *list; cur->next; cur = cur->next)
+      ;
+    cur->next = newtl;
+  }
+  return newtl->tlv->length;
 }
 
 faim_internal int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list)

@@ -1982,7 +1982,7 @@ void prefs_build_buddy(GtkWidget *preftree)
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, buddy_page);
 
-	/* FIXME ! We shouldn't be showing this if we're not signed on */
+	/* FIXME ! We should move this to a per-user configuration */
 	text[0] = _("Permit/Deny");
 	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);

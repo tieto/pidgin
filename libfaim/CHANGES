@@ -1,6 +1,27 @@
 
 No release numbers
 ------------------
+ - Tue Oct 17 02:10:13 UTC 2000
+  - Rearrange a few things
+
+ - Mon Oct 16 20:56:59 UTC 2000
+  - Remove some warnings
+
+ - Mon Oct  9 04:24:56 CDT 2000 (jbm)
+  - took care of the XXXs in aim_putuserinfo()
+     - now use dynamic TLV count to send ("look ma, no magic!")
+     - now send cap blocks
+     - now send icq info if a numeric SN
+
+ - Wed Oct  4 21:29:47 CDT 2000 (jbm)
+  - Fix borked disconnect callbacks
+  - Add aim_conn_in_sess()
+  - A little housekeeping in faimtest ("fixing" order of printf, 
+      remove a comment)
+
+ - Mon Sep 25 00:21:31 CDT 2000 (jbm)
+  - Add a couple of ICQ userinfo parses
+
  - Fri Sep 22 22:47:49 UTC 2000
   - Add aim_icq_setstatus() (jbm)
 

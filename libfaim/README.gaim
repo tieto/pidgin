@@ -51,7 +51,6 @@ Chat:
  - getting invited
  - creating rooms (needed to join empty rooms)
  - refreshing the chatlist in the preferences dialog
-Direct IM (aka IM Image, for sounds and pictures)
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
@@ -63,6 +62,7 @@ Changing your password
 File Transfer (Get/Send)
 Voice Chat
 Buddy Icon
+Direct IM (aka IM Image, for sounds and pictures)
 
 KNOWN ISSUES
 ============
@@ -80,8 +80,7 @@ been.
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them.
 
-- Direct IM has problems. Don't accept a Direct IM if you're offered one, it
-may cause you to segfault.
+- Temporarily removed Direct IM pending a UI change
 
 - Getting Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
 

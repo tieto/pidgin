@@ -847,53 +847,61 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
  
     faimdprintf(2, "faim: rend: read error (fd: %i) %02x%02x%02x%02x%02x%02x (%i)\n", conn->fd, hdrbuf1[0],hdrbuf1[1],hdrbuf1[0],hdrbuf1[0],hdrbuf1[0],hdrbuf1[0],hdrlen);
     faim_mutex_unlock(&conn->active);
-    aim_conn_close(conn);
     
     if(hdrlen < 0)
       perror("read");
     else { /* disconnected */
-      int i = -1;
       switch(conn->subtype) {
       case AIM_CONN_SUBTYPE_OFT_DIRECTIM: { /* XXX: clean up cookies here ? */
-	struct aim_directim_priv *priv;
-	if(!(priv = (struct aim_directim_priv *)conn->priv) )
+	struct aim_directim_priv *priv = NULL;
+	if(!(priv = (struct aim_directim_priv *)conn->priv) ) 
 	  return -1; /* not much we can do */
-
-	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT)) )
-	  i = userfunc(sess, NULL, conn, priv->sn);
-	else
-	  aim_conn_kill(sess, &conn);
-
 	aim_uncachecookie(sess, priv->cookie, AIM_COOKIETYPE_OFTIM);
+
+	
+	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT)) ) {
+	  aim_conn_close(conn);
+	  return  userfunc(sess, NULL, conn, priv->sn);
+	}
+
+	break;
       }
+
       case AIM_CONN_SUBTYPE_OFT_GETFILE: {
 	struct aim_filetransfer_priv *priv;
 	if(!(priv = (struct aim_filetransfer_priv *)conn->priv))
 	  return -1;
 
-	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEDISCONNECT)) )
-	  i = userfunc(sess, NULL, conn, priv->sn);
-	else
-	  aim_conn_kill(sess, &conn);
-
 	aim_uncachecookie(sess, priv->cookie, AIM_COOKIETYPE_OFTGET);
+
+	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEDISCONNECT)) ) {
+	  aim_conn_close(conn);
+	  return userfunc(sess, NULL, conn, priv->sn);
+	}
+
+	break;
       }
+
       case AIM_CONN_SUBTYPE_OFT_SENDFILE: {
 	struct aim_filetransfer_priv *priv;
 	if(!(priv = (struct aim_filetransfer_priv *)conn->priv))
 	  return -1;
 
-	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEDISCONNECT)) )
-	  i = userfunc(sess, NULL, conn, priv->sn);
-	else
-	  aim_conn_kill(sess, &conn);
-
-
 	aim_uncachecookie(sess, priv->cookie, AIM_COOKIETYPE_OFTSEND);
+
+	if ( (userfunc = aim_callhandler(conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEDISCONNECT)) ) {
+	  aim_conn_close(conn);
+	  return userfunc(sess, NULL, conn, priv->sn);
+	}
+
+	break;
       }
       }
 
-    return i;
+      aim_conn_close(conn);
+      aim_conn_kill(sess, &conn);
+      
+      return -1;
     }
   }
 

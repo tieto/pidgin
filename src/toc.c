@@ -40,7 +40,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 1010 $"
+#define REVISION "gaim:$Revision: 1012 $"
 
 struct toc_data {
 	int toc_fd;
@@ -136,33 +136,17 @@ void toc_login(struct aim_user *user)
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
+	serv_finish_login(gc);
+	account_online(gc);
+
 	config = toc_wait_config(gc);
 	tdt->state = STATE_ONLINE;
 
-	if (mainwindow)
-		gtk_widget_hide(mainwindow);
-	show_buddy_list();
-#ifdef USE_APPLET
-	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-		refresh_buddy_window();
-		createOnlinePopup();
-                applet_buddy_show = TRUE;
-        } else {
-                gtk_widget_hide(blist);
-                applet_buddy_show = FALSE;
-        }
-
-	set_user_state(online);
-#else
-	refresh_buddy_window();
-#endif
 	if (config != NULL)
 		parse_toc_buddy_list(gc, config, 0);
 	else
 		do_import(0, gc);
         
-	setup_buddy_chats();
-
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 
@@ -173,9 +157,6 @@ void toc_login(struct aim_user *user)
 
 	if (gc->keepalive < 0)
 		update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
-
-	serv_finish_login(gc);
-	gaim_setup(gc);
 }
 
 void toc_close(struct gaim_connection *gc)

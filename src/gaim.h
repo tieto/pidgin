@@ -330,11 +330,6 @@ struct conversation {
 
 	/* something to distinguish */
 	gboolean is_chat;
-
-	/* DirectIM stuff */
-	gboolean is_direct;
-	struct aim_conn_t *conn; /* needed for Oscar */
-	int watcher;
 };
 
 struct file_header {
@@ -655,8 +650,6 @@ extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_send(struct gaim_connection *, int, char *);
-extern void serv_do_imimage(GtkWidget *, char *);
-extern void serv_got_imimage(struct gaim_connection *, char *, char *, char *, struct aim_conn_t *, int);
 
 /* output from serv */
 extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
@@ -671,7 +664,6 @@ extern void serv_rvous_cancel(struct gaim_connection *, char *, char *, char *);
 
 /* Functions in conversation.c */
 extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
-extern void make_direct(struct conversation *, gboolean, struct aim_conn_t *, gint);
 extern void write_to_conv(struct conversation *, char *, int, char *);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
@@ -705,7 +697,6 @@ extern int connect_address(unsigned int, unsigned short);
 extern void oscar_login(struct aim_user *);
 extern void oscar_close(struct gaim_connection *);
 extern struct chat_connection *find_oscar_chat(struct gaim_connection *, char *name);
-extern void oscar_do_directim(struct gaim_connection *, char *);
 extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* Functions in toc.c */

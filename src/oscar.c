@@ -161,10 +161,6 @@ static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 
-static int gaim_directim_incoming(struct aim_session_t *, struct command_rx_struct *, ...);
-static int gaim_directim_typing  (struct aim_session_t *, struct command_rx_struct *, ...);
-static int gaim_directim_initiate(struct aim_session_t *, struct command_rx_struct *, ...);
-
 static char *msgerrreason[] = {
 	"Invalid error",
 	"Invalid SNAC",
@@ -221,16 +217,7 @@ static void oscar_callback(gpointer data, gint source,
 			if (aim_get_command(odata->sess, conn) >= 0) {
 				aim_rxdispatch(odata->sess);
 			} else {
-				if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
-				    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
-					struct conversation *cnv =
-						find_conversation(((struct aim_directim_priv *)conn->priv)->sn);
-					debug_print("connection error for directim\n");
-					if (cnv) {
-						make_direct(cnv, FALSE, NULL, 0);
-					}
-					aim_conn_kill(odata->sess, &conn);
-				} else if ((conn->type == AIM_CONN_TYPE_BOS) ||
+				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
 					debug_print(_("major connection error\n"));
 					hide_login_progress(gc, _("Disconnected."));
@@ -485,7 +472,6 @@ int gaim_server_ready(struct aim_session_t *sess,
 		serv_got_joined_chat(gc, id++, aim_chat_getname(command->conn));
 		break;
 	case AIM_CONN_TYPE_RENDEZVOUS:
-		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
 		break;
 	default: /* huh? */
 		sprintf(debug_buff, "server ready: got unexpected connection type %04x\n", command->conn->type);
@@ -626,89 +612,6 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 	return 1;
 }
 
-static void accept_directim(GtkWidget *w, GtkWidget *m)
-{
-	struct aim_conn_t *newconn;
-	struct aim_directim_priv *priv;
-	struct gaim_connection *gc;
-	struct oscar_data *odata;
-	int watcher;
-
-	priv = (struct aim_directim_priv *)gtk_object_get_user_data(GTK_OBJECT(m));
-	gc = (struct gaim_connection *)gtk_object_get_user_data(GTK_OBJECT(w));
-	odata = (struct oscar_data *)gc->proto_data;
-	gtk_widget_destroy(m);
-
-	if (!(newconn = aim_directim_connect(odata->sess, odata->conn, priv))) {
-		debug_print("imimage: could not connect\n");
-		return;
-	}
-
-	aim_conn_addhandler(odata->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
-	aim_conn_addhandler(odata->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
-
-	watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				oscar_callback, newconn);
-
-	sprintf(debug_buff, "DirectIM: connected to %s\n", priv->sn);
-	debug_print(debug_buff);
-
-	serv_got_imimage(gc, priv->sn, priv->cookie, priv->ip, newconn, watcher);
-
-	g_free(priv);
-}
-
-static void cancel_directim(GtkWidget *w, GtkWidget *m)
-{
-	gtk_widget_destroy(m);
-}
-
-static void directim_dialog(struct gaim_connection *gc, struct aim_directim_priv *priv)
-{
-	GtkWidget *window;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *yes;
-	GtkWidget *no;
-	char buf[BUF_LONG];
-
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_window_set_title(GTK_WINDOW(window), _("Accept Direct IM?"));
-	gtk_window_set_wmclass(GTK_WINDOW(window), "directim", "Gaim");
-	gtk_widget_realize(window);
-	aol_icon(window->window);
-	gtk_object_set_user_data(GTK_OBJECT(window), (void *)priv);
-
-	vbox = gtk_vbox_new(TRUE, 5);
-	gtk_container_add(GTK_CONTAINER(window), vbox);
-	gtk_widget_show(vbox);
-
-	sprintf(buf,  _("%s has requested to directly connect to your computer. "
-			"Do you accept?"), priv->sn);
-	label = gtk_label_new(buf);
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
-	gtk_widget_show(label);
-
-	hbox = gtk_hbox_new(TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	yes = picture_button(window, _("Accept"), ok_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), yes, FALSE, FALSE, 5);
-	gtk_object_set_user_data(GTK_OBJECT(yes), gc);
-
-	no = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), no, FALSE, FALSE, 5);
-
-	gtk_signal_connect(GTK_OBJECT(yes), "clicked",
-			   GTK_SIGNAL_FUNC(accept_directim), window);
-	gtk_signal_connect(GTK_OBJECT(no), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_directim), window);
-
-	gtk_widget_show(window);
-}
-
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
@@ -765,20 +668,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			/* bah */
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
 			/* DirectIM stuff */
-			struct aim_directim_priv *priv, *priv2;
-
-			userinfo = va_arg(ap, struct aim_userinfo_s *);
-			priv = va_arg(ap, struct aim_directim_priv *);
-			va_end(ap);
-
-			sprintf(debug_buff, "DirectIM request from %s (%s)\n", userinfo->sn, priv->ip);
-			debug_print(debug_buff);
-
-			priv2 = g_new0(struct aim_directim_priv, 1);
-			strcpy(priv2->cookie, priv->cookie);
-			strcpy(priv2->sn, priv->sn);
-			strcpy(priv2->ip, priv->ip);
-			directim_dialog(gc, priv2);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -1164,33 +1053,13 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
-		if (mainwindow)
-			gtk_widget_hide(mainwindow);
-		show_buddy_list();
-
-#ifdef USE_APPLET
-		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-			refresh_buddy_window();
-			createOnlinePopup();
-			applet_buddy_show = TRUE;
-		} else {
-			gtk_widget_hide(blist);
-			applet_buddy_show = FALSE;
-		}
-		set_user_state(online);
-#else
-		refresh_buddy_window();
-#endif
-
 		serv_finish_login(gc);
-		gaim_setup(gc);
+		account_online(gc);
 
 		if (bud_list_cache_exists(gc))
 			do_import(NULL, gc);
 
 		debug_print("buddy list loaded\n");
-
-		setup_buddy_chats();
 
 		aim_addicbmparam(sess, command->conn);
 		aim_bos_reqicbmparaminfo(sess, command->conn);
@@ -1254,80 +1123,6 @@ int gaim_bosrights(struct aim_session_t *sess, struct command_rx_struct *command
 	return 1;
 }
 
-int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	va_list ap;
-	char *sn = NULL, *msg = NULL;
-	struct aim_conn_t *conn;
-	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
-
-	va_start(ap, command);
-	conn = va_arg(ap, struct aim_conn_t *);
-	sn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
-	va_end(ap);
-
-	sprintf(debug_buff, "Got DirectIM message from %s\n", sn);
-	debug_print(debug_buff);
-
-	serv_got_im(gc, sn, msg, 0);
-
-	return 1;
-}
-
-/* this is such a f*cked up function */
-int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	va_list ap;
-	struct aim_directim_priv *priv;
-	struct aim_conn_t *newconn;
-	struct conversation *cnv;
-	int watcher;
-
-	va_start(ap, command);
-	newconn = va_arg(ap, struct aim_conn_t *);
-	va_end(ap);
-
-	priv = (struct aim_directim_priv *)newconn->priv;
-
-	sprintf(debug_buff, "DirectIM: initiate success to %s\n", priv->sn);
-	debug_print(debug_buff);
-
-	cnv = find_conversation(priv->sn);
-	gdk_input_remove(cnv->watcher);
-	watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, newconn);
-	make_direct(cnv, TRUE, newconn, watcher);
-
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
-
-	return 1;
-}
-
-int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	va_list ap;
-	char *sn;
-
-	va_start(ap, command);
-	sn = va_arg(ap, char *);
-	va_end(ap);
-
-	/* I had to leave this. It's just too funny. It reminds me of my sister. */
-	sprintf(debug_buff, "ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
-	debug_print(debug_buff);
-
-	return 1;
-}
-
-void oscar_do_directim(struct gaim_connection *gc, char *name) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	struct aim_conn_t *newconn = aim_directim_initiate(odata->sess, odata->conn, NULL, name);
-	struct conversation *cnv = find_conversation(name); /* this will never be null because
-							       it just got set up */
-	cnv->conn = newconn;
-	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
-	aim_conn_addhandler(odata->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
-}
-
 static void oscar_keepalive(struct gaim_connection *gc) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	aim_flap_nop(odata->sess, odata->conn);
@@ -1340,15 +1135,10 @@ static char *oscar_name() {
 static void oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct conversation *cnv = find_conversation(name);
-	if (cnv && cnv->is_direct) {
-		debug_printf("Sending DirectIM to %s\n", name);
-		aim_send_im_direct(odata->sess, cnv->conn, message);
-	} else {
-		if (away)
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
-		else
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
-	}
+	if (away)
+		aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+	else
+		aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
 }
 
 static void oscar_get_info(struct gaim_connection *g, char *name) {

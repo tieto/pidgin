@@ -442,7 +442,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 
         u->user_info[0] = 0;
 	u->options = OPT_USR_REM_PASS;
-	u->protocol = PROTO_TOC;
+	u->protocol = 0; /* PROTO_TOC */
 
         if (!fgets(buf, sizeof(buf), f))
                 return u;
