@@ -1366,9 +1366,6 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
 
 
 
-	buf = g_malloc(MAX(strlen(message) * 2, 8192));
-	strcpy(buf, message);
-
 	if (convo_options & OPT_CONVO_SEND_LINKS)
 		buf = linkify_text(message);
 	else
