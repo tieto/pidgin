@@ -317,8 +317,8 @@ struct _GaimPluginProtocolInfo
 
 /* It's not like we're going to run out of integers for this version
    number, but we only want to really change it once per release. */
-/* GAIM_PRPL_API_VERSION last changed for version: 0.80 */
-#define GAIM_PRPL_API_VERSION 6
+/* GAIM_PRPL_API_VERSION last changed for version: 0.82 */
+#define GAIM_PRPL_API_VERSION 7
 
 #ifdef __cplusplus
 extern "C" {
