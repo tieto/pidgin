@@ -42,6 +42,7 @@
 #include "gtkdebug.h"
 #include "gtkft.h"
 #include "gtknotify.h"
+#include "gtkplugin.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
@@ -520,6 +521,9 @@ gaim_gtk_quit(void)
 	/* unplug */
 	session_end();
 #endif
+
+	/* Save the plugins we have loaded for next time. */
+	gaim_gtk_plugins_save();
 
 	/* and end it all... */
 	gtk_main_quit();
