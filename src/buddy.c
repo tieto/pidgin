@@ -1318,8 +1318,10 @@ gint log_timeout(char *name)
 	if (!b->present) {
 		gtk_widget_hide(b->item);
 		g = find_group_by_buddy(name);
-		gtk_tree_item_collapse(GTK_TREE_ITEM(g->item));
-		gtk_tree_item_expand(GTK_TREE_ITEM(g->item));
+		if (GTK_TREE_ITEM(g->item)->expanded) {
+			gtk_tree_item_collapse(GTK_TREE_ITEM(g->item));
+			gtk_tree_item_expand(GTK_TREE_ITEM(g->item));
+		}
 	} else
 		set_buddy(b);
 	
