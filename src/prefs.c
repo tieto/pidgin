@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "prpl.h"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/fontface2.xpm"
 #include "pixmaps/refresh.xpm"
@@ -1604,6 +1605,7 @@ static void build_deny_menu()
 	struct gaim_connection *gc;
 	int count = 0;
 	gboolean found = FALSE;
+	char buf[2048];
 
 	if (g_slist_length(connections) == 1) {
 		gtk_widget_hide(deny_conn_hbox);
@@ -1615,7 +1617,11 @@ static void build_deny_menu()
 
 	while (c) {
 		gc = (struct gaim_connection *)c->data;
-		opt = gtk_menu_item_new_with_label(gc->username);
+		c = c->next;
+		if (!gc->prpl->set_permit_deny)
+			continue;
+		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, (*gc->prpl->name)());
+		opt = gtk_menu_item_new_with_label(buf);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
 		gtk_widget_show(opt);
 		gtk_menu_append(GTK_MENU(menu), opt);
@@ -1623,7 +1629,6 @@ static void build_deny_menu()
 			found = TRUE;
 		else if (!found)
 			count++;
-		c = c->next;
 	}
 
 	if (!found) {
@@ -1798,21 +1803,33 @@ static void deny_page()
 
 void update_connection_dependent_prefs()
 {				/* what a crappy name */
+	gboolean needdeny = FALSE;
+	GSList *c = connections;
+	struct gaim_connection *gc = NULL;
+
 	if (!prefs)
 		return;
-	if (!connections && deny_node) {
+
+	while (c) {
+		gc = c->data;
+		if (gc->prpl->set_permit_deny)
+			break;
+		gc = NULL;
+		c = c->next;
+	}
+	needdeny = (gc != NULL);
+
+	if (!needdeny && deny_node) {
 		if (current_is_deny)
 			gtk_ctree_select(GTK_CTREE(preftree), general_node);
 		gtk_ctree_remove_node(GTK_CTREE(preftree), deny_node);
 		deny_node = NULL;
-	} else if (connections) {
-		if (!deny_node)
-			prefs_build_deny();
-		else {
-			build_deny_menu();
-			build_allow_list();
-			build_block_list();
-		}
+	} else if (deny_node && current_is_deny) {
+		build_deny_menu();
+		build_allow_list();
+		build_block_list();
+	} else if (needdeny && !deny_node) {
+		prefs_build_deny();
 	}
 }
 
