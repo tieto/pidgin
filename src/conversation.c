@@ -1611,10 +1611,9 @@ void update_convo_add_button(struct conversation *c)
 	gtk_widget_destroy(c->add);
 	
 	if (c->gc && find_buddy(c->gc, c->name)) {
-		/* remove */
 		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
 	} else {
-		c->add = picture_button2(c->window, _("Add"), gnome_remove_xpm, dispstyle);
+		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
 	}
 	gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 	gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
