@@ -70,7 +70,6 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =			cmdproc.c \
 			command.c \
-			dispatch.c \
 			error.c \
 			group.c \
 			history.c \
