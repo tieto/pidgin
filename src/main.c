@@ -354,6 +354,24 @@ void show_login()
 
 }
 
+static void
+clean_pid(void)
+{
+#ifndef _WIN32
+	int status;
+	pid_t pid;
+
+	do {
+		pid = waitpid(-1, &status, WNOHANG);
+	} while (pid != 0 && pid != (pid_t)-1);
+	if(pid == (pid_t)-1 && errno != ECHILD) {
+		char errmsg[BUFSIZ];
+		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
+		perror(errmsg);
+	}
+#endif
+}
+
 #if HAVE_SIGNAL_H
 void sighandler(int sig)
 {

@@ -273,7 +273,7 @@ buddy_icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
 	width = gdk_pixbuf_get_width(pixbuf);
 	height = gdk_pixbuf_get_height(pixbuf);
 	basename = g_path_get_basename(filename);
-	size = gaim_get_size_string(st.st_size);
+	size = gaim_str_size_to_units(st.st_size);
 	markup = g_strdup_printf(_("<b>File:</b> %s\n"
 							   "<b>File size:</b> %s\n"
 							   "<b>Image size:</b> %dx%d"),

@@ -24,7 +24,7 @@ static void historize(GaimConversation *c)
 	struct stat st;
 	FILE *fd;
 	char *userdir = g_strdup(gaim_user_dir());
-	char *logfile = g_strdup_printf("%s.log", normalize(name));
+	char *logfile = g_strdup_printf("%s.log", gaim_normalize(name));
 	char *path = g_build_filename(userdir, "logs", logfile, NULL);
 	char buf[HISTORY_SIZE+1];
 	char *tmp, *tmp2;
@@ -55,7 +55,7 @@ static void historize(GaimConversation *c)
 		options |= GTK_IMHTML_NO_NEWLINE;
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
-		tmp2 = linkify_text(tmp);
+		tmp2 = gaim_markup_linkify(tmp);
 	else
 		tmp2 = g_strdup(tmp);
 

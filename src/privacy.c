@@ -37,10 +37,10 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(normalize(who));
+	name = g_strdup(gaim_normalize(who));
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, normalize((char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, gaim_normalize((char *)l->data)))
 			break;
 	}
 
@@ -72,10 +72,10 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(normalize(who));
+	name = g_strdup(gaim_normalize(who));
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, normalize((char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, gaim_normalize((char *)l->data)))
 			break;
 	}
 
@@ -108,10 +108,10 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(normalize(who));
+	name = g_strdup(gaim_normalize(who));
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, normalize((char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, gaim_normalize((char *)l->data)))
 			break;
 	}
 
@@ -143,10 +143,10 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(normalize(who));
+	name = g_strdup(gaim_normalize(who));
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, normalize((char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, gaim_normalize((char *)l->data)))
 			break;
 	}
 

@@ -138,214 +138,6 @@ gchar *sec_to_text(guint sec)
 	return ret;
 }
 
-char *linkify_text(const char *text)
-{
-	const char *c, *t, *q = NULL;
-	char *tmp;
-	char url_buf[BUF_LEN * 4];
-	GString *ret = g_string_new("");
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
-
-	c = text;
-	while (*c) {
-		if(!q && (*c == '\"' || *c == '\'')) {
-			q = c;
-		} else if(q) {
-			if(*c == *q)
-				q = NULL;
-		} else if (!g_ascii_strncasecmp(c, "<A", 2)) {
-			while (1) {
-				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
-					break;
-				}
-				ret = g_string_append_c(ret, *c);
-				c++;
-				if (!(*c))
-					break;
-			}
-		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
-					(!g_ascii_strncasecmp(c, "https://", 8)))) {
-			t = c;
-			while (1) {
-				if (badchar(*t)) {
-
-					if (*(t) == ',' && (*(t + 1) != ' ')) {
-						t++;
-						continue;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							url_buf, url_buf);
-					c = t;
-					break;
-				}
-				if (!t)
-					break;
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "www.", 4)) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t)) {
-						if (t - c == 4) {
-							break;
-						}
-
-						if (*(t) == ',' && (*(t + 1) != ' ')) {
-							t++;
-							continue;
-						}
-
-						if (*(t - 1) == '.')
-							t--;
-						strncpy(url_buf, c, t - c);
-						url_buf[t - c] = 0;
-						g_string_append_printf(ret,
-								"<A HREF=\"http://%s\">%s</A>", url_buf,
-								url_buf);
-						c = t;
-						break;
-					}
-					if (!t)
-						break;
-					t++;
-				}
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
-			t = c;
-			while (1) {
-				if (badchar(*t)) {
-					if (*(t - 1) == '.')
-						t--;
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							url_buf, url_buf);
-					c = t;
-					break;
-				}
-				if (!t)
-					break;
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp.", 4)) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t)) {
-						if (t - c == 4) {
-							break;
-						}
-						if (*(t - 1) == '.')
-							t--;
-						strncpy(url_buf, c, t - c);
-						url_buf[t - c] = 0;
-						g_string_append_printf(ret,
-								"<A HREF=\"ftp://%s\">%s</A>", url_buf,
-								url_buf);
-						c = t;
-						break;
-					}
-					if (!t)
-						break;
-					t++;
-				}
-			}
-		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
-			t = c;
-			while (1) {
-				if (badchar(*t)) {
-					if (*(t - 1) == '.')
-						t--;
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							  url_buf, url_buf);
-					c = t;
-					break;
-				}
-				if (!t)
-					break;
-				t++;
-
-			}
-		} else if (c != text && (*c == '@')) {
-			char *tmp;
-			int flag;
-			int len = 0;
-			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
-			url_buf[0] = 0;
-
-			if (strchr(illegal_chars,*(c - 1)) || strchr(illegal_chars, *(c + 1)))
-				flag = 0;
-			else
-				flag = 1;
-
-			t = c;
-			while (flag) {
-				if (badchar(*t)) {
-					ret = g_string_truncate(ret, ret->len - (len - 1));
-					break;
-				} else {
-					len++;
-					tmp = g_malloc(len + 1);
-					tmp[len] = 0;
-					tmp[0] = *t;
-					strncpy(tmp + 1, url_buf, len - 1);
-					strcpy(url_buf, tmp);
-					url_buf[len] = 0;
-					g_free(tmp);
-					t--;
-					if (t < text) {
-						ret = g_string_assign(ret, "");
-						break;
-					}
-				}
-			}
-
-			t = c + 1;
-
-			while (flag) {
-				if (badchar(*t)) {
-					char *d;
-
-					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
-						*d = '\0';
-
-					g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
-							url_buf, url_buf);
-					c = t;
-
-					break;
-				} else {
-					strncat(url_buf, t, 1);
-					len++;
-					url_buf[len] = 0;
-				}
-
-				t++;
-			}
-		}
-
-		if (*c == 0)
-			break;
-
-		ret = g_string_append_c(ret, *c);
-		c++;
-
-	}
-	tmp = ret->str;
-	g_string_free(ret, FALSE);
-	return tmp;
-}
-
 
 static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -502,7 +294,7 @@ int gaim_base16_decode(const char *ascii, unsigned char **raw)
 	return len/2;
 }
 
-char *normalize(const char *s)
+char *gaim_normalize(const char *s)
 {
 	static char buf[BUF_LEN];
 	char *tmp;
@@ -536,24 +328,6 @@ char *date()
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&tme));
 	return date;
 }
-
-void clean_pid(void)
-{
-#ifndef _WIN32
-	int status;
-	pid_t pid;
-
-	do {
-		pid = waitpid(-1, &status, WNOHANG);
-	} while (pid != 0 && pid != (pid_t)-1);
-	if(pid == (pid_t)-1 && errno != ECHILD) {
-		char errmsg[BUFSIZ];
-		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
-		perror(errmsg);
-	}
-#endif
-}
-
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
    or time */
@@ -1004,7 +778,8 @@ const char *gaim_strcasestr(const char *haystack, const char *needle) {
 	return ret;
 }
 
-char *gaim_get_size_string(size_t size)
+char *
+gaim_str_size_to_units(size_t size)
 {
 	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
 	float size_mag;
@@ -1609,6 +1384,215 @@ gaim_markup_strip_html(const char *str)
 	str2[j] = '\0';
 
 	return str2;
+}
+
+char *
+gaim_markup_linkify(const char *text)
+{
+	const char *c, *t, *q = NULL;
+	char *tmp;
+	char url_buf[BUF_LEN * 4];
+	GString *ret = g_string_new("");
+	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
+
+	c = text;
+	while (*c) {
+		if(!q && (*c == '\"' || *c == '\'')) {
+			q = c;
+		} else if(q) {
+			if(*c == *q)
+				q = NULL;
+		} else if (!g_ascii_strncasecmp(c, "<A", 2)) {
+			while (1) {
+				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
+					break;
+				}
+				ret = g_string_append_c(ret, *c);
+				c++;
+				if (!(*c))
+					break;
+			}
+		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
+					(!g_ascii_strncasecmp(c, "https://", 8)))) {
+			t = c;
+			while (1) {
+				if (badchar(*t)) {
+
+					if (*(t) == ',' && (*(t + 1) != ' ')) {
+						t++;
+						continue;
+					}
+
+					if (*(t - 1) == '.')
+						t--;
+					strncpy(url_buf, c, t - c);
+					url_buf[t - c] = 0;
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							url_buf, url_buf);
+					c = t;
+					break;
+				}
+				if (!t)
+					break;
+				t++;
+
+			}
+		} else if (!g_ascii_strncasecmp(c, "www.", 4)) {
+			if (c[4] != '.') {
+				t = c;
+				while (1) {
+					if (badchar(*t)) {
+						if (t - c == 4) {
+							break;
+						}
+
+						if (*(t) == ',' && (*(t + 1) != ' ')) {
+							t++;
+							continue;
+						}
+
+						if (*(t - 1) == '.')
+							t--;
+						strncpy(url_buf, c, t - c);
+						url_buf[t - c] = 0;
+						g_string_append_printf(ret,
+								"<A HREF=\"http://%s\">%s</A>", url_buf,
+								url_buf);
+						c = t;
+						break;
+					}
+					if (!t)
+						break;
+					t++;
+				}
+			}
+		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
+			t = c;
+			while (1) {
+				if (badchar(*t)) {
+					if (*(t - 1) == '.')
+						t--;
+					strncpy(url_buf, c, t - c);
+					url_buf[t - c] = 0;
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							url_buf, url_buf);
+					c = t;
+					break;
+				}
+				if (!t)
+					break;
+				t++;
+
+			}
+		} else if (!g_ascii_strncasecmp(c, "ftp.", 4)) {
+			if (c[4] != '.') {
+				t = c;
+				while (1) {
+					if (badchar(*t)) {
+						if (t - c == 4) {
+							break;
+						}
+						if (*(t - 1) == '.')
+							t--;
+						strncpy(url_buf, c, t - c);
+						url_buf[t - c] = 0;
+						g_string_append_printf(ret,
+								"<A HREF=\"ftp://%s\">%s</A>", url_buf,
+								url_buf);
+						c = t;
+						break;
+					}
+					if (!t)
+						break;
+					t++;
+				}
+			}
+		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
+			t = c;
+			while (1) {
+				if (badchar(*t)) {
+					if (*(t - 1) == '.')
+						t--;
+					strncpy(url_buf, c, t - c);
+					url_buf[t - c] = 0;
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							  url_buf, url_buf);
+					c = t;
+					break;
+				}
+				if (!t)
+					break;
+				t++;
+
+			}
+		} else if (c != text && (*c == '@')) {
+			char *tmp;
+			int flag;
+			int len = 0;
+			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
+			url_buf[0] = 0;
+
+			if (strchr(illegal_chars,*(c - 1)) || strchr(illegal_chars, *(c + 1)))
+				flag = 0;
+			else
+				flag = 1;
+
+			t = c;
+			while (flag) {
+				if (badchar(*t)) {
+					ret = g_string_truncate(ret, ret->len - (len - 1));
+					break;
+				} else {
+					len++;
+					tmp = g_malloc(len + 1);
+					tmp[len] = 0;
+					tmp[0] = *t;
+					strncpy(tmp + 1, url_buf, len - 1);
+					strcpy(url_buf, tmp);
+					url_buf[len] = 0;
+					g_free(tmp);
+					t--;
+					if (t < text) {
+						ret = g_string_assign(ret, "");
+						break;
+					}
+				}
+			}
+
+			t = c + 1;
+
+			while (flag) {
+				if (badchar(*t)) {
+					char *d;
+
+					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
+						*d = '\0';
+
+					g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
+							url_buf, url_buf);
+					c = t;
+
+					break;
+				} else {
+					strncat(url_buf, t, 1);
+					len++;
+					url_buf[len] = 0;
+				}
+
+				t++;
+			}
+		}
+
+		if (*c == 0)
+			break;
+
+		ret = g_string_append_c(ret, *c);
+		c++;
+
+	}
+	tmp = ret->str;
+	g_string_free(ret, FALSE);
+	return tmp;
 }
 
 gboolean

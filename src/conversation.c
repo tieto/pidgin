@@ -219,7 +219,7 @@ common_send(GaimConversation *conv, const char *message)
 	if ((gc->flags & GAIM_CONNECTION_HTML) &&
 		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
 
-		buffy = linkify_text(buf);
+		buffy = gaim_markup_linkify(buf);
 	}
 	else
 		buffy = g_strdup(buf);
@@ -1289,12 +1289,12 @@ gaim_find_conversation(const char *name)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(normalize(name));
+	cuser = g_strdup(gaim_normalize(name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
 
-		if (!gaim_utf8_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))))
+		if (!gaim_utf8_strcasecmp(cuser, gaim_normalize(gaim_conversation_get_name(c))))
 			break;
 
 		c = NULL;
@@ -1315,13 +1315,13 @@ gaim_find_conversation_with_account(const char *name,
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(normalize(name));
+	cuser = g_strdup(gaim_normalize(name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
 
 		if (!gaim_utf8_strcasecmp(cuser,
-								  normalize(gaim_conversation_get_name(c))) &&
+								  gaim_normalize(gaim_conversation_get_name(c))) &&
 			account == gaim_conversation_get_account(c)) {
 
 			break;
@@ -1826,11 +1826,11 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 		char *str;
 		const char *disp;
 
-		str = g_strdup(normalize(who));
+		str = g_strdup(gaim_normalize(who));
 		disp = gaim_connection_get_display_name(gc);
 
-		if (!gaim_utf8_strcasecmp(str, normalize(gaim_account_get_username(account))) ||
-			(disp && !gaim_utf8_strcasecmp(str, normalize(disp)))) {
+		if (!gaim_utf8_strcasecmp(str, gaim_normalize(gaim_account_get_username(account))) ||
+			(disp && !gaim_utf8_strcasecmp(str, gaim_normalize(disp)))) {
 
 			flags |= GAIM_MESSAGE_SEND;
 		}

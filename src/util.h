@@ -46,7 +46,7 @@ extern "C" {
  *
  * @return A pointer to the normalized version stored in a static buffer.
  */
-char *normalize(const char *str);
+char *gaim_normalize(const char *str);
 
 /**
  * Converts a string to its base-64 equivalent.
@@ -96,11 +96,6 @@ unsigned char *gaim_base16_encode(const unsigned char *str, int len);
 int gaim_base16_decode(const char *str, unsigned char **ret_str);
 
 /**
- * Waits for all child processes to terminate.
- */
-void clean_pid(void);
-
-/**
  * Returns the current local time in hour:minute:second form.
  *
  * The returned string is stored in a static buffer, so the result
@@ -111,15 +106,6 @@ void clean_pid(void);
  * @see full_date()
  */
 char *date(void);
-
-/**
- * Adds the necessary HTML code to turn URIs into HTML links in a string.
- *
- * @param str The string to linkify.
- *
- * @return The linkified text.
- */
-char *linkify_text(const char *str);
 
 /**
  * Converts seconds into a human-readable form.
@@ -319,6 +305,7 @@ gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,
  *
  * @param haystack The string to search in.
  * @param needle   The substring to find.
+ *
  * @return the location of the substring if found, or NULL if not
  */
 const char *gaim_strcasestr(const char *haystack, const char *needle);
@@ -328,8 +315,10 @@ const char *gaim_strcasestr(const char *haystack, const char *needle);
  * units (MB, KB, GB, etc.)
  *
  * @param size The size
+ *
+ * @return The string in units form. This must be freed.
  */
-char *gaim_get_size_string(size_t size);
+char *gaim_str_size_to_units(size_t size);
 
 /**
  * Finds a HTML tag matching the given name.
@@ -397,6 +386,15 @@ void gaim_markup_html_to_xhtml(const char *html, char **dest_xhtml,
  * @return The new string without HTML. This must be freed.
  */
 char *gaim_markup_strip_html(const char *str);
+
+/**
+ * Adds the necessary HTML code to turn URIs into HTML links in a string.
+ *
+ * @param str The string to linkify.
+ *
+ * @return The linkified text.
+ */
+char *gaim_markup_linkify(const char *str);
 
 /**
  * Parses a URL, returning its host, port, and file path.

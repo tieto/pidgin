@@ -878,7 +878,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * "We're not worthy! We're not worthy!"
 	 */
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {
-		buffy = linkify_text(message);
+		buffy = gaim_markup_linkify(message);
 		g_free(message);
 		message = buffy;
 	}
@@ -1093,9 +1093,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
 				   OPT_PROTO_CORRECT_TIME)) {
 
-		char *tmp = g_strdup(normalize(name));
+		char *tmp = g_strdup(gaim_normalize(name));
 		if (!gaim_utf8_strcasecmp(tmp,
-				normalize(gaim_account_get_username(account)))) {
+				gaim_normalize(gaim_account_get_username(account)))) {
 
 			gc->evil = evil;
 			gc->login_time_official = signon;
@@ -1485,7 +1485,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
-		buf = linkify_text(message);
+		buf = gaim_markup_linkify(message);
 	else
 		buf = g_strdup(message);
 

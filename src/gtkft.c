@@ -758,8 +758,8 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 
 	type = gaim_xfer_get_type(xfer);
 
-	size_str      = gaim_get_size_string(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_get_size_string(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
+	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									(type == GAIM_XFER_RECEIVE
@@ -876,8 +876,8 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 	if ((data = GAIM_GTKXFER(xfer)) == NULL)
 		return;
 
-	size_str      = gaim_get_size_string(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_get_size_string(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
+	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
 					   COLUMN_PROGRESS, gaim_xfer_get_progress(xfer),
@@ -1102,7 +1102,7 @@ gaim_gtkxfer_ask_recv(GaimXfer *xfer)
 
 	size = gaim_xfer_get_size(xfer);
 
-	size_buf = gaim_get_size_string(size);
+	size_buf = gaim_str_size_to_units(size);
 
 	buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
 						  xfer->who, gaim_xfer_get_filename(xfer), size_buf);
