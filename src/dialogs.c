@@ -645,8 +645,11 @@ void show_ee_dialog(int ee)
 		label = gtk_label_new("Now that's what I like!");
 	else if (ee == 4)
 		label = gtk_label_new("Ahh, and excellent choice!");
-	else
+	else  if (ee == 5)
 		label = gtk_label_new("Everytime you click my name, an angel gets its wings.");
+	else 
+		label = gtk_label_new("This sunflower seed taste like pizza.");
+
 	gtk_widget_show(label);
 	gtk_widget_show(ok);
 

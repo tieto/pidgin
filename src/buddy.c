@@ -729,6 +729,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			 show_ee_dialog(4);
 		else if (!g_strcasecmp("seanegn", normalize (b->name)))
 			show_ee_dialog(5);
+		else if (!g_strcasecmp("chipx86", normalize (b->name)))
+			show_ee_dialog(6);
 
 	} else {
 
