@@ -1,4 +1,9 @@
 
+Mon Sep  4 01:08:33 UTC 2000 EWarmenhoven
+	- libfaim updates, gaim updates.
+	- hopefully gaim/faim is much more stable now
+	- gaim/faim reports errors much better
+
 Sat Sep  2 12:32:44 UTC 2000 EWarmenhoven
 	- Modified chat handling a bit so that if we've signed off, we don't
 	  try to kill the chat connection when the window is closed. This

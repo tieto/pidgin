@@ -14,7 +14,6 @@ included with the libfaim source on sourceforge) with the Gaim GTK front-end.
 So far the changes to libfaim that I've made are:
 - remove mkbuildinfo.sh and put the #defines it creates into Makefile.am
 - add #if HAVE_GETADDRINFO in aim_ft.c for Solaris people
-- aim_snac.c: in aim_remsnac, default cur to NULL, to avoid segfault
 
 And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
 for anything other than laughs right now. Hopefully we'll get it working better
