@@ -584,8 +584,9 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					gaim_account_get_buddy_icon(dialog->account));
 	}
 
-	if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
-		!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON)) {
+	if (!dialog->prpl_info ||
+			(!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
+		!(dialog->prpl_info->options & OPT_PROTO_BUDDY_ICON))) {
 
 		/* Nothing to see :( aww. */
 		gtk_widget_hide(dialog->user_frame);
