@@ -72,6 +72,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			auth.c \
 			buddy.c \
 			chat.c \
+			disco.c \
 			iq.c \
 			jabber.c \
 			jutil.c \
