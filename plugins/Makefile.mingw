@@ -76,15 +76,13 @@ LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgobject-2.0 -lgmodule-2.0 -l
 all: plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw
-
-#	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
 
 install:
 	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw install
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw install
-
-#	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
 
 #
 # BUILD Plugin
@@ -98,9 +96,8 @@ install:
 	$(CC) -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
 	rm -rf $@.base $@.def $@.exp junk.tmp
 
-plugins: spellchk.dll autorecon.dll
+plugins: iconaway.dll spellchk.dll autorecon.dll
 
-# iconaway.dll 
 
 ##
 ## CLEAN RULES

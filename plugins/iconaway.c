@@ -15,9 +15,9 @@
 void *handle;
 
 G_MODULE_IMPORT GtkWidget *imaway;
-G_MODULE_IMPORT GtkWidget *blist;
+/*G_MODULE_IMPORT GtkWidget *blist;*/
 /* XXX G_MODULE_IMPORT GtkWidget *all_chats; */
-G_MODULE_IMPORT GtkWidget *all_convos;
+/*G_MODULE_IMPORT GtkWidget *all_convos;*/
 
 #ifdef USE_APPLET
 extern void applet_destroy_buddy();
@@ -32,7 +32,7 @@ void iconify_windows(struct gaim_connection *gc, char *state,
 		return;
 
 	gtk_window_iconify(GTK_WINDOW(imaway));
-	hide_buddy_list();
+	gaim_blist_set_visible(FALSE);
 
 	for (windows = gaim_get_windows();
 		 windows != NULL;

@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
 #include "gaim.h"
+#include "gtklist.h"
 #include "win32dep.h"
 
 /*
@@ -47,6 +48,8 @@
 #define OPT_WGAIM_BLTRANS               0x00000004
 #define OPT_WGAIM_BUDDYWIN_ONTOP        0x00000008
 
+#define blist (gaim_get_blist()?(GAIM_GTK_BLIST(gaim_get_blist())?((GAIM_GTK_BLIST(gaim_get_blist()))->window):NULL):NULL)
+
 /*
  *  DATA STRUCTS
  */
@@ -59,7 +62,6 @@ typedef struct {
 /*
  *  GLOBALS
  */
-G_MODULE_IMPORT GtkWidget *blist;
 
 /*
  *  LOCALS
