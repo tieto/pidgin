@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1116 $"
+#define REVISION "gaim:$Revision: 1122 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -370,7 +370,11 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		c = strtok(NULL, ":");
 		away = strtok(NULL, ":");
-		message = strtok(NULL, ":");
+
+		message = away;
+		while (*message && (*message != ':')) message++;
+		message++;
+
 		a = (away && (*away == 'T')) ? 1 : 0;
 
 		serv_got_im(gc, c, message, a);
@@ -434,7 +438,9 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		sscanf(strtok(NULL, ":"), "%d", &id);
 		who = strtok(NULL, ":");
 		whisper = strtok(NULL, ":");
-		m = strtok(NULL, ":");
+		m = whisper;
+		while (*m && (*m != ':')) m++;
+		m++;
 
 		w = (whisper && (*whisper == 'T')) ? 1 : 0;
 
