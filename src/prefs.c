@@ -1009,7 +1009,12 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	gaim_button(_("Hide Buddy Icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
+	hbox = gtk_hbox_new(FALSE, 5);	
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
+	gtk_widget_show(hbox);
+	gaim_button(_("Hide Buddy Icons"), &im_options, OPT_IM_HIDE_ICONS, hbox);
+	
+	gaim_button(_("Disable Buddy Icon Animation"), &im_options, OPT_IM_NO_ANIMATION, hbox);
 #endif
 
 	gtk_widget_show(prefdialog);

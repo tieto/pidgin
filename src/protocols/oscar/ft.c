@@ -1115,7 +1115,7 @@ static int handlehdr_directim(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr)
 				i = aim_recv(conn->fd, msg2, 1024);
 			else 
 				i = aim_recv(conn->fd, msg2, payloadlength - recvd);
-			if (i == 0) {
+			if (i <= 0) {
 				free(msg);
 				return -1;
 			}

@@ -3287,6 +3287,8 @@ void update_icon(struct conversation *c)
 	gtk_widget_set_usize(c->icon, sf, sf);
 	gtk_container_add(GTK_CONTAINER(event), c->icon);
 	gtk_widget_show(c->icon);
+	if(im_options & OPT_IM_NO_ANIMATION)
+		stop_anim(c->icon, c);		
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);

@@ -4,6 +4,10 @@ version 0.54
 	* Compiles without GdkPixbuf again
 	* GtkIMHtml will refresh when you set a new GTK+ theme
 	* Improved Yahoo! typing notification (thanks Brian Macke)
+	* Prompt to authorize MSN buddies who added you while you
+	  were offline (Thanks Jason Willis)
+	* Option to globally disable Buddy Icon animation (Thanks
+	  Luke Schierer)
 	
 version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)

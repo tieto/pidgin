@@ -699,7 +699,6 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 		return;
 	}
 	build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
-
 	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
 }
 
@@ -847,6 +846,10 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "LST", 3)) {
 		char *which, *who, *friend, *tmp = buf;
+		struct msn_add_permit *ap; /* for any as yet undealt with buddies who've added you to their buddy list when you were off-line.  How dare they! */
+		GSList *perm = gc->permit; /* current permit list */
+		char msg[MSN_BUF_LEN];
+		int new = 1;
 		int pos, tot;
 
 		GET_NEXT(tmp);
@@ -874,8 +877,25 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		} else if (!g_strcasecmp(which, "BL") && pos) {
 			gc->deny = g_slist_append(gc->deny, g_strdup(who));
 		} else if (!g_strcasecmp(which, "RL")) {
-			if (pos != tot)
-				return 1;
+			while(perm) {
+				if(!g_strcasecmp(perm->data, who))
+					new = 0;
+				perm = perm->next;
+			}
+
+			if(new) {
+				debug_printf("Unresolved MSN RL entry");
+				ap = g_new0(struct msn_add_permit, 1);
+				ap->user = g_strdup(who);
+				ap->friend = g_strdup(friend);
+				ap->gc = gc;
+                         
+		                g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list",ap->user, url_decode(ap->friend));
+				do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
+			}
+			
+			if (pos != tot) 
+				return 1; /* this isn't the last one in the RL, so return. */
 
 			g_snprintf(sendbuf, sizeof(sendbuf), "CHG %d NLN\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
