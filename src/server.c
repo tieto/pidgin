@@ -943,6 +943,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
+			if(strcmp(alias, name) != 0)
+			    g_snprintf(qm->alias, sizeof(qm->alias), "(%s)", alias);
 			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
@@ -961,14 +963,15 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				gtk_tree_model_get_iter_from_string(
 								GTK_TREE_MODEL(awayqueuestore), &iter, path);
 				gtk_list_store_set(awayqueuestore, &iter,
-								1, number, -1);
+								2, number, -1);
 			} else {
-				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore), 
+				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore),
 								&iter);
 				gtk_list_store_append(awayqueuestore, &iter);
 				gtk_list_store_set(awayqueuestore, &iter,
 								0, qm->name,
-								1, _("(1 message)"),
+								1, qm->alias,
+								2, _("(1 message)"),
 								-1);
 			}
 		} else {

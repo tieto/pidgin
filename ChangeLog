@@ -41,6 +41,8 @@ version 0.76cvs:
 	* Deleting an account while modifying it will no longer crash gaim.
 	* Only one account preference window will now appear per account when
 	  clicking Modify.
+	* Aliases are now shown alongside the screen name in the message
+	  queue window. (Kevin Stange).
 	* TCL Plugin API changed
 	* The mobile icon on MSN users is now removed when the person disables
 	  mobile paging (Stu Tomlinson)

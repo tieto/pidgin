@@ -244,7 +244,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 			GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), awayqueuesw, TRUE, TRUE, 0);
 
-	awayqueuestore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	awayqueuestore = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	awayqueue = gtk_tree_view_new_with_model(GTK_TREE_MODEL(awayqueuestore));
 	renderer = gtk_cell_renderer_text_new();
 
@@ -255,6 +255,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
 	column = gtk_tree_view_column_new_with_attributes(NULL, renderer,
 			"text", 1,
+			NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
+	column = gtk_tree_view_column_new_with_attributes(NULL, renderer,
+			"text", 2,
 			NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
 

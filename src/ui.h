@@ -66,6 +66,7 @@ struct away_message {
 
 struct queued_message {
 	char name[80];
+	char alias[80];
 	char *message;
 	time_t tm;
 	GaimAccount *account;
