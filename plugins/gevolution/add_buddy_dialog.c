@@ -124,7 +124,7 @@ populate_address_books(GevoAddBuddyDialog *dialog)
 	GtkWidget *menu;
 #if notyet
 	ESourceList *addressbooks;
-	GList *groups, *g;
+	GSList *groups, *g;
 #endif
 
 	menu =
@@ -147,7 +147,7 @@ populate_address_books(GevoAddBuddyDialog *dialog)
 		return;
 	}
 
-	groups = e_source_list_peek_groups(list);
+	groups = e_source_list_peek_groups(addressbooks);
 
 	if (groups == NULL)
 	{
@@ -160,13 +160,13 @@ populate_address_books(GevoAddBuddyDialog *dialog)
 
 	for (g = groups; g != NULL; g = g->next)
 	{
-		GList *sources, *s;
+		GSList *sources, *s;
 
 		sources = e_source_group_peek_sources(g->data);
 
-		for (p = sources; p != NULL; p = p->next)
+		for (s = sources; s != NULL; s = s->next)
 		{
-			ESource *source = E_SOURCE(p->data);
+			ESource *source = E_SOURCE(s->data);
 
 			item = gtk_menu_item_new_with_label(e_source_peek_name(source));
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);

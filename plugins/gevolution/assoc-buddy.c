@@ -62,7 +62,7 @@ populate_address_books(GevoAssociateBuddyDialog *dialog)
 	GtkWidget *menu;
 #if notyet
 	ESourceList *addressbooks;
-	GList *groups, *g;
+	GSList *groups, *g;
 #endif
 
 	menu =
@@ -85,7 +85,7 @@ populate_address_books(GevoAssociateBuddyDialog *dialog)
 		return;
 	}
 
-	groups = e_source_list_peek_groups(list);
+	groups = e_source_list_peek_groups(addressbooks);
 
 	if (groups == NULL)
 	{
@@ -98,13 +98,13 @@ populate_address_books(GevoAssociateBuddyDialog *dialog)
 
 	for (g = groups; g != NULL; g = g->next)
 	{
-		GList *sources, *s;
+		GSList *sources, *s;
 
 		sources = e_source_group_peek_sources(g->data);
 
-		for (p = sources; p != NULL; p = p->next)
+		for (s = sources; s != NULL; s = s->next)
 		{
-			ESource *source = E_SOURCE(p->data);
+			ESource *source = E_SOURCE(s->data);
 
 			item = gtk_menu_item_new_with_label(e_source_peek_name(source));
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -294,7 +294,7 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 {
 	GtkTreeSelection *selection;
 	GtkTreeIter iter;
-	GList *list, *new_list = NULL, *l;
+	GList *list;
 	const char *fullname;
 	EContactField protocol_field;
 	EContact *contact;
@@ -315,17 +315,17 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 
 	list = e_contact_get(contact, protocol_field);
 
-	/* Make a copy of the list */
-	for (l = list; l != NULL; l = l->next)
-		new_list = g_list_append(new_list, g_strdup((char *)l->data));
+	list = g_list_append(list, g_strdup(dialog->buddy->name));
 
-	new_list = g_list_append(new_list, dialog->buddy->name);
-
-	e_contact_set(contact, protocol_field, new_list);
+	e_contact_set(contact, protocol_field, list);
+	if (!e_book_commit_contact(dialog->book, contact, NULL))
+	{
+		gaim_debug_error("evolution", "Error adding contact to book\n");
+	}
 
 	/* Free the list. */
-	g_list_foreach(new_list, (GFunc)g_free, NULL);
-	g_list_free(new_list);
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
 
 	delete_win_cb(NULL, NULL, dialog);
 }
