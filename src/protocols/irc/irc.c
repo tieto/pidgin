@@ -492,16 +492,8 @@ static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_tra
 
 
 void irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition) {
-		struct irc_file_transfer *ift = data;
-		struct irc_data *id = (struct irc_data *)ift->gc->proto_data;
-		int len;
-		guint32 ack;
-		
-		printf("I got here.\n");
-		len = recv(source, (char *)&ack, 4, MSG_PEEK);
-		printf("Len is: %d\n", len);
-		printf("Ack is: %d\n", ack);
-		recv(source, (char *)&ack, 4, 0);
+		/* Read ACK Here */
+
 }
 
 void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
@@ -517,11 +509,11 @@ void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition
 		ift->fd = accept(ift->fd, (struct sockaddr *)&addr, &len);
 		if (!ift->fd) {
 				/* FIXME: Handle this gracefully XXX */
-				printf("Something bad happened here, bubba!");
+				printf("Something bad happened here, bubba!\n");
 				return;
 		}
 		
-//		ift->awatcher = gaim_input_add(ift->fd, GAIM_INPUT_READ, irc_read_dcc_ack, ift);
+	/*	ift->awatcher = gaim_input_add(ift->fd, GAIM_INPUT_READ, irc_read_dcc_ack, ift); */
 		
 		if (transfer_out_do(ift->xfer, ift->fd, 0)) {
 				gaim_input_remove(ift->watcher);
@@ -2149,6 +2141,7 @@ static void irc_file_transfer_out (struct gaim_connection *gc, struct file_trans
 	ift->port = ntohs(addr.sin_port);
 
 	ift->watcher = gaim_input_add (ift->fd, GAIM_INPUT_READ, dcc_send_callback, ift);
+	printf("watcher is %d\n", ift->watcher);
 
 	snprintf(buf, sizeof(buf), "\001DCC SEND %s %s %d %d\001\n", name, ift->ip, ift->port, totsize);
 	printf("Trying: %s\n", buf);
@@ -2226,13 +2219,13 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->callback = irc_start_chat;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-
+/*
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("DCC Send");
 	pbm->callback = irc_ask_send_file;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-
+*/
 	return m;
 }
 
