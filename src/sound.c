@@ -244,6 +244,7 @@ void play(unsigned char *data, int size)
         else if (pid == 0) {
 		if (sound_options & OPT_SOUND_BEEP) {
 			printf("\a");
+			fflush(stdout);
 			_exit(0);
 		}
 
