@@ -1283,7 +1283,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 			} else
 				item->name = NULL;
 			aim_freetlvchain(&item->data);
-			item->data = data;
+			item->data = aim_tlvlist_copy(data);
 		}
 
 		if ((item = aim_ssi_itemlist_find(sess->ssi.official, gid, bid))) {
@@ -1295,12 +1295,13 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 			} else
 				item->name = NULL;
 			aim_freetlvchain(&item->data);
-			item->data = data;
+			item->data = aim_tlvlist_copy(data);
 		}
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
 
+		aim_freetlvchain(&data);
 		free(name);
 	}
 
