@@ -144,7 +144,7 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 		if (category == NULL)
 			g_print("%s", arg_s);
 		else
-			g_print("%s: %s", arg_s);
+			g_print("%s: %s", category, arg_s);
 	}
 
 	g_free(arg_s);
