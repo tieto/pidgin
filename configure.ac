@@ -285,7 +285,7 @@ if test "$enable_perl" = yes ; then
 
 	if test "x$prefix" != "xNONE"; then
 		prefix=`eval echo $prefix`
-		PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
+		PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
 	fi
 
 	AC_ARG_WITH(perl-lib,
@@ -298,10 +298,10 @@ if test "$enable_perl" = yes ; then
 			if test -z "`$perlpath -v | grep '5\.0'`"; then
 				PERL_MM_PARAMS="INSTALLDIRS=vendor"
 			else
-				PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
+				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
 			fi
 		else
-			PERL_MM_PARAMS="INSTALLDIRS=perl LIB=$withval"
+			PERL_MM_PARAMS="INSTALLDIRS=vendor LIB=$withval"
 		fi
 	])
 
