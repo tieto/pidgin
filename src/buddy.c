@@ -1973,7 +1973,9 @@ static void update_idle_time(struct buddy_show *bs)
 	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
 
-	style = gtk_style_copy(bs->idle->style);
+	style = gtk_style_new();
+	gdk_font_unref(gtk_style_get_font(style));
+	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(bs->label->style)));
 	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle)) {
 		style->fg[GTK_STATE_NORMAL].red =
 		  (style->fg[GTK_STATE_NORMAL].red / 2) + (style->base[GTK_STATE_NORMAL].red / 2);

@@ -174,7 +174,7 @@ if test "x$enable_gnome" != "xyes" -a "x$enable_gtk2" != "xyes" ; then
 	AM_PATH_GTK(1.2.3,,AC_MSG_ERROR([
 *** GTK+ is required to build Gaim; please make sure you have the GTK+
 *** development headers installed. The latest version of GTK+ is
-*** always available at http://www.gtk.org/.]),gthread)
+*** always available at http://www.gtk.org/.]))
 	UI_LIBS="$UI_LIBS $GTK_LIBS"
 	AC_PATH_PROG(gaimpath, gaim)
 fi
