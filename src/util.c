@@ -137,6 +137,9 @@ static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
+static const char xdigits[] =
+	"0123456789abcdef";
+
 unsigned char *
 gaim_base64_encode(const unsigned char *in, size_t inlen)
 {
@@ -244,23 +247,37 @@ gaim_base64_decode(const char *text, char **data, int *size)
 }
 
 /**************************************************************************
- * Quoted Printable Functions
+ * Quoted Printable Functions (see RFC 1341)
  **************************************************************************/
 void
 gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
 	char *n, *new;
 	const char *end, *p;
-	int i;
 
 	n = new = g_malloc(strlen (str) + 1);
 	end = str + strlen(str);
 
 	for (p = str; p < end; p++, n++) {
 		if (*p == '=') {
-			sscanf(p + 1, "%2x\n", &i);
-			*n = i;
-			p += 2;
+			if (p[1] == '\r' && p[2] == '\n') { /* 5.1 #5 */
+				n -= 1;
+				p += 2;
+			} else if (p[1] == '\n') { /* fuzzy case for 5.1 #5 */
+				n -= 1;
+				p += 1;
+			} else if (p[1] && p[2]) {
+				char *nibble1 = strchr(xdigits, tolower(p[1]));
+				char *nibble2 = strchr(xdigits, tolower(p[2]));
+				if (nibble1 && nibble2) { /* 5.1 #1 */
+					*n = ((nibble1 - xdigits) << 4) | (nibble2 - xdigits);
+					p += 2;
+				} else { /* This should never happen */
+					*n = *p;
+				}
+			} else { /* This should never happen */
+				*n = *p;
+			}
 		}
 		else if (*p == '_')
 			*n = ' ';
