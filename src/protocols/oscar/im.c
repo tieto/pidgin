@@ -84,7 +84,7 @@ faim_export fu16_t aim_fingerprintclient(fu8_t *msghdr, int len)
 }
 
 /* This should be endian-safe now... but who knows... */
-faim_export fu32_t aim_iconsum(const fu8_t *buf, int buflen)
+faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen)
 {
 	fu32_t sum;
 	int i;
@@ -94,7 +94,7 @@ faim_export fu32_t aim_iconsum(const fu8_t *buf, int buflen)
 
 	sum = ((sum & 0xffff0000) >> 16) + (sum & 0x0000ffff);
 
-	return sum;
+	return (fu16_t)sum;
 }
 
 /*
@@ -314,7 +314,8 @@ faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct ai
 		aimbs_put16(&fr->data, 0x0008);
 		aimbs_put16(&fr->data, 0x000c);
 		aimbs_put32(&fr->data, args->iconlen);
-		aimbs_put32(&fr->data, args->iconsum);
+		aimbs_put16(&fr->data, 0x0001);
+		aimbs_put16(&fr->data, args->iconsum);
 		aimbs_put32(&fr->data, args->iconstamp);
 	}
 
@@ -356,7 +357,7 @@ faim_export int aim_send_im(aim_session_t *sess, aim_conn_t *conn, const char *d
  * This is also performance sensitive. (If you can believe it...)
  *
  */
-faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu32_t iconsum)
+faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum)
 {
 	int i;
 	fu8_t ck[8];
@@ -418,7 +419,8 @@ faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char 
 	/* TLV t(2711) */
 	aimbs_put16(&fr->data, 0x2711);
 	aimbs_put16(&fr->data, 4+4+4+iconlen+strlen(AIM_ICONIDENT));
-	aimbs_put32(&fr->data, iconsum);
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_put16(&fr->data, iconsum);
 	aimbs_put32(&fr->data, iconlen);
 	aimbs_put32(&fr->data, stamp);
 	aimbs_putraw(&fr->data, icon, iconlen);
@@ -854,8 +856,9 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		} else if (type == 0x0008) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
 
-			args.iconsum = aimbs_get32(bs);
 			args.iconlen = aimbs_get32(bs);
+			aimbs_get16(bs); /* 0x0001 */
+			args.iconsum = aimbs_get16(bs);
 			args.iconstamp = aimbs_get32(bs);
 			args.icbmflags |= AIM_IMFLAGS_HASICON;
 

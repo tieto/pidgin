@@ -738,7 +738,7 @@ struct aim_incomingim_ch1_args {
 	/* Only provided if AIM_IMFLAGS_HASICON is set */
 	time_t iconstamp;
 	fu32_t iconlen;
-	fu32_t iconsum;
+	fu16_t iconsum;
 
 	/* Only provided if AIM_IMFLAGS_CUSTOMFEATURES is set */
 	fu8_t *features;
@@ -786,8 +786,8 @@ struct aim_incomingim_ch2_args {
 
 faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct aim_sendimext_args *args);
 faim_export int aim_send_im(aim_session_t *, aim_conn_t *, const char *destsn, unsigned short flags, const char *msg);
-faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu32_t iconsum);
-faim_export fu32_t aim_iconsum(const fu8_t *buf, int buflen);
+faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
+faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, aim_conn_t *, const char *destsn);
