@@ -1311,7 +1311,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 			file = fopen(gc->user->iconfile, "r");
 			if (file) {
 				fread(buf, 1, st.st_size, file);
-				debug_printf("Sending buddy icon to %d\n", userinfo->sn);
+				debug_printf("Sending buddy icon to %s\n", userinfo->sn);
 				aim_send_icon(sess, conn, userinfo->sn, buf, st.st_size,
 					      st.st_mtime, aim_iconsum(buf, st.st_size));
 				fclose(file);
