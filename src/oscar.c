@@ -703,6 +703,7 @@ int gaim_memrequest(struct aim_session_t *sess,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
+	/*
 	if (offset > AIM_MAX_FILE_SIZE || len > AIM_MAX_FILE_SIZE) {
 		char buf[8];
 		buf[0] = offset & 0xff;
@@ -717,6 +718,7 @@ int gaim_memrequest(struct aim_session_t *sess,
 		aim_sendmemblock(sess, command->conn, offset, 8, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
+	*/
 
 	pos = g_new0(struct pieceofcrap, 1);
 	pos->gc = sess->aux_data;
