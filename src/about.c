@@ -115,7 +115,7 @@ void show_about(GtkWidget *w, void *null)
 		/* Left side, TOP */
 		style = gtk_widget_get_style(about);
 		pm = gdk_pixmap_create_from_xpm_d(about->window, &bm,
-						  &style->bg[GTK_STATE_NORMAL], (gchar **) aol_logo);
+						  &style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
 		pixmap = gtk_pixmap_new(pm, bm);
 
 		gdk_pixmap_unref(pm);
@@ -123,18 +123,21 @@ void show_about(GtkWidget *w, void *null)
 
 		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
 
-		label = gtk_label_new(_("GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
-			"using Gtk+ and is licensed under the GPL.\n\n"
-			"URL: " WEBSITE));
+		label =
+		    gtk_label_new(
+				  _("GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
+				   "using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE));
 
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 
 		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
 
-		text = gtk_text_new(NULL, NULL); 
+		text = gtk_text_new(NULL, NULL);
 
-		gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL, _("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nJim Duchek\nMark Spencer (original author)   markster@marko.net"), 198);
-		
+		gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL,
+				_("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nJim Duchek\nMark Spencer (original author)   markster@marko.net"),
+				198);
+
 		gtk_widget_show(text);
 
 		gtk_box_pack_start(GTK_BOX(fbox), text, TRUE, TRUE, 0);
@@ -214,8 +217,7 @@ void gaim_help(GtkWidget *w, void *x)
 
 		close = picture_button(help, _("Close"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
-		gtk_signal_connect(GTK_OBJECT(close), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_help), NULL);
+		gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(destroy_help), NULL);
 
 		pm = gdk_pixmap_create_from_xpm_d(help->window, &bm, NULL, panic_xpm);
 		pix = gtk_pixmap_new(pm, bm);

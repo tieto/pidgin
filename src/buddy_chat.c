@@ -319,7 +319,7 @@ GList *generate_invite_user_names(struct gaim_connection *gc)
 	GSList *bl;
 	struct group *g;
 	struct buddy *buddy;
-	
+
 	static GList *tmp = NULL;
 
 	if (tmp)
@@ -343,7 +343,7 @@ GList *generate_invite_user_names(struct gaim_connection *gc)
 					tmp = g_list_append(tmp, buddy->name);
 
 				bl = g_slist_next(bl);
-			}	
+			}
 
 			grp = g_slist_next(grp);
 		}
@@ -362,7 +362,7 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 	GtkWidget *vbox;
 	GtkWidget *table;
 	GtkWidget *frame;
-	
+
 	if (!invite) {
 		invite = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_widget_realize(invite);
@@ -373,14 +373,14 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		invitemess = gtk_entry_new();
 		frame = gtk_frame_new(_("Invite"));
 		table = gtk_table_new(2, 2, FALSE);
-		
+
 		gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 		gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-		
+
 		gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
-		
-		/* Now we should fill out all of the names */ 
+
+		/* Now we should fill out all of the names */
 		gtk_combo_set_popdown_strings(GTK_COMBO(inviteentry), generate_invite_user_names(b->gc));
 
 		vbox = gtk_vbox_new(FALSE, 0);
@@ -398,8 +398,10 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
 		/* Now the right side of the table */
-		gtk_table_attach(GTK_TABLE(table), inviteentry, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-		gtk_table_attach(GTK_TABLE(table), invitemess, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), inviteentry, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0,
+				 0);
+		gtk_table_attach(GTK_TABLE(table), invitemess, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0,
+				 0);
 
 		/* And now for the button box */
 		bbox = gtk_hbox_new(FALSE, 10);
@@ -414,7 +416,8 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_invite), b);
 		gtk_signal_connect(GTK_OBJECT(invite_btn), "clicked", GTK_SIGNAL_FUNC(do_invite), b);
-		gtk_signal_connect(GTK_OBJECT(GTK_ENTRY(GTK_COMBO(inviteentry)->entry)), "activate", GTK_SIGNAL_FUNC(do_invite), b);
+		gtk_signal_connect(GTK_OBJECT(GTK_ENTRY(GTK_COMBO(inviteentry)->entry)), "activate",
+				   GTK_SIGNAL_FUNC(do_invite), b);
 
 		/* Finish up */
 		gtk_widget_set_usize(GTK_WIDGET(invite), 550, 115);
@@ -484,12 +487,12 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 
 
 	if (!(flag & WFLAG_WHISPER)) {
-		str = g_strdup(normalize(who));
-		if (!g_strcasecmp(str, normalize(b->gc->username))) {
+		str = g_strdup(normalize (who));
+		if (!g_strcasecmp(str, normalize (b->gc->username))) {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
-		} else if (!g_strcasecmp(str, normalize(b->gc->displayname))) {
+		} else if (!g_strcasecmp(str, normalize (b->gc->displayname))) {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
@@ -534,7 +537,7 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 	g_snprintf(buf2, sizeof(buf2), "%s->%s", b->gc->username, who);
 
-	chat_write(b, buf2, WFLAG_WHISPER, buf, time((time_t)NULL));
+	chat_write(b, buf2, WFLAG_WHISPER, buf, time(NULL));
 
 	gtk_widget_grab_focus(GTK_WIDGET(b->entry));
 
@@ -642,7 +645,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	ignored = b->ignored;
 	while (ignored) {
 		if (!g_strcasecmp(name, ignored->data))
-			break;
+			 break;
 		ignored = ignored->next;
 	}
 
@@ -658,7 +661,8 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_show(list_item);
 
-	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room), g_list_length(b->in_room) == 1 ? "person" : "people");
+	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
+		   g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
@@ -666,7 +670,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }
 
@@ -729,7 +733,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s is now known as %s"), old, new);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }
 
@@ -764,7 +768,8 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 	if (!names)
 		return;
 
-	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room), g_list_length(b->in_room) == 1 ? "person" : "people");
+	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
+		   g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
@@ -772,7 +777,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
-		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }
 
@@ -784,10 +789,11 @@ void im_callback(GtkWidget *w, struct conversation *b)
 	struct conversation *c;
 
 	i = GTK_LIST(b->list)->selection;
-	if (i)
+	if (i) {
 		name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
-	else
+	} else {
 		return;
+	}
 
 	c = find_conversation(name);
 
@@ -809,17 +815,18 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	char tmp[80];
 
 	i = GTK_LIST(b->list)->selection;
-	if (i)
+	if (i) {
 		name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
-	else
+	} else {
 		return;
+	}
 
 	pos = gtk_list_child_position(GTK_LIST(b->list), i->data);
 
 	ignored = b->ignored;
 	while (ignored) {
 		if (!g_strcasecmp(name, ignored->data))
-			break;
+			 break;
 		ignored = ignored->next;
 	}
 
@@ -852,7 +859,9 @@ static gint delete_all_chats(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void chat_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
 {
 	GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(chat_notebook),
-			gtk_notebook_get_nth_page(GTK_NOTEBOOK(chat_notebook), page_num));
+						      gtk_notebook_get_nth_page(GTK_NOTEBOOK
+										(chat_notebook),
+										page_num));
 	GtkStyle *style;
 	struct conversation *b = g_list_nth_data(chats, page_num);
 	if (b && b->window && b->entry)
@@ -908,18 +917,18 @@ void show_new_buddy_chat(struct conversation *b)
 			if (chat_options & OPT_CHAT_SIDE_TAB) {
 				if (chat_options & OPT_CHAT_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
-							GTK_POS_RIGHT);
+								 GTK_POS_RIGHT);
 				} else {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
-							GTK_POS_LEFT);
+								 GTK_POS_LEFT);
 				}
 			} else {
 				if (chat_options & OPT_CHAT_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
-							GTK_POS_BOTTOM);
+								 GTK_POS_BOTTOM);
 				} else {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
-							GTK_POS_TOP);
+								 GTK_POS_TOP);
 				}
 			}
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
@@ -948,7 +957,7 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_window_set_title(GTK_WINDOW(win), buf);
 		gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
 
-		cont = gtk_vbox_new(FALSE,5);
+		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_add(GTK_CONTAINER(win), cont);
 		gtk_widget_show(cont);
 	}
@@ -1106,7 +1115,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show(win);
 }
 
-void chat_set_topic(struct conversation *b, char* who, char* topic)
+void chat_set_topic(struct conversation *b, char *who, char *topic)
 {
 	gtk_entry_set_text(GTK_ENTRY(b->topic_text), topic);
 	if (b->topic)
@@ -1239,7 +1248,7 @@ void chat_tabize()
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
 			gtk_signal_disconnect_by_func(GTK_OBJECT(win),
-					GTK_SIGNAL_FUNC(close_callback), c);
+						      GTK_SIGNAL_FUNC(close_callback), c);
 			gtk_widget_destroy(win);
 
 			if (c->topic)
@@ -1253,7 +1262,7 @@ void chat_tabize()
 
 				while (ignored) {
 					if (!g_strcasecmp(name, ignored->data))
-						break;
+						 break;
 					ignored = ignored->next;
 				}
 
@@ -1267,7 +1276,7 @@ void chat_tabize()
 				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
 						   GTK_SIGNAL_FUNC(right_click_chat), c);
 				gtk_list_insert_items(GTK_LIST(c->list),
-						g_list_append(NULL, list_item), pos);
+						      g_list_append(NULL, list_item), pos);
 				gtk_widget_show(list_item);
 
 				r = r->next;
@@ -1302,7 +1311,7 @@ void chat_tabize()
 
 				while (ignored) {
 					if (!g_strcasecmp(name, ignored->data))
-						break;
+						 break;
 					ignored = ignored->next;
 				}
 
@@ -1316,7 +1325,7 @@ void chat_tabize()
 				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
 						   GTK_SIGNAL_FUNC(right_click_chat), c);
 				gtk_list_insert_items(GTK_LIST(c->list),
-						g_list_append(NULL, list_item), pos);
+						      g_list_append(NULL, list_item), pos);
 				gtk_widget_show(list_item);
 
 				r = r->next;

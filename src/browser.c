@@ -97,7 +97,8 @@ Screen *screen;
 						       __SWM_VROOT, 0, 1, False, XA_WINDOW,
 						       &actual_type, &actual_format,
 						       &nitems, &bytesafter,
-						       (unsigned char **)&newRoot) == Success && newRoot) {
+						       (unsigned char **)&newRoot) == Success
+				    && newRoot) {
 					root = *newRoot;
 					break;
 				}
@@ -460,11 +461,10 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 
 			if (data)
 				g_free(data);
-		}
-			else if (event->type == GDK_PROPERTY_NOTIFY &&
-				 event->property.window == window &&
-				 event->property.state == GDK_PROPERTY_DELETE &&
-				 event->property.atom == XA_MOZILLA_COMMAND) {
+		} else if (event->type == GDK_PROPERTY_NOTIFY &&
+			   event->property.window == window &&
+			   event->property.state == GDK_PROPERTY_DELETE &&
+			   event->property.atom == XA_MOZILLA_COMMAND) {
 			debug_printf("%s: (server 0x%x has accepted "
 				     MOZILLA_COMMAND_PROP ".)\n", progname, (unsigned int)window);
 		}
@@ -609,7 +609,8 @@ void open_url(GtkWidget *w, char *url)
 				g_snprintf(command, sizeof(command), web_command, url);
 			else if ((ms = strstr(web_command, "%s")) != NULL) {
 				*ms = 0;
-				g_snprintf(command, sizeof(command), "%s\"%s\"%s", web_command, url, ms + 2);
+				g_snprintf(command, sizeof(command), "%s\"%s\"%s", web_command, url,
+					   ms + 2);
 			}
 
 			args[0] = "sh";
@@ -667,4 +668,4 @@ void open_url(GtkWidget *w, char *url)
 }
 
 
-#endif	/* _WIN32 */
+#endif /* _WIN32 */

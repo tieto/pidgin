@@ -162,20 +162,20 @@ void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
 	if (gc && gc->prpl && gc->prpl->set_away) {
-		char *buf=NULL;
-		if(message) {
-			buf = g_malloc(strlen(message)+1);
-			if(gc->prpl->options & OPT_PROTO_HTML)
-				strncpy(buf, message, strlen(message)+1);
+		char *buf = NULL;
+		if (message) {
+			buf = g_malloc(strlen(message) + 1);
+			if (gc->prpl->options & OPT_PROTO_HTML)
+				strncpy(buf, message, strlen(message) + 1);
 			else
-				strncpy_nohtml(buf, message, strlen(message)+1);
+				strncpy_nohtml(buf, message, strlen(message) + 1);
 		}
 
 		(*gc->prpl->set_away)(gc, state, buf);
 
 		plugin_event(event_away, gc, state, buf, 0);
 
-		if(buf)
+		if (buf)
 			g_free(buf);
 	}
 
@@ -237,7 +237,7 @@ void serv_remove_buddy(struct gaim_connection *g, char *name)
 void serv_remove_buddies(struct gaim_connection *gc, GList *g)
 {
 	if (!gc->prpl)
-		return; /* how the hell did that happen? */
+		return;		/* how the hell did that happen? */
 	if (gc->prpl->remove_buddies)
 		(*gc->prpl->remove_buddies)(gc, g);
 	else {
@@ -344,8 +344,7 @@ int find_queue_row_by_name(char *name)
 
 	templist = message_queue;
 
-	for (i = 0; i < GTK_CLIST(clistqueue)->rows; i++)
-	{
+	for (i = 0; i < GTK_CLIST(clistqueue)->rows; i++) {
 		gtk_clist_get_text(GTK_CLIST(clistqueue), i, 0, &temp);
 
 		if (!strcmp(name, temp))
@@ -366,7 +365,7 @@ int find_queue_total_by_name(char *name)
 		struct queued_message *qm = (struct queued_message *)templist->data;
 		if ((qm->flags & WFLAG_RECV) && !strcmp(name, qm->name))
 			i++;
-	
+
 		templist = templist->next;
 	}
 
@@ -382,7 +381,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 
 	while (templist) {
 		qar = (struct queued_away_response *)templist->data;
-		
+
 		if (!strcmp(name, qar->name))
 			return qar;
 
@@ -533,7 +532,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 				play_sound(FIRST_RECEIVE);
 			else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
-			
+
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 		}
 
@@ -577,7 +576,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qm->flags = WFLAG_SEND | WFLAG_AUTO;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
-			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);
+			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL,
+				      mtime);
 		g_free(tmpmsg);
 	} else {
 		/* we're not away. this is easy. if the convo window doesn't exist, create and update
@@ -643,7 +643,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 						 g_snprintf(who, 63, LOG_CONVERSATION_TITLE, name);
 					else
 						g_snprintf(who, 63, CONVERSATION_TITLE, name);
-						gtk_window_set_title(GTK_WINDOW(cv->window), who);
+					gtk_window_set_title(GTK_WINDOW(cv->window), who);
 					/* was g_free(buf), but break gives us that
 					 * and freeing twice is not good --Sumner */
 					break;
@@ -769,7 +769,7 @@ static void close_invite(GtkWidget *w, GtkWidget *w2)
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
 	struct gaim_connection *g = (struct gaim_connection *)
-					gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
+	    gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
 	GList *str, *tmp;
 
 	str = gtk_object_get_user_data(GTK_OBJECT(w2));
@@ -907,7 +907,8 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	delete_chat(b);
 }
 
-void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message, time_t mtime)
+void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message,
+		      time_t mtime)
 {
 	int w;
 	GSList *bcs = g->buddy_chats;
@@ -926,7 +927,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 		return;
 
 	if (plugin_event(event_chat_recv, g, (void *)b->id, who, message))
-		 return;
+		return;
 
 	buf = g_malloc(MAX(strlen(message) * 2, 8192));
 	strcpy(buf, message);

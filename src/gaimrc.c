@@ -219,8 +219,7 @@ static void gaimrc_read_away(FILE *f)
 		/* auto { time } { default message } */
 		else if (!strcmp(p->option, "auto")) {
 			auto_away = atoi(p->value[0]);
-			default_away = g_slist_nth_data(away_messages,
-							atoi(p->value[1]));
+			default_away = g_slist_nth_data(away_messages, atoi(p->value[1]));
 		}
 	}
 }
@@ -249,7 +248,7 @@ static void gaimrc_write_away(FILE *f)
 
 			awy = g_slist_next(awy);
 		}
-		fprintf(f, "\tauto { %d } { %d }\n", auto_away, 
+		fprintf(f, "\tauto { %d } { %d }\n", auto_away,
 			g_slist_index(away_messages, default_away));
 	} else {
 		fprintf(f, "\tmessage { boring default } { %s }\n", BORING_DEFAULT_AWAY_MSG);
@@ -293,7 +292,7 @@ static void gaimrc_read_pounce(FILE *f)
 
 			g_snprintf(b->sound, sizeof(b->sound), "%s", p->value[6]);
 			filter_break(b->sound);
-			
+
 			buddy_pounces = g_list_append(buddy_pounces, b);
 		}
 	}
@@ -448,7 +447,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	}
 
 	if ((i = strlen(u->user_info))) {
-		u->user_info[i-1] = '\0';
+		u->user_info[i - 1] = '\0';
 	}
 
 	if (!fgets(buf, sizeof(buf), f)) {

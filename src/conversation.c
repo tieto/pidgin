@@ -427,7 +427,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		if (im_options & OPT_IM_ONE_WINDOW) {
 			if (g_list_length(conversations) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
-						g_list_index(conversations, c));
+							 g_list_index(conversations, c));
 			} else {
 				if (c->window)
 					gtk_widget_destroy(c->window);
@@ -444,7 +444,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		if (chat_options & OPT_CHAT_ONE_WINDOW) {
 			if (g_list_length(chats) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
-						g_list_index(chats, c));
+							 g_list_index(chats, c));
 			} else {
 				if (c->window)
 					gtk_widget_destroy(c->window);
@@ -522,7 +522,7 @@ static gint delete_all_convo(GtkWidget *w, GdkEventAny *e, gpointer d)
 	return FALSE;
 }
 
-static gint delete_event_convo(GtkWidget *w, GdkEventAny * e, struct conversation *c)
+static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation *c)
 {
 	delete_conversation(c);
 	return FALSE;
@@ -566,10 +566,11 @@ void info_callback(GtkWidget *w, struct conversation *c)
 		GList *i;
 
 		i = GTK_LIST(c->list)->selection;
-		if (i)
+		if (i) {
 			name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
-		else
+		} else {
 			return;
+		}
 
 		serv_get_info(c->gc, name);
 	} else {
@@ -707,7 +708,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		if (event->keyval == 'l')
 			gtk_imhtml_clear(GTK_IMHTML(c->text));
 		if ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
-		    ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
+		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
 			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 			if (event->keyval == '[') {
 				gtk_notebook_prev_page(GTK_NOTEBOOK(notebook));
@@ -718,8 +719,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			} else if (event->keyval == GDK_Tab) {
 				GList *ws = (c->is_chat ? chats : conversations);
 				GList *cnv = g_list_nth(ws,
-						gtk_notebook_get_current_page(
-							GTK_NOTEBOOK(notebook)));
+							gtk_notebook_get_current_page(GTK_NOTEBOOK
+										      (notebook)));
 				struct conversation *d = NULL;
 				while (cnv) {
 					d = cnv->data;
@@ -730,7 +731,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				}
 				if (d) {
 					gtk_notebook_set_page(GTK_NOTEBOOK(notebook),
-							g_list_index(ws, d));
+							      g_list_index(ws, d));
 				} else {
 					cnv = ws;
 					while (cnv) {
@@ -741,26 +742,22 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 						d = NULL;
 					}
 					if (d) {
-						gtk_notebook_set_page(
-								GTK_NOTEBOOK(notebook),
-								g_list_index(ws, d));
+						gtk_notebook_set_page(GTK_NOTEBOOK(notebook),
+								      g_list_index(ws, d));
 					} else {
 						cnv = g_list_last(ws);
 						if (c == cnv->data)
-							gtk_notebook_set_page(
-								GTK_NOTEBOOK(notebook), 0);
+							gtk_notebook_set_page(GTK_NOTEBOOK(notebook), 0);
 						else
-							gtk_notebook_next_page(
-								GTK_NOTEBOOK(notebook));
+							gtk_notebook_next_page(GTK_NOTEBOOK(notebook));
 					}
 				}
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
 	} else if (((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
-		    ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
-			(event->state & GDK_MOD1_MASK) && isdigit(event->keyval) &&
-			(event->keyval > '0')) {
+		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
+		   (event->state & GDK_MOD1_MASK) && isdigit(event->keyval) && (event->keyval > '0')) {
 		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 		gtk_notebook_set_page(GTK_NOTEBOOK(notebook), event->keyval - '1');
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -780,7 +777,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		return;
 
 	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-	limit = 32 * 1024; /* you shouldn't be sending more than 32k in your messages. that's a book. */
+	limit = 32 * 1024;	/* you shouldn't be sending more than 32k in your messages. that's a book. */
 	buf = g_malloc(limit);
 	g_snprintf(buf, limit, "%s", buf2);
 	g_free(buf2);
@@ -832,8 +829,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 
 		if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
-			g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red,
-				   c->bgcol.green, c->bgcol.blue, buf);
+			g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
+				   c->bgcol.red, c->bgcol.green, c->bgcol.blue, buf);
 			strcpy(buf, buf2);
 		}
 	}
@@ -852,8 +849,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
 		int plugin_return = plugin_event(evnt, c->gc,
-						c->is_chat ? (void *)c->id : c->name,
-						&buffy, 0);
+						 c->is_chat ? (void *)c->id : c->name,
+						 &buffy, 0);
 		if (!buffy) {
 			g_free(buf2);
 			g_free(buf);
@@ -885,7 +882,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 
 		if (err > 0) {
-			write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
+			write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL));
 
 			if (c->makesound && (sound_options & OPT_SOUND_SEND))
 				play_sound(SEND);
@@ -1359,7 +1356,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			if (flags & WFLAG_SEND) {
 				b = find_buddy(c->gc, c->gc->username);
 				if (b && strcmp(b->name, b->show))
-					who = b->show;
+					 who = b->show;
 				else if (c->gc->displayname[0])
 					who = c->gc->displayname;
 				else
@@ -1378,14 +1375,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 	}
 
-	
+
 	if (flags & WFLAG_SYSTEM) {
 		if (convo_options & OPT_CONVO_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", mdate, what);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", what);
 		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
-			mdate, what);
+			   mdate, what);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
 
@@ -1461,11 +1458,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 		if (convo_options & OPT_CONVO_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\">(%s) </FONT>"
-					"<B>%s</B></FONT> ", colour, mdate, str);
+				   "<B>%s</B></FONT> ", colour, mdate, str);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT> ", colour, str);
 		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\"><!--(%s) --></FONT>"
-				"<B>%s</B></FONT> ", colour, mdate, str);
+			   "<B>%s</B></FONT> ", colour, mdate, str);
 
 		g_free(str);
 
@@ -1539,19 +1536,22 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 	if ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
 	    (!c->is_chat && (im_options & OPT_IM_POPUP)))
-		    gdk_window_show(c->window->window);
+		gdk_window_show(c->window->window);
 
 	if (((flags & WFLAG_RECV) || (flags & WFLAG_SYSTEM)) &&
 	    ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW) &&
 	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
-			!= g_list_index(conversations, c))) ||
-	     ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW) &&
+	       != g_list_index(conversations, c))) ||
+	     (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW) &&
 	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook))
-			!= g_list_index(chats, c))))) {
+	       != g_list_index(chats, c))))) {
 		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 		GList *ws = (c->is_chat ? chats : conversations);
 		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook),
-				gtk_notebook_get_nth_page(GTK_NOTEBOOK(notebook), g_list_index(ws, c)));
+							      gtk_notebook_get_nth_page(GTK_NOTEBOOK
+											(notebook),
+											g_list_index(ws,
+												     c)));
 		GtkStyle *style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
@@ -1732,9 +1732,9 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
 	state_lock = 0;
 
-	save = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar),
-					NULL, _("Save Conversation"),
-					_("Save"), save_p, GTK_SIGNAL_FUNC(save_convo), c);
+	save = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+				       NULL, _("Save Conversation"),
+				       _("Save"), save_p, GTK_SIGNAL_FUNC(save_convo), c);
 
 	speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					     GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
@@ -1944,8 +1944,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 void update_buttons_by_protocol(struct conversation *c)
 {
-	if (!c->gc)
-	{
+	if (!c->gc) {
 		gtk_widget_set_sensitive(c->info, FALSE);
 		gtk_widget_set_sensitive(c->send, FALSE);
 		gtk_widget_set_sensitive(c->warn, FALSE);
@@ -1954,7 +1953,7 @@ void update_buttons_by_protocol(struct conversation *c)
 
 		return;
 	}
-	
+
 	if (c->gc->prpl->get_info == NULL && c->info)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else if (c->info)
@@ -1985,16 +1984,14 @@ void update_buttons_by_protocol(struct conversation *c)
 	if (c->add)
 		update_convo_add_button(c);
 
-	if (c->whisper) 
-	{
+	if (c->whisper) {
 		if (c->gc->prpl->chat_whisper == NULL)
 			gtk_widget_set_sensitive(c->whisper, FALSE);
 		else
 			gtk_widget_set_sensitive(c->whisper, TRUE);
 	}
 
-	if (c->invite) 
-	{
+	if (c->invite) {
 		if (c->gc->prpl->chat_invite == NULL)
 			gtk_widget_set_sensitive(c->invite, FALSE);
 		else
@@ -2005,7 +2002,9 @@ void update_buttons_by_protocol(struct conversation *c)
 static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
 {
 	GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
-			gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook), page_num));
+						      gtk_notebook_get_nth_page(GTK_NOTEBOOK
+										(convo_notebook),
+										page_num));
 	GtkStyle *style;
 	struct conversation *c = g_list_nth_data(conversations, page_num);
 	if (c && c->window && c->entry)
@@ -2076,18 +2075,18 @@ void show_conv(struct conversation *c)
 			if (im_options & OPT_IM_SIDE_TAB) {
 				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-							GTK_POS_RIGHT);
+								 GTK_POS_RIGHT);
 				} else {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-							GTK_POS_LEFT);
+								 GTK_POS_LEFT);
 				}
-			} else  {
+			} else {
 				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-							GTK_POS_BOTTOM);
+								 GTK_POS_BOTTOM);
 				} else {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-							GTK_POS_TOP);
+								 GTK_POS_TOP);
 				}
 			}
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(convo_notebook), TRUE);
@@ -2250,7 +2249,7 @@ void show_conv(struct conversation *c)
 	style = gtk_widget_get_style(GTK_WIDGET(entry));
 	gtk_imhtml_set_defaults(GTK_IMHTML(text), 0, &style->fg[GTK_STATE_NORMAL],
 				&style->base[GTK_STATE_NORMAL]);
-							
+
 	gtk_widget_show(win);
 }
 
@@ -2405,8 +2404,11 @@ void tabize()
 void set_convo_tab_label(struct conversation *c, char *text)
 {
 	gtk_label_set_text(GTK_LABEL(gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
-					gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
-						g_list_index(conversations, c)))), text);
+								gtk_notebook_get_nth_page(GTK_NOTEBOOK
+											  (convo_notebook),
+											  g_list_index
+											  (conversations,
+											   c)))), text);
 }
 
 void raise_convo_tab(struct conversation *c)
@@ -2415,46 +2417,40 @@ void raise_convo_tab(struct conversation *c)
 	gdk_window_show(c->window->window);
 }
 
-void update_im_tabs() {
+void update_im_tabs()
+{
 	if (!convo_notebook || !all_convos)
 		return;
 	if (im_options & OPT_IM_SIDE_TAB) {
 		if (im_options & OPT_IM_BR_TAB) {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-					GTK_POS_RIGHT);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook), GTK_POS_RIGHT);
 		} else {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-					GTK_POS_LEFT);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook), GTK_POS_LEFT);
 		}
-	} else  {
+	} else {
 		if (im_options & OPT_IM_BR_TAB) {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-					GTK_POS_BOTTOM);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook), GTK_POS_BOTTOM);
 		} else {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
-					GTK_POS_TOP);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook), GTK_POS_TOP);
 		}
 	}
 }
 
-void update_chat_tabs() {
+void update_chat_tabs()
+{
 	if (!chat_notebook || !all_chats)
 		return;
 	if (chat_options & OPT_CHAT_SIDE_TAB) {
 		if (chat_options & OPT_CHAT_BR_TAB) {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
-					GTK_POS_RIGHT);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), GTK_POS_RIGHT);
 		} else {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
-					GTK_POS_LEFT);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), GTK_POS_LEFT);
 		}
 	} else {
 		if (chat_options & OPT_CHAT_BR_TAB) {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
-					GTK_POS_BOTTOM);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), GTK_POS_BOTTOM);
 		} else {
-			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
-					GTK_POS_TOP);
+			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), GTK_POS_TOP);
 		}
 	}
 }
@@ -2468,10 +2464,12 @@ void update_convo_color(gboolean fg)
 		b = c->data;
 		c = c->next;
 		if (fg) {
-			if (b->hasfg) continue;
+			if (b->hasfg)
+				continue;
 			b->fgcol = fgcolor;
 		} else {
-			if (b->hasbg) continue;
+			if (b->hasbg)
+				continue;
 			b->bgcol = bgcolor;
 		}
 	}
@@ -2485,7 +2483,8 @@ void update_convo_font()
 	while (c) {
 		b = c->data;
 		c = c->next;
-		if (b->hasfont) continue;
+		if (b->hasfont)
+			continue;
 		sprintf(b->fontface, "%s", fontface);
 	}
 }
@@ -2523,21 +2522,20 @@ static gboolean redraw_icon(gpointer data)
 	case GDK_PIXBUF_FRAME_RETAIN:
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_height(c->anim), 1),
-				GDK_INTERP_NEAREST);
+						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
 		gdk_pixbuf_unref(scale);
 		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, &bm);
 		gc = gdk_gc_new(pm);
 		gdk_draw_pixmap(pm, gc, src, 0, 0,
 				MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_width(c->anim), 1),
+				    gdk_pixbuf_animation_get_width(c->anim), 1),
 				MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_height(c->anim), 1),
-				-1, -1);
+				    gdk_pixbuf_animation_get_height(c->anim), 1), -1, -1);
 		gdk_pixmap_unref(src);
 		gtk_widget_queue_draw(c->icon);
 		gdk_gc_unref(gc);
@@ -2545,11 +2543,11 @@ static gboolean redraw_icon(gpointer data)
 	case GDK_PIXBUF_FRAME_DISPOSE:
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_height(c->anim), 1),
-				GDK_INTERP_NEAREST);
+						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 		gdk_pixbuf_unref(scale);
 		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
@@ -2561,11 +2559,11 @@ static gboolean redraw_icon(gpointer data)
 		frame = frames->data;
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-					gdk_pixbuf_animation_get_height(c->anim), 1),
-				GDK_INTERP_NEAREST);
+						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 		gdk_pixbuf_unref(scale);
 		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
@@ -2638,11 +2636,11 @@ void update_icon(struct conversation *c)
 		GdkPixbuf *buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
 		sf = SCALE(c->anim);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * sf /
-					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * sf /
-					gdk_pixbuf_animation_get_height(c->anim), 1),
-				GDK_INTERP_NEAREST);
+						MAX(gdk_pixbuf_get_width(buf) * sf /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * sf /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
 
 		if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
 			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);

@@ -66,10 +66,10 @@ void load_protocol(proto_init pi, int size)
 	struct prpl *old;
 	if (size != sizeof(struct prpl)) {
 		do_error_dialog(_("You have attempted to load a protocol which was not compiled"
-				" from the same version of the source as this application was."
-				" Unfortunately, because it is not the same version I cannot"
-				" safely tell you which one it was. Needless to say, it was not"
-				" successfully loaded."), _("Protocol Error"));
+				  " from the same version of the source as this application was."
+				  " Unfortunately, because it is not the same version I cannot"
+				  " safely tell you which one it was. Needless to say, it was not"
+				  " successfully loaded."), _("Protocol Error"));
 		return;
 	}
 	p = g_new0(struct prpl, 1);
@@ -341,7 +341,8 @@ void do_proto_menu()
 	}
 }
 
-static void des_email_win(GtkWidget *w, struct gaim_connection *yd) {
+static void des_email_win(GtkWidget *w, struct gaim_connection *yd)
+{
 	gtk_widget_destroy(yd->email_win);
 	if (yd->email_win == w)
 		yd->email_win = NULL;
@@ -356,8 +357,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		return;
 
 	if (count < 0 && from && subject) {
-		g_snprintf(buf, sizeof buf, "%s has mail from %s: %s",
-				gc->username, from, subject);
+		g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, subject);
 		if (!gc->email_win) {
 			GtkWidget *close;
 
@@ -372,13 +372,13 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 			gc->email_label = gtk_label_new(buf);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->vbox),
-					gc->email_label, 0, 0, 5);
+					   gc->email_label, 0, 0, 5);
 			gtk_widget_show(gc->email_label);
 
 			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
 			gtk_window_set_focus(GTK_WINDOW(gc->email_win), close);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
-					close, 0, 0, 5);
+					   close, 0, 0, 5);
 			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
 					   GTK_SIGNAL_FUNC(des_email_win), gc);
 
@@ -387,7 +387,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		gtk_label_set_text(GTK_LABEL(gc->email_label), buf);
 	} else if (count) {
 		g_snprintf(buf, sizeof buf, "%s has %d new message%s.",
-				gc->username, count, count == 1 ? "" : "s");
+			   gc->username, count, count == 1 ? "" : "s");
 		if (!gc->email_win) {
 			GtkWidget *close;
 
@@ -402,13 +402,13 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 			gc->email_label = gtk_label_new(buf);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->vbox),
-					gc->email_label, 0, 0, 5);
+					   gc->email_label, 0, 0, 5);
 			gtk_widget_show(gc->email_label);
 
 			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
 			gtk_window_set_focus(GTK_WINDOW(gc->email_win), close);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
-					close, 0, 0, 5);
+					   close, 0, 0, 5);
 			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
 					   GTK_SIGNAL_FUNC(des_email_win), gc);
 

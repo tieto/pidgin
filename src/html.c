@@ -196,7 +196,7 @@ void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
 	gunk->website = parse_url(url);
 
 	if ((sock = proxy_connect(gunk->website.address, gunk->website.port,
-					grab_url_callback, gunk)) < 0) {
+				  grab_url_callback, gunk)) < 0) {
 		g_free(gunk->url);
 		g_free(gunk);
 		callback(data, g_strdup(_("g003: Error opening connection.\n")));

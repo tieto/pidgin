@@ -202,7 +202,7 @@ static int can_play_esd()
 static int play_artsc(unsigned char *data, int size)
 {
 	arts_stream_t stream;
-	guint16* lineardata;
+	guint16 *lineardata;
 	int result = 1;
 	int error;
 	int i;
@@ -243,7 +243,7 @@ static int can_play_artsc()
 static int artsc_play_file(char *file)
 {
 	struct stat stat_buf;
-	unsigned char* buf = NULL;
+	unsigned char *buf = NULL;
 	int result = 0;
 	int fd = -1;
 
@@ -263,15 +263,17 @@ static int artsc_play_file(char *file)
 	buf = g_malloc(stat_buf.st_size);
 	if (!buf)
 		goto out;
-	
+
 	if (read(fd, buf, stat_buf.st_size) < 0)
 		goto out;
 
 	result = play_artsc(buf, stat_buf.st_size);
 
-	out:
-	if (buf) g_free(buf);
-	if (fd != -1) close(fd);
+      out:
+	if (buf)
+		g_free(buf);
+	if (fd != -1)
+		close(fd);
 	return result;
 }
 

@@ -86,21 +86,18 @@ gchar *sec_to_text(guint sec)
 			if (hrs) {
 				if (min) {
 					g_snprintf(ret, 256,
-							"%d day%s, %d hour%s, %d minute%s.",
-							daze, daze == 1 ? "" : "s",
-							hrs, hrs == 1 ? "" : "s",
-							min, min == 1 ? "" : "s");
+						   "%d day%s, %d hour%s, %d minute%s.",
+						   daze, daze == 1 ? "" : "s",
+						   hrs, hrs == 1 ? "" : "s", min, min == 1 ? "" : "s");
 				} else {
 					g_snprintf(ret, 256,
-							"%d day%s, %d hour%s.",
-							daze, daze == 1 ? "" : "s",
-							hrs, hrs == 1 ? "" : "s");
+						   "%d day%s, %d hour%s.",
+						   daze, daze == 1 ? "" : "s", hrs, hrs == 1 ? "" : "s");
 				}
 			} else {
 				g_snprintf(ret, 256,
-						"%d day%s, %d minute%s.",
-						daze, daze == 1 ? "" : "s",
-						min, min == 1 ? "" : "s");
+					   "%d day%s, %d minute%s.",
+					   daze, daze == 1 ? "" : "s", min, min == 1 ? "" : "s");
 			}
 		} else
 			g_snprintf(ret, 256, "%d day%s.", daze, daze == 1 ? "" : "s");
@@ -108,9 +105,8 @@ gchar *sec_to_text(guint sec)
 		if (hrs) {
 			if (min) {
 				g_snprintf(ret, 256,
-						"%d hour%s, %d minute%s.",
-						hrs, hrs == 1 ? "" : "s",
-						min, min == 1 ? "" : "s");
+					   "%d hour%s, %d minute%s.",
+					   hrs, hrs == 1 ? "" : "s", min, min == 1 ? "" : "s");
 			} else {
 				g_snprintf(ret, 256, "%d hour%s.", hrs, hrs == 1 ? "" : "s");
 			}
@@ -440,11 +436,11 @@ FILE *open_log_file(char *name)
 
 		if (flag) {	/* is a new file */
 			if (logging_options & OPT_LOG_STRIP_HTML) {
-			   fprintf(fd, "IM Sessions with %s\n", name);
-			}else {
-			   fprintf(fd, "<HTML><HEAD><TITLE>");
-			   fprintf(fd, "IM Sessions with %s", name);
-			   fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+				fprintf(fd, "IM Sessions with %s\n", name);
+			} else {
+				fprintf(fd, "<HTML><HEAD><TITLE>");
+				fprintf(fd, "IM Sessions with %s", name);
+				fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
 			}
 		}
 
@@ -456,11 +452,11 @@ FILE *open_log_file(char *name)
 
 	if (fd && flag) {	/* is a new file */
 		if (logging_options & OPT_LOG_STRIP_HTML) {
-		   fprintf(fd, "IM Sessions with %s\n", name);
-		}else {
-		   fprintf(fd, "<HTML><HEAD><TITLE>");
-		   fprintf(fd, "IM Sessions with %s", name);
-		   fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+			fprintf(fd, "IM Sessions with %s\n", name);
+		} else {
+			fprintf(fd, "<HTML><HEAD><TITLE>");
+			fprintf(fd, "IM Sessions with %s", name);
+			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
 		}
 	}
 
@@ -1166,10 +1162,11 @@ int file_is_dir(const char *path, GtkWidget *w)
 
 	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
 		/* append a / if needed */
-		if (path[strlen(path) - 1] != '/')
+		if (path[strlen(path) - 1] != '/') {
 			name = g_strconcat(path, "/", NULL);
-		else
+		} else {
 			name = g_strdup(path);
+		}
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(w), name);
 		g_free(name);
 		return 1;
@@ -1263,30 +1260,32 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 			dest += 4;
 		} else {
 			*dest++ = *src;
-			if (*src == '\0') return;
-			else src++;
+			if (*src == '\0')
+				return;
+			else
+				src++;
 		}
 	}
 }
 
 
-void away_on_login (char *mesg)
+void away_on_login(char *mesg)
 {
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
-	
+
 	if (!blist) {
 		return;
 	}
 
 	if (mesg == NULL) {
 		/* Use default message */
-		do_away_message((GtkWidget*)NULL, default_away);
+		do_away_message((GtkWidget *)NULL, default_away);
 	} else {
 		/* Use argument */
 		while (awy) {
 			a = (struct away_message *)awy->data;
-			if (strcmp (a->name, mesg) == 0) {
+			if (strcmp(a->name, mesg) == 0) {
 				message = a;
 				break;
 			}
@@ -1294,7 +1293,7 @@ void away_on_login (char *mesg)
 		}
 		if (message == NULL)
 			message = default_away;
-		do_away_message((GtkWidget*)NULL, message);
+		do_away_message((GtkWidget *)NULL, message);
 	}
 	return;
 }
@@ -1322,32 +1321,32 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) signed on @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) signed off @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) changed away state @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) came back @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) became idle @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text), "+++ %s (%s) returned from idle @ %s",
-					gc->username, (*gc->prpl->name)(), full_date());
+				   gc->username, (*gc->prpl->name)(), full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_quit:
@@ -1359,32 +1358,33 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed on @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed off @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) went away @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) came back @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) became idle @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) returned from idle @ %s",
-				gc->username, (*gc->prpl->name)(), who->show, who->name, full_date());
+			g_snprintf(text, sizeof(text),
+				   "%s (%s) reported that %s (%s) returned from idle @ %s", gc->username,
+				   (*gc->prpl->name)(), who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		default:
@@ -1396,32 +1396,33 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed on @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed off @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s went away @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s came back @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), "%s (%s) reported that %s became idle @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+				   gc->username, (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s returned from idle @ %s",
-				gc->username, (*gc->prpl->name)(), who->name, full_date());
+			g_snprintf(text, sizeof(text),
+				   "%s (%s) reported that %s returned from idle @ %s", gc->username,
+				   (*gc->prpl->name)(), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		default:
@@ -1445,7 +1446,7 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 
 unsigned char *utf8_to_str(unsigned char *in)
 {
-	int n = 0,i = 0;
+	int n = 0, i = 0;
 	int inlen;
 	unsigned char *result;
 
@@ -1454,27 +1455,31 @@ unsigned char *utf8_to_str(unsigned char *in)
 
 	inlen = strlen(in);
 
-	result = g_malloc(inlen+1);
+	result = g_malloc(inlen + 1);
 
-	while(n <= inlen-1) {
+	while (n <= inlen - 1) {
 		long c = (long)in[n];
-		if(c<0x80)
+		if (c < 0x80)
 			result[i++] = (char)c;
 		else {
-			if((c&0xC0) == 0xC0)
-				result[i++] = (char)(((c&0x03)<<6)|(((unsigned char)in[++n])&0x3F));
-			else if((c&0xE0) == 0xE0) {
+			if ((c & 0xC0) == 0xC0)
+				result[i++] =
+				    (char)(((c & 0x03) << 6) | (((unsigned char)in[++n]) & 0x3F));
+			else if ((c & 0xE0) == 0xE0) {
 				if (n + 2 <= inlen) {
-					result[i] = (char)(((c&0xF)<<4)|(((unsigned char)in[++n])&0x3F));
-					result[i] = (char)(((unsigned char)result[i]) |(((unsigned char)in[++n])&0x3F));
+					result[i] =
+					    (char)(((c & 0xF) << 4) | (((unsigned char)in[++n]) & 0x3F));
+					result[i] =
+					    (char)(((unsigned char)result[i]) |
+						   (((unsigned char)in[++n]) & 0x3F));
 					i++;
-				} else n += 2;
-			}
-			else if((c&0xF0) == 0xF0)
+				} else
+					n += 2;
+			} else if ((c & 0xF0) == 0xF0)
 				n += 3;
-			else if((c&0xF8) == 0xF8)
+			else if ((c & 0xF8) == 0xF8)
 				n += 4;
-			else if((c&0xFC) == 0xFC)
+			else if ((c & 0xFC) == 0xFC)
 				n += 5;
 		}
 		n++;
@@ -1486,7 +1491,7 @@ unsigned char *utf8_to_str(unsigned char *in)
 
 char *str_to_utf8(unsigned char *in)
 {
-	int n = 0,i = 0;
+	int n = 0, i = 0;
 	int inlen;
 	char *result = NULL;
 
@@ -1509,13 +1514,14 @@ char *str_to_utf8(unsigned char *in)
 			continue;
 		}
 		if ((c == 0x0D) || (c == 0x0A)) {
-			n++; continue;
+			n++;
+			continue;
 		}
 		if (c < 128)
 			result[i++] = (char)c;
 		else {
-			result[i++] = (char)((c>>6)|192);
-			result[i++] = (char)((c&63)|128);
+			result[i++] = (char)((c >> 6) | 192);
+			result[i++] = (char)((c & 63) | 128);
 		}
 		n++;
 	}

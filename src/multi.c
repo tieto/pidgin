@@ -47,8 +47,9 @@ static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
 static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
 static GtkWidget *newmain = NULL;	/* the notebook that holds options */
 static struct aim_user tmpusr = { "", "", "", OPT_USR_REM_PASS, DEFAULT_PROTO,
-		{ "", "", "", "", "", "", "" }, "", NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL };
+	{"", "", "", "", "", "", ""}, "", NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL
+};
 
 static void generate_prpl_options(struct aim_user *, GtkWidget *);
 
@@ -267,7 +268,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			GtkEntry *entry = tmp->data;
 			int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
 			g_snprintf(u->proto_opt[pos], sizeof(u->proto_opt[pos]), "%s",
-						gtk_entry_get_text(entry));
+				   gtk_entry_get_text(entry));
 			tmp = tmp->next;
 		}
 		if (u->opt_entries)
@@ -287,7 +288,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			GtkEntry *entry = tmp->data;
 			int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
 			g_snprintf(u->proto_opt[pos], sizeof(u->proto_opt[pos]), "%s",
-						gtk_entry_get_text(entry));
+				   gtk_entry_get_text(entry));
 			tmp = tmp->next;
 		}
 		if (tmpusr.opt_entries)
@@ -324,20 +325,16 @@ static void set_prot(GtkWidget *opt, int proto)
 		for (i = 0; i < 7; i++)
 			u->proto_opt[i][0] = '\0';
 		p = find_prpl(u->tmp_protocol);
-		if (!(p->options & OPT_PROTO_NO_PASSWORD) &&
-		     (q->options & OPT_PROTO_NO_PASSWORD)) {
+		if (!(p->options & OPT_PROTO_NO_PASSWORD) && (q->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_hide(u->pwdbox);
 			gtk_widget_hide(u->rempass);
-		} else if ((p->options & OPT_PROTO_NO_PASSWORD) &&
-			  !(q->options & OPT_PROTO_NO_PASSWORD)) {
+		} else if ((p->options & OPT_PROTO_NO_PASSWORD) && !(q->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_show(u->pwdbox);
 			gtk_widget_show(u->rempass);
 		}
-		if (!(p->options & OPT_PROTO_MAIL_CHECK) &&
-		     (q->options & OPT_PROTO_MAIL_CHECK)) {
+		if (!(p->options & OPT_PROTO_MAIL_CHECK) && (q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_show(u->checkmail);
-		} else if ((p->options & OPT_PROTO_MAIL_CHECK) &&
-			  !(q->options & OPT_PROTO_MAIL_CHECK)) {
+		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_hide(u->checkmail);
 		}
 		u->tmp_protocol = proto;
@@ -347,20 +344,16 @@ static void set_prot(GtkWidget *opt, int proto)
 		for (i = 0; i < 7; i++)
 			tmpusr.proto_opt[i][0] = '\0';
 		p = find_prpl(tmpusr.tmp_protocol);
-		if (!(p->options & OPT_PROTO_NO_PASSWORD) &&
-		     (q->options & OPT_PROTO_NO_PASSWORD)) {
+		if (!(p->options & OPT_PROTO_NO_PASSWORD) && (q->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_hide(tmpusr.pwdbox);
 			gtk_widget_hide(tmpusr.rempass);
-		} else if ((p->options & OPT_PROTO_NO_PASSWORD) &&
-			  !(q->options & OPT_PROTO_NO_PASSWORD)) {
+		} else if ((p->options & OPT_PROTO_NO_PASSWORD) && !(q->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_show(tmpusr.pwdbox);
 			gtk_widget_show(tmpusr.rempass);
 		}
-		if (!(p->options & OPT_PROTO_MAIL_CHECK) &&
-		     (q->options & OPT_PROTO_MAIL_CHECK)) {
+		if (!(p->options & OPT_PROTO_MAIL_CHECK) && (q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_show(tmpusr.checkmail);
-		} else if ((p->options & OPT_PROTO_MAIL_CHECK) &&
-			  !(q->options & OPT_PROTO_MAIL_CHECK)) {
+		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_hide(tmpusr.checkmail);
 		}
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
@@ -460,7 +453,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 
 	rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
-	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);*/
+	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox); */
 	checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
 
 	gtk_widget_show_all(vbox);
@@ -638,7 +631,7 @@ static void show_acct_mod(struct aim_user *u)
 	}
 
 	gtk_widget_show_all(mod);
-	
+
 	if (u) {
 		p = find_prpl(u->tmp_protocol);
 		if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
@@ -823,7 +816,7 @@ static void sel_auto(gpointer w, gpointer d)
 {
 	GList *l = aim_users;
 	struct aim_user *u;
-	int i = 0; /* faster than doing g_list_index each time */
+	int i = 0;		/* faster than doing g_list_index each time */
 	while (l) {
 		u = l->data;
 		l = l->next;
@@ -962,7 +955,7 @@ void account_online(struct gaim_connection *gc)
 		serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
 	}
 	if (opt_away_arg != NULL) {
-		g_free (opt_away_arg);
+		g_free(opt_away_arg);
 		opt_away_arg = NULL;
 	}
 

@@ -244,7 +244,7 @@ void show_login()
 
 	style = gtk_widget_get_style(mainwindow);
 	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
-					  &style->bg[GTK_STATE_NORMAL], (gchar **) aol_logo);
+					  &style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
 	pmw = gtk_pixmap_new(pm, mask);
 	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
 	gtk_widget_show(pmw);
@@ -383,21 +383,21 @@ void sighandler(int sig)
 		break;
 	case SIGSEGV:
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
-				"This is a bug in the software and has happened through\n"
-				"no fault of your own.\n\n"
-				"It is possible that this bug is already fixed in CVS.\n"
-				"You can get a tarball of CVS from the Gaim website, at\n"
-				WEBSITE "gaim-CVS.tar.gz.\n\n"
-				"If you are already using CVS, or can reproduce the crash\n"
-				"using the CVS version, please notify the gaim maintainers\n"
-				"by reporting a bug at\n"
-				WEBSITE "bug.php3\n\n"
-				"Please make sure to specify what you were doing at the time,\n"
-				"and post the backtrace from the core file. If you do not know\n"
-				"how to get the backtrace, please get instructions at\n"
-				WEBSITE "gdb.shtml. If you need further\n"
-				"assistance, please IM either EWarmenhoven or RobFlynn and\n"
-				"they can help you.\n");
+			"This is a bug in the software and has happened through\n"
+			"no fault of your own.\n\n"
+			"It is possible that this bug is already fixed in CVS.\n"
+			"You can get a tarball of CVS from the Gaim website, at\n"
+			WEBSITE "gaim-CVS.tar.gz.\n\n"
+			"If you are already using CVS, or can reproduce the crash\n"
+			"using the CVS version, please notify the gaim maintainers\n"
+			"by reporting a bug at\n"
+			WEBSITE "bug.php3\n\n"
+			"Please make sure to specify what you were doing at the time,\n"
+			"and post the backtrace from the core file. If you do not know\n"
+			"how to get the backtrace, please get instructions at\n"
+			WEBSITE "gdb.shtml. If you need further\n"
+			"assistance, please IM either EWarmenhoven or RobFlynn and\n"
+			"they can help you.\n");
 		abort();
 		break;
 	default:
@@ -427,7 +427,8 @@ int main(int argc, char *argv[])
 		{"acct", 'a', POPT_ARG_NONE, &opt_acct, 'a',
 		 "Display account editor window", NULL},
 		{"away", 'w', POPT_ARG_STRING, NULL, 'w',
-		 "Make away on signon (optional argument MESG specifies name of away message to use)", "[MESG]"},
+		 "Make away on signon (optional argument MESG specifies name of away message to use)",
+		 "[MESG]"},
 		{"login", 'l', POPT_ARG_STRING, NULL, 'l',
 		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
 		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
@@ -439,9 +440,9 @@ int main(int argc, char *argv[])
 #endif /* USE_GNOME */
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
-		/*{"away", optional_argument, NULL, 'w'},*/
+		/*{"away", optional_argument, NULL, 'w'}, */
 		{"help", no_argument, NULL, 'h'},
-		/*{"login", optional_argument, NULL, 'l'},*/
+		/*{"login", optional_argument, NULL, 'l'}, */
 		{"user", required_argument, NULL, 'u'},
 		{"file", required_argument, NULL, 'f'},
 		{"version", no_argument, NULL, 'v'},
@@ -478,8 +479,8 @@ int main(int argc, char *argv[])
 			if ((equals = strchr(argv[i], '=')) != NULL) {
 				/* --login=NAME */
 				opt_login_arg = g_strdup(equals + 1);
-				if (strlen (opt_login_arg) == 0) {
-					g_free (opt_login_arg);
+				if (strlen(opt_login_arg) == 0) {
+					g_free(opt_login_arg);
 					opt_login_arg = NULL;
 				}
 			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
@@ -503,44 +504,44 @@ int main(int argc, char *argv[])
 			strcpy(argv[i], " ");
 		}
 		/* --away option */
-		else if (strstr (argv[i], "--aw") == argv[i]) {
+		else if (strstr(argv[i], "--aw") == argv[i]) {
 			char *equals;
 			opt_away = 1;
 			if ((equals = strchr(argv[i], '=')) != NULL) {
 				/* --away=MESG */
-				opt_away_arg = g_strdup (equals+1);
-				if (strlen (opt_away_arg) == 0) {
-					g_free (opt_away_arg);
+				opt_away_arg = g_strdup(equals + 1);
+				if (strlen(opt_away_arg) == 0) {
+					g_free(opt_away_arg);
 					opt_away_arg = NULL;
 				}
-			} else if (i+1 < argc && argv[i+1][0] != '-') {
+			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
 				/* --away MESG */
-				opt_away_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
+				opt_away_arg = g_strdup(argv[i + 1]);
+				strcpy(argv[i + 1], " ");
 			}
-			strcpy (argv[i], " ");
+			strcpy(argv[i], " ");
 		}
 		/* -w option */
-		else if (strstr (argv[i], "-w") == argv[i]) {
+		else if (strstr(argv[i], "-w") == argv[i]) {
 			opt_away = 1;
-			if (strlen (argv[i]) > 2) {
+			if (strlen(argv[i]) > 2) {
 				/* -wMESG */
-				opt_away_arg = g_strdup (argv[i]+2);
-			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				opt_away_arg = g_strdup(argv[i] + 2);
+			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
 				/* -w MESG */
-				opt_away_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
+				opt_away_arg = g_strdup(argv[i + 1]);
+				strcpy(argv[i + 1], " ");
 			}
 			strcpy(argv[i], " ");
 		}
 	}
 	/*
-	if (opt_login) {
-		printf ("--login given with arg %s\n",
-			opt_login_arg ? opt_login_arg : "NULL");
-		exit(0);
-	}
-	*/
+	   if (opt_login) {
+	   printf ("--login given with arg %s\n",
+	   opt_login_arg ? opt_login_arg : "NULL");
+	   exit(0);
+	   }
+	 */
 
 	gtk_set_locale();
 #ifdef USE_GNOME
@@ -555,8 +556,7 @@ int main(int argc, char *argv[])
 #else
 	opterr = 1;
 #endif
-	while ((opt = getopt_long(argc, argv, "ahu:f:v",
-				  long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "ahu:f:v", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
 			opt_user = 1;
@@ -566,7 +566,7 @@ int main(int argc, char *argv[])
 			opt_acct = 1;
 			break;
 		case 'f':
-			opt_rcfile_arg = g_strdup (optarg);
+			opt_rcfile_arg = g_strdup(optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = 1;
@@ -629,7 +629,6 @@ int main(int argc, char *argv[])
 			opt_login_arg = NULL;
 		}
 	}
-
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"prefs", _("Preferences"), show_prefs, NULL);

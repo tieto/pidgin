@@ -43,8 +43,8 @@
 #define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 char proxyhost[128] = { 0 };
-int  proxyport = 0;
-int  proxytype = 0;
+int proxyport = 0;
+int proxytype = 0;
 char proxyuser[128] = { 0 };
 char proxypass[128] = { 0 };
 
@@ -78,15 +78,14 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 	debug_printf("CLOSURE: callback for %d, fd is %d\n",
-			closure->result, g_io_channel_unix_get_fd(source));
+		     closure->result, g_io_channel_unix_get_fd(source));
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
 
 	return TRUE;
 }
 
-gint gaim_input_add(gint source, GaimInputCondition condition,
-		GaimInputFunction function, gpointer data)
+gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction function, gpointer data)
 {
 	GaimIOClosure *closure = g_new0(GaimIOClosure, 1);
 	GIOChannel *channel;
@@ -102,7 +101,7 @@ gint gaim_input_add(gint source, GaimInputCondition condition,
 
 	channel = g_io_channel_unix_new(source);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-				     gaim_io_invoke, closure, gaim_io_destroy);
+					      gaim_io_invoke, closure, gaim_io_destroy);
 
 	debug_printf("CLOSURE: adding input watcher %d for fd %d\n", closure->result, source);
 
@@ -191,10 +190,10 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
-		phb->port = fd; /* bleh */
-		g_timeout_add(50, clean_connect, phb); /* we do this because we never
-							  want to call our callback
-							  before we return. */
+		phb->port = fd;	/* bleh */
+		g_timeout_add(50, clean_connect, phb);	/* we do this because we never
+							   want to call our callback
+							   before we return. */
 	}
 
 	return fd;
@@ -213,16 +212,16 @@ static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(phb->inpa);
 
 	while ((nlc != 2) && (read(source, &inputline[pos++], 1) == 1)) {
-		if (inputline[pos-1] == '\n')
+		if (inputline[pos - 1] == '\n')
 			nlc++;
-		else if (inputline[pos-1] != '\r')
+		else if (inputline[pos - 1] != '\r')
 			nlc = 0;
 	}
 	inputline[pos] = '\0';
 
 	debug_printf("Proxy says: %s\n", inputline);
 
-	if ((memcmp(HTTP_GOODSTRING , inputline, strlen(HTTP_GOODSTRING )) == 0) ||
+	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING)) == 0) ||
 	    (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
 		phb->func(phb->data, source, GAIM_INPUT_READ);
 		g_free(phb->host);
@@ -256,7 +255,8 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 	fcntl(source, F_SETFL, 0);
 
-	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\nHost = %s:%d\r\n", phb->host, phb->port, phb->host, phb->port);
+	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\nHost = %s:%d\r\n", phb->host, phb->port,
+		   phb->host, phb->port);
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
@@ -583,12 +583,12 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (buf[1] == 0x02) {
 		unsigned int i = strlen(proxyuser), j = strlen(proxypass);
-		buf[0] = 0x01; /* version 1 */
+		buf[0] = 0x01;	/* version 1 */
 		buf[1] = i;
-		memcpy(buf+2, proxyuser, i);
-		buf[2+i] = j;
-		memcpy(buf+2+i+1, proxypass, j);
-		if (write(source, buf, 3+i+j) < 3+i+j) {
+		memcpy(buf + 2, proxyuser, i);
+		buf[2 + i] = j;
+		memcpy(buf + 2 + i + 1, proxypass, j);
+		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
 			g_free(phb->host);
@@ -715,9 +715,7 @@ int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 
 	sethostent(1);
 
-	if ((proxytype == PROXY_NONE) ||
-		 !proxyhost || !proxyhost[0] ||
-		 !proxyport || (proxyport == -1))
+	if ((proxytype == PROXY_NONE) || !proxyhost || !proxyhost[0] || !proxyport || (proxyport == -1))
 		return proxy_connect_none(host, port, phb);
 	else if (proxytype == PROXY_HTTP)
 		return proxy_connect_http(host, port, phb);

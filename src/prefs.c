@@ -215,8 +215,7 @@ static void general_page()
 	gtk_container_add(GTK_CONTAINER(frame), mbox);
 	gtk_widget_show(mbox);
 
-	gaim_button(_("Use borderless buttons"), &misc_options,
-		    OPT_MISC_COOL_LOOK, mbox);
+	gaim_button(_("Use borderless buttons"), &misc_options, OPT_MISC_COOL_LOOK, mbox);
 
 	if (!tickerwindow && (misc_options & OPT_MISC_BUDDY_TICKER))
 		misc_options ^= OPT_MISC_BUDDY_TICKER;
@@ -257,11 +256,15 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(mbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
-	gaim_button(_("Log when buddies sign on/sign off"), &logging_options, OPT_LOG_BUDDY_SIGNON, mbox);
-	gaim_button(_("Log when buddies become idle/un-idle"), &logging_options, OPT_LOG_BUDDY_IDLE, mbox);
+	gaim_button(_("Log when buddies sign on/sign off"), &logging_options, OPT_LOG_BUDDY_SIGNON,
+		    mbox);
+	gaim_button(_("Log when buddies become idle/un-idle"), &logging_options, OPT_LOG_BUDDY_IDLE,
+		    mbox);
 	gaim_button(_("Log when buddies go away/come back"), &logging_options, OPT_LOG_BUDDY_AWAY, mbox);
-	gaim_button(_("Log your own signons/idleness/awayness"), &logging_options, OPT_LOG_MY_SIGNON, mbox);
-	gaim_button(_("Individual log file for each buddy's signons"), &logging_options, OPT_LOG_INDIVIDUAL, mbox);
+	gaim_button(_("Log your own signons/idleness/awayness"), &logging_options, OPT_LOG_MY_SIGNON,
+		    mbox);
+	gaim_button(_("Individual log file for each buddy's signons"), &logging_options,
+		    OPT_LOG_INDIVIDUAL, mbox);
 
 	frame = gtk_frame_new(_("Browser"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
@@ -321,7 +324,7 @@ static void general_page()
 
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
-	     if (entrynum == PROXYHOST)
+	if (entrynum == PROXYHOST)
 		g_snprintf(proxyhost, sizeof(proxyhost), "%s", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
 		proxyport = atoi(gtk_entry_get_text(entry));
@@ -332,11 +335,11 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 	save_prefs();
 }
 
-static void proxy_print_optionrad(GtkRadioButton *entry, int entrynum)
+static void proxy_print_optionrad(GtkRadioButton * entry, int entrynum)
 {
 	if (entrynum == PROXY_NONE)
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
-	else	
+	else
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), TRUE);
 
 	proxytype = entrynum;
@@ -378,7 +381,7 @@ static void proxy_page()
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
 	gtk_widget_show(frame);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
-	
+
 	table = gtk_table_new(2, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
@@ -390,33 +393,37 @@ static void proxy_page()
 	gtk_table_attach(GTK_TABLE(table), first, 0, 1, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
 	gtk_signal_connect(GTK_OBJECT(first), "clicked",
-			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_NONE);
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void *)PROXY_NONE);
 	gtk_widget_show(first);
-	
+
 	if (proxytype == PROXY_NONE)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
 
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), _("SOCKS 4"));
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)),
+					    _("SOCKS 4"));
 	gtk_table_attach(GTK_TABLE(table), opt, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
-			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_SOCKS4);
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void *)PROXY_SOCKS4);
 	gtk_widget_show(opt);
 	if (proxytype == PROXY_SOCKS4)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), _("SOCKS 5"));
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)),
+					    _("SOCKS 5"));
 	gtk_table_attach(GTK_TABLE(table), opt, 0, 1, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
-			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_SOCKS5);
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void *)PROXY_SOCKS5);
 	gtk_widget_show(opt);
 	if (proxytype == PROXY_SOCKS5)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), _("HTTP"));
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), _("HTTP"));
 	gtk_table_attach(GTK_TABLE(table), opt, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(opt), "clicked",
-			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void*)PROXY_HTTP);
+			   GTK_SIGNAL_FUNC(proxy_print_optionrad), (void *)PROXY_HTTP);
 	gtk_widget_show(opt);
 	if (proxytype == PROXY_HTTP)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
@@ -428,7 +435,7 @@ static void proxy_page()
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
 
 	prefs_proxy_frame = frame;
-	
+
 	if (proxytype == PROXY_NONE)
 		gtk_widget_set_sensitive(GTK_WIDGET(frame), FALSE);
 
@@ -448,7 +455,7 @@ static void proxy_page()
 	entry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYHOST);
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void *)PROXYHOST);
 	gtk_entry_set_text(GTK_ENTRY(entry), proxyhost);
 	gtk_widget_show(entry);
 
@@ -464,7 +471,7 @@ static void proxy_page()
 	entry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYPORT);
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void *)PROXYPORT);
 
 	if (proxyport) {
 		char buf[128];
@@ -481,7 +488,7 @@ static void proxy_page()
 	entry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 2, 3, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYUSER);
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void *)PROXYUSER);
 	gtk_entry_set_text(GTK_ENTRY(entry), proxyuser);
 	gtk_widget_show(entry);
 
@@ -498,7 +505,7 @@ static void proxy_page()
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 3, 4, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(proxy_print_option), (void*)PROXYPASS);
+			   GTK_SIGNAL_FUNC(proxy_print_option), (void *)PROXYPASS);
 	gtk_entry_set_text(GTK_ENTRY(entry), proxypass);
 	gtk_widget_show(entry);
 
@@ -554,7 +561,8 @@ static void buddy_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	button2 = gaim_button(_("Show pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
+	button2 =
+	    gaim_button(_("Show pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
 	if (blist_options & OPT_BLIST_NO_BUTTONS)
 		gtk_widget_set_sensitive(button2, FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
@@ -720,12 +728,12 @@ static GtkWidget *am_radio(char *label, int which, GtkWidget *box, GtkWidget *se
 	gtk_widget_show(opt);
 	if (which & 1) {
 		if (which == (OPT_CHAT_BUTTON_TEXT | 1)) {
-			if ( (chat_options & OPT_CHAT_BUTTON_TEXT) &&
+			if ((chat_options & OPT_CHAT_BUTTON_TEXT) &&
 			    !(chat_options & OPT_CHAT_BUTTON_XPM))
 				gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 		} else if (which == (OPT_CHAT_BUTTON_XPM | 1)) {
 			if (!(chat_options & OPT_CHAT_BUTTON_TEXT) &&
-			     (chat_options & OPT_CHAT_BUTTON_XPM))
+			    (chat_options & OPT_CHAT_BUTTON_XPM))
 				gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 		} else {
 			if (((chat_options & OPT_CHAT_BUTTON_TEXT) &&
@@ -736,18 +744,15 @@ static GtkWidget *am_radio(char *label, int which, GtkWidget *box, GtkWidget *se
 		}
 	} else {
 		if (which == OPT_IM_BUTTON_TEXT) {
-			if ( (im_options & OPT_IM_BUTTON_TEXT) &&
-			    !(im_options & OPT_IM_BUTTON_XPM))
+			if ((im_options & OPT_IM_BUTTON_TEXT) && !(im_options & OPT_IM_BUTTON_XPM))
 				gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 		} else if (which == OPT_IM_BUTTON_XPM) {
-			if (!(im_options & OPT_IM_BUTTON_TEXT) &&
-			     (im_options & OPT_IM_BUTTON_XPM))
+			if (!(im_options & OPT_IM_BUTTON_TEXT) && (im_options & OPT_IM_BUTTON_XPM))
 				gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 		} else {
 			if (((im_options & OPT_IM_BUTTON_TEXT) &&
 			     (im_options & OPT_IM_BUTTON_XPM)) ||
-			    (!(im_options & OPT_IM_BUTTON_TEXT) &&
-			     !(im_options & OPT_IM_BUTTON_XPM)))
+			    (!(im_options & OPT_IM_BUTTON_TEXT) && !(im_options & OPT_IM_BUTTON_XPM)))
 				gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 		}
 	}
@@ -758,7 +763,7 @@ static GtkWidget *am_radio(char *label, int which, GtkWidget *box, GtkWidget *se
 static void set_tab_opt(GtkWidget *w, int data)
 {
 	int mask;
-	if (data & 0x1)	{	/* set the first bit if we're affecting chat buttons */
+	if (data & 0x1) {	/* set the first bit if we're affecting chat buttons */
 		mask = (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB);
 		chat_options &= ~(mask);
 		chat_options |= (data & mask);
@@ -828,7 +833,7 @@ static void gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *va
 	gtk_widget_set_usize(spin, 50, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed",
-		GTK_SIGNAL_FUNC(update_spin_value), GTK_WIDGET(spin));
+			   GTK_SIGNAL_FUNC(update_spin_value), GTK_WIDGET(spin));
 	gtk_widget_show(spin);
 }
 
@@ -894,7 +899,9 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 5);
 	gtk_widget_show(vbox2);
 
-	button = gaim_button(_("Show all conversations in one tabbed window"), &im_options, OPT_IM_ONE_WINDOW, vbox2);
+	button =
+	    gaim_button(_("Show all conversations in one tabbed window"), &im_options, OPT_IM_ONE_WINDOW,
+			vbox2);
 	gaim_button(_("Raise windows on events"), &im_options, OPT_IM_POPUP, vbox2);
 	gaim_button(_("Show logins in window"), &im_options, OPT_IM_LOGON, vbox2);
 
@@ -1013,7 +1020,9 @@ static void chat_page()
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	opt = am_radio(_("Pictures And Text"), OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM | 1, vbox2, NULL);
+	opt =
+	    am_radio(_("Pictures And Text"), OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM | 1, vbox2,
+		     NULL);
 	opt = am_radio(_("Pictures"), OPT_CHAT_BUTTON_XPM | 1, vbox2, opt);
 	opt = am_radio(_("Text"), OPT_CHAT_BUTTON_TEXT | 1, vbox2, opt);
 
@@ -1025,7 +1034,9 @@ static void chat_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 5);
 	gtk_widget_show(vbox2);
 
-	button = gaim_button(_("Show all chats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW, vbox2);
+	button =
+	    gaim_button(_("Show all chats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
+			vbox2);
 	gaim_button(_("Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox2);
 	gaim_button(_("Show people joining/leaving in window"), &chat_options, OPT_CHAT_LOGON, vbox2);
 
@@ -1196,25 +1207,25 @@ static void font_page()
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_BOLD));
 	gtk_table_attach(GTK_TABLE(table), button, 0, 1, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_BOLD);
+			   GTK_SIGNAL_FUNC(set_font_option), (int *)OPT_FONT_BOLD);
 
 	button = gtk_check_button_new_with_label(_("Italic Text"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_ITALIC));
 	gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_ITALIC);
+			   GTK_SIGNAL_FUNC(set_font_option), (int *)OPT_FONT_ITALIC);
 
 	button = gtk_check_button_new_with_label(_("Underline Text"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_UNDERLINE));
 	gtk_table_attach(GTK_TABLE(table), button, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_UNDERLINE);
+			   GTK_SIGNAL_FUNC(set_font_option), (int *)OPT_FONT_UNDERLINE);
 
 	button = gtk_check_button_new_with_label(_("Strike through Text"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_STRIKE));
 	gtk_table_attach(GTK_TABLE(table), button, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_STRIKE);
+			   GTK_SIGNAL_FUNC(set_font_option), (int *)OPT_FONT_STRIKE);
 
 
 	gtk_widget_show_all(table);
@@ -1234,7 +1245,7 @@ static void font_page()
 	gtk_widget_show(frame);
 
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
-	
+
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
@@ -1279,7 +1290,7 @@ static void font_page()
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
-	
+
 	button = gaim_button(_("Font Face for Text"), &font_options, OPT_FONT_FACE, hbox);
 
 	select = picture_button(prefs, _("Select"), fontface2_xpm);
@@ -1305,8 +1316,8 @@ static void font_page()
 		gtk_widget_set_sensitive(GTK_WIDGET(spin), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
-+	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(update_spin_value),
-			   GTK_WIDGET(spin));
+	+gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(update_spin_value),
+			    GTK_WIDGET(spin));
 	gtk_widget_show(spin);
 
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
@@ -1435,7 +1446,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
 	gtk_widget_show(entry);
 }
 
-static gint sound_cmd_yeah(GtkEntry * entry, GdkEvent *event, gpointer d)
+static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
 {
 	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	save_prefs();
@@ -1527,7 +1538,8 @@ static void sound_page()
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	sound_entry(_("Sound when received message begins conversation"), OPT_SOUND_FIRST_RCV, vbox, FIRST_RECEIVE);
+	sound_entry(_("Sound when received message begins conversation"), OPT_SOUND_FIRST_RCV, vbox,
+		    FIRST_RECEIVE);
 	sound_entry(_("Sound when message is received"), OPT_SOUND_RECV, vbox, RECEIVE);
 	sound_entry(_("Sound when message is sent"), OPT_SOUND_SEND, vbox, SEND);
 
@@ -1561,11 +1573,9 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 	strcpy(buffer, a->message);
 	tmp = stylize(buffer, BUF_LONG);
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
-							   GTK_IMHTML_NO_COMMENTS |
-							   GTK_IMHTML_NO_SCROLL);
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
-							      GTK_IMHTML_NO_COMMENTS |
-							      GTK_IMHTML_NO_SCROLL);
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 	g_free(tmp);
 }
 
@@ -1693,7 +1703,8 @@ static void away_page()
 
 	gaim_button(_("Ignore new conversations when away"), &away_options, OPT_AWAY_DISCARD, vbox2);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, vbox2);
-	gaim_button(_("Sending messages removes away status"), &away_options, OPT_AWAY_BACK_ON_IM, vbox2);
+	gaim_button(_("Sending messages removes away status"), &away_options, OPT_AWAY_BACK_ON_IM,
+		    vbox2);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 5);
@@ -1813,11 +1824,9 @@ static void away_page()
 		g_snprintf(buffer, sizeof(buffer), "%s", a->message);
 		tmp = stylize(buffer, BUF_LONG);
 		gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
-								   GTK_IMHTML_NO_COMMENTS |
-								   GTK_IMHTML_NO_SCROLL);
+				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
-								      GTK_IMHTML_NO_COMMENTS |
-								      GTK_IMHTML_NO_SCROLL);
+				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 		g_free(tmp);
 	}
 
@@ -1825,7 +1834,8 @@ static void away_page()
 		a = (struct away_message *)awy->data;
 		list_item = gtk_list_item_new();
 		gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
-		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked), a);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked),
+				   a);
 		gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 		gtk_widget_show(list_item);
 
@@ -2176,8 +2186,8 @@ static void deny_page()
 	gtk_widget_show(prefdialog);
 }
 
-void update_connection_dependent_prefs()	/* what a crappy name */
-{
+void update_connection_dependent_prefs()
+{				/* what a crappy name */
 	gboolean needdeny = FALSE;
 	GSList *c = connections;
 	struct gaim_connection *gc = NULL;
@@ -2215,7 +2225,7 @@ void update_connection_dependent_prefs()	/* what a crappy name */
 	}
 }
 
-static void try_me(GtkCTree * ctree, GtkCTreeNode * node)
+static void try_me(GtkCTree *ctree, GtkCTreeNode *node)
 {
 	/* this is a hack */
 	void (*func)();
@@ -2376,7 +2386,6 @@ void debug_printf(char *fmt, ...)
 		if (scroll)
 			gtk_adjustment_set_value(adj, adj->upper - adj->lower - adj->page_size);
 	}
-
 #ifdef DEBUG
 	g_print("%s", s);
 #endif

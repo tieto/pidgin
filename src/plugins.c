@@ -227,10 +227,11 @@ void load_plugin(char *filename)
 
 	plugins = g_list_append(plugins, plug);
 
-	if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc))
+	if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc)) {
 		plug->name = (*cfunc)();
-	else
+	} else {
 		plug->name = NULL;
+	}
 
 	if (g_module_symbol(plug->handle, "description", (gpointer *)&cfunc))
 		plug->description = (*cfunc)();
