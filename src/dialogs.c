@@ -897,7 +897,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	table = gtk_table_new(3, 3, FALSE);
+	table = gtk_table_new(4, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
