@@ -358,17 +358,13 @@ static void xml_logger_write(GaimLog *log,
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
-		file = fopen(dir, "r");
-		if(!file)
-			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		else
-			fclose(file);
-
 		log->logger_data = fopen(filename, "a");
 		if (!log->logger_data) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			g_free(filename);
 			return;
 		}
+		g_free(filename);
 		fprintf(log->logger_data, "<?xml version='1.0' encoding='UTF-8' ?>\n"
 			"<?xml-stylesheet href='file:///usr/src/web/htdocs/log-stylesheet.xsl' type='text/xml' ?>\n");
 
@@ -437,7 +433,6 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
 		char *dir;
 		char *filename;
-		FILE *file;
 
 		if (log->type == GAIM_LOG_CHAT) {
 			chat = g_strdup_printf("%s.chat", guy);
@@ -466,15 +461,10 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
-		file = fopen(dir, "r");
-		if(!file)
-			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		else
-			fclose(file);
-
 		log->logger_data = fopen(filename, "a");
 		if (!log->logger_data) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			g_free(filename);
 			return;
 		}
 		g_free(filename);
@@ -498,12 +488,25 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			fprintf(log->logger_data, _("<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
 		else if (type & GAIM_MESSAGE_RECV)
 			fprintf(log->logger_data, _("<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
-	} else if (type & GAIM_MESSAGE_RECV)
-		fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
-			date, from, gc->prpl->info->name, message);
-	else if (type & GAIM_MESSAGE_SEND)
-		fprintf(log->logger_data, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
-			date, from, gc->prpl->info->name, message);
+	} else if (type & GAIM_MESSAGE_RECV) {
+		char *msg = g_strdup(message);
+		if(gaim_message_meify(msg, -1))
+			fprintf(log->logger_data, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+					date, from, gc->prpl->info->name, msg);
+		else
+			fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+					date, from, gc->prpl->info->name, msg);
+		g_free(msg);
+	} else if (type & GAIM_MESSAGE_SEND) {
+		char *msg = g_strdup(message);
+		if(gaim_message_meify(msg, -1))
+			fprintf(log->logger_data, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+					date, from, gc->prpl->info->name, msg);
+		else
+			fprintf(log->logger_data, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+					date, from, gc->prpl->info->name, msg);
+		g_free(msg);
+	}
 	fflush(log->logger_data);
 }
 
@@ -573,7 +576,6 @@ static void txt_logger_write(GaimLog *log,
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
 			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
 		char *dir;
-		FILE *file;
 
 		if (log->type == GAIM_LOG_CHAT) {
 			chat = g_strdup_printf("%s.chat", guy);
@@ -601,15 +603,10 @@ static void txt_logger_write(GaimLog *log,
 		filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
-		file = fopen(dir, "r");
-		if(!file)
-			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		else
-			fclose(file);
-
 		log->logger_data = fopen(filename, "a");
 		if (!log->logger_data) {
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			g_free(filename);
 			return;
 		}
 		g_free(filename);
@@ -622,11 +619,17 @@ static void txt_logger_write(GaimLog *log,
 	stripped = gaim_markup_strip_html(message);
 	if (type & GAIM_MESSAGE_SEND ||
 	    type & GAIM_MESSAGE_RECV) {
-		if (type & GAIM_MESSAGE_AUTO_RESP)
+		if (type & GAIM_MESSAGE_AUTO_RESP) {
 			fprintf(log->logger_data, _("(%s) %s <AUTO-REPLY>: %s\n"), date, from, stripped);
-		else
-			fprintf(log->logger_data, "(%s) %s: %s\n", date, from, stripped);	
-  	} else if (type & GAIM_MESSAGE_SYSTEM)
+		} else {
+			if(gaim_message_meify(stripped, -1))
+				fprintf(log->logger_data, "(%s) ***%s %s\n", date, from,
+						stripped);
+			else
+				fprintf(log->logger_data, "(%s) %s: %s\n", date, from,
+						stripped);
+		}
+	} else if (type & GAIM_MESSAGE_SYSTEM)
 		fprintf(log->logger_data, "(%s) %s\n", date, stripped);
 	else if (type & GAIM_MESSAGE_NO_LOG) {
 		/* This shouldn't happen */

@@ -2101,3 +2101,33 @@ gaim_utf8_strcasecmp(const char *a, const char *b)
 	return ret;
 }
 
+gboolean gaim_message_meify(char *message, size_t len)
+{
+	char *c;
+	gboolean inside_html = FALSE;
+
+	g_return_val_if_fail(message != NULL, FALSE);
+
+	if(len == -1)
+		len = strlen(message);
+
+	for (c = message; *c; c++, len--) {
+		if(inside_html) {
+			if(*c == '>')
+				inside_html = FALSE;
+		} else {
+			if(*c == '<')
+				inside_html = TRUE;
+			else
+				break;
+		}
+	}
+
+	if(*c && !g_ascii_strncasecmp(c, "/me ", 4)) {
+		memmove(c, c+4, len-3);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+

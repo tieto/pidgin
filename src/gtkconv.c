@@ -2896,44 +2896,6 @@ tab_complete(GaimConversation *conv)
 	g_free(partial);
 }
 
-static gboolean
-meify(char *message, size_t len)
-{
-	/*
-	 * Read /me-ify: If the message (post-HTML) starts with /me,
-	 * remove the "/me " part of it (including that space) and return TRUE.
-	 */
-	char *c;
-	gboolean inside_html = 0;
-
-	/* Umm.. this would be very bad if this happens. */
-	g_return_val_if_fail(message != NULL, FALSE);
-
-	if (len == -1)
-		len = strlen(message);
-
-	for (c = message; *c != '\0'; c++, len--) {
-		if (inside_html) {
-			if (*c == '>')
-				inside_html = FALSE;
-		}
-		else {
-			if (*c == '<')
-				inside_html = TRUE;
-			else
-				break;
-		}
-	}
-
-	if (*c != '\0' && !g_ascii_strncasecmp(c, "/me ", 4)) {
-		memmove(c, c + 4, len - 3);
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static void
 save_convo(GtkWidget *save, GaimConversation *c)
 {
@@ -4610,7 +4572,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			str = g_malloc(1024);
 
 			/* If we're whispering, it's not an autoresponse. */
-			if (meify(new_message, length)) {
+			if (gaim_message_meify(new_message, length)) {
 				g_snprintf(str, 1024, "***%s", who);
 				strcpy(color, "#6C2585");
 			}
@@ -4620,7 +4582,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			}
 		}
 		else {
-			if (meify(new_message, length)) {
+			if (gaim_message_meify(new_message, length)) {
 				str = g_malloc(1024);
 
 				if (flags & GAIM_MESSAGE_AUTO_RESP)

@@ -507,6 +507,16 @@ char *gaim_utf8_try_convert(const char *str);
  */
 int gaim_utf8_strcasecmp(const char *a, const char *b);
 
+/**
+ * Checks for messages starting with "/me "
+ *
+ * @param message The message to check
+ * @param len     The message length, or -1
+ *
+ * @return TRUE if it starts with /me, and it has been removed, otherwise FALSE
+ */
+gboolean gaim_message_meify(char *message, size_t len);
+
 /*@}*/
 
 #ifdef __cplusplus
