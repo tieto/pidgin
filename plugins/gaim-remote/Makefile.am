@@ -9,7 +9,7 @@ grinclude_HEADERS = \
 	remote.h
 
 libgaim_remote_la_SOURCES = remote-socket.c
-
+libgaim_remote_la_LIBADD = $(GLIB_LIBS)
 
 gaim_remote_la_LDFLAGS = -module -avoid-version
 
