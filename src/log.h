@@ -79,7 +79,7 @@ struct _GaimLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	 * this returns the contents of the log in GtkIMHtml markup */
 	char *(*read)(GaimLog *log, GaimLogReadFlags *flags);
-	
+
 	/** Given one of the logs returned by the logger's list function,
 	 * this returns the size of the log in bytes */
 	int (*size)(GaimLog *log);
@@ -112,9 +112,10 @@ struct _GaimLog {
 extern "C" {
 #endif
 
-	/***************************************
-	 ** LOG FUNCTIONS **********************
-	 ***************************************/
+	/***************************************/
+	/** @name Log Functions                */
+	/***************************************/
+	/*@{*/
 
 	/**
 	 * Creates a new log
@@ -206,10 +207,12 @@ extern "C" {
 	 * @return					A value as specified by GCompareFunc
 	 */
 	 gint gaim_log_compare(gconstpointer y, gconstpointer z);
+	/*@}*/
 
-	/******************************************
-	 ** LOGGER FUNCTIONS **********************
-	 ******************************************/
+	/******************************************/
+	/** @name Logger Functions                */
+	/******************************************/
+	/*@{*/
 
 	/**
 	 * Creates a new logger
@@ -277,7 +280,7 @@ extern "C" {
 	GList *gaim_log_logger_get_options(void);
 
 	void gaim_log_init(void);
-/*@}*/
+	/*@}*/
 
 
 #ifdef __cplusplus
