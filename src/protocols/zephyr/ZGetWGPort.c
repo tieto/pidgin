@@ -29,7 +29,7 @@ int ZGetWGPort()
 	(void) sprintf(name, "/tmp/wg.%d", getuid());
 	envptr = name;
     } 
-    if (!(fp = g_fopen(envptr, "r")))
+    if (!(fp = fopen(envptr, "r")))
 	return (-1);
 
     /* if fscanf fails, return -1 via wgport */
