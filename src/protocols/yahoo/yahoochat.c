@@ -40,6 +40,9 @@
 
 #define YAHOO_CHAT_ID (1)
 
+/* prototype(s) */
+static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *dn, gboolean logout);
+
 /* special function to log us on to the yahoo chat service */
 static void yahoo_chat_online(GaimConnection *gc)
 {
@@ -298,9 +301,22 @@ void yahoo_process_chat_online(GaimConnection *gc, struct yahoo_packet *pkt)
 void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
+	GSList *l;
+	
+	for (l = pkt->hash; l; l = l->next) {
+		struct yahoo_pair *pair = l->data;
 
-	if (pkt->status == 1)
+		if (pair->key == 1)
+			if (g_ascii_strcasecmp(pair->value,
+					gaim_connection_get_display_name(gc)))
+				return;
+	}
+	
+	if (pkt->status == 1) {
 		yd->chat_online = 0;
+		if (yd->in_chat)
+			yahoo_c_leave(gc, YAHOO_CHAT_ID);
+	}
 }
 
 void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -369,18 +385,21 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		return;
 
 	if (yd->chat_name && gaim_utf8_strcasecmp(room, yd->chat_name))
-		yahoo_c_leave(gc, YAHOO_CHAT_ID);
+		yahoo_chat_leave(gc, room,
+				gaim_connection_get_display_name(gc), FALSE);
 
 	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 
-	if (!c) {
+	if (!c && members && ((g_list_length(members) > 1) ||
+				!g_ascii_strcasecmp(members->data,
+				gaim_connection_get_display_name(gc)))) {
 		c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 		if (topic)
 			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 		yd->in_chat = 1;
 		yd->chat_name = g_strdup(room);
 		gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
-	} else {
+	} else if (c) {
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
@@ -390,6 +409,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
+	char *room = NULL;
 	GSList *l;
 	struct yahoo_data *yd;
 
@@ -398,14 +418,16 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
 
+		if (pair->key == 104)
+			room = pair->value;
 		if (pair->key == 109)
 			who = pair->value;
 	}
 
 
-	if (who) {
+	if (who && room) {
 		GaimConversation *c = gaim_find_chat(gc, YAHOO_CHAT_ID);
-		if (c)
+		if (c && !gaim_utf8_strcasecmp(gaim_conversation_get_name(c), room))
 			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
 
 	}
@@ -623,9 +645,11 @@ static void yahoo_conf_invite(struct yahoo_data *yd, GaimConversation *c,
  * Functions dealing with chats
  */
 
-static void yahoo_chat_leave(struct yahoo_data *yd, const char *room, const char *dn)
+static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *dn, gboolean logout)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
+	GaimConversation *c;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -644,6 +668,19 @@ static void yahoo_chat_leave(struct yahoo_data *yd, const char *room, const char
 		yd->chat_name = NULL;
 	}
 
+	if ((c = gaim_find_chat(gc, YAHOO_CHAT_ID)))
+		serv_got_chat_left(gc, YAHOO_CHAT_ID);
+
+	if (!logout)
+		return;
+	
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATLOGOUT,
+			YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, dn);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+
+	yd->chat_online = 0;
 }
 
 /* borrowed from gtkconv.c */
@@ -791,7 +828,7 @@ void yahoo_c_leave(GaimConnection *gc, int id)
 			gaim_connection_get_display_name(gc), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)));
 			yd->confs = g_slist_remove(yd->confs, c);
 	} else {
-		yahoo_chat_leave(yd, gaim_conversation_get_name(c), gaim_connection_get_display_name(gc));
+		yahoo_chat_leave(gc, gaim_conversation_get_name(c), gaim_connection_get_display_name(gc), TRUE);
 	}
 
 	serv_got_chat_left(gc, id);
@@ -868,7 +905,9 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 		return;
 	} else {
 		if (yd->in_chat)
-			yahoo_c_leave(gc, YAHOO_CHAT_ID);
+			yahoo_chat_leave(gc, room,
+					gaim_connection_get_display_name(gc),
+					FALSE);
 		if (!yd->chat_online)
 			yahoo_chat_online(gc);
 		yahoo_chat_join(yd, gaim_connection_get_display_name(gc), room, topic);
