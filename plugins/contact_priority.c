@@ -138,10 +138,10 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
 
 	/* Explanation */
-	label = gtk_label_new(_("The buddy with the lowest score is the buddy who will have priority in the contact.\nThe default values (offline = 4,away = 2, and idle = 1)\nwill use what used to be the built-in order active->idle->away->away+idle->offline."));
+	label = gtk_label_new(_("The buddy with the lowest score is the buddy who will have priority in the contact.\nThe default values (offline = 4, away = 2, and idle = 1) will use what used to be\nthe built-in order: active, idle, away, away + idle, offline."));
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	frame = gaim_gtk_make_frame(ret, _("Point values to use for Account..."));
+	frame = gaim_gtk_make_frame(ret, _("Point values to use for account..."));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
