@@ -935,13 +935,6 @@ GtkWidget *list_page() {
 	g_list_free(l);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
-	gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
-							"/gaim/gtk/blist/button_style",
-							_("Pictures"), GAIM_BUTTON_IMAGE,
-							_("Text"), GAIM_BUTTON_TEXT,
-							_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
-							_("None"), GAIM_BUTTON_NONE,
-							NULL);
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/blist/raise_on_events", vbox);
 

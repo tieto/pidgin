@@ -68,9 +68,6 @@ struct _GaimGtkBuddyList {
 	GtkItemFactory *ift;
 	GtkWidget *bpmenu;              /**< The buddy pounce menu. */
 
-	GtkWidget *bbox;                /**< A Button Box. */
-	GtkTooltips *tooltips;           /**< Tooltips for the buttons. */
-
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */

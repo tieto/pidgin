@@ -590,51 +590,6 @@ static void gtk_blist_show_onlinehelp_cb()
 	gaim_notify_uri(NULL, GAIM_WEBSITE "documentation.php");
 }
 
-static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = gtk_tree_view_get_model(tv);
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
-
-	if(gtk_tree_selection_get_selected(sel, &model, &iter)){
-		GaimBlistNode *node;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
-		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			gaim_gtkdialogs_im_with_user(((GaimBuddy*)node)->account, ((GaimBuddy*)node)->name);
-			return;
-		} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
-			GaimBuddy *buddy =
-				gaim_contact_get_priority_buddy((GaimContact*)node);
-			gaim_gtkdialogs_im_with_user(buddy->account, buddy->name);
-			return;
-		}
-	}
-	gaim_gtkdialogs_im();
-}
-
-static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = gtk_tree_view_get_model(tv);
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
-
-	if(gtk_tree_selection_get_selected(sel, &model, &iter)){
-		GaimBlistNode *node;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
-		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			serv_get_info(((GaimBuddy*)node)->account->gc, ((GaimBuddy*)node)->name);
-			return;
-		} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
-			GaimBuddy *buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
-			serv_get_info(buddy->account->gc, buddy->name);
-			return;
-		}
-	}
-	gaim_gtkdialogs_info();
-}
-
 static void
 do_join_chat(GaimGtkJoinChatData *data)
 {
@@ -894,31 +849,6 @@ gaim_gtk_blist_joinchat_show(void)
 	g_object_unref(data->sg);
 
 	gtk_widget_show_all(data->window);
-}
-
-static void gtk_blist_button_chat_cb(GtkWidget *w, GtkTreeView *tv)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = gtk_tree_view_get_model(tv);
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
-
-	if(gtk_tree_selection_get_selected(sel, &model, &iter)){
-		GaimBlistNode *node;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
-		if (GAIM_BLIST_NODE_IS_CHAT(node)) {
-			serv_join_chat(((GaimChat *)node)->account->gc, ((GaimChat *)node)->components);
-			return;
-		}
-	}
-	gaim_gtk_blist_joinchat_show();
-}
-
-static void gtk_blist_button_away_cb(GtkWidget *w, gpointer data)
-{
-	/* FIXME: Status */
-	gtk_menu_popup(GTK_MENU(awaymenu), NULL, NULL, NULL, NULL,
-				   1, GDK_CURRENT_TIME);
 }
 
 static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
@@ -3069,8 +2999,6 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());
-
-	gaim_gtk_blist_update_toolbar();
 }
 
 
@@ -3171,8 +3099,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
-	GtkWidget *button;
-	GtkSizeGroup *sg;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3332,59 +3258,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_restore_position();
 	gtk_widget_show_all(gtkblist->window);
 
-	/**************************** Button Box **************************************/
-	/* add this afterwards so it doesn't force up the width of the window         */
-	/* What?  Won't GTK dynamically resize the width to accomodate the widgets?   */
-
-	gtkblist->tooltips = gtk_tooltips_new();
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-	gtkblist->bbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->bbox, FALSE, FALSE, 0);
-	gtk_widget_show(gtkblist->bbox);
-
-	button = gaim_pixbuf_button_from_stock(_("I_M"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
-			 gtkblist->treeview);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Send a message to the selected buddy"), NULL);
-	g_object_set_data(G_OBJECT(button), "button_name", "im");
-	gtk_widget_show(button);
-
-	button = gaim_pixbuf_button_from_stock(_("Get _Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
-			 gtkblist->treeview);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Get information on the selected buddy"), NULL);
-	g_object_set_data(G_OBJECT(button), "button_name", "info");
-	gtk_widget_show(button);
-
-	button = gaim_pixbuf_button_from_stock(_("_Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_chat_cb), gtkblist->treeview);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Join a chat room"), NULL);
-	gtk_widget_set_sensitive(button, gaim_gtk_blist_joinchat_is_showable());
-	g_object_set_data(G_OBJECT(button), "button_name", "chat");
-	gtk_widget_show(button);
-
-	button = gaim_pixbuf_button_from_stock(_("_Away"), GAIM_STOCK_ICON_AWAY, GAIM_BUTTON_VERTICAL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Set an away message"), NULL);
-	g_object_set_data(G_OBJECT(button), "button_name", "away");
-	gtk_widget_show(button);
-
-	/* this will show the right image/label widgets for us */
-	gaim_gtk_blist_update_toolbar();
-
 	/* start the refresh timer */
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") ||
 		gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
@@ -3392,17 +3265,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 		gtkblist->refresh_timer = g_timeout_add(30000,
 				(GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 	}
-
-	/* attach prefs callbacks */
-	/* for the toolbar buttons */
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/button_style",
-					gaim_gtk_blist_update_toolbar, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_buttons",
-					gaim_gtk_blist_update_toolbar, NULL)));
 
 	/* things that affect how buddies are displayed */
 	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
@@ -3561,44 +3423,6 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 	}
 	gtk_tree_path_free(path);
 	return TRUE;
-}
-
-static void
-gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer data)
-{
-	GaimButtonStyle style = gaim_prefs_get_int("/gaim/gtk/blist/button_style");
-
-	if (GTK_IS_IMAGE(widget)) {
-		if (style == GAIM_BUTTON_IMAGE || style == GAIM_BUTTON_TEXT_IMAGE)
-			gtk_widget_show(widget);
-		else
-			gtk_widget_hide(widget);
-	}
-	else if (GTK_IS_LABEL(widget)) {
-		if (style == GAIM_BUTTON_IMAGE)
-			gtk_widget_hide(widget);
-		else
-			gtk_widget_show(widget);
-	}
-	else if (GTK_IS_CONTAINER(widget)) {
-		if (GTK_IS_BUTTON(widget) && !strcmp(g_object_get_data(G_OBJECT(widget), "button_name"), "chat"))
-				gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
-		gtk_container_foreach(GTK_CONTAINER(widget),
-							  gaim_gtk_blist_update_toolbar_icons, NULL);
-	}
-}
-
-void gaim_gtk_blist_update_toolbar() {
-	if (!gtkblist)
-		return;
-
-	if (gaim_prefs_get_int("/gaim/gtk/blist/button_style") == GAIM_BUTTON_NONE)
-		gtk_widget_hide(gtkblist->bbox);
-	else {
-		gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox),
-							  gaim_gtk_blist_update_toolbar_icons, NULL);
-		gtk_widget_show(gtkblist->bbox);
-	}
 }
 
 static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
@@ -3982,8 +3806,6 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 
 	gaim_gtk_blist_tooltip_destroy();
 
-	gtk_object_sink(GTK_OBJECT(gtkblist->tooltips));
-
 	if (gtkblist->refresh_timer)
 		g_source_remove(gtkblist->refresh_timer);
 	if (gtkblist->timeout)
@@ -3995,7 +3817,6 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->treemodel = NULL;
 	gtkblist->idle_column = NULL;
 	gtkblist->warning_column = gtkblist->buddy_icon_column = NULL;
-	gtkblist->bbox = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
 	pluginmenu = NULL;
@@ -4732,7 +4553,6 @@ void gaim_gtk_blist_init(void)
 	/* Initialize prefs */
 	gaim_prefs_add_none("/gaim/gtk/blist");
 	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
-	gaim_prefs_add_int("/gaim/gtk/blist/button_style", GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
