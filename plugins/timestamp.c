@@ -138,7 +138,6 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
 
 	interval = gaim_prefs_get_int("/plugins/gtk/timestamp/interval");
-	gaim_debug(GAIM_DEBUG_ERROR, "XXX", "Got interval from prefs: %d\n", interval);
 
 	return TRUE;
 }
