@@ -1210,11 +1210,16 @@ static const char *
 msn_normalize(const GaimAccount *account, const char *str)
 {
 	static char buf[BUF_LEN];
+	char *tmp;
 
 	g_return_val_if_fail(str != NULL, NULL);
 
 	g_snprintf(buf, sizeof(buf), "%s%s", str,
 			   (strchr(str, '@') ? "" : "@hotmail.com"));
+
+	tmp = g_utf8_strdown(buf, -1);
+	strncpy(buf, tmp, sizeof(buf));
+	g_free(tmp);
 
 	return buf;
 }
