@@ -792,9 +792,19 @@ trepia_login(GaimAccount *account)
 static void
 trepia_close(GaimConnection *gc)
 {
+	TrepiaSession *session = gc->proto_data;
+
 	__clear_user_list(gaim_connection_get_account(gc));
 
-	g_free(gc->proto_data);
+	if (session->rxqueue != NULL)
+		g_string_free(session->rxqueue, TRUE);
+
+	if (session->inpa)
+		gaim_input_remove(session->inpa);
+
+	close(session->fd);
+
+	g_free(session);
 
 	gc->proto_data = NULL;
 }
