@@ -119,7 +119,14 @@ void gaim_quotedp_decode (const char *str, char **ret_str, int *ret_len);
 
 /**
  * Converts a MIME header field string back to its readable equivalent
- * according to RFC 2047.
+ * according to RFC 2047.  Basically, a header is plain ASCII and can 
+ * contain any number of sections called "encoded-words."  The format 
+ * of an encoded word is =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=
+ * =? designates the beginning of the encoded-word
+ * ?= designates the end of the encoded-word
+ * ? segments the encoded word into three pieces.  The first piece is 
+ *   the character set, the second peice is the encoding, and the 
+ *   third piece is the encoded text.
  *
  * @param str The string to convert back.
  *
