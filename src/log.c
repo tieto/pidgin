@@ -487,9 +487,9 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			date, from, msg_fixed);
 	else if (type & GAIM_MESSAGE_AUTO_RESP) {
 		if (type & GAIM_MESSAGE_SEND)
-			fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-REPLY&lt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+			fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		else if (type & GAIM_MESSAGE_RECV)
-			fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-REPLY&lt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+			fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 	} else if (type & GAIM_MESSAGE_RECV) {
 		if(gaim_message_meify(msg_fixed, -1))
 			fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
