@@ -245,7 +245,6 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			g_snprintf(u->password, sizeof(u->password), "%s", txt);
 		else
 			u->password[0] = '\0';
-		gtk_widget_destroy(u->mod);
 		i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
 		gtk_clist_set_text(GTK_CLIST(list), i, 2,
 				   (u->options & OPT_USR_AUTO) ? "True" : "False");
@@ -262,6 +261,8 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		if (u->opt_entries)
 			g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
+
+		gtk_widget_destroy(u->mod);
 	} else {
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
 		u = new_user(txt, tmpusr.protocol, tmpusr.options);
@@ -484,6 +485,14 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
 
+	if (u && u->opt_entries) {
+		g_list_free(u->opt_entries);
+		u->opt_entries = NULL;
+	} else if (!u && tmpusr.opt_entries) {
+		g_list_free(tmpusr.opt_entries);
+		tmpusr.opt_entries = NULL;
+	}
+
 	if (p && p->user_opts) {
 		GList *op = (*p->user_opts)();
 		GList *tmp = op;
@@ -494,14 +503,6 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 		GtkWidget *entry;
 
 		char buf[256];
-
-		if (u && u->opt_entries) {
-			g_list_free(u->opt_entries);
-			u->opt_entries = NULL;
-		} else if (!u && tmpusr.opt_entries) {
-			g_list_free(tmpusr.opt_entries);
-			tmpusr.opt_entries = NULL;
-		}
 
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
