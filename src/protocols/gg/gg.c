@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4639 2003-01-21 00:38:33Z hermanator $
+ * $Id: gg.c 4712 2003-01-27 22:27:02Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -788,7 +788,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 		g_strdelimit(users_tbl[i], "\r\t\n\015", ' ');
 		data_tbl = g_strsplit(users_tbl[i], ";", 8);
 
-		show = data_tbl[3];
+		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
 		name = data_tbl[6];
 
 		if (invalid_uin(name)) {
@@ -812,6 +812,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 			gaim_blist_save();
 			g_free(group);
 		}
+		g_free(show);
 		g_strfreev(data_tbl);
 	}
 	g_strfreev(users_tbl);
