@@ -1033,7 +1033,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	binding_set = gtk_binding_set_by_class (parent_class);
-	gtk_binding_entry_add_signal (binding_set, GDK_a, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
+	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
 	gtk_binding_entry_add_signal (binding_set, GDK_u, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_UNDERLINE);
 	gtk_binding_entry_add_signal (binding_set, GDK_plus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
