@@ -885,14 +885,36 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_widget_show_all(acctedit);
 }
 
+struct signon_meter {
+	struct gaim_connection *gc;
+	GtkWidget *window;
+	GtkWidget *progress;
+	GtkWidget *status;
+};
+static GSList *meters = NULL;
+
+static struct signon_meter *find_signon_meter(struct gaim_connection *gc)
+{
+	GSList *m = meters;
+	while (m) {
+		if (((struct signon_meter *)m->data)->gc == gc)
+			return m->data;
+		m = m->next;
+	}
+	return NULL;
+}
+
 void account_online(struct gaim_connection *gc)
 {
 	int i;
+	struct signon_meter *meter = find_signon_meter(gc);
 
 	/* first we hide the login progress meter */
-	if (gc->meter)
-		gtk_widget_destroy(gc->meter);
-	gc->meter = NULL;
+	if (meter) {
+		gtk_widget_destroy(meter->window);
+		meters = g_slist_remove(meters, meter);
+		g_free(meter);
+	}
 
 	/* then we do the buddy list stuff */
 	if (mainwindow)
@@ -953,9 +975,12 @@ void account_online(struct gaim_connection *gc)
 void account_offline(struct gaim_connection *gc)
 {
 	int i;
-	if (gc->meter)
-		gtk_widget_destroy(gc->meter);
-	gc->meter = NULL;
+	struct signon_meter *meter = find_signon_meter(gc);
+	if (meter) {
+		gtk_widget_destroy(meter->window);
+		meters = g_slist_remove(meters, meter);
+		g_free(meter);
+	}
 	gc->user->gc = NULL;	/* wasn't that awkward? */
 	if (!acctedit)
 		return;
@@ -980,66 +1005,71 @@ void auto_login()
 	}
 }
 
-static void cancel_signon(GtkWidget *button, struct gaim_connection *gc)
+static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 {
-	gc->wants_to_die = TRUE;
-	signoff(gc);
+	meter->gc->wants_to_die = TRUE;
+	signoff(meter->gc);
 }
 
-static gint meter_destroy(GtkWidget *meter, GdkEvent *evt, struct gaim_connection *gc)
+static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct signon_meter *meter)
 {
 	return TRUE;
 }
 
 void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 {
+	struct signon_meter *meter = find_signon_meter(gc);
+
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
-	if (!gc->meter) {
+	if (!meter) {
 		GtkWidget *box, *label, *button;
 		char buf[256];
 
-		gc->meter = gtk_window_new(GTK_WINDOW_DIALOG);
-		gtk_window_set_policy(GTK_WINDOW(gc->meter), 0, 0, 1);
-		gtk_window_set_wmclass(GTK_WINDOW(gc->meter), "signon", "Gaim");
-		gtk_container_set_border_width(GTK_CONTAINER(gc->meter), 5);
+		meter = g_new0(struct signon_meter, 1);
+		meter->gc = gc;
+
+		meter->window = gtk_window_new(GTK_WINDOW_DIALOG);
+		gtk_window_set_policy(GTK_WINDOW(meter->window), 0, 0, 1);
+		gtk_window_set_wmclass(GTK_WINDOW(meter->window), "signon", "Gaim");
+		gtk_container_set_border_width(GTK_CONTAINER(meter->window), 5);
 		g_snprintf(buf, sizeof(buf), "%s Signing On", gc->username);
-		gtk_window_set_title(GTK_WINDOW(gc->meter), buf);
-		gtk_signal_connect(GTK_OBJECT(gc->meter), "delete_event",
-				   GTK_SIGNAL_FUNC(meter_destroy), gc);
-		gtk_widget_realize(gc->meter);
-		aol_icon(gc->meter->window);
+		gtk_window_set_title(GTK_WINDOW(meter->window), buf);
+		gtk_signal_connect(GTK_OBJECT(meter->window), "delete_event",
+				   GTK_SIGNAL_FUNC(meter_destroy), meter);
+		gtk_widget_realize(meter->window);
+		aol_icon(meter->window->window);
 
 		box = gtk_vbox_new(FALSE, 5);
-		gtk_container_add(GTK_CONTAINER(gc->meter), box);
+		gtk_container_add(GTK_CONTAINER(meter->window), box);
 		gtk_widget_show(box);
 
 		label = gtk_label_new(buf);
 		gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 
-		gc->progress = gtk_progress_bar_new();
-		gtk_widget_set_usize(gc->progress, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), gc->progress, FALSE, FALSE, 0);
-		gtk_widget_show(gc->progress);
+		meter->progress = gtk_progress_bar_new();
+		gtk_widget_set_usize(meter->progress, 150, 0);
+		gtk_box_pack_start(GTK_BOX(box), meter->progress, FALSE, FALSE, 0);
+		gtk_widget_show(meter->progress);
 
-		gc->status = gtk_statusbar_new();
-		gtk_widget_set_usize(gc->status, 150, 0);
-		gtk_box_pack_start(GTK_BOX(box), gc->status, FALSE, FALSE, 0);
-		gtk_widget_show(gc->status);
+		meter->status = gtk_statusbar_new();
+		gtk_widget_set_usize(meter->status, 150, 0);
+		gtk_box_pack_start(GTK_BOX(box), meter->status, FALSE, FALSE, 0);
+		gtk_widget_show(meter->status);
 
 		button = gtk_button_new_with_label(_("Cancel"));
 		gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_signon), gc);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_signon), meter);
 		gtk_widget_show(button);
 
-		gtk_widget_show(gc->meter);
+		gtk_widget_show(meter->window);
 	}
 
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(gc->progress), howfar / LOGIN_STEPS);
-	gtk_statusbar_pop(GTK_STATUSBAR(gc->status), 1);
-	gtk_statusbar_push(GTK_STATUSBAR(gc->status), 1, message);
+	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);
+	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
+	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, message);
 }
 
 static void set_kick_null(GtkObject *obj, struct aim_user *u)
@@ -1050,15 +1080,18 @@ static void set_kick_null(GtkObject *obj, struct aim_user *u)
 void hide_login_progress(struct gaim_connection *gc, char *why)
 {
 	char buf[2048];
+	struct signon_meter *meter = find_signon_meter(gc);
 	sprintf(buf, _("%s\n%s was unable to sign on: %s"), full_date(), gc->username, why);
 	if (gc->user->kick_dlg)
 		gtk_widget_destroy(gc->user->kick_dlg);
 	gc->user->kick_dlg = do_error_dialog(buf, _("Signon Error"));
 	gtk_signal_connect(GTK_OBJECT(gc->user->kick_dlg), "destroy",
 			   GTK_SIGNAL_FUNC(set_kick_null), gc->user);
-	if (gc->meter)
-		gtk_widget_destroy(gc->meter);
-	gc->meter = NULL;
+	if (meter) {
+		gtk_widget_destroy(meter->window);
+		meters = g_slist_remove(meters, meter);
+		g_free(meter);
+	}
 }
 
 void signoff_all(gpointer w, gpointer d)

@@ -63,11 +63,6 @@ struct gaim_connection {
 	int is_idle;
 	time_t correction_time;
 
-	/* stuff for a signin progress meter */
-	GtkWidget *meter;
-	GtkWidget *progress;
-	GtkWidget *status;
-
 	char *away;
 	int is_auto_away;
 
