@@ -1156,7 +1156,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_window_set_policy(GTK_WINDOW(meter->window), 0, 0, 1);
 		gtk_window_set_wmclass(GTK_WINDOW(meter->window), "signon", "Gaim");
 		gtk_container_set_border_width(GTK_CONTAINER(meter->window), 5);
-		g_snprintf(buf, sizeof(buf), "%s Signing On", gc->username);
+		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name());
 		gtk_window_set_title(GTK_WINDOW(meter->window), buf);
 		gtk_signal_connect(GTK_OBJECT(meter->window), "delete_event",
 				   GTK_SIGNAL_FUNC(meter_destroy), meter);
