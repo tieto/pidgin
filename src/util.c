@@ -2944,6 +2944,78 @@ gaim_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
+/** Stolen from gnome_uri_list_extract_uris **/
+GList* gaim_uri_list_extract_uris (const gchar* uri_list) {
+	const gchar *p, *q;
+	gchar *retval;
+	GList *result = NULL;
+
+	g_return_val_if_fail (uri_list != NULL, NULL);
+
+	p = uri_list;
+
+	/* We don't actually try to validate the URI according to RFC
+	* 2396, or even check for allowed characters - we just ignore
+	* comments and trim whitespace off the ends.  We also
+	* allow LF delimination as well as the specified CRLF.
+	*/
+	while (p) {
+		if (*p != '#') {
+			while (isspace(*p))
+				p++;
+
+			q = p;
+			while (*q && (*q != '\n') && (*q != '\r'))
+				q++;
+
+			if (q > p) {
+				q--;
+				while (q > p && isspace(*q))
+					q--;
+
+				retval = (gchar*)g_malloc (q - p + 2);
+				strncpy (retval, p, q - p + 1);
+				retval[q - p + 1] = '\0';
+
+				result = g_list_prepend (result, retval);
+			}
+		}
+		p = strchr (p, '\n');
+		if (p)
+			p++;
+	}
+
+	return g_list_reverse (result);
+}
+
+
+/** Stolen from gaim_uri_list_extract_filenames **/
+GList* gaim_uri_list_extract_filenames (const gchar* uri_list) {
+	GList *tmp_list, *node, *result;
+
+	g_return_val_if_fail (uri_list != NULL, NULL);
+
+	result = gaim_uri_list_extract_uris (uri_list);
+
+	tmp_list = result;
+	while (tmp_list) {
+		gchar *s = (gchar*)tmp_list->data;
+
+		node = tmp_list;
+		tmp_list = tmp_list->next;
+
+		if (!strncmp (s, "file:", 5)) {
+			node->data = g_filename_from_uri (s, NULL, NULL);
+			/* not sure if this fallback is useful at all */
+			if (!node->data) node->data = g_strdup (s+5);
+		} else {
+			result = g_list_remove_link(result, node);
+			g_list_free_1 (node);
+		}
+		g_free (s);
+	}
+	return result;
+}
 
 /**************************************************************************
  * UTF8 String Functions

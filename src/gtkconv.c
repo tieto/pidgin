@@ -4420,21 +4420,23 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	else if (sd->target == gdk_atom_intern("text/uri-list", FALSE)) {
 		if (!g_ascii_strncasecmp(sd->data, "file://", 7)) {
 			GError *converr = NULL;
+			GList *tmp;
+			GList *files = gaim_uri_list_extract_filenames(sd->data);
+        		for(tmp = files; tmp != NULL ; tmp = g_list_next(tmp)) {
+                  		gchar *filename = tmp->data;
+				/* XXX - Make ft API support creating a transfer with more than one file */
+				if (g_file_test(filename, G_FILE_TEST_EXISTS) 
+						&& !g_file_test(filename, G_FILE_TEST_IS_DIR) 
+						&& gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+					serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), filename);
+				}
+				g_free(filename);
+        		}
+			g_list_free(files);
 			gchar *file;
-			if(!(file = g_filename_from_uri(sd->data, NULL, &converr))) {
-				gaim_debug(GAIM_DEBUG_ERROR, "conv dnd", "%s\n",
-					   (converr ? converr->message :
-					    "g_filename_from_uri error"));
-				g_error_free(converr);
-				return;
-			}
-			file = g_strchomp(file);
-			/* XXX - Handle dragging more than one file.  Make ft API support creating a transfer with more than one file */
 			/* XXX - Attempt to load this file into gdk_pixbuf, or otherwise determine if it is an image.  If it is, offer
 			 * the choice of a) sending this file b) inserting this file as an IM image or c) setting this file as a custom
 			 * buddy icon for this buddy */
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-				serv_send_file(gaim_conversation_get_gc(conv), gaim_conversation_get_name(conv), file);
 			g_free(file);
 		}
 	}
