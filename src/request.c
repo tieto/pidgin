@@ -1050,6 +1050,16 @@ gaim_request_field_account_set_show_all(GaimRequestField *field,
 	}
 }
 
+void
+gaim_request_field_account_set_filter(GaimRequestField *field,
+									  GaimFilterAccountFunc filter_func)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+
+	field->u.account.filter_func = filter_func;
+}
+
 GaimAccount *
 gaim_request_field_account_get_default_value(const GaimRequestField *field)
 {
@@ -1075,6 +1085,15 @@ gaim_request_field_account_get_show_all(const GaimRequestField *field)
 	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, FALSE);
 
 	return field->u.account.show_all;
+}
+
+GaimFilterAccountFunc
+gaim_request_field_account_get_filter(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, FALSE);
+
+	return field->u.account.filter_func;
 }
 
 /* -- */

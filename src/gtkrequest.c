@@ -659,7 +659,9 @@ create_account_field(GaimRequestField *field)
 	widget = gaim_gtk_account_option_menu_new(
 		gaim_request_field_account_get_default_value(field),
 		gaim_request_field_account_get_show_all(field),
-		G_CALLBACK(field_account_cb), NULL, field);
+		G_CALLBACK(field_account_cb),
+		gaim_request_field_account_get_filter(field),
+		field);
 
 	return widget;
 }

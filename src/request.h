@@ -154,6 +154,8 @@ typedef struct
 			GaimAccount *account;
 			gboolean show_all;
 
+			GaimFilterAccountFunc filter_func;
+
 		} account;
 
 	} u;
@@ -995,6 +997,18 @@ void gaim_request_field_account_set_show_all(GaimRequestField *field,
 											 gboolean show_all);
 
 /**
+ * Sets the account filter function in an account field.
+ *
+ * This function will determine which accounts get displayed and which
+ * don't.
+ *
+ * @param field       The account field.
+ * @param filter_func The account filter function.
+ */
+void gaim_request_field_account_set_filter(GaimRequestField *field,
+										   GaimFilterAccountFunc filter_func);
+
+/**
  * Returns the default account in an account field.
  *
  * @param field The field.
@@ -1024,6 +1038,19 @@ GaimAccount *gaim_request_field_account_get_value(
  * @param show_all Whether or not to show all accounts.
  */
 gboolean gaim_request_field_account_get_show_all(
+		const GaimRequestField *field);
+
+/**
+ * Returns the account filter function in an account field.
+ *
+ * This function will determine which accounts get displayed and which
+ * don't.
+ *
+ * @param field       The account field.
+ *
+ * @return The account filter function.
+ */
+GaimFilterAccountFunc gaim_request_field_account_get_filter(
 		const GaimRequestField *field);
 
 /*@}*/

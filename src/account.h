@@ -27,8 +27,12 @@
 #ifndef _GAIM_ACCOUNTS_H_
 #define _GAIM_ACCOUNTS_H_
 
+#include <glib.h>
+
 typedef struct _GaimAccountUiOps GaimAccountUiOps;
 typedef struct _GaimAccount      GaimAccount;
+
+typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 
 #include "connection.h"
 #include "proxy.h"

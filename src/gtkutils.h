@@ -55,8 +55,6 @@ typedef enum
 } GaimBrowserPlace;
 #endif /* _WIN32 */
 
-typedef gboolean (*GaimCheckAccountFunc)(GaimAccount *account);
-
 extern guint accels_save_timer;
 
 /**
@@ -256,19 +254,19 @@ GtkWidget *gaim_gtk_protocol_option_menu_new(const char *id,
 /**
  * Creates a drop-down option menu filled with accounts.
  *
- * @param default_account    The account to select by default.
- * @param show_all           Whether or not to show all accounts, or just
- *                           active accounts.
- * @param cb                 The callback to call when an account is selected.
- * @param check_account_func A function for checking if an account should
- *                           be shown. This can be NULL.
- * @param user_data          Data to pass to the callback function.
+ * @param default_account The account to select by default.
+ * @param show_all        Whether or not to show all accounts, or just
+ *                        active accounts.
+ * @param cb              The callback to call when an account is selected.
+ * @param filter_func     A function for checking if an account should
+ *                        be shown. This can be NULL.
+ * @param user_data       Data to pass to the callback function.
  *
  * @return The drop-down option menu.
  */
 GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 		gboolean show_all, GCallback cb,
-		GaimCheckAccountFunc check_account_func, gpointer user_data);
+		GaimFilterAccountFunc filter_func, gpointer user_data);
 
 /**
  * Check if the given path is a directory or not.  If it is, then modify
