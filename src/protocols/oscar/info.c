@@ -23,6 +23,9 @@ faim_export int aim_getinfo(aim_session_t *sess, aim_conn_t *conn, const char *s
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
+	if ((infotype != AIM_GETINFO_GENERALINFO) && (infotype != AIM_GETINFO_AWAYMESSAGE))
+		return -EINVAL;
+
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
 		return -ENOMEM;
 
@@ -598,8 +601,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	inforeq = (struct aim_priv_inforeq *)origsnac->data;
 
 	if ((inforeq->infotype != AIM_GETINFO_GENERALINFO) &&
-			(inforeq->infotype != AIM_GETINFO_AWAYMESSAGE) &&
-			(inforeq->infotype != AIM_GETINFO_CAPABILITIES)) {
+			(inforeq->infotype != AIM_GETINFO_AWAYMESSAGE)) {
 		faimdprintf(sess, 0, "parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
 		return 0;
 	}
@@ -612,30 +614,18 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 * Depending on what informational text was requested, different
 	 * TLVs will appear here.
 	 *
-	 * Profile will be 1 and 2, away message will be 3 and 4, caps
-	 * will be 5.
+	 * Profile will be 1 and 2, away message will be 3 and 4.
 	 */
-	if (inforeq->infotype == AIM_GETINFO_GENERALINFO) {
+	if (aim_gettlv(tlvlist, 0x0001, 1)) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
 		text = aim_gettlv_str(tlvlist, 0x0002, 1);
-	} else if (inforeq->infotype == AIM_GETINFO_AWAYMESSAGE) {
+	} else if (aim_gettlv(tlvlist, 0x0003, 1)) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
 		text = aim_gettlv_str(tlvlist, 0x0004, 1);
-	} else if (inforeq->infotype == AIM_GETINFO_CAPABILITIES) {
-		aim_tlv_t *ct;
-
-		if ((ct = aim_gettlv(tlvlist, 0x0005, 1))) {
-			aim_bstream_t cbs;
-
-			aim_bstream_init(&cbs, ct->value, ct->length);
-
-			userinfo.capabilities = aim_getcap(sess, &cbs, ct->length);
-			userinfo.capspresent = 1;
-		}
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, inforeq->infotype, text_encoding, text);
+		ret = userfunc(sess, rx, &userinfo, text_encoding, text, inforeq->infotype);
 
 	free(text_encoding);
 	free(text);
