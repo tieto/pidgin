@@ -35,6 +35,9 @@ DEFINES =
 
 include $(GAIM_TOP)/src/win32/global.mak
 
+# Perl headers with /* /* */ type comments.. Turn off warnings.
+CFLAGS += -Wno-comment
+
 ##
 ## INCLUDE PATHS
 ##
