@@ -363,8 +363,9 @@ GtkWidget *messages_page() {
 	gaim_button(_("Show graphical _smileys"), &convo_options_new, OPT_CONVO_SHOW_SMILEY, vbox);
 	gaim_button(_("Show _timestamp on messages"), &convo_options_new, OPT_CONVO_SHOW_TIME, vbox);
 	gaim_button(_("Show _URLs as links"), &convo_options_new, OPT_CONVO_SEND_LINKS, vbox);
+#ifdef USE_GTKSPELL
 	gaim_button(_("_Highlight misspelled words"), &convo_options_new, OPT_CONVO_CHECK_SPELLING, vbox);
-
+#endif
 	vbox = make_frame (ret, _("Ignore"));
 	gaim_button(_("Ignore c_olors"), &convo_options_new, OPT_CONVO_IGNORE_COLOUR, vbox);
 	gaim_button(_("Ignore font _faces"), &convo_options_new, OPT_CONVO_IGNORE_FONTS, vbox);
