@@ -1475,7 +1475,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_widget_show(big_p);
 	gdk_bitmap_unref(mask);
 	font_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-			&win->style->white, bold_xpm );
+			&win->style->white, fontface_xpm );
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
 	gdk_bitmap_unref(mask);
