@@ -645,8 +645,12 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 			if ((c = strchr(status, '\r')) || (c = strchr(status, '\n')) ||
 				(c = strchr(status, '\0')))
 			{
-				strncpy(temp, status, c - status);
-				temp[c - status] = '\0';
+				size_t offset =  c - status;
+				if (offset >= sizeof(temp))
+					offset = sizeof(temp) - 1;
+		      
+				strncpy(temp, status, offset);
+				temp[offset] = '\0';
 			}
 
 			gaim_debug_error("msn", "Received non-OK result: %s\n", temp);
