@@ -707,6 +707,12 @@ new_pounce_cb(GtkWidget *w, struct buddy *b)
 }
 
 static void
+delete_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
+{
+	gaim_pounce_destroy(pounce);
+}
+
+static void
 edit_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
 {
 	struct buddy *buddy;
@@ -717,14 +723,76 @@ edit_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
 	gaim_gtkpounce_dialog_show(buddy, pounce);
 }
 
+static void
+fill_menu(GtkWidget *menu, GCallback cb)
+{
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *image;
+	GtkWidget *item;
+	GdkPixbuf *pixbuf, *scale;
+	struct gaim_pounce *pounce;
+	const char *buddy;
+	GtkSizeGroup *sg;
+	GList *bp;
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
+		pounce = (struct gaim_pounce *)bp->data;
+		buddy = gaim_pounce_get_pouncee(pounce);
+
+		/* Create a pixmap for the protocol icon. */
+		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+
+		/* Now convert it to GtkImage */
+		if (pixbuf == NULL)
+			image = gtk_image_new();
+		else
+			image = gtk_image_new_from_pixbuf(scale);
+
+		gtk_size_group_add_widget(sg, image);
+
+		g_object_unref(G_OBJECT(scale));
+		g_object_unref(G_OBJECT(pixbuf));
+
+		/* Build the menu item */
+		item = gtk_menu_item_new_with_label(buddy);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+
+		/* Do some evil, see some evil, speak some evil, continued. */
+		box = gtk_hbox_new(FALSE, 0);
+
+		label = gtk_bin_get_child(GTK_BIN(item));
+		g_object_ref(label);
+		gtk_container_remove(GTK_CONTAINER(item), label);
+
+		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+
+		g_object_unref(label);
+
+		gtk_container_add(GTK_CONTAINER(item), box);
+
+		gtk_widget_show(label);
+		gtk_widget_show(image);
+		gtk_widget_show(box);
+
+		/* Set our callbacks. */
+		g_signal_connect(G_OBJECT(item), "activate", cb, pounce);
+	}
+
+	g_object_unref(sg);
+}
+
 void
 gaim_gtkpounce_menu_build(GtkWidget *menu)
 {
-	GtkWidget *remmenu, *item;
+	GtkWidget *remmenu;
+	GtkWidget *item;
 	GList *l;
-	GList *bp;
-	struct gaim_pounce *pounce;
-	const char *buddy;
 
 	for (l = gtk_container_get_children(GTK_CONTAINER(menu));
 		 l != NULL;
@@ -747,17 +815,7 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	/* "Remove Buddy Pounce" menu */
 	remmenu = gtk_menu_new();
 
-	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
-		pounce = (struct gaim_pounce *)bp->data;
-		buddy = gaim_pounce_get_pouncee(pounce);
-
-		item = gtk_menu_item_new_with_label(buddy);
-		gtk_menu_shell_append(GTK_MENU_SHELL(remmenu), item);
-		gtk_widget_show(item);
-
-		g_signal_connect(G_OBJECT(item), "activate",
-						 G_CALLBACK(edit_pounce_cb), pounce);
-	}
+	fill_menu(remmenu, G_CALLBACK(delete_pounce_cb));
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), remmenu);
 	gtk_widget_show(remmenu);
@@ -768,21 +826,6 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
-	/* Pounces */
-	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
-		struct gaim_gtkpounce_data *pounce_data;
-
-		pounce = (struct gaim_pounce *)bp->data;
-		buddy = gaim_pounce_get_pouncee(pounce);
-
-		pounce_data = GAIM_GTKPOUNCE(pounce);
-
-		item = gtk_menu_item_new_with_label(buddy);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-
-		g_signal_connect(G_OBJECT(item), "activate",
-						 G_CALLBACK(edit_pounce_cb), pounce);
-	}
+	fill_menu(menu, G_CALLBACK(edit_pounce_cb));
 }
 
