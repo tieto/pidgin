@@ -906,6 +906,10 @@ extern void add_bookmark(GtkWidget *, char *);
 /* Functions in multi.c */
 extern void account_editor(GtkWidget *, GtkWidget *);
 
+/* Functions in core.c */ /* Don't ever use these */
+extern int core_main();
+extern void core_quit();
+
 /* fucntions in ticker.c */
 void SetTickerPrefs();
 void BuddyTickerSignOff();

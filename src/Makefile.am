@@ -10,6 +10,7 @@ gaim_applet_SOURCES =	about.c \
 			buddy.c \
 			buddy_chat.c \
 			conversation.c \
+			core.c \
 			dialogs.c \
 			gaimrc.c \
 			gtkimhtml.c \
@@ -42,6 +43,7 @@ gaim_SOURCES =	about.c \
 		buddy.c \
 		buddy_chat.c \
 		conversation.c \
+		core.c \
 		dialogs.c \
 		gaimrc.c \
 		gtkimhtml.c \

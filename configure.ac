@@ -41,6 +41,11 @@ dnl This is a bad, bad hack.  I am a bad, bad man.
 CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
+AC_ARG_ENABLE(devel,,,enable_devel=no)
+if test "$enable_devel" = "yes" ; then
+	CFLAGS="$CFLAGS -Wall"
+	AC_DEFINE(DEVEL)
+fi
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
@@ -95,7 +100,7 @@ AC_ARG_ENABLE(artsc,   [  --disable-artsc         Turn off ArtsC (default=auto)]
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 
-AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=$enable_devel)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 

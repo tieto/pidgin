@@ -382,6 +382,7 @@ void sighandler(int sig)
 		signoff_all(NULL, NULL);
 		break;
 	case SIGSEGV:
+		core_quit();
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
@@ -408,6 +409,7 @@ void sighandler(int sig)
 #endif
 		if (gtk_main_level())
 			gtk_main_quit();
+		core_quit();
 		exit(0);
 	}
 }
@@ -620,6 +622,8 @@ int main(int argc, char *argv[])
 
 	load_prefs();
 
+	core_main();
+
 	/* set the default username */
 	if (opt_user_arg != NULL) {
 		set_first_user(opt_user_arg);
@@ -678,6 +682,7 @@ int main(int argc, char *argv[])
 #endif /* USE_APPLET */
 
 	gtkspell_stop();
+	core_quit();
 
 	return 0;
 
