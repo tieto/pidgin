@@ -185,6 +185,7 @@ src/away.c
 src/blist.c
 src/browser.c
 src/buddy_chat.c
+src/connection.c
 src/conversation.c
 src/core.c
 src/dialogs.c
@@ -222,6 +223,7 @@ src/server.c
 src/session.c
 src/socket.c
 src/sound.c
+src/status.c
 src/stock.c
 src/themes.c
 src/util.c

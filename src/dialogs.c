@@ -3989,7 +3989,7 @@ static void log_show_convo(struct view_log *view)
 		gtk_main_iteration();
 	*/
 
-	while (fgets(buf, BUF_LONG, fp) && !strstr(buf, "---- New C")) {
+	while (fgets(buf, BUF_LONG, fp) && strncmp(buf, "---- ", 5)!=0) {
 		i++;
 		if (strlen(buf) >= 5 && (!strncmp(buf + strlen(buf) - 5, "<BR>\n", 5)))
 			/* take off the \n */
@@ -4166,7 +4166,7 @@ void show_log(char *nm)
 		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
 		while (fgets(buf, BUF_LONG, fp)) {
-			if (strstr(buf, "---- New C")) {
+			if (strncmp(buf, "---- ", 5)==0) {
 				int length;
 				char *temp = strchr(buf, '@');
 				GtkTreeIter iter;

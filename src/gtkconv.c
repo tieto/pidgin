@@ -3905,6 +3905,7 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 			fd = open_log_file(filename, (conv_type == GAIM_CONV_CHAT));
 
 			if (fd) {
+			    /* "---- " is a delimiter, see dialogs.c:show_log() */
 				if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 					fprintf(fd,
 							_("<HR><BR><H3 Align=Center> "
