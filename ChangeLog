@@ -6,6 +6,9 @@ version 0.62
 	* Support for Jabber XHTML messages
 	* Updated a number of translations. Thanks to everyone who submitted
 	  a translation update.
+	* Ability to re-request authorization from ICQ users by right 
+	  clicking on them in your buddy list.
+	* Improved Zephyr internationalization.
 
 version 0.61 (04/07/2003):
 	* Split the buddy pounce core and UI, and rewrote the UI for it.

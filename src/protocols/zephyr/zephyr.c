@@ -333,15 +333,15 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				ZLocations_t locs;
 				int one = 1;
 				GString *str = g_string_new("");
-				g_string_append_printf(str, "<b>User:</b> %s<br>"
-								"<b>Alias:</b> %s<br>",
-								b->name, b->alias);
+				g_string_append_printf(str, _("<b>User:</b> %s<br>"), b->name);
+				if (b->alias)
+					g_string_append_printf(str, _("<b>Alias:</b> %s<br>"), b->alias);
 				if (!nlocs) {
-					g_string_append_printf(str, "<br>Hidden or not logged-in");
+					g_string_append_printf(str, _("<br>Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
 					ZGetLocations(&locs, &one);
-					g_string_append_printf(str, "<br>At %s since %s", locs.host,
+					g_string_append_printf(str, _("<br>At %s since %s"), locs.host,
 									locs.time);
 				}
 				g_show_info_text(NULL, NULL, 2, str->str, NULL);
@@ -513,8 +513,7 @@ static void process_zsubs()
 			if (buff[0]) {
 				triple = g_strsplit(buff, ",", 3);
 				if (triple[0] && triple[1] ) {
-					/*					char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"), 
-										ZGetRealm());*/
+					/* char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"), ZGetRealm()); */
 					char *tmp = g_strdup_printf("%s",ZGetSender());
 					char *atptr;
 					sub.zsub_class = triple[0];
@@ -595,8 +594,8 @@ static void zephyr_login(struct gaim_account *account)
 	ZSubscription_t sub;
 
 	if (zgc) {
-		do_error_dialog("Already logged in with Zephyr", "Because Zephyr uses your system username, you are unable to "
-				"have multiple accounts on it when logged in as the same user.", GAIM_ERROR);
+		do_error_dialog(_("Already logged in with Zephyr"), _("Because Zephyr uses your system username, you are unable to "
+				"have multiple accounts on it when logged in as the same user."), GAIM_ERROR);
 		return;
 	}
 
@@ -858,10 +857,10 @@ static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = NULL;
 	}
 
-	if (!g_ascii_strcasecmp(state, "Hidden")) {
+	if (!g_ascii_strcasecmp(state, _("Hidden"))) {
 		ZSetLocation(EXPOSE_OPSTAFF);
 		gc->away = g_strdup("");
-	} else if (!g_ascii_strcasecmp(state, "Online"))
+	} else if (!g_ascii_strcasecmp(state, _("Online")))
 		ZSetLocation(get_exposure_level());
 	else /* state is GAIM_AWAY_CUSTOM */ if (msg)
 		gc->away = g_strdup(msg);
@@ -871,9 +870,9 @@ static GList *zephyr_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Online");
+	m = g_list_append(m, _("Online"));
 	m = g_list_append(m, GAIM_AWAY_CUSTOM);
-	m = g_list_append(m, "Hidden");
+	m = g_list_append(m, _("Hidden"));
 
 	return m;
 }
