@@ -29,7 +29,7 @@ int alpha = 255;
 static void gaim_new_conversation(char *who) {
 	struct conversation *c = find_conversation(who);
 
-	if (!c)
+	if (!c || alpha == 255)
 		return;
 
 	gdk_window_add_filter (GTK_WIDGET(c->window)->window, wgaim_window_filter, c);
