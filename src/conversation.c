@@ -2101,7 +2101,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
-		gdk_font_unref(gtk_style_get_font(style));
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		if (!unhighlight && flags & WFLAG_NICK) {
 			style->fg[0].red = 0x0000;
@@ -2188,10 +2187,12 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	c->log_button = menuitem;  /* We should save this */
 	
 	state_lock = 1;
+
 	if (find_log_info(c->name))
-		 gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(menuitem), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), TRUE);	
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(menuitem), FALSE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), FALSE);	
+
 	state_lock = 0;
 
 	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_loggle), c);
@@ -3571,7 +3572,7 @@ void remove_icon(struct conversation *c)
 		gtk_timeout_remove(c->icon_timer);
 	c->icon_timer = 0;
 	if(c->iter)
-		g_object_unref(c->iter);
+		g_object_unref(G_OBJECT(c->iter));
 }
 
 void update_smilies(struct conversation *c)

@@ -1601,10 +1601,10 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_label_set_pattern(GTK_LABEL(label), "_");
 	gtk_container_add(GTK_CONTAINER(menuitem), label);
 	gtk_widget_show(label);
-
+/* FIXME: Go back and fix this 
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-
+*/
 	return menuitem;
 }
 
