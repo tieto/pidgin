@@ -661,7 +661,7 @@ extern void serv_chat_send(struct gaim_connection *, int, char *);
 /* output from serv */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
 extern void serv_got_im(struct gaim_connection *, char *, char *, int);
-extern void serv_got_eviled(char *, int);
+extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
 extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
@@ -784,7 +784,7 @@ extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 extern void gaim_plugin_unload(GModule *);
 #endif
 extern char *event_name(enum gaim_event);
-extern void plugin_event(enum gaim_event, void *, void *, void *, void *);
+extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
 
 /* Functions in prefs.c */
 extern void debug_print( char * chars );

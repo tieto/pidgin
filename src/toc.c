@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1099 $"
+#define REVISION "gaim:$Revision: 1110 $"
 
 struct toc_data {
 	int toc_fd;
@@ -473,7 +473,7 @@ void toc_callback( gpointer          data,
                 sprintf(debug_buff,"%s | %d\n", name, lev);
 				debug_print(debug_buff);
 
-		serv_got_eviled(name, lev);
+		serv_got_eviled(gc, name, lev);
 		
         } else if (!strcasecmp(c, "CHAT_JOIN")) {
                 char *name;

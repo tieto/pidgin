@@ -580,17 +580,18 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct convers
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
 	char *buf, *buf2, *buf3;
-	int hdrlen, limit;
+	int limit;
 
 	if (!c->gc) return;
-	/* FIXME! this used to have limits based on protocol limits (oscar chat was 512,
-	 * oscar im was 7985, toc was 4k). we shouldn't be using PROTO_whatever here. it
-	 * should be gotten from the PRPL somehow */
-	limit = 7985 << 2;
 
-	buf = g_malloc(limit);
-	
 	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
+	/* uncomment this if you want no limit on outgoing messages.
+	 * if you uncomment this, you'll probably get kicked off if
+	 * you send one that's too big.
+	limit = strlen(buf2) * 2;
+	*/
+	limit = 7985 << 2;
+	buf = g_malloc(limit);
 	g_snprintf(buf, limit, "%s", buf2);
 	g_free(buf2);
 	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
@@ -603,15 +604,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		linkify_text(buf);
 
 	buf2 = g_malloc(limit);
-
-        /* Let us determine how long the message CAN be.
-         * toc_send_im is 11 chars long + 2 quotes.
-         * + 2 spaces + 6 for the header + 2 for good
-         * measure = 23 bytes + the length of normalize c->name */
-	/* FIXME: the hdrlen is for how long the header is going to cut off the limit.
-	 * but since we don't know on a protocol basis anymore we can't do this. so we'll
-	 * just assume it's 23 + strlen(normalize(c->name)) for all protocols */
-	hdrlen = 23 + strlen(normalize(c->name));
 
         if (font_options & OPT_FONT_BOLD) {
                 g_snprintf(buf2, limit, "<B>%s</B>", buf);
@@ -651,8 +643,14 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	{
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
-		plugin_event(evnt, c->gc, c->name, &buffy, 0);
+		int plugin_return = plugin_event(evnt, c->gc, c->name, &buffy, 0);
 		if (!buffy) {
+			g_free(buf2);
+			g_free(buf);
+			return;
+		}
+		if (plugin_return) {
+			g_free(buffy);
 			g_free(buf2);
 			g_free(buf);
 			return;

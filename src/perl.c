@@ -515,11 +515,15 @@ int perl_event(char *event, char *args)
 {
 	GList *handler;
 	struct _perl_event_handlers *data;
+	SV *handler_return;
 
 	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
 		data = handler->data;
-		if (!strcmp(event, data->event_type))
-			execute_perl(data->handler_name, args);
+		if (!strcmp(event, data->event_type)) {
+			handler_return = execute_perl(data->handler_name, args);
+			if (SvIV(handler_return))
+				return SvIV(handler_return);
+		}
 	}
 
 	return 0;

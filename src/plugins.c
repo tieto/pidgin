@@ -619,7 +619,7 @@ char *event_name(enum gaim_event event)
 	return buf;
 }
 
-void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4) {
+int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4) {
 #ifdef USE_PERL
 	char buf[BUF_LONG];
 	char *tmp;
@@ -821,6 +821,8 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 	tmp = event_name(event);
 	g_snprintf(debug_buff, sizeof debug_buff, "%s: %s\n", tmp, buf);
 	debug_print(debug_buff);
-	perl_event(tmp, buf);
+	return perl_event(tmp, buf);
+#else
+	return 0;
 #endif
 }

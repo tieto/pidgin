@@ -307,9 +307,12 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 	char *buffy = g_strdup(message);
 	char *angel = g_strdup(name);
-	plugin_event(event_im_recv, gc, &angel, &buffy, 0);
-	if (!buffy || !angel)
+	int plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
+	if (!buffy || !angel || plugin_return) {
+		if (buffy) g_free(buffy);
+		if (angel) g_free(angel);
 		return;
+	}
 	g_snprintf(message, strlen(message) + 1, "%s", buffy);
 	g_free(buffy);
 	g_snprintf(name, strlen(name) + 1, "%s", angel);
@@ -497,16 +500,16 @@ void close_warned(GtkWidget *w, GtkWidget *w2)
 
 
 
-void serv_got_eviled(char *name, int lev)
+void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 {
         char *buf2 = g_malloc(1024);
         GtkWidget *d, *label, *close;
 
 
-	plugin_event(event_warned, name, (void *)lev, 0, 0);
+	plugin_event(event_warned, gc, name, (void *)lev, 0);
 
-        g_snprintf(buf2, 1023, "You have just been warned by %s.\nYour new warning level is %d%%",
-                   ((name == NULL) ? "an anonymous person" : name) , lev);
+        g_snprintf(buf2, 1023, "%s have just been warned by %s.\nYour new warning level is %d%%",
+                   gc->username, ((name == NULL) ? "an anonymous person" : name) , lev);
 
 
         d = gtk_dialog_new();
@@ -694,7 +697,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
         if (!b)
                 return;
         
-	plugin_event(event_chat_recv, g, b->name, who, message);
+	if (plugin_event(event_chat_recv, g, b->name, who, message))
+		return;
 
         if (whisper)
                 w = WFLAG_WHISPER;

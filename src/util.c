@@ -1258,3 +1258,52 @@ int file_is_dir (char *path, GtkWidget *w)
 
 	return 0;
 }
+
+GSList *message_split(char *message, int limit) {
+	static GSList *ret = NULL;
+	int lastgood = 0, curgood = 0, curpos = 0, len = strlen(message);
+	gboolean intag = FALSE;
+
+	if (ret) {
+		GSList *tmp = ret;
+		while (tmp) {
+			g_free(tmp->data);
+			tmp = g_slist_remove(tmp, tmp->data);
+		}
+		ret = NULL;
+	}
+
+	while (TRUE) {
+		if (lastgood >= len)
+			return ret;
+
+		if (len - lastgood < limit) {
+			ret = g_slist_append(ret, g_strdup(&message[lastgood]));
+			return ret;
+		}
+		
+		curgood = curpos = 0;
+		intag = FALSE;
+		while (curpos <= limit) {
+			if (isspace(message[curpos + lastgood]) && !intag)
+				curgood = curpos;
+			if (message[curpos + lastgood] == '<')
+				intag = TRUE;
+			if (message[curpos + lastgood] == '>')
+				intag = FALSE;
+			curpos++;
+		}
+
+		if (curgood) {
+			ret = g_slist_append(ret, g_strndup(&message[lastgood], curgood));
+			if (isspace(message[curgood + lastgood]))
+				lastgood += curgood + 1;
+			else
+				lastgood += curgood;
+		} else {
+			/* whoops, guess we have to fudge it here */
+			ret = g_slist_append(ret, g_strndup(&message[lastgood], limit));
+			lastgood += limit;
+		}
+	}
+}
