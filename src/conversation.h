@@ -1109,6 +1109,13 @@ void gaim_chat_remove_user(GaimChat *chat, const char *user,
 void gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason);
 
 /**
+ * Clears all users from a chat.
+ *
+ * @param chat The chat.
+ */
+void gaim_chat_clear_users(GaimChat *chat);
+
+/**
  * Finds a chat with the specified chat ID.
  *
  * @param gc The gaim_connection.

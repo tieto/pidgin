@@ -2119,6 +2119,40 @@ gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason)
 	}
 }
 
+void
+gaim_chat_clear_users(GaimChat *chat)
+{
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
+	GList *users;
+	GList *l, *l_next;
+
+	g_return_if_fail(chat != NULL);
+
+	conv  = gaim_chat_get_conversation(chat);
+	ops   = gaim_conversation_get_ui_ops(conv);
+	users = gaim_chat_get_users(chat);
+
+	if (ops != NULL && ops->chat_remove_users != NULL)
+		ops->chat_remove_users(conv, users);
+
+	for (l = users; l != NULL; l = l_next)
+	{
+		char *user = (char *)l->data;
+
+		l_next = l->next;
+
+		gaim_event_broadcast(event_chat_buddy_leave,
+							 gaim_conversation_get_gc(conv),
+							 gaim_chat_get_id(chat), user);
+
+		g_free(user);
+	}
+
+	g_list_free(users);
+	gaim_chat_set_users(chat, NULL);
+}
+
 GaimConversation *
 gaim_find_chat(const GaimConnection *gc, int id)
 {
