@@ -2705,7 +2705,38 @@ void do_import(GtkWidget *w, void *dummy)
                 
         fgets(first, 64, f);
 
+	/* AIM 4 buddy list */
         if (!strcasecmp(first, "Config {\n")) {
+		debug_print("aim 4\n");
+		rewind(f);
+		translate_blt (f, buf);
+		sprintf(debug_buff, "%s\n", buf);
+		debug_print(debug_buff);
+		buf2 = buf;
+		buf = g_malloc(8193);
+                g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
+                g_free(buf2);
+	/* AIM 3 buddy list */
+	} else if (strstr(first, "group") != NULL) {
+		debug_print("aim 3\n");
+		rewind(f);
+		translate_lst (f, buf);
+		sprintf(debug_buff, "%s\n", buf);
+		debug_print(debug_buff);
+		buf2 = buf;
+		buf = g_malloc(8193);
+                g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
+                g_free(buf2);
+	/* GAIM buddy list - no translation */
+        } else if (first[0] == 'm') {
+		rewind(f);
+		fread(buf, BUF_LONG, 1, f);
+		buf2 = buf;
+		buf = g_malloc(8193);
+                g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
+                g_free(buf2);
+	/* Something else */
+        } else {
 		if ( show_dialog == 1 ) {
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
@@ -2714,35 +2745,15 @@ void do_import(GtkWidget *w, void *dummy)
 		g_free(first);
 		fclose( f );
                 return;
-        } else if (buf[0] == 'm') {
-                buf2 = buf;
-                buf = g_malloc(8193);
-                g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-                g_free(buf2);
-        }
+	}
 
-                
-        fseek(f, 0, SEEK_SET);
-
-        fread(buf, BUF_LONG, 1, f);
-
-        grp = groups;
-	
-	/* why is this being done? if we merge them than this shouldn't happen
-        while(grp) {
-                grp2 = grp->next;
-		remove_group((struct group *)grp->data);
-		grp = grp2;
-        }
-	*/
-        
         parse_toc_buddy_list(buf, 1);
 
         serv_save_config();
-        
+
         build_edit_tree();
         build_permit_tree();
-        
+
 	fclose( f );
 
 	if ( show_dialog == 1 ) {
@@ -2752,7 +2763,7 @@ void do_import(GtkWidget *w, void *dummy)
                	destroy_dialog(NULL, importdialog);
                	importdialog = NULL;
 	} 
-        
+
         g_free(buf);
         g_free(first);
 }

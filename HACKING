@@ -13,6 +13,9 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
+This was written around August 8, 2000. It's now August 15, 2000, and I'm
+sure a lot of it is already out of date.
+
 
 PROGRAM FLOW
 ============

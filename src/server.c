@@ -384,54 +384,33 @@ void serv_set_permit_deny()
 
 		switch (permdeny) {
 		case PERMIT_ALL:
-			/* toc_add_permit current_user to go to permit mode,
-			   toc_add_deny <none> to deny none */
 			sprintf(buf, "toc_add_deny %s", current_user->username);
 			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_NONE:
-			/* toc_add_deny current_user to go to deny mode,
-			   toc_add_permit <none> to permit none */
 			sprintf(buf, "toc_add_permit %s", current_user->username);
 			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case PERMIT_SOME:
-			/* toc_add_permit <permit> */
-			/* if permit is empty this is the same as PERMIT_NONE */
-			if (permit) {
-				at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
-				list = permit;
-				while (list) {
-					at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-					list = list->next;
-				}
-				buf[at] = 0; /* is this necessary? */
-				sflap_send(buf, -1, TYPE_DATA);
-			} else {
-				sprintf(buf, "toc_add_deny %s", current_user->username);
-				sflap_send(buf, -1, TYPE_DATA);
-				sprintf(buf, "toc_add_permit");
-				sflap_send(buf, -1, TYPE_DATA);
+			at = g_snprintf(buf, sizeof(buf), "toc_add_permit");
+			list = permit;
+			while (list) {
+				at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
+				list = list->next;
 			}
+			buf[at] = 0; /* is this necessary? */
+			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case DENY_SOME:
-			/* toc_add_deny <deny> */
-			/* if deny is empty this is the same as PERMIT_ALL */
-			if (deny) {
-				at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
-				list = deny;
-				while (list) {
-					at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
-					list = list->next;
-				}
-				buf[at] = 0; /* is this necessary? */
-				sflap_send(buf, -1, TYPE_DATA);
-			} else {
-				sprintf(buf, "toc_add_permit %s", current_user->username);
-				sflap_send(buf, -1, TYPE_DATA);
-				sprintf(buf, "toc_add_deny");
-				sflap_send(buf, -1, TYPE_DATA);
+			/* FIXME! This still doesn't work */
+			at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
+			list = deny;
+			while (list) {
+				at += g_snprintf(&buf[at], sizeof(buf) - at, " %s", normalize(list->data));
+				list = list->next;
 			}
+			buf[at] = 0; /* is this necessary? */
+			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		}
 	} else {
@@ -476,6 +455,8 @@ void serv_set_permit_deny()
 					if (list)
 						at += g_snprintf(&buf[at], sizeof(buf) - at, "&");
 				}
+				sprintf(debug_buff, "denying %s\n", buf);
+				debug_print(debug_buff);
 				aim_bos_changevisibility(gaim_sess, gaim_conn,
 				   AIM_VISIBILITYCHANGE_DENYADD, buf);
 			} else {
