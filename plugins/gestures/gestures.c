@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "gaim.h"
+#include "prefs.h"
 #include "gstroke.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
@@ -147,7 +148,15 @@ mouse_button_menu_cb(GtkMenuItem *item, gpointer data)
 static void
 toggle_draw_cb(GtkToggleButton *toggle, gpointer data)
 {
-	gstroke_set_draw_strokes(!gstroke_draw_strokes());
+	gaim_prefs_set_bool("/plugins/gtk/X11/gestures/visual",
+		gtk_toggle_button_get_active(toggle));
+}
+
+static void
+visual_pref_cb(const char *name, GaimPrefType type, gpointer value,
+			   gpointer data)
+{
+	gstroke_set_draw_strokes((gboolean)value);
 }
 
 static gboolean
@@ -234,7 +243,7 @@ get_config_frame(GaimPlugin *plugin)
 	toggle = gtk_check_button_new_with_mnemonic(_("_Visual gesture display"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-								 gstroke_draw_strokes());
+			gaim_prefs_get_bool("/plugins/gtk/X11/gestures/visual"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 					 G_CALLBACK(toggle_draw_cb), NULL);
 
@@ -284,6 +293,13 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/gtk");
+	gaim_prefs_add_none("/plugins/gtk/X11");
+	gaim_prefs_add_none("/plugins/gtk/X11/gestures");
+	gaim_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
+
+	gaim_prefs_connect_callback("/plugins/gtk/X11/gestures/visual",
+								visual_pref_cb, NULL);
 }
 
 GAIM_INIT_PLUGIN(gestures, __init_plugin, info);
