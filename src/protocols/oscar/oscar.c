@@ -511,19 +511,28 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	}
 
 	/*
-	 * If we're sending to an ICQ user, and they are advertising the
-	 * Unicode capability, then attempt to send as UCS-2BE.
+	 * If we're sending to an ICQ user, and they are in our
+	 * buddy list, and they are advertising the Unicode
+	 * capability, and they are online, then attempt to send
+	 * as UCS-2BE.
 	 */
 	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		userinfo = aim_locate_finduserinfo(od->sess, destsn);
 
-	if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_ICQUTF8)) {
-		*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-		if (*msg != NULL) {
-			*charset = AIM_CHARSET_UNICODE;
-			*charsubset = 0x0000;
-			*msglen_int = msglen;
-			return;
+	if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_ICQUTF8))
+	{
+		GaimBuddy *b;
+		b = gaim_find_buddy(account, destsn);
+		if ((b != NULL) && (GAIM_BUDDY_IS_ONLINE(b)))
+		{
+			*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			if (*msg != NULL)
+			{
+				*charset = AIM_CHARSET_UNICODE;
+				*charsubset = 0x0000;
+				*msglen_int = msglen;
+				return;
+			}
 		}
 	}
 
