@@ -22,7 +22,7 @@ msgstr "사용자 정보"
 #: plugins/yay/yay.c:183
 #, fuzzy
 msgid "Your message did not get sent."
-msgstr "메시지를 보낼 때 소리 내기"
+msgstr "메시지가 전송 돼지 안앗습니다"
 
 #: plugins/yay/yay.c:183 src/dialogs.c:3066 src/dialogs.c:3073
 #: src/oscar.c:1869 src/oscar.c:1874 src/oscar.c:1910 src/oscar.c:1929
@@ -33,12 +33,12 @@ msgstr "Gaim - 오류 %d"
 #: plugins/yay/yay.c:201
 #, c-format
 msgid "%s has made %s their buddy%s%s"
-msgstr ""
+msgstr "%s 가 %s 를 친구로 추가 햇습니다"
 
 #: plugins/yay/yay.c:203
 #, fuzzy
 msgid "Gaim - Buddy"
-msgstr "Gaim - 친구 더하기"
+msgstr "Gaim - 친구"
 
 #: plugins/yay/yay.c:250 src/about.c:179 src/aim.c:303 src/buddy.c:2607
 #: src/buddy_chat.c:971 src/buddy_chat.c:1125 src/buddy_chat.c:1152
@@ -49,7 +49,7 @@ msgstr "닫기"
 
 #: plugins/napster.c:1042
 msgid "Napster registration is currently under development"
-msgstr ""
+msgstr "넵스터 사용은 아직 불가능"
 
 #: src/about.c:87
 #, c-format
@@ -62,13 +62,14 @@ msgid ""
 "written using Gtk+ and is licensed under the GPL.\n"
 "URL: "
 msgstr ""
+"GAIM은 AOL Instant Messenger 프로토콜을 사용 할수있습니다. GtK+ 를 사용해요."
 
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 #. gtk_widget_grab_default(button);
 #: src/about.c:199
 msgid "Web Site"
-msgstr ""
+msgstr "왭 사이트"
 
 #: src/aim.c:137 src/buddy.c:2600
 msgid "Signoff"
@@ -81,12 +82,12 @@ msgstr "이름을 입력하세요"
 #: src/aim.c:149 src/aim.c:154 src/multi.c:917
 #, fuzzy
 msgid "Signon Error"
-msgstr "연결"
+msgstr "연결 오류"
 
 #: src/aim.c:154
 #, fuzzy
 msgid "Please enter your password"
-msgstr "이름을 입력하세요"
+msgstr "암호를 입력하세요"
 
 #: src/aim.c:248
 msgid "Gaim - Login"
@@ -106,7 +107,7 @@ msgstr "끝내기"
 
 #: src/aim.c:306 src/aim.c:647 src/buddy.c:2662
 msgid "Accounts"
-msgstr ""
+msgstr "개정"
 
 #: src/aim.c:308 src/multi.c:597
 msgid "Signon"
@@ -177,7 +178,7 @@ msgstr "잠수 메시지 없애기"
 
 #: src/away.c:529
 msgid "Set All Away"
-msgstr ""
+msgstr "다 없애기"
 
 #. Put the buttons in the box
 #: src/buddy.c:440 src/buddy.c:2747 src/buddy_chat.c:1157
@@ -195,7 +196,7 @@ msgstr "그룹"
 #: src/conversation.c:1785 src/conversation.c:2147 src/prefs.c:1199
 #: src/prefs.c:1966 src/prefs.c:2273 src/prefs.c:2307
 msgid "Remove"
-msgstr "제거"
+msgstr ""
 
 #: src/buddy.c:446 src/buddy.c:2130 src/buddy.c:2485
 msgid "Chat"
@@ -204,7 +205,7 @@ msgstr "채팅"
 #: src/buddy.c:447 src/buddy.c:648 src/buddy.c:761 src/buddy.c:2483
 #: src/buddy_chat.c:507 src/buddy_chat.c:927
 msgid "IM"
-msgstr "IM"
+msgstr "인스텐트 매시지"
 
 #: src/buddy.c:448 src/buddy.c:2484 src/buddy_chat.c:520 src/buddy_chat.c:935
 #: src/buddy_chat.c:1165 src/conversation.c:2168
@@ -215,7 +216,7 @@ msgstr "정보"
 #: src/buddy.c:654 src/buddy.c:767 src/dialogs.c:983 src/dialogs.c:3421
 #: src/dialogs.c:3436
 msgid "Alias"
-msgstr ""
+msgstr "별명"
 
 #: src/buddy.c:660 src/buddy.c:787
 msgid "Add Buddy Pounce"
@@ -223,7 +224,7 @@ msgstr "친구 붙잡기 만들기"
 
 #: src/buddy.c:666 src/buddy.c:793
 msgid "View Log"
-msgstr ""
+msgstr "로그 보기"
 
 #: src/buddy.c:749 src/buddy.c:781
 #, fuzzy
@@ -232,7 +233,7 @@ msgstr "제거"
 
 #: src/buddy.c:774
 msgid "Un-Alias"
-msgstr ""
+msgstr "별명 제거"
 
 #: src/buddy.c:1808
 msgid "New Buddy Pounce"
@@ -249,29 +250,29 @@ msgstr "친구 붙잡기"
 
 #: src/buddy.c:2124
 msgid "Voice"
-msgstr ""
+msgstr "말하기"
 
 #: src/buddy.c:2127
 msgid "IM Image"
-msgstr ""
+msgstr "인스텐트 매시지 그림 연결"
 
 #: src/buddy.c:2133
 #, fuzzy
 msgid "Get File"
-msgstr "파일"
+msgstr "파일 갓기"
 
 #: src/buddy.c:2136
 #, fuzzy
 msgid "Send File"
-msgstr "파일"
+msgstr "파일 보내기"
 
 #: src/buddy.c:2139
 msgid "Games"
-msgstr ""
+msgstr "개임"
 
 #: src/buddy.c:2142
 msgid "Stocks"
-msgstr ""
+msgstr "증권"
 
 #: src/buddy.c:2194
 #, fuzzy, c-format
@@ -285,7 +286,7 @@ msgstr "주의: %d%%\n"
 #: src/buddy.c:2217
 #, c-format
 msgid "Capabilities: %s\n"
-msgstr ""
+msgstr "할수잇기: %s\n"
 
 #: src/buddy.c:2221
 #, fuzzy, c-format
@@ -394,7 +395,7 @@ msgstr "옵션"
 
 #: src/buddy.c:2673
 msgid "View System Log"
-msgstr ""
+msgstr "시스템 로그 보기"
 
 #: src/buddy.c:2684
 #, fuzzy
@@ -403,15 +404,15 @@ msgstr "허용"
 
 #: src/buddy.c:2687
 msgid "Load Script"
-msgstr ""
+msgstr "스크맆 보기"
 
 #: src/buddy.c:2691
 msgid "Unload All Scripts"
-msgstr ""
+msgstr "스크맆 다 종류"
 
 #: src/buddy.c:2695
 msgid "List Scripts"
-msgstr ""
+msgstr "스크맆들 보기"
 
 #: src/buddy.c:2703
 msgid "Help"
@@ -2121,7 +2122,7 @@ msgstr "메시지 만들기"
 
 #: src/prefs.c:1956
 msgid "Edit"
-msgstr ""
+msgstr "편집"
 
 #: src/prefs.c:1960
 #, fuzzy
@@ -2187,7 +2188,7 @@ msgstr "모든 대화를 로깅"
 
 #: src/prefs.c:2687
 msgid "Windows"
-msgstr ""
+msgstr "원도우스"
 
 #: src/prefs.c:2708
 msgid "Sounds"
@@ -2280,11 +2281,11 @@ msgstr "메시지는:"
 
 #: src/server.c:781
 msgid "Yes"
-msgstr ""
+msgstr "내"
 
 #: src/server.c:782
 msgid "No"
-msgstr ""
+msgstr "아니요"
 
 #: src/toc.c:324 src/toc.c:331
 #, fuzzy
@@ -2297,11 +2298,11 @@ msgstr ""
 
 #: src/toc.c:429
 msgid "TOC has come back from its pause. You may now send messages again."
-msgstr ""
+msgstr "TOC가 다시 시작 했습니다. 매시지 사용을 다시 할수있습니다"
 
 #: src/toc.c:430
 msgid "TOC Resume"
-msgstr ""
+msgstr "TOC 다시 시작"
 
 #: src/toc.c:587
 #, fuzzy
@@ -2322,7 +2323,7 @@ msgstr ""
 
 #: src/toc.c:612
 msgid "TOC Pause"
-msgstr ""
+msgstr "TOC 멍추기"
 
 #: src/toc.c:1016
 #, fuzzy
@@ -2630,3 +2631,4 @@ msgstr "%s 가 당신에게 파일을 보내달라고 요청하였습니다"
 
 #~ msgid "Create new message"
 #~ msgstr "새로운 메시지 만들기"
+
