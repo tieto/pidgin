@@ -2145,11 +2145,17 @@ void update_progress(struct conversation *c, float percent) {
 
 GtkWidget *build_conv_menubar(struct conversation *c)
 {
+	GtkWidget *hb;
 	GtkWidget *menubar;
 	GtkWidget *menu;
 	GtkWidget *menuitem;
 
+
+	hb = gtk_handle_box_new();
+		
 	menubar = gtk_menu_bar_new();
+
+	gtk_container_add(GTK_CONTAINER(hb), menubar);
 
 	menu = gtk_menu_new();
 
@@ -2214,9 +2220,9 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	/* Now set the current values or something */
 	gtk_widget_set_sensitive(GTK_WIDGET(c->log_button), (logging_options & OPT_LOG_CONVOS) ? FALSE : TRUE);
 
-	gtk_widget_show_all(menubar);
+	gtk_widget_show_all(hb);
 
-	return menubar;
+	return hb;
 
 }
 
