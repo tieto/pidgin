@@ -125,14 +125,14 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 		gtk_widget_destroy(acctedit);
 	}
 	acctedit = NULL;
-	if (d == NULL && blist == NULL && mainwindow == NULL && g_slist_length(connections) < 1)
+	if (!d && !blist && !mainwindow && !connections)
 		gtk_main_quit();
 }
 
 static gint acctedit_close(GtkWidget *w, gpointer d)
 {
 	gtk_widget_destroy(acctedit);
-	if (d == NULL && blist == NULL && mainwindow == NULL)
+	if (!d && !blist && !mainwindow && !connections)
 		gtk_main_quit();
 	return FALSE;
 }
