@@ -364,7 +364,8 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	struct yahoo_buddy_icon_upload_data *d = data;
 	struct yahoo_packet *pkt;
 	gchar *size, *post, *buf;
-	int content_length;
+	const char *host;
+	int content_length, port;
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;
@@ -403,15 +404,14 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 
 	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
-	post = g_strdup_printf("POST /notifyft HTTP/1.0\r\n"
+	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST); 
+	port = gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
+	post = g_strdup_printf("POST http://%s:%d/notifyft HTTP/1.0\r\n"
 	                       "Content-length: %" G_GSIZE_FORMAT "\r\n"
 	                       "Host: %s:%d\r\n"
 	                       "Cookie: %s\r\n"
 	                       "\r\n",
-	                       content_length + 4 + d->str->len,
-			       gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST),
-			       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-			       buf);
+	                       host, port, content_length + 4 + d->str->len, host, port, buf);
 	write(d->fd, post, strlen(post));
 
 	yahoo_packet_send_special(pkt, d->fd, 8);
