@@ -1943,12 +1943,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 						m = m % NUM_NICK_COLORS;
 						strcpy(colour, nick_colors[m]);
 					} else {
-						strcpy(colour, "#ff0000");
+						strcpy(colour, "#e37500");
 					}
-				} else if (flags & WFLAG_RECV)
-					strcpy(colour, "#ff0000");
-				else if (flags & WFLAG_SEND)
-					strcpy(colour, "#0000ff");
+				} else if (flags & WFLAG_SEND)
+					strcpy(colour, "#001763");
 			}
 		}
 
