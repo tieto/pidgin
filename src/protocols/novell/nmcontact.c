@@ -701,10 +701,12 @@ nm_folder_add_folder_to_list(NMFolder * root, NMFolder * folder)
 void
 nm_folder_remove_contact(NMFolder * folder, NMContact * contact)
 {
-	GSList *node = folder->contacts;
+	GSList *node;
 
 	if (folder == NULL || contact == NULL)
 		return;
+
+	node = folder->contacts;
 
 	while (node) {
 		if (contact->id == ((NMContact *) (node->data))->id) {
