@@ -1950,6 +1950,9 @@ update_send_as_selection(struct gaim_window *win)
 	user   = gaim_conversation_get_user(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
 
+	if (user == NULL)
+		return;
+
 	if (gtkwin->menu.send_as == NULL)
 		return;
 
