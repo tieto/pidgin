@@ -2616,8 +2616,8 @@ parse_content_len(const char *data, size_t data_len)
 	 * if we make sure that there is indeed a \n in our header.
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
-		sscanf(p, "Content-Length: %ud", &content_len);
-		gaim_debug_misc("parse_content_len", "parsed %d\n", content_len);
+		sscanf(p, "Content-Length: %u", &content_len);
+		gaim_debug_misc("parse_content_len", "parsed %u\n", content_len);
 	}
 
 	return content_len;
@@ -2741,7 +2741,14 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 
 					/* In with the new. */
 					gfud->data_len = content_len;
-					gfud->webdata = g_malloc(gfud->data_len);
+					gfud->webdata = g_try_malloc(gfud->data_len);
+					if (gfud->webdata == NULL) {
+						gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n", gfud->data_len, strerror(errno));
+						gaim_input_remove(gfud->inpa);
+						close(sock);
+						gfud->callback(gfud->user_data, NULL, 0);
+						destroy_fetch_url_data(gfud);
+					}
 				}
 				else
 					gfud->newline = TRUE;
