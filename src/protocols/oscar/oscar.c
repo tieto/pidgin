@@ -2173,7 +2173,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
 	} else if (args->reqclass & AIM_CAPS_VOICE) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
-		set_icon_data(gc, normalize(userinfo->sn), args->info.icon.icon,
+		set_icon_data(gc, userinfo->sn, args->info.icon.icon,
 				args->info.icon.length);
 	} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 		struct ask_direct *d = g_new0(struct ask_direct, 1);

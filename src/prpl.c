@@ -560,10 +560,21 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 	GList *l;
 	struct icon_data *id;
 	struct buddy *b;
+	/* i'm going to vent here a little bit about normalize().  normalize()
+	 * uses a static buffer, so when we call functions that use normalize() from
+	 * functions that use normalize(), whose parameters are the result of running
+	 * normalize(), bad things happen.  To prevent some of this, we're going
+	 * to make a copy of what we get from normalize(), so we know nothing else
+	 * touches it, and buddy icons don't go to the wrong person.  Some day I
+	 * will kill normalize(), and dance on its grave.  That will be a very happy
+	 * day for everyone.
+	 *                                    --ndw
+	 */
+	char *realwho = g_strdup(normalize(who));
 	tmp.gc = gc;
-	tmp.who = normalize(who);
+	tmp.who = realwho;
 	tmp.data=NULL;
-        tmp.len = 0;
+	tmp.len = 0;
 	l = g_list_find_custom(icons, &tmp, find_icon_data);
 	id = l ? l->data : NULL;
 
@@ -573,29 +584,31 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 			icons = g_list_remove(icons, id);
 			g_free(id->who);
 			g_free(id);
+			g_free(realwho);
 			return;
 		}
 	} else if (data) {
 		id = g_new0(struct icon_data, 1);
 		icons = g_list_append(icons, id);
 		id->gc = gc;
-		id->who = g_strdup(normalize(who));
+		id->who = g_strdup(realwho);
 	} else {
+		g_free(realwho);
 		return;
 	}
 
-	debug_printf("Got icon for %s (length %d)\n", who, len);
+	debug_printf("Got icon for %s (length %d)\n", realwho, len);
 
 	id->data = g_memdup(data, len);
 	id->len = len;
 
 	/* Update the buddy icon for this user. */
-	conv = gaim_find_conversation(who);
+	conv = gaim_find_conversation(realwho);
 
 	/* XXX Buddy Icon should probalby be part of struct buddy instead of this weird global
 	 * linked list stuff. */
 
-	if ((b = gaim_find_buddy(gc->account, who)) != NULL) {
+	if ((b = gaim_find_buddy(gc->account, realwho)) != NULL) {
 		char *random = g_strdup_printf("%x", g_random_int());
 		char *filename = g_build_filename(gaim_user_dir(), "icons", random,
 				NULL);
@@ -631,6 +644,8 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 
 	if (conv != NULL && gaim_conversation_get_gc(conv) == gc)
 		gaim_gtkconv_update_buddy_icon(conv);
+
+	g_free(realwho);
 }
 
 void remove_icon_data(struct gaim_connection *gc)
