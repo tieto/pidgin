@@ -116,17 +116,10 @@ char *grab_url(char *url)
 
         website = parse_url(url);
 
-	/*
-	host = gethostbyname(website.address);
-	if (!host) { return g_strdup("g001: Error resolving host\n"); }
-
-	if ((sock = connect_address(inet_addr(host->h_addr), website.port)) <= -1)
-		return g_strdup("g003: Error opening connection.\n");
-	*/
 	host = (struct in_addr *)get_address(website.address);
-	if (!host) { return g_strdup("g001: Error resolving host\n"); }
+	if (!host) { return g_strdup(_("g001: Error resolving host\n")); }
 	if ((sock = connect_address(host->s_addr, website.port)) < 0)
-		return g_strdup("g003: Error opening connection.\n");
+		return g_strdup(_("g003: Error opening connection.\n"));
 
 	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\n\n", website.page);
 	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
@@ -158,7 +151,7 @@ char *grab_url(char *url)
 				char tmpbuf[1024];
 				sscanf(cs, "Content-Length: %d", &datalen);
 
-                                g_snprintf(tmpbuf, 1024, "Getting %d bytes from %s", datalen, url);
+                                g_snprintf(tmpbuf, 1024, _("Getting %d bytes from %s"), datalen, url);
                                 pw = gtk_dialog_new();
 
 				label = gtk_label_new(tmpbuf);
@@ -171,7 +164,7 @@ char *grab_url(char *url)
 						   pbar, FALSE, FALSE, 5);
                                 gtk_widget_show(pbar);
                                 
-                                gtk_window_set_title(GTK_WINDOW(pw), "Getting Data");
+                                gtk_window_set_title(GTK_WINDOW(pw), _("Getting Data"));
                                 
                                 gtk_widget_realize(pw);
                                 aol_icon(pw->window);
@@ -204,7 +197,7 @@ char *grab_url(char *url)
         webdata[len] = 0;
 
 
-        g_snprintf(debug_buff, sizeof(debug_buff), "Receieved: '%s'\n", webdata);
+        g_snprintf(debug_buff, sizeof(debug_buff), _("Receieved: '%s'\n"), webdata);
         debug_print(debug_buff);
 
         if (pw)

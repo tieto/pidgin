@@ -194,13 +194,13 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 	host = (struct in_addr *)get_address(REG_SRVR);
 	if (!host) 
 	{
-		printf("Error Resolving Mail Server.\n");
+		printf(_("Error Resolving Mail Server.\n"));
 		return -1;
 	}
 
 	if ((sock = connect_address(host->s_addr, REG_PORT)) < 0)
 	{
-		printf("Error Connecting to Socket.\n");
+		printf(_("Error Connecting to Socket.\n"));
 		return -1;
 	}	 
 
@@ -368,8 +368,8 @@ void show_warn_dialog(char *who)
         char *buf = g_malloc(128);
         w->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, w->window);
-        cancel = gtk_button_new_with_label("Cancel");
-        warn = gtk_button_new_with_label("Warn");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        warn = gtk_button_new_with_label(_("Warn"));
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
 
@@ -377,14 +377,14 @@ void show_warn_dialog(char *who)
         gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
-        g_snprintf(buf, 127, "Do you really want to warn %s?", who);
+        g_snprintf(buf, 127, _("Do you really want to warn %s?"), who);
         label = gtk_label_new(buf);
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
         gtk_widget_show(label);
-        w->anon = gtk_check_button_new_with_label("Warn anonymously?");
+        w->anon = gtk_check_button_new_with_label(_("Warn anonymously?"));
         gtk_box_pack_start(GTK_BOX(vbox), w->anon, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Anonymous warnings are less harsh.");
+        label = gtk_label_new(_("Anonymous warnings are less harsh."));
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
         gtk_widget_show(label);
 
@@ -405,7 +405,7 @@ void show_warn_dialog(char *who)
         gtk_widget_show(w->anon);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
-        gtk_window_set_title(GTK_WINDOW(w->window), "Gaim - Warn user?");
+        gtk_window_set_title(GTK_WINDOW(w->window), _("Gaim - Warn user?"));
         gtk_container_add(GTK_CONTAINER(w->window), vbox);
         gtk_widget_realize(w->window);
         aol_icon(w->window->window);
@@ -432,7 +432,7 @@ do_error_dialog(char *message, char *title)
         label = gtk_label_new(message);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
-	close = gtk_button_new_with_label("Close");
+	close = gtk_button_new_with_label(_("Close"));
 	gtk_widget_show(close);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox),
 		label, FALSE, FALSE, 5);
@@ -461,86 +461,86 @@ void show_error_dialog(char *c)
 	
         switch(no) {
         case 69:
-                g_snprintf(buf, sizeof(buf), "Unable to write file %s.", w);
+                g_snprintf(buf, sizeof(buf), _("Unable to write file %s."), w);
                 break;
         case 169:
-                g_snprintf(buf, sizeof(buf), "Unable to read file %s.", w);
+                g_snprintf(buf, sizeof(buf), _("Unable to read file %s."), w);
                 break;
         case 269:
-                g_snprintf(buf, sizeof(buf), "Message too long, last %s bytes truncated.", w);
+                g_snprintf(buf, sizeof(buf), _("Message too long, last %s bytes truncated."), w);
                 break;
         case 901:
-                g_snprintf(buf, sizeof(buf), "%s not currently logged in.", w);
+                g_snprintf(buf, sizeof(buf), _("%s not currently logged in."), w);
                 break;
         case 902:
-                g_snprintf(buf, sizeof(buf), "Warning of %s not allowed.", w);
+                g_snprintf(buf, sizeof(buf), _("Warning of %s not allowed."), w);
                 break;
         case 903:
-                g_snprintf(buf, sizeof(buf), "A message has been dropped, you are exceeding the server speed limit.");
+                g_snprintf(buf, sizeof(buf), _("A message has been dropped, you are exceeding the server speed limit."));
                 break;
         case 950:
-                g_snprintf(buf, sizeof(buf), "Chat in %s is not available.", w);
+                g_snprintf(buf, sizeof(buf), _("Chat in %s is not available."), w);
                 break;
         case 960:
-                g_snprintf(buf, sizeof(buf), "You are sending messages too fast to %s.", w);
+                g_snprintf(buf, sizeof(buf), _("You are sending messages too fast to %s."), w);
                 break;
         case 961:
-                g_snprintf(buf, sizeof(buf), "You missed an IM from %s because it was too big.", w);
+                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was too big."), w);
                 break;
         case 962:
-                g_snprintf(buf, sizeof(buf), "You missed an IM from %s because it was sent too fast.", w);
+                g_snprintf(buf, sizeof(buf), _("You missed an IM from %s because it was sent too fast."), w);
                 break;
         case 970:
-                g_snprintf(buf, sizeof(buf), "Failure.");
+                g_snprintf(buf, sizeof(buf), _("Failure."));
                 break;
         case 971:
-                g_snprintf(buf, sizeof(buf), "Too many matches.");
+                g_snprintf(buf, sizeof(buf), _("Too many matches."));
                 break;
         case 972:
-                g_snprintf(buf, sizeof(buf), "Need more qualifiers.");
+                g_snprintf(buf, sizeof(buf), _("Need more qualifiers."));
                 break;
         case 973:
-                g_snprintf(buf, sizeof(buf), "Dir service temporarily unavailable.");
+                g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
                 break;
         case 974:
-                g_snprintf(buf, sizeof(buf), "Email lookup restricted.");
+                g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
                 break;
         case 975:
-                g_snprintf(buf, sizeof(buf), "Keyword ignored.");
+                g_snprintf(buf, sizeof(buf), _("Keyword ignored."));
                 break;
         case 976:
-                g_snprintf(buf, sizeof(buf), "No keywords.");
+                g_snprintf(buf, sizeof(buf), _("No keywords."));
                 break;
         case 977:
-                g_snprintf(buf, sizeof(buf), "User has no directory information.");
+                g_snprintf(buf, sizeof(buf), _("User has no directory information."));
                 /* g_snprintf(buf, sizeof(buf), "Language not supported."); */
                 break;
         case 978:
-                g_snprintf(buf, sizeof(buf), "Country not supported.");
+                g_snprintf(buf, sizeof(buf), _("Country not supported."));
                 break;
         case 979:
-                g_snprintf(buf, sizeof(buf), "Failure unknown: %s.", w);
+                g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
                 break;
         case 980:
-                g_snprintf(buf, sizeof(buf), "Incorrect nickname or password.");
+                g_snprintf(buf, sizeof(buf), _("Incorrect nickname or password."));
                 break;
         case 981:
-                g_snprintf(buf, sizeof(buf), "The service is temporarily unavailable.");
+                g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));
                 break;
         case 982:
-                g_snprintf(buf, sizeof(buf), "Your warning level is currently too high to log in.");
+                g_snprintf(buf, sizeof(buf), _("Your warning level is currently too high to log in."));
                 break;
         case 983:
-                g_snprintf(buf, sizeof(buf), "You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer.");
+                g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
                 break;
         case 989:
-                g_snprintf(buf, sizeof(buf), "An unknown signon error has occurred: %s.", w);
+                g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
                 break;
         default:
-                g_snprintf(buf, sizeof(buf), "An unknown error, %d, has occured.  Info: %s", no, w);
+                g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occured.  Info: %s"), no, w);
 	}
 	
-	g_snprintf(buf2, sizeof(buf2), "Gaim - Error %d", no);
+	g_snprintf(buf2, sizeof(buf2), _("Gaim - Error %d"), no);
 
 
         do_error_dialog(buf, buf2);
@@ -580,7 +580,7 @@ void show_ee_dialog(int ee)
 	GtkWidget *eedialog;
 
 	eedialog = gtk_window_new(GTK_WINDOW_DIALOG);
-        ok = gtk_button_new_with_label("OK");
+        ok = gtk_button_new_with_label(_("OK"));
         box = gtk_vbox_new(FALSE, 10);
 
 	if (ee == 0)
@@ -624,8 +624,8 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
         if (!imdialog) {
 
                 imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
-                cancel = gtk_button_new_with_label("Cancel");
-                ok = gtk_button_new_with_label("OK");
+                cancel = gtk_button_new_with_label(_("Cancel"));
+                ok = gtk_button_new_with_label(_("OK"));
                 bbox = gtk_hbox_new(TRUE, 10);
                 vbox = gtk_vbox_new(FALSE, 5);
                 ebox = gtk_hbox_new(FALSE, 2);
@@ -634,7 +634,7 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
                 gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
                 gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
-                label = gtk_label_new("IM who: ");
+                label = gtk_label_new(_("IM who: "));
                 gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
                 gtk_widget_show(label);
 
@@ -660,7 +660,7 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
                 gtk_widget_show(imentry);
                 gtk_widget_show(bbox);
                 gtk_widget_show(vbox);
-                gtk_window_set_title(GTK_WINDOW(imdialog), "Gaim - IM user");
+                gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
                 gtk_container_add(GTK_CONTAINER(imdialog), vbox);
                 gtk_widget_grab_focus(imentry);
                 gtk_widget_realize(imdialog);
@@ -688,7 +688,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
         add_buddy(grp, who);
 
         if (c != NULL)
-		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), "Remove");
+		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Remove"));
         
         build_edit_tree();
 
@@ -712,7 +712,7 @@ static GList *groups_tree()
         GList *grp = groups;
         
 	if (!grp) {
-                tmp2 = g_strdup("Buddies");
+                tmp2 = g_strdup(_("Buddies"));
                 tmp = g_list_append(tmp, tmp2);
 	} else {
 		while(grp) {
@@ -740,8 +740,8 @@ void show_add_buddy(char *buddy, char *group)
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, a->window);
-        cancel = gtk_button_new_with_label("Cancel");
-        add = gtk_button_new_with_label("Add");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        add = gtk_button_new_with_label(_("Add"));
         bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
@@ -756,16 +756,16 @@ void show_add_buddy(char *buddy, char *group)
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
 	frame = gtk_frame_new(NULL);
-	gtk_frame_set_label(GTK_FRAME(frame), "Add Buddy");
+	gtk_frame_set_label(GTK_FRAME(frame), _("Add Buddy"));
 
-        label = gtk_label_new("Buddy");
+        label = gtk_label_new(_("Buddy"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
         if (buddy != NULL)
                 gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
 
-        label = gtk_label_new("Group");
+        label = gtk_label_new(_("Group"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), a->combo, FALSE, FALSE, 5);
@@ -795,7 +795,7 @@ void show_add_buddy(char *buddy, char *group)
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
 	gtk_widget_show(frame);
-        gtk_window_set_title(GTK_WINDOW(a->window), "Gaim - Add Buddy");
+        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
         gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
         gtk_container_add(GTK_CONTAINER(a->window), frame);
@@ -850,8 +850,8 @@ void show_new_bp(char *name)
         
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, b->window);
-        cancel = gtk_button_new_with_label("Cancel");
-        ok = gtk_button_new_with_label("OK");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        ok = gtk_button_new_with_label(_("OK"));
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
         b->nameentry = gtk_entry_new();
@@ -861,15 +861,15 @@ void show_new_bp(char *name)
         gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
-        label = gtk_label_new("Buddy To Pounce:");
+        label = gtk_label_new(_("Buddy To Pounce:"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox), b->nameentry, FALSE, FALSE, 0);
 
-	b->openwindow = gtk_check_button_new_with_label("Open IM Window on Buddy Logon");
+	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window on Buddy Logon"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
 	
-	b->sendim = gtk_check_button_new_with_label("Send IM on Buddy Logon"); 
+	b->sendim = gtk_check_button_new_with_label(_("Send IM on Buddy Logon")); 
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 
 	gtk_widget_show(b->openwindow);
@@ -877,7 +877,7 @@ void show_new_bp(char *name)
 	gtk_box_pack_start(GTK_BOX(vbox), b->openwindow, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->sendim, FALSE, FALSE, 0);
 
-        label = gtk_label_new("Message to send:");
+        label = gtk_label_new(_("Message to send:"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox), b->messentry, FALSE, FALSE, 0);
@@ -904,7 +904,7 @@ void show_new_bp(char *name)
         gtk_widget_show(b->messentry);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
-        gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - New Buddy Pounce");
+        gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
         if (name != NULL) {
                 gtk_entry_set_text(GTK_ENTRY(b->nameentry), name);
                 gtk_window_set_focus(GTK_WINDOW(b->window), b->messentry);
@@ -979,8 +979,8 @@ void show_set_dir()
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	
-	b->cancel = gtk_button_new_with_label("Cancel");
-	b->save = gtk_button_new_with_label("Save");
+	b->cancel = gtk_button_new_with_label(_("Cancel"));
+	b->save = gtk_button_new_with_label(_("Save"));
 
 	bot = gtk_hbox_new(TRUE, 10);
 	top = gtk_vbox_new(FALSE, 10);
@@ -1002,39 +1002,39 @@ void show_set_dir()
 	b->city = gtk_entry_new();
 	b->state = gtk_entry_new();
 	b->country = gtk_entry_new();
-	b->web = gtk_check_button_new_with_label("Allow Web Searches To Find Your Info");
+	b->web = gtk_check_button_new_with_label(_("Allow Web Searches To Find Your Info"));
 	
-	label = gtk_label_new("First Name");
+	label = gtk_label_new(_("First Name"));
 	gtk_widget_show(label);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 	gtk_table_attach_defaults(GTK_TABLE(table), b->first, 1, 2, 0, 1);
 	
-        label = gtk_label_new("Middle Name");
+        label = gtk_label_new(_("Middle Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
         gtk_table_attach_defaults(GTK_TABLE(table), b->middle, 1, 2, 1, 2);  
 
-        label = gtk_label_new("Last Name");
+        label = gtk_label_new(_("Last Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
         gtk_table_attach_defaults(GTK_TABLE(table), b->last, 1, 2, 2, 3);  
 
-        label = gtk_label_new("Maiden Name");
+        label = gtk_label_new(_("Maiden Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
         gtk_table_attach_defaults(GTK_TABLE(table), b->maiden, 1, 2, 3, 4);  
 
-        label = gtk_label_new("City");
+        label = gtk_label_new(_("City"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 4, 5);
         gtk_table_attach_defaults(GTK_TABLE(table), b->city, 1, 2, 4, 5);  
 
-	label = gtk_label_new("State");        
+	label = gtk_label_new(_("State"));        
 	gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 5, 6);
         gtk_table_attach_defaults(GTK_TABLE(table), b->state, 1, 2, 5, 6);
 
-        label = gtk_label_new("Country");
+        label = gtk_label_new(_("Country"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 6, 7);
         gtk_table_attach_defaults(GTK_TABLE(table), b->country, 1, 2, 6, 7);
@@ -1065,7 +1065,7 @@ void show_set_dir()
 	gtk_container_add(GTK_CONTAINER(b->window), top);
 	gtk_container_border_width(GTK_CONTAINER(b->window), 10);
  	gtk_widget_set_usize(b->window, 530, 280); 
-	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Set Dir Info");
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->first);
         gtk_widget_realize(b->window);
 	aol_icon(b->window->window);
@@ -1083,12 +1083,12 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
 
 	if (strcasecmp(new1, new2)) {
-		do_error_dialog("New Passwords Do Not Match", "Gaim - Change Password Error");
+		do_error_dialog(_("New Passwords Do Not Match"), _("Gaim - Change Password Error"));
 		return ;
 	}
 
 	if ((strlen(orig) < 1) || (strlen(new1) < 1) || (strlen(new2) < 1)) {
-		do_error_dialog("Fill out all fields completely", "Gaim - Change Password Error");
+		do_error_dialog(_("Fill out all fields completely"), _("Gaim - Change Password Error"));
 		return;
 	}
 
@@ -1109,8 +1109,8 @@ void show_change_passwd()
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
-	b->ok = gtk_button_new_with_label("Ok");
-	b->cancel = gtk_button_new_with_label("Cancel");
+	b->ok = gtk_button_new_with_label(_("Ok"));
+	b->cancel = gtk_button_new_with_label(_("Cancel"));
 
 	gtk_widget_show(b->ok);
 	gtk_widget_show(b->cancel);
@@ -1119,7 +1119,7 @@ void show_change_passwd()
 	
 
 
-	label = gtk_label_new("Original Password");
+	label = gtk_label_new(_("Original Password"));
 	gtk_widget_show(label);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 	b->original = gtk_entry_new();
@@ -1127,7 +1127,7 @@ void show_change_passwd()
 	gtk_widget_show(b->original);
 	gtk_table_attach_defaults(GTK_TABLE(table), b->original, 1, 2, 0, 1);
 
-        label = gtk_label_new("New Password");
+        label = gtk_label_new(_("New Password"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
         b->new1 = gtk_entry_new();
@@ -1135,7 +1135,7 @@ void show_change_passwd()
         gtk_widget_show(b->new1);
         gtk_table_attach_defaults(GTK_TABLE(table), b->new1, 1, 2, 1, 2);
 
-        label = gtk_label_new("New Password (again)");
+        label = gtk_label_new(_("New Password (again)"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
         b->new2 = gtk_entry_new();
@@ -1158,7 +1158,7 @@ void show_change_passwd()
 	gtk_widget_show(vbox);
 
 	gtk_container_border_width(GTK_CONTAINER(b->window), 10);
-	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Password Change");
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
 	gtk_widget_show(b->window);
 	
         gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
@@ -1181,8 +1181,8 @@ void show_set_info()
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
-	b->cancel = gtk_button_new_with_label("Cancel");
-	b->save = gtk_button_new_with_label("Save");
+	b->cancel = gtk_button_new_with_label(_("Cancel"));
+	b->save = gtk_button_new_with_label(_("Save"));
 
 	bot = gtk_hbox_new(TRUE, 10);
 	top = gtk_vbox_new(FALSE, 10);
@@ -1221,7 +1221,7 @@ void show_set_info()
         gtk_widget_realize(b->window);
 	aol_icon(b->window->window);
 
-	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Set User Info");
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
 	gtk_widget_show(b->window);
 
 }
@@ -1269,8 +1269,8 @@ void show_register_dialog()
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
-	cancel = gtk_button_new_with_label("Cancel");
-	ok = gtk_button_new_with_label("Send");
+	cancel = gtk_button_new_with_label(_("Cancel"));
+	ok = gtk_button_new_with_label(_("Send"));
 
 	bbox = gtk_hbox_new(TRUE, 10);
 	table = gtk_table_new(6, 2, TRUE);
@@ -1362,13 +1362,13 @@ void g_show_info_text(char *info)
         bbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(b->window), bbox);
 
-        ok = gtk_button_new_with_label("OK");
+        ok = gtk_button_new_with_label(_("OK"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
         gtk_signal_connect(GTK_OBJECT(ok), "clicked",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
-        label = gtk_label_new("Below are the results of your search: ");
+        label = gtk_label_new(_("Below are the results of your search: "));
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
@@ -1461,8 +1461,8 @@ void show_add_perm(char *who)
 
         p->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, p->window);
-        cancel = gtk_button_new_with_label("Cancel");
-        add = gtk_button_new_with_label("Add");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        add = gtk_button_new_with_label(_("Add"));
         bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
@@ -1472,12 +1472,12 @@ void show_add_perm(char *who)
         if (who != NULL)
                 gtk_entry_set_text(GTK_ENTRY(p->entry), who);
 
-        which = gtk_radio_button_new_with_label(NULL, "Deny");
+        which = gtk_radio_button_new_with_label(NULL, _("Deny"));
         gtk_box_pack_start(GTK_BOX(rbox), which, FALSE, FALSE, 0);
         gtk_object_set_user_data(GTK_OBJECT(which), (int *)1);
         gtk_widget_show(which);
 
-        which = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(which)), "Permit");
+        which = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(which)), _("Permit"));
         gtk_box_pack_start(GTK_BOX(rbox), which, FALSE, FALSE, 0);
         gtk_object_set_user_data(GTK_OBJECT(which), (int *)2);
         gtk_widget_show(which);
@@ -1486,7 +1486,7 @@ void show_add_perm(char *who)
         gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 		
-        label = gtk_label_new("Add");
+        label = gtk_label_new(_("Add"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), p->entry, FALSE, FALSE, 5);
@@ -1515,7 +1515,7 @@ void show_add_perm(char *who)
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
         gtk_widget_show(rbox);
-        gtk_window_set_title(GTK_WINDOW(p->window), "Gaim - Add Permit/Deny");
+        gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit/Deny"));
         gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
         gtk_container_add(GTK_CONTAINER(p->window), vbox);
         gtk_widget_realize(p->window);
@@ -1576,7 +1576,7 @@ void show_log_dialog(char *bname)
 
 	
 	if (!logdialog) {
-		logdialog = gtk_file_selection_new("Gaim - Log Conversation");
+		logdialog = gtk_file_selection_new(_("Gaim - Log Conversation"));
 		
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(logdialog));	
 
@@ -1646,8 +1646,8 @@ void show_find_info()
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, b->window);
 
-        cancel = gtk_button_new_with_label("Cancel");
-        ok = gtk_button_new_with_label("OK");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        ok = gtk_button_new_with_label(_("OK"));
 
         bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_table_new(7, 2, TRUE);
@@ -1664,37 +1664,37 @@ void show_find_info()
         gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
-        label = gtk_label_new("First Name");
+        label = gtk_label_new(_("First Name"));
 	gtk_widget_show(label);
 	gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 0, 1);
 	gtk_table_attach_defaults(GTK_TABLE(topbox), b->firstentry, 1, 2, 0, 1);
 
-        label = gtk_label_new("Middle Name");
+        label = gtk_label_new(_("Middle Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 1, 2);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->middleentry, 1, 2, 1, 2);
 
-        label = gtk_label_new("Last Name");
+        label = gtk_label_new(_("Last Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 2, 3);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->lastentry, 1, 2, 2, 3);
 
-        label = gtk_label_new("Maiden Name");
+        label = gtk_label_new(_("Maiden Name"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 3, 4);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->maidenentry, 1, 2, 3, 4);
 
-        label = gtk_label_new("City");
+        label = gtk_label_new(_("City"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 4, 5);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->cityentry, 1, 2, 4, 5);
 
-        label = gtk_label_new("State");
+        label = gtk_label_new(_("State"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 5, 6);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->stateentry, 1, 2, 5, 6);
 
-        label = gtk_label_new("Country");
+        label = gtk_label_new(_("Country"));
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 6, 7);
         gtk_table_attach_defaults(GTK_TABLE(topbox), b->countryentry, 1, 2, 6, 7);
@@ -1721,7 +1721,7 @@ void show_find_info()
         gtk_widget_show(topbox);
         gtk_widget_show(bbox);                      
         gtk_widget_show(vbox);
-        gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Find Buddy By Info");
+        gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Info"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->firstentry);
         gtk_container_add(GTK_CONTAINER(b->window), vbox);
         gtk_container_border_width(GTK_CONTAINER(b->window), 10);
@@ -1744,8 +1744,8 @@ void show_find_email()
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         dialogwindows = g_list_prepend(dialogwindows, b->window); 
 
-        cancel = gtk_button_new_with_label("Cancel");
-        ok = gtk_button_new_with_label("OK");
+        cancel = gtk_button_new_with_label(_("Cancel"));
+        ok = gtk_button_new_with_label(_("OK"));
 
         bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
@@ -1756,7 +1756,7 @@ void show_find_email()
         gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
-        label = gtk_label_new("Email");
+        label = gtk_label_new(_("Email"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), b->emailentry, FALSE, FALSE, 5);
@@ -1779,7 +1779,7 @@ void show_find_email()
         gtk_widget_show(topbox);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
-        gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Find Buddy By Email");
+        gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->emailentry);
         gtk_container_add(GTK_CONTAINER(b->window), vbox);
         gtk_container_border_width(GTK_CONTAINER(b->window), 10);
@@ -1833,8 +1833,8 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 		linkdialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		dialogwindows = g_list_prepend(dialogwindows, linkdialog);
 
-		b->cancel = gtk_button_new_with_label("Cancel");
-		b->ok = gtk_button_new_with_label("Ok");
+		b->cancel = gtk_button_new_with_label(_("Cancel"));
+		b->ok = gtk_button_new_with_label(_("Ok"));
 	
 		vbox = gtk_vbox_new(FALSE, 10);
 		bbox = gtk_hbox_new(TRUE, 10);
@@ -1850,12 +1850,12 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 		b->url = gtk_entry_new();
 		b->text = gtk_entry_new();
 
-		label = gtk_label_new("URL");
+		label = gtk_label_new(_("URL"));
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 		gtk_table_attach_defaults(GTK_TABLE(table), b->url, 1, 2, 0, 1);
 		gtk_widget_show(label);
 	
-		label = gtk_label_new("Description");
+		label = gtk_label_new(_("Description"));
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 		gtk_table_attach_defaults(GTK_TABLE(table), b->text, 1, 2, 1, 2);
 		gtk_widget_show(label);
@@ -1877,7 +1877,7 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 
 		gtk_container_add(GTK_CONTAINER(linkdialog  ), vbox);
 		gtk_container_border_width(GTK_CONTAINER(linkdialog  ), 10);
-		gtk_window_set_title(GTK_WINDOW(linkdialog  ), "GAIM - Add URL");
+		gtk_window_set_title(GTK_WINDOW(linkdialog  ), _("GAIM - Add URL"));
 		gtk_window_set_focus(GTK_WINDOW(linkdialog  ), b->url);
 		b->window = linkdialog;
 		b->toggle = link;
@@ -1942,7 +1942,7 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 
     if (!c->color_dialog)
 	{
-    	c->color_dialog = gtk_color_selection_dialog_new("Select Text Color");
+    	c->color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->colorsel;
 
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
@@ -2058,7 +2058,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 
 	if (!font) { /* we came from the prefs dialog */
 		if (fontseld) return;
-		fontseld = gtk_font_selection_dialog_new("Select Font");
+		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
 		if (fontname)
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld), fontname);
 		else
@@ -2077,7 +2077,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 	
 	if (!c->font_dialog)
 	{
-		c->font_dialog = gtk_font_selection_dialog_new("Select Font");
+		c->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
 		if (font)
 			gtk_object_set_user_data(GTK_OBJECT(c->font_dialog), c);
@@ -2164,8 +2164,8 @@ void do_export(GtkWidget *w, void *dummy)
                 fclose(f);
                 chmod(buf, S_IRUSR | S_IWUSR);
         } else if ( show_dialog == 1 ) {
-                g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
-                do_error_dialog(buf, "Error");
+                g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
+                do_error_dialog(buf, _("Error"));
         }
 	if ( show_dialog == 1 ) {
         	destroy_dialog(NULL, exportdialog);
@@ -2181,7 +2181,7 @@ void show_export_dialog()
 {
         char *buf = g_malloc(BUF_LEN);
         if (!exportdialog) {
-                exportdialog = gtk_file_selection_new("Gaim - Export Buddy List");
+                exportdialog = gtk_file_selection_new(_("Gaim - Export Buddy List"));
 
                 gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(exportdialog));
 
@@ -2235,8 +2235,8 @@ void do_import(GtkWidget *w, void *dummy)
 
         if (!(f = fopen(path,"r"))) {
 		if ( show_dialog == 1 ) {
-                	g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
-                	do_error_dialog(buf, "Error");
+                	g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), file);
+                	do_error_dialog(buf, _("Error"));
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
 		}
@@ -2301,7 +2301,7 @@ void show_import_dialog()
 {
         char *buf = g_malloc(BUF_LEN);
         if (!importdialog) {
-                importdialog = gtk_file_selection_new("Gaim - Import Buddy List");
+                importdialog = gtk_file_selection_new(_("Gaim - Import Buddy List"));
 
                 gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(importdialog));
 
@@ -2376,7 +2376,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* Set up window */
 	ca->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 10);
-	gtk_window_set_title(GTK_WINDOW(ca->window), "Gaim - New away message");
+	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
 	gtk_signal_connect(GTK_OBJECT(ca->window),"delete_event",
 		           GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 
@@ -2386,7 +2386,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	tbox = gtk_vbox_new(FALSE, 0);
 
 	/* Make a label for away entry */
-	label = gtk_label_new("Away title: ");
+	label = gtk_label_new(_("Away title: "));
 	gtk_box_pack_start(GTK_BOX(titlebox), label, TRUE, TRUE, 0);
 
 	/* make away title entry */
@@ -2408,12 +2408,12 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 10);   
 
 	/* make create button */
-	create = gtk_button_new_with_label ("Create new message");
+	create = gtk_button_new_with_label (_("Create new message"));
 	gtk_box_pack_start(GTK_BOX(bbox), create, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(create), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
 
 	/* Checkbox for showing away msg */
-	ca->checkbx = gtk_check_button_new_with_label("Make away now");
+	ca->checkbx = gtk_check_button_new_with_label(_("Make away now"));
 
 	/* pack boxes where they belong */
 	gtk_box_pack_start(GTK_BOX(tbox), titlebox, FALSE, FALSE, 0);

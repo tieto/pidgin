@@ -105,7 +105,7 @@ static void accept_callback(GtkWidget *widget, struct file_transfer *ft)
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
 	
-	ft->window = gtk_file_selection_new("Gaim - Save As...");
+	ft->window = gtk_file_selection_new(_("Gaim - Save As..."));
 
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(ft->window));
 
@@ -218,8 +218,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	GtkWidget *button = NULL, *pct = NULL;
 
 	if (!(ft->f = fopen(file,"w"))) {
-                g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
-		do_error_dialog(buf, "Error");
+                g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
+		do_error_dialog(buf, _("Error"));
 		ft->accepted = 0;
 		accept_callback(NULL, ft);
 		return;
@@ -267,7 +267,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	rcv = 0;
 
 	fw = gtk_dialog_new();
-	snprintf(buf, 2048, "Receiving %s from %s", ft->filename, ft->user);
+	snprintf(buf, 2048, _("Receiving %s from %s"), ft->filename, ft->user);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
 	gtk_widget_show(label);
@@ -277,11 +277,11 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	pct = gtk_label_new("0 %");
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), pct, 0, 0, 5);
 	gtk_widget_show(pct);
-	button = gtk_button_new_with_label("Cancel");
+	button = gtk_button_new_with_label(_("Cancel"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
 	gtk_widget_show(button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
-	gtk_window_set_title(GTK_WINDOW(fw), "Gaim - File Transfer");
+	gtk_window_set_title(GTK_WINDOW(fw), _("Gaim - File Transfer"));
 	gtk_widget_realize(fw);
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
@@ -402,7 +402,7 @@ static void send_file_callback(gpointer data, gint source,
 	read_file_header(ft->fd, &fhdr);
 
 	fw = gtk_dialog_new();
-	snprintf(buf, 2048, "Sending %s to %s", fhdr.name, ft->user);
+	snprintf(buf, 2048, _("Sending %s to %s"), fhdr.name, ft->user);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
 	gtk_widget_show(label);
@@ -412,11 +412,11 @@ static void send_file_callback(gpointer data, gint source,
 	pct = gtk_label_new("0 %");
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), pct, 0, 0, 5); 
 	gtk_widget_show(pct);
-	button = gtk_button_new_with_label("Cancel");
+	button = gtk_button_new_with_label(_("Cancel"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
 	gtk_widget_show(button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
-	gtk_window_set_title(GTK_WINDOW(fw), "Gaim - File Transfer");
+	gtk_window_set_title(GTK_WINDOW(fw), _("Gaim - File Transfer"));
 	gtk_widget_realize(fw);
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
@@ -487,8 +487,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	stat(file, &st);
 	if (!(ft->f = fopen(file, "r"))) {
-		g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
-		do_error_dialog(buf, "Error");
+		g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), file);
+		do_error_dialog(buf, _("Error"));
 		ft->accepted = 0;
 		accept_callback(NULL, ft);
 		free_ft(ft);
@@ -630,10 +630,10 @@ void accept_file_dialog(struct file_transfer *ft)
         
         ft->window = gtk_window_new(GTK_WINDOW_DIALOG);
 
-        accept = gtk_button_new_with_label("Accept");
-        info = gtk_button_new_with_label("Info");
-        warn = gtk_button_new_with_label("Warn");
-        cancel = gtk_button_new_with_label("Cancel");
+        accept = gtk_button_new_with_label(_("Accept"));
+        info = gtk_button_new_with_label(_("Info"));
+        warn = gtk_button_new_with_label(_("Warn"));
+        cancel = gtk_button_new_with_label(_("Cancel"));
 
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
@@ -649,10 +649,10 @@ void accept_file_dialog(struct file_transfer *ft)
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
 	if (!strcmp(ft->UID, FILE_SEND_UID)) {
-	        g_snprintf(buf, sizeof(buf), "%s requests you to accept the file: %s (%d bytes)",
+	        g_snprintf(buf, sizeof(buf), _("%s requests you to accept the file: %s (%d bytes)"),
 				ft->user, ft->filename, ft->size);
 	} else {
-		g_snprintf(buf, sizeof(buf), "%s requests you to send them a file",
+		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"),
 				ft->user);
 	}
         if (ft->message)
@@ -662,7 +662,7 @@ void accept_file_dialog(struct file_transfer *ft)
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
         gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 
-        gtk_window_set_title(GTK_WINDOW(ft->window), "Gaim - File Transfer?");
+        gtk_window_set_title(GTK_WINDOW(ft->window), _("Gaim - File Transfer?"));
         gtk_window_set_focus(GTK_WINDOW(ft->window), accept);
         gtk_container_add(GTK_CONTAINER(ft->window), vbox);
         gtk_container_border_width(GTK_CONTAINER(ft->window), 10);

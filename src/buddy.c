@@ -140,7 +140,7 @@ void update_num_groups()
                 grp = grp->next;
         }
 #ifdef USE_APPLET
-	g_snprintf(buf, sizeof(buf), "%d/%d Buddies Online", onl, all);
+	g_snprintf(buf, sizeof(buf), _("%d/%d Buddies Online"), onl, all);
 	applet_set_tooltips(buf);
 #endif
 }
@@ -267,21 +267,21 @@ void update_button_pix()
 {
 
 	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
-	        adjust_pic(addbutton, "Add", (gchar **)daemon_buddyadd_xpm);
-		adjust_pic(rembutton, "Remove", (gchar **)daemon_buddydel_xpm);
-		adjust_pic(chatbutton, "Chat", (gchar **)daemon_buddychat_xpm);
-	        adjust_pic(imbutton, "IM", (gchar **)daemon_im_xpm);
-	        adjust_pic(infobutton, "Info", (gchar **)daemon_info_xpm);
-	        adjust_pic(addpermbutton, "Add", (gchar **)daemon_permadd_xpm);
-	        adjust_pic(rempermbutton, "Remove", (gchar **)daemon_permdel_xpm);
+	        adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
+		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
+		adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
+	        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
+	        adjust_pic(infobutton, _("Info"), (gchar **)daemon_info_xpm);
+	        adjust_pic(addpermbutton, _("Add"), (gchar **)daemon_permadd_xpm);
+	        adjust_pic(rempermbutton, _("Remove"), (gchar **)daemon_permdel_xpm);
 	} else {
-	        adjust_pic(addbutton, "Add", (gchar **)buddyadd_xpm);
-		adjust_pic(rembutton, "Remove", (gchar **)buddydel_xpm);
-		adjust_pic(chatbutton, "Chat", (gchar **)buddychat_xpm);
-	        adjust_pic(imbutton, "IM", (gchar **)im_xpm);
-	        adjust_pic(infobutton, "Info", (gchar **)info_xpm);
-	        adjust_pic(addpermbutton, "Add", (gchar **)permadd_xpm);
-	        adjust_pic(rempermbutton, "Remove", (gchar **)permdel_xpm);
+	        adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
+		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
+		adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
+	        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
+	        adjust_pic(infobutton, _("Info"), (gchar **)info_xpm);
+	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
+	        adjust_pic(rempermbutton, _("Remove"), (gchar **)permdel_xpm);
 	}
 }
 
@@ -431,39 +431,39 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 
 		menu = gtk_menu_new();
 
-		button = gtk_menu_item_new_with_label("IM");
+		button = gtk_menu_item_new_with_label(_("IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_im), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label("Info");
+		button = gtk_menu_item_new_with_label(_("Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_info), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label("Dir Info");
+		button = gtk_menu_item_new_with_label(_("Dir Info"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
 #ifdef USE_OSCAR /* FIXME : someday maybe TOC can do this too */
-		button = gtk_menu_item_new_with_label("Away Msg");
+		button = gtk_menu_item_new_with_label(_("Away Msg"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 #endif
 
-		button = gtk_menu_item_new_with_label("Toggle Logging");
+		button = gtk_menu_item_new_with_label(_("Toggle Logging"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(log_callback), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label("Add Buddy Pounce");
+		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
@@ -566,7 +566,7 @@ void build_permit_tree()
 
         gtk_tree_clear_items(GTK_TREE(permtree), 0, -1);
 
-        ti = gtk_tree_item_new_with_label("Permit");
+        ti = gtk_tree_item_new_with_label(_("Permit"));
         sub = gtk_tree_new();
         gtk_widget_show(ti);
         gtk_widget_show(sub);
@@ -582,7 +582,7 @@ void build_permit_tree()
         }
 
 
-        ti = gtk_tree_item_new_with_label("Deny");
+        ti = gtk_tree_item_new_with_label(_("Deny"));
         sub = gtk_tree_new();
         gtk_widget_show(ti);
         gtk_widget_show(sub);
@@ -1014,7 +1014,7 @@ static void do_del_perm(GtkWidget *w, GtkTree *permtree)
 			pitem = GTK_WIDGET(GTK_TREE(item->parent)->tree_owner);
 			plabel = GTK_LABEL(GTK_BIN(pitem)->child);
 			gtk_label_get(plabel, &d);
-                        if (!strcasecmp(d, "Permit")) {
+                        if (!strcasecmp(d, _("Permit"))) {
                                 while(plist) {
                                         if (!strcasecmp((char *)(plist->data), c)) {
                                                 permit = g_list_remove(permit, plist->data);
@@ -1295,7 +1295,7 @@ void do_bp_menu()
 
 	remmenu = gtk_menu_new();
 	
-	menuitem = gtk_menu_item_new_with_label("New Buddy Pounce");
+	menuitem = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
 	gtk_menu_append(GTK_MENU(bpmenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(new_bp_callback), NULL);
@@ -1313,7 +1313,7 @@ void do_bp_menu()
 
 	}
 	
-	menuitem = gtk_menu_item_new_with_label("Remove Buddy Pounce");
+	menuitem = gtk_menu_item_new_with_label(_("Remove Buddy Pounce"));
 	gtk_menu_append(GTK_MENU(bpmenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);
@@ -1422,12 +1422,12 @@ void set_buddy(struct buddy *b)
                 }
 		
 		if (b->evil) {
-			g_snprintf(warn, sizeof(warn), "Warnings: %d%%\n", b->evil);
+			g_snprintf(warn, sizeof(warn), _("Warnings: %d%%\n"), b->evil);
 
 		} else
 			warn[0] = '\0';
 		
-                i = g_snprintf(infotip, sizeof(infotip), "Name: %s                \nLogged in: %s\n%s%s%s", b->name, sotime, warn, ((b->idle) ? "Idle: " : ""),  itime);
+                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime);
 		
 		gtk_tooltips_set_tip(tips, GTK_WIDGET(b->item), infotip, "");
 
@@ -1475,7 +1475,7 @@ void set_buddy(struct buddy *b)
 					char tmp[1024];
 
 					
-					g_snprintf(tmp, sizeof(tmp), "<HR><B>%s logged in%s%s.</B><BR><HR>", b->name,
+					g_snprintf(tmp, sizeof(tmp), _("<HR><B>%s logged in%s%s.</B><BR><HR>"), b->name,
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
 
@@ -1573,7 +1573,7 @@ void set_buddy(struct buddy *b)
 					char tmp[1024];
 
 					
-					g_snprintf(tmp, sizeof(tmp), "<HR><B>%s logged out%s%s.</B><BR><HR>", b->name,
+					g_snprintf(tmp, sizeof(tmp), _("<HR><B>%s logged out%s%s.</B><BR><HR>"), b->name,
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
                                                    ((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
 
@@ -1706,41 +1706,41 @@ void show_buddy_list()
 	menu = gtk_menu_new();
 
 
-	menuitem = gaim_new_item(NULL, "File", NULL);
+	menuitem = gaim_new_item(NULL, _("File"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item(menu, "Add A Buddy", GTK_SIGNAL_FUNC(add_buddy_callback));
+	gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
         gaim_seperator(menu);
-        gaim_new_item(menu, "Import Buddy List", GTK_SIGNAL_FUNC(import_callback));
-        gaim_new_item(menu, "Export Buddy List", GTK_SIGNAL_FUNC(export_callback));
+        gaim_new_item(menu, _("Import Buddy List"), GTK_SIGNAL_FUNC(import_callback));
+        gaim_new_item(menu, _("Export Buddy List"), GTK_SIGNAL_FUNC(export_callback));
 	if (!(general_options & OPT_GEN_REGISTERED))
 	{
         	gaim_seperator(menu);
-		gaim_new_item(menu, "Register", GTK_SIGNAL_FUNC(gaimreg_callback));
+		gaim_new_item(menu, _("Register"), GTK_SIGNAL_FUNC(gaimreg_callback));
 	}
 	gaim_seperator(menu);
-	gaim_new_item(menu, "Signoff", GTK_SIGNAL_FUNC(signoff));
+	gaim_new_item(menu, _("Signoff"), GTK_SIGNAL_FUNC(signoff));
 
 #ifndef USE_APPLET
-	gaim_new_item(menu, "Quit", GTK_SIGNAL_FUNC(do_quit));
+	gaim_new_item(menu, _("Quit"), GTK_SIGNAL_FUNC(do_quit));
 #else
-	gaim_new_item(menu, "Close", GTK_SIGNAL_FUNC(applet_destroy_buddy));
+	gaim_new_item(menu, _("Close"), GTK_SIGNAL_FUNC(applet_destroy_buddy));
 #endif
 
 	menu = gtk_menu_new();
 
-	menuitem = gaim_new_item(NULL, "Tools", NULL);
+	menuitem = gaim_new_item(NULL, _("Tools"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	awaymenu = gtk_menu_new();
-	menuitem = gaim_new_item(menu, "Away", NULL);
+	menuitem = gaim_new_item(menu, _("Away"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), awaymenu);
         do_away_menu();
 
         bpmenu = gtk_menu_new();
-        menuitem = gaim_new_item(menu, "Buddy Pounce", NULL);
+        menuitem = gaim_new_item(menu, _("Buddy Pounce"), NULL);
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), bpmenu);
         do_bp_menu();
 
@@ -1748,51 +1748,51 @@ void show_buddy_list()
 
 	findmenu = gtk_menu_new();
 	gtk_widget_show(findmenu);
-	menuitem = gaim_new_item(menu, "Search for Buddy", NULL);
+	menuitem = gaim_new_item(menu, _("Search for Buddy"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), findmenu);
 	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label("by Email");
+	menuitem = gtk_menu_item_new_with_label(_("by Email"));
 	gtk_menu_append(GTK_MENU(findmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_email), NULL);
 	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label("by Dir Info");
+	menuitem = gtk_menu_item_new_with_label(_("by Dir Info"));
 	gtk_menu_append(GTK_MENU(findmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_find_info), NULL);
  	gtk_widget_show(menuitem);
 
 	setmenu = gtk_menu_new();
 	gtk_widget_show(setmenu);
-	menuitem = gaim_new_item(menu, "Settings", NULL);
+	menuitem = gaim_new_item(menu, _("Settings"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), setmenu);
 	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label("User Info");
+	menuitem = gtk_menu_item_new_with_label(_("User Info"));
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_info), NULL);
 	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label("Directory Info");
+	menuitem = gtk_menu_item_new_with_label(_("Directory Info"));
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_set_dir), NULL);	
 	gtk_widget_show(menuitem);
-	menuitem = gtk_menu_item_new_with_label("Change Password");
+	menuitem = gtk_menu_item_new_with_label(_("Change Password"));
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
 	gtk_widget_show(menuitem);
 	gaim_seperator(menu);
 
-        gaim_new_item(menu, "Preferences", GTK_SIGNAL_FUNC(show_prefs));
+        gaim_new_item(menu, _("Preferences"), GTK_SIGNAL_FUNC(show_prefs));
 
 #ifdef GAIM_PLUGINS
-        gaim_new_item(menu, "Plugins", GTK_SIGNAL_FUNC(show_plugins));
+        gaim_new_item(menu, _("Plugins"), GTK_SIGNAL_FUNC(show_plugins));
 #endif
 
 	menu = gtk_menu_new();
 
-	menuitem = gaim_new_item(NULL, "Help", NULL);
+	menuitem = gaim_new_item(NULL, _("Help"), NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_item_right_justify(GTK_MENU_ITEM(menuitem));
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 	
-	gaim_new_item(menu, "About", show_about);
+	gaim_new_item(menu, _("About"), show_about);
 
         gtk_widget_show(menubar);
 
@@ -1826,9 +1826,9 @@ void show_buddy_list()
 
         buddypane = gtk_vbox_new(FALSE, 0);
         
-        imbutton   = gtk_button_new_with_label("IM");
-	infobutton = gtk_button_new_with_label("Info");
-	chatbutton = gtk_button_new_with_label("Chat");
+        imbutton   = gtk_button_new_with_label(_("IM"));
+	infobutton = gtk_button_new_with_label(_("Info"));
+	chatbutton = gtk_button_new_with_label(_("Chat"));
 
 	hbox       = gtk_hbox_new(TRUE, 10);
 
@@ -1840,7 +1840,7 @@ void show_buddy_list()
 
         
 	tips = gtk_tooltips_new();
-	gtk_object_set_data(GTK_OBJECT(blist), "Buddy List", tips);
+	gtk_object_set_data(GTK_OBJECT(blist), _("Buddy List"), tips);
 	
  
 	
@@ -1863,9 +1863,9 @@ void show_buddy_list()
         gtk_container_border_width(GTK_CONTAINER(hbox), 10);
 
 
-	gtk_tooltips_set_tip(tips,infobutton, "Information on selected Buddy", "Penguin");
-	gtk_tooltips_set_tip(tips,imbutton, "Send Instant Message", "Penguin");
-	gtk_tooltips_set_tip(tips,chatbutton, "Start/join a Buddy Chat", "Penguin");
+	gtk_tooltips_set_tip(tips,infobutton, _("Information on selected Buddy"), "Penguin");
+	gtk_tooltips_set_tip(tips,imbutton, _("Send Instant Message"), "Penguin");
+	gtk_tooltips_set_tip(tips,chatbutton, _("Start/join a Buddy Chat"), "Penguin");
 
         gtk_box_pack_start(GTK_BOX(buddypane), sw, TRUE, TRUE, 0);
         gtk_box_pack_start(GTK_BOX(buddypane), hbox, FALSE, FALSE, 0);
@@ -1879,8 +1879,8 @@ void show_buddy_list()
         editpane = gtk_vbox_new(FALSE, 0);
 
         
-       	addbutton = gtk_button_new_with_label("Add");
-       	rembutton = gtk_button_new_with_label("Remove");
+       	addbutton = gtk_button_new_with_label(_("Add"));
+       	rembutton = gtk_button_new_with_label(_("Remove"));
 	edittree = gtk_ctree_new(1, 0);
 	gtk_ctree_set_line_style (GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);
         gtk_ctree_set_expander_style(GTK_CTREE(edittree), GTK_CTREE_EXPANDER_SQUARE);
@@ -1900,8 +1900,8 @@ void show_buddy_list()
        	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 10);
        	gtk_box_pack_start(GTK_BOX(bbox), rembutton, TRUE, TRUE, 10);
 
-	gtk_tooltips_set_tip(tips, addbutton, "Add a new Buddy", "Penguin");
-	gtk_tooltips_set_tip(tips, rembutton, "Remove selected Buddy", "Penguin");
+	gtk_tooltips_set_tip(tips, addbutton, _("Add a new Buddy"), "Penguin");
+	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy"), "Penguin");
 
        	/* And the boxes in the box */
        	gtk_box_pack_start(GTK_BOX(editpane), tbox, TRUE, TRUE, 5);
@@ -1924,14 +1924,14 @@ void show_buddy_list()
 
 	permitpane = gtk_vbox_new(FALSE, 0);
 
-        permopt = gtk_radio_button_new_with_label(NULL, "Allow anyone");
+        permopt = gtk_radio_button_new_with_label(NULL, _("Allow anyone"));
         gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)1);
 	gtk_widget_show(permopt);
 	if (permdeny == 1)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(permopt), TRUE);
 
-        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), "Permit some");
+        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), _("Permit some"));
         gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)3);
 	gtk_widget_show(permopt);
@@ -1939,7 +1939,7 @@ void show_buddy_list()
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(permopt), TRUE);
 
 
-        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), "Deny some");
+        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), _("Deny some"));
         gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)4);
         gtk_widget_show(permopt);
@@ -1948,8 +1948,8 @@ void show_buddy_list()
 
 
 
-        addpermbutton = gtk_button_new_with_label("Add");
-        rempermbutton = gtk_button_new_with_label("Remove");
+        addpermbutton = gtk_button_new_with_label(_("Add"));
+        rempermbutton = gtk_button_new_with_label(_("Remove"));
         
        	permtree = gtk_tree_new();
 	build_permit_tree();
@@ -1960,8 +1960,8 @@ void show_buddy_list()
         gtk_box_pack_start(GTK_BOX(pbox), rempermbutton, TRUE, TRUE, 10);
         
 
-	gtk_tooltips_set_tip(tips, addpermbutton, "Add buddy to permit/deny", "Penguin");
-	gtk_tooltips_set_tip(tips, rempermbutton, "Remove buddy from permit/deny", "Penguin");
+	gtk_tooltips_set_tip(tips, addpermbutton, _("Add buddy to permit/deny"), "Penguin");
+	gtk_tooltips_set_tip(tips, rempermbutton, _("Remove buddy from permit/deny"), "Penguin");
        	/* And the boxes in the box */
        	gtk_box_pack_start(GTK_BOX(permitpane), xbox, TRUE, TRUE, 5);
        	gtk_box_pack_start(GTK_BOX(permitpane), pbox, FALSE, FALSE, 5);
@@ -1980,11 +1980,11 @@ void show_buddy_list()
 
 
 
-        label = gtk_label_new("Online");
+        label = gtk_label_new(_("Online"));
         gtk_notebook_append_page(GTK_NOTEBOOK(notebook), buddypane, label);
-        label = gtk_label_new("Edit Buddies");
+        label = gtk_label_new(_("Edit Buddies"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), editpane, label);
-	label = gtk_label_new("Permit");
+	label = gtk_label_new(_("Permit"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), permitpane, label);
 
         gtk_widget_show_all(notebook);
@@ -2031,7 +2031,7 @@ void show_buddy_list()
        	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(xbox),
                                        GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
 
-        gtk_window_set_title(GTK_WINDOW(blist), "Gaim - Buddy List");
+        gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
 
         if (general_options & OPT_GEN_SAVED_WINDOWS) {
                 if (blist_pos.width != 0) { /* Sanity check! */

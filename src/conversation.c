@@ -361,11 +361,11 @@ static void color_callback(GtkWidget *widget, struct conversation *c)
 static void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (find_buddy(c->name) != NULL) {
-		sprintf(debug_buff,"Removing '%s' from buddylist.\n", c->name);
+		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
 		debug_print(debug_buff);
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
 		build_edit_tree();
-		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), "Add");
+		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Add"));
 	}
 	else
 	{
@@ -493,7 +493,7 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 
 	escape_text(buf);
 	if (escape_message(buf) > MSG_LEN - hdrlen) {
-		do_error_dialog("Message too long, some data truncated.", "Error");
+		do_error_dialog(_("Message too long, some data truncated."), _("Error"));
 	}
 
         serv_send_im(c->name, buf, 0);
@@ -667,14 +667,14 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 		return;
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 	pos = GTK_EDITABLE(entry)->current_pos;
-	sprintf(debug_buff,"Currently at %d\n",pos);
+	sprintf(debug_buff,_("Currently at %d\n"),pos);
 	debug_print(debug_buff);
 	s2= strstr(&s[pos], post);
 	if (s2)
 		pos = s2 - s + strlen(post);
 	else
 		pos=strlen(s);
-	sprintf(debug_buff,"Setting position to %d\n",pos);
+	sprintf(debug_buff,_("Setting position to %d\n"),pos);
 	debug_print(debug_buff);
 	gtk_editable_set_position(GTK_EDITABLE(entry), pos);
 	gtk_widget_grab_focus(entry);
@@ -1092,18 +1092,18 @@ void show_conv(struct conversation *c)
         
         c->window = win;
         
-	send = gtk_button_new_with_label("Send");
-	info = gtk_button_new_with_label("Info");
-	warn = gtk_button_new_with_label("Warn");
+	send = gtk_button_new_with_label(_("Send"));
+	info = gtk_button_new_with_label(_("Info"));
+	warn = gtk_button_new_with_label(_("Warn"));
 	/* color = gtk_button_new_with_label("Color"); */
-	close = gtk_button_new_with_label("Close");
+	close = gtk_button_new_with_label(_("Close"));
 	if (find_buddy(c->name) != NULL) {
-       		add = gtk_button_new_with_label("Remove");
+       		add = gtk_button_new_with_label(_("Remove"));
 	}
 	else {
-		add = gtk_button_new_with_label("Add");
+		add = gtk_button_new_with_label(_("Add"));
 	}
-        block = gtk_button_new_with_label("Block");
+        block = gtk_button_new_with_label(_("Block"));
 
 
         bbox = gtk_hbox_new(TRUE, 0);
@@ -1177,48 +1177,48 @@ void show_conv(struct conversation *c)
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-					  "Bold", "Bold Text", "Bold", bold_p,
+					  _("Bold"), _("Bold Text"), _("Bold"), bold_p,
 					  GTK_SIGNAL_FUNC(do_bold), entry);
 	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), 
 		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Italics", "Italics Text",
-					    "Italics", italic_p, GTK_SIGNAL_FUNC(do_italic), entry);
+					    NULL, _("Italics"), _("Italics Text"),
+					    _("Italics"), italic_p, GTK_SIGNAL_FUNC(do_italic), entry);
 	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Underline", "Underline Text",
-					    "Underline", underline_p, GTK_SIGNAL_FUNC(do_underline), entry);
+					    NULL, _("Underline"), _("Underline Text"),
+					    _("Underline"), underline_p, GTK_SIGNAL_FUNC(do_underline), entry);
 	strike = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Strike", "Strike through Text",
-					    "Strike", strike_p, GTK_SIGNAL_FUNC(do_strike), entry);
+					    NULL, _("Strike"), _("Strike through Text"),
+					    _("Strike"), strike_p, GTK_SIGNAL_FUNC(do_strike), entry);
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Small", "Decrease font size", "Small", small_p, GTK_SIGNAL_FUNC(do_small), entry);
-	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Normal", "Normal font size", "Normal", normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
-	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), entry);
+	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Small"), _("Decrease font size"), _("Small"), small_p, GTK_SIGNAL_FUNC(do_small), entry);
+	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Normal"), _("Normal font size"), _("Normal"), normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
+	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Big"), _("Increase font size"), _("Big"), big_p, GTK_SIGNAL_FUNC(do_big), entry);
 	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-						NULL, "Font", "Select Font",
-						"Font", font_p, GTK_SIGNAL_FUNC(toggle_font), c);
+						NULL, _("Font"), _("Select Font"),
+						_("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
 
 	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
 	
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, "Link", "Insert Link",
-                                            "Link", link_p, GTK_SIGNAL_FUNC(do_link), entry);                 
+                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, _("Link"), _("Insert Link"),
+                                            _("Link"), link_p, GTK_SIGNAL_FUNC(do_link), entry);                 
 	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Color", "Text Color",
-				 	    "Color", palette_p, GTK_SIGNAL_FUNC(toggle_color), c);
+					    NULL, _("Color"), _("Text Color"),
+				 	    _("Color"), palette_p, GTK_SIGNAL_FUNC(toggle_color), c);
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Logging", "Enable logging",
-                                          "Logging", wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
+					    NULL, _("Logging"), _("Enable logging"),
+                                          _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
         speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Sound", "Enable sounds",
-					    "Sound", speaker_p, GTK_SIGNAL_FUNC(set_option), &c->makesound);
+					    NULL, _("Sound"), _("Enable sounds"),
+					    _("Sound"), speaker_p, GTK_SIGNAL_FUNC(set_option), &c->makesound);
 	c->makesound=0;
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
 	

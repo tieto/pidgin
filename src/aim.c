@@ -298,12 +298,12 @@ void show_login()
         }
         
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        signon   = gtk_button_new_with_label("Signon");
-	cancel   = gtk_button_new_with_label("Cancel");
-	reg      = gtk_button_new_with_label("Register");
-	options  = gtk_button_new_with_label("Options");
+        signon   = gtk_button_new_with_label(_("Signon"));
+	cancel   = gtk_button_new_with_label(_("Cancel"));
+	reg      = gtk_button_new_with_label(_("Register"));
+	options  = gtk_button_new_with_label(_("Options"));
 #ifdef GAIM_PLUGINS
-	plugs    = gtk_button_new_with_label("Plugins");
+	plugs    = gtk_button_new_with_label(_("Plugins"));
 #endif
 	table    = gtk_table_new(8, 2, FALSE);
 	name     = gtk_combo_new();
@@ -366,13 +366,13 @@ void show_login()
 	gtk_table_attach(GTK_TABLE(table), label, 0,1,1,2,0,0, 5, 5);
 	gtk_widget_show(label);
 #endif
-	label = gtk_label_new("Screen Name: ");
+	label = gtk_label_new(_("Screen Name: "));
 	gtk_table_attach(GTK_TABLE(table), label, 0,1,2,3,0,0, 5, 5);
 	gtk_widget_show(label);
-	label = gtk_label_new("Password: ");
+	label = gtk_label_new(_("Password: "));
 	gtk_table_attach(GTK_TABLE(table), label, 0,1,3,4,0,0, 5, 5);
 	gtk_widget_show(label);
-	remember = gtk_check_button_new_with_label("Remember Password");
+	remember = gtk_check_button_new_with_label(_("Remember Password"));
 	gtk_table_attach(GTK_TABLE(table), remember, 0,2,4,5,0,0, 5, 5);
 	gtk_widget_show(remember);
 

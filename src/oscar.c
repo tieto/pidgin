@@ -90,7 +90,7 @@ static void oscar_callback(gpointer data, gint source,
 
 	if (condition & GDK_INPUT_EXCEPTION) {
 		signoff();
-		hide_login_progress("Disconnected.");
+		hide_login_progress(_("Disconnected."));
 		aim_logoff(gaim_sess);
 		gdk_input_remove(inpa);
 		auth_failed();
@@ -98,9 +98,9 @@ static void oscar_callback(gpointer data, gint source,
 	}
 	if (condition & GDK_INPUT_READ) {
 		if (aim_get_command(gaim_sess, conn) < 0) {
-			debug_print("connection error!\n");
+			debug_print(_("connection error!\n"));
 			signoff();
-			hide_login_progress("Disconnected.");
+			hide_login_progress(_("Disconnected."));
 			aim_logoff(gaim_sess);
 			auth_failed();
 			gdk_input_remove(inpa);
@@ -117,7 +117,7 @@ int oscar_login(char *username, char *password) {
 	struct aim_user *u;
 	char buf[256];
 
-	sprintf(debug_buff, "Logging in %s\n", username);
+	sprintf(debug_buff, _("Logging in %s\n"), username);
 	debug_print(debug_buff);
 
 	sess = g_new0(struct aim_session_t, 1);
@@ -127,17 +127,17 @@ int oscar_login(char *username, char *password) {
 	sess->tx_enqueue = &aim_tx_enqueue__immediate;
 	gaim_sess = sess;
 
-	sprintf(buf, "Looking up %s", FAIM_LOGIN_SERVER);
+	sprintf(buf, _("Looking up %s"), FAIM_LOGIN_SERVER);
 	set_login_progress(1, buf);
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, FAIM_LOGIN_SERVER);
 
 	if (conn == NULL) {
-		debug_print("internal connection error\n");
+		debug_print(_("internal connection error\n"));
 #ifdef USE_APPLET
 		setUserState(offline);
 #endif
 		set_state(STATE_OFFLINE);
-		hide_login_progress("Unable to login to AIM");
+		hide_login_progress(_("Unable to login to AIM"));
 		return -1;
 	} else if (conn->fd == -1) {
 #ifdef USE_APPLET
@@ -145,17 +145,17 @@ int oscar_login(char *username, char *password) {
 #endif
 		set_state(STATE_OFFLINE);
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
-			sprintf(debug_buff, "couldn't resolve host\n");
+			sprintf(debug_buff, _("couldn't resolve host\n"));
 			debug_print(debug_buff);
 			hide_login_progress(debug_buff);
 		} else if (conn->status & AIM_CONN_STATUS_CONNERR) {
-			sprintf(debug_buff, "couldn't connect to host\n");
+			sprintf(debug_buff, _("couldn't connect to host\n"));
 			debug_print(debug_buff);
 			hide_login_progress(debug_buff);
 		}
 		return -1;
 	}
-	g_snprintf(buf, sizeof(buf), "Signon: %s", username);
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), username);
 	set_login_progress(2, buf);
 
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL,
@@ -183,7 +183,7 @@ int oscar_login(char *username, char *password) {
 				"%s", password);
 	save_prefs();
 
-	debug_print("Password sent, waiting for response\n");
+	debug_print(_("Password sent, waiting for response\n"));
 
 	return 0;
 }
@@ -197,7 +197,7 @@ void oscar_close() {
 		gdk_input_remove(inpa);
 	inpa = -1;
 	aim_logoff(gaim_sess);
-	debug_print("Signed off.\n");
+	debug_print(_("Signed off.\n"));
 }
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
@@ -210,13 +210,13 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	if (sess->logininfo.errorcode) {
 		switch (sess->logininfo.errorcode) {
 		case 0x18:
-			do_error_dialog("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer.", "Gaim - Error");
+			do_error_dialog(_("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."), _("Gaim - Error"));
 			break;
 		case 0x05:
-			do_error_dialog("Incorrect nickname or password.", "Gaim - Error");
+			do_error_dialog(_("Incorrect nickname or password."), _("Gaim - Error"));
 			break;
 		case 0x1c:
-			do_error_dialog("AOL has decided your client is too old. Please download a newer version from http://www.marko.net/gaim/", "Gaim - Error");
+			do_error_dialog(_("AOL has decided your client is too old. Please download a newer version from http://www.marko.net/gaim/"), _("Gaim - Error"));
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -229,7 +229,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		setUserState(offline);
 #endif
 		set_state(STATE_OFFLINE);
-		hide_login_progress("Authentication Failed");
+		hide_login_progress(_("Authentication Failed"));
 		gdk_input_remove(inpa);
 		aim_conn_kill(sess, &command->conn);
 		auth_failed();
@@ -250,7 +250,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		setUserState(offline);
 #endif
 		set_state(STATE_OFFLINE);
-		hide_login_progress("Internal Error");
+		hide_login_progress(_("Internal Error"));
 		auth_failed();
 		return -1;
 	} else if (bosconn->status != 0) {
@@ -258,7 +258,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		setUserState(offline);
 #endif
 		set_state(STATE_OFFLINE);
-		hide_login_progress("Could Not Connect");
+		hide_login_progress(_("Could Not Connect"));
 		auth_failed();
 		return -1;
 	}
@@ -284,7 +284,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	gaim_conn = bosconn;
 	inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
-	set_login_progress(4, "Connection established, cookie sent");
+	set_login_progress(4, _("Connection established, cookie sent"));
 	return 1;
 }
 
@@ -577,7 +577,7 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	u_short subtype;
 
 	char buf[2048], buf2[256];
-	sprintf(buf2, "Gaim - Error");
+	sprintf(buf2, _("Gaim - Error"));
 	buf[0] = 0;
 
 	family  = aimutil_get16(command->data+0);
@@ -586,17 +586,17 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	switch (family) {
 	case 0x0001:
 		if (subtype == 0x000a)
-			sprintf(buf, "You are sending messages too fast.");
+			sprintf(buf, _("You are sending messages too fast."));
 		break;
 	case 0x0002:
 		if (subtype == 0x0001)
-			sprintf(buf, "Unknown SNAC error (I'm hungry)");
+			sprintf(buf, _("Unknown SNAC error (I'm hungry)"));
 		break;
 	case 0x0004:
 		if (subtype == 0x0001)
-			sprintf(buf, "User is not online.");
+			sprintf(buf, _("User is not online."));
 		else if (subtype == 0x000a)
-			sprintf(buf, "A message has been dropped.");
+			sprintf(buf, _("A message has been dropped."));
 		break;
 	}
 
@@ -622,16 +622,16 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (prof == NULL || !strlen(prof)) {
-		do_error_dialog("User has no info/away message.",
-				"Gaim - User Info");
+		do_error_dialog(_("User has no info/away message."),
+				_("Gaim - User Info"));
 		return 1;
 	}
 
-	snprintf(buf, sizeof buf, "Username : <B>%s</B>\n<BR>"
+	snprintf(buf, sizeof buf, _("Username : <B>%s</B>\n<BR>"
 				  "Warning Level : <B>%d %%</B>\n<BR>"
 				  "Online Since : <B>%s</B><BR>"
 				  "Idle Minutes : <B>%d</B>\n<BR><HR><BR>"
-				  "%s\n",
+				  "%s\n"),
 				  info->sn,
 				  info->warnlevel,
 				  asctime(localtime(&info->onlinesince)),

@@ -108,7 +108,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
-		back = gtk_button_new_with_label("I'm Back!");
+		back = gtk_button_new_with_label(_("I'm Back!"));
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
                 vbox = gtk_vbox_new(FALSE, 5);
@@ -148,7 +148,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		if (strlen(a->name))
 			gtk_window_set_title(GTK_WINDOW(imaway), a->name);
 		else
-                        gtk_window_set_title(GTK_WINDOW(imaway), "Gaim - Away!");
+                        gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
 		gtk_window_set_focus(GTK_WINDOW(imaway), back);
 		gtk_container_add(GTK_CONTAINER(imaway), vbox);
 		awaymessage = a;
@@ -261,7 +261,7 @@ void do_away_menu()
 	
 	
 
-	menuitem = gtk_menu_item_new_with_label("New Away Message");
+	menuitem = gtk_menu_item_new_with_label(_("New Away Message"));
 	gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(create_away_mess), NULL);
@@ -280,7 +280,7 @@ void do_away_menu()
 
 	}
 	
-	menuitem = gtk_menu_item_new_with_label("Remove Away Message");
+	menuitem = gtk_menu_item_new_with_label(_("Remove Away Message"));
 	gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);

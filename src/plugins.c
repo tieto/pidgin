@@ -99,7 +99,7 @@ static void load_file(GtkWidget *w, gpointer data)
 		return;
 	}
 
-	plugin_dialog = gtk_file_selection_new("Gaim - Plugin List");
+	plugin_dialog = gtk_file_selection_new(_("Gaim - Plugin List"));
 
 	gtk_file_selection_hide_fileop_buttons(
 					GTK_FILE_SELECTION(plugin_dialog));
@@ -159,14 +159,14 @@ void load_plugin(char *filename) {
 	plug->handle = dlopen(plug->filename, RTLD_LAZY);
 	if (!plug->handle) {
 		error = (char *)dlerror();
-		do_error_dialog(error, "Plugin Error");
+		do_error_dialog(error, _("Plugin Error"));
 		g_free(plug);
 		return;
 	}
 
 	gaim_plugin_init = dlsym(plug->handle, "gaim_plugin_init");
 	if ((error = (char *)dlerror()) != NULL) {
-		do_error_dialog(error, "Plugin Error");
+		do_error_dialog(error, _("Plugin Error"));
 		dlclose(plug->handle);
 		g_free(plug);
 		return;
@@ -213,7 +213,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_widget_realize(plugwindow);
 	aol_icon(plugwindow->window);
 	gtk_container_border_width(GTK_CONTAINER(plugwindow), 10);
-	gtk_window_set_title(GTK_WINDOW(plugwindow), "Gaim - Plugins");
+	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
 	gtk_widget_set_usize(plugwindow, 400, 250);
 	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
@@ -242,21 +242,21 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_text_set_word_wrap(GTK_TEXT(plugtext), TRUE);
 	gtk_text_set_editable(GTK_TEXT(plugtext), FALSE);
 
-	add = gtk_button_new_with_label("Load Plugin");
+	add = gtk_button_new_with_label(_("Load Plugin"));
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
 			   GTK_SIGNAL_FUNC(load_file), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
 
-	config = gtk_button_new_with_label("Configure Plugin");
+	config = gtk_button_new_with_label(_("Configure Plugin"));
 	gtk_widget_set_sensitive(config, 0);
 	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, FALSE, 5);
 
-	remove = gtk_button_new_with_label("Unload Plugin");
+	remove = gtk_button_new_with_label(_("Unload Plugin"));
 	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
 			   GTK_SIGNAL_FUNC(unload), pluglist);
 	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, FALSE, 5);
 
-	close = gtk_button_new_with_label("Close");
+	close = gtk_button_new_with_label(_("Close"));
 	gtk_signal_connect(GTK_OBJECT(close), "clicked",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, FALSE, 5);

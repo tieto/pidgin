@@ -112,7 +112,7 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 		
 	} else {
 		result = FALSE;
-		sprintf(debug_buff,"file not found: %s\n",path);
+		sprintf(debug_buff,_("file not found: %s\n"),path);
 		debug_print(debug_buff);
 	}
 	
@@ -145,14 +145,14 @@ gboolean update_applet( gpointer *ap ){
                            icon_offline_pm,
                            icon_offline_bm );
          	       gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
-		       applet_set_tooltips("Offilne. Click to bring up login box.");
+		       applet_set_tooltips(_("Offilne. Click to bring up login box."));
       		break;
       		case signing_on:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
                            icon_connect_pm,
                            icon_connect_bm );   
       			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
-			applet_set_tooltips("Attempting to sign on....");
+			applet_set_tooltips(_("Attempting to sign on...."));
       		break;
       		case online:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
@@ -172,7 +172,7 @@ gboolean update_applet( gpointer *ap ){
       			gtk_pixmap_set( GTK_PIXMAP(icon),
                            icon_online_pm,
                            icon_online_bm );   
-      			gtk_label_set( GTK_LABEL(status_label), "Away" );
+      			gtk_label_set( GTK_LABEL(status_label), _("Away") );
       		break;
       	}
       	old_user_status = MRI_user_status;
@@ -557,7 +557,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 	
 	gtk_box_pack_start(GTK_BOX(vbox), icon, FALSE, TRUE, 0);
 	
-	status_label = gtk_label_new("Offline");
+	status_label = gtk_label_new(_("Offline"));
 	/*set this label's font*/
 	label_style = gtk_widget_get_style( status_label );
 	
@@ -568,7 +568,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		label_style->font = label_font; 
 		gtk_widget_set_style( status_label, label_style );
 	} else {
-		sprintf(debug_buff, "Font does not exist" );
+		sprintf(debug_buff, _("Font does not exist") );
 		debug_print(debug_buff);
 	}
 	

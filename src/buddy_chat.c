@@ -98,8 +98,8 @@ void join_chat()
 	GtkWidget *topbox;
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		cancel = gtk_button_new_with_label("Cancel");
-		join = gtk_button_new_with_label("Join");
+		cancel = gtk_button_new_with_label(_("Cancel"));
+		join = gtk_button_new_with_label(_("Join"));
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
@@ -109,7 +109,7 @@ void join_chat()
 		gtk_box_pack_start(GTK_BOX(bbox), join, TRUE, TRUE, 10);
 		gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 		
-		label = gtk_label_new("Join what group:");
+		label = gtk_label_new(_("Join what group:"));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(topbox), entry, FALSE, FALSE, 5);
@@ -135,7 +135,7 @@ void join_chat()
 		gtk_widget_show(topbox);
 		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
-		gtk_window_set_title(GTK_WINDOW(joinchat), "Join Chat");
+		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
 		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
                 gtk_container_add(GTK_CONTAINER(joinchat), vbox);
                 gtk_widget_realize(joinchat);
@@ -173,8 +173,8 @@ static void invite_callback(GtkWidget *w, struct buddy_chat *b)
 	GtkWidget *topbox;
 	if (!invite) {
 		invite = gtk_window_new(GTK_WINDOW_DIALOG);
-		cancel = gtk_button_new_with_label("Cancel");
-		invite_btn = gtk_button_new_with_label("Invite");
+		cancel = gtk_button_new_with_label(_("Cancel"));
+		invite_btn = gtk_button_new_with_label(_("Invite"));
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
@@ -185,11 +185,11 @@ static void invite_callback(GtkWidget *w, struct buddy_chat *b)
 		gtk_box_pack_start(GTK_BOX(bbox), invite_btn, TRUE, TRUE, 10);
 		gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 		
-		label = gtk_label_new("Invite who?");
+		label = gtk_label_new(_("Invite who?"));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(topbox), inviteentry, FALSE, FALSE, 5);
-		label = gtk_label_new("With message:");
+		label = gtk_label_new(_("With message:"));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(topbox), invitemess, FALSE, FALSE, 5);
@@ -216,7 +216,7 @@ static void invite_callback(GtkWidget *w, struct buddy_chat *b)
 		gtk_widget_show(topbox);
 		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
-		gtk_window_set_title(GTK_WINDOW(invite), "Invite to Buddy Chat");
+		gtk_window_set_title(GTK_WINDOW(invite), _("Invite to Buddy Chat"));
 		gtk_window_set_focus(GTK_WINDOW(invite), inviteentry);
                 gtk_container_add(GTK_CONTAINER(invite), vbox);
                 gtk_widget_realize(invite);
@@ -553,14 +553,14 @@ void show_new_buddy_chat(struct buddy_chat *b)
 
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
-	close = gtk_button_new_with_label("Close");
-	invite_btn = gtk_button_new_with_label("Invite");
-	whisper = gtk_button_new_with_label("Whisper");
-        send = gtk_button_new_with_label("Send");
+	close = gtk_button_new_with_label(_("Close"));
+	invite_btn = gtk_button_new_with_label(_("Invite"));
+	whisper = gtk_button_new_with_label(_("Whisper"));
+        send = gtk_button_new_with_label(_("Send"));
 
-        im = gtk_button_new_with_label("IM");
-        ignore = gtk_button_new_with_label("Ignore");
-        info = gtk_button_new_with_label("Info");
+        im = gtk_button_new_with_label(_("IM"));
+        ignore = gtk_button_new_with_label(_("Ignore"));
+        info = gtk_button_new_with_label(_("Info"));
 
 	text = gtk_html_new(NULL, NULL);
 	
@@ -624,29 +624,29 @@ void show_new_buddy_chat(struct buddy_chat *b)
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-					  "Bold", "Bold Text", "Bold", bold_p,
+					  _("Bold"), _("Bold Text"), _("Bold"), bold_p,
 					  GTK_SIGNAL_FUNC(do_bold), chatentry);
 	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), 
 		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Italics", "Italics Text",
-					    "Italics", italic_p, GTK_SIGNAL_FUNC(do_italic), chatentry);
+					    NULL, _("Italics"), _("Italics Text"),
+					    _("Italics"), italic_p, GTK_SIGNAL_FUNC(do_italic), chatentry);
 	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Underline", "Underline Text",
-					    "Underline", underline_p, GTK_SIGNAL_FUNC(do_underline), chatentry);
+					    NULL, _("Underline"), _("Underline Text"),
+					    _("Underline"), underline_p, GTK_SIGNAL_FUNC(do_underline), chatentry);
 	strike = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, "Strike", "Strike through Text",
-					    "Strike", strike_p, GTK_SIGNAL_FUNC(do_strike), chatentry);
+					    NULL, _("Strike"), _("Strike through Text"),
+					    _("Strike"), strike_p, GTK_SIGNAL_FUNC(do_strike), chatentry);
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Small", "Decrease font size", "Small", small_p, GTK_SIGNAL_FUNC(do_small), chatentry);
-	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Normal", "Normal font size", "Normal", normal_p, GTK_SIGNAL_FUNC(do_normal), chatentry);
-	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), chatentry);
+	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Small"), _("Decrease font size"), _("Small"), small_p, GTK_SIGNAL_FUNC(do_small), chatentry);
+	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Normal"), _("Normal font size"), _("Normal"), normal_p, GTK_SIGNAL_FUNC(do_normal), chatentry);
+	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Big"), _("Increase font size"), _("Big"), big_p, GTK_SIGNAL_FUNC(do_big), chatentry);
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, "Link", "Insert Link",
-                                            "Link", link_p, GTK_SIGNAL_FUNC(do_link), chatentry);                 
+                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, _("Link"), _("Insert Link"),
+                                            _("Link"), link_p, GTK_SIGNAL_FUNC(do_link), chatentry);                 
 
 	gtk_widget_show(toolbar);
 
@@ -789,7 +789,7 @@ void setup_buddy_chats()
 
         while(list) {
                 w = (GtkWidget *)list->data;
-                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Buddy Chat")) {
+                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Buddy Chat"))) {
                         gtk_tree_remove_items(GTK_TREE(buddies), list);
                         list = GTK_TREE(buddies)->children;
                         if (!list)
@@ -801,7 +801,7 @@ void setup_buddy_chats()
         if (crs == NULL)
                 return;
 
-        item = gtk_tree_item_new_with_label("Buddy Chat");
+        item = gtk_tree_item_new_with_label(_("Buddy Chat"));
         tree = gtk_tree_new();
         gtk_widget_show(item);
         gtk_widget_show(tree);
