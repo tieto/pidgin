@@ -74,8 +74,8 @@ typedef struct gjconn_struct {
 	xmlnode current;	/* Current node in parsing instance.. */
 
 	/* Event callback ptrs */
-	void (*on_state) (struct gjconn_struct * j, int state);
-	void (*on_packet) (struct gjconn_struct * j, jpacket p);
+	void (*on_state)(struct gjconn_struct *j, int state);
+	void (*on_packet)(struct gjconn_struct *j, jpacket p);
 
 	void *priv;
 
@@ -425,7 +425,11 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		return;
 	}
 
+	from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
+
 	serv_got_im(GJ_GC(j), from, msg, 0);
+
+	g_free(from);
 
 	return;
 }
@@ -469,6 +473,18 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 
 static void jabber_handles10n(gjconn j, jpacket p)
 {
+	xmlnode g;
+	char *Jid = xmlnode_get_attrib(p->x, "from");
+	char *ask = xmlnode_get_attrib(p->x, "type");
+
+	g = xmlnode_new_tag("presence");
+	xmlnode_put_attrib(g, "to", Jid);
+	if (!strcmp(ask, "subscribe"))
+		xmlnode_put_attrib(g, "type", "subscribed");
+	else
+		xmlnode_put_attrib(g, "type", "unsubscribed");
+
+	gjab_send(j, g);
 }
 
 static void jabber_handleroster(gjconn j, xmlnode querynode)
@@ -485,12 +501,15 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 		name = xmlnode_get_attrib(x, "name");
 		sub = xmlnode_get_attrib(x, "subscription");
 		ask = xmlnode_get_attrib(x, "ask");
+		who = jid_new(j->p, Jid);
 
 		if (ask) {
-			/* XXX do something
-			debug_printf("jabber: unhandled subscription request (%s/%s/%s/%s)\n", Jid, name,
-				     sub, ask);
-			*/
+			g = xmlnode_new_tag("presence");
+			xmlnode_put_attrib(g, "to", Jid);
+			if (!strcmp(ask, "subscribe"))
+				xmlnode_put_attrib(g, "type", "subscribed");
+			else
+				xmlnode_put_attrib(g, "type", "unsubscribed");
 		}
 
 		if ((g = xmlnode_get_firstchild(x))) {
@@ -500,7 +519,6 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					char *groupname, *buddyname;
 
 					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
-					who = jid_new(j->p, Jid);
 					if (who->user == NULL) {
 						/* FIXME: transport */
 						debug_printf("user was NULL in handleroster!\n");
@@ -529,7 +547,6 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 			struct buddy *b;
 			char *buddyname;
 
-			who = jid_new(j->p, Jid);
 			if (who->user == NULL) {
 				/* FIXME: transport */
 				debug_printf("user was NULL in handleroster!\n");
@@ -579,8 +596,10 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 				account_online(GJ_GC(j));
 				serv_finish_login(GJ_GC(j));
 
+				/*
 				if (bud_list_cache_exists(GJ_GC(j)))
 					do_import(NULL, GJ_GC(j));
+				*/
 
 				gjab_reqroster(j);
 
@@ -700,14 +719,15 @@ static void jabber_send_im(struct gaim_connection *gc, char *who, char *message,
 
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 {
-	xmlnode x;
+	xmlnode x, y;
 	char *realwho;
 	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
 
 	if (!name)
 		return;
 
-	x = xmlnode_new_tag("presence");
+	if (!strcmp(gc->username, name))
+		return;
 
 	if (!strchr(name, '@'))
 		realwho = g_strdup_printf("%s@%s", name, j->user->server);
@@ -720,35 +740,40 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 		}
 		realwho = g_strdup_printf("%s@%s", who->user, who->server);
 	}
-	xmlnode_put_attrib(x, "to", realwho);
-	g_free(realwho);
 
-	xmlnode_put_attrib(x, "type", "subscribe");
-
+	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
+	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+	xmlnode_put_attrib(y, "jid", realwho);
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
+
+	x = xmlnode_new_tag("presence");
+	xmlnode_put_attrib(x, "to", realwho);
+	xmlnode_put_attrib(x, "type", "subscribe");
+	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
+
+	g_free(realwho);
 }
 
 static void jabber_remove_buddy(struct gaim_connection *gc, char *name)
 {
-	xmlnode x;
+	xmlnode x, y;
 	char *realwho;
 	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
 
 	if (!name)
 		return;
 
-	x = xmlnode_new_tag("presence");
-
 	if (!strchr(name, '@'))
 		realwho = g_strdup_printf("%s@%s", name, j->user->server);
 	else
 		realwho = g_strdup(name);
-	xmlnode_put_attrib(x, "to", realwho);
-	g_free(realwho);
 
-	xmlnode_put_attrib(x, "type", "unsubscribe");
-
+	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
+	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+	xmlnode_put_attrib(y, "subscription", "remove");
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
+
+	g_free(realwho);
 }
 
 static char **jabber_list_icon(int uc)
