@@ -348,6 +348,43 @@ mdns_read_rr_rdata_txt(const char *data, int datalen, int offset, unsigned short
 }
 
 /*
+ *
+ *
+ */
+static ResourceRecordSRV *
+mdns_read_rr_rdata_srv(const char *data, int datalen, int offset, unsigned short rdlength)
+{
+	ResourceRecordSRV *ret = NULL;
+	int endoffset = offset + rdlength;
+
+	if (offset + 7 > endoffset)
+		return NULL;
+
+	ret = g_malloc(sizeof(ResourceRecordSRV));
+
+	/* Read in the priority */
+	ret->priority = util_get16(&data[offset]);
+	offset += 2;
+
+	/* Read in the weight */
+	ret->weight = util_get16(&data[offset]);
+	offset += 2;
+
+	/* Read in the port */
+	ret->port = util_get16(&data[offset]);
+	offset += 2;
+
+	/* Read in the target name */
+	/*
+	 * XXX - RFC2782 says it's not supposed to be an alias...
+	 * but it was in the packet capture I looked at from iChat.
+	 */
+	ret->target = mdns_read_name(data, datalen, offset);
+
+	return ret;
+}
+
+/*
  * XXX - Needs bounds checking!
  *
  */
@@ -384,6 +421,10 @@ mdns_read_rr(int numrecords, const char *data, int datalen, int *offset)
 				ret[i].rdata = mdns_read_rr_rdata_txt(data, datalen, *offset, ret[i].rdlength);
 			break;
 
+			case RENDEZVOUS_RRTYPE_SRV:
+				ret[i].rdata = mdns_read_rr_rdata_srv(data, datalen, *offset, ret[i].rdlength);
+			break;
+
 			default:
 				ret[i].rdata = NULL;
 			break;
@@ -403,7 +444,7 @@ mdns_read(int fd)
 {
 	DNSPacket *ret = NULL;
 	int i; /* Current position in datagram */
-	//char data[512];
+	/* char data[512]; */ /* XXX - Find out what to use as a maximum incoming UDP packet size */
 	char data[10096];
 	int datalen;
 	struct sockaddr_in addr;

@@ -60,6 +60,7 @@
 #define RENDEZVOUS_RRTYPE_NULL	10
 #define RENDEZVOUS_RRTYPE_PTR	12
 #define RENDEZVOUS_RRTYPE_TXT	16
+#define RENDEZVOUS_RRTYPE_SRV	33
 
 /*
  * Express for Men's
@@ -79,7 +80,7 @@ typedef struct _Question {
 	unsigned short class;
 } Question;
 
-typedef struct ResourceRecord {
+typedef struct _ResourceRecord {
 	gchar *name;
 	unsigned short type;
 	unsigned short class;
@@ -87,6 +88,15 @@ typedef struct ResourceRecord {
 	unsigned short rdlength;
 	void *rdata;
 } ResourceRecord;
+
+typedef GHashTable ResourceRecordTXT;
+
+typedef struct _ResourceRecordSRV {
+	unsigned int priority;
+	unsigned int weight;
+	unsigned int port;
+	gchar *target;
+} ResourceRecordSRV;
 
 typedef struct _DNSPacket {
 	Header header;
@@ -123,8 +133,12 @@ int mdns_establish_socket();
 int mdns_query(int fd, const char *domain);
 
 /**
+ * Read a UDP packet from the given file descriptor and parse it
+ * into a DNSPacket.
  *
- *
+ * @param fd A UDP listening socket to read from.
+ * @return A newly allocated DNSPacket.  This should be freed with
+ *         mdns_free() when no longer needed.
  */
 DNSPacket *mdns_read(int fd);
 

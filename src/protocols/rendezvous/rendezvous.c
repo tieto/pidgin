@@ -163,13 +163,18 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 	GHashTable *rdata;
 	gchar *tmp1, *tmp2;
 
+	rdata = rr->rdata;
+
+	/* Don't do a damn thing if the version is greater than 1 */
+	tmp1 = g_hash_table_lookup(rdata, "version");
+	if ((tmp1 == NULL) || (strcmp(tmp1, "1")))
+		return;
+
 	rb = g_hash_table_lookup(rd->buddies, name);
 	if (rb == NULL) {
 		rb = g_malloc0(sizeof(RendezvousBuddy));
 		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
 	}
-
-	rdata = rr->rdata;
 
 	tmp1 = g_hash_table_lookup(rdata, "1st");
 	tmp2 = g_hash_table_lookup(rdata, "last");
@@ -186,8 +191,14 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 		rb->aim = g_strdup(tmp1);
 	}
 
-	tmp1 = g_hash_table_lookup(rdata, "port.p2pj");
-	rb->p2pjport = atoi(tmp1);
+	/*
+	 * We only want to use this port as a back-up.  Ideally the port
+	 * is specified in a separate, SRV resource record.
+	 */
+	if (rb->p2pjport == 0) {
+		tmp1 = g_hash_table_lookup(rdata, "port.p2pj");
+		rb->p2pjport = atoi(tmp1);
+	}
 
 	tmp1 = g_hash_table_lookup(rdata, "status");
 	if (tmp1 != NULL) {
@@ -212,8 +223,23 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 		g_free(rb->msg);
 		rb->msg = g_strdup(tmp1);
 	}
+}
 
-	/* XXX - Use the TTL value of the rr to cause this data to expire */
+static void rendezvous_handle_rr_srv(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
+{
+	RendezvousData *rd = gc->proto_data;
+	RendezvousBuddy *rb;
+	ResourceRecordSRV *rdata;
+
+	rdata = rr->rdata;
+
+	rb = g_hash_table_lookup(rd->buddies, name);
+	if (rb == NULL) {
+		rb = g_malloc0(sizeof(RendezvousBuddy));
+		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
+	}
+
+	rb->p2pjport = rdata->port;
 }
 
 /*
@@ -223,7 +249,13 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 {
 	gchar *name;
 
-	gaim_debug_error("XXX", "Parsing resource record with domain name %s\n", rr->name);
+	gaim_debug_misc("rendezvous", "Parsing resource record with domain name %s\n", rr->name);
+
+	/*
+	 * XXX - Cache resource records from this function, if needed.
+	 * Use the TTL value of the rr to cause this data to expire, but let
+	 * the mdns_cache stuff handle that as much as possible.
+	 */
 
 	switch (rr->type) {
 		case RENDEZVOUS_RRTYPE_NULL: {
@@ -252,6 +284,13 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 		case RENDEZVOUS_RRTYPE_TXT: {
 			if ((name = rendezvous_extract_name(rr->name)) != NULL) {
 				rendezvous_handle_rr_txt(gc, rr, name);
+				g_free(name);
+			}
+		} break;
+
+		case RENDEZVOUS_RRTYPE_SRV: {
+			if ((name = rendezvous_extract_name(rr->name)) != NULL) {
+				rendezvous_handle_rr_srv(gc, rr, name);
 				g_free(name);
 			}
 		} break;
@@ -314,8 +353,6 @@ static gchar *rendezvous_prpl_tooltip_text(GaimBuddy *b)
 		else
 			g_string_append_printf(ret, "\n<b>%s</b>: %s", _("Available"), rb->msg);
 	}
-
-	/* XXX - Fix blist.c so we can prepend the \n's rather than appending them */
 
 	return g_string_free(ret, FALSE);
 }
