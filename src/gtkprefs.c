@@ -567,11 +567,9 @@ GtkWidget *theme_page() {
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	smiley_theme_store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
-										 1, GTK_SORT_ASCENDING);
 
 	path = theme_refresh_theme_list();
-	
+
 	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
 
 	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te, 
@@ -586,6 +584,8 @@ GtkWidget *theme_page() {
 		gtk_tree_selection_select_path(sel, path);
 		gtk_tree_path_free(path);
 	}
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
+										 1, GTK_SORT_ASCENDING);
 
 	col = gtk_tree_view_column_new_with_attributes (_("Icon"),
 							rend,
@@ -602,10 +602,7 @@ GtkWidget *theme_page() {
 	g_object_unref(G_OBJECT(smiley_theme_store));
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
-	g_signal_connect (G_OBJECT (sel), "changed",
-			  G_CALLBACK (smiley_sel),
-			  NULL);
-
+	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
 
 	gtk_widget_show_all(ret);
 	return ret;
