@@ -34,7 +34,7 @@ typedef struct _JabberID {
 JabberID* jabber_id_new(const char *str);
 void jabber_id_free(JabberID *jid);
 
-const char *jabber_get_resource(const char *jid);
+char *jabber_get_resource(const char *jid);
 char *jabber_get_bare_jid(const char *jid);
 
 time_t str_to_time(const char *timestamp);

@@ -537,7 +537,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	GString *info_text;
-	const char *resource_name;
+	char *resource_name;
 	char *title;
 	xmlnode *vcard;
 
@@ -586,6 +586,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 				g_free(purdy);
 		}
 	}
+
+	g_free(resource_name);
 
 	if((vcard = xmlnode_get_child(packet, "vCard"))) {
 		xmlnode *child;

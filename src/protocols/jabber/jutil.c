@@ -116,32 +116,76 @@ jabber_id_new(const char *str)
 {
 	char *at;
 	char *slash;
+	char *c;
 
 	JabberID *jid;
 
-	if(!str)
+	if(!str || !g_utf8_validate(str, -1, NULL))
 		return NULL;
 
 	jid = g_new0(JabberID, 1);
 
-	at = strchr(str, '@');
-	slash = strchr(str, '/');
+	at = g_utf8_strchr(str, -1, '@');
+	slash = g_utf8_strchr(str, -1, '/');
 
 	if(at) {
-		jid->node = g_strndup(str, at-str);
+		jid->node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
 		if(slash) {
-			jid->domain = g_strndup(at+1, slash-(at+1));
-			jid->resource = g_strdup(slash+1);
+			jid->domain = g_utf8_normalize(at+1, slash-(at+1), G_NORMALIZE_NFKC);
+			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			jid->domain = g_strdup(at+1);
+			jid->domain = g_utf8_normalize(at+1, -1, G_NORMALIZE_NFKC);
 		}
 	} else {
 		if(slash) {
-			jid->domain = g_strndup(str, slash-str);
-			jid->resource = g_strdup(slash+1);
+			jid->domain = g_utf8_normalize(str, slash-str, G_NORMALIZE_NFKC);
+			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			jid->domain = g_strdup(str);
+			jid->domain = g_utf8_normalize(str, -1, G_NORMALIZE_NFKC);
 		}
+	}
+
+
+	/* check lengths */
+	if((jid->node && strlen(jid->node) > 1023) ||
+			(jid->domain && strlen(jid->domain) > 1023) ||
+			(jid->resource && strlen(jid->resource) > 1023)) {
+		jabber_id_free(jid);
+		return NULL;
+	}
+
+	/* nodeprep */
+	c = jid->node;
+	while(c && *c) {
+		gunichar ch = g_utf8_get_char(c);
+		if(ch == '\"' || ch == '&' || ch == '\'' || ch == '/' || ch == ':' ||
+				ch == '<' || ch == '>' || ch == '@' || !g_unichar_isgraph(ch)) {
+			jabber_id_free(jid);
+			return NULL;
+		}
+		c = g_utf8_next_char(c);
+	}
+
+	/* nameprep */
+	c = jid->domain;
+	while(c && *c) {
+		gunichar ch = g_utf8_get_char(c);
+		if(!g_unichar_isgraph(ch)) {
+			jabber_id_free(jid);
+			return NULL;
+		}
+		c = g_utf8_next_char(c);
+	}
+
+	/* resourceprep */
+	c = jid->resource;
+	while(c && *c) {
+	gunichar ch = g_utf8_get_char(c);
+		if(!g_unichar_isgraph(ch)) {
+			jabber_id_free(jid);
+			return NULL;
+		}
+		c = g_utf8_next_char(c);
 	}
 
 	return jid;
@@ -162,26 +206,32 @@ jabber_id_free(JabberID *jid)
 }
 
 
-const char *jabber_get_resource(const char *jid)
+char *jabber_get_resource(const char *in)
 {
-	char *slash;
+	JabberID *jid = jabber_id_new(in);
+	char *out;
 
-	slash = strrchr(jid, '/');
-	if(slash)
-		return slash+1;
-	else
+	if(!jid)
 		return NULL;
+
+	out = g_strdup(jid->resource);
+	jabber_id_free(jid);
+
+	return out;
 }
 
-char *jabber_get_bare_jid(const char *jid)
+char *jabber_get_bare_jid(const char *in)
 {
-	char *slash;
-	slash = strrchr(jid, '/');
+	JabberID *jid = jabber_id_new(in);
+	char *out;
 
-	if(slash)
-		return g_utf8_strdown(jid, slash - jid);
-	else
-		return g_utf8_strdown(jid, -1);
+	if(!jid)
+		return NULL;
+
+	out = g_strdup_printf("%s@%s", jid->node, jid->domain);
+	jabber_id_free(jid);
+
+	return out;
 }
 
 const char *jabber_normalize(const char *in)
@@ -194,3 +244,4 @@ const char *jabber_normalize(const char *in)
 	g_free(tmp);
 	return buf;
 }
+

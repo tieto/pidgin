@@ -79,7 +79,7 @@ static void handle_chat(JabberMessage *jm)
 	JabberBuddyResource *jbr;
 
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
-	jbr = jabber_buddy_find_resource(jb, jabber_get_resource(jm->from));
+	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
 	if(find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
@@ -174,7 +174,7 @@ static void handle_groupchat(JabberMessage *jm)
 				jm->subject);
 
 	if(jm->xhtml || jm->body)
-		serv_got_chat_in(jm->js->gc, chat->id, jabber_get_resource(jm->from),
+		serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
 				0, jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 	jabber_id_free(jid);
 }
@@ -412,12 +412,17 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	JabberBuddyResource *jbr;
 	char *buf;
 	char *xhtml;
+	char *resource;
 
 	if(!who || !msg)
 		return 0;
 
+	resource = jabber_get_resource(who);
+
 	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
-	jbr = jabber_buddy_find_resource(jb, jabber_get_resource(who));
+	jbr = jabber_buddy_find_resource(jb, resource);
+
+	g_free(resource);
 
 	jm = g_new0(JabberMessage, 1);
 	jm->js = gc->proto_data;
@@ -468,9 +473,12 @@ int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
+	char *resource = jabber_get_resource(who);
 
 	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
-	jbr = jabber_buddy_find_resource(jb, jabber_get_resource(who));
+	jbr = jabber_buddy_find_resource(jb, resource);
+
+	g_free(resource);
 
 	if(!jbr || !(jbr->capabilities & JABBER_CAP_COMPOSING))
 		return 0;
