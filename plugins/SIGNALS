@@ -9,6 +9,8 @@ enum gaim_event {
 	event_buddy_signoff,
 	event_buddy_away,
 	event_buddy_back,
+	event_buddy_idle,
+	event_buddy_unidle,
 	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
@@ -51,26 +53,30 @@ one. Sorry, that's just the way it works.
 So here are the args that get passed to your functions in various events:
 
 event_signon:
-	(none)
+	struct gaim_connection *gc
 
-	Note that you can get the username (which would probably be the only
-	useful information here) from other places. (Read gaim.h for details.)
+	'gc' is the new connection.
 
 event_signoff:
-	(none)
+	struct gaim_connection *gc
+
+	'gc' is the connection that is about to go offline. This is called before
+	serv_close is, so you still have a chance to get one last message out.
 
 event_away:
 	(none)
 
-	Note that the away message that's being used can be retrieved from a
-	global variable. (Read gaim.h for details.)
+	This is fucked up for now. Currently all connections are told to use the
+	same away message when the user wants to be Away. The away message that
+	is used can be obtained from global variables.
 
 event_back:
 	(none)
 
 event_im_recv:
-	char **who, char **text
+	struct gaim_connection *gc, char **who, char **text
 
+	'gc' is the connection that received the message.
 	'who' is the username of the person who sent the message.
 	'text' is the actual strict text (with HTML tags and all) of the
 		message they sent.
@@ -79,9 +85,14 @@ event_im_recv:
 	Note that *other* plugins can also modify these values, so you should
 	check that they are not NULL, and try not to leave them as NULL.
 
-event_im_send:
-	char *who, char **text
+	gc was placed as the first arg as opposed to the third for intuitiveness.
+	Unfortunately, it means that most plugins that use this event need to be
+	slightly modified and then recompiled.
 
+event_im_send:
+	struct gaim_connection *gc, char *who, char **text
+
+	'gc' is the connection that you are about to send the message through.
 	'who' is the username of the person you're sending the message to.
 	'text' is the actual strict text (with HTML tags and all) of the
 		message you're sending.
@@ -92,7 +103,8 @@ event_im_send:
 event_buddy_signon:
 	char *who
 	
-	'who' is who signed on.
+	'who' is who signed on. (There is currently no way to see which connection
+	reported that the buddy came online. Hopefully this will happen soon.)
 
 event_buddy_signoff:
 	char *who
@@ -109,33 +121,47 @@ event_buddy_back:
 
 	'who' is who is no longer away.
 
+event_buddy_idle:
+	char *who
+
+	'who' is who went idle.
+
+event_buddy_unidle:
+	char *who
+
+	'who' is who is no longer idle.
+
 event_blist_update:
 	(none)
 	
 	This event is called when the buddylist is updated (automatically every
-	20 seconds)
+	20 seconds for every connection, though the updates are usually syncopated)
 
 event_chat_invited:
-	char *who, char *room, char *message
+	struct gaim_connection *gc, char *who, char *room, char *message
 
+	'gc' is the connection that received the invitation.
 	'who' is who invited you to a chat room.
 	'room' is the room they invited you to.
 	'message' is the (optional) message they sent to invite you, and may be
 	an empty string.
 
 event_chat_join:
-	char *room
+	struct gaim_connection *gc, char *room
 
+	'gc' is the connection that joined the room.
 	'room' is the chat room that you have just joined.
 
 event_chat_leave:
-	char *room
+	struct gaim_connection *gc, char *room
 
+	'gc' is the connection that joined the room.
 	'room' is the chat room that you have just left.
 
 event_chat_buddy_join:
-	char *room, char *who
+	struct gaim_connection *gc, char *room, char *who
 
+	'gc' is the connection that the chat room is attached to.
 	'room' is the room the person joined.
 	'who' is the screenname of the person who joined.
 
@@ -146,14 +172,16 @@ event_chat_buddy_join:
 	for though.)
 
 event_chat_buddy_leave:
-	char *room, char *who
+	struct gaim_connection *gc, char *room, char *who
 
+	'gc' is the connection that the chat room is attached to.
 	'room' is the room the person left.
 	'who' is the screenname of the person who left.
 
 event_chat_recv:
-	char *room, char *who, char *text
+	struct gaim_connection *gc, char *room, char *who, char *text
 
+	'gc' is the connection that received the message.
 	'room' should be obvious by now.
 	'who' should be too.
 	'text' is the message that got sent.
@@ -162,8 +190,9 @@ event_chat_recv:
 	messages that you send. I didn't design it, AOL did.
 
 event_chat_send:
-	char *room, char **text
+	struct gaim_connection *gc, char *room, char **text
 
+	'gc' is the connection that the message is about to be sent on.
 	'room'. Need I say more.
 	'text' is what you're about to say, linkified/HTML-ized, but not
 	TOC-escaped.

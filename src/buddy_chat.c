@@ -434,7 +434,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
         char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
 
-	plugin_event(event_chat_buddy_join, b->name, name, 0);
+	plugin_event(event_chat_buddy_join, b->gc, b->name, name, 0);
         b->in_room = g_list_append(b->in_room, name);
 
         update_chat_list(b);
@@ -456,7 +456,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
         GList *names = b->in_room;
 	char tmp[BUF_LONG];
 
-	plugin_event(event_chat_buddy_leave, b->name, buddy, 0);
+	plugin_event(event_chat_buddy_leave, b->gc, b->name, buddy, 0);
 
         while(names) {
                 if (!strcasecmp((char *)names->data, buddy)) {

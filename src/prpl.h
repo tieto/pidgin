@@ -32,6 +32,8 @@
 #define PROTO_IRC	5
 #define PROTO_FTP	6
 
+typedef void (*proto_init)(struct prpl *);
+
 struct prpl {
 	int protocol;
 	char *(* name)();
@@ -80,7 +82,11 @@ struct prpl {
 
 extern GSList *protocols;
 
+/* this is mostly just for aim.c, when it initializes the protocols */
 void static_proto_init();
+
+/* this is what should actually load the protocol. pass it the protocol's initializer */
+void load_protocol(proto_init);
 
 struct prpl *find_prpl(int);
 

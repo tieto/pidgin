@@ -177,6 +177,8 @@ enum gaim_event {
 	event_buddy_signoff,
 	event_buddy_away,
 	event_buddy_back,
+	event_buddy_idle,
+	event_buddy_unidle,
 	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
@@ -785,7 +787,7 @@ extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
 extern void gaim_plugin_unload(void *);
 #endif
 extern char *event_name(enum gaim_event);
-extern void plugin_event(enum gaim_event, void *, void *, void *);
+extern void plugin_event(enum gaim_event, void *, void *, void *, void *);
 
 /* Functions in prefs.c */
 extern void debug_print( char * chars );

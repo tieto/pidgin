@@ -84,7 +84,7 @@ static gint check_idle(struct gaim_connection *gc)
         /* Not idle, really...  :) */
         update_all_buddies();
 
-	plugin_event(event_blist_update, 0, 0, 0);
+	plugin_event(event_blist_update, 0, 0, 0, 0);
         
 	time(&t);
 
@@ -452,7 +452,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 	char *buffy = g_strdup(message);
 	char *angel = g_strdup(name);
-	plugin_event(event_im_recv, &angel, &buffy, 0);
+	plugin_event(event_im_recv, gc, &angel, &buffy, 0);
 	if (!buffy || !angel)
 		return;
 	g_snprintf(message, strlen(message) + 1, "%s", buffy);
@@ -603,13 +603,16 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
 
         }
 
+	if (!b->idle && idle) plugin_event(event_buddy_idle, b->name, 0, 0, 0);
+	if (b->idle && !idle) plugin_event(event_buddy_unidle, b->name, 0, 0, 0);
+
         b->idle = idle;
         b->evil = evil;
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-		plugin_event(event_buddy_back, b->name, 0, 0);
+		plugin_event(event_buddy_back, b->name, 0, 0, 0);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
-		plugin_event(event_buddy_away, b->name, 0, 0);
+		plugin_event(event_buddy_away, b->name, 0, 0, 0);
 	}
 
         b->uc = type;
@@ -642,7 +645,7 @@ void serv_got_eviled(char *name, int lev)
         GtkWidget *d, *label, *close;
 
 
-	plugin_event(event_warned, name, (void *)lev, 0);
+	plugin_event(event_warned, name, (void *)lev, 0, 0);
 
         g_snprintf(buf2, 1023, "You have just been warned by %s.\nYour new warning level is %d%%",
                    ((name == NULL) ? "an anonymous person" : name) , lev);
@@ -704,7 +707,7 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *w
         char buf2[BUF_LONG];
 
 
-	plugin_event(event_chat_invited, who, name, message);
+	plugin_event(event_chat_invited, g, who, name, message);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2), "User '%s' invites %s to buddy chat room: '%s'\n%s", who, g->username, name, message);
@@ -750,7 +753,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 {
         struct conversation *b;
 
-	plugin_event(event_chat_join, name, 0, 0);
+	plugin_event(event_chat_join, gc, name, 0, 0);
 
         b = (struct conversation *)g_new0(struct conversation, 1);
         gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
@@ -800,7 +803,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
         if (!b)
                 return;
 
-	plugin_event(event_chat_leave, b->name, 0, 0);
+	plugin_event(event_chat_leave, g, b->name, 0, 0);
 
 	sprintf(debug_buff, "Leaving room %s.\n", b->name);
 	debug_print(debug_buff);
@@ -827,7 +830,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
         if (!b)
                 return;
         
-	plugin_event(event_chat_recv, b->name, who, message);
+	plugin_event(event_chat_recv, g, b->name, who, message);
 
         if (whisper)
                 w = WFLAG_WHISPER;

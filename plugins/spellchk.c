@@ -31,7 +31,7 @@ int get_word(char *, int);
 char *have_word(char *, int);
 void substitute(char **, int, int, char *);
 
-void substitute_words(char *who, char **message, void *m) {
+void substitute_words(struct gaim_connection *gc, char *who, char **message, void *m) {
 	int i, l;
 	int word;
 	GList *w;

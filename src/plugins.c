@@ -561,6 +561,12 @@ char *event_name(enum gaim_event event)
 		case event_buddy_back:
 			sprintf(buf, "event_buddy_back");
 			break;
+		case event_buddy_idle:
+			sprintf(buf, "event_buddy_idle");
+			break;
+		case event_buddy_unidle:
+			sprintf(buf, "event_buddy_unidle");
+			break;
 		case event_blist_update:
 			sprintf(buf, "event_blist_update");
 			break;
@@ -604,7 +610,7 @@ char *event_name(enum gaim_event event)
 	return buf;
 }
 
-void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
+void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4) {
 #ifdef USE_PERL
 	char buf[BUF_LONG];
 	char *tmp;
@@ -618,9 +624,16 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 		if (g->event == event && g->function != NULL) {
 			switch(event) {
 
-			/* no args */
+			/* struct gaim_connection * */
 			case event_signon:
 			case event_signoff:
+				{
+					void (*function)(struct gaim_connection *, void *) = g->function;
+					(*function)(arg1, g->data);
+				}
+				break;
+
+			/* no args */
 			case event_away:
 			case event_back:
 			case event_blist_update:
@@ -631,19 +644,31 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 				}
 				break;
 
-			/* char **, char ** */
+			/* struct gaim_connection *, char **, char ** */
 			case event_im_recv:
 				{
-					void (*function)(char **, char **, void *) = g->function;
-					(*function)(arg1, arg2, g->data);
+					void (*function)(struct gaim_connection *, char **, char **,
+							void *) = g->function;
+					(*function)(arg1, arg2, arg3, g->data);
 				}
 				break;
 
-			/* char *, char ** */
+			/* struct gaim_connection *, char *, char ** */
 			case event_im_send:
 			case event_chat_send:
 				{
-					void (*function)(char *, char **, void *) = g->function;
+					void (*function)(struct gaim_connection *, char *, char **,
+							void *) = g->function;
+					(*function)(arg1, arg2, arg3, g->data);
+				}
+				break;
+
+			/* struct gaim_connection *, char * */
+			case event_chat_join:
+			case event_chat_leave:
+				{
+					void (*function)(struct gaim_connection *, char *, void *) =
+										g->function;
 					(*function)(arg1, arg2, g->data);
 				}
 				break;
@@ -653,8 +678,8 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			case event_buddy_signoff:
 			case event_buddy_away:
 			case event_buddy_back:
-			case event_chat_join:
-			case event_chat_leave:
+			case event_buddy_idle:
+			case event_buddy_unidle:
 			case event_new_conversation:
 				{
 					void (*function)(char *, void *) = g->function;
@@ -662,21 +687,23 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 				}
 				break;
 
-			/* char *, char *, char * */
+			/* struct gaim_connection *, char *, char *, char * */
 			case event_chat_invited:
 			case event_chat_recv:
 				{
-					void (*function)(char *, char *, char *, void *) = g->function;
-					(*function)(arg1, arg2, arg3, g->data);
+					void (*function)(struct gaim_connection *, char *, char *,
+							char *, void *) = g->function;
+					(*function)(arg1, arg2, arg3, arg4, g->data);
 				}
 				break;
 
-			/* char *, char * */
+			/* struct gaim_connection *, char *, char * */
 			case event_chat_buddy_join:
 			case event_chat_buddy_leave:
 				{
-					void (*function)(char *, char *, void *) = g->function;
-					(*function)(arg1, arg2, g->data);
+					void (*function)(struct gaim_connection *, char *, char *,
+							void *) = g->function;
+					(*function)(arg1, arg2, arg3, g->data);
 				}
 				break;
 
@@ -708,10 +735,10 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 #ifdef USE_PERL
 	switch (event) {
 		case event_signon:
-			buf[0] = 0;
+			g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
 			break;
 		case event_signoff:
-			buf[0] = 0;
+			g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
 			break;
 		case event_away:
 			buf[0] = 0;
@@ -720,10 +747,10 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			buf[0] = 0;
 			break;
 		case event_im_recv:
-			g_snprintf(buf, sizeof buf, "\"%s\" %s", *(char **)arg1, *(char **)arg2);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", ((struct gaim_connection *)arg1)->username, *(char **)arg2, *(char **)arg3);
 			break;
 		case event_im_send:
-			g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg1, *(char **)arg2);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", ((struct gaim_connection *)arg1)->username, (char *)arg2, *(char **)arg3);
 			break;
 		case event_buddy_signon:
 			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
@@ -737,29 +764,35 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 		case event_buddy_back:
 			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
 			break;
+		case event_buddy_idle:
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			break;
+		case event_buddy_unidle:
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			break;
 		case event_blist_update:
 			buf[0] = 0;
 			break;
 		case event_chat_invited:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg1, (char *)arg2, (char *)arg3);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);
 			break;
 		case event_chat_join:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_chat_leave:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_chat_buddy_join:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg1, (char *)arg2);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
 			break;
 		case event_chat_buddy_leave:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg1, (char *)arg2);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
 			break;
 		case event_chat_recv:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg1, (char *)arg2, (char *)arg3);
+			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);
 			break;
 		case event_chat_send:
-			g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg1, *(char **)arg2);
+			g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2, *(char **)arg3);
 			break;
 		case event_warned:
 			g_snprintf(buf, sizeof buf, "\"%s\" %d", (char *)arg1, (int)arg2);

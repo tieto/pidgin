@@ -69,9 +69,9 @@ void update_lag(int us) {
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(my_lagometer), pct);
 }
 
-void check_lag(char **who, char **message, void *m) {
+void check_lag(struct gaim_connection *gc, char **who, char **message, void *m) {
 	char *name = g_strdup(normalize(*who));
-	if (!strcasecmp(normalize(current_user->username), name) &&
+	if (!strcasecmp(normalize(gc->username), name) &&
 	    (*message != NULL) &&
 	    !strcmp(*message, MY_LAG_STRING)) {
 		struct timeval tv;
@@ -89,9 +89,9 @@ void check_lag(char **who, char **message, void *m) {
 	g_free(name);
 }
 
-void send_lag() {
+void send_lag(struct gaim_connection *gc) {
 	gettimeofday(&my_lag_tv, NULL);
-	serv_send_im(current_user->username, MY_LAG_STRING, 1);
+	serv_send_im(gc, gc->username, MY_LAG_STRING, 1);
 }
 
 void gaim_plugin_remove() {
@@ -106,11 +106,11 @@ void gaim_plugin_remove() {
 	lagbox = NULL;
 }
 
-void avail_now(void *m) {
+void avail_now(struct gaim_connection *gc, void *m) {
 	update_lag(0);
 	gaim_signal_connect(handle, event_im_recv, check_lag, NULL);
 	gaim_signal_connect(handle, event_signoff, gaim_plugin_remove, NULL);
-	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, NULL);
+	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, gc);
 }
 
 void gaim_plugin_init(void *h) {
@@ -122,7 +122,7 @@ void gaim_plugin_init(void *h) {
 	if (!blist)
 		gaim_signal_connect(handle, event_signon, avail_now, NULL);
 	else
-		avail_now(NULL);
+		avail_now(connections->data, NULL);
 }
 
 void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {

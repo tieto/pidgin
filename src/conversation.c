@@ -139,7 +139,7 @@ struct conversation *new_conversation(char *name)
 	if (connections)
 		c->gc = (struct gaim_connection *)connections->data;
         conversations = g_list_append(conversations, c);
-	plugin_event(event_new_conversation, name, 0, 0);
+	plugin_event(event_new_conversation, name, 0, 0, 0);
         return c;
 }
 
@@ -684,7 +684,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	{
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
-		plugin_event(evnt, c->name, &buffy, 0);
+		plugin_event(evnt, c->gc, c->name, &buffy, 0);
 		if (!buffy) {
 			g_free(buf2);
 			g_free(buf);

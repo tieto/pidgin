@@ -438,7 +438,7 @@ void show_error_dialog(char *d)
 	char buf[256];
 	char buf2[32];
 
-	plugin_event(event_error, (void *)no, 0, 0);
+	plugin_event(event_error, (void *)no, 0, 0, 0);
 
 	w = strtok(NULL, ":");
  	

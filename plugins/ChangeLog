@@ -1,3 +1,27 @@
+version 0.11.0:
+	Gaim is now multi-connection based. This represents a significant
+	change. Most of the code was modified, though most of the modifications
+	were small (referencing an int as part of a struct as opposed to as a
+	global int). Such changes will require most plugins to be modified to
+	match the new function declarations and such.
+
+	The plugin system itself was only slightly modified. However, the
+	arguments passed to signal handlers have been modified in some cases.
+	Look at the updates SIGNALS file to see what the new arguments passed
+	to your handlers are. In some cases the only change necessary will be
+	to modify the function declaration; in many cases the changes will be
+	much more substantial.
+
+	The new system allows for protocol plugins. New protocols (including
+	Yahoo, MSN, IRC, ICQ, etc) can be loaded dynamically. However, most
+	of these plugins are going to be controlled by the gaim maintainers.
+	If you have interest in writing a protocol plugin, please talk to one
+	of us before you start.
+
+	That's about all that I'm going to talk about. My SN is EWarmenhoven
+	if you have any questions (like what the hell struct gaim_connection is
+	and what its relation to struct aim_user is).
+
 version 0.10.0:
 	Rather than have a separate CFLAGS and LDFLAGS for the plugins than
 	for gaim, and doing all kinds of crazy things to work around the

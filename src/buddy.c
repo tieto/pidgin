@@ -291,7 +291,7 @@ void signoff(struct gaim_connection *gc)
 {
 	GList *mem;
 
-	plugin_event(event_signoff, gc, 0, 0);
+	plugin_event(event_signoff, gc, 0, 0, 0);
 	serv_close(gc);
 
 	if (connections) return;
@@ -982,7 +982,7 @@ void do_quit()
 	char *error;
 
 	/* first we tell those who have requested it we're quitting */
-	plugin_event(event_quit, 0, 0, 0);
+	plugin_event(event_quit, 0, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
 	c = plugins;
@@ -1439,7 +1439,7 @@ void set_buddy(struct buddy *b)
 		/* this check should also depend on whether they left,
 		 * and signed on again before they got erased */
                 if (!GTK_WIDGET_VISIBLE(b->item) || b->present == 1) {
-			plugin_event(event_buddy_signon, b->name, 0, 0);
+			plugin_event(event_buddy_signon, b->name, 0, 0, 0);
 			
 			play_sound(BUDDY_ARRIVE);
 			b->present = 2;
@@ -1593,7 +1593,7 @@ void set_buddy(struct buddy *b)
 
 	} else {
 		if (GTK_WIDGET_VISIBLE(b->item)) {
-			plugin_event(event_buddy_signoff, b->name, 0, 0);
+			plugin_event(event_buddy_signoff, b->name, 0, 0, 0);
 			play_sound(BUDDY_LEAVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)logout_icon_xpm);

@@ -353,17 +353,17 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		case 0x18:
 			/* connecting too frequently */
 			do_error_dialog(_("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."), _("Gaim - Error"));
-			plugin_event(event_error, (void *)983, 0, 0);
+			plugin_event(event_error, (void *)983, 0, 0, 0);
 			break;
 		case 0x05:
 			/* Incorrect nick/password */
 			do_error_dialog(_("Incorrect nickname or password."), _("Gaim - Error"));
-			plugin_event(event_error, (void *)980, 0, 0);
+			plugin_event(event_error, (void *)980, 0, 0, 0);
 			break;
 		case 0x1c:
 			/* client too old */
 			do_error_dialog(_("The client version you are using is too old. Please upgrade at http://www.marko.net/gaim/"), _("Gaim - Error"));
-			plugin_event(event_error, (void *)989, 0, 0);
+			plugin_event(event_error, (void *)989, 0, 0, 0);
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -807,12 +807,12 @@ int gaim_parse_misses(struct aim_session_t *sess,
 			/* message too large */
 			sprintf(buf, _("You missed a message from %s because it was too large."), userinfo->sn);
 			do_error_dialog(buf, _("Gaim - Error"));
-			plugin_event(event_error, (void *)961, 0, 0);
+			plugin_event(event_error, (void *)961, 0, 0, 0);
 			break;
 		default:
 			sprintf(buf, _("You missed a message from %s for unknown reasons."), userinfo->sn);
 			do_error_dialog(buf, _("Gaim - Error"));
-			plugin_event(event_error, (void *)970, 0, 0);
+			plugin_event(event_error, (void *)970, 0, 0, 0);
 			break;
 	}
 
@@ -878,7 +878,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 		char buf[1024];
 		sprintf(buf, _("%s has no info/away message."), info->sn);
 		do_error_dialog(buf, _("Gaim - Error"));
-		plugin_event(event_error, (void *)977, 0, 0);
+		plugin_event(event_error, (void *)977, 0, 0, 0);
 		return 1;
 	}
 
@@ -1526,9 +1526,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	aim_chat_send_im(odata->sess, cn, message);
 }
 
-struct prpl *oscar_init() {
-	struct prpl *ret = g_new0(struct prpl, 1);
-
+void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
 	ret->login = oscar_login;
@@ -1556,8 +1554,6 @@ struct prpl *oscar_init() {
 	ret->chat_whisper = oscar_chat_whisper;
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
-	
-	return ret;
 }
 
 #endif

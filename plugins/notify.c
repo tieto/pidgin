@@ -6,7 +6,7 @@
 
 void *handle;
 
-void received_im(char **who, char **what, void *m) {
+void received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 	char buf[256];
 	struct conversation *cnv = find_conversation(*who);
 	GtkWindow *win;
@@ -23,7 +23,7 @@ void received_im(char **who, char **what, void *m) {
 	}
 }
 
-void sent_im(char *who, char **what, void *m) {
+void sent_im(struct gaim_connection *gc, char *who, char **what, void *m) {
 	char buf[256];
 	struct conversation *c = find_conversation(who);
 	GtkWindow *win = (GtkWindow *)c->window;

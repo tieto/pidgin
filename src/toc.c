@@ -40,7 +40,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 1008 $"
+#define REVISION "gaim:$Revision: 1010 $"
 
 struct toc_data {
 	int toc_fd;
@@ -1115,9 +1115,7 @@ static void toc_keepalive(struct gaim_connection *gc) {
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
-struct prpl *toc_init() {
-        struct prpl *ret = g_new0(struct prpl, 1);
-
+void toc_init(struct prpl *ret) {
         ret->protocol = PROTO_TOC;
         ret->name = toc_name;
         ret->login = toc_login;
@@ -1145,6 +1143,4 @@ struct prpl *toc_init() {
         ret->chat_whisper = toc_chat_whisper;
         ret->chat_send = toc_chat_send;
 	ret->keepalive = toc_keepalive;
-
-        return ret;
 }

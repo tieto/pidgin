@@ -20,8 +20,9 @@
  */
 
 #include "prpl.h"
-extern struct prpl *toc_init();
-extern struct prpl *oscar_init();
+
+extern void toc_init(struct prpl *);
+extern void oscar_init(struct prpl *);
 
 GSList *protocols = NULL;
 
@@ -40,10 +41,20 @@ struct prpl *find_prpl(int prot)
 	return NULL;
 }
 
+void load_protocol(proto_init pi)
+{
+	struct prpl *p = g_new0(struct prpl, 1);
+	pi(p);
+	if (find_prpl(p->protocol))
+		g_free(p);
+	else
+		protocols = g_slist_append(protocols, p);
+}
+
 void static_proto_init()
 {
-	protocols = g_slist_append(protocols, toc_init());
+	load_protocol(toc_init);
 #ifndef DYNAMIC_OSCAR
-	protocols = g_slist_append(protocols, oscar_init());
+	load_protocol(oscar_init);
 #endif
 }

@@ -87,7 +87,7 @@ void cancel_logon(void)
 	char *error;
 
 	/* first we tell those who have requested it we're quitting */
-	plugin_event(event_quit, 0, 0, 0);
+	plugin_event(event_quit, 0, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
 	c = plugins;
@@ -140,9 +140,9 @@ void gaim_setup(struct gaim_connection *gc) {
 
 	account_online(gc);
 
-	plugin_event(event_signon, 0, 0, 0);
+	plugin_event(event_signon, gc, 0, 0, 0);
 
-	 return;
+	return;
 }
 
 
