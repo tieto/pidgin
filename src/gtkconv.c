@@ -5034,11 +5034,15 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC) {
+		const char *topic;
 		chat = GAIM_CONV_CHAT(conv);
 		gtkchat = gtkconv->u.chat;
 
-		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text),
-						   gaim_conv_chat_get_topic(chat));
+		topic = gaim_conv_chat_get_topic(chat);
+
+		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text),topic);
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
+				topic, NULL);
 	}
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
