@@ -102,7 +102,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
+	STATIC_PRPLS="gg irc jabber msn napster oscar yahoo zephyr"
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -142,7 +142,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $l
 
 AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
+	DYNAMIC_PRPLS="gg irc jabber msn napster oscar yahoo zephyr"
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
