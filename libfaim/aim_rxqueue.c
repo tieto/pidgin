@@ -42,7 +42,6 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
    */
   faim_mutex_lock(&conn->active);
   if (recv(conn->fd, generic, 6, MSG_WAITALL) < 6){
-    printf("faim: flap: read underflow (header)\n");
     aim_conn_close(conn);
     faim_mutex_unlock(&conn->active);
     return -1;
@@ -91,7 +90,6 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
 
   /* read the data portion of the packet */
   if (recv(conn->fd, newrx->data, newrx->commandlen, MSG_WAITALL) < newrx->commandlen){
-    printf("faim: flap: read underflow (payload)\n");
     free(newrx->data);
     free(newrx);
     aim_conn_close(conn);

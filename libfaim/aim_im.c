@@ -856,6 +856,8 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
   struct aim_snac_t *snac = NULL;
   int ret = 0;
   rxcallback_t userfunc = NULL;
+  char *dest;
+  unsigned short reason = 0;
 
   /*
    * Get SNAC from packet and look it up 
@@ -872,14 +874,18 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
 
   if (!snac) {
     printf("faim: msgerr: got an ICBM-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
-  }
+    dest = NULL;
+  } else
+    dest = snac->data;
+
+  reason = aimutil_get16(command->data+10);
 
   /*
    * Call client.
    */
   userfunc = aim_callhandler(command->conn, 0x0004, 0x0001);
   if (userfunc)
-    ret =  userfunc(sess, command, (snac)?snac->data:"(UNKNOWN)");
+    ret =  userfunc(sess, command, dest, reason);
   else
     ret = 0;
   
@@ -892,3 +898,47 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
 }
 
 
+int aim_parse_missedcall(struct aim_session_t *sess,
+			 struct command_rx_struct *command)
+{
+  int i, ret = 1;
+  rxcallback_t userfunc = NULL;
+  unsigned short channel, nummissed, reason;
+  struct aim_userinfo_s userinfo;
+ 
+  i = 10; /* Skip SNAC header */
+
+
+  /*
+   * XXX: supposedly, this entire packet can repeat as many times
+   * as necessary. Should implement that.
+   */
+
+  /*
+   * Channel ID.
+   */
+  channel = aimutil_get16(command->data+i);
+  i += 2;
+  
+  /*
+   * Extract the standard user info block.
+   */
+  i += aim_extractuserinfo(command->data+i, &userinfo);
+  
+  nummissed = aimutil_get16(command->data+i);
+  i += 2;
+  
+  reason = aimutil_get16(command->data+i);
+  i += 2;
+
+  /*
+   * Call client.
+   */
+  userfunc = aim_callhandler(command->conn, 0x0004, 0x000a);
+  if (userfunc)
+    ret =  userfunc(sess, command, channel, &userinfo, nummissed, reason);
+  else
+    ret = 0;
+  
+  return ret;
+}

@@ -431,10 +431,11 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_DEFAULT, workingPtr);
 	    break;
 	  }
+	  break;
 	case 0x0002: /* Family: Location */
 	  switch (subtype) {
 	  case 0x0001:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0002, 0x0001, workingPtr);
+	    workingPtr->handled = aim_parse_locateerr(sess, workingPtr);
 	    break;
 	  case 0x0003:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0002, 0x0003, workingPtr);
@@ -446,13 +447,14 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_DEFAULT, workingPtr);
 	    break;
 	  }
+	  break;
 	case 0x0003: /* Family: Buddy List */
 	  switch (subtype) {
 	  case 0x0001:
 	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
 	    break;
 	  case 0x0003:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0003, 0x0003, workingPtr);
+	    workingPtr->handled = aim_parse_buddyrights(sess, workingPtr);
 	    break;
 	  case 0x000b: /* oncoming buddy */
 	    workingPtr->handled = aim_parse_oncoming_middle(sess, workingPtr);
@@ -479,7 +481,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_parse_incoming_im_middle(sess, workingPtr);
 	    break;
 	  case 0x000a:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0004, 0x000a, workingPtr);
+	    workingPtr->handled = aim_parse_missedcall(sess, workingPtr);
 	    break;
 	  case 0x000c:
 	    workingPtr->handled = aim_parse_msgack_middle(sess, workingPtr);
@@ -492,7 +494,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  if (subtype == 0x0001)
 	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
 	  else if (subtype == 0x0003)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0009, 0x0003, workingPtr);
+	    workingPtr->handled = aim_parse_bosrights(sess, workingPtr);
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BOS, AIM_CB_BOS_DEFAULT, workingPtr);
 	  break;
@@ -508,7 +510,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOK, AIM_CB_LOK_DEFAULT, workingPtr);
 	  }
 	  break;
-	case 0x000b:
+	case 0x000b: {
 	  if (subtype == 0x0001)
 	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
 	  else if (subtype == 0x0002)
@@ -516,15 +518,16 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_STS, AIM_CB_STS_DEFAULT, workingPtr);
 	  break;
-      case AIM_CB_FAM_SPECIAL: 
-	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-	break;
+	}
+	case AIM_CB_FAM_SPECIAL: 
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+	  break;
 	default:
 	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
 	  break;
-	}
+	} /* switch(family) */
 	break;
-      }
+      } /* AIM_CONN_TYPE_BOS */
       case AIM_CONN_TYPE_CHATNAV: {
 	u_short family;
 	u_short subtype;

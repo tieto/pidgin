@@ -260,6 +260,45 @@ u_long aim_bos_setgroupperm(struct aim_session_t *sess,
   return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
 
+int aim_parse_bosrights(struct aim_session_t *sess,
+			struct command_rx_struct *command, ...)
+{
+  rxcallback_t userfunc = NULL;
+  int ret=1;
+  struct aim_tlvlist_t *tlvlist;
+  struct aim_tlv_t *tlv;
+  unsigned short maxpermits = 0, maxdenies = 0;
+
+  /* 
+   * TLVs follow 
+   */
+  if (!(tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10)))
+    return ret;
+
+  /*
+   * TLV type 0x0001: Maximum number of buddies on permit list.
+   */
+  if ((tlv = aim_gettlv(tlvlist, 0x0001, 1))) {
+    maxpermits = aimutil_get16(tlv->value);
+  }
+
+  /*
+   * TLV type 0x0002: Maximum number of buddies on deny list.
+   *
+   */
+  if ((tlv = aim_gettlv(tlvlist, 0x0002, 1))) {
+    maxdenies = aimutil_get16(tlv->value);
+  }
+  
+  userfunc = aim_callhandler(command->conn, 0x0009, 0x0003);
+  if (userfunc)
+    ret =  userfunc(sess, command, maxpermits, maxdenies);
+
+  aim_freetlvchain(&tlvlist);
+
+  return ret;  
+}
+
 /*
  * aim_bos_clientready()
  * 

@@ -1,6 +1,15 @@
 
 No release numbers
 ------------------
+ - Sat Sep  2 23:42:37 UTC 2000
+   - Hopefully fix aim_snac.c bugs
+   - Add Buddy List Rights parser (max buddies and max watchers)
+   - Fix rather major problem in rxhandlers caused by missing breaks
+   - Add reason code for msgerr (0004/0001) callback
+   - Add BOS Rights parser (max permit / max deny)
+   - Add locate error (0002/0001) parser
+   - Add parser for missed calls (0004/000a)
+
  - Fri Sep  1 23:34:28 UTC 2000
    - Switched the read()s in rxqueue to use recv()
      - Should fix the big message problem and the big buddy list problem

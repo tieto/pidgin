@@ -37,7 +37,7 @@ void aim_initsnachash(struct aim_session_t *sess)
 u_long aim_newsnac(struct aim_session_t *sess,
 		   struct aim_snac_t *newsnac) 
 {
-  struct aim_snac_t *snac = NULL, *cur = NULL;
+  struct aim_snac_t *snac = NULL;
   int index;
 
   if (!newsnac)
@@ -55,6 +55,8 @@ u_long aim_newsnac(struct aim_session_t *sess,
   snac->next = sess->snac_hash[index];
   sess->snac_hash[index] = snac;
   faim_mutex_unlock(&sess->snac_hash_locks[index]);
+
+  printf("faim: cached snac %lx\n", snac->id);
 
   return(snac->id);
 }
@@ -77,11 +79,9 @@ struct aim_snac_t *aim_remsnac(struct aim_session_t *sess,
   faim_mutex_lock(&sess->snac_hash_locks[index]);
   if (!sess->snac_hash[index])
     ;
-  else if (!sess->snac_hash[index]->next) {
-    if (sess->snac_hash[index]->id == id) {
-      cur = sess->snac_hash[index];
-      sess->snac_hash[index] = NULL;
-    }
+  else if (sess->snac_hash[index]->id == id) {
+    cur = sess->snac_hash[index];
+    sess->snac_hash[index] = cur->next;
   } else {
     cur = sess->snac_hash[index];
     while (cur->next) {
@@ -111,36 +111,41 @@ struct aim_snac_t *aim_remsnac(struct aim_session_t *sess,
 int aim_cleansnacs(struct aim_session_t *sess,
 		   int maxage)
 {
-  struct aim_snac_t *cur;
-  struct aim_snac_t *remed = NULL;
+  struct aim_snac_t *cur, *next, *prev = NULL;
   time_t curtime;
   int i;
 
   for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
     faim_mutex_lock(&sess->snac_hash_locks[i]);
-    if (!sess->snac_hash[i])
-      ;
-    else if (!sess->snac_hash[i]->next) {
-      if ((sess->snac_hash[i]->issuetime + maxage) >= curtime) {
-	remed = sess->snac_hash[i];
-	if(remed->data)
-	  free(remed->data);
-	free(remed);
-	sess->snac_hash[i] = NULL;
-      }
-    } else {
-      cur = sess->snac_hash[i];	
-      while(cur && cur->next) {
-	if ((cur->next->issuetime + maxage) >= curtime) {
-	  remed = cur->next;
-	  cur->next = cur->next->next;
-	  if (remed->data)
-	    free(remed->data);	
-	  free(remed);
-	}
-	cur = cur->next;
-      }
+    if (!sess->snac_hash[i]) {
+      faim_mutex_unlock(&sess->snac_hash_locks[i]);
+      continue;
     }
+
+    curtime = time(NULL); /* done here in case we waited for the lock */
+
+    cur = sess->snac_hash[i];
+    while (cur) {
+      next = cur->next;
+      if ((curtime - cur->issuetime) > maxage) {
+	if (sess->snac_hash[i] == cur)
+	  prev = sess->snac_hash[i] = next;
+	else
+	  prev->next = next;
+
+	printf("faim: killing ancient snac %lx (%lx)\n", cur->id, curtime - cur->issuetime);
+	
+	/* XXX should we have destructors here? */
+	if (cur->data)
+	  free(cur->data);
+	free(cur);
+
+      } else {
+	prev = cur;
+      }
+      cur = next;
+    }
+
     faim_mutex_unlock(&sess->snac_hash_locks[i]);
   }
 

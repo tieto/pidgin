@@ -544,6 +544,8 @@ int aim_parse_outgoing_im_middle(struct aim_session_t *, struct command_rx_struc
 u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_parse_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+int aim_parse_missedcall(struct aim_session_t *sess, struct command_rx_struct *command);
 
 struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
 int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
@@ -654,7 +656,7 @@ int aim_parse_offgoing_middle(struct aim_session_t *, struct command_rx_struct *
 int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info);
 int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
 int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
-
+int aim_parse_locateerr(struct aim_session_t *sess, struct command_rx_struct *command);
 
 /* aim_auth.c */
 int aim_auth_sendcookie(struct aim_session_t *, struct aim_conn_t *, u_char *);
@@ -664,6 +666,7 @@ u_long aim_auth_changepasswd(struct aim_session_t *, struct aim_conn_t *, char *
 /* aim_buddylist.c */
 u_long aim_add_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
 u_long aim_remove_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
+int aim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 
 /* aim_search.c */
 u_long aim_usersearch_address(struct aim_session_t *, struct aim_conn_t *, char *);

@@ -57,6 +57,49 @@ u_long aim_getinfo(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
+int aim_parse_locateerr(struct aim_session_t *sess,
+			struct command_rx_struct *command)
+{
+  u_long snacid = 0x000000000;
+  struct aim_snac_t *snac = NULL;
+  int ret = 0;
+  rxcallback_t userfunc = NULL;
+  char *dest;
+  unsigned short reason = 0;
+
+  /*
+   * Get SNAC from packet and look it up 
+   * the list of unrepliedto/outstanding
+   * SNACs.
+   *
+   */
+  snacid = aimutil_get32(command->data+6);
+  snac = aim_remsnac(sess, snacid);
+
+  if (!snac) {
+    printf("faim: locerr: got an locate-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
+    dest = NULL;
+  } else
+    dest = snac->data;
+
+  reason = aimutil_get16(command->data+10);
+
+  /*
+   * Call client.
+   */
+  userfunc = aim_callhandler(command->conn, 0x0002, 0x0001);
+  if (userfunc)
+    ret =  userfunc(sess, command, dest, reason);
+  else
+    ret = 0;
+  
+  if (snac) {
+    free(snac->data);
+    free(snac);
+  }
+
+  return ret;
+}
 
 /*
  * Capability blocks.  
