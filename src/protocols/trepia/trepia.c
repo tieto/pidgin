@@ -156,11 +156,8 @@ __get_mac_address(const char *ip)
 #endif
 
 	return mac;
-
-	return NULL;
 }
 #endif
-
 
 /**************************************************************************
  * Callbacks
@@ -168,7 +165,13 @@ __get_mac_address(const char *ip)
 static void
 save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
 {
+	char *buf, *temp;
 
+	buf = g_strdup("<K>");
+	temp = buf;
+
+	gaim_debug(GAIM_DEBUG_MISC, "trepia", "Setting profile: {%s}\n",
+			   buf);
 }
 
 static void
@@ -880,25 +883,21 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	GaimAccount *account;
 	const char *password;
 	char *buffer;
-	char *mac = "00:04:5A:50:31:DE";
-	char *gateway_mac = "00:C0:F0:52:D0:A6";
+	char *mac = "00:01:02:03:04:05";
 	char buf[3];
 	char md5_password[17];
 	md5_state_t st;
 	md5_byte_t di[16];
 	int i;
 
-#if 0
-	mac = __get_mac_address();
-	gateway_mac = mac;
-#endif
-
-	mac = g_strdup("01:02:03:04:05:06");
-
 	if (source < 0) {
 		gaim_connection_error(session->gc, _("Write error"));
 		return;
 	}
+
+#if 0
+	mac = __get_mac_address();
+#endif
 
 	session->fd = source;
 
@@ -920,12 +919,12 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	buffer = g_strdup_printf(
 		"<C>\n"
 		"<a>%s</a>\n"
-		"<b1>%s</b1>\n"
+		"<b1></b1>\n"
 		"<c>%s</c>\n"
 		"<d>%s</d>\n"
-		"<e>2.02</e>\n"
+		"<e>2.50</e>\n"
 		"</C>",
-		mac, gateway_mac, gaim_account_get_username(account),
+		mac, gaim_account_get_username(account),
 		md5_password);
 
 	g_free(mac);
