@@ -1431,6 +1431,30 @@ _sync_privacy_lists(NMUser *user)
 	}
 }
 
+ /* Map known property tags to user-friendly strings */
+static const char *
+_map_property_tag(const char *tag)
+{
+	if (tag == NULL) return NULL;
+
+	if (strcmp(tag, "telephoneNumber") == 0)
+		return _("Telephone Number");
+	else if (strcmp(tag, "L") == 0)
+		return _("Location");
+	else if (strcmp(tag, "OU") == 0)
+		return _("Department");
+	else if (strcmp(tag, "personalTitle") == 0)
+		return _("Personal Title");
+	else if (strcmp(tag, "Title") == 0)
+		return _("Title");
+	else if (strcmp(tag, "mailstop") == 0)
+		return _("Mailstop");
+	else if (strcmp(tag, "Internet EMail Address") == 0)
+		return _("Email Address");
+	else
+		return tag;
+}
+
 /* Display a dialog box showing the properties for the given user record */
 static void
 _show_info(GaimConnection * gc, NMUserRecord * user_record)
@@ -1442,16 +1466,16 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 
 	info_text = g_string_new("");
 
-	tag = _("Userid");
+	tag = _("User ID");
 	value = nm_user_record_get_userid(user_record);
 	if (value) {
-		g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n", tag, value);
+		g_string_append_printf(info_text, "<b>%s:</b> %s<br>", tag, value);
 	}
 
 /*	tag = _("DN");
 	value = nm_user_record_get_dn(user_record);
 	if (value) {
-	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+	g_string_append_printf(info_text, "<b>%s:</b> %s<br>",
 	tag, value);
 	}
 */
@@ -1459,17 +1483,17 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 	tag = _("Full name");
 	value = nm_user_record_get_full_name(user_record);
 	if (value) {
-		g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n", tag, value);
+		g_string_append_printf(info_text, "<b>%s:</b> %s<br>", tag, value);
 	}
 
 	count = nm_user_record_get_property_count(user_record);
 	for (i = 0; i < count; i++) {
 		property = nm_user_record_get_property(user_record, i);
 		if (property) {
-			tag = nm_property_get_tag(property);
+			tag = _map_property_tag(nm_property_get_tag(property));
 			value = nm_property_get_value(property);
 			if (tag && value) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br>",
 									   tag, value);
 			}
 			nm_release_property(property);
