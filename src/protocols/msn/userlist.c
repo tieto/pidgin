@@ -668,6 +668,6 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 		return;
 	}
 
-	msn_userlist_rem_buddy(userlist, who, MSN_LIST_FL, old_group_name);
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL, new_group_name);
+	msn_userlist_rem_buddy(userlist, who, MSN_LIST_FL, old_group_name);
 }

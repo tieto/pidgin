@@ -412,7 +412,8 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 
 		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
 		msn_parse_format(format, &pre, &post);
-		body_str = g_strdup_printf("%s%s%s", pre, body_enc, post);
+		body_str = g_strdup_printf("%s%s%s", pre ? pre : "",
+								   body_enc ? body_enc : "", post ? post : "");
 		g_free(body_enc);
 		g_free(pre);
 		g_free(post);
@@ -830,14 +831,15 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)
 	{
-		char *pre_format, *post_format;
+		char *pre, *post;
 
-		msn_parse_format(value, &pre_format, &post_format);
+		msn_parse_format(value, &pre, &post);
 
-		body_final = g_strdup_printf("%s%s%s", pre_format, body_enc, post_format);
+		body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
+									 body_enc ? body_enc : "", post ? post : "");
 
-		g_free(pre_format);
-		g_free(post_format);
+		g_free(pre);
+		g_free(post);
 		g_free(body_enc);
 	}
 	else
@@ -1055,7 +1057,8 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_parse_socket(cmd->params[2], &host, &port);
 
-	msn_switchboard_connect(swboard, host, port);
+	if (!msn_switchboard_connect(swboard, host, port))
+		msn_switchboard_destroy(swboard);
 
 	g_free(host);
 }

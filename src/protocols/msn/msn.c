@@ -687,7 +687,8 @@ msn_login(GaimAccount *account, GaimStatus *status)
 	if (strcmp(username, gaim_account_get_username(account)))
 		gaim_account_set_username(account, username);
 
-	msn_session_connect(session, host, port, http_method);
+	if (!msn_session_connect(session, host, port, http_method))
+		gaim_connection_error(gc, _("Failed to connect to server."));
 }
 
 static void
@@ -755,7 +756,8 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 
 		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
 		msn_parse_format(format, &pre, &post);
-		body_str = g_strdup_printf("%s%s%s", pre, body_enc, post);
+		body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
+								   body_enc ? body_enc : "", post ? post : "");
 		g_free(body_enc);
 		g_free(pre);
 		g_free(post);

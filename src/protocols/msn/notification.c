@@ -269,6 +269,30 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+usr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnErrorType msnerr = 0;
+
+	switch (error)
+	{
+		case 500:
+		case 601:
+		case 910:
+		case 921:
+			msnerr = MSN_ERROR_SERV_UNAVAILABLE;
+			break;
+		case 911:
+			msnerr = MSN_ERROR_AUTH;
+			break;
+		default:
+			return;
+			break;
+	}
+
+	msn_session_set_error(cmdproc->session, msnerr, NULL);
+}
+
+static void
 ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
@@ -321,6 +345,9 @@ void
 msn_notification_close(MsnNotification *notification)
 {
 	g_return_if_fail(notification != NULL);
+
+	if (!notification->in_use)
+		return;
 
 	msn_cmdproc_send_quick(notification->cmdproc, "OUT", NULL, NULL);
 
@@ -976,7 +1003,8 @@ rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard->im_user = g_strdup(cmd->params[4]);
 	/* msn_switchboard_add_user(swboard, cmd->params[4]); */
 
-	msn_switchboard_connect(swboard, host, port);
+	if (!msn_switchboard_connect(swboard, host, port))
+		msn_switchboard_destroy(swboard);
 
 	g_free(host);
 }
@@ -1320,15 +1348,7 @@ msn_notification_init(void)
 	msn_table_add_error(cbs_table, "REG", reg_error);
 	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	/* msn_table_add_error(cbs_table, "REA", rea_error); */
-
-	/* I received a '500' error from the notification server just now.
-	 * I think this means 'Service temporarily unavailable' or similar,
-	 * in response to a USR command. We should report this instead of
-	 * 'Error reading from notification server'.
-	 * I'm not going to implement this right now, because we're string
-	 * frozen (and I'd probably break something anyway), so I'll put this
-	 * here as a reminder, or something. Stu. */
-	/* msn_table_add_error(cbs_table, "USR", usr_error); */
+	msn_table_add_error(cbs_table, "USR", usr_error);
 
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsprofile",

@@ -93,8 +93,6 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 {
 	MsnNexus *nexus;
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
 
 	nexus = data;
 	g_return_if_fail(nexus != NULL);
@@ -102,16 +100,9 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	account = session->account;
-	g_return_if_fail(account != NULL);
-
-	gc = gaim_account_get_connection(account);
-	g_return_if_fail(gc != NULL);
-
 	msn_session_set_error(session, MSN_ERROR_AUTH, _("Unable to connect"));
-
-	msn_nexus_destroy(nexus);
-	session->nexus = NULL;
+	/* the above line will result in nexus being destroyed, so we don't want
+	 * to destroy it here, or we'd crash */
 }
 
 static void

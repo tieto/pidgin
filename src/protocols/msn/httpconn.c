@@ -80,6 +80,40 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 	g_free(httpconn);
 }
 
+static char *
+msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
+{
+	GaimAccount *account;
+	GaimProxyInfo *gpi;
+	const char *username, *password;
+	char *auth = NULL;
+
+	account = httpconn->session->account;
+
+	if (gaim_account_get_proxy_info(account) == NULL)
+		gpi = gaim_global_proxy_get_info();
+	else
+		gpi = gaim_account_get_proxy_info(account);
+
+	if (gpi == NULL || !(gaim_proxy_info_get_type(gpi) == GAIM_PROXY_HTTP ||
+						 gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR))
+		return NULL;
+
+	username = gaim_proxy_info_get_username(gpi);
+	password = gaim_proxy_info_get_password(gpi);
+
+	if (username != NULL) {
+		char *tmp;
+		auth = g_strdup_printf("%s:%s", username, password ? password : "");
+		tmp = gaim_base64_encode(auth, strlen(auth));
+		g_free(auth);
+		auth = g_strdup_printf("Proxy-Authorization: Basic %s\r\n", tmp);
+		g_free(tmp);
+	}
+
+	return auth;
+}
+
 static ssize_t
 write_raw(MsnHttpConn *httpconn, const char *header,
 		  const char *body, size_t body_len)
@@ -129,6 +163,7 @@ void
 msn_httpconn_poll(MsnHttpConn *httpconn)
 {
 	char *header;
+	char *auth;
 	int r;
 
 	g_return_if_fail(httpconn != NULL);
@@ -139,6 +174,8 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 		return;
 	}
 
+	auth = msn_httpconn_proxy_auth(httpconn);
+
 	header = g_strdup_printf(
 		"POST http://%s/gateway/gateway.dll?Action=poll&SessionID=%s HTTP/1.1\r\n"
 		"Accept: */*\r\n"
@@ -146,13 +183,18 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 		"User-Agent: MSMSGS\r\n"
 		"Host: %s\r\n"
 		"Proxy-Connection: Keep-Alive\r\n"
+		"%s" /* Proxy auth */
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
 		"Content-Length: 0\r\n",
 		httpconn->host,
 		httpconn->full_session_id,
-		httpconn->host);
+		httpconn->host,
+		auth ? auth : "");
+
+	if (auth != NULL)
+		g_free(auth);
 
 	r = write_raw(httpconn, header, NULL, -1);
 
@@ -172,9 +214,17 @@ do_poll(gpointer data)
 
 	httpconn = data;
 
+	g_return_val_if_fail(httpconn != NULL, TRUE);
+
 #if 0
 	gaim_debug_info("msn", "polling from %s\n", httpconn->session_id);
 #endif
+
+	if ((httpconn->host == NULL) || (httpconn->full_session_id == NULL))
+	{
+		gaim_debug_warning("msn", "Attempted HTTP poll before session is established\n");
+		return TRUE;
+	}
 
 	if (httpconn->dirty)
 		msn_httpconn_poll(httpconn);
@@ -296,7 +346,9 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (!msn_httpconn_parse_data(httpconn, httpconn->rx_buf, httpconn->rx_len,
 								 &result_msg, &result_len, &error))
 	{
-		/* We must wait for more input */
+		/* We must wait for more input, or something went wrong */
+		if (error)
+			msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
 	}
@@ -421,6 +473,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 {
 	char *params;
 	char *header;
+	char *auth;
 	gboolean first;
 	const char *server_types[] = { "NS", "SB" };
 	const char *server_type;
@@ -469,9 +522,17 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		/* The rest of the times servconn->host is the gateway host. */
 		host = httpconn->host;
 
+		if (host == NULL || httpconn->full_session_id == NULL)
+		{
+			gaim_debug_warning("msn", "Attempted HTTP write before session is established\n");
+			return -1;
+		}
+
 		params = g_strdup_printf("SessionID=%s",
 								 httpconn->full_session_id);
 	}
+
+	auth = msn_httpconn_proxy_auth(httpconn);
 
 	header = g_strdup_printf(
 		"POST http://%s/gateway/gateway.dll?%s HTTP/1.1\r\n"
@@ -480,6 +541,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		"User-Agent: MSMSGS\r\n"
 		"Host: %s\r\n"
 		"Proxy-Connection: Keep-Alive\r\n"
+		"%s" /* Proxy auth */
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
@@ -487,9 +549,13 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		host,
 		params,
 		host,
+		auth ? auth : "",
 		(int)size);
 
 	g_free(params);
+
+	if (auth != NULL)
+		g_free(auth);
 
 	r = write_raw(httpconn, header, data, size);
 

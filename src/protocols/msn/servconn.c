@@ -212,7 +212,8 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 		/* HTTP Connection. */
 
 		if (!servconn->httpconn->connected)
-			msn_httpconn_connect(servconn->httpconn, host, port);
+			if (!msn_httpconn_connect(servconn->httpconn, host, port))
+				return FALSE;;
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;
