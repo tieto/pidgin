@@ -1165,11 +1165,24 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy) {
 
 	gaim_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
-			G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
-			G_CALLBACK(gaim_gtk_blist_remove_cb), buddy,
-			0, 0, NULL);
+	if(((GaimBlistNode*)buddy)->parent->child->next) {
+		gaim_new_item_from_stock(menu, _("_Alias Buddy..."), GAIM_STOCK_ALIAS,
+				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("_Remove Buddy"), GTK_STOCK_REMOVE,
+				G_CALLBACK(gaim_gtk_blist_remove_cb), buddy, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("Alias Contact..."), GAIM_STOCK_ALIAS,
+				G_CALLBACK(gtk_blist_menu_alias_cb),
+				gaim_buddy_get_contact(buddy), 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("Remove Contact"), GTK_STOCK_REMOVE,
+				G_CALLBACK(gaim_gtk_blist_remove_cb),
+				gaim_buddy_get_contact(buddy), 0, 0, NULL);
+	} else {
+		gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
+		gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
+				G_CALLBACK(gaim_gtk_blist_remove_cb), buddy,
+				0, 0, NULL);
+	}
 }
 
 static gboolean
