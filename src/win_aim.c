@@ -12,12 +12,17 @@
 /*
  *  GLOBALS
  */
-__declspec(dllimport) HINSTANCE g_hInstance;
+__declspec(dllimport) HINSTANCE gaimexe_hInstance;
+
+/*
+ *  LOCALS
+ */
 
 /*
  *  PROTOTYPES
  */
 extern int gaim_main( int, char** );
+
 
 #ifdef __GNUC__
 #  ifndef _stdcall
@@ -31,7 +36,7 @@ WinMain (struct HINSTANCE__ *hInstance,
 	 char               *lpszCmdLine,
 	 int                 nCmdShow)
 {
-	g_hInstance = hInstance;
+	gaimexe_hInstance = hInstance;
 	return gaim_main (__argc, __argv);
 }
 
