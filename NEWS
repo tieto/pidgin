@@ -10,6 +10,19 @@
 
 	Oh yeah, I also got food poisoned by bad eggs.  Ugh!
 
+	Eric: Every protocol except TOC has been improved since the last
+	release. All of them except Zephyr and ICQ now use the same proxy
+	options, which you can set in the preferences. ICQ can use them if
+	you set it to Socks5 though.
+
+	There are a bunch of other good additions and fixes for each
+	protocol which you can read about in the ChangeLog. And, there's one
+	super cool feature that everyone seems to be asking for: Buddy Icons.
+	Right now you can only receive them and only in Oscar, but hey, they're
+	there.
+
+	So that's it. Have fun with it :)
+
 0.11.0-pre11 (04/30/2001):
 	Rob: I bought a big carton of juice today.  It is now 50% empty.
 	A lot of the plugins got some new options and/or improvements. I
