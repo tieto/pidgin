@@ -730,7 +730,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (seed) {
 		struct yahoo_packet *pack;
 		GaimAccount *account = gaim_connection_get_account(gc);
-		const char *name = gaim_account_get_username(account);
+		const char *name = normalize(gaim_account_get_username(account));
 		const char *pass = gaim_account_get_password(account);
 
 		/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
@@ -965,7 +965,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, gaim_account_get_username(gaim_connection_get_account(gc)));
+	yahoo_packet_hash(pkt, 1, normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
