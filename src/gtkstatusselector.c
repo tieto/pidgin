@@ -633,14 +633,12 @@ rebuild_list(GaimGtkStatusSelector *selector)
 			}
 
 			for(i=0; i<GAIM_STATUS_NUM_PRIMITIVES; i++) {
-				gaim_debug_misc("gtkstatusselector", "account=%p, acct_options[%d]=%p\n", account, i, acct_options[i]);
 				if(acct_options[i] == account)
 					options[i]++;
 			}
 		}
 
 		for(i=0; i<GAIM_STATUS_NUM_PRIMITIVES; i++) {
-			gaim_debug_misc("gtkstatusselector", "%s has %d accounts\n", gaim_primitive_get_name_from_type(i), options[i]);
 			if(options[i] == num_accounts) {
 				char *filename = g_strdup_printf("%s.png", gaim_primitive_get_id_from_type(i));
 				add_item(selector, gaim_primitive_get_id_from_type(i), gaim_primitive_get_name_from_type(i), load_icon(filename));
