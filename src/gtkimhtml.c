@@ -415,6 +415,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
 	imhtml->show_smileys = TRUE;
+	imhtml->show_comments = TRUE;
 
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
@@ -431,8 +432,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->tip_window = NULL;
 
 	imhtml->scalables = NULL;
-
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -993,9 +992,6 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 								imhtml->scalables = g_list_append(imhtml->scalables, scalable); \
 								gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter); \
                         } \
-						if (x == NEW_COMMENT_BIT) { \
-							gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "comment", &siter, &iter); \
-						} \
 
 
 
@@ -1352,7 +1348,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					break;
 				case 59:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
-					wpos = g_snprintf (ws, len, "%s", tag);
+					if (imhtml->show_comments)
+						wpos = g_snprintf (ws, len, "%s", tag);
 					NEW_BIT (NEW_COMMENT_BIT);
 					break;
 				default:
@@ -1480,14 +1477,7 @@ void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-	GtkTextIter iter;
-	GtkTextTagTable *table = gtk_text_buffer_get_tag_table(imhtml->text_buffer);
-	GtkTextTag *tag = gtk_text_tag_table_lookup(table, "comment");
-	g_object_set(G_OBJECT(tag), "invisible", !show, NULL);
-	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &iter);
-
+	imhtml->show_comments = show;
 }
 
 void

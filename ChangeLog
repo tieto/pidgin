@@ -29,8 +29,6 @@ version 0.65:
 	* Ability to view iChat "Available" messages for AIM
 	* Stores your buddy icon on the server for AIM
 	* Support for non-ascii characters with Yahoo! Messenger
-	* F2 toggles the display of timestamps retroactively once again 
-	  (Thanks Ka-Hing Cheung)
 
 version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.
