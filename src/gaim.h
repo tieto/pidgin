@@ -261,6 +261,7 @@ extern void serv_get_away(GaimConnection *, const char *);
 extern void serv_alias_buddy(struct buddy *);
 extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
 extern void serv_rename_group(GaimConnection *, struct group *, const char *);
+extern void serv_set_buddyicon(GaimConnection *, const char *);
 
 /* Functions in log.h */
 extern FILE *open_log_file (const char *, int);

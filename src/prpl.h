@@ -293,6 +293,8 @@ struct _GaimPluginProtocolInfo
 	void (*convo_closed)(GaimConnection *, char *who);
 
 	char *(*normalize)(const char *);
+	
+	void (*set_buddy_icon)(GaimConnection *, const char *filename);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

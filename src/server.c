@@ -691,6 +691,18 @@ int serv_chat_send(GaimConnection *g, int id, char *message)
 	return val;
 }
 
+void serv_set_buddyicon(GaimConnection *gc, const char *filename)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	
+	if (gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->set_buddy_icon)
+		prpl_info->set_buddy_icon(gc, filename);
+	
+}	
+
 int find_queue_row_by_name(char *name)
 {
 	gchar *temp;
@@ -1484,3 +1496,4 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	gtk_imhtml_append_text(GTK_IMHTML(text), msg, -1, GTK_IMHTML_NO_NEWLINE);
 }
+

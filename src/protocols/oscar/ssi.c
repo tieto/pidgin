@@ -1023,7 +1023,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t 
  *
  * @param sess The oscar session.
  * @param iconcsum The MD5 checksum of the icon you are using.
- * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
+ * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen)
@@ -1035,30 +1035,31 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
 	if (!sess || !iconsum || !iconsumlen)
 		return -EINVAL;
 
-	/* Create the data for the TLV containing the icon checksum */
 	if (!(csumdata = (fu8_t *)malloc((iconsumlen+2)*sizeof(fu8_t))))
 		return -ENOMEM;
 	csumdata[0] = 0x00;
 	csumdata[1] = 0x10;
 	memcpy(&csumdata[2], iconsum, iconsumlen);
+	
+		
+	/* Need to add the x00d5 TLV to the TLV chain */
+	aim_addtlvtochain_raw(&data, 0x00d5, (iconsumlen+2) * sizeof(fu8_t), csumdata);
 
-	/* Need to add the x0131 TLV to the TLV chain */
+	/* This TLV is added to cache the icon. */
 	aim_addtlvtochain_noval(&data, 0x0131);
 
-	/* Need to add the x00d5 TLV to the TLV chain */
-	aim_addtlvtochain_raw(&data, 0x00d5, 0x0012, csumdata);
 
 	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "0", AIM_SSI_TYPE_ICONINFO))) {
 		aim_freetlvchain(&tmp->data);
 		tmp->data = data;
 	} else {
-		tmp = aim_ssi_itemlist_add(&sess->ssi.local, "0", 0x0000, 0xFFFF, AIM_SSI_TYPE_ICONINFO, data);
+		tmp = aim_ssi_itemlist_add(&sess->ssi.local, "1", 0x0000, 0x51F4, AIM_SSI_TYPE_ICONINFO, data);
 		aim_freetlvchain(&data);
 	}
 
 	/* Sync our local list with the server list */
 	aim_ssi_sync(sess);
-
+	free(csumdata);
 	return 0;
 }
 

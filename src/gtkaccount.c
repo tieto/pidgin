@@ -210,7 +210,6 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	
 static void buddy_icon_filesel_delete_cb (GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	gtk_widget_destroy(dialog->buddy_icon_filesel);
 	dialog->buddy_icon_filesel = NULL;
 }
 
@@ -284,7 +283,7 @@ static void buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 
 	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "delete-event", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
-			 G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
+			 G_CALLBACK(gtk_widget_destroy), NULL);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->ok_button), "clicked", G_CALLBACK(buddy_icon_filesel_choose),
 			 dialog);
 

@@ -51,6 +51,7 @@
 #include "core.h"
 #include "proxy.h"
 #include "aim.h"
+#include "md5.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -84,6 +85,7 @@ struct oscar_data {
 	guint icopa;
 
 	gboolean iconconnecting;
+	gboolean set_icon;
 
 	GSList *create_rooms;
 
@@ -96,7 +98,7 @@ struct oscar_data {
 	gboolean chpass;
 	char *oldp;
 	char *newp;
-
+	
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *file_transfers;
@@ -280,6 +282,8 @@ static int oscar_sendfile_estblsh(aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_prompt (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_ack    (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
+
+static int gaim_buddyiconreq (aim_session_t *, aim_frame_t *, ...);
 
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
@@ -1143,6 +1147,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0021, gaim_buddyiconreq,0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
@@ -3532,16 +3537,42 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	struct buddyinfo *bi;
 	aim_conn_t *conn;
 
-	if (!od->requesticon) {
-		gaim_debug(GAIM_DEBUG_MISC, "oscar",
-				   "no more icons to request\n");
-		return FALSE;
-	}
-
 	conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON);
 	if (!conn && !od->iconconnecting) {
 		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
 		od->iconconnecting = TRUE;
+		return FALSE;
+	}
+
+	if (od->set_icon) {
+		const char *iconfile;
+		if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
+			FILE *file;
+			struct stat st;
+			gaim_debug(GAIM_DEBUG_INFO, "Uploading icon: %s\n", iconfile);
+			if (!stat(iconfile, &st)) {
+				char *buf = g_malloc(st.st_size);
+				file = fopen(iconfile, "rb");
+				if (file) {
+					int len = fread(buf, 1, st.st_size, file);
+					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+						   "Uploading icon to icon server\n");
+					aim_icon_upload(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON), buf, st.st_size);
+					fclose(file);
+				} else
+					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+						   "Can't open buddy icon file!\n");
+				g_free(buf);
+			} else
+				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+					   "Can't stat buddy icon file!\n");
+		}
+		od->set_icon = FALSE;
+	}
+
+	if (!od->requesticon) {
+		gaim_debug(GAIM_DEBUG_MISC, "oscar",
+				   "no more icons to request\n");
 		return FALSE;
 	}
 
@@ -5424,6 +5455,60 @@ static char *oscar_status_text(struct buddy *b) {
 	return ret;
 }
 
+
+static int gaim_buddyiconreq (aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+
+	char *md5 = NULL;
+	fu16_t type;
+	fu8_t length, cached;
+	va_list ap;
+	va_start(ap, fr);
+	type = va_arg(ap, int);
+	switch (type) {
+	case 0x0001:
+	case 0x0000:
+		cached = va_arg(ap, int);
+		length = va_arg(ap, int);
+		md5 = va_arg(ap, char*);
+		break;
+	}
+	va_end(ap);
+	if (cached == 0x41) {
+		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON) && !od->iconconnecting) {
+			od->iconconnecting = TRUE;
+			od->set_icon = TRUE;
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
+		} else {
+			const char *iconfile;
+			if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
+				FILE *file;
+				struct stat st;
+
+				if (!stat(iconfile, &st)) {
+					char *buf = g_malloc(st.st_size);
+					file = fopen(iconfile, "rb");
+					if (file) {
+						int len = fread(buf, 1, st.st_size, file);
+						gaim_debug(GAIM_DEBUG_INFO, "oscar",
+							   "Uploading icon to icon server\n");
+						aim_icon_upload(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON), buf, st.st_size);
+						fclose(file);
+					} else
+						gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+							   "Can't open buddy icon file!\n");
+					g_free(buf);
+				} else
+					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+						   "Can't stat buddy icon file!\n");
+			}
+		}
+	} else if (cached == 0x81)
+		aim_ssi_seticon(od->sess, md5, length);
+}
+			    
+			    
 /*
  * We have just established a socket with the other dude, so set up some handlers.
  */
@@ -5929,6 +6014,37 @@ static void oscar_show_chpassurl(GaimConnection *gc)
 	g_free(substituted);
 }
 
+static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
+{
+	struct oscar_data *od;
+	aim_session_t *sess;
+	od = gc->proto_data;
+	FILE *file;
+	struct stat st;
+	sess = od->sess;
+	if (!stat(iconfile, &st)) {
+		char *buf = g_malloc(st.st_size);
+		file = fopen(iconfile, "rb");
+		if (file) {
+			int len = fread(buf, 1, st.st_size, file);
+			char md5[16];
+			md5_state_t *state = g_malloc(sizeof(md5_state_t));
+			md5_init(state);
+			md5_append(state, buf, len);
+			md5_finish(state, md5);
+			fclose(file);
+			g_free(state);
+			aim_ssi_seticon(sess, md5, 16);
+		} else
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				   "Can't open buddy icon file!\n");
+		g_free(buf);
+	} else
+		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+			   "Can't stat buddy icon file!\n");
+}
+
+
 static GList *oscar_actions(GaimConnection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -5959,9 +6075,9 @@ static GList *oscar_actions(GaimConnection *gc)
 		/* AIM actions */
 		m = g_list_append(m, NULL);
 
-		pam = g_new0(struct proto_actions_menu, 1);
+	       	pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Format Screenname");
-		pam->callback = oscar_show_format_screenname;
+		pam->callback = oscar_format_screenname;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
 
@@ -6099,7 +6215,8 @@ static GaimPluginProtocolInfo prpl_info =
 #endif
 	NULL,
 	oscar_convo_closed,
-	NULL
+	NULL,
+	oscar_set_icon
 };
 
 static GaimPluginInfo info =

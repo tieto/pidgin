@@ -946,26 +946,38 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
  * Subtype 0x0021 - Receive our extended status
  *
  * This is used for MAC non-away "away" messages, and maybe ICQ extended status messages?
+ * It's also used to tell the client whether or not it needs to upload an SSI buddy icon... who engineers this stuff, anyway?
  */
 static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	int ret = 0;
+	int ret = 0, i;
 	aim_rxcallback_t userfunc;
-	char *msg = NULL;
+	char *msg = NULL, *md5 = NULL;
 	fu16_t type;
-	fu8_t number, length;
+	fu8_t number, length, cached;
 
-	type = aimbs_get16(bs); /* 0x0002 */
-	number = aimbs_get8(bs); /* 0x04 */
-	length = aimbs_get8(bs); /* the first length */
-	msg = aimbs_getstr(bs, aimbs_get16(bs)); /* the second length is just for the message */
-
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, msg);
-
-	free(msg);
-
-	return ret;
+	type = aimbs_get16(bs); 
+	printf("blah: %d\n", type);
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
+		switch (type) {
+		case 0x0001:
+		case 0x0000: /* not sure what the difference between 1 and 0 is */
+			cached = aimbs_get8(bs);
+			length = aimbs_get8(bs);
+			md5 = aimbs_getraw(bs, length);
+			ret = userfunc(sess, rx, type, cached, length, md5);
+			free(md5);
+			break;
+		case 0x0002:
+			number = aimbs_get8(bs); /* 0x04 */
+			length = aimbs_get8(bs); /* the first length */
+			msg = aimbs_getstr(bs, aimbs_get16(bs)); /* the second length is just for the message */
+			ret = userfunc(sess, rx, msg);
+			free(msg);
+			break;
+		}
+		return ret;
+	}
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)

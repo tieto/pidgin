@@ -14,18 +14,17 @@
  *
  * @param sess The oscar session.
  * @param conn The icon connection for this session.
- * @param num The reference number of the icon you are uploading.
  * @param icon The raw data of the icon image file.
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icon_upload(aim_session_t *sess, int num, const fu8_t *icon, fu16_t iconlen)
+faim_export int aim_icon_upload(aim_session_t *sess, aim_conn_t *conn, const fu8_t *icon, fu16_t iconlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !num || !icon || !iconlen)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !icon || !iconlen)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 2 + 2+iconlen)))
@@ -34,7 +33,7 @@ faim_export int aim_icon_upload(aim_session_t *sess, int num, const fu8_t *icon,
 	aim_putsnac(&fr->data, 0x0010, 0x0002, 0x0000, snacid);
 
 	/* The reference number for the icon */
-	aimbs_put16(&fr->data, num);
+	aimbs_put16(&fr->data, 1);
 
 	/* The icon */
 	aimbs_put16(&fr->data, iconlen);
