@@ -98,7 +98,6 @@ void cancel_logon(void)
 			(*gaim_plugin_remove)();
 		/* we don't need to worry about removing callbacks since
 		 * there won't be any more chance to call them back :) */
-		dlclose(p->handle);
 		g_free(p->filename); /* why do i bother? */
 		g_free(p);
 		c = c->next;
