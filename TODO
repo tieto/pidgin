@@ -22,6 +22,10 @@ THE CORE:
 		good way to do this? IRC it varies based on who you're connected as,
 		Jabber you need a connection to retrieve the list, and AIM you can get
 		it while you're offline.)
+	We've run out of room in display and general _options. We need to either make
+		more variables (which I'm opposed to) or find some way to make them
+		64-bit variables (which is probably tricky and not portable but what
+		I'd prefer, if it is portable).
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
