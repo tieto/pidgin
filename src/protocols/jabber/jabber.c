@@ -9,7 +9,6 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -82,9 +81,9 @@ G_MODULE_IMPORT GSList *connections;
 #define UC_DND    (0x10 | UC_UNAVAILABLE)
 #define UC_ERROR  (0x20 | UC_UNAVAILABLE)
 
+#define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
 #define DEFAULT_PORT 5222
-#define DEFAULT_RESOURCE "Gaim"
 
 #define USEROPT_PORT 0
 #define USEROPT_CONN_SERVER 1
@@ -248,11 +247,10 @@ static char *jabber_normalize(const char *s);
 static char *create_valid_jid(const char *given, char *server, char *resource)
 {
 	char *valid;
-	char *tmp;
 
-	if (!(tmp = strchr(given, '@')))
+	if (!strchr(given, '@'))
 		valid = g_strdup_printf("%s@%s/%s", given, server, resource);
-	else if (!strchr(tmp, '/'))
+	else if (!strchr(strchr(given, '@'), '/'))
 		valid = g_strdup_printf("%s/%s", given, resource);
 	else
 		valid = g_strdup(given);
@@ -260,24 +258,6 @@ static char *create_valid_jid(const char *given, char *server, char *resource)
 	return valid;
 }
 
-/* checks the username of a GC is a valid JID and appends   *
- * the resource if necessary. returns NULL for invalid JID. *
- * for jabber_login and jabber_register_user                */
-static char *create_login_name(struct gaim_connection *gc)
-{
-	char *given = gc->account->username;
-	char *valid;
-	char *tmp;
-
-	if (!(tmp = strchr(given, '@')))
-		valid = NULL;
-	else if (!strchr(tmp, '/'))
-		valid = g_strdup_printf("%s/%s", given, DEFAULT_RESOURCE);
-	else
-		valid = g_strdup(given);
-
-	return valid;
-}
 
 /*
  * Dispose of a gaim_jid_struct
@@ -2287,13 +2267,7 @@ static void jabber_login(struct gaim_account *account)
 {
 	struct gaim_connection *gc = new_gaim_conn(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_login_name(gc);
-
-	if (!loginname) {
-		hide_login_progress(gc, _("Jabber IDs must be of the form user@server"));
-		signoff(gc);
-		return;
-	}
+	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
@@ -4141,13 +4115,7 @@ void jabber_register_user(struct gaim_account *account)
 {
 	struct gaim_connection *gc = new_gaim_conn(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_login_name(gc);
-
-	if (!loginname) {
-		hide_login_progress(gc, _("Jabber IDs must be of the form user@server"));
-		signoff(gc);
-		return;
-	}
+	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
 	/*
 	 * These do nothing during registration
@@ -4255,12 +4223,12 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup_printf("%d", DEFAULT_PORT);
+	puo->def = g_strdup_printf("%d", "5222");
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Connect Server:\n(optional)"));
+	puo->label = g_strdup(_("Connect Server:"));
 	puo->def = g_strdup("");
 	puo->pos = USEROPT_CONN_SERVER;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
