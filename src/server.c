@@ -627,7 +627,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 		char *filename;
 
 		filename = (char *)malloc(100);
-		snprintf(filename, 100, "%s.chat", b->name);
+		g_snprintf(filename, 100, "%s.chat", b->name);
 		
 		fd = open_log_file(filename);
 		if (!(general_options & OPT_GEN_STRIP_HTML))
