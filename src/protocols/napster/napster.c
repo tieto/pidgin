@@ -289,7 +289,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		break;
 
 	case 202: /* MSG_SERVER_SEARCH_END */
+		res = g_strsplit(buf, " ", 0);
 		gaim_prpl_got_user_status(account, res[0], "offline", NULL);
+		g_strfreev(res);
 		break;
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
