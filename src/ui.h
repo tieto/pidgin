@@ -286,6 +286,7 @@ extern void load_perl_script();
 extern void aol_icon(GdkWindow *);
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
+extern int file_is_dir(const char *, GtkWidget *);
 
 /* Functions in multi.c */
 extern void account_editor(GtkWidget *, GtkWidget *);

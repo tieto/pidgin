@@ -524,3 +524,26 @@ void remove_all_plugins()
 	}
 }
 #endif
+
+void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
+{
+	switch (subtype) {
+		/*
+	case CUI_PLUGIN_LIST:
+		break;
+		*/
+	case CUI_PLUGIN_LOAD:
+		load_plugin(data);
+		/* XXX need to broadcast to UIs that plugin has been loaded */
+		break;
+		/*
+	case CUI_PLUGIN_UNLOAD:
+		break;
+	case CUI_PLUGIN_RELOAD:
+		break;
+		*/
+	default:
+		debug_printf("unhandled plugin subtype: %d\n", subtype);
+		break;
+	}
+}

@@ -74,6 +74,11 @@ enum gaim_event {
 	/* any others? it's easy to add... */
 };
 
+struct UI {
+	GIOChannel *channel;
+	guint inpa;
+};
+
 #ifdef GAIM_PLUGINS
 
 struct gaim_plugin {
@@ -89,8 +94,6 @@ struct gaim_callback {
 	void *data;
 };
 
-extern GList *plugins;
-extern GList *callbacks;
 #endif
 
 struct buddy {
@@ -114,6 +117,13 @@ struct group {
 	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
+/* Globals in core.c */
+extern GSList *uis;
+
+/* Globals in plugins.c */
+extern GList *plugins;
+extern GList *callbacks;
+
 /* Functions in buddy.c */
 extern struct buddy *find_buddy(struct gaim_connection *, char *);
 extern struct group *find_group(struct gaim_connection *, char *);
@@ -129,6 +139,8 @@ extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 
 /* Functions in core.c */
+extern gint UI_write(struct UI *, guchar *, int);
+extern void UI_broadcast(guchar *data, int);
 /* Don't ever use these; when gaim-core is done these will be
  * merged into the core's main() and won't be called directly */
 extern int core_main();
@@ -156,9 +168,10 @@ extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
 extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 extern void gaim_plugin_unload(GModule *);
+extern void remove_all_plugins();
 #endif
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
-extern void remove_all_plugins();
+extern void plugin_handler(struct UI *, guchar, guchar *);
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);

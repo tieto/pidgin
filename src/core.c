@@ -38,10 +38,6 @@
 #include "gaim.h"
 
 static gint UI_fd = -1;
-struct UI {
-	GIOChannel *channel;
-	guint inpa;
-};
 GSList *uis = NULL;
 
 gint UI_write(struct UI *ui, guchar *data, gint len)
@@ -70,27 +66,27 @@ void UI_broadcast(guchar *data, gint len)
 static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	switch (subtype) {
-		case CUI_META_LIST:
-			break;
-		case CUI_META_QUIT:
-			while (uis) {
-				ui = uis->data;
-				uis = g_slist_remove(uis, ui);
-				g_io_channel_close(ui->channel);
-				g_source_remove(ui->inpa);
-				g_free(ui);
-			}
-			do_quit();
-			break;
-		case CUI_META_DETACH:
+	case CUI_META_LIST:
+		break;
+	case CUI_META_QUIT:
+		while (uis) {
+			ui = uis->data;
 			uis = g_slist_remove(uis, ui);
 			g_io_channel_close(ui->channel);
 			g_source_remove(ui->inpa);
 			g_free(ui);
-			break;
-		default:
-			debug_printf("unhandled meta subtype %d\n", subtype);
-			break;
+		}
+		do_quit();
+		break;
+	case CUI_META_DETACH:
+		uis = g_slist_remove(uis, ui);
+		g_io_channel_close(ui->channel);
+		g_source_remove(ui->inpa);
+		g_free(ui);
+		break;
+	default:
+		debug_printf("unhandled meta subtype %d\n", subtype);
+		break;
 	}
 }
 
@@ -162,10 +158,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		case CUI_TYPE_META:
 			meta_handler(ui, subtype, in);
 			break;
-			/*
 		case CUI_TYPE_PLUGIN:
 			plugin_handler(ui, subtype, in);
 			break;
+			/*
 		case CUI_TYPE_USER:
 			user_handler(ui, subtype, in);
 			break;
