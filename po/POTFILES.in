@@ -192,8 +192,8 @@ src/protocols/zephyr/zephyr.c
 src/protocols/zephyr/zephyr_err.c
 src/about.c
 src/away.c
+src/blist.c
 src/browser.c
-src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/core.c
@@ -205,6 +205,7 @@ src/gaim-remote.c
 src/gaimrc.c
 src/getopt.c
 src/getopt1.c
+src/gtkblist.c
 src/gtkcellrendererprogress.c
 src/gtkconv.c
 src/gtkft.c
@@ -213,7 +214,6 @@ src/gtkpounce.c
 src/gtkutils.c
 src/html.c
 src/idle.c
-src/list.c
 src/log.c
 src/main.c
 src/md5.c
