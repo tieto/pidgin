@@ -4,71 +4,779 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.11pre14\n"
-"POT-Creation-Date: 2001-07-26 20:42+0500\n"
-"PO-Revision-Date: 2001-07-27 21:05+0400\n"
-"Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
+"Project-Id-Version: gaim 0.48\n"
+"POT-Creation-Date: 2001-11-15 11:03+0400\n"
+"PO-Revision-Date: 2001-11-16 13:51+0400\n"
+"Last-Translator: Sergey Volozhanin <svo@asplinux.ru>\n"
 "Language-Team: RUSSIAN <RU@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=KOI8-R\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: plugins/icq/gaim_icq.c:457
-#: src/oscar.c:2926
-#: src/toc.c:1031
+#: src/protocols/gg/gg.c:68
+msgid "Available"
+msgstr "Доступен"
+
+#: src/protocols/gg/gg.c:69
+msgid "Available for friends only"
+msgstr "Доступен только для друзей"
+
+#: src/applet.c:291
+#: src/buddy.c:478
+#: src/buddy.c:2283
+#: src/buddy.c:2419
+#: src/protocols/gg/gg.c:70
+msgid "Away"
+msgstr "Статус"
+
+#: src/protocols/gg/gg.c:71
+msgid "Away for friends only"
+msgstr "Отошел только для друзей"
+
+#: src/protocols/gg/gg.c:72
+msgid "Invisible"
+msgstr "Невидимый"
+
+#: src/protocols/gg/gg.c:73
+msgid "Invisible for friends only"
+msgstr "Невидим только для друзей"
+
+#: src/protocols/gg/gg.c:74
+msgid "Unavailable"
+msgstr "Недоступен"
+
+#: src/protocols/gg/gg.c:168
+#, fuzzy
+msgid "Unable to resolve hostname."
+msgstr "Нет возможности прочитать файл %s"
+
+#: src/protocols/gg/gg.c:171
+msgid "Unable to connect to server."
+msgstr "Не могу соединиться с сервером."
+
+#: src/protocols/gg/gg.c:174
+msgid "Invalid response from server."
+msgstr "Ошибочный ответ сервера"
+
+#: src/protocols/gg/gg.c:177
+msgid "Error while reading from socket."
+msgstr "Ошибка при чтении из сокета."
+
+#: src/protocols/gg/gg.c:180
+msgid "Error while writting to socket."
+msgstr "Ошибка при записи в сокет"
+
+#: src/protocols/gg/gg.c:183
+msgid "Authentification failed."
+msgstr "Авторизация провалена"
+
+#: src/protocols/gg/gg.c:186
+msgid "Unknown Error Code."
+msgstr "Неизвестный код ошибеи"
+
+#: src/protocols/gg/gg.c:191
+#: src/protocols/gg/gg.c:599
+#: src/protocols/gg/gg.c:698
+#: src/protocols/gg/gg.c:840
+#: src/protocols/gg/gg.c:877
+#: src/protocols/gg/gg.c:921
+msgid "Gadu-Gadu Error"
+msgstr "Gaim - Ошибка Gadu"
+
+#: src/protocols/gg/gg.c:311
+#, c-format
+msgid "Status: %s"
+msgstr "Статус: %s"
+
+#: src/protocols/gg/gg.c:326
+msgid "Nick:"
+msgstr "Псевдоним:"
+
+#: src/protocols/gg/gg.c:327
+msgid "Gadu-Gadu User"
+msgstr "Gadu -Пользователь Gadu"
+
+#: src/protocols/gg/gg.c:462
+msgid "Unable to connect."
+msgstr "Не могу установить соединение"
+
+#: src/protocols/gg/gg.c:473
+msgid "Handshake"
+msgstr ""
+
+#: src/protocols/gg/gg.c:475
+msgid "Connecting to GG server"
+msgstr "Соединение к GG серверу"
+
+#: src/protocols/gg/gg.c:478
+msgid "Waiting for server key"
+msgstr "Ожидается ключ для сервера"
+
+#: src/protocols/gg/gg.c:480
+msgid "Sending key"
+msgstr "Отправить ключ"
+
+#: src/protocols/gg/gg.c:537
+msgid "Send as message"
+msgstr "Отправить как сообщение"
+
+#: src/protocols/gg/gg.c:545
+msgid "Looking up GG server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:548
+msgid "Invalid Gadu-Gadu UIN specified"
+msgstr ""
+
+#: src/protocols/gg/gg.c:575
+#, c-format
+msgid "Connect to %s failed"
+msgstr "Соединение с %s разорвано"
+
+#: src/protocols/gg/gg.c:598
+msgid "You are trying to send message to invalid Gadu-Gadu UIN!"
+msgstr ""
+
+#: src/protocols/gg/gg.c:698
+msgid "Couldn't get search results"
+msgstr ""
+
+#: src/protocols/gg/gg.c:703
+msgid "Gadu-Gadu Search Engine"
+msgstr ""
+
+#: src/protocols/gg/gg.c:730
+msgid "Active"
+msgstr ""
+
+#: src/protocols/gg/gg.c:731
+msgid "yes"
+msgstr "да"
+
+#: src/protocols/gg/gg.c:731
+msgid "no"
+msgstr "нет"
+
+#: src/protocols/gg/gg.c:735
+msgid "UIN"
+msgstr "UIN"
+
+#: src/protocols/gg/gg.c:739
+msgid "First name"
+msgstr "Имя"
+
+#: src/protocols/gg/gg.c:744
+msgid "Second Name"
+msgstr "Фамилия"
+
+#: src/protocols/gg/gg.c:748
+msgid "Nick"
+msgstr "Псевдоним"
+
+#: src/protocols/gg/gg.c:755
+#: src/protocols/gg/gg.c:758
+msgid "Birth year"
+msgstr "Год рождения"
+
+#: src/protocols/gg/gg.c:764
+#: src/protocols/gg/gg.c:766
+#: src/protocols/gg/gg.c:768
+msgid "Sex"
+msgstr "Пол"
+
+#. Line 5
+#: src/dialogs.c:1385
+#: src/dialogs.c:2068
+#: src/protocols/gg/gg.c:772
+msgid "City"
+msgstr "Город"
+
+#: src/protocols/gg/gg.c:840
+msgid "Couldn't send search request"
+msgstr ""
+
+#: src/protocols/gg/gg.c:876
+#: src/protocols/gg/gg.c:920
+#, c-format
+msgid "Connect to search service failed (%s)"
+msgstr ""
+
+#: src/protocols/gg/gg.c:886
+#: src/protocols/gg/gg.c:895
+msgid "Directory Search"
+msgstr "Поиск каталога"
+
+#: src/protocols/icq/gaim_icq.c:305
+msgid "Send message through server"
+msgstr "Отправить сообщение через сервер"
+
+#: src/protocols/icq/gaim_icq.c:466
+#: src/protocols/irc/irc.c:1493
+#: src/protocols/jabber/jabber.c:1644
+#: src/protocols/oscar/oscar.c:2621
+#: src/protocols/toc/toc.c:1199
 msgid "Get Info"
 msgstr "Получить информацию"
 
-#: plugins/yay/yay.c:183
-msgid "Your message did not get sent."
-msgstr "Ваше сообщение не может быть отправлено"
+#: src/protocols/irc/irc.c:428
+#: src/protocols/irc/irc.c:920
+#, c-format
+msgid "<B>%s has changed the topic to: %s</B>"
+msgstr "<B>%s сменил топик на: %s</B>"
 
-#: plugins/yay/yay.c:183
-#: src/dialogs.c:3066
-#: src/dialogs.c:3073
-#: src/oscar.c:1900
-#: src/oscar.c:1905
-#: src/oscar.c:1941
-#: src/oscar.c:1960
+#: src/protocols/irc/irc.c:662
+msgid "No such nick/channel"
+msgstr "Нет такого псевдонима/канала"
+
+#: src/protocols/irc/irc.c:662
+#: src/protocols/irc/irc.c:665
+#: src/protocols/irc/irc.c:667
+#: src/protocols/irc/irc.c:856
+msgid "IRC Error"
+msgstr "Ошибка IRC"
+
+#: src/protocols/irc/irc.c:665
+msgid "No such server"
+msgstr "Сервер не найден"
+
+#: src/protocols/irc/irc.c:667
+msgid "No nickname given"
+msgstr "Не задан псевдоним"
+
+#: src/protocols/irc/irc.c:799
+msgid "Unable to write"
+msgstr "Невозможно записать"
+
+#: src/protocols/irc/irc.c:854
+#, fuzzy, c-format
+msgid "You have been kicked from %s: %s"
+msgstr "Прервано соединение с чатом %s."
+
+#: src/protocols/irc/irc.c:1324
+#, c-format
+msgid "You have left %s"
+msgstr "Вы покинули %s"
+
+#: src/protocols/irc/irc.c:1325
+msgid "IRC Part"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1398
+msgid "Channel:"
+msgstr "Канал:"
+
+#: src/multi.c:506
+#: src/protocols/irc/irc.c:1402
+msgid "Password:"
+msgstr "Пароль"
+
+#: src/protocols/jabber/jabber.c:1352
+msgid "Room:"
+msgstr "Чат:"
+
+#: src/protocols/jabber/jabber.c:1356
+msgid "Server:"
+msgstr "Сервер:"
+
+#: src/protocols/jabber/jabber.c:1361
+msgid "Handle:"
+msgstr "Псевдоним:"
+
+#: src/protocols/msn/msn.c:566
+#: src/protocols/msn/msn.c:1689
+#: src/protocols/msn/msn.c:1722
+msgid "MSN Error"
+msgstr "Ошибка MSN"
+
+#: src/protocols/msn/msn.c:566
+msgid "Gaim was unable to send a message"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1689
+#: src/protocols/msn/msn.c:1722
+msgid "Invalid name"
+msgstr "Неверное имя"
+
+#: src/protocols/napster/napster.c:450
+#: src/protocols/oscar/oscar.c:2319
+#: src/protocols/toc/toc.c:1087
+msgid "Join what group:"
+msgstr "Войти в группу"
+
+#: src/protocols/oscar/oscar.c:295
+#, c-format
+msgid "Direct IM with %s closed"
+msgstr "Прямое соединение с %s закрыто"
+
+#: src/protocols/oscar/oscar.c:331
+msgid ""
+"connection error (rend)\n"
+""
+msgstr ""
+"Ошибка соединения (rend)\n"
+""
+
+#: src/protocols/oscar/oscar.c:342
+msgid ""
+"major connection error\n"
+""
+msgstr ""
+"серьезная ошибка соединения\n"
+""
+
+#: src/protocols/oscar/oscar.c:343
+#: src/protocols/toc/toc.c:511
+#: src/protocols/toc/toc.c:521
+#: src/protocols/toc/toc.c:587
+msgid "Disconnected."
+msgstr "Соединение разорвано."
+
+#: src/protocols/oscar/oscar.c:355
+#: src/protocols/toc/toc.c:755
+#, c-format
+msgid "You have been disconnected from chat room %s."
+msgstr "Прервано соединение с чатом %s."
+
+#: src/protocols/oscar/oscar.c:356
+msgid "Chat Error!"
+msgstr "Чат ошибка!"
+
+#: src/protocols/oscar/oscar.c:366
+msgid "Chat is currently unavailable"
+msgstr "Чат временно недоступен"
+
+#: src/protocols/oscar/oscar.c:367
+msgid "Gaim - Chat"
+msgstr "Gaim - Чат"
+
+#: src/protocols/oscar/oscar.c:426
+#: src/protocols/oscar/oscar.c:488
+msgid "Couldn't connect to host"
+msgstr "Не могу присоединиться к машине"
+
+#: src/protocols/oscar/oscar.c:434
+msgid ""
+"Password sent, waiting for response\n"
+""
+msgstr ""
+"Пароль передан, ждите ответа\n"
+""
+
+#: src/protocols/oscar/oscar.c:445
+#, c-format
+msgid ""
+"Logging in %s\n"
+""
+msgstr ""
+"Присоединение к %s\n"
+""
+
+#: src/protocols/oscar/oscar.c:450
+msgid "Send offline message"
+msgstr "Отправить сообщение через сервер"
+
+#: src/protocols/oscar/oscar.c:469
+msgid ""
+"internal connection error\n"
+""
+msgstr ""
+"внутренняя ошибка соединения\n"
+""
+
+#: src/protocols/oscar/oscar.c:470
+msgid "Unable to login to AIM"
+msgstr "Немогу соединиться с AIM"
+
+#: src/protocols/oscar/oscar.c:475
+#, c-format
+msgid "Signon: %s"
+msgstr "Подключился: %s"
+
+#: src/protocols/oscar/oscar.c:531
+msgid ""
+"Signed off.\n"
+""
+msgstr ""
+"Отключился.\n"
+""
+
+#: src/protocols/oscar/oscar.c:550
+#: src/protocols/oscar/oscar.c:668
+msgid "Could Not Connect"
+msgstr "Не могу присоединиться"
+
+#: src/protocols/oscar/oscar.c:558
+msgid "Connection established, cookie sent"
+msgstr "Соединение установлено, печеньки высланы"
+
+#. Incorrect nick/password
+#: src/protocols/oscar/oscar.c:584
+#: src/protocols/toc/toc.c:459
+msgid "Incorrect nickname or password."
+msgstr "Не корректный псевдоним или пароль."
+
+#. Suspended account
+#: src/protocols/oscar/oscar.c:589
+msgid "Your account is currently suspended."
+msgstr "Ваша учетная запись заблокирована."
+
+#. connecting too frequently
+#: src/protocols/oscar/oscar.c:593
+msgid "You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."
+msgstr "Вы пытались соединиться и отсоединиться слишком часто. Подождите 10 минут и попробуйте еще раз. Если вы будете продолжать попытки вам придется подождать дольше."
+
+#. client too old
+#: src/protocols/oscar/oscar.c:598
+msgid "The client version you are using is too old. Please upgrade at "
+msgstr "Вы используете слишком старую версию клиента."
+
+#: src/protocols/oscar/oscar.c:602
+#: src/protocols/toc/toc.c:539
+msgid "Authentication Failed"
+msgstr "Авторизация провалена"
+
+#: src/protocols/oscar/oscar.c:624
+msgid "Internal Error"
+msgstr "Внутреняя ошибка"
+
+#: src/protocols/oscar/oscar.c:1184
+#: src/protocols/oscar/oscar.c:2525
+#, c-format
+msgid "Direct IM with %s established"
+msgstr "Прямое соединение с %s установлено"
+
+#: src/protocols/oscar/oscar.c:1423
+#, c-format
+msgid "You missed %d message%s from %s because %s invalid."
+msgstr "Вы не получили %d сообщение%s от %s, оно некорректно."
+
+#: src/protocols/oscar/oscar.c:1433
+#, c-format
+msgid "You missed %d message%s from %s because %s too large."
+msgstr "Вы не получили %d сообщение%s от %s, %s слишком велико."
+
+#: src/protocols/oscar/oscar.c:1443
+#, c-format
+msgid "You missed %d message%s from %s because the rate limit has been exceeded."
+msgstr "Вы не получили%d сообщение%s от %s, сообщения отправлялись слишком часто."
+
+#: src/protocols/oscar/oscar.c:1452
+#, c-format
+msgid "You missed %d message%s from %s because they are too evil."
+msgstr "Вы не получили %d сообщение%s от %s, оно вам не понравится."
+
+#: src/protocols/oscar/oscar.c:1461
+#, c-format
+msgid "You missed %d message%s from %s because you are too evil."
+msgstr "Вы не получили %d сообщение%s от %s, по собственному желанию."
+
+#: src/protocols/oscar/oscar.c:1469
+#, c-format
+msgid "You missed %d message%s from %s for unknown reasons."
+msgstr "Вы не получили %d сообщение%s от %s по неизвестной причине."
+
+#: src/dialogs.c:2808
+#: src/dialogs.c:2814
+#: src/protocols/oscar/oscar.c:1475
+#: src/protocols/oscar/oscar.c:1507
+#: src/protocols/oscar/oscar.c:1525
+#: src/protocols/yahoo/yahoo.c:500
 msgid "Gaim - Error"
 msgstr "Gaim - Ошибка"
 
-#: plugins/yay/yay.c:201
+#: src/protocols/oscar/oscar.c:1505
 #, c-format
-msgid "%s has made %s their buddy%s%s"
-msgstr "%s сделал %s своим пользователем %s%s"
+msgid "Your message to %s did not get sent: %s"
+msgstr "Ваше сообщение к %s не отправлено: %s"
 
-#: plugins/yay/yay.c:203
-msgid "Gaim - Buddy"
-msgstr "Gaim - Пользователи"
+#: src/protocols/oscar/oscar.c:1506
+#: src/protocols/oscar/oscar.c:1524
+msgid "Reason unknown"
+msgstr "Причина неизвестна"
 
-#: plugins/yay/yay.c:250
-#: src/about.c:140
-#: src/aim.c:303
-#: src/buddy.c:2607
-#: src/buddy_chat.c:971
-#: src/buddy_chat.c:1125
-#: src/buddy_chat.c:1152
-#: src/conversation.c:2136
-#: src/dialogs.c:440
-#: src/dialogs.c:3719
-#: src/multi.c:744
-#: src/plugins.c:374
-#: src/prefs.c:2452
-#: src/prpl.c:359
-msgid "Close"
-msgstr "Закрыть"
+#: src/protocols/oscar/oscar.c:1523
+#, c-format
+msgid "User information for %s unavailable: %s"
+msgstr "Информация о пользователе %s недоступна: %s"
 
-#: plugins/napster.c:1042
-msgid "Napster registration is currently under development"
-msgstr "Регистрация на сервере Napster находится на стадии разработки"
+#: src/protocols/oscar/oscar.c:1565
+#, c-format
+msgid ""
+"Username : <B>%s</B>  %s <BR>\n"
+"%sWarning Level : <B>%d %%</B><BR>\n"
+"Online Since : <B>%s</B><BR>\n"
+"Idle Minutes : <B>%d</B>\n"
+"<BR>\n"
+"<HR><BR>\n"
+""
+msgstr ""
+"UIN:<B>%s</B. %s <BR>\n"
+"%s Уровень предупреждений:<B>%d %%</B><BR>\n"
+"Подключился:<B>%s</B><BR>\n"
+"Молчит:<B>%d</B>\n"
+"<BR>\n"
+"<HR><BR>\n"
+""
 
-#: src/about.c:89
+#: src/protocols/oscar/oscar.c:1576
+msgid "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : Administrator"
+msgstr "<br><BODY BGCOLOR=WHITE><hr><I>Легенда:</I><br><br><IMG SRC=\"free_icon.gif\"> : Обычный пользователь AIM<br><IMG SRC=\"aol_icon.gif\"> : Пользователь AOL <br><IMG SRC=\"dt_icon.gif\"> : Временный пользователь AIM<br><IMG SRC=\"admin_icon.gif\"> : Администратор"
+
+#: src/protocols/oscar/oscar.c:1586
+msgid "<i>No Information Provided</i>"
+msgstr "<i>Информация не предоставлена</i>"
+
+#: src/protocols/oscar/oscar.c:1587
+msgid "<i>User has no away message</i>"
+msgstr "<i>Пользователь не имеет сообщения об отсутствии</i>"
+
+#: src/protocols/oscar/oscar.c:1612
+msgid "Your connection may be lost."
+msgstr "Соединение может быть разорвано."
+
+#: src/protocols/oscar/oscar.c:1613
+msgid "AOL error"
+msgstr "Ошибка AOL"
+
+#: src/dialogs.c:3341
+#: src/protocols/oscar/oscar.c:2062
+#: src/protocols/oscar/oscar.c:2599
+#: src/protocols/toc/toc.c:1544
+#: src/protocols/toc/toc.c:1561
+#: src/protocols/toc/toc.c:1621
+#: src/protocols/toc/toc.c:1663
+#: src/protocols/toc/toc.c:1782
+#: src/protocols/toc/toc.c:1812
+#: src/protocols/toc/toc.c:1868
+msgid "Error"
+msgstr "Ошибка"
+
+#: src/protocols/oscar/oscar.c:2323
+#: src/protocols/toc/toc.c:1091
+msgid "Exchange:"
+msgstr "Обмен:"
+
+#: src/protocols/oscar/oscar.c:2599
+msgid "Unable to open Direct IM"
+msgstr "Немогу установить прямое соединение"
+
+#: src/protocols/oscar/oscar.c:2609
+#, c-format
+msgid "You have selected to open a Direct IM connection with %s. Doing this will let them see your IP address, and may be a security risk. Do you wish to continue?"
+msgstr "Вы хотите создать прямое соединение с %s. Собеседник может определить ваш IP адрес, что приведет к проблемам с безопасностью. Вы хотите продолжить?"
+
+#: src/protocols/oscar/oscar.c:2627
+msgid "Get Away Msg"
+msgstr "Получить сообщение об отсутствии"
+
+#: src/protocols/oscar/oscar.c:2634
+msgid "Direct IM"
+msgstr "Прямое соединение"
+
+#: src/protocols/toc/toc.c:398
+#, c-format
+msgid "Unable to write file %s."
+msgstr "Невозможно записать файл %s"
+
+#: src/protocols/toc/toc.c:401
+#, c-format
+msgid "Unable to read file %s."
+msgstr "Нет возможности прочитать файл %s"
+
+#: src/protocols/toc/toc.c:404
+#, c-format
+msgid "Message too long, last %s bytes truncated."
+msgstr "Сообщение боольшое, последние %s байт обрезаны"
+
+#: src/protocols/toc/toc.c:407
+#, c-format
+msgid "%s not currently logged in."
+msgstr "%s неверная регистрация"
+
+#: src/protocols/toc/toc.c:410
+#, c-format
+msgid "Warning of %s not allowed."
+msgstr "Предупреждение %s недоступен."
+
+#: src/protocols/toc/toc.c:413
+msgid "A message has been dropped, you are exceeding the server speed limit."
+msgstr "Сообщение было опущенно, вы превысили лимит сообщений для сервера."
+
+#: src/protocols/toc/toc.c:416
+#, c-format
+msgid "Chat in %s is not available."
+msgstr "Чат с %s невозможен"
+
+#: src/protocols/toc/toc.c:419
+#, c-format
+msgid "You are sending messages too fast to %s."
+msgstr "Вы посылаете сообщения к %s слишком часто."
+
+#: src/protocols/toc/toc.c:422
+#, c-format
+msgid "You missed an IM from %s because it was too big."
+msgstr "Вы не получили сообщение от %s, оно слишком большое."
+
+#: src/protocols/toc/toc.c:425
+#, c-format
+msgid "You missed an IM from %s because it was sent too fast."
+msgstr "Вы не получили сообщение от %s, сообщений слишком много."
+
+#: src/protocols/toc/toc.c:428
+msgid "Failure."
+msgstr "Не удалось."
+
+#: src/protocols/toc/toc.c:431
+msgid "Too many matches."
+msgstr "Слишком много совпадений."
+
+#: src/protocols/toc/toc.c:434
+msgid "Need more qualifiers."
+msgstr "Уточните."
+
+#: src/protocols/toc/toc.c:437
+msgid "Dir service temporarily unavailable."
+msgstr "Сервис временно недоступен."
+
+#: src/protocols/toc/toc.c:440
+msgid "Email lookup restricted."
+msgstr "Просмотр email ограничен."
+
+#: src/protocols/toc/toc.c:443
+msgid "Keyword ignored."
+msgstr "Ключевое слово игнорировано."
+
+#: src/protocols/toc/toc.c:446
+msgid "No keywords."
+msgstr "Нет ключевого слова."
+
+#: src/protocols/toc/toc.c:449
+msgid "User has no directory information."
+msgstr "Нет информации о пользователе."
+
+#: src/protocols/toc/toc.c:453
+msgid "Country not supported."
+msgstr "Нет поддержки для данной страны."
+
+#: src/protocols/toc/toc.c:456
+#, c-format
+msgid "Failure unknown: %s."
+msgstr "Неизвестная ошибка: %s."
+
+#: src/protocols/toc/toc.c:462
+msgid "The service is temporarily unavailable."
+msgstr "Этот сервис временно недоступен."
+
+#: src/protocols/toc/toc.c:465
+msgid "Your warning level is currently too high to log in."
+msgstr "Уровень предупреждений слишком велик чтобы присоединиться."
+
+#: src/protocols/toc/toc.c:468
+msgid "You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."
+msgstr "Вы пытались соединиться и отсоединиться слишком часто. Подождите 10 минут и попробуйте еще раз. Если вы будете продолжать попытки вам придется подождать дольше."
+
+#: src/protocols/toc/toc.c:471
+#, c-format
+msgid "An unknown signon error has occurred: %s."
+msgstr "Неизвестная ошибка при соединении: %s."
+
+#: src/protocols/toc/toc.c:474
+#, c-format
+msgid "An unknown error, %d, has occured.  Info: %s"
+msgstr "Неизвестная ошибка, %d.  Информация: %s"
+
+#: src/protocols/toc/toc.c:491
+msgid "Connection Closed"
+msgstr "Соединение разорвано"
+
+#: src/protocols/toc/toc.c:526
+msgid "Waiting for reply..."
+msgstr "Ожидается ответ..."
+
+#: src/protocols/toc/toc.c:595
+msgid "TOC has come back from its pause. You may now send messages again."
+msgstr "TOC связь восстановлена. Вы можете отправлять сообщение "
+
+#: src/protocols/toc/toc.c:596
+msgid "TOC Resume"
+msgstr "TOC продолжим."
+
+#: src/protocols/toc/toc.c:757
+msgid "Chat Error"
+msgstr "Чат ошибка"
+
+#: src/protocols/toc/toc.c:776
+msgid "Password Change Successeful"
+msgstr "Пароль изменен успешно"
+
+#: src/dialogs.c:1491
+#: src/protocols/toc/toc.c:776
+msgid "Gaim - Password Change"
+msgstr "Gaim - Смена пароля"
+
+#: src/protocols/toc/toc.c:779
+msgid "TOC has sent a PAUSE command. When this happens, TOC ignores any messages sent to it, and may kick you off if you send a message. Gaim will prevent anything from going through. This is only temporary, please be patient."
+msgstr "TOC передал команду PAUSE. Когда это происходит, TOC игнорирует все сообщения посылаемые ему, и может отключить вас при попытке переслать сообщение. Gaim не позволит вам этого сделать. Это временные недобства - будьте терпеливы."
+
+#: src/protocols/toc/toc.c:782
+msgid "TOC Pause"
+msgstr "TOC Пауза"
+
+#: src/protocols/toc/toc.c:1205
+msgid "Get Dir Info"
+msgstr "Получить информацию"
+
+#: src/protocols/toc/toc.c:1621
+#: src/protocols/toc/toc.c:1663
+#: src/protocols/toc/toc.c:1782
+#: src/protocols/toc/toc.c:1868
+msgid "Could not connect for transfer!"
+msgstr "Немогу присоединиться для передачи файла!"
+
+#: src/protocols/toc/toc.c:1812
+msgid "Could not write file header!"
+msgstr "Не могу записать заголовок файла!"
+
+#: src/protocols/toc/toc.c:1901
+msgid "Gaim - Save As..."
+msgstr "Gaim - Сохранить как..."
+
+#: src/protocols/toc/toc.c:1940
+#, c-format
+msgid "%s requests %s to accept %d file%s: %s (%.2f %s)%s%s"
+msgstr "%s запросил у %s поддтвердение %d о передаче файла %s: %s (%.2f %s)%s%s"
+
+#: src/protocols/toc/toc.c:1945
+#, c-format
+msgid "%s requests you to send them a file"
+msgstr "%s запросил передачу файла"
+
+#: src/protocols/yahoo/yahoo.c:500
+msgid "Your message did not get sent."
+msgstr "Ваше сообщение не может быть отправлено"
+
+#: src/protocols/zephyr/zephyr.c:778
+msgid "ZLocate"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:815
+msgid "Class:"
+msgstr "Класс:"
+
+#: src/protocols/zephyr/zephyr.c:819
+msgid "Instance:"
+msgstr "Запрос:"
+
+#: src/protocols/zephyr/zephyr.c:823
+msgid "Recipient:"
+msgstr "Адресат:"
+
+#: src/about.c:94
 #, c-format
 msgid "About Gaim v%s"
 msgstr "О Gaim версия%s "
 
-#: src/about.c:119
+#: src/about.c:127
 msgid ""
 "Gaim is a client that supports AOL's Instant Messenger protocol. It is written\n"
 "using Gtk+ and is licensed under the GPL.\n"
@@ -80,279 +788,311 @@ msgstr ""
 "распространяется под лицензией GPL.\n"
 "URL: "
 
-#: src/about.c:129
+#: src/about.c:128
+msgid ""
+"\n"
+"\n"
+"IRC: #gaim on irc.openprojects.net"
+msgstr ""
+"\n"
+"\n"
+"IRC: #gaim on irc.openprojects.net"
+
+#: src/about.c:137
 msgid ""
 "Rob Flynn (maintainer)               rob@marko.net\n"
 "Eric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n"
 "\n"
 "Benjamin Miller\n"
 "Decklin Foster\n"
+"Sean Egan\n"
 "Jim Duchek\n"
 "Mark Spencer (original author)   markster@marko.net"
 msgstr ""
 
+#: src/about.c:148
+#: src/about.c:213
+#: src/aim.c:295
+#: src/buddy.c:2408
+#: src/buddy_chat.c:1301
+#: src/buddy_chat.c:1398
+#: src/buddy_chat.c:1428
+#: src/conversation.c:2293
+#: src/dialogs.c:447
+#: src/dialogs.c:3634
+#: src/multi.c:1002
+#: src/plugins.c:277
+#: src/prefs.c:2416
+#: src/prpl.c:438
+msgid "Close"
+msgstr "Закрыть"
+
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 #. gtk_widget_grab_default(button);
-#: src/about.c:160
+#: src/about.c:168
 msgid "Web Site"
 msgstr "Интернет Сайт"
 
-#: src/aim.c:137
-#: src/buddy.c:2600
+#: src/about.c:223
+msgid "Relax, help is just around the corner. The first thing you'll need to do is get an AIM account; you can get one from http://aim.aol.com/. Just click the button that says \"New Users\" and you can create an account that way. Once you have your account, enter the username and password into the login window that comes up when you start Gaim, and click the Signon button. Once you're online, you can talk to one of the Gaim developers for more assistance; their contact information is in the AUTHORS file in the Gaim source, or at "
+msgstr ""
+
+#: src/about.c:234
+msgid "contactinfo.php. If you can't get online and still need more assistance, feel free to email us at gaim@marko.net. Thanks for using Gaim!"
+msgstr ""
+
+#: src/aim.c:128
+#: src/buddy.c:2401
 msgid "Signoff"
 msgstr "Завершение сеанса"
 
-#: src/aim.c:149
+#: src/aim.c:140
 msgid "Please enter your logon"
 msgstr "Пожалуйста, введите Ваше имя"
 
-#: src/aim.c:149
-#: src/aim.c:154
-#: src/multi.c:917
+#: src/aim.c:140
+#: src/multi.c:1231
+#: src/server.c:53
 msgid "Signon Error"
 msgstr "Ошибка регистрации"
 
-#: src/aim.c:154
-msgid "Please enter your password"
-msgstr "Пожалуйста, введите пароль"
-
-#: src/aim.c:248
+#: src/aim.c:238
 msgid "Gaim - Login"
 msgstr "Gaim - Регистрация"
 
-#: src/aim.c:266
+#: src/aim.c:256
 msgid "Screen Name: "
-msgstr "Идентификационный номер (UIN)"
+msgstr "UIN"
 
-#: src/aim.c:280
+#: src/aim.c:272
 msgid "Password: "
 msgstr "Пароль"
 
-#: src/aim.c:301
-#: src/buddy.c:2604
+#: src/aim.c:293
+#: src/buddy.c:2405
 msgid "Quit"
 msgstr "Выход"
 
-#: src/aim.c:306
-#: src/aim.c:630
-#: src/buddy.c:2662
+#: src/aim.c:298
+#: src/aim.c:745
+#: src/buddy.c:2431
 msgid "Accounts"
 msgstr "Учетные записи"
 
-#: src/aim.c:308
-#: src/multi.c:597
+#: src/aim.c:300
+#: src/multi.c:854
 msgid "Signon"
 msgstr "Подключиться"
 
-#: src/aim.c:340
-#: src/prpl.c:363
-msgid "Register"
-msgstr "Новый пользователь"
+#: src/aim.c:332
+msgid "Help!"
+msgstr "Помощь!"
 
-#: src/aim.c:341
-#: src/prefs.c:1632
-#: src/prefs.c:1839
+#: src/aim.c:333
+#: src/prefs.c:1525
+#: src/prefs.c:1800
 msgid "Options"
 msgstr "Параметры"
 
 #. Left side: frame with list of plugin file names
-#: src/aim.c:343
-#: src/aim.c:633
-#: src/buddy.c:2679
-#: src/plugins.c:289
+#: src/aim.c:335
+#: src/aim.c:748
+#: src/buddy.c:2449
+#: src/plugins.c:192
 msgid "Plugins"
-msgstr "Дополнения (plugins)"
+msgstr "Дополнения"
 
-#: src/aim.c:627
-#: src/buddy.c:2671
+#: src/aim.c:742
+#: src/buddy.c:2441
 msgid "Preferences"
 msgstr "Свойства"
 
-#: src/applet.c:88
-#, c-format
-msgid ""
-"file not found: %s\n"
-""
-msgstr ""
-"Не найден файл: %s\n"
-""
-
-#: src/applet.c:111
+#: src/applet.c:197
 msgid "Attempting to sign on...."
 msgstr "Попытка соединения"
 
-#: src/applet.c:116
+#: src/applet.c:200
 msgid "Offline. Click to bring up login box."
 msgstr "Отключен.Сделайте активным окно регистрации."
 
-#: src/applet.c:169
-#: src/buddy.c:445
-#: src/buddy.c:2486
-#: src/buddy.c:2618
-msgid "Away"
-msgstr "Статус"
+#: src/applet.c:216
+#, c-format
+msgid "Away: %d pending."
+msgstr ""
 
-#: src/applet.c:172
-#: src/away.c:333
+#: src/applet.c:219
+msgid "Away."
+msgstr "Отошел."
+
+#: src/applet.c:294
+#: src/away.c:387
 msgid "New Away Message"
 msgstr "Новое сообщение об отсутствии"
 
-#: src/applet.c:309
+#: src/applet.c:441
 msgid "Can't create Gaim applet!"
 msgstr "Невозможно создать Gaim апплет!"
 
-#: src/applet.c:352
+#: src/applet.c:462
 msgid "About..."
 msgstr "О программе..."
 
-#: src/away.c:153
+#: src/away.c:203
 msgid "Gaim - Away!"
 msgstr "Gaim - Отошел!"
 
-#: src/away.c:196
+#: src/away.c:249
 msgid "I'm Back!"
 msgstr "Вернулся!"
 
-#: src/away.c:212
-#: src/away.c:292
-#: src/away.c:460
+#: src/away.c:265
+#: src/away.c:345
+#: src/away.c:519
 msgid "Back"
 msgstr "Вернулся"
 
-#: src/away.c:353
+#: src/away.c:407
 msgid "Remove Away Message"
 msgstr "Удалить ообщение об отсутствии"
 
-#: src/away.c:529
+#: src/away.c:595
 msgid "Set All Away"
 msgstr "Установить везде \"отошел\""
 
 #. Put the buttons in the box
-#: src/buddy.c:440
-#: src/buddy.c:2747
-#: src/buddy_chat.c:1157
-#: src/conversation.c:1800
-#: src/conversation.c:2151
-#: src/dialogs.c:883
-#: src/dialogs.c:1007
-#: src/dialogs.c:1893
-#: src/multi.c:728
-#: src/prefs.c:1198
-#: src/prefs.c:1952
-#: src/prefs.c:2292
-#: src/prefs.c:2326
+#: src/buddy.c:473
+#: src/buddy.c:2518
+#: src/buddy_chat.c:1433
+#: src/conversation.c:1934
+#: src/conversation.c:2308
+#: src/dialogs.c:765
+#: src/dialogs.c:949
+#: src/dialogs.c:1831
+#: src/multi.c:986
+#: src/prefs.c:1914
+#: src/prefs.c:2256
+#: src/prefs.c:2290
 msgid "Add"
 msgstr "Добавить"
 
-#: src/buddy.c:441
-#: src/buddy.c:2748
-#: src/dialogs.c:893
-#: src/dialogs.c:989
+#: src/buddy.c:474
+#: src/buddy.c:2519
+#: src/dialogs.c:775
+#: src/dialogs.c:922
 msgid "Group"
 msgstr "Группа"
 
-#: src/buddy.c:442
-#: src/buddy.c:2749
-#: src/buddy_chat.c:1159
-#: src/conversation.c:1786
-#: src/conversation.c:2148
-#: src/prefs.c:1199
-#: src/prefs.c:1966
-#: src/prefs.c:2296
-#: src/prefs.c:2330
+#: src/buddy.c:475
+#: src/buddy.c:2520
+#: src/buddy_chat.c:1435
+#: src/conversation.c:1920
+#: src/conversation.c:2305
+#: src/prefs.c:1928
+#: src/prefs.c:2260
+#: src/prefs.c:2294
 msgid "Remove"
 msgstr "Удалить"
 
-#: src/buddy.c:446
-#: src/buddy.c:2130
-#: src/buddy.c:2485
+#: src/buddy.c:479
+#: src/buddy.c:1898
+#: src/buddy.c:2282
+#: src/prefs.c:2741
 msgid "Chat"
 msgstr "Чат"
 
-#: src/buddy.c:447
-#: src/buddy.c:648
-#: src/buddy.c:761
-#: src/buddy.c:2483
-#: src/buddy_chat.c:507
-#: src/buddy_chat.c:927
+#: src/buddy.c:480
+#: src/buddy.c:616
+#: src/buddy.c:759
+#: src/buddy.c:2280
+#: src/buddy_chat.c:820
+#: src/buddy_chat.c:1257
 msgid "IM"
 msgstr "Отправить сообщение"
 
-#: src/buddy.c:448
-#: src/buddy.c:2484
-#: src/buddy_chat.c:520
-#: src/buddy_chat.c:935
-#: src/buddy_chat.c:1165
-#: src/conversation.c:2169
+#: src/buddy.c:481
+#: src/buddy.c:2281
+#: src/buddy_chat.c:836
+#: src/buddy_chat.c:1265
+#: src/buddy_chat.c:1441
+#: src/conversation.c:2326
 msgid "Info"
 msgstr "Информация"
 
 #. Put the buttons in the box
-#: src/buddy.c:654
-#: src/buddy.c:767
-#: src/dialogs.c:983
-#: src/dialogs.c:3421
-#: src/dialogs.c:3436
+#: src/buddy.c:621
+#: src/buddy.c:764
+#: src/dialogs.c:914
+#: src/dialogs.c:3195
+#: src/dialogs.c:3210
 msgid "Alias"
 msgstr "Псевдоним"
 
-#: src/buddy.c:660
-#: src/buddy.c:787
+#: src/buddy.c:626
+#: src/buddy.c:783
 msgid "Add Buddy Pounce"
 msgstr "Оповещение"
 
-#: src/buddy.c:666
-#: src/buddy.c:793
+#: src/buddy.c:633
+#: src/buddy.c:789
 msgid "View Log"
 msgstr "Просмотр журнала"
 
-#: src/buddy.c:749
-#: src/buddy.c:781
+#: src/buddy.c:748
+#: src/buddy.c:777
 msgid "Rename"
 msgstr "Переименовать"
 
-#: src/buddy.c:774
+#: src/buddy.c:771
 msgid "Un-Alias"
 msgstr "Убрать псевдоним"
 
-#: src/buddy.c:1808
+#: src/buddy.c:1476
+#: src/buddy.c:2424
+msgid "Buddy Pounce"
+msgstr "Оповещение"
+
+#: src/buddy.c:1548
 msgid "New Buddy Pounce"
 msgstr "Новое оповещение"
 
-#: src/buddy.c:1826
+#: src/buddy.c:1566
 msgid "Remove Buddy Pounce"
 msgstr "Удалить оповещение"
 
-#: src/buddy.c:2121
+#: src/buddy.c:1889
 msgid "Buddy Icon"
 msgstr "Иконки пользователей"
 
-#: src/buddy.c:2124
+#: src/buddy.c:1892
 msgid "Voice"
 msgstr "Голос"
 
-#: src/buddy.c:2127
+#: src/buddy.c:1895
 msgid "IM Image"
-msgstr ""
+msgstr "IM Изображение"
 
-#: src/buddy.c:2133
+#: src/buddy.c:1901
 msgid "Get File"
 msgstr "Получить файл"
 
-#: src/buddy.c:2136
+#: src/buddy.c:1904
 msgid "Send File"
 msgstr "Отправить файл"
 
-#: src/buddy.c:2139
+#: src/buddy.c:1908
 msgid "Games"
 msgstr "Игры"
 
-#: src/buddy.c:2142
+#: src/buddy.c:1911
 msgid "Stocks"
 msgstr "Шаблон"
 
-#: src/buddy.c:2194
+#: src/buddy.c:1914
+msgid "EveryBuddy Bug"
+msgstr "EvryBuddy Bug"
+
+#: src/buddy.c:1985
 #, c-format
 msgid ""
 "Logged in: %s\n"
@@ -361,7 +1101,8 @@ msgstr ""
 "Подключился: %s\n"
 ""
 
-#: src/buddy.c:2205
+#: src/buddy.c:1997
+#, c-format
 msgid ""
 "Warnings: %d%%\n"
 ""
@@ -369,7 +1110,7 @@ msgstr ""
 "Предупреждения: %d%%\n"
 ""
 
-#: src/buddy.c:2217
+#: src/buddy.c:2009
 #, c-format
 msgid ""
 "Capabilities: %s\n"
@@ -378,7 +1119,7 @@ msgstr ""
 "Права: %s\n"
 ""
 
-#: src/buddy.c:2221
+#: src/buddy.c:2013
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -389,295 +1130,265 @@ msgstr ""
 "Идентификационный номер: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2225
+#: src/buddy.c:2017
 msgid "Idle: "
 msgstr "Не занят"
 
-#: src/buddy.c:2294
+#: src/buddy.c:2087
 #, c-format
 msgid "%s logged in."
 msgstr "%s в сети"
 
-#: src/buddy.c:2346
+#: src/buddy.c:2142
 #, c-format
 msgid "%s logged out."
 msgstr "%s отключился"
 
-#: src/buddy.c:2515
+#: src/buddy.c:2315
 msgid "Information on selected Buddy"
 msgstr "Информация о пользователе"
 
-#: src/buddy.c:2516
-#: src/dialogs.c:678
+#: src/buddy.c:2316
+#: src/dialogs.c:572
 msgid "Send Instant Message"
 msgstr "Отправить сообщение"
 
-#: src/buddy.c:2517
+#: src/buddy.c:2317
 msgid "Start/join a Buddy Chat"
 msgstr "Чат"
 
-#: src/buddy.c:2518
+#: src/buddy.c:2318
 msgid "Activate Away Message"
 msgstr "Отошел!"
 
-#: src/buddy.c:2582
+#: src/buddy.c:2381
 msgid "File"
 msgstr "Файл"
 
-#: src/buddy.c:2586
+#: src/buddy.c:2385
 msgid "Add A Buddy"
 msgstr "Добавить пользователя"
 
-#: src/buddy.c:2588
+#: src/buddy.c:2387
 msgid "Join A Chat"
 msgstr "Подключиться к чату"
 
-#: src/buddy.c:2590
+#: src/buddy.c:2389
 msgid "New Instant Message"
 msgstr "Новое сообщение"
 
-#: src/buddy.c:2595
+#: src/buddy.c:2391
+#: src/dialogs.c:624
+msgid "Get User Info"
+msgstr "Информация о пользователе"
+
+#: src/buddy.c:2396
 msgid "Import Buddy List"
 msgstr "Импорт списка пользователей"
 
-#: src/buddy.c:2613
+#: src/buddy.c:2414
 msgid "Tools"
 msgstr "Инструменты"
 
-#: src/buddy.c:2623
-msgid "Buddy Pounce"
-msgstr "Оповещение"
-
-#: src/buddy.c:2632
-#: src/dialogs.c:2074
-#: src/dialogs.c:2241
-msgid "Search for Buddy"
-msgstr "Поиск пользователя"
-
-#: src/buddy.c:2636
-msgid "by Email"
-msgstr "по адресу электронной почты"
-
-#: src/buddy.c:2640
-msgid "by Dir Info"
-msgstr "по данным"
-
-#: src/buddy.c:2647
-msgid "Settings"
-msgstr "Установки"
-
-#: src/buddy.c:2649
-msgid "User Info"
-msgstr "Данные пользователя"
-
-#: src/buddy.c:2653
-#: src/dialogs.c:1367
-msgid "Directory Info"
-msgstr "Профиль"
-
-#: src/buddy.c:2657
-#: src/dialogs.c:1558
-msgid "Change Password"
-msgstr "Сменить пароль"
-
-#: src/buddy.c:2666
+#: src/buddy.c:2437
 msgid "Protocol Actions"
-msgstr "Протокол"
+msgstr "Действия"
 
-#: src/buddy.c:2673
+#: src/buddy.c:2443
 msgid "View System Log"
 msgstr "Просмотр системных сообщений"
 
-#: src/buddy.c:2684
+#: src/buddy.c:2455
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2687
+#: src/buddy.c:2458
 msgid "Load Script"
 msgstr "Загрузить скрипт"
 
-#: src/buddy.c:2691
+#: src/buddy.c:2462
 msgid "Unload All Scripts"
 msgstr "Выгрузить все скрипты"
 
-#: src/buddy.c:2695
+#: src/buddy.c:2466
 msgid "List Scripts"
 msgstr "Список скриптов"
 
-#: src/buddy.c:2703
+#: src/buddy.c:2474
 msgid "Help"
 msgstr "Помощь"
 
-#: src/buddy.c:2708
+#: src/buddy.c:2479
 msgid "About Gaim"
 msgstr "О программе"
 
-#: src/buddy.c:2727
-#: src/prefs.c:2694
+#: src/buddy.c:2498
+#: src/prefs.c:2720
 msgid "Buddy List"
 msgstr "Список пользователей"
 
-#: src/buddy.c:2781
+#: src/buddy.c:2551
 msgid "Add a new Buddy"
 msgstr "Добавить нового пользователя"
 
-#: src/buddy.c:2782
+#: src/buddy.c:2552
 msgid "Add a new Group"
 msgstr "Добавить новую группу"
 
-#: src/buddy.c:2783
-msgid "Remove selected Buddy"
-msgstr "Удалить выбранного пользователя"
+#: src/buddy.c:2553
+msgid "Remove selected Buddy/Group"
+msgstr "Удалить выбранного пользователя/группу"
 
-#: src/buddy.c:2808
+#: src/buddy.c:2578
 msgid "Online"
 msgstr "В сети"
 
-#: src/buddy.c:2810
+#: src/buddy.c:2580
 msgid "Edit Buddies"
 msgstr "Все пользователи"
 
-#: src/buddy.c:2847
+#: src/buddy.c:2620
 msgid "Gaim - Buddy List"
 msgstr "Gaim - Cписок пользователей"
 
-#: src/buddy_chat.c:104
-#: src/oscar.c:2621
-#: src/toc.c:1001
-msgid "Join what group:"
-msgstr "Войти в группу"
-
-#: src/buddy_chat.c:202
+#: src/buddy_chat.c:265
 msgid "Join Chat"
 msgstr "Войти в чат"
 
-#: src/buddy_chat.c:209
-#: src/buddy_chat.c:1057
-#: src/buddy_chat.c:1069
+#: src/buddy_chat.c:272
 msgid "Buddy Chat"
 msgstr "Чат"
 
-#: src/buddy_chat.c:220
+#: src/buddy_chat.c:283
 msgid "Join Chat As:"
 msgstr "Войти в чат как:"
 
-#: src/buddy_chat.c:241
-#: src/buddy_chat.c:286
-#: src/dialogs.c:410
-#: src/dialogs.c:697
-#: src/dialogs.c:757
-#: src/dialogs.c:885
-#: src/dialogs.c:1002
-#: src/dialogs.c:1281
-#: src/dialogs.c:1491
-#: src/dialogs.c:1619
-#: src/dialogs.c:1684
-#: src/dialogs.c:1882
-#: src/dialogs.c:2080
-#: src/dialogs.c:2260
-#: src/dialogs.c:2334
-#: src/dialogs.c:3199
-#: src/dialogs.c:3423
-#: src/dialogs.c:3619
+#: src/buddy_chat.c:304
+#: src/buddy_chat.c:392
+#: src/dialogs.c:420
+#: src/dialogs.c:590
+#: src/dialogs.c:648
+#: src/dialogs.c:767
+#: src/dialogs.c:945
+#: src/dialogs.c:1234
+#: src/dialogs.c:1439
+#: src/dialogs.c:1563
+#: src/dialogs.c:1623
+#: src/dialogs.c:1820
+#: src/dialogs.c:2002
+#: src/dialogs.c:2177
+#: src/dialogs.c:2248
+#: src/dialogs.c:2940
+#: src/dialogs.c:3197
+#: src/dialogs.c:3378
+#: src/dialogs.c:3747
 #: src/dialogs.c:3852
-#: src/dialogs.c:3940
-#: src/multi.c:479
-#: src/multi.c:593
-#: src/multi.c:893
-#: src/prpl.c:159
-#: src/prpl.c:231
+#: src/multi.c:720
+#: src/multi.c:850
+#: src/multi.c:1184
+#: src/prpl.c:150
+#: src/prpl.c:224
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/buddy_chat.c:246
+#: src/buddy_chat.c:309
 msgid "Join"
 msgstr "Подключиться"
 
-#: src/buddy_chat.c:287
-#: src/buddy_chat.c:977
-#: src/buddy_chat.c:1124
+#: src/buddy_chat.c:393
+#: src/buddy_chat.c:396
+#: src/buddy_chat.c:1307
+#: src/buddy_chat.c:1397
 msgid "Invite"
 msgstr "Приглашение"
 
-#: src/buddy_chat.c:303
-msgid "Invite who?"
-msgstr "Кого пригласить"
+#: src/buddy_chat.c:412
+#: src/dialogs.c:1114
+#: src/dialogs.c:3205
+msgid "Buddy"
+msgstr "Пользователь(UIN)"
 
-#: src/buddy_chat.c:307
-msgid "With message:"
-msgstr "С уведомлением:"
+#: src/buddy_chat.c:417
+#: src/prefs.c:1879
+msgid "Message"
+msgstr "Сообщение"
 
-#: src/buddy_chat.c:331
-msgid "Invite to Buddy Chat"
-msgstr "Приглашение к чату"
+#: src/buddy_chat.c:454
+msgid "Gaim - Invite Buddy Into Chat Room"
+msgstr "Gaim - Приглашение пользователя в чат"
 
-#: src/buddy_chat.c:513
-#: src/buddy_chat.c:931
+#: src/buddy_chat.c:827
+msgid "Un-Ignore"
+msgstr "Разрешить"
+
+#: src/buddy_chat.c:829
+#: src/buddy_chat.c:1261
 msgid "Ignore"
 msgstr "Отказать"
 
-#: src/buddy_chat.c:565
-#: src/buddy_chat.c:671
+#. don't remove them from ignored in case they re-enter
+#: src/buddy_chat.c:873
+#: src/buddy_chat.c:993
 #, c-format
 msgid "%d %s in room"
 msgstr "%d %s в данном чате"
 
-#: src/buddy_chat.c:572
+#: src/buddy_chat.c:881
 #, c-format
 msgid "%s entered the room."
 msgstr "%s вошел в данный чат"
 
-#: src/buddy_chat.c:635
+#: src/buddy_chat.c:955
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s будет %s"
 
-#: src/buddy_chat.c:678
+#: src/buddy_chat.c:1001
 #, c-format
 msgid "%s left the room."
 msgstr "%s покинул данный чат"
 
-#: src/buddy_chat.c:805
+#: src/buddy_chat.c:1136
 msgid "Gaim - Group Chats"
 msgstr "Gaim - Конференция"
 
-#: src/buddy_chat.c:866
+#: src/buddy_chat.c:1197
 msgid "Topic:"
 msgstr "Тема"
 
-#: src/buddy_chat.c:908
+#: src/buddy_chat.c:1238
 msgid "0 people in room"
 msgstr "0 пользователей в данном чате"
 
-#: src/buddy_chat.c:982
-#: src/buddy_chat.c:1123
+#: src/buddy_chat.c:1312
+#: src/buddy_chat.c:1396
 msgid "Whisper"
-msgstr "Намек"
+msgstr "Диалог"
 
-#: src/buddy_chat.c:987
-#: src/buddy_chat.c:1121
-#: src/buddy_chat.c:1167
-#: src/conversation.c:2180
+#: src/buddy_chat.c:1317
+#: src/buddy_chat.c:1394
+#: src/buddy_chat.c:1443
+#: src/conversation.c:2337
 msgid "Send"
 msgstr "Отправить"
 
-#: src/buddy_chat.c:1161
-#: src/conversation.c:2157
+#: src/buddy_chat.c:1437
+#: src/conversation.c:2314
 msgid "Block"
 msgstr "Блокировать"
 
-#: src/buddy_chat.c:1163
-#: src/conversation.c:2163
-#: src/dialogs.c:380
-#: src/dialogs.c:405
+#: src/buddy_chat.c:1439
+#: src/conversation.c:2320
+#: src/dialogs.c:391
+#: src/dialogs.c:416
 msgid "Warn"
 msgstr "Предупреждение"
 
-#: src/conversation.c:372
+#: src/conversation.c:387
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - Сохранить разговор"
 
-#: src/conversation.c:520
+#: src/conversation.c:544
 #, c-format
 msgid ""
 "Removing '%s' from buddylist.\n"
@@ -686,12 +1397,25 @@ msgstr ""
 "Удаление '%s' из списка пользователей.\n"
 ""
 
-#: src/conversation.c:1086
+#: src/conversation.c:925
+msgid "Unable to send message: too large"
+msgstr "Сообщение не передано: оно очень велико"
+
+#: src/conversation.c:925
+#: src/conversation.c:927
+msgid "Message Error"
+msgstr "Ошибка сообщения"
+
+#: src/conversation.c:927
+msgid "Unable to send message: Unknown reason"
+msgstr "Вы не получили сообщение:Причина неизвестна."
+
+#: src/conversation.c:1146
 #, c-format
 msgid "Currently at %d, "
 msgstr "В настоящее время %d,"
 
-#: src/conversation.c:1094
+#: src/conversation.c:1154
 #, c-format
 msgid ""
 "Setting position to %d\n"
@@ -700,682 +1424,577 @@ msgstr ""
 "Установить позицию равной %d\n"
 ""
 
-#: src/conversation.c:1620
-#: src/prefs.c:1373
+#: src/conversation.c:1725
+#: src/prefs.c:1233
 msgid "Bold Text"
 msgstr "Жирный"
 
-#: src/conversation.c:1620
+#: src/conversation.c:1725
 msgid "Bold"
 msgstr "Жирный"
 
-#: src/conversation.c:1624
-#: src/prefs.c:1374
+#: src/conversation.c:1729
 msgid "Italics Text"
 msgstr "Наклонный"
 
-#: src/conversation.c:1625
+#: src/conversation.c:1730
 msgid "Italics"
 msgstr "Наклонный"
 
-#: src/conversation.c:1628
+#: src/conversation.c:1733
+#: src/prefs.c:1245
 msgid "Underline Text"
 msgstr "Подчеркнутый"
 
-#: src/conversation.c:1629
+#: src/conversation.c:1734
 msgid "Underline"
 msgstr "Подчеркнутый"
 
-#: src/conversation.c:1633
+#: src/conversation.c:1738
+#: src/prefs.c:1251
 msgid "Strike through Text"
 msgstr "Зачеркнутый текст"
 
-#: src/conversation.c:1633
+#: src/conversation.c:1738
 msgid "Strike"
 msgstr "Зачеркнутый"
 
-#: src/conversation.c:1639
+#: src/conversation.c:1744
 msgid "Decrease font size"
 msgstr "Уменьшить шрифт"
 
-#: src/conversation.c:1639
+#: src/conversation.c:1744
 msgid "Small"
 msgstr "Маленький"
 
-#: src/conversation.c:1642
+#: src/conversation.c:1747
 msgid "Normal font size"
 msgstr "Нормальный размер шрифта "
 
-#: src/conversation.c:1642
+#: src/conversation.c:1747
 msgid "Normal"
 msgstr "Нормальный"
 
-#: src/conversation.c:1645
+#: src/conversation.c:1750
 msgid "Increase font size"
 msgstr "Увеличить шрифт"
 
-#: src/conversation.c:1645
+#: src/conversation.c:1750
 msgid "Big"
 msgstr "Большой"
 
-#: src/conversation.c:1652
-#: src/dialogs.c:2686
-#: src/dialogs.c:2702
+#: src/conversation.c:1757
+#: src/dialogs.c:2628
+#: src/dialogs.c:2647
 msgid "Select Font"
 msgstr "Выбор шрифта"
 
-#: src/conversation.c:1653
+#: src/conversation.c:1758
 msgid "Font"
 msgstr "Шрифт"
 
-#: src/conversation.c:1656
-#: src/prefs.c:1404
+#: src/conversation.c:1761
+#: src/prefs.c:1281
 msgid "Text Color"
 msgstr "Цвет текста"
 
-#: src/conversation.c:1657
-#: src/conversation.c:1661
+#: src/conversation.c:1762
+#: src/conversation.c:1766
 msgid "Color"
 msgstr "Цвет"
 
-#: src/conversation.c:1661
-#: src/prefs.c:1422
+#: src/conversation.c:1766
+#: src/prefs.c:1299
 msgid "Background Color"
 msgstr "Цвет фона"
 
-#: src/conversation.c:1668
-#: src/dialogs.c:2328
+#: src/conversation.c:1773
+#: src/dialogs.c:2242
 msgid "Insert Link"
 msgstr "Вставить ссылку"
 
-#: src/conversation.c:1669
+#: src/conversation.c:1774
 msgid "Link"
 msgstr "Ссылка"
 
-#: src/conversation.c:1672
+#: src/conversation.c:1777
 msgid "Insert smiley face"
 msgstr "Вставить смайлик"
 
-#: src/conversation.c:1672
+#: src/conversation.c:1777
 msgid "Smiley"
 msgstr "Смайлик"
 
-#: src/conversation.c:1679
+#: src/conversation.c:1784
 msgid "Enable logging"
 msgstr "Разрешена регистрация"
 
-#: src/conversation.c:1680
-#: src/prefs.c:246
+#: src/conversation.c:1785
+#: src/prefs.c:244
 msgid "Logging"
 msgstr "Журнал"
 
-#: src/conversation.c:1689
+#: src/conversation.c:1794
 msgid "Save Conversation"
 msgstr "Сохранить разговор"
 
-#: src/conversation.c:1690
-#: src/dialogs.c:1496
-#: src/dialogs.c:1689
-#: src/dialogs.c:3211
-#: src/dialogs.c:3728
+#: src/conversation.c:1795
+#: src/dialogs.c:1443
+#: src/dialogs.c:1627
+#: src/dialogs.c:2952
+#: src/dialogs.c:3643
 msgid "Save"
 msgstr "Сохранить"
 
-#: src/conversation.c:1694
+#: src/conversation.c:1799
 msgid "Enable sounds"
 msgstr "Разрешить звук"
 
-#: src/conversation.c:1695
+#: src/conversation.c:1800
 msgid "Sound"
 msgstr "Звук"
 
-#: src/conversation.c:2009
+#: src/conversation.c:2166
 msgid "Gaim - Conversations"
 msgstr "Gaim - Разговор"
 
-#: src/conversation.c:2096
+#: src/conversation.c:2253
 msgid "Send message as: "
 msgstr "Отправить сообщение как:"
 
-#: src/dialogs.c:367
+#: src/conversation.c:2742
+msgid "Gaim - Save Icon"
+msgstr "Gaim - Сохранить иконку"
+
+#: src/conversation.c:2769
+msgid "Disable Animation"
+msgstr "Отключить анимацию"
+
+#: src/conversation.c:2774
+msgid "Enable Animation"
+msgstr "Разрешить анимацию"
+
+#: src/conversation.c:2780
+msgid "Hide Icon"
+msgstr "Спрятать иконку"
+
+#: src/conversation.c:2786
+msgid "Save Icon As..."
+msgstr "Сохранить иконку как..."
+
+#: src/dialogs.c:379
 msgid "Gaim - Warn user?"
 msgstr "Оповестить пользователя ?"
 
-#: src/dialogs.c:388
+#: src/dialogs.c:399
 #, c-format
 msgid "Do you really want to warn %s?"
 msgstr "Вы действительно желаете предупредить %s?"
 
-#: src/dialogs.c:393
+#: src/dialogs.c:404
 msgid "Warn anonymously?"
 msgstr "Предупредить анонимно?"
 
-#: src/dialogs.c:397
+#: src/dialogs.c:408
 msgid "Anonymous warnings are less harsh."
 msgstr "Анонимные предупреждения менее надоедливы."
 
-#: src/dialogs.c:474
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Невозможно записать файл %s"
-
-#: src/dialogs.c:477
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Нет возможности прочитать файл %s"
-
-#: src/dialogs.c:480
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Сообщение боольшое, последние %s байт обрезаны"
-
-#: src/dialogs.c:483
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s неверная регистрация"
-
-#: src/dialogs.c:486
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "Предупреждение %s недоступен."
-
-#: src/dialogs.c:489
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Сообщение было опущенно, вы превысили лимит сообщений для сервера."
-
-#: src/dialogs.c:492
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Чат с %s невозможен"
-
-#: src/dialogs.c:495
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Вы посылаете сообщения к %s слишком часто."
-
-#: src/dialogs.c:498
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "Вы не получили сообщение от %s, оно слишком большое."
-
-#: src/dialogs.c:501
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Вы не получили сообщение от %s, сообщений слишком много."
-
-#: src/dialogs.c:504
-msgid "Failure."
-msgstr "Не удалось."
-
-#: src/dialogs.c:507
-msgid "Too many matches."
-msgstr "Слишком много совпадений."
-
-#: src/dialogs.c:510
-msgid "Need more qualifiers."
-msgstr "Уточните."
-
-#: src/dialogs.c:513
-msgid "Dir service temporarily unavailable."
-msgstr "Сервис временно недоступен."
-
-#: src/dialogs.c:516
-msgid "Email lookup restricted."
-msgstr "Просмотр email ограничен."
-
-#: src/dialogs.c:519
-msgid "Keyword ignored."
-msgstr "Ключевое слово игнорировано."
-
-#: src/dialogs.c:522
-msgid "No keywords."
-msgstr "Нет ключевого слова."
-
-#: src/dialogs.c:525
-msgid "User has no directory information."
-msgstr "Нет информации о пользователе."
-
-#: src/dialogs.c:529
-msgid "Country not supported."
-msgstr "Нет поддержки для данной страны."
-
-#: src/dialogs.c:532
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Неизвестная ошибка: %s."
-
-#. Incorrect nick/password
-#: src/dialogs.c:535
-#: src/oscar.c:627
-msgid "Incorrect nickname or password."
-msgstr "Не корректный псевдоним или пароль."
-
-#: src/dialogs.c:538
-msgid "The service is temporarily unavailable."
-msgstr "Этот сервис временно недоступен."
-
-#: src/dialogs.c:541
-msgid "Your warning level is currently too high to log in."
-msgstr "Уровень предупреждений слишком велик чтобы присоединиться."
-
-#: src/dialogs.c:544
-msgid "You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."
-msgstr "Вы пытались соединиться и отсоединиться слишком часто. Подождите 10 минут и попробуйте еще раз. Если вы будете продолжать попытки вам придется подождать дольше."
-
-#: src/dialogs.c:547
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Неизвестная ошибка при соединении: %s."
-
-#: src/dialogs.c:550
-#, c-format
-msgid "An unknown error, %d, has occured.  Info: %s"
-msgstr "Неизвестная ошибка, %d.  Информация: %s"
-
-#: src/dialogs.c:553
-#, c-format
-msgid "Gaim - Error %d"
-msgstr "Gaim - Ошибка %d"
-
 #. Build OK Button
-#: src/dialogs.c:612
-#: src/dialogs.c:702
-#: src/dialogs.c:762
-#: src/dialogs.c:1286
-#: src/dialogs.c:1624
-#: src/dialogs.c:1737
-#: src/dialogs.c:2079
-#: src/dialogs.c:2265
-#: src/dialogs.c:2333
+#: src/dialogs.c:516
+#: src/dialogs.c:595
+#: src/dialogs.c:653
+#: src/dialogs.c:1238
+#: src/dialogs.c:1567
+#: src/dialogs.c:1680
+#: src/dialogs.c:2001
+#: src/dialogs.c:2181
+#: src/dialogs.c:2247
+#: src/dialogs.c:3752
 #: src/dialogs.c:3857
-#: src/dialogs.c:3945
-#: src/multi.c:483
+#: src/multi.c:725
 msgid "OK"
 msgstr "OK"
 
-#: src/dialogs.c:668
+#: src/dialogs.c:562
 msgid "Gaim - IM user"
 msgstr "Gaim - Сообщение"
 
-#: src/dialogs.c:685
+#: src/dialogs.c:579
 msgid "IM who:"
 msgstr "Кому (UIN):"
 
-#: src/dialogs.c:733
-msgid "Get User Info"
-msgstr "Информация о пользователе"
-
-#: src/dialogs.c:740
+#: src/dialogs.c:631
 msgid "User:"
 msgstr "Пользователь(UIN):"
 
 #. Finish up
-#: src/dialogs.c:768
+#: src/dialogs.c:658
 msgid "Gaim - Get User Info"
 msgstr "Информация о пользователе"
 
-#: src/dialogs.c:838
+#: src/dialogs.c:720
 msgid "Buddies"
 msgstr "Пользователи"
 
-#: src/dialogs.c:891
+#: src/dialogs.c:773
 msgid "Add Group"
 msgstr "Добавить группу"
 
-#: src/dialogs.c:921
+#: src/dialogs.c:798
 msgid "Gaim - Add Group"
 msgstr "Gaim - Добавить группу"
 
-#: src/dialogs.c:948
+#: src/dialogs.c:882
 msgid "Gaim - Add Buddy"
 msgstr "Gaim - Добавить пользователя"
 
-#: src/dialogs.c:962
+#: src/dialogs.c:894
 msgid "Add Buddy"
 msgstr "Добавить пользователя"
 
-#: src/dialogs.c:972
-#: src/dialogs.c:3431
-msgid "Buddy"
-msgstr "Пользователь(UIN)"
+#: src/dialogs.c:904
+msgid "Contact"
+msgstr "UIN"
 
-#: src/dialogs.c:1026
+#. Set up stuff for the account box
+#: src/dialogs.c:932
+msgid "Add To"
+msgstr "Добавить к"
+
+#: src/dialogs.c:967
 msgid "Please enter a buddy to pounce."
 msgstr "Введите пользователя"
 
-#: src/dialogs.c:1026
+#: src/dialogs.c:967
 msgid "Buddy Pounce Error"
 msgstr "Ошибка"
 
-#: src/dialogs.c:1095
-msgid "Pounce buddy as:"
-msgstr "От:"
-
-#: src/dialogs.c:1145
+#: src/dialogs.c:1083
 msgid "Gaim - New Buddy Pounce"
 msgstr "Gaim - Новое оповещение"
 
-#: src/dialogs.c:1162
-msgid "Buddy:"
-msgstr "Пользователь(UIN):"
+#. <pounce type="who">
+#: src/dialogs.c:1094
+msgid "Pounce Who"
+msgstr "Оповестить"
 
-#: src/dialogs.c:1177
+#: src/dialogs.c:1105
+msgid "Account"
+msgstr "Учетнaя запись"
+
+#. </pounce type="who">
+#. <pounce type="when">
+#: src/dialogs.c:1129
+msgid "Pounce When"
+msgstr "Когда оповещать"
+
+#: src/dialogs.c:1139
 msgid "Pounce on sign on"
 msgstr "Оповестить при подключении"
 
-#: src/dialogs.c:1182
+#: src/dialogs.c:1144
 msgid "Pounce on return from away"
 msgstr "Оповестить о возврате"
 
-#: src/dialogs.c:1186
+#: src/dialogs.c:1150
 msgid "Pounce on return from idle"
 msgstr "Оповестить о незанятости"
 
-#: src/dialogs.c:1194
-msgid "Open IM window on pounce"
-msgstr "Открыть окно сообщений при оповещении"
+#. </pounce type="when">
+#. <pounce type="action">
+#: src/dialogs.c:1162
+msgid "Pounce Action"
+msgstr "Дествие при оповещении"
 
-#: src/dialogs.c:1199
-msgid "Send IM on pounce"
-msgstr "Отправить сообщение при оповещении"
+#: src/dialogs.c:1173
+msgid "Open IM Window"
+msgstr "Открыть окно сообщения"
 
-#: src/dialogs.c:1208
-msgid "Message:"
-msgstr "Сообщение:"
+#: src/dialogs.c:1178
+msgid "Popup Notification"
+msgstr "Всплывающее уведомление"
 
-#: src/dialogs.c:1220
+#: src/dialogs.c:1183
+msgid "Send Message"
+msgstr "Отправить сообщение"
+
+#: src/dialogs.c:1196
 msgid "Execute command on pounce"
 msgstr "Выполнить команду при оповещении"
 
-#: src/dialogs.c:1229
-msgid "Command:"
-msgstr "Команда:"
-
-#: src/dialogs.c:1242
+#: src/dialogs.c:1209
 msgid "Play sound on pounce"
 msgstr "Проигрывать звук при оповещении"
 
-#: src/dialogs.c:1251
-msgid "Sound:"
-msgstr "Звук"
-
-#: src/dialogs.c:1268
+#. </pounce type="action">
+#: src/dialogs.c:1224
 msgid "Save this pounce after activation"
 msgstr "Сохранить настройки оповещения"
 
-#: src/dialogs.c:1357
+#: src/dialogs.c:1306
 msgid "Gaim - Set Dir Info"
 msgstr "Ваши данные"
 
-#: src/dialogs.c:1389
+#: src/dialogs.c:1315
+msgid "Directory Info"
+msgstr "Профиль"
+
+#: src/dialogs.c:1337
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Разрешить поиск на web для получения ваших данных."
 
 #. Line 1
-#: src/dialogs.c:1392
-#: src/dialogs.c:2098
+#: src/dialogs.c:1340
+#: src/dialogs.c:2020
 msgid "First Name"
 msgstr "Имя"
 
 #. Line 2
-#: src/dialogs.c:1403
-#: src/dialogs.c:2110
+#: src/dialogs.c:1351
+#: src/dialogs.c:2032
 msgid "Middle Name"
 msgstr "Отчество"
 
 #. Line 3
-#: src/dialogs.c:1415
-#: src/dialogs.c:2122
+#: src/dialogs.c:1363
+#: src/dialogs.c:2044
 msgid "Last Name"
 msgstr "Фамилия"
 
 #. Line 4
-#: src/dialogs.c:1426
-#: src/dialogs.c:2134
+#: src/dialogs.c:1374
+#: src/dialogs.c:2056
 msgid "Maiden Name"
 msgstr "Девичья фамилия"
 
-#. Line 5
-#: src/dialogs.c:1437
-#: src/dialogs.c:2146
-msgid "City"
-msgstr "Город"
-
 #. Line 6
-#: src/dialogs.c:1448
-#: src/dialogs.c:2157
+#: src/dialogs.c:1396
+#: src/dialogs.c:2079
 msgid "State"
 msgstr "Республика/Область"
 
 #. Line 7
-#: src/dialogs.c:1459
-#: src/dialogs.c:2168
+#: src/dialogs.c:1407
+#: src/dialogs.c:2090
 msgid "Country"
 msgstr "Страна"
 
-#: src/dialogs.c:1514
+#: src/dialogs.c:1461
 msgid "New Passwords Do Not Match"
 msgstr "Несовпадение пароля"
 
-#: src/dialogs.c:1514
-#: src/dialogs.c:1519
+#: src/dialogs.c:1461
+#: src/dialogs.c:1466
 msgid "Gaim - Change Password Error"
 msgstr "Gaim - Ошибка смены пароля"
 
-#: src/dialogs.c:1519
+#: src/dialogs.c:1466
 msgid "Fill out all fields completely"
 msgstr "Заполните все поля"
 
-#: src/dialogs.c:1546
-#: src/toc.c:606
-msgid "Gaim - Password Change"
-msgstr "Gaim - Смена пароля"
+#: src/dialogs.c:1502
+msgid "Change Password"
+msgstr "Сменить пароль"
 
-#: src/dialogs.c:1577
+#: src/dialogs.c:1521
 msgid "Original Password"
 msgstr "Старый пароль"
 
-#: src/dialogs.c:1591
+#: src/dialogs.c:1535
 msgid "New Password"
 msgstr "Новый пароль"
 
-#: src/dialogs.c:1605
+#: src/dialogs.c:1549
 msgid "New Password (again)"
 msgstr "Новый пароль (еще раз)"
 
-#: src/dialogs.c:1650
+#: src/dialogs.c:1590
 msgid "Gaim - Set User Info"
 msgstr "Gaim - Устанвка информации"
 
-#: src/dialogs.c:1748
+#: src/dialogs.c:1685
 msgid "Below are the results of your search: "
 msgstr "Результат поиска"
 
-#: src/dialogs.c:1872
-#: src/dialogs.c:1879
+#: src/dialogs.c:1810
+#: src/dialogs.c:1817
 msgid "Permit"
 msgstr "Разрешить"
 
-#: src/dialogs.c:1874
-#: src/dialogs.c:1881
+#: src/dialogs.c:1812
+#: src/dialogs.c:1819
 msgid "Deny"
 msgstr "Запретить"
 
-#: src/dialogs.c:1922
+#: src/dialogs.c:1856
 msgid "Gaim - Add Permit"
 msgstr "Gaim - Разрешить"
 
-#: src/dialogs.c:1924
+#: src/dialogs.c:1858
 msgid "Gaim - Add Deny"
 msgstr "Gaim - Запретить"
 
-#: src/dialogs.c:1995
+#: src/dialogs.c:1918
 msgid "Gaim - Log Conversation"
 msgstr "Gaim - Журнал беседы"
 
-#: src/dialogs.c:2205
+#: src/dialogs.c:1996
+#: src/dialogs.c:2159
+msgid "Search for Buddy"
+msgstr "Поиск пользователя"
+
+#: src/dialogs.c:2124
 msgid "Gaim - Find Buddy By Info"
 msgstr "Gaim - Поиск по информации"
 
-#: src/dialogs.c:2235
+#: src/dialogs.c:2153
 msgid "Gaim - Find Buddy By Email"
 msgstr "Gaim - Поиск по Email"
 
-#: src/dialogs.c:2248
+#: src/dialogs.c:2166
 msgid "Email"
-msgstr ""
+msgstr "e-mail"
 
-#: src/dialogs.c:2347
+#: src/dialogs.c:2261
 msgid "URL"
 msgstr "URL"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2355
-#: src/plugins.c:308
+#: src/dialogs.c:2269
+#: src/plugins.c:211
 msgid "Description"
 msgstr "Описание"
 
-#: src/dialogs.c:2381
+#: src/dialogs.c:2293
 msgid "Gaim - Add URL"
 msgstr "Gaim - Добавить URL"
 
-#: src/dialogs.c:2524
-#: src/dialogs.c:2537
-#: src/dialogs.c:2574
+#: src/dialogs.c:2444
+#: src/dialogs.c:2465
+#: src/dialogs.c:2519
 msgid "Select Text Color"
 msgstr "Выбор цвета текста"
 
-#: src/dialogs.c:2561
+#: src/dialogs.c:2498
 msgid "Select Background Color"
 msgstr "Выбор цвета фона"
 
-#: src/dialogs.c:2925
-#, c-format
-msgid "Error reading file %s"
-msgstr "Ошибка чтения файла %s"
+#: src/dialogs.c:2722
+msgid "Import to:"
+msgstr "Импорт:"
 
-#: src/dialogs.c:2926
-#: src/dialogs.c:3580
-#: src/oscar.c:2396
-#: src/oscar.c:2906
-#: src/toc.c:1422
-#: src/toc.c:1439
-#: src/toc.c:1499
-#: src/toc.c:1541
-#: src/toc.c:1675
-#: src/toc.c:1705
-#: src/toc.c:1761
-msgid "Error"
-msgstr "Ошибка"
-
-#: src/dialogs.c:3003
+#: src/dialogs.c:2746
 msgid "Gaim - Import Buddy List"
 msgstr "Gaim - Импорт списка пользователя"
 
 #. We shouldn't allow a blank title
-#: src/dialogs.c:3066
+#: src/dialogs.c:2807
 msgid "You cannot create an away message with a blank title"
 msgstr "Вы не можете создать сообщение без заголовка"
 
 #. We shouldn't allow a blank message
-#: src/dialogs.c:3073
+#: src/dialogs.c:2814
 msgid "You cannot create an empty away message"
 msgstr "Вы не можете создать пустое сообщение"
 
-#: src/dialogs.c:3140
+#: src/dialogs.c:2882
 msgid "Gaim - New away message"
 msgstr "Gaim - Сообщение об отсутствии"
 
-#: src/dialogs.c:3150
+#: src/dialogs.c:2892
 msgid "New away message"
 msgstr "Сообщение"
 
-#: src/dialogs.c:3163
+#: src/dialogs.c:2905
 msgid "Away title: "
 msgstr "Название"
 
-#: src/dialogs.c:3203
+#: src/dialogs.c:2944
 msgid "Use"
 msgstr "Применить"
 
-#: src/dialogs.c:3207
+#: src/dialogs.c:2948
 msgid "Save & Use"
 msgstr "Сохранить и применить"
 
 #. show everything
-#: src/dialogs.c:3376
+#: src/dialogs.c:3151
 msgid "Smile!"
 msgstr "Смайл!"
 
-#: src/dialogs.c:3429
+#: src/dialogs.c:3203
 msgid "Alias Buddy"
 msgstr "Псевдоним пользователя"
 
-#: src/dialogs.c:3466
+#: src/dialogs.c:3236
 msgid "Gaim - Alias Buddy"
 msgstr "Gaim - Смена псевдонима"
 
-#: src/dialogs.c:3543
+#: src/dialogs.c:3308
 msgid "Gaim - Save Log File"
 msgstr "Gaim - Сохранить"
 
-#: src/dialogs.c:3578
+#: src/dialogs.c:3340
 #, c-format
 msgid "Unable to remove file %s - %s"
 msgstr "Невозможно удалить файл %s - %s"
 
-#: src/dialogs.c:3609
+#: src/dialogs.c:3368
 msgid "Really clear log?"
 msgstr "Действительно очистить журнал?"
 
-#: src/dialogs.c:3627
+#: src/dialogs.c:3383
 msgid "Okay"
 msgstr "Окей"
 
-#: src/dialogs.c:3723
+#: src/dialogs.c:3554
+msgid "Date"
+msgstr "Дата"
+
+#: src/dialogs.c:3617
+msgid "Conversation"
+msgstr "Беседа"
+
+#: src/dialogs.c:3638
 msgid "Clear"
 msgstr "Очистить"
 
-#: src/dialogs.c:3821
+#: src/dialogs.c:3716
 msgid "Gaim - Rename Group"
 msgstr "Gaim - Переименовать Группу"
 
-#: src/dialogs.c:3831
+#: src/dialogs.c:3726
 msgid "Rename Group"
 msgstr "Переименовать Группу"
 
+#: src/dialogs.c:3733
 #: src/dialogs.c:3838
-#: src/dialogs.c:3926
 msgid "New name:"
 msgstr "Новый номер(UIN):"
 
-#: src/dialogs.c:3909
+#: src/dialogs.c:3821
 msgid "Gaim - Rename Buddy"
 msgstr "Gaim - Переименовать пользователя"
 
-#: src/dialogs.c:3919
+#: src/dialogs.c:3831
 msgid "Rename Buddy"
 msgstr "Переименовать пользователя"
 
-#: src/gaimrc.c:980
+#. Below is basically stolen from plugins.c
+#: src/dialogs.c:3915
+msgid "Gaim - Select Perl Script"
+msgstr "Gaim - Выбор скрипта Perl"
+
+#: src/gaimrc.c:1107
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Не могу открыть файл конфигурации %s."
 
-#: src/gaimrc.c:981
+#: src/gaimrc.c:1108
 msgid "Preferences Error"
 msgstr "Ошибка параметров"
 
-#: src/html.c:167
-#, c-format
-msgid "Getting %d bytes from %s"
-msgstr "Получение %d байт от %s"
-
-#: src/html.c:181
-msgid "Getting Data"
-msgstr "Получение данных"
-
-#: src/html.c:213
+#: src/html.c:183
 #, c-format
 msgid ""
 "Receieved: '%s'\n"
@@ -1384,7 +2003,7 @@ msgstr ""
 "Принято: '%s'\n"
 ""
 
-#: src/html.c:238
+#: src/html.c:221
 msgid ""
 "g003: Error opening connection.\n"
 ""
@@ -1392,73 +2011,85 @@ msgstr ""
 "g003: Ошибка создания соединения.\n"
 ""
 
-#: src/multi.c:361
-#: src/prefs.c:189
-msgid "General Options"
-msgstr "Основные параметры"
+#: src/multi.c:411
+msgid "Gaim - Load Buddy Icon"
+msgstr "Gaim - Загрузить иконку пользователя"
 
-#: src/multi.c:366
+#: src/multi.c:454
+msgid "Buddy Icon File:"
+msgstr "Файл иконок пользователей:"
+
+#: src/multi.c:465
+msgid "Browse"
+msgstr "Просмотр"
+
+#: src/multi.c:470
+#: src/prefs.c:1457
+msgid "Reset"
+msgstr "Сброс"
+
+#: src/multi.c:497
 msgid "Screenname:"
 msgstr "Номер (UIN)"
 
-#: src/multi.c:375
-msgid "Password:"
-msgstr "Пароль"
-
-#: src/multi.c:386
+#: src/multi.c:517
 msgid "Protocol:"
 msgstr "Протокол"
 
-#: src/multi.c:391
+#: src/multi.c:522
 msgid "Remember Password"
 msgstr "Запомнить пароль"
 
-#: src/multi.c:392
+#: src/multi.c:523
 msgid "Auto-Login"
 msgstr "Подключиться автоматически"
 
-#: src/multi.c:458
+#: src/multi.c:563
+msgid "New Mail Notifications"
+msgstr "Предупреждение о новой почте"
+
+#: src/multi.c:703
 msgid "Gaim - Modify Account"
 msgstr "Gaim - Редактирование"
 
-#: src/multi.c:565
+#: src/multi.c:822
 msgid "Enter Password"
 msgstr "Введите пароль"
 
-#: src/multi.c:653
+#: src/multi.c:911
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Вы согласны удалить %s?"
 
-#: src/multi.c:690
+#: src/multi.c:948
 msgid "Gaim - Account Editor"
 msgstr "Gaim - Учетные записи"
 
-#: src/multi.c:709
+#: src/multi.c:967
 msgid "Select All"
 msgstr "Выбрать все"
 
-#: src/multi.c:714
+#: src/multi.c:972
 msgid "Select Autos"
-msgstr "Текущий пользователь"
+msgstr "Текущий"
 
-#: src/multi.c:718
+#: src/multi.c:976
 msgid "Select None"
-msgstr "Отменить выбор"
+msgstr "Отменить"
 
-#: src/multi.c:732
+#: src/multi.c:990
 msgid "Modify"
-msgstr "Редактирование"
+msgstr "Изменить"
 
-#: src/multi.c:736
+#: src/multi.c:994
 msgid "Sign On/Off"
-msgstr "Отключить/Подключить"
+msgstr "Вкл/Выкл"
 
-#: src/multi.c:740
+#: src/multi.c:998
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/multi.c:914
+#: src/multi.c:1226
 #, c-format
 msgid ""
 "%s\n"
@@ -1467,306 +2098,80 @@ msgstr ""
 "%s\n"
 "%s невозможно соединиться: %s"
 
-#: src/oscar.c:343
-#: src/oscar.c:362
-#: src/toc.c:351
-#: src/toc.c:361
-#: src/toc.c:422
-msgid "Disconnected."
-msgstr "Соединение разорвано."
-
-#: src/oscar.c:351
-msgid ""
-"connection error (rend)\n"
-""
-msgstr ""
-"Ошибка соединения (rend)\n"
-""
-
-#: src/oscar.c:361
-msgid ""
-"major connection error\n"
-""
-msgstr ""
-"серьезная ошибка соединения\n"
-""
-
-#: src/oscar.c:374
-#: src/toc.c:585
-#, c-format
-msgid "You have been disconnected from chat room %s."
-msgstr "Прервано соединение с чатом %s."
-
-#: src/oscar.c:375
-msgid "Chat Error!"
-msgstr "Чат ошибка!"
-
-#: src/oscar.c:385
-msgid "Chat is currently unavailable"
-msgstr "Чат временно недоступен"
-
-#: src/oscar.c:386
-msgid "Gaim - Chat"
-msgstr "Gaim - Чат"
-
-#: src/oscar.c:441
-#: src/oscar.c:494
-msgid "Couldn't connect to host"
-msgstr "Не могу присоединиться к машине"
-
-#: src/oscar.c:449
-msgid ""
-"Password sent, waiting for response\n"
-""
-msgstr ""
-"Пароль передан, ждите ответа\n"
-""
-
-#: src/oscar.c:460
-#, c-format
-msgid ""
-"Logging in %s\n"
-""
-msgstr ""
-"Присоединение к %s\n"
-""
-
-#: src/oscar.c:475
-msgid ""
-"internal connection error\n"
-""
-msgstr ""
-"внутренняя ошибка соединения\n"
-""
-
-#: src/oscar.c:476
-msgid "Unable to login to AIM"
-msgstr "Немогу соединиться с AIM"
-
-#: src/oscar.c:481
-#, c-format
-msgid "Signon: %s"
-msgstr "Подключился: %s"
-
-#: src/oscar.c:550
-msgid ""
-"Signed off.\n"
-""
-msgstr ""
-"Отключился.\n"
-""
-
-#: src/oscar.c:569
-#: src/oscar.c:716
-msgid "Could Not Connect"
-msgstr "Не могу присоединиться"
-
-#: src/oscar.c:577
-msgid "Connection established, cookie sent"
-msgstr "Соединение установлено, печеньки высланы"
-
-#. Suspended account
-#: src/oscar.c:632
-msgid "Your account is currently suspended."
-msgstr "Ваша учетная запись заблокирована."
-
-#. connecting too frequently
-#: src/oscar.c:636
-msgid "You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."
-msgstr "Вы пытались соединиться и отсоединиться слишком часто. Подождите 10 минут и попробуйте еще раз. Если вы будете продолжать попытки вам придется подождать дольше."
-
-#. client too old
-#: src/oscar.c:641
-msgid "The client version you are using is too old. Please upgrade at "
-msgstr "Вы используете слишком старую версию клиента."
-
-#: src/oscar.c:645
-#: src/toc.c:375
-msgid "Authentication Failed"
-msgstr "Авторизация провалена"
-
-#: src/oscar.c:673
-msgid "Internal Error"
-msgstr "Внутреняя ошибка"
-
-#: src/oscar.c:1256
-#: src/oscar.c:2790
-#, c-format
-msgid "Direct IM with %s established"
-msgstr "Прямое соединение с %s установлено"
-
-#. message too large
-#: src/oscar.c:1899
-#, c-format
-msgid "You missed a message from %s because it was too large."
-msgstr "Вы не получили сообщение от %s, оно слишком велико."
-
-#: src/oscar.c:1904
-#, c-format
-msgid "You missed a message from %s for unknown reasons."
-msgstr "Вы не получили сообщение от %s по неизвестной причине."
-
-#: src/oscar.c:1939
-#, c-format
-msgid "Your message to %s did not get sent: %s"
-msgstr "Ваше сообщение к %s небыло послано: %s"
-
-#: src/oscar.c:1940
-#: src/oscar.c:1959
-msgid "Reason unknown"
-msgstr "Причина неизвестна"
-
-#: src/oscar.c:1958
-#, c-format
-msgid "User information for %s unavailable: %s"
-msgstr "Информация о пользователе %s недоступна: %s"
-
-#: src/oscar.c:1999
-msgid ""
-"Username : <B>%s</B>  %s <BR>\n"
-"%sWarning Level : <B>%d %%</B><BR>\n"
-"Online Since : <B>%s</B><BR>\n"
-"Idle Minutes : <B>%d</B>\n"
-"<BR>\n"
-"<HR><BR>\n"
-"%s<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : Administrator"
-msgstr ""
-"Пользователь : <B>%s</B>  %s <BR>\n"
-"%sУровень : <B>%d %%</B><BR>\n"
-"В сети с : <B>%s</B><BR>\n"
-"Молчит : <B>%d</B>\n"
-"<BR>\n"
-"<HR><BR>\n"
-"%s<br><BODY BGCOLOR=WHITE><hr><I>Легенда:</I><br><br><IMG SRC=\"free_icon.gif\"> : Обычный пользователь AIM<br><IMG SRC=\"aol_icon.gif\"> : Пользователь AOL <br><IMG SRC=\"dt_icon.gif\"> : Временный пользователь AIM<br><IMG SRC=\"admin_icon.gif\"> : Администратор"
-
-#: src/oscar.c:2021
-msgid "<i>No Information Provided</i>"
-msgstr "<i>Информация не предоставлена</i>"
-
-#: src/oscar.c:2022
-msgid "<i>User has no away message</i>"
-msgstr "<i>Пользователь не имеет сообщения об отсутствии</i>"
-
-#: src/oscar.c:2048
-msgid "Your connection may be lost."
-msgstr "Соединение может быть разорвано."
-
-#: src/oscar.c:2049
-msgid "AOL error"
-msgstr "Ошибка AOL"
-
-#: src/oscar.c:2636
-msgid "Exchange:"
-msgstr "Обмен:"
-
-#: src/oscar.c:2847
-#, c-format
-msgid "Direct IM with %s closed"
-msgstr "Прямое соединение с %s закрыто"
-
-#: src/oscar.c:2906
-msgid "Unable to open Direct IM"
-msgstr "Немогу установить прямое соединение"
-
-#: src/oscar.c:2916
-#, c-format
-msgid "You have selected to open a Direct IM connection with %s. Doing this will let them see your IP address, and may be a security risk. Do you wish to continue?"
-msgstr "Вы хотите создать прямое соединение с %s. Собеседник может определить ваш IP адрес, что приведет к проблемам с безопасностью. Вы хотите продолжить?"
-
-#: src/oscar.c:2933
-msgid "Get Away Msg"
-msgstr "Получить сообщение об отсутствии"
-
-#: src/oscar.c:2941
-msgid "Direct IM"
-msgstr "Прямое соединение"
-
-#: src/oscar.c:3081
-msgid "Unfortunately, currently Oscar only allows new user registration by going to http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no. Clicking the Register button will open the URL for you."
-msgstr ""
-"К сожалению, в настоящее время, вход на Oscar требует регистрации\n"
-"http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no. Нажмите кнопку Register на открывшейся страничке."
-
-#. Below is basically stolen from plugins.c
-#: src/perl.c:656
-msgid "Gaim - Select Perl Script"
-msgstr "Gaim - Выбор скрипта Perl"
-
-#: src/perl.c:704
+#: src/perl.c:856
 msgid "Perl Scripts"
 msgstr "Perl Скрипт"
 
-#: src/plugins.c:129
+#: src/plugins.c:113
 msgid "Gaim - Plugin List"
 msgstr "Gaim - Список дополнений"
 
-#: src/plugins.c:206
-#: src/plugins.c:212
-#: src/plugins.c:222
-msgid "Plugin Error"
-msgstr "Ошибка дополнения"
-
-#: src/plugins.c:275
+#: src/plugins.c:178
 msgid "Gaim - Plugins"
 msgstr "Gaim - Дополнения"
 
-#: src/plugins.c:335
+#: src/plugins.c:238
 msgid "Filepath:"
 msgstr "Путь"
 
-#: src/plugins.c:353
+#: src/plugins.c:256
 msgid "Load"
 msgstr "Загрузить"
 
-#: src/plugins.c:356
+#: src/plugins.c:259
 msgid "Load a plugin from a file"
 msgstr "Загрузить дополнение из файла"
 
-#: src/plugins.c:358
+#: src/plugins.c:261
 msgid "Configure"
 msgstr "Настройка"
 
-#: src/plugins.c:361
+#: src/plugins.c:264
 msgid "Configure settings of the selected plugin"
 msgstr "Настройка выбранного дополнения"
 
-#: src/plugins.c:363
+#: src/plugins.c:266
 msgid "Reload"
 msgstr "Обновить"
 
-#: src/plugins.c:367
+#: src/plugins.c:270
 msgid "Reload the selected plugin"
 msgstr "Перезагрузить выбранное дополнение"
 
-#: src/plugins.c:369
+#: src/plugins.c:272
 msgid "Unload"
 msgstr "Выгрузить"
 
-#: src/plugins.c:372
+#: src/plugins.c:275
 msgid "Unload the selected plugin"
 msgstr "Выгрузить выбранное расширение"
 
-#: src/plugins.c:377
+#: src/plugins.c:280
 msgid "Close this window"
 msgstr "Закрыть окно"
 
-#: src/prefs.c:197
-#: src/prefs.c:362
-#: src/prefs.c:503
-#: src/prefs.c:602
-#: src/prefs.c:835
-#: src/prefs.c:1366
-#: src/prefs.c:1628
-#: src/prefs.c:1835
-#: src/prefs.c:2243
+#: src/prefs.c:190
+msgid "General Options"
+msgstr "Основные параметры"
+
+#: src/prefs.c:198
+#: src/prefs.c:372
+#: src/prefs.c:538
+#: src/prefs.c:639
+#: src/prefs.c:868
+#: src/prefs.c:1003
+#: src/prefs.c:1221
+#: src/prefs.c:1521
+#: src/prefs.c:1796
+#: src/prefs.c:2207
 msgid "All options take effect immediately unless otherwise noted."
 msgstr "Все настройки срабатывают немедленно, если не указано обратное."
 
-#: src/prefs.c:209
+#: src/prefs.c:210
 msgid "Miscellaneous"
 msgstr "Дополнительно"
 
-#: src/prefs.c:217
+#: src/prefs.c:218
 msgid "Use borderless buttons"
 msgstr "Прозрачные кнопки"
 
@@ -1774,39 +2179,39 @@ msgstr "Прозрачные кнопки"
 msgid "Show Buddy Ticker"
 msgstr "Показать тиккер"
 
-#: src/prefs.c:228
+#: src/prefs.c:227
 msgid "Show Debug Window"
 msgstr "Показать окно отладки"
 
-#: src/prefs.c:232
+#: src/prefs.c:230
 msgid "Report Idle Times"
 msgstr "Отчет о времени бездействия"
 
-#: src/prefs.c:240
+#: src/prefs.c:238
 msgid "None"
 msgstr "Нет"
 
-#: src/prefs.c:241
+#: src/prefs.c:239
 msgid "Gaim Use"
 msgstr "Использование Gaim"
 
-#: src/prefs.c:243
+#: src/prefs.c:241
 msgid "X Use"
 msgstr "Использование X"
 
-#: src/prefs.c:254
+#: src/prefs.c:252
 msgid "Log all conversations"
 msgstr "Включить журнал сообщений"
 
-#: src/prefs.c:255
+#: src/prefs.c:253
 msgid "Strip HTML from logs"
 msgstr "Убирать HTML тэги при записи в журнал"
 
-#: src/prefs.c:261
+#: src/prefs.c:259
 msgid "Log when buddies sign on/sign off"
 msgstr "Записывать подключения/отключения пользователей"
 
-#: src/prefs.c:262
+#: src/prefs.c:261
 msgid "Log when buddies become idle/un-idle"
 msgstr "Записывать не занят/занят"
 
@@ -1818,662 +2223,634 @@ msgstr "Записывать - пользователь ушел/пришел"
 msgid "Log your own signons/idleness/awayness"
 msgstr "Записывать время ваших состояний подключения/молчания/отсутствия"
 
-#: src/prefs.c:265
+#: src/prefs.c:266
 msgid "Individual log file for each buddy's signons"
 msgstr "Индивидуальные файлы журналов"
 
-#: src/prefs.c:267
+#: src/prefs.c:269
 msgid "Browser"
 msgstr "Броузер"
 
-#: src/prefs.c:279
+#: src/prefs.c:281
 msgid "KFM"
-msgstr ""
+msgstr "KFM"
 
-#: src/prefs.c:280
-msgid "Netscape"
-msgstr ""
+#: src/prefs.c:282
+msgid "Opera"
+msgstr "Opera"
 
 #: src/prefs.c:283
+msgid "Netscape"
+msgstr "Netscape"
+
+#: src/prefs.c:286
 msgid "Pop up new window by default"
 msgstr "Всплытие нового окна по умолчанию"
 
-#: src/prefs.c:290
+#: src/prefs.c:293
 msgid "GNOME URL Handler"
-msgstr ""
+msgstr "GNOME URL Handler"
 
-#: src/prefs.c:292
+#: src/prefs.c:295
 msgid "Manual"
 msgstr "Другой"
 
-#: src/prefs.c:354
+#: src/prefs.c:364
 msgid "Proxy Options"
 msgstr "Параметры Proxy"
 
-#: src/prefs.c:366
+#: src/prefs.c:376
 msgid "Not all protocols can use these proxy options. Please see the README file for details."
-msgstr "Не все протоколы могут использовать эти свойства прокси. Смотрите файл README для получения более детальной информации."
+msgstr ""
+"Не все протоколы могут использовать эти свойства прокси.\n"
+"Смотрите файл README для получения более детальной информации."
 
-#: src/prefs.c:375
-msgid "No proxy"
+#: src/prefs.c:381
+msgid "Proxy Type"
+msgstr "Тип Proxy"
+
+#: src/prefs.c:393
+msgid "No Proxy"
 msgstr "Прокси отстутствует"
 
-#: src/prefs.c:495
+#: src/prefs.c:405
+msgid "SOCKS 4"
+msgstr "SOCKS 4"
+
+#: src/prefs.c:415
+msgid "SOCKS 5"
+msgstr "SOCKS 5"
+
+#: src/prefs.c:424
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/prefs.c:433
+msgid "Proxy Server"
+msgstr "Proxy сервер"
+
+#: src/prefs.c:451
+msgid "Host"
+msgstr "Хост"
+
+#: src/prefs.c:467
+msgid "Port"
+msgstr "Порт"
+
+#: src/prefs.c:484
+msgid "User"
+msgstr "Пользователь"
+
+#: src/prefs.c:500
+msgid "Password"
+msgstr "Пароль"
+
+#: src/prefs.c:530
 msgid "Buddy List Options"
 msgstr "Параметры списка пользователей"
 
-#: src/prefs.c:507
+#: src/prefs.c:542
 msgid "Buddy List Window"
 msgstr "Окно списка пользователей"
 
-#: src/prefs.c:519
+#: src/prefs.c:554
 msgid "Hide IM/Info/Chat buttons"
 msgstr "Спрятать кнопки"
 
-#: src/prefs.c:521
+#: src/prefs.c:556
 msgid "Automatically show buddy list on sign on"
 msgstr "Автоматически показывать список собеседников при подключении"
 
-#: src/prefs.c:524
+#: src/prefs.c:559
 msgid "Save Window Size/Position"
 msgstr "Сохранять Размер/Положение окна"
 
-#: src/prefs.c:530
+#: src/prefs.c:566
 msgid "Show pictures on buttons"
 msgstr "Показывать рисунок на кнопках"
 
-#: src/prefs.c:535
+#: src/prefs.c:571
 msgid "Display Buddy List near applet"
 msgstr "Отображать список собеседников около апплета"
 
-#: src/prefs.c:538
+#: src/prefs.c:574
 msgid "Group Displays"
 msgstr "Группы"
 
-#: src/prefs.c:550
+#: src/prefs.c:586
 msgid "Hide groups with no online buddies"
 msgstr "Не показывать группу ( все Ofline)"
 
-#: src/prefs.c:556
+#: src/prefs.c:592
 msgid "Show numbers in groups"
 msgstr "Показывать количество пользователей"
 
-#: src/prefs.c:558
+#: src/prefs.c:594
 msgid "Buddy Displays"
 msgstr "Пользователи"
 
-#: src/prefs.c:570
+#: src/prefs.c:606
 msgid "Show buddy type icons"
 msgstr "Показать иконки статуса"
 
-#: src/prefs.c:571
+#: src/prefs.c:607
 msgid "Show warning levels"
 msgstr "Показывать уровень предупреждения"
 
-#: src/prefs.c:577
+#: src/prefs.c:613
 msgid "Show idle times"
 msgstr "Показать время бездействия"
 
-#: src/prefs.c:594
+#: src/prefs.c:614
+msgid "Grey idle buddies"
+msgstr ""
+
+#: src/prefs.c:631
 msgid "Conversation Options"
 msgstr "Параметры общения"
 
-#: src/prefs.c:606
+#: src/prefs.c:643
 msgid "Keyboard Options"
 msgstr "Параметры клавиатуры"
 
-#: src/prefs.c:618
+#: src/prefs.c:655
 msgid "Enter sends message"
 msgstr "Enter передать собщение"
 
-#: src/prefs.c:619
+#: src/prefs.c:656
 msgid "Control-Enter sends message"
 msgstr "Ctrl-Enter передать сообщение"
 
-#: src/prefs.c:620
+#: src/prefs.c:657
 msgid "Escape closes window"
 msgstr "Esc закрыть окно"
 
-#: src/prefs.c:626
+#: src/prefs.c:663
 msgid "Control-{B/I/U/S} inserts HTML tags"
 msgstr "Ctrl-{B/I/U/S} вставить тэги HTML "
 
-#: src/prefs.c:627
+#: src/prefs.c:664
 msgid "Control-(number) inserts smileys"
 msgstr "Ctrl-(цифра) вставить смайлик"
 
-#: src/prefs.c:628
+#: src/prefs.c:665
 msgid "F2 toggles timestamp display"
 msgstr "Отображать или не отображать время сообщения по кнопке F2"
 
-#: src/prefs.c:630
+#: src/prefs.c:667
 msgid "Display and General Options"
 msgstr "Вид и основные параметры"
 
-#: src/prefs.c:642
+#: src/prefs.c:679
 msgid "Show graphical smileys"
 msgstr "Показывать графические смайлики"
 
-#: src/prefs.c:643
+#: src/prefs.c:680
 msgid "Show timestamp on messages"
 msgstr "Показывать время сообщений"
 
-#: src/prefs.c:644
+#: src/prefs.c:681
 msgid "Show URLs as links"
 msgstr "Показывать URL как ссылку"
 
-#: src/prefs.c:645
+#: src/prefs.c:682
 msgid "Highlight misspelled words"
 msgstr "Проверка орфографии"
 
-#: src/prefs.c:646
-#: src/prefs.c:1857
+#: src/prefs.c:683
+#: src/prefs.c:1818
 msgid "Sending messages removes away status"
 msgstr "Менять статус отсутствия при отправке сообщения "
 
-#: src/prefs.c:647
-#: src/prefs.c:1864
+#: src/prefs.c:684
+#: src/prefs.c:1826
 msgid "Queue new messages when away"
 msgstr ""
 "Показать окно колличества сообщений\n"
 "при отсутствии"
 
-#: src/prefs.c:653
+#: src/prefs.c:690
 msgid "Ignore colors"
 msgstr "Игнорировать цвет"
 
-#: src/prefs.c:654
+#: src/prefs.c:691
 msgid "Ignore font faces"
 msgstr "Игнорировать тип шрифта"
 
-#: src/prefs.c:655
+#: src/prefs.c:692
 msgid "Ignore font sizes"
 msgstr "Игнорировать размер шрифта"
 
-#: src/prefs.c:656
+#: src/prefs.c:693
 msgid "Ignore TiK Automated Messages"
 msgstr "Игнорировать автоматические сообщения"
 
-#: src/prefs.c:657
-#: src/prefs.c:1855
+#: src/prefs.c:694
+#: src/prefs.c:1816
 msgid "Ignore new conversations when away"
 msgstr ""
 "Игнорировать запрос на беседу во время\n"
 "отсутствия"
 
-#: src/prefs.c:827
+#: src/prefs.c:860
 msgid "IM Options"
 msgstr "Параметры сообщения"
 
-#: src/prefs.c:839
+#: src/prefs.c:872
+#: src/prefs.c:2736
 msgid "IM Window"
 msgstr "Окно сообщения"
 
-#: src/prefs.c:855
-#: src/prefs.c:899
+#: src/prefs.c:888
+#: src/prefs.c:1023
 msgid "Show buttons as: "
 msgstr "Показывать кнопки как:"
 
-#: src/prefs.c:859
-#: src/prefs.c:903
+#: src/prefs.c:892
+#: src/prefs.c:1028
 msgid "Pictures And Text"
 msgstr "Картинки и текст"
 
-#: src/prefs.c:860
-#: src/prefs.c:904
+#: src/prefs.c:893
+#: src/prefs.c:1030
 msgid "Pictures"
 msgstr "Картинки"
 
-#: src/prefs.c:861
-#: src/prefs.c:905
+#: src/prefs.c:894
+#: src/prefs.c:1031
 msgid "Text"
 msgstr "Текст"
 
-#: src/prefs.c:871
+#: src/prefs.c:905
 msgid "Show all conversations in one tabbed window"
 msgstr "Показывать все разговоры в одном окне c закладками"
 
-#: src/prefs.c:872
-#: src/prefs.c:916
+#: src/prefs.c:907
+#: src/prefs.c:1044
 msgid "Raise windows on events"
 msgstr "Авто-всплытие окна при событиях"
 
-#: src/prefs.c:873
+#: src/prefs.c:908
 msgid "Show logins in window"
 msgstr "Показывать подключения"
 
-#: src/prefs.c:879
-#: src/prefs.c:923
+#: src/prefs.c:909
+msgid "Use aliases instead screen name"
+msgstr "В закладках использются псевдонимы"
+
+#: src/prefs.c:910
+#: src/prefs.c:1047
+msgid "Window Sizes"
+msgstr "Размеры окна"
+
+#: src/prefs.c:918
+#: src/prefs.c:1055
 msgid "New window width:"
 msgstr "Новая ширина окна"
 
-#: src/prefs.c:880
-#: src/prefs.c:924
+#: src/prefs.c:919
+#: src/prefs.c:1056
 msgid "New window height:"
 msgstr "Новая высота окна"
 
-#: src/prefs.c:881
-#: src/prefs.c:925
+#: src/prefs.c:920
+#: src/prefs.c:1057
 msgid "Entry widget height:"
 msgstr "Высота окна ввода"
 
-#: src/prefs.c:883
-msgid "Group Chat Window"
-msgstr "Окно чата"
-
-#: src/prefs.c:915
-msgid "Show all chats in one tabbed window"
-msgstr "Показывать все чаты в одном окне с закладками"
-
-#: src/prefs.c:917
-msgid "Show people joining/leaving in window"
-msgstr "Показывать вошедших/вышедших в окне "
-
-#: src/prefs.c:927
-msgid "Tabbed Window Options"
-msgstr "Параметры закладок"
-
-#: src/prefs.c:939
-msgid "IM Tab Placement:"
+#: src/prefs.c:922
+#: src/prefs.c:1059
+msgid "Tab Placement"
 msgstr "Расположение закладок сообщений"
 
-#: src/prefs.c:951
-#: src/prefs.c:985
+#: src/prefs.c:942
+#: src/prefs.c:1079
 msgid "Top"
 msgstr "Вверху"
 
-#: src/prefs.c:953
-#: src/prefs.c:987
+#: src/prefs.c:944
+#: src/prefs.c:1081
 msgid "Bottom"
 msgstr "Внизу"
 
-#: src/prefs.c:960
-#: src/prefs.c:994
+#: src/prefs.c:951
+#: src/prefs.c:1088
 msgid "Left"
 msgstr "Слева"
 
-#: src/prefs.c:962
-#: src/prefs.c:996
+#: src/prefs.c:953
+#: src/prefs.c:1090
 msgid "Right"
 msgstr "Справа"
 
-#: src/prefs.c:973
-msgid "Chat Tab Placement:"
-msgstr "Расположение закладок чата"
+#: src/prefs.c:957
+msgid "Buddy Icons"
+msgstr "Иконки пользователей"
 
-#: src/prefs.c:1031
-#: src/prefs.c:1033
-#: src/prefs.c:1241
-#: src/prefs.c:1243
-msgid "Gaim Chat"
-msgstr "Gaim Чат"
+#: src/prefs.c:969
+msgid "Hide Buddy Icons"
+msgstr "Скрыть иконки пользователей"
 
-#: src/prefs.c:1179
-#: src/prefs.c:2720
-msgid "Chat Rooms"
-msgstr "Чат"
+#: src/prefs.c:995
+msgid "Chat Options"
+msgstr "Свойства чата"
 
-#: src/prefs.c:1197
-msgid "Refresh"
-msgstr "Обновить"
+#: src/prefs.c:1007
+msgid "Group Chat Window"
+msgstr "Окно чата"
 
-#: src/prefs.c:1222
-msgid "List of available chats"
-msgstr "Список доступных чатов"
+#: src/prefs.c:1042
+msgid "Show all chats in one tabbed window"
+msgstr "Показывать все чаты в одном окне с закладками"
 
-#: src/prefs.c:1232
-msgid "List of subscribed chats"
-msgstr "Выбранные чаты"
+#: src/prefs.c:1045
+msgid "Show people joining/leaving in window"
+msgstr "Показывать вошедших/вышедших в окне "
 
-#: src/prefs.c:1358
-#: src/prefs.c:2715
+#: src/prefs.c:1093
+msgid "Tab Completion"
+msgstr "Режим дополнений"
+
+#: src/prefs.c:1105
+msgid "Tab-Complete Nicks"
+msgstr "Tab - Дополнить псевдоним"
+
+#: src/prefs.c:1111
+msgid "Old-Style Tab Completion"
+msgstr "Старый стиль дополнения"
+
+#: src/prefs.c:1213
+#: src/prefs.c:2746
 msgid "Font Options"
 msgstr "Шрифт"
 
-#: src/prefs.c:1375
-msgid "Underlined Text"
-msgstr "Подчеркнутый "
+#: src/prefs.c:1239
+msgid "Italic Text"
+msgstr "Наклонный текст"
 
-#: src/prefs.c:1376
-msgid "Strike Text"
-msgstr "Перечеркнутый"
-
-#: src/prefs.c:1406
-#: src/prefs.c:1424
-#: src/prefs.c:1446
+#: src/prefs.c:1283
+#: src/prefs.c:1301
+#: src/prefs.c:1323
 msgid "Select"
 msgstr "Выбор"
 
-#: src/prefs.c:1444
+#: src/prefs.c:1321
 msgid "Font Face for Text"
 msgstr "Выбор шрифта"
 
-#: src/prefs.c:1459
+#: src/prefs.c:1336
 msgid "Font Size for Text"
 msgstr "Размер шрифта"
 
-#: src/prefs.c:1541
+#: src/prefs.c:1422
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - Выбор звука"
 
-#: src/prefs.c:1576
-msgid "Reset"
-msgstr "Сброс"
-
-#: src/prefs.c:1581
+#: src/prefs.c:1462
 msgid "Choose..."
 msgstr "Выбрать"
 
-#: src/prefs.c:1620
+#: src/prefs.c:1513
 msgid "Sound Options"
 msgstr "Настройки звука"
 
-#: src/prefs.c:1648
+#: src/prefs.c:1541
 msgid "No sounds when you log in"
 msgstr "Отключить звук при подключении"
 
-#: src/prefs.c:1649
-#: src/prefs.c:1856
+#: src/prefs.c:1547
+#: src/prefs.c:1817
 msgid "Sounds while away"
 msgstr "Звуки во время отсутствия"
 
-#: src/prefs.c:1655
-msgid "Beep instead of playing sound"
-msgstr "Сигнал вместо проигрывания звуков"
+#: src/prefs.c:1557
+msgid "Sound Player:"
+msgstr "Проигрыватель звуков:"
 
-#: src/prefs.c:1665
+#: src/prefs.c:1626
 #, c-format
 msgid ""
 "Command to play sound files\n"
 "(%s for filename; internal if empty)"
 msgstr ""
 "Программа проигрывания звуковых файлов\n"
-"(встроенная при незаполненном окне ввода)"
+"(встроенная при не заполненном окне ввода)"
 
-#: src/prefs.c:1676
+#: src/prefs.c:1637
 msgid "Events"
 msgstr "События"
 
-#: src/prefs.c:1684
+#: src/prefs.c:1645
 msgid "Sound when buddy logs in"
 msgstr "Звук при подключении пользователя"
 
-#: src/prefs.c:1685
+#: src/prefs.c:1646
 msgid "Sound when buddy logs out"
 msgstr "Звук при отключении пользователя"
 
-#: src/prefs.c:1691
+#: src/prefs.c:1652
 msgid "Sound when received message begins conversation"
 msgstr "Звук при соединении"
 
-#: src/prefs.c:1692
+#: src/prefs.c:1654
 msgid "Sound when message is received"
 msgstr "Звук при получении сообщения"
 
-#: src/prefs.c:1693
+#: src/prefs.c:1655
 msgid "Sound when message is sent"
 msgstr "Звук при отправки сообщения"
 
-#: src/prefs.c:1699
+#: src/prefs.c:1661
 msgid "Sound in chat rooms when people enter"
 msgstr "Звук при входе пользователя в чат"
 
-#: src/prefs.c:1700
+#: src/prefs.c:1662
 msgid "Sound in chat rooms when people leave"
 msgstr "Звук при выходе пользователя из чата"
 
-#: src/prefs.c:1701
+#: src/prefs.c:1663
 msgid "Sound in chat rooms when you talk"
 msgstr "Звук при посылке сообщения в чат"
 
-#: src/prefs.c:1702
+#: src/prefs.c:1664
 msgid "Sound in chat rooms when others talk"
 msgstr "Звук при приходе сообщения в чат"
 
-#: src/prefs.c:1827
-#: src/prefs.c:2742
+#: src/prefs.c:1788
+#: src/prefs.c:2768
 msgid "Away Messages"
 msgstr "Сообщение об отсутствии(Away)"
 
-#: src/prefs.c:1863
+#: src/prefs.c:1825
 msgid "Don't send auto-response"
 msgstr "Не передавать автоответ"
 
-#: src/prefs.c:1874
+#: src/prefs.c:1836
 msgid "Auto Away after"
 msgstr "Авто Away после"
 
-#: src/prefs.c:1888
+#: src/prefs.c:1850
 msgid "minutes using"
 msgstr "минут используя"
 
-#: src/prefs.c:1901
+#: src/prefs.c:1863
 msgid "Messages"
 msgstr "Сообщения"
 
-#: src/prefs.c:1913
+#: src/prefs.c:1875
 msgid "Title"
 msgstr "Заголовок"
 
-#: src/prefs.c:1917
-msgid "Message"
-msgstr "Сообщение"
-
-#: src/prefs.c:1956
+#: src/prefs.c:1918
 msgid "Edit"
 msgstr "Редактировать"
 
-#: src/prefs.c:1960
+#: src/prefs.c:1922
 msgid "Make Away"
 msgstr "Применить"
 
-#: src/prefs.c:2235
+#: src/prefs.c:2199
 msgid "Privacy Options"
 msgstr "Личные предпочтения"
 
-#: src/prefs.c:2251
+#: src/prefs.c:2215
 msgid "Set privacy for:"
 msgstr "Установить приват для:"
 
-#: src/prefs.c:2270
+#: src/prefs.c:2234
 msgid "Allow all users to contact me"
 msgstr "Разрешить доступ всем пользователям"
 
-#: src/prefs.c:2271
+#: src/prefs.c:2235
 msgid "Allow only the users below"
 msgstr "Разрешить доступ выбранным пользователям"
 
-#: src/prefs.c:2273
+#: src/prefs.c:2237
 msgid "Allow List"
 msgstr "Выбранные пользователи"
 
-#: src/prefs.c:2304
+#: src/prefs.c:2268
 msgid "Deny all users"
 msgstr "Запретить доступ всем пользователям"
 
-#: src/prefs.c:2305
+#: src/prefs.c:2269
 msgid "Block the users below"
 msgstr "Запретить  доступ из 'черного списка'"
 
-#: src/prefs.c:2307
+#: src/prefs.c:2271
 msgid "Block List"
 msgstr "'Черный список'"
 
-#: src/prefs.c:2402
+#: src/prefs.c:2366
 msgid "Gaim - Preferences"
 msgstr "Gaim - Настройки"
 
-#: src/prefs.c:2482
+#: src/prefs.c:2445
 msgid "Gaim debug output window"
 msgstr "окно отладки Gaim"
 
-#: src/prefs.c:2676
+#: src/prefs.c:2702
 msgid "General"
 msgstr "Общие"
 
-#: src/prefs.c:2681
+#: src/prefs.c:2707
 msgid "Proxy"
 msgstr "Прокси"
 
-#: src/prefs.c:2705
+#: src/prefs.c:2731
 msgid "Conversations"
 msgstr "Беседа"
 
-#: src/prefs.c:2710
-msgid "Windows"
-msgstr "Окна"
-
-#: src/prefs.c:2731
+#: src/prefs.c:2757
 msgid "Sounds"
 msgstr "Звуки"
 
-#: src/prefs.c:2753
+#: src/prefs.c:2779
 msgid "Privacy"
 msgstr "Личное"
 
-#: src/prpl.c:76
+#: src/prpl.c:70
 msgid "You have attempted to load a protocol which was not compiled from the same version of the source as this application was. Unfortunately, because it is not the same version I cannot safely tell you which one it was. Needless to say, it was not successfully loaded."
 msgstr "Вы попытались загрузить модуль протокола, который был собран из исходных кодов другой версии. К сожалению, из-за различия версий модуль не может быть использован."
 
-#: src/prpl.c:80
+#: src/prpl.c:74
 msgid "Protocol Error"
 msgstr "Ошибка протокола"
 
-#: src/prpl.c:100
+#: src/prpl.c:93
 #, c-format
 msgid "%s was using %s, which got removed. %s is now offline."
 msgstr "%s использует %s, который удален. %s отключен."
 
-#: src/prpl.c:103
+#: src/prpl.c:96
 msgid "Disconnect"
 msgstr "Соединение прервано"
 
-#: src/prpl.c:143
+#: src/prpl.c:133
 msgid "Accept?"
 msgstr "Согласны?"
 
-#: src/prpl.c:163
-#: src/prpl.c:235
+#: src/prpl.c:154
+#: src/prpl.c:228
 msgid "Accept"
 msgstr "Согласен"
 
-#: src/prpl.c:208
+#: src/prpl.c:199
 msgid "Gaim - Prompt"
 msgstr "Gaim - Срочно"
 
-#: src/prpl.c:303
-msgid "Gaim - New User Registration"
-msgstr "Gaim - Регистрация"
+#: src/prpl.c:419
+msgid "Gaim - New Mail"
+msgstr "Gaim - Новая почта"
 
-#: src/prpl.c:312
-msgid "New User Registration"
-msgstr "Регистрация нового пользователя"
+#: src/prpl.c:445
+msgid "Open Mail"
+msgstr "Открыть почту"
 
-#: src/prpl.c:324
-msgid "Register new user for"
-msgstr "Регистрация на:"
+#: src/prpl.c:564
+#, c-format
+msgid "%s%s%s%s has made %s their buddy%s%s%s"
+msgstr "%s%s%s%s сделал %s своим пользователем %s%s%s"
 
-#: src/prpl.c:552
-msgid "Gaim - Select File"
-msgstr "Gaim - Выбор файла"
+#: src/prpl.c:572
+msgid ""
+"\n"
+"\n"
+"Do you wish to add them to your buddy list?"
+msgstr ""
 
-#: src/prpl.c:554
-msgid "Gaim - Send File"
-msgstr "Gaim - Передача файла"
+#: src/server.c:53
+msgid "Please enter your password"
+msgstr "Пожалуйста, введите пароль"
 
-#: src/server.c:56
+#: src/server.c:60
 msgid "You cannot log this account in; you do not have the protocol it uses loaded, or the protocol does not have a login function."
 msgstr ""
 "Вы не можете подключиться испольюуя эту учетную запись потому что используемый ей протокол не поддерживается,\n"
 "или протокол не имеет функции подключения."
 
-#: src/server.c:58
+#: src/server.c:62
 msgid "Login Error"
 msgstr "Ошибка входа"
 
-#: src/server.c:487
+#: src/server.c:535
 #, c-format
 msgid "(%d messages)"
 msgstr "(%d сообщений)"
 
-#: src/server.c:493
+#: src/server.c:541
 msgid "(1 message)"
 msgstr "(1 сообщение)"
 
-#: src/server.c:781
+#: src/server.c:756
+msgid "Warned"
+msgstr "Предупреждение"
+
+#: src/server.c:827
 msgid "Yes"
 msgstr "Да"
 
-#: src/server.c:782
+#: src/server.c:828
 msgid "No"
 msgstr "Нет"
 
-#: src/toc.c:324
-#: src/toc.c:331
-msgid "Connection Closed"
-msgstr "Соединение разорвано"
-
-#: src/toc.c:366
-msgid "Waiting for reply..."
-msgstr "Ожидается ответ..."
-
-#: src/toc.c:429
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC связь восстановлена. Вы можете отправлять сообщение "
-
-#: src/toc.c:430
-msgid "TOC Resume"
-msgstr "TOC продолжим."
-
-#: src/toc.c:587
-msgid "Chat Error"
-msgstr "Чат ошибка"
-
-#: src/toc.c:606
-msgid "Password Change Successeful"
-msgstr "Пароль изменен успешно"
-
-#: src/toc.c:609
-msgid "TOC has sent a PAUSE command. When this happens, TOC ignores any messages sent to it, and may kick you off if you send a message. Gaim will prevent anything from going through. This is only temporary, please be patient."
-msgstr "TOC передал команду PAUSE. Когда это происходит, TOC игнорирует все сообщения посылаемые ему, и может отключить вас при попытке переслать сообщение. Gaim не позволит вам этого сделать. Это временные недобства - будьте терпеливы."
-
-#: src/toc.c:612
-msgid "TOC Pause"
-msgstr "TOC Пауза"
-
-#: src/toc.c:1016
-msgid "Community:"
-msgstr "Общество:"
-
-#: src/toc.c:1037
-msgid "Get Dir Info"
-msgstr "Получить информацию"
-
-#: src/toc.c:1215
-msgid "Unfortunately, currently TOC only allows new user registration by going to http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no. Clicking the Register button will open the URL for you."
-msgstr "К сожалению, в настоящее время, вход на TOC требует регистрации http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no. Нажмите кнопку Rigister на открывшейся страничке."
-
-#: src/toc.c:1499
-#: src/toc.c:1541
-#: src/toc.c:1675
-#: src/toc.c:1761
-msgid "Could not connect for transfer!"
-msgstr "Немогу присоединиться для передачи файла!"
-
-#: src/toc.c:1705
-msgid "Could not write file header!"
-msgstr "Не могу записать заголовок файла!"
-
-#: src/toc.c:1794
-msgid "Gaim - Save As..."
-msgstr "Gaim - Сохранить как..."
-
-#: src/toc.c:1833
-#, c-format
-msgid "%s requests %s to accept %d file%s: %s (%.2f %s)%s%s"
-msgstr "%s запросил у %s поддтвердение %d о передаче файла %s: %s (%.2f %s)%s%s"
-
-#: src/toc.c:1838
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s запросил передачу файла"
