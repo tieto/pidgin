@@ -1020,7 +1020,7 @@ silcgaim_add_buddy_ask_pk_cb(SilcGaimBuddyRes r, gint id)
 	}
 
 	/* Open file selector to select the public key. */
-	gaim_request_file(NULL, _("Open..."), NULL, FALSE,
+	gaim_request_file(NULL, _("Open..."), "", FALSE,
 			  G_CALLBACK(silcgaim_add_buddy_ask_import),
 			  G_CALLBACK(silcgaim_add_buddy_ask_pk_cancel), r);
 }
@@ -1148,6 +1148,8 @@ silcgaim_add_buddy_resolved(SilcClient client,
 	SilcUInt32 pk_len;
 	const char *filename;
 
+	filename = gaim_blist_node_get_string((GaimBlistNode *)b, "public-key");
+
 	/* If the buddy is offline/nonexistent, we will require user
 	   to associate a public key with the buddy or the buddy
 	   cannot be added. */
@@ -1158,7 +1160,12 @@ silcgaim_add_buddy_resolved(SilcClient client,
 		}
 
 		r->offline = TRUE;
-		silcgaim_add_buddy_ask_pk(r);
+		/* If the user has already associated a public key, try loading it
+		 * before prompting the user to load it again */
+		if (filename != NULL)
+			silcgaim_add_buddy_ask_import(r, filename);
+		else
+			silcgaim_add_buddy_ask_pk(r);
 		return;
 	}
 
@@ -1200,8 +1207,6 @@ silcgaim_add_buddy_resolved(SilcClient client,
 	memset(&userpk, 0, sizeof(userpk));
 	b->proto_data = silc_memdup(clients[0]->id, sizeof(*clients[0]->id));
 	r->client_id = *clients[0]->id;
-
-	filename = gaim_blist_node_get_string((GaimBlistNode *)b, "public-key");
 
 	/* Get the public key from attributes, if not present then
 	   resolve it with GETKEY unless we have it cached already. */
