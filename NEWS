@@ -23,9 +23,14 @@
 	Mark: Our crazy patch writers rock.  Gary Kramlich, Tim Ringenbach,
 	Kevin Stange, and Stu Tomlinson did an amazing job of tying up
 	loose ends and helping get this release out the door.  Thanks guys!
-	
+
 	Rob: My birthday is in a few days.  I like cool stuff.  Buy me something
 	grand!!
+
+	Tim: Luke said write a NEWS, so I thought I would.  There's a room
+	list dialog now. And Nathan and I doubled the number of protocols that
+	can transfer files.  After that I got lazy/busy and let Gary, Kevin,
+	and Stu fix all the bugs.
 
 0.75 (01/09/2004):
 	Rob: Woah, what's this? Me? Making a NEWS post!? Say it ain't so!
