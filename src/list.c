@@ -471,22 +471,6 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 	}
 }
 
-/* remove leading whitespace from a string */
-static char *remove_spaces(char *str)
-{
-	int i;
-	char *new;
-
-	if (str == NULL)
-		return NULL;
-
-	i = strspn(str, " \t\n\r\f");
-	new = &str[i];
-
-	return new;
-}
-
-
 /* translate an AIM 3 buddylist (*.lst) to a Gaim buddylist */
 static void translate_lst(FILE *src_fp, char *dest)
 {
@@ -497,7 +481,7 @@ static void translate_lst(FILE *src_fp, char *dest)
 	sprintf(dest, "m 1\n");
 
 	while (fgets(line, BUF_LEN, src_fp)) {
-		line2 = remove_spaces(line);
+		line2 = g_strchug(line);
 		if (strstr(line2, "group") == line2) {
 			name = strpbrk(line2, " \t\n\r\f") + 1;
 			strcat(dest, "g ");
@@ -533,58 +517,73 @@ static void translate_blt(FILE *src_fp, char *dest)
 	while (strstr(fgets(line, BUF_LEN, src_fp), "list") == NULL);
 
 	while (1) {
-		fgets(line, BUF_LEN, src_fp);
+		fgets(line, BUF_LEN, src_fp); g_strchomp(line);
 		if (strchr(line, '}') != NULL)
 			break;
 
-		/* Syntax starting with "<group> {" */
 		if (strchr(line, '{') != NULL) {
+			/* Syntax starting with "<group> {" */
+
 			strcat(dest, "g ");
-			buddy = remove_spaces(strtok(line, "{"));
+			buddy = g_strchug(strtok(line, "{"));
 			for (i = 0; i < strlen(buddy); i++) {
-				if (buddy[i] != '\"')
+				if (buddy[i] != '\"') {
 					strncat(dest, &buddy[i], 1);
+				}
 			}
 			strcat(dest, "\n");
 			while (strchr(fgets(line, BUF_LEN, src_fp), '}') == NULL) {
-				buddy = remove_spaces(line);
+				gboolean pounce = FALSE;
+				g_strchomp(line);
+				buddy = g_strchug(line);
+				debug_printf("\nbuddy: \"%s\"\n\n", buddy);
 				strcat(dest, "b ");
+				if (strchr(buddy, '{') != NULL) {
+					/* buddy pounce, etc */
+					char *pos = strchr(buddy, '{') - 1;
+					*pos = 0;
+					pounce = TRUE;
+				}
 				if (strchr(buddy, '\"') != NULL) {
 					buddy++;
 					strncat(dest, buddy, strchr(buddy, '\"') - buddy);
-					strcat(dest, "\n");
 				} else
 					strcat(dest, buddy);
+				strcat(dest, "\n");
+				if (pounce)
+					do
+						fgets(line, BUF_LEN, src_fp);
+					while (!strchr(line, '}'));
 			}
-		}
-		/* Syntax "group buddy buddy ..." */
-		else {
-			buddy = remove_spaces(strtok(line, " \n"));
+		} else {
+
+			/* Syntax "group buddy buddy ..." */
+			buddy = g_strchug(strtok(line, " \n"));
 			strcat(dest, "g ");
 			if (strchr(buddy, '\"') != NULL) {
 				strcat(dest, &buddy[1]);
 				strcat(dest, " ");
-				buddy = remove_spaces(strtok(NULL, " \n"));
+				buddy = g_strchug(strtok(NULL, " \n"));
 				while (strchr(buddy, '\"') == NULL) {
 					strcat(dest, buddy);
 					strcat(dest, " ");
-					buddy = remove_spaces(strtok(NULL, " \n"));
+					buddy = g_strchug(strtok(NULL, " \n"));
 				}
 				strncat(dest, buddy, strlen(buddy) - 1);
 			} else {
 				strcat(dest, buddy);
 			}
 			strcat(dest, "\n");
-			while ((buddy = remove_spaces(strtok(NULL, " \n"))) != NULL) {
+			while ((buddy = g_strchug(strtok(NULL, " \n"))) != NULL) {
 				strcat(dest, "b ");
 				if (strchr(buddy, '\"') != NULL) {
 					strcat(dest, &buddy[1]);
 					strcat(dest, " ");
-					buddy = remove_spaces(strtok(NULL, " \n"));
+					buddy = g_strchug(strtok(NULL, " \n"));
 					while (strchr(buddy, '\"') == NULL) {
 						strcat(dest, buddy);
 						strcat(dest, " ");
-						buddy = remove_spaces(strtok(NULL, " \n"));
+						buddy = g_strchug(strtok(NULL, " \n"));
 					}
 					strncat(dest, buddy, strlen(buddy) - 1);
 				} else {
