@@ -56,13 +56,14 @@ gint check_idle(struct gaim_connection *gc)
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
-		if (!d)
-			d = XOpenDisplay((char *)NULL);
-		if (mit_info == NULL) {
-			mit_info = XScreenSaverAllocInfo();
-		}
-		XScreenSaverQueryInfo(d, DefaultRootWindow(d), mit_info);
-		idle_time = (mit_info->idle) / 1000;
+		if (d || (d = XOpenDisplay((char *)NULL))) {
+			if (mit_info == NULL) {
+				mit_info = XScreenSaverAllocInfo();
+			}
+			XScreenSaverQueryInfo(d, DefaultRootWindow(d), mit_info);
+			idle_time = (mit_info->idle) / 1000;
+		} else
+			idle_time = 0;
 	} else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
