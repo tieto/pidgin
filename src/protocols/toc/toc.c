@@ -232,7 +232,6 @@ static int escape_message(char *msg)
 		case ']':
 		case '(':
 		case ')':
-		case '#':
 			msg[cnt++] = '\\';
 			/* Fall through */
 		default:
