@@ -25,13 +25,13 @@ version 0.60:
 	* Notify.c plugin rewritten; check its configure dialog. (Thanks,
 	  Etan Reisner)
 	* Buddy Ticker made a plugin.
-	* I'dle Mak'er added to source.
+	* Idle Maker added to source.
 	* Fortune profile added to source.
 
 	AIM/ICQ:
 	* TOC no longer compiles statically by default--use OSCAR.
 	* ICQ plugin no longer gets built--use OSCAR.
-	* File send/receive support for Oscar (Thanks, William T. Mahan)
+	* File send/receive support for Aim over Oscar (Thanks, William T. Mahan)
 	* Non-direct connect typing notification for AIM over oscar.
 	  (Thanks, Mark Doliner)
 	* Allow only people in buddy list privacy option added for AIM.
@@ -83,6 +83,7 @@ version 0.60:
 	* Japanese translation updated. (Thanks, Junichi Uekawa)
 	* Korean translation updated. (Thanks, A Lee)
 	* Romanian translation added. (Thanks, Misu Moldovan)
+	* Many other translation patches from many people merged in.
 
 	Internationalization:
 	* Now using libiconv for better i18n support (Thanks, Junichi 
