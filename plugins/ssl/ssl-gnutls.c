@@ -171,6 +171,10 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
+#ifdef HAVE_GNUTLS
+	gaim_ssl_set_ops(NULL);
+#endif
+
 	return TRUE;
 }
 
