@@ -8,9 +8,9 @@ version 0.56 (04/11/2002):
 	* Buddylist looks a little better
 	* Fixed MSN privacy settings
 	* Group deletion fix (Thanks Mark Doliner)
-	* Alias/Group syncronization for Jabber  (Thanks JSeymour)
+	* Alias/Group syncronization for Jabber (Thanks JSeymour)
  	* Fixed broken signal handling in gdm-started GNOME sessions 
- 	  (Thanks Jim Seymour, Vann, Robert McQueen)
+	  (Thanks Jim Seymour, Vann, Robert McQueen)
 	* Oscar group syncronization (Thanks, Mark Doliner)
 	* ICQ Authorization via Oscar (Thanks, Mark Doliner)
 	
