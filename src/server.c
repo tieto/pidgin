@@ -646,11 +646,14 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 		g_snprintf(filename, 100, "%s.chat", b->name);
 
 		fd = open_log_file(filename);
-		if (fd > 0) {
-			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
-					full_date());
-			fclose(fd);
-		}
+		if (!(general_options & OPT_GEN_STRIP_HTML))
+			fprintf(fd,
+				"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
+				full_date());
+		else
+			fprintf(fd, "---- New Conversation @ %s ----\n", full_date());
+
+		fclose(fd);
 		free(filename);
 	}
 

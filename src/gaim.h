@@ -440,7 +440,7 @@ extern int general_options;
 #define OPT_GEN_ENTER_SENDS       0x00000001
 /* #define OPT_GEN_AUTO_LOGIN        0x00000002 now OPT_USR_AUTO */
 #define OPT_GEN_LOG_ALL           0x00000004
-/* #define OPT_GEN_STRIP_HTML        0x00000008 this didn't work anyway */
+#define OPT_GEN_STRIP_HTML        0x00000008
 #define OPT_GEN_APP_BUDDY_SHOW    0x00000010
 #define OPT_GEN_POPUP_WINDOWS     0x00000020
 #define OPT_GEN_SEND_LINKS        0x00000040
