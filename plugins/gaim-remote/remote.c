@@ -70,7 +70,7 @@ gaim_remote_handle_uri(const char *uri)
 	GaimConnection *gc = NULL;
 	GaimAccount *account;
 
-	gaim_debug(GAIM_DEBUG_INFO, "gaim_remote_handle_uri", "Handling URI: %s\n", uri);
+	gaim_debug_info("gaim_remote_handle_uri", "Handling URI: %s\n", uri);
 
 	/* Well, we'd better check to make sure we have at least one
 	   AIM account connected. */
@@ -158,7 +158,7 @@ gaim_remote_handle_uri(const char *uri)
 			g_string_free(str, TRUE);
 		}
 
-		gaim_debug(GAIM_DEBUG_MISC, "gaim_remote_handle_uri", "who: %s\n", who);
+		gaim_debug_misc("gaim_remote_handle_uri", "who: %s\n", who);
 		gaim_blist_request_add_buddy(gc->account, who, group, NULL);
 		g_free(who);
 		if (group)
@@ -330,8 +330,7 @@ meta_handler(struct UI *ui, guchar subtype, gchar *data)
 		gaim_remote_packet_free(p);
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "cui",
-				   "Unhandled meta subtype %d\n", subtype);
+		gaim_debug_warning("cui", "Unhandled meta subtype %d\n", subtype);
 		break;
 	}
 
@@ -362,8 +361,7 @@ plugin_handler(struct UI *ui, guchar subtype, gpointer data)
 		}
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "cui",
-				   "Unhandled plugin subtype %d\n", subtype);
+		gaim_debug_warning("cui", "Unhandled plugin subtype %d\n", subtype);
 		break;
 	}
 #endif
@@ -414,8 +412,7 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
                 break;
 #endif /* STATUS */
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "cui",
-				   "Unhandled user subtype %d\n", subtype);
+		gaim_debug_warning("cui", "Unhandled user subtype %d\n", subtype);
 		break;
 	}
 }
@@ -463,8 +460,7 @@ message_handler(struct UI *ui, guchar subtype, gchar *data)
 	case CUI_MESSAGE_RECV:
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "cui",
-				   "Unhandled message subtype %d\n", subtype);
+		gaim_debug_warning("cui", "Unhandled message subtype %d\n", subtype);
 		break;
 	}
 }
@@ -496,9 +492,89 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 {
 	const char *resp;
 	char *send;
+
+	GList *c = gaim_connections_get_all();
+	GaimConnection *gc;
+	GaimAccount *account;
+
 	switch (subtype) {
 	case CUI_REMOTE_CONNECTIONS:
 		break;
+	case CUI_REMOTE_SEND:
+		if (!data)
+			return;
+		{
+			guint id;
+			GaimConnection *gc;
+   			GaimConversation *conv;
+			guint tlen,len,len2,quiet;
+			char *who, *msg;
+			char *tmp, *from, *proto;
+			gint flags;
+			int pos = 0;
+			GList *c = gaim_connections_get_all();
+
+			gaim_debug_info("cui", "Got `gaim-remote send` packet\n",data);
+			gaim_debug_info("cui", "g-r>%s;\n",data);
+
+			tmp = g_strndup(data + pos, 4);
+			tlen=atoi(tmp);
+			pos+=4;
+
+			who=g_strndup(data+pos, tlen);
+			pos+=tlen;
+
+			tmp = g_strndup(data + pos, 4);
+			tlen=atoi(tmp); len=tlen; /*length for 'from' compare*/
+			pos+=4;
+
+			from=g_strndup(data+pos, tlen);
+			pos+=tlen;
+
+			tmp = g_strndup(data + pos, 4);
+			tlen=atoi(tmp); len2=tlen; /*length for 'proto' compare*/
+			pos+=4;
+
+			proto=g_strndup(data+pos, tlen);
+			pos+=tlen;
+			
+			tmp = g_strndup(data + pos, 4);
+			tlen=atoi(tmp);
+			pos+=4;
+
+			msg=g_strndup(data+pos, tlen);
+			pos+=tlen;
+
+			tmp = g_strndup(data + pos, 1);
+			quiet=atoi(tmp); /*quiet flag - not in use yet*/
+
+			/*find acct*/
+	   		while (c) {
+				gc = c->data;
+				account=gaim_connection_get_account(gc);
+				if ((!gaim_utf8_strcasecmp(from, gaim_account_get_username(account))) && (!g_ascii_strncasecmp(proto, gaim_account_get_protocol_id(account), len2)) ) 
+					break;
+				c = c->next;
+			}
+			if (!gc)
+				return;
+			/*end acct find*/
+
+			/*gaim_debug_info("cui", "g-r>To: %s; From: %s; Protocol: %s; Message: %s; Quiet: %d\n",who,from,proto,msg,quiet);*/
+   			conv = gaim_conversation_new(GAIM_CONV_IM, gaim_connection_get_account(gc), who);
+   			gaim_conv_im_send(GAIM_CONV_IM(conv), msg);
+
+			/*likely to be used for quiet:
+			serv_send_im(gc, who, msg, -1, 0);
+			*/
+			
+			g_free(who);
+			g_free(msg);
+			g_free(from);
+			g_free(tmp);
+		}
+		break;
+
 	case CUI_REMOTE_URI:
 		send = g_malloc(len + 1);
 		memcpy(send, data, len);
@@ -508,8 +584,7 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 		/* report error */
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "cui",
-				   "Unhandled remote subtype %d\n", subtype);
+		gaim_debug_warning("cui", "Unhandled remote subtype %d\n", subtype);
 		break;
 	}
 }
@@ -529,7 +604,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 
 	/* no byte order worries! this'll change if we go to TCP */
 	if (gaim_recv(source, &type, sizeof(type)) != sizeof(type)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
+		gaim_debug_error("cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -542,7 +617,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	if (gaim_recv(source, &subtype, sizeof(subtype)) != sizeof(subtype)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
+		gaim_debug_error("cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -555,7 +630,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	if (gaim_recv(source, (gchar *)&len, sizeof(len)) != sizeof(len)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
+		gaim_debug_error("cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -570,7 +645,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 	if (len) {
 		in = g_new0(gchar, len);
 		if (gaim_recv(source, in, len) != len) {
-			gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
+			gaim_debug_error("cui", "UI has abandoned us!\n");
 			uis = g_slist_remove(uis, ui);
 			g_io_channel_shutdown(ui->channel, TRUE, &error);
 			if(error) {
@@ -614,8 +689,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 			remote_handler(ui, subtype, in, len);
 			break; 
         default:
-			gaim_debug(GAIM_DEBUG_WARNING, "cui",
-					   "Unhandled type %d\n", type);
+			gaim_debug_warning("cui", "Unhandled type %d\n", type);
 			break;
 	}
 
@@ -643,7 +717,7 @@ socket_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 	ui->inpa = g_io_add_watch(ui->channel, G_IO_IN | G_IO_HUP | G_IO_ERR, UI_readable, ui);
 	g_io_channel_unref(ui->channel);
 
-	gaim_debug(GAIM_DEBUG_MISC, "cui", "Got one\n");
+	gaim_debug_misc("cui", "Got one\n");
 	return TRUE;
 }
 
@@ -656,7 +730,7 @@ open_socket(char **error)
 	while (gaim_remote_session_exists(gaim_session))
 		gaim_session++;
 	
-	gaim_debug(GAIM_DEBUG_MISC, "cui", "Session: %d\n", gaim_session);
+	gaim_debug_misc("cui", "Session: %d\n", gaim_session);
 	
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
@@ -720,7 +794,7 @@ plugin_unload(GaimPlugin *plugin)
 
 	unlink(buf);
 
-	gaim_debug(GAIM_DEBUG_MISC, "core", "Removed core\n");
+	gaim_debug_misc("core", "Removed core\n");
 
 	return TRUE;
 #else

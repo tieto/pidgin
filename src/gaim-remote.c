@@ -32,13 +32,8 @@
 	     "       list                     Print buddy list\n"
 	     "       ison                     Show presence state of your buddy\n"
 	     "       convo                    Open a new conversation window\n"
-	     "       send                     Send message\n"
 	     "       add                      Add buddy to buddy list\n"
 	     "       remove                   Remove buddy from list\n"
-	     "       -m, --message=MESG       Message to send or show in conversation window\n"
-	     "       -t, --to=SCREENNAME      Select a target for command\n"
-	     "       -p, --protocol=PROTO     Specify protocol to use\n"
-	     "       -f, --from=SCREENNAME    Specify screen name to use\n"
 	     "       -q, --quiet              Send message without showing a conversation\n"
 	     "                                window\n"
 */
@@ -57,8 +52,8 @@ struct remoteopts {
 	char *command;
 	char *uri;
 	gboolean help, quiet;
-	char *message, *to, *from;
-	int protocol;
+	char *message, *to, *from, *protocol;
+	/*int protocol;*/
 };
 struct remoteopts opts;
 
@@ -110,8 +105,13 @@ show_remote_usage(const char *name)
 		"       uri                      Handle AIM: URI\n"
 		"       away                     Popup the away dialog with the default message\n"
 		"       back                     Remove the away dialog\n"
+		"       send                     Send message\n"
 		"       quit                     Close running copy of Gaim\n\n"
 		"    OPTIONS:\n"
+		"       -m, --message=MESG       Message to send or show in conversation window\n"
+		"       -t, --to=SCREENNAME      Select a target for command\n"
+		"       -p, --protocol=PROTO     Specify protocol to use\n"
+		"       -f, --from=SCREENNAME    Specify screen name to use\n"
 		"       -h, --help [command]     Show help for command\n"), name);
 
 	message(text, 1);
@@ -126,7 +126,7 @@ get_options(int argc, char *argv[])
 	int i;
 
 	memset(&opts, 0, sizeof(opts));
-	opts.protocol = -1;
+	/*opts.protocol = -1;*/
 
 	while ((i=getopt_long(argc, argv, "m:t:p:f:qh", longopts, NULL)) != -1) {
 		switch (i) {
@@ -137,7 +137,7 @@ get_options(int argc, char *argv[])
 			opts.to = optarg;
 			break;
 		case 'p':
-			/* Do stuff here. */
+			opts.protocol = optarg;
 			break;
 		case 'f':
 			opts.from = optarg;
@@ -212,6 +212,53 @@ send_command_uri() {
 	return 0;
 }
 
+static int
+send_command_send() {
+	int fd = 0;
+	GaimRemotePacket *p = NULL;
+	char temp[10003]; /*TODO: Future implementation should send packets instead */
+
+	fd = gaim_remote_session_connect(0);
+	if (fd < 0) {
+		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
+		return 1;
+	}
+	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_SEND);
+
+	/*Format is as follows:
+	 *Each string has a 4 character 'header' containing the length of the string
+	 *The strings are: To, From, Protocol name, Message
+	 *Following the message is the quiet flag, expressed in a single int (0/1)
+	 *Because the header is 4 characters long, there is a 9999 char limit on any
+	 *given string, though none of these strings should be exceeding this.
+	 *-JBS 
+	 */
+
+	if(opts.to && *opts.to && opts.from && *opts.from && opts.protocol && *opts.protocol && opts.message && *opts.message  && (strlen(opts.to) <10000) && (strlen(opts.from) <10000) && (strlen(opts.protocol) <20) && (strlen(opts.message) <10000) ){ 
+		sprintf(temp, "%04d%s", strlen(opts.to), opts.to);
+		gaim_remote_packet_append_string(p, temp);
+		sprintf(temp, "%04d%s", strlen(opts.from), opts.from);
+		gaim_remote_packet_append_string(p, temp);
+		sprintf(temp, "%04d%s", strlen(opts.protocol), opts.protocol);
+		gaim_remote_packet_append_string(p, temp);
+		sprintf(temp, "%04d%s", strlen(opts.message), opts.message);
+		gaim_remote_packet_append_string(p, temp);
+		sprintf(temp, "%d", 0);/*quiet flag - off for now*/
+		gaim_remote_packet_append_string(p, temp);
+
+		gaim_remote_session_send_packet (fd, p);
+		close(fd);
+		gaim_remote_packet_free(p);
+		return 0;
+	}else{
+		message(_("Insufficient arguments (-t, -f, -p, & -m are all required) or arguments greater than 9999 chars\n"), 2);
+		close(fd);
+		gaim_remote_packet_free(p);
+ 		return 1;
+ 	}
+
+}
+
 static void
 show_longhelp( char *name, char *command)
 {
@@ -247,6 +294,10 @@ show_longhelp( char *name, char *command)
 		message(_("\nSet all accounts as not away.\n"), 1);
 	}
 
+	else if (!strcmp(command, "send")) {
+		message(_("\nSend instant message\n"), 1);
+	}
+
 	else {
 		show_remote_usage(name);
 	}
@@ -271,6 +322,13 @@ int main(int argc, char *argv[])
 			show_longhelp(argv[0], "uri");
 		else
 			return send_command_uri();
+	}
+
+	else if (!strcmp(opts.command, "send")) {
+		if (opts.help)
+			show_longhelp(argv[0], "send");
+		else
+			return send_command_send();
 	}
 
 	else if (!strcmp(opts.command, "away")) {

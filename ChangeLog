@@ -1,4 +1,8 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
+
+version 2.0.0
+	* gaim-remote can send text (John B. Silvestri)
+
 version 0.83:
 	New Features:
 	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
