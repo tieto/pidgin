@@ -596,7 +596,7 @@ GtkWidget *im_page() {
 	typingbutton = gaim_button(_("Notify buddies that you are typing to them"), &misc_options_new,
 				   OPT_MISC_STEALTH_TYPING, vbox);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(typingbutton), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(typingbutton)));
-	misc_options ^= OPT_MISC_STEALTH_TYPING;
+	misc_options_new ^= OPT_MISC_STEALTH_TYPING;
 	gtk_widget_show(vbox);
 		
 
@@ -626,7 +626,7 @@ GtkWidget *chat_page() {
 	gaim_labeled_spin_button(vbox, _("New window width:"), &buddy_chat_size_new.width, 25, 9999);
 	gaim_labeled_spin_button(vbox, _("New window height:"), &buddy_chat_size_new.height, 25, 9999);
 	gaim_labeled_spin_button(vbox, _("Entry widget height:"), &buddy_chat_size_new.entry_height, 25, 9999);
-	gaim_button(_("Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox);
+	gaim_button(_("Raise windows on events"), &chat_options_new, OPT_CHAT_POPUP, vbox);
 	gtk_widget_show (vbox);
 
 
