@@ -3,6 +3,9 @@
  *
  * Copyright (C) 2000-2001, Rob Flynn <rob@tgflinux.com>
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ *
+ * A large portion of this was copied more or less directly from X-Chat,
+ * the world's most rocking IRC client. http://www.xchat.org/
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
