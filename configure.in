@@ -104,7 +104,7 @@ CFLAGS="$CFLAGS $GTK_CFLAGS"
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
-	XSS_LIBS="no"
+	XSS_LIBS=""
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
 	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-lXss"],[],[-lX11 -lXext -lm])
@@ -116,10 +116,10 @@ if test "x$enable_xss" = "xyes" ; then
 				AC_SUBST(XSS_LIBS)
 				])
 	else
-	       XSS_LIBS=no
+	       XSS_LIBS=""
 	fi
 else
-	XSS_LIBS=no
+	XSS_LIBS=""
 fi
 
 
@@ -224,11 +224,6 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-if test "$XSS_LIBS" = "no" ; then
-	echo Build with X scrnsvr ext... : no
-else
-	echo X screensaver libs......... : $XSS_LIBS
-fi
 echo Build with GNOME bits...... : $enable_gnome
 echo Build as GNOME applet...... : $enable_panel
 echo
