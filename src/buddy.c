@@ -474,6 +474,18 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 	}
 }
 
+static void un_alias(GtkWidget *a, struct buddy *b)
+{
+	struct group *g = find_group_by_buddy(b->gc, b->name);
+	struct group_show *gs = find_group_show(g->name);
+	struct buddy_show *bs;
+	GtkCTreeNode *node = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
+	g_snprintf(b->show, sizeof(b->show), "%s", b->name);
+	gtk_ctree_node_set_text(GTK_CTREE(edittree), node, 0, b->name);
+	if (gs) bs = find_buddy_show(gs, b->name);
+	if (bs) gtk_label_set(GTK_LABEL(bs->label), b->name);
+	do_export(0, 0);
+}
 
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
@@ -508,13 +520,24 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 			       event->button, event->time);
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
+		struct group *g = find_group_by_buddy(b->gc, b->name);
+		struct group_show *gs = find_group_show(g->name);
+		struct buddy_show *bs = find_buddy_show(gs, b->name);
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_alias), b);
+				   GTK_SIGNAL_FUNC(pressed_alias), bs);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+
+		if (strcmp(b->name, b->show)) {
+			button = gtk_menu_item_new_with_label(_("Un-Alias"));
+			gtk_signal_connect(GTK_OBJECT(button), "activate",
+					   GTK_SIGNAL_FUNC(un_alias), b);
+			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_widget_show(button);
+		}
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -931,9 +954,13 @@ void build_edit_tree()
 			mem = g->members;
 
 			while(mem) {
+				char buf[256];
 				b = (struct buddy *)mem->data;
-
-				text[0] = b->name;
+				if (strcmp(b->name, b->show)) {
+					g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+					text[0] = buf;
+				} else
+					text[0] = b->name;
 
 				n = gtk_ctree_insert_node(GTK_CTREE(edittree),
 							  p, NULL, text, 5,

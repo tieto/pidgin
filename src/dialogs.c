@@ -3429,6 +3429,7 @@ static void do_alias(GtkWidget *w, struct buddy_show *b)
 	}
 	do_export(0, 0);
 	destroy_dialog(aliasdlg, aliasdlg);
+	build_edit_tree();
 }
 
 void alias_dialog(struct buddy_show *b)
