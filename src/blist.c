@@ -127,8 +127,8 @@ GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
 
 static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
 	GaimBlistNode *bnode;
+	int contact_score = INT_MAX;
 	contact->priority = NULL;
-	contact->score = INT_MAX;
 
 	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
 		GaimBuddy *buddy;
@@ -149,12 +149,12 @@ static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
 
 		score += gaim_account_get_int(buddy->account, "score", 0);
 
-		if (score < contact->score) {
+		if (score < contact_score) {
 			contact->priority = buddy;
-			contact->score = score;
+			contact_score = score;
 		}
 		if (gaim_prefs_get_bool("/core/contact/last_match"))
-			if (score == contact->score)
+			if (score == contact_score)
 				contact->priority = buddy;
 	}
 }
@@ -765,7 +765,6 @@ GaimContact *gaim_contact_new()
 	((GaimBlistNode*)c)->type = GAIM_BLIST_CONTACT_NODE;
 
 	c->totalsize = c->currentsize = c->online = 0;
-	c->score = INT_MAX;
 	gaim_blist_node_initialize_settings((GaimBlistNode*)c);
 
 	ops = gaim_blist_get_ui_ops();

@@ -119,7 +119,6 @@ struct _GaimContact {
 	int currentsize;	    /**< The number of buddies in this contact corresponding to online accounts */
 	int online;			    /**< The number of buddies in this contact who are currently online */
 	GaimBuddy *priority;    /**< The "top" buddy for this contact */
-	int score;                             /**< The priority score. */
 };
 
 
