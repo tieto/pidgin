@@ -181,7 +181,7 @@ void show_about(GtkWidget *w, void *data)
 			"  <b>", _("Norwegian"), " (no)</b> - Petter Johan Olsen &lt;<a href=\"mailto:petter.olsen@cc.uit.no\">petter.olsen@cc.uit.no</a>&gt;<br>"
 			"  <b>", _("Polish"), " (pl)</b> - Krzysztof &lt;<a href=\"mailto:krzysztof@foltman.com\">krzysztof@foltman.com</a>&gt;, Emil &lt;<a href=\"mailto:emil5@go2.pl\">emil5@go2.pl</a>&gt;<br>"
 			"  <b>", _("Portuguese"), " (pt)</b> - Duarte Henriques &lt;<a href=\"mailto:duarte_henriques@myrealbox.com\">duarte_henriques@myrealbox.com</a>&gt;<br>"
-			"  <b>", _("Portuguese-Brazil"), " (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@myrealbox.com\">mauricioc@myrealbox.com</a>&gt;<br>"
+			"  <b>", _("Portuguese-Brazil"), " (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@gmail.com\">mauricioc@gmail.com</a>&gt;<br>"
 			"  <b>", _("Romanian"), " (ro)</b> - Mişu Moldovan &lt;<a href=\"mailto: dumol@go.ro\">dumol@go.ro</a>&gt;<br>"
 			"  <b>", _("Russian"), "(ru)</b> - Alexandre Prokoudine &lt;<a href=\"mailto: avp@altlinux.ru\">avp@altlinux.ru</a>&gt;<br>"
 			"  <b>", _("Serbian"), " (sr)</b> - Danilo Šegan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;, Aleksandar Urosevic &lt;<a href=\"mailto: urke@users.sourceforge.net\">urke@users.sourceforge.net</a>&gt;<br>"
