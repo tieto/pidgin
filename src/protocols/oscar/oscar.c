@@ -2016,7 +2016,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		if (!args->msg || !args->msglen)
 			return 1;
-		
+
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "UCS-2BE", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("Unicode IM conversion: %s\n", err->message);
@@ -3520,26 +3520,27 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
 	buf = g_strdup_printf("<b>UIN:</b> %s", who);
-	if (info->nick) {
+	if (info->nick && info->nick[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Nick:</b> ", info->nick, NULL);  g_free(tmp);
 		serv_got_alias(gc, who, info->nick);
 	}
-	if (info->first) {
+	if (info->first && info->first[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>First Name:</b> ", info->first, NULL);  g_free(tmp);
 	}
-	if (info->last) {
+	if (info->last && info->last[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Last Name:</b> ", info->last, NULL);  g_free(tmp);
 	}
-	if (info->email) {
+	if (info->email && info->email[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> <a href=\"mailto:", info->email, "\">", info->email, "</a>", NULL);  g_free(tmp);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
+			if (info->email2[i] && info->email2[i][0])
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> <a href=\"mailto:", info->email2[i], "\">", info->email2[i], "</a>", NULL);  g_free(tmp);
 		}
 	}
-	if (info->mobile) {
+	if (info->mobile && info->mobile[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Mobile Phone:</b> ", info->mobile, NULL);  g_free(tmp);
 	}
 	if (info->gender) {
@@ -3559,57 +3560,57 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		snprintf(age, sizeof(age), "%hhd", info->age);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Age:</b> ", age, NULL);  g_free(tmp);
 	}
-	if (info->personalwebpage) {
+	if (info->personalwebpage && info->personalwebpage[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Personal Web Page:</b> <a href=\"", info->personalwebpage, "\">", info->personalwebpage, "</a>", NULL);  g_free(tmp);
 	}
-	if (info->info) {
+	if (info->info && info->info[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "<hr><b>Additional Information:</b><br>", info->info, NULL);  g_free(tmp);
 	}
 	tmp = buf;  buf = g_strconcat(tmp, "<hr>\n", NULL);  g_free(tmp);
-	if (info->homeaddr || info->homecity || info->homestate || info->homezip) {
+	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>Home Address:</b>", NULL);  g_free(tmp);
-		if (info->homeaddr) {
+		if (info->homeaddr && info->homeaddr[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Address:</b> ", info->homeaddr, NULL);  g_free(tmp);
 		}
-		if (info->homecity) {
+		if (info->homecity && info->homecity[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>City:</b> ", info->homecity,  NULL);  g_free(tmp);
 		}
-		if (info->homestate) {
+		if (info->homestate && info->homestate[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>State:</b> ", info->homestate, NULL);  g_free(tmp);
 		}
-		if (info->homezip) {
+		if (info->homezip && info->homezip[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Zip Code:</b> ", info->homezip, NULL);  g_free(tmp);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
-	if (info->workaddr || info->workcity || info->workstate || info->workzip) {
+	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>Work Address:</b>", NULL);  g_free(tmp);
-		if (info->workaddr) {
+		if (info->workaddr && info->workaddr[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Address:</b> ", info->workaddr, NULL);  g_free(tmp);
 		}
-		if (info->workcity) {
+		if (info->workcity && info->workcity[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>City:</b> ", info->workcity, NULL);  g_free(tmp);
 		}
-		if (info->workstate) {
+		if (info->workstate && info->workstate[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>State:</b> ", info->workstate, NULL);  g_free(tmp);
 		}
-		if (info->workzip) {
+		if (info->workzip && info->workzip[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Zip Code:</b> ", info->workzip, NULL);  g_free(tmp);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
-	if (info->workcompany || info->workdivision || info->workposition || info->workwebpage) {
+	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>Work Information:</b>", NULL);  g_free(tmp);
-		if (info->workcompany) {
+		if (info->workcompany && info->workcompany[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Company:</b> ", info->workcompany, NULL);  g_free(tmp);
 		}
-		if (info->workdivision) {
+		if (info->workdivision && info->workdivision[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Division:</b> ", info->workdivision, NULL);  g_free(tmp);
 		}
-		if (info->workposition) {
+		if (info->workposition && info->workposition[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Position:</b> ", info->workposition, NULL);  g_free(tmp);
 		}
-		if (info->workwebpage) {
+		if (info->workwebpage && info->workwebpage[0]) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Web Page:</b> <a href=\"", info->workwebpage, "\">", info->workwebpage, "</a>", NULL);  g_free(tmp);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
