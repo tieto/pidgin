@@ -857,9 +857,20 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 	read(source, header, 4);
 	len = header[0];
 	command = header[1];	
-	
+
 	read(source, buf, len);
 	buf[len] = 0;
+
+	/* If we have some kind of error, get outta here */
+	if (command == 0x00)
+	{
+		do_error_dialog(buf, "Gaim: Napster Error");
+		gdk_input_remove(ndata->inpa);
+		ndata->inpa = 0;
+		close(source);
+		signoff(gc);
+		return;
+	}
 
 	if (command == 0x03) {
 		printf("Registered with E-Mail address of: %s\n", buf);

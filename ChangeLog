@@ -2,6 +2,8 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.11.0-pre13:
 	* Can view/set chat topic in Jabber (thanks faceprint)
+	* The napster plugin no longer segfaults on invalid names
+	  and/or passwords.
 
 version 0.11.0-pre12 (05/29/2001):
 	* Fixed a funny bug with auto responses when queued messages
