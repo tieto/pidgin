@@ -97,10 +97,12 @@ proto_name(int proto)
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
-static GtkWidget *
-__make_protocol_menu(AccountPrefsDialog *dialog)
+static void
+__set_account_protocol(GtkWidget *item, GaimProtocol protocol)
 {
-	return gtk_button_new();
+	AccountPrefsDialog *dialog;
+	
+	dialog = g_object_get_data(G_OBJECT(item), "user_data");
 }
 
 static GtkWidget *
@@ -148,7 +150,9 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Protocol */
-	dialog->protocol_menu = __make_protocol_menu(dialog);
+	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(-1,
+			G_CALLBACK(__set_account_protocol), dialog);
+
 	__add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
 	/* Screen Name */

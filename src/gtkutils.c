@@ -523,3 +523,50 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	return vbox;
 }
 
+GtkWidget *
+gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
+								  gpointer user_data)
+{
+	GaimPluginProtocolInfo *prpl_info;
+	GaimPlugin *plugin;
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkWidget *item;
+	GList *p;
+	int i;
+	int selected_index = -1;
+
+	optmenu = gtk_option_menu_new();
+	gtk_widget_show(optmenu);
+
+	menu = gtk_menu_new();
+	gtk_widget_show(menu);
+
+	for (p = gaim_plugins_get_protocols(), i = 0;
+		 p != NULL;
+		 p = p->next, i++) {
+
+		plugin = (GaimPlugin *)p->data;
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		item = gtk_menu_item_new_with_label(plugin->info->name);
+
+		g_object_set_data(G_OBJECT(item), "user_data", user_data);
+
+		g_signal_connect(G_OBJECT(item), "activate",
+						 cb, GINT_TO_POINTER(prpl_info->protocol));
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+
+		if (prpl_info->protocol == protocol)
+			selected_index = i;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+
+	if (selected_index != -1)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+
+	return optmenu;
+}

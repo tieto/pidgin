@@ -26,6 +26,7 @@
 
 #include "gaim.h"
 #include "conversation.h"
+#include "prpl.h"
 
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
@@ -162,5 +163,18 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str,
  * @return The vbox to put things into.
  */
 GtkWidget *gaim_gtk_make_frame(GtkWidget *parent, const char *title);
+
+/**
+ * Creates a drop-down option menu filled with protocols.
+ *
+ * @param protocol  The protocol to select by default.
+ * @param cb        The callback to call when a protocol is selected.
+ * @param user_data Data to pass to the callback function.
+ *
+ * @return The drop-down option menu.
+ */
+GtkWidget *gaim_gtk_protocol_option_menu_new(GaimProtocol protocol,
+											 GCallback cb,
+											 gpointer user_data);
 
 #endif /* _GAIM_GTK_UTILS_H_ */
