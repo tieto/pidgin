@@ -3,7 +3,6 @@ SUBDIRS = protocols
 bin_PROGRAMS = gaim
 gaim_SOURCES =	about.c \
 		aim.c \
-		applet.c \
 		away.c \
 		browser.c \
 		buddy.c \
