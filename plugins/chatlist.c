@@ -9,6 +9,7 @@
 #include "gaim.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 struct chat_page {
 	GtkWidget *list1;
