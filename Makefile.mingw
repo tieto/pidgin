@@ -22,7 +22,6 @@ TOC = $(GAIM_PROTOS)/toc
 IRC = $(GAIM_PROTOS)/irc
 JABBER = $(GAIM_PROTOS)/jabber
 NAPSTER = $(GAIM_PROTOS)/napster
-BLOGGER = $(GAIM_PROTOS)/blogger
 GG = $(GAIM_PROTOS)/gg
 PO = ./po
 
@@ -53,7 +52,6 @@ IRC_TYPE = PLUGIN
 JABBER_TYPE = PLUGIN
 NAPSTER_TYPE = PLUGIN
 GG_TYPE = PLUGIN
-BLOGGER_TYPE = PLUGIN
 
 all:
 	cp config.h.mingw config.h
@@ -64,7 +62,6 @@ all:
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
-	$(MAKE) TYPE='$(BLOGGER_TYPE)' -C $(BLOGGER) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
@@ -83,7 +80,6 @@ install: all
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw install
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw install
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
-	$(MAKE) TYPE='$(BLOGGER_TYPE)' -C $(BLOGGER) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
@@ -104,7 +100,6 @@ clean:
 	$(MAKE) -C $(IRC) -f Makefile.mingw clean
 	$(MAKE) -C $(JABBER) -f Makefile.mingw clean
 	$(MAKE) -C $(GG) -f Makefile.mingw clean
-	$(MAKE) -C $(BLOGGER) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)
