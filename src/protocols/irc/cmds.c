@@ -25,7 +25,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
-#include "util.c"
+#include "util.h"
 
 #include "irc.h"
 
