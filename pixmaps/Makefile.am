@@ -54,6 +54,7 @@ EXTRA_DIST =	about_small.xpm			\
 		moneymouth.xpm			\
 		mrt.xpm				\
 		msgpend.png			\
+		msgunread.png			\
 		no_icon.xpm			\
 		normal.xpm			\
 		offline.png			\
@@ -104,7 +105,7 @@ gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png 
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
-gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png msgunread.png
+gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png 
 
 distpixmapdir = $(datadir)/pixmaps
 distpixmap_DATA = gaim.png
