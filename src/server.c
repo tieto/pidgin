@@ -815,18 +815,14 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			qm->len = len;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else {
-			/* "CVS will be broken frequently for fun"
-			   -- Topic on #gaim, 7 April 2003 */
-			char *upper = g_ascii_strup(message, len);
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			/* CONV XXX gaim_conversation_set_name(cnv, name); */
 
-			gaim_im_write(GAIM_IM(cnv), NULL, upper, len,
+			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
 						  away | WFLAG_RECV, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
-			g_free(upper);
 		}
 	}
 
