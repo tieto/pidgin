@@ -7,6 +7,16 @@
 	awesome.  Thanks to everyone who helped report, triage, fix, and
 	test.
 
+	Christian: Yay for three weeks working so well. Boo for me not
+	doing much of anything this release, aside from a small memory
+	leak fix. I'm starting a new job and leaving my current one, so
+	when the dust settles and my schedule is a bit better, the very
+	cool status rewrite will be finished up. Especially now that I have
+	some help! I'd like to second Sean's thanks to all the people who
+	helped with this bug fix release. Gaim should be a bit more stable
+	for a lot of you. For those experiencing MSN problems still, we'll
+	get that nailed for you soon, promise.
+
 0.80 (07/15/2004):
 	Sean: Three weeks!  Hooray for timeliness!  I didn't do much here
 	but drag-and-droppable file transfers.  Drag something into a
