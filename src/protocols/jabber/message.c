@@ -168,12 +168,16 @@ static void handle_groupchat(JabberMessage *jm)
 		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
 		if(!jm->xhtml && !jm->body) {
-			char *msg;
+			char *msg, *tmp, *tmp2;
+			tmp = gaim_escape_html(jm->subject);
+			tmp2 = gaim_markup_linkify(tmp);
 			if(jid->resource)
-				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, jm->subject);
+				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
-				msg = g_strdup_printf(_("The topic is: %s"), jm->subject);
+				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", msg, GAIM_MESSAGE_SYSTEM, jm->sent);
+			g_free(tmp);
+			g_free(tmp2);
 			g_free(msg);
 		}
 	}

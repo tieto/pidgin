@@ -1,6 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.82:
+	New Features:
+	* Topics in the conversation window (not the topic field at the
+	  top) with urls will now have those urls linkified (Stu Tomlinson)
 	Bug Fixes:
 	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)
 	* Selecting a buddy icon for a brand new account no longer

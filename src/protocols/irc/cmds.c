@@ -444,9 +444,12 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(convo));
 
 		if (topic) {
-			char *tmp = gaim_escape_html(topic);
-			buf = g_strdup_printf(_("current topic is: %s"), tmp);
+			char *tmp, *tmp2;
+			tmp = gaim_escape_html(topic);
+			tmp2 = gaim_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
+			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), target, buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));

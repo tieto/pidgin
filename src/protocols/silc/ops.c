@@ -314,52 +314,61 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		break;
 
 	case SILC_NOTIFY_TYPE_TOPIC_SET:
-		idtype = va_arg(va, int);
-		entry = va_arg(va, void *);
-		tmp = va_arg(va, char *);
-		channel = va_arg(va, SilcChannelEntry);
+		{
+			char *esc, *tmp2;
+			idtype = va_arg(va, int);
+			entry = va_arg(va, void *);
+			tmp = va_arg(va, char *);
+			channel = va_arg(va, SilcChannelEntry);
 
-		convo = gaim_find_conversation_with_account(channel->channel_name,
-							    sg->account);
-		if (!convo)
+			convo = gaim_find_conversation_with_account(channel->channel_name,
+					sg->account);
+			if (!convo)
+				break;
+
+			if (!tmp)
+				break;
+
+			esc = gaim_escape_html(tmp);
+			tmp2 = gaim_markup_linkify(esc);
+			g_free(esc);
+
+			if (idtype == SILC_ID_CLIENT) {
+				client_entry = (SilcClientEntry)entry;
+				g_snprintf(buf, sizeof(buf),
+						_("%s has changed the topic of <I>%s</I> to: %s"),
+						client_entry->nickname, channel->channel_name, tmp2);
+				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), client_entry->nickname,
+						buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+						client_entry->nickname, tmp);
+			} else if (idtype == SILC_ID_SERVER) {
+				server_entry = (SilcServerEntry)entry;
+				g_snprintf(buf, sizeof(buf),
+						_("%s has changed the topic of <I>%s</I> to: %s"),
+						server_entry->server_name, channel->channel_name, tmp2);
+				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), server_entry->server_name,
+						buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+						server_entry->server_name, tmp);
+			} else if (idtype == SILC_ID_CHANNEL) {
+				channel = (SilcChannelEntry)entry;
+				g_snprintf(buf, sizeof(buf),
+						_("%s has changed the topic of <I>%s</I> to: %s"),
+						channel->channel_name, channel->channel_name, tmp2);
+				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), channel->channel_name,
+						buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+						channel->channel_name, tmp);
+			} else {
+				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, tmp);
+			}
+
+			g_free(tmp2);
+
 			break;
 
-		if (!tmp)
-			break;
-
-		if (idtype == SILC_ID_CLIENT) {
-			client_entry = (SilcClientEntry)entry;
-			g_snprintf(buf, sizeof(buf),
-				   _("%s has changed the topic of <I>%s</I> to: %s"),
-				   client_entry->nickname, channel->channel_name, tmp);
-			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), client_entry->nickname,
-					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
-									 client_entry->nickname, tmp);
-		} else if (idtype == SILC_ID_SERVER) {
-			server_entry = (SilcServerEntry)entry;
-			g_snprintf(buf, sizeof(buf),
-				   _("%s has changed the topic of <I>%s</I> to: %s"),
-				   server_entry->server_name, channel->channel_name, tmp);
-			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), server_entry->server_name,
-					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
-									 server_entry->server_name, tmp);
-		} else if (idtype == SILC_ID_CHANNEL) {
-			channel = (SilcChannelEntry)entry;
-			g_snprintf(buf, sizeof(buf),
-				   _("%s has changed the topic of <I>%s</I> to: %s"),
-				   channel->channel_name, channel->channel_name, tmp);
-			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), channel->channel_name,
-					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
-									 channel->channel_name, tmp);
-		} else {
-			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, tmp);
 		}
-
-		break;
-
 	case SILC_NOTIFY_TYPE_NICK_CHANGE:
 		client_entry = va_arg(va, SilcClientEntry);
 		client_entry2 = va_arg(va, SilcClientEntry);

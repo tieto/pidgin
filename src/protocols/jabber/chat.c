@@ -549,11 +549,15 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 		jabber_message_free(jm);
 	} else {
 		const char *cur = gaim_conv_chat_get_topic(GAIM_CONV_CHAT(chat->conv));
-		char *buf;
+		char *buf, *tmp, *tmp2;
 
-		if(cur)
-			buf = g_strdup_printf(_("current topic is: %s"), cur);
-		else
+		if(cur) {
+			tmp = gaim_escape_html(cur);
+			tmp2 = gaim_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
+			g_free(tmp);
+			g_free(tmp2);
+		} else
 			buf = g_strdup(_("No topic is set"));
 		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", buf,
 				GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG, time(NULL));

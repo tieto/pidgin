@@ -985,7 +985,7 @@ static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
 {
 	GaimConnection *gc;
 	int id = 0;
-	char *buf, *tmp;
+	char *buf, *tmp, *tmp2;
 	const char *topic;
 
 	gc = gaim_conversation_get_gc(conv);
@@ -998,8 +998,10 @@ static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
 		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(conv));
 		if (topic) {
 			tmp = gaim_escape_html(topic);
-			buf = g_strdup_printf(_("current topic is: %s"), tmp);
+			tmp2 = gaim_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
+			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
 		gaim_conv_chat_write(GAIM_CONV_CHAT(conv), gc->account->username, buf,
