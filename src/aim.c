@@ -406,6 +406,8 @@ int main(int argc, char *argv[])
 
                 applet_show_login(APPLET_WIDGET(applet), NULL);
         }
+
+	update_pixmaps();
 	
 	applet_widget_gtk_main();
 #else

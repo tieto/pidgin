@@ -54,19 +54,13 @@ enum gaim_user_states {
 #define _MSG_ONLINE_ "Online"
 #define _MSG_FONT_ "-adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
 
-#define GAIM_GNOME_PIXMAP_DIR "/usr/share/pixmaps/gaim/gnome/"
+#define GAIM_GNOME_DEVIL_OFFLINE "gaim/gnome/devil-offline.png"
+#define GAIM_GNOME_DEVIL_CONNECT "gaim/gnome/devil-connect.png"
+#define GAIM_GNOME_DEVIL_ONLINE "gaim/gnome/devil-online.png"
 
-/*this should be configurable instead of hard coded.*/
-#if 0
-#define GAIM_GNOME_OFFLINE_ICON "devil-offline.png"
-#define GAIM_GNOME_CONNECT_ICON "devil-connect.png"
-#define GAIM_GNOME_ONLINE_ICON "devil-online.png"
-
-#else 
-#define GAIM_GNOME_OFFLINE_ICON "penguin-offline.png"
-#define GAIM_GNOME_CONNECT_ICON "penguin-connect.png"
-#define GAIM_GNOME_ONLINE_ICON "penguin-online.png"
-#endif
+#define GAIM_GNOME_PENGUIN_OFFLINE "gaim/gnome/penguin-offline.png"
+#define GAIM_GNOME_PENGUIN_CONNECT "gaim/gnome/penguin-connect.png"
+#define GAIM_GNOME_PENGUIN_ONLINE "gaim/gnome/penguin-online.png"
 
 gint InitAppletMgr();                                              /* Initializes and creates applet */
 
@@ -91,6 +85,7 @@ void set_applet_draw_closed();								/* indicates that the code has closed the 
 void insert_applet_away();
 void remove_applet_away();
 
+void update_pixmaps();
 
 
 #endif /*USE_APPLET*/

@@ -23,5 +23,6 @@ gaimgnomedir = $(gnomedata)/pixmaps/gaim/gnome
 gaimgnome_DATA = 
 gaimgnomepixmapsdir = $(gnomedata)/pixmaps/gaim
 gaimgnomepixmaps_DATA = gnome/penguin-online.png gnome/penguin-offline.png \
-	gnome/penguin-connect.png
+	gnome/penguin-connect.png gnome/devil-offline.png \
+	gnome/devil-connect.png gnome/devil-online.png
 endif

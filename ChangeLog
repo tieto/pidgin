@@ -1,6 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.9.14:
+	* Using devil pictures in applet is now easily configurable
 	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,
 	  etc)
 	* Paned Conversation Windows (Thanks Syd)

@@ -297,7 +297,7 @@ void play_sound(int sound)
 #else /* USE_APPLET */
 
 #include "gaim.h"
-#include <libgnome/gnome-triggers.h>
+#include <gnome.h>
 void play_sound(int sound)
 {
 

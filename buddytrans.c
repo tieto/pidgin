@@ -79,6 +79,7 @@ void do_trans(int source, int destin) {
 			} else if (!strcmp("buddy", field)) {
 				fprintf(dest, "b %s\n", name);
 			}
+			free(field);
 		}
 	}
 	fprintf(dest, "}");

@@ -41,6 +41,10 @@ gboolean buddy_created = FALSE;
 gboolean applet_draw_open = FALSE;
 GtkWidget *applet_popup = NULL;
 
+gchar GAIM_GNOME_OFFLINE_ICON[255] = GAIM_GNOME_PENGUIN_OFFLINE;
+gchar GAIM_GNOME_CONNECT_ICON[255] = GAIM_GNOME_PENGUIN_CONNECT;
+gchar GAIM_GNOME_ONLINE_ICON[255] = GAIM_GNOME_PENGUIN_ONLINE;
+
 GtkWidget *applet;
 GtkWidget *button;
 GtkWidget *status_label;
@@ -87,13 +91,13 @@ GdkPixmap *icon_away_bm=NULL;
 
 gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **pm, GdkBitmap **bm ){
 	gboolean result = TRUE;
-	char path[255] = GAIM_GNOME_PIXMAP_DIR;
+	char *path;
 	GdkImlibImage *im;
 	GdkPixmap *temp_pm;
         GdkPixmap *temp_bm;
-		
-	strcat( path, name);
-	
+
+	path = gnome_pixmap_file(name);	
+
 	im=gdk_imlib_load_image( path );
 	
 	if ((*pm)!=NULL)
@@ -111,6 +115,7 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 		debug_print(debug_buff);
 	}
 	
+	free(path);
 	return result;
 }
 
@@ -120,7 +125,8 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 ** visibility - private
 **
 ** input:
-**	ap - not in use
+**	ap - if not NULL, was called from update_pixmaps, and
+**		should update them
 **
 ** description - takes care of swapping status icons and 
 **			  updating the status label
@@ -140,7 +146,7 @@ gboolean update_applet( gpointer *ap ){
 		debug_print(debug_buff);
      }
      
-     if( MRI_user_status != old_user_status ){
+     if( MRI_user_status != old_user_status || ap){
 
          switch( MRI_user_status ){
       		case offline:
@@ -173,8 +179,8 @@ gboolean update_applet( gpointer *ap ){
       		break;
       		case away:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_away_pm,
-                           icon_away_bm );   
+                           icon_online_pm,
+                           icon_online_bm );   
       			gtk_label_set( GTK_LABEL(status_label), "Away" );
       		break;
       	}
@@ -204,6 +210,25 @@ gboolean update_applet( gpointer *ap ){
 #endif /*_USE_BUDDY_COUNT_*/
       return TRUE;
 
+}
+
+void update_pixmaps() {
+	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
+		sprintf(GAIM_GNOME_OFFLINE_ICON, "%s",  GAIM_GNOME_DEVIL_OFFLINE);
+		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_DEVIL_CONNECT);
+		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_DEVIL_ONLINE);
+	} else {
+		sprintf(GAIM_GNOME_OFFLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_OFFLINE);
+		sprintf(GAIM_GNOME_CONNECT_ICON, "%s",  GAIM_GNOME_PENGUIN_CONNECT);
+		sprintf(GAIM_GNOME_ONLINE_ICON, "%s",  GAIM_GNOME_PENGUIN_ONLINE);
+	}
+	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 32, 34,
+			&icon_offline_pm, &icon_offline_bm );
+	load_applet_icon( GAIM_GNOME_CONNECT_ICON, 32, 34,
+			&icon_connect_pm, &icon_connect_bm );
+	load_applet_icon( GAIM_GNOME_ONLINE_ICON, 32, 34,
+			&icon_online_pm, &icon_online_bm );
+	update_applet((gpointer *)applet);
 }
 
 
@@ -287,6 +312,8 @@ void insert_applet_away() {
 		awy = awy->next;
 		free(awayname);
 	}
+
+	MRI_user_status = online;
 }
 
 void remove_applet_away() {
@@ -310,6 +337,8 @@ void remove_applet_away() {
 	}
 	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away/");
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
+
+	MRI_user_status = away;
 }
 
 /***************************************************************
@@ -327,7 +356,7 @@ void applet_show_about(AppletWidget *widget, gpointer data) {
   const gchar *authors[] = {"Mark Spencer <markster@marko.net>",
                             "Jim Duchek <jimduchek@ou.edu>",
                             "Rob Flynn <rflynn@blueridge.net>",
-			
+			    "Eric Warmenhoven <warmenhoven@yahoo.com>",
                             NULL};
 
   GtkWidget *about=gnome_about_new(_("GAIM"),
@@ -687,7 +716,7 @@ gint InitAppletMgr( int argc, char *argv[] ){
 
 void setUserState( enum gaim_user_states state ){
 	MRI_user_status = state; 
-	update_applet( (gpointer *)applet );
+	update_applet(NULL);
 }
 
 void setTotalBuddies( gint num ){

@@ -32,6 +32,10 @@
 #include "gaim.h"
 #include "proxy.h"
 
+#if USE_APPLET
+#include "gnome_applet_mgr.h"
+#endif
+
 
 struct aim_user *current_user = NULL;
 GList *aim_users = NULL;
@@ -415,7 +419,7 @@ static void gaimrc_read_options(FILE *f)
                         blist_pos.height = atoi(p->value[3]);
                         blist_pos.xoff = atoi(p->value[4]);
                         blist_pos.yoff = atoi(p->value[5]);
-                }
+		}
 
         }
 

@@ -13,7 +13,6 @@ gaim_SOURCES = about.c aim.c away.c buddy.c buddy_chat.c conversation.c \
 endif
 
 
-
 CFLAGS += $(GAIM_CFLAGS)
 LIBS += $(GAIM_LIBS)
 LDADD += $(GAIM_LDADD)
