@@ -190,6 +190,7 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
+	case YAHOO_SERVICE_NEWCONTACT:
 		yahoo_parse_status(sess, pkt);
 		break;
 	case YAHOO_SERVICE_IDACT:
@@ -297,7 +298,15 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		}
 		yahoo_parse_packet(session, conn, &pkt);
 	} else if (conn->type == YAHOO_CONN_TYPE_DUMB) {
-		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "closing buddy list host connnection");
+		char *buf = g_malloc0(5000);
+		while (read(socket, &buf[pos++], 1) == 1);
+		if (pos == 1) {
+			g_free(buf);
+			YAHOO_PRINT(session, YAHOO_LOG_WARNING, "error reading from listserv");
+			return;
+		}
+		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
+		YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "closing buddy list host connnection");
 		yahoo_close(session, conn);
 	}
 }

@@ -70,6 +70,8 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 	g_free(bdy);
 	g_free(id);
 	g_free(usr);
+	if (message && strlen(message))
+		g_free(msg);
 
 	if (!send)
 		return 0;
@@ -131,6 +133,8 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 	g_free(bdy);
 	g_free(id);
 	g_free(usr);
+	if (message && strlen(message))
+		g_free(msg);
 
 	if (!send)
 		return 0;

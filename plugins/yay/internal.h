@@ -61,6 +61,7 @@ void yahoo_close(struct yahoo_session *, struct yahoo_conn *);
 #define YAHOO_SERVICE_IDDEACT          8
 #define YAHOO_SERVICE_NEWMAIL         11
 #define YAHOO_SERVICE_NEWPERSONALMAIL 14
+#define YAHOO_SERVICE_NEWCONTACT      15
 #define YAHOO_SERVICE_PING            18
 
 #define YAHOO_MESSAGE_NORMAL  1
