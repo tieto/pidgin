@@ -5,6 +5,7 @@
 #undef HAVE_STPCPY
 #undef HAVE_LIBSM
 #undef USE_APPLET
+#undef USE_GNOME
 #undef DEBUG
 #undef GAIM_PLUGINS
 #undef USE_PERL
