@@ -197,6 +197,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER,
 					       GTK_POLICY_ALWAYS);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 		gtk_widget_set_usize(sw, 245, 120);
 		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(sw);
