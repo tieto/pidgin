@@ -71,6 +71,8 @@ EXTRA_DIST =	about_small.xpm			\
 		luke03.xpm			\
 		moneymouth.xpm			\
 		msg_pending.xpm			\
+		msn_away.xpm			\
+		msn_online.xpm			\
 		no_icon.xpm			\
 		normal.xpm			\
 		offline.xpm			\

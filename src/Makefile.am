@@ -67,7 +67,8 @@ endif
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS)
 LIBS += $(DEBUG_LIBS)
 
-EXTRA_DIST =	convo.h \
+EXTRA_DIST =	applet.h \
+		convo.h \
 		gaim.h \
 		getopt.c \
 		getopt.h \
@@ -75,7 +76,6 @@ EXTRA_DIST =	convo.h \
 		gtkhtml.h \
 		gtkspell.h \
 		gtkticker.h \
-		gnome_applet_mgr.h \
 		multi.h \
 		prpl.h \
 		proxy.h
