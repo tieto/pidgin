@@ -425,6 +425,8 @@ msn_userlist_destroy(MsnUserList *userlist)
 	}
 
 	g_list_free(userlist->groups);
+
+	g_queue_free(userlist->buddy_icon_requests);
 	g_free(userlist);
 }
 

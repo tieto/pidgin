@@ -376,21 +376,6 @@ msn_send_file(GaimConnection *gc, const char *who, const char *file)
 		gaim_xfer_request(xfer);
 }
 
-static void
-update_buddy_icon_cb(GaimBlistNode *node, gpointer ignored)
-{
-/*	GaimBuddy *buddy;
- *	GaimConnection *gc;
- *
- *	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
- *
- *	buddy = (GaimBuddy *) node;
- *	gc = gaim_account_get_connection(buddy->account);
- *
- *	msn_request_buddy_icon(gc, buddy->name);
- */
-}
-
 /**************************************************************************
  * Protocol Plugin ops
  **************************************************************************/
@@ -536,11 +521,6 @@ msn_buddy_menu(GaimBuddy *buddy)
 	{
 		act = gaim_blist_node_action_new(_("Initiate Chat"),
 										 initiate_chat_cb, NULL);
-		m = g_list_append(m, act);
-
-		act = gaim_blist_node_action_new(_("Update Buddy Icon"),
-											update_buddy_icon_cb, NULL);
-
 		m = g_list_append(m, act);
 	}
 
