@@ -31,7 +31,7 @@ struct g_url {
 
 void grab_url(char *url, gboolean full,
 			  void (*callback)(gpointer, char *, unsigned long),
-			  gpointer data);
+			  gpointer data, char *, int);
 
 gchar *strip_html(const gchar *text);
 void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out);

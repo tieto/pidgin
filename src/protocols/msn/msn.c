@@ -28,6 +28,7 @@
 #include "state.h"
 #include "utils.h"
 #include "multi.h"
+#include "html.h"
 
 #define BUDDY_ALIAS_MAXLEN 388
 
@@ -1157,6 +1158,150 @@ msn_normalize(const char *str)
 	return buf;
 }
 
+static void
+msn_got_info(gpointer data, char *url_text, unsigned long len)
+{
+	char *stripped,*p,*q;
+	int count;
+	char buf[1024];
+	char *user_url = NULL;
+
+	if (!url_text || !strcmp(url_text,"")) {
+		g_show_info_text(NULL, NULL, 2,
+				"<html><body><b>Error retrieving profile</b></body></html>", NULL);
+		return;
+	}
+
+	/* if they have a homepage link, MSN masks it such that we need to
+	 * fetch the url out before strip_html() nukes it */
+	if((p = strstr(url_text, "Take a look at my </font><A class=viewDesc title=\"")) != NULL )
+	{
+		p += 50;
+		if((q = strchr(p, '"')) != NULL)
+			user_url = g_strndup(p,q-p);
+	}
+
+	/* strip_html() doesn't strip out character entities like &nbsp; and &#183; */
+	while ((p = strstr(url_text, "&nbsp;")) != NULL) {
+		memmove(p, p+6, strlen(p+6));
+		url_text[strlen(url_text)-6] = '\0';
+	}
+	while ((p = strstr(url_text, "&#183;")) != NULL) {
+		memmove(p, p+6, strlen(p+6));
+		url_text[strlen(url_text)-6] = '\0';
+	}
+
+	/* nuke the nasty \r's that just get in the way */
+	while ((p = strchr(url_text, '\r')) != NULL) {
+		memmove(p, p+1, strlen(p+1));
+		url_text[strlen(url_text)-1] = '\0';
+	}
+
+	/* MSN always puts in &#39; for apostrophies...replace them */
+	while ((p = strstr(url_text, "&#39;")) != NULL) {
+		*p = '\'';
+		memmove(p+1, p+5, strlen(p+5));
+		url_text[strlen(url_text)-4] = '\0';
+	}
+
+	/* nuke the html, it's easier than trying to parse the horrid stuff */
+	stripped = strip_html(url_text);
+
+	/* gonna re-use the memory we've already got for url_text */
+	strcpy(url_text, "<html><body>\n");
+
+	/* extract their Name and put it in */
+	info_extract_field(stripped, url_text, "\tName", 0, "\t", '\n',
+			"Undisclosed", "Name", 0, NULL);
+
+	/* extract their Age and put it in */
+	info_extract_field(stripped, url_text, "\tAge", 0, "\t", '\n',
+			"Undisclosed", "Age", 0, NULL);
+
+	/* extract their Gender and put it in */
+	info_extract_field(stripped, url_text, "\tGender", 6, "\t", '\n',
+			"Undisclosed", "Gender", 0, NULL);
+
+	/* extract their MaritalStatus and put it in */
+	info_extract_field(stripped, url_text, "\tMaritalStatus", 0, "\t", '\n',
+			"Undisclosed", "Marital Status", 0, NULL);
+
+	/* extract their Location and put it in */
+	info_extract_field(stripped, url_text, "\tLocation", 0, "\t", '\n',
+			"Undisclosed", "Location", 0, NULL);
+
+	/* extract their Occupation and put it in */
+	info_extract_field(stripped, url_text, "\t Occupation", 6, "\t", '\n',
+			"Undisclosed", "Occupation", 0, NULL);
+
+	/* the fields, 'A Little About Me', 'Favorite Things', 'Hobbies and Interests',
+	 * 'Favorite Quote', and 'My Homepage' may or may not appear, in any combination.
+	 * however, they do appear in certain order, so we can successively search to
+	 * pin down the distinct values.
+	 */
+
+	/* check if they have A Little About Me */
+	if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Favorite Things", '\n',
+				NULL, "A Little About Me", 0, NULL))
+		if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Hobbies and Interests", '\n',
+					NULL, "A Little About Me", 0, NULL))
+			if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Favorite Quote", '\n',
+						NULL, "A Little About Me", 0, NULL))
+				if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "My Homepage\tTake a look", '\n',
+							NULL, "A Little About Me", 0, NULL))
+					info_extract_field(stripped, url_text, "\tA Little About Me", 1, "last updated", '\n',
+							NULL, "A Little About Me", 0, NULL);
+
+	/* check if they have Favorite Things */
+	if(!info_extract_field(stripped, url_text, "Favorite Things", 1, "Hobbies and Interests", '\n',
+				NULL, "Favorite Things", 0, NULL))
+		if(!info_extract_field(stripped, url_text, "Favorite Things", 1, "Favorite Quote", '\n',
+					NULL, "Favorite Things", 0, NULL))
+			if(info_extract_field(stripped, url_text, "Favorite Things", 1, "My Homepage\tTake a look", '\n',
+						NULL, "Favorite Things", 0, NULL))
+				info_extract_field(stripped, url_text, "Favorite Things", 1, "last updated", '\n',
+						NULL, "Favorite Things", 0, NULL);
+
+	/* check if they have Hobbies and Interests */
+	if(!info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "Favorite Quote", '\n',
+				NULL, "Hobbies and Interests", 0, NULL))
+		if(info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "My Homepage\tTake a look", '\n',
+					NULL, "Hobbies and Interests", 0, NULL))
+			info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "last updated", '\n',
+					NULL, "Hobbies and Interests", 0, NULL);
+
+	/* check if they have Favorite Quote */
+	if(!info_extract_field(stripped, url_text, "Favorite Quote", 1, "My Homepage\tTake a look", '\n',
+				NULL, "Favorite Quote", 0, NULL))
+		info_extract_field(stripped, url_text, "Favorite Quote", 1, "last updated", '\n',
+				NULL, "Favorite Quote", 0, NULL);
+
+	/* extract the last updated date and put it in */
+	info_extract_field(stripped, url_text, "\tlast updated:", 1, "\n", '\n',
+			NULL, "Last Updated", 0, NULL);
+
+	/* if we were able to fetch a homepage url earlier, stick it in there */
+	if(user_url)
+	{
+		g_snprintf(buf,sizeof(buf),"<b>Home Page:</b><br><a href=\"%s\">%s</a><br>\n",user_url,user_url);
+		strcat(url_text,buf);
+	}
+
+	/* finish it off, and show it to them */
+	strcat(url_text, "</body></html>\n");
+	g_show_info_text(NULL, NULL, 2, url_text, NULL);
+	g_free(stripped);
+}
+
+static void
+msn_get_info(GaimConnection *gc, const char *name)
+{
+	/* MsnSession *session = (MsnSession *)gc->proto_data; */
+	char url[256];
+	g_snprintf(url, sizeof url, "%s%s", PROFILE_URL, name);
+	grab_url(url, FALSE, msn_got_info, NULL,"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",1);
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_MSN,
@@ -1176,7 +1321,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_send_im,
 	NULL,
 	msn_send_typing,
-	NULL,
+	msn_get_info,
 	msn_set_away,
 	NULL,
 	NULL,

@@ -898,7 +898,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", tdt->toc_ip,
 				gaim_account_get_int(gc->account, "port", TOC_PORT),
 				url);
-		grab_url(tmp, FALSE, toc_got_info, NULL);
+		grab_url(tmp, FALSE, toc_got_info, NULL, NULL, 0);
 	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_PASSWD_STATUS")) {

@@ -1541,7 +1541,7 @@ static void yahoo_get_info(GaimConnection *gc, const char *name)
 	/* struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data; */
 	char url[256];
 	g_snprintf(url, sizeof url, "%s%s", YAHOO_PROFILE_URL, name);
-	grab_url(url, FALSE, yahoo_got_info, NULL);
+	grab_url(url, FALSE, yahoo_got_info, NULL, NULL, 0);
 }
 
 static GaimPlugin *my_protocol = NULL;

@@ -81,7 +81,7 @@ struct g_url *parse_url(char *url)
 	/* hyphen at end includes it in control set */
 	char addr_ctrl[] = "A-Za-z0-9.-";
 	char port_ctrl[] = "0-9";
-	char page_ctrl[] = "A-Za-z0-9.~_/&%%?=+^-";
+	char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
 
 	if((turl=strstr(url, "http://")) || (turl=strstr(url, "HTTP://")))
 		url=turl+=7;
@@ -111,6 +111,8 @@ struct grab_url_data {
 	struct g_url *website;
 	char *url;
 	gboolean full;
+	char *user_agent;
+	int http11;
 
 	int inpa;
 
@@ -167,13 +169,14 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 				   "Redirecting to %s\n", new_url);
 
 		/* Try again, with this new location. */
-		grab_url(new_url, full, gunk->callback, gunk->data);
+		grab_url(new_url, full, gunk->callback, gunk->data, gunk->user_agent, gunk->http11);
 
 		/* Free up. */
 		g_free(new_url);
 		g_free(gunk->webdata);
 		g_free(gunk->website);
 		g_free(gunk->url);
+		g_free(gunk->user_agent);
 		g_free(gunk);
 
 		return TRUE;
@@ -201,16 +204,31 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		gunk->callback(gunk->data, NULL, 0);
 		g_free(gunk->website);
 		g_free(gunk->url);
+		g_free(gunk->user_agent);
 		g_free(gunk);
 		return;
 	}
 
 	if (!gunk->sentreq) {
-		char buf[256];
+		char buf[1024];
 
-		g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\n\r\n", gunk->full ? "" : "/",
-			   gunk->full ? gunk->url : gunk->website->page);
+		if(gunk->user_agent) {
+			if(gunk->http11)
+				g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.1\r\nUser-Agent: \"%s\"\r\nHost: %s\r\n\r\n", gunk->full ? "" : "/",
+						gunk->full ? gunk->url : gunk->website->page, gunk->user_agent, gunk->website->address);
+			else
+				g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\nUser-Agent: \"%s\"\r\n\r\n", gunk->full ? "" : "/",
+						gunk->full ? gunk->url : gunk->website->page, gunk->user_agent);
+		}
+		else {
+			if(gunk->http11)
+				g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.1\r\nHost: %s\r\n\r\n", gunk->full ? "" : "/",
+						gunk->full ? gunk->url : gunk->website->page, gunk->website->address);
+			else
+				g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\n\r\n", gunk->full ? "" : "/",
+						gunk->full ? gunk->url : gunk->website->page);
 
+		}
 		gaim_debug(GAIM_DEBUG_MISC, "grab_url_callback",
 				   "Request: %s\n", buf);
 
@@ -288,6 +306,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 			g_free(gunk->webdata);
 		g_free(gunk->website);
 		g_free(gunk->url);
+		g_free(gunk->user_agent);
 		g_free(gunk);
 	} else {
 		gaim_input_remove(gunk->inpa);
@@ -297,11 +316,13 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 			g_free(gunk->webdata);
 		g_free(gunk->website);
 		g_free(gunk->url);
+		g_free(gunk->user_agent);
 		g_free(gunk);
 	}
 }
 
-void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned long), gpointer data)
+void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned long),
+		gpointer data, char *user_agent, int http11)
 {
 	int sock;
 	struct grab_url_data *gunk = g_new0(struct grab_url_data, 1);
@@ -309,6 +330,8 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 	gunk->callback = callback;
 	gunk->data = data;
 	gunk->url = g_strdup(url);
+	gunk->user_agent = (user_agent) ? g_strdup(user_agent) : NULL;
+	gunk->http11 = http11;
 	gunk->website = parse_url(url);
 	gunk->full = full;
 
@@ -317,6 +340,7 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 								   gunk)) < 0) {
 		g_free(gunk->website);
 		g_free(gunk->url);
+		g_free(gunk->user_agent);
 		g_free(gunk);
 		callback(data, g_strdup(_("g003: Error opening connection.\n")), 0);
 	}

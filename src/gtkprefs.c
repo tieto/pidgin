@@ -538,7 +538,7 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 
 			/* We'll check this just to make sure. This also lets us do something different on
 			 * other platforms, if need be */
-			grab_url(name, TRUE, theme_got_url, ".tgz");
+			grab_url(name, TRUE, theme_got_url, ".tgz", NULL, 0);
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
