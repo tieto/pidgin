@@ -12,6 +12,7 @@ version 0.9.14:
 	* FONT sizes now work correctly.
 	* PLUGIN SUPPORT!! (Lots of cool goodies here)
 	* Fixed another leak or two
+	* Added ability to change your screenname password
 
 version 0.9.13 (03/27/2000):
 	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)

@@ -1043,45 +1043,102 @@ void show_set_dir()
 	gtk_widget_show(b->window);	
 }
 
+void do_change_password(GtkWidget *widget, struct passwddlg *b)
+{
+	gchar *orig, *new1, *new2;
+	gchar *buf;
+
+	orig = gtk_entry_get_text(GTK_ENTRY(b->original));
+	new1 = gtk_entry_get_text(GTK_ENTRY(b->new1));
+	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
+
+	if (strcasecmp(new1, new2)) {
+		do_error_dialog("New Passwords Do Not Match", "Gaim - Change Password Error");
+		return ;
+	}
+
+	if ((strlen(orig) < 1) || (strlen(new1) < 1) || (strlen(new2) < 1)) {
+		do_error_dialog("Fill out all fields completely", "Gaim - Change Password Error");
+		return;
+	}
+
+	buf = g_malloc(BUF_LONG);
+	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new1);
+	sflap_send(buf, strlen(buf), TYPE_DATA);
+	g_free(buf);
+	
+	destroy_dialog(NULL, b->window);
+	g_free(b);
+}
+
 void show_change_passwd()
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox;
+	GtkWidget *table;
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	b->cancel = gtk_button_new_with_label("Cancel");
+
 	b->ok = gtk_button_new_with_label("Ok");
+	b->cancel = gtk_button_new_with_label("Cancel");
 
-	vbox = gtk_vbox_new(FALSE, 10);
-	label = gtk_label_new("Changing Password");
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 10);
-	gtk_widget_show(label);
+	gtk_widget_show(b->ok);
+	gtk_widget_show(b->cancel);
 
-	hbox = gtk_hbox_new(FALSE, 10);
+	table = gtk_table_new(3, 2, TRUE);
+	
+
+
 	label = gtk_label_new("Original Password");
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 10);
-
+	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 	b->original = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), b->original, FALSE, FALSE, 10);
+	gtk_widget_show(b->original);
+	gtk_table_attach_defaults(GTK_TABLE(table), b->original, 1, 2, 0, 1);
 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 10);
-	gtk_widget_show(hbox);
-
-
-        label = gtk_label_new("Got sleepy, Will add the rest later.");
-        gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 10);
+        label = gtk_label_new("New Password");
         gtk_widget_show(label);
+        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+        b->new1 = gtk_entry_new();
+        gtk_widget_show(b->new1);
+        gtk_table_attach_defaults(GTK_TABLE(table), b->new1, 1, 2, 1, 2);
+
+        label = gtk_label_new("New Password (again)");
+        gtk_widget_show(label);
+        gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
+        b->new2 = gtk_entry_new();
+        gtk_widget_show(b->new2);
+        gtk_table_attach_defaults(GTK_TABLE(table), b->new2, 1, 2, 2, 3);
+
+	gtk_widget_show(table);
+
+	vbox = gtk_vbox_new(TRUE, TRUE);
+	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 5);
+	
+	hbox = gtk_hbox_new(TRUE, TRUE);
+	gtk_box_pack_start(GTK_BOX(hbox), b->ok, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
 	
 	gtk_container_add(GTK_CONTAINER(b->window), vbox);
 	gtk_widget_show(vbox);
-	gtk_widget_show(b->original);
-	aol_icon(b->window->window);
-	gtk_widget_realize(b->window);
+
+	gtk_container_border_width(GTK_CONTAINER(b->window), 10);
+	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim - Password Change");
 	gtk_widget_show(b->window);
+	
+        gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
+                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+        gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+        gtk_signal_connect(GTK_OBJECT(b->ok), "clicked",
+                           GTK_SIGNAL_FUNC(do_change_password), b);
+
+
 }
 
 void show_set_info()

@@ -177,7 +177,7 @@ int toc_login(char *username, char *password)
 		   FILETRANS_UID);
 	sflap_send(buf2, -1, TYPE_DATA);
 #endif
-        
+
         serv_finish_login();
 	return 0;
 }
@@ -498,6 +498,8 @@ void toc_callback( gpointer          data,
                 serv_got_joined_chat(id, name);
 
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
+	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
+		do_error_dialog("Password Change Successeful", "Gaim - Password Change");
 	} else if (!strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
 		int id;
 		char *in;
