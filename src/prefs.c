@@ -1974,7 +1974,7 @@ void update_color(GtkWidget *w, GtkWidget *pic)
 	style = gtk_style_new();
 	style->bg[0] = c;
 	gtk_widget_set_style(pic, style);
-	gtk_style_unref(style);
+	g_object_unref(style);
 }
 
 void set_default_away(GtkWidget *w, gpointer i)
@@ -2161,7 +2161,7 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 
 	swid = gtk_event_box_new();
 	gtk_widget_set_style(GTK_WIDGET(swid), style);
-	gtk_style_unref(style);
+	g_object_unref(style);
 	gtk_widget_set_usize(GTK_WIDGET(swid), 40, -1);
 	gtk_box_pack_start(GTK_BOX(box), swid, FALSE, FALSE, 5);
 	gtk_widget_show(swid);
