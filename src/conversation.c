@@ -1296,21 +1296,21 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	entry = c->entry;
 
 	link_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
-	     &win->style->white, link_xpm );
+	     &win->style->white, bold_xpm );
 	link_p = gtk_pixmap_new(link_i, mask);
 	gtk_widget_show(link_p);
 
 	palette_i = gdk_pixmap_create_from_xpm_d (win->window, &mask,
-             &win->style->white, palette_xpm );
+             &win->style->white, bold_xpm );
 	palette_p = gtk_pixmap_new(palette_i, mask);
 	gtk_widget_show(palette_p);
 
 	wood_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask, 
-	     &win->style->white, wood_xpm );
+	     &win->style->white, bold_xpm );
 	wood_p = gtk_pixmap_new(wood_i, mask);
 	gtk_widget_show(wood_p);
 	speaker_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, speaker_xpm );
+             &win->style->white, bold_xpm );
 	speaker_p = gtk_pixmap_new(speaker_i, mask);
 	gtk_widget_show(speaker_p);
 	c->makesound=1;
@@ -1331,22 +1331,22 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	underline_p = gtk_pixmap_new(underline_i, mask);
 	gtk_widget_show(underline_p);
 	small_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, small_xpm );
+             &win->style->white, bold_xpm );
 	small_p = gtk_pixmap_new(small_i, mask);
 	gtk_widget_show(small_p);
 	normal_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, normal_xpm );
+             &win->style->white, bold_xpm );
 	normal_p = gtk_pixmap_new(normal_i, mask);
 	gtk_widget_show(normal_p);
 	big_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, big_xpm );
+             &win->style->white, bold_xpm );
 	big_p = gtk_pixmap_new(big_i, mask);
 	gtk_widget_show(big_p);
 	font_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-			&win->style->white, fontface_xpm );
+			&win->style->white, bold_xpm );
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
-	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_xpm);
+	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, bold_xpm);
 	smiley_p = gtk_pixmap_new(smiley_i, mask);
 	gtk_widget_show(smiley_p);
 
