@@ -4,9 +4,15 @@
 ;;  Default language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
 ;;
+;;  Version 2
+;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_ENGLISH} "The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
+
+; License Page
+LangString GAIM_LICENSE_BUTTON			${LANG_ENGLISH} "Next >"
+LangString GAIM_LICENSE_BOTTOM_TEXT		${LANG_ENGLISH} "$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messaging Client (required)"
@@ -24,13 +30,11 @@ LangString GTK_WIMP_THEME_DESC			${LANG_ENGLISH} "GTK-Wimp (Windows impersonator
 LangString GTK_BLUECURVE_THEME_DESC			${LANG_ENGLISH} "The Bluecurve theme."
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_ENGLISH} "The Lighthouseblue theme."
 
-; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_ENGLISH} "Choose Install Location"
-LangString GTK_PAGE_SUBTITLE				${LANG_ENGLISH} "Choose the folder in which to install GTK+"
-LangString GTK_PAGE_INSTALL_MSG1			${LANG_ENGLISH} "Setup will install GTK+ in the following folder"
-LangString GTK_PAGE_INSTALL_MSG2			${LANG_ENGLISH} "To install in a different folder, click Browse and select another folder. Click Next to continue."
-LangString GTK_PAGE_UPGRADE_MSG1			${LANG_ENGLISH} "Setup will upgrade GTK+ found in the following folder"
+; GTK+ Directory Page
 LangString GTK_UPGRADE_PROMPT				${LANG_ENGLISH} "An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
+
+; Installer Finish Page
+LangString GAIM_FINISH_VISIT_WEB_SITE			${LANG_ENGLISH} "Visit the Windows Gaim Web Page"
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_ENGLISH} "Gaim (remove only)"

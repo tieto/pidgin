@@ -4,9 +4,19 @@
 ; NOTE: this .NSI script is designed for NSIS v2.0b4+
 
 ;--------------------------------
+;Global Variables
+Var name
+Var GTK_FOLDER
+Var GTK_THEME_SEL
+Var LANG_IS_SET
+Var ISSILENT
+
+;--------------------------------
 ;Configuration
 
-;General
+;The name var is set in .onInit
+Name $name
+
 !ifdef WITH_GTK
 OutFile "gaim-${GAIM_VERSION}.exe"
 !else
@@ -16,77 +26,96 @@ OutFile "gaim-${GAIM_VERSION}-debug.exe"
 OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
 !endif
 !endif
-SetCompressor bzip2
 
+SetCompressor bzip2
 DirShow show
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
 
-; $INSTDIR is set in .onInit function..
+; $name and $INSTDIR are set in .onInit function..
 
 !include "MUI.nsh"
-!include Sections.nsh
+!include "Sections.nsh"
 
 ;--------------------------------
 ;Defines
 
-!define MUI_PRODUCT			"Gaim"
-!define MUI_VERSION			${GAIM_VERSION}
+!define GAIM_NSIS_INCLUDE_PATH			".\src\win32\nsis"
+!define GAIM_INSTALLER_DEPS			"..\win32-dev\gaim-inst-deps"
 
-!define MUI_ICON			.\pixmaps\gaim-install.ico
-!define MUI_UNICON			.\pixmaps\gaim-install.ico
-!define MUI_SPECIALBITMAP		.\src\win32\nsis\gaim-intro.bmp
-!define MUI_HEADERBITMAP		.\src\win32\nsis\gaim-header.bmp
+!define GAIM_REG_KEY				"SOFTWARE\gaim"
+!define GAIM_UNINSTALL_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
+!define HKLM_APP_PATHS_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
+!define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+!define GAIM_UNINST_EXE				"gaim-uninst.exe"
+!define GAIM_REG_LANG				"Installer Language"
 
-!define GAIM_NSIS_INCLUDE_PATH		".\src\win32\nsis"
-!define GAIM_INSTALLER_DEPS		"..\win32-dev\gaim-inst-deps"
+!define GTK_VERSION				"2.2.4"
+!define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
+!define PERL_REG_KEY				"SOFTWARE\Perl"
+!define PERL_DLL				"perl58.dll"
+!define GTK_DEFAULT_INSTALL_PATH		"$PROGRAMFILES\Common Files\GTK\2.0"
+!define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
+!define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
+!define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
+!define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.2.0\engines"
 
-!define GAIM_REG_KEY			"SOFTWARE\gaim"
-!define GAIM_UNINSTALL_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
-!define HKLM_APP_PATHS_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
-!define GAIM_STARTUP_RUN_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-!define GAIM_UNINST_EXE			"gaim-uninst.exe"
+;--------------------------------
+;Modern UI Configuration
 
-!define GTK_VERSION			"2.2.2"
-!define GTK_REG_KEY			"SOFTWARE\GTK\2.0"
-!define PERL_REG_KEY			"SOFTWARE\Perl"
-!define PERL_DLL			"perl58.dll"
-!define GTK_DEFAULT_INSTALL_PATH	"$PROGRAMFILES\Common Files\GTK\2.0"
-!define GTK_RUNTIME_INSTALLER		"..\gtk_installer\gtk-runtime*.exe"
-!define GTK_THEME_DIR			"..\gtk_installer\gtk_themes"
-!define GTK_DEFAULT_THEME_GTKRC_DIR	"share\themes\Default\gtk-2.0"
-!define GTK_DEFAULT_THEME_ENGINE_DIR	"lib\gtk-2.0\2.2.0\engines"
+  !define MUI_ICON				".\pixmaps\gaim-install.ico"
+  !define MUI_UNICON				".\pixmaps\gaim-install.ico"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP 		".\src\win32\nsis\gaim-intro.bmp"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP		".\src\win32\nsis\gaim-header.bmp"
+
+  ; Alter License section
+  !define MUI_LICENSEPAGE_BUTTON		$(GAIM_LICENSE_BUTTON)
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(GAIM_LICENSE_BOTTOM_TEXT)
+
+  !define MUI_COMPONENTSPAGE_SMALLDESC
+  !define MUI_ABORTWARNING
+
+  ;Finish Page config
+  !define MUI_FINISHPAGE_RUN			"$INSTDIR\gaim.exe"
+  !define MUI_FINISHPAGE_RUN_NOTCHECKED
+  !define MUI_FINISHPAGE_LINK			$(GAIM_FINISH_VISIT_WEB_SITE)
+  !define MUI_FINISHPAGE_LINK_LOCATION          "http://gaim.sourceforge.net/win32"
 
 ;--------------------------------
 ;Pages
   
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
-  Page custom ShowGtkInstallDirChooser GtkInstallDirVerify
+
+!ifdef WITH_GTK
+  ; GTK+ install dir page
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE		preGtkDirPage
+  !define MUI_PAGE_CUSTOMFUNCTION_LEAVE		postGtkDirPage
+  !define MUI_DIRECTORYPAGE_VARIABLE		$GTK_FOLDER
   !insertmacro MUI_PAGE_DIRECTORY
+!endif
+
+  ; Gaim install dir page
+  !insertmacro MUI_PAGE_DIRECTORY
+
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
 
+  !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
-
-;--------------------------------
-;Modern UI Configuration
-
-  !define MUI_COMPONENTSPAGE_SMALLDESC
-  !define MUI_ABORTWARNING
-
-  ;Remember the installer language
-  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
-  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
-  !define MUI_LANGDLL_ALWAYSSHOW
+  !insertmacro MUI_UNPAGE_FINISH
 
 ;--------------------------------
 ;Languages
  
+  ;; English goes first because its the default. The rest are
+  ;; in alphabetical order (at least the strings actually displayed
+  ;; will be).
+
   !insertmacro MUI_LANGUAGE "English"
 
   !insertmacro MUI_LANGUAGE "Bulgarian"
@@ -124,35 +153,18 @@ SetDateSave on
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
 
 ;--------------------------------
-;Data
-  
-  LicenseData /LANG=${LANG_ENGLISH}		"./COPYING"
-  LicenseData /LANG=${LANG_GERMAN}		"./COPYING"
-  LicenseData /LANG=${LANG_DUTCH}		"./COPYING"
-  LicenseData /LANG=${LANG_FRENCH}		"./COPYING"
-  LicenseData /LANG=${LANG_SIMPCHINESE} 	"./COPYING"
-  LicenseData /LANG=${LANG_SERBIAN}		"./COPYING"
-  LicenseData /LANG=${LANG_PORTUGUESEBR}	"./COPYING"
-  LicenseData /LANG=${LANG_HUNGARIAN}		"./COPYING"
-  LicenseData /LANG=${LANG_ITALIAN}		"./COPYING"
-  LicenseData /LANG=${LANG_BULGARIAN}		"./COPYING"
-  LicenseData /LANG=${LANG_SWEDISH}		"./COPYING"
-  LicenseData /LANG=${LANG_TRADCHINESE}		"./COPYING"
-  LicenseData /LANG=${LANG_KOREAN}		"./COPYING"
-  LicenseData /LANG=${LANG_ROMANIAN}		"./COPYING"
-  LicenseData /LANG=${LANG_PORTUGUESE}		"./COPYING"
-
-;--------------------------------
 ;Reserve Files
   ; Only need this if using bzip2 compression
 
-  ReserveFile "${GAIM_NSIS_INCLUDE_PATH}\gtkInstall.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   !insertmacro MUI_RESERVEFILE_LANGDLL 
   ReserveFile "${NSISDIR}\Plugins\AccessControl.dll"
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Start Install Sections ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;--------------------------------
 ;Uninstall any old version of Gaim
@@ -207,6 +219,7 @@ Section -SecUninstallOldGaim
 	  ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
 	  ; and versions 0.60 and lower did not correctly set the uninstall reg string 
 	  ; (the string was set in quotes)
+          IfSilent do_wipeout
           MessageBox MB_YESNO $(GAIM_PROMPT_WIPEOUT) IDYES do_wipeout IDNO cancel_install
           cancel_install:
             Quit
@@ -248,24 +261,23 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   Pop $R6
 
-  ; Pass on the language we are using to GTK+ installer via registry..
-  WriteRegStr HKCU "${GTK_REG_KEY}" "Installer Language" "$LANGUAGE"
-
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
   StrCmp $R0 "2" no_gtk no_gtk
 
   no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
-    !insertmacro MUI_INSTALLOPTIONS_READ $R2 "gtkInstall.ini" "Field 4" "State"
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /S /D=$R2'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     Goto gtk_install_cont
 
   upgrade_gtk:
+    StrCpy $GTK_FOLDER $R6
+    IfSilent skip_mb
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) IDNO done
+    skip_mb:
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /S'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
     Goto gtk_install_cont
 
   gtk_install_cont:
@@ -275,15 +287,17 @@ Section $(GTK_SECTION_TITLE) SecGtk
 
     gtk_install_error:
       Delete "$TEMP\gtk-runtime.exe"
+      IfSilent skip_mb1
       MessageBox MB_OK $(GTK_INSTALL_ERROR) IDOK
+      skip_mb1:
       Quit
 
   have_gtk:
-    StrCpy $R2 $R6 ; Copy GTK+ path
+    StrCpy $GTK_FOLDER $R6
     StrCmp $R1 "NONE" done ; If we have no rights.. can't re-install..
     ; Even if we have a sufficient version of GTK+, we give user choice to re-install.
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /S'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
     IfErrors gtk_install_error
     Goto done
 
@@ -291,15 +305,17 @@ Section $(GTK_SECTION_TITLE) SecGtk
   ; end got_install rights
 
   gtk_no_install_rights:
+    ; Install GTK+ to Gaim install dir
+    StrCpy $GTK_FOLDER $INSTDIR
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /S /D=$INSTDIR'
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
     IfErrors gtk_install_error
       SetOverwrite on
       ClearErrors
-      CopyFiles /FILESONLY "$INSTDIR\bin\*.dll" $INSTDIR
+      CopyFiles /FILESONLY "$GTK_FOLDER\bin\*.dll" $GTK_FOLDER
       SetOverwrite off
       IfErrors gtk_install_error
-        Delete "$INSTDIR\bin\*.dll"
+        Delete "$GTK_FOLDER\bin\*.dll"
         Goto done
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; end gtk_no_install_rights
@@ -396,6 +412,9 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     CreateShortCut "$SMPROGRAMS\Gaim\Uninstall.lnk" "$INSTDIR\${GAIM_UNINST_EXE}"
     SetOverwrite off
 
+    ; Write out installer language
+    WriteRegStr HKCU "${GAIM_REG_KEY}" "${GAIM_REG_LANG}" "$LANGUAGE"
+
     ; write out uninstaller
     SetOverwrite on
     WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
@@ -408,67 +427,59 @@ SectionEnd ; end of default Gaim section
 ;GTK+ Themes
 
 SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
-  Section $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
+  Section /o $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
     Call CanWeInstallATheme
-    Pop $R1
-    StrCmp $R1 "" done
-
+    Pop $R0
+    StrCmp $R0 "" done
     SetOverwrite on
-    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    CopyFiles $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.plain $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc
+    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    CopyFiles $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.plain $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc
     SetOverwrite off
-
     done:
   SectionEnd
 
   Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
     Call CanWeInstallATheme
-    Pop $R1
-    StrCmp $R1 "" done
-
+    Pop $R0
+    StrCmp $R0 "" done
     SetOverwrite on
-    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R1\${GTK_DEFAULT_THEME_ENGINE_DIR}
+    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
     File ${GTK_THEME_DIR}\engines\libwimp.dll
-    SetOutPath $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}
+    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
     File ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
     File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
     SetOverwrite off
-    
     done:
   SectionEnd
 
-  Section $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
+  Section /o $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
     Call CanWeInstallATheme
-    Pop $R1
-    StrCmp $R1 "" done
-
+    Pop $R0
+    StrCmp $R0 "" done
     SetOverwrite on
-    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R1\${GTK_DEFAULT_THEME_ENGINE_DIR}
+    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
     File ${GTK_THEME_DIR}\engines\libbluecurve.dll
-    SetOutPath $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}
+    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
     File ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
     File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
     SetOverwrite off
-
     done:
   SectionEnd
 
-  Section $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
+  Section /o $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
     Call CanWeInstallATheme
-    Pop $R1
-    StrCmp $R1 "" done
-
+    Pop $R0
+    StrCmp $R0 "" done
     SetOverwrite on
-    Rename $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R1\${GTK_DEFAULT_THEME_ENGINE_DIR}
+    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
+    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
     File ${GTK_THEME_DIR}\engines\liblighthouseblue.dll
-    SetOutPath $R1\${GTK_DEFAULT_THEME_GTKRC_DIR}
+    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
     File ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
     File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
     SetOverwrite off
-
     done:
   SectionEnd
 SubSectionEnd
@@ -506,7 +517,7 @@ Section Uninstall
     DeleteRegValue HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
     DeleteRegValue HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
     ; Remove Language preference info
-    DeleteRegKey ${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
+    DeleteRegKey HKCU ${GAIM_REG_KEY} ;${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
 
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
@@ -566,21 +577,23 @@ Section Uninstall
     Goto done
 
   cant_uninstall:
+    IfSilent skip_mb
     MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) IDOK
+    skip_mb:
     Quit
 
   no_rights:
+    IfSilent skip_mb1
     MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) IDOK
+    skip_mb1:
     Quit
 
   done:
-  ;Display the Finish header
-  !insertmacro MUI_UNFINISHHEADER
 SectionEnd ; end of uninstall section
 
 ;--------------------------------
 ;Descriptions
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGaim} \
 	$(GAIM_SECTION_DESCRIPTION)
 !ifdef WITH_GTK
@@ -597,7 +610,7 @@ SectionEnd ; end of uninstall section
         $(GTK_BLUECURVE_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
         $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Functions
@@ -616,18 +629,20 @@ Function CanWeInstallATheme
     Push $1
     Push $0
 
-    ; Did we install GTK+ to the Gaim dir?
-    IfFileExists "$INSTDIR\lib" 0 check_keys
-      StrCpy $1 $INSTDIR
-      Goto done
+    ; Set default.. no rights
+    StrCpy $1 ""
 
-    check_keys:
-    ; First see if we can install a theme..
     Call CheckUserInstallRights
     Pop $0
 
-    StrCmp $0 "HKCU" hkcu
-    StrCmp $0 "HKLM" hklm no_rights
+    ; If no rights check if gtk was installed to gaim dir..
+    StrCmp $0 "NONE" 0 themes_cont
+      StrCmp $GTK_FOLDER $INSTDIR 0 no_rights
+        StrCpy $1 $INSTDIR
+	Goto done
+    themes_cont:
+
+    StrCmp $0 "HKCU" hkcu hklm
 
     hkcu:
       ReadRegStr $1 HKCU ${GTK_REG_KEY} "Path"
@@ -635,10 +650,12 @@ Function CanWeInstallATheme
 
     hklm:
       ReadRegStr $1 HKLM ${GTK_REG_KEY} "Path"
-      StrCmp $1 "" no_rights done
+      Goto done
 
     no_rights:
-      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) IDOK done
+      IfSilent skip_mb
+      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) IDOK
+      skip_mb:
       StrCpy $1 ""
 
     done:
@@ -685,6 +702,7 @@ Function un.CheckUserInstallRights
 	Pop $0
 	UserInfo::GetAccountType
 	Pop $1
+
 	StrCmp $1 "Admin" 0 +3
                 StrCpy $1 "HKLM"
 		Goto done
@@ -939,21 +957,35 @@ Function DoWeNeedGtk
 FunctionEnd
 
 Function .onInit
+  StrCpy $name "Gaim ${GAIM_VERSION}"
+  StrCpy $GTK_THEME_SEL ${SecGtkWimp}
+  StrCpy $ISSILENT "/NOUI"
+
+  ; GTK installer has two silent states.. one with Message boxes, one without
+  ; If gaim installer was run silently, we want to supress gtk installer msg boxes.
+  IfSilent 0 set_gtk_normal
+      StrCpy $ISSILENT "/S"
+  set_gtk_normal:
+
+  Call ParseParameters
+
   ; If this installer dosn't have GTK, check whether we need it.
   !ifndef WITH_GTK
     Call DoWeNeedGtk
     Pop $0
-    Pop $1
+    Pop $GTK_FOLDER
 
     StrCmp $0 "0" have_gtk need_gtk
     need_gtk:
+      IfSilent skip_mb
       MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
+      skip_mb:
       Quit
     have_gtk:
-  !else
-  ;Extract InstallOptions INI Files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${GAIM_NSIS_INCLUDE_PATH}\gtkInstall.ini" "gtkInstall.ini"
   !endif
+
+  ; If install path was set on the command, use it.
+  StrCmp $INSTDIR "" 0 instdir_done
 
   Call CheckUserInstallRights
   Pop $0
@@ -971,22 +1003,16 @@ Function .onInit
 
   instdir_done:
 
-  ; Set up Theme sections..
-  StrCpy $1 ${SecGtkNone} ; Sets global to remember which theme is set.
-  !insertmacro SelectSection ${SecGtkNone}
-  !insertmacro UnselectSection ${SecGtkWimp}
-  !insertmacro UnselectSection ${SecGtkBluecurve}
-  !insertmacro UnselectSection ${SecGtkLighthouseblue}
-
-  ; Display Language selection dialog
-  !insertmacro MUI_LANGDLL_DISPLAY
-
+  IntCmp $LANG_IS_SET 1 skip_lang
+    ; Display Language selection dialog
+    !insertmacro MUI_LANGDLL_DISPLAY
+    skip_lang:
 FunctionEnd
 
 Function un.onInit
 
   ; Get stored language prefrence
-  !insertmacro MUI_UNGETLANGUAGE
+  ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
   
 FunctionEnd
 
@@ -1010,37 +1036,39 @@ Function .onSelChange
     SectionSetFlags ${SecGtkLighthouseblue} 0
   skip:
 
-  !insertmacro UnselectSection $1
+  !insertmacro UnselectSection $GTK_THEME_SEL
  
   ; Remember old selection
-  StrCpy $2 $1
+  StrCpy $2 $GTK_THEME_SEL
 
   ; Now go through and see who is checked..
   SectionGetFlags ${SecGtkNone} $0
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $1 ${SecGtkNone}
+    StrCpy $GTK_THEME_SEL ${SecGtkNone}
   SectionGetFlags ${SecGtkWimp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $1 ${SecGtkWimp}
+    StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   SectionGetFlags ${SecGtkBluecurve} $0
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $1 ${SecGtkBluecurve}
+    StrCpy $GTK_THEME_SEL ${SecGtkBluecurve}
   SectionGetFlags ${SecGtkLighthouseblue} $0
   IntOp $0 $0 & ${SF_SELECTED}
   IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $1 ${SecGtkLighthouseblue}
+    StrCpy $GTK_THEME_SEL ${SecGtkLighthouseblue}
 
-  StrCmp $2 $1 0 +2 ; selection hasn't changed
-    !insertmacro SelectSection $1
+  StrCmp $2 $GTK_THEME_SEL 0 +2 ; selection hasn't changed
+    !insertmacro SelectSection $GTK_THEME_SEL
 
   Pop $2
   Pop $0
 FunctionEnd
 
-Function ShowGtkInstallDirChooser
+; Page enter and exit functions..
+
+Function preGtkDirPage
   Call DoWeNeedGtk
   Pop $0
   Pop $1
@@ -1071,23 +1099,125 @@ Function ShowGtkInstallDirChooser
       hklm1:
         StrCpy $2 "${GTK_DEFAULT_INSTALL_PATH}"
 
-  got_path:
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "gtkInstall.ini" "Field 4" "State" $2
-
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "gtkInstall.ini" "Field 1" "Text" $(GTK_PAGE_INSTALL_MSG1)
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "gtkInstall.ini" "Field 2" "Text" $(GTK_PAGE_INSTALL_MSG2)
-  !insertmacro MUI_HEADER_TEXT "$(GTK_PAGE_TITLE)" "$(GTK_PAGE_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "gtkInstall.ini"
+   got_path:
+     StrCpy $name "GTK+ ${GTK_VERSION}"
+     StrCpy $GTK_FOLDER $2
 FunctionEnd
 
-Function GtkInstallDirVerify
-  !insertmacro MUI_INSTALLOPTIONS_READ $0 "gtkInstall.ini" "Field 4" "State"
-  Push $0
+Function postGtkDirPage
+  StrCpy $name "Gaim ${GAIM_VERSION}"
+  Push $GTK_FOLDER
   Call VerifyDir
   Pop $0
   StrCmp $0 "0" 0 done
+    IfSilent skip_mb
     MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) IDOK
+    skip_mb:
     Abort
   done:
 FunctionEnd
 
+; GetParameters
+; input, none
+; output, top of stack (replaces, with e.g. whatever)
+; modifies no other variables.
+ 
+Function GetParameters
+ 
+   Push $R0
+   Push $R1
+   Push $R2
+   Push $R3
+   
+   StrCpy $R2 1
+   StrLen $R3 $CMDLINE
+   
+   ;Check for quote or space
+   StrCpy $R0 $CMDLINE $R2
+   StrCmp $R0 '"' 0 +3
+     StrCpy $R1 '"'
+     Goto loop
+   StrCpy $R1 " "
+   
+   loop:
+     IntOp $R2 $R2 + 1
+     StrCpy $R0 $CMDLINE 1 $R2
+     StrCmp $R0 $R1 get
+     StrCmp $R2 $R3 get
+     Goto loop
+   
+   get:
+     IntOp $R2 $R2 + 1
+     StrCpy $R0 $CMDLINE 1 $R2
+     StrCmp $R0 " " get
+     StrCpy $R0 $CMDLINE "" $R2
+   
+   Pop $R3
+   Pop $R2
+   Pop $R1
+   Exch $R0
+ 
+FunctionEnd
+
+; StrStr
+ ; input, top of stack = string to search for
+ ;        top of stack-1 = string to search in
+ ; output, top of stack (replaces with the portion of the string remaining)
+ ; modifies no other variables.
+ ;
+ ; Usage:
+ ;   Push "this is a long ass string"
+ ;   Push "ass"
+ ;   Call StrStr
+ ;   Pop $R0
+ ;  ($R0 at this point is "ass string")
+
+ Function StrStr
+ Exch $R1 ; st=haystack,old$R1, $R1=needle
+   Exch    ; st=old$R1,haystack
+   Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+   Push $R3
+   Push $R4
+   Push $R5
+   StrLen $R3 $R1
+   StrCpy $R4 0
+   ; $R1=needle
+   ; $R2=haystack
+   ; $R3=len(needle)
+   ; $R4=cnt
+   ; $R5=tmp
+   loop:
+     StrCpy $R5 $R2 $R3 $R4
+     StrCmp $R5 $R1 done
+     StrCmp $R5 "" done
+     IntOp $R4 $R4 + 1
+     Goto loop
+ done:
+   StrCpy $R1 $R2 "" $R4
+   Pop $R5
+   Pop $R4
+   Pop $R3
+   Pop $R2
+   Exch $R1
+ FunctionEnd
+
+;
+; Parse the Command line
+;
+; Unattended install command line parameters
+; /L=Language e.g.: /L=1033
+;
+Function ParseParameters
+  IntOp $LANG_IS_SET 0 + 0
+  Call GetParameters
+  Pop $R0
+  Push $R0
+  Push "L="
+  Call StrStr
+  Pop $R1
+  StrCmp $R1 "" next
+    StrCpy $R1 $R1 4 2 ; Strip first 2 chars of string
+    StrCpy $LANGUAGE $R1
+    IntOp $LANG_IS_SET 0 + 1
+  next:
+FunctionEnd
