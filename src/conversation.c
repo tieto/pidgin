@@ -778,10 +778,11 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 	/* Check if this conversation already exists. */
 	if (((conv = gaim_find_conversation_with_account(name, account)) != NULL) &&
-	     (gaim_conversation_get_type(conv) == type)) {
-
-	     	if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT ||
-		    gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv))) {
+	     (gaim_conversation_get_type(conv) == type))
+	{
+		if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT ||
+		    gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
+		{
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
 				gaim_conversation_chat_cleanup_for_rejoin(conv);
 
@@ -800,7 +801,8 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 	conv->log          = gaim_log_new(type == GAIM_CONV_IM ? GAIM_LOG_IM :
-					  type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT : GAIM_LOG_IM, name, account, time(NULL));
+									  type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT :
+									  GAIM_LOG_IM, name, account, time(NULL));
 
 
 	if (type == GAIM_CONV_IM)
@@ -821,11 +823,12 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		conv->u.chat->conv = conv;
 
 		chats = g_list_append(chats, conv);
-		if((disp = gaim_connection_get_display_name(account->gc))) {
+
+		if ((disp = gaim_connection_get_display_name(account->gc)))
 			gaim_conv_chat_set_nick(conv->u.chat, disp);
-		} else {
-			gaim_conv_chat_set_nick(conv->u.chat, gaim_account_get_username(account));
-		}
+		else
+			gaim_conv_chat_set_nick(conv->u.chat,
+									gaim_account_get_username(account));
 
 		gaim_conversation_set_logging(conv,
 				gaim_prefs_get_bool("/core/logging/log_chats"));
@@ -899,7 +902,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 				prpl_info->convo_closed(gc, name);
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-		#if 0
+#if 0
 			/*
 			 * This is unfortunately necessary, because calling
 			 * serv_chat_leave() calls this gaim_conversation_destroy(),
@@ -923,7 +926,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 				return;
 			}
-		#endif
+#endif
 		/*
 		 * Instead of all of that, lets just close the window when the user tells
 		 * us to, and let the prpl deal with the internals on it's own time.
@@ -2271,6 +2274,36 @@ conv_placement_new_window(GaimConversation *conv)
 	gaim_conv_window_show(win);
 }
 
+static GaimGroup *
+conv_get_group(GaimConversation *conv)
+{
+	GaimGroup *group = NULL;
+
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+	{
+		GaimBuddy *buddy;
+
+		buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
+								gaim_conversation_get_name(conv));
+
+		if (buddy != NULL)
+			group = gaim_find_buddys_group(buddy);
+
+	}
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+	{
+		GaimChat *chat;
+
+		chat = gaim_blist_find_chat(gaim_conversation_get_account(conv),
+									gaim_conversation_get_name(conv));
+
+		if (chat != NULL)
+			group = gaim_chat_get_group(chat);
+	}
+
+	return group;
+}
+
 /*
  * This groups things by, well, group. Buddies from groups will always be
  * grouped together, and a buddy from a group not belonging to any currently
@@ -2279,106 +2312,44 @@ conv_placement_new_window(GaimConversation *conv)
 static void
 conv_placement_by_group(GaimConversation *conv)
 {
-	GaimConvWindow *win;
 	GaimConversationType type;
+	GaimGroup *group = NULL;
+	GList *wl, *cl;
 
 	type = gaim_conversation_get_type(conv);
 
-	if (type == GAIM_CONV_IM) {
-		GaimBuddy *b;
-		GaimGroup *grp = NULL;
-		GList *wins, *convs;
+	group = conv_get_group(conv);
 
-		b = gaim_find_buddy(gaim_conversation_get_account(conv),
-					   gaim_conversation_get_name(conv));
+	/* Go through the list of IMs and find one with this group. */
+	for (wl = gaim_get_windows(); wl != NULL; wl = wl->next)
+	{
+		GaimConvWindow *win2;
+		GaimConversation *conv2;
+		GaimGroup *group2 = NULL;
 
-		if (b != NULL)
-			grp = gaim_find_buddys_group(b);
+		win2 = (GaimConvWindow *)wl->data;
 
-		/* Go through the list of IMs and find one with this group. */
-		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimConvWindow *win2;
-			GaimConversation *conv2;
-			GaimBuddy *b2;
-			GaimGroup *g2 = NULL;
+		for (cl = gaim_conv_window_get_conversations(win2);
+			 cl != NULL;
+			 cl = cl->next)
+		{
+			conv2 = (GaimConversation *)cl->data;
 
-			win2 = (GaimConvWindow *)wins->data;
+			group2 = conv_get_group(conv2);
 
-			for (convs = gaim_conv_window_get_conversations(win2);
-				 convs != NULL;
-				 convs = convs->next) {
+			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
+				 type == gaim_conversation_get_type(conv2)) &&
+				group == group2)
+			{
+				gaim_conv_window_add_conversation(win2, conv);
 
-				conv2 = (GaimConversation *)convs->data;
-
-				b2 = gaim_find_buddy(gaim_conversation_get_account(conv2),
-								gaim_conversation_get_name(conv2));
-
-				if (b2 != NULL)
-					g2 = gaim_find_buddys_group(b2);
-
-				if (grp == g2) {
-					gaim_conv_window_add_conversation(win2, conv);
-
-					return;
-				}
+				return;
 			}
 		}
-
-		/* Make a new window. */
-		conv_placement_new_window(conv);
 	}
-	else if (type == GAIM_CONV_CHAT) {
-		GaimChat *chat;
-		GaimGroup *group = NULL;
-		GList *wins, *convs;
 
-		chat = gaim_blist_find_chat(gaim_conversation_get_account(conv),
-									gaim_conversation_get_name(conv));
-
-		if (chat != NULL)
-			group = gaim_chat_get_group(chat);
-
-		/* Go through the list of chats and find one with this group. */
-		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimConvWindow *win2;
-			GaimConversation *conv2;
-			GaimChat *chat2;
-			GaimGroup *group2 = NULL;
-
-			win2 = (GaimConvWindow *)wins->data;
-
-			for (convs = gaim_conv_window_get_conversations(win2);
-				 convs != NULL;
-				 convs = convs->next) {
-
-				conv2 = (GaimConversation *)convs->data;
-
-				chat2 = gaim_blist_find_chat(
-					gaim_conversation_get_account(conv2),
-					gaim_conversation_get_name(conv2));
-
-				if (chat2 != NULL)
-					group2 = gaim_chat_get_group(chat2);
-
-				if (group == group2) {
-					gaim_conv_window_add_conversation(win2, conv);
-
-					return;
-				}
-			}
-		}
-
-		/* Make a new window. */
-		conv_placement_new_window(conv);
-	}
-	else {
-		win = gaim_get_last_window_with_type(type);
-
-		if (win == NULL)
-			conv_placement_new_window(conv);
-		else
-			gaim_conv_window_add_conversation(win, conv);
-	}
+	/* Make a new window. */
+	conv_placement_new_window(conv);
 }
 
 /* This groups things by account.  Otherwise, the same semantics as above */
@@ -2392,28 +2363,27 @@ conv_placement_by_account(GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 	type = gaim_conversation_get_type(conv);
 
-
 	/* Go through the list of IMs and find one with this group. */
-	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next)
+	{
 		GaimConvWindow *win2;
 		GaimConversation *conv2;
 
 		win2 = (GaimConvWindow *)wins->data;
 
 		for (convs = gaim_conv_window_get_conversations(win2);
-				convs != NULL;
-				convs = convs->next) {
-
+			 convs != NULL;
+			 convs = convs->next)
+		{
 			conv2 = (GaimConversation *)convs->data;
 
 			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
 				 type == gaim_conversation_get_type(conv2)) &&
-				account == gaim_conversation_get_account(conv2)) {
-
+				account == gaim_conversation_get_account(conv2))
+			{
 				gaim_conv_window_add_conversation(win2, conv);
 				return;
 			}
-
 		}
 	}
 

@@ -26,6 +26,9 @@ version 0.76cvs:
 	* TCL Plugin API changed
 	* The mobile icon on MSN users is now removed when the person disables
 	  mobile paging (Stu Tomlinson)
+	* Conversation placement by account now works correctly with both
+	  chats and IMs, and takes the Combine Chats and IMs option into
+	  consideration.
 	* Added new MSN error codes and fixed an incorrect one (Stu Tomlinson)
 	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
 	* Buddy pounces for an account are removed when the account is
