@@ -902,6 +902,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	int w;
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
+	char *buf;
 
 	while (bcs) {
 		b = (struct conversation *)bcs->data;
@@ -917,8 +918,11 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	if (plugin_event(event_chat_recv, g, b->name, who, message))
 		 return;
 
+	buf = g_malloc(MAX(strlen(message) * 2, 8192));
+	strcpy(buf, message);
+
 	if (general_options & OPT_GEN_SEND_LINKS) {
-		linkify_text(message);
+		linkify_text(buf);
 	}
 
 	if (whisper)
@@ -926,7 +930,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	else
 		w = 0;
 
-	chat_write(b, who, w, message, mtime);
+	chat_write(b, who, w, buf, mtime);
+	g_free(buf);
 }
 
 void send_keepalive(gpointer d)
