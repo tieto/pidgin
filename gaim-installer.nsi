@@ -1045,6 +1045,7 @@ Function .onInit
 FunctionEnd
 
 Function un.onInit
+  StrCpy $name "Gaim ${GAIM_VERSION}"
 
   ; Get stored language prefrence
   ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
