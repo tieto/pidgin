@@ -26,6 +26,46 @@ AC_CHECK_LIB(pthread, pthread_create, _PTHREAD_LDFLAGS="-lpthread",
 	)
     )
 )
+dnl This is where it came straight from Mozilla.
+rm -f conftest*
+ac_cv_have_dash_pthread=no
+AC_MSG_CHECKING(whether ${CC-cc} accepts -pthread)
+echo 'int main() { return 0; }' | cat > conftest.c
+${CC-cc} -pthread -o conftest conftest.c > conftest.out 2>&1
+if test $? -eq 0; then
+	if test -z "`egrep -i '(unrecognize|unknown)' conftest.out | grep pthread`" && test -z "`egrep -i '(error|incorrect)' conftest.out`" ; then
+		ac_cv_have_dash_pthread=yes
+		CFLAGS="$CFLAGS -pthread"
+	fi
+fi
+rm -f conftest*
+case "$target" in
+	*-*-freebsd*)
+		AC_DEFINE(_REENTRANT)
+		AC_DEFINE(_THREAD_SAFE)
+		if test "$ac_cv_have_dash_pthread" = "yes"; then
+			_PTHREAD_LDFLAGS=""
+		else
+			_PTHREAD_LDFLAGS="-lc_r"
+		fi
+		;;
+	*-*-linux*)
+		AC_DEFINE(_REENTRANT)
+		;;
+	*-*-os2*)
+		_PTHREAD_LDFLAGS=
+		;;
+	alpha*-*-osf*)
+		AC_DEFINE(_REENTRANT)
+		;;
+	*-*-solaris*)
+		AC_DEFINE(_REENTRANT)
+		if test ! "$GNU_CC"; then
+			CFLAGS="$CFLAGS -mt"
+		fi
+		;;
+esac
+AC_MSG_RESULT($ac_cv_have_dash_pthread)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
