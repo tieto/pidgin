@@ -1427,10 +1427,10 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if (cur->item) {
 		if (cur->ack) {
 			/* Our action was unsuccessful, so change the local list back to how it was */
-			/* Make sure cur->item is still valid memory */
 			if (cur->action == AIM_CB_SSI_ADD) {
+				/* Remove the item from the local list */
+				/* Make sure cur->item is still valid memory */
 				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
-					/* Remove the item from the local list */
 					if (cur->item->name) {
 						cur->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
 						strcpy(cur->name, cur->item->name);
@@ -1458,7 +1458,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 			} else if (cur->action == AIM_CB_SSI_DEL) {
 				/* Add the item back into the local list */
-				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
+				if (aim_ssi_itemlist_valid(sess->ssi.official, cur->item)) {
 					aim_ssi_itemlist_add(&sess->ssi.local, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
 				} else
 					cur->item = NULL;
@@ -1467,26 +1467,33 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		} else {
 			/* Do the exact opposite */
 			if (cur->action == AIM_CB_SSI_ADD) {
-				/* Add the local item to the official list */
-				aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
+			/* Add the local item to the official list */
+				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
+					aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
+				} else
+					cur->item = NULL;
 
 			} else if (cur->action == AIM_CB_SSI_MOD) {
 				/* Replace the official item with the item from the local list */
-				struct aim_ssi_item *cur1;
-				if ((cur1 = aim_ssi_itemlist_find(sess->ssi.official, cur->item->gid, cur->item->bid))) {
-					free(cur1->name);
-					if (cur->item->name) {
-						cur1->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
-						strcpy(cur1->name, cur->item->name);
-					} else
-						cur1->name = NULL;
-					aim_freetlvchain(&cur1->data);
-					cur1->data = aim_tlvlist_copy(cur->item->data);
-				}
+				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
+					struct aim_ssi_item *cur1;
+					if ((cur1 = aim_ssi_itemlist_find(sess->ssi.official, cur->item->gid, cur->item->bid))) {
+						free(cur1->name);
+						if (cur->item->name) {
+							cur1->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
+							strcpy(cur1->name, cur->item->name);
+						} else
+							cur1->name = NULL;
+						aim_freetlvchain(&cur1->data);
+						cur1->data = aim_tlvlist_copy(cur->item->data);
+					}
+				} else
+					cur->item = NULL;
 
 			} else if (cur->action == AIM_CB_SSI_DEL) {
 				/* Remove the item from the official list */
-				aim_ssi_itemlist_del(&sess->ssi.official, cur->item);
+				if (aim_ssi_itemlist_valid(sess->ssi.official, cur->item))
+					aim_ssi_itemlist_del(&sess->ssi.official, cur->item);
 				cur->item = NULL;
 			}
 

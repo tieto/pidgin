@@ -2899,18 +2899,18 @@ static char *oscar_tooltip_text(struct buddy *b) {
 }
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
-	aim_userinfo_t *info;
-	char *text_enc = NULL, *text = NULL, *utf8 = NULL;
-	int text_len;
-	fu16_t infotype;
-	fu32_t flags;
-	char header[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
+	char header[BUF_LONG];
 	GSList *l = od->evilhack;
 	gboolean evilhack = FALSE;
-	va_list ap;
 	gchar *membersince = NULL, *onlinesince = NULL, *idle = NULL;
+	fu32_t flags;
+	va_list ap;
+	aim_userinfo_t *info;
+	fu16_t infotype;
+	char *text_enc = NULL, *text = NULL, *utf8 = NULL;
+	int text_len;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -2933,35 +2933,35 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
 			break;
 		default:
-			utf8 = g_strdup(_("<I>Unable to display information because it was sent in an unknown encoding.</I>"));
+			utf8 = g_strdup(_("<i>Unable to display information because it was sent in an unknown encoding.</i>"));
 			debug_printf("Encountered an unknown encoding while parsing userinfo\n");
 		}
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		onlinesince = g_strdup_printf("Online Since : <B>%s</B><BR>\n",
+		onlinesince = g_strdup_printf("Online Since : <b>%s</b><br>\n",
 					asctime(localtime(&info->onlinesince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		membersince = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
+		membersince = g_strdup_printf("Member Since : <b>%s</b><br>\n",
 					asctime(localtime(&info->membersince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
 		gchar *itime = sec_to_text(info->idletime*60);
-		idle = g_strdup_printf("Idle : <B>%s</B>", itime);
+		idle = g_strdup_printf("Idle : <b>%s</b>", itime);
 		g_free(itime);
 	} else
-		idle = g_strdup("Idle: <B>Active</B>");
+		idle = g_strdup("Idle: <b>Active</b>");
 
 	g_snprintf(header, sizeof header,
-			_("Username : <B>%s</B>  %s <BR>\n"
-			"Warning Level : <B>%d %%</B><BR>\n"
+			_("Username : <b>%s</b>  %s <br>\n"
+			"Warning Level : <b>%d %%</b><br>\n"
 			"%s"
 			"%s"
 			"%s\n"
-			"<HR>\n"),
+			"<hr>\n"),
 			info->sn, images(info->flags),
 			info->warnlevel/10,
 			onlinesince ? onlinesince : "",
@@ -2993,7 +2993,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
 					 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
-					 (utf8 && *utf8) ? "<HR>" : NULL,
+					 (utf8 && *utf8) ? "<hr>" : NULL,
 					 NULL);
 		}
 	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
