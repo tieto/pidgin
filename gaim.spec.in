@@ -132,7 +132,7 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/libsilcgaim.*
 %endif
 
-%if %{?_with_tcl:1}%{!?_with_silc:0}
+%if %{?_with_tcl:1}%{!?_with_tcl:0}
 %files tcl
 %defattr(-, root, root)
 
