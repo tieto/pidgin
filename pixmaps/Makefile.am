@@ -27,6 +27,7 @@ EXTRA_DIST =	about_small.xpm			\
 		cancel.xpm			\
 		close.xpm			\
 		close_small.xpm			\
+		crazy4.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
 		daemon-buddyadd.xpm		\

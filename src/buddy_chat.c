@@ -41,6 +41,7 @@
 
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
+#include "pixmaps/crazy4.xpm"
 
 static GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
@@ -850,6 +851,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
 	gtk_widget_show(text);
 
 	lbox = gtk_vbox_new(FALSE, 5);

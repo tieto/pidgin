@@ -69,6 +69,7 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
+#include "pixmaps/crazy4.xpm"
 
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/free_icon.xpm"
@@ -1762,6 +1763,8 @@ void g_show_info_text(char *info)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
@@ -3719,6 +3722,8 @@ show_log (char *name)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "O-)", oneeye_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), ">:)", crazy4_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), ">:-)", crazy4_xpm);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);

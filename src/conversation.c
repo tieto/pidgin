@@ -55,6 +55,7 @@
 
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
+#include "pixmaps/crazy4.xpm"
 
 int state_lock = 0;
 
@@ -2026,6 +2027,8 @@ void show_conv(struct conversation *c)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
 	gtk_widget_show(text);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);
