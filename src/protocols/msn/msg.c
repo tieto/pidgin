@@ -309,7 +309,21 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	}
 	else
 	{
-		msn_message_set_body(msg, tmp);
+		char *tmp2;
+		size_t body_len;
+
+		body_len = msg->size - (tmp - tmp_base);
+
+		tmp2 = g_malloc(body_len + 1);
+
+		if (body_len > 0)
+			memcpy(tmp2, tmp, body_len);
+
+		tmp2[body_len] = '\0';
+
+		msn_message_set_body(msg, tmp2);
+
+		g_free(tmp2);
 	}
 
 	g_free(command_header);
