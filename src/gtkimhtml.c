@@ -3768,13 +3768,14 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	nextiter = iter = *start;
 	gtk_text_iter_forward_char(&nextiter);
 
-	/* First add the tags that are already in progress */
+	/* First add the tags that are already in progress (we don't care about non-printing tags)*/
 	tags = gtk_text_iter_get_tags(start);
 
 	for (sl = tags; sl; sl = sl->next) {
 		tag = sl->data;
 		if (!gtk_text_iter_toggles_tag(start, GTK_TEXT_TAG(tag))) {
-		 	g_string_append(str, tag_to_html_start(GTK_TEXT_TAG(tag)));
+			if (strlen(tag_to_html_end(tag)) > 0)
+		 		g_string_append(str, tag_to_html_start(tag));
 			g_queue_push_tail(q, tag);
 		}
 	}
@@ -3787,7 +3788,8 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			if (gtk_text_iter_begins_tag(&iter, GTK_TEXT_TAG(tag))) {
-		 		g_string_append(str, tag_to_html_start(GTK_TEXT_TAG(tag)));
+				if (strlen(tag_to_html_end(tag)) > 0)
+		 			g_string_append(str, tag_to_html_start(tag));
 				g_queue_push_tail(q, tag);
 			}
 		}
@@ -3795,11 +3797,11 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 		if (c == 0xFFFC) {
 			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
-			char *text = NULL;
-			if (anchor)
-				text = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_htmltext");
-			if (text)
-				str = g_string_append(str, text);
+			if (anchor) {
+				char *text = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_htmltext");
+				if (text)
+					str = g_string_append(str, text);
+			}
 		} else 	if (c == '<') {
 			str = g_string_append(str, "&lt;");
 		} else if (c == '>') {
@@ -3817,7 +3819,8 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		tags = g_slist_reverse(tags);
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
-			if (tag_ends_here(tag, &iter, &nextiter)) {
+			/** don't worry about non-printing tags ending */
+			if (tag_ends_here(tag, &iter, &nextiter) && strlen(tag_to_html_end(tag)) > 0) {
 
 				GtkTextTag *tmp;
 
@@ -3825,7 +3828,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 					if (tmp == NULL)
 						break;
 
-					if (!tag_ends_here(tmp, &iter, &nextiter))
+					if (!tag_ends_here(tmp, &iter, &nextiter) && strlen(tag_to_html_end(tmp)) > 0)
 						g_queue_push_tail(r, tmp);
 		 			g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
 				}
