@@ -21,53 +21,55 @@
 .\" USA.
 .TH gaim 1
 .SH NAME
-Gaim v0.59 \- Instant Messaging client
+Gaim v0.60cvs \- Instant Messaging client
 .SH SYNOPSIS
 .TP 5
 \fBgaim \fI[options]\fR
 
 .SH DESCRIPTION
 .PP
-\fBgaim\fR is a GTK-based Instant Messaging (IM) client designed primarily for use with AOL Instant Messager (AIM).  However, it supports most other popular IM protocols including ICQ, MSN Messager, Jabber, Yahoo!, IRC, Napster, Zephyr, and Gadu-Gadu.
+\fBgaim\fR is a GTK2-based Instant Messaging (IM) client designed primarily for use with AOL Instant Messager (AIM).  However, it supports most other popular IM protocols including Gadu-Gadu, ICQ, IRC, Jabber, MSN Messager, Napster, Yahoo!, and Zephyr.
 
 .SH OPTIONS
-The following options are provided by \fBgaim\fR using the standard GNU command line syntax.
+The following options are provided by \fBgaim\fR using the standard GNU command line syntax:
 .TP
 .B \-a, \-\-acct
-Launch the \fBaccount editor\fR rather than the login window on start.
+Launch the \fBAccount Editor\fR rather than the \fBLogin\fR window on start.
 .TP
 .B \-d, \-\-debug
-Print debugging messages to stdout.  These are the same debugging messages that are displayed in the \fBdebug window\fR.
+Print debugging messages to stdout.  These are the same debugging messages that are displayed in the \fBDebug\fR window.
 .TP
-.B \-f, \-\-file=FILE
-Use FILE as the configuration file instead of ~/.gaimrc.
+.B \-f, \-\-file=\fIFILE\fB
+Use \fIFILE\fR as the configuration file instead of \fI~/.gaimrc\fR.
 .TP
 .B \-h, \-\-help
 Print this help and exit.
 .TP
-.B \-l, \-\-login[=NAME]
-Automatically login on start using the default account or the account specified by the NAME parameter.
+.B \-l, \-\-login[=\fINAME\fB]
+Automatically login on start using the default account or the account specified by the \fINAME\fR parameter.
 .TP
-.B \-u, \-\-user=NAME
-Use account NAME as default.
+.B \-n, \-\-loginwin
+Don't automatically login when \fBgaim\fR starts.  Show the \fBLogin\fR window instead.
+.TP
+.B \-u, \-\-user=\fINAME\fB
+Use account \fINAME\fR as default.
 .TP
 .B \-v, \-\-version
 Display the version information window.
 .TP
-.B \-w, \-\-away[=MESG]
-Automatically go away on signon.  You may optionally use the MESG parameter to set the away message.
+.B \-w, \-\-away[=\fIMESG\fB]
+Automatically go away on signon.  You may optionally use the \fIMESG\fR parameter to set the away message.
 
 .SH BUDDY LIST
-The \fBBuddy List Window\fR is \fBgaim\fR's main interface window.  The focus of this window is the \fBBuddy List\fR itself.  This is a list of your contacts whose presence you have been notified of.
+The \fBBuddy List\fR window is \fBgaim\fR's main interface window.  The focus of this window is the \fBBuddy List\fR itself, shown in the \fBOnline\fR pane.  Buddy list organization and editing is handled in the \fBEdit Buddies\fR pane.
 
-The list of buddies is organized into groups.  \fBGaim\fR supports multiple connections, but all online buddies are organized on the same buddy list.  Buddy List organization is handled in the \fBEdit Buddies\fR tab.
+Buddy Lists can be imported by using the \fIImport Buddy List\fR command in the \fIFile\fR menu.
 
-Buddy Lists can be imported and exported to disk using the appropriate commands in the \fIfile\fR menu.
-
-The icon to the left of each buddy indicates the buddy's current state.  Double clicking a buddy will open a new \fBconversation window\fR.  Right clicking will open a menu:
+.SH Online Pane
+The \fBOnline\fR pane contains a list of your buddies who are online and have allowed you to be notified of their presence.  The icon to the left of each buddy (if enabled in \fBgaim\fR's \fBPreferences\fR) indicates the buddy's current state.  Double clicking a buddy will open a new \fBConversation\fR window.  Right clicking will pop up a menu:
 .TP
 .B IM
-Opens a new \fBconversation window\fR to the selected buddy.
+Opens a new \fBConversation\fR window to the selected buddy.
 .TP
 .B Alias
 Create an alias for this buddy.  This will open up a new dialog in which one can give this buddy an alternate name to appear on the buddy list and in conversataions.
@@ -78,9 +80,9 @@ For example, if a buddy's name screen name was jsmith1281xx and his real name wa
 A Buddy Pounce is a configurable automated action to be performed when the buddy's state changes.  This will open the \fBBuddy Pounce\fR dialog to be discussed later.
 .TP 
 .B View Log
-\fBgaim\fR is capable of automatically log its activities.  These logs are html files (with a .log extenstion) located in the ~/.gaim/logs directory.  This menu command will attempt to view this file with \fBgaim's\fR internal log viewer.
+\fBgaim\fR is capable of automatically log its activities.  These logs are html files (with a .log extenstion) located in the \fI~/.gaim/logs\fR directory.  This menu command will attempt to view this file with \fBgaim\fR's internal log viewer.
 .LP
-The remainder of the menu will consist of protocol specific commands.  If logged on with multiple connections, these will appear in submenus named with each screen name logged on.  These commands vary depending on the protocol; below are the commands available when using OSCAR, the more popular and developer-recommended AIM protocol:
+The remainder of the menu will consist of protocol specific commands.  These commands vary depending on the protocol; below are the commands available when using OSCAR, the more popular and developer-recommended AIM protocol:
 .TP
 .B Get Info
 Retrieves and displays information about the buddy.  This information is also known as a Profile.
@@ -88,11 +90,183 @@ Retrieves and displays information about the buddy.  This information is also kn
 .B Get Away Msg
 If this buddy is in an Away state, this will retrieve and display the buddy's \fBAway Message\fR.
 .TP
-.B Direct IM
-This will send a request to the buddy for a \fBDirect IM\fR.  If accepted, a direct connection will be made between the two clients, no longer relying on the server.  This will reveal your IP address to your buddy, which may constitute a security risk.
+.B Get Capabilities
+Retrieves and displays the client capabilities of your buddy.
+.LP
+At the bottom of the pane are several buttons (if enabled in \fBPreferences\fR):
+.TP
+.B IM
+Opens a new \fBConversation\fR window to to the selected buddy, or brings up the \fBNew Message\fR dialog box if no buddy is selected.
+.TP
+.B Info
+Retrieves and display information about the selected buddy, or brings up the \fBGet User Info\fR dialog box if no buddy is selected.
+.TP
+.B Chat
+Brings up the \fBJoin Chat\fR dialog box, prompting the user to select which username to use and what chat group to join.
+.TP
+.B Away
+Brings up a menu of all available \fBAway Messages\fR.  If an item is selected, all online accounts will use this item as their away message.
 
-.SH The Conversation Window
-When starting a new conversation, the user is presented with the conversation window.  The conversation appears in the upper text box and the user types his message in the lower.  Between the two is a row of setting, represented by icons.  From left to right:
+.SH Edit Buddies Pane
+Clicking the \fBEdit Buddies\fR tab on the \fBBuddy List Window\fR will invoke the main interface to edit and organize buddy lists.  Buddies already in your buddy list can be moved to different groups or reordered in the same group by clicking and dragging with the mouse.  One can also add, rename, alias, or delete buddies here, as well as access some of the functions available in the \fBBuddy List Dialog\fR.  
+
+At the bottom of the pane are several buttons:
+.TP
+.B Add
+This brings up the \fBAdd Buddy Dialog\fR, where you can add a buddy to your buddy list.
+.TP
+.B Group
+This brings up the \fBAdd Group Dialog\fR, where you can add a group to the current connection (the connection with an item selected, otherwise the top-most connection).
+.TP
+.B Remove
+This removes the currently selected buddy or group.  If no buddy or group is selected, no action is taken.
+
+.SH ACCOUNT EDITOR
+The account editor consists of a list of accounts and information about them.  Clicking \fIDelete\fR will delete the currently selected account.  Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR window.  Here, you can add or alter account information.  When creating a new account, you will submit your screen name and password.  You will also choose your protocol. The AIM protocol, OSCAR, is always loaded, but other protocols can be dynamically loaded and unloaded using \fBProtocols Plugins\fR (PRPLS).
+
+If \fIRemember Password\fR is chosen, the password will be saved in \fBgaim\fR's configuration file.
+
+If \fIAuto-Login\fR is chosen, this account will automatically login upon starting \fBgaim\fR.
+
+Each protocol has it's own specific options that can be found in the protocol-specific tab on the modify screen.
+
+.SH PREFERENCES
+
+All options take effect immediately.
+
+.SH Interface
+
+\fIShow debug window\fR: Makes visable \fBgaim\fR's debugging window, which displays more verbose operating information.  A must for bug-tracking.
+
+\fIDisplay remote nicknames if no alias is set\fR: Toggles whether server nickname data should be used if no local alias exists.
+
+.TP
+.B Themes
+Allows the user to choose between different emoticon themes.
+.TP
+.B Fonts
+Lets the user pick a default font style/face/color for all accounts (only available in protocols that accept HTML messages).
+.TP
+.B Message Text
+\fIShow graphical smileys\fR: Enables the replacement of text emoticons with their graphical equivalents.
+
+\fIShow timestamp on messages\fR: Toggles the timestamp behavior for conversations.  Per-conversation behavior can be changed by pressing \fIF2\fR in the \fBConversation\fR window.
+
+\fIShow URLs as links\fR: Enables the translation of URLs (such as \fIhttp://gaim.sourceforge.net\fR) into clickable links.
+
+\fIIgnore colors/font faces/font sizes\fR: Tells \fBgaim\fR to disregard buddies' color/font/size information in displaying IMs or Chats.
+.TP
+.B Shortcuts
+Allows the user to determine which keyboard shortcuts are available.
+.TP
+.B Buddy List
+\fIHide IM/Info/Chat buttons\fR: Disables the display of these buttons on the
+\fBBuddy List\fR's \fBOnline\fR pane.
+
+\fIShow pictures on buttons\fR: Toggles between picture-only and text-only views of the buttons on the \fBBuddy List\fR.
+
+\fISave window size/position\fR: If enabled, \fBgaim\fR will place the \fBBuddy List\fR at its last screen position at start-up.
+
+\fIRaise window on events\fR: Tells \fBgaim\fR to bring the \fBBuddy List\fR window to the top when buddies sign in or out.
+
+\fIHide groups with no online buddies\fR: Groups in which no buddies are currently logged in will not be shown in the \fBOnline\fR pane.
+
+\fIShow numbers in groups\fR: The number of buddies from each group currently logged in will be shown along with the total number of buddies in the group.
+
+\fIShow buddy type icons\fR: The icons showing which protocol each buddy uses and whether or not the buddy is away will not be shown.
+
+\fIShow warning levels\fR: Each buddy's warning level will be displayed next to the screen name. As a buddy's warning level increases, outgoing messages are more and more severely rate-limited.
+
+\fIShow idle times\fR: The amount of time each buddy has been idle will be displayed next to the screen name (if the buddy has opted to have their client report this information).
+
+\fIGrey idle buddies\fR: If enabled, idle buddies will be displayed in grey text instead of black text.
+.TP
+.B IM Window
+\fIShow buttons as...\fR: The selected item will determine whether picture-only, text-only, or combined picture/text buttons will be used for \fBConversation\fR windows.
+
+\fINew window width/height...\fR: The values here determine how large \fBConversation\fR windows are by default.  However, each window can be independently resized.
+
+\fIEntry widget height...\fR: This value controls the size of the entry widget (the part of the \fBConversation\fR window where you type).  It should not be made greater than the \fINew window height\fR.
+
+\fIRaise windows on events\fR: If enabled, \fBConversation\fR windows will be brought to the top when new messages are received.
+
+\fIHide window on send\fR: If enabled, \fBConversation\fR windows will be iconified after each message is sent.
+
+\fIHide buddy icons\fR: For protocols that support it, buddy icons allow buddies to send small pictures to be displayed during the course of a conversation. This option hides those pictures.
+
+\fIDisable buddy icon animation\fR: If these pictures happen to be animated, this option will disable the animation, displaying only the first frame.
+
+\fIShow logins in window\fR: If currently conversing with a buddy who signs off or on, this information will be shown in the \fBConversation\fR window.
+
+\fINotify buddies that you are typing to them\fR: Some protocols allow clients to tell their buddies when they are typing. This option enables this feature for protocols that supports it.
+.TP
+.B Chat Window
+\fIWindow\fR: The options in this section behave identically to the options of the same name in the \fBIM Window\fR preferences.
+
+\fITab Completion\fR: In a chat room with many participants, it can be tedious to keep typing the screen name of the user to whom you wish to direct a comment.  These options allow \fITab\fR to expand the current text into a valid nickname.
+\fIShow people joining/leaving in window\fR: When chat room participants enter or exit the room, the information will be displayed in the \fBBuddy Chat\fR window.
+
+\fIColorize screennames\fR: Color code the screen names of users in chat rooms.
+.TP
+.B Tabs
+Tabbed chatting allows one to have multiple conversations without multiple windows. \fbTabs\fR show which conversations have unanswered messages, and can identify a user either by screen name or by alias.
+
+.SH Proxy
+
+The configuration section to enable \fBgaim\fR to operate through a proxy server.  \fBgaim\fR currently supports SOCKS 4/5 and HTTP proxies.
+
+.SH Browser
+
+Allows the user to select \fBgaim\fR's default web browser.  Galeon, Konqueror, Mozilla, Netscape, and Opera are supported natively.  The user can also manually enter a command to be executed when a link is clicked (\fI%s\fR expands to the URL).  For example, \fIxterm -e lynx %s\fR will open the link with lynx.  \fIOpen new window by default\fR makes the browser use a new window instead of using the current window (or spawning a new tab).
+
+.SH Logging
+
+\fIMessage Logs\fR lets the user choose whether \fBConversations\fR and/or \fBBuddy Chats\fR will be logged as well as whether logs will be in HTML or plain text format.  \fISystem Logs\fR describes the types of events to be logged.
+
+.SH Sounds
+
+\fINo sounds when you log in\fR: Makes the log-in process silent.
+
+\fISounds while away\fR: Determines whether sounds are played when an away message is up.
+
+\fISound Method\fR lets the user choose between different playback methods. The user can also manually enter a command to be executed when a sound is to be played (\fI%s\fR expands to the full path to the file name).
+
+.TP
+.B Sound Events
+Lets the user choose when and what sounds are to be played.
+
+.SH Away / Idle
+
+\fISending messages removes away status\fR: If enabled, sending a message will change the sending account's status to Available.  If disabled, any account may send messages without affecting their away status.
+
+\fIQueue new messages when away\fR: Messages received since going Away will not be shown until away status is removed.
+
+\fIIgnore new conversations when away\fR: Messages from current conversations will be accepted, but new conversations will not be shown until away status is removed.
+
+\fISeconds before resending\fR: Auto-response information is resent to all buddies in current conversations every once in a while.  This option decides just how often.
+
+\fIDon't send auto-response\fR: If someone messages you while away, your auto-response will not be sent.
+
+\fIOnly send auto-response when idle\fR: If someone messages you while away, your auto-response will only be sent if \fBgaim\fR decides that the connection is idle.
+
+\fIDon't send auto-response in active conversations\fR: If you continue a conversation while away, this option will disable the sending of the auto-response for the duration of the conversation.
+
+\fIIdle time reporting\fR: If \fINone\fR is selected, account idle time will not be reported.  \fIGaim usage\fR infers your idle time from your usage of \fBgaim\fR.  \fIX usage\fR infers your idle time from \fBX\fR (this option may not be universally available).
+
+\fIAuto-away\fR: Determines if and under what conditions \fBgaim\fR will automatically turn on the Away status.
+
+.TP
+.B Away Messages
+Lets the user add/edit/remove available \fBAway Messages\fR.
+
+.SH Plugins
+
+Allows the user to enable add-on plugins for \fBgaim\fR.  Several of these come with \fBgaim\fR, while others must be downloaded separately.  The \fIDescription\fR field gives the plugin author's description of the plugin, while the \fIDetails\fR field gives the plugin's authorship, URL, and file name/location information.
+
+Some plugins can be configured.  If you load such a plugin, its configuration preferences will appear as a submenu to \fBPlugins\fR, with the submenu title determined by the plugin's name.
+
+.SH CONVERSATIONS
+When starting a new conversation, the user is presented with the \fBConversation\fR window.  The conversation appears in the upper text box and the user types his/her message in the lower text box.  Between the two is a row of settings, represented by icons.  From left to right:
 .TP
 .B Bold
 adds <b></b> to your message
@@ -103,9 +277,6 @@ adds <i></i> to your message
 .B Underline
 adds <u></u> to your message
 .TP
-.B Strikethrough
-adds <s></s> to your message
-.TP
 .B Decrease font size
 adds <font size="1"></font> to your message
 .TP
@@ -115,58 +286,43 @@ adds <font size="3"></font> to your message
 .B Increase font size
 adds <font size="5"></font> to your message
 .TP
-.B Select font face
-adds an appropriate font tag to your message.
-.TP
 .B Select a foreground color
 adds an appropriate font tag to your message.
 .TP
 .B Select a background color
 adds an appropriate body tag to your message.
 .TP
+.B Add image
+inserts an appropriate img tag (not available in all protocols).
+.TP
 .B Add hyperlink
 adds an appropriate a href tag to your message.
 .TP
 .B Add smiley
-adds an ASCII smiley to your message.  This will become a graphic smiley in the upper textbox if the option for graphical smileys is set.
-.TP
-.B Enable logging
-As the conversation continues, everything will get logged to a log file in ~/.gaim/logs
-.TP
-.B Save Conversation
-Saves the current conversation to a log file of your choice.
-.TP
-.B Enable Sounds
-Choose whether events in this conversation will trigger sounds.
+adds an ASCII smiley to your message.  This will become a graphic smiley in the upper text box if the option for graphical smileys is set.
 
-Beneath the lower textbox is a row of buttons that execute commands:
-.TP
-.B Send
-This sends what's currently in the lower textbox
-.TP
-.B Get Info
-This gets information (a profile) about the other person in the conversation.
+Beneath the lower text box is a row of buttons that execute commands:
 .TP
 .B Warn
-This issues a warning to the other person in the conversation.
+This issues a warning to the other person in the conversation (not available in all protocols).
 .TP
 .B Block
-This adds the other person to your deny list.
+This adds the other person to your deny list (not available in all protocols).
 .TP
-.B Add to buddy list
-This adds this user to your buddy list.  If he already is on your list, it will remove him from it.
+.B Add
+This adds this user to your buddy list.  This option is not available if the user is already on your list.
 .TP
-.B Close
-Closes this window.
+.B Remove
+This removes this user from your buddy list.  This option is not available if the user is not on your list.
+.TP
+.B Info
+This gets information (a profile) about the other person in the conversation (not available in all protocols).
+.TP
+.B Send
+This sends what's currently in the lower text box
 
-
-.SH Edit Buddies
-Clicking this tab on the \fBBuddy List Window\fR will invoke the main interface to edit and organize buddy lists.  Buddy's already in your buddy list can be moved to different groups or reordered in the same group by clicking and dragging with the mouse.  One can also add, rename, alias, or delete buddies here, as well as some of the functions available in the \fBBuddy List Dialog\fR.  
-
-In the \fBEdit Buddies\fR dialog, the list is arranged by connection.  If two or more connections have a group of the same, the \fBBuddy List\fR will only show one group with that name.  Available buddies from \fIboth\fR connections will be shown in this group.  If both connections have a buddy with the same screen name in a group of the same name, the buddy will appear only once.
-
-.SH Buddy Chat
-For protocols that allow it, \fBBuddy Chats\fR can be entered through the file menu, the keyboard shortcut \fICTRL+C\fR, or the right most button on the bottom of the \bBBuddy List Dialog\fR.
+.SH BUDDY CHATS
+For protocols that allow it, \fBBuddy Chats\fR can be entered through the \fIFile\fR menu or the \fIChat\fR button at the bottom of the \fBBuddy List\fR's \fBOnline\fR tab.
 
 Additional commands available in chat, depending on the protocol are:
 .TP
@@ -183,171 +339,40 @@ Ignore anything said by the chosen person
 Set the topic of the chat room.  This is usually a brief sentence describing the nature of the chat--an explanation of the chat room's name.
 
 .SH AWAY MESSAGES
-Most protocols allow for away messages.  When a user is \fIaway\fR, he can leave a message indicating why for others to see.  The \fBaway\fR submenu of the \fBTools\fR menu is used to add and remove away message, as well as to set a user's away state.
+Most protocols allow for away messages.  When a user is \fIAway\fR, he can leave an informative message for others to see.  The \fBAway\fR submenu of the \fBTools\fR menu is used to add and remove away messages.
 
-\fINew Away Message\fR provides space for one to enter an away message and a title for that message.  If \fISave\fR of \fISave & Use\fR are chosen, this message will be saved.  It can later be referred to by the title given to it.
+\fINew Away Message\fR provides space for one to enter an away message and a title for that message.  If \fISave\fR or \fISave & Use\fR are chosen, this message will be saved.  It can later be referred to by the title given to it.
 
 \fIRemove Away Message\fR is a submenu containing the titles of saved away messages.  Clicking on one of these titles will remove the away message associated with it.
 
 The rest of the \fIaway\fR menu provides the user with a way to assign different away messages to different connections.  Choosing \fISet All Away\fR will set away all the connections capable of the away state.
 
 .SH BUDDY POUNCE
-A Buddy Pounce is an automated trigger that occurs when a buddy returns to a normal state from an away state.  A pounce can be set to occur on any combination of the events listed, and any combination of actions can result.  If \fISave this pounce after activation\fR is checked, the trigger will remain until it is removed from the \fIRemove buddy pounce\fR menu.
-
-.SH ACCOUNT EDITOR
-The account editor consists of a list of accounts and information about them.  Clicking \fIAdd\fR or \fIModify\fR will invoke a \fIModify Account\fR window.  Here, you can alter information about your account.  When creating a new account, you will submit your screen name and password.  You will also choose your protocol; The two AIM protocols, TOC and OSCAR are always loaded, but other protocols can be dynamically loaded and unloaded using \fBProtocols Plugins (PRPLS)\fR.  
-
-If \fBRemember Password\fR is chosen, the password will be saved in \fBgaim's\fR configuration file.
-
-If \fBAuto-Login\fR is chosen, this account will automatically login upon starting \fBgaim\fR.
-
-Each protocol has it's own specific options that can be found in the protocol-specific tab on the modify screen.
-
-.SH PERL
-\fBGaim\fR allows for perl scripting.  This submenu provides for the loading of individual perl scripts and for the unloading of all of them.  See PERL-HOWTO for more information about perl scripting.
+A Buddy Pounce is an automated trigger that occurs when a buddy returns to a normal state from an away state.  The \fBNew Buddy Pounce\fR dialog box can be activated by selecting the \fIBuddy Pounce\fR submenu from the \fBTools\fR menu. A pounce can be set to occur on any combination of the events listed, and any combination of actions can result.  If \fISave this pounce after activation\fR is checked, the trigger will remain until it is removed from the \fIRemove Buddy Pounce\fR menu.
 
 .SH PLUGINS
-\fBGaim\fR allows for dynamic loading of plugins.  The plugin window shows the paths to loaded plugins on the left, and the name and description of the plugin on the right.
+\fBGaim\fR allows for dynamic loading of plugins to add extra functionality to \fBgaim\fR.  Plugins can be enabled and configured from the \fBPreferences\fR window.  See \fIplugins/HOWTO\fR for more information on writing plugins.
 
-You may load and unload plugins using the appropriate buttons.
-
-.SH PREFERENCES
-.SH General
-.TP
-.B Use Borderless Buttons
-Change the appearence of the GUI's buttons.
-.TP
-.B Show Buddy Ticker
-This opens the \fBBuddy Ticker\fR, a small window in which the contents of your buddy list scroll to keep you up to date on their status.
-.TP
-.B Show Debug Window
-This opens a debug window into which \fBgaim\fR sends more verbose information about what it's doing.
-.TP
-.B Report Idle Times
-For protocol's that require the client to report idle times, this option sets the method of determining idle times.  If \fINone\fR is chosen, idleness will not be reported.  If \fIGaim Use\fR is chosen, it will send idle times relative to the last time \fBgaim\fR was used.  If \fIX Use\fR is chosen, idle times will be reported based on the last time the mouse or keyboard was used.
-.TP
-.B Logging
-Log all conversations will automatically log conversations into ~/.gaim/logs/.  Unless \fIStrip HTML from logs\fR is checked, they will be saved as an HTML file with a .log extension.  The preferences window provides options to specify exactly what to log.
-.TP
-.B Browser
-Choose the Web Browser to use when a hyperlink is clicked.
-.SH Buddy List
-.TP
-.B Hide IM/Info/Chat buttons
-This option will remove the three buttons beneath the \fBBuddy List\fR in the \fBBuddy List Window\fR.
-.TP
-.B Show pictures on buttons
-If checked, the buttons will feature an icon, otherwise, the buttons will be text.
-.TP
-.B Hide groups with no online buddies
-This feature will only display a folder representing a group if there is at least one online buddy in it.
-.TP
-.B Show numbers in groups
-This feature displays the number of buddies in each group and the number of these online in the \fBBuddy List\fR.
-.TP
-.B Show buddy type icons
-This icon is a quick reference as to what protocol a buddy is using, and what away state, if any, he is in.
-.TP
-.B Show Idle times
-This shows how long a buddy has been idle next to his name.
-.B Show warning levels
-This shows the warning level of a buddy next to his name.
-.SH Conversations
-.TP
-.B Keyboard Options
-These options set certain keybindings.
-.TP
-.B Show graphical smileys
-This will convert emoticons such as :) and >:-O to small icons representing them.
-.TP
-.B Show timestamp on messages
-When selected, this option shows in the conversation window, the time each message was received or sent.
-.TP
-.B Show URLs as links
-This will convert URLs such as http://gaim.sourceforge.net to a hyperlink pointing to that site.
-.TP
-.B Highlight misspelled words
-While typing a message, if a user misspells a word, it will immediately turn red.  Right-clicking on the word will invoke a menu of possible corrections.
-.TP
-.B Sending messages removes away status
-If this option is selected, a user will come back from \fBaway\fR if he sends a message to someone.
-.TP
-.B Queue new messages when away
-This option will cause new conversation windows not to be created until a user returns from away.  Instead, a record of how many messages received and from whom they were received is shown in the away message window.
-.TP
-.B Ignore colors/font faces/ font sizes
-These options ignore font settings that can be set in HTML tags.
-.TP
-.B Ignore TiK Automated Messages
-AOL's open source TiK client gets a user's away message by sending him an automated message.  This option ignores those messages.
-.TP
-.B Ignore new conversations when away
-If checked, new conversations will be ignored entirely when away.  Unlike the \fBQueue new messages when away\fR option, no record will be kept of these.
-.SH Windows
-.TP 
-.B Show buttons as:
-This option selects the look of the buttons.
-.TP
-.B Show all conversations in one tabbed window
-Instead of seperate windows for each conversation, they are all shown in one window with tabs at the top to select the conversation.  A name on a tab will become red if a new message hasn't yet been read.
-.TP
-.B Raise windows on events
-When an event happens to a conversation, the conversation window will be raised above all other windows on the desktop.
-.TP
-.B Show logins in window
-This will show when buddies log in and out in the conversation window, if one is open for that buddy.
-.TP
-.B Window size
-Select the default size for new conversation windows.
-.SH Font Options
-.TP 
- These set the font preferences that are sent with all messages over a protocol that supports HTML.
-.SH Chat Rooms
-.TP
-This is a list of available chat rooms and chat rooms that you are subscribed to.
-.SH Sounds
-.TP
-.B No sounds when you log in
-This will prevent sounds from playing when \fBgaim\fR is first notified of your buddy's presence because you just signed on.
-.TP
-.B Sounds while away
-This option will continue to play sounds on events if you are away.
-.TP
-.B Beep instead of playing sound
-This will cause a terminal beep instead of a sound upon events.
-.TP
-.B Command to play sound files
-If you need a special command executed to play a sound, enter it in the given box with %s representing the filename.  If you prefer \fBgaim\fR to play the sound, leave it blank.
-.TP
-.B Events
-Choose sounds to play when each event occurs.
-.SH Away Messages
-.TP
-.B Don't send auto-response
-If someone sends the user a message while away, \fBgaim\fR will not respond with the away message if this is checked.
-.TP
-.B Auto Away
-If this is selected \fBgaim\fR will automatically go away if it's been idle for the specified length of time.
-.SH Privacy
-.TP
-Here, the user can configure his permit/deny lists.
-
-
+.SH PERL
+\fBGaim\fR allows for perl scripting.  See \fIplugins/PERL-HOWTO\fR for more information about perl scripting.
 
 .SH FILES
-~/.gaimrc \- Gaim Config File
+\fI/usr/local/bin/gaim\fR: \fBgaim\fR's default location.
 .br
-~/.gaim/logs/SCREENNAME.log \- a log of all conversation with SCREENNAME.
+\fI/usr/local/lib/gaim/\fR: \fBgaim\fR's plugins directory.
 .br
-/usr/local/lib/gaim/ \- Gaim Plugin Files
+\fI~/.gaimrc\fR: \fBgaim\fR's configuration file.
 .br
-~/.gaim/SCREENAME.PROTOCOL.blist \- the buddy list for SCREENAME using protocol number PROTOCOL
+\fI~/.gaim/logs/SCREENNAME.log\fR: a log of all conversation with \fISCREENNAME\fR.
+.br
+\fI~/.gaim/SCREENAME.PROTOCOL.blist\fR: the buddy list for \fISCREENAME\fR using protocol number \fIPROTOCOL\fR.
+
 .SH BUGS
-Known bugs are at http://sourceforge.net/bugs/?group_id=235
-.SH BUG REPORTS
-If you find a bug in \fBgaim\fR, please submit a bug form at
-http://sourceforge.net/bugs/?group_id=235
-.PP
+Known bugs are listed at \fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR.
+
+.SH PATCHES
+If you fix a bug in \fBgaim\fR (or otherwise enhance it), please submit a patch (using \fIcvs diff -u > my.diff\fR against the latest CVS version) at \fIhttp://sourceforge.net/tracker/?func=add&group_id=235&atid=300235\fR.
+
 Before sending a bug report, please verify that you have the latest 
 version of \fBgaim\fR.  Many bugs (major and minor) are fixed 
 at each release, and if yours is out of date, the problem may already 
@@ -355,6 +380,7 @@ have been solved.
 
 .SH SEE ALSO
 \fIhttp://gaim.sourceforge.net/\fR
+.br
 \fIhttp://www.sourceforge.net/projects/gaim/\fR
 
 .SH LICENSE
@@ -362,36 +388,31 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-.PP
+
 This program is distributed in the hope that it will be useful, but
 \fBWITHOUT ANY WARRANTY\fR; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
 General Public License for more details.
-.PP
+
 You should have received a copy of the GNU General Public License 
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple PLace, Suite 330, Boston, MA  02111-1307  USA
+
 .SH AUTHORS
-The authors of \fBgaim\fR are:
-.PP
- Rob Flynn <rob@marko.net> \- AIM: RobFlynn
+\fBGaim\fR's active developers are:
+
+ Rob Flynn (maintainer) <\fIrob@marko.net\fR>
 .br
- Sean Egan <bj91704@binghamton.edu> \- AIM: SeanEgn
+ Sean Egan (coder) <\fIbj91704@binghamton.edu\fR>
+
+The retired developers of \fBgaim\fR are:
+
+ Jim Duchek
 .br
- Syd Logan
-
-The retired authors of \fBgaim\fR are:
-.PP
- Jim Duchek <jim@linuxpimps.com> \- AIM: Zilding
+ Eric Warmenhoven <\fIwarmenhoven@yahoo.com\fR>
 .br
- Eric Warmenhoven <eric@warmenhoven.org>
-.br
- Mark Spencer <markster@marko.net> \- AIM: Markster97
+ Mark Spencer (original author) <\fImarkster@marko.net\fR>
 
 
-.PP
+This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIbj91704@binghamton.edu\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
 
-This manpage was originally written by Dennis Ristuccia <dennis@dennisr.net> AIM: D3nnisR.  It has been updated and largely rewritten by Sean Egan <bj91704@binghamton.edu> AIM: SeanEgn
-
-.\" WOO!
-.\" Agreed, Dennis, agreed.
