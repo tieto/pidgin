@@ -34,9 +34,94 @@ typedef enum
 {
 	GAIM_REQUEST_INPUT = 0,  /**< Text input request.      */
 	GAIM_REQUEST_CHOICE,     /**< Multiple-choice request. */
-	GAIM_REQUEST_ACTION      /**< Action request.          */
+	GAIM_REQUEST_ACTION,     /**< Action request.          */
+	GAIM_REQUEST_FIELDS      /**< Multiple fields request. */
 
 } GaimRequestType;
+
+/**
+ * A type of field.
+ */
+typedef enum
+{
+	GAIM_REQUEST_FIELD_NONE,
+	GAIM_REQUEST_FIELD_STRING,
+	GAIM_REQUEST_FIELD_INTEGER,
+	GAIM_REQUEST_FIELD_BOOLEAN,
+	GAIM_REQUEST_FIELD_CHOICE
+
+} GaimRequestFieldType;
+
+/**
+ * A request field.
+ */
+typedef struct
+{
+	GaimRequestFieldType type;
+
+	char *id;
+	char *label;
+
+	union
+	{
+		struct
+		{
+			gboolean multiline;
+			char *default_value;
+			char *value;
+
+		} string;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+		} integer;
+
+		struct
+		{
+			gboolean default_value;
+			gboolean value;
+
+		} boolean;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+			GList *labels;
+
+		} choice;
+
+	} u;
+
+} GaimRequestField;
+
+/**
+ * Multiple fields request data.
+ */
+typedef struct
+{
+	GList *groups;
+
+	GHashTable *fields;
+
+} GaimRequestFields;
+
+/**
+ * A group of fields with a title.
+ */
+typedef struct
+{
+	GaimRequestFields *fields_list;
+
+	char *title;
+
+	GList *fields;
+
+} GaimRequestFieldGroup;
 
 /**
  * Request UI operations.
@@ -59,6 +144,11 @@ typedef struct
 							const char *secondary, unsigned int default_action,
 							void *user_data, size_t action_count,
 							va_list actions);
+	void *(*request_fields)(const char *title, const char *primary,
+							const char *secondary, GaimRequestFields *fields,
+							const char *ok_text, GCallback ok_cb,
+							const char *cancel_text, GCallback cancel_cb,
+							void *user_data);
 
 	void (*close_request)(GaimRequestType type, void *ui_handle);
 
@@ -66,6 +156,428 @@ typedef struct
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
 typedef void (*GaimRequestActionCb)(void *, int);
+typedef void (*GaimRequestFieldsCb)(void *, GaimRequestFields *fields);
+
+/**************************************************************************/
+/** @name Field List API                                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a list of fields to pass to gaim_request_fields().
+ *
+ * @return A GaimRequestFields structure.
+ */
+GaimRequestFields *gaim_request_fields_new(void);
+
+/**
+ * Destroys a list of fields.
+ *
+ * @param fields The list of fields to destroy.
+ */
+void gaim_request_fields_destroy(GaimRequestFields *fields);
+
+/**
+ * Adds a group of fields to the list.
+ *
+ * @param fields The fields list.
+ * @param group  The group to add.
+ */
+void gaim_request_fields_add_group(GaimRequestFields *fields,
+								   GaimRequestFieldGroup *group);
+
+/**
+ * Returns a list of all groups in a field list.
+ *
+ * @param fields The fields list.
+ *
+ * @return A list of groups.
+ */
+GList *gaim_request_fields_get_groups(const GaimRequestFields *fields);
+
+/**
+ * Return the field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The field, if found.
+ */
+GaimRequestField *gaim_request_fields_get_field(
+		const GaimRequestFields *fields, const char *id);
+
+/**
+ * Returns the string value of a field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The string value, if found, or @c NULL otherwise.
+ */
+const char *gaim_request_fields_get_string(const GaimRequestFields *fields,
+										   const char *id);
+
+/**
+ * Returns the integer value of a field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The integer value, if found, or 0 otherwise.
+ */
+int gaim_request_fields_get_integer(const GaimRequestFields *fields,
+									const char *id);
+
+/**
+ * Returns the boolean value of a field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The boolean value, if found, or @c FALSE otherwise.
+ */
+gboolean gaim_request_fields_get_bool(const GaimRequestFields *fields,
+									  const char *id);
+
+/**
+ * Returns the choice index of a field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The choice index, if found, or -1 otherwise.
+ */
+int gaim_request_fields_get_choice(const GaimRequestFields *fields,
+								   const char *id);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Fields Group API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a fields group with an optional title.
+ *
+ * @param title The optional title to give the group.
+ *
+ * @return A new fields group
+ */
+GaimRequestFieldGroup *gaim_request_field_group_new(const char *title);
+
+/**
+ * Destroys a fields group.
+ *
+ * @param group The group to destroy.
+ */
+void gaim_request_field_group_destroy(GaimRequestFieldGroup *group);
+
+/**
+ * Adds a field to the group.
+ *
+ * @param group The group to add the field to.
+ * @param field The field to add to the group.
+ */
+void gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
+										GaimRequestField *field);
+
+/**
+ * Returns the title of a fields group.
+ *
+ * @param group The group.
+ *
+ * @return The title, if set.
+ */
+const char *gaim_request_field_group_get_title(
+		const GaimRequestFieldGroup *group);
+
+/**
+ * Returns a list of all fields in a group.
+ *
+ * @param group The group.
+ *
+ * @return The list of fields in the group.
+ */
+GList *gaim_request_field_group_get_fields(
+		const GaimRequestFieldGroup *group);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Field API                                                       */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a field of the specified type.
+ *
+ * @param id   The field ID.
+ * @param text The text label of the field.
+ * @param type The type of field.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_new(const char *id, const char *text,
+										 GaimRequestFieldType type);
+
+/**
+ * Destroys a field.
+ *
+ * @param field The field to destroy.
+ */
+void gaim_request_field_destroy(GaimRequestField *field);
+
+/**
+ * Sets the label text of a field.
+ *
+ * @param field The field.
+ * @param label The text label.
+ */
+void gaim_request_field_set_label(GaimRequestField *field, const char *label);
+
+/**
+ * Returns the type of a field.
+ *
+ * @param field The field.
+ *
+ * @return The field's type.
+ */
+GaimRequestFieldType gaim_request_field_get_type(const GaimRequestField *field);
+
+/**
+ * Returns the ID of a field.
+ *
+ * @param field The field.
+ *
+ * @return The ID
+ */
+const char *gaim_request_field_get_id(const GaimRequestField *field);
+
+/**
+ * Returns the label text of a field.
+ *
+ * @param field The field.
+ *
+ * @return The label text.
+ */
+const char *gaim_request_field_get_label(const GaimRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name String Field API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a string request field.
+ *
+ * @param id            The field ID.
+ * @param text          The text label of the field.
+ * @param default_value The optional default value.
+ * @param multiline     Whether or not this should be a multiline string.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_string_new(const char *id,
+												const char *text,
+												const char *default_value,
+												gboolean multiline);
+
+/**
+ * Sets the default value in a string field.
+ *
+ * @param field The field.
+ * @param value The default value.
+ */
+void gaim_request_field_string_set_default_value(GaimRequestField *field,
+												 const char *default_value);
+
+/**
+ * Returns the default value in a string field.
+ *
+ * @param field The field.
+ * 
+ * @return The default value.
+ */
+const char *gaim_request_field_string_get_default_value(
+		const GaimRequestField *field);
+
+/**
+ * Returns the user-entered value in a string field.
+ *
+ * @param field The field.
+ *
+ * @return The value.
+ */
+const char *gaim_request_field_string_get_value(const GaimRequestField *field);
+
+/**
+ * Returns whether or not a string field is multi-line.
+ *
+ * @param field The field.
+ *
+ * @return @c TRUE if the field is mulit-line, or @c FALSE otherwise.
+ */
+gboolean gaim_request_field_string_is_multiline(const GaimRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Integer Field API                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates an integer field.
+ *
+ * @param id            The field ID.
+ * @param text          The text label of the field.
+ * @param default_value The default value.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_int_new(const char *id,
+											 const char *text,
+											 int default_value);
+
+/**
+ * Sets the default value in an integer field.
+ *
+ * @param field The field.
+ * @param value The default value.
+ */
+void gaim_request_field_int_set_default_value(GaimRequestField *field,
+											  int default_value);
+
+/**
+ * Returns the default value in an integer field.
+ *
+ * @param field The field.
+ * 
+ * @return The default value.
+ */
+int gaim_request_field_int_get_default_value(const GaimRequestField *field);
+
+/**
+ * Returns the user-entered value in an integer field.
+ *
+ * @param field The field.
+ *
+ * @return The value.
+ */
+int gaim_request_field_int_get_value(const GaimRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Boolean Field API                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a boolean field.
+ *
+ * This is often represented as a checkbox.
+ *
+ * @param id            The field ID.
+ * @param text          The text label of the field.
+ * @param default_value The default value.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_bool_new(const char *id,
+											  const char *text,
+											  gboolean default_value);
+
+/**
+ * Sets the default value in an boolean field.
+ *
+ * @param field The field.
+ * @param value The default value.
+ */
+void gaim_request_field_bool_set_default_value(GaimRequestField *field,
+											   gboolean default_value);
+
+/**
+ * Returns the default value in an boolean field.
+ *
+ * @param field The field.
+ * 
+ * @return The default value.
+ */
+gboolean gaim_request_field_bool_get_default_value(
+		const GaimRequestField *field);
+
+/**
+ * Returns the user-entered value in an boolean field.
+ *
+ * @param field The field.
+ *
+ * @return The value.
+ */
+gboolean gaim_request_field_bool_get_value(const GaimRequestField *field);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Choice Field API                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a multiple choice field.
+ *
+ * This is often represented as a group of radio buttons.
+ *
+ * @param id            The field ID.
+ * @param text          The optional label of the field.
+ * @param default_value The default choice.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_choice_new(const char *id,
+												const char *text,
+												int default_value);
+
+/**
+ * Adds a choice to a multiple choice field.
+ *
+ * @param field The choice field.
+ * @param label The choice label.
+ */
+void gaim_request_field_choice_add(GaimRequestField *field,
+								   const char *label);
+
+/**
+ * Sets the default value in an choice field.
+ *
+ * @param field The field.
+ * @param value The default value.
+ */
+void gaim_request_field_choice_set_default_value(GaimRequestField *field,
+												 int default_value);
+
+/**
+ * Returns the default value in an choice field.
+ *
+ * @param field The field.
+ * 
+ * @return The default value.
+ */
+int gaim_request_field_choice_get_default_value(const GaimRequestField *field);
+
+/**
+ * Returns the user-entered value in an choice field.
+ *
+ * @param field The field.
+ *
+ * @return The value.
+ */
+int gaim_request_field_choice_get_value(const GaimRequestField *field);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Request API                                                     */
@@ -189,6 +701,29 @@ void *gaim_request_action_varg(void *handle, const char *title,
 							   unsigned int default_action,
 							   void *user_data, size_t action_count,
 							   va_list actions);
+
+/**
+ * Displays groups of fields for the user to fill in.
+ *
+ * @param handle      The plugin or connection handle.
+ * @param title       The title of the message.
+ * @param primary     The main point of the message.
+ * @param secondary   The secondary information.
+ * @param fields      The list of fields.
+ * @param ok_text     The text for the OK button.
+ * @param ok_cb       The callback for the OK button.
+ * @param cancel_text The text for the cancel button.
+ * @param cancel_cb   The callback for the cancel button.
+ * @param user_data   The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_request_fields(void *handle, const char *title,
+						  const char *primary, const char *secondary,
+						  GaimRequestFields *fields,
+						  const char *ok_text, GCallback ok_cb,
+						  const char *cancel_text, GCallback cancel_cb,
+						  void *user_data);
 
 /**
  * Closes a request.
