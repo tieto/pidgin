@@ -451,12 +451,16 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
         }
 
 	if (!b->idle && idle) plugin_event(event_buddy_idle, gc, b->name, 0, 0);
-	if (b->idle && !idle) plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
+	if (b->idle && !idle) {
+                do_pounce(b->name);
+		plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
+	}
 
         b->idle = idle;
         b->evil = evil;
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
+                do_pounce(b->name);
 		plugin_event(event_buddy_back, gc, b->name, 0, 0);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
 		plugin_event(event_buddy_away, gc, b->name, 0, 0);
