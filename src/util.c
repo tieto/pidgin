@@ -1277,15 +1277,17 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 {
 	gchar *end = dest + destsize;
 
-	while (*src && dest < end) {
-		if (*src == '\n' && dest < end - 4) {
+	while (dest < end) {
+		if (*src == '\n' && dest < end - 5) {
 			strcpy(dest, "<BR>");
 			src++;
 			dest += 4;
-		} else
-			*dest++ = *src++;
+		} else {
+			*dest++ = *src;
+			if (*src == '\0') return;
+			else src++;
+		}
 	}
-	dest[destsize-1] = '\0';
 }
 
 
