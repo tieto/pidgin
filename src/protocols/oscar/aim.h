@@ -953,12 +953,12 @@ faim_export int aim_sendbuddyoffgoing(aim_session_t *sess, aim_conn_t *conn, con
 
 
 struct aim_icbmparameters {
-	unsigned short maxchan;
-	unsigned long flags; /* AIM_IMPARAM_FLAG_ */
-	unsigned short maxmsglen; /* message size that you will accept */
-	unsigned short maxsenderwarn; /* this and below are *10 (999=99.9%) */
-	unsigned short maxrecverwarn;
-	unsigned long minmsginterval; /* in milliseconds? */
+	fu16_t maxchan;
+	fu32_t flags; /* AIM_IMPARAM_FLAG_ */
+	fu16_t maxmsglen; /* message size that you will accept */
+	fu16_t maxsenderwarn; /* this and below are *10 (999=99.9%) */
+	fu16_t maxrecverwarn;
+	fu32_t minmsginterval; /* in milliseconds? */
 };
 
 faim_export int aim_reqicbmparams(aim_session_t *sess);

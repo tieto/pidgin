@@ -53,6 +53,12 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	if (aim_gettlv(tlvlist, 0x0002, 1))
 		maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
 
+	/*
+	 * TLV type 0x0003: Unknown.
+	 *
+	 * ICQ only?
+	 */
+
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, maxbuddies, maxwatchers);
 

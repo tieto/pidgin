@@ -290,6 +290,10 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_encode_password_md5(password, key, digest);
 	aim_addtlvtochain_raw(&tl, 0x0025, 16, digest);
 
+	/*
+	 * Newer versions of winaim have an empty type x004c TLV here.
+	 */
+
 	if (ci->clientstring)
 		aim_addtlvtochain_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
 	aim_addtlvtochain16(&tl, 0x0016, (fu16_t)ci->clientid);
@@ -304,7 +308,6 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	
 	aim_addtlvtochain8(&tl, 0x004a, 0x01);
 
 	aim_writetlvchain(&fr->data, &tl);
