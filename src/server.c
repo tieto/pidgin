@@ -139,14 +139,17 @@ void serv_touch_idle(GaimConnection *gc)
 void serv_finish_login(GaimConnection *gc)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimAccount *account;
 
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (strlen(gc->account->user_info)) {
+	account = gaim_connection_get_account(gc);
+
+	if (gaim_account_get_user_info(account) != NULL) {
 		/* g_malloc(strlen(gc->user->user_info) * 4);
 		   strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4); */
-		serv_set_info(gc, gc->account->user_info);
+		serv_set_info(gc, (char *)gaim_account_get_user_info(account));
 		/* g_free(buf); */
 	}
 
