@@ -342,6 +342,23 @@ gaim_gtk_get_cmd_prefix(void)
 	return "/";
 }
 
+static GaimCmdRet
+me_command_cb(GaimConversation *conv,
+              const char *cmd, char **args, char **error)
+{
+	char *tmp;
+
+	tmp = g_strdup_printf("/me %s", args[0]);
+	
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gaim_conv_im_send(GAIM_CONV_IM(conv), tmp);
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		gaim_conv_chat_send(GAIM_CONV_CHAT(conv), tmp);
+
+	g_free(tmp);
+	return GAIM_CMD_RET_OK;
+}
+
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -5938,6 +5955,14 @@ gaim_gtk_conversations_init(void)
 	                                    GAIM_SUBTYPE_CONV_WINDOW),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONV_WINDOW));
+
+	/**********************************************************************
+	 * Register commands
+	 **********************************************************************/
+	 gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
+                        GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+                        me_command_cb, _("Send an IRC style action to a buddy or chat."));
+
 }
 
 void
