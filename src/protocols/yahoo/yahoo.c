@@ -799,6 +799,32 @@ static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+#define OUT_CHARSET "utf-8"
+
+static char *yahoo_decode(const char *text)
+{
+	char *converted;
+	char *p, *n, *new;
+	
+	n = new = g_malloc(strlen (text));
+
+	for (p = (char *)text; *p; p++, n++) {
+		if (*p == '\\') {
+			sscanf(p + 1, "%3o\n", (int *)n);
+			p += 3;
+		}
+		else
+			*n = *p;
+	}
+
+	*n = '\0';
+	
+	converted = g_convert(new, n - new, OUT_CHARSET, "iso-8859-1", NULL, NULL, NULL);
+	g_free(new);
+
+	return converted;
+}
+
 static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -825,11 +851,15 @@ static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (who && subj && email && *email) {
-		char *from = g_strdup_printf("%s (%s)", who, email);
+		char *dec_who = yahoo_decode(who);
+		char *dec_subj = yahoo_decode(subj);
+		char *from = g_strdup_printf("%s (%s)", dec_who, email);
 
-		gaim_notify_email(gc, subj, from, gaim_account_get_username(account),
+		gaim_notify_email(gc, dec_subj, from, gaim_account_get_username(account),
 						  "http://mail.yahoo.com/", NULL, NULL);
 
+		g_free(dec_who);
+		g_free(dec_subj);
 		g_free(from);
 	} else if (count > 0) {
 		const char *to = gaim_account_get_username(account);
