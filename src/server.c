@@ -461,7 +461,7 @@ void serv_alias_buddy(struct buddy *b)
 	}
 }
 
-void serv_got_alias(GaimConnection *gc, char *who, char *alias) {
+void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(!b)
 		return;
@@ -1023,7 +1023,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 
 
-void serv_got_update(GaimConnection *gc, char *name, int loggedin,
+void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type)
 {
 	GaimAccount *account;
@@ -1147,7 +1147,7 @@ void serv_got_update(GaimConnection *gc, char *name, int loggedin,
 }
 
 
-void serv_got_eviled(GaimConnection *gc, char *name, int lev)
+void serv_got_eviled(GaimConnection *gc, const char *name, int lev)
 {
 	char buf2[1024];
 
@@ -1169,7 +1169,7 @@ void serv_got_eviled(GaimConnection *gc, char *name, int lev)
 	gaim_notify_info(NULL, NULL, buf2, NULL);
 }
 
-void serv_got_typing(GaimConnection *gc, char *name, int timeout,
+void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 int state) {
 
 	struct buddy *b;
@@ -1196,7 +1196,7 @@ void serv_got_typing(GaimConnection *gc, char *name, int timeout,
 		gaim_im_start_typing_timeout(im, timeout);
 }
 
-void serv_got_typing_stopped(GaimConnection *gc, char *name) {
+void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
 	struct gaim_conversation *c = gaim_find_conversation(name);
 	struct gaim_im *im;
@@ -1241,8 +1241,8 @@ static void chat_invite_accept(struct chat_invite_data *cid)
 
 
 
-void serv_got_chat_invite(GaimConnection *gc, char *name,
-						  char *who, char *message, GHashTable *data)
+void serv_got_chat_invite(GaimConnection *gc, const char *name,
+						  const char *who, const char *message, GHashTable *data)
 {
 	GaimAccount *account;
 	char buf2[BUF_LONG];
@@ -1271,7 +1271,7 @@ void serv_got_chat_invite(GaimConnection *gc, char *name,
 }
 
 struct gaim_conversation *serv_got_joined_chat(GaimConnection *gc,
-											   int id, char *name)
+											   int id, const char *name)
 {
 	struct gaim_conversation *b;
 	struct gaim_chat *chat;

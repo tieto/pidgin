@@ -3176,7 +3176,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"%s\n"
 			"<hr>\n"),
 			info->sn, images(info->flags),
-			(info->warnlevel/10.0) + 0.5,
+			(int)((info->warnlevel/10.0) + 0.5),
 			onlinesince ? onlinesince : "",
 			membersince ? membersince : "",
 			idle ? idle : "");

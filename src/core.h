@@ -122,16 +122,16 @@ extern void load_pounces();
 extern void save_prefs();
 
 /* Functions in server.c */
-extern void serv_got_update(GaimConnection *, char *, int, int, time_t, time_t, int);
+extern void serv_got_update(GaimConnection *, const char *, int, int, time_t, time_t, int);
 extern void serv_got_im(GaimConnection *, const char *, const char *, guint32, time_t, gint);
-extern void serv_got_typing(GaimConnection *, char *, int, int);
-extern void serv_got_typing_stopped(GaimConnection *, char *);
-extern void serv_got_eviled(GaimConnection *, char *, int);
-extern void serv_got_chat_invite(GaimConnection *, char *, char *, char *, GHashTable *);
-extern struct gaim_conversation *serv_got_joined_chat(GaimConnection *, int, char *);
+extern void serv_got_typing(GaimConnection *, const char *, int, int);
+extern void serv_got_typing_stopped(GaimConnection *, const char *);
+extern void serv_got_eviled(GaimConnection *, const char *, int);
+extern void serv_got_chat_invite(GaimConnection *, const char *, const char *, const char *, GHashTable *);
+extern struct gaim_conversation *serv_got_joined_chat(GaimConnection *, int, const char *);
 extern void serv_got_chat_left(GaimConnection *, int);
 extern void serv_got_chat_in(GaimConnection *, int, char *, int, char *, time_t);
-extern void serv_got_alias(GaimConnection *, char *, char *);
+extern void serv_got_alias(GaimConnection *, const char *, const char *);
 extern void serv_finish_login();
 
 #endif /* _CORE_H_ */
