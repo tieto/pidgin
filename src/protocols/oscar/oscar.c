@@ -1262,15 +1262,8 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 	struct gaim_connection *gc = sess->aux_data;
 	int flags = 0;
 
-	if (sizeof(gaim_features) == args->featureslen) {
-		int i;
-		for (i = 0; i < args->featureslen; i++) {
-			if (gaim_features[i] != args->features[i])
-				break;
-		}
-		if (i == args->featureslen)
-			flags |= IM_FLAG_GAIMUSER;
-	}
+	if ((sizeof(gaim_features) == args->featureslen) && !memcmp(gaim_features, args->features, args->featureslen))
+		flags |= IM_FLAG_GAIMUSER;
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
 		flags |= IM_FLAG_AWAY;
