@@ -1415,7 +1415,8 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 				/* Did auth work? */
 				if (buf[0] == 0x00) {
 					/* Success */
-					return s5_sendconnect(phb, source);
+					s5_sendconnect(phb, source);
+					return;
 				} else {
 					/* Failure */
 					gaim_debug_warning("proxy", "socks5 CHAP authentication "
