@@ -64,6 +64,12 @@ email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 	gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
 }
 
+static void
+formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
+{
+	gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
+}
+
 static void *
 gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 						const char *primary, const char *secondary,
@@ -271,6 +277,9 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
 
+	g_signal_connect(G_OBJECT(window), "delete_event",
+					 G_CALLBACK(formatted_close_cb), NULL);
+
 	/* Setup the main vbox */
 	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -312,7 +321,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gtk_widget_destroy), window);
+					 G_CALLBACK(formatted_close_cb), window);
 
 	/* Add the text to the gtkimhtml */
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
