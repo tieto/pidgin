@@ -9,6 +9,10 @@ version 0.52:
 	* Updated German Translation (Thanks Karsten Weiss)
 	* Yahoo! Messenger works again
 	* MSN Works again
+	* Can register a new user with a Jabber Server (JSeymour)
+	* Can now set Jabber vCards (JSeymour)
+	* Jabber vCards are not shown in their entirety (JSeymour)
+	* Various jabber bug fixes/enhancements (JSeymour)
 
 version 0.51 (01/24/2002):
 	* Arrow buttons in log viewer and some other dialogs
