@@ -7,6 +7,7 @@ version 0.9.18:
 	* Pressing enter once again sends a message in buddy chatrooms (oops)
 	* More fixes for the change on the AOL sign-on process. 
 	* Fixed bug where GAIM sometimes doesn't find a font to use.
+	* Per-conversation font and color dialogs (thanks fflewddur)
 
 version 0.9.17 (05/31/2000):
 	* Automagic feature to check for new versions has been removed

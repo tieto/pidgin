@@ -219,12 +219,12 @@ struct debug_window {
 };
 
 struct conversation {
-        GtkWidget *window;
-        char name[80];
+	GtkWidget *window;
+	char name[80];
 	GtkWidget *text;
-        GtkWidget *entry;
+	GtkWidget *entry;
 	GtkWidget *italic;
-        GtkWidget *bold;
+	GtkWidget *bold;
 	GtkWidget *underline;
 	GtkWidget *palette;
 	GtkWidget *link;
@@ -232,6 +232,8 @@ struct conversation {
     GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
+	GtkWidget *color_dialog;
+	GtkWidget *font_dialog;
 
 	char current_fontface[64];
 	char current_fontname[64];
@@ -339,7 +341,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 318 $"
+#define REVISION "gaim:$Revision: 321 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -668,14 +670,14 @@ extern void g_show_info_text (char *);
 extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
-extern void show_color_dialog(GtkWidget *entry, GtkWidget *color);
+extern void show_color_dialog(struct conversation *c, GtkWidget *color);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
 extern void show_change_passwd();
 
-extern void show_font_dialog(GtkWidget *widget, GtkWidget *font);
-extern void cancel_font(GtkWidget *widget, GtkWidget *font);
+extern void show_font_dialog(struct conversation *c, GtkWidget *font);
+extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 
 /* Functions in rvous.c */

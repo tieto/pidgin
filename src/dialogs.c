@@ -44,7 +44,7 @@ char *fontname;
 
 static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
-static GtkWidget *linkdialog, *colordialog, *exportdialog, *importdialog, *logdialog, *fontdialog;
+static GtkWidget *linkdialog, *exportdialog, *importdialog, *logdialog;
 
 static void accept_callback(GtkWidget *widget, struct file_transfer *t);
 
@@ -245,6 +245,18 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 /*  Destroys                                                              */
 /*------------------------------------------------------------------------*/
 
+static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversation *c)
+{
+	dialogwindows = g_list_remove(dialogwindows, w);
+	gtk_widget_destroy(w);
+	
+	if (GTK_IS_COLOR_SELECTION_DIALOG(w))
+		c->color_dialog = NULL;
+	if (GTK_IS_FONT_SELECTION_DIALOG(w))
+		c->font_dialog = NULL;
+
+	return FALSE;
+}
 
 static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 {
@@ -267,14 +279,14 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 	if (dest == logdialog)
 		logdialog = NULL;
 
-	if (dest == colordialog)
-		colordialog = NULL;
+/*	if (GTK_COLOR_SELECTION_DIALOG(dest))
+		color_dialog = NULL;*/
 
 	if (dest == linkdialog)
 		linkdialog = NULL;
 	
-	if (dest == fontdialog)
-		fontdialog = NULL;
+/*	if (dest == fontdialog)
+		fontdialog = NULL;*/
 
         dialogwindows = g_list_remove(dialogwindows, dest);
         gtk_widget_destroy(dest);
@@ -305,10 +317,11 @@ void destroy_all_dialogs()
 		destroy_dialog(NULL, linkdialog);
 		linkdialog = NULL;
 	}
-	if (colordialog) {
+/* is this needed? */
+/*	if (colordialog) {
 		destroy_dialog(NULL, colordialog);
 		colordialog = NULL;
-	}
+	}*/
 
         if (exportdialog) {
                 destroy_dialog(NULL, exportdialog);
@@ -324,11 +337,11 @@ void destroy_all_dialogs()
 		destroy_dialog(NULL, logdialog);
 		logdialog = NULL;
 	}
-
-	if (fontdialog) {
+/* is this needed? */
+/*	if (fontdialog) {
 		destroy_dialog(NULL, fontdialog);
 		fontdialog = NULL;
-	}
+	}*/
 }
 
 static void do_warn(GtkWidget *widget, struct warning *w)
@@ -1874,84 +1887,84 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 /* Color Selection Dialog                               */
 /*------------------------------------------------------*/
 
-void cancel_color(GtkWidget *widget, GtkWidget *color)
+void cancel_color(GtkWidget *widget, struct conversation *c)
 {
- 	if (color)
-        {
-        	set_state_lock(1);
-        	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(color), FALSE);
-        	set_state_lock(0);
+ 	if (c->palette && widget)
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->palette), FALSE);
+		set_state_lock(0);
 	}
-	destroy_dialog(NULL, colordialog);
+	dialogwindows = g_list_remove(dialogwindows, c->color_dialog);
+	gtk_widget_destroy(c->color_dialog);
+	c->color_dialog = NULL;
 }
-
-
 
 void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
 {
-        gdouble color[3];
+	gdouble color[3];
 	GdkColor text_color;
-	GtkWidget *entry;
+	struct conversation *c;
 	char *open_tag;
 
 	open_tag = g_malloc(30);
 
-        gtk_color_selection_get_color (colorsel, color);
+	gtk_color_selection_get_color (colorsel, color);
 
-        entry = gtk_object_get_user_data(GTK_OBJECT(colorsel));
-	
-        text_color.red = ((guint16)(color[0]*65535))>>8;
-        text_color.green = ((guint16)(color[1]*65535))>>8;
-		text_color.blue = ((guint16)(color[2]*65535))>>8;
+	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
+	GTK_IS_EDITABLE(c->entry);
+
+	text_color.red = ((guint16)(color[0]*65535))>>8;
+	text_color.green = ((guint16)(color[1]*65535))>>8;
+	text_color.blue = ((guint16)(color[2]*65535))>>8;
 	
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
-
-	surround(entry, open_tag, "</FONT>");
+	surround(c->entry, open_tag, "</FONT>");
 	sprintf(debug_buff,"#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	debug_print(debug_buff);
-        g_free(open_tag);
-	cancel_color(NULL, NULL);
+	g_free(open_tag);
+	cancel_color(NULL, c);
 }
 
 
-void show_color_dialog(GtkWidget *entry, GtkWidget *color)
+void show_color_dialog(struct conversation *c, GtkWidget *color)
 {
-        GtkWidget *colorsel;
+	GtkWidget *colorsel;
 
-        if (!colordialog) {
-     
+    if (!c->color_dialog)
+	{
+    	c->color_dialog = gtk_color_selection_dialog_new("Select Text Color");
+		colorsel = GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->colorsel;
 
-		colordialog = gtk_color_selection_dialog_new("Select Text Color");
-                colorsel = GTK_COLOR_SELECTION_DIALOG(colordialog)->colorsel;
+		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
 		
-		/* XXX: Modality is evil, but we need it until we have
-		 * per-conversation color dialogs */
+		gtk_signal_connect(GTK_OBJECT(c->color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_color), colorsel);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_color), c);
 
-		gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
+		gtk_widget_realize(c->color_dialog);
+		aol_icon(c->color_dialog->window);
+	}
 
-                gtk_object_set_user_data(GTK_OBJECT(colorsel), entry);
-		
-                gtk_signal_connect(GTK_OBJECT(colordialog), "delete_event", GTK_SIGNAL_FUNC(cancel_color), color);
-
-                gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_color), colorsel);
-
-                gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_color), color);
-                gtk_widget_realize(colordialog);
-		aol_icon(colordialog->window);
-
-        }
-
-        gtk_widget_show(colordialog);
-        gdk_window_raise(colordialog->window);
+	gtk_widget_show(c->color_dialog);
+	gdk_window_raise(c->color_dialog->window);
 }
 
 /*------------------------------------------------------------------------*/
 /*  Font Selection Dialog                                                 */
 /*------------------------------------------------------------------------*/
 
-void cancel_font(GtkWidget *widget, GtkWidget *window)
+void cancel_font(GtkWidget *widget, struct conversation *c)
 {	
-	destroy_dialog(NULL, fontdialog);
+	if (c->font && widget)
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->font), FALSE);
+		set_state_lock(0);
+	}
+	dialogwindows = g_list_remove(dialogwindows, c->font_dialog);
+	gtk_widget_destroy(c->font_dialog);
+	c->font_dialog = NULL;	
 }
 
 void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
@@ -2003,38 +2016,40 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 		save_prefs();
 	}
 	
-	cancel_font(widget, NULL);
+	cancel_font(NULL, c);
 }
 
-void show_font_dialog(GtkWidget *widget, GtkWidget *font)
+void show_font_dialog(struct conversation *c, GtkWidget *font)
 {
 	GtkWidget *fontsel;
 	
-	fontdialog = gtk_font_selection_dialog_new("Select Font");
-	fontsel = GTK_FONT_SELECTION_DIALOG(fontdialog)->fontsel;
+	if (!c->font_dialog)
+	{
+		c->font_dialog = gtk_font_selection_dialog_new("Select Font");
+		fontsel = GTK_FONT_SELECTION_DIALOG(c->font_dialog)->fontsel;
 
-	if (font)
-		gtk_object_set_user_data(GTK_OBJECT(fontsel), gtk_object_get_user_data(GTK_OBJECT(font)));
-	else
-		gtk_object_set_user_data(GTK_OBJECT(fontsel), NULL);
+		if (font)
+			gtk_object_set_user_data(GTK_OBJECT(fontsel), c);
+		else
+			gtk_object_set_user_data(GTK_OBJECT(fontsel), NULL);
 			
-	gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, DEFAULT_FONT_NAME);	
-	gtk_window_set_modal(GTK_WINDOW(fontdialog), TRUE);
-	gtk_signal_connect(GTK_OBJECT(fontdialog), "delete_event", GTK_SIGNAL_FUNC(cancel_font), font);
-	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontdialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_font), fontsel);
-	gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontdialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_font), font);
-	
-	if (fontname)
-		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, fontname);
-	else
-		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)fontdialog, DEFAULT_FONT_NAME);		
+		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, DEFAULT_FONT_NAME);	
 		
-	gtk_widget_realize(fontdialog);
+		gtk_signal_connect(GTK_OBJECT(c->font_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_font), fontsel);
+		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(c->font_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_font), c);
 	
-	aol_icon(fontdialog->window);
+		if (fontname)
+			gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, fontname);
+		else
+			gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *)c->font_dialog, DEFAULT_FONT_NAME);		
 		
-	gtk_widget_show(fontdialog);
-	gdk_window_raise(fontdialog->window);
+		gtk_widget_realize(c->font_dialog);
+	
+		aol_icon(c->font_dialog->window);
+	}	
+	gtk_widget_show(c->font_dialog);
+	gdk_window_raise(c->font_dialog->window);
 }
 
 /*------------------------------------------------------------------------*/

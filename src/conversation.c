@@ -208,6 +208,10 @@ struct log_conversation *find_log_info(char *name)
 void delete_conversation(struct conversation *cnv)
 {
         conversations = g_list_remove(conversations, cnv);
+	if (cnv->color_dialog)
+		gtk_widget_destroy(cnv->color_dialog);
+	if (cnv->font_dialog)
+		gtk_widget_destroy(cnv->font_dialog);
         g_free(cnv);
 }
 
@@ -246,8 +250,8 @@ void update_font_buttons()
                 if (c->strike)
                         gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
 
-                if (c->font)
-                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);
+/*                if (c->font)
+                        gtk_widget_set_sensitive(c->font, ((font_options & OPT_FONT_FACE)) ? TRUE : FALSE);*/
 		
 		cnv = cnv->next;
 	}
@@ -340,7 +344,6 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 	delete_conversation(c);
 	return FALSE;
 }
-	
 
 static void color_callback(GtkWidget *widget, struct conversation *c)
 {
@@ -492,8 +495,9 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	quiet_set(c->strike, FALSE);
 	quiet_set(c->italic, FALSE);
 	quiet_set(c->underline, FALSE);
+	quiet_set(c->font, FALSE);
 	quiet_set(c->palette, FALSE);
-        quiet_set(c->link, FALSE);
+	quiet_set(c->link, FALSE);
         
 	if (c->makesound && (sound_options & OPT_SOUND_SEND))
 		play_sound(SEND);
@@ -669,19 +673,24 @@ static void advance_past(GtkWidget *entry, char *pre, char *post)
 	gtk_widget_grab_focus(entry);
 }
 
-static void toggle_color(GtkWidget *color, GtkWidget *entry)
+static void toggle_color(GtkWidget *color, struct conversation *c)
 {
-        if (state_lock)
+	if (state_lock)
                 return;
-        if (GTK_TOGGLE_BUTTON(color)->active)
-		show_color_dialog(entry, color);
+	if (GTK_TOGGLE_BUTTON(color)->active)
+		show_color_dialog(c, color);
 	else
-		advance_past(entry, "<FONT COLOR>", "</FONT>" );
+		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
 }
 
-static void toggle_font(GtkWidget *font, GtkWidget *entry)
+static void toggle_font(GtkWidget *font, struct conversation *c)
 {
-	show_font_dialog(entry, font);
+	if (state_lock)
+		return;
+	if (GTK_TOGGLE_BUTTON(font)->active)
+		show_font_dialog(c, font);
+	else
+		advance_past(c->entry, "<FONT FACE>", "</FONT>");
 	
 	return;
 }
@@ -780,11 +789,18 @@ void check_everything(GtkWidget *entry)
 		quiet_set(c->italic, FALSE);
      
 	if (invert_tags(entry, "<FONT COLOR", "</FONT>", 0))
-                quiet_set(c->palette, TRUE);
-        else if (count_tag(entry, "<FONT COLOR", "</FONT>"))
-                quiet_set(c->palette, TRUE);
-        else
-                quiet_set(c->palette, FALSE);
+		quiet_set(c->palette, TRUE);
+ 	else if (count_tag(entry, "<FONT COLOR", "</FONT>"))
+		quiet_set(c->palette, TRUE);
+	else
+		quiet_set(c->palette, FALSE);
+	
+	if (invert_tags(entry, "<FONT FACE", "</FONT>", 0))
+		quiet_set(c->font, TRUE);
+	else if (count_tag(entry, "<FONT FACE", "</FONT>"))
+		quiet_set(c->font, TRUE);
+	else
+		quiet_set(c->font, FALSE);
 
 	if (invert_tags(entry, "<A HREF", "</A>", 0))
 		quiet_set(c->link, TRUE);
@@ -1077,8 +1093,11 @@ void show_conv(struct conversation *c)
 	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Small", "Decrease font size", "Small", small_p, GTK_SIGNAL_FUNC(do_small), entry);
 	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Normal", "Normal font size", "Normal", normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), entry);
-	font = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Font", "Select Font", "Font", font_p, GTK_SIGNAL_FUNC(toggle_font), entry);
-	gtk_object_set_user_data(GTK_OBJECT(font), c);
+	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+						NULL, "Font", "Select Font",
+						"Font", font_p, GTK_SIGNAL_FUNC(toggle_font), c);
+
 	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(font), FALSE);
 	
@@ -1089,7 +1108,7 @@ void show_conv(struct conversation *c)
 	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, "Color", "Text Color",
-				 	    "Color", palette_p, GTK_SIGNAL_FUNC(toggle_color), entry); 
+				 	    "Color", palette_p, GTK_SIGNAL_FUNC(toggle_color), c);
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, "Logging", "Enable logging",
@@ -1189,9 +1208,6 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
 
-	
-
-
 	gtk_widget_show(send);
 	gtk_widget_show(info);
 	gtk_widget_show(warn);
@@ -1203,7 +1219,9 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(vbox);
 	gtk_widget_show(entry);
 	gtk_widget_show(text);
-	
+
+	c->font_dialog = NULL;
+	c->color_dialog = NULL;	
 	
 	gtk_container_add(GTK_CONTAINER(win), paned);
         gtk_container_border_width(GTK_CONTAINER(win), 10);
