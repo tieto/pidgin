@@ -2384,6 +2384,8 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/conversations/im/button_type",
 			"/gaim/gtk/conversations/button_type");
 
+	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
+
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/button_style");
 	gaim_prefs_remove("/gaim/gtk/blist/grey_idle_buddies");

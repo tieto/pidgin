@@ -23,11 +23,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "debug.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <glib.h>
+#include "internal.h"
+#include "prefs.h"
 
 static GaimDebugUiOps *debug_ui_ops = NULL;
+
+/*
+ * This determines whether debug info should be written to the
+ * console or not.
+ *
+ * It doesn't make sense to make this a normal Gaim preference
+ * because it's a command line option.  This will always be FALSE,
+ * unless the user explicitly started Gaim with the -d flag.
+ * It doesn't matter what this value was the last time Gaim was
+ * started, so it doesn't make sense to save it in prefs.
+ */
+static gboolean debug_enabled = FALSE;
 
 void
 gaim_debug_vargs(GaimDebugLevel level, const char *category,
@@ -37,6 +48,32 @@ gaim_debug_vargs(GaimDebugLevel level, const char *category,
 
 	g_return_if_fail(level != GAIM_DEBUG_ALL);
 	g_return_if_fail(format != NULL);
+
+	if (debug_enabled) {
+		gchar *arg_s, *ts_s;
+		gboolean timestamps;
+
+		arg_s = g_strdup_vprintf(format, args);
+
+		timestamps = gaim_prefs_get_bool("/core/debug/timestamps");;
+		if ((category != NULL) && (timestamps)) {
+			gchar mdate[64];
+
+			time_t mtime = time(NULL);
+			strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+			ts_s = g_strdup_printf("(%s) ", mdate);
+		} else {
+			ts_s = g_strdup("");
+		}
+
+		if (category == NULL)
+			g_print("%s%s", ts_s, arg_s);
+		else
+			g_print("%s%s: %s", ts_s, category, arg_s);
+
+		g_free(arg_s);
+		g_free(ts_s);
+	}
 
 	ops = gaim_debug_get_ui_ops();
 
@@ -119,6 +156,18 @@ gaim_debug_fatal(const char *category, const char *format, ...)
 }
 
 void
+gaim_debug_set_enabled(gboolean enabled)
+{
+	debug_enabled = enabled;
+}
+
+gboolean
+gaim_debug_is_enabled()
+{
+	return debug_enabled;
+}
+
+void
 gaim_debug_set_ui_ops(GaimDebugUiOps *ops)
 {
 	debug_ui_ops = ops;
@@ -128,4 +177,16 @@ GaimDebugUiOps *
 gaim_debug_get_ui_ops(void)
 {
 	return debug_ui_ops;
+}
+
+void
+gaim_debug_init(void)
+{
+	gaim_prefs_add_none("/core/debug");
+
+	/*
+	 * This pref is currently used by both the console
+	 * output and the debug window output.
+	 */
+	gaim_prefs_add_bool("/core/debug/timestamps", FALSE);
 }

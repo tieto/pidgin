@@ -25,6 +25,7 @@
 #ifndef _GAIM_DEBUG_H_
 #define _GAIM_DEBUG_H_
 
+#include <glib.h>
 #include <stdarg.h>
 
 /**
@@ -148,6 +149,20 @@ void gaim_debug_error(const char *category, const char *format, ...);
  */
 void gaim_debug_fatal(const char *category, const char *format, ...);
 
+/**
+ * Enable or disable printing debug output to the console.
+ *
+ * @param enabled TRUE to enable debug output or FALSE to disable it.
+ */
+void gaim_debug_set_enabled(gboolean enabled);
+
+/**
+ * Check if console debug output is enabled.
+ *
+ * @return TRUE if debuggin is enabled, FALSE if it is not.
+ */
+gboolean gaim_debug_is_enabled();
+
 /*@}*/
 
 /**************************************************************************/
@@ -170,6 +185,18 @@ void gaim_debug_set_ui_ops(GaimDebugUiOps *ops);
  * @return The UI operations structure in use.
  */
 GaimDebugUiOps *gaim_debug_get_ui_ops(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Debug Subsystem                                                 */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the debug subsystem.
+ */
+void gaim_debug_init(void);
 
 /*@}*/
 

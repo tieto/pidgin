@@ -36,8 +36,6 @@
 #include "gtkutils.h"
 #include "gtkstock.h"
 
-extern int opt_debug;
-
 typedef struct
 {
 	GtkWidget *window;
@@ -212,7 +210,7 @@ timestamps_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 
-	gaim_prefs_set_bool("/gaim/gtk/debug/timestamps", win->timestamps);
+	gaim_prefs_set_bool("/core/debug/timestamps", win->timestamps);
 }
 
 static void
@@ -293,9 +291,9 @@ debug_window_new(void)
 											win);
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-						gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
+						gaim_prefs_get_bool("/core/debug/timestamps"));
 
-		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(), "/gaim/gtk/debug/timestamps",
+		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(), "/core/debug/timestamps",
 									timestamps_pref_cb, button);
 	}
 
@@ -384,8 +382,10 @@ gaim_gtk_debug_init(void)
 	 */
 
 	gaim_prefs_add_none("/gaim/gtk/debug");
+
+	/* Controls printing to the debug window */
 	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
+
 	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
 	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
@@ -438,77 +438,62 @@ static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
-	gchar *arg_s, *ts_s;
 	gboolean timestamps;
+	gchar *arg_s, *ts_s;
+	gchar *esc_s, *cat_s, *tmp, *s;
 
-	timestamps = gaim_prefs_get_bool("/gaim/gtk/debug/timestamps");
+	if (!gaim_prefs_get_bool("/gaim/gtk/debug/enabled") ||
+					(debug_win == NULL) || debug_win->paused) {
+		return;
+	}
+
+	timestamps = gaim_prefs_get_bool("/core/debug/timestamps");
 
 	arg_s = g_strdup_vprintf(format, args);
 
-	if (category == NULL) {
+	/*
+ 	 * For some reason we only print the timestamp if category is
+ 	 * not NULL.  Why the hell do we do that?  --Mark
+	 */
+	if ((category != NULL) && (timestamps)) {
+		gchar mdate[64];
+
+		time_t mtime = time(NULL);
+		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+		ts_s = g_strdup_printf("(%s) ", mdate);
+	} else {
 		ts_s = g_strdup("");
 	}
-	else {
-		/*
-		 * If the category is not NULL, then do timestamps.
-		 * This IS right. :)
-		 */
-		if (timestamps) {
-			gchar mdate[64];
-			time_t mtime = time(NULL);
 
-			strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+	if (category == NULL)
+		cat_s = g_strdup("");
+	else
+		cat_s = g_strdup_printf("<b>%s:</b> ", category);
 
-			ts_s = g_strdup_printf("(%s) ", mdate);
-		}
-		else
-			ts_s = g_strdup("");
-	}
+	esc_s = g_markup_escape_text(arg_s, -1);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled") &&
-		debug_win != NULL && !debug_win->paused) {
+	g_free(arg_s);
 
-		gchar *esc_s, *cat_s, *utf8_s, *s;
-
-		if (category == NULL)
-			cat_s = g_strdup("");
-		else
-			cat_s = g_strdup_printf("<b>%s:</b> ", category);
-
-		esc_s = g_markup_escape_text(arg_s, -1);
-
-		s = g_strdup_printf("<font color=\"%s\">%s%s%s</font>",
-							debug_fg_colors[level], ts_s, cat_s, esc_s);
-
-		g_free(esc_s);
-
-		utf8_s = gaim_utf8_try_convert(s);
-		g_free(s);
-		s = utf8_s;
-
-		if (level == GAIM_DEBUG_FATAL) {
-			gchar *temp = s;
-
-			s = g_strdup_printf("<b>%s</b>", temp);
-			g_free(temp);
-		}
-
-		g_free(cat_s);
-
-		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
-
-		g_free(s);
-	}
-
-	if (opt_debug) {
-		if (category == NULL)
-			g_print("%s%s", ts_s, arg_s);
-		else
-			g_print("%s%s: %s", ts_s, category, arg_s);
-	}
+	s = g_strdup_printf("<font color=\"%s\">%s%s%s</font>",
+						debug_fg_colors[level], ts_s, cat_s, esc_s);
 
 	g_free(ts_s);
-	g_free(arg_s);
+	g_free(cat_s);
+	g_free(esc_s);
+
+	tmp = gaim_utf8_try_convert(s);
+	g_free(s);
+	s = tmp;
+
+	if (level == GAIM_DEBUG_FATAL) {
+		tmp = g_strdup_printf("<b>%s</b>", s);
+		g_free(s);
+		s = tmp;
+	}
+
+	gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
+
+	g_free(s);
 }
 
 static GaimDebugUiOps ops =

@@ -83,7 +83,6 @@ GtkWidget *mainwindow = NULL;
 int opt_away = 0;
 int docklet_count = 0;
 char *opt_away_arg = NULL;
-int opt_debug = 0;
 
 #if HAVE_SIGNAL_H
 /*
@@ -654,6 +653,7 @@ int main(int argc, char *argv[])
 	int opt, opt_user = 0;
 	int i;
 	gboolean gui_check;
+	gboolean debug_enabled;
 	gchar *gaimrc, *accountsxml;
 
 	struct option long_options[] = {
@@ -671,8 +671,11 @@ int main(int argc, char *argv[])
 	};
 
 #ifdef DEBUG
-	opt_debug = 1;
+	debug_enabled = TRUE;
+#else
+	debug_enabled = FALSE;
 #endif
+
 #ifndef _WIN32
 	br_set_locate_fallback_func(gaim_find_binary_location, argv[0]);
 #endif
@@ -720,7 +723,7 @@ int main(int argc, char *argv[])
 		char errmsg[BUFSIZ];
 		snprintf(errmsg, BUFSIZ, "Warning: couldn't unblock signals");
 		perror(errmsg);
-	}		
+	}
 #endif
 
 	for (i = 0; i < argc; i++) {
@@ -801,9 +804,9 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "adhu:c:vns:", 
+				  "adhu:c:vns:",
 #else
-				  "adhu:c:vn", 
+				  "adhu:c:vn",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -815,7 +818,7 @@ int main(int argc, char *argv[])
 			opt_acct = 1;
 			break;
 		case 'd':	/* debug */
-			opt_debug = 1;
+			debug_enabled = TRUE;
 			break;
 		case 'c':	/* use specified config dir */
 			set_gaim_user_dir(optarg);
@@ -874,6 +877,8 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
+	gaim_debug_set_enabled(debug_enabled);
+
 	plugin_search_paths[0] = g_strdup(LIBDIR);
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_build_filename(gaim_user_dir(), "plugins", NULL);
@@ -903,7 +908,6 @@ int main(int argc, char *argv[])
 	gaim_blist_load();
 
 	gaim_prefs_load();
-
 	gaim_prefs_update_old();
 	gaim_gtk_prefs_update_old();
 
@@ -922,7 +926,7 @@ int main(int argc, char *argv[])
 		g_free(opt_session_arg);
 		opt_session_arg = NULL;
 	}
-	
+
 	if (opt_config_dir_arg != NULL) {
 		g_free(opt_config_dir_arg);
 		opt_config_dir_arg = NULL;

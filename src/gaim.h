@@ -27,9 +27,6 @@
 
 #include "connection.h"
 
-/* Globals in gtkmain.c */
-extern int opt_debug;
-
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
 

@@ -536,6 +536,9 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
 	gchar *host_temp;
+	gboolean show_debug;
+
+	show_debug = gaim_debug_is_enabled();
 
 	host_temp = g_strstrip(g_strdup(hostname));
 	strncpy(dns_params.hostname, host_temp, sizeof(dns_params.hostname) - 1);
@@ -600,7 +603,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			close(child_out[0]);
 			close(child_in[1]);
 
-			gaim_dns_childthread(child_out[1], child_in[0], &dns_params, opt_debug);
+			gaim_dns_childthread(child_out[1], child_in[0], &dns_params, show_debug);
 			/* The thread calls _exit() rather than returning, so we never get here */
 		}
 
