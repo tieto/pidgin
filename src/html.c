@@ -41,16 +41,25 @@
 
 gchar *strip_html(gchar *text)
 {
-	int i, j;
+	int i, j, k;
 	int visible = 1;
-	gchar *text2 = g_malloc(strlen(text) + 1);
+	gchar *text2 = g_strdup(text);
 
-	strcpy(text2, text);
 	for (i = 0, j = 0; text2[i]; i++) {
 		if (text2[i] == '<') {
-			visible = 0;
-			continue;
-		} else if (text2[i] == '>') {
+			k = i + 1;
+			while (text2[k]) {
+				if (text2[k] == '<') {
+					visible = 1;
+					break;
+				}
+				if (text2[k] == '>') {
+					visible = 0;
+					break;
+				}
+				k++;
+			}
+		} else if (text2[i] == '>' && !visible) {
 			visible = 1;
 			continue;
 		}
