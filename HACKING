@@ -30,10 +30,11 @@ want to make your life really simple, learn how CVS works. CVS is your
 friend.) To make a patch, just edit the files right there in that tree
 (don't bother with two trees, or even two copies of the same file). Then
 when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
-and send it off.
+and send it off; either post it on sf.net/projects/gaim in the patches
+section, or email it to gaim@marko.net.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-09-20 04:20:32 -0400 (Thu, 20 Sep 2001) $.
+$Date: 2001-10-16 19:34:26 -0400 (Tue, 16 Oct 2001) $.
 
 
 CODING STYLE
