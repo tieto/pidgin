@@ -1143,6 +1143,42 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 }
 
 static void
+move_account_after(GtkListStore *store, GtkTreeIter *iter,
+				   GtkTreeIter *position)
+{
+	GtkTreeIter new_iter;
+	GaimAccount *account;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(store), iter,
+					   COLUMN_DATA, &account,
+					   -1);
+
+	gtk_list_store_insert_after(store, &new_iter, position);
+
+	set_account(store, &new_iter, account);
+
+	gtk_list_store_remove(store, iter);
+}
+
+static void
+move_account_before(GtkListStore *store, GtkTreeIter *iter,
+					GtkTreeIter *position)
+{
+	GtkTreeIter new_iter;
+	GaimAccount *account;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(store), iter,
+					   COLUMN_DATA, &account,
+					   -1);
+
+	gtk_list_store_insert_before(store, &new_iter, position);
+
+	set_account(store, &new_iter, account);
+
+	gtk_list_store_remove(store, iter);
+}
+
+static void
 drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 						guint x, guint y, GtkSelectionData *sd,
 						guint info, guint t, AccountsDialog *dialog)
@@ -1171,42 +1207,19 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 			switch (position) {
 				case GTK_TREE_VIEW_DROP_AFTER:
 				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
-					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
-							   "after\n");
-					gtk_list_store_move_after(dialog->model,
-											  &dialog->drag_iter, &iter);
+					move_account_after(dialog->model, &dialog->drag_iter,
+									   &iter);
 					dest_index = g_list_index(gaim_accounts_get_all(),
 											  account) + 1;
 					break;
 
 				case GTK_TREE_VIEW_DROP_BEFORE:
 				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
-					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
-							   "before\n");
 					dest_index = g_list_index(gaim_accounts_get_all(),
 											  account);
 
-					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
-							   "iter = %p\n", &iter);
-					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
-							   "account = %s\n",
-							   gaim_account_get_username(account));
-
-					/*
-					 * Somebody figure out why inserting before the first
-					 * account sometimes moves to the end, please :(
-					 */
-					if (dest_index == 0) {
-						gtk_list_store_move_after(dialog->model,
-												  &dialog->drag_iter, &iter);
-						gtk_list_store_swap(dialog->model, &iter,
-											&dialog->drag_iter);
-					}
-					else {
-						gtk_list_store_move_before(dialog->model,
-												   &dialog->drag_iter, &iter);
-					}
-
+					move_account_before(dialog->model, &dialog->drag_iter,
+										&iter);
 					break;
 
 				default:
