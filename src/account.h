@@ -47,6 +47,7 @@ struct _GaimAccount
 	GaimConnection *gc;         /**< The connection handle.      */
 
 	GHashTable *settings;       /**< Protocol-specific settings. */
+	GHashTable *ui_settings;    /**< UI-specific settings.       */
 
 	GaimProxyInfo *proxy_info;  /**< Proxy information.          */
 
@@ -204,6 +205,38 @@ void gaim_account_set_string(GaimAccount *account, const char *name,
 void gaim_account_set_bool(GaimAccount *account, const char *name,
 						   gboolean value);
 
+/**
+ * Sets a UI-specific integer setting for an account.
+ *
+ * @param account The account.
+ * @param ui      The UI name.
+ * @param name    The name of the setting.
+ * @param value   The setting's value.
+ */
+void gaim_account_set_ui_int(GaimAccount *account, const char *ui,
+							 const char *name, int value);
+
+/**
+ * Sets a UI-specific string setting for an account.
+ *
+ * @param account The account.
+ * @param ui      The UI name.
+ * @param name    The name of the setting.
+ * @param value   The setting's value.
+ */
+void gaim_account_set_ui_string(GaimAccount *account, const char *ui,
+								const char *name, const char *string);
+
+/**
+ * Sets a UI-specific boolean setting for an account.
+ *
+ * @param account The account.
+ * @param ui      The UI name.
+ * @param name    The name of the setting.
+ * @param value   The setting's value.
+ */
+void gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
+							  const char *name, gboolean value);
 
 /**
  * Returns whether or not the account is connected.
@@ -340,6 +373,46 @@ const char *gaim_account_get_string(const GaimAccount *account,
  */
 gboolean gaim_account_get_bool(const GaimAccount *account, const char *name,
 							   gboolean default_value);
+
+/**
+ * Returns a UI-specific integer setting for an account.
+ *
+ * @param account       The account.
+ * @param ui            The UI name.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
+ *
+ * @return The value.
+ */
+int gaim_account_get_ui_int(const GaimAccount *account, const char *ui,
+							const char *name, int default_value);
+
+/**
+ * Returns a UI-specific string setting for an account.
+ *
+ * @param account       The account.
+ * @param ui            The UI name.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
+ *
+ * @return The value.
+ */
+const char *gaim_account_get_ui_string(const GaimAccount *account,
+									   const char *ui, const char *name,
+									   const char *default_value);
+
+/**
+ * Returns a UI-specific boolean setting for an account.
+ *
+ * @param account       The account.
+ * @param ui            The UI name.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
+ *
+ * @return The value.
+ */
+gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
+								  const char *name, gboolean default_value);
 
 /**
  * Loads the accounts.

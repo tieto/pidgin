@@ -57,6 +57,8 @@ typedef struct
 {
 	GaimPrefType type;
 
+	char *ui;
+
 	union
 	{
 		int integer;
@@ -79,6 +81,7 @@ typedef struct
 	GString *buffer;
 
 	GaimPrefType setting_type;
+	char *setting_ui;
 	char *setting_name;
 
 	gboolean in_proxy;
@@ -93,6 +96,9 @@ static void
 __delete_setting(void *data)
 {
 	GaimAccountSetting *setting = (GaimAccountSetting *)data;
+
+	if (setting->ui != NULL)
+		g_free(setting->ui);
 
 	if (setting->type == GAIM_PREF_STRING)
 		g_free(setting->value.string);
@@ -130,6 +136,9 @@ gaim_account_new(const char *username, GaimProtocol protocol)
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, __delete_setting);
+
+	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
+												 g_free, __delete_setting);
 
 	return account;
 }
@@ -195,7 +204,7 @@ gaim_account_set_username(GaimAccount *account, const char *username)
 void
 gaim_account_set_password(GaimAccount *account, const char *password)
 {
-	g_return_if_fail(account  != NULL);
+	g_return_if_fail(account != NULL);
 
 	if (account->password != NULL)
 		g_free(account->password);
@@ -221,7 +230,7 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 void
 gaim_account_set_user_info(GaimAccount *account, const char *user_info)
 {
-	g_return_if_fail(account   != NULL);
+	g_return_if_fail(account != NULL);
 
 	if (account->user_info != NULL)
 		g_free(account->user_info);
@@ -368,6 +377,69 @@ gaim_account_set_bool(GaimAccount *account, const char *name, gboolean value)
 	setting->value.bool = value;
 
 	g_hash_table_insert(account->settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
+}
+
+void
+gaim_account_set_ui_int(GaimAccount *account, const char *ui,
+						const char *name, int value)
+{
+	GaimAccountSetting *setting;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(ui      != NULL);
+	g_return_if_fail(name    != NULL);
+
+	setting = g_new0(GaimAccountSetting, 1);
+
+	setting->type          = GAIM_PREF_INT;
+	setting->ui            = g_strdup(ui);
+	setting->value.integer = value;
+
+	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
+}
+
+void
+gaim_account_set_ui_string(GaimAccount *account, const char *ui,
+						   const char *name, const char *value)
+{
+	GaimAccountSetting *setting;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(ui      != NULL);
+	g_return_if_fail(name    != NULL);
+
+	setting = g_new0(GaimAccountSetting, 1);
+
+	setting->type         = GAIM_PREF_STRING;
+	setting->ui           = g_strdup(ui);
+	setting->value.string = g_strdup(value);
+
+	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
+}
+
+void
+gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
+						 const char *name, gboolean value)
+{
+	GaimAccountSetting *setting;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(ui      != NULL);
+	g_return_if_fail(name    != NULL);
+
+	setting = g_new0(GaimAccountSetting, 1);
+
+	setting->type       = GAIM_PREF_BOOLEAN;
+	setting->ui         = g_strdup(ui);
+	setting->value.bool = value;
+
+	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
 
 	schedule_accounts_save();
 }
@@ -540,8 +612,17 @@ __start_element_handler(GMarkupParseContext *context,
 						const gchar **attribute_values,
 						gpointer user_data, GError **error)
 {
+	const char *value;
 	AccountParserData *data = user_data;
+	GHashTable *atts;
 	int i;
+
+	atts = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for (i = 0; attribute_names[i] != NULL; i++) {
+		g_hash_table_insert(atts, g_strdup(attribute_names[i]),
+							g_strdup(attribute_values[i]));
+	}
 
 	if (data->buffer != NULL) {
 		g_string_free(data->buffer, TRUE);
@@ -571,22 +652,23 @@ __start_element_handler(GMarkupParseContext *context,
 		data->tag = TAG_HOST;
 	else if (!strcmp(element_name, "port"))
 		data->tag = TAG_PORT;
+	else if (!strcmp(element_name, "settings")) {
+		if ((value = g_hash_table_lookup(atts, "ui")) != NULL)
+			data->setting_ui = g_strdup(value);
+	}
 	else if (!strcmp(element_name, "setting")) {
 		data->tag = TAG_SETTING;
 
-		for (i = 0; attribute_names[i] != NULL; i++) {
+		if ((value = g_hash_table_lookup(atts, "name")) != NULL)
+			data->setting_name = g_strdup(value);
 
-			if (!strcmp(attribute_names[i], "name"))
-				data->setting_name = g_strdup(attribute_values[i]);
-			else if (!strcmp(attribute_names[i], "type")) {
-
-				if (!strcmp(attribute_values[i], "string"))
-					data->setting_type = GAIM_PREF_STRING;
-				else if (!strcmp(attribute_values[i], "int"))
-					data->setting_type = GAIM_PREF_INT;
-				else if (!strcmp(attribute_values[i], "bool"))
-					data->setting_type = GAIM_PREF_BOOLEAN;
-			}
+		if ((value = g_hash_table_lookup(atts, "type")) != NULL) {
+			if (!strcmp(value, "string"))
+				data->setting_type = GAIM_PREF_STRING;
+			else if (!strcmp(value, "int"))
+				data->setting_type = GAIM_PREF_INT;
+			else if (!strcmp(value, "bool"))
+				data->setting_type = GAIM_PREF_BOOLEAN;
 		}
 	}
 }
@@ -681,15 +763,29 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_SETTING) {
-		if (data->setting_type == GAIM_PREF_STRING)
-			gaim_account_set_string(data->account, data->setting_name,
-									buffer);
-		else if (data->setting_type == GAIM_PREF_INT)
-			gaim_account_set_int(data->account, data->setting_name,
-								 atoi(buffer));
-		else if (data->setting_type == GAIM_PREF_BOOLEAN)
-			gaim_account_set_bool(data->account, data->setting_name,
-				(*buffer == '0' ? FALSE : TRUE));
+		if (data->setting_ui != NULL) {
+			if (data->setting_type == GAIM_PREF_STRING)
+				gaim_account_set_ui_string(data->account, data->setting_ui,
+										   data->setting_name, buffer);
+			else if (data->setting_type == GAIM_PREF_INT)
+				gaim_account_set_ui_int(data->account, data->setting_ui,
+										data->setting_name, atoi(buffer));
+			else if (data->setting_type == GAIM_PREF_BOOLEAN)
+				gaim_account_set_ui_bool(data->account, data->setting_ui,
+										 data->setting_name,
+										 (*buffer == '0' ? FALSE : TRUE));
+		}
+		else {
+			if (data->setting_type == GAIM_PREF_STRING)
+				gaim_account_set_string(data->account, data->setting_name,
+										buffer);
+			else if (data->setting_type == GAIM_PREF_INT)
+				gaim_account_set_int(data->account, data->setting_name,
+									 atoi(buffer));
+			else if (data->setting_type == GAIM_PREF_BOOLEAN)
+				gaim_account_set_bool(data->account, data->setting_name,
+									  (*buffer == '0' ? FALSE : TRUE));
+		}
 
 		g_free(data->setting_name);
 		data->setting_name = NULL;
@@ -703,6 +799,12 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 		else {
 			gaim_account_set_proxy_info(data->account, data->proxy_info);
+		}
+	}
+	else if (!strcmp(element_name, "settings")) {
+		if (data->setting_ui != NULL) {
+			g_free(data->setting_ui);
+			data->setting_ui = NULL;
 		}
 	}
 
