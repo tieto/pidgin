@@ -481,46 +481,46 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 }
 
 /* translate an AIM 3 buddylist (*.lst) to a Gaim buddylist */
-static void translate_lst(FILE *src_fp, char *dest)
+static GString *translate_lst(FILE *src_fp)
 {
 	char line[BUF_LEN], *line2;
 	char *name;
 	int i;
 
-	sprintf(dest, "m 1\n");
+	GString *dest = g_string_new("m 1\n");
 
 	while (fgets(line, BUF_LEN, src_fp)) {
 		line2 = g_strchug(line);
 		if (strstr(line2, "group") == line2) {
 			name = strpbrk(line2, " \t\n\r\f") + 1;
-			strcat(dest, "g ");
+			dest = g_string_append(dest, "g ");
 			for (i = 0; i < strcspn(name, "\n\r"); i++)
 				if (name[i] != '\"')
-					strncat(dest, &name[i], 1);
-			strcat(dest, "\n");
+					dest = g_string_append_c(dest, name[i]);
+			dest = g_string_append_c(dest, '\n');
 		}
 		if (strstr(line2, "buddy") == line2) {
 			name = strpbrk(line2, " \t\n\r\f") + 1;
-			strcat(dest, "b ");
+			dest = g_string_append(dest, "b ");
 			for (i = 0; i < strcspn(name, "\n\r"); i++)
 				if (name[i] != '\"')
-					strncat(dest, &name[i], 1);
-			strcat(dest, "\n");
+					dest = g_string_append_c(dest, name[i]);
+			dest = g_string_append_c(dest, '\n');
 		}
 	}
 
-	return;
+	return dest;
 }
 
 
 /* translate an AIM 4 buddylist (*.blt) to Gaim format */
-static void translate_blt(FILE *src_fp, char *dest)
+static GString *translate_blt(FILE *src_fp)
 {
 	int i;
 	char line[BUF_LEN];
 	char *buddy;
 
-	sprintf(dest, "m 1\n");
+	GString *dest = g_string_new("m 1\n");
 
 	while (strstr(fgets(line, BUF_LEN, src_fp), "Buddy") == NULL);
 	while (strstr(fgets(line, BUF_LEN, src_fp), "list") == NULL);
@@ -533,32 +533,31 @@ static void translate_blt(FILE *src_fp, char *dest)
 		if (strchr(line, '{') != NULL) {
 			/* Syntax starting with "<group> {" */
 
-			strcat(dest, "g ");
+			dest = g_string_append(dest, "g ");
 			buddy = g_strchug(strtok(line, "{"));
-			for (i = 0; i < strlen(buddy); i++) {
-				if (buddy[i] != '\"') {
-					strncat(dest, &buddy[i], 1);
-				}
-			}
-			strcat(dest, "\n");
+			for (i = 0; i < strlen(buddy); i++)
+				if (buddy[i] != '\"')
+					dest = g_string_append_c(dest, buddy[i]);
+			dest = g_string_append_c(dest, '\n');
 			while (strchr(fgets(line, BUF_LEN, src_fp), '}') == NULL) {
 				gboolean pounce = FALSE;
+				char *e;
 				g_strchomp(line);
 				buddy = g_strchug(line);
 				debug_printf("\nbuddy: \"%s\"\n\n", buddy);
-				strcat(dest, "b ");
+				dest = g_string_append(dest, "b ");
 				if (strchr(buddy, '{') != NULL) {
 					/* buddy pounce, etc */
 					char *pos = strchr(buddy, '{') - 1;
 					*pos = 0;
 					pounce = TRUE;
 				}
-				if (strchr(buddy, '\"') != NULL) {
+				if ((e = strchr(buddy, '\"')) != NULL) {
+					*e = '\0';
 					buddy++;
-					strncat(dest, buddy, strchr(buddy, '\"') - buddy);
-				} else
-					strcat(dest, buddy);
-				strcat(dest, "\n");
+				}
+				dest = g_string_append(dest, buddy);
+				dest = g_string_append_c(dest, '\n');
 				if (pounce)
 					do
 						fgets(line, BUF_LEN, src_fp);
@@ -568,42 +567,71 @@ static void translate_blt(FILE *src_fp, char *dest)
 
 			/* Syntax "group buddy buddy ..." */
 			buddy = g_strchug(strtok(line, " \n"));
-			strcat(dest, "g ");
+			dest = g_string_append(dest, "g ");
 			if (strchr(buddy, '\"') != NULL) {
-				strcat(dest, &buddy[1]);
-				strcat(dest, " ");
+				dest = g_string_append(dest, &buddy[1]);
+				dest = g_string_append_c(dest, ' ');
 				buddy = g_strchug(strtok(NULL, " \n"));
 				while (strchr(buddy, '\"') == NULL) {
-					strcat(dest, buddy);
-					strcat(dest, " ");
+					dest = g_string_append(dest, buddy);
+					dest = g_string_append_c(dest, ' ');
 					buddy = g_strchug(strtok(NULL, " \n"));
 				}
-				strncat(dest, buddy, strlen(buddy) - 1);
+				buddy[strlen(buddy) - 1] = '\0';
+				dest = g_string_append(dest, buddy);
 			} else {
-				strcat(dest, buddy);
+				dest = g_string_append(dest, buddy);
 			}
-			strcat(dest, "\n");
+			dest = g_string_append_c(dest, '\n');
 			while ((buddy = g_strchug(strtok(NULL, " \n"))) != NULL) {
-				strcat(dest, "b ");
+				dest = g_string_append(dest, "b ");
 				if (strchr(buddy, '\"') != NULL) {
-					strcat(dest, &buddy[1]);
-					strcat(dest, " ");
+					dest = g_string_append(dest, &buddy[1]);
+					dest = g_string_append_c(dest, ' ');
 					buddy = g_strchug(strtok(NULL, " \n"));
 					while (strchr(buddy, '\"') == NULL) {
-						strcat(dest, buddy);
-						strcat(dest, " ");
+						dest = g_string_append(dest, buddy);
+						dest = g_string_append_c(dest, ' ');
 						buddy = g_strchug(strtok(NULL, " \n"));
 					}
-					strncat(dest, buddy, strlen(buddy) - 1);
+					buddy[strlen(buddy) - 1] = '\0';
+					dest = g_string_append(dest, buddy);
 				} else {
-					strcat(dest, buddy);
+					dest = g_string_append(dest, buddy);
 				}
-				strcat(dest, "\n");
+				dest = g_string_append_c(dest, '\n');
 			}
 		}
 	}
 
-	return;
+	return dest;
+}
+
+static GString *translate_gnomeicu(FILE *src_fp)
+{
+	char line[BUF_LEN];
+	GString *dest = g_string_new("m 1\ng Buddies\n");
+
+	while (strstr(fgets(line, BUF_LEN, src_fp), "NewContacts") == NULL);
+
+	while (fgets(line, BUF_LEN, src_fp)) {
+		char *eq;
+		g_strchomp(line);
+		if (line[0] == '\n' || line[0] == '[')
+			break;
+		eq = strchr(line, '=');
+		if (!eq)
+			break;
+		*eq = ':';
+		eq = strchr(eq, ',');
+		if (eq)
+			*eq = '\0';
+		dest = g_string_append(dest, "b ");
+		dest = g_string_append(dest, line);
+		dest = g_string_append_c(dest, '\n');
+	}
+
+	return dest;
 }
 
 static gchar *get_screenname_filename(const char *name)
@@ -658,85 +686,83 @@ gboolean bud_list_cache_exists(struct gaim_connection *gc)
 
 void do_import(struct gaim_connection *gc, char *filename)
 {
-	char *buf = g_malloc(BUF_LONG * 2);
-	char *buf2;
-	char *first = g_malloc(64);
-	char *file;
+	GString *buf = NULL;
+	char first[64];
 	char path[PATHSIZE];
-	char *g_screenname;
 	int len;
 	FILE *f;
+	struct stat st;
 
 	if (filename) {
 		g_snprintf(path, sizeof(path), "%s", filename);
 	} else {
-		g_screenname = get_screenname_filename(gc->username);
+		char *g_screenname = get_screenname_filename(gc->username);
+		char *file = gaim_user_dir();
 
-		file = gaim_user_dir();
 		if (file != (char *)NULL) {
 			sprintf(path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
 			g_free(file);
 			g_free(g_screenname);
 		} else {
 			g_free(g_screenname);
-			g_free(buf);
-			g_free(first);
 			return;
 		}
 	}
 
+	if (stat(path, &st)) {
+		debug_printf("Unable to stat %s.\n", path);
+		return;
+	}
+
 	if (!(f = fopen(path, "r"))) {
 		debug_printf("Unable to open %s.\n", path);
-		g_free(buf);
-		g_free(first);
 		return;
 	}
 
 	fgets(first, 64, f);
 
-	/* AIM 4 buddy list */
+	if ((first[0] == '\n') || (first[0] == '\r' && first[1] == '\n'))
+		fgets(first, 64, f);
+
 	if (!g_strncasecmp(first, "Config {", strlen("Config {"))) {
+		/* AIM 4 buddy list */
 		debug_printf("aim 4\n");
 		rewind(f);
-		translate_blt(f, buf);
-		debug_printf("%s\n", buf);
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* AIM 3 buddy list */
+		buf = translate_blt(f);
 	} else if (strstr(first, "group") != NULL) {
+		/* AIM 3 buddy list */
 		debug_printf("aim 3\n");
 		rewind(f);
-		translate_lst(f, buf);
-		debug_printf("%s\n", buf);
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* Gaim buddy list - no translation */
-	} else if (first[0] == 'm') {
+		buf = translate_lst(f);
+	} else if (!g_strncasecmp(first, "[User]", strlen("[User]"))) {
+		/* GnomeICU (hopefully) */
+		debug_printf("gnomeicu\n");
 		rewind(f);
-		len = fread(buf, 1, BUF_LONG * 2, f);
-		buf[len] = '\0';
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* Something else */
-	} else {
-		g_free(buf);
-		g_free(first);
-		fclose(f);
-		return;
+		buf = translate_gnomeicu(f);
+	} else if (first[0] == 'm') {
+		/* Gaim buddy list - no translation */
+		char buf2[BUF_LONG * 2];
+		buf = g_string_new("");
+		rewind(f);
+		while (1) {
+			len = fread(buf2, 1, BUF_LONG * 2 - 1, f);
+			if (len <= 0)
+				break;
+			buf2[len] = '\0';
+			buf = g_string_append(buf, buf2);
+			if (len != BUF_LONG * 2 - 1)
+				break;
+		}
 	}
-
-	parse_toc_buddy_list(gc, buf);
 
 	fclose(f);
 
-	g_free(buf);
-	g_free(first);
+	if (buf) {
+		buf = g_string_prepend(buf, "toc_set_config {");
+		buf = g_string_append(buf, "}\n");
+		parse_toc_buddy_list(gc, buf->str);
+		g_string_free(buf, TRUE);
+	}
 }
 
 void do_export(struct gaim_connection *g)
