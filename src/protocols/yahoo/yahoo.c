@@ -3033,6 +3033,12 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *msg = gaim_status_get_attr_string(status, "message");
+
+		if (msg == NULL) {
+			gaim_debug_info("yahoo", "Attempted to set a NULL status message.\n");
+			msg = "";
+		}
+
 		conv_msg = yahoo_string_encode(gc, msg, NULL);
 		conv_msg2 = gaim_markup_strip_html(conv_msg);
 		yahoo_packet_hash(pkt, 19, conv_msg2);
@@ -3157,7 +3163,7 @@ static GList *yahoo_status_types(GaimAccount *account)
 		types = g_list_append(types, type);
 
 		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
-		                                       "Away", TRUE, TRUE, FALSE,
+		                                       _("Away"), TRUE, TRUE, FALSE,
 		                                       "message", _("Message"),
 		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);

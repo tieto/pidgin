@@ -6876,9 +6876,11 @@ oscar_status_types(GaimAccount *account)
 									 _("Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY,
-									 OSCAR_STATUS_ID_AWAY,
-									 _("Away"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
+										   OSCAR_STATUS_ID_AWAY,
+										   _("Away"), TRUE, TRUE, FALSE,
+										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
