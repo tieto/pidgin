@@ -1,6 +1,9 @@
 /** @page perl-howto Perl Scripting HOWTO
 
  @section Introduction
+  THERE ARE SIGNIFICANT BUGS IN THIS CODE. HOWEVER, IT _MOSTLY_ WORKS _IF_
+  YOU ARE VERY CAREFUL. DO _NOT_ COMPLAIN ABOUT THIS API. SUBMIT A PATCH.
+
   Perl is the first scripting language compatible with Gaim, and has been a
   valuable aid to developers wishing to write scripts to modify the behavior
   of their favorite instant messenger. A perl script acts like a normal
