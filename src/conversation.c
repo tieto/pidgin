@@ -2599,6 +2599,9 @@ void update_icon(struct conversation *c)
 
 	if (!c->gc)
 		return;
+
+	remove_icon(c);
+
 	data = get_icon_data(c->gc, normalize(c->name), &len);
 	if (!data)
 		return;
