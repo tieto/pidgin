@@ -8,6 +8,8 @@ version 0.78cvs
 	  Add Buddy Pounce dialog.
 	* Massive rewrite of MSN support, which should fix a number of issues
 	  and make errors easier to interpret. (Felipe Contreras)
+	* Option to hide the buttons at the bottom of conversation
+	  windows (Phil Snowberger)
 
 	Bug Fixes:
 	* Gadu-Gadu updates (Andrew Wellington)
