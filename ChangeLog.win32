@@ -1,4 +1,6 @@
-version 0.81cvs:
+version 0.82:
+
+version 0.81 (08/05/2004):
 	* Napster joins binary release (Thanks Kevin)
 	* Gaim's gtkspell build now makes use of pango's squigly underline
           (Thanks Nathan Fredrickson and Daniel Atallah)
