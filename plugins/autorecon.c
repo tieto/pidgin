@@ -12,14 +12,14 @@ char *description() {
 }
 
 static gboolean do_signon(struct aim_user *u) {
-	if (!g_list_index(aim_users, u))
+	if (g_list_index(aim_users, u) < 0)
 		return FALSE;
 	serv_login(u);
 	return FALSE;
 }
 
 static void reconnect(struct gaim_connection *gc, void *m) {
-	if (gc->wants_to_die)
+	if (!gc->wants_to_die)
 		gtk_timeout_add(8000, (GtkFunction)do_signon, gc->user);
 }
 
