@@ -139,6 +139,42 @@ void gaim_prefs_init() {
 
 }
 
+static char *
+get_path_dirname(const char *name)
+{
+	char *c, *str;
+
+	str = g_strdup(name);
+
+	if ((c = strrchr(str, '/')) != NULL) {
+		*c = '\0';
+
+		if (*str == '\0') {
+			g_free(str);
+
+			str = g_strdup("/");
+		}
+	}
+	else {
+		g_free(str);
+
+		str = g_strdup(".");
+	}
+
+	return str;
+}
+
+static char *
+get_path_basename(const char *name)
+{
+	const char *c;
+
+	if ((c = strrchr(name, '/')) != NULL)
+		return g_strdup(c + 1);
+
+	return g_strdup(name);
+}
+
 static char *pref_full_name(struct gaim_pref *pref) {
 	GString *name;
 	struct gaim_pref *parent;
@@ -172,7 +208,7 @@ static struct gaim_pref *find_pref(const char *name)
 
 static struct gaim_pref *find_pref_parent(const char *name)
 {
-	char *parent_name = g_path_get_dirname(name);
+	char *parent_name = get_path_dirname(name);
 	struct gaim_pref *ret = &prefs;
 
 	if(strcmp(parent_name, "/")) {
@@ -218,7 +254,7 @@ static struct gaim_pref *add_pref(GaimPrefType type, const char *name) {
 	if(!parent)
 		return NULL;
 
-	my_name = g_path_get_basename(name);
+	my_name = get_path_basename(name);
 
 	for(sibling = parent->first_child; sibling; sibling = sibling->sibling) {
 		if(!strcmp(sibling->name, my_name)) {
