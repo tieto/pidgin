@@ -33,10 +33,13 @@
 #include "eggtrayicon.h"
 #include "docklet.h"
 
+#define EMBED_TIMEOUT 3000
+
 /* globals */
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *image = NULL;
 static GdkPixbuf *blank_icon = NULL;
+static int embed_timeout = 0;
 
 /* protos */
 static void docklet_x11_create();
@@ -53,8 +56,9 @@ static void
 docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "embedded\n");
-
-	docklet_embedded();
+	
+	g_source_remove(embed_timeout);
+	embed_timeout = 0;
 }
 
 static void
@@ -148,7 +152,7 @@ docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 	*push_in = TRUE;
 }
 
-static void
+static gboolean
 docklet_x11_destroy()
 {
 	docklet_remove(GTK_WIDGET_VISIBLE(docklet));
@@ -164,6 +168,7 @@ docklet_x11_destroy()
 	blank_icon = NULL;
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
+	return FALSE;
 }
 
 static void
@@ -197,6 +202,8 @@ docklet_x11_create()
 
 	/* ref the docklet before we bandy it about the place */
 	g_object_ref(G_OBJECT(docklet));
+	docklet_embedded();
+	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_destroy, NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
 }
