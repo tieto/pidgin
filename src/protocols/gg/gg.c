@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9771 2004-05-21 12:02:27Z lschiere $
+ * $Id: gg.c 9772 2004-05-21 12:07:26Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -541,7 +541,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
 					status);
 		}
-		break;	
+		break;
 	case GG_EVENT_ACK:
 		gaim_debug(GAIM_DEBUG_MISC, "gg",
 				   "main_callback: message %d to %lu sent with status %d\n",
@@ -811,7 +811,7 @@ static void agg_add_buddies(GaimConnection *gc, GList *whos)
 		gg_notify(gd->sess, userlist, userlist_size);
 		g_free(userlist);
 	}
-	
+
 	agg_save_buddy_list(gc, NULL);
 }
 
@@ -1379,7 +1379,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 	g_free(eold);
 
 	if (gaim_proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
-	       	gaim_notify_error(gc, NULL,
+		gaim_notify_error(gc, NULL,
 							  _("Unable to change Gadu-Gadu password"),
 							  _("Gaim was unable to change your password "
 								"due to an error connecting to the "
@@ -1388,7 +1388,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 		g_free(hpass->request);
 		g_free(hpass);
 		return;
-	}                                        
+	}
 }
 
 static GList *agg_actions(GaimConnection *gc)
@@ -1448,7 +1448,7 @@ static void agg_get_info(GaimConnection *gc, const char *who)
 	if (invalid_uin(who)) {
 		gchar *new_who = charset_convert(who, "UTF-8", "CP1250");
 		gchar *enew_who = gg_urlencode(new_who);
-		
+
 		g_free(new_who);
 
 		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
