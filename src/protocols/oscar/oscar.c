@@ -47,6 +47,7 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
+#include "core.h"
 #include "aim.h"
 #include "proxy.h"
 
@@ -88,6 +89,7 @@ static struct prpl *my_protocol = NULL;
 /* For win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT int report_idle;
+G_MODULE_IMPORT GSList *groups;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON |
 	AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;

@@ -27,11 +27,6 @@
 #include <unistd.h>
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
-#else
-#include "win32dep.h"
-#ifdef small
-#undef small
-#endif
 #endif /*_WIN32*/
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -48,6 +43,10 @@
 #include "prpl.h"
 #include "gtkimhtml.h"
 #include "dnd-hints.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 static char nick_colors[][8] = {
 	"#ba55d3",              /* Medium Orchid */

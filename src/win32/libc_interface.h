@@ -82,5 +82,6 @@ wgaim_gettimeofday( ## timeval ##, ## timezone ## )
 
 /* sys/stat.h */
 #define mkdir(a,b) _mkdir((a))
+#define fchmod(a,b)
 
 #endif /* _LIBC_INTERFACE_H_ */

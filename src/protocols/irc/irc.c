@@ -41,6 +41,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include "multi.h"
+#include "core.h"
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
@@ -62,7 +63,7 @@ static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
-
+G_MODULE_IMPORT GSList *groups;
 
 /* Datastructs */
 struct dcc_chat

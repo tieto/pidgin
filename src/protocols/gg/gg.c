@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4614 2003-01-19 22:16:52Z faceprint $
+ * $Id: gg.c 4639 2003-01-21 00:38:33Z hermanator $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -45,6 +45,7 @@
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
 #include "multi.h"
+#include "core.h"
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
@@ -89,7 +90,7 @@
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
-
+G_MODULE_IMPORT GSList *groups;
 
 struct agg_data {
 	struct gg_session *sess;

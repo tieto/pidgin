@@ -13,6 +13,7 @@ GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
 GTK_TOP = ../win32-dev/gtk_2_0
 GTK_LIBS = $(GTK_TOP)/lib
+GTK_BIN = $(GTK_TOP)/bin
 PERL_TOP = ../win32-dev/perl56
 IDLETRACKER_TOP = $(GAIM_SRC)/win32/IdleTracker
 GTKRC_TOP = ../win32-dev/gtkrc
@@ -28,37 +29,37 @@ PO = ./po
 
 VERSION := $(shell cat ./VERSION)
 
-NEEDED_DLLS = 		$(GTK_LIBS)/libgdk-win32-2.0-0.dll \
-			$(GTK_LIBS)/libglib-2.0-0.dll \
-			$(GTK_LIBS)/libintl-1.dll \
-			$(GTK_LIBS)/iconv.dll \
-			$(GTK_LIBS)/libgmodule-2.0-0.dll \
-			$(GTK_LIBS)/libgtk-win32-2.0-0.dll \
-			$(GTK_LIBS)/libgdk_pixbuf-2.0-0.dll \
-			$(GTK_LIBS)/libgobject-2.0-0.dll \
-			$(GTK_LIBS)/libgthread-2.0-0.dll \
-			$(GTK_TOP)/bin/libjpeg.dll \
-			$(GTK_TOP)/bin/libpng.dll \
-			$(GTK_TOP)/bin/libtiff.dll \
-			$(GTK_TOP)/bin/zlib.dll \
-			$(GTK_LIBS)/libpango-1.0-0.dll \
-			$(GTK_LIBS)/libpangoft2-1.0-0.dll \
-			$(GTK_LIBS)/libpangowin32-1.0-0.dll \
-			$(GTK_LIBS)/libatk-1.0-0.dll \
+NEEDED_DLLS = 		$(GTK_BIN)/libgdk-win32-2.0-0.dll \
+			$(GTK_BIN)/libglib-2.0-0.dll \
+			$(GTK_BIN)/libintl-1.dll \
+			$(GTK_BIN)/iconv.dll \
+			$(GTK_BIN)/libgmodule-2.0-0.dll \
+			$(GTK_BIN)/libgtk-win32-2.0-0.dll \
+			$(GTK_BIN)/libgdk_pixbuf-2.0-0.dll \
+			$(GTK_BIN)/libgobject-2.0-0.dll \
+			$(GTK_BIN)/libgthread-2.0-0.dll \
+			$(GTK_BIN)/libjpeg.dll \
+			$(GTK_BIN)/libpng.dll \
+			$(GTK_BIN)/libtiff.dll \
+			$(GTK_BIN)/zlib.dll \
+			$(GTK_BIN)/libpango-1.0-0.dll \
+			$(GTK_BIN)/libpangoft2-1.0-0.dll \
+			$(GTK_BIN)/libpangowin32-1.0-0.dll \
+			$(GTK_BIN)/libatk-1.0-0.dll \
 			$(PERL_TOP)/perl56.dll \
 			$(IDLETRACKER_TOP)/IdleTrac.dll
 
 # For Gtk 2.0.3
-#			$(GTK_LIBS)/libjpeg6b.dll \
-#			$(GTK_LIBS)/libpng-3.dll \
-#			$(GTK_LIBS)/libtiff.dll \
-#			$(GTK_LIBS)/libz.dll \
+#			$(GTK_BIN)/libjpeg6b.dll \
+#			$(GTK_BIN)/libpng-3.dll \
+#			$(GTK_BIN)/libtiff.dll \
+#			$(GTK_BIN)/libz.dll \
 
 # For Gtk 2.0.6
-#			$(GTK_TOP)/bin/libjpeg.dll \
-#			$(GTK_TOP)/bin/libpng.dll \
-#			$(GTK_TOP)/bin/libtiff.dll \
-#			$(GTK_TOP)/bin/zlib.dll \
+#			$(GTK_BIN)/libjpeg.dll \
+#			$(GTK_BIN)/libpng.dll \
+#			$(GTK_BIN)/libtiff.dll \
+#			$(GTK_BIN)/zlib.dll \
 
 
 SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
@@ -91,7 +92,7 @@ all:
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
-	$(MAKE) TYPE '$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw
+	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
 
@@ -109,11 +110,10 @@ install: all
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw install
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw install
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
-	$(MAKE) TYPE='$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0
-	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
+	cp -R $(GTK_LIBS)/gtk-2.0/2.2.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
 	cp -R $(GTK_TOP)/etc $(GAIM_INSTALL_DIR)
 	cp $(GAIM_SRC)/win32/themes/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
@@ -130,7 +130,6 @@ clean:
 	$(MAKE) -C $(IRC) -f Makefile.mingw clean
 	$(MAKE) -C $(JABBER) -f Makefile.mingw clean
 	$(MAKE) -C $(GG) -f Makefile.mingw clean
-	$(MAKE) -C $(NAPSTER) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)

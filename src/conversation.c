@@ -27,13 +27,14 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <errno.h>
-#ifdef _WIN32
-#include "wgaimerror.h"
-#endif
 #include <ctype.h>
 #include "conversation.h"
 #include "gaim.h"
 #include "prpl.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #define SEND_TYPED_TIMEOUT 5000
 
