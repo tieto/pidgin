@@ -2412,7 +2412,7 @@ static void oscar_keepalive(struct gaim_connection *gc) {
 }
 
 static char *oscar_name() {
-	return "Oscar";
+	return "Oscar / ICQ";
 }
 
 static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing) {
