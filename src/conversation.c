@@ -223,6 +223,8 @@ void delete_conversation(struct conversation *cnv)
 		gtk_widget_destroy(cnv->color_dialog);
 	if (cnv->font_dialog)
 		gtk_widget_destroy(cnv->font_dialog);
+	if (cnv->smiley_dialog)
+		gtk_widget_destroy(cnv->smiley_dialog);
         g_free(cnv);
 }
 
