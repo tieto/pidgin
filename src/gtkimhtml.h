@@ -51,6 +51,9 @@ struct _GtkIMHtml {
 	GdkCursor *arrow_cursor;
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
+
+	gboolean show_smileys;
+	gboolean show_comments;
 };
 
 struct _GtkIMHtmlClass {
