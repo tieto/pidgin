@@ -144,7 +144,7 @@ static void save_convo(GtkWidget *save, GaimConversation *c);
 static void
 do_save_convo(GtkWidget *wid)
 {
-	GaimConversation *c = g_object_get_data(GTK_FILE_SELECTION(wid)->ok_button,
+	GaimConversation *c = g_object_get_data(G_OBJECT(GTK_FILE_SELECTION(wid)->ok_button),
 											"gaim_conversation");
 	const char *filename;
 	FILE *fp;

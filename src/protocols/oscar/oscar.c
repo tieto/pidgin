@@ -3534,27 +3534,26 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	}
 
 	if (od->set_icon) {
-		const char *iconfile;
-		if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
-			FILE *file;
-			struct stat st;
-			gaim_debug(GAIM_DEBUG_INFO, "Uploading icon: %s\n", iconfile);
-			if (!stat(iconfile, &st)) {
-				char *buf = g_malloc(st.st_size);
-				file = fopen(iconfile, "rb");
-				if (file) {
-					fread(buf, 1, st.st_size, file);
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
-						   "Uploading icon to icon server\n");
-					aim_icon_upload(od->sess, buf, st.st_size);
-					fclose(file);
-				} else
-					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-						   "Can't open buddy icon file!\n");
-				g_free(buf);
+		struct stat st;
+		const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+		if (iconfile == NULL) {
+			/* Set an empty icon, or something */
+		} else if (!stat(iconfile, &st)) {
+			char *buf = g_malloc(st.st_size);
+			FILE *file = fopen(iconfile, "rb");
+			if (file) {
+				fread(buf, 1, st.st_size, file);
+				fclose(file);
+				gaim_debug(GAIM_DEBUG_INFO, "oscar",
+					   "Uploading icon to icon server\n");
+				aim_icon_upload(od->sess, buf, st.st_size);
 			} else
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Can't stat buddy icon file!\n");
+					   "Can't open buddy icon file!\n");
+			g_free(buf);
+		} else {
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+				   "Can't stat buddy icon file!\n");
 		}
 		od->set_icon = FALSE;
 	}
@@ -4293,6 +4292,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			if (file) {
 				char *buf = g_malloc(st.st_size);
 				fread(buf, 1, st.st_size, file);
+				fclose(file);
 
 				args.iconlen   = st.st_size;
 				args.iconsum   = aimutil_iconsum(buf, st.st_size);
@@ -4311,7 +4311,6 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 					bi->ico_informed = TRUE;
 				}
 
-				fclose(file);
 				g_free(buf);
 			}
 		}
@@ -5482,27 +5481,26 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 					od->set_icon = TRUE;
 					aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
 				} else {
-					const char *iconfile;
-					if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc)))) {
-						FILE *file;
-						struct stat st;
-
-						if (!stat(iconfile, &st)) {
-							char *buf = g_malloc(st.st_size);
-							file = fopen(iconfile, "rb");
-							if (file) {
-								fread(buf, 1, st.st_size, file);
-								gaim_debug(GAIM_DEBUG_INFO, "oscar",
-									   "Uploading icon to icon server\n");
-								aim_icon_upload(od->sess, buf, st.st_size);
-								fclose(file);
-							} else
-								gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-									   "Can't open buddy icon file!\n");
-							g_free(buf);
+					struct stat st;
+					const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+					if (iconfile == NULL) {
+						/* Set an empty icon, or something */
+					} else if (!stat(iconfile, &st)) {
+						char *buf = g_malloc(st.st_size);
+						FILE *file = fopen(iconfile, "rb");
+						if (file) {
+							fread(buf, 1, st.st_size, file);
+							fclose(file);
+							gaim_debug(GAIM_DEBUG_INFO, "oscar",
+								   "Uploading icon to icon server\n");
+							aim_icon_upload(od->sess, buf, st.st_size);
 						} else
 							gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-								   "Can't stat buddy icon file!\n");
+								   "Can't open buddy icon file!\n");
+						g_free(buf);
+					} else {
+						gaim_debug(GAIM_DEBUG_ERROR, "oscar",
+							   "Can't stat buddy icon file!\n");
 					}
 				}
 			} else if (flags == 0x81)
@@ -6058,17 +6056,19 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 	FILE *file;
 	struct stat st;
 
-	if (!stat(iconfile, &st)) {
+	if (iconfile == NULL) {
+		/* Set an empty icon, or something */
+	} else if (!stat(iconfile, &st)) {
 		char *buf = g_malloc(st.st_size);
 		file = fopen(iconfile, "rb");
 		if (file) {
-			int len = fread(buf, 1, st.st_size, file);
 			char md5[16];
+			int len = fread(buf, 1, st.st_size, file);
+			fclose(file);
 			md5_state_t *state = g_malloc(sizeof(md5_state_t));
 			md5_init(state);
 			md5_append(state, buf, len);
 			md5_finish(state, md5);
-			fclose(file);
 			g_free(state);
 			aim_ssi_seticon(sess, md5, 16);
 		} else
