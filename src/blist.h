@@ -424,6 +424,16 @@ GaimContact *gaim_contact_new();
 void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNode *node);
 
 /**
+ * Merges two contacts
+ *
+ * All of the buddies from source will be moved to target
+ *
+ * @param source  The contact to merge
+ * @param target  The contact to be merged into
+ */
+void gaim_blist_merge_contact(GaimContact *source, GaimContact *target);
+
+/**
  * Returns the highest priority buddy for a given contact.
  *
  * @param contact  The contact

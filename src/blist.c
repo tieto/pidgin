@@ -886,6 +886,26 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		gaim_blist_save();
 }
 
+void gaim_blist_merge_contact(GaimContact *source, GaimContact *target)
+{
+	GaimBlistNode *sourcenode = (GaimBlistNode*)source;
+	GaimBlistNode *targetnode = (GaimBlistNode*)target;
+	GaimBlistNode *child, *child2;
+
+	if(source == target)
+		return;
+
+	child = sourcenode->child;
+
+	while(child) {
+		child2 = child;
+		child = child->next;
+		if(GAIM_BLIST_NODE_IS_BUDDY(child2))
+			gaim_blist_add_buddy((GaimBuddy*)child2, target, NULL,
+					gaim_blist_get_last_child(targetnode));
+	}
+}
+
 void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 {
 	struct gaim_blist_ui_ops *ops;
