@@ -28,7 +28,10 @@ version 0.71
 	* Some plugins must be updated due to code variable changes, 
 	  function name changes, and change of behavior for certain 
 	  functions.
+	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)
