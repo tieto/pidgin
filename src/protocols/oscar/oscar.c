@@ -257,6 +257,7 @@ static int gaim_ssi_parseerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parserights  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parselist    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parseack     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_ssi_parseadd     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_authgiven    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_authrequest  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_authreply    (aim_session_t *, aim_frame_t *, ...);
@@ -1180,6 +1181,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_NOLIST, gaim_ssi_parselist, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_SRVACK, gaim_ssi_parseack, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ADD, gaim_ssi_parseadd, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTH, gaim_ssi_authgiven, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREQ, gaim_ssi_authrequest, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREP, gaim_ssi_authreply, 0);
@@ -5140,6 +5142,54 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		retval = retval->next;
 	}
+
+	return 1;
+}
+
+static int gaim_ssi_parseadd(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	char *gname, *gname_utf8, *alias, *alias_utf8;
+	GaimBuddy *b;
+	GaimGroup *g;
+	va_list ap;
+	fu16_t type;
+	const char *name;
+
+	va_start(ap, fr);
+	type = (fu16_t)va_arg(ap, int);
+	name = va_arg(ap, char *);
+	va_end(ap);
+
+	if ((type != 0x0000) || (name == NULL))
+		return 1;
+
+	gname = aim_ssi_itemlist_findparentname(sess->ssi.local, name);
+	gname_utf8 = gname ? gaim_utf8_try_convert(gname) : NULL;
+	alias = aim_ssi_getalias(sess->ssi.local, gname, name);
+	alias_utf8 = alias ? gaim_utf8_try_convert(alias) : NULL;
+	b = gaim_find_buddy(gc->account, name);
+	free(alias);
+
+	if (b) {
+		/* Get server stored alias */
+		if (alias_utf8) {
+			g_free(b->alias);
+			b->alias = g_strdup(alias_utf8);
+		}
+	} else {
+		b = gaim_buddy_new(gc->account, name, alias_utf8);
+
+		if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
+			g = gaim_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+			gaim_blist_add_group(g, NULL);
+		}
+
+		gaim_debug(GAIM_DEBUG_INFO, "oscar",
+				   "ssi: adding b %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
+		gaim_blist_add_buddy(b, NULL, g, NULL);
+	}
+	g_free(gname_utf8);
+	g_free(alias_utf8);
 
 	return 1;
 }

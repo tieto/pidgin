@@ -1373,11 +1373,12 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 		aim_ssi_itemlist_add(&sess->ssi.local, name, gid, bid, type, data);
 		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, data);
-		free(name);
 		aim_tlvlist_free(&data);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-			ret = userfunc(sess, rx);
+			ret = userfunc(sess, rx, type, name);
+
+		free(name);
 	}
 
 	return ret;
