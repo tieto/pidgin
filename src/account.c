@@ -927,9 +927,13 @@ gaim_account_get_log(GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	if(!account->system_log){
+		GaimConnection *gc;
+
+		gc = gaim_account_get_connection(account);
+
 		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM,
 				gaim_account_get_username(account), account,
-				account->gc->login_time);
+				gc != NULL ? gc->login_time : time(NULL));
 	}
 
 	return account->system_log;
