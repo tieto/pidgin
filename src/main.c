@@ -808,29 +808,6 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-#if 0
-	/* This has to be done before the debug stuff. */
-	gaim_gtk_stock_init();
-
-	static_proto_init();
-
-	gaim_prefs_init();
-
-	/* This kind of has to be here.. sucks, but it's important. */
-	gaim_gtk_debug_init();
-
-	gaim_conversation_init();
-	gaim_proxy_init();
-	gaim_sound_init();
-	gaim_pounces_init();
-
-	gaim_gtk_prefs_init();
-	gaim_gtk_blist_init();
-	gaim_gtk_conversation_init();
-	gaim_gtk_pounces_init();
-	gaim_gtk_xfer_init();
-#endif
-
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());
