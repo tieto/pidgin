@@ -2471,15 +2471,17 @@ void create_mess(GtkWidget *widget, struct create_away *ca)
 	g_free(away_message);
 	is_checked = GTK_TOGGLE_BUTTON(ca->checkbx)->active;
 	
-	if (is_checked) do_away_message(NULL, b);
-
-	/* stick it on the away list */
-	if (strlen(b->name)) {
+	if (is_checked) {
                 away_messages = g_list_append(away_messages, b);
                 save_prefs();
                 do_away_menu();
                 if (pd != NULL)
                         gtk_list_select_item(GTK_LIST(pd->away_list), g_list_index(away_messages, b));
+	}
+
+	/* stick it on the away list */
+	if (strlen(b->name)) {
+		do_away_message(NULL, b);
         }
         
         destroy_dialog(NULL, ca->window);
@@ -2554,7 +2556,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	icon = gdk_pixmap_create_from_xpm_d( ca->window->window , &mask, NULL, save_xpm);
 	icon_i = gtk_pixmap_new ( icon, mask );
-	label = gtk_label_new(_("Save"));
+	label = gtk_label_new(_("Away"));
 
 	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(button_box), label, FALSE, FALSE, 2);
@@ -2595,7 +2597,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* End of our cancel button code */
 
 	/* Checkbox for showing away msg */
-	ca->checkbx = gtk_check_button_new_with_label(_("Make away now"));
+	ca->checkbx = gtk_check_button_new_with_label(_("Save for later use"));
 
 	/* pack boxes where they belong */
 	gtk_box_pack_start(GTK_BOX(fbox), titlebox, TRUE, TRUE, 5);
