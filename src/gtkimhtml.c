@@ -60,6 +60,7 @@
 #define TOOLTIP_TIMEOUT 500
 
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
+void gtk_imhtml_close_tags(GtkIMHtml *imhtml);
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -380,7 +381,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		g_string_free(str, TRUE);
 		g_free(selection);
 	} else {
-		text = gtk_text_buffer_get_text(imhtml, &start, &end, FALSE);
+		text = gtk_text_buffer_get_text(imhtml->text_buffer, &start, &end, FALSE);
 		gtk_selection_data_set_text(selection_data, text, strlen(text));
 	}
 	g_free(text);
@@ -1112,14 +1113,14 @@ typedef enum {
 	NEW_SCALABLE_BIT
 } GtkIMHtmlBitType;
 
-static inline new_bit(GtkIMHtml *imhtml, GtkTextIter *iter, GtkIMHtmlBitType x, char *ws, int *wpos)
+static inline void new_bit(GtkIMHtml *imhtml, GtkTextIter *iter, GtkIMHtmlBitType x, char *ws, int *wpos)
 {
 	GtkTextMark *mark2;
 	GtkTextIter siter;
 	GtkIMHtmlScalable *scalable = NULL;
 
 	ws [*wpos] = '\0'; 
-	mark2 = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	mark2 = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 	gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, -1);
 
 	gtk_text_buffer_delete_mark(imhtml->text_buffer, mark2);
@@ -1171,14 +1172,14 @@ static inline new_bit(GtkIMHtml *imhtml, GtkTextIter *iter, GtkIMHtmlBitType x, 
 	*wpos = 0;
 	ws[0] = 0;
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, iter);
-	if (x == NEW_SCALABLE_BIT) { 
-		GdkRectangle rect; 
-		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect); 
-		scalable->add_to(scalable, imhtml, &iter); 
-		scalable->scale(scalable, rect.width, rect.height); 
-		imhtml->scalables = g_list_append(imhtml->scalables, scalable); 
-		gtk_text_buffer_get_end_iter(imhtml->text_buffer, iter); 
-	} 
+	if (x == NEW_SCALABLE_BIT) {
+		GdkRectangle rect;
+		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+		scalable->add_to(scalable, imhtml, iter);
+		scalable->scale(scalable, rect.width, rect.height);
+		imhtml->scalables = g_list_append(imhtml->scalables, scalable);
+		gtk_text_buffer_get_end_iter(imhtml->text_buffer, iter);
+	}
 }
 
 
