@@ -434,7 +434,7 @@ static void irc_get_info(GaimConnection *gc, const char *who)
 static void irc_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	struct irc_conn *irc;
+	struct irc_conn *irc = NULL;
 	const char *args[1];
 	const char *status_id = gaim_status_get_id(status);
 
