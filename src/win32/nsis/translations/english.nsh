@@ -13,12 +13,12 @@
 
 ; Startup Checks
 !insertmacro GAIM_MACRO_DEFAULT_STRING INSTALLER_IS_RUNNING			"The installer is already running."
-!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_IS_RUNNING			"An instance of Gaim is currently running. Exit Gaim then try again."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_IS_RUNNING			"An instance of Gaim is currently running. Exit Gaim and then try again."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_INSTALLER_NEEDED			"The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
 
 ; License Page
 !insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BUTTON			"Next >"
-!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) is released under the GNU General Public License (GPL). The license is provided here for information purposes only. $_CLICK"
 
 ; Components Page
 !insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SECTION_TITLE			"Gaim Instant Messaging Client (required)"
