@@ -92,14 +92,14 @@ discussed later.
 .B View Log
 \fBgaim\fR is capable of automatically log its activities.  These logs are
 either plain text files (with a .log extension) or  html files (with a
-.html extenstion) located under the \fI~/.gaim/logs\fR directory.  This
+.html extension) located under the \fI~/.gaim/logs\fR directory.  This
 menu command will attempt to view this file with \fBgaim\fR's internal log
 viewer.
 .TP
 .B Alias
 Create an alias for this buddy.  This will open up a new dialog in which
 one can give this buddy an alternate name to appear on the buddy list and
-in conversataions.
+in conversations.
 
 For example, if a buddy's name screen name was jsmith1281xx and his real
 name was 'John Q. Smith,' one could create an alias as to identify the
@@ -179,7 +179,7 @@ as you type.
 \fIIgnore colors/font faces/font sizes\fR: Tells \fBgaim\fR to disregard
 buddies' color/font/size information in displaying IMs or Chats.
 
-\fIDefault Formatting\fR: Allows specifing the default formatting to apply
+\fIDefault Formatting\fR: Allows specifying the default formatting to apply
 to all outgoing messages (only applicable to protocols that support
 formatting in messages).
 .TP
@@ -190,7 +190,7 @@ Allows the user to determine which keyboard shortcuts are available.
 \fISorting\fR: Toggles the order in which buddies are shown in your
 \fBBuddy List\fR between none, alphabetical, by status and by log size.
 
-\fIShow buttons as\fR: Toggles between picture-only, text-only, picure and
+\fIShow buttons as\fR: Toggles between picture-only, text-only, picture and
 text or no buttons view of the buttons on the \fBBuddy List\fR.
 
 \fIRaise window on events\fR: Tells \fBgaim\fR to bring the \fBBuddy
@@ -522,7 +522,7 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple PLace, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 .SH AUTHORS
 \fBGaim\fR's active developers are:
