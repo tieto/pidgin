@@ -25,6 +25,8 @@ THE CORE:
 		*cough*GTK*cough* that they don't.
 
 	Need to write the core side of the core-ui protocol
+	Non-blocking gethostbyname()
+	Cancelable proxy_connect
 
 ----
 THE PROTOCOLS:

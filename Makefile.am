@@ -1,6 +1,6 @@
 
 EXTRA_DIST = gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
-	HACKING STATUS gaim2blt.pl
+	HACKING STATUS gaim2blt.pl licq2gaim.pl
 
 if DISTRIB
 
