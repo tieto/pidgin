@@ -634,11 +634,6 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 		return;
 	}
 
-	imhtml->x = BORDER_SIZE;
-	imhtml->y = BORDER_SIZE + 10;
-	imhtml->llheight = 0;
-	imhtml->llascent = 0;
-
 	imhtml->xsize = allocation->width;
 
 	gtk_imhtml_redraw_all (imhtml);
