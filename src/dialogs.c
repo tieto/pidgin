@@ -3946,7 +3946,7 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 		char *prevname;
 		gc = g->gc;
-		if ((orig = find_group(g->gc, new_name)) != NULL) {
+		if ((orig = find_group(g->gc, new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
 			orig->members = g_slist_concat(orig->members, g->members);
 			handle_group_rename(orig, g->name);
 			g->gc->groups = g_slist_remove(g->gc->groups, g);
