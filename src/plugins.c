@@ -515,6 +515,8 @@ static void plugin_reload(struct gaim_plugin *p)
 	load_plugin(file);
 
 	/* Try and reselect the plugin in list */
+	if (!pluglist)
+		return;
 	plugs = plugins;
 	while (plugs) {
 		plug = plugs->data;
