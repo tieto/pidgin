@@ -290,7 +290,7 @@ static struct msn_switchboard *msn_find_switch(struct gaim_connection *gc, char 
 	while (m) {
 		struct msn_switchboard *ms = m->data;
 		m = m->next;
-		if (ms->total == 1 && !g_strcasecmp(ms->user, id))
+		if (!g_strcasecmp(ms->user, id))
 			return ms;
 	}
 
@@ -690,7 +690,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
 	} else if (!g_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
-		char *sessid, *ssaddr, *auth;
+		char *sessid, *ssaddr, *auth, *user;
 		int port, i = 0;
 		char *tmp = buf;
 
@@ -706,6 +706,9 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 		auth = tmp;
 
 		GET_NEXT(tmp);
+		user = tmp;
+
+		GET_NEXT(tmp);
 
 		while (ssaddr[i] && ssaddr[i] != ':') i++;
 		if (ssaddr[i] == ':') {
@@ -716,6 +719,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 			port = 1863;
 
 		ms = g_new0(struct msn_switchboard, 1);
+		ms->user = g_strdup(user);
 		ms->sessid = g_strdup(sessid);
 		ms->auth = g_strdup(auth);
 		ms->gc = gc;
