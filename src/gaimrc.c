@@ -575,14 +575,16 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 
 static void gaimrc_write_user(FILE *f, struct gaim_account *account)
 {
-	char *c;
+	char *c, *d;
 	int nl = 1, i;
 
 	if (account->options & OPT_ACCT_REM_PASS) {
-		fprintf(f, "\t\tident { %s } { %s }\n", account->username, (c = escape_text2(account->password)));
+		fprintf(f, "\t\tident { %s } { %s }\n", (d = escape_text2(account->username)), (c = escape_text2(account->password)));
 		free(c);
+		free(d);
 	} else {
-		fprintf(f, "\t\tident { %s } {  }\n", account->username);
+		fprintf(f, "\t\tident { %s } {  }\n", (d = escape_text2(account->username)));
+		free(d);
 	}
 	fprintf(f, "\t\tuser_info {");
 	c = account->user_info;
