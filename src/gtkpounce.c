@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <unistd.h>
 #include "gaim.h"
 #include "gtkpounce.h"
 #include "gtklist.h"
@@ -203,7 +204,7 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 	save_prefs();
 }
 
-static GtkWidget *
+static void
 pounce_choose_cb(GtkWidget *item, struct gaim_gtkpounce_dialog *dialog)
 {
 	dialog->account = g_object_get_data(G_OBJECT(item), "user_data");
@@ -219,7 +220,7 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 	GtkWidget *item;
 	GSList *l;
 	char buf[2048];
-	int count, place;
+	int count, place = 0;
 
 	opt_menu = gtk_option_menu_new();
 	menu = gtk_menu_new();
@@ -398,7 +399,6 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	GtkWidget *button;
 	GtkWidget *frame;
 	GtkWidget *table;
-	GtkWidget *optmenu;
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
 
@@ -720,7 +720,7 @@ edit_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
 void
 gaim_gtkpounce_menu_build(GtkWidget *menu)
 {
-	GtkWidget *remmenu, *submenu, *item;
+	GtkWidget *remmenu, *item;
 	GList *l;
 	GList *bp;
 	struct gaim_pounce *pounce;

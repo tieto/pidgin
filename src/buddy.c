@@ -48,6 +48,7 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gtklist.h"
+#include "gtkpounce.h"
 #include "gtkft.h"
 
 #ifdef _WIN32

@@ -1617,7 +1617,6 @@ load_pounces()
 	GList *l;
 	struct pounce_placeholder *ph;
 	struct gaim_pounce *pounce;
-	struct gaim_gtkpounce_data *pounce_data;
 	struct gaim_account *account;
 
 	debug_printf("*** Loading pounces...\n");
