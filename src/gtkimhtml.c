@@ -2348,13 +2348,13 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							if (font->underline != oldfont->underline)
 							    gtk_imhtml_toggle_underline(imhtml);
 
-							if (!oldfont->face || strcmp(font->face, oldfont->face) != 0)
+							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
 
-							if (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0)
+							if (font->fore && (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0))
 							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
 
-							if (!oldfont->back || strcmp(font->back, oldfont->back) != 0)
+							if (font->back && (!oldfont->back || strcmp(font->back, oldfont->back) != 0))
 						      gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
 
