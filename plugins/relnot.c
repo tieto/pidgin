@@ -156,4 +156,4 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_int("/plugins/gtk/relnot/last_check", 0);
 }
 
-GAIM_INIT_PLUGIN(signalstest, init_plugin, info)
+GAIM_INIT_PLUGIN(relnot, init_plugin, info)
