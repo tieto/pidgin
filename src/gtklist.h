@@ -63,6 +63,8 @@ struct gaim_gtk_buddy_list {
 					       cell we're currently hovering over.  This is 
 					       used for tooltips. */
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
+
+	GaimBlistNode *selected_node;   /**< The currently selected node */
 };
 
 /**

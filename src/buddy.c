@@ -59,6 +59,7 @@ static struct gaim_gtk_buddy_list *gtkblist = NULL;
 /* Docklet nonsense */
 static gboolean gaim_gtk_blist_obscured = FALSE;
 
+static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(struct buddy *b);
 static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size);
@@ -790,7 +791,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 	return NULL;
 }
 
-static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b) 
+static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 {
 	char *name = gaim_get_buddy_alias(b);
 	char *esc = g_markup_escape_text(name, strlen(name)), *text = NULL;
@@ -803,7 +804,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS) {
+		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) {
 			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);
@@ -840,7 +841,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("Warned (%d%%) "), b->evil);
 
-	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS) {
+	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) {
 		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s%s%s</span>",
 					esc,
 					statustext != NULL ? statustext : "",
@@ -849,10 +850,11 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	} else if (statustext == NULL && idletime == NULL && warning == NULL) {
 		text = g_strdup_printf("%s", esc);
 	} else {
-		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s%s%s</span>", esc,
-				       statustext != NULL ? statustext :  "",
-				       idletime != NULL ? idletime : "", 
-				       warning != NULL ? warning : "");
+		text = g_strdup_printf("%s\n<span %s size='smaller'>%s%s%s</span>", esc,
+				selected ? "" : "color='dim grey'",
+				statustext != NULL ? statustext :  "",
+				idletime != NULL ? idletime : "", 
+				warning != NULL ? warning : "");
 	}
 	if (idletime)
 		g_free(idletime);
@@ -902,6 +904,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
+	GtkTreeSelection *selection;
 	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
@@ -945,6 +948,12 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
+
+	/* Set up selection stuff */
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
+	g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(gaim_gtk_blist_selection_changed), NULL);
+
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview), GDK_BUTTON1_MASK, gte,
@@ -1115,6 +1124,34 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 	}
 }
 
+static gboolean do_selection_changed(GaimBlistNode *new_selection)
+{
+	GaimBlistNode *old_selection = gtkblist->selected_node;
+
+	if(new_selection != gtkblist->selected_node) {
+		gtkblist->selected_node = new_selection;
+		if(new_selection)
+			gaim_gtk_blist_update(NULL, new_selection);
+		if(old_selection)
+			gaim_gtk_blist_update(NULL, old_selection);
+	}
+
+	return FALSE;
+}
+
+static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data)
+{
+	GaimBlistNode *new_selection = NULL;
+	GtkTreeIter iter;
+
+	if(gtk_tree_selection_get_selected(selection, NULL, &iter)){
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+				NODE_COLUMN, &new_selection, -1);
+	}
+	/* we set this up as a timeout, otherwise the blist flickers */
+	g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
+}
+
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
@@ -1163,13 +1200,13 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 					expand = TRUE;
 				}
-				
+
 				oldersibling = node->prev;
 				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter))
 					oldersibling = oldersibling->prev;
 
 				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
-				
+
 				if (blist_options & OPT_BLIST_POPUP)
 					gtk_window_present(GTK_WINDOW(gtkblist->window));
 
@@ -1188,10 +1225,12 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		char *mark;
 		char *warning = NULL, *idle = NULL;
 
-		status = gaim_gtk_blist_get_status_icon((struct buddy*)node, 
+		gboolean selected = (gtkblist->selected_node == node);
+
+		status = gaim_gtk_blist_get_status_icon((struct buddy*)node,
 							blist_options & OPT_BLIST_SHOW_ICONS ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL);
 		avatar = gaim_gtk_blist_get_buddy_icon((struct buddy*)node);
-		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node);
+		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node, selected);
 
 		if (((struct buddy*)node)->idle > 0) {
 			time_t t;
@@ -1207,18 +1246,18 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 		if (((struct buddy*)node)->evil > 0)
 			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil);
-		
+
 
 		if((blist_options & OPT_BLIST_GREY_IDLERS)
 				&& ((struct buddy *)node)->idle) {
-			if(warning) {
+			if(warning && !selected) {
 				char *w2 = g_strdup_printf("<span color='dim grey'>%s</span>",
 						warning);
 				g_free(warning);
 				warning = w2;
 			}
 
-			if(idle) {
+			if(idle && !selected) {
 				char *i2 = g_strdup_printf("<span color='dim grey'>%s</span>",
 						idle);
 				g_free(idle);
