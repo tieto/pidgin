@@ -421,7 +421,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
-	GtkWidget *sep;
+	/* GtkWidget *sep; */
 	GtkWidget *button;
 	GtkWidget *img;
 	GtkSizeGroup *sg;
@@ -565,12 +565,26 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				if (type == GAIM_REQUEST_FIELD_STRING) {
 					const char *value;
 
-					widget = gtk_entry_new();
-
 					value = gaim_request_field_string_get_default_value(field);
 
-					if (value != NULL)
-						gtk_entry_set_text(GTK_ENTRY(widget), value);
+					if (gaim_request_field_string_is_multiline(field)) {
+						widget = gtk_text_view_new();
+
+						if (value != NULL) {
+							GtkTextBuffer *buffer;
+							
+							buffer = gtk_text_view_get_buffer(
+								GTK_TEXT_VIEW(widget));
+
+							gtk_text_buffer_set_text(buffer, value, -1);
+						}
+					}
+					else {
+						widget = gtk_entry_new();
+
+						if (value != NULL)
+							gtk_entry_set_text(GTK_ENTRY(widget), value);
+					}
 
 					g_signal_connect(G_OBJECT(widget), "focus-out-event",
 									 G_CALLBACK(field_string_focus_out_cb),
