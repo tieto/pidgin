@@ -497,7 +497,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 
 static void
 gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *destsn, const gchar *from,
-										   gchar **msg, int *msglen,
+										   gchar **msg, int *msglen_int,
 										   fu16_t *charset, fu16_t *charsubset)
 {
 	OscarData *od = gc->proto_data;
@@ -505,12 +505,14 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	GError *err = NULL;
 	aim_userinfo_t *userinfo = NULL;
 	const gchar *charsetstr;
+	gsize msglen;
 
 	/* Attempt to send as ASCII */
-	*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, msglen, NULL);
+	*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
+		*msglen_int = msglen;
 		return;
 	}
 
@@ -522,10 +524,11 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 		userinfo = aim_locate_finduserinfo(od->sess, destsn);
 
 	if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_ICQUTF8)) {
-		*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, msglen, NULL);
+		*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		if (*msg != NULL) {
 			*charset = AIM_CHARSET_UNICODE;
 			*charsubset = 0x0000;
+			*msglen_int = msglen;
 			return;
 		}
 	}
@@ -538,20 +541,22 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		charsetstr = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 
-	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, msglen, NULL);
+	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
 		*charsubset = 0x0000;
+		*msglen_int = msglen;
 		return;
 	}
 
 	/*
 	 * Nothing else worked, so send as UCS-2BE.
 	 */
-	*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, msglen, &err);
+	*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
+		*msglen_int = msglen;
 		return;
 	}
 
@@ -560,7 +565,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 
 	gaim_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
 	*msg = g_strdup(from);
-	*msglen = strlen(*msg);
+	*msglen_int = strlen(*msg);
 	*charset = AIM_CHARSET_ASCII;
 	*charsubset = 0x0000;
 	return;
