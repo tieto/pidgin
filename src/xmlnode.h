@@ -54,6 +54,7 @@ const char *xmlnode_get_attrib(xmlnode *node, const char *attr);
 void xmlnode_remove_attrib(xmlnode *node, const char *attr);
 char *xmlnode_to_str(xmlnode *node, int *len);
 xmlnode *xmlnode_from_str(const char *str, size_t size);
+xmlnode *xmlnode_copy(xmlnode *src);
 
 void xmlnode_free(xmlnode *node);
 

@@ -392,8 +392,12 @@ xmlnode *xmlnode_copy(xmlnode *src)
 
 	ret = new_node(src->name, src->type);
 	if(src->data) {
-		ret->data = g_memdup(src->data, src->data_sz);
-		ret->data_sz = src->data_sz;
+		if(src->data_sz) {
+			ret->data = g_memdup(src->data, src->data_sz);
+			ret->data_sz = src->data_sz;
+		} else {
+			ret->data = g_strdup(src->data);
+		}
 	}
 
 	for(child = src->child; child; child = child->next) {
