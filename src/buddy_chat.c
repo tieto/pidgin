@@ -228,10 +228,33 @@ static void invite_callback(GtkWidget *w, struct buddy_chat *b)
 	gtk_widget_show(invite);
 }
 
+static gboolean meify(char *message) {
+	/* read /me-ify : if the message (post-HTML) starts with /me, remove
+	 * the "/me " part of it (including that space) and return TRUE */
+	char *c = message;
+	int inside_HTML = 0; /* i really don't like descriptive names */
+	if (!c) return FALSE; /* um... this would be very bad if this happens */
+	while (*c) {
+		if (inside_HTML) {
+			if (*c == '>') inside_HTML = 0;
+		} else {
+			if (*c == '<') inside_HTML = 1;
+			else break;
+		}
+		c++; /* i really don't like c++ either */
+	}
+	/* k, so now we've gotten past all the HTML crap. */
+	if (!*c) return FALSE;
+	if (!strncmp(c, "/me ", 4)) {
+		sprintf(c, "%s", c+4);
+		return TRUE;
+	} else
+		return FALSE;
+}
+
 void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
 {
         char *buf;
-	char *buf2;
         GList *ignore = b->ignored;
         char *str;
         char colour[10];
@@ -247,21 +270,17 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
         buf = g_malloc(BUF_LONG);
         
         if (flag & WFLAG_WHISPER) {
-		buf2 = g_strdup(message);
-		if (!strncmp(buf2, "/me ", 4)) {
+		if (meify(message)) {
 			str = g_malloc(64);
 			g_snprintf(str, 62, "***%s", who);
 			strcpy(colour, "#6C2585\0");
-			sprintf(message, "%s", buf2 + 4);
 		} else {
 	                str = g_malloc(64);
 	                g_snprintf(str, 62, "*%s*:", who);
 	                strcpy(colour, "#00ff00\0");
 		}
-		g_free(buf2);
         } else {
-		buf2 = g_strdup(message);
-		if (!strncmp(buf2, "/me ", 4)) {
+		if (meify(message)) {
 	                str = g_strdup(normalize(who));
 	                if (!strcasecmp(str, normalize(current_user->username))) {
 				if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
@@ -274,7 +293,6 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
 			str = g_malloc(64);
 			g_snprintf(str, 62, "***%s", who);
 			strcpy(colour, "#6C2585\0");
-			sprintf(message, "%s", buf2 + 4);
 		} else {
 	                str = g_strdup(normalize(who));
 	                if (!strcasecmp(str, normalize(current_user->username))) {
@@ -290,7 +308,6 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
 	                str = g_malloc(64);
 			g_snprintf(str, 62, "%s:", who);
 		}
-		g_free(buf2);
         }
 
 
