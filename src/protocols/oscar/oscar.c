@@ -3792,18 +3792,21 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 
 	switch(reason) {
 		case 0x0003: { /* Reply from an ICQ status message request */
-			char *status_msg = oscar_icqstatus(state);
-			char *dialog_msg, **splitmsg;
+			char *title, *statusmsg, **splitmsg, *dialogmsg;
+
+			title = g_strdup_printf(_("Info for %s"), who);
 
 			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			statusmsg = oscar_icqstatus(state);
 			splitmsg = g_strsplit(msg, "\r\n", 0);
-
-			dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, status_msg, g_strjoinv("<BR>", splitmsg));
-			gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, dialog_msg, NULL, NULL);
-
-			g_free(status_msg);
-			g_free(dialog_msg);
+			dialogmsg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, statusmsg, g_strjoinv("<BR>", splitmsg));
+			g_free(statusmsg);
 			g_strfreev(splitmsg);
+
+			gaim_notify_formatted(gc, title, _("Buddy Information"), NULL, dialogmsg, NULL, NULL);
+
+			g_free(title);
+			g_free(dialogmsg);
 		} break;
 
 		default: {
@@ -3965,7 +3968,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GString *str;
-	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
+	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL, *title = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -4015,7 +4018,9 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, tmp, NULL, NULL);
+	title = g_strdup_printf(_("Info for %s"), userinfo->sn);
+	gaim_notify_formatted(gc, title, _("Buddy Information"), NULL, tmp, NULL, NULL);
+	g_free(title);
 	g_free(tmp);
 
 	return 1;
