@@ -1355,7 +1355,6 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 {
 	if (data->cbs[id] != NULL)
 		((GaimRequestFileCb)data->cbs[id])(data->user_data, data->u.file.name);
-	g_free(data->u.file.name);
 
 	if (id == 1)
 		gaim_request_close(GAIM_REQUEST_FILE, data);
@@ -1379,10 +1378,11 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 	const gchar *name;
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
+
+	/* If name is a directory then change directories */
 	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
-		/* Descend into directory? */
-		/* Close dialog? */
 		return;
+
 	data->u.file.name = g_strdup(name);
 #endif /* FILECHOOSER */
 
@@ -1477,6 +1477,8 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 
 	if (type == GAIM_REQUEST_FIELDS)
 		gaim_request_fields_destroy(data->u.multifield.fields);
+	else if (type == GAIM_REQUEST_FILE)
+		g_free(data->u.file.name);
 
 	g_free(data);
 }
