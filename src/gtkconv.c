@@ -5085,10 +5085,11 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	GaimConvChat *chat;
 
 	win     = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(win);
+	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (type == GAIM_CONV_UPDATE_ACCOUNT) {
+	if (type == GAIM_CONV_UPDATE_ACCOUNT)
+	{
 		gaim_conversation_autoset_title(conv);
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
@@ -5103,54 +5104,60 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
-			 type == GAIM_CONV_UPDATE_UNSEEN) {
-		const gchar *name = NULL;
-		gchar *label = NULL;
+			 type == GAIM_CONV_UPDATE_UNSEEN)
+	{
+		const char *title;
 		GaimConvIm *im = NULL;
-
+		char color[8];
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 			im = GAIM_CONV_IM(conv);
 
-		name = gaim_conversation_get_name(conv);
+		title = gaim_conversation_get_title(conv);
+
+		*color = '\0';
 
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
-		if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-			label = g_strdup_printf("<span color=\"#46A046\">%s</span>", name);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
+		if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPING)
+		{
+			strcpy(color, "#47A046");
 		}
-		else if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPED) {
-			label = g_strdup_printf("<span color=\"#D1940C\">%s</span>", name);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
+		else if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
+		{
+			strcpy(color, "#D1940C");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK) {
-			label = g_strdup_printf("<span color=\"#314E6C\">%s</span>", name);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
+		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
+		{
+			strcpy(color, "#314E6C");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT) {
-			label = g_strdup_printf("<span color=\"#868272\">%s</span>", name);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
+		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT)
+		{
+			strcpy(color, "#868272");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
-			label = g_strdup_printf("<span color=\"#DF421E\">%s</span>", name);
+		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
+		{
+			strcpy(color, "#DF421E");
+		}
+
+		if (*color != '\0')
+		{
+			char *label;
+
+			label = g_strdup_printf("<span color=\"%s\">%s</span>",
+									color, title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
-			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), name);
+			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
 
-		if(conv == gaim_conv_window_get_active_conversation(win)) {
+		if (conv == gaim_conv_window_get_active_conversation(win))
 			update_typing_icon(conv);
-		}
-
 	}
-	else if (type == GAIM_CONV_UPDATE_TOPIC) {
+	else if (type == GAIM_CONV_UPDATE_TOPIC)
+	{
 		const char *topic;
 		chat = GAIM_CONV_CHAT(conv);
 		gtkchat = gtkconv->u.chat;
@@ -5159,23 +5166,23 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text),topic);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
-				topic, NULL);
+							 topic, NULL);
 	}
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
-			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
-
+			 type == GAIM_CONV_ACCOUNT_OFFLINE)
+	{
 		gray_stuff_out(gaim_conv_window_get_active_conversation(win));
 		generate_send_as_items(win, NULL);
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
 	}
-	else if (type == GAIM_CONV_UPDATE_AWAY) {
+	else if (type == GAIM_CONV_UPDATE_AWAY)
+	{
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
 	}
-	else if (type == GAIM_CONV_UPDATE_ADD ||
-			 type == GAIM_CONV_UPDATE_REMOVE) {
-
+	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE)
+	{
 		gray_stuff_out(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_ICON)
