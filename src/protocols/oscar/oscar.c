@@ -46,12 +46,22 @@
 #include "aim.h"
 #include "md5.h"
 
-#define UC_AOL		0x02
-#define UC_ADMIN	0x04
+#define AIM_ICQ_STATUS_ID_ONLINE	"online"
+#define AIM_ICQ_STATUS_ID_AWAY		"away"
+#define AIM_ICQ_STATUS_ID_DND		"dnd"
+#define AIM_ICQ_STATUS_ID_NA		"na"
+#define AIM_ICQ_STATUS_ID_OCCUPIED	"occupied"
+#define AIM_ICQ_STATUS_ID_FREE4CHAT	"free4chat"
+#define AIM_ICQ_STATUS_ID_INVISIBLE	"invisible"
+#define AIM_ICQ_STATUS_ID_CUSTOM	"custom"
+
+#define UC_UNAVAILABLE	0x01
+#define UC_AOL			0x02
+#define UC_ADMIN		0x04
 #define UC_UNCONFIRMED	0x08
-#define UC_NORMAL	0x10
-#define UC_AB		0x20
-#define UC_WIRELESS	0x40
+#define UC_NORMAL		0x10
+#define UC_AB			0x20
+#define UC_WIRELESS		0x40
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -286,18 +296,10 @@ static int oscar_sendfile_prompt (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_ack    (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 
-/* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
-
-/* just because */
 static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
 static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const char *cookie);
-
-/* remove these at some point? */
-/* Because I don't like forward declarations?  I think that was why... */
 static void oscar_set_info(GaimConnection *gc, const char *text);
-static void oscar_set_status(GaimConnection *gc, const char *state, const char *message);
-
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -463,7 +465,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 		charsetstr1 = "UCS-2BE";
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		if ((sourcesn != NULL) && isdigit(sourcesn[0]))
+		if ((sourcesn != NULL) && aim_sn_is_icq(sourcesn))
 			charsetstr1 = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
 			charsetstr1 = "ISO-8859-1";
@@ -514,7 +516,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	 * If we're sending to an ICQ user, and they are advertising the
 	 * Unicode capability, then attempt to send as UCS-2BE.
 	 */
-	if ((destsn != NULL) && isdigit(destsn[0]))
+	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		userinfo = aim_locate_finduserinfo(od->sess, destsn);
 
 	if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_ICQUTF8)) {
@@ -531,7 +533,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	 * ICQ then attempt to send as the user specified character encoding.
 	 */
 	charsetstr = "ISO-8859-1";
-	if ((destsn != NULL) && isdigit(destsn[0]))
+	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		charsetstr = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 
 	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, msglen, NULL);
@@ -715,7 +717,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 
 	if (b != NULL) {
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
-			if (isdigit(b->name[0])) {
+			if (aim_sn_is_icq(b->name)) {
 				tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 				oscar_string_append(str, newline, _("Status"), tmp);
 				g_free(tmp);
@@ -1703,7 +1705,7 @@ static void oscar_login(GaimAccount *account) {
 		g_free(buf);
 	}
 
-	if (isdigit(*(gaim_account_get_username(account)))) {
+	if (aim_sn_is_icq((gaim_account_get_username(account)))) {
 		od->icq = TRUE;
 	} else {
 		gc->flags |= GAIM_CONNECTION_HTML;
@@ -1805,7 +1807,7 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_timeout_remove(od->getblisttimer);
 	if (od->getinfotimer > 0)
 		gaim_timeout_remove(od->getinfotimer);
-	gaim_prefs_disconnect_callback(od->recentbuddies->cbid);
+	gaim_prefs_disconnect_callback(od->recentbuddies_cbid);
 
 	aim_session_kill(od->sess);
 	g_free(od->sess);
@@ -3278,7 +3280,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
 	 */
-	if (isdigit(gaim_account_get_username(account)[0]) && isdigit(userinfo->sn[0])) {
+	if (aim_sn_is_icq(gaim_account_get_username(account) && aim_sn_is_icq(userinfo->sn)) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = gaim_escape_html(tmp);
 		g_free(tmp);
@@ -5413,9 +5415,9 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		 * If we're IMing an ICQ user then send newlines as CR/LF and
 		 * strip all HTML
 		 */
-		if (isdigit(name[0]) ) {
+		if (aim_sn_is_icq(name) ) {
 			/* being sent to an ICQ user */
-			if (!isdigit(gaim_account_get_username(gc->account)[0])) {
+			if (!aim_sn_is_icq(gaim_account_get_username(gc->account))) {
 				/* from an AIM user - ICQ receiving from AIM *expects the messsage to be HTML formatted* */
 				tmpmsg = gaim_str_add_cr(message);
 			} else {
@@ -5424,7 +5426,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			}
 		} else {
 			/* being sent to an AIM user */
-			if (isdigit(gaim_account_get_username(gc->account)[0])) {
+			if (aim_sn_is_icq(gaim_account_get_username(gc->account))) {
 				/* from an ICQ user */
 				tmpmsg2 = gaim_strdup_withhtml(message);
 				tmpmsg = gaim_escape_html(tmpmsg2);
@@ -5452,7 +5454,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 static void oscar_get_info(GaimConnection *gc, const char *name) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
-	if (od->icq && isdigit(name[0]))
+	if (od->icq && aim_sn_is_icq(name))
 		aim_icq_getallinfo(od->sess, name);
 	else
 		aim_locate_getinfoshort(od->sess, name, 0x00000003);
@@ -6492,13 +6494,13 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 
 static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
 	if (!b || (b && b->name && b->name[0] == '+')) {
-		if (a != NULL && isdigit(*gaim_account_get_username(a)))
+		if (a != NULL && aim_sn_is_icq(gaim_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
 	}
 
-	if (b != NULL && isdigit(b->name[0]))
+	if (b != NULL && aim_sn_is_icq(b->name))
 		return "icq";
 	return "aim";
 }
@@ -6532,7 +6534,7 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 		}
 	}
 
-	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
+	if (b->name && (b->uc & 0xffff0000) && aim_sn_is_icq(b->name)) {
 		int uc = b->uc >> 16;
 		if (uc & AIM_ICQ_STATE_INVISIBLE)
 			emblems[i++] = "invisible";
@@ -6609,7 +6611,7 @@ static char *oscar_status_text(GaimBuddy *b) {
 	gchar *ret = NULL;
 
 	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
-		if (isdigit(b->name[0]))
+		if (aim_sn_is_icq(b->name))
 			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 		else
 			ret = g_strdup(_("Away"));
@@ -6805,13 +6807,22 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 #endif
 }
 
-static GList *oscar_status_types(GaimAccount *account)
+static GList *
+oscar_status_types(GaimAccount *account)
 {
-	OscarData *od = gc->proto_data;
-	GList *m = NULL;
+	GList *status_types = NULL;
+	GaimStatusType *type;
+	gboolean is_icq;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
+	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
+
+
+
+	return status_types;
+
+#if 0 /* STATUS - old stuff that should be removed */
 	if (od->icq) {
 		m = g_list_append(m, _("Online"));
 		m = g_list_append(m, _("Away"));
@@ -6828,6 +6839,7 @@ static GList *oscar_status_types(GaimAccount *account)
 	}
 
 	return m;
+#endif
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {

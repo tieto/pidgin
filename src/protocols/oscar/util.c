@@ -219,6 +219,21 @@ faim_export int aim_snvalid(const char *sn)
 	return 0;
 }
 
+/**
+ * Determine if a given screen name is an ICQ screen name 
+ * (i.e. it begins with a number).
+ *
+ * @sn A valid AIM or ICQ screen name.
+ * @return 1 if the screen name is an ICQ screen name.  Otherwise 0
+ *         is returned.
+ */
+faim_export int aim_sn_is_icq(const char *sn)
+{
+	if (isalpha(sn[0]))
+		return 0;
+	return 1;
+}
+
 /*
 * int snlen(const char *)
 * 
