@@ -269,7 +269,7 @@ gaim_quotedp_decode(const char *text, char **data, int *size)
 
 	if (size)
 		*size = n - new;
-	
+
 	/* Resize to take less space */
 	/* new = realloc(new, n - new); */
 
@@ -294,8 +294,8 @@ gaim_mime_decode_word(const char *charset, const char *encoding, const char *tex
 		gaim_base64_decode(text, &decoded, &len);
 	else
 		return NULL;
-	
-	
+
+
 	converted = g_convert(decoded, len, OUT_CHARSET, charset, NULL, NULL, NULL);
 	g_free(decoded);
 
@@ -323,14 +323,14 @@ gaim_mime_decode_field(const char *str)
 		int len;
 		char *token;
 		GQueue *tokens = g_queue_new();
-		
+
 		for (cur += 2, mark = cur; *cur; cur++) {
 			if (*cur == '?') {
 				token = g_strndup(mark, cur - mark);
 				g_queue_push_head(tokens, token);
 
 				mark = (cur + 1);
-				
+
 				if (*mark == '=')
 					break;
 			} else {
@@ -352,26 +352,28 @@ gaim_mime_decode_field(const char *str)
 			charset = g_queue_pop_tail(tokens);
 			encoding = g_queue_pop_tail(tokens);
 			text = g_queue_pop_tail(tokens);
-			
+
 			if ((decoded = gaim_mime_decode_word(charset, encoding, text))) {
 				len = strlen(decoded);
 				n = strncpy(n, decoded, len) + len;
 				g_free(decoded);
 			}
-			
+
 			g_free(charset);
 			g_free(encoding);
 			g_free(text);
 		} else {
 			len = cur - unencoded_start;
 			n = strncpy(n, unencoded_start, len) + len;
-			
+
 			while ((token = g_queue_pop_tail(tokens)))
 				g_free(token);
 		}
-		
+
 		g_queue_free(tokens);
 	}
+
+	*n = '\0';
 
 	if (*unencoded_start)
 		n = strcpy(n, unencoded_start);
