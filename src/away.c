@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#if 0
 #include "internal.h"
 #include "gtkgaim.h"
 
@@ -33,7 +34,6 @@
 #include "util.h"
 #include "request.h"
 
-#if 0
 /* XXX CORE/UI: Until we can get rid of the message queue stuff... */
 #include "away.h"
 #include "gaim.h"

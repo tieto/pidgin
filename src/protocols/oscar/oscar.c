@@ -46,10 +46,10 @@
 #include "aim.h"
 #include "md5.h"
 
-#define OSCAR_STATUS_ID_AVAILABLE	"available"
 #define OSCAR_STATUS_ID_INVISIBLE	"invisible"
 #define OSCAR_STATUS_ID_OFFLINE		"offline"
 #define OSCAR_STATUS_ID_ONLINE		"online"
+#define OSCAR_STATUS_ID_AVAILABLE	"available"
 #define OSCAR_STATUS_ID_AWAY		"away"
 #define OSCAR_STATUS_ID_DND			"dnd"
 #define OSCAR_STATUS_ID_NA			"na"
@@ -5530,68 +5530,63 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	return;
 }
 
-static void oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
+static void
+oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 {
-	OscarData *od;
+	GaimConnection *gc = gaim_account_get_connection(account);
+	OscarData *od = (OscarData *)gc->proto_data;
+	GaimStatusType *statusType;
+	GaimStatusPrimitive primitive;
+	GaimPresence *presence;
+	const gchar *status_id;
 	int charset = 0;
 	gchar *text_html = NULL;
-	const gchar *state;
 	char *msg = NULL;
 	gsize msglen = 0;
 
-	od = (OscarData *)account->gc->proto_data;
-	state = gaim_status_get_name(status);
+	statusType = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(statusType);
+	status_id = gaim_status_get_id(status);
+	presence = gaim_account_get_presence(account);
 
-	if (!strcmp(state, _("Visible"))) {
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-		return;
-	} else if (!strcmp(state, _("Invisible"))) {
+	if (primitive == GAIM_STATUS_HIDDEN)
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-		return;
-	} /* else... */
+	else
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
-	if (!strcmp(state, _("Back"))) {
-		/* If this is our only online account then globally set Gaim not-away */
-		GList *gcs = gaim_connections_get_all();
-		if (gcs->next == NULL)
-			; /* XXX do_im_back(NULL, NULL); */
-	}
 
 	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	if (od->rights.maxawaymsglen == 0)
-		gaim_notify_warning(account->gc, NULL, _("Unable to set AIM away message."),
+		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
 							_("You have probably requested to set your "
 							  "away message before the login procedure "
 							  "completed.  You remain in a \"present\" "
 							  "state; try setting it again when you are "
 							  "fully connected."));
 
-#if 0 /* this needs to be fixed when we have the custom away messages setup below */
-	if (!text) {
+	status_id = gaim_status_get_name(status);
+	if (status_id == NULL) {
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 		return;
 	}
+	text_html = gaim_strdup_withhtml(status_id);
 
-	text_html = gaim_strdup_withhtml(text);
 	charset = oscar_charset_check(text_html);
 	if (charset == AIM_CHARSET_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
-		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
 	} else if (charset == AIM_CHARSET_CUSTOM) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
-		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	} else {
 		msglen = strlen(text_html);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	}
 
 	if (msglen > od->rights.maxawaymsglen) {
@@ -5607,53 +5602,57 @@ static void oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	}
 	
 	g_free(text_html);
-#endif
 
 	return;
 }
 
-static void oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
+static void
+oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 {
-	OscarData *od = (OscarData *)account->gc->proto_data;
-	const gchar *state = gaim_status_get_name(status);
+	GaimConnection *gc = gaim_account_get_connection(account);
+	OscarData *od = (OscarData *)gc->proto_data;
+	const gchar *status_id = gaim_status_get_id(status);
 
-	if (strcmp(state, _("Invisible")))
+	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_HIDDEN)
 		account->perm_deny = 4;
 	else
 		account->perm_deny = 3;
+
 	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
 
-	if (!strcmp(state, _("Online")))
+	if (!strcmp(status_id, OSCAR_STATUS_ID_ONLINE))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-	else if (!strcmp(state, _("Away"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
-	} else if (!strcmp(state, _("Do Not Disturb"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
-	} else if (!strcmp(state, _("Not Available"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-	} else if (!strcmp(state, _("Occupied"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
-	} else if (!strcmp(state, _("Free For Chat"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_CHAT);
-	} else if (!strcmp(state, _("Invisible"))) {
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-#if 0 /* XXX fix me!! */
-	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
-	 	if (message) {
-			aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-		} else {
-			aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-		}
-#endif
-	}
+
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 
 	return;
 }
 
-static void oscar_set_status(GaimAccount *account, GaimStatus *status)
+static void
+oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
-	OscarData *od = (OscarData *)account->gc->proto_data;
+	GaimConnection *gc = gaim_account_get_connection(account);
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->icq)
 		oscar_set_status_icq(account, status);
@@ -5663,7 +5662,8 @@ static void oscar_set_status(GaimAccount *account, GaimStatus *status)
 	return;
 }
 
-static void oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
+static void
+oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_im_warn(od->sess, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
 }
@@ -5853,8 +5853,6 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimStatus *status;
 	int i;
 	va_list ap;
 	int numtypes;
@@ -6079,8 +6077,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
 						if (od->icq && account->perm_deny == 0x03) {
-							gaim_presence_switch_status(account->presence,
-														OSCAR_STATUS_ID_INVISIBLE);	
+							gaim_presence_switch_status(account->presence, OSCAR_STATUS_ID_INVISIBLE);
 						}
 					}
 				}
@@ -6092,7 +6089,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
 
-	/* XXX - STATUS - Set our ICQ status */
+	/*
+	 * XXX - STATUS - Set our ICQ status.  We probably don't want to do
+	 * this.  We probably want the SSI status setting to override the local
+	 * setting.
+	 */
 	status = gaim_presence_get_active_status(account->presence);
 	if (gaim_status_is_available(status))
 		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
@@ -6822,58 +6823,52 @@ oscar_status_types(GaimAccount *account)
 
 	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
 
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, OSCAR_STATUS_ID_OFFLINE, _("Offline"), FALSE, FALSE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+									 OSCAR_STATUS_ID_OFFLINE,
+									 _("Offline"), FALSE, FALSE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, OSCAR_STATUS_ID_ONLINE, _("Online"), FALSE, FALSE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
+									 OSCAR_STATUS_ID_ONLINE,
+									 _("Online"), FALSE, FALSE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, OSCAR_STATUS_ID_INVISIBLE, _("Invisible"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_AVAILABLE,
+									 _("Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, OSCAR_STATUS_ID_AVAILABLE, _("Available"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_FREE4CHAT,
+									 _("Free For Chat"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, OSCAR_STATUS_ID_FREE4CHAT, _("Free For Chat"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
+									 OSCAR_STATUS_ID_OCCUPIED,
+									 _("Occupied"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_AWAY, _("Away"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
+									 OSCAR_STATUS_ID_INVISIBLE,
+									 _("Invisible"), TRUE, TRUE, TRUE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_OCCUPIED, _("Occupied"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY,
+									 OSCAR_STATUS_ID_AWAY,
+									 _("Away"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY, OSCAR_STATUS_ID_DND, _("Do Not Disturb"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+									 OSCAR_STATUS_ID_DND,
+									 _("Do Not Disturb"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY, OSCAR_STATUS_ID_NA, _("Not Available"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+									 OSCAR_STATUS_ID_NA,
+									 _("Not Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
-
-	/*
-	 * Do something with:
-	 * #define OSCAR_STATUS_ID_CUSTOM		"custom"
-	 */
-
-#if 0 /* STATUS - old stuff that should be removed */
-	if (od->icq) {
-		m = g_list_append(m, _("Online"));
-		m = g_list_append(m, _("Away"));
-		m = g_list_append(m, _("Do Not Disturb"));
-		m = g_list_append(m, _("Not Available"));
-		m = g_list_append(m, _("Occupied"));
-		m = g_list_append(m, _("Free For Chat"));
-		m = g_list_append(m, _("Invisible"));
-	} else {
-		m = g_list_append(m, GAIM_AWAY_CUSTOM);
-		m = g_list_append(m, _("Back"));
-		m = g_list_append(m, _("Visible"));
-		m = g_list_append(m, _("Invisible"));
-	}
-
-	return m;
-#endif
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {

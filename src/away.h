@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#if 0
+
 #ifndef _GAIM_AWAY_H_
 #define _GAIM_AWAY_H_
 
@@ -31,7 +33,7 @@
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
 /* WTF?  How does having a title for something mean that it is part of the UI? */
-#if 0 /* XXX CUI */
+//if 0 /* XXX CUI */
 struct away_message {
 	char name[80];
 	char message[2048];

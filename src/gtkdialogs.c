@@ -546,7 +546,9 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 	g_free(username);
 }
 
-/* XXX this needs to deal with logs of all types, not just IM logs */
+/*
+ * TODO - This needs to deal with logs of all types, not just IM logs.
+ */
 void
 gaim_gtkdialogs_log(void)
 {
@@ -597,7 +599,7 @@ gaim_gtkdialogs_warn_cb(GtkWidget *widget, gint resp, struct warning *w)
 }
 
 /*
- * XXX - Make this use the request API, if possible.
+ * TODO - Make this use the request API, if possible.
  */
 void
 gaim_gtkdialogs_warn(GaimConnection *gc, const char *who)
@@ -833,7 +835,7 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 	account = buddy->account;
 
 	gaim_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
-	/* XXX - Should remove from blist first... then call serv_remove_buddy()? */
+	/* TODO - Should remove from blist first... then call serv_remove_buddy()? */
 	serv_remove_buddy(buddy->account->gc, buddy, group);
 	gaim_blist_remove_buddy(buddy);
 

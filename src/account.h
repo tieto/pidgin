@@ -277,7 +277,7 @@ void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
  * Activates or deactivates a status.
  *
  * Only independent statuses can be deactivated with this. To deactivate
- * an exclusive status, activate a separate status.
+ * an exclusive status, activate a different (and exclusive?) status.
  *
  * @param account   The account.
  * @param status_id The ID of the status.
