@@ -395,6 +395,12 @@ void sighandler(int sig)
 #endif
 		abort();
 		break;
+	case SIGCHLD:
+		clean_pid();
+#if HAVE_SIGNAL_H
+		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
+#endif
+		break;
 	default:
 		debug_printf("caught signal %d\n", sig);
 		signoff_all(NULL, NULL);

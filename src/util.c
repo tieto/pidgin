@@ -642,6 +642,21 @@ char *date()
 	return date;
 }
 
+void clean_pid(void)
+{
+#ifndef _WIN32
+	int status;
+	pid_t pid;
+
+	pid = waitpid(-1, &status, 0);
+	if(pid < 0 && errno != ECHILD) {
+		char errmsg[BUFSIZ];
+		sprintf(errmsg, "Warning: waitpid() returned %d", pid);
+		perror(errmsg);
+	}
+#endif
+}
+
 struct aim_user *find_user(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));

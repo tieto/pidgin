@@ -445,6 +445,7 @@ extern void serv_rename_group(struct gaim_connection *, struct group *, const ch
 extern char *normalize(const char *);
 extern char *tobase64(const char *);
 extern void frombase64(const char *, char **, int *);
+extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
 extern FILE *open_log_file (char *, int);
