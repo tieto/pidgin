@@ -49,6 +49,7 @@ guint chat_options;
 guint font_options;
 guint sound_options;
 guint away_options;
+guint away_resend;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
@@ -731,6 +732,7 @@ static void gaimrc_read_options(FILE *f)
 			sound_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
+			away_resend = atoi(p->value[1]);
 		} else if (!strcmp(p->option, "font_xfld")) {
 			g_snprintf(fontxfld, sizeof(fontxfld), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "font_face")) {
@@ -807,6 +809,9 @@ static void gaimrc_read_options(FILE *f)
 		for (i = 0; disp_replace[i].val; i++)
 			if (display_options & disp_replace[i].old)
 				*disp_replace[i].val |= disp_replace[i].new;
+
+	if (!away_resend)
+		away_resend = 120;
 }
 
 static void gaimrc_write_options(FILE *f)

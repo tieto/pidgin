@@ -1853,8 +1853,6 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		 gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, -1, options);
 	va_end(ap);
 
-	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", -1, 0);
-
 	if (away)
 		info_dlgs = g_slist_remove(info_dlgs, b);
 	else
@@ -3769,6 +3767,8 @@ void show_log(char *nm)
 
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", GTK_SIGNAL_FUNC(open_url), NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
+	GTK_LAYOUT(layout)->hadjustment->step_increment = 10.0;
+	GTK_LAYOUT(layout)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(layout);
 
 	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);

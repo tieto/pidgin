@@ -2113,6 +2113,14 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->name);
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
+				} else if (clistqueue && find_queue_total_by_name(b->name)) {
+					struct queued_message *qm = g_new0(struct queued_message, 1);
+					qm->message = g_strdup_printf(_("%s logged in."), b->name);
+					qm->gc = gc;
+					qm->tm = time(NULL);
+					qm->flags = WFLAG_SYSTEM;
+					qm->len = -1;
+					message_queue = g_slist_append(message_queue, qm);
 				}
 			}
 			bs->sound = 2;
@@ -2168,6 +2176,14 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->name);
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
+			} else if (clistqueue && find_queue_total_by_name(b->name)) {
+				struct queued_message *qm = g_new0(struct queued_message, 1);
+				qm->message = g_strdup_printf(_("%s logged out."), b->name);
+				qm->gc = gc;
+				qm->tm = time(NULL);
+				qm->flags = WFLAG_SYSTEM;
+				qm->len = -1;
+				message_queue = g_slist_append(message_queue, qm);
 			}
 		}
 

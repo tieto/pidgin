@@ -1904,6 +1904,8 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 			aim_conn_setlatency(fr->conn, 0);
 	} else if (code == AIM_RATE_CODE_WARNING) {
 		aim_conn_setlatency(fr->conn, windowsize/4);
+		do_error_dialog(_("The last message was not sent because you are over the rate limit. "
+				  "Please wait 10 seconds and try again."), _("Gaim - Error"));
 	} else if (code == AIM_RATE_CODE_LIMIT) {
 		aim_conn_setlatency(fr->conn, windowsize/2);
 	} else if (code == AIM_RATE_CODE_CLEARLIMIT) {

@@ -584,7 +584,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 		/* regardless of whether we queue it or not, we should send an auto-response. That is,
 		 * of course, unless the horse.... no wait. */
-		if ((away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away)) {
+		if ((away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away) ||
+				((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
 			g_free(name);
 			g_free(message);
 			return;
@@ -602,7 +603,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qar->sent_away = 0;
 			away_time_queue = g_slist_append(away_time_queue, qar);
 		}
-		if ((t - qar->sent_away) < 120) {
+		if ((t - qar->sent_away) < away_resend) {
 			g_free(name);
 			g_free(message);
 			return;
@@ -978,6 +979,8 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	text = gtk_imhtml_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), text);
+	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
+	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(text);
 
 	hbox = gtk_hbox_new(FALSE, 5);

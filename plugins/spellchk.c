@@ -360,6 +360,7 @@ void gaim_plugin_config() {
 	GAIM_DIALOG(configwin);
 	gtk_widget_set_usize(configwin, 450, 250);
 	gtk_window_set_title(GTK_WINDOW(configwin), "Spell Check Config");
+	gtk_signal_connect(GTK_OBJECT(configwin), "destroy", GTK_SIGNAL_FUNC(close_config), NULL);
 
 	vbox = gtk_vbox_new(0, 2);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);

@@ -443,6 +443,10 @@ extern GtkWidget *pref_bg_picture;
 /* Functions in prpl.c */
 extern void register_dialog();
 
+/* Functions in server.c */
+/* server.c is in desperate need need of a split */
+extern int find_queue_total_by_name(char *);
+
 /* Functions in sound.c */
 extern void play_sound(int);
 extern void play_file(char *);

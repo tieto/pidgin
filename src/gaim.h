@@ -307,7 +307,9 @@ extern guint away_options;
 #define OPT_AWAY_AUTO			0x00000008
 #define OPT_AWAY_NO_AUTO_RESP		0x00000010
 #define OPT_AWAY_QUEUE			0x00000020
+#define OPT_AWAY_IDLE_RESP		0x00000040
 
+extern guint away_resend;
 extern int report_idle;
 extern int web_browser;
 extern GSList *aim_users;

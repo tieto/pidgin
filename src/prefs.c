@@ -829,7 +829,7 @@ static void update_spin_value(GtkWidget *w, GtkWidget *spin)
 	*value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin));
 }
 
-static void gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *val)
+static void gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *val, int min, int max)
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -844,7 +844,7 @@ static void gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *va
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	adjust = gtk_adjustment_new(*val, 1, 9999, 1, 1, 1);
+	adjust = gtk_adjustment_new(*val, min, max, 1, 1, 1);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 	gtk_object_set_user_data(GTK_OBJECT(spin), val);
 	gtk_widget_set_usize(spin, 50, -1);
@@ -949,9 +949,9 @@ static void im_page()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	gaim_labeled_spin_button(vbox, _("New window width:"), &conv_size.width);
-	gaim_labeled_spin_button(vbox, _("New window height:"), &conv_size.height);
-	gaim_labeled_spin_button(vbox, _("Entry widget height:"), &conv_size.entry_height);
+	gaim_labeled_spin_button(vbox, _("New window width:"), &conv_size.width, 25, 9999);
+	gaim_labeled_spin_button(vbox, _("New window height:"), &conv_size.height, 25, 9999);
+	gaim_labeled_spin_button(vbox, _("Entry widget height:"), &conv_size.entry_height, 25, 9999);
 
 	frame = gtk_frame_new(_("Tab Placement"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
@@ -1093,9 +1093,9 @@ static void chat_page()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	gaim_labeled_spin_button(vbox, _("New window width:"), &buddy_chat_size.width);
-	gaim_labeled_spin_button(vbox, _("New window height:"), &buddy_chat_size.height);
-	gaim_labeled_spin_button(vbox, _("Entry widget height:"), &buddy_chat_size.entry_height);
+	gaim_labeled_spin_button(vbox, _("New window width:"), &buddy_chat_size.width, 25, 9999);
+	gaim_labeled_spin_button(vbox, _("New window height:"), &buddy_chat_size.height, 25, 9999);
+	gaim_labeled_spin_button(vbox, _("Entry widget height:"), &buddy_chat_size.entry_height, 25, 9999);
 
 	frame = gtk_frame_new(_("Tab Placement"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
@@ -1823,11 +1823,12 @@ static void away_page()
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *vbox2;
+	GtkWidget *button;
+	GtkWidget *button2;
 	GtkWidget *top;
 	GtkWidget *bot;
 	GtkWidget *sw;
 	GtkWidget *sw2;
-	GtkWidget *button;
 	GtkWidget *list_item;
 	GtkWidget *sep;
 	GtkObject *adjust;
@@ -1875,8 +1876,28 @@ static void away_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 5);
 	gtk_widget_show(vbox2);
 
-	gaim_button(_("Don't send auto-response"), &away_options, OPT_AWAY_NO_AUTO_RESP, vbox2);
+	button = gaim_button(_("Don't send auto-response"), &away_options, OPT_AWAY_NO_AUTO_RESP, vbox2);
+	button2 = gaim_button(_("Only send auto-response when idle"), &away_options, OPT_AWAY_IDLE_RESP,
+			      vbox2);
+	if (away_options & OPT_AWAY_NO_AUTO_RESP)
+		gtk_widget_set_sensitive(button2, FALSE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
 	gaim_button(_("Queue new messages when away"), &away_options, OPT_AWAY_QUEUE, vbox2);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	gaim_labeled_spin_button(hbox, _("Time between sending auto-responses (in seconds):"),
+			&away_resend, 1, 24 * 60 * 60);
+
+	if (away_options & OPT_AWAY_NO_AUTO_RESP)
+		gtk_widget_set_sensitive(hbox, FALSE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), hbox);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
@@ -1957,6 +1978,8 @@ static void away_page()
 
 	away_text = gtk_imhtml_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw2), away_text);
+	GTK_LAYOUT(away_text)->hadjustment->step_increment = 10.0;
+	GTK_LAYOUT(away_text)->vadjustment->step_increment = 10.0;
 	gaim_setup_imhtml(away_text);
 	gtk_widget_show(away_text);
 
