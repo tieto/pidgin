@@ -3812,9 +3812,6 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 		aim_locate_setcaps(od->sess, caps_aim);
 	oscar_set_info(gc, gc->account->user_info);
 
-	if (gc->away_state != NULL)
-		oscar_set_away(gc, gc->away_state, gc->away);
-
 	return 1;
 }
 
