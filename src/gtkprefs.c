@@ -919,7 +919,7 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	label = gaim_gtk_prefs_labeled_spin_button(vbox, "Number of conversations per window",
+	label = gaim_gtk_prefs_labeled_spin_button(vbox, _("Number of conversations per window"),
 	                                           "/gaim/gtk/conversations/placement_number",
 	                                           1, 50, sg);
 

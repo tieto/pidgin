@@ -49,11 +49,11 @@ idle_action(GaimPlugin *plugin)
 
 	group = gaim_request_field_group_new(NULL);
 
-	field = gaim_request_field_account_new("acct", "Account", NULL);
+	field = gaim_request_field_account_new("acct", _("Account"), NULL);
 	gaim_request_field_account_set_show_all(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
 	
-	field = gaim_request_field_int_new("mins", "Minutes", 10);
+	field = gaim_request_field_int_new("mins", _("Minutes"), 10);
 	gaim_request_field_group_add_field(group, field);
 
 	request = gaim_request_fields_new();
