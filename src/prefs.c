@@ -1464,17 +1464,17 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
 	gaim_button(label, &sound_options, opt, hbox);
 
 	button = gtk_button_new_with_label(_("Play"));
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 3);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(test_sound), (void *)snd);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label(_("Reset"));
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 3);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(reset_sound), (void *)snd);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label(_("Choose..."));
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 3);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_sound), (void *)snd);
 	gtk_widget_show(button);
 
