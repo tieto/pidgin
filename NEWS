@@ -1,5 +1,18 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
+0.11.0-pre13 (06/06/2001):
+	Rob: \O.  Howdy doodie!  This release isn't coming too far behind
+	the previous release but hey, what can ya say, there were a couple
+	of good fixes in this one.  Jabber & IRC can set / view the topics
+	of chat rooms now, napster doesnt crash on bad login names and
+	passwords, and the man page got a big update.  
+
+	Well, that's about all, folks.  Next release, I hope to try to get
+	group MSN chat support added as well as DCC support in the IRC 
+	plugin. 
+
+	Peace!
+
 0.11.0-pre12 (05/29/2001):
 	Rob: Hi!  O/.  My girlfriend was visiting me so I've been busy being
 	unavailable online.  Hooray.
