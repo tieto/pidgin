@@ -50,6 +50,7 @@ void do_chat_page(GtkWidget *page);
 void list_clicked( GtkWidget *widget, struct away_message *a);
 void list_unclicked( GtkWidget *widget, struct away_message *a);
 
+void show_debug(GtkObject *);
 
 void remove_away_message(GtkWidget *widget, void *dummy)
 {
@@ -153,9 +154,12 @@ void set_general_option(GtkWidget *w, int *option)
 
 static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 {
-	if(debugbutton && (general_options & OPT_GEN_DEBUG))
-	{
+	if (debugbutton)
 		gtk_button_clicked(GTK_BUTTON(debugbutton));
+	if (general_options & OPT_GEN_DEBUG)
+	{
+		general_options = general_options ^ (int)OPT_GEN_DEBUG;
+		save_prefs();
 	}
 	g_free(dw);
 	dw=NULL;
@@ -411,7 +415,7 @@ void build_prefs()
         gtk_widget_show(idleframe);
 
 
-//        gtk_signal_connect_object( GTK_OBJECT(debugbutton), "clicked", GTK_SIGNAL_FUNC(show_debug), NULL);
+        gtk_signal_connect_object( GTK_OBJECT(debugbutton), "clicked", GTK_SIGNAL_FUNC(show_debug), NULL);
 
         /* Connection */
         
@@ -1053,6 +1057,7 @@ void show_debug(GtkObject * object)
                         build_debug();
                 gtk_widget_show(dw->window);
         } else {
+		if (!dw) return;
                 gtk_widget_destroy(dw->window);
                 dw->window = NULL;
 	}
