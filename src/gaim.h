@@ -414,7 +414,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 925 $"
+#define REVISION "gaim:$Revision: 927 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -796,7 +796,7 @@ extern GtkWidget *pref_bg_picture;
 
 
 /* Functions in gaimrc.c */
-extern void set_defaults();
+extern void set_defaults(int);
 extern void load_prefs();
 extern void save_prefs();
 

@@ -659,18 +659,22 @@ static void gaimrc_write_options(FILE *f)
 }
 
 
-void set_defaults()
+void set_defaults(int saveinfo)
 {
-        if (aim_users)
-        {
-        	g_list_free(aim_users);
-        	aim_users = NULL;
-        }
-        if (away_messages)
-        {
-        	g_list_free(away_messages);
-        	away_messages = NULL;
-        }
+	if (!saveinfo)
+	{	
+        	if (aim_users)
+        	{
+        		g_list_free(aim_users);
+        		aim_users = NULL;
+       	 	}
+       	 	if (away_messages)
+       	 	{
+       	 		g_list_free(away_messages);
+        		away_messages = NULL;
+        	}
+	}
+
         general_options =
                 OPT_GEN_SEND_LINKS |
                 OPT_GEN_ENTER_SENDS |
@@ -696,26 +700,29 @@ void set_defaults()
 		OPT_DISP_CHAT_BUTTON_XPM | 
 		OPT_DISP_CHAT_BUTTON_TEXT;
 
-	font_options = 0; 
-        sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
-        report_idle = IDLE_GAIM;
-        web_browser = BROWSER_NETSCAPE;
-        proxy_type = PROXY_NONE;
+	if (!saveinfo)
+	{
+		font_options = 0; 
+        	sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
+        	report_idle = IDLE_GAIM;
+        	web_browser = BROWSER_NETSCAPE;
+        	proxy_type = PROXY_NONE;
         
-	aim_port = TOC_PORT;
-	login_port = AUTH_PORT;
-	g_snprintf(aim_host, sizeof(aim_host), "%s", TOC_HOST);
-    	g_snprintf(login_host, sizeof(login_host), "%s", AUTH_HOST);
-        proxy_host[0] = 0;
-        proxy_port = 0;
-        g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
-        blist_pos.width = 0;
-        blist_pos.height = 0;
-        blist_pos.x = 0;
-        blist_pos.y = 0;
-        blist_pos.xoff = 0;
-        blist_pos.yoff = 0;
-	g_snprintf(latest_ver, BUF_LONG, "%s", VERSION);
+		aim_port = TOC_PORT;
+		login_port = AUTH_PORT;
+		g_snprintf(aim_host, sizeof(aim_host), "%s", TOC_HOST);
+    		g_snprintf(login_host, sizeof(login_host), "%s", AUTH_HOST);
+        	proxy_host[0] = 0;
+        	proxy_port = 0;
+        	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+        	blist_pos.width = 0;
+        	blist_pos.height = 0;
+        	blist_pos.x = 0;
+        	blist_pos.y = 0;
+        	blist_pos.xoff = 0;
+        	blist_pos.yoff = 0;
+		g_snprintf(latest_ver, BUF_LONG, "%s", VERSION);
+	}
 }
 
 
@@ -732,11 +739,12 @@ void load_prefs()
 			sscanf(buf, "# .gaimrc v%d", &ver);
 			if ( (ver <= 1) || (buf[0] != '#')) {
                                 fclose(f);
-				set_defaults();
+				set_defaults(FALSE);
 				save_prefs();
 				load_prefs();
                                 return;
 			}
+			
 			while(!feof(f)) {
 				switch(gaimrc_parse_tag(f)) {
 				case -1:
@@ -770,6 +778,10 @@ void load_prefs()
 			fclose(f);
 		}
 	}
+
+	if ( (ver == 2) || (buf[0] != '#')) {
+		set_defaults(TRUE);
+	}
 	
 }
 
@@ -781,7 +793,7 @@ void save_prefs()
 	if (getenv("HOME")) {
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
 		if ((f = fopen(buf,"w"))) {
-			fprintf(f, "# .gaimrc v%d\n", 2);
+			fprintf(f, "# .gaimrc v%d\n", 3);
 			gaimrc_write_users(f);
 			gaimrc_write_options(f);
 			gaimrc_write_away(f);

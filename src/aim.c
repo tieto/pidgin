@@ -540,7 +540,7 @@ int main(int argc, char *argv[])
 
 	if (argc > 1 && !strcmp(argv[1], "--version")) {
 		gtk_init(&argc, &argv);
-		set_defaults(); /* needed for open_url_nw */
+		set_defaults(FALSE); /* needed for open_url_nw */
 		load_prefs();
 		show_about(0, (void *)1);
 		gtk_main();
@@ -555,7 +555,7 @@ int main(int argc, char *argv[])
         gtk_init(&argc, &argv);
 #endif /* USE_GNOME */
 
-        set_defaults();
+        set_defaults(FALSE);
         load_prefs();
 
 	if (general_options & OPT_GEN_DEBUG)
