@@ -51,7 +51,7 @@ struct _MsnUser
 
 	size_t ref_count;       /**< The reference count.       */
 
-	GHashTable *clientinfo; /**< The client information.    */
+	GHashTable *clientcaps; /**< The client's capabilities. */
 };
 
 /**
@@ -209,7 +209,7 @@ const char *msn_user_get_mobile_phone(const MsnUser *user);
  * @param user The user.
  * @param info The client information.
  */
-void msn_user_set_client_info(MsnUser *user, GHashTable *info);
+void msn_user_set_client_caps(MsnUser *user, GHashTable *info);
 
 /**
  * Returns the client information for a user.
@@ -218,7 +218,7 @@ void msn_user_set_client_info(MsnUser *user, GHashTable *info);
  *
  * @return The client information.
  */
-GHashTable *msn_user_get_client_info(const MsnUser *user);
+GHashTable *msn_user_get_client_caps(const MsnUser *user);
 
 /**
  * Creates a new MsnUsers structure.

@@ -72,8 +72,8 @@
 #define MSN_FT_GUID "{5D3E02AB-6190-11d3-BBBB-00C04F795683}"
 
 #define MSN_CLIENTINFO \
-	"User-Agent: Gaim/" VERSION "\r\n" \
-	"Buddy-Icons: 1\r\n" \
-	"Logging: 1\r\n"
+	"Client-Name: Gaim/" VERSION "\r\n" \
+	"Chat-Logging: Y\r\n" \
+	"Buddy-Icons: 1\r\n"
 
 #endif /* _MSN_H_ */

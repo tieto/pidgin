@@ -30,7 +30,7 @@ static GHashTable *switchboard_msg_types = NULL;
  * Utility functions
  **************************************************************************/
 static gboolean
-__send_clientinfo(MsnSwitchBoard *swboard)
+__send_clientcaps(MsnSwitchBoard *swboard)
 {
 	MsnMessage *msg;
 
@@ -38,7 +38,7 @@ __send_clientinfo(MsnSwitchBoard *swboard)
 		return TRUE;
 
 	msg = msn_message_new();
-	msn_message_set_content_type(msg, "text/x-clientinfo");
+	msn_message_set_content_type(msg, "text/x-clientcaps");
 	msn_message_set_charset(msg, NULL);
 	msn_message_set_attr(msg, "User-Agent", NULL);
 	msn_message_set_body(msg, MSN_CLIENTINFO);
@@ -89,7 +89,7 @@ __ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (swboard->chat != NULL)
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
 
-	return __send_clientinfo(swboard);
+	return __send_clientcaps(swboard);
 }
 
 static gboolean
@@ -196,7 +196,7 @@ __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 	}
 
-	return __send_clientinfo(swboard);
+	return __send_clientcaps(swboard);
 }
 
 static gboolean
@@ -318,19 +318,19 @@ __control_msg(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__clientinfo_msg(MsnServConn *servconn, const MsnMessage *msg)
+__clientcaps_msg(MsnServConn *servconn, const MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard = servconn->data;
 	MsnUser *user;
-	GHashTable *clientinfo;
+	GHashTable *clientcaps;
 	const char *value;
 
 	user = msn_user_new(session, servconn->msg_passport, NULL);
 
-	clientinfo = msn_message_get_hashtable_from_body(msg);
+	clientcaps = msn_message_get_hashtable_from_body(msg);
 
-	if ((value = g_hash_table_lookup(clientinfo, "Buddy-Icons")) != NULL)
+	if ((value = g_hash_table_lookup(clientcaps, "Buddy-Icons")) != NULL)
 		msn_buddy_icon_invite(swboard);
 
 	return TRUE;
@@ -423,8 +423,10 @@ msn_switchboard_new(MsnSession *session)
 		msn_servconn_register_msg_type(servconn, "text/plain", __plain_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-msmsgscontrol",
 									   __control_msg);
+		msn_servconn_register_msg_type(servconn, "text/x-clientcaps",
+									   __clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
-									   __clientinfo_msg);
+									   __clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "application/x-buddyicon",
 									   msn_buddy_icon_msg);
 

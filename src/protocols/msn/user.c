@@ -69,8 +69,8 @@ msn_user_destroy(MsnUser *user)
 	if (user->session != NULL && user->session->users != NULL)
 		msn_users_remove(user->session->users, user);
 
-	if (user->clientinfo != NULL)
-		g_hash_table_destroy(user->clientinfo);
+	if (user->clientcaps != NULL)
+		g_hash_table_destroy(user->clientcaps);
 
 	if (user->passport != NULL) g_free(user->passport);
 	if (user->name     != NULL) g_free(user->name);
@@ -224,23 +224,23 @@ msn_user_get_mobile_phone(const MsnUser *user)
 }
 
 void
-msn_user_set_client_info(MsnUser *user, GHashTable *info)
+msn_user_set_client_caps(MsnUser *user, GHashTable *info)
 {
 	g_return_if_fail(user != NULL);
 	g_return_if_fail(info != NULL);
 
-	if (user->clientinfo != NULL)
-		g_hash_table_destroy(user->clientinfo);
+	if (user->clientcaps != NULL)
+		g_hash_table_destroy(user->clientcaps);
 
-	user->clientinfo = info;
+	user->clientcaps = info;
 }
 
 GHashTable *
-msn_user_get_client_info(const MsnUser *user)
+msn_user_get_client_caps(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->clientinfo;
+	return user->clientcaps;
 }
 
 MsnUsers *
