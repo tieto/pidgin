@@ -977,14 +977,13 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						p++;
 					}
 					c = strchr(c, '>') + 1;
-					pt = g_new0(struct gaim_parse_tag, 1);
-					pt->src_tag = "font";
-					pt->dest_tag = "span";
-					tags = g_list_prepend(tags, pt);
-					xhtml = g_string_append(xhtml, "<span");
-					if(style->len)
-						g_string_append_printf(xhtml, " style='%s'", style->str);
-					xhtml = g_string_append_c(xhtml, '>');
+					if(style->len) {
+						pt = g_new0(struct gaim_parse_tag, 1);
+						pt->src_tag = "font";
+						pt->dest_tag = "span";
+						tags = g_list_prepend(tags, pt);
+						g_string_append_printf(xhtml, "<span style='%s'>", style->str);
+					}
 					g_string_free(style, TRUE);
 					continue;
 				}
