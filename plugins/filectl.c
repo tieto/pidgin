@@ -1,9 +1,10 @@
-/*
-** Send commands to gaim via ~/.gaim/control
-**
-** By Eric Warmenhoven <eric@warmenhoven.org>
-** compile fixes/mini hacks Alex Bennee <alex@bennee.com>
-*/
+/**
+ * Send commands to Gaim via ~/.gaim/control
+ *
+ * Originally by Eric Warmenhoven <eric@warmenhoven.org>
+ * Compile fixes/mini hacks Alex Bennee <alex@bennee.com>
+ * and Brian Tarricone <bjt23@users.sourceforge.net>
+ */
 
 /* system includes */
 #include <stdlib.h>
@@ -14,16 +15,16 @@
 #include <string.h>
 #include <ctype.h>
 
-/* gaim includes */
-#include "internal.h"
-
-#include "config.h"
-#include "gaim.h"
-#include "debug.h"
 #include "account.h"
+#include "config.h"
+#include "core.h"
 #include "conversation.h"
+#include "debug.h"
+#include "eventloop.h"
+#include "gaim.h"
+#include "internal.h"
+#include "util.h"
 #include "version.h"
-
 
 #define FILECTL_PLUGIN_ID "core-filectl"
 static int check;
@@ -36,82 +37,96 @@ static gboolean check_file();
 char *getarg(char *, int, int);
 
 /* go through file and run any commands */
-void run_commands() {
+void
+run_commands()
+{
 	struct stat finfo;
 	char filename[256];
 	char buffer[1024];
 	char *command, *arg1, *arg2;
 	FILE *file;
 
-	sprintf(filename, "%s/.gaim/control", getenv("HOME"));
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
 	file = fopen(filename, "r+");
-	while (fgets(buffer, sizeof buffer, file)) {
+	while (fgets(buffer, sizeof(buffer), file)) {
+
+		/* Read the next command */
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = 0;
-		gaim_debug(GAIM_DEBUG_MISC, "filectl", "read: %s\n", buffer);
+		gaim_debug_misc("filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
+
 		if (!strncasecmp(command, "signon", 6)) {
-			GaimAccount *account = NULL;
-			GList *accts = gaim_accounts_get_all();
-			arg1 = getarg(buffer, 1, 1);
-			if (arg1) {
-				while (accts) {
-					GaimAccount *a = accts->data;
-					if (!strcmp(a->username, arg1)) {
-						account = a;
-						break;
-					}
-					accts = accts->next;
-				}
-				free(arg1);
-			}
-			if (account) /* username found */
-				gaim_account_connect(account);
-		} else if (!strncasecmp(command, "signoff", 7)) {
-			GaimConnection *gc = NULL;
-			GList *c = gaim_connections_get_all();
-			arg1 = getarg(buffer, 1, 1);
-			while (arg1 && c) {
-				gc = c->data;
-				if (!strcmp(gc->account->username, arg1)) {
-					break;
-				}
-				gc = NULL;
-				c = c->next;
-			}
-			if (gc)
-				gaim_connection_disconnect(gc);
-			else if (!arg1)
-				gaim_connections_disconnect_all();
-			free(arg1);
-		} else if (!strncasecmp(command, "send", 4)) {
-			GaimConversation *c;
+			GaimAccount *account;
+
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
-			c = gaim_find_conversation(GAIM_CONV_ANY, arg1);
-			if (c)
-			{
-				/* disable for now
-				gaim_conversation_write(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
-				serv_send_im(c->gc, arg1, arg2, 0);
-				*/
-			}
+
+			account = gaim_accounts_find(arg1, arg2);
+			if (account != NULL) /* username found */
+				gaim_account_connect(account);
+
 			free(arg1);
 			free(arg2);
+
+		} else if (!strncasecmp(command, "signoff", 7)) {
+			GaimAccount *account;
+			GaimConnection *gc;
+
+			arg1 = getarg(buffer, 1, 1);
+			arg2 = getarg(buffer, 2, 1);
+
+			account = gaim_accounts_find(arg1, arg2);
+			if (account != NULL)
+			{
+				gc = gaim_account_get_connection(account);
+				if (gc != NULL)
+					gaim_connection_disconnect(gc);
+			}
+			else if (arg1 == NULL)
+				gaim_connections_disconnect_all();
+
+			free(arg1);
+			free(arg2);
+
+		} else if (!strncasecmp(command, "send", 4)) {
+			GaimConversation *conv;
+
+			arg1 = getarg(buffer, 1, 0);
+			arg2 = getarg(buffer, 2, 1);
+
+			conv = gaim_find_conversation(GAIM_CONV_ANY, arg1);
+			if (conv != NULL)
+			{
+				/*
+				gaim_conversation_write(conv, arg2, WFLAG_SEND, NULL, time(NULL), -1);
+				serv_send_im(conv->gc, arg1, arg2, 0);
+				*/
+			}
+
+			free(arg1);
+			free(arg2);
+
 		} else if (!strncasecmp(command, "away", 4)) {
 			arg1 = getarg(buffer, 1, 1);
-			serv_set_away_all(arg1);
+			/* serv_set_away_all(arg1); */
 			free(arg1);
+
 		} else if (!strncasecmp(command, "hide", 4)) {
-			/* hide_buddy_list(); */
+			gaim_blist_set_visible(FALSE);
+
 		} else if (!strncasecmp(command, "unhide", 6)) {
-			/* unhide_buddy_list(); */
+			gaim_blist_set_visible(TRUE);
+
 		} else if (!strncasecmp(command, "back", 4)) {
 			/* do_im_back(); */
+
 		} else if (!strncasecmp(command, "quit", 4)) {
-			/* gaim_core_quit(); */
+			gaim_core_quit();
+
 		}
+
 		free(command);
 	}
 
@@ -122,31 +137,38 @@ void run_commands() {
 	mtime = finfo.st_mtime;
 }
 
-/* check to see if the size of the file is > 0. if so, run commands */
-void init_file() {
+/**
+ * Check to see if the size of the file is > 0. if so, run commands.
+ */
+void
+init_file()
+{
 	/* most of this was taken from Bash v2.04 by the FSF */
 	struct stat finfo;
-	char file[256];
+	char filename[256];
 
-	sprintf(file, "%s/.gaim/control", getenv("HOME"));
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
-	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
+	if ((stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 		run_commands();
 }
 
-/* check to see if we need to run commands from the file */
-gboolean check_file() {
+/**
+ * Check to see if we need to run commands from the file.
+ */
+gboolean
+check_file()
+{
 	/* most of this was taken from Bash v2.04 by the FSF */
 	struct stat finfo;
-	char file[256];
+	char filename[256];
 
-	sprintf(file, "%s/.gaim/control", getenv("HOME"));
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
 
-	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
+	if ((stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 	{
 		if (mtime != finfo.st_mtime) {
-			gaim_debug(GAIM_DEBUG_INFO, "filectl",
-					   "control changed, checking\n");
+			gaim_debug_info("filectl", "control changed, checking\n");
 			run_commands();
 		}
 	}
@@ -154,7 +176,9 @@ gboolean check_file() {
 	return TRUE;
 }
 
-char *getarg(char *line, int which, int remain) {
+char *
+getarg(char *line, int which, int remain)
+{
 	char *arr;
 	char *val;
 	int count = -1;
@@ -188,6 +212,7 @@ char *getarg(char *line, int which, int remain) {
 	free(arr);
 	return val;
 }
+
 /*
  *  EXPORTED FUNCTIONS
  */
@@ -196,7 +221,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	init_file();
-	check = g_timeout_add(5000, (GSourceFunc) check_file, NULL);
+	check = gaim_timeout_add(5000, (GSourceFunc)check_file, NULL);
 
 	return TRUE;
 }
@@ -204,7 +229,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	g_source_remove(check);
+	gaim_timeout_remove(check);
 
 	return TRUE;
 }
