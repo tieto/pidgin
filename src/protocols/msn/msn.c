@@ -148,6 +148,7 @@ static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
 			while (*(tmp) && *(tmp) == ' ') \
 				(tmp)++;
 
+#define GET_NEXT_LINE(tmp,s)	strsep (&tmp, " "); s = strsep (&tmp, "\r");
 
 static char *msn_normalize(const char *s)
 {
@@ -762,7 +763,7 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 	struct msn_data *md = ms->gc->proto_data;
 	char *tmp = msg;
 
-	if (strstr(msg, "Application-Name: File Transfer") &&
+	if (strstr(msg, "Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}") &&
 		strstr(msg, "Invitation-Command: INVITE")) {
 
 		/*
@@ -774,21 +775,10 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 		char *cookie_s, *filesize_s;
 		size_t filesize;
 
-		tmp = strstr(msg, "Invitation-Cookie");
-		GET_NEXT(tmp);
-		cookie_s = tmp;
-		GET_NEXT(tmp);
-		GET_NEXT(tmp);
-		filename = tmp;
-
-		/* Needed for filenames with spaces */
-		tmp = strchr(tmp, '\r');
-		*tmp = '\0';
-		tmp += 2;
-
-		GET_NEXT(tmp);
-		filesize_s = tmp;
-		GET_NEXT(tmp);
+		tmp = strstr(msg, "Invitation-Cookie:");
+		GET_NEXT_LINE(tmp, cookie_s);
+		GET_NEXT_LINE(tmp, filename);
+		GET_NEXT_LINE(tmp, filesize_s);
 
 		mft = g_new0(struct msn_file_transfer, 1);
 		mft->gc = ms->gc;
@@ -821,19 +811,12 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 
 			char *cookie_s, *ip, *port_s, *authcookie_s;
 
-			tmp = strstr(msg, "Invitation-Cookie");
-			GET_NEXT(tmp);
-			cookie_s = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			ip = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			port_s = tmp;
-			GET_NEXT(tmp);
-			GET_NEXT(tmp);
-			authcookie_s = tmp;
-			GET_NEXT(tmp);
+			tmp = strstr(msg, "Invitation-Cookie:");
+			GET_NEXT_LINE(tmp, cookie_s);
+			GET_NEXT_LINE(tmp, ip);
+			GET_NEXT_LINE(tmp, port_s);
+			GET_NEXT_LINE(tmp, authcookie_s);
+			GET_NEXT_LINE(tmp, authcookie_s);
 
 			mft = find_mft_by_cookie(ms->gc, atoi(cookie_s));
 
