@@ -60,6 +60,8 @@
 #include "pixmaps/mrt.xpm"
 #include "pixmaps/download.xpm"
 
+static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
+
 int state_lock = 0;
 
 GdkPixmap *dark_icon_pm = NULL;
@@ -2323,6 +2325,9 @@ void toggle_spellchk()
 	GSList *con = connections;
 	struct gaim_connection *gc;
 
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_start(NULL, ispell_cmd);
+
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
 		if (convo_options & OPT_CONVO_CHECK_SPELLING)
@@ -2345,6 +2350,9 @@ void toggle_spellchk()
 		}
 		con = con->next;
 	}
+
+	if (!(convo_options & OPT_CONVO_CHECK_SPELLING))
+		gtkspell_stop();
 }
 
 void toggle_timestamps()

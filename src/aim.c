@@ -636,7 +636,8 @@ int main(int argc, char *argv[])
 	if (misc_options & OPT_MISC_DEBUG)
 		show_debug();
 
-	gtkspell_start(NULL, ispell_cmd);
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_start(NULL, ispell_cmd);
 #ifdef USE_PERL
 	perl_autoload();
 #endif
@@ -681,7 +682,8 @@ int main(int argc, char *argv[])
 
 #endif /* USE_APPLET */
 
-	gtkspell_stop();
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
+		gtkspell_stop();
 	core_quit();
 
 	return 0;
