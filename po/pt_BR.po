@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-02 11:10-0300\n"
-"PO-Revision-Date: 2003-07-01 11:22-0300\n"
+"POT-Creation-Date: 2003-07-02 22:02-0300\n"
+"PO-Revision-Date: 2003-07-02 22:03-0300\n"
 "Last-Translator: Maurício de Lemos Rodrigues Collares Neto "
 "<mauricioc@myrealbox.com>\n"
 "Language-Team: pt_BR <pt_BR@li.org>\n"
@@ -32,7 +32,7 @@ msgstr "Novo..."
 
 #: plugins/docklet/docklet.c:144 src/protocols/gg/gg.c:54
 #: src/protocols/irc/irc.c:1019 src/protocols/jabber/jabber.c:1176
-#: src/protocols/jabber/jabber.c:3438 src/protocols/jabber/jabber.c:3492
+#: src/protocols/jabber/jabber.c:3440 src/protocols/jabber/jabber.c:3494
 #: src/protocols/oscar/oscar.c:2821 src/protocols/oscar/oscar.c:4537
 #: src/protocols/oscar/oscar.c:5436 src/protocols/oscar/oscar.c:5831
 #: src/gtkblist.c:1589 src/gtkpounce.c:460 src/gtkprefs.c:1476
@@ -56,7 +56,7 @@ msgstr "Transferências de arquivos"
 msgid "Accounts"
 msgstr "Contas"
 
-#: plugins/docklet/docklet.c:165 src/gtkprefs.c:2318 src/main.c:428
+#: plugins/docklet/docklet.c:165 src/gtkprefs.c:2320 src/main.c:428
 #: src/win32/systray.c:361
 msgid "Preferences"
 msgstr "Preferências"
@@ -612,14 +612,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ticker/ticker.c:68 plugins/ticker/ticker.c:277
+#: plugins/ticker/ticker.c:68 plugins/ticker/ticker.c:280
 msgid "Buddy Ticker"
 msgstr "Monitor de contatos"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ticker/ticker.c:280 plugins/ticker/ticker.c:282
+#: plugins/ticker/ticker.c:283 plugins/ticker/ticker.c:285
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "Uma versão da lista de contatos que rola horizontalmente."
 
@@ -757,8 +757,8 @@ msgstr "Disponível apenas para amigos"
 msgid "Away for friends only"
 msgstr "Ausente apenas para amigos"
 
-#: src/protocols/gg/gg.c:56 src/protocols/jabber/jabber.c:3441
-#: src/protocols/jabber/jabber.c:3504 src/protocols/oscar/oscar.c:2825
+#: src/protocols/gg/gg.c:56 src/protocols/jabber/jabber.c:3443
+#: src/protocols/jabber/jabber.c:3506 src/protocols/oscar/oscar.c:2825
 #: src/protocols/oscar/oscar.c:4525 src/protocols/oscar/oscar.c:4552
 #: src/protocols/oscar/oscar.c:5836 src/protocols/yahoo/yahoo.c:1066
 #: src/protocols/yahoo/yahoo.c:1273 src/protocols/yahoo/yahoo.c:1340
@@ -912,7 +912,7 @@ msgid "Sex"
 msgstr "Sexo"
 
 #. City
-#: src/protocols/gg/gg.c:705 src/protocols/trepia/trepia.c:361
+#: src/protocols/gg/gg.c:705 src/protocols/trepia/trepia.c:363
 #: src/dialogs.c:2016 src/dialogs.c:2665
 msgid "City"
 msgstr "Cidade"
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid "Directory Search"
 msgstr "Pesquisa de Diretório"
 
-#: src/protocols/gg/gg.c:1195 src/protocols/jabber/jabber.c:4323
+#: src/protocols/gg/gg.c:1195 src/protocols/jabber/jabber.c:4325
 #: src/protocols/oscar/oscar.c:6096 src/protocols/toc/toc.c:1442
 #: src/dialogs.c:2127 src/dialogs.c:2136
 msgid "Change Password"
@@ -1080,12 +1080,12 @@ msgstr "Adicionar"
 #: src/protocols/oscar/oscar.c:2473 src/protocols/oscar/oscar.c:2518
 #: src/protocols/oscar/oscar.c:5709 src/protocols/oscar/oscar.c:5924
 #: src/protocols/oscar/oscar.c:5972 src/protocols/oscar/oscar.c:6032
-#: src/protocols/trepia/trepia.c:377 src/protocols/yahoo/yahoo.c:1183
+#: src/protocols/trepia/trepia.c:379 src/protocols/yahoo/yahoo.c:1183
 #: src/buddy_chat.c:375 src/dialogs.c:453 src/dialogs.c:464 src/dialogs.c:476
 #: src/dialogs.c:2073 src/dialogs.c:2188 src/dialogs.c:2254 src/dialogs.c:2422
 #: src/dialogs.c:2607 src/dialogs.c:2756 src/dialogs.c:3427 src/dialogs.c:3920
 #: src/dialogs.c:4401 src/dialogs.c:4954 src/gtkaccount.c:1512
-#: src/gtkconn.c:128 src/gtkrequest.c:169 src/multi.c:177 src/prpl.c:313
+#: src/gtkconn.c:143 src/gtkrequest.c:169 src/multi.c:177 src/prpl.c:313
 #: src/request.h:811 src/request.h:821
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1112,9 +1112,9 @@ msgstr "Negar"
 msgid "Send message through server"
 msgstr "Enviar mensagem através do servidor"
 
-#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2336
-#: src/protocols/jabber/jabber.c:2370 src/protocols/jabber/jabber.c:4242
-#: src/protocols/jabber/jabber.c:4288 src/protocols/msn/dispatch.c:160
+#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2338
+#: src/protocols/jabber/jabber.c:2372 src/protocols/jabber/jabber.c:4244
+#: src/protocols/jabber/jabber.c:4290 src/protocols/msn/dispatch.c:160
 #: src/protocols/msn/msn.c:425 src/protocols/msn/notification.c:1376
 #: src/protocols/napster/napster.c:496
 msgid "Unable to connect"
@@ -1170,7 +1170,7 @@ msgstr "Usuário"
 
 #. Splits
 #: src/protocols/irc/irc.c:921 src/protocols/irc/irc.c:3028
-#: src/protocols/jabber/jabber.c:4419 src/protocols/napster/napster.c:639
+#: src/protocols/jabber/jabber.c:4421 src/protocols/napster/napster.c:639
 msgid "Server"
 msgstr "Servidor"
 
@@ -1307,7 +1307,7 @@ msgstr "CTCP Ping"
 msgid "Signon: %s"
 msgstr "Conectando: %s"
 
-#: src/protocols/irc/irc.c:1960 src/protocols/trepia/trepia.c:1079
+#: src/protocols/irc/irc.c:1960 src/protocols/trepia/trepia.c:1096
 msgid "Unable to create socket"
 msgstr "Impossível criar socket"
 
@@ -1388,9 +1388,9 @@ msgid "IRC Protocol Plugin"
 msgstr "Plugin do protocolo IRC"
 
 #. Account Options
-#: src/protocols/irc/irc.c:3032 src/protocols/jabber/jabber.c:4426
+#: src/protocols/irc/irc.c:3032 src/protocols/jabber/jabber.c:4428
 #: src/protocols/msn/msn.c:1221 src/protocols/napster/napster.c:644
-#: src/protocols/trepia/trepia.c:1308 src/gtkprefs.c:1171
+#: src/protocols/trepia/trepia.c:1325 src/gtkprefs.c:1171
 msgid "Port"
 msgstr "Porta"
 
@@ -1427,18 +1427,18 @@ msgid "Unknown"
 msgstr "Desconhecido"
 
 #. once again, we don't have to put anything here
-#: src/protocols/jabber/jabber.c:1178 src/protocols/jabber/jabber.c:3437
-#: src/protocols/jabber/jabber.c:3488
+#: src/protocols/jabber/jabber.c:1178 src/protocols/jabber/jabber.c:3439
+#: src/protocols/jabber/jabber.c:3490
 msgid "Chatty"
 msgstr "Disponível para chat"
 
-#: src/protocols/jabber/jabber.c:1180 src/protocols/jabber/jabber.c:3439
-#: src/protocols/jabber/jabber.c:3496
+#: src/protocols/jabber/jabber.c:1180 src/protocols/jabber/jabber.c:3441
+#: src/protocols/jabber/jabber.c:3498
 msgid "Extended Away"
 msgstr "Ausente (estendido)"
 
-#: src/protocols/jabber/jabber.c:1182 src/protocols/jabber/jabber.c:3440
-#: src/protocols/jabber/jabber.c:3500 src/protocols/oscar/oscar.c:2815
+#: src/protocols/jabber/jabber.c:1182 src/protocols/jabber/jabber.c:3442
+#: src/protocols/jabber/jabber.c:3502 src/protocols/oscar/oscar.c:2815
 #: src/protocols/oscar/oscar.c:4540 src/protocols/oscar/oscar.c:5832
 msgid "Do Not Disturb"
 msgstr "Não perturbe"
@@ -1488,103 +1488,103 @@ msgstr "Autenticando"
 msgid "Unknown login error"
 msgstr "Erro desconehcido ao conectar"
 
-#: src/protocols/jabber/jabber.c:2289
+#: src/protocols/jabber/jabber.c:2291
 msgid "Password successfully changed."
 msgstr "Senha alterada com sucesso."
 
-#: src/protocols/jabber/jabber.c:2334 src/protocols/jabber/jabber.c:4240
+#: src/protocols/jabber/jabber.c:2336 src/protocols/jabber/jabber.c:4242
 msgid "Connection lost"
 msgstr "Conexão perdida"
 
-#: src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2343
 msgid "Connected"
 msgstr "Conectado"
 
-#: src/protocols/jabber/jabber.c:2344
+#: src/protocols/jabber/jabber.c:2346
 msgid "Requesting Authentication Method"
 msgstr "Requisitando Método de Autorização"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:2364 src/protocols/msn/dispatch.c:164
+#: src/protocols/jabber/jabber.c:2366 src/protocols/msn/dispatch.c:164
 #: src/protocols/msn/msn.c:416 src/protocols/napster/napster.c:489
-#: src/protocols/yahoo/yahoo.c:981
+#: src/protocols/trepia/trepia.c:1090 src/protocols/yahoo/yahoo.c:981
 msgid "Connecting"
 msgstr "Conectando"
 
-#: src/protocols/jabber/jabber.c:2690
+#: src/protocols/jabber/jabber.c:2692
 #, c-format
 msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
 msgstr "O usuário %s é um I.D. Jabber inválido e portanto não foi adicionado."
 
-#: src/protocols/jabber/jabber.c:2692
+#: src/protocols/jabber/jabber.c:2694
 msgid "Unable to add buddy."
 msgstr "Impossível adicionar contato."
 
-#: src/protocols/jabber/jabber.c:2693
+#: src/protocols/jabber/jabber.c:2695
 msgid "Jabber Error"
 msgstr "Erro do Jabber"
 
-#: src/protocols/jabber/jabber.c:2952
+#: src/protocols/jabber/jabber.c:2954
 msgid "Room:"
 msgstr "Sala:"
 
-#: src/protocols/jabber/jabber.c:2957
+#: src/protocols/jabber/jabber.c:2959
 msgid "Server:"
 msgstr "Servidor:"
 
-#: src/protocols/jabber/jabber.c:2963
+#: src/protocols/jabber/jabber.c:2965
 msgid "Handle:"
 msgstr "Apelido:"
 
-#: src/protocols/jabber/jabber.c:2993
+#: src/protocols/jabber/jabber.c:2995
 msgid "Unable to join chat"
 msgstr "Impossível ingressar na conversa"
 
-#: src/protocols/jabber/jabber.c:3229 src/protocols/jabber/jabber.c:3280
-#: src/protocols/jabber/jabber.c:3705
+#: src/protocols/jabber/jabber.c:3231 src/protocols/jabber/jabber.c:3282
+#: src/protocols/jabber/jabber.c:3707
 msgid "Jabber ID"
 msgstr "ID Jabber"
 
-#: src/protocols/jabber/jabber.c:3230
+#: src/protocols/jabber/jabber.c:3232
 msgid "Error"
 msgstr "Erro"
 
-#: src/protocols/jabber/jabber.c:3281 src/protocols/jabber/jabber.c:3340
-#: src/protocols/jabber/jabber.c:3351 src/protocols/jabber/jabber.c:3731
+#: src/protocols/jabber/jabber.c:3283 src/protocols/jabber/jabber.c:3342
+#: src/protocols/jabber/jabber.c:3353 src/protocols/jabber/jabber.c:3733
 msgid "Status"
 msgstr "Status"
 
-#: src/protocols/jabber/jabber.c:3351 src/protocols/jabber/jabber.c:3373
+#: src/protocols/jabber/jabber.c:3353 src/protocols/jabber/jabber.c:3375
 #: src/protocols/oscar/oscar.c:5444
 msgid "Not Authorized"
 msgstr "Não autorizado"
 
-#: src/protocols/jabber/jabber.c:3386
+#: src/protocols/jabber/jabber.c:3388
 msgid "View Error Msg"
 msgstr "Ver mensagem de erro"
 
-#: src/protocols/jabber/jabber.c:3398 src/gtkconv.c:1083
+#: src/protocols/jabber/jabber.c:3400 src/gtkconv.c:1083
 msgid "Get Away Msg"
 msgstr "Ver mensagem de away"
 
-#: src/protocols/jabber/jabber.c:3405
+#: src/protocols/jabber/jabber.c:3407
 msgid "Un-hide From"
 msgstr "Não ocultar-se de"
 
-#: src/protocols/jabber/jabber.c:3408
+#: src/protocols/jabber/jabber.c:3410
 msgid "Temporarily Hide From"
 msgstr "Ocultar-se temporariamente de"
 
-#: src/protocols/jabber/jabber.c:3415
+#: src/protocols/jabber/jabber.c:3417
 msgid "Cancel Presence Notification"
 msgstr "Cancelar notificação de presença"
 
-#: src/protocols/jabber/jabber.c:3423
+#: src/protocols/jabber/jabber.c:3425
 msgid "Re-request authorization"
 msgstr "Re-requisitar autorização"
 
 #. state is one of our own strings. it won't be NULL.
-#: src/protocols/jabber/jabber.c:3436 src/protocols/jabber/jabber.c:3486
+#: src/protocols/jabber/jabber.c:3438 src/protocols/jabber/jabber.c:3488
 #: src/protocols/oscar/oscar.c:2827 src/protocols/oscar/oscar.c:4535
 #: src/protocols/oscar/oscar.c:5830 src/protocols/yahoo/yahoo.c:1070
 #: src/protocols/zephyr/zephyr.c:866 src/protocols/zephyr/zephyr.c:876
@@ -1592,86 +1592,86 @@ msgstr "Re-requisitar autorização"
 msgid "Online"
 msgstr "Conectado"
 
-#: src/protocols/jabber/jabber.c:3626
+#: src/protocols/jabber/jabber.c:3628
 msgid "Full Name"
 msgstr "Nome completo"
 
-#: src/protocols/jabber/jabber.c:3627
+#: src/protocols/jabber/jabber.c:3629
 msgid "Family Name"
 msgstr "Sobrenome"
 
-#: src/protocols/jabber/jabber.c:3628
+#: src/protocols/jabber/jabber.c:3630
 msgid "Given Name"
 msgstr "Nome"
 
-#: src/protocols/jabber/jabber.c:3629
+#: src/protocols/jabber/jabber.c:3631
 msgid "Nickname"
 msgstr "Apelido"
 
-#: src/protocols/jabber/jabber.c:3630 src/dialogs.c:2877
+#: src/protocols/jabber/jabber.c:3632 src/dialogs.c:2877
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3631
+#: src/protocols/jabber/jabber.c:3633
 msgid "Street Address"
 msgstr "Endereço (Rua)"
 
-#: src/protocols/jabber/jabber.c:3632
+#: src/protocols/jabber/jabber.c:3634
 msgid "Extended Address"
 msgstr "Endereço (Complemento)"
 
-#: src/protocols/jabber/jabber.c:3633
+#: src/protocols/jabber/jabber.c:3635
 msgid "Locality"
 msgstr "Localidade"
 
-#: src/protocols/jabber/jabber.c:3634
+#: src/protocols/jabber/jabber.c:3636
 msgid "Region"
 msgstr "Região"
 
-#: src/protocols/jabber/jabber.c:3635
+#: src/protocols/jabber/jabber.c:3637
 msgid "Postal Code"
 msgstr "Código Postal (CEP)"
 
 #. Country
-#: src/protocols/jabber/jabber.c:3636 src/protocols/trepia/trepia.c:369
+#: src/protocols/jabber/jabber.c:3638 src/protocols/trepia/trepia.c:371
 #: src/dialogs.c:2038 src/dialogs.c:2683
 msgid "Country"
 msgstr "País"
 
-#: src/protocols/jabber/jabber.c:3637
+#: src/protocols/jabber/jabber.c:3639
 msgid "Telephone"
 msgstr "Telefone"
 
-#: src/protocols/jabber/jabber.c:3638 src/dialogs.c:2741
+#: src/protocols/jabber/jabber.c:3640 src/dialogs.c:2741
 msgid "Email"
 msgstr "Email"
 
-#: src/protocols/jabber/jabber.c:3639
+#: src/protocols/jabber/jabber.c:3641
 msgid "Organization Name"
 msgstr "Nome da organização"
 
-#: src/protocols/jabber/jabber.c:3640
+#: src/protocols/jabber/jabber.c:3642
 msgid "Organization Unit"
 msgstr "Grupo de trabalho"
 
-#: src/protocols/jabber/jabber.c:3641
+#: src/protocols/jabber/jabber.c:3643
 msgid "Title"
 msgstr "Título"
 
-#: src/protocols/jabber/jabber.c:3642
+#: src/protocols/jabber/jabber.c:3644
 msgid "Role"
 msgstr "Função"
 
-#: src/protocols/jabber/jabber.c:3643
+#: src/protocols/jabber/jabber.c:3645
 msgid "Birthday"
 msgstr "Data de nascimento"
 
-#: src/protocols/jabber/jabber.c:3644 src/dialogs.c:2887 src/gtkprefs.c:655
-#: src/gtkprefs.c:1803
+#: src/protocols/jabber/jabber.c:3646 src/dialogs.c:2887 src/gtkprefs.c:655
+#: src/gtkprefs.c:1805
 msgid "Description"
 msgstr "Descrição"
 
-#: src/protocols/jabber/jabber.c:3669
+#: src/protocols/jabber/jabber.c:3671
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -1679,23 +1679,23 @@ msgstr ""
 "Todos os itens a seguir são opcionais. Preencha apenas as informações que "
 "quiser"
 
-#: src/protocols/jabber/jabber.c:3670
+#: src/protocols/jabber/jabber.c:3672
 msgid "User Identity"
 msgstr "Identidade do usuário"
 
-#: src/protocols/jabber/jabber.c:4099
+#: src/protocols/jabber/jabber.c:4101
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Editar vCard do Jabber"
 
-#: src/protocols/jabber/jabber.c:4174
+#: src/protocols/jabber/jabber.c:4176
 msgid "Server Registration successful!"
 msgstr "Registro no servidor efetuado com sucesso!"
 
-#: src/protocols/jabber/jabber.c:4196
+#: src/protocols/jabber/jabber.c:4198
 msgid "Unknown registration error"
 msgstr "Erro desconhecido ao registrar"
 
-#: src/protocols/jabber/jabber.c:4309 src/protocols/oscar/oscar.c:6082
+#: src/protocols/jabber/jabber.c:4311 src/protocols/oscar/oscar.c:6082
 #: src/protocols/toc/toc.c:1430 src/dialogs.c:2213
 msgid "Set User Info"
 msgstr "Definir informações de usário"
@@ -1710,15 +1710,15 @@ msgstr "Definir informações de usário"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:4398 src/protocols/jabber/jabber.c:4400
+#: src/protocols/jabber/jabber.c:4400 src/protocols/jabber/jabber.c:4402
 msgid "Jabber Protocol Plugin"
 msgstr "Plugin do protocolo Jabber"
 
-#: src/protocols/jabber/jabber.c:4422
+#: src/protocols/jabber/jabber.c:4424
 msgid "Resource"
 msgstr "Recurso"
 
-#: src/protocols/jabber/jabber.c:4430
+#: src/protocols/jabber/jabber.c:4432
 msgid "Connect server"
 msgstr "Conectar ao servidor"
 
@@ -1739,10 +1739,10 @@ msgstr "Conectar ao servidor"
 #: src/protocols/msn/msn.c:1045 src/protocols/msn/msn.c:1069
 #: src/protocols/msn/msn.c:1081 src/protocols/msn/notification.c:127
 #: src/protocols/msn/notification.c:156 src/protocols/msn/notification.c:949
-#: src/protocols/msn/notification.c:969 src/protocols/trepia/trepia.c:278
-#: src/protocols/trepia/trepia.c:724 src/protocols/trepia/trepia.c:1002
-#: src/protocols/trepia/trepia.c:1043 src/protocols/trepia/trepia.c:1139
-#: src/protocols/trepia/trepia.c:1195
+#: src/protocols/msn/notification.c:969 src/protocols/trepia/trepia.c:280
+#: src/protocols/trepia/trepia.c:730 src/protocols/trepia/trepia.c:1013
+#: src/protocols/trepia/trepia.c:1057 src/protocols/trepia/trepia.c:1156
+#: src/protocols/trepia/trepia.c:1212
 msgid "Write error"
 msgstr "Erro ao enviar"
 
@@ -2019,7 +2019,7 @@ msgstr "<b>Status:</b> %s"
 msgid "Away From Computer"
 msgstr "Ausente"
 
-	#: src/protocols/msn/msn.c:313 src/protocols/msn/msn.c:560
+#: src/protocols/msn/msn.c:313 src/protocols/msn/msn.c:560
 #: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:1048
 #: src/protocols/yahoo/yahoo.c:1255 src/protocols/yahoo/yahoo.c:1331
 msgid "Be Right Back"
@@ -2114,7 +2114,7 @@ msgstr ""
 msgid "MSN Protocol Plugin"
 msgstr "Plugin do protocolo MSN"
 
-#: src/protocols/msn/msn.c:1216 src/protocols/trepia/trepia.c:1303
+#: src/protocols/msn/msn.c:1216 src/protocols/trepia/trepia.c:1320
 msgid "Login server"
 msgstr "Servidor de login"
 
@@ -2126,7 +2126,7 @@ msgstr "Impossível requisitar INF"
 msgid "Unable to send USR"
 msgstr "Impossível enviar USR"
 
-#: src/protocols/msn/notification.c:297
+#: src/protocols/msn/notification.c:297 src/protocols/trepia/trepia.c:667
 msgid "Retrieving buddy list"
 msgstr "Requisitando lista de contatos"
 
@@ -2888,11 +2888,11 @@ msgstr "Telefone móvel:"
 msgid "Gender:"
 msgstr "Sexo:"
 
-#: src/protocols/oscar/oscar.c:3955 src/protocols/trepia/trepia.c:311
+#: src/protocols/oscar/oscar.c:3955 src/protocols/trepia/trepia.c:313
 msgid "Female"
 msgstr "Feminino"
 
-#: src/protocols/oscar/oscar.c:3955 src/protocols/trepia/trepia.c:310
+#: src/protocols/oscar/oscar.c:3955 src/protocols/trepia/trepia.c:312
 msgid "Male"
 msgstr "Masculino"
 
@@ -3589,101 +3589,105 @@ msgid "TOC port"
 msgstr "Porta TOC"
 
 #. Basic Profile group.
-#: src/protocols/trepia/trepia.c:293
+#: src/protocols/trepia/trepia.c:295
 msgid "Basic Profile"
 msgstr "Perfil básico"
 
 #. First Name
-#: src/protocols/trepia/trepia.c:297 src/dialogs.c:1971 src/dialogs.c:2625
+#: src/protocols/trepia/trepia.c:299 src/dialogs.c:1971 src/dialogs.c:2625
 msgid "First Name"
 msgstr "Nome"
 
 #. Last Name
-#: src/protocols/trepia/trepia.c:304 src/dialogs.c:1994 src/dialogs.c:2645
+#: src/protocols/trepia/trepia.c:306 src/dialogs.c:1994 src/dialogs.c:2645
 msgid "Last Name"
 msgstr "Sobrenome"
 
 #. Gender
-#: src/protocols/trepia/trepia.c:309
+#: src/protocols/trepia/trepia.c:311
 msgid "Gender"
 msgstr "Sexo"
 
 #. Age
-#: src/protocols/trepia/trepia.c:315
+#: src/protocols/trepia/trepia.c:317
 msgid "Age"
 msgstr "Idade"
 
 #. Homepage
-#: src/protocols/trepia/trepia.c:319
+#: src/protocols/trepia/trepia.c:321
 msgid "Homepage"
 msgstr "Página da web"
 
 #. E-Mail Address
-#: src/protocols/trepia/trepia.c:324
+#: src/protocols/trepia/trepia.c:326
 msgid "E-Mail Address"
 msgstr "Endereço de email"
 
-#: src/protocols/trepia/trepia.c:330
+#: src/protocols/trepia/trepia.c:332
 msgid "Profile Information"
 msgstr "Informação do perfil"
 
 #. Instant Messagers
-#: src/protocols/trepia/trepia.c:336
+#: src/protocols/trepia/trepia.c:338
 msgid "Instant Messagers"
 msgstr "Mensageiros Instantâneos"
 
 #. AIM
-#: src/protocols/trepia/trepia.c:340
+#: src/protocols/trepia/trepia.c:342
 msgid "AIM"
 msgstr "AIM"
 
 #. ICQ
-#: src/protocols/trepia/trepia.c:344
+#: src/protocols/trepia/trepia.c:346
 msgid "ICQ UIN"
 msgstr "UIN do ICQ"
 
 #. MSN
-#: src/protocols/trepia/trepia.c:348
+#: src/protocols/trepia/trepia.c:350
 msgid "MSN"
 msgstr "MSN"
 
 #. Yahoo
-#: src/protocols/trepia/trepia.c:352
+#: src/protocols/trepia/trepia.c:354
 msgid "Yahoo"
 msgstr "Yahoo"
 
 #. I'm From
-#: src/protocols/trepia/trepia.c:357
+#: src/protocols/trepia/trepia.c:359
 msgid "I'm From"
 msgstr "Eu sou de(o)"
 
 #. State
-#: src/protocols/trepia/trepia.c:365 src/dialogs.c:2027 src/dialogs.c:2674
+#: src/protocols/trepia/trepia.c:367 src/dialogs.c:2027 src/dialogs.c:2674
 msgid "State"
 msgstr "Estado"
 
 #. Call the dialog.
-#: src/protocols/trepia/trepia.c:374
+#: src/protocols/trepia/trepia.c:376
 msgid "Set your Trepia profile data."
 msgstr "Define os dados do seu perfil Trepia"
 
-#: src/protocols/trepia/trepia.c:376 src/dialogs.c:2069 src/dialogs.c:2250
+#: src/protocols/trepia/trepia.c:378 src/dialogs.c:2069 src/dialogs.c:2250
 #: src/dialogs.c:3415 src/dialogs.c:4219 src/dialogs.c:4949
 #: src/gtkrequest.c:175
 msgid "Save"
 msgstr "Salvar"
 
-#: src/protocols/trepia/trepia.c:511
+#: src/protocols/trepia/trepia.c:513
 msgid "Set Profile"
 msgstr "Definir perfil"
 
-#: src/protocols/trepia/trepia.c:847 src/protocols/trepia/trepia.c:850
+#: src/protocols/trepia/trepia.c:853 src/protocols/trepia/trepia.c:856
 msgid "Local Users"
 msgstr "Usuários locais"
 
-#: src/protocols/trepia/trepia.c:941
+#: src/protocols/trepia/trepia.c:952
 msgid "Read error"
 msgstr "Erro de leitura"
+
+#: src/protocols/trepia/trepia.c:1053
+msgid "Logging in"
+msgstr "Conectando"
 
 #. *< api_version
 #. *< type
@@ -3695,7 +3699,7 @@ msgstr "Erro de leitura"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/trepia/trepia.c:1284 src/protocols/trepia/trepia.c:1286
+#: src/protocols/trepia/trepia.c:1301 src/protocols/trepia/trepia.c:1303
 msgid "Trepia Protocol Plugin"
 msgstr "Plugin do protocolo Trepia"
 
@@ -3918,7 +3922,7 @@ msgstr "Remover mensagem de away"
 msgid "Set All Away"
 msgstr "Definir todos como ausente"
 
-#: src/blist.c:358 src/gtkprefs.c:2255
+#: src/blist.c:358 src/gtkprefs.c:2257
 msgid "Chats"
 msgstr "Chats"
 
@@ -3935,24 +3939,24 @@ msgstr ""
 msgid "Group not removed"
 msgstr "Grupo não removido"
 
-#: src/blist.c:876
+#: src/blist.c:877
 msgid "Invalid Groupname"
 msgstr "Nome de grupo inválido"
 
-#: src/blist.c:1632
+#: src/blist.c:1633
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
 "Um erro foi encontrado ao processar sua lista de contatos. Ela não foi "
 "carregada."
 
-#: src/blist.c:1634
+#: src/blist.c:1635
 msgid "Buddy List Error"
 msgstr "Erro da lista de contatos"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
-#: src/blist.c:1642
+#: src/blist.c:1643
 #, c-format
 msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
@@ -3961,7 +3965,7 @@ msgstr ""
 "O Gaim está convertendo sua antiga lista de contatos para um novo formato, "
 "que agora estará localizado em %s"
 
-#: src/blist.c:1645
+#: src/blist.c:1646
 msgid "Converting Buddy List"
 msgstr "Convertendo lista de contatos"
 
@@ -5030,7 +5034,7 @@ msgstr "Por status"
 msgid "By log size"
 msgstr "Por tamanho do log"
 
-#: src/gtkblist.c:1430 src/gtkprefs.c:2252
+#: src/gtkblist.c:1430 src/gtkprefs.c:2254
 msgid "Buddy List"
 msgstr "Lista de contatos"
 
@@ -5081,23 +5085,24 @@ msgstr "Definir uma mensagem de away"
 msgid "No actions available"
 msgstr "Nenhuma ação disponível"
 
-#: src/gtkconn.c:117 src/multi.c:167
-msgid "Signon: "
-msgstr "Conectando: "
-
-#: src/gtkconn.c:175 src/multi.c:225
-msgid "Signon"
-msgstr "Conectando"
-
-#: src/gtkconn.c:188 src/multi.c:237
-msgid "Cancel All"
-msgstr "Cancelar todos"
-
-#: src/gtkconn.c:222 src/gtkconn.c:239 src/gtkconn.c:348 src/multi.c:91
+#: src/gtkconn.c:57 src/gtkconn.c:237 src/gtkconn.c:254 src/gtkconn.c:363
+#: src/multi.c:91
 msgid "Done."
 msgstr "Pronto."
 
-#: src/gtkconn.c:339 src/multi.c:292
+#: src/gtkconn.c:132 src/multi.c:167
+msgid "Signon: "
+msgstr "Conectando: "
+
+#: src/gtkconn.c:190 src/multi.c:225
+msgid "Signon"
+msgstr "Conectando"
+
+#: src/gtkconn.c:203 src/multi.c:237
+msgid "Cancel All"
+msgstr "Cancelar todos"
+
+#: src/gtkconn.c:354 src/multi.c:292
 #, c-format
 msgid ""
 "%s\n"
@@ -5106,25 +5111,25 @@ msgstr ""
 "%s\n"
 "%s: %s"
 
-#: src/gtkconn.c:361 src/multi.c:314
+#: src/gtkconn.c:376 src/multi.c:314
 #, c-format
 msgid "%s was unable to sign on"
 msgstr "%s não pôde se conectar"
 
-#: src/gtkconn.c:363 src/multi.c:316
+#: src/gtkconn.c:378 src/multi.c:316
 msgid "Signon Error"
 msgstr "Erro ao se conectar"
 
-#: src/gtkconn.c:376 src/multi.c:329
+#: src/gtkconn.c:391 src/multi.c:329
 msgid "Notice"
 msgstr "Aviso"
 
-#: src/gtkconn.c:390 src/multi.c:343
+#: src/gtkconn.c:405 src/multi.c:343
 #, c-format
 msgid "%s has been signed off"
 msgstr "%s foi desconectado"
 
-#: src/gtkconn.c:392 src/multi.c:345
+#: src/gtkconn.c:407 src/multi.c:345
 msgid "Connection Error"
 msgstr "Erro de conexão"
 
@@ -5701,7 +5706,7 @@ msgstr "Tocar um som"
 msgid "Browse"
 msgstr "Procurar"
 
-#: src/gtkpounce.c:517 src/gtkprefs.c:2079
+#: src/gtkpounce.c:517 src/gtkprefs.c:2081
 msgid "Test"
 msgstr "Testar"
 
@@ -5951,7 +5956,7 @@ msgstr "Mostrar _tempo de inatividade"
 msgid "Dim i_dle buddies"
 msgstr "Turvar contatos in_ativos"
 
-#: src/gtkprefs.c:950 src/gtkprefs.c:2253
+#: src/gtkprefs.c:950 src/gtkprefs.c:2255
 msgid "Conversations"
 msgstr "Conversas"
 
@@ -6313,96 +6318,96 @@ msgstr ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Nome do arquivo:</span>  %s"
 
-#: src/gtkprefs.c:1767
+#: src/gtkprefs.c:1769
 msgid "Load"
 msgstr "Carregar"
 
-#: src/gtkprefs.c:1774
+#: src/gtkprefs.c:1776
 msgid "Name"
 msgstr "Nome"
 
-#: src/gtkprefs.c:1821
+#: src/gtkprefs.c:1823
 msgid "Details"
 msgstr "Detalhes"
 
-#: src/gtkprefs.c:1946
+#: src/gtkprefs.c:1948
 msgid "Sound Selection"
 msgstr "Seleção de som"
 
-#: src/gtkprefs.c:2053
+#: src/gtkprefs.c:2055
 msgid "Play"
 msgstr "Tocar"
 
-#: src/gtkprefs.c:2060
+#: src/gtkprefs.c:2062
 msgid "Event"
 msgstr "Evento"
 
-#: src/gtkprefs.c:2083
+#: src/gtkprefs.c:2085
 msgid "Reset"
 msgstr "Redefinir"
 
-#: src/gtkprefs.c:2087
+#: src/gtkprefs.c:2089
 msgid "Choose..."
 msgstr "Escolher..."
 
-#: src/gtkprefs.c:2211
+#: src/gtkprefs.c:2213
 msgid "_Edit"
 msgstr "_Editar"
 
-#: src/gtkprefs.c:2247
+#: src/gtkprefs.c:2249
 msgid "Interface"
 msgstr "Interface"
 
-#: src/gtkprefs.c:2248
+#: src/gtkprefs.c:2250
 msgid "Smiley Themes"
 msgstr "Temas de emoticons"
 
-#: src/gtkprefs.c:2249
+#: src/gtkprefs.c:2251
 msgid "Fonts"
 msgstr "Fontes"
 
-#: src/gtkprefs.c:2250
+#: src/gtkprefs.c:2252
 msgid "Message Text"
 msgstr "Texto das mensagens"
 
-#: src/gtkprefs.c:2251
+#: src/gtkprefs.c:2253
 msgid "Shortcuts"
 msgstr "Atalhos"
 
-#: src/gtkprefs.c:2254
+#: src/gtkprefs.c:2256
 msgid "IMs"
 msgstr "MIs"
 
-#: src/gtkprefs.c:2256
+#: src/gtkprefs.c:2258
 msgid "Proxy"
 msgstr "Proxy"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2259
+#: src/gtkprefs.c:2261
 msgid "Browser"
 msgstr "Browser"
 
-#: src/gtkprefs.c:2261
+#: src/gtkprefs.c:2263
 msgid "Logging"
-msgstr "Conectando"
+msgstr "Gravando"
 
-#: src/gtkprefs.c:2262
+#: src/gtkprefs.c:2264
 msgid "Sounds"
 msgstr "Sons"
 
-#: src/gtkprefs.c:2263
+#: src/gtkprefs.c:2265
 msgid "Sound Events"
 msgstr "Eventos de som"
 
-#: src/gtkprefs.c:2264
+#: src/gtkprefs.c:2266
 msgid "Away / Idle"
 msgstr "Ausente / Inativo"
 
-#: src/gtkprefs.c:2265
+#: src/gtkprefs.c:2267
 msgid "Away Messages"
 msgstr "Mensagens de away"
 
-#: src/gtkprefs.c:2268
+#: src/gtkprefs.c:2270
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -6821,12 +6826,12 @@ msgstr "Estou de volta"
 msgid "Exit"
 msgstr "Sair"
 
-#: src/plugin.c:242
+#: src/plugin.c:222
 #, c-format
 msgid "The plugin %s did not return any valid plugin information"
 msgstr "O plugin %s não retornou nenhuma informação de plugin válida"
 
-#: src/plugin.c:247
+#: src/plugin.c:227
 msgid "Gaim was unable to load your plugin."
 msgstr "O Gaim não conseguiu carregar seu plugin"
 
