@@ -62,14 +62,18 @@ PIXMAPS_DIALOGS =	$(GAIM_PIXMAPS)/gaim_error.png \
 			$(GAIM_PIXMAPS)/gaim_warning.png \
 			$(GAIM_PIXMAPS)/gaim_question.png
 
-PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png
+PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
+			$(GAIM_PIXMAPS)/accounts.png \
+			$(GAIM_PIXMAPS)/preferences.png \
+			$(GAIM_PIXMAPS)/signon.png
 
 PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/connect.png \
 			$(GAIM_PIXMAPS)/msgpend.png \
 			$(GAIM_PIXMAPS)/msgunread.png \
 			$(GAIM_PIXMAPS)/offline.png \
-			$(GAIM_PIXMAPS)/online.png
+			$(GAIM_PIXMAPS)/online.png \
+			$(GAIM_PIXMAPS)/logo.png
 
 
 ##
