@@ -2060,7 +2060,7 @@ void show_find_info()
 
 	struct findbyinfo *b = g_new0(struct findbyinfo, 1);
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_widget_set_usize(b->window, 350, 340);
+	gtk_widget_set_usize(b->window, 350, 320);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(b->window);
 
