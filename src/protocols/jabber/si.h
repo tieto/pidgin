@@ -26,28 +26,7 @@
 
 #include "jabber.h"
 
-typedef struct _JabberSIXfer {
-	JabberStream *js;
-
-	char *id;
-	char *resource;
-
-	enum {
-		STREAM_METHOD_UNKNOWN,
-		STREAM_METHOD_BYTESTREAMS,
-		STREAM_METHOD_IBB,
-		STREAM_METHOD_UNSUPPORTED
-	} stream_method;
-} JabberSIXfer;
-
+void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet);
 void jabber_si_parse(JabberStream *js, xmlnode *packet);
-
-void jabber_si_xfer_init(GaimXfer *xfer);
-void jabber_si_xfer_start(GaimXfer *xfer);
-void jabber_si_xfer_end(GaimXfer *xfer);
-void jabber_si_xfer_cancel_send(GaimXfer *xfer);
-void jabber_si_xfer_cancel_recv(GaimXfer *xfer);
-void jabber_si_xfer_ack(GaimXfer *xfer, const char *buffer, size_t size);
-
 
 #endif /* _GAIM_JABBER_SI_H_ */

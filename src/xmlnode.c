@@ -183,7 +183,7 @@ void xmlnode_free(xmlnode *node)
 }
 
 xmlnode*
-xmlnode_get_child(xmlnode *parent, const char *name)
+xmlnode_get_child_with_namespace(xmlnode *parent, const char *name, const char *ns)
 {
 	xmlnode *x, *ret = NULL;
 	char **names;
@@ -196,17 +196,28 @@ xmlnode_get_child(xmlnode *parent, const char *name)
 	child_name = names[1];
 
 	for(x = parent->child; x; x = x->next) {
-		if(x->type == XMLNODE_TYPE_TAG && name && !strcmp(parent_name, x->name)) {
+		const char *xmlns = NULL;
+		if(ns)
+			xmlns = xmlnode_get_attrib(x, "xmlns");
+
+		if(x->type == XMLNODE_TYPE_TAG && name && !strcmp(parent_name, x->name)
+				&& (!ns || (xmlns && !strcmp(ns, xmlns)))) {
 			ret = x;
 			break;
 		}
 	}
 
 	if(child_name && ret)
-		ret = xmlnode_get_child(x, child_name);
+		ret = xmlnode_get_child(ret, child_name);
 
 	g_strfreev(names);
 	return ret;
+}
+
+xmlnode*
+xmlnode_get_child(xmlnode *parent, const char *name)
+{
+	return xmlnode_get_child_with_namespace(parent, name, NULL);
 }
 
 char *
@@ -416,12 +427,18 @@ xmlnode *xmlnode_copy(xmlnode *src)
 
 xmlnode *xmlnode_get_next_twin(xmlnode *node) {
 	xmlnode *sibling;
+	const char *ns = xmlnode_get_attrib(node, "xmlns");
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(node->type == XMLNODE_TYPE_TAG, NULL);
 
 	for(sibling = node->next; sibling; sibling = sibling->next) {
-		if(sibling->type == XMLNODE_TYPE_TAG && !strcmp(node->name, sibling->name))
+		const char *xmlns;
+		if(ns)
+			xmlns = xmlnode_get_attrib(sibling, "xmlns");
+
+		if(sibling->type == XMLNODE_TYPE_TAG && !strcmp(node->name, sibling->name) &&
+				(!ns || (xmlns && !strcmp(ns, xmlns))))
 			return sibling;
 	}
 

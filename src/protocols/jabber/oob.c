@@ -117,9 +117,6 @@ static ssize_t jabber_oob_xfer_read(char **buffer, GaimXfer *xfer) {
 	return 0;
 }
 
-static void jabber_oob_xfer_cancel_send(GaimXfer *xfer) {
-}
-
 static void jabber_oob_xfer_cancel_recv(GaimXfer *xfer) {
 	JabberOOBXfer *jox = xfer->data;
 	JabberIq *iq;
@@ -173,7 +170,6 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 
 	gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
 	gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
-	gaim_xfer_set_cancel_send_fnc(xfer, jabber_oob_xfer_cancel_send);
 	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_cancel_recv);
 	gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 	gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);

@@ -1314,7 +1314,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(phb->inpa);
 	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
 
-	if (read(source, buf, 10) < 10) {
+	if (read(source, buf, 4) < 4) {
 		gaim_debug(GAIM_DEBUG_WARNING, "socks5 proxy", "or not...\n");
 		close(source);
 
@@ -1345,6 +1345,25 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 		g_free(phb);
 		return;
 	}
+
+	/* Skip past BND.ADDR */
+	switch(buf[3]) {
+		case 0x01: /* the address is a version-4 IP address, with a length of 4 octets */
+			lseek(source, 4, SEEK_CUR);
+			break;
+		case 0x03: /* the address field contains a fully-qualified domain name.  The first
+					  octet of the address field contains the number of octets of name that
+					  follow, there is no terminating NUL octet. */
+			read(source, buf+4, 1);
+			lseek(source, buf[4], SEEK_CUR);
+			break;
+		case 0x04: /* the address is a version-6 IP address, with a length of 16 octets */
+			lseek(source, 16, SEEK_CUR);
+			break;
+	}
+
+	/* Skip past BND.PORT */
+	lseek(source, 2, SEEK_CUR);
 
 	if (phb->account == NULL ||
 		gaim_account_get_connection(phb->account) != NULL) {
@@ -1762,6 +1781,24 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 	return gaim_gethostbyname_async(connecthost, connectport,
 									connection_host_resolved, phb);
 }
+
+int
+gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
+		GaimInputFunction func, gpointer data)
+{
+	struct PHB *phb;
+
+	phb = g_new0(struct PHB, 1);
+	phb->gpi = gpi;
+	phb->func = func;
+	phb->data = data;
+	phb->host = g_strdup(host);
+	phb->port = port;
+
+	return gaim_gethostbyname_async(gaim_proxy_info_get_host(gpi), gaim_proxy_info_get_port(gpi),
+									connection_host_resolved, phb);
+}
+
 
 static void
 proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,

@@ -267,17 +267,16 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		SUPPORT_FEATURE("jabber:iq:time")
 		SUPPORT_FEATURE("jabber:iq:version")
 		SUPPORT_FEATURE("jabber:x:conference")
-		/*
 		SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
-		*/
 		SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
 		SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
+#if 0
+		SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
+#endif
 		SUPPORT_FEATURE("http://jabber.org/protocol/muc")
 		SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
-		/*
 		SUPPORT_FEATURE("http://jabber.org/protocol/si")
 		SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
-		*/
 		SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 
 		jabber_iq_send(iq);
@@ -411,6 +410,9 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			} else if(!strcmp(xmlns, "jabber:iq:oob")) {
 				jabber_oob_parse(js, packet);
 				return;
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/bytestreams")) {
+				jabber_bytestreams_parse(js, packet);
+				return;
 			}
 		} else if(!strcmp(type, "get")) {
 			if(!strcmp(xmlns, "jabber:iq:last")) {
@@ -440,6 +442,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 				jabber_disco_info_parse(js, packet);
 				return;
 			}
+		}
+	} else {
+		xmlnode *si;
+		if((si = xmlnode_get_child(packet, "si")) && (xmlns = xmlnode_get_attrib(si, "xmlns")) &&
+				!strcmp(xmlns, "http://jabber.org/protocol/si")) {
+			jabber_si_parse(js, packet);
+			return;
 		}
 	}
 

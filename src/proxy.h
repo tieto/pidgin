@@ -238,6 +238,20 @@ void gaim_input_remove(gint handle);
 int gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 					   GaimInputFunction func, gpointer data);
 
+/**
+ * Makes a connection through a SOCKS5 proxy.
+ *
+ * @param gpi     The GaimProxyInfo specifying the proxy settings
+ * @param host    The destination host.
+ * @param port    The destination port.
+ * @param func    The input handler function.
+ * @param data    User-defined data.
+ *
+ * @return The socket handle.
+ */
+int gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
+					   GaimInputFunction func, gpointer data);
+
 /*@}*/
 
 #ifdef __cplusplus

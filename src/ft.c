@@ -500,12 +500,8 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
-		if (r > 0) {
+		if (r > 0)
 			fwrite(buffer, 1, r, xfer->dest_fp);
-		} else {
-			gaim_xfer_cancel_remote(xfer);
-			return;
-		}
 	}
 	else {
 		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
