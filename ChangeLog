@@ -5,7 +5,8 @@ version 0.68:
 	  signal system.
 	* Added plugin dependency support.
 	* Swedish translation updated (Tore Lundqvist (luntor))
-
+	* German translation updated (Bjoern Voigt)
+		
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin

@@ -3,7 +3,6 @@ plugins/docklet/docklet-win32.c
 plugins/docklet/eggtrayicon.c
 plugins/autorecon.c
 plugins/chkmail.c
-plugins/events.c
 plugins/filectl.c
 plugins/gaiminc.c
 plugins/gtik.c
@@ -13,6 +12,7 @@ plugins/idle.c
 plugins/mailchk.c
 plugins/notify.c
 plugins/raw.c
+plugins/signals-test.c
 plugins/simple.c
 plugins/spellchk.c
 plugins/timestamp.c
