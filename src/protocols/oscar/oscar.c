@@ -2634,6 +2634,8 @@ static void oscar_do_action(struct gaim_connection *gc, char *act)
 
 	if (!strcmp(act, "Set User Info")) {
 		show_set_info(gc);
+	} else if (!strcmp(act, "Set Buddy Icon")) {
+		show_set_icon(gc);
 	} else if (!strcmp(act, "Change Password")) {
 		show_change_passwd(gc);
 	} else if (!strcmp(act, "Confirm Account")) {
@@ -2659,6 +2661,7 @@ static GList *oscar_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, "Set User Info");
+	m = g_list_append(m, "Set Buddy Icon");
 	m = g_list_append(m, NULL);
 	m = g_list_append(m, "Change Password");
 	m = g_list_append(m, "Confirm Account");

@@ -85,6 +85,7 @@ static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GtkWidget *infodialog = NULL;
 static GList *dialogwindows = NULL;
 static GtkWidget *exportdialog, *importdialog;
+static GtkWidget *icondlg;
 static GtkWidget *aliasdlg = NULL;
 static GtkWidget *aliasentry = NULL;
 static GtkWidget *aliasname = NULL;
@@ -171,6 +172,14 @@ struct set_info_dlg {
 	GtkWidget *text;
 	GtkWidget *save;
 	GtkWidget *cancel;
+};
+
+struct set_icon_dlg {
+	GtkWidget *window;
+	struct aim_user *user;
+	GtkWidget *ok;
+	GtkWidget *cancel;
+	GtkWidget *entry;
 };
 
 struct set_dir_dlg {
@@ -278,6 +287,9 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 	if (dest == importdialog)
 		importdialog = NULL;
 
+	if (dest == icondlg)
+		icondlg = NULL;
+
 	if (dest == aliasdlg) {
 		aliasdlg = NULL;
 		aliasentry = NULL;
@@ -329,6 +341,11 @@ void destroy_all_dialogs()
         if (importdialog) {
                 destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
+        }
+
+        if (icondlg) {
+                destroy_dialog(NULL, icondlg);
+                icondlg = NULL;
         }
 }
 
@@ -1516,6 +1533,183 @@ void show_change_passwd(struct gaim_connection *gc)
 
 
 	gtk_widget_show(b->window);
+}
+
+void do_user_icon(GtkWidget *w, gpointer data)
+{
+	struct set_icon_dlg *b = (struct set_icon_dlg *)data;
+	char *file;
+
+	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(icondlg));
+
+	if (file_is_dir(file, icondlg))
+		return;
+
+	if (b && b->entry) {
+		gtk_entry_set_text(GTK_ENTRY(b->entry), file);
+	}
+
+	destroy_dialog(NULL, icondlg);
+	icondlg = NULL;
+
+}
+
+void show_icon_dialog(GtkWidget *w, gpointer data)
+{
+	struct set_icon_dlg *b = (struct set_icon_dlg *)data;
+        char *buf = g_malloc(BUF_LEN);
+	
+        if (!icondlg) {
+                icondlg = gtk_file_selection_new(_("Gaim - Load User Icon"));
+
+                gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(icondlg));
+
+                g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
+                
+                gtk_file_selection_set_filename(GTK_FILE_SELECTION(icondlg), buf);
+                gtk_signal_connect(GTK_OBJECT(icondlg), "destroy",
+                                   GTK_SIGNAL_FUNC(destroy_dialog), icondlg);
+                
+                gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(icondlg)->ok_button),
+                                   "clicked", GTK_SIGNAL_FUNC(do_user_icon), b);
+                gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(icondlg)->cancel_button),
+                                   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), icondlg);
+                
+
+        }
+
+	g_free(buf);
+        gtk_widget_show(icondlg);
+        gdk_window_raise(icondlg->window);
+}
+
+void do_save_icon(GtkWidget *w, struct set_icon_dlg *b)
+{
+	char *file = gtk_entry_get_text(GTK_ENTRY(b->entry));
+
+	if (file)
+		g_snprintf(b->user->iconfile, sizeof(b->user->iconfile), "%s", file);
+	else
+		b->user->iconfile[0] = 0;
+
+	save_prefs();
+
+	destroy_dialog(NULL, b->window);
+}
+
+void do_clear_icon(GtkWidget *w, struct set_icon_dlg *b)
+{
+	gtk_entry_set_text(GTK_ENTRY(b->entry), "");
+}
+
+void show_set_icon(struct gaim_connection *gc)
+{
+	GtkWidget *label;
+	GtkWidget *frame;
+	GtkWidget *buttons;
+	GtkWidget *button;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *hbox2;
+	GtkWidget *rbox;
+/*	GtkWidget *sep; */
+
+	struct aim_user *tmp;
+	struct set_icon_dlg *b = g_new0(struct set_icon_dlg, 1);
+
+	if (!g_slist_find(connections, gc))
+		gc = connections->data;
+
+	tmp = gc->user;
+	b->user = tmp;
+
+	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
+	gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_icon", "Gaim");
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Icon"));
+	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
+			GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	gtk_widget_realize(b->window);
+	aol_icon(b->window->window);
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
+
+	/* the box that holds everything */
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_widget_show(vbox);
+	gtk_container_add(GTK_CONTAINER(b->window), vbox);
+
+	/* and the frame that umm frames shit */
+	frame = gtk_frame_new(_("User Icon"));
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
+	gtk_widget_show(frame);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
+
+	/* the inner boxie */
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_widget_show(hbox);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
+
+	/*
+	sep = gtk_vseparator_new();
+	gtk_widget_show(sep);
+	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 5);
+	*/
+
+	/* A boxy */
+	rbox = gtk_vbox_new(FALSE, 5);
+	gtk_widget_show(rbox);
+	gtk_box_pack_start(GTK_BOX(hbox), rbox, FALSE, FALSE, 5);
+
+	label = gtk_label_new(_("Please select an icon to be viewed when you chat with\nother users."));
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(rbox), label, FALSE, FALSE, 5);
+
+	hbox2 = gtk_hbox_new(FALSE, 5);
+	gtk_widget_show(hbox2);
+	gtk_box_pack_start(GTK_BOX(rbox), hbox2, FALSE, FALSE, 5);
+	
+	b->entry = gtk_entry_new();
+
+	if (strlen(gc->user->iconfile)) {
+		gtk_entry_set_text(GTK_ENTRY(b->entry), gc->user->iconfile);
+	}
+	
+	gtk_widget_show(b->entry);
+	gtk_box_pack_start(GTK_BOX(hbox2), b->entry, TRUE, TRUE, 5); 
+	
+	button = gtk_button_new_with_label(_("Browse"));
+	gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			GTK_SIGNAL_FUNC(show_icon_dialog), b);
+	gtk_widget_show(button);	
+	
+	button = gtk_button_new_with_label(_("Clear"));
+	gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			GTK_SIGNAL_FUNC(do_clear_icon), b);
+
+	gtk_widget_show(button);	
+	
+	/* button buttons */
+	buttons = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
+	gtk_widget_show(buttons);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
+			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	b->ok = picture_button(b->window, _("Ok"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->ok, FALSE, FALSE, 0);
+
+	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked",
+			   GTK_SIGNAL_FUNC(do_save_icon), b);
+
+	/* Show it */
+	gtk_widget_show(b->window);
+	
 }
 
 void show_set_info(struct gaim_connection *gc)
