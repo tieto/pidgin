@@ -1178,14 +1178,32 @@ chunk_select_words (struct line_info *chunk)
 	start = chunk->sel_start;
 	end = chunk->sel_end;
 
-	if (start != chunk->text)
-		while (start > chunk->text && *(start-1) != ' ')
-			start--;
+	if (start != chunk->text) {
+		if (isalnum(*start) || *start == '\'')
+			while (start > chunk->text && 
+			       (isalnum(*(start-1)) || *(start-1) == '\''))
+				start--;
+		else if (isspace(*start))
+			while (start > chunk->text && isspace(*(start-1)))
+				start--;
+		else if (ispunct(*start))
+			while (start > chunk->text && ispunct(*(start-1)))
+				start--;
+	}
 	chunk->sel_start = start;
 
-	if (end != NULL)
-		while (*end != '\0' && *end != ' ')
-			end++;
+	if (end != NULL) {
+		if (isalnum(*end) || *end == '\'')
+			while (*end != '\0' && 
+			       (isalnum(*end) || *end == '\''))
+				end++;
+		else if (isspace(*end))
+			while (*end != '\0' && isspace(*end))
+				end++;
+		else if (ispunct(*end))
+			while (*end != '\0' && ispunct(*end))
+				end++;
+	}
 	chunk->sel_end = end;
 }
 
