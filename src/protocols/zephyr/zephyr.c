@@ -741,9 +741,9 @@ static void zephyr_close(GaimConnection *gc)
 }
 
 static void zephyr_add_buddy(GaimConnection *gc, const char *buddy) { }
-static void zephyr_remove_buddy(GaimConnection *gc, char *buddy, char *group) { }
+static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { }
 
-static int zephyr_chat_send(GaimConnection *gc, int id, char *im)
+static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 {
 	ZNotice_t notice;
 	zephyr_triple *zt;
@@ -853,7 +853,7 @@ static GList *zephyr_buddy_menu(GaimConnection *gc, const char *who)
 	return m;
 }
 
-static void zephyr_set_away(GaimConnection *gc, char *state, char *msg)
+static void zephyr_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	if (gc->away) {
 		g_free(gc->away);

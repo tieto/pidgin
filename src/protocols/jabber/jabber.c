@@ -1199,7 +1199,7 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 	jri->away_msg = g_strdup(xmlnode_get_tag_data(p->x, "status"));
 }
 
-static void jabber_convo_closed(GaimConnection *gc, char *name)
+static void jabber_convo_closed(GaimConnection *gc, const char *name)
 {
 	jab_res_info jri = jabber_find_resource(gc, name);
 
@@ -2452,7 +2452,7 @@ static void jabber_close(GaimConnection *gc)
 	gc->proto_data = NULL;
 }
 
-static int jabber_send_typing(GaimConnection *gc, char *who, int typing)
+static int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
 {
 	xmlnode x, y;
 	char *realwho;
@@ -2710,7 +2710,7 @@ static void jabber_add_buddy(GaimConnection *gc, const char *name)
 	g_free(realwho);
 }
 
-static void jabber_remove_buddy(GaimConnection *gc, char *name, char *group)
+static void jabber_remove_buddy(GaimConnection *gc, const char *name, const char *group)
 {
 	xmlnode x;
 	char *realwho;
@@ -3089,7 +3089,7 @@ static void jabber_chat_leave(GaimConnection *gc, int id)
 	jc->b = NULL;
 }
 
-static int jabber_chat_send(GaimConnection *gc, int id, char *message)
+static int jabber_chat_send(GaimConnection *gc, int id, const char *message)
 {
 	xmlnode x, y;
 	struct jabber_chat *jc = NULL;
@@ -3124,7 +3124,7 @@ static int jabber_chat_send(GaimConnection *gc, int id, char *message)
 	return 0;
 }
 
-static void jabber_chat_whisper(GaimConnection *gc, int id, char *who, char *message)
+static void jabber_chat_whisper(GaimConnection *gc, int id, const char *who, const char *message)
 {
 	xmlnode x;
 	struct jabber_chat *jc = NULL;
@@ -3291,7 +3291,7 @@ static void jabber_get_away_msg(GaimConnection *gc, const char *who) {
 
 }
 
-static void jabber_get_cb_info(GaimConnection *gc, int cid, char *who) {
+static void jabber_get_cb_info(GaimConnection *gc, int cid, const char *who) {
 	struct jabber_chat *jc = NULL;
 	char *realwho;
 
@@ -3305,7 +3305,7 @@ static void jabber_get_cb_info(GaimConnection *gc, int cid, char *who) {
 	g_free(realwho);
 }
 
-static void jabber_get_cb_away_msg(GaimConnection *gc, int cid, char *who) {
+static void jabber_get_cb_away_msg(GaimConnection *gc, int cid, const char *who) {
 	struct jabber_chat *jc = NULL;
 	char *realwho;
 
@@ -3439,7 +3439,7 @@ static GList *jabber_away_states(GaimConnection *gc) {
 	return m;
 }
 
-static void jabber_set_away(GaimConnection *gc, char *state, char *message)
+static void jabber_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	xmlnode x, y;
 	struct jabber_data *jd = gc->proto_data;

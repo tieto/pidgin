@@ -3791,7 +3791,7 @@ alias_dialog_bud(struct buddy *b)
 	gtk_widget_show_all(alias_dialog);
 
 	if (info)
-		gtk_widget_grab_focus(info->name_entry);
+		gtk_widget_grab_focus(info->alias_entry);
 }
 
 

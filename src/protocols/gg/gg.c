@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6360 2003-06-18 06:01:15Z chipx86 $
+ * $Id: gg.c 6509 2003-07-08 03:36:41Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -163,7 +163,7 @@ static char *handle_errcode(GaimConnection *gc, int errcode)
 	return msg;
 }
 
-static void agg_set_away(GaimConnection *gc, char *state, char *msg)
+static void agg_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	int status = gd->own_status;
@@ -591,7 +591,7 @@ static void agg_add_buddy(GaimConnection *gc, const char *who)
 	gg_add_notify(gd->sess, strtol(who, (char **)NULL, 10));
 }
 
-static void agg_rem_buddy(GaimConnection *gc, char *who, char *group)
+static void agg_rem_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))

@@ -1249,7 +1249,7 @@ dcc_chat_cancel(struct dcc_chat *data){
 }
 
 static void 
-irc_convo_closed(GaimConnection *gc, char *who)
+irc_convo_closed(GaimConnection *gc, const char *who)
 {
 	struct dcc_chat *dchat = find_dcc_chat(gc, who);
 	if (!dchat)
@@ -2460,7 +2460,7 @@ irc_send_im(GaimConnection *gc, const char *who, const char *what, int len, int 
 static void 
 irc_add_buddy(GaimConnection *gc, const char *who) {}
 static void 
-irc_remove_buddy(GaimConnection *gc, char *who, char *group) {}
+irc_remove_buddy(GaimConnection *gc, const char *who, const char *group) {}
 
 static GList *
 irc_chat_info(GaimConnection *gc)
@@ -2515,14 +2515,14 @@ irc_chat_leave(GaimConnection *gc, int id)
 }
 
 static int 
-irc_chat_send(GaimConnection *gc, int id, char *what)
+irc_chat_send(GaimConnection *gc, int id, const char *what)
 {
 	GaimConversation *c = gaim_find_chat(gc, id);
 	if (!c)
 		return -EINVAL;
 	if (send_msg(gc, c->name, what) > 0)
 		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
-			(char *)gaim_connection_get_display_name(gc), 0, what, time(NULL));
+			gaim_connection_get_display_name(gc), 0, what, time(NULL));
 	return 0;
 }
 
@@ -2533,7 +2533,7 @@ irc_away_states(GaimConnection *gc)
 }
 
 static void 
-irc_set_away(GaimConnection *gc, char *state, char *msg)
+irc_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	struct irc_data *idata = gc->proto_data;
 	char buf[IRC_BUF_LEN];

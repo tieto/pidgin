@@ -232,9 +232,9 @@ struct _GaimPluginProtocolInfo
 	int  (*send_im)(GaimConnection *, const char *who,
 					const char *message, int len, int away);
 	void (*set_info)(GaimConnection *, const char *info);
-	int  (*send_typing)(GaimConnection *, char *name, int typing);
+	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);
-	void (*set_away)(GaimConnection *, char *state, char *message);
+	void (*set_away)(GaimConnection *, const char *state, const char *message);
 	void (*get_away)(GaimConnection *, const char *who);
 	void (*set_dir)(GaimConnection *, const char *first,
 					const char *middle, const char *last,
@@ -251,7 +251,8 @@ struct _GaimPluginProtocolInfo
 						  const char *new_pass);
 	void (*add_buddy)(GaimConnection *, const char *name);
 	void (*add_buddies)(GaimConnection *, GList *buddies);
-	void (*remove_buddy)(GaimConnection *, char *name, char *group);
+	void (*remove_buddy)(GaimConnection *, const char *name, 
+						const char *group);
 	void (*remove_buddies)(GaimConnection *, GList *buddies,
 						   const char *group);
 	void (*add_permit)(GaimConnection *, const char *name);
@@ -259,22 +260,22 @@ struct _GaimPluginProtocolInfo
 	void (*rem_permit)(GaimConnection *, const char *name);
 	void (*rem_deny)(GaimConnection *, const char *name);
 	void (*set_permit_deny)(GaimConnection *);
-	void (*warn)(GaimConnection *, char *who, int anonymous);
+	void (*warn)(GaimConnection *, const char *who, int anonymous);
 	void (*join_chat)(GaimConnection *, GHashTable *components);
 	void (*chat_invite)(GaimConnection *, int id,
 						const char *who, const char *message);
 	void (*chat_leave)(GaimConnection *, int id);
 	void (*chat_whisper)(GaimConnection *, int id,
-						 char *who, char *message);
-	int  (*chat_send)(GaimConnection *, int id, char *message);
+						 const char *who, const char *message);
+	int  (*chat_send)(GaimConnection *, int id, const char *message);
 	void (*keepalive)(GaimConnection *);
 
 	/* new user registration */
 	void (*register_user)(GaimAccount *);
 
 	/* get "chat buddy" info and away message */
-	void (*get_cb_info)(GaimConnection *, int, char *who);
-	void (*get_cb_away)(GaimConnection *, int, char *who);
+	void (*get_cb_info)(GaimConnection *, int, const char *who);
+	void (*get_cb_away)(GaimConnection *, int, const char *who);
 
 	/* save/store buddy's alias on server list/roster */
 	void (*alias_buddy)(GaimConnection *, const char *who,
@@ -291,7 +292,7 @@ struct _GaimPluginProtocolInfo
 	void (*buddy_free)(struct buddy *);
 
 	/* this is really bad. */
-	void (*convo_closed)(GaimConnection *, char *who);
+	void (*convo_closed)(GaimConnection *, const char *who);
 
 	char *(*normalize)(const char *);
 	

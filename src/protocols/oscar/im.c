@@ -2186,7 +2186,7 @@ static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * and Gaim 0.60 and newer.
  *
  */
-faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2)
+faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn, fu16_t type2)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;

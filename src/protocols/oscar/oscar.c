@@ -2282,7 +2282,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		serv_got_chat_invite(gc,
 				     name ? name : args->info.chat.roominfo.name,
 				     userinfo->sn,
-				     (char *)args->msg,
+				     args->msg,
 				     components);
 		if (name)
 			g_free(name);
@@ -4208,7 +4208,7 @@ static void oscar_keepalive(GaimConnection *gc) {
 	aim_flap_nop(od->sess, od->conn);
 }
 
-static int oscar_send_typing(GaimConnection *gc, char *name, int typing) {
+static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	if (dim)
@@ -4572,7 +4572,7 @@ static void oscar_set_away_icq(GaimConnection *gc, struct oscar_data *od, const 
 	return;
 }
 
-static void oscar_set_away(GaimConnection *gc, char *state, char *message)
+static void oscar_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
@@ -4584,7 +4584,7 @@ static void oscar_set_away(GaimConnection *gc, char *state, char *message)
 	return;
 }
 
-static void oscar_warn(GaimConnection *gc, char *name, int anon) {
+static void oscar_warn(GaimConnection *gc, const char *name, int anon) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
 }
@@ -4645,7 +4645,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 #endif
 }
 
-static void oscar_remove_buddy(GaimConnection *gc, char *name, char *group) {
+static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char *group) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 #ifdef NOSSI
 	aim_remove_buddy(od->sess, od->conn, name);
@@ -5252,7 +5252,7 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 	serv_got_chat_left(g, gaim_chat_get_id(GAIM_CHAT(b)));
 }
 
-static int oscar_chat_send(GaimConnection *g, int id, char *message) {
+static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
 	GaimConversation *b = NULL;
@@ -6190,7 +6190,7 @@ static void oscar_change_passwd(GaimConnection *gc, const char *old, const char 
 	}
 }
 
-static void oscar_convo_closed(GaimConnection *gc, char *who)
+static void oscar_convo_closed(GaimConnection *gc, const char *who)
 {
 	struct oscar_data *od = gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, who);

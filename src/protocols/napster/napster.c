@@ -159,7 +159,7 @@ static void nap_add_buddies(GaimConnection *gc, GList *buddies)
 }
 
 /* 303 - MSG_CLIENT_REMOVE_HOTLIST */
-static void nap_remove_buddy(GaimConnection *gc, char *name, char *group)
+static void nap_remove_buddy(GaimConnection *gc, const char *name, const char *group)
 {
 	nap_write_packet(gc, 303, "%s", name);
 }
@@ -193,7 +193,7 @@ static void nap_chat_leave(GaimConnection *gc, int id)
 }
 
 /* 402 - MSG_CLIENT_PUBLIC */
-static int nap_chat_send(GaimConnection *gc, int id, char *message)
+static int nap_chat_send(GaimConnection *gc, int id, const char *message)
 {
 	GaimConversation *c = gaim_find_chat(gc, id);
 

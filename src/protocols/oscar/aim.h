@@ -859,7 +859,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
 /* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, fu16_t code);
-/* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2);
+/* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn, fu16_t type2);
 
 
 

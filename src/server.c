@@ -169,7 +169,7 @@ void serv_finish_login(GaimConnection *gc)
  * typing notifications.
  * if it returns zero, it will not send any more typing notifications 
  * typing is a flag - TRUE for typing, FALSE for stopped typing */
-int serv_send_typing(GaimConnection *g, char *name, int typing) {
+int serv_send_typing(GaimConnection *g, const char *name, int typing) {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (g != NULL && g->prpl != NULL)
@@ -186,9 +186,9 @@ struct queued_away_response {
 	time_t sent_away;
 };
 
-struct queued_away_response *find_queued_away_response_by_name(char *name);
+struct queued_away_response *find_queued_away_response_by_name(const char *name);
 
-int serv_send_im(GaimConnection *gc, char *name, char *message,
+int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 				 int len, int flags)
 {
 	GaimConversation *c;
@@ -229,7 +229,7 @@ int serv_send_im(GaimConnection *gc, char *name, char *message,
 	return val;
 }
 
-void serv_get_info(GaimConnection *g, char *name)
+void serv_get_info(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -251,7 +251,7 @@ void serv_get_away(GaimConnection *g, const char *name)
 		prpl_info->get_away(g, name);
 }
 
-void serv_get_dir(GaimConnection *g, char *name)
+void serv_get_dir(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -293,7 +293,7 @@ void serv_dir_search(GaimConnection *g, const char *first,
 }
 
 
-void serv_set_away(GaimConnection *gc, char *state, char *message)
+void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -333,7 +333,7 @@ void serv_set_away(GaimConnection *gc, char *state, char *message)
 	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
 }
 
-void serv_set_away_all(char *message)
+void serv_set_away_all(const char *message)
 {
 	GList *c;
 	GaimConnection *g;
@@ -402,7 +402,7 @@ void serv_add_buddies(GaimConnection *g, GList *buddies)
 }
 
 
-void serv_remove_buddy(GaimConnection *g, char *name, char *group)
+void serv_remove_buddy(GaimConnection *g, const char *name, const char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -413,7 +413,7 @@ void serv_remove_buddy(GaimConnection *g, char *name, char *group)
 		prpl_info->remove_buddy(g, name, group);
 }
 
-void serv_remove_buddies(GaimConnection *gc, GList *g, char *group)
+void serv_remove_buddies(GaimConnection *gc, GList *g, const char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -590,7 +590,7 @@ void serv_set_idle(GaimConnection *g, int time)
 		prpl_info->set_idle(g, time);
 }
 
-void serv_warn(GaimConnection *g, char *name, int anon)
+void serv_warn(GaimConnection *g, const char *name, int anon)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -643,7 +643,7 @@ void serv_chat_leave(GaimConnection *g, int id)
 		prpl_info->chat_leave(g, id);
 }
 
-void serv_chat_whisper(GaimConnection *g, int id, char *who, char *message)
+void serv_chat_whisper(GaimConnection *g, int id, const char *who, const char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -654,7 +654,7 @@ void serv_chat_whisper(GaimConnection *g, int id, char *who, char *message)
 		prpl_info->chat_whisper(g, id, who, message);
 }
 
-int serv_chat_send(GaimConnection *g, int id, char *message)
+int serv_chat_send(GaimConnection *g, int id, const char *message)
 {
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -721,7 +721,7 @@ int find_queue_total_by_name(char *name)
 	return i;
 }
 
-struct queued_away_response *find_queued_away_response_by_name(char *name)
+struct queued_away_response *find_queued_away_response_by_name(const char *name)
 {
 	GSList *templist;
 	struct queued_away_response *qar;
@@ -1349,8 +1349,8 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	gaim_conversation_destroy(conv);
 }
 
-void serv_got_chat_in(GaimConnection *g, int id, char *who,
-					  int whisper, char *message, time_t mtime)
+void serv_got_chat_in(GaimConnection *g, int id, const char *who,
+					  int whisper, const char *message, time_t mtime)
 {
 	int w;
 	GSList *bcs;
@@ -1412,8 +1412,6 @@ void serv_got_chat_in(GaimConnection *g, int id, char *who,
 
 	gaim_chat_write(chat, who, buf, w, mtime);
 
-	g_free(who);
-	g_free(message);
 	g_free(buf);
 }
 
@@ -1426,7 +1424,7 @@ static void des_popup(GtkWidget *w, GtkWidget *window)
 	gtk_widget_destroy(window);
 }
 
-void serv_got_popup(char *msg, char *u, int wid, int hei)
+void serv_got_popup(const char *msg, const char *u, int wid, int hei)
 {
 	GtkWidget *window;
 	GtkWidget *vbox;

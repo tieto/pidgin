@@ -494,7 +494,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 static int
-msn_send_typing(GaimConnection *gc, char *who, int typing)
+msn_send_typing(GaimConnection *gc, const char *who, int typing)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
@@ -538,7 +538,7 @@ msn_send_typing(GaimConnection *gc, char *who, int typing)
 }
 
 static void
-msn_set_away(GaimConnection *gc, char *state, char *msg)
+msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	MsnSession *session = gc->proto_data;
 	const char *away;
@@ -636,7 +636,7 @@ msn_add_buddy(GaimConnection *gc, const char *name)
 }
 
 static void
-msn_rem_buddy(GaimConnection *gc, char *who, char *group)
+msn_rem_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
@@ -932,7 +932,7 @@ msn_chat_leave(GaimConnection *gc, int id)
 }
 
 static int
-msn_chat_send(GaimConnection *gc, int id, char *message)
+msn_chat_send(GaimConnection *gc, int id, const char *message)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
@@ -961,7 +961,7 @@ msn_chat_send(GaimConnection *gc, int id, char *message)
 
 	msn_message_destroy(msg);
 
-	serv_got_chat_in(gc, id, (char *)gaim_account_get_username(account),
+	serv_got_chat_in(gc, id, gaim_account_get_username(account),
 					 0, message, time(NULL));
 
 	return 0;
@@ -1096,7 +1096,7 @@ msn_buddy_free(struct buddy *b)
 }
 
 static void
-msn_convo_closed(GaimConnection *gc, char *who)
+msn_convo_closed(GaimConnection *gc, const char *who)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;

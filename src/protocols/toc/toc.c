@@ -318,40 +318,61 @@ static int escape_message(char *msg)
 	return cnt;
 }
 
-static int escape_text(char *msg)
+/*
+ * Duplicates the input string, replacing each \n with a <BR>, and 
+ * escaping a few other characters.
+ */
+char *escape_text(const char *msg)
 {
-	char *c, *cpy;
-	int cnt = 0;
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 4 bytes */
-	if (strlen(msg) > BUF_LEN) {
-		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
-		msg[2047] = '\0';
-	}
+	char *ret;
+	int i, j;
 
-	cpy = g_strdup(msg);
-	c = cpy;
-	while (*c) {
-		switch (*c) {
+	if (!msg)
+		return NULL;
+
+	/* Calculate the length after escaping */
+	i = 0;
+	j = 0;
+	while (msg[i++])
+		switch (msg[i]) {
 		case '\n':
-			msg[cnt++] = '<';
-			msg[cnt++] = 'B';
-			msg[cnt++] = 'R';
-			msg[cnt++] = '>';
+			j += 4;
 			break;
 		case '{':
 		case '}':
 		case '\\':
 		case '"':
-			msg[cnt++] = '\\';
-			/* Fall through */
+			j += 1;
 		default:
-			msg[cnt++] = *c;
+			j += 1;
 		}
-		c++;
+
+	/* Allocate a string */
+	ret = (char *)malloc((j+1) * sizeof(char));
+
+	/* Copy the string */
+	i = 0;
+	j = 0;
+	while (msg[i++]) {
+		switch (msg[i]) {
+		case '\n':
+			ret[j++] = '<';
+			ret[j++] = 'B';
+			ret[j++] = 'R';
+			ret[j++] = '>';
+			break;
+		case '{':
+		case '}':
+		case '\\':
+		case '"':
+			ret[j++] = '\\';
+		default:
+			ret[j++] = msg[i];
+		}
 	}
-	msg[cnt] = '\0';
-	g_free(cpy);
-	return cnt;
+	ret[j] = '\0';
+
+	return ret;
 }
 
 static int sflap_send(GaimConnection *gc, char *buf, int olen, int type)
@@ -1005,10 +1026,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, int flags)
 {
 	char buf[BUF_LEN * 2];
-	char *tmp = g_malloc(strlen(message) * 4 + 1); /* 4 because \n gets replaced with <BR> */
+	char *tmp;
 
-	strcpy(tmp, message);
-	escape_text(tmp);
+	tmp = escape_text(message);
 	if (strlen(tmp) + 52 > MSG_LEN) {
 		g_free(tmp);
 		return -E2BIG;
@@ -1047,11 +1067,12 @@ static void toc_get_dir(GaimConnection *g, const char *name)
 static void toc_set_dir(GaimConnection *g, const char *first, const char *middle, const char *last,
 			const char *maiden, const char *city, const char *state, const char *country, int web)
 {
-	char buf2[BUF_LEN * 4], buf[BUF_LEN];
+	char *buf3, buf2[BUF_LEN * 4], buf[BUF_LEN];
 	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
 		   middle, last, maiden, city, state, country, (web == 1) ? "Y" : "");
-	escape_text(buf2);
-	g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
+	buf3 = escape_text(buf2);
+	g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf3);
+	g_free(buf3);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
@@ -1066,7 +1087,7 @@ static void toc_dir_search(GaimConnection *g, const char *first, const char *mid
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_away(GaimConnection *g, char *state, char *message)
+static void toc_set_away(GaimConnection *g, const char *state, const char *message)
 {
 	char buf[BUF_LEN * 2];
 	if (g->away) {
@@ -1074,10 +1095,9 @@ static void toc_set_away(GaimConnection *g, char *state, char *message)
 		g->away = NULL;
 	}
 	if (message) {
-		char *tmp = g_malloc(strlen(message) * 4 + 1);
-		strcpy(tmp, message);
-		g->away = g_strdup (message);
-		escape_text(tmp);
+		char *tmp;
+		g->away = g_strdup(message);
+		tmp = escape_text(message);
 		g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", tmp);
 		g_free(tmp);
 	} else
@@ -1087,10 +1107,10 @@ static void toc_set_away(GaimConnection *g, char *state, char *message)
 
 static void toc_set_info(GaimConnection *g, const char *info)
 {
-	char buf[BUF_LEN * 2], buf2[BUF_LEN * 2];
-	g_snprintf(buf2, sizeof buf2, "%s", info);
-	escape_text(buf2);
+	char buf[BUF_LEN * 2], *buf2;
+	buf2 = escape_text(info);
 	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", buf2);
+	g_free(buf2);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
@@ -1126,7 +1146,7 @@ static void toc_add_buddies(GaimConnection *g, GList *buddies)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_remove_buddy(GaimConnection *g, char *name, char *group)
+static void toc_remove_buddy(GaimConnection *g, const char *name, const char *group)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
@@ -1159,7 +1179,7 @@ static void toc_set_idle(GaimConnection *g, int time)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_warn(GaimConnection *g, char *name, int anon)
+static void toc_warn(GaimConnection *g, const char *name, int anon)
 {
 	char send[BUF_LEN * 2];
 	g_snprintf(send, 255, "toc_evil %s %s", name, ((anon) ? "anon" : "norm"));
@@ -1241,22 +1261,28 @@ static void toc_chat_leave(GaimConnection *g, int id)
 	}
 }
 
-static void toc_chat_whisper(GaimConnection *g, int id, char *who, char *message)
+static void toc_chat_whisper(GaimConnection *g, int id, const char *who, const char *message)
 {
-	char buf2[BUF_LEN * 2];
-	escape_text(message);
-	g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, normalize(who), message);
+	char *buf1, *buf2;
+	buf1 = escape_text(message);
+	buf2 = g_strdup_printf("toc_chat_whisper %d %s \"%s\"", id, normalize(who), buf1);
+	g_free(buf1);
 	sflap_send(g, buf2, -1, TYPE_DATA);
+	g_free(buf2);
 }
 
-static int toc_chat_send(GaimConnection *g, int id, char *message)
+static int toc_chat_send(GaimConnection *g, int id, const char *message)
 {
-	char buf[BUF_LEN * 2];
-	escape_text(message);
-	if (strlen(message) > 2000)
+	char *buf1, *buf2;
+	buf1 = escape_text(message);
+	if (strlen(buf1) > 2000) {
+		g_free(buf1);
 		return -E2BIG;
-	g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"", id, message);
-	sflap_send(g, buf, -1, TYPE_DATA);
+	}
+	buf2 = g_strdup_printf("toc_chat_send %d \"%s\"", id, buf1);
+	g_free(buf1);
+	sflap_send(g, buf2, -1, TYPE_DATA);
+	g_free(buf2);
 	return 0;
 }
 

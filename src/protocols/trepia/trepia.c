@@ -1219,7 +1219,7 @@ trepia_add_buddy(GaimConnection *gc, const char *name)
 }
 
 static void
-trepia_rem_buddy(GaimConnection *gc, char *who, char *group)
+trepia_rem_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 }
 

@@ -1214,7 +1214,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	return 1;
 }
 
-int yahoo_send_typing(GaimConnection *gc, char *who, int typ)
+int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
@@ -1232,7 +1232,7 @@ int yahoo_send_typing(GaimConnection *gc, char *who, int typ)
 	return 0;
 }
 
-static void yahoo_set_away(GaimConnection *gc, char *state, char *msg)
+static void yahoo_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -1376,7 +1376,7 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who)
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_remove_buddy(GaimConnection *gc, char *who, char *group)
+static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 

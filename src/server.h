@@ -53,25 +53,25 @@ extern "C" {
 void serv_login(GaimAccount *);
 void serv_close(GaimConnection *);
 void serv_touch_idle(GaimConnection *);
-int  serv_send_im(GaimConnection *, char *, char *, int, int);
-void serv_get_info(GaimConnection *, char *);
-void serv_get_dir(GaimConnection *, char *);
+int  serv_send_im(GaimConnection *, const char *, const char *, int, int);
+void serv_get_info(GaimConnection *, const char *);
+void serv_get_dir(GaimConnection *, const char *);
 void serv_set_idle(GaimConnection *, int);
 void serv_set_info(GaimConnection *, const char *);
-void serv_set_away(GaimConnection *, char *, char *);
-void serv_set_away_all(char *);
-int  serv_send_typing(GaimConnection *, char *, int);
+void serv_set_away(GaimConnection *, const char *, const char *);
+void serv_set_away_all(const char *);
+int  serv_send_typing(GaimConnection *, const char *, int);
 void serv_change_passwd(GaimConnection *, const char *, const char *);
 void serv_add_buddy(GaimConnection *, const char *);
 void serv_add_buddies(GaimConnection *, GList *);
-void serv_remove_buddy(GaimConnection *, char *, char *);
-void serv_remove_buddies(GaimConnection *, GList *, char *);
+void serv_remove_buddy(GaimConnection *, const char *, const char *);
+void serv_remove_buddies(GaimConnection *, GList *, const char *);
 void serv_add_permit(GaimConnection *, const char *);
 void serv_add_deny(GaimConnection *, const char *);
 void serv_rem_permit(GaimConnection *, const char *);
 void serv_rem_deny(GaimConnection *, const char *);
 void serv_set_permit_deny(GaimConnection *);
-void serv_warn(GaimConnection *, char *, int);
+void serv_warn(GaimConnection *, const char *, int);
 void serv_set_dir(GaimConnection *, const char *, const char *,
 				  const char *, const char *, const char *,
 				  const char *, const char *, int);
@@ -81,9 +81,9 @@ void serv_dir_search(GaimConnection *, const char *, const char *,
 void serv_join_chat(GaimConnection *, GHashTable *);
 void serv_chat_invite(GaimConnection *, int, const char *, const char *);
 void serv_chat_leave(GaimConnection *, int);
-void serv_chat_whisper(GaimConnection *, int, char *, char *);
-int  serv_chat_send(GaimConnection *, int, char *);
-void serv_got_popup(char *, char *, int, int);
+void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
+int  serv_chat_send(GaimConnection *, int, const char *);
+void serv_got_popup(const char *, const char *, int, int);
 void serv_get_away(GaimConnection *, const char *);
 void serv_alias_buddy(struct buddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
@@ -105,8 +105,8 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 									   int id, const char *name);
 void serv_got_chat_left(GaimConnection *g, int id);
-void serv_got_chat_in(GaimConnection *g, int id, char *who,
-					  int whisper, char *message, time_t mtime);
+void serv_got_chat_in(GaimConnection *g, int id, const char *who,
+					  int whisper, const char *message, time_t mtime);
 
 #ifdef __cplusplus
 }
