@@ -38,7 +38,7 @@
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
-static gint _point_sizes [] = { 4, 6, 8, 10, 20, 30, 40 };
+static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
 /* The four elements present in a <FONT> tag contained in a struct */
 typedef struct _FontDetail   FontDetail;
