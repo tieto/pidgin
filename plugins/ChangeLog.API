@@ -7,6 +7,7 @@ version 0.79:
 	* Added: has_focus UI op to GaimConversationUiOps and
 	  GaimConvWindowUiOps.
 	* Added: gaim_conversation_has_focus() and gaim_conv_window_has_focus().
+	* Removed: gaim_blist_save()
 
 	Plugin API: v5
 	* Changed: add_buddy, add_buddies, remove_buddy, remove_buddies,

@@ -356,6 +356,7 @@ conv_created(GaimConversation *conv)
 	attach_signals(conv);
 }
 
+#if 0
 static void
 conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 {
@@ -372,6 +373,7 @@ conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 			notify_win(gaimwin);
 	}
 }
+#endif
 
 static void
 deleting_conv(GaimConversation *conv)
@@ -387,6 +389,7 @@ deleting_conv(GaimConversation *conv)
 		notify_win(gaimwin);
 }
 
+#if 0
 static void
 conversation_drag_ended(GaimConversation *active_conv,
                         GaimConvWindow *old_gaimwin,
@@ -433,6 +436,7 @@ conversation_drag_ended(GaimConversation *active_conv,
 			*/
 	}
 }
+#endif
 
 static void
 handle_string(GaimConvWindow *gaimwin)
@@ -734,12 +738,12 @@ plugin_load(GaimPlugin *plugin)
 	                    GAIM_CALLBACK(conv_created), NULL);
 	gaim_signal_connect(conv_handle, "deleting-conversation", plugin,
 	                    GAIM_CALLBACK(deleting_conv), NULL);
-	/*
+#if 0
 	gaim_signal_connect(conv_handle, "conversation-switched", plugin,
 	                    GAIM_CALLBACK(conv_switched), NULL);
 	gaim_signal_connect(gtk_conv_handle, "conversation-drag-ended", plugin,
 	                    GAIM_CALLBACK(conversation_drag_ended), NULL);
-	 */
+#endif
 
 	while (convs) {
 		GaimConversation *conv = (GaimConversation *)convs->data;

@@ -985,7 +985,7 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("_Raise IM window on events"),
 			"/gaim/gtk/conversations/im/raise_on_events", vbox);
 
-	gaim_gtk_prefs_checkbox(_("_Raise chat window on events"),
+	gaim_gtk_prefs_checkbox(_("Raise chat _window on events"),
 			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
 	gaim_gtk_prefs_checkbox(_("Use _multi-colored screen names in chats"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
