@@ -245,6 +245,9 @@ draw_text (GtkIMHtml        *imhtml,
 	gfloat xoff, yoff;
 	GdkColor *bg, *fg;
 
+	if (GTK_LAYOUT (imhtml)->freeze_count)
+		return;
+
 	bit = line->bit;
 	gc = gdk_gc_new (window);
 	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
@@ -346,7 +349,7 @@ draw_text (GtkIMHtml        *imhtml,
 	gdk_gc_unref (gc);
 }
 
-static gint
+static void
 draw_img (GtkIMHtml        *imhtml,
 	  struct line_info *line)
 {
@@ -356,6 +359,9 @@ draw_img (GtkIMHtml        *imhtml,
 	gint width, height, hoff;
 	GdkWindow *window = GTK_LAYOUT (imhtml)->bin_window;
 	gfloat xoff, yoff;
+
+	if (GTK_LAYOUT (imhtml)->freeze_count)
+		return;
 
 	bit = line->bit;
 	gdk_window_get_size (bit->pm, &width, &height);
@@ -385,11 +391,9 @@ draw_img (GtkIMHtml        *imhtml,
 	gdk_draw_pixmap (window, gc, bit->pm, 0, 0, line->x - xoff, line->y - yoff + hoff, -1, -1);
 
 	gdk_gc_unref (gc);
-
-	return TRUE;
 }
 
-static gint
+static void
 draw_line (GtkIMHtml        *imhtml,
 	   struct line_info *line)
 {
@@ -399,6 +403,9 @@ draw_line (GtkIMHtml        *imhtml,
 	GdkGC *gc;
 	guint line_height;
 	gfloat xoff, yoff;
+
+	if (GTK_LAYOUT (imhtml)->freeze_count)
+		return;
 
 	xoff = GTK_LAYOUT (imhtml)->hadjustment->value;
 	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
@@ -424,8 +431,6 @@ draw_line (GtkIMHtml        *imhtml,
 			    line->width, line_height);
 
 	gdk_gc_unref (gc);
-
-	return TRUE;
 }
 
 static void
@@ -546,18 +551,7 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	vadj = GTK_LAYOUT (imhtml)->vadjustment;
 	oldvalue = vadj->value / vadj->upper;
 
-	b = imhtml->bits;
-	while (b) {
-		bit = b->data;
-		b = g_list_next (b);
-		while (bit->chunks) {
-			struct line_info *li = bit->chunks->data;
-			if (li->text)
-				g_free (li->text);
-			bit->chunks = g_list_remove (bit->chunks, li);
-			g_free (li);
-		}
-	}
+	gtk_layout_freeze (GTK_LAYOUT (imhtml));
 
 	g_list_free (imhtml->line);
 	imhtml->line = NULL;
@@ -572,17 +566,27 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 
-	if (GTK_LAYOUT (imhtml)->bin_window)
-		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
-
 	b = imhtml->bits;
 	while (b) {
-		gtk_imhtml_draw_bit (imhtml, b->data);
+		bit = b->data;
 		b = g_list_next (b);
+		while (bit->chunks) {
+			struct line_info *li = bit->chunks->data;
+			if (li->text)
+				g_free (li->text);
+			bit->chunks = g_list_remove (bit->chunks, li);
+			g_free (li);
+		}
+		gtk_imhtml_draw_bit (imhtml, bit);
 	}
+
+	if (GTK_LAYOUT (imhtml)->bin_window && (imhtml->y < GTK_WIDGET (imhtml)->allocation.y))
+		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
 
 	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y + 5);
 	gtk_adjustment_set_value (vadj, vadj->upper * oldvalue);
+
+	gtk_layout_thaw (GTK_LAYOUT (imhtml));
 }
 
 static void
@@ -656,6 +660,7 @@ gtk_imhtml_select_none (GtkIMHtml *imhtml)
 
 		bits = g_list_next (bits);
 	}
+	imhtml->sel_endchunk = NULL;
 }
 
 static gchar*
@@ -815,6 +820,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 						} else
 							chunk->sel_end = new_pos;
 						selection = 2;
+						imhtml->sel_endchunk = chunk;
 						got_end = TRUE;
 					} else {
 						new_pos = get_position (chunk, endx, smileys);
@@ -826,6 +832,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 						chunk->sel_start = new_pos;
 						chunk->sel_end = NULL;
 						selection++;
+						imhtml->sel_endchunk = chunk;
 						got_end = TRUE;
 					}
 				} else if (!COORDS_IN_CHUNK (startx, starty) && !got_start) {
@@ -859,6 +866,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					chunk->sel_start = chunk->text;
 					chunk->sel_end = new_pos;
 					selection++;
+					imhtml->sel_endchunk = chunk;
 					got_end = TRUE;
 				} else {
 					if ( !chunk->selected ||
@@ -898,6 +906,41 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 		}
 
 		bits = g_list_next (bits);
+	}
+}
+
+static void
+gtk_imhtml_select_in_chunk (GtkIMHtml *imhtml,
+			    struct line_info *chunk)
+{
+	GtkIMHtmlBit *bit = chunk->bit;
+	gchar *new_pos;
+	guint endx = imhtml->sel_endx;
+	guint startx = imhtml->sel_startx;
+	guint starty = imhtml->sel_starty;
+	gboolean smileys = imhtml->smileys;
+	gboolean redraw = FALSE;
+
+	new_pos = get_position (chunk, endx, smileys);
+	if ((starty < chunk->y) ||
+	    ((starty < chunk->y + chunk->height) && (startx < endx))) {
+		if (chunk->sel_end != new_pos)
+			redraw = TRUE;
+		chunk->sel_end = new_pos;
+	} else {
+		if (chunk->sel_start != new_pos)
+			redraw = TRUE;
+		chunk->sel_start = new_pos;
+	}
+
+	if (redraw) {
+		if (DRAW_IMG (bit))
+			draw_img (imhtml, chunk);
+		else if ((bit->type == TYPE_SEP) && 
+			 (bit->chunks->data == chunk))
+			draw_line (imhtml, chunk);
+		else
+			draw_text (imhtml, chunk);
 	}
 }
 
@@ -959,9 +1002,17 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 		}
 
 		if (imhtml->selection) {
+			struct line_info *chunk = imhtml->sel_endchunk;
 			imhtml->sel_endx = MAX (x, 0);
 			imhtml->sel_endy = MAX (y, 0);
-			gtk_imhtml_select_bits (imhtml);
+			if ((chunk == NULL) ||
+			    (x < chunk->x) ||
+			    (x > chunk->x + chunk->width) ||
+			    (y < chunk->y) ||
+			    (y > chunk->y + chunk->height))
+				gtk_imhtml_select_bits (imhtml);
+			else
+				gtk_imhtml_select_in_chunk (imhtml, chunk);
 		}
 	} else {
 		GList *urls = imhtml->urls;
