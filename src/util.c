@@ -1267,7 +1267,7 @@ gaim_markup_strip_html(const char *str)
 
 			if(g_ascii_isspace(str2[k]))
 				visible = TRUE;
-			else
+			else if (str2[k])
 			{
 				/* Scan until we end the tag either implicitly (closed start
 				 * tag) or explicitly, using a sloppy method (i.e., < or >
