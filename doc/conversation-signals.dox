@@ -406,13 +406,13 @@ void (*chat_invited_user)(GaimConversation *conv, const char *name,
  @signaldef chat-invited
   @signalproto
 void (*chat_invited)(GaimAccount *account, const char *inviter,
-                     const char *invite, const char *invite_message);
+                     const char *chat, const char *invite_message);
   @endsignalproto
   @signaldesc
    Emitted when an account was invited to a chat.
   @param account        The account being invited.
   @param inviter        The username of the person inviting the account.
-  @param invitee        The username of the account being invited.
+  @param chat           The name of the chat your being invited to.
   @param invite_message The optional invite message.
  @endsignaldef
 
