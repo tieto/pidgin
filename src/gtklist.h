@@ -56,7 +56,7 @@ struct gaim_gtk_buddy_list {
  */
 struct gaim_gtk_blist_node
 {
-	uint timer;                      /**< The timer handle.  */
+	unsigned int timer;                      /**< The timer handle.  */
 };
 
 #define GAIM_GTK_BLIST_NODE(node) ((struct gaim_gtk_blist_node *)(node)->ui_data)
