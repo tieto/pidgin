@@ -135,6 +135,8 @@ gaim_SOURCES = \
 	gtkimhtml.c \
 	gtkimhtml.h \
 	gtkinternal.h \
+	gtklog.c \
+	gtklog.h \
 	gtknotify.c \
 	gtknotify.h \
 	gtkplugin.c \

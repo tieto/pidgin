@@ -239,10 +239,10 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
+		/* LOG	system_log(log_signoff, gc, NULL,
+		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
 
-		system_log(log_signoff, gc, NULL,
-				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 		/*
 		 * XXX This is a hack! Remove this and replace it with a better event
@@ -328,10 +328,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
 
+		/* LOG system_log(log_signon, gc, NULL,
+		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
-
-		system_log(log_signon, gc, NULL,
-				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 #if 0
 		/* away option given? */

@@ -903,89 +903,6 @@ void show_set_info(GaimConnection *gc)
 }
 
 
-/*------------------------------------------------------------------------*/
-/*  Functions Called To Add A Log                                          */
-/*------------------------------------------------------------------------*/
-
-void cancel_log(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->toolbar.log) {
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
-									   FALSE);
-	}
-
-	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.log);
-	gtk_widget_destroy(gtkconv->dialogs.log);
-	gtkconv->dialogs.log = NULL;
-}
-
-void do_log(GtkWidget *w, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-	struct log_conversation *l;
-	const char *file;
-	char path[PATHSIZE];
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (!find_log_info(c->name)) {
-		file = gtk_file_selection_get_filename(
-			GTK_FILE_SELECTION(gtkconv->dialogs.log));
-
-		strncpy(path, file, PATHSIZE - 1);
-
-		if (gaim_gtk_check_if_dir(path, GTK_FILE_SELECTION(gtkconv->dialogs.log)))
-			return;
-
-		l = (struct log_conversation *)g_new0(struct log_conversation, 1);
-		strcpy(l->name, gaim_conversation_get_name(c));
-		strcpy(l->filename, file);
-		log_conversations = g_list_append(log_conversations, l);
-
-		if (c != NULL)
-			gaim_conversation_set_logging(c, TRUE);
-	}
-
-	cancel_log(NULL, c);
-}
-
-void show_log_dialog(GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-	char *buf = g_malloc(BUF_LEN);
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (!gtkconv->dialogs.log) {
-		gtkconv->dialogs.log = gtk_file_selection_new(_("Log Conversation"));
-
-		gtk_file_selection_hide_fileop_buttons(
-			GTK_FILE_SELECTION(gtkconv->dialogs.log));
-
-		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log",
-				   gaim_home_dir(), gaim_normalize(c->account, c->name));
-		g_object_set_data(G_OBJECT(gtkconv->dialogs.log), "dialog_type",
-								 "log dialog");
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.log),
-										buf);
-		g_signal_connect(G_OBJECT(gtkconv->dialogs.log), "delete_event",
-						 G_CALLBACK(delete_event_dialog), c);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.log)->ok_button), "clicked",
-						 G_CALLBACK(do_log), c);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.log)->cancel_button), "clicked",
-						 G_CALLBACK(cancel_log), c);
-	}
-
-	g_free(buf);
-
-	gtk_widget_show(gtkconv->dialogs.log);
-	gdk_window_raise(gtkconv->dialogs.log->window);
-}
-
 /*------------------------------------------------------*/
 /* Link Dialog                                          */
 /*------------------------------------------------------*/
@@ -2098,19 +2015,6 @@ static void des_log_win(GObject *win, gpointer data)
 		g_free(x);
 }
 
-void conv_show_log(GtkWidget *w, gpointer data)
-{
-	char *name = g_strdup(data);
-	show_log(name);
-	g_free(name);
-}
-
-void chat_show_log(GtkWidget *w, gpointer data)
-{
-	char *name = g_strdup_printf("%s.chat", (char*)data);
-	show_log(name);
-	g_free(name);
-}
 
 static void
 url_clicked_cb(GtkWidget *widget, const char *uri)

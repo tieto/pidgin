@@ -807,6 +807,8 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->history      = g_string_new("");
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
+	conv->log          = gaim_log_new(GAIM_LOG_IM, name, account, time(NULL));
+
 
 	if (type == GAIM_CONV_IM)
 	{
@@ -1000,6 +1002,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
 
+	gaim_log_free(conv->log);
 	g_free(conv);
 }
 
@@ -1394,7 +1397,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			if (who == NULL) {
 				if (flags & GAIM_MESSAGE_SEND) {
 					b = gaim_find_buddy(account,
-							gaim_account_get_username(account));
+							    gaim_account_get_username(account));
 
 					if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
 						who = gaim_get_buddy_alias(b);
@@ -1407,7 +1410,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 				}
 				else {
 					b = gaim_find_buddy(account,
-										gaim_conversation_get_name(conv));
+							    gaim_conversation_get_name(conv));
 
 					if (b != NULL)
 						who = gaim_get_buddy_alias(b);
@@ -1424,6 +1427,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		}
 	}
 
+	gaim_log_write(conv->log, flags, who, mtime, message);
 	ops->write_conv(conv, who, message, flags, mtime);
 
 	win = gaim_conversation_get_window(conv);

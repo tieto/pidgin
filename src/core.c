@@ -84,6 +84,7 @@ gaim_core_init(const char *ui)
 	gaim_connections_init();
 	gaim_conversations_init();
 	gaim_blist_init();
+	gaim_log_init();
 	gaim_buddy_icons_init();
 	gaim_privacy_init();
 	gaim_pounces_init();

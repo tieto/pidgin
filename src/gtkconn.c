@@ -277,6 +277,8 @@ struct disconnect_window *disconnect_window = NULL;
 
 static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
+	GaimAccount *account = NULL;
+	
 	switch(id) {
 	case GTK_RESPONSE_CLOSE:
 		gtk_widget_destroy(disconnect_window->window);
@@ -284,6 +286,8 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 		disconnect_window = NULL;
 		break;
 	case GTK_RESPONSE_ACCEPT:
+		
+		gaim_account_connect(account);
 		break;
 	}
 }

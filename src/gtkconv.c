@@ -47,6 +47,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkimhtml.h"
+#include "gtklog.h"
 #include "gtkpounce.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
@@ -712,7 +713,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	conv_show_log(NULL, (char *)gaim_conversation_get_name(conv));
+	gaim_gtk_log_show((char *)gaim_conversation_get_name(conv), gaim_conversation_get_account(conv));
 }
 
 struct _search {
@@ -4088,7 +4089,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		 *
 		 * This should probably be elsewhere, but then, logging should
 		 * be moved out in some way, either via plugin or via a new API.
-		 */
+		
 		if (gaim_conversation_is_logging(conv) &&
 			conv_type != GAIM_CONV_MISC) {
 
@@ -4102,7 +4103,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 			fd = open_log_file(filename, (conv_type == GAIM_CONV_CHAT));
 
 			if (fd) {
-			    /* "---- " is a delimiter, see dialogs.c:show_log() */
 				if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 					fprintf(fd,
 							_("<HR><BR><H3 Align=Center> "
@@ -4115,7 +4115,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 				fclose(fd);
 			}
 		}
-
+*/
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 5);
@@ -4506,8 +4506,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	int gtk_font_options = 0;
 	GString *log_str;
 	GSList *images = NULL;
-	FILE *fd;
-	char buf[BUF_LONG];
+       	char buf[BUF_LONG];
 	char buf2[BUF_LONG];
 	char mdate[64];
 	char color[10];
@@ -4522,11 +4521,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	win = gaim_conversation_get_window(conv);
 
 	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
-		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-		  gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
-		 (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-		  (gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events") ||
-		   gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))))) {
+	    ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
+	      gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
+	     (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
+	      (gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events") ||
+	       gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))))) {
 
 		gaim_conv_window_show(win);
 	}
@@ -4541,7 +4540,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	if(gc)
 		sml_attrib = g_strdup_printf("sml=\"%s\"", gc->prpl->info->name);
-
+	
 	gtk_font_options ^= GTK_IMHTML_NO_COMMENTS;
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
@@ -4555,87 +4554,52 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 		gtk_font_options ^= GTK_IMHTML_RETURN_LOG;
-
+	
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol(conv->account)))->options &
-		OPT_PROTO_USE_POINTSIZE) {
-
+	    OPT_PROTO_USE_POINTSIZE) {
+		
 		gtk_font_options ^= GTK_IMHTML_USE_POINTSIZE;
 	}
 
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
 			g_snprintf(buf, BUF_LONG, "(%s) <B>%s</B>",
-					   mdate, message);
+				   mdate, message);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
-
+		
 		g_snprintf(buf2, sizeof(buf2),
-				   "<!--(%s) --><B>%s</B><BR>",
-				   mdate, message);
-
+			   "<!--(%s) --><B>%s</B><BR>",
+			   mdate, message);
+		
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
-
+		
 		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 			char *t1 = gaim_markup_strip_html(buf);
-
+			
 			conv->history = g_string_append(conv->history, t1);
 			conv->history = g_string_append(conv->history, "\n");
-
+			
 			g_free(t1);
 		}
 		else {
 			conv->history = g_string_append(conv->history, buf);
 			conv->history = g_string_append(conv->history, "<BR>\n");
 		}
-
-		if (!(flags & GAIM_MESSAGE_NO_LOG) && gaim_conversation_is_logging(conv)) {
-
-			char *t1;
-			char nm[256];
-			const char *nm2;
-
-			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-				t1 = gaim_markup_strip_html(buf);
-			else
-				t1 = buf;
-
-			nm2 = gaim_normalize(gaim_conversation_get_account(conv),
-					gaim_conversation_get_name(conv));
-
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-				g_snprintf(nm, sizeof(nm), "%s.chat", nm2);
-			else
-				strncpy(nm, nm2, sizeof(nm));
-
-			fd = open_log_file(nm,
-				(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT));
-
-			if (fd) {
-				if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-					fprintf(fd, "%s\n", t1);
-				else
-					fprintf(fd, "%s<BR>\n", t1);
-
-				fclose(fd);
-			}
-
-			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-				g_free(t1);
-		}
-	}
-	else if (flags & GAIM_MESSAGE_NO_LOG) {
+		
+	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,
-				   "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>",
-				   message);
-
+			   "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>",
+			   message);
+		
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf, 0, images);
 	}
 	else {
 		char *new_message = g_memdup(message, length);
-
+		
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
-
+			
 			/* If we're whispering, it's not an autoresponse. */
 			if (meify(new_message, length)) {
 				g_snprintf(str, 1024, "***%s", who);
@@ -4645,16 +4609,16 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				g_snprintf(str, 1024, "*%s*:", who);
 				strcpy(color, "#00FF00");
 			}
-		}
+		} 
 		else {
 			if (meify(new_message, length)) {
 				str = g_malloc(1024);
-
+				
 				if (flags & GAIM_MESSAGE_AUTO_RESP)
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
 				else
 					g_snprintf(str, 1024, "***%s", who);
-
+				
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else
@@ -4662,24 +4626,22 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			}
 			else {
 				str = g_malloc(1024);
-
 				if (flags & GAIM_MESSAGE_AUTO_RESP)
 					g_snprintf(str, 1024, "%s %s", who, AUTO_RESPONSE);
 				else
 					g_snprintf(str, 1024, "%s:", who);
-
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else if (flags & GAIM_MESSAGE_RECV) {
 					if (flags & GAIM_MESSAGE_COLORIZE) {
 						const char *u;
 						int m = 0;
-
+						
 						for (u = who; *u != '\0'; u++)
 							m += *u;
-
+						
 						m = m % NUM_NICK_COLORS;
-
+						
 						strcpy(color, nick_colors[m]);
 					}
 					else
@@ -4689,22 +4651,22 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 					strcpy(color, "#16569E");
 			}
 		}
-
+		
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
 			g_snprintf(buf, BUF_LONG,
-					   "<FONT COLOR=\"%s\" %s>(%s) "
-					   "<B>%s</B></FONT> ", color,
-					   sml_attrib ? sml_attrib : "", mdate, str);
+				   "<FONT COLOR=\"%s\" %s>(%s) "
+				   "<B>%s</B></FONT> ", color,
+				   sml_attrib ? sml_attrib : "", mdate, str);
 		else
 			g_snprintf(buf, BUF_LONG,
-					   "<FONT COLOR=\"%s\" %s><B>%s</B></FONT> ", color,
-					   sml_attrib ? sml_attrib : "", str);
-
+				   "<FONT COLOR=\"%s\" %s><B>%s</B></FONT> ", color,
+				   sml_attrib ? sml_attrib : "", str);
+		
 		g_snprintf(buf2, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s><!--(%s) -->"
-				   "<B>%s</B></FONT> ",
-				   color, sml_attrib ? sml_attrib : "", mdate, str);
-
+			   "<FONT COLOR=\"%s\" %s><!--(%s) -->"
+			   "<B>%s</B></FONT> ",
+			   color, sml_attrib ? sml_attrib : "", mdate, str);
+		
 		g_free(str);
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
@@ -4714,96 +4676,33 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			char *post = "</font>";
 			int pre_len = strlen(pre);
 			int post_len = strlen(post);
-
+			
 			with_font_tag = g_malloc(length + pre_len + post_len + 1);
-
+			
 			strcpy(with_font_tag, pre);
 			memcpy(with_font_tag + pre_len, new_message, length);
 			strcpy(with_font_tag + pre_len + length, post);
-
+			
 			length += pre_len + post_len;
 			g_free(pre);
 		}
 		else
 			with_font_tag = g_memdup(new_message, length);
-
+		
 		log_str = gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-										 with_font_tag, gtk_font_options, images);
-
+							 with_font_tag, gtk_font_options, images);
+		
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
-
-		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
-			char *t1, *t2;
-
-			t1 = gaim_markup_strip_html(buf);
-			t2 = gaim_markup_strip_html(new_message);
-
-			conv->history = g_string_append(conv->history, t1);
-			conv->history = g_string_append(conv->history, t2);
-			conv->history = g_string_append(conv->history, "\n");
-
-			g_free(t1);
-			g_free(t2);
-		}
-		else {
-			char *t1, *t2;
-
-			t1 = html_logize(buf);
-			t2 = html_logize(new_message);
-
-			conv->history = g_string_append(conv->history, t1);
-			conv->history = g_string_append(conv->history, t2);
-			conv->history = g_string_append(conv->history, "\n");
-			conv->history = g_string_append(conv->history, log_str->str);
-			conv->history = g_string_append(conv->history, "<BR>\n");
-
-			g_free(t1);
-			g_free(t2);
-		}
-
-		if (gaim_conversation_is_logging(conv)) {
-			char *t1, *t2;
-			char nm[256];
-			const char *nm2;
-
-			nm2 = gaim_normalize(gaim_conversation_get_account(conv),
-					gaim_conversation_get_name(conv));
-
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-				g_snprintf(nm, sizeof(nm), "%s.chat", nm2);
-			else
-				strncpy(nm, nm2, sizeof(nm));
-
-			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
-				t1 = gaim_markup_strip_html(buf);
-				t2 = gaim_markup_strip_html(with_font_tag);
-			}
-			else {
-				t1 = html_logize(buf);
-				t2 = html_logize(with_font_tag);
-			}
-
-			fd = open_log_file(nm,
-				(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT));
-
-			if (fd) {
-				if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-					fprintf(fd, "%s%s\n", t1, t2);
-				else {
-					fprintf(fd, "%s%s%s<BR>\n", t1, t2, log_str->str);
-					g_string_free(log_str, TRUE);
-				}
-
-				fclose(fd);
-			}
-
-			g_free(t1);
-			g_free(t2);
-		}
-
-		g_free(with_font_tag);
-		g_free(new_message);
-	}
+		
+		/*conv->history = g_string_append(conv->history, t1);
+		conv->history = g_string_append(conv->history, t2);
+		conv->history = g_string_append(conv->history, "\n");
+			
+		g_free(t1);
+		g_free(t2); */
+	}	
+	
+	g_free(with_font_tag);
 
 	if(sml_attrib)
 		g_free(sml_attrib);
@@ -5048,7 +4947,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 
 					g_free(val);
 				}
-
+				
 				break;
 			}
 		}

@@ -155,12 +155,12 @@ gint check_idle(gpointer data)
 				   gaim_account_get_username(account), idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
-		system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
+		// LOG	system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	} else if (idle_time < IDLEMARK && gc->is_idle) {
 		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
 		serv_touch_idle(gc);
-		system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
+		// LOG	system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	}
 
 	return TRUE;

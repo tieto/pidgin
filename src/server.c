@@ -395,10 +395,9 @@ void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 						 account, state, message);
 	}
 
+	/* LOG system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON); */
 	/* New away message... Clear out the record of sent autoresponses */
 	flush_last_auto_responses(gc);
-
-	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
 }
 
 void serv_set_away_all(const char *message)
@@ -1121,20 +1120,18 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (!b->idle && idle) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
-		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	} else if (b->idle && !idle) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
 	gaim_blist_update_buddy_idle(b, idle);
 	gaim_blist_update_buddy_evil(b, evil);
-
+/* LOG
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
-
+*/
 	gaim_blist_update_buddy_status(b, type);
 
 	if (loggedin) {
@@ -1161,7 +1158,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 				}
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
-			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
+			// LOG system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
@@ -1187,7 +1184,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			}
 			serv_got_typing_stopped(gc, name); /* obviously not typing */
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
-			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
+			// LOG system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	}
 
@@ -1362,7 +1359,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 
 	gaim_conv_chat_set_id(chat, id);
 
-	/* TODO Move this to UI logging code! */
+	/* TODO Move this to UI logging code! LOG
 	if (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") ||
 		find_log_info(gaim_conversation_get_name(conv))) {
 
@@ -1388,6 +1385,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		}
 		free(filename);
 	}
+	*/
 
 	gaim_conv_window_show(gaim_conversation_get_window(conv));
 	gaim_conv_window_switch_conversation(gaim_conversation_get_window(conv),

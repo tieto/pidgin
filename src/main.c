@@ -501,7 +501,7 @@ gaim_gtk_ui_init(void)
 	gaim_privacy_set_ui_ops(gaim_gtk_privacy_get_ui_ops());
 	gaim_request_set_ui_ops(gaim_gtk_request_get_ui_ops());
 	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
-	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
+       	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
 
 	gaim_gtk_prefs_init();
 	gaim_gtk_blist_init();
@@ -517,7 +517,7 @@ gaim_gtk_quit(void)
 	/* XXX? */
 
 	/* captain's log, stardate... */
-	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+	//LOG system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 #ifdef USE_SM
 	/* unplug */
@@ -844,7 +844,6 @@ int main(int argc, char *argv[])
 	gaim_plugins_probe(NULL);
 
 	gaim_prefs_load();
-
 
 	/* we only read ~/.gaimrc (load_prefs()) if there is no accounts.xml
 	 * since prefs.xml existed alongside ~/.gaim in 0.64 */

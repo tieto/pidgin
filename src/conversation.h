@@ -116,6 +116,7 @@ typedef enum
 } GaimMessageFlags;
 
 #include "account.h"
+#include "log.h"
 #include "buddyicon.h"
 #include "server.h"
 
@@ -241,7 +242,9 @@ struct _GaimConversation
 	char *title;                /**< The window title.                  */
 
 	gboolean logging;           /**< The status of logging.             */
-
+	
+	GaimLog *log;               /**< This conversation's log            */
+	
 	GList *send_history;        /**< The send history.                  */
 	GString *history;           /**< The conversation history.          */
 
