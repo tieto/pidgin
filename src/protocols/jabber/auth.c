@@ -198,14 +198,14 @@ static GHashTable* parse_challenge(const char *challenge)
 
 static unsigned char*
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
-		const char *cnonce, const char *a2)
+		const char *cnonce, const char *a2, const char *realm)
 {
 	md5_state_t ctx;
 	md5_byte_t result[16];
 
 	char *x, *y, *a1, *ha1, *ha2, *kd, *z;
 
-	x = g_strdup_printf("%s:%s:%s", jid->node, jid->domain, passwd);
+	x = g_strdup_printf("%s:%s:%s", jid->node, realm, passwd);
 	md5_init(&ctx);
 	md5_append(&ctx, x, strlen(x));
 	md5_finish(&ctx, result);
@@ -280,12 +280,12 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 		a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
 		auth_resp = generate_response_value(js->user,
-				gaim_account_get_password(js->gc->account), nonce, cnonce, a2);
+				gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
 		g_free(a2);
 
 		a2 = g_strdup_printf(":xmpp/%s", realm);
 		js->expected_rspauth = generate_response_value(js->user,
-				gaim_account_get_password(js->gc->account), nonce, cnonce, a2);
+				gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
 		g_free(a2);
 
 
