@@ -1643,6 +1643,10 @@ static const char *msn_status_text(struct buddy *b) {
 	return NULL;
 }
 
+static const char *msn_tooltip_text(struct buddy *b) {
+	return g_strdup(msn_get_away_text(b->uc >> 1));
+}
+
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
@@ -2007,6 +2011,7 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->send_typing = msn_send_typing;
 	ret->away_states = msn_away_states;
 	ret->status_text = msn_status_text;
+	ret->tooltip_text = msn_tooltip_text;
 	ret->set_away = msn_set_away;
 	ret->set_idle = msn_set_idle;
 	ret->add_buddy = msn_add_buddy;

@@ -197,6 +197,11 @@ struct prpl
 	 */
 	const char *(* status_text)(struct buddy *buddy);
 	
+	/**
+	 * Gets a string to put in the buddy list tooltip.
+	 */
+	char *(* tooltip_text)(struct buddy *buddy);
+	
 	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)(struct gaim_connection *gc);
 	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */

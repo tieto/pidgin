@@ -1076,6 +1076,17 @@ static const char *yahoo_status_text(struct buddy *b)
 	}
 }
 
+static char *yahoo_tooltip_text(struct buddy *b)
+{
+	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
+	if (b->uc & UC_UNAVAILABLE && b->uc >> 2 != YAHOO_STATUS_IDLE) {
+	       	if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+			return g_strdup(yahoo_get_status_string(b->uc >> 2));
+		else
+			return g_strdup(g_hash_table_lookup(yd->hash, b->name));
+	}
+} 
+    
 static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
@@ -1347,6 +1358,7 @@ G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	ret->buddy_menu = yahoo_buddy_menu;
 	ret->list_icon = yahoo_list_icon;
 	ret->status_text = yahoo_status_text;
+	ret->tooltip_text = yahoo_tooltip_text;
 	ret->actions = yahoo_actions;
 	ret->send_im = yahoo_send_im;
 	ret->away_states = yahoo_away_states;

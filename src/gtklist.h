@@ -34,6 +34,10 @@ enum {
 	BLIST_COLUMNS
 	};
 
+typedef enum {
+	GAIM_STATUS_ICON_LARGE,
+	GAIM_STATUS_ICON_SMALL
+} GaimStatusIconSize;
 /**************************************************************************
  * @name Structures
  **************************************************************************/
@@ -49,6 +53,12 @@ struct gaim_gtk_buddy_list {
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
 			
 	GtkWidget *bbox;                /**< A Button Box. */
+
+	guint      timeout;              /**< The timeout for the tooltip. */
+	GdkRectangle rect;               /**< This is the bounding rectangle of the
+					       cell we're currently hovering over.  This is 
+					       used for tooltips. */
+	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 };
 
 /**

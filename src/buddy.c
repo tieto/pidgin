@@ -60,6 +60,8 @@ static struct gaim_gtk_buddy_list *gtkblist = NULL;
 static gboolean gaim_gtk_blist_obscured = FALSE;
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
+static char *gaim_get_tooltip_text(struct buddy *b);
+static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size);
 
 /***************************************************
  *              Callbacks                          *
@@ -336,6 +338,134 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 	}
 }
 
+static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, struct buddy *b)
+{
+	int x,y,scr_w,scr_h, w, h;
+	GtkStyle *style;
+	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(b, GAIM_STATUS_ICON_LARGE);
+	PangoLayout *layout;
+	char *tooltiptext = gaim_get_tooltip_text(b);
+
+	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
+	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
+	style = gtkblist->tipwindow->style;
+	
+	gtk_paint_flat_box (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+			    NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
+	
+	gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, pixbuf,
+			0, 0, 4, 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+
+	gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, TRUE,
+			  NULL, gtkblist->tipwindow, "tooltip", 38, 4, layout);
+
+	g_object_unref (pixbuf);
+	g_object_unref (layout);
+	g_free(tooltiptext);
+	return;
+}
+
+static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
+{
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GaimBlistNode *node;
+	char *tooltiptext;
+	GValue val = {0};
+
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->rect.x, gtkblist->rect.y, &path, NULL, NULL, NULL))
+		return FALSE;
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+	node = g_value_get_pointer(&val);
+	
+	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		int scr_w,scr_h, w, h, x, y;
+		PangoLayout *layout;
+		struct buddy *buddy = (struct buddy*)node;
+		char *tooltiptext = gaim_get_tooltip_text(buddy);
+		gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+		gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
+		gtk_window_set_policy(GTK_WINDOW(gtkblist->tipwindow), FALSE, FALSE, TRUE);
+		gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
+		g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event", 
+				 G_CALLBACK(gaim_gtk_blist_paint_tip), buddy);
+		gtk_widget_ensure_style (gtkblist->tipwindow);
+
+		layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
+		pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
+		scr_w = gdk_screen_width();
+		scr_h = gdk_screen_height();
+		pango_layout_get_size (layout, &w, &h);
+		w = PANGO_PIXELS(w) + 8;
+		h = PANGO_PIXELS(h) + 8;
+
+		/* 38 is the size of a large status icon plus 4 pixels padding on each side.
+		   I should #define this or something */
+		w = w + 38;
+		h = MAX(h, 38);
+
+		gdk_window_get_pointer(NULL, &x, &y, NULL);
+		if (GTK_WIDGET_NO_WINDOW(gtkblist->window))
+			y+=gtkblist->window->allocation.y;
+	
+		x -= ((w >> 1) + 4);
+		
+		if ((x + w) > scr_w)
+			x -= (x + w) - scr_w;
+		else if (x < 0)
+			x = 0;
+
+		if ((y + h + 4) > scr_h)
+			y = y - h;
+		else
+			y = y + 6;
+		g_object_unref (layout);
+		g_free(tooltiptext);
+		gtk_widget_set_size_request(gtkblist->tipwindow, w, h);
+		gtk_widget_set_uposition(gtkblist->tipwindow, x, y);
+		gtk_widget_show(gtkblist->tipwindow);
+	}
+	
+	gtk_tree_path_free(path);
+	return FALSE;
+}
+
+static void gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
+{
+	GtkTreePath *path;
+
+	if (gtkblist->timeout) {
+		if ((event->y > gtkblist->rect.y) && ((event->y - gtkblist->rect.height) < gtkblist->rect.y))
+			return;
+		/* We've left the cell.  Remove the timeout and create a new one below */
+		if (gtkblist->tipwindow) {
+			gtk_widget_destroy(gtkblist->tipwindow);
+			gtkblist->tipwindow = NULL;
+		}
+		
+		g_source_remove(gtkblist->timeout);
+	}
+	
+	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL);
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->rect);
+	if (path)
+		gtk_tree_path_free(path);
+	gtkblist->timeout = g_timeout_add(500, (GSourceFunc)gaim_gtk_blist_tooltip_timeout, tv);
+}
+
+static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
+{
+	if (gtkblist->timeout == 0) 
+		return;
+	if (gtkblist->tipwindow) {
+		gtk_widget_destroy(gtkblist->tipwindow);
+		gtkblist->tipwindow = NULL;
+	}
+	g_source_remove(gtkblist->timeout);
+	gtkblist->timeout = 0;
+}	
+
 /***************************************************
  *            Crap                                 *
  ***************************************************/
@@ -385,7 +515,54 @@ static GtkItemFactoryEntry blist_menu[] =
  * Private Utility functions                             *
  *********************************************************/
 
-static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b) 
+static char *gaim_get_tooltip_text(struct buddy *b)
+{
+	char *text = NULL;
+	struct prpl* prpl = find_prpl(b->account->protocol);
+	char *statustext = NULL;
+	char *tooltiptext = NULL;
+	char *warning = NULL, *idletime = NULL;
+
+	if (prpl->tooltip_text) {
+		char *tmp = prpl->tooltip_text(b);
+		if (tmp) {
+			statustext = g_markup_escape_text(tmp, strlen(tmp));
+			g_free(tmp);
+		}
+	}
+	
+	if (b->idle) {
+		int ihrs, imin;
+		time_t t;
+		time(&t);
+		ihrs = (t - b->idle) / 3600;
+		imin = ((t - b->idle) / 60) % 60;
+		if (ihrs)
+			idletime = g_strdup_printf(_("<b>Idle</b> %dh%02dm"), ihrs, imin);
+		else
+			idletime = g_strdup_printf(_("<b>Idle</b> %dm"), imin);
+	}
+	
+	if (b->evil > 0)
+		warning = g_strdup_printf(_("<b>Warned</b> %d%%"), b->evil);
+	
+	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
+			       "%s %s %s"  /* Alias */
+			       "%s %s %s"  /* Nickname */
+			       "%s %s"     /* Idle */
+			       "%s %s"     /* Warning */
+			       "%s %s",    /* Status */
+			       b->name,
+			       b->alias && b->alias[0] ? "\n" : "", b->alias && b->alias[0] ? _("<b>Alias</b> ") : "", b->alias ? b->alias : "", 
+			       b->server_alias ? "\n" : "", b->server_alias ? _("<b>Nickname</b> ") : "", b->server_alias ? b->server_alias : "", 
+			       b->idle ? "\n" : "", b->idle ? idletime : "", 
+			       b->evil ? "\n" : "", b->evil ? warning : "",
+			       statustext ? "\n" : "", statustext ? statustext : "");
+	return text;
+
+}
+
+static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size) 
 {
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *scale = NULL;
@@ -403,7 +580,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 	if (prpl->list_emblems)
 		prpl->list_emblems(b, &se, &sw, &nw, &ne);
 	
-	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
+	if (size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
 		sw = nw = ne = NULL; /* So that only the se icon will composite */
 	}
@@ -449,7 +626,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 		emblem = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
 		if (emblem) {
-			if (blist_options & OPT_BLIST_SHOW_ICONS)
+			if (size == GAIM_STATUS_ICON_LARGE)
 				gdk_pixbuf_composite (emblem,
 						      scale, 15, 15,
 						      15, 15,
@@ -550,8 +727,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	/* XXX Clean up this crap */
 
 	int ihrs, imin;
-	char *idletime = NULL, *warning = NULL;
-	const char *statustext = NULL;
+	char *idletime = NULL, *warning = NULL, *statustext = NULL;
        	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
@@ -570,7 +746,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	imin = ((t - b->idle) / 60) % 60;
 
 	if (prpl->status_text) {
-		char *tmp = prpl->status_text(b);
+		const char *tmp = prpl->status_text(b);
 		if (tmp)
 			statustext = g_markup_escape_text(tmp, strlen(tmp));
 	}
@@ -681,6 +857,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
 
+	/* Tooltips */
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "motion-notify-event", G_CALLBACK(gaim_gtk_blist_motion_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "leave-notify-event", G_CALLBACK(gaim_gtk_blist_leave_cb), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
@@ -903,7 +1082,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		char *mark;
 		char *warning = NULL, *idle = NULL;
 
-		status = gaim_gtk_blist_get_status_icon((struct buddy*)node);
+		status = gaim_gtk_blist_get_status_icon((struct buddy*)node, 
+							blist_options & OPT_BLIST_SHOW_ICONS ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL);
 		avatar = gaim_gtk_blist_get_buddy_icon((struct buddy*)node);
 		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node);
 
