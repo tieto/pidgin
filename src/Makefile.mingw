@@ -85,6 +85,7 @@ DLL_C_SRC =		about.c \
 			dialogs.c \
 			dnd-hints.c \
 			ft.c \
+			gaim-disclosure.c \
 			gaimrc.c \
 			gtkconv.c \
 			gtkcellrendererprogress.c \
