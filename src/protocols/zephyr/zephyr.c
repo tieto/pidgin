@@ -863,13 +863,13 @@ static void zephyr_inithosts(zephyr_account* zephyr)
 	if (gethostname(zephyr->ourhost, sizeof(zephyr->ourhost)) == -1) {
 		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
 		g_strlcpy(zephyr->ourhost, "unknown", sizeof(zephyr->ourhost));
-		g_strlcpy(zephyr->ourhostcanon, "unknown", sizeof(zephyr->ourhost));
+		g_strlcpy(zephyr->ourhostcanon, "unknown", sizeof(zephyr->ourhostcanon));
 		return;
 	}
 	
 	if (!(hent = gethostbyname(zephyr->ourhost))) {
 		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
-		g_strlcpy(zephyr->ourhostcanon, zephyr->ourhost, sizeof(zephyr->ourhost));
+		g_strlcpy(zephyr->ourhostcanon, zephyr->ourhost, sizeof(zephyr->ourhostcanon));
 		return;
 	}
 
