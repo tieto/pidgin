@@ -36,6 +36,7 @@
 #include "debug.h"
 #include "prpl.h"
 #include "notify.h"
+#include "util.h"
 #include "version.h"
 
 /* XXX */
@@ -374,7 +375,7 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 	GaimAccount *account;
 
 	switch (subtype) {
-		/*
+	/*
 	case CUI_USER_LIST:
 		break;
 	case CUI_USER_ADD:
@@ -383,7 +384,8 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 		break;
 	case CUI_USER_MODIFY:
 		break;
-		*/
+	*/
+
 	case CUI_USER_SIGNON:
 		if (!data)
 			return;
@@ -393,23 +395,26 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 			gaim_account_connect(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
-#if 0 /* STATUS */
-       case CUI_USER_AWAY:
-                {
-                    GSList* l;
-                    const char* default_away_name = gaim_prefs_get_string("/core/away/default_message");
 
-                    for(l = away_messages; l; l = l->next) {
-                        if(!strcmp(default_away_name, ((struct away_message *)l->data)->name)) {
-                            do_away_message(NULL, l->data);
-                            break;
-                        }
-                    }
-                }
-                break;
-       case CUI_USER_BACK:
-                do_im_back(NULL, NULL);
-                break;
+#if 0 /* STATUS */
+	case CUI_USER_AWAY:
+		{
+			GSList* l;
+			const char* default_away_name = gaim_prefs_get_string("/core/away/default_message");
+
+			for (l = away_messages; l; l = l->next) {
+				if (!strcmp(default_away_name, ((struct away_message *)l->data)->name)) {
+					do_away_message(NULL, l->data);
+					break;
+				}
+			}
+		}
+		break;
+
+	case CUI_USER_BACK:
+		do_im_back(NULL, NULL);
+		break;
+
 #endif /* STATUS */
 	default:
 		gaim_debug_warning("cui", "Unhandled user subtype %d\n", subtype);
@@ -492,7 +497,6 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 {
 	const char *resp;
 	char *send;
-
 	GList *c = gaim_connections_get_all();
 	GaimConnection *gc;
 	GaimAccount *account;
@@ -504,51 +508,47 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 		if (!data)
 			return;
 		{
-			guint id;
-			GaimConnection *gc;
    			GaimConversation *conv;
-			guint tlen,len,len2,quiet;
+			guint tlen, len, len2, quiet;
 			char *who, *msg;
 			char *tmp, *from, *proto;
-			gint flags;
 			int pos = 0;
-			GList *c = gaim_connections_get_all();
 
 			gaim_debug_info("cui", "Got `gaim-remote send` packet\n",data);
 			gaim_debug_info("cui", "g-r>%s;\n",data);
 
 			tmp = g_strndup(data + pos, 4);
-			tlen=atoi(tmp);
-			pos+=4;
+			tlen = atoi(tmp);
+			pos += 4;
 
-			who=g_strndup(data+pos, tlen);
-			pos+=tlen;
-
-			tmp = g_strndup(data + pos, 4);
-			tlen=atoi(tmp); len=tlen; /*length for 'from' compare*/
-			pos+=4;
-
-			from=g_strndup(data+pos, tlen);
-			pos+=tlen;
+			who = g_strndup(data+pos, tlen);
+			pos += tlen;
 
 			tmp = g_strndup(data + pos, 4);
-			tlen=atoi(tmp); len2=tlen; /*length for 'proto' compare*/
-			pos+=4;
+			tlen = atoi(tmp); len=tlen; /* length for 'from' compare */
+			pos += 4;
 
-			proto=g_strndup(data+pos, tlen);
-			pos+=tlen;
-			
+			from = g_strndup(data+pos, tlen);
+			pos += tlen;
+
 			tmp = g_strndup(data + pos, 4);
-			tlen=atoi(tmp);
-			pos+=4;
+			tlen = atoi(tmp); len2=tlen; /* length for 'proto' compare */
+			pos += 4;
 
-			msg=g_strndup(data+pos, tlen);
-			pos+=tlen;
+			proto = g_strndup(data+pos, tlen);
+			pos += tlen;
+
+			tmp = g_strndup(data + pos, 4);
+			tlen = atoi(tmp);
+			pos += 4;
+
+			msg = g_strndup(data+pos, tlen);
+			pos += tlen;
 
 			tmp = g_strndup(data + pos, 1);
-			quiet=atoi(tmp); /*quiet flag - not in use yet*/
+			quiet = atoi(tmp); /* quiet flag - not in use yet */
 
-			/*find acct*/
+			/* find acct */
 	   		while (c) {
 				gc = c->data;
 				account=gaim_connection_get_account(gc);
@@ -558,16 +558,16 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 			}
 			if (!gc)
 				return;
-			/*end acct find*/
+			/* end acct find */
 
-			/*gaim_debug_info("cui", "g-r>To: %s; From: %s; Protocol: %s; Message: %s; Quiet: %d\n",who,from,proto,msg,quiet);*/
+			/* gaim_debug_info("cui", "g-r>To: %s; From: %s; Protocol: %s; Message: %s; Quiet: %d\n",who,from,proto,msg,quiet); */
    			conv = gaim_conversation_new(GAIM_CONV_IM, gaim_connection_get_account(gc), who);
    			gaim_conv_im_send(GAIM_CONV_IM(conv), msg);
 
-			/*likely to be used for quiet:
+			/* likely to be used for quiet:
 			serv_send_im(gc, who, msg, -1, 0);
 			*/
-			
+
 			g_free(who);
 			g_free(msg);
 			g_free(from);
@@ -583,6 +583,7 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 		g_free(send);
 		/* report error */
 		break;
+
 	default:
 		gaim_debug_warning("cui", "Unhandled remote subtype %d\n", subtype);
 		break;
@@ -593,13 +594,10 @@ static gboolean
 UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 {
 	struct UI *ui = data;
-
 	gchar type;
 	gchar subtype;
 	gint len;
-
 	GError *error = NULL;
-
 	gchar *in;
 
 	/* no byte order worries! this'll change if we go to TCP */
@@ -685,10 +683,10 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 			chat_handler(ui, subtype, in);
 			break;
 			*/   
-	        case CUI_TYPE_REMOTE:
+		case CUI_TYPE_REMOTE:
 			remote_handler(ui, subtype, in, len);
 			break; 
-        default:
+		default:
 			gaim_debug_warning("cui", "Unhandled type %d\n", type);
 			break;
 	}
@@ -835,9 +833,9 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+_init_plugin(GaimPlugin *plugin)
 {
 }
 
 /* This may be horribly wrong. Oh the mayhem! */
-GAIM_INIT_PLUGIN(remote, __init_plugin, info)
+GAIM_INIT_PLUGIN(remote, _init_plugin, info)

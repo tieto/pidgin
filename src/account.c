@@ -520,6 +520,7 @@ gaim_account_set_status_types(GaimAccount *account, GList *status_types)
 {
 	g_return_if_fail(account != NULL);
 
+	/* Old with the old... */
 	if (account->status_types != NULL)
 	{
 		GList *l;
@@ -530,6 +531,7 @@ gaim_account_set_status_types(GaimAccount *account, GList *status_types)
 		g_list_free(account->status_types);
 	}
 
+	/* In with the new... */
 	account->status_types = status_types;
 }
 

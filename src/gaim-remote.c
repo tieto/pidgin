@@ -27,15 +27,15 @@
 
 #include <gaim-remote/remote.h>
 
-/*To be implemented:
-	     "       info                     Show information about connected accounts\n"
-	     "       list                     Print buddy list\n"
-	     "       ison                     Show presence state of your buddy\n"
-	     "       convo                    Open a new conversation window\n"
-	     "       add                      Add buddy to buddy list\n"
-	     "       remove                   Remove buddy from list\n"
-	     "       -q, --quiet              Send message without showing a conversation\n"
-	     "                                window\n"
+/* To be implemented:
+	"       info                     Show information about connected accounts\n"
+	"       list                     Print buddy list\n"
+	"       ison                     Show presence state of your buddy\n"
+	"       convo                    Open a new conversation window\n"
+	"       add                      Add buddy to buddy list\n"
+	"       remove                   Remove buddy from list\n"
+	"       -q, --quiet              Send message without showing a conversation\n"
+	"                                window\n"
 */
 
 static struct option longopts[] = {
@@ -216,7 +216,7 @@ static int
 send_command_send() {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
-	char temp[10003]; /*TODO: Future implementation should send packets instead */
+	char temp[10003]; /* TODO: Future implementation should send packets instead */
 
 	fd = gaim_remote_session_connect(0);
 	if (fd < 0) {
@@ -225,16 +225,21 @@ send_command_send() {
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_SEND);
 
-	/*Format is as follows:
-	 *Each string has a 4 character 'header' containing the length of the string
-	 *The strings are: To, From, Protocol name, Message
-	 *Following the message is the quiet flag, expressed in a single int (0/1)
-	 *Because the header is 4 characters long, there is a 9999 char limit on any
-	 *given string, though none of these strings should be exceeding this.
-	 *-JBS 
+	/*
+	 * Format is as follows:
+	 * Each string has a 4 character 'header' containing the length of the string
+	 * The strings are: To, From, Protocol name, Message
+	 * Following the message is the quiet flag, expressed in a single int (0/1)
+	 * Because the header is 4 characters long, there is a 9999 char limit on any
+	 * given string, though none of these strings should be exceeding this.
+	 * -JBS 
 	 */
 
-	if(opts.to && *opts.to && opts.from && *opts.from && opts.protocol && *opts.protocol && opts.message && *opts.message  && (strlen(opts.to) <10000) && (strlen(opts.from) <10000) && (strlen(opts.protocol) <20) && (strlen(opts.message) <10000) ){ 
+	if (opts.to && *opts.to && opts.from && *opts.from &&
+		opts.protocol && *opts.protocol && opts.message && *opts.message  &&
+		(strlen(opts.to) < 10000) && (strlen(opts.from) < 10000) &&
+		(strlen(opts.protocol) < 20) && (strlen(opts.message) < 10000) )
+	{
 		sprintf(temp, "%04d%s", strlen(opts.to), opts.to);
 		gaim_remote_packet_append_string(p, temp);
 		sprintf(temp, "%04d%s", strlen(opts.from), opts.from);
@@ -243,20 +248,19 @@ send_command_send() {
 		gaim_remote_packet_append_string(p, temp);
 		sprintf(temp, "%04d%s", strlen(opts.message), opts.message);
 		gaim_remote_packet_append_string(p, temp);
-		sprintf(temp, "%d", 0);/*quiet flag - off for now*/
+		sprintf(temp, "%d", 0); /* quiet flag - off for now */
 		gaim_remote_packet_append_string(p, temp);
 
 		gaim_remote_session_send_packet (fd, p);
 		close(fd);
 		gaim_remote_packet_free(p);
 		return 0;
-	}else{
+	} else {
 		message(_("Insufficient arguments (-t, -f, -p, & -m are all required) or arguments greater than 9999 chars\n"), 2);
 		close(fd);
 		gaim_remote_packet_free(p);
  		return 1;
  	}
-
 }
 
 static void
