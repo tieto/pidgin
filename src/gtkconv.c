@@ -895,20 +895,6 @@ menu_sendfile_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-menu_sendfile_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	GaimConvWindow *win = (GaimConvWindow *)data;
-	GaimConversation *conv;
-	GaimConnection *gc;
-
-	conv = gaim_conv_window_get_active_conversation(win);
-
-	gc = gaim_conversation_get_gc(conv);
-
-	gaim_prpl_ask_send_file (gc, gaim_conversation_get_name (conv));
-}
-
-static void
 menu_warn_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;

@@ -341,6 +341,35 @@ static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 	g_value_unset(&val);
 }
 
+static void disconnect_signed_on_cb(GaimConnection *gc, void *data)
+{
+	if (disconnect_window) {
+		GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter_first(model, &iter)) {
+			GaimAccount *account = NULL;
+			do {
+				GValue val = { 0, };
+				gtk_tree_model_get_value(model, &iter, 4, &val);
+				account = g_value_get_pointer(&val);
+				g_value_unset(&val);
+				if (account == gaim_connection_get_account(gc)) {
+					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+
+					if (!gtk_tree_model_get_iter_first(model, &iter))
+						disconnect_window_hide();
+					else {
+						GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(disconnect_window->treeview));
+						gtk_tree_selection_select_iter(sel, &iter);
+						if (!gtk_tree_model_iter_next(model, &iter))
+							gtk_widget_hide_all(disconnect_window->sw);
+					}
+					break;
+				}
+			} while (gtk_tree_model_iter_next(model, &iter));
+		}
+	}
+}
 
 static void
 gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
@@ -423,6 +452,10 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		gtk_widget_set_size_request(disconnect_window->treeview, -1, 96);
 		g_signal_connect (G_OBJECT (sel), "changed",
 				  G_CALLBACK (disconnect_tree_cb), list_store);
+
+		gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+				disconnect_window, GAIM_CALLBACK(disconnect_signed_on_cb), NULL);
+
 	} else
 		list_store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview)));
 
