@@ -67,6 +67,33 @@ void UI_broadcast(guchar *data, gint len)
 	}
 }
 
+static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
+{
+	switch (subtype) {
+		case CUI_META_LIST:
+			break;
+		case CUI_META_QUIT:
+			while (uis) {
+				ui = uis->data;
+				uis = g_slist_remove(uis, ui);
+				g_io_channel_close(ui->channel);
+				g_source_remove(ui->inpa);
+				g_free(ui);
+			}
+			do_quit();
+			break;
+		case CUI_META_DETACH:
+			uis = g_slist_remove(uis, ui);
+			g_io_channel_close(ui->channel);
+			g_source_remove(ui->inpa);
+			g_free(ui);
+			break;
+		default:
+			debug_printf("unhandled meta subtype %d\n", subtype);
+			break;
+	}
+}
+
 static gint gaim_recv(GIOChannel *source, void *buf, gint len)
 {
 	gint total = 0;
@@ -132,27 +159,27 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	}
 
 	switch (type) {
-			/*
 		case CUI_TYPE_META:
-			meta_handler(ui, in);
+			meta_handler(ui, subtype, in);
 			break;
+			/*
 		case CUI_TYPE_PLUGIN:
-			plugin_handler(ui, in);
+			plugin_handler(ui, subtype, in);
 			break;
 		case CUI_TYPE_USER:
-			user_handler(ui, in);
+			user_handler(ui, subtype, in);
 			break;
 		case CUI_TYPE_CONN:
-			conn_handler(ui, in);
+			conn_handler(ui, subtype, in);
 			break;
 		case CUI_TYPE_BUDDY:
-			buddy_handler(ui, in);
+			buddy_handler(ui, subtype, in);
 			break;
 		case CUI_TYPE_MESSAGE:
-			message_handler(ui, in);
+			message_handler(ui, subtype, in);
 			break;
 		case CUI_TYPE_CHAT:
-			chat_handler(ui, in);
+			chat_handler(ui, subtype, in);
 			break;
 			*/
 		default:
