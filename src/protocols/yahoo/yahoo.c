@@ -746,6 +746,31 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_slist_free(list);
 }
 
+static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *prim, *me = NULL, *msg = NULL;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		if (pair->key == 5)
+			me = pair->value;
+		if (pair->key == 14)
+			msg = pair->value;
+
+		l = l->next;
+	}
+
+	if (!msg)
+		return;
+
+	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
+	                       me?me:gaim_connection_get_display_name(gc));
+	gaim_notify_info(NULL, NULL, prim, msg);
+	g_free(prim);
+}
+
 static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	char *id = NULL;
 	char *who = NULL;
@@ -1558,27 +1583,42 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	int err = 0;
 	char *msg;
+	char *url = NULL;
+	char *fullmsg;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
 		if (pair->key == 66)
 			err = strtol(pair->value, NULL, 10);
+		if (pair->key == 20)
+			url = pair->value;
 
 		l = l->next;
 	}
 
 	switch (err) {
 	case 3:
-		msg = _("Invalid username.");
+		msg = g_strdup(_("Invalid username."));
 		break;
 	case 13:
-		msg = _("Incorrect password.");
+		msg = g_strdup(_("Incorrect password."));
+		break;
+	case 14:
+		msg = g_strdup(_("Your account is locked, please log in to the yahoo website."));
 		break;
 	default:
-		msg = _("Unknown error.");
+		msg = g_strdup_printf(_("Unknown error number %d."), err);
 	}
-	gaim_connection_error(gc, msg);
+
+	if (url)
+		fullmsg = g_strdup_printf("%s\n%s", msg, url);
+	else
+		fullmsg = g_strdup(msg);
+
+	gaim_connection_error(gc, fullmsg);
+	g_free(msg);
+	g_free(fullmsg);
 }
 
 static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -1653,6 +1693,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_CHATMSG:
 		yahoo_process_message(gc, pkt);
 		break;
+	case YAHOO_SERVICE_SYSMESSAGE:
+		yahoo_process_sysmessage(gc, pkt);
+			break;
 	case YAHOO_SERVICE_NEWMAIL:
 		yahoo_process_mail(gc, pkt);
 		break;
