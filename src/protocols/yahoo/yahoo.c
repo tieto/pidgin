@@ -524,7 +524,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 	char *from = NULL;
 	time_t tm = time(NULL);
 	GSList *l = pkt->hash;
-
+	
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 4)
@@ -536,7 +536,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 		l = l->next;
 	}
 
-	if (pkt->status <= 1) {
+	if (pkt->status <= 1 || pkt->status == 5) {
 		char *m;
 		int i, j;
 		strip_linefeed(msg);
@@ -715,8 +715,8 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		pkt = yahoo_packet_new(0, 0, 0);
 
 		pkt->service = yahoo_get16(yd->rxqueue + pos); pos += 2;
-		debug_printf("Yahoo Service: 0x%02x Status: %d\n", pkt->service, pkt->status);
 		pkt->status = yahoo_get32(yd->rxqueue + pos); pos += 4;
+		debug_printf("Yahoo Service: 0x%02x Status: %d\n", pkt->service, pkt->status);
 		pkt->id = yahoo_get32(yd->rxqueue + pos); pos += 4;
 
 		yahoo_packet_read(pkt, yd->rxqueue + pos, pktlen);
