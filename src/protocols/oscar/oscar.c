@@ -1532,14 +1532,15 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 
 /* Hrmph. I don't know how to make this look better. --mid */
 static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
-	va_list ap;
-	struct aim_redirect_data *redir;
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	struct gaim_account *account = gc->account;
 	aim_conn_t *tstconn;
 	int i;
 	char *host;
 	int port;
+	va_list ap;
+	struct aim_redirect_data *redir;
 
 	port = account->proto_opt[USEROPT_AUTHPORT][0] ?
 		atoi(account->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
@@ -1638,6 +1639,11 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	case 0x0010: { /* icon */
+		if (od->icopa > 0)
+			gaim_input_remove(od->icopa);
+		while ((tstconn = aim_conn_findbygroup(sess, 0x0010)))
+			aim_conn_kill(sess, &tstconn);
+
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON, NULL))) {
 			debug_printf("unable to connect to icon server\n");
 			g_free(host);
