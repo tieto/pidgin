@@ -5,13 +5,20 @@
 
 PACKAGE = gaim
 
+##
+## PATHS
+##
 
 srcdir = .
-top_srcdir = ..
+GAIM_TOP = ..
 GAIM_INSTALL_DIR = ../win32-install-dir
 LOCALEDIR = $(GAIM_INSTALL_DIR)/locale
-CC = gcc
 GTK_BIN = ../../win32-dev/gtk_2_0/bin
+
+##
+## TOOLS
+##
+
 GMSGFMT = $(GTK_BIN)/msgfmt
 MSGFMT = $(GTK_BIN)/msgfmt
 XGETTEXT = $(GTK_BIN)/xgettext
@@ -84,7 +91,7 @@ POTFILES = \
 all: $(CATALOGS)
 
 $(PACKAGE).pot: $(POTFILES) POTFILES.in
-	$(XGETTEXT) --default-domain=$(PACKAGE) --directory=$(top_srcdir) \
+	$(XGETTEXT) --default-domain=$(PACKAGE) --directory=$(GAIM_TOP) \
 	  --add-comments --keyword=_ --keyword=N_ \
 	  --files-from=$(srcdir)/POTFILES.in \
 	&& test ! -f $(PACKAGE).po \
