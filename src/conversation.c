@@ -774,6 +774,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 					}
 				}
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+				return TRUE;
 			}
 		}
 	} else if ((event->keyval == GDK_Tab) && c->is_chat && (chat_options & OPT_CHAT_TAB_COMPLETE)) {
