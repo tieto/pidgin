@@ -419,7 +419,7 @@ static void cope_with_gdb_brokenness()
 static void
 gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboolean show_debug)
 {
-	const int zero = 0;
+	const size_t zero = 0;
 	int rc;
 #if HAVE_GETADDRINFO
 	struct addrinfo hints, *res, *tmp;
