@@ -1,4 +1,4 @@
-*
+/*
  * System tray icon (aka docklet) plugin for Gaim
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
