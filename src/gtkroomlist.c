@@ -356,6 +356,9 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	dialog->account_widget = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
 	                         G_CALLBACK(dialog_select_account_cb), account_filter_func, dialog);
 
+	if (!dialog->account) /* this is normally null, and we normally don't care what the first selected item is */
+		dialog->account = gaim_gtk_account_option_menu_get_selected(dialog->account_widget);
+
 	gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
 	gtk_widget_show(dialog->account_widget);
