@@ -126,16 +126,6 @@
 #include "win32dep.h"
 #endif
 
-/* stupid, stupid, stupid */
-/* This is a workaround for the fact that G_GINT64_MODIFIER and
- * G_GUINT64_FORMAT are wrong, even in Glib >= 2.4 */
-#ifdef _WIN32
-#	undef  G_GINT64_MODIFIER
-#	define G_GINT64_MODIFIER "ll"
-#	undef  G_GUINT64_FORMAT
-#	define G_GUINT64_FORMAT "llu"
-#endif
-
 /* ugly ugly ugly */
 /* This is a workaround for the fact that G_GINT64_MODIFIER and G_GSIZE_FORMAT
  * are only defined in Glib >= 2.4 */
