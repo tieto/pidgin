@@ -26,7 +26,6 @@ EXTRA_DIST =	about_small.xpm			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
 		farted.xpm			\
-		fontface.xpm			\
 		fontface2.xpm			\
 		gaim.png			\
 		gaim_error.png			\
@@ -73,7 +72,6 @@ EXTRA_DIST =	about_small.xpm			\
 		signon.png \
 		smile.xpm			\
 		smile8.xpm			\
-		smile_icon.xpm			\
 		status-away.xpm			\
 		status-game.xpm			\
 		status-here.xpm			\

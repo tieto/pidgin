@@ -50,9 +50,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/fontface.xpm"
-#include "pixmaps/smile_icon.xpm"
-#include "pixmaps/search_small.xpm"
 #include "pixmaps/save_small.xpm"
 
 #include "pixmaps/luke03.xpm"
