@@ -685,7 +685,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 	data->entries = NULL;
 
-	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info == NULL)
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 		list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
@@ -774,7 +774,7 @@ joinchat_select_account_cb(GObject *w, GaimAccount *account,
 }
 
 static gboolean
-joinchat_account_filter_func(GaimAccount *account)
+chat_account_filter_func(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -793,7 +793,7 @@ gaim_gtk_blist_joinchat_is_showable()
 	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
 
-		if (joinchat_account_filter_func(gaim_connection_get_account(gc)))
+		if (chat_account_filter_func(gaim_connection_get_account(gc)))
 			return TRUE;
 	}
 
@@ -854,7 +854,7 @@ gaim_gtk_blist_joinchat_show(void)
 
 	data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
 			G_CALLBACK(joinchat_select_account_cb),
-			joinchat_account_filter_func, data);
+			chat_account_filter_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label),
 								  GTK_WIDGET(data->account_menu));
@@ -4380,15 +4380,6 @@ add_chat_select_account_cb(GObject *w, GaimAccount *account,
 	}
 }
 
-/* XXX this does exactly the same thing as joinchat_account_filter_func() */
-static gboolean
-add_chat_check_account_func(GaimAccount *account)
-{
-	GaimConnection *gc = gaim_account_get_connection(account);
-
-	return (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL);
-}
-
 void
 gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 								const char *alias, const char *name)
@@ -4481,7 +4472,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 
 	data->account_menu = gaim_gtk_account_option_menu_new(account, FALSE,
 			G_CALLBACK(add_chat_select_account_cb),
-			add_chat_check_account_func, data);
+			chat_account_filter_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 	gaim_set_accessible_label (data->account_menu, label);
 
@@ -5095,7 +5086,7 @@ gaim_gtk_blist_update_protocol_actions(void)
 	/* Clear the old Account Actions menu */
 	for (l = gtk_container_get_children(GTK_CONTAINER(protomenu)); l; l = l->next) {
 		GaimPluginAction *action;
-		
+
 		menuitem = l->data;
 		action = (GaimPluginAction *) g_object_get_data(G_OBJECT(menuitem),
 				"plugin_action");
