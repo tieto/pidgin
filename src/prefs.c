@@ -640,6 +640,7 @@ GtkWidget *im_page() {
 
 	vbox = make_frame (ret, _("Display"));
 	gaim_button(_("Show _logins in window"), &im_options, OPT_IM_LOGON, vbox);
+	gaim_button(_("Show a_liases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox);
 
 	vbox = make_frame (ret, _("Typing Notification"));
 	typingbutton = gaim_button(_("Notify buddies that you are _typing to them"), &misc_options,
@@ -705,7 +706,7 @@ GtkWidget *tab_page() {
 		      _("Right"), OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gaim_button(_("Show all _instant messages in one tabbed\nwindow"), &im_options, OPT_IM_ONE_WINDOW, vbox);
-	gaim_button(_("Show a_liases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox);
+
 
 	vbox = make_frame (ret, _("Chat Tabs"));
 	dd = gaim_dropdown(vbox, _("Tab _placement:"), &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
