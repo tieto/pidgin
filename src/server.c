@@ -683,6 +683,11 @@ void serv_got_im(char *name, char *message, int away)
 	g_free(nname);
 	
         cnv = find_conversation(name);
+
+	if (general_options & OPT_GEN_SEND_LINKS) {
+		linkify_text(message);
+	}
+	
 	if (away) away = WFLAG_AUTO;
 
 	if (awaymessage != NULL) {

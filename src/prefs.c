@@ -393,7 +393,7 @@ void build_prefs()
 	gaim_button(_("Strip HTML from log files"), &general_options, OPT_GEN_STRIP_HTML, genbox);
 	gaim_button(_("Raise windows when message recieved"), &general_options, OPT_GEN_POPUP_WINDOWS, genbox);
 	gaim_button(_("Raise chat windows when people speak"), &general_options, OPT_GEN_POPUP_CHAT, genbox);
-        gaim_button(_("Send URLs as links"), &general_options, OPT_GEN_SEND_LINKS, genbox);
+        gaim_button(_("Show URLs as links"), &general_options, OPT_GEN_SEND_LINKS, genbox);
 	gaim_button(_("Show Lag-O-Meter"), &general_options, OPT_GEN_SHOW_LAGMETER, genbox);
         gaim_button(_("Save some window size/positions"), &general_options, OPT_GEN_SAVED_WINDOWS, genbox);
         gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, genbox);
