@@ -46,12 +46,29 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
+static char *irc_name() {
+	return "IRC";
+}
+
+char *name() {
+	return "IRC";
+}
+
+char *description() {
+	return "Allows gaim to use the IRC protocol";
+}
+
+void irc_login(struct aim_user *user) {
+	
+}
+
+
 struct prpl *irc_init() {
 	struct prpl *ret = g_new0(struct prpl, 1);
 
-	ret->protocol = NULL;
-	ret->name = NULL;
-	ret->login = NULL;
+	ret->protocol = PROTO_IRC;
+	ret->name = irc_name;
+	ret->login = irc_login;
 	ret->close = NULL;
 	ret->send_im = NULL;
 	ret->set_info = NULL;
