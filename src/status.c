@@ -1169,8 +1169,6 @@ gaim_presence_destroy(GaimPresence *presence)
 	{
 		GaimStatusBuddyKey key;
 
-		presence->u.buddy.ref_count--;
-
 		if(presence->u.buddy.ref_count != 0)
 			return;
 
@@ -1196,6 +1194,11 @@ gaim_presence_destroy(GaimPresence *presence)
 	g_free(presence);
 }
 
+/*
+ * TODO: Maybe we should cal gaim_presence_destroy() after we
+ *       decrement the ref count?  I don't see why we should
+ *       make other places do it manually when we can do it here.
+ */
 void
 gaim_presence_remove_buddy(GaimPresence *presence, GaimBuddy *buddy)
 {
