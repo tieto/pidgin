@@ -1759,6 +1759,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gaim_gtk_set_state_lock(FALSE);
 
 	gtk_widget_grab_focus(gtkconv->entry);
+
+	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
+			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }
 
 /**************************************************************************
@@ -3267,7 +3270,6 @@ gaim_gtk_new_window(struct gaim_window *win)
 	gtk_window_set_resizable(GTK_WINDOW(gtkwin->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
 	gtk_widget_realize(gtkwin->window);
-	gtk_window_set_title(GTK_WINDOW(gtkwin->window), _("Conversations"));
 
 	g_signal_connect(G_OBJECT(gtkwin->window), "delete_event",
 					 G_CALLBACK(close_win_cb), win);
@@ -4173,10 +4175,17 @@ static void
 gaim_gtkconv_set_title(struct gaim_conversation *conv, const char *title)
 {
 	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_window *win;
+	struct gaim_gtk_window *gtkwin;
 
+	win = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+
+	if(conv == gaim_window_get_active_conversation(win))
+		gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
 }
 
 static void
