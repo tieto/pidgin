@@ -567,6 +567,15 @@ gaim_request_field_choice_get_value(const GaimRequestField *field)
 	return field->u.choice.value;
 }
 
+GList *
+gaim_request_field_choice_get_labels(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE, NULL);
+
+	return field->u.choice->labels;
+}
+
 /* -- */
 
 void *

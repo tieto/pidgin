@@ -97,6 +97,8 @@ typedef struct
 
 	} u;
 
+	void *ui_data;
+
 } GaimRequestField;
 
 /**
@@ -610,6 +612,15 @@ int gaim_request_field_choice_get_default_value(const GaimRequestField *field);
  * @return The value.
  */
 int gaim_request_field_choice_get_value(const GaimRequestField *field);
+
+/**
+ * Returns a list of labels in a choice field.
+ *
+ * @param field The field.
+ *
+ * @return The list of labels.
+ */
+GList *gaim_request_field_choice_get_labels(const GaimRequestField *field);
 
 /*@}*/
 
