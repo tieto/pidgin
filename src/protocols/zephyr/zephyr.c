@@ -195,7 +195,7 @@ static char *zephyr_to_html(char *message)
 			char *buf;
 			int end;
 			for (end=1; (cnt+end) <= len &&
-					!IS_OPENER(message[cnt+end]); end++);
+					!IS_OPENER(message[cnt+end]) && !IS_CLOSER(message[cnt+end]); end++);
 			buf = g_new0(char, end);
 			if (end) {
 				g_snprintf(buf, end, "%s", message+cnt+1);
@@ -243,7 +243,17 @@ static char *zephyr_to_html(char *message)
 				if ((cnt+end) > len) {
 					g_string_append_c(frames->text, '@');
 					cnt++;
-				} else {
+				} else if (IS_CLOSER(message[cnt+end])) {
+                                        /* We have @chars..closer . This is 
+                                           merely a sequence of chars that isn't a formatting tag
+                                        */
+                                        int tmp=cnt;
+                                        while (tmp<=cnt+end) {
+                                                g_string_append_c(frames->text,message[tmp]);
+                                                tmp++;
+                                        }
+                                        cnt+=end+1;
+                                } else {
 					/* unrecognized thingie. act like it's not there, but we
 					 * still need to take care of the corresponding closer,
 					 * make a frame that does nothing. */
