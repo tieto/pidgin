@@ -89,6 +89,13 @@ typedef struct _ResourceRecord {
 	void *rdata;
 } ResourceRecord;
 
+typedef struct _ResourceRecordTXTRDataNode {
+	char *name;
+	char *value;
+} ResourceRecordTXTRDataNode;
+
+typedef GSList ResourceRecordTXTRData;
+
 typedef GHashTable ResourceRecordTXT;
 
 typedef struct _ResourceRecordSRV {
@@ -146,6 +153,7 @@ int mdns_send_dns(int fd, const DNSPacket *dns);
 int mdns_query(int fd, const char *domain);
 
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
+int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
 
 /**
  * Read a UDP packet from the given file descriptor and parse it

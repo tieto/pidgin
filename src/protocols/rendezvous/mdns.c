@@ -135,6 +135,23 @@ mdns_send_raw(int fd, unsigned int datalen, unsigned char *data)
 /***************************************/
 
 static int
+mdns_getlength_RR_txt(void *rdata)
+{
+	GSList *cur;
+	ResourceRecordTXTRDataNode *node;
+	int rdlength = 0;
+
+	for (cur = (GSList *)rdata; cur != NULL; cur = cur->next) {
+		node = (ResourceRecordTXTRDataNode *)cur->data;
+		rdlength += 1 + strlen(node->name);
+		if (node->value != NULL)
+			rdlength += 1 + strlen(node->value);
+	}
+
+	return rdlength;
+}
+
+static int
 mdns_getlength_RR(const ResourceRecord *rr)
 {
 	int ret = 0;
@@ -145,6 +162,10 @@ mdns_getlength_RR(const ResourceRecord *rr)
 	switch (rr->type) {
 		case RENDEZVOUS_RRTYPE_PTR:
 			ret += strlen((const char *)rr->rdata) + 2;
+		break;
+
+		case RENDEZVOUS_RRTYPE_TXT:
+			ret += mdns_getlength_RR_txt(rr->rdata);
 		break;
 	}
 
@@ -180,12 +201,36 @@ mdns_put_RR(char *data, int datalen, int offset, const ResourceRecord *rr)
 	i += util_put16(&data[offset + i], rr->type);
 	i += util_put16(&data[offset + i], rr->class);
 	i += util_put32(&data[offset + i], rr->ttl);
-	i += util_put16(&data[offset + i], rr->rdlength);
 
 	switch (rr->type) {
 		case RENDEZVOUS_RRTYPE_PTR:
+			i += util_put16(&data[offset + i], strlen((const char *)rr->rdata) + 2);
 			i += mdns_put_name(data, datalen, offset + i, (const char *)rr->rdata);
 		break;
+
+		case RENDEZVOUS_RRTYPE_TXT: {
+			GSList *cur;
+			ResourceRecordTXTRDataNode *node;
+			int rdlength = mdns_getlength_RR_txt(rr->rdata);
+			int mylength;
+
+			i += util_put16(&data[offset + i], rdlength);
+			for (cur = (GSList *)rr->rdata; cur != NULL; cur = cur->next) {
+				node = (ResourceRecordTXTRDataNode *)cur->data;
+				mylength = 1 + strlen(node->name);
+				if (node->value)
+					mylength += 1 + strlen(node->value);
+				i += util_put8(&data[offset + i], mylength - 1);
+				memcpy(&data[offset + i], node->name, strlen(node->name));
+				i += strlen(node->name);
+				if (node->value) {
+					data[offset + i] = '=';
+					i++;
+					memcpy(&data[offset + i], node->value, strlen(node->value));
+					i += strlen(node->value);
+				}
+			}
+		} break;
 	}
 
 	return i;
@@ -314,13 +359,53 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	dns->answers[0].type = RENDEZVOUS_RRTYPE_PTR;
 	dns->answers[0].class = 0x0001;
 	dns->answers[0].ttl = 0x00001c20;
-	dns->answers[0].rdlength = strlen(domain) + 2;
+	dns->answers[0].rdlength = 0x0000; /* Set automatically */
 	dns->answers[0].rdata = (void *)g_strdup(domain);
 
 	dns->authority = NULL;
 	dns->additional = NULL;
 
 	mdns_send_dns(fd, dns);
+
+	mdns_free(dns);
+
+	return ret;
+}
+
+int
+mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
+{
+	int ret;
+	DNSPacket *dns;
+
+	if ((strlen(name) > 255)) {
+		return -EINVAL;
+	}
+
+	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
+	dns->header.id = 0x0000;
+	dns->header.flags = 0x8400;
+	dns->header.numquestions = 0x0000;
+	dns->header.numanswers = 0x0001;
+	dns->header.numauthority = 0x0000;
+	dns->header.numadditional = 0x0000;
+	dns->questions = NULL;
+
+	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
+	dns->answers[0].name = g_strdup(name);
+	dns->answers[0].type = RENDEZVOUS_RRTYPE_TXT;
+	dns->answers[0].class = 0x0001;
+	dns->answers[0].ttl = 0x00001c20;
+	dns->answers[0].rdlength = 0x0000; /* Set automatically */
+	dns->answers[0].rdata = (void *)rdata;
+
+	dns->authority = NULL;
+	dns->additional = NULL;
+
+	mdns_send_dns(fd, dns);
+
+	/* The hash table should be freed by the caller of this function */
+	dns->answers[0].rdata = NULL;
 
 	mdns_free(dns);
 

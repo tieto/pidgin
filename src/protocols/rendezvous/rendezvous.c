@@ -36,6 +36,7 @@
 typedef struct _RendezvousData {
 	int fd;
 	GHashTable *buddies;
+	GSList *mytxtdata;
 } RendezvousData;
 
 typedef struct _RendezvousBuddy {
@@ -224,7 +225,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 
 	tmp1 = g_hash_table_lookup(rdata, "status");
 	if (tmp1 != NULL) {
-		if (!strcmp(tmp1, "dnd")) {
+		if (!strcmp(tmp1, "avail")) {
 			/* Available */
 			rb->status = 0;
 		} else if (!strcmp(tmp1, "away")) {
@@ -233,7 +234,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			rb->idle = atoi(tmp2);
 			gaim_debug_error("XXX", "User has been idle since %d\n", rb->idle);
 			rb->status = UC_IDLE;
-		} else if (!strcmp(tmp1, "avail")) {
+		} else if (!strcmp(tmp1, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
@@ -405,6 +406,36 @@ static void rendezvous_callback(gpointer data, gint source, GaimInputCondition c
 	mdns_free(dns);
 }
 
+static void rendezvous_add_to_txt(RendezvousData *rd, const char *name, const char *value)
+{
+	ResourceRecordTXTRDataNode *node;
+	node = g_malloc(sizeof(ResourceRecordTXTRDataNode));
+	node->name = g_strdup(name);
+	node->value = value != NULL ? g_strdup(value) : NULL;
+	rd->mytxtdata = g_slist_append(rd->mytxtdata, node);
+}
+
+static void rendezvous_send_online(GaimConnection *gc)
+{
+	RendezvousData *rd = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+
+	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", "mark@diverge._presence._tcp.local");
+
+	rendezvous_add_to_txt(rd, "txtvers", "1");
+	rendezvous_add_to_txt(rd, "status", "avail");
+	rendezvous_add_to_txt(rd, "1st", gaim_account_get_string(account, "first", "Gaim"));
+	rendezvous_add_to_txt(rd, "AIM", "markdoliner");
+	rendezvous_add_to_txt(rd, "version", "1");
+	rendezvous_add_to_txt(rd, "port.p2pj", "5298");
+	rendezvous_add_to_txt(rd, "last", gaim_account_get_string(account, "last", _("User")));
+	mdns_advertise_txt(rd->fd, "mark@diverge._presence._tcp.local", rd->mytxtdata);
+
+#if 0
+	mdns_advertise_srv(rd->fd, "mark@diverge._presence._tcp.local", port 5298, IP?);
+#endif
+}
+
 static void rendezvous_prpl_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -428,24 +459,13 @@ static void rendezvous_prpl_login(GaimAccount *account)
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 
 	mdns_query(rd->fd, "_presence._tcp.local");
-	/* mdns_advertise_ptr(rd->fd, "_presence._tcp.local", "mark@diverge._presence._tcp.local"); */
-
-#if 0
-	text_record_add("txtvers", "1");
-	text_record_add("status", "avail");
-	text_record_add("1st", gaim_account_get_string(account, "first", "Gaim"));
-	text_record_add("AIM", "markdoliner");
-	text_record_add("version", "1");
-	text_record_add("port.p2pj", "5298");
-	text_record_add("last", gaim_account_get_string(account, "last", _("User")));
-
-	publish(account->username, "_presence._tcp", 5298);
-#endif
+	rendezvous_send_online(gc);
 }
 
 static void rendezvous_prpl_close(GaimConnection *gc)
 {
 	RendezvousData *rd = (RendezvousData *)gc->proto_data;
+	ResourceRecordTXTRDataNode *node;
 
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
@@ -459,6 +479,14 @@ static void rendezvous_prpl_close(GaimConnection *gc)
 		close(rd->fd);
 
 	g_hash_table_destroy(rd->buddies);
+
+	while (rd->mytxtdata != NULL) {
+		node = rd->mytxtdata->data;
+		rd->mytxtdata = g_slist_remove(rd->mytxtdata, node);
+		g_free(node->name);
+		g_free(node->value);
+		g_free(node);
+	}
 
 	g_free(rd);
 }
