@@ -211,6 +211,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 			else if (!g_ascii_strncasecmp(c + 1, "a href=\"", 8))
 			{
 				c += 9;
+				
+				if (!g_ascii_strncasecmp(c, "mailto:", 7))
+					c += 7;
 
 				while (g_ascii_strncasecmp(c, "\">", 2))
 					msg[retcount++] = *c++;
