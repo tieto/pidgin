@@ -1,0 +1,8 @@
+Makefile
+Makefile.in
+.deps
+.libs
+libyahoo.lo
+memtok.lo
+yay.lo
+libyahoo.la

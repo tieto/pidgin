@@ -4,7 +4,10 @@ SUFFIXES = .c .so
 	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
 
 if PLUGINS
-plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so lagmeter.so
+
+SUBDIRS = yay
+
+plugin_DATA = autorecon.so iconaway.so irc.so notify.so spellchk.so lagmeter.so
 plugindir = $(libdir)/gaim
 
 clean distclean:

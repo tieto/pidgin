@@ -1,0 +1,59 @@
+Introduction:
+-------------
+This is GTKYahoo, a GPL'd GTK Yahoo! Pager client. It is functional
+enough to carry on normal conversations. New features, and additional
+functionality is being added quite frequently.
+
+Please send me patches/fixes/additions/suggestions... Any help is
+appreciated.
+
+I _HIGHLY_ suggest reading the ChangeLog and other files in here to get
+some details on what is going on with the program, etc.
+
+This software is not supported or sponsored in any way by Yahoo!. 
+
+Where to get:
+-------------
+Home Page: http://www.unixtools.org/gtkyahoo/
+Download Area: http://www.unixtools.org/gtkyahoo/dist/
+Anon-CVS: 
+	Root: :pserver:cvs@cvs.unixtools.org:/cvsroot-gtkyahoo
+	Password: cvs
+	Module: gtkyahoo
+
+Usage notes:
+------------
+The first time you run GTKYahoo it will create a configuration directory
+and config file. Edit it prior to running the program again.
+
+Look at the sample gtkyahoorc file for info on other options. Note, many
+of the features are unimplemented at the moment.
+
+Debugging options are available in the config file, syntax is:
+	
+	debug "keyword" level
+
+i.e.
+	
+	debug "yahoolib" 1
+
+Available keywords include: 
+	packets: enables tracing of received packets
+	yahoolib: enables debugging of yahoolib actions
+	sendraw: enables the sendraw facility
+
+Development notes:
+------------------
+This program makes use of the cfunctions program to build some of it's
+header files. This is only done in response to issuing "make proto".
+The cfunctions tool is available from the URL:
+
+	http://www.hayamasa.demon.co.uk/cfunctions
+
+The yahoolib files can be pulled out and used to implement the pager
+protocol. They are not documented however. The basic functionality of the library is that you give it a pointer to a buffer area, and the size of the buffer, 
+and it will return you a raw packet if the buffer contains one. The actual
+I/O with the server is up to you.
+
+Other suggested packages include:
+	bison, flex, ElectricFence, cvs

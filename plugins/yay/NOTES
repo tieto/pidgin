@@ -1,0 +1,61 @@
+Small scenario notes by Craig:
+
+Here's the scenario:
+
+The pager does the normal cookie retrieval thing with
+http://msg.edit.yahoo.com:80/config/ncclogin?.src=bl&login=<USERID>&passwd=<PASSWORD>0&n=1&t=1
+
+which gives you the cookies
+(Y=n=<NSUBCOOKIE>&l=<LSUBCOOKIE> is all you need to keep).
+
+( I was thinking that we might include a configurable option to "put" this into Netscape's cookies file
+just like the Win32 version does. )
+
+Then:
+
+http://msg.edit.yahoo.com:80/config/get_buddylist?.src=bl&.l=<USERID>
+
+if given the cookies
+Y=v=1&n=<NSUBCOOKIE>&l=<LSUBCOOKIE> (where <NSUBCOOKIE> and <LSUBCOOKIE> were retrieved from ncclogin)
+gives you the buddies list as:
+
+BEGIN BUDDYLIST
+<GROUP>:ID[,IDn]*
+END BUDDYLIST
+BEGIN IGNORELIST
+
+END IGNORELIST
+BEGIN IDENTITIES
+<PRIMARYID>[,<OTHERID>]*
+END IDENTITIES
+Mail=<UNREADMAIL>
+Login=<PRIMARYID>
+
+You can get details of the people in your Yahoo!  Address book for which you have mentioned their Messenger ID with:
+
+http://uk.address.yahoo.com:80/yab/uk/yab?v=PG&A=s
+with cookies Y=v=1&n=<NSUBCOOKIE>&l=<LSUBCOOKIE>
+gives:
+
+1^I
+<ID>:<FIRSTNAME>^I<LASTNAME>^I<EMAILNICKNAME>^I<EMAIL>^I<HOMEPHONE>^I<WORKPHONE>^I[01]^I<ENTRYID>
+
+(the [01] is 0 if the entry's Primary phone is "Home"
+and 1 if it's "Work")
+
+so for me it **might** be:
+
+ranec:Craig^IEmery^Iranec@yahoo.com^I+44 UK work^I+44 UK home^I1^I123
+
+( I **really** want to get these entries retreived by libyahoo so I can use them as tool-tips on your friend's id's just like the
+Win32 version does. )
+
+Anyway after loging in and getting the buddies list and your address book entries, it periodically opens a connection to:
+
+http://http.pager.yahoo.com:80/notify/
+
+and I don't know the details of this traffic 'cause I've got no packet sniffing on Win23 (NT actually).
+
+Has anyone else out there traced any of the "notify" traffic?
+
+All I need is this and I can get GtkYahoo working entirely over HTTP (even HTTP proxies) and firewalls become irrelevant!
