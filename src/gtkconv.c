@@ -3804,8 +3804,6 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
-	struct buddy *b = NULL;
-	GaimAccount *account;
 
 	name      = gaim_conversation_get_name(conv);
 	conv_type = gaim_conversation_get_type(conv);

@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 #include "gtkinternal.h"
 
 #include "account.h"
 #include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "util.h"
 
@@ -241,8 +241,7 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 		kill_meter(meter, _("Done."));
 }
 
-static void gaim_gtk_connection_disconnected(GaimConnection *gc,
-		const char *reason)
+static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 
@@ -267,12 +266,27 @@ static void gaim_gtk_connection_notice(GaimConnection *gc,
 {
 }
 
+static void
+gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
+{
+	gchar *primary, *secondary;
+
+	primary = g_strdup_printf(_("%s has been disconnected"),
+				gaim_account_get_username(gaim_connection_get_account(gc)));
+	secondary = g_strdup_printf("%s\n%s", full_date(),
+								text ? text : _("Reason Unknown."));
+	gaim_notify_error(NULL, _("Connection Error"), primary, secondary);
+	g_free(primary);
+	g_free(secondary);
+}
+
 static GaimConnectionUiOps conn_ui_ops =
 {
 	gaim_gtk_connection_connect_progress,
 	gaim_gtk_connection_connected,
 	gaim_gtk_connection_disconnected,
-	gaim_gtk_connection_notice
+	gaim_gtk_connection_notice,
+	gaim_gtk_connection_report_disconnect
 };
 
 GaimConnectionUiOps *gaim_get_gtk_connection_ui_ops(void)

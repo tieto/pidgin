@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -48,8 +48,9 @@ typedef struct
 	void (*connect_progress)(GaimConnection *gc, const char *text,
 							 size_t step, size_t step_count);
 	void (*connected)(GaimConnection *gc);
-	void (*disconnected)(GaimConnection *gc, const char *reason);
+	void (*disconnected)(GaimConnection *gc);
 	void (*notice)(GaimConnection *gc, const char *text);
+	void (*report_disconnect)(GaimConnection *gc, const char *text);
 
 } GaimConnectionUiOps;
 

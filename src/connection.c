@@ -316,7 +316,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
 		if (ops != NULL && ops->disconnected != NULL)
-			ops->disconnected(gc, NULL);
+			ops->disconnected(gc);
 	}
 }
 
@@ -399,27 +399,23 @@ void
 gaim_connection_error(GaimConnection *gc, const char *text)
 {
 	GaimConnectionUiOps *ops;
-	gchar *primary, *secondary;
 
 	g_return_if_fail(gc   != NULL);
 	g_return_if_fail(text != NULL);
 
 	/* If we've already got one error, we don't need any more */
-	if(gc->disconnect_timeout)
+	if (gc->disconnect_timeout)
 		return;
-
-	primary = g_strdup_printf(_("%s has been disconnected"),
-				gaim_account_get_username(gaim_connection_get_account(gc)));
-	secondary = g_strdup_printf("%s\n%s", full_date(),
-								text ? text : _("Reason Unknown."));
-	gaim_notify_error(NULL, _("Connection Error"), primary, secondary);
-	g_free(primary);
-	g_free(secondary);
 
 	ops = gaim_get_connection_ui_ops();
 
-	if (ops != NULL && ops->disconnected != NULL)
-		ops->disconnected(gc, text);
+	if (ops != NULL) {
+		if (ops->report_disconnect != NULL)
+			ops->report_disconnect(gc, text);
+
+		if (ops->disconnected != NULL)
+			ops->disconnected(gc);
+	}
 
 	gc->disconnect_timeout = g_timeout_add(0, gaim_connection_disconnect_cb,
 			gaim_connection_get_account(gc));
