@@ -417,6 +417,120 @@ static void cope_with_gdb_brokenness()
 #endif
 }
 
+static void
+gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params)
+{
+	const int zero = 0;
+	int rc;
+#if HAVE_GETADDRINFO
+	struct addrinfo hints, *res, *tmp;
+	char servname[20];
+#else
+	struct sockaddr_in sin;
+	const size_t addrlen = sizeof(sin);
+#endif
+
+#ifdef HAVE_SIGNAL_H
+	signal(SIGHUP, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGCHLD, SIG_DFL);
+	signal(SIGTERM, SIG_DFL);
+	signal(SIGTRAP, trap_gdb_bug);
+#endif
+
+	while (1) {
+		if (dns_params->hostname[0] == '\0') {
+			const char Y = 'Y';
+			fd_set fds;
+			struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
+			FD_ZERO(&fds);
+			FD_SET(child_in, &fds);
+			rc = select(child_in + 1, &fds, NULL, NULL, &tv);
+			if (!rc) {
+				if (opt_debug)
+					fprintf(stderr,"dns[%d]: nobody needs me... =(\n", getpid());
+				break;
+			}
+			rc = read(child_in, dns_params, sizeof(dns_params_t));
+			if (rc < 0) {
+				perror("read()");
+				break;
+			}
+			if (rc==0) {
+				if(opt_debug)
+					fprintf(stderr,"dns[%d]: Ops, father has gone, wait for me, wait...!\n", getpid());
+				_exit(0);
+			}
+			if (dns_params->hostname[0] == '\0') {
+				fprintf(stderr, "dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params->port);
+				_exit(1);
+			}
+			write(child_out, &Y, 1);
+		}
+
+#if HAVE_GETADDRINFO
+		g_snprintf(servname, sizeof(servname), "%d", dns_params->port);
+		memset(&hints,0,sizeof(hints));
+
+		/* This is only used to convert a service
+		 * name to a port number. As we know we are
+		 * passing a number already, we know this
+		 * value will not be really used by the C
+		 * library.
+		 */
+		hints.ai_socktype = SOCK_STREAM;
+		rc = getaddrinfo(dns_params->hostname, servname, &hints, &res);
+		if(rc) {
+			write(child_out, &rc, sizeof(int));
+			close(child_out);
+			if(opt_debug)
+				fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
+					getpid(), rc);
+			dns_params->hostname[0] = '\0';
+			continue;
+		}
+		write(child_out, &zero, sizeof(zero));
+		tmp = res;
+		while(res) {
+			size_t ai_addrlen = res->ai_addrlen;
+			write(child_out, &ai_addrlen, sizeof(ai_addrlen));
+			write(child_out, res->ai_addr, res->ai_addrlen);
+			res = res->ai_next;
+		}
+		freeaddrinfo(tmp);
+		write(child_out, &zero, sizeof(zero));
+#else
+		if (!inet_aton(hostname, &sin.sin_addr)) {
+			struct hostent *hp;
+			if(!(hp = gethostbyname(dns_params->hostname))) {
+				write(child_out, &h_errno, sizeof(int));
+				close(child_out);
+				if(opt_debug)
+					fprintf(stderr,"DNS Error: %d\n", h_errno);
+				_exit(0);
+			}
+			memset(&sin, 0, sizeof(struct sockaddr_in));
+			memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+			sin.sin_family = hp->h_addrtype;
+		} else
+			sin.sin_family = AF_INET;
+
+		sin.sin_port = htons(dns_params->port);
+		write(child_out, &zero, sizeof(zero));
+		write(child_out, &addrlen, sizeof(addrlen));
+		write(child_out, &sin, addrlen);
+		write(child_out, &zero, sizeof(zero));
+#endif
+		dns_params->hostname[0] = '\0';
+	}
+
+	close(child_out);
+	close(child_in);
+
+	_exit(0);
+}
+
 int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback, gpointer data)
 {
 	pending_dns_request_t *req = NULL;
@@ -444,11 +558,10 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			break;
 
 		req_free(req);
+		req = NULL;
 	}
 
-	/*
-	 * We need to create a new DNS request child.
-	 */
+	/* We need to create a new DNS request child */
 	if (req == NULL) {
 		int child_out[2], child_in[2];
 
@@ -467,144 +580,41 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			return 0;
 		}
 
+		/* Create pipes for communicating with the child process */
 		if (pipe(child_out) || pipe(child_in)) {
 			gaim_debug(GAIM_DEBUG_ERROR, "dns",
 					   "Could not create pipes: %s\n", strerror(errno));
 			return -1;
 		}
 
-		/* We need to create a new child. */
-		req = g_new(pending_dns_request_t,1);
+		req = g_new(pending_dns_request_t, 1);
 
 		cope_with_gdb_brokenness();
 
+		/* Fork! */
 		req->dns_pid = fork();
 
-		/* If we are a child... */
-		if (req->dns_pid == 0) {
-			const int zero = 0;
-			int rc;
-
-#if HAVE_GETADDRINFO
-			struct addrinfo hints, *res, *tmp;
-			char servname[20];
-#else
-			struct sockaddr_in sin;
-			const size_t addrlen = sizeof(sin);
-#endif
-#ifdef HAVE_SIGNAL_H
-			signal(SIGHUP, SIG_DFL);
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			signal(SIGCHLD, SIG_DFL);
-			signal(SIGTERM, SIG_DFL);
-			signal(SIGTRAP, trap_gdb_bug);
-#endif
-
+		/* If we are the child process... */
+		if (req->dns_pid==0) {
 			/* We should not access the parent's side of the pipe, so close them... */
 			close(child_out[0]);
 			close(child_in[1]);
 
-			while (1) {
-				if (dns_params.hostname[0] == '\0') {
-					const char Y = 'Y';
-					fd_set fds;
-					struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
-					FD_ZERO(&fds);
-					FD_SET(child_in[0], &fds);
-					rc = select(child_in[0]+1, &fds, NULL, NULL, &tv);
-					if (!rc) {
-						if (opt_debug)
-							fprintf(stderr,"dns[%d]: Nobody needs me... =(\n", getpid());
-						break;
-					}
-					rc = read(child_in[0], &dns_params, sizeof(dns_params));
-					if (rc < 0) {
-						perror("read()");
-						break;
-					}
-					if (rc==0) {
-						if (opt_debug)
-							fprintf(stderr,"dns[%d]: Father has gone, wait for me, wait...!\n", getpid());
-						_exit(0);
-					}
-					if (dns_params.hostname[0] == '\0') {
-						fprintf(stderr, "dns[%d]: Hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
-						_exit(1);
-					}
-					write(child_out[1], &Y, 1);
-				}
-
-#if HAVE_GETADDRINFO
-				g_snprintf(servname, sizeof(servname), "%d", dns_params.port);
-				memset(&hints,0,sizeof(hints));
-
-				/* This is only used to convert a service
-				 * name to a port number. As we know we are
-				 * passing a number already, we know this
-				 * value will not be really used by the C
-				 * library.
-				 */
-				hints.ai_socktype = SOCK_STREAM;
-				rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
-				if (rc) {
-					write(child_out[1], &rc, sizeof(int));
-					close(child_out[1]);
-					if (opt_debug)
-						fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
-							getpid(), rc);
-					dns_params.hostname[0] = '\0';
-					continue;
-				}
-				write(child_out[1], &zero, sizeof(zero));
-				tmp = res;
-				while (res) {
-					size_t ai_addrlen = res->ai_addrlen;
-					write(child_out[1], &ai_addrlen, sizeof(ai_addrlen));
-					write(child_out[1], res->ai_addr, res->ai_addrlen);
-					res = res->ai_next;
-				}
-				freeaddrinfo(tmp);
-				write(child_out[1], &zero, sizeof(zero));
-#else
-				/* XXX - Should hostname be changed to dns_params.hostname? */
-				if (!inet_aton(hostname, &sin.sin_addr)) {
-					struct hostent *hp;
-					if (!(hp = gethostbyname(dns_params.hostname))) {
-						write(child_out[1], &h_errno, sizeof(int));
-						close(child_out[1]);
-						if (opt_debug)
-							fprintf(stderr,"DNS Error: %d\n", h_errno);
-						_exit(0);
-					}
-					memset(&sin, 0, sizeof(struct sockaddr_in));
-					memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-					sin.sin_family = hp->h_addrtype;
-				} else
-					sin.sin_family = AF_INET;
-				sin.sin_port = htons(dns_params.port);
-				write(child_out[1], &zero, sizeof(zero));
-				write(child_out[1], &addrlen, sizeof(addrlen));
-				write(child_out[1], &sin, addrlen);
-				write(child_out[1], &zero, sizeof(zero));
-#endif
-				dns_params.hostname[0] = '\0';
-			}
-			close(child_out[1]);
-			close(child_in[0]);
-			_exit(0);
-		} /* End of child process */
+			gaim_dns_childthread(child_out[1], child_in[0], &dns_params);
+			/* The thread calls _exit() rather than returning, so we never get here */
+		}
 
 		/* We should not access the child's side of the pipe, so close them... */
 		close(child_out[1]);
 		close(child_in[0]);
-		if (req->dns_pid==-1) {
+		if (req->dns_pid == -1) {
 			gaim_debug(GAIM_DEBUG_ERROR, "dns",
 					   "Could not create child process for DNS: %s\n",
 					   strerror(errno));
 			g_free(req);
 			return -1;
 		}
+
 		req->fd_out = child_out[0];
 		req->fd_in = child_in[1];
 		number_of_dns_children++;
@@ -613,7 +623,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				   req->dns_pid, number_of_dns_children);
 	}
 
-	req->host = g_strdup(dns_params.hostname);
+	req->host = g_strdup(hostname);
 	req->port = port;
 	req->callback = callback;
 	req->data = data;
