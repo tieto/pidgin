@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -80,18 +80,6 @@ void gaim_debug_vargs(GaimDebugLevel level, const char *category,
  */
 void gaim_debug(GaimDebugLevel level, const char *category,
 				const char *format, ...);
-
-/**
- * Outputs debug information.
- *
- * @deprecated This has been replaced with gaim_debug(), and will be
- *             removed in a future release.
- *
- * @param fmt The format string.
- *
- * @see gaim_debug()
- */
-void debug_printf(const char *fmt, ...);
 
 /*@}*/
 

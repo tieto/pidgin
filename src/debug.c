@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -52,18 +52,6 @@ gaim_debug(GaimDebugLevel level, const char *category,
 
 	va_start(args, format);
 	gaim_debug_vargs(level, category, format, args);
-	va_end(args);
-}
-
-void
-debug_printf(const char *format, ...)
-{
-	va_list args;
-
-	g_return_if_fail(format != NULL);
-
-	va_start(args, format);
-	gaim_debug_vargs(GAIM_DEBUG_INFO, NULL, format, args);
 	va_end(args);
 }
 
