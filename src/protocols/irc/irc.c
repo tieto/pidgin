@@ -1078,7 +1078,7 @@ static void set_mode(struct gaim_connection *gc, char *who, int sign, int mode, 
 	}
 }
 
-static void handle_command(struct gaim_connection *gc, char *who, char *what)
+static int handle_command(struct gaim_connection *gc, char *who, char *what)
 {
 	char buf[IRC_BUF_LEN];
 	char pdibuf[IRC_BUF_LEN];
@@ -1097,7 +1097,7 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		}
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
 		irc_write(id->fd, buf, strlen(buf));
-		return;
+		return 1;
 	}
 
 	what++;
@@ -1108,12 +1108,12 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2])
-			return;
+			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "NICK")) {
 		if (!*word_eol[2])
-			return;
+			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "NICK %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "OP")) {
@@ -1126,24 +1126,24 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		set_mode(gc, who, '-', 'v', word);
 	} else if (!g_strcasecmp(pdibuf, "QUOTE")) {
 		if (!*word_eol[2])
-			return;
+			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "%s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "SAY")) {
 		if (!*word_eol[2])
-			return;
+			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "MSG")) {
 		if (!*word[2])
-			return;
+			return -EINVAL;
 		if (!*word_eol[3])
-			return;
+			return -EINVAL;
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", word[2], word_eol[3]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "KICK")) {
 		if (!*word[2])
-			return;
+			return -EINVAL;
 		if (*word_eol[3])
 			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s\r\n", who, word[2], word_eol[3]);
 		else
@@ -1153,7 +1153,7 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "KICKBAN")) {
 	} else if (!g_strcasecmp(pdibuf, "JOIN")) {
 		if (!*word[2])
-			return;
+			return -EINVAL;
 		if (*word[3])
 			g_snprintf(buf, sizeof(buf), "JOIN %s %s\r\n", word[2], word[3]);
 		else
@@ -1164,7 +1164,7 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 		char *reason = word_eol[3];
 		struct conversation *c;
 		if (!is_channel(gc, chan))
-			return;
+			return -EINVAL;
 		c = irc_find_chat(gc, chan);
 		g_snprintf(buf, sizeof(buf), "PART %s%s%s\r\n", chan,
 				*reason ? " :" : "",
@@ -1184,23 +1184,25 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 			c = find_conversation(who);
 		}
 		if (!c)
-			return;
+			return -EINVAL;
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
 				 "JOIN PART TOPIC<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
 				 "NICK ME MSG QUOTE SAY</B><BR>",
 				 WFLAG_SYSTEM, NULL, time(NULL));
 	}
+	return 0;
 }
 
-static void send_msg(struct gaim_connection *gc, char *who, char *what)
+static int send_msg(struct gaim_connection *gc, char *who, char *what)
 {
 	char *cr = strchr(what, '\n');
 	if (cr) {
+		int ret = 0;
 		while (TRUE) {
 			if (cr)
 				*cr = 0;
-			handle_command(gc, who, what);
+			ret = handle_command(gc, who, what);
 			if (!cr)
 				break;
 			what = cr + 1;
@@ -1209,17 +1211,16 @@ static void send_msg(struct gaim_connection *gc, char *who, char *what)
 			*cr = '\n';
 			cr = strchr(what, '\n');
 		}
+		return ret;
 	} else
-		handle_command(gc, who, what);
+		return handle_command(gc, who, what);
 }
 
 static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int flags)
 {
 	if (*who == '@' || *who == '+')
-		send_msg(gc, who + 1, what);
-	else
-		send_msg(gc, who, what);
-	return 0;
+		return send_msg(gc, who + 1, what);
+	return send_msg(gc, who, what);
 }
 
 /* IRC doesn't have a buddy list, but we can still figure out who's online with ISON */
@@ -1275,8 +1276,8 @@ static int irc_chat_send(struct gaim_connection *gc, int id, char *what)
 	struct conversation *c = irc_find_chat_by_id(gc, id);
 	if (!c)
 		return -EINVAL;
-	send_msg(gc, c->name, what);
-	serv_got_chat_in(gc, c->id, gc->displayname, 0, what, time(NULL));
+	if (send_msg(gc, c->name, what) > 0)
+		serv_got_chat_in(gc, c->id, gc->displayname, 0, what, time(NULL));
 	return 0;
 }
 

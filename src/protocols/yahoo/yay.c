@@ -402,7 +402,7 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *message, i
 		yahoo_send_message(yd->sess, yd->active_id, who, message);
 	else
 		yahoo_send_message_offline(yd->sess, yd->active_id, who, message);
-	return 0;
+	return 1;
 }
 
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {

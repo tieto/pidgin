@@ -751,7 +751,7 @@ static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int f
 	notice.z_message = buf;
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
-	return 0;
+	return 1;
 }
 
 static char *zephyr_normalize(const char *orig)

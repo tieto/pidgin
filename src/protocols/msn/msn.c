@@ -1202,7 +1202,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
 			signoff(gc);
-			return 0;
+			return 1;
 		}
 
 		ms = g_new0(struct msn_switchboard, 1);
@@ -1214,7 +1214,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 	} else
 		/* in msn you can't send messages to yourself, so we'll fake like we received it ;) */
 		serv_got_im(gc, who, message, flags | IM_FLAG_GAIMUSER, time(NULL));
-	return 0;
+	return 1;
 }
 
 static int msn_chat_send(struct gaim_connection *gc, int id, char *message)

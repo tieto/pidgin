@@ -1254,7 +1254,7 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 	xmlnode_free(x);
-	return 0;
+	return 1;
 }
 
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)

@@ -2073,11 +2073,12 @@ static char *oscar_name() {
 static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int imflags) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
+	int ret = 0;
 	if (dim) {
-		return aim_send_im_direct(odata->sess, dim->conn, message);
+		ret = aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
 		if (imflags & IM_FLAG_AWAY)
-			return aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+			ret = aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else {
 			struct aim_sendimext_args args;
 			GSList *h = odata->hasicons;
@@ -2123,9 +2124,12 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			args.msg    = message;
 			args.msglen = strlen(message);
 
-			return aim_send_im_ext(odata->sess, odata->conn, &args);
+			ret = aim_send_im_ext(odata->sess, odata->conn, &args);
 		}
 	}
+	if (ret >= 0)
+		return 1;
+	return ret;
 }
 
 static void oscar_get_info(struct gaim_connection *g, char *name) {

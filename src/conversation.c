@@ -874,7 +874,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		}
 
 
-		if (err >= 0) {
+		if (err > 0) {
 			write_to_conv(c, buf, WFLAG_SEND, NULL, time((time_t)NULL));
 
 			if (c->makesound && (sound_options & OPT_SOUND_SEND))

@@ -334,7 +334,7 @@ static int icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int fl
 		icq_SendMessage(id->link, w, msg,
 				(flags & IM_FLAG_CHECKBOX) ? ICQ_SEND_THRUSERVER : ICQ_SEND_BESTWAY);
 	}
-	return 0;
+	return 1;
 }
 
 static void icq_keepalive(struct gaim_connection *gc) {

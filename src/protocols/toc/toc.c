@@ -755,7 +755,7 @@ static int toc_send_im(struct gaim_connection *gc, char *name, char *message, in
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	
 	g_free(tmp);
-	return 0;
+	return 1;
 }
 
 static void toc_set_config(struct gaim_connection *gc)
