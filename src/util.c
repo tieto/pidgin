@@ -2443,10 +2443,6 @@ gaim_str_binary_to_ascii(const unsigned char *binary, guint len)
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/
-/*
- * Would be nice when dissecting an environmental variable
- * that specifies proxy information.
- */
 gboolean
 gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
@@ -2454,7 +2450,7 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	char scan_info[255];
 	char port_str[6];
 	int f;
-	const char *at;
+	const char *at, *slash;
 	const char *turl;
 	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
@@ -2475,7 +2471,12 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	}
 
 	/* parse out authentication information if supplied */
-	if ((at = strchr(url, '@')) != NULL) {
+	/* Only care about @ char BEFORE the first / */
+	at = strchr(url, '@');
+	slash = strchr(url, '/');
+	if ((at != NULL) &&
+			(((slash != NULL) && (strlen(at) > strlen(slash))) ||
+			(slash == NULL))) {
 		g_snprintf(scan_info, sizeof(scan_info),
 					"%%255[%s]:%%255[%s]^@", user_ctrl, passwd_ctrl);
 		f = sscanf(url, scan_info, user, passwd);
