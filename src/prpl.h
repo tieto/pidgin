@@ -168,6 +168,9 @@ struct prpl {
 	/* change a buddy's group on a server list/roster */
 	void (* group_buddy)	(struct gaim_connection *, char *who, char *old_group, char *new_group);
 
+	/* rename a group on a server list/roster */
+	void (* rename_group)	(struct gaim_connection *, char *old_group, char *new_group, GList *members);
+
 	void (* buddy_free)	(struct buddy *);
 
 	/* this is really bad. */

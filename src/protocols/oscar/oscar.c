@@ -3007,6 +3007,21 @@ static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, char
 	}
 }
 
+static void oscar_rename_group(struct gaim_connection *g, char *old_group, char *new_group, GList *members) {
+	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	if (!odata->icq)
+		if (odata->sess->ssi.received_data) {
+			if (aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, new_group, 0x0001)) {
+				oscar_remove_buddies(g, members, old_group);
+				oscar_add_buddies(g, members);
+				debug_printf("ssi: moved all buddies from group %s to %s\n", old_group, new_group);
+			} else {
+				aim_ssi_rename_group(odata->sess, odata->conn, old_group, new_group);
+				debug_printf("ssi: renamed group %s to %s\n", old_group, new_group);
+			}
+		}
+}
+
 static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 /*	XXX - Fix parsing of the ssi rights packet and pass us the data
 	fu16_t maxbuddies, maxgroups, maxpermits, maxdenies;
@@ -3892,6 +3907,7 @@ void oscar_init(struct prpl *ret) {
 	ret->add_buddy = oscar_add_buddy;
 	ret->add_buddies = oscar_add_buddies;
 	ret->group_buddy = oscar_move_buddy;
+	ret->rename_group = oscar_rename_group;
 	ret->remove_buddy = oscar_remove_buddy;
 	ret->remove_buddies = oscar_remove_buddies;
 	ret->add_permit = oscar_add_permit;

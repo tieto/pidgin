@@ -315,6 +315,31 @@ void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 	}
 }
 
+/*
+ * Rename a group on server roster/list.
+ */
+void serv_rename_group(struct gaim_connection *g, struct group *old_group, char *new_name)
+{
+	if (g && g->prpl && old_group && new_name) {
+		GList *tobemoved = NULL;
+		GSList *original;
+
+		for (original=old_group->members; original; original=g_slist_next(original))
+			tobemoved = g_list_append(tobemoved, ((struct buddy *)original->data)->name);
+
+		if (g->prpl->rename_group) {
+			/* prpl's might need to check if the group already 
+			 * exists or not, and handle that differently */
+			g->prpl->rename_group(g, old_group->name, new_name, tobemoved);
+		} else {
+			serv_remove_buddies(g, tobemoved, old_group->name);
+			serv_add_buddies(g, tobemoved);
+		}
+
+		g_list_free(tobemoved);
+	}
+}
+
 void serv_add_permit(struct gaim_connection *g, char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_permit)

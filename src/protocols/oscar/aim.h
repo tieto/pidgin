@@ -1049,6 +1049,7 @@ faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
 faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type);
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn, char *sn);
+faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn);
 faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
 faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);

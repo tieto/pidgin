@@ -409,6 +409,7 @@ extern void serv_got_popup(char *, char *, int, int);
 extern void serv_get_away(struct gaim_connection *, char *);
 extern void serv_alias_buddy(struct buddy *);
 extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
+extern void serv_rename_group(struct gaim_connection *, struct group *, char *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);

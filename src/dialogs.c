@@ -3946,16 +3946,20 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 		char *prevname;
 		gc = g->gc;
+
 		if ((orig = find_group(g->gc, new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
 			orig->members = g_slist_concat(orig->members, g->members);
 			handle_group_rename(orig, g->name);
 			g->gc->groups = g_slist_remove(g->gc->groups, g);
 			/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
+			serv_rename_group(gc, g, new_name);
 			g_free(g);
 		} else {
 			prevname = g_strdup(g->name);
+			serv_rename_group(gc, g, new_name);
 			g_snprintf(g->name, sizeof(g->name), "%s", new_name);
 			handle_group_rename(g, prevname);
+			/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
 			g_free(prevname);
 		}
 		do_export(gc);

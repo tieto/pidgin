@@ -94,7 +94,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, str
  */
 static int aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item **list, struct aim_ssi_item *parentgroup)
 {
-	int newlen, i;
+	int newlen;
 	struct aim_ssi_item *cur;
 
 	/* Free the old additional data */
@@ -517,7 +517,7 @@ faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 		}
 
 	/* Send the add item SNAC */
-	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+	if ((i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD))) {
 		free(newitems);
 		return -i;
 	}
@@ -526,11 +526,11 @@ faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 	free(newitems);
 
 	/* Rebuild the additional data in the parent group */
-	if (i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup))
+	if ((i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup)))
 		return i;
 
 	/* Send the mod item SNAC */
-	if (i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD))
+	if ((i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD)))
 		return i;
 
 	/* Begin sending SSI SNACs */
@@ -608,7 +608,7 @@ faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **
 		}
 
 	/* Send the add item SNAC */
-	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+	if ((i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD))) {
 		free(newitems);
 		return -i;
 	}
@@ -617,11 +617,11 @@ faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **
 	free(newitems);
 
 	/* Rebuild the additional data in the parent group */
-	if (i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup))
+	if ((i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup)))
 		return i;
 
 	/* Send the mod item SNAC */
-	if (i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD))
+	if ((i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD)))
 		return i;
 
 	/* Begin sending SSI SNACs */
@@ -664,7 +664,7 @@ faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn
 		}
 
 	/* Send the add item SNAC */
-	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+	if ((i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD))) {
 		free(newitems);
 		return -i;
 	}
@@ -714,8 +714,11 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 
 	/* Look up the new parent group */
 	if (!(groups[1] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, newgn, AIM_SSI_TYPE_GROUP))) {
-		free(groups);
-		return -ENOMEM;
+		aim_ssi_addgroups(sess, conn, &newgn, 1);
+		if (!(groups[1] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, newgn, AIM_SSI_TYPE_GROUP))) {
+			free(groups);
+			return -ENOMEM;
+		}
 	}
 
 	/* Send the delete item SNAC */
@@ -745,6 +748,46 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 
 	/* Free the temporary array */
 	free(groups);
+
+	/* Begin sending SSI SNACs */
+	aim_ssi_dispatch(sess, conn);
+
+	return 0;
+}
+
+/**
+ * Rename a group.  I really like how this is done.  It turns me on.
+ *
+ * Did I say that out loud?...
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param oldgn The old group name.
+ * @param newgn The new group name.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn)
+{
+	struct aim_ssi_item *group;
+
+	if (!sess || !conn || !oldgn || !newgn)
+		return -EINVAL;
+
+	/* Look up the group */
+	if (!(group = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, oldgn, AIM_SSI_TYPE_GROUP)))
+		return -ENOMEM;
+
+	/* Free the old group name and copy the new one in its place. */
+	if (group->name)
+		free(group->name);
+	if (!(group->name = (char *)malloc((strlen(newgn)+1)*sizeof(char)))) {
+		group->name = NULL;
+		return -ENOMEM;
+	}
+	strcpy(group->name, newgn);
+
+	/* Send the mod item SNAC */
+	aim_ssi_addmoddel(sess, conn, &group, 1, AIM_CB_SSI_MOD);
 
 	/* Begin sending SSI SNACs */
 	aim_ssi_dispatch(sess, conn);
@@ -1012,8 +1055,7 @@ faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t permdeny, fu32_t vismask) {
-	struct aim_ssi_item *cur, *tmp;
-	fu16_t j;
+	struct aim_ssi_item *cur;
 	aim_tlv_t *tlv;
 
 	if (!sess || !conn)
@@ -1077,8 +1119,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t
  * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence) {
-	struct aim_ssi_item *cur, *tmp;
-	fu16_t j;
+	struct aim_ssi_item *cur;
 	aim_tlv_t *tlv;
 
 	if (!sess || !conn)
