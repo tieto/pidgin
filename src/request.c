@@ -1139,20 +1139,18 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
-					void *user_data, size_t choice_count, ...)
+					void *user_data, ...)
 {
 	void *ui_handle;
 	va_list args;
 
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
-	g_return_val_if_fail(choice_count > 0, NULL);
 
-	va_start(args, choice_count);
+	va_start(args, user_data);
 	ui_handle = gaim_request_choice_varg(handle, title, primary, secondary,
-										 default_value, ok_text, ok_cb,
-										 cancel_text, cancel_cb, user_data,
-										 choice_count, args);
+					     default_value, ok_text, ok_cb,
+					     cancel_text, cancel_cb, user_data, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1160,18 +1158,16 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 
 void *
 gaim_request_choice_varg(void *handle, const char *title,
-						 const char *primary, const char *secondary,
-						 unsigned int default_value,
-						 const char *ok_text, GCallback ok_cb,
-						 const char *cancel_text, GCallback cancel_cb,
-						 void *user_data, size_t choice_count,
-						 va_list choices)
+			 const char *primary, const char *secondary,
+			 unsigned int default_value,
+			 const char *ok_text, GCallback ok_cb,
+			 const char *cancel_text, GCallback cancel_cb,
+			 void *user_data, va_list choices)
 {
 	GaimRequestUiOps *ops;
 
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
-	g_return_val_if_fail(choice_count > 0, NULL);
 
 	ops = gaim_request_get_ui_ops();
 
@@ -1182,11 +1178,10 @@ gaim_request_choice_varg(void *handle, const char *title,
 		info->type      = GAIM_REQUEST_CHOICE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_choice(title, primary, secondary,
-											  default_value,
-											  ok_text, ok_cb,
-											  cancel_text, cancel_cb,
-											  user_data, choice_count,
-											  choices);
+						      default_value,
+						      ok_text, ok_cb,
+						      cancel_text, cancel_cb,
+						      user_data, choices);
 
 		handles = g_list_append(handles, info);
 

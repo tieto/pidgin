@@ -42,11 +42,14 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "conversation.h"
 #include "debug.h"
+#include "desktopitem.h"
 #include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "request.h"
 #include "signals.h"
 #include "util.h"
 
@@ -1350,4 +1353,250 @@ gaim_running_gnome(void)
 	}
 
 	return FALSE;
+}
+
+enum {
+	DND_FILE_TRANSFER,
+	DND_IM_IMAGE,
+	DND_BUDDY_ICON
+};
+
+typedef struct {
+	char *filename;
+	GaimAccount *account;
+	char *who;
+} _DndData;
+
+void dnd_set_icon_ok_cb(_DndData *data)
+{
+	free(data->filename);
+	free(data->who);
+	free(data);
+}
+
+void dnd_set_icon_cancel_cb(_DndData *data)
+{
+	free(data->filename);
+	free(data->who);
+	free (data);
+}
+
+void dnd_image_ok_callback(_DndData *data, int choice)
+{
+	char *filedata;
+	size_t size;
+	GError *err = NULL;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GtkTextIter iter;
+	int id;
+	switch (choice) {
+	case DND_BUDDY_ICON:
+		if (!g_file_get_contents(data->filename, &filedata, &size,
+					 &err)) {
+			char *str;
+
+			str = g_strdup_printf(_("The following error has occurred loading %s: %s"), data->filename, err->message);
+			gaim_notify_error(NULL, NULL,
+					  _("Failed to load image"),
+					  str);
+				
+			g_error_free(err);
+			g_free(str);
+
+			return;
+		}
+		
+		gaim_buddy_icons_set_for_user(data->account, data->who, filedata, size);
+		g_free(filedata);
+		break;
+	case DND_FILE_TRANSFER:
+		serv_send_file(gaim_account_get_connection(data->account), data->who, data->filename);
+		break;
+	case DND_IM_IMAGE:
+		conv = gaim_conversation_new(GAIM_CONV_IM, data->account, data->who);
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (!g_file_get_contents(data->filename, &filedata, &size,
+					 &err)) {
+			char *str;
+			
+			str = g_strdup_printf(_("The following error has occurred loading %s: %s"), data->filename, err->message);
+			gaim_notify_error(NULL, NULL,
+					  _("Failed to load image"),
+					  str);
+				
+			g_error_free(err);
+			g_free(str);
+			
+			return;
+		}
+		id = gaim_imgstore_add(filedata, size, data->filename);
+		g_free(filedata);
+		
+		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
+						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
+		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
+		gaim_imgstore_unref(id);
+		
+		break;
+	}
+	free(data->filename);
+	free(data->who);
+	free(data);
+}
+
+void dnd_image_cancel_callback(_DndData *data, int choice)
+{
+	free(data->filename);
+	free(data->who);
+	free(data);
+}
+
+void
+gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who)
+{
+	GList *tmp;
+	GdkPixbuf *pb;
+	GList *files = gaim_uri_list_extract_filenames(sd->data);
+	GaimConnection *gc = gaim_account_get_connection(account);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimDesktopItem *item;
+	gboolean file_send_ok = FALSE;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(who != NULL);
+	
+	for(tmp = files; tmp != NULL ; tmp = g_list_next(tmp)) {
+		gchar *filename = tmp->data;
+		gchar *basename = g_path_get_basename(filename);
+			
+		/* Set the default action: don't send anything */
+		file_send_ok = FALSE;
+
+		/* XXX - Make ft API support creating a transfer with more than one file */
+		if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
+			continue;
+		}
+
+		/* XXX - make ft api suupport sending a directory */
+		/* Are we dealing with a directory? */
+		if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
+			char *str;
+
+			str = g_strdup_printf(_("Cannot send folder %s."), basename);
+			gaim_notify_error(NULL, NULL,
+					  str,_("Gaim cannot transfer a folder. You will need to send the files within individually"));
+				
+			g_free(str);
+			
+		        continue;
+		}
+
+		/* Are we dealing with an image? */
+		pb = gdk_pixbuf_new_from_file(filename, NULL);
+		if (pb) {
+			_DndData *data = g_malloc(sizeof(_DndData));
+			gboolean ft = FALSE, im = FALSE;
+			
+			data->who = g_strdup(who);
+			data->filename = g_strdup(filename);
+			data->account = account;
+
+			if (gc)
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
+				im = TRUE;
+						
+			if (prpl_info && prpl_info->send_file)
+				ft = prpl_info->can_receive_file(gc, who);
+						
+			if (im && ft)
+				gaim_request_choice(NULL, NULL,
+						    _("You have dragged an image"),
+						    _("You can send this image as a file transfer,"
+						      " embed it into this message, or use it as the buddy icon for this user."),
+						    DND_BUDDY_ICON, "OK", (GCallback)dnd_image_ok_callback,
+						    "Cancel", (GCallback)dnd_image_cancel_callback, data, 
+						    _("Set as buddy icon"), DND_BUDDY_ICON,
+						    _("Send image file"), DND_FILE_TRANSFER, 
+						    _("Insert in message"), DND_IM_IMAGE, NULL);	
+			else if (!(im || ft))
+				gaim_request_yes_no(NULL, NULL, _("You have dragged an image"), 
+						       _("Would you like to set it as the buddy icon for this user?"),
+						    0, data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
+			else 
+				gaim_request_choice(NULL, NULL,
+						    _("You have dragged an image"),
+						    ft ? _("You can send this image as a file transfer or"
+							   "embed it into this message, or use it as the buddy icon for this user.") :
+						    _("You can insert this image into this message, or use it as the buddy icon for this user"),
+						    DND_BUDDY_ICON, "OK", (GCallback)dnd_image_ok_callback,
+						    "Cancel", (GCallback)dnd_image_cancel_callback, data, 
+						    _("Set as buddy icon"), DND_BUDDY_ICON,
+						    ft ? _("Send image file") : _("Insert in message"), ft ? DND_FILE_TRANSFER : DND_IM_IMAGE, NULL);	
+			return;
+		}
+
+#ifndef _WIN32
+		/* Are we trying to send a .desktop file? */
+		else if (g_str_has_suffix(basename, ".desktop") && (item = gaim_desktop_item_new_from_file(filename))) {
+			GaimDesktopItemType dtype;
+			char key[64];
+			char *dot;
+			const char *itemname = NULL;
+		
+#if GTK_CHECK_VERSION(2,6,0)
+			char **langs;
+			int i;
+			langs = g_get_language_names();
+			for (i = 0; langs[i]; i++) {
+				g_snprintf(key, sizeof(key), "Name[%s]", langs[i]);
+				itemname = gaim_desktop_item_get_string(item, key);
+				break;
+			}
+#else
+			const char *lang = g_getenv("LANG");
+			dot = strchr(lang, '.');
+			if (dot) 
+				*dot = '\0';
+			g_snprintf(key, sizeof(key), "Name[%s]", lang);
+			itemname = gaim_desktop_item_get_string(item, key);
+#endif
+			if (!itemname)
+				itemname = gaim_desktop_item_get_string(item, "Name");
+
+			dtype = gaim_desktop_item_get_entry_type(item);
+			switch (dtype) {
+				GaimConversation *conv;
+				GaimGtkConversation *gtkconv;
+
+			case GAIM_DESKTOP_ITEM_TYPE_LINK:
+				conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
+				gtkconv =  GAIM_GTK_CONVERSATION(conv);
+				gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), 
+						       gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer), 
+						       gaim_desktop_item_get_string(item, "URL"), itemname);
+				break;
+			default: 
+				/* I don't know if we really want to do anything here.  Most of the desktop item types are crap like
+				 * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
+				 * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
+				 * Probably not.  I'll just give an error and return. */
+				/* The original patch sent the icon used by the launcher.  That's probably wrong */
+				gaim_notify_error(NULL, NULL, _("Cannot send launcher"), _("You dragged a desktop launcher. "
+											   "Most likely you wanted to send whatever this launcher points to instead of this launcher"
+											   " itself."));
+				break;
+			}
+			gaim_desktop_item_unref(item);
+			return;
+		}
+#endif /* _WIN32 */
+
+		/* Everything is fine, let's send */
+		serv_send_file(gc, who, filename);
+		g_free(filename);
+	}
+	g_list_free(files);
 }

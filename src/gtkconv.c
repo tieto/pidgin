@@ -4365,23 +4365,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else if (sd->target == gdk_atom_intern("text/uri-list", FALSE)) {
-		GList *tmp;
-		GList *files = gaim_uri_list_extract_filenames(sd->data);
-		for(tmp = files; tmp != NULL ; tmp = g_list_next(tmp)) {
-			gchar *filename = tmp->data;
-			/* XXX - Make ft API support creating a transfer with more than one file */
-			if (g_file_test(filename, G_FILE_TEST_EXISTS)
-					&& !g_file_test(filename, G_FILE_TEST_IS_DIR)
-					&& gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-				serv_send_file(gaim_conversation_get_gc(conv),
-						gaim_conversation_get_name(conv), filename);
-			}
-			g_free(filename);
-		}
-		g_list_free(files);
-		/* XXX - Attempt to load this file into gdk_pixbuf, or otherwise determine if it is an image.  If it is, offer
-		 * the choice of a) sending this file b) inserting this file as an IM image or c) setting this file as a custom
-		 * buddy icon for this buddy */
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+			gaim_dnd_file_manage(sd, gaim_conversation_get_account(conv), gaim_conversation_get_name(conv));
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else

@@ -2023,18 +2023,10 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 				
 				if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
 					GaimBuddy *b = GAIM_BLIST_NODE_IS_BUDDY(node) ? (GaimBuddy*)node : gaim_contact_get_priority_buddy((GaimContact*)node);
-					GList *tmp;
-					GList *files = gaim_uri_list_extract_filenames(sd->data);
-					for(tmp = files; tmp != NULL ; tmp = g_list_next(tmp)) {
-						gchar *filename = tmp->data;
-						/* XXX - Make ft API support creating a transfer with more than one file */
-						if (g_file_test(filename, G_FILE_TEST_EXISTS)
-								&& !g_file_test(filename, G_FILE_TEST_IS_DIR)) {
-							serv_send_file(gaim_account_get_connection(b->account), b->name, filename);
-						}
-						g_free(filename);
-					}
-					g_list_free(files);
+					gaim_dnd_file_manage(sd, b->account, b->name);
+					gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+				} else {
+					gtk_drag_finish(dc, FALSE, FALSE, t);
 				}
 			}	
 	}

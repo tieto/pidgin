@@ -182,8 +182,7 @@ typedef struct
 							const char *secondary, unsigned int default_value,
 							const char *ok_text, GCallback ok_cb,
 							const char *cancel_text, GCallback cancel_cb,
-							void *user_data, size_t choice_count,
-							va_list choices);
+							void *user_data, va_list choices);
 	void *(*request_action)(const char *title, const char *primary,
 							const char *secondary, unsigned int default_action,
 							void *user_data, size_t action_count,
@@ -201,6 +200,7 @@ typedef struct
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
 typedef void (*GaimRequestActionCb)(void *, int);
+typedef void (*GaimRequestChoiceCb)(void *, int);
 typedef void (*GaimRequestFieldsCb)(void *, GaimRequestFields *fields);
 typedef void (*GaimRequestFileCb)(void *, const char *filename);
 
@@ -1117,7 +1117,7 @@ void *gaim_request_choice(void *handle, const char *title,
 						  unsigned int default_value,
 						  const char *ok_text, GCallback ok_cb,
 						  const char *cancel_text, GCallback cancel_cb,
-						  void *user_data, size_t choice_count, ...);
+						  void *user_data, ...);
 
 /**
  * Prompts the user for multiple-choice input.
@@ -1142,8 +1142,7 @@ void *gaim_request_choice_varg(void *handle, const char *title,
 							   unsigned int default_value,
 							   const char *ok_text, GCallback ok_cb,
 							   const char *cancel_text, GCallback cancel_cb,
-							   void *user_data, size_t choice_count,
-							   va_list choices);
+							   void *user_data, va_list choices);
 
 /**
  * Prompts the user for an action.
