@@ -953,30 +953,6 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 	return 0;
 }
 
-/*
- *
- * This should use tlvlists, but doesn't for performance reasons.
- *
- * XXX support multipart IMs:
- *
- * 0004 0007 0000 8f08 d295 
- *      0031 6520 3b7b f9fd
- * 	0001 
- * 	06 XXXX XXXX XXXX
- * 	0000 
- * 	0004 
- * 		0001 0002 0004 
- * 		0010 0004 0000 01a3
- * 		0002 0004 3ab6 94fa
- * 		0003 0004 3b7b f85a
- * 	0002 003c 
- * 		0501 0001 01
- * 		0101 000a 0000 0000 3c48 544d 4c3e   ASCII part 
- * 		ISO-8859 part:
- * 		0101 0016 0003 0000 6c6b 7364 6a6b 6c6a 676c a56b 3b73 646a 6b6a
- * 		0101 000b 0000 0000 3c2f 4854 4d4c 3e   another ASCII part
- *
- */
 static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_bstream_t *bs, fu8_t *cookie)
 {
 	fu16_t type, length;
