@@ -4165,14 +4165,19 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 		else
 			aim_odc_send_typing(od->sess, dim->conn, 0x0000);
 	else {
-		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
-		if (bi && bi->typingnot) {
-			if (typing == TYPING)
-				aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
-			else if (typing == TYPED)
-				aim_im_sendmtn(od->sess, 0x0001, name, 0x0001);
-			else
-				aim_im_sendmtn(od->sess, 0x0001, name, 0x0000);
+		/* Don't send if this turkey is in our deny list */
+		GSList *list;
+		for (list=gc->account->deny; (list && aim_sncmp(name, list->data)); list=list->next);
+		if (!list) {
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
+			if (bi && bi->typingnot) {
+				if (typing == TYPING)
+					aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
+				else if (typing == TYPED)
+					aim_im_sendmtn(od->sess, 0x0001, name, 0x0001);
+				else
+					aim_im_sendmtn(od->sess, 0x0001, name, 0x0000);
+			}
 		}
 	}
 	return 0;
