@@ -1862,16 +1862,16 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	struct yahoo_data *yd = gc->proto_data;
 	const char *sn = gaim_account_get_username(account);
 	const char *pass = gaim_account_get_password(account);
-
 	GHashTable *hash = yahoo_login_page_hash(buf, len);
 	GString *url = g_string_new("GET /config/login?login=");
-	url = g_string_append(url, sn);
-	url = g_string_append(url, "&passwd=");
-	
 	char md5[33], *hashp = md5, *chal;
 	int i;
 	md5_byte_t result[16];
 	md5_state_t ctx;
+
+	url = g_string_append(url, sn);
+	url = g_string_append(url, "&passwd=");
+
 	md5_init(&ctx);
 	md5_append(&ctx, pass, strlen(pass));
 	md5_finish(&ctx, result);
