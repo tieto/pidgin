@@ -17,19 +17,20 @@
 # NOTE  中文統一用「」引號；URL、指令等該用'/"者除外
 # NOTE  以前分「Deny」(拒絕) 和「Block」(封鎖)，現在不分了
 # NOTE  拒絕可以說等同於封鎖和某一個使用者的聯繫，有時用封鎖比較好。
+# NOTE  nplurals 重設為 2，因為部分原文要分辨例如「它」及「它們」一類的字眼
 # ----------------------------------------------------------
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.75\n"
-"POT-Creation-Date: 2003-12-16 19:35-0500\n"
+"POT-Creation-Date: 2003-12-21 10:11-0500\n"
 "PO-Revision-Date: 2003-05-29 12:04+0800\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "\n"
 
 #. *< api_version
@@ -168,7 +169,7 @@ msgstr "加入聊天室..."
 msgid "New..."
 msgstr "新增..."
 
-#: plugins/docklet/docklet.c:153 src/gtkblist.c:2530 src/gtkpounce.c:411
+#: plugins/docklet/docklet.c:153 src/gtkblist.c:2540 src/gtkpounce.c:411
 #: src/gtkprefs.c:1469 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
 #: src/protocols/jabber/jabber.c:926 src/protocols/jabber/jutil.c:98
 #: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2845
@@ -981,7 +982,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "當 Windows 啟動時同時執行 Gaim(_S)"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2364
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2374
 #: src/gtkprefs.c:2266
 msgid "Buddy List"
 msgstr "好友清單"
@@ -1279,23 +1280,23 @@ msgstr "請輸入您目前的密碼以及希望使用的新密碼。"
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:336 src/connection.c:193 src/dialogs.c:1492
-#: src/dialogs.c:1509 src/dialogs.c:1528 src/gtkblist.c:1730
+#: src/dialogs.c:1509 src/dialogs.c:1528 src/gtkblist.c:1738
 #: src/gtkrequest.c:195 src/protocols/jabber/jabber.c:1023
 #: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
 #: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
 #: src/protocols/oscar/oscar.c:2456 src/protocols/oscar/oscar.c:2536
 #: src/protocols/oscar/oscar.c:6213 src/protocols/oscar/oscar.c:6309
 #: src/protocols/oscar/oscar.c:6358 src/protocols/oscar/oscar.c:6440
-#: src/protocols/yahoo/yahoo.c:2394 src/protocols/yahoo/yahoo.c:2402
-#: src/request.h:852
+#: src/protocols/yahoo/yahoo.c:2398 src/protocols/yahoo/yahoo.c:2406
+#: src/request.h:1001
 msgid "OK"
 msgstr "確定"
 
 #: src/account.c:337 src/account.c:371 src/connection.c:194 src/dialogs.c:353
 #: src/dialogs.c:365 src/dialogs.c:378 src/dialogs.c:399 src/dialogs.c:1334
 #: src/dialogs.c:1493 src/dialogs.c:1510 src/dialogs.c:1529
-#: src/gtkaccount.c:1622 src/gtkaccount.c:2091 src/gtkblist.c:1731
-#: src/gtkblist.c:3677 src/gtkconn.c:148 src/gtkprivacy.c:568
+#: src/gtkaccount.c:1622 src/gtkaccount.c:2091 src/gtkblist.c:1739
+#: src/gtkblist.c:3689 src/gtkconn.c:149 src/gtkprivacy.c:568
 #: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
 #: src/gtkrequest.c:196 src/protocols/icq/gaim_icq.c:277
 #: src/protocols/jabber/buddy.c:512 src/protocols/jabber/jabber.c:651
@@ -1307,8 +1308,8 @@ msgstr "確定"
 #: src/protocols/oscar/oscar.c:6041 src/protocols/oscar/oscar.c:6214
 #: src/protocols/oscar/oscar.c:6310 src/protocols/oscar/oscar.c:6359
 #: src/protocols/oscar/oscar.c:6424 src/protocols/oscar/oscar.c:6441
-#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2395
-#: src/protocols/yahoo/yahoo.c:2403 src/request.h:852 src/request.h:862
+#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2399
+#: src/protocols/yahoo/yahoo.c:2407 src/request.h:1001 src/request.h:1011
 msgid "Cancel"
 msgstr "取消"
 
@@ -1346,7 +1347,7 @@ msgstr "全部設為離開"
 msgid "Chats"
 msgstr "聊天"
 
-#: src/blist.c:661 src/blist.c:848 src/blist.c:2063 src/gtkblist.c:3146
+#: src/blist.c:661 src/blist.c:848 src/blist.c:2063 src/gtkblist.c:3156
 #: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1160
 msgid "Buddies"
 msgstr "好友"
@@ -1360,6 +1361,9 @@ msgid_plural ""
 "%d buddies from group %s were not removed because their accounts were not "
 "logged in.  These buddies and the group were not removed.\n"
 msgstr[0] ""
+"%d 個在 %s 群組的好友並沒有被移除，因為他（她）所對應的帳號並沒有登入。這個好"
+"友及群組沒有被移除。\n"
+msgstr[1] ""
 "%d 個在 %s 群組的好友並沒有被移除，因為他們所對應的帳號並沒有登入。這些好友及"
 "群組沒有被移除。\n"
 
@@ -1385,7 +1389,7 @@ msgstr "在解析您的好友清單時發生錯誤。好友清單沒有被讀入
 msgid "Buddy List Error"
 msgstr "好友清單錯誤"
 
-#: src/buddy_chat.c:212 src/gtkblist.c:3567
+#: src/buddy_chat.c:212 src/gtkblist.c:3579
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -1803,15 +1807,15 @@ msgstr "不好意思，我離開一下下。"
 msgid "boring default"
 msgstr "無聊（預設）"
 
-#: src/gaimrc.c:1259 src/gtkblist.c:2326
+#: src/gaimrc.c:1259 src/gtkblist.c:2336
 msgid "Alphabetical"
 msgstr "依照字母"
 
-#: src/gaimrc.c:1261 src/gtkblist.c:2327
+#: src/gaimrc.c:1261 src/gtkblist.c:2337
 msgid "By status"
 msgstr "依照狀態"
 
-#: src/gaimrc.c:1263 src/gtkblist.c:2328
+#: src/gaimrc.c:1263 src/gtkblist.c:2338
 msgid "By log size"
 msgstr "依照日誌大小"
 
@@ -1852,7 +1856,7 @@ msgstr "帳號："
 msgid "Password:"
 msgstr "密碼："
 
-#: src/gtkaccount.c:469 src/gtkblist.c:3306 src/gtkblist.c:3626
+#: src/gtkaccount.c:469 src/gtkblist.c:3316 src/gtkblist.c:3638
 msgid "Alias:"
 msgstr "別名："
 
@@ -1988,7 +1992,7 @@ msgstr "帳號"
 
 #: src/gtkaccount.c:1758 src/protocols/jabber/jabber.c:924
 #: src/protocols/oscar/oscar.c:2851 src/protocols/oscar/oscar.c:4594
-#: src/protocols/oscar/oscar.c:6162 src/protocols/yahoo/yahoo.c:2189
+#: src/protocols/oscar/oscar.c:6162 src/protocols/yahoo/yahoo.c:2193
 #: src/protocols/zephyr/zephyr.c:886 src/protocols/zephyr/zephyr.c:896
 msgid "Online"
 msgstr "上線"
@@ -2020,7 +2024,7 @@ msgstr "資訊"
 msgid "Add buddy to your list?"
 msgstr "將使用者加入您的好友清單？"
 
-#: src/gtkaccount.c:2090 src/gtkblist.c:3676 src/gtkconv.c:1272
+#: src/gtkaccount.c:2090 src/gtkblist.c:3688 src/gtkconv.c:1272
 #: src/gtkconv.c:3197 src/gtkconv.c:4402 src/gtkrequest.c:200
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2693
 msgid "Add"
@@ -2046,8 +2050,8 @@ msgstr "觀看日誌(_L)"
 msgid "_Alias..."
 msgstr "別名(_A)..."
 
-#: src/gtkblist.c:842 src/gtkblist.c:931 src/gtkblist.c:953 src/gtkconn.c:424
-#: src/gtkconn.c:460
+#: src/gtkblist.c:842 src/gtkblist.c:931 src/gtkblist.c:953 src/gtkconn.c:425
+#: src/gtkconn.c:461
 msgid "_Remove"
 msgstr "移除(_R)"
 
@@ -2086,117 +2090,117 @@ msgid ""
 msgstr "您並未登入任何一個可供您新增哪個好友的通訊協定。"
 
 #. Buddies menu
-#: src/gtkblist.c:1680
+#: src/gtkblist.c:1688
 msgid "/_Buddies"
 msgstr "/好友(_B)"
 
-#: src/gtkblist.c:1681
+#: src/gtkblist.c:1689
 msgid "/Buddies/New Instant _Message..."
 msgstr "/好友/新即時訊息(_M)"
 
-#: src/gtkblist.c:1682
+#: src/gtkblist.c:1690
 msgid "/Buddies/Join a _Chat..."
 msgstr "/好友/加入聊天室(_C)"
 
-#: src/gtkblist.c:1683
+#: src/gtkblist.c:1691
 msgid "/Buddies/Get _User Info..."
 msgstr "/好友/取得使用者資訊(_U)"
 
-#: src/gtkblist.c:1685
+#: src/gtkblist.c:1693
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/好友/顯示離線好友(_O)"
 
-#: src/gtkblist.c:1686
+#: src/gtkblist.c:1694
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/好友/顯示空白的群組(_E)"
 
-#: src/gtkblist.c:1687
+#: src/gtkblist.c:1695
 msgid "/Buddies/_Add Buddy..."
 msgstr "/好友/新增好友(_A)..."
 
-#: src/gtkblist.c:1688
+#: src/gtkblist.c:1696
 msgid "/Buddies/Add C_hat..."
 msgstr "/好友/新增聊天室(_H)..."
 
-#: src/gtkblist.c:1689
+#: src/gtkblist.c:1697
 msgid "/Buddies/Add _Group..."
 msgstr "/好友/新增群組(_G)..."
 
-#: src/gtkblist.c:1691
+#: src/gtkblist.c:1699
 msgid "/Buddies/_Signoff"
 msgstr "/好友/登出(_S)"
 
-#: src/gtkblist.c:1692
+#: src/gtkblist.c:1700
 msgid "/Buddies/_Quit"
 msgstr "/好友/結束程式(_Q)"
 
 #. Tools
-#: src/gtkblist.c:1695
+#: src/gtkblist.c:1703
 msgid "/_Tools"
 msgstr "工具(_T)"
 
-#: src/gtkblist.c:1696
+#: src/gtkblist.c:1704
 msgid "/Tools/_Away"
 msgstr "/工具/離開(_A)"
 
-#: src/gtkblist.c:1697
+#: src/gtkblist.c:1705
 msgid "/Tools/Buddy _Pounce"
 msgstr "/工具/好友狀態捕捉(_P)"
 
-#: src/gtkblist.c:1698
+#: src/gtkblist.c:1706
 msgid "/Tools/P_rotocol Actions"
 msgstr "/工具/通訊協定相關設定(_R)"
 
-#: src/gtkblist.c:1700
+#: src/gtkblist.c:1708
 msgid "/Tools/A_ccounts"
 msgstr "/工具/帳號清單(_C)"
 
-#: src/gtkblist.c:1701
+#: src/gtkblist.c:1709
 msgid "/Tools/_File Transfers"
 msgstr "/工具/檔案傳輸(_F)"
 
-#: src/gtkblist.c:1702
+#: src/gtkblist.c:1710
 msgid "/Tools/Pr_eferences"
 msgstr "/工具/偏好設定(_E)"
 
-#: src/gtkblist.c:1703
+#: src/gtkblist.c:1711
 msgid "/Tools/Pr_ivacy"
 msgstr "/工具/隱私設定(_I)"
 
-#: src/gtkblist.c:1705
+#: src/gtkblist.c:1713
 msgid "/Tools/View System _Log"
 msgstr "觀看系統日誌(_L)"
 
 #. Help
-#: src/gtkblist.c:1708
+#: src/gtkblist.c:1716
 msgid "/_Help"
 msgstr "說明(_H)"
 
-#: src/gtkblist.c:1709
+#: src/gtkblist.c:1717
 msgid "/Help/Online _Help"
 msgstr "線上說明(_H)"
 
-#: src/gtkblist.c:1710
+#: src/gtkblist.c:1718
 msgid "/Help/_Debug Window"
 msgstr "/說明/除錯視窗(_D)"
 
-#: src/gtkblist.c:1711
+#: src/gtkblist.c:1719
 msgid "/Help/_About"
 msgstr "/說明/關於(_A)"
 
-#: src/gtkblist.c:1727
+#: src/gtkblist.c:1735
 msgid "Rename Group"
 msgstr "修改群組名稱"
 
-#: src/gtkblist.c:1727
+#: src/gtkblist.c:1735
 msgid "New group name"
 msgstr "新名字"
 
-#: src/gtkblist.c:1728
+#: src/gtkblist.c:1736
 msgid "Please enter a new name for the selected group."
 msgstr "請為選取的群組輸入一個新的名稱。"
 
-#: src/gtkblist.c:1756
+#: src/gtkblist.c:1764
 #, c-format
 msgid ""
 "\n"
@@ -2205,16 +2209,16 @@ msgstr ""
 "\n"
 "<b>帳號：</b>%s"
 
-#: src/gtkblist.c:1817 src/protocols/oscar/oscar.c:5542
+#: src/gtkblist.c:1827 src/protocols/oscar/oscar.c:5542
 msgid "<b>Status:</b> Offline"
 msgstr "<b>狀態：</b>離線"
 
-#: src/gtkblist.c:1829
+#: src/gtkblist.c:1839
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:1844
+#: src/gtkblist.c:1854
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2222,7 +2226,7 @@ msgstr ""
 "\n"
 "<b>帳號：</b>"
 
-#: src/gtkblist.c:1845
+#: src/gtkblist.c:1855
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2230,7 +2234,7 @@ msgstr ""
 "\n"
 "<b>別名：</b>"
 
-#: src/gtkblist.c:1846
+#: src/gtkblist.c:1856
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2238,7 +2242,7 @@ msgstr ""
 "\n"
 "<b>別名：</b>"
 
-#: src/gtkblist.c:1847
+#: src/gtkblist.c:1857
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2246,7 +2250,7 @@ msgstr ""
 "\n"
 "<b>暱稱：</b>"
 
-#: src/gtkblist.c:1848
+#: src/gtkblist.c:1858
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2254,7 +2258,7 @@ msgstr ""
 "\n"
 "<b>閒置：</b>"
 
-#: src/gtkblist.c:1849
+#: src/gtkblist.c:1859
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2262,7 +2266,7 @@ msgstr ""
 "\n"
 "<b>警告：<b>"
 
-#: src/gtkblist.c:1851
+#: src/gtkblist.c:1861
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2270,7 +2274,7 @@ msgstr ""
 "\n"
 "<b>介紹：</b>幽靈似的"
 
-#: src/gtkblist.c:1852
+#: src/gtkblist.c:1862
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2278,7 +2282,7 @@ msgstr ""
 "\n"
 "<b>狀態：</b>頂呱呱"
 
-#: src/gtkblist.c:1853
+#: src/gtkblist.c:1863
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2286,85 +2290,85 @@ msgstr ""
 "\n"
 "<b>狀態：</b>頂呱呱"
 
-#: src/gtkblist.c:2121
+#: src/gtkblist.c:2131
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "閒置（%d 小時 %d 分）"
 
-#: src/gtkblist.c:2123
+#: src/gtkblist.c:2133
 #, c-format
 msgid "Idle (%dm) "
 msgstr "閒置（%d 分）"
 
-#: src/gtkblist.c:2128
+#: src/gtkblist.c:2138
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "警告 (%d%%)"
 
-#: src/gtkblist.c:2131
+#: src/gtkblist.c:2141
 msgid "Offline "
 msgstr "離線"
 
-#: src/gtkblist.c:2324 src/gtkprefs.c:841 src/gtkprefs.c:1497
+#: src/gtkblist.c:2334 src/gtkprefs.c:841 src/gtkprefs.c:1497
 msgid "None"
 msgstr "無"
 
-#: src/gtkblist.c:2391
+#: src/gtkblist.c:2401
 msgid "/Tools/Away"
 msgstr "/工具/離開"
 
-#: src/gtkblist.c:2394
+#: src/gtkblist.c:2404
 msgid "/Tools/Buddy Pounce"
 msgstr "/工具/好友狀態捕捉"
 
-#: src/gtkblist.c:2397
+#: src/gtkblist.c:2407
 msgid "/Tools/Protocol Actions"
 msgstr "/工具/通訊協定相關設定"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:2484
+#: src/gtkblist.c:2494
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/好友/顯示離線好友"
 
-#: src/gtkblist.c:2486
+#: src/gtkblist.c:2496
 msgid "/Buddies/Show Empty Groups"
 msgstr "/好友/顯示空的好的群組"
 
-#: src/gtkblist.c:2504 src/gtkconv.c:1231
+#: src/gtkblist.c:2514 src/gtkconv.c:1231
 msgid "IM"
 msgstr "即時訊息"
 
-#: src/gtkblist.c:2510
+#: src/gtkblist.c:2520
 msgid "Send a message to the selected buddy"
 msgstr "傳送訊息給被選取的好友"
 
-#: src/gtkblist.c:2513 src/protocols/napster/napster.c:529
+#: src/gtkblist.c:2523 src/protocols/napster/napster.c:529
 msgid "Get Info"
 msgstr "取得資訊"
 
-#: src/gtkblist.c:2519
+#: src/gtkblist.c:2529
 msgid "Get information on the selected buddy"
 msgstr "取得被選取好友的資訊"
 
-#: src/gtkblist.c:2522 src/protocols/oscar/oscar.c:3089
+#: src/gtkblist.c:2532 src/protocols/oscar/oscar.c:3089
 msgid "Chat"
 msgstr "聊天"
 
-#: src/gtkblist.c:2527
+#: src/gtkblist.c:2537
 msgid "Join a chat room"
 msgstr "加入一個聊天室"
 
-#: src/gtkblist.c:2535
+#: src/gtkblist.c:2545
 msgid "Set an away message"
 msgstr "設定一個離開訊息"
 
-#: src/gtkblist.c:3248 src/protocols/yahoo/yahoo.c:2321
+#: src/gtkblist.c:3258 src/protocols/yahoo/yahoo.c:2325
 msgid "Add Buddy"
 msgstr "新增好友"
 
-#: src/gtkblist.c:3271
+#: src/gtkblist.c:3281
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2373,63 +2377,63 @@ msgstr ""
 "請輸入您所想要加入好友的帳號。您可以為這個好友設定別名或暱稱，而這個設定將會"
 "在好友清單中顯示。\n"
 
-#: src/gtkblist.c:3293 src/main.c:289
+#: src/gtkblist.c:3303 src/main.c:289
 msgid "Screen Name:"
 msgstr "帳號："
 
-#: src/gtkblist.c:3319 src/gtkblist.c:3639
+#: src/gtkblist.c:3329 src/gtkblist.c:3651
 msgid "Group:"
 msgstr "群組："
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:3328 src/gtkblist.c:3607
+#: src/gtkblist.c:3338 src/gtkblist.c:3619
 msgid "Account:"
 msgstr "帳號："
 
-#: src/gtkblist.c:3574
+#: src/gtkblist.c:3586
 msgid "Add Chat"
 msgstr "新增聊天室"
 
-#: src/gtkblist.c:3597
+#: src/gtkblist.c:3609
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
 msgstr "請輸入別名，或者關於您所想加入好友清單的聊天室的適當資訊。\n"
 
-#: src/gtkblist.c:3673
+#: src/gtkblist.c:3685
 msgid "Add Group"
 msgstr "加入群組"
 
-#: src/gtkblist.c:3674
+#: src/gtkblist.c:3686
 msgid "Please enter the name of the group to be added."
 msgstr "請給您新增的群組輸入名稱。"
 
-#: src/gtkblist.c:4191
+#: src/gtkblist.c:4203
 msgid "No actions available"
 msgstr "不允許任何動作"
 
-#: src/gtkconn.c:58 src/gtkconn.c:242 src/gtkconn.c:253
+#: src/gtkconn.c:58 src/gtkconn.c:243 src/gtkconn.c:254
 msgid "Done."
 msgstr "完成。"
 
-#: src/gtkconn.c:137
+#: src/gtkconn.c:138
 msgid "Signon: "
 msgstr "登入："
 
-#: src/gtkconn.c:195
+#: src/gtkconn.c:196
 msgid "Signon"
 msgstr "登入"
 
-#: src/gtkconn.c:208
+#: src/gtkconn.c:209
 msgid "Cancel All"
 msgstr "全部取消"
 
-#: src/gtkconn.c:425 src/gtkconn.c:460 src/gtkconn.c:526
+#: src/gtkconn.c:426 src/gtkconn.c:461 src/gtkconn.c:527
 msgid "_Reconnect"
 msgstr "重新連線(_R)"
 
 # XXX 暫譯
-#: src/gtkconn.c:490
+#: src/gtkconn.c:491
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
@@ -2442,19 +2446,19 @@ msgstr ""
 "%s\n"
 "%s"
 
-#: src/gtkconn.c:492
+#: src/gtkconn.c:493
 msgid "Reason Unknown."
 msgstr "理由不明。"
 
-#: src/gtkconn.c:531
+#: src/gtkconn.c:532
 msgid "Reconnect _All"
 msgstr "全部重新連線(_A)"
 
-#: src/gtkconn.c:554
+#: src/gtkconn.c:555
 msgid "Account"
 msgstr "帳號"
 
-#: src/gtkconn.c:562
+#: src/gtkconn.c:563
 msgid "Time"
 msgstr "時間"
 
@@ -2797,6 +2801,7 @@ msgstr "關閉交談"
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d 個人在這個房間"
+msgstr[1] "%d 個人在這個房間"
 
 #: src/gtkconv.c:5344
 msgid "Animate"
@@ -2980,6 +2985,7 @@ msgstr "交談："
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] "%s 有 %d 封新郵件。"
+msgstr[1] "%s 有 %d 封新郵件。"
 
 #: src/gtknotify.c:219
 #, c-format
@@ -3076,7 +3082,7 @@ msgid "Return from away"
 msgstr "由離開返回"
 
 #: src/gtkpounce.c:415 src/gtkprefs.c:1494 src/protocols/msn/state.c:30
-#: src/protocols/yahoo/yahoo.c:2185
+#: src/protocols/yahoo/yahoo.c:2189
 msgid "Idle"
 msgstr "閒置"
 
@@ -3884,11 +3890,11 @@ msgstr "您確定要拒絕 %s？"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:193 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:193 src/protocols/gg/gg.c:660 src/request.h:992
 msgid "Yes"
 msgstr "是"
 
-#: src/gtkrequest.c:194 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:194 src/protocols/gg/gg.c:660 src/request.h:992
 msgid "No"
 msgstr "否"
 
@@ -4079,8 +4085,8 @@ msgstr "無聊（預設）"
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:110
 #: src/protocols/msn/msn.c:344 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2488
-#: src/protocols/yahoo/yahoo.c:2597
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2492
+#: src/protocols/yahoo/yahoo.c:2601
 msgid "Available"
 msgstr "上線"
 
@@ -4095,8 +4101,8 @@ msgstr "離開（只有好友可以看到我）"
 #: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:929
 #: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2849
 #: src/protocols/oscar/oscar.c:4584 src/protocols/oscar/oscar.c:4611
-#: src/protocols/oscar/oscar.c:6168 src/protocols/yahoo/yahoo.c:2183
-#: src/protocols/yahoo/yahoo.c:2508 src/protocols/yahoo/yahoo.c:2607
+#: src/protocols/oscar/oscar.c:6168 src/protocols/yahoo/yahoo.c:2187
+#: src/protocols/yahoo/yahoo.c:2512 src/protocols/yahoo/yahoo.c:2611
 msgid "Invisible"
 msgstr "隱身"
 
@@ -4255,9 +4261,9 @@ msgstr "城市"
 #: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1286
 #: src/protocols/msn/msn.c:1530 src/protocols/napster/napster.c:387
 #: src/protocols/oscar/oscar.c:2891 src/protocols/oscar/oscar.c:3203
-#: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2780
-#: src/protocols/yahoo/yahoo.c:2802 src/protocols/yahoo/yahoo.c:2825
-#: src/protocols/yahoo/yahoo.c:2983 src/protocols/zephyr/zephyr.c:355
+#: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2784
+#: src/protocols/yahoo/yahoo.c:2806 src/protocols/yahoo/yahoo.c:2829
+#: src/protocols/yahoo/yahoo.c:2987 src/protocols/zephyr/zephyr.c:355
 msgid "Buddy Information"
 msgstr "好友資訊"
 
@@ -4500,7 +4506,7 @@ msgstr "顯示是日訊息 (MOTD)"
 msgid "_Channel:"
 msgstr "頻道(_C)："
 
-#: src/protocols/irc/irc.c:163 src/protocols/jabber/chat.c:56
+#: src/protocols/irc/irc.c:163 src/protocols/jabber/chat.c:57
 msgid "_Password:"
 msgstr "密碼(_P)："
 
@@ -4584,7 +4590,7 @@ msgstr " <i>(IRC 操作者)</i>"
 msgid " <i>(identified)</i>"
 msgstr " <i>(已驗證)</i>"
 
-#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2883
+#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2887
 msgid "Realname"
 msgstr "姓名"
 
@@ -4822,7 +4828,7 @@ msgid "Given Name"
 msgstr "名"
 
 #: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:625
-#: src/protocols/jabber/jabber.c:592 src/protocols/yahoo/yahoo.c:2879
+#: src/protocols/jabber/jabber.c:592 src/protocols/yahoo/yahoo.c:2883
 msgid "Nickname"
 msgstr "暱稱"
 
@@ -4863,7 +4869,7 @@ msgid "Telephone"
 msgstr "電話"
 
 #: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:699
-#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2875
+#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2879
 msgid "Email"
 msgstr "電子郵件"
 
@@ -4971,44 +4977,44 @@ msgstr "要求或重新要求認證"
 msgid "Unsubscribe"
 msgstr "從好友名單中移除"
 
-#: src/protocols/jabber/chat.c:37 src/protocols/yahoo/yahoochat.c:938
+#: src/protocols/jabber/chat.c:38 src/protocols/yahoo/yahoochat.c:938
 msgid "_Room:"
 msgstr "聊天室(_R)："
 
-#: src/protocols/jabber/chat.c:44
+#: src/protocols/jabber/chat.c:45
 msgid "_Server:"
 msgstr "伺服器(_S)："
 
-#: src/protocols/jabber/chat.c:50
+#: src/protocols/jabber/chat.c:51
 msgid "_Handle:"
 msgstr "暱稱(_H)："
 
-#: src/protocols/jabber/chat.c:158
+#: src/protocols/jabber/chat.c:159
 #, c-format
 msgid "%s is not a valid room name"
 msgstr "%s 不是一個有效的聊天室名稱"
 
-#: src/protocols/jabber/chat.c:159
+#: src/protocols/jabber/chat.c:160
 msgid "Invalid Room Name"
 msgstr "聊天室名稱無效"
 
-#: src/protocols/jabber/chat.c:164
+#: src/protocols/jabber/chat.c:165
 #, c-format
 msgid "%s is not a valid server name"
 msgstr "%s 不是一個有效的伺服器名稱"
 
-#: src/protocols/jabber/chat.c:165 src/protocols/jabber/chat.c:166
+#: src/protocols/jabber/chat.c:166 src/protocols/jabber/chat.c:167
 msgid "Invalid Server Name"
 msgstr "伺服器名稱無效"
 
 # NOTE Arto Alakulju 發現「room handle」即是聊天室內使用者所用的暱稱而已
-#: src/protocols/jabber/chat.c:170
+#: src/protocols/jabber/chat.c:171
 #, c-format
 msgid "%s is not a valid room handle"
 msgstr "%s 不是一個有效的暱稱"
 
 # NOTE Arto Alakulju 發現「room handle」即是聊天室內使用者所用的暱稱而已
-#: src/protocols/jabber/chat.c:171 src/protocols/jabber/chat.c:172
+#: src/protocols/jabber/chat.c:172 src/protocols/jabber/chat.c:173
 msgid "Invalid Room Handle"
 msgstr "暱稱無效"
 
@@ -5254,7 +5260,7 @@ msgstr "註冊新的 Jabber 帳戶"
 #: src/protocols/jabber/jabber.c:767 src/protocols/msn/dispatch.c:219
 #: src/protocols/msn/msn.c:483 src/protocols/napster/napster.c:487
 #: src/protocols/oscar/oscar.c:694 src/protocols/trepia/trepia.c:1110
-#: src/protocols/yahoo/yahoo.c:2069
+#: src/protocols/yahoo/yahoo.c:2073
 msgid "Connecting"
 msgstr "連線中"
 
@@ -5271,7 +5277,7 @@ msgid "Re-initializing Stream"
 msgstr "串流重新初始中"
 
 #: src/protocols/jabber/jabber.c:909 src/protocols/jabber/jabber.c:962
-#: src/protocols/jabber/presence.c:296
+#: src/protocols/jabber/presence.c:292
 msgid "Error"
 msgstr "錯誤"
 
@@ -5383,11 +5389,11 @@ msgstr "在確定好友的連線狀態時，發生了未知的錯誤"
 msgid "The user %s wants to add you to their buddy list."
 msgstr "使用者 %s 想要將您加入他（她）的好友清單中。"
 
-#: src/protocols/jabber/presence.c:286 src/protocols/oscar/oscar.c:2950
+#: src/protocols/jabber/presence.c:282 src/protocols/oscar/oscar.c:2950
 msgid "Unknown error"
 msgstr "未知錯誤"
 
-#: src/protocols/jabber/presence.c:292
+#: src/protocols/jabber/presence.c:288
 msgid "Unable to join chat"
 msgstr "無法加入聊天室"
 
@@ -5443,8 +5449,8 @@ msgstr "無法解析訊息。"
 
 #: src/protocols/msn/dispatch.c:215 src/protocols/msn/msn.c:492
 #: src/protocols/msn/notification.c:2149 src/protocols/napster/napster.c:463
-#: src/protocols/napster/napster.c:494 src/protocols/yahoo/yahoo.c:1849
-#: src/protocols/yahoo/yahoo.c:1880 src/protocols/yahoo/yahoo.c:1945
+#: src/protocols/napster/napster.c:494 src/protocols/yahoo/yahoo.c:1853
+#: src/protocols/yahoo/yahoo.c:1884 src/protocols/yahoo/yahoo.c:1949
 msgid "Unable to connect"
 msgstr "無法連線"
 
@@ -5724,7 +5730,7 @@ msgstr "送出行動訊息。"
 msgid "Page"
 msgstr "傳呼"
 
-#: src/protocols/msn/msn.c:332 src/protocols/yahoo/yahoo.c:2297
+#: src/protocols/msn/msn.c:332 src/protocols/yahoo/yahoo.c:2301
 #, c-format
 msgid "<b>Status:</b> %s"
 msgstr "<b>狀態：</b>%s"
@@ -5735,26 +5741,26 @@ msgid "Away From Computer"
 msgstr "不在電腦前"
 
 #: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:630
-#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2165
-#: src/protocols/yahoo/yahoo.c:2490 src/protocols/yahoo/yahoo.c:2598
+#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2169
+#: src/protocols/yahoo/yahoo.c:2494 src/protocols/yahoo/yahoo.c:2602
 msgid "Be Right Back"
 msgstr "馬上回來"
 
 #: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:632
-#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2167
-#: src/protocols/yahoo/yahoo.c:2492 src/protocols/yahoo/yahoo.c:2599
+#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2171
+#: src/protocols/yahoo/yahoo.c:2496 src/protocols/yahoo/yahoo.c:2603
 msgid "Busy"
 msgstr "忙碌"
 
 #: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:634
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2175
-#: src/protocols/yahoo/yahoo.c:2500 src/protocols/yahoo/yahoo.c:2603
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2179
+#: src/protocols/yahoo/yahoo.c:2504 src/protocols/yahoo/yahoo.c:2607
 msgid "On The Phone"
 msgstr "電話中"
 
 #: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:636
-#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2179
-#: src/protocols/yahoo/yahoo.c:2504 src/protocols/yahoo/yahoo.c:2605
+#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2183
+#: src/protocols/yahoo/yahoo.c:2508 src/protocols/yahoo/yahoo.c:2609
 msgid "Out To Lunch"
 msgstr "外出用餐"
 
@@ -5796,9 +5802,14 @@ msgstr "傳送至行動電話"
 msgid "Initiate Chat"
 msgstr "開啟聊天室"
 
+# XXX 暫譯
 #: src/protocols/msn/msn.c:457
-msgid "SSL support is needed for MSN. Please install it."
-msgstr "MSN 需要 SSL 程式庫的支援，請安裝相關的程式庫。"
+msgid ""
+"SSL support is needed for MSN. Please install a supported SSL library. See "
+"http://gaim.sf.net/faq-ssl.php for more information."
+msgstr ""
+"MSN 需要 SSL 程式庫的支援，請安裝一個受支援的 SSL 程式庫。詳情請閱 http://"
+"gaim.sf.net/faq-ssl.php。"
 
 #: src/protocols/msn/msn.c:745
 #, c-format
@@ -5822,33 +5833,33 @@ msgstr ""
 "MSN 的帳號必需為「user@server.com」的格式。或許您所指的是 %s@hotmail.com。目"
 "前將不會變更您的拒絕清單。"
 
-#: src/protocols/msn/msn.c:1287 src/protocols/yahoo/yahoo.c:2781
+#: src/protocols/msn/msn.c:1287 src/protocols/yahoo/yahoo.c:2785
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>讀取個人資訊時發生錯誤</b></body></html>"
 
 #. Age
 #: src/protocols/msn/msn.c:1357 src/protocols/oscar/oscar.c:4001
 #: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:413
-#: src/protocols/yahoo/yahoo.c:2891
+#: src/protocols/yahoo/yahoo.c:2895
 msgid "Age"
 msgstr "年齡"
 
 #. Gender
 #: src/protocols/msn/msn.c:1364 src/protocols/oscar/oscar.c:3987
 #: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:421
-#: src/protocols/yahoo/yahoo.c:2899
+#: src/protocols/yahoo/yahoo.c:2903
 msgid "Gender"
 msgstr "性別"
 
-#: src/protocols/msn/msn.c:1372 src/protocols/yahoo/yahoo.c:2895
+#: src/protocols/msn/msn.c:1372 src/protocols/yahoo/yahoo.c:2899
 msgid "Marital Status"
 msgstr "婚姻狀況"
 
-#: src/protocols/msn/msn.c:1379 src/protocols/yahoo/yahoo.c:2887
+#: src/protocols/msn/msn.c:1379 src/protocols/yahoo/yahoo.c:2891
 msgid "Location"
 msgstr "所在位置"
 
-#: src/protocols/msn/msn.c:1387 src/protocols/yahoo/yahoo.c:2903
+#: src/protocols/msn/msn.c:1387 src/protocols/yahoo/yahoo.c:2907
 msgid "Occupation"
 msgstr "職業"
 
@@ -5869,11 +5880,11 @@ msgid "Hobbies and Interests"
 msgstr "嗜好/興趣"
 
 #: src/protocols/msn/msn.c:1491 src/protocols/msn/msn.c:1497
-#: src/protocols/yahoo/yahoo.c:2938
+#: src/protocols/yahoo/yahoo.c:2942
 msgid "Favorite Quote"
 msgstr "至愛名言"
 
-#: src/protocols/msn/msn.c:1505 src/protocols/yahoo/yahoo.c:2974
+#: src/protocols/msn/msn.c:1505 src/protocols/yahoo/yahoo.c:2978
 msgid "Last Updated"
 msgstr "更新日期"
 
@@ -5884,12 +5895,12 @@ msgid "Homepage"
 msgstr "網頁"
 
 # NOTE 譯文更動 by Ambrose
-#: src/protocols/msn/msn.c:1538 src/protocols/yahoo/yahoo.c:2989
+#: src/protocols/msn/msn.c:1538 src/protocols/yahoo/yahoo.c:2993
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "無法取得使用者 %s 的個人資訊"
 
-#: src/protocols/msn/msn.c:1540 src/protocols/yahoo/yahoo.c:2991
+#: src/protocols/msn/msn.c:1540 src/protocols/yahoo/yahoo.c:2995
 msgid "The user's profile is empty."
 msgstr "這個使用者的資訊是空白的。"
 
@@ -6006,6 +6017,11 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
+"MSN 伺服器將要在 %d 分鐘內關閉以進行維護，屆時您將會由伺服器上自動登出。請儘"
+"快結束您目前的交談。\n"
+"\n"
+"當維護工作結束，您將可以再度登入。"
+msgstr[1] ""
 "MSN 伺服器將要在 %d 分鐘內關閉以進行維護，屆時您將會由伺服器上自動登出。請儘"
 "快結束您目前的交談。\n"
 "\n"
@@ -6464,7 +6480,7 @@ msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為它們都是無效
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為它太大了。"
-msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為它們都太大了。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為它們太大了。"
 
 #: src/protocols/oscar/oscar.c:2794
 #, c-format
@@ -6473,24 +6489,29 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為它傳送的速度太快。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為它們傳送的速度太快。"
 
+# XXX 跟芬蘭文的譯者有同感，直譯「邪惡」好像行不通，下同
 #: src/protocols/oscar/oscar.c:2803
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為他 / 她太邪惡了。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為他 / 她太邪惡了。"
 
 #: src/protocols/oscar/oscar.c:2812
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，因為您太邪惡了。"
+msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，因為您太邪惡了。"
 
 #: src/protocols/oscar/oscar.c:2821
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "您因為不明原因而遺失了 %hu 個由 %s 送來的訊息。"
+msgstr[1] "您因為不明原因而遺失了 %hu 個由 %s 送來的訊息。"
 
 #: src/protocols/oscar/oscar.c:2837 src/protocols/oscar/oscar.c:4608
 #: src/protocols/oscar/oscar.c:6167
@@ -6548,7 +6569,7 @@ msgid "Get File"
 msgstr "接收檔案"
 
 #: src/protocols/oscar/oscar.c:3095 src/protocols/oscar/oscar.c:6258
-#: src/protocols/yahoo/yahoo.c:2346
+#: src/protocols/yahoo/yahoo.c:2350
 msgid "Send File"
 msgstr "傳送檔案"
 
@@ -6862,6 +6883,7 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] "超出個人資訊的長度上限 %d 位元組。Gaim 將在截短內容後進行設定。"
+msgstr[1] "超出個人資訊的長度上限 %d 位元組。Gaim 將在截短內容後進行設定。"
 
 #: src/protocols/oscar/oscar.c:4505
 msgid "Profile too long."
@@ -6889,6 +6911,7 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] "超出離開訊息的長度上限 %d 位元組。Gaim 將在截短內容後進行設定。"
+msgstr[1] "超出離開訊息的長度上限 %d 位元組。Gaim 將在截短內容後進行設定。"
 
 #: src/protocols/oscar/oscar.c:4568
 msgid "Away message too long."
@@ -7026,7 +7049,7 @@ msgstr "<b>離開訊息：</b>"
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>狀態：</b>未認證"
 
-#: src/protocols/oscar/oscar.c:5572 src/protocols/yahoo/yahoo.c:2187
+#: src/protocols/oscar/oscar.c:5572 src/protocols/yahoo/yahoo.c:2191
 msgid "Offline"
 msgstr "離線"
 
@@ -7378,6 +7401,7 @@ msgstr "Gaim - 儲存為..."
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] "%s 要求 %s 接收 %d 個檔案：%s (%.2f %s)%s%s"
+msgstr[1] "%s 要求 %s 接收 %d 個檔案：%s (%.2f %s)%s%s"
 
 #: src/protocols/toc/toc.c:2083
 #, c-format
@@ -7494,22 +7518,29 @@ msgstr "登入中"
 msgid "Trepia Protocol Plugin"
 msgstr "Trepia 協定模組"
 
-#: src/protocols/yahoo/yahoo.c:726
+# XXX 暫譯
+#: src/protocols/yahoo/yahoo.c:297
+msgid ""
+"You have been logged off as you have logged in on a different machine or "
+"device."
+msgstr "您已經被登出，因為您已在另一處登入。"
+
+#: src/protocols/yahoo/yahoo.c:730
 msgid "Your Yahoo! message did not get sent."
 msgstr "您的 Yahoo! 訊息並沒有被送出。"
 
 # XXX 暫譯
-#: src/protocols/yahoo/yahoo.c:768
+#: src/protocols/yahoo/yahoo.c:772
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "%s 的 Yahoo! 系統訊息："
 
-#: src/protocols/yahoo/yahoo.c:834
+#: src/protocols/yahoo/yahoo.c:838
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr "使用者 %s 剛剛拒絕了您先前將他（她）新增至您的好友清單的要求。"
 
-#: src/protocols/yahoo/yahoo.c:837
+#: src/protocols/yahoo/yahoo.c:841
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -7518,11 +7549,11 @@ msgstr ""
 "使用者 %s 因為下列原因，剛剛拒絕了您先前將他（她）新增至您的好友清單的要求：%"
 "s"
 
-#: src/protocols/yahoo/yahoo.c:840
+#: src/protocols/yahoo/yahoo.c:844
 msgid "Add buddy rejected"
 msgstr "新增好友被拒"
 
-#: src/protocols/yahoo/yahoo.c:1490
+#: src/protocols/yahoo/yahoo.c:1494
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -7532,11 +7563,11 @@ msgstr ""
 "Yahoo 伺服器要求了使用一種不明的認證方式，因此這個版本的 Gaim 很可能不會成功"
 "登入 Yahoo。請到 %s 檢查有沒有更新的版本。"
 
-#: src/protocols/yahoo/yahoo.c:1493
+#: src/protocols/yahoo/yahoo.c:1497
 msgid "Failed Yahoo! Authentication"
 msgstr "Yahoo! 認證失敗"
 
-#: src/protocols/yahoo/yahoo.c:1566
+#: src/protocols/yahoo/yahoo.c:1570
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -7545,68 +7576,68 @@ msgstr ""
 "您嘗試忽略在您的好友名單內的 %s。如果您打算把他（她）從您的好友清單中移除，並"
 "隨即忽略他（她），請按一下「是」。"
 
-#: src/protocols/yahoo/yahoo.c:1569
+#: src/protocols/yahoo/yahoo.c:1573
 msgid "Ignore buddy?"
 msgstr "忽略使用者？"
 
-#: src/protocols/yahoo/yahoo.c:1602
+#: src/protocols/yahoo/yahoo.c:1606
 msgid "Invalid username."
 msgstr "使用者名稱無效。"
 
-#: src/protocols/yahoo/yahoo.c:1605
+#: src/protocols/yahoo/yahoo.c:1609
 msgid "Incorrect password."
 msgstr "錯誤的密碼。"
 
 # XXX 暫譯
-#: src/protocols/yahoo/yahoo.c:1608
+#: src/protocols/yahoo/yahoo.c:1612
 msgid "Your account is locked, please log in to the yahoo website."
 msgstr "你的帳戶目前被封鎖。請您登入 Yahoo 網站。"
 
-#: src/protocols/yahoo/yahoo.c:1611
+#: src/protocols/yahoo/yahoo.c:1615
 #, c-format
 msgid "Unknown error number %d."
 msgstr "未知的錯誤代碼 %d。"
 
-#: src/protocols/yahoo/yahoo.c:1668
+#: src/protocols/yahoo/yahoo.c:1672
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr "無法將好友「%1$s」新增至帳號「%3$s」在伺服器上的清單內的群組「%2$s」。"
 
-#: src/protocols/yahoo/yahoo.c:1670
+#: src/protocols/yahoo/yahoo.c:1674
 msgid "Could not add buddy to server list"
 msgstr "無法將好友新增至伺服器上的清單內"
 
-#: src/protocols/yahoo/yahoo.c:1780 src/protocols/yahoo/yahoo.c:1910
+#: src/protocols/yahoo/yahoo.c:1784 src/protocols/yahoo/yahoo.c:1914
 msgid "Unable to read"
 msgstr "無法讀取"
 
-#: src/protocols/yahoo/yahoo.c:1935 src/protocols/yahoo/yahoo.c:2044
-#: src/protocols/yahoo/yahoo.c:2085
+#: src/protocols/yahoo/yahoo.c:1939 src/protocols/yahoo/yahoo.c:2048
+#: src/protocols/yahoo/yahoo.c:2089
 msgid "Connection problem"
 msgstr "連線錯誤"
 
-#: src/protocols/yahoo/yahoo.c:2169 src/protocols/yahoo/yahoo.c:2494
-#: src/protocols/yahoo/yahoo.c:2600
+#: src/protocols/yahoo/yahoo.c:2173 src/protocols/yahoo/yahoo.c:2498
+#: src/protocols/yahoo/yahoo.c:2604
 msgid "Not At Home"
 msgstr "不在家"
 
-#: src/protocols/yahoo/yahoo.c:2171 src/protocols/yahoo/yahoo.c:2496
-#: src/protocols/yahoo/yahoo.c:2601
+#: src/protocols/yahoo/yahoo.c:2175 src/protocols/yahoo/yahoo.c:2500
+#: src/protocols/yahoo/yahoo.c:2605
 msgid "Not At Desk"
 msgstr "不在座位"
 
-#: src/protocols/yahoo/yahoo.c:2173 src/protocols/yahoo/yahoo.c:2498
-#: src/protocols/yahoo/yahoo.c:2602
+#: src/protocols/yahoo/yahoo.c:2177 src/protocols/yahoo/yahoo.c:2502
+#: src/protocols/yahoo/yahoo.c:2606
 msgid "Not In Office"
 msgstr "不在辦公室"
 
-#: src/protocols/yahoo/yahoo.c:2177 src/protocols/yahoo/yahoo.c:2502
-#: src/protocols/yahoo/yahoo.c:2604
+#: src/protocols/yahoo/yahoo.c:2181 src/protocols/yahoo/yahoo.c:2506
+#: src/protocols/yahoo/yahoo.c:2608
 msgid "On Vacation"
 msgstr "渡假去了"
 
-#: src/protocols/yahoo/yahoo.c:2181 src/protocols/yahoo/yahoo.c:2506
-#: src/protocols/yahoo/yahoo.c:2606
+#: src/protocols/yahoo/yahoo.c:2185 src/protocols/yahoo/yahoo.c:2510
+#: src/protocols/yahoo/yahoo.c:2610
 msgid "Stepped Out"
 msgstr "走出去了"
 
@@ -7614,88 +7645,88 @@ msgstr "走出去了"
 # NOTE 這也表示你不會看見這個好友登入等等。」(yeah, it mean the buddy
 # NOTE isn't on the server's buddy list/ which also means you won't
 # NOTE be able to see when they log on, etc)
-#: src/protocols/yahoo/yahoo.c:2245 src/protocols/yahoo/yahoo.c:2277
+#: src/protocols/yahoo/yahoo.c:2249 src/protocols/yahoo/yahoo.c:2281
 msgid "Not on server list"
 msgstr "不在伺服器上的清單中"
 
 # NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
-#: src/protocols/yahoo/yahoo.c:2333
+#: src/protocols/yahoo/yahoo.c:2337
 msgid "Join in Chat"
 msgstr "加入好友目前所在的聊天室"
 
 # NOTE「會議室」是暫時的意譯。Yahoo! 好像沒有為「Conference」提供正式中譯名。
-#: src/protocols/yahoo/yahoo.c:2339
+#: src/protocols/yahoo/yahoo.c:2343
 msgid "Initiate Conference"
 msgstr "開啟會議室"
 
-#: src/protocols/yahoo/yahoo.c:2392
+#: src/protocols/yahoo/yahoo.c:2396
 msgid "Active which ID?"
 msgstr "啟動哪一個 ID？"
 
 # NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
-#: src/protocols/yahoo/yahoo.c:2400
+#: src/protocols/yahoo/yahoo.c:2404
 msgid "Join who in chat?"
 msgstr "加入哪個好友目前所在的聊天室？"
 
-#: src/protocols/yahoo/yahoo.c:2411
+#: src/protocols/yahoo/yahoo.c:2415
 msgid "Activate ID..."
 msgstr "啟動 ID..."
 
-#: src/protocols/yahoo/yahoo.c:2417
+#: src/protocols/yahoo/yahoo.c:2421
 msgid "Join user in chat..."
 msgstr "加入好友目前所在的聊天室..."
 
-#: src/protocols/yahoo/yahoo.c:2798
+#: src/protocols/yahoo/yahoo.c:2802
 msgid ""
 "<b>Sorry, profiles marked as containing adult content are not supported at "
 "this time.</b><br><br>\n"
 msgstr "<b>對不起，暫時並不支援內容被列為兒童不宜的個人資訊。</b><br><br>\n"
 
 # NOTE 注意：鏈結在譯文之下顯示，故譯成「以下」
-#: src/protocols/yahoo/yahoo.c:2799 src/protocols/yahoo/yahoo.c:2822
+#: src/protocols/yahoo/yahoo.c:2803 src/protocols/yahoo/yahoo.c:2826
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
 msgstr "您如果想看這則個人資訊，請用您的瀏覽器開啟以下連結<br>"
 
-#: src/protocols/yahoo/yahoo.c:2821
+#: src/protocols/yahoo/yahoo.c:2825
 msgid ""
 "<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
 msgstr "<b>對不起，暫時只支援英文的個人資訊。</b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2869 src/protocols/yahoo/yahoo.c:2870
+#: src/protocols/yahoo/yahoo.c:2873 src/protocols/yahoo/yahoo.c:2874
 msgid "Yahoo! ID"
 msgstr "Yahoo! 帳號"
 
-#: src/protocols/yahoo/yahoo.c:2914 src/protocols/yahoo/yahoo.c:2917
-#: src/protocols/yahoo/yahoo.c:2920
+#: src/protocols/yahoo/yahoo.c:2918 src/protocols/yahoo/yahoo.c:2921
+#: src/protocols/yahoo/yahoo.c:2924
 msgid "Hobbies"
 msgstr "嗜好"
 
-#: src/protocols/yahoo/yahoo.c:2929 src/protocols/yahoo/yahoo.c:2932
+#: src/protocols/yahoo/yahoo.c:2933 src/protocols/yahoo/yahoo.c:2936
 msgid "Latest News"
 msgstr "最新消息"
 
-#: src/protocols/yahoo/yahoo.c:2946
+#: src/protocols/yahoo/yahoo.c:2950
 msgid "Home Page"
 msgstr "網頁"
 
-#: src/protocols/yahoo/yahoo.c:2958
+#: src/protocols/yahoo/yahoo.c:2962
 msgid "Cool Link 1"
 msgstr "酷連結(一)"
 
-#: src/protocols/yahoo/yahoo.c:2962
+#: src/protocols/yahoo/yahoo.c:2966
 msgid "Cool Link 2"
 msgstr "酷連結(二)"
 
-#: src/protocols/yahoo/yahoo.c:2964
+#: src/protocols/yahoo/yahoo.c:2968
 msgid "Cool Link 3"
 msgstr "酷連結(三)"
 
 # XXX 改譯「註冊日期」會否比較通順？
-#: src/protocols/yahoo/yahoo.c:2970
+#: src/protocols/yahoo/yahoo.c:2974
 msgid "Member Since"
 msgstr "成為成員的時間"
 
@@ -7709,23 +7740,23 @@ msgstr "成為成員的時間"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/yahoo/yahoo.c:3171 src/protocols/yahoo/yahoo.c:3173
+#: src/protocols/yahoo/yahoo.c:3175 src/protocols/yahoo/yahoo.c:3177
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo 協定模組"
 
-#: src/protocols/yahoo/yahoo.c:3190
+#: src/protocols/yahoo/yahoo.c:3194
 msgid "Pager host"
 msgstr "傳呼系統伺服器"
 
-#: src/protocols/yahoo/yahoo.c:3193
+#: src/protocols/yahoo/yahoo.c:3197
 msgid "Pager port"
 msgstr "傳呼系統通訊埠"
 
-#: src/protocols/yahoo/yahoo.c:3196
+#: src/protocols/yahoo/yahoo.c:3200
 msgid "File transfer host"
 msgstr "檔案傳輸主機"
 
-#: src/protocols/yahoo/yahoo.c:3199
+#: src/protocols/yahoo/yahoo.c:3203
 msgid "File transfer port"
 msgstr "檔案傳輸通訊埠"
 
@@ -7856,7 +7887,7 @@ msgstr "使用者自定"
 #. *
 #. * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
 #.
-#: src/request.h:862
+#: src/request.h:1011
 msgid "Accept"
 msgstr "接受"
 
@@ -7869,6 +7900,7 @@ msgstr "請輸入您的密碼"
 msgid "(%d message)"
 msgid_plural "(%d messages)"
 msgstr[0] "（%d 個訊息）"
+msgstr[1] "（%d 個訊息）"
 
 #: src/server.c:961
 msgid "(1 message)"
@@ -7942,16 +7974,19 @@ msgstr "未知。"
 msgid "day"
 msgid_plural "days"
 msgstr[0] "天"
+msgstr[1] "天"
 
 #: src/util.c:1928 src/util.c:1932 src/util.c:1946 src/util.c:1948
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "小時"
+msgstr[1] "小時"
 
 #: src/util.c:1928 src/util.c:1937 src/util.c:1946 src/util.c:1951
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "分"
+msgstr[1] "分"
 
 #: src/util.c:2283
 msgid "g003: Error opening connection.\n"
@@ -7968,6 +8003,9 @@ msgstr "包含 Gaim 的使用者設定的目錄現在移至："
 #: src/win32/win32dep.c:276
 msgid "Notification"
 msgstr "通知"
+
+#~ msgid "SSL support is needed for MSN. Please install it."
+#~ msgstr "MSN 需要 SSL 程式庫的支援，請安裝相關的程式庫。"
 
 # XXX 唉，不能寫「世界文」吧......
 #~ msgid "Esperanto"
