@@ -248,7 +248,8 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry), c->fontface);
 		}
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size"))
+		if (!(gc->flags & GAIM_CONNECTION_NO_FONTSIZE) &&
+			gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size"))
 		{
 		        gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
 					gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
@@ -2368,6 +2369,10 @@ gray_stuff_out(GaimConversation *conv)
 				buttons &= ~GTK_IMHTML_IMAGE;
 			if (gc->flags & GAIM_CONNECTION_NO_BGCOLOR)
 				buttons &= ~GTK_IMHTML_BACKCOLOR;
+			if (gc->flags & GAIM_CONNECTION_NO_FONTSIZE) {
+				buttons &= ~GTK_IMHTML_GROW;
+				buttons &= ~GTK_IMHTML_SHRINK;
+			}
 		} else {
 			buttons = GTK_IMHTML_SMILEY;
 		}

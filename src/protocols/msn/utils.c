@@ -57,6 +57,10 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 			pre = g_string_append_c(pre, '<');
 			pre = g_string_append_c(pre, *cur);
 			pre = g_string_append_c(pre, '>');
+			post = g_string_prepend_c(post, '>');
+			post = g_string_prepend_c(post, *cur);
+			post = g_string_prepend_c(post, '/');
+			post = g_string_prepend_c(post, '<');
 			cur++;
 		}
 	}

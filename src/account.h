@@ -72,7 +72,7 @@ struct _GaimAccount
 	GSList *permit;             /**< Permit list.                         */
 	GSList *deny;               /**< Deny list.                           */
 	int perm_deny;              /**< The permit/deny setting.             */
- 	GaimLog *system_log;        /**< The system log                       */
+	GaimLog *system_log;        /**< The system log                       */
 };
 
 #ifdef __cplusplus
