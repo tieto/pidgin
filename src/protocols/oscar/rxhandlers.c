@@ -539,56 +539,37 @@ faim_export void aim_rxdispatch(aim_session_t *sess)
 		if (cur->handled)
 			continue;
 
-		/*
-		 * This is a debugging/sanity check only and probably 
-		 * could/should be removed for stable code.
-		 */
-		if (((cur->hdrtype == AIM_FRAMETYPE_OFT) && 
-		   (cur->conn->type != AIM_CONN_TYPE_RENDEZVOUS)) || 
-		  ((cur->hdrtype == AIM_FRAMETYPE_FLAP) && 
-		   (cur->conn->type == AIM_CONN_TYPE_RENDEZVOUS))) {
-			faimdprintf(sess, 0, "rxhandlers: incompatible frame type %d on connection type 0x%04x\n", cur->hdrtype, cur->conn->type);
-			cur->handled = 1;
-			continue;
-		}
-
-		if (cur->conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
-			if (cur->hdrtype != AIM_FRAMETYPE_OFT) {
-				faimdprintf(sess, 0, "internal error: non-OFT frames on OFT connection\n");
-				cur->handled = 1; /* get rid of it */
-			} else {
-				aim_rxdispatch_rendezvous(sess, cur);
-				cur->handled = 1;
-			}
-			continue;
-		}
-
-		if (cur->conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
-			/* not possible */
-			faimdprintf(sess, 0, "rxdispatch called on RENDEZVOUS_OUT connection!\n");
-			cur->handled = 1;
-			continue;
-		}
-
-		if (cur->hdr.flap.type == 0x01) {
-			
-			cur->handled = aim_callhandler_noparam(sess, cur->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, cur); /* XXX use consumenonsnac */
-			
-			continue;
-			
-		} else if (cur->hdr.flap.type == 0x02) {
-
-			if ((cur->handled = consumesnac(sess, cur)))
+		if (cur->hdrtype == AIM_FRAMETYPE_FLAP) {
+			if (cur->hdr.flap.type == 0x01) {
+				cur->handled = aim_callhandler_noparam(sess, cur->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, cur); /* XXX use consumenonsnac */
 				continue;
 
-		} else if (cur->hdr.flap.type == 0x04) {
+			} else if (cur->hdr.flap.type == 0x02) {
+				if ((cur->handled = consumesnac(sess, cur)))
+					continue;
 
-			cur->handled = negchan_middle(sess, cur);
-			continue;
+			} else if (cur->hdr.flap.type == 0x04) {
+				cur->handled = negchan_middle(sess, cur);
+				continue;
 
-		} else if (cur->hdr.flap.type == 0x05)
-			;
-		
+			} else if (cur->hdr.flap.type == 0x05) {
+
+			}
+
+		} else if (cur->hdrtype == AIM_FRAMETYPE_OFT) {
+			if (cur->conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
+				aim_rxdispatch_rendezvous(sess, cur);
+				cur->handled = 1;
+				continue;
+
+			} else if (cur->conn->type == AIM_CONN_TYPE_LISTENER) {
+				/* not possible */
+				faimdprintf(sess, 0, "rxdispatch called on LISTENER connection!\n");
+				cur->handled = 1;
+				continue;
+			}
+		}
+
 		if (!cur->handled) {
 			consumenonsnac(sess, cur, 0xffff, 0xffff); /* last chance! */
 			cur->handled = 1;

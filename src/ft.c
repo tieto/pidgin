@@ -437,8 +437,8 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 
 		r = read(xfer->fd, *buffer, s);
 
-		if ((r == 0) || ((gaim_xfer_get_size > 0) &&
-			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer))))
+		if ((gaim_xfer_get_size > 0) &&
+			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
 	}
 

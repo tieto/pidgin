@@ -448,8 +448,6 @@ static char *show_error_message()
 	char *w = strtok(NULL, ":");
 	static char buf[256];
 
-	plugin_event(event_error, (void *)no, 0, 0, 0);
-
         switch(no) {
         case 69:
                 g_snprintf(buf, sizeof(buf), _("Unable to write file %s."), w);

@@ -24,7 +24,6 @@ typedef struct aim_module_s {
 	fu16_t flags;
 	char name[AIM_MODULENAME_MAXLEN+1];
 	int (*snachandler)(aim_session_t *sess, struct aim_module_s *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs);
-	int (*snacdestructor)(aim_session_t *sess, aim_conn_t *conn, aim_modsnac_t *snac, void *data);
 
 	void (*shutdown)(aim_session_t *sess, struct aim_module_s *mod);
 	void *priv;
@@ -129,11 +128,6 @@ typedef struct aim_snac_s {
 	struct aim_snac_s *next;
 } aim_snac_t;
 
-struct aim_snac_destructor {
-	aim_conn_t *conn;
-	void *data;
-};
-
 /* snac.c */
 faim_internal void aim_initsnachash(aim_session_t *sess);
 faim_internal aim_snacid_t aim_newsnac(aim_session_t *, aim_snac_t *newsnac);
@@ -210,11 +204,6 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info);
 faim_internal int aim_chat_readroominfo(aim_bstream_t *bs, struct aim_chat_roominfo *outinfo);
 
 faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...);
-
-faim_internal int aim_request_directim(aim_session_t *sess, const char *destsn, fu8_t *ip, fu16_t port, fu8_t *ckret);
-faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, const char *filename, fu16_t numfiles, fu32_t totsize, fu8_t *ip, fu16_t port, fu8_t *ckret);
-faim_internal void aim_conn_close_rend(aim_session_t *sess, aim_conn_t *conn);
-faim_internal void aim_conn_kill_rend(aim_session_t *sess, aim_conn_t *conn);
 
 faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn);
 

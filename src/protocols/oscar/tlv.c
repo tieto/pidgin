@@ -549,10 +549,7 @@ faim_internal int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list)
 	aim_tlvlist_t *cur;
 
 	/* do an initial run to test total length */
-	for (cur = *list, goodbuflen = 0; cur; cur = cur->next) {
-		goodbuflen += 2 + 2; /* type + len */
-		goodbuflen += cur->tlv->length;
-	}
+	goodbuflen = aim_sizetlvchain(list);
 
 	if (goodbuflen > aim_bstream_empty(bs))
 		return 0; /* not enough buffer */

@@ -1129,7 +1129,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 #ifndef _WIN32
 		   _("<span size=\"larger\">%s %s</span>\n\n"
 		     "<span weight=\"bold\">Written by:</span>\t%s\n"
-		     "<span weight=\"bold\">URL:</span>\t%s\n"
+		     "<span weight=\"bold\">Web site:</span>\t\t%s\n"
 		     "<span weight=\"bold\">File name:</span>\t%s"),
 #else
 		   _("<span size=\"larger\">%s %s</span>\n\n"

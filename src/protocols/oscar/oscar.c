@@ -25,7 +25,7 @@
 #endif
 
 #include <sys/types.h>
-/*this must happen before sys/socket.h or freebsd won't compile*/
+/* this must happen before sys/socket.h or freebsd won't compile */
 
 #ifndef _WIN32
 #include <netdb.h>
@@ -91,8 +91,7 @@ G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT int report_idle;
 G_MODULE_IMPORT GSList *groups;
 
-static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON |
-	AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
 
 /* Set AIM caps, because Gaim can still do them over ICQ and 
  * Winicq doesn't mind. */
@@ -178,21 +177,15 @@ struct ask_direct {
 	fu8_t cookie[8];
 };
 
-#if 0
-struct oscar_file_transfer {
-	enum { OFT_SENDFILE_IN, OFT_SENDFILE_OUT } type;
-	aim_conn_t *conn;
-	struct file_transfer *xfer;
-	char *sn;
-	char ip[64];
-	fu16_t port;
+/* BBB */
+struct oscar_xfer_data {
 	fu8_t cookie[8];
-	int totsize;
-	int filesdone;
-	int totfiles;
-	int watcher;
+	fu16_t modtime;
+	fu16_t checksum;
+	aim_conn_t *conn;
+	struct gaim_xfer *xfer;
+	struct gaim_connection *gc;
 };
-#endif
 
 struct icon_req {
 	char *user;
@@ -288,10 +281,248 @@ static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *g
 	return c;
 }
 
+/* XXX - I really don't like forward declarations */
+static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
+
+/* BBB */
+/*
+ * This little area in oscar.c is the nexus of file transfer code, 
+ * so I wrote a little explanation of what happens.  I am such a 
+ * ninja.
+ *
+ * The series of events for a file send is:
+ *  -Create xfer and call gaim_xfer_request (this happens in oscar_ask_sendfile)
+ *  -User chooses a file and oscar_xfer_init is called.  It establishs a 
+ *   listening socket, then asks the remote user to connect to us (and 
+ *   gives them the file name, port, IP, etc.)
+ *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens 
+ *   in oscar_sendfile_established)
+ *  -They send us an AIM_CB_OFT_ACK and then we start sending data
+ *  -When we finish, they send us an AIM_CB_OFT_DONE and they close the 
+ *   connection.
+ *  -We get drunk because file transfer kicks ass.
+ *
+ * The series of events for a file receive is:
+ *  -Create xfer and call gaim_xfer request (this happens in incomingim_chan2)
+ *  -Gaim user selects file to name and location to save file to and 
+ *   oscar_xfer_init is called
+ *  -It connects to the remote user using the IP they gave us earlier
+ *  -After connecting, they send us an AIM_CB_OFT_PROMPT.  In reply, we send 
+ *   them an AIM_CB_OFT_ACK.
+ *  -They begin to send us lots of raw data.
+ *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close 
+ *   the connectionn.
+ */
+static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
+static int oscar_sendfile_established(aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_prompt(aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_ack(aim_session_t *, aim_frame_t *, ...);
+static int oscar_sendfile_done(aim_session_t *, aim_frame_t *, ...);
+
+/* XXX - This function is pretty ugly */
+static void
+oscar_xfer_init(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+debug_printf("in oscar_xfer_init\n");
+
+	if (!(xfer_data = xfer->data))
+		return;
+	if (!(gc = xfer_data->gc))
+		return;
+	if (!(od = gc->proto_data))
+		return;
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
+		xfer->filename = g_path_get_basename(xfer->local_filename);
+		if (xfer->local_port) {
+			int i;
+			char ip[4];
+			gchar **ipsplit = g_strsplit(xfer->local_ip, ".", 4);
+			for (i=0; ipsplit[i]; i++)
+				ip[i] = atoi(ipsplit[i]);
+			g_strfreev(ipsplit);
+			xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
+			if (!xfer_data->conn) {
+				/*
+				 * Try a few random ports.  Maybe we need a 
+				 * way to tell libfaim to listen for multiple 
+				 * connections on one listener socket.
+				 */
+				for (i=0; (i<5 && !xfer_data->conn); i++) {
+					xfer->local_port = (rand() % (65535-1024)) + 1024;
+					xfer_data->conn = aim_sendfile_listen(od->sess, xfer_data->cookie, ip, xfer->local_port);
+				}
+			}
+			if (xfer_data->conn) {
+				xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
+				aim_im_sendch2_sendfile_ask(od->sess, xfer_data->cookie, xfer->who, ip, xfer->local_port, xfer->filename, 1, xfer->size);
+				aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_established, 0);
+				/* Calculate a checksum thingy.  This is ugly.
+				if ((fd = open(xfer->local_filename, O_RDONLY))) {
+					int bytes;
+					char buf[1024];
+					xfer_data->checksum = 0xffff0000;
+					while ((bytes = aim_recv(fd, buf, 1024)) > 0)
+						xfer_data->checksum = aim_oft_checksum(buf, bytes, xfer_data->checksum);
+					close(fd);
+				} */
+			} else {
+				do_error_dialog(_("File Transfer Aborted"), _("Unable to establish listener socket."), GAIM_ERROR);
+				/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
+				/* gaim_xfer_cancel(xfer); */
+			}
+		} else {
+			/* gaim_xfer_cancel(xfer); */
+		}
+	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		if (xfer->remote_ip && xfer->remote_port) {
+			xfer_data->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
+			if (xfer_data->conn) {
+				xfer_data->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+				aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
+				xfer_data->conn->fd = xfer->fd = proxy_connect(xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
+				if (xfer->fd == -1) {
+					do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
+					/* gaim_xfer_cancel? */
+				}
+			} else {
+				do_error_dialog(_("File Transfer Aborted"), _("Unable to create new connection."), GAIM_ERROR);
+				/* gaim_xfer_cancel? */
+				/* Try a different port? Ask them to connect to us? */
+			}
+		} else {
+			/* I have a feeling this would crash */
+			/* gaim_xfer_cancel(xfer); */
+		}
+	}
+}
+
+static void
+oscar_xfer_start(struct gaim_xfer *xfer)
+{
+/*	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+
+	if (!(xfer_data = xfer->data))
+		return;
+	if (!(gc = xfer_data->gc))
+		return;
+	if (!(od = gc->proto_data))
+		return;
+
+	od = xfer_data->od;
+*/
+debug_printf("AAA - in oscar_xfer_start\n");
+
+	/* I'm pretty sure we don't need to do jack here.  Nor Jill. */
+}
+
+static void
+oscar_xfer_end(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+debug_printf("AAA - in oscar_xfer_end\n");
+
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
+		aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_DONE, xfer_data->cookie, xfer->filename, 1, 1, xfer->size, xfer->size, xfer_data->modtime, xfer_data->checksum, 0x21);
+
+	if ((gc = xfer_data->gc)) {
+		if ((od = gc->proto_data))
+			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+	}
+
+	g_free(xfer_data);
+	xfer->data = NULL;
+}
+
+static void
+oscar_xfer_cancel(struct gaim_xfer *xfer)
+{
+	struct gaim_connection *gc;
+	struct oscar_data *od;
+	struct oscar_xfer_data *xfer_data;
+	aim_conn_t *conn;
+debug_printf("AAA - in oscar_xfer_cancel\n");
+
+	if (!(xfer_data = xfer->data))
+		return;
+
+	if ((conn = xfer_data->conn)) {
+		aim_session_t *sess;
+		if ((sess = conn->sessv))
+			if (xfer_data->cookie && xfer->who)
+				aim_im_sendch2_sendfile_cancel(sess, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
+	}
+
+	if ((gc = xfer_data->gc))
+		if ((od = gc->proto_data))
+			od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+
+	g_free(xfer_data);
+	xfer->data = NULL;
+}
+
+static void
+oscar_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
+{
+	struct oscar_xfer_data *xfer_data;
+
+	if (!(xfer_data = xfer->data))
+		return;
+
+	aim_oft_checksum(buffer, size, xfer_data->checksum);
+}
+
+static struct gaim_xfer *
+oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
+{
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *data;
+
+	while (fts) {
+		xfer = fts->data;
+		data = xfer->data;
+
+		if (data && !strcmp(data->cookie, ck))
+			return xfer;
+
+		fts = g_slist_next(fts);
+	}
+
+	return NULL;
+}
+
+static struct gaim_xfer *
+oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
+{
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *data;
+
+	while (fts) {
+		xfer = fts->data;
+		data = xfer->data;
+
+		if (data && (conn == data->conn))
+			return xfer;
+
+		fts = g_slist_next(fts);
+	}
+
+	return NULL;
+}
+
 #if 0
 /* XXX there must be a better way than this.... -- wtm */
-static struct oscar_file_transfer *find_oft_by_conn(struct gaim_connection *gc,
-		aim_conn_t *conn) {
+static struct oscar_file_transfer *find_oft_by_conn(struct gaim_connection *gc, aim_conn_t *conn) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
 	struct oscar_file_transfer *f = NULL;
 
@@ -306,30 +537,13 @@ static struct oscar_file_transfer *find_oft_by_conn(struct gaim_connection *gc,
 	return f;
 }
 
-static struct oscar_file_transfer *find_oft_by_xfer(struct gaim_connection *gc,
-		struct file_transfer *xfer) {
+static struct oscar_file_transfer *find_oft_by_xfer(struct gaim_connection *gc, struct file_transfer *xfer) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
 	struct oscar_file_transfer *f = NULL;
 
 	while (g) {
 		f = (struct oscar_file_transfer *)g->data;
 		if (f->xfer == xfer)
-			break;
-		g = g->next;
-		f = NULL;
-	}
-
-	return f;
-}
-
-static struct oscar_file_transfer *find_oft_by_cookie(struct gaim_connection *gc,
-		const char *cookie) {
-	GSList *g = ((struct oscar_data *)gc->proto_data)->file_transfers;
-	struct oscar_file_transfer *f = NULL;
-
-	while (g) {
-		f = (struct oscar_file_transfer *)g->data;
-		if (!strncmp(f->cookie, cookie, 8))
 			break;
 		g = g->next;
 		f = NULL;
@@ -392,21 +606,10 @@ static int gaim_ssi_authreply    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_gotadded     (aim_session_t *, aim_frame_t *, ...);
 #endif
 
-static int gaim_directim_initiate(aim_session_t *, aim_frame_t *, ...);
-static int gaim_directim_incoming(aim_session_t *, aim_frame_t *, ...);
-static int gaim_directim_typing  (aim_session_t *, aim_frame_t *, ...);
-static int gaim_update_ui       (aim_session_t *, aim_frame_t *, ...);
-
-#if 0
-static int oscar_file_transfer_do(aim_session_t *, aim_frame_t *, ...);
-static void oscar_file_transfer_disconnect(aim_session_t *,
-		aim_conn_t *);
-static void oscar_file_transfer_cancel(struct gaim_connection *,
-		struct file_transfer *);
-static int oscar_sendfile_request(aim_session_t *sess,
-		struct oscar_file_transfer *oft);
-static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...);
-#endif
+static int gaim_odc_initiate     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_odc_incoming     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_odc_typing       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_update_ui        (aim_session_t *, aim_frame_t *, ...);
 
 static fu32_t check_encoding(const char *utf8);
 static fu32_t parse_encoding(const char *enc);
@@ -440,32 +643,7 @@ static char *msgerrreason[] = {
 };
 static int msgerrreasonlen = 25;
 
-#if 0
-/*
- * This is called to clean up whenever a file transfer is no longer in progress, 
- * whether because it finished sucessfully, it was canceled, or there was an error.
- */
-static void oscar_file_transfer_disconnect(aim_session_t *sess, aim_conn_t *conn) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft = find_oft_by_conn(gc,
-			conn);
-
-	od->file_transfers = g_slist_remove(od->file_transfers, oft);
-
-	if (oft->watcher) {
-		gaim_input_remove(oft->watcher);
-		oft->watcher = 0;
-	}
-	
-	aim_conn_kill(sess, &conn);
-
-	g_free(oft->sn);
-	g_free(oft);
-}
-#endif
-
-static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
+static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct gaim_conversation *cnv;
@@ -473,7 +651,7 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	char *sn;
 	char buf[256];
 
-	sn = g_strdup(aim_directim_getsn(conn));
+	sn = g_strdup(aim_odc_getsn(conn));
 
 	debug_printf("%s disconnected Direct IM.\n", sn);
 
@@ -497,12 +675,11 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	return;
 }
 
-static void oscar_callback(gpointer data, gint source,
-				GaimInputCondition condition) {
+static void oscar_callback(gpointer data, gint source, GaimInputCondition condition) {
 	aim_conn_t *conn = (aim_conn_t *)data;
 	aim_session_t *sess = aim_conn_getsess(conn);
 	struct gaim_connection *gc = sess ? sess->aux_data : NULL;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 
 	if (!gc) {
 		/* gc is null. we return, else we seg SIGSEG on next line. */
@@ -510,7 +687,7 @@ static void oscar_callback(gpointer data, gint source,
 		return;
 	}
       
-	odata = (struct oscar_data *)gc->proto_data;
+	od = (struct oscar_data *)gc->proto_data;
 
 	if (!g_slist_find(connections, gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we 
@@ -520,20 +697,20 @@ static void oscar_callback(gpointer data, gint source,
 	}
 
 	if (condition & GAIM_INPUT_READ) {
-		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
-			debug_printf("got information on rendezvous\n");
-			if (aim_handlerendconnect(odata->sess, conn) < 0) {
-				debug_printf("connection error (rend)\n");
-				aim_conn_kill(odata->sess, &conn);
+		if (conn->type == AIM_CONN_TYPE_LISTENER) {
+			debug_printf("got information on rendezvous listener\n");
+			if (aim_handlerendconnect(od->sess, conn) < 0) {
+				debug_printf("connection error (rendezvous listener)\n");
+				aim_conn_kill(od->sess, &conn);
 			}
 		} else {
-			if (aim_get_command(odata->sess, conn) >= 0) {
-				aim_rxdispatch(odata->sess);
-                                if (odata->killme)
+			if (aim_get_command(od->sess, conn) >= 0) {
+				aim_rxdispatch(od->sess);
+                                if (od->killme)
                                         signoff(gc);
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
-					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
+					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS))) {
 					debug_printf("major connection error\n");
 					hide_login_progress_error(gc, _("Disconnected."));
 					signoff(gc);
@@ -546,56 +723,43 @@ static void oscar_callback(gpointer data, gint source,
 						gaim_input_remove(c->inpa);
 					c->inpa = 0;
 					c->fd = -1;
-					aim_conn_kill(odata->sess, &conn);
+					aim_conn_kill(od->sess, &conn);
 					snprintf(buf, sizeof(buf), _("You have been disconnected from chat room %s."), c->name);
 					do_error_dialog(buf, NULL, GAIM_ERROR);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
-					if (odata->cnpa > 0)
-						gaim_input_remove(odata->cnpa);
-					odata->cnpa = 0;
+					if (od->cnpa > 0)
+						gaim_input_remove(od->cnpa);
+					od->cnpa = 0;
 					debug_printf("removing chatnav input watcher\n");
-					while (odata->create_rooms) {
-						struct create_room *cr = odata->create_rooms->data;
+					while (od->create_rooms) {
+						struct create_room *cr = od->create_rooms->data;
 						g_free(cr->name);
-						odata->create_rooms =
-							g_slist_remove(odata->create_rooms, cr);
+						od->create_rooms =
+							g_slist_remove(od->create_rooms, cr);
 						g_free(cr);
 						do_error_dialog(_("Chat is currently unavailable"), NULL, GAIM_ERROR);
 					}
-					aim_conn_kill(odata->sess, &conn);
+					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
-					if (odata->paspa > 0)
-						gaim_input_remove(odata->paspa);
-					odata->paspa = 0;
+					if (od->paspa > 0)
+						gaim_input_remove(od->paspa);
+					od->paspa = 0;
 					debug_printf("removing authconn input watcher\n");
-					aim_conn_kill(odata->sess, &conn);
+					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
-					if (odata->emlpa > 0)
-						gaim_input_remove(odata->emlpa);
-					odata->emlpa = 0;
+					if (od->emlpa > 0)
+						gaim_input_remove(od->emlpa);
+					od->emlpa = 0;
 					debug_printf("removing email input watcher\n");
-					aim_conn_kill(odata->sess, &conn);
+					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
-						gaim_directim_disconnect(odata->sess, conn);
-					else if (conn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
-#if 0
-						struct oscar_file_transfer *oft = find_oft_by_conn(gc, conn);
-						if (oft) {
-							transfer_abort(oft->xfer, _("Buddy canceled transfer"));
-						}
-						oscar_file_transfer_disconnect(odata->sess, conn);
-#endif
-					}
-					else {
-						debug_printf("No handler for rendezvous disconnect (%d).\n",
-								source);
-					}
-					aim_conn_kill(odata->sess, &conn);
+						gaim_odc_disconnect(od->sess, conn);
+					aim_conn_kill(od->sess, &conn);
 				} else {
 					debug_printf("holy crap! generic connection error! %hu\n",
 							conn->type);
-					aim_conn_kill(odata->sess, &conn);
+					aim_conn_kill(od->sess, &conn);
 				}
 			}
 		}
@@ -620,7 +784,7 @@ static void oscar_debug(aim_session_t *sess, int level, const char *format, va_l
 static void oscar_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *conn;
 
@@ -629,8 +793,8 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
+	od = gc->proto_data;
+	sess = od->sess;
 	conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
 	
 	conn->fd = source;
@@ -642,8 +806,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	}
 
 	aim_conn_completeconnect(sess, conn);
-	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ,
-			oscar_callback, conn);
+	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ, oscar_callback, conn);
 	debug_printf("Password sent, waiting for response\n");
 }
 
@@ -652,16 +815,16 @@ static void oscar_login(struct gaim_account *account) {
 	aim_conn_t *conn;
 	char buf[256];
 	struct gaim_connection *gc = new_gaim_conn(account);
-	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
+	struct oscar_data *od = gc->proto_data = g_new0(struct oscar_data, 1);
 
 	if (isdigit(*account->username)) {
-		odata->icq = TRUE;
+		od->icq = TRUE;
 		gc->password[8] = 0;
 	} else {
 		gc->flags |= OPT_CONN_HTML;
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
-	odata->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
+	od->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -671,7 +834,7 @@ static void oscar_login(struct gaim_account *account) {
 	/* we need an immediate queue because we don't use a while-loop to
 	 * see if things need to be sent. */
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
-	odata->sess = sess;
+	od->sess = sess;
 	sess->aux_data = gc;
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
@@ -702,69 +865,66 @@ static void oscar_login(struct gaim_account *account) {
 }
 
 static void oscar_close(struct gaim_connection *gc) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	
-	while (odata->oscar_chats) {
-		struct chat_connection *n = odata->oscar_chats->data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+
+	while (od->oscar_chats) {
+		struct chat_connection *n = od->oscar_chats->data;
 		if (n->inpa > 0)
 			gaim_input_remove(n->inpa);
 		g_free(n->name);
 		g_free(n->show);
-		odata->oscar_chats = g_slist_remove(odata->oscar_chats, n);
+		od->oscar_chats = g_slist_remove(od->oscar_chats, n);
 		g_free(n);
 	}
-	while (odata->direct_ims) {
-		struct direct_im *n = odata->direct_ims->data;
+	while (od->direct_ims) {
+		struct direct_im *n = od->direct_ims->data;
 		if (n->watcher > 0)
 			gaim_input_remove(n->watcher);
-		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
+		od->direct_ims = g_slist_remove(od->direct_ims, n);
 		g_free(n);
 	}
 
-#if 0
-	while (odata->file_transfers) {
-		struct oscar_file_transfer *n = odata->file_transfers->data;
-		if (n->watcher > 0)
-			gaim_input_remove(n->watcher);
-		odata->file_transfers = g_slist_remove(odata->file_transfers, n);
-		g_free(n);
+/* BBB */
+	while (od->file_transfers) {
+		struct gaim_xfer *xfer;
+		xfer = (struct gaim_xfer *)od->file_transfers->data;
+		gaim_xfer_destroy(xfer);
 	}
-#endif
 
-	while (odata->hasicons) {
-		struct icon_req *n = odata->hasicons->data;
+	while (od->hasicons) {
+		struct icon_req *n = od->hasicons->data;
 		g_free(n->user);
-		odata->hasicons = g_slist_remove(odata->hasicons, n);
+		od->hasicons = g_slist_remove(od->hasicons, n);
 		g_free(n);
 	}
-	g_hash_table_destroy(odata->supports_tn);
-	while (odata->evilhack) {
-		g_free(odata->evilhack->data);
-		odata->evilhack = g_slist_remove(odata->evilhack, odata->evilhack->data);
+	g_hash_table_destroy(od->supports_tn);
+	while (od->evilhack) {
+		g_free(od->evilhack->data);
+		od->evilhack = g_slist_remove(od->evilhack, od->evilhack->data);
 	}
-	while (odata->create_rooms) {
-		struct create_room *cr = odata->create_rooms->data;
+	while (od->create_rooms) {
+		struct create_room *cr = od->create_rooms->data;
 		g_free(cr->name);
-		odata->create_rooms = g_slist_remove(odata->create_rooms, cr);
+		od->create_rooms = g_slist_remove(od->create_rooms, cr);
 		g_free(cr);
 	}
-	if (odata->email)
-		g_free(odata->email);
-	if (odata->newp)
-		g_free(odata->newp);
-	if (odata->oldp)
-		g_free(odata->oldp);
+	if (od->email)
+		g_free(od->email);
+	if (od->newp)
+		g_free(od->newp);
+	if (od->oldp)
+		g_free(od->oldp);
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
-	if (odata->cnpa > 0)
-		gaim_input_remove(odata->cnpa);
-	if (odata->paspa > 0)
-		gaim_input_remove(odata->paspa);
-	if (odata->emlpa > 0)
-		gaim_input_remove(odata->emlpa);
-	aim_session_kill(odata->sess);
-	g_free(odata->sess);
-	odata->sess = NULL;
+	if (od->cnpa > 0)
+		gaim_input_remove(od->cnpa);
+	if (od->paspa > 0)
+		gaim_input_remove(od->paspa);
+	if (od->emlpa > 0)
+		gaim_input_remove(od->emlpa);
+	aim_session_kill(od->sess);
+	g_free(od->sess);
+	od->sess = NULL;
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;
 	debug_printf("Signed off.\n");
@@ -772,7 +932,7 @@ static void oscar_close(struct gaim_connection *gc) {
 
 static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *bosconn;
 
@@ -781,9 +941,9 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
-	bosconn = odata->conn;	
+	od = gc->proto_data;
+	sess = od->sess;
+	bosconn = od->conn;	
 	bosconn->fd = source;
 
 	if (source < 0) {
@@ -793,26 +953,52 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	}
 
 	aim_conn_completeconnect(sess, bosconn);
-	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ,
-			oscar_callback, bosconn);
+	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
 }
 
-#if 0
-static void oscar_ask_send_file(struct gaim_connection *gc, char *destsn) {
+/* BBB */
+static void oscar_ask_sendfile(struct gaim_connection *gc, char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
-	struct oscar_file_transfer *oft = g_new0(struct oscar_file_transfer,
-			1);
+	/* You want to send a file to someone else, you're so generous */
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *xfer_data;
 
-	oft->type = OFT_SENDFILE_OUT;
-	oft->sn = g_strdup(destsn);
+	/* Create the oscar-specific data */
+	xfer_data = g_malloc0(sizeof(struct oscar_xfer_data));
+	xfer_data->gc = gc;
 
-	od->file_transfers = g_slist_append(od->file_transfers, oft);
+	/* Build the file transfer handle */
+	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, destsn);
+	xfer_data->xfer = xfer;
+	xfer->data = xfer_data;
 
-	oft->xfer = transfer_out_add(gc, oft->sn);
+	/* Set the info about the incoming file */
+	if (od) {
+		/* XXX - Create core gaim functions for getting ip and getting port from an fd */
+		aim_session_t *sess;
+		aim_conn_t *conn;
+		struct sockaddr addr;
+		socklen_t namelen = sizeof(addr);
+		if ((sess = od->sess) && (conn = aim_conn_findbygroup(sess, 0x0004)))
+			if (!getsockname(conn->fd, &addr, &namelen))
+				xfer->local_ip = g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	}
+	xfer->local_port = 5190;
+
+	 /* Setup our I/O op functions */
+	gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
+	gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
+	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
+	gaim_xfer_set_cancel_fnc(xfer, oscar_xfer_cancel);
+
+	/* Keep track of this transfer for later */
+	od->file_transfers = g_slist_append(od->file_transfers, xfer);
+
+	/* Now perform the request */
+	gaim_xfer_request(xfer);
 }
-#endif
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
@@ -840,7 +1026,6 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 0x05:
 			/* Incorrect nick/password */
 			hide_login_progress(gc, _("Incorrect nickname or password."));
-			plugin_event(event_error, (void *)980, 0, 0, 0);
 			break;
 		case 0x11:
 			/* Suspended account */
@@ -853,13 +1038,11 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 0x18:
 			/* connecting too frequently */
 			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
-			plugin_event(event_error, (void *)983, 0, 0, 0);
 			break;
 		case 0x1c:
 			/* client too old */
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), WEBSITE);
 			hide_login_progress(gc, buf);
-			plugin_event(event_error, (void *)989, 0, 0, 0);
 			break;
 		default:
 			hide_login_progress(gc, _("Authentication Failed"));
@@ -930,10 +1113,6 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREQ, gaim_ssi_authrequest, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREP, gaim_ssi_authreply, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ADDED, gaim_ssi_gotadded, 0);
-#endif
-
-#if 0
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_MSGTIMEOUT, oscar_sendfile_timeout, 0);
 #endif
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
@@ -1111,13 +1290,13 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *key;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = gc->proto_data;
+	struct oscar_data *od = gc->proto_data;
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
 	va_end(ap);
 
-	if (odata->icq) {
+	if (od->icq) {
 		struct client_info_s info = CLIENTINFO_ICQ_KNOWNGOOD;
 		aim_send_login(sess, fr->conn, gc->username, gc->password, &info, key);
 	} else {
@@ -1177,7 +1356,7 @@ static int conninitdone_email(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1186,8 +1365,8 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
+	od = gc->proto_data;
+	sess = od->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_CHATNAV);
 	tstconn->fd = source;
 
@@ -1198,15 +1377,14 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
-	odata->cnpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ,
-					oscar_callback, tstconn);
+	od->cnpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
 }
 
 static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1215,8 +1393,8 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
+	od = gc->proto_data;
+	sess = od->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
 	tstconn->fd = source;
 
@@ -1227,8 +1405,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
-	odata->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ,
-				oscar_callback, tstconn);
+	od->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
 }
 
@@ -1236,7 +1413,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 {
 	struct chat_connection *ccon = data;
 	struct gaim_connection *gc = ccon->gc;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1248,8 +1425,8 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
+	od = gc->proto_data;
+	sess = od->sess;
 	tstconn = ccon->conn;
 	tstconn->fd = source;
 
@@ -1262,15 +1439,13 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	}
 
 	aim_conn_completeconnect(sess, ccon->conn);
-	ccon->inpa = gaim_input_add(tstconn->fd,
-			GAIM_INPUT_READ,
-			oscar_callback, tstconn);
-	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
+	ccon->inpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
+	od->oscar_chats = g_slist_append(od->oscar_chats, ccon);
 }
 
 static void oscar_email_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata;
+	struct oscar_data *od;
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
@@ -1279,8 +1454,8 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 		return;
 	}
 
-	odata = gc->proto_data;
-	sess = odata->sess;
+	od = gc->proto_data;
+	sess = od->sess;
 	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_EMAIL);
 	tstconn->fd = source;
 
@@ -1291,7 +1466,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
-	odata->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
+	od->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
 	debug_printf("email: connected\n");
 }
 
@@ -1507,7 +1682,7 @@ static void cancel_direct_im(struct ask_direct *d) {
 	g_free(d);
 }
 
-static void oscar_directim_callback(gpointer data, gint source, GaimInputCondition condition) {
+static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct direct_im *dim = data;
 	struct gaim_connection *gc = dim->gc;
 	struct oscar_data *od = gc->proto_data;
@@ -1539,205 +1714,183 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 	
-	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
-				      oscar_callback, dim->conn);
+	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
 }
 
-#if 0
+/* BBB */
 /*
- * This is called every time we are finished sending a file and the receiving buddy 
- * has sent back an acknowledgement; we start the next file or tear down the 
- * connection as appropriate.
+ * This is called after a remote AIM user has connected to us.  We 
+ * want to do some voodoo with the socket file descriptors, add a 
+ * callback or two, and then send the AIM_CB_OFT_PROMPT.
  */
-static int oscar_sendfile_out_done(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	va_list ap;
-	aim_conn_t *conn;
-	const char *cook;
-	struct oscar_file_transfer *oft;
-
-	va_start(ap, fr);
-	conn = va_arg(ap, aim_conn_t *);
-	cook = va_arg(ap, const char *);
-	va_end(ap);
-
-	oft = find_oft_by_cookie(gc, cook);
-	if (oft->filesdone == oft->totfiles)
-		oscar_file_transfer_disconnect(sess, conn);
-	else 
-		/* Send header for next file */
-		oscar_sendfile_request(sess, oft);
-
-	return 0;
-}
-
-/* Called once for each file before sending the raw data. */
-static int oscar_sendfile_request(aim_session_t *sess,
-		struct oscar_file_transfer *oft) {
-	char *name;
-	int size;
-
-	transfer_get_file_info(oft->xfer, &size, &name);
-	/* AAA convert the name to UCS-2 if necessary, and pass the encoding to the call below */
-	aim_oft_sendfile_request(sess, oft->conn, name, oft->filesdone,
-			oft->totfiles, size, oft->totsize);
-
-	return 0;
-}
-
-/*
- * This is called when sending a file and a direct connection has been set up with 
- * the buddy; we can now transmit the appropriate headers describing the transfer.
- */
-static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int oscar_sendfile_established(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft;
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *xfer_data;
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
+debug_printf("AAA - in oscar_sendfile_established\n");
 
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	listenerconn = va_arg(ap, aim_conn_t *);
 	va_end(ap);
 
-	oft = find_oft_by_conn(gc, listenerconn);
-	oft->conn = conn;
+	if (!(xfer = oscar_find_xfer_by_conn(od->file_transfers, listenerconn)))
+		return 1;
+
+	if (!(xfer_data = xfer->data))
+		return 1;
+
 	/* Stop watching listener conn; watch transfer conn instead */
-	gaim_input_remove(oft->watcher);
+	gaim_input_remove(xfer->watcher);
 	aim_conn_kill(sess, &listenerconn);
 
-	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_SENDFILEFILESEND,
-			oscar_file_transfer_do,
-			0);
-	aim_conn_addhandler(sess, conn,
-			AIM_CB_FAM_OFT,
-			AIM_CB_OFT_SENDFILECOMPLETE,
-			oscar_sendfile_out_done,
-			0);
-	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
-			oscar_callback, oft->conn);
+	xfer_data->conn = conn;
+	xfer->fd = xfer_data->conn->fd;
 
-	oscar_sendfile_request(sess, oft);
+	aim_conn_addhandler(sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ACK, oscar_sendfile_ack, 0);
+	aim_conn_addhandler(sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DONE, oscar_sendfile_done, 0);
+	xfer->watcher = gaim_input_add(xfer_data->conn->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
+
+	/* Inform the other user that we are connected and ready to transfer */
+	aim_oft_sendheader(sess, xfer_data->conn, AIM_CB_OFT_PROMPT, NULL, xfer->filename, 0, 1,  xfer->size, xfer->size, time(NULL), xfer_data->checksum, 0x02);
 
 	return 0;
 }
 
 /*
- * This is called when we requested to send a file to a buddy, but he or she didn't 
- * respond; we need to clean up.
+ * This is the gaim callback passed to proxy_connect when connecting to another AIM 
+ * user in order to transfer a file.
  */
-static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...) {
+static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition) {
+	struct gaim_connection *gc;
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *xfer_data;
+debug_printf("AAA - in oscar_sendfile_connected\n");
+
+	if (!(xfer = data))
+		return;
+	if (!(xfer_data = xfer->data))
+		return;
+	if (!(gc = xfer_data->gc))
+		return;
+	if (source < 0)
+		return;
+
+	xfer->fd = source;
+	xfer_data->conn->fd = source;
+
+	aim_conn_completeconnect(xfer_data->conn->sessv, xfer_data->conn);
+	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, xfer_data->conn);
+
+	/* Inform the other user that we are connected and ready to transfer */
+	aim_im_sendch2_sendfile_accept(xfer_data->conn->sessv, xfer_data->cookie, xfer->who, AIM_CAPS_SENDFILE);
+
+	return;
+}
+
+/*
+ * This is called when a buddy sends us some file info.  This happens when they 
+ * are sending a file to you, and you have just established a connection to them.
+ * You should send them the exactly same info except use the real cookie.  We also 
+ * get like totally ready to like, receive the file, kay?
+ */
+static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	struct gaim_xfer *xfer;
+	struct oscar_xfer_data *xfer_data;
 	va_list ap;
-	struct oscar_file_transfer *oft;
-	char *cookie;
-	aim_conn_t *bosconn;
+	aim_conn_t *conn;
+	fu8_t *cookie;
+	struct aim_fileheader_t *fh;
+debug_printf("AAA - in oscar_sendfile_prompt\n");
 
 	va_start(ap, fr);
-	bosconn = va_arg(ap, aim_conn_t *);
-	cookie = va_arg(ap, char *);
+	conn = va_arg(ap, aim_conn_t *);
+	cookie = va_arg(ap, fu8_t *);
+	fh = va_arg(ap, struct aim_fileheader_t *);
 	va_end(ap);
 
-	if ((oft = find_oft_by_cookie(gc, cookie))) {
-		aim_canceltransfer(sess, bosconn, oft->cookie,
-				oft->sn, AIM_CAPS_SENDFILE);
+	if (!(xfer = oscar_find_xfer_by_conn(od->file_transfers, conn)))
+		return 1;
 
-		transfer_abort(oft->xfer, _("Transfer timed out"));
-		oscar_file_transfer_disconnect(sess, oft->conn);
-	}
+	if (!(xfer_data = xfer->data))
+		return 1;
 
-	return 1; /* success */
-}
+	/* Jot down some data we'll need later */
+	xfer_data->modtime = fh->modtime;
+	xfer_data->checksum = fh->checksum;
 
-/* Called once at the beginning of an outgoing transfer session. */
-static void oscar_file_transfer_out(struct gaim_connection *gc,
-		struct file_transfer *xfer, const char *name, int totfiles,
-		int totsize) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+	/* We want to stop listening with a normal thingy */
+	gaim_input_remove(xfer->watcher);
+	xfer->watcher = 0;
 
-	oft->xfer = xfer;
-	oft->totsize = totsize;
-	oft->totfiles = totfiles;
-	oft->filesdone = 0;
+	/* XXX - convert the name from UTF-8 to UCS-2 if necessary, and pass the encoding to the call below */
+	aim_oft_sendheader(xfer_data->conn->sessv, xfer_data->conn, AIM_CB_OFT_ACK, xfer_data->cookie, xfer->filename, 0, 1, xfer->size, xfer->size, fh->modtime, fh->checksum, 0x02);
+	gaim_xfer_start(xfer, xfer->fd, NULL, 0);
 
-	oft->conn = aim_sendfile_initiate(od->sess, oft->sn,
-			name, totfiles, oft->totsize, oft->cookie);
-	if (!oft->conn) {
-		do_error_dialog(_("Couldn't open listener to send file"),
-				_("File transfer aborted"),
-				GAIM_ERROR);
-		return;
-	}
-
-	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_SENDFILEINITIATE,
-			oscar_sendfile_accepted,
-			0);
-	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
-			oscar_callback, oft->conn);
+	return 0;
 }
 
 /*
- * This is called after a chunk of data has been sent out or received; it is used 
- * to update the checksum.
+ * We are sending a file to someone else.  They have just acknowledged are 
+ * prompt, so we want to start sending data like there's no tomorrow.
  */
-static void oscar_file_transfer_data_chunk(struct gaim_connection *gc,
-		struct file_transfer *xfer, const char *buf, int len)
-{
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
-	aim_session_t *sess = aim_conn_getsess(oft->conn);
+static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	struct gaim_xfer *xfer;
+	va_list ap;
+	aim_conn_t *conn;
+	fu8_t *cookie;
+	struct aim_fileheader_t *fh;
+debug_printf("AAA - in oscar_sendfile_ack\n");
 
-	if (oft->type == OFT_SENDFILE_IN)
-		aim_update_checksum(sess, oft->conn, buf, len);
-}
+	va_start(ap, fr);
+	conn = va_arg(ap, aim_conn_t *);
+	cookie = va_arg(ap, fu8_t *);
+	fh = va_arg(ap, struct aim_fileheader_t *);
+	va_end(ap);
 
-/* Called once at the beginning of an incoming transfer session. */
-static void oscar_file_transfer_in(struct gaim_connection *gc,
-		struct file_transfer *xfer, int offset) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+	if (!(xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
+		return 1;
 
-	oft->xfer = xfer;
-	oft->conn = aim_accepttransfer(od->sess, od->conn, oft->sn,
-			oft->cookie, oft->ip,
-			oft->port,
-			AIM_CAPS_SENDFILE);
-	if (!oft->conn) {
-		/* XXX implement reverse connections for receiving from behind a firewall */
-		char *buf = g_strdup_printf("Couldn't connect to remote host");
-		do_error_dialog(buf, NULL, GAIM_ERROR);
-		g_free(buf);
-		return;
-	}
+	gaim_xfer_start(xfer, xfer->fd, NULL, 0);
 
-	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
-			AIM_CB_OFT_SENDFILEFILEREQ, oscar_file_transfer_do,
-			0);
-
-	oft->watcher = gaim_input_add(oft->conn->fd, GAIM_INPUT_READ,
-			oscar_callback, oft->conn);
+	return 0;
 }
 
 /*
- * This is called when the user began a file transfer, but subsequently canceled.
+ * We just sent a file to someone.  They said they got it and everything, 
+ * so we can close our direct connection and what not.
  */
-static void oscar_file_transfer_cancel(struct gaim_connection *gc, struct file_transfer *xfer) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
+static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	struct gaim_xfer *xfer;
+	va_list ap;
+	aim_conn_t *conn;
+	fu8_t *cookie;
+	struct aim_fileheader_t *fh;
+debug_printf("AAA - in oscar_sendfile_done\n");
 
-	if (oft->type == OFT_SENDFILE_IN)
-		aim_denytransfer(od->sess, oft->sn, oft->cookie,
-				AIM_TRANSFER_DENY_DECLINE);
+	va_start(ap, fr);
+	conn = va_arg(ap, aim_conn_t *);
+	cookie = va_arg(ap, fu8_t *);
+	fh = va_arg(ap, struct aim_fileheader_t *);
+	va_end(ap);
 
-	od->file_transfers = g_slist_remove(od->file_transfers, oft);
-	aim_conn_kill(od->sess, &oft->conn);
-	g_free(oft->sn);
-	g_free(oft);
+	if (!(xfer = oscar_find_xfer_by_conn(od->file_transfers, conn)))
+		return 1;
+
+	gaim_xfer_set_completed(xfer, TRUE);
+	gaim_xfer_end(xfer);
+
+	return 0;
 }
-#endif
 
 static void accept_direct_im(struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
@@ -1763,7 +1916,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	dim->gc = d->gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
 
-	dim->conn = aim_directim_connect(od->sess, d->sn, NULL, d->cookie);
+	dim->conn = aim_odc_connect(od->sess, d->sn, NULL, d->cookie);
 	if (!dim->conn) {
 		g_free(dim);
 		cancel_direct_im(d);
@@ -1771,9 +1924,9 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
-				gaim_directim_incoming, 0);
+				gaim_odc_incoming, 0);
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
-				gaim_directim_typing, 0);
+				gaim_odc_typing, 0);
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
 			        gaim_update_ui, 0);
 	for (i = 0; i < (int)strlen(d->ip); i++) {
@@ -1784,7 +1937,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 	host = g_strndup(d->ip, i);
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	rc = proxy_connect(host, port, oscar_directim_callback, dim);
+	rc = proxy_connect(host, port, oscar_odc_callback, dim);
 	g_free(host);
 	if (rc < 0) {
 		aim_conn_kill(od->sess, &dim->conn);
@@ -1844,9 +1997,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			if (file) {
 				int len = fread(buf, 1, st.st_size, file);
 				debug_printf("Sending buddy icon to %s (%d bytes, %lu reported)\n",
-						userinfo->sn, len, st.st_size);
-				aim_send_icon(sess, userinfo->sn, buf, st.st_size,
-					      st.st_mtime, aim_iconsum(buf, st.st_size));
+					userinfo->sn, len, st.st_size);
+				aim_im_sendch2_icon(sess, userinfo->sn, buf, st.st_size,
+					st.st_mtime, aimutil_iconsum(buf, st.st_size));
 				fclose(file);
 			} else
 				debug_printf("Can't open buddy icon file!\n");
@@ -1912,38 +2065,12 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 
 	if (!args)
 		return 0;
 
-	debug_printf("rendezvous status %hu (%s)\n", args->status, userinfo->sn);
-
-	if (args->status == AIM_RENDEZVOUS_CANCEL) {
-#if 0
-		struct oscar_file_transfer *oft;
-		if (!args->cookie)
-			return 1;
-		oft = find_oft_by_cookie(gc, args->cookie);
-		if (oft) {
-			transfer_abort(oft->xfer, _("Buddy canceled transfer"));
-			oscar_file_transfer_disconnect(sess, oft->conn);
-		}
-		return 0;
-#endif
-	}
-	else if (args->status == AIM_RENDEZVOUS_ACCEPT) {
-#if 0
-		/* The user accepted our transfer request, but we don't
-		 * really need to do anything yet.
-		 * -- wtm
-		 */
-		return 0;
-#endif
-	}
-	else if (args->status != AIM_RENDEZVOUS_PROPOSE) {
-		debug_printf("unknown rendezvous status\n");
-		return 1;
-	}
+	debug_printf("rendezvous with %s, status is %hu\n", userinfo->sn, args->status);
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name;
@@ -1965,96 +2092,78 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (name)
 			g_free(name);
 	} else if (args->reqclass & AIM_CAPS_SENDFILE) {
-#if 0
-		struct oscar_file_transfer *oft;
-		struct oscar_data *od = gc->proto_data;
-		char *tmp;
+/* BBB */
+		if (args->status == AIM_RENDEZVOUS_PROPOSE) {
+			/* Someone wants to send a file (or files) to us */
+			struct gaim_xfer *xfer;
+			struct oscar_xfer_data *xfer_data;
 
-		if (!args->cookie || !args->verifiedip || !args->port ||
-		    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
-		    !args->info.sendfile.totfiles || !args->reqclass)
-			return 1;
-		if ((oft = find_oft_by_cookie(sess->aux_data, args->cookie)))
-		{
-			/* This is a request for a reverse connection,
-			 * which is used by newer clients when for some
-			 * reason they are unable to connect to our listener
-			 * (e.g. they are behind a firewall).
+			/* XXX - Should do something with args->clientip or args->clientip2 */
+			if (!args->cookie || !args->verifiedip || !args->port ||
+			    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
+			    !args->info.sendfile.totfiles || !args->reqclass)
+				return 1;
+
+			if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR) {
+				/* last char of the ft req is a star, they are sending us a
+				 * directory -- remove the star and trailing slash so we dont save
+				 * directories that look like 'dirname\*'  -- arl */
+				char *tmp = strrchr(args->info.sendfile.filename, '\\');
+				if (tmp && (tmp[1] == '*')) {
+					tmp[0] = '\0';
+				}
+			}
+
+			/* Setup the oscar-specific transfer xfer_data */
+			xfer_data = g_malloc0(sizeof(struct oscar_xfer_data));
+			xfer_data->gc = gc;
+			memcpy(xfer_data->cookie, args->cookie, 8);
+
+			/* Build the file transfer handle */
+			xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, userinfo->sn);
+			xfer_data->xfer = xfer;
+			xfer->data = xfer_data;
+
+			/* Set the info about the incoming file */
+			gaim_xfer_set_filename(xfer, args->info.sendfile.filename);
+			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
+			/* XXX - xfer->remote_ip = g_strdup(args->verifiedip); */
+			xfer->remote_ip = g_strdup(args->clientip2);
+			xfer->remote_port = args->port;
+
+			 /* Setup our I/O op functions */
+			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
+			gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
+			gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
+			gaim_xfer_set_cancel_fnc(xfer, oscar_xfer_cancel);
+			gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
+
+			/*
+			 * XXX - Should do something with args->msg, args->encoding, and args->language
+			 *       probably make it apply to all ch2 messages.
 			 */
-			if (oft->type != OFT_SENDFILE_OUT)
-				return -1;
 
-			/* It seems that Trillian sends some weird
-			 * packets.  Sanity check.
+			/* Keep track of this transfer for later */
+			od->file_transfers = g_slist_append(od->file_transfers, xfer);
+
+			/* Now perform the request */
+			gaim_xfer_request(xfer);
+		} else if (args->status == AIM_RENDEZVOUS_CANCEL) {
+			/* The other user wants to cancel a file transfer */
+			struct gaim_xfer *xfer;
+			debug_printf("AAA - File transfer canceled by remote user\n");
+			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie)))
+				gaim_xfer_cancel(xfer);
+		} else if (args->status == AIM_RENDEZVOUS_ACCEPT) {
+			/*
+			 * This gets sent by the receiver of a file 
+			 * as they connect directly to us.  If we don't 
+			 * get this, then maybe a third party connected 
+			 * to us, and we shouldn't send them anything.
 			 */
-			if (!args->verifiedip)
-				return -1;
-
-			/* This connection isn't used for anything, since
-			 * we're using a reverse connection instead.
-			 */
-			gaim_input_remove(oft->watcher);
-			aim_conn_kill(sess, &oft->conn);
-
-			debug_printf("sendfile: doing reverse connection to %s:%hu\n", args->verifiedip, args->port);
-
-			oft->conn = aim_accepttransfer(sess, od->conn,
-				userinfo->sn,
-				args->cookie, args->verifiedip,
-				args->port,
-				AIM_CAPS_SENDFILE);
-
-			/* XXX: this is a bit of a hack: ideally
-			 * we should wait on GAIM_INPUT_WRITE. -- wtm
-			 */
-			aim_conn_completeconnect(sess, oft->conn);
-
-			oscar_sendfile_request(sess, oft);
-
-			aim_conn_addhandler(sess, oft->conn,
-				AIM_CB_FAM_OFT,
-				AIM_CB_OFT_SENDFILECOMPLETE,
-				oscar_sendfile_out_done,
-				0);
-			aim_conn_addhandler(sess, oft->conn,
-				AIM_CB_FAM_OFT,
-				AIM_CB_OFT_SENDFILEFILESEND,
-				oscar_file_transfer_do,
-				0);
-			oft->watcher = gaim_input_add(oft->conn->fd,
-				GAIM_INPUT_READ, oscar_callback,
-				oft->conn);
-			return 0;
+		} else {
+			debug_printf("unknown rendezvous status!\n");
 		}
-
-		/* Someone wants to send a file (or files) to us */
-		debug_printf("%s (%s) requests to send a file to %s\n",
-				userinfo->sn, args->verifiedip, gc->username);
-
-		oft = g_new0(struct oscar_file_transfer, 1);
-		
-		oft->type = OFT_SENDFILE_IN;
-		oft->sn = g_strdup(userinfo->sn);
-		strncpy(oft->ip, args->verifiedip, sizeof(oft->ip));
-		oft->port = args->port;
-		memcpy(oft->cookie, args->cookie, 8);
-
-		od->file_transfers = g_slist_append(od->file_transfers, oft);
-
-		/* last char of the ft req is a star, they are sending us a
-		 * directory -- remove the star and trailing slash so we dont save
-		 * directories that look like 'dirname\*'  -- arl */
-		tmp = strrchr(args->info.sendfile.filename, '\\');
-		if (tmp && (tmp[1] == '*')) {
-			tmp[0] = '\0';
-		}
-
-		oft->xfer = transfer_in_add(gc, userinfo->sn, 
-				args->info.sendfile.filename,
-				args->info.sendfile.totsize,
-				args->info.sendfile.totfiles,
-				args->msg);
-#endif
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
 	} else if (args->reqclass & AIM_CAPS_VOICE) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
@@ -2155,7 +2264,7 @@ static void gaim_auth_grant(struct name_data *data) {
 		gchar message;
 		message = 0;
 		buddy = find_buddy(gc->account, data->name);
-		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
+		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
 		show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 #else
 		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
@@ -2172,7 +2281,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 	if (g_slist_find(connections, gc)) {
 		struct oscar_data *od = gc->proto_data;
 #ifdef NOSSI
-		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
+		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
 #else
 		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, msg ? msg : _("No reason given."));
 #endif
@@ -2478,20 +2587,15 @@ static char *gaim_icq_status(int state) {
 
 static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 
+/* BBB */
 	switch (reason) {
 		case 3: { /* Decline sendfile. */
-#if 0
-			struct oscar_file_transfer *oft = find_oft_by_cookie(gc, cookie);
-
-			if (oft) {
-				char *buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
-						who, gc->username);
-				transfer_abort(oft->xfer, buf);
-				g_free(buf);
-				oscar_file_transfer_disconnect(sess, oft->conn);
-			}
-#endif
+			struct gaim_xfer *xfer;
+			debug_printf("AAA - Other user declined file transfer\n");
+			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
+				gaim_xfer_cancel(xfer);
 		} break;
 
 		default: {
@@ -2598,35 +2702,35 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-	va_list ap;
-	char *data;
-	fu16_t reason;
-	char buf[1024];
-	struct gaim_connection *gc = sess->aux_data;
-
 #if 0
-	struct oscar_file_transfer *oft;
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	struct gaim_xfer *xfer;
 #endif
+	va_list ap;
+	fu16_t reason;
+	char *data, *buf;
 
 	va_start(ap, fr);
-	reason = (fu16_t) va_arg(ap, unsigned int);
+	reason = (fu16_t)va_arg(ap, unsigned int);
 	data = va_arg(ap, char *);
 	va_end(ap);
 
-#if 0
-	/* If this was a file transfer request, data is a cookie. */
-	if ((oft = find_oft_by_cookie(gc, data))) {
-		transfer_abort(oft->xfer,
-				(reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."));
+	debug_printf("Message error with data %s and reason %hu\n", data, reason);
 
-		oscar_file_transfer_disconnect(sess, oft->conn);
+/* BBB */
+#if 0
+	/* If this was a file transfer request, data is a cookie */
+	if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, data))) {
+		gaim_xfer_cancel(xfer);
 		return 1;
 	}
 #endif
 
-	/* Data is assumed to be the destination sn. */
-	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), data);
+	/* Data is assumed to be the destination sn */
+	buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	g_free(buf);
 
 	return 1;
 }
@@ -2907,7 +3011,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t type;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
 	type = (fu16_t) va_arg(ap, unsigned int);
@@ -2927,12 +3031,12 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			debug_printf("chat info: \tExchange List: (%d total)\n", exchangecount);
 			for (i = 0; i < exchangecount; i++)
 				debug_printf("chat info: \t\t%hu    %s\n", exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
-			while (odata->create_rooms) {
-				struct create_room *cr = odata->create_rooms->data;
+			while (od->create_rooms) {
+				struct create_room *cr = od->create_rooms->data;
 				debug_printf("creating room %s\n", cr->name);
 				aim_chatnav_createroom(sess, fr->conn, cr->name, cr->exchange);
 				g_free(cr->name);
-				odata->create_rooms = g_slist_remove(odata->create_rooms, cr);
+				od->create_rooms = g_slist_remove(od->create_rooms, cr);
 				g_free(cr);
 			}
 			}
@@ -2961,7 +3065,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 					createtime,
 					maxmsglen, maxoccupancy, createperms, unknown,
 					name, ck);
-			aim_chat_join(odata->sess, odata->conn, exchange, ck, instance);
+			aim_chat_join(od->sess, od->conn, exchange, ck, instance);
 			}
 			break;
 		default:
@@ -3084,7 +3188,6 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	if (emailinfo) {
-		debug_printf("Got email info. domain is %s,  webmail is %s,  new email: %hhu,  number new: %hu,  flag is %hu, havenewmail is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag, havenewmail);
 		if (emailinfo->unread) {
 			if (havenewmail)
 				connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
@@ -3207,7 +3310,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_bos_reqlocaterights(sess, fr->conn);
 	aim_bos_reqbuddyrights(sess, fr->conn);
-	aim_reqicbmparams(sess);
+	aim_im_reqparams(sess);
 	aim_bos_reqrights(sess, fr->conn);
 
 #ifdef NOSSI
@@ -3282,7 +3385,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	params->maxmsglen = 8000;
 	params->minmsginterval = 0;
 
-	aim_seticbmparam(sess, params);
+	aim_im_setparams(sess, params);
 
 	return 1;
 }
@@ -3292,7 +3395,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_list ap;
 	fu16_t maxsiglen;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	char *unicode;
 	int unicode_len;
 	fu32_t flags;
@@ -3303,9 +3406,9 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	debug_printf("locate rights: max sig len = %d\n", maxsiglen);
 
-	odata->rights.maxsiglen = odata->rights.maxawaymsglen = (guint)maxsiglen;
+	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
-	if (odata->icq)
+	if (od->icq)
 		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else {
 		flags = check_encoding (gc->account->user_info);
@@ -3329,7 +3432,7 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t maxbuddies, maxwatchers;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxbuddies = (fu16_t) va_arg(ap, unsigned int);
@@ -3338,8 +3441,8 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("buddy list rights: Max buddies = %hu / Max watchers = %hu\n", maxbuddies, maxwatchers);
 
-	odata->rights.maxbuddies = (guint)maxbuddies;
-	odata->rights.maxwatchers = (guint)maxwatchers;
+	od->rights.maxbuddies = (guint)maxbuddies;
+	od->rights.maxwatchers = (guint)maxwatchers;
 
 	return 1;
 }
@@ -3348,7 +3451,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t maxpermits, maxdenies;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t) va_arg(ap, unsigned int);
@@ -3357,8 +3460,8 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("BOS rights: Max permit = %hu / Max deny = %hu\n", maxpermits, maxdenies);
 
-	odata->rights.maxpermits = (guint)maxpermits;
-	odata->rights.maxdenies = (guint)maxdenies;
+	od->rights.maxpermits = (guint)maxpermits;
+	od->rights.maxdenies = (guint)maxdenies;
 
 	account_online(gc);
 	serv_finish_login(gc);
@@ -3367,9 +3470,9 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 
-	/* AAA - Should call aim_bos_setidle with 0x0000 */
+	/* XXX - Should call aim_bos_setidle with 0x0000 */
 
-	/* AAA - Should only call reqofflinemsgs when using ICQ? */
+	/* XXX - Should only call reqofflinemsgs when using ICQ? */
 	aim_icq_reqofflinemsgs(sess);
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
@@ -3419,6 +3522,9 @@ static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
+
+	if (!info || !info->uin)
+		return 1;
 
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
 	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
@@ -3483,6 +3589,9 @@ static int gaim_icqallinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
+
+	if (!info || !info->uin)
+		return 1;
 
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
 	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
@@ -3675,23 +3784,23 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static void oscar_keepalive(struct gaim_connection *gc) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	aim_flap_nop(odata->sess, odata->conn);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	aim_flap_nop(od->sess, od->conn);
 }
 
 static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	struct direct_im *dim = find_direct_im(odata, name);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim = find_direct_im(od, name);
 	if (dim)
-		aim_send_typing(odata->sess, dim->conn, typing);
+		aim_odc_send_typing(od->sess, dim->conn, typing);
 	else {
-		if (g_hash_table_lookup(odata->supports_tn, normalize(name))) {
+		if (g_hash_table_lookup(od->supports_tn, normalize(name))) {
 			if (typing == TYPING)
-				aim_mtn_send(odata->sess, 0x0001, name, 0x0002);
+				aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
 			else if (typing == TYPED)
-				aim_mtn_send(odata->sess, 0x0001, name, 0x0001);
+				aim_im_sendmtn(od->sess, 0x0001, name, 0x0001);
 			else
-				aim_mtn_send(odata->sess, 0x0001, name, 0x0000);
+				aim_im_sendmtn(od->sess, 0x0001, name, 0x0000);
 		}
 	}
 	return 0;
@@ -3699,15 +3808,15 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 static void oscar_ask_direct_im(struct gaim_connection *gc, char *name);
 
 static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int len, int imflags) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	struct direct_im *dim = find_direct_im(odata, name);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
 	GError *err = NULL;
 
 	if (dim) {
 		if (dim->connected) {  /* If we're not connected yet, send through server */
-			/* AAA - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
+			/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
+			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
 			if (ret == 0)
 				return 1;
 			else return ret;
@@ -3719,17 +3828,17 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		return -ENOTCONN;
 	}
 	if (imflags & IM_FLAG_AWAY) {
-		ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
+		ret = aim_im_sendch1(od->sess, name, AIM_IMFLAGS_AWAY, message);
 	} else {
 		struct aim_sendimext_args args;
-		GSList *h = odata->hasicons;
+		GSList *h = od->hasicons;
 		struct icon_req *ir = NULL;
 		char *who = normalize(name);
 		struct stat st;
 		int len;
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
-		if (odata->icq)
+		if (od->icq)
 			args.flags |= AIM_IMFLAGS_OFFLINE;
 
 		args.features = gaim_features;
@@ -3754,7 +3863,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				fread(buf, 1, st.st_size, file);
 
 				args.iconlen   = st.st_size;
-				args.iconsum   = aim_iconsum(buf, st.st_size);
+				args.iconsum   = aimutil_iconsum(buf, st.st_size);
 				args.iconstamp = st.st_mtime;
 
 				args.flags |= AIM_IMFLAGS_HASICON;
@@ -3796,7 +3905,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		}
 		args.msglen = len;
 
-		ret = aim_send_im_ext(odata->sess, &args);
+		ret = aim_im_sendch1_ext(od->sess, &args);
 	}
 	if (ret >= 0)
 		return 1;
@@ -3804,24 +3913,24 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 }
 
 static void oscar_get_info(struct gaim_connection *g, char *name) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	if (odata->icq)
-		aim_icq_getsimpleinfo(odata->sess, name);
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	if (od->icq)
+		aim_icq_getsimpleinfo(od->sess, name);
 	else
 		/* people want the away message on the top, so we get the away message
 		 * first and then get the regular info, since it's too difficult to
 		 * insert in the middle. i hate people. */
-		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
+		aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
 
 static void oscar_get_away(struct gaim_connection *g, char *who) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	if (odata->icq) {
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	if (od->icq) {
 		struct buddy *budlight = find_buddy(g->account, who);
 		if (budlight)
 			if ((budlight->uc & 0xffff0000) >> 16)
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_send_im_ch2_geticqmessage(odata->sess, who, (budlight->uc & 0xffff0000) >> 16);
+					aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else
 					debug_printf("Error: Remote client does not support retrieval of status messages.\n");
 			else
@@ -3829,63 +3938,65 @@ static void oscar_get_away(struct gaim_connection *g, char *who) {
 		else
 			debug_printf("Error: Could not find %s in local contact list, therefore unable to request status message.\n", who);
 	} else
-		aim_getinfo(odata->sess, odata->conn, who, AIM_GETINFO_GENERALINFO);
+		aim_getinfo(od->sess, od->conn, who, AIM_GETINFO_GENERALINFO);
 }
 
+#if 0
 static void oscar_get_caps(struct gaim_connection *g, char *name) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_CAPABILITIES);
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_CAPABILITIES);
 }
+#endif
 
 static void oscar_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
-	/* AAA: some of these things are wrong, but i'm lazy */
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_setdirectoryinfo(odata->sess, odata->conn, first, middle, last,
+	/* XXX - some of these things are wrong, but i'm lazy */
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	aim_setdirectoryinfo(od->sess, od->conn, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 }
 
 
 static void oscar_set_idle(struct gaim_connection *g, int time) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_bos_setidle(odata->sess, odata->conn, time);
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+	aim_bos_setidle(od->sess, od->conn, time);
 }
 
 static void oscar_set_info(struct gaim_connection *g, char *info) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	gchar *inforeal, *unicode;
 	fu32_t flags;
 	int unicode_len;
 
-	if (odata->rights.maxsiglen == 0)
+	if (od->rights.maxsiglen == 0)
 		do_error_dialog(_("Unable to set AIM profile."), 
 				_("You have probably requested to set your profile before the login procedure completed.  "
 				  "Your profile remains unset; try setting it again when you are fully connected."), GAIM_ERROR);
 
-	if (strlen(info) > odata->rights.maxsiglen) {
+	if (strlen(info) > od->rights.maxsiglen) {
 		gchar *errstr;
 
 		errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
-					   "Gaim has truncated and set it."), odata->rights.maxsiglen);
+					   "Gaim has truncated and set it."), od->rights.maxsiglen);
 		do_error_dialog("Profile too long.", errstr, GAIM_WARNING);
 
 		g_free(errstr);
 	}
 
-	inforeal = g_strndup(info, odata->rights.maxsiglen);
+	inforeal = g_strndup(info, od->rights.maxsiglen);
 
-	if (odata->icq)
-		aim_bos_setprofile(odata->sess, odata->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+	if (od->icq)
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else {
 		flags = check_encoding(inforeal);
 
 		if (flags == 0) {
-			aim_bos_setprofile(odata->sess, odata->conn, "us-ascii", inforeal, strlen (inforeal),
+			aim_bos_setprofile(od->sess, od->conn, "us-ascii", inforeal, strlen (inforeal),
 					   NULL, NULL, 0, caps_aim);
 		} else {
 			unicode = g_convert (inforeal, strlen(inforeal), "UCS-2BE", "UTF-8", NULL,
 					     &unicode_len, NULL);
-			aim_bos_setprofile(odata->sess, odata->conn, "unicode-2-0", unicode, unicode_len,
+			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", unicode, unicode_len,
 					   NULL, NULL, 0, caps_aim);
 			g_free(unicode);
 		}
@@ -4005,15 +4116,15 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 }
 
 static void oscar_warn(struct gaim_connection *gc, char *name, int anon) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	aim_send_warning(odata->sess, odata->conn, name, anon ? AIM_WARN_ANON : 0);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
 }
 
 static void oscar_dir_search(struct gaim_connection *gc, const char *first, const char *middle, const char *last,
 			     const char *maiden, const char *city, const char *state, const char *country, const char *email) {
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (strlen(email))
-		aim_usersearch_address(odata->sess, odata->conn, email);
+		aim_usersearch_address(od->sess, od->conn, email);
 }
 
 static void oscar_add_buddy(struct gaim_connection *gc, const char *name) {
@@ -4139,7 +4250,7 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi rights:");
 	for (i=0; i<numtypes; i++)
-		debug_printf(" max type 0x%04x = %hx, ", i, maxitems[i]);
+		debug_printf(" max type 0x%04x=%hd,", i, maxitems[i]);
 	debug_printf("\n");
 
 	if (numtypes >= 0)
@@ -4159,7 +4270,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct aim_ssi_item *curitem;
 	int tmp;
-	/* AAA - use these?
+	/* XXX - use these?
 	va_list ap;
 
 	va_start(ap, fr);
@@ -4510,7 +4621,7 @@ static GList *oscar_chat_info(struct gaim_connection *gc) {
 }
 
 static void oscar_join_chat(struct gaim_connection *g, GList *data) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	aim_conn_t *cur;
 	char *name;
 	int *exchange;
@@ -4522,33 +4633,33 @@ static void oscar_join_chat(struct gaim_connection *g, GList *data) {
 	exchange = data->next->data;
 
 	debug_printf("Attempting to join chat room %s.\n", name);
-	if ((cur = aim_getconn_type(odata->sess, AIM_CONN_TYPE_CHATNAV))) {
+	if ((cur = aim_getconn_type(od->sess, AIM_CONN_TYPE_CHATNAV))) {
 		debug_printf("chatnav exists, creating room\n");
-		aim_chatnav_createroom(odata->sess, cur, name, *exchange);
+		aim_chatnav_createroom(od->sess, cur, name, *exchange);
 	} else {
 		/* this gets tricky */
 		struct create_room *cr = g_new0(struct create_room, 1);
 		debug_printf("chatnav does not exist, opening chatnav\n");
 		cr->exchange = *exchange;
 		cr->name = g_strdup(name);
-		odata->create_rooms = g_slist_append(odata->create_rooms, cr);
-		aim_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
+		od->create_rooms = g_slist_append(od->create_rooms, cr);
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_CHATNAV);
 	}
 }
 
 static void oscar_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	struct chat_connection *ccon = find_oscar_chat(g, id);
 	
 	if (!ccon)
 		return;
 	
-	aim_chat_invite(odata->sess, odata->conn, name, message ? message : "",
+	aim_chat_invite(od->sess, od->conn, name, message ? message : "",
 			ccon->exchange, ccon->name, 0x0);
 }
 
 static void oscar_chat_leave(struct gaim_connection *g, int id) {
-	struct oscar_data *odata = g ? (struct oscar_data *)g->proto_data : NULL;
+	struct oscar_data *od = g ? (struct oscar_data *)g->proto_data : NULL;
 	GSList *bcs = g->buddy_chats;
 	struct gaim_conversation *b = NULL;
 	struct chat_connection *c = NULL;
@@ -4570,12 +4681,12 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	
 	c = find_oscar_chat(g, gaim_chat_get_id(GAIM_CHAT(b)));
 	if (c != NULL) {
-		if (odata)
-			odata->oscar_chats = g_slist_remove(odata->oscar_chats, c);
+		if (od)
+			od->oscar_chats = g_slist_remove(od->oscar_chats, c);
 		if (c->inpa > 0)
 			gaim_input_remove(c->inpa);
-		if (g && odata->sess)
-			aim_conn_kill(odata->sess, &c->conn);
+		if (g && od->sess)
+			aim_conn_kill(od->sess, &c->conn);
 		g_free(c->name);
 		g_free(c->show);
 		g_free(c);
@@ -4585,7 +4696,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 }
 
 static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
-	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
 	struct gaim_conversation *b = NULL;
 	struct chat_connection *c = NULL;
@@ -4602,7 +4713,7 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	if (!b)
 		return -EINVAL;
 
-	bcs = odata->oscar_chats;
+	bcs = od->oscar_chats;
 	while (bcs) {
 		c = (struct chat_connection *)bcs->data;
 		if (b == c->cnv)
@@ -4636,7 +4747,7 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	}
 	g_free(buf2);
 
-	aim_chat_send_im(odata->sess, c->conn, 0, buf, strlen(buf));
+	aim_chat_send_im(od->sess, c->conn, 0, buf, strlen(buf));
 	g_free(buf);
 	return 0;
 }
@@ -4677,108 +4788,18 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
-#if 0
 /*
- * This is called after the raw data for a file has been transferred (whether 
- * we are sending or receiving), but there are other files remaining.
+ * We have just established a socket with the other dude, so set up some handlers.
  */
-void oscar_file_transfer_nextfile(struct gaim_connection *gc,
-		struct file_transfer *xfer) {
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
-	aim_conn_t *conn = oft->conn;
-	aim_session_t *sess = aim_conn_getsess(conn);
-
-	oft->filesdone++;
-	oft->watcher = gaim_input_add(conn->fd, GAIM_INPUT_READ,
-			oscar_callback, conn);
-
-	/* If this is an incoming sendfile transfer, we send an OK
-	 * message to the sender; if this is an outgoing sendfile, we
-	 * will get an OK from the receiver that will be handled in
-	 * oscar_sendfile_out_done(), so we don't need to do anything
-	 * yet.
-	 */
-
-	if (oft->type == OFT_SENDFILE_IN)
-		aim_oft_end(sess, conn);
-}
-
-/*
- * This is called after the raw data for a file has been transferred (whether 
- * we are sending or receiving), and it is the last file in the set, so we 
- * can tear down the connection.
- */
-void oscar_file_transfer_done(struct gaim_connection *gc,
-		struct file_transfer *xfer) {
-	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
-	aim_conn_t *conn = oft->conn;
-	aim_session_t *sess = aim_conn_getsess(conn);
-
-	oft->filesdone++;
-	if (oft->type == OFT_SENDFILE_IN) {
-		aim_oft_end(sess, conn);
-		oscar_file_transfer_disconnect(sess, conn);
-	}
-	else if (oft->type == OFT_SENDFILE_OUT) { 
-		/* Wait for response before closing connection. */
-		oft->watcher = gaim_input_add(conn->fd, GAIM_INPUT_READ,
-				oscar_callback, conn);
-	}
-}
-
-/*
- * This is called when there is raw data ready to be sent or received; all the 
- * protocol details have been taken care of.
- */
-static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	va_list ap;
-	aim_conn_t *conn;
-	struct oscar_file_transfer *oft;
-	struct aim_fileheader_t *fh;
-	int err;
-
-	va_start(ap, fr);
-	conn = va_arg(ap, aim_conn_t *);
-	fh = va_arg(ap, struct aim_fileheader_t *);
-	va_end(ap);
-
-	oft = find_oft_by_conn(gc, conn);
-
-	/* Don't use the regular input handler for the raw data. */
-	gaim_input_remove(oft->watcher);
-	oft->watcher = 0;
-
-	if (oft->type == OFT_SENDFILE_IN) {
-		/* AAA convert fh->name from UCS-2 to UTF-8 if (fh->nencode == 0x0002) */
-		err = transfer_in_do(oft->xfer, conn->fd, fh->name, fh->size);
-	}
-	else {
-		err = transfer_out_do(oft->xfer, conn->fd, fh->nrecvd);
-	}
-
-	if (err) {
-		/* There was an error; cancel the transfer. */
-		struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-		aim_conn_t *bosconn = od->conn;
-		aim_canceltransfer(sess, bosconn, oft->cookie,
-			oft->sn, AIM_CAPS_SENDFILE);
-		oscar_file_transfer_disconnect(sess, oft->conn);
-	}
-
-	return 0;
-}
-#endif
-
-static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
-	va_list ap;
+static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	aim_conn_t *newconn, *listenerconn;
 	struct gaim_conversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
 	char *sn;
+	va_list ap;
+	aim_conn_t *newconn, *listenerconn;
 
 	va_start(ap, fr);
 	newconn = va_arg(ap, aim_conn_t *);
@@ -4788,7 +4809,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_close(listenerconn);
 	aim_conn_kill(sess, &listenerconn);
 
-	sn = g_strdup(aim_directim_getsn(newconn));
+	sn = g_strdup(aim_odc_getsn(newconn));
 
 	debug_printf("DirectIM: initiate success to %s\n", sn);
 	dim = find_direct_im(od, sn);
@@ -4797,19 +4818,16 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
-	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
-					oscar_callback, dim->conn);
+	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
 	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
 	gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
-				gaim_directim_incoming, 0);
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
-				gaim_directim_typing, 0);
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
-			    gaim_update_ui, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_odc_incoming, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_odc_typing, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER, gaim_update_ui, 0);
+
 	return 1;
 }
 
@@ -4844,7 +4862,7 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *msg, *sn;
 	int len, encoding;
@@ -4859,13 +4877,13 @@ static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("Got DirectIM message from %s\n", sn);
 
-	/* AAA - I imagine Paco-Paco will want to do some voodoo with the encoding here */
+	/* XXX - I imagine Paco-Paco will want to do some voodoo with the encoding here */
 	serv_got_im(gc, sn, msg, 0, time(NULL), len);
 
 	return 1;
 }
 
-static int gaim_directim_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *sn;
 	int typing;
@@ -4923,13 +4941,13 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
-	dim->conn = aim_directim_initiate(od->sess, data->who);
+	dim->conn = aim_odc_initiate(od->sess, data->who);
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
 		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 						oscar_callback, dim->conn);
-		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
-					gaim_directim_initiate, 0);
+		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
+					gaim_odc_initiate, 0);
 	} else {
 		do_error_dialog(_("Unable to open Direct IM"), NULL, GAIM_ERROR);
 		g_free(dim);
@@ -4955,7 +4973,7 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 		if (budlight)
 			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
+					aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else {
 					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
@@ -5134,22 +5152,23 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->callback = oscar_ask_direct_im;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
-		
 #if 0
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Send File");
-			pbm->callback = oscar_ask_send_file;
+			pbm->callback = oscar_ask_sendfile;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
 #endif
 		}
 	}
 
+#if 0
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Get Capabilities");
 	pbm->callback = oscar_get_caps;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
+#endif
 
 	return m;
 }
@@ -5306,15 +5325,25 @@ static GList *oscar_actions(struct gaim_connection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-	if (od->sess->authinfo->regstatus == 0x0003) {
-		/* AIM actions */
-		m = g_list_append(m, NULL);
-
+	if ((od->sess->authinfo->regstatus == 0x0003) || (od->icq)) {
 		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Change Password");
 		pam->callback = show_change_passwd;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
+	}
+
+	if (od->sess->authinfo->chpassurl) {
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Change Password (URL)");
+		pam->callback = oscar_show_chpassurl;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	}
+
+	if (od->sess->authinfo->regstatus == 0x0003) {
+		/* AIM actions */
+		m = g_list_append(m, NULL);
 
 		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Format Screenname");
@@ -5337,12 +5366,6 @@ static GList *oscar_actions(struct gaim_connection *gc)
 		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Change Current Registered Address");
 		pam->callback = oscar_show_change_email;
-		pam->gc = gc;
-		m = g_list_append(m, pam);
-	} else if (od->sess->authinfo->chpassurl) {
-		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Password");
-		pam->callback = oscar_show_chpassurl;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
 	}
@@ -5375,14 +5398,19 @@ static GList *oscar_actions(struct gaim_connection *gc)
 static void oscar_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
 {
 	struct oscar_data *od = gc->proto_data;
-	if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
-		od->chpass = TRUE;
-		od->oldp = g_strdup(old);
-		od->newp = g_strdup(new);
-		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+
+	if (od->icq) {
+		aim_icq_changepasswd(od->sess, new);
 	} else {
-		aim_admin_changepasswd(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH),
-				new, old);
+		aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
+		if (conn) {
+			aim_admin_changepasswd(od->sess, conn, new, old);
+		} else {
+			od->chpass = TRUE;
+			od->oldp = g_strdup(old);
+			od->newp = g_strdup(new);
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+		}
 	}
 }
 
@@ -5496,15 +5524,6 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->rem_permit = oscar_rem_permit;
 	ret->rem_deny = oscar_rem_deny;
 	ret->set_permit_deny = oscar_set_permit_deny;
-
-#if 0
-	ret->file_transfer_cancel = oscar_file_transfer_cancel;
-	ret->file_transfer_in = oscar_file_transfer_in;
-	ret->file_transfer_out = oscar_file_transfer_out;
-	ret->file_transfer_data_chunk = oscar_file_transfer_data_chunk;
-	ret->file_transfer_nextfile = oscar_file_transfer_nextfile;
-	ret->file_transfer_done = oscar_file_transfer_done;
-#endif
 
 	ret->warn = oscar_warn;
 	ret->chat_info = oscar_chat_info;

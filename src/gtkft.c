@@ -1116,8 +1116,9 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 	gaim_gtkxfer_dialog_update_xfer(xfer_dialog, xfer);
 
 	/* See if it's removed. */
-	if (xfer->ui_data == NULL)
-		gaim_xfer_destroy(xfer);
+	/* XXX - This caused some bad stuff, and I don't see a point to it */
+/*	if (xfer->ui_data == NULL)
+		gaim_xfer_destroy(xfer); */
 }
 
 static void
@@ -1126,8 +1127,9 @@ gaim_gtkxfer_cancel(struct gaim_xfer *xfer)
 	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 
 	/* See if it's removed. */
-	if (xfer->ui_data == NULL)
-		gaim_xfer_destroy(xfer);
+	/* XXX - This caused some looping, and I don't see a point to it */
+/*	if (xfer->ui_data == NULL)
+		gaim_xfer_destroy(xfer); */
 }
 
 struct gaim_xfer_ui_ops ops =

@@ -36,8 +36,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 	}
 
 	/* For sanity... */
-	if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) || 
-			(conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT)) {
+	if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) || (conn->type == AIM_CONN_TYPE_LISTENER)) {
 		if (framing != AIM_FRAMETYPE_OFT) {
 			faimdprintf(sess, 0, "aim_tx_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
 			return NULL;
@@ -242,13 +241,13 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
 			/* I strongly suspect that this is a horrible thing to do
 			 * and I feel really guilty doing it. */
-			const char *sn = aim_directim_getsn(conn);
+			const char *sn = aim_odc_getsn(conn);
 			aim_rxcallback_t userfunc;
 			while (count - wrote > 1024) {
 				wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
 				if ((userfunc=aim_callhandler(conn->sessv, conn, 
-							      AIM_CB_FAM_SPECIAL, 
-							      AIM_CB_SPECIAL_IMAGETRANSFER)))
+								AIM_CB_FAM_SPECIAL, 
+								AIM_CB_SPECIAL_IMAGETRANSFER)))
 				  userfunc(conn->sessv, NULL, sn, 
 					   count-wrote>1024 ? ((double)wrote / count) : 1);
 			}
@@ -256,9 +255,8 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 		if (count - wrote) {
 			wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, count - wrote);
 		}
-		
+
 	}
-	
 
 	if (((aim_session_t *)conn->sessv)->debug >= 2) {
 		int i;
@@ -273,10 +271,9 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 		faimdprintf(sess, 2, "\n");
 	}
 
-
 	bs->offset += wrote;
 
-	return wrote;	
+	return wrote;
 }
 
 static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)

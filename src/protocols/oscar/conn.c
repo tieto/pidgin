@@ -172,9 +172,7 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	/*
 	 * This will free ->internal if it necessary...
 	 */
-	if ((*deadconn)->type == AIM_CONN_TYPE_RENDEZVOUS)
-		aim_conn_kill_rend(sess, *deadconn);
-	else if ((*deadconn)->type == AIM_CONN_TYPE_CHAT)
+	if ((*deadconn)->type == AIM_CONN_TYPE_CHAT)
 		aim_conn_kill_chat(sess, *deadconn);
 
 	if ((*deadconn)->inside) {
@@ -324,8 +322,6 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
 	deadconn->fd = -1;
 	if (deadconn->handlerlist)
 		aim_clearhandlers(deadconn);
-	if (deadconn->type == AIM_CONN_TYPE_RENDEZVOUS)
-		aim_conn_close_rend((aim_session_t *)deadconn->sessv, deadconn);
 
 	return;
 }

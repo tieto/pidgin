@@ -24,6 +24,7 @@
 #define AIM_CB_FAM_CTN 0x000d /* ChatNav */
 #define AIM_CB_FAM_CHT 0x000e /* Chat */
 #define AIM_CB_FAM_SCH 0x000f /* "New" search */
+#define AIM_CB_FAM_ICO 0x0010 /* Used for uploading buddy icons */
 #define AIM_CB_FAM_SSI 0x0013 /* Server stored information */
 #define AIM_CB_FAM_ICQ 0x0015
 #define AIM_CB_FAM_ATH 0x0017
@@ -250,11 +251,11 @@
  *
  * See non-SNAC note below.
  */
-#define AIM_CB_OFT_DIRECTIMCONNECTREQ 0x0001/* connect request -- actually an OSCAR CAP*/
+#define AIM_CB_OFT_DIRECTIMCONNECTREQ 0x0001/* connect request -- actually an OSCAR CAP */
 #define AIM_CB_OFT_DIRECTIMINCOMING 0x0002
 #define AIM_CB_OFT_DIRECTIMDISCONNECT 0x0003
 #define AIM_CB_OFT_DIRECTIMTYPING 0x0004
-#define AIM_CB_OFT_DIRECTIMINITIATE 0x0005
+#define AIM_CB_OFT_DIRECTIM_ESTABLISHED 0x0005
 
 #if 0
 #define AIM_CB_OFT_GETFILECONNECTREQ 0x0006 /* connect request -- actually an OSCAR CAP*/
@@ -262,7 +263,7 @@
 #define AIM_CB_OFT_GETFILEFILEREQ 0x0008    /* received file request */
 #define AIM_CB_OFT_GETFILEFILESEND 0x0009   /* received file request confirm -- send data */
 #define AIM_CB_OFT_GETFILECOMPLETE 0x000a   /* received file send complete*/
-#define AIM_CB_OFT_GETFILEINITIATE 0x000b   /* request for file get acknowledge */
+#define AIM_CB_OFT_GETFILE_ESTABLISHED 0x000b   /* request for file get acknowledge */
 #define AIM_CB_OFT_GETFILEDISCONNECT 0x000c   /* OFT connection disconnected.*/
 #define AIM_CB_OFT_GETFILELISTING 0x000d   /* OFT listing.txt received.*/
 #define AIM_CB_OFT_GETFILERECEIVE 0x000e   /* OFT file incoming.*/
@@ -270,10 +271,19 @@
 #define AIM_CB_OFT_GETFILESTATE4 0x0010
 #endif
 
-#define AIM_CB_OFT_SENDFILEFILEREQ 0x0011 /* started receiving file */
-#define AIM_CB_OFT_SENDFILEFILESEND 0x0012 /* buddy ready to for us to send */
-#define AIM_CB_OFT_SENDFILECOMPLETE 0x0013 /* send to buddy complete */
-#define AIM_CB_OFT_SENDFILEINITIATE 0x0014 /* connection to buddy initiated */
+#define AIM_CB_OFT_PROMPT 0x0101 /* Just connected to another buddy, receiver sends this */
+#define AIM_CB_OFT_RESUMESOMETHING 0x0106 /* I really don't know */
+#define AIM_CB_OFT_ACK 0x0202 /* Just after receiving the prompt, sender sends this */
+#define AIM_CB_OFT_DONE 0x0204 /* After a transfer is complete, sender sends this */
+#define AIM_CB_OFT_RESUME 0x0205 /* Resume transferring, send by whoever paused? */
+#define AIM_CB_OFT_RESUMEACK 0x0207 /* Not really sure */
+#define AIM_CB_OFT_ESTABLISHED 0xffff /* Internal, when a connection is established */
+
+#define AIM_CB_OFT_SENDFILE_REQUEST 0x0011 /* started receiving file */
+#define AIM_CB_OFT_SENDFILE_SEND 0x0012 /* buddy ready to for us to send */
+#define AIM_CB_OFT_SENDFILE_COMPLETE 0x0013 /* send to buddy complete */
+#define AIM_CB_OFT_SENDFILE_ESTABLISHED 0xFFFF /* connection to buddy initiated */
+#define AIM_CB_OFT_SENDFILE_RESUME 0x0015 /* somethin' */
 
 
 /*

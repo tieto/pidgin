@@ -121,6 +121,42 @@ faim_export char *aimutil_itemidx(char *toSearch, int index, char dl)
 	return toReturn;
 }
 
+/**
+ * Calculate the checksum of a given icon.
+ *
+ */
+faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen)
+{
+	fu32_t sum;
+	int i;
+
+	for (i=0, sum=0; i+1<buflen; i+=2)
+		sum += (buf[i+1] << 8) + buf[i];
+	if (i < buflen)
+		sum += buf[i];
+	sum = ((sum & 0xffff0000) >> 16) + (sum & 0x0000ffff);
+
+	return sum;
+}
+
+faim_export int aim_util_getlocalip(fu8_t *ip)
+{
+	struct hostent *hptr;
+	char localhost[129];
+
+	/* XXX if available, use getaddrinfo() */
+	/* XXX allow client to specify which IP to use for multihomed boxes */
+
+	if (gethostname(localhost, 128) < 0)
+		return -1;
+
+	if (!(hptr = gethostbyname(localhost)))
+		return -1;
+	memcpy(ip, hptr->h_addr_list[0], 4);
+
+	return 0;
+}
+
 /*
 * int snlen(const char *)
 * 

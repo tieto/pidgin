@@ -1623,10 +1623,10 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 				       char *title,
 				       char *prologue)
 {
-	char buf[2048];
+	gchar *buf;
 	struct kick_dlg *k = find_kick_dlg(gc->account);
 	struct signon_meter *meter = find_signon_meter(gc);
-	sprintf(buf, _("%s\n%s: %s"), full_date(), prologue, details);
+	buf = g_strdup_printf(_("%s\n%s: %s"), full_date(), prologue, details);
 	if (k)
 		gtk_widget_destroy(k->dlg);
 	k = g_new0(struct kick_dlg, 1);
@@ -1639,14 +1639,17 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
+	g_free(buf);
 }
 
 void hide_login_progress(struct gaim_connection *gc, char *why)
 {
-	char buf[2048];
+	gchar *buf;
 
-	sprintf(buf, _("%s was unable to sign on"), gc->username);
+	plugin_event(event_error, gc, why);
+	buf = g_strdup_printf(_("%s was unable to sign on"), gc->username);
 	hide_login_progress_common(gc, why, _("Signon Error"), buf);
+	g_free(buf);
 }
 
 /*
@@ -1666,6 +1669,8 @@ void hide_login_progress_notice(struct gaim_connection *gc, char *why)
 void hide_login_progress_error(struct gaim_connection *gc, char *why)
 {
 	char buf[2048];
+
+	plugin_event(event_error, gc, why);
 	g_snprintf(buf, sizeof(buf), _("%s has been signed off"), gc->username);
 	hide_login_progress_common(gc, why, _("Connection Error"), buf);
 }

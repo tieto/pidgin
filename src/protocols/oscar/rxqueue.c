@@ -164,7 +164,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	fu16_t payloadlen;
 
 	if (!sess || !conn)
-		return -1;
+		return -EINVAL;
 
 	if (conn->fd == -1)
 		return -1; /* it's an aim_conn_close()'d connection */
@@ -176,7 +176,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 		return aim_conn_completeconnect(sess, conn);
 
 	if (!(newrx = (aim_frame_t *)calloc(sizeof(aim_frame_t), 1)))
-		return -1;
+		return -ENOMEM;
 
 	/*
 	 * Rendezvous (client to client) connections do not speak FLAP, so this 
@@ -184,8 +184,8 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	 */
 	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS)
 		payloadlen = aim_get_command_rendezvous(sess, conn, newrx);
-	else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
-		faimdprintf(sess, 0, "AIM_CONN_TYPE_RENDEZVOUS_OUT on fd %d\n", conn->fd);
+	else if (conn->type == AIM_CONN_TYPE_LISTENER) {
+		faimdprintf(sess, 0, "AIM_CONN_TYPE_LISTENER on fd %d\n", conn->fd);
 		free(newrx);
 		return -1;
 	} else
