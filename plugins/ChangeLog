@@ -38,7 +38,7 @@ version 0.11.0pre1:
 	If you have interest in writing a protocol plugin, please talk to one
 	of us before you start.
 
-	That's about all that I'm going to talk about. My SN is EWarmenhoven
+	That's about all that I'm going to talk about. My SN is EricWarmenhoven
 	if you have any questions (like what the hell struct gaim_connection is
 	and what its relation to struct aim_user is).
 

@@ -845,7 +845,7 @@ static void toc_add_buddies(struct gaim_connection *g, GList * buddies)
 
 	n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 	while (buddies) {
-		if (strlen(normalize(buddies->data)) > MSG_LEN - n - 16) {
+		if (strlen(normalize(buddies->data)) + n + 32 > MSG_LEN) {
 			sflap_send(g, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 		}

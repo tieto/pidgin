@@ -2,7 +2,7 @@
  *
  * test every callback, print to stdout
  *
- * by EWarmenhoven
+ * by EW
  *
  * GPL and all that jazz
  *

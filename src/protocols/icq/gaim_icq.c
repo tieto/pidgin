@@ -174,7 +174,7 @@ static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st)
 	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
-static gint icq_set_timeout_cb() {
+static gboolean icq_set_timeout_cb(gpointer data) {
 	icq_HandleTimeout();
 	ack_timer = 0;
 	return FALSE;
@@ -183,9 +183,9 @@ static gint icq_set_timeout_cb() {
 static void icq_set_timeout(long interval) {
 	debug_printf("icq_SetTimeout: %ld\n", interval);
 	if (interval > 0 && ack_timer == 0)
-		ack_timer = gtk_timeout_add(interval * 1000, (GtkFunction)icq_set_timeout_cb, NULL);
+		ack_timer = g_timeout_add(interval * 1000, icq_set_timeout_cb, NULL);
 	else if (ack_timer > 0) {
-		gtk_timeout_remove(ack_timer);
+		g_source_remove(ack_timer);
 		ack_timer = 0;
 	}
 }

@@ -388,7 +388,7 @@ void sighandler(int sig)
 				"and post the backtrace from the core file. If you do not know\n"
 				"how to get the backtrace, please get instructions at\n"
 				WEBSITE "gdb.shtml. If you need further\n"
-				"assistance, please IM either EWarmenhoven or RobFlynn and\n"
+				"assistance, please IM either EricWarmenhoven or RobFlynn and\n"
 				"they can help you.\n");
 		abort();
 		break;
