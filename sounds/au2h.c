@@ -18,6 +18,11 @@ int main(int argc, char *argv[])
 	char file[256];
 	int offset = 0, cnt;
 
+	if (argc != 3) {
+		fprintf(stderr, "Too few arguments! Are you using gmake?\n");
+		exit(1);
+	}
+
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0) {
 		perror("open");
