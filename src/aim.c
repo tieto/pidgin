@@ -411,11 +411,11 @@ void show_login()
 		gtk_combo_set_value_in_list(GTK_COMBO(name), length, 0);
                 if ((general_options & OPT_GEN_REMEMBER_PASS)) {
                         combo_changed(NULL, name);
-                }
-
-
-		gtk_widget_grab_focus(signon);
-	}
+			gtk_widget_grab_focus(signon);
+                } else
+			gtk_widget_grab_focus(pass);
+	} else
+		gtk_widget_grab_focus(name);
 
 
 	gtk_signal_connect(GTK_OBJECT(remember), "clicked", GTK_SIGNAL_FUNC(set_general_option), (int *)OPT_GEN_REMEMBER_PASS);
