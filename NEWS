@@ -15,6 +15,20 @@
 	than they were in earlier releases. There are some other significant
 	changes, but they are mostly backend stuff, yay for core/ui splits ;-)
 
+	Christian: As Sean and Luke said, I did a tiny bit of work in this
+	release. The MSN prpl was rewritten, and should now work better. It's
+	compatible with the MSNP7 protocol that MSN v4.x uses. Unfortunately,
+	MSNP9 is being worked on. Bah. Also, it has MSN Mobile support, so you
+	can register your MSN account with http://mobile.msn.com/ and people
+	can page your mobile device. You can also page other MSN Mobile users.
+	Groups are now stored on server. Oh, and due to the nature of MSNP7,
+	conversations are timed out after 5 minutes, so you'll unfortunately
+	see a message indicating that. Sorry! Also, we have a rewrite of the
+	plugin interface, so rewrite your plugins! Things are going to get
+	very cool from it. The debug API was core/UI split, and some
+	enhancements were made to the debug window. I think that's all from me.
+	It's been a fun release. Stay tuned, I have some great things coming up!
+
 0.62 (04/23/2003):
 	Sean: This is just another standard bi-weekly Gaim release.  Nothing
 	really interesting, but it has some good bugfixes.  Personally, I've
