@@ -2150,6 +2150,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
+#ifdef YAHOO_WEBMESSENGER
 static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -2329,6 +2330,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 		return;
 	}
 }
+#endif
 
 static void yahoo_server_check(GaimAccount *account)
 {
