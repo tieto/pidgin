@@ -922,7 +922,7 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Send _URLs as Links"),
 				  "/core/conversations/send_urls_as_links", vbox);
 
-	gaim_gtk_prefs_checkbox(_("Show _Formatting Toolbar"),
+	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 
 	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
