@@ -3243,10 +3243,17 @@ void alias_dialog(struct buddy_show *b)
 	GtkWidget *add;
 	GtkWidget *label;
         GtkWidget *topbox;
+	static int a, c;
 
 	if (aliasdlg) {
 		gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
 		gtk_widget_show(aliasdlg);
+		gtk_signal_disconnect(GTK_OBJECT(add), a);
+		gtk_signal_disconnect(GTK_OBJECT(aliasname), c);
+		a = gtk_signal_connect(GTK_OBJECT(add), "clicked",
+				   GTK_SIGNAL_FUNC(do_alias), b);
+		c = gtk_signal_connect(GTK_OBJECT(aliasname), "activate",
+				   GTK_SIGNAL_FUNC(do_alias), b);
 		return;
 	}
 
@@ -3296,11 +3303,9 @@ void alias_dialog(struct buddy_show *b)
                            GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
         gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), aliasdlg);
-        gtk_signal_connect(GTK_OBJECT(add), "clicked",
+        a = gtk_signal_connect(GTK_OBJECT(add), "clicked",
                            GTK_SIGNAL_FUNC(do_alias), b);
-        gtk_signal_connect(GTK_OBJECT(aliasentry), "activate",
-                           GTK_SIGNAL_FUNC(do_alias), b);
-	gtk_signal_connect(GTK_OBJECT(aliasname), "activate",
+	c = gtk_signal_connect(GTK_OBJECT(aliasname), "activate",
 			   GTK_SIGNAL_FUNC(do_alias), b);
         /* Finish up */
         gtk_widget_show(add);
