@@ -129,7 +129,7 @@ void show_about(GtkWidget *w, void *data)
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
 			"  Sean Egan (lead developer) "
 			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
-			"bj91704@binghamton.edu</A>&gt;"
+			"bj91704@binghamton.edu</A>&gt;<BR>"
 			"  Christian 'ChipX86' Hammond (developer & webmaster)<BR>"
 			"  Herman Bloggs (win32 port) "
 			"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
@@ -160,7 +160,7 @@ void show_about(GtkWidget *w, void *data)
 				"  Jim Seymour (former Jabber developer)<BR>"
 				"  Mark Spencer (original author) "
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
-				"markster@marko.net</A>&gt;"
+				"markster@marko.net</A>&gt;<BR>"
 				"  Syd Logan (hacker and designated driver [lazy bum])<BR>"
 				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
