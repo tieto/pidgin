@@ -57,6 +57,20 @@ struct dcc_chat
 	char nick[80];		
 };
 
+struct irc_file_transfer {
+		enum { IFT_SENDFILE_IN, IFT_SENDFILE_OUT } type;
+		struct file_transfer *xfer;
+		char *sn;
+		char *name;
+		int len;
+		int watcher;
+		char ip[12];
+		int port;
+		int fd;
+		int cur;
+		struct gaim_connection *gc;
+};
+
 GSList *dcc_chat_list = NULL;
 
 struct irc_data {
@@ -78,6 +92,7 @@ struct irc_data {
 	gboolean in_whois;
 	gboolean in_list;
 	GString *liststr;
+	GSList *file_transfers;
 };
 
 struct dcc_chat *
@@ -443,6 +458,27 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 			       time ((time_t) NULL), -1);
 		dcc_chat_cancel (NULL,chat);
 	}
+}
+
+static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_transfer *ift) {
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+
+	/* Ok, we better be receiving some crap here boyeee */
+	if (transfer_in_do(ift->xfer, ift->fd, ift->name, ift->len)) {
+			gaim_input_remove(ift->watcher);
+			ift->watcher = 0;
+	}
+}
+
+
+void dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
+		struct irc_file_transfer *ift = data;
+
+		ift->fd = source;
+
+		printf("WELL, we should be doing something then, should we not?\n");
+
+		irc_file_transfer_do(ift->gc, ift);
 }
 
 void dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
@@ -1009,6 +1045,8 @@ static void dcc_chat_init(gpointer obj, struct dcc_chat *data) {
 	memcpy(chat, data, sizeof(struct dcc_chat));  /* we have to make a new one
 						       * because the old one get's freed by
 						       * dcc_chat_cancel. */
+
+	printf("ONE MORE TIME: %s:%d\n", chat->ip_address, chat->port);
 	proxy_connect(chat->ip_address, chat->port, dcc_chat_callback, chat);
 }
 
@@ -1055,12 +1093,34 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		struct dcc_chat * dccchat = g_new0(struct dcc_chat, 1);
 		dccchat->gc = gc;	
 		g_snprintf(dccchat->ip_address, sizeof(dccchat->ip_address), chat_args[3]);	
+		printf("DCC CHAT DEBUG CRAP: %s\n", dccchat->ip_address);
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
 		g_snprintf(ask, sizeof(ask), _("%s has requested a DCC chat.  "
 					       "Would you like to establish the direct connection?"), nick);
 		do_ask_dialog(ask, dccchat, dcc_chat_init, dcc_chat_cancel);
 	}
+
+
+	if (!g_strncasecmp(msg, "DCC SEND", 8)) {
+			struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
+			char **send_args = g_strsplit(msg, " ", 6);
+			send_args[5][strlen(send_args[5])-1] = 0;
+
+			ift->type = IFT_SENDFILE_IN;
+			ift->sn = g_strdup(nick);
+			ift->gc = gc;
+			g_snprintf(ift->ip, sizeof(ift->ip), send_args[3]);	
+			ift->port = atoi(send_args[4]);
+			ift->len = atoi(send_args[5]);
+			ift->name = g_strdup(send_args[2]);
+			ift->cur = 0;
+
+			id->file_transfers = g_slist_append(id->file_transfers, ift);
+
+			ift->xfer = transfer_in_add(gc, nick, ift->name, ift->len, 1, NULL);
+	}
+	
 	/* XXX should probably write_to_conv or something here */
 }
 
@@ -1895,6 +1955,102 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
 }
 
+static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
+		struct irc_data *id = (struct irc_data *)gc->proto_data;
+		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
+
+		ift->type = IFT_SENDFILE_OUT;
+		ift->sn = g_strdup(destsn);
+		ift->gc = gc;
+		id->file_transfers = g_slist_append(id->file_transfers, ift);
+		ift->xfer = transfer_out_add(gc, ift->sn);
+}
+
+
+static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
+				struct file_transfer *xfer) {
+		
+		GSList *g = ((struct irc_data *)gc->proto_data)->file_transfers;
+		struct irc_file_transfer *f = NULL;
+
+		while (g) {
+				f = (struct irc_file_transfer *)g->data;
+				if (f->xfer == xfer)
+						break;
+				g = g->next;
+				f = NULL;
+		}
+
+		return f;
+}
+
+static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file_transfer *xfer, const char *data, int len) {
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
+	guint32 pos;
+	
+	ift->cur += len;
+	pos = htonl(ift->cur);
+	write(ift->fd, (char *)&pos, 4);
+
+	printf("Cheap-O Progress Bar (%s) %d of %d: %2.0f\%\n", ift->name, ift->cur, ift->len, ((float)ift->cur/(float)ift->len) * 100);
+}
+
+static void irc_file_transfer_cancel (struct gaim_connection *gc, struct file_transfer *xfer) {
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
+
+	printf("Our shit got canceled, yo!\n");
+
+	/* Remove the FT from our list of transfers */
+	id->file_transfers = g_slist_remove(id->file_transfers, ift);
+
+	gaim_input_remove(ift->watcher);
+
+	/* Close our FT because we're done */
+	close(ift->fd);
+
+	g_free(ift->sn);
+	g_free(ift->name);
+
+	g_free(ift);
+}
+
+static void irc_file_transfer_done(struct gaim_connection *gc, struct file_transfer *xfer) {
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
+
+
+	printf("Our shit be done, yo.\n");
+	
+	/* Remove the FT from our list of transfers */
+	id->file_transfers = g_slist_remove(id->file_transfers, ift);
+
+	gaim_input_remove(ift->watcher);
+
+	/* Close our FT because we're done */
+	close(ift->fd);
+
+	g_free(ift->sn);
+	g_free(ift->name);
+
+	g_free(ift);
+}
+
+static void irc_file_transfer_in(struct gaim_connection *gc,
+				struct file_transfer *xfer, int offset) {
+
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
+	struct sockaddr_in addr;
+	char *ip = (char *)malloc(32);
+
+	ift->xfer = xfer;
+	printf("You, I should be getting a file or some shit, hehe\n");
+	printf("Connecting to: %s %d\n", ift->ip, ift->port);
+	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
+}
+
 static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	struct dcc_chat *chat;
 	int len;
@@ -1951,11 +2107,21 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->callback = irc_get_info;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
+
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("DCC Chat");
 	pbm->callback = irc_start_chat;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
+
+/*
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("DCC Send");
+	pbm->callback = irc_ask_send_file;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+*/	
+
 	return m;
 }
 
@@ -1983,6 +2149,11 @@ void irc_init(struct prpl *ret)
 	ret->buddy_menu = irc_buddy_menu;
 	ret->chat_invite = irc_chat_invite;
 	ret->convo_closed = irc_convo_closed;
+	ret->file_transfer_out = NULL; /* Implement me */
+	ret->file_transfer_in = irc_file_transfer_in;
+	ret->file_transfer_data_chunk = irc_file_transfer_data_chunk;
+	ret->file_transfer_done = irc_file_transfer_done;
+	ret->file_transfer_cancel =irc_file_transfer_cancel;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Server:");
@@ -1996,7 +2167,7 @@ void irc_init(struct prpl *ret)
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
-       	my_protocol = ret;
+	my_protocol = ret;
 }
 
 #ifndef STATIC
