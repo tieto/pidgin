@@ -2910,9 +2910,6 @@ setup_menubar(GaimWindow *win)
 
 	generate_send_as_items(win, NULL);
 
-//	if (gaim_prefs_get_bool("/gaim/gtk/conversations/escape_closes"))
-//		/
-
 	gtk_widget_show(gtkwin->menu.menubar);
 
 	return gtkwin->menu.menubar;
