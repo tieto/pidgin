@@ -743,8 +743,16 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 			!((GaimBlistNode*)buddy)->next) {
 		gaim_gtkdialogs_remove_buddy(buddy);
 	} else {
-		gchar *text = g_strdup_printf(_("You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"),
-			       buddy->name, contact->totalsize - 1);
+		gchar *text;
+		text = g_strdup_printf(
+					ngettext(
+						"You are about to remove the contact containing %s "
+						"and %d other buddy from your buddy list.  Do you "
+						"want to continue?",
+						"You are about to remove the contact containing %s "
+						"and %d other buddies from your buddy list.  Do you "
+						"want to continue?", contact->totalsize - 1),
+					buddy->name, contact->totalsize - 1);
 
 		gaim_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
 				_("Remove Contact"), G_CALLBACK(gaim_gtkdialogs_remove_contact_cb),

@@ -2215,6 +2215,10 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 		}
 
 		if (size > 10)
+			/*
+			 * This should probably use ngettext(), but this function
+			 * isn't called from anywhere, so I'm going to leave it.
+			 */
 			g_snprintf(tmp, sizeof(tmp),
 					   _("(+%d more)"), size - 10);
 
