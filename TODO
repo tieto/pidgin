@@ -34,7 +34,6 @@ TOC:
 	Other RVOUS Actions
 
 Oscar:
-	File Transfer
 	Other RVOUS Actions
 
 Yahoo:
@@ -51,8 +50,8 @@ MSN:
 	File Transfer
 
 IRC:
-	/whois, /ban, /kickban, /list, /names
-	DCC
+	/ban, /kickban, /list, /names
+	DCC Send
 	CTCP
 
 Jabber:
@@ -63,6 +62,7 @@ Jabber:
 	Rework how subscriptions are handled
 	Browsing
 	Make the set info dialog prettier
+	File Sending
 
 Napster:
 	File Transfer
