@@ -474,6 +474,8 @@ int core_main()
 	GMainLoop *loop;
 	 */
 
+	gaim_blist_load();
+
 #ifndef _WIN32
 	GIOChannel *channel;
 
@@ -490,8 +492,6 @@ int core_main()
 	loop = g_main_new(TRUE);
 	g_main_run(loop);
 	 */
-
-	gaim_blist_load();
 
 	return 0;
 }
