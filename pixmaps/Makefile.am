@@ -23,6 +23,7 @@ EXTRA_DIST =	ab.xpm				\
 		big.xpm				\
 		bigsmile.xpm			\
 		block.xpm			\
+		block_small.xpm			\
 		bold.xpm			\
 		broken.xpm			\
 		burp.xpm			\
@@ -35,6 +36,7 @@ EXTRA_DIST =	ab.xpm				\
 		cry.xpm				\
 		dt_icon.xpm			\
 		download.xpm			\
+		edit.png			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
 		farted.xpm			\
@@ -121,31 +123,34 @@ EXTRA_DIST =	ab.xpm				\
 		yell.xpm			
 
 
+gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
+gaimbuttonpix_DATA = edit.png
+
 if DISTRIB
 
-gaimdistpixdir = $(datadir)/pixmaps/gaim
-gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png
+	gaimdistpixdir = $(datadir)/pixmaps/gaim
+	gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png
 
-distpixmapdir = $(datadir)/pixmaps
-distpixmap_DATA = gaim.xpm
-	
-else
-
-if GNOMEAPPLET
-
-gnomedata    = `@GNOME_CONFIG@ --datadir`
-
-gaimdistpmdir = $(gnomedata)/pixmaps/gaim
-gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
-
-gaimpixmapdir = $(gnomedata)/pixmaps
-gaimpixmap_DATA = gaim.xpm
+	distpixmapdir = $(datadir)/pixmaps
+	distpixmap_DATA = gaim.png
 
 else
 
-pixmapdir = $(datadir)/pixmaps
-pixmap_DATA = gaim.xpm
-	
-endif
+	if GNOMEAPPLET
+
+		gnomedata    = `@GNOME_CONFIG@ --datadir`
+
+		gaimdistpmdir = $(gnomedata)/pixmaps/gaim
+		gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
+
+		gaimpixmapdir = $(gnomedata)/pixmaps
+		gaimpixmap_DATA = gaim.png
+
+	else
+
+		pixmapdir = $(datadir)/pixmaps
+		pixmap_DATA = gaim.png
+
+	endif
 
 endif
