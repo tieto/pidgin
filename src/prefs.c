@@ -160,7 +160,7 @@ static GtkWidget *connect_radio(char *label, int which, GtkWidget *box, GtkWidge
 	else
 		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(opt), "selected", GTK_SIGNAL_FUNC(set_connect), (void *)which);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_connect), (void *)which);
 	gtk_widget_show(opt);
 	if (proxy_type == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
