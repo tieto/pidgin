@@ -1607,9 +1607,9 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				 * because I thought it'd be funny :-) */
 
 				g_snprintf(tmp, sizeof(tmp), "%s has %s", name, 
-					   (b->options & OPT_POUNCE_TYPING) ? "started typing to you" :
-					   (b->options & OPT_POUNCE_SIGNON) ? "signed on" : 
-					   (b->options & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
+					   (when & OPT_POUNCE_TYPING) ? "started typing to you" :
+					   (when & OPT_POUNCE_SIGNON) ? "signed on" : 
+					   (when & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
 					   "returned from being away");
 				
 				do_error_dialog(tmp, _("Buddy Pounce"));
