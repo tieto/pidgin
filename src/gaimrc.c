@@ -933,7 +933,7 @@ static void gaimrc_read_options(FILE *f)
 			fgcolor.blue = atoi(p->value[2]);
 			fgcolor.green = atoi(p->value[1]);
 
-			g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+			g_snprintf(buf, sizeof(buf), "#%03x%03x%03x",
 					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", buf);
 
@@ -944,9 +944,10 @@ static void gaimrc_read_options(FILE *f)
 			bgcolor.blue = atoi(p->value[2]);
 			bgcolor.green = atoi(p->value[1]);
 
-			g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+			g_snprintf(buf, sizeof(buf), "#%03x%03x%03x",
 					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);
+			printf("\n\n%s\n\n",buf);
 
 		} else if (!strcmp(p->option, "report_idle")) {
 			switch(atoi(p->value[0])) {
