@@ -14,7 +14,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 	2.2  Why is gaim crashing when somebody sends me an IM?
 
 3  Features
-	3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
+	3.1  How do I use MSN, Yahoo, Jabber, IRC, Gadu-Gadu, Napster, or Zephyr?
 	3.2  Can Gaim send files?
 	3.3  When will file transfer be supported? Is it being worked on?
 	3.4  How come there's no Export Buddy List?
@@ -162,7 +162,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 | 3  Features
 +--------------------------------------------------------------------------
 
-3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
+3.1  How do I use MSN, Yahoo, Jabber, IRC, Gadu-Gadu, Napster, or Zephyr?
 
   First load the plugin. Protocol plugins come with Gaim, so just go to the
   Plugins dialog (Tools->Plugins, or the Plugins button on the start
