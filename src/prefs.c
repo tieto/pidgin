@@ -1609,14 +1609,6 @@ void show_prefs()
 	gtk_signal_connect(GTK_OBJECT(preftree), "tree_select_row", GTK_SIGNAL_FUNC(try_me), NULL);
 	gtk_widget_show(preftree);
 
-	prefs_build_general(preftree);
-	prefs_build_connect(preftree);
-	prefs_build_buddy(preftree);
-	prefs_build_convo(preftree);
-	prefs_build_sound(preftree);
-	prefs_build_away(preftree);
-	prefs_build_browser(preftree);
-
 	container = gtk_frame_new(NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(container), 0);
 	gtk_frame_set_shadow_type(GTK_FRAME(container), GTK_SHADOW_NONE);
@@ -1627,7 +1619,15 @@ void show_prefs()
 	gtk_container_add(GTK_CONTAINER(container), prefdialog);
 	gtk_widget_show(prefdialog);
 
-	general_page();
+	prefs_build_general(preftree);
+	prefs_build_connect(preftree);
+	prefs_build_buddy(preftree);
+	prefs_build_convo(preftree);
+	prefs_build_sound(preftree);
+	prefs_build_away(preftree);
+	prefs_build_browser(preftree);
+
+	//general_page();
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
@@ -1815,6 +1815,8 @@ void prefs_build_general(GtkWidget *preftree)
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, general_page);
+
+	gtk_ctree_select(GTK_CTREE(preftree), parent);
 }
 
 void prefs_build_connect(GtkWidget *preftree)
