@@ -165,7 +165,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 	account = gaim_connection_get_account(gc);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		if (gaim_xfer_get_size(xfer) >= 1048577) {
+		if (0 && gaim_xfer_get_size(xfer) >= 1048577) {
 			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
 			                  _("Gaim cannot send files over Yahoo! that are bigger than "
 			                    "One Megabyte (1,048,576 bytes)."));
