@@ -238,6 +238,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 		awaymessage = a;
 
+#ifdef _WIN32
+		/* Register window widget with wgaim systray module */
+		wgaim_created_backwin(imaway);
+#endif
+
 	} else {
 		destroy_im_away();
 		do_away_message(w, a);
