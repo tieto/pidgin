@@ -67,6 +67,8 @@ CORESOURCES = \
 	blist.h \
 	buddyicon.c \
 	buddyicon.h \
+	cmds.c \
+	cmds.h \
 	connection.c \
 	connection.h \
 	conversation.c \

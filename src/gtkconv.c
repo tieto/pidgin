@@ -36,6 +36,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "cmds.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "log.h"
@@ -334,16 +335,75 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), FALSE);
 	}
 }
+
+static const char *
+gaim_gtk_get_cmd_prefix(void)
+{
+	return "/";
+}
+
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	char *cmd;
+	const char *prefix;
 	GaimAccount *account;
 	GaimConnection *gc;
 	char *buf, *clean;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	account = gaim_conversation_get_account(conv);
+	prefix = gaim_gtk_get_cmd_prefix();
+
+	if(gaim_prefs_get_bool("/gaim/gtk/conversations/enable_commands")) {
+		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
+		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
+			GaimCmdStatus status;
+			char *error, *cmdline;
+
+			cmdline = cmd + strlen(prefix);
+			status = gaim_cmd_do_command(conv, cmdline, &error);
+			g_free(cmd);
+
+			gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+			default_formatize(conv);
+
+			switch(status) {
+				case GAIM_CMD_STATUS_OK:
+					return;
+				case GAIM_CMD_STATUS_NOT_FOUND:
+					gaim_conversation_write(conv, "", _("No such command"),
+							GAIM_MESSAGE_SYSTEM, time(NULL));
+					return;
+				case GAIM_CMD_STATUS_WRONG_ARGS:
+					gaim_conversation_write(conv, "", _("Syntax error"),
+							GAIM_MESSAGE_SYSTEM, time(NULL));
+					return;
+				case GAIM_CMD_STATUS_FAILED:
+					gaim_conversation_write(conv, "", error ? error : _("Command failed"),
+							GAIM_MESSAGE_SYSTEM, time(NULL));
+					if(error)
+						g_free(error);
+					return;
+				case GAIM_CMD_STATUS_WRONG_TYPE:
+					if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+						gaim_conversation_write(conv, "", _("That command only works in Chats, not IMs."),
+								GAIM_MESSAGE_SYSTEM, time(NULL));
+					else
+						gaim_conversation_write(conv, "", _("That command only works in IMs, not Chats."),
+								GAIM_MESSAGE_SYSTEM, time(NULL));
+					return;
+				case GAIM_CMD_STATUS_WRONG_PRPL:
+					gaim_conversation_write(conv, "", _("That command doesn't work on this protocol."),
+							GAIM_MESSAGE_SYSTEM, time(NULL));
+					return;
+			}
+		}
+
+		g_free(cmd);
+	}
+
 
 	if (!gaim_account_is_connected(account))
 		return;
@@ -5815,6 +5875,8 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/enable_commands", TRUE);
+
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_int("/gaim/gtk/conversations/placement_number", 1);
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "");

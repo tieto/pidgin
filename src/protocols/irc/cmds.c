@@ -111,13 +111,17 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	g_free(newargs);
 
 	convo = gaim_find_conversation_with_account(target, irc->account);
-	if (convo && gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) {
+	if (convo) {
 		action = g_strdup_printf("/me %s", args[0]);
 		if (action[strlen(action) - 1] == '\n')
 			action[strlen(action) - 1] = '\0';
-		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
-				 gaim_connection_get_display_name(gc),
-				 0, action, time(NULL));
+		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
+			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
+			         	 gaim_connection_get_display_name(gc),
+				         0, action, time(NULL));
+		else
+			gaim_conv_im_write(GAIM_CONV_IM(convo), gaim_connection_get_display_name(gc),
+			                  action, 0, time(NULL));
 		g_free(action);
 	}
 

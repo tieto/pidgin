@@ -49,6 +49,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data);
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);
 JabberChat *jabber_chat_find_by_id(JabberStream *js, int id);
+JabberChat *jabber_chat_find_by_conv(GaimConversation *conv);
 void jabber_chat_destroy(JabberChat *chat);
 void jabber_chat_free(JabberChat *chat);
 gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name);

@@ -482,7 +482,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	JabberChat *chat;
 	JabberMessage *jm;
 	JabberStream *js;
-	char *buf, *body, *xhtml;
+	char *buf;
 
 	if(!msg || !gc)
 		return 0;
@@ -493,42 +493,23 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	if(!chat)
 		return 0;
 
+	jm = g_new0(JabberMessage, 1);
+	jm->js = gc->proto_data;
+	jm->type = JABBER_MESSAGE_GROUPCHAT;
+	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
-	gaim_markup_html_to_xhtml(buf, &xhtml, &body);
+	gaim_markup_html_to_xhtml(buf, &jm->xhtml, &jm->body);
 	g_free(buf);
 
-	if(!strcmp(body, "/configure") || !strcmp(body, "/config")) {
-		jabber_chat_request_room_configure(chat);
-	} else if(!strcmp(body, "/register")) {
-		jabber_chat_register(chat);
-	} else if(!strncmp(body, "/topic", 6)) {
-		jabber_chat_change_topic(chat, strlen(body) > 7 ? body+7 : NULL);
-	} else if(!strncmp(body, "/nick", 5)) {
-		if(strlen(body) > 6)
-			jabber_chat_change_nick(chat, body+6);
-	} else if(!strncmp(body, "/part", 5)) {
-		jabber_chat_part(chat, strlen(body) > 6 ? body+6 : NULL);
-	} else {
-		jm = g_new0(JabberMessage, 1);
-		jm->js = gc->proto_data;
-		jm->type = JABBER_MESSAGE_GROUPCHAT;
-		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
-
-
-		if(chat->xhtml)
-			jm->xhtml = xhtml;
-		else
-			g_free(xhtml);
-
-		jm->body = body;
-
-		jabber_message_send(jm);
-		jabber_message_free(jm);
-		return 1;
+	if(!chat->xhtml) {
+		g_free(jm->xhtml);
+		jm->xhtml = NULL;
 	}
 
-	g_free(body);
-	g_free(xhtml);
+	jabber_message_send(jm);
+	jabber_message_free(jm);
+
 	return 1;
 }
 

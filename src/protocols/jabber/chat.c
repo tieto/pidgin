@@ -103,6 +103,16 @@ JabberChat *jabber_chat_find_by_id(JabberStream *js, int id)
 	return chat;
 }
 
+JabberChat *jabber_chat_find_by_conv(GaimConversation *conv)
+{
+	GaimAccount *account = gaim_conversation_get_account(conv);
+	GaimConnection *gc = gaim_account_get_connection(account);
+	JabberStream *js = gc->proto_data;
+	int id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+
+	return jabber_chat_find_by_id(js, id);
+}
+
 void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 		const char *name)
 {

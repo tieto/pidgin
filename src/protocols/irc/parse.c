@@ -26,6 +26,7 @@
 #include "conversation.h"
 #include "notify.h"
 #include "debug.h"
+#include "cmds.h"
 #include "irc.h"
 
 #include <stdio.h>
@@ -134,6 +135,67 @@ static struct _irc_user_cmd {
 	{ "whois", "n", irc_cmd_whois },
 	{ NULL, NULL, NULL }
 };
+
+static GaimCmdRet irc_parse_gaim_cmd(GaimConversation *conv, const gchar *cmd,
+                                        gchar **args, gchar **error)
+{
+	GaimConnection *gc;
+	struct irc_conn *irc;
+	struct _irc_user_cmd *cmdent;
+
+	gc = gaim_conversation_get_gc(conv);
+	if (!gc)
+		return GAIM_CMD_RET_FAILED;
+
+	irc = gc->proto_data;
+
+	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	(cmdent->cb)(irc, cmd, gaim_conversation_get_name(conv), (const char **)args);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static void irc_register_command(struct _irc_user_cmd *c)
+{
+	GaimCmdFlag f;
+	char args[10];
+	char *format;
+	int i;
+
+	f = GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY
+	    | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS;
+
+	format = c->format;
+
+	for (i = 0; (i < (sizeof(args) - 1)) && *format; i++, format++)
+		switch (*format) {
+		case 'v':
+		case 'n':
+		case 'c':
+		case 't':
+			args[i] = 'w';
+			break;
+		case ':':
+		case '*':
+			args[i] = 's';
+			break;
+		}
+
+	args[i] = '\0';
+
+	gaim_cmd_register(c->name, args, GAIM_CMD_P_PRPL, f, "prpl-irc", irc_parse_gaim_cmd,
+	                  _("No help is available at this time for this command."));
+}
+
+void irc_register_commands(void)
+{
+	struct _irc_user_cmd *c;
+
+	for (c = _irc_cmds; c && c->name; c++)
+		irc_register_command(c);
+}
 
 static char *irc_send_convert(struct irc_conn *irc, const char *string)
 {

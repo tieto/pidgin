@@ -321,11 +321,11 @@ static int irc_im_send(GaimConnection *gc, const char *who, const char *what, Ga
 	else
 		args[0] = who;
 	args[1] = what;
-
+#if 0
 	if (*what == '/') {
 		return irc_parse_cmd(irc, who, what + 1);
 	}
-
+#endif
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 	return 1;
 }
@@ -461,11 +461,11 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "chat send on nonexistent chat\n");
 		return -EINVAL;
 	}
-
+#if 0
 	if (*what == '/') {
 		return irc_parse_cmd(irc, convo->name, what + 1);
 	}
-
+#endif
 	args[0] = convo->name;
 	args[1] = what;
 
@@ -654,6 +654,8 @@ static void _init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	_irc_plugin = plugin;
+
+	irc_register_commands();
 }
 
 GAIM_INIT_PLUGIN(irc, _init_plugin, info);

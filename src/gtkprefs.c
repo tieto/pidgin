@@ -993,6 +993,9 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
 			"/core/conversations/use_alias_for_title", vbox);
 
+	gaim_gtk_prefs_checkbox(_("Enable _Commands"),
+			"/gaim/gtk/conversations/enable_commands", vbox);
+
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
 	tabs_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),

@@ -23,6 +23,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "cmds.h"
 #include "debug.h"
 #include "message.h"
 #include "notify.h"
@@ -1265,6 +1266,75 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 	}
 }
 
+static GaimCmdRet jabber_cmd_chat_config(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	jabber_chat_request_room_configure(chat);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_register(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	jabber_chat_register(chat);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_topic(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	jabber_chat_change_topic(chat, args ? args[0] : NULL);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_nick(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	jabber_chat_change_nick(chat, args[0]);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_part(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+	jabber_chat_part(chat, args ? args[0] : NULL);
+	return GAIM_CMD_RET_OK;
+}
+
+static void jabber_register_commands(void)
+{
+	gaim_cmd_register("config", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
+			jabber_cmd_chat_config, _("Configure a chat room"));
+	gaim_cmd_register("configure", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
+			jabber_cmd_chat_config, _("Configure a chat room"));
+	gaim_cmd_register("nick", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
+			jabber_cmd_chat_nick, _("Change your nickname"));
+	gaim_cmd_register("part", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_part, _("Leave the room"));
+	gaim_cmd_register("register", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
+			jabber_cmd_chat_register, _("Register with a chat room"));
+	/* XXX: there needs to be a core /topic cmd, methinks */
+	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+			jabber_cmd_chat_topic, _("View or change the topic"));
+}
+
 static GaimPluginPrefFrame *
 get_plugin_pref_frame(GaimPlugin *plugin) {
 	GaimPluginPrefFrame *frame;
@@ -1413,6 +1483,8 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_none("/plugins/prpl/jabber");
 	gaim_prefs_add_bool("/plugins/prpl/jabber/hide_os", FALSE);
+
+	jabber_register_commands();
 }
 
 GAIM_INIT_PLUGIN(jabber, init_plugin, info);
