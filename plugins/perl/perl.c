@@ -227,7 +227,7 @@ normalize_script_name(char *name)
 
 	for (c = name; *c != '\0'; c++)
 	{
-		if (*c == '_' && !g_ascii_isalnum(*c))
+		if (*c != '_' && !g_ascii_isalnum(*c))
 			*c = '_';
 	}
 }
