@@ -353,13 +353,19 @@ static void disconnect_window_update_buttons(GtkTreeModel *model)
 
 	/*
 	 * Update the Reconnect/Remove button appropriately and set the 
-	 * label in the dialog to what it should be.
+	 * label in the dialog to what it should be.  If there is only 
+	 * one account in the tree model, and that account is connected, 
+	 * then we don't show the remove button.
 	 */
 	gtk_tree_model_get(model, &iter, 3, &label_text, 4, &account, -1);
 	gtk_button_set_label(GTK_BUTTON(disconnect_window->reconnect_btn),
 		gaim_account_is_connected(account) ? _("_Remove") : _("_Reconnect"));
 	gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(disconnect_window->window), GTK_RESPONSE_ACCEPT, TRUE);
+	if (gaim_account_is_connected(account) && !(gtk_tree_model_iter_next(model, &iter)))
+		gtk_widget_hide(disconnect_window->reconnect_btn);
+	else
+		gtk_widget_show(disconnect_window->reconnect_btn);
 }
 
 static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
