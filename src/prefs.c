@@ -1155,6 +1155,9 @@ void away_list_unclicked(GtkWidget *widget, struct away_message *a)
 		return;
 	strcpy(a->message, edited_message);
 	save_prefs();
+	
+	/* point edited_message to the new text */
+	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, -1);
 }
 
 void remove_away_message(GtkWidget *widget, void *dummy)
