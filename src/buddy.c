@@ -2508,12 +2508,10 @@ void build_imchat_box(gboolean on)
 
 		imchatbox = gtk_hbox_new(TRUE, 10);
 
-		if (misc_options & OPT_MISC_COOL_LOOK) {
-			gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(awaybutton), GTK_RELIEF_NONE);
-		}
+		gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(awaybutton), GTK_RELIEF_NONE);
 
 		/* Put the buttons in the hbox */
 		gtk_widget_show(imbutton);
@@ -2738,11 +2736,9 @@ void make_buddy_list()
 	groupbutton = gtk_button_new_with_label(_("Group"));
 	rembutton = gtk_button_new_with_label(_("Remove"));
 
-	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
-	}
+	gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
 
 	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), groupbutton, TRUE, TRUE, 0);

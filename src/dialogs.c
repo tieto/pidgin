@@ -4660,8 +4660,6 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	GtkWidget *pixmap;
 
 	button = gtk_button_new();
-	if (misc_options & OPT_MISC_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
 	button_box = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
@@ -4706,9 +4704,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 
 	if (!button_tips)
 		button_tips = gtk_tooltips_new();
+
 	button = gtk_button_new();
-	if (misc_options & OPT_MISC_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
 	button_box = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(button), button_box);

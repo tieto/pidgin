@@ -207,7 +207,6 @@ extern guint misc_options;
 #define OPT_MISC_DEBUG			0x00000001
 #define OPT_MISC_BROWSER_POPUP		0x00000002
 #define OPT_MISC_BUDDY_TICKER           0x00000004
-#define OPT_MISC_COOL_LOOK		0x00000008
 #define OPT_MISC_STEALTH_TYPING         0x00000010
 
 extern guint logging_options;

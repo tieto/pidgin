@@ -176,8 +176,6 @@ GtkWidget *interface_page() {
 	debugbutton = gaim_button(_("Show _Debug Window"), &misc_options, OPT_MISC_DEBUG, vbox);
 
 
-	gaim_button(_("Use _borderless buttons"), &misc_options, OPT_MISC_COOL_LOOK, vbox);
-
 	gtk_widget_show_all(ret);
 	return ret;
 }
