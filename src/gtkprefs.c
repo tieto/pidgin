@@ -1714,10 +1714,12 @@ GtkWidget *sound_page() {
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
 				   "/core/sound/while_away", vbox);
 
+#ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
 	sound_pref2_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
 												  sound_changed2_cb, vbox);
+#endif
 
 	vbox = gaim_gtk_make_frame(ret, _("Sound Events"));
 
@@ -1809,10 +1811,12 @@ GtkWidget *sound_page() {
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
 
+#ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
 			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
 	sound_pref3_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
 												  sound_changed2_cb, vbox);
+#endif
 
 	return ret;
 }
