@@ -1995,7 +1995,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
  * A bunch of buddy icon functions
  **************************************************************************/
 static GdkPixbuf *
-get_tab_icon(GaimConversation *conv)
+get_tab_icon(GaimConversation *conv, gboolean small)
 {
 	GaimAccount *account = gaim_conversation_get_account(conv);
 	const char *name = gaim_conversation_get_name(conv);
@@ -2005,7 +2005,7 @@ get_tab_icon(GaimConversation *conv)
 		GaimBuddy *b = gaim_find_buddy(account, name);
 		if (b != NULL) {
 			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
-					GAIM_STATUS_ICON_SMALL);
+				(small ? GAIM_STATUS_ICON_SMALL : GAIM_STATUS_ICON_LARGE));
 		}
 	}
 
@@ -2013,11 +2013,14 @@ get_tab_icon(GaimConversation *conv)
 		GdkPixbuf *pixbuf;
 		pixbuf = create_prpl_icon(account);
 
-		if (pixbuf) {
+		if (small && pixbuf != NULL)
+		{
 			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
 					GDK_INTERP_BILINEAR);
 			g_object_unref(pixbuf);
 		}
+		else
+			status = pixbuf;
 	}
 	return status;
 }
@@ -2035,17 +2038,24 @@ update_tab_icon(GaimConversation *conv)
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
 
-	status = get_tab_icon(conv);
+	status = get_tab_icon(conv, TRUE);
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
 
+	if (status != NULL)
+		g_object_unref(status);
+
 	if (gaim_conv_window_get_active_conversation(win) == conv &&
 		gtkconv->u.im->anim == NULL)
+	{
+		status = get_tab_icon(conv, FALSE);
+
 		gtk_window_set_icon(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window), status);
 
-	if(status)
-		g_object_unref(status);
+		if (status != NULL)
+			g_object_unref(status);
+	}
 }
 
 static gboolean
@@ -2424,7 +2434,7 @@ gray_stuff_out(GaimConversation *conv)
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
 		}
-		
+
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
@@ -2449,7 +2459,7 @@ gray_stuff_out(GaimConversation *conv)
 			gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 		g_object_ref(window_icon);
 	} else {
-		window_icon = get_tab_icon(conv);
+		window_icon = get_tab_icon(conv, FALSE);
 	}
 	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
 	g_object_unref(G_OBJECT(window_icon));
