@@ -745,6 +745,27 @@ gaim_get_last_window_with_type(GaimConversationType type)
 /**************************************************************************
  * Conversation API
  **************************************************************************/
+static void
+gaim_conversation_chat_cleanup_for_rejoin(GaimConversation *conv)
+{
+	const char *disp;
+	GaimAccount *account;
+
+	account = gaim_conversation_get_account(conv);
+
+	if ((disp = gaim_connection_get_display_name(gaim_account_get_connection(account)))) {
+		gaim_conv_chat_set_nick(conv->u.chat, disp);
+	} else {
+		gaim_conv_chat_set_nick(conv->u.chat, gaim_account_get_username(account));
+	}
+
+	gaim_conv_chat_clear_users(conv->u.chat);
+	gaim_conv_chat_set_topic(conv->u.chat, NULL, NULL);
+	conv->u.chat->left = FALSE;
+
+	gaim_conversation_update(conv, GAIM_CONV_UPDATE_CHATLEFT);
+}
+
 GaimConversation *
 gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 					  const char *name)
@@ -756,8 +777,17 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	g_return_val_if_fail(name    != NULL, NULL);
 
 	/* Check if this conversation already exists. */
-	if ((conv = gaim_find_conversation_with_account(name, account)) != NULL)
-		return conv;
+	if (((conv = gaim_find_conversation_with_account(name, account)) != NULL) &&
+	     (gaim_conversation_get_type(conv) == type)) {
+
+	     	if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT ||
+		    gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv))) {
+			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+				gaim_conversation_chat_cleanup_for_rejoin(conv);
+
+			return conv;
+		}
+	}
 
 	conv = g_new0(GaimConversation, 1);
 
@@ -869,6 +899,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 				prpl_info->convo_closed(gc, name);
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		#if 0
 			/*
 			 * This is unfortunately necessary, because calling
 			 * serv_chat_leave() calls this gaim_conversation_destroy(),
@@ -892,6 +923,12 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 				return;
 			}
+		#endif
+		/*
+		 * Instead of all of that, lets just close the window when the user tells
+		 * us to, and let the prpl deal with the internals on it's own time.
+		 */
+			serv_chat_leave(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 		}
 	}
 
@@ -1406,7 +1443,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			}
 		}
 	}
-	
+
 	if (gaim_conversation_is_logging(conv))
 		gaim_log_write(conv->log, flags, who, mtime, message);
 	ops->write_conv(conv, who, message, flags, mtime);
@@ -1457,9 +1494,9 @@ gaim_conversation_update_progress(GaimConversation *conv, float percent)
 }
 
 /*
- * TODO: Need to make sure calls to this function happen in the core 
- * instead of the UI.  That way UIs have less work to do, and the 
- * core/UI split is cleaner.  Also need to make sure this is called 
+ * TODO: Need to make sure calls to this function happen in the core
+ * instead of the UI.  That way UIs have less work to do, and the
+ * core/UI split is cleaner.  Also need to make sure this is called
  * when chats are added/removed from the blist.
  */
 void
@@ -2178,6 +2215,23 @@ gaim_find_chat(const GaimConnection *gc, int id)
 	}
 
 	return NULL;
+}
+
+void
+gaim_conv_chat_left(GaimConvChat *chat)
+{
+	g_return_if_fail(chat != NULL);
+
+	chat->left = TRUE;
+	gaim_conversation_update(chat->conv, GAIM_CONV_UPDATE_CHATLEFT);
+}
+
+gboolean
+gaim_conv_chat_has_left(GaimConvChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, TRUE);
+
+	return chat->left;
 }
 
 /**************************************************************************

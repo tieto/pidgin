@@ -2466,7 +2466,9 @@ gray_stuff_out(GaimConversation *conv)
 	 * Handle graying stuff out based on whether an account is connected 
 	 * and what features that account supports.
 	 */
-	if (gc != NULL) {
+	if ((gc != NULL) &&
+	   ( (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT) ||
+	    !gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)) )) {
 		/* Account is online */
 
 		/* Deal with buttons */
@@ -2523,6 +2525,7 @@ gray_stuff_out(GaimConversation *conv)
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 	} else {
 		/* Account is offline */
+		/* Or it's a chat where we left. */
 
 		/* Deal with buttons */
 		gtk_widget_set_sensitive(gtkconv->add, FALSE);
@@ -5245,7 +5248,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 	GList *l;
 	char tmp[BUF_LONG];
 	int num_users;
-	int f = 1;
+	gboolean f;
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -5268,7 +5271,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 												   &iter))
 					break;
 
-				while (f != 0) {
+				do {
 					char *val;
 
 					gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
@@ -5280,7 +5283,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 					f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
 
 					g_free(val);
-				}
+				} while (f);
 				
 				break;
 			}
@@ -5410,7 +5413,8 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
 	}
-	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE)
+	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE ||
+	         type == GAIM_CONV_UPDATE_CHATLEFT)
 	{
 		gray_stuff_out(conv);
 	}

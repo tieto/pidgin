@@ -86,7 +86,8 @@ typedef enum
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	GAIM_CONV_UPDATE_AWAY,     /**< The other user went away.                */
 	GAIM_CONV_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
-	GAIM_CONV_UPDATE_TITLE
+	GAIM_CONV_UPDATE_TITLE,
+	GAIM_CONV_UPDATE_CHATLEFT
 
 } GaimConvUpdateType;
 
@@ -224,6 +225,8 @@ struct _GaimConvChat
 	char  *topic;                    /**< The topic.                    */
 	int    id;                       /**< The chat ID.                  */
 	char *nick;                      /**< Your nick in this chat.       */
+
+	gboolean left;                   /**< We left the chat and kept the window open */
 };
 
 /**
@@ -1205,6 +1208,25 @@ const char *gaim_conv_chat_get_nick(GaimConvChat *chat);
  * @return The chat conversation.
  */
 GaimConversation *gaim_find_chat(const GaimConnection *gc, int id);
+
+/**
+ * Lets the core know we left a chat, without destroying it.
+ * Called from serv_got_chat_left().
+ *
+ * @param chat The chat.
+ */
+void gaim_conv_chat_left(GaimConvChat *chat);
+
+/**
+ * Returns true if we're no longer in this chat,
+ * and just left the window open.
+ *
+ * @param chat The chat.
+ *
+ * @return @c TRUE if we left the chat already, @c FALSE if
+ * we're still there.
+ */
+gboolean gaim_conv_chat_has_left(GaimConvChat *chat);
 
 /*@}*/
 

@@ -592,10 +592,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
-		/*g_slist_remove(irc->gc->buddy_chats, convo);
-		  gaim_conversation_set_account(convo, NULL);*/
-		/*g_list_free(gaim_conv_chat_get_users(GAIM_CONV_CHAT(convo)));
-		  gaim_conv_chat_set_users(GAIM_CONV_CHAT(convo), NULL);*/
+		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
 		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), args[1], buf);
@@ -723,6 +720,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
                                       (args[1] && *args[1]) ? ": " : "", args[1]);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
+		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, args[1]);
 	}

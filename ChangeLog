@@ -9,6 +9,9 @@ version 0.76cvs:
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
 	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
 	* Improved local IP address detection (Tim Ringenbach)
+	* Fixed a bug where only the first user in a chat room list was removed
+	  sometimes when trying to remove a group of users (Tim Ringenbach)
+	* Improved chat parting logic (Tim Ringenbach)
 	* Local IP address information can be changed in Preferences
 	  (Tim Ringenbach)
 	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)

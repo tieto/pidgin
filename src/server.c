@@ -740,6 +740,12 @@ void serv_chat_invite(GaimConnection *g, int id, const char *message, const char
 		g_free(buffy);
 }
 
+/* Ya know, nothing uses this except gaim_conversation_destroy(),
+ * I think I'll just merge it into that later...
+ * Then again, something might want to use this, from outside prpl-land
+ * to leave a chat without destroying the conversation.
+ */
+
 void serv_chat_leave(GaimConnection *g, int id)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1364,7 +1370,8 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 	conv = gaim_conversation_new(GAIM_CONV_CHAT, account, name);
 	chat = GAIM_CONV_CHAT(conv);
 
-	gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
+	if (!g_slist_find(gc->buddy_chats, conv))
+		gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
 
 	gaim_conv_chat_set_id(chat, id);
 
@@ -1407,7 +1414,7 @@ void serv_got_chat_left(GaimConnection *g, int id)
 
 	g->buddy_chats = g_slist_remove(g->buddy_chats, conv);
 
-	gaim_conversation_destroy(conv);
+	gaim_conv_chat_left(GAIM_CONV_CHAT(conv));
 }
 
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
