@@ -60,13 +60,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/jabber/available.xpm"
-#include "pixmaps/protocols/jabber/available-away.xpm"
-#include "pixmaps/protocols/jabber/available-chat.xpm"
-#include "pixmaps/protocols/jabber/available-xa.xpm"
-#include "pixmaps/protocols/jabber/available-dnd.xpm"
-#include "pixmaps/protocols/jabber/available-error.xpm"
-
 static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */

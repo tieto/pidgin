@@ -52,13 +52,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/oscar/admin_icon.xpm"
-#include "pixmaps/protocols/oscar/aol_icon.xpm"
-#include "pixmaps/protocols/oscar/away_icon.xpm"
-#include "pixmaps/protocols/oscar/dt_icon.xpm"
-#include "pixmaps/protocols/oscar/free_icon.xpm"
-#include "pixmaps/protocols/oscar/wireless_icon.xpm"
-
 static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */

@@ -72,7 +72,7 @@ static void gaim_blist_print()
 	if (!gaimbuddylist)
 		return;
 	while (group) {
-		debug_printf("+-%s %d\n", ((struct group*)group)->name, group);
+		debug_printf("+-%s %p\n", ((struct group*)group)->name, group);
 		buddy = group->child;
 		while (buddy) {
 			debug_printf("|--- %d %s\t\t%d\n", ((struct buddy*)buddy)->present, ((struct buddy*)buddy)->name, ((struct buddy*)buddy)->idle);
@@ -103,7 +103,6 @@ void  gaim_blist_show ()
 void gaim_blist_destroy()
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *node = gaimbuddylist->root;
 	if (ops)
 		ops->destroy(gaimbuddylist);
 }

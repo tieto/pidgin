@@ -26,10 +26,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/msn/msn_online.xpm"
-#include "pixmaps/protocols/msn/msn_away.xpm"
-#include "pixmaps/protocols/msn/msn_occ.xpm"
-
 #define BUDDY_ALIAS_MAXLEN 388
 
 static struct prpl *my_protocol = NULL;
@@ -543,7 +539,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 					struct group *g;
 					printf("I'm adding %s now..\n", mb->user);
 					if (!(g = gaim_find_group(_("Buddies")))) {
-						printf("How could I not exitst!??!\n");
+						printf("How could I not exitst!?!\n");
 						g = gaim_group_new(_("Buddies"));
 						gaim_blist_add_group(g, NULL);
 					}

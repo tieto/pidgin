@@ -6,13 +6,6 @@
 #include "prpl.h"  /* needed for prpl */
 #include "proxy.h"
 
-#include "pixmaps/protocols/icq/gnomeicu-online.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-away.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-dnd.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-na.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-occ.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-ffc.xpm"
-
 #define USEROPT_NICK 0
 
 static struct prpl *my_protocol = NULL;

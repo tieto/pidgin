@@ -55,22 +55,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/oscar/ab.xpm"
-#include "pixmaps/protocols/oscar/admin_icon.xpm"
-#include "pixmaps/protocols/oscar/aol_icon.xpm"
-#include "pixmaps/protocols/oscar/away_icon.xpm"
-#include "pixmaps/protocols/oscar/dt_icon.xpm"
-#include "pixmaps/protocols/oscar/free_icon.xpm"
-#include "pixmaps/protocols/oscar/wireless_icon.xpm"
-
-#include "pixmaps/protocols/icq/gnomeicu-online.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-offline.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-away.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-dnd.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-na.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-occ.xpm"
-#include "pixmaps/protocols/icq/gnomeicu-ffc.xpm"
-
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
@@ -4815,7 +4799,7 @@ static const char *oscar_list_icon(struct gaim_account *a, struct buddy *b) {
 	return "aim";
 }
 
-static const char **oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;

@@ -35,8 +35,6 @@
 #include <time.h>
 #include <ctype.h>
 
-#include "pixmaps/no_icon.xpm"
-
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
 #else
@@ -55,8 +53,6 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
-
-static gboolean obscured = FALSE;
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 
@@ -169,7 +165,7 @@ static gboolean gaim_reset_present_icon(GaimBlistNode *b)
 
 static void gaim_gtk_blist_add_buddy_cb()
 {
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(gtkblist->treeview);
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	GtkTreeIter iter;
 	GaimBlistNode *node;
 	GValue val;
@@ -449,18 +445,16 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
 	GtkWidget *button;
-	GValue *val;
-	GtkTreeIter iter;
-	
+
 	if (gtkblist) {
 		gtk_widget_show(gtkblist->window);
 		return;
 	}
-		
+
 	gtkblist = g_new0(struct gaim_gtk_buddy_list , 1);
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
-	
+
 	gtkblist->vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
@@ -474,7 +468,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_widget_set_usize(sw, 200, 200);
+	gtk_widget_set_size_request(sw, 200, 200);
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
@@ -537,7 +531,7 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 {
 	GaimBlistNode *group = list->root;
 	GaimBlistNode *buddy;
-	
+
 	while (group) {
 		gaim_gtk_blist_update(list, group);
 		buddy = group->child;
@@ -552,20 +546,18 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	GtkTreeIter *iter = node->ui_data;
-	GtkTreePath *path;
-	GdkPixbuf *buf = NULL;
 	gboolean expand = FALSE;
 
 	if (!gtkblist)
 		return;
-				
+
 	if (!iter) { /* This is a newly added node */
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			if (((struct buddy*)node)->present) {
 				if(node->parent && node->parent && !node->parent->ui_data) {
-					
+
 					/* This buddy's group has not yet been added.  We do that here */
-					
+
 					char *mark = g_strdup_printf("<span weight='bold'>%s</span>",  ((struct group*)node->parent)->name);
 					GtkTreeIter *iter2 = g_new0(GtkTreeIter, 1);
 					GaimBlistNode *insertat = node->parent->prev;
@@ -576,7 +568,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 						insertat = insertat->prev;
 					if (insertat)
 						insertatiter = insertat->ui_data;
-					
+
 					/* This is where we create the node and add it. */
 					gtk_tree_store_insert_after(gtkblist->treemodel, iter2, 
 								    node->parent->parent ? node->parent->parent->ui_data : NULL, insertatiter);

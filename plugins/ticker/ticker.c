@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include "gaim.h"
 #include "prpl.h"
-#include "pixmaps/no_icon.xpm"
 #ifdef _WIN32
 #include "win32dep.h"
 #endif

@@ -56,11 +56,6 @@ extern char *yahoo_crypt(char *, char *);
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
-#include "pixmaps/status-away.xpm"
-#include "pixmaps/status-here.xpm"
-#include "pixmaps/status-idle.xpm"
-#include "pixmaps/status-game.xpm"
-
 #define YAHOO_DEBUG
 
 #define USEROPT_MAIL 0

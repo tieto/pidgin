@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4998 2003-03-10 05:30:31Z seanegan $
+ * $Id: gg.c 5001 2003-03-10 06:22:44Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -53,11 +53,6 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
-
-#include "pixmaps/protocols/gg/gg_suncloud.xpm"
-#include "pixmaps/protocols/gg/gg_sunred.xpm"
-#include "pixmaps/protocols/gg/gg_sunwhitered.xpm"
-#include "pixmaps/protocols/gg/gg_sunyellow.xpm"
 
 #define USEROPT_NICK 0
 

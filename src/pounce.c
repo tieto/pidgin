@@ -339,7 +339,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), account);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
-		gtk_menu_shell_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
 
 		if (b->account == account) {
@@ -384,7 +384,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	}
 
 	GAIM_DIALOG(b->window);
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(gtk_widget_destroy), b->window);
