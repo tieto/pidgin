@@ -1627,6 +1627,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	GaimPlugin *plug;
 	gchar buf[1024];
+	gchar *name = NULL, *description = NULL;
 	
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
 	gdk_window_set_cursor(prefs->window, wait);
@@ -1695,23 +1696,23 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 	gdk_window_set_cursor(prefs->window, NULL);
 
+	name = g_markup_escape_text(_(plug->info->name), -1);
+	description = g_markup_escape_text(_(plug->info->description), -1);
 	if (plug->error != NULL) {
+		gchar *error = g_markup_escape_text(plug->error, -1);
 		g_snprintf(buf, sizeof(buf),
 				   "<span size=\"larger\">%s %s</span>\n\n"
 				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
 				   "%s",
-				   g_markup_escape_text(_(plug->info->name), -1),
-				   plug->info->version,
-				   g_markup_escape_text(plug->error, -1),
-				   g_markup_escape_text(_(plug->info->description), -1));
-	}
-	else {
+				   name, plug->info->version, error, description);
+		g_free(error);
+	} else {
 		g_snprintf(buf, sizeof(buf),
 				   "<span size=\"larger\">%s %s</span>\n\n%s",
-				   g_markup_escape_text(_(plug->info->name), -1),
-				   plug->info->version,
-				   g_markup_escape_text(_(plug->info->description), -1));
+				   name, plug->info->version, description);
 	}
+	g_free(name);
+	g_free(description);
 
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0,

@@ -1531,11 +1531,13 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 {
 	const char *connecthost = host;
 	int connectport = port;
-	struct PHB *phb = g_new0(struct PHB, 1);
+	struct PHB *phb;
 
 	g_return_val_if_fail(host != NULL, -1);
 	g_return_val_if_fail(port != 0 && port != -1, -1);
 	g_return_val_if_fail(func != NULL, -1);
+
+	phb = g_new0(struct PHB, 1);
 
 	if (account == NULL || gaim_account_get_proxy_info(account) == NULL)
 		phb->gpi = gaim_global_proxy_get_info();

@@ -991,10 +991,10 @@ gaim_accounts_load()
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
 				   "Error reading accounts: %s\n", error->message);
-		
 		g_error_free(error);
-
+		g_free(filename);
 		accounts_loaded = TRUE;
+
 		return FALSE;
 	}
 
@@ -1006,7 +1006,7 @@ gaim_accounts_load()
 	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
 		g_free(contents);
-
+		g_free(filename);
 		accounts_loaded = TRUE;
 
 		return FALSE;
@@ -1015,9 +1015,9 @@ gaim_accounts_load()
 	if (!g_markup_parse_context_end_parse(context, NULL)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error parsing %s\n",
 				   filename);
-
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		g_free(filename);
 		accounts_loaded = TRUE;
 
 		return FALSE;
@@ -1025,9 +1025,7 @@ gaim_accounts_load()
 
 	g_markup_parse_context_free(context);
 	g_free(contents);
-
 	g_free(filename);
-
 	accounts_loaded = TRUE;
 
 	return TRUE;

@@ -830,7 +830,9 @@ gboolean gaim_prefs_load() {
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error reading prefs: %s\n",
 				error->message);
 		g_error_free(error);
+		g_free(filename);
 		prefs_is_loaded = TRUE;
+
 		return FALSE;
 	}
 
@@ -839,7 +841,9 @@ gboolean gaim_prefs_load() {
 	if(!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		g_free(filename);
 		prefs_is_loaded = TRUE;
+
 		return FALSE;
 	}
 
@@ -847,14 +851,15 @@ gboolean gaim_prefs_load() {
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error parsing %s\n", filename);
 		g_markup_parse_context_free(context);
 		g_free(contents);
+		g_free(filename);
 		prefs_is_loaded = TRUE;
+
 		return FALSE;
 	}
 
+	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Finished reading %s\n", filename);
 	g_markup_parse_context_free(context);
 	g_free(contents);
-
-	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Finished reading %s\n", filename);
 	g_free(filename);
 	prefs_is_loaded = TRUE;
 

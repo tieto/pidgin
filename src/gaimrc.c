@@ -1243,6 +1243,7 @@ static void gaimrc_read_sounds(FILE *f)
 			pref_name = g_strdup_printf("/gaim/gtk/sound/file/%s",
 					gaim_gtk_sound_get_event_option(i));
 			gaim_prefs_set_string(pref_name, p->value[0]);
+			g_free(pref_name);
 		}
 	}
 }

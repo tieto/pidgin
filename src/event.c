@@ -87,7 +87,6 @@ gaim_signal_disconnect(void *handle, GaimEvent event, void *func)
 
 	for (c = callbacks; c != NULL; c = next_c) {
 		next_c = c->next;
-
 		g = (GaimSignalCallback *)c->data;
 
 		if (handle == g->handle && func == g->function) {
@@ -114,7 +113,8 @@ gaim_signals_disconnect_by_handle(void *handle)
 		g = (GaimSignalCallback *)c->data;
 
 		if (g->handle == handle) {
-			callbacks = g_list_remove(callbacks, (gpointer)g);
+			callbacks = g_list_remove(callbacks, c->data);
+			g_free(g);
 
 			gaim_debug(GAIM_DEBUG_INFO, "signals",
 					   "Removing callback. %d remain.\n",
