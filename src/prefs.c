@@ -241,6 +241,7 @@ static void convo_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Enter sends message"), &general_options, OPT_GEN_ENTER_SENDS, box);
+	gaim_button(_("Control-Enter sends message"), &general_options, OPT_GEN_CTL_ENTER, box);
 	gaim_button(_("Escape closes window"), &general_options, OPT_GEN_ESC_CAN_CLOSE, box);
 	gaim_button(_("Control-{B/I/U/S} inserts HTML tags"), &general_options, OPT_GEN_CTL_CHARS, box);
 	gaim_button(_("Control-(number) inserts smileys"), &general_options, OPT_GEN_CTL_SMILEYS, box);
@@ -1895,7 +1896,7 @@ void show_prefs()
 	gtk_widget_realize(prefs);
 	aol_icon(prefs->window);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 690, 540);
+	gtk_widget_set_usize(prefs, 690, 600);
 	gtk_signal_connect(GTK_OBJECT(prefs), "destroy", GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
