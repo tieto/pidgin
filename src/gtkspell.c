@@ -45,14 +45,12 @@
  */
 static pid_t spell_pid = -1;
 static int fd_write[2] = {0}, fd_read[2] = {0};
-static int signal_set_up = 0;
 
 /* FIXME? */
 static GdkColor highlight = { 0, 255*256, 0, 0 };
 
 static void entry_insert_cb(GtkText *gtktext, 
 		gchar *newtext, guint len, guint *ppos, gpointer d);
-static void set_up_signal();
 
 int gtkspell_running() {
 	return (spell_pid > 0? spell_pid : 0);
@@ -550,8 +548,17 @@ static void replace_word(GtkWidget *w, gpointer d) {
 }
 
 static GtkMenu *make_menu(GList *l, GtkText *gtktext) {
-	GtkWidget *menu, *item;
+	static GtkWidget *menu = NULL;
+	GtkWidget *item;
 	char *caption;
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if(menu)
+		gtk_widget_destroy(menu);
+
 	menu = gtk_menu_new(); {
 		caption = g_strdup_printf("Not in dictionary: %s", (char*)l->data);
 		item = gtk_menu_item_new_with_label(caption);
