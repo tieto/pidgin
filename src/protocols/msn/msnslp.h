@@ -35,6 +35,8 @@ struct _MsnSlpSession
 
 	MsnSwitchBoard *swboard;
 
+	char *call_id;
+
 	long session_id;
 	long base_id;
 	long prev_msg_id;

@@ -42,6 +42,15 @@ msn_slp_session_destroy(MsnSlpSession *session)
 {
 	g_return_if_fail(session != NULL);
 
+	if (session->orig_body != NULL)
+		g_free(session->orig_body);
+
+	if (session->outgoing_msg != NULL)
+		msn_message_unref(session->outgoing_msg);
+
+	if (session->call_id != NULL)
+		g_free(session->call_id);
+
 	g_free(session);
 }
 
@@ -135,7 +144,7 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 
 	msg->msnslp_header.id = slpsession->prev_msg_id;
 //	msg->msnslp_header.ack_session_id = rand() % 0xFFFFFF00;
-	msg->msnslp_header.ack_session_id = 1980589;
+	msg->msnslp_header.ack_session_id = 0x1407C7DE;
 
 	msn_message_set_charset(msg, NULL);
 
@@ -203,7 +212,6 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	char *msnobj_data;
 	char *msnobj_base64;
 	char *branch;
-	char *call_id;
 	char *content;
 	char *body;
 
@@ -233,19 +241,19 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 							 rand() % 0xAAFF + 0x1111,
 							 rand() % 0xAAFF + 0x1111);
 
-	call_id = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111,
-							  rand() % 0xAAFF + 0x1111);
+	slpsession->call_id = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111,
+										  rand() % 0xAAFF + 0x1111);
 
 	content = g_strdup_printf(
 		"EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
-		"SessionID: %ld\r\n"
+		"SessionID: %lu\r\n"
 		"AppID: 1\r\n"
 		"Context: %s",
 		session_id,
@@ -270,13 +278,12 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		msn_user_get_passport(remote_user),
 		msn_user_get_passport(local_user),
 		branch,
-		call_id,
+		slpsession->call_id,
 		strlen(content) + 5,
 		content);
 
 	g_free(content);
 	g_free(branch);
-	g_free(call_id);
 
 	gaim_debug_misc("msn", "Message = {%s}\n", body);
 
