@@ -1712,7 +1712,6 @@ msgid "Protocol:"
 msgstr ""
 
 #: src/gtkaccount.c:391
-#, fuzzy
 msgid "Screenname:"
 msgstr "שם לתצוגה:"
 
@@ -1868,7 +1867,7 @@ msgstr "הסר _קבוצה"
 
 #: src/gtkaccount.c:1731
 msgid "Screen Name"
-msgstr "שם לתצוגה:"
+msgstr "שם לתצוגה"
 
 #: src/gtkaccount.c:1754 src/protocols/jabber/jabber.c:866
 #: src/protocols/oscar/oscar.c:2839 src/protocols/oscar/oscar.c:4527
