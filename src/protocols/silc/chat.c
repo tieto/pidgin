@@ -1081,7 +1081,7 @@ void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 	   do both 1 and 2 with default keys. */
 
 	/* Call JOIN */
-	if (passphrase && strlen (passphrase))
+	if ((passphrase != NULL) && (*passphrase != '\0'))
 		silc_client_command_call(client, conn, NULL, "JOIN",
 					 channel, passphrase, "-auth", "-founder", NULL);
 	else
