@@ -90,7 +90,6 @@ GdkColor bgcolor;
 GdkColor fgcolor;
 
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
-static GtkWidget *infodialog = NULL;
 static GList *dialogwindows = NULL;
 static GtkWidget *importdialog;
 static struct gaim_connection *importgc;
@@ -186,6 +185,14 @@ struct info_dlg {
 	GtkWidget *window;
 	GtkWidget *text;
 };
+
+struct getuserinfo {
+	GtkWidget *window;
+	GtkWidget *entry;
+	GtkWidget *account;
+	struct gaim_connection *gc; 
+};
+
 static GSList *info_dlgs = NULL;
 
 static struct info_dlg *find_info_dlg(struct gaim_connection *gc, char *who)
@@ -321,9 +328,6 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 	if (dest == imdialog)
 		imdialog = NULL;
 
-	if (dest == infodialog)
-		infodialog = NULL;
-
 	if (dest == importdialog) {
 		importdialog = NULL;
 		importgc = NULL;
@@ -361,11 +365,6 @@ void destroy_all_dialogs()
 	if (imdialog) {
 		destroy_dialog(NULL, imdialog);
 		imdialog = NULL;
-	}
-
-	if (infodialog) {
-		destroy_dialog(NULL, infodialog);
-		infodialog = NULL;
 	}
 
 	if (importdialog) {
@@ -605,13 +604,12 @@ static void do_im(GtkWidget *widget, GtkWidget *imentry)
 	g_free(who);
 }
 
-static void do_info(GtkWidget *widget, GtkWidget *infoentry)
+static void do_info(GtkWidget *widget, struct getuserinfo *info)
 {
 	char *who;
 
-	who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(infoentry))));
-	destroy_dialog(NULL, infodialog);
-	infodialog = NULL;
+	who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(info->entry))));
+	destroy_dialog(NULL, info->window);
 
 	if (!g_strcasecmp(who, "")) {
 		g_free(who);
@@ -619,8 +617,8 @@ static void do_info(GtkWidget *widget, GtkWidget *infoentry)
 	}
 
 	/* what do we want to do about this case? */
-	if (connections)
-		serv_get_info(connections->data, who);
+	if (info->gc)
+		serv_get_info(info->gc, who);
 
 	g_free(who);
 }
@@ -727,67 +725,109 @@ void show_im_dialog()
 	gtk_widget_show_all(imdialog);
 }
 
+void show_info_select_account(GtkObject *w, struct gaim_connection *gc)
+{
+	struct getuserinfo *info = gtk_object_get_user_data(w);
+	info->gc = gc;
+}
+
 void show_info_dialog()
 {
 	GtkWidget *mainbox;
 	GtkWidget *frame;
-	GtkWidget *fbox;
+	GtkWidget *table;
 	GtkWidget *bbox;
 	GtkWidget *button;
-	GtkWidget *infoentry;
 	GtkWidget *label;
+	GtkWidget *menu, *opt;
+	char buf[2048];
+	GSList *g = connections;
+	struct gaim_connection *c;
 
-	if (!infodialog) {
+	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
+	info->gc = connections->data;
 
-		GAIM_DIALOG(infodialog);
-		gtk_window_set_wmclass(GTK_WINDOW(infodialog), "infodialog", "Gaim");
-		gtk_window_set_policy(GTK_WINDOW(infodialog), FALSE, TRUE, TRUE);
-		gtk_widget_realize(infodialog);
+	GAIM_DIALOG(info->window);
+	gtk_window_set_wmclass(GTK_WINDOW(info->window), "infodialog", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(info->window), FALSE, TRUE, TRUE);
+	gtk_widget_realize(info->window);
 
-		mainbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-		gtk_container_add(GTK_CONTAINER(infodialog), mainbox);
+	mainbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
+	gtk_container_add(GTK_CONTAINER(info->window), mainbox);
 
-		frame = gtk_frame_new(_("Get User Info"));
-		gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
+	frame = gtk_frame_new(_("Get User Info"));
+	gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
+	table = gtk_table_new(2, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_container_add(GTK_CONTAINER(frame), table);
 
-		label = gtk_label_new(_("User:"));
-		gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
+	label = gtk_label_new(_("User:"));
+	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+	gtk_widget_show(label);
+
+	info->entry = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
+
+	if (connections->next) {
+
+		label = gtk_label_new(_("Account:"));
+		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 		gtk_widget_show(label);
 
-		infoentry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(fbox), infoentry, TRUE, TRUE, 0);
+		info->account = gtk_option_menu_new();
+		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 
-		/* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(infoentry), "activate",
-				   GTK_SIGNAL_FUNC(do_info), infoentry);
-		gtk_signal_connect(GTK_OBJECT(infodialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
+		menu = gtk_menu_new();
 
-		/* Buttons */
-		bbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
+		while (g) {
+			c = (struct gaim_connection *)g->data;
+			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name());
+			opt = gtk_menu_item_new_with_label(buf);
+			gtk_object_set_user_data(GTK_OBJECT(opt), info);
 
-		button = picture_button(infodialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-				   GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
+			gtk_signal_connect(GTK_OBJECT(opt), "activate",
+					   GTK_SIGNAL_FUNC(show_info_select_account), c);
 
-		button = picture_button(infodialog, _("OK"), ok_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_info), infoentry);
+			gtk_menu_append(GTK_MENU(menu), opt);
+			gtk_widget_show(opt);
 
-		/* Finish up */
-		gtk_window_set_title(GTK_WINDOW(infodialog), _("Gaim - Get User Info"));
-		gtk_widget_grab_focus(infoentry);
+			g = g->next;
+		}
 
-		aol_icon(infodialog->window);
+		gtk_widget_show(menu);
+		gtk_option_menu_set_menu(GTK_OPTION_MENU(info->account), menu);
+		gtk_widget_show(info->account);
 	}
-	gtk_widget_show_all(infodialog);
+
+	/* Handle closes right */
+	gtk_signal_connect(GTK_OBJECT(info->entry), "activate",
+			   GTK_SIGNAL_FUNC(do_info), info);
+	gtk_signal_connect(GTK_OBJECT(info->window), "destroy",
+			   GTK_SIGNAL_FUNC(destroy_dialog), info->window);
+
+	/* Buttons */
+	bbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
+
+	button = picture_button(info->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(destroy_dialog), info->window);
+
+	button = picture_button(info->window, _("OK"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_info), info);
+
+	/* Finish up */
+	gtk_window_set_title(GTK_WINDOW(info->window), _("Gaim - Get User Info"));
+	gtk_widget_grab_focus(info->entry);
+
+	aol_icon(info->window->window);
+	gtk_widget_show_all(info->window);
 }
 
 
