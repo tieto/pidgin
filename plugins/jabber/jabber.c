@@ -1169,7 +1169,7 @@ static void jabber_login(struct aim_user *user)
 	gjab_packet_handler(jd->jc, jabber_handlepacket);
 	gjab_start(jd->jc);
 
-	if (gc->proto_data)
+	if (user->gc && gc->proto_data)
 		gc->inpa = gdk_input_add(jd->jc->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				jabber_callback, gc);
 
