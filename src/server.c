@@ -407,7 +407,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically
 	 * just to avoid segfaults. */
-	buffy = g_strdup(message);
+	buffy = g_malloc(MAX(strlen(message), BUF_LONG));
+	strcpy(buffy, message);
 	angel = g_strdup(name);
 	plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
 
