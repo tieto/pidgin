@@ -115,6 +115,8 @@ void cancel_logon(void)
 	perl_end();
 #endif
 
+	save_prefs();
+
 	gtk_main_quit();
 }
 

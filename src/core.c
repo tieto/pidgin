@@ -495,11 +495,14 @@ int core_main()
 
 void core_quit()
 {
+	save_prefs();
 #ifndef _WIN32
+	{
 	char buf[1024];
 	close(UI_fd);
 	sprintf(buf, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 	unlink(buf);
 	debug_printf("Removed core\n");
+	}
 #endif
 }

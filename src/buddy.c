@@ -1425,6 +1425,8 @@ void do_quit()
 	perl_end();
 #endif
 
+	save_prefs();
+
 	gtk_main_quit();
 }
 
