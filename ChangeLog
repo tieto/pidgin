@@ -12,6 +12,11 @@ version 0.81cvs:
 	* Yahoo! away messages can be 255 characters long now
 
 	Bug Fixes:
+	* Novel fixes (Mike Stoddard of Novell):
+		* Fixed reconnect crash
+		* Fixed duplicate root folder bug
+		* Fixed bug with folder ordering (on a first time login
+		  folders were being added in reverse order).
 	* Use ISO date format for the system log (Eduardo Pérez)
 	* Long buddy lists with irc should cause flooding disconnects less
 	  (Stu Tomlinson)

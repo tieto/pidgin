@@ -34,6 +34,7 @@
 
 #define DEFAULT_PORT			8300
 #define NOVELL_CONNECT_STEPS	4
+#define NM_ROOT_FOLDER_NAME "GroupWise Messenger"
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -320,6 +321,9 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 		if (folder) {
 			folder_name = nm_folder_get_name(folder);
 		}
+
+		if (*folder_name == '\0')
+			folder_name = NM_ROOT_FOLDER_NAME;
 
 		/* Re-add the buddy now that we got the okay from the server */
 		if (folder_name && (group = gaim_find_group(folder_name))) {
@@ -1187,6 +1191,7 @@ _remove_gaim_buddies(NMUser *user)
 	GSList *rem_list = NULL;
 	GSList *l;
 	NMFolder *folder = NULL;
+	const char *gname = NULL;
 
 	if ((blist = gaim_get_blist())) {
 		for (gnode = blist->root; gnode; gnode = gnode->next) {
@@ -1201,7 +1206,10 @@ _remove_gaim_buddies(NMUser *user)
 						continue;
 					buddy = (GaimBuddy *) bnode;
 					if (buddy->account == user->client_data) {
-						folder = nm_find_folder(user, group->name);
+						gname = group->name;
+						if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0)
+							gname = "";
+						folder = nm_find_folder(user, gname);
 						if (folder == NULL ||
 							!nm_folder_find_contact_by_display_id(folder, buddy->name)) {
 							rem_list = g_slist_append(rem_list, buddy);
@@ -1231,13 +1239,21 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 	NMERR_T cnt = 0, i;
 	const char *text = NULL;
 	const char *name = NULL;
+	const char *fname = NULL;
 	int status = 0;
 
-	/* Does the Gaim group exist already? */
-	group = gaim_find_group(nm_folder_get_name(folder));
+	/* If this is the root folder give it a name. Gaim does not have the concept of
+	 * a root folder.
+	 */
+	fname = nm_folder_get_name(folder);
+	if (fname == NULL || *fname == '\0') {
+		fname = NM_ROOT_FOLDER_NAME;
+	}
 
+	/* Does the Gaim group exist already? */
+	group = gaim_find_group(fname);
 	if (group == NULL) {
-		group = gaim_group_new(nm_folder_get_name(folder));
+		group = gaim_group_new(fname);
 		gaim_blist_add_group(group, NULL);
 	}
 
@@ -1285,16 +1301,20 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 static void
 _add_gaim_buddies(NMUser * user)
 {
-	NMERR_T cnt = 0, i;
+	int cnt = 0, i;
 	NMFolder *root_folder = NULL;
 	NMFolder *folder = NULL;
 
 	root_folder = nm_get_root_folder(user);
 	if (root_folder) {
 
-		/* Add contacts for the sub folders */
+		/* Add sub-folders and contacts to sub-folders...
+		 * iterate throught the sub-folders in reverse order
+		 * because Gaim adds the folders to the front -- so we
+		 * want to add the first folder last
+		 */
 		cnt = nm_folder_get_subfolder_count(root_folder);
-		for (i = 0; i < cnt; i++) {
+		for (i = cnt-1; i >= 0; i--) {
 			folder = nm_folder_get_subfolder(root_folder, i);
 			if (folder) {
 				_add_contacts_to_gaim_blist(user, folder);
@@ -2125,13 +2145,8 @@ novell_close(GaimConnection * gc)
 	user = gc->proto_data;
 	if (user) {
 		conn = user->conn;
-		if (conn) {
-			if (conn->use_ssl && user->conn->ssl_conn) {
-				gaim_ssl_close(user->conn->ssl_conn->data);
-			} else {
-				gaim_input_remove(gc->inpa);
-				close(conn->fd);
-			}
+		if (conn && conn->ssl_conn) {
+			gaim_ssl_close(user->conn->ssl_conn->data);
 		}
 		nm_deinitialize_user(user);
 	}
@@ -2435,7 +2450,7 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 	NMContact *contact;
 	NMUser *user;
 	NMERR_T rc = NM_OK;
-	const char *alias;
+	const char *alias, *gname;
 
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
@@ -2463,7 +2478,13 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 	gaim_blist_remove_buddy(buddy);
 	buddy = NULL;
 
-	folder = nm_find_folder(user, group->name);
+	if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
+		gname = "";
+	} else {
+		gname = group->name;
+	}
+
+	folder = nm_find_folder(user, gname);
 	if (folder) {
 
 		/* We have everything that we need, so send the createcontact */
@@ -2473,7 +2494,7 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 	} else {
 
 		/* Need to create the folder before we can add the contact */
-		rc = nm_send_create_folder(user, group->name,
+		rc = nm_send_create_folder(user, gname,
 								   _create_folder_resp_add_contact, contact);
 	}
 
@@ -2487,7 +2508,7 @@ novell_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	NMContact *contact;
 	NMFolder *folder;
 	NMUser *user;
-	const char *dn;
+	const char *dn, *gname;
 	NMERR_T rc = NM_OK;
 
 	if (gc == NULL || buddy == NULL || group == NULL)
@@ -2495,7 +2516,12 @@ novell_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 
 	user = (NMUser *) gc->proto_data;
 	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
-		folder = nm_find_folder(user, group->name);
+		if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
+			gname = "";
+		} else {
+			gname = group->name;
+		}
+		folder = nm_find_folder(user, gname);
 		if (folder) {
 			contact = nm_folder_find_contact(folder, dn);
 			if (contact) {
@@ -2540,7 +2566,7 @@ novell_alias_buddy(GaimConnection * gc, const char *name, const char *alias)
 	NMUser *user;
 	GList *contacts = NULL;
 	GList *cnode = NULL;
-	const char *dn = NULL;
+	const char *dn = NULL, *fname = NULL;
 	NMERR_T rc = NM_OK;
 
 	if (gc == NULL || name == NULL || alias == NULL)
@@ -2554,21 +2580,28 @@ novell_alias_buddy(GaimConnection * gc, const char *name, const char *alias)
 		for (cnode = contacts; cnode != NULL; cnode = cnode->next) {
 			contact = (NMContact *) cnode->data;
 			if (contact) {
-				GaimGroup *group;
+				GaimGroup *group = NULL;
 				GaimBuddy *buddy;
 				NMFolder *folder;
 
 				/* Alias the Gaim buddy? */
 				folder = nm_find_folder_by_id(user,
 											  nm_contact_get_parent_id(contact));
-				if (folder &&
-					(group = gaim_find_group(nm_folder_get_name(folder)))) {
+				if (folder) {
+					fname = nm_folder_get_name(folder);
+					if (*fname == '\0') {
+						fname = NM_ROOT_FOLDER_NAME;
+					}
+					group = gaim_find_group(fname);
+				}
+
+				if (group) {
 					buddy = gaim_find_buddy_in_group(user->client_data,
 													 name, group);
 					if (buddy && strcmp(buddy->alias, alias))
 						gaim_blist_alias_buddy(buddy, alias);
-
 				}
+
 				/* Tell the server to alias the contact */
 				rc = nm_send_rename_contact(user, contact, alias,
 											_rename_contact_resp_cb, NULL);
@@ -2600,11 +2633,23 @@ novell_group_buddy(GaimConnection * gc,
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Find the old folder */
-		old_folder = nm_find_folder(user, old_group_name);
+		if (strcmp(old_group_name, NM_ROOT_FOLDER_NAME) == 0) {
+			old_folder = nm_get_root_folder(user);
+			if (nm_folder_find_contact(old_folder, dn) == NULL)
+				old_folder = nm_find_folder(user, old_group_name);
+		} else {
+			old_folder = nm_find_folder(user, old_group_name);
+		}
+
 		if (old_folder && (contact = nm_folder_find_contact(old_folder, dn))) {
 
 			/* Find the new folder */
 			new_folder = nm_find_folder(user, new_group_name);
+			if (new_folder == NULL) {
+				if (strcmp(new_group_name, NM_ROOT_FOLDER_NAME) == 0)
+					new_folder = nm_get_root_folder(user);
+			}
+
 			if (new_folder) {
 
 				/* Tell the server to move the contact to the new folder */
@@ -2646,15 +2691,19 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 	if (user) {
 		/* Does new folder exist already? */
 		if (nm_find_folder(user, group->name)) {
-			/* Gaim currently calls novell_group_buddy()
-			 * for all buddies in the group, so we don't
-			 * need to worry about this situation.
+			/* gaim_blist_rename_group() adds the buddies
+			 * to the new group and removes the old group...
+			 * so there is nothing more to do here.
 			 */
 			return;
 		}
 
-		folder = nm_find_folder(user, old_name);
+		if (strcmp(old_name, NM_ROOT_FOLDER_NAME) == 0) {
+			/* Can't rename the root folder ... need to revisit this */
+			return;
+		}
 
+		folder = nm_find_folder(user, old_name);
 		if (folder) {
 			rc = nm_send_rename_folder(user, folder, group->name,
 									   _rename_folder_resp_cb, NULL);
