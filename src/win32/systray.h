@@ -10,9 +10,7 @@
 #define _SYSTRAY_H_
 
 extern void wgaim_systray_init(void);
-extern void wgaim_created_blistwin( GtkWidget* );
 extern void wgaim_created_loginwin( GtkWidget* );
-extern void wgaim_created_backwin( GtkWidget* );
 extern void wgaim_systray_cleanup(void);
 extern void wgaim_systray_minimize( GtkWidget* );
 extern void wgaim_systray_maximize( GtkWidget* );

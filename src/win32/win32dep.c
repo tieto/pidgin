@@ -180,21 +180,9 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 /*
  *  These functions are called after their respective windows are created.
  */
-void wgaim_created_blistwin( GtkWidget *blist ) {
-	gdk_window_add_filter (GTK_WIDGET(blist)->window,
-			       st_buddywin_filter,
-			       NULL);
-}
-
 void wgaim_created_loginwin( GtkWidget *loginwin ) {
 	gdk_window_add_filter (GTK_WIDGET(loginwin)->window,
 			       st_loginwin_filter,
-			       NULL);
-}
-
-void wgaim_created_backwin( GtkWidget *backwin ) {
-	gdk_window_add_filter (GTK_WIDGET(backwin)->window,
-			       st_backwin_filter,
 			       NULL);
 }
 

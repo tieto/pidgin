@@ -236,18 +236,6 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 			/* Double Click */
 			/* Either hide or show current window (login or buddy) */
 			gaim_gtk_blist_docklet_toggle();
-#if 0
-			/* if away.. hide/show I'm back win too */
-			if(st_state == SYSTRAY_STATE_AWAY) {
-				if(GTK_WIDGET_VISIBLE(blist) && !GTK_WIDGET_VISIBLE(imaway)) {
-					RestoreWndFromTray(GDK_WINDOW_HWND(GTK_WIDGET(imaway)->window));
-					gtk_window_present(GTK_WINDOW(imaway));
-				} else if(!GTK_WIDGET_VISIBLE(blist) && GTK_WIDGET_VISIBLE(imaway)) {
-					wgaim_systray_minimize(imaway);
-					gtk_widget_hide(imaway);
-				}
-			}
-#endif
 			debug_printf("Systray got double click\n");
 		}
 		if( lparam == WM_RBUTTONUP ) {
@@ -413,25 +401,6 @@ static void st_im_recieve(struct gaim_connection *gc, void *data) {
  * GAIM WINDOW FILTERS 
  **********************/
 
-GdkFilterReturn st_buddywin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_SYSCOMMAND:
-		if( msg->wParam == SC_MINIMIZE ) {
-			gaim_blist_set_visible(FALSE);
-			return GDK_FILTER_REMOVE;
-		}
-		break;
-	case WM_CLOSE:
-		gaim_blist_set_visible(FALSE);
-		return GDK_FILTER_REMOVE;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
 GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
 	MSG *msg = (MSG*)xevent;
 
@@ -444,24 +413,6 @@ GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer
 
 	return GDK_FILTER_CONTINUE;
 }
-
-GdkFilterReturn st_backwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_SYSCOMMAND:
-		if( msg->wParam == SC_MINIMIZE ) {
-			if(imaway) {
-				wgaim_systray_minimize(imaway);
-				gtk_widget_hide(imaway);
-			}
-			return GDK_FILTER_REMOVE;
-		}
-		break;
-	}
-	return GDK_FILTER_CONTINUE;
-}
-
 
 /* Create a hidden window and associate it with the systray icon.
    We use this hidden window to proccess WM_TRAYMESSAGE msgs. */
@@ -491,7 +442,7 @@ void wgaim_systray_init(void) {
 }
 
 void wgaim_systray_cleanup(void) {
-	gaim_gtk_blist_docklet_remove();
+	/*gaim_gtk_blist_docklet_remove();*/
 	systray_remove_nid();
 	DestroyMenu(systray_menu);
 	DestroyWindow(systray_hwnd);
