@@ -206,8 +206,8 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 
 	/* Descriptive label */
 	detail_text = g_strdup_printf(
-		ngettext("%s has %d new message.", "%s has %d new messages.", count),
-		*tos, count);
+		ngettext("%s has %d new message.", "%s has %d new messages.", (int) count),
+		*tos, (int) count);
 
 	if (count == 1) {
 		char *from_text = NULL, *subject_text = NULL;

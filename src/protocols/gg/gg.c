@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7685 2003-10-02 02:54:07Z chipx86 $
+ * $Id: gg.c 7981 2003-10-30 22:27:36Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -956,7 +956,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 			      "User-Agent: " GG_HTTP_USERAGENT "\r\n"
 			      "Content-Length: %d\r\n"
 			      "Pragma: no-cache\r\n" "\r\n" "%s\r\n",
-			      hdata->form, hdata->host, strlen(request), request);
+			      hdata->form, hdata->host, (int)strlen(request), request);
 
 	g_free(request);
 

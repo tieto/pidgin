@@ -146,7 +146,7 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 		servconn->http_data->gateway_ip,
 		params,
 		servconn->http_data->gateway_ip,
-		size,
+		(int)size,
 		buf);
 
 	g_free(params);

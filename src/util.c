@@ -1778,7 +1778,7 @@ parse_content_len(const char *data, size_t data_len)
 {
 	size_t content_len = 0;
 
-	sscanf(data, "Content-Length: %d", &content_len);
+	sscanf(data, "Content-Length: %d", (int *)&content_len);
 
 	return content_len;
 }

@@ -458,7 +458,7 @@ gaim_recv(GIOChannel *source, gchar *buf, gint len)
 	GError *error = NULL;
 
 	while (total < len) {
-		if (g_io_channel_read_chars(source, buf + total, len - total, &cur, &error) != G_IO_STATUS_NORMAL) {
+		if (g_io_channel_read_chars(source, buf + total, len - total, (gsize *) &cur, &error) != G_IO_STATUS_NORMAL) {
 			if (error)
 				g_error_free(error);
 			return -1;

@@ -279,7 +279,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		msn_user_get_passport(local_user),
 		branch,
 		slpsession->call_id,
-		strlen(content) + 5,
+		(int)strlen(content) + 5,
 		content);
 
 	g_free(content);

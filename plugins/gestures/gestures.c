@@ -155,7 +155,7 @@ static void
 visual_pref_cb(const char *name, GaimPrefType type, gpointer value,
 			   gpointer data)
 {
-	gstroke_set_draw_strokes((gboolean)value);
+	gstroke_set_draw_strokes((gboolean) GPOINTER_TO_INT(value) );
 }
 
 static gboolean

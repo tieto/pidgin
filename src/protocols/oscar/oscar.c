@@ -3890,6 +3890,15 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
+/* This function was recommended by the STRFTIME(3) man page to remove the
+ * "last 2 digits" warning.
+ */
+static size_t my_strftime(char *s, size_t max, const char  *fmt,  
+			const struct tm *tm)
+{
+	return strftime(s, max, fmt, tm);
+}
+
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
@@ -3941,7 +3950,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mday = (int)info->birthday;
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
-		strftime(date, sizeof(date), "%x", &tm);
+		my_strftime(date, sizeof(date), "%x", &tm);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Birthday"), ":</b> ", date, NULL);  g_free(tmp);
 	}
 	if (info->age) {
@@ -5841,15 +5850,15 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 				if (image->filename)
 					g_string_append_printf(msg,
 						"<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
-						image->filename, oscar_id, image->size);
+						image->filename, oscar_id, (int)image->size);
 				else
 					g_string_append_printf(msg,
 						"<IMG ID=\"%d\" DATASIZE=\"%d\">",
-						oscar_id, image->size);
+						oscar_id, (int)image->size);
 
 				/* ... and append the data to the binary section ... */
 				g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%d\">",
-					oscar_id, image->size);
+					oscar_id, (int)image->size);
 				data = g_string_append_len(data, image->data, image->size);
 				data = g_string_append(data, "</DATA>");
 			} else {

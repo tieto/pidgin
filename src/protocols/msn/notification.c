@@ -2157,7 +2157,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		strcpy(old_buf, proto_vers);
 
-		g_snprintf(proto_vers, sizeof(proto_vers), "MSNP%d %s", i, old_buf);
+		g_snprintf(proto_vers, sizeof(proto_vers), "MSNP%d %s", (int)i, old_buf);
 	}
 
 	strncat(proto_vers, "CVR0", sizeof(proto_vers));

@@ -116,7 +116,7 @@ msn_page_build_string(const MsnPage *page)
 		g_snprintf(buf, sizeof(buf), "PAG %d %s %d\r\n",
 				   msn_page_get_transaction_id(page),
 				   msn_user_get_passport(receiver),
-				   page->size);
+				   (int)page->size);
 	}
 
 	len = strlen(buf) + page->size + 1;

@@ -90,7 +90,7 @@ perl_signal_cb(va_list args, void *data)
 	for (i = 0; i < value_count; i++)
 	{
 		sv_args[i] = sv_2mortal(gaim_perl_sv_from_vargs(values[i],
-														&args, &copy_args[i]));
+														(va_list*)&args, &copy_args[i]));
 
 		XPUSHs(sv_args[i]);
 	}

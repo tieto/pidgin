@@ -378,12 +378,12 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 		g_snprintf(buf, sizeof(buf), "MSG %s %s %d\r\n",
 				   msn_user_get_passport(sender), msn_user_get_name(sender),
-				   msg->size);
+				   (int)msg->size);
 	}
 	else {
 		g_snprintf(buf, sizeof(buf), "MSG %d %c %d\r\n",
 				   msn_message_get_transaction_id(msg),
-				   msn_message_get_flag(msg), msg->size);
+				   msn_message_get_flag(msg), (int)msg->size);
 	}
 
 	len = strlen(buf) + msg->size + 1;

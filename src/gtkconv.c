@@ -2988,7 +2988,7 @@ static const int menu_item_count =
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
 {
-	return _(path);
+	return _((char *)path);
 }
 
 static GtkWidget *
@@ -5919,7 +5919,7 @@ show_timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), (gboolean)value);
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), (gboolean)GPOINTER_TO_INT(value));
 	}
 }
 
@@ -5968,7 +5968,7 @@ show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml), (gboolean)value);
+		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml), (gboolean)GPOINTER_TO_INT(value));
 	}
 }
 
@@ -6016,7 +6016,7 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 		win     = gaim_conversation_get_window(conv);
 		gtkwin  = GAIM_GTK_WINDOW(win);
 
-		gtkconv->show_formatting_toolbar = (gboolean)value;
+		gtkconv->show_formatting_toolbar = (gboolean)GPOINTER_TO_INT(value);
 		gtk_check_menu_item_set_active(
 				GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
 				gtkconv->show_formatting_toolbar);

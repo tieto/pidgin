@@ -499,19 +499,19 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
 				return gaim_perl_sv_from_subtype(value, *copy_arg);
 
 			case GAIM_TYPE_BOOLEAN:
-				*copy_arg = (void *)va_arg(*args, gboolean);
+				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
 
-				return newSViv((gboolean)*copy_arg);
+				return newSViv((gboolean)GPOINTER_TO_INT(*copy_arg));
 
 			case GAIM_TYPE_INT:
-				*copy_arg = (void *)va_arg(*args, int);
+				*copy_arg = GINT_TO_POINTER( va_arg(*args, int) );
 
-				return newSViv((int)*copy_arg);
+				return newSViv(GPOINTER_TO_INT(*copy_arg));
 
 			case GAIM_TYPE_UINT:
-				*copy_arg = (void *)va_arg(*args, unsigned int);
+				*copy_arg = GUINT_TO_POINTER(va_arg(*args, unsigned int));
 
-				return newSVuv((unsigned int)*copy_arg);
+				return newSVuv(GPOINTER_TO_UINT(*copy_arg));
 
 			case GAIM_TYPE_LONG:
 				*copy_arg = (void *)va_arg(*args, long);
