@@ -4,7 +4,11 @@ SUFFIXES = .c .so
 	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) $(PLUGIN_LIBS)
 	rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	cp .libs/libtmp$@.so $@
+	if test -f .libs/libtmp$@.so ; then \
+		cp .libs/libtmp$@.so $@ ; \
+	elif test -f .libs/libtmp$@.so.0.0 ; then \
+		cp .libs/libtmp$@.so.0.0 $@ ; \
+	fi
 	rm -f .libs/libtmp$@.*
 
 if PLUGINS
