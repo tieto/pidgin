@@ -68,14 +68,16 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			away.c \
+C_SRC =			buddyicon.c \
 			dispatch.c \
 			error.c \
 			msg.c \
 			msn.c \
 			notification.c \
+			page.c \
 			servconn.c \
 			session.c \
+			state.c \
 			switchboard.c \
 			user.c \
 			utils.c
