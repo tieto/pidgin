@@ -652,6 +652,7 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 struct gaim_parse_tag {
 	char *src_tag;
 	char *dest_tag;
+	gboolean ignore;
 };
 
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
@@ -843,7 +844,19 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					GString *style = g_string_new("");
 					struct gaim_parse_tag *pt;
 					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "color=", strlen("color="))) {
+						if(!g_ascii_strncasecmp(p, "back=", strlen("back="))) {
+							const char *q = p + strlen("back=");
+							GString *color = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								color = g_string_append_c(color, *q);
+								q++;
+							}
+							g_string_append_printf(style, "background: %s; ", color->str);
+							g_string_free(color, TRUE);
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "color=", strlen("color="))) {
 							const char *q = p + strlen("color=");
 							GString *color = g_string_new("");
 							if(*q == '\'' || *q == '\"')
@@ -887,13 +900,14 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						p++;
 					}
 					c = strchr(c, '>') + 1;
-					if(style->len) {
-						pt = g_new0(struct gaim_parse_tag, 1);
-						pt->src_tag = "font";
-						pt->dest_tag = "span";
-						tags = g_list_prepend(tags, pt);
+					pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "font";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					if(style->len)
 						g_string_append_printf(xhtml, "<span style='%s'>", style->str);
-					}
+					else
+						pt->ignore = TRUE;
 					g_string_free(style, TRUE);
 					continue;
 				}
@@ -994,7 +1008,9 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	}
 	tag = tags;
 	while(tag) {
-		g_string_append_printf(xhtml, "</%s>", (char *)tag->data);
+		struct gaim_parse_tag *pt = tag->data;
+		if(!pt->ignore)
+			g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 		tag = tag->next;
 	}
 	g_list_free(tags);
