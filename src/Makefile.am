@@ -20,7 +20,6 @@ gaim_SOURCES =	about.c \
 		module.c \
 		multi.c \
 		perl.c \
-		plugins.c \
 		prefs.c \
 		proxy.c \
 		prpl.c \
