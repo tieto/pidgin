@@ -139,6 +139,7 @@ int toc_login(char *username, char *password)
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
 	set_login_progress(5, buf);
 	config = toc_wait_config();
+	state = STATE_ONLINE;
 
 #ifdef USE_APPLET
 	make_buddy();
@@ -347,7 +348,7 @@ int wait_reply(char *buffer, size_t buflen)
 			state = STATE_SIGNON_ACK;
 		else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "CONFIG:", strlen("CONFIG:"))) {
 			state = STATE_CONFIG;
-		} else if (state != STATE_ONLINE && !strncasecmp(buffer + sizeof(struct sflap_hdr), "ERROR:", strlen("ERROR:"))) {
+		} else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "ERROR:", strlen("ERROR:"))) {
 			c = strtok(buffer + sizeof(struct sflap_hdr) + strlen("ERROR:"), ":");
 			show_error_dialog(c);
 		}
@@ -444,8 +445,10 @@ void toc_callback( gpointer          data,
 	} else if (!strcasecmp(c, "CONFIG")) {
 		/* do we want to load the buddy list again here? */
 	} else if (!strcasecmp(c, "ERROR")) {
+		/* This should be handled by wait_reply
 		c = strtok(NULL,":");
 		show_error_dialog(c);
+		*/
 	} else if (!strcasecmp(c, "NICK")) {
 		c = strtok(NULL,":");
 		g_snprintf(current_user->username, sizeof(current_user->username), "%s", c);
