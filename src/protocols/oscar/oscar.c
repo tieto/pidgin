@@ -93,7 +93,7 @@ static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON |
 
 /* Set AIM caps, because Gaim can still do them over ICQ and 
  * Winicq doesn't mind. */
-static int caps_icq = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
+static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
 /* static int caps_icq = AIM_CAPS_ICQ; */
 /* What does AIM_CAPS_ICQ actually mean? -SE */
 

@@ -897,10 +897,7 @@ faim_export int aim_send_im_ch2_geticqmessage(aim_session_t *sess, const char *s
 		{ /* V */
 			aimbs_putle16(&fr->data, 0x001b); /* L */
 			aimbs_putle16(&fr->data, 0x0008); /* XXX - Protocol version */
-			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
-			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
-			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
-			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aim_putcap(&fr->data, AIM_CAPS_EMPTY);
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
 			aimbs_putle16(&fr->data, 0x0003); /* Client features? */
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
@@ -927,8 +924,8 @@ faim_export int aim_send_im_ch2_geticqmessage(aim_session_t *sess, const char *s
 
 			aimbs_putle16(&fr->data, 0x0000); /* Status? */
 			aimbs_putle16(&fr->data, 0x0001); /* Priority of this message? */
-			aimbs_putle16(&fr->data, 0x0001); /* L? */
-			aimbs_putle8(&fr->data, 0x00); /* Null termination? */
+			aimbs_putle16(&fr->data, 0x0001); /* L */
+			aimbs_putle8(&fr->data, 0x00); /* String of length L */
 		} /* End TLV t(2711) */
 	} /* End TLV t(0005) */
 

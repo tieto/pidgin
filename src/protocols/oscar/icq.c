@@ -307,6 +307,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->email = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			/* Then 0x00 02 00 00 00 00 00 */
 		} break;
 		} /* End switch statement */
 
