@@ -22,6 +22,7 @@ version 0.11.0-pre12:
 	* Can receive buddy icons in Oscar (requires gdk_pixbuf,
 	  which GNOME depends on. If you --disable-pixbuf, it will
 	  disable this.)
+	* Redesigned plugins dialog (thanks Mike Heffner)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
