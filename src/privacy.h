@@ -65,7 +65,7 @@ gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name,
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
 gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
-								 gboolean local_only);
+									gboolean local_only);
 
 /**
  * Adds a user to the account's deny list.
@@ -78,7 +78,7 @@ gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
  * @return TRUE if the user was added successfully, or @c FALSE otherwise.
  */
 gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
-								 gboolean local_only);
+							   gboolean local_only);
 
 /**
  * Removes a user from the account's deny list.
@@ -91,7 +91,7 @@ gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
 gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
-								 gboolean local_only);
+								  gboolean local_only);
 
 /**
  * Sets the UI operations structure for the privacy subsystem.
