@@ -699,15 +699,13 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 	OscarData *od;
 	GaimAccount *account;
 	GaimPresence *presence;
-	GaimPresence *buddy_presence;
+	GaimStatus *status;
 	GaimGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
 
 	od = gc->proto_data;
 	account = gaim_connection_get_account(gc);
-	presence = gaim_account_get_presence(account);
-	buddy_presence = gaim_buddy_get_presence(b);
 
 	if ((str == NULL) || (newline == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
@@ -719,13 +717,17 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		b = gaim_find_buddy(account, userinfo->sn);
 
 	if (b != NULL)
+	{
 		g = gaim_find_buddys_group(b);
+		presence = gaim_buddy_get_presence(b);
+		status = gaim_presence_get_active_status(presence);
+	}
 
 	if (userinfo != NULL)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 
 	if (b != NULL) {
-		if (gaim_presence_is_online(buddy_presence)) {
+		if (gaim_presence_is_online(presence)) {
 			if (aim_sn_is_icq(b->name)) {
 				tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 				oscar_string_append(str, newline, _("Status"), tmp);
@@ -766,7 +768,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		}
 	}
 
-	if ((bi != NULL) && (bi->availmsg != NULL) && gaim_presence_is_available(presence)) {
+	if ((bi != NULL) && (bi->availmsg != NULL) && gaim_status_is_available(status)) {
 		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 		oscar_string_append(str, newline, _("Available"), tmp);
 		g_free(tmp);
@@ -5673,9 +5675,6 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
 
-	if (!gaim_status_is_active(status)) /* Is this right?  I'm confused. */
-		return;
-
 	gaim_debug_info("oscar", "Setting status to %s\n", status_id);
 
 	if (gc)
@@ -5797,7 +5796,7 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 	GaimStatusType *type = gaim_status_get_type(status);
 	int primitive = gaim_status_type_get_primitive(type);
 
-	if(!gaim_status_is_active(status))
+	if (!gaim_status_is_active(status))
 		return;
 
 	if (primitive == !GAIM_STATUS_OFFLINE && !gc) {
