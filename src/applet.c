@@ -60,6 +60,9 @@ static GdkPixmap *get_applet_icon(const char *name)
 	double affine[6];
 	int r,g,b,i;
 
+	if (!applet)
+		return NULL;
+
 	cache = gdk_pixmap_new(applet->window, sizehint, sizehint,
 			gtk_widget_get_visual(applet)->depth); 
 	gc = gdk_gc_new(cache);
