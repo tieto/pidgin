@@ -1195,7 +1195,7 @@ gaim_accounts_load()
 		g_free(filename);
 		accounts_loaded = TRUE;
 
-		return FALSE;
+		return TRUE; /* we return TRUE so .gaimrc doesn't load */
 	}
 
 	if (!g_markup_parse_context_end_parse(context, NULL)) {
@@ -1206,7 +1206,7 @@ gaim_accounts_load()
 		g_free(filename);
 		accounts_loaded = TRUE;
 
-		return FALSE;
+		return TRUE; /* we return TRUE so .gaimrc doesn't load */
 	}
 
 	g_markup_parse_context_free(context);
