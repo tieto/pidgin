@@ -63,12 +63,10 @@ static void historize(GaimConversation *c)
 
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, options);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", options);
-	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer, &
-end);
-	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0, 0,
- 0, 0);
-	gtk_text_buffer_move_mark_by_name(GTK_IMHTML(gtkconv->imhtml)->text_buffer,
-									  "insert", &end);
+	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+			&end);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0,
+			TRUE, 0, 0);
 
 	g_free(tmp2);
 	g_free(userdir);
