@@ -60,6 +60,7 @@ CORESOURCES = \
 	account.h \
 	accountopt.c \
 	accountopt.h \
+	away.h \
 	blist.c \
 	blist.h \
 	buddyicon.c \
