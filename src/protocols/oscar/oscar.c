@@ -4215,12 +4215,22 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x000e: { /* contact requires authorization */
 				if (retval->action == AIM_CB_SSI_ADD) {
 					struct name_data *data = g_new(struct name_data, 1);
-					gchar *dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), retval->name);
+					struct buddy *buddy;
+					gchar *alias;
+					gchar *dialog_msg;
+
+					buddy = find_buddy(gc, retval->name);
+					if (buddy && (get_buddy_alias_only(buddy)))
+						alias = g_strdup_printf(" (%s)", get_buddy_alias_only(buddy));
+					else
+						alias = g_strdup("");
+					dialog_msg = g_strdup_printf(_("The user %s%s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), retval->name, alias);
 					data->gc = gc;
 					data->name = g_strdup(retval->name);
 					data->nick = NULL;
 					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest);
 					g_free(dialog_msg);
+					g_free(alias);
 				}
 			} break;
 
