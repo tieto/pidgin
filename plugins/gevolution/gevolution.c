@@ -199,7 +199,7 @@ signed_on_cb(GaimConnection *gc)
 }
 
 static void
-menu_item_activate_cb(GaimBlistNode *node)
+menu_item_activate_cb(GaimBlistNode *node, gpointer user_data)
 {
 	GaimBuddy *buddy = (GaimBuddy *)node;
 	gevo_associate_buddy_dialog_new(buddy);
@@ -210,7 +210,6 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
 	GaimBlistNodeAction *act;
 	GaimBuddy *buddy;
-	GtkWidget *item;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return;
