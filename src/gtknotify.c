@@ -61,7 +61,7 @@ message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 static void
 email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 {
-	if (id == 0)
+	if (id == GTK_RESPONSE_YES)
 		gaim_notify_uri(NULL, data->url);
 
 	gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
@@ -111,8 +111,8 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	}
 
 	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
-					     NULL, 0, GTK_STOCK_CLOSE,
-					     GTK_RESPONSE_ACCEPT, NULL);
+										 NULL, 0, GTK_STOCK_CLOSE,
+										 GTK_RESPONSE_CLOSE, NULL);
 
 	gtk_window_set_role(GTK_WINDOW(dialog), "notify_dialog");
 
@@ -179,13 +179,15 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 
 	data->url = g_strdup(urls[0]);
 
-	/* Create the dialog. */
-	data->dialog = dialog = gtk_dialog_new();
-
-	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, 1);
+	/* Create the dialog */
+	dialog = gtk_dialog_new_with_buttons("New Mail", NULL, 0,
+										 GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+										 NULL);
+	data->dialog = dialog;
 
 	if (urls != NULL)
-		gtk_dialog_add_button(GTK_DIALOG(dialog), GAIM_STOCK_OPEN_MAIL, 0);
+		gtk_dialog_add_button(GTK_DIALOG(dialog),
+							  GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(email_response_cb), data);
@@ -201,7 +203,7 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
-	/* Dialog icon. */
+	/* Dialog icon */
 	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_INFO,
 								   GTK_ICON_SIZE_DIALOG);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
