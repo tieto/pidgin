@@ -83,7 +83,8 @@ msn_set_prp(GaimConnection *gc, const char *type, const char *entry)
 	if (entry == NULL || *entry == '\0')
 		g_snprintf(outparams, sizeof(outparams), "%s  ", type);
 	else
-		g_snprintf(outparams, sizeof(outparams), "%s %s", type, entry);
+		g_snprintf(outparams, sizeof(outparams), "%s %s", type,
+				   msn_url_encode(entry));
 
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "PRP", outparams)) {
