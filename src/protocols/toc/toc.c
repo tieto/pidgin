@@ -486,7 +486,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	/* there's data waiting to be read, so read it. */
 	if (wait_reply(gc, buf, 8 * 1024) <= 0) {
-		hide_login_progress(gc, _("Connection Closed"));
+		hide_login_progress_error(gc, _("Connection Closed"));
 		signoff(gc);
 		return;
 	}

@@ -1205,7 +1205,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	len = read(md->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		hide_login_progress(gc, "Error reading from server");
+		hide_login_progress_error(gc, "Error reading from server");
 		signoff(gc);
 		return;
 	}

@@ -1401,6 +1401,17 @@ void hide_login_progress_notice(struct gaim_connection *gc, char *why)
 	hide_login_progress_common(gc, why, _("Notice"), gc->username);
 }
 
+/*
+ * Like hide_login_progress(), but for non-signon error messages.
+ *
+ */
+void hide_login_progress_error(struct gaim_connection *gc, char *why)
+{
+	char buf[2048];
+	g_snprintf(buf, sizeof(buf), _("%s has been signed off"), gc->username);
+	hide_login_progress_common(gc, why, _("Connection Error"), buf);
+}
+
 void signoff_all()
 {
 	GSList *c = connections;

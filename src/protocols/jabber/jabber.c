@@ -76,10 +76,15 @@
 
 #define USEROPT_PORT 0
 
+/*
+ * Note: "was_connected" may seem redundant, but it was needed and I
+ * didn't want to touch the Jabber state stuff not specific to Gaim.
+ */
 typedef struct gjconn_struct {
 	/* Core structure */
 	pool p;			/* Memory allocation pool */
 	int state;		/* Connection state flag */
+	int was_connected;	/* We were once connected */
 	int fd;			/* Connection file descriptor */
 	jid user;		/* User info */
 	char *pass;		/* User passwd */
@@ -209,6 +214,7 @@ static gjconn gjab_new(char *user, char *pass, void *priv)
 	gjc->pass = pstrdup(p, pass);
 
 	gjc->state = JCONN_STATE_OFF;
+	gjc->was_connected = 0;
 	gjc->id = 1;
 	gjc->fd = -1;
 
@@ -249,6 +255,7 @@ static void gjab_stop(gjconn gjc)
 
 	gjab_send_raw(gjc, "</stream:stream>");
 	gjc->state = JCONN_STATE_OFF;
+	gjc->was_connected = 0;
 	close(gjc->fd);
 	gjc->fd = -1;
 	XML_ParserFree(gjc->parser);
@@ -1401,10 +1408,15 @@ static void jabber_handlestate(gjconn gjc, int state)
 {
 	switch (state) {
 	case JCONN_STATE_OFF:
-		hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+		if(gjc->was_connected) {
+			hide_login_progress_error(GJ_GC(gjc), _("Connection lost"));
+		} else {
+			hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+		}
 		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
+		gjc->was_connected = 1;
 		set_login_progress(GJ_GC(gjc), 2, _("Connected"));
 		break;
 	case JCONN_STATE_ON:
@@ -2804,10 +2816,15 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 {
 	switch (state) {
 	case JCONN_STATE_OFF:
-		hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+		if(gjc->was_connected) {
+			hide_login_progress_error(GJ_GC(gjc), _("Connection lost"));
+		} else {
+			hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+		}
 		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
+		gjc->was_connected = 1;
 		/*
 		 * TBD?
 		set_login_progress(GJ_GC(gjc), 2, _("Connected"));

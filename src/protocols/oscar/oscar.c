@@ -375,7 +375,7 @@ static void oscar_callback(gpointer data, gint source,
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
 					debug_printf(_("major connection error\n"));
-					hide_login_progress(gc, _("Disconnected."));
+					hide_login_progress_error(gc, _("Disconnected."));
 					signoff(gc);
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);

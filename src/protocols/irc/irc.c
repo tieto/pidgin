@@ -1161,7 +1161,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	i = read(idata->fd, buf, 1024);
 	if (i <= 0) {
-		hide_login_progress(gc, "Read error");
+		hide_login_progress_error(gc, "Read error");
 		signoff(gc);
 		return;
 	}

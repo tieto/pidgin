@@ -711,7 +711,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	len = read(yd->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		hide_login_progress(gc, "Unable to read");
+		hide_login_progress_error(gc, "Unable to read");
 		signoff(gc);
 		return;
 	}
