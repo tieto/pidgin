@@ -17,11 +17,14 @@
 #include <netinet/in.h>
 #include <sys/utsname.h> /* for aim_directim_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
-#else
-#include "win32dep.h"
 #endif
 
 #include "gaim.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 
 /* TODO: 
    o look for memory leaks.. there's going to be shitloads, i'm sure. 
@@ -965,6 +968,9 @@ static int listenestablish(fu16_t portnum)
 	int listenfd;
 	const int on = 1;
 	struct sockaddr_in sockin;
+#ifdef _WIN32
+	u_long imode;
+#endif
 
 	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("socket(listenfd)");
@@ -1003,7 +1009,12 @@ static int listenestablish(fu16_t portnum)
 #endif
 		return -1;
 	}
+#ifndef _WIN32
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
+#else
+	imode = 1;
+	ioctlsocket(listenfd, FIONBIO, &imode);
+#endif
 	return listenfd;
 #endif
 } 
