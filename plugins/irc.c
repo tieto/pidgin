@@ -51,6 +51,8 @@
 #define USEROPT_PROXYSERV 2
 #define USEROPT_PROXYPORT 3
 #define USEROPT_PROXYTYPE 4
+#define USEROPT_USER      5
+#define USEROPT_PASS      6
 
 
 static int chat_id = 0;
@@ -1227,7 +1229,9 @@ static void irc_login(struct aim_user *user)
 	idata->fd = proxy_connect(user->proto_opt[USEROPT_SERV],
 			user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : 6667,
 			user->proto_opt[USEROPT_PROXYSERV], atoi(user->proto_opt[USEROPT_PROXYPORT]),
-			atoi(user->proto_opt[USEROPT_PROXYTYPE]), irc_login_callback, gc);
+			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+			irc_login_callback, gc);
 	if (idata->fd < 0) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
@@ -1253,6 +1257,12 @@ static void irc_print_option(GtkEntry *entry, struct aim_user *user)
 	} else if (entrynum == USEROPT_PROXYPORT) {
 		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
 			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_USER) {
+		g_snprintf(user->proto_opt[USEROPT_USER],
+			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PASS) {
+		g_snprintf(user->proto_opt[USEROPT_PASS],
+			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
 	}
 }
 
@@ -1309,14 +1319,56 @@ static void irc_user_opts(GtkWidget * book, struct aim_user *user)
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
 	if (user->proto_opt[USEROPT_PORT][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
-	} else {
-		gtk_entry_set_text(GTK_ENTRY(entry), "6667");
-	}
-	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
+
 	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1354,39 +1406,42 @@ static void irc_user_opts(GtkWidget * book, struct aim_user *user)
 	}
 	gtk_widget_show(entry);
 
-	first = gtk_radio_button_new_with_label(NULL, "No proxy");
-	gtk_box_pack_start(GTK_BOX(vbox), first, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
-	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
-	gtk_widget_show(first);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
 
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4"); 
-	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+	label = gtk_label_new("HTTP User:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
 
-	opt =
-	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5"); 
-	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
+	if (user->proto_opt[USEROPT_USER][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
+	}
+	gtk_widget_show(entry);
 
-	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
-	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(irc_print_optionrad), user);
-	gtk_widget_show(opt);
-	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("HTTP Password:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
+	if (user->proto_opt[USEROPT_PASS][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
+	}
+	gtk_widget_show(entry);
 }
 
 static char **irc_list_icon(int uc)

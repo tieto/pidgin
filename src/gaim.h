@@ -124,7 +124,7 @@ struct aim_user {
 	int protocol;
 	/* prpls can use this to save information about the user,
 	 * like which server to connect to, etc */
-	char proto_opt[6][256];
+	char proto_opt[7][256];
 
 	struct gaim_connection *gc;
 
@@ -601,6 +601,7 @@ extern char *normalize(const char *);
 extern int escape_text(char *);
 extern char *escape_text2(char *);
 extern int escape_message(char *msg);
+extern char *tobase64(char *);
 extern char *frombase64(char *);
 extern gint clean_pid(void *);
 extern char *date();

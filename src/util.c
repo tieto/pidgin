@@ -621,16 +621,16 @@ char *tobase64(char *text)
 		break;
 	case 1:
 		tmp <<= 16;
-		out = g_realloc(out, len + 4);
-		out[len] = alphabet[(tmp >> 12) & 0x3f];
-		out[len + 1] = alphabet[(tmp >> 6) & 0x3f];
+		out = g_realloc(out, len + 5);
+		out[len] = alphabet[(tmp >> 18) & 0x3f];
+		out[len + 1] = alphabet[(tmp >> 12) & 0x3f];
 		out[len + 2] = '=';
-		out[len + 3] = 0;
+		out[len + 3] = '=';
+		out[len + 4] = 0;
 		break;
 	case 0:
-		out = g_realloc(out, len + 2);
-		out[len] = '=';
-		out[len + 1] = 0;
+		out = g_realloc(out, len + 1);
+		out[len] = 0;
 		break;
 	}
 	return out;

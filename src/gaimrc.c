@@ -523,7 +523,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "proto_opts"))
 		return u;
 
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < 7; i++)
 		g_snprintf(u->proto_opt[i], sizeof u->proto_opt[i], "%s", p->value[i]);
 
 	return u;
@@ -558,7 +558,7 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 	fprintf(f, "\n\t\t}\n");
 	fprintf(f, "\t\tuser_opts { %d } { %d }\n", u->options, u->protocol);
 	fprintf(f, "\t\tproto_opts");
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < 7; i++)
 		fprintf(f, " { %s }", u->proto_opt[i]);
 	fprintf(f, "\n");
 }

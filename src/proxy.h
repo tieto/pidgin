@@ -39,6 +39,7 @@
 
 extern int proxy_connect(char *host, int port,
 			 char *proxyhost, int proxyport, int proxytype,
+			 char *user, char *pass,
 			 GdkInputFunction func, gpointer data);
 
 #endif

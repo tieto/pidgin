@@ -45,6 +45,8 @@ struct PHB {
 	gpointer data;
 	char *host;
 	int port;
+	char *user;
+	char *pass;
 	gint inpa;
 };
 
@@ -142,6 +144,10 @@ static void http_canread(gpointer data, gint source, GdkInputCondition cond)
 	if ((memcmp(HTTP_GOODSTRING , inputline, strlen(HTTP_GOODSTRING )) == 0) ||
 	    (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
 		phb->func(phb->data, source, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -149,6 +155,10 @@ static void http_canread(gpointer data, gint source, GdkInputCondition cond)
 
 	close(source);
 	phb->func(phb->data, -1, GDK_INPUT_READ);
+	if (phb->user) {
+		g_free(phb->user);
+		g_free(phb->pass);
+	}
 	g_free(phb->host);
 	g_free(phb);
 	return;
@@ -166,16 +176,55 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
 
-	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\n\r\n", phb->host, phb->port);
+	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\n", phb->host, phb->port);
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	if (phb->user) {
+		char *t1, *t2;
+		t1 = g_strdup_printf("%s:%s", phb->user, phb->pass);
+		t2 = tobase64(t1);
+		g_free(t1);
+		g_snprintf(cmd, sizeof(cmd), "Proxy-Authorization: Basic %s\r\n", t2);
+		g_free(t2);
+		if (send(source, cmd, strlen(cmd), 0) < 0) {
+			close(source);
+			phb->func(phb->data, -1, GDK_INPUT_READ);
+			g_free(phb->user);
+			g_free(phb->pass);
+			g_free(phb->host);
+			g_free(phb);
+			return;
+		}
+	}
+
+	g_snprintf(cmd, sizeof(cmd), "\r\n");
+	if (send(source, cmd, strlen(cmd), 0) < 0) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -186,6 +235,7 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 
 static int proxy_connect_http(char *host, unsigned short port,
 			      char *proxyhost, unsigned short proxyport,
+			      char *user, char *pass,
 			      struct PHB *phb)
 {
 	struct hostent *hp;
@@ -211,6 +261,10 @@ static int proxy_connect_http(char *host, unsigned short port,
 
 	phb->host = g_strdup(host);
 	phb->port = port;
+	if (user && pass && user[0] && pass[0]) {
+		phb->user = g_strdup(user);
+		phb->pass = g_strdup(pass);
+	}
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
@@ -219,6 +273,10 @@ static int proxy_connect_http(char *host, unsigned short port,
 			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, http_canwrite, phb);
 		} else {
 			close(fd);
+			if (phb->user) {
+				g_free(phb->user);
+				g_free(phb->pass);
+			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -229,6 +287,10 @@ static int proxy_connect_http(char *host, unsigned short port,
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
+			if (phb->user) {
+				g_free(phb->user);
+				g_free(phb->pass);
+			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -536,6 +598,7 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 
 int proxy_connect(char *host, int port,
 		  char *proxyhost, int proxyport, int proxytype,
+		  char *user, char *pass,
 		  GdkInputFunction func, gpointer data)
 {
 	struct PHB *phb = g_new0(struct PHB, 1);
@@ -552,7 +615,7 @@ int proxy_connect(char *host, int port,
 		 !proxyport || (proxyport == -1))
 		return proxy_connect_none(host, port, phb);
 	else if (proxytype == PROXY_HTTP)
-		return proxy_connect_http(host, port, proxyhost, proxyport, phb);
+		return proxy_connect_http(host, port, proxyhost, proxyport, user, pass, phb);
 	else if (proxytype == PROXY_SOCKS4)
 		return proxy_connect_socks4(host, port, proxyhost, proxyport, phb);
 	else if (proxytype == PROXY_SOCKS5)
