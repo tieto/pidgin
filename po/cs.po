@@ -7,14 +7,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim VERSION\n"
-"POT-Creation-Date: 2003-10-09 15:23-0700\n"
-"PO-Revision-Date: 2003-10-08 17:53+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-10-29 14:25-0500\n"
+"PO-Revision-Date: 2003-10-29 21:23+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
@@ -68,7 +68,7 @@ msgstr "Gaim - Odhlášen"
 msgid "Gaim - Away"
 msgstr "Gaim - Pryč"
 
-#: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1765
+#: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1770
 msgid "Auto-login"
 msgstr "Automatické přihlašování"
 
@@ -84,12 +84,12 @@ msgstr "Připojit se k chatu..."
 msgid "New..."
 msgstr "Nový..."
 
-#: plugins/docklet/docklet.c:153 src/gtkblist.c:1916 src/gtkpounce.c:461
-#: src/gtkprefs.c:1473 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
-#: src/protocols/jabber/jabber.c:868 src/protocols/jabber/jutil.c:97
-#: src/protocols/jabber/presence.c:81 src/protocols/oscar/oscar.c:2833
-#: src/protocols/oscar/oscar.c:4529 src/protocols/oscar/oscar.c:5464
-#: src/protocols/oscar/oscar.c:6064
+#: plugins/docklet/docklet.c:153 src/gtkblist.c:2269 src/gtkpounce.c:411
+#: src/gtkprefs.c:1462 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
+#: src/protocols/jabber/jabber.c:892 src/protocols/jabber/jutil.c:98
+#: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2839
+#: src/protocols/oscar/oscar.c:4539 src/protocols/oscar/oscar.c:5485
+#: src/protocols/oscar/oscar.c:6086
 msgid "Away"
 msgstr "Pryč"
 
@@ -106,11 +106,11 @@ msgid "File Transfers"
 msgstr "Přenosy souborů"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1924 src/main.c:323
+#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1929 src/main.c:323
 msgid "Accounts"
 msgstr "Účty"
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2337 src/main.c:333
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2326 src/main.c:333
 msgid "Preferences"
 msgstr "Nastavení"
 
@@ -336,15 +336,15 @@ msgstr "(Žádná"
 msgid "Change"
 msgstr "změna"
 
-#: plugins/history.c:98
+#: plugins/history.c:96
 msgid "History"
 msgstr "Historie"
 
-#: plugins/history.c:100
+#: plugins/history.c:98
 msgid "Shows recently logged conversations in new conversations."
 msgstr "Zobrazuje nedávno zaznamenané konverzace v nových konverzacích."
 
-#: plugins/history.c:101
+#: plugins/history.c:99
 msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
@@ -382,7 +382,7 @@ msgstr "Nastavit"
 msgid "idle for"
 msgstr "nečinný po"
 
-#: plugins/idle.c:90 plugins/timestamp.c:88
+#: plugins/idle.c:90 plugins/timestamp.c:109
 msgid "minutes."
 msgstr "minut."
 
@@ -651,14 +651,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ssl/ssl-gnutls.c:190
+#: plugins/ssl/ssl-gnutls.c:192
 msgid "GNUTLS"
 msgstr "GNUTLS"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-gnutls.c:193 plugins/ssl/ssl-gnutls.c:195
+#: plugins/ssl/ssl-gnutls.c:195 plugins/ssl/ssl-gnutls.c:197
 msgid "Provides SSL support through GNUTLS."
 msgstr "Poskutuje podporu SSL pomocí GNUTLS."
 
@@ -669,14 +669,14 @@ msgstr "Poskutuje podporu SSL pomocí GNUTLS."
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ssl/ssl-nss.c:287
+#: plugins/ssl/ssl-nss.c:290
 msgid "NSS"
 msgstr "NSS"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-nss.c:290 plugins/ssl/ssl-nss.c:292
+#: plugins/ssl/ssl-nss.c:293 plugins/ssl/ssl-nss.c:295
 msgid "Provides SSL support through Mozilla NSS."
 msgstr "Poskytuje podporu SSL pomocí Mozilla NSS."
 
@@ -698,7 +698,7 @@ msgstr "SSL"
 msgid "Provides a wrapper around SSL support libraries."
 msgstr "Poskytuje rozhraní pro knihovny podporySSL."
 
-#: plugins/statenotify.c:30 src/gtkpounce.c:843
+#: plugins/statenotify.c:30 src/gtkpounce.c:793
 #, c-format
 msgid "%s has gone away."
 msgstr "%s šel pryč."
@@ -766,15 +766,15 @@ msgstr "Ticker kamarádů"
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "Vodorovně se posunující verze seznamu kamarádů."
 
-#: plugins/timestamp.c:74
+#: plugins/timestamp.c:95
 msgid "iChat Timestamp"
 msgstr "Časová značka iChat"
 
-#: plugins/timestamp.c:81
+#: plugins/timestamp.c:102
 msgid "Delay"
 msgstr "Zpoždění"
 
-#: plugins/timestamp.c:94
+#: plugins/timestamp.c:115
 msgid "_Apply"
 msgstr "_Použít"
 
@@ -785,14 +785,14 @@ msgstr "_Použít"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/timestamp.c:150
+#: plugins/timestamp.c:173
 msgid "Timestamp"
 msgstr "Časová značka"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/timestamp.c:153 plugins/timestamp.c:155
+#: plugins/timestamp.c:176 plugins/timestamp.c:178
 msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr "Každých N minut přidává ke konverzacím časové značky ve styly iChat."
 
@@ -816,7 +816,7 @@ msgid "_Show slider bar in IM window"
 msgstr "_Zobrazovat posuvný pruh v okně IM"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:845
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:844
 msgid "Buddy List Window"
 msgstr "Okno seznamu kamarádů"
 
@@ -863,8 +863,8 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Spustit Gaim při spuštění Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:1756
-#: src/gtkprefs.c:2270
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2109
+#: src/gtkprefs.c:2259
 msgid "Buddy List"
 msgstr "Seznam kamarádů"
 
@@ -883,8 +883,8 @@ msgid "_Keep Buddy List window on top"
 msgstr "_Udržovat okno seznamu kamarádů nahoře"
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:894
-#: src/gtkprefs.c:2271
+#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:880
+#: src/gtkprefs.c:2260
 msgid "Conversations"
 msgstr "Konverzace"
 
@@ -983,11 +983,11 @@ msgstr "hacker a jmenovaný řidič [líná kůže]"
 msgid "Current Translators"
 msgstr "Současní překladatelé"
 
-#: src/about.c:163 src/about.c:192
+#: src/about.c:163 src/about.c:193
 msgid "Catalan"
 msgstr "Katalánština"
 
-#: src/about.c:164 src/about.c:193
+#: src/about.c:164 src/about.c:194
 msgid "Czech"
 msgstr "Čeština"
 
@@ -995,183 +995,188 @@ msgstr "Čeština"
 msgid "Danish"
 msgstr "Dánština"
 
-#: src/about.c:166 src/about.c:194
+#: src/about.c:166 src/about.c:195
 msgid "German"
 msgstr "Němčina"
 
-#: src/about.c:167 src/about.c:195
+#: src/about.c:167 src/about.c:196
 msgid "Spanish"
 msgstr "Španělština"
 
-#: src/about.c:168 src/about.c:196
-msgid "French"
-msgstr "Fancouzština"
+#: src/about.c:168
+msgid "Finnish"
+msgstr "Finština"
 
-#: src/about.c:169
+#: src/about.c:169 src/about.c:197
+msgid "French"
+msgstr "Francouzština"
+
+#: src/about.c:170
 msgid "Hindi"
 msgstr "Hindština"
 
-#: src/about.c:170
+#: src/about.c:171
 msgid "Hungarian"
 msgstr "Maďarština"
 
-#: src/about.c:171 src/about.c:198
+#: src/about.c:172 src/about.c:199
 msgid "Italian"
 msgstr "Italština"
 
-#: src/about.c:172 src/about.c:200
+#: src/about.c:173 src/about.c:201
 msgid "Korean"
 msgstr "Korejština"
 
-#: src/about.c:173
+#: src/about.c:174
 msgid "Dutch; Flemish"
 msgstr "Holandština; vlámština"
 
-#: src/about.c:174 src/about.c:202
+#: src/about.c:175 src/about.c:203
 msgid "Polish"
 msgstr "Polština"
 
-#: src/about.c:175
+#: src/about.c:176
+msgid "Portuguese"
+msgstr "Portugalština"
+
+#: src/about.c:177
 msgid "Portuguese-Brazil"
 msgstr "Portugalština-brazilská"
 
-#: src/about.c:176
-msgid "Portuguese-Portugal"
-msgstr "Portugalština-portugalská"
-
-#: src/about.c:177
+#: src/about.c:178
 msgid "Romanian"
 msgstr "Rumunština"
 
-#: src/about.c:178 src/about.c:203
+#: src/about.c:179 src/about.c:204
 msgid "Russian"
 msgstr "Ruština"
 
-#: src/about.c:179
+#: src/about.c:180
 msgid "Serbian"
 msgstr "Srbština"
 
-#: src/about.c:180 src/about.c:205
+#: src/about.c:181 src/about.c:206
 msgid "Swedish"
 msgstr "Švédština"
 
-#: src/about.c:181
+#: src/about.c:182
 msgid "Simplified Chinese"
 msgstr "Zjednodušená čínština"
 
-#: src/about.c:182
+#: src/about.c:183
 msgid "Traditional Chinese"
 msgstr "Tradiční čínština"
 
-#: src/about.c:189
+#: src/about.c:190
 msgid "Past Translators"
 msgstr "Dřívější překladatelé"
 
-#: src/about.c:190
+#: src/about.c:191
 msgid "Amharic"
 msgstr "Amharština"
 
-#: src/about.c:191
+#: src/about.c:192
 msgid "Bulgarian"
 msgstr "Bulharština"
 
-#: src/about.c:197
+#: src/about.c:198
 msgid "Hebrew"
 msgstr "Hebrejština"
 
-#: src/about.c:199
+#: src/about.c:200
 msgid "Japanese"
 msgstr "Japonština"
 
-#: src/about.c:201
+#: src/about.c:202
 msgid "Norwegian"
 msgstr "Norština"
 
-#: src/about.c:204
+#: src/about.c:205
 msgid "Slovak"
 msgstr "Slovenština"
 
-#: src/about.c:206
+#: src/about.c:207
 msgid "Chinese"
 msgstr "Čínština"
 
-#: src/about.c:219 src/dialogs.c:2290 src/gtkrequest.c:205
+#: src/about.c:220 src/dialogs.c:2282 src/gtkrequest.c:205
 #: src/protocols/msn/msn.c:247
 msgid "Close"
 msgstr "Zavřít"
 
-#: src/account.c:265 src/protocols/jabber/jabber.c:918
+#: src/account.c:275 src/protocols/jabber/jabber.c:942
 msgid "New passwords do not match."
 msgstr "Nová hesla nesouhlasí."
 
-#: src/account.c:273
+#: src/account.c:283
 msgid "Fill out all fields completely."
 msgstr "Úplně vyplňte všechna pole."
 
-#: src/account.c:298
+#: src/account.c:308
 msgid "Original password"
 msgstr "Původní heslo"
 
-#: src/account.c:304
+#: src/account.c:314
 msgid "New password"
 msgstr "Nové heslo"
 
-#: src/account.c:310
+#: src/account.c:320
 msgid "New password (again)"
 msgstr "Nové heslo (znovu)"
 
-#: src/account.c:315
+#: src/account.c:325
 #, c-format
 msgid "Change password for %s"
 msgstr "Změnit heslo pro %s"
 
-#: src/account.c:321
+#: src/account.c:331
 msgid "Please enter your current password and your new password."
 msgstr "Zadejte prosím své aktuální a nové heslo."
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:324 src/connection.c:193 src/dialogs.c:1812
-#: src/dialogs.c:1855 src/dialogs.c:1986 src/gtkblist.c:1138
-#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:963
+#: src/account.c:334 src/connection.c:193 src/dialogs.c:1813
+#: src/dialogs.c:1830 src/dialogs.c:1873 src/gtkblist.c:1472
+#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:987
 #: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
 #: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
-#: src/protocols/oscar/oscar.c:2448 src/protocols/oscar/oscar.c:2528
-#: src/protocols/oscar/oscar.c:6114 src/protocols/oscar/oscar.c:6210
-#: src/protocols/oscar/oscar.c:6259 src/protocols/oscar/oscar.c:6339
+#: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2534
+#: src/protocols/oscar/oscar.c:6136 src/protocols/oscar/oscar.c:6232
+#: src/protocols/oscar/oscar.c:6281 src/protocols/oscar/oscar.c:6363
 #: src/protocols/yahoo/yahoo.c:2232 src/request.h:852
 msgid "OK"
 msgstr "OK"
 
 #. Cancel button.
-#: src/account.c:325 src/account.c:359 src/buddy_chat.c:375
-#: src/connection.c:194 src/dialogs.c:466 src/dialogs.c:478 src/dialogs.c:491
-#: src/dialogs.c:512 src/dialogs.c:897 src/dialogs.c:1646 src/dialogs.c:1813
-#: src/dialogs.c:1856 src/dialogs.c:1993 src/gtkaccount.c:1619
-#: src/gtkaccount.c:2087 src/gtkblist.c:1139 src/gtkblist.c:3038
-#: src/gtkconn.c:147 src/gtkprivacy.c:568 src/gtkprivacy.c:581
-#: src/gtkprivacy.c:606 src/gtkprivacy.c:617 src/gtkrequest.c:203
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/jabber/buddy.c:520
-#: src/protocols/jabber/jabber.c:613 src/protocols/jabber/jabber.c:964
-#: src/protocols/msn/msn.c:182 src/protocols/msn/msn.c:193
-#: src/protocols/msn/msn.c:204 src/protocols/msn/msn.c:215
-#: src/protocols/msn/msn.c:228 src/protocols/oscar/oscar.c:2412
-#: src/protocols/oscar/oscar.c:2449 src/protocols/oscar/oscar.c:2484
-#: src/protocols/oscar/oscar.c:2529 src/protocols/oscar/oscar.c:5942
-#: src/protocols/oscar/oscar.c:6115 src/protocols/oscar/oscar.c:6211
-#: src/protocols/oscar/oscar.c:6260 src/protocols/oscar/oscar.c:6325
-#: src/protocols/oscar/oscar.c:6340 src/protocols/trepia/trepia.c:338
-#: src/protocols/yahoo/yahoo.c:2233 src/request.h:852 src/request.h:862
+#: src/account.c:335 src/account.c:369 src/buddy_chat.c:375
+#: src/connection.c:194 src/dialogs.c:467 src/dialogs.c:479 src/dialogs.c:492
+#: src/dialogs.c:513 src/dialogs.c:898 src/dialogs.c:1647 src/dialogs.c:1814
+#: src/dialogs.c:1831 src/dialogs.c:1874 src/dialogs.c:1988
+#: src/gtkaccount.c:1624 src/gtkaccount.c:2092 src/gtkblist.c:1473
+#: src/gtkblist.c:3408 src/gtkconn.c:147 src/gtkprivacy.c:568
+#: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
+#: src/gtkrequest.c:203 src/protocols/icq/gaim_icq.c:277
+#: src/protocols/jabber/buddy.c:520 src/protocols/jabber/jabber.c:631
+#: src/protocols/jabber/jabber.c:988 src/protocols/msn/msn.c:182
+#: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
+#: src/protocols/msn/msn.c:215 src/protocols/msn/msn.c:228
+#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:2455
+#: src/protocols/oscar/oscar.c:2490 src/protocols/oscar/oscar.c:2535
+#: src/protocols/oscar/oscar.c:5964 src/protocols/oscar/oscar.c:6137
+#: src/protocols/oscar/oscar.c:6233 src/protocols/oscar/oscar.c:6282
+#: src/protocols/oscar/oscar.c:6347 src/protocols/oscar/oscar.c:6364
+#: src/protocols/trepia/trepia.c:338 src/protocols/yahoo/yahoo.c:2233
+#: src/request.h:852 src/request.h:862
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/account.c:351
+#: src/account.c:361
 #, c-format
 msgid "Change user information for %s"
 msgstr "Změnit informace o uživateli %s"
 
-#: src/account.c:358 src/dialogs.c:893 src/dialogs.c:1634 src/dialogs.c:2299
+#: src/account.c:368 src/dialogs.c:894 src/dialogs.c:1635 src/dialogs.c:2291
 #: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:519
 #: src/protocols/trepia/trepia.c:337
 msgid "Save"
@@ -1197,16 +1202,16 @@ msgstr "Odstranit zprávu o nepřítomnosti"
 msgid "Set All Away"
 msgstr "Nastavit vše na nepřítomen"
 
-#: src/blist.c:548 src/gtkprefs.c:2273
+#: src/blist.c:548 src/gtkprefs.c:2262
 msgid "Chats"
 msgstr "Chaty"
 
-#: src/blist.c:643 src/blist.c:816 src/blist.c:2018 src/gtkblist.c:2528
-#: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1146
+#: src/blist.c:643 src/blist.c:830 src/blist.c:2038 src/gtkblist.c:2886
+#: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1159
 msgid "Buddies"
 msgstr "Kamarádi"
 
-#: src/blist.c:1103
+#: src/blist.c:1130
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1224,31 +1229,30 @@ msgstr[2] ""
 "%d kamarádů ze skupiny %s nebylo odstraněno, protože jejich účty nebyly "
 "přihlášeny. Tito kamarádi a skupina nebyli odstraněni.\n"
 
-#: src/blist.c:1112
+#: src/blist.c:1139
 msgid "Group not removed"
 msgstr "Skupina neodstraněna"
 
-#: src/blist.c:1163 src/gtkaccount.c:159 src/gtkpounce.c:307
-#: src/gtkutils.c:839 src/protocols/jabber/auth.c:97
-#: src/protocols/jabber/buddy.c:571
+#: src/blist.c:1189 src/gtkaccount.c:159 src/gtkutils.c:839
+#: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:571
 msgid "Unknown"
 msgstr "Neznámé"
 
-#: src/blist.c:1491
+#: src/blist.c:1512
 msgid "Invalid Groupname"
 msgstr "Neplatné jméno skupiny"
 
-#: src/blist.c:2135
+#: src/blist.c:2155
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
 "Při zpracování vašeho seznamu kamarádů došlo k chybě. Seznam nebyl načten."
 
-#: src/blist.c:2137
+#: src/blist.c:2157
 msgid "Buddy List Error"
 msgstr "Chyba seznamu kamarádů"
 
-#: src/buddy_chat.c:316 src/gtkblist.c:2931
+#: src/buddy_chat.c:316 src/gtkblist.c:3300
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -1298,66 +1302,66 @@ msgstr "Nemohu odeslat zprávu. Zpráva je příliš velká."
 msgid "Unable to send message."
 msgstr "Nemohu odeslat zprávu."
 
-#: src/conversation.c:1888
+#: src/conversation.c:1903
 #, c-format
 msgid "%s entered the room."
 msgstr "%s vstoupil do místnosti."
 
-#: src/conversation.c:1891
+#: src/conversation.c:1906
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] vstoupil do místnosti."
 
-#: src/conversation.c:1976
+#: src/conversation.c:1991
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s je teď znám jako %s"
 
-#: src/conversation.c:2018
+#: src/conversation.c:2033
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s opustil místnost (%s)."
 
-#: src/conversation.c:2020
+#: src/conversation.c:2035
 #, c-format
 msgid "%s left the room."
 msgstr "%s opustil místnost."
 
-#: src/conversation.c:2093
+#: src/conversation.c:2108
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d dalších)"
 
-#: src/conversation.c:2095
+#: src/conversation.c:2110
 #, c-format
 msgid " left the room (%s)."
 msgstr " opustil místnost (%s)."
 
-#: src/conversation.c:2377
+#: src/conversation.c:2392
 msgid "Last created window"
 msgstr "Poslední vytvořené okno"
 
-#: src/conversation.c:2379
+#: src/conversation.c:2394
 msgid "New window"
 msgstr "Nové okno"
 
-#: src/conversation.c:2381
+#: src/conversation.c:2396
 msgid "By group"
 msgstr "Podle skupiny"
 
-#: src/conversation.c:2383
+#: src/conversation.c:2398
 msgid "By account"
 msgstr "Podle účtu"
 
-#: src/dialogs.c:314
+#: src/dialogs.c:315
 msgid "Warn User"
 msgstr "Varovat uživatele"
 
-#: src/dialogs.c:317
+#: src/dialogs.c:318
 msgid "_Warn"
 msgstr "_Varovat"
 
-#: src/dialogs.c:333
+#: src/dialogs.c:334
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1370,25 +1374,25 @@ msgstr ""
 "Toto zvýší úroveň varování %s a oni budou pod vlivem tvrdšího omezení "
 "rychlosti.\n"
 
-#: src/dialogs.c:342
+#: src/dialogs.c:343
 msgid "Warn _anonymously?"
 msgstr "Varovat _anonymně?"
 
-#: src/dialogs.c:349
+#: src/dialogs.c:350
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Anonymní varování jsou méně vážná.</b>"
 
-#: src/dialogs.c:462
+#: src/dialogs.c:463
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Hodláte odstranit %s ze svého seznamu kamarádů. Chcete pokračovat?"
 
-#: src/dialogs.c:464 src/dialogs.c:465
+#: src/dialogs.c:465 src/dialogs.c:466
 msgid "Remove Buddy"
 msgstr "Odstranit kamaráda"
 
-#: src/dialogs.c:474
+#: src/dialogs.c:475
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -1396,11 +1400,11 @@ msgid ""
 msgstr ""
 "Hodláte odstranit chat %s ze svého seznamu kamarádů. Chcete pokračovat?"
 
-#: src/dialogs.c:476 src/dialogs.c:477
+#: src/dialogs.c:477 src/dialogs.c:478
 msgid "Remove Chat"
 msgstr "Odstranit chat"
 
-#: src/dialogs.c:486
+#: src/dialogs.c:487
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1409,11 +1413,11 @@ msgstr ""
 "Hodláte odstranit skupinu %s a všechny její členy ze svého seznamu kamarádů. "
 "Chcete pokračovat?"
 
-#: src/dialogs.c:489 src/dialogs.c:490
+#: src/dialogs.c:490 src/dialogs.c:491
 msgid "Remove Group"
 msgstr "Odstranit skupinu"
 
-#: src/dialogs.c:507
+#: src/dialogs.c:508
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1422,151 +1426,163 @@ msgstr ""
 "Hodláte odstranit kontakt obsahující %s a %d jiných kamarádů ze svého "
 "seznamu kamarádů. Chcete pokračovat?"
 
-#: src/dialogs.c:510 src/dialogs.c:511
+#: src/dialogs.c:511 src/dialogs.c:512
 msgid "Remove Contact"
 msgstr "Odstranit kontakt"
 
-#: src/dialogs.c:659
+#: src/dialogs.c:660
 msgid "New Message"
 msgstr "Nová zpráva"
 
-#: src/dialogs.c:677
+#: src/dialogs.c:678
 msgid "Please enter the screenname of the person you would like to IM.\n"
 msgstr "Zadejte prosím jméno uživatele, kterého chcete IM.\n"
 
-#: src/dialogs.c:693 src/dialogs.c:770
+#: src/dialogs.c:694 src/dialogs.c:771
 msgid "_Screenname:"
 msgstr "_Jméno uživatele:"
 
-#: src/dialogs.c:708 src/dialogs.c:786 src/gtkpounce.c:408
+#: src/dialogs.c:709 src/dialogs.c:787 src/gtkpounce.c:358
 msgid "_Account:"
 msgstr "_Účet:"
 
-#: src/dialogs.c:739
+#: src/dialogs.c:740
 msgid "Get User Info"
 msgstr "Získat informace o uživateli"
 
-#: src/dialogs.c:758
+#: src/dialogs.c:759
 msgid ""
 "Please enter the screenname of the person whose info you would like to "
 "view.\n"
 msgstr "Zadejte prosím jméno uživatele, jehož informace chcete zobrazit.\n"
 
-#: src/dialogs.c:852 src/protocols/jabber/jabber.c:974
-#: src/protocols/oscar/oscar.c:6408 src/protocols/toc/toc.c:1531
+#: src/dialogs.c:853 src/protocols/jabber/jabber.c:998
+#: src/protocols/oscar/oscar.c:6432 src/protocols/toc/toc.c:1532
 msgid "Set User Info"
 msgstr "Nastavit informace o uživateli"
 
-#: src/dialogs.c:861
+#: src/dialogs.c:862
 #, c-format
 msgid "Changing info for %s:"
 msgstr "Měním informace pro %s:"
 
-#: src/dialogs.c:963
+#: src/dialogs.c:964
 msgid "Log Conversation"
 msgstr "Zaznamenávat konverzaci"
 
-#: src/dialogs.c:1059
+#: src/dialogs.c:1060
 msgid "Insert Link"
 msgstr "Vložit odkaz"
 
-#: src/dialogs.c:1061
+#: src/dialogs.c:1062
 msgid "Insert"
 msgstr "Vložit"
 
-#: src/dialogs.c:1083
+#: src/dialogs.c:1084
 msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
 msgstr ""
 "Zadejte prosím URL a popis odkazu, který chcete vložit. Popis je nepovinný.\n"
 
-#: src/dialogs.c:1101 src/protocols/jabber/buddy.c:257
-#: src/protocols/jabber/jabber.c:594
+#: src/dialogs.c:1102 src/protocols/jabber/buddy.c:257
+#: src/protocols/jabber/jabber.c:612
 msgid "URL"
 msgstr "URL"
 
-#: src/dialogs.c:1111 src/gtkprefs.c:601 src/gtkprefs.c:1809
-#: src/protocols/jabber/buddy.c:271 src/protocols/jabber/buddy.c:744
+#: src/dialogs.c:1112 src/gtkprefs.c:601 src/gtkprefs.c:1798
+#: src/protocols/jabber/buddy.c:271 src/protocols/jabber/buddy.c:746
 msgid "Description"
 msgstr "Popis"
 
-#: src/dialogs.c:1247 src/dialogs.c:1264
+#: src/dialogs.c:1248 src/dialogs.c:1265
 msgid "Select Text Color"
 msgstr "Vyberte barvu textu"
 
-#: src/dialogs.c:1299 src/dialogs.c:1316
+#: src/dialogs.c:1300 src/dialogs.c:1317
 msgid "Select Background Color"
 msgstr "Vyberte barvu pozadí"
 
-#: src/dialogs.c:1401 src/dialogs.c:1427
+#: src/dialogs.c:1402 src/dialogs.c:1428
 msgid "Select Font"
 msgstr "Vyberte písmo"
 
-#: src/dialogs.c:1493
+#: src/dialogs.c:1494
 msgid "You cannot save an away message with a blank title"
 msgstr "Nemůžete uložit zprávu o nepřítomnosti s prázdným nadpisem"
 
-#: src/dialogs.c:1495
+#: src/dialogs.c:1496
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Dejte prosím zprávě nadpis, nebo zvolte \"Použít\" pro použití bez uložení."
 
-#: src/dialogs.c:1505
+#: src/dialogs.c:1506
 msgid "You cannot create an empty away message"
 msgstr "Nemůžete vytvořit prázdnou zprávu o nepřítomnosti"
 
-#: src/dialogs.c:1570 src/dialogs.c:1578
+#: src/dialogs.c:1571 src/dialogs.c:1579
 msgid "New away message"
 msgstr "Nová zpráva o nepřítomnosti"
 
-#: src/dialogs.c:1588
+#: src/dialogs.c:1589
 msgid "Away title: "
 msgstr "Nadpis zprávy o nepřítomnosti: "
 
-#: src/dialogs.c:1638
+#: src/dialogs.c:1639
 msgid "Save & Use"
 msgstr "Uložit & použít"
 
-#: src/dialogs.c:1642
+#: src/dialogs.c:1643
 msgid "Use"
 msgstr "Použít"
 
 #. show everything
-#: src/dialogs.c:1791
+#: src/dialogs.c:1792
 msgid "Smile!"
 msgstr "Úsměv!"
 
-#: src/dialogs.c:1809
+#: src/dialogs.c:1810
 msgid "Alias Chat"
 msgstr "Alias chatu"
 
-#: src/dialogs.c:1809
+#: src/dialogs.c:1810
 msgid "Alias chat"
 msgstr "Alias chatu"
 
-#: src/dialogs.c:1810
+#: src/dialogs.c:1811
 msgid "Please enter an aliased name for this chat."
 msgstr "Zadejte prosím alias pro tento chat."
 
-#: src/dialogs.c:1841
+#: src/dialogs.c:1827
+msgid "Alias Contact"
+msgstr "Alias kontaktu"
+
+#: src/dialogs.c:1827
+msgid "Alias contact"
+msgstr "Alias kontaktu"
+
+#: src/dialogs.c:1828
+msgid "Please enter an aliased name for this contact."
+msgstr "Zadejte prosím alias pro tento kontakt."
+
+#: src/dialogs.c:1859
 msgid "_Screenname"
 msgstr "_Jméno uživatele"
 
-#: src/dialogs.c:1846 src/gtkblist.c:523 src/gtkblist.c:616
+#: src/dialogs.c:1864 src/gtkblist.c:810 src/gtkblist.c:903 src/gtkblist.c:909
 msgid "_Alias"
 msgstr "_Alias"
 
-#: src/dialogs.c:1850
+#: src/dialogs.c:1868
 msgid "Alias Buddy"
 msgstr "Alias kamaráda"
 
-#: src/dialogs.c:1851
+#: src/dialogs.c:1869
 msgid "Alias buddy"
 msgstr "Alias kamaráda"
 
-#: src/dialogs.c:1852
+#: src/dialogs.c:1870
 msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list."
@@ -1574,51 +1590,52 @@ msgstr ""
 "Zadejte prosím alias osoby níže nebo přejmenujte tento kontakt ve svém "
 "seznamu kamarádů."
 
-#: src/dialogs.c:1888 src/dialogs.c:1895
+#: src/dialogs.c:1906 src/dialogs.c:1913
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "Nemohu zapisovat do %s."
 
-#: src/dialogs.c:1919
+#: src/dialogs.c:1937
 msgid "Save Log File"
 msgstr "Uložit soubor záznamu"
 
-#: src/dialogs.c:1949
+#: src/dialogs.c:1965
 #, c-format
 msgid "Couldn't remove file %s."
 msgstr "Nemohu odstranit soubor %s."
 
-#: src/dialogs.c:1968
-msgid "Clear Log"
-msgstr "Vymazat záznam"
+#: src/dialogs.c:1982
+#, c-format
+msgid "You are about to remove the log file for %s.  Do you want to continue?"
+msgstr "Hodláte odstranit soubor záznamu pro %s. Chcete pokračovat?"
 
-#: src/dialogs.c:1977
-msgid "Really clear log?"
-msgstr "Skutečně vymazat záznam?"
+#: src/dialogs.c:1984 src/dialogs.c:1986
+msgid "Remove Log"
+msgstr "Odstranit záznam"
 
-#: src/dialogs.c:2022 src/dialogs.c:2193
+#: src/dialogs.c:2012 src/dialogs.c:2185
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "Nemohu otevřít soubor záznamu %s."
 
-#: src/dialogs.c:2170
+#: src/dialogs.c:2162
 #, c-format
 msgid "Conversations with %s"
 msgstr "Konverzace s %s"
 
-#: src/dialogs.c:2172
+#: src/dialogs.c:2164
 msgid "System Log"
 msgstr "Systémový záznam"
 
-#: src/dialogs.c:2214 src/protocols/jabber/jabber.c:599
+#: src/dialogs.c:2206 src/protocols/jabber/jabber.c:617
 msgid "Date"
 msgstr "Datum"
 
-#: src/dialogs.c:2271
+#: src/dialogs.c:2263
 msgid "Log"
 msgstr "Záznam"
 
-#: src/dialogs.c:2294
+#: src/dialogs.c:2286
 msgid "Clear"
 msgstr "Vymazat"
 
@@ -1735,15 +1752,15 @@ msgstr "promiňte, na chvíli jsem běžel ven. vrátím se později"
 msgid "boring default"
 msgstr "nudná implicitní"
 
-#: src/gaimrc.c:1267 src/gtkblist.c:1717
+#: src/gaimrc.c:1267 src/gtkblist.c:2070
 msgid "Alphabetical"
 msgstr "Podle abecedy"
 
-#: src/gaimrc.c:1269 src/gtkblist.c:1718
+#: src/gaimrc.c:1269 src/gtkblist.c:2071
 msgid "By status"
 msgstr "Podle stavu"
 
-#: src/gaimrc.c:1271 src/gtkblist.c:1719
+#: src/gaimrc.c:1271 src/gtkblist.c:2072
 msgid "By log size"
 msgstr "Podle velikosti záznamu"
 
@@ -1763,7 +1780,7 @@ msgstr ""
 "<b>Velikost souboru:</b> %s\n"
 "<b>Velikost obrázku:</b> %d×%d"
 
-#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3067
+#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3070
 msgid "Buddy Icon"
 msgstr "Ikona kamaráda"
 
@@ -1781,11 +1798,11 @@ msgid "Screenname:"
 msgstr "Jméno uživatele:"
 
 #: src/gtkaccount.c:464 src/main.c:307 src/protocols/irc/irc.c:161
-#: src/protocols/jabber/chat.c:55
+#: src/protocols/jabber/chat.c:56
 msgid "Password:"
 msgstr "Heslo:"
 
-#: src/gtkaccount.c:469 src/gtkblist.c:2680 src/gtkblist.c:2989
+#: src/gtkaccount.c:469 src/gtkblist.c:3040 src/gtkblist.c:3359
 msgid "Alias:"
 msgstr "Alias:"
 
@@ -1846,7 +1863,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:782 src/gtkprefs.c:1112
+#: src/gtkaccount.c:782 src/gtkprefs.c:1101
 msgid "Use Environmental Settings"
 msgstr "Použít globální prostředí"
 
@@ -1863,7 +1880,7 @@ msgstr "Pokud se podíváte opravdu zblízka,"
 msgid "Proxy Options"
 msgstr "Možnosti proxy"
 
-#: src/gtkaccount.c:851 src/gtkprefs.c:1106
+#: src/gtkaccount.c:851 src/gtkprefs.c:1095
 msgid "Proxy _type:"
 msgstr "_Typ proxy:"
 
@@ -1883,58 +1900,58 @@ msgstr "Jméno _uživatele:"
 msgid "Pa_ssword:"
 msgstr "_Heslo:"
 
-#: src/gtkaccount.c:1215
+#: src/gtkaccount.c:1220
 msgid "Add Account"
 msgstr "Přidat účet"
 
-#: src/gtkaccount.c:1217
+#: src/gtkaccount.c:1222
 msgid "Modify Account"
 msgstr "Změnit účet"
 
 #. Add the disclosure
-#: src/gtkaccount.c:1241
+#: src/gtkaccount.c:1246
 msgid "Show more options"
 msgstr "Zobrazit více nastavení"
 
-#: src/gtkaccount.c:1242
+#: src/gtkaccount.c:1247
 msgid "Show fewer options"
 msgstr "Zobrazit méně nastavení"
 
 #. Register button
-#: src/gtkaccount.c:1269 src/protocols/jabber/jabber.c:612
+#: src/gtkaccount.c:1274 src/protocols/jabber/jabber.c:630
 msgid "Register"
 msgstr "Registrovat"
 
-#: src/gtkaccount.c:1614
+#: src/gtkaccount.c:1619
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Jste si jisti, že chcete odstranit %s?"
 
-#: src/gtkaccount.c:1618 src/gtkrequest.c:206
+#: src/gtkaccount.c:1623 src/gtkrequest.c:206
 msgid "Delete"
 msgstr "Odstranit"
 
-#: src/gtkaccount.c:1731
+#: src/gtkaccount.c:1736
 msgid "Screen Name"
 msgstr "Jméno uživatele"
 
-#: src/gtkaccount.c:1754 src/protocols/jabber/jabber.c:866
-#: src/protocols/oscar/oscar.c:2839 src/protocols/oscar/oscar.c:4527
-#: src/protocols/oscar/oscar.c:6063 src/protocols/yahoo/yahoo.c:2032
+#: src/gtkaccount.c:1759 src/protocols/jabber/jabber.c:890
+#: src/protocols/oscar/oscar.c:2845 src/protocols/oscar/oscar.c:4537
+#: src/protocols/oscar/oscar.c:6085 src/protocols/yahoo/yahoo.c:2032
 #: src/protocols/zephyr/zephyr.c:886 src/protocols/zephyr/zephyr.c:896
 msgid "Online"
 msgstr "Připojen"
 
-#: src/gtkaccount.c:1772
+#: src/gtkaccount.c:1777
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/gtkaccount.c:2062
+#: src/gtkaccount.c:2067
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s udělali %s svým kamarádem%s%s%s"
 
-#: src/gtkaccount.c:2076
+#: src/gtkaccount.c:2081
 msgid ""
 "\n"
 "\n"
@@ -1944,184 +1961,184 @@ msgstr ""
 "\n"
 "Chcete je přidat do svého seznamu kamarádů?"
 
-#: src/gtkaccount.c:2080
+#: src/gtkaccount.c:2085
 msgid "Gaim - Information"
 msgstr "Gaim - Informace"
 
-#: src/gtkaccount.c:2084
+#: src/gtkaccount.c:2089
 msgid "Add buddy to your list?"
 msgstr "Přidat kamaráda do vašeho seznamu?"
 
-#: src/gtkaccount.c:2086 src/gtkblist.c:3037 src/gtkconv.c:1137
-#: src/gtkconv.c:3017 src/gtkconv.c:4191 src/gtkrequest.c:207
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2681
+#: src/gtkaccount.c:2091 src/gtkblist.c:3407 src/gtkconv.c:1234
+#: src/gtkconv.c:3123 src/gtkconv.c:4304 src/gtkrequest.c:207
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2687
 msgid "Add"
 msgstr "Přidat"
 
-#: src/gtkblist.c:496
+#: src/gtkblist.c:783
 msgid "_Get Info"
 msgstr "_Získat Informace"
 
-#: src/gtkblist.c:499
+#: src/gtkblist.c:786
 msgid "_IM"
 msgstr "_IM"
 
-#: src/gtkblist.c:501
+#: src/gtkblist.c:788
 msgid "Add Buddy _Pounce"
 msgstr "Přidat _sledování kamaráda"
 
-#: src/gtkblist.c:503
+#: src/gtkblist.c:790
 msgid "View _Log"
 msgstr "Zobrazit záz_nam"
 
-#: src/gtkblist.c:525 src/gtkblist.c:618 src/gtkblist.c:626
+#: src/gtkblist.c:812 src/gtkblist.c:905 src/gtkblist.c:914
 msgid "_Remove"
 msgstr "_Odstranit"
 
-#: src/gtkblist.c:597
+#: src/gtkblist.c:884
 msgid "Add a _Buddy"
 msgstr "_Přidat kamaráda"
 
-#: src/gtkblist.c:599
+#: src/gtkblist.c:886
 msgid "Add a C_hat"
 msgstr "Přidat _chat"
 
-#: src/gtkblist.c:601
+#: src/gtkblist.c:888
 msgid "_Delete Group"
 msgstr "_Odstranit skupinu"
 
-#: src/gtkblist.c:603
+#: src/gtkblist.c:890
 msgid "_Rename"
 msgstr "_Přejmenovat"
 
-#: src/gtkblist.c:611
+#: src/gtkblist.c:898
 msgid "_Join"
 msgstr "_Připojit"
 
-#: src/gtkblist.c:613
+#: src/gtkblist.c:900
 msgid "Auto-Join"
 msgstr "Automatické přihlašování"
 
-#: src/gtkblist.c:622 src/gtkblist.c:653
+#: src/gtkblist.c:911 src/gtkblist.c:941
 msgid "_Collapse"
 msgstr "_Sbalit"
 
-#: src/gtkblist.c:658
+#: src/gtkblist.c:946
 msgid "_Expand"
 msgstr "_Rozbalit"
 
 #. Buddies menu
-#: src/gtkblist.c:1088
+#: src/gtkblist.c:1422
 msgid "/_Buddies"
 msgstr "/_Kamarádi"
 
-#: src/gtkblist.c:1089
+#: src/gtkblist.c:1423
 msgid "/Buddies/New _Instant Message..."
 msgstr "/Kamarádi/Nová _Instant Message..."
 
-#: src/gtkblist.c:1090
+#: src/gtkblist.c:1424
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Kamarádi/Připojit se k _chatu..."
 
-#: src/gtkblist.c:1091
+#: src/gtkblist.c:1425
 msgid "/Buddies/Get _User Info..."
 msgstr "/Kamarádi/Získat informace o _uživateli..."
 
-#: src/gtkblist.c:1093
+#: src/gtkblist.c:1427
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Kamarádi/Zobrazovat _odpojené kamarády"
 
-#: src/gtkblist.c:1094
+#: src/gtkblist.c:1428
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Kamarádi/Zobrazovat _prázdné skupiny"
 
-#: src/gtkblist.c:1095
+#: src/gtkblist.c:1429
 msgid "/Buddies/_Add a Buddy..."
 msgstr "/Kamarádi/_Přidat kamaráda..."
 
-#: src/gtkblist.c:1096
+#: src/gtkblist.c:1430
 msgid "/Buddies/Add a C_hat..."
 msgstr "/Kamarádi/Přidat _chat..."
 
-#: src/gtkblist.c:1097
+#: src/gtkblist.c:1431
 msgid "/Buddies/Add a _Group..."
 msgstr "/Kamarádi/Přidat _skupinu..."
 
-#: src/gtkblist.c:1099
+#: src/gtkblist.c:1433
 msgid "/Buddies/_Signoff"
 msgstr "/Kamarádi/_Odpojit"
 
-#: src/gtkblist.c:1100
+#: src/gtkblist.c:1434
 msgid "/Buddies/_Quit"
 msgstr "/Kamarádi/_Konec"
 
 #. Tools
-#: src/gtkblist.c:1103
+#: src/gtkblist.c:1437
 msgid "/_Tools"
 msgstr "/_Nástroje"
 
-#: src/gtkblist.c:1104
+#: src/gtkblist.c:1438
 msgid "/Tools/_Away"
 msgstr "/Nástroje/_Pryč"
 
-#: src/gtkblist.c:1105
+#: src/gtkblist.c:1439
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Nástroje/_Sledování kamarádů"
 
-#: src/gtkblist.c:1106
+#: src/gtkblist.c:1440
 msgid "/Tools/P_rotocol Actions"
 msgstr "/Nástroje/Akce p_rotokolu"
 
-#: src/gtkblist.c:1108
+#: src/gtkblist.c:1442
 msgid "/Tools/A_ccounts"
 msgstr "/Nástroje/_Účty"
 
-#: src/gtkblist.c:1109
+#: src/gtkblist.c:1443
 msgid "/Tools/_File Transfers..."
 msgstr "/Nástroje/_Přenosy souborů..."
 
-#: src/gtkblist.c:1110
+#: src/gtkblist.c:1444
 msgid "/Tools/Preferences"
 msgstr "/Nástroje/Nastavení"
 
-#: src/gtkblist.c:1111
+#: src/gtkblist.c:1445
 msgid "/Tools/Pr_ivacy"
 msgstr "/Nástroje/_Soukromí"
 
-#: src/gtkblist.c:1113
+#: src/gtkblist.c:1447
 msgid "/Tools/View System _Log"
 msgstr "/Nástroje/Zobrazit systémový záz_nam"
 
 #. Help
-#: src/gtkblist.c:1116
+#: src/gtkblist.c:1450
 msgid "/_Help"
 msgstr "/Nápo_věda"
 
-#: src/gtkblist.c:1117
+#: src/gtkblist.c:1451
 msgid "/Help/Online _Help"
 msgstr "/Nápověda/_Nápověda online"
 
-#: src/gtkblist.c:1118
+#: src/gtkblist.c:1452
 msgid "/Help/_Debug Window"
 msgstr "/Nápověda/_Ladicí okno"
 
-#: src/gtkblist.c:1119
+#: src/gtkblist.c:1453
 msgid "/Help/_About"
 msgstr "/Nápověda/_O programu"
 
-#: src/gtkblist.c:1135
+#: src/gtkblist.c:1469
 msgid "Rename Group"
 msgstr "Přejmenovat skupinu"
 
-#: src/gtkblist.c:1135
+#: src/gtkblist.c:1469
 msgid "New group name"
 msgstr "Nové jméno skupiny"
 
-#: src/gtkblist.c:1136
+#: src/gtkblist.c:1470
 msgid "Please enter a new name for the selected group."
 msgstr "Zadejte prosím nové jméno vybrané skupiny."
 
-#: src/gtkblist.c:1165
+#: src/gtkblist.c:1499
 #, c-format
 msgid ""
 "\n"
@@ -2130,16 +2147,16 @@ msgstr ""
 "\n"
 "<b>Účet:</b> %s"
 
-#: src/gtkblist.c:1224 src/protocols/oscar/oscar.c:5444
+#: src/gtkblist.c:1562 src/protocols/oscar/oscar.c:5465
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Stav:</b> Odpojen"
 
-#: src/gtkblist.c:1236
+#: src/gtkblist.c:1574
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:1250
+#: src/gtkblist.c:1589
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2147,7 +2164,13 @@ msgstr ""
 "\n"
 "<b>Účet:</b>"
 
-#: src/gtkblist.c:1251
+#: src/gtkblist.c:1590
+msgid ""
+"\n"
+"<b>Contact Alias:</b>"
+msgstr "\n<b>Alias kontaktu:</b>"
+
+#: src/gtkblist.c:1591
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2155,7 +2178,7 @@ msgstr ""
 "\n"
 "<b>Alias:</b>"
 
-#: src/gtkblist.c:1252
+#: src/gtkblist.c:1592
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2163,7 +2186,7 @@ msgstr ""
 "\n"
 "<b>Přezdívka:</b>"
 
-#: src/gtkblist.c:1253
+#: src/gtkblist.c:1593
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2171,7 +2194,7 @@ msgstr ""
 "\n"
 "<b>Nečinný:</b>"
 
-#: src/gtkblist.c:1254
+#: src/gtkblist.c:1594
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2179,7 +2202,7 @@ msgstr ""
 "\n"
 "<b>Varován:</b>"
 
-#: src/gtkblist.c:1256
+#: src/gtkblist.c:1596
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2187,7 +2210,7 @@ msgstr ""
 "\n"
 "<b>Popis:</b> Vystrašený"
 
-#: src/gtkblist.c:1257
+#: src/gtkblist.c:1597
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2195,7 +2218,7 @@ msgstr ""
 "\n"
 "<b>Stav</b>: Skvělý"
 
-#: src/gtkblist.c:1258
+#: src/gtkblist.c:1598
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2203,85 +2226,85 @@ msgstr ""
 "\n"
 "<b>Stav:</b> Žůžo"
 
-#: src/gtkblist.c:1514
+#: src/gtkblist.c:1866
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Nečinný (%dh%02dm) "
 
-#: src/gtkblist.c:1516
+#: src/gtkblist.c:1868
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Nečinný (%dm) "
 
-#: src/gtkblist.c:1520
+#: src/gtkblist.c:1873
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Varován (%d%%) "
 
-#: src/gtkblist.c:1523
+#: src/gtkblist.c:1876
 msgid "Offline "
 msgstr "Odpojen "
 
-#: src/gtkblist.c:1715 src/gtkprefs.c:842 src/gtkprefs.c:1501
+#: src/gtkblist.c:2068 src/gtkprefs.c:841 src/gtkprefs.c:1490
 msgid "None"
 msgstr "Žádné"
 
-#: src/gtkblist.c:1780
+#: src/gtkblist.c:2133
 msgid "/Tools/Away"
 msgstr "/Nástroje/Pryč"
 
-#: src/gtkblist.c:1783
+#: src/gtkblist.c:2136
 msgid "/Tools/Buddy Pounce"
 msgstr "/Nástroje/Sledování kamarádů"
 
-#: src/gtkblist.c:1786
+#: src/gtkblist.c:2139
 msgid "/Tools/Protocol Actions"
 msgstr "/Nástroje/Akce protokolu"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:1870
+#: src/gtkblist.c:2223
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Nástroje/Zobrazovat odpojené kamarády"
 
-#: src/gtkblist.c:1872
+#: src/gtkblist.c:2225
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Nástroje/Zobrazovat prázdné skupiny"
 
-#: src/gtkblist.c:1890 src/gtkconv.c:1096
+#: src/gtkblist.c:2243 src/gtkconv.c:1193
 msgid "IM"
 msgstr "IM"
 
-#: src/gtkblist.c:1896
+#: src/gtkblist.c:2249
 msgid "Send a message to the selected buddy"
 msgstr "Odeslat zprávu vybranému kamarádovi"
 
-#: src/gtkblist.c:1899 src/protocols/napster/napster.c:529
+#: src/gtkblist.c:2252 src/protocols/napster/napster.c:529
 msgid "Get Info"
 msgstr "Info"
 
-#: src/gtkblist.c:1905
+#: src/gtkblist.c:2258
 msgid "Get information on the selected buddy"
 msgstr "Získat informace o vybraném kamarádovi"
 
-#: src/gtkblist.c:1908 src/protocols/oscar/oscar.c:3076
+#: src/gtkblist.c:2261 src/protocols/oscar/oscar.c:3079
 msgid "Chat"
 msgstr "Chat"
 
-#: src/gtkblist.c:1913
+#: src/gtkblist.c:2266
 msgid "Join a chat room"
 msgstr "Připojit se k místnosti chatu"
 
-#: src/gtkblist.c:1921
+#: src/gtkblist.c:2274
 msgid "Set an away message"
 msgstr "Nastavit zprávu o nepřítomnosti"
 
-#: src/gtkblist.c:2622 src/protocols/yahoo/yahoo.c:2166
+#: src/gtkblist.c:2982 src/protocols/yahoo/yahoo.c:2166
 msgid "Add Buddy"
 msgstr "Přidat kamaráda"
 
-#: src/gtkblist.c:2645
+#: src/gtkblist.c:3005
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2291,24 +2314,24 @@ msgstr ""
 "kamarádů. Můžete také zadat alias nebo přezdívku pro kamaráda. Alias bude "
 "zobrazen místo jména uživatele kdykoli je to možné.\n"
 
-#: src/gtkblist.c:2667 src/main.c:289
+#: src/gtkblist.c:3027 src/main.c:289
 msgid "Screen Name:"
 msgstr "Jméno uživatele:"
 
-#: src/gtkblist.c:2693 src/gtkblist.c:3000
+#: src/gtkblist.c:3053 src/gtkblist.c:3370
 msgid "Group:"
 msgstr "Skupina:"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:2702 src/gtkblist.c:2971
+#: src/gtkblist.c:3062 src/gtkblist.c:3340
 msgid "Account:"
 msgstr "Účet:"
 
-#: src/gtkblist.c:2938
+#: src/gtkblist.c:3307
 msgid "Add Chat"
 msgstr "Přidat chat"
 
-#: src/gtkblist.c:2961
+#: src/gtkblist.c:3330
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2316,19 +2339,19 @@ msgstr ""
 "Zadejte prosím alias a odpovídající informace o chatu, který chcete přidat "
 "do svého seznamu kamarádů.\n"
 
-#: src/gtkblist.c:3034
+#: src/gtkblist.c:3404
 msgid "Add Group"
 msgstr "Přidat skupinu"
 
-#: src/gtkblist.c:3034
+#: src/gtkblist.c:3404
 msgid "Add a new group"
 msgstr "Přidat novou skupinu"
 
-#: src/gtkblist.c:3035
+#: src/gtkblist.c:3405
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím jméno skupiny, kterou přidat."
 
-#: src/gtkblist.c:3547
+#: src/gtkblist.c:3920
 msgid "No actions available"
 msgstr "Žádné akce nejsou k dispozici"
 
@@ -2395,293 +2418,317 @@ msgstr "_Kamarád:"
 msgid "_Message:"
 msgstr "Z_práva:"
 
-#: src/gtkconv.c:1104
+#: src/gtkconv.c:772
+msgid ""
+"<span weight='bold' size='larger'>Enter a search phrase\n"
+"</span>"
+msgstr ""
+"<span weight='bold' size='larger'>Zadejte hledaný text\n"
+"</span>"
+
+#: src/gtkconv.c:779
+msgid "Search term: "
+msgstr "Hledaná položka: "
+
+#: src/gtkconv.c:1201
 msgid "Un-Ignore"
 msgstr "Přestat ignorovat"
 
-#: src/gtkconv.c:1106 src/gtkprefs.c:774
+#: src/gtkconv.c:1203 src/gtkprefs.c:774
 msgid "Ignore"
 msgstr "Ignorovat"
 
 #. Info button
-#: src/gtkconv.c:1115 src/gtkconv.c:3040
+#: src/gtkconv.c:1212 src/gtkconv.c:3146
 msgid "Info"
 msgstr "Info"
 
-#: src/gtkconv.c:1124
+#: src/gtkconv.c:1221
 msgid "Get Away Msg"
 msgstr "Získat zprávu o nepřítomnosti"
 
-#: src/gtkconv.c:1135 src/gtkconv.c:3023 src/gtkconv.c:4176
+#: src/gtkconv.c:1232 src/gtkconv.c:3129 src/gtkconv.c:4289
 #: src/gtkrequest.c:208
 msgid "Remove"
 msgstr "Odstranit"
 
-#: src/gtkconv.c:2248
+#: src/gtkconv.c:2349
 msgid "User is typing..."
 msgstr "Uživatel píše..."
 
-#: src/gtkconv.c:2256
+#: src/gtkconv.c:2357
 msgid "User has typed something and paused"
 msgstr "Uživatel něco napsal a počkal"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2359
+#: src/gtkconv.c:2460
 msgid "_Send As"
 msgstr "_Odeslat jako"
 
-#: src/gtkconv.c:2819
+#: src/gtkconv.c:2920
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - Uložit konverzaci"
 
 #. Conversation menu
-#: src/gtkconv.c:2836
+#: src/gtkconv.c:2937
 msgid "/_Conversation"
 msgstr "/_Konverzace"
 
-#: src/gtkconv.c:2838
+#: src/gtkconv.c:2939
 msgid "/Conversation/_Save As..."
 msgstr "/Konverzace/_Uložit jako..."
 
-#: src/gtkconv.c:2840
-msgid "/Conversation/View _Log..."
-msgstr "/Konverzace/Zobrazit záz_nam..."
+#: src/gtkconv.c:2941
+msgid "/Conversation/View _Log"
+msgstr "/Konverzace/Zobrazit záz_nam"
 
-#: src/gtkconv.c:2844
+#: src/gtkconv.c:2942
+msgid "/Conversation/Search..."
+msgstr "/Konverzace/Hledat..."
+
+#: src/gtkconv.c:2946
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Konverzace/Přidat _sledování kamaráda..."
 
-#: src/gtkconv.c:2846
+#: src/gtkconv.c:2948
 msgid "/Conversation/A_lias..."
 msgstr "/Konverzace/A_lias..."
 
-#: src/gtkconv.c:2848
+#: src/gtkconv.c:2950
 msgid "/Conversation/_Get Info..."
 msgstr "/Konverzace/_Získat informace..."
 
-#: src/gtkconv.c:2850
+#: src/gtkconv.c:2952
 msgid "/Conversation/In_vite..."
 msgstr "/Konverzace/_Pozvat..."
 
-#: src/gtkconv.c:2855
+#: src/gtkconv.c:2957
 msgid "/Conversation/Insert _URL..."
 msgstr "/Konverzace/Vložit _URL..."
 
-#: src/gtkconv.c:2857
+#: src/gtkconv.c:2959
 msgid "/Conversation/Insert _Image..."
 msgstr "/Konverzace/Vložit _obrázek..."
 
-#: src/gtkconv.c:2862
+#: src/gtkconv.c:2964
 msgid "/Conversation/_Warn..."
 msgstr "/Konverzace/_Varovat..."
 
-#: src/gtkconv.c:2864
+#: src/gtkconv.c:2966
 msgid "/Conversation/_Block..."
 msgstr "/Konverzace/_Blokovat..."
 
-#: src/gtkconv.c:2866
+#: src/gtkconv.c:2968
 msgid "/Conversation/_Add..."
 msgstr "/Konverzace/_Přidat..."
 
-#: src/gtkconv.c:2868
+#: src/gtkconv.c:2970
 msgid "/Conversation/_Remove..."
 msgstr "/Konverzace/_Odstranit..."
 
-#: src/gtkconv.c:2873
+#: src/gtkconv.c:2975
 msgid "/Conversation/_Close"
 msgstr "/Konverzace/_Zavřít"
 
 #. Options
-#: src/gtkconv.c:2877
+#: src/gtkconv.c:2979
 msgid "/_Options"
 msgstr "/_Možnosti"
 
-#: src/gtkconv.c:2878
+#: src/gtkconv.c:2980
 msgid "/Options/Enable _Logging"
 msgstr "/Možnosti/Povolit zaz_namenávání"
 
-#: src/gtkconv.c:2879
+#: src/gtkconv.c:2981
 msgid "/Options/Enable _Sounds"
 msgstr "/Možnosti/Povolit _zvuky"
 
-#: src/gtkconv.c:2919
-msgid "/Conversation/View Log..."
-msgstr "/Konverzace/Zobrazit záznam..."
+#: src/gtkconv.c:2982
+msgid "/Options/Show Formatting _Toolbar"
+msgstr "/Možnosti/Zobrazovat lištu nástrojů _Formátování"
 
-#: src/gtkconv.c:2924
+#: src/gtkconv.c:3022
+msgid "/Conversation/View Log"
+msgstr "/Konverzace/Zobrazit záznam"
+
+#: src/gtkconv.c:3027
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Konverzace/Přidat sledování kamaráda..."
 
-#: src/gtkconv.c:2928
+#: src/gtkconv.c:3031
 msgid "/Conversation/Alias..."
 msgstr "/Konverzace/Alias..."
 
-#: src/gtkconv.c:2932
+#: src/gtkconv.c:3035
 msgid "/Conversation/Get Info..."
 msgstr "/Konverzace/Získat informace..."
 
-#: src/gtkconv.c:2936
+#: src/gtkconv.c:3039
 msgid "/Conversation/Invite..."
 msgstr "/Konverzace/Pozvat..."
 
-#: src/gtkconv.c:2942
+#: src/gtkconv.c:3045
 msgid "/Conversation/Insert URL..."
 msgstr "/Konverzace/Vložit URL..."
 
-#: src/gtkconv.c:2946
+#: src/gtkconv.c:3049
 msgid "/Conversation/Insert Image..."
 msgstr "/Konverzace/Vložit obrázek..."
 
-#: src/gtkconv.c:2952
+#: src/gtkconv.c:3055
 msgid "/Conversation/Warn..."
 msgstr "/Konverzace/Varovat..."
 
-#: src/gtkconv.c:2956
+#: src/gtkconv.c:3059
 msgid "/Conversation/Block..."
 msgstr "/Konverzace/Blokovat..."
 
-#: src/gtkconv.c:2960
+#: src/gtkconv.c:3063
 msgid "/Conversation/Add..."
 msgstr "/Konverzace/Přidat..."
 
-#: src/gtkconv.c:2964
+#: src/gtkconv.c:3067
 msgid "/Conversation/Remove..."
 msgstr "/Konverzace/Odstranit..."
 
-#: src/gtkconv.c:2970
+#: src/gtkconv.c:3073
 msgid "/Options/Enable Logging"
 msgstr "/Možnosti/Povolit zaznamenávání"
 
-#: src/gtkconv.c:2973
+#: src/gtkconv.c:3076
 msgid "/Options/Enable Sounds"
 msgstr "/Možnosti/Povolit zvuky"
 
+#: src/gtkconv.c:3079
+msgid "/Options/Show Formatting Toolbar"
+msgstr "/Možnosti/Zobrazovat lištu nástrojů Formátování"
+
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:2997 src/gtkconv.c:2999 src/gtkconv.c:3097 src/gtkconv.c:3099
-#: src/gtkconv.c:5958
+#: src/gtkconv.c:3103 src/gtkconv.c:3105 src/gtkconv.c:3203 src/gtkconv.c:3205
+#: src/gtkconv.c:6111
 msgid "Send"
 msgstr "Odeslat"
 
-#: src/gtkconv.c:3020 src/gtkconv.c:4194
+#: src/gtkconv.c:3126 src/gtkconv.c:4307
 msgid "Add the user to your buddy list"
 msgstr "Přidat uživatele do vašeho seznamu kamarádů"
 
-#: src/gtkconv.c:3026 src/gtkconv.c:4179
+#: src/gtkconv.c:3132 src/gtkconv.c:4292
 msgid "Remove the user from your buddy list"
 msgstr "Odstranit uživatele z vašeho seznamu kamarádů"
 
 #. Warn button
-#: src/gtkconv.c:3033
+#: src/gtkconv.c:3139
 msgid "Warn"
 msgstr "Varovat"
 
-#: src/gtkconv.c:3037
+#: src/gtkconv.c:3143
 msgid "Warn the user"
 msgstr "Varovat uživatele"
 
-#: src/gtkconv.c:3044 src/gtkconv.c:3479
+#: src/gtkconv.c:3150 src/gtkconv.c:3588
 msgid "Get the user's information"
 msgstr "Získat informace o uživateli"
 
 #. Block button
-#: src/gtkconv.c:3047 src/gtkprivacy.c:605 src/gtkprivacy.c:616
+#: src/gtkconv.c:3153 src/gtkprivacy.c:605 src/gtkprivacy.c:616
 msgid "Block"
 msgstr "Blokovat"
 
-#: src/gtkconv.c:3051
+#: src/gtkconv.c:3157
 msgid "Block the user"
 msgstr "Blokovat uživatele"
 
 #. Invite
-#: src/gtkconv.c:3109 src/gtkconv.c:5961
+#: src/gtkconv.c:3215 src/gtkconv.c:6114
 msgid "Invite"
 msgstr "Pozvat"
 
-#: src/gtkconv.c:3112
+#: src/gtkconv.c:3218
 msgid "Invite a user"
 msgstr "Pozvat uživatele"
 
-#: src/gtkconv.c:3151
+#: src/gtkconv.c:3257
 msgid "Bold"
 msgstr "Tučné"
 
-#: src/gtkconv.c:3162
+#: src/gtkconv.c:3268
 msgid "Italic"
 msgstr "Kurzíva"
 
-#: src/gtkconv.c:3173
+#: src/gtkconv.c:3279
 msgid "Underline"
 msgstr "Podtržené"
 
-#: src/gtkconv.c:3189
+#: src/gtkconv.c:3295
 msgid "Larger font size"
 msgstr "Větší velikost písma"
 
-#: src/gtkconv.c:3201
+#: src/gtkconv.c:3307
 msgid "Normal font size"
 msgstr "Normální velikost písma"
 
-#: src/gtkconv.c:3213
+#: src/gtkconv.c:3319
 msgid "Smaller font size"
 msgstr "Menší velikost písma"
 
-#: src/gtkconv.c:3230
+#: src/gtkconv.c:3336
 msgid "Font Face"
 msgstr "Řez písma"
 
-#: src/gtkconv.c:3242
+#: src/gtkconv.c:3348
 msgid "Foreground font color"
 msgstr "Barva pozadí písma"
 
-#: src/gtkconv.c:3254
+#: src/gtkconv.c:3360
 msgid "Background color"
 msgstr "Barva pozadí"
 
-#: src/gtkconv.c:3269
+#: src/gtkconv.c:3375
 msgid "Insert image"
 msgstr "Vložit obrázek"
 
-#: src/gtkconv.c:3280
+#: src/gtkconv.c:3386
 msgid "Insert link"
 msgstr "Vložit odkaz"
 
-#: src/gtkconv.c:3291
+#: src/gtkconv.c:3397
 msgid "Insert smiley"
 msgstr "Vložit smajlík"
 
-#: src/gtkconv.c:3348
+#: src/gtkconv.c:3457
 msgid "Topic:"
 msgstr "Téma:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3399
+#: src/gtkconv.c:3508
 msgid "0 people in room"
 msgstr "0 lidí v místnosti"
 
-#: src/gtkconv.c:3456
+#: src/gtkconv.c:3565
 msgid "IM the user"
 msgstr "IM uživatele"
 
-#: src/gtkconv.c:3468
+#: src/gtkconv.c:3577
 msgid "Ignore the user"
 msgstr "Ignorovat uživatele"
 
-#: src/gtkconv.c:3962 src/server.c:1380
+#: src/gtkconv.c:4072 src/server.c:1382
 #, c-format
 msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
 msgstr "<HR><BR><H3 Align=Center> ---- Nová konverzace @ %s ----</H3><BR>\n"
 
-#: src/gtkconv.c:3966 src/server.c:1383
+#: src/gtkconv.c:4076 src/server.c:1385
 #, c-format
 msgid "---- New Conversation @ %s ----\n"
 msgstr "---- Nová konverzace @ %s ----\n"
 
-#: src/gtkconv.c:3999
+#: src/gtkconv.c:4112
 msgid "Close conversation"
 msgstr "Zavřít konverzaci"
 
-#: src/gtkconv.c:4683 src/gtkconv.c:4715 src/gtkconv.c:4836 src/gtkconv.c:4903
+#: src/gtkconv.c:4805 src/gtkconv.c:4837 src/gtkconv.c:4958 src/gtkconv.c:5025
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -2689,23 +2736,19 @@ msgstr[0] "%d osoba v místnosti"
 msgstr[1] "%d osoby v místnosti"
 msgstr[2] "%d osob v místnosti"
 
-#: src/gtkconv.c:5225
-msgid "Disable Animation"
-msgstr "Zakázat animaci"
+#: src/gtkconv.c:5358
+msgid "Animate"
+msgstr "Animovat"
 
-#: src/gtkconv.c:5234
-msgid "Enable Animation"
-msgstr "Povolit animaci"
-
-#: src/gtkconv.c:5241
+#: src/gtkconv.c:5363
 msgid "Hide Icon"
 msgstr "Skrýt ikonu"
 
-#: src/gtkconv.c:5247
+#: src/gtkconv.c:5369
 msgid "Save Icon As..."
 msgstr "Uložit ikonu jako..."
 
-#: src/gtkconv.c:5728 src/gtkconv.c:5731
+#: src/gtkconv.c:5848 src/gtkconv.c:5851
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Konverzace/Zavřít"
 
@@ -2813,7 +2856,7 @@ msgstr "Tento soubor již existuje."
 msgid "Gaim - Open..."
 msgstr "Gaim - Otevřít..."
 
-#: src/gtkft.c:1060 src/protocols/toc/toc.c:2041
+#: src/gtkft.c:1060 src/protocols/toc/toc.c:2042
 msgid "Gaim - Save As..."
 msgstr "Gaim - Uložit jako..."
 
@@ -2822,19 +2865,19 @@ msgstr "Gaim - Uložit jako..."
 msgid "%s wants to send you %s (%s)"
 msgstr "%s vám chce poslat %s (%s)"
 
-#: src/gtkimhtml.c:535
+#: src/gtkimhtml.c:605
 msgid "_Copy E-Mail Address"
 msgstr "_Kopírovat emailovou adresu"
 
-#: src/gtkimhtml.c:547
+#: src/gtkimhtml.c:617
 msgid "_Copy Link Location"
 msgstr "_Kopírovat adresu odkazu"
 
-#: src/gtkimhtml.c:557
+#: src/gtkimhtml.c:627
 msgid "_Open Link in Browser"
 msgstr "_Otevřít odkaz v prohlížeči"
 
-#: src/gtkimhtml.c:1639
+#: src/gtkimhtml.c:1733
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -2842,16 +2885,16 @@ msgstr ""
 "Nemohu uhádnout typ obrázku podle dodané přípony souboru. Implicitně "
 "používám PNG."
 
-#: src/gtkimhtml.c:1647
+#: src/gtkimhtml.c:1741
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Chyba při ukládání obrázku: %s"
 
-#: src/gtkimhtml.c:1656
+#: src/gtkimhtml.c:1750
 msgid "Save Image"
 msgstr "Uložit obrázek"
 
-#: src/gtkimhtml.c:1679
+#: src/gtkimhtml.c:1773
 msgid "_Save Image..."
 msgstr "_Uložit obrázek..."
 
@@ -2923,135 +2966,135 @@ msgid "Please enter a buddy to pounce."
 msgstr "Zadejte prosím kamaráda, kterého sledovat."
 
 #. "New Buddy Pounce"
-#: src/gtkpounce.c:383 src/gtkpounce.c:788
+#: src/gtkpounce.c:333 src/gtkpounce.c:738
 msgid "New Buddy Pounce"
 msgstr "Nové sledování kamaráda"
 
-#: src/gtkpounce.c:383
+#: src/gtkpounce.c:333
 msgid "Edit Buddy Pounce"
 msgstr "Upravit sledování kamaráda"
 
 #. Create the "Pounce Who" frame.
-#: src/gtkpounce.c:401
+#: src/gtkpounce.c:351
 msgid "Pounce Who"
 msgstr "Sledovat koho"
 
-#: src/gtkpounce.c:427
+#: src/gtkpounce.c:377
 msgid "_Buddy Name:"
 msgstr "_Jméno kamaráda:"
 
 #. Create the "Pounce When" frame.
-#: src/gtkpounce.c:449
+#: src/gtkpounce.c:399
 msgid "Pounce When"
 msgstr "Sledovat kdy"
 
-#: src/gtkpounce.c:457 src/main.c:339
+#: src/gtkpounce.c:407 src/main.c:339
 msgid "Sign on"
 msgstr "Přihlášení"
 
-#: src/gtkpounce.c:459
+#: src/gtkpounce.c:409
 msgid "Sign off"
 msgstr "Odhlášení"
 
-#: src/gtkpounce.c:463
+#: src/gtkpounce.c:413
 msgid "Return from away"
 msgstr "Návrat z nepřítomnosti"
 
-#: src/gtkpounce.c:465 src/gtkprefs.c:1498 src/protocols/msn/state.c:30
+#: src/gtkpounce.c:415 src/gtkprefs.c:1487 src/protocols/msn/state.c:30
 #: src/protocols/yahoo/yahoo.c:2028
 msgid "Idle"
 msgstr "Nečinný"
 
-#: src/gtkpounce.c:467
+#: src/gtkpounce.c:417
 msgid "Return from idle"
 msgstr "Návrat z nečinnosti"
 
-#: src/gtkpounce.c:469
+#: src/gtkpounce.c:419
 msgid "Buddy starts typing"
 msgstr "Kamarád začne psát"
 
-#: src/gtkpounce.c:471
+#: src/gtkpounce.c:421
 msgid "Buddy stops typing"
 msgstr "Kamarád přestane psát"
 
 #. Create the "Pounce Action" frame.
-#: src/gtkpounce.c:500
+#: src/gtkpounce.c:450
 msgid "Pounce Action"
 msgstr "Akce sledování"
 
-#: src/gtkpounce.c:507
+#: src/gtkpounce.c:457
 msgid "Open an IM window"
 msgstr "Otevřít okno IM"
 
-#: src/gtkpounce.c:508
+#: src/gtkpounce.c:458
 msgid "Popup notification"
 msgstr "Zobrazit upozornění"
 
-#: src/gtkpounce.c:509
+#: src/gtkpounce.c:459
 msgid "Send a message"
 msgstr "Odeslat zprávu"
 
-#: src/gtkpounce.c:510
+#: src/gtkpounce.c:460
 msgid "Execute a command"
 msgstr "Spustit příkaz"
 
-#: src/gtkpounce.c:511
+#: src/gtkpounce.c:461
 msgid "Play a sound"
 msgstr "Přehrát zvuk"
 
-#: src/gtkpounce.c:515 src/gtkpounce.c:517
+#: src/gtkpounce.c:465 src/gtkpounce.c:467
 msgid "Browse"
 msgstr "Procházet"
 
-#: src/gtkpounce.c:518 src/gtkprefs.c:2087
+#: src/gtkpounce.c:468 src/gtkprefs.c:2076
 msgid "Test"
 msgstr "Otestovat"
 
-#: src/gtkpounce.c:601
+#: src/gtkpounce.c:551
 msgid "_Save this pounce after activation"
 msgstr "_Uložit toto sledování po aktivaci"
 
 #. "Remove Buddy Pounce"
-#: src/gtkpounce.c:795
+#: src/gtkpounce.c:745
 msgid "Remove Buddy Pounce"
 msgstr "Odstranit sledování kamaráda"
 
-#: src/gtkpounce.c:836
+#: src/gtkpounce.c:786
 #, c-format
 msgid "%s has started typing to you"
 msgstr "%s vám začal psát"
 
-#: src/gtkpounce.c:837
+#: src/gtkpounce.c:787
 #, c-format
 msgid "%s has signed on"
 msgstr "%s se přihlásil"
 
-#: src/gtkpounce.c:838
+#: src/gtkpounce.c:788
 #, c-format
 msgid "%s has returned from being idle"
 msgstr "%s se vrátil z nečinnosti"
 
-#: src/gtkpounce.c:839
+#: src/gtkpounce.c:789
 #, c-format
 msgid "%s has returned from being away"
 msgstr "%s se vrátil z nepřítomnosti"
 
-#: src/gtkpounce.c:840
+#: src/gtkpounce.c:790
 #, c-format
 msgid "%s has stopped typing to you"
 msgstr "%s vám přestal psát"
 
-#: src/gtkpounce.c:841
+#: src/gtkpounce.c:791
 #, c-format
 msgid "%s has signed off"
 msgstr "%s se odhlásil"
 
-#: src/gtkpounce.c:842
+#: src/gtkpounce.c:792
 #, c-format
 msgid "%s has become idle"
 msgstr "%s se stal nečinným"
 
-#: src/gtkpounce.c:844
+#: src/gtkpounce.c:794
 msgid "Unknown pounce event. Please report this!"
 msgstr "Neznámá událost sledování. Oznamte to prosím!"
 
@@ -3119,7 +3162,7 @@ msgstr "Barva _textu"
 msgid "Bac_kground color"
 msgstr "Barva _pozadí"
 
-#: src/gtkprefs.c:762 src/gtkprefs.c:1003 src/gtkprefs.c:1056
+#: src/gtkprefs.c:762 src/gtkprefs.c:992 src/gtkprefs.c:1045
 msgid "Display"
 msgstr "Zobrazení"
 
@@ -3183,245 +3226,249 @@ msgstr "Control-{B/I/U} vloží značky _HTML"
 msgid "Control-(number) _inserts smileys"
 msgstr "Control-(číslo) vloží _smajlík"
 
-#: src/gtkprefs.c:822
+#: src/gtkprefs.c:821
 msgid "Buddy List Sorting"
 msgstr "Třídění seznamu kamarádů"
 
-#: src/gtkprefs.c:831
+#: src/gtkprefs.c:830
 msgid "Sorting:"
 msgstr "Třídění:"
 
-#: src/gtkprefs.c:836
+#: src/gtkprefs.c:835
 msgid "Buddy List Toolbar"
 msgstr "Lišta nástrojů seznamu kamarádů"
 
-#: src/gtkprefs.c:837 src/gtkprefs.c:973 src/gtkprefs.c:1029
+#: src/gtkprefs.c:836 src/gtkprefs.c:962 src/gtkprefs.c:1018
 msgid "Show _buttons as:"
 msgstr "Zobrazovat _tlačítka jako:"
 
-#: src/gtkprefs.c:839 src/gtkprefs.c:975 src/gtkprefs.c:1031
+#: src/gtkprefs.c:838 src/gtkprefs.c:964 src/gtkprefs.c:1020
 msgid "Pictures"
 msgstr "Obrázky"
 
-#: src/gtkprefs.c:840 src/gtkprefs.c:976 src/gtkprefs.c:1032
+#: src/gtkprefs.c:839 src/gtkprefs.c:965 src/gtkprefs.c:1021
 msgid "Text"
 msgstr "Text"
 
-#: src/gtkprefs.c:841 src/gtkprefs.c:977 src/gtkprefs.c:1033
+#: src/gtkprefs.c:840 src/gtkprefs.c:966 src/gtkprefs.c:1022
 msgid "Pictures and text"
 msgstr "Obrázky a text"
 
-#: src/gtkprefs.c:846 src/gtkprefs.c:991 src/gtkprefs.c:1047
+#: src/gtkprefs.c:845 src/gtkprefs.c:980 src/gtkprefs.c:1036
 msgid "_Raise window on events"
 msgstr "Z_výšit okno při událostech"
 
-#: src/gtkprefs.c:849
+#: src/gtkprefs.c:848
 msgid "Group Display"
 msgstr "Zobrazení skupin"
 
-#: src/gtkprefs.c:850
+#: src/gtkprefs.c:849
 msgid "Show _numbers in groups"
 msgstr "Zobrazovat _čísla ve skupinách"
 
-#: src/gtkprefs.c:853
+#: src/gtkprefs.c:852
 msgid "Buddy Display"
 msgstr "Zobrazení kamarádů"
 
-#: src/gtkprefs.c:854 src/gtkprefs.c:998
+#: src/gtkprefs.c:853 src/gtkprefs.c:987
 msgid "Show buddy _icons"
 msgstr "Zobrazovat _ikony kamarádů"
 
-#: src/gtkprefs.c:856
+#: src/gtkprefs.c:855
 msgid "Show _warning levels"
 msgstr "Zobrazovat úrovně _varování"
 
-#: src/gtkprefs.c:859
+#: src/gtkprefs.c:857
 msgid "Show idle _times"
 msgstr "Zobrazovat _doby nečinnosti"
 
-#: src/gtkprefs.c:873
+#: src/gtkprefs.c:859
 msgid "Dim i_dle buddies"
 msgstr "Ztmavit _nečinné kamarády"
 
-#: src/gtkprefs.c:898
+#: src/gtkprefs.c:884
 msgid "_Placement:"
 msgstr "_Umístění:"
 
-#: src/gtkprefs.c:905
+#: src/gtkprefs.c:891
 msgid "Send _URLs as Links"
 msgstr "Odesílat _URL jako odkazy"
 
-#: src/gtkprefs.c:908
+#: src/gtkprefs.c:894
+msgid "Show Formatting Toolbar"
+msgstr "Zobrazovat lištu nástrojů Formátování"
+
+#: src/gtkprefs.c:897
 msgid "Tab Options"
 msgstr "Možnosti záložek"
 
-#: src/gtkprefs.c:910
+#: src/gtkprefs.c:899
 msgid "_Tab Placement:"
 msgstr "_Umístění záložek:"
 
-#: src/gtkprefs.c:912
+#: src/gtkprefs.c:901
 msgid "Top"
 msgstr "Nahoře"
 
-#: src/gtkprefs.c:913
+#: src/gtkprefs.c:902
 msgid "Bottom"
 msgstr "Dole"
 
-#: src/gtkprefs.c:914
+#: src/gtkprefs.c:903
 msgid "Left"
 msgstr "Vlevo"
 
-#: src/gtkprefs.c:915
+#: src/gtkprefs.c:904
 msgid "Right"
 msgstr "Vpravo"
 
-#: src/gtkprefs.c:921
+#: src/gtkprefs.c:910
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "Zobrazovat IM a chaty v oknech se zá_ložkami."
 
-#: src/gtkprefs.c:924
+#: src/gtkprefs.c:913
 msgid "Show IMs and chats in _same tabbed window"
 msgstr "Zobrazovat IM a chaty ve _stejném okně se záložkami"
 
-#: src/gtkprefs.c:934
+#: src/gtkprefs.c:923
 msgid "Show _close button on tabs"
 msgstr "Zobrazovat na záložkách tlačítko z_avřít."
 
-#: src/gtkprefs.c:945
+#: src/gtkprefs.c:934
 msgid "Show status _icons on tabs"
 msgstr "Zobrazovat na záložkách _ikony stavu"
 
-#: src/gtkprefs.c:972 src/gtkprefs.c:1028
+#: src/gtkprefs.c:961 src/gtkprefs.c:1017
 msgid "Window"
 msgstr "Okno"
 
-#: src/gtkprefs.c:982 src/gtkprefs.c:1038
+#: src/gtkprefs.c:971 src/gtkprefs.c:1027
 msgid "New window _width:"
 msgstr "_Šířka nového okna:"
 
-#: src/gtkprefs.c:985 src/gtkprefs.c:1041
+#: src/gtkprefs.c:974 src/gtkprefs.c:1030
 msgid "New window _height:"
 msgstr "_Výška nového okna:"
 
-#: src/gtkprefs.c:988 src/gtkprefs.c:1044
+#: src/gtkprefs.c:977 src/gtkprefs.c:1033
 msgid "_Entry field height:"
 msgstr "Výška v_stupního pole:"
 
-#: src/gtkprefs.c:993
+#: src/gtkprefs.c:982
 msgid "Hide window on _send"
 msgstr "Skrýt okno při _odeslání"
 
-#: src/gtkprefs.c:997
+#: src/gtkprefs.c:986
 msgid "Buddy Icons"
 msgstr "Ikony kamarádů"
 
-#: src/gtkprefs.c:1000
+#: src/gtkprefs.c:989
 msgid "Enable buddy icon a_nimation"
 msgstr "Povolit _animaci ikon kamarádů"
 
-#: src/gtkprefs.c:1004
+#: src/gtkprefs.c:993
 msgid "Show _logins in window"
 msgstr "Zobrazovat v okně přihlašovací jména"
 
-#: src/gtkprefs.c:1006
+#: src/gtkprefs.c:995
 msgid "Show a_liases in tabs/titles"
 msgstr "Zobrazovat a_liasy v záložkách/nadpisech"
 
-#: src/gtkprefs.c:1009
+#: src/gtkprefs.c:998
 msgid "Typing Notification"
 msgstr "Upozornění na psaní"
 
-#: src/gtkprefs.c:1010
+#: src/gtkprefs.c:999
 msgid "Notify buddies that you are _typing to them"
 msgstr "Upozornit kamarády, že jim _píšete"
 
-#: src/gtkprefs.c:1050
+#: src/gtkprefs.c:1039
 msgid "Tab Completion"
 msgstr "Dokončování tabelátorem"
 
-#: src/gtkprefs.c:1051
+#: src/gtkprefs.c:1040
 msgid "_Tab-complete nicks"
 msgstr "Dokončovat _tabelátorem přezdívky"
 
-#: src/gtkprefs.c:1053
+#: src/gtkprefs.c:1042
 msgid "_Old-style tab completion"
 msgstr "Dokončování tabelátorem ve _starém stylu"
 
-#: src/gtkprefs.c:1057
+#: src/gtkprefs.c:1046
 msgid "_Show people joining in window"
 msgstr "Zobrazovat _přicházející lidi v okně"
 
-#: src/gtkprefs.c:1059
+#: src/gtkprefs.c:1048
 msgid "_Show people leaving in window"
 msgstr "Zobrazovat _odcházející lidi v okně"
 
-#: src/gtkprefs.c:1061
+#: src/gtkprefs.c:1050
 msgid "Co_lorize screennames"
 msgstr "O_barvovat jména uživatelů"
 
-#: src/gtkprefs.c:1105
+#: src/gtkprefs.c:1094
 msgid "Proxy Type"
 msgstr "Typ proxy"
 
-#: src/gtkprefs.c:1108
+#: src/gtkprefs.c:1097
 msgid "No proxy"
 msgstr "Žádná proxy"
 
-#: src/gtkprefs.c:1115
+#: src/gtkprefs.c:1104
 msgid "Proxy Server"
 msgstr "Proxy server"
 
-#: src/gtkprefs.c:1136
+#: src/gtkprefs.c:1125
 msgid "_Host"
 msgstr "_Počítač"
 
-#: src/gtkprefs.c:1153 src/protocols/irc/irc.c:551
-#: src/protocols/jabber/jabber.c:1087 src/protocols/msn/msn.c:1617
+#: src/gtkprefs.c:1142 src/protocols/irc/irc.c:553
+#: src/protocols/jabber/jabber.c:1111 src/protocols/msn/msn.c:1635
 #: src/protocols/napster/napster.c:642 src/protocols/trepia/trepia.c:1335
 msgid "Port"
 msgstr "Port"
 
-#: src/gtkprefs.c:1171
+#: src/gtkprefs.c:1160
 msgid "_User"
 msgstr "_Uživatel"
 
-#: src/gtkprefs.c:1188
+#: src/gtkprefs.c:1177
 msgid "Pa_ssword"
 msgstr "_Heslo"
 
-#: src/gtkprefs.c:1225
+#: src/gtkprefs.c:1214
 msgid "Opera"
 msgstr "Opera"
 
-#: src/gtkprefs.c:1226
+#: src/gtkprefs.c:1215
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/gtkprefs.c:1227
+#: src/gtkprefs.c:1216
 msgid "Mozilla"
 msgstr "Mozilla"
 
-#: src/gtkprefs.c:1228
+#: src/gtkprefs.c:1217
 msgid "Konqueror"
 msgstr "Konqueror"
 
-#: src/gtkprefs.c:1229
+#: src/gtkprefs.c:1218
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/gtkprefs.c:1238
+#: src/gtkprefs.c:1227
 msgid "Manual"
 msgstr "Ruční"
 
-#: src/gtkprefs.c:1279
+#: src/gtkprefs.c:1268
 msgid "Browser Selection"
 msgstr "Výběr prohlížeče"
 
-#: src/gtkprefs.c:1283
+#: src/gtkprefs.c:1272
 msgid "_Browser:"
 msgstr "_Prohlížeč:"
 
-#: src/gtkprefs.c:1293
+#: src/gtkprefs.c:1282
 #, c-format
 msgid ""
 "_Manual:\n"
@@ -3430,87 +3477,87 @@ msgstr ""
 "_Ruční:\n"
 "(%s pro URL)"
 
-#: src/gtkprefs.c:1314
+#: src/gtkprefs.c:1303
 msgid "Browser Options"
 msgstr "Možnosti prohlížeče"
 
-#: src/gtkprefs.c:1315
+#: src/gtkprefs.c:1304
 msgid "Open new _window by default"
 msgstr "Implicitně otevřít nové _okno"
 
-#: src/gtkprefs.c:1330
+#: src/gtkprefs.c:1319
 msgid "Message Logs"
 msgstr "Záznamy zpráv"
 
-#: src/gtkprefs.c:1331
+#: src/gtkprefs.c:1320
 msgid "_Log all instant messages"
 msgstr "Zaz_namenávat všechny instant message"
 
-#: src/gtkprefs.c:1333
+#: src/gtkprefs.c:1322
 msgid "Log all c_hats"
 msgstr "Zaznamenávat všechny _chaty"
 
-#: src/gtkprefs.c:1335
+#: src/gtkprefs.c:1324
 msgid "Strip _HTML from logs"
 msgstr "Odstranit ze záznamů _HTML"
 
-#: src/gtkprefs.c:1338
+#: src/gtkprefs.c:1327
 msgid "System Logs"
 msgstr "Záznamy systému"
 
-#: src/gtkprefs.c:1339
+#: src/gtkprefs.c:1328
 msgid "Log when buddies _sign on/sign off"
 msgstr "Zaznamenávat, když se kamarádi _přihlásí/odhlásí"
 
-#: src/gtkprefs.c:1341
+#: src/gtkprefs.c:1330
 msgid "Log when buddies become _idle/un-idle"
 msgstr "Zaznamenávat, když se kamarádi stanou _nečinnými/činnými"
 
-#: src/gtkprefs.c:1343
+#: src/gtkprefs.c:1332
 msgid "Log when buddies go away/come _back"
 msgstr "Zaznamenávat, když kamarádi odejdou _pryč/vrátí se"
 
-#: src/gtkprefs.c:1345
+#: src/gtkprefs.c:1334
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Zaznamenávat _vlastní přihlášení/nečinnosti/odchody pryč"
 
-#: src/gtkprefs.c:1347
+#: src/gtkprefs.c:1336
 msgid "I_ndividual log file for each buddy's signons"
 msgstr "Individuální soubor záznamu pro přihlášení každého kamaráda"
 
-#: src/gtkprefs.c:1390
+#: src/gtkprefs.c:1379
 msgid "Sound Options"
 msgstr "Možnosti zvuku"
 
-#: src/gtkprefs.c:1391
+#: src/gtkprefs.c:1380
 msgid "_No sounds when you log in"
 msgstr "_Žádné zvuky při přihlášení"
 
-#: src/gtkprefs.c:1393
+#: src/gtkprefs.c:1382
 msgid "_Sounds while away"
 msgstr "Z_vuky při nepřítomnosti"
 
-#: src/gtkprefs.c:1397
+#: src/gtkprefs.c:1386
 msgid "Sound Method"
 msgstr "Metoda zvuku"
 
-#: src/gtkprefs.c:1398
+#: src/gtkprefs.c:1387
 msgid "_Method:"
 msgstr "_Metoda:"
 
-#: src/gtkprefs.c:1400
+#: src/gtkprefs.c:1389
 msgid "Console beep"
 msgstr "Pípnutí konzoly"
 
-#: src/gtkprefs.c:1402
+#: src/gtkprefs.c:1391
 msgid "Automatic"
 msgstr "Automatická"
 
-#: src/gtkprefs.c:1409
+#: src/gtkprefs.c:1398
 msgid "Command"
 msgstr "Příkaz"
 
-#: src/gtkprefs.c:1419
+#: src/gtkprefs.c:1408
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -3519,67 +3566,67 @@ msgstr ""
 "_Příkaz zvuku:\n"
 "(%s pro název souboru)"
 
-#: src/gtkprefs.c:1474
+#: src/gtkprefs.c:1463
 msgid "_Sending messages removes away status"
 msgstr "_Odesílání zpráv zruší stav nepřítomnosti"
 
-#: src/gtkprefs.c:1476
+#: src/gtkprefs.c:1465
 msgid "_Queue new messages when away"
 msgstr "Zařazovat nové zprávy do _fronty při nepřítomnosti"
 
-#: src/gtkprefs.c:1479
+#: src/gtkprefs.c:1468
 msgid "Auto-response"
 msgstr "Automatická odpověď"
 
-#: src/gtkprefs.c:1482
+#: src/gtkprefs.c:1471
 msgid "Seconds before _resending:"
 msgstr "Sekundy před _opakovaným odesláním:"
 
-#: src/gtkprefs.c:1485
+#: src/gtkprefs.c:1474
 msgid "_Send auto-response"
 msgstr "_Odeslat automatickou odpověď"
 
-#: src/gtkprefs.c:1487
+#: src/gtkprefs.c:1476
 msgid "_Only send auto-response when idle"
 msgstr "Odesílat automatickou odpověď _jen při nečinnosti"
 
-#: src/gtkprefs.c:1489
+#: src/gtkprefs.c:1478
 msgid "Send auto-response in _active conversations"
 msgstr "Odeslat automatickou odpověď v _aktivních konverzacích"
 
-#: src/gtkprefs.c:1499
+#: src/gtkprefs.c:1488
 msgid "Idle _time reporting:"
 msgstr "Hlášení _času nečinnosti:"
 
-#: src/gtkprefs.c:1502
+#: src/gtkprefs.c:1491
 msgid "Gaim usage"
 msgstr "Použití Gaim"
 
-#: src/gtkprefs.c:1505
+#: src/gtkprefs.c:1494
 msgid "X usage"
 msgstr "Použití X"
 
-#: src/gtkprefs.c:1507
+#: src/gtkprefs.c:1496
 msgid "Windows usage"
 msgstr "Použití Windows"
 
-#: src/gtkprefs.c:1515
+#: src/gtkprefs.c:1504
 msgid "Auto-away"
 msgstr "Automatická nepřítomnost"
 
-#: src/gtkprefs.c:1516
+#: src/gtkprefs.c:1505
 msgid "Set away _when idle"
 msgstr "Nastavit nepřítomnost _při nečinnosti"
 
-#: src/gtkprefs.c:1518
+#: src/gtkprefs.c:1507
 msgid "_Minutes before setting away:"
 msgstr "_Minuty před nastavením nepřítomnosti:"
 
-#: src/gtkprefs.c:1525
+#: src/gtkprefs.c:1514
 msgid "Away m_essage:"
 msgstr "Zpráva o nepřítomnosti:"
 
-#: src/gtkprefs.c:1587
+#: src/gtkprefs.c:1576
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3594,7 +3641,7 @@ msgstr ""
 "<span weight=\"bold\">WWW stránka:</span>\t\t%s\n"
 "<span weight=\"bold\">Název souboru:</span>\t%s"
 
-#: src/gtkprefs.c:1592
+#: src/gtkprefs.c:1581
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3609,97 +3656,97 @@ msgstr ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Název souboru:</span>  %s"
 
-#: src/gtkprefs.c:1773
+#: src/gtkprefs.c:1762
 msgid "Load"
 msgstr "Načítat"
 
-#: src/gtkprefs.c:1780 src/protocols/jabber/jabber.c:544
-#: src/protocols/msn/msn.c:1303 src/protocols/trepia/trepia.c:392
+#: src/gtkprefs.c:1769 src/protocols/jabber/jabber.c:562
+#: src/protocols/msn/msn.c:1323 src/protocols/trepia/trepia.c:392
 msgid "Name"
 msgstr "Název"
 
-#: src/gtkprefs.c:1827
+#: src/gtkprefs.c:1816
 msgid "Details"
 msgstr "Detaily"
 
-#: src/gtkprefs.c:1954
+#: src/gtkprefs.c:1943
 msgid "Sound Selection"
 msgstr "Výběr zvuku"
 
-#: src/gtkprefs.c:2061
+#: src/gtkprefs.c:2050
 msgid "Play"
 msgstr "Přehrát"
 
-#: src/gtkprefs.c:2068
+#: src/gtkprefs.c:2057
 msgid "Event"
 msgstr "Událost"
 
-#: src/gtkprefs.c:2091
+#: src/gtkprefs.c:2080
 msgid "Reset"
 msgstr "Vymazat"
 
-#: src/gtkprefs.c:2095
+#: src/gtkprefs.c:2084
 msgid "Choose..."
 msgstr "Vybrat..."
 
-#: src/gtkprefs.c:2229
+#: src/gtkprefs.c:2218
 msgid "_Edit"
 msgstr "_Upravit"
 
-#: src/gtkprefs.c:2265
+#: src/gtkprefs.c:2254
 msgid "Interface"
 msgstr "Rozhraní"
 
-#: src/gtkprefs.c:2266
+#: src/gtkprefs.c:2255
 msgid "Smiley Themes"
 msgstr "Témata smajlíků"
 
-#: src/gtkprefs.c:2267
+#: src/gtkprefs.c:2256
 msgid "Fonts"
 msgstr "Písma"
 
-#: src/gtkprefs.c:2268
+#: src/gtkprefs.c:2257
 msgid "Message Text"
 msgstr "Text zprávy"
 
-#: src/gtkprefs.c:2269
+#: src/gtkprefs.c:2258
 msgid "Shortcuts"
 msgstr "Zkratky"
 
-#: src/gtkprefs.c:2272
+#: src/gtkprefs.c:2261
 msgid "IMs"
 msgstr "IM"
 
-#: src/gtkprefs.c:2274
+#: src/gtkprefs.c:2263
 msgid "Proxy"
 msgstr "Proxy"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2277
+#: src/gtkprefs.c:2266
 msgid "Browser"
 msgstr "Prohlížeč"
 
-#: src/gtkprefs.c:2279
+#: src/gtkprefs.c:2268
 msgid "Logging"
 msgstr "Zaznamenávání"
 
-#: src/gtkprefs.c:2280
+#: src/gtkprefs.c:2269
 msgid "Sounds"
 msgstr "Zvuky"
 
-#: src/gtkprefs.c:2281
+#: src/gtkprefs.c:2270
 msgid "Sound Events"
 msgstr "Události zvuků"
 
-#: src/gtkprefs.c:2282
+#: src/gtkprefs.c:2271
 msgid "Away / Idle"
 msgstr "Pryč / nečinný"
 
-#: src/gtkprefs.c:2283
+#: src/gtkprefs.c:2272
 msgid "Away Messages"
 msgstr "Zprávy o nepřítomnosti"
 
-#: src/gtkprefs.c:2286
+#: src/gtkprefs.c:2275
 msgid "Plugins"
 msgstr "Zásuvné moduly"
 
@@ -4062,7 +4109,7 @@ msgstr "Vyžadovaný zásuvný modul %s nebylo možné načíst."
 msgid "Slightly less boring default"
 msgstr "Trošku méně nudné implicitní"
 
-#: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:109
+#: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:110
 #: src/protocols/msn/msn.c:344 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
 #: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2304
@@ -4078,10 +4125,10 @@ msgstr "Přítomen jen pro přátele"
 msgid "Away for friends only"
 msgstr "Pryč jen pro přátele"
 
-#: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:871
-#: src/protocols/jabber/presence.c:88 src/protocols/oscar/oscar.c:2837
-#: src/protocols/oscar/oscar.c:4517 src/protocols/oscar/oscar.c:4544
-#: src/protocols/oscar/oscar.c:6069 src/protocols/yahoo/yahoo.c:2026
+#: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:895
+#: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2843
+#: src/protocols/oscar/oscar.c:4527 src/protocols/oscar/oscar.c:4554
+#: src/protocols/oscar/oscar.c:6091 src/protocols/yahoo/yahoo.c:2026
 #: src/protocols/yahoo/yahoo.c:2324 src/protocols/yahoo/yahoo.c:2415
 msgid "Invisible"
 msgstr "Neviditelný"
@@ -4199,7 +4246,7 @@ msgstr "Vyhledávací stroj Gadu-Gadu"
 msgid "Active"
 msgstr "Aktivní"
 
-#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3892
+#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3907
 msgid "UIN"
 msgstr "UIN"
 
@@ -4208,13 +4255,13 @@ msgid "First name"
 msgstr "Křestní jméno"
 
 #. Last Name
-#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:564
-#: src/protocols/oscar/oscar.c:3900 src/protocols/trepia/trepia.c:265
+#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:582
+#: src/protocols/oscar/oscar.c:3915 src/protocols/trepia/trepia.c:265
 msgid "Last Name"
 msgstr "Příjmení"
 
 #: src/protocols/gg/gg.c:677 src/protocols/gg/gg.c:1389
-#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3894
+#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3909
 msgid "Nick"
 msgstr "Přezdívka"
 
@@ -4228,16 +4275,16 @@ msgid "Sex"
 msgstr "Pohlaví"
 
 #. City
-#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:574
-#: src/protocols/oscar/oscar.c:3946 src/protocols/oscar/oscar.c:3962
+#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:592
+#: src/protocols/oscar/oscar.c:3961 src/protocols/oscar/oscar.c:3977
 #: src/protocols/trepia/trepia.c:322 src/protocols/trepia/trepia.c:421
 msgid "City"
 msgstr "Město"
 
 #. res[0] == username
-#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1241
-#: src/protocols/msn/msn.c:1483 src/protocols/napster/napster.c:387
-#: src/protocols/oscar/oscar.c:2879 src/protocols/oscar/oscar.c:3187
+#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1261
+#: src/protocols/msn/msn.c:1503 src/protocols/napster/napster.c:387
+#: src/protocols/oscar/oscar.c:2885 src/protocols/oscar/oscar.c:3190
 #: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2581
 #: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2623
 #: src/protocols/yahoo/yahoo.c:2810 src/protocols/zephyr/zephyr.c:355
@@ -4342,8 +4389,8 @@ msgstr ""
 msgid "Directory Search"
 msgstr "Hledání v adresáři"
 
-#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:981
-#: src/protocols/oscar/oscar.c:6422 src/protocols/toc/toc.c:1545
+#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1005
+#: src/protocols/oscar/oscar.c:6446 src/protocols/toc/toc.c:1546
 msgid "Change Password"
 msgstr "Změnit heslo"
 
@@ -4394,17 +4441,17 @@ msgstr "Gaim se setkal s chybou při komunikaci se serverem ICQ."
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "Uživatel %s (%s%s%s%s%s) chce, abyste je autorizovali."
 
-#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:181
-#: src/protocols/msn/notification.c:935 src/protocols/msn/notification.c:1256
-#: src/protocols/msn/notification.c:1422 src/protocols/oscar/oscar.c:2609
-#: src/protocols/oscar/oscar.c:5080
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:184
+#: src/protocols/msn/notification.c:948 src/protocols/msn/notification.c:1269
+#: src/protocols/msn/notification.c:1435 src/protocols/oscar/oscar.c:2615
+#: src/protocols/oscar/oscar.c:5085
 msgid "Authorize"
 msgstr "Autorizovat"
 
-#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:182
-#: src/protocols/msn/notification.c:936 src/protocols/msn/notification.c:1258
-#: src/protocols/msn/notification.c:1424 src/protocols/oscar/oscar.c:2611
-#: src/protocols/oscar/oscar.c:5081
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:185
+#: src/protocols/msn/notification.c:949 src/protocols/msn/notification.c:1271
+#: src/protocols/msn/notification.c:1437 src/protocols/oscar/oscar.c:2617
+#: src/protocols/oscar/oscar.c:5086
 msgid "Deny"
 msgstr "Zamítnout"
 
@@ -4485,8 +4532,7 @@ msgstr "Kanál:"
 msgid "IRC nicks may not contain whitespace"
 msgstr "Přezdívky IRC nemohou obsahovat mezery"
 
-#: src/protocols/irc/irc.c:199 src/protocols/oscar/oscar.c:679
-#: src/protocols/toc/toc.c:228
+#: src/protocols/irc/irc.c:199 src/protocols/toc/toc.c:228
 #, c-format
 msgid "Signon: %s"
 msgstr "Přihlásit: %s"
@@ -4504,23 +4550,28 @@ msgstr "Nemohu vytvořit socket"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:530
+#: src/protocols/irc/irc.c:532
 msgid "IRC Protocol Plugin"
 msgstr "Zásuvný modul protokolu IRC"
 
 #. *  summary
-#: src/protocols/irc/irc.c:531
+#: src/protocols/irc/irc.c:533
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Zásuvný modul protokolu IRC, který není tak špatný"
 
-#: src/protocols/irc/irc.c:548 src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1077 src/protocols/napster/napster.c:637
+#: src/protocols/irc/irc.c:550 src/protocols/irc/msgs.c:197
+#: src/protocols/jabber/jabber.c:1101 src/protocols/napster/napster.c:637
 msgid "Server"
 msgstr "Server"
 
-#: src/protocols/irc/irc.c:554
+#: src/protocols/irc/irc.c:556
 msgid "Encoding"
 msgstr "Kódování"
+
+#: src/protocols/irc/irc.c:559 src/protocols/irc/msgs.c:191
+#: src/protocols/jabber/jabber.c:552
+msgid "Username"
+msgstr "Jméno uživatele"
 
 #: src/protocols/irc/msgs.c:98
 msgid "Bad mode"
@@ -4542,10 +4593,6 @@ msgstr " <i>(ircop)</i>"
 #: src/protocols/irc/msgs.c:185
 msgid " <i>(identified)</i>"
 msgstr " <i>(identifikován)</i>"
-
-#: src/protocols/irc/msgs.c:191 src/protocols/jabber/jabber.c:534
-msgid "Username"
-msgstr "Jméno uživatele"
 
 #: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2681
 msgid "Realname"
@@ -4698,133 +4745,133 @@ msgstr "Odpověď na CTCP PING"
 msgid "Disconnected"
 msgstr "Odpojen"
 
-#: src/protocols/jabber/auth.c:50
+#: src/protocols/jabber/auth.c:51
 msgid "Server requires SSL for login"
 msgstr "Server pro přihlášení vyžaduje SSL"
 
-#: src/protocols/jabber/auth.c:58 src/protocols/jabber/auth.c:342
-#: src/protocols/jabber/auth.c:354
+#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:366
+#: src/protocols/jabber/auth.c:378
 msgid "Invalid response from server"
 msgstr "Neplatná odpověď od serveru"
 
-#: src/protocols/jabber/auth.c:77 src/protocols/jabber/auth.c:124
+#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:137
 msgid "Server does not use any supported authentication method"
 msgstr "Server nepoužívá žádnou podporovanou metodu autentizace"
 
-#: src/protocols/jabber/auth.c:327
+#: src/protocols/jabber/auth.c:287
 msgid "Invalid challenge from server"
 msgstr "Neplatná výzva od serveru"
 
-#: src/protocols/jabber/auth.c:357
+#: src/protocols/jabber/auth.c:381
 msgid "Bad Protocol"
 msgstr "Špatný protokol"
 
-#: src/protocols/jabber/auth.c:360
+#: src/protocols/jabber/auth.c:384
 msgid "Encryption Required"
 msgstr "Vyžadováno šifrování"
 
-#: src/protocols/jabber/auth.c:363
+#: src/protocols/jabber/auth.c:387
 msgid "Invalid authzid"
 msgstr "Neplatné autzid"
 
-#: src/protocols/jabber/auth.c:366
+#: src/protocols/jabber/auth.c:390
 msgid "Invalid Mechanism"
 msgstr "Neplatný mechanismus"
 
-#: src/protocols/jabber/auth.c:368
+#: src/protocols/jabber/auth.c:392
 msgid "Invalid Realm"
 msgstr "Neplatný realm"
 
-#: src/protocols/jabber/auth.c:371
+#: src/protocols/jabber/auth.c:395
 msgid "Mechanism Too Weak"
 msgstr "Příliš slabý mechanismus"
 
-#: src/protocols/jabber/auth.c:374 src/protocols/jabber/jabber.c:130
-#: src/protocols/jabber/jabber.c:806 src/protocols/jabber/jabber.c:856
-#: src/protocols/oscar/oscar.c:5472
+#: src/protocols/jabber/auth.c:398 src/protocols/jabber/jabber.c:131
+#: src/protocols/jabber/jabber.c:830 src/protocols/jabber/jabber.c:880
+#: src/protocols/oscar/oscar.c:5493
 msgid "Not Authorized"
 msgstr "Neautorizován"
 
-#: src/protocols/jabber/auth.c:377
+#: src/protocols/jabber/auth.c:401
 msgid "Temporary Authentication Failure"
 msgstr "Dočasné selhání autentizace"
 
-#: src/protocols/jabber/auth.c:379
+#: src/protocols/jabber/auth.c:403
 msgid "Authentication Failure"
 msgstr "Selhání autentizace"
 
-#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:603
+#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:605
 msgid "Full Name"
 msgstr "Celé jméno"
 
-#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:616
+#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:618
 msgid "Family Name"
 msgstr "Příjmení"
 
-#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:620
+#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:622
 msgid "Given Name"
 msgstr "Křestní jméno"
 
-#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:631
-#: src/protocols/jabber/jabber.c:554 src/protocols/yahoo/yahoo.c:2675
+#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:633
+#: src/protocols/jabber/jabber.c:572 src/protocols/yahoo/yahoo.c:2675
 msgid "Nickname"
 msgstr "Přezdívka"
 
-#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:659
+#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:661
 msgid "Street Address"
 msgstr "Adresa ulice"
 
-#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:655
+#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:657
 msgid "Extended Address"
 msgstr "Rozšířená adresa"
 
-#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:663
+#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:665
 msgid "Locality"
 msgstr "Lokalita"
 
-#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:667
+#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:669
 msgid "Region"
 msgstr "Region"
 
-#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:671
-#: src/protocols/jabber/jabber.c:584
+#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:673
+#: src/protocols/jabber/jabber.c:602
 msgid "Postal Code"
 msgstr "PSČ"
 
 #. Country
-#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:676
+#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:678
 #: src/protocols/trepia/trepia.c:330 src/protocols/trepia/trepia.c:439
 msgid "Country"
 msgstr "Země"
 
-#: src/protocols/jabber/buddy.c:264 src/protocols/jabber/buddy.c:687
-#: src/protocols/jabber/buddy.c:694
+#: src/protocols/jabber/buddy.c:264 src/protocols/jabber/buddy.c:689
+#: src/protocols/jabber/buddy.c:696
 msgid "Telephone"
 msgstr "Telefon"
 
-#: src/protocols/jabber/buddy.c:265 src/protocols/jabber/buddy.c:705
-#: src/protocols/jabber/buddy.c:713 src/protocols/yahoo/yahoo.c:2669
+#: src/protocols/jabber/buddy.c:265 src/protocols/jabber/buddy.c:707
+#: src/protocols/jabber/buddy.c:715 src/protocols/yahoo/yahoo.c:2669
 msgid "Email"
 msgstr "Email"
 
-#: src/protocols/jabber/buddy.c:266 src/protocols/jabber/buddy.c:728
+#: src/protocols/jabber/buddy.c:266 src/protocols/jabber/buddy.c:730
 msgid "Organization Name"
 msgstr "Název organizace"
 
-#: src/protocols/jabber/buddy.c:267 src/protocols/jabber/buddy.c:732
+#: src/protocols/jabber/buddy.c:267 src/protocols/jabber/buddy.c:734
 msgid "Organization Unit"
 msgstr "Jednotka organizace"
 
-#: src/protocols/jabber/buddy.c:268 src/protocols/jabber/buddy.c:738
+#: src/protocols/jabber/buddy.c:268 src/protocols/jabber/buddy.c:740
 msgid "Title"
 msgstr "Titul"
 
-#: src/protocols/jabber/buddy.c:269 src/protocols/jabber/buddy.c:741
+#: src/protocols/jabber/buddy.c:269 src/protocols/jabber/buddy.c:743
 msgid "Role"
 msgstr "Role"
 
-#: src/protocols/jabber/buddy.c:270 src/protocols/jabber/buddy.c:634
-#: src/protocols/oscar/oscar.c:3926
+#: src/protocols/jabber/buddy.c:270 src/protocols/jabber/buddy.c:636
+#: src/protocols/oscar/oscar.c:3941
 msgid "Birthday"
 msgstr "Datum narození"
 
@@ -4844,323 +4891,360 @@ msgid "Jabber ID"
 msgstr "ID Jabberu"
 
 #: src/protocols/jabber/buddy.c:564 src/protocols/jabber/buddy.c:571
-#: src/protocols/jabber/buddy.c:582 src/protocols/jabber/jabber.c:843
-#: src/protocols/jabber/jabber.c:856
+#: src/protocols/jabber/buddy.c:582 src/protocols/jabber/jabber.c:867
+#: src/protocols/jabber/jabber.c:880
 msgid "Status"
 msgstr "Stav"
 
-#: src/protocols/jabber/buddy.c:580 src/protocols/jabber/jabber.c:1080
+#: src/protocols/jabber/buddy.c:580 src/protocols/jabber/jabber.c:1104
 msgid "Resource"
 msgstr "Zdroj"
 
-#: src/protocols/jabber/buddy.c:624
+#: src/protocols/jabber/buddy.c:626
 msgid "Middle Name"
 msgstr "Prostřední jméno"
 
-#: src/protocols/jabber/buddy.c:639 src/protocols/jabber/jabber.c:569
-#: src/protocols/oscar/oscar.c:3943 src/protocols/oscar/oscar.c:3959
+#: src/protocols/jabber/buddy.c:641 src/protocols/jabber/jabber.c:587
+#: src/protocols/oscar/oscar.c:3958 src/protocols/oscar/oscar.c:3974
 msgid "Address"
 msgstr "Adresa"
 
-#: src/protocols/jabber/buddy.c:651
+#: src/protocols/jabber/buddy.c:653
 msgid "P.O. Box"
 msgstr "P.O. Box"
 
-#: src/protocols/jabber/buddy.c:757
+#: src/protocols/jabber/buddy.c:759
 msgid "Photo"
 msgstr "Foto"
 
-#: src/protocols/jabber/buddy.c:757
+#: src/protocols/jabber/buddy.c:759
 msgid "Logo"
 msgstr "Logo"
 
-#: src/protocols/jabber/buddy.c:771
+#: src/protocols/jabber/buddy.c:773
 msgid "Jabber Profile"
 msgstr "Profil Jabberu"
 
-#: src/protocols/jabber/buddy.c:866
+#: src/protocols/jabber/buddy.c:875
 msgid "Un-hide From"
 msgstr "Zrušit skrytí Od"
 
-#: src/protocols/jabber/buddy.c:869
+#: src/protocols/jabber/buddy.c:878
 msgid "Temporarily Hide From"
 msgstr "Dočasně skrýt Od"
 
-#: src/protocols/jabber/buddy.c:877
+#: src/protocols/jabber/buddy.c:886
 msgid "Cancel Presence Notification"
 msgstr "Zrušit upozornění na přítomnosti"
 
-#: src/protocols/jabber/buddy.c:885
-msgid "Re-request authorization"
-msgstr "Znovu vyžádat autorizaci"
+#: src/protocols/jabber/buddy.c:894
+msgid "(Re-)Request authorization"
+msgstr "(Znovu) vyžádat autorizaci"
 
-#: src/protocols/jabber/chat.c:36 src/protocols/yahoo/yahoochat.c:870
+#: src/protocols/jabber/buddy.c:900
+msgid "Unsubscribe"
+msgstr "Odhlásit"
+
+#: src/protocols/jabber/chat.c:37 src/protocols/yahoo/yahoochat.c:870
 msgid "Room:"
 msgstr "Místnost:"
 
-#: src/protocols/jabber/chat.c:43
+#: src/protocols/jabber/chat.c:44
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/jabber/chat.c:49
+#: src/protocols/jabber/chat.c:50
 msgid "Handle:"
 msgstr "Přezdívka:"
 
-#: src/protocols/jabber/jabber.c:80
+#: src/protocols/jabber/chat.c:174
+#, c-format
+msgid "%s is not a valid room name"
+msgstr "%s není platný název místnosti"
+
+#: src/protocols/jabber/chat.c:175
+msgid "Invalid Room Name"
+msgstr "Neplatný název místnosti"
+
+#: src/protocols/jabber/chat.c:180
+#, c-format
+msgid "%s is not a valid server name"
+msgstr "%s není platný název serveru"
+
+#: src/protocols/jabber/chat.c:181 src/protocols/jabber/chat.c:182
+msgid "Invalid Server Name"
+msgstr "Neplatný název serveru"
+
+#: src/protocols/jabber/chat.c:186
+#, c-format
+msgid "%s is not a valid room handle"
+msgstr "%s není platná přezdívka místnosti"
+
+#: src/protocols/jabber/chat.c:187 src/protocols/jabber/chat.c:188
+msgid "Invalid Room Handle"
+msgstr "Neplatná přezdívka místnosti"
+
+#: src/protocols/jabber/jabber.c:81
 msgid "Error initializing session"
 msgstr "Chyba při inicializaci sezení"
 
-#: src/protocols/jabber/jabber.c:105
+#: src/protocols/jabber/jabber.c:106
 msgid "Bad Format"
 msgstr "Špatný formát"
 
-#: src/protocols/jabber/jabber.c:107
+#: src/protocols/jabber/jabber.c:108
 msgid "Bad Namespace Prefix"
 msgstr "Špatná předpona prostoru jmen"
 
-#: src/protocols/jabber/jabber.c:110
+#: src/protocols/jabber/jabber.c:111
 msgid "Resource Conflict"
 msgstr "Konflikt zdrojů"
 
-#: src/protocols/jabber/jabber.c:112
+#: src/protocols/jabber/jabber.c:113
 msgid "Connection Timeout"
 msgstr "Spojení vypršel čas"
 
-#: src/protocols/jabber/jabber.c:114
+#: src/protocols/jabber/jabber.c:115
 msgid "Host Gone"
 msgstr "Počítač zmizel"
 
-#: src/protocols/jabber/jabber.c:116
+#: src/protocols/jabber/jabber.c:117
 msgid "Host Unknown"
 msgstr "Neznámý počítač"
 
-#: src/protocols/jabber/jabber.c:118
+#: src/protocols/jabber/jabber.c:119
 msgid "Improper Addressing"
 msgstr "Nesprávné adresování"
 
-#: src/protocols/jabber/jabber.c:120
+#: src/protocols/jabber/jabber.c:121
 msgid "Internal Server Error"
 msgstr "Interní chyba serveru"
 
-#: src/protocols/jabber/jabber.c:122
+#: src/protocols/jabber/jabber.c:123
 msgid "Invalid ID"
 msgstr "Neplatné ID"
 
-#: src/protocols/jabber/jabber.c:124
+#: src/protocols/jabber/jabber.c:125
 msgid "Invalid Namespace"
 msgstr "Neplatný prostor jmen"
 
-#: src/protocols/jabber/jabber.c:126
+#: src/protocols/jabber/jabber.c:127
 msgid "Invalid XML"
 msgstr "Neplatné XML"
 
-#: src/protocols/jabber/jabber.c:128
+#: src/protocols/jabber/jabber.c:129
 msgid "Non-matching Hosts"
 msgstr "Neodpovídající počítače"
 
-#: src/protocols/jabber/jabber.c:132
+#: src/protocols/jabber/jabber.c:133
 msgid "Policy Violation"
 msgstr "Porušení pravidel"
 
-#: src/protocols/jabber/jabber.c:134
+#: src/protocols/jabber/jabber.c:135
 msgid "Remote Connection Failed"
 msgstr "Selhalo vzdálené připojení"
 
-#: src/protocols/jabber/jabber.c:136
+#: src/protocols/jabber/jabber.c:137
 msgid "Resource Constraint"
 msgstr "Omezení zdrojů"
 
-#: src/protocols/jabber/jabber.c:138
+#: src/protocols/jabber/jabber.c:139
 msgid "Restricted XML"
 msgstr "Omezené XML"
 
-#: src/protocols/jabber/jabber.c:140
+#: src/protocols/jabber/jabber.c:141
 msgid "See Other Host"
 msgstr "Zobrazit druhý počítač"
 
-#: src/protocols/jabber/jabber.c:142
+#: src/protocols/jabber/jabber.c:143
 msgid "System Shutdown"
 msgstr "Vypnutí systému"
 
-#: src/protocols/jabber/jabber.c:144
+#: src/protocols/jabber/jabber.c:145
 msgid "Undefined Condition"
 msgstr "Nedefinovaná podmínka"
 
-#: src/protocols/jabber/jabber.c:146
+#: src/protocols/jabber/jabber.c:147
 msgid "Unsupported Condition"
 msgstr "Nepodporovaná podmínka"
 
-#: src/protocols/jabber/jabber.c:148
+#: src/protocols/jabber/jabber.c:149
 msgid "Unsupported Stanza Type"
 msgstr "Nepodporovaný typ stanza"
 
-#: src/protocols/jabber/jabber.c:150
+#: src/protocols/jabber/jabber.c:151
 msgid "Unsupported Version"
 msgstr "Nepodporovaná verze"
 
-#: src/protocols/jabber/jabber.c:152
+#: src/protocols/jabber/jabber.c:153
 msgid "XML Not Well Formed"
 msgstr "XML není well-formed"
 
-#: src/protocols/jabber/jabber.c:154
+#: src/protocols/jabber/jabber.c:155
 msgid "Stream Error"
 msgstr "Chyba proudu"
 
-#: src/protocols/jabber/jabber.c:232 src/protocols/msn/msn.c:82
-#: src/protocols/msn/msn.c:102 src/protocols/msn/msn.c:160
-#: src/protocols/msn/msn.c:260 src/protocols/msn/msn.c:516
-#: src/protocols/msn/msn.c:627 src/protocols/msn/msn.c:643
-#: src/protocols/msn/msn.c:691 src/protocols/msn/msn.c:714
-#: src/protocols/msn/msn.c:746 src/protocols/msn/msn.c:754
-#: src/protocols/msn/msn.c:787 src/protocols/msn/msn.c:795
-#: src/protocols/msn/msn.c:809 src/protocols/msn/msn.c:818
-#: src/protocols/msn/msn.c:832 src/protocols/msn/msn.c:856
-#: src/protocols/msn/msn.c:906 src/protocols/msn/msn.c:944
-#: src/protocols/msn/msn.c:1042 src/protocols/msn/msn.c:1074
-#: src/protocols/msn/msn.c:1095 src/protocols/msn/msn.c:1106
-#: src/protocols/msn/msn.c:1117 src/protocols/msn/msn.c:1141
-#: src/protocols/msn/msn.c:1153 src/protocols/msn/msn.c:1218
-#: src/protocols/msn/notification.c:179 src/protocols/msn/notification.c:207
-#: src/protocols/msn/notification.c:1655 src/protocols/msn/notification.c:1675
-#: src/protocols/trepia/trepia.c:239 src/protocols/trepia/trepia.c:740
-#: src/protocols/trepia/trepia.c:1023 src/protocols/trepia/trepia.c:1067
-#: src/protocols/trepia/trepia.c:1166 src/protocols/trepia/trepia.c:1222
+#: src/protocols/jabber/jabber.c:233 src/protocols/msn/httpmethod.c:216
+#: src/protocols/msn/msn.c:82 src/protocols/msn/msn.c:102
+#: src/protocols/msn/msn.c:160 src/protocols/msn/msn.c:260
+#: src/protocols/msn/msn.c:536 src/protocols/msn/msn.c:647
+#: src/protocols/msn/msn.c:663 src/protocols/msn/msn.c:711
+#: src/protocols/msn/msn.c:734 src/protocols/msn/msn.c:766
+#: src/protocols/msn/msn.c:774 src/protocols/msn/msn.c:807
+#: src/protocols/msn/msn.c:815 src/protocols/msn/msn.c:829
+#: src/protocols/msn/msn.c:838 src/protocols/msn/msn.c:852
+#: src/protocols/msn/msn.c:876 src/protocols/msn/msn.c:926
+#: src/protocols/msn/msn.c:964 src/protocols/msn/msn.c:1062
+#: src/protocols/msn/msn.c:1094 src/protocols/msn/msn.c:1115
+#: src/protocols/msn/msn.c:1126 src/protocols/msn/msn.c:1137
+#: src/protocols/msn/msn.c:1161 src/protocols/msn/msn.c:1173
+#: src/protocols/msn/msn.c:1238 src/protocols/msn/notification.c:179
+#: src/protocols/msn/notification.c:207 src/protocols/msn/notification.c:1668
+#: src/protocols/msn/notification.c:1688 src/protocols/trepia/trepia.c:239
+#: src/protocols/trepia/trepia.c:740 src/protocols/trepia/trepia.c:1023
+#: src/protocols/trepia/trepia.c:1067 src/protocols/trepia/trepia.c:1166
+#: src/protocols/trepia/trepia.c:1222
 msgid "Write error"
 msgstr "Chyba zápisu"
 
-#: src/protocols/jabber/jabber.c:269 src/protocols/jabber/jabber.c:289
+#: src/protocols/jabber/jabber.c:270 src/protocols/jabber/jabber.c:290
 msgid "Read Error"
 msgstr "Chyba čtení"
 
-#: src/protocols/jabber/jabber.c:394 src/protocols/jabber/jabber.c:671
+#: src/protocols/jabber/jabber.c:367 src/protocols/jabber/jabber.c:661
+msgid "Invalid Jabber ID"
+msgstr "Neplatné ID Jabberu"
+
+#: src/protocols/jabber/jabber.c:401 src/protocols/jabber/jabber.c:695
 #: src/protocols/trepia/trepia.c:1106
 msgid "Unable to create socket"
 msgstr "Nemohu vytvořit socket"
 
-#: src/protocols/jabber/jabber.c:419
+#: src/protocols/jabber/jabber.c:426
 #, c-format
 msgid "Registration of %s@%s successful"
 msgstr "Registrace %s@%s úspěšná"
 
-#: src/protocols/jabber/jabber.c:421 src/protocols/jabber/jabber.c:422
+#: src/protocols/jabber/jabber.c:428 src/protocols/jabber/jabber.c:429
 msgid "Registration Successful"
 msgstr "Registrace úspěšná"
 
-#: src/protocols/jabber/jabber.c:431
+#: src/protocols/jabber/jabber.c:438
 msgid "Unknown Error"
 msgstr "Neznámá chyba"
 
-#: src/protocols/jabber/jabber.c:434
+#: src/protocols/jabber/jabber.c:441
 #, c-format
 msgid "Registration of %s@%s failed: %s"
 msgstr "Registrace %s@%s selhala: %s"
 
-#: src/protocols/jabber/jabber.c:436 src/protocols/jabber/jabber.c:437
+#: src/protocols/jabber/jabber.c:443 src/protocols/jabber/jabber.c:444
 msgid "Registration Failed"
 msgstr "Registrace selhala"
 
-#: src/protocols/jabber/jabber.c:524 src/protocols/jabber/jabber.c:525
+#: src/protocols/jabber/jabber.c:542 src/protocols/jabber/jabber.c:543
 msgid "Already Registered"
 msgstr "Již zaregistrován"
 
-#: src/protocols/jabber/jabber.c:538 src/protocols/jabber/jabber.c:951
+#: src/protocols/jabber/jabber.c:556 src/protocols/jabber/jabber.c:975
 msgid "Password"
 msgstr "Heslo"
 
-#: src/protocols/jabber/jabber.c:549
+#: src/protocols/jabber/jabber.c:567
 msgid "E-Mail"
 msgstr "Email"
 
 #. First Name
-#: src/protocols/jabber/jabber.c:559 src/protocols/oscar/oscar.c:3897
+#: src/protocols/jabber/jabber.c:577 src/protocols/oscar/oscar.c:3912
 #: src/protocols/trepia/trepia.c:258
 msgid "First Name"
 msgstr "Křestní jméno"
 
 #. State
-#: src/protocols/jabber/jabber.c:579 src/protocols/oscar/oscar.c:3949
-#: src/protocols/oscar/oscar.c:3965 src/protocols/trepia/trepia.c:326
+#: src/protocols/jabber/jabber.c:597 src/protocols/oscar/oscar.c:3964
+#: src/protocols/oscar/oscar.c:3980 src/protocols/trepia/trepia.c:326
 #: src/protocols/trepia/trepia.c:430
 msgid "State"
 msgstr "Stát"
 
-#: src/protocols/jabber/jabber.c:589
+#: src/protocols/jabber/jabber.c:607
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/protocols/jabber/jabber.c:607
+#: src/protocols/jabber/jabber.c:625
 msgid "Please fill out the information below to register your new account."
 msgstr "Pro zaregistrování vašeho nového účtu prosím vyplňte informace níže."
 
-#: src/protocols/jabber/jabber.c:610 src/protocols/jabber/jabber.c:611
+#: src/protocols/jabber/jabber.c:628 src/protocols/jabber/jabber.c:629
 msgid "Register New Jabber Account"
 msgstr "Zaregistrovat nový účet Jabber"
 
-#: src/protocols/jabber/jabber.c:710 src/protocols/msn/dispatch.c:219
-#: src/protocols/msn/msn.c:461 src/protocols/napster/napster.c:487
-#: src/protocols/trepia/trepia.c:1100 src/protocols/yahoo/yahoo.c:1923
+#: src/protocols/jabber/jabber.c:734 src/protocols/msn/dispatch.c:219
+#: src/protocols/msn/msn.c:481 src/protocols/napster/napster.c:487
+#: src/protocols/oscar/oscar.c:693 src/protocols/trepia/trepia.c:1100
+#: src/protocols/yahoo/yahoo.c:1923
 msgid "Connecting"
 msgstr "Připojuji se"
 
-#: src/protocols/jabber/jabber.c:714
+#: src/protocols/jabber/jabber.c:738
 msgid "Initializing Stream"
 msgstr "Inicializuji proud"
 
-#: src/protocols/jabber/jabber.c:720
+#: src/protocols/jabber/jabber.c:744
 msgid "Authenticating"
 msgstr "Autentizuji"
 
-#: src/protocols/jabber/jabber.c:728
+#: src/protocols/jabber/jabber.c:752
 msgid "Re-initializing Stream"
 msgstr "Reinicializuji proud"
 
-#: src/protocols/jabber/jabber.c:851 src/protocols/jabber/jabber.c:902
-#: src/protocols/jabber/presence.c:257
+#: src/protocols/jabber/jabber.c:875 src/protocols/jabber/jabber.c:926
+#: src/protocols/jabber/presence.c:270
 msgid "Error"
 msgstr "Chyba"
 
-#: src/protocols/jabber/jabber.c:867 src/protocols/jabber/jutil.c:100
-#: src/protocols/jabber/presence.c:79
+#: src/protocols/jabber/jabber.c:891 src/protocols/jabber/jutil.c:101
+#: src/protocols/jabber/presence.c:82
 msgid "Chatty"
 msgstr "Chatty"
 
-#: src/protocols/jabber/jabber.c:869 src/protocols/jabber/jutil.c:103
-#: src/protocols/jabber/presence.c:84
+#: src/protocols/jabber/jabber.c:893 src/protocols/jabber/jutil.c:104
+#: src/protocols/jabber/presence.c:87
 msgid "Extended Away"
 msgstr "Pryč na dlouho"
 
-#: src/protocols/jabber/jabber.c:870 src/protocols/jabber/jutil.c:106
-#: src/protocols/jabber/presence.c:86 src/protocols/oscar/oscar.c:2827
-#: src/protocols/oscar/oscar.c:4532 src/protocols/oscar/oscar.c:6065
+#: src/protocols/jabber/jabber.c:894 src/protocols/jabber/jutil.c:107
+#: src/protocols/jabber/presence.c:89 src/protocols/oscar/oscar.c:2833
+#: src/protocols/oscar/oscar.c:4542 src/protocols/oscar/oscar.c:6087
 msgid "Do Not Disturb"
 msgstr "Nerušit"
 
-#: src/protocols/jabber/jabber.c:884
+#: src/protocols/jabber/jabber.c:908
 msgid "Password Changed"
 msgstr "Heslo změněno"
 
-#: src/protocols/jabber/jabber.c:885
+#: src/protocols/jabber/jabber.c:909
 msgid "Your password has been changed."
 msgstr "Vaše heslo bylo změněno."
 
-#: src/protocols/jabber/jabber.c:895
+#: src/protocols/jabber/jabber.c:919
 #, c-format
 msgid "Error changing password: %s"
 msgstr "Chyba při změně hesla: %s"
 
-#: src/protocols/jabber/jabber.c:899
+#: src/protocols/jabber/jabber.c:923
 msgid "Unknown error occurred changing password"
 msgstr "Při změně hesla došlo k neznámé chybě"
 
-#: src/protocols/jabber/jabber.c:956
+#: src/protocols/jabber/jabber.c:980
 msgid "Password (again)"
 msgstr "Heslo (znovu)"
 
-#: src/protocols/jabber/jabber.c:961 src/protocols/jabber/jabber.c:962
+#: src/protocols/jabber/jabber.c:985 src/protocols/jabber/jabber.c:986
 msgid "Change Jabber Password"
 msgstr "Změnit heslo Jabberu"
 
-#: src/protocols/jabber/jabber.c:962
+#: src/protocols/jabber/jabber.c:986
 msgid "Please enter your new password"
 msgstr "Zadejte prosím své nové heslo"
 
@@ -5174,33 +5258,33 @@ msgstr "Zadejte prosím své nové heslo"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:1057 src/protocols/jabber/jabber.c:1059
+#: src/protocols/jabber/jabber.c:1081 src/protocols/jabber/jabber.c:1083
 msgid "Jabber Protocol Plugin"
 msgstr "Zásuvný modul protokolu Jabber"
 
-#: src/protocols/jabber/jabber.c:1083
+#: src/protocols/jabber/jabber.c:1107
 msgid "Force Old SSL"
 msgstr "Vnutit staré SSL"
 
-#: src/protocols/jabber/jabber.c:1091
+#: src/protocols/jabber/jabber.c:1115
 msgid "Connect server"
 msgstr "Server spojení"
 
-#: src/protocols/jabber/message.c:95
+#: src/protocols/jabber/message.c:125
 #, c-format
 msgid "Message from %s"
 msgstr "Zpráva od %s"
 
-#: src/protocols/jabber/message.c:178
+#: src/protocols/jabber/message.c:219
 #, c-format
 msgid "Message delivery to %s failed: %s"
 msgstr "Doručení zprávy pro %s selhalo: %s"
 
-#: src/protocols/jabber/message.c:181
+#: src/protocols/jabber/message.c:222
 msgid "Jabber Message Error"
 msgstr "Chyba zprávy Jabberu"
 
-#: src/protocols/jabber/message.c:244
+#: src/protocols/jabber/message.c:281
 #, c-format
 msgid " (Code %s)"
 msgstr " (Kód %s)"
@@ -5209,26 +5293,30 @@ msgstr " (Kód %s)"
 msgid "XML Parse error"
 msgstr "Chyba zpracování XML"
 
-#: src/protocols/jabber/presence.c:167
+#: src/protocols/jabber/presence.c:170
 #, c-format
 msgid "%s (Code %s)"
 msgstr "%s (Kód %s)"
 
-#: src/protocols/jabber/presence.c:172
+#: src/protocols/jabber/presence.c:175
 msgid "Unknown Error in presence"
 msgstr "Neznámá chyba v přítomnosti"
 
-#: src/protocols/jabber/presence.c:176
+#: src/protocols/jabber/presence.c:179
 #, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr "Uživatel %s si vás chce přidat do svého seznamu kamarádů."
 
-#: src/protocols/jabber/presence.c:253
+#: src/protocols/jabber/presence.c:260 src/protocols/oscar/oscar.c:2944
+msgid "Unknown error"
+msgstr "Neznámá chyba"
+
+#: src/protocols/jabber/presence.c:266
 msgid "Unable to join chat"
 msgstr "Nemohu se připojit k chatu"
 
 #: src/protocols/msn/dispatch.c:42 src/protocols/msn/notification.c:278
-#: src/protocols/msn/notification.c:509
+#: src/protocols/msn/notification.c:520
 msgid "Unable to request USR\n"
 msgstr "Nemohu požadovat USR\n"
 
@@ -5248,15 +5336,15 @@ msgstr "Požaduji odeslání hesla"
 msgid "Protocol version not supported"
 msgstr "Verze protokolu nepodporována"
 
-#: src/protocols/msn/dispatch.c:117 src/protocols/msn/notification.c:771
+#: src/protocols/msn/dispatch.c:117 src/protocols/msn/notification.c:784
 msgid "Unable to request CVR\n"
 msgstr "Nemohu požadovat CVR\n"
 
-#: src/protocols/msn/dispatch.c:126 src/protocols/msn/notification.c:780
+#: src/protocols/msn/dispatch.c:126 src/protocols/msn/notification.c:793
 msgid "Unable to request INF\n"
 msgstr "Nemohu požadovat INF\n"
 
-#: src/protocols/msn/dispatch.c:147 src/protocols/msn/notification.c:1889
+#: src/protocols/msn/dispatch.c:147 src/protocols/msn/notification.c:1915
 msgid "Got invalid XFR"
 msgstr "Dostal jsem neplatný XFR"
 
@@ -5268,23 +5356,23 @@ msgstr "Nemohu přenášet"
 msgid "Unable to parse message."
 msgstr "Nemohu zpracovat zprávu."
 
-#: src/protocols/msn/dispatch.c:215 src/protocols/msn/msn.c:470
-#: src/protocols/msn/notification.c:2116 src/protocols/napster/napster.c:463
+#: src/protocols/msn/dispatch.c:215 src/protocols/msn/msn.c:490
+#: src/protocols/msn/notification.c:2145 src/protocols/napster/napster.c:463
 #: src/protocols/napster/napster.c:494 src/protocols/yahoo/yahoo.c:1715
 #: src/protocols/yahoo/yahoo.c:1746 src/protocols/yahoo/yahoo.c:1811
 msgid "Unable to connect"
 msgstr "Nemohu se připojit"
 
-#: src/protocols/msn/dispatch.c:239 src/protocols/msn/notification.c:876
-#: src/protocols/msn/notification.c:2138
+#: src/protocols/msn/dispatch.c:239 src/protocols/msn/notification.c:889
+#: src/protocols/msn/notification.c:2167
 msgid "Unable to write to server"
 msgstr "Nemohu zapisovat na server"
 
-#: src/protocols/msn/dispatch.c:243 src/protocols/msn/notification.c:2145
+#: src/protocols/msn/dispatch.c:243 src/protocols/msn/notification.c:2174
 msgid "Syncing with server"
 msgstr "Synchronizuji se se serverem"
 
-#: src/protocols/msn/dispatch.c:257 src/protocols/msn/notification.c:2159
+#: src/protocols/msn/dispatch.c:257 src/protocols/msn/notification.c:2188
 msgid "Error reading from server"
 msgstr "Chyba při čtení ze serveru"
 
@@ -5380,7 +5468,7 @@ msgstr "Vyžadovaná pole chybí"
 msgid "Too many hits to a FND"
 msgstr "Příliš mnoho výsledků FND"
 
-#: src/protocols/msn/error.c:107 src/protocols/oscar/oscar.c:179
+#: src/protocols/msn/error.c:107 src/protocols/oscar/oscar.c:182
 msgid "Not logged in"
 msgstr "Nepřihlášen."
 
@@ -5433,8 +5521,8 @@ msgstr "Chyba vytváření spojení"
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parametry CVR nejsou známy nebo nejsou povoleny"
 
-#: src/protocols/msn/error.c:154 src/protocols/msn/notification.c:623
-#: src/protocols/msn/notification.c:1269 src/protocols/msn/notification.c:1437
+#: src/protocols/msn/error.c:154 src/protocols/msn/notification.c:635
+#: src/protocols/msn/notification.c:1282 src/protocols/msn/notification.c:1450
 msgid "Unable to write"
 msgstr "Nemohu zapisovat"
 
@@ -5466,7 +5554,7 @@ msgstr "Přátelské jméno se mění příliš rychle"
 msgid "Server too busy"
 msgstr "Server je příliš zaneprázdněn"
 
-#: src/protocols/msn/error.c:190 src/protocols/oscar/oscar.c:1074
+#: src/protocols/msn/error.c:190 src/protocols/oscar/oscar.c:1075
 #: src/protocols/toc/toc.c:659
 msgid "Authentication failed"
 msgstr "Autentizace selhala"
@@ -5549,36 +5637,36 @@ msgstr "Stránka"
 msgid "<b>Status:</b> %s"
 msgstr "<b>Stav:</b> %s"
 
-#: src/protocols/msn/msn.c:345 src/protocols/msn/msn.c:603
+#: src/protocols/msn/msn.c:345 src/protocols/msn/msn.c:623
 #: src/protocols/msn/state.c:32
 msgid "Away From Computer"
 msgstr "Pryč od počítače"
 
-#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:605
+#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:625
 #: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2008
 #: src/protocols/yahoo/yahoo.c:2306 src/protocols/yahoo/yahoo.c:2406
 msgid "Be Right Back"
 msgstr "Hned budu zpátky"
 
-#: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:607
+#: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:627
 #: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2010
 #: src/protocols/yahoo/yahoo.c:2308 src/protocols/yahoo/yahoo.c:2407
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:609
+#: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:629
 #: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2018
 #: src/protocols/yahoo/yahoo.c:2316 src/protocols/yahoo/yahoo.c:2411
 msgid "On The Phone"
 msgstr "Telefonuji"
 
-#: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:611
+#: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:631
 #: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2022
 #: src/protocols/yahoo/yahoo.c:2320 src/protocols/yahoo/yahoo.c:2413
 msgid "Out To Lunch"
 msgstr "Na obědě"
 
-#: src/protocols/msn/msn.c:350 src/protocols/msn/msn.c:613
+#: src/protocols/msn/msn.c:350 src/protocols/msn/msn.c:633
 #: src/protocols/zephyr/zephyr.c:883 src/protocols/zephyr/zephyr.c:898
 msgid "Hidden"
 msgstr "Skryt"
@@ -5615,7 +5703,11 @@ msgstr "Odeslat na mobil"
 msgid "Initiate Chat"
 msgstr "Začít chat"
 
-#: src/protocols/msn/msn.c:727
+#: src/protocols/msn/msn.c:457
+msgid "SSL support is needed for MSN. Please install it."
+msgstr "Pro MSN je potřeba podpora SSL. Nainstalujte ji prosím."
+
+#: src/protocols/msn/msn.c:747
 #, c-format
 msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
@@ -5624,11 +5716,11 @@ msgstr ""
 "Jméno uživatele MSN musí být ve tvaru \"user@server.com\". Možná jste chtěli "
 "%s@hotmail.com. Nebyly provedeny žádné změny ve vašem seznamu povolených."
 
-#: src/protocols/msn/msn.c:731 src/protocols/msn/msn.c:771
+#: src/protocols/msn/msn.c:751 src/protocols/msn/msn.c:791
 msgid "Invalid MSN screenname"
 msgstr "Neplatné jméno uživatele MSN"
 
-#: src/protocols/msn/msn.c:767
+#: src/protocols/msn/msn.c:787
 #, c-format
 msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
@@ -5637,73 +5729,73 @@ msgstr ""
 "Jméno uživatele MSN musí být ve tvaru \"user@server.com\". Možná jste chtěli "
 "%s@hotmail.com. Nebyly provedeny žádné změny ve vašem seznamu blokovaných."
 
-#: src/protocols/msn/msn.c:1242 src/protocols/yahoo/yahoo.c:2582
+#: src/protocols/msn/msn.c:1262 src/protocols/yahoo/yahoo.c:2582
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Chyba při získávání profilu</b></body></html>"
 
 #. Age
-#: src/protocols/msn/msn.c:1310 src/protocols/oscar/oscar.c:3931
+#: src/protocols/msn/msn.c:1330 src/protocols/oscar/oscar.c:3946
 #: src/protocols/trepia/trepia.c:276 src/protocols/trepia/trepia.c:404
 #: src/protocols/yahoo/yahoo.c:2693
 msgid "Age"
 msgstr "Věk"
 
 #. Gender
-#: src/protocols/msn/msn.c:1317 src/protocols/oscar/oscar.c:3917
+#: src/protocols/msn/msn.c:1337 src/protocols/oscar/oscar.c:3932
 #: src/protocols/trepia/trepia.c:270 src/protocols/trepia/trepia.c:412
 #: src/protocols/yahoo/yahoo.c:2705
 msgid "Gender"
 msgstr "Pohlaví"
 
-#: src/protocols/msn/msn.c:1325 src/protocols/yahoo/yahoo.c:2699
+#: src/protocols/msn/msn.c:1345 src/protocols/yahoo/yahoo.c:2699
 msgid "Marital Status"
 msgstr "Stav"
 
-#: src/protocols/msn/msn.c:1332 src/protocols/yahoo/yahoo.c:2687
+#: src/protocols/msn/msn.c:1352 src/protocols/yahoo/yahoo.c:2687
 msgid "Location"
 msgstr "Umístění"
 
-#: src/protocols/msn/msn.c:1340 src/protocols/yahoo/yahoo.c:2711
+#: src/protocols/msn/msn.c:1360 src/protocols/yahoo/yahoo.c:2711
 msgid "Occupation"
 msgstr "Zaměstnání"
 
-#: src/protocols/msn/msn.c:1357 src/protocols/msn/msn.c:1363
-#: src/protocols/msn/msn.c:1370 src/protocols/msn/msn.c:1377
-#: src/protocols/msn/msn.c:1384
+#: src/protocols/msn/msn.c:1377 src/protocols/msn/msn.c:1383
+#: src/protocols/msn/msn.c:1390 src/protocols/msn/msn.c:1397
+#: src/protocols/msn/msn.c:1404
 msgid "A Little About Me"
 msgstr "Něco o mě"
 
-#: src/protocols/msn/msn.c:1393 src/protocols/msn/msn.c:1406
-#: src/protocols/msn/msn.c:1413
+#: src/protocols/msn/msn.c:1413 src/protocols/msn/msn.c:1426
+#: src/protocols/msn/msn.c:1433
 msgid "Favorite Things"
 msgstr "Oblíbené věci"
 
-#: src/protocols/msn/msn.c:1422 src/protocols/msn/msn.c:1428
-#: src/protocols/msn/msn.c:1435
+#: src/protocols/msn/msn.c:1442 src/protocols/msn/msn.c:1448
+#: src/protocols/msn/msn.c:1455
 msgid "Hobbies and Interests"
 msgstr "Koníčky a zájmy"
 
-#: src/protocols/msn/msn.c:1444 src/protocols/msn/msn.c:1450
+#: src/protocols/msn/msn.c:1464 src/protocols/msn/msn.c:1470
 #: src/protocols/yahoo/yahoo.c:2755
 msgid "Favorite Quote"
 msgstr "Oblíbený citát"
 
-#: src/protocols/msn/msn.c:1458 src/protocols/yahoo/yahoo.c:2799
+#: src/protocols/msn/msn.c:1478 src/protocols/yahoo/yahoo.c:2799
 msgid "Last Updated"
 msgstr "Naposledy aktualizováno"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1469 src/protocols/trepia/trepia.c:280
+#: src/protocols/msn/msn.c:1489 src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:448
 msgid "Homepage"
 msgstr "Domovská stránka"
 
-#: src/protocols/msn/msn.c:1491 src/protocols/yahoo/yahoo.c:2817
+#: src/protocols/msn/msn.c:1511 src/protocols/yahoo/yahoo.c:2817
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Informace o uživateli %s nedostupné"
 
-#: src/protocols/msn/msn.c:1493 src/protocols/yahoo/yahoo.c:2819
+#: src/protocols/msn/msn.c:1513 src/protocols/yahoo/yahoo.c:2819
 msgid "The user's profile is empty."
 msgstr "Profil uživatele je prázdný."
 
@@ -5717,82 +5809,91 @@ msgstr "Profil uživatele je prázdný."
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1591 src/protocols/msn/msn.c:1593
+#: src/protocols/msn/msn.c:1611 src/protocols/msn/msn.c:1613
 msgid "MSN Protocol Plugin"
 msgstr "Zásuvný modul protokolu MSN"
 
-#: src/protocols/msn/msn.c:1612 src/protocols/trepia/trepia.c:1330
+#: src/protocols/msn/msn.c:1630 src/protocols/trepia/trepia.c:1330
 msgid "Login server"
 msgstr "Přihlašovací server"
+
+#: src/protocols/msn/msn.c:1640
+msgid "Use HTTP Method"
+msgstr "Používat metodu HTTP"
 
 #: src/protocols/msn/notification.c:247
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "Chyba MSN: %s\n"
 
-#: src/protocols/msn/notification.c:366 src/protocols/msn/notification.c:534
+#: src/protocols/msn/notification.c:322
+msgid "Unable to connect to server"
+msgstr "Nemohu se připojit k serveru"
+
+#: src/protocols/msn/notification.c:376 src/protocols/msn/notification.c:545
 msgid "Unable to write to MSN Nexus server."
 msgstr "Nemohu zapisovat na server MSN Nexus."
 
-#: src/protocols/msn/notification.c:375 src/protocols/msn/notification.c:549
+#: src/protocols/msn/notification.c:385 src/protocols/msn/notification.c:560
 msgid "Unable to read from MSN Nexus server."
 msgstr "Nemohu číst ze serveru MSN Nexus."
 
-#: src/protocols/msn/notification.c:395
+#: src/protocols/msn/notification.c:405
 msgid "MSN Nexus server returned invalid redirect information."
 msgstr "Server MSN Nexus vrátil neplatnou informaci o přesměrování."
 
-#: src/protocols/msn/notification.c:448
+#: src/protocols/msn/notification.c:459
 msgid "Unknown error when attempting to authorize with MSN login server."
 msgstr "Neznámá chyba při pokusu autorizovat se u přihlašovacího serveru MSN."
 
-#: src/protocols/msn/notification.c:560
+#: src/protocols/msn/notification.c:571
 msgid "MSN Nexus server returned invalid information."
 msgstr "Server MSN Nexus vrátil neplatné informace."
 
-#: src/protocols/msn/notification.c:628 src/protocols/trepia/trepia.c:677
+#: src/protocols/msn/notification.c:640 src/protocols/trepia/trepia.c:677
 msgid "Retrieving buddy list"
 msgstr "Získávám seznam kamarádů"
 
-#: src/protocols/msn/notification.c:690
+#: src/protocols/msn/notification.c:703
 msgid "Unable to connect to passport server"
 msgstr "Nemohu se připojit k serveru passport"
 
-#: src/protocols/msn/notification.c:695 src/protocols/msn/notification.c:727
+#: src/protocols/msn/notification.c:708 src/protocols/msn/notification.c:740
+#: src/protocols/oscar/oscar.c:1361
 msgid "Password sent"
 msgstr "Heslo odesláno"
 
-#: src/protocols/msn/notification.c:722
+#: src/protocols/msn/notification.c:735
 msgid "Unable to send password"
 msgstr "Nemohu odeslat heslo"
 
-#: src/protocols/msn/notification.c:758
+#: src/protocols/msn/notification.c:771
 msgid "Protocol not supported"
 msgstr "Protokol nepodporován"
 
-#: src/protocols/msn/notification.c:800
+#: src/protocols/msn/notification.c:813
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "Byli jste odpojeni. Přihlásili jste se z jiného umístění."
 
-#: src/protocols/msn/notification.c:805
+#: src/protocols/msn/notification.c:818
 msgid "You have been disconnected. The MSN servers are going down temporarily."
 msgstr "Byli jste odpojeni. Servery MSN se dočasně vypínají."
 
-#: src/protocols/msn/notification.c:931
+#: src/protocols/msn/notification.c:944
 #, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "Uživatel %s (%s) chce přidat %s do svého seznamu kamarádů."
 
-#: src/protocols/msn/notification.c:1250 src/protocols/msn/notification.c:1416
+#: src/protocols/msn/notification.c:1263 src/protocols/msn/notification.c:1429
 #, c-format
 msgid "The user %s (%s) wants to add you to their buddy list."
 msgstr "Uživatel %s (%s) vás chce přidat do svého seznamu kamarádů."
 
-#: src/protocols/msn/notification.c:1931
+#: src/protocols/msn/notification.c:1960
 msgid "Unable to transfer to notification server"
 msgstr "Nemohu odesílat na serverem upozornění"
 
-#: src/protocols/msn/notification.c:2079
+#: src/protocols/msn/notification.c:2108
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5823,6 +5924,10 @@ msgstr[2] ""
 "odhlášen. Dokončete prosím probíhající konverzace.\n"
 "\n"
 "Až bude údržba dokončena, budete se moci přihlásit."
+
+#: src/protocols/msn/servconn.c:528
+msgid "Received HTTP error. Please report this."
+msgstr "Dostal jsem chybu HTTP. Nahlaste to prosím."
 
 #: src/protocols/msn/switchboard.c:147
 msgid "The conversation has become inactive and timed out."
@@ -5880,8 +5985,8 @@ msgstr ""
 msgid "%s requested a PING"
 msgstr "%s požádal o PING"
 
-#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5151
-#: src/protocols/toc/toc.c:1258
+#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5156
+#: src/protocols/toc/toc.c:1259
 msgid "Join what group:"
 msgstr "Připojit se ke které skupině:"
 
@@ -5899,174 +6004,178 @@ msgstr "Připojit se ke které skupině:"
 msgid "NAPSTER Protocol Plugin"
 msgstr "Zásuvný modul protokolu NAPSTER"
 
-#: src/protocols/oscar/oscar.c:175
+#: src/protocols/oscar/oscar.c:178
 msgid "Invalid error"
 msgstr "Neplatná chyba"
 
-#: src/protocols/oscar/oscar.c:176
+#: src/protocols/oscar/oscar.c:179
 msgid "Invalid SNAC"
 msgstr "Neplatné SNAC"
 
-#: src/protocols/oscar/oscar.c:177
+#: src/protocols/oscar/oscar.c:180
 msgid "Rate to host"
 msgstr "Rychlost k hostiteli"
 
-#: src/protocols/oscar/oscar.c:178
+#: src/protocols/oscar/oscar.c:181
 msgid "Rate to client"
 msgstr "Rychlost ke klientovi"
 
-#: src/protocols/oscar/oscar.c:180
+#: src/protocols/oscar/oscar.c:183
 msgid "Service unavailable"
 msgstr "Služba nedostupná"
 
-#: src/protocols/oscar/oscar.c:181
+#: src/protocols/oscar/oscar.c:184
 msgid "Service not defined"
 msgstr "Služba nedefinována"
 
-#: src/protocols/oscar/oscar.c:182
+#: src/protocols/oscar/oscar.c:185
 msgid "Obsolete SNAC"
 msgstr "Zastaralé SNAC"
 
-#: src/protocols/oscar/oscar.c:183
+#: src/protocols/oscar/oscar.c:186
 msgid "Not supported by host"
 msgstr "Nepodporováno hostitelem"
 
-#: src/protocols/oscar/oscar.c:184
+#: src/protocols/oscar/oscar.c:187
 msgid "Not supported by client"
 msgstr "Nepodporováno klientem"
 
-#: src/protocols/oscar/oscar.c:185
+#: src/protocols/oscar/oscar.c:188
 msgid "Refused by client"
 msgstr "Odmítnuto klientem"
 
-#: src/protocols/oscar/oscar.c:186
+#: src/protocols/oscar/oscar.c:189
 msgid "Reply too big"
 msgstr "Odpověď příliš velká"
 
-#: src/protocols/oscar/oscar.c:187
+#: src/protocols/oscar/oscar.c:190
 msgid "Responses lost"
 msgstr "Odpovědi ztraceny"
 
-#: src/protocols/oscar/oscar.c:188
+#: src/protocols/oscar/oscar.c:191
 msgid "Request denied"
 msgstr "Požadavek zamítnut"
 
-#: src/protocols/oscar/oscar.c:189
+#: src/protocols/oscar/oscar.c:192
 msgid "Busted SNAC payload"
 msgstr "Poškozená data SNAC"
 
-#: src/protocols/oscar/oscar.c:190
+#: src/protocols/oscar/oscar.c:193
 msgid "Insufficient rights"
 msgstr "Nedostatečná oprávnění"
 
-#: src/protocols/oscar/oscar.c:191
+#: src/protocols/oscar/oscar.c:194
 msgid "In local permit/deny"
 msgstr "V místním povolit/zakázat"
 
-#: src/protocols/oscar/oscar.c:192
+#: src/protocols/oscar/oscar.c:195
 msgid "Too evil (sender)"
 msgstr "Příliš zlý (odesílatel)"
 
-#: src/protocols/oscar/oscar.c:193
+#: src/protocols/oscar/oscar.c:196
 msgid "Too evil (receiver)"
 msgstr "Příliš zlý (příjemce)"
 
-#: src/protocols/oscar/oscar.c:194
+#: src/protocols/oscar/oscar.c:197
 msgid "User temporarily unavailable"
 msgstr "Uživatel dočasně nedostupný"
 
-#: src/protocols/oscar/oscar.c:195
+#: src/protocols/oscar/oscar.c:198
 msgid "No match"
 msgstr "Žádná shoda"
 
-#: src/protocols/oscar/oscar.c:196
+#: src/protocols/oscar/oscar.c:199
 msgid "List overflow"
 msgstr "Přetečení seznamu"
 
-#: src/protocols/oscar/oscar.c:197
+#: src/protocols/oscar/oscar.c:200
 msgid "Request ambiguous"
 msgstr "Požadavek nejednoznačný"
 
-#: src/protocols/oscar/oscar.c:198
+#: src/protocols/oscar/oscar.c:201
 msgid "Queue full"
 msgstr "Fronta plná"
 
-#: src/protocols/oscar/oscar.c:199
+#: src/protocols/oscar/oscar.c:202
 msgid "Not while on AOL"
 msgstr "Ne když na AOL"
 
-#: src/protocols/oscar/oscar.c:470
+#: src/protocols/oscar/oscar.c:474
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Přímé IM s %s zavřeno"
 
-#: src/protocols/oscar/oscar.c:472
+#: src/protocols/oscar/oscar.c:476
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Přímé IM s %s selhalo"
 
-#: src/protocols/oscar/oscar.c:531 src/protocols/toc/toc.c:218
+#: src/protocols/oscar/oscar.c:534 src/protocols/toc/toc.c:218
 #: src/protocols/toc/toc.c:625 src/protocols/toc/toc.c:641
 #: src/protocols/toc/toc.c:709
 msgid "Disconnected."
 msgstr "Odpojen."
 
-#: src/protocols/oscar/oscar.c:543 src/protocols/toc/toc.c:885
+#: src/protocols/oscar/oscar.c:546 src/protocols/toc/toc.c:885
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Byl jste odpojen z místnosti chatu %s."
 
-#: src/protocols/oscar/oscar.c:559
+#: src/protocols/oscar/oscar.c:562
 msgid "Chat is currently unavailable"
 msgstr "Chat je momentálně nedostupný"
 
-#: src/protocols/oscar/oscar.c:633 src/protocols/oscar/oscar.c:690
+#: src/protocols/oscar/oscar.c:633 src/protocols/oscar/oscar.c:689
 msgid "Couldn't connect to host"
 msgstr "Nemohu se připojit k hostiteli"
 
-#: src/protocols/oscar/oscar.c:675
+#: src/protocols/oscar/oscar.c:643
+msgid "Screen name sent"
+msgstr "Jméno uživatele odesláno"
+
+#: src/protocols/oscar/oscar.c:677
 msgid "Unable to login to AIM"
 msgstr "Nemohu se přihlásit do AIM"
 
-#: src/protocols/oscar/oscar.c:778 src/protocols/oscar/oscar.c:1165
+#: src/protocols/oscar/oscar.c:778 src/protocols/oscar/oscar.c:1166
 msgid "Could Not Connect"
 msgstr "Nemohu se připojit"
 
-#: src/protocols/oscar/oscar.c:785
+#: src/protocols/oscar/oscar.c:786
 msgid "Connection established, cookie sent"
 msgstr "Spojení navázáno, cookie odesláno"
 
-#: src/protocols/oscar/oscar.c:852 src/protocols/oscar/oscar.c:865
-#: src/protocols/oscar/oscar.c:870
+#: src/protocols/oscar/oscar.c:853 src/protocols/oscar/oscar.c:866
+#: src/protocols/oscar/oscar.c:871
 msgid "File Transfer Aborted"
 msgstr "Přenos souboru přerušen"
 
-#: src/protocols/oscar/oscar.c:853
+#: src/protocols/oscar/oscar.c:854
 msgid "Unable to establish listener socket."
 msgstr "Nemohu vytvořit naslouchající socket."
 
-#: src/protocols/oscar/oscar.c:866
+#: src/protocols/oscar/oscar.c:867
 msgid "Unable to establish file descriptor."
 msgstr "Nemohu získat deskriptor souboru."
 
-#: src/protocols/oscar/oscar.c:871
+#: src/protocols/oscar/oscar.c:872
 msgid "Unable to create new connection."
 msgstr "Nemohu vytvořit nové spojení."
 
-#: src/protocols/oscar/oscar.c:1051 src/protocols/toc/toc.c:571
+#: src/protocols/oscar/oscar.c:1052 src/protocols/toc/toc.c:571
 msgid "Incorrect nickname or password."
 msgstr "Nesprávná přezdívka nebo heslo."
 
-#: src/protocols/oscar/oscar.c:1056
+#: src/protocols/oscar/oscar.c:1057
 msgid "Your account is currently suspended."
 msgstr "Váš účet je momentálně suspendován."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:1060
+#: src/protocols/oscar/oscar.c:1061
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Služba AOL Instant Messenger je dočasně nedostupná."
 
-#: src/protocols/oscar/oscar.c:1065
+#: src/protocols/oscar/oscar.c:1066
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6074,18 +6183,22 @@ msgstr ""
 "Připojovali a odpojovali jste se příliš často. Počkejte deset minut a zkuste "
 "to znovu. Pokud to budete dále zkouše, budete muset čekat ještě déle."
 
-#: src/protocols/oscar/oscar.c:1070
+#: src/protocols/oscar/oscar.c:1071
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 "Verze klienta, kterou používáte, je příliš stará. Aktualizujte prosím na %s"
 
-#: src/protocols/oscar/oscar.c:1102
+#: src/protocols/oscar/oscar.c:1103
 msgid "Internal Error"
 msgstr "Interní chyba"
 
-#: src/protocols/oscar/oscar.c:1204 src/protocols/oscar/oscar.c:1234
-#: src/protocols/oscar/oscar.c:1322
+#: src/protocols/oscar/oscar.c:1173
+msgid "Received authorization"
+msgstr "Přijal jsem autorizaci"
+
+#: src/protocols/oscar/oscar.c:1208 src/protocols/oscar/oscar.c:1238
+#: src/protocols/oscar/oscar.c:1326
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -6094,29 +6207,29 @@ msgstr ""
 "Možná budete brzo odpojen. Možná budete chtít používat TOC, dokud toto není "
 "opraveno. Hledejte aktualizace na %s."
 
-#: src/protocols/oscar/oscar.c:1207 src/protocols/oscar/oscar.c:1237
+#: src/protocols/oscar/oscar.c:1211 src/protocols/oscar/oscar.c:1241
 msgid "Gaim was Unable to get a valid AIM login hash."
 msgstr "Gaim nemohl získat platný přihlašovací hash AIM."
 
-#: src/protocols/oscar/oscar.c:1325
+#: src/protocols/oscar/oscar.c:1329
 msgid "Gaim was Unable to get a valid login hash."
 msgstr "Gaim nemohl získat platný přihlašovací hash."
 
-#: src/protocols/oscar/oscar.c:1905 src/protocols/oscar/oscar.c:5572
+#: src/protocols/oscar/oscar.c:1911 src/protocols/oscar/oscar.c:5594
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Přímé IM s %s navázáno"
 
-#: src/protocols/oscar/oscar.c:2234 src/protocols/oscar/oscar.c:2256
+#: src/protocols/oscar/oscar.c:2240 src/protocols/oscar/oscar.c:2262
 msgid "(There was an error receiving this message)"
 msgstr "(Při příjmu této zprávy došlo k chybě)"
 
-#: src/protocols/oscar/oscar.c:2403
+#: src/protocols/oscar/oscar.c:2409
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s právě požádal o přímé spojení s %s"
 
-#: src/protocols/oscar/oscar.c:2406
+#: src/protocols/oscar/oscar.c:2412
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -6126,24 +6239,24 @@ msgstr ""
 "Images. Protože bude odkryta vaše IP adresa, dá se to považovat za riziko "
 "pro soukromí."
 
-#: src/protocols/oscar/oscar.c:2411 src/protocols/oscar/oscar.c:5941
+#: src/protocols/oscar/oscar.c:2417 src/protocols/oscar/oscar.c:5963
 msgid "Connect"
 msgstr "Připojit"
 
-#: src/protocols/oscar/oscar.c:2438
+#: src/protocols/oscar/oscar.c:2444
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Autorizujte mě prosím, abych vás mohl přidat do svého seznamu kamarádů."
 
-#: src/protocols/oscar/oscar.c:2446
+#: src/protocols/oscar/oscar.c:2452
 msgid "Authorization Request Message:"
 msgstr "Zpráva požadavku na autorizaci"
 
-#: src/protocols/oscar/oscar.c:2447
+#: src/protocols/oscar/oscar.c:2453
 msgid "Please authorize me!"
 msgstr "Autorizujte mě prosím!"
 
-#: src/protocols/oscar/oscar.c:2475
+#: src/protocols/oscar/oscar.c:2481
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -6152,22 +6265,23 @@ msgstr ""
 "Uživatel %s vyžaduje autorizaci před přidáním do seznamu kamarádů. Chcete "
 "odeslat požadavek na autorizaci?"
 
-#: src/protocols/oscar/oscar.c:2480 src/protocols/oscar/oscar.c:2482
+#: src/protocols/oscar/oscar.c:2486 src/protocols/oscar/oscar.c:2488
 msgid "Request Authorization"
 msgstr "Požadovat autorizaci"
 
-#: src/protocols/oscar/oscar.c:2518 src/protocols/oscar/oscar.c:2520
-#: src/protocols/oscar/oscar.c:2527 src/protocols/oscar/oscar.c:2599
-#: src/protocols/oscar/oscar.c:2619 src/protocols/oscar/oscar.c:2975
-#: src/protocols/oscar/oscar.c:5072 src/protocols/oscar/oscar.c:5118
+#: src/protocols/oscar/oscar.c:2524 src/protocols/oscar/oscar.c:2526
+#: src/protocols/oscar/oscar.c:2533 src/protocols/oscar/oscar.c:2605
+#: src/protocols/oscar/oscar.c:2625 src/protocols/oscar/oscar.c:2981
+#: src/protocols/oscar/oscar.c:3037 src/protocols/oscar/oscar.c:5077
+#: src/protocols/oscar/oscar.c:5123
 msgid "No reason given."
 msgstr "Neudán žádný důvod."
 
-#: src/protocols/oscar/oscar.c:2526
+#: src/protocols/oscar/oscar.c:2532
 msgid "Authorization Denied Message:"
 msgstr "Zpráva odmítnutí autorizace:"
 
-#: src/protocols/oscar/oscar.c:2599
+#: src/protocols/oscar/oscar.c:2605
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -6177,11 +6291,11 @@ msgstr ""
 "důvodu:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2607 src/protocols/oscar/oscar.c:5078
+#: src/protocols/oscar/oscar.c:2613 src/protocols/oscar/oscar.c:5083
 msgid "Authorization Request"
 msgstr "Požadavek na autorizaci"
 
-#: src/protocols/oscar/oscar.c:2619
+#: src/protocols/oscar/oscar.c:2625
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -6192,18 +6306,18 @@ msgstr ""
 "následujícího důvodu:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2620
+#: src/protocols/oscar/oscar.c:2626
 msgid "ICQ authorization denied."
 msgstr "Autorizace ICQ odepřena."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:2627
+#: src/protocols/oscar/oscar.c:2633
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr ""
 "Uživatel %u splnil váš požadavek na jeho přidání do vašeho seznamu kamarádů."
 
-#: src/protocols/oscar/oscar.c:2635
+#: src/protocols/oscar/oscar.c:2641
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -6216,7 +6330,7 @@ msgstr ""
 "Od: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2643
+#: src/protocols/oscar/oscar.c:2649
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -6229,7 +6343,7 @@ msgstr ""
 "Od: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2651
+#: src/protocols/oscar/oscar.c:2657
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -6242,20 +6356,20 @@ msgstr ""
 "Zpráva je:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2672
+#: src/protocols/oscar/oscar.c:2678
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "Uživatel ICQ %u vám poslal kamaráda: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:2678
+#: src/protocols/oscar/oscar.c:2684
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Chcete přidat tohoto kamaráda do svého seznamu kamarádů?"
 
-#: src/protocols/oscar/oscar.c:2682
+#: src/protocols/oscar/oscar.c:2688
 msgid "Decline"
 msgstr "Odmítnout"
 
-#: src/protocols/oscar/oscar.c:2764
+#: src/protocols/oscar/oscar.c:2770
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
@@ -6263,7 +6377,7 @@ msgstr[0] "Přišli jste o %hu zprávu od %s, protože byla neplatná."
 msgstr[1] "Přišli jste o %hu zprávy od %s, protože byly neplatné."
 msgstr[2] "Přišli jste o %hu zpráv od %s, protože byly neplatné."
 
-#: src/protocols/oscar/oscar.c:2773
+#: src/protocols/oscar/oscar.c:2779
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
@@ -6271,7 +6385,7 @@ msgstr[0] "Přišli jste o %hu zprávu od %s, protože byla příliš velká."
 msgstr[1] "Přišli jste o %hu zprávy od %s, protože byly příliš velké."
 msgstr[2] "Přišli jste o %hu zpráv od %s, protože byly příliš velké."
 
-#: src/protocols/oscar/oscar.c:2782
+#: src/protocols/oscar/oscar.c:2788
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -6284,7 +6398,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Přišli jste o %hu zpráv od %s, protože limit rychlosti byl překročen."
 
-#: src/protocols/oscar/oscar.c:2791
+#: src/protocols/oscar/oscar.c:2797
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -6292,7 +6406,7 @@ msgstr[0] "Přišli jste o %hu zprávu od %s, protože byli příliš zlí."
 msgstr[1] "Přišli jste o %hu zprávy od %s, protože byli příliš zlí."
 msgstr[2] "Přišli jste o %hu zpráv od %s, protože byli příliš zlí."
 
-#: src/protocols/oscar/oscar.c:2800
+#: src/protocols/oscar/oscar.c:2806
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
@@ -6300,7 +6414,7 @@ msgstr[0] "Přišli jste o %hu zprávu od %s, protože jste velmi zlí."
 msgstr[1] "Přišli jste o %hu zprávy od %s, protože jste velmi zlí."
 msgstr[2] "Přišli jste o %hu zpráv od %s, protože jste velmi zlí."
 
-#: src/protocols/oscar/oscar.c:2809
+#: src/protocols/oscar/oscar.c:2815
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
@@ -6308,151 +6422,152 @@ msgstr[0] "Přišli jste o %hu zprávu od %s z neznámého důvodu."
 msgstr[1] "Přišli jste o %hu zprávy od %s z neznámého důvodu."
 msgstr[2] "Přišli jste o %hu zpráv od %s z neznámého důvodu."
 
-#: src/protocols/oscar/oscar.c:2825 src/protocols/oscar/oscar.c:4541
-#: src/protocols/oscar/oscar.c:6068
+#: src/protocols/oscar/oscar.c:2831 src/protocols/oscar/oscar.c:4551
+#: src/protocols/oscar/oscar.c:6090
 msgid "Free For Chat"
 msgstr "Volný pro chat"
 
-#: src/protocols/oscar/oscar.c:2829 src/protocols/oscar/oscar.c:4535
-#: src/protocols/oscar/oscar.c:6066
+#: src/protocols/oscar/oscar.c:2835 src/protocols/oscar/oscar.c:4545
+#: src/protocols/oscar/oscar.c:6088
 msgid "Not Available"
 msgstr "Nejsem k dispozici"
 
-#: src/protocols/oscar/oscar.c:2831 src/protocols/oscar/oscar.c:4538
-#: src/protocols/oscar/oscar.c:6067
+#: src/protocols/oscar/oscar.c:2837 src/protocols/oscar/oscar.c:4548
+#: src/protocols/oscar/oscar.c:6089
 msgid "Occupied"
 msgstr "Zaměstnán"
 
-#: src/protocols/oscar/oscar.c:2835
+#: src/protocols/oscar/oscar.c:2841
 msgid "Web Aware"
 msgstr "Ví o WWW"
 
-#: src/protocols/oscar/oscar.c:2878
+#: src/protocols/oscar/oscar.c:2884
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>Stav:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:2937
+#: src/protocols/oscar/oscar.c:2943
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC hodil chybu: %s\n"
 
-#: src/protocols/oscar/oscar.c:2938
-msgid "Unknown error"
-msgstr "Neznámá chyba"
-
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:2973
+#: src/protocols/oscar/oscar.c:2979
 #, c-format
 msgid "Your message to %s did not get sent:"
 msgstr "Vaše zpráva pro %s nebyla odeslána:"
 
-#: src/protocols/oscar/oscar.c:3070
+#: src/protocols/oscar/oscar.c:3035
+#, c-format
+msgid "User information for %s unavailable:"
+msgstr "Informace o uživateli %s nedostupné:"
+
+#: src/protocols/oscar/oscar.c:3073
 msgid "Voice"
 msgstr "Hlas"
 
-#: src/protocols/oscar/oscar.c:3073
+#: src/protocols/oscar/oscar.c:3076
 msgid "AIM Direct IM"
 msgstr "AIM Přímé IM"
 
-#: src/protocols/oscar/oscar.c:3079 src/protocols/oscar/oscar.c:6167
+#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:6189
 msgid "Get File"
 msgstr "Získat soubor"
 
-#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:6159
+#: src/protocols/oscar/oscar.c:3085 src/protocols/oscar/oscar.c:6181
 msgid "Send File"
 msgstr "Odeslat soubor"
 
-#: src/protocols/oscar/oscar.c:3086
+#: src/protocols/oscar/oscar.c:3089
 msgid "Games"
 msgstr "Hry"
 
-#: src/protocols/oscar/oscar.c:3089
+#: src/protocols/oscar/oscar.c:3092
 msgid "Add-Ins"
 msgstr "Přídavky"
 
-#: src/protocols/oscar/oscar.c:3092
+#: src/protocols/oscar/oscar.c:3095
 msgid "Send Buddy List"
 msgstr "Odeslat seznam kamarádů"
 
-#: src/protocols/oscar/oscar.c:3095
+#: src/protocols/oscar/oscar.c:3098
 msgid "ICQ Direct Connect"
 msgstr "Přímé spojení ICQ"
 
-#: src/protocols/oscar/oscar.c:3098
+#: src/protocols/oscar/oscar.c:3101
 msgid "AP User"
 msgstr "Uživatel AP"
 
-#: src/protocols/oscar/oscar.c:3101
+#: src/protocols/oscar/oscar.c:3104
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:3104
+#: src/protocols/oscar/oscar.c:3107
 msgid "Nihilist"
 msgstr "Nihilist"
 
-#: src/protocols/oscar/oscar.c:3107
+#: src/protocols/oscar/oscar.c:3110
 msgid "ICQ Server Relay"
 msgstr "Relay ICQ serveru"
 
-#: src/protocols/oscar/oscar.c:3110
+#: src/protocols/oscar/oscar.c:3113
 msgid "Old ICQ UTF8"
 msgstr "Staré ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3113
+#: src/protocols/oscar/oscar.c:3116
 msgid "Trillian Encryption"
 msgstr "Šifrování Trillian"
 
-#: src/protocols/oscar/oscar.c:3116
+#: src/protocols/oscar/oscar.c:3119
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3119
+#: src/protocols/oscar/oscar.c:3122
 msgid "Hiptop"
 msgstr "Hiptop"
 
-#: src/protocols/oscar/oscar.c:3122
-msgid "Secure IM"
-msgstr "Zabezpečené IM"
+#: src/protocols/oscar/oscar.c:3125
+msgid "Security Enabled"
+msgstr "Zabezpečení povoleno"
 
-#: src/protocols/oscar/oscar.c:3151
+#: src/protocols/oscar/oscar.c:3154
 #, c-format
 msgid "Username: <b>%s</b><br>\n"
 msgstr "Jméno uživatele: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3152
+#: src/protocols/oscar/oscar.c:3155
 #, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
 msgstr "Úroveň varování: <b>%d%%</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3155
+#: src/protocols/oscar/oscar.c:3158
 #, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "Připojen od: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3159
+#: src/protocols/oscar/oscar.c:3162
 #, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "Člen od: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3164
+#: src/protocols/oscar/oscar.c:3167
 #, c-format
 msgid "Idle: <b>%s</b>"
 msgstr "Nečinný: <b>%s</b>"
 
-#: src/protocols/oscar/oscar.c:3167
+#: src/protocols/oscar/oscar.c:3170
 msgid "Idle: <b>Active</b>"
 msgstr "Nečinný: <b>Aktivní</b>"
 
-#: src/protocols/oscar/oscar.c:3206
+#: src/protocols/oscar/oscar.c:3209
 msgid "Your AIM connection may be lost."
 msgstr "Vaše spojení AIM může být přerušeno."
 
-#: src/protocols/oscar/oscar.c:3594
+#: src/protocols/oscar/oscar.c:3603
 msgid "Rate limiting error."
 msgstr "Chyba omezení rychlosti."
 
-#: src/protocols/oscar/oscar.c:3595
+#: src/protocols/oscar/oscar.c:3604
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -6460,7 +6575,7 @@ msgstr ""
 "Poslední akce, o kterou jste se pokusili, nemohla být provedena, protože "
 "jste překročili limit rychlosti. Počkejte prosím 10 sekund a zkuste to znovu."
 
-#: src/protocols/oscar/oscar.c:3656
+#: src/protocols/oscar/oscar.c:3665
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
@@ -6468,105 +6583,109 @@ msgstr ""
 "Byli jste odpojeni protože jste se s tímto jménem uživatele přihlásili na "
 "jiném místě."
 
-#: src/protocols/oscar/oscar.c:3658
+#: src/protocols/oscar/oscar.c:3667
 msgid "You have been signed off for an unknown reason."
 msgstr "Byli jste odpojeni z neznámého důvodu."
 
-#: src/protocols/oscar/oscar.c:3903 src/protocols/oscar/oscar.c:3909
+#: src/protocols/oscar/oscar.c:3698
+msgid "Finalizing connection"
+msgstr "Dokončuji spojení"
+
+#: src/protocols/oscar/oscar.c:3918 src/protocols/oscar/oscar.c:3924
 msgid "Email Address"
 msgstr "Emailová adresa"
 
-#: src/protocols/oscar/oscar.c:3914
+#: src/protocols/oscar/oscar.c:3929
 msgid "Mobile Phone"
 msgstr "Mobilní telefon"
 
-#: src/protocols/oscar/oscar.c:3917 src/protocols/trepia/trepia.c:272
+#: src/protocols/oscar/oscar.c:3932 src/protocols/trepia/trepia.c:272
 #: src/protocols/trepia/trepia.c:413
 msgid "Female"
 msgstr "Žena"
 
-#: src/protocols/oscar/oscar.c:3917 src/protocols/trepia/trepia.c:271
+#: src/protocols/oscar/oscar.c:3932 src/protocols/trepia/trepia.c:271
 #: src/protocols/trepia/trepia.c:413
 msgid "Male"
 msgstr "Muž"
 
-#: src/protocols/oscar/oscar.c:3934
+#: src/protocols/oscar/oscar.c:3949
 msgid "Personal Web Page"
 msgstr "Osobní WWW stránka"
 
-#: src/protocols/oscar/oscar.c:3937
+#: src/protocols/oscar/oscar.c:3952
 msgid "Additional Information"
 msgstr "Přídavné informace"
 
-#: src/protocols/oscar/oscar.c:3941
+#: src/protocols/oscar/oscar.c:3956
 msgid "Home Address"
 msgstr "Domácí adresa"
 
-#: src/protocols/oscar/oscar.c:3952 src/protocols/oscar/oscar.c:3968
+#: src/protocols/oscar/oscar.c:3967 src/protocols/oscar/oscar.c:3983
 msgid "Zip Code"
 msgstr "PSČ"
 
-#: src/protocols/oscar/oscar.c:3957
+#: src/protocols/oscar/oscar.c:3972
 msgid "Work Address"
 msgstr "Pracovní adresa"
 
-#: src/protocols/oscar/oscar.c:3973
+#: src/protocols/oscar/oscar.c:3988
 msgid "Work Information"
 msgstr "Pracovní informace"
 
-#: src/protocols/oscar/oscar.c:3975
+#: src/protocols/oscar/oscar.c:3990
 msgid "Company"
 msgstr "Společnost"
 
-#: src/protocols/oscar/oscar.c:3978
+#: src/protocols/oscar/oscar.c:3993
 msgid "Division"
 msgstr "Oddělení"
 
-#: src/protocols/oscar/oscar.c:3981
+#: src/protocols/oscar/oscar.c:3996
 msgid "Position"
 msgstr "Pozice"
 
-#: src/protocols/oscar/oscar.c:3984
+#: src/protocols/oscar/oscar.c:3999
 msgid "Web Page"
 msgstr "WWW stránka"
 
-#: src/protocols/oscar/oscar.c:3990
+#: src/protocols/oscar/oscar.c:4005
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "Informace ICQ pro %s"
 
-#: src/protocols/oscar/oscar.c:4040
+#: src/protocols/oscar/oscar.c:4055
 msgid "Pop-Up Message"
 msgstr "Vyskakovací zpráva"
 
-#: src/protocols/oscar/oscar.c:4061
+#: src/protocols/oscar/oscar.c:4076
 #, c-format
 msgid "The following screennames are associated with %s"
 msgstr "Následující jména uživatele jsou asociována s %s"
 
-#: src/protocols/oscar/oscar.c:4065
+#: src/protocols/oscar/oscar.c:4080
 msgid "Search Results"
 msgstr "Výsledky hledání"
 
-#: src/protocols/oscar/oscar.c:4082
+#: src/protocols/oscar/oscar.c:4097
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Pro e-mailovou adresu %s nebyly nalezeny žádné výsledky"
 
-#: src/protocols/oscar/oscar.c:4103
+#: src/protocols/oscar/oscar.c:4118
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Měli byste dostat e-mail žádající o potvrzení %s."
 
-#: src/protocols/oscar/oscar.c:4105
+#: src/protocols/oscar/oscar.c:4120
 msgid "Account Confirmation Requested"
 msgstr "Požadováno potvrzení účtu"
 
-#: src/protocols/oscar/oscar.c:4133
+#: src/protocols/oscar/oscar.c:4148
 msgid "Error Changing Account Info"
 msgstr "Chyba při změně informací o účtu"
 
-#: src/protocols/oscar/oscar.c:4136
+#: src/protocols/oscar/oscar.c:4151
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6575,7 +6694,7 @@ msgstr ""
 "Chyba 0x%04x: Nemohu naformátovat jméno uživatele, protože požadované jméno "
 "uživatele se liší od původního."
 
-#: src/protocols/oscar/oscar.c:4139
+#: src/protocols/oscar/oscar.c:4154
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6584,7 +6703,7 @@ msgstr ""
 "Chyba 0x%04x: Nemohu naformátovat jméno uživatele, protože požadované jméno "
 "uživatele končí mezerou."
 
-#: src/protocols/oscar/oscar.c:4142
+#: src/protocols/oscar/oscar.c:4157
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6593,7 +6712,7 @@ msgstr ""
 "Chyba 0x%04x: Nemohu naformátovat jméno uživatele, protože požadované jméno "
 "uživatele je příliš dlouhé."
 
-#: src/protocols/oscar/oscar.c:4145
+#: src/protocols/oscar/oscar.c:4160
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -6602,7 +6721,7 @@ msgstr ""
 "Chyba 0x%04x: Nemohu změnit emailovou adresu, protože pro toto jméno "
 "uživatele již existuje požadavek."
 
-#: src/protocols/oscar/oscar.c:4148
+#: src/protocols/oscar/oscar.c:4163
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -6611,7 +6730,7 @@ msgstr ""
 "Chyba 0x%04x: Nemohu změnit emailovou adresu, protože zadaná adresa má "
 "asociováno příliš mnoho jmen uživatelů."
 
-#: src/protocols/oscar/oscar.c:4151
+#: src/protocols/oscar/oscar.c:4166
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -6620,12 +6739,12 @@ msgstr ""
 "Chyba 0x%04x: Nemohu změnit emailovou adresu, protože zadaná adresa je "
 "neplatná."
 
-#: src/protocols/oscar/oscar.c:4154
+#: src/protocols/oscar/oscar.c:4169
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Chyba 0x%04x: Neznámá chyba."
 
-#: src/protocols/oscar/oscar.c:4164
+#: src/protocols/oscar/oscar.c:4179
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -6634,20 +6753,20 @@ msgstr ""
 "Vaše jméno uživatele je aktuálně formátováno následovně:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4165 src/protocols/oscar/oscar.c:4172
+#: src/protocols/oscar/oscar.c:4180 src/protocols/oscar/oscar.c:4187
 msgid "Account Info"
 msgstr "Informace o účtu"
 
-#: src/protocols/oscar/oscar.c:4170
+#: src/protocols/oscar/oscar.c:4185
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "Emailová adresa pro %s je %s"
 
-#: src/protocols/oscar/oscar.c:4400
+#: src/protocols/oscar/oscar.c:4415
 msgid "Unable to set AIM profile."
 msgstr "Nemohu nastavit profil AIM."
 
-#: src/protocols/oscar/oscar.c:4401
+#: src/protocols/oscar/oscar.c:4416
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -6657,7 +6776,7 @@ msgstr ""
 "procedury přihlášení. Váš profil zůstává nenastaven; zkuste jej nastavit "
 "znovu, až budete úplně připojeni."
 
-#: src/protocols/oscar/oscar.c:4431
+#: src/protocols/oscar/oscar.c:4443
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -6672,15 +6791,15 @@ msgstr[1] ""
 msgstr[2] ""
 "Maximální délka profilu %d bajtů byla překročena. Gaim jej pro vás zkrátil."
 
-#: src/protocols/oscar/oscar.c:4436
+#: src/protocols/oscar/oscar.c:4448
 msgid "Profile too long."
 msgstr "Profil příliš dlouhý"
 
-#: src/protocols/oscar/oscar.c:4455
+#: src/protocols/oscar/oscar.c:4465
 msgid "Unable to set AIM away message."
 msgstr "Nemohu nastavit zprávu AIM o nepřítomnosti."
 
-#: src/protocols/oscar/oscar.c:4456
+#: src/protocols/oscar/oscar.c:4466
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -6690,7 +6809,7 @@ msgstr ""
 "dokončením procedury přihlášení. Zůstáváte ve stavu \"přítomen\"; zkuste jej "
 "nastavit znovu, až budete úplně připojeni."
 
-#: src/protocols/oscar/oscar.c:4496
+#: src/protocols/oscar/oscar.c:4506
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -6708,15 +6827,15 @@ msgstr[2] ""
 "Maximální délka zprávy o nepřítomnosti %d bajtů byla překročena. Gaim ji "
 "zkrátil a nastavil vaši nepřítomnost."
 
-#: src/protocols/oscar/oscar.c:4501
+#: src/protocols/oscar/oscar.c:4511
 msgid "Away message too long."
 msgstr "Zpráva o nepřítomnosti příliš dlouhá."
 
-#: src/protocols/oscar/oscar.c:4721
+#: src/protocols/oscar/oscar.c:4725
 msgid "Unable To Retrieve Buddy List"
 msgstr "Nemohu získat seznam kamarádů"
 
-#: src/protocols/oscar/oscar.c:4722
+#: src/protocols/oscar/oscar.c:4726
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -6725,12 +6844,12 @@ msgstr ""
 "Gaim dočasně nemohl získat váš seznam kamarádů ze serverů AIM. Váš seznam "
 "kamarádů není ztracen a pravděpodobně bude k dispozici za několik hodin."
 
-#: src/protocols/oscar/oscar.c:4813 src/protocols/oscar/oscar.c:4814
-#: src/protocols/oscar/oscar.c:4819
+#: src/protocols/oscar/oscar.c:4818 src/protocols/oscar/oscar.c:4819
+#: src/protocols/oscar/oscar.c:4824
 msgid "Orphans"
 msgstr "Sirotci"
 
-#: src/protocols/oscar/oscar.c:4985
+#: src/protocols/oscar/oscar.c:4990
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -6739,15 +6858,15 @@ msgstr ""
 "Nemohu přidat kamaráda %s, protože ve svém seznamu máte příliš mnoho "
 "kamarádů. Odstraňte prosím jednoho a zkuste to znovu."
 
-#: src/protocols/oscar/oscar.c:4985 src/protocols/oscar/oscar.c:4998
+#: src/protocols/oscar/oscar.c:4990 src/protocols/oscar/oscar.c:5003
 msgid "(no name)"
 msgstr "(žádné jméno)"
 
-#: src/protocols/oscar/oscar.c:4986 src/protocols/oscar/oscar.c:4999
+#: src/protocols/oscar/oscar.c:4991 src/protocols/oscar/oscar.c:5004
 msgid "Unable To Add"
 msgstr "Nemohu přidat"
 
-#: src/protocols/oscar/oscar.c:4998
+#: src/protocols/oscar/oscar.c:5003
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -6757,7 +6876,7 @@ msgstr ""
 "Z neznámého důvodu nemohu přidat kamaráda %s. Nejčastější důvod je, že máte "
 "ve svém seznamu kamarádů maximální počet povolených kamarádů."
 
-#: src/protocols/oscar/oscar.c:5033
+#: src/protocols/oscar/oscar.c:5038
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -6766,11 +6885,11 @@ msgstr ""
 "Uživatel %s vám povolil přidat jej do vašeho seznamu kamarádů. Chcete jej "
 "přidat?"
 
-#: src/protocols/oscar/oscar.c:5039
+#: src/protocols/oscar/oscar.c:5044
 msgid "Authorization Given"
 msgstr "Autorizace udělena"
 
-#: src/protocols/oscar/oscar.c:5072
+#: src/protocols/oscar/oscar.c:5077
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -6781,18 +6900,18 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:5114
+#: src/protocols/oscar/oscar.c:5119
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr ""
 "Uživatel %s vyhověl vašemu požadavku přidat jej do vašeho seznamu kamarádů."
 
-#: src/protocols/oscar/oscar.c:5115
+#: src/protocols/oscar/oscar.c:5120
 msgid "Authorization Granted"
 msgstr "Autorizace udělena"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:5118
+#: src/protocols/oscar/oscar.c:5123
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -6803,56 +6922,56 @@ msgstr ""
 "následujícího důvodu:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5119
+#: src/protocols/oscar/oscar.c:5124
 msgid "Authorization Denied"
 msgstr "Autorizace zamítnuta"
 
-#: src/protocols/oscar/oscar.c:5156 src/protocols/toc/toc.c:1263
+#: src/protocols/oscar/oscar.c:5161 src/protocols/toc/toc.c:1264
 msgid "Exchange:"
 msgstr "Výměna:"
 
-#: src/protocols/oscar/oscar.c:5379
+#: src/protocols/oscar/oscar.c:5398
 msgid "<b>Status:</b> "
 msgstr "<b>Stav:</b> "
 
-#: src/protocols/oscar/oscar.c:5388
+#: src/protocols/oscar/oscar.c:5407
 msgid "<b>Logged In:</b> "
 msgstr "<b>Přihlášen:</b> "
 
-#: src/protocols/oscar/oscar.c:5400
+#: src/protocols/oscar/oscar.c:5419
 msgid "<b>IP Address:</b> "
 msgstr "<b>IP adresa:</b> "
 
-#: src/protocols/oscar/oscar.c:5408
+#: src/protocols/oscar/oscar.c:5427
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Schopnosti:</b> "
 
-#: src/protocols/oscar/oscar.c:5415
+#: src/protocols/oscar/oscar.c:5434
 msgid "<b>Available:</b> "
 msgstr "<b>K dispozici:</b> "
 
-#: src/protocols/oscar/oscar.c:5431
+#: src/protocols/oscar/oscar.c:5452
 msgid "<b>Away Message:</b> "
 msgstr "<b>Zpráva o nepřítomnosti:</b>"
 
-#: src/protocols/oscar/oscar.c:5440
+#: src/protocols/oscar/oscar.c:5461
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Stav:</b> Neautorizován"
 
-#: src/protocols/oscar/oscar.c:5474 src/protocols/yahoo/yahoo.c:2030
+#: src/protocols/oscar/oscar.c:5495 src/protocols/yahoo/yahoo.c:2030
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/protocols/oscar/oscar.c:5921
+#: src/protocols/oscar/oscar.c:5943
 msgid "Unable to open Direct IM"
 msgstr "Nemohu otevřít Přímé IM"
 
-#: src/protocols/oscar/oscar.c:5934
+#: src/protocols/oscar/oscar.c:5956
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Rozhodli jste se otevřít Přímé IM spojení s %s."
 
-#: src/protocols/oscar/oscar.c:5937
+#: src/protocols/oscar/oscar.c:5959
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -6860,51 +6979,51 @@ msgstr ""
 "Protože to odkryje vaši IP adresu, dá se to považovat za riziko pro "
 "soukromí. Chcete pokračovat?"
 
-#: src/protocols/oscar/oscar.c:6112
+#: src/protocols/oscar/oscar.c:6134
 msgid "Buddy Comment:"
 msgstr "Poznámka o kamarádovi:"
 
-#: src/protocols/oscar/oscar.c:6128
+#: src/protocols/oscar/oscar.c:6150
 msgid "Edit Buddy Comment"
 msgstr "Upravit poznámku o kamarádovi"
 
-#: src/protocols/oscar/oscar.c:6136
+#: src/protocols/oscar/oscar.c:6158
 msgid "Get Status Msg"
 msgstr "Získat zprávu o stavu"
 
-#: src/protocols/oscar/oscar.c:6151
+#: src/protocols/oscar/oscar.c:6173
 msgid "Direct IM"
 msgstr "Přímé IM"
 
-#: src/protocols/oscar/oscar.c:6180
+#: src/protocols/oscar/oscar.c:6202
 msgid "Re-request Authorization"
 msgstr "Znovu požádat o autorizaci"
 
-#: src/protocols/oscar/oscar.c:6201
+#: src/protocols/oscar/oscar.c:6223
 msgid "The new formatting is invalid."
 msgstr "Nové formátování je neplatné."
 
-#: src/protocols/oscar/oscar.c:6202
+#: src/protocols/oscar/oscar.c:6224
 msgid "Screenname formatting can change only capitalization and whitespace."
 msgstr "Formátování jména uživatele může změnit jen velikost písmen a mezery."
 
-#: src/protocols/oscar/oscar.c:6208
+#: src/protocols/oscar/oscar.c:6230
 msgid "New screenname formatting:"
 msgstr "Nové formátování jména uživatele:"
 
-#: src/protocols/oscar/oscar.c:6257
+#: src/protocols/oscar/oscar.c:6279
 msgid "Change Address To:"
 msgstr "Změnit adresu na:"
 
-#: src/protocols/oscar/oscar.c:6301
+#: src/protocols/oscar/oscar.c:6323
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>nečekáte na autorizaci</i>"
 
-#: src/protocols/oscar/oscar.c:6304
+#: src/protocols/oscar/oscar.c:6326
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Čekáte na autorizaci od následujících kamarádů:"
 
-#: src/protocols/oscar/oscar.c:6305
+#: src/protocols/oscar/oscar.c:6327
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -6912,59 +7031,63 @@ msgstr ""
 "Můžete znovu požádat o autorizaci od těchto kamarádů kliknutím na ně pravým "
 "tlačítkem a zvolením \"Znovu požádat o autorizaci.\""
 
-#: src/protocols/oscar/oscar.c:6319
+#: src/protocols/oscar/oscar.c:6341
 msgid "Find Buddy by E-mail"
 msgstr "Hledat kamaráda podle emailu"
 
-#: src/protocols/oscar/oscar.c:6320
+#: src/protocols/oscar/oscar.c:6342
 msgid "Search for a buddy by e-mail address"
 msgstr "Hledat kamaráda podle emailové adresy"
 
-#: src/protocols/oscar/oscar.c:6321
+#: src/protocols/oscar/oscar.c:6343
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Typ emailové adresy kamaráda, kterého hledáte."
 
-#: src/protocols/oscar/oscar.c:6324
+#: src/protocols/oscar/oscar.c:6346
 msgid "Search"
 msgstr "Hledat"
 
-#: src/protocols/oscar/oscar.c:6337
+#: src/protocols/oscar/oscar.c:6360
 msgid "Available Message:"
 msgstr "Zpráva o dostupnosti:"
 
-#: src/protocols/oscar/oscar.c:6415
+#: src/protocols/oscar/oscar.c:6361
+msgid "I'm doing work and hoping for a distraction--IM me!"
+msgstr "Pracuji a toužím po rozptýlení--pošlete mi IM!"
+
+#: src/protocols/oscar/oscar.c:6439
 msgid "Set Available Message"
 msgstr "Nastavit zprávu o dostupnosti"
 
-#: src/protocols/oscar/oscar.c:6429
+#: src/protocols/oscar/oscar.c:6453
 msgid "Change Password (URL)"
 msgstr "Změnit heslo (URL)"
 
-#: src/protocols/oscar/oscar.c:6437
+#: src/protocols/oscar/oscar.c:6461
 msgid "Configure IM Forwarding (URL)"
 msgstr "Nastavit předávání IM (URL)"
 
-#: src/protocols/oscar/oscar.c:6448
+#: src/protocols/oscar/oscar.c:6472
 msgid "Format Screenname"
 msgstr "Formátovat jméno uživatele"
 
-#: src/protocols/oscar/oscar.c:6454
+#: src/protocols/oscar/oscar.c:6478
 msgid "Confirm Account"
 msgstr "Potvrdit účet"
 
-#: src/protocols/oscar/oscar.c:6460
+#: src/protocols/oscar/oscar.c:6484
 msgid "Display Current Registered Address"
 msgstr "Zobrazit aktuální registrovanou adresu"
 
-#: src/protocols/oscar/oscar.c:6466
+#: src/protocols/oscar/oscar.c:6490
 msgid "Change Current Registered Address"
 msgstr "Změnit aktuální registrovanou adresu"
 
-#: src/protocols/oscar/oscar.c:6475
+#: src/protocols/oscar/oscar.c:6499
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Zobrazit kamarády čekající na autorizaci"
 
-#: src/protocols/oscar/oscar.c:6483
+#: src/protocols/oscar/oscar.c:6507
 msgid "Search for Buddy by Email"
 msgstr "Hledat kamaráda podle emailu"
 
@@ -6978,15 +7101,15 @@ msgstr "Hledat kamaráda podle emailu"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6604 src/protocols/oscar/oscar.c:6606
+#: src/protocols/oscar/oscar.c:6628 src/protocols/oscar/oscar.c:6630
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Zásuvný modul protokolu AIM/ICQ"
 
-#: src/protocols/oscar/oscar.c:6623
+#: src/protocols/oscar/oscar.c:6647
 msgid "Auth host"
 msgstr "Počítač autentizace"
 
-#: src/protocols/oscar/oscar.c:6628
+#: src/protocols/oscar/oscar.c:6652
 msgid "Auth port"
 msgstr "Port autentizace"
 
@@ -7141,37 +7264,37 @@ msgstr ""
 "vykopnout, pokud odešlete zprávu. Gaim zabrání, aby něco prošlo. Je to jen "
 "dočasné, buďte prosím trpěliví."
 
-#: src/protocols/toc/toc.c:1401
+#: src/protocols/toc/toc.c:1402
 msgid "Get Dir Info"
 msgstr "Získat informace adresáře"
 
-#: src/protocols/toc/toc.c:1538
+#: src/protocols/toc/toc.c:1539
 msgid "Set Dir Info"
 msgstr "Nastavit informace adresáře"
 
-#: src/protocols/toc/toc.c:1663
+#: src/protocols/toc/toc.c:1664
 #, c-format
 msgid "Could not open %s for writing!"
 msgstr "Nemohu otevřít %s pro zápis!"
 
-#: src/protocols/toc/toc.c:1699
+#: src/protocols/toc/toc.c:1700
 msgid "File transfer failed; other side probably canceled."
 msgstr "Přenos souboru selhal; druhá strana jej pravděpodobně přerušila."
 
-#: src/protocols/toc/toc.c:1744 src/protocols/toc/toc.c:1784
-#: src/protocols/toc/toc.c:1996
+#: src/protocols/toc/toc.c:1745 src/protocols/toc/toc.c:1785
+#: src/protocols/toc/toc.c:1997
 msgid "Could not connect for transfer."
 msgstr "Nemohu se připojit pro přenos."
 
-#: src/protocols/toc/toc.c:1908
+#: src/protocols/toc/toc.c:1909
 msgid "Could not connect for transfer!"
 msgstr "Nemohu se připojit pro přenos!"
 
-#: src/protocols/toc/toc.c:1941
+#: src/protocols/toc/toc.c:1942
 msgid "Could not write file header.  The file will not be transferred."
 msgstr "Nemohu zapsat hlavičku souboru. Soubor nebude přenesen."
 
-#: src/protocols/toc/toc.c:2075
+#: src/protocols/toc/toc.c:2076
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
@@ -7179,7 +7302,7 @@ msgstr[0] "%s požaduje, aby %s přijal %d soubor: %s (%.2f %s)%s%s"
 msgstr[1] "%s požaduje, aby %s přijal %d soubory: %s (%.2f %s)%s%s"
 msgstr[2] "%s požaduje, aby %s přijal %d souborů: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:2082
+#: src/protocols/toc/toc.c:2083
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%s vás žádá, abyste jim poslali soubor"
@@ -7194,15 +7317,15 @@ msgstr "%s vás žádá, abyste jim poslali soubor"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/toc/toc.c:2158 src/protocols/toc/toc.c:2160
+#: src/protocols/toc/toc.c:2159 src/protocols/toc/toc.c:2161
 msgid "TOC Protocol Plugin"
 msgstr "Zásuvný modul protokolu TOC"
 
-#: src/protocols/toc/toc.c:2177
+#: src/protocols/toc/toc.c:2178
 msgid "TOC host"
 msgstr "Počítač TOC"
 
-#: src/protocols/toc/toc.c:2181
+#: src/protocols/toc/toc.c:2182
 msgid "TOC port"
 msgstr "Port TOC"
 
@@ -7674,7 +7797,7 @@ msgstr "Přijmout pozvání k chatu?"
 #. * makes it slightly less boring ;)
 #: src/status.c:35
 msgid "Sorry, I ran out for a bit!"
-msgstr "Promiňte, na chvíli jsem běžel ven."
+msgstr "Promiňte, na chvíli jsem běžel ven!"
 
 #: src/stock.c:84
 msgid "_Modify"
@@ -7684,44 +7807,44 @@ msgstr "Z_měnit"
 msgid "_Open Mail"
 msgstr "_Otevřít poštu"
 
-#: src/util.c:1527
+#: src/util.c:1587
 msgid "Calculating..."
 msgstr "Počítám..."
 
-#: src/util.c:1530
+#: src/util.c:1590
 msgid "Unknown."
 msgstr "Neznámá."
 
-#: src/util.c:1561 src/util.c:1566 src/util.c:1571 src/util.c:1574
+#: src/util.c:1621 src/util.c:1626 src/util.c:1631 src/util.c:1634
 msgid "day"
 msgid_plural "days"
 msgstr[0] "den"
 msgstr[1] "dny"
 msgstr[2] "dnů"
 
-#: src/util.c:1562 src/util.c:1566 src/util.c:1580 src/util.c:1582
+#: src/util.c:1622 src/util.c:1626 src/util.c:1640 src/util.c:1642
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "hodina"
 msgstr[1] "hodiny"
 msgstr[2] "hodin"
 
-#: src/util.c:1562 src/util.c:1571 src/util.c:1580 src/util.c:1585
+#: src/util.c:1622 src/util.c:1631 src/util.c:1640 src/util.c:1645
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minuta"
 msgstr[1] "minuty"
 msgstr[2] "minut"
 
-#: src/util.c:1917
+#: src/util.c:1977
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Chyba při otevírání spojení.\n"
 
-#: src/win32/win32dep.c:474
+#: src/win32/win32dep.c:387
 msgid "Notification"
 msgstr "Upozornění"
 
-#: src/win32/win32dep.c:475
+#: src/win32/win32dep.c:388
 msgid "Moving Gaim user settings directory to:"
 msgstr "Přesouvám adresář nastavení uživatele Gaim do:"
 
@@ -8078,9 +8201,6 @@ msgstr "Přesouvám adresář nastavení uživatele Gaim do:"
 
 #~ msgid "Couldn't open log file %s"
 #~ msgstr "Nemohu otevřít soubor záznamu %s."
-
-#~ msgid "Screenname"
-#~ msgstr "Jméno uživatele"
 
 #~ msgid "_Raise windows on events"
 #~ msgstr "Z_výšit okno při událostech"
