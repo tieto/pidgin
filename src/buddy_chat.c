@@ -440,6 +440,163 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 	gtk_widget_show(invite);
 }
 
+void tab_complete(struct conversation *c)
+{
+	int pos = GTK_EDITABLE(c->entry)->current_pos;
+	int start = pos;
+	int most_matched = -1;
+	char *entered, *partial = NULL;
+	char *text;
+	GList *matches = NULL;
+	GList *nicks = c->in_room;
+
+	/* if there's nothing there just return */
+	if (!start)
+		return;
+	
+	text = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, pos);
+
+	/* if we're at the end of ": " we need to move back 2 spaces */
+	if (start >= 2 && text[start - 1] == ' ' && text[start - 2] == ':')
+		start -= 2;
+	
+	/* find the start of the word that we're tabbing */
+	while (start > 0 && text[start - 1] != ' ')
+		start--;
+
+	entered = text + start;
+	if (chat_options & OPT_CHAT_OLD_STYLE_TAB) {
+		if (strlen(entered) >= 2 && !strncmp(": ", entered + strlen(entered) - 2, 2))
+			entered[strlen(entered) - 2] = 0;
+	}
+		
+	if (!strlen(entered)) {
+		g_free(text);
+		return;
+	}
+
+	debug_printf("checking tab-completion for %s\n", entered);
+
+	while (nicks) {
+		char *nick = nicks->data;
+		/* this checks to see if the current nick could be a completion */
+		if (g_strncasecmp(nick, entered, strlen(entered))) {
+			if (nick[0] != '+' && nick[0] != '@') {
+				nicks = nicks->next;
+				continue;
+			}
+			if (g_strncasecmp(nick + 1, entered, strlen(entered))) {
+				if (nick[0] != '@' && nick[1] != '+') {
+					nicks = nicks->next;
+					continue;
+				}
+				if (g_strncasecmp(nick + 2, entered, strlen(entered))) {
+					nicks = nicks->next;
+					continue;
+				}
+				else
+					nick += 2;
+			} else
+				nick++;
+		}
+		/* if we're here, it's a possible completion */
+		debug_printf("possible completion: %s\n", nick);
+
+		/* if we're doing old-style, just fill in the completion */
+		if (chat_options & OPT_CHAT_OLD_STYLE_TAB) {
+		        gtk_editable_delete_text(GTK_EDITABLE(c->entry), start, pos);
+			if (strlen(nick) == strlen(entered)) {
+				nicks = nicks->next ? nicks->next : c->in_room;
+				nick = nicks->data;
+				if (*nick == '@')
+					nick++;
+				if (*nick == '+')
+					nick++;
+			}
+
+			if (start == 0) {
+				char *tmp = g_strdup_printf("%s: ", nick);
+				int t = start;
+				gtk_editable_insert_text(GTK_EDITABLE(c->entry), tmp, strlen(tmp), &start);
+				if (t == start) {
+					t = start + strlen(tmp);
+					gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
+				}
+				g_free(tmp);
+			} else {
+				int t = start;
+				gtk_editable_insert_text(GTK_EDITABLE(c->entry), nick, strlen(nick), &start);
+				if (t == start) {
+					t = start + strlen(nick);
+					gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
+				}
+			}
+			g_free(text);
+			return;
+		}
+
+		/* we're only here if we're doing new style */
+		if (most_matched == -1) {
+			/* this will only get called once, since from now on most_matched is >= 0 */
+			most_matched = strlen(nick);
+			partial = g_strdup(nick);
+		} else if (most_matched) {
+			while (g_strncasecmp(nick, partial, most_matched))
+				most_matched--;
+			partial[most_matched] = 0;
+		}
+		matches = g_list_append(matches, nick);
+
+		nicks = nicks->next;
+	}
+	/* we're only here if we're doing new style */
+	
+	/* if there weren't any matches, return */
+	if (!matches) {
+		/* if matches isn't set partials won't be either */
+		g_free(text);
+		return;
+	}
+	
+	gtk_editable_delete_text(GTK_EDITABLE(c->entry), start, pos);
+	if (!matches->next) {
+		/* there was only one match. fill it in. */
+		if (start == 0) {
+			char *tmp = g_strdup_printf("%s: ", (char *)matches->data);
+			int t = start;
+			gtk_editable_insert_text(GTK_EDITABLE(c->entry), tmp, strlen(tmp), &start);
+			if (t == start) {
+				t = start + strlen(tmp);
+				gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
+			}
+			g_free(tmp);
+		} else {
+			gtk_editable_insert_text(GTK_EDITABLE(c->entry), matches->data, strlen(matches->data), &start);
+		}
+		matches = g_list_remove(matches, matches->data);
+	} else {
+		/* there were lots of matches, fill in as much as possible and display all of them */
+		char *addthis = g_malloc0(1);
+		int t = start;
+		while (matches) {
+			char *tmp = addthis;
+			addthis = g_strconcat(tmp, matches->data, " ", NULL);
+			g_free(tmp);
+			matches = g_list_remove(matches, matches->data);
+		}
+		write_to_conv(c, addthis, WFLAG_NOLOG, NULL, time(NULL));
+		gtk_editable_insert_text(GTK_EDITABLE(c->entry), partial, strlen(partial), &start);
+		if (t == start) {
+			t = start + strlen(partial);
+			gtk_editable_set_position(GTK_EDITABLE(c->entry), t);
+		}
+		g_free(addthis);
+	}
+	
+	g_free(text);
+	g_free(partial);
+}
+
 gboolean meify(char *message)
 {
 	/* read /me-ify : if the message (post-HTML) starts with /me, remove

@@ -2,22 +2,18 @@ THE CORE:
 	GPG Encryption of messages
 	Have plugin_event use varargs instead of void*
 	Separate core functions from UI stuff.
-		about.c, applet.[ch], away.c, conversation.c, convo.h, multi.c,
-		gtk*, prefs.c, prpl.c, sound.c, ticker.c
+		about.c, applet.[ch], away.c, buddy.c, conversation.c, convo.h,
+		dialogs.c, multi.c, gtk*, prefs.c, prpl.c, sound.c, ticker.c
 			little to no work (mostly GTK)
 
-		gaimrc.c, html.c, proxy.[ch], prpl.h, server.c, util.c
+		gaimrc.c, html.c, list.c, proxy.[ch], prpl.h, server.c, util.c
 			little to no work (mostly CORE)
 
 		aim.c - need to redo main() completely
 			- current main should be moved mostly to core
 			- GTK main should connect to core
 		browser.c - let the UI deal with this? little to no work.
-		buddy.c - need to split into buddy.c and list.c
-			- buddy.c handles add/remove/rename/alias buddies
-			- list.c handles drawing the buddy list for GTK
 		buddy_chat.c - need to move out non-GTK functions. some work.
-		dialogs.c - need to move import/export out of here and into buddy.c
 		gaim.h - need to separate into core.h and ui.h.
 		idle.c - Need to figure out how to report idle times when there's
 			more than one UI

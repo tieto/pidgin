@@ -755,6 +755,9 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
+	} else if ((event->keyval == GDK_Tab) && c->is_chat && (chat_options & OPT_CHAT_TAB_COMPLETE)) {
+	        tab_complete(c);
+		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	} else if (((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
 		   (event->state & GDK_MOD1_MASK) && isdigit(event->keyval) && (event->keyval > '0')) {
@@ -1396,7 +1399,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			c->history = g_string_append(c->history, "<BR>\n");
 		}
 
-		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
+		if (!(flags & WFLAG_NOLOG) && ((logging_options & OPT_LOG_ALL) || find_log_info(c->name))) {
 			char *t1;
 			char nm[256];
 
@@ -1422,7 +1425,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				g_free(t1);
 			}
 		}
-
+	} else if (flags & WFLAG_NOLOG) {
+		g_snprintf(buf, BUF_LONG, "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>", what);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, 0);
 	} else {
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
@@ -1499,7 +1504,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(t2);
 		}
 
-		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
+		if (!(flags & WFLAG_NOLOG) && ((logging_options & OPT_LOG_ALL) || find_log_info(c->name))) {
 			char *t1, *t2;
 			char *nm = g_malloc(256);
 			if (c->is_chat)

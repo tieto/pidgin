@@ -8,6 +8,9 @@ version 0.45:
 	  SIGNALS)
 	* Some GtkIMHtml improvements
 	* Various bugfixes
+	* Nick Highlighting in chat
+	* Tab-completion for nicks in chat (thanks to Sean Egan)
+	* Large internal reworkings
 
 version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to

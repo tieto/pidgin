@@ -41,6 +41,7 @@ extern void im_callback(GtkWidget *, struct conversation *);
 extern void ignore_callback(GtkWidget *, struct conversation *);
 extern void whisper_callback(GtkWidget *, struct conversation *);
 extern void invite_callback(GtkWidget *, struct conversation *);
+extern void tab_complete(struct conversation *c);
 
 /* now IM */
 extern void warn_callback(GtkWidget *, struct conversation *);

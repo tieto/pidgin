@@ -70,6 +70,7 @@
 #define WFLAG_FILERECV	0x10
 #define WFLAG_SYSTEM	0x20
 #define WFLAG_NICK	0x40
+#define WFLAG_NOLOG	0x80
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
@@ -528,6 +529,8 @@ extern guint chat_options;
 #define OPT_CHAT_POPUP			0x00000010
 #define OPT_CHAT_SIDE_TAB		0x00000020
 #define OPT_CHAT_BR_TAB			0x00000040
+#define OPT_CHAT_TAB_COMPLETE		0x00000080
+#define OPT_CHAT_OLD_STYLE_TAB		0x00000100
 
 extern guint font_options;
 #define OPT_FONT_BOLD			0x00000001

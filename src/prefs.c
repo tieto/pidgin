@@ -984,6 +984,8 @@ static void chat_page()
 	GtkWidget *button;
 	GtkWidget *hbox2;
 	GtkWidget *vbox3;
+	GtkWidget *tab;
+	GtkWidget *old;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1085,6 +1087,29 @@ static void chat_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
 	opt = tab_radio(_("Right"), OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB | 1, vbox3, opt);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+
+	frame = gtk_frame_new(_("Tab Completion"));
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	tab = gaim_button(_("Tab-Complete Nicks"), &chat_options, OPT_CHAT_TAB_COMPLETE, vbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	old = gaim_button(_("Old-Style Tab Completion"), &chat_options, OPT_CHAT_OLD_STYLE_TAB, vbox);
+	if (!(chat_options & OPT_CHAT_TAB_COMPLETE))
+		gtk_widget_set_sensitive(GTK_WIDGET(old), FALSE);
+	gtk_signal_connect(GTK_OBJECT(tab), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), old);
 
 	gtk_widget_show(prefdialog);
 }
