@@ -394,7 +394,7 @@ void jabber_iq_disco_server(JabberStream *js)
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberCallbackData *jcd;
-	xmlnode *query;
+	xmlnode *query, *error, *x;
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIq *iq;
@@ -448,28 +448,28 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	id = xmlnode_get_attrib(packet, "id");
 
-	if(type && (!strcmp(type, "result") || !strcmp(type, "error")) && id
-			&& *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
-		jcd->callback(js, packet, jcd->data);
-		g_hash_table_remove(js->callbacks, id);
+	if(type && (!strcmp(type, "result") || !strcmp(type, "error"))) {
+		if(id && *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
+			jcd->callback(js, packet, jcd->data);
+			g_hash_table_remove(js->callbacks, id);
+		}
 		return;
 	}
 
 	/* Default error reply mandated by XMPP-CORE */
 
 	iq = jabber_iq_new(js, JABBER_IQ_ERROR);
-	xmlnode_set_attrib(iq->node, "id", id);
-	xmlnode_set_attrib(iq->node, "to", from);
 
-	for(query = packet->child; query; query = query->next) {
-		switch(query->type) {
-			case XMLNODE_TYPE_TAG:
-				break;
-			case XMLNODE_TYPE_ATTRIB:
-				break;
-			case XMLNODE_TYPE_DATA:
-				break;
-		}
-	}
+	xmlnode_free(iq->node);
+	iq->node = xmlnode_copy(packet);
+	xmlnode_set_attrib(iq->node, "to", from);
+	xmlnode_set_attrib(iq->node, "type", "error");
+	error = xmlnode_new_child(iq->node, "error");
+	xmlnode_set_attrib(error, "type", "cancel");
+	xmlnode_set_attrib(error, "code", "501");
+	x = xmlnode_new_child(error, "feature-not-implemented");
+	xmlnode_set_attrib(x, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+
+	jabber_iq_send(iq);
 }
 
