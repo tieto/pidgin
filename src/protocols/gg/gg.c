@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 11653 2004-12-24 01:47:59Z thekingant $
+ * $Id: gg.c 11661 2004-12-24 14:45:30Z nosnilmot $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -81,8 +81,6 @@ struct agg_http {
 
 static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {
-	return (g_convert (locstr, strlen (locstr), encdst, encsrc, NULL, NULL, NULL));
-
 	gchar *msg;
 	GError *err = NULL;
 
