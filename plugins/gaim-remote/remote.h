@@ -33,22 +33,22 @@
 #define CUI_TYPE_BUDDY		5	/* BUDDY_LIST, i.e., both groups and buddies */
 #define CUI_TYPE_MESSAGE	6
 #define CUI_TYPE_CHAT		7
-#define CUI_TYPE_REMOTE         8       
+#define CUI_TYPE_REMOTE     8
 					/* This is used to send commands to other UI's, 
 					 * like "Open new conversation" or "send IM".
 					 * Even though there's much redundancy with the
 					 * other CUI_TYPES, we're better keeping this stuff
 					 * separate because it's intended use is so different */
 
-#define CUI_META_LIST		1	
+#define CUI_META_LIST		1
 					/* 1 is always list; this is ignored by the core.
 					   If we move to TCP this can be a keepalive */
 #define CUI_META_QUIT		2
-#define CUI_META_DETACH		3	
+#define CUI_META_DETACH		3
 					/* you don't need to send this, you can just close
 					   the socket. the core will understand. */
-#define CUI_META_PING           4
-#define CUI_META_ACK            5
+#define CUI_META_PING       4
+#define CUI_META_ACK        5
 
 #define CUI_PLUGIN_LIST		1
 #define CUI_PLUGIN_LOAD		2
@@ -61,6 +61,7 @@
 #define CUI_USER_SIGNON		5
 #define CUI_USER_AWAY		6
 #define CUI_USER_BACK		7
+#define CUI_USER_LOGOUT		8
 
 #define CUI_CONN_LIST		1
 #define CUI_CONN_PROGRESS	2
@@ -68,7 +69,7 @@
 #define CUI_CONN_OFFLINE	4	/* this may send a "reason" for why it was killed */
 
 #define CUI_BUDDY_LIST		1
-#define CUI_BUDDY_STATE		2	
+#define CUI_BUDDY_STATE		2
 					/* notifies the UI of state changes; UI can use it to
 					   request the current status from the core */
 #define CUI_BUDDY_ADD		3

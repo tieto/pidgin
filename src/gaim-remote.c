@@ -65,7 +65,7 @@ struct remoteopts opts;
  *
  * If channel is 1, the message is printed to stdout.
  * if channel is 2, the message is printed to stderr.
- */ 
+ */
 static void
 message(char *text, int channel)
 {
@@ -103,11 +103,13 @@ show_remote_usage(const char *name)
 
 	text = g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
 		"    COMMANDS:\n"
+		"       send                     Send message\n"
 		"       uri                      Handle AIM: URI\n"
 		"       away                     Popup the away dialog with the default message\n"
 		"       back                     Remove the away dialog\n"
-		"       send                     Send message\n"
-		"       quit                     Close running copy of Gaim\n\n"
+		"       logout                   Log out all accounts\n"
+		"       quit                     Close running copy of Gaim\n"
+		"\n"
 		"    OPTIONS:\n"
 		"       -m, --message=MESG       Message to send or show in conversation window\n"
 		"       -t, --to=SCREENNAME      Select a target for command\n"
@@ -307,6 +309,10 @@ show_longhelp( char *name, char *command)
 			  "...prompts you to add 'Penguin' to your buddy list.\n"), 1);
 	}
 
+	else if (!strcmp(command, "logout")) {
+		message(_("\nLog out all accounts\n"), 1);
+	}
+
 	else if (!strcmp(command, "quit")) {
 		message(_("\nClose running copy of Gaim\n"), 1);
 	}
@@ -370,6 +376,13 @@ int main(int argc, char *argv[])
 			return send_generic_command(CUI_TYPE_USER, CUI_USER_BACK);
 	}
 
+	else if (!strcmp(opts.command, "logout")) {
+		if (opts.help)
+			show_longhelp(argv[0], "logout");
+		else
+			return send_generic_command(CUI_TYPE_USER, CUI_USER_LOGOUT);
+	}
+
 	else if (!strcmp(opts.command, "quit")) {
 		if (opts.help)
 			show_longhelp(argv[0], "quit");
@@ -381,6 +394,6 @@ int main(int argc, char *argv[])
 		show_remote_usage(argv[0]);
 		return 1;
 	}
-	
+
 	return 0;
 }

@@ -24,7 +24,7 @@
  *                           Thomas Nilsson and 4Front Technologies
  *  Copyright (C) 1999-2002  Haavard Kvaalen 
  */
- 
+
 /* This provides code for connecting to a Gaim socket and communicating with
  * it.  It will eventually be made a library once the core and ui are split. */
 
@@ -140,7 +140,7 @@ gaim_remote_session_read_packet(int fd)
 		g_free(p);
 		return NULL;
 	}
-	
+
 	if (p->length) {
 		data = g_malloc(p->length);
 
@@ -193,10 +193,9 @@ gaim_remote_session_exists(int sess)
 		gaim_remote_session_send_packet(fd, pack);
 		gaim_remote_packet_free(pack);
 		close(fd);
-		
+
 		return TRUE;
 	}
 
 	return FALSE;
 }
-

@@ -95,7 +95,7 @@ gaim_remote_handle_uri(const char *uri)
 		char *who, *what;
 		GaimConversation *c;
 		uri = uri + strlen("aim:goim?");
-		
+
 		if (!(who = strstr(uri, "screenname="))) {
 			return _("No screenname given.");
 		}
@@ -108,7 +108,7 @@ gaim_remote_handle_uri(const char *uri)
 		}
 		who = g_strdup(str->str);
 		g_string_free(str, TRUE);
-		
+
 		what = strstr(uri, "message=");
 		if (what) {
 			what = what + strlen("message=");
@@ -168,10 +168,10 @@ gaim_remote_handle_uri(const char *uri)
 		char *room;
 		GHashTable *components;
 		int exch = 5;
-		
+
 		uri = uri + strlen("aim:gochat?");
 		/* spaces are encoded as +'s */
-		
+
 		if (!(room = strstr(uri, "roomname="))) {
 			return _("No roomname given.");
 		}
@@ -194,8 +194,7 @@ gaim_remote_handle_uri(const char *uri)
 	} else {
 		return _("Invalid AIM URI");
 	}
-	
-	
+
 	return NULL;
 }
 
@@ -305,6 +304,7 @@ meta_handler(struct UI *ui, guchar subtype, gchar *data)
 {
 	GaimRemotePacket *p;
 	GError *error = NULL;
+
 	switch (subtype) {
 	case CUI_META_LIST:
 		break;
@@ -416,6 +416,11 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 		break;
 
 #endif /* STATUS */
+
+	case CUI_USER_LOGOUT:
+		gaim_connections_disconnect_all();
+		break;
+
 	default:
 		gaim_debug_warning("cui", "Unhandled user subtype %d\n", subtype);
 		break;
@@ -682,10 +687,10 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 		case CUI_TYPE_CHAT:
 			chat_handler(ui, subtype, in);
 			break;
-			*/   
+			*/
 		case CUI_TYPE_REMOTE:
 			remote_handler(ui, subtype, in, len);
-			break; 
+			break;
 		default:
 			gaim_debug_warning("cui", "Unhandled type %d\n", type);
 			break;
@@ -724,12 +729,12 @@ open_socket(char **error)
 {
 	struct sockaddr_un saddr;
 	gint fd;
-	
+
 	while (gaim_remote_session_exists(gaim_session))
 		gaim_session++;
-	
+
 	gaim_debug_misc("cui", "Session: %d\n", gaim_session);
-	
+
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
@@ -742,7 +747,7 @@ open_socket(char **error)
 			*error = g_strdup_printf(_("Failed to assign %s to a socket:\n%s"),
 					   saddr.sun_path, strerror(errno));
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
-			      "Failed to assign %s to a socket (Error: %s)",	
+			      "Failed to assign %s to a socket (Error: %s)",
 			      saddr.sun_path, strerror(errno));
 			umask(m);
 			return -1;
