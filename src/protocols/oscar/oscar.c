@@ -3652,8 +3652,10 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gc->evil = (info->warnlevel/10.0) + 0.5;
 
-	if (info->onlinesince)
+	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		gc->login_time_official = info->onlinesince;
+	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
+		gc->login_time_official = time(NULL) - info->sessionlen;
 
 	return 1;
 }
