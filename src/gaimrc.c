@@ -69,7 +69,7 @@ int report_idle;
 int web_browser;
 struct save_pos blist_pos;
 struct window_size conv_size, buddy_chat_size;
-char web_command[2048] = "";
+char web_command[2048];
 char *sound_file[NUM_SOUNDS];
 #ifndef _WIN32
 char sound_cmd[2048];
