@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim-0.76\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-16 15:37-0500\n"
+"POT-Creation-Date: 2004-03-09 21:09+0200\n"
 "PO-Revision-Date: 2004-03-11 21:51+0200\n"
 "Last-Translator: Mişu Moldovan <dumol@go.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -134,7 +134,7 @@ msgstr "Gaim - Deautentificat"
 msgid "Gaim - Away"
 msgstr "Gaim - Absent"
 
-#: plugins/docklet/docklet.c:114 src/gtkaccount.c:495 src/gtkaccount.c:1820
+#: plugins/docklet/docklet.c:114 src/gtkaccount.c:495 src/gtkaccount.c:1819
 msgid "Auto-login"
 msgstr "Conectare automată"
 
@@ -150,12 +150,12 @@ msgstr "Intră într-un chat..."
 msgid "New..."
 msgstr "Nou..."
 
-#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1576 src/protocols/gg/gg.c:51
+#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1568 src/protocols/gg/gg.c:51
 #: src/protocols/irc/msgs.c:187 src/protocols/jabber/jabber.c:960
 #: src/protocols/jabber/jutil.c:99 src/protocols/jabber/presence.c:58
-#: src/protocols/jabber/presence.c:114 src/protocols/oscar/oscar.c:2939
-#: src/protocols/oscar/oscar.c:4748 src/protocols/oscar/oscar.c:5792
-#: src/protocols/oscar/oscar.c:6410
+#: src/protocols/jabber/presence.c:114 src/protocols/oscar/oscar.c:2897
+#: src/protocols/oscar/oscar.c:4706 src/protocols/oscar/oscar.c:5750
+#: src/protocols/oscar/oscar.c:6368
 msgid "Away"
 msgstr "Absenţă"
 
@@ -172,11 +172,11 @@ msgid "File Transfers"
 msgstr "Transfer de fişiere"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1999 src/main.c:288
+#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1998 src/main.c:288
 msgid "Accounts"
 msgstr "Conturi"
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2564 src/main.c:294
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2556 src/main.c:294
 msgid "Preferences"
 msgstr "Preferinţe"
 
@@ -382,15 +382,15 @@ msgstr "Carte de adrese locală"
 #: plugins/gevolution/add_buddy_dialog.c:146
 #: plugins/gevolution/add_buddy_dialog.c:157
 #: plugins/gevolution/assoc-buddy.c:86 plugins/gevolution/assoc-buddy.c:97
-#: src/gtkblist.c:2879 src/gtkprefs.c:851 src/gtkprefs.c:1604
+#: src/gtkblist.c:2874 src/gtkprefs.c:843 src/gtkprefs.c:1596
 #: src/protocols/jabber/jabber.c:916
 msgid "None"
 msgstr "Fără"
 
 #: plugins/gevolution/add_buddy_dialog.c:190
-#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:1981
-#: src/gtkroomlist.c:561 src/protocols/jabber/jabber.c:590
-#: src/protocols/msn/msn.c:1367 src/protocols/trepia/trepia.c:401
+#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:1973
+#: src/gtkroomlist.c:560 src/protocols/jabber/jabber.c:590
+#: src/protocols/msn/msn.c:1363 src/protocols/trepia/trepia.c:401
 msgid "Name"
 msgstr "Nume"
 
@@ -401,19 +401,18 @@ msgstr "Mesagerie instantanee"
 #. Add the label.
 #: plugins/gevolution/add_buddy_dialog.c:482
 msgid "Select a person from your address book below, or add a new person."
-msgstr ""
-"Selectaţi o persoană din cartea de adrese de mai jos, sau adăugaţi o nouă "
-"persoană."
+msgstr "Selectaţi o persoană din cartea de adrese de mai jos, sau adăugaţi "
+"o nouă persoană."
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:495
-#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6680
+#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6638
 msgid "Search"
 msgstr "Caută"
 
 #: plugins/gevolution/add_buddy_dialog.c:566
-#: plugins/gevolution/new_person_dialog.c:310 src/gtkblist.c:3897
-#: src/gtkblist.c:4225
+#: plugins/gevolution/new_person_dialog.c:310 src/gtkblist.c:3892
+#: src/gtkblist.c:4220
 msgid "Group:"
 msgstr "Grup:"
 
@@ -452,7 +451,7 @@ msgid "_Associate Buddy"
 msgstr "_Asociază contactul"
 
 #: plugins/gevolution/gevo-util.c:66 plugins/gevolution/gevolution.c:90
-#: src/blist.c:674 src/blist.c:861 src/blist.c:2094 src/gtkblist.c:3722
+#: src/blist.c:674 src/blist.c:861 src/blist.c:2094 src/gtkblist.c:3717
 #: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:792
 msgid "Buddies"
 msgstr "Contacte"
@@ -469,8 +468,8 @@ msgstr "Configurare integrare cu Evolution"
 #. Label
 #: plugins/gevolution/gevolution.c:350
 msgid "Select all accounts that buddies should be auto-added to."
-msgstr ""
-"Selectaţi toate conturile în care contactele ar trebui adăugate automat."
+msgstr "Selectaţi toate conturile în care contactele ar trebui adăugate "
+"automat."
 
 #: plugins/gevolution/gevolution.c:380 src/gtkconn.c:620
 msgid "Account"
@@ -518,7 +517,7 @@ msgstr "Detalii opţionale:"
 
 #. Label
 #: plugins/gevolution/new_person_dialog.c:341 src/gtkaccount.c:318
-#: src/protocols/oscar/oscar.c:3174
+#: src/protocols/oscar/oscar.c:3132
 msgid "Buddy Icon"
 msgstr "Iconiţă"
 
@@ -1078,7 +1077,7 @@ msgid "_Show slider bar in IM window"
 msgstr "Arată _bara de derulare în fereastra de mesaje"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:854
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:846
 msgid "Buddy List Window"
 msgstr "Fereastra listei de contacte"
 
@@ -1126,8 +1125,8 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Porneşte Gaim odată cu Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2920
-#: src/gtkprefs.c:2480
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2915
+#: src/gtkprefs.c:2472
 msgid "Buddy List"
 msgstr "Listă contacte"
 
@@ -1146,8 +1145,8 @@ msgid "_Keep Buddy List window on top"
 msgstr "_Păstrează fereastra listei de contacte deasupra"
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:892
-#: src/gtkprefs.c:2481 src/protocols/msn/msn.c:1697
+#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:884
+#: src/gtkprefs.c:2473 src/protocols/msn/msn.c:1693
 msgid "Conversations"
 msgstr "Discuţii"
 
@@ -1411,22 +1410,22 @@ msgstr "Introduceţi vechea parolă şi pe cea nouă."
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:336 src/connection.c:198 src/dialogs.c:472 src/dialogs.c:528
-#: src/gtkblist.c:2278 src/gtkrequest.c:225 src/protocols/jabber/jabber.c:1046
+#: src/gtkblist.c:2273 src/gtkrequest.c:225 src/protocols/jabber/jabber.c:1046
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:182
 #: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
-#: src/protocols/msn/msn.c:215 src/protocols/oscar/oscar.c:2549
-#: src/protocols/oscar/oscar.c:2630 src/protocols/oscar/oscar.c:6470
-#: src/protocols/oscar/oscar.c:6566 src/protocols/oscar/oscar.c:6615
-#: src/protocols/oscar/oscar.c:6697 src/protocols/yahoo/yahoo.c:2500
-#: src/protocols/yahoo/yahoo.c:2508 src/request.h:1237
+#: src/protocols/msn/msn.c:215 src/protocols/oscar/oscar.c:2507
+#: src/protocols/oscar/oscar.c:2588 src/protocols/oscar/oscar.c:6428
+#: src/protocols/oscar/oscar.c:6524 src/protocols/oscar/oscar.c:6573
+#: src/protocols/oscar/oscar.c:6655 src/protocols/yahoo/yahoo.c:2494
+#: src/protocols/yahoo/yahoo.c:2502 src/request.h:1237
 msgid "OK"
 msgstr "OK"
 
 #: src/account.c:337 src/account.c:371 src/connection.c:199 src/dialogs.c:306
 #: src/dialogs.c:318 src/dialogs.c:331 src/dialogs.c:352 src/dialogs.c:473
 #: src/dialogs.c:529 src/dialogs.c:837 src/dialogs.c:858 src/dialogs.c:875
-#: src/dialogs.c:894 src/gtkaccount.c:1673 src/gtkaccount.c:2164
-#: src/gtkblist.c:2279 src/gtkblist.c:4264 src/gtkconn.c:168
+#: src/dialogs.c:894 src/gtkaccount.c:1672 src/gtkaccount.c:2163
+#: src/gtkblist.c:2274 src/gtkblist.c:4259 src/gtkconn.c:168
 #: src/gtkimhtmltoolbar.c:366 src/gtkprivacy.c:561 src/gtkprivacy.c:574
 #: src/gtkprivacy.c:599 src/gtkprivacy.c:610 src/gtkrequest.c:226
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/jabber/buddy.c:514
@@ -1434,13 +1433,13 @@ msgstr "OK"
 #: src/protocols/jabber/jabber.c:1047 src/protocols/jabber/xdata.c:338
 #: src/protocols/msn/msn.c:183 src/protocols/msn/msn.c:194
 #: src/protocols/msn/msn.c:205 src/protocols/msn/msn.c:216
-#: src/protocols/msn/msn.c:229 src/protocols/oscar/oscar.c:2513
-#: src/protocols/oscar/oscar.c:2550 src/protocols/oscar/oscar.c:2586
-#: src/protocols/oscar/oscar.c:2631 src/protocols/oscar/oscar.c:6289
-#: src/protocols/oscar/oscar.c:6471 src/protocols/oscar/oscar.c:6567
-#: src/protocols/oscar/oscar.c:6616 src/protocols/oscar/oscar.c:6681
-#: src/protocols/oscar/oscar.c:6698 src/protocols/trepia/trepia.c:347
-#: src/protocols/yahoo/yahoo.c:2501 src/protocols/yahoo/yahoo.c:2509
+#: src/protocols/msn/msn.c:229 src/protocols/oscar/oscar.c:2471
+#: src/protocols/oscar/oscar.c:2508 src/protocols/oscar/oscar.c:2544
+#: src/protocols/oscar/oscar.c:2589 src/protocols/oscar/oscar.c:6247
+#: src/protocols/oscar/oscar.c:6429 src/protocols/oscar/oscar.c:6525
+#: src/protocols/oscar/oscar.c:6574 src/protocols/oscar/oscar.c:6639
+#: src/protocols/oscar/oscar.c:6656 src/protocols/trepia/trepia.c:347
+#: src/protocols/yahoo/yahoo.c:2495 src/protocols/yahoo/yahoo.c:2503
 #: src/request.h:1237 src/request.h:1247
 msgid "Cancel"
 msgstr "Renunţă"
@@ -1475,7 +1474,7 @@ msgstr "Şterge mesajul în absenţă"
 msgid "Set All Away"
 msgstr "Trece totul în absenţă"
 
-#: src/blist.c:579 src/gtkprefs.c:2483
+#: src/blist.c:579 src/gtkprefs.c:2475
 msgid "Chats"
 msgstr "Chat-uri"
 
@@ -1535,67 +1534,67 @@ msgstr "Eroare la conectare"
 msgid "Enter password for %s"
 msgstr "Introduceţi parola pentru %s"
 
-#: src/conversation.c:296
+#: src/conversation.c:283
 msgid "Unable to send message. The message is too large."
 msgstr "Nu pot trimite mesajul. Mesajul este prea mare"
 
-#: src/conversation.c:304
+#: src/conversation.c:291
 msgid "Unable to send message."
 msgstr "Nu pot trimite mesajul."
 
-#: src/conversation.c:1968
+#: src/conversation.c:1955
 #, c-format
 msgid "%s entered the room."
 msgstr "%s a intrat în chat."
 
-#: src/conversation.c:1971
+#: src/conversation.c:1958
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] a intrat în chat."
 
-#: src/conversation.c:2063
+#: src/conversation.c:2050
 #, c-format
 msgid "You are now known as %s"
 msgstr "Sunteţi cunoscut acum ca %s"
 
-#: src/conversation.c:2066
+#: src/conversation.c:2053
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s este acum %s"
 
-#: src/conversation.c:2109
+#: src/conversation.c:2096
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s a ieşit din chat (%s)"
 
-#: src/conversation.c:2111
+#: src/conversation.c:2098
 #, c-format
 msgid "%s left the room."
 msgstr "%s a ieşit din chat."
 
-#: src/conversation.c:2184
+#: src/conversation.c:2171
 #, c-format
 msgid "(+%d more)"
 msgstr "(încă +%d)"
 
-#: src/conversation.c:2186
+#: src/conversation.c:2173
 #, c-format
 msgid " left the room (%s)."
 msgstr " a ieşit din chat (%s)."
 
-#: src/conversation.c:2466
+#: src/conversation.c:2453
 msgid "Last created window"
 msgstr "În ultima fereastră creată"
 
-#: src/conversation.c:2468 src/gtkprefs.c:1380
+#: src/conversation.c:2455 src/gtkprefs.c:1372
 msgid "New window"
 msgstr "În fereastră nouă"
 
-#: src/conversation.c:2470
+#: src/conversation.c:2457
 msgid "By group"
 msgstr "După grup"
 
-#: src/conversation.c:2472
+#: src/conversation.c:2459
 msgid "By account"
 msgstr "După cont"
 
@@ -1882,23 +1881,23 @@ msgstr ""
 msgid "sorry, i ran out for a while. bbl"
 msgstr "Scuze, lipsesc momentan. Vin imediat!"
 
-#: src/gaimrc.c:375 src/gaimrc.c:1451
+#: src/gaimrc.c:375 src/gaimrc.c:1453
 msgid "boring default"
 msgstr "Mesaj implicit"
 
-#: src/gaimrc.c:1260 src/gtkblist.c:2881
+#: src/gaimrc.c:1262 src/gtkblist.c:2876
 msgid "Alphabetical"
 msgstr "Alfabetic"
 
-#: src/gaimrc.c:1262 src/gtkblist.c:2882
+#: src/gaimrc.c:1264 src/gtkblist.c:2877
 msgid "By status"
 msgstr "După status"
 
-#: src/gaimrc.c:1264 src/gtkblist.c:2883
+#: src/gaimrc.c:1266 src/gtkblist.c:2878
 msgid "By log size"
 msgstr "După mărimea înregistrărilor"
 
-#: src/gaimrc.c:1549
+#: src/gaimrc.c:1551
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Nu am putut deschide fişierul de configurare %s."
@@ -1923,7 +1922,7 @@ msgstr "Opţiuni autentificare"
 msgid "Protocol:"
 msgstr "Protocol:"
 
-#: src/gtkaccount.c:404 src/gtkblist.c:3869
+#: src/gtkaccount.c:404 src/gtkblist.c:3864
 msgid "Screen Name:"
 msgstr "Nume ales:"
 
@@ -1931,7 +1930,7 @@ msgstr "Nume ales:"
 msgid "Password:"
 msgstr "Parolă:"
 
-#: src/gtkaccount.c:482 src/gtkblist.c:3883 src/gtkblist.c:4211
+#: src/gtkaccount.c:482 src/gtkblist.c:3878 src/gtkblist.c:4206
 msgid "Alias:"
 msgstr "Alias:"
 
@@ -1992,7 +1991,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:807 src/gtkprefs.c:1181
+#: src/gtkaccount.c:807 src/gtkprefs.c:1173
 msgid "Use Environmental Settings"
 msgstr "Utilizează setările sistemului"
 
@@ -2008,15 +2007,15 @@ msgstr "Dacă vă uitaţi cu atenţie"
 msgid "Proxy Options"
 msgstr "Opţiuni proxy"
 
-#: src/gtkaccount.c:876 src/gtkprefs.c:1175
+#: src/gtkaccount.c:876 src/gtkprefs.c:1167
 msgid "Proxy _type:"
 msgstr "_Tip Proxy"
 
-#: src/gtkaccount.c:885 src/gtkprefs.c:1205
+#: src/gtkaccount.c:885 src/gtkprefs.c:1197
 msgid "_Host:"
 msgstr "_Gazdă:"
 
-#: src/gtkaccount.c:889 src/gtkprefs.c:1223
+#: src/gtkaccount.c:889 src/gtkprefs.c:1215
 msgid "_Port:"
 msgstr "P_ort:"
 
@@ -2024,62 +2023,62 @@ msgstr "P_ort:"
 msgid "_Username:"
 msgstr "Nume _utilizator:"
 
-#: src/gtkaccount.c:902 src/gtkprefs.c:1260
+#: src/gtkaccount.c:902 src/gtkprefs.c:1252
 msgid "Pa_ssword:"
 msgstr "_Parolă:"
 
-#: src/gtkaccount.c:1260
+#: src/gtkaccount.c:1259
 msgid "Add Account"
 msgstr "Adăugare cont"
 
-#: src/gtkaccount.c:1262
+#: src/gtkaccount.c:1261
 msgid "Modify Account"
 msgstr "Modificare cont"
 
 #. Add the disclosure
-#: src/gtkaccount.c:1286
+#: src/gtkaccount.c:1285
 msgid "Show more options"
 msgstr "Mai multe opţiuni"
 
-#: src/gtkaccount.c:1287
+#: src/gtkaccount.c:1286
 msgid "Show fewer options"
 msgstr "Mai puţine opţiuni"
 
 #. Register button
-#: src/gtkaccount.c:1314 src/protocols/jabber/jabber.c:658
+#: src/gtkaccount.c:1313 src/protocols/jabber/jabber.c:658
 msgid "Register"
 msgstr "Înregistrează contul"
 
-#: src/gtkaccount.c:1668
+#: src/gtkaccount.c:1667
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Sunteţi sigur că doriţi să ştergeţi %s?"
 
-#: src/gtkaccount.c:1672 src/gtkrequest.c:229
+#: src/gtkaccount.c:1671 src/gtkrequest.c:229
 msgid "Delete"
 msgstr "Şterge"
 
-#: src/gtkaccount.c:1786
+#: src/gtkaccount.c:1785
 msgid "Screen Name"
 msgstr "Nume ales"
 
-#: src/gtkaccount.c:1809 src/protocols/jabber/jabber.c:958
-#: src/protocols/oscar/oscar.c:2945 src/protocols/oscar/oscar.c:4746
-#: src/protocols/oscar/oscar.c:6409 src/protocols/yahoo/yahoo.c:2295
-#: src/protocols/zephyr/zephyr.c:1176 src/protocols/zephyr/zephyr.c:1186
+#: src/gtkaccount.c:1808 src/protocols/jabber/jabber.c:958
+#: src/protocols/oscar/oscar.c:2903 src/protocols/oscar/oscar.c:4704
+#: src/protocols/oscar/oscar.c:6367 src/protocols/yahoo/yahoo.c:2289
+#: src/protocols/zephyr/zephyr.c:1013 src/protocols/zephyr/zephyr.c:1023
 msgid "Online"
 msgstr "Conectat"
 
-#: src/gtkaccount.c:1827
+#: src/gtkaccount.c:1826
 msgid "Protocol"
 msgstr "Protocol"
 
-#: src/gtkaccount.c:2139
+#: src/gtkaccount.c:2138
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s l-a făcut pe %s contactul său%s%s%s"
 
-#: src/gtkaccount.c:2153
+#: src/gtkaccount.c:2152
 msgid ""
 "\n"
 "\n"
@@ -2089,22 +2088,22 @@ msgstr ""
 "\n"
 "Doriţi să-l adăugaţi listei de contacte?"
 
-#: src/gtkaccount.c:2157
+#: src/gtkaccount.c:2156
 msgid "Information"
 msgstr "Detalii"
 
-#: src/gtkaccount.c:2161
+#: src/gtkaccount.c:2160
 msgid "Add buddy to your list?"
 msgstr "Adaug utilizatorul în lista de contacte?"
 
 #. Add button
-#: src/gtkaccount.c:2163 src/gtkblist.c:4263 src/gtkconv.c:1072
-#: src/gtkconv.c:3289 src/gtkconv.c:3380 src/gtkrequest.c:230
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2787
+#: src/gtkaccount.c:2162 src/gtkblist.c:4258 src/gtkconv.c:1093
+#: src/gtkconv.c:3295 src/gtkconv.c:3386 src/gtkrequest.c:230
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2745
 msgid "Add"
 msgstr "Adaugă"
 
-#: src/gtkblist.c:803 src/gtkblist.c:4151
+#: src/gtkblist.c:803 src/gtkblist.c:4146
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -2122,70 +2121,70 @@ msgid ""
 msgstr ""
 "Introduceţi informaţiile necesare despre chat-ul în care doriţi să intraţi.\n"
 
-#: src/gtkblist.c:850 src/gtkpounce.c:361 src/gtkroomlist.c:365
+#: src/gtkblist.c:850 src/gtkpounce.c:361 src/gtkroomlist.c:364
 msgid "_Account:"
 msgstr "_Cont:"
 
-#: src/gtkblist.c:1088 src/gtkblist.c:3070
+#: src/gtkblist.c:1083 src/gtkblist.c:3065
 msgid "Get _Info"
 msgstr "_Detalii"
 
-#: src/gtkblist.c:1091 src/gtkblist.c:3061
+#: src/gtkblist.c:1086 src/gtkblist.c:3056
 msgid "I_M"
 msgstr "_Mesaj"
 
-#: src/gtkblist.c:1093
+#: src/gtkblist.c:1088
 msgid "Add Buddy _Pounce"
 msgstr "Adaugă î_ntâmpinare"
 
-#: src/gtkblist.c:1095
+#: src/gtkblist.c:1090
 msgid "View _Log"
 msgstr "Arată în_registrările"
 
-#: src/gtkblist.c:1115 src/gtkblist.c:1187 src/gtkblist.c:1200
+#: src/gtkblist.c:1110 src/gtkblist.c:1182 src/gtkblist.c:1195
 msgid "_Alias..."
 msgstr "_Alias..."
 
-#: src/gtkblist.c:1117 src/gtkblist.c:1189 src/gtkblist.c:1205
+#: src/gtkblist.c:1112 src/gtkblist.c:1184 src/gtkblist.c:1200
 #: src/gtkconn.c:361
 msgid "_Remove"
 msgstr "Şter_ge"
 
-#: src/gtkblist.c:1162
+#: src/gtkblist.c:1157
 msgid "Add a _Buddy"
 msgstr "_Adăugare contact"
 
-#: src/gtkblist.c:1164
+#: src/gtkblist.c:1159
 msgid "Add a C_hat"
 msgstr "Adăugare c_hat"
 
-#: src/gtkblist.c:1166
+#: src/gtkblist.c:1161
 msgid "_Delete Group"
 msgstr "Şter_gere grup"
 
-#: src/gtkblist.c:1168
+#: src/gtkblist.c:1163
 msgid "_Rename"
 msgstr "_Redenumire"
 
 #. join button
-#: src/gtkblist.c:1182 src/gtkroomlist.c:261 src/gtkroomlist.c:417
+#: src/gtkblist.c:1177 src/gtkroomlist.c:261 src/gtkroomlist.c:416
 #: src/stock.c:87
 msgid "_Join"
 msgstr "_Intră"
 
-#: src/gtkblist.c:1184
+#: src/gtkblist.c:1179
 msgid "Auto-Join"
 msgstr "Intră automat"
 
-#: src/gtkblist.c:1202 src/gtkblist.c:1228
+#: src/gtkblist.c:1197 src/gtkblist.c:1223
 msgid "_Collapse"
 msgstr "_Strânge"
 
-#: src/gtkblist.c:1233
+#: src/gtkblist.c:1228
 msgid "_Expand"
 msgstr "Des_fă"
 
-#: src/gtkblist.c:1884 src/gtkconv.c:3864
+#: src/gtkblist.c:1879 src/gtkconv.c:3851
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2193,121 +2192,121 @@ msgstr ""
 "acel contact."
 
 #. Buddies menu
-#: src/gtkblist.c:2225
+#: src/gtkblist.c:2220
 msgid "/_Buddies"
 msgstr "/_Contacte"
 
-#: src/gtkblist.c:2226
+#: src/gtkblist.c:2221
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Contacte/Trimite un _nou mesaj..."
 
-#: src/gtkblist.c:2227
+#: src/gtkblist.c:2222
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Contacte/Intră într-un _chat..."
 
-#: src/gtkblist.c:2228
+#: src/gtkblist.c:2223
 msgid "/Buddies/Get User _Info..."
 msgstr "/Contacte/Caută deta_lii..."
 
-#: src/gtkblist.c:2230
+#: src/gtkblist.c:2225
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Contacte/Arată contactele n_eautentificate"
 
-#: src/gtkblist.c:2231
+#: src/gtkblist.c:2226
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Contacte/Arată grupurile _fără contacte"
 
-#: src/gtkblist.c:2232
+#: src/gtkblist.c:2227
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Contacte/_Adaugă un contact..."
 
-#: src/gtkblist.c:2233
+#: src/gtkblist.c:2228
 msgid "/Buddies/Add C_hat..."
 msgstr "/Contacte/Adaugă un c_hat..."
 
-#: src/gtkblist.c:2234
+#: src/gtkblist.c:2229
 msgid "/Buddies/Add _Group..."
 msgstr "/Contacte/Adaugă un _grup..."
 
-#: src/gtkblist.c:2236
+#: src/gtkblist.c:2231
 msgid "/Buddies/_Signoff"
 msgstr "/Contacte/_Deautentificare"
 
-#: src/gtkblist.c:2237
+#: src/gtkblist.c:2232
 msgid "/Buddies/_Quit"
 msgstr "/Contacte/_Ieşire"
 
 #. Tools
-#: src/gtkblist.c:2240
+#: src/gtkblist.c:2235
 msgid "/_Tools"
 msgstr "/_Unelte"
 
-#: src/gtkblist.c:2241
+#: src/gtkblist.c:2236
 msgid "/Tools/_Away"
 msgstr "/Unelte/_Absenţă"
 
-#: src/gtkblist.c:2242
+#: src/gtkblist.c:2237
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Unelte/Î_ntâmpinare"
 
-#: src/gtkblist.c:2243
+#: src/gtkblist.c:2238
 msgid "/Tools/P_rotocol Actions"
 msgstr "/Unelte/Acţiuni _specifice"
 
-#: src/gtkblist.c:2245
+#: src/gtkblist.c:2240
 msgid "/Tools/A_ccounts"
 msgstr "/Unelte/_Conturi"
 
-#: src/gtkblist.c:2246
+#: src/gtkblist.c:2241
 msgid "/Tools/_File Transfers"
 msgstr "/Unelte/_Transfer de fişiere"
 
-#: src/gtkblist.c:2247
+#: src/gtkblist.c:2242
 msgid "/Tools/R_oom List"
 msgstr "/Unelte/_Listă camere de chat"
 
-#: src/gtkblist.c:2248
+#: src/gtkblist.c:2243
 msgid "/Tools/Pr_eferences"
 msgstr "/Unelte/_Preferinţe"
 
-#: src/gtkblist.c:2249
+#: src/gtkblist.c:2244
 msgid "/Tools/Pr_ivacy"
 msgstr "/Unelte/Secur_itate"
 
-#: src/gtkblist.c:2252
+#: src/gtkblist.c:2247
 msgid "/Tools/View System _Log"
 msgstr "/Unelte/Arată în_registrările Gaim..."
 
 #. Help
-#: src/gtkblist.c:2256
+#: src/gtkblist.c:2251
 msgid "/_Help"
 msgstr "/_Ajutor"
 
-#: src/gtkblist.c:2257
+#: src/gtkblist.c:2252
 msgid "/Help/Online _Help"
 msgstr "/Ajutor/Ajutor pe _net"
 
-#: src/gtkblist.c:2258
+#: src/gtkblist.c:2253
 msgid "/Help/_Debug Window"
 msgstr "/Ajutor/_Fereastră de depanare"
 
-#: src/gtkblist.c:2259
+#: src/gtkblist.c:2254
 msgid "/Help/_About"
 msgstr "/Ajutor/_Despre"
 
-#: src/gtkblist.c:2275
+#: src/gtkblist.c:2270
 msgid "Rename Group"
 msgstr "Redenumire grup"
 
-#: src/gtkblist.c:2275
+#: src/gtkblist.c:2270
 msgid "New group name"
 msgstr "Nou nume pentru grup"
 
-#: src/gtkblist.c:2276
+#: src/gtkblist.c:2271
 msgid "Please enter a new name for the selected group."
 msgstr "Introduceţi un nou nume pentru grupul selectat."
 
-#: src/gtkblist.c:2304
+#: src/gtkblist.c:2299
 #, c-format
 msgid ""
 "\n"
@@ -2316,16 +2315,16 @@ msgstr ""
 "\n"
 "<b>Cont:</b> %s"
 
-#: src/gtkblist.c:2368 src/protocols/oscar/oscar.c:5772
+#: src/gtkblist.c:2363 src/protocols/oscar/oscar.c:5730
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Status:</b> Neautentificat"
 
-#: src/gtkblist.c:2383
+#: src/gtkblist.c:2378
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2399
+#: src/gtkblist.c:2394
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2333,7 +2332,7 @@ msgstr ""
 "\n"
 "<b>Cont:</b>"
 
-#: src/gtkblist.c:2400
+#: src/gtkblist.c:2395
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2341,7 +2340,7 @@ msgstr ""
 "\n"
 "<b>Alias contact:</b>"
 
-#: src/gtkblist.c:2401
+#: src/gtkblist.c:2396
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2349,7 +2348,7 @@ msgstr ""
 "\n"
 "<b>Alias:</b>"
 
-#: src/gtkblist.c:2402
+#: src/gtkblist.c:2397
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2357,7 +2356,7 @@ msgstr ""
 "\n"
 "<b>Pseudonim:</b>"
 
-#: src/gtkblist.c:2403
+#: src/gtkblist.c:2398
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2365,7 +2364,7 @@ msgstr ""
 "\n"
 "<b>Autentificat:</b>"
 
-#: src/gtkblist.c:2404
+#: src/gtkblist.c:2399
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2373,7 +2372,7 @@ msgstr ""
 "\n"
 "<b>Inactiv:</b>"
 
-#: src/gtkblist.c:2405
+#: src/gtkblist.c:2400
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2381,7 +2380,7 @@ msgstr ""
 "\n"
 "<b>Avertizat:</b>"
 
-#: src/gtkblist.c:2407
+#: src/gtkblist.c:2402
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2389,7 +2388,7 @@ msgstr ""
 "\n"
 "<b>Descriere:</b> Fantomatic"
 
-#: src/gtkblist.c:2408
+#: src/gtkblist.c:2403
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2397,7 +2396,7 @@ msgstr ""
 "\n"
 "<b>Status:</b> Excelent"
 
-#: src/gtkblist.c:2409
+#: src/gtkblist.c:2404
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2405,77 +2404,77 @@ msgstr ""
 "\n"
 "<b>Status:</b> Beton!"
 
-#: src/gtkblist.c:2679
+#: src/gtkblist.c:2674
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Inactiv (%do%02dm) "
 
-#: src/gtkblist.c:2681
+#: src/gtkblist.c:2676
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inactiv (%dm)"
 
-#: src/gtkblist.c:2686
+#: src/gtkblist.c:2681
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Avertizat (%d%%)"
 
-#: src/gtkblist.c:2689
+#: src/gtkblist.c:2684
 msgid "Offline "
 msgstr "Neautentificat "
 
-#: src/gtkblist.c:2947
+#: src/gtkblist.c:2942
 msgid "/Tools/Away"
 msgstr "/Unelte/Absenţă"
 
-#: src/gtkblist.c:2950
+#: src/gtkblist.c:2945
 msgid "/Tools/Buddy Pounce"
 msgstr "/Unelte/Întâmpinare"
 
-#: src/gtkblist.c:2953
+#: src/gtkblist.c:2948
 msgid "/Tools/Protocol Actions"
 msgstr "/Unelte/Acţiuni specifice"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3041
+#: src/gtkblist.c:3036
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Contacte/Arată contactele neautentificate"
 
-#: src/gtkblist.c:3043
+#: src/gtkblist.c:3038
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Contacte/Arată grupurile fără contacte"
 
-#: src/gtkblist.c:3067
+#: src/gtkblist.c:3062
 msgid "Send a message to the selected buddy"
 msgstr "Trimite un mesaj către contactul selectat"
 
-#: src/gtkblist.c:3076
+#: src/gtkblist.c:3071
 msgid "Get information on the selected buddy"
 msgstr "Caută detalii despre contactul selectat"
 
-#: src/gtkblist.c:3079
+#: src/gtkblist.c:3074
 msgid "_Chat"
 msgstr "C_hat"
 
-#: src/gtkblist.c:3084
+#: src/gtkblist.c:3079
 msgid "Join a chat room"
 msgstr "Intră într-o cameră de chat"
 
-#: src/gtkblist.c:3087
+#: src/gtkblist.c:3082
 msgid "_Away"
 msgstr "A_bsenţă"
 
-#: src/gtkblist.c:3092
+#: src/gtkblist.c:3087
 msgid "Set an away message"
 msgstr "Setează un mesaj în absenţă"
 
-#: src/gtkblist.c:3824 src/protocols/yahoo/yahoo.c:2427
+#: src/gtkblist.c:3819 src/protocols/yahoo/yahoo.c:2421
 msgid "Add Buddy"
 msgstr "Adaugă contact"
 
-#: src/gtkblist.c:3847
+#: src/gtkblist.c:3842
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2486,15 +2485,15 @@ msgstr ""
 "fi afişat în locul numelui ales de câte ori este posibil.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:3907 src/gtkblist.c:4191
+#: src/gtkblist.c:3902 src/gtkblist.c:4186
 msgid "Account:"
 msgstr "Cont:"
 
-#: src/gtkblist.c:4158
+#: src/gtkblist.c:4153
 msgid "Add Chat"
 msgstr "Adaugă un chat"
 
-#: src/gtkblist.c:4181
+#: src/gtkblist.c:4176
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2502,15 +2501,15 @@ msgstr ""
 "Introduceţi un alias şi informaţiile necesare pentru chat-ul pe care doriţi "
 "să-l adăugaţi în lista de contacte.\n"
 
-#: src/gtkblist.c:4260
+#: src/gtkblist.c:4255
 msgid "Add Group"
 msgstr "Adaugă grupul"
 
-#: src/gtkblist.c:4261
+#: src/gtkblist.c:4256
 msgid "Please enter the name of the group to be added."
 msgstr "Introduceţi numele grupului de adăugat."
 
-#: src/gtkblist.c:4780
+#: src/gtkblist.c:4775
 msgid "No actions available"
 msgstr "Nici o acţiune nu e disponibilă"
 
@@ -2567,12 +2566,12 @@ msgstr "Acest fişier există deja."
 msgid "Would you like to overwrite it?"
 msgstr "Doriţi să îl suprascrieţi?"
 
-#: src/gtkconv.c:470
+#: src/gtkconv.c:491
 msgid "Invite Buddy Into Chat Room"
 msgstr "Invită contactul în camera de chat"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:498
+#: src/gtkconv.c:519
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -2580,299 +2579,299 @@ msgstr ""
 "Introduceţi numele utilizatorului pe care doriţi să-l invitaţi. Puteţi "
 "adăuga un mesaj de invitare opţional."
 
-#: src/gtkconv.c:519
+#: src/gtkconv.c:540
 msgid "_Buddy:"
 msgstr "_Contact:"
 
-#: src/gtkconv.c:539
+#: src/gtkconv.c:560
 msgid "_Message:"
 msgstr "_Mesaj:"
 
-#: src/gtkconv.c:632
+#: src/gtkconv.c:653
 msgid "Find"
 msgstr "Caută"
 
-#: src/gtkconv.c:658
+#: src/gtkconv.c:679
 msgid "_Search for:"
 msgstr "C_aută:"
 
-#: src/gtkconv.c:1030
+#: src/gtkconv.c:1051
 msgid "IM"
 msgstr "Mesaj"
 
-#: src/gtkconv.c:1038
+#: src/gtkconv.c:1059
 msgid "Un-Ignore"
 msgstr "Nu ignora"
 
-#: src/gtkconv.c:1040 src/gtkprefs.c:784
+#: src/gtkconv.c:1061 src/gtkprefs.c:776
 msgid "Ignore"
 msgstr "Ignorare"
 
 #. Info button
-#: src/gtkconv.c:1049 src/gtkconv.c:3303
+#: src/gtkconv.c:1070 src/gtkconv.c:3309
 msgid "Info"
 msgstr "Detalii"
 
-#: src/gtkconv.c:1058
+#: src/gtkconv.c:1079
 msgid "Get Away Msg"
 msgstr "Mesajul în absenţă"
 
 #. Remove button
-#: src/gtkconv.c:1070 src/gtkconv.c:3296 src/gtkconv.c:3387
+#: src/gtkconv.c:1091 src/gtkconv.c:3302 src/gtkconv.c:3393
 #: src/gtkrequest.c:231
 msgid "Remove"
 msgstr "Ştergere"
 
-#: src/gtkconv.c:2162
+#: src/gtkconv.c:2176
 msgid "Animate"
 msgstr "Animează"
 
-#: src/gtkconv.c:2167
+#: src/gtkconv.c:2181
 msgid "Hide Icon"
 msgstr "Ascunde iconiţa"
 
-#: src/gtkconv.c:2173
+#: src/gtkconv.c:2187
 msgid "Save Icon As..."
 msgstr "Salvează iconiţa ca..."
 
-#: src/gtkconv.c:2536
+#: src/gtkconv.c:2542
 msgid "User is typing..."
 msgstr "Utilizatorul scrie..."
 
-#: src/gtkconv.c:2544
+#: src/gtkconv.c:2550
 msgid "User has typed something and paused"
 msgstr "Utilizatorul a scris ceva şi s-a oprit"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2647
+#: src/gtkconv.c:2653
 msgid "_Send As"
 msgstr "_Cont"
 
-#: src/gtkconv.c:3067
+#: src/gtkconv.c:3073
 msgid "Save Conversation"
 msgstr "Salvează discuţia"
 
 #. Conversation menu
-#: src/gtkconv.c:3084
+#: src/gtkconv.c:3090
 msgid "/_Conversation"
 msgstr "/_Discuţie"
 
-#: src/gtkconv.c:3086
+#: src/gtkconv.c:3092
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Discuţie/_Mesaj nou..."
 
-#: src/gtkconv.c:3091
+#: src/gtkconv.c:3097
 msgid "/Conversation/_Find..."
 msgstr "/Discuţie/C_aută..."
 
-#: src/gtkconv.c:3093
+#: src/gtkconv.c:3099
 msgid "/Conversation/View _Log"
 msgstr "/Discuţie/Arată în_registrările"
 
-#: src/gtkconv.c:3094
+#: src/gtkconv.c:3100
 msgid "/Conversation/_Save As..."
 msgstr "/Discuţie/_Salvează ca..."
 
-#: src/gtkconv.c:3099
+#: src/gtkconv.c:3105
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Discuţie/Adaugă î_ntâmpinare..."
 
-#: src/gtkconv.c:3101
+#: src/gtkconv.c:3107
 msgid "/Conversation/_Get Info"
 msgstr "/Discuţie/D_etalii..."
 
-#: src/gtkconv.c:3103
+#: src/gtkconv.c:3109
 msgid "/Conversation/_Warn..."
 msgstr "/Discuţie/A_vertizează..."
 
-#: src/gtkconv.c:3105
+#: src/gtkconv.c:3111
 msgid "/Conversation/In_vite..."
 msgstr "/Discuţie/_Invită..."
 
-#: src/gtkconv.c:3110
+#: src/gtkconv.c:3116
 msgid "/Conversation/A_lias..."
 msgstr "/Discuţie/A_lias..."
 
-#: src/gtkconv.c:3112
+#: src/gtkconv.c:3118
 msgid "/Conversation/_Block..."
 msgstr "/Discuţie/_Blochează..."
 
-#: src/gtkconv.c:3114
+#: src/gtkconv.c:3120
 msgid "/Conversation/_Add..."
 msgstr "/Discuţie/A_daugă..."
 
-#: src/gtkconv.c:3116
+#: src/gtkconv.c:3122
 msgid "/Conversation/_Remove..."
 msgstr "/Discuţie/Şter_ge..."
 
-#: src/gtkconv.c:3121
+#: src/gtkconv.c:3127
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Discuţie/Inserea_ză o adresă..."
 
-#: src/gtkconv.c:3123
+#: src/gtkconv.c:3129
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Discuţie/Inserează _o imagine..."
 
-#: src/gtkconv.c:3128
+#: src/gtkconv.c:3134
 msgid "/Conversation/_Close"
 msgstr "/Discuţie/În_chide"
 
 #. Options
-#: src/gtkconv.c:3132
+#: src/gtkconv.c:3138
 msgid "/_Options"
 msgstr "/_Opţiuni"
 
-#: src/gtkconv.c:3133
+#: src/gtkconv.c:3139
 msgid "/Options/Enable _Logging"
 msgstr "/Opţiuni/Activează în_registrarea"
 
-#: src/gtkconv.c:3134
+#: src/gtkconv.c:3140
 msgid "/Options/Enable _Sounds"
 msgstr "/Opţiuni/Activează _sunetul"
 
-#: src/gtkconv.c:3135
+#: src/gtkconv.c:3141
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opţiuni/Arată bara cu _unelte"
 
-#: src/gtkconv.c:3177
+#: src/gtkconv.c:3183
 msgid "/Conversation/View Log"
 msgstr "/Discuţie/Arată înregistrările"
 
-#: src/gtkconv.c:3182
+#: src/gtkconv.c:3188
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Discuţie/Adaugă o întâmpinare..."
 
-#: src/gtkconv.c:3188
+#: src/gtkconv.c:3194
 msgid "/Conversation/Get Info"
 msgstr "/Discuţie/Caută detalii"
 
-#: src/gtkconv.c:3192
+#: src/gtkconv.c:3198
 msgid "/Conversation/Warn..."
 msgstr "/Discuţie/Avertizează.."
 
-#: src/gtkconv.c:3196
+#: src/gtkconv.c:3202
 msgid "/Conversation/Invite..."
 msgstr "/Discuţie/Invită..."
 
-#: src/gtkconv.c:3202
+#: src/gtkconv.c:3208
 msgid "/Conversation/Alias..."
 msgstr "/Discuţie/Alias..."
 
-#: src/gtkconv.c:3206
+#: src/gtkconv.c:3212
 msgid "/Conversation/Block..."
 msgstr "/Discuţie/Blochează..."
 
-#: src/gtkconv.c:3210
+#: src/gtkconv.c:3216
 msgid "/Conversation/Add..."
 msgstr "/Discuţie/Adaugă..."
 
-#: src/gtkconv.c:3214
+#: src/gtkconv.c:3220
 msgid "/Conversation/Remove..."
 msgstr "/Discuţie/Şterge..."
 
-#: src/gtkconv.c:3220
+#: src/gtkconv.c:3226
 msgid "/Conversation/Insert Link..."
 msgstr "/Discuţie/Inserează o adresă..."
 
-#: src/gtkconv.c:3224
+#: src/gtkconv.c:3230
 msgid "/Conversation/Insert Image..."
 msgstr "/Discuţie/Inserează o imagine..."
 
-#: src/gtkconv.c:3230
+#: src/gtkconv.c:3236
 msgid "/Options/Enable Logging"
 msgstr "/Opţiuni/Activează înregistrarea"
 
-#: src/gtkconv.c:3233
+#: src/gtkconv.c:3239
 msgid "/Options/Enable Sounds"
 msgstr "/Opţiuni/Activează sunetul"
 
-#: src/gtkconv.c:3236
+#: src/gtkconv.c:3242
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Opţiuni/Arată bara cu unelte"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3259 src/gtkconv.c:3261 src/gtkconv.c:3359 src/gtkconv.c:3361
+#: src/gtkconv.c:3265 src/gtkconv.c:3267 src/gtkconv.c:3365 src/gtkconv.c:3367
 msgid "Send"
 msgstr "Trimitere"
 
 #. Now, um, just kind of all over the place. Huh?
 #. Warn button
-#: src/gtkconv.c:3275
+#: src/gtkconv.c:3281
 msgid "Warn"
 msgstr "Avertizare"
 
-#: src/gtkconv.c:3278
+#: src/gtkconv.c:3284
 msgid "Warn the user"
 msgstr "Avertizează utilizatorul"
 
 #. Block button
-#: src/gtkconv.c:3282 src/gtkprivacy.c:598 src/gtkprivacy.c:609
+#: src/gtkconv.c:3288 src/gtkprivacy.c:598 src/gtkprivacy.c:609
 msgid "Block"
 msgstr "Blocare"
 
-#: src/gtkconv.c:3285
+#: src/gtkconv.c:3291
 msgid "Block the user"
 msgstr "Blochează utilizatorul"
 
-#: src/gtkconv.c:3292
+#: src/gtkconv.c:3298
 msgid "Add the user to your buddy list"
 msgstr "Adaugă utilizatorul în lista de contacte"
 
-#: src/gtkconv.c:3299
+#: src/gtkconv.c:3305
 msgid "Remove the user from your buddy list"
 msgstr "Şterge utilizatorul din lista de contacte"
 
-#: src/gtkconv.c:3306 src/gtkconv.c:3628
+#: src/gtkconv.c:3312 src/gtkconv.c:3633
 msgid "Get the user's information"
 msgstr "Caută detalii despre utilizator"
 
 #. Invite
-#: src/gtkconv.c:3373
+#: src/gtkconv.c:3379
 msgid "Invite"
 msgstr "Invită"
 
-#: src/gtkconv.c:3376
+#: src/gtkconv.c:3382
 msgid "Invite a user"
 msgstr "Invită un utilizator"
 
-#: src/gtkconv.c:3383
+#: src/gtkconv.c:3389
 msgid "Add the chat to your buddy list"
 msgstr "Adaugă acest chat în lista de contacte"
 
-#: src/gtkconv.c:3390
+#: src/gtkconv.c:3396
 msgid "Remove the chat from your buddy list"
 msgstr "Şterge acest chat din lista de contacte"
 
-#: src/gtkconv.c:3490
+#: src/gtkconv.c:3495
 msgid "Topic:"
 msgstr "Topic:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3550
+#: src/gtkconv.c:3555
 msgid "0 people in room"
 msgstr "0 persoane în chat"
 
-#: src/gtkconv.c:3605
+#: src/gtkconv.c:3610
 msgid "IM the user"
 msgstr "Mesaj către utilizator"
 
-#: src/gtkconv.c:3617
+#: src/gtkconv.c:3622
 msgid "Ignore the user"
 msgstr "Ignoră utilizatorul"
 
-#: src/gtkconv.c:4155
+#: src/gtkconv.c:4142
 msgid "Close conversation"
 msgstr "Încheie discuţia"
 
-#: src/gtkconv.c:4668 src/gtkconv.c:4700 src/gtkconv.c:4821 src/gtkconv.c:4888
+#: src/gtkconv.c:4655 src/gtkconv.c:4687 src/gtkconv.c:4808 src/gtkconv.c:4875
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persoană în chat"
 msgstr[1] "%d persoane în chat"
 
-#: src/gtkconv.c:5404 src/gtkconv.c:5407
+#: src/gtkconv.c:5391 src/gtkconv.c:5394
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Discuţie/Închide"
 
@@ -3009,19 +3008,19 @@ msgstr "Salvează ca..."
 msgid "%s wants to send you %s (%s)"
 msgstr "%s doreşte să vă trimită %s (%s)"
 
-#: src/gtkimhtml.c:829
+#: src/gtkimhtml.c:797
 msgid "_Copy E-Mail Address"
 msgstr "C_opiază adresa de mail"
 
-#: src/gtkimhtml.c:841
+#: src/gtkimhtml.c:809
 msgid "_Copy Link Location"
 msgstr "_Copiază locaţia adresei"
 
-#: src/gtkimhtml.c:851
+#: src/gtkimhtml.c:819
 msgid "_Open Link in Browser"
 msgstr "_Deschide adresa în navigator"
 
-#: src/gtkimhtml.c:2262
+#: src/gtkimhtml.c:2208
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -3029,16 +3028,16 @@ msgstr ""
 "Gaim nu a putut ghici tipul imaginii după extensia dată fişierului. "
 "Presupunem formatul implicit: PNG."
 
-#: src/gtkimhtml.c:2270
+#: src/gtkimhtml.c:2216
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Eroare la salvarea imaginii: %s"
 
-#: src/gtkimhtml.c:2279
+#: src/gtkimhtml.c:2225
 msgid "Save Image"
 msgstr "Salvează imaginea"
 
-#: src/gtkimhtml.c:2302
+#: src/gtkimhtml.c:2248
 msgid "_Save Image..."
 msgstr "_Salvează imaginea..."
 
@@ -3076,51 +3075,51 @@ msgid "Insert Image"
 msgstr "Inserează o imagine"
 
 #. show everything
-#: src/gtkimhtmltoolbar.c:592
+#: src/gtkimhtmltoolbar.c:595
 msgid "Smile!"
 msgstr "Zâmbete!"
 
-#: src/gtkimhtmltoolbar.c:722
+#: src/gtkimhtmltoolbar.c:671
 msgid "Bold"
 msgstr "Aldin"
 
-#: src/gtkimhtmltoolbar.c:733
+#: src/gtkimhtmltoolbar.c:682
 msgid "Italic"
 msgstr "Cursiv"
 
-#: src/gtkimhtmltoolbar.c:744
+#: src/gtkimhtmltoolbar.c:693
 msgid "Underline"
 msgstr "Subliniat"
 
-#: src/gtkimhtmltoolbar.c:760
+#: src/gtkimhtmltoolbar.c:709
 msgid "Larger font size"
 msgstr "Font mai mare"
 
-#: src/gtkimhtmltoolbar.c:772
+#: src/gtkimhtmltoolbar.c:721
 msgid "Smaller font size"
 msgstr "Font mai mic"
 
-#: src/gtkimhtmltoolbar.c:789
+#: src/gtkimhtmltoolbar.c:738
 msgid "Font Face"
 msgstr "Font"
 
-#: src/gtkimhtmltoolbar.c:801
+#: src/gtkimhtmltoolbar.c:750
 msgid "Foreground font color"
 msgstr "Culoare text"
 
-#: src/gtkimhtmltoolbar.c:813
+#: src/gtkimhtmltoolbar.c:762
 msgid "Background color"
 msgstr "Culoare fundal"
 
-#: src/gtkimhtmltoolbar.c:828
+#: src/gtkimhtmltoolbar.c:777
 msgid "Insert link"
 msgstr "Inserează o adresă"
 
-#: src/gtkimhtmltoolbar.c:838
+#: src/gtkimhtmltoolbar.c:787
 msgid "Insert image"
 msgstr "Inserează o imagine"
 
-#: src/gtkimhtmltoolbar.c:849
+#: src/gtkimhtmltoolbar.c:798
 msgid "Insert smiley"
 msgstr "Inserează o iconiţă simbolică"
 
@@ -3359,7 +3358,7 @@ msgstr ""
 msgid "Icon"
 msgstr "Iconiţă"
 
-#: src/gtkprefs.c:604 src/gtkprefs.c:2018 src/protocols/jabber/buddy.c:265
+#: src/gtkprefs.c:604 src/gtkprefs.c:2010 src/protocols/jabber/buddy.c:265
 #: src/protocols/jabber/buddy.c:748 src/protocols/jabber/chat.c:683
 msgid "Description"
 msgstr "Descriere"
@@ -3380,394 +3379,387 @@ msgstr "Cursi_v"
 msgid "_Underline"
 msgstr "_Subliniat"
 
-#. who in their right mind would use this as a default anyway?
-#. * and plus, it wouldn't work as the code currently existed,
-#. * and then i went and applied simguy's patch to remove the
-#. * non-functional code.
-#. *
-#. * remove this after string freeze ends
-#.
-#: src/gtkprefs.c:686
+#: src/gtkprefs.c:678
 msgid "_Strikethrough"
 msgstr "Te_xt tăiat"
 
-#: src/gtkprefs.c:689
+#: src/gtkprefs.c:681
 msgid "Face"
 msgstr "Tip de caractere"
 
-#: src/gtkprefs.c:692
+#: src/gtkprefs.c:684
 msgid "Use custo_m face"
 msgstr "Utilizează caracterele _alese"
 
-#: src/gtkprefs.c:709
+#: src/gtkprefs.c:701
 msgid "Use custom si_ze"
 msgstr "Utilizează _mărimea aleasă"
 
-#: src/gtkprefs.c:721
+#: src/gtkprefs.c:713
 msgid "Color"
 msgstr "Culoare"
 
-#: src/gtkprefs.c:725
+#: src/gtkprefs.c:717
 msgid "_Text color"
 msgstr "Culoare _text"
 
-#: src/gtkprefs.c:744
+#: src/gtkprefs.c:736
 msgid "Bac_kground color"
 msgstr "Culoare fun_dal"
 
-#: src/gtkprefs.c:772 src/gtkprefs.c:1004 src/gtkprefs.c:1052
+#: src/gtkprefs.c:764 src/gtkprefs.c:996 src/gtkprefs.c:1044
 msgid "Display"
 msgstr "Afişare"
 
-#: src/gtkprefs.c:773
+#: src/gtkprefs.c:765
 msgid "Show graphical _smileys"
 msgstr "_Substituie iconiţe simbolice"
 
-#: src/gtkprefs.c:775
+#: src/gtkprefs.c:767
 msgid "Show _timestamp on messages"
 msgstr "_Datează toate mesajele"
 
-#: src/gtkprefs.c:777
+#: src/gtkprefs.c:769
 msgid "Show _URLs as links"
 msgstr "Arată _adresele ca legături active"
 
-#: src/gtkprefs.c:781
+#: src/gtkprefs.c:773
 msgid "_Highlight misspelled words"
 msgstr "_Evidenţiază cuvintele incorect scrise"
 
-#: src/gtkprefs.c:785
+#: src/gtkprefs.c:777
 msgid "Ignore c_olors"
 msgstr "_Ignoră culorile"
 
-#: src/gtkprefs.c:787
+#: src/gtkprefs.c:779
 msgid "Ignore font _faces"
 msgstr "Ig_noră caracterele speciale"
 
-#: src/gtkprefs.c:789
+#: src/gtkprefs.c:781
 msgid "Ignore font si_zes"
 msgstr "Igno_ră alte mărimi de caractere"
 
-#: src/gtkprefs.c:802
+#: src/gtkprefs.c:794
 msgid "Send Message"
 msgstr "Trimitere mesaj"
 
-#: src/gtkprefs.c:803
+#: src/gtkprefs.c:795
 msgid "Enter _sends message"
 msgstr "_Enter expediază mesajul"
 
-#: src/gtkprefs.c:805
+#: src/gtkprefs.c:797
 msgid "C_ontrol-Enter sends message"
 msgstr "C_ontrol-Enter expediază mesajul"
 
-#: src/gtkprefs.c:808
+#: src/gtkprefs.c:800
 msgid "Window Closing"
 msgstr "Închidere ferestre"
 
-#: src/gtkprefs.c:809
+#: src/gtkprefs.c:801
 msgid "_Escape closes window"
 msgstr "E_scape închide fereastra"
 
-#: src/gtkprefs.c:812
+#: src/gtkprefs.c:804
 msgid "Insertions"
 msgstr "Inserări"
 
-#: src/gtkprefs.c:813
+#: src/gtkprefs.c:805
 msgid "Control-{B/I/U} inserts _HTML tags"
 msgstr "Control-{B/I/U/S} inserează taguri _HTML"
 
-#: src/gtkprefs.c:815
+#: src/gtkprefs.c:807
 msgid "Control-(number) _inserts smileys"
 msgstr "Control-(număr) inserează _iconiţe simbolice"
 
-#: src/gtkprefs.c:831
+#: src/gtkprefs.c:823
 msgid "Buddy List Sorting"
 msgstr "Sortare listă de contacte"
 
-#: src/gtkprefs.c:840
+#: src/gtkprefs.c:832
 msgid "_Sorting:"
 msgstr "_Sortare:"
 
-#: src/gtkprefs.c:845
+#: src/gtkprefs.c:837
 msgid "Buddy List Toolbar"
 msgstr "Bara cu unelte a listei de contacte"
 
-#: src/gtkprefs.c:846 src/gtkprefs.c:977 src/gtkprefs.c:1028
+#: src/gtkprefs.c:838 src/gtkprefs.c:969 src/gtkprefs.c:1020
 msgid "Show _buttons as:"
 msgstr "Arată _butoanele ca:"
 
-#: src/gtkprefs.c:848 src/gtkprefs.c:979 src/gtkprefs.c:1030
+#: src/gtkprefs.c:840 src/gtkprefs.c:971 src/gtkprefs.c:1022
 msgid "Pictures"
 msgstr "Iconiţe"
 
-#: src/gtkprefs.c:849 src/gtkprefs.c:980 src/gtkprefs.c:1031
+#: src/gtkprefs.c:841 src/gtkprefs.c:972 src/gtkprefs.c:1023
 msgid "Text"
 msgstr "Text"
 
-#: src/gtkprefs.c:850 src/gtkprefs.c:981 src/gtkprefs.c:1032
+#: src/gtkprefs.c:842 src/gtkprefs.c:973 src/gtkprefs.c:1024
 msgid "Pictures and text"
 msgstr "Iconiţe şi text"
 
-#: src/gtkprefs.c:855 src/gtkprefs.c:992 src/gtkprefs.c:1043
+#: src/gtkprefs.c:847 src/gtkprefs.c:984 src/gtkprefs.c:1035
 msgid "_Raise window on events"
 msgstr "_Ridică deasupra fereastra la evenimente noi"
 
-#: src/gtkprefs.c:858
+#: src/gtkprefs.c:850
 msgid "Group Display"
 msgstr "Afişare grupuri"
 
-#: src/gtkprefs.c:859
+#: src/gtkprefs.c:851
 msgid "Show _numbers in groups"
 msgstr "Arată _numerele în grupuri"
 
-#: src/gtkprefs.c:862
+#: src/gtkprefs.c:854
 msgid "Buddy Display"
 msgstr "Afişare contacte"
 
-#: src/gtkprefs.c:863 src/gtkprefs.c:999
+#: src/gtkprefs.c:855 src/gtkprefs.c:991
 msgid "Show buddy _icons"
 msgstr "Arată ic_oniţele contactelor"
 
-#: src/gtkprefs.c:865
+#: src/gtkprefs.c:857
 msgid "Show _warning levels"
 msgstr "Arată nivelul de a_vertizare"
 
-#: src/gtkprefs.c:867
+#: src/gtkprefs.c:859
 msgid "Show idle _times"
 msgstr "Arată _timpul de inactivitate"
 
-#: src/gtkprefs.c:869
+#: src/gtkprefs.c:861
 msgid "Dim i_dle buddies"
 msgstr "Contacte inactive în _gri"
 
-#: src/gtkprefs.c:871
+#: src/gtkprefs.c:863
 msgid "_Automatically expand contacts"
 msgstr "_Desfă automat contactele comasate"
 
-#: src/gtkprefs.c:896
+#: src/gtkprefs.c:888
 msgid "_Placement:"
 msgstr "_Plasament:"
 
-#: src/gtkprefs.c:903
+#: src/gtkprefs.c:895
 msgid "Send _URLs as Links"
 msgstr "Trimite adresele ca legături acti_ve"
 
-#: src/gtkprefs.c:906
+#: src/gtkprefs.c:898
 msgid "Show _Formatting Toolbar"
 msgstr "Arată bara de _formatare"
 
-#: src/gtkprefs.c:909
+#: src/gtkprefs.c:901
 msgid "Show a_liases in tabs/titles"
 msgstr "Arată alia_surile în taburi sau titluri"
 
-#: src/gtkprefs.c:912
+#: src/gtkprefs.c:904
 msgid "Tab Options"
 msgstr "Opţiuni taburi"
 
-#: src/gtkprefs.c:914
+#: src/gtkprefs.c:906
 msgid "_Tab Placement:"
 msgstr "Plasamentul _taburilor:"
 
-#: src/gtkprefs.c:916
+#: src/gtkprefs.c:908
 msgid "Top"
 msgstr "Sus"
 
-#: src/gtkprefs.c:917
+#: src/gtkprefs.c:909
 msgid "Bottom"
 msgstr "Jos"
 
-#: src/gtkprefs.c:918
+#: src/gtkprefs.c:910
 msgid "Left"
 msgstr "În stânga"
 
-#: src/gtkprefs.c:919
+#: src/gtkprefs.c:911
 msgid "Right"
 msgstr "În dreapta"
 
-#: src/gtkprefs.c:925
+#: src/gtkprefs.c:917
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "Arată _discuţiile şi chat-urile în taburi"
 
-#: src/gtkprefs.c:928
+#: src/gtkprefs.c:920
 msgid "Show IMs and chats in _same tabbed window"
 msgstr "Nu deschide _altă fereastră pentru taburile de chat"
 
-#: src/gtkprefs.c:938
+#: src/gtkprefs.c:930
 msgid "Show _close button on tabs"
 msgstr "Arată _butoanele de închidere a taburilor"
 
-#: src/gtkprefs.c:949
+#: src/gtkprefs.c:941
 msgid "Show status _icons on tabs"
 msgstr "Arată _iconiţele de status în taburi"
 
-#: src/gtkprefs.c:976 src/gtkprefs.c:1027
+#: src/gtkprefs.c:968 src/gtkprefs.c:1019
 msgid "Window"
 msgstr "Ferestre"
 
-#: src/gtkprefs.c:986 src/gtkprefs.c:1037
+#: src/gtkprefs.c:978 src/gtkprefs.c:1029
 msgid "New window _width:"
 msgstr "_Lăţimea unei ferestre noi:"
 
-#: src/gtkprefs.c:988 src/gtkprefs.c:1039
+#: src/gtkprefs.c:980 src/gtkprefs.c:1031
 msgid "New window _height:"
 msgstr "Î_nălţimea unei ferestre noi:"
 
-#: src/gtkprefs.c:990 src/gtkprefs.c:1041
+#: src/gtkprefs.c:982 src/gtkprefs.c:1033
 msgid "_Entry field height:"
 msgstr "Înălţimea intrărilor _de text:"
 
-#: src/gtkprefs.c:994
+#: src/gtkprefs.c:986
 msgid "Hide window on _send"
 msgstr "A_scunde fereastra la trimitere"
 
-#: src/gtkprefs.c:998
+#: src/gtkprefs.c:990
 msgid "Buddy Icons"
 msgstr "Iconiţe contacte"
 
-#: src/gtkprefs.c:1001
+#: src/gtkprefs.c:993
 msgid "Enable buddy icon a_nimation"
 msgstr "Activea_ză animaţiile iconiţelor contactelor"
 
-#: src/gtkprefs.c:1005
+#: src/gtkprefs.c:997
 msgid "Show _logins in window"
 msgstr "Arată autentificările în _fereastră"
 
-#: src/gtkprefs.c:1008
+#: src/gtkprefs.c:1000
 msgid "Typing Notification"
 msgstr "Notificare la scriere"
 
-#: src/gtkprefs.c:1009
+#: src/gtkprefs.c:1001
 msgid "Notify buddies that you are _typing to them"
 msgstr "_Notifică contactele când le scriu"
 
-#: src/gtkprefs.c:1046
+#: src/gtkprefs.c:1038
 msgid "Tab Completion"
 msgstr "Completare automată cu Tab"
 
-#: src/gtkprefs.c:1047
+#: src/gtkprefs.c:1039
 msgid "_Tab-complete nicks"
 msgstr "_Tab completează pseudonimele"
 
-#: src/gtkprefs.c:1049
+#: src/gtkprefs.c:1041
 msgid "_Old-style tab completion"
 msgstr "Completare automată de stil _vechi"
 
-#: src/gtkprefs.c:1053
+#: src/gtkprefs.c:1045
 msgid "_Show people joining in window"
 msgstr "Arată în fereastră persoanele ce _intră"
 
-#: src/gtkprefs.c:1055
+#: src/gtkprefs.c:1047
 msgid "_Show people leaving in window"
 msgstr "Arată în fereastră persoanele ce i_es"
 
-#: src/gtkprefs.c:1057
+#: src/gtkprefs.c:1049
 msgid "Co_lorize screen names"
 msgstr "Colorea_ză numele alese"
 
-#: src/gtkprefs.c:1078
+#: src/gtkprefs.c:1070
 msgid "IP Address"
 msgstr "Adresă IP"
 
-#: src/gtkprefs.c:1080
+#: src/gtkprefs.c:1072
 msgid "_Autodetect IP Address"
 msgstr "_Autodetectare adresă IP"
 
-#: src/gtkprefs.c:1089
+#: src/gtkprefs.c:1081
 msgid "Public _IP:"
 msgstr "_IP public:"
 
-#: src/gtkprefs.c:1113
+#: src/gtkprefs.c:1105
 msgid "Ports"
 msgstr "Porturi"
 
-#: src/gtkprefs.c:1116
+#: src/gtkprefs.c:1108
 msgid "_Manually specify range of ports to listen on"
 msgstr "Porturi de _utilizat"
 
-#: src/gtkprefs.c:1119
+#: src/gtkprefs.c:1111
 msgid "_Start Port:"
 msgstr "_De la:"
 
-#: src/gtkprefs.c:1126
+#: src/gtkprefs.c:1118
 msgid "_End Port:"
 msgstr "_Până la:"
 
-#: src/gtkprefs.c:1174
+#: src/gtkprefs.c:1166
 msgid "Proxy Type"
 msgstr "Tip Proxy"
 
-#: src/gtkprefs.c:1177
+#: src/gtkprefs.c:1169
 msgid "No proxy"
 msgstr "Fără Proxy"
 
-#: src/gtkprefs.c:1184
+#: src/gtkprefs.c:1176
 msgid "Proxy Server"
 msgstr "Server Proxy"
 
-#: src/gtkprefs.c:1242
+#: src/gtkprefs.c:1234
 msgid "_User:"
 msgstr "_Utilizator:"
 
-#: src/gtkprefs.c:1298
+#: src/gtkprefs.c:1290
 msgid "Opera"
 msgstr "Opera"
 
-#: src/gtkprefs.c:1299
+#: src/gtkprefs.c:1291
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/gtkprefs.c:1300
+#: src/gtkprefs.c:1292
 msgid "Mozilla"
 msgstr "Mozilla"
 
-#: src/gtkprefs.c:1301
+#: src/gtkprefs.c:1293
 msgid "Konqueror"
 msgstr "Konqueror"
 
-#: src/gtkprefs.c:1302
+#: src/gtkprefs.c:1294
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/gtkprefs.c:1303
+#: src/gtkprefs.c:1295
 msgid "Firebird"
 msgstr "Firebird"
 
-#: src/gtkprefs.c:1304
+#: src/gtkprefs.c:1296
 msgid "Firefox"
 msgstr "Firefox"
 
-#: src/gtkprefs.c:1305
+#: src/gtkprefs.c:1297
 msgid "Gnome Default"
 msgstr "Navigatorul Gnome"
 
-#: src/gtkprefs.c:1314
+#: src/gtkprefs.c:1306
 msgid "Manual"
 msgstr "Manual"
 
-#: src/gtkprefs.c:1365
+#: src/gtkprefs.c:1357
 msgid "Browser Selection"
 msgstr "Navigator preferat"
 
-#: src/gtkprefs.c:1369
+#: src/gtkprefs.c:1361
 msgid "_Browser:"
 msgstr "_Navigator"
 
-#: src/gtkprefs.c:1376
+#: src/gtkprefs.c:1368
 msgid "_Open link in:"
 msgstr "_Deschide adresa în:"
 
-#: src/gtkprefs.c:1378
+#: src/gtkprefs.c:1370
 msgid "Browser default"
 msgstr "După cum e setat navigatorul"
 
-#: src/gtkprefs.c:1379
+#: src/gtkprefs.c:1371
 msgid "Existing window"
 msgstr "Într-o fereastră existentă"
 
-#: src/gtkprefs.c:1381
+#: src/gtkprefs.c:1373
 msgid "New tab"
 msgstr "Într-un tab nou"
 
-#: src/gtkprefs.c:1395
+#: src/gtkprefs.c:1387
 #, c-format
 msgid ""
 "_Manual:\n"
@@ -3776,55 +3768,55 @@ msgstr ""
 "_Manual:\n"
 "(%s pentru adresă)"
 
-#: src/gtkprefs.c:1428
+#: src/gtkprefs.c:1420
 msgid "Message Logs"
 msgstr "Înregistrare mesaje"
 
-#: src/gtkprefs.c:1431
+#: src/gtkprefs.c:1423
 msgid "Log _Format:"
 msgstr "_Format înregistrări:"
 
-#: src/gtkprefs.c:1434
+#: src/gtkprefs.c:1426
 msgid "_Log all instant messages"
 msgstr "Înregistrează toate _mesajele"
 
-#: src/gtkprefs.c:1436
+#: src/gtkprefs.c:1428
 msgid "Log all c_hats"
 msgstr "Înregistrează _toate chat-urile"
 
-#: src/gtkprefs.c:1491
+#: src/gtkprefs.c:1483
 msgid "Sound Options"
 msgstr "Opţiuni sunet"
 
-#: src/gtkprefs.c:1492
+#: src/gtkprefs.c:1484
 msgid "_No sounds when you log in"
 msgstr "_Fără sunete la propria autentificare"
 
-#: src/gtkprefs.c:1494
+#: src/gtkprefs.c:1486
 msgid "_Sounds while away"
 msgstr "Utilizează sunete în _absenţă"
 
-#: src/gtkprefs.c:1498
+#: src/gtkprefs.c:1490
 msgid "Sound Method"
 msgstr "Sistemul de sunet"
 
-#: src/gtkprefs.c:1499
+#: src/gtkprefs.c:1491
 msgid "_Method:"
 msgstr "_Sistem:"
 
-#: src/gtkprefs.c:1501
+#: src/gtkprefs.c:1493
 msgid "Console beep"
 msgstr "Bip"
 
-#: src/gtkprefs.c:1503
+#: src/gtkprefs.c:1495
 msgid "Automatic"
 msgstr "Automat"
 
-#: src/gtkprefs.c:1510
+#: src/gtkprefs.c:1502
 msgid "Command"
 msgstr "Comandă"
 
-#: src/gtkprefs.c:1520
+#: src/gtkprefs.c:1512
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -3833,72 +3825,72 @@ msgstr ""
 "Comandă de _redare sunet\n"
 "(%s pentru numele fişierului)"
 
-#: src/gtkprefs.c:1577
+#: src/gtkprefs.c:1569
 msgid "_Sending messages removes away status"
 msgstr "Ieşi din _absenţă la trimiterea unui mesaj"
 
-#: src/gtkprefs.c:1579
+#: src/gtkprefs.c:1571
 msgid "_Queue new messages when away"
 msgstr "Încolonează mesajele _noi în absenţă"
 
-#: src/gtkprefs.c:1582
+#: src/gtkprefs.c:1574
 msgid "Auto-response"
 msgstr "Răspunsuri automate"
 
-#: src/gtkprefs.c:1585
+#: src/gtkprefs.c:1577
 msgid "Seconds before _resending:"
 msgstr "Secunde înainte de _retrimitere:"
 
-#: src/gtkprefs.c:1588
+#: src/gtkprefs.c:1580
 msgid "_Send auto-response"
 msgstr "_Trimite răspuns automat"
 
-#: src/gtkprefs.c:1590
+#: src/gtkprefs.c:1582
 msgid "_Only send auto-response when idle"
 msgstr "Trimite răspuns automat doar când sunt _inactiv"
 
-#: src/gtkprefs.c:1592
+#: src/gtkprefs.c:1584
 msgid "Send auto-response in _active conversations"
 msgstr "Trimite răspuns automat în _discuţiile active"
 
-#: src/gtkprefs.c:1601 src/protocols/msn/state.c:30
-#: src/protocols/yahoo/yahoo.c:2291
+#: src/gtkprefs.c:1593 src/protocols/msn/state.c:30
+#: src/protocols/yahoo/yahoo.c:2285
 msgid "Idle"
 msgstr "Inactiv"
 
-#: src/gtkprefs.c:1602
+#: src/gtkprefs.c:1594
 msgid "Idle _time reporting:"
 msgstr "Arată inactivitatea în _funcţie de:"
 
-#: src/gtkprefs.c:1605
+#: src/gtkprefs.c:1597
 msgid "Gaim usage"
 msgstr "Utilizarea Gaim"
 
-#: src/gtkprefs.c:1608
+#: src/gtkprefs.c:1600
 msgid "X usage"
 msgstr "Utilizarea X"
 
-#: src/gtkprefs.c:1610
+#: src/gtkprefs.c:1602
 msgid "Windows usage"
 msgstr "Folosirea ferestrelor"
 
-#: src/gtkprefs.c:1618
+#: src/gtkprefs.c:1610
 msgid "Auto-away"
 msgstr "Absenţe automate"
 
-#: src/gtkprefs.c:1619
+#: src/gtkprefs.c:1611
 msgid "Set away _when idle"
 msgstr "Treci în absenţă când sunt inacti_v"
 
-#: src/gtkprefs.c:1623
+#: src/gtkprefs.c:1615
 msgid "_Minutes before setting away:"
 msgstr "Număr de _minute inactive:"
 
-#: src/gtkprefs.c:1631
+#: src/gtkprefs.c:1623
 msgid "Away m_essage:"
 msgstr "Mesaje în a_bsenţă"
 
-#: src/gtkprefs.c:1786
+#: src/gtkprefs.c:1778
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3913,7 +3905,7 @@ msgstr ""
 "<span weight=\"bold\">Adresă Internet:</span>\t\t%s\n"
 "<span weight=\"bold\">Nume fişier:</span>\t%s"
 
-#: src/gtkprefs.c:1791
+#: src/gtkprefs.c:1783
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3928,108 +3920,108 @@ msgstr ""
 "<span weight=\"bold\">Adresă:</span>  %s\n"
 "<span weight=\"bold\">Nume fişier:</span>  %s"
 
-#: src/gtkprefs.c:1974
+#: src/gtkprefs.c:1966
 msgid "Load"
 msgstr "Activare"
 
-#: src/gtkprefs.c:1988
+#: src/gtkprefs.c:1980
 msgid "Summary"
 msgstr "Descriere"
 
-#: src/gtkprefs.c:2036
+#: src/gtkprefs.c:2028
 msgid "Details"
 msgstr "Detalii"
 
-#: src/gtkprefs.c:2163
+#: src/gtkprefs.c:2155
 msgid "Sound Selection"
 msgstr "Selectaţi un sunet"
 
-#: src/gtkprefs.c:2270
+#: src/gtkprefs.c:2262
 msgid "Play"
 msgstr "Redare"
 
-#: src/gtkprefs.c:2277
+#: src/gtkprefs.c:2269
 msgid "Event"
 msgstr "Eveniment"
 
-#: src/gtkprefs.c:2296
+#: src/gtkprefs.c:2288
 msgid "Test"
 msgstr "Testare"
 
-#: src/gtkprefs.c:2300
+#: src/gtkprefs.c:2292
 msgid "Reset"
 msgstr "Resetare"
 
-#: src/gtkprefs.c:2304
+#: src/gtkprefs.c:2296
 msgid "Choose..."
 msgstr "Alegeţi..."
 
-#: src/gtkprefs.c:2439
+#: src/gtkprefs.c:2431
 msgid "_Edit"
 msgstr "_Editare"
 
-#: src/gtkprefs.c:2475
+#: src/gtkprefs.c:2467
 msgid "Interface"
 msgstr "Interfaţă"
 
-#: src/gtkprefs.c:2476
+#: src/gtkprefs.c:2468
 msgid "Smiley Themes"
 msgstr "Teme iconiţe"
 
-#: src/gtkprefs.c:2477
+#: src/gtkprefs.c:2469
 msgid "Fonts"
 msgstr "Fonturi"
 
-#: src/gtkprefs.c:2478
+#: src/gtkprefs.c:2470
 msgid "Message Text"
 msgstr "Text mesaj"
 
-#: src/gtkprefs.c:2479
+#: src/gtkprefs.c:2471
 msgid "Shortcuts"
 msgstr "Scurtături"
 
-#: src/gtkprefs.c:2482
+#: src/gtkprefs.c:2474
 msgid "IMs"
 msgstr "Mesaje"
 
-#: src/gtkprefs.c:2484
+#: src/gtkprefs.c:2476
 msgid "Network"
 msgstr "Reţea"
 
-#: src/gtkprefs.c:2485
+#: src/gtkprefs.c:2477
 msgid "Proxy"
 msgstr "Proxy"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2488
+#: src/gtkprefs.c:2480
 msgid "Browser"
 msgstr "Navigator"
 
-#: src/gtkprefs.c:2490
+#: src/gtkprefs.c:2482
 msgid "Logging"
 msgstr "Înregistrare"
 
-#: src/gtkprefs.c:2491
+#: src/gtkprefs.c:2483
 msgid "Sounds"
 msgstr "Sunete"
 
-#: src/gtkprefs.c:2492
+#: src/gtkprefs.c:2484
 msgid "Sound Events"
 msgstr "Evenimente sonore"
 
-#: src/gtkprefs.c:2493
+#: src/gtkprefs.c:2485
 msgid "Away / Idle"
 msgstr "Absenţă / Inactivitate"
 
-#: src/gtkprefs.c:2494
+#: src/gtkprefs.c:2486
 msgid "Away Messages"
 msgstr "Mesaje în absenţă"
 
-#: src/gtkprefs.c:2496
+#: src/gtkprefs.c:2488
 msgid "Protocols"
 msgstr "Protocoale"
 
-#: src/gtkprefs.c:2512
+#: src/gtkprefs.c:2504
 msgid "Plugins"
 msgstr "Module"
 
@@ -4117,11 +4109,11 @@ msgstr "Sunteţi sigur că doriţi ca %s să nu vă poată contacta?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:223 src/protocols/gg/gg.c:663 src/request.h:1228
+#: src/gtkrequest.c:223 src/protocols/gg/gg.c:660 src/request.h:1228
 msgid "Yes"
 msgstr "Da"
 
-#: src/gtkrequest.c:224 src/protocols/gg/gg.c:663 src/request.h:1228
+#: src/gtkrequest.c:224 src/protocols/gg/gg.c:660 src/request.h:1228
 msgid "No"
 msgstr "Nu"
 
@@ -4146,7 +4138,7 @@ msgid "Room List"
 msgstr "Listă camere de chat"
 
 #. list button
-#: src/gtkroomlist.c:410
+#: src/gtkroomlist.c:409
 msgid "_Get List"
 msgstr "_Obţine lista"
 
@@ -4230,10 +4222,9 @@ msgid "XML"
 msgstr "XML"
 
 #: src/log.c:514
-#, fuzzy, c-format
 msgid ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-"
-"REPLY&gt;:</b></font> %s<br/>\n"
+"REPLY&gt;:</b></font> <br/>\n"
 msgstr ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;Răspuns "
 "automat&gt;:</b></font> <br/>\n"
@@ -4290,7 +4281,7 @@ msgid "Sign on"
 msgstr "Autentificare"
 
 #. full help text
-#: src/main.c:524
+#: src/main.c:519
 #, c-format
 msgid ""
 "Gaim %s\n"
@@ -4327,7 +4318,7 @@ msgstr ""
 "  -h, --help          arată aceste mesaje de ajutor şi ieşi\n"
 
 #. short message
-#: src/main.c:539
+#: src/main.c:534
 #, c-format
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s. Încercaţi „%s -h” pentru mai multe informaţii.\n"
@@ -4356,8 +4347,8 @@ msgstr "Mesajul implicit"
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:111
 #: src/protocols/msn/msn.c:345 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2594
-#: src/protocols/yahoo/yahoo.c:2703
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2588
+#: src/protocols/yahoo/yahoo.c:2697
 msgid "Available"
 msgstr "Disponibil"
 
@@ -4370,11 +4361,11 @@ msgid "Away for friends only"
 msgstr "Absent doar pentru prieteni"
 
 #: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:964
-#: src/protocols/jabber/presence.c:121 src/protocols/oscar/oscar.c:2943
-#: src/protocols/oscar/oscar.c:4668 src/protocols/oscar/oscar.c:4739
-#: src/protocols/oscar/oscar.c:4763 src/protocols/oscar/oscar.c:6415
-#: src/protocols/oscar/oscar.c:6419 src/protocols/yahoo/yahoo.c:2289
-#: src/protocols/yahoo/yahoo.c:2614 src/protocols/yahoo/yahoo.c:2713
+#: src/protocols/jabber/presence.c:121 src/protocols/oscar/oscar.c:2901
+#: src/protocols/oscar/oscar.c:4626 src/protocols/oscar/oscar.c:4697
+#: src/protocols/oscar/oscar.c:4721 src/protocols/oscar/oscar.c:6373
+#: src/protocols/oscar/oscar.c:6377 src/protocols/yahoo/yahoo.c:2283
+#: src/protocols/yahoo/yahoo.c:2608 src/protocols/yahoo/yahoo.c:2707
 msgid "Invisible"
 msgstr "Invizibil"
 
@@ -4431,159 +4422,159 @@ msgid "Unable to read socket"
 msgstr "Nu pot citi din socket"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
-#: src/protocols/gg/gg.c:402 src/protocols/icq/gaim_icq.c:344
+#: src/protocols/gg/gg.c:399 src/protocols/icq/gaim_icq.c:344
 #: src/protocols/msn/dispatch.c:208 src/protocols/msn/msn.c:496
 #: src/protocols/msn/notification.c:1789 src/protocols/napster/napster.c:463
 #: src/protocols/napster/napster.c:494 src/protocols/toc/toc.c:200
-#: src/protocols/yahoo/yahoo.c:1954 src/protocols/yahoo/yahoo.c:1985
-#: src/protocols/yahoo/yahoo.c:2048 src/protocols/yahoo/yahoo_filexfer.c:68
+#: src/protocols/yahoo/yahoo.c:1948 src/protocols/yahoo/yahoo.c:1979
+#: src/protocols/yahoo/yahoo.c:2042 src/protocols/yahoo/yahoo_filexfer.c:68
 #: src/protocols/yahoo/yahoo_filexfer.c:139
 msgid "Unable to connect."
 msgstr "Nu mă pot conecta."
 
-#: src/protocols/gg/gg.c:418
+#: src/protocols/gg/gg.c:415
 msgid "Reading data"
 msgstr "Citesc date"
 
-#: src/protocols/gg/gg.c:421
+#: src/protocols/gg/gg.c:418
 msgid "Balancer handshake"
 msgstr "Echilibrare sincronizare"
 
-#: src/protocols/gg/gg.c:424
+#: src/protocols/gg/gg.c:421
 msgid "Reading server key"
 msgstr "Primesc cheia serverului"
 
-#: src/protocols/gg/gg.c:427
+#: src/protocols/gg/gg.c:424
 msgid "Exchanging key hash"
 msgstr "Schimb key hash"
 
-#: src/protocols/gg/gg.c:437
+#: src/protocols/gg/gg.c:434
 msgid "Critical error in GG library\n"
 msgstr "Eroare critică în modulul GG\n"
 
-#: src/protocols/gg/gg.c:455 src/protocols/gg/gg.c:546
+#: src/protocols/gg/gg.c:452 src/protocols/gg/gg.c:543
 #: src/protocols/toc/toc.c:176
 #, c-format
 msgid "Connect to %s failed"
 msgstr "Conectarea la %s a eşuat"
 
-#: src/protocols/gg/gg.c:503
+#: src/protocols/gg/gg.c:500
 msgid "Unable to ping server"
 msgstr "Serverul nu răspunde la ping"
 
-#: src/protocols/gg/gg.c:515
+#: src/protocols/gg/gg.c:512
 msgid "Send as message"
 msgstr "Trimite ca mesaj"
 
-#: src/protocols/gg/gg.c:520
+#: src/protocols/gg/gg.c:517
 msgid "Looking up GG server"
 msgstr "Caut serverul GG"
 
-#: src/protocols/gg/gg.c:523
+#: src/protocols/gg/gg.c:520
 msgid "Invalid Gadu-Gadu UIN specified"
 msgstr "Aţi specificat un UIN Gadu-Gadu invalid"
 
-#: src/protocols/gg/gg.c:570
+#: src/protocols/gg/gg.c:567
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "Aţi încercat să trimiteţi un mesaj către un UIN Gadu-Gadu invalid."
 
-#: src/protocols/gg/gg.c:632
+#: src/protocols/gg/gg.c:629
 msgid "Couldn't get search results"
 msgstr "Nu am putut obţine rezultatele căutării"
 
-#: src/protocols/gg/gg.c:637
+#: src/protocols/gg/gg.c:634
 msgid "Gadu-Gadu Search Engine"
 msgstr "Motorul de căutare Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:662
+#: src/protocols/gg/gg.c:659
 msgid "Active"
 msgstr "Activ"
 
-#: src/protocols/gg/gg.c:667 src/protocols/oscar/oscar.c:4106
+#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:4064
 msgid "UIN"
 msgstr "UIN"
 
 #. First Name
-#: src/protocols/gg/gg.c:671 src/protocols/jabber/jabber.c:605
-#: src/protocols/oscar/oscar.c:4111 src/protocols/trepia/trepia.c:267
+#: src/protocols/gg/gg.c:668 src/protocols/jabber/jabber.c:605
+#: src/protocols/oscar/oscar.c:4069 src/protocols/trepia/trepia.c:267
 msgid "First Name"
 msgstr "Prenume"
 
 #. Last Name
-#: src/protocols/gg/gg.c:676 src/protocols/jabber/jabber.c:610
-#: src/protocols/oscar/oscar.c:4114 src/protocols/trepia/trepia.c:274
+#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:610
+#: src/protocols/oscar/oscar.c:4072 src/protocols/trepia/trepia.c:274
 msgid "Last Name"
 msgstr "Nume de familie"
 
-#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1392
-#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:4108
+#: src/protocols/gg/gg.c:677 src/protocols/gg/gg.c:1389
+#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:4066
 msgid "Nick"
 msgstr "Pseudonim"
 
-#: src/protocols/gg/gg.c:687 src/protocols/gg/gg.c:690
+#: src/protocols/gg/gg.c:684 src/protocols/gg/gg.c:687
 msgid "Birth Year"
 msgstr "An naştere"
 
-#: src/protocols/gg/gg.c:696 src/protocols/gg/gg.c:698
-#: src/protocols/gg/gg.c:700
+#: src/protocols/gg/gg.c:693 src/protocols/gg/gg.c:695
+#: src/protocols/gg/gg.c:697
 msgid "Sex"
 msgstr "Sex"
 
 #. City
-#: src/protocols/gg/gg.c:704 src/protocols/jabber/jabber.c:620
-#: src/protocols/oscar/oscar.c:4160 src/protocols/oscar/oscar.c:4176
+#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:620
+#: src/protocols/oscar/oscar.c:4118 src/protocols/oscar/oscar.c:4134
 #: src/protocols/trepia/trepia.c:331 src/protocols/trepia/trepia.c:430
 msgid "City"
 msgstr "Oraş"
 
 #. res[0] == username
 #. show it to the user
-#: src/protocols/gg/gg.c:725 src/protocols/msn/msn.c:1303
-#: src/protocols/msn/msn.c:1547 src/protocols/napster/napster.c:387
-#: src/protocols/oscar/oscar.c:2985 src/protocols/oscar/oscar.c:3311
-#: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2887
-#: src/protocols/yahoo/yahoo.c:2909 src/protocols/yahoo/yahoo.c:2932
-#: src/protocols/yahoo/yahoo.c:3090 src/protocols/zephyr/zephyr.c:536
+#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1299
+#: src/protocols/msn/msn.c:1543 src/protocols/napster/napster.c:387
+#: src/protocols/oscar/oscar.c:2943 src/protocols/oscar/oscar.c:3269
+#: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2881
+#: src/protocols/yahoo/yahoo.c:2903 src/protocols/yahoo/yahoo.c:2926
+#: src/protocols/yahoo/yahoo.c:3084 src/protocols/zephyr/zephyr.c:392
 msgid "Buddy Information"
 msgstr "Informaţii contact"
 
-#: src/protocols/gg/gg.c:744
+#: src/protocols/gg/gg.c:741
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Nu există nici o listă de contacte pe serverul Gadu-Gadu."
 
-#: src/protocols/gg/gg.c:752
+#: src/protocols/gg/gg.c:749
 msgid "Couldn't Import Buddy List from Server"
 msgstr "Nu am putut importa lista de contacte de pe server"
 
-#: src/protocols/gg/gg.c:815
+#: src/protocols/gg/gg.c:812
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
 msgstr "Lista de contacte a fost transferată cu succes pe serverul Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:823
+#: src/protocols/gg/gg.c:820
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "Nu am putut transfera lista de contacte pe serverul Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:831
+#: src/protocols/gg/gg.c:828
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Lista de contacte a fost ştearsă de pe serverul Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:839
+#: src/protocols/gg/gg.c:836
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
 msgstr "Nu am putut şterge lista de contacte de pe serverul Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:847
+#: src/protocols/gg/gg.c:844
 msgid "Password changed successfully"
 msgstr "Parola a fost schimbată cu succes"
 
-#: src/protocols/gg/gg.c:854
+#: src/protocols/gg/gg.c:851
 msgid "Password couldn't be changed"
 msgstr "Parola nu a putut fi schimbată"
 
-#: src/protocols/gg/gg.c:971
+#: src/protocols/gg/gg.c:968
 msgid "Error communicating with Gadu-Gadu server"
 msgstr "Eroare de comunicare cu serverul Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:972
+#: src/protocols/gg/gg.c:969
 msgid ""
 "Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
@@ -4591,11 +4582,11 @@ msgstr ""
 "Gaim nu a putut da curs cererii dumneavoastră datorită unei probleme în "
 "comunicarea cu serverul HTTP Gadu-Gadu. Vă rugăm să încercaţi mai târziu."
 
-#: src/protocols/gg/gg.c:1000
+#: src/protocols/gg/gg.c:997
 msgid "Unable to import Gadu-Gadu buddy list"
 msgstr "Nu pot importa lista de contacte Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:1001
+#: src/protocols/gg/gg.c:998
 msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
@@ -4603,26 +4594,26 @@ msgstr ""
 "Gaim nu s-a putut conecta la serverul Gadu-Gadu ce ţine listele cu contacte. "
 "Vă rugăm încercaţi din nou mai târziu."
 
-#: src/protocols/gg/gg.c:1074
+#: src/protocols/gg/gg.c:1071
 msgid "Couldn't export buddy list"
 msgstr "Nu am putut exporta lista de contacte"
 
-#: src/protocols/gg/gg.c:1075 src/protocols/gg/gg.c:1098
+#: src/protocols/gg/gg.c:1072 src/protocols/gg/gg.c:1095
 msgid ""
 "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
 "Gaim nu s-a putut conecta la serverul cu lista de contacte. Încercaţi mai "
 "târziu."
 
-#: src/protocols/gg/gg.c:1097
+#: src/protocols/gg/gg.c:1094
 msgid "Unable to delete Gadu-Gadu buddy list"
 msgstr "Nu pot şterge lista de contacte Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:1146
+#: src/protocols/gg/gg.c:1143
 msgid "Unable to access directory"
 msgstr "Nu pot accesa directorul"
 
-#: src/protocols/gg/gg.c:1147
+#: src/protocols/gg/gg.c:1144
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
@@ -4630,11 +4621,11 @@ msgstr ""
 "Gaim nu a putut căuta în director deoarece nu s-a putut conecta la server. "
 "Vă rugăm încercaţi din nou mai târziu."
 
-#: src/protocols/gg/gg.c:1180
+#: src/protocols/gg/gg.c:1177
 msgid "Unable to change Gadu-Gadu password"
 msgstr "Nu pot schimba parola Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:1181
+#: src/protocols/gg/gg.c:1178
 msgid ""
 "Gaim was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
@@ -4642,32 +4633,32 @@ msgstr ""
 "Gaim nu a putut schimba parola datorită unei erori de conectare la serverul "
 "Gadu-Gadu. Vă rugăm încercaţi din nou mai târziu."
 
-#: src/protocols/gg/gg.c:1198
+#: src/protocols/gg/gg.c:1195
 msgid "Directory Search"
 msgstr "Căutare în director"
 
-#: src/protocols/gg/gg.c:1207 src/protocols/jabber/jabber.c:1063
+#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1063
 #: src/protocols/toc/toc.c:1546
 msgid "Change Password"
 msgstr "Schimbare parola"
 
-#: src/protocols/gg/gg.c:1215
+#: src/protocols/gg/gg.c:1212
 msgid "Import Buddy List from Server"
 msgstr "Importă lista de contacte de pe server"
 
-#: src/protocols/gg/gg.c:1221
+#: src/protocols/gg/gg.c:1218
 msgid "Export Buddy List to Server"
 msgstr "Exportă lista de contacte către server"
 
-#: src/protocols/gg/gg.c:1227
+#: src/protocols/gg/gg.c:1224
 msgid "Delete Buddy List from Server"
 msgstr "Şterge lista de contacte de pe server"
 
-#: src/protocols/gg/gg.c:1260
+#: src/protocols/gg/gg.c:1257
 msgid "Unable to access user profile."
 msgstr "Nu pot accesa profilul utilizatorului."
 
-#: src/protocols/gg/gg.c:1261
+#: src/protocols/gg/gg.c:1258
 msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
@@ -4686,7 +4677,7 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/gg/gg.c:1373 src/protocols/gg/gg.c:1375
+#: src/protocols/gg/gg.c:1370 src/protocols/gg/gg.c:1372
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Modúl de protocol Gadu-Gadu"
 
@@ -4701,15 +4692,15 @@ msgstr "Utilizatorul %s (%s%s%s%s%s) doreşte să fie autorizat."
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:224
 #: src/protocols/msn/notification.c:581 src/protocols/msn/notification.c:908
-#: src/protocols/msn/notification.c:1075 src/protocols/oscar/oscar.c:2715
-#: src/protocols/oscar/oscar.c:5374
+#: src/protocols/msn/notification.c:1075 src/protocols/oscar/oscar.c:2673
+#: src/protocols/oscar/oscar.c:5332
 msgid "Authorize"
 msgstr "Autorizează"
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:225
 #: src/protocols/msn/notification.c:582 src/protocols/msn/notification.c:910
-#: src/protocols/msn/notification.c:1077 src/protocols/oscar/oscar.c:2717
-#: src/protocols/oscar/oscar.c:5375
+#: src/protocols/msn/notification.c:1077 src/protocols/oscar/oscar.c:2675
+#: src/protocols/oscar/oscar.c:5333
 msgid "Deny"
 msgstr "Refuză"
 
@@ -4761,7 +4752,9 @@ msgstr "topic curent este: %s"
 msgid "No topic is set"
 msgstr "Nu există topic"
 
-#: src/protocols/irc/dcc_send.c:272 src/protocols/yahoo/yahoo_filexfer.c:199
+#: src/protocols/irc/dcc_send.c:272 src/protocols/oscar/oscar.c:901
+#: src/protocols/oscar/oscar.c:914 src/protocols/oscar/oscar.c:919
+#: src/protocols/yahoo/yahoo_filexfer.c:199
 #: src/protocols/yahoo/yahoo_filexfer.c:208
 #: src/protocols/yahoo/yahoo_filexfer.c:217
 msgid "File Transfer Aborted"
@@ -4793,8 +4786,8 @@ msgid "View MOTD"
 msgstr "Arată MOTD"
 
 #: src/protocols/irc/irc.c:154 src/protocols/jabber/buddy.c:883
-#: src/protocols/oscar/oscar.c:3189 src/protocols/oscar/oscar.c:6515
-#: src/protocols/yahoo/yahoo.c:2452
+#: src/protocols/oscar/oscar.c:3147 src/protocols/oscar/oscar.c:6473
+#: src/protocols/yahoo/yahoo.c:2446
 msgid "Send File"
 msgstr "Transfer de fişiere"
 
@@ -4855,7 +4848,7 @@ msgid "Server"
 msgstr "Server"
 
 #: src/protocols/irc/irc.c:632 src/protocols/jabber/jabber.c:1390
-#: src/protocols/msn/msn.c:1680 src/protocols/napster/napster.c:642
+#: src/protocols/msn/msn.c:1676 src/protocols/napster/napster.c:642
 #: src/protocols/trepia/trepia.c:1350
 msgid "Port"
 msgstr "Port"
@@ -4890,7 +4883,7 @@ msgstr " <i>(operator IRC)</i>"
 msgid " <i>(identified)</i>"
 msgstr " <i>(identificat)</i>"
 
-#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2990
+#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2984
 msgid "Realname"
 msgstr "Nume real"
 
@@ -5041,7 +5034,7 @@ msgstr "PONG"
 msgid "CTCP PING reply"
 msgstr "Replică CTCP PING"
 
-#: src/protocols/irc/parse.c:400 src/protocols/oscar/oscar.c:581
+#: src/protocols/irc/parse.c:400 src/protocols/oscar/oscar.c:580
 #: src/protocols/toc/toc.c:218 src/protocols/toc/toc.c:625
 #: src/protocols/toc/toc.c:641 src/protocols/toc/toc.c:709
 msgid "Disconnected."
@@ -5089,7 +5082,7 @@ msgid "Given Name"
 msgstr "Prenume"
 
 #: src/protocols/jabber/buddy.c:250 src/protocols/jabber/buddy.c:635
-#: src/protocols/jabber/jabber.c:600 src/protocols/yahoo/yahoo.c:2986
+#: src/protocols/jabber/jabber.c:600 src/protocols/yahoo/yahoo.c:2980
 msgid "Nickname"
 msgstr "Pseudonim"
 
@@ -5130,7 +5123,7 @@ msgid "Telephone"
 msgstr "Telefon"
 
 #: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:709
-#: src/protocols/jabber/buddy.c:717 src/protocols/yahoo/yahoo.c:2982
+#: src/protocols/jabber/buddy.c:717 src/protocols/yahoo/yahoo.c:2976
 msgid "Email"
 msgstr "Mail"
 
@@ -5151,7 +5144,7 @@ msgid "Role"
 msgstr "Funcţie"
 
 #: src/protocols/jabber/buddy.c:264 src/protocols/jabber/buddy.c:638
-#: src/protocols/oscar/oscar.c:4140
+#: src/protocols/oscar/oscar.c:4098
 msgid "Birthday"
 msgstr "Zi de naştere"
 
@@ -5185,7 +5178,7 @@ msgid "Middle Name"
 msgstr "Iniţială"
 
 #: src/protocols/jabber/buddy.c:643 src/protocols/jabber/jabber.c:615
-#: src/protocols/oscar/oscar.c:4157 src/protocols/oscar/oscar.c:4173
+#: src/protocols/oscar/oscar.c:4115 src/protocols/oscar/oscar.c:4131
 msgid "Address"
 msgstr "Adresă"
 
@@ -5319,17 +5312,17 @@ msgstr "Eroare la iniţializarea sesiunii"
 #: src/protocols/jabber/jabber.c:203 src/protocols/msn/httpmethod.c:255
 #: src/protocols/msn/msn.c:83 src/protocols/msn/msn.c:103
 #: src/protocols/msn/msn.c:161 src/protocols/msn/msn.c:261
-#: src/protocols/msn/msn.c:548 src/protocols/msn/msn.c:721
-#: src/protocols/msn/msn.c:744 src/protocols/msn/msn.c:776
-#: src/protocols/msn/msn.c:784 src/protocols/msn/msn.c:817
-#: src/protocols/msn/msn.c:825 src/protocols/msn/msn.c:839
-#: src/protocols/msn/msn.c:848 src/protocols/msn/msn.c:863
-#: src/protocols/msn/msn.c:873 src/protocols/msn/msn.c:895
-#: src/protocols/msn/msn.c:945 src/protocols/msn/msn.c:983
-#: src/protocols/msn/msn.c:1085 src/protocols/msn/msn.c:1118
-#: src/protocols/msn/msn.c:1139 src/protocols/msn/msn.c:1150
-#: src/protocols/msn/msn.c:1161 src/protocols/msn/msn.c:1185
-#: src/protocols/msn/msn.c:1197 src/protocols/msn/msn.c:1278
+#: src/protocols/msn/msn.c:548 src/protocols/msn/msn.c:719
+#: src/protocols/msn/msn.c:742 src/protocols/msn/msn.c:774
+#: src/protocols/msn/msn.c:782 src/protocols/msn/msn.c:815
+#: src/protocols/msn/msn.c:823 src/protocols/msn/msn.c:837
+#: src/protocols/msn/msn.c:846 src/protocols/msn/msn.c:861
+#: src/protocols/msn/msn.c:871 src/protocols/msn/msn.c:893
+#: src/protocols/msn/msn.c:943 src/protocols/msn/msn.c:981
+#: src/protocols/msn/msn.c:1081 src/protocols/msn/msn.c:1114
+#: src/protocols/msn/msn.c:1135 src/protocols/msn/msn.c:1146
+#: src/protocols/msn/msn.c:1157 src/protocols/msn/msn.c:1181
+#: src/protocols/msn/msn.c:1193 src/protocols/msn/msn.c:1274
 #: src/protocols/msn/notification.c:147 src/protocols/msn/notification.c:175
 #: src/protocols/msn/notification.c:1304 src/protocols/msn/notification.c:1324
 #: src/protocols/msn/session.c:205 src/protocols/trepia/trepia.c:248
@@ -5394,8 +5387,8 @@ msgid "E-Mail"
 msgstr "Mail"
 
 #. State
-#: src/protocols/jabber/jabber.c:625 src/protocols/oscar/oscar.c:4163
-#: src/protocols/oscar/oscar.c:4179 src/protocols/trepia/trepia.c:335
+#: src/protocols/jabber/jabber.c:625 src/protocols/oscar/oscar.c:4121
+#: src/protocols/oscar/oscar.c:4137 src/protocols/trepia/trepia.c:335
 #: src/protocols/trepia/trepia.c:439
 msgid "State"
 msgstr "Stat"
@@ -5418,8 +5411,8 @@ msgstr "Înregistrare cont nou Jabber"
 
 #: src/protocols/jabber/jabber.c:774 src/protocols/msn/dispatch.c:212
 #: src/protocols/msn/msn.c:487 src/protocols/napster/napster.c:487
-#: src/protocols/oscar/oscar.c:750 src/protocols/trepia/trepia.c:1115
-#: src/protocols/yahoo/yahoo.c:2173
+#: src/protocols/oscar/oscar.c:740 src/protocols/trepia/trepia.c:1115
+#: src/protocols/yahoo/yahoo.c:2167
 msgid "Connecting"
 msgstr "Autentificare"
 
@@ -5437,7 +5430,7 @@ msgstr "Reiniţializare flux"
 
 #: src/protocols/jabber/jabber.c:873 src/protocols/jabber/jabber.c:1161
 #: src/protocols/jabber/jabber.c:1202 src/protocols/jabber/jabber.c:1235
-#: src/protocols/oscar/oscar.c:5800
+#: src/protocols/oscar/oscar.c:5758
 msgid "Not Authorized"
 msgstr "Neautorizat"
 
@@ -5481,8 +5474,8 @@ msgstr "Absenţă prelungită"
 
 #: src/protocols/jabber/jabber.c:962 src/protocols/jabber/jutil.c:108
 #: src/protocols/jabber/presence.c:65 src/protocols/jabber/presence.c:119
-#: src/protocols/oscar/oscar.c:2933 src/protocols/oscar/oscar.c:4751
-#: src/protocols/oscar/oscar.c:6411
+#: src/protocols/oscar/oscar.c:2891 src/protocols/oscar/oscar.c:4709
+#: src/protocols/oscar/oscar.c:6369
 msgid "Do Not Disturb"
 msgstr "Nu deranjaţi"
 
@@ -6060,7 +6053,7 @@ msgstr "Pseudonimele au fost schimbate prea rapid"
 msgid "Server too busy"
 msgstr "Server prea încărcat"
 
-#: src/protocols/msn/error.c:193 src/protocols/oscar/oscar.c:1163
+#: src/protocols/msn/error.c:193 src/protocols/oscar/oscar.c:1125
 #: src/protocols/toc/toc.c:659
 msgid "Authentication failed"
 msgstr "Autentificare eşuată"
@@ -6142,42 +6135,42 @@ msgstr "Trimite un mesaj mobil."
 msgid "Page"
 msgstr "Pagină"
 
-#: src/protocols/msn/msn.c:333 src/protocols/yahoo/yahoo.c:2403
+#: src/protocols/msn/msn.c:333 src/protocols/yahoo/yahoo.c:2397
 #, c-format
 msgid "<b>Status:</b> %s"
 msgstr "<b>Status:</b> %s"
 
-#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:640
+#: src/protocols/msn/msn.c:346 src/protocols/msn/msn.c:638
 #: src/protocols/msn/state.c:32
 msgid "Away From Computer"
 msgstr "Absent din faţa calculatorului"
 
-#: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:642
-#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2271
-#: src/protocols/yahoo/yahoo.c:2596 src/protocols/yahoo/yahoo.c:2704
+#: src/protocols/msn/msn.c:347 src/protocols/msn/msn.c:640
+#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:2265
+#: src/protocols/yahoo/yahoo.c:2590 src/protocols/yahoo/yahoo.c:2698
 msgid "Be Right Back"
 msgstr "Vin imediat"
 
-#: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:644
-#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2273
-#: src/protocols/yahoo/yahoo.c:2598 src/protocols/yahoo/yahoo.c:2705
+#: src/protocols/msn/msn.c:348 src/protocols/msn/msn.c:642
+#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:2267
+#: src/protocols/yahoo/yahoo.c:2592 src/protocols/yahoo/yahoo.c:2699
 msgid "Busy"
 msgstr "Ocupat"
 
-#: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:646
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2281
-#: src/protocols/yahoo/yahoo.c:2606 src/protocols/yahoo/yahoo.c:2709
+#: src/protocols/msn/msn.c:349 src/protocols/msn/msn.c:644
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2275
+#: src/protocols/yahoo/yahoo.c:2600 src/protocols/yahoo/yahoo.c:2703
 msgid "On The Phone"
 msgstr "La telefon"
 
-#: src/protocols/msn/msn.c:350 src/protocols/msn/msn.c:648
-#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2285
-#: src/protocols/yahoo/yahoo.c:2610 src/protocols/yahoo/yahoo.c:2711
+#: src/protocols/msn/msn.c:350 src/protocols/msn/msn.c:646
+#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:2279
+#: src/protocols/yahoo/yahoo.c:2604 src/protocols/yahoo/yahoo.c:2705
 msgid "Out To Lunch"
 msgstr "La masă"
 
-#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:650
-#: src/protocols/zephyr/zephyr.c:1173 src/protocols/zephyr/zephyr.c:1188
+#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:648
+#: src/protocols/zephyr/zephyr.c:1010 src/protocols/zephyr/zephyr.c:1025
 msgid "Hidden"
 msgstr "Ascuns"
 
@@ -6221,7 +6214,7 @@ msgstr ""
 "Pentru MSN aveţi nevoie de suport SSL. Instalaţi bibliotecile SSL necesare. "
 "Detalii la http://gaim.sf.net/faq-ssl.php"
 
-#: src/protocols/msn/msn.c:757
+#: src/protocols/msn/msn.c:755
 #, c-format
 msgid ""
 "An MSN screen name must be in the form \"user@server.com\". Perhaps you "
@@ -6231,11 +6224,11 @@ msgstr ""
 "vrut să scrieţi %s@hotmail.com. Nu s-au operat schimbări în lista "
 "utilizatorilor permişi."
 
-#: src/protocols/msn/msn.c:761 src/protocols/msn/msn.c:801
+#: src/protocols/msn/msn.c:759 src/protocols/msn/msn.c:799
 msgid "Invalid MSN screen name"
 msgstr "Numele ales MSN este invalid"
 
-#: src/protocols/msn/msn.c:797
+#: src/protocols/msn/msn.c:795
 #, c-format
 msgid ""
 "An MSN screen name must be in the form \"user@server.com\". Perhaps you "
@@ -6245,73 +6238,73 @@ msgstr ""
 "dorit să scrieţi %s@hotmail.com. Nu s-au operat modificări în lista "
 "utilizatorilor blocaţi."
 
-#: src/protocols/msn/msn.c:1304 src/protocols/yahoo/yahoo.c:2888
+#: src/protocols/msn/msn.c:1300 src/protocols/yahoo/yahoo.c:2882
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Eroare la descărcarea profilului</b></body></html>"
 
 #. Age
-#: src/protocols/msn/msn.c:1374 src/protocols/oscar/oscar.c:4145
+#: src/protocols/msn/msn.c:1370 src/protocols/oscar/oscar.c:4103
 #: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:413
-#: src/protocols/yahoo/yahoo.c:2998
+#: src/protocols/yahoo/yahoo.c:2992
 msgid "Age"
 msgstr "Vârstă"
 
 #. Gender
-#: src/protocols/msn/msn.c:1381 src/protocols/oscar/oscar.c:4131
+#: src/protocols/msn/msn.c:1377 src/protocols/oscar/oscar.c:4089
 #: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:421
-#: src/protocols/yahoo/yahoo.c:3006
+#: src/protocols/yahoo/yahoo.c:3000
 msgid "Gender"
 msgstr "Sex"
 
-#: src/protocols/msn/msn.c:1389 src/protocols/yahoo/yahoo.c:3002
+#: src/protocols/msn/msn.c:1385 src/protocols/yahoo/yahoo.c:2996
 msgid "Marital Status"
 msgstr "Status marital"
 
-#: src/protocols/msn/msn.c:1396 src/protocols/yahoo/yahoo.c:2994
+#: src/protocols/msn/msn.c:1392 src/protocols/yahoo/yahoo.c:2988
 msgid "Location"
 msgstr "Locaţie"
 
-#: src/protocols/msn/msn.c:1404 src/protocols/yahoo/yahoo.c:3010
+#: src/protocols/msn/msn.c:1400 src/protocols/yahoo/yahoo.c:3004
 msgid "Occupation"
 msgstr "Ocupaţie"
 
-#: src/protocols/msn/msn.c:1421 src/protocols/msn/msn.c:1427
-#: src/protocols/msn/msn.c:1434 src/protocols/msn/msn.c:1441
-#: src/protocols/msn/msn.c:1448
+#: src/protocols/msn/msn.c:1417 src/protocols/msn/msn.c:1423
+#: src/protocols/msn/msn.c:1430 src/protocols/msn/msn.c:1437
+#: src/protocols/msn/msn.c:1444
 msgid "A Little About Me"
 msgstr "Câteva cuvinte despre mine"
 
-#: src/protocols/msn/msn.c:1457 src/protocols/msn/msn.c:1470
-#: src/protocols/msn/msn.c:1477
+#: src/protocols/msn/msn.c:1453 src/protocols/msn/msn.c:1466
+#: src/protocols/msn/msn.c:1473
 msgid "Favorite Things"
 msgstr "Lucruri favorite"
 
-#: src/protocols/msn/msn.c:1486 src/protocols/msn/msn.c:1492
-#: src/protocols/msn/msn.c:1499
+#: src/protocols/msn/msn.c:1482 src/protocols/msn/msn.c:1488
+#: src/protocols/msn/msn.c:1495
 msgid "Hobbies and Interests"
 msgstr "Hobby-uri şi domenii de interes"
 
-#: src/protocols/msn/msn.c:1508 src/protocols/msn/msn.c:1514
-#: src/protocols/yahoo/yahoo.c:3045
+#: src/protocols/msn/msn.c:1504 src/protocols/msn/msn.c:1510
+#: src/protocols/yahoo/yahoo.c:3039
 msgid "Favorite Quote"
 msgstr "Citat favorit"
 
-#: src/protocols/msn/msn.c:1522 src/protocols/yahoo/yahoo.c:3081
+#: src/protocols/msn/msn.c:1518 src/protocols/yahoo/yahoo.c:3075
 msgid "Last Updated"
 msgstr "Ultima actualizare"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1533 src/protocols/trepia/trepia.c:289
+#: src/protocols/msn/msn.c:1529 src/protocols/trepia/trepia.c:289
 #: src/protocols/trepia/trepia.c:457
 msgid "Homepage"
 msgstr "Pagină personală"
 
-#: src/protocols/msn/msn.c:1555 src/protocols/yahoo/yahoo.c:3096
+#: src/protocols/msn/msn.c:1551 src/protocols/yahoo/yahoo.c:3090
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Detaliile utilizatorului %s nu sunt disponibile"
 
-#: src/protocols/msn/msn.c:1557 src/protocols/yahoo/yahoo.c:3098
+#: src/protocols/msn/msn.c:1553 src/protocols/yahoo/yahoo.c:3092
 msgid "The user's profile is empty."
 msgstr "Profilul utilizatorului este gol."
 
@@ -6326,23 +6319,23 @@ msgstr "Profilul utilizatorului este gol."
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1655 src/protocols/msn/msn.c:1657
+#: src/protocols/msn/msn.c:1651 src/protocols/msn/msn.c:1653
 msgid "MSN Protocol Plugin"
 msgstr "Modúl de protocol MSN"
 
-#: src/protocols/msn/msn.c:1675 src/protocols/trepia/trepia.c:1345
+#: src/protocols/msn/msn.c:1671 src/protocols/trepia/trepia.c:1345
 msgid "Login server"
 msgstr "Server de autentificare"
 
-#: src/protocols/msn/msn.c:1684
+#: src/protocols/msn/msn.c:1680
 msgid "Use HTTP Method"
 msgstr "Utilizează metoda HTTP"
 
-#: src/protocols/msn/msn.c:1702
+#: src/protocols/msn/msn.c:1698
 msgid "Display conversation closed notices"
 msgstr "Notifică la închiderea unei discuţii"
 
-#: src/protocols/msn/msn.c:1707
+#: src/protocols/msn/msn.c:1703
 msgid "Display timeout notices"
 msgstr "Notifică la expirarea conexiunii"
 
@@ -6372,7 +6365,7 @@ msgid "Retrieving buddy list"
 msgstr "Descarc lista de contacte"
 
 #: src/protocols/msn/notification.c:340 src/protocols/msn/notification.c:372
-#: src/protocols/oscar/oscar.c:1452
+#: src/protocols/oscar/oscar.c:1414
 msgid "Password sent"
 msgstr "Parola a fost trimisă"
 
@@ -6498,7 +6491,7 @@ msgstr "%s a cerut un PING"
 msgid "Get Info"
 msgstr "Detalii"
 
-#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5445
+#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5403
 #: src/protocols/toc/toc.c:1259
 msgid "_Group:"
 msgstr "_Grup"
@@ -6624,73 +6617,62 @@ msgstr "Chat-ul direct cu %s s-a terminat"
 msgid "Direct IM with %s failed"
 msgstr "Chat-ul direct cu %s a eşuat"
 
-#: src/protocols/oscar/oscar.c:593 src/protocols/toc/toc.c:885
+#: src/protocols/oscar/oscar.c:592 src/protocols/toc/toc.c:885
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Aţi fost deconectat din camera de chat %s."
 
-#: src/protocols/oscar/oscar.c:609
+#: src/protocols/oscar/oscar.c:608
 msgid "Chat is currently unavailable"
 msgstr "Chat-ul este deocamdată indisponibil"
 
-#: src/protocols/oscar/oscar.c:680 src/protocols/oscar/oscar.c:746
+#: src/protocols/oscar/oscar.c:679 src/protocols/oscar/oscar.c:736
 msgid "Couldn't connect to host"
 msgstr "Nu m-am putut conecta la server"
 
-#: src/protocols/oscar/oscar.c:690
+#: src/protocols/oscar/oscar.c:689
 msgid "Screen name sent"
 msgstr "Numele ales a fost trimis"
 
-#: src/protocols/oscar/oscar.c:705
-#, fuzzy, c-format
-msgid ""
-"Unable to login: Could not sign on as %s because the screen name is "
-"invalid.  Screen names must either start with a letter and contain only "
-"letters, numbers and spaces, or contain only numbers."
-msgstr ""
-"Nu pot adăuga %s deoarece numele ales este invalid. Unul valid trebuie "
-"săînceapă cu o literă sau să conţină doar litere, numere şi spaţii sau să "
-"conţină doar numere."
-
-#: src/protocols/oscar/oscar.c:734
+#: src/protocols/oscar/oscar.c:724
 msgid "Unable to login to AIM"
 msgstr "Nu mă pot autentifica la AIM"
 
-#: src/protocols/oscar/oscar.c:838 src/protocols/oscar/oscar.c:1256
+#: src/protocols/oscar/oscar.c:828 src/protocols/oscar/oscar.c:1218
 msgid "Could Not Connect"
 msgstr "Nu m-am putut conecta"
 
-#: src/protocols/oscar/oscar.c:846
+#: src/protocols/oscar/oscar.c:836
 msgid "Connection established, cookie sent"
 msgstr "Conectare iniţializată, cookie trimis"
 
-#: src/protocols/oscar/oscar.c:959 src/protocols/yahoo/yahoo_filexfer.c:209
+#: src/protocols/oscar/oscar.c:902
+msgid "Unable to establish listener socket."
+msgstr "Nu pot deschide socket-ul de ascultare."
+
+#: src/protocols/oscar/oscar.c:915 src/protocols/yahoo/yahoo_filexfer.c:209
 #: src/protocols/yahoo/yahoo_filexfer.c:218
 msgid "Unable to establish file descriptor."
 msgstr "Nu pot deschide descriptorul fişierului."
 
-#: src/protocols/oscar/oscar.c:964
+#: src/protocols/oscar/oscar.c:920
 msgid "Unable to create new connection."
 msgstr "Nu pot crea o nouă conexiune."
 
-#: src/protocols/oscar/oscar.c:1035
-msgid "Unable to establish listener socket."
-msgstr "Nu pot deschide socket-ul de ascultare."
-
-#: src/protocols/oscar/oscar.c:1140 src/protocols/toc/toc.c:571
+#: src/protocols/oscar/oscar.c:1102 src/protocols/toc/toc.c:571
 msgid "Incorrect nickname or password."
 msgstr "Pseudonim sau parolă incorecte"
 
-#: src/protocols/oscar/oscar.c:1145
+#: src/protocols/oscar/oscar.c:1107
 msgid "Your account is currently suspended."
 msgstr "Contul dumneavoastră este momentan suspendat."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:1149
+#: src/protocols/oscar/oscar.c:1111
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Serviciul de mesagerie instantanee AOL este temporar indisponibil."
 
-#: src/protocols/oscar/oscar.c:1154
+#: src/protocols/oscar/oscar.c:1116
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6698,21 +6680,21 @@ msgstr ""
 "V-aţi conectat şi deconectat prea des. Aşteptaţi zece minute şi încercaţi "
 "din nou. Dacă continuaţi să încercaţi, va trebui să aşteptaţi mai mult."
 
-#: src/protocols/oscar/oscar.c:1159
+#: src/protocols/oscar/oscar.c:1121
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Versiunea clientului folosit este prea veche. Actualizaţi-l la %s"
 
-#: src/protocols/oscar/oscar.c:1191
+#: src/protocols/oscar/oscar.c:1153
 msgid "Internal Error"
 msgstr "Eroare internă"
 
-#: src/protocols/oscar/oscar.c:1263
+#: src/protocols/oscar/oscar.c:1225
 msgid "Received authorization"
 msgstr "Am primit autorizarea"
 
-#: src/protocols/oscar/oscar.c:1299 src/protocols/oscar/oscar.c:1329
-#: src/protocols/oscar/oscar.c:1417
+#: src/protocols/oscar/oscar.c:1261 src/protocols/oscar/oscar.c:1291
+#: src/protocols/oscar/oscar.c:1379
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -6721,29 +6703,29 @@ msgstr ""
 "S-ar putea să fiţi rapid deconectat. Poate doriţi să încercaţi TOC până ce "
 "se rezolvă această problemă. Vizitaţi %s pentru actualizări. "
 
-#: src/protocols/oscar/oscar.c:1302 src/protocols/oscar/oscar.c:1332
+#: src/protocols/oscar/oscar.c:1264 src/protocols/oscar/oscar.c:1294
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "Gaim nu a putut obţine un hash valid pentru autentificarea AIM."
 
-#: src/protocols/oscar/oscar.c:1420
+#: src/protocols/oscar/oscar.c:1382
 msgid "Gaim was unable to get a valid login hash."
 msgstr "Gaim nu a putut obţine un hash valid pentru autentificare."
 
-#: src/protocols/oscar/oscar.c:2002 src/protocols/oscar/oscar.c:5906
+#: src/protocols/oscar/oscar.c:1964 src/protocols/oscar/oscar.c:5864
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Chat-ul direct cu %s a fost iniţializat"
 
-#: src/protocols/oscar/oscar.c:2333 src/protocols/oscar/oscar.c:2355
+#: src/protocols/oscar/oscar.c:2293 src/protocols/oscar/oscar.c:2315
 msgid "(There was an error receiving this message)"
 msgstr "(S-a produs o eroare la primirea acestui mesaj)"
 
-#: src/protocols/oscar/oscar.c:2504
+#: src/protocols/oscar/oscar.c:2462
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s tocmai a cerut o conexiune directă cu %s."
 
-#: src/protocols/oscar/oscar.c:2507
+#: src/protocols/oscar/oscar.c:2465
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -6753,23 +6735,23 @@ msgstr ""
 "necesară pentru imaginile asociate conturilor. Pentru că adresa IP vă va fi "
 "vizibilă, luaţi în considerare riscurile la care vă expuneţi."
 
-#: src/protocols/oscar/oscar.c:2512 src/protocols/oscar/oscar.c:6288
+#: src/protocols/oscar/oscar.c:2470 src/protocols/oscar/oscar.c:6246
 msgid "Connect"
 msgstr "Conectează-te"
 
-#: src/protocols/oscar/oscar.c:2539
+#: src/protocols/oscar/oscar.c:2497
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Autorizează-mă pentru a te putea adăuga în lista mea de contacte."
 
-#: src/protocols/oscar/oscar.c:2547
+#: src/protocols/oscar/oscar.c:2505
 msgid "Authorization Request Message:"
 msgstr "Mesajul cererii de autorizare:"
 
-#: src/protocols/oscar/oscar.c:2548
+#: src/protocols/oscar/oscar.c:2506
 msgid "Please authorize me!"
 msgstr "Autorizează-mă te rog!"
 
-#: src/protocols/oscar/oscar.c:2577
+#: src/protocols/oscar/oscar.c:2535
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -6778,23 +6760,23 @@ msgstr ""
 "Utilizatorul %s a cerut autorizarea înainte de a fi adăugat în lista de "
 "contacte. Doriţi să trimiteţi o cerere de autorizare?"
 
-#: src/protocols/oscar/oscar.c:2582 src/protocols/oscar/oscar.c:2584
+#: src/protocols/oscar/oscar.c:2540 src/protocols/oscar/oscar.c:2542
 msgid "Request Authorization"
 msgstr "Solicit autorizarea"
 
-#: src/protocols/oscar/oscar.c:2620 src/protocols/oscar/oscar.c:2622
-#: src/protocols/oscar/oscar.c:2629 src/protocols/oscar/oscar.c:2705
-#: src/protocols/oscar/oscar.c:2725 src/protocols/oscar/oscar.c:3081
-#: src/protocols/oscar/oscar.c:3141 src/protocols/oscar/oscar.c:5366
-#: src/protocols/oscar/oscar.c:5412
+#: src/protocols/oscar/oscar.c:2578 src/protocols/oscar/oscar.c:2580
+#: src/protocols/oscar/oscar.c:2587 src/protocols/oscar/oscar.c:2663
+#: src/protocols/oscar/oscar.c:2683 src/protocols/oscar/oscar.c:3039
+#: src/protocols/oscar/oscar.c:3099 src/protocols/oscar/oscar.c:5324
+#: src/protocols/oscar/oscar.c:5370
 msgid "No reason given."
 msgstr "Fără motiv."
 
-#: src/protocols/oscar/oscar.c:2628
+#: src/protocols/oscar/oscar.c:2586
 msgid "Authorization Denied Message:"
 msgstr "Mesajul de autorizare refuzată:"
 
-#: src/protocols/oscar/oscar.c:2705
+#: src/protocols/oscar/oscar.c:2663
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -6804,11 +6786,11 @@ msgstr ""
 "motiv:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2713 src/protocols/oscar/oscar.c:5372
+#: src/protocols/oscar/oscar.c:2671 src/protocols/oscar/oscar.c:5330
 msgid "Authorization Request"
 msgstr "Cerere de autorizare"
 
-#: src/protocols/oscar/oscar.c:2725
+#: src/protocols/oscar/oscar.c:2683
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -6819,18 +6801,18 @@ msgstr ""
 "contacte, motivând astfel:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2726
+#: src/protocols/oscar/oscar.c:2684
 msgid "ICQ authorization denied."
 msgstr "Autorizarea ICQ a fost refuzată."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:2733
+#: src/protocols/oscar/oscar.c:2691
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr ""
 "Utilizatorul %u v-a acordat dreptul de a-l adăuga la lista de contacte."
 
-#: src/protocols/oscar/oscar.c:2741
+#: src/protocols/oscar/oscar.c:2699
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -6843,7 +6825,7 @@ msgstr ""
 "Expeditor: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2749
+#: src/protocols/oscar/oscar.c:2707
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -6856,7 +6838,7 @@ msgstr ""
 "Expeditor: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2757
+#: src/protocols/oscar/oscar.c:2715
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -6869,34 +6851,34 @@ msgstr ""
 "Mesajul: \n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2778
+#: src/protocols/oscar/oscar.c:2736
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "Utilizatorul ICQ %u v-a trimis un contact: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:2784
+#: src/protocols/oscar/oscar.c:2742
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Doriţi să adăugaţi acest contact în lista de contacte?"
 
-#: src/protocols/oscar/oscar.c:2788
+#: src/protocols/oscar/oscar.c:2746
 msgid "Decline"
 msgstr "Refuz"
 
-#: src/protocols/oscar/oscar.c:2870
+#: src/protocols/oscar/oscar.c:2828
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Aţi pierdut %hu mesaj de la %s deoarece era invalid."
 msgstr[1] "Aţi pierdut %hu mesaje de la %s deoarece erau invalide."
 
-#: src/protocols/oscar/oscar.c:2879
+#: src/protocols/oscar/oscar.c:2837
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "Aţi pierdut %hu mesaj de la %s pentru că era prea mare."
 msgstr[1] "Aţi pierdut %hu mesaje de la %s pentru că erau prea mari."
 
-#: src/protocols/oscar/oscar.c:2888
+#: src/protocols/oscar/oscar.c:2846
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -6905,7 +6887,7 @@ msgid_plural ""
 msgstr[0] "Aţi pierdut %hu mesaj de la %s pentru că a depăşit limita fixată."
 msgstr[1] "Aţi pierdut %hu mesaje de la %s pentru că au depăşit limita fixată."
 
-#: src/protocols/oscar/oscar.c:2897
+#: src/protocols/oscar/oscar.c:2855
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -6914,186 +6896,186 @@ msgstr[0] ""
 msgstr[1] ""
 "Aţi pierdut %hu mesaje de la %s pentru că expeditorul era prea periculos."
 
-#: src/protocols/oscar/oscar.c:2906
+#: src/protocols/oscar/oscar.c:2864
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "Aţi pierdut %hu mesaj de la %s pentru că aţi fost prea periculos."
 msgstr[1] "Aţi pierdut %hu mesaje de la %s pentru că aţi fost prea periculos."
 
-#: src/protocols/oscar/oscar.c:2915
+#: src/protocols/oscar/oscar.c:2873
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Aţi pierdut %hu mesaj de la %s din motive necunoscute."
 msgstr[1] "Aţi pierdut %hu mesaje de la %s din motive necunoscute."
 
-#: src/protocols/oscar/oscar.c:2931 src/protocols/oscar/oscar.c:4760
-#: src/protocols/oscar/oscar.c:6414
+#: src/protocols/oscar/oscar.c:2889 src/protocols/oscar/oscar.c:4718
+#: src/protocols/oscar/oscar.c:6372
 msgid "Free For Chat"
 msgstr "Disponibil pentru chat"
 
-#: src/protocols/oscar/oscar.c:2935 src/protocols/oscar/oscar.c:4754
-#: src/protocols/oscar/oscar.c:6412
+#: src/protocols/oscar/oscar.c:2893 src/protocols/oscar/oscar.c:4712
+#: src/protocols/oscar/oscar.c:6370
 msgid "Not Available"
 msgstr "Indisponibil"
 
-#: src/protocols/oscar/oscar.c:2937 src/protocols/oscar/oscar.c:4757
-#: src/protocols/oscar/oscar.c:6413
+#: src/protocols/oscar/oscar.c:2895 src/protocols/oscar/oscar.c:4715
+#: src/protocols/oscar/oscar.c:6371
 msgid "Occupied"
 msgstr "Ocupat"
 
-#: src/protocols/oscar/oscar.c:2941
+#: src/protocols/oscar/oscar.c:2899
 msgid "Web Aware"
 msgstr "Prezent pe net"
 
-#: src/protocols/oscar/oscar.c:2984
+#: src/protocols/oscar/oscar.c:2942
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>Status:</B> %s><HR>%s"
 
-#: src/protocols/oscar/oscar.c:3043
+#: src/protocols/oscar/oscar.c:3001
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC a dat eroarea: %s\n"
 
-#: src/protocols/oscar/oscar.c:3044
+#: src/protocols/oscar/oscar.c:3002
 msgid "Unknown error"
 msgstr "Eroare necunoscută"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:3079
+#: src/protocols/oscar/oscar.c:3037
 #, c-format
 msgid "Your message to %s did not get sent:"
 msgstr "Mesajul dumneavoastră către %s nu a fost trimis:"
 
-#: src/protocols/oscar/oscar.c:3138
+#: src/protocols/oscar/oscar.c:3096
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "Detaliile utilizatorului %s nu sunt disponibile:"
 
-#: src/protocols/oscar/oscar.c:3177
+#: src/protocols/oscar/oscar.c:3135
 msgid "Voice"
 msgstr "Voce"
 
-#: src/protocols/oscar/oscar.c:3180
+#: src/protocols/oscar/oscar.c:3138
 msgid "AIM Direct IM"
 msgstr "Chat direct AIM"
 
-#: src/protocols/oscar/oscar.c:3183
+#: src/protocols/oscar/oscar.c:3141
 msgid "Chat"
 msgstr "Chat"
 
-#: src/protocols/oscar/oscar.c:3186 src/protocols/oscar/oscar.c:6523
+#: src/protocols/oscar/oscar.c:3144 src/protocols/oscar/oscar.c:6481
 msgid "Get File"
 msgstr "Primeşte fişierul"
 
-#: src/protocols/oscar/oscar.c:3193
+#: src/protocols/oscar/oscar.c:3151
 msgid "Games"
 msgstr "Jocuri"
 
-#: src/protocols/oscar/oscar.c:3196
+#: src/protocols/oscar/oscar.c:3154
 msgid "Add-Ins"
 msgstr "Adăugiri"
 
-#: src/protocols/oscar/oscar.c:3199
+#: src/protocols/oscar/oscar.c:3157
 msgid "Send Buddy List"
 msgstr "Trimite lista de contacte"
 
-#: src/protocols/oscar/oscar.c:3202
+#: src/protocols/oscar/oscar.c:3160
 msgid "ICQ Direct Connect"
 msgstr "Conectare directă ICQ"
 
-#: src/protocols/oscar/oscar.c:3205
+#: src/protocols/oscar/oscar.c:3163
 msgid "AP User"
 msgstr "Utilizator AP"
 
-#: src/protocols/oscar/oscar.c:3208
+#: src/protocols/oscar/oscar.c:3166
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:3211
+#: src/protocols/oscar/oscar.c:3169
 msgid "Nihilist"
 msgstr "Nihilist"
 
-#: src/protocols/oscar/oscar.c:3214
+#: src/protocols/oscar/oscar.c:3172
 msgid "ICQ Server Relay"
 msgstr "Schimb de server ICQ"
 
-#: src/protocols/oscar/oscar.c:3217
+#: src/protocols/oscar/oscar.c:3175
 msgid "Old ICQ UTF8"
 msgstr "ICQ UTF8 (vechi)"
 
-#: src/protocols/oscar/oscar.c:3220
+#: src/protocols/oscar/oscar.c:3178
 msgid "Trillian Encryption"
 msgstr "Criptare Trillian"
 
-#: src/protocols/oscar/oscar.c:3223
+#: src/protocols/oscar/oscar.c:3181
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3226
+#: src/protocols/oscar/oscar.c:3184
 msgid "Hiptop"
 msgstr "Hiptop"
 
-#: src/protocols/oscar/oscar.c:3229
+#: src/protocols/oscar/oscar.c:3187
 msgid "Security Enabled"
 msgstr "Securitate activată"
 
-#: src/protocols/oscar/oscar.c:3232
+#: src/protocols/oscar/oscar.c:3190
 msgid "Video Chat"
 msgstr "Videochat"
 
-#: src/protocols/oscar/oscar.c:3236
+#: src/protocols/oscar/oscar.c:3194
 msgid "iChat AV"
 msgstr "iChat AV"
 
-#: src/protocols/oscar/oscar.c:3239
+#: src/protocols/oscar/oscar.c:3197
 msgid "Live Video"
 msgstr "Video în direct"
 
-#: src/protocols/oscar/oscar.c:3242
+#: src/protocols/oscar/oscar.c:3200
 msgid "Camera"
 msgstr "Cameră"
 
-#: src/protocols/oscar/oscar.c:3271
+#: src/protocols/oscar/oscar.c:3229
 #, c-format
 msgid "Username: <b>%s</b><br>\n"
 msgstr "Nume utilizator: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3272
+#: src/protocols/oscar/oscar.c:3230
 #, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
 msgstr "Nivel avertizare: <b>%d%%</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3275
+#: src/protocols/oscar/oscar.c:3233
 #, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "Autentificat din: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3279
+#: src/protocols/oscar/oscar.c:3237
 #, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "Membru din: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3284
+#: src/protocols/oscar/oscar.c:3242
 #, c-format
 msgid "Idle: <b>%s</b>"
 msgstr "Inactiv: <b>%s</b>"
 
-#: src/protocols/oscar/oscar.c:3287
+#: src/protocols/oscar/oscar.c:3245
 msgid "Idle: <b>Active</b>"
 msgstr "Inactiv: <b>Activ</b>"
 
-#: src/protocols/oscar/oscar.c:3359
+#: src/protocols/oscar/oscar.c:3317
 msgid "Your AIM connection may be lost."
 msgstr "E posibil să fi pierdut conexiunea AIM."
 
-#: src/protocols/oscar/oscar.c:3760
+#: src/protocols/oscar/oscar.c:3718
 msgid "Rate limiting error."
 msgstr "Eroare la rata de limitare."
 
-#: src/protocols/oscar/oscar.c:3761
+#: src/protocols/oscar/oscar.c:3719
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -7101,7 +7083,7 @@ msgstr ""
 "Ultima acţiune cerută nu a fost îndeplinită pentru că aţi depăşit limita "
 "fixată. Aşteptaţi 10 secunde şi încercaţi din nou."
 
-#: src/protocols/oscar/oscar.c:3824
+#: src/protocols/oscar/oscar.c:3782
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
@@ -7109,109 +7091,109 @@ msgstr ""
 "Aţi fost deconectat pentru că v-aţi autentificat cu acest nume ales de la o "
 "altă locaţie."
 
-#: src/protocols/oscar/oscar.c:3826
+#: src/protocols/oscar/oscar.c:3784
 msgid "You have been signed off for an unknown reason."
 msgstr "Aţi fost deautentificat din motive necunoscute."
 
-#: src/protocols/oscar/oscar.c:3857
+#: src/protocols/oscar/oscar.c:3815
 msgid "Finalizing connection"
 msgstr "Finalizare conexiune"
 
-#: src/protocols/oscar/oscar.c:4117 src/protocols/oscar/oscar.c:4123
+#: src/protocols/oscar/oscar.c:4075 src/protocols/oscar/oscar.c:4081
 msgid "Email Address"
 msgstr "Adresă de mail"
 
-#: src/protocols/oscar/oscar.c:4128
+#: src/protocols/oscar/oscar.c:4086
 msgid "Mobile Phone"
 msgstr "Telefon mobil"
 
-#: src/protocols/oscar/oscar.c:4131 src/protocols/trepia/trepia.c:281
+#: src/protocols/oscar/oscar.c:4089 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:422
 msgid "Female"
 msgstr "Feminin"
 
-#: src/protocols/oscar/oscar.c:4131 src/protocols/trepia/trepia.c:280
+#: src/protocols/oscar/oscar.c:4089 src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:422
 msgid "Male"
 msgstr "Masculin"
 
-#: src/protocols/oscar/oscar.c:4148
+#: src/protocols/oscar/oscar.c:4106
 msgid "Personal Web Page"
 msgstr "Pagină personală"
 
-#: src/protocols/oscar/oscar.c:4151
+#: src/protocols/oscar/oscar.c:4109
 msgid "Additional Information"
 msgstr "Alte informaţii"
 
-#: src/protocols/oscar/oscar.c:4155
+#: src/protocols/oscar/oscar.c:4113
 msgid "Home Address"
 msgstr "Adresă acasă"
 
-#: src/protocols/oscar/oscar.c:4166 src/protocols/oscar/oscar.c:4182
+#: src/protocols/oscar/oscar.c:4124 src/protocols/oscar/oscar.c:4140
 msgid "Zip Code"
 msgstr "Cod poştal"
 
-#: src/protocols/oscar/oscar.c:4171
+#: src/protocols/oscar/oscar.c:4129
 msgid "Work Address"
 msgstr "Adresă serviciu"
 
-#: src/protocols/oscar/oscar.c:4187
+#: src/protocols/oscar/oscar.c:4145
 msgid "Work Information"
 msgstr "Informaţii serviciu"
 
-#: src/protocols/oscar/oscar.c:4189
+#: src/protocols/oscar/oscar.c:4147
 msgid "Company"
 msgstr "Companie"
 
-#: src/protocols/oscar/oscar.c:4192
+#: src/protocols/oscar/oscar.c:4150
 msgid "Division"
 msgstr "Divizie"
 
-#: src/protocols/oscar/oscar.c:4195
+#: src/protocols/oscar/oscar.c:4153
 msgid "Position"
 msgstr "Poziţie"
 
-#: src/protocols/oscar/oscar.c:4198
+#: src/protocols/oscar/oscar.c:4156
 msgid "Web Page"
 msgstr "Adresă Internet"
 
-#: src/protocols/oscar/oscar.c:4204
+#: src/protocols/oscar/oscar.c:4162
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "Detalii ICQ pentru %s"
 
-#: src/protocols/oscar/oscar.c:4254
+#: src/protocols/oscar/oscar.c:4212
 msgid "Pop-Up Message"
 msgstr "Mesaj popup"
 
-#: src/protocols/oscar/oscar.c:4275
+#: src/protocols/oscar/oscar.c:4233
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "Următoarele nume alese sunt asociate cu %s"
 
-#: src/protocols/oscar/oscar.c:4279
+#: src/protocols/oscar/oscar.c:4237
 msgid "Search Results"
 msgstr "Rezultatele căutării"
 
-#: src/protocols/oscar/oscar.c:4296
+#: src/protocols/oscar/oscar.c:4254
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Nu s-a găsit nici un rezultat pentru adresa de mail %s"
 
-#: src/protocols/oscar/oscar.c:4317
+#: src/protocols/oscar/oscar.c:4275
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Ar trebui să primiţi un mail care să vă ceară confirmarea %s."
 
-#: src/protocols/oscar/oscar.c:4319
+#: src/protocols/oscar/oscar.c:4277
 msgid "Account Confirmation Requested"
 msgstr "Vi s-a cerut confirmarea contului"
 
-#: src/protocols/oscar/oscar.c:4347
+#: src/protocols/oscar/oscar.c:4305
 msgid "Error Changing Account Info"
 msgstr "Eroare la schimbarea detaliilor contului"
 
-#: src/protocols/oscar/oscar.c:4350
+#: src/protocols/oscar/oscar.c:4308
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -7220,7 +7202,7 @@ msgstr ""
 "Eroare 0x%04x: Nu pot formata numele ales pentru că numele cerut este "
 "diferit de cel original."
 
-#: src/protocols/oscar/oscar.c:4353
+#: src/protocols/oscar/oscar.c:4311
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -7229,7 +7211,7 @@ msgstr ""
 "Eroare 0x%04x: Nu pot formata numele ales pentru că numele cerut se termină "
 "cu un punct."
 
-#: src/protocols/oscar/oscar.c:4356
+#: src/protocols/oscar/oscar.c:4314
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -7238,7 +7220,7 @@ msgstr ""
 "Eroare 0x%04x: Nu pot formata numele ales pentru că numele cerut este prea "
 "lung."
 
-#: src/protocols/oscar/oscar.c:4359
+#: src/protocols/oscar/oscar.c:4317
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -7247,7 +7229,7 @@ msgstr ""
 "Eroare 0x%04x: Nu pot schimba adresa de mail pentru că există deja o cerere "
 "în aşteptare pentru acest nume."
 
-#: src/protocols/oscar/oscar.c:4362
+#: src/protocols/oscar/oscar.c:4320
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -7256,7 +7238,7 @@ msgstr ""
 "Eroare 0x%04x: Nu pot schimba adresa de mail pentru că adresa dată are prea "
 "multe nume alese asociate."
 
-#: src/protocols/oscar/oscar.c:4365
+#: src/protocols/oscar/oscar.c:4323
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -7265,12 +7247,12 @@ msgstr ""
 "Eroare 0x%04x: Nu pot schimba adresa de mail pentru că adresa dată este "
 "invalidă."
 
-#: src/protocols/oscar/oscar.c:4368
+#: src/protocols/oscar/oscar.c:4326
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Eroare 0x%04x: Eroare necunoscută."
 
-#: src/protocols/oscar/oscar.c:4378
+#: src/protocols/oscar/oscar.c:4336
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -7279,20 +7261,20 @@ msgstr ""
 "Numele ales vă este formatat după cum urmează:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4379 src/protocols/oscar/oscar.c:4386
+#: src/protocols/oscar/oscar.c:4337 src/protocols/oscar/oscar.c:4344
 msgid "Account Info"
 msgstr "Detalii Cont"
 
-#: src/protocols/oscar/oscar.c:4384
+#: src/protocols/oscar/oscar.c:4342
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "Adresa de mail pentru %s este %s"
 
-#: src/protocols/oscar/oscar.c:4616
+#: src/protocols/oscar/oscar.c:4574
 msgid "Unable to set AIM profile."
 msgstr "Nu pot seta profilul AIM."
 
-#: src/protocols/oscar/oscar.c:4617
+#: src/protocols/oscar/oscar.c:4575
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -7302,7 +7284,7 @@ msgstr ""
 "Profilul vă va rămâne la fel. Încercaţi să-l setaţi din nou când veţi fi "
 "conectat 100%."
 
-#: src/protocols/oscar/oscar.c:4644
+#: src/protocols/oscar/oscar.c:4602
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -7317,19 +7299,19 @@ msgstr[1] ""
 "Aţi depăşit lungimea maximă de %d octeţi a profilului. Gaim l-a trunchiat "
 "automat."
 
-#: src/protocols/oscar/oscar.c:4649
+#: src/protocols/oscar/oscar.c:4607
 msgid "Profile too long."
 msgstr "Profil prea lung."
 
-#: src/protocols/oscar/oscar.c:4665 src/protocols/oscar/oscar.c:6418
+#: src/protocols/oscar/oscar.c:4623 src/protocols/oscar/oscar.c:6376
 msgid "Visible"
 msgstr "Vizibil"
 
-#: src/protocols/oscar/oscar.c:4676
+#: src/protocols/oscar/oscar.c:4634
 msgid "Unable to set AIM away message."
 msgstr "Gaim nu a putut seta mesajul în absenţă pentru AIM"
 
-#: src/protocols/oscar/oscar.c:4677
+#: src/protocols/oscar/oscar.c:4635
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -7339,7 +7321,7 @@ msgstr ""
 "procedurii de autentificare. Veţi rămâne în starea „prezent”. Încercaţi din "
 "nou când veţi fi conectat."
 
-#: src/protocols/oscar/oscar.c:4717
+#: src/protocols/oscar/oscar.c:4675
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -7354,31 +7336,31 @@ msgstr[1] ""
 "Mesajul în absenţă depăşeşte lungimea maximă de %d octeţi. Gaim a trunchiat "
 "mesajul şi v-a trecut în absenţă."
 
-#: src/protocols/oscar/oscar.c:4722
+#: src/protocols/oscar/oscar.c:4680
 msgid "Away message too long."
 msgstr "Mesaj în absenţă prea lung."
 
-#: src/protocols/oscar/oscar.c:4815
+#: src/protocols/oscar/oscar.c:4773
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
 "must either start with a letter and contain only letters, numbers and "
 "spaces, or contain only numbers."
 msgstr ""
-"Nu pot adăuga %s deoarece numele ales este invalid. Unul valid trebuie "
-"săînceapă cu o literă sau să conţină doar litere, numere şi spaţii sau să "
+"Nu pot adăuga %s deoarece numele ales este invalid. Unul valid trebuie să"
+"înceapă cu o literă sau să conţină doar litere, numere şi spaţii sau să "
 "conţină doar numere."
 
-#: src/protocols/oscar/oscar.c:4816 src/protocols/oscar/oscar.c:5233
-#: src/protocols/oscar/oscar.c:5246
+#: src/protocols/oscar/oscar.c:4774 src/protocols/oscar/oscar.c:5191
+#: src/protocols/oscar/oscar.c:5204
 msgid "Unable To Add"
 msgstr "Nu pot adăuga"
 
-#: src/protocols/oscar/oscar.c:4952
+#: src/protocols/oscar/oscar.c:4910
 msgid "Unable To Retrieve Buddy List"
 msgstr "Nu pot descărca lista de contacte"
 
-#: src/protocols/oscar/oscar.c:4953
+#: src/protocols/oscar/oscar.c:4911
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -7387,13 +7369,13 @@ msgstr ""
 "Gaim nu a reuşit deocamdată să vă descarce lista de contacte de pe serverele "
 "AIM. Ea nu este pierdută, dar probabil va fi disponibilă abia în câteva ore."
 
-#: src/protocols/oscar/oscar.c:5129 src/protocols/oscar/oscar.c:5130
-#: src/protocols/oscar/oscar.c:5135 src/protocols/oscar/oscar.c:5290
-#: src/protocols/oscar/oscar.c:5291 src/protocols/oscar/oscar.c:5296
+#: src/protocols/oscar/oscar.c:5087 src/protocols/oscar/oscar.c:5088
+#: src/protocols/oscar/oscar.c:5093 src/protocols/oscar/oscar.c:5248
+#: src/protocols/oscar/oscar.c:5249 src/protocols/oscar/oscar.c:5254
 msgid "Orphans"
 msgstr "Orfani"
 
-#: src/protocols/oscar/oscar.c:5232
+#: src/protocols/oscar/oscar.c:5190
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -7402,11 +7384,11 @@ msgstr ""
 "Nu am putut adăuga contactul %s deoarece aveţi prea multe contacte în lista "
 "de contacte. Ştergeţi unul şi încercaţi din nou."
 
-#: src/protocols/oscar/oscar.c:5232 src/protocols/oscar/oscar.c:5245
+#: src/protocols/oscar/oscar.c:5190 src/protocols/oscar/oscar.c:5203
 msgid "(no name)"
 msgstr "(fără nume)"
 
-#: src/protocols/oscar/oscar.c:5245
+#: src/protocols/oscar/oscar.c:5203
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -7416,7 +7398,7 @@ msgstr ""
 "Nu am putut adăuga contactul %s dintr-un motiv necunoscut. Cel mai probabil "
 "aţi atins numărul maxim permis de contacte în lista de contacte."
 
-#: src/protocols/oscar/oscar.c:5327
+#: src/protocols/oscar/oscar.c:5285
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -7425,11 +7407,11 @@ msgstr ""
 "Utilizatorul %s v-a autorizat să-l adăugaţi în lista de contacte. Doriţi să-"
 "l adăugaţi?"
 
-#: src/protocols/oscar/oscar.c:5333
+#: src/protocols/oscar/oscar.c:5291
 msgid "Authorization Given"
 msgstr "Autorizare acordată"
 
-#: src/protocols/oscar/oscar.c:5366
+#: src/protocols/oscar/oscar.c:5324
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -7439,18 +7421,18 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:5408
+#: src/protocols/oscar/oscar.c:5366
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr ""
 "Utilizatorul %s v-a acordat permisiunea de a-l adăuga la lista proprie."
 
-#: src/protocols/oscar/oscar.c:5409
+#: src/protocols/oscar/oscar.c:5367
 msgid "Authorization Granted"
 msgstr "Autorizare acordată"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:5412
+#: src/protocols/oscar/oscar.c:5370
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -7461,60 +7443,60 @@ msgstr ""
 "contacte, motivând astfel:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5413
+#: src/protocols/oscar/oscar.c:5371
 msgid "Authorization Denied"
 msgstr "Autorizare refuzată"
 
-#: src/protocols/oscar/oscar.c:5450 src/protocols/toc/toc.c:1264
+#: src/protocols/oscar/oscar.c:5408 src/protocols/toc/toc.c:1264
 msgid "_Exchange:"
 msgstr "Cheie numerică (e_xchange):"
 
-#: src/protocols/oscar/oscar.c:5472
+#: src/protocols/oscar/oscar.c:5430
 msgid "Invalid chat name specified."
 msgstr "Aţi specificat un nume invalid de cameră de chat."
 
-#: src/protocols/oscar/oscar.c:5703
+#: src/protocols/oscar/oscar.c:5661
 msgid "<b>Status:</b> "
 msgstr "<b>Status: </b>"
 
-#: src/protocols/oscar/oscar.c:5715
+#: src/protocols/oscar/oscar.c:5673
 msgid "<b>IP Address:</b> "
 msgstr "<b>Adresă IP: </b>"
 
-#: src/protocols/oscar/oscar.c:5723
+#: src/protocols/oscar/oscar.c:5681
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Facilităţi:</b> "
 
-#: src/protocols/oscar/oscar.c:5732
+#: src/protocols/oscar/oscar.c:5690
 msgid "<b>Buddy Comment:</b> "
 msgstr "<b>Comentariu contact:<b>"
 
-#: src/protocols/oscar/oscar.c:5741
+#: src/protocols/oscar/oscar.c:5699
 msgid "<b>Available:</b> "
 msgstr "<b>Disponibil:</b> "
 
-#: src/protocols/oscar/oscar.c:5760
+#: src/protocols/oscar/oscar.c:5718
 msgid "<b>Away Message:</b> "
 msgstr "<b>Mesaj în absenţă:</b>"
 
-#: src/protocols/oscar/oscar.c:5768
+#: src/protocols/oscar/oscar.c:5726
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Status:</b> Neautorizat"
 
-#: src/protocols/oscar/oscar.c:5802 src/protocols/yahoo/yahoo.c:2293
+#: src/protocols/oscar/oscar.c:5760 src/protocols/yahoo/yahoo.c:2287
 msgid "Offline"
 msgstr "Neautentificat"
 
-#: src/protocols/oscar/oscar.c:6268
+#: src/protocols/oscar/oscar.c:6226
 msgid "Unable to open Direct IM"
 msgstr "Nu pot deschide un chat direct"
 
-#: src/protocols/oscar/oscar.c:6281
+#: src/protocols/oscar/oscar.c:6239
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Aţi ales să deschideţi un chat direct cu %s."
 
-#: src/protocols/oscar/oscar.c:6284
+#: src/protocols/oscar/oscar.c:6242
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -7522,53 +7504,52 @@ msgstr ""
 "Pentru că adresa IP vă va fi vizibilă, vă rugăm să evaluaţi riscurile la "
 "care vă expuneţi. Doriţi să continuaţi?"
 
-#: src/protocols/oscar/oscar.c:6468
+#: src/protocols/oscar/oscar.c:6426
 msgid "Buddy Comment:"
 msgstr "Comentariu contact:"
 
-#: src/protocols/oscar/oscar.c:6484
+#: src/protocols/oscar/oscar.c:6442
 msgid "Edit Buddy Comment"
 msgstr "Editare comentariu contact"
 
-#: src/protocols/oscar/oscar.c:6492
+#: src/protocols/oscar/oscar.c:6450
 msgid "Get Status Msg"
 msgstr "Arată mesajul de status"
 
-#: src/protocols/oscar/oscar.c:6507
+#: src/protocols/oscar/oscar.c:6465
 msgid "Direct IM"
 msgstr "Chat direct"
 
-#: src/protocols/oscar/oscar.c:6536
+#: src/protocols/oscar/oscar.c:6494
 msgid "Re-request Authorization"
 msgstr "Solicit din nou autorizare"
 
-#: src/protocols/oscar/oscar.c:6557
+#: src/protocols/oscar/oscar.c:6515
 msgid "The new formatting is invalid."
 msgstr "Formatul nou este invalid."
 
-#: src/protocols/oscar/oscar.c:6558
+#: src/protocols/oscar/oscar.c:6516
 msgid "Screen name formatting can change only capitalization and whitespace."
-msgstr ""
-"Formatarea numelor alese nu poate schimba decât spaţiile albe şi "
+msgstr "Formatarea numelor alese nu poate schimba decât spaţiile albe şi "
 "capitalizarea."
 
-#: src/protocols/oscar/oscar.c:6564
+#: src/protocols/oscar/oscar.c:6522
 msgid "New screen name formatting:"
 msgstr "Noua formatare a numelui ales:"
 
-#: src/protocols/oscar/oscar.c:6613
+#: src/protocols/oscar/oscar.c:6571
 msgid "Change Address To:"
 msgstr "Schimbă adresa în:"
 
-#: src/protocols/oscar/oscar.c:6657
+#: src/protocols/oscar/oscar.c:6615
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>nu aşteptaţi nici o autorizare</i>"
 
-#: src/protocols/oscar/oscar.c:6660
+#: src/protocols/oscar/oscar.c:6618
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Momentan aşteptaţi autorizarea de la următoarele contacte"
 
-#: src/protocols/oscar/oscar.c:6661
+#: src/protocols/oscar/oscar.c:6619
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -7576,67 +7557,67 @@ msgstr ""
 "Puteţi solicita din nou autorizarea de la aceste contacte dând click dreapta "
 "pe nume şi selectând „Solicit din nou autorizare”."
 
-#: src/protocols/oscar/oscar.c:6675
+#: src/protocols/oscar/oscar.c:6633
 msgid "Find Buddy by E-mail"
 msgstr "Caută un contact după adresa de mail"
 
-#: src/protocols/oscar/oscar.c:6676
+#: src/protocols/oscar/oscar.c:6634
 msgid "Search for a buddy by e-mail address"
 msgstr "Caută un contact după adresa de mail"
 
-#: src/protocols/oscar/oscar.c:6677
+#: src/protocols/oscar/oscar.c:6635
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Introduceţi adresa de mail a contactului pe care îl căutaţi"
 
-#: src/protocols/oscar/oscar.c:6694
+#: src/protocols/oscar/oscar.c:6652
 msgid "Available Message:"
 msgstr "Mesaj ce arată disponibilitatea:"
 
-#: src/protocols/oscar/oscar.c:6695
+#: src/protocols/oscar/oscar.c:6653
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Muncesc, dar abia aştept să iau o pauză ... Scrie-mi!"
 
-#: src/protocols/oscar/oscar.c:6766
+#: src/protocols/oscar/oscar.c:6724
 msgid "Set User Info..."
 msgstr "Setaţi detaliile..."
 
-#: src/protocols/oscar/oscar.c:6773
+#: src/protocols/oscar/oscar.c:6731
 msgid "Set Available Message..."
 msgstr "Setaţi mesajul ce arată disponibilitatea..."
 
-#: src/protocols/oscar/oscar.c:6780
+#: src/protocols/oscar/oscar.c:6738
 msgid "Change Password..."
 msgstr "Schimbaţi parola..."
 
-#: src/protocols/oscar/oscar.c:6787
+#: src/protocols/oscar/oscar.c:6745
 msgid "Change Password (URL)"
 msgstr "Schimbare parolă (adresă)"
 
-#: src/protocols/oscar/oscar.c:6795
+#: src/protocols/oscar/oscar.c:6753
 msgid "Configure IM Forwarding (URL)"
 msgstr "Configurare înaintare mesaje (adresă)"
 
-#: src/protocols/oscar/oscar.c:6806
+#: src/protocols/oscar/oscar.c:6764
 msgid "Format Screen Name..."
 msgstr "Formatare nume ales..."
 
-#: src/protocols/oscar/oscar.c:6812
+#: src/protocols/oscar/oscar.c:6770
 msgid "Confirm Account"
 msgstr "Confirmaţi contul"
 
-#: src/protocols/oscar/oscar.c:6818
+#: src/protocols/oscar/oscar.c:6776
 msgid "Display Currently Registered Address"
 msgstr "Arată adresa înregistrată curentă"
 
-#: src/protocols/oscar/oscar.c:6824
+#: src/protocols/oscar/oscar.c:6782
 msgid "Change Currently Registered Address..."
 msgstr "Schimbă adresa curentă înregistrată..."
 
-#: src/protocols/oscar/oscar.c:6833
+#: src/protocols/oscar/oscar.c:6791
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Arată contactele ce aşteaptă autorizarea"
 
-#: src/protocols/oscar/oscar.c:6841
+#: src/protocols/oscar/oscar.c:6799
 msgid "Search for Buddy by Email..."
 msgstr "Caută un contact după adresa de mail..."
 
@@ -7651,15 +7632,15 @@ msgstr "Caută un contact după adresa de mail..."
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:6962 src/protocols/oscar/oscar.c:6964
+#: src/protocols/oscar/oscar.c:6920 src/protocols/oscar/oscar.c:6922
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Modúl de protocol AIM/ICQ"
 
-#: src/protocols/oscar/oscar.c:6981
+#: src/protocols/oscar/oscar.c:6939
 msgid "Auth host"
 msgstr "Server de autentificare"
 
-#: src/protocols/oscar/oscar.c:6986
+#: src/protocols/oscar/oscar.c:6944
 msgid "Auth port"
 msgstr "Port de autentificare"
 
@@ -7971,27 +7952,27 @@ msgid ""
 msgstr ""
 "Aţi fost deautentificat pentru că v-aţi autentificat dintr-o altă locaţie."
 
-#: src/protocols/yahoo/yahoo.c:747
+#: src/protocols/yahoo/yahoo.c:741
 msgid "Your Yahoo! message did not get sent."
 msgstr "Mesajul dumneavoastră Yahoo! nu a fost trimis."
 
-#: src/protocols/yahoo/yahoo.c:765
+#: src/protocols/yahoo/yahoo.c:759
 msgid "Buzz!!"
 msgstr "Alooo!"
 
-#: src/protocols/yahoo/yahoo.c:800
+#: src/protocols/yahoo/yahoo.c:794
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Mesaj sistem Yahoo! de la %s:"
 
-#: src/protocols/yahoo/yahoo.c:866
+#: src/protocols/yahoo/yahoo.c:860
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr ""
 "Utilizatorul %s v-a refuzat retroactiv cererea de a-l adăuga la lista de "
 "contacte."
 
-#: src/protocols/yahoo/yahoo.c:869
+#: src/protocols/yahoo/yahoo.c:863
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -8000,11 +7981,11 @@ msgstr ""
 "Utilizatorul %s v-a refuzat retroactiv cererea de a-l adăuga la lista de "
 "contacte, motivând astfel: %s."
 
-#: src/protocols/yahoo/yahoo.c:872
+#: src/protocols/yahoo/yahoo.c:866
 msgid "Add buddy rejected"
 msgstr "Adăugarea contactului a fost refuzată"
 
-#: src/protocols/yahoo/yahoo.c:1595
+#: src/protocols/yahoo/yahoo.c:1589
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -8015,11 +7996,11 @@ msgstr ""
 "nerecunoscute. Această versiune Gaim nu se va putea autentifica cu succes pe "
 "Yahoo!, a se vedea %s pentru versiuni mai noi."
 
-#: src/protocols/yahoo/yahoo.c:1598
+#: src/protocols/yahoo/yahoo.c:1592
 msgid "Failed Yahoo! Authentication"
 msgstr "Autentificarea Yahoo! a eşuat"
 
-#: src/protocols/yahoo/yahoo.c:1671
+#: src/protocols/yahoo/yahoo.c:1665
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -8028,102 +8009,102 @@ msgstr ""
 "Doriţi să-l ignoraţi pe %s, dar utilizatorul e prezent în lista de contacte "
 "Apăsaţi „Da” pentru a-l şterge din listă şi a-l ignora de acum înainte."
 
-#: src/protocols/yahoo/yahoo.c:1674
+#: src/protocols/yahoo/yahoo.c:1668
 msgid "Ignore buddy?"
 msgstr "Ignor contactul?"
 
-#: src/protocols/yahoo/yahoo.c:1707
+#: src/protocols/yahoo/yahoo.c:1701
 msgid "Invalid username."
 msgstr "Nume de utilizator invalid."
 
-#: src/protocols/yahoo/yahoo.c:1710
+#: src/protocols/yahoo/yahoo.c:1704
 msgid "Incorrect password."
 msgstr "Parolă incorectă."
 
-#: src/protocols/yahoo/yahoo.c:1713
+#: src/protocols/yahoo/yahoo.c:1707
 msgid "Your account is locked, please log in to the yahoo website."
 msgstr "Contul vă este blocat, autentificaţi-vă pe net la www.yahoo.com"
 
-#: src/protocols/yahoo/yahoo.c:1716
+#: src/protocols/yahoo/yahoo.c:1710
 #, c-format
 msgid "Unknown error number %d."
 msgstr "Cod de eroare necunoscut %d."
 
-#: src/protocols/yahoo/yahoo.c:1773
+#: src/protocols/yahoo/yahoo.c:1767
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Nu am putut adăuga contactul %s în grupul %s la lista de pe server pentru "
 "contul %s."
 
-#: src/protocols/yahoo/yahoo.c:1775
+#: src/protocols/yahoo/yahoo.c:1769
 msgid "Could not add buddy to server list"
 msgstr "Nu am putut adăuga contactul în lista de pe server"
 
-#: src/protocols/yahoo/yahoo.c:1885 src/protocols/yahoo/yahoo.c:2016
+#: src/protocols/yahoo/yahoo.c:1879 src/protocols/yahoo/yahoo.c:2010
 msgid "Unable to read"
 msgstr "Nu pot citi"
 
-#: src/protocols/yahoo/yahoo.c:2038 src/protocols/yahoo/yahoo.c:2148
-#: src/protocols/yahoo/yahoo.c:2191 src/protocols/yahoo/yahoochat.c:1360
+#: src/protocols/yahoo/yahoo.c:2032 src/protocols/yahoo/yahoo.c:2142
+#: src/protocols/yahoo/yahoo.c:2185 src/protocols/yahoo/yahoochat.c:1360
 #: src/protocols/yahoo/yahoochat.c:1421
 msgid "Connection problem"
 msgstr "Probleme la conectare"
 
-#: src/protocols/yahoo/yahoo.c:2275 src/protocols/yahoo/yahoo.c:2600
-#: src/protocols/yahoo/yahoo.c:2706
+#: src/protocols/yahoo/yahoo.c:2269 src/protocols/yahoo/yahoo.c:2594
+#: src/protocols/yahoo/yahoo.c:2700
 msgid "Not At Home"
 msgstr "Plecat de acasă"
 
-#: src/protocols/yahoo/yahoo.c:2277 src/protocols/yahoo/yahoo.c:2602
-#: src/protocols/yahoo/yahoo.c:2707
+#: src/protocols/yahoo/yahoo.c:2271 src/protocols/yahoo/yahoo.c:2596
+#: src/protocols/yahoo/yahoo.c:2701
 msgid "Not At Desk"
 msgstr "Plecat din faţa calculatorului"
 
-#: src/protocols/yahoo/yahoo.c:2279 src/protocols/yahoo/yahoo.c:2604
-#: src/protocols/yahoo/yahoo.c:2708
+#: src/protocols/yahoo/yahoo.c:2273 src/protocols/yahoo/yahoo.c:2598
+#: src/protocols/yahoo/yahoo.c:2702
 msgid "Not In Office"
 msgstr "Plecat din birou"
 
-#: src/protocols/yahoo/yahoo.c:2283 src/protocols/yahoo/yahoo.c:2608
-#: src/protocols/yahoo/yahoo.c:2710
+#: src/protocols/yahoo/yahoo.c:2277 src/protocols/yahoo/yahoo.c:2602
+#: src/protocols/yahoo/yahoo.c:2704
 msgid "On Vacation"
 msgstr "În vacanţă"
 
-#: src/protocols/yahoo/yahoo.c:2287 src/protocols/yahoo/yahoo.c:2612
-#: src/protocols/yahoo/yahoo.c:2712
+#: src/protocols/yahoo/yahoo.c:2281 src/protocols/yahoo/yahoo.c:2606
+#: src/protocols/yahoo/yahoo.c:2706
 msgid "Stepped Out"
 msgstr "Ieşit afară"
 
-#: src/protocols/yahoo/yahoo.c:2351 src/protocols/yahoo/yahoo.c:2383
+#: src/protocols/yahoo/yahoo.c:2345 src/protocols/yahoo/yahoo.c:2377
 msgid "Not on server list"
 msgstr "Nu este în lista de pe server"
 
-#: src/protocols/yahoo/yahoo.c:2439
+#: src/protocols/yahoo/yahoo.c:2433
 msgid "Join in Chat"
 msgstr "Intră în chat"
 
-#: src/protocols/yahoo/yahoo.c:2445
+#: src/protocols/yahoo/yahoo.c:2439
 msgid "Initiate Conference"
 msgstr "Iniţiază o conferinţă"
 
-#: src/protocols/yahoo/yahoo.c:2498
+#: src/protocols/yahoo/yahoo.c:2492
 msgid "Active which ID?"
 msgstr "Ce identitate doriţi să activaţi?"
 
-#: src/protocols/yahoo/yahoo.c:2506
+#: src/protocols/yahoo/yahoo.c:2500
 msgid "Join who in chat?"
 msgstr "Cui vă alăturaţi în chat?"
 
-#: src/protocols/yahoo/yahoo.c:2517
+#: src/protocols/yahoo/yahoo.c:2511
 msgid "Activate ID..."
 msgstr "Activează identitatea..."
 
-#: src/protocols/yahoo/yahoo.c:2523
+#: src/protocols/yahoo/yahoo.c:2517
 msgid "Join user in chat..."
 msgstr "Alătură-te unui contact în chat..."
 
-#: src/protocols/yahoo/yahoo.c:2905
+#: src/protocols/yahoo/yahoo.c:2899
 msgid ""
 "<b>Sorry, profiles marked as containing adult content are not supported at "
 "this time.</b><br><br>\n"
@@ -8131,7 +8112,7 @@ msgstr ""
 "<b>Ne cerem scuze, profilurile ce conţin materiale pentru adulţi nu sunt "
 "suportate deocamdată.</b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2906 src/protocols/yahoo/yahoo.c:2929
+#: src/protocols/yahoo/yahoo.c:2900 src/protocols/yahoo/yahoo.c:2923
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
@@ -8139,43 +8120,43 @@ msgstr ""
 "Dacă doriţi să vedeţi acest profil va trebui să deschideţi această adresă în "
 "navigator<br>"
 
-#: src/protocols/yahoo/yahoo.c:2928
+#: src/protocols/yahoo/yahoo.c:2922
 msgid ""
 "<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
 msgstr ""
 "<b>Ne cerem scuze, doar profilurile în engleză sunt suportate deocamdată.</"
 "b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2976 src/protocols/yahoo/yahoo.c:2977
+#: src/protocols/yahoo/yahoo.c:2970 src/protocols/yahoo/yahoo.c:2971
 msgid "Yahoo! ID"
 msgstr "Identitate Yahoo!"
 
-#: src/protocols/yahoo/yahoo.c:3021 src/protocols/yahoo/yahoo.c:3024
-#: src/protocols/yahoo/yahoo.c:3027
+#: src/protocols/yahoo/yahoo.c:3015 src/protocols/yahoo/yahoo.c:3018
+#: src/protocols/yahoo/yahoo.c:3021
 msgid "Hobbies"
 msgstr "Hobby-uri"
 
-#: src/protocols/yahoo/yahoo.c:3036 src/protocols/yahoo/yahoo.c:3039
+#: src/protocols/yahoo/yahoo.c:3030 src/protocols/yahoo/yahoo.c:3033
 msgid "Latest News"
 msgstr "Noutăţi"
 
-#: src/protocols/yahoo/yahoo.c:3053
+#: src/protocols/yahoo/yahoo.c:3047
 msgid "Home Page"
 msgstr "Pagină personală"
 
-#: src/protocols/yahoo/yahoo.c:3065
+#: src/protocols/yahoo/yahoo.c:3059
 msgid "Cool Link 1"
 msgstr "Adresă interesantă 1"
 
-#: src/protocols/yahoo/yahoo.c:3069
+#: src/protocols/yahoo/yahoo.c:3063
 msgid "Cool Link 2"
 msgstr "Adresă interesantă 2"
 
-#: src/protocols/yahoo/yahoo.c:3071
+#: src/protocols/yahoo/yahoo.c:3065
 msgid "Cool Link 3"
 msgstr "Adresă interesantă 3"
 
-#: src/protocols/yahoo/yahoo.c:3077
+#: src/protocols/yahoo/yahoo.c:3071
 msgid "Member Since"
 msgstr "Membru din"
 
@@ -8190,27 +8171,27 @@ msgstr "Membru din"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3283 src/protocols/yahoo/yahoo.c:3285
+#: src/protocols/yahoo/yahoo.c:3277 src/protocols/yahoo/yahoo.c:3279
 msgid "Yahoo Protocol Plugin"
 msgstr "Modúl de protocol Yahoo"
 
-#: src/protocols/yahoo/yahoo.c:3302
+#: src/protocols/yahoo/yahoo.c:3296
 msgid "Pager host"
 msgstr "Server pager"
 
-#: src/protocols/yahoo/yahoo.c:3305
+#: src/protocols/yahoo/yahoo.c:3299
 msgid "Pager port"
 msgstr "Port pager"
 
-#: src/protocols/yahoo/yahoo.c:3308
+#: src/protocols/yahoo/yahoo.c:3302
 msgid "File transfer host"
 msgstr "Server transfer fişiere"
 
-#: src/protocols/yahoo/yahoo.c:3311
+#: src/protocols/yahoo/yahoo.c:3305
 msgid "File transfer port"
 msgstr "Port transfer fişiere"
 
-#: src/protocols/yahoo/yahoo.c:3314
+#: src/protocols/yahoo/yahoo.c:3308
 msgid "Chat Room List Url"
 msgstr "Adresa listei camerelor de chat"
 
@@ -8219,8 +8200,8 @@ msgid ""
 "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
 "(1,048,576 bytes)."
 msgstr ""
-"Gaim nu poate trimite prin Yahoo! fişiere care sunt mai mare de un megaoctet "
-"(1,048,576 octeţi)."
+"Gaim nu poate trimite prin Yahoo! fişiere care sunt mai mare de un "
+"megaoctet (1,048,576 octeţi)." 
 
 #: src/protocols/yahoo/yahoochat.c:198
 #, c-format
@@ -8276,35 +8257,35 @@ msgstr "Nu pot obţine lista camerelor de chat."
 msgid "User Rooms"
 msgstr "Camere utilizatori"
 
-#: src/protocols/zephyr/zephyr.c:525
+#: src/protocols/zephyr/zephyr.c:381
 #, c-format
 msgid "<b>User:</b> %s<br>"
 msgstr "<b>Utilizator:</b> %s<br>"
 
-#: src/protocols/zephyr/zephyr.c:527
+#: src/protocols/zephyr/zephyr.c:383
 #, c-format
 msgid "<b>Alias:</b> %s<br>"
 msgstr "<b>Alias:</b> %s<br>"
 
-#: src/protocols/zephyr/zephyr.c:529
+#: src/protocols/zephyr/zephyr.c:385
 msgid "<br>Hidden or not logged-in"
 msgstr "<br>Invizibil sau neautentificat"
 
-#: src/protocols/zephyr/zephyr.c:533
+#: src/protocols/zephyr/zephyr.c:389
 #, c-format
 msgid "<br>At %s since %s"
 msgstr "<br>În %s din %s"
 
-#: src/protocols/zephyr/zephyr.c:793 src/protocols/zephyr/zephyr.c:794
-#: src/protocols/zephyr/zephyr.c:982 src/protocols/zephyr/zephyr.c:983
+#: src/protocols/zephyr/zephyr.c:646 src/protocols/zephyr/zephyr.c:647
+#: src/protocols/zephyr/zephyr.c:835 src/protocols/zephyr/zephyr.c:836
 msgid "Anyone"
 msgstr "Oricine"
 
-#: src/protocols/zephyr/zephyr.c:820
+#: src/protocols/zephyr/zephyr.c:673
 msgid "Already logged in with Zephyr"
 msgstr "Sunteţi deja autentificat cu Zephyr"
 
-#: src/protocols/zephyr/zephyr.c:821
+#: src/protocols/zephyr/zephyr.c:674
 msgid ""
 "Because Zephyr uses your system username, you are unable to have multiple "
 "accounts on it when logged in as the same user."
@@ -8312,19 +8293,19 @@ msgstr ""
 "Deoarece Zephyr foloseşte numele de utilizator al sistemului nu puteţi avea "
 "multiple conturi active cu acelaşi utilizator."
 
-#: src/protocols/zephyr/zephyr.c:1158
+#: src/protocols/zephyr/zephyr.c:995
 msgid "ZLocate"
 msgstr "ZLocalizare"
 
-#: src/protocols/zephyr/zephyr.c:1198
+#: src/protocols/zephyr/zephyr.c:1035
 msgid "_Class:"
 msgstr "_Clasă:"
 
-#: src/protocols/zephyr/zephyr.c:1203
+#: src/protocols/zephyr/zephyr.c:1040
 msgid "_Instance:"
 msgstr "_Instanţă:"
 
-#: src/protocols/zephyr/zephyr.c:1208
+#: src/protocols/zephyr/zephyr.c:1045
 msgid "_Recipient:"
 msgstr "_Destinatar:"
 
@@ -8339,19 +8320,19 @@ msgstr "_Destinatar:"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/zephyr/zephyr.c:1358 src/protocols/zephyr/zephyr.c:1360
+#: src/protocols/zephyr/zephyr.c:1195 src/protocols/zephyr/zephyr.c:1197
 msgid "Zephyr Protocol Plugin"
 msgstr "Modul de protocol Zephyr"
 
-#: src/protocols/zephyr/zephyr.c:1377
+#: src/protocols/zephyr/zephyr.c:1214
 msgid "Export to .anyone"
 msgstr "Export către .anyone"
 
-#: src/protocols/zephyr/zephyr.c:1380
+#: src/protocols/zephyr/zephyr.c:1217
 msgid "Export to .zephyr.subs"
 msgstr "Export .zephyr.subs"
 
-#: src/protocols/zephyr/zephyr.c:1383
+#: src/protocols/zephyr/zephyr.c:1220
 msgid "Exposure"
 msgstr "Expunere"
 
@@ -8467,33 +8448,33 @@ msgstr "_Arată mailul"
 msgid "_Warn"
 msgstr "_Avertizare"
 
-#: src/util.c:1884
+#: src/util.c:1851
 msgid "Calculating..."
 msgstr "Calculez..."
 
-#: src/util.c:1887
+#: src/util.c:1854
 msgid "Unknown."
 msgstr "Necunoscut."
 
-#: src/util.c:1918 src/util.c:1923 src/util.c:1928 src/util.c:1931
+#: src/util.c:1885 src/util.c:1890 src/util.c:1895 src/util.c:1898
 msgid "day"
 msgid_plural "days"
 msgstr[0] "zi"
 msgstr[1] "zile"
 
-#: src/util.c:1919 src/util.c:1923 src/util.c:1937 src/util.c:1939
+#: src/util.c:1886 src/util.c:1890 src/util.c:1904 src/util.c:1906
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "oră"
 msgstr[1] "ore"
 
-#: src/util.c:1919 src/util.c:1928 src/util.c:1937 src/util.c:1942
+#: src/util.c:1886 src/util.c:1895 src/util.c:1904 src/util.c:1909
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minut"
 msgstr[1] "minute"
 
-#: src/util.c:2274
+#: src/util.c:2241
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Eroare la deschiderea conexiunii.\n"
 
