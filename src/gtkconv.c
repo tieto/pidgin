@@ -328,9 +328,6 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 			gaim_conv_chat_send(GAIM_CONV_CHAT(conv), buf);
 	}
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))
-		gaim_conv_window_hide(gaim_conversation_get_window(conv));
-
 	g_free(clean);
 	g_free(buf);
 
@@ -3798,6 +3795,7 @@ setup_im_pane(GaimConversation *conv)
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
 
+	/* XXX - The following two prefs need to be set whenever the window is resized. */
 	gtk_widget_set_size_request(gtkconv->sw,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_height"));
@@ -3862,6 +3860,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry),
 								GTK_WRAP_WORD_CHAR);
+	/* XXX - The following pref needs to be set whenever the window is resized. */
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
@@ -4555,8 +4554,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	    ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
 	      gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
 	     (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-	      (gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events") ||
-	       gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))))) {
+	      gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")))) {
 
 		gaim_conv_window_show(win);
 	}
@@ -5885,7 +5883,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/button_type",
 					   GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/animate_buddy_icons", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/im/hide_on_send", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_width", 410);

@@ -1036,8 +1036,6 @@ static void gaimrc_read_options(FILE *f)
 					!(im_options & OPT_IM_NO_ANIMATION));
 			gaim_prefs_set_bool("/core/conversations/use_alias_for_title",
 					im_options & OPT_IM_ALIAS_TAB);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/im/hide_on_send",
-								(im_options & OPT_IM_POPDOWN));
 			gaim_prefs_set_bool("/gaim/gtk/conversations/tabs",
 					im_options & OPT_IM_ONE_WINDOW);
 

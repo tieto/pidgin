@@ -973,16 +973,8 @@ GtkWidget *im_page() {
 
 	gtk_size_group_add_widget(sg, widge);
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("New window _width:"),
-			"/gaim/gtk/conversations/im/default_width", 25, 9999, sg);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("New window _height:"),
-			"/gaim/gtk/conversations/im/default_height", 25, 9999, sg);
-	gaim_gtk_prefs_labeled_spin_button(vbox, _("_Entry field height:"),
-			"/gaim/gtk/conversations/im/entry_height", 25, 9999, sg);
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/conversations/im/raise_on_events", vbox);
-	gaim_gtk_prefs_checkbox(_("Hide window on _send"),
-			"/gaim/gtk/conversations/im/hide_on_send", vbox);
 	gtk_widget_show (vbox);
 #endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));
