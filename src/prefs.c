@@ -1499,8 +1499,7 @@ void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 
 void do_select_sound(GtkWidget *w, int snd)
 {
-
-	char *file;
+	const char *file;
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
 
