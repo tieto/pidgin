@@ -1330,6 +1330,15 @@ void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	silcgaim_add_buddy_i(gc, buddy, FALSE);
 }
 
+void silcgaim_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
+{
+	GList *curb = buddies;
+	while (curb != NULL) {
+		silcgaim_add_buddy_i(gc, curb->data, TRUE);
+		curb = curb->next;
+	}
+}
+
 void silcgaim_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
 			   GaimGroup *group)
 {
