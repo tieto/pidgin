@@ -474,17 +474,6 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 			return FALSE;
 			break;
 
-#ifdef LAY_OFF_MY_FRIGGIN_KEYBINDINGS
-		case 'f':
-		case 'F':
-			/*set_toggle(gtkconv->toolbar.font,
-			  !gtk_toggle_button_get_active(
-			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));*/
-			
-			return TRUE;
-			break;
-#endif /* this doesn't even DO anything */
-			
 		case 'i':
 		case 'I':
 			if (imhtml->format_functions & GTK_IMHTML_ITALIC) {

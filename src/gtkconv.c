@@ -960,7 +960,6 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link)));
 }
 
-#if 0
 static void
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -976,7 +975,6 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image),
 		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image)));
 }
-#endif
 
 static void
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
@@ -2521,8 +2519,7 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
-		/* XXX - IMIMAGE - Fix IM images then show this. */
-		gtk_widget_hide(gtkwin->menu.insert_image);
+		gtk_widget_show(gtkwin->menu.insert_image);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
@@ -3359,7 +3356,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
-	{ N_("/Conversation/Insert Imag_e..."), NULL, NULL, 0, /* menu_insert_image_cb, 0, */
+	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
 	  "<StockItem>", GAIM_STOCK_IMAGE },
 
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>" },

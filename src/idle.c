@@ -37,12 +37,9 @@
 #include "debug.h"
 #include "log.h"
 #include "prefs.h"
-#include "prpl.h"
 #include "signals.h"
 
 #include "ui.h"
-
-#include "gtkprefs.h"
 
 /* XXX For the away stuff */
 #include "gaim.h"
