@@ -618,6 +618,7 @@ extern int set_dispstyle (int);
 extern void show_usage (int, char *);
 extern void set_first_user (char *);
 extern int do_auto_login (char *);
+extern int file_is_dir (char *, GtkWidget *);
 
 /* Functions in server.c */
 /* input to serv */

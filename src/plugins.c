@@ -128,8 +128,15 @@ static void load_file(GtkWidget *w, gpointer data)
 }
 
 static void load_which_plugin(GtkWidget *w, gpointer data) {
-	load_plugin(gtk_file_selection_get_filename(
-					GTK_FILE_SELECTION(plugin_dialog)));
+	char *file;
+
+	file = gtk_file_selection_get_filename(
+		                   GTK_FILE_SELECTION(plugin_dialog));
+	if (file_is_dir(file, plugin_dialog)) {
+		return;
+	}
+
+	load_plugin(file);
 
 	if (plugin_dialog)
 		gtk_widget_destroy(plugin_dialog);

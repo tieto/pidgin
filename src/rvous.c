@@ -216,6 +216,10 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL;
 	GtkWidget *button = NULL, *pct = NULL;
 
+	if (file_is_dir(file, ft->window)) {
+	  	return;
+	}
+
 	if (!(ft->f = fopen(file,"w"))) {
                 g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
 		do_error_dialog(buf, _("Error"));
@@ -485,6 +489,11 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *c;
 	struct stat st;
 	struct tm *fortime;
+
+	if (file_is_dir (file, ft->window)) {
+		g_free(file);
+		return;
+	}
 
 	stat(file, &st);
 	if (!(ft->f = fopen(file, "r"))) {

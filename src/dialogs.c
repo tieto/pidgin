@@ -67,6 +67,8 @@
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
+#define PATHSIZE 1024
+
 int smiley_array[FACE_TOTAL];
 GdkColor bgcolor;
 GdkColor fgcolor;
@@ -1862,11 +1864,19 @@ void do_log(GtkWidget *w, struct conversation *c)
 {
         struct log_conversation *l;
         char buf[128];
+	char *file;
+	char path[PATHSIZE];
 
         if (!find_log_info(c->name)) {
+		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->log_dialog));
+		strncpy( path, file, PATHSIZE - 1 );
+		if (file_is_dir(path, c->log_dialog)) {
+			return;
+		}
+
                 l = (struct log_conversation *)g_new0(struct log_conversation, 1);
                 strcpy(l->name, c->name);
-                strcpy(l->filename, gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->log_dialog)));
+                strcpy(l->filename, file);
                 log_conversations = g_list_append(log_conversations, l);
 
                 if (c != NULL)
@@ -2623,8 +2633,6 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
-#define PATHSIZE 1024
-
 /* see if a buddy list cache file for this user exists */
 
 gboolean
@@ -2670,6 +2678,10 @@ void do_export(GtkWidget *w, void *dummy)
 	if ( show_dialog == 1 ) {
 		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
 		strncpy( path, file, PATHSIZE - 1 );
+		if (file_is_dir(path, exportdialog)) {
+			g_free (buf);
+			return;
+		}
 		if ((f = fopen(path,"w"))) {
 			toc_build_config(connections->data, buf, 8192 - 1, TRUE);
 			fprintf(f, "%s\n", buf);
@@ -2772,6 +2784,11 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
         if ( !gc ) {
         	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
                 strncpy( path, file, PATHSIZE - 1 );
+		if (file_is_dir(path, importdialog)) {
+			g_free (buf);
+			g_free (first);
+			return;
+		}
         }
         else {
 		for (i = 0; i < strlen(gc->username); i++)

@@ -1272,3 +1272,22 @@ int do_auto_login (char *name)
 	return retval;
 }
 		
+
+int file_is_dir (char *path, GtkWidget *w)
+{
+	struct stat st;
+	char *name;
+
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
+		/* append a / if needed */
+		if (path[strlen(path)-1] != '/')
+			name = g_strconcat(path,"/",NULL);
+		else
+			name = g_strdup(path);
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(w), name);
+		g_free(name);
+		return 1;
+	}
+
+	return 0;
+}
