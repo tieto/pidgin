@@ -143,6 +143,7 @@ struct getfile_transfer {
 	long size;
 };
 
+#if USE_GNOME
 struct icon_req {
 	char *user;
 	time_t timestamp;
@@ -155,6 +156,7 @@ struct icon_req {
 	int curframe;
 	int timer;
 };
+#endif
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	GSList *d = od->direct_ims;
