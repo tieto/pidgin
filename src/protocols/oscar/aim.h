@@ -759,7 +759,7 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
 #define AIM_IMFLAGS_CUSTOMFEATURES 	0x0080 /* features field present */
 #define AIM_IMFLAGS_EXTDATA		0x0100
-#define AIM_IMFLAGS_CUSTOMCHARSET	0x0200 /* charset fields set */
+#define AIM_IMFLAGS_X			0x0200
 #define AIM_IMFLAGS_MULTIPART		0x0400 /* ->mpmsg section valid */
 #define AIM_IMFLAGS_OFFLINE		0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT		0x1000 /* typing notification */

@@ -1995,13 +1995,16 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			debug_printf("Can't stat buddy icon file!\n");
 	}
 
+	debug_printf("Character set is %hu %hu\n", args->charset, args->charsubset);
 	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
 		/* This message is marked as UNICODE, so we have to
 		 * convert it to utf-8 before handing it to the gaim core.
 		 * This conversion should *never* fail, if it does it
 		 * means that either the incoming ICBM is corrupted or
-		 * there is something we don't understand about it. */
-		/* For the record, AIM Unicode is big-endian UCS-2 */
+		 * there is something we don't understand about it.
+		 * For the record, AIM Unicode is big-endian UCS-2 */
+
+		debug_printf("Received UNICODE IM\n");
 
 		if (!args->msg || !args->msglen)
 			return 1;
@@ -2019,9 +2022,8 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * gaim (everything before 0.60) and other broken clients
 		 * that will happily send ISO-8859-1 without marking it as
 		 * such */
-		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
+		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1)
 			debug_printf("Received ISO-8859-1 IM\n");
-		}
 
 		if (!args->msg || !args->msglen)
 			return 1;
@@ -2031,10 +2033,6 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
 		}
-	}
-
-	if (args->icbmflags & AIM_IMFLAGS_CUSTOMCHARSET) {
-		debug_printf("Custom character set: %hu %hu\n", args->charset, args->charsubset);
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
@@ -3880,6 +3878,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		args.flags |= check_encoding(message);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			debug_printf("Sending Unicode IM\n");
+			args.charset = 0x0002;
+			args.charsubset = 0x0002;
 			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("Error converting a unicode message: %s\n", err->message);
@@ -3889,6 +3889,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			}
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
 			debug_printf("Sending ISO-8859-1 IM\n");
+			args.charset = 0x0003;
+			args.charsubset = 0x0003;
 			args.msg = g_convert(message, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("conversion error: %s\n", err->message);
@@ -3901,6 +3903,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				}
 			}
 		} else {
+			args.charset = 0x0000;
+			args.charsubset = 0x0000;
 			args.msg = message;
 		}
 		args.msglen = len;

@@ -343,19 +343,8 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		aimbs_put16(&fr->data, args->msglen + 0x04);
 
 		/* Character set */
-		if (args->flags & AIM_IMFLAGS_CUSTOMCHARSET) {
-			aimbs_put16(&fr->data, args->charset);
-			aimbs_put16(&fr->data, args->charsubset);
-		} else {
-			if (args->flags & AIM_IMFLAGS_UNICODE)
-				aimbs_put16(&fr->data, 0x0002);
-			else if (args->flags & AIM_IMFLAGS_ISO_8859_1)
-				aimbs_put16(&fr->data, 0x0003);
-			else
-				aimbs_put16(&fr->data, 0x0000);
-
-			aimbs_put16(&fr->data, 0x0000);
-		}
+		aimbs_put16(&fr->data, args->charset);
+		aimbs_put16(&fr->data, args->charsubset);
 
 		/* Message.  Not terminated */
 		aimbs_putraw(&fr->data, args->msg, args->msglen);
@@ -428,6 +417,8 @@ faim_export int aim_im_sendch1(aim_session_t *sess, const char *sn, fu16_t flags
 	args.flags = flags;
 	args.msg = msg;
 	args.msglen = strlen(msg);
+	args.charset = 0x0000;
+	args.charsubset = 0x0000;
 
 	/* Make these don't get set by accident -- they need aim_im_sendch1_ext */
 	args.flags &= ~(AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_HASICON | AIM_IMFLAGS_MULTIPART);
@@ -1304,7 +1295,6 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 			/* Great. We found one.  Fill it in. */
 			args->charset = sec->charset;
 			args->charsubset = sec->charsubset;
-			args->icbmflags |= AIM_IMFLAGS_CUSTOMCHARSET;
 
 			/* Set up the simple flags */
 			if (args->charset == 0x0000)
