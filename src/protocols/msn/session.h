@@ -47,6 +47,7 @@ struct _MsnSession
 	MsnUsers *users;
 	MsnGroups *groups;
 
+	GList *servconns;
 	GList *switches;
 
 	struct

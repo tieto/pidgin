@@ -61,11 +61,8 @@ process_single_line(MsnServConn *servconn, char *str)
 	size_t param_count = 0;
 	char *command, *param_start;
 	char **params = NULL;
-	MsnServConn *old_notification_conn;
 
 	command = str;
-
-	old_notification_conn = session->notification_conn;
 
 	/**
 	 * See how many spaces we have in this.
@@ -102,18 +99,8 @@ process_single_line(MsnServConn *servconn, char *str)
 	if (params != NULL)
 		g_strfreev(params);
 
-	/*
-	 * We're checking here if the old notification server was replaced
-	 * with a new one, and if the current servconn here is the old
-	 * notification server. If so, we're going to have a bit of trouble
-	 * in the upcoming loop, as servconn will be a freed variable, so
-	 * we'll just return early.
-	 */
-	if (servconn == old_notification_conn &&
-		old_notification_conn != session->notification_conn) {
-
+	if (g_list_find(session->servconns, servconn) == NULL)
 		return result;
-	}
 
 	/* Process all queued messages that are waiting on this command. */
 	for (l = servconn->msg_queue; l != NULL; l = l_next) {
@@ -203,6 +190,8 @@ msn_servconn_new(MsnSession *session)
 	servconn->msg_types = g_hash_table_new_full(g_str_hash, g_str_equal,
 												g_free, NULL);
 
+	session->servconns = g_list_append(session->servconns, servconn);
+
 	return servconn;
 }
 
@@ -256,7 +245,13 @@ msn_servconn_disconnect(MsnServConn *servconn)
 void
 msn_servconn_destroy(MsnServConn *servconn)
 {
+	MsnSession *session;
+
 	g_return_if_fail(servconn != NULL);
+
+	session = servconn->session;
+
+	session->servconns = g_list_remove(session->servconns, servconn);
 
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
