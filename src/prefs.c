@@ -1405,7 +1405,7 @@ void show_prefs()
 	aol_icon(prefs->window);
 	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 600, 440);
+	gtk_widget_set_usize(prefs, 600, 550);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
@@ -1416,7 +1416,7 @@ void show_prefs()
 	gtk_widget_show(hpaned);
 	
        	scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_paned_pack1(GTK_PANED(hpaned), scroll, TRUE, TRUE);
+	gtk_paned_pack1(GTK_PANED(hpaned), scroll, FALSE, FALSE);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
 			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 	gtk_widget_set_usize(scroll, 125, -1);
