@@ -1,4 +1,4 @@
-/*
+/**
  * Low-level connection handling.
  *
  * Does all this gloriously nifty connection handling stuff...
