@@ -2089,6 +2089,24 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b) {
 }
 
 static gint log_timeout(struct buddy_show *b) {
+	/* this part is really just a bad hack because of a bug I can't find */
+	GSList *s = shows;
+	while (s) {
+		struct group_show *gs = s->data;
+		GSList *m = gs->members;
+		while (m) {
+			if (b == m->data)
+				break;
+			m = m->next;
+		}
+		if (m != NULL)
+			break;
+		s = s->next;
+	}
+	if (!s)
+		return 0;
+
+	/* this is the real part. */
 	if (!b->connlist) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
