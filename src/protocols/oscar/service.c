@@ -88,7 +88,7 @@ static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	 */
 	aim_setversions(sess, rx->conn);
 
-	return 1; 
+	return 1;
 }
 
 /* Subtype 0x0004 - Service request */
@@ -109,7 +109,7 @@ faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exch
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	struct chatsnacinfo csi;
-	
+
 	if (!sess || !conn || !roomname || !strlen(roomname))
 		return -EINVAL;
 
@@ -135,7 +135,7 @@ faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exch
 
 	aim_tx_enqueue(sess, fr);
 
-	return 0; 
+	return 0;
 }
 
 /* Subtype 0x0005 - Redirect */
@@ -390,12 +390,12 @@ static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 faim_internal int aim_rates_addparam(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
-	aim_frame_t *fr;	
+	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
-		return -ENOMEM; 
+		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0008, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0001, 0x0008, 0x0000, snacid);
@@ -412,12 +412,12 @@ faim_internal int aim_rates_addparam(aim_session_t *sess, aim_conn_t *conn)
 faim_internal int aim_rates_delparam(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
-	aim_frame_t *fr;	
+	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
-		return -ENOMEM; 
+		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0009, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0001, 0x0009, 0x0000, snacid);
@@ -440,7 +440,7 @@ static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	code = aimbs_get16(bs);
 	rateclass = aimbs_get16(bs);
-	
+
 	windowsize = aimbs_get32(bs);
 	clear = aimbs_get32(bs);
 	alert = aimbs_get32(bs);
@@ -561,7 +561,7 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	aim_userinfo_t userinfo;
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
-	
+
 	newevil = aimbs_get16(bs);
 
 	if (aim_bstream_empty(bs))
@@ -807,11 +807,11 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
-	
+
 	aim_tlvlist_add_32(&tl, 0x0006, data);
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
-	
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -975,13 +975,13 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 
 	if ((flag == AIM_SENDMEMBLOCK_FLAG_ISHASH) && buf && (len == 0x10)) { /* we're getting a hash */
 
-		aimbs_putraw(&fr->data, buf, 0x10); 
+		aimbs_putraw(&fr->data, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
 		md5_state_t state;
 		md5_byte_t digest[0x10];
 
-		md5_init(&state);	
+		md5_init(&state);
 		md5_append(&state, (const md5_byte_t *)buf, len);
 		md5_finish(&state, digest);
 
@@ -1057,7 +1057,7 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 	fu16_t type;
 	fu8_t flags, length;
 
-	type = aimbs_get16(bs); 
+	type = aimbs_get16(bs);
 	flags = aimbs_get8(bs);
 	length = aimbs_get8(bs);
 

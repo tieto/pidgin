@@ -4483,7 +4483,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
 		g_free(to);
 	}
-	
+
 	if (alertitle)
 		gaim_debug_misc("oscar", "Got an alert '%s' %s\n", alertitle, alerturl ? alerturl : "");
 
@@ -4999,7 +4999,7 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
  * This function was recommended by the STRFTIME(3) man page to remove the
  * "last 2 digits" warning.
  */
-static size_t my_strftime(char *s, size_t max, const char  *fmt,  
+static size_t my_strftime(char *s, size_t max, const char  *fmt,
 			const struct tm *tm)
 {
 	return strftime(s, max, fmt, tm);
@@ -5720,6 +5720,7 @@ static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gro
 	}
 #endif
 
+	/* XXX - Should this be done from AIM accounts, as well? */
 	if (od->icq)
 		aim_icq_getalias(od->sess, buddy->name);
 }
@@ -7025,7 +7026,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 			m = g_list_append(m, act);
 		}
 	}
-	
+
 	return m;
 }
 
