@@ -539,7 +539,6 @@ make_info_table(GaimGtkXferDialog *dialog)
 {
 	GtkWidget *table;
 	GtkWidget *label;
-	GtkWidget *sep;
 	int i;
 
 	struct
@@ -561,7 +560,7 @@ make_info_table(GaimGtkXferDialog *dialog)
 	};
 
 	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(10, 2, FALSE);
+	dialog->table = table = gtk_table_new(9, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
@@ -593,11 +592,6 @@ make_info_table(GaimGtkXferDialog *dialog)
 	gtk_table_attach(GTK_TABLE(table), dialog->progress, 0, 2, 8, 9,
 					 GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(dialog->progress);
-
-	sep = gtk_hseparator_new();
-	gtk_table_attach(GTK_TABLE(table), sep, 0, 2, 9, 10,
-					 GTK_FILL, GTK_FILL, 0, 0);
-	gtk_widget_show(sep);
 
 	return table;
 }

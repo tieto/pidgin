@@ -698,7 +698,6 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *sep;
 	GtkWidget *sw;
 	GtkWidget *text;
 	GtkWidget *toolbar;
@@ -824,11 +823,6 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 
 	/* Populate list */
 	status_editor_populate_list(dialog);
-
-	/* Separator */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
