@@ -177,7 +177,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 
 	passport = msn_user_get_passport(user);
 	friendly = msn_user_get_friendly_name(user);
-	
+
 	if (list_id == MSN_LIST_FL)
 	{
 		GaimConnection *gc = gaim_account_get_connection(account);

@@ -318,9 +318,11 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		user = msn_user_new(session->userlist, passport, friendly);
 		msn_userlist_add_user(session->userlist, user);
 	}
+	else
+		msn_user_set_friendly_name(user, friendly);
 
 	list_id = msn_get_list_id(list);
-	
+
 	if (cmd->param_count >= 6)
 		group_id = atoi(cmd->params[5]);
 	else
