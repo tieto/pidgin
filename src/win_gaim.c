@@ -240,8 +240,6 @@ WinMain (struct HINSTANCE__ *hInstance,
         if((hmod=LoadLibrary("gaim.dll"))) {
                 gaim_main = (void*)GetProcAddress(hmod, "gaim_main");
         }
-        else
-                
 
         if(!gaim_main) {
                 char errbuf[256];
