@@ -264,12 +264,20 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 	GDir *dir;
 	GList *list = NULL;
 	const char *filename;
-	char *me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
+	char *me;
+
+	const char *prpl;
+	char *path;
+
+	if(!account)
+		return NULL;
+
+	me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
 
 	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
-	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
+	prpl = GAIM_PLUGIN_PROTOCOL_INFO
 		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
-	char *path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
+	path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
 
 	g_free(me);
 
