@@ -1623,66 +1623,66 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-					  _("Bold"), _("Bold Text"), _("Bold"), bold_p,
+					  NULL, _("Bold Text"), _("Bold"), bold_p,
 					  GTK_SIGNAL_FUNC(do_bold), entry);
 	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Italics"), _("Italics Text"),
+					    NULL, NULL, _("Italics Text"),
 					    _("Italics"), italic_p, GTK_SIGNAL_FUNC(do_italic), entry);
 	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					       GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					       NULL, _("Underline"), _("Underline Text"),
+					       NULL, NULL, _("Underline Text"),
 					       _("Underline"), underline_p,
 					       GTK_SIGNAL_FUNC(do_underline), entry);
 	strike =
 	    gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				       _("Strike"), _("Strike through Text"), _("Strike"), strike_p,
+				       NULL, _("Strike through Text"), _("Strike"), strike_p,
 				       GTK_SIGNAL_FUNC(do_strike), entry);
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 
 	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-					_("Small"), _("Decrease font size"), _("Small"),
+					NULL, _("Decrease font size"), _("Small"),
 					small_p, GTK_SIGNAL_FUNC(do_small), entry);
 	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-					 _("Normal"), _("Normal font size"), _("Normal"),
+					 NULL, _("Normal font size"), _("Normal"),
 					 normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-				      _("Big"), _("Increase font size"), _("Big"),
+				      NULL, _("Increase font size"), _("Big"),
 				      big_p, GTK_SIGNAL_FUNC(do_big), entry);
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 
 	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, _("Font"), _("Select Font"),
+					  NULL, NULL, _("Select Font"),
 					  _("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
 	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-						NULL, _("Color"), _("Text Color"),
+						NULL, NULL, _("Text Color"),
 						_("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_fg_color),
 						c);
 	bgcolorbtn =
 	    gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				       _("Color"), _("Background Color"), _("Color"), bgcolor_p,
+				       NULL, _("Background Color"), _("Color"), bgcolor_p,
 				       GTK_SIGNAL_FUNC(toggle_bg_color), c);
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, _("Link"), _("Insert Link"),
+					  NULL, NULL, _("Insert Link"),
 					  _("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);
 	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Smiley"), _("Insert smiley face"), _("Smiley"),
+					    NULL, NULL, _("Insert smiley face"), _("Smiley"),
 					    smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
 
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, _("Logging"), _("Enable logging"),
+					  NULL, NULL, _("Enable logging"),
 					  _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
 	state_lock = 1;
 	if (find_log_info(c->name))
@@ -1692,12 +1692,12 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	state_lock = 0;
 
 	save = gtk_toolbar_append_item (GTK_TOOLBAR(toolbar),
-					_("Save"), _("Save Conversation"),
+					NULL, _("Save Conversation"),
 					_("Save"), save_p, GTK_SIGNAL_FUNC(save_convo), c);
 
 	speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					     GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					     NULL, _("Sound"), _("Enable sounds"),
+					     NULL, NULL, _("Enable sounds"),
 					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(set_option),
 					     &c->makesound);
 	c->makesound = 0;
