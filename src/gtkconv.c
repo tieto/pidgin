@@ -138,6 +138,7 @@ static void update_typing_icon(GaimConversation *conv);
 static gboolean update_send_as_selection(GaimWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 static void save_convo(GtkWidget *save, GaimConversation *c);
+static void update_tab_icon(GaimConversation *conv);
 
 /**************************************************************************
  * Callbacks
@@ -3942,46 +3943,8 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 					 G_CALLBACK(close_conv_cb), conv);
 
 	/* Status icon. */
-	account = gaim_conversation_get_account(conv);
-	b = gaim_find_buddy(account, name);
-	if (b != NULL) {
-		gtkconv->icon = gtk_image_new_from_pixbuf(
-							  gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-											 GAIM_STATUS_ICON_SMALL));
-	} else {
-		GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol(account));
-		GaimPluginProtocolInfo *prpl_info;
-
-		if (plugin != NULL)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-
-		if (prpl_info != NULL) {
-			char buf[32];
-			char *filename;
-			GdkPixbuf *pixbuf, *scale;
-
-			const char *proto_name = prpl_info->list_icon(account, NULL);
-			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-						    "default", buf, NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-
-			g_free(filename);
-			
-			if (pixbuf != NULL) {
-				/* Scale and insert the image */
-				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-								GDK_INTERP_BILINEAR);
-				gtkconv->icon = gtk_image_new_from_pixbuf(scale);
-
-				g_object_unref(G_OBJECT(pixbuf));
-				g_object_unref(G_OBJECT(scale));
-			}
-			else
-				gtkconv->icon = gtk_image_new();
-		}
-	
-	}
+	gtkconv->icon = gtk_image_new();
+	update_tab_icon(conv);
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
@@ -4894,14 +4857,42 @@ update_tab_icon(GaimConversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
-	b = gaim_find_buddy(account, name);
 
-	if (b != NULL) {
-		gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
-				gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-					GAIM_STATUS_ICON_SMALL));
-	} else {
-		gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		b = gaim_find_buddy(account, name);
+		if (b != NULL) {
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
+					gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+						GAIM_STATUS_ICON_SMALL));
+		} else {
+			GdkPixbuf *pixbuf, *scale;
+			pixbuf = create_prpl_icon(account);
+
+			if (pixbuf) {
+				scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+
+				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
+
+				g_object_unref(pixbuf);
+				g_object_unref(scale);
+			} else {
+				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
+			}
+		}
+	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		GdkPixbuf *pixbuf, *scale;
+		pixbuf = create_prpl_icon(account);
+
+		if (pixbuf) {
+			scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
+
+			g_object_unref(pixbuf);
+			g_object_unref(scale);
+		} else {
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
+		}
 	}
 }
 
@@ -5000,10 +4991,12 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
 		generate_send_as_items(win, NULL);
-		update_tab_icon(conv);
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+			update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_AWAY) {
-		update_tab_icon(conv);
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+			update_tab_icon(conv);
 	}
 	else if(type == GAIM_CONV_UPDATE_ADD ||
 			type == GAIM_CONV_UPDATE_REMOVE) {
@@ -5684,8 +5677,10 @@ icons_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-		if (value)
+		if (value) {
+			update_tab_icon(conv);
 			gtk_widget_show(gtkconv->icon);
+		}
 		else
 			gtk_widget_hide(gtkconv->icon);
 	}
