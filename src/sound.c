@@ -463,8 +463,6 @@ void play_file(char *filename)
 		}
 
 		_exit(0);
-	} else {
-		g_timeout_add(100, clean_pid, NULL);
 	}
 }
 
@@ -533,8 +531,6 @@ void play(unsigned char *data, int size)
 		}
 
 		_exit(0);
-	} else {
-		g_timeout_add(100, clean_pid, NULL);
 	}
 }
 

@@ -613,17 +613,13 @@ char *date()
 }
 
 
-gboolean clean_pid(gpointer dummy)
+void clean_pid(void)
 {
 	int status;
 	pid_t pid;
 
+	printf ("clean_pid\n");
 	pid = waitpid(-1, &status, WNOHANG);
-
-	if (pid == 0)
-		return TRUE;
-
-	return FALSE;
 }
 
 struct aim_user *find_user(const char *name, int protocol)

@@ -1551,8 +1551,6 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					args[3] = NULL;
 					execvp(args[0], args);
 					_exit(0);
-				} else if (pid > 0) {
-					gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
 				}
 			}
 			if (b->options & OPT_POUNCE_SOUND) {

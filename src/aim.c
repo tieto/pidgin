@@ -406,6 +406,9 @@ void sighandler(int sig)
 #endif
 		abort();
 		break;
+	case SIGCHLD:
+		clean_pid();
+		break;
 	default:
 		debug_printf("caught signal %d\n", sig);
 		gtkspell_stop();
@@ -576,6 +579,7 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, sighandler);
 	signal(SIGQUIT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
+	signal(SIGCHLD, sighandler);
 #endif
 
 

@@ -499,8 +499,6 @@ gint check_netscape(char *msg)
 		if (status != 6)
 			mozilla_remote_free_lock(window);
 
-		gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
-
 		netscape_lock = 0;
 
 		g_free(msg);
@@ -612,8 +610,6 @@ void open_url(GtkWidget *w, char *url)
 
 			execvp(args[0], args);
 			_exit(0);
-		} else {
-			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
 		}
 	}
 }

@@ -399,7 +399,7 @@ extern void serv_get_away(struct gaim_connection *, char *);
 extern char *normalize(const char *);
 extern char *tobase64(const char *);
 extern void frombase64(const char *, char **, int *);
-extern gint clean_pid(gpointer);
+extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
 extern FILE *open_log_file (char *);
