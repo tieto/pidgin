@@ -1740,7 +1740,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		if (!who) {
 			if (flags & WFLAG_SEND) {
 				b = find_buddy(c->gc, c->gc->username);
-				if (get_buddy_alias(b))
+				if (get_buddy_alias_only(b))
 					 who = get_buddy_alias(b);
 				else if (c->gc->user->alias[0])
 					who = c->gc->user->alias;
