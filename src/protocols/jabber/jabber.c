@@ -143,11 +143,19 @@ struct jabber_data {
 };
 
 /*
+ * Used in jabber_buddy_data.invisible, below
+ */
+#define JABBER_NOT_INVIS  0x00
+#define JABBER_SERV_INVIS 0x01	/* Invisible set on server */
+#define JABBER_BUD_INVIS  0x02	/* Invisible set on buddy */
+
+/*
  * It is *this* to which we point the buddy proto_data
  */
 struct jabber_buddy_data {
 	GSList *resources;
 	char *error_msg;
+	unsigned invisible;	/* We've set presence type invisible for this buddy */
 };
 
 /*
@@ -973,6 +981,9 @@ static void jabber_change_passwd(struct gaim_connection *gc, char *old, char *ne
 	}
 }
 
+/*
+ * Return pointer to jabber_buddy_data if buddy found.  Create if necessary.
+ */
 static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, char *buddy)
 {
 	struct jabber_data *jd = gc->proto_data;
@@ -991,6 +1002,7 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
 		struct jabber_buddy_data *jbd = g_new0(struct jabber_buddy_data, 1);
 		jbd->error_msg = NULL;
 		jbd->resources = NULL;
+		jbd->invisible = JABBER_NOT_INVIS;
 		g_hash_table_insert(jd->buddies, g_strdup(realwho), jbd);
 		g_free(realwho);
 		return jbd;
@@ -2396,20 +2408,123 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *gr
  */
 static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *name)
 {
-	xmlnode x, y;
-	char *realwho;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+	char *realwho;
 
-	if(!name || (realwho = get_realwho(gjc, name, FALSE, NULL)) == NULL)
-		return;
+	if((realwho = get_realwho(gjc, name, FALSE, NULL)) != NULL) {
+		xmlnode x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
+		xmlnode y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+		xmlnode_put_attrib(y, "jid", realwho);
+		xmlnode_put_attrib(y, "subscription", "remove");
+		gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
+		g_free(realwho);
+		xmlnode_free(x);
+	}
+}
 
-	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
-	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
-	xmlnode_put_attrib(y, "jid", realwho);
-	xmlnode_put_attrib(y, "subscription", "remove");
-	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
-	g_free(realwho);
-	xmlnode_free(x);
+/*
+ * Unsubscribe a buddy from our presence
+ */
+static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, char *name)
+{
+	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+	char *realwho;
+
+	if((realwho = get_realwho(gjc, name, FALSE, NULL)) != NULL) {
+		xmlnode g = xmlnode_new_tag("presence");
+		xmlnode_put_attrib(g, "to", realwho);
+		xmlnode_put_attrib(g, "type", "unsubscribed");
+		gjab_send(gjc, g);
+		xmlnode_free(g);
+	}
+}
+
+/*
+ * Common code for setting ourselves invisible/visible to buddy
+ */
+static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, char *name, gboolean invisible)
+{
+	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+	char *realwho;
+
+	if((realwho = get_realwho(gjc, name, FALSE, NULL)) != NULL) {
+		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho);
+		xmlnode g = xmlnode_new_tag("presence");
+
+		xmlnode_put_attrib(g, "to", realwho);
+
+		if(invisible)
+			xmlnode_put_attrib(g, "type", "invisible");
+
+		gjab_send(gjc, g);
+
+		g_free(realwho);
+		xmlnode_free(g);
+
+		if(jbd) {
+			if(invisible) {
+				jbd->invisible |= JABBER_BUD_INVIS;
+			} else {
+				jbd->invisible &= ~JABBER_BUD_INVIS;
+			}
+		}
+	}
+}
+
+/*
+ * Make ourselves temporarily invisible to a buddy
+ */
+static void jabber_invisible_to_buddy(struct gaim_connection *gc, char *name)
+{
+	jabber_invisible_to_buddy_common(gc, name, TRUE);
+}
+
+/*
+ * Make ourselves visible to a buddy
+ */
+static void jabber_visible_to_buddy(struct gaim_connection *gc, char *name)
+{
+	jabber_invisible_to_buddy_common(gc, name, FALSE);
+}
+
+/*
+ * Function used by the g_hash_table_foreach() in invisible_to_all_buddies() to
+ * actually set the status.
+ *
+ * key is unused
+ * value is the pointer to the jabber_buddy_data struct
+ * data is gboolean: TRUE (invisible) or FALSE (not invisible)
+ */
+static void set_invisible_to_buddy_status(gpointer key, gpointer val, gpointer data) {
+	struct jabber_buddy_data *jbd = val;
+	gboolean invisible = (gboolean) data;
+
+	if(jbd) {
+		if(invisible) {
+			jbd->invisible = JABBER_SERV_INVIS | JABBER_BUD_INVIS;
+		} else {
+			/*
+			 * If we've asserted server-level invisibility, cancelling
+			 * it removes explicit buddy invisibility settings too.
+			 */
+			if(jbd->invisible & JABBER_SERV_INVIS)
+				jbd->invisible = JABBER_NOT_INVIS;
+		}
+	}
+}
+
+/*
+ * Show we've set ourselves invisible/visible to all buddies on the server
+ *
+ * Used when we set server-wide invisibility so that individual buddy menu
+ * entries show the proper option.
+ */
+static void invisible_to_all_buddies(struct gaim_connection *gc, gboolean invisible)
+{
+	struct jabber_data *jd = gc->proto_data;
+
+	if(jd->buddies != NULL)
+		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, (gpointer) invisible);
 }
 
 static char **jabber_list_icon(int uc)
@@ -2867,6 +2982,12 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 	} else {
+		gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+		char *realwho = get_realwho(gjc, who, FALSE, NULL);
+		struct jabber_buddy_data *jbd = jabber_find_buddy(gc, realwho);
+
+		g_free(realwho);
+
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Info");
 		pbm->callback = jabber_get_info;
@@ -2875,6 +2996,17 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Away Msg");
 		pbm->callback = jabber_get_away_msg;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		if(jbd && (jbd->invisible & JABBER_BUD_INVIS)) {
+			pbm->label = _("Un-hide From");
+			pbm->callback = jabber_visible_to_buddy;
+		} else {
+			pbm->label = _("Temporarily Hide From");
+			pbm->callback = jabber_invisible_to_buddy;
+		}
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 	}
@@ -2894,6 +3026,11 @@ static GList *jabber_edit_buddy_menu(struct gaim_connection *gc, char *who) {
 	pbm->callback = jabber_remove_buddy_roster_item;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Cancel Presence Notification");
+	pbm->callback = jabber_unsubscribe_buddy_from_us;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
 	return m;
 }
@@ -2906,6 +3043,7 @@ static GList *jabber_away_states(struct gaim_connection *gc) {
 	m = g_list_append(m, "Away");
 	m = g_list_append(m, "Extended Away");
 	m = g_list_append(m, "Do Not Disturb");
+	m = g_list_append(m, "Invisible");
 
 	return m;
 }
@@ -2918,6 +3056,7 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 	GSList *jcs;
 	struct jabber_chat *jc;
 	char *chatname;
+	gboolean invisible = FALSE;
 
 	gc->away = NULL; /* never send an auto-response */
 
@@ -2955,6 +3094,10 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "dnd", -1);
 			gc->away = "";
+		} else if (!strcmp(state, "Invisible")) {
+			xmlnode_put_attrib(x, "type", "invisible");
+			gc->away = "";
+			invisible = TRUE;
 		}
 	}
 
@@ -2977,6 +3120,8 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 	}
 
 	xmlnode_free(x);
+
+	invisible_to_all_buddies(gc, invisible);
 }
 
 static void jabber_set_idle(struct gaim_connection *gc, int idle) {

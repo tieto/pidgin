@@ -39,6 +39,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 	7.2  How do I change my Jabber resource to be other than the
 	     default of "/GAIM"?
 	7.3  How do I register a new Jabber account?
+	7.4  How do I use invisibility?
+        7.5  I've a buddy that I keep removing from my buddy list, but
+	     he keeps coming back!  How can I stop this?
+	7.6  What does "Remove From Roster" do?
+	7.7  What does "Cancel Presence Notification" do?
 
 8  Scripts and Plugins
 	8.1  Where can I find documentation on writing plugins and
@@ -320,6 +325,65 @@ mv ~/.gaim/SCREENNAME.0.blist ~/
         password" check-box as well, as Gaim presently does no password
         verification. So if you don't type in what you thought you did,
         you're hosed.
+
+
+7.4  How do I use invisibility?
+
+  Jabber invisibility support is available in Gaim version 0.60 and later.
+
+  There are two ways to use Jabber invisibility: on a per-buddy and on a
+  per-server basis.
+
+  To use per-buddy invisibility: right-click on the buddy on the Online
+  buddy list and select "Temporarily Hide From."  You will appear to that
+  buddy to be off-line.  To make yourself seen by that buddy again:
+  right-click on the buddy and select "Un-hide From."  Note that the menu
+  changes based on whether you're currently invisible to that buddy or
+  not.
+
+    The "Temporarily" part is a dead give-away.  Your invisibility to
+    that buddy will last only until the next time you log on or until
+    you set server invisibility (discussed next) on and off.
+
+  To use per-server invisibility: click "Tools -> Away," select the Jabber
+  server login for the server upon which you wish to become invisible (if
+  necessary) and select "Invisible."  To become visible again: select
+  anything else from that same menu (such as "Online"), or set your away
+  status or log off the server and back on again.
+
+  You can set yourself invisible per-server and subsequently make yourself
+  visible to selected buddies only.
+
+  Gaim currently does not retain invisibility settings between logins,
+  just as it doesn't currently retain "away" status.
+
+
+7.5  I've a buddy that I keep removing from my buddy list but the entry
+     keeps coming back every time I log in again!  How can I stop this?
+
+  As of Gaim version 0.59 and later: Select the Edit Buddies tab, right-
+  click on the offending entry, and select "Remove From Roster."
+
+
+7.6  Can I remove a buddy from my Jabber roster entirely?
+
+  As of Gaim version 0.59 and later: yes.  In the Edit Buddies tab, right-
+  click on a buddy and Select "Remove From Roster."
+
+  The buddy will disappear from your buddy list and also will no longer
+  receive presence notifications from you.
+
+
+7.7  What does "Cancel Presence Notification" do?
+
+  This selection, available in Gaim version 0.60 and later, and found by
+  right-clicking on a buddy entry in the Edit Buddies tab, prevents that
+  Jabber I.D. from receiving future presence notifications when you log on
+  to the server.
+
+  After you do this, that buddy will have to re-request a subscription to
+  your presence (and you will have to approve it) for them to again see you
+  on-line.
 
 
 +--------------------------------------------------------------------------
