@@ -286,7 +286,6 @@ static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
 
 void show_login()
 {
-	GdkPixbuf *icon;
 	GtkWidget *image;
 	GtkWidget *vbox;
 	GtkWidget *button;
@@ -294,6 +293,7 @@ void show_login()
 	GtkWidget *label;
 	GtkWidget *vbox2;
 	GList *tmp;
+	char *filename;
 
 	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
 	if (mainwindow) {
@@ -312,17 +312,12 @@ void show_login()
 	g_signal_connect(G_OBJECT(mainwindow), "delete_event",
 					 G_CALLBACK(login_window_closed), mainwindow);
 
-
-	icon = gaim_pixbuf(NULL, "gaim.png");
-	if (icon) {
-			gtk_window_set_icon(GTK_WINDOW(mainwindow), icon);
-			g_object_unref(G_OBJECT(icon));
-	}
-
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(mainwindow), vbox);
 
-	image = gaim_pixmap(NULL, "logo.png");
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "logo.png", NULL);
+	image = gtk_image_new_from_file(filename);
+	g_free(filename);
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 0);
 
 	vbox2 = gtk_vbox_new(FALSE, 0);
@@ -530,6 +525,7 @@ static int ui_main()
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
 #endif
+
 	if (current_smiley_theme == NULL) {
 		smiley_theme_probe();
 		if (smiley_themes) {
@@ -549,8 +545,9 @@ static int ui_main()
 		icons = g_list_append(icons,icon);
 		gtk_window_set_default_icon_list(icons);
 		g_object_unref(G_OBJECT(icon));
+		g_list_free(icons);
 	} else {
-		debug_printf("Failed to load icon from %s" G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png\n",DATADIR);
+		debug_printf("Failed to load default window icon!\n");
 	}
 
 	g_snprintf(name, sizeof(name), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
@@ -561,6 +558,7 @@ static int ui_main()
 	channel = g_io_channel_unix_new(UI_fd);
 	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
 #endif
+
 	return 0;
 }
 

@@ -617,15 +617,15 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 
 static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
 {
-	if (gtkblist->timeout == 0) 
-		return;
+	if (gtkblist->timeout) {
+		g_source_remove(gtkblist->timeout);
+		gtkblist->timeout = 0;
+	}
 	if (gtkblist->tipwindow) {
 		gtk_widget_destroy(gtkblist->tipwindow);
 		gtkblist->tipwindow = NULL;
 	}
-	g_source_remove(gtkblist->timeout);
-	gtkblist->timeout = 0;
-}	
+}
 
 /***************************************************
  *            Crap                                 *
@@ -948,7 +948,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if ((b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || blist_options & OPT_BLIST_SHOW_OFFLINE) {
+		if ((b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || b->present == 0) {
 			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);

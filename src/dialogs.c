@@ -956,7 +956,7 @@ void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 }
 
 
-static GList *groups_tree(struct gaim_connection *gc)
+static GList *groups_tree()
 {
 	GList *tmp = NULL;
 	char *tmp2;
@@ -1047,9 +1047,6 @@ static void addbuddy_select_account(GObject *w, struct gaim_connection *gc)
 
 	/* Save our account */
 	b->gc = gc;
-
-	/* We also want to update our group list */	
-	gtk_combo_set_popdown_strings(GTK_COMBO(b->combo), groups_tree(gc));
 }
 
 static void create_online_user_names(struct addbuddy *b)
@@ -1181,7 +1178,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
 
 	a->combo = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(a->gc));
+	gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree());
 	gtk_table_attach_defaults(GTK_TABLE(table), a->combo, 1, 2, 2, 3);
 
 	/* Set up stuff for the account box */

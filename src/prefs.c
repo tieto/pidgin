@@ -812,9 +812,9 @@ GtkWidget *proxy_page() {
 }
 
 #ifndef _WIN32
-static void manual_browser_set(GtkButton *button, GtkEntry *entry) {
+static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
+	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	const char *program = gtk_entry_get_text(entry);
 	if (!program_is_valid(program)) {
 		char *error = g_strdup_printf(_("The entered manual browser "
 						"'%s' is not valid. Hyperlinks will "
@@ -823,10 +823,9 @@ static void manual_browser_set(GtkButton *button, GtkEntry *entry) {
 	}
 
 	g_strlcpy(web_command, program, sizeof(web_command));
-}
 
-static void manual_browser_reset(GtkButton *button, GtkEntry *entry) {
-	gtk_entry_set_text(entry, web_command);
+	/* carry on normally */
+	return FALSE;
 }
 
 static GList *get_available_browsers() 
@@ -890,6 +889,7 @@ GtkWidget *browser_page() {
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
+
 	browser_entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), browser_entry);
 	if (web_browser != BROWSER_MANUAL)
@@ -897,16 +897,7 @@ GtkWidget *browser_page() {
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
-	g_signal_connect_swapped(GTK_OBJECT(browser_entry), "activate",
-				 G_CALLBACK(manual_browser_set), NULL);
-	label = gtk_button_new_with_label(_("Set"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(label), "clicked", 
-			 G_CALLBACK(manual_browser_set), browser_entry);
-	label = gtk_button_new_with_label(_("Reset"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(label), "clicked", 
-			 G_CALLBACK(manual_browser_reset), browser_entry);
+	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event", G_CALLBACK(manual_browser_set), NULL);
 
 	if (browsers != NULL) {
 		vbox = make_frame (ret, _("Browser Options"));
