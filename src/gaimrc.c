@@ -84,14 +84,13 @@ static struct parse *parse_line(char *line, struct parse *p)
 		p->value[x][0] = 0;
 	}
 
-
 	while (*c) {
 		if (*c == '\t') {
 			c++;
 			continue;
 		}
+		
 		if (inopt) {
-			/*   if ((*c < 'a' || *c > 'z') && *c != '_') { */
 			if ((*c < 'a' || *c > 'z') && *c != '_' && (*c < 'A' || *c > 'Z')) {
 				inopt = 0;
 				p->option[optlen] = 0;
@@ -104,29 +103,38 @@ static struct parse *parse_line(char *line, struct parse *p)
 			c++;
 			continue;
 		} else if (inval) {
-			if ((*c == '}')) {
-				if (*(c - 1) == '\\') {
-					p->value[curval][vallen - 1] = *c;
-					c++;
-					continue;
-				} else {
-					p->value[curval][vallen - 1] = 0;
-					inval = 0;
-					c++;
-					continue;
-				}
+			if (*c == '\\') {
+				/* if we have a \ take the char after it literally.. */
+				c++;
+				p->value[curval][vallen] = *c;
+
+				vallen++;
+				c++;
+				continue;
+			} else if (*c == '}') {
+				/* } that isn't escaped should end this chunk of data, and
+				 * should have a space before it.. */
+				p->value[curval][vallen - 1] = 0;
+				inval = 0;
+				c++;
+				continue;
 			} else {
 				p->value[curval][vallen] = *c;
+
 				vallen++;
 				c++;
 				continue;
 			}
 		} else if (*c == '{') {
+			/* i really don't think this if ever succeeds, but i'm
+			 * not brave enough to take it out... */ 
 			if (*(c - 1) == '\\') {
 				p->value[curval][vallen - 1] = *c;
 				c++;
 				continue;
 			} else {
+				/* { that isn't escaped should signify the start of a
+				 * piece of data and should have a space after it.. */
 				curval++;
 				vallen = 0;
 				inval = 1;
