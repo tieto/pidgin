@@ -1353,9 +1353,10 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
 			do_export(gct);
 		} else if (*type == EDIT_GROUP) {
-			remove_group(((struct group *)type)->gc, (struct group *)type);
+			struct gaim_connection *gc = ((struct group *)type)->gc;
+			remove_group(gc, (struct group *)type);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
-			do_export(((struct group *)type)->gc);
+			do_export(gc);
                 }
 
         } else {
