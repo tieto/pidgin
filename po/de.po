@@ -1061,7 +1061,7 @@ msgstr ""
 
 #: src/prefs.c:385
 msgid "Enter sends message"
-msgstr ""
+msgstr "Enter verschickt Nachricht"
 
 #: src/prefs.c:386
 msgid "Auto-login"
@@ -1069,31 +1069,31 @@ msgstr ""
 
 #: src/prefs.c:387
 msgid "Log All Conversations"
-msgstr ""
+msgstr "Alles Mitschneiten"
 
 #: src/prefs.c:388
 msgid "Strip HTML from log files"
-msgstr ""
+msgstr "HTML aus Mitschnitt entfernen"
 
 #: src/prefs.c:389
 msgid "Raise windows when message recieved"
-msgstr ""
+msgstr "Fenster nach Oben, bei neuer Nachricht"
 
 #: src/prefs.c:390
 msgid "Send URLs as links"
-msgstr ""
+msgstr "URLs als Link verschicken"
 
 #: src/prefs.c:391
 msgid "Show Lag-O-Meter"
-msgstr ""
+msgstr "Warnlevel zeigen"
 
 #: src/prefs.c:392
 msgid "Save some window size/positions"
-msgstr ""
+msgstr "Fensterposition und -größe speichern"
 
 #: src/prefs.c:393
 msgid "Ignore new conversations when away"
-msgstr ""
+msgstr "Neue Telegramme bei Abwesenheit ignorieren"
 
 #: src/prefs.c:394
 msgid "Automagically highlight misspelled words"
@@ -1101,7 +1101,7 @@ msgstr ""
 
 #: src/prefs.c:397
 msgid "Enable debug mode"
-msgstr ""
+msgstr "Debugmodus aktivieren"
 
 #: src/prefs.c:400
 msgid "No Idle"
