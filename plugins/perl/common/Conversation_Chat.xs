@@ -89,7 +89,7 @@ gaim_chat_send(chat, message)
 	const char *message
 
 
-MODULE = Gaim::Conversation  PACKAGE = Gaim  PREFIX = gaim_
+MODULE = Gaim::Conversation::Chat  PACKAGE = Gaim  PREFIX = gaim_
 PROTOTYPES: ENABLE
 
 void
