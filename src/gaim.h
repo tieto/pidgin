@@ -246,6 +246,8 @@ struct buddy_pounce {
 	int popup;
 	int sendim;
 	
+	char pouncer[80];
+	
 	int signon;
 	int unaway;
 	int unidle;

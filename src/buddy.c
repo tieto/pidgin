@@ -1385,7 +1385,7 @@ void do_bp_menu()
 	gtk_widget_show(menuitem);
 	gtk_widget_show(sep);
 
-	bp = buddy_pounces;;
+	bp = buddy_pounces;
 	
 	while(bp) {
 
