@@ -1062,7 +1062,8 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	i = GTK_TREE_SELECTION(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
-        } else {
+        }
+	if (!i || !b) {
 		show_im_dialog();
 		return;
         }
@@ -1085,7 +1086,8 @@ static void info_callback(GtkWidget *widget, GtkTree *tree)
 	i = GTK_TREE_SELECTION(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
-        } else {
+        }
+	if (!i || !b) {
 		show_info_dialog();
 		return;
         }
