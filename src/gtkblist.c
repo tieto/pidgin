@@ -1103,7 +1103,91 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 
 		gtk_tree_path_free(sourcerow);
 	}
+	else if (data->target == gdk_atom_intern("application/x-im-contact",
+											 FALSE)) {
 
+		GtkTreeRowReference *ref;
+		GtkTreePath *sourcerow;
+		GtkTreeIter iter;
+		GaimBlistNode *node = NULL;
+		GaimBuddy *buddy;
+		GaimConnection *gc;
+		GValue val = {0};
+		const char *prpl_id;
+		GString *str;
+		const char *protocol;
+		char *mime_str;
+
+		ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
+		sourcerow = gtk_tree_row_reference_get_path(ref);
+
+		if (!sourcerow)
+			return;
+
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+								sourcerow);
+		gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+								 NODE_COLUMN, &val);
+
+		node = g_value_get_pointer(&val);
+
+		if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		{
+			buddy = gaim_contact_get_priority_buddy((GaimContact *)node);
+		}
+		else if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+		{
+			gtk_tree_path_free(sourcerow);
+			return;
+		}
+		else
+		{
+			buddy = (GaimBuddy *)node;
+		}
+
+		prpl_id = gaim_account_get_protocol_id(buddy->account);
+
+		gc = gaim_account_get_connection(buddy->account);
+
+		if (gc == NULL)
+		{
+			gtk_tree_path_free(sourcerow);
+			return;
+		}
+
+		protocol =
+			GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(buddy->account,
+														   buddy);
+
+		str = g_string_new(NULL);
+		g_string_printf(str,
+			"MIME-Version: 1.0\r\n"
+			"Content-Type: application/x-im-contact\r\n"
+			"X-IM-Protocol: %s\r\n"
+			"X-IM-Username: %s\r\n",
+			protocol,
+			buddy->name);
+
+		if (buddy->alias != NULL)
+		{
+			g_string_append_printf(str,
+				"X-IM-Alias: %s\r\n",
+				buddy->alias);
+		}
+
+		str = g_string_append(str, "\r\n");
+
+		mime_str = g_string_free(str, FALSE);
+
+		gtk_selection_data_set(data,
+					gdk_atom_intern("application/x-im-contact", FALSE),
+					8, /* bits */
+					mime_str,
+					strlen(mime_str) + 1);
+
+		g_free(mime_str);
+		gtk_tree_path_free(sourcerow);
+	}
 }
 
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
@@ -1258,6 +1342,161 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 
 			gaim_blist_save();
 		}
+	}
+	else if (sd->target == gdk_atom_intern("application/x-im-contact",
+										   FALSE) && sd->data)
+	{
+		GaimGroup *group = NULL;
+		GtkTreePath *path = NULL;
+		GtkTreeViewDropPosition position;
+		char *protocol = NULL;
+		char *username = NULL;
+		char *alias = NULL;
+		char *contact_str;
+		char *c, *s;
+
+		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget),
+											  x, y, &path, &position))
+		{
+			GtkTreeIter iter;
+			GaimBlistNode *node;
+			GValue val = {0};
+
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
+									&iter, path);
+			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
+									  &iter, NODE_COLUMN, &val);
+			node = g_value_get_pointer(&val);
+
+			if (GAIM_BLIST_NODE_IS_BUDDY(node))
+			{
+				group = (GaimGroup *)node->parent->parent;
+			}
+			else if (GAIM_BLIST_NODE_IS_CHAT(node) ||
+					 GAIM_BLIST_NODE_IS_CONTACT(node))
+			{
+				group = (GaimGroup *)node->parent;
+			}
+			else if (GAIM_BLIST_NODE_IS_GROUP(node))
+			{
+				group = (GaimGroup *)node;
+			}
+		}
+
+		contact_str = g_strndup(sd->data, sd->length);
+
+		s = contact_str;
+
+		while (*s != '\r' && *s != '\n' && *s != '\0')
+		{
+			char *key, *value;
+
+			key = s;
+
+			/* Grab the key */
+			while (*s != '\r' && *s != '\n' && *s != '\0' && *s != ' ')
+				s++;
+
+			if (*s == '\r') s++;
+
+			if (*s == '\n')
+			{
+				s++;
+				continue;
+			}
+
+			if (*s != '\0') *s++ = '\0';
+
+			/* Clear past any whitespace */
+			while (*s != '\0' && *s == ' ')
+				s++;
+
+			/* Now let's grab until the end of the line. */
+			value = s;
+
+			while (*s != '\r' && *s != '\n' && *s != '\0')
+				s++;
+
+			if (*s == '\r') *s++ = '\0';
+			if (*s == '\n') *s++ = '\0';
+
+			if ((c = strchr(key, ':')) != NULL)
+			{
+				if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
+					username = g_strdup(value);
+				else if (!g_ascii_strcasecmp(key, "X-IM-Protocol:"))
+					protocol = g_strdup(value);
+				else if (!g_ascii_strcasecmp(key, "X-IM-Alias:"))
+					alias = g_strdup(value);
+			}
+		}
+
+		if (username != NULL && protocol != NULL)
+		{
+			GaimAccount *account = NULL;
+			GList *l;
+			const char *protoname;
+
+			for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+			{
+				GaimConnection *gc = (GaimConnection *)l->data;
+				account = gaim_connection_get_account(gc);
+
+				protoname =
+					GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(account,
+																   NULL);
+
+				if (!strcmp(protoname, protocol))
+					break;
+
+				account = NULL;
+			}
+
+			/* Special case for AIM and ICQ */
+			if (account == NULL && (!strcmp(protocol, "aim") ||
+									!strcmp(protocol, "icq")))
+			{
+
+				for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+				{
+					GaimConnection *gc = (GaimConnection *)l->data;
+					account = gaim_connection_get_account(gc);
+
+					protoname =
+						GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(account,
+																	   NULL);
+
+					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
+						break;
+
+					account = NULL;
+				}				
+			}
+
+			if (account == NULL)
+			{
+				gaim_notify_error(NULL, NULL,
+					_("You are not currently signed on with an account that "
+					  "can add that buddy."), NULL);
+			}
+			else
+			{
+				gaim_blist_request_add_buddy(account, username,
+											 (group ? group->name : NULL),
+											 alias);
+			}
+		}
+
+		if (username != NULL) g_free(username);
+		if (protocol != NULL) g_free(protocol);
+		if (alias    != NULL) g_free(alias);
+
+		g_free(contact_str);
+
+		if (path != NULL)
+			gtk_tree_path_free(path);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 }
 
