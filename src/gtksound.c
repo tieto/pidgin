@@ -40,6 +40,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "sound.h"
+#include "util.h"
 
 #include "gtksound.h"
 

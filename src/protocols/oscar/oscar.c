@@ -3893,6 +3893,9 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 
 #if 0
 /*
+ * Update, 2003-11-09:
+ * Joseph S. Myers, a gcc dude, fixed this for gcc 3.4!  Rock on!
+ *
  * It may not be my place to do this, but...
  * I feel pretty strongly that the "last 2 digits" warning is ridiculously 
  * stupid, and should not exist for % switches (%x in our case) that request 
