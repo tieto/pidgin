@@ -3,6 +3,14 @@
 	Sean: I think I'll go as the Gaim logo guy for Halloween.  That
 	would be a cool costume.
 
+	Luke: We've had a record month for number of bugs submitted (395 as
+	of now) this month, but the total number of bugs open has grown by
+    less than 20, so while it might be fustrating for those of you out
+	there who think your bug report is being ignored, know that we are
+    doing our best to look at them all :-). This release fixes a goodly
+	number of bugs including the troubles with signing on icq (thanks
+    to Mark). Enjoy!
+
 0.71 (10/09/2003):
 	Rob: It's been a while since I've commited some news.  I've had a
 	very hectic few weeks/months.  Thing are finally coming together
@@ -1046,7 +1054,7 @@
 	"Beans and Franks, Beans and Franks, Wine And Beer, Have No Fear!
 	I can sing! I can dance! I have a penguin in my pants!"
 
-			- Rob Flynn after not having enough sleep.
+	- Rob Flynn after not having enough sleep.
 
 	Eric: I've had less sleep than Rob, I can guarantee you that. There's
 	actually a lot going on in this release, despite 2 releases 2 days ago.
