@@ -1204,6 +1204,7 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Has you....................... : yes
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
