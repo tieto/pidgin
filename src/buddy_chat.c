@@ -1276,7 +1276,7 @@ void show_new_buddy_chat(struct conversation *b)
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(chatentry));
 	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 0);
-	gtk_widget_set_usize(chatentry, buddy_chat_size.width, buddy_chat_size.entry_height);
+	gtk_widget_set_usize(chatentry, buddy_chat_size.width, MAX(buddy_chat_size.entry_height, 25));
 	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
 	gtk_widget_show(chatentry);
 
