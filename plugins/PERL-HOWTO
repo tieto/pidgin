@@ -1,0 +1,108 @@
+This is really the wrong place for a HOWTO on writing perl scripts for gaim,
+but there didn't seem to be a much better place.
+
+If you've ever written a perl script for X-Chat then you've basically written
+one for gaim as well. perl.c in gaim's source is basically an exact copy of
+X-Chat's perl.c file, with small modifications to suit AIM rather than IRC.
+
+Basically the reason for including perl is based on the experience with the
+plugins. X-Chat's docs on Perl Scripting sums it up nicely:
+   it's not quite as simple to stick a module together in C and make it
+   stable compared to the development time of perl code
+
+Plugins are more powerful as they can directly access gaim's functions and
+variables; as such they should be used for things like modifying the UI or
+when something takes quite a bit of trickery not offered by perl. But for
+the most part things should be written in Perl. It's more stable than
+plugins.
+
+Right now, the only way to test that your script is working correctly is to
+load the perl plugin and load the script through that. Though, right now
+there really isn't much point in writing a script, since the two major
+functions in the AIM module (message_handler and command_handler) haven't
+been implemented yet.
+
+Everything available in normal perl scripts should be available in gaim's
+perl interface, so I'm not going to bother describing that. The important
+things are the functions provided by gaim's internal AIM module, which is
+what most of this document is about. So, onto the functions.
+
+AIM::register(name, version, shutdownroutine, unused)
+	Just like X-Chat. This is the first function your script should call.
+	shutdownroutine is a function that will be called when the script
+	gets unloaded (like when gaim gets closed). This function returns
+	gaim's version number.
+
+AIM::get_info(integer)
+	This function returns different information based on the integer passed
+	to it.
+	0 - the version of gaim you're running ("0.10.0" for example).
+	1 - the screenname to last attempt to sign on
+	2 - either "Offline", "TOC", or "Oscar"
+
+AIM::print(title, message)
+	This displays a nice little dialog window.
+
+
+AIM::buddy_list()
+	This returns the buddy list (no groups, just the names of the buddies)
+
+AIM::online_list()
+	This returns the list of online buddies.
+
+AIM::deny_list()
+	This returns the deny list. This is probably going to be modified before
+	0.10.0 is released to return either the deny or the permit list and the
+	current mode.
+
+
+AIM::command(command, ...)
+	This sends commands to the server, and each command takes various
+	arguments. The command should be self-explanatory:
+	"signon" - no args.
+	"signoff" - no args.
+	"away" - the second arg is the away message
+	"back" - no args.
+	"idle" - the second arg is how long (in seconds) to set the idle time
+	"warn" - the second arg is the name of the person to warn
+
+AIM::user_info(nick)
+	Returns 7 data items:
+		the screenname of the buddy
+		"Online" or "Offline"
+		their warning level
+		signon time, in seconds since the epoch
+		idle time, in seconds (?)
+		user class, an integer with bit values
+			AOL		1
+			ADMIN		2
+			UNCONFIRMED	4
+			NORMAL		8
+			AWAY		16
+		their capabilites, an integer with bit values
+			BUDDYICON	1
+			VOICE		2
+			IMIMAGE		4
+			CHAT		8
+			GETFILE		16
+			SENDFILE	32
+
+		This is probably going to change before 0.10.0 is released to
+		also return the alias of the buddy.
+
+AIM::print_to_conv(who, what)
+	This should be obvious. If you can't figure this out on your own, you
+	shouldn't be using a computer.
+
+AIM::print_to_chat(room, what)
+	This should be just as obvious as the last command.
+
+AIM::add_message_handler
+	This actually hasn't been implemented yet, so don't worry about it
+
+AIM::add_command_handler
+	This hasn't been implemented yet either. Pay no attention.
+
+AIM::add_timeout_handler(integer, function)
+	This calls function after integer number of seconds. It only calls function
+	once, so if you want to keep calling function, keep reading the handler.
