@@ -171,6 +171,15 @@ GaimPrefType gaim_account_option_get_type(const GaimAccountOption *option);
 const char *gaim_account_option_get_text(const GaimAccountOption *option);
 
 /**
+ * Returns the account setting for an account option.
+ *
+ * @param option The accont option.
+ *
+ * @return The account setting.
+ */
+const char *gaim_account_option_get_setting(const GaimAccountOption *option);
+
+/**
  * Returns the default boolean value for an account option.
  *
  * @param option The account option.

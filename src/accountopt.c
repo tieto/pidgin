@@ -161,6 +161,14 @@ gaim_account_option_get_text(const GaimAccountOption *option)
 	return option->text;
 }
 
+const char *
+gaim_account_option_get_setting(const GaimAccountOption *option)
+{
+	g_return_val_if_fail(option != NULL, NULL);
+
+	return option->pref_name;
+}
+
 gboolean
 gaim_account_option_get_default_bool(const GaimAccountOption *option)
 {

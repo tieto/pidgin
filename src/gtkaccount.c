@@ -95,6 +95,10 @@ typedef struct
 	GtkWidget *buddy_icon_hbox;
 	GtkWidget *buddy_icon_entry;
 
+	/* Protocol Options */
+	GtkWidget *protocol_frame;
+	GtkWidget *register_check;
+
 	GtkSizeGroup *sg;
 
 } AccountPrefsDialog;
@@ -367,12 +371,121 @@ __add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
+__add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
+{
+	GaimAccountOption *option;
+	GtkWidget *frame;
+	GtkWidget *vbox;
+	GtkWidget *check;
+	GtkWidget *entry;
+	GList *l;
+	char buf[1024];
+	char *title;
+	const char *str_value;
+	gboolean bool_value;
+	int int_value;
+
+	if (dialog->protocol_frame != NULL)
+		gtk_widget_destroy(dialog->protocol_frame);
+
+	if (dialog->prpl_info == NULL ||
+		dialog->prpl_info->protocol_options == NULL) {
+
+		return;
+	}
+
+	/* Build the protocol options frame. */
+	g_snprintf(buf, sizeof(buf), _("%s Options"), dialog->plugin->info->name);
+
+	frame = gaim_gtk_make_frame(parent, _("Protocol Options"));
+	dialog->protocol_frame =
+		gtk_widget_get_parent(gtk_widget_get_parent(frame));
+
+	gtk_box_reorder_child(GTK_BOX(parent), dialog->protocol_frame, 0);
+	gtk_widget_show(dialog->protocol_frame);
+
+	/* Main vbox */
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next) {
+		option = (GaimAccountOption *)l->data;
+
+		switch (gaim_account_option_get_type(option)) {
+			case GAIM_PREF_BOOLEAN:
+				bool_value = gaim_account_get_bool(dialog->account,
+					gaim_account_option_get_setting(option),
+					gaim_account_option_get_default_bool(option));
+
+				check = gtk_check_button_new_with_label(
+					gaim_account_option_get_text(option));
+
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
+											 bool_value);
+
+				gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+				gtk_widget_show(check);
+				break;
+
+			case GAIM_PREF_INT:
+				int_value = gaim_account_get_int(dialog->account,
+					gaim_account_option_get_setting(option),
+					gaim_account_option_get_default_int(option));
+
+				g_snprintf(buf, sizeof(buf), "%d", int_value);
+
+				entry = gtk_entry_new();
+				gtk_entry_set_text(GTK_ENTRY(entry), buf);
+
+				title = g_strdup_printf("%s:",
+						gaim_account_option_get_text(option));
+
+				__add_pref_box(dialog, vbox, title, entry);
+
+				g_free(title);
+				break;
+
+			case GAIM_PREF_STRING:
+				str_value = gaim_account_get_string(dialog->account,
+					gaim_account_option_get_setting(option),
+					gaim_account_option_get_default_string(option));
+
+				entry = gtk_entry_new();
+				gtk_entry_set_text(GTK_ENTRY(entry), str_value);
+
+				title = g_strdup_printf("%s:",
+						gaim_account_option_get_text(option));
+
+				__add_pref_box(dialog, vbox, title, entry);
+
+				g_free(title);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	/* Register user */
+	if (dialog->prpl_info->register_user != NULL) {
+		dialog->register_check =
+			gtk_check_button_new_with_label(_("Register with your server"));
+
+		gtk_box_pack_start(GTK_BOX(vbox), dialog->register_check,
+						   FALSE, FALSE, 0);
+		gtk_widget_show(dialog->register_check);
+	}
+}
+
+static void
 __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
 	GtkWidget *vbox;
 	GtkWidget *bbox;
+	GtkWidget *dbox;
 	GtkWidget *disclosure;
 	GtkWidget *sep;
 	GtkWidget *button;
@@ -423,6 +536,16 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 									 _("Show fewer options"));
 	gtk_box_pack_start(GTK_BOX(vbox), disclosure, FALSE, FALSE, 0);
 	gtk_widget_show(disclosure);
+
+	/* Setup the box that the disclosure will cover. */
+	dbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
+	gtk_widget_show(dbox);
+
+	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
+
+	/** Setup the bottom frames. */
+	__add_protocol_options_frame(dialog, dbox);
 
 	/* Separator... */
 	sep = gtk_hseparator_new();
