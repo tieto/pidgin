@@ -425,7 +425,7 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		gtk_widget_show(table);
 		gtk_widget_show(frame);
 		gtk_window_set_title(GTK_WINDOW(invite), _("Gaim - Invite Buddy Into Chat Room"));
-		gtk_window_set_focus(GTK_WINDOW(invite), GTK_ENTRY(GTK_COMBO(inviteentry)->entry));
+		gtk_window_set_focus(GTK_WINDOW(invite), GTK_WIDGET(GTK_COMBO(inviteentry)->entry));
 		gtk_container_add(GTK_CONTAINER(invite), vbox);
 
 		aol_icon(invite->window);
