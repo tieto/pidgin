@@ -399,6 +399,28 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		g_free(u_errormsg);
 	}
 
+	/* This should be a whois response. I only care about the first (311) one.  I might do
+	 * the other's later. They're boring.  */
+
+	if (((strstr(buf, " 311 ")) && (!strstr(buf, "PRIVMSG")) && (!strstr(buf, "NOTICE")))) {
+		char **res;
+
+		res = g_strsplit(buf, " ", 7);
+
+		if (!strcmp(res[1], "311"))
+		{
+			char buf[8192];
+
+			g_snprintf(buf, 4096, "<b>Nick:</b> %s<br>"
+					"<b>Host:</b> %s@%s<br>"
+					"<b>Name:</b> %s<br>", res[3], res[4], res[5], res[7]+1);
+
+			g_show_info_text(buf);
+		}
+
+		g_strfreev(res);
+	}
+
 	/* Parse the list of names that we receive when we first sign on to
 	 * a channel */
 
@@ -1166,6 +1188,24 @@ static void irc_send_ping(GtkObject * w, char *who)
 	write(idata->fd, buf, strlen(buf));
 }
 
+/* Do a whois check on someone :-) */
+static void irc_get_info(struct gaim_connection *gc, char *who)
+{
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	char buf[BUF_LEN];
+
+	if ((who[0] == '@') || (who[0] == '+') && (strlen(who)>1))
+		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who+1);
+	else
+		g_snprintf(buf, BUF_LEN, "WHOIS %s\n", who);
+	write(idata->fd, buf, strlen(buf));
+}
+
+static void irc_send_whois(GtkObject * w, char *who)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
+	irc_get_info(gc, who);
+}
 
 static void irc_buddy_menu(GtkWidget * menu, struct gaim_connection *gc, char *who)
 {
@@ -1173,6 +1213,12 @@ static void irc_buddy_menu(GtkWidget * menu, struct gaim_connection *gc, char *w
 
 	button = gtk_menu_item_new_with_label("Ping");
 	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(irc_send_ping), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label("Whois");
+	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(irc_send_whois), who);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
@@ -1194,6 +1240,7 @@ static void irc_init(struct prpl *ret)
 	ret->join_chat = irc_join_chat;
 	ret->chat_leave = irc_chat_leave;
 	ret->chat_send = irc_chat_send;
+	ret->get_info = irc_get_info;
 
 	my_protocol = ret;
 }
