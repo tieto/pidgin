@@ -2695,6 +2695,10 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
 
 	last_hb = (GtkHtmlBit *) g_list_last(html->html_bits)->data;
 
+	/* make sure pixmaps drop down a line after a <BR> */
+	if (last_hb->newline)
+		html->current_y += private->height + 2;
+			
 	hb->fit = fit;
 	hb->x = html->current_x;
 	hb->y = html->current_y;
