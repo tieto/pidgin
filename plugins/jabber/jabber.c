@@ -50,6 +50,10 @@
 #include "jabber.h"
 
 #include "pixmaps/available.xpm"
+#include "pixmaps/available-away.xpm"
+#include "pixmaps/available-chat.xpm"
+#include "pixmaps/available-xa.xpm"
+#include "pixmaps/available-dnd.xpm"
 
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
@@ -57,6 +61,11 @@
 #define IQ_NONE -1
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
+
+#define UC_AWAY 0x38
+#define UC_CHAT 0x48
+#define UC_XA   0x98
+#define UC_DND  0x118
 
 typedef struct gjconn_struct {
 	/* Core structure */
@@ -440,10 +449,28 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	struct buddy *b;
 	jid who;
 	char *buddy;
+	xmlnode y;
+	char *show;
+	int state;
 
 	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
+
+	if ((y = xmlnode_get_tag(p->x, "show"))) {
+		show = xmlnode_get_data(y);
+		if (!strcmp(show, "away")) {
+			state = UC_AWAY;
+		} else if (!strcmp(show, "chat")) {
+			state = UC_CHAT;
+		} else if (!strcmp(show, "xa")) {
+			state = UC_XA;
+		} else if (!strcmp(show, "dnd")) {
+			state = UC_DND;
+		}
+	} else {
+		state = UC_NORMAL;
+	}
 
 	who = jid_new(j->p, from);
 	if (who->user == NULL) {
@@ -454,7 +481,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	buddy = g_strdup_printf("%s@%s", who->user, who->server);
 
 	if (!(b = find_buddy(GJ_GC(j), buddy))) {
-		add_buddy(GJ_GC(j), "Buddies", buddy, buddy);
+		b = add_buddy(GJ_GC(j), "Buddies", buddy, buddy);
 		build_edit_tree();
 		do_export(NULL, NULL);
 	}
@@ -462,7 +489,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	if (type && (strcasecmp(type, "unavailable") == 0))
 		serv_got_update(GJ_GC(j), buddy, 0, 0, 0, 0, 0, 0);
 	else
-		serv_got_update(GJ_GC(j), buddy, 1, 0, 0, 0, 0, 0);
+		serv_got_update(GJ_GC(j), buddy, 1, 0, 0, 0, state, 0);
 
 	g_free(buddy);
 
@@ -774,7 +801,18 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name)
 
 static char **jabber_list_icon(int uc)
 {
-	return available_xpm;
+	switch (uc) {
+	case UC_AWAY:
+		return available_away_xpm;
+	case UC_CHAT:
+		return available_chat_xpm;
+	case UC_XA:
+		return available_xa_xpm;
+	case UC_DND:
+		return available_dnd_xpm;
+	default:
+		return available_xpm;
+	}
 }
 
 static struct prpl *my_protocol = NULL;
