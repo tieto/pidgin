@@ -49,6 +49,11 @@ typedef struct _JabberStream
 		JABBER_PROTO_0_9,
 		JABBER_PROTO_1_0
 	} protocol_version;
+	enum {
+		JABBER_AUTH_NONE,
+		JABBER_AUTH_DIGEST_MD5,
+		JABBER_AUTH_PLAIN
+	} auth_type;
 	char *stream_id;
 	JabberStreamState state;
 

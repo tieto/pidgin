@@ -63,8 +63,9 @@ static void jabber_stream_init(JabberStream *js)
 
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
 				          "xmlns='jabber:client' "
-						  "xmlns:stream='http://etherx.jabber.org/streams' "
-						  "version='1.0'>", js->user->domain);
+						  "xmlns:stream='http://etherx.jabber.org/streams'>",
+						  /* "version='1.0'>" */
+						  js->user->domain);
 
 	jabber_send_raw(js, open_stream);
 

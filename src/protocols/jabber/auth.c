@@ -38,8 +38,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *mechs, *mechnode;
 	xmlnode *starttls;
+	xmlnode *auth;
 
-	gboolean digest_md5 = FALSE;
+	gboolean digest_md5 = FALSE, plain=FALSE;
 
 	if((starttls = xmlnode_get_child(packet, "starttls"))) {
 		if(gaim_ssl_is_supported()) {
@@ -65,17 +66,29 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			char *mech_name = xmlnode_get_data(mechnode);
 			if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
 				digest_md5 = TRUE;
+			else if(mech_name && !strcmp(mech_name, "PLAIN"))
+				plain = TRUE;
 			g_free(mech_name);
 		}
 	}
 
+	auth = xmlnode_new("auth");
+	xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
 	if(digest_md5) {
-		jabber_send_raw(js, "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl'"
-				" mechanism='DIGEST-MD5' />");
+		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
+		js->auth_type = JABBER_AUTH_DIGEST_MD5;
+	/*
+	} else if(plain) {
+		js->auth_type = JABBER_AUTH_PLAIN;
+		*/
 	} else {
 		gaim_connection_error(js->gc,
 				_("Server does not use any supported authentication method"));
+		xmlnode_free(auth);
+		return;
 	}
+	jabber_send(js, auth);
+	xmlnode_free(auth);
 }
 
 static void auth_old_result_cb(JabberStream *js, xmlnode *packet)
@@ -248,91 +261,101 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 void
 jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 {
-	char *enc_in = xmlnode_get_data(packet);
-	char *dec_in;
-	char *enc_out;
-	GHashTable *parts;
 
-	gaim_base64_decode(enc_in, &dec_in, NULL);
+	if(js->auth_type == JABBER_AUTH_PLAIN) {
+		/* XXX: implement me! */
+	} else if(js->auth_type == JABBER_AUTH_DIGEST_MD5) {
+		char *enc_in = xmlnode_get_data(packet);
+		char *dec_in;
+		char *enc_out;
+		GHashTable *parts;
 
-	parts = parse_challenge(dec_in);
+		gaim_base64_decode(enc_in, &dec_in, NULL);
 
-	/* we're actually supposed to prompt the user for a realm if
-	 * the server doesn't send one, but that really complicates things,
-	 * so i'm not gonna worry about it until is poses a problem to someone,
-	 * or I get really bored */
-
-	if(g_hash_table_lookup(parts, "realm")) {
-		/* assemble a response, and send it */
-		/* see RFC 2831 */
-		GString *response = g_string_new("");
-		char *a2;
-		char *auth_resp;
-		char *buf;
-		char *cnonce;
-		char *realm;
-		char *nonce;
-
-		cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
-				g_random_int());
-		nonce = g_hash_table_lookup(parts, "nonce");
-		realm = g_hash_table_lookup(parts, "realm");
-
-		a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
-		auth_resp = generate_response_value(js->user,
-				gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
-		g_free(a2);
-
-		a2 = g_strdup_printf(":xmpp/%s", realm);
-		js->expected_rspauth = generate_response_value(js->user,
-				gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
-		g_free(a2);
+		parts = parse_challenge(dec_in);
 
 
-		g_string_append_printf(response, "username=\"%s\"", js->user->node);
-		g_string_append_printf(response, ",realm=\"%s\"", realm);
-		g_string_append_printf(response, ",nonce=\"%s\"", nonce);
-		g_string_append_printf(response, ",cnonce=\"%s\"", cnonce);
-		g_string_append_printf(response, ",nc=00000001");
-		g_string_append_printf(response, ",qop=auth");
-		g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
-		g_string_append_printf(response, ",response=%s", auth_resp);
-		g_string_append_printf(response, ",charset=utf-8");
-		g_string_append_printf(response, ",authzid=\"%s@%s/%s\"",
-				js->user->node, js->user->domain, js->user->resource);
-
-		g_free(auth_resp);
-		g_free(cnonce);
-
-		enc_out = gaim_base64_encode(response->str, response->len);
-
-		gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
-
-		buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
-
-		jabber_send_raw(js, buf);
-
-		g_free(buf);
-
-		g_free(enc_out);
-
-		g_string_free(response, TRUE);
-	} else if (g_hash_table_lookup(parts, "rspauth")) {
-		char *rspauth = g_hash_table_lookup(parts, "rspauth");
+		if (g_hash_table_lookup(parts, "rspauth")) {
+			char *rspauth = g_hash_table_lookup(parts, "rspauth");
 
 
-		if(rspauth && !strcmp(rspauth, js->expected_rspauth)) {
-			jabber_send_raw(js,
-					"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />");
+			if(rspauth && js->expected_rspauth &&
+					!strcmp(rspauth, js->expected_rspauth)) {
+				jabber_send_raw(js,
+						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />");
+			} else {
+				gaim_connection_error(js->gc, _("Invalid challenge from server"));
+			}
+			g_free(js->expected_rspauth);
 		} else {
-			gaim_connection_error(js->gc, _("Invalid challenge from server"));
-		}
-		g_free(js->expected_rspauth);
-	}
+			/* assemble a response, and send it */
+			/* see RFC 2831 */
+			GString *response = g_string_new("");
+			char *a2;
+			char *auth_resp;
+			char *buf;
+			char *cnonce;
+			char *realm;
+			char *nonce;
 
-	g_free(enc_in);
-	g_free(dec_in);
-	g_hash_table_destroy(parts);
+			/* we're actually supposed to prompt the user for a realm if
+			 * the server doesn't send one, but that really complicates things,
+			 * so i'm not gonna worry about it until is poses a problem to
+			 * someone, or I get really bored */
+			realm = g_hash_table_lookup(parts, "realm");
+			if(!realm)
+				realm = js->user->domain;
+
+			cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
+					g_random_int());
+			nonce = g_hash_table_lookup(parts, "nonce");
+
+
+			a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
+			auth_resp = generate_response_value(js->user,
+					gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
+			g_free(a2);
+
+			a2 = g_strdup_printf(":xmpp/%s", realm);
+			js->expected_rspauth = generate_response_value(js->user,
+					gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
+			g_free(a2);
+
+
+			g_string_append_printf(response, "username=\"%s\"", js->user->node);
+			g_string_append_printf(response, ",realm=\"%s\"", realm);
+			g_string_append_printf(response, ",nonce=\"%s\"", nonce);
+			g_string_append_printf(response, ",cnonce=\"%s\"", cnonce);
+			g_string_append_printf(response, ",nc=00000001");
+			g_string_append_printf(response, ",qop=auth");
+			g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
+			g_string_append_printf(response, ",response=%s", auth_resp);
+			g_string_append_printf(response, ",charset=utf-8");
+			g_string_append_printf(response, ",authzid=\"%s@%s/%s\"",
+					js->user->node, js->user->domain, js->user->resource);
+
+			g_free(auth_resp);
+			g_free(cnonce);
+
+			enc_out = gaim_base64_encode(response->str, response->len);
+
+			gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
+
+			buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
+
+			jabber_send_raw(js, buf);
+
+			g_free(buf);
+
+			g_free(enc_out);
+
+			g_string_free(response, TRUE);
+		}
+
+		g_free(enc_in);
+		g_free(dec_in);
+		g_hash_table_destroy(parts);
+	}
 }
 
 void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
