@@ -44,6 +44,7 @@
 #endif
 #include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
+#include "prefs.h"
 #include "prpl.h"
 #include "ui.h"
 #include "notify.h"
@@ -58,7 +59,7 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
-	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_smileys"))
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",

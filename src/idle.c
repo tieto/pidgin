@@ -40,6 +40,7 @@
 #include "gaim.h"
 #include "multi.h"
 #include "prpl.h"
+#include "prefs.h"
 
 #define IDLEMARK 600   	/* 10 minutes! */
 
@@ -78,7 +79,7 @@ gint check_idle(gpointer data)
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
 
-	if ((away_options & OPT_AWAY_AUTO) && (idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
+	if (gaim_prefs_get_bool("/core/away/away_when_idle") && (idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
 		if (!gc->away) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
 					   "Making %s away automatically\n", gc->username);

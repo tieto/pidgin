@@ -14,6 +14,7 @@
 #include "gaim.h"
 #include "core.h"
 #include "multi.h"
+#include "prefs.h"
 #include "prpl.h"
 #include "notify.h"
 #include <string.h>
@@ -44,9 +45,6 @@ void rm_log(struct log_conversation *a)
 	log_conversations = g_list_remove(log_conversations, a);
 
 	save_prefs();
-
-	if (cnv && !(im_options & OPT_IM_ONE_WINDOW))
-		gaim_conversation_autoset_title(cnv);
 }
 
 struct log_conversation *find_log_info(const char *name)
@@ -88,10 +86,10 @@ void update_log_convs()
 		if (gtkconv->toolbar.log) {
 			if (gaim_conversation_get_type(c) == GAIM_CONV_CHAT)
 				gtk_widget_set_sensitive(GTK_WIDGET(gtkconv->toolbar.log),
-						   ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
+						!gaim_prefs_get_bool("/gaim/gtk/logging/log_chats"));
 			else
 				gtk_widget_set_sensitive(GTK_WIDGET(gtkconv->toolbar.log),
-							 ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);
+						!gaim_prefs_get_bool("/gaim/gtk/logging/log_ims"));
 		}
 	}
 }
@@ -244,8 +242,8 @@ FILE *open_log_file(const char *name, int is_chat)
 	int flag = 0;
 
 	if (((is_chat == 2) && !(logging_options & OPT_LOG_INDIVIDUAL))
-		|| ((is_chat == 1) && !(logging_options & OPT_LOG_CHATS))
-		|| ((is_chat == 0) && !(logging_options & OPT_LOG_CONVOS))) {
+		|| ((is_chat == 1) && !gaim_prefs_get_bool("/gaim/gtk/logging/log_chats"))
+		|| ((is_chat == 0) && !gaim_prefs_get_bool("/gaim/gtk/logging/log_ims"))) {
 
 		l = find_log_info(name);
 		if (!l)
@@ -420,7 +418,7 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 		}
 	}
 
-	if (logging_options & OPT_LOG_STRIP_HTML) {
+	if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 		fprintf(fd, "---- %s ----\n", text);
 	} else {
 		if (logging_options & OPT_LOG_INDIVIDUAL)
