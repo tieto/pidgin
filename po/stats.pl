@@ -23,6 +23,7 @@ my $PACKAGE="gaim";
 
 use Locale::Language;
 
+$lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
