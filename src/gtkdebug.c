@@ -84,16 +84,7 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 static void
 clear_cb(GtkWidget *w, DebugWindow *win)
 {
-	GtkWidget *parent;
-
-	/* I HATE THIS! It's necessary though... Clearing a GtkTextView is SLOW. */
-	parent = gtk_widget_get_parent(win->text);
-
-	gtk_container_remove(GTK_CONTAINER(parent), win->text);
-
-	win->text = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(parent), win->text);
-	gtk_widget_show(win->text);
+	gtk_imhtml_clear(GTK_IMHTML(win->text));
 }
 
 static void
