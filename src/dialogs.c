@@ -2740,9 +2740,9 @@ void create_mess(GtkWidget *widget, struct create_away *ca)
 	}
 
 	/* stick it on the away list */
-	if (strlen(b->name)) {
-		do_away_message(NULL, b);
-        }
+	if (!strlen(b->name))
+		g_snprintf(b->name, sizeof(b->name), "I'm away!");
+	do_away_message(NULL, b);
         
         destroy_dialog(NULL, ca->window);
 }
