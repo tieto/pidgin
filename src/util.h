@@ -121,13 +121,13 @@ void gaim_quotedp_decode (const char *str, char **ret_str, int *ret_len);
 
 /**
  * Converts a MIME header field string back to its readable equivalent
- * according to RFC 2047.  Basically, a header is plain ASCII and can 
- * contain any number of sections called "encoded-words."  The format 
+ * according to RFC 2047.  Basically, a header is plain ASCII and can
+ * contain any number of sections called "encoded-words."  The format
  * of an encoded word is =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=
  * =? designates the beginning of the encoded-word
  * ?= designates the end of the encoded-word
- * ? segments the encoded word into three pieces.  The first piece is 
- *   the character set, the second peice is the encoding, and the 
+ * ? segments the encoded word into three pieces.  The first piece is
+ *   the character set, the second peice is the encoding, and the
  *   third piece is the encoded text.
  *
  * @param str The string to convert back.
@@ -375,10 +375,10 @@ const char *gaim_normalize(const GaimAccount *account, const char *str);
 /**
  * Compares two strings to see if the first contains the second as
  * a proper prefix.
- * 
+ *
  * @param s  The string to check.
  * @param p  The prefix in question.
- * 
+ *
  * @return   TRUE if p is a prefix of s, otherwise FALSE.
  */
 gboolean gaim_str_has_prefix(const char *s, const char *p);
@@ -386,10 +386,10 @@ gboolean gaim_str_has_prefix(const char *s, const char *p);
 /**
  * Compares two strings to see if the second is a proper suffix
  * of the first.
- * 
+ *
  * @param s  The string to check.
  * @param x  The suffix in question.
- * 
+ *
  * @return   TRUE if x is a a suffix of s, otherwise FALSE.
  */
 gboolean gaim_str_has_suffix(const char *s, const char *x);
@@ -595,9 +595,20 @@ gboolean gaim_message_meify(char *message, size_t len);
  *
  * @return The stripped string
  */
-char * gaim_text_strip_mnemonic(const char *in);
+char *gaim_text_strip_mnemonic(const char *in);
 
 /*@}*/
+
+/**
+ * Adds 8 to something.
+ *
+ * Blame SimGuy.
+ *
+ * @param i The integer to add 8 to.
+ *
+ * @return i + 8
+ */
+int gaim_add_eight(int i);
 
 #ifdef __cplusplus
 }

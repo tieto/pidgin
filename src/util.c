@@ -2421,3 +2421,8 @@ char *gaim_text_strip_mnemonic(const char *in)
 	return out;
 }
 
+int
+gaim_add_eight(int i)
+{
+	return (i + 8);
+}
