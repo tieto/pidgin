@@ -352,9 +352,10 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 				list = list->next;
 			}
 		}
-	
+
+		plugin_event (event_draw_menu, menu, ((struct buddy *) node)->name);
 		gaim_separator(menu);
-	
+
 		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Alias"));
 		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -847,10 +848,10 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 						      255);
 			else
 					gdk_pixbuf_composite (emblem,
-						      scale, 0, 0,
-						      15, 15,
-						      0, 0,
-						      1, 1,
+						      scale, 5, 5,
+						      10, 10,
+						      5, 5,
+						      .6, .6,
 						      GDK_INTERP_BILINEAR,
 						      255);
 			g_object_unref(G_OBJECT(emblem));
