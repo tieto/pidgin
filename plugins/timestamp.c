@@ -46,7 +46,7 @@ static gboolean do_timestamp (gpointer data)
 	GaimConversation *c = (GaimConversation *)data;
 	GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
 	GtkTextIter iter;
-	char mdate[6];
+	char mdate[7];
 	int is_conversation_active;
 	time_t tim = time(NULL);
 	
@@ -60,7 +60,7 @@ static gboolean do_timestamp (gpointer data)
 		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(conv->imhtml));
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gaim_conversation_set_data(c, "timestamp-conv-active", GINT_TO_POINTER(FALSE));
-		strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
+		strftime(mdate, sizeof(mdate), "\n%H:%M", localtime(&tim));
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
 	}
 	else
