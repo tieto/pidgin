@@ -468,7 +468,9 @@ void oscar_close(struct gaim_connection *gc) {
 		gdk_input_remove(odata->paspa);
 	aim_logoff(odata->sess);
 	g_free(odata->sess);
+	odata->sess = NULL;
 	g_free(gc->proto_data);
+	gc->proto_data = NULL;
 	debug_printf(_("Signed off.\n"));
 }
 
