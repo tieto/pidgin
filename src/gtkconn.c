@@ -47,7 +47,7 @@ struct meter_window {
 
 static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 {
-	if (gc == NULL)
+	if (meter->account->gc == NULL)
 		return;
 
 	meter->account->gc->wants_to_die = TRUE;
