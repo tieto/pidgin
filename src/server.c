@@ -606,6 +606,7 @@ void serv_chat_send(int id, char *message)
 {
 	if (!USE_OSCAR) {
 	        char buf[MSG_LEN];
+		escape_text(message);
 	        g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
 	        sflap_send(buf, -1, TYPE_DATA);
 	} else {
