@@ -2048,9 +2048,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				g_list_index(chats, c) + offs)
 			unhighlight = 1;
 	} else {
-		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) ==
-				g_list_index(conversations, c))
-			unhighlight = 1;
+		if (im_options & OPT_IM_ONE_WINDOW)
+			if (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) ==
+					g_list_index(conversations, c))
+				unhighlight = 1;
 	}
 
 	if (!unhighlight && flags & WFLAG_NICK) {
