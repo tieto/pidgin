@@ -143,6 +143,10 @@ bin_PROGRAMS = gaim gaim-remote
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
+	gtkcombobox.c \
+	gtkcelllayout.c \
+	gtkcellview.c \
+	gtkcellviewmenuitem.c \
 	gtkaccount.c \
 	gtkcellrendererprogress.c \
 	gtkblist.c \
@@ -178,6 +182,12 @@ gaim_SOURCES = \
 
 gaim_headers = \
 	gaim.h \
+	gtkcombobox.h \
+	gtkcelllayout.h \
+	gtkcellview.h \
+	gtkcellviewmenuitem.h \
+	gtkcellview.h \
+	gtkcellviewmenuitem.h \
 	gtkaccount.h \
 	gtkcellrendererprogress.h \
 	gtkblist.h \
