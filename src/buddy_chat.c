@@ -298,7 +298,7 @@ static void do_invite(GtkWidget *w, struct conversation *b)
 		return;
 	}
 
-	buddy = gtk_entry_get_text(GTK_ENTRY(inviteentry));
+	buddy = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(inviteentry)->entry));
 	mess = gtk_entry_get_text(GTK_ENTRY(invitemess));
 
 	if (invite) {
@@ -309,6 +309,41 @@ static void do_invite(GtkWidget *w, struct conversation *b)
 }
 
 
+GList *generate_invite_user_names(struct gaim_connection *gc)
+{
+	GSList *grp;
+	GSList *bl;
+	struct group *g;
+	struct buddy *buddy;
+	
+	GList *tmp = NULL;
+
+	tmp = g_list_append(tmp, "");
+
+	if (gc) {
+		grp = gc->groups;
+
+		while (grp) {
+			g = (struct group *)grp->data;
+
+			bl = g->members;
+
+			while (bl) {
+				buddy = (struct buddy *)bl->data;
+
+				if (buddy->present)
+					tmp = g_list_append(tmp, g_strdup(buddy->name));
+
+				bl = g_slist_next(bl);
+			}	
+
+			grp = g_slist_next(grp);
+		}
+	}
+
+	return tmp;
+
+}
 
 void invite_callback(GtkWidget *w, struct conversation *b)
 {
@@ -318,37 +353,58 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 	GtkWidget *bbox;
 	GtkWidget *vbox;
 	GtkWidget *topbox;
+	GtkWidget *table;
+	GtkWidget *frame;
+	
 	if (!invite) {
 		invite = gtk_window_new(GTK_WINDOW_DIALOG);
-		cancel = gtk_button_new_with_label(_("Cancel"));
-		invite_btn = gtk_button_new_with_label(_("Invite"));
-		bbox = gtk_hbox_new(TRUE, 10);
-		topbox = gtk_hbox_new(FALSE, 5);
-		vbox = gtk_vbox_new(FALSE, 5);
-		inviteentry = gtk_entry_new();
+		gtk_widget_realize(invite);
+
+		cancel = picture_button(invite, _("Cancel"), cancel_xpm);
+		invite_btn = picture_button(invite, _("Invite"), join_xpm);
+		inviteentry = gtk_combo_new();
 		invitemess = gtk_entry_new();
+		frame = gtk_frame_new(_("Invite"));
+		table = gtk_table_new(2, 2, FALSE);
+		
+		gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+		gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+		
+		gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
+		
+		/* Now we should fill out all of the names */ 
+		gtk_combo_set_popdown_strings(GTK_COMBO(inviteentry), generate_invite_user_names(b->gc));
 
 		if (display_options & OPT_DISP_COOL_LOOK) {
 			gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 			gtk_button_set_relief(GTK_BUTTON(invite_btn), GTK_RELIEF_NONE);
 		}
 
-		/* Put the buttons in the box */
-		gtk_box_pack_start(GTK_BOX(bbox), invite_btn, TRUE, TRUE, 10);
-		gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+		gtk_container_add(GTK_CONTAINER(frame), table);
 
-		label = gtk_label_new(_("Invite who?"));
+		label = gtk_label_new(_("Buddy"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
 		gtk_widget_show(label);
-		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(topbox), inviteentry, FALSE, FALSE, 5);
-		label = gtk_label_new(_("With message:"));
-		gtk_widget_show(label);
-		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(topbox), invitemess, FALSE, FALSE, 5);
+		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 
-		/* And the boxes in the box */
-		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+		label = gtk_label_new(_("Message"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
+		gtk_widget_show(label);
+		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
+
+		/* Now the right side of the table */
+		gtk_table_attach(GTK_TABLE(table), inviteentry, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+		gtk_table_attach(GTK_TABLE(table), invitemess, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+
+		/* And now for the button box */
+		bbox = gtk_hbox_new(FALSE, 10);
+		gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+
+		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(bbox), invite_btn, FALSE, FALSE, 0);
 
 		/* Handle closes right */
 		gtk_signal_connect(GTK_OBJECT(invite), "delete_event",
@@ -356,19 +412,22 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_invite), b);
 		gtk_signal_connect(GTK_OBJECT(invite_btn), "clicked", GTK_SIGNAL_FUNC(do_invite), b);
-		gtk_signal_connect(GTK_OBJECT(inviteentry), "activate", GTK_SIGNAL_FUNC(do_invite), b);
+		gtk_signal_connect(GTK_OBJECT(GTK_ENTRY(GTK_COMBO(inviteentry)->entry)), "activate", GTK_SIGNAL_FUNC(do_invite), b);
+
 		/* Finish up */
+		gtk_widget_set_usize(GTK_WIDGET(invite), 550, 115);
 		gtk_widget_show(invite_btn);
 		gtk_widget_show(cancel);
 		gtk_widget_show(inviteentry);
 		gtk_widget_show(invitemess);
-		gtk_widget_show(topbox);
-		gtk_widget_show(bbox);
 		gtk_widget_show(vbox);
-		gtk_window_set_title(GTK_WINDOW(invite), _("Invite to Buddy Chat"));
-		gtk_window_set_focus(GTK_WINDOW(invite), inviteentry);
+		gtk_widget_show(bbox);
+		gtk_widget_show(table);
+		gtk_widget_show(frame);
+		gtk_window_set_title(GTK_WINDOW(invite), _("Gaim - Invite Buddy Into Chat Room"));
+		gtk_window_set_focus(GTK_WINDOW(invite), GTK_ENTRY(GTK_COMBO(inviteentry)->entry));
 		gtk_container_add(GTK_CONTAINER(invite), vbox);
-		gtk_widget_realize(invite);
+
 		aol_icon(invite->window);
 
 	}

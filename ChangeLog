@@ -12,6 +12,8 @@ version 0.44:
 	* Wrote a plugin for all those people who miss having the
 	  chat rooms in their buddy lists (chatlist.so)
 	* Updated libfaim
+	* Added drop down selection to chat invitation
+	* Improved the looks of the chat invitation dialog
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)
