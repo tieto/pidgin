@@ -382,9 +382,18 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 									GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 									NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog->icon_filesel), GTK_RESPONSE_ACCEPT);
+
+
+	/*  I removed code to set the current path to the current icon in the old file selector so I figure
+	 * it shouldn't be here either.  The reason is because the icon will potentially converted and won't
+	 * be anything near what the user selected last time (which is the advantage to doing it this way. 
+	 * The solution is to create a new pref to specify the last chosen buddy icon.  This would also have the
+	 * advantage (?) of not being account-specific. 
 	if (dialog->icon_path != NULL)
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog->icon_filesel),
 			dialog->icon_path);
+	*/
+
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
