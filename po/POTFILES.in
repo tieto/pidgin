@@ -45,7 +45,6 @@ src/dialogs.c
 src/ft.c
 src/gaim-disclosure.c
 src/gaim-remote.c
-src/gaimrc.c
 src/gtkaccount.c
 src/gtkblist.c
 src/gtkconn.c
