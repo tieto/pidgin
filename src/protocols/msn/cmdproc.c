@@ -158,7 +158,7 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 {
 	MsnServConn *servconn;
 	char *data;
-	char *params;
+	char *params = NULL;
 	va_list arg;
 	size_t len;
 
@@ -167,9 +167,11 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 
 	servconn = cmdproc->servconn;
 
-	va_start(arg, format);
-	params = g_strdup_vprintf(format, arg);
-	va_end(arg);
+	if (format != NULL) {
+		va_start(arg, format);
+		params = g_strdup_vprintf(format, arg);
+		va_end(arg);
+	}
 
 	if (params != NULL)
 		data = g_strdup_printf("%s %s\r\n", command, params);
@@ -201,9 +203,11 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 
 	trans->command = g_strdup(command);
 
-	va_start(arg, format);
-	trans->params = g_strdup_vprintf(format, arg);
-	va_end(arg);
+	if (format != NULL) {
+		va_start(arg, format);
+		trans->params = g_strdup_vprintf(format, arg);
+		va_end(arg);
+	}
 
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
