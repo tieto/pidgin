@@ -28,6 +28,14 @@ EXTRA_DIST = \
 		win32/nsis/gaim-header.bmp \
 		win32/nsis/gaim-intro.bmp \
 		win32/nsis/gtkInstall.ini \
+		win32/nsis/translations/dutch.nsh \
+		win32/nsis/translations/english.nsh \
+		win32/nsis/translations/french.nsh \
+		win32/nsis/translations/german.nsh \
+		win32/nsis/translations/hungarian.nsh \
+		win32/nsis/translations/portuguese-br.nsh \
+		win32/nsis/translations/serbian-latin.nsh \
+		win32/nsis/translations/simp-chinese.nsh \
 		win32/themes/gtkrc
 
 SUBDIRS = protocols
