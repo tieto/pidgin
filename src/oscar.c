@@ -87,6 +87,7 @@ static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_msgack     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_evilnotify (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static int gaim_directim_incoming(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_typing  (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -308,6 +309,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MISSEDCALL, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_ratechange, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_EVIL, gaim_parse_evilnotify, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
@@ -345,9 +347,9 @@ int gaim_server_ready(struct aim_session_t *sess,
 	case AIM_CONN_TYPE_BOS:
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
-		aim_bos_setprivacyflags(sess, command->conn, 0x00000003);
+		aim_bos_setprivacyflags(sess, command->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_ADS);
-		aim_bos_setgroupperm(sess, command->conn, 0x1f);
+		aim_bos_setgroupperm(sess, command->conn, AIM_CLASS_ALLUSERS);
 		debug_print("done with BOS ServerReady\n");
 		break;
 	case AIM_CONN_TYPE_CHATNAV:
@@ -512,6 +514,8 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 
 	if (info->class & AIM_CLASS_TRIAL)
 		type |= UC_UNCONFIRMED;
+	else if (info->class & AIM_CLASS_ADMINISTRATOR)
+		type |= UC_ADMIN;
 	else if (info->class & AIM_CLASS_AOL)
 		type |= UC_AOL;
 	else if (info->class & AIM_CLASS_FREE)
@@ -787,11 +791,14 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(debug_buff, "MOTD: %s\n", msg);
+	sprintf(debug_buff, "MOTD: %s (%d)\n", msg, id);
 	debug_print(debug_buff);
 	sprintf(debug_buff, "Gaim %s / Libfaim %s\n",
 			VERSION, aim_getbuildstring());
 	debug_print(debug_buff);
+	if (id != 4)
+		do_error_dialog(_("Your connection may be lost."),
+				_("AOL error"));
 
 	return 1;
 }
@@ -969,6 +976,19 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 
 	return 1;
 };
+
+int gaim_parse_evilnotify(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *sn;
+
+	va_start(ap, command);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	serv_got_eviled(sn, 0);
+
+	return 1;
+}
 
 int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;

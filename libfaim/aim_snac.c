@@ -43,8 +43,7 @@ u_long aim_newsnac(struct aim_session_t *sess,
   if (!newsnac)
     return 0;
 
-  snac = calloc(1, sizeof(struct aim_snac_t));
-  if (!snac)
+  if (!(snac = calloc(1, sizeof(struct aim_snac_t))))
     return 0;
   memcpy(snac, newsnac, sizeof(struct aim_snac_t));
   snac->issuetime = time(&snac->issuetime);
@@ -53,12 +52,8 @@ u_long aim_newsnac(struct aim_session_t *sess,
   index = snac->id % FAIM_SNAC_HASH_SIZE;
 
   faim_mutex_lock(&sess->snac_hash_locks[index]);
-  if (!sess->snac_hash[index])
-    sess->snac_hash[index] = snac;
-  else {
-    snac->next = sess->snac_hash[index];
-    sess->snac_hash[index] = snac;
-  }
+  snac->next = sess->snac_hash[index];
+  sess->snac_hash[index] = snac;
   faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
   return(snac->id);
@@ -74,7 +69,7 @@ u_long aim_newsnac(struct aim_session_t *sess,
 struct aim_snac_t *aim_remsnac(struct aim_session_t *sess, 
 			       u_long id) 
 {
-  struct aim_snac_t *cur;
+  struct aim_snac_t *cur = NULL;
   int index;
 
   index = id % FAIM_SNAC_HASH_SIZE;

@@ -421,6 +421,9 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  case 0x000f:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x000f, workingPtr);
 	    break;
+	  case 0x0010:
+	    workingPtr->handled = aim_parse_evilnotify_middle(sess, workingPtr);
+	    break;
 	  case 0x0013:
 	    workingPtr->handled = aim_parsemotd_middle(sess, workingPtr);
 	    break;
@@ -651,6 +654,31 @@ int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_st
   return ret;
 }
 
+int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+{
+  rxcallback_t userfunc = NULL;
+  int ret = 1, pos;
+  char *sn = NULL;
+
+  if(command->commandlen < 12) /* a warning level dec sends this */
+    return 1;
+
+  if ((pos = aimutil_get8(command->data+ 12)) > MAXSNLEN)
+    return 1;
+
+  if(!(sn = (char *)calloc(1, pos+1)))
+    return 1;
+
+  memcpy(sn, command->data+13, pos);
+
+  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0010)))
+    ret = userfunc(sess, command, sn);
+  
+  free(sn);
+
+  return ret;
+}
+
 int aim_parsemotd_middle(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...)
 {
@@ -661,7 +689,14 @@ int aim_parsemotd_middle(struct aim_session_t *sess,
   u_short id;
 
   /*
-   * Dunno.
+   * Code.
+   *
+   * Valid values:
+   *   1 Mandatory upgrade
+   *   2 Advisory upgrade
+   *   3 System bulletin
+   *   4 Nothing's wrong ("top o the world" -- normal)
+   *
    */
   id = aimutil_get16(command->data+10);
 

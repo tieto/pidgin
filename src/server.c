@@ -470,6 +470,8 @@ void serv_warn(char *name, int anon)
 			   ((anon) ? "anon" : "norm"));
 		sflap_send(send, -1, TYPE_DATA);
 		g_free(send);
+	} else {
+		aim_send_warning(gaim_sess, gaim_conn, name, anon);
 	}
 }
 

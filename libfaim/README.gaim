@@ -14,6 +14,8 @@ included with the libfaim source on sourceforge) with the Gaim GTK front-end.
 So far the changes to libfaim that I've made are:
 - remove mkbuildinfo.sh and put the #defines it creates into Makefile.am
 - add #if HAVE_GETADDRINFO in aim_ft.c for Solaris people
+- aim_tlv.c: deleted a printf
+- aim_snac.c: in aim_remsnac, default cur to NULL, to avoid segfault
 
 And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
 for anything other than laughs right now. Hopefully we'll get it working better
@@ -41,6 +43,7 @@ Being away/coming back
 Setting your info
 Getting users' info
 Getting users' away messages
+Warning users/getting warned
 Chat:
  - joining rooms
  - leaving rooms
@@ -53,7 +56,6 @@ Direct IM (aka IM Image, for sounds and pictures)
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
 Telling the server who's on your permit/deny lists
-Warning users/getting warned
 Chat:
  - whispering (this will never happen)
  - creating rooms (needed to join empty rooms)
@@ -79,7 +81,9 @@ been.
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them.
 
-- Warnings and Dir Info are not in libfaim yet, and so are not in Gaim/Faim yet.
+- Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
+
+- Warnings are there now. Yes, I know it says the wrong value.
 
 - There are also FIXME's scattered about gaim. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed

@@ -141,6 +141,19 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 	      if (aim_gettlv(innerlist, 0x0004, 1))
 		;
 
+	      /* 
+	       * Type 0x0002: Unknown
+	       */
+	      if (aim_gettlv(innerlist, 0x0002, 1)) {
+		struct aim_tlv_t *tmptlv;
+		unsigned short classperms = 0;
+
+		tmptlv = aim_gettlv(innerlist, 0x0002, 1);
+		classperms = aimutil_get16(tmptlv->value);
+		
+		printf("faim: class permissions %x\n", classperms);
+	      }
+
 	      /*
 	       * Type 0x00c9: Unknown
 	       */ 
@@ -154,7 +167,7 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 		;
 	      
 	      /*
-	       * Type 0x00d0: Unknown
+	       * Type 0x00d0: Mandatory Channels?
 	       */
 	      if (aim_gettlv(innerlist, 0x00d0, 1))
 		;
@@ -166,7 +179,7 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 		;
 
 	      /*
-	       * Type 0x00d2: Unknown
+	       * Type 0x00d2: Maximum Occupancy?
 	       */
 	      if (aim_gettlv(innerlist, 0x00d2, 1))	
 		;	
@@ -180,10 +193,22 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 		exchanges[curexchange-1].name = NULL;
 
 	      /*
-	       * Type 0x00d5: Unknown
+	       * Type 0x00d5: Creation Permissions
+	       *
+	       * 0  Creation not allowed
+	       * 1  Room creation allowed
+	       * 2  Exchange creation allowed
+	       * 
 	       */
-	      if (aim_gettlv(innerlist, 0x00d5, 1))
-		;
+	      if (aim_gettlv(innerlist, 0x00d5, 1)) {
+		struct aim_tlv_t *tmptlv;
+		unsigned char createperms = 0;
+
+		tmptlv = aim_gettlv(innerlist, 0x00d5, 1);
+		createperms = aimutil_get8(tmptlv->value);
+		
+		printf("faim: creation permissions %x\n", createperms);
+	      }
 
 	      /*
 	       * Type 0x00d6: Character Set (First Time)

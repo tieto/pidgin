@@ -94,6 +94,8 @@
  * for WinAIM clients (up through the latest (4.0.1957)) to
  * send any more than 1kb.  Amaze all your windows friends
  * with utterly oversized instant messages!
+ *
+ * XXX: the real limit is the total SNAC size at 8192. Fix this.
  * 
  */
 #define MAXMSGLEN 7987
@@ -331,14 +333,16 @@ struct aim_userinfo_s {
   u_short capabilities;
 };
 
-#define AIM_CLASS_TRIAL 	0x0001
-#define AIM_CLASS_UNKNOWN2	0x0002
+#define AIM_CLASS_TRIAL 	0x0001 /* "damned transients" */
+#define AIM_CLASS_ADMINISTRATOR	0x0002
 #define AIM_CLASS_AOL		0x0004
-#define AIM_CLASS_UNKNOWN4	0x0008
+#define AIM_CLASS_OSCAR_PAY	0x0008
 #define AIM_CLASS_FREE 		0x0010
 #define AIM_CLASS_AWAY		0x0020
 #define AIM_CLASS_UNKNOWN40	0x0040
 #define AIM_CLASS_UNKNOWN80	0x0080
+
+#define AIM_CLASS_ALLUSERS      0x001f
 
 /*
  * TLV handling
@@ -484,6 +488,12 @@ void aim_session_init(struct aim_session_t *);
 #define AIM_VISIBILITYCHANGE_DENYADD      0x07
 #define AIM_VISIBILITYCHANGE_DENYREMOVE   0x08
 
+#define AIM_PRIVFLAGS_ALLOWIDLE           0x01
+#define AIM_PRIVFLAGS_ALLOWMEMBERSINCE    0x02
+
+#define AIM_WARN_ANON                     0x01
+
+int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon);
 u_long aim_bos_nop(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
 u_long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
@@ -514,6 +524,7 @@ int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
 int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 
 /* aim_im.c */

@@ -306,7 +306,8 @@ int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *comma
   rxcallback_t userfunc;
 
   keylen = aimutil_get16(command->data+10);
-  key = malloc(keylen+1);
+  if (!(key = malloc(keylen+1)))
+    return ret;
   memcpy(key, command->data+12, keylen);
   key[keylen] = '\0';
   

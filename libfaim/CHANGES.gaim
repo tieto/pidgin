@@ -1,4 +1,7 @@
 
+Mon Aug 28 05:02:39 UTC 2000 EWarmenhoven
+	- libfaim gets warnings. no blocking, just warnings.
+
 Tue Aug 22 23:34:47 UTC 2000 EWarmenhoven
 	- New login method. Don't ask me anything about it. The only
 	  thing I know about Oscar is its name.

@@ -250,7 +250,11 @@ u_long aim_bos_setprofile(struct aim_session_t *sess,
 /* 
  * aim_bos_setgroupperm(mask)
  * 
- * Set group permisson mask.  Normally 0x1f.
+ * Set group permisson mask.  Normally 0x1f (all classes).
+ *
+ * The group permission mask allows you to keep users of a certain
+ * class or classes from talking to you.  The mask should be
+ * a bitwise OR of all the user classes you want to see you.
  *
  */
 u_long aim_bos_setgroupperm(struct aim_session_t *sess,
@@ -336,12 +340,8 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
 }
 
 /* 
- *  send_login_phase3(int socket)   
- *
  *  Request Rate Information.
  * 
- *  TODO: Move to aim_conn.
- *  TODO: Move to SNAC interface.
  */
 u_long aim_bos_reqrate(struct aim_session_t *sess,
 		       struct aim_conn_t *conn)
@@ -350,8 +350,6 @@ u_long aim_bos_reqrate(struct aim_session_t *sess,
 }
 
 /* 
- *  send_login_phase3b(int socket)   
- *
  *  Rate Information Response Acknowledge.
  *
  */
@@ -389,7 +387,7 @@ u_long aim_bos_ackrateresp(struct aim_session_t *sess,
  * Sets privacy flags. Normally 0x03.
  *
  *  Bit 1:  Allows other AIM users to see how long you've been idle.
- *
+ *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
 u_long aim_bos_setprivacyflags(struct aim_session_t *sess,
@@ -503,10 +501,7 @@ u_long aim_bos_reqservice(struct aim_session_t *sess,
  * aim_bos_nop()
  *
  * No-op.  WinAIM sends these every 4min or so to keep
- * the connection alive.  With the recent changes
- * in the OSCAR servers, it looks like we must do the
- * same or be disconnected with a mysterious 'you logged
- * on from another client' message.
+ * the connection alive.  Its not real necessary.
  *
  */
 u_long aim_bos_nop(struct aim_session_t *sess,
@@ -538,6 +533,46 @@ u_long aim_bos_reqbuddyrights(struct aim_session_t *sess,
 {
   return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
 }
+
+/*
+ * aim_send_warning(struct aim_session_t *sess, 
+ *                  struct aim_conn_t *conn, char *destsn, int anon)
+ * send a warning to destsn.
+ * anon is anonymous or not;
+ *  AIM_WARN_ANON anonymous
+ *
+ * returns -1 on error (couldn't alloc packet), next snacid on success.
+ *
+ */
+int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon)
+{
+  struct command_tx_struct *newpacket;
+  int curbyte;
+
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, strlen(destsn)+13)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  curbyte  = 0;
+  curbyte += aim_putsnac(newpacket->data+curbyte,
+                        0x0004, 0x0008, 0x0000, sess->snac_nextid);
+
+  curbyte += aimutil_put16(newpacket->data+curbyte, (anon & AIM_WARN_ANON)?1:0);
+
+  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(destsn));
+
+  curbyte += aimutil_putstr(newpacket->data+curbyte, destsn, strlen(destsn));
+
+  newpacket->commandlen = curbyte;
+  newpacket->lock = 0;
+
+  aim_tx_enqueue(sess, newpacket);
+
+  return (sess->snac_nextid++);
+}
+
+
 
 /*
  * aim_debugconn_sendconnect()
