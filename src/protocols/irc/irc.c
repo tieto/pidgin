@@ -1946,15 +1946,6 @@ irc_login(GaimAccount *account)
 	struct irc_data *idata;
 	char **parts;
 
-	if(!strrchr(username, '@')) {
-		char *tmp = g_strdup_printf("%s@%s", username,
-			    gaim_account_get_string(account, "server", DEFAULT_SERVER));
-		gaim_account_set_username(account, tmp);
-		/* XXX: delete function required */
-		gaim_account_set_string(account, "server", NULL);
-		g_free(tmp);
-	}
-
 	gc = gaim_account_get_connection(account);
 	idata = gc->proto_data = g_new0(struct irc_data, 1);
 

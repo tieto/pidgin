@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6009 2003-05-31 15:40:32Z faceprint $
+ * $Id: gg.c 6025 2003-05-31 20:55:31Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -527,8 +527,6 @@ static void agg_login(GaimAccount *account)
 #endif
 
 	gd->sess = g_new0(struct gg_session, 1);
-
-	gaim_connection_set_display_name(gc, gaim_account_get_string(account, "nick", ""));
 
 	gaim_connection_update_progress(gc, _("Looking up GG server"), 1, GG_CONNECT_STEPS);
 

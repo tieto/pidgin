@@ -503,6 +503,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	char buf[4096];
 	char user_info[2048];
 	int flags;
+	char *tmp;
 
 	if (!fgets(buf, sizeof(buf), f))
 		return NULL;
@@ -579,15 +580,6 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "proto_opts"))
 		return account;
 
-	/* TODO: Server and port should be preserved! :/ */
-#if 0
-	for (i = 0; i < 7; i++) {
-		char buf[256];
-
-		g_snprintf(account->proto_opt[i], sizeof account->proto_opt[i], "%s", p->value[i]);
-	}
-#endif
-
 	/* I hate this part. We must convert the protocol options. */
 	switch (gaim_account_get_protocol(account)) {
 		case GAIM_PROTO_TOC:
@@ -609,14 +601,13 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 			break;
 
 		case GAIM_PROTO_IRC:
-			/* XXX: fix this */
-			gaim_account_set_string(account, "server", p->value[0]);
+			if(strlen(p->value[0]) && !strchr(account->username, '@')) {
+				tmp = g_strdup_printf("%s@%s", account->username, p->value[0]);
+				gaim_account_set_username(account, tmp);
+				g_free(tmp);
+			}
 			gaim_account_set_int(account, "port", atoi(p->value[1]));
 			gaim_account_set_string(account, "charset", p->value[2]);
-			break;
-
-		case GAIM_PROTO_GADUGADU:
-			gaim_account_set_string(account, "nick", p->value[0]);
 			break;
 
 		default:
