@@ -4253,7 +4253,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
 		else if (flags & WFLAG_RECV) {
 			if ((flags & WFLAG_NICK) &&
-				gaim_prefs_get_bool("/gaim/gtk/sound/nick_said")) {
+				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said")) {
 
 				gaim_sound_play_event(GAIM_SOUND_CHAT_NICK);
 			}
