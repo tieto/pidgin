@@ -14,10 +14,10 @@
 # Tray Icon = Statusikon
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.75\n"
+"Project-Id-Version: gaim 0.76\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-08 17:26+0100\n"
-"PO-Revision-Date: 2004-01-04 22:28+0100\n"
+"PO-Revision-Date: 2004-03-10 22:20+0100\n"
 "Last-Translator: Morten Brix Pedersen <morten@wtf.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -407,7 +407,7 @@ msgstr "Navn"
 
 #: plugins/gevolution/add_buddy_dialog.c:201
 msgid "Instant Messaging"
-msgstr ""
+msgstr "Øjeblikkelig besked"
 
 #. Add the label.
 #: plugins/gevolution/add_buddy_dialog.c:482
@@ -3295,7 +3295,7 @@ msgstr "G_ennemse..."
 
 #: src/gtkpounce.c:473
 msgid "Pre_view"
-msgstr ""
+msgstr "Forhånds_visning"
 
 #: src/gtkpounce.c:556
 msgid "Sav_e this pounce after activation"
@@ -3933,7 +3933,7 @@ msgstr "Indlæs"
 
 #: src/gtkprefs.c:1980
 msgid "Summary"
-msgstr ""
+msgstr "Kort beskrivelse"
 
 #: src/gtkprefs.c:2028
 msgid "Details"
@@ -5441,7 +5441,7 @@ msgstr "Begge"
 
 #: src/protocols/jabber/jabber.c:907
 msgid "From (To pending)"
-msgstr ""
+msgstr "Fra (Til afventer)"
 
 #: src/protocols/jabber/jabber.c:909
 msgid "From"
@@ -5453,11 +5453,11 @@ msgstr "Til"
 
 #: src/protocols/jabber/jabber.c:914
 msgid "None (To pending)"
-msgstr ""
+msgstr "Ingen (Til afventer)"
 
 #: src/protocols/jabber/jabber.c:918
 msgid "Subscription"
-msgstr ""
+msgstr "Abonnering"
 
 #: src/protocols/jabber/jabber.c:938
 msgid "Error"
@@ -5534,7 +5534,7 @@ msgstr "Intern server fejl"
 
 #: src/protocols/jabber/jabber.c:1153
 msgid "Item Not Found"
-msgstr ""
+msgstr "Punkt ikke fundet"
 
 #: src/protocols/jabber/jabber.c:1155
 msgid "Malformed Jabber ID"
@@ -5578,11 +5578,11 @@ msgstr "Service ikke tilgængelig"
 
 #: src/protocols/jabber/jabber.c:1179
 msgid "Subscription Required"
-msgstr ""
+msgstr "Abonement krævet"
 
 #: src/protocols/jabber/jabber.c:1181
 msgid "Unexpected Request"
-msgstr ""
+msgstr "Uventet anmodning"
 
 #: src/protocols/jabber/jabber.c:1188
 msgid "Authorization Aborted"
@@ -5598,11 +5598,11 @@ msgstr "Ugyldigt authzid"
 
 #: src/protocols/jabber/jabber.c:1196
 msgid "Invalid Authorization Mechanism"
-msgstr ""
+msgstr "Ugyldig godkendelsesmekanisme"
 
 #: src/protocols/jabber/jabber.c:1199
 msgid "Authorization mechanism too weak"
-msgstr ""
+msgstr "Godkendelsesmekanisme for svag"
 
 #: src/protocols/jabber/jabber.c:1204
 msgid "Temporary Authentication Failure"
@@ -6079,7 +6079,7 @@ msgstr "Passport konto endnu ikke godkendt"
 
 #: src/protocols/msn/error.c:215
 msgid "Bad ticket"
-msgstr ""
+msgstr "Fejl fra server: \"Bad ticket\""
 
 #: src/protocols/msn/error.c:219
 #, c-format
@@ -7962,7 +7962,7 @@ msgstr "Din Yahoo! besked blev ikke sendt."
 
 #: src/protocols/yahoo/yahoo.c:759
 msgid "Buzz!!"
-msgstr ""
+msgstr "Bip!!"
 
 #: src/protocols/yahoo/yahoo.c:794
 #, c-format
@@ -8192,7 +8192,7 @@ msgstr "Filoverførsel port"
 
 #: src/protocols/yahoo/yahoo.c:3308
 msgid "Chat Room List Url"
-msgstr ""
+msgstr "Chatrumsliste adresse"
 
 #: src/protocols/yahoo/yahoo_filexfer.c:200
 msgid ""
@@ -8243,7 +8243,7 @@ msgstr "Hentning af rumliste fejlede."
 
 #: src/protocols/yahoo/yahoochat.c:1341
 msgid "Voices"
-msgstr ""
+msgstr "Stemmer"
 
 #: src/protocols/yahoo/yahoochat.c:1344
 msgid "Webcams"
@@ -8334,7 +8334,7 @@ msgstr "Eksportér til .zephyr.subs"
 
 #: src/protocols/zephyr/zephyr.c:1220
 msgid "Exposure"
-msgstr ""
+msgstr "Fremvisning"
 
 #. Forbidden
 #: src/proxy.c:954
@@ -8489,33 +8489,3 @@ msgstr "Flytter Gaim brugerindstillings-mappen til: "
 #: src/win32/win32dep.c:277
 msgid "Notification"
 msgstr "Påmindelse"
-
-#~ msgid "Bad Protocol"
-#~ msgstr "Ugyldig protokol"
-
-#~ msgid "Invalid Realm"
-#~ msgstr "Ugyldigt område"
-
-#~ msgid "Mechanism Too Weak"
-#~ msgstr "Mekanisme for svag"
-
-#~ msgid "Registration of %s@%s failed: %s"
-#~ msgstr "Registrering af %s@%s fejlede: %s"
-
-#~ msgid "Unknown error occurred changing password"
-#~ msgstr "Ukendt fejl skete ved ændring af adgangskoden"
-
-#~ msgid "Unable to join chat"
-#~ msgstr "Kunne ikke deltage i chat"
-
-#~ msgid "Browser Options"
-#~ msgstr "Browserindstillinger"
-
-#~ msgid "Open new _window by default"
-#~ msgstr "Åbn nyt vindue som standard"
-
-#~ msgid "Could not send %s to %s, protocol not supported."
-#~ msgstr "Kunne ikke sende %s til %s, protokol ikke understøttet."
-
-#~ msgid "Internal server error"
-#~ msgstr "Intern server fejl"
