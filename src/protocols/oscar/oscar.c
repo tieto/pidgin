@@ -2566,7 +2566,6 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimAccount *ac = gaim_connection_get_account(gc);
 #if 0
 	struct client_info_s info = {"gaim", 7, 3, 2003, "us", "en", 0x0004, 0x0000, 0x04b};
 #endif
@@ -2579,12 +2578,12 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icq) {
 		struct client_info_s info = CLIENTINFO_ICQ_KNOWNGOOD;
-		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
-					   gaim_account_get_password(account), &info, key);
+		aim_send_login(sess, fr->conn, gaim_account_get_username(account),
+					   gaim_connection_get_password(gc), &info, key);
 	} else {
 		struct client_info_s info = CLIENTINFO_AIM_KNOWNGOOD;
-		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
-					   gaim_account_get_password(account), &info, key);
+		aim_send_login(sess, fr->conn, gaim_account_get_username(account),
+					   gaim_connection_get_password(gc), &info, key);
 	}
 
 	gaim_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);

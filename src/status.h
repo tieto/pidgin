@@ -53,7 +53,8 @@
  * your accounts is saved so that the next time you start Gaim,
  * your accounts will be set to their last know statuses.  There
  * is also a list of saved statuses that are written to the
- * status.xml file.
+ * status.xml file.  Also, each GaimStatus has a "savable" boolean.
+ * If "savable" is set to FALSE then the status is NEVER saved.
  *
  * A GaimPresence is like a collection of GaimStatuses (plus some
  * other random info).  For any buddy, or for any one of your accounts,

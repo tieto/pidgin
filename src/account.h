@@ -113,20 +113,15 @@ void gaim_account_destroy(GaimAccount *account);
  * Connects to an account.
  *
  * @param account The account to connect to.
- * @param status  The status the account should use when logging in.
- *
- * @return The gaim connection.
  */
-GaimConnection *gaim_account_connect(GaimAccount *account);
+void gaim_account_connect(GaimAccount *account);
 
 /**
  * Registers an account.
  *
  * @param account The account to register.
- *
- * @return The gaim connection.
  */
-GaimConnection *gaim_account_register(GaimAccount *account);
+void gaim_account_register(GaimAccount *account);
 
 /**
  * Disconnects from an account.

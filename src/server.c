@@ -44,36 +44,6 @@
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
-void serv_login(GaimAccount *account, GaimStatus *status)
-{
-	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (account->gc == NULL || p == NULL)
-		return;
-
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
-
-	if (prpl_info->login) {
-		if (gaim_account_get_password(account) == NULL &&
-			!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
-			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
-			gaim_notify_error(NULL, NULL,
-							  _("Please enter your password"), NULL);
-			return;
-		}
-
-		gaim_debug_info("server", PACKAGE " " VERSION
-						" logging in %s using %s\n",
-						gaim_account_get_username(account),
-						gaim_account_get_protocol_name(account));
-
-		gaim_signal_emit(gaim_accounts_get_handle(),
-						 "account-connecting", account);
-		prpl_info->login(account, status);
-	}
-}
-
 static gboolean send_keepalive(gpointer d)
 {
 	GaimConnection *gc = d;

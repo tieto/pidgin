@@ -1000,7 +1000,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	account = gaim_connection_get_account(session->gc);
 
-	password = gaim_account_get_password(account);
+	password = gaim_connection_get_password(session->gc);
 
 	md5_init(&st);
 	md5_append(&st, (const md5_byte_t *)password, strlen(password));
@@ -1195,7 +1195,7 @@ trepia_register_user(GaimAccount *account)
 		"<f></f><g></g><h></h><i></i><j></j><k></k><l></l>"
 		"<m></m></J>",
 		mac, "", TREPIA_VERSION, gaim_account_get_username(account),
-		gaim_account_get_password(account));
+		gaim_connection_get_password(gc->account));
 }
 
 static GaimPluginProtocolInfo prpl_info =

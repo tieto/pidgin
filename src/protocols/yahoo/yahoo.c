@@ -920,7 +920,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	struct yahoo_packet *pack;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const char *name = gaim_normalize(account, gaim_account_get_username(account));
-	const char *pass = gaim_account_get_password(account);
+	const char *pass = gaim_connection_get_password(gc);
 	struct yahoo_data *yd = gc->proto_data;
 
 	/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
@@ -1037,7 +1037,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	struct yahoo_packet *pack = NULL;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const char *name = gaim_normalize(account, gaim_account_get_username(account));
-	const char *pass = gaim_account_get_password(account);
+	const char *pass = gaim_connection_get_password(gc);
 	struct yahoo_data *yd = gc->proto_data;
 
 	GaimCipher 			*md5_cipher;
@@ -2172,7 +2172,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	const char *sn = gaim_account_get_username(account);
-	const char *pass = gaim_account_get_password(account);
+	const char *pass = gaim_connection_get_password(gc);
 	GHashTable *hash = yahoo_login_page_hash(buf, len);
 	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;

@@ -286,7 +286,7 @@ static gboolean do_login(GaimConnection *gc) {
 	char hostname[256];
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
-	const char *pass = gaim_account_get_password(gc->account);
+	const char *pass = gaim_connection_get_password(gc);
 
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);

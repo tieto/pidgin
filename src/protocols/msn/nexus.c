@@ -129,7 +129,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
 
 	password =
-		g_strdup(gaim_url_encode(gaim_account_get_password(session->account)));
+		g_strdup(gaim_url_encode(gaim_connection_get_password(session->account->gc)));
 
 	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
 

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12334 2005-03-26 02:43:49Z lschiere $
+ * $Id: gg.c 12342 2005-03-26 23:25:18Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -27,6 +27,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "connection.h"
 #include "debug.h"
 #include "notify.h"
 #include "proxy.h"
@@ -1353,7 +1354,7 @@ static void import_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
-	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
+	gchar *p = gg_urlencode(gaim_connection_get_password(gc));
 
 	hi->gc = gc;
 	hi->type = AGG_HTTP_USERLIST_IMPORT;
@@ -1380,7 +1381,7 @@ static void export_buddies_server(GaimConnection *gc)
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	gchar *ptr;
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
-	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
+	gchar *p = gg_urlencode(gaim_connection_get_password(gc));
 
 	GaimBlistNode *gnode, *cnode, *bnode;
 
@@ -1453,7 +1454,7 @@ static void delete_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
-	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
+	gchar *p = gg_urlencode(gaim_connection_get_password(gc));
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_DELETE;
@@ -1529,7 +1530,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 {
 	struct agg_http *hpass = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
-	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
+	gchar *p = gg_urlencode(gaim_connection_get_password(gc));
 	gchar *enew = gg_urlencode(new);
 	gchar *eold = gg_urlencode(old);
 

@@ -243,7 +243,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 
 	len = header[0];
-	command = header[1];	
+	command = header[1];
 	buf = (gchar *)g_malloc((len + 1) * sizeof(gchar));
 	buf[len] = '\0';
 
@@ -268,7 +268,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		gaim_input_remove(gc->inpa);
 		gc->inpa = 0;
 		close(source);
-		gaim_connection_destroy(gc);
+		gaim_connection_error(gc, _("Unknown server error."));
 		break;
 
 	case 003: /* MSG_SERVER_EMAIL */
@@ -333,9 +333,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 316: /* MSG_SERVER_DISCONNECTING */
 		/* we have been kicked off =^( */
-		gaim_notify_error(gc, NULL,
-						  _("You were disconnected from the server."), NULL);
-                gaim_connection_destroy(gc);
+		gaim_connection_error(gc, _("You were disconnected from the server."));
 		break;
 
 	case 401: /* MSG_CLIENT_PART */
@@ -429,10 +427,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 748: /* MSG_SERVER_GHOST */
 		/* Looks like someone logged in as us! =-O */
-		gaim_notify_error(gc, NULL,
-						  _("You were disconnected from the server, because "
-							"you logged on from a different location"), NULL);
-		gaim_connection_destroy(gc);
+		gaim_connection_error(gc, _("You have signed on from another location."));
 		break;
 
 	case 751: /* MSG_CLIENT_PING */
@@ -497,7 +492,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	/* Write our signon data */
 	nap_write_packet(gc, 2, "%s %s 0 \"gaim %s\" 0",
 			gaim_account_get_username(gc->account),
-			gaim_account_get_password(gc->account), VERSION);
+			gaim_connection_get_password(gc), VERSION);
 
 	/* And set up the input watcher */
 	gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);

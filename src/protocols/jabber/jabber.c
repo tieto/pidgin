@@ -24,6 +24,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "cmds.h"
+#include "connection.h"
 #include "debug.h"
 #include "message.h"
 #include "notify.h"
@@ -422,7 +423,10 @@ static gboolean
 conn_close_cb(gpointer data)
 {
 	JabberStream *js = data;
-	gaim_connection_destroy(js->gc);
+	GaimAccount *account = gaim_connection_get_account(js->gc);
+
+	gaim_account_disconnect(account);
+
 	return FALSE;
 }
 
@@ -599,7 +603,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		gaim_request_field_group_add_field(group, field);
 
 		field = gaim_request_field_string_new("password", _("Password"),
-				gaim_account_get_password(js->gc->account), FALSE);
+				gaim_connection_get_password(js->gc), FALSE);
 		gaim_request_field_string_set_masked(field, TRUE);
 		gaim_request_field_group_add_field(group, field);
 

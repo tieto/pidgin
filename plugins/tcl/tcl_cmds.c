@@ -119,10 +119,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
 		if (error || !tcl_validate_account(account, interp))
 			return TCL_ERROR;
-		if (gaim_account_is_connected(account))
-			Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
-		else
-			Tcl_SetIntObj(result, (int)gaim_account_connect(account));
+		if (!gaim_account_is_connected(account))
+			gaim_account_connect(account);
+		Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
 		break;
 	case CMD_ACCOUNT_CONNECTION:
 		if (objc != 3) {

@@ -79,6 +79,7 @@ struct _GaimConnection
 	GaimConnectionState state;   /**< The connection state.              */
 
 	GaimAccount *account;        /**< The account being connected to.    */
+	char *password;              /**< The password used.                 */
 	int inpa;                    /**< The input watcher.                 */
 
 	GSList *buddy_chats;         /**< A list of active chats.            */
@@ -113,44 +114,35 @@ extern "C" {
 /*@{*/
 
 /**
- * Creates a connection to the specified account.
+ * This function should only be called by gaim_connection_connect()
+ * in account.c.  If you're trying to sign on an account, use that
+ * function instead.
+ *
+ * Creates a connection to the specified account and either connects
+ * or attempts to register a new account.  If you are logging in,
+ * the connection uses the current active status for this account.
+ * So if you want to sign on as "away," for example, you need to
+ * have called gaim_account_set_status(account, "away").
+ * (And this will call gaim_account_connect() automatically).
  *
  * @param account The account the connection should be connecting to.
- *
- * @return The gaim connection.
+ * @param register Whether we are registering a new account or just
+ *        trying to do a normal signon.
+ * @param password The password to use.
  */
-GaimConnection *gaim_connection_new(GaimAccount *account);
-
-/**
- * Destroys and closes a gaim connection.
- *
- * @param gc The gaim connection to destroy.
- */
-void gaim_connection_destroy(GaimConnection *gc);
+void gaim_connection_new(GaimAccount *account, gboolean regist,
+									const char *password);
 
 /**
  * This function should only be called by gaim_connection_connect()
  * in account.c.  If you're trying to sign on an account, use that
  * function instead.
  *
- * Logs in to this connection.  The connection uses the current
- * active status in the account as the initial status.  So if
- * you want to sign on as "away," for example, you need to
- * have called gaim_account_set_status(account, "away").
- * (And generally this has the effect of also signin on).
+ * Disconnects and destroys a GaimConnection.
  *
- * @param gc The connection to log in.
- *
- * @see gaim_connection_disconnect()
+ * @param gc The gaim connection to destroy.
  */
-void gaim_connection_connect(GaimConnection *gc);
-
-/**
- * Registers a connection.
- *
- * @param gc The connection to register.
- */
-void gaim_connection_register(GaimConnection *gc);
+void gaim_connection_destroy(GaimConnection *gc);
 
 /**
  * This function should only be called by gaim_connection_disconnect()
@@ -214,6 +206,15 @@ GaimConnectionState gaim_connection_get_state(const GaimConnection *gc);
  * @return The connection's account.
  */
 GaimAccount *gaim_connection_get_account(const GaimConnection *gc);
+
+/**
+ * Returns the connection's password.
+ *
+ * @param gc The connection.
+ *
+ * @return The connection's password.
+ */
+const char *gaim_connection_get_password(const GaimConnection *gc);
 
 /**
  * Returns the connection's displayed name.

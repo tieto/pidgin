@@ -1709,7 +1709,7 @@ novell_ssl_connected_cb(gpointer data, GaimSslConnection * gsc,
 									2, NOVELL_CONNECT_STEPS);
 
 	my_addr = gaim_network_get_my_ip(gsc->fd);
-	pwd = gaim_account_get_password(user->client_data);
+	pwd = gaim_connection_get_password(gc);
 	ua = _user_agent_string();
 
 	rc = nm_send_login(user, pwd, my_addr, ua, _login_resp_cb, NULL);

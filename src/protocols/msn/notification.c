@@ -904,7 +904,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_snprintf(buf, sizeof(buf), "%s%lu%s",
 			   session->passport_info.mspauth,
 			   time(NULL) - session->passport_info.sl,
-			   gaim_account_get_password(account));
+			   gaim_connection_get_password(account->gc));
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);

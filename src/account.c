@@ -741,44 +741,83 @@ gaim_account_destroy(GaimAccount *account)
 	g_free(account);
 }
 
-GaimConnection *
+void
 gaim_account_register(GaimAccount *account)
 {
-	GaimConnection *gc;
+	g_return_if_fail(account != NULL);
 
-	g_return_val_if_fail(account != NULL, NULL);
+	gaim_debug_info("account", "Registering account %s\n",
+					gaim_account_get_username(account));
 
-	if (gaim_account_get_connection(account) != NULL)
-		return NULL;
-
-	gc = gaim_connection_new(account);
-
-	gaim_debug_info("account", "Registering account %p. gc = %p\n",
-					account, gc);
-
-	gaim_connection_register(gc);
-
-	return gc;
+	gaim_connection_new(account, TRUE, NULL);
 }
 
-GaimConnection *
+static void
+request_password_ok_cb(GaimAccount *account, const char *entry)
+{
+	if (!entry || !*entry)
+	{
+		gaim_notify_error(account, NULL, _("Password is required to sign on."), NULL);
+		return;
+	}
+
+	if (gaim_account_get_remember_password(account))
+		gaim_account_set_password(account, entry);
+
+	gaim_connection_new(account, FALSE, entry);
+}
+
+static void
+request_password(GaimAccount *account)
+{
+	gchar *primary;
+	gchar *escaped;
+	const gchar *username;
+
+	username = gaim_account_get_username(account);
+	escaped = g_markup_escape_text(username, strlen(username));
+	primary = g_strdup_printf(_("Enter password for %s (%s)"), escaped,
+								  gaim_account_get_protocol_name(account));
+	gaim_request_input(account, _("Enter Password"), primary, NULL, NULL,
+					   FALSE, TRUE, NULL,
+					   _("OK"), G_CALLBACK(request_password_ok_cb),
+					   _("Cancel"), NULL, account);
+	g_free(primary);
+	g_free(escaped);
+}
+
+void
 gaim_account_connect(GaimAccount *account)
 {
-	GaimConnection *gc;
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info;
+	const char *password;
 
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_if_fail(account != NULL);
 
-	if (gaim_account_get_connection(account) != NULL)
-		return NULL;
+	gaim_debug_info("account", "Connecting to account %s\n",
+					gaim_account_get_username(account));
 
-	gc = gaim_connection_new(account);
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	if (prpl == NULL)
+	{
+		gchar *message;
 
-	gaim_debug_info("account", "Connecting to account %p. gc = %p\n",
-					account, gc);
+		message = g_strdup_printf(_("Missing protocol plugin for %s"),
+			gaim_account_get_username(account));
+		gaim_notify_error(NULL, _("Connection Error"), message, NULL);
+		g_free(message);
+		return;
+	}
 
-	gaim_connection_connect(gc);
-
-	return gc;
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	password = gaim_account_get_password(account);
+	if ((password == NULL) &&
+		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+		request_password(account);
+	else
+		gaim_connection_new(account, FALSE, password);
 }
 
 void
@@ -940,9 +979,7 @@ gaim_account_set_username(GaimAccount *account, const char *username)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->username != NULL)
-		g_free(account->username);
-
+	g_free(account->username);
 	account->username = (username == NULL ? NULL : g_strdup(username));
 
 	schedule_accounts_save();
@@ -953,8 +990,11 @@ gaim_account_set_password(GaimAccount *account, const char *password)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->password != NULL)
-		g_free(account->password);
+	g_free(account->password);
+	account->password = NULL;
+
+	if (!gaim_account_get_remember_password(account))
+		return;
 
 	account->password = (password == NULL ? NULL : g_strdup(password));
 
@@ -966,9 +1006,7 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->alias != NULL)
-		g_free(account->alias);
-
+	g_free(account->alias);
 	account->alias = (alias == NULL ? NULL : g_strdup(alias));
 
 	schedule_accounts_save();
@@ -979,9 +1017,7 @@ gaim_account_set_user_info(GaimAccount *account, const char *user_info)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->user_info != NULL)
-		g_free(account->user_info);
-
+	g_free(account->user_info);
 	account->user_info = (user_info == NULL ? NULL : g_strdup(user_info));
 
 	schedule_accounts_save();
@@ -992,11 +1028,9 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 {
 	g_return_if_fail(account != NULL);
 
-	if (account->buddy_icon != NULL)
-		g_free(account->buddy_icon);
-
+	g_free(account->buddy_icon);
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
-	if (account->gc)
+	if (gaim_account_is_connected(account))
 		serv_set_buddyicon(account->gc, icon);
 
 	schedule_accounts_save();
@@ -1008,9 +1042,7 @@ gaim_account_set_protocol_id(GaimAccount *account, const char *protocol_id)
 	g_return_if_fail(account     != NULL);
 	g_return_if_fail(protocol_id != NULL);
 
-	if (account->protocol_id != NULL)
-		g_free(account->protocol_id);
-
+	g_free(account->protocol_id);
 	account->protocol_id = g_strdup(protocol_id);
 
 	schedule_accounts_save();

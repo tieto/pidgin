@@ -1537,7 +1537,8 @@ silc_disconnected(SilcClient client, SilcClientConnection conn,
 	if (!sg->detaching)
 		gaim_connection_error(gc, _("Disconnected by server"));
 	else
-		gaim_connection_destroy(gc);
+		/* TODO: Does this work correctly? Maybe we need to set wants_to_die? */
+		gaim_account_disconnect(gaim_connection_get_account(gc));
 }
 
 

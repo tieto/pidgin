@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
+#include "account.h"
 #include "blist.h"
 #include "connection.h"
 #include "debug.h"
@@ -40,21 +41,73 @@ static GaimConnectionUiOps *connection_ui_ops = NULL;
 
 static int connections_handle;
 
-GaimConnection *
-gaim_connection_new(GaimAccount *account)
+void
+gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 {
 	GaimConnection *gc;
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info;
 
-	g_return_val_if_fail(account != NULL, NULL);
+	g_return_if_fail(account != NULL);
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+
+	if (prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	else {
+		gchar *message;
+
+		message = g_strdup_printf(_("Missing protocol plugin for %s"),
+			gaim_account_get_username(account));
+		gaim_notify_error(NULL, regist ? _("Registration Error") :
+						  _("Connection Error"), message, NULL);
+		g_free(message);
+		return;
+	}
+
+	if (regist)
+	{
+		if (prpl_info->register_user == NULL)
+			return;
+	}
+	else
+	{
+		if ((password == NULL) &&
+			!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+		{
+			gaim_debug_error("connection", "Can not connect to account %s without "
+							 "a password.\n", gaim_account_get_username(account));
+			return;
+		}
+	}
 
 	gc = g_new0(GaimConnection, 1);
-
-	gc->prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-
+	gc->prpl = prpl;
+	gc->password = g_strdup(password);
 	gaim_connection_set_account(gc, account);
+	gaim_connection_set_state(gc, GAIM_CONNECTING);
+	connections = g_list_append(connections, gc);
 	gaim_account_set_connection(account, gc);
 
-	return gc;
+	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
+
+	if (regist)
+	{
+		gaim_debug_info("connection", "Registering.  gc = %p\n", gc);
+
+		/* set this so we don't auto-reconnect after registering */
+		gc->wants_to_die = TRUE;
+
+		prpl_info->register_user(account);
+	}
+	else
+	{
+		gaim_debug_info("connection", "Connecting. gc = %p\n", gc);
+
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-connecting", account);
+		prpl_info->login(account, gaim_account_get_active_status(account));
+	}
 }
 
 void
@@ -75,6 +128,9 @@ gaim_connection_destroy(GaimConnection *gc)
 	account = gaim_connection_get_account(gc);
 	gaim_account_set_connection(account, NULL);
 
+	if (gc->password != NULL)
+		g_free(gc->password);
+
 	if (gc->display_name != NULL)
 		g_free(gc->display_name);
 
@@ -82,126 +138,6 @@ gaim_connection_destroy(GaimConnection *gc)
 		gaim_timeout_remove(gc->disconnect_timeout);
 
 	g_free(gc);
-}
-
-static void
-request_pass_ok_cb(GaimAccount *account, const char *entry)
-{
-	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
-
-	gaim_account_connect(account);
-}
-
-void
-gaim_connection_register(GaimConnection *gc)
-{
-	GaimAccount *account;
-	GaimConnectionUiOps *ops;
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	g_return_if_fail(gc != NULL);
-
-	gaim_debug_info("connection", "Registering.  gc = %p\n", gc);
-
-	ops = gaim_connections_get_ui_ops();
-
-	if (gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-	else
-	{
-		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
-			gaim_account_get_username(gaim_connection_get_account(gc)));
-
-		gaim_debug_error("connection", "Could not get prpl info for %p\n", gc);
-		gaim_notify_error(NULL, _("Registration Error"),
-				  message, NULL);
-		g_free(message);
-		return;
-	}
-
-	if (prpl_info->register_user == NULL)
-		return;
-
-	account = gaim_connection_get_account(gc);
-
-	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
-		return;
-
-	gaim_connection_set_state(gc, GAIM_CONNECTING);
-
-	connections = g_list_append(connections, gc);
-
-	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
-
-	/* set this so we don't auto-reconnect after registering */
-	gc->wants_to_die = TRUE;
-
-	gaim_debug_info("connection", "Calling register_user\n");
-
-	prpl_info->register_user(account);
-}
-
-
-void
-gaim_connection_connect(GaimConnection *gc)
-{
-	GaimAccount *account;
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimStatus *status;
-
-	g_return_if_fail(gc != NULL);
-
-	gaim_debug_info("connection", "Connecting. gc = %p\n", gc);
-
-	if (gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-	else {
-		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
-			gaim_account_get_username(gaim_connection_get_account(gc)));
-
-		gaim_debug_error("connection", "Could not get prpl info for %p\n", gc);
-		gaim_notify_error(NULL, _("Connection Error"), message, NULL);
-		g_free(message);
-		return;
-	}
-
-	account = gaim_connection_get_account(gc);
-
-	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
-		return;
-
-	if (!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
-			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
-			gaim_account_get_password(account) == NULL) {
-		gchar *primary;
-		gchar *escaped;
-		const gchar *username = gaim_account_get_username(account);
-
-		gaim_debug_info("connection", "Requesting password\n");
-		gaim_connection_destroy(gc);
-		escaped = g_markup_escape_text(username, strlen(username));
-		primary = g_strdup_printf(_("Enter password for %s (%s)"), escaped,
-								  gaim_account_get_protocol_name(account));
-		gaim_request_input(gc, _("Enter Password"), primary, NULL, NULL,
-						   FALSE, TRUE, NULL,
-						   _("OK"), G_CALLBACK(request_pass_ok_cb),
-						   _("Cancel"), NULL, account);
-		g_free(primary);
-		g_free(escaped);
-
-		return;
-	}
-
-	gaim_connection_set_state(gc, GAIM_CONNECTING);
-
-	connections = g_list_append(connections, gc);
-
-	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
-
-	gaim_debug_info("connection", "Calling serv_login\n");
-
-	status = gaim_account_get_active_status(account);
-	serv_login(account, status);
 }
 
 void
@@ -255,9 +191,6 @@ gaim_connection_disconnect(GaimConnection *gc)
 		gaim_request_close_with_handle(gc);
 		gaim_notify_close_with_handle(gc);
 	}
-
-	if (!gaim_account_get_remember_password(account))
-		gaim_account_set_password(account, NULL);
 
 	gaim_connection_destroy(gc);
 }
@@ -428,6 +361,14 @@ gaim_connection_get_account(const GaimConnection *gc)
 	g_return_val_if_fail(gc != NULL, NULL);
 
 	return gc->account;
+}
+
+const char *
+gaim_connection_get_password(const GaimConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, NULL);
+
+	return gc->password;
 }
 
 const char *

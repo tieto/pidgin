@@ -74,7 +74,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		response = g_string_append(response, js->user->node);
 		response = g_string_append_len(response, "\0", 1);
 		response = g_string_append(response,
-				gaim_account_get_password(js->gc->account));
+				gaim_connection_get_password(js->gc));
 
 		enc_out = gaim_base64_encode(response->str, response->len);
 
@@ -96,7 +96,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		x = xmlnode_new_child(query, "resource");
 		xmlnode_insert_data(x, js->user->resource, -1);
 		x = xmlnode_new_child(query, "password");
-		xmlnode_insert_data(x, gaim_account_get_password(js->gc->account), -1);
+		xmlnode_insert_data(x, gaim_connection_get_password(js->gc), -1);
 		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 		jabber_iq_send(iq);
 	}
@@ -201,7 +201,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	JabberIq *iq;
 	xmlnode *query, *x;
 	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *pw = gaim_account_get_password(js->gc->account);
+	const char *pw = gaim_connection_get_password(js->gc);
 
 	if(!type) {
 		gaim_connection_error(js->gc, _("Invalid response from server."));
@@ -422,12 +422,12 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 			a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
 			auth_resp = generate_response_value(js->user,
-					gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
+					gaim_connection_get_password(js->gc), nonce, cnonce, a2, realm);
 			g_free(a2);
 
 			a2 = g_strdup_printf(":xmpp/%s", realm);
 			js->expected_rspauth = generate_response_value(js->user,
-					gaim_account_get_password(js->gc->account), nonce, cnonce, a2, realm);
+					gaim_connection_get_password(js->gc), nonce, cnonce, a2, realm);
 			g_free(a2);
 
 

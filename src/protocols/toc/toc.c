@@ -602,9 +602,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				   "Client sends TOC \"toc_signon\" message\n");
 		/* i hate icq. */
 		if (username[0] >= '0' && username[0] <= '9')
-			password = g_strndup(gaim_account_get_password(account), 8);
+			password = g_strndup(gaim_connection_get_password(connection), 8);
 		else
-			password = g_strdup(gaim_account_get_password(account));
+			password = g_strdup(gaim_connection_get_password(connection));
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
 			   AUTH_HOST, AUTH_PORT, gaim_normalize(account, username),
 			   roast_password(password), LANGUAGE, REVISION);
@@ -684,7 +684,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
 				   AUTH_HOST, AUTH_PORT,
 				   gaim_normalize(account, gaim_account_get_username(account)),
-				   roast_password(gaim_account_get_password(account)),
+				   roast_password(gaim_connection_get_password(connection)),
 				   LANGUAGE, REVISION);
 			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
 				gaim_connection_error(gc, _("Disconnected."));
