@@ -2479,9 +2479,22 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 
 			if (!got_tag) {
-				ws [wpos] = 0;
-				strcat (ws, tag);
-				wpos = strlen (ws);
+				char *d;
+				tag [tpos] = 0;
+				d = tag;
+				while (*d) {
+					if ((smilelen = gtk_imhtml_is_smiley (imhtml, d)) != 0) {
+						ws [wpos] = 0;
+						wpos = 0;
+						NEW_BIT (NEW_TEXT_BIT);
+						g_snprintf (ws, smilelen + 1, "%s", d);
+						NEW_BIT (NEW_SMILEY_BIT);
+						d += smilelen;
+					} else {
+						ws [wpos++] = *d++;
+					}
+				}
+				tpos = 0;
 			} else {
 				wpos = 0;
 			}
