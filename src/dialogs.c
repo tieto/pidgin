@@ -1026,13 +1026,15 @@ static void pounce_choose(GtkWidget *opt, struct addbp *b)
 	b->user = u;
 }
 
-static GtkWidget *pounce_user_menu(struct addbp *b)
+static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 {
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
 	GSList *u = aim_users;
 	struct aim_user *a;
+	int count = 0;
+	int place = 0;
 
 	optmenu = gtk_option_menu_new();
 
@@ -1051,13 +1053,19 @@ static GtkWidget *pounce_user_menu(struct addbp *b)
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pounce_choose), b);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
+
+		if (a->gc == gc) {
+			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
+			place = count;
+		}
+
+		count++;
+			
 		u = u->next;
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
-				    g_slist_index(aim_users,
-						 ((struct gaim_connection *)connections->data)->user));
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), place);
 	b->user = ((struct gaim_connection *)connections->data)->user;
 
 	b->menu = optmenu;
@@ -1066,7 +1074,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b)
 }
 
 
-void show_new_bp(char *name)
+void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 {
 	GtkWidget *label;
 	GtkWidget *bbox;
@@ -1109,7 +1117,7 @@ void show_new_bp(char *name)
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(label);
 
-	optmenu = pounce_user_menu(b);
+	optmenu = pounce_user_menu(b, gc);
 	gtk_table_attach(GTK_TABLE(table), optmenu, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(optmenu);
 
@@ -1144,10 +1152,14 @@ void show_new_bp(char *name)
 	gtk_widget_show(b->p_signon);
 
 	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
+	if (away)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unaway), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unaway, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_unaway);
 
 	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
+	if (idle)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unidle), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_unidle);
 
