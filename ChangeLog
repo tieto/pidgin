@@ -17,6 +17,7 @@ version 0.11.0:
 	* Spell checker now uses gtkspell
 	* Auto-Away (thanks, yet again, to bmiller ;)
 	* More buddy pounce options
+	* Various GUI improvements
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed

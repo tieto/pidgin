@@ -159,7 +159,7 @@ Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/chatsession.P .deps/contacts.P .deps/cyrillic.P \
 .deps/filesession.P .deps/gaim_icq.P .deps/icqbyteorder.P \
