@@ -187,7 +187,11 @@ static void
 reconnected(GaimConnection *gc, void *m) {
 	GaimAccount *account;
 
-	g_return_if_fail(gc != NULL && accountReconnecting != NULL);
+	g_return_if_fail(gc != NULL);
+
+	if (accountReconnecting == NULL)
+		return;
+
 	account = gaim_connection_get_account(gc);
 
 	accountReconnecting = g_slist_remove(accountReconnecting, account);

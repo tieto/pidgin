@@ -173,8 +173,6 @@ docklet_x11_destroy()
 		g_object_unref(G_OBJECT(blank_icon));
 	blank_icon = NULL;
 
-	if (image)
-		gtk_widget_destroy(image);
 	image = NULL;
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");

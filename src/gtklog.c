@@ -105,6 +105,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 					   0, title,
 					   1, log, -1);
 		}
+		g_free(read);
 	}
 
 
@@ -189,12 +190,15 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	title = title_utf8;
 	gtk_window_set_title(GTK_WINDOW(viewer->window), title);
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
-       	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
+	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
 
 	if (viewer->search)
+	{
+		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
 		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
+	}
 
 	g_free(read);
 	g_free(title);
@@ -225,6 +229,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 		/* do utf8 conversions */
 		utf8_tmp = gaim_utf8_try_convert(month);
 		strncpy(month, utf8_tmp, sizeof(month));
+		g_free(utf8_tmp);
 		utf8_tmp = gaim_utf8_try_convert(title);
 		strncpy(title, utf8_tmp, sizeof(title));
 		g_free(utf8_tmp);

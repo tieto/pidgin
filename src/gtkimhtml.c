@@ -946,6 +946,8 @@ gtk_imhtml_finalize (GObject *object)
 	g_slist_free(imhtml->im_images);
 	if (imhtml->protocol_name)
 		g_free(imhtml->protocol_name);
+	if (imhtml->search_string)
+		g_free(imhtml->search_string);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -3080,6 +3082,7 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter,
 						 gtk_text_buffer_get_mark(imhtml->text_buffer, "search"));
 	}
+	g_free(imhtml->search_string);
 	imhtml->search_string = g_strdup(text);
 
 	if (gtk_source_iter_forward_search(&iter, imhtml->search_string,

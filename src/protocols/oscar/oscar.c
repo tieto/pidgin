@@ -67,8 +67,6 @@
 
 #define FAIM_DEBUG_LEVEL 0
 
-static GaimPlugin *my_protocol = NULL;
-
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 
@@ -7727,13 +7725,6 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	/* We don't add these to protocol_options because they're ICQ specific */
-	option = gaim_account_option_bool_new(_("Authorization"), "authorization", OSCAR_DEFAULT_AUTHORIZATION);
-	option = gaim_account_option_bool_new(_("Hide IP"), "hide_ip", OSCAR_DEFAULT_HIDE_IP);
-	option = gaim_account_option_bool_new(_("Web presence"), "web_aware", OSCAR_DEFAULT_WEB_AWARE);
-
-	my_protocol = plugin;
 
 	gaim_prefs_add_none("/plugins/prpl/oscar");
 	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);

@@ -480,8 +480,9 @@ gaim_gtk_status_window_hide(void)
 static gboolean
 status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	StatusWindow *dialog = user_data;
+	StatusEditor *dialog = user_data;
 
+	g_free(dialog->original_title);
 	g_free(dialog);
 
 	return FALSE;
@@ -490,10 +491,11 @@ status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 static void
 status_editor_cancel_cb(GtkButton *button, gpointer user_data)
 {
-	StatusWindow *dialog = user_data;
+	StatusEditor *dialog = user_data;
 
 	gtk_widget_destroy(dialog->window);
 
+	g_free(dialog->original_title);
 	g_free(dialog);
 }
 
@@ -538,8 +540,6 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 		{
 			gtk_list_store_remove(status_window->model, &iter);
 		}
-
-		g_free(dialog->original_title);
 	}
 
 	status = gaim_savedstatus_new(title, type);
@@ -549,6 +549,7 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 	g_free(unformatted);
 
 	gtk_widget_destroy(dialog->window);
+	g_free(dialog->original_title);
 	g_free(dialog);
 
 	add_status_to_saved_status_list(status_window->model, status);
@@ -782,7 +783,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	if (status != NULL)
+	if ((status != NULL) && (gaim_savedstatus_get_message(status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 							   gaim_savedstatus_get_message(status), 0);
 

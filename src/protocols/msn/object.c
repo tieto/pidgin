@@ -110,6 +110,9 @@ msn_object_destroy(MsnObject *obj)
 	if (obj->location != NULL)
 		g_free(obj->location);
 
+	if (obj->real_location != NULL)
+		g_free(obj->real_location);
+
 	if (obj->friendly != NULL)
 		g_free(obj->friendly);
 

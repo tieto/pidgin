@@ -54,6 +54,7 @@
 #include "gtkprivacy.h"
 #include "gtkrequest.h"
 #include "gtkroomlist.h"
+#include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
@@ -258,6 +259,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_prefs_init();
 	gaim_gtk_account_init();
 	gaim_gtk_blist_init();
+	gaim_gtk_status_init();
 	gaim_gtk_conversations_init();
 	gaim_gtk_pounces_init();
 	gaim_gtk_privacy_init();
@@ -281,6 +283,12 @@ gaim_gtk_quit(void)
 
 	/* Save the plugins we have loaded for next time. */
 	gaim_gtk_plugins_save();
+
+	/* Uninit */
+	gaim_gtk_conversations_uninit();
+	gaim_gtk_status_uninit();
+	gaim_gtk_blist_uninit();
+	gaim_gtk_account_uninit();
 
 	/* and end it all... */
 	gtk_main_quit();
