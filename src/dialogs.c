@@ -832,6 +832,11 @@ static GList *groups_tree()
 	return tmp;
 }
 
+static void free_dialog(GtkWidget *w, struct addbuddy *a)
+{
+	g_free(a);
+}
+
 
 void show_add_group()
 {
@@ -879,6 +884,8 @@ void show_add_group()
         /* Handle closes right */
         gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+	gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
+			   GTK_SIGNAL_FUNC(free_dialog), a);
         gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
         gtk_signal_connect(GTK_OBJECT(add), "clicked",
@@ -963,6 +970,8 @@ void show_add_buddy(char *buddy, char *group)
         /* Handle closes right */
         gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+	gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
+			   GTK_SIGNAL_FUNC(free_dialog), a);
         gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
         gtk_signal_connect(GTK_OBJECT(add), "clicked",
