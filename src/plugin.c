@@ -820,7 +820,6 @@ gaim_plugins_destroy_all(void)
 #endif /* GAIM_PLUGINS */
 }
 
-/* TODO: Change this to accept a GList* */
 void
 gaim_plugins_load_saved(const char *key)
 {
@@ -966,6 +965,20 @@ gaim_plugins_probe(const char *ext)
 
 	if (probe_cb != NULL)
 		probe_cb(probe_cb_data);
+
+#else /* GAIM_PLUGINS */
+	/* We just need to populate the protocol_plugins list with all the PRPLs */
+	GList *cur;
+	GaimPlugin *plugin;
+
+	for (cur = plugins; cur != NULL; cur = cur->next)
+	{
+		plugin = cur->data;
+		if (plugin->info->type == GAIM_PLUGIN_PROTOCL)
+			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
+													(GCompareFunc)compare_prpl);
+	}
+
 
 #endif /* GAIM_PLUGINS */
 }
