@@ -1805,7 +1805,7 @@ gaim_statuses_read_parse_substatus(xmlnode *substatus)
 {
 	GaimStatusSavedSub *ret;
 	xmlnode *node;
-	const char *tmp;
+	char *data = NULL;
 
 	ret = g_new0(GaimStatusSavedSub, 1);
 
@@ -1813,12 +1813,13 @@ gaim_statuses_read_parse_substatus(xmlnode *substatus)
 	node = xmlnode_get_child(substatus, "account");
 	if (node != NULL)
 	{
-		const char *acct_name;
+		char *acct_name;
 		const char *protocol;
 		acct_name = xmlnode_get_data(node);
 		protocol = xmlnode_get_attrib(node, "protocol");
 		if ((acct_name != NULL) && (protocol != NULL))
 			ret->account = gaim_accounts_find(acct_name, protocol);
+		g_free(acct_name);
 	}
 
 	if (ret->account == NULL)
@@ -1830,17 +1831,20 @@ gaim_statuses_read_parse_substatus(xmlnode *substatus)
 	/* Read the state */
 	node = xmlnode_get_child(substatus, "state");
 	if (node != NULL)
-		tmp = xmlnode_get_data(node);
-	if (tmp != NULL)
+		data = xmlnode_get_data(node);
+	if (data != NULL) {
 		ret->type = gaim_status_type_find_with_id(ret->account->status_types,
-												  tmp);
+												  data);
+		g_free(data);
+		data = NULL;
+	}
 
 	/* Read the message */
 	node = xmlnode_get_child(substatus, "message");
 	if (node != NULL)
-		tmp = xmlnode_get_data(node);
-	if (tmp != NULL)
-		ret->message = g_strdup(tmp);
+		data = xmlnode_get_data(node);
+	if (data != NULL)
+		ret->message = data;
 
 	return ret;
 }
@@ -1874,38 +1878,42 @@ gaim_statuses_read_parse_status(xmlnode *status)
 {
 	GaimStatusSaved *ret;
 	xmlnode *node;
-	const char *tmp;
+	const char *attrib;
+	char *data = NULL;
 	int i;
 
 	ret = g_new0(GaimStatusSaved, 1);
 
 	/* Read the title */
-	tmp = xmlnode_get_attrib(status, "name");
-	if (tmp == NULL)
-		tmp = "No Title";
+	attrib = xmlnode_get_attrib(status, "name");
+	if (attrib == NULL)
+		attrib = "No Title";
 	/* Ensure the title is unique */
-	ret->title = g_strdup(tmp);
+	ret->title = g_strdup(attrib);
 	i = 2;
 	while (gaim_statuses_find_saved(ret->title) != NULL)
 	{
 		g_free(ret->title);
-		ret->title = g_strdup_printf("%s %d", tmp, i);
+		ret->title = g_strdup_printf("%s %d", attrib, i);
 		i++;
 	}
 
 	/* Read the primitive status type */
 	node = xmlnode_get_child(status, "state");
 	if (node != NULL)
-		tmp = xmlnode_get_data(node);
-	if (tmp != NULL)
-		ret->type = gaim_primitive_get_type(tmp);
+		data = xmlnode_get_data(node);
+	if (data != NULL) {
+		ret->type = gaim_primitive_get_type(data);
+		g_free(data);
+		data = NULL;
+	}
 
 	/* Read the message */
 	node = xmlnode_get_child(status, "message");
 	if (node != NULL)
-		tmp = xmlnode_get_data(node);
-	if (tmp != NULL)
-		ret->message = g_strdup(tmp);
+		data = xmlnode_get_data(node);
+	if (data != NULL)
+		ret->message = data;
 
 	/* Read substatuses */
 	for (node = xmlnode_get_child(status, "status"); node != NULL;

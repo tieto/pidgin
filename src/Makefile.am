@@ -177,7 +177,6 @@ gaim_SOURCES = \
 	session.c
 
 gaim_headers = \
-	$(gaim_coreheaders) \
 	gaim.h \
 	gtkaccount.h \
 	gtkcellrendererprogress.h \
