@@ -24,6 +24,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "core.h"
 #include "debug.h"
 #include "event.h"
 #include "plugin.h"
