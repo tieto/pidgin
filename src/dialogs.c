@@ -558,7 +558,7 @@ void show_im_dialog()
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	label = gtk_label_new(_("Please enter the screenname of the person you would like to IM.\n"));
+	label = gtk_label_new(_("Please enter the screen name of the person you would like to IM.\n"));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
@@ -570,7 +570,7 @@ void show_im_dialog()
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
 	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screen Name:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
@@ -635,7 +635,7 @@ void show_info_dialog()
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	label = gtk_label_new(_("Please enter the screenname of the person whose info you would like to view.\n"));
+	label = gtk_label_new(_("Please enter the screen name of the person whose info you would like to view.\n"));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
@@ -647,7 +647,7 @@ void show_info_dialog()
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
 	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screen Name:"));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 

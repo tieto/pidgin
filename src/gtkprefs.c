@@ -1042,7 +1042,7 @@ GtkWidget *chat_page() {
 			"/core/conversations/chat/show_join", vbox);
 	gaim_gtk_prefs_checkbox(_("_Show people leaving in window"),
 			"/core/conversations/chat/show_leave", vbox);
-	gaim_gtk_prefs_checkbox(_("Co_lorize screennames"),
+	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
 	gtk_widget_show_all(ret);

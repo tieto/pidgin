@@ -742,11 +742,11 @@ msn_add_permit(GaimConnection *gc, const char *who)
 
 	if (!strchr(who, '@')) {
 		g_snprintf(buf, sizeof(buf),
-			   _("An MSN screenname must be in the form \"user@server.com\". "
+			   _("An MSN screen name must be in the form \"user@server.com\". "
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your allow list."), who);
 
-		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
+		gaim_notify_error(gc, NULL, _("Invalid MSN screen name"), buf);
 		gaim_privacy_permit_remove(gc->account, who, TRUE);
 
 		return;
@@ -782,11 +782,11 @@ msn_add_deny(GaimConnection *gc, const char *who)
 
 	if (!strchr(who, '@')) {
 		g_snprintf(buf, sizeof(buf),
-			   _("An MSN screenname must be in the form \"user@server.com\". "
+			   _("An MSN screen name must be in the form \"user@server.com\". "
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your block list."), who);
 
-		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
+		gaim_notify_error(gc, NULL, _("Invalid MSN screen name"), buf);
 
 		gaim_privacy_deny_remove(gc->account, who, TRUE);
 

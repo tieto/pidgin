@@ -3745,7 +3745,7 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->chpass = FALSE;
 	}
 	if (od->setnick) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "formatting screenname\n");
+		gaim_debug(GAIM_DEBUG_INFO, "oscar", "formatting screen name\n");
 		aim_admin_setnick(sess, fr->conn, od->newsn);
 		g_free(od->newsn);
 		od->newsn = NULL;
@@ -4137,7 +4137,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
-	secondary = g_strdup_printf(_("The following screennames are associated with %s"), email);
+	secondary = g_strdup_printf(_("The following screen names are associated with %s"), email);
 	text = g_string_new("");
 	for (i = 0; i < num; i++)
 		g_string_append_printf(text, "%s<br>", &SNs[i * (MAXSNLEN + 1)]);
@@ -6289,13 +6289,13 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 		}
 	} else {
 		gaim_notify_error(gc, NULL, _("The new formatting is invalid."),
-						  _("Screenname formatting can change only capitalization and whitespace."));
+						  _("Screen name formatting can change only capitalization and whitespace."));
 	}
 }
 
 static void oscar_show_format_screenname(GaimConnection *gc)
 {
-	gaim_request_input(gc, NULL, _("New screenname formatting:"), NULL,
+	gaim_request_input(gc, NULL, _("New screen name formatting:"), NULL,
 					   gaim_connection_get_display_name(gc), FALSE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_format_screenname),
 					   _("Cancel"), NULL,
@@ -6537,7 +6537,7 @@ static GList *oscar_actions(GaimConnection *gc)
 		m = g_list_append(m, NULL);
 
 		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Format Screenname...");
+		pam->label = _("Format Screen Name...");
 		pam->callback = oscar_show_format_screenname;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
