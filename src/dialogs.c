@@ -3053,7 +3053,17 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 		default: smiley_text = g_strndup(":-)", strlen(":-)")); break;
 	}
 	
-	surround(c->entry, smiley_text, "");
+	/* surround(c->entry, smiley_text, ""); */
+
+	if (GTK_EDITABLE(c->entry)->has_selection) {
+		int finish = GTK_EDITABLE(c->entry)->selection_end_pos;
+		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+					 smiley_text, strlen(smiley_text), &finish);
+	} else {
+		int pos = GTK_EDITABLE(c->entry)->current_pos;
+		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+					 smiley_text, strlen(smiley_text), &pos);
+	}
 
 	g_free(smiley_text);
 	
