@@ -51,19 +51,6 @@ faim_export char *aim_ssi_getparentgroup(aim_session_t *sess, aim_conn_t *conn, 
 }
 
 /*
- * Returns the permit/deny byte
- * This should be removed and the byte should be passed directly to
- * the handler for x0006, along with all the buddies and other info.
- */
-faim_export int aim_ssi_getpermdeny(aim_tlvlist_t *tlvlist)
-{
-	aim_tlv_t *tlv;
-	if ((tlv = aim_gettlv(tlvlist, 0x00ca, 1)) && tlv->value)
-		return tlv->value[0];
-	return 0;
-}
-
-/*
  * Returns a pointer to an item with the given name and type, or NULL if one does not exist.
  */
 static struct aim_ssi_item *get_ssi_item(struct aim_ssi_item *items, char *name, fu16_t type)
@@ -73,12 +60,50 @@ static struct aim_ssi_item *get_ssi_item(struct aim_ssi_item *items, char *name,
 		for (cur=items; cur; cur=cur->next)
 			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, name)))
 				return cur;
-	 } else { /* return the master group */
+	 } else { /* return the given type with gid 0 */
 		for (cur=items; cur; cur=cur->next)
 			if ((cur->type == type) && (cur->gid == 0x0000))
 				return cur;
 	}
 	return NULL;
+}
+
+/*
+ * Returns the permit/deny byte
+ */
+faim_export int aim_ssi_getpermdeny(aim_session_t *sess, aim_conn_t *conn)
+{
+	struct aim_ssi_item *cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PDINFO);
+	if (cur) {
+		aim_tlvlist_t *tlvlist = cur->data;
+		if (tlvlist) {
+			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x00ca, 1);
+			if (tlv && tlv->value)
+				return aimutil_get8(tlv->value);
+		}
+	}
+
+	return 0;
+}
+
+/*
+ * Returns the presence flag
+ * I'm pretty sure this is a bitmask, but really have no evidence for that.
+ * 0x00000400 - Show up as visible to others
+ */
+faim_export fu32_t aim_ssi_getpresence(aim_session_t *sess, aim_conn_t *conn)
+{
+	struct aim_ssi_item *cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
+	if (cur) {
+		aim_tlvlist_t *tlvlist = cur->data;
+		if (tlvlist) {
+			aim_tlv_t *tlv = aim_gettlv(tlvlist, 0x00c9, 1);
+			if (tlv && tlv->length)
+				return aimutil_get32(tlv->value);
+		}
+	}
+
+	return 0xFFFFFFFF;
 }
 
 /*
@@ -809,7 +834,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 		return -EINVAL;
 
 	/* Look up the permit/deny settings item */
-	for (cur=sess->ssi.items; (cur && (cur->type!=AIM_SSI_TYPE_PDINFO)); cur=cur->next);
+	cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PDINFO);
 
 	if (cur) {
 		/* The permit/deny item exists */
@@ -845,6 +870,70 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 		cur->data = NULL;
 		aim_addtlvtochain8((aim_tlvlist_t**)&cur->data, 0x00ca, permdeny);
 		aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00cb, 0xffffffff);
+
+		/* Add the item to our list */
+		cur->next = sess->ssi.items;
+		sess->ssi.items = cur;
+
+		/* Send the add item SNAC */
+		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_ADD);
+	}
+
+	/* Begin sending SSI SNACs */
+	aim_ssi_dispatch(sess, conn);
+
+	return 0;
+}
+
+/*
+ * Stores your setting for whether you should show up as idle or not.
+ * presence is a bitmask (at least, I think so...)
+ * 0x00000400 if you want others to see your idle time
+ */
+faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence) {
+	struct aim_ssi_item *cur, *tmp;
+	fu16_t j;
+	aim_tlv_t *tlv;
+
+	if (!sess || !conn)
+		return -EINVAL;
+
+	/* Look up the item */
+	cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
+
+	if (cur) {
+		/* The item exists */
+		if (cur->data && (tlv = aim_gettlv(cur->data, 0x00c9, 1))) {
+			/* Just change the value of the x00c9 TLV */
+			if (tlv->length != 4) {
+				tlv->length = 4;
+				free(tlv->value);
+				tlv->value = (fu8_t *)malloc(4*sizeof(fu8_t));
+			}
+			aimutil_put32(tlv->value, presence);
+		} else {
+			/* Need to add the x00c9 TLV to the TLV chain */
+			aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00c9, presence);
+		}
+
+		/* Send the mod item SNAC */
+		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_MOD);
+	} else {
+		/* Need to add the item */
+		if (!(cur = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item))))
+			return -ENOMEM;
+		cur->name = NULL;
+		cur->gid = 0x0000;
+		cur->bid = 0x007a; /* XXX - Is this number significant? */
+		do {
+			cur->bid += 0x0001;
+			for (tmp=sess->ssi.items, j=0; ((tmp) && (!j)); tmp=tmp->next)
+				if (tmp->bid == cur->bid)
+					j=1;
+		} while (j);
+		cur->type = AIM_SSI_TYPE_PRESENCEPREFS;
+		cur->data = NULL;
+		aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00c9, presence);
 
 		/* Add the item to our list */
 		cur->next = sess->ssi.items;

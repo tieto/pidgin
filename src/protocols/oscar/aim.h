@@ -1016,6 +1016,7 @@ struct aim_ssi_item {
 	struct aim_ssi_item *next;
 };
 
+/* These build the actual SNACs and queue them to be sent */
 faim_export int aim_ssi_reqrights(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t localstamp, fu16_t localrev);
 faim_export int aim_ssi_enable(aim_session_t *sess, aim_conn_t *conn);
@@ -1023,9 +1024,11 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess, aim_conn_t *conn, struct 
 faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
 
+/* These handle the local variables */
 faim_export int aim_ssi_inlist(aim_session_t *sess, aim_conn_t *conn, char *name, fu16_t type);
 faim_export char *aim_ssi_getparentgroup(aim_session_t *sess, aim_conn_t *conn, char *name);
-/* faim_export int aim_ssi_getpermdeny(aim_tlvlist_t *tlvlist); */
+faim_export int aim_ssi_getpermdeny(aim_session_t *sess, aim_conn_t *conn);
+faim_export fu32_t aim_ssi_getpresence(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
 faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
@@ -1037,6 +1040,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type);
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny);
+faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence);
 
 struct aim_icq_offlinemsg {
 	fu32_t sender;

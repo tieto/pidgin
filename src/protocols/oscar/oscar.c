@@ -2251,8 +2251,11 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
 
-	if (!odata->icq)
+	if (!odata->icq) {
+		debug_printf("ssi: requesting ssi list\n");
 		aim_ssi_reqrights(sess, fr->conn);
+		aim_ssi_reqdata(sess, fr->conn, sess->ssi.timestamp, sess->ssi.revision);
+	}
 
 	return 1;
 }
@@ -2781,9 +2784,6 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi rights: Max buddies = %d / Max groups = %d / Max permits = %d / Max denies = %d\n", maxbuddies, maxgroups, maxpermits, maxdenies);
 */
-	debug_printf("ssi: requesting ssi list\n");
-
-	aim_ssi_reqdata(sess, fr->conn, sess->ssi.timestamp, sess->ssi.revision);
 
 	return 1;
 }
@@ -2797,12 +2797,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: syncing local list and server list\n");
 
-	if (odata->icq) {
-		/* Delete the buddy list */
-		debug_printf("ssi: using ICQ, removing ssi data\n");
-		aim_ssi_deletelist(sess, fr->conn);
+	if (odata->icq)
 		return 1;
-	}
 
 	/* Activate SSI */
 	debug_printf("ssi: activating server-stored buddy list\n");
@@ -2862,12 +2858,16 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0004: /* Permit/deny setting */
 				if (curitem->data) {
 					fu8_t permdeny;
-					if ((permdeny = aim_ssi_getpermdeny(curitem->data)) && (permdeny != gc->permdeny)) {
+					if ((permdeny = aim_ssi_getpermdeny(sess, fr->conn)) && (permdeny != gc->permdeny)) {
 						debug_printf("ssi: changing permdeny from %d to %d\n", gc->permdeny, permdeny);
 						gc->permdeny = permdeny;
 						tmp++;
 					}
 				}
+				break;
+
+			case 0x0005: /* Presence setting */
+				/* We don't want to change Gaim's setting because it applies to all accounts */
 				break;
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
@@ -2940,6 +2940,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				free(sns);
 			}
 		}
+
+		/* Presence settings (idle time visibility) */
+		if ((tmp = aim_ssi_getpresence(sess, fr->conn)) != 0xFFFFFFFF)
+			if (report_idle && !(tmp & 0x400))
+				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
 	}
 
 	return 1;
