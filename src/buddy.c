@@ -77,6 +77,7 @@
 
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/tb_search.xpm"
+#include "pixmaps/join.xpm"
 
 static GtkTooltips *tips;
 static GtkWidget *editpane;
@@ -251,7 +252,7 @@ void update_button_pix()
 		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
 	}
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
-		adjust_pic(chatbutton, _("Chat"), (gchar **)tb_search_xpm);
+		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
 	        adjust_pic(infobutton, _("Info"), (gchar **)tb_search_xpm);
 	}
@@ -1776,7 +1777,7 @@ void show_buddy_list()
 
 	// gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm, GTK_SIGNAL_FUNC(add_buddy_callback));
-	gaim_new_item_with_pixmap(menu, _("Join A Chat"), add_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
+	gaim_new_item_with_pixmap(menu, _("Join A Chat"), pounce_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
         gaim_seperator(menu);
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
         gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,GTK_SIGNAL_FUNC(export_callback));

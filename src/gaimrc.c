@@ -677,13 +677,23 @@ void set_defaults()
                 OPT_GEN_SAVED_WINDOWS |
                 OPT_GEN_REMEMBER_PASS |
 		OPT_GEN_REGISTERED |
-		OPT_GEN_NEAR_APPLET; 
+		OPT_GEN_NEAR_APPLET |
+		OPT_GEN_CTL_SMILEYS |
+		OPT_GEN_CTL_CHARS; 
+
         display_options =
                 OPT_DISP_SHOW_IDLETIME |
                 OPT_DISP_SHOW_TIME |
                 OPT_DISP_SHOW_PIXMAPS |
                 OPT_DISP_SHOW_BUDDYTICKER |
-                OPT_DISP_SHOW_BUTTON_XPM;
+                OPT_DISP_SHOW_BUTTON_XPM |
+		OPT_DISP_SHOW_SMILEY |
+		OPT_DISP_COOL_LOOK |
+		OPT_DISP_CONV_SHOW_TEXT |
+		OPT_DISP_CHAT_SHOW_TEXT |
+		OPT_DISP_CONV_BIG_ENTRY |
+		OPT_DISP_CHAT_BIG_ENTRY;
+
 	font_options = 0; 
         sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
         report_idle = IDLE_GAIM;
