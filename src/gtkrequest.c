@@ -834,6 +834,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				field = fl->data;
 
+				if (!gaim_request_field_is_visible(field))
+					continue;
+
 				type = gaim_request_field_get_type(field);
 
 				if (type != GAIM_REQUEST_FIELD_BOOLEAN)
@@ -880,6 +883,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					widget = create_choice_field(field);
 				else if (type == GAIM_REQUEST_FIELD_LIST)
 					widget = create_list_field(field);
+				else
+					continue;
 
 				if (type == GAIM_REQUEST_FIELD_STRING &&
 					gaim_request_field_string_is_multiline(field))

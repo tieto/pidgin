@@ -254,6 +254,7 @@ gaim_request_field_new(const char *id, const char *text,
 	field->type = type;
 
 	gaim_request_field_set_label(field, text);
+	gaim_request_field_set_visible(field, TRUE);
 
 	return field;
 }
@@ -314,6 +315,14 @@ gaim_request_field_set_label(GaimRequestField *field, const char *label)
 	field->label = (label == NULL ? NULL : g_strdup(label));
 }
 
+void
+gaim_request_field_set_visible(GaimRequestField *field, gboolean visible)
+{
+	g_return_if_fail(field != NULL);
+
+	field->visible = visible;
+}
+
 GaimRequestFieldType
 gaim_request_field_get_type(const GaimRequestField *field)
 {
@@ -336,6 +345,14 @@ gaim_request_field_get_label(const GaimRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->label;
+}
+
+gboolean
+gaim_request_field_is_visible(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+
+	return field->visible;
 }
 
 GaimRequestField *

@@ -63,6 +63,8 @@ typedef struct
 	char *id;
 	char *label;
 
+	gboolean visible;
+
 	union
 	{
 		struct
@@ -355,6 +357,14 @@ void gaim_request_field_destroy(GaimRequestField *field);
 void gaim_request_field_set_label(GaimRequestField *field, const char *label);
 
 /**
+ * Sets whether or not a field is visible.
+ *
+ * @param field  The field.
+ * @param visible TRUE if visible, or FALSE if not.
+ */
+void gaim_request_field_set_visible(GaimRequestField *field, gboolean visible);
+
+/**
  * Returns the type of a field.
  *
  * @param field The field.
@@ -380,6 +390,15 @@ const char *gaim_request_field_get_id(const GaimRequestField *field);
  * @return The label text.
  */
 const char *gaim_request_field_get_label(const GaimRequestField *field);
+
+/**
+ * Returns whether or not a field is visible.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the field is visible. FALSE otherwise.
+ */
+gboolean gaim_request_field_is_visible(const GaimRequestField *field);
 
 /*@}*/
 
