@@ -60,12 +60,6 @@ proto_name(int proto)
 }
 
 static void
-__account_signed_on_cb(GaimConnection *gc, AccountsDialog *dialog)
-{
-	
-}
-
-static void
 __signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -81,10 +75,17 @@ __signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
 }
 
 static gint
-__window_destroy_cb(GtkWidget *w, GdkEvent *event, void *unused)
+__window_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsDialog *dialog)
 {
 	g_free(accounts_dialog);
 	accounts_dialog = NULL;
+
+	/* See if we're the main window here. */
+	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
+		mainwindow == NULL && gaim_connections_get_all() == NULL) {
+
+		do_quit();
+	}
 
 	return FALSE;
 }
@@ -143,7 +144,9 @@ __delete_account_cb(GtkWidget *w, AccountsDialog *dialog)
 static void
 __close_accounts_cb(GtkWidget *w, AccountsDialog *dialog)
 {
+	gtk_widget_destroy(dialog->window);
 
+	__window_destroy_cb(NULL, NULL, dialog);
 }
 
 static void
@@ -330,9 +333,10 @@ gaim_gtk_account_dialog_show(void)
 	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
 	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
 
-	win = dialog->window;
-
 	GAIM_DIALOG(win);
+
+	dialog->window = win;
+
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "accounts");
 	gtk_window_set_title(GTK_WINDOW(win), "Accounts");
