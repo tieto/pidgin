@@ -2220,12 +2220,12 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 		float factor;
 		int new_width = image->width, new_height = image->height;
 
-		if(image->width > width){
+		if(image->width > (width - 2)){
 			factor = (float)(width)/image->width;
 			new_width = width;
 			new_height = image->height * factor;
 		}
-		if(new_height > height){
+		if(new_height >= (height - 2)){
 			factor = (float)(height)/new_height;
 			new_height = height;
 			new_width = new_width * factor;
@@ -2414,7 +2414,7 @@ GtkIMHtmlScalable *gtk_imhtml_hr_new()
 
 void gtk_imhtml_hr_scale(GtkIMHtmlScalable *scale, int width, int height)
 {
-	gtk_widget_set_size_request(((GtkIMHtmlHr *)scale)->sep, width, 2);
+	gtk_widget_set_size_request(((GtkIMHtmlHr *)scale)->sep, width - 2, 2);
 }
 
 void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
