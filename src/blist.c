@@ -70,6 +70,12 @@ static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hb
 	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account && hb1->group == hb2->group);
 }
 
+static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gpointer data)
+{
+	/* XXX - We shouldn't call gtk functions directly */
+	/* gaim_gtk_blist_refresh(gaimbuddylist); */
+}
+
 /*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
@@ -85,6 +91,8 @@ struct gaim_buddy_list *gaim_blist_new()
 
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
+
+	gaim_prefs_connect_callback("/core/buddies/use_server_alias", blist_pref_cb, NULL);
 
 	return gbl;
 }

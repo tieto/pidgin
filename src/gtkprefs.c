@@ -185,26 +185,6 @@ dropdown_set(GObject *w, const char *key)
 		gaim_prefs_set_bool(key, FALSE);
 		gaim_prefs_set_bool(bool_key, TRUE);
 	}
-
-#if 0
-	} else if (option == (int*)&blist_options) {
-		gaim_gtk_blist_update_toolbar();
-	} else if (option == (int*)&im_options) { 
-		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
-			gaim_gtkconv_update_tabs();
-		else if (clear == (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM))
-			gaim_gtkconv_update_im_button_style();
-	} else if (option == (int*)&chat_options) {
-		if (clear == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB))
-			gaim_gtkconv_update_tabs();
-		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
-			gaim_gtkconv_update_chat_button_style();
-		//	} else if (option == (int*)&blist_options) {
-		//    set_blist_tab();
-	} else if (option == (int *)&conv_placement_option) {
-		gaim_conv_placement_set_active(conv_placement_option);
-	} 
-#endif
 }
 
 static GtkWidget *
@@ -371,23 +351,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 		}
 	}
 }
-
-static void proxy_print_option(GtkEntry *entry, int entrynum)
-{
-	if (entrynum == PROXYHOST)
-		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
-	else if (entrynum == PROXYPORT)
-		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
-	else if (entrynum == PROXYUSER)
-		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
-	else if (entrynum == PROXYPASS)
-		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
-
-	/* If the user specifies it, we want to save it. */
-	gaim_global_proxy_set_from_prefs(TRUE);
-}
-
-/* OK, Apply and Cancel */
 
 static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 	GtkTreeIter   iter;
@@ -1105,6 +1068,21 @@ proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	const char *proxy = value;
 
 	gtk_widget_set_sensitive(frame, strcmp(proxy, "none"));
+}
+
+static void proxy_print_option(GtkEntry *entry, int entrynum)
+{
+	if (entrynum == PROXYHOST)
+		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPORT)
+		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
+	else if (entrynum == PROXYUSER)
+		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPASS)
+		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
+
+	/* If the user specifies it, we want to save it. */
+	gaim_global_proxy_set_from_prefs(TRUE);
 }
 
 GtkWidget *proxy_page() {
