@@ -228,7 +228,7 @@ char *have_word(char *m, int pos) {
 }
 
 void substitute(char **mes, int pos, int m, char *text) {
-	char *new = malloc(strlen(*mes) + strlen(text) + 1);
+	char *new = g_malloc(strlen(*mes) + strlen(text) + 1);
 	char *tmp;
 	new[0] = 0;
 
@@ -238,7 +238,7 @@ void substitute(char **mes, int pos, int m, char *text) {
 	strcat(new, &(*mes)[pos + m]);
 	tmp = *mes;
 	*mes = new;
-	free(tmp);
+	g_free(tmp);
 }
 
 GtkWidget *configwin = NULL;
