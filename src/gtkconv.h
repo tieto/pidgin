@@ -130,10 +130,6 @@ struct _GaimGtkConversation
 {
 	gboolean make_sound;
 	gboolean show_formatting_toolbar;
-	gboolean has_font;
-	char fontface[128];
-	GdkColor fg_color;
-	GdkColor bg_color;
 
 	GtkTooltips *tooltips;
 
@@ -218,28 +214,6 @@ GaimConversationUiOps *gaim_gtk_conversations_get_conv_ui_ops(void);
  * @param conv The conversation.
  */
 void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
-
-/**
- * Updates the font buttons on all conversations to reflect any changed
- * preferences.
- */
-void gaim_gtkconv_update_font_buttons(void);
-
-/**
- * Updates the font colors of each conversation to the new colors
- * chosen in the prefs dialog.
- *
- * @param conv The conversation to update.
- */
-void gaim_gtkconv_update_font_colors(GaimConversation *conv);
-
-/**
- * Updates the font faces of each conversation to the new font
- * face chosen in the prefs dialog.
- *
- * @param conv The conversation to update.
- */
-void gaim_gtkconv_update_font_face(GaimConversation *conv);
 
 /**
  * Updates the tab positions on all conversation windows to reflect any

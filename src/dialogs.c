@@ -46,7 +46,6 @@
 #include "gaim.h"
 
 static GList *dialogwindows = NULL;
-static GtkWidget *fontseld = NULL;
 
 struct confirm_del {
 	GtkWidget *window;
@@ -581,119 +580,6 @@ show_log_dialog(void)
 						_("OK"), G_CALLBACK(get_log_cb),
 						_("Cancel"), NULL,
 						NULL);
-}
-
-/*------------------------------------------------------*/
-/* Color Selection Dialog                               */
-/*------------------------------------------------------*/
-
-GtkWidget *fgcseld = NULL;
-GtkWidget *bgcseld = NULL;
-
-void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
-{
-	GaimGtkConversation *gtkconv;
-	GdkColor fgcolor;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
-					&fgcolor);
-
-	if (fgcseld)
-		return;
-	
-	fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
-	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), &fgcolor);
-	g_signal_connect(G_OBJECT(fgcseld), "delete_event",
-			 G_CALLBACK(destroy_colorsel), (void *)1);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button),
-			 "clicked", G_CALLBACK(destroy_colorsel), (void *)1);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
-			 G_CALLBACK(apply_color_dlg), (void *)1);
-	gtk_widget_realize(fgcseld);
-	gtk_widget_show(fgcseld);
-	gdk_window_raise(fgcseld->window);
-	return;
-}
-
-void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color)
-{
-	GaimGtkConversation *gtkconv;
-	GdkColor bgcolor;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
-					&bgcolor);
-
-	if (bgcseld)
-		return;
-	
-	bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
-	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), &bgcolor);
-	g_signal_connect(G_OBJECT(bgcseld), "delete_event",
-			 G_CALLBACK(destroy_colorsel), NULL);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button),
-			 "clicked", G_CALLBACK(destroy_colorsel), NULL);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
-			 G_CALLBACK(apply_color_dlg), (void *)2);
-	gtk_widget_realize(bgcseld);
-	gtk_widget_show(bgcseld);
-	gdk_window_raise(bgcseld->window);
-	return;
-}
-
-
-/*------------------------  ----------------------------------------------*/
-/*  Font Selection Dialog                                                 */
-/*------------------------------------------------------------------------*/
-
-
-void destroy_fontsel(GtkWidget *w, gpointer d)
-{
-	gtk_widget_destroy(fontseld);
-	fontseld = NULL;
-}
-
-void show_font_dialog(GaimConversation *c, GtkWidget *font)
-{
-	GaimGtkConversation *gtkconv;
-	char fonttif[128];
-	const char *fontface;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-
-	if (fontseld)
-		return;
-	
-	fontseld = gtk_font_selection_dialog_new(_("Select Font"));
-	
-	fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
-	
-	if (fontface != NULL && *fontface != '\0') {
-		g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontface);
-		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-							fonttif);
-	} else {
-		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-							DEFAULT_FONT_FACE " 12");
-	}
-	
-	g_signal_connect(G_OBJECT(fontseld), "delete_event",
-			 G_CALLBACK(destroy_fontsel), NULL);
-	g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
-			 "clicked", G_CALLBACK(destroy_fontsel), NULL);
-	g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
-			 G_CALLBACK(apply_font_dlg), fontseld);
-	gtk_widget_realize(fontseld);
-	gtk_widget_show(fontseld);
-	gdk_window_raise(fontseld->window);
-	return;
-
 }
 
 /*------------------------------------------------------------------------*/

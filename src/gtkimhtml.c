@@ -2299,8 +2299,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						    font->underline = oldfont->underline;
 						}
 						if (textdec && font->underline != 1
-							&& size
-							&& g_ascii_strcasecmp(size, "underline") == 0
+							&& g_ascii_strcasecmp(textdec, "underline") == 0
 							&& (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
 						{
 						    gtk_imhtml_toggle_underline(imhtml);
@@ -3129,6 +3128,39 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold,
 		(*underline) = TRUE;
 }
 
+char *
+gtk_imhtml_get_current_fontface(GtkIMHtml *imhtml)
+{
+	if (imhtml->edit.fontface)
+		return g_strdup(imhtml->edit.fontface);
+	else
+		return NULL;
+}
+
+char *
+gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml)
+{
+	if (imhtml->edit.forecolor)
+		return g_strdup(imhtml->edit.forecolor);
+	else
+		return NULL;
+}
+
+char *
+gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml)
+{
+	if (imhtml->edit.backcolor)
+		return g_strdup(imhtml->edit.backcolor);
+	else
+		return NULL;
+}
+
+gint
+gtk_imhtml_get_current_fontsize(GtkIMHtml *imhtml)
+{
+	return imhtml->edit.fontsize;
+}
+
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
 {
 	return imhtml->editable;
@@ -3289,7 +3321,9 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 {
+	GObject *object;
 	GtkTextIter start, end;
+	GtkIMHtmlButtons b = 0;
 
 	imhtml->edit.fontsize = size;
 
@@ -3305,10 +3339,16 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
 
+	object = g_object_ref(G_OBJECT(imhtml));
+	b |= GTK_IMHTML_SHRINK;
+	b |= GTK_IMHTML_GROW;
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, b);
+	g_object_unref(object);
 }
 
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 {
+	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.fontsize == 1)
@@ -3329,10 +3369,14 @@ void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK);
+	g_object_unref(object);
 }
 
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 {
+	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.fontsize == MAX_FONT_SIZE)
@@ -3353,16 +3397,20 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_GROW);
+	g_object_unref(object);
 }
 
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 {
+	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.forecolor != NULL)
 		g_free(imhtml->edit.forecolor);
 
-	if (color) {
+	if (color && strcmp(color, "") != 0) {
 		imhtml->edit.forecolor = g_strdup(color);
 		if (imhtml->wbfo) {
 			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
@@ -3377,19 +3425,28 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 		}
 	} else {
 		imhtml->edit.forecolor = NULL;
+		if (imhtml->wbfo) {
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_font_forecolor(imhtml, &start, &end, TRUE);
+		}
 	}
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_FORECOLOR);
+	g_object_unref(object);
 
 	return imhtml->edit.forecolor != NULL;
 }
 
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 {
+	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.backcolor != NULL)
 		g_free(imhtml->edit.backcolor);
 
-	if (color) {
+	if (color && strcmp(color, "") != 0) {
 		imhtml->edit.backcolor = g_strdup(color);
 
 		if (imhtml->wbfo) {
@@ -3405,19 +3462,28 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 		}
 	} else {
 		imhtml->edit.backcolor = NULL;
+		if (imhtml->wbfo) {
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_font_backcolor(imhtml, &start, &end, TRUE);
+		}
 	}
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BACKCOLOR);
+	g_object_unref(object);
 
 	return imhtml->edit.backcolor != NULL;
 }
 
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 {
+	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.fontface != NULL)
 		g_free(imhtml->edit.fontface);
 
-	if (face) {
+	if (face && strcmp(face, "") != 0) {
 		imhtml->edit.fontface = g_strdup(face);
 
 		if (imhtml->wbfo) {
@@ -3433,13 +3499,22 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 		}
 	} else {
 		imhtml->edit.fontface = NULL;
+		if (imhtml->wbfo) {
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_font_face(imhtml, &start, &end, TRUE);
+		}
 	}
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_FACE);
+	g_object_unref(object);
 
 	return imhtml->edit.fontface != NULL;
 }
 
 void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 {
+	GObject *object;
 	GtkTextIter start, end;
 	GtkTextTag *linktag;
 	static guint linkno = 0;
@@ -3469,6 +3544,10 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 			gtk_text_buffer_apply_tag(imhtml->text_buffer, linktag, &start, &end);
 		}
 	}
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_LINK);
+	g_object_unref(object);
 }
 
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, GtkTextMark *mark, const char *url, const char *text)

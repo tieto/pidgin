@@ -51,6 +51,8 @@ version 0.78cvs
 	* Added "Conversation placement - By conversation count"
 	* Added a "none" smiley theme to replace the "Show graphical
 	  smileys" option
+	* Replace default formatting preferences with a dialog to set a
+	  default formatting in a WYSIWYG manner.
 	* Removed "Show logins in window," default to yes
 	* Removed "Send URLs as links," default to yes (in protocols that
 	  support HTML)

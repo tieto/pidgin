@@ -269,48 +269,59 @@ default_formatize(GaimConversation *conv)
 
 	if (gc && gc->flags & GAIM_CONNECTION_HTML)
 	{
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
-			gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
-		
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
-			gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
-			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
-		
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font") ||
-			c->has_font)
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
 		{
-			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry), c->fontface);
-		}
+			char *color;
+			GdkColor fg_color, bg_color;
 
-		if (!(gc->flags & GAIM_CONNECTION_NO_FONTSIZE) &&
-			gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size"))
-		{
-		        gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+				gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
+
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+				gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
+
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+				gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
+
+			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),
+				gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+
+			if (!(gc->flags & GAIM_CONNECTION_NO_FONTSIZE))
+				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
 					gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
-		}
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor"))
-		{
-			char *color = g_strdup_printf("#%02x%02x%02x",
-										  c->fg_color.red   / 256,
-										  c->fg_color.green / 256,
-										  c->fg_color.blue  / 256);
+			if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
+			{
+				gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+								&fg_color);
+				color = g_strdup_printf("#%02x%02x%02x",
+										fg_color.red   / 256,
+										fg_color.green / 256,
+										fg_color.blue  / 256);
+			}
+			else
+				color = g_strdup("");
+
 			gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
 			g_free(color);
-		}
 
-		if (!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) &&
-			gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor"))
-		{
-			char *color = g_strdup_printf("#%02x%02x%02x",
-										  c->bg_color.red   / 256,
-										  c->bg_color.green / 256,
-										  c->bg_color.blue  / 256);
+			if(!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) &&
+			   strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
+			{
+				gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+								&bg_color);
+				color = g_strdup_printf("#%02x%02x%02x",
+										bg_color.red   / 256,
+										bg_color.green / 256,
+										bg_color.blue  / 256);
+			}
+			else
+				color = g_strdup("");
+
 			gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), color);
 			g_free(color);
 		}
+
 
 		if (gc->flags & GAIM_CONNECTION_FORMATTING_WBFO)
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), TRUE);
@@ -318,7 +329,6 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), FALSE);
 	}
 }
-
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -4151,12 +4161,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 		gtkconv->tooltips = gtk_tooltips_new();
 
-		/* Setup the foreground and background colors */
-		gaim_gtkconv_update_font_colors(conv);
-
-		/* Setup the font face */
-		gaim_gtkconv_update_font_face(conv);
-
 		if (conv_type == GAIM_CONV_IM) {
 			gtkconv->u.im = g_malloc0(sizeof(GaimGtkImPane));
 			gtkconv->u.im->a_virgin = TRUE;
@@ -5306,38 +5310,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 }
 
 void
-gaim_gtkconv_update_font_colors(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
-					&gtkconv->fg_color);
-
-	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
-					&gtkconv->bg_color);
-}
-
-void
-gaim_gtkconv_update_font_face(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	strncpy(gtkconv->fontface,
-			gaim_prefs_get_string("/gaim/gtk/conversations/font_face"),
-			sizeof(gtkconv->fontface));
-}
-
-void
 gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 {
 	GaimConvWindow *win;
@@ -5799,23 +5771,20 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/send_formatting", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_formatting", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_bgcolor", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_fgcolor", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_font", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_size", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_int("/gaim/gtk/conversations/placement_number", 1);
-	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
-	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
+	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "");
+	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "");
 	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);

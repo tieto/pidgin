@@ -153,27 +153,26 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 static void
 toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 {
-#if 0
-	char fonttif[128];
-	const char *fontface;
-#endif
+	const char *fontname;
 
 	g_return_if_fail(toolbar);
+
+	fontname = gtk_imhtml_get_current_fontface(GTK_IMHTML(toolbar->imhtml));
 
 	if (!toolbar->font_dialog) {
 		toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
 		g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
 
-		/*	if (gtkconv->fontface[0]) {
-		  g_snprintf(fonttif, sizeof(fonttif), "%s 12", gtkconv->fontface);
-		  gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font),
-		  fonttif);
-		  } else {
-		  gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font),
-		  DEFAULT_FONT_FACE);
-		  }
-		*/
+		if(fontname) {
+			char fonttif[128];
+			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontname);
+			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+													fonttif);
+		} else {
+			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+													DEFAULT_FONT_FACE);
+		}
 
 		g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
 						 G_CALLBACK(destroy_toolbar_font), toolbar);
@@ -231,15 +230,18 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
-		/* GdkColor fgcolor; */
+		GdkColor fgcolor;
+		const char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
 
-		/*gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
-		  &fgcolor);*/
 		if (!toolbar->fgcolor_dialog) {
 
 			toolbar->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->colorsel;
-			//gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
+			if (color) {
+				gdk_color_parse(color, &fgcolor);
+				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
+			}
+
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
@@ -301,15 +303,18 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
-		/* GdkColor bgcolor; */
+		GdkColor bgcolor;
+		const char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
 
-		/*gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
-		  &bgcolor);*/
 		if (!toolbar->bgcolor_dialog) {
 
 			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->colorsel;
-			//gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
+			if (color) {
+				gdk_color_parse(color, &bgcolor);
+				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
+			}
+
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",

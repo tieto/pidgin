@@ -46,14 +46,12 @@
 #define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")
 #define MAX_VALUES 10
 
+/* We're going to ignore strikethough and assume "custom font"
+   means to send custom formatting */
 #define OPT_FONT_BOLD			0x00000001
 #define OPT_FONT_ITALIC			0x00000002
 #define OPT_FONT_UNDERLINE		0x00000008
-/* We're going to ignore strikethough */
 #define OPT_FONT_FACE			0x00000020
-#define OPT_FONT_FGCOL			0x00000040
-#define OPT_FONT_BGCOL			0x00000080
-#define OPT_FONT_SIZE			0x00000100
 
 #define OPT_MISC_DEBUG			0x00000001
 #define OPT_MISC_BROWSER_POPUP		0x00000002
@@ -1061,14 +1059,8 @@ static void gaimrc_read_options(FILE *f)
 					font_options & OPT_FONT_ITALIC);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline",
 					font_options & OPT_FONT_UNDERLINE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_font",
+			gaim_prefs_set_bool("/gaim/gtk/conversations/send_formatting",
 					font_options & OPT_FONT_FACE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_size",
-					font_options & OPT_FONT_SIZE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_fgcolor",
-					font_options & OPT_FONT_FGCOL);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_bgcolor",
-					font_options & OPT_FONT_BGCOL);
 
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
