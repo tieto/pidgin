@@ -173,6 +173,7 @@ gaim_event_broadcast(GaimEvent event, ...)
 	GList *l;
 	GaimSignalCallback *g;
 	GaimSignalBroadcaster *broadcaster;
+	int retval = 0;
 	va_list arrg;
 	void    *arg1 = NULL, *arg2 = NULL, *arg3 = NULL, *arg4 = NULL;
 
@@ -295,14 +296,14 @@ gaim_event_broadcast(GaimEvent event, ...)
 		}
 	}
 
-	for (l = broadcasters; l != NULL; l = l->next) {
+	for (l = broadcasters; l != NULL && retval == 0; l = l->next) {
 		broadcaster = l->data;
 
 		va_start(arrg, event);
-		broadcaster->func(event, broadcaster->data, arrg);
+		retval = broadcaster->func(event, broadcaster->data, arrg);
 	}
 
-	return 0;
+	return retval;
 }
 
 const char *
