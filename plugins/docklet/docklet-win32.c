@@ -41,9 +41,9 @@
 /*
  *  DEFINES, MACROS & DATA TYPES
  */
-#define GAIM_SYSTRAY_HINT _("Gaim Instant Messaging Client")
-#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim Instant Messaging Client - Signed off")
-#define GAIM_SYSTRAY_AWAY_HINT _("Gaim Instant Messaging Client - Away")
+#define GAIM_SYSTRAY_HINT _("Gaim")
+#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim - Signed off")
+#define GAIM_SYSTRAY_AWAY_HINT _("Gaim - Away")
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 
 /*
