@@ -518,6 +518,12 @@ static void oscar_close(struct gaim_connection *gc) {
 		odata->hasicons = g_slist_remove(odata->hasicons, n);
 		g_free(n);
 	}
+	if (odata->create_name)
+		g_free(odata->create_name);
+	if (odata->newp)
+		g_free(odata->newp);
+	if (odata->oldp)
+		g_free(odata->oldp);
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
 	if (odata->cnpa > 0)

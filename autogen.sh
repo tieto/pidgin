@@ -39,14 +39,14 @@ echo "Generating configuration files for Gaim, please wait...."
 echo;
 
 echo "Running gettextize, please ignore non-fatal messages...."
-echo n | gettextize --copy --force;
+echo n | gettextize --copy --force || exit;
 echo "Running libtoolize, please ignore non-fatal messages...."
-echo n | libtoolize --copy --force;
+echo n | libtoolize --copy --force || exit;
 
-aclocal -I m4 $ACLOCAL_FLAGS;
-autoheader;
-automake --add-missing --copy;
-autoconf;
-automake;
+aclocal -I m4 $ACLOCAL_FLAGS || exit;
+autoheader || exit;
+automake --add-missing --copy || exit;
+autoconf || exit;
+automake || exit;
 ./configure $@
 

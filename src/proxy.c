@@ -74,7 +74,7 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 
 	if (condition & GAIM_READ_COND)
 		gaim_cond |= GAIM_INPUT_READ;
-	if (condition & GAIM_READ_COND)
+	if (condition & GAIM_WRITE_COND)
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 	debug_printf("CLOSURE: callback for %d, fd is %d\n",
