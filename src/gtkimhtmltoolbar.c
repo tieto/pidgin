@@ -962,6 +962,9 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show(sep);
 	toolbar->sml = NULL;
 	gtk_widget_show_all(hbox);
+
+	/* XXX - IMIMAGE - Fix IM images then remove the following line */
+	gtk_widget_hide(toolbar->image);
 }
 
 GtkWidget *gtk_imhtmltoolbar_new()

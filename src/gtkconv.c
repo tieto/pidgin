@@ -717,31 +717,37 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 							   gaim_conversation_get_name(conv), NULL);
 }
 
-#if 0
 static void
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
+	GtkIMHtmlToolbar *toolbar;
 
 	conv    = gaim_conv_window_get_active_conversation(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
-		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link)));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link),
+		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link)));
 }
 
+#if 0
 static void
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
+	GtkIMHtmlToolbar *toolbar;
 
+	conv    = gaim_conv_window_get_active_conversation(win);
 	gtkconv = GAIM_GTK_CONVERSATION(gaim_conv_window_get_active_conversation(win));
+	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
-		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image)));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image),
+		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image)));
 }
 #endif
 
@@ -2304,7 +2310,8 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
-		gtk_widget_show(gtkwin->menu.insert_image);
+		/* XXX - IMIMAGE - Fix IM images then show this. */
+		gtk_widget_hide(gtkwin->menu.insert_image);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
@@ -3177,7 +3184,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/Insert Lin_k..."), NULL, NULL, 0, /* menu_insert_link_cb, 0, */
+	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
 	{ N_("/Conversation/Insert Imag_e..."), NULL, NULL, 0, /* menu_insert_image_cb, 0, */
 	  "<StockItem>", GAIM_STOCK_IMAGE },
