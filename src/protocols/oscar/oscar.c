@@ -1677,7 +1677,8 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
 			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
+			"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
+			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy <br>"));
 
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
