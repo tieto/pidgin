@@ -637,6 +637,12 @@ void show_ee_dialog(int ee)
 	gtk_widget_show(eedialog);
 }
 
+char *gem()
+{
+	return "You are a True Penguin Pimp. Tell no one of your finding. Notify "
+		"EWarmenhoven immediately so he can reward your efforts.";
+}
+
 void show_im_dialog()
 {
         GtkWidget *mainbox;
@@ -1926,6 +1932,15 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
         aol_icon(p->window->window);
 
         gtk_widget_show(p->window);
+}
+
+void do_stuff(void *g)
+{
+	char buf[16];
+	struct gaim_connection *gc;
+	some_name(buf);
+	get_good(&gc);
+	put_out(gc, buf, g);
 }
 
 

@@ -79,6 +79,7 @@
 
 #define PLUGIN_DIR ".gaim/plugins/"
 
+#define WEBSITE "http://gaim.sourceforge.net/"
 #define REG_EMAIL_ADDR "gaiminfo@blueridge.net"
 #define REG_SRVR "blueridge.net"
 #define REG_PORT 25

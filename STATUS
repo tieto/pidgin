@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-04-12 05:21:16 -0400 (Thu, 12 Apr 2001) $ by
+STATUS of GAIM CVS tree. Last modified $Date: 2001-04-13 06:50:33 -0400 (Fri, 13 Apr 2001) $ by
 $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
@@ -42,7 +42,8 @@ Applet
 ======
 
 The applet should be stable and completely functional now (as far as the applet
-part of it goes).
+part of it goes). Please, someone send in better icons. And preferably OS-
+neutral ones.
 
 
 Plugins

@@ -4,7 +4,6 @@ THE CORE:
 	Rename for groups/buddies (in the Edit Buddies Pane)
 	Status labels in buddy list (mostly just for yahoo)
 	Border for GtkIMHtml
-	Sounds on buddy pounce
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
 

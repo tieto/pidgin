@@ -51,7 +51,17 @@ static void version_exit()
 
 static void about_click(GtkWidget *w, gpointer m)
 {
-	open_url_nw(NULL, "http://gaim.sourceforge.net/");
+	open_url_nw(NULL, WEBSITE);
+}
+
+char *name()
+{
+	return PACKAGE;
+}
+
+char *description()
+{
+	return WEBSITE;
 }
 
 void show_about(GtkWidget *w, void *null)
@@ -113,7 +123,7 @@ void show_about(GtkWidget *w, void *null)
 		    gtk_label_new(_
 				  ("GAIM is a client that supports AOL's Instant Messenger protocol. "
 				   "It is written using Gtk+ and is licensed under the GPL.\n"
-				   "URL: http://gaim.sourceforge.net/"));
+				   "URL: " WEBSITE));
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 2, 0, 2);
 

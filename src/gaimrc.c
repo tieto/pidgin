@@ -440,7 +440,8 @@ static void gaimrc_read_plugins(FILE *f)
 	 * we load a plugin the gaimrc file gets rewrit. so we have to remember
 	 * which ones to load before loading them. */
 	while (load) {
-		load_plugin(load->data);
+		if (load->data)
+			load_plugin(load->data);
 		g_free(load->data);
 		load = g_slist_remove(load, load->data);
 	}

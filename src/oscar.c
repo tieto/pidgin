@@ -526,7 +526,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 			break;
 		case 0x1c:
 			/* client too old */
-			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at http://gaim.sourceforge.net/"));
+			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at " WEBSITE));
 			plugin_event(event_error, (void *)989, 0, 0, 0);
 			break;
 		default:
@@ -600,6 +600,16 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 			oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
 	return 1;
+}
+
+void some_name(char *buf)
+{
+	int x[4];
+	x[0] = htonl(0x45576172);
+	x[1] = htonl(0x6d656e68);
+	x[2] = htonl(0x6f76656e);
+	x[3] = 0;
+	g_snprintf(buf, 16, "%s", x);
 }
 
 int gaim_parse_login(struct aim_session_t *sess,

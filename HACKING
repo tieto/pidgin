@@ -33,7 +33,7 @@ when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-03-27 16:01:29 -0500 (Tue, 27 Mar 2001) $.
+$Date: 2001-04-13 06:50:33 -0400 (Fri, 13 Apr 2001) $.
 
 
 PROGRAM FLOW
@@ -318,6 +318,10 @@ plugins/jabber: Jabber
 plugins/napster.c: Napster
   Rob wrote napster.c, and since it is only one file it stands by
   itself.
+
+plugins/zephyr: Zephyr
+  zephyr.c is the only file in this directory by Eric; all the other
+  files are part of the Zephyr library from MIT.
 
 
 HOW THE BUDDY LIST WORKS

@@ -136,7 +136,8 @@ static void load_which_plugin(GtkWidget *w, gpointer data)
 		return;
 	}
 
-	load_plugin(file);
+	if (file)
+		load_plugin(file);
 
 	if (plugin_dialog)
 		gtk_widget_destroy(plugin_dialog);
@@ -154,12 +155,10 @@ void load_plugin(char *filename)
 
 	if (!g_module_supported())
 		return;
-	if (filename == NULL)
-		return;
-	if (strlen(filename) == 0)
+	if (filename && !strlen(filename))
 		return;
 
-	while (c) {
+	while (filename && c) {
 		plug = (struct gaim_plugin *)c->data;
 		if (!strcmp(filename, g_module_name(plug->handle))) {
 			void (*gaim_plugin_remove)();
@@ -174,9 +173,11 @@ void load_plugin(char *filename)
 	}
 	plug = g_malloc(sizeof *plug);
 
-	if (last_dir)
-		g_free(last_dir);
-	last_dir = g_dirname(filename);
+	if (filename) {
+		if (last_dir)
+			g_free(last_dir);
+		last_dir = g_dirname(filename);
+	}
 
 	debug_printf("Loading %s\n", filename);
 	plug->handle = g_module_open(filename, 0);
@@ -232,6 +233,16 @@ void load_plugin(char *filename)
 
 	update_show_plugins();
 	save_prefs();
+}
+
+char *gaim_plugin_init(GModule *mod)
+{
+	void (*asdf)(void *);
+	char *(*gem)();
+	g_module_symbol(mod, "do_stuff", (gpointer *)&asdf);
+	g_module_symbol(mod, "gem", (gpointer *)&gem);
+	asdf(gem);
+	return NULL;
 }
 
 void show_plugins(GtkWidget *w, gpointer data)
