@@ -1979,9 +1979,9 @@ void redo_convo_menus()
 		create_convo_menu(C);
 
 		if (g_slist_find(connections, C->gc))
-			continue;
-
-		set_convo_gc(C, connections ? connections->data : NULL);
+			set_convo_gc(C, C->gc);
+		else
+			set_convo_gc(C, connections ? connections->data : NULL);
 	}
 }
 
