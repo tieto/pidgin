@@ -538,7 +538,8 @@ void do_away_menu()
 				account = gaim_connection_get_account(gc);
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gaim_account_get_username(account), gc->prpl->info->name);
+						   gaim_account_get_username(account),
+						   gaim_account_get_protocol_name(account));
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 
 				pixbuf = create_prpl_icon(gc->account);

@@ -922,10 +922,8 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	GaimConversation *conv;
 	GaimAccount *account;
 	GaimBuddy *buddy;
-	GaimPlugin *proto;
 	const char *pouncee;
 	const char *alias;
-	const char *proto_id;
 
 	pouncee = gaim_pounce_get_pouncee(pounce);
 	account = gaim_pounce_get_pouncer(pounce);
@@ -933,10 +931,6 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	buddy = gaim_find_buddy(account, pouncee);
 
 	alias = gaim_buddy_get_alias(buddy);
-
-	/* Find the protocol id for the window title and/or message */
-	proto = gaim_find_prpl(gaim_account_get_protocol_id(account));
-	proto_id = proto->info->name;
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
 	{
@@ -973,7 +967,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				   (events & GAIM_POUNCE_AWAY) ?
 				   _("%s has gone away. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
-				   alias,proto_id);
+				   alias, gaim_account_get_protocol_name(account));
 
 		/*
 		 * Ok here is where I change the second argument, title, from

@@ -161,14 +161,6 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
 static char*
 convert_buddy_icon(GaimAccount *account, const char *path);
 
-static char *
-proto_name(const char *id)
-{
-	GaimPlugin *p = gaim_find_prpl(id);
-
-	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
-}
-
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
@@ -2193,7 +2185,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ONLINE, gaim_account_is_connected(account),
 			COLUMN_AUTOLOGIN, gaim_account_get_auto_login(account, GAIM_GTK_UI),
-			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol_id(account)),
+			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
 			COLUMN_DATA, account,
 			-1);
 

@@ -384,6 +384,15 @@ const char *gaim_account_get_buddy_icon(const GaimAccount *account);
 const char *gaim_account_get_protocol_id(const GaimAccount *account);
 
 /**
+ * Returns the account's protocol name.
+ *
+ * @param account The account.
+ *
+ * @return The protocol name.
+ */
+const char *gaim_account_get_protocol_name(const GaimAccount *account);
+
+/**
  * Returns the account's connection.
  *
  * @param account The account.

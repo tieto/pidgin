@@ -36,6 +36,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "account.h"
 #include "cmds.h"
 #include "debug.h"
 #include "imgstore.h"
@@ -1770,16 +1771,14 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	GaimAccount *account = g_object_get_data(m, "gaim_account");
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
-	GaimPlugin *protocol;
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
 	gaim_conversation_set_account(conv, account);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	protocol = gaim_find_prpl(conv->account->protocol_id);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 protocol->info->name);
+								 gaim_account_get_protocol_name(conv->account));
 }
 
 static void
@@ -3924,7 +3923,6 @@ setup_chat_pane(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
-	GaimPlugin *protocol;
 	GtkWidget *vpaned, *hpaned;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *lbox, *bbox;
@@ -4150,9 +4148,8 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 
-	protocol = gaim_find_prpl(conv->account->protocol_id);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 protocol->info->name);
+								 gaim_account_get_protocol_name(conv->account));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	gaim_setup_imhtml(gtkconv->entry);
@@ -4203,7 +4200,6 @@ setup_im_pane(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkImPane *gtkim;
-	GaimPlugin *protocol;
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -4289,9 +4285,8 @@ setup_im_pane(GaimConversation *conv)
 	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 
-	protocol = gaim_find_prpl(conv->account->protocol_id);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 protocol->info->name);
+								 gaim_account_get_protocol_name(conv->account));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	gaim_setup_imhtml(gtkconv->entry);
@@ -5035,7 +5030,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	if(gc)
-		sml_attrib = g_strdup_printf("sml=\"%s\"", gc->prpl->info->name);
+		sml_attrib = g_strdup_printf("sml=\"%s\"",
+									 gaim_account_get_protocol_name(conv->account));
 
 	gtk_font_options ^= GTK_IMHTML_NO_COMMENTS;
 
