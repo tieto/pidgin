@@ -1399,7 +1399,7 @@ void build_allow_list()
 	GtkWidget *list_item;
 	GSList *p;
 
-	if (current_is_deny)
+	if (!current_is_deny)
 		return;
 
 	p = current_deny_gc->permit;
@@ -1494,6 +1494,42 @@ static void build_deny_menu()
 	gtk_widget_show(deny_opt_menu);
 }
 
+static void pref_deny_add(GtkWidget *button, gboolean permit)
+{
+	show_add_perm(current_deny_gc, NULL, permit);
+}
+
+static void pref_deny_rem(GtkWidget *button, gboolean permit)
+{
+	GList *i;
+	char *who;
+
+	if (permit && !allow_list)
+		return;
+	if (!permit && !block_list)
+		return;
+
+	if (permit)
+		i = GTK_LIST(allow_list)->selection;
+	else
+		i = GTK_LIST(block_list)->selection;
+
+	if (!i)
+		return;
+	who = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	if (permit) {
+		current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, who);
+		serv_rem_permit(current_deny_gc, who);
+		build_allow_list();
+	} else {
+		current_deny_gc->deny = g_slist_remove(current_deny_gc->deny, who);
+		serv_rem_deny(current_deny_gc, who);
+		build_block_list();
+	}
+
+	do_export(0, 0);
+}
+
 static void deny_page()
 {
 	GtkWidget *parent;
@@ -1574,9 +1610,11 @@ static void deny_page()
 	gtk_widget_show(bbox);
 
 	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), (void *)TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), (void *)TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1607,9 +1645,11 @@ static void deny_page()
 	gtk_widget_show(bbox);
 
 	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
 	gtk_widget_show(prefdialog);

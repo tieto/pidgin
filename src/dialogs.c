@@ -105,9 +105,9 @@ struct addbuddy {
 
 struct addperm {
         GtkWidget *window;
-        GSList *buttons;
         GtkWidget *entry;
 	struct gaim_connection *gc;
+	gboolean permit;
 };
 
 struct addbp {
@@ -1828,7 +1828,6 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         char *who;
         char *name;
         int d = 0;
-        GSList *buttons = p->buttons;
 
 
         who = gtk_entry_get_text(GTK_ENTRY(p->entry));
@@ -1836,15 +1835,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         name = g_malloc(strlen(who) + 2);
         g_snprintf(name, strlen(who) + 2, "%s", who);
         
-        while(buttons) {
-                if((int)gtk_object_get_user_data(GTK_OBJECT(buttons->data)) == 1) {
-                        if (GTK_TOGGLE_BUTTON(buttons->data)->active)
-                                d = 1;
-                }
-                buttons = buttons->next;
-        }
-
-        if (d) {
+        if (!p->permit) {
 		GSList *d = p->gc->deny;
 		char *n;
 		n = g_strdup(normalize(name));
@@ -1885,56 +1876,49 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
 
 
-void show_add_perm(struct gaim_connection *gc, char *who)
+void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 {
 	GtkWidget *cancel;
 	GtkWidget *add;
 	GtkWidget *label;
         GtkWidget *bbox;
         GtkWidget *vbox;
-        GtkWidget *rbox;
         GtkWidget *topbox;
-        GtkWidget *which;
 	GtkWidget *frame;
 	
 	struct addperm *p = g_new0(struct addperm, 1);
 	p->gc = gc;
+	p->permit = permit;
 
         p->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_container_set_border_width(GTK_CONTAINER(p->window), 5);
-	gtk_widget_set_usize(p->window, 310, 130);
 	gtk_window_set_policy(GTK_WINDOW(p->window), FALSE, FALSE, TRUE);
-	gtk_widget_show(p->window);
+	gtk_widget_realize(p->window);
 
 	dialogwindows = g_list_prepend(dialogwindows, p->window);
 
 	bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
-        rbox = gtk_vbox_new(FALSE, 5);
         p->entry = gtk_entry_new();
 
-	frame = gtk_frame_new(_("Permit / Deny"));
+	if (permit)
+		frame = gtk_frame_new(_("Permit"));
+	else
+		frame = gtk_frame_new(_("Deny"));
 
 	/* Build Add Button */
 
-	add = picture_button(p->window, _("Add"), add_xpm);
+	if (permit)
+		add = picture_button(p->window, _("Permit"), add_xpm);
+	else
+		add = picture_button(p->window, _("Deny"), add_xpm);
 	cancel = picture_button(p->window, _("Cancel"), cancel_xpm);
 	
 	/* End of Cancel Button */
         if (who != NULL)
                 gtk_entry_set_text(GTK_ENTRY(p->entry), who);
 
-        which = gtk_radio_button_new_with_label(NULL, _("Deny"));
-        gtk_box_pack_start(GTK_BOX(rbox), which, FALSE, FALSE, 0);
-        gtk_object_set_user_data(GTK_OBJECT(which), (int *)1);
-        gtk_widget_show(which);
-
-        which = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(which)), _("Permit"));
-        gtk_box_pack_start(GTK_BOX(rbox), which, FALSE, FALSE, 0);
-        gtk_object_set_user_data(GTK_OBJECT(which), (int *)2);
-        gtk_widget_show(which);
-                
         /* Put the buttons in the box */
 	
 	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
@@ -1944,14 +1928,12 @@ void show_add_perm(struct gaim_connection *gc, char *who)
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), p->entry, FALSE, FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(topbox), rbox, FALSE, FALSE, 5);
         /* And the boxes in the box */
         gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
         gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 
-        p->buttons = gtk_radio_button_group(GTK_RADIO_BUTTON(which));
         /* Handle closes right */
         gtk_signal_connect(GTK_OBJECT(p->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), p->window);
@@ -1969,9 +1951,11 @@ void show_add_perm(struct gaim_connection *gc, char *who)
         gtk_widget_show(topbox);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
-        gtk_widget_show(rbox);
 	gtk_widget_show(frame);
-        gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit/Deny"));
+	if (permit)
+		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit"));
+	else
+		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Deny"));
         gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
         gtk_container_add(GTK_CONTAINER(p->window), frame);
         gtk_widget_realize(p->window);

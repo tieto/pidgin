@@ -440,7 +440,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 
 void block_callback(GtkWidget *widget, struct conversation *c)
 {
-        if (c->gc) show_add_perm(c->gc, c->name);
+        if (c->gc) show_add_perm(c->gc, c->name, FALSE);
 	gtk_widget_grab_focus(c->entry);
 }
 

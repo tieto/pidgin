@@ -729,7 +729,7 @@ extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_add_buddy(struct gaim_connection *, char *, char *);
 extern void show_add_group(struct gaim_connection *);
-extern void show_add_perm(struct gaim_connection *, char *);
+extern void show_add_perm(struct gaim_connection *, char *, gboolean);
 extern void destroy_all_dialogs();
 extern void show_export_dialog();
 extern void show_import_dialog();
