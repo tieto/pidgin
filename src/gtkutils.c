@@ -723,7 +723,7 @@ gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 		gtk_widget_show(item);
 		gaim_set_accessible_label (item, label);
 
-		if (!strcmp(plugin->info->id, id))
+		if (id != NULL && !strcmp(plugin->info->id, id))
 			selected_index = i;
 	}
 
@@ -1563,7 +1563,7 @@ gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 	gdk_window_get_origin (widget->window, x, y);
 	gtk_tree_view_get_cursor (tv, &path, &col);
 	gtk_tree_view_get_cell_area (tv, path, col, &rect);
-	
+
 	*x += rect.x+rect.width;
 	*y += rect.y+rect.height+ythickness;
 	gaim_gtk_menu_position_func (menu, x, y, push_in, data);
