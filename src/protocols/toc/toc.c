@@ -1122,7 +1122,8 @@ static void toc_join_chat(struct gaim_connection *g, GList *data)
 static void toc_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
 {
 	char buf[BUF_LONG];
-	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
+	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id,
+			message ? message : "", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
