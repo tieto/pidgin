@@ -1,3 +1,4 @@
+SUBDIRS = protocols
 EXTRA_DIST =	ab.xpm				\
 		about_small.xpm			\
 		add.xpm				\
