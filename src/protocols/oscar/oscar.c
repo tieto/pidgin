@@ -3544,6 +3544,9 @@ static int gaim_conv_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...
 	va_end(ap);
 
 	utf8 = oscar_encoding_to_utf8(charset, msg, len);
+	if (utf8 == NULL)
+		/* The conversion failed! */
+		utf8 = g_strdup(_("[Unable to display a message from this user because it contained invalid characters."));
 	serv_got_chat_in(gc, ccon->id, info->sn, 0, utf8, time((time_t)NULL));
 	g_free(utf8);
 
