@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.80\n"
 "POT-Creation-Date: 2004-06-29 00:02-0400\n"
-"PO-Revision-Date: 2004-08-23 16:34+0300\n"
+"PO-Revision-Date: 2004-08-24 11:29+0300\n"
 "Last-Translator: Gediminas Č. <gediminas@parok.lt>\n"
 "Language-Team: Lithuanian <gediminas@parok.lt>\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: plugins/autorecon.c:233
 msgid "Error Message Suppression"
-msgstr ""
+msgstr "Pranešimų apie klaidas uždraudimas"
 
 #: plugins/autorecon.c:237
 msgid "Hide Disconnect Errors"
@@ -83,14 +83,14 @@ msgstr "Bičiulis išėjęs"
 
 #: plugins/contact_priority.c:120
 msgid "Buddy is idle:"
-msgstr "Bičiulis nekalba:"
+msgstr "Bičiulis neveiklus:"
 
 #: plugins/contact_priority.c:134
 msgid "Use last matching buddy"
 msgstr ""
 
 #  Explanation
-#. Explanation
+#  Explanation
 #: plugins/contact_priority.c:140
 msgid ""
 "The buddy with the lowest score is the buddy who will have priority in the contact.\n"
@@ -124,7 +124,7 @@ msgid "Allows for controlling the values associated with different buddy states.
 msgstr ""
 
 #  *< description
-#. *< description
+#  *< description
 #: plugins/contact_priority.c:197
 msgid "Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."
 msgstr ""
@@ -332,10 +332,10 @@ msgstr "Gaim bylų kontrolė"
 #  *< version
 #  *  summary
 #  *  description
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
+#  *< name
+#  *< version
+#  *  summary
+#  *  description
 #: plugins/filectl.c:225
 #: plugins/filectl.c:227
 msgid "Allows you to control Gaim by entering commands in a file."
@@ -733,7 +733,7 @@ msgstr "_Atšaukti"
 #: plugins/idle.c:97
 #: plugins/idle.c:98
 msgid "Allows you to hand-configure how long you've been idle for"
-msgstr "Leidžia rankiniu būdų nustatyti jūsų nevaktyvumo laiką"
+msgstr "Leidžia rankiniu būdų nustatyti jūsų neveiklumo laiką"
 
 #  *< api_version
 #  *< type
@@ -876,11 +876,13 @@ msgid "Remove when _typing in conversation window"
 msgstr ""
 
 #  Remove on message send button
+#  Remove on message send button
 #. Remove on message send button
 #: plugins/notify.c:696
 msgid "Remove when a _message gets sent"
 msgstr ""
 
+#  Remove on conversation switch button
 #  Remove on conversation switch button
 #. Remove on conversation switch button
 #: plugins/notify.c:705
@@ -1216,10 +1218,10 @@ msgstr "Bičiulis neveiklus"
 msgid "Buddy State Notification"
 msgstr " "
 
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
+#  *< name
+#  *< version
+#  *  summary
+#  *  description
 #: plugins/statenotify.c:116
 #: plugins/statenotify.c:119
 msgid "Notifies in a conversation window when a buddy goes or returns from away or idle."
@@ -1292,33 +1294,33 @@ msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr ""
 
 #: plugins/win32/transparency/win2ktrans.c:133
-#: plugins/win32/transparency/win2ktrans.c:388
-#: plugins/win32/transparency/win2ktrans.c:419
+#: plugins/win32/transparency/win2ktrans.c:387
+#: plugins/win32/transparency/win2ktrans.c:418
 msgid "Opacity:"
 msgstr ""
 
 #  IM Convo trans options
 #. IM Convo trans options
-#: plugins/win32/transparency/win2ktrans.c:369
+#: plugins/win32/transparency/win2ktrans.c:368
 msgid "IM Conversation Windows"
 msgstr "IM pokalbių langai"
 
-#: plugins/win32/transparency/win2ktrans.c:370
+#: plugins/win32/transparency/win2ktrans.c:369
 msgid "_IM window transparency"
 msgstr "_IM lango permatomumas"
 
-#: plugins/win32/transparency/win2ktrans.c:380
+#: plugins/win32/transparency/win2ktrans.c:379
 msgid "_Show slider bar in IM window"
 msgstr ""
 
 #  Buddy List trans options
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:405
+#: plugins/win32/transparency/win2ktrans.c:404
 #: src/gtkprefs.c:953
 msgid "Buddy List Window"
 msgstr "Bičiulių sąrašo langas"
 
-#: plugins/win32/transparency/win2ktrans.c:406
+#: plugins/win32/transparency/win2ktrans.c:405
 msgid "_Buddy List window transparency"
 msgstr "_Bičiulių sąrašo lango permatomumas"
 
@@ -1329,7 +1331,7 @@ msgstr "_Bičiulių sąrašo lango permatomumas"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/win32/transparency/win2ktrans.c:462
+#: plugins/win32/transparency/win2ktrans.c:461
 msgid "Transparency"
 msgstr "Permatomumas"
 
@@ -1339,13 +1341,13 @@ msgstr "Permatomumas"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/win32/transparency/win2ktrans.c:465
+#: plugins/win32/transparency/win2ktrans.c:464
 msgid "Variable Transparency for the buddy list and conversations."
 msgstr ""
 
 #  *  description
 #. *  description
-#: plugins/win32/transparency/win2ktrans.c:467
+#: plugins/win32/transparency/win2ktrans.c:466
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and the buddy list.\n"
 "\n"
@@ -1357,13 +1359,14 @@ msgstr ""
 
 #: plugins/win32/winprefs/winprefs.c:343
 msgid "GTK+ Runtime Version"
-msgstr ""
+msgstr "GTK+ Runtime versija"
 
+#  Autostart
 #  Autostart
 #. Autostart
 #: plugins/win32/winprefs/winprefs.c:351
 msgid "Startup"
-msgstr ""
+msgstr "Paleisti"
 
 #: plugins/win32/winprefs/winprefs.c:352
 msgid "_Start Gaim on Windows startup"
@@ -1565,7 +1568,7 @@ msgstr "Išejęs!"
 
 #: src/away.c:303
 msgid "Edit This Message"
-msgstr ""
+msgstr "Redaguoti šitą žinutę"
 
 #: src/away.c:308
 msgid "I'm Back!"
@@ -1584,8 +1587,8 @@ msgstr "Pašalinti nebuvimo žinutę"
 #. Remove button
 #: src/away.c:365
 #: src/gtkconv.c:1400
-#: src/gtkconv.c:3742
-#: src/gtkconv.c:3813
+#: src/gtkconv.c:3743
+#: src/gtkconv.c:3814
 #: src/gtkrequest.c:248
 msgid "Remove"
 msgstr "Ištrinti"
@@ -1632,7 +1635,7 @@ msgstr "_Naudoti"
 
 #: src/blist.c:680
 msgid "Chats"
-msgstr ""
+msgstr "Pokalbiai"
 
 #: src/blist.c:1337
 #: src/blist.c:1346
@@ -1941,6 +1944,7 @@ msgid "%s Options"
 msgstr "%s nustatymai:"
 
 #  Use Global Proxy Settings
+#  Use Global Proxy Settings
 #. Use Global Proxy Settings
 #: src/gtkaccount.c:1032
 #: src/gtkaccount.c:1079
@@ -1981,7 +1985,7 @@ msgstr ""
 
 #: src/gtkaccount.c:1153
 msgid "you can see the butterflies mating"
-msgstr ""
+msgstr "jus galite matyti besiporuojancius drugelius"
 
 #: src/gtkaccount.c:1157
 msgid "If you look real closely"
@@ -2096,8 +2100,8 @@ msgstr "Įtraukti bičiulį į sąrašą?"
 #: src/gtkaccount.c:2505
 #: src/gtkblist.c:4413
 #: src/gtkconv.c:1402
-#: src/gtkconv.c:3735
-#: src/gtkconv.c:3806
+#: src/gtkconv.c:3736
+#: src/gtkconv.c:3807
 #: src/gtkrequest.c:247
 #: src/protocols/icq/gaim_icq.c:276
 #: src/protocols/oscar/oscar.c:3741
@@ -2135,7 +2139,7 @@ msgstr "_Siųsti bylą..."
 
 #: src/gtkblist.c:1134
 msgid "Add Buddy _Pounce"
-msgstr ""
+msgstr "Naujas bičiulio _stebėjimas"
 
 #: src/gtkblist.c:1136
 msgid "View _Log"
@@ -2170,6 +2174,7 @@ msgstr "_Trinti grupė"
 msgid "_Rename"
 msgstr "P_ervadinti"
 
+#  join button
 #. join button
 #: src/gtkblist.c:1216
 #: src/gtkroomlist.c:264
@@ -2192,7 +2197,7 @@ msgid "_Expand"
 msgstr ""
 
 #: src/gtkblist.c:1919
-#: src/gtkconv.c:4378
+#: src/gtkconv.c:4379
 #: src/gtkpounce.c:314
 msgid "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2664,7 +2669,7 @@ msgid "_Message:"
 msgstr "Ž_inutė:"
 
 #: src/gtkconv.c:813
-#: src/gtkconv.c:2497
+#: src/gtkconv.c:2498
 #: src/gtkdebug.c:182
 msgid "Unable to open file."
 msgstr "Neįmanoma atidaryti bylos."
@@ -2695,7 +2700,7 @@ msgstr "IM"
 #  Send File button
 #. Send File button
 #: src/gtkconv.c:1359
-#: src/gtkconv.c:3728
+#: src/gtkconv.c:3729
 #: src/protocols/oscar/oscar.c:569
 msgid "Send File"
 msgstr "Siųsti"
@@ -2712,7 +2717,7 @@ msgstr "Ignoruoti"
 #  Info button
 #. Info button
 #: src/gtkconv.c:1379
-#: src/gtkconv.c:3749
+#: src/gtkconv.c:3750
 msgid "Info"
 msgstr "Info"
 
@@ -2720,197 +2725,197 @@ msgstr "Info"
 msgid "Get Away Msg"
 msgstr ""
 
-#: src/gtkconv.c:2505
+#: src/gtkconv.c:2506
 msgid "Unable to save icon file to disk."
 msgstr "Neįmanoma išsaugoti ikonos bylos į diską."
 
-#: src/gtkconv.c:2526
+#: src/gtkconv.c:2527
 msgid "Save Icon"
 msgstr "Išsaugoti ikoną"
 
-#: src/gtkconv.c:2556
+#: src/gtkconv.c:2557
 msgid "Animate"
 msgstr ""
 
-#: src/gtkconv.c:2561
+#: src/gtkconv.c:2562
 msgid "Hide Icon"
 msgstr "Paslėpti ikoną"
 
-#: src/gtkconv.c:2567
+#: src/gtkconv.c:2568
 msgid "Save Icon As..."
 msgstr "Išsaugoti ikoną kaip..."
 
-#: src/gtkconv.c:2937
+#: src/gtkconv.c:2938
 msgid "User is typing..."
 msgstr "Naudotojas rašo..."
 
-#: src/gtkconv.c:2945
+#: src/gtkconv.c:2946
 msgid "User has typed something and paused"
 msgstr "Naudotojas kažka rašė ir sustojo"
 
 #  Build the Send As menu
 #. Build the Send As menu
-#: src/gtkconv.c:3048
+#: src/gtkconv.c:3049
 msgid "_Send As"
 msgstr "_Išsaugoti kaip"
 
 #  Conversation menu
 #. Conversation menu
-#: src/gtkconv.c:3499
+#: src/gtkconv.c:3500
 msgid "/_Conversation"
 msgstr "/_Pokalbiai"
 
-#: src/gtkconv.c:3501
+#: src/gtkconv.c:3502
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Pokalbiai/_Siųsti naują žinutę..."
 
-#: src/gtkconv.c:3506
+#: src/gtkconv.c:3507
 msgid "/Conversation/_Find..."
 msgstr "/Pokalbiai/_Ieškoti"
 
-#: src/gtkconv.c:3508
+#: src/gtkconv.c:3509
 msgid "/Conversation/View _Log"
 msgstr "/Pokalbiai/Žiurėti ž_urnalą"
 
-#: src/gtkconv.c:3509
+#: src/gtkconv.c:3510
 msgid "/Conversation/_Save As..."
 msgstr "/Pokalbiai/Išsaugoti _kaip..."
 
-#: src/gtkconv.c:3511
+#: src/gtkconv.c:3512
 msgid "/Conversation/Clear"
 msgstr "/Pokalbiai/Iš_valyti"
 
-#: src/gtkconv.c:3515
+#: src/gtkconv.c:3516
 msgid "/Conversation/Se_nd File..."
 msgstr "/Pokalbiai/_Siųsti bylą..."
 
-#: src/gtkconv.c:3516
+#: src/gtkconv.c:3517
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Pokalbiai/Bičiulių _stebykla..."
 
-#: src/gtkconv.c:3518
+#: src/gtkconv.c:3519
 msgid "/Conversation/_Get Info"
 msgstr "/Pokalbi/_Informacija"
 
-#: src/gtkconv.c:3520
+#: src/gtkconv.c:3521
 msgid "/Conversation/_Warn..."
 msgstr "/Pokalbiai/_Perspėjimas..."
 
-#: src/gtkconv.c:3522
+#: src/gtkconv.c:3523
 msgid "/Conversation/In_vite..."
 msgstr "/Pokalbiai/P_akviesti..."
 
-#: src/gtkconv.c:3527
+#: src/gtkconv.c:3528
 msgid "/Conversation/A_lias..."
 msgstr "/Pokalbiai/_Slapyvardis..."
 
-#: src/gtkconv.c:3529
+#: src/gtkconv.c:3530
 msgid "/Conversation/_Block..."
 msgstr "/Pokalbiai/_Blokuoti..."
 
-#: src/gtkconv.c:3531
+#: src/gtkconv.c:3532
 msgid "/Conversation/_Add..."
 msgstr "/Pokalbiai/Į_dėti..."
 
-#: src/gtkconv.c:3533
+#: src/gtkconv.c:3534
 msgid "/Conversation/_Remove..."
 msgstr "/Pokalbiai/_Pašalinti..."
 
-#: src/gtkconv.c:3538
+#: src/gtkconv.c:3539
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Pokalbiai/_Nuoroda..."
 
-#: src/gtkconv.c:3540
+#: src/gtkconv.c:3541
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Pokalbiai/Pa_veiksliukas..."
 
-#: src/gtkconv.c:3545
+#: src/gtkconv.c:3546
 msgid "/Conversation/_Close"
 msgstr "/Pokalbiai/_Uždaryti"
 
 #  Options
 #. Options
-#: src/gtkconv.c:3549
+#: src/gtkconv.c:3550
 msgid "/_Options"
 msgstr "/_Nustatymai"
 
-#: src/gtkconv.c:3550
+#: src/gtkconv.c:3551
 msgid "/Options/Enable _Logging"
 msgstr "/Nustatymai/Įjungti ž_urnalų vedimą"
 
-#: src/gtkconv.c:3551
+#: src/gtkconv.c:3552
 msgid "/Options/Enable _Sounds"
 msgstr "/Nustatymai/Įjungti _garsus"
 
-#: src/gtkconv.c:3552
+#: src/gtkconv.c:3553
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Nustatymai/Rodyti _teksto formatavimą"
 
-#: src/gtkconv.c:3553
+#: src/gtkconv.c:3554
 msgid "/Options/Show T_imestamps"
 msgstr "/Nustatymai/Rodyti _laiką"
 
-#: src/gtkconv.c:3595
+#: src/gtkconv.c:3596
 msgid "/Conversation/View Log"
 msgstr "/Pokalbiai/Žiūrėti žurnalą"
 
-#: src/gtkconv.c:3600
+#: src/gtkconv.c:3601
 msgid "/Conversation/Send File..."
 msgstr "/Pokalbiai/Siųsti bylą..."
 
-#: src/gtkconv.c:3604
+#: src/gtkconv.c:3605
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Pokalbiai/Bičiulių stebykla..."
 
-#: src/gtkconv.c:3610
+#: src/gtkconv.c:3611
 msgid "/Conversation/Get Info"
-msgstr ""
+msgstr "/Pokalbiai/Informacija"
 
-#: src/gtkconv.c:3614
+#: src/gtkconv.c:3615
 msgid "/Conversation/Warn..."
 msgstr "/Pokalbiai/Perspėjimas..."
 
-#: src/gtkconv.c:3618
+#: src/gtkconv.c:3619
 msgid "/Conversation/Invite..."
 msgstr "/Pokalbiai/Pakviesti..."
 
-#: src/gtkconv.c:3624
+#: src/gtkconv.c:3625
 msgid "/Conversation/Alias..."
 msgstr "/Pokalbiai/Slapyvardis..."
 
-#: src/gtkconv.c:3628
+#: src/gtkconv.c:3629
 msgid "/Conversation/Block..."
 msgstr "/Pokalbiai/Blokuoti..."
 
-#: src/gtkconv.c:3632
+#: src/gtkconv.c:3633
 msgid "/Conversation/Add..."
 msgstr "/Pokalbiai/Įdėti..."
 
-#: src/gtkconv.c:3636
+#: src/gtkconv.c:3637
 msgid "/Conversation/Remove..."
 msgstr "/Pokalbiai/Pašalinti..."
 
-#: src/gtkconv.c:3642
+#: src/gtkconv.c:3643
 msgid "/Conversation/Insert Link..."
 msgstr "/Pokalbiai/Nuoroda..."
 
-#: src/gtkconv.c:3646
+#: src/gtkconv.c:3647
 msgid "/Conversation/Insert Image..."
 msgstr "/Pokalbiai/Paveiksliukas..."
 
-#: src/gtkconv.c:3652
+#: src/gtkconv.c:3653
 msgid "/Options/Enable Logging"
 msgstr "/Nustatymai/Įjungti žurnalų vedimą"
 
-#: src/gtkconv.c:3655
+#: src/gtkconv.c:3656
 msgid "/Options/Enable Sounds"
 msgstr "/Nustatymai/Įjungti garsus"
 
-#: src/gtkconv.c:3658
+#: src/gtkconv.c:3659
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Nustatymai/Rodyti laiką"
 
-#: src/gtkconv.c:3661
+#: src/gtkconv.c:3662
 msgid "/Options/Show Timestamps"
 msgstr "/Nustatymai/Rodyti laiką"
 
@@ -2918,120 +2923,120 @@ msgstr "/Nustatymai/Rodyti laiką"
 #  Warn button
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3714
+#: src/gtkconv.c:3715
 msgid "Warn"
 msgstr "Perspėti"
 
-#: src/gtkconv.c:3715
+#: src/gtkconv.c:3716
 msgid "Warn the user"
 msgstr "Įspėti naudotoją"
 
 #  Block button
 #. Block button
-#: src/gtkconv.c:3721
+#: src/gtkconv.c:3722
 #: src/gtkprivacy.c:623
 #: src/gtkprivacy.c:634
 msgid "Block"
 msgstr "Blokuoti"
 
-#: src/gtkconv.c:3722
+#: src/gtkconv.c:3723
 msgid "Block the user"
 msgstr "Blokuoti vartotoją"
 
-#: src/gtkconv.c:3729
+#: src/gtkconv.c:3730
 msgid "Send a file to the user"
 msgstr "Siųsti naudotojui bylą"
 
-#: src/gtkconv.c:3736
+#: src/gtkconv.c:3737
 msgid "Add the user to your buddy list"
 msgstr "Įdėti naudotoją į bičiulių sąrašą"
 
-#: src/gtkconv.c:3743
+#: src/gtkconv.c:3744
 msgid "Remove the user from your buddy list"
 msgstr "Pašalinti naudotoją iš bičiulių sąrašą"
 
-#: src/gtkconv.c:3750
-#: src/gtkconv.c:4085
+#: src/gtkconv.c:3751
+#: src/gtkconv.c:4086
 msgid "Get the user's information"
 msgstr "Gauti naudotojo informaciją"
 
 #  From right to left...
 #  Send button
 #. Send button
-#: src/gtkconv.c:3756
-#: src/gtkconv.c:3820
+#: src/gtkconv.c:3757
+#: src/gtkconv.c:3821
 msgid "Send"
 msgstr "Siųsti"
 
-#: src/gtkconv.c:3757
-#: src/gtkconv.c:3821
+#: src/gtkconv.c:3758
+#: src/gtkconv.c:3822
 msgid "Send message"
 msgstr "Siųsti žinutę"
 
 #  Invite
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3799
+#: src/gtkconv.c:3800
 msgid "Invite"
 msgstr "Pakviesti"
 
-#: src/gtkconv.c:3800
+#: src/gtkconv.c:3801
 msgid "Invite a user"
 msgstr "Pakviesti naudotoją"
 
-#: src/gtkconv.c:3807
+#: src/gtkconv.c:3808
 msgid "Add the chat to your buddy list"
 msgstr "Įdėti pokalbių kambarį į bičiulių sąrašą"
 
-#: src/gtkconv.c:3814
+#: src/gtkconv.c:3815
 msgid "Remove the chat from your buddy list"
 msgstr "Pašalinti pokalbių kambarį iš bičiulių sąrašo"
 
-#: src/gtkconv.c:3938
+#: src/gtkconv.c:3939
 msgid "Topic:"
 msgstr "Antraštė"
 
 #  Setup the label telling how many people are in the room.
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4001
+#: src/gtkconv.c:4002
 msgid "0 people in room"
 msgstr "0 žmonių pokalbių kamabryje"
 
-#: src/gtkconv.c:4062
+#: src/gtkconv.c:4063
 msgid "IM the user"
 msgstr ""
 
-#: src/gtkconv.c:4074
+#: src/gtkconv.c:4075
 msgid "Ignore the user"
 msgstr "Ignoruoti naudotoją"
 
-#: src/gtkconv.c:4668
+#: src/gtkconv.c:4669
 msgid "Close conversation"
 msgstr "Uždaryti pokalbio langą"
 
-#: src/gtkconv.c:5201
-#: src/gtkconv.c:5230
-#: src/gtkconv.c:5326
-#: src/gtkconv.c:5384
-#: src/gtkconv.c:5942
-#: src/gtkconv.c:5945
+#: src/gtkconv.c:5202
+#: src/gtkconv.c:5231
+#: src/gtkconv.c:5327
+#: src/gtkconv.c:5385
+#: src/gtkconv.c:5950
+#: src/gtkconv.c:5953
 #, c-format
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Pokalbiai/Uždaryti"
 
-#: src/gtkconv.c:6317
+#: src/gtkconv.c:6325
 msgid "say &lt;message&gt;:  Send a message normally as if you weren't using a command."
 msgstr ""
 
-#: src/gtkconv.c:6320
+#: src/gtkconv.c:6328
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 
-#: src/gtkconv.c:6323
+#: src/gtkconv.c:6331
 msgid "debug &lt;option&gt;:  Send various debug information to the current conversation."
 msgstr ""
 
-#: src/gtkconv.c:6327
+#: src/gtkconv.c:6335
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr ""
 
@@ -3539,11 +3544,11 @@ msgstr ""
 
 #: src/gtkimhtml.c:602
 msgid "Pa_ste As Text"
-msgstr ""
+msgstr "Į_dėti kaip tekstą"
 
 #: src/gtkimhtml.c:1047
 msgid "Hyperlink color"
-msgstr ""
+msgstr "Nuorodos spalva"
 
 #: src/gtkimhtml.c:1048
 msgid "Color to draw hyperlinks."
@@ -3551,120 +3556,121 @@ msgstr ""
 
 #: src/gtkimhtml.c:1253
 msgid "_Copy E-Mail Address"
-msgstr ""
+msgstr "Kopijuoti _el.pašto adrsą"
 
 #: src/gtkimhtml.c:1265
 msgid "_Copy Link Location"
-msgstr ""
+msgstr "Kopijuoti _nuorodą"
 
 #: src/gtkimhtml.c:1275
 msgid "_Open Link in Browser"
-msgstr ""
+msgstr "_Atverti naršyklėje"
 
 #: src/gtkimhtml.c:2819
 msgid "Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."
-msgstr ""
+msgstr "Nežinomas paveiksliuko išplėtimas. Nustatoma į PNG."
 
 #: src/gtkimhtml.c:2827
 #, c-format
 msgid "Error saving image: %s"
-msgstr ""
+msgstr "Klaida išsaugant paveiksliuką: %s"
 
 #: src/gtkimhtml.c:2904
 #: src/gtkimhtml.c:2916
 msgid "Save Image"
-msgstr ""
+msgstr "Išsaugoti paveiksliuką"
 
 #: src/gtkimhtml.c:2944
 msgid "_Save Image..."
-msgstr ""
+msgstr "_Išsaugoti paveiksliuką..."
 
 #: src/gtkimhtmltoolbar.c:164
 msgid "Select Font"
-msgstr ""
+msgstr "Pasirinkti šriftą"
 
 #: src/gtkimhtmltoolbar.c:239
 msgid "Select Text Color"
-msgstr ""
+msgstr "Pasirinkti teksto spalvą"
 
 #: src/gtkimhtmltoolbar.c:312
 msgid "Select Background Color"
-msgstr ""
+msgstr "Pasirinkti fono spalvą"
 
 #: src/gtkimhtmltoolbar.c:395
 msgid "_URL"
-msgstr ""
+msgstr "_WWW"
 
 #: src/gtkimhtmltoolbar.c:403
 msgid "_Description"
-msgstr ""
+msgstr "_Aprašymas"
 
 #: src/gtkimhtmltoolbar.c:406
 msgid "Please enter the URL and description of the link that you want to insert. The description is optional."
-msgstr ""
+msgstr "Prašome įvesit WWW ir aprašymą nuorodos, kurią norite įdėti. Aprašymas nėra būtinas."
 
 #: src/gtkimhtmltoolbar.c:410
 msgid "Please enter the URL of the link that you want to insert."
-msgstr ""
+msgstr "Prašome įvesti WWW nuorodos, kurią norite įdėti."
 
 #: src/gtkimhtmltoolbar.c:415
 msgid "Insert Link"
-msgstr ""
+msgstr "Įdėti nuorodą"
 
 #: src/gtkimhtmltoolbar.c:419
 msgid "_Insert"
-msgstr ""
+msgstr "Į_dėti"
 
 #: src/gtkimhtmltoolbar.c:488
 #, c-format
 msgid "Failed to store image: %s\n"
-msgstr ""
+msgstr "Nepavyko išsaugoti paveiksliuko: %s\n"
 
 #: src/gtkimhtmltoolbar.c:514
 #: src/gtkimhtmltoolbar.c:524
 msgid "Insert Image"
-msgstr ""
+msgstr "Įdėti paveiksliuką"
 
 #: src/gtkimhtmltoolbar.c:662
 msgid "This theme has no available smileys."
-msgstr ""
+msgstr "Šita tema neturi šypsenėlių."
 
+#  show everything
 #. show everything
 #: src/gtkimhtmltoolbar.c:677
 msgid "Smile!"
-msgstr ""
+msgstr "Šypsokis!"
 
 #: src/gtkimhtmltoolbar.c:895
 msgid "Bold"
-msgstr ""
+msgstr "Pusjuodis"
 
 #: src/gtkimhtmltoolbar.c:906
 msgid "Italic"
-msgstr ""
+msgstr "Kursyvas"
 
 #: src/gtkimhtmltoolbar.c:917
 msgid "Underline"
-msgstr ""
+msgstr "Pabrauktas"
 
 #: src/gtkimhtmltoolbar.c:933
 msgid "Larger font size"
-msgstr ""
+msgstr "Didesnis šriftas"
 
 #: src/gtkimhtmltoolbar.c:945
 msgid "Smaller font size"
-msgstr ""
+msgstr "Mažesnis šriftas"
 
 #: src/gtkimhtmltoolbar.c:962
 msgid "Font Face"
-msgstr ""
+msgstr "Šriftas"
 
 #: src/gtkimhtmltoolbar.c:974
 msgid "Foreground font color"
-msgstr ""
+msgstr "Šrifto spalva"
 
 #: src/gtkimhtmltoolbar.c:986
 msgid "Background color"
-msgstr ""
+msgstr "Fono spalva"
 
 #: src/gtkimhtmltoolbar.c:1001
 msgid "Insert link"
@@ -3728,20 +3734,20 @@ msgstr ""
 #: src/gtknotify.c:430
 #, c-format
 msgid "The browser command <b>%s</b> is invalid."
-msgstr ""
+msgstr "Naršyklės komanda <b>%s</b> yra neteisinga."
 
 #: src/gtknotify.c:432
 #: src/gtknotify.c:444
 #: src/gtknotify.c:457
 #: src/gtknotify.c:576
 msgid "Unable to open URL"
-msgstr ""
+msgstr "Negalima atidaryti nuorodos"
 
 #: src/gtknotify.c:442
 #: src/gtknotify.c:455
 #, c-format
 msgid "Error launching <b>%s</b>: %s"
-msgstr ""
+msgstr "Klaida paleidžiant <b>%s</b>: %s"
 
 #: src/gtknotify.c:577
 msgid "The 'Manual' browser command has been chosen, but no command has been set."
@@ -3749,13 +3755,14 @@ msgstr ""
 
 #: src/gtkpounce.c:130
 msgid "Select a file"
-msgstr ""
+msgstr "Pasirink bylą"
 
 #: src/gtkpounce.c:161
 msgid "Please enter a buddy to pounce."
-msgstr ""
+msgstr "Įveskite bičiulį kurį stebėti"
 
 #  "New Buddy Pounce"
+#. "New Buddy Pounce"
 #: src/gtkpounce.c:387
 #: src/gtkpounce.c:889
 msgid "New Buddy Pounce"
@@ -3766,6 +3773,7 @@ msgid "Edit Buddy Pounce"
 msgstr "Redaguoti stebėjimus"
 
 #  Create the "Pounce Who" frame.
+#. Create the "Pounce Who" frame.
 #: src/gtkpounce.c:404
 msgid "Pounce Who"
 msgstr "Ką stebėti"
@@ -3775,6 +3783,7 @@ msgid "_Buddy name:"
 msgstr "_Bičiulio vardas:"
 
 #  Create the "Pounce When" frame.
+#. Create the "Pounce When" frame.
 #: src/gtkpounce.c:455
 msgid "Pounce When"
 msgstr "Pranešti apie"
@@ -3793,66 +3802,68 @@ msgstr "_Manęs nėra"
 
 #: src/gtkpounce.c:469
 msgid "_Return from away"
-msgstr ""
+msgstr "_Gryžta"
 
 #: src/gtkpounce.c:471
 msgid "_Idle"
-msgstr ""
+msgstr "_Neveiklus"
 
 #: src/gtkpounce.c:473
 msgid "Retur_n from idle"
-msgstr ""
+msgstr "_Tampa veiklus"
 
 #: src/gtkpounce.c:475
 msgid "Buddy starts _typing"
-msgstr ""
+msgstr "_Pradeda rašyti"
 
 #: src/gtkpounce.c:477
 msgid "Buddy stops t_yping"
-msgstr ""
+msgstr "_Sustoja rašyti"
 
 #  Create the "Pounce Action" frame.
+#. Create the "Pounce Action" frame.
 #: src/gtkpounce.c:506
 msgid "Pounce Action"
-msgstr ""
+msgstr "Stebėjimo veiksmas"
 
 #: src/gtkpounce.c:514
 msgid "Op_en an IM window"
-msgstr ""
+msgstr "_Atidaryti IM lanfą"
 
 #: src/gtkpounce.c:516
 msgid "_Popup notification"
-msgstr ""
+msgstr "_Išokantis perspėjimas"
 
 #: src/gtkpounce.c:518
 msgid "Send a _message"
-msgstr ""
+msgstr "_Siųsti žinutė"
 
 #: src/gtkpounce.c:520
 msgid "E_xecute a command"
-msgstr ""
+msgstr "_Vykdyti komandą"
 
 #: src/gtkpounce.c:522
 msgid "P_lay a sound"
-msgstr ""
+msgstr "_Groti garsą"
 
 #: src/gtkpounce.c:526
 msgid "B_rowse..."
-msgstr ""
+msgstr "_Naršyti...."
 
 #: src/gtkpounce.c:528
 msgid "Bro_wse..."
-msgstr ""
+msgstr "_Naršyti..."
 
 #: src/gtkpounce.c:529
 msgid "Pre_view"
-msgstr ""
+msgstr "_Klausyti"
 
 #: src/gtkpounce.c:612
 msgid "Sav_e this pounce after activation"
-msgstr ""
+msgstr "_Išsaugoti stebėjimą po aktyvavimo"
 
 #  "Remove Buddy Pounce"
+#. "Remove Buddy Pounce"
 #: src/gtkpounce.c:896
 msgid "Remove Buddy Pounce"
 msgstr "Pašalinti stebėjimą"
@@ -3899,11 +3910,11 @@ msgstr "%s išėjo. (%s)"
 
 #: src/gtkpounce.c:969
 msgid "Unknown pounce event. Please report this!"
-msgstr ""
+msgstr "Nežinomas stebėjimo veiksmas. Pranešk apie tai!"
 
 #: src/gtkprefs.c:447
 msgid "Interface Options"
-msgstr ""
+msgstr "Sąsajos nustatymai"
 
 #: src/gtkprefs.c:449
 msgid "D_isplay remote nicknames if no alias is set"
@@ -3915,7 +3926,7 @@ msgstr ""
 
 #: src/gtkprefs.c:718
 msgid "Icon"
-msgstr ""
+msgstr "Ikona"
 
 #: src/gtkprefs.c:725
 #: src/gtkprefs.c:2201
@@ -3923,7 +3934,7 @@ msgstr ""
 #: src/protocols/jabber/buddy.c:748
 #: src/protocols/jabber/chat.c:721
 msgid "Description"
-msgstr ""
+msgstr "Aprašymas"
 
 #: src/gtkprefs.c:821
 msgid "Display"
@@ -3935,19 +3946,19 @@ msgstr "_Rodyti laiką žinutėse"
 
 #: src/gtkprefs.c:825
 msgid "_Highlight misspelled words"
-msgstr ""
+msgstr "_Paryškinti klaidingus žodžius"
 
 #: src/gtkprefs.c:829
 msgid "Ignore c_olors"
-msgstr ""
+msgstr "Ignoruoti _spalvas"
 
 #: src/gtkprefs.c:831
 msgid "Ignore font _faces"
-msgstr ""
+msgstr "Igonruoti šriftų _pakeitimus"
 
 #: src/gtkprefs.c:833
 msgid "Ignore font si_zes"
-msgstr ""
+msgstr "Ignoruoti šrifto _dydžius"
 
 #: src/gtkprefs.c:836
 msgid "Default Formatting"
@@ -3999,7 +4010,7 @@ msgstr ""
 
 #: src/gtkprefs.c:939
 msgid "Buddy List Sorting"
-msgstr ""
+msgstr "Bičiulio sąrašo rikiavimas"
 
 #: src/gtkprefs.c:948
 msgid "_Sorting:"
@@ -4008,22 +4019,22 @@ msgstr ""
 #: src/gtkprefs.c:954
 #: src/gtkprefs.c:1006
 msgid "Show _buttons as:"
-msgstr ""
+msgstr "Rodyti _mygtukus:"
 
 #: src/gtkprefs.c:956
 #: src/gtkprefs.c:1008
 msgid "Pictures"
-msgstr ""
+msgstr "Paveiksliukai"
 
 #: src/gtkprefs.c:957
 #: src/gtkprefs.c:1009
 msgid "Text"
-msgstr ""
+msgstr "Tekstas"
 
 #: src/gtkprefs.c:958
 #: src/gtkprefs.c:1010
 msgid "Pictures and text"
-msgstr ""
+msgstr "Paveiksliukas ir tekstas"
 
 #: src/gtkprefs.c:961
 msgid "_Raise window on events"
@@ -4036,7 +4047,7 @@ msgstr ""
 #: src/gtkprefs.c:965
 #: src/gtkprefs.c:1027
 msgid "Show buddy _icons"
-msgstr ""
+msgstr "Rodyti bičiulių _ikonas"
 
 #: src/gtkprefs.c:967
 msgid "Show _warning levels"
@@ -4044,7 +4055,7 @@ msgstr ""
 
 #: src/gtkprefs.c:969
 msgid "Show idle _times"
-msgstr ""
+msgstr "Rodyti _neveiklumo laiką"
 
 #: src/gtkprefs.c:971
 msgid "Dim i_dle buddies"
@@ -4076,7 +4087,7 @@ msgstr ""
 
 #: src/gtkprefs.c:1031
 msgid "_Notify buddies that you are typing to them"
-msgstr ""
+msgstr "_Pranešti bičiulius kai tu jiems rašai"
 
 #: src/gtkprefs.c:1033
 msgid "_Raise IM window on events"
@@ -4131,43 +4142,43 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:712
 #: src/protocols/oscar/oscar.c:4974
 msgid "IP Address"
-msgstr ""
+msgstr "IP adresas"
 
 #: src/gtkprefs.c:1126
 msgid "_Autodetect IP Address"
-msgstr ""
+msgstr "_Automatiškai atpažinti IP"
 
 #: src/gtkprefs.c:1135
 msgid "Public _IP:"
-msgstr ""
+msgstr "_Viešas IP:"
 
 #: src/gtkprefs.c:1159
 msgid "Ports"
-msgstr ""
+msgstr "Prievadai"
 
 #: src/gtkprefs.c:1162
 msgid "_Manually specify range of ports to listen on"
-msgstr ""
+msgstr "_Rankiniu būdų nustatyti prievadus"
 
 #: src/gtkprefs.c:1165
 msgid "_Start Port:"
-msgstr ""
+msgstr "_Pradinis prievadas:"
 
 #: src/gtkprefs.c:1172
 msgid "_End Port:"
-msgstr ""
+msgstr "_Paskutinis prievadas:"
 
 #: src/gtkprefs.c:1179
 msgid "Proxy Server"
-msgstr ""
+msgstr "Proxy serveris"
 
 #: src/gtkprefs.c:1183
 msgid "No proxy"
-msgstr ""
+msgstr "Nėra proxy"
 
 #: src/gtkprefs.c:1245
 msgid "_User:"
-msgstr ""
+msgstr "_Naudotojas:"
 
 #: src/gtkprefs.c:1301
 msgid "Epiphany"
@@ -4211,7 +4222,7 @@ msgstr ""
 
 #: src/gtkprefs.c:1369
 msgid "Browser Selection"
-msgstr ""
+msgstr "Naršyklės pasirinkimas"
 
 #: src/gtkprefs.c:1373
 msgid "_Browser:"
@@ -4242,43 +4253,43 @@ msgstr ""
 
 #: src/gtkprefs.c:1436
 msgid "Message Logs"
-msgstr ""
+msgstr "Žinučių žurnalas"
 
 #: src/gtkprefs.c:1439
 msgid "Log _Format:"
-msgstr ""
+msgstr "Žurnalų formatas:"
 
 #: src/gtkprefs.c:1442
 msgid "_Log all instant messages"
-msgstr ""
+msgstr "_Privačių pokalbių žurnalų vedimas"
 
 #: src/gtkprefs.c:1444
 msgid "Log all c_hats"
-msgstr ""
+msgstr "_Pokalbio kambarių žurnalų vedimas"
 
 #: src/gtkprefs.c:1447
 msgid "System Logs"
-msgstr ""
+msgstr "Systeminiai žurnalai"
 
 #: src/gtkprefs.c:1449
 msgid "_Enable system log"
-msgstr ""
+msgstr "Įj_ungti systemos žurnalų vedimą"
 
 #: src/gtkprefs.c:1452
 msgid "Log when buddies _sign on/sign off"
-msgstr ""
+msgstr "Pranešti kai bičiuliai _prisijungia/atsijungia"
 
 #: src/gtkprefs.c:1458
 msgid "Log when buddies become _idle/un-idle"
-msgstr ""
+msgstr "Pranešti kai bičiuliai tampa _neveiklūs/veiklūs"
 
 #: src/gtkprefs.c:1464
 msgid "Log when buddies go away/come _back"
-msgstr ""
+msgstr "Pranešti kai bičiuliai _išeina/gryžta"
 
 #: src/gtkprefs.c:1470
 msgid "Log your _own signons/idleness/awayness"
-msgstr ""
+msgstr "Pranešti apie _mano prisijungimus/neveiklumus/išėjimus"
 
 #: src/gtkprefs.c:1596
 msgid "Sound Selection"
@@ -4325,35 +4336,35 @@ msgstr ""
 
 #: src/gtkprefs.c:1701
 msgid "Sound Events"
-msgstr ""
+msgstr "Veiksmai"
 
 #: src/gtkprefs.c:1752
 msgid "Play"
-msgstr ""
+msgstr "Groti"
 
 #: src/gtkprefs.c:1759
 msgid "Event"
-msgstr ""
+msgstr "Įvykis"
 
 #: src/gtkprefs.c:1778
 msgid "Test"
-msgstr ""
+msgstr "Testas"
 
 #: src/gtkprefs.c:1782
 msgid "Reset"
-msgstr ""
+msgstr "Anuliuoti"
 
 #: src/gtkprefs.c:1786
 msgid "Choose..."
-msgstr ""
+msgstr "Pasirinkti"
 
 #: src/gtkprefs.c:1810
 msgid "_Queue new messages when away"
-msgstr ""
+msgstr "_Nerodyti naujos žiutės kai manęs nėra"
 
 #: src/gtkprefs.c:1813
 msgid "_Auto-reply:"
-msgstr ""
+msgstr "_Auto-atsakymas:"
 
 #: src/gtkprefs.c:1815
 msgid "Never"
@@ -4365,7 +4376,7 @@ msgstr "Tiktai kai išėjęs"
 
 #: src/gtkprefs.c:1817
 msgid "When away and idle"
-msgstr ""
+msgstr "Kai manęs nėra ir aš neveiklus"
 
 #: src/gtkprefs.c:1820
 #: src/protocols/msn/msn.c:1179
@@ -4375,39 +4386,39 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2563
 #: src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
-msgstr ""
+msgstr "Neveiklus"
 
 #: src/gtkprefs.c:1821
 msgid "Idle _time reporting:"
-msgstr ""
+msgstr "_Neveiklumą skaičiuoti nuo:"
 
 #: src/gtkprefs.c:1824
 msgid "Gaim usage"
-msgstr ""
+msgstr "Gaim naudojimo"
 
 #: src/gtkprefs.c:1827
 msgid "X usage"
-msgstr ""
+msgstr "X naudijimo"
 
 #: src/gtkprefs.c:1829
 msgid "Windows usage"
-msgstr ""
+msgstr "Windows naudojimo"
 
 #: src/gtkprefs.c:1837
 msgid "Auto-away"
-msgstr ""
+msgstr "Auto-manęs nėra"
 
 #: src/gtkprefs.c:1838
 msgid "Set away _when idle"
-msgstr ""
+msgstr "_Nustatyti manęs nėra, kai aš neveiklus"
 
 #: src/gtkprefs.c:1842
 msgid "_Minutes before setting away:"
-msgstr ""
+msgstr "_Minutės prieš nustatant manęs nėra:"
 
 #: src/gtkprefs.c:1850
 msgid "Away m_essage:"
-msgstr ""
+msgstr "Nebuvimo žinutė:"
 
 #: src/gtkprefs.c:1919
 #, c-format
@@ -4418,6 +4429,11 @@ msgid ""
 "<span weight=\"bold\">Web site:</span>\t\t%s\n"
 "<span weight=\"bold\">File name:</span>\t%s"
 msgstr ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Autorius:</span>\t%s\n"
+"<span weight=\"bold\">Svetainė:</span>\t\t%s\n"
+"<span weight=\"bold\">Byla:</span>\t%s"
 
 #: src/gtkprefs.c:1924
 #, c-format
@@ -4428,67 +4444,72 @@ msgid ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">File name:</span>  %s"
 msgstr ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Autorius:</span>  %s\n"
+"<span weight=\"bold\">WWW:</span>  %s\n"
+"<span weight=\"bold\">Byla:</span>  %s"
 
 #: src/gtkprefs.c:2157
 msgid "Load"
-msgstr ""
+msgstr "Paleisti"
 
 #: src/gtkprefs.c:2171
 msgid "Summary"
-msgstr ""
+msgstr "Suvestinė"
 
 #: src/gtkprefs.c:2219
 msgid "Details"
-msgstr ""
+msgstr "Detalizuoti"
 
 #: src/gtkprefs.c:2379
 msgid "_Edit"
-msgstr ""
+msgstr "_Redaguoti"
 
 #: src/gtkprefs.c:2415
 msgid "Interface"
-msgstr ""
+msgstr "Sąsaja"
 
 #: src/gtkprefs.c:2418
 msgid "Message Text"
-msgstr ""
+msgstr "Žinutės tekstas"
 
 #: src/gtkprefs.c:2419
 msgid "Shortcuts"
-msgstr ""
+msgstr "Greitieji klavišai"
 
 #: src/gtkprefs.c:2420
 msgid "Smiley Themes"
-msgstr ""
+msgstr "Šypsenų temos"
 
 #: src/gtkprefs.c:2421
 msgid "Sounds"
-msgstr ""
+msgstr "Garsai"
 
 #: src/gtkprefs.c:2422
 msgid "Network"
-msgstr ""
+msgstr "Tinklas"
 
-#. We use the registered default browser in windows
+#  We use the registered default browser in windows
 #: src/gtkprefs.c:2425
 msgid "Browser"
-msgstr ""
+msgstr "Naršyklė"
 
 #: src/gtkprefs.c:2427
 msgid "Logging"
-msgstr ""
+msgstr "Žurnalai"
 
 #: src/gtkprefs.c:2428
 msgid "Away / Idle"
-msgstr ""
+msgstr "Manęs nėra / Neveiklus"
 
 #: src/gtkprefs.c:2429
 msgid "Away Messages"
-msgstr ""
+msgstr "Nebuvimo žinutės"
 
 #: src/gtkprefs.c:2432
 msgid "Plugins"
-msgstr ""
+msgstr "Įskiepiai"
 
 #: src/gtkprivacy.c:78
 msgid "Allow all users to contact me"
@@ -4575,9 +4596,8 @@ msgstr ""
 msgid "Are you sure you want to block %s?"
 msgstr ""
 
-#. *
-#. * A wrapper for gaim_request_action() that uses Yes and No buttons.
-#.
+#  *
+#  * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #: src/gtkrequest.c:240
 #: src/protocols/gg/gg.c:949
 #: src/protocols/novell/novell.c:1889
@@ -4585,7 +4605,7 @@ msgstr ""
 #: src/protocols/silc/pk.c:116
 #: src/request.h:1234
 msgid "Yes"
-msgstr ""
+msgstr "Taip"
 
 #: src/gtkrequest.c:241
 #: src/protocols/gg/gg.c:949
@@ -4594,17 +4614,17 @@ msgstr ""
 #: src/protocols/silc/pk.c:117
 #: src/request.h:1234
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: src/gtkrequest.c:244
 msgid "Apply"
-msgstr ""
+msgstr "Vykdyti"
 
 #: src/gtkrequest.c:245
 #: src/protocols/msn/msn.c:314
 #: src/protocols/silc/util.c:332
 msgid "Close"
-msgstr ""
+msgstr "Uždaryti"
 
 #: src/gtkrequest.c:1392
 msgid "That file already exists"
@@ -4693,17 +4713,17 @@ msgstr ""
 
 #: src/log.c:545
 msgid "XML"
-msgstr ""
+msgstr "XML"
 
 #: src/log.c:604
 #, c-format
 msgid "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
-msgstr ""
+msgstr "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:606
 #, c-format
 msgid "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
-msgstr ""
+msgstr "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:657
 #: src/log.c:787
@@ -4718,12 +4738,12 @@ msgstr ""
 
 #: src/log.c:671
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: src/log.c:732
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
-msgstr ""
+msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 #: src/log.c:803
 msgid "Plain text"
@@ -4731,34 +4751,34 @@ msgstr ""
 
 #: src/main.c:150
 msgid "Please create an account."
-msgstr ""
+msgstr "Prašome sukurti abonentą"
 
 #: src/main.c:232
 msgid "Login"
-msgstr ""
+msgstr "Prisijungti"
 
 #: src/main.c:248
 msgid "<b>_Account:</b>"
-msgstr ""
+msgstr "<b>_Abonentas:</b>"
 
 #: src/main.c:262
 msgid "<b>_Password:</b>"
-msgstr ""
+msgstr "<b>_Slaptažodis:</b>"
 
-#. And now for the buttons
+#  And now for the buttons
 #: src/main.c:279
 msgid "_Accounts"
-msgstr ""
+msgstr "_Abonentai"
 
 #: src/main.c:285
 msgid "_Preferences"
-msgstr ""
+msgstr "_Nustatymai"
 
 #: src/main.c:291
 msgid "_Sign on"
-msgstr ""
+msgstr "_Prisijungti"
 
-#. full help text
+#  full help text
 #: src/main.c:517
 #, c-format
 msgid ""
@@ -7522,9 +7542,8 @@ msgid "Personal Title"
 msgstr "Pareigos"
 
 #: src/protocols/novell/novell.c:1451
-#, fuzzy
 msgid "Mailstop"
-msgstr "El.paštas"
+msgstr "Mailstop"
 
 #: src/protocols/novell/novell.c:1453
 #: src/protocols/oscar/oscar.c:4980
@@ -8162,6 +8181,7 @@ msgid "Unknown error"
 msgstr ""
 
 #  Data is assumed to be the destination sn
+#. Data is assumed to be the destination sn
 #: src/protocols/oscar/oscar.c:4027
 #, c-format
 msgid "Unable to send message: %s"
@@ -8195,18 +8215,18 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:4118
 msgid "Online Since"
-msgstr ""
+msgstr "Prisijungęs nuo"
 
 #: src/protocols/oscar/oscar.c:4122
 #: src/protocols/yahoo/yahoo_profile.c:1118
 msgid "Member Since"
-msgstr ""
+msgstr "Narys nuo"
 
 #: src/protocols/oscar/oscar.c:4206
 msgid "Your AIM connection may be lost."
 msgstr ""
 
-#. The conversion failed!
+#  The conversion failed!
 #: src/protocols/oscar/oscar.c:4392
 msgid "[Unable to display a message from this user because it contained invalid characters.]"
 msgstr ""
@@ -8234,7 +8254,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4992
 #: src/protocols/silc/util.c:538
 msgid "Mobile Phone"
-msgstr ""
+msgstr "Mobilus telefonas"
 
 #: src/protocols/oscar/oscar.c:4993
 msgid "Not specified"
@@ -8244,42 +8264,42 @@ msgstr ""
 #: src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:407
 msgid "Female"
-msgstr ""
+msgstr "Moteris"
 
 #: src/protocols/oscar/oscar.c:4994
 #: src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:407
 msgid "Male"
-msgstr ""
+msgstr "Vyras"
 
 #: src/protocols/oscar/oscar.c:5010
 msgid "Personal Web Page"
-msgstr ""
+msgstr "Asmeninė svetainė"
 
 #: src/protocols/oscar/oscar.c:5014
 msgid "Additional Information"
-msgstr ""
+msgstr "Papildoma informacija"
 
 #: src/protocols/oscar/oscar.c:5019
 msgid "Home Address"
-msgstr ""
+msgstr "Namų adresas"
 
 #: src/protocols/oscar/oscar.c:5023
 #: src/protocols/oscar/oscar.c:5031
 msgid "Zip Code"
-msgstr ""
+msgstr "Pašto kodas"
 
 #: src/protocols/oscar/oscar.c:5027
 msgid "Work Address"
-msgstr ""
+msgstr "Darbo adresas"
 
 #: src/protocols/oscar/oscar.c:5035
 msgid "Work Information"
-msgstr ""
+msgstr "Darbovietės informacija"
 
 #: src/protocols/oscar/oscar.c:5036
 msgid "Company"
-msgstr ""
+msgstr "Kompanija"
 
 #: src/protocols/oscar/oscar.c:5037
 msgid "Division"
@@ -8291,12 +8311,12 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:5040
 msgid "Web Page"
-msgstr ""
+msgstr "Svetainė"
 
 #: src/protocols/oscar/oscar.c:5050
 #, c-format
 msgid "ICQ Info for %s"
-msgstr ""
+msgstr "ICQ %s informacija"
 
 #: src/protocols/oscar/oscar.c:5099
 msgid "Pop-Up Message"
@@ -8309,12 +8329,12 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:5124
 msgid "Search Results"
-msgstr ""
+msgstr "Paieškos rezultatai"
 
 #: src/protocols/oscar/oscar.c:5141
 #, c-format
 msgid "No results found for email address %s"
-msgstr ""
+msgstr "El.pašto adresas %s nerastas"
 
 #: src/protocols/oscar/oscar.c:5162
 #, c-format
@@ -10910,7 +10930,7 @@ msgstr "Nežinomas."
 #: src/util.c:2411
 #: src/util.c:2828
 msgid "g003: Error opening connection.\n"
-msgstr ""
+msgstr "g003: Klaida jungiantis.\n"
 
 #: src/win32/win32dep.c:273
 msgid "Moving Gaim Settings.."
