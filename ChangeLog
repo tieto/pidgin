@@ -4,6 +4,7 @@ version 0.76cvs:
 	* WYSIWYG text input (with scrollbars, too!)
 	* Catalan translation updated (Xan (DXpublica))
 	* English (British) translation updated (Luke Ross (lukeross))
+	* Russian translation updated (Alexandre Prokoudine)
 
 version 0.75 (01/09/2004):
 	* New Yahoo! auth method
