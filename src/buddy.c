@@ -356,7 +356,6 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, s
 	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(b, GAIM_STATUS_ICON_LARGE);
 	PangoLayout *layout;
 	char *tooltiptext = gaim_get_tooltip_text(b);
-	int width;
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
@@ -573,6 +572,13 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       b->idle ? "\n" : "", b->idle ? idletime : "", 
 			       b->evil ? "\n" : "", b->evil ? warning : "",
 			       statustext ? "\n" : "", statustext ? statustext : "");
+	if(warning)
+		g_free(warning);
+	if(idletime)
+		g_free(idletime);
+	if(statustext)
+		g_free(statustext);
+
 	return text;
 
 }
@@ -582,11 +588,11 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *scale = NULL;
 	GdkPixbuf *emblem = NULL;
-	gchar *filename = NULL;	
+	gchar *filename = NULL;
 	const char *protoname = NULL;
 
 	char *se = NULL, *sw = NULL ,*nw = NULL ,*ne = NULL;
-	
+
 	int scalesize = 30;
 
 	struct prpl* prpl = find_prpl(b->account->protocol);
@@ -594,7 +600,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 		protoname = prpl->list_icon(b->account, b);
 	if (prpl->list_emblems)
 		prpl->list_emblems(b, &se, &sw, &nw, &ne);
-	
+
 	if (size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
 		sw = nw = ne = NULL; /* So that only the se icon will composite */
@@ -612,7 +618,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 		gtknode = GAIM_GTK_BLIST_NODE((GaimBlistNode*)b);
 		gtknode->timer = g_timeout_add(10000, (GSourceFunc)gaim_reset_present_icon, b);
 
-		/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and 
+		/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and
 		   then it will look up protoname from the theme */
 	} else {
 		char *image = g_strdup_printf("%s.png", protoname);
@@ -622,17 +628,19 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 		g_free(filename);
 
 	}
-	
+
 	if (!status)
 		return NULL;
-	
+
 	scale =  gdk_pixbuf_scale_simple(status, scalesize, scalesize, GDK_INTERP_BILINEAR);
-	
+
+	g_object_unref(G_OBJECT(status));
+
 	/* Emblems */
-	
+
 	/* Each protocol can specify up to four "emblems" to composite over the base icon.  "away", "busy", "mobile user"
 	 * are all examples of states represented by emblems.  I'm not even really sure I like this yet. */
-	
+
 	/* XXX Clean this crap up, yo. */
 	if (se) {
 		char *image = g_strdup_printf("%s.png", se);
@@ -657,6 +665,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 						      1, 1,
 						      GDK_INTERP_BILINEAR,
 						      255);
+			g_object_unref(G_OBJECT(emblem));
 		}
 	}
 	if (sw) {
@@ -666,13 +675,14 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 		emblem = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
 		if (emblem) {
-				gdk_pixbuf_composite (emblem,
-						      scale, 0, 15,
-						      15, 15,
-						      0, 15,
-						      1, 1,
-						      GDK_INTERP_BILINEAR,
-						      255);
+			gdk_pixbuf_composite (emblem,
+					scale, 0, 15,
+					15, 15,
+					0, 15,
+					1, 1,
+					GDK_INTERP_BILINEAR,
+					255);
+			g_object_unref(G_OBJECT(emblem));
 		}
 	}
 	if (nw) {
@@ -689,6 +699,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 					      1, 1,
 					      GDK_INTERP_BILINEAR,
 					      255);
+			g_object_unref(G_OBJECT(emblem));
 		}
 	}
 	if (ne) {
@@ -706,29 +717,36 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 					      GDK_INTERP_BILINEAR,
 					      255);
 		}
-	}		
+	}
 
-	
+
 	/* Idle grey buddies affects the whole row.  This converts the status icon to greyscale. */
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0, FALSE);
 	return scale;
 }
 
-static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b) 
+static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 {
 	/* This just opens a file from ~/.gaim/icons/screenname.  This needs to change to be more gooder. */
-	char *file = g_build_filename(gaim_user_dir(), "icons", normalize(b->name), NULL);
-	GdkPixbuf *buf = gdk_pixbuf_new_from_file(file, NULL);
-	
+	char *file;
+	GdkPixbuf *buf, *ret;
+
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS))
 		return NULL;
-	
+
+	file = g_build_filename(gaim_user_dir(), "icons", normalize(b->name), NULL);
+	buf = gdk_pixbuf_new_from_file(file, NULL);
+	g_free(file);
+
+
 	if (buf) {
 		if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS) {
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0, FALSE);
 		}
-		return gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
+		ret = gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
+		g_object_unref(G_OBJECT(buf));
+		return ret;
 	}
 	return NULL;
 }
@@ -799,6 +817,8 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 		g_free(warning);
 	if (statustext)
 		g_free(statustext);
+	if (esc)
+		g_free(esc);
 
 	return text;
 }
@@ -1091,6 +1111,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 							   NAME_COLUMN, mark,
 							   NODE_COLUMN, node->parent,
 							   -1);
+
+					g_free(mark);
 
 					expand = TRUE;
 				}
