@@ -1087,7 +1087,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				serv_got_update(GJ_GC(gjc), buddy, 0, 0, 0, 0, 0, 0);
 			}
 		} else {
-			if (!resources) {
+			if (res && !resources) {
 				b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
 			}
 
