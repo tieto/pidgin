@@ -461,8 +461,10 @@ static void oscar_login_connect(gpointer data, gint source, GdkInputCondition co
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	odata = gc->proto_data;
 	sess = odata->sess;
@@ -590,8 +592,10 @@ static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond
 	struct aim_session_t *sess;
 	struct aim_conn_t *bosconn;
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	odata = gc->proto_data;
 	sess = odata->sess;
@@ -1003,8 +1007,10 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 	struct aim_session_t *sess;
 	struct aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	odata = gc->proto_data;
 	sess = odata->sess;
@@ -1037,8 +1043,10 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 	struct aim_session_t *sess;
 	struct aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc))
+	if (!g_slist_find(connections, gc)) {
+		close(source);
 		return;
+	}
 
 	odata = gc->proto_data;
 	sess = odata->sess;
@@ -1073,6 +1081,7 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 	struct aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
+		close(source);
 		g_free(ccon->priv);
 		g_free(ccon->show);
 		g_free(ccon->name);
@@ -2678,22 +2687,13 @@ static void oscar_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
 
 static void oscar_chat_invite(struct gaim_connection *g, int id, char *message, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
-
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-		b = NULL;
-	}
-
-	if (!b)
+	struct chat_connection *ccon = find_oscar_chat(g, id);
+	
+	if (!ccon)
 		return;
-
-	aim_chat_invite(odata->sess, odata->conn, name,
-			message ? message : "", 0x4, b->name, 0x0);
+	
+	aim_chat_invite(odata->sess, odata->conn, name, message ? message : "",
+			ccon->exchange, ccon->name, 0x0);
 }
 
 static void oscar_chat_leave(struct gaim_connection *g, int id) {

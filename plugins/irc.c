@@ -1877,8 +1877,15 @@ static void irc_chat_leave(struct gaim_connection *gc, int id)
 static void irc_login_callback(gpointer data, gint source, GdkInputCondition condition)
 {
 	struct gaim_connection *gc = data;
-	struct irc_data *idata = gc->proto_data;
+	struct irc_data *idata;
 	char buf[4096];
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
+		return;
+	}
+
+	idata = gc->proto_data;
 
 	if (source == -1) {
 		hide_login_progress(gc, "Write error");
@@ -1886,7 +1893,7 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 		return;
 	}
 
-	if (idata->fd == 0)
+	if (idata->fd != source)
 		idata->fd = source;
 
  	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (%s)\n",

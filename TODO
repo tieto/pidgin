@@ -2,7 +2,6 @@
 
 THE CORE:
 	Status labels in buddy list (mostly just for yahoo/msn)
-	Border for GtkIMHtml
 	Transparency for GtkIMHtml
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
@@ -14,7 +13,6 @@ THE CORE:
 			offline/normal message. uh... maybe this isn't the best
 			idea, but we need something that gives us this functionality....
 			prpl->send_im_offline?
-		OPT_PROTO_CHAT_TOPIC (for IRC/Jabber chatroom topics)
 		OPT_PROTO_MAILCHECK (mainly for Yahoo/MSN) - with appropriate toggle
 			on account editor modify thing for whether or not to display
 			it (and also move Yahoo/MSN dialog to prpl.c and have both of
@@ -57,14 +55,12 @@ Oscar:
 Yahoo:
 	Chat
 	File Transfer
-	Offline Messaging
 
 ICQ:
 	Authorization (is requesting Auth necessary?)
 	Chat
 	File Transfer
 	New User Registration
-	Offline Messaging
 
 MSN:
 	Chat (?)
