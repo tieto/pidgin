@@ -165,6 +165,7 @@ void show_about(GtkWidget *w, void *data)
 			"  <b>", _("Czech"), " (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
 			"  <b>", _("Danish"), " (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
 			"  <b>", _("British English"), "(en_GB)</b> - Luke Ross &lt;<a href=\"mailto: lukeross@sys3175.co.uk\">lukeross@sys3175.co.uk</a>&gt;<br>"
+			"  <b>", _("Canadian English"), "(en_CA)</b> - Adam Weinberger &lt;<a href=\"mailto: adamw@gnome.org\">adamw@gnome.org</a>&gt;<br>"
 			"  <b>", _("German"), " (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
 			"  <b>", _("Spanish"), " (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
 			"  <b>", _("Finnish"), " (fi)</b> - Arto Alakulju &lt;<a href=\"mailto: arto@alakulju.net\">arto@alakulju.net</a>&gt;<br>"

@@ -20,6 +20,7 @@
 
 use Locale::Language;
 
+$lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
 $lang{'sr@Latn'} = "Serbian (Latin)";
