@@ -122,6 +122,7 @@ void gaim_probe_plugins() {
 					handle = g_module_open(path, 0);
 					if (!handle) {
 						debug_printf("%s is unloadable: %s\n", file, g_module_error());
+						g_free(path);
 						continue;
 					}
 					if (g_module_symbol(handle, "gaim_prpl_init", (gpointer *)&gaim_prpl_init)) {
@@ -136,16 +137,19 @@ void gaim_probe_plugins() {
 						    find_prpl(new_prpl->protocol)) {
 							/* Nothing to see here--move along, move along */
 							unload_protocol(new_prpl);
+							g_free(path);
 							continue;
 						}
 						protocols = g_slist_insert_sorted(protocols, new_prpl, (GCompareFunc)proto_compare);
 						g_module_close(handle);
+						g_free(path);
 						continue;
 					}
 					
 					if (!g_module_symbol(handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
 						debug_printf("%s is unloadable %s\n", file, g_module_error());
 						g_module_close(handle);
+						g_free(path);
 						continue;
 					}
 					plug = g_new0(struct gaim_plugin, 1);
