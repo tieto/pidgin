@@ -212,6 +212,7 @@ void make_buddy(void) {
 		gnome_buddy_show();
 	}	
 	build_edit_tree();
+	build_permit_tree();
 	applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
 	
 }
