@@ -79,7 +79,6 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 DLL_C_SRC =	\
 			account.c \
 			accountopt.c \
-			away.c \
 			blist.c \
 			buddyicon.c \
 			cmds.c \
