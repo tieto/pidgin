@@ -1,5 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.57
+	* New authorization method for Yahoo!
+
 version 0.56 (04/11/2002):
 	* German translation update (Thanks Karsten Weiss)
 	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
