@@ -2,8 +2,9 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.9.20:
 	* More plugin events, more plugin features
-	* French translation added
-	* Spanish translation added
+	* French translation added (fr)
+	* Spanish translation added (es)
+	* Simplified Chinese translation added (zh_CN)
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces
