@@ -4,7 +4,5 @@ Need to make it so that when the buddy list is edited the main window properly r
 Need to set number of buddies in group (as an option)
 Need to not hide empty groups (as an option)
 Need to do Buddy Pounces on a per-connection basis
-Need to report logins/outs to convo window
 Need to get the permit/deny stuff put back
 Need to have per-connection protocol options (e.g. which server to connect to for IRC)
-Need to get the ticker working again.

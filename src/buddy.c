@@ -1495,8 +1495,10 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
-			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
-				BuddyTickerSetPixmap(b->name, pm, bm);
+			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER) {
+				BuddyTickerAddUser(b->name, pm, bm);
+				gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogonTimeout, b->name);
+			}
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 			b->present = 2;
@@ -1505,6 +1507,16 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+			if (display_options & OPT_DISP_SHOW_LOGON) {
+				struct conversation *c = find_conversation(b->name);
+				if (c) {
+					char tmp[1024];
+					g_snprintf(tmp, sizeof(tmp), _("<HR><B>%s logged in%s%s.</B><BR><HR>"), b->name,
+							((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
+							((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
+					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
+				}
+			}
 		} else {
 			if (gc->prpl->list_icon)
 				xpm = (*gc->prpl->list_icon)(b->uc);
@@ -1534,10 +1546,22 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 		gtk_widget_show(bs->pix);
-		if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
+		if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER) {
 			BuddyTickerSetPixmap(b->name, pm, bm);
+			gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogoutTimeout, b->name);
+		}
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
+		if (display_options & OPT_DISP_SHOW_LOGON) {
+			struct conversation *c = find_conversation(b->name);
+			if (c) {
+				char tmp[1024];
+				g_snprintf(tmp, sizeof(tmp), _("<HR><B>%s logged out%s%s.</B><BR><HR>"), b->name,
+						((display_options & OPT_DISP_SHOW_TIME) ? " @ " : ""),
+						((display_options & OPT_DISP_SHOW_TIME) ? date() : ""));
+				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
+			}
+		}
 	}
 }
 
