@@ -257,7 +257,7 @@ struct vcard_template {
 	{N_("Region"),             NULL, TRUE, TRUE, "REGION",    "ADR", NULL},
 	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
 	{N_("Country"),            NULL, TRUE, TRUE, "COUNTRY",   "ADR", NULL},
-	{N_("Telephone"),          NULL, TRUE, TRUE, "TELEPHONE", NULL,  NULL},
+	{N_("Telephone"),          NULL, TRUE, TRUE, "TEL",       NULL,  NULL},
 	{N_("Email"),              NULL, TRUE, TRUE, "EMAIL",     NULL,  "<A HREF=\"mailto:%s\">%s</A>"},
 	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
 	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
