@@ -1,5 +1,6 @@
-#define GAIM_PLUGINS
+#include "config.h"
 #include "gaim.h"
+#include "applet.h"
 
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -88,6 +89,10 @@ void run_commands() {
 			a.name[0] = 0;
 			do_away_message(NULL, &a);
 			free(arg1);
+		} else if (!strncasecmp(command, "hide", 4)) {
+			hide_buddy_list();
+		} else if (!strncasecmp(command, "unhide", 6)) {
+			unhide_buddy_list();
 		} else if (!strncasecmp(command, "back", 4)) {
 			do_im_back();
 		} else if (!strncasecmp(command, "quit", 4)) {

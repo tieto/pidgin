@@ -8,6 +8,8 @@ version 0.58:
 	* Formatting of incoming MSN messages	
 	* Get Info from menu multiple-account-aware (thanks
 	  Brian Bernas)
+	* Hide and unhide functions for the filectl plugin.
+	  (Thanks, Ari Pollack)
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
