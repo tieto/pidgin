@@ -644,14 +644,13 @@ void accept_file_dialog(struct file_transfer *ft)
         gtk_widget_show(warn);
         gtk_widget_show(cancel);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(accept), GTK_RELIEF_NONE);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		if (display_options & OPT_DISP_COOL_LOOK)
+		{
+			gtk_button_set_relief(GTK_BUTTON(accept), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		}
 
         gtk_box_pack_start(GTK_BOX(bbox), accept, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 10);

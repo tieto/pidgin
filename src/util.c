@@ -916,7 +916,5 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
 	gtk_widget_show(label);
 
-	gtk_widget_set_usize(button, 75, 30);
-
 	return button;
 }

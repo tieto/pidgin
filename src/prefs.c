@@ -38,6 +38,8 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/fontface2.xpm"
 #include "pixmaps/refresh.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/gnome_remove.xpm"
 
 struct prefs_data *pd = NULL;
 struct debug_window *dw = NULL;
@@ -346,12 +348,7 @@ void build_prefs()
 	GtkWidget *away_page;
 	GtkWidget *select_font;
 	GtkWidget *font_face_for_text;
-	GtkWidget *button_box, *icon_i, *button_label;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	
 	GtkWidget *list_item;
-
 	gchar buffer[64];
 
 	if (!pd)
@@ -627,18 +624,20 @@ void build_prefs()
 	gtk_text_set_word_wrap(GTK_TEXT(pd->away_text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(pd->away_text), TRUE );
 
-	add_away = gtk_button_new_with_label(_("Create Message"));
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(add_away), GTK_RELIEF_NONE);
+	add_away = picture_button(pd->window, _("Add Message"), gnome_add_xpm);
 	gtk_signal_connect(GTK_OBJECT(add_away), "clicked", GTK_SIGNAL_FUNC(create_away_mess), NULL);
 	gtk_box_pack_start(GTK_BOX(away_botbox), add_away, TRUE, FALSE, 5);
 
-	remove_away = gtk_button_new_with_label(_("Remove Message"));
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(remove_away), GTK_RELIEF_NONE);
+	remove_away = picture_button(pd->window, _("Remove Message"), gnome_remove_xpm);
 	gtk_signal_connect(GTK_OBJECT(remove_away), "clicked", GTK_SIGNAL_FUNC(remove_away_message), NULL);
 	gtk_box_pack_start(GTK_BOX(away_botbox), remove_away, TRUE, FALSE, 5);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(remove_away), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(add_away), GTK_RELIEF_NONE);
+	}
+		
 	gtk_box_pack_start(GTK_BOX(away_page), away_topbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(away_page), away_botbox, FALSE, FALSE, 0);
 
@@ -794,26 +793,15 @@ void build_prefs()
 	font_face_for_text = gaim_button(_("Font Face for Text"), &font_options, OPT_FONT_FACE, fontbox);
 		
 	/* Build font button */
-	select_font = gtk_button_new();
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d (pd->window->window, &mask, NULL, fontface2_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	button_label = gtk_label_new(_("Select Font Face"));
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), button_label, FALSE, FALSE, 2);
-	gtk_widget_show(button_label);
-	gtk_widget_show(icon_i);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(select_font), GTK_RELIEF_NONE);
-	gtk_widget_show(button_box);
-	gtk_container_add(GTK_CONTAINER(select_font), button_box);
+	select_font = picture_button(pd->window, _("Select Font Face"), fontface2_xpm);
 	gtk_box_pack_start(GTK_BOX(fontbox), select_font, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(select_font), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(select_font), GTK_RELIEF_NONE);
 	if (!(font_options & OPT_FONT_FACE))
 	    gtk_widget_set_sensitive(GTK_WIDGET(select_font), FALSE);
 	gtk_widget_show(select_font);
 	gtk_signal_connect(GTK_OBJECT(font_face_for_text), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select_font);
-	/* end of font button */
 	
 	gtk_widget_show(appearance_page);
 	gtk_widget_show(fontbox);
@@ -834,27 +822,8 @@ void build_prefs()
 	bbox = gtk_hbox_new(FALSE, 5);
 
 	/* Build close button */
-
-	close = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, cancel_xpm);
-
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	button_label = gtk_label_new(_("Close"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), button_label, FALSE, FALSE, 2);
-
-	gtk_widget_show(button_label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(close), button_box);
+	close = picture_button(pd->window, _("Close"), cancel_xpm);
 	gtk_widget_set_usize(close, 75, 30);
-	
 	/* End of close button */
 
 
@@ -1032,9 +1001,6 @@ void do_chat_page(GtkWidget *page)
 	GtkWidget *label;
 	GtkWidget *sw1, *sw2;
 	GtkWidget *item;
-	GtkWidget *button_box, *icon_i, *button_label;
-	GdkPixmap *icon;
-	GdkBitmap *mask;
 	struct chat_page *cp = g_new0(struct chat_page, 1);
 	GList *crs = chat_rooms;
 	GList *items = NULL;
@@ -1043,33 +1009,16 @@ void do_chat_page(GtkWidget *page)
 	table = gtk_table_new(4, 2, FALSE);
 	gtk_widget_show(table);
 	
-
 	gtk_box_pack_start(GTK_BOX(page), table, TRUE, TRUE, 0);
-
 
 	list1 = gtk_list_new();
 	list2 = gtk_list_new();
 	sw1 = gtk_scrolled_window_new(NULL, NULL);
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 
-	/* Build refresh button */
-	ref_button = gtk_button_new();
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( pd->window->window, &mask, NULL, refresh_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	button_label = gtk_label_new(_("Refresh List"));
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), button_label, FALSE, FALSE, 2);
-	gtk_widget_show(button_label);
-	gtk_widget_show(icon_i);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(ref_button), GTK_RELIEF_NONE);
-	gtk_widget_show(button_box);
-	gtk_container_add(GTK_CONTAINER(ref_button), button_box);
-	/* End of refresh button */
-	
-	add_button = gtk_button_new_with_label(_("Add"));
-	rem_button = gtk_button_new_with_label(_("Remove"));
+	ref_button = picture_button(pd->window, _("Refresh"), refresh_xpm);
+	add_button = picture_button(pd->window, _("Add"), gnome_add_xpm);
+	rem_button = picture_button(pd->window, _("Remove"), gnome_remove_xpm);
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
 		gtk_button_set_relief(GTK_BUTTON(ref_button), GTK_RELIEF_NONE);
