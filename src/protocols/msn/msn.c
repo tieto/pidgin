@@ -162,9 +162,10 @@ static char *msn_normalize(const char *s)
 {
 	static char buf[BUF_LEN];
 
+	gchar * ss = g_strstrip(s);
 	g_return_val_if_fail(s != NULL, NULL);
 
-	g_snprintf(buf, sizeof(buf), "%s%s", s, strchr(s, '@') ? "" : "@hotmail.com");
+	g_snprintf(buf, sizeof(buf), "%s%s", ss, strchr(ss, '@') ? "" : "@hotmail.com");
 
 	return buf;
 }

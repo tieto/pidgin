@@ -591,7 +591,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 			msg[j++] = m[i];
 		}
 		msg[j] = 0;
-		serv_got_im(gc, from, msg, 0, tm, -1);
+		serv_got_im(gc, from, utf8_to_str(msg), 0, tm, -1);
 	} else if (pkt->status == 2) {
 		do_error_dialog(_("Your Yahoo! message did not get sent."), NULL, GAIM_ERROR);
 	}
@@ -970,6 +970,7 @@ static void yahoo_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
+	g_snprintf(gc->username, sizeof(gc->username), "%s", g_strstrip(gc->username));
 	set_login_progress(gc, 1, "Connecting");
 
 	yd->fd = -1;
@@ -1178,15 +1179,16 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int 
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
+	char *msg = str_to_utf8(what);
 
 	yahoo_packet_hash(pkt, 1, gc->displayname);
 	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 14, what);
+	yahoo_packet_hash(pkt, 14, msg);
 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
-
+	
 	return 1;
 }
 

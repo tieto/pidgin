@@ -437,7 +437,8 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 	mn->email_label = gtk_label_new(buf);
 	gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
-	gtk_box_pack_start(GTK_BOX(vbox), mn->email_label, 0, 0, 5);
+	gtk_label_set_line_wrap(GTK_LABEL(mn->email_label), TRUE);
+	gtk_box_pack_start(GTK_BOX(vbox), mn->email_label, FALSE, TRUE, 5);
 	gtk_widget_show(mn->email_label);
 
 	hbox = gtk_hbox_new(FALSE, 5);

@@ -64,6 +64,11 @@ version 0.60:
 	* Login all auto-login accounts from login window (Thanks
 	  Etan Reisner)
 	* View log button in conversation toolbar (Thanks Etan Reisner)
+	* Fixed a possible segfault when signing off Jabber (Thanks
+	  Craig Boston)
+	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+	* Strip trailing and leading spaces from MSN/Yahoo names (Thanks,
+	  Arun Tharuvai)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

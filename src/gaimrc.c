@@ -63,16 +63,15 @@ struct parse {
 	char value[MAX_VALUES][4096];
 };
 
-static struct parse *parse_line(char *line)
+static struct parse *parse_line(char *line, struct parse *p)
 {
 	char *c = line;
 	int inopt = 1, inval = 0, curval = -1;
 	int optlen = 0, vallen = 0;
-	static struct parse p;
 	int x;
 
 	for (x = 0; x < MAX_VALUES; x++) {
-		p.value[x][0] = 0;
+		p->value[x][0] = 0;
 	}
 
 
@@ -85,36 +84,36 @@ static struct parse *parse_line(char *line)
 			/*   if ((*c < 'a' || *c > 'z') && *c != '_') { */
 			if ((*c < 'a' || *c > 'z') && *c != '_' && (*c < 'A' || *c > 'Z')) {
 				inopt = 0;
-				p.option[optlen] = 0;
+				p->option[optlen] = 0;
 				c++;
 				continue;
 			}
 
-			p.option[optlen] = *c;
+			p->option[optlen] = *c;
 			optlen++;
 			c++;
 			continue;
 		} else if (inval) {
 			if ((*c == '}')) {
 				if (*(c - 1) == '\\') {
-					p.value[curval][vallen - 1] = *c;
+					p->value[curval][vallen - 1] = *c;
 					c++;
 					continue;
 				} else {
-					p.value[curval][vallen - 1] = 0;
+					p->value[curval][vallen - 1] = 0;
 					inval = 0;
 					c++;
 					continue;
 				}
 			} else {
-				p.value[curval][vallen] = *c;
+				p->value[curval][vallen] = *c;
 				vallen++;
 				c++;
 				continue;
 			}
 		} else if (*c == '{') {
 			if (*(c - 1) == '\\') {
-				p.value[curval][vallen - 1] = *c;
+				p->value[curval][vallen - 1] = *c;
 				c++;
 				continue;
 			} else {
@@ -129,7 +128,7 @@ static struct parse *parse_line(char *line)
 		c++;
 	}
 
-	return &p;
+	return p;
 }
 
 
@@ -228,6 +227,7 @@ static char *escape_text2(const char *msg)
 
 static void gaimrc_read_away(FILE *f)
 {
+	struct parse parse_buffer;
 	struct parse *p;
 	char buf[4096];
 	struct away_message *a;
@@ -241,7 +241,7 @@ static void gaimrc_read_away(FILE *f)
 		if (buf[0] == '}')
 			return;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "message")) {
 			a = g_new0(struct away_message, 1);
 
@@ -301,6 +301,7 @@ static void gaimrc_write_away(FILE *f)
 
 static void gaimrc_read_pounce(FILE *f)
 {
+	struct parse parse_buffer;
 	struct parse *p;
 	char buf[4096];
 	struct buddy_pounce *b;
@@ -314,7 +315,7 @@ static void gaimrc_read_pounce(FILE *f)
 		if (buf[0] == '}')
 			return;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "entry")) {
 			b = g_new0(struct buddy_pounce, 1);
 
@@ -413,6 +414,7 @@ static void gaimrc_write_plugins(FILE *f)
 
 static void gaimrc_read_plugins(FILE *f)
 {
+	struct parse parse_buffer;
 	struct parse *p;
 	char buf[4096];
 	GSList *load = NULL;
@@ -426,7 +428,7 @@ static void gaimrc_read_plugins(FILE *f)
 		if (buf[0] == '}')
 			break;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "plugin")) {
 			filter_break(p->value[0]);
 			load = g_slist_append(load, g_strdup(p->value[0]));
@@ -446,6 +448,7 @@ static void gaimrc_read_plugins(FILE *f)
 
 static struct aim_user *gaimrc_read_user(FILE *f)
 {
+	struct parse parse_buffer;
 	struct parse *p;
 	struct aim_user *u;
 	int i;
@@ -454,7 +457,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (!fgets(buf, sizeof(buf), f))
 		return NULL;
 
-	p = parse_line(buf);
+	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "ident"))
 		return NULL;
@@ -499,7 +502,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 		return u;
 	}
 
-	p = parse_line(buf);
+	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "user_opts"))
 		return u;
@@ -513,7 +516,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (!strcmp(buf, "\t}"))
 		return u;
 
-	p = parse_line(buf);
+	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "proto_opts"))
 		return u;
@@ -527,7 +530,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (!strcmp(buf, "\t}"))
 		return u;
 
-	p = parse_line(buf);
+	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "iconfile"))
 		return u;
@@ -540,7 +543,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (!strcmp(buf, "\t}"))
 		return u;
 
-	p = parse_line(buf);
+	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "alias"))
 		return u;
@@ -593,6 +596,7 @@ static void gaimrc_read_users(FILE *f)
 {
 	char buf[2048];
 	struct aim_user *u;
+	struct parse parse_buffer;
 	struct parse *p;
 
 	buf[0] = 0;
@@ -606,7 +610,7 @@ static void gaimrc_read_users(FILE *f)
 
 
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "current_user")) {
 		} else if (strcmp(p->option, "user")) {
@@ -706,6 +710,7 @@ static struct replace disp_replace[] = {
 static void gaimrc_read_options(FILE *f)
 {
 	char buf[2048];
+	struct parse parse_buffer;
 	struct parse *p;
 	gboolean read_logging = FALSE, read_general = FALSE, read_display = FALSE;
 	int general_options = 0, display_options = 0;
@@ -720,7 +725,7 @@ static void gaimrc_read_options(FILE *f)
 		if (!fgets(buf, sizeof(buf), f))
 			return;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "general_options")) {
 			general_options = atoi(p->value[0]);
@@ -872,6 +877,7 @@ static void gaimrc_read_sounds(FILE *f)
 {
 	int i;
 	char buf[2048];
+	struct parse parse_buffer;
 	struct parse *p;
 
 	buf[0] = 0;
@@ -887,7 +893,7 @@ static void gaimrc_read_sounds(FILE *f)
 		if (!fgets(buf, sizeof(buf), f))
 			return;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "sound_cmd")) {
 			g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", p->value[0]);
@@ -1006,6 +1012,7 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 static void gaimrc_read_proxy(FILE *f)
 {
 	char buf[2048];
+	struct parse parse_buffer;
 	struct parse *p;
 
 	buf[0] = 0;
@@ -1018,7 +1025,7 @@ static void gaimrc_read_proxy(FILE *f)
 		if (!fgets(buf, sizeof(buf), f))
 			return;
 
-		p = parse_line(buf);
+		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "host")) {
 			g_snprintf(proxyhost, sizeof(proxyhost), "%s", p->value[0]);
@@ -1135,7 +1142,7 @@ static void set_defaults()
 	away_options =
 		OPT_AWAY_BACK_ON_IM;
 
-	for (i = 0; i < 7; i++)
+	for (i = 0; i < NUM_SOUNDS; i++)
 		sound_file[i] = NULL;
 	font_options = 0;
 	/* Enable all of the sound players that might be available.  The first
