@@ -278,56 +278,6 @@ pounce_choose_cb(GtkWidget *item, GaimAccount *account,
 	dialog->account = account;
 }
 
-#if 0
-static GtkWidget *
-pounce_user_menu(GaimGtkPounceDialog *dialog)
-{
-	GaimAccount *account;
-	GaimPlugin *prpl;
-	GtkWidget *opt_menu;
-	GtkWidget *menu;
-	GtkWidget *item;
-	GList *l;
-	char buf[2048];
-	int count, place = 0;
-
-	opt_menu = gtk_option_menu_new();
-	menu = gtk_menu_new();
-
-	for (l = gaim_accounts_get_all(), count = 0;
-		 l != NULL;
-		 l = l->next, count++) {
-
-		account = (GaimAccount *)l->data;
-
-		prpl = gaim_find_prpl(account->protocol);
-
-		g_snprintf(buf, sizeof(buf), "%s (%s)", account->username,
-				   (prpl && prpl->info->name)
-				   ? prpl->info->name : _("Unknown"));
-
-		item = gtk_menu_item_new_with_label(buf);
-		g_object_set_data(G_OBJECT(item), "user_data", account);
-
-		g_signal_connect(G_OBJECT(item), "activate",
-						 G_CALLBACK(pounce_choose_cb), dialog);
-
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-
-		if (dialog->account == account) {
-			gtk_menu_item_activate(GTK_MENU_ITEM(item));
-			place = count;
-		}
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(opt_menu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(opt_menu), place);
-
-	return opt_menu;
-}
-#endif
-
 static void
 buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
 {
@@ -896,8 +846,9 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 			memset(&StartInfo, 0 , sizeof(StartInfo));
 			StartInfo.cb = sizeof(StartInfo);
 			CreateProcess(NULL, (char *)command, NULL, NULL, 0, 0, NULL, NULL, &StartInfo, &ProcInfo);
-                        gaim_debug(GAIM_DEBUG_INFO, "pounce", "Pounce execute command called for: %s\n", command);
-
+			gaim_debug_info("pounce",
+							"Pounce execute command called for: %s\n",
+							command);
 #endif
 		}
 	}
