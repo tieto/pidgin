@@ -10,7 +10,6 @@ gtk2/new prefs
 	replace legend in info dialog with link to status icons page
 	buddy ticker stays around when you sign off - showing the buddies who were online
 	need a close button on conversations for when its tabed if nothing else.
-	both color selectors say "select text color", which is background and which foreground?
 	text like <font color=blah>with only some text</font> being colored causes the whole line to be colored. 
 	lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
 	on away tab, if you set the time between responces, you 
