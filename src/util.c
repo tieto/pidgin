@@ -2418,6 +2418,28 @@ gaim_str_seconds_to_string(guint secs)
 	return g_string_free(gstr, FALSE);
 }
 
+
+char *
+gaim_str_binary_to_ascii(const unsigned char *binary, guint len)
+{
+	GString *ret;
+	guint i;
+
+	g_return_val_if_fail(len > 0, NULL);
+
+	ret = g_string_sized_new(len);
+
+	for (i = 0; i < len; i++)
+		if (binary[i] < 32 || binary[i] > 126)
+			g_string_append_printf(ret, "\\x%02hhx", binary[i]);
+		else if (binary[i] == '\\')
+			g_string_append(ret, "\\\\");
+		else
+			g_string_append_c(ret, binary[i]);
+
+	return g_string_free(ret, FALSE);
+}
+
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/

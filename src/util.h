@@ -567,6 +567,20 @@ char *gaim_str_size_to_units(size_t size);
  */
 char *gaim_str_seconds_to_string(guint sec);
 
+/**
+ * Converts a binary string into a NUL terminated ascii string,
+ * replacing nonascii characters and characters below SPACE (including
+ * NUL) into \xyy, where yy are two hex digits. Also backslashes are
+ * changed into two backslashes (\\). The returned, newly allocated
+ * can be outputted to the console, and must be g_free()d.
+ *
+ * @param binary A string of random data, possibly with embedded NULs
+ *               and such.
+ * @param len The length in bytes of the input string. Must not be 0.
+ *
+ * @return A newly allocated ASCIIZ string.
+ */
+char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
 /*@}*/
 
 

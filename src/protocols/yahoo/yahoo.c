@@ -412,6 +412,22 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				yahoo_update_status(gc, name, f);
 			}
 			break;
+		case 197: /* Avatars? */
+		{
+			char *decoded, *tmp;
+			guint len;
+
+			if (pair->value) {
+				gaim_base64_decode(pair->value, &decoded, &len);
+				if (len) {
+					tmp = gaim_str_binary_to_ascii(decoded, len);
+					gaim_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
+					g_free(tmp);
+				}
+				g_free(decoded);
+			}
+			break;
+		}
 		case 16: /* Custom error message */
 			{
 				char *tmp = yahoo_string_decode(gc, pair->value, TRUE);
@@ -1038,20 +1054,20 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	 *
 	 * Sorry, Yahoo.
 	 */
-		
+
 	md5_byte_t result[16];
 	md5_state_t ctx;
-		
+
 	char *crypt_result;
 	char password_hash[25];
 	char crypt_hash[25];
 	char *hash_string_p = g_malloc(50 + strlen(name));
 	char *hash_string_c = g_malloc(50 + strlen(name));
-		
+
 	char checksum;
-	
+
 	int sv;
-	
+
 	char result6[25];
 	char result96[25];
 
@@ -1062,9 +1078,9 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	md5_append(&ctx, pass, strlen(pass));
 	md5_finish(&ctx, result);
 	to_y64(password_hash, result, 16);
-		
+
 	md5_init(&ctx);
-	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");  
+	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 	md5_append(&ctx, crypt_result, strlen(crypt_result));
 	md5_finish(&ctx, result);
 	to_y64(crypt_hash, result, 16);
@@ -1109,13 +1125,13 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 				   "%c%s%s%s", checksum, crypt_hash, name, seed);
 			break;
 	}
-		
-	md5_init(&ctx);  
+
+	md5_init(&ctx);
 	md5_append(&ctx, hash_string_p, strlen(hash_string_p));
 	md5_finish(&ctx, result);
 	to_y64(result6, result, 16);
-	
-	md5_init(&ctx);  
+
+	md5_init(&ctx);
 	md5_append(&ctx, hash_string_c, strlen(hash_string_c));
 	md5_finish(&ctx, result);
 	to_y64(result96, result, 16);
@@ -1125,14 +1141,14 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	yahoo_packet_hash(pack, 6, result6);
 	yahoo_packet_hash(pack, 96, result96);
 	yahoo_packet_hash(pack, 1, name);
-		
+
 	yahoo_send_packet(yd, pack);
-	
+
 	g_free(hash_string_p);
 	g_free(hash_string_c);
-	
+
 	yahoo_packet_free(pack);
-	
+
 }
 
 /* I'm dishing out some uber-mad props to Cerulean Studios for cracking this
@@ -1145,13 +1161,13 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	const char *name = gaim_normalize(account, gaim_account_get_username(account));
 	const char *pass = gaim_account_get_password(account);
 	struct yahoo_data *yd = gc->proto_data;
-	
+
 	md5_byte_t			result[16];
 	md5_state_t			ctx;
-	
+
 	SHA_CTX				ctx1;
 	SHA_CTX				ctx2;
-	
+
 	char				*alphabet1			= "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	char				*alphabet2			= "F0E1D2C3B4A59687abcdefghijklmnop";
 
@@ -1204,7 +1220,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 * Magic: Phase 1.  Generate what seems to be a 30 byte value (could change if base64
 	 * ends up differently?  I don't remember and I'm tired, so use a 64 byte buffer.
 	 */
-	
+
 	magic_ptr = seed;
 
 	while (*magic_ptr != (int)NULL) {
@@ -1309,7 +1325,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 				cl = (cl & 0x0f) << 6; 
 				bl = ((bl & 0x3f) + cl) << 6; 
 			} 
-			
+
 			cl = magic[magic_cnt++]; 
 			bl = (cl & 0x3f) + bl; 
 		} else
@@ -1449,7 +1465,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 		/* First two bytes of digest stuffed together.
 		 */
-		
+
 		val = digest2[x];
 		val <<= 8;
 		val += digest2[x+1];
@@ -1592,9 +1608,9 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *sn   = NULL;
 	GSList *l = pkt->hash;
 	int m = 0;
-	gchar *buf;	
+	gchar *buf;
 
-	
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 94)
@@ -1605,7 +1621,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 			m = atoi(pair->value);
 		l = l->next;
 	}
-	
+
 	if (seed) {
 		switch (m) {
 		case 0:
@@ -1800,13 +1816,12 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_free(decoded_group);
 }
 
-#if 0
 static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	char *who = NULL;
 	char *base64 = NULL;
-	char *decoded, *escaped;
+	char *decoded;
 	int len;
 
 	while (l) {
@@ -1842,13 +1857,16 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (0 && base64) {
+	if (base64) {
 		gaim_base64_decode(base64, &decoded, &len);
-		gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, decoded);
+		if (len) {
+			char *tmp = gaim_str_binary_to_ascii(decoded, len);
+			gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
+			g_free(tmp);
+		}
 		g_free(decoded);
 	}
 }
-#endif
 
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
@@ -1938,11 +1956,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
-#if 0
 	case YAHOO_SERVICE_PEEPTOPEER:
 		yahoo_process_p2p(gc, pkt);
 		break;
-#endif
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
