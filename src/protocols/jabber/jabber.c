@@ -971,8 +971,11 @@ static GList *jabber_status_types(GaimAccount *account)
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "online",
-			_("Online"), TRUE, TRUE, FALSE, "priority", _("Priority"),
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available",
+			_("Available"), TRUE, TRUE, FALSE, "priority", _("Priority"),
 			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);

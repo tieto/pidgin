@@ -97,6 +97,9 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	JabberBuddyState state;
 	int priority;
 
+	if(!gaim_status_is_active(status))
+		return;
+
 	if(!account) return ;
 	gc = account->gc;
 
@@ -450,6 +453,29 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				g_free(chat->handle);
 				chat->handle = g_strdup(jid->resource);
 				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
+
+				/* <iq to='room@server'
+				   type='get'>
+				   <query xmlns='http://jabber.org/protocol/disco#info'
+				   node='http://jabber.org/protocol/muc#traffic'/>
+				   </iq>
+				   */
+				/* expected response format:
+				   <iq from='room@server'
+				   type='get'>
+				   <query xmlns='http://jabber.org/protocol/disco#info'
+				   node='http://jabber.org/protocol/muc#traffic'>
+				   <feature var='http://jabber.org/protocol/xhtml-im'/>
+				   <feature var='jabber:x:roster/'/>
+				   </query>
+				   </iq>
+				   */
+				/*
+				 * XXX: i'm not sure if we turn off XHTML unless we get
+				 * xhtml back in this, or if we turn it off only if we
+				 * get a response, and it's not there.  Ask stpeter to
+				 * clarify.
+				 */
 			}
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
@@ -466,7 +492,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(room_jid);
 	} else {
-		if(state != JABBER_BUDDY_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO)) {
+		if(state != JABBER_BUDDY_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO || jb->subscription & JABBER_SUB_PENDING)) {
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					"got unexpected presence from %s, ignoring\n", from);
 			jabber_id_free(jid);
