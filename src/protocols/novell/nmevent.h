@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -28,7 +28,7 @@ typedef struct _NMEvent NMEvent;
 #include "nmuser.h"
 
 /**
- * Defines for the event types 
+ * Defines for the event types
  */
 #define	NMEVT_INVALID_RECIPIENT			101
 #define	NMEVT_UNDELIVERABLE_STATUS		102
@@ -115,7 +115,7 @@ NMConference *nm_event_get_conference(NMEvent * event);
 void nm_event_set_user_record(NMEvent * event, NMUserRecord * user_record);
 
 /**
- * Returns the NMUserRecord object associated with the given event. 
+ * Returns the NMUserRecord object associated with the given event.
  * The user record represents the event source. This should not
  * be released. If it needs to be kept around call
  * nm_user_record_add_ref().
@@ -173,7 +173,7 @@ int nm_event_get_type(NMEvent * event);
  * @param event	The event.
  *
  * @return		The timestamp for the event. This is the number of
- *			    seconds since 1/1/1970 (as returned by the time() 
+ *			    seconds since 1/1/1970 (as returned by the time()
  *				system call).
  */
 guint32 nm_event_get_gmt(NMEvent * event);

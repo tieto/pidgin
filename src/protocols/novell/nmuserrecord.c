@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -83,7 +83,7 @@ _get_attribute_value(NMField *field)
 		 * just pick the first value and return it
 		 */
 		NMField *tmp = (NMField *)field->value;
-		if ((tmp != NULL) && 
+		if ((tmp != NULL) &&
 			((tmp->type == NMFIELD_TYPE_UTF8) ||
 			(tmp->type == NMFIELD_TYPE_DN))) {
 
@@ -96,12 +96,12 @@ _get_attribute_value(NMField *field)
 	} else {
 		return NULL;
 	}
-	
+
 	return g_strdup(value);
 }
 /*
- * This creates a user_record for the reference list the 
- * field array that is passed in should be a 
+ * This creates a user_record for the reference list the
+ * field array that is passed in should be a
  * NM_A_FA_USER_DETAILS array.
  */
 NMUserRecord *
@@ -123,7 +123,7 @@ nm_create_user_record_from_fields(NMField * details)
 	user_record = nm_create_user_record();
 
 	if ((field = nm_locate_field(NM_A_SZ_AUTH_ATTRIBUTE, fields))) {
-		
+
 		if (field->value) {
 			user_record->display_id = _get_attribute_value(field);
 			user_record->auth_attr = TRUE;
@@ -131,7 +131,7 @@ nm_create_user_record_from_fields(NMField * details)
 	}
 
 	if ((field = nm_locate_field(NM_A_SZ_DN, fields))) {
-		
+
 		if (field->value) {
 			user_record->dn = _get_attribute_value(field);
 		}
@@ -152,7 +152,7 @@ nm_create_user_record_from_fields(NMField * details)
 	}
 
 	if ((field = nm_locate_field("Surname", fields))) {
-		
+
 		if (field->value) {
 			user_record->lname = _get_attribute_value(field);
 		}
@@ -257,11 +257,11 @@ nm_user_record_copy(NMUserRecord * dest, NMUserRecord * src)
 
 	/* Copy fields */
 	if (src->fields) {
-		
+
 		if (dest->fields) {
 			nm_free_fields(&dest->fields);
 		}
-		
+
 		dest->fields = nm_copy_field_array(src->fields);
 	}
 
@@ -307,7 +307,7 @@ nm_release_user_record(NMUserRecord * user_record)
 		if (user_record->full_name) {
 			g_free(user_record->full_name);
 		}
-		
+
 		if (user_record->status_text) {
 			g_free(user_record->status_text);
 		}
@@ -471,7 +471,7 @@ nm_user_record_set_status(NMUserRecord * user_record,
 		g_free(user_record->status_text);
 		user_record->status_text = NULL;
 	}
-	
+
 	if (text)
 		user_record->status_text = g_strdup(text);
 }

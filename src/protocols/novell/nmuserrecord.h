@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -46,7 +46,7 @@ NMUserRecord *nm_create_user_record();
  * Creates an NMUserRecord
  *
  * The NMUserRecord should be released by calling
- * nm_release_user_record 
+ * nm_release_user_record
  *
  * @param	details	Should be a NM_A_FA_USER_DETAILS
  *
@@ -60,7 +60,7 @@ NMUserRecord *nm_create_user_record_from_fields(NMField * details);
  * Add a reference to an existing user_record
  *
  * The reference should be released by calling
- * nm_release_user_record 
+ * nm_release_user_record
  *
  * @param	user_record	The contact to addref
  *
@@ -124,7 +124,7 @@ void nm_user_record_set_dn(NMUserRecord * user_record, const char *dn);
 const char *nm_user_record_get_dn(NMUserRecord * user_record);
 
 /**
- * Set the user id for the 
+ * Set the user id for the
  *
  * @param	user_record		The user record
  * @param	userid			The userid (CN) for the user record
@@ -192,7 +192,7 @@ const char *nm_user_record_get_first_name(NMUserRecord * user_record);
  * Get the last name for the user record
  *
  * @param	user_record		The user record
- * 
+ *
  * @return	The last name for the user
  */
 const char *nm_user_record_get_last_name(NMUserRecord * user_record);
@@ -202,7 +202,7 @@ const char *nm_user_record_get_last_name(NMUserRecord * user_record);
  *
  * @param	user_record		The user record
  * @param	data			The user defined data for the user record
- * 
+ *
  */
 void nm_user_record_set_data(NMUserRecord * user_record, gpointer data);
 

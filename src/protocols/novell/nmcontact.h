@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -46,7 +46,7 @@ NMContact *nm_create_contact();
  * Creates a contact from a field array representing the
  * contact
  *
- * Should be released by calling nm_release_contact 
+ * Should be released by calling nm_release_contact
  *
  * @param	fields	Should be the NM_A_FA_CONTACT for
  *					the contact
@@ -60,7 +60,7 @@ NMContact *nm_create_contact_from_fields(NMField * fields);
  * Add a reference to an existing contact
  *
  * The reference should be released by calling
- * nm_release_contact 
+ * nm_release_contact
  *
  * @param	contact	The contact
  *
@@ -105,7 +105,7 @@ const char *nm_contact_get_dn(NMContact * contact);
 
 /**
  * Set the display name for a contact. This is called
- * by nm_send_rename_contact. It should not be called 
+ * by nm_send_rename_contact. It should not be called
  * directly (it does not change the display name on the
  * server side list -- nm_send_rename_conact does).
  *
@@ -210,7 +210,7 @@ const char *nm_contact_get_display_id(NMContact * contact);
 void nm_contact_set_data(NMContact * contact, gpointer data);
 
 /**
- * Create a folder with the given name 
+ * Create a folder with the given name
  *
  * @param	name	The name of the folder
  *
@@ -292,7 +292,7 @@ const char *nm_folder_get_name(NMFolder * folder);
 /**
  * Set the name of a folder. Do not call this directly.
  * It does not change the name of the folder in the
- * server side contact list. You must call 
+ * server side contact list. You must call
  * nm_send_set_folder_name().
  *
  * @param	folder	The folder
@@ -317,7 +317,7 @@ int nm_folder_get_id(NMFolder * folder);
  * @param	user	The logged in user
  * @param	root	The root folder
  * @param	fields	The contact list field array
- * 
+ *
  */
 void nm_folder_add_contacts_and_folders(NMUser * user, NMFolder * root,
 										NMField * fields);

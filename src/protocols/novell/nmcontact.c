@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -56,7 +56,7 @@ static void _add_contacts(NMUser * user, NMFolder * folder, NMField * fields);
 static void _add_folders(NMFolder * root, NMField * fields);
 
 /*********************************************************************
- * Contact API 
+ * Contact API
  *********************************************************************/
 
 NMContact *
@@ -73,8 +73,8 @@ nm_create_contact()
 }
 
 /*
- * This creates a contact for the contact list. The 
- * field array that is passed in should be a 
+ * This creates a contact for the contact list. The
+ * field array that is passed in should be a
  * NM_A_FA_CONTACT array.
  *
  */
@@ -108,7 +108,7 @@ nm_create_contact_from_fields(NMField * fields)
 
 	if ((field =
 		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			contact->seq = atoi((char *) field->value);
 
@@ -116,7 +116,7 @@ nm_create_contact_from_fields(NMField * fields)
 
 	if ((field =
 		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			contact->display_name = g_strdup((char *) field->value);
 
@@ -141,14 +141,14 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 		return;
 
 	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			contact->id = atoi((char *)field->value);
 
 	}
 
 	if ((field = nm_locate_field(NM_A_SZ_PARENT_ID, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			contact->parent_id = atoi((char *) field->value);
 
@@ -164,7 +164,7 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 
 	if ((field =
 		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->value))) {
-		
+
 		if (field->value) {
 			if (contact->display_name)
 				g_free(contact->display_name);
@@ -179,7 +179,7 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 		if (field->value) {
 			if (contact->dn)
 				g_free(contact->dn);
-			
+
 			contact->dn = g_strdup((char *) field->value);
 		}
 
@@ -284,7 +284,7 @@ nm_contact_get_display_name(NMContact * contact)
 		} else {
 
 			/* If auth attribute is set use it */
-			if (nm_user_record_get_auth_attr(contact->user_record) && 
+			if (nm_user_record_get_auth_attr(contact->user_record) &&
 				display_id != NULL)	{
 
 				contact->display_name = g_strdup(display_id);
@@ -320,7 +320,7 @@ nm_contact_set_display_name(NMContact * contact, const char *display_name)
 		g_free(contact->display_name);
 		contact->display_name = NULL;
 	}
-	
+
 	if (display_name)
 		contact->display_name = g_strdup(display_name);
 }
@@ -444,7 +444,7 @@ nm_contact_get_display_id(NMContact * contact)
 
 
 /*********************************************************************
- * Folder API 
+ * Folder API
  *********************************************************************/
 
 NMFolder *
@@ -472,14 +472,14 @@ nm_create_folder_from_fields(NMField * fields)
 	folder = g_new0(NMFolder, 1);
 
 	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			folder->id = atoi((char *) field->value);
 	}
 
 	if ((field =
 		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			folder->seq = atoi((char *) field->value);
 	}
@@ -537,7 +537,7 @@ nm_folder_update_list_properties(NMFolder * folder, NMField * fields)
 		return;
 
 	if ((field = nm_locate_field(NM_A_SZ_OBJECT_ID, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			folder->id = atoi((char *) field->value);
 
@@ -545,7 +545,7 @@ nm_folder_update_list_properties(NMFolder * folder, NMField * fields)
 
 	if ((field =
 		 nm_locate_field(NM_A_SZ_SEQUENCE_NUMBER, (NMField *) fields->value))) {
-		
+
 		if (field->value)
 			folder->seq = atoi((char *) field->value);
 
@@ -557,7 +557,7 @@ nm_folder_update_list_properties(NMFolder * folder, NMField * fields)
 		if (field->value) {
 			if (folder->name)
 				g_free(folder->name);
-			
+
 			folder->name = g_strdup((char *) field->value);
 		}
 
@@ -721,7 +721,7 @@ nm_folder_add_contact_to_list(NMFolder * root_folder, NMContact * contact)
 {
 	GSList *node = NULL;
 	NMFolder *folder = root_folder;
-	
+
 	if (folder == NULL || contact == NULL)
 		return;
 
@@ -843,7 +843,7 @@ nm_folder_find_contact(NMFolder * folder, const char *dn)
 {
 	int cnt, i;
 	NMContact *tmp, *contact = NULL;
-	
+
 	if (folder == NULL || dn == NULL)
 		return NULL;
 
@@ -885,7 +885,7 @@ _release_folder_folders(NMFolder * folder)
 {
 	GSList *fnode;
 	NMFolder *subfolder;
-	
+
 	if (folder == NULL)
 		return;
 

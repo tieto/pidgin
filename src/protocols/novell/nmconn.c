@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -95,10 +95,10 @@ url_escape_string(char *src)
 		} else {
 			*q = '%';
 			q++;
-			
+
 			*q = hex_table[ch >> 4];
 			q++;
-			
+
 			*q = hex_table[ch & 15];
 			q++;
 		}
@@ -166,7 +166,7 @@ encode_method(guint8 method)
 			str = "0";
 			break;
 	}
-	
+
 	return str;
 }
 
@@ -283,7 +283,7 @@ nm_write_fields(NMConn * conn, NMField * fields)
 			switch (field->type) {
 				case NMFIELD_TYPE_UTF8:
 				case NMFIELD_TYPE_DN:
-					
+
 					value = url_escape_string((char *) field->value);
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%s", value);
@@ -291,14 +291,14 @@ nm_write_fields(NMConn * conn, NMField * fields)
 					if (ret < 0) {
 						rc = NMERR_TCP_WRITE;
 					}
-					
+
 					g_free(value);
-					
+
 					break;
-					
+
 				case NMFIELD_TYPE_ARRAY:
 				case NMFIELD_TYPE_MV:
-					
+
 					val = nm_count_fields((NMField *) field->value);
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%u", val);
@@ -306,22 +306,22 @@ nm_write_fields(NMConn * conn, NMField * fields)
 					if (ret < 0) {
 						rc = NMERR_TCP_WRITE;
 					}
-					
+
 					break;
-					
+
 				default:
-					
+
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%u", field->value);
 					ret = nm_tcp_write(conn, buffer, bytes_to_send);
 					if (ret < 0) {
 						rc = NMERR_TCP_WRITE;
 					}
-					
+
 					break;
 			}
 		}
-		
+
 		/* Write the field type */
 		if (rc == NM_OK) {
 			bytes_to_send = g_snprintf(buffer, sizeof(buffer),
@@ -389,7 +389,7 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 		request = nm_copy_field_array(fields);
 		if (request) {
 			char *str = g_strdup_printf("%d", ++(conn->trans_id));
-			
+
 			request = nm_add_field(request, NM_A_SZ_TRANSACTION_ID, 0,
 								   NMFIELD_METHOD_VALID, 0,
 								   (guint32) str, NMFIELD_TYPE_UTF8);
@@ -450,7 +450,7 @@ nm_read_header(NMConn * conn)
 				ptr++;
 			}
 			rtn_buf[i] = '\0';
-			
+
 			if (i > 0)
 				rtn_code = atoi(rtn_buf);
 		}

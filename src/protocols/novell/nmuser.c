@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -29,7 +29,7 @@
 #include "nmuserrecord.h"
 #include "util.h"
 
-/* This is the template that we wrap outgoing messages in, since the other 
+/* This is the template that we wrap outgoing messages in, since the other
  * GW Messenger clients expect messages to be in RTF.
  */
 #define RTF_TEMPLATE 	"{\\rtf1\\fbidis\\ansi\\ansicpg1252\\deff0\\deflang1033"\
@@ -126,7 +126,7 @@ nm_send_login(NMUser * user, const char *pwd, const char *my_addr,
 
 	fields = nm_add_field(fields, NM_A_SZ_USERID, 0, NMFIELD_METHOD_VALID, 0,
 						  (guint32) g_strdup(user->name), NMFIELD_TYPE_UTF8);
-	
+
 	fields = nm_add_field(fields, NM_A_SZ_CREDENTIALS, 0, NMFIELD_METHOD_VALID, 0,
 						  (guint32) g_strdup(pwd), NMFIELD_TYPE_UTF8);
 
@@ -338,7 +338,7 @@ nm_send_leave_conference(NMUser * user, NMConference * conference,
 						  NMFIELD_METHOD_VALID, 0, (guint32) tmp,
 						  NMFIELD_TYPE_ARRAY);
 	tmp = NULL;
-	
+
 	/* Send the request to the server */
 	rc = nm_send_request(user->conn, "leaveconf", fields, &req);
 	if (rc == NM_OK && req) {
@@ -615,7 +615,7 @@ nm_send_create_contact(NMUser * user, NMFolder * folder,
 	if (display_name)
 		fields = nm_add_field(fields, NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_METHOD_VALID, 0,
 							  (guint32) g_strdup(display_name), NMFIELD_TYPE_UTF8);
-		
+
 	/* Dispatch the request */
 	rc = nm_send_request(user->conn, "createcontact", fields, &req);
 	if (rc == NM_OK && req) {
@@ -1387,7 +1387,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 	const char *cmd;
 	nm_response_cb cb;
 	gboolean done = TRUE;
-	
+
 	if (user == NULL || request == NULL || fields == NULL)
 		return NMERR_BAD_PARM;
 
@@ -1398,7 +1398,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 	} else {
 		ret_code = NMERR_PROTOCOL;
 	}
-	
+
 	cmd = nm_request_get_cmd(request);
 	if (ret_code == NM_OK && cmd != NULL) {
 

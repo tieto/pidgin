@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -51,7 +51,7 @@ NMConference *nm_create_conference(const char *guid);
 /**
  * Increments the reference count for the conference.
  *
- * The reference to the conference should be released 
+ * The reference to the conference should be released
  * by calling nm_release_conference
  *
  * @param conference	The conference to reference
@@ -59,7 +59,7 @@ NMConference *nm_create_conference(const char *guid);
 void nm_conference_add_ref(NMConference * conference);
 
 /**
- * Releases the resources associated with the conference 
+ * Releases the resources associated with the conference
  * if there are no more references to it, otherwise just
  * decrements the reference count.
  *
@@ -69,7 +69,7 @@ void nm_conference_add_ref(NMConference * conference);
 void nm_release_conference(NMConference * conf);
 
 /**
- * Set the GUID for the conference.  
+ * Set the GUID for the conference.
  *
  * @param conference	The conference
  * @param guid			The new conference GUID
@@ -78,7 +78,7 @@ void nm_release_conference(NMConference * conf);
 void nm_conference_set_guid(NMConference * conference, const char *guid);
 
 /**
- * Return the GUID for the conference.  
+ * Return the GUID for the conference.
  *
  * @param conference	The conference
  *
@@ -92,7 +92,7 @@ const char *nm_conference_get_guid(NMConference * conference);
  * @param conference	The conference
  * @param user_record	The user record to add as a participant
  *
- * @return				
+ * @return
  */
 void nm_conference_add_participant(NMConference * conference,
 								   NMUserRecord * user_record);
@@ -132,7 +132,7 @@ NMUserRecord *nm_conference_get_participant(NMConference * conference, int index
  *
  * @param conference	The conference
  *
- * @return				TRUE if the conference has been instantiated, 
+ * @return				TRUE if the conference has been instantiated,
  *						FALSE otherwise.
  *
  */

@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -143,7 +143,7 @@ struct _NMUser
 #define NMERR_FOLDER_EXISTS					(NMERR_BASE + 0x0008)
 
 
-/** 
+/**
  *	Initialize the user that we are going to login to the system as.
  *
  *	@param	name			The userid of the user
@@ -159,14 +159,14 @@ NMUser *nm_initialize_user(const char *name, const char *server, int port,
 						   gpointer data, nm_event_cb event_callback);
 
 
-/** 
+/**
  *	Free up resources associated with the user object.
  *
  *  @param	user	The user to deinitialize
  */
 void nm_deinitialize_user(NMUser * user);
 
-/** 
+/**
  *	Send a login request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -177,7 +177,7 @@ void nm_deinitialize_user(NMUser * user);
  *  @param	user_agent	String describing the client (eg. "Gaim/0.76 (Linux; 2.4.20)")
  *	@param	callback	Function to call when we get the response from the server
  *  @param 	data		User defined data to be passed to the callback function
- * 
+ *
  *
  *	@return	NM_OK if login is sent successfully, error otherwise.
  */
@@ -185,7 +185,7 @@ NMERR_T nm_send_login(NMUser * user, const char *pwd, const char *my_addr,
 					  const char *user_agent, nm_response_cb callback,
 					  gpointer data);
 
-/** 
+/**
  *	Send a set status request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -202,7 +202,7 @@ NMERR_T nm_send_set_status(NMUser * user, int status, const char *text,
 						   const char *auto_resp, nm_response_cb callback,
 						   gpointer data);
 
-/** 
+/**
  *	Send a create conference to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -217,9 +217,9 @@ NMERR_T nm_send_set_status(NMUser * user, int status, const char *text,
 NMERR_T nm_send_create_conference(NMUser * user, NMConference * conference,
 								  nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Tell server we have left the conference.
- * 
+ *
  *	The response data sent to the callback will be NULL.
  *
  *  @param	user		The logged in User
@@ -232,7 +232,7 @@ NMERR_T nm_send_create_conference(NMUser * user, NMConference * conference,
 NMERR_T nm_send_leave_conference(NMUser * user, NMConference * conference,
 								 nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Send a join conference request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -248,10 +248,10 @@ NMERR_T nm_send_leave_conference(NMUser * user, NMConference * conference,
 NMERR_T nm_send_join_conference(NMUser * user, NMConference * conference,
 								nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Send a conference reject request to the server.
  *
- *	The response data sent to the callback will be NULL. 
+ *	The response data sent to the callback will be NULL.
  *
  *  @param	user		The logged in User
  *	@param	conference	Conference the user is rejecting
@@ -264,9 +264,9 @@ NMERR_T nm_send_join_conference(NMUser * user, NMConference * conference,
 NMERR_T nm_send_reject_conference(NMUser * user, NMConference * conference,
 								  nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Get details for a user from the server.
- * 
+ *
  *	The response data sent to the callback will be an NMUserRecord which should be
  *  freed with nm_release_user_record
  *
@@ -280,11 +280,11 @@ NMERR_T nm_send_reject_conference(NMUser * user, NMConference * conference,
 NMERR_T nm_send_get_details(NMUser * user, const char *name,
 							nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Get details for multiple users from the server.
- * 
+ *
  *	The response data to the callback will be a list of NMUserRecord, which should be
- *	freed (each user record should be released with nm_release_user_record and the 
+ *	freed (each user record should be released with nm_release_user_record and the
  *  list should be freed)
  *
  *  @param	user		The logged in User
@@ -297,7 +297,7 @@ NMERR_T nm_send_get_details(NMUser * user, const char *name,
 NMERR_T nm_send_multiple_get_details(NMUser *user, GSList *names,
 									 nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Send a message.
  *
  *  The response data sent to the callback will be NULL.
@@ -311,7 +311,7 @@ NMERR_T nm_send_multiple_get_details(NMUser *user, GSList *names,
 NMERR_T nm_send_message(NMUser * user, NMMessage * message,
 						nm_response_cb callback);
 
-/** 
+/**
  *	Sends a typing event to the server.
  *
  *  The response data sent to the callback will be NULL.
@@ -327,7 +327,7 @@ NMERR_T nm_send_message(NMUser * user, NMMessage * message,
 NMERR_T nm_send_typing(NMUser * user, NMConference * conf,
 					   gboolean typing, nm_response_cb callback);
 
-/** 
+/**
  *	Send a create contact request to the server.
  *
  *  The given folder should already exist on the server. If not,
@@ -348,7 +348,7 @@ NMERR_T nm_send_create_contact(NMUser * user, NMFolder * folder,
 							   NMContact * contact, nm_response_cb callback,
 							   gpointer data);
 
-/** 
+/**
  *	Send a remove contact request to the server.
  *
  *  The response data sent to the callback will be NULL.
@@ -365,7 +365,7 @@ NMERR_T nm_send_remove_contact(NMUser * user, NMFolder * folder,
 							   NMContact * contact, nm_response_cb callback,
 							   gpointer data);
 
-/** 
+/**
  *	Send a create folder request to the server.
  *
  *  The response data sent to the callback will be a NMFolder which should be
@@ -381,7 +381,7 @@ NMERR_T nm_send_remove_contact(NMUser * user, NMFolder * folder,
 NMERR_T nm_send_create_folder(NMUser * user, const char *name,
 							  nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Send a delete folder request to the server.
  *
  *  The response data sent to the callback will be NULL.
@@ -396,7 +396,7 @@ NMERR_T nm_send_create_folder(NMUser * user, const char *name,
 NMERR_T nm_send_remove_folder(NMUser * user, NMFolder * folder,
 							  nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Send a rename contact request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -413,7 +413,7 @@ NMERR_T nm_send_rename_contact(NMUser * user, NMContact * contact,
 							   const char *new_name, nm_response_cb callback,
 							   gpointer data);
 
-/** 
+/**
  *	Send a rename folder request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -430,7 +430,7 @@ NMERR_T nm_send_rename_folder(NMUser * user, NMFolder * folder,
 							  const char *new_name, nm_response_cb callback,
 							  gpointer data);
 
-/** 
+/**
  *	Send a move contact request to the server.
  *
  *	The response data sent to the callback will be NULL.
@@ -447,7 +447,7 @@ NMERR_T nm_send_move_contact(NMUser * user, NMContact * contact,
 							 NMFolder * folder, nm_response_cb callback,
 							 gpointer data);
 
-/** 
+/**
  *	Send a get status request to the server.
  *
  * 	The response data sent to the callback will be a NMUserRecord.
@@ -463,14 +463,14 @@ NMERR_T nm_send_move_contact(NMUser * user, NMContact * contact,
 NMERR_T nm_send_get_status(NMUser * user, NMUserRecord * user_record,
 						   nm_response_cb callback, gpointer data);
 
-/** 
+/**
  *	Reads a response/event from the server and processes it.
  *
  *  @param	user	The logged in User
  */
 NMERR_T nm_process_new_data(NMUser * user);
 
-/** 
+/**
  *	Return the root folder of the contact list
  *
  *  @param	user	The logged in User
@@ -479,7 +479,7 @@ NMERR_T nm_process_new_data(NMUser * user);
  */
 NMFolder *nm_get_root_folder(NMUser * user);
 
-/** 
+/**
  *	Create the contact list based on the login fields
  *
  *  @param	user	The logged in User
@@ -522,7 +522,7 @@ NMConn *nm_user_get_conn(NMUser * user);
 /** Some utility functions **/
 
 /**
- * Check to see if the conference GUIDs are equivalent.	
+ * Check to see if the conference GUIDs are equivalent.
  *
  * @param guid1	First guid to compare
  * @param guid2 Second guid to compare

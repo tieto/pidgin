@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -132,7 +132,7 @@ _got_user_for_event(NMUser * user, NMERR_T ret_val,
 	if (ret_val == NM_OK) {
 		if (event && user_record) {
 
-			/* Add the user record to the event structure 
+			/* Add the user record to the event structure
 			 * and make the callback.
 			 */
 			nm_event_set_user_record(event, user_record);
@@ -175,7 +175,7 @@ _got_user_for_conference(NMUser * user, NMERR_T ret_val,
 			/* Add source of event as recip of the conference */
 			nm_conference_add_participant(conference, user_record);
 
-			/* Add the user record to the event structure 
+			/* Add the user record to the event structure
 			 * and make the callback.
 			 */
 			nm_event_set_user_record(event, user_record);
@@ -469,7 +469,7 @@ handle_conference_reject(NMUser * user, NMEvent * event)
 }
 
 /* Read the conference left event, set up the event object, and
- * remove the conference from the list if there are no more 
+ * remove the conference from the list if there are no more
  * participants
  */
 static NMERR_T
@@ -500,12 +500,12 @@ handle_conference_left(NMUser * user, NMEvent * event)
 		if (conference) {
 			nm_event_set_conference(event, conference);
 			nm_conference_set_flags(conference, flags);
-			
+
 			nm_conference_remove_participant(conference, nm_event_get_source(event));
 			if (nm_conference_get_participant_count(conference) == 0) {
 				nm_conference_list_remove(user, conference);
 			}
-			
+
 		} else {
 			rc = NMERR_CONFERENCE_NOT_FOUND;
 		}
@@ -585,22 +585,22 @@ handle_conference_joined(NMUser * user, NMEvent * event)
 		conference = nm_conference_list_find(user, guid);
 		if (conference) {
 			nm_conference_set_flags(conference, flags);
-			
+
 			nm_event_set_conference(event, conference);
-			
+
 			/* Add the new user to the participants list */
 			user_record = nm_find_user_record(user, nm_event_get_source(event));
 			if (user_record) {
 				nm_conference_add_participant(conference, user_record);
 			} else {
-				
+
 				/* Need to go to the server to get details for the user */
 				rc = nm_send_get_details(user, nm_event_get_source(event),
 										 _got_user_for_conference, event);
 				if (rc == NM_OK)
 					rc = -1;		/* Not done processing the event yet! */
 			}
-			
+
 		} else {
 			rc = NMERR_CONFERENCE_NOT_FOUND;
 		}

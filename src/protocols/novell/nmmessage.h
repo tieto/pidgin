@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -28,13 +28,13 @@ typedef struct _NMMessage NMMessage;
 #include "nmconference.h"
 
 /**
- * Creates a new message. 
+ * Creates a new message.
  *
  * The returned message should be released by calling
  * nm_release_message
  *
  * @param	text	The message text
- * @return			A newly allocated message	
+ * @return			A newly allocated message
  */
 NMMessage *nm_create_message(const char *text);
 
@@ -65,8 +65,8 @@ void nm_message_set_conference(NMMessage * msg, NMConference * conf);
 /**
  * Returns the conference object associated with the message
  *
- * Note: this does not increment the reference count for the 
- * conference and the conference should NOT be released with 
+ * Note: this does not increment the reference count for the
+ * conference and the conference should NOT be released with
  * nm_release_conference. If the reference needs to be kept
  * around nm_conference_add_ref should be called.
  *

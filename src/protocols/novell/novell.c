@@ -9,7 +9,7 @@
  * RECAST, TRANSFORMED OR ADAPTED WITHOUT THE PRIOR WRITTEN CONSENT OF NOVELL,
  * INC. ANY USE OR EXPLOITATION OF THIS WORK WITHOUT AUTHORIZATION COULD SUBJECT
  * THE PERPETRATOR TO CRIMINAL AND CIVIL LIABILITY.
- * 
+ *
  * AS BETWEEN [GAIM] AND NOVELL, NOVELL GRANTS [GAIM] THE RIGHT TO REPUBLISH
  * THIS WORK UNDER THE GPL (GNU GENERAL PUBLIC LICENSE) WITH ALL RIGHTS AND
  * LICENSES THEREUNDER.  IF YOU HAVE RECEIVED THIS WORK DIRECTLY OR INDIRECTLY
@@ -219,7 +219,7 @@ _get_details_resp_send_msg(NMUser * user, NMERR_T ret_code,
 		}
 
 	} else {
-		
+
 		gc = gaim_account_get_connection(user->client_data);
 		if (gc != NULL) {
 			char *err = g_strdup_printf(_("Unable to send message."
@@ -349,7 +349,7 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 			/* Save the new buddy as part of the contact object */
 			nm_contact_set_data(new_contact, (gpointer) buddy);
 
-			/* We need details for the user before we can setup the 
+			/* We need details for the user before we can setup the
 			 * new Gaim buddy. We always call this because the
 			 * 'createcontact' response fields do not always contain
 			 * everything that we need.
@@ -524,7 +524,7 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 			/* Tell the server to move the contact to the new folder */
 /*			rc = nm_send_move_contact(user, contact, new_folder,
 			_move_contact_resp_cb, NULL); */
-	
+
 			rc = nm_send_create_contact(user, new_folder, contact,
 										NULL, NULL);
 
@@ -680,7 +680,7 @@ _user_agent_string()
 	const char *release = "";
 	const char *template = "Gaim/%s (%s; %s)";
 	struct utsname u;
-	
+
 	if (uname(&u) == 0) {
 		sysname = u.sysname;
 		release = u.release;
@@ -697,18 +697,18 @@ _user_agent_string()
 	const char *template = "Gaim/%s (%s; %d.%d)";
 	OSVERSIONINFO os_info;
 	SYSTEM_INFO sys_info;
-	
+
 	os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&os_info);
 	GetSystemInfo(&sys_info);
-	
+
 	if (os_info.dwPlatformId == VER_PLATFORM_WIN32_NT)  {
 		switch (os_info.dwMajorVersion) {
 			case 3:
-			case 4:			
+			case 4:
 				sysname = "Windows NT";
 				break;
-			case 5:			  
+			case 5:
 				switch (os_info.dwMinorVersion) {
 					case 0:
 						sysname = "Windows 2000";
@@ -728,7 +728,7 @@ _user_agent_string()
 				sysname = "Windows";
 				break;
 		}
-		
+
 	}	else if (os_info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
 		switch (os_info.dwMinorVersion) {
 			case 0:
@@ -747,13 +747,13 @@ _user_agent_string()
 	} else {
 		sysname = "Windows";
 	}
-	
+
 	return g_strdup_printf(template, VERSION, sysname,
 						   os_info.dwMajorVersion, os_info.dwMinorVersion);
-	
+
 #endif
-	
-	
+
+
 }
 
 static gboolean
@@ -791,7 +791,7 @@ _send_message(NMUser * user, NMMessage * message)
 
 	conf = nm_message_get_conference(message);
 	if (conf) {
-		/* We have a conference make sure that the 
+		/* We have a conference make sure that the
 		   server knows about it already. */
 		if (nm_conference_is_instantiated(conf)) {
 
@@ -935,7 +935,7 @@ _add_contacts_to_gaim_blist(NMUser * user, NMFolder * folder)
 
 		} else {
 			/* NULL contact. This should not happen, but
-			 * let's break out of the loop. 
+			 * let's break out of the loop.
 			 */
 			break;
 		}
@@ -1158,7 +1158,7 @@ novell_ssl_connected_cb(gpointer data, GaimSslConnection * gsc,
 	} else {
 		gaim_connection_error(gc, _("Unable to connect to server."));
 	}
-	
+
 	gaim_connection_update_progress(gc, _("Waiting for response..."),
 									3, NOVELL_CONNECT_STEPS);
 
@@ -1501,7 +1501,7 @@ _event_callback(NMUser * user, NMEvent * event)
 			break;
 		case NMEVT_CONFERENCE_INVITE_NOTIFY:
 			/* Someone else has been invited to join a
-			 * conference that we are currently a part of 
+			 * conference that we are currently a part of
 			 */
 			/* TODO: show the invite notify in chat window */
 			break;
@@ -1517,7 +1517,7 @@ _event_callback(NMUser * user, NMEvent * event)
 			break;
 		case NMEVT_CONFERENCE_LEFT:
 			/* Someone else has left a conference that we
-			 * are currently a part of 
+			 * are currently a part of
 			 */
 			_evt_conference_left(user, event);
 			break;
@@ -1525,7 +1525,7 @@ _event_callback(NMUser * user, NMEvent * event)
 			gaim_debug(GAIM_DEBUG_INFO, "novell",
 					   "_event_callback(): unhandled event, %d\n",
 					   nm_event_get_type(event));
-			break;	
+			break;
 	}
 }
 
@@ -1552,7 +1552,7 @@ novell_login(GaimAccount * account)
 	server = gaim_account_get_string(account, "server", NULL);
 	if (server == NULL || *server == '\0') {
 
-		/* TODO: Would be nice to prompt if not set!      
+		/* TODO: Would be nice to prompt if not set!
 		 *  gaim_request_fields(gc, _("Server Address"),...);
 		 */
 
@@ -1582,7 +1582,7 @@ novell_login(GaimAccount * account)
 			gaim_connection_error(gc, _("Error."
 										" SSL support is not installed."));
 		}
-	}	
+	}
 }
 
 static void
@@ -1678,7 +1678,7 @@ novell_send_im(GaimConnection * gc, const char *name,
 		created_conf = TRUE;
 
 		nm_message_set_conference(message, conf);
-		
+
 		rc = nm_send_get_details(user, name, _get_details_resp_send_msg, message);
 		_check_for_disconnect(user, rc);
 
@@ -1871,7 +1871,7 @@ novell_add_buddy(GaimConnection * gc, const char *name, GaimGroup * group)
 	contact = nm_create_contact();
 	nm_contact_set_dn(contact, name);
 
-	/* Remove the GaimBuddy (we will add it back after adding it 
+	/* Remove the GaimBuddy (we will add it back after adding it
 	 * to the server side list). Save the alias if there is one.
 	 */
 	buddy = gaim_find_buddy_in_group(user->client_data, name, group);
