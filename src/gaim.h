@@ -725,6 +725,7 @@ extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 /* Functions in buddy.c */
 extern void destroy_buddy();
 extern void update_button_pix();
+extern void toggle_show_empty_groups();
 extern void update_all_buddies();
 extern void update_num_groups();
 extern void show_buddy_list();
@@ -819,8 +820,8 @@ extern void show_error_dialog(char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_add_buddy(struct gaim_connection *, char *, char *);
-extern void show_add_group();
-extern void show_add_perm();
+extern void show_add_group(struct gaim_connection *);
+extern void show_add_perm(struct gaim_connection *, char *);
 extern void destroy_all_dialogs();
 extern void show_export_dialog();
 extern void show_import_dialog();

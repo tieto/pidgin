@@ -1696,6 +1696,9 @@ void set_display_option(GtkWidget *w, int *option)
 	if (blist && ((int)option == OPT_DISP_SHOW_GRPNUM))
 		update_num_groups();
 
+	if (blist && ((int)option == OPT_DISP_NO_MT_GRP))
+		toggle_show_empty_groups();
+
 #ifdef USE_APPLET
 	update_pixmaps();
 #endif

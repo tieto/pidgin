@@ -100,12 +100,14 @@ struct addbuddy {
         GtkWidget *window;
         GtkWidget *combo;
         GtkWidget *entry;
+	struct gaim_connection *gc;
 };
 
 struct addperm {
         GtkWidget *window;
         GSList *buttons;
         GtkWidget *entry;
+	struct gaim_connection *gc;
 };
 
 struct addbp {
@@ -569,7 +571,7 @@ static void do_info(GtkWidget *widget, GtkWidget *infoentry)
 		return;
 	}
 	
-	/* FIXME: what do we want to do about this case? */
+	/* what do we want to do about this case? */
 	if (connections)
 		serv_get_info(connections->data, who);
 
@@ -788,8 +790,8 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         c = find_conversation(who);
 
-	/* FIXME */
-        add_buddy(connections->data, grp, who, NULL);
+	if (a->gc) add_buddy(a->gc, grp, who, NULL);
+	else if (connections) add_buddy(connections->data, grp, who, NULL);
 
         if (c != NULL) {
 		update_convo_add_button(c);
@@ -814,8 +816,8 @@ void do_add_group(GtkWidget *w, struct addbuddy *a)
 
 	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
-	/* FIXME */
-	add_group(connections->data, grp);
+	if (a->gc) add_group(a->gc, grp);
+	else if (connections) add_group(connections->data, grp);
 
 	build_edit_tree();
 
@@ -852,7 +854,7 @@ static void free_dialog(GtkWidget *w, struct addbuddy *a)
 }
 
 
-void show_add_group()
+void show_add_group(struct gaim_connection *gc)
 {
 	GtkWidget *cancel;
 	GtkWidget *add;
@@ -863,6 +865,7 @@ void show_add_group()
 	GtkWidget *frame;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
+	a->gc = gc;
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_group", "Gaim");
@@ -937,6 +940,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	GtkWidget *frame;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
+	a->gc = gc;
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_buddy", "Gaim");
@@ -1735,11 +1739,9 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         }
 
         if (d) {
-		/* FIXME */
-		serv_add_deny(connections->data, name);
+		serv_add_deny(p->gc, name);
         } else {
-		/* FIXME */
-		serv_add_permit(connections->data, name);
+		serv_add_permit(p->gc, name);
         }
 
 	do_export(0, 0);
@@ -1749,7 +1751,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
 
 
-void show_add_perm(char *who)
+void show_add_perm(struct gaim_connection *gc, char *who)
 {
 	GtkWidget *cancel;
 	GtkWidget *add;
@@ -1762,6 +1764,7 @@ void show_add_perm(char *who)
 	GtkWidget *frame;
 	
 	struct addperm *p = g_new0(struct addperm, 1);
+	p->gc = gc;
 
         p->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_container_set_border_width(GTK_CONTAINER(p->window), 5);

@@ -142,6 +142,46 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 }
 
 
+void toggle_show_empty_groups() {
+	if (display_options & OPT_DISP_NO_MT_GRP) {
+		/* remove any group_shows with empty members */
+		GSList *s = shows;
+		struct group_show *g;
+
+		while (s) {
+			g = (struct group_show *)s->data;
+			if (!g_slist_length(g->members)) {
+				shows = g_slist_remove(shows, g);
+				s = shows;
+				gtk_widget_destroy(g->item);
+				g_free(g->name);
+				g_free(g);
+			} else
+				s = g_slist_next(s);
+		}
+
+	} else {
+		/* put back all groups */
+		GSList *c = connections;
+		struct gaim_connection *gc;
+		GSList *m;
+		struct group *g;
+
+		while (c) {
+			gc = (struct gaim_connection *)c->data;
+			m = gc->groups;
+			while (m) {
+				g = (struct group *)m->data;
+				m = g_slist_next(m);
+				if (!find_group_show(g->name))
+					new_group_show(g->name);
+			}
+			c = g_slist_next(c);
+		}
+		
+	}
+}
+
 static void update_num_group(struct group_show *gs) {
 	GSList *c = connections;
 	struct gaim_connection *gc;
@@ -845,6 +885,9 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 	
 	build_edit_tree();
 	
+	if (!(display_options & OPT_DISP_NO_MT_GRP) && !find_group_show(group))
+		new_group_show(group);
+
 	return g;
 }
 
@@ -957,7 +1000,16 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 
 void add_group_callback(GtkWidget *widget, void *dummy)
 {
-	show_add_group();
+	GtkCTreeNode *node;
+	GList *i;
+	struct gaim_connection *gc = NULL;
+
+	i = GTK_CLIST(edittree)->selection;
+	if (i) {
+		node = i->data;
+		gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+	}
+	show_add_group(gc);
 }
 
 static void im_callback(GtkWidget *widget, GtkTree *tree)
@@ -1404,6 +1456,7 @@ static struct group_show *new_group_show(char *group) {
 	gtk_widget_show(g->tree);
 
 	shows = g_slist_insert(shows, g, pos);
+	update_num_groups(g);
 	return g;
 }
 

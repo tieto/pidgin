@@ -427,7 +427,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 	}
 	else
 	{
-        	show_add_buddy(c->gc, c->name, NULL);
+        	if (c->gc) show_add_buddy(c->gc, c->name, NULL);
 	}
 
 	gtk_widget_grab_focus(c->entry);
@@ -436,7 +436,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 
 void block_callback(GtkWidget *widget, struct conversation *c)
 {
-        show_add_perm(c->name);
+        if (c->gc) show_add_perm(c->gc, c->name);
 	gtk_widget_grab_focus(c->entry);
 }
 

@@ -692,6 +692,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
+	char buf[256];
 
 	debug_printf("Accepted DirectIM.\n");
 
@@ -711,6 +712,9 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	}
 
 	if (!(dim->cnv = find_conversation(d->sn))) dim->cnv = new_conversation(d->sn);
+	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), d->sn);
+	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
+
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
 
@@ -1526,6 +1530,7 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	struct aim_directim_priv *priv;
 	struct aim_conn_t *newconn;
 	struct direct_im *dim;
+	char buf[256];
 
 	va_start(ap, command);
 	newconn = va_arg(ap, struct aim_conn_t *);
@@ -1544,7 +1549,8 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	dim->conn = newconn;
 	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, dim->conn);
-	/* FIXME: print to screen that this is now direct */
+	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), priv->sn);
+	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
 				gaim_directim_incoming, 0);
@@ -1582,6 +1588,7 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
+	char buf[256];
 
 	va_start(ap, command);
 	conn = va_arg(ap, struct aim_conn_t *);
@@ -1595,7 +1602,9 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 	gdk_input_remove(dim->watcher);
 	gtk_signal_disconnect_by_data(GTK_OBJECT(dim->cnv->window), dim);
 
-	/* FIXME: need to indicate no longer direct */
+	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s closed</B>"), sn);
+	if (dim->cnv)
+		write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL);
 
 	aim_conn_kill(sess, &conn);
 
@@ -1629,13 +1638,18 @@ static void oscar_direct_im(GtkObject *obj, char *who) {
 	dim = g_new0(struct direct_im, 1);
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", who);
-	od->direct_ims = g_slist_append(od->direct_ims, dim);
 
 	dim->conn = aim_directim_initiate(od->sess, od->conn, NULL, who);
-	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, dim->conn);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
-				gaim_directim_initiate, 0);
+	if (dim->conn != NULL) {
+		od->direct_ims = g_slist_append(od->direct_ims, dim);
+		dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+						oscar_callback, dim->conn);
+		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
+					gaim_directim_initiate, 0);
+	} else {
+		do_error_dialog(_("Unable to open Direct IM"), _("Error"));
+		g_free(dim);
+	}
 }
 
 static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
