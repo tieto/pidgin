@@ -57,6 +57,10 @@ mv po/ChangeLog.save po/ChangeLog
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
 
+if test -d /usr/local/share/aclocal ; then
+	ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I /usr/local/share/aclocal"
+fi
+
 aclocal -I m4 $ACLOCAL_FLAGS || exit;
 autoheader || exit;
 automake --add-missing --copy;
