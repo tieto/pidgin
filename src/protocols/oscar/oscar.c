@@ -443,7 +443,6 @@ static void oscar_login(struct aim_user *user) {
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
 	odata->create_exchange = 0;
 
-	debug_printf(_("Logging in %s\n"), user->username);
 	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
 		/* this is odd but it's necessary for a proper do_import and do_export */
@@ -1615,7 +1614,6 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_getbuildstring(buildbuf, sizeof(buildbuf));
 
 	debug_printf("MOTD: %s (%d)\n", msg ? msg : "Unknown", id);
-	debug_printf("Gaim %s / libfaim %s\n", VERSION, buildbuf);
 	if (id < 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));

@@ -54,7 +54,7 @@ void serv_login(struct aim_user *user)
 			return;
 		}
 
-		debug_printf("Logging in using %s\n", p->name());
+		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
 		p->login(user);
 	} else {
 		do_error_dialog(_("You cannot log this account in; you do not have "
