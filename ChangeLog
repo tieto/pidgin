@@ -41,8 +41,9 @@ version 0.60:
 	  authorization (Thanks, Mark Doliner)
 	* TOC no longer compiles statically by default--use OSCAR.
 	* ICQ plugin no longer gets built--use OSCAR.
-	* File send/receive support for Aim over Oscar (Thanks, William T. Mahan)
-	* Non-direct connect typing notification for AIM over oscar.
+	* File send/receive support for Aim over Oscar (Thanks, William T. 
+	  Mahan and Mark Doliner)
+	* Non-direct connect typing notification for AIM over OSCAR.
 	  (Thanks, Mark Doliner)
 	* Allow only people in buddy list privacy option added for AIM.
 	* Support for synchronizing group renames on server.  Group
@@ -51,6 +52,7 @@ version 0.60:
 	  group improved. (Thanks, Mark Doliner)
 	* Ability to add screenname@mac.com people to AIM buddy lists.
 	  (Thanks, Graham Booker)
+	* Ability to change ICQ password. (Thanks, Mark Doliner)
 	* Option to have AIM notify you if you have 
 	  unread mail. (Thanks, Mark Doliner)
 	* Parse URL messages, Contact Sending and Pager Messages
