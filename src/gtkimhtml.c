@@ -1920,7 +1920,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 #define ENCDNG 14
 
 		for (i = 0; xflds [i]; i++);
-		g_print("%d\n", i);
 		if (i != 15) {
 			int tmp;
 			newvals = g_malloc0 (16 * sizeof (gchar *));
