@@ -97,8 +97,11 @@ event_im_send:
 	'text' is the actual strict text (with HTML tags and all) of the
 		message you're sending.
 
-	Note that you can modify outgoing text. (You are _not_ encouraged to
-		do so ;-) .)
+	Note that you can modify outgoing text. The **text points to a g_malloc'd
+	data chunk that contains the text. If your plugin changes it, it should
+	either not add length to the string, or g_free *text and g_malloc a new
+	segment. Since plugins can modify this, you should not try and remember it
+	in your plugin.
 
 event_buddy_signon:
 	struct gaim_connection *gc, char *who
@@ -198,6 +201,8 @@ event_chat_send:
 
 	Be aware that you receive messages you send (as noted above). This
 	event will be called before you actually send the message though.
+	The **text pointer behaves the same as the **text pointer for the
+	event_im_send event above; so read the note about it there.
 
 event_warned:
 	char *who, int level

@@ -484,7 +484,7 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	GtkWidget *menu;
 	GtkWidget *button;
 	
-	if (event->button != 3)
+	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
 		return TRUE;
 
 	if (!gtk_clist_get_selection_info(GTK_CLIST(edittree), event->x, event->y, &row, &column))
@@ -509,6 +509,12 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
 		menu = gtk_menu_new();
+
+		button = gtk_menu_item_new_with_label(_("Alias"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_alias), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",

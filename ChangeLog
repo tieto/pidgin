@@ -5,6 +5,7 @@ version 0.11.0:
 	* ICQ Alias problem fixed
 	* Negative times fixed
 	* Cannot create blank away messages/messages with blank titles
+	* Can right-click Edit Buddies list to alias/add pounce/etc.
 
 version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0
