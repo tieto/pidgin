@@ -75,9 +75,7 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
-int opt_away = 0;
 int docklet_count = 0;
-char *opt_away_arg = NULL;
 
 #if HAVE_SIGNAL_H
 /*
@@ -100,29 +98,31 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-static int dologin_named(char *name)
+static int
+dologin_named(const char *name)
 {
 	GaimAccount *account;
-	char **names, **n;
-	int retval = -1;
+	char **names;
+	int i;
+	int ret = -1;
 
-	if (name !=NULL) {	/* list of names given */
-		names = g_strsplit(name, ",", 32);
-		for (n = names; *n != NULL; n++) {
-			account = gaim_accounts_find(*n, NULL);
-			if (account) {	/* found a user */
-				retval = 0;
+	if (name != NULL) { /* list of names given */
+		names = g_strsplit(name, ",", 64);
+		for (i = 0; names[i] != NULL; i++) {
+			account = gaim_accounts_find(names[i], NULL);
+			if (account != NULL) { /* found a user */
+				ret = 0;
 				gaim_account_connect(account);
 			}
 		}
 		g_strfreev(names);
-	} else {		/* no name given, use default */
+	} else { /* no name given, use the first account */
 		account = (GaimAccount *)gaim_accounts_get_all()->data;
-		retval = 0;
+		ret = 0;
 		gaim_account_connect(account);
 	}
 
-	return retval;
+	return ret;
 }
 
 static void
@@ -144,12 +144,12 @@ clean_pid(void)
 }
 
 #if HAVE_SIGNAL_H
-void sighandler(int sig)
+void
+sighandler(int sig)
 {
 	switch (sig) {
 	case SIGHUP:
-		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
-				   "Caught signal %d\n", sig);
+		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
@@ -158,7 +158,7 @@ void sighandler(int sig)
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"It is possible that this bug is already fixed in CVS.\n"
-			"If you can reproduce the crash, please notify the gaim\n" 
+			"If you can reproduce the crash, please notify the gaim\n"
 			"maintainers by reporting a bug at\n"
 			GAIM_WEBSITE "bug.php\n\n"
 			"Please make sure to specify what you were doing at the time,\n"
@@ -185,8 +185,7 @@ void sighandler(int sig)
 #endif
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
-				   "Caught signal %d\n", sig);
+		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
 		gaim_connections_disconnect_all();
 
 		gaim_plugins_unload_all();
@@ -198,7 +197,8 @@ void sighandler(int sig)
 }
 #endif
 
-static int ui_main()
+static int
+ui_main()
 {
 #ifndef _WIN32
 	GList *icons = NULL;
@@ -208,7 +208,7 @@ static int ui_main()
 
 	if (current_smiley_theme == NULL) {
 		smiley_theme_probe();
-		if (smiley_themes) {
+		if (smiley_themes != NULL) {
 			struct smiley_theme *smile = smiley_themes->data;
 			load_smiley_theme(smile->path, TRUE);
 		}
@@ -227,23 +227,12 @@ static int ui_main()
 		g_object_unref(G_OBJECT(icon));
 		g_list_free(icons);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "ui_main",
-				   "Failed to load the default window icon!\n");
+		gaim_debug_error("ui_main",
+						 "Failed to load the default window icon!\n");
 	}
 #endif
 
 	return 0;
-}
-
-static void set_first_user(const char *name)
-{
-	GaimAccount *account;
-
-	account = gaim_accounts_find(name, NULL);
-
-	/* Place it as the first user. */
-	if (account != NULL)
-		gaim_accounts_reorder(account, 0);
 }
 
 static void
@@ -329,13 +318,10 @@ show_usage(const char *name, gboolean terse)
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
-		       "  -n, --loginwin      don't automatically login; show login window\n"
+		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, seperated by commas)\n"
-		       "  -u, --user=NAME     use account NAME\n"
-		       "  -v, --version       display the current version and exit\n"
-		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
-		       "                      name of away message to use)\n"), VERSION, name);
+		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
 	/* tries to convert 'text' to users locale */
@@ -446,32 +432,36 @@ int gaim_main(HINSTANCE hint, int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
-	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, dologin_ret = -1;
-	char *opt_user_arg = NULL, *opt_login_arg = NULL;
-	char *opt_session_arg = NULL, *opt_config_dir_arg = NULL;
+	gboolean opt_acct = FALSE;
+	gboolean opt_help = FALSE;
+	gboolean opt_login = FALSE;
+	gboolean opt_nologin = FALSE;
+	gboolean opt_version = FALSE;
+	char *opt_config_dir_arg = NULL;
+	char *opt_login_arg = NULL;
+	char *opt_session_arg = NULL;
+	int dologin_ret = -1;
 	char *plugin_search_paths[3];
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
 	void (*prev_sig_disp)();
 #endif
-	int opt, opt_user = 0;
-	int i;
+	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gchar *gaimrc, *accountsxml;
+	char errmsg[BUFSIZ];
 
 	struct option long_options[] = {
-		{"acct", no_argument, NULL, 'a'},
-		/*{"away", optional_argument, NULL, 'w'}, */
-		{"help", no_argument, NULL, 'h'},
-		/*{"login", optional_argument, NULL, 'l'}, */
-		{"loginwin", no_argument, NULL, 'n'},
-		{"user", required_argument, NULL, 'u'},
-		{"config", required_argument, NULL, 'c'},
-		{"debug", no_argument, NULL, 'd'},
-		{"version", no_argument, NULL, 'v'},
-		{"session", required_argument, NULL, 's'},
+		{"acct",     no_argument,       NULL, 'a'},
+		{"config",   required_argument, NULL, 'c'},
+		{"debug",    no_argument,       NULL, 'd'},
+		{"help",     no_argument,       NULL, 'h'},
+		{"login",    optional_argument, NULL, 'l'},
+		{"nologin",  no_argument,       NULL, 'n'},
+		{"session",  required_argument, NULL, 's'},
+		{"version",  no_argument,       NULL, 'v'},
 		{0, 0, 0, 0}
 	};
 
@@ -497,19 +487,16 @@ int main(int argc, char *argv[])
 	 * useful signals like SIGCHLD, so we unblock all the ones we  *
 	 * declare a handler for. thanks JSeymour and Vann.            */
 	if (sigemptyset(&sigset)) {
-		char errmsg[BUFSIZ];
 		snprintf(errmsg, BUFSIZ, "Warning: couldn't initialise empty signal set");
 		perror(errmsg);
 	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
-			char errmsg[BUFSIZ];
 			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d for catching",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 		if(sigaddset(&sigset, catch_sig_list[sig_indx])) {
-			char errmsg[BUFSIZ];
 			snprintf(errmsg, BUFSIZ, "Warning: couldn't include signal %d for unblocking",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
@@ -517,7 +504,6 @@ int main(int argc, char *argv[])
 	}
 	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
-			char errmsg[BUFSIZ];
 			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d to ignore",
 				ignore_sig_list[sig_indx]);
 			perror(errmsg);
@@ -525,121 +511,51 @@ int main(int argc, char *argv[])
 	}
 
 	if (sigprocmask(SIG_UNBLOCK, &sigset, NULL)) {
-		char errmsg[BUFSIZ];
 		snprintf(errmsg, BUFSIZ, "Warning: couldn't unblock signals");
 		perror(errmsg);
 	}
 #endif
 
-	for (i = 0; i < argc; i++) {
-		/* --login option */
-		if (strstr(argv[i], "--l") == argv[i]) {
-			char *equals;
-			opt_login = 1;
-			if ((equals = strchr(argv[i], '=')) != NULL) {
-				/* --login=NAME */
-				opt_login_arg = g_strdup(equals + 1);
-				if (strlen(opt_login_arg) == 0) {
-					g_free(opt_login_arg);
-					opt_login_arg = NULL;
-				}
-			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
-				/* --login NAME */
-				opt_login_arg = g_strdup(argv[i + 1]);
-				strcpy(argv[i + 1], " ");
-			}
-			strcpy(argv[i], " ");
-		}
-		/* -l option */
-		else if (strstr(argv[i], "-l") == argv[i]) {
-			opt_login = 1;
-			if (strlen(argv[i]) > 2) {
-				/* -lNAME */
-				opt_login_arg = g_strdup(argv[i] + 2);
-			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
-				/* -l NAME */
-				opt_login_arg = g_strdup(argv[i + 1]);
-				strcpy(argv[i + 1], " ");
-			}
-			strcpy(argv[i], " ");
-		}
-		/* --away option */
-		else if (strstr(argv[i], "--aw") == argv[i]) {
-			char *equals;
-			opt_away = 1;
-			if ((equals = strchr(argv[i], '=')) != NULL) {
-				/* --away=MESG */
-				opt_away_arg = g_strdup(equals + 1);
-				if (strlen(opt_away_arg) == 0) {
-					g_free(opt_away_arg);
-					opt_away_arg = NULL;
-				}
-			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
-				/* --away MESG */
-				opt_away_arg = g_strdup(argv[i + 1]);
-				strcpy(argv[i + 1], " ");
-			}
-			strcpy(argv[i], " ");
-		}
-		/* -w option */
-		else if (strstr(argv[i], "-w") == argv[i]) {
-			opt_away = 1;
-			if (strlen(argv[i]) > 2) {
-				/* -wMESG */
-				opt_away_arg = g_strdup(argv[i] + 2);
-			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
-				/* -w MESG */
-				opt_away_arg = g_strdup(argv[i + 1]);
-				strcpy(argv[i + 1], " ");
-			}
-			strcpy(argv[i], " ");
-		}
-	}
-	/*
-	   if (opt_login) {
-	   printf ("--login given with arg %s\n",
-	   opt_login_arg ? opt_login_arg : "NULL");
-	   exit(0);
-	   }
-	 */
-
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "adhu:c:vns:",
+				  "ac:dhnl::s:v",
 #else
-				  "adhu:c:vn",
+				  "ac:dhnl::v",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'a':	/* account editor */
-			opt_acct = 1;
+			opt_acct = TRUE;
+			break;
+		case 'c':	/* config dir */
+			g_free(opt_config_dir_arg);
+			opt_config_dir_arg = g_strdup(optarg);
 			break;
 		case 'd':	/* debug */
 			debug_enabled = TRUE;
 			break;
-		case 'c':	/* use specified config dir */
-			set_gaim_user_dir(optarg);
-			opt_config_dir_arg = g_strdup(optarg);
-			break;
 		case 'h':	/* help */
-			opt_help = 1;
+			opt_help = TRUE;
 			break;
-		case 'n':       /* don't autologin */
-			opt_nologin = 1;
+		case 'n':	/* no autologin */
+			opt_nologin = TRUE;
+			break;
+		case 'l':	/* login, option username */
+			opt_login = TRUE;
+			g_free(opt_login_arg);
+			if (optarg != NULL)
+				opt_login_arg = g_strdup(optarg);
 			break;
 		case 's':	/* use existing session ID */
+			g_free(opt_session_arg);
 			opt_session_arg = g_strdup(optarg);
 			break;
-		case 'u':	/* set user */
-			opt_user = 1;
-			opt_user_arg = g_strdup(optarg);
-			break;
 		case 'v':	/* version */
-			opt_version = 1;
+			opt_version = TRUE;
 			break;
-		case '?':
+		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);
 			return 0;
@@ -654,8 +570,13 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("Gaim %s\n",VERSION);
+		printf("Gaim %s\n", VERSION);
 		return 0;
+	}
+
+	/* set a user-specified config directory */
+	if (opt_config_dir_arg != NULL) {
+		set_gaim_user_dir(opt_config_dir_arg);
 	}
 
 	gui_check = gtk_init_check(&argc, &argv);
@@ -669,7 +590,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef _WIN32
-        wgaim_init(hint);
+	wgaim_init(hint);
 #endif
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
@@ -735,17 +656,11 @@ int main(int argc, char *argv[])
 		opt_config_dir_arg = NULL;
 	}
 
-	/* set the default username */
-	if (opt_user_arg != NULL) {
-		set_first_user(opt_user_arg);
-		g_free(opt_user_arg);
-		opt_user_arg = NULL;
-	}
-
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
 		gaim_gtk_debug_window_show();
 
-	/* deal with --login */
+	gaim_blist_show();
+
 	if (opt_login) {
 		dologin_ret = dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
@@ -757,9 +672,7 @@ int main(int argc, char *argv[])
 	if (!opt_acct && !opt_nologin)
 		gaim_accounts_auto_login(GAIM_GTK_UI);
 
-	gaim_blist_show();
-
-	if (opt_acct) {
+	if (opt_acct || (gaim_accounts_get_all() == NULL)) {
 		gaim_gtk_accounts_window_show();
 	}
 
@@ -774,5 +687,4 @@ int main(int argc, char *argv[])
 #endif
 
 	return 0;
-
 }
