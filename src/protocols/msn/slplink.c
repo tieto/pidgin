@@ -46,7 +46,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	dir = send ? "send" : "recv";
 	c = send ? m_sc++ : m_rc++;
 	tmp = g_strdup_printf("%s/msntest/%s/%03d", g_get_home_dir(), dir, c);
-	tf = fopen(tmp, "w");
+	tf = fopen(tmp, "wb");
 	pload = msn_message_gen_payload(msg, &pload_size);
 	fwrite(pload, 1, pload_size, tf);
 	fclose(tf);
@@ -474,7 +474,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				if (xfer != NULL)
 				{
 					slpmsg->fp =
-						fopen(gaim_xfer_get_local_filename(slpmsg->slpcall->xfer), "w");
+						fopen(gaim_xfer_get_local_filename(slpmsg->slpcall->xfer), "wb");
 				}
 			}
 		}

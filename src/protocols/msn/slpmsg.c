@@ -95,7 +95,7 @@ msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
 {
 	struct stat st;
 
-	slpmsg->fp = fopen(file_name, "r");
+	slpmsg->fp = fopen(file_name, "rb");
 
 	if (stat(file_name, &st) == 0)
 		slpmsg->size = st.st_size;
