@@ -35,17 +35,26 @@
 #include "cmds.h"
 
 #include "zephyr/zephyr.h"
+#include "internal.h"
 
 #include <strings.h>
 
 #define ZEPHYR_FALLBACK_CHARSET "ISO-8859-1"
 
+/* these are deliberately high, since most people don't send multiple "PING"s */
+#define ZEPHYR_TYPING_SEND_TIMEOUT 15
+#define ZEPHYR_TYPING_RECV_TIMEOUT 10
+
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
 extern Code_t ZUnsetLocation();
+extern Code_t ZGetSubscriptions(ZSubscription_t *, int*);
 
 typedef struct _zframe zframe;
 typedef struct _zephyr_triple zephyr_triple;
+
+char ourhost[MAXHOSTNAMELEN];
+char ourhostcanon[MAXHOSTNAMELEN];
 
 /* struct I need for zephyr_to_html */
 struct _zframe {
@@ -114,7 +123,7 @@ GaimConnection *zgc = NULL;
 static GList *pending_zloc_names = NULL;
 static GSList *subscrips = NULL;
 static int last_id = 0;
-
+unsigned short zephyr_port;
 /* just for debugging */
 static void handle_unknown(ZNotice_t notice)
 {
@@ -154,18 +163,27 @@ static void free_triple(zephyr_triple * zt)
 	g_free(zt);
 }
 
-static const char *gaim_zephyr_get_sender()
+static gchar *gaim_zephyr_get_sender()
 {
 	/* will be useful once this plugin can use a backend other
 	   than libzephyr */
-	return ZGetSender();
+	/* XXX add zephyr error reporting */
+	gchar *sender;
+	sender = ZGetSender();
+	if (!sender || !g_ascii_strcasecmp(sender,"")) {
+		sender = "";
+	}
+	return sender;
 }
 
 static const char *gaim_zephyr_get_realm()
 {
 	/* will be useful once this plugin can use a backend other
 	   than libzephyr */
-	return ZGetRealm();
+	gchar *realm=NULL;
+	/* XXX add zephyr error reporting */
+	realm= ZGetRealm();
+	return realm;
 }
 
 /* returns true if zt1 is a subset of zt2.  This function is used to
@@ -265,6 +283,9 @@ static char *html_to_zephyr(const char *message)
 	char *ret;
 
 	len = strlen(message);
+	if (!len) 
+		return g_strdup("");
+
 	ret = g_new0(char, len * 3);
 
 	bzero(ret, len * 3);
@@ -583,6 +604,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			char *user;
 			GaimBuddy *b;
 
+			/* XXX add real error reporting */
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
 
@@ -606,6 +628,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					g_string_append_printf(str, _("<br>Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
+					/* XXX add real error reporting */
 					ZGetLocations(&locs, &one);
 					g_string_append_printf(str, _("<br>At %s since %s"), locs.host, locs.time);
 				}
@@ -622,22 +645,34 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		GaimConversation *gconv1;
 		GaimConvChat *gcc;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
-		int len = notice.z_message_len - (strlen(notice.z_message) +1);
+		int len; 
 		char *sendertmp = g_strdup_printf("%s", gaim_zephyr_get_sender());
+		int signature_length = strlen(notice.z_message);
+		int message_has_no_body = 0;
 		GaimConvImFlags flags = 0;
-
-		if (len > 0) {
 			gchar *tmpescape;
 
+		/* Need to deal with 0 length  messages to handle typing notification (OPCODE) ping messages */
+		/* One field zephyrs would have caused gaim to crash */
+		if ( (notice.z_message_len == 0) || (signature_length >= notice.z_message_len - 1)) {
+			message_has_no_body = 1;
+			len = 0;
+			gaim_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
+			buf3 = g_strdup("");
+						
+		} else {
+			len =  notice.z_message_len - ( signature_length +1);
+			gaim_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
 			g_strchomp(buf);
 			tmpescape = gaim_escape_html(buf);
+			g_free(buf);
 			buf2 = zephyr_to_html(tmpescape);
 			buf3 = zephyr_recv_convert(buf2, strlen(buf2));
 			g_free(buf2);
-			g_free(buf);
 			g_free(tmpescape);
+		}
 
 			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") && !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL") 
                             && !g_ascii_strcasecmp(notice.z_recipient,gaim_zephyr_get_sender())) {
@@ -645,7 +680,12 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 					flags |= GAIM_CONV_IM_AUTO_RESP;
 				stripped_sender = zephyr_strip_foreign_realm(notice.z_sender);
+
+			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
+				serv_got_typing(zgc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, GAIM_TYPING);
+			else 
 				serv_got_im(zgc, stripped_sender, buf3, flags, time(NULL));
+
 				g_free(stripped_sender);
 			} else {
 				zephyr_triple *zt1, *zt2;
@@ -673,7 +713,6 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
                                 send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
                                 send_inst_utf8 = zephyr_recv_convert(send_inst, strlen(send_inst));
                                 if (!send_inst_utf8) {
-                                        fprintf(stderr, "zephyr: send_inst %s became null\n",send_inst);
                                         gaim_debug(GAIM_DEBUG_ERROR, "zephyr","send_inst %s became null\n", send_inst);
                                         send_inst_utf8 = "malformed instance";
                                 }
@@ -704,15 +743,18 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				free_triple(zt1);
 			}
 			g_free(buf3);
-		}
+		
 	}
 }
 
 static gint check_notify(gpointer data)
 {
+	/* XXX add real error reporting */
+
 	while (ZPending()) {
 		ZNotice_t notice;
 		struct sockaddr_in from;
+		/* XXX add real error reporting */
 
 		z_call_r(ZReceiveNotice(&notice, &from));
 
@@ -728,14 +770,14 @@ static gint check_notify(gpointer data)
 			}
 			break;
 		case CLIENTACK:
-			gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "Client ack received\n");
+			gaim_debug_error("zephyr", "Client ack received\n");
 		default:
 			/* we'll just ignore things for now */
 			handle_unknown(notice);
-			gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Unhandled notice.\n");
+			gaim_debug_error("zephyr", "Unhandled notice.\n");
 			break;
 		}
-
+		/* XXX add real error reporting */
 		ZFreeNotice(&notice);
 	}
 
@@ -766,6 +808,7 @@ static gint check_loc(gpointer data)
 					const char *chk;
 
 					chk = local_zephyr_normalize(b->name);
+					/* XXX add real error reporting */
 					/* doesn't matter if this fails or not; we'll just move on to the next one */
 					ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
 					g_free(ald.user);
@@ -780,6 +823,7 @@ static gint check_loc(gpointer data)
 
 static char *get_exposure_level()
 {
+	/* XXX add real error reporting */
 	char *exposure = ZGetVariable("exposure");
 
 	if (!exposure)
@@ -807,12 +851,32 @@ static void strip_comments(char *str)
 	g_strchomp(str);
 }
 
+static void zephyr_inithosts()
+{
+	/* XXX This code may not be Win32 clean */
+	struct hostent *hent;
+	
+	if (gethostname(ourhost, sizeof(ourhost)-1) == -1) {
+		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
+		g_stpcpy(ourhost,"unknown");
+		g_stpcpy(ourhostcanon,"unknown");
+		return;
+	}
+	
+	if (!(hent = gethostbyname(ourhost))) {
+		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",ourhost);
+		g_stpcpy(ourhostcanon,ourhost);
+		return;
+	}
+	g_stpcpy(ourhostcanon,hent->h_name);
+	return;
+}
+
 static void process_zsubs()
 {
         /* Loads zephyr chats "(subscriptions) from ~/.zephyr.subs, and 
            registers (subscribes to) them on the server */
 
-        /* XXX write subscriptions into the buddy list somehow "a Zephyr Chats group?"*/
         /* XXX deal with unsubscriptions */
         /* XXX deal with punts */
 
@@ -820,12 +884,15 @@ static void process_zsubs()
 	gchar *fname;
 	gchar buff[BUFSIZ];
 
+	zephyr_inithosts();
 	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
 	f = fopen(fname, "r");
 	if (f) {
 		char **triple;
 		ZSubscription_t sub;
 		char *recip;
+		char *z_class;
+		char *z_instance;
 
 		while (fgets(buff, BUFSIZ, f)) {
 			strip_comments(buff);
@@ -867,10 +934,37 @@ static void process_zsubs()
 					}
 					g_free(tmp);
 					sub.zsub_recipient = recip;
+
+					if (!g_ascii_strcasecmp(triple[0],"%host%")) {
+						z_class = g_strdup(ourhost);
+					} else if (!g_ascii_strcasecmp(triple[0],"%canon%")) {
+						z_class = g_strdup(ourhostcanon);
+					} else {
+						z_class = g_strdup(triple[0]);
+					}
+					sub.zsub_class = z_class;
+					
+					if (!g_ascii_strcasecmp(triple[1],"%host%")) {
+						z_instance = g_strdup(ourhost);
+					} else if (!g_ascii_strcasecmp(triple[1],"%canon%")) {
+						z_instance = g_strdup(ourhostcanon);
+					} else {
+						z_instance = g_strdup(triple[1]);
+					}
+					sub.zsub_classinst = z_instance;
+
+					/* There should be some sort of error report listing classes that couldn't be subbed to.
+					   Not important right now though */
+
 					if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
+
 						gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Couldn't subscribe to %s, %s, %s\n", sub.zsub_class, sub.zsub_classinst, sub.zsub_recipient);
 					}
-					subscrips = g_slist_append(subscrips, new_triple(triple[0], triple[1], recip));
+
+					subscrips = g_slist_append(subscrips, new_triple(sub.zsub_class,sub.zsub_classinst,sub.zsub_recipient));
+					/*					  g_hash_table_destroy(sub_hash_table); */
+					g_free(z_instance);
+					g_free(z_class);
 					g_free(recip);
 				}
 				g_strfreev(triple);
@@ -911,6 +1005,7 @@ static void zephyr_login(GaimAccount * account)
 {
 	ZSubscription_t sub;
 
+	/* This needs to fixed to deal with multiple accounts somehow */
 	if (zgc) {
 		gaim_notify_error(account->gc, NULL,
 						  _("Already logged in with Zephyr"), _("Because Zephyr uses your system username, you " "are unable to have multiple accounts on it " "when logged in as the same user."));
@@ -918,11 +1013,13 @@ static void zephyr_login(GaimAccount * account)
 	}
 
 	zgc = gaim_account_get_connection(account);
-	zgc->flags |= GAIM_CONNECTION_HTML;
-	gaim_connection_update_progress(zgc, _("Connecting"), 0, 2);
+	zgc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
+	gaim_connection_update_progress(zgc, _("Connecting"), 0, 8);
+
+	/* XXX z_call_s should actually try to report the com_err determined error */
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
-	z_call_s(ZOpenPort(NULL), "Couldn't open port");
+	z_call_s(ZOpenPort(&zephyr_port), "Couldn't open port");
 	z_call_s(ZSetLocation((char *)
 						  gaim_account_get_string(zgc->account, "exposure_level", EXPOSE_REALMVIS)), "Couldn't set location");
 
@@ -930,9 +1027,12 @@ static void zephyr_login(GaimAccount * account)
 	sub.zsub_classinst = "PERSONAL";
 	sub.zsub_recipient = (char *)gaim_zephyr_get_sender();
 
-	/* we don't care if this fails. i'm lying right now. */
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
-		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Couldn't subscribe to messages!\n");
+		/* XXX don't translate this yet. It could be written better */
+		/* XXX error messages could be handled with more detail */
+		gaim_notify_error(account->gc, NULL,
+				  "Unable to subscribe to messages", "Unable to subscribe to initial messages");
+		return;
 	}
 
 	gaim_connection_set_state(zgc, GAIM_CONNECTED);
@@ -968,19 +1068,45 @@ static void write_zsubs()
 	}
 
 	while (s) {
+		char *zclass, *zinst, *zrecip;
 		zt = s->data;
 		triple = g_strsplit(zt->name, ",", 3);
-		if (triple[2] != NULL) {
-			if (!g_ascii_strcasecmp(triple[2], "")) {
-				fprintf(fd, "%s,%s,*\n", triple[0], triple[1]);
-			} else if (!g_ascii_strcasecmp(triple[2], gaim_zephyr_get_sender())) {
-				fprintf(fd, "%s,%s,%%me%%\n", triple[0], triple[1]);
-			} else {
-				fprintf(fd, "%s\n", zt->name);
-			}
+		
+		/* deal with classes */
+		if (!g_ascii_strcasecmp(triple[0],ourhost)) {
+			zclass = g_strdup("%host%");;
+		} else if (!g_ascii_strcasecmp(triple[0],ourhostcanon)) {
+			zclass = g_strdup("%canon%");;
 		} else {
-			fprintf(fd, "%s,%s,*\n", triple[0], triple[1]);
+			zclass = g_strdup(triple[0]);
 		}
+
+		/* deal with instances */
+
+		if (!g_ascii_strcasecmp(triple[1],ourhost)) {
+			zinst = g_strdup("%host%");;
+		} else if (!g_ascii_strcasecmp(triple[1],ourhostcanon)) {
+			zinst = g_strdup("%canon%");;
+			} else {
+			zinst = g_strdup(triple[1]);
+			}
+
+		/* deal with recipients */
+		if (triple[2] == NULL) {
+			zrecip = g_strdup("*");
+		} else if (!g_ascii_strcasecmp(triple[2],"")){
+			zrecip = g_strdup("*");
+		} else if (!g_ascii_strcasecmp(triple[2], gaim_zephyr_get_sender())) {
+			zrecip = g_strdup("%me%");
+		} else {
+			zrecip = g_strdup(triple[2]);
+		}
+
+		fprintf(fd, "%s,%s,%s\n",zclass,zinst,zrecip);
+		 
+		g_free(zclass);
+		g_free(zinst);
+		g_free(zrecip);
 		g_free(triple);
 		s = s->next;
 	}
@@ -1072,12 +1198,12 @@ static void zephyr_close(GaimConnection * gc)
 }
 
 static int zephyr_send_message(char* zclass, char* instance, char* recipient, const char *im, 
-                               const char *sig) ;
+			       const char *sig, char *opcode) ;
 
 const char * zephyr_get_signature()
 {
-        const char * sig;
-        sig = ZGetVariable("zwrite-signature");
+	/* XXX add zephyr error reporting */
+	const char * sig =ZGetVariable("zwrite-signature");
         if (!sig) {
                 sig = g_get_real_name();
         }
@@ -1111,7 +1237,7 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
 	else
 		recipient = local_zephyr_normalize(zt->recipient);
 
-        zephyr_send_message(zt->class,inst,recipient,im,sig);
+	zephyr_send_message(zt->class,inst,recipient,im,sig,"");
         /*        g_free(inst); */
         /*        g_free(recipient);  */
 	return 0;
@@ -1127,13 +1253,13 @@ static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, 
 	else {
 		sig = zephyr_get_signature();
 	}
-        zephyr_send_message("MESSAGE","PERSONAL",local_zephyr_normalize(who),im,sig);
+	zephyr_send_message("MESSAGE","PERSONAL",local_zephyr_normalize(who),im,sig,"");
 
 	return 1; 
 }
 
 static int zephyr_send_message(char* zclass, char* instance, char* recipient, const char *im, 
-                               const char *sig) 
+			       const char *sig, char *opcode) 
 {
         char *html_buf;
         char *html_buf2;
@@ -1156,11 +1282,18 @@ static int zephyr_send_message(char* zclass, char* instance, char* recipient, co
         notice.z_default_format = "Class $class, Instance $instance:\n" "To: @bold($recipient) at $time $date\n" "From: @bold($1) <$sender>\n\n$2";
 	notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 	notice.z_message = buf;
+	notice.z_opcode = g_strdup(opcode);
+	gaim_debug_info("zephyr","About to send notice");
+	if (! ZSendNotice(&notice, ZAUTH) == ZERR_NONE) {
+		/* XXX handle errors here */
+                return 0;
+	}
+	gaim_debug_info("zephyr","notice sent");
+	g_free(buf);
+
 	g_free(html_buf2);
 	g_free(html_buf);
 
-	ZSendNotice(&notice, ZAUTH);
-	g_free(buf);
         return 1;
 }
 
@@ -1207,6 +1340,8 @@ static void zephyr_zloc(GaimConnection *gc, const char *who)
 	if (ZRequestLocations(normalized_who, &ald, UNACKED, ZAUTH) == ZERR_NONE) {
 		pending_zloc_names = g_list_append(pending_zloc_names,
 				g_strdup(normalized_who));
+	} else {
+		/* XXX deal with errors somehow */
 	}
 }
 
@@ -1218,10 +1353,14 @@ static void zephyr_set_away(GaimConnection * gc, const char *state, const char *
 	}
 
 	if (!g_ascii_strcasecmp(state, _("Hidden"))) {
+		/* XXX handle errors */
 		ZSetLocation(EXPOSE_OPSTAFF);
 		gc->away = g_strdup("");
-	} else if (!g_ascii_strcasecmp(state, _("Online")))
+	} 
+	else if (!g_ascii_strcasecmp(state, _("Online"))) {
+		/* XXX handle errors */
 		ZSetLocation(get_exposure_level());
+	}
 	else /* state is GAIM_AWAY_CUSTOM */ if (msg)
 		gc->away = g_strdup(msg);
 }
@@ -1263,6 +1402,15 @@ static GList *zephyr_chat_info(GaimConnection * gc)
 	return m;
 }
 
+/* Called when the server notifies us a message couldn't get sent */
+
+static void zephyr_subscribe_failed(ZSubscription_t *sub)
+{
+	gchar* subscribe_failed = g_strdup_printf(_("Attempt to subscribe to %s,%s,%s failed"), sub->zsub_class, sub->zsub_classinst,sub->zsub_recipient);
+	gaim_notify_error(zgc,"", subscribe_failed, NULL);
+	g_free(subscribe_failed);
+}
+
 static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 {
 	ZSubscription_t sub;
@@ -1275,10 +1423,23 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	instname = g_hash_table_lookup(data, "instance");
 	recip = g_hash_table_lookup(data, "recipient");
 
+		
 	if (!classname)
 		return;
+
+	if (!g_ascii_strcasecmp(classname,"%host%"))
+	    classname = g_strdup(ourhost);
+	if (!g_ascii_strcasecmp(classname,"%canon%")) 
+	    classname = g_strdup(ourhostcanon);
+
 	if (!instname || !strlen(instname))
 		instname = "*";
+
+	if (!g_ascii_strcasecmp(instname,"%host%"))
+	    instname = g_strdup(ourhost);
+	if (!g_ascii_strcasecmp(instname,"%canon%")) 
+	    instname = g_strdup(ourhostcanon);
+
 	if (!recip || (*recip == '*'))
 		recip = "";
 	if (!g_ascii_strcasecmp(recip, "%me%"))
@@ -1303,6 +1464,8 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	sub.zsub_recipient = zt1->recipient;
         
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
+		/* XXX output better subscription information */
+		zephyr_subscribe_failed(&sub);
 		free_triple(zt1);
 		return;
 	}
@@ -1326,11 +1489,56 @@ static void zephyr_chat_leave(GaimConnection * gc, int id)
 	}
 }
 
+static GaimChat *zephyr_find_blist_chat(GaimAccount *account, const char *name)
+{
+	GaimBlistNode *gnode, *cnode;
+
+	/* XXX needs to be %host%,%canon%, and %me% clean */
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			GaimChat *chat = (GaimChat*)cnode;
+			char *zclass, *inst, *recip;
+			char** triple;
+			if(!GAIM_BLIST_NODE_IS_CHAT(cnode))
+				continue;
+			if(chat->account !=account)
+				continue;
+			if(!(zclass = g_hash_table_lookup(chat->components, "class")))
+				continue;
+			if(!(inst = g_hash_table_lookup(chat->components, "instance")))
+				inst = g_strdup("");
+			if(!(recip = g_hash_table_lookup(chat->components, "recipient")))
+				recip = g_strdup("");
+			triple = g_strsplit(name,",",3);
+			if (!g_ascii_strcasecmp(triple[0],zclass) && !g_ascii_strcasecmp(triple[1],inst) && !g_ascii_strcasecmp(triple[2],recip))
+				return chat;
+			
+		}
+	}
+	return NULL;
+}
 static const char *zephyr_list_icon(GaimAccount * a, GaimBuddy * b)
 {
 	return "zephyr";
 }
 
+static int zephyr_send_typing(GaimConnection *gc, const char *who, int typing) {
+	gchar *recipient;
+	if (!typing)
+		return 0;
+	/* XXX We probably should care if this fails. Or maybe we don't want to */
+	if (!who) {
+		gaim_debug_info("zephyr", "who is null\n");
+		recipient = local_zephyr_normalize("");
+	} else {
+		recipient = local_zephyr_normalize(who);
+	}
+
+	gaim_debug_info("zephyr","about to send typing notification to %s",recipient);
+	zephyr_send_message("MESSAGE","PERSONAL",recipient,"","","PING");
+	gaim_debug_info("zephyr","sent typing notification");
+	return ZEPHYR_TYPING_SEND_TIMEOUT;
+}
 
 
 
@@ -1358,12 +1566,16 @@ static GaimCmdRet zephyr_gaim_cmd_msg(GaimConversation *conv,
                                       const char *cmd, char **args, char **error)
 {
         char *recipient;
+        
         if (!g_ascii_strcasecmp(args[0],"*"))
-                recipient = local_zephyr_normalize("");
+                return GAIM_CMD_RET_FAILED;  /* "*" is not a valid argument */
         else 
                 recipient = local_zephyr_normalize(args[0]);
 
-        if (zephyr_send_message("MESSAGE","PERSONAL",recipient,args[1],zephyr_get_signature()))
+        if (strlen(recipient) < 1)
+                return GAIM_CMD_RET_FAILED; /* a null recipient is a chat message, not an IM */
+
+	if (zephyr_send_message("MESSAGE","PERSONAL",recipient,args[1],zephyr_get_signature(),""))
                 return GAIM_CMD_RET_OK;
         else 
                 return GAIM_CMD_RET_FAILED;
@@ -1406,7 +1618,7 @@ static GaimCmdRet zephyr_gaim_cmd_zi(GaimConversation *conv,
                                               const char *cmd, char **args, char **error)
 {
         /* args = instance, message */
-        if (zephyr_send_message("message",args[0],"",args[1],zephyr_get_signature())) 
+	if ( zephyr_send_message("message",args[0],"",args[1],zephyr_get_signature(),""))
                 return GAIM_CMD_RET_OK;
         else 
                 return GAIM_CMD_RET_FAILED;
@@ -1416,7 +1628,7 @@ static GaimCmdRet zephyr_gaim_cmd_zci(GaimConversation *conv,
                                               const char *cmd, char **args, char **error)
 {
         /* args = class, instance, message */
-        if ( zephyr_send_message(args[0],args[1],"",args[2],zephyr_get_signature()))
+	if ( zephyr_send_message(args[0],args[1],"",args[2],zephyr_get_signature(),""))
                 return GAIM_CMD_RET_OK;
         else 
                 return GAIM_CMD_RET_FAILED;
@@ -1426,7 +1638,7 @@ static GaimCmdRet zephyr_gaim_cmd_zcir(GaimConversation *conv,
                                               const char *cmd, char **args, char **error)
 {
         /* args = class, instance, recipient, message */
-        if ( zephyr_send_message(args[0],args[1],args[2],args[3],zephyr_get_signature())) 
+	if ( zephyr_send_message(args[0],args[1],args[2],args[3],zephyr_get_signature(),"")) 
                 return GAIM_CMD_RET_OK;
         else
                 return GAIM_CMD_RET_FAILED;
@@ -1436,7 +1648,7 @@ static GaimCmdRet zephyr_gaim_cmd_zir(GaimConversation *conv,
                                               const char *cmd, char **args, char **error)
 {
         /* args = instance, recipient, message */
-        if ( zephyr_send_message("message",args[0],args[1],args[2],zephyr_get_signature())) 
+	if ( zephyr_send_message("message",args[0],args[1],args[2],zephyr_get_signature(),"")) 
                 return GAIM_CMD_RET_OK;
         else
                 return GAIM_CMD_RET_FAILED;
@@ -1446,7 +1658,7 @@ static GaimCmdRet zephyr_gaim_cmd_zc(GaimConversation *conv,
                                               const char *cmd, char **args, char **error)
 {
         /* args = class, message */
-        if ( zephyr_send_message(args[0],"PERSONAL","",args[1],zephyr_get_signature()))
+	if ( zephyr_send_message(args[0],"PERSONAL","",args[1],zephyr_get_signature(),"")) 
                 return GAIM_CMD_RET_OK;
         else 
                 return GAIM_CMD_RET_FAILED;
@@ -1530,8 +1742,8 @@ static int zephyr_resubscribe(GaimConnection *gc)
                 zst.zsub_class = zt->class;
                 zst.zsub_classinst = zt->instance;
                 zst.zsub_recipient = zt->recipient;
-                ZSubscribeTo(&zst, 1, 0);
                 /* XXX We really should care if this fails */
+		ZSubscribeTo(&zst, 1, 0);
                 s = s->next;
         }
         /* XXX handle unsubscriptions */
@@ -1547,6 +1759,41 @@ static void zephyr_action_resubscribe(GaimPluginAction *action)
 }
 
 
+static void zephyr_action_get_subs_from_server(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	gchar *title;
+	int retval, nsubs, one,i;
+	ZSubscription_t subs;
+	GString* subout = g_string_new("Subscription list<br>");
+
+	title = g_strdup_printf("Server subscriptions for %s", gaim_zephyr_get_sender());
+	
+	if (zephyr_port == 0) {
+		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving port");
+		return;
+	} 
+	if ((retval = ZRetrieveSubscriptions(zephyr_port,&nsubs)) != ZERR_NONE) {
+		/* XXX better error handling */
+		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving subscriptions from server");
+		return;
+	}
+	g_string_append_printf(subout,"Subscription list <br>");
+	for(i=0;i<nsubs;i++) {
+		one = 1;
+		if ((retval = ZGetSubscriptions(&subs,&one)) != ZERR_NONE) {
+			/* XXX better error handling */
+			gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving individual subscription");
+			return;
+		}
+		g_string_append_printf(subout, "Class %s Instance %s Recipient %s<br>",
+				       subs.zsub_class, subs.zsub_classinst,
+				       subs.zsub_recipient);
+	}
+	gaim_notify_formatted(gc, title, title, NULL,  subout->str, NULL, NULL);
+}
+
+
 static GList *zephyr_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *list = NULL;
@@ -1554,6 +1801,9 @@ static GList *zephyr_actions(GaimPlugin *plugin, gpointer context)
 
 	act = gaim_plugin_action_new(_("Resubscribe"), zephyr_action_resubscribe);
 	list = g_list_append(list, act);
+
+	act = gaim_plugin_action_new(_("Retrieve subscriptions from server"), zephyr_action_get_subs_from_server);
+	list = g_list_append(list,act);
 
 	return list;
 }
@@ -1563,35 +1813,35 @@ static GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info = {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
-	NULL,					/* user_splits */
-	NULL,					/* protocol_options */
-	NO_BUDDY_ICONS,			/* icon_spec */
-	zephyr_list_icon,		/* list_icon */
-	NULL,					/* list_emblems */
-	NULL,					/* status_text */
-	NULL,					/* tooltip_text */
+	NULL, /* ??? user_splits */
+	NULL,  /* ??? protocol_options */
+	NO_BUDDY_ICONS,
+	zephyr_list_icon,
+	NULL, /* ??? list_emblems */
+	NULL, /* ??? status_text */
+	NULL, /* ??? tooltip_text */
 	zephyr_away_states,		/* away_states */
-	NULL,					/* blist_node_menu */
+	NULL, /* ??? blist_node_menu - probably all useful actions are already handled*/
 	zephyr_chat_info,		/* chat_info */
 	zephyr_login,			/* login */
 	zephyr_close,			/* close */
 	zephyr_send_im,			/* send_im */
-	NULL,					/* set_info */
-	NULL,					/* send_typing */
+	NULL,	/* XXX set info (Location?) */
+	zephyr_send_typing,  /* send_typing */
 	zephyr_zloc,			/* get_info */
-	zephyr_set_away,		/* set_away */
-	NULL,					/* set_idle */
-	NULL,					/* change_passwd */
+	zephyr_set_away,  /* XXX set_away need to fix */
+	NULL, /* ??? set idle */
+	NULL, /* change password */
 	NULL,					/* add_buddy */
 	NULL,					/* add_buddies */
 	NULL,					/* remove_buddy */
 	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* rem_permit */
-	NULL,					/* rem_deny */
-	NULL,					/* set_permit_deny */
-	NULL,					/* warn */
+	NULL, /* add_permit -- not useful, since anyone can zephyr you by default*/
+	NULL, /* XXX add deny  -- maybe put an auto "I'm ignoring your zephyrs*/
+	NULL, /* remove_permit -- not useful, see add permit */
+	NULL, /* XXX remove deny -- remove above deny, */
+	NULL, /* ??? set permit deny */
+	NULL,  /* --- warn  */
 	zephyr_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,					/* chat_invite */
@@ -1600,22 +1850,22 @@ static GaimPluginProtocolInfo prpl_info = {
 	zephyr_chat_send,		/* chat_send */
 	NULL,					/* keepalive */
 	NULL,					/* register_user */
-	NULL,					/* get_cb_info */
+	NULL, /* XXX get_cb_info get chat buddy info */
 	NULL,					/* get_cb_away */
 	NULL,					/* alias_buddy */
 	NULL,					/* group_buddy */
 	NULL,					/* rename_group */
-	NULL,					/* buddy_free */
+	NULL, /* ??? buddy_free */
 	NULL,					/* convo_closed */
 	zephyr_normalize,		/* normalize */
-	NULL,					/* set_buddy_icon */
+	NULL, /* XXX set_buddy_icon */
 	NULL,					/* remove_group */
-	NULL,					/* get_cb_real_name */
+	NULL, /* XXX get_cb_real_name */
 	zephyr_chat_set_topic,	/* set_chat_topic */
-	NULL,					/* find_blist_chat */
+	zephyr_find_blist_chat, /* find_blist_chat */
 	NULL,					/* roomlist_get_list */
 	NULL,					/* roomlist_cancel */
-	NULL,					/* roomlist_expand_category */
+	NULL,  /* roomlist_expand_category */
 	NULL,					/* can_receive_file */
 	NULL					/* send_file */
 };

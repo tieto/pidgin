@@ -7,6 +7,7 @@ version 0.80cvs:
 	* Ability to send files from the conversation window (Daniel Atallah)
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
+	* Zephyr typing notification (Arun A Tharuvai)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
