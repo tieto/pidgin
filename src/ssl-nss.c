@@ -28,6 +28,7 @@
 #include "sslconn.h"
 
 #include <nspr.h>
+#include <private/pprio.h>
 #include <nss.h>
 #include <pk11func.h>
 #include <prio.h>

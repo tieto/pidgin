@@ -57,6 +57,7 @@ typedef struct
 	gboolean (*init)(void);
 	void (*uninit)(void);
 	GaimInputFunction connect_cb;
+	void (*recv)(gpointer data, gint source, GaimInputCondition cond);
 	void (*close)(GaimSslConnection *gsc);
 	size_t (*read)(GaimSslConnection *gsc, void *data, size_t len);
 	size_t (*write)(GaimSslConnection *gsc, const void *data, size_t len);
