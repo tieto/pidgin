@@ -1106,12 +1106,12 @@ GtkWidget *gtk_imhtml_new(void *a, void *b)
 	return GTK_WIDGET(g_object_new(gtk_imhtml_get_type(), NULL));
 }
 
-GtkType gtk_imhtml_get_type()
+GType gtk_imhtml_get_type()
 {
-	static GtkType imhtml_type = 0;
+	static GType imhtml_type = 0;
 
 	if (!imhtml_type) {
-		static const GtkTypeInfo imhtml_info = {
+		static const GTypeInfo imhtml_info = {
 			sizeof(GtkIMHtmlClass),
 			NULL,
 			NULL,

@@ -212,11 +212,11 @@ struct _GtkIMHtmlFuncs {
 /*@{*/
 
 /**
- * Returns the GtkType object for an IM/HTML widget.
+ * Returns the GType object for an IM/HTML widget.
  *
- * @return The GtkType for an IM/HTML widget.
+ * @return The GType for an IM/HTML widget.
  */
-GtkType gtk_imhtml_get_type(void);
+GType gtk_imhtml_get_type(void);
 
 /**
  * Creates and returns a new GTK IM/HTML widget.
