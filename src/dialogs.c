@@ -3399,7 +3399,8 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
-	gtk_entry_set_text(GTK_ENTRY(aliasname), b->alias);
+	if(b->alias)
+		gtk_entry_set_text(GTK_ENTRY(aliasname), b->alias);
 
 	/* Put the buttons in the box */
 	bbox = gtk_hbox_new(FALSE, 5);
