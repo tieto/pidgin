@@ -561,6 +561,7 @@ static int ui_main()
 	channel = g_io_channel_unix_new(UI_fd);
 	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
 #endif
+	gtk_widget_set_default_direction(GTK_TEXT_DIR_RTL);
 	return 0;
 }
 
