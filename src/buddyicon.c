@@ -150,19 +150,22 @@ gaim_buddy_icon_update(GaimBuddyIcon *icon)
 	GaimConversation *conv;
 	GaimAccount *account;
 	const char *username;
-	GSList *sl;
+	GSList *sl, *list;
 
 	g_return_if_fail(icon != NULL);
 
 	account  = gaim_buddy_icon_get_account(icon);
 	username = gaim_buddy_icon_get_username(icon);
 
-	for (sl = gaim_find_buddies(account, username); sl != NULL; sl = sl->next)
+	for (list =sl = gaim_find_buddies(account, username); sl != NULL;
+			sl = sl->next)
 	{
 		GaimBuddy *buddy = (GaimBuddy *)sl->data;
 
 		gaim_buddy_set_icon(buddy, icon);
 	}
+
+	g_slist_free(list);
 
 	conv = gaim_find_conversation_with_account(username, account);
 
