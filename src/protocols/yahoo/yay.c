@@ -698,7 +698,6 @@ void yahoo_init(struct prpl *ret) {
 	ret->set_info = NULL;
 	ret->get_info = NULL;
 	ret->set_away = yahoo_set_away;
-	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;

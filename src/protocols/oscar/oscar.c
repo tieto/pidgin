@@ -2707,7 +2707,6 @@ void oscar_init(struct prpl *ret) {
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;
-	ret->get_away_msg = oscar_get_away_msg;
 	ret->set_dir = oscar_set_dir;
 	ret->get_dir = NULL; /* Oscar really doesn't have this */
 	ret->dir_search = oscar_dir_search;

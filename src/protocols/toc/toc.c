@@ -1182,7 +1182,6 @@ void toc_init(struct prpl *ret)
 	ret->set_info = toc_set_info;
 	ret->get_info = toc_get_info;
 	ret->set_away = toc_set_away;
-	ret->get_away_msg = NULL;
 	ret->set_dir = toc_set_dir;
 	ret->get_dir = toc_get_dir;
 	ret->dir_search = toc_dir_search;

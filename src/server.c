@@ -138,12 +138,6 @@ void serv_get_info(struct gaim_connection *g, char *name)
 		(*g->prpl->get_info)(g, name);
 }
 
-void serv_get_away_msg(struct gaim_connection *g, char *name)
-{
-	if (g && g->prpl && g->prpl->get_away_msg)
-		(*g->prpl->get_away_msg)(g, name);
-}
-
 void serv_get_dir(struct gaim_connection *g, char *name)
 {
 	if (g && g->prpl && g->prpl->get_dir)

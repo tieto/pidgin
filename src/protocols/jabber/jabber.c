@@ -1749,7 +1749,6 @@ void jabber_init(struct prpl *ret)
 	ret->set_info = NULL;
 	ret->get_info = jabber_get_info;
 	ret->set_away = jabber_set_away;
-	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;

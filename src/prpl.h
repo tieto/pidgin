@@ -94,7 +94,6 @@ struct prpl {
 	void (* set_info)	(struct gaim_connection *, char *info);
 	void (* get_info)	(struct gaim_connection *, char *who);
 	void (* set_away)	(struct gaim_connection *, char *state, char *message);
-	void (* get_away_msg)	(struct gaim_connection *, char *who);
 	void (* set_dir)	(struct gaim_connection *, char *first,
 							   char *middle,
 							   char *last,
