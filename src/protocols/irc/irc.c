@@ -789,10 +789,31 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (msg[0] == 1 && msg[strlen (msg) - 1] == 1) { /* ctcp */
 			if (!g_strncasecmp(msg + 1, "ACTION", 6)) {
 				char *po = strchr(msg + 7, 1);
+				char *tmp;
 				if (po) *po = 0;
-				to = g_strconcat("/me", msg + 7, NULL);
-				irc_got_im(gc, nick, to, 0, time(NULL));
-				g_free(to);
+				if (is_channel(gc, to)) {
+					struct conversation *c = irc_find_chat(gc, to);
+					if (!c)
+						return;
+					tmp = g_strconcat("/me", msg + 7, NULL);
+					irc_got_chat_in(gc, c->id, nick, 0, tmp, time(NULL));
+					g_free(tmp);
+				} else {
+					tmp = g_strconcat("/me", msg + 7, NULL);
+					to = g_malloc(strlen(nick) + 2);
+					g_snprintf(to, strlen(nick) + 2, "@%s", nick);
+					if (find_conversation(to))
+						irc_got_im(gc, to, tmp, 0, time(NULL));
+					else {
+						*to = '+';
+						if (find_conversation(to))
+							irc_got_im(gc, to, tmp, 0, time(NULL));
+						else
+							irc_got_im(gc, nick, tmp, 0, time(NULL));
+					}
+					g_free(to);
+					g_free(tmp);
+				}
 			}
 		} else {
 			if (is_channel(gc, to)) {
