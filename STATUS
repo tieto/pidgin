@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-02-06 12:58:17 -0500 (Tue, 06 Feb 2001) $ by $Author: robflynn $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-02-24 04:34:46 -0500 (Sat, 24 Feb 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -20,6 +20,10 @@ and allows multiple connections (which should also be stable).
 There have been a lot of changes since 0.10.x; I think all of the bugs have
 been worked out but I'm sure there are still a lot remaining. Please, if you
 get bored one day, go on a big bug hunt.
+
+I broke parallel builds. Sorry. Don't compile plugins if you want a parallel
+build. (If someone could tell me how to fix this, and still be somewhat
+portable, I'd appreciate it.)
 
 
 Buddy List
@@ -85,8 +89,10 @@ Yahoo (Eric)
 
 Yahoo currently supports signing on/off, changing status (only to user-defined
 so far though), checking other people's status (via right-clicking in the
-buddy list), and sending/receiving messages. Chat support is planned but not
-yet implemented.
+buddy list), and sending/receiving messages. You can also select your active ID,
+though currently you have to just remember what it is since there's nothing in
+the UI that'll let you know. Chat and file transfer are planned but not yet
+implemented.
 
 
 IRC (Rob)
