@@ -21,10 +21,10 @@ liboscar_a_SOURCES = 	admin.c		\
 			chatnav.c	\
 			conn.c		\
 			ft.c		\
+			icq.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
-			login.c		\
 			md5.c		\
 			meta.c		\
 			misc.c		\
@@ -33,6 +33,7 @@ liboscar_a_SOURCES = 	admin.c		\
 			rxhandlers.c	\
 			rxqueue.c	\
 			search.c	\
+			service.c	\
 			snac.c		\
 			ssi.c		\
 			stats.c		\
@@ -58,10 +59,10 @@ liboscar_la_SOURCES = 	admin.c		\
 			chatnav.c	\
 			conn.c		\
 			ft.c		\
+			icq.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
-			login.c		\
 			md5.c		\
 			meta.c		\
 			misc.c		\
@@ -70,6 +71,7 @@ liboscar_la_SOURCES = 	admin.c		\
 			rxhandlers.c	\
 			rxqueue.c	\
 			search.c	\
+			service.c	\
 			snac.c		\
 			ssi.c		\
 			stats.c		\

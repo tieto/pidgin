@@ -32,3 +32,5 @@ invite.lo
 popups.lo
 ssi.lo
 translate.lo
+icq.lo
+service.lo

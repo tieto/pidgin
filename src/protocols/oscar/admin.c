@@ -87,7 +87,7 @@ faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod)
 	return 0;
 }
 
-faim_export int aim_auth_changepasswd(aim_session_t *sess, aim_conn_t *conn, const char *newpw, const char *curpw)
+faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, const char *newpw, const char *curpw)
 {
 	aim_frame_t *tx;
 	aim_tlvlist_t *tl = NULL;
@@ -121,7 +121,7 @@ faim_export int aim_auth_changepasswd(aim_session_t *sess, aim_conn_t *conn, con
  * get the TRIAL flag removed from your account.
  *
  */
-faim_export int aim_auth_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
 {
 	return aim_genericreq_n(sess, conn, 0x0007, 0x0006);
 }
@@ -132,7 +132,7 @@ faim_export int aim_auth_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
  * The only known valid tag is 0x0011 (email address).
  *
  */ 
-faim_export int aim_auth_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info)
+faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info)
 {
 	aim_frame_t *tx;
 	aim_snacid_t snacid;
@@ -151,7 +151,7 @@ faim_export int aim_auth_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t i
 	return 0;
 }
 
-faim_export int aim_auth_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail)
+faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail)
 {
 	aim_frame_t *tx;
 	aim_snacid_t snacid;
@@ -172,3 +172,4 @@ faim_export int aim_auth_setemail(aim_session_t *sess, aim_conn_t *conn, const c
 
 	return 0;
 }
+

@@ -691,7 +691,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->killme = TRUE;
 		return 0;
 	}
-	aim_auth_sendcookie(sess, bosconn, cookie);
+	aim_sendcookie(sess, bosconn, cookie);
 	gaim_input_remove(gc->inpa);
 	return 1;
 }
@@ -1028,7 +1028,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_auth_sendcookie(sess, tstconn, cookie);
+		aim_sendcookie(sess, tstconn, cookie);
 		break;
 	case 0xd: /* ChatNav */
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
@@ -1047,7 +1047,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_auth_sendcookie(sess, tstconn, cookie);
+		aim_sendcookie(sess, tstconn, cookie);
 		break;
 	case 0xe: /* Chat */
 		{
@@ -1086,7 +1086,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(ccon);
 			return 1;
 		}
-		aim_auth_sendcookie(sess, tstconn, cookie);
+		aim_sendcookie(sess, tstconn, cookie);
 		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
 		}
 		break;
@@ -1903,7 +1903,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
-	aim_bos_reqpersonalinfo(sess, fr->conn);
+	aim_reqpersonalinfo(sess, fr->conn);
 	aim_bos_reqlocaterights(sess, fr->conn);
 	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
 	aim_bos_reqbuddyrights(sess, fr->conn);
@@ -1935,19 +1935,19 @@ static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->chpass) {
 		debug_printf("changing password\n");
-		aim_auth_changepasswd(sess, fr->conn, od->newp, od->oldp);
+		aim_admin_changepasswd(sess, fr->conn, od->newp, od->oldp);
 		g_free(od->oldp);
 		g_free(od->newp);
 		od->chpass = FALSE;
 	}
 	if (od->conf) {
 		debug_printf("confirming account\n");
-		aim_auth_reqconfirm(sess, fr->conn);
+		aim_admin_reqconfirm(sess, fr->conn);
 		od->conf = FALSE;
 	}
 	if (od->reqemail) {
 		debug_printf("requesting email\n");
-		aim_auth_getinfo(sess, fr->conn, 0x0011);
+		aim_admin_getinfo(sess, fr->conn, 0x0011);
 		od->reqemail = FALSE;
 	}
 
@@ -2007,7 +2007,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 
-	aim_bos_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
+	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
 
 	return 1;
 }
@@ -2230,31 +2230,31 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 		gc->away = NULL;
 
 	if (!strcmp(state, "Online"))
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
 	else if (!strcmp(state, "Away")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
 		gc->away = "";
 	} else if (!strcmp(state, "Do Not Disturb")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
 		gc->away = "";
 	} else if (!strcmp(state, "Not Available")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
 		gc->away = "";
 	} else if (!strcmp(state, "Occupied")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_OCCUPIED);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OCCUPIED);
 		gc->away = "";
 	} else if (!strcmp(state, "Free For Chat")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
 		gc->away = "";
 	} else if (!strcmp(state, "Invisible")) {
-		aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
 		gc->away = "";
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 		if (message) {
-			aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
+			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NA);
 			gc->away = "";
 		} else {
-			aim_icq_setstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
+			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_ONLINE);
 		}
 	}
 }
@@ -2335,7 +2335,7 @@ static void oscar_join_chat(struct gaim_connection *g, GList *data) {
 		debug_printf("chatnav does not exist, opening chatnav\n");
 		odata->create_exchange = *exchange;
 		odata->create_name = g_strdup(name);
-		aim_bos_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
+		aim_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
 	}
 }
 
@@ -2734,16 +2734,16 @@ static void oscar_do_action(struct gaim_connection *gc, char *act)
 	} else if (!strcmp(act, "Confirm Account")) {
 		if (!conn) {
 			od->conf = TRUE;
-			aim_bos_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
-			aim_auth_reqconfirm(od->sess, conn);
+			aim_admin_reqconfirm(od->sess, conn);
 	} else if (!strcmp(act, "Change Email")) {
 	} else if (!strcmp(act, "Display Current Registered Address")) {
 		if (!conn) {
 			od->reqemail = TRUE;
-			aim_bos_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+			aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
-			aim_auth_getinfo(od->sess, conn, 0x11);
+			aim_admin_getinfo(od->sess, conn, 0x11);
 	} else if (!strcmp(act, "Search for Buddy by Email")) {
 		show_find_email(gc);
 	}
@@ -2774,9 +2774,9 @@ static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new
 		od->chpass = TRUE;
 		od->oldp = g_strdup(old);
 		od->newp = g_strdup(new);
-		aim_bos_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 	} else {
-		aim_auth_changepasswd(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH),
+		aim_admin_changepasswd(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH),
 				new, old);
 	}
 }

@@ -51,6 +51,7 @@ faim_internal int invite_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int translate_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int popups_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int adverts_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int icq_modfirst(aim_session_t *sess, aim_module_t *mod);
 
 faim_internal int aim_genericreq_n(aim_session_t *, aim_conn_t *conn, fu16_t family, fu16_t subtype);
 faim_internal int aim_genericreq_n_snacid(aim_session_t *, aim_conn_t *conn, fu16_t family, fu16_t subtype);
@@ -202,7 +203,8 @@ faim_internal void aim_conn_kill_rend(aim_session_t *sess, aim_conn_t *conn);
 /* These are all handled internally now. */
 faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn);
 faim_internal int aim_reqrates(aim_session_t *, aim_conn_t *);
-faim_internal int aim_ratesack(aim_session_t *, aim_conn_t *);
+faim_internal int aim_rates_addparam(aim_session_t *, aim_conn_t *);
+faim_internal int aim_rates_delparam(aim_session_t *, aim_conn_t *);
 
 #ifndef FAIM_INTERNAL_INSANE
 #define printf() printf called inside libfaim

@@ -107,6 +107,8 @@ faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen)
  *   AIM_IMFLAGS_AWAY  -- Marks the message as an autoresponse
  *   AIM_IMFLAGS_ACK   -- Requests that the server send an ack
  *                        when the message is received (of type 0x0004/0x000c)
+ *   AIM_IMFLAGS_OFFLINE--If destination is offline, store it until they are
+ *                        online (probably ICQ only).
  *   AIM_IMFLAGS_UNICODE--Instead of ASCII7, the passed message is
  *                        made up of UNICODE duples.  If you set
  *                        this, you'd better be damn sure you know
@@ -305,11 +307,8 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 		aimbs_put16(&fr->data, 0x0000);
 	}
 
-	/*
-	 * Set the Buddy Icon Requested flag.
-	 */
-	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
-		aimbs_put16(&fr->data, 0x0009);
+	if (args->flags & AIM_IMFLAGS_OFFLINE) {
+		aimbs_put16(&fr->data, 0x0006);
 		aimbs_put16(&fr->data, 0x0000);
 	}
 
@@ -323,6 +322,14 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 		aimbs_put16(&fr->data, 0x0001);
 		aimbs_put16(&fr->data, args->iconsum);
 		aimbs_put32(&fr->data, args->iconstamp);
+	}
+
+	/*
+	 * Set the Buddy Icon Requested flag.
+	 */
+	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
+		aimbs_put16(&fr->data, 0x0009);
+		aimbs_put16(&fr->data, 0x0000);
 	}
 
 	aim_tx_enqueue(sess, fr);
@@ -860,6 +867,11 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		} else if (type == 0x0004) { /* Message is Auto Response */
 
 			args.icbmflags |= AIM_IMFLAGS_AWAY;
+
+		} else if (type == 0x0006) { /* Message was received offline. */
+
+			/* XXX not sure if this actually gets sent. */
+			args.icbmflags |= AIM_IMFLAGS_OFFLINE;
 
 		} else if (type == 0x0008) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
 

@@ -15,102 +15,6 @@
 #include <aim.h> 
 
 /*
- * aim_bos_setidle()
- *
- *  Should set your current idle time in seconds.  Idealy, OSCAR should
- *  do this for us.  But, it doesn't.  The client must call this to set idle
- *  time.  
- *
- */
-faim_export int aim_bos_setidle(aim_session_t *sess, aim_conn_t *conn, fu32_t idletime)
-{
-	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
-}
-
-
-/*
- * aim_bos_changevisibility(conn, changtype, namelist)
- *
- * Changes your visibility depending on changetype:
- *
- *  AIM_VISIBILITYCHANGE_PERMITADD: Lets provided list of names see you
- *  AIM_VISIBILITYCHANGE_PERMIDREMOVE: Removes listed names from permit list
- *  AIM_VISIBILITYCHANGE_DENYADD: Hides you from provided list of names
- *  AIM_VISIBILITYCHANGE_DENYREMOVE: Lets list see you again
- *
- * list should be a list of 
- * screen names in the form "Screen Name One&ScreenNameTwo&" etc.
- *
- * Equivelents to options in WinAIM:
- *   - Allow all users to contact me: Send an AIM_VISIBILITYCHANGE_DENYADD
- *      with only your name on it.
- *   - Allow only users on my Buddy List: Send an 
- *      AIM_VISIBILITYCHANGE_PERMITADD with the list the same as your
- *      buddy list
- *   - Allow only the uesrs below: Send an AIM_VISIBILITYCHANGE_PERMITADD 
- *      with everyone listed that you want to see you.
- *   - Block all users: Send an AIM_VISIBILITYCHANGE_PERMITADD with only 
- *      yourself in the list
- *   - Block the users below: Send an AIM_VISIBILITYCHANGE_DENYADD with
- *      the list of users to be blocked
- *
- * XXX ye gods.
- */
-faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, int changetype, const char *denylist)
-{
-	aim_frame_t *fr;
-	int packlen = 0;
-	fu16_t subtype;
-	char *localcpy = NULL, *tmpptr = NULL;
-	int i;
-	int listcount;
-	aim_snacid_t snacid;
-
-	if (!denylist)
-		return -EINVAL;
-
-	if (changetype == AIM_VISIBILITYCHANGE_PERMITADD)
-		subtype = 0x05;
-	else if (changetype == AIM_VISIBILITYCHANGE_PERMITREMOVE)
-		subtype = 0x06;
-	else if (changetype == AIM_VISIBILITYCHANGE_DENYADD)
-		subtype = 0x07;
-	else if (changetype == AIM_VISIBILITYCHANGE_DENYREMOVE)
-		subtype = 0x08;
-	else
-		return -EINVAL;
-
-	localcpy = strdup(denylist);
-
-	listcount = aimutil_itemcnt(localcpy, '&');
-	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, packlen))) {
-		free(localcpy);
-		return -ENOMEM;
-	}
-
-	snacid = aim_cachesnac(sess, 0x0009, subtype, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0009, subtype, 0x00, snacid);
-
-	for (i = 0; (i < (listcount - 1)) && (i < 99); i++) {
-		tmpptr = aimutil_itemidx(localcpy, i, '&');
-
-		aimbs_put8(&fr->data, strlen(tmpptr));
-		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));
-
-		free(tmpptr);
-	}
-	free(localcpy);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-
-
-/*
  * aim_bos_setbuddylist(buddylist)
  *
  * This just builds the "set buddy list" command then queues it.
@@ -172,7 +76,6 @@ faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, cons
  * aim_bos_setprofile(profile)
  *
  * Gives BOS your profile.
- *
  * 
  */
 faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps)
@@ -187,10 +90,21 @@ faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const 
 		aim_addtlvtochain_raw(&tl, 0x0001, strlen(defencoding), defencoding);
 		aim_addtlvtochain_raw(&tl, 0x0002, strlen(profile), profile);
 	}
-	
+
+	/*
+	 * So here's how this works:
+	 *   - You are away when you have a non-zero-length type 4 TLV stored.
+	 *   - You become unaway when you clear the TLV with a zero-length
+	 *       type 4 TLV.
+	 *   - If you do not send the type 4 TLV, your status does not change
+	 *       (that is, if you were away, you'll remain away).
+	 */
 	if (awaymsg) {
-		aim_addtlvtochain_raw(&tl, 0x0003, strlen(defencoding), defencoding);
-		aim_addtlvtochain_raw(&tl, 0x0004, strlen(awaymsg), awaymsg);
+		if (strlen(awaymsg)) {
+			aim_addtlvtochain_raw(&tl, 0x0003, strlen(defencoding), defencoding);
+			aim_addtlvtochain_raw(&tl, 0x0004, strlen(awaymsg), awaymsg);
+		} else
+			aim_addtlvtochain_noval(&tl, 0x0004);
 	}
 
 	aim_addtlvtochain_caps(&tl, 0x0005, caps);
@@ -207,124 +121,6 @@ faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const 
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
-}
-
-/*
- * aim_bos_clientready()
- * 
- * Send Client Ready.  
- *
- */
-faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
-{
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
-	struct snacgroup *sg;
-	aim_frame_t *fr;
-	aim_snacid_t snacid;
-
-	if (!ins)
-		return -EINVAL;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
-
-	/*
-	 * Send only the tool versions that the server cares about (that it
-	 * marked as supporting in the server ready SNAC).  
-	 */
-	for (sg = ins->groups; sg; sg = sg->next) {
-		aim_module_t *mod;
-
-		if ((mod = aim__findmodulebygroup(sess, sg->group))) {
-			aimbs_put16(&fr->data, mod->family);
-			aimbs_put16(&fr->data, mod->version);
-			aimbs_put16(&fr->data, mod->toolid);
-			aimbs_put16(&fr->data, mod->toolversion);
-		} else
-			faimdprintf(sess, 1, "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
-	}
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/* 
- * aim_bos_setprivacyflags()
- *
- * Sets privacy flags. Normally 0x03.
- *
- *  Bit 1:  Allows other AIM users to see how long you've been idle.
- *  Bit 2:  Allows other AIM users to see how long you've been a member.
- *
- */
-faim_export int aim_bos_setprivacyflags(aim_session_t *sess, aim_conn_t *conn, fu32_t flags)
-{
-	return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
-}
-
-/*
- * aim_bos_reqpersonalinfo()
- *
- */
-faim_export int aim_bos_reqpersonalinfo(aim_session_t *sess, aim_conn_t *conn)
-{
-	return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
-}
-
-/*
- * aim_bos_reqservice(serviceid)
- *
- * Service request. 
- *
- */
-faim_export int aim_bos_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t serviceid)
-{
-	return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
-}
-
-/*
- * aim_bos_nop()
- *
- * No-op.  WinAIM sends these every 4min or so to keep
- * the connection alive.  Its not real necessary.
- *
- */
-faim_export int aim_bos_nop(aim_session_t *sess, aim_conn_t *conn)
-{
-	return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
-}
-
-/*
- * aim_flap_nop()
- *
- * No-op.  WinAIM 4.x sends these _every minute_ to keep
- * the connection alive.  
- */
-faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
-{
-	aim_frame_t *fr;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x05, 0)))
-		return -ENOMEM;
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/*
- * aim_bos_reqrights()
- *
- * Request BOS rights.
- *
- */
-faim_export int aim_bos_reqrights(aim_session_t *sess, aim_conn_t *conn)
-{
-	return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
 }
 
 /*
@@ -425,10 +221,6 @@ faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn,
 	return 0;
 }
 
-/*
- *
- *
- */
 faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype, fu32_t *longdata)
 {
 	aim_frame_t *fr;
@@ -567,32 +359,8 @@ faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, cons
 	return 0;
 }
 
-faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status)
-{
-	aim_frame_t *fr;
-	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
-	fu32_t data;
-
-	data = 0x00030000 | status; /* yay for error checking ;^) */
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
-	
-	aim_addtlvtochain32(&tl, 0x0006, data);
-	aim_writetlvchain(&fr->data, &tl);
-	aim_freetlvchain(&tl);
-	
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
 /*
- * Should be generic enough to handle the errors for all families...
+ * Should be generic enough to handle the errors for all groups.
  *
  */
 static int generror(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
@@ -643,3 +411,5 @@ faim_internal int misc_modfirst(aim_session_t *sess, aim_module_t *mod)
 
 	return 0;
 }
+
+

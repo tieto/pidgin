@@ -505,10 +505,6 @@ faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
 faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest);
-faim_export int aim_sendauthresp(aim_session_t *sess, aim_conn_t *conn, const char *sn, int errorcode, const char *errorurl, const char *bosip, const char *cookie, const char *email, int regstatus);
-faim_export int aim_gencookie(unsigned char *buf);
-faim_export int aim_sendserverready(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_sendredirect(aim_session_t *sess, aim_conn_t *conn, fu16_t servid, const char *ip, const char *cookie);
 faim_export void aim_purge_rxqueue(aim_session_t *);
 
 #define AIM_TX_QUEUED    0 /* default */
@@ -558,7 +554,7 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
 faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_send_warning(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
-faim_export int aim_bos_nop(aim_session_t *, aim_conn_t *);
+faim_export int aim_nop(aim_session_t *, aim_conn_t *);
 faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_bos_setidle(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
@@ -566,14 +562,14 @@ faim_export int aim_bos_setbuddylist(aim_session_t *, aim_conn_t *, const char *
 faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
-faim_export int aim_bos_reqpersonalinfo(aim_session_t *, aim_conn_t *);
-faim_export int aim_bos_reqservice(aim_session_t *, aim_conn_t *, fu16_t);
+faim_export int aim_reqpersonalinfo(aim_session_t *, aim_conn_t *);
+faim_export int aim_reqservice(aim_session_t *, aim_conn_t *, fu16_t);
 faim_export int aim_bos_reqrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqbuddyrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqlocaterights(aim_session_t *, aim_conn_t *);
 faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
 faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
-faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status);
+faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status);
 
 faim_export struct aim_fileheader_t *aim_getlisting(aim_session_t *sess, FILE *);
 
@@ -652,6 +648,7 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_EXTDATA		0x0100
 #define AIM_IMFLAGS_CUSTOMCHARSET	0x0200 /* charset fields set */
 #define AIM_IMFLAGS_MULTIPART		0x0400 /* ->mpmsg section valid */
+#define AIM_IMFLAGS_OFFLINE		0x0800 /* send to offline user */
 
 /*
  * Multipart message structures.
@@ -890,12 +887,12 @@ faim_export int aim_seticbmparam(aim_session_t *sess, struct aim_icbmparameters 
 
 
 /* auth.c */
-faim_export int aim_auth_sendcookie(aim_session_t *, aim_conn_t *, const fu8_t *);
+faim_export int aim_sendcookie(aim_session_t *, aim_conn_t *, const fu8_t *);
 
-faim_export int aim_auth_changepasswd(aim_session_t *, aim_conn_t *, const char *newpw, const char *curpw);
-faim_export int aim_auth_reqconfirm(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_auth_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info);
-faim_export int aim_auth_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail);
+faim_export int aim_admin_changepasswd(aim_session_t *, aim_conn_t *, const char *newpw, const char *curpw);
+faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info);
+faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail);
 
 /* aim_buddylist.c */
 faim_export int aim_add_buddy(aim_session_t *, aim_conn_t *, const char *);
