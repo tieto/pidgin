@@ -1397,7 +1397,7 @@ void show_new_buddy_chat(struct conversation *b)
 	b->entry = chatentry;
 	if (!(chat_options & OPT_CHAT_ONE_WINDOW)
 			|| ((gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook)) == 0)
-				&& (b = g_list_nth_data(chats, 0))))
+				&& (b == g_list_nth_data(chats, 0))))
 		gtk_widget_grab_focus(b->entry);
 
 
