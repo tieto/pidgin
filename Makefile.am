@@ -15,6 +15,8 @@ EXTRA_DIST = \
 		plugins/Makefile.mingw \
 		plugins/win32/transparency/Makefile.mingw \
 		plugins/win32/transparency/win2ktrans.c \
+		plugins/win32/winprefs/gtkappbar.c \
+		plugins/win32/winprefs/gtkappbar.h \
 		plugins/win32/winprefs/Makefile.mingw \
 		plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
