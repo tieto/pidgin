@@ -1088,7 +1088,7 @@ void account_online(struct gaim_connection *gc)
 		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
-	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(gc->user->protocol));
+	gtk_clist_set_text(GTK_CLIST(list), i, 3, (*gc->prpl->name)());
 
 	return;
 }
