@@ -5121,6 +5121,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
+		gaim_gtkconv_update_buttons_by_protocol(conv);
 		generate_send_as_items(win, NULL);
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
