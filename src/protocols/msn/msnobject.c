@@ -26,7 +26,8 @@
 	{ \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
-		obj->field = g_strndup(tag, c - tag); \
+		if (c != NULL) \
+			obj->field = g_strndup(tag, c - tag); \
 	}
 
 #define GET_INT_TAG(field, id) \
@@ -35,8 +36,11 @@
 		char buf[16]; \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
-		strncpy(buf, tag, c - tag); \
-		obj->field = atoi(buf); \
+		if (c != NULL) \
+		{ \
+			strncpy(buf, tag, c - tag); \
+			obj->field = atoi(buf); \
+		} \
 	}
 
 MsnObject *
