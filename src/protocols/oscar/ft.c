@@ -16,10 +16,8 @@
 #include <netinet/in.h>
 #include <sys/utsname.h> /* for aim_directim_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
+#define G_DIR_SEPARATOR '/'
 #endif
-
-/* XXX - I really don't think this should include gaim.h */
-#include "gaim.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -1493,16 +1491,6 @@ static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, aim
 
 	aim_tx_enqueue(sess, newoft);
 
-	/*
-	 * Throw away the resource fork, in case we are receiving from a Mac.
-	 */
-	if (ft->fh.rfsize) {
-		char *buf = malloc(ft->fh.rfsize);
-		if (!buf)
-			return -1;
-		aim_recv(conn->fd, buf, ft->fh.rfsize);
-	}
-
 	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_SENDFILEFILEREQ)) == NULL)
 		return 1;
 
@@ -1522,7 +1510,7 @@ static int handlehdr_sendfile_sending(aim_session_t *sess, aim_conn_t *conn, aim
 /* 
  * These were originally described by Josh Myer:
  * http://www.geocrawler.com/archives/3/896/2000/9/0/4291064/
- * XXX this doesn't actualy work yet
+ * XXX this doesn't actually work yet
  * -- wtm
  */
 static int handlehdr_sendfile_resume(aim_session_t *sess, aim_conn_t *conn, aim_bstream_t *bs) {
@@ -2124,9 +2112,9 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
 	fh->compress = 0x0000;
 	fh->totfiles = numfiles;
 	fh->filesleft = numfiles - filesdone;
-	fh->totparts = 0x0001;
+	fh->totparts = 0x0001; /* set to 0x0002 sending Mac resource forks */
 	fh->partsleft = 0x0001;
-	fh->totsize = totsize; /* set to 0x0002 sending Mac resource forks */
+	fh->totsize = totsize;
 	fh->size = size;
 	fh->modtime = (int)time(NULL); /* we'll go with current time for now */
 	/* fh->checksum set above */

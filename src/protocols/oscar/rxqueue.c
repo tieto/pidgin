@@ -129,7 +129,7 @@ static faim_shortfunc int aim_get_command_flap(aim_session_t *sess, aim_conn_t *
 }
 
 /*
- * Read a rendevouz header from conn into fr, and return the number of bytes in the payload.
+ * Read a rendezvous header from conn into fr, and return the number of bytes in the payload.
  */
 static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
 {
