@@ -9,7 +9,7 @@ version 0.9.14:
 	* When multiple screen names, Gaim now correctly remembers the name
 	  that was used last.
 	* FONT sizes now work correctly.
-	* PLUGIN SUPPORT!!
+	* PLUGIN SUPPORT!! (Lots of cool goodies here)
 
 version 0.9.13 (03/27/2000):
 	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)
