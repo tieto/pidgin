@@ -47,7 +47,7 @@ typedef struct
 
 static char debug_fg_colors[][8] = {
 	"#000000",    /**< All debug levels. */
-	"#666666",    /**< Blather.          */
+	"#666666",    /**< Misc.             */
 	"#000000",    /**< Information.      */
 	"#660000",    /**< Warnings.         */
 	"#FF0000",    /**< Errors.           */
@@ -215,6 +215,57 @@ debug_enabled_cb(const char *name, GaimPrefType type, gpointer value,
 		gaim_gtk_debug_window_hide();
 }
 
+static void
+gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+					  const gchar *msg, gpointer user_data)
+{
+	GaimDebugLevel level;
+	char *new_msg = NULL;
+	char *new_domain = NULL;
+
+	if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_ERROR)
+		level = GAIM_DEBUG_ERROR;
+	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_CRITICAL)
+		level = GAIM_DEBUG_FATAL;
+	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_WARNING)
+		level = GAIM_DEBUG_WARNING;
+	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_MESSAGE)
+		level = GAIM_DEBUG_INFO;
+	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_INFO)
+		level = GAIM_DEBUG_INFO;
+	else if ((flags & G_LOG_LEVEL_MASK) == G_LOG_LEVEL_DEBUG)
+		level = GAIM_DEBUG_MISC;
+	else {
+		gaim_debug(GAIM_DEBUG_WARNING, "gtkdebug",
+				   "Unknown glib logging level in %d\n", flags);
+
+		level = GAIM_DEBUG_MISC; /* This will never happen. */
+	}
+
+	if (msg != NULL)
+		new_msg = gaim_utf8_try_convert(msg);
+
+	if (domain != NULL)
+		new_domain = gaim_utf8_try_convert(domain);
+
+	if (new_msg != NULL) {
+		gaim_debug(GAIM_DEBUG_MISC, new_domain ? new_domain : "g_log", 
+			   "%s\n", new_msg);
+
+		g_free(new_msg);
+	}
+
+	if (new_domain != NULL)
+		g_free(new_domain);
+}
+
+#ifdef _WIN32
+static void
+gaim_glib_dummy_print_handler(const gchar *string)
+{
+}
+#endif
+
 void
 gaim_gtk_debug_init(void)
 {
@@ -235,6 +286,25 @@ gaim_gtk_debug_init(void)
 
 	gaim_prefs_connect_callback("/gaim/gtk/debug/enabled",
 								debug_enabled_cb, NULL);
+
+#define REGISTER_G_LOG_HANDLER(name) \
+	g_log_set_handler((name), G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
+					  | G_LOG_FLAG_RECURSION, \
+					  gaim_glib_log_handler, NULL)
+
+	/* Register the glib/gtk log handlers. */
+	REGISTER_G_LOG_HANDLER(NULL);
+	REGISTER_G_LOG_HANDLER("Gdk");
+	REGISTER_G_LOG_HANDLER("Gtk");
+	REGISTER_G_LOG_HANDLER("GLib");
+	REGISTER_G_LOG_HANDLER("GModule");
+	REGISTER_G_LOG_HANDLER("GLib-GObject");
+	REGISTER_G_LOG_HANDLER("GThread");
+
+#ifdef _WIN32
+	if (!opt_debug)
+		g_set_print_handler(gaim_glib_dummy_print_handler);
+#endif
 }
 
 void

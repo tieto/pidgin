@@ -474,29 +474,6 @@ static void set_first_user(char *name)
 	gaim_accounts_reorder(account, 0);
 }
 
-#ifdef _WIN32
-/* WIN32 print and log handlers */
-
-static void gaim_dummy_print( const gchar* string ) {
-	return;
-}
-
-static void gaim_dummy_log_handler (const gchar    *domain,
-				    GLogLevelFlags  flags,
-				    const gchar    *msg,
-				    gpointer        user_data) {
-	return;
-}
-
-static void gaim_log_handler (const gchar    *domain,
-			      GLogLevelFlags  flags,
-			      const gchar    *msg,
-			      gpointer        user_data) {
-	gaim_debug(GAIM_DEBUG_MISC, "log", "%s - %s\n", domain, msg);
-	g_log_default_handler(domain, flags, msg, user_data);
-}
-#endif /* _WIN32 */
-
 static void
 debug_init(void)
 {
@@ -787,45 +764,6 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-
-#ifdef _WIN32
-	/* We don't want a console window.. */
-	/*
-	 *  Any calls to the glib logging functions, result in a call to AllocConsole().
-	 *  ME and 98 will in such cases produce a console window (2000 not), despite
-	 *  being built as a windows app rather than a console app.  So we should either
-	 *  ignore messages by setting dummy log handlers, or redirect messages.
-	 *  This requires setting handlers for all domains (any lib which uses g_logging).
-	 */
-
-	g_log_set_handler (NULL, G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);	
-	g_log_set_handler ("Gdk", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-	g_log_set_handler ("Gtk", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-	g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-	g_log_set_handler ("GModule", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-	g_log_set_handler ("GLib-GObject", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-	g_log_set_handler ("GThread", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
-			   (opt_gdebug ? gaim_log_handler : gaim_dummy_log_handler),
-			   NULL);
-
-	/* g_print also makes a call to AllocConsole(), therefore a handler needs to be
-	   set here aswell */
-	if(!opt_debug)
-		g_set_print_handler( gaim_dummy_print );
-
-#endif
 
 	/* show help message */
 	if (opt_help) {
