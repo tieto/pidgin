@@ -386,14 +386,23 @@ static void do_callbacks(const char* name, struct gaim_pref *pref) {
 void gaim_prefs_trigger_callback(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_if_fail(pref != NULL);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_trigger_callback: Unknown pref %s\n", name);
+		return;
+	}
+
 	do_callbacks(name, pref);
 }
 
 void gaim_prefs_set_generic(const char *name, gpointer value) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_if_fail(pref != NULL);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_set_generic: Unknown pref %s\n", name);
+		return;
+	}
 
 	pref->value.generic = value;
 	do_callbacks(name, pref);
@@ -403,7 +412,11 @@ void gaim_prefs_set_bool(const char *name, gboolean value) {
 	struct gaim_pref *pref = find_pref(name);
 
 	if(pref) {
-		g_return_if_fail(pref->type == GAIM_PREF_BOOLEAN);
+		if(pref->type != GAIM_PREF_BOOLEAN) {
+			gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+					"gaim_prefs_set_bool: %s not a boolean pref\n", name);
+			return;
+		}
 
 		if(pref->value.boolean != value) {
 			pref->value.boolean = value;
@@ -418,7 +431,11 @@ void gaim_prefs_set_int(const char *name, int value) {
 	struct gaim_pref *pref = find_pref(name);
 
 	if(pref) {
-		g_return_if_fail(pref->type == GAIM_PREF_INT);
+		if(pref->type != GAIM_PREF_INT) {
+			gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+					"gaim_prefs_set_int: %s not an integer pref\n", name);
+			return;
+		}
 
 		if(pref->value.integer != value) {
 			pref->value.integer = value;
@@ -433,7 +450,11 @@ void gaim_prefs_set_string(const char *name, const char *value) {
 	struct gaim_pref *pref = find_pref(name);
 
 	if(pref) {
-		g_return_if_fail(pref->type == GAIM_PREF_STRING);
+		if(pref->type != GAIM_PREF_STRING) {
+			gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+					"gaim_prefs_set_string: %s not a string pref\n", name);
+			return;
+		}
 
 		if(strcmp(pref->value.string, value)) {
 			g_free(pref->value.string);
@@ -449,6 +470,14 @@ void gaim_prefs_set_string_list(const char *name, GList *value) {
 	struct gaim_pref *pref = find_pref(name);
 	if(pref) {
 		GList *tmp;
+
+		if(pref->type != GAIM_PREF_STRING_LIST) {
+			gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+					"gaim_prefs_set_string_list: %s not a string list pref\n",
+					name);
+			return;
+		}
+
 		for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
 			g_free(tmp->data);
 
@@ -467,7 +496,11 @@ void gaim_prefs_set_string_list(const char *name, GList *value) {
 gpointer gaim_prefs_get_generic(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_val_if_fail(pref != NULL, NULL);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_generic: Unknown pref %s\n", name);
+		return NULL;
+	}
 
 	return pref->value.generic;
 }
@@ -475,8 +508,15 @@ gpointer gaim_prefs_get_generic(const char *name) {
 gboolean gaim_prefs_get_bool(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_val_if_fail(pref != NULL, FALSE);
-	g_return_val_if_fail(pref->type == GAIM_PREF_BOOLEAN, FALSE);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_bool: Unknown pref %s\n", name);
+		return FALSE;
+	} else if(pref->type != GAIM_PREF_BOOLEAN) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_bool: %s not a boolean pref\n", name);
+		return FALSE;
+	}
 
 	return pref->value.boolean;
 }
@@ -484,8 +524,15 @@ gboolean gaim_prefs_get_bool(const char *name) {
 int gaim_prefs_get_int(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_val_if_fail(pref != NULL, 0);
-	g_return_val_if_fail(pref->type == GAIM_PREF_INT, 0);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_int: Unknown pref %s\n", name);
+		return 0;
+	} else if(pref->type != GAIM_PREF_INT) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_int: %s not an integer pref\n", name);
+		return 0;
+	}
 
 	return pref->value.integer;
 }
@@ -493,8 +540,15 @@ int gaim_prefs_get_int(const char *name) {
 const char *gaim_prefs_get_string(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_val_if_fail(pref != NULL, NULL);
-	g_return_val_if_fail(pref->type == GAIM_PREF_STRING, NULL);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_string: Unknown pref %s\n", name);
+		return NULL;
+	} else if(pref->type != GAIM_PREF_STRING) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_string: %s not a string pref\n", name);
+		return NULL;
+	}
 
 	return pref->value.string;
 }
@@ -503,8 +557,15 @@ GList *gaim_prefs_get_string_list(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 	GList *ret = NULL, *tmp;
 
-	g_return_val_if_fail(pref != NULL, NULL);
-	g_return_val_if_fail(pref->type == GAIM_PREF_STRING_LIST, NULL);
+	if(!pref) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_string_list: Unknown pref %s\n", name);
+		return NULL;
+	} else if(pref->type != GAIM_PREF_STRING_LIST) {
+		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
+				"gaim_prefs_get_string_list: %s not a string list pref\n", name);
+		return NULL;
+	}
 
 	for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
 		ret = g_list_append(ret, g_strdup(tmp->data));
