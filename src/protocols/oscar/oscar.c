@@ -3169,7 +3169,8 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL);
+	/* gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL); */
+	gaim_notify_formatted(gc, NULL, _("Below are the results of your search:"), NULL, text->str, NULL, NULL);
 	g_string_free(text, TRUE);
 
 	return 1;
