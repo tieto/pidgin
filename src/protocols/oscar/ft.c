@@ -23,7 +23,7 @@
  *      number that we're listening on.
  *   2) The receiver connects to the sender on the given IP address 
  *      and port.  After the connection is established, the receiver 
- *      sends another ICBM signifying that we are ready and waiting.
+ *      sends an ICBM signifying that we are ready and waiting.
  *   3) The sender sends an OFT PROMPT message over the OFT 
  *      connection.
  *   4) The receiver of the file sends back an exact copy of this 
@@ -35,7 +35,8 @@
  *      until the entire file has been sent.
  *   6) The receiver knows the file is finished because the sender 
  *      sent the file size in an earlier OFT packet.  So then the 
- *      receiver sends the DONE thingy and closes the connection.
+ *      receiver sends the DONE thingy (after filling in the 
+ *      "received" checksum and size) and closes the connection.
  */
 
 #define FAIM_INTERNAL
@@ -521,9 +522,6 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
  * will accept the pending connection and stop listening.
  *
  * @param sess The session
- * @param conn The BOS conn.
- * @param priv A dummy priv value (we'll let it get filled in later)
- *             (if you pass a %NULL, we alloc one).
  * @param sn The screen name to connect to.
  * @return The new connection.
  */
@@ -598,9 +596,8 @@ faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, con
 	if (!sess || !sn)
 		return NULL;
 
-	if (!(intdata = malloc(sizeof(struct aim_odc_intdata))))
+	if (!(intdata = calloc(1, sizeof(struct aim_odc_intdata))))
 		return NULL;
-	memset(intdata, 0, sizeof(struct aim_odc_intdata));
 	memcpy(intdata->cookie, cookie, 8);
 	strncpy(intdata->sn, sn, sizeof(intdata->sn));
 	if (addr)
@@ -703,6 +700,78 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	return ret;
 }
 
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename)
+{
+	struct aim_oft_info *new;
+
+	if (!sess)
+		return NULL;
+
+	if (!(new = (struct aim_oft_info *)calloc(1, sizeof(struct aim_oft_info))))
+		return NULL;
+
+	new->sess = sess;
+	if (cookie)
+		memcpy(new->cookie, cookie, 8);
+	if (ip)
+		new->clientip = strdup(ip);
+	if (sn)
+		new->sn = strdup(sn);
+	new->port = port;
+	new->fh.totfiles = 1;
+	new->fh.filesleft = 1;
+	new->fh.totparts = 1;
+	new->fh.partsleft = 1;
+	new->fh.totsize = size;
+	new->fh.size = size;
+	new->fh.modtime = modtime;
+	new->fh.checksum = 0xffff0000;
+	new->fh.rfrcsum = 0xffff0000;
+	new->fh.rfcsum = 0xffff0000;
+	new->fh.recvcsum = 0xffff0000;
+	strncpy(new->fh.idstring, "OFT_Windows ICBMFT V1.1 32", 31);
+	if (filename)
+		strncpy(new->fh.name, filename, 63);
+
+	new->next = sess->oft_info;
+	sess->oft_info = new;
+
+	return new;
+}
+
+/**
+ * Remove the given oft_info struct from the oft_info linked list, and 
+ * then free its memory.
+ *
+ * @param sess The session.
+ * @param oft_info The aim_oft_info struct that we're destroying.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info)
+{
+	aim_session_t *sess;
+
+	if (!oft_info || !(sess = oft_info->sess))
+		return -EINVAL;
+
+	if (sess->oft_info && (sess->oft_info == oft_info)) {
+		sess->oft_info = sess->oft_info->next;
+	} else {
+		struct aim_oft_info *cur;
+		for (cur=sess->oft_info; (cur->next && (cur->next!=oft_info)); cur=cur->next);
+		if (cur->next)
+			cur->next = cur->next->next;
+	}
+
+	free(oft_info->sn);
+	free(oft_info->proxyip);
+	free(oft_info->clientip);
+	free(oft_info->verifiedip);
+	free(oft_info);
+
+	return 0;
+}
+
 /**
  * Creates a listener socket so the other dude can connect to us.
  *
@@ -712,30 +781,30 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
  * will accept the pending connection and stop listening.
  *
  * @param sess The session.
- * @param cookie This better be Mrs. Fields or I'm going to be pissed.
- * @param ip Should be 4 bytes,  each byte is 1 quartet of the IP address.
- * @param port Ye olde port number to listen on.
- * @return Return the new conn if everything went as planned.  Otherwise, 
- *         return NULL.
+ * @param oft_info File transfer information associated with this 
+ *        connection.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export aim_conn_t *aim_sendfile_listen(aim_session_t *sess, const fu8_t *cookie, const fu8_t *ip, fu16_t port)
+faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info)
 {
-	aim_conn_t *newconn;
 	int listenfd;
 
-	if ((listenfd = listenestablish(port)) == -1)
-		return NULL;
+	if (!oft_info)
+		return -EINVAL;
 
-	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER, NULL))) {
+	if ((listenfd = listenestablish(oft_info->port)) == -1)
+		return 1;
+
+	if (!(oft_info->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER, NULL))) {
 		close(listenfd);
-		return NULL;
+		return -ENOMEM;
 	}
 
-	newconn->fd = listenfd;
-	newconn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-	newconn->lastactivity = time(NULL);
+	oft_info->conn->fd = listenfd;
+	oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+	oft_info->conn->lastactivity = time(NULL);
 
-	return newconn;
+	return 0;
 }
 
 /**
@@ -830,110 +899,52 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 	return 0;
 }
 
-faim_export struct aim_oft_info *aim_oft_createnewheader(fu8_t *cookie, char *ip, fu32_t size, fu32_t modtime, char *filename)
-{
-	struct aim_oft_info *new;
-
-	if (!(new = (struct aim_oft_info *)calloc(1, sizeof(struct aim_oft_info))))
-		return NULL;
-
-	if (cookie && (sizeof(cookie) == 8)) {
-		memcpy(new->cookie, cookie, 8);
-		memcpy(new->fh.bcookie, cookie, 8);
-	}
-	if (ip)
-		strncpy(new->ip, ip, 30);
-	new->fh.filesleft = 0;
-	new->fh.totparts = 1;
-	new->fh.partsleft = 1;
-	new->fh.totsize = size;
-	new->fh.size = size;
-	new->fh.modtime = modtime;
-	strcpy(new->fh.idstring, "OFT_Windows ICBMFT V1.1 32");
-	if (filename)
-		strncpy(new->fh.name, filename, 64);
-
-	return new;
-}
-
 /**
  * Create an OFT packet based on the given information, and send it on its merry way.
  *
  * @param sess The session.
- * @param conn The already-connected OFT connection.
- * @param cookie The cookie associated with this file transfer.
- * @param filename The filename.
- * @param filesdone Number of files already transferred.
- * @param numfiles Total number of files.
- * @param size Size in bytes of this file.
- * @param totsize Size in bytes of all files combined.
- * @param checksum Funky checksum of this file.
- * @param flags Any flags you want, baby.  Send 0x21 when sending the 
- *        "AIM_CB_OFT_DONE" message, and "0x02" for everything else.
+ * @param type The subtype of the OFT packet we're sending.
+ * @param oft_info The aim_oft_info struct with the connection and OFT 
+ *        info we're sending.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags, fu32_t bytesreceived, fu32_t recvcsum)
+faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info)
 {
-	aim_frame_t *newoft;
-	struct aim_fileheader_t *fh;
+	aim_frame_t *fr;
 
-	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS) || !filename)
+	if (!sess || !oft_info || !oft_info->conn || (oft_info->conn->type != AIM_CONN_TYPE_RENDEZVOUS))
 		return -EINVAL;
 
-	if (!(fh = (struct aim_fileheader_t *)calloc(1, sizeof(struct aim_fileheader_t))))
-		return -ENOMEM;
-
+#if 0
 	/*
 	 * If you are receiving a file, the cookie should be null, if you are sending a 
 	 * file, the cookie should be the same as the one used in the ICBM negotiation 
 	 * SNACs.
 	 */
-	if (cookie)
-		memcpy(fh->bcookie, cookie, 8);
-	fh->totfiles = numfiles;
-	fh->filesleft = numfiles - filesdone;
-	fh->totparts = 0x0001; /* set to 0x0002 sending Mac resource forks */
-	fh->partsleft = 0x0001;
-	fh->totsize = totsize;
-	fh->size = size;
-	fh->modtime = modtime;
-	fh->checksum = checksum;
-	fh->nrecvd = bytesreceived;
-	fh->recvcsum = recvcsum;
-
-	strncpy(fh->idstring, "OFT_Windows ICBMFT V1.1 32", sizeof(fh->idstring));
-	fh->flags = flags;
 	fh->lnameoffset = 0x1a;
 	fh->lsizeoffset = 0x10;
-	memset(fh->dummy, 0, sizeof(fh->dummy));
-	memset(fh->macfileinfo, 0, sizeof(fh->macfileinfo));
 
 	/* apparently 0 is ASCII, 2 is UCS-2 */
 	/* it is likely that 3 is ISO 8859-1 */
 	/* I think "nlanguage" might be the same thing as "subenc" in im.c */
 	fh->nencode = 0x0000;
 	fh->nlanguage = 0x0000;
+#endif
 
-	strncpy(fh->name, filename, sizeof(fh->name));
-	aim_oft_dirconvert_tostupid(fh->name);
+	aim_oft_dirconvert_tostupid(oft_info->fh.name);
 
-	if (!(newoft = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, type, 0))) {
-		free(fh);
+	if (!(fr = aim_tx_new(sess, oft_info->conn, AIM_FRAMETYPE_OFT, type, 0)))
+		return -ENOMEM;
+
+	if (aim_oft_buildheader(&fr->data, &oft_info->fh) == -1) {
+		aim_frame_destroy(fr);
 		return -ENOMEM;
 	}
 
-	if (aim_oft_buildheader(&newoft->data, fh) == -1) {
-		aim_frame_destroy(newoft);
-		free(fh);
-		return -ENOMEM;
-	}
+	memcpy(fr->hdr.rend.magic, "OFT2", 4);
+	fr->hdr.rend.hdrlen = aim_bstream_curpos(&fr->data);
 
-	memcpy(newoft->hdr.rend.magic, "OFT2", 4);
-	newoft->hdr.rend.hdrlen = aim_bstream_curpos(&newoft->data);
-
-	aim_tx_enqueue(sess, newoft);
-
-	free(fh);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }

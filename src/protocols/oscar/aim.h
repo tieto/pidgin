@@ -836,9 +836,9 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
 /* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port, const char *filename, fu16_t numfiles, fu32_t totsize);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, const fu8_t *cookie, const char *sn, fu16_t rendid);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, const fu8_t *cookie, const char *sn, fu16_t rendid);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type);
 /* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
@@ -885,7 +885,13 @@ struct aim_fileheader_t {
 
 struct aim_oft_info {
 	char cookie[8];
-	char ip[30];
+	char *sn;
+	char *proxyip;
+	char *clientip;
+	char *verifiedip;
+	fu16_t port;
+	aim_conn_t *conn;
+	aim_session_t *sess;
 	struct aim_fileheader_t fh;
 	struct aim_oft_info *next;
 };
@@ -899,13 +905,14 @@ faim_export const char *aim_odc_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
-faim_export struct aim_oft_info *aim_oft_createnewheader(fu8_t *cookie, char *ip, fu32_t size, fu32_t modtime, char *filename);
-faim_export aim_conn_t *aim_sendfile_listen(aim_session_t *sess, const fu8_t *cookie, const fu8_t *ip, fu16_t port);
-faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t type, const fu8_t *cookie, const char *filename, fu16_t filesdone, fu16_t numfiles, fu32_t size, fu32_t totsize, fu32_t modtime, fu32_t checksum, fu8_t flags, fu32_t bytesreceived, fu32_t recvcsum);
+
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename);
+faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info);
+faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info);
+faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
 
 
 
-/* info.c */
 /* info.c */
 /*
  * AIM User Info, Standard Form.

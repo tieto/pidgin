@@ -667,28 +667,21 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, co
  * Subtype 0x0006 - Send an "I want to send you this file" message
  *
  */
-faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port, const char *filename, fu16_t numfiles, fu32_t totsize)
+faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl=NULL, *subtl=NULL;
-	fu8_t *ck;
 	int i;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
-		return -EINVAL;
-
-	if (!sn || !filename)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !oft_info)
 		return -EINVAL;
 
 	/* XXX - Should be like "21CBF95" and null terminated */
-	ck = (fu8_t *)malloc(8*sizeof(fu8_t));
 	for (i = 0; i < 7; i++)
-		ck[i] = 0x30 + ((fu8_t)rand() % 10);
-	ck[7] = '\0';
-	if (cookie)
-		memcpy(cookie, ck, 8);
+		oft_info->cookie[i] = 0x30 + ((fu8_t)rand() % 10);
+	oft_info->cookie[7] = '\0';
 
 	{ /* Create the subTLV chain */
 		fu8_t *buf;
@@ -700,22 +693,31 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, 
 /*		aim_addtlvtochain_raw(&subtl, 0x000e, 2, "en");
 		aim_addtlvtochain_raw(&subtl, 0x000d, 8, "us-ascii");
 		aim_addtlvtochain_raw(&subtl, 0x000c, 24, "Please accept this file."); */
-		if (ip[0])
+		if (oft_info->clientip) {
+			fu8_t ip[4];
+			char *nexttoken;
+			int i = 0;
+			nexttoken = strtok(oft_info->clientip, ".");
+			while (nexttoken && i<4) {
+				ip[i] = atoi(nexttoken);
+				nexttoken = strtok(NULL, ".");
+				i++;
+			}
 			aim_addtlvtochain_raw(&subtl, 0x0003, 4, ip);
-		aim_addtlvtochain16(&subtl, 0x0005, port);
+		}
+		aim_addtlvtochain16(&subtl, 0x0005, oft_info->port);
 
 		/* TLV t(2711) */
-		buflen = 2+2+4+63;
+		buflen = 2+2+4+strlen(oft_info->fh.name)+1;
 		buf = malloc(buflen);
 		aim_bstream_init(&bs, buf, buflen);
-		aimbs_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
-		aimbs_put16(&bs, numfiles);
-		aimbs_put32(&bs, totsize);
+		aimbs_put16(&bs, (oft_info->fh.totfiles > 1) ? 0x0002 : 0x0001);
+		aimbs_put16(&bs, oft_info->fh.totfiles);
+		aimbs_put32(&bs, oft_info->fh.totsize);
 
-		/* Filename is a fixed size of 63 bytes, so pad with 0's */
-		aimbs_putraw(&bs, filename, strlen(filename));
-		for (i=0; i<(63-strlen(filename)); i++)
-			aimbs_put8(&bs, 0x00);
+		/* Filename - NULL terminated, for some odd reason */
+		aimbs_putraw(&bs, oft_info->fh.name, strlen(oft_info->fh.name));
+		aimbs_put8(&bs, 0x00);
 
 		aim_addtlvtochain_raw(&subtl, 0x2711, bs.len, bs.data);
 		free(buf);
@@ -731,7 +733,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, 
 		buf = malloc(buflen);
 		aim_bstream_init(&bs, buf, buflen);
 		aimbs_put16(&bs, AIM_RENDEZVOUS_PROPOSE);
-		aimbs_putraw(&bs, ck, 8);
+		aimbs_putraw(&bs, oft_info->cookie, 8);
 		aim_putcap(&bs, AIM_CAPS_SENDFILE);
 		aim_writetlvchain(&bs, &subtl);
 		aim_freetlvchain(&subtl);
@@ -742,14 +744,14 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, 
 		aim_addtlvtochain_noval(&tl, 0x0003);
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(sn) + aim_sizetlvchain(&tl))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(oft_info->sn) + aim_sizetlvchain(&tl))))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, 0x0004, 0x0006, AIM_SNACFLAGS_DESTRUCTOR, ck, sizeof(ck));
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, AIM_SNACFLAGS_DESTRUCTOR, oft_info->cookie, sizeof(oft_info->cookie));
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&fr->data, ck, 0x0002, sn);
+	aim_im_puticbm(&fr->data, oft_info->cookie, 0x0002, oft_info->sn);
 
 	/* All that crap from above (the 0x0005 TLV and the 0x0003 TLV) */
 	aim_writetlvchain(&fr->data, &tl);
@@ -765,29 +767,29 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, fu8_t *cookie, 
  *
  * @param rendid Capability type (AIM_CAPS_GETFILE or AIM_CAPS_SENDFILE)
  */
-faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, const fu8_t *cookie, const char *sn, fu16_t rendid)
+faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *oft_info)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !cookie || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !oft_info)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(sn) + 4+2+8+16)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(oft_info->sn) + 4+2+8+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&fr->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&fr->data, oft_info->cookie, 0x0002, oft_info->sn);
 
 	aimbs_put16(&fr->data, 0x0005);
 	aimbs_put16(&fr->data, 0x001a);
 	aimbs_put16(&fr->data, AIM_RENDEZVOUS_ACCEPT);
-	aimbs_putraw(&fr->data, cookie, 8);
-	aim_putcap(&fr->data, rendid);
+	aimbs_putraw(&fr->data, oft_info->cookie, 8);
+	aim_putcap(&fr->data, AIM_CAPS_SENDFILE);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -798,29 +800,29 @@ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, const fu8_t 
  * Subtype 0x0006 - Send a "cancel this file transfer" message?
  *
  */
-faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, const fu8_t *cookie, const char *sn, fu16_t rendid)
+faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !cookie || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !oft_info)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(sn) + 4+2+8+16)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(oft_info->sn) + 4+2+8+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&fr->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&fr->data, oft_info->cookie, 0x0002, oft_info->sn);
 
 	aimbs_put16(&fr->data, 0x0005);
 	aimbs_put16(&fr->data, 0x001a);
 	aimbs_put16(&fr->data, AIM_RENDEZVOUS_CANCEL);
-	aimbs_putraw(&fr->data, cookie, 8);
-	aim_putcap(&fr->data, rendid);
+	aimbs_putraw(&fr->data, oft_info->cookie, 8);
+	aim_putcap(&fr->data, AIM_CAPS_SENDFILE);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1769,6 +1771,8 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 	/*
 	 * Unknown -- no value
+	 *
+	 * Maybe means we should connect directly to transfer the file?
 	 */
 	if (aim_gettlv(list2, 0x000f, 1))
 		;

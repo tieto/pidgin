@@ -63,10 +63,8 @@ gaim_xfer_destroy(struct gaim_xfer *xfer)
 	if (xfer == NULL)
 		return;
 
-	if (!xfer->completed) {
+	if (!xfer->completed)
 		gaim_xfer_cancel_local(xfer);
-		return;
-	}
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
