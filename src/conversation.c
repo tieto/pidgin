@@ -847,6 +847,11 @@ void surround(GtkWidget *entry, char *pre, char *post)
 	int temp, pos = GTK_EDITABLE(entry)->current_pos;
 	int dummy;
 	int start, finish;
+
+	if (general_options & OPT_GEN_CHECK_SPELLING) {
+		gtkspell_detach(GTK_TEXT(entry));
+	}
+
 	if (GTK_EDITABLE(entry)->has_selection) {
 		remove_tags(entry, pre);
 		remove_tags(entry, post);
@@ -878,6 +883,11 @@ void surround(GtkWidget *entry, char *pre, char *post)
 			gtk_editable_set_position(GTK_EDITABLE(entry), pos);
 		}
 	}
+	
+	if (general_options & OPT_GEN_CHECK_SPELLING) {
+		gtkspell_attach(GTK_TEXT(entry));
+	}
+	
 	gtk_widget_grab_focus(entry);
 }
 
@@ -956,10 +966,12 @@ void do_strike(GtkWidget *strike, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
+	
 	if (GTK_TOGGLE_BUTTON(strike)->active)
 		surround(entry, "<STRIKE>","</STRIKE>");
 	else
 		advance_past(entry, "<STRIKE>", "</STRIKE>");
+
 }
 
 void do_bold(GtkWidget *bold, GtkWidget *entry)
