@@ -3013,11 +3013,10 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 /*
  * We get this error when there was an error in the locate family.  This 
- * usually happens because libfaim couldn't get info for someone when it 
- * tried automatically.  Seeing the message gets annoying...
+ * happens when you request info of someone who is offline.
  */
 static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-	/* char *buf; */
+	gchar *buf;
 	va_list ap;
 	fu16_t reason;
 	char *destn;
@@ -3027,12 +3026,10 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	/*
 	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
 	gaim_notify_error(sess->aux_data, NULL, buf,
 					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
 	g_free(buf);
-	*/
 
 	return 1;
 }

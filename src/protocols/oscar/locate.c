@@ -249,6 +249,47 @@ static void aim_locate_dorequest(aim_session_t *sess) {
 	aim_locate_getinfoshort(sess, cur->sn, 0x00000003);
 }
 
+/*
+ * Remove this screen name from our queue.  If this info was resquested 
+ * by our info request queue, then pop off the next element of the queue.
+ *
+ * @param sess The aim session.
+ * @param sn Screen name of the info we just received.
+ * @return True if the request was explicit (client requested the info), 
+ *         false if the request was implicit (libfaim request the info).
+ */
+static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
+	struct userinfo_node *cur, *del;
+	int was_explicit = TRUE;
+
+	while ((sess->locate.request_queue != NULL) && (aim_sncmp(sn, sess->locate.request_queue->sn) == 0)) {
+		del = sess->locate.request_queue;
+		sess->locate.request_queue = del->next;
+		was_explicit = FALSE;
+		free(del->sn);
+		free(del);
+	}
+
+	cur = sess->locate.request_queue;
+	while ((cur != NULL) && (cur->next != NULL)) {
+		if (aim_sncmp(sn, cur->next->sn) == 0) {
+			del = cur->next;
+			cur->next = del->next;
+			was_explicit = FALSE;
+			free(del->sn);
+			free(del);
+		} else
+			cur = cur->next;
+	}
+
+	if (!was_explicit) {
+		sess->locate.waiting_for_response = FALSE;
+		aim_locate_dorequest(sess);
+	}
+
+	return was_explicit;
+}
+
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn) {
 	struct userinfo_node *cur;
 
@@ -733,6 +774,52 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 }
 
 /*
+ * Subtype 0x0001
+ */
+static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	aim_snac_t *snac2;
+	fu16_t reason;
+	char *sn;
+	int was_explicit;
+
+	if (!(snac2 = aim_remsnac(sess, snac->id))) {
+		faimdprintf(sess, 0, "faim: locate.c, error(): received response from unknown request!\n");
+		return 0;
+	}
+
+	if ((snac2->family != 0x0002) && (snac2->type != 0x0015)) {
+		faimdprintf(sess, 0, "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
+		return 0;
+	}
+
+	if (!(sn = snac2->data)) {
+		faimdprintf(sess, 0, "faim: locate.c, error(): received response from request without a screen name!\n");
+		return 0;
+	}
+
+	reason = aimbs_get16(bs);
+
+	/*
+	 * Remove this screen name from our queue.  If the client requested 
+	 * this buddy's info explicitly, then notify them that we do not have 
+	 * info for this buddy.
+	 */
+	was_explicit = aim_locate_gotuserinfo(sess, sn);
+	if (was_explicit == TRUE)
+		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+			ret = userfunc(sess, rx, reason, sn);
+
+	if (snac2)
+		free(snac2->data);
+	free(snac2);
+
+	return ret;
+}
+
+/*
  * Subtype 0x0002
  *
  * Request Location services rights.
@@ -909,7 +996,6 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	aim_tlvlist_t *tlvlist;
 	aim_tlv_t *tlv = NULL;
 	int was_explicit;
-	struct userinfo_node *cur, *del;
 
 	userinfo = (aim_userinfo_t *)malloc(sizeof(aim_userinfo_t));
 	aim_info_extract(sess, bs, userinfo);
@@ -950,33 +1036,10 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 * this buddy's info explicitly, then notify them that we have info 
 	 * for this buddy.
 	 */
-	was_explicit = TRUE;
-	while ((sess->locate.request_queue != NULL) && (aim_sncmp(userinfo2->sn, sess->locate.request_queue->sn) == 0)) {
-		del = sess->locate.request_queue;
-		sess->locate.request_queue = del->next;
-		was_explicit = FALSE;
-		free(del->sn);
-		free(del);
-	}
-	cur = sess->locate.request_queue;
-	while ((cur != NULL) && (cur->next != NULL)) {
-		if (aim_sncmp(userinfo2->sn, cur->next->sn) == 0) {
-			del = cur->next;
-			cur->next = del->next;
-			was_explicit = FALSE;
-			free(del->sn);
-			free(del);
-		} else
-			cur = cur->next;
-	}
-
-	if (was_explicit == TRUE) {
+	was_explicit = aim_locate_gotuserinfo(sess, userinfo2->sn);
+	if (was_explicit == TRUE)
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx, userinfo2);
-	} else {
-		sess->locate.waiting_for_response = FALSE;
-		aim_locate_dorequest(sess);
-	}
 
 	return ret;
 }
@@ -1132,9 +1195,9 @@ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, fu3
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+1+strlen(sn))))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0015, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(sess, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
 
-	aim_putsnac(&fr->data, 0x0002, 0x0015, 0x0000, 0);
+	aim_putsnac(&fr->data, 0x0002, 0x0015, 0x0000, snacid);
 	aimbs_put32(&fr->data, flags);
 	aimbs_put8(&fr->data, strlen(sn));
 	aimbs_putraw(&fr->data, sn, strlen(sn));
@@ -1147,7 +1210,9 @@ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, fu3
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-	if (snac->subtype == 0x0003)
+	if (snac->subtype == 0x0001)
+		return error(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0003)
 		return rights(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0006)
 		return userinfo(sess, mod, rx, snac, bs);
