@@ -1121,18 +1121,18 @@ gaim_conversation_get_title(const struct gaim_conversation *conv)
 void
 gaim_conversation_autoset_title(struct gaim_conversation *conv)
 {
-	struct gaim_connection *gc;
+	struct aim_user *user;
 	struct buddy *b;
 	const char *text, *name;
 
 	if (conv == NULL)
 		return;
 
-	gc   = gaim_conversation_get_gc(conv);
+	user = gaim_conversation_get_user(conv);
 	name = gaim_conversation_get_name(conv);
 
 	if (((im_options & OPT_IM_ALIAS_TAB) == OPT_IM_ALIAS_TAB) &&
-		gc != NULL && ((b = find_buddy(gc->user, name)) != NULL)) {
+		user != NULL && ((b = find_buddy(user, name)) != NULL)) {
 
 		text = get_buddy_alias(b);
 	}
