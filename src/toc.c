@@ -506,7 +506,7 @@ void toc_callback( gpointer          data,
 		}
 		
 		if (!b) {
-			g_free(buf); //FIXME
+			g_free(buf); 
 			return;
 		}
 

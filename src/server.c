@@ -579,12 +579,13 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
                                 gtk_window_set_title(GTK_WINDOW(cv->window), who);
                                 /* no free 'who', set_title needs it.
                                  */
-				g_free(who); //FIXME
+				/* Umm .. Why?? */
+				g_free(who);
                                 break;
                         }
                         cnv = cnv->next;
                 }
-		g_free(who); //FIXME
+		g_free(who); 
                 g_snprintf(b->name, sizeof(b->name), "%s", name);
                 /*gtk_label_set_text(GTK_LABEL(b->label), b->name);*/
 
