@@ -1475,7 +1475,7 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	{
 		user = msn_users_find_with_passport(session->users, passport);
 
-		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
+		msnobj = msn_object_new_from_string(msn_url_decode(params[4]));
 		msn_user_set_object(user, msnobj);
 	}
 
