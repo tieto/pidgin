@@ -443,6 +443,7 @@ static void gaimrc_read_plugins(FILE *f)
 
 		p = parse_line(buf);
 		if (!strcmp(p->option, "plugin")) {
+			filter_break(p->value[0]);
 			load = g_slist_append(load, g_strdup(p->value[0]));
 		}
 	}
@@ -451,7 +452,7 @@ static void gaimrc_read_plugins(FILE *f)
 	 * which ones to load before loading them. */
 	while (load) {
 		if (load->data)
-			load_plugin(filter_break(load->data));
+			load_plugin(load->data);
 		g_free(load->data);
 		load = g_slist_remove(load, load->data);
 	}
