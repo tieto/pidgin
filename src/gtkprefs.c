@@ -1013,8 +1013,12 @@ GtkWidget *conv_page() {
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
+#if 0
 	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
 			"/gaim/gtk/conversations/enable_commands", vbox);
+#endif
+	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
+	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);

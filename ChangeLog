@@ -9,6 +9,8 @@ version 0.82:
 	  top) with URLs will now appear as links (Stu Tomlinson)
 	* File transfers appear in the file transfer window when they
 	  are initiated rather than when they begin transferring (Dave West)
+	* Instead of toggling slash commands on/off, you can now toggle
+	  passing through unknown slash commands on/off.
 
 	Bug Fixes:
 	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)

@@ -392,19 +392,92 @@ send_history_add(GaimConversation *conv, const char *message)
 	conv->send_history = g_list_prepend(first, NULL);
 }
 
-static void
-send_cb(GtkWidget *widget, GaimConversation *conv)
+static gboolean
+check_for_and_do_command(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	char *cmd;
 	const char *prefix;
+	GaimAccount *account;
+	GtkTextIter start;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	account = gaim_conversation_get_account(conv);
+	prefix = gaim_gtk_get_cmd_prefix();
+
+	cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
+	gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
+
+	if (cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)
+	   && !gtk_text_iter_get_child_anchor(&start)) {
+		GaimCmdStatus status;
+		char *error, *cmdline, *markup, *send_history;
+		GtkTextIter end;
+
+		send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
+		send_history_add(conv, send_history);
+		g_free(send_history);
+
+		cmdline = cmd + strlen(prefix);
+
+		gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
+		gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
+		markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
+		status = gaim_cmd_do_command(conv, cmdline, markup, &error);
+		g_free(cmd);
+		g_free(markup);
+
+		switch (status) {
+			case GAIM_CMD_STATUS_OK:
+				return TRUE;
+			case GAIM_CMD_STATUS_NOT_FOUND:
+				if (!gaim_prefs_get_bool("/gaim/gtk/conversations/passthrough_unknown_commands")) {
+					gaim_conversation_write(conv, "", _("No such command."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+
+					return TRUE;
+				}
+				return FALSE;
+			case GAIM_CMD_STATUS_WRONG_ARGS:
+				gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
+								    "to that command."),
+						GAIM_MESSAGE_NO_LOG, time(NULL));
+				return TRUE;
+			case GAIM_CMD_STATUS_FAILED:
+				gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
+						GAIM_MESSAGE_NO_LOG, time(NULL));
+				if(error)
+					g_free(error);
+				return TRUE;
+			case GAIM_CMD_STATUS_WRONG_TYPE:
+				if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+					gaim_conversation_write(conv, "", _("That command only works in Chats, not IMs."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+				else
+					gaim_conversation_write(conv, "", _("That command only works in IMs, not Chats."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+				return TRUE;
+			case GAIM_CMD_STATUS_WRONG_PRPL:
+				gaim_conversation_write(conv, "", _("That command doesn't work on this protocol."),
+						GAIM_MESSAGE_NO_LOG, time(NULL));
+				return TRUE;
+		}
+	}
+
+	g_free(cmd);
+	return FALSE;
+}
+
+static void
+send_cb(GtkWidget *widget, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
 	GaimAccount *account;
 	GaimConnection *gc;
 	char *buf, *clean;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	account = gaim_conversation_get_account(conv);
-	prefix = gaim_gtk_get_cmd_prefix();
 
 	if (!gaim_account_is_connected(account))
 		return;
@@ -413,75 +486,11 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
 		return;
 
-	if(gaim_prefs_get_bool("/gaim/gtk/conversations/enable_commands")) {
-		GtkTextIter start;
-		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
-		gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
-
-		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)
-		   && !gtk_text_iter_get_child_anchor(&start)) {
-			GaimCmdStatus status;
-			char *error, *cmdline, *markup, *send_history;
-			GtkTextIter end;
-
-			send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
-			send_history_add(conv, send_history);
-			g_free(send_history);
-
-			cmdline = cmd + strlen(prefix);
-
-			gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
-			gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
-			markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
-			status = gaim_cmd_do_command(conv, cmdline, markup, &error);
-			g_free(cmd);
-			g_free(markup);
-
-			gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-			default_formatize(conv);
-
-			switch(status) {
-				case GAIM_CMD_STATUS_OK:
-					return;
-				case GAIM_CMD_STATUS_NOT_FOUND:
-					gaim_conversation_write(conv, "", _("No such command. If you didn't mean "
-					                                    "to type a command, you can turn "
-					                                    "commands off from Tools->"
-					                                    "Preferences->Interface->Conversation"
-					                                    "->Enable \"slash\" commands."),
-							GAIM_MESSAGE_NO_LOG, time(NULL));
-					return;
-				case GAIM_CMD_STATUS_WRONG_ARGS:
-					gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
-					                                    "to that command. If you didn't mean to type a command, "
-				                                            "you can turn commands off from Tools->Preferences->"
-					                                    "Interface->Conversation->Enable \"slash\" commands."),
-							GAIM_MESSAGE_NO_LOG, time(NULL));
-					return;
-				case GAIM_CMD_STATUS_FAILED:
-					gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
-							GAIM_MESSAGE_NO_LOG, time(NULL));
-					if(error)
-						g_free(error);
-					return;
-				case GAIM_CMD_STATUS_WRONG_TYPE:
-					if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-						gaim_conversation_write(conv, "", _("That command only works in Chats, not IMs."),
-								GAIM_MESSAGE_NO_LOG, time(NULL));
-					else
-						gaim_conversation_write(conv, "", _("That command only works in IMs, not Chats."),
-								GAIM_MESSAGE_NO_LOG, time(NULL));
-					return;
-				case GAIM_CMD_STATUS_WRONG_PRPL:
-					gaim_conversation_write(conv, "", _("That command doesn't work on this protocol."),
-							GAIM_MESSAGE_NO_LOG, time(NULL));
-					return;
-			}
-		}
-
-		g_free(cmd);
+	if (check_for_and_do_command(conv)) {
+		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+		default_formatize(conv);
+		return;
 	}
-
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
@@ -6225,7 +6234,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/enable_commands", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_int("/gaim/gtk/conversations/placement_number", 1);
