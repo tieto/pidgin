@@ -313,7 +313,6 @@ static void alpha_pref_set_int(GtkWidget *w, GdkEventFocus *e, const char *pref)
 }
 
 static void bl_alpha_change(GtkWidget *w, gpointer data) {
-	alpha_change(w, data);
 	if(blist)
 		change_alpha(w, blist);
 }
