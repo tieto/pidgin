@@ -235,7 +235,7 @@ void gaim_set_notify_ui_ops(GaimNotifyUiOps *ops);
  * Returns the UI operations structure to be used when displaying a
  * notification.
  *
- * @param ops The UI operations structure.
+ * @return The UI operations structure.
  */
 GaimNotifyUiOps *gaim_get_notify_ui_ops(void);
 
