@@ -1,4 +1,4 @@
-/* $Id: libgg.h 2488 2001-10-10 20:03:17Z warmenhoven $ */
+/* $Id: libgg.h 2523 2001-10-15 19:18:19Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -201,7 +201,7 @@ void gg_search_cancel(struct gg_search *f);
  * je¶li chcemy sobie podebugowaæ, wystarczy zdefiniowaæ GG_DEBUG.
  */
 
-int gg_debug_level;
+extern int gg_debug_level;
 
 #ifdef GG_DEBUG
 
