@@ -55,7 +55,7 @@ typedef enum
 } GaimRoomlistFieldType;
 
 #include "account.h"
-#include "internal.h"
+#include "glib.h"
 
 /**************************************************************************/
 /** Data Structures                                                       */

@@ -24,8 +24,10 @@
 #include "config.h"
 #endif
 
-#include "prpl.h"
 #include "debug.h"
+#include "internal.h"
+#include "prpl.h"
+
 #include "yahoo.h"
 
 #include <string.h>

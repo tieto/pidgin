@@ -221,8 +221,8 @@ void show_login()
 
 	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
 	if (mainwindow) {
-			gtk_window_present(GTK_WINDOW(mainwindow));
-			return;
+		gtk_window_present(GTK_WINDOW(mainwindow));
+		return;
 	}
 
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);

@@ -270,7 +270,6 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 	GaimBuddy *buddy;
 	GaimPresence *presence;
 	GaimStatus *status;
-	gboolean was_online = FALSE;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
