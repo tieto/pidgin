@@ -1094,6 +1094,7 @@ struct aim_user *new_user(const char *name, int proto, int opts)
 
 	struct aim_user *u = g_new0(struct aim_user, 1);
 	g_snprintf(u->username, sizeof(u->username), "%s", name);
+	g_snprintf(u->user_info, sizeof(u->user_info), "%s", DEFAULT_INFO);
 	u->protocol = proto;
 	u->options = opts;
 	aim_users = g_list_append(aim_users, u);

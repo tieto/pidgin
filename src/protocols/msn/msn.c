@@ -17,6 +17,7 @@
 #define MSN_BUF_LEN 8192
 #define MIME_HEADER	"MIME-Version: 1.0\r\n" \
 			"Content-Type: text/plain; charset=UTF-8\r\n" \
+			"User-Agent: Gaim/" VERSION "\r\n" \
 			"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; PF=0\r\n\r\n"
 
 #define MSN_ONLINE  1
@@ -434,8 +435,9 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
-		char *msg, *content, *utf;
+		char *msg, *content, *agent, *utf;
 		int len, r;
+		int flags = 0;
 
 		GET_NEXT(tmp);
 		user = tmp;
@@ -456,6 +458,11 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 			}
 		}
 
+		agent = strstr(msg, "User-Agent: ");
+		if (agent) {
+			if (!g_strncasecmp(agent, "User-Agent: Gaim", strlen("User-Agent: Gaim")))
+				flags |= IM_FLAG_GAIMUSER;
+		}
 		content = strstr(msg, "Content-Type: ");
 		if (!content) {
 			g_free(msg);
@@ -477,9 +484,9 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 			g_free(utf);
 
 			if (ms->chat)
-				serv_got_chat_in(gc, ms->chat->id, user, 0, final, time(NULL));
+				serv_got_chat_in(gc, ms->chat->id, user, flags, final, time(NULL));
 			else
-				serv_got_im(gc, user, final, 0, time(NULL));
+				serv_got_im(gc, user, final, flags, time(NULL));
 
 			g_free(final);
 		}
@@ -1206,7 +1213,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		ms->fd = -1;
 	} else
 		/* in msn you can't send messages to yourself, so we'll fake like we received it ;) */
-		serv_got_im(gc, who, message, flags & IM_FLAG_AWAY, time(NULL));
+		serv_got_im(gc, who, message, flags | IM_FLAG_GAIMUSER, time(NULL));
 	return 0;
 }
 

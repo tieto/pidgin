@@ -58,6 +58,7 @@
 static int gaim_caps = AIM_CAPS_CHAT |
 		       AIM_CAPS_BUDDYICON |
 		       AIM_CAPS_IMIMAGE;
+static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02, 0x66};
 
 struct oscar_data {
 	aim_session_t *sess;
@@ -1259,6 +1260,20 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch1_args *args) {
 	char *tmp = g_malloc(BUF_LONG);
 	struct gaim_connection *gc = sess->aux_data;
+	int flags = 0;
+
+	if (sizeof(gaim_features) == args->featureslen) {
+		int i;
+		for (i = 0; i < args->featureslen; i++) {
+			if (gaim_features[i] != args->features[i])
+				break;
+		}
+		if (i == args->featureslen)
+			flags |= IM_FLAG_GAIMUSER;
+	}
+
+	if (args->icbmflags & AIM_IMFLAGS_AWAY)
+		flags |= IM_FLAG_AWAY;
 
 	if (args->icbmflags & AIM_IMFLAGS_HASICON) {
 		struct oscar_data *od = gc->proto_data;
@@ -1327,7 +1342,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 	} else
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
 
-	serv_got_im(gc, userinfo->sn, tmp, args->icbmflags & AIM_IMFLAGS_AWAY, time(NULL));
+	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2076,12 +2091,11 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			struct icon_req *ir = NULL;
 			char *who = normalize(name);
 			struct stat st;
-			static fu8_t features[] = {0x01, 0x01, 0x01, 0x02, 0x66};
 
 			args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 
-			args.features = features;
-			args.featureslen = sizeof(features);
+			args.features = gaim_features;
+			args.featureslen = sizeof(gaim_features);
 
 			while (h) {
 				ir = h->data;

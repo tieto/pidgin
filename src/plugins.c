@@ -772,12 +772,12 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				}
 				break;
 
-				/* struct gaim_connection *, char **, char ** */
+				/* struct gaim_connection *, char **, char **, guint32 */
 			case event_im_recv:
 				{
 					void (*function)(struct gaim_connection *, char **, char **,
-							  void *) = g->function;
-					(*function)(arg1, arg2, arg3, g->data);
+							  guint32, void *) = g->function;
+					(*function)(arg1, arg2, arg3, (guint32)arg4, g->data);
 				}
 				break;
 
@@ -832,11 +832,19 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_chat_buddy_leave:
 			case event_away:
 			case event_back:
-			case event_im_displayed_rcvd:
 				{
 					void (*function)(struct gaim_connection *, char *, char *,
 							  void *) = g->function;
 					(*function)(arg1, arg2, arg3, g->data);
+				}
+				break;
+
+				/* struct gaim_connection *, char *, char *, guint32 */
+			case event_im_displayed_rcvd:
+				{
+					void (*function)(struct gaim_connection *, char *, char *,
+							  guint32, void *) = g->function;
+					(*function)(arg1, arg2, arg3, (guint32)arg4, g->data);
 				}
 				break;
 

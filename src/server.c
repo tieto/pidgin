@@ -387,14 +387,25 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 }
 
 /* woo. i'm actually going to comment this function. isn't that fun. make sure to follow along, kids */
-void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
+void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 flags, time_t mtime)
 {
 	char *buffy;
 	char *angel;
 	int plugin_return;
+	int away = 0;
 
 	struct conversation *cnv;
 	int new_conv = 0;
+
+	/* pay no attention to the man behind the curtain.
+	 *
+	 * the reason i feel okay with this is because it's useful to some plugins.
+	 * Gaim doesn't ever use it itself. Besides, it's not entirely accurate; it's
+	 * possible to have false negatives with most protocols. Also with some it's
+	 * easy to have false positives as well. So if you're a plugin author, don't
+	 * rely on this, still do your own checks. but uh. it's a start. */
+	if (flags & IM_FLAG_GAIMUSER)
+		debug_printf("%s is a gaim user.\n", name);
 
 	/* we should update the conversation window buttons and menu, if it exists. */
 	cnv = find_conversation(name);
@@ -410,7 +421,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(name);
-	plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
+	plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)flags);
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -443,7 +454,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	/* um. when we call write_to_conv with the message we received, it's nice to pass whether
 	 * or not it was an auto-response. so if it was an auto-response, we set the appropriate
 	 * flag. this is just so prpls don't have to know about WFLAG_* (though some do anyway) */
-	if (away)
+	if (flags & IM_FLAG_AWAY)
 		away = WFLAG_AUTO;
 
 	/* alright. two cases for how to handle this. either we're away or we're not. if we're not,
@@ -578,7 +589,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 	}
 
-	plugin_event(event_im_displayed_rcvd, gc, name, message, 0);
+	plugin_event(event_im_displayed_rcvd, gc, name, message, (void *)flags);
 	g_free(name);
 	g_free(message);
 }
@@ -635,7 +646,10 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 			cnv = cnv->next;
 		}
 		g_free(who);
+		who = g_strdup(b->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
+		handle_buddy_rename(b, who);
+		g_free(who);
 		/*gtk_label_set_text(GTK_LABEL(b->label), b->name); */
 
 		/* okay lets save the new config... */

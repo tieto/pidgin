@@ -439,7 +439,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			message++;
 		message++;
 
-		a = (away && (*away == 'T')) ? 1 : 0;
+		a = (away && (*away == 'T')) ? IM_FLAG_AWAY : 0;
 
 		serv_got_im(gc, c, message, a, time((time_t)NULL));
 	} else if (!strcasecmp(c, "UPDATE_BUDDY")) {

@@ -580,6 +580,10 @@ extern int logging_options;
 
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
+#define IM_FLAG_AWAY     0x01
+#define IM_FLAG_CHECKBOX 0x02
+#define IM_FLAG_GAIMUSER 0x04
+
 extern int report_idle;
 extern int web_browser;
 extern GList *aim_users;
@@ -663,8 +667,6 @@ extern void serv_login(struct aim_user *);
 extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
 extern void serv_finish_login();
-#define IM_FLAG_AWAY     0x01
-#define IM_FLAG_CHECKBOX 0x02
 extern int  serv_send_im(struct gaim_connection *, char *, char *, int);
 extern void serv_get_info(struct gaim_connection *, char *);
 extern void serv_get_away_msg(struct gaim_connection *, char *);
@@ -695,7 +697,7 @@ extern void update_keepalive(struct gaim_connection *, gboolean);
 
 /* output from serv */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
-extern void serv_got_im(struct gaim_connection *, char *, char *, int, time_t);
+extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);
 extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);

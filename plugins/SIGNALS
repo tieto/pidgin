@@ -92,12 +92,13 @@ event_back:
 	removed eventually.
 
 event_im_recv:
-	struct gaim_connection *gc, char **who, char **text
+	struct gaim_connection *gc, char **who, char **text, guint32 flags
 
 	'gc' is the connection that received the message.
 	'who' is the username of the person who sent the message.
 	'text' is the actual strict text (with HTML tags and all) of the
 		message they sent.
+	'flags' is message flags.
 	
 	Note that you can modify these values. (You are encouraged to do so!)
 	Note that *other* plugins can also modify these values, so you should
@@ -106,6 +107,9 @@ event_im_recv:
 	gc was placed as the first arg as opposed to the third for intuitiveness.
 	Unfortunately, it means that most plugins that use this event need to be
 	slightly modified and then recompiled.
+
+	flags is actually a bit mask. AND with IM_FLAG_AWAY to see if they were
+	away, etc.
 
 event_im_send:
 	struct gaim_connection *gc, char *who, char **text
@@ -287,7 +291,7 @@ event_im_displayed_sent:
 	won't be displayed at all.
 
 event_im_displayed_rcvd:
-	struct gaim_connection *gc, char *who, char *what
+	struct gaim_connection *gc, char *who, char *what, guint32 flags
 
 	This is called after what you receive is displayed. This is useful
 	for displaying an autoresponse after the message that triggered it.
@@ -297,3 +301,4 @@ event_im_displayed_rcvd:
 	'gc' is the connection the message was received on.
 	'who' is who sent the message.
 	'what' is what was sent.
+	'flags' is flags on the message.

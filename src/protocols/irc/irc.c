@@ -683,7 +683,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		res = g_strsplit(buf, " ", 5);
 
 		if (!strcmp(res[1], "301"))
-			serv_got_im(gc, res[3], res[4] + 1, 1, time((time_t) NULL));
+			serv_got_im(gc, res[3], res[4] + 1, IM_FLAG_AWAY, time((time_t) NULL));
 
 		g_strfreev(res);
 		return;

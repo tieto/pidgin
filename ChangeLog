@@ -15,6 +15,8 @@ version 0.44:
 	* Added drop down selection to chat invitation
 	* Improved the look of the chat invitation dialog
 	* Improved the look of the proxy preferences
+	* event_im_recv and event_im_display_rcvd passed whether
+	  the message received was auto-response (see SIGNALS)
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)

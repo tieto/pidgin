@@ -3,6 +3,7 @@ THE CORE:
 	Transparency for GtkIMHtml
 	Rewrite the HTML parser in GtkIMHtml
 	GPG Encryption of messages
+	Have plugin_event use varargs instead of void*
 	Better way of showing away state - and possibly in main window
 	Moving GTK/GDK and related things out of the prpls
 		TOC: file transfer (move into the core)
