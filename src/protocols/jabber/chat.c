@@ -138,22 +138,6 @@ void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 	g_free(room_jid);
 }
 
-void jabber_chat_whisper(GaimConnection *gc, int id, const char *who,
-		const char *message)
-{
-	JabberStream *js = gc->proto_data;
-	JabberChat *chat;
-	char *full_jid;
-
-	chat = jabber_chat_find_by_id(js, id);
-
-	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
-
-	jabber_message_send_im(gc, full_jid, message, 0);
-
-	g_free(full_jid);
-}
-
 void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;

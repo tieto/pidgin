@@ -1075,7 +1075,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_chat_join,
 	jabber_chat_invite,
 	jabber_chat_leave,
-	jabber_chat_whisper,
+	NULL,
 	jabber_message_send_chat,
 	jabber_keepalive,
 	jabber_register_account,

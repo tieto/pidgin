@@ -47,8 +47,6 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 JabberChat *jabber_chat_find_by_id(JabberStream *js, int id);
 void jabber_chat_destroy(JabberChat *chat);
 gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name);
-void jabber_chat_whisper(GaimConnection *gc, int id, const char *who,
-		const char *message);
 void jabber_chat_invite(GaimConnection *gc, int id, const char *message,
 		const char *name);
 void jabber_chat_leave(GaimConnection *gc, int id);
