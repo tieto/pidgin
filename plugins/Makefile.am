@@ -1,7 +1,7 @@
 LDFLAGS += $(LDADD) $(LIBS) -ggdb -shared
 SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
+	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -fPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
 
 if PLUGINS
 
