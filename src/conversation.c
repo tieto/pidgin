@@ -759,7 +759,7 @@ gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 		ops->switch_conversation(win, index);
 
 	conv = gaim_window_get_conversation_at(win, index);
-	gaim_conversation_set_unseen(conv, 0);
+	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 	gaim_event_broadcast(event_conversation_switch, conv);
 
 }
