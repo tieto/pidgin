@@ -200,7 +200,7 @@ void smiley_theme_probe()
 		dir = g_dir_open(probedirs[l], 0, NULL);
 		if (dir) {
 			while ((file = g_dir_read_name(dir))) {
-				path = g_build_filename(probedirs[0], file, "theme", NULL);
+				path = g_build_filename(probedirs[l], file, "theme", NULL);
 				
 				/* Here we check to see that the theme has proper syntax.
 				 * We set the second argument to FALSE so that it doesn't load
