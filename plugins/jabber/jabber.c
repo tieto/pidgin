@@ -596,7 +596,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 
 	type = xmlnode_get_attrib(p->x, "type");
 
-	if (!type || !strcmp(type, "normal") || !strcmp(type, "chat")) {
+	if (!type || !strcasecmp(type, "normal") || !strcasecmp(type, "chat")) {
 
 		/* XXX namespaces could be handled better. (mid) */
 		if ((xmlns = xmlnode_get_tag(p->x, "x")))
@@ -617,7 +617,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		if (!from)
 			return;
 
-		if (type && !strcmp(type, "jabber:x:conference")) {
+		if (type && !strcasecmp(type, "jabber:x:conference")) {
 			char *room;
 
 			room = xmlnode_get_attrib(xmlns, "jid");
@@ -642,7 +642,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		if (msg)
 			free(msg);
 
-	} else if (!strcmp(type, "error")) {
+	} else if (!strcasecmp(type, "error")) {
 		if ((y = xmlnode_get_tag(p->x, "error"))) {
 			type = xmlnode_get_attrib(y, "code");
 			msg = xmlnode_get_data(y);
@@ -653,7 +653,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			do_error_dialog(msg, from);
 			g_free(from);
 		}
-	} else if (!strcmp(type, "groupchat")) {
+	} else if (!strcasecmp(type, "groupchat")) {
 		struct jabber_chat *jc;
 		static int i = 0;
 
@@ -730,13 +730,13 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 		show = xmlnode_get_data(y);
 		if (!show) {
 			state = UC_NORMAL;
-		} else if (!strcmp(show, "away")) {
+		} else if (!strcasecmp(show, "away")) {
 			state = UC_AWAY;
-		} else if (!strcmp(show, "chat")) {
+		} else if (!strcasecmp(show, "chat")) {
 			state = UC_CHAT;
-		} else if (!strcmp(show, "xa")) {
+		} else if (!strcasecmp(show, "xa")) {
 			state = UC_XA;
-		} else if (!strcmp(show, "dnd")) {
+		} else if (!strcasecmp(show, "dnd")) {
 			state = UC_DND;
 		}
 	} else {
@@ -802,10 +802,12 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 		}
 	} else {
 		if (who->resource) {
-			if (type && !strcmp(type, "unavailable")) {
+			if (type && !strcasecmp(type, "unavailable")) {
 				struct jabber_data *jd;
-				if (!jc)
-					jc = find_existing_chat(GJ_GC(j), who);
+				if (!jc && !(jc = find_existing_chat(GJ_GC(j), who))) {
+					g_free(buddy);
+					return;
+				}
 				jd = jc->gc->proto_data;
 				if (strcmp(who->resource, jc->Jid->resource)) {
 					remove_chat_buddy(jc->b, who->resource);
@@ -816,8 +818,10 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				serv_got_chat_left(GJ_GC(j), jc->b->id);
 				g_free(jc);
 			} else {
-				if (!jc)
-					jc = find_existing_chat(GJ_GC(j), who);
+				if (!jc && !(jc = find_existing_chat(GJ_GC(j), who))) {
+					g_free(buddy);
+					return;
+				}
 				if (!find_chat_buddy(jc->b, who->resource))
 					add_chat_buddy(jc->b, who->resource);
 				else if ((y = xmlnode_get_tag(p->x, "status"))) {
