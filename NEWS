@@ -7,7 +7,11 @@
 	to sleep.  Next release, I should have a good bit more done on
 	IRC and will have made Napster more stable.  Have fun!!
 
-
+	Eric: There's a new protocol plugin, Zephyr. Don't use it! unless
+	you know what Zephyr is, and have zhm set up correctly. Also there
+	were a lot of other good bugfixes (like registering for Jabber
+	accounts!) and a few neat features. In this release, Oscar is also
+	working, but we'll see how long that lasts, eh?
 
 0.11.0-pre9 (03/26/2001):
 	Rob: Well, looks AOL was doing something naughty earlier this
