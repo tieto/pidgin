@@ -742,8 +742,13 @@ gtk_imhtml_draw_focus (GtkWidget *widget)
 		return;
 
 	if (GTK_WIDGET_HAS_FOCUS (widget)) {
+#if GTK_CHECK_VERSION(1,3,0)
+		gtk_paint_focus (widget->style, widget->window, GTK_STATE_NORMAL, NULL, widget, "text", 
+				 0, 0, widget->allocation.width - 1, widget->allocation.height - 1);
+#else
 		gtk_paint_focus (widget->style, widget->window, NULL, widget, "text", 0, 0,
 				 widget->allocation.width - 1, widget->allocation.height - 1);
+#endif
 		x = 1; y = 1; w = 2; h = 2;
 	}
 
