@@ -1121,7 +1121,13 @@ void do_quit()
 	GList *c;
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
+#endif
 
+#ifdef USE_APPLET
+	applet = NULL;
+#endif
+
+#ifdef GAIM_PLUGINS
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
 

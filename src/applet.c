@@ -201,6 +201,9 @@ void remove_applet_away() {
 	struct away_message *a;
 	char  *awayname;
 
+	if (!applet)
+		return;
+
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away/new");
 
 	while (awy) {
@@ -398,6 +401,8 @@ void set_user_state( enum gaim_user_states state ){
 }
 
 void applet_set_tooltips(char *msg) {
+	if (!applet)
+		return;
 	applet_widget_set_tooltip(APPLET_WIDGET(applet), msg);
 }
 
