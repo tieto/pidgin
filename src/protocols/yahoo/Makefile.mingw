@@ -69,7 +69,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 C_SRC =			yahoo.c \
-			crypt.c
+			crypt.c \
+			util.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
