@@ -562,7 +562,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		g_signal_connect(GTK_OBJECT(button), "activate",
 				   G_CALLBACK(new_bp_callback),
-				   cn ? find_buddy(cn->data, b->name) : NULL);
+				   cn ? find_buddy(((struct gaim_connection *)cn->data)->user, b->name) : NULL);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
