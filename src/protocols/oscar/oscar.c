@@ -4488,7 +4488,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (export)
 		gaim_blist_save();
 
-#if 0
 	{ /* Add from local list to server list */
 		GaimBlistNode *gnode, *bnode;
 		struct group *group;
@@ -4509,11 +4508,13 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							g_free(servernick);
 						}
 						if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
+#if 0
 							/* Store local alias on server */
 							char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
 							if (!alias && buddy->alias)
 								aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
 							free(alias);
+#endif
 						} else {
 							debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
 							aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
@@ -4543,7 +4544,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (report_idle && !(tmp & 0x400))
 				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
 	} /* end adding buddies from local list to server list */
-#endif
 
 	{ /* Check for maximum number of buddies */
 		GSList *groups = gaim_blist_groups(), *cur;
