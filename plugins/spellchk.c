@@ -45,26 +45,25 @@ void spell_check(char *who, char **message, void *m) {
 
 void gaim_plugin_init(void *handle) {
 	struct replace_words *p;
+	FILE *file;
+	char buffer[256];
+	char *good;
+	char *bad;
 
-	p = malloc(sizeof *p);
-	p->bad = "definately";
-	p->good = "definitely";
-	words = g_list_append(words, p);
-
-	p = malloc(sizeof *p);
-	p->bad = "u";
-	p->good = "you";
-	words = g_list_append(words, p);
-
-	p = malloc(sizeof *p);
-	p->bad = "r";
-	p->good = "are";
-	words = g_list_append(words, p);
-
-	p = malloc(sizeof *p);
-	p->bad = "teh";
-	p->good = "the";
-	words = g_list_append(words, p);
+	sprintf(buffer, "%s/.gaim/dict", getenv("HOME"));
+	file = fopen(buffer, "r");
+	while (fgets(buffer, sizeof buffer, file)) {
+		buffer[strlen(buffer) - 1] = 0;
+		p = malloc(sizeof *p);
+		good = strdup(strpbrk(strpbrk(buffer, " \t\r\f\n"),
+		       "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"));
+		bad = strpbrk(buffer, " \t\r\f\n");
+		bad[0] = 0;
+		bad = strdup(buffer);
+		p->bad = bad;
+		p->good = good;
+		words = g_list_append(words, p);
+	}
 
 	gaim_signal_connect(handle, event_im_send, spell_check, NULL);
 }
@@ -92,8 +91,10 @@ int num_words(char *m) {
 				state = 2;
 			break;
 		case 1: /* inside word */
-			if (isspace(m[pos]))
+			if (isspace(m[pos]) || m[pos] == '\'' || m[pos] == '.')
 				state = 0;
+			else if (m[pos] == '<')
+				state = 2;
 			break;
 		case 2: /* inside HTML tag */
 			if (m[pos] == '>')
@@ -119,7 +120,7 @@ int get_word(char *m, int word) {
 				state = 2;
 			break;
 		case 1:
-			if (isspace(m[pos]))
+			if (isspace(m[pos]) || m[pos] == '\'' || m[pos] == '.')
 				state = 0;
 			break;
 		case 2:
@@ -132,7 +133,7 @@ int get_word(char *m, int word) {
 }
 
 char *have_word(char *m, int pos) {
-	char *tmp = strpbrk(&m[pos], "' \t\f\r\n");
+	char *tmp = strpbrk(&m[pos], "' \t\f\r\n.");
 	int len = (int)(tmp - &m[pos]);
 
 	if (tmp == NULL) {
