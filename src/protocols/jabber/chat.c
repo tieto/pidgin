@@ -309,7 +309,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 
 		for(x = query->child; x; x = x->next) {
 			const char *xmlns;
-			if(strcmp(x->name, "x"))
+			if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
 				continue;
 
 			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
@@ -461,7 +461,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 
 		for(x = query->child; x; x = x->next) {
 			const char *xmlns;
-			if(strcmp(x->name, "x"))
+			if(x->type != NODE_TYPE_TAG || strcmp(x->name, "x"))
 				continue;
 
 			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))

@@ -166,7 +166,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 	gaim_request_fields_add_group(fields, group);
 
 	for(fn = packet->child; fn; fn = fn->next) {
-		if(fn->name && !strcmp(fn->name, "field")) {
+		if(fn->type == NODE_TYPE_TAG && !strcmp(fn->name, "field")) {
 			xmlnode *valuenode;
 			const char *type = xmlnode_get_attrib(fn, "type");
 			const char *label = xmlnode_get_attrib(fn, "label");
@@ -204,7 +204,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 				GString *str = g_string_new("");
 
 				for(valuenode = fn->child; valuenode; valuenode = valuenode->next) {
-					if(strcmp(valuenode->name, "value"))
+					if(valuenode->type != NODE_TYPE_TAG || strcmp(valuenode->name, "value"))
 						continue;
 
 					if(!(value = xmlnode_get_data(valuenode)))
@@ -237,7 +237,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 				}
 
 				for(valuenode = fn->child; valuenode; valuenode = valuenode->next) {
-					if(strcmp(valuenode->name, "value"))
+					if(valuenode->type != NODE_TYPE_TAG || strcmp(valuenode->name, "value"))
 						continue;
 					selected = g_list_prepend(selected, xmlnode_get_data(valuenode));
 				}
@@ -245,7 +245,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 				for(optnode = fn->child; optnode; optnode = optnode->next) {
 					const char *lbl;
 
-					if(strcmp(optnode->name, "option"))
+					if(optnode->type != NODE_TYPE_TAG || strcmp(optnode->name, "option"))
 						continue;
 
 					if(!(valuenode = xmlnode_get_child(optnode, "value")))
