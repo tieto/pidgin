@@ -29,4 +29,4 @@ endif
 
 EXTRA_DIST = ChangeLog PERL-HOWTO HOWTO SIGNALS autorecon.c filectl.c iconaway.c \
 		notify.c spellchk.c gaim.pl mailchk.c chatlist.c gtik.c error.c  \
-		history.c timestamp.c
+		history.c timestamp.c fortuneprofile.pl
