@@ -279,6 +279,14 @@ close_conv_cb(GtkWidget *w, gpointer d)
 	return TRUE;
 }
 
+/* Courtesy of Galeon! */
+static void
+tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
+{
+	if (GTK_WIDGET_STATE(widget) == GTK_STATE_ACTIVE)
+		gtk_widget_set_state(widget, GTK_STATE_NORMAL);
+}
+
 static void
 cancel_insert_image_cb(GtkWidget *unused, GaimGtkConversation *gtkconv)
 {
@@ -4140,15 +4148,22 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
 	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close), 16, 16);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close),
 			  gtk_image_new_from_stock(GTK_STOCK_CLOSE,
 			  GTK_ICON_SIZE_MENU));
-	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 						 _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
 					 G_CALLBACK(close_conv_cb), conv);
+
+	/*
+	 * I love Galeon. They have a fix for that stupid annoying visible
+	 * border bug. I love you guys! -- ChipX86
+	 */
+	g_signal_connect(G_OBJECT(gtkconv->close), "state_changed",
+					 G_CALLBACK(tab_close_button_state_changed_cb), NULL);
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
