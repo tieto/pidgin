@@ -1,5 +1,10 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.79:
+	Gaim API:
+	* gaim_url_parse() now takes two additional parameters, which are used
+	  for returning the username and password from the URL, if they exist.
+
 version 0.78 (05/30/2004):
 	Plugin API: v4
 	* Added: actions - for plugins to add to the new Plugin Actions menu
