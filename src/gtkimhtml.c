@@ -431,10 +431,9 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	imhtml->default_font = gdk_font_ref (GTK_IMHTML_GET_STYLE_FONT (widget->style));
 
-	gtk_style_apply_default_background (widget->style, widget->window, TRUE, GTK_STATE_NORMAL,
-					    NULL, 0, 0, attributes.width, attributes.height);
-	gtk_style_apply_default_background (widget->style, GTK_LAYOUT(imhtml)->bin_window, TRUE, GTK_STATE_NORMAL,
-					    NULL, 0, 0, attributes.width, attributes.height);
+	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
+	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
+				   &widget->style->base [GTK_STATE_NORMAL]);
 
 	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
 	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
@@ -490,16 +489,12 @@ draw_text (GtkIMHtml        *imhtml,
 	} else {
 		gdk_color_alloc (cmap, imhtml->default_bg_color);
 		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
-		if (GTK_WIDGET(imhtml)->style->bg_pixmap[GTK_STATE_NORMAL]) {
-			gdk_gc_set_tile(gc, GTK_WIDGET(imhtml)->style->bg_pixmap[GTK_STATE_NORMAL]);
-			gdk_gc_set_fill (gc, GDK_TILED);
-		}
 		bg = imhtml->default_bg_color;
 	}
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
 			    line->width ? line->width : imhtml->xsize, line->height);
-	gdk_gc_set_fill(gc, GDK_SOLID);
+
 	if (!line->text) {
 		gdk_gc_unref (gc);
 		return;
@@ -649,14 +644,9 @@ draw_img (GtkIMHtml        *imhtml,
 	} else {
 		gdk_color_alloc (cmap, imhtml->default_bg_color);
 		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
-		if (GTK_WIDGET(imhtml)->style->bg_pixmap[GTK_STATE_NORMAL]) {
-			gdk_gc_set_tile(gc, GTK_WIDGET(imhtml)->style->bg_pixmap[GTK_STATE_NORMAL]);
-			gdk_gc_set_fill(gc, GDK_TILED);
-		}
 	}
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
-	gdk_gc_set_fill(gc, GDK_SOLID);
 
 	if (line->selected) {
 		gdk_color_alloc (cmap, imhtml->default_hl_color);
@@ -870,7 +860,6 @@ gtk_imhtml_style_set (GtkWidget *widget,
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
 				   &widget->style->base [GTK_STATE_NORMAL]);
-	
 	gtk_imhtml_draw_exposed (imhtml);
 }
 
