@@ -1487,7 +1487,7 @@ GtkWidget *away_page() {
 				  "/core/away/auto_response/enabled", vbox);
 	prefs_checkbox(_("_Only send auto-response when idle"),
 				  "/core/away/auto_response/idle_only", vbox);
-	prefs_checkbox(_("Send auto-response in active conversations"),
+	prefs_checkbox(_("Send auto-response in _active conversations"),
 				  "/core/away/auto_response/in_active_conv", vbox);
 
 	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))

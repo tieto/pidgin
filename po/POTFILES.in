@@ -33,6 +33,7 @@ plugins/timestamp.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/about.c
+src/account.c
 src/away.c
 src/blist.c
 src/browser.c
@@ -63,7 +64,6 @@ src/gtkprivacy.c
 src/gtkrequest.c
 src/gtksound.c
 src/gtkutils.c
-src/html.c
 src/idle.c
 src/log.c
 src/main.c

@@ -1375,7 +1375,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		default:
 			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
-						"authentication method.  This version of Gaim will likely not be able"
+						"authentication method.  This version of Gaim will likely not be able "
 						"to successfully sign on to Yahoo.  Check %s for updates."), GAIM_WEBSITE);
 			gaim_notify_error(gc, "", _("Failed Yahoo! Authentication"),
 					  buf);

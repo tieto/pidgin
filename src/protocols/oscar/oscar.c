@@ -3161,7 +3161,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
 		if (away_utf8 != NULL) {
-			g_string_append_printf(text, _("<hr>%s"), away_utf8);
+			g_string_append_printf(text, "<hr>%s", away_utf8);
 			g_free(away_utf8);
 		}
 	}
@@ -3169,7 +3169,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
 		info_utf8 = oscar_encoding_to_utf8(userinfo->info_encoding, userinfo->info, userinfo->info_len);
 		if (info_utf8 != NULL) {
-			g_string_append_printf(text, _("<hr>%s"), info_utf8);
+			g_string_append_printf(text, "<hr>%s", info_utf8);
 			g_free(info_utf8);
 		}
 	}
