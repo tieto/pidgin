@@ -36,7 +36,7 @@ char *gaim_plugin_error(int error) {
 }
 
 char *name() {
-	return "Error Tester" VERSION ;
+	return "Error Tester " VERSION ;
 }
 
 char *description() {
