@@ -109,7 +109,8 @@ DLL_C_SRC =		aim.c \
 			util.c \
 			win32/win32dep.c \
 			win32/MinimizeToTray.c \
-			win32/libc_interface.c
+			win32/libc_interface.c \
+			win32/systray.c
 
 RC_SRC =		win32/gaimrc.rc
 
