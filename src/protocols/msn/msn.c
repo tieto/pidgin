@@ -734,6 +734,12 @@ msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 	char outparams[MSN_BUF_LEN];
 	MsnGroup *group;
 
+	if (strchr(who, ' '))
+	{
+		/* This is a broken blist entry. */
+		return;
+	}
+
 	group = msn_groups_find_with_name(session->groups, group_name);
 
 	if (group == NULL)
