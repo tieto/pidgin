@@ -31,11 +31,17 @@ static GaimSslOps *_ssl_ops = NULL;
 static gboolean
 ssl_init(void)
 {
+	GaimPlugin *plugin;
 	GaimSslOps *ops = gaim_ssl_get_ops();
 	gboolean success = FALSE;
 
 	if (_ssl_initialized)
 		return FALSE;
+
+	plugin = gaim_plugins_find_with_id("ssl");
+
+	if (plugin != NULL && !gaim_plugin_is_loaded(plugin))
+		gaim_plugin_load(plugin);
 
 	if (ops != NULL && ops->init != NULL)
 		success = ops->init();
