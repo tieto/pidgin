@@ -465,6 +465,8 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
 
+	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+
 	close = gtk_button_new_with_label("Close");
 	invite_btn = gtk_button_new_with_label("Invite");
 	whisper = gtk_button_new_with_label("Whisper");

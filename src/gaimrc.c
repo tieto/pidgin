@@ -203,8 +203,19 @@ static void gaimrc_write_away(FILE *f)
 	fprintf(f, "away {\n");
 
 	while (awy) {
+		char *str1, *str2;
+
 		a = (struct away_message *)awy->data;
-		fprintf(f, "\tmessage { %s } { %s }\n", escape_text2(a->name), escape_text2(a->message));
+
+		str1 = escape_text2(a->name);
+		str2 = escape_text2(a->message);
+
+		fprintf(f, "\tmessage { %s } { %s }\n", str1, str2);
+
+		/* escape_text2 uses malloc(), so we don't want to g_free these */
+		free(str1);
+		free(str2);
+
 		awy = awy->next;
 	}
 

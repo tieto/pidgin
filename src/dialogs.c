@@ -776,8 +776,9 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 {
         struct buddy_pounce *bp = g_new0(struct buddy_pounce, 1);
 	
-        strcpy(bp->name, gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
-        strcpy(bp->message, gtk_entry_get_text(GTK_ENTRY(b->messentry)));
+	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
+	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
+
 	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
 		bp->popup = 1;
 	else
@@ -787,10 +788,10 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 		bp->sendim = 1;
 	else
 		bp->sendim = 0;
+
         buddy_pounces = g_list_append(buddy_pounces, bp);
 	
         do_bp_menu();
-        
         
         destroy_dialog(NULL, b->window);
         g_free(b);

@@ -135,10 +135,17 @@ static Window GClientWindow (dpy, win)
     XGetWindowProperty(dpy, win, WM_STATE, 0, 0, False, AnyPropertyType,
                        &type, &format, &nitems, &after, &data);
     if (type)
-        return win;
+    {
+	XFree(data);
+	return win;
+    }
+
     inf = TryChildren(dpy, win, WM_STATE);
     if (!inf)
         inf = win;
+
+    XFree(data);
+
     return inf;
 }
 
@@ -166,6 +173,8 @@ Window TryChildren (dpy, win, WM_STATE)
                            &after, &data);
         if (type)
             inf = children[i];
+
+	XFree(data);
     }
     for (i = 0; !inf && (i < nchildren); i++)
         inf = TryChildren(dpy, children[i], WM_STATE);
@@ -212,7 +221,7 @@ static GdkWindow *mozilla_remote_find_window()
         if (!(kids && nkids)) {
                 sprintf (debug_buff, "%s: root window has no children on display %s\n",
                          progname, DisplayString (gdk_display));
-				debug_print(debug_buff);
+		debug_print(debug_buff);
             	return NULL;
         }
 
@@ -228,8 +237,10 @@ static GdkWindow *mozilla_remote_find_window()
                                                  False, XA_STRING,
                                                  &type, &format, &nitems, &bytesafter,
                                                  &version);
+
                 if (! version)
                         continue;
+
                 if (strcmp ((char *) version, expected_mozilla_version) &&
                     !tenative)
                 {
@@ -237,13 +248,15 @@ static GdkWindow *mozilla_remote_find_window()
                         tenative_version = version;
                         continue;
                 }
-                g_free (version);
+                XFree(version);
                 if (status == Success && type != None)
                 {
                         result = w;
                         break;
                 }
         }
+
+	XFree(kids);
 
         if (result && tenative)
         {
@@ -254,7 +267,7 @@ static GdkWindow *mozilla_remote_find_window()
                          expected_mozilla_version, (unsigned int) result,
                          expected_mozilla_version);
 			debug_print(debug_buff);
-            g_free (tenative_version);
+            XFree(tenative_version);
             return gdk_window_foreign_new(result);
         }
         else if (tenative)
@@ -265,7 +278,7 @@ static GdkWindow *mozilla_remote_find_window()
                      progname, expected_mozilla_version,
                      tenative_version, (unsigned int) tenative);
 			debug_print(debug_buff);
-            g_free (tenative_version);
+            XFree(tenative_version);
             return gdk_window_foreign_new(tenative);
         }
         else if (result)
@@ -594,6 +607,7 @@ static void netscape_command(char *command)
 
 		netscape_lock = 0;
 		
+		gdk_window_destroy (window);
 	} else {
 		pid = fork();
 		if (pid == 0) {

@@ -57,7 +57,10 @@ int connect_address(unsigned int addy, unsigned short port)
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	
 	if (fd > -1) {
-		quad_addr=strdup(inet_ntoa(sin.sin_addr));
+		if (quad_addr)
+			g_free (quad_addr);
+		
+		quad_addr=g_strdup(inet_ntoa(sin.sin_addr));
 		if (proxy_connect(fd, (struct sockaddr *)&sin, sizeof(sin)) > -1) {
 			return fd;
 		}

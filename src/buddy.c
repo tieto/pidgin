@@ -1131,18 +1131,19 @@ void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 
 void do_pounce(char *name)
 {
-        char *who = g_malloc(64);
-        char *buf = g_malloc(BUF_LONG);
+        char *who;
         
         struct buddy_pounce *b;
 	struct conversation *c;
 
 	GList *bp = buddy_pounces;
         
-        strcpy(who, normalize(name));
+	who = g_strdup(normalize(name));
 
 	while(bp) {
 		b = (struct buddy_pounce *)bp->data;;
+		bp = bp->next; /* increment the list here because rem_bp can make our handle bad */
+
                 if (!strcasecmp(who, normalize(b->name))) {
 			if (b->popup == 1)
 			{
@@ -1166,10 +1167,8 @@ void do_pounce(char *name)
                         rem_bp(NULL, b);
                         
                 }
-                bp = bp->next;
         }
         g_free(who);
-        g_free(buf);
 }
 
 static void new_bp_callback(GtkWidget *w, char *name)
@@ -1300,7 +1299,6 @@ gint log_timeout(char *name)
 
 void set_buddy(struct buddy *b)
 {
-	char *who;
 	char infotip[256];
         char idlet[16];
         char warn[256];
@@ -1359,10 +1357,6 @@ void set_buddy(struct buddy *b)
 			
 			play_sound(BUDDY_ARRIVE);
 
-			who = g_malloc(sizeof(b->name) + 10);
-			strcpy(who, b->name);
-	
-			g_free(who);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)login_icon_xpm);
 			gtk_widget_hide(b->pix);

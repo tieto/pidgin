@@ -269,7 +269,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 19 $"
+#define REVISION "gaim:$Revision: 35 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -399,6 +399,7 @@ extern gchar *strip_html(gchar *);
 /* Functions in util.c */
 extern char *normalize(const char *);
 extern int escape_text(char *);
+extern char *escape_text2(char *);
 extern int escape_message(char *msg);
 extern char *frombase64(char *);
 extern gint clean_pid(void *);

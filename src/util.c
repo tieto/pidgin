@@ -492,6 +492,8 @@ char * escape_text2(char *msg)
                 c++;
         }
         woo[cnt]='\0';
+
+	g_free (cpy);
         return woo;
 }
 
@@ -617,12 +619,14 @@ char *normalize(const char *s)
         char *t, *u;
         int x=0;
 
-        u = t = g_malloc(strlen(s) + 1);
+        g_return_if_fail (s != NULL);
+
+        u = t = g_strdup(s);
 
         strcpy(t, s);
         g_strdown(t);
         
-	while(*t) {
+	while(*t && (x < BUF_LEN - 1)) {
 		if (*t != ' ') {
 			buf[x] = *t;
 			x++;

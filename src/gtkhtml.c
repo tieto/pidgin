@@ -1510,6 +1510,8 @@ static gint gtk_html_motion_notify(GtkWidget * widget, GdkEventMotion * event)
 			if ((realx > hb->x && realx < (hb->x + hb->width)) &&
 				(realy < hb->y && realy > (hb->y - hb->height)))
 			{
+				GdkCursor *cursor = NULL;
+
 				if (html->tooltip_hb != hb)
 				{
 					html->tooltip_hb = hb;
@@ -1524,8 +1526,11 @@ static gint gtk_html_motion_notify(GtkWidget * widget, GdkEventMotion * event)
 						gtk_timeout_add(HTML_TOOLTIP_DELAY,
 										gtk_html_tooltip_timeout, html);
 				}
-				gdk_window_set_cursor(html->html_area,
-									  gdk_cursor_new(GDK_HAND2));
+
+				cursor = gdk_cursor_new(GDK_HAND2);
+				gdk_window_set_cursor(html->html_area, cursor);
+				gdk_cursor_destroy(cursor);
+
 				return TRUE;
 			}
 			urls = urls->next;
@@ -2856,17 +2861,19 @@ static void gtk_html_add_text(GtkHtml * html,
 			num--;
 		else
 		{
-
-			html->current_x = 0;
-			if (nl)
-			{
-				text[length] = '\n';
-				length++;
+			if (html->current_x != 0) {
+				html->current_x = 0;
+				if (nl) {
+					text[length] = '\n';
+					length++;
+				}
+				gtk_html_add_text(html, cfont, fore, back, text, length, uline, strike, url);
+				g_free(text);
+				return;
+			} else {
+				num = strlen (text);
+				break;
 			}
-			gtk_html_add_text(html, cfont, fore, back, text, length, uline,
-							  strike, url);
-			g_free(text);
-			return;
 		}
 
 	}
@@ -2922,17 +2929,9 @@ static void gtk_html_add_text(GtkHtml * html,
 		 * This is kinda cheesy but it may make things
 		 * * much better lookin 
 		 */
-		for (i = 2; i < 15; i++)
-		{
-			if ((num - i) < 0)
-			{
-				html->current_x = 0;
-				gtk_html_add_text(html, cfont, fore, back, text, strlen(text),
-								  uline, strike, url);
-				return;
-			}
-			else if (text[num - i] == ' ')
-			{
+
+		for (i=2; (num - i > 0); i++) {
+			if (text[num - i] == ' ') {
 				num = num - (i - 1);
 				nl2 = 1;
 				break;

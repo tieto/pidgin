@@ -62,7 +62,7 @@ GList *chat_rooms = NULL;
 GtkWidget *mainwindow = NULL;
 
 char toc_addy[16];
-char *quad_addr;
+char *quad_addr = NULL;
 
 
 void cancel_logon(void)
