@@ -42,6 +42,8 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
+use Gaim;
+
 %PLUGIN_INFO = (
 	perl_api_version => 2,
 	name             => "Fortune Profile",
@@ -59,7 +61,7 @@ sub plugin_init {
 }
 
 sub plugin_load {
-	my $plugin = shift;
+	$plugin = shift;
 
 	$tab = "&nbsp;";
 	$tab = $tab . $tab . $tab . $tab;
@@ -81,12 +83,13 @@ sub plugin_load {
 	}
 
 	# Command to get dynamic message from
-	$command = "fortune -sn " . ($max - $len);     
+	$command = "fortune -sn " . ($max - $len);
 
+	$seconds = 10;                   # Delay before updating away messages.
 	# output the first message and start the timers...
 	# This is done as a timeout to prevent attempts to set the
 	# profile before logging in.
-	Gaim::timeout_add($plugin, $seconds, "update_away");
+	Gaim::timeout_add($plugin, $seconds, "update_away", NULL);
 }
 
 sub update_away {
@@ -113,8 +116,13 @@ sub update_away {
     $message = $message . "---$nl" . $post_message ;
   }
 
-  foreach $id (GAIM::get_info(1)) {GAIM::command("info", $id, $message);} 
-  GAIM::add_timeout_handler($handle, $seconds, "update_away");
+  foreach $account (Gaim::accounts()) {
+    if ($account->is_connected()) {
+      $account->set_user_info($message);
+    }
+  }
+
+  Gaim::timeout_add($plugin, $seconds, "update_away", NULL);
 }
 
 
