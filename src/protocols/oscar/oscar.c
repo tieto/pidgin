@@ -3911,6 +3911,9 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
  *
  * I guess the bottom line is--I'm trying to show a date to the user how they 
  * prefer to see it, why the hell does gcc want me to change that?
+ *
+ * See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=3190
+ * See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=8714
  */
 
 /*
