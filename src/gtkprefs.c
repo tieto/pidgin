@@ -947,10 +947,10 @@ GtkWidget *conv_page() {
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(icons_checkbox), FALSE);
 		}
-	*/
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), icons_checkbox);
+	*/
 
 	gtk_widget_show_all(ret);
 
@@ -1624,12 +1624,12 @@ GtkWidget *away_page() {
 	/*	
 	  gaim_gtk_prefs_checkbox(_("Send auto-response in _active conversations"),
 				  "/core/away/auto_response/in_active_conv", vbox);
-	*/
 	if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
 		gtk_widget_set_sensitive(hbox, FALSE);
 
 	auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
 												  auto_resp_changed_cb, hbox);
+	*/
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),
