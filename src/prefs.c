@@ -261,31 +261,52 @@ void theme_install_theme(char *path, char *extn) {
 	gchar *command;
 	gchar *destdir;
 	gchar *tail;
+	gchar *tmp;
+	GError *converr = NULL;
 
 	/* Just to be safe */
 	g_strchomp(path);
 
+	if(!(tmp = g_filename_from_uri(path, NULL, &converr))) {
+		debug_printf("%s\n", converr ? converr->message : "g_filename_from_uri error");
+		return;
+	}
+
 	/* I dont know what you are, get out of here */
 	if (extn != NULL)
 		tail = extn;
-	else if ((tail = strrchr(path, '.')) == NULL)
+	else if ((tail = strrchr(tmp, '.')) == NULL) {
+		g_free(tmp);
 		return;
-
+	}
 	destdir = g_strconcat(gaim_user_dir(), G_DIR_SEPARATOR_S "smileys", NULL);
 
 	/* We'll check this just to make sure. This also lets us do something different on
 	 * other platforms, if need be */
-	if (!g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz"))
+	if (!g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz")) {
+#ifndef _WIN32
 		command = g_strdup_printf("tar > /dev/null xzf \"%s\" -C %s", path, destdir);
+#else
+		if(!wgaim_gz_untar(tmp, destdir)) {
+			g_free(destdir);
+			g_free(tmp);
+			return;
+		}
+#endif
+	}
 	else {
+		g_free(tmp);
 		g_free(destdir);
 		return;
 	}
 
+#ifndef _WIN32
 	/* Fire! */
 	system(command);
 
 	g_free(command);
+#endif
+	g_free(tmp);
 	g_free(destdir);
 
 	theme_refresh_theme_list();
@@ -316,7 +337,7 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			/* It looks like we're dealing with a local file. Let's 
 			 * just untar it in the right place */
-			theme_install_theme(name + 7, NULL);
+			theme_install_theme(name, NULL);
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
