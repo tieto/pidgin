@@ -333,8 +333,6 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
-
-	gaim_connection_destroy(gc);
 }
 
 void
