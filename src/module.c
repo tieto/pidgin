@@ -90,7 +90,7 @@ void gaim_probe_plugins() {
 	GDir *dir;
 	const gchar *file;
 	gchar *path;
-	struct gaim_plugin_description *plugdes;
+	/*struct gaim_plugin_description *plugdes;*/
 	struct gaim_plugin *plug;
 	char *probedirs[3];
 	int l;
@@ -112,7 +112,7 @@ void gaim_probe_plugins() {
 		if (dir) {
 			while ((file = g_dir_read_name(dir))) {
 #ifdef GAIM_PLUGINS
-				if (is_so_file(file, 
+				if (is_so_file((char*)file, 
 #ifndef _WIN32
 					       ".so"
 #else
@@ -168,7 +168,7 @@ void gaim_probe_plugins() {
 				}
 #endif
 #ifdef USE_PERL
-				if (is_so_file(file, ".pl")) {
+				if (is_so_file((char*)file, ".pl")) {
 					path = g_build_filename(probedirs[l], file, NULL);
 					plug = probe_perl(path);
 					if (plug) 
@@ -185,14 +185,15 @@ void gaim_probe_plugins() {
 #ifdef GAIM_PLUGINS
 struct gaim_plugin *load_plugin(const char *filename)
 {
-	struct gaim_plugin *plug;
+	struct gaim_plugin *plug=NULL;
 	struct gaim_plugin_description *desc;
 	struct gaim_plugin_description *(*gaim_plugin_desc)();
 	char *(*cfunc)();
-	GList *c = plugins;
+	/*GList *c = plugins;*/
 	GList *p = probed_plugins;
 	char *(*gaim_plugin_init)(GModule *);
-	char *error, *retval;
+	char *error=NULL;
+	char *retval;
 	gboolean newplug = FALSE;
 
 	if (!g_module_supported())
@@ -201,8 +202,9 @@ struct gaim_plugin *load_plugin(const char *filename)
 		return NULL;
 
 #ifdef USE_PERL
-	if (is_so_file(filename, ".pl")) {
-		return perl_load_file(filename);
+	if (is_so_file((char*)filename, ".pl")) {
+		/* perl_load_file is returning an int.. this should be fixed */
+		return (struct gaim_plugin *)perl_load_file((char*)filename);
 	}
 #endif
 

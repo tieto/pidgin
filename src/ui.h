@@ -358,6 +358,7 @@ extern void unhide_buddy_list();
 extern void docklet_add();
 extern void docklet_remove();
 extern void docklet_toggle();
+extern GtkWidget *gaim_new_item(GtkWidget *, const char *);
 
 /* Functions in buddy_chat.c */
 extern void join_chat();

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3753 2002-10-11 03:14:01Z robflynn $
+ * $Id: gg.c 3850 2002-10-16 19:57:03Z hermanator $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -440,11 +440,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 	debug_printf("GG login_callback...\n");
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 	debug_printf("Found GG connection\n");
@@ -892,25 +888,16 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 		debug_printf("search_callback: g_slist_find error\n");
 		gaim_input_remove(hdata->inpa);
 		g_free(hdata);
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
 	webdata = NULL;
 	len = 0;
-#ifndef _WIN32
+
 	while (read(source, &read_data, 1) > 0 || errno == EWOULDBLOCK) {
 		if (errno == EWOULDBLOCK) {
 			errno = 0;
-#else
-	while (recv(source, &read_data, 1, 0) > 0 || WSAEWOULDBLOCK == WSAGetLastError() ) {
-		if (WSAEWOULDBLOCK == WSAGetLastError()) {
-			WSASetLastError(0);
-#endif
 			continue;
 		}
 
@@ -926,11 +913,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	webdata[len] = 0;
 
 	gaim_input_remove(hdata->inpa);
-#ifndef _WIN32
 	close(source);
-#else
-	closesocket(source);
-#endif
 
 	debug_printf("http_results: type %d, webdata [%s]\n", hdata->type, webdata);
 
@@ -973,11 +956,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		debug_printf("http_req_callback: g_slist_find error\n");
 		g_free(request);
 		g_free(hdata);
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -999,18 +978,10 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 
 	g_free(request);
 
-#ifndef _WIN32
 	if (write(source, buf, strlen(buf)) < strlen(buf)) {
-#else
-	if (send(source, buf, strlen(buf), 0) < strlen(buf)) {
-#endif
 		g_free(buf);
 		g_free(hdata);
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		do_error_dialog(_("Error communicating with Gadu-Gadu server"),
 				_("Gaim was unable to complete your request due to a problem "
 				  "communicating to the Gadu-Gadu HTTP server.  Please try again "

@@ -107,6 +107,11 @@ struct _GtkSmileyTree {
 	gchar **image;
 };
 
+/*
+ *  PROTOS
+ */
+extern void debug_printf(char * fmt, ...);
+
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
 {
@@ -2095,24 +2100,13 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 #define RGSTRY 13
 #define ENCDNG 14
 
+#if 0
 static const gchar*
 gtk_imhtml_get_font_name (PangoFontDescription *font)
 {
-#if 0
-#ifndef _WIN32
-	return gdk_x11_font_get_name(font);
-#else
-#if 0
-	/* win32 gdkfont.h says this is temporary - GTK 2.0.3 */
-	return 	gdk_font_full_name_get(font);
-#else
-	/* So i can build with GTK 2.0.6 */
-	return "-unknown-arial-normal-r-normal---18--108-120-120-p-0-microsoft-vietnamese-unknown-arial-normal-r-normal---18--108-120-120-p-0-microsoft-vietnamese27";
-#endif
-#endif
-#endif
 	return pango_font_description_get_family(font);
 }
+#endif
 
 static PangoFontDescription *
 gtk_imhtml_font_load (GtkIMHtml *imhtml,
@@ -2835,13 +2829,13 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 		*replace = ' ';
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&copy;", 6)) {
-		*replace = '©';
+		*replace = '�'; /* was: '©' */
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&quot;", 6)) {
 		*replace = '\"';
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&reg;", 5)) {
-		*replace = '®';
+		*replace = '�'; /* was: '®' */
 		*length = 5;
 	} else if (*(string + 1) == '#') {
 		guint pound = 0;

@@ -41,6 +41,10 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 void expat_startElement(void* userdata, const char* name, const char** atts)
 {
     /* get the xmlnode pointed to by the userdata */

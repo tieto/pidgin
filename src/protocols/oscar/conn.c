@@ -14,8 +14,10 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#else
-#include <winsock.h>
+#endif
+
+#ifdef _WIN32
+#include "win32dep.h"
 #endif
 
 /*
@@ -319,11 +321,7 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
 
 	if (deadconn->fd >= 3)
-#ifndef _WIN32
 		close(deadconn->fd);
-#else
-		closesocket(deadconn->fd);
-#endif
 	deadconn->fd = -1;
 	if (deadconn->handlerlist)
 		aim_clearhandlers(deadconn);
@@ -435,11 +433,7 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
 		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
 			faimdprintf(sess, 0, "proxyconnect: unable to connect to proxy\n");
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
 
@@ -455,40 +449,20 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 			buf[2] = 0x00;
 			i = 3;
 		}
-#ifndef _WIN32
 		if (write(fd, buf, i) < i) {
-#else
-		if (send(fd, buf, i, 0) < i) {
-#endif
 			*statusret = errno;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
-#ifndef _WIN32
 		if (read(fd, buf, 2) < 2) {
-#else
-		if (recv(fd, buf, 2, 0) < 2) {
-#endif
 			*statusret = errno;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
 
 		if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
 			*statusret = EINVAL;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
 
@@ -499,39 +473,19 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 			i += aimutil_putstr(buf+i, sess->socksproxy.username, strlen(sess->socksproxy.username));
 			i += aimutil_put8(buf+i, strlen(sess->socksproxy.password));
 			i += aimutil_putstr(buf+i, sess->socksproxy.password, strlen(sess->socksproxy.password));
-#ifndef _WIN32
 			if (write(fd, buf, i) < i) {
-#else
-			if (send(fd, buf, i, 0) < i) {
-#endif
 				*statusret = errno;
-#ifndef _WIN32
 				close(fd);
-#else
-				closesocket(fd);
-#endif
 				return -1;
 			}
-#ifndef _WIN32
 			if (read(fd, buf, 2) < 2) {
-#else
-			if (recv(fd, buf, 2, 0) < 2) {
-#endif
 				*statusret = errno;
-#ifndef _WIN32
 				close(fd);
-#else
-				closesocket(fd);
-#endif
 				return -1;
 			}
 			if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
 				*statusret = EINVAL;
-#ifndef _WIN32
 				close(fd);
-#else
-				closesocket(fd);
-#endif
 				return -1;
 			}
 		}
@@ -543,49 +497,28 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 		i += aimutil_put8(buf+i, strlen(host));
 		i += aimutil_putstr(buf+i, host, strlen(host));
 		i += aimutil_put16(buf+i, port);
-#ifndef _WIN32
+
 		if (write(fd, buf, i) < i) {
-#else
-		if (send(fd, buf, i, 0) < i) {
-#endif
 			*statusret = errno;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
-#ifndef _WIN32
+
 		if (read(fd, buf, 10) < 10) {
-#else
-		if (recv(fd, buf, 10, 0) < 10) {
-#endif
 			*statusret = errno;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
 		if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 			*statusret = EINVAL;
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			return -1;
 		}
 
 	} else { /* connecting directly */
 		struct sockaddr_in sa;
 		struct hostent *hp;
-#ifdef _WIN32
-		int imode = 1;
-		int w_errno = 0;
-#endif
+
 		if (!(hp = gethostbyname(host))) {
 			*statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
 			return -1;
@@ -599,29 +532,17 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
 
 		if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT)
-#ifndef _WIN32
 			fcntl(fd, F_SETFL, O_NONBLOCK); /* XXX save flags */
-#else
-			ioctlsocket(fd, FIONBIO, (unsigned long *)&imode);
-#endif
+
 		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
 			if (sess->flags & AIM_SESS_FLAGS_NONBLOCKCONNECT) {
-#ifndef _WIN32
 				if ((errno == EINPROGRESS) || (errno == EINTR)) {
-#else
-				w_errno = WSAGetLastError();
-				if ((w_errno == WSAEINPROGRESS) || (w_errno == WSAEINTR)) {
-#endif
 					if (statusret)
 						*statusret |= AIM_CONN_STATUS_INPROGRESS;
 					return fd;
 				}
 			}
-#ifndef _WIN32
 			close(fd);
-#else
-			closesocket(fd);
-#endif
 			fd = -1;
 		}
 	}
@@ -1073,11 +994,8 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 	fd_set fds, wfds;
 	struct timeval tv;
 	int res;
-#ifndef _WIN32
 	int error = ETIMEDOUT;
-#else
-	int error = 0;
-#endif
+
 	aim_rxcallback_t userfunc;
 
 	if (!conn || (conn->fd == -1))
@@ -1094,11 +1012,7 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 	tv.tv_usec = 0;
 
 	if ((res = select(conn->fd+1, &fds, &wfds, NULL, &tv)) == -1) {
-#ifndef _WIN32
 		error = errno;
-#else
-		error = WSAGetLastError();
-#endif
 		aim_conn_close(conn);
 		errno = error;
 		return -1;
@@ -1109,13 +1023,8 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 
 	if (FD_ISSET(conn->fd, &fds) || FD_ISSET(conn->fd, &wfds)) {
 		int len = sizeof(error);
-#ifndef _WIN32
 		if (getsockopt(conn->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
 			error = errno;
-#else
-		if (getsockopt(conn->fd, SOL_SOCKET, SO_ERROR, (char*)&error, &len) < 0)
-			error = WSAGetLastError();
-#endif
 	}
 
 	if (error) {
@@ -1123,9 +1032,8 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 		errno = error;
 		return -1;
 	}
-#ifndef _WIN32
 	fcntl(conn->fd, F_SETFL, 0); /* XXX should restore original flags */
-#endif
+
 	conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
 
 	if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNCOMPLETE)))

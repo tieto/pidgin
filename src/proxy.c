@@ -133,20 +133,11 @@ static struct sockaddr_in *gaim_gethostbyname(char *host, int port)
 {
 	static struct sockaddr_in sin;
 
-#ifndef _WIN32
 	if (!inet_aton(host, &sin.sin_addr)) {
-#else
-	if ((sin.sin_addr.s_addr = inet_addr(host)) == INADDR_NONE) {
-#endif
 		struct hostent *hp;
 		if(!(hp = gethostbyname(host))) {
-#ifndef _WIN32
 			debug_printf("gaim_gethostbyname(\"%s\", %d) failed: %s",
 				     host, port, hstrerror(h_errno));
-#else
-			debug_printf("gaim_gethostbyname(\"%s\", %d) failed: Error %d",
-				     host, port, WSAGetLastError());
-#endif
 			return NULL;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
@@ -163,26 +154,10 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
 	unsigned int len;
-#ifdef _WIN32
-	int werror = WSAETIMEDOUT;
-	u_long imode;
-#else
 	int error = ETIMEDOUT;
-#endif 
+
 	debug_printf("Connected\n");
-#ifdef _WIN32
-	len = sizeof(werror);
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-		closesocket(source);
-		gaim_input_remove(phb->inpa);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
-		g_free(phb);
-		return;
-	} else
-		WSASetLastError(werror);
-	imode=0;
-	ioctlsocket(source, FIONBIO, &imode);
-#else
+
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
@@ -192,7 +167,6 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
-#endif
 	gaim_input_remove(phb->inpa);
 	phb->func(phb->data, source, GAIM_INPUT_READ);
 	g_free(phb);
@@ -213,10 +187,7 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in *sin;
 	int fd = -1;
-#ifdef _WIN32
-	u_long imode;
-	int w_errno;
-#endif
+
 	debug_printf("connecting to %s:%d with no proxy\n", host, port);
 
 	if (!(sin = gaim_gethostbyname(host, port))) {
@@ -230,50 +201,19 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 		g_free(phb);
 		return -1;
 	}
-#ifdef _WIN32
-	imode=1;
-	ioctlsocket(fd, FIONBIO, &imode);
-#else
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-#endif
+
 	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
-#ifdef _WIN32
-		w_errno = WSAGetLastError();
-		if ((w_errno == WSAEINPROGRESS) || (w_errno == WSAEINTR) || (w_errno == WSAEWOULDBLOCK)) {
-#else
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-#endif
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
 		} else {
-#ifdef _WIN32
-			debug_printf("connect failed (errno %d)\n", w_errno);
-			closesocket(fd);
-#else
 			debug_printf("connect failed (errno %d)\n", errno);
 			close(fd);
-#endif
 			g_free(phb);
 			return -1;
 		}
 	} else {
-#ifdef _WIN32
-		int werror = WSAETIMEDOUT;
-		unsigned int len;
-		u_long imode;
-
-		debug_printf("Connect didn't block\n");
-		len = sizeof(werror);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-			debug_printf("getsockopt failed\n");
-			closesocket(fd);
-			g_free(phb);
-			return -1;
-		} else
-			WSASetLastError(werror);
-		imode=0;
-		ioctlsocket(fd, FIONBIO, &imode);
-#else
 		unsigned int len;
 		int error = ETIMEDOUT;
 		debug_printf("Connect didn't block\n");
@@ -285,7 +225,6 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
-#endif
 		phb->port = fd;	/* bleh */
 		g_timeout_add(50, clean_connect, phb);	/* we do this because we never
 							   want to call our callback
@@ -307,11 +246,7 @@ static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_input_remove(phb->inpa);
 
-#ifdef _WIN32
-	while ((nlc != 2) && (recv(source, &inputline[pos++], 1, 0) == 1)) {
-#else
 	while ((nlc != 2) && (read(source, &inputline[pos++], 1) == 1)) {
-#endif
 		if (inputline[pos - 1] == '\n')
 			nlc++;
 		else if (inputline[pos - 1] != '\r')
@@ -329,11 +264,7 @@ static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-#ifdef _WIN32
-	closesocket(source);
-#else
 	close(source);
-#endif
 	phb->func(phb->data, -1, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
@@ -345,44 +276,24 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	char cmd[384];
 	struct PHB *phb = data;
 	unsigned int len;
-#ifdef _WIN32
-	int w_error = WSAETIMEDOUT;
-	u_long imode = 0;
-#else
 	int error = ETIMEDOUT;
-#endif
+
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
-#ifdef _WIN32
-	len = sizeof(w_error);
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, (char*)&w_error, &len) < 0) {
-		closesocket(source);
-#else
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
-#ifdef _WIN32
-	} else
-		WSASetLastError( w_error );
-	ioctlsocket(source, FIONBIO, &imode);
-#else
 	}
 	fcntl(source, F_SETFL, 0);
-#endif
 	g_snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n", phb->host, phb->port,
 		   phb->host, phb->port);
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -397,11 +308,7 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		g_snprintf(cmd, sizeof(cmd), "Proxy-Authorization: Basic %s\r\n", t2);
 		g_free(t2);
 		if (send(source, cmd, strlen(cmd), 0) < 0) {
-#ifdef _WIN32
-			closesocket(source);
-#else
 			close(source);
-#endif
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
 			g_free(phb->host);
 			g_free(phb);
@@ -411,11 +318,7 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 	g_snprintf(cmd, sizeof(cmd), "\r\n");
 	if (send(source, cmd, strlen(cmd), 0) < 0) {
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -429,9 +332,7 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in *sin;
 	int fd = -1;
-#ifdef _WIN32
 	u_long imode;
-#endif
 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 
@@ -448,61 +349,31 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 	phb->host = g_strdup(host);
 	phb->port = port;
 
-#ifdef _WIN32
-	imode = 1;
-	ioctlsocket(fd, FIONBIO, &imode); 
-#else
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-#endif
+
 	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
-#ifdef _WIN32
-		int w_errno = WSAGetLastError();
-		if ((w_errno == WSAEINPROGRESS) || (w_errno == WSAEINTR)) {
-#else
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-#endif
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, http_canwrite, phb);
 		} else {
-#ifdef _WIN32
-			closesocket(fd);
-#else
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
 		}
 	} else {
 		unsigned int len;
-#ifdef _WIN32
-		int werror = WSAETIMEDOUT;
-		u_long imode;
-#else
 		int error = ETIMEDOUT;
-#endif
+
 		debug_printf("Connect didn't block\n");
-#ifdef _WIN32
-		len = sizeof(werror);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-			closesocket(fd);
-#else
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
-#ifdef _WIN32
-		} else
-			WSASetLastError(werror);
-		imode=0;
-		ioctlsocket(fd, FIONBIO, &imode);
-#else
 		}
 		fcntl(fd, F_SETFL, 0);
-#endif
 		http_canwrite(phb, fd, GAIM_INPUT_WRITE);
 	}
 
@@ -517,22 +388,15 @@ static void s4_canread(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(phb->inpa);
 
 	memset(packet, 0, sizeof(packet));
-#ifdef _WIN32
-	if (recv(source, packet, 9, 0) >= 4 && packet[1] == 90) {
-#else
+
 	if (read(source, packet, 9) >= 4 && packet[1] == 90) {
-#endif
 		phb->func(phb->data, source, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
-#ifdef _WIN32
-	closesocket(source);
-#else
 	close(source);
-#endif
 	phb->func(phb->data, -1, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
@@ -544,44 +408,24 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	struct hostent *hp;
 	struct PHB *phb = data;
 	unsigned int len;
-#ifdef _WIN32
-	int werror = WSAETIMEDOUT;
-	u_long imode;
-#else
 	int error = ETIMEDOUT;
-#endif
+
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
-#ifdef _WIN32
-	len = sizeof(werror);
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-		closesocket(source);
-#else
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
-#ifdef _WIN32
-	} else
-		WSASetLastError(werror);
-	imode=0;
-	ioctlsocket(source, FIONBIO, &imode);
-#else
 	}
 	fcntl(source, F_SETFL, 0);
-#endif
+
 	/* XXX does socks4 not support host name lookups by the proxy? */
 	if (!(hp = gethostbyname(phb->host))) {
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -597,13 +441,9 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	packet[6] = (unsigned char)(hp->h_addr_list[0])[2];
 	packet[7] = (unsigned char)(hp->h_addr_list[0])[3];
 	packet[8] = 0;
-#ifdef _WIN32
-	if (send(source, packet, 9, 0) != 9) {
-		closesocket(source);
-#else
+
 	if (write(source, packet, 9) != 9) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -617,10 +457,6 @@ static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb
 {
 	struct sockaddr_in *sin;
 	int fd = -1;
-#ifdef _WIN32
-	int werrno;
-	u_long imode;
-#endif
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
 
@@ -637,61 +473,30 @@ static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb
 	phb->host = g_strdup(host);
 	phb->port = port;
 
-#ifdef _WIN32
-	imode=1;
-	ioctlsocket(fd, FIONBIO, &imode);
-#else
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-#endif
 	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
-#ifdef _WIN32
-		werrno = WSAGetLastError();
-		if ((werrno == WSAEINPROGRESS) || (werrno == WSAEINTR)) {
-#else
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-#endif
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s4_canwrite, phb);
 		} else {
-#ifdef _WIN32
-			closesocket(fd);
-#else
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
 		}
 	} else {
 		unsigned int len;
-#ifdef _WIN32
-		int werror = WSAETIMEDOUT;
-		u_long imode;
-#else
 		int error = ETIMEDOUT;
-#endif
+
 		debug_printf("Connect didn't block\n");
-#ifdef _WIN32
-		len = sizeof(werror);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-			closesocket(fd);
-#else
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
-#ifdef _WIN32
-		} else
-			WSASetLastError(werror);
-		imode=0;
-		ioctlsocket(fd, FIONBIO, &imode);
-#else
 		}
 		fcntl(fd, F_SETFL, 0);
-#endif
 		s4_canwrite(phb, fd, GAIM_INPUT_WRITE);
 	}
 
@@ -706,17 +511,9 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 	gaim_input_remove(phb->inpa);
 	debug_printf("able to read again\n");
 
-#ifdef _WIN32
-	if (recv(source, buf, 10, 0) < 10) {
-#else
 	if (read(source, buf, 10) < 10) {
-#endif
 		debug_printf("or not...\n");
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -724,11 +521,7 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 	}
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 		debug_printf("bad data\n");
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -756,13 +549,8 @@ static void s5_sendconnect(gpointer data, gint source)
 	buf[5 + strlen(phb->host)] = phb->port >> 8;
 	buf[5 + strlen(phb->host) + 1] = phb->port & 0xff;
 
-#ifdef _WIN32
-	if (send(source, buf, (5 + strlen(phb->host) + 2), 0) < (5 + strlen(phb->host) + 2)) {
-		closesocket(source);
-#else
 	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -780,13 +568,8 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(phb->inpa);
 	debug_printf("got auth response\n");
 
-#ifdef _WIN32
-	if (recv(source, buf, 2, 0) < 2) {
-		closesocket(source);
-#else
 	if (read(source, buf, 2) < 2) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -794,11 +577,7 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -816,13 +595,8 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(phb->inpa);
 	debug_printf("able to read\n");
 
-#ifdef _WIN32
-	if (recv(source, buf, 2, 0) < 2) {
-		closesocket(source);
-#else
 	if (read(source, buf, 2) < 2) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -830,11 +604,7 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -848,13 +618,9 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		memcpy(buf + 2, proxyuser, i);
 		buf[2 + i] = j;
 		memcpy(buf + 2 + i + 1, proxypass, j);
-#ifdef _WIN32
-		if (send(source, buf, 3 + i + j, 0) < 3 + i + j) {
-			closesocket(source);
-#else
+
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
-#endif
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
 			g_free(phb->host);
 			g_free(phb);
@@ -873,37 +639,20 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	int i;
 	struct PHB *phb = data;
 	unsigned int len;
-#ifdef _WIN32
-	int werror = WSAETIMEDOUT;
-	u_long imode;
-#else
 	int error = ETIMEDOUT;
-#endif
+
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
-#ifdef _WIN32
-	len = sizeof(werror);
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-		closesocket(source);
-#else
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
-#ifdef _WIN32
-	} else
-		WSASetLastError(werror);
-	imode=0;
-	ioctlsocket(source, FIONBIO, &imode);
-#else
 	}
 	fcntl(source, F_SETFL, 0);
-#endif
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
@@ -917,17 +666,10 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		buf[2] = 0x00;
 		i = 3;
 	}
-#ifdef _WIN32
-	if (send(source, buf, i, 0) < i) {
-#else
+
 	if (write(source, buf, i) < i) {
-#endif
 		debug_printf("unable to write\n");
-#ifdef _WIN32
-		closesocket(source);
-#else
 		close(source);
-#endif
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
@@ -941,10 +683,6 @@ static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb
 {
 	struct sockaddr_in *sin;
 	int fd = -1;
-#ifdef _WIN32
-	u_long imode;
-	int werrno;
-#endif
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
 
@@ -961,60 +699,30 @@ static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb
 	phb->host = g_strdup(host);
 	phb->port = port;
 
-#ifdef _WIN32
-	imode=1;
-	ioctlsocket(fd, FIONBIO, &imode);
-#else
 	fcntl(fd, F_SETFL, O_NONBLOCK);
-#endif
 	if (connect(fd, (struct sockaddr *)sin, sizeof(*sin)) < 0) {
-#ifdef _WIN32
-		werrno = WSAGetLastError();
-		if ((werrno == WSAEINPROGRESS) || (werrno == WSAEINTR)) {
-#else
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-#endif
 			debug_printf("Connect would have blocked\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s5_canwrite, phb);
 		} else {
-#ifdef _WIN32
-			closesocket(fd);
-#else
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
 		}
 	} else {
 		unsigned int len;
-#ifdef _WIN32
-		int werror = WSAETIMEDOUT;
-#else
 		int error = ETIMEDOUT;
-#endif
+
 		debug_printf("Connect didn't block\n");
-#ifdef _WIN32
-		len = sizeof(werror);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char*)&werror, &len) < 0) {
-			closesocket(fd);
-#else
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-#endif
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
-#ifdef _WIN32
-		} else
-			WSASetLastError(werror);
-		imode=0;
-		ioctlsocket(fd, FIONBIO, &imode);
-#else
 		}
 		fcntl(fd, F_SETFL, 0);
-#endif
 		s5_canwrite(phb, fd, GAIM_INPUT_WRITE);
 	}
 

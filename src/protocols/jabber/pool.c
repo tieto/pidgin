@@ -41,6 +41,9 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #ifdef POOL_DEBUG
 int pool__total = 0;

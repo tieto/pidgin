@@ -62,21 +62,13 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 		return 0; /* not an error */
 
 	if (cliaddr.sa_family != AF_INET) { /* just in case IPv6 really is happening */
-#ifndef _WIN32
 		close(acceptfd);
-#else
-		closesocket(acceptfd);
-#endif
 		aim_conn_close(cur);
 		return -1;
 	} 
 
 	if (!(newconn = aim_cloneconn(sess, cur))) {
-#ifndef _WIN32
 		close(acceptfd);
-#else
-		closesocket(acceptfd);
-#endif
 		aim_conn_close(cur);
 		return -1;
 	}
@@ -342,11 +334,7 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, const char *d
 
 	/* XXX switch to aim_cloneconn()? */
 	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS_OUT, NULL))) {
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 		return NULL;
 	}
 
@@ -417,11 +405,7 @@ faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *sess, const char *d
 	aim_cachecookie(sess, cookie);
 
 	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS_OUT, NULL))) {
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 		return NULL;
 	}
 
@@ -945,11 +929,7 @@ static int listenestablish(fu16_t portnum)
 		if (bind(listenfd, res->ai_addr, res->ai_addrlen) == 0)
 			break;
 		/* success */
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 	} while ( (res = res->ai_next) );
 
 	if (!res)
@@ -968,9 +948,6 @@ static int listenestablish(fu16_t portnum)
 	int listenfd;
 	const int on = 1;
 	struct sockaddr_in sockin;
-#ifdef _WIN32
-	u_long imode;
-#endif
 
 	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("socket(listenfd)");
@@ -979,11 +956,7 @@ static int listenestablish(fu16_t portnum)
 
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
 		perror("setsockopt(listenfd)");
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 		return -1;
 	} 
 
@@ -993,28 +966,15 @@ static int listenestablish(fu16_t portnum)
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
 		perror("bind(listenfd)");
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 		return -1;
 	}
 	if (listen(listenfd, 4) != 0) {
 		perror("listen(listenfd)");
-#ifndef _WIN32
 		close(listenfd);
-#else
-		closesocket(listenfd);
-#endif
 		return -1;
 	}
-#ifndef _WIN32
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
-#else
-	imode = 1;
-	ioctlsocket(listenfd, FIONBIO, &imode);
-#endif
 	return listenfd;
 #endif
 } 

@@ -41,6 +41,10 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /* util for making presence packets */
 xmlnode jutil_presnew(int type, char *to, char *status)
 {

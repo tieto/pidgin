@@ -29,10 +29,13 @@
 #include <unistd.h>
 #else
 #include <direct.h>
-#include <io.h>
 #endif
 #include "gaim.h"
 #include "prpl.h"
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 #define PATHSIZE 1024
 
@@ -790,11 +793,7 @@ void do_export(struct gaim_connection *g)
 	strcpy(buf, file);
 	dir = fopen(buf, "r");
 	if (!dir)
-#ifndef _WIN32
 		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
-#else
-		_mkdir(buf);
-#endif
 	else
 		fclose(dir);
 
@@ -806,11 +805,7 @@ void do_export(struct gaim_connection *g)
 		toc_build_config(g, buf, 8192 - 1, TRUE);
 		fprintf(f, "%s\n", buf);
 		fclose(f);
-#ifdef _WIN32
-		_chmod(buf, _S_IWRITE);
-#else
 		chmod(path, S_IRUSR | S_IWUSR);
-#endif
 	} else {
 		debug_printf("unable to write %s\n", path);
 	}

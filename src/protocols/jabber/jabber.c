@@ -35,7 +35,6 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #else
-#include <winsock.h>
 #include "utsname.h"
 #endif
 
@@ -509,11 +508,7 @@ static void gjab_stop(gjconn gjc)
 	gjab_send_raw(gjc, "</stream:stream>");
 	gjc->state = JCONN_STATE_OFF;
 	gjc->was_connected = 0;
-#ifndef _WIN32
 	close(gjc->fd);
-#else
-	closesocket(gjc->fd);
-#endif
 	gjc->fd = -1;
 	XML_ParserFree(gjc->parser);
 	gjc->parser = NULL;
@@ -759,11 +754,7 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	gjconn gjc;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 

@@ -9,7 +9,7 @@
 #include <resolv.h>
 #include <unistd.h>
 #else
-
+#include <winsock.h>
 #endif
 
 #include <string.h>

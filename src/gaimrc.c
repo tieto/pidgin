@@ -1220,13 +1220,8 @@ void load_prefs()
 	else if (gaim_home_dir())
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
 	else {
-#ifndef _WIN32
 		set_defaults();
 		return;
-#else
-		/* Pre Win 2000 there are no home dirs... */
-		g_snprintf(buf, sizeof(buf), "C:" G_DIR_SEPARATOR_S ".gaimrc");
-#endif
 	}
 
 	if ((f = fopen(buf, "r"))) {
@@ -1291,12 +1286,7 @@ void save_prefs()
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
 	}
 	else {
-#ifndef _WIN32
 		return;
-#else
-	        /* Pre Win 2000, there are no home dirs.. */
-	        g_snprintf(buf, sizeof(buf), "C:" G_DIR_SEPARATOR_S ".gaimrc");
-#endif
 	}
 	if ((f = fopen(buf, "w"))) {
 		fprintf(f, "# .gaimrc v%d\n", 4);
@@ -1310,9 +1300,8 @@ void save_prefs()
 #endif
 		gaimrc_write_proxy(f);
 		fclose(f);
-#ifndef _WIN32	
+
 		chmod(buf, S_IRUSR | S_IWUSR);
-#endif
 	}
 	else
 	  debug_printf("Error opening .gaimrc\n");

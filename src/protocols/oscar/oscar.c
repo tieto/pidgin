@@ -34,8 +34,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#else
-#include <winsock.h>
 #endif
 
 #include <errno.h>
@@ -592,11 +590,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	aim_conn_t *conn;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -745,11 +739,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	aim_conn_t *bosconn;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -943,11 +933,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	int x = 0;
 	unsigned char m[17];
 
-#ifndef _WIN32
 	while (read(pos->fd, &in, 1) == 1) {
-#else
-	while (recv(pos->fd, &in, 1, 0) == 1) {
-#endif
 		if (in == '\n')
 			x++;
 		else if (in != '\r')
@@ -961,30 +947,18 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 				_("You may be disconnected shortly.  You may want to use TOC until "
 				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
 		gaim_input_remove(pos->inpa);
-#ifndef _WIN32
 		close(pos->fd);
-#else
-		closesocket(pos->fd);
-#endif
 		g_free(pos);
 		return;
 	}
-#ifndef _WIN32
 	read(pos->fd, m, 16);
-#else
-	recv(pos->fd, m, 16, 0);
-#endif
 	m[16] = '\0';
 	debug_printf("Sending hash: ");
 	for (x = 0; x < 16; x++)
 		debug_printf("%02x ", (unsigned char)m[x]);
 	debug_printf("\n");
 	gaim_input_remove(pos->inpa);
-#ifndef _WIN32
 	close(pos->fd);
-#else
-	closesocket(pos->fd);
-#endif
 	aim_sendmemblock(od->sess, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
 	g_free(pos);
 }
@@ -1006,11 +980,7 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 	g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
 			"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
-#ifndef _WIN32
 	write(pos->fd, buf, strlen(buf));
-#else
-	send(pos->fd, buf, strlen(buf), 0);
-#endif
 	if (pos->modname)
 		g_free(pos->modname);
 	pos->inpa = gaim_input_add(pos->fd, GAIM_INPUT_READ, damn_you, pos);
@@ -1164,11 +1134,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1196,11 +1162,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1229,11 +1191,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	aim_conn_t *tstconn;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
@@ -3384,12 +3342,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	} else if (len != -1) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
-#ifndef _WIN32
 		return -ENOTCONN;
-#else
-		WSASetLastError( WSAENOTCONN );
-		return SOCKET_ERROR;
-#endif
 	}
 	if (imflags & IM_FLAG_AWAY) {
 		ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);

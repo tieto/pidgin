@@ -22,6 +22,10 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 static void shaHashBlock(j_SHA_CTX *ctx);
 
 void shaInit(j_SHA_CTX *ctx) {

@@ -41,6 +41,10 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /* socket.c
  *
  * Simple wrapper to make socket creation easy.

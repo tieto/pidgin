@@ -19,6 +19,10 @@
 
 #include "jabber.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /* local macros for launching event handlers */
 #define STATE_EVT(arg) if(j->on_state) { (j->on_state)(j, (arg) ); }
 

@@ -35,7 +35,7 @@
 #include "pixmaps/tb_redo.xpm"
 #include "pixmaps/tb_undo.xpm"
 #include "pixmaps/tb_refresh.xpm"
-#include "pixmaps/no_icon.xpm"
+/*#include "pixmaps/no_icon.xpm"*/
 
 #define LOGIN_STEPS 5
 

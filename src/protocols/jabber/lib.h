@@ -16,8 +16,6 @@
 #include <unistd.h>
 #else
 #include <winsock.h>
-#include <stdlib.h>
-#include "win32dep.h"
 #endif
 
 #include <string.h>

@@ -41,6 +41,10 @@
 
 #include "lib.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 char *j_strdup(const char *str)
 {
     if(str == NULL)
