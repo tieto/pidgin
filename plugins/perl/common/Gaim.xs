@@ -14,11 +14,58 @@ CODE:
 	gaim_perl_timeout_add(plugin, seconds, func, arg);
 
 void
-debug(category, string)
+debug(level, category, string)
+	const char *level
+	const char *category
+	const char *string
+CODE:
+	if (!strcmp(level, "misc"))
+		gaim_debug(GAIM_DEBUG_MISC, category, string);
+	else if (!strcmp(level, "info"))
+		gaim_debug(GAIM_DEBUG_INFO, category, string);
+	else if (!strcmp(level, "warning"))
+		gaim_debug(GAIM_DEBUG_WARNING, category, string);
+	else if (!strcmp(level, "error"))
+		gaim_debug(GAIM_DEBUG_ERROR, category, string);
+	else if (!strcmp(level, "fatal"))
+		gaim_debug(GAIM_DEBUG_FATAL, category, string);
+	else
+		croak("Unknown debug level type '%s'", level);
+
+void
+debug_misc(category, string)
+	const char *category
+	const char *string
+CODE:
+	gaim_debug(GAIM_DEBUG_MISC, category, string);
+
+void
+debug_info(category, string)
 	const char *category
 	const char *string
 CODE:
 	gaim_debug(GAIM_DEBUG_INFO, category, string);
+
+void
+debug_warning(category, string)
+	const char *category
+	const char *string
+CODE:
+	gaim_debug(GAIM_DEBUG_WARNING, category, string);
+
+void
+debug_error(category, string)
+	const char *category
+	const char *string
+CODE:
+	gaim_debug(GAIM_DEBUG_ERROR, category, string);
+
+void
+debug_fatal(category, string)
+	const char *category
+	const char *string
+CODE:
+	gaim_debug(GAIM_DEBUG_FATAL, category, string);
 
 void
 deinit()
