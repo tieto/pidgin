@@ -53,13 +53,13 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_BIGGER,   "buttons", "text_bigger.png"          },
 	{ GAIM_STOCK_TEXT_NORMAL,   "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,  "buttons", "text_smaller.png"         },
-	{ GAIM_STOCK_TYPED,         NULL,      GTK_STOCK_JUSTIFY_FILL     },
-	{ GAIM_STOCK_TYPING,        NULL,      GTK_STOCK_EXECUTE          },
+	{ GAIM_STOCK_TYPED,         "gaim",    "typed.png"                },
+	{ GAIM_STOCK_TYPING,        "gaim",    "typing.png"               },
 	{ GAIM_STOCK_UPLOAD,        NULL,      GTK_STOCK_GO_UP            },
 	{ GAIM_STOCK_WARN,          NULL,      GTK_STOCK_DIALOG_WARNING   },
 	{ GAIM_STOCK_IM,            NULL,      GTK_STOCK_CONVERT          },
 	{ GAIM_STOCK_CHAT,          NULL,      GTK_STOCK_JUMP_TO          },
-	{ GAIM_STOCK_AWAY,          "buttons",      "away.xpm"                 }
+	{ GAIM_STOCK_AWAY,          "buttons", "away.xpm"                 }
 };
 
 static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
@@ -79,7 +79,7 @@ find_file(const char *dir, const char *base)
 									dir, base, NULL);
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		debug_printf("Unable to load stock pixmap %s\n", base);
+		g_critical("Unable to load stock pixmap %s\n", base);
 
 		g_free(filename);
 
