@@ -115,8 +115,6 @@ __process_single_line(MsnServConn *servconn, char *str)
 
 			msn_message_ref(msg);
 
-			msn_servconn_unqueue_message(servconn, entry->msg);
-
 			sender = msn_message_get_sender(msg);
 
 			servconn->msg_passport = g_strdup(msn_user_get_passport(sender));
@@ -129,6 +127,8 @@ __process_single_line(MsnServConn *servconn, char *str)
 
 			msn_message_destroy(msg);
 			entry->msg = NULL;
+
+			msn_servconn_unqueue_message(servconn, entry->msg);
 		}
 	}
 
