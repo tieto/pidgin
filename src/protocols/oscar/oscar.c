@@ -3531,23 +3531,29 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Last Name:</b> ", info->last, NULL);  g_free(tmp);
 	}
 	if (info->email) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> ", info->email, NULL);  g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> <a href=\"mailto:", info->email, "\">", info->email, "</a>", NULL);  g_free(tmp);
+	}
+	if (info->numaddresses && info->email2) {
+		int i;
+		for (i = 0; i < info->numaddresses; i++) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> <a href=\"mailto:", info->email2[i], "\">", info->email2[i], "</a>", NULL);  g_free(tmp);
+		}
 	}
 	if (info->mobile) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Mobile:</b> ", info->mobile, NULL);  g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Mobile Phone:</b> ", info->mobile, NULL);  g_free(tmp);
+	}
+	if (info->gender) {
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Gender:</b> ", info->gender==1 ? "Female" : "Male", NULL);  g_free(tmp);
 	}
 	if (info->birthyear || info->birthmonth || info->birthday) {
 		char date[15];
-		snprintf(date, sizeof(date), "%hhd/%hhd/%hd", info->birthday, info->birthmonth, info->birthyear);
+		snprintf(date, sizeof(date), "%hhd/%hhd/%hd", info->birthmonth, info->birthday, info->birthyear);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Birthday:</b> ", date, NULL);  g_free(tmp);
 	}
 	if (info->age) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Age:</b> ", age, NULL);  g_free(tmp);
-	}
-	if (info->gender) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Age:</b> ", info->gender ? "Male" : "Female", NULL);  g_free(tmp);
 	}
 	if (info->personalwebpage) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Personal Web Page:</b> <a href=\"", info->personalwebpage, "\">", info->personalwebpage, "</a>", NULL);  g_free(tmp);

@@ -147,7 +147,7 @@ faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
 	/* Keep track of this request and the ICQ number and request ID */
 	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
 	info->reqid = snacid;
-	info->uin = atoi(sess->sn);
+	info->uin = atoi(uin);
 	info->next = sess->icq_info;
 	sess->icq_info = info;
 
@@ -230,6 +230,8 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 }
 
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
+	int i;
+
 	if (!info)
 		return;
 	free(info->nick);
@@ -244,6 +246,9 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	free(info->mobile);
 	free(info->homezip);
 	free(info->personalwebpage);
+	if (info->email2)
+		for (i = 0; i < info->numaddresses; i++)
+			free(info->email2[i]);
 	free(info->email2);
 	free(info->workcity);
 	free(info->workstate);
@@ -349,8 +354,9 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			info->mobile = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homezip = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homecountry = aimbs_getle16(&qbs);
-			/* 1 byte timezone */
-			/* 1 byte hide email flag */
+			/* 0x0a 00 02 00 */
+			/* 1 byte timezone? */
+			/* 1 byte hide email flag? */
 		} break;
 
 		case 0x00dc: { /* personal information */
@@ -364,9 +370,9 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			info->language1 = aimbs_getle8(&qbs);
 			info->language2 = aimbs_getle8(&qbs);
 			info->language3 = aimbs_getle8(&qbs);
+			/* 0x00 00 01 00 00 01 00 00 00 00 00 */
 		} break;
 
-		/* XXX - Look into the webpage thing for this, too */
 		case 0x00d2: { /* work information */
 			info->workcity = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workstate = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
@@ -378,7 +384,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			info->workcompany = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workdivision = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workposition = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, 2); /* Number of webpage addresses? */
+			aim_bstream_advance(&qbs, 2); /* 0x01 00 */
 			info->workwebpage = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 		} break;
 
@@ -386,10 +392,15 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			info->info = aimbs_getstr(&qbs, aimbs_getle16(&qbs)-1);
 		} break;
 
-		/* XXX - Find out the structure of this.  Probably make a 2d array of strings */
 		case 0x00eb: { /* email address(es) */
+			int i;
 			info->numaddresses = aimbs_getle16(&qbs);
-			info->email2 = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->email2 = (char **)calloc(info->numaddresses, sizeof(char *));
+			for (i = 0; i < info->numaddresses; i++) {
+				info->email2[i] = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+				if (i+1 != info->numaddresses)
+					aim_bstream_advance(&qbs, 1); /* 0x00 */
+			}
 		} break;
 
 		case 0x00f0: { /* personal interests */
@@ -399,6 +410,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		} break;
 
 		case 0x010e: { /* unknown */
+			/* 0x00 00 */
 		} break;
 
 		case 0x019a: { /* simple info */

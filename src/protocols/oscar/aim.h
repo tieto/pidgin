@@ -1293,7 +1293,7 @@ struct aim_icq_info {
 
 	/* email (0x00eb) */
 	fu16_t numaddresses;
-	char *email2;
+	char **email2;
 
 	/* we keep track of these in a linked list because we're 1337 */
 	struct aim_icq_info *next;
