@@ -19,7 +19,7 @@
  *
  */
 
-#include "../config.h"
+#include "config.h"
 
 #include <netdb.h>
 #include <gtk/gtk.h>
