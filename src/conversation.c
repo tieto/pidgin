@@ -850,7 +850,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 	int state;
 	int y;
 	int i;
-	char *smiley = g_malloc(5);
+	char *smiley = g_malloc(7);
 	
         if (flags & WFLAG_SYSTEM) {
 
@@ -914,25 +914,29 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                			buf2[y] = what[i];
                			y++;
 
-		                if ((what[i] == ':') || (what[i] == ';'))
+		                if ( (what[i] == ':') || (what[i] == ';') || (what[i] == 'O') )
                			{
-                       			if (state == 0)
+                       			if (state < 2)
                         	  	{
                                 		smiley[state] = what[i];
-                                		state = 1;
+                                		state++; 
                         		}
                         		else
+					{
                                 		state = 0;
+					}
                 		}
-                		else if ((what[i] == '-'))
+                		else if ( (what[i] == '-') || (what[i] == '^') || (what[i] == 'o') ) 
                 		{
-                        		if (state == 1)
+                        		if ((state == 1) || (state==2))
                         		{
                                 		smiley[state] = what[i];
-                                		state = 2;
-                        		}
+						state++;
+					}
                         		else
+					{
                                 		state = 0;
+					}
                 		}
                 		else if ((what[i] == ')') || (what[i] == '*') || (what[i] == '(') ||
                          		(what[i] == 'p') || (what[i] == 'P') || (what[i] == '$') ||
@@ -949,7 +953,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);			
                                 		state = 0;
                         		}
-                        		else if (state == 2)
+                        		else if ( (state == 2) || (state == 3))
                         		{
                                 		smiley[state] = what[i];
                                 		smiley[state+1] = 0;
