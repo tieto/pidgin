@@ -1217,7 +1217,7 @@ show_account_prefs(AccountPrefsDialogType type,
 
 	if (dialog->prpl_info->register_user != NULL) {
 		/* Register button */
-		button = gtk_button_new_with_label("Register");
+		button = gtk_button_new_with_label(_("Register"));
 		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_widget_show(button);
 
