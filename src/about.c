@@ -130,14 +130,15 @@ void show_about(GtkWidget *w, void *data)
 	/* Crazy Patch Writers */
 	str = g_strconcat(
 		"<FONT SIZE=\"4\">", _("Crazy Patch Writers"), ":</FONT><BR>"
-		"  Benjamin Miller<BR>"
+		"  Daniel 'datallah' Atallah<br>"
+		"  Ka-Hing 'javabsp' Cheung<br>"
 		"  Decklin Foster<BR>"
-		"  Etan 'deryni' Reisner<BR>"
+		"  Gary 'grim' Kramlich<br>"
 		"  Robert 'Robot101' McQueen<BR>"
+		"  Benjamin Miller<BR>"
+		"  Etan 'deryni' Reisner<BR>"
 		"  Kevin 'SimGuy' Stange<br>"
 		"  Stu 'nosnilmot' Tomlinson<br>"
-		"  Gary 'grim' Kramlich<br>"
-		"  Ka-Hing 'javabsp' Cheung<br>"
 		"<BR>", NULL);
 	gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 	g_free(str);
