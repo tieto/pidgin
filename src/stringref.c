@@ -97,7 +97,7 @@ void gaim_stringref_unref(GaimStringref *stringref)
 	if ((--(stringref->ref) & 0x7fffffff) == 0) {
 		if (stringref->ref & 0x80000000)
 			gclist = g_list_remove(gclist, stringref);
-		g_free(stringref);
+		stringref_free(stringref);
 	}
 }
 
