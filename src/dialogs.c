@@ -3675,6 +3675,9 @@ static void des_log_win(GObject *win, gpointer data)
 	char *x = g_object_get_data(win, "log_window");
 	if (x)
 		g_free(x);
+	x = g_object_get_data(win, "name");
+	if (x)
+		g_free(x);
 }
 
 void conv_show_log(GtkWidget *w, gpointer data)

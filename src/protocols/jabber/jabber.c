@@ -3784,11 +3784,16 @@ static void jabber_set_info(struct gaim_connection *gc, char *info)
 	/*
 	 * Send only if there's actually any *information* to send
 	 */
-	if((vc_node = xmlstr2xmlnode(info)) != NULL && xmlnode_get_name(vc_node) != NULL &&
-			g_ascii_strncasecmp(xmlnode_get_name(vc_node), "vcard", 5) == 0) {
-		xmlnode_insert_tag_node(x, vc_node);
-		debug_printf("jabber: vCard packet: %s\n", xmlnode2str(x));
-		gjab_send(gjc, x);
+	vc_node = xmlstr2xmlnode(info);
+
+	if(vc_node) {
+		if (xmlnode_get_name(vc_node) &&
+				!g_ascii_strncasecmp(xmlnode_get_name(vc_node), "vcard", 5)) {
+			xmlnode_insert_tag_node(x, vc_node);
+			debug_printf("jabber: vCard packet: %s\n", xmlnode2str(x));
+			gjab_send(gjc, x);
+		}
+		xmlnode_free(vc_node);
 	}
 
 	xmlnode_free(x);
