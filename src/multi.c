@@ -1206,7 +1206,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 6);
+	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
 #if 0
 	vbox2 = gtk_vbox_new(TRUE, 5);
