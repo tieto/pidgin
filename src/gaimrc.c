@@ -1631,8 +1631,10 @@ load_pounces()
 		old_pounce_opts_to_new(ph->options, &events, &actions);
 
 		pounce = gaim_gtkpounce_new(account, ph->name, events, actions,
-									ph->message, ph->command, ph->sound,
-									(ph->options & 0x100));
+			(*ph->message == '\0' ? NULL : ph->message),
+			(*ph->command == '\0' ? NULL : ph->command),
+			(*ph->sound   == '\0' ? NULL : ph->sound),
+			(ph->options & 0x100));
 
 		g_free(ph);
 	}
