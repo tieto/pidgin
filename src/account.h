@@ -528,7 +528,7 @@ gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
  * Returns the system log for an account.
  * Create it if it doesn't already exist.
  *
- * @param gc The account.
+ * @param account The account.
  *
  * @return The log.
  */
@@ -537,7 +537,7 @@ GaimLog *gaim_account_get_log(GaimAccount *account);
 /**
  * Frees the system log of an account
  *
- * @param gc The account.
+ * @param account The account.
  */
 	void gaim_account_destroy_log(GaimAccount *account);
 

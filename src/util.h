@@ -636,9 +636,9 @@ char *gaim_text_strip_mnemonic(const char *in);
  *
  * Blame SimGuy.
  *
- * @param i The number to add 8 to.
+ * @param x The number to add 8 to.
  *
- * @return i + 8
+ * @return x + 8
  */
 #define gaim_add_eight(x) ((x)+8)
 

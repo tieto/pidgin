@@ -201,8 +201,8 @@ GList *gaim_plugin_pref_get_choices(GaimPluginPref *pref);
 /**
  * Set the max length for a string plugin pref
  *
- * @param pref   The plugin pref
- * @param length The max length of the string
+ * @param pref       The plugin pref
+ * @param max_length The max length of the string
  */
 void gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_length);
 

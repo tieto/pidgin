@@ -853,7 +853,7 @@ gboolean gaim_request_field_list_get_multi_select(
  * Returns the data for a particular item.
  *
  * @param field The list field.
- * @param item  The item text.
+ * @param text  The item text.
  *
  * @return The data associated with the item.
  */
@@ -1037,7 +1037,7 @@ GaimAccount *gaim_request_field_account_get_value(
  * only online accounts will be shown.
  *
  * @param field    The account field.
- * @param show_all Whether or not to show all accounts.
+ * @return Whether or not to show all accounts.
  */
 gboolean gaim_request_field_account_get_show_all(
 		const GaimRequestField *field);

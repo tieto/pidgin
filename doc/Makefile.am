@@ -10,7 +10,9 @@ EXTRA_DIST = \
 	blist-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
+	gtkblist-signals.dox \
+	gtkconv-signals.dox \
+	gtkimhtml-signals.dox \
 	plugin-ids.dox \
 	gaim.1.in \
 	gaim-remote.1.in
-

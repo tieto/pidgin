@@ -55,6 +55,7 @@ typedef enum {
  * This struct gets filled out and is included in the GaimLog.  It contains everything
  * needed to write and read from logs.
  */
+/*@{*/
 struct _GaimLogLogger {
 	char *name;               /**< The logger's name */
 	char *id;                 /**< an identifier to refer to this logger */
@@ -191,6 +192,7 @@ extern "C" {
 	/**
 	 * Returns the size, in bytes, of all available logs in this conversation
 	 *
+	 * @param type                The type of the log
 	 * @param name                The name of the log
 	 * @param account             The account
 	 * @return                    The size in bytes
@@ -284,4 +286,3 @@ extern "C" {
 #endif
 
 #endif /* _GAIM_LOG_H_ */
-

@@ -355,7 +355,7 @@ GaimProtocol gaim_prpl_id_to_num(const char *id);
 /**
  * Finds a protocol plugin structure of the specified type.
  *
- * @param type The protocol plugin;
+ * @param id The protocol plugin;
  */
 GaimPlugin *gaim_find_prpl(const char *id);
 

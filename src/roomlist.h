@@ -219,10 +219,10 @@ void gaim_roomlist_cancel_get_list(GaimRoomlist *list);
  * On some protocols, the rooms in the category
  * won't be fetched until this is called.
  *
- * @param list The room list.
- * @param room The category that was expanded. The expression
- *             (category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
- *             must be true.
+ * @param list     The room list.
+ * @param category The category that was expanded. The expression
+ *                 (category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
+ *                 must be true.
  */
 void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category);
 
@@ -272,9 +272,10 @@ void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room);
 /**
  * Creates a new field.
  *
- * @param type The type of the field.
- * @param label The i18n'ed, user displayable name.
- * @param name The internal name of the field.
+ * @param type   The type of the field.
+ * @param label  The i18n'ed, user displayable name.
+ * @param name   The internal name of the field.
+ * @param hidden Hide the field.
  *
  * @return A new GaimRoomlistField, ready to be added to a GList and passed to
  *         gaim_roomlist_set_fields().
