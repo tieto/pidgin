@@ -4342,7 +4342,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
-	/* aim_ssi_cleanlist(sess, fr->conn); */
+	aim_ssi_cleanlist(sess, fr->conn);
 
 	/* Add from server list to local list */
 	tmp = 0;
@@ -4356,6 +4356,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					char *alias_utf8 = gaim_try_conv_to_utf8(alias);
 					struct buddy *buddy = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
+					/* Not with the current code, but that might be cleaner -- med */
 					free(alias);
 					if (buddy) {
 						/* Get server stored alias */
@@ -4367,8 +4368,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						struct group *g;
 						buddy = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
 						
-						if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans"))))
+						if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
 							g = gaim_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+							gaim_blist_add_group(g, NULL);
+						}
 						
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
 						gaim_blist_add_buddy(buddy, g, NULL);
