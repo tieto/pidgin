@@ -50,6 +50,8 @@ gaim_connection_new(GaimAccount *account)
 	gaim_connection_set_account(gc, account);
 	gaim_account_set_connection(account, gc);
 
+	connections = g_list_append(connections, gc);
+
 	return gc;
 }
 
@@ -68,6 +70,8 @@ gaim_connection_destroy(GaimConnection *gc)
 
 	gaim_debug(GAIM_DEBUG_INFO, "connection",
 			   "Destroying connection %p\n", gc);
+
+	connections = g_list_remove(connections, gc);
 
 	account = gaim_connection_get_account(gc);
 	gaim_account_set_connection(account, NULL);
@@ -118,8 +122,6 @@ gaim_connection_connect(GaimConnection *gc)
 
 	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
 
-	connections = g_list_append(connections, gc);
-
 	serv_login(account);
 }
 
@@ -146,8 +148,6 @@ gaim_connection_disconnect(GaimConnection *gc)
 			gaim_blist_remove_account(gaim_connection_get_account(gc));
 
 		serv_close(gc);
-
-		connections = g_list_remove(connections, gc);
 
 		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
@@ -348,6 +348,12 @@ gaim_connection_notice(GaimConnection *gc, const char *text)
 		ops->notice(gc, text);
 }
 
+static gboolean disconnect_conn_cb(gpointer data)
+{
+	gaim_connection_disconnect(data);
+	return FALSE;
+}
+
 void
 gaim_connection_error(GaimConnection *gc, const char *text)
 {
@@ -361,7 +367,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
 
-	gaim_connection_disconnect(gc);
+	g_timeout_add(0, disconnect_conn_cb, gc);
 }
 
 void

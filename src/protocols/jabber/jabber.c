@@ -139,7 +139,6 @@ struct jabber_data {
 	gboolean did_import;
 	GSList *chats;
 	time_t idle;
-	gboolean die;
 	GHashTable *buddies;
 	GSList *file_transfers;
 };
@@ -675,8 +674,6 @@ static void gjab_recv(gjconn gjc)
 		gaim_debug(GAIM_DEBUG_MISC, "jabber",
 				   "input (len %d): %s\n", len, buf);
 		XML_Parse(gjc->parser, buf, len, 0);
-		if (jd->die)
-			gaim_connection_destroy(GJ_GC(gjc));
 	} else if (len < 0 || errno != EAGAIN) {
 		STATE_EVT(JCONN_STATE_OFF)
 	}
@@ -1938,8 +1935,6 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 		} else {
 			gaim_connection_error(GJ_GC(gjc), _("Unknown login error"));
 		}
-
-		jd->die = TRUE;
 	}
 }
 
@@ -4197,8 +4192,6 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 		} else {
 			gaim_connection_error(GJ_GC(gjc), _("Unknown registration error"));
 		}
-
-		jd->die = TRUE;
 	}
 }
 
@@ -4273,7 +4266,7 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
  */
 void jabber_register_user(GaimAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
+	GaimConnection *gc = gaim_connection_new(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
