@@ -699,6 +699,8 @@ extern void update_color(GtkWidget *, GtkWidget *);
 extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);
 extern void update_connection_dependent_prefs();
+extern void build_allow_list();
+extern void build_block_list();
 extern GtkWidget *prefs_away_list;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;

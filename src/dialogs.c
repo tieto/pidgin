@@ -1741,8 +1741,10 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         }
 
         if (d) {
+		build_block_list();
 		serv_add_deny(p->gc, name);
         } else {
+		build_allow_list();
 		serv_add_permit(p->gc, name);
         }
 

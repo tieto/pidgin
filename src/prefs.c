@@ -1393,7 +1393,7 @@ static void des_deny_opt(GtkWidget *d, gpointer e)
 	block_list = NULL;
 }
 
-static void build_allow_list()
+void build_allow_list()
 {
 	GtkWidget *label;
 	GtkWidget *list_item;
