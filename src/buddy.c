@@ -1956,7 +1956,7 @@ static void update_idle_time(struct buddy_show *bs)
 	style = gtk_style_new();
 	gdk_font_unref(style->font);
 	style->font = gdk_font_ref(GTK_WIDGET(bs->label)->style->font);
-	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle) && (t - b->idle >= 1200)) {
+	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle)) {
 		style->fg[GTK_STATE_NORMAL].red =
 		  (style->fg[GTK_STATE_NORMAL].red / 2) + (style->bg[GTK_STATE_NORMAL].red / 2);
 		style->fg[GTK_STATE_NORMAL].green = 

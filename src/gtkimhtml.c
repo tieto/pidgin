@@ -1944,7 +1944,6 @@ gtk_imhtml_init (GtkIMHtml *imhtml)
 		{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT }
 	};
 
-	imhtml->default_font = gtk_imhtml_font_load (imhtml, DEFAULT_FONT_NAME, FALSE, FALSE, 0);
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
