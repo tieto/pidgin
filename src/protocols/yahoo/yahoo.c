@@ -419,7 +419,7 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 			split = g_strsplit(*tmp, ":", 2);
 			if (!split)
 				continue;
-			if (!split[1]) {
+			if (!split[0] || !split[1]) {
 				g_strfreev(split);
 				continue;
 			}
