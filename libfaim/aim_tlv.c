@@ -45,9 +45,11 @@ struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
 
 		cur->tlv = aim_createtlv();	
 		cur->tlv->type = type;
-		cur->tlv->length = length;
-		cur->tlv->value = (u_char *)malloc(length*sizeof(u_char));
-		memcpy(cur->tlv->value, buf+pos, length);
+		cur->tlv->length = length; 
+		if (length) {
+		  cur->tlv->value = (unsigned char *)malloc(length);
+		  memcpy(cur->tlv->value, buf+pos, length);
+		} 
 
 		cur->next = list;
 		list = cur;
