@@ -45,7 +45,7 @@ static void make_connect_menu(GtkWidget *box) {
 	GtkWidget *optmenu;
 
 	optmenu = gaim_gtk_account_option_menu_new(NULL, FALSE,
-			G_CALLBACK(select_account_cb), NULL);
+			G_CALLBACK(select_account_cb), NULL, NULL);
 
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
 

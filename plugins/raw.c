@@ -109,7 +109,7 @@ plugin_load(GaimPlugin *plugin)
 
 	/* Account drop-down menu. */
 	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
-			G_CALLBACK(account_changed_cb), NULL);
+			G_CALLBACK(account_changed_cb), NULL, NULL);
 
 	if (gaim_connections_get_all())
 		account = (GaimAccount *)gaim_connections_get_all()->data;
