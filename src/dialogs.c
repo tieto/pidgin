@@ -1191,6 +1191,7 @@ void show_new_bp(char *name)
 	
 	/* Set up the different options */
 	b->p_signon = gtk_check_button_new_with_label(_("Sign On"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
 	b->p_unaway = gtk_check_button_new_with_label(_("Return from away"));
 	b->p_unidle = gtk_check_button_new_with_label(_("Return from idle"));
 
