@@ -94,6 +94,14 @@ GaimBuddyIcon *gaim_buddy_icon_unref(GaimBuddyIcon *icon);
 void gaim_buddy_icon_update(GaimBuddyIcon *icon);
 
 /**
+ * Caches a buddy icon associated with a specific buddy to disk.
+ *
+ * @param icon  The buddy icon.
+ * @param buddy The buddy that this icon belongs to.
+ */
+void gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy);
+
+/**
  * Sets the buddy icon's account.
  *
  * @param icon    The buddy icon.
@@ -174,6 +182,41 @@ void gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
  */
 GaimBuddyIcon *gaim_buddy_icons_find(const GaimAccount *account,
 									 const char *username);
+
+/**
+ * Sets whether or not buddy icon caching is enabled.
+ *
+ * @param caching TRUE of buddy icon caching should be enabled, or
+ *                FALSE otherwise.
+ */
+void gaim_buddy_icons_set_caching(gboolean caching);
+
+/**
+ * Returns whether or not buddy icon caching should be enabled.
+ *
+ * The default is TRUE, unless otherwise specified by
+ * gaim_buddy_icons_set_caching().
+ *
+ * @return TRUE if buddy icon caching is enabled, or FALSE otherwise.
+ */
+gboolean gaim_buddy_icons_is_caching(void);
+
+/**
+ * Sets the directory used to store buddy icon cache files.
+ *
+ * @param dir The directory to store buddy icon cache files to.
+ */
+void gaim_buddy_icons_set_cache_dir(const char *cache_dir);
+
+/**
+ * Returns the directory used to store buddy icon cache files.
+ *
+ * The default directory is GAIMDIR/icons, unless otherwise specified
+ * by gaim_buddy_icons_set_cache_dir().
+ *
+ * @return The directory to store buddy icon cache files to.
+ */
+const char *gaim_buddy_icons_get_cache_dir(void);
 
 /**
  * Returns the buddy icon subsystem handle.

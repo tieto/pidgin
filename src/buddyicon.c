@@ -23,8 +23,12 @@
 #include "internal.h"
 #include "buddyicon.h"
 #include "conversation.h"
+#include "debug.h"
+#include "util.h"
 
 static GHashTable *account_cache = NULL;
+static char       *cache_dir     = NULL;
+static gboolean    icon_caching  = TRUE;
 
 GaimBuddyIcon *
 gaim_buddy_icon_new(GaimAccount *account, const char *username,
@@ -154,6 +158,62 @@ gaim_buddy_icon_update(GaimBuddyIcon *icon)
 }
 
 void
+gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
+{
+	const void *data;
+	const char *dirname;
+	char *random;
+	char *filename;
+	char *old_icon;
+	size_t len;
+	FILE *file = NULL;
+
+	g_return_if_fail(icon  != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	if (!gaim_buddy_icons_is_caching())
+		return;
+
+	data = gaim_buddy_icon_get_data(icon, &len);
+
+	random   = g_strdup_printf("%x", g_random_int());
+	dirname  = gaim_buddy_icons_get_cache_dir();
+	filename = g_build_filename(dirname, random, NULL);
+	old_icon = gaim_buddy_get_setting(buddy, "buddy_icon");
+
+	g_free(random);
+
+	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
+	{
+		gaim_debug_info("buddy icons", "Creating icon cache directory.\n");
+
+		if (mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
+		{
+			gaim_debug_error("buddy icons",
+							 "Unable to create directory %s: %s\n",
+							 dirname, strerror(errno));
+		}
+	}
+
+	if ((file = fopen(filename, "wb")) != NULL)
+	{
+		fwrite(data, 1, len, file);
+		fclose(file);
+	}
+
+	if (old_icon != NULL)
+	{
+		unlink(old_icon);
+		g_free(old_icon);
+	}
+
+	gaim_buddy_set_setting(buddy, "buddy_icon", filename);
+	gaim_blist_save();
+
+	g_free(filename);
+}
+
+void
 gaim_buddy_icon_set_account(GaimBuddyIcon *icon, GaimAccount *account)
 {
 	g_return_if_fail(icon    != NULL);
@@ -249,6 +309,35 @@ gaim_buddy_icons_find(const GaimAccount *account, const char *username)
 	return g_hash_table_lookup(icon_cache, username);
 }
 
+void
+gaim_buddy_icons_set_caching(gboolean caching)
+{
+	icon_caching = caching;
+}
+
+gboolean
+gaim_buddy_icons_is_caching(void)
+{
+	return icon_caching;
+}
+
+void
+gaim_buddy_icons_set_cache_dir(const char *dir)
+{
+	g_return_if_fail(cache_dir != NULL);
+
+	if (cache_dir != NULL)
+		g_free(cache_dir);
+
+	cache_dir = g_strdup(dir);
+}
+
+const char *
+gaim_buddy_icons_get_cache_dir(void)
+{
+	return cache_dir;
+}
+
 void *
 gaim_buddy_icons_get_handle()
 {
@@ -263,6 +352,8 @@ gaim_buddy_icons_init()
 	account_cache = g_hash_table_new_full(
 		g_direct_hash, g_direct_equal,
 		NULL, (GFreeFunc)g_hash_table_destroy);
+
+	cache_dir = g_build_filename(gaim_user_dir(), "icons", NULL);
 }
 
 void
