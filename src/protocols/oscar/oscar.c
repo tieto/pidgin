@@ -549,8 +549,8 @@ static void oscar_login(struct gaim_account *account) {
 		gc->flags |= OPT_CONN_HTML;
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
-	od->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
-	od->buddy_caps = g_hash_table_new(g_str_hash, g_str_equal);
+	od->supports_tn = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	od->buddy_caps = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -1632,7 +1632,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!aim_sncmp(gc->username, info->sn))
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
 
-	g_hash_table_replace(od->buddy_caps, normalize(info->sn),
+	g_hash_table_replace(od->buddy_caps, g_strdup(normalize(info->sn)),
 			GINT_TO_POINTER(caps));
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
@@ -2033,7 +2033,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
-		char *who = normalize(userinfo->sn);
+		char *who = g_strdup(normalize(userinfo->sn));
 		if (!g_hash_table_lookup(od->supports_tn, who))
 			g_hash_table_insert(od->supports_tn, who, (gpointer)1);
 	}
