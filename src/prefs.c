@@ -693,7 +693,7 @@ GtkWidget *browser_page() {
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic("_Manual: ");
+	label = gtk_label_new_with_mnemonic(_("_Manual: "));
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
@@ -1050,14 +1050,14 @@ static GtkWidget *plugin_page ()
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
 
 	
-	col = gtk_tree_view_column_new_with_attributes ("Load",
+	col = gtk_tree_view_column_new_with_attributes (_("Load"),
 							rend,
 							"active", 0,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 
 	rendt = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes ("Name",
+	col = gtk_tree_view_column_new_with_attributes (_("Name"),
 							rendt,
 							"text", 1,
 							NULL);
@@ -1296,14 +1296,14 @@ GtkWidget *sound_events_page() {
 	gtk_tree_selection_select_path(sel, path);
 	gtk_tree_path_free(path);
 
-	col = gtk_tree_view_column_new_with_attributes ("Play",
+	col = gtk_tree_view_column_new_with_attributes (_("Play"),
 							rend,
 							"active", 0,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 
 	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes ("Event",
+	col = gtk_tree_view_column_new_with_attributes (_("Event"),
 							rend,
 							"text", 1,
 							NULL);
