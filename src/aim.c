@@ -238,72 +238,81 @@ void show_login()
 	}
 
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	/* Set the WM name and class */
 	gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login", "Gaim");
-	/* Disallow resizing */
 	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
+	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
+			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
+	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 	gtk_widget_realize(mainwindow);
+	aol_icon(mainwindow->window);
+	gdk_window_set_group(mainwindow->window, mainwindow->window);
 
-	signon = gtk_button_new_with_label(_("Signon"));
-#ifndef NO_MULTI
-	accts = gtk_button_new_with_label(_("Accounts"));
-#endif
-	cancel = gtk_button_new_with_label(_("Cancel"));
-	reg = gtk_button_new_with_label(_("Register"));
-	options = gtk_button_new_with_label(_("Options"));
-#ifdef GAIM_PLUGINS
-	plugs = gtk_button_new_with_label(_("Plugins"));
-#endif
 	table = gtk_table_new(8, 2, FALSE);
+	gtk_container_add(GTK_CONTAINER(mainwindow), table);
+	gtk_widget_show(table);
+
+	style = gtk_widget_get_style(mainwindow);
+	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
+					  &style->bg[GTK_STATE_NORMAL], (gchar **) aol_logo);
+	pmw = gtk_pixmap_new(pm, mask);
+	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
+	gtk_widget_show(pmw);
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(mask);
+
+	label = gtk_label_new(_("Screen Name: "));
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, 0, 0, 5, 5);
+	gtk_widget_show(label);
+
 	name = gtk_combo_new();
-	pass = gtk_entry_new();
-
 	gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
-
-	if (display_options & OPT_DISP_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
-#ifndef NO_MULTI
-		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
-#endif
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
-#ifdef GAIM_PLUGINS
-		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
-#endif
-	}
-
-	/* Make the buttons do stuff */
-	/* Clicking the button initiates a login */
-	gtk_signal_connect(GTK_OBJECT(signon), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
-#ifndef NO_MULTI
-	gtk_signal_connect(GTK_OBJECT(accts), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
-#endif
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
-	/* Allow user to change prefs before logging in */
-	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
-#ifdef GAIM_PLUGINS
-	/* Allow user to control plugins before logging in */
-	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
-#endif
-
-	/* Register opens the right URL */
-	gtk_signal_connect(GTK_OBJECT(reg), "clicked",
-			   GTK_SIGNAL_FUNC(register_user), NULL);
-	/* Enter in the username clears the password and sets
-	   the pointer in the password field */
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",
 			   GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
 			   GTK_SIGNAL_FUNC(combo_changed), name);
+	gtk_widget_set_usize(name, 100, 0);
+	gtk_table_attach(GTK_TABLE(table), name, 1, 2, 2, 3, 0, 0, 5, 5);
+	gtk_widget_show(name);
 
+	label = gtk_label_new(_("Password: "));
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, 0, 0, 5, 5);
+	gtk_widget_show(label);
+
+	pass = gtk_entry_new();
+	gtk_widget_set_usize(pass, 100, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	gtk_signal_connect(GTK_OBJECT(pass), "activate", GTK_SIGNAL_FUNC(doenter), mainwindow);
-	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
-			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
-	/* Homogenous spacing, 10 padding */
-	bbox = gtk_hbox_new(TRUE, 10);
-	hbox = gtk_hbox_new(TRUE, 10);
+	gtk_table_attach(GTK_TABLE(table), pass, 1, 2, 3, 4, 0, 0, 5, 5);
+	gtk_widget_show(pass);
+
 	sbox = gtk_vbox_new(TRUE, 5);
+	gtk_container_border_width(GTK_CONTAINER(sbox), 10);
+	gtk_table_attach(GTK_TABLE(table), sbox, 0, 2, 7, 8, 0, 0, 5, 5);
+	gtk_widget_show(sbox);
+
+	bbox = gtk_hbox_new(TRUE, 10);
+	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	cancel = gtk_button_new_with_label(_("Cancel"));
+#ifndef NO_MULTI
+	accts = gtk_button_new_with_label(_("Accounts"));
+#endif
+	signon = gtk_button_new_with_label(_("Signon"));
+
+	if (display_options & OPT_DISP_COOL_LOOK) {
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+#ifndef NO_MULTI
+		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
+#endif
+		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
+	}
+
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
+#ifndef NO_MULTI
+	gtk_signal_connect(GTK_OBJECT(accts), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
+#endif
+	gtk_signal_connect(GTK_OBJECT(signon), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
 
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
 #ifndef NO_MULTI
@@ -311,60 +320,46 @@ void show_login()
 #endif
 	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
 
+	gtk_widget_show(cancel);
+#ifndef NO_MULTI
+	gtk_widget_show(accts);
+#endif
+	gtk_widget_show(signon);
+
+	hbox = gtk_hbox_new(TRUE, 10);
+	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
+	gtk_widget_show(hbox);
+
+	reg = gtk_button_new_with_label(_("Register"));
+	options = gtk_button_new_with_label(_("Options"));
+#ifdef GAIM_PLUGINS
+	plugs = gtk_button_new_with_label(_("Plugins"));
+#endif
+	if (display_options & OPT_DISP_COOL_LOOK) {
+		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
+#ifdef GAIM_PLUGINS
+		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
+#endif
+	}
+
+	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(register_user), NULL);
+	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
+#ifdef GAIM_PLUGINS
+	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
+#endif
+
 	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 #ifdef GAIM_PLUGINS
 	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
-
-	/* Labels for selectors and text boxes */
-	label = gtk_label_new(_("Screen Name: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, 0, 0, 5, 5);
-	gtk_widget_show(label);
-	label = gtk_label_new(_("Password: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, 0, 0, 5, 5);
-	gtk_widget_show(label);
-
+	gtk_widget_show(reg);
 	gtk_widget_show(options);
 #ifdef GAIM_PLUGINS
 	gtk_widget_show(plugs);
 #endif
-
-	/* Adjust sizes of inputs */
-	gtk_widget_set_usize(name, 100, 0);
-	gtk_widget_set_usize(pass, 100, 0);
-
-
-	/* Attach the buttons at the bottom */
-	gtk_widget_show(signon);
-	gtk_widget_show(cancel);
-	gtk_widget_show(reg);
-#ifndef NO_MULTI
-	gtk_widget_show(accts);
-#endif
-	gtk_widget_show(bbox);
-	gtk_widget_show(hbox);
-	gtk_widget_show(sbox);
-	gtk_table_attach(GTK_TABLE(table), sbox, 0, 2, 7, 8, 0, 0, 5, 5);
-
-	/* Text fields */
-
-	gtk_table_attach(GTK_TABLE(table), name, 1, 2, 2, 3, 0, 0, 5, 5);
-	gtk_widget_show(name);
-	gtk_table_attach(GTK_TABLE(table), pass, 1, 2, 3, 4, 0, 0, 5, 5);
-	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
-	gtk_widget_show(pass);
-
-	gtk_container_border_width(GTK_CONTAINER(sbox), 10);
-
-	gtk_container_add(GTK_CONTAINER(mainwindow), table);
-
-	gtk_widget_show(table);
-	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
-
 
 	if (aim_users) {
 		struct aim_user *c = (struct aim_user *)aim_users->data;
@@ -378,29 +373,9 @@ void show_login()
 		gtk_widget_grab_focus(name);
 	}
 
-	gtk_widget_realize(mainwindow);
-
-	/* Logo at the top */
-	style = gtk_widget_get_style(mainwindow);
-	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
-					  &style->bg[GTK_STATE_NORMAL], (gchar **) aol_logo);
-	pmw = gtk_pixmap_new(pm, mask);
-	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
-	gtk_widget_show(pmw);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
-
-
-	aol_icon(mainwindow->window);
-#ifndef _WIN32
-	gdk_window_set_group(mainwindow->window, mainwindow->window);
-#endif
-
-
 	gtk_widget_show(mainwindow);
 
 	SetTickerPrefs();
-
 }
 
 extern void show_debug(GtkObject *);
