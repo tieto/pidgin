@@ -1197,7 +1197,7 @@ int gaim_build_dir (char *path, int mode)
 		return -1;
 
 	dir = g_new0(char, strlen(path) + 1);
-	components = g_strsplit(path, delim, -1);
+	components = g_strsplit(path + 1, delim, -1);
 	len = 0;
 	for (cur = 0; components[cur] != NULL; cur++) {
 		dir[len++] = G_DIR_SEPARATOR;
@@ -1225,6 +1225,11 @@ int gaim_build_dir (char *path, int mode)
 			g_free(dir);
 			return -1;
 		}
+		/* For some reason, the above mkdir doesn't properly
+		 * set permissions for some people ... and I have NO
+		 * idea why not.  In the meantime, we'll attempt to
+		 * set them explicitly. */
+		chmod(dir, mode);
 	}
 
 	g_strfreev(components);
