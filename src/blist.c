@@ -349,24 +349,6 @@ void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
 
-#if 0
-void gaim_blist_update_buddy_idle(GaimBuddy *buddy, int idle)
-{
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-
-	g_return_if_fail(buddy != NULL);
-
-	if (buddy->idle == idle)
-		return;
-
-	buddy->idle = idle;
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
-
-	if (ops && ops->update)
-		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
-}
-#endif
-
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
