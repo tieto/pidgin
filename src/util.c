@@ -2777,7 +2777,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
 		gfud->webdata[gfud->len] = 0;
 
-		gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata);
+		/* gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata); */
 
 		gaim_input_remove(gfud->inpa);
 		close(sock);
@@ -2798,7 +2798,7 @@ gaim_url_fetch(const char *url, gboolean full,
 
 	g_return_if_fail(url != NULL);
 	g_return_if_fail(cb  != NULL);
-	
+
 	gaim_debug_info("gaim_url_fetch",
 			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
 			 url, full, user_agent?user_agent:"(null)", http11);
