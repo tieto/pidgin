@@ -916,6 +916,13 @@ gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b) {
 	gchar *b_norm=NULL;
 	gint ret=-1;
 
+	if(!a && b)
+		return -1;
+	else if(!b && a)
+		return 1;
+	else if(!a && !b)
+		return 0;
+
 	if(!g_utf8_validate(a, -1, NULL) || !g_utf8_validate(b, -1, NULL)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "gaim_utf8_strcasecmp", "One or both parameters are invalid UTF8\n");
 		return ret;
