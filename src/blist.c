@@ -432,7 +432,7 @@ void gaim_blist_rename_group(GaimGroup *group, const char *name)
 	}
 }
 
-GaimChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
+GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
 {
 	GaimChat *chat;
 	GaimBlistUiOps *ops;
@@ -458,7 +458,7 @@ GaimChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTabl
 	return chat;
 }
 
-char *gaim_blist_chat_get_display_name(GaimChat *chat)
+char *gaim_chat_get_display_name(GaimChat *chat)
 {
 	char *name;
 
@@ -1169,7 +1169,7 @@ const char *  gaim_get_buddy_alias (GaimBuddy *buddy)
 	return ret ? ret : buddy->name;
 }
 
-const char *gaim_blist_chat_get_name(GaimChat *chat)
+const char *gaim_chat_get_name(GaimChat *chat)
 {
 	if(chat->alias && *chat->alias) {
 		return chat->alias;
@@ -1313,7 +1313,7 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 }
 
 GaimGroup *
-gaim_blist_chat_get_group(GaimChat *chat)
+gaim_chat_get_group(GaimChat *chat)
 {
 	g_return_val_if_fail(chat != NULL, NULL);
 
@@ -2025,7 +2025,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			GaimChat *chat = gaim_blist_chat_new(account,
+			GaimChat *chat = gaim_chat_new(account,
 					blist_parser_chat_alias, blist_parser_chat_components);
 			gaim_blist_add_chat(chat,blist_parser_group,
 					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_group));
@@ -2548,13 +2548,13 @@ void gaim_group_set_setting(GaimGroup *g, const char *key,
 	g_hash_table_replace(g->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_group_get_setting(GaimGroup *g, const char *key) {
+const char *gaim_group_get_setting(GaimGroup *g, const char *key) {
 	if(!g)
 		return NULL;
-	return g_strdup(g_hash_table_lookup(g->settings, key));
+	return g_hash_table_lookup(g->settings, key);
 }
 
-void gaim_blist_chat_set_setting(GaimChat *c, const char *key,
+void gaim_chat_set_setting(GaimChat *c, const char *key,
 		const char *value)
 {
 	if(!c)
@@ -2562,11 +2562,11 @@ void gaim_blist_chat_set_setting(GaimChat *c, const char *key,
 	g_hash_table_replace(c->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_blist_chat_get_setting(GaimChat *c, const char *key)
+const char *gaim_chat_get_setting(GaimChat *c, const char *key)
 {
 	if(!c)
 		return NULL;
-	return g_strdup(g_hash_table_lookup(c->settings, key));
+	return g_hash_table_lookup(c->settings, key);
 }
 
 void gaim_buddy_set_setting(GaimBuddy *b, const char *key,
@@ -2576,10 +2576,10 @@ void gaim_buddy_set_setting(GaimBuddy *b, const char *key,
 	g_hash_table_replace(b->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_buddy_get_setting(GaimBuddy *b, const char *key) {
+const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key) {
 	if(!b)
 		return NULL;
-	return g_strdup(g_hash_table_lookup(b->settings, key));
+	return g_hash_table_lookup(b->settings, key);
 }
 
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline) {

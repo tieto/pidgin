@@ -1817,7 +1817,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
-		char *filename = NULL, *b16 = NULL, *saved_b16 = NULL;
+		const char *filename = NULL, *saved_b16 = NULL;
+		char *b16 = NULL;
 		GaimBuddy *b = NULL;
 
 		b16 = gaim_base16_encode(info->iconcsum, info->iconcsumlen);
@@ -1830,7 +1831,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (filename != NULL) {
 			if (g_file_test(filename, G_FILE_TEST_EXISTS))
 				saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
-			g_free(filename);
 		} else
 			saved_b16 = NULL;
 
@@ -1845,7 +1845,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
 			}
 		}
-		g_free(saved_b16);
 		g_free(b16);
 	}
 
@@ -4896,11 +4895,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							continue;
 						buddy = (GaimBuddy *)bnode;
 						if (buddy->account == gc->account) {
-							gchar *servernick = gaim_buddy_get_setting(buddy, "servernick");
-							if (servernick) {
+							const char *servernick = gaim_buddy_get_setting(buddy, "servernick");
+							if (servernick)
 								serv_got_alias(gc, buddy->name, servernick);
-								g_free(servernick);
-							}
+
 							if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
 								/* Store local alias on server */
 								char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);

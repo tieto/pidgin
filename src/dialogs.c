@@ -470,7 +470,7 @@ void show_confirm_del(GaimBuddy *b)
 
 void show_confirm_del_blist_chat(GaimChat *chat)
 {
-	char *name = gaim_blist_chat_get_display_name(chat);
+	char *name = gaim_chat_get_display_name(chat);
 	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
 
 	gaim_request_action(NULL, NULL, _("Remove Chat"), text, -1, chat, 2,

@@ -164,7 +164,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	const char *dirname;
 	char *random;
 	char *filename;
-	char *old_icon;
+	const char *old_icon;
 	size_t len;
 	FILE *file = NULL;
 
@@ -202,10 +202,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	}
 
 	if (old_icon != NULL)
-	{
 		unlink(old_icon);
-		g_free(old_icon);
-	}
 
 	gaim_buddy_set_setting(buddy, "buddy_icon", filename);
 	gaim_blist_save();

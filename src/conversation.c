@@ -2254,7 +2254,7 @@ conv_placement_by_group(GaimConversation *conv)
 									gaim_conversation_get_name(conv));
 
 		if (chat != NULL)
-			group = gaim_blist_chat_get_group(chat);
+			group = gaim_chat_get_group(chat);
 
 		/* Go through the list of chats and find one with this group. */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
@@ -2276,7 +2276,7 @@ conv_placement_by_group(GaimConversation *conv)
 					gaim_conversation_get_name(conv2));
 
 				if (chat2 != NULL)
-					group2 = gaim_blist_chat_get_group(chat2);
+					group2 = gaim_chat_get_group(chat2);
 
 				if (group == group2) {
 					gaim_conv_window_add_conversation(win2, conv);

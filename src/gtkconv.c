@@ -5274,11 +5274,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
 					gaim_conversation_get_name(conv))) != NULL) {
-		char *file = gaim_buddy_get_setting(buddy, "buddy_icon");
-		if(file) {
+		const char *file;
+		if((file = gaim_buddy_get_setting(buddy, "buddy_icon")))
 			gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(file, &err);
-			g_free(file);
-		}
 	}
 	else
 	{

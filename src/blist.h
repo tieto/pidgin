@@ -322,7 +322,7 @@ void gaim_blist_rename_group(GaimGroup *group, const char *name);
  * @param components The info the prpl needs to join the chat
  * @return           A newly allocated chat
  */
-GaimChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTable *components);
+GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components);
 
 /**
  * Gets the alias of the chat, or the chat name if the alias does not exist
@@ -330,7 +330,7 @@ GaimChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTabl
  * @param chat    The chat
  * @return        The display name of the chat
  */
-char *gaim_blist_chat_get_display_name(GaimChat *chat);
+char *gaim_chat_get_display_name(GaimChat *chat);
 
 /**
  * Adds a new chat to the buddy list.
@@ -519,7 +519,7 @@ const char *gaim_get_buddy_alias(GaimBuddy *buddy);
  * @param chat   The chat whose name will be returned.
  * @return       The alias (if set), or first component value.
  */
-const char *gaim_blist_chat_get_name(GaimChat *chat);
+const char *gaim_chat_get_name(GaimChat *chat);
 
 /**
  * Finds the buddy struct given a screenname and an account
@@ -586,7 +586,7 @@ GaimChat *gaim_blist_find_chat(GaimAccount *account, const char *name);
  *
  * @return The parent group, or @c NULL if the chat is not in a group.
  */
-GaimGroup *gaim_blist_chat_get_group(GaimChat *chat);
+GaimGroup *gaim_chat_get_group(GaimChat *chat);
 
 /**
  * Returns the group of which the buddy is a member.
@@ -720,7 +720,7 @@ void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value);
  * @param key    The key to retrieve the data with
  * @return       The associated data or NULL if no data is associated
  */
-char *gaim_group_get_setting(GaimGroup *g, const char *key);
+const char *gaim_group_get_setting(GaimGroup *g, const char *key);
 
 /**
  * Associates some data with the chat in the xml buddy list
@@ -729,17 +729,17 @@ char *gaim_group_get_setting(GaimGroup *g, const char *key);
  * @param key    The key used to retrieve the data
  * @param value  The data to set
  */
-void gaim_blist_chat_set_setting(GaimChat *c, const char *key, const char *value);
+void gaim_chat_set_setting(GaimChat *c, const char *key, const char *value);
 
 /**
- * Retrieves data from the XML buddy list set by gaim_blist_chat_set_setting())
+ * Retrieves data from the XML buddy list set by gaim_chat_set_setting())
  *
  * @param c      The chat to retrieve data from
  * @param key    The key to retrieve the data with
  *
  * @return       The associated data or NULL if no data is associated
  */
-char *gaim_blist_chat_get_setting(GaimChat *c, const char *key);
+const char *gaim_chat_get_setting(GaimChat *c, const char *key);
 
 /**
  * Associates some data with the buddy in the xml buddy list
@@ -757,7 +757,7 @@ void gaim_buddy_set_setting(GaimBuddy *b, const char *key, const char *value);
  * @param key    The key to retrieve the data with
  * @return       The associated data or NULL if no data is associated
  */
-char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
+const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 
 /*@}*/
 

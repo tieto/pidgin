@@ -14,20 +14,20 @@ const char *
 gaim_chat_get_display_name(chat)
 	Gaim::BuddyList::Chat chat
 CODE:
-	RETVAL = gaim_blist_chat_get_display_name(chat);
+	RETVAL = gaim_chat_get_display_name(chat);
 OUTPUT:
 	RETVAL
 
 Gaim::BuddyList::Group
-gaim_blist_chat_get_group(chat)
+gaim_chat_get_group(chat)
 	Gaim::BuddyList::Chat chat
 CODE:
-	RETVAL = gaim_blist_chat_get_group(chat);
+	RETVAL = gaim_chat_get_group(chat);
 OUTPUT:
 	RETVAL
 
 void
-gaim_blist_chat_set_setting(chat, key, value)
+gaim_chat_set_setting(chat, key, value)
 	Gaim::BuddyList::Chat chat
 	const char *key
 	const char *value
@@ -37,7 +37,7 @@ gaim_chat_get_setting(chat, key)
 	Gaim::BuddyList::Chat chat
 	const char *key
 CODE:
-	RETVAL = gaim_blist_chat_get_setting(chat, key);
+	RETVAL = gaim_chat_get_setting(chat, key);
 OUTPUT:
 	RETVAL
 
