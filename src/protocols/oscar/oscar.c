@@ -1776,8 +1776,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	if (caps & AIM_CAPS_ICQ)
-		caps ^= AIM_CAPS_ICQ;
+	if (caps & AIM_CAPS_ICQ_DIRECT)
+		caps ^= AIM_CAPS_ICQ_DIRECT;
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
 		time(&time_idle);
@@ -3011,8 +3011,13 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+/*
+ * We get this error when there was an error in the locate family.  This 
+ * usually happens because libfaim couldn't get info for someone when it 
+ * tried automatically.  Seeing the message gets annoying...
+ */
 static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
-	char *buf;
+	/* char *buf; */
 	va_list ap;
 	fu16_t reason;
 	char *destn;
@@ -3022,10 +3027,12 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
+	/*
 	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
 	gaim_notify_error(sess->aux_data, NULL, buf,
 					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
 	g_free(buf);
+	*/
 
 	return 1;
 }
@@ -3063,7 +3070,7 @@ static char *caps_string(guint caps)
 				tmp = _("Voice");
 				break;
 			case AIM_CAPS_DIRECTIM:
-				tmp = _("Direct IM");
+				tmp = _("AIM Direct IM");
 				break;
 			case AIM_CAPS_CHAT:
 				tmp = _("Chat");
@@ -3084,8 +3091,8 @@ static char *caps_string(guint caps)
 			case AIM_CAPS_SENDBUDDYLIST:
 				tmp = _("Send Buddy List");
 				break;
-			case AIM_CAPS_ICQ:
-				tmp = _("EveryBuddy Bug");
+			case AIM_CAPS_ICQ_DIRECT:
+				tmp = _("ICQ Direct Connect");
 				break;
 			case AIM_CAPS_APINFO:
 				tmp = _("AP User");

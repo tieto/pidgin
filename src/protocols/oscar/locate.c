@@ -71,10 +71,7 @@ static const struct {
 	 {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1, 
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	/*
-	 * Advertised by the EveryBuddy client.
-	 */
-	{AIM_CAPS_ICQ,
+	{AIM_CAPS_ICQ_DIRECT,
 	 {0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1, 
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -494,6 +491,13 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			outinfo->icqinfo.status = aimbs_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQEXTSTATUS;
 
+		} else if (type == 0x0008) {
+			/*
+			 * Type = 0x0008
+			 *
+			 * Client type, or some such.
+			 */
+
 		} else if (type == 0x000a) {
 			/*
 			 * Type = 0x000a
@@ -523,7 +527,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			/*
 			 * Type = 0x000d
 			 *
-			 * Capability information.
+			 * OSCAR Capability information.
 			 *
 			 */
 			outinfo->capabilities = aim_getcap(sess, bs, length);
@@ -533,10 +537,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			/*
 			 * Type = 0x000e
 			 *
-			 * Unknown.  Always of zero length, and always only
-			 * on AOL users.
-			 *
-			 * Ignore.
+			 * AOL capability information.
 			 *
 			 */
 
@@ -556,10 +557,27 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
 		} else if (type == 0x0019) {
-/*			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV type 0x0019: from %s\n", outinfo->sn); */
+			/*
+			 * Type = 0x0019
+			 *
+			 * OSCAR short capability information.  A shortened 
+			 * form of the normal capabilities.
+			 */
 
 		} else if (type == 0x001b) {
-/*			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV type 0x001b: from %s\n", outinfo->sn); */
+			/*
+			 * Type = 0x001a
+			 *
+			 * AOL short capability information.  A shortened 
+			 * form of the normal capabilities.
+			 */
+
+		} else if (type == 0x001b) {
+			/*
+			 * Type = 0x0019
+			 *
+			 * Encryption certification MD5 checksum.
+			 */
 
 		} else if (type == 0x001d) {
 			/*
