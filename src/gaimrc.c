@@ -449,7 +449,9 @@ static void gaimrc_read_plugins(FILE *f)
 
 		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "plugin")) {
+#ifndef _WIN32
 			filter_break(p->value[0]);
+#endif
 			load = g_slist_append(load, g_strdup(p->value[0]));
 		}
 	}
