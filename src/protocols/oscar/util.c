@@ -158,34 +158,80 @@ faim_export int aim_util_getlocalip(fu8_t *ip)
 }
 
 /**
- * Check if the given screen name is a valid AIM or ICQ screen name.
+ * Check if the given screen name is a valid AIM screen name.
+ * Example: BobDole
+ *
+ * @return 1 if the screen name is valid, 0 if not.
+ */
+static int aim_snvalid_aim(const char *sn)
+{
+	int i;
+
+	for (i = 0; sn[i] != '\0'; i++) {
+		if (!isalnum(sn[i]) && (sn[i] != ' ') && (sn[i] != '@') && (sn[i] != '.') && (sn[i] != '_'))
+			return 0;
+	}
+
+	return 1;
+}
+
+/**
+ * Check if the given screen name is a valid ICQ screen name.
+ * Example: 1234567
+ *
+ * @return 1 if the screen name is valid, 0 if not.
+ */
+static int aim_snvalid_icq(const char *sn)
+{
+	int i;
+
+	for (i = 0; sn[i] != '\0'; i++) {
+		if (!isdigit(sn[i]))
+			return 0;
+	}
+
+	return 1;
+}
+
+/**
+ * Check if the given screen name is a valid SMS screen name.
+ * Example: +19195551234
+ *
+ * @return 1 if the screen name is valid, 0 if not.
+ */
+static int aim_snvalid_sms(const char *sn)
+{
+	int i;
+
+	if (sn[0] != '+')
+		return 0;
+
+	for (i = 1; sn[i] != '\0'; i++) {
+		if (!isdigit(sn[i]))
+			return 0;
+	}
+
+	return 1;
+}
+
+/**
+ * Check if the given screen name is a valid oscar screen name.
  *
  * @return 1 if the screen name is valid, 0 if not.
  */
 faim_export int aim_snvalid(const char *sn)
 {
-	int isICQ = 0;
-	int i = 0;
-
-	if (!sn)
+	if ((sn == NULL) || (*sn == '\0'))
 		return 0;
 
-	if (isdigit(sn[0]))
-		isICQ = 1;
+	if (isalpha(sn[0]))
+		return aim_snvalid_aim(sn);
+	else if (isdigit(sn[0]))
+		return aim_snvalid_icq(sn);
+	else if (sn[0] == '+')
+		return aim_snvalid_sms(sn);
 
-	while (sn[i] != '\0') {
-		/* If it started with a digit then it betta be all digits, ho */
-		if (isICQ) {
-			if (!isdigit(sn[i]))
-				return 0;
-		} else {
-			if (!isalnum(sn[i]) && (sn[i] != ' ') && (sn[i] != '@') && (sn[i] != '.') && (sn[i] != '_'))
-				return 0;
-		}
-		i++;
-	}
-
-	return 1;
+	return 0;
 }
 
 /*
