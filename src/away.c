@@ -241,6 +241,7 @@ void do_away_menu()
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(create_away_mess), NULL);
 
 
+	awy = away_messages;
         while(awy) {
                 a = (struct away_message *)awy->data;
 
