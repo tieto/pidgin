@@ -7051,7 +7051,7 @@ static void oscar_show_set_info(GaimPluginAction *action)
 static void oscar_show_set_info_icqurl(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_notify_uri(gc, "http://web.icq.com/whitepages/login/1,,,00.html");
+	gaim_notify_uri(gc, "http://www.icq.com/whitepages/user_details.php");
 }
 
 static void oscar_change_pass(GaimPluginAction *action)
