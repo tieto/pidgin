@@ -19,6 +19,7 @@ version 0.65:
 	* Added protocol icons to various drop-down boxes.
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
+	* Fixed the MSN add buddy crash.
 	* Ability to view iChat "Available" messages
 
 version 0.64 (05/29/2003):
