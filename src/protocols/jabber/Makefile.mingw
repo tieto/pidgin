@@ -81,6 +81,7 @@ C_SRC =			auth.c \
 			presence.c \
 			roster.c \
 			si.c \
+			xdata.c \
 			win32/posix.uname.c
 
 

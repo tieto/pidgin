@@ -41,6 +41,7 @@
 #include "presence.h"
 #include "jabber.h"
 #include "roster.h"
+#include "xdata.h"
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
 
@@ -88,7 +89,7 @@ static void jabber_session_init(JabberStream *js)
 static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 		gpointer data)
 {
-	/* XXX: check for errors, re-set our ow js->user JID */
+	/* XXX: check for errors, re-set our own js->user JID */
 
 	jabber_session_init(js);
 }
@@ -544,13 +545,27 @@ jabber_register_cancel_cb(JabberStream *js, GaimRequestFields *fields)
 	jabber_connection_schedule_close(js);
 }
 
+static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointer data)
+{
+	xmlnode *query;
+	JabberIq *iq;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
+	query = xmlnode_get_child(iq->node, "query");
+
+	xmlnode_insert_child(query, result);
+
+	jabber_iq_set_callback(iq, jabber_registration_result_cb, NULL);
+	jabber_iq_send(iq);
+}
+
 void jabber_register_parse(JabberStream *js, xmlnode *packet)
 {
 	if(js->registration) {
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
 		GaimRequestField *field;
-		xmlnode *query, *y;
+		xmlnode *query, *x, *y;
 		char *instructions;
 
 		/* get rid of the login thingy */
@@ -564,6 +579,24 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			jabber_connection_schedule_close(js);
 			return;
 		}
+
+		for(x = packet->child; x; x = x->next) {
+			const char *xmlns;
+			if(strcmp(x->name, "x"))
+				continue;
+
+			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
+				continue;
+
+			if(!strcmp(xmlns, "jabber:x:data")) {
+				jabber_x_data_request(js, x, jabber_register_x_data_cb, NULL);
+				return;
+			}
+		}
+
+		/* XXX: if no jabber:x:data, but jabber:x:oob is there, use that */
+
+		/* as a last resort, use the old jabber:iq:register syntax */
 
 		fields = gaim_request_fields_new();
 		group = gaim_request_field_group_new(NULL);
@@ -801,7 +834,8 @@ char *jabber_get_next_id(JabberStream *js)
 	return g_strdup_printf("gaim%x", js->next_id++);
 }
 
-void jabber_idle_set(GaimConnection *gc, int idle)
+
+static void jabber_idle_set(GaimConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
 

@@ -27,6 +27,7 @@
 #include "iq.h"
 #include "message.h"
 #include "presence.h"
+#include "xdata.h"
 
 GList *jabber_chat_info(GaimConnection *gc)
 {
@@ -266,14 +267,91 @@ char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who)
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 }
 
-void jabber_chat_start_room_configure(JabberChat *chat) {
+static void jabber_chat_room_configure_x_data_cb(JabberStream *js, xmlnode *result, gpointer data)
+{
+	JabberChat *chat = data;
+	xmlnode *query;
+	JabberIq *iq;
+	char *to = g_strdup_printf("%s@%s", chat->room, chat->server);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "http://jabber.org/protocol/muc#owner");
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+
+	xmlnode_insert_child(query, result);
+
+	jabber_iq_send(iq);
+}
+
+static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *query, *x;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from = xmlnode_get_attrib(packet, "from");
+	JabberChat *chat;
+	JabberID *jid;
+
+	if(!type || !from)
+		return;
+
+
+	if(!strcmp(type, "result")) {
+		jid = jabber_id_new(from);
+
+		if(!jid)
+			return;
+
+		chat = jabber_chat_find(js, jid->node, jid->domain);
+		jabber_id_free(jid);
+
+		if(!chat)
+			return;
+
+		if(!(query = xmlnode_get_child(packet, "query")))
+			return;
+
+		for(x = query->child; x; x = x->next) {
+			const char *xmlns;
+			if(strcmp(x->name, "x"))
+				continue;
+
+			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
+				continue;
+
+			if(!strcmp(xmlns, "jabber:x:data")) {
+				jabber_x_data_request(js, x, jabber_chat_room_configure_x_data_cb, chat);
+				return;
+			}
+		}
+	} else {
+		/* XXX: handle errors */
+	}
+
+
+}
+
+void jabber_chat_request_room_configure(JabberChat *chat) {
+	JabberIq *iq;
+	xmlnode *query;
+	char *room_jid;
+
 	if(!chat)
 		return;
 
-	/* XXX: implement me! */
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#owner");
+	query = xmlnode_get_child(iq->node, "query");
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	/* XXX: for now... */
-	jabber_chat_create_instant_room(chat);
+	xmlnode_set_attrib(iq->node, "to", room_jid);
+
+	jabber_iq_set_callback(iq, jabber_chat_room_configure_cb, NULL);
+
+	jabber_iq_send(iq);
+
+	g_free(room_jid);
 }
 
 void jabber_chat_create_instant_room(JabberChat *chat) {

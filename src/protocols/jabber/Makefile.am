@@ -28,7 +28,9 @@ JABBERSOURCES = auth.c \
 			  roster.c \
 			  roster.h \
 			  si.c \
-			  si.h
+			  si.h \
+			  xdata.c \
+			  xdata.h
 
 AM_CFLAGS = $(st)
 

@@ -479,6 +479,11 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 
 	chat = jabber_chat_find_by_id(js, id);
 
+	if(!strcmp(msg, "/configure") || !strcmp(msg, "/config")) {
+		jabber_chat_request_room_configure(chat);
+		return 1;
+	}
+
 	jm = g_new0(JabberMessage, 1);
 	jm->js = gc->proto_data;
 	jm->type = JABBER_MESSAGE_GROUPCHAT;
