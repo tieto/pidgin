@@ -862,11 +862,12 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	}
 
 	if (!b->idle && idle) {
+		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
 		plugin_event(event_buddy_idle, gc, b->name);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 	if (b->idle && !idle) {
-		do_pounce(gc, b->name, OPT_POUNCE_UNIDLE);
+		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
 		plugin_event(event_buddy_unidle, gc, b->name);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
@@ -875,10 +876,11 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	gaim_blist_update_buddy_evil(b, evil);
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-		do_pounce(gc, b->name, OPT_POUNCE_UNAWAY);
+		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY_RETURN);
 		plugin_event(event_buddy_back, gc, b->name);
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
+		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY);
 		plugin_event(event_buddy_away, gc, b->name);
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 	}
@@ -906,7 +908,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 				message_queue = g_slist_append(message_queue, qm);
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
-			do_pounce(gc, b->name, OPT_POUNCE_SIGNON);
+			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
@@ -930,6 +932,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 				message_queue = g_slist_append(message_queue, qm);
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
+			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNOFF);
 			plugin_event(event_buddy_signoff, gc, b->name);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
@@ -965,6 +968,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
 					 int state) {
 
+	struct buddy *b;
 	struct gaim_conversation *cnv = gaim_find_conversation(name);
 	struct gaim_im *im;
 
@@ -977,8 +981,12 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
 	gaim_im_set_typing_state(im, state);
 	gaim_im_update_typing(im);
 
+	b = gaim_find_buddy(gc->account, name);
+
 	plugin_event(event_got_typing, gc, name);
-	do_pounce(gc, name, OPT_POUNCE_TYPING);
+
+	if (b != NULL)
+		gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING);
 
 	if (timeout > 0)
 		gaim_im_start_typing_timeout(im, timeout);
@@ -988,6 +996,7 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 
 	struct gaim_conversation *c = gaim_find_conversation(name);
 	struct gaim_im *im;
+	struct buddy *b;
 
 	if (!c)
 		return;
@@ -997,6 +1006,11 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 	gaim_im_stop_typing_timeout(im);
 	gaim_im_set_typing_state(im, NOT_TYPING);
 	gaim_im_update_typing(im);
+
+	b = gaim_find_buddy(gc->account, name);
+
+	if (b != NULL)
+		gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING_STOPPED);
 }
 
 struct chat_invite_data {

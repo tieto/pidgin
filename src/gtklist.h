@@ -55,6 +55,8 @@ struct gaim_gtk_buddy_list {
 		*warning_column, 
 		*buddy_icon_column;
 
+	GtkWidget *bpmenu;              /**< The buddy pounce menu. */
+
 	GtkWidget *bbox;                /**< A Button Box. */
 	GtkTooltips *tooltips;           /**< Tooltips for the buttons. */
 
@@ -79,6 +81,8 @@ struct gaim_gtk_blist_node
 
 #define GAIM_GTK_BLIST_NODE(node) ((struct gaim_gtk_blist_node *)(node)->ui_data)
 #define GAIM_GTK_BLIST(list) ((struct gaim_gtk_buddy_list *)(list)->ui_data)
+#define GAIM_IS_GTK_BLIST(list) \
+	((list)->ui_ops == gaim_get_gtk_blist_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Conversation API

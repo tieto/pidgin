@@ -179,6 +179,7 @@ extern void core_quit();
 
 /* Functions in gaimrc.c */
 extern void load_prefs();
+extern void load_pounces();
 extern void save_prefs();
 
 /* Functions in perl.c */

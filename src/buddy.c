@@ -149,8 +149,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, struct buddy *b)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, struct buddy *b)
 {
-       show_new_bp(b->name, b->account->gc, b->idle,
-                               b->uc & UC_UNAVAILABLE, NULL);
+	gaim_gtkpounce_dialog_show(b, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, struct buddy *b)
@@ -1167,8 +1166,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	awaymenu = gtk_item_factory_get_widget(ift, N_("/Tools/Away"));
 	do_away_menu();
 
-	bpmenu = gtk_item_factory_get_widget(ift, N_("/Tools/Buddy Pounce"));
-	do_bp_menu();
+	gtkblist->bpmenu = gtk_item_factory_get_widget(ift, N_("/Tools/Buddy Pounce"));
+	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
 	protomenu = gtk_item_factory_get_widget(ift, N_("/Tools/Protocol Actions"));
 	do_proto_menu();
@@ -1597,7 +1596,6 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 			}
 		}
 
-
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_COLUMN, status,
 				   NAME_COLUMN, mark,
@@ -1658,7 +1656,6 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 	gtkblist->bbox = gtkblist->tipwindow = NULL;
 	protomenu = NULL;
 	awaymenu = NULL;
-	bpmenu = NULL;
 }
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)

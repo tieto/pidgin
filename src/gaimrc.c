@@ -39,6 +39,8 @@
 #include "prpl.h"
 #include "proxy.h"
 #include "sound.h"
+#include "pounce.h"
+#include "gtkpounce.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -78,6 +80,28 @@ struct parse {
 	char option[256];
 	char value[MAX_VALUES][4096];
 };
+
+/*
+ * This is absolutely necessary, unfortunately. It is used to grab
+ * the information on the pounce, so that we can then later register
+ * them. The reason we do this (well, one of them) is because the buddy
+ * list isn't processed yet.
+ *
+ *  -- ChipX86
+ */
+struct pounce_placeholder
+{
+	char name[80];
+	char message[2048];
+	char command[2048];
+	char sound[2048];
+	char pouncer[80];
+
+	int protocol;
+	int options;
+};
+
+static GList *buddy_pounces = NULL;
 
 static struct parse *parse_line(char *line, struct parse *p)
 {
@@ -302,12 +326,111 @@ static void gaimrc_write_away(FILE *f)
 	fprintf(f, "}\n");
 }
 
-static void gaimrc_read_pounce(FILE *f)
+/*
+ * This is temporary, and we're using it to translate the new event
+ * and action values into the old ones. We're also adding entries for
+ * new types, but if you go and use an older gaim, these will be nuked.
+ * When we have a better prefs system, this can go away.
+ *
+ *   -- ChipX86
+ */
+static int pounce_evt_trans_table[] =
+{
+	0x010, GAIM_POUNCE_SIGNON,
+	0x020, GAIM_POUNCE_AWAY_RETURN,
+	0x040, GAIM_POUNCE_IDLE_RETURN,
+	0x080, GAIM_POUNCE_TYPING,
+	/* 0x100, save, is handled separately. */
+	0x400, GAIM_POUNCE_SIGNOFF,
+	0x800, GAIM_POUNCE_AWAY,
+	0x1000, GAIM_POUNCE_IDLE,
+	0x2000, GAIM_POUNCE_TYPING_STOPPED
+};
+
+static int pounce_act_trans_table[] =
+{
+	0x001, GAIM_GTKPOUNCE_OPEN_WIN,
+	0x002, GAIM_GTKPOUNCE_SEND_MSG,
+	0x004, GAIM_GTKPOUNCE_EXEC_CMD,
+	0x008, GAIM_GTKPOUNCE_PLAY_SOUND,
+	/* 0x100, save, is handled separately. */
+	0x200, GAIM_GTKPOUNCE_POPUP
+};
+
+static int pounce_evt_trans_table_size =
+	(sizeof(pounce_evt_trans_table) / sizeof(*pounce_evt_trans_table));
+
+static int pounce_act_trans_table_size =
+	(sizeof(pounce_act_trans_table) / sizeof(*pounce_act_trans_table));
+
+static int
+new_pounce_opts_to_old(struct gaim_pounce *pounce)
+{
+	struct gaim_gtkpounce_data *gtkpounce;
+
+	int opts = 0;
+	int i;
+
+	gtkpounce = GAIM_GTKPOUNCE(pounce);
+
+	/* First, convert events */
+	for (i = 0; i < pounce_evt_trans_table_size; i += 2)
+	{
+		GaimPounceEvent evt = pounce_evt_trans_table[i + 1];
+
+		if ((gaim_pounce_get_events(pounce) & evt) == evt)
+			opts |= pounce_evt_trans_table[i];
+	}
+
+	for (i = 0; i < pounce_act_trans_table_size; i += 2)
+	{
+		GaimGtkPounceAction act = pounce_act_trans_table[i + 1];
+
+		if ((gtkpounce->actions & act) == act)
+			opts |= pounce_act_trans_table[i];
+	}
+
+	if (gtkpounce->save)
+		opts |= 0x100;
+
+	return opts;
+}
+
+static void
+old_pounce_opts_to_new(int opts, GaimPounceEvent *events,
+					   GaimGtkPounceAction *actions)
+{
+	int i;
+
+	*events = 0;
+	*actions = 0;
+
+	/* First, convert events */
+	for (i = 0; i < pounce_evt_trans_table_size; i += 2)
+	{
+		int evt = pounce_evt_trans_table[i];
+
+		if ((opts & evt) == evt)
+			*events |= pounce_evt_trans_table[i + 1];
+	}
+
+	for (i = 0; i < pounce_act_trans_table_size; i += 2)
+	{
+		int act = pounce_act_trans_table[i];
+
+		if ((opts & act) == act)
+			*actions |= pounce_act_trans_table[i + 1];
+	
+	}
+}
+
+static void
+gaimrc_read_pounce(FILE *f)
 {
 	struct parse parse_buffer;
 	struct parse *p;
 	char buf[4096];
-	struct buddy_pounce *b;
+	struct pounce_placeholder *b;
 
 	buf[0] = 0;
 
@@ -320,7 +443,7 @@ static void gaimrc_read_pounce(FILE *f)
 
 		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "entry")) {
-			b = g_new0(struct buddy_pounce, 1);
+			b = g_new0(struct pounce_placeholder, 1);
 
 			g_snprintf(b->name, sizeof(b->name), "%s", p->value[0]);
 			g_snprintf(b->message, sizeof(b->message), "%s", p->value[1]);
@@ -338,48 +461,72 @@ static void gaimrc_read_pounce(FILE *f)
 	}
 }
 
-static void gaimrc_write_pounce(FILE *f)
+static void
+gaimrc_write_pounce(FILE *f)
 {
-	GList *pnc = buddy_pounces;
-	struct buddy_pounce *b;
+	GList *pnc;
+	struct gaim_pounce *pounce;
+	struct gaim_gtkpounce_data *pounce_data;
+
+	debug_printf("*** Writing pounces.\n");
 
 	fprintf(f, "pounce {\n");
 
-	while (pnc) {
+	for (pnc = gaim_get_pounces(); pnc != NULL; pnc = pnc->next) {
 		char *str1, *str2, *str3, *str4;
+		struct gaim_account *account;
 
-		b = (struct buddy_pounce *)pnc->data;
+		pounce      = (struct gaim_pounce *)pnc->data;
+		pounce_data = GAIM_GTKPOUNCE(pounce);
+		account     = gaim_pounce_get_pouncer(pounce);
 
-		str1 = escape_text2(b->name);
-		if (strlen(b->message))
-			str2 = escape_text2(b->message);
+		/* Pouncee name */
+		str1 = escape_text2(gaim_pounce_get_pouncee(pounce));
+
+		if (pounce_data == NULL)
+		{
+			fprintf(f, "\tentry { %s } {  } {  } { %d } { %s } { %d } {  }\n",
+					str1, new_pounce_opts_to_old(pounce),
+					account->username, account->protocol);
+
+			free(str1);
+
+			continue;
+		}
+
+		/* Message */
+		if (pounce_data->message != NULL)
+			str2 = escape_text2(pounce_data->message);
 		else {
 			str2 = malloc(1);
-			str2[0] = 0;
+			*str2 = '\0';
 		}
-		if (strlen(b->command))
-			str3 = escape_text2(b->command);
+
+		/* Command */
+		if (pounce_data->command != NULL)
+			str3 = escape_text2(pounce_data->command);
 		else {
 			str3 = malloc(1);
-			str3[0] = 0;
+			*str3 = '\0';
 		}
-		if (strlen(b->sound))
-			str4 = escape_text2(b->sound);
+
+		/* Sound file */
+		if (pounce_data->sound != NULL)
+			str4 = escape_text2(pounce_data->sound);
 		else {
 			str4 = malloc(1);
-			str4[0] = 0;
+			*str4 = '\0';
 		}
 
 		fprintf(f, "\tentry { %s } { %s } { %s } { %d } { %s } { %d } { %s }\n",
-			str1, str2, str3, b->options, b->pouncer, b->protocol, str4);
+				str1, str2, str3, new_pounce_opts_to_old(pounce),
+				account->username, account->protocol, str4);
 
 		/* escape_text2 uses malloc(), so we don't want to g_free these */
 		free(str1);
 		free(str2);
 		free(str3);
 		free(str4);
-
-		pnc = pnc->next;
 	}
 
 	fprintf(f, "}\n");
@@ -1462,4 +1609,42 @@ gint sort_awaymsg_list(gconstpointer a, gconstpointer b)
 
 	return (strcmp(msg_a->name, msg_b->name));
 
+}
+
+void
+load_pounces()
+{
+	GList *l;
+	struct pounce_placeholder *ph;
+	struct gaim_pounce *pounce;
+	struct gaim_gtkpounce_data *pounce_data;
+	struct gaim_account *account;
+
+	debug_printf("*** Loading pounces...\n");
+
+	for (l = buddy_pounces; l != NULL; l = l->next) {
+		ph = (struct pounce_placeholder *)l->data;
+		GaimPounceEvent events = GAIM_POUNCE_NONE;
+		GaimGtkPounceAction actions = GAIM_GTKPOUNCE_NONE;
+
+		account = gaim_account_find(ph->pouncer, ph->protocol);
+
+		old_pounce_opts_to_new(ph->options, &events, &actions);
+
+		pounce = gaim_gtkpounce_new(account, ph->name, events, actions,
+									ph->message, ph->command, ph->sound,
+									(ph->options & 0x100));
+
+		g_free(ph);
+	}
+
+	g_list_free(buddy_pounces);
+	buddy_pounces = NULL;
+
+	/* 
+	 * < ChipX86|Coding> why do we save prefs just after reading them?
+	 * <      faceprint> ChipX86|Coding: because we're cool like that
+	 * <SeanEgan|Coding> damn straight
+	 */
+	save_prefs();
 }

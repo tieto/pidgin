@@ -196,7 +196,6 @@ enum log_event {
 #define BUF_LONG BUF_LEN * 2
 
 /* Globals in aim.c */
-extern GList *buddy_pounces;
 extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;

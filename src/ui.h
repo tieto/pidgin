@@ -250,7 +250,6 @@ extern void show_add_perm(struct gaim_connection *, char *, gboolean);
 extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();
-extern void show_new_bp(char *, struct gaim_connection *, int, int, struct buddy_pounce *);
 extern void conv_show_log(GtkWidget *, gpointer);
 extern void chat_show_log(GtkWidget *, gpointer);
 extern void show_log(char *);

@@ -65,7 +65,6 @@ static GtkWidget *name;
 static GtkWidget *pass;
 
 GList *log_conversations = NULL;
-GList *buddy_pounces = NULL;
 GSList *away_messages = NULL;
 GSList *message_queue = NULL;
 GSList *unread_message_queue = NULL;
@@ -872,6 +871,7 @@ int main(int argc, char *argv[])
 
 	load_prefs();
 	core_main();
+	load_pounces();
 	ui_main();
 
 #ifdef USE_SM
