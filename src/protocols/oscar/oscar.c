@@ -5802,8 +5802,13 @@ static void
 oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	OscarData *od = (OscarData *)gc->proto_data;
+	OscarData *od = NULL;
 	const gchar *status_id = gaim_status_get_id(status);
+
+	if (gc)
+		od = (OscarData *)gc->proto_data;
+	if (!od)
+		return;
 
 	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_HIDDEN)
 		account->perm_deny = 4;

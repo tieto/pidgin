@@ -1353,6 +1353,8 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 
 		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
+		gaim_account_set_enabled(dialog->account, GAIM_GTK_UI, TRUE);
+			
 	}
 	else
 	{

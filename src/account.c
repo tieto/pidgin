@@ -584,7 +584,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
-
+	
 	account->presence = gaim_presence_new_for_account(account);
 
 	prpl = gaim_find_prpl(protocol_id);

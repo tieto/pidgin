@@ -434,19 +434,24 @@ static void irc_get_info(GaimConnection *gc, const char *who)
 static void irc_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	struct irc_conn *irc = gc->proto_data;
+	struct irc_conn *irc;
 	const char *args[1];
 	const char *status_id = gaim_status_get_id(status);
+
+	if (gc)
+	  irc = gc->proto_data;
 
 	if (!gaim_status_is_active(status))
 		return;
 
 	args[0] = NULL;
 
-	if (!strcmp(status_id, "away"))
+	if (strcmp(status_id, "offline") && !gc) {
+		gaim_account_connect(account, status);
+	} else if (!strcmp(status_id, "away")) {
 		args[0] = gaim_status_get_attr_string(status, "message");
-
-	irc_cmd_away(irc, "away", NULL, args);
+		irc_cmd_away(irc, "away", NULL, args);
+	}
 }
 
 static void irc_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)

@@ -823,14 +823,17 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 
 	gc = gaim_account_get_connection(account);
 
-	if (gc == NULL)
-		return;
-
-	session = gc->proto_data;
+	if (gc) 
+		session = gc->proto_data;
 
 	state = gaim_status_get_id(status);
 
-	if (!strcmp(state, "away"))
+	printf("%d %s\n", gc, state);
+	if (strcmp(state, "offline") && !gc) {
+		gaim_account_connect(account, status);
+		return;
+	}
+	else if (!strcmp(state, "away"))
 		msnstatus = MSN_AWAY;
 	else if (!strcmp(state, "brb"))
 		msnstatus = MSN_BRB;
@@ -846,8 +849,8 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 		msnstatus = MSN_IDLE;
 	else
 		msnstatus = MSN_ONLINE;
-
-	msn_change_status(session, msnstatus);
+	if (gc)
+		msn_change_status(session, msnstatus);
 }
 
 static void

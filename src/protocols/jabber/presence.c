@@ -102,10 +102,13 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 	if(!account) return ;
 	gc = account->gc;
-
-	if(!gc) return ;
+	
+	if (!gc && strcmp(gaim_status_get_id(status), "offline"))
+		gaim_account_connect(account, status);
+	
+	if(!gc) return;
 	js= gc->proto_data;
-
+	
 	gaim_status_to_jabber(status, &state, &msg, &priority);
 
 	if(msg)
