@@ -137,21 +137,21 @@ if DISTRIB
 
 else
 
-	if GNOMEAPPLET
+if GNOMEAPPLET
 
-		gnomedata    = `@GNOME_CONFIG@ --datadir`
+gnomedata    = `@GNOME_CONFIG@ --datadir`
 
-		gaimdistpmdir = $(gnomedata)/pixmaps/gaim
-		gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
+gaimdistpmdir = $(gnomedata)/pixmaps/gaim
+gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
 
-		gaimpixmapdir = $(gnomedata)/pixmaps
-		gaimpixmap_DATA = gaim.png
+gaimpixmapdir = $(gnomedata)/pixmaps
+gaimpixmap_DATA = gaim.png
 
-	else
+else
 
-		pixmapdir = $(datadir)/pixmaps
-		pixmap_DATA = gaim.png
+pixmapdir = $(datadir)/pixmaps
+pixmap_DATA = gaim.png
 
-	endif
+endif
 
 endif

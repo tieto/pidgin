@@ -222,8 +222,8 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 	return fd;
 }
 
-#define HTTP_GOODSTRING "HTTP/1.0 200 Connection established"
-#define HTTP_GOODSTRING2 "HTTP/1.1 200 Connection established"
+#define HTTP_GOODSTRING "HTTP/1.0 200"
+#define HTTP_GOODSTRING2 "HTTP/1.1 200"
 
 static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 {

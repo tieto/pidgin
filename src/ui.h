@@ -81,6 +81,11 @@
 #define FACE_YELL 15
 #define FACE_TOTAL 16
 
+#define GAIM_PIXMAP_ICON 0
+#define GAIM_PIXMAP_ERROR 1
+#define GAIM_PIXMAP_WARNING 2
+#define GAIM_PIXMAP_
+
 struct debug_window {
 	GtkWidget *window;
 	GtkWidget *entry;
