@@ -165,6 +165,8 @@ AC_SUBST(UI_LIBS)
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
+	old_LIBS="$LIBS"
+	LIBS="$LIBS $UI_LIBS"
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
@@ -179,6 +181,7 @@ if test "x$enable_xss" = "xyes" ; then
 	       XSS_LIBS=""
 	       enable_xss=no
 	fi
+	LIBS="$old_LIBS"
 else
 	XSS_LIBS=""
 	enable_xss=no
