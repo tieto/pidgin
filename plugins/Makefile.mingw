@@ -16,6 +16,7 @@ GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 TICKER :=		./ticker
 TRANSPARENCY :=		./win32/transparency
 WINPREFS :=		./win32/winprefs
+PERL_PLUGIN_LOADER :=	./perl
 
 ##
 ## VARIABLE DEFINITIONS
@@ -77,12 +78,14 @@ all: plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
+	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw
 
 install:
 	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
 	$(MAKE) -C $(TICKER) -f Makefile.mingw install
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw install
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
+	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw install
 
 #
 # BUILD Plugin
@@ -109,3 +112,4 @@ clean:
 	$(MAKE) -C $(TICKER) -f Makefile.mingw clean
 	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw clean
 	$(MAKE) -C $(WINPREFS) -f Makefile.mingw clean
+	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw clean
