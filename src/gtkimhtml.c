@@ -122,45 +122,37 @@ static UINT win_html_fmt;
 
 static gchar *
 clipboard_win32_to_html(char *clipboard) {
-    const char *begin, *end;
+	const char *begin, *end;
 	gchar *html;
 
-    begin = strstr(clipboard, "<!--StartFragment");
-    while(*begin++ != '>');
+	begin = strstr(clipboard, "<!--StartFragment");
+	while(*begin++ != '>');
 	end = strstr(clipboard, "<!--EndFragment");
 	html = g_strstrip(g_strndup(begin, (end ? (end - begin) : strlen(begin))));
 }
 
 static gchar *
 clipboard_html_to_win32(char *html) {
-    int length;
+	int length;
 	gchar *ret;
 	GString *clipboard;
 
-    if (html == NULL)
-	    return NULL;
+	if (html == NULL)
+		return NULL;
 
 	length = strlen(html);
 	clipboard = g_string_new ("Version:0.9\r\n");
 	g_string_append(clipboard, "StartHTML:0000000105\r\n");
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, g_strdup_printf("EndHTML:%010d\r\n", 143 + length));
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, "StartFragment:0000000105\r\n");
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, g_strdup_printf("EndFragment:%010d\r\n", 143 + length));
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, "<!--StartFragment-->");
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, html);
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	g_string_append(clipboard, "<!--EndFragment-->");
-	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
 	ret = clipboard->str;
 	g_string_free(clipboard, FALSE);
 	return ret;
 }
-
 #endif
 
 static GtkSmileyTree*
@@ -624,16 +616,15 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	gchar *buffer;
 	gint length = strlen(clipboard);
 	if(clipboard != NULL) {
-	    OpenClipboard(NULL);
+		OpenClipboard(NULL);
 		hdata = GlobalAlloc(GMEM_MOVEABLE, length);
 		buffer = GlobalLock(hdata);
         memcpy(buffer, clipboard, length);
 		GlobalUnlock(hdata);
         SetClipboardData(win_html_fmt, hdata);
 		CloseClipboard();
+		g_free(clipboard);
 	}
-
-	gaim_debug_info("html clipboard", "clipboard set\n%s\n", (clipboard ? clipboard : "nothing"));
 #endif
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
@@ -656,7 +647,7 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	DWORD err;
 	char *buffer;
 	if (IsClipboardFormatAvailable(win_html_fmt)) {
-	    OpenClipboard(NULL);
+		OpenClipboard(NULL);
 		hdata = GetClipboardData(win_html_fmt);
 		if (hdata == NULL) {
 		    err = GetLastError();
@@ -666,18 +657,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		}
 		buffer = GlobalLock(hdata);
 		if (buffer == NULL) {
-		    err = GetLastError();
+			err = GetLastError();
 			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
 			CloseClipboard();
 			return;
 		}
 		text = clipboard_win32_to_html(buffer);
-		gaim_debug_info("html clipboard", "buffer\n%s\n", (buffer ? buffer : "nothing"));
 		GlobalUnlock(hdata);
 		CloseClipboard();
-
-		gaim_debug_info("html clipboard", "text\n%s\n", (text ? text : "nothing"));
-
 	} else
 #endif
 	if (selection_data->length < 0) {
