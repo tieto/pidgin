@@ -878,6 +878,7 @@ int main(int argc, char *argv[])
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
 	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
+	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
 
 
 	plugin_search_paths[0] = LIBDIR;
