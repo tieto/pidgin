@@ -91,6 +91,8 @@ CORESOURCES = \
 	request.h \
 	server.c \
 	server.h \
+	sha.c \
+	sha.h \
 	signals.c \
 	signals.h \
 	status.c \
