@@ -36,7 +36,6 @@ version 0.78cvs
 	* Print Gadu-Gadu messages to the debug window instead of the console
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Ampersands in links should work right (Tim Ringenbach)
-	* Win32 transparency plugin fixes (Kevin Stange)
 	* IM Image support for AIM is back. It still depends on Direct
 	  Connect, and both are still as bugger as ever, if not more so.
 
