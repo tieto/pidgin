@@ -632,9 +632,9 @@ req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 }
 
 GList *
-get_online_screennames(void)
+get_online_names(void)
 {
-	GList *screennames = NULL;
+	GList *names = NULL;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
@@ -654,12 +654,18 @@ get_online_screennames(void)
 				if (!gaim_account_is_connected(buddy->account))
 					continue;
 
-				screennames = g_list_append(screennames, g_strdup(buddy->name));
+#ifdef NEW_STYLE_COMPLETION
+				names = g_list_append(names, ((GaimContact *)cnode)->alias);
+				names = g_list_append(names,
+					(gpointer)gaim_buddy_get_contact_alias(buddy));
+#endif /* NEW_STYLE_COMPLETION */
+
+				names = g_list_append(names, buddy->name);
 			}
 		}
 	}
 
-	return screennames;
+	return names;
 }
 
 #ifndef NEW_STYLE_COMPLETION
@@ -736,10 +742,63 @@ completion_entry_event(GtkEditable *entry, GdkEventKey *event,
 static void
 destroy_completion_data(GtkWidget *w, GaimGtkCompletionData *data)
 {
-	g_list_foreach(data->completion->items, (GFunc)g_free, NULL);
 	g_completion_free(data->completion);
 
 	g_free(data);
+}
+#endif /* !NEW_STYLE_COMPLETION */
+
+#ifdef NEW_STYLE_COMPLETION
+static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
+		const gchar *key, GtkTreeIter *iter, gpointer user_data) {
+
+	GValue val = { 0, };
+	GtkTreeModel *model;
+	char *screenname = NULL;
+	char *alias = NULL;
+	char *temp;
+	gboolean ret = FALSE;
+
+	model = gtk_entry_completion_get_model (completion);
+
+	gtk_tree_model_get_value(model, iter, 1, &val);
+	temp = (gchar *)g_value_get_string(&val);
+	if (temp) {
+		temp = g_utf8_normalize(temp, -1, G_NORMALIZE_DEFAULT);
+		screenname = g_utf8_casefold(temp, -1);
+		g_free(temp);
+	}
+	g_value_unset(&val);
+
+	gtk_tree_model_get_value(model, iter, 2, &val);
+	temp = (gchar *)g_value_get_string(&val);
+	if (temp) {
+		temp = g_utf8_normalize(temp, -1, G_NORMALIZE_DEFAULT);
+		alias = g_utf8_casefold(temp, -1);
+		g_free(temp);
+	}
+	g_value_unset(&val);
+
+	if (g_str_has_prefix(screenname, key) ||
+	    g_str_has_prefix(alias, key))
+		ret = TRUE;
+
+	g_free(screenname);
+	g_free(alias);
+
+	return ret;
+}
+
+static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
+		GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data) {
+
+	GValue val = { 0, };
+
+	gtk_tree_model_get_value(model, iter, 1, &val);
+	gtk_entry_set_text(GTK_ENTRY(user_data), g_value_get_string(&val));
+	g_value_unset(&val);
+
+	return TRUE;
 }
 #endif /* !NEW_STYLE_COMPLETION */
 
@@ -750,22 +809,70 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 	GtkListStore *store;
 	GtkTreeIter iter;
 	GtkEntryCompletion *completion;
-	GList *screennames, *l;
+	GList *aliases_and_screennames, *l;
 
-	store = gtk_list_store_new(1, G_TYPE_STRING);
+	/* Store the displayed completion value, the screenname, and the value for comparison. */
+	store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-	screennames = get_online_screennames();
+	aliases_and_screennames = get_online_names();
 
-	for (l = screennames; l != NULL; l = l->next)
+	/* Loop through the list three elements at a time. */
+	for (l = aliases_and_screennames; l != NULL; l = l->next->next->next)
 	{
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, l->data, -1);
+		char *contact_alias = l->data;
+		char *buddy_alias = l->next->data;
+		char *screenname = l->next->next->data;
+		gboolean completion_added = FALSE;
+
+		/* There's no sense listing things like: 'xxx "xxx"'
+		   when the screenname and buddy alias match. */
+		if (buddy_alias && strcmp(buddy_alias, screenname)) {
+			char *completion_entry = g_strdup_printf("%s \"%s\"", screenname, buddy_alias);
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					0, completion_entry,
+					1, screenname,
+					2, buddy_alias,
+					-1);
+			g_free(completion_entry);
+			completion_added = TRUE;
+		}
+
+		/* There's no sense listing things like: 'xxx "xxx"'
+		   when the screenname and contact alias match. */
+		if (contact_alias && strcmp(contact_alias, screenname)) {
+			/* We don't want duplicates when the contact and buddy alias match. */
+			if (strcmp(contact_alias, buddy_alias)) {
+				char *completion_entry = g_strdup_printf("%s \"%s\"",
+								screenname, contact_alias);
+				gtk_list_store_append(store, &iter);
+				gtk_list_store_set(store, &iter,
+						0, completion_entry,
+						1, screenname,
+						2, contact_alias,
+						-1);
+				g_free(completion_entry);
+				completion_added = TRUE;
+			}
+		}
+
+		if (completion_added == FALSE) {
+			/* Add the buddy's screenname. */
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					0, screenname,
+					1, screenname,
+					2, NULL,
+					-1);
+		}
 	}
 
-	g_list_foreach(screennames, (GFunc)g_free, NULL);
-	g_list_free(screennames);
+	g_list_free(aliases_and_screennames);
 
 	completion = gtk_entry_completion_new();
+	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
+	g_signal_connect(G_OBJECT(completion), "match-selected",
+		G_CALLBACK(screenname_completion_match_selected_cb), entry);
 	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
 	g_object_unref(completion);
 
@@ -784,7 +891,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 
 	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
 
-	screennames = get_online_screennames();
+	screennames = get_online_names();
 
 	g_completion_add_items(data->completion, screennames);
 

@@ -451,10 +451,9 @@ gaim_gtkdialogs_im(void)
 	group = gaim_request_field_group_new(NULL);
 	gaim_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Screen name"),
-										  NULL, FALSE);
-	gaim_request_field_set_required(field, TRUE);
+	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	gaim_request_field_set_type_hint(field, "screenname");
+	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
@@ -466,8 +465,8 @@ gaim_gtkdialogs_im(void)
 
 	gaim_request_fields(gaim_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name of the person you "
-						  "would like to IM."),
+						_("Please enter the screen name or alias of the person "
+						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(gaim_gtkdialogs_im_cb),
 						_("Cancel"), NULL,
@@ -594,8 +593,7 @@ gaim_gtkdialogs_info(void)
 	group = gaim_request_field_group_new(NULL);
 	gaim_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Screen name"),
-										  NULL, FALSE);
+	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	gaim_request_field_set_type_hint(field, "screenname");
 	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
@@ -609,8 +607,8 @@ gaim_gtkdialogs_info(void)
 
 	gaim_request_fields(gaim_get_blist(), _("Get User Info"),
 						NULL,
-						_("Please enter the screen name of the person whose "
-						  "info you would like to view."),
+						_("Please enter the screen name or alias of the person "
+						  "whose info you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(gaim_gtkdialogs_info_cb),
 						_("Cancel"), NULL,
@@ -649,8 +647,7 @@ gaim_gtkdialogs_log(void)
 	group = gaim_request_field_group_new(NULL);
 	gaim_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Screen name"),
-										  NULL, FALSE);
+	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	gaim_request_field_set_type_hint(field, "screenname");
 	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
@@ -665,8 +662,8 @@ gaim_gtkdialogs_log(void)
 
 	gaim_request_fields(gaim_get_blist(), _("Get User Log"),
 						NULL,
-						_("Please enter the screen name of the person whose "
-						  "log you would like to view."),
+						_("Please enter the screen name or alias of the person "
+						  "whose log you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(gaim_gtkdialogs_log_cb),
 						_("Cancel"), NULL,
