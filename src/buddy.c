@@ -99,6 +99,13 @@ struct group_show {
 };
 static GSList *shows = NULL;
 
+static struct group_show *find_group_show(char *group);
+static struct buddy_show *find_buddy_show(struct group_show *gs, char *name);
+static int group_number(char *group);
+static int buddy_number(char *group, char *buddy);
+static struct group_show *new_group_show(char *group);
+static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *buddy);
+static struct group_show *find_gs_by_bs(struct buddy_show *b);
 
 void destroy_buddy()
 {
@@ -383,6 +390,8 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 	GSList *grp;
 	GSList *mem;
 	struct conversation *c;
+	struct group_show *gs;
+	struct buddy_show *bs;
 	
 	struct group *delg;
 	struct buddy *delb;
@@ -391,6 +400,31 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 	 * gc's buddy list, therefore we can safely remove it. we need to ensure this
 	 * via the UI
 	 */
+
+	gs = find_group_show(rem_g->name);
+	if (gs) {
+		bs = find_buddy_show(gs, rem_b->name);
+		if (bs) {
+			if (g_slist_find(bs->connlist, gc)) {
+				bs->connlist = g_slist_remove(bs->connlist, gc);
+				if (!g_slist_length(bs->connlist)) {
+					gs->members = g_slist_remove(gs->members, bs);
+					if (bs->log_timer > 0)
+						gtk_timeout_remove(bs->log_timer);
+					gtk_widget_destroy(bs->item);
+					g_free(bs->show);
+					g_free(bs->name);
+					g_free(bs);
+					if (!g_slist_length(gs->members)) {
+						shows = g_slist_remove(shows, gs);
+						gtk_widget_destroy(gs->item);
+						g_free(gs->name);
+						g_free(gs);
+					}
+				}
+			}
+		}
+	}
 
 	grp = g_slist_find(gc->groups, rem_g);
         delg = (struct group *)grp->data;
@@ -432,12 +466,8 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 
 	while(delg->members) {
 		delb = (struct buddy *)delg->members->data;
-                delg->members = g_slist_remove(delg->members, delb);
-		c = find_conversation(delb->name);
-		if (c)
-			update_convo_add_button(c);
+		remove_buddy(gc, delg, delb);
                 serv_remove_buddy(gc, delb->name);
-                g_free(delb);
 	}
 
 	gc->groups = g_slist_remove(gc->groups, delg);
@@ -493,6 +523,17 @@ gboolean edit_drag_compare_func (GtkCTree *ctree, GtkCTreeNode *source_node,
 }
 
 
+static void redo_buddy_list() {
+	/* so here we can safely assume that we don't have to add or delete anything, we
+	 * just have to go through and reorder everything. remember, nothing is going to
+	 * change connections, so we can assume that we don't have to change any user
+	 * data or anything. this is just a simple reordering. so calm down. */
+	GSList *s = shows;
+	struct group_show *g;
+	GSList *m;
+	struct buddy_show *b;
+	struct gaim_connection *gc;
+}
 
 static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
                  GtkCTreeNode *sibling, gpointer data)
@@ -634,6 +675,8 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 	}
 
 	do_export( (GtkWidget *) NULL, 0 );
+
+	redo_buddy_list();
 }
 
 
