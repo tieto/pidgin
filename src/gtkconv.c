@@ -3675,9 +3675,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		else
 			return;
 
-		c = gaim_conversation_new(GAIM_CONV_IM,
-								  ((GaimBuddy *)n)->account,
-								  ((GaimBuddy *)n)->name);
+		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 
 		gaim_window_add_conversation(win, c);
 	}
