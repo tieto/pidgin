@@ -12,7 +12,6 @@ src/protocols/yahoo/yahoo.c
 src/protocols/zephyr/zephyr.c
 src/about.c
 src/aim.c
-src/applet.c
 src/away.c
 src/buddy.c
 src/buddy_chat.c
