@@ -77,7 +77,13 @@ typedef struct
 	GtkWidget *window;
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
+
 	GtkWidget *screenname_entry;
+	GtkWidget *password_entry;
+	GtkWidget *alias_entry;
+
+	GtkWidget *remember_pass_check;
+	GtkWidget *auto_login_check;
 
 	GtkSizeGroup *sg;
 
@@ -134,6 +140,7 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *vbox;
 	GtkWidget *entry;
 	GaimPlugin *plugin = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimProtocol protocol;
 	GList *user_splits;
 	GList *split_entries = NULL;
@@ -148,7 +155,8 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	else
 		protocol = gaim_account_get_protocol(dialog->account);
 
-	plugin = gaim_find_prpl(protocol);
+	if ((plugin = gaim_find_prpl(protocol)) != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
 
 	/* Build the login options frame. */
@@ -179,7 +187,7 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (plugin == NULL) /* Yeah right. */
 		user_splits = NULL;
 	else
-		user_splits = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->user_splits;
+		user_splits = prpl_info->user_splits;
 
 	if (dialog->account != NULL)
 		username = g_strdup(gaim_account_get_username(dialog->account));
@@ -223,7 +231,8 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (value == NULL)
 			value = gaim_account_user_split_get_default_value(split);
 
-		gtk_entry_set_text(GTK_ENTRY(entry), value);
+		if (value != NULL)
+			gtk_entry_set_text(GTK_ENTRY(entry), value);
 	}
 
 	if (username != NULL)
@@ -232,6 +241,52 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	g_free(username);
 
 	g_list_free(split_entries);
+
+	/* Password */
+	dialog->password_entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
+	__add_pref_box(dialog, vbox, _("Password:"), dialog->password_entry);
+
+	/* Alias */
+	dialog->alias_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox, _("Alias:"), dialog->alias_entry);
+
+	/* Remember Password */
+	dialog->remember_pass_check =
+		gtk_check_button_new_with_label(_("Remember password"));
+	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
+					   FALSE, FALSE, 0);
+	gtk_widget_show(dialog->remember_pass_check);
+
+	/* Auto-Login */
+	dialog->auto_login_check =
+		gtk_check_button_new_with_label(_("Auto-login"));
+	gtk_box_pack_start(GTK_BOX(vbox), dialog->auto_login_check,
+					   FALSE, FALSE, 0);
+	gtk_widget_show(dialog->auto_login_check);
+
+	/* Set the fields. */
+	if (dialog->account != NULL) {
+		if (gaim_account_get_password(dialog->account))
+			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
+							   gaim_account_get_password(dialog->account));
+
+		if (gaim_account_get_alias(dialog->account))
+			gtk_entry_set_text(GTK_ENTRY(dialog->alias_entry),
+							   gaim_account_get_alias(dialog->account));
+
+		gtk_toggle_button_set_active(
+				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
+				gaim_account_get_remember_password(dialog->account));
+
+		gtk_toggle_button_set_active(
+				GTK_TOGGLE_BUTTON(dialog->auto_login_check), FALSE);
+	}
+
+	if (prpl_info != NULL && (prpl_info->options & OPT_PROTO_NO_PASSWORD)) {
+		gtk_widget_hide(dialog->password_entry);
+		gtk_widget_hide(dialog->remember_pass_check);
+	}
 }
 
 static void
@@ -241,8 +296,9 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	GtkWidget *win;
 	GtkWidget *vbox;
 	GtkWidget *bbox;
-	GtkWidget *sep;
 	GtkWidget *disclosure;
+	GtkWidget *sep;
+	GtkWidget *button;
 
 	dialog = g_new0(AccountPrefsDialog, 1);
 
@@ -278,6 +334,29 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	__add_user_options(dialog, vbox);
 #endif
 
+	/* Separator... */
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	/* Setup the button box */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* Cancel button */
+	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	/* OK button */
+	button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	/* Show the window. */
 	gtk_widget_show(win);
 }
 
