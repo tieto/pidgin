@@ -499,6 +499,10 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	} else if(!strncmp(msg, "/topic", 6)) {
 		jabber_chat_change_topic(chat, strlen(msg) > 7 ? msg+7 : NULL);
 		return 1;
+	} else if(!strncmp(msg, "/nick", 5)) {
+		if(strlen(msg) > 6)
+			jabber_chat_change_nick(chat, msg+6);
+		return 1;
 	}
 
 	jm = g_new0(JabberMessage, 1);

@@ -308,12 +308,42 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(type && !strcmp(type, "unavailable")) {
-			if(!strcmp(jid->resource, chat->nick)) {
-				serv_got_chat_left(js->gc, chat->id);
-				jabber_chat_destroy(chat);
-			} else {
-				gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						NULL);
+			gboolean nick_change = FALSE;
+			if(chat->muc) {
+				xmlnode *x;
+				for(x = packet->child; x; x = x->next) {
+					const char *xmlns, *nick, *code;
+					xmlnode *stat, *item;
+					if(strcmp(x->name, "x"))
+						continue;
+					if(!(xmlns = xmlnode_get_attrib(x, "xmlns")) ||
+							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
+						continue;
+					if(!(stat = xmlnode_get_child(x, "status")))
+						continue;
+					if(!(code = xmlnode_get_attrib(stat, "code")) || strcmp(code, "303"))
+						continue;
+					if(!(item = xmlnode_get_child(x, "item")))
+						continue;
+					if(!(nick = xmlnode_get_attrib(item, "nick")))
+						continue;
+					nick_change = TRUE;
+					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
+					if(!g_utf8_collate(jid->resource, chat->nick)) {
+						g_free(chat->nick);
+						chat->nick = g_strdup(nick);
+					}
+					break;
+				}
+			}
+			if(!nick_change) {
+				if(!strcmp(jid->resource, chat->nick)) {
+					serv_got_chat_left(js->gc, chat->id);
+					jabber_chat_destroy(chat);
+				} else {
+					gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
+							NULL);
+				}
 			}
 		} else {
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))

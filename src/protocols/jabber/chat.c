@@ -571,3 +571,25 @@ void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic)
 }
 
 
+void jabber_chat_change_nick(JabberChat *chat, const char *nick)
+{
+	xmlnode *presence;
+	char *full_jid;
+
+	if(!chat->muc) {
+		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
+				_("Nick changing not supported in non-MUC chatrooms"),
+				GAIM_MESSAGE_SYSTEM, time(NULL));
+		return;
+	}
+
+	presence = jabber_presence_create(chat->js->gc->away_state, chat->js->gc->away);
+	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
+	xmlnode_set_attrib(presence, "to", full_jid);
+	g_free(full_jid);
+
+	jabber_send(chat->js, presence);
+	xmlnode_free(presence);
+}
+
+
