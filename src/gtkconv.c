@@ -216,6 +216,43 @@ close_conv_cb(GtkWidget *w, gpointer d)
 	return TRUE;
 }
 
+static gboolean
+size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+
+	if (!GTK_WIDGET_VISIBLE(w))
+		return FALSE;
+
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return FALSE;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+	{
+		if (w == gtkconv->sw)
+		{
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
+		}
+		if (w == gtkconv->entry)
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
+	}
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+	{
+		if (w == gtkconv->sw)
+		{
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
+		}
+		if (w == gtkconv->entry)
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
+	}
+
+	return FALSE;
+}
+
 /* Courtesy of Galeon! */
 static void
 tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
@@ -3533,7 +3570,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	/* Setup the top part of the pane. */
 	vbox = gtk_vbox_new(FALSE, 6);
-	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, FALSE);
+	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
 	if (gc != NULL)
@@ -3578,6 +3615,9 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_set_size_request(gtkconv->sw,
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_height"));
+
+	g_signal_connect(G_OBJECT(gtkconv->sw), "size-allocate",
+					 G_CALLBACK(size_allocate_cb), conv);
 
 	gtk_widget_show(gtkconv->sw);
 
@@ -3694,7 +3734,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	/* Build the toolbar. */
 	vbox = gtk_vbox_new(FALSE, 6);
-	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
+	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
 
 	gtkconv->toolbar = gtk_imhtmltoolbar_new();
@@ -3742,6 +3782,8 @@ setup_chat_pane(GaimConversation *conv)
 					 G_CALLBACK(entry_key_press_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
+					 G_CALLBACK(size_allocate_cb), conv);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
@@ -3795,10 +3837,11 @@ setup_im_pane(GaimConversation *conv)
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
 
-	/* XXX - The following two prefs need to be set whenever the window is resized. */
 	gtk_widget_set_size_request(gtkconv->sw,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_height"));
+	g_signal_connect(G_OBJECT(gtkconv->sw), "size-allocate",
+					 G_CALLBACK(size_allocate_cb), conv);
 	gtk_widget_show(gtkconv->sw);
 
 	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
@@ -3819,7 +3862,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->imhtml);
 
 	vbox2 = gtk_vbox_new(FALSE, 6);
-	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
+	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
 	gtk_widget_show(vbox2);
 
 	/* Build the toolbar. */
@@ -3860,7 +3903,6 @@ setup_im_pane(GaimConversation *conv)
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry),
 								GTK_WRAP_WORD_CHAR);
-	/* XXX - The following pref needs to be set whenever the window is resized. */
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
@@ -3869,6 +3911,8 @@ setup_im_pane(GaimConversation *conv)
 					 G_CALLBACK(entry_key_press_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
+					 G_CALLBACK(size_allocate_cb), conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
 					 G_CALLBACK(insert_text_cb), conv);

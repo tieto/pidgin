@@ -11,6 +11,7 @@ version 0.78cvs
 	* Pounce notification now includes time (Mike Lundy)
 	* The history plugin now shows history for chats in addition to IMs
 	* Menu item to view log (Tom Samstag)
+	* Conversation and Chat sizes automatically saved (Stu Tomlinson)
 
 	Bug Fixes:
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
