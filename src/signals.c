@@ -455,8 +455,8 @@ gaim_signal_emit_return_1(void *instance, const char *signal, ...)
 	void *ret_val;
 	va_list args;
 
-	g_return_if_fail(instance != NULL);
-	g_return_if_fail(signal   != NULL);
+	g_return_val_if_fail(instance != NULL, NULL);
+	g_return_val_if_fail(signal   != NULL, NULL);
 
 	va_start(args, signal);
 	ret_val = gaim_signal_emit_vargs_return_1(instance, signal, args);
