@@ -600,7 +600,7 @@ int main(int argc, char *argv[])
 					"accounts",
 					_("Accounts"),
 					(AppletCallbackFunc)account_editor,
-					NULL);
+					(void *)1);
 #ifdef GAIM_PLUGINS
         applet_widget_register_callback(APPLET_WIDGET(applet),
 					"plugins",
