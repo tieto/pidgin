@@ -299,7 +299,7 @@ static void logging_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Log all conversations"), &logging_options, OPT_LOG_ALL, box);
-	gaim_button(_("Strip HTML from conversationlogs"), &logging_options, OPT_LOG_STRIP_HTML, box);
+	gaim_button(_("Strip HTML from logs"), &logging_options, OPT_LOG_STRIP_HTML, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
