@@ -65,9 +65,11 @@ static GaimPlugin *my_protocol = NULL;
 G_MODULE_IMPORT GSList *connections;
 
 /* The priv member of gjconn's is a gaim_connection for now. */
-#define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
+#define GJ_GC(x) ((GaimConnection *)(x)->priv)
 /* Confused? That makes three of us. -Robot101 */
 #define GC_GJ(x) ((gjconn)((struct jabber_data *)(x)->proto_data)->gjc)
+
+#define JABBER_CONNECT_STEPS 5
 
 #define IQID_AUTH "__AUTH__"
 
@@ -225,7 +227,7 @@ typedef struct gaim_jid_struct *gaim_jid;
  */
 struct jabber_chat {
 	gaim_jid gjid;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct gaim_conversation *b;
 	int id;
 	int state;
@@ -748,7 +750,7 @@ static void endElement(void *userdata, const char *name)
 
 static void jabber_callback(gpointer data, gint source, GaimInputCondition condition)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)data;
+	GaimConnection *gc = data;
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
 
 	gjab_recv(jd->gjc);
@@ -766,7 +768,7 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	xmlnode x;
 	char *t, *t2;
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct jabber_data *jd;
 	gjconn gjc;
 
@@ -809,17 +811,17 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 
 static void gjab_start(gjconn gjc)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	int port, rc;
-	char *server;
+	const char *server;
 
 	if (!gjc || gjc->state != JCONN_STATE_OFF)
 		return;
 
 	account = GJ_GC(gjc)->account;
-	port = account->proto_opt[USEROPT_PORT][0] ? atoi(account->proto_opt[USEROPT_PORT]) : DEFAULT_PORT;
-	server = account->proto_opt[USEROPT_CONN_SERVER][0] ? account->proto_opt[USEROPT_CONN_SERVER] : gjc->user->server;
-
+	port = gaim_account_get_int(account, "port", DEFAULT_PORT);
+	server = gaim_account_get_string(account, "connect_server",
+			gjc->user->server);
 
 	gjc->parser = XML_ParserCreate(NULL);
 	XML_SetUserData(gjc->parser, (void *)gjc);
@@ -836,7 +838,7 @@ static void gjab_start(gjconn gjc)
 /*
  * Find chat by chat group name
  */
-static struct gaim_conversation *find_chat(struct gaim_connection *gc, char *name)
+static struct gaim_conversation *find_chat(GaimConnection *gc, char *name)
 {
 	GSList *bcs = gc->buddy_chats;
 	struct gaim_conversation *b = NULL;
@@ -866,7 +868,7 @@ static struct gaim_conversation *find_chat(struct gaim_connection *gc, char *nam
  * jabber_chat struct list.  But that's the way it
  * was, so that's the way I'm leaving it--for now.
  */
-static int jabber_find_chat_by_convo_id(struct gaim_connection *gc, int id, struct jabber_chat **jc)
+static int jabber_find_chat_by_convo_id(GaimConnection *gc, int id, struct jabber_chat **jc)
 {
 	GSList *bcs = gc->buddy_chats;
 	struct gaim_conversation *b = NULL;
@@ -897,7 +899,7 @@ static int jabber_find_chat_by_convo_id(struct gaim_connection *gc, int id, stru
 /*
  * Find any chat
  */
-static struct jabber_chat *find_any_chat(struct gaim_connection *gc, jid chat)
+static struct jabber_chat *find_any_chat(GaimConnection *gc, jid chat)
 {
 	GSList *jcs = ((struct jabber_data *)gc->proto_data)->chats;
 	struct jabber_chat *jc = NULL;
@@ -917,7 +919,7 @@ static struct jabber_chat *find_any_chat(struct gaim_connection *gc, jid chat)
 /*
  * Find existing/active Jabber chat
  */
-static struct jabber_chat *find_existing_chat(struct gaim_connection *gc, jid chat)
+static struct jabber_chat *find_existing_chat(GaimConnection *gc, jid chat)
 {
 	GSList *jcs = ((struct jabber_data *)gc->proto_data)->chats;
 	struct jabber_chat *jc = NULL;
@@ -936,7 +938,7 @@ static struct jabber_chat *find_existing_chat(struct gaim_connection *gc, jid ch
 /*
  * Find pending chat
  */
-static struct jabber_chat *find_pending_chat(struct gaim_connection *gc, jid chat)
+static struct jabber_chat *find_pending_chat(GaimConnection *gc, jid chat)
 {
 	GSList *jcs = ((struct jabber_data *)gc->proto_data)->chats;
 	struct jabber_chat *jc = NULL;
@@ -968,7 +970,7 @@ static gboolean find_chat_buddy(struct gaim_conversation *b, char *name)
 /*
  * Remove a buddy from the (gaim) buddylist (if he's on it)
  */
-static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *buddyname)
+static void jabber_remove_gaim_buddy(GaimConnection *gc, const char *buddyname)
 {
 	struct buddy *b;
 
@@ -980,7 +982,7 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *bud
 	}
 }
 
-static void jabber_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
+static void jabber_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 
@@ -1028,7 +1030,7 @@ static void jabber_change_passwd(struct gaim_connection *gc, const char *old, co
 /*
  * Return pointer to jabber_buddy_data if buddy found.  Create if necessary.
  */
-static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, const char *buddy, gboolean create)
+static struct jabber_buddy_data* jabber_find_buddy(GaimConnection *gc, const char *buddy, gboolean create)
 {
 	struct jabber_data *jd = gc->proto_data;
 	gpointer val;
@@ -1058,7 +1060,7 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
  * default being the highest priority one.
  */
 
-static jab_res_info jabber_find_resource(struct gaim_connection *gc, const char *who)
+static jab_res_info jabber_find_resource(GaimConnection *gc, const char *who)
 {
 	GSList *resources;
 	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, who, FALSE);
@@ -1091,7 +1093,7 @@ static jab_res_info jabber_find_resource(struct gaim_connection *gc, const char 
 	return jri;
 }
 
-static gboolean jabber_is_default_resource(struct gaim_connection *gc, const char *who)
+static gboolean jabber_is_default_resource(GaimConnection *gc, const char *who)
 {
 	jab_res_info jri = jabber_find_resource(gc, who);
 	char *buddy = g_strdup(who);
@@ -1109,7 +1111,7 @@ static gboolean jabber_is_default_resource(struct gaim_connection *gc, const cha
 /*
  * if the resource doesn't exist, create it.  otherwise, just update the priority
  */
-static void jabber_track_resource(struct gaim_connection *gc,
+static void jabber_track_resource(GaimConnection *gc,
 				  char *buddy,
 				  char *res,
 				  int priority,
@@ -1141,7 +1143,7 @@ static void jabber_track_resource(struct gaim_connection *gc,
 /*
  * remove the resource, if it exists
  */
-static void jabber_remove_resource(struct gaim_connection *gc, char *buddy, char *res)
+static void jabber_remove_resource(GaimConnection *gc, char *buddy, char *res)
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy, FALSE);
 	if(jbd) {
@@ -1209,7 +1211,7 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 	jri->away_msg = g_strdup(xmlnode_get_tag_data(p->x, "status"));
 }
 
-static void jabber_convo_closed(struct gaim_connection *gc, char *name)
+static void jabber_convo_closed(GaimConnection *gc, char *name)
 {
 	jab_res_info jri = jabber_find_resource(gc, name);
 
@@ -1640,7 +1642,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
  * Used only by Jabber accept/deny add stuff just below
  */
 struct jabber_add_permit {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	gchar *user;
 };
 
@@ -1907,7 +1909,8 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 	if (jpacket_subtype(p) == JPACKET__RESULT) {
 		if (xmlnode_has_children(p->x)) {
 			xmlnode query = xmlnode_get_tag(p->x, "query");
-			set_login_progress(GJ_GC(gjc), 4, _("Authenticating"));
+			gaim_connection_update_progress(GJ_GC(gjc), _("Authenticating"),
+					4, JABBER_CONNECT_STEPS);
 			if (!xmlnode_get_tag(query, "digest")) {
 				g_free(gjc->sid);
 				gjc->sid = NULL;
@@ -1916,7 +1919,7 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 		} else {
 			gaim_debug(GAIM_DEBUG_INFO, "jabber", "auth success\n");
 
-			account_online(GJ_GC(gjc));
+			gaim_connection_set_state(GJ_GC(gjc), GAIM_CONNECTED);
 			serv_finish_login(GJ_GC(gjc));
 
 			((struct jabber_data *)GJ_GC(gjc)->proto_data)->did_import = TRUE;
@@ -1939,9 +1942,9 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 				g_snprintf(msg, sizeof(msg), "Error %d: %s", errcode, errmsg);
 			} else
 				g_snprintf(msg, sizeof(msg), "%s", errmsg);
-			hide_login_progress(GJ_GC(gjc), msg);
+			gaim_connection_error(GJ_GC(gjc), msg);
 		} else {
-			hide_login_progress(GJ_GC(gjc), _("Unknown login error"));
+			gaim_connection_error(GJ_GC(gjc), _("Unknown login error"));
 		}
 
 		jd->die = TRUE;
@@ -2336,18 +2339,18 @@ static void jabber_handlestate(gjconn gjc, int state)
 	switch (state) {
 	case JCONN_STATE_OFF:
 		if(gjc->was_connected) {
-			hide_login_progress_error(GJ_GC(gjc), _("Connection lost"));
+			gaim_connection_error(GJ_GC(gjc), _("Connection lost"));
 		} else {
-			hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+			gaim_connection_error(GJ_GC(gjc), _("Unable to connect"));
 		}
 		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
 		gjc->was_connected = 1;
-		set_login_progress(GJ_GC(gjc), 2, _("Connected"));
+		gaim_connection_update_progress(GJ_GC(gjc), _("Connected"), 2, JABBER_CONNECT_STEPS);
 		break;
 	case JCONN_STATE_ON:
-		set_login_progress(GJ_GC(gjc), 3, _("Requesting Authentication Method"));
+		gaim_connection_update_progress(GJ_GC(gjc), _("Requesting Authentication Method"), 3, JABBER_CONNECT_STEPS);
 		gjab_reqauth(gjc);
 		break;
 	default:
@@ -2356,9 +2359,9 @@ static void jabber_handlestate(gjconn gjc, int state)
 	return;
 }
 
-static void jabber_login(struct gaim_account *account)
+static void jabber_login(GaimAccount *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(account);
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
@@ -2367,13 +2370,13 @@ static void jabber_login(struct gaim_account *account)
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
 
-	set_login_progress(gc, 1, _("Connecting"));
+	gaim_connection_update_progress(gc, _("Connecting"), 1, JABBER_CONNECT_STEPS);
 
 	if (!(jd->gjc = gjab_new(loginname, account->password, gc))) {
 		g_free(loginname);
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
 				   "unable to connect (jab_new failed)\n");
-		hide_login_progress(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
 	}
@@ -2423,7 +2426,7 @@ static gboolean jabber_free(gpointer data)
 	return FALSE;
 }
 
-static void jabber_close(struct gaim_connection *gc)
+static void jabber_close(GaimConnection *gc)
 {
 	struct jabber_data *jd = gc->proto_data;
 
@@ -2464,7 +2467,7 @@ static void jabber_close(struct gaim_connection *gc)
 	gc->proto_data = NULL;
 }
 
-static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
+static int jabber_send_typing(GaimConnection *gc, char *who, int typing)
 {
 	xmlnode x, y;
 	char *realwho;
@@ -2519,7 +2522,7 @@ static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 	g_free(xhtml);
 }
 
-static int jabber_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
+static int jabber_send_im(GaimConnection *gc, const char *who, const char *message, int len, int flags)
 {
 	xmlnode x, y;
 	char *thread_id = NULL;
@@ -2564,7 +2567,7 @@ static int jabber_send_im(struct gaim_connection *gc, const char *who, const cha
  * If "alias" or "group" are NULL, gets them from Gaim's current buddylist values
  * for the buddy.
  */
-static void jabber_roster_update(struct gaim_connection *gc, const char *name, const char *alias, const char *group)
+static void jabber_roster_update(GaimConnection *gc, const char *name, const char *alias, const char *group)
 {
 	xmlnode x, y;
 	char *realwho;
@@ -2643,7 +2646,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
  *
  * This is just a roster update using existing, local buddylist data
  */
-static void jabber_alias_buddy(struct gaim_connection *gc, const char *name, const char *alias)
+static void jabber_alias_buddy(GaimConnection *gc, const char *name, const char *alias)
 {
 	jabber_roster_update(gc, name, alias, NULL);
 }
@@ -2651,7 +2654,7 @@ static void jabber_alias_buddy(struct gaim_connection *gc, const char *name, con
 /*
  * Change buddy's group on server roster
  */
-static void jabber_group_change(struct gaim_connection *gc, const char *name, const char *old_group, const char *new_group)
+static void jabber_group_change(GaimConnection *gc, const char *name, const char *old_group, const char *new_group)
 {
 	if(old_group && new_group && strcmp(old_group, new_group))
 		jabber_roster_update(gc, name, NULL, new_group);
@@ -2664,7 +2667,7 @@ static void jabber_group_change(struct gaim_connection *gc, const char *name, co
  * So we iterate through the list of buddies that are in the group and change
  * the group attribute for each of them.
  */
-static void jabber_rename_group(struct gaim_connection *gc,
+static void jabber_rename_group(GaimConnection *gc,
 				const char *old_group,
 				const char *new_group,
 				GList *members)
@@ -2676,12 +2679,13 @@ static void jabber_rename_group(struct gaim_connection *gc,
 		}
 }
 
-static void jabber_add_buddy(struct gaim_connection *gc, const char *name)
+static void jabber_add_buddy(GaimConnection *gc, const char *name)
 {
 	xmlnode x;
 	char *realwho;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	gaim_jid gjid;
+	GaimAccount *account = gaim_connection_get_account(gc);
 
 	if (!((struct jabber_data *)gc->proto_data)->did_import)
 		return;
@@ -2689,7 +2693,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, const char *name)
 	/*
 	 * If there's no name or the name is ourself
 	 */
-	if(!name || !strcmp(gc->username, name))
+	if(!name || !strcmp(gaim_account_get_username(account), name))
 		return;
 
 	if((realwho = get_realwho(gjc, name, FALSE, &gjid)) == NULL) {
@@ -2721,7 +2725,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, const char *name)
 	g_free(realwho);
 }
 
-static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *group)
+static void jabber_remove_buddy(GaimConnection *gc, char *name, char *group)
 {
 	xmlnode x;
 	char *realwho;
@@ -2742,7 +2746,7 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *gr
 /*
  * Remove a buddy item from the roster entirely
  */
-static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *name)
+static void jabber_remove_buddy_roster_item(GaimConnection *gc, char *name)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	char *realwho;
@@ -2762,7 +2766,7 @@ static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *na
 /*
  * Unsubscribe a buddy from our presence
  */
-static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, const char *name)
+static void jabber_unsubscribe_buddy_from_us(GaimConnection *gc, const char *name)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	char *realwho;
@@ -2779,7 +2783,7 @@ static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, const c
 /*
  * Common code for setting ourselves invisible/visible to buddy
  */
-static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, const char *name, gboolean invisible)
+static void jabber_invisible_to_buddy_common(GaimConnection *gc, const char *name, gboolean invisible)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	char *realwho;
@@ -2811,7 +2815,7 @@ static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, const c
 /*
  * Make ourselves temporarily invisible to a buddy
  */
-static void jabber_invisible_to_buddy(struct gaim_connection *gc, const char *name)
+static void jabber_invisible_to_buddy(GaimConnection *gc, const char *name)
 {
 	jabber_invisible_to_buddy_common(gc, name, TRUE);
 }
@@ -2819,7 +2823,7 @@ static void jabber_invisible_to_buddy(struct gaim_connection *gc, const char *na
 /*
  * Make ourselves visible to a buddy
  */
-static void jabber_visible_to_buddy(struct gaim_connection *gc, const char *name)
+static void jabber_visible_to_buddy(GaimConnection *gc, const char *name)
 {
 	jabber_invisible_to_buddy_common(gc, name, FALSE);
 }
@@ -2856,7 +2860,7 @@ static void set_invisible_to_buddy_status(gpointer key, gpointer val, gpointer d
  * Used when we set server-wide invisibility so that individual buddy menu
  * entries show the proper option.
  */
-static void invisible_to_all_buddies(struct gaim_connection *gc, gboolean invisible)
+static void invisible_to_all_buddies(GaimConnection *gc, gboolean invisible)
 {
 	struct jabber_data *jd = gc->proto_data;
 
@@ -2864,7 +2868,7 @@ static void invisible_to_all_buddies(struct gaim_connection *gc, gboolean invisi
 		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, (gpointer) invisible);
 }
 
-static const char *jabber_list_icon(struct gaim_account *a, struct buddy *b)
+static const char *jabber_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "jabber";
 }
@@ -2904,7 +2908,7 @@ static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw
 	}
 }
 
-static GList *jabber_chat_info(struct gaim_connection *gc)
+static GList *jabber_chat_info(GaimConnection *gc)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 
@@ -2974,7 +2978,7 @@ static GList *jabber_chat_info(struct gaim_connection *gc)
 	return m;
 }
 
-static void jabber_join_chat(struct gaim_connection *gc, GHashTable *data)
+static void jabber_join_chat(GaimConnection *gc, GHashTable *data)
 {
 	xmlnode x;
 	char *room, *server, *handle;
@@ -3045,7 +3049,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GHashTable *data)
 	g_free(realwho);
 }
 
-static void jabber_chat_invite(struct gaim_connection *gc, int id, const char *message, const char *name)
+static void jabber_chat_invite(GaimConnection *gc, int id, const char *message, const char *name)
 {
 	xmlnode x, y;
 	struct jabber_data *jd = gc->proto_data;
@@ -3079,7 +3083,7 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, const char *m
 	xmlnode_free(x);
 }
 
-static void jabber_chat_leave(struct gaim_connection *gc, int id)
+static void jabber_chat_leave(GaimConnection *gc, int id)
 {
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
@@ -3100,7 +3104,7 @@ static void jabber_chat_leave(struct gaim_connection *gc, int id)
 	jc->b = NULL;
 }
 
-static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
+static int jabber_chat_send(GaimConnection *gc, int id, char *message)
 {
 	xmlnode x, y;
 	struct jabber_chat *jc = NULL;
@@ -3135,7 +3139,7 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	return 0;
 }
 
-static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, char *message)
+static void jabber_chat_whisper(GaimConnection *gc, int id, char *who, char *message)
 {
 	xmlnode x;
 	struct jabber_chat *jc = NULL;
@@ -3192,7 +3196,7 @@ static char *jabber_normalize(const char *s)
 	}
 }
 
-static void jabber_get_info(struct gaim_connection *gc, const char *who) {
+static void jabber_get_info(GaimConnection *gc, const char *who) {
 	xmlnode x;
 	char *id;
 	char *realwho;
@@ -3217,7 +3221,7 @@ static void jabber_get_info(struct gaim_connection *gc, const char *who) {
 	xmlnode_free(x);
 }
 
-static void jabber_get_error_msg(struct gaim_connection *gc, const char *who) {
+static void jabber_get_error_msg(GaimConnection *gc, const char *who) {
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
 	gchar **str_arr = (gchar **) g_new(gpointer, 3);
@@ -3245,7 +3249,7 @@ static void jabber_get_error_msg(struct gaim_connection *gc, const char *who) {
 	g_free(final);
 }
 
-static void jabber_get_away_msg(struct gaim_connection *gc, const char *who) {
+static void jabber_get_away_msg(GaimConnection *gc, const char *who) {
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
 	int num_resources;
@@ -3302,7 +3306,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, const char *who) {
 
 }
 
-static void jabber_get_cb_info(struct gaim_connection *gc, int cid, char *who) {
+static void jabber_get_cb_info(GaimConnection *gc, int cid, char *who) {
 	struct jabber_chat *jc = NULL;
 	char *realwho;
 
@@ -3316,7 +3320,7 @@ static void jabber_get_cb_info(struct gaim_connection *gc, int cid, char *who) {
 	g_free(realwho);
 }
 
-static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *who) {
+static void jabber_get_cb_away_msg(GaimConnection *gc, int cid, char *who) {
 	struct jabber_chat *jc = NULL;
 	char *realwho;
 
@@ -3381,7 +3385,7 @@ static char *jabber_status_text(struct buddy *b)
 	return ret;
 }
 
-static GList *jabber_buddy_menu(struct gaim_connection *gc, const char *who) {
+static GList *jabber_buddy_menu(GaimConnection *gc, const char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct buddy *b = gaim_find_buddy(gc->account, who);
@@ -3436,7 +3440,7 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, const char *who) {
 	return m;
 }
 
-static GList *jabber_away_states(struct gaim_connection *gc) {
+static GList *jabber_away_states(GaimConnection *gc) {
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Online"));
@@ -3450,7 +3454,7 @@ static GList *jabber_away_states(struct gaim_connection *gc) {
 	return m;
 }
 
-static void jabber_set_away(struct gaim_connection *gc, char *state, char *message)
+static void jabber_set_away(GaimConnection *gc, char *state, char *message)
 {
 	xmlnode x, y;
 	struct jabber_data *jd = gc->proto_data;
@@ -3537,14 +3541,14 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 	invisible_to_all_buddies(gc, invisible);
 }
 
-static void jabber_set_idle(struct gaim_connection *gc, int idle) {
+static void jabber_set_idle(GaimConnection *gc, int idle) {
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
 	gaim_debug(GAIM_DEBUG_INFO, "jabber",
 			   "jabber_set_idle: setting idle %i\n", idle);
 	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
-static void jabber_keepalive(struct gaim_connection *gc) {
+static void jabber_keepalive(GaimConnection *gc) {
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
 	gjab_send_raw(jd->gjc, JABBER_KEEPALIVE_STRING);
 }
@@ -3689,7 +3693,7 @@ typedef struct {
  */
 static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 {
-	struct gaim_connection *gc = GJ_GC(gjc);
+	GaimConnection *gc = GJ_GC(gjc);
 	char *cdata, *status;
 	struct vcard_template *vc_tp = vcard_template_data;
 
@@ -3921,7 +3925,7 @@ static char *tag_for_label(const char *label)
 /*
  * Send vCard info to Jabber server
  */
-static void jabber_set_info(struct gaim_connection *gc, char *info)
+static void jabber_set_info(GaimConnection *gc, char *info)
 {
 	xmlnode x, vc_node;
 	char *id;
@@ -4016,7 +4020,7 @@ static gchar *jabber_format_info(MultiEntryDlg *b)
  * string (if any) into GSLists for the (multi-entry) edit dialog and
  * calls the set_vcard dialog.
  */
-static void jabber_setup_set_info(struct gaim_connection *gc)
+static void jabber_setup_set_info(GaimConnection *gc)
 {
 	MultiEntryData *data;
 	const struct vcard_template *vc_tp;
@@ -4024,7 +4028,7 @@ static void jabber_setup_set_info(struct gaim_connection *gc)
 	MultiEntryDlg *b = multi_entry_dialog_new();
 	char *cdata;
 	xmlnode x_vc_data = NULL;
-	struct gaim_account *tmp = gc->account;
+	GaimAccount *tmp = gc->account;
 	b->account = tmp;
 
 
@@ -4174,7 +4178,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					   "registration successful!\n");
 
-			hide_login_progress_notice(GJ_GC(gjc), _("Server Registration successful!"));
+			gaim_connection_notice(GJ_GC(gjc), _("Server Registration successful!"));
 			/*
 			 * TBD: is this the correct way to do away with a
 			 * gaim_connection and all its associated memory
@@ -4199,9 +4203,9 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 				g_snprintf(msg, sizeof(msg), "Error %d: %s", errcode, errmsg);
 			} else
 				g_snprintf(msg, sizeof(msg), "%s", errmsg);
-			hide_login_progress(GJ_GC(gjc), msg);
+			gaim_connection_error(GJ_GC(gjc), msg);
 		} else {
-			hide_login_progress(GJ_GC(gjc), _("Unknown registration error"));
+			gaim_connection_error(GJ_GC(gjc), _("Unknown registration error"));
 		}
 
 		jd->die = TRUE;
@@ -4245,9 +4249,9 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 	switch (state) {
 	case JCONN_STATE_OFF:
 		if(gjc->was_connected) {
-			hide_login_progress_error(GJ_GC(gjc), _("Connection lost"));
+			gaim_connection_error(GJ_GC(gjc), _("Connection lost"));
 		} else {
-			hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
+			gaim_connection_error(GJ_GC(gjc), _("Unable to connect"));
 		}
 		signoff(GJ_GC(gjc));
 		break;
@@ -4278,9 +4282,9 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 /*
  * Like jabber_login(), only different
  */
-void jabber_register_user(struct gaim_account *account)
+void jabber_register_user(GaimAccount *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(account);
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
@@ -4294,7 +4298,7 @@ void jabber_register_user(struct gaim_account *account)
 		g_free(loginname);
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber",
 				   "unable to connect (jab_new failed)\n");
-		hide_login_progress(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect"));
 		signoff(gc);
 	} else {
 		gjab_state_handler(jd->gjc, jabber_handle_registration_state);
@@ -4310,7 +4314,7 @@ void jabber_register_user(struct gaim_account *account)
 /* End Jabber "user registration" support */
 /*----------------------------------------*/
 
-static GList *jabber_actions(struct gaim_connection *gc)
+static GList *jabber_actions(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;

@@ -1241,7 +1241,7 @@ static void connection_host_resolved(GSList *hosts, gpointer data, const char *e
 }
 
 int
-proxy_connect(GaimAccount *account, char *host, int port, GaimInputFunction func, gpointer data)
+proxy_connect(GaimAccount *account, const char *host, int port, GaimInputFunction func, gpointer data)
 {
 	char *connecthost = host;
 	int connectport = port;

@@ -71,6 +71,6 @@ typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
 extern gint gaim_input_add(int, GaimInputCondition, GaimInputFunction, gpointer);
 extern void gaim_input_remove(gint);
 
-extern int proxy_connect(GaimAccount *account, char *host, int port, GaimInputFunction func, gpointer data);
+extern int proxy_connect(GaimAccount *account, const char *host, int port, GaimInputFunction func, gpointer data);
 
 #endif /* _PROXY_H_ */
