@@ -2215,7 +2215,8 @@ gray_stuff_out(GaimConversation *conv)
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc      = gaim_conversation_get_gc(conv);
-
+	GtkIMHtmlButtons buttons;
+	
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -2329,13 +2330,19 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
+		
+		if (gc->flags & GAIM_CONNECTION_HTML) {
+			buttons = -1;    /* Everything on */
+			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
+				buttons ^= GTK_IMHTML_IMAGE; 
+			if (gc->flags & GAIM_CONNECTION_NO_BGCOLOR)
+				buttons ^= GTK_IMHTML_BACKCOLOR;
+		} else {
+			buttons = 0;
+		}
+		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
+	
 #if 0
-		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
-		gtk_widget_set_sensitive(gtkconv->toolbar.image,
-								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
-		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
-								 !(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
-
 		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
@@ -2381,7 +2388,7 @@ gray_stuff_out(GaimConversation *conv)
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
 		}
-
+		
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);

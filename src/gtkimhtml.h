@@ -49,6 +49,19 @@ typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 
+typedef enum {
+	GTK_IMHTML_BOLD =      1 << 0,
+	GTK_IMHTML_ITALIC =    1 << 1,
+	GTK_IMHTML_UNDERLINE = 1 << 2,
+	GTK_IMHTML_GROW =      1 << 3,
+	GTK_IMHTML_SHRINK =    1 << 4,
+	GTK_IMHTML_FACE =      1 << 5,
+	GTK_IMHTML_FORECOLOR = 1 << 6,
+	GTK_IMHTML_BACKCOLOR = 1 << 7,
+	GTK_IMHTML_LINK =      1 << 8,
+	GTK_IMHTML_IMAGE =     1 << 9,
+	GTK_IMHTML_SMILEY =    1 << 10
+} GtkIMHtmlButtons;
 
 typedef struct {
 	GtkTextMark *start;
@@ -83,6 +96,8 @@ struct _GtkIMHtml {
 	gchar *search_string;
 
 	gboolean editable;
+	GtkIMHtmlButtons format_functions;
+
 	struct {
 		GtkIMHtmlFormatSpan *bold;
 		GtkIMHtmlFormatSpan *italic;
@@ -101,6 +116,8 @@ struct _GtkIMHtmlClass {
 	GtkTextViewClass parent_class;
 
 	void (*url_clicked)(GtkIMHtml *, const gchar *);
+	void (*buttons_update)(GtkIMHtml *, GtkIMHtmlButtons);
+	void (*toggle_format)(GtkIMHtml *, GtkIMHtmlButtons);
 };
 
 struct _GtkIMHtmlFontDetail {
@@ -202,6 +219,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
 
 /* Editable stuff */
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
+void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons);
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);

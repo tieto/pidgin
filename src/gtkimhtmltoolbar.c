@@ -603,6 +603,47 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
+static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
+{
+
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_IMHTML_BOLD);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->italic), buttons & GTK_IMHTML_ITALIC);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->underline), buttons & GTK_IMHTML_UNDERLINE);
+
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->larger_size), buttons & GTK_IMHTML_GROW);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smaller_size), buttons & GTK_IMHTML_SHRINK);
+
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->font), buttons & GTK_IMHTML_FACE);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->fgcolor), buttons & GTK_IMHTML_FORECOLOR);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bgcolor), buttons & GTK_IMHTML_BACKCOLOR);
+
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->image), buttons & GTK_IMHTML_IMAGE);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->link), buttons & GTK_IMHTML_LINK);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smiley), buttons & GTK_IMHTML_SMILEY);
+
+}
+
+static void toggle_button_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
+{
+	/* This is hacky.  I have to tolerate the fact that set_active causes the signal to be emited, so I wind up
+	 * toggling in gtkimhtml twice here */
+
+	if (buttons & GTK_IMHTML_BOLD) {
+		gtk_imhtml_toggle_bold(imhtml);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bold), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)));
+	}
+
+	if (buttons & GTK_IMHTML_ITALIC) {
+		gtk_imhtml_toggle_italic(imhtml);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->italic), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)));
+	}
+
+	if (buttons & GTK_IMHTML_UNDERLINE) {
+		gtk_imhtml_toggle_underline(imhtml);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->underline), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)));
+	}
+}
+
 enum {
 	LAST_SIGNAL
 };
@@ -852,4 +893,6 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
 	toolbar->imhtml = imhtml;
+	g_signal_connect(G_OBJECT(imhtml), "format_functions_update", G_CALLBACK(update_buttons_cb), toolbar);
+	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
 }

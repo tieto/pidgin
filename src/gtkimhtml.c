@@ -84,6 +84,14 @@ enum {
 	DRAG_URL
 };
 
+enum {
+	URL_CLICKED,
+	BUTTONS_UPDATE,
+	TOGGLE_FORMAT,
+	LAST_SIGNAL
+};
+static guint signals [LAST_SIGNAL] = { 0 };
+
 GtkTargetEntry selection_targets[] = {
 	{ "text/html", 0, TARGET_HTML },
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
@@ -360,6 +368,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 {	
 	char buf[7];
 	buf[0] = '\0';
+	GObject *object;
 
 	if (event->state & GDK_CONTROL_MASK)
 		switch (event->keyval) {
@@ -377,7 +386,12 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		
 		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
 		case 'B':
-			gtk_imhtml_toggle_bold(imhtml);
+			if (imhtml->format_functions & GTK_IMHTML_BOLD) {
+				gtk_imhtml_toggle_bold(imhtml);
+				object = g_object_ref(G_OBJECT(imhtml));
+				g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
+				g_object_unref(object);
+			}
 			return TRUE;
 			break;
 			
@@ -392,36 +406,28 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 			
 		case 'i':
 		case 'I':
-			/*set_toggle(gtkconv->toolbar.italic,
-			  !gtk_toggle_button_get_active(
-			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.italic)));*/
-			gtk_imhtml_toggle_italic(imhtml);
+			if (imhtml->format_functions & GTK_IMHTML_ITALIC)
+				gtk_imhtml_toggle_italic(imhtml);
 			return TRUE;
 			break;
 			
 		case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
 		case 'U':
-			/*set_toggle(gtkconv->toolbar.underline,
-			  !gtk_toggle_button_get_active(
-			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));*/
-			gtk_imhtml_toggle_underline(imhtml);
+			if (imhtml->format_functions & GTK_IMHTML_UNDERLINE)
+				gtk_imhtml_toggle_underline(imhtml);
 			return TRUE;
 			break;
 			
 		case '-':
-			/*set_toggle(gtkconv->toolbar.smaller_size,
-			  !gtk_toggle_button_get_active(
-			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.smaller_size)));*/
-			gtk_imhtml_font_shrink(imhtml);
+			if (imhtml->format_functions & GTK_IMHTML_SHRINK)
+				gtk_imhtml_font_shrink(imhtml);
 			return TRUE;
 			break;
 			
 		case '=':
 		case '+':
-			/*set_toggle(gtkconv->toolbar.larger_size,
-			  !gtk_toggle_button_get_active(
-			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.larger_size)));*/
-			gtk_imhtml_font_grow(imhtml);
+			if (imhtml->format_functions & GTK_IMHTML_GROW)
+				gtk_imhtml_font_grow(imhtml);
 			return TRUE;
 			break;
 			
@@ -566,13 +572,6 @@ static gboolean button_release_cb(GtkIMHtml *imhtml, GdkEventButton event, gpoin
 
 static GtkTextViewClass *parent_class = NULL;
 
-/* GtkIMHtml has one signal--URL_CLICKED */
-enum {
-	URL_CLICKED,
-	LAST_SIGNAL
-};
-static guint signals [LAST_SIGNAL] = { 0 };
-
 static void
 gtk_imhtml_finalize (GObject *object)
 {
@@ -616,6 +615,24 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 						g_cclosure_marshal_VOID__POINTER,
 						G_TYPE_NONE, 1,
 						G_TYPE_POINTER);
+	signals[BUTTONS_UPDATE] = g_signal_new("format_functions_update",
+					       G_TYPE_FROM_CLASS(gobject_class),
+					       G_SIGNAL_RUN_FIRST,
+					       G_STRUCT_OFFSET(GtkIMHtmlClass, buttons_update),
+					       NULL,
+					       0,
+					       g_cclosure_marshal_VOID__POINTER,
+					       G_TYPE_NONE, 1,
+					       G_TYPE_INT);
+	signals[TOGGLE_FORMAT] = g_signal_new("format_function_toggle",
+					      G_TYPE_FROM_CLASS(gobject_class),
+					      G_SIGNAL_RUN_FIRST,
+					      G_STRUCT_OFFSET(GtkIMHtmlClass, toggle_format),
+					      NULL,
+					      0,
+					      g_cclosure_marshal_VOID__POINTER,
+					      G_TYPE_NONE, 1,
+					      G_TYPE_INT);
 	gobject_class->finalize = gtk_imhtml_finalize;
 }
 
@@ -690,7 +707,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->scalables = NULL;
 
 	gtk_imhtml_set_editable(imhtml, FALSE);
-
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -1373,6 +1389,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	GtkIMHtmlScalable *scalable = NULL;
 	int y, height;
 
+	printf("Appending: %s\n", text);
 
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
@@ -2462,6 +2479,15 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 	 */
 	/* gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable); */
 	imhtml->editable = editable;
+	imhtml->format_functions = !editable ? 0 : -1;
+}
+
+void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
+{
+	GObject *object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[BUTTONS_UPDATE], 0, buttons);
+	imhtml->format_functions = buttons;
+	g_object_unref(object);
 }
 
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
