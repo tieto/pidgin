@@ -247,3 +247,11 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 <KingAnt> Paco-Paco: I understand everything you just said
 <Paco-Paco> does it scare you?
 <KingAnt> Paco-Paco: You have no idea
+
+---
+
+(18:45:00) SuperNewbie entered the room.
+(18:51:07) SuperNewbie: I'm new and I dont understand how to get into a chat.
+(18:51:19) faceprint: you're in a chat now
+(18:51:30) SuperNewbie: Oh OK
+
