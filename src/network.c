@@ -30,10 +30,34 @@
 #include "network.h"
 #include "prefs.h"
 
+const unsigned char *
+gaim_network_ip_atoi(const char *ip)
+{
+	static unsigned char ret[4];
+	gchar delimiter = '.';
+	gchar **split;
+	int i;
+
+	g_return_val_if_fail(ip != NULL, NULL);
+
+	split = g_strsplit(ip, &delimiter, 4);
+	for (i = 0; split[i] != NULL; i++)
+		ret[i] = atoi(split[i]);
+	g_strfreev(split);
+
+	/* i should always be 4 */
+	if (i != 4)
+		return NULL;
+
+	return ret;
+}
+
 void
 gaim_network_set_public_ip(const char *ip)
 {
 	g_return_if_fail(ip != NULL);
+
+	/* XXX - Ensure the IP address is valid */
 
 	gaim_prefs_set_string("/core/network/public_ip", ip);
 }
@@ -69,6 +93,7 @@ gaim_network_get_local_ip_from_fd(int fd)
 
 	tmp = inet_ntoa(addr.sin_addr);
 	strncpy(ip, tmp, sizeof(ip));
+
 	return ip;
 }
 
@@ -106,7 +131,7 @@ gaim_network_get_local_system_ip(int fd)
 }
 
 const char *
-gaim_network_get_ip_for_account(const GaimAccount *account, int fd)
+gaim_network_get_my_ip(int fd)
 {
 	const char *ip = NULL;
 

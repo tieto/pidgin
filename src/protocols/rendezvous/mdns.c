@@ -772,16 +772,16 @@ mdns_send_rr(int fd, ResourceRecord *rr)
 }
 
 int
-mdns_advertise_a(int fd, const char *name, unsigned char *ip)
+mdns_advertise_a(int fd, const char *name, const unsigned char *ip)
 {
 	int ret;
 	ResourceRecord *rr;
 	ResourceRecordRDataA *rdata;
 	int i;
 
-	if ((name == NULL) || (strlen(name) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
+	g_return_val_if_fail(ip != NULL, -EINVAL);
 
 	rdata = g_malloc(4);
 	for (i = 0; i < 4; i++)
@@ -878,7 +878,7 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 }
 
 int
-mdns_advertise_aaaa(int fd, const char *name, unsigned char *ip)
+mdns_advertise_aaaa(int fd, const char *name, const unsigned char *ip)
 {
 	int ret;
 	ResourceRecord *rr;

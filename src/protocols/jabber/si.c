@@ -281,7 +281,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		return;
 	}
 
-	host = gaim_network_get_ip_for_account(jsx->js->gc->account, jsx->js->fd);
+	host = gaim_network_get_my_ip(jsx->js->fd);
 
 	buffer[0] = 0x05;
 	buffer[1] = 0x00;
@@ -429,7 +429,7 @@ jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 		return;
 	}
 
-	xmlnode_set_attrib(streamhost, "host",  gaim_network_get_ip_for_account(jsx->js->gc->account, jsx->js->fd));
+	xmlnode_set_attrib(streamhost, "host",  gaim_network_get_my_ip(jsx->js->fd));
 	xfer->local_port = gaim_network_get_port_from_fd(fd);
 	port = g_strdup_printf("%hu", xfer->local_port);
 	xmlnode_set_attrib(streamhost, "port", port);

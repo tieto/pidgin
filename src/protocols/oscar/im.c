@@ -779,6 +779,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
 /*		aim_tlvlist_add_raw(&subtl, 0x000e, 2, "en");
 		aim_tlvlist_add_raw(&subtl, 0x000d, 8, "us-ascii");
 		aim_tlvlist_add_raw(&subtl, 0x000c, 24, "Please accept this file."); */
+		/* XXX - Change oft_info->clientip to an array of 4 bytes */
 		if (oft_info->clientip) {
 			fu8_t ip[4];
 			char *nexttoken;

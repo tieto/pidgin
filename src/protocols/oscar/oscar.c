@@ -1277,7 +1277,6 @@ static void oscar_xfer_ack_send(GaimXfer *xfer, const char *buffer, size_t size)
 
 static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	const char *ip;
@@ -1288,7 +1287,7 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, destsn);
 
 	/* Create the oscar-specific data */
-	ip = gaim_network_get_ip_for_account(account, od->conn ? od->conn->fd : -1);
+	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
 	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, ip, 0, 0, 0, NULL);
 	xfer->data = oft_info;
 

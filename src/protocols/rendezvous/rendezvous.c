@@ -481,34 +481,18 @@ static void rendezvous_send_icon(GaimConnection *gc)
 	g_free(rdata);
 }
 
-static int *rendezvous_get_ip_as_int_array(int fd)
-{
-	static int ret[4];
-	const char *ip, *nexttoken;
-	int i = 0;
-
-	ip = gaim_network_get_local_system_ip(fd);
-	nexttoken = strtok((char *)ip, ".");
-	while (nexttoken && i < 4) {
-		ret[i] = atoi(nexttoken);
-		nexttoken = strtok(NULL, ".");
-	}
-
-	return ret;
-}
-
 static void rendezvous_send_online(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const gchar *me;
 	gchar *myname, *mycomp;
-	unsigned char *myip;
+	const unsigned char *myip;
 
 	me = gaim_account_get_username(account);
 	myname = g_strdup_printf("%s._presence._tcp.local", me);
 	mycomp = g_strdup_printf("%s.local", strchr(me, '@') + 1);
-	myip = rendezvous_get_ip_as_int_array(rd->fd);
+	myip = gaim_network_ip_atoi(gaim_network_get_local_system_ip(rd->fd));
 
 	mdns_advertise_a(rd->fd, mycomp, myip);
 	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", myname);

@@ -60,11 +60,6 @@ gaim_account_set_auto_login(account, ui, value)
 	const char *ui
 	gboolean value
 
-void
-gaim_account_set_public_ip(account, ip)
-	Gaim::Account account
-	const char *ip
-
 gboolean
 gaim_account_is_connected(account)
 	Gaim::Account account
@@ -109,10 +104,6 @@ gboolean
 gaim_account_get_auto_login(account, ui)
 	Gaim::Account account
 	const char *ui
-
-const char *
-gaim_account_get_public_ip(account)
-	Gaim::Account account
 
 
 MODULE = Gaim::Account  PACKAGE = Gaim::Accounts  PREFIX = gaim_accounts_
