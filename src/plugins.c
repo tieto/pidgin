@@ -715,11 +715,12 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				}
 				break;
 
-				/* char *, int */
+				/* struct gaim_connection *, char *, int */
 			case event_warned:
 				{
-					void (*function)(char *, int, void *) = g->function;
-					(*function)(arg1, (int)arg2, g->data);
+					void (*function)(struct gaim_connection *, char *, int,
+							void *) = g->function;
+					(*function)(arg1, arg2, (int)arg3, g->data);
 				}
 				break;
 
@@ -806,7 +807,8 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2, *(char **)arg3);
 		break;
 	case event_warned:
-		g_snprintf(buf, sizeof buf, "\"%s\" %d", (char *)arg1, (int)arg2);
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %d",
+			   ((struct gaim_connection *)arg1)->username, (char *)arg2, (int)arg3);
 		break;
 	case event_error:
 		g_snprintf(buf, sizeof buf, "%d", (int)arg1);
