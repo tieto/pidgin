@@ -98,6 +98,8 @@ static int GetDoAnimateMinimize(void)
 
 void MinimizeWndToTray(HWND hWnd)
 {
+  if(!IsWindowVisible(hWnd)) 
+    return;
   if(GetDoAnimateMinimize())
   {
     RECT rcFrom,rcTo;
@@ -113,6 +115,8 @@ void MinimizeWndToTray(HWND hWnd)
 
 void RestoreWndFromTray(HWND hWnd)
 {
+  if(IsWindowVisible(hWnd)) 
+    return;
   if(GetDoAnimateMinimize())
   {
     RECT rcFrom,rcTo;
@@ -125,7 +129,6 @@ void RestoreWndFromTray(HWND hWnd)
   ShowWindow(hWnd,SW_SHOW);
   SetActiveWindow(hWnd);
   SetForegroundWindow(hWnd);
-
 }
 
 
