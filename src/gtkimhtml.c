@@ -3008,8 +3008,8 @@ int span_compare_end(GtkIMHtmlFormatSpan *a, GtkIMHtmlFormatSpan *b)
 	gtk_text_buffer_get_iter_at_mark(b->buffer, &ib, b->start);
 	/* The -1 here makes it so that if I have two spans that close at the same point, the
 	 * span added second will be closed first, as in <b><i>Hello</i></b>.  Without this,
-	 * it would be <b><i>Hello</b></i> */
-	return gtk_text_iter_compare(&ia, &ib) - 1;
+	 * it would be <b><i>Hello</b></i>  I took it out.  It started breaking things, and I don't know why*/
+	return gtk_text_iter_compare(&ia, &ib);
 }
 
 /* Basic notion here: traverse through the text buffer one-by-one, non-character elements, such
@@ -3064,11 +3064,6 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 				 * can't, for some reason.  The warning depends on how much HTML I send
 				 * in my message, kind of.
 				 */
-				/* comment this out until myself or someone else finishes
-				 * it.  This is supposed to apply a tag to selected text,
-				 * i believe...
-				gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
-				 */
 			}
 			sspan = (GtkIMHtmlFormatSpan*)starters->data;
 			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);
@@ -3098,8 +3093,9 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 					espan = (GtkIMHtmlFormatSpan*)closers->data;
 					if (espan->end)
 						gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
-					else 
+					else {
 						gtk_text_iter_forward_to_end(&eiter);
+					}
 				}
 			}
 			while (gtk_text_iter_equal(&siter, &iter)) {
