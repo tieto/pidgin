@@ -1464,8 +1464,8 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		sprintf(byte, "%c", delimit_lookup[lookup]);
 		strcat(resp_96, byte);
 	}
-	
-	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
+	printf("yahoo status : %d\n", yd->current_status);	
+	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
 	yahoo_packet_hash(pack, "sssss", 0, name, 6, resp_6, 96, resp_96, 1,
 	                  name, 135, "6,0,0,1710");
 	if (yd->picture_checksum) 
@@ -1997,7 +1997,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
-
+	
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
@@ -2010,7 +2010,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	yd = gc->proto_data;
 	yd->fd = source;
-
+	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash_str(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
@@ -2219,10 +2219,10 @@ static void yahoo_picture_check(GaimAccount *account)
 }
 
 
-static void yahoo_login(GaimAccount *account) {
+static void yahoo_login(GaimAccount *account, GaimStatus *status) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
-
+	char *id = gaim_status_get_id(status);
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
@@ -2233,7 +2233,39 @@ static void yahoo_login(GaimAccount *account) {
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
-
+		
+	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE) || !strcmp(id, YAHOO_STATUS_TYPE_ONLINE)) {
+		yd->current_status = YAHOO_STATUS_AVAILABLE;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BRB)) {
+		yd->current_status = YAHOO_STATUS_BRB;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BUSY)) {
+		yd->current_status = YAHOO_STATUS_BUSY;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_NOTATHOME)) {
+		yd->current_status = YAHOO_STATUS_NOTATHOME;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_NOTATDESK)) {
+		yd->current_status = YAHOO_STATUS_NOTATDESK;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_NOTINOFFICE)) {
+		yd->current_status = YAHOO_STATUS_NOTINOFFICE;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_ONPHONE)) {
+		yd->current_status = YAHOO_STATUS_ONPHONE;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_ONVACATION)) {
+		yd->current_status = YAHOO_STATUS_ONVACATION;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_OUTTOLUNCH)) {
+		yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_STEPPEDOUT)) {
+		yd->current_status = YAHOO_STATUS_STEPPEDOUT;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_INVISIBLE)) {
+		yd->current_status = YAHOO_STATUS_INVISIBLE;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AWAY)) {
+		yd->current_status = YAHOO_STATUS_CUSTOM;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE_WM)) {
+		yd->current_status = YAHOO_STATUS_CUSTOM;
+	} else if (gc->is_idle) { /* i think this is broken */
+		yd->current_status = YAHOO_STATUS_IDLE;
+	} else {
+		gaim_debug_error("yahoo", "Unexpected GaimStatus passed to yahoo_set_status!\n");
+		yd->current_status = YAHOO_STATUS_AVAILABLE;
+	}
 	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
@@ -2695,14 +2727,26 @@ int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
-	int old_status = yd->current_status;
+	int old_status;
 	const char *id;
 	char *conv_msg = NULL;
 	char *conv_msg2 = NULL;
 
 	id = gaim_status_get_id(status);
+	if (!gaim_status_is_active(status))
+		return;
+	if (strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && !gc) {
+		gaim_account_connect(account, status);
+		return;
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && gc) {
+		gaim_account_disconnect(account);
+		return;
+	}
+
+	yd = (struct yahoo_data *)gc->proto_data;
+	old_status = yd->current_status;
 
 	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE)) {
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
@@ -2733,7 +2777,7 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	} else if (gc->is_idle) { /* i think this is broken */
 		yd->current_status = YAHOO_STATUS_IDLE;
 	} else {
-		gaim_debug_error("yahoo", "Unexpected GaimStatus passed to yahoo_set_status!\n");
+		gaim_debug_error("yahoo", "Unexpected GaimStatus passed to yahoo_login!\n");
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 	}
 
@@ -2827,10 +2871,10 @@ static GList *yahoo_status_types(GaimAccount *account)
 	if (gc)
 		yd = gc->proto_data;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, _("Offline"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, _("Offline"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_ONLINE, YAHOO_STATUS_TYPE_ONLINE, _("Online"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, YAHOO_STATUS_TYPE_ONLINE, _("Online"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE, _("Available"), TRUE);

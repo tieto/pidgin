@@ -89,7 +89,8 @@ request_pass_ok_cb(GaimAccount *account, const char *entry)
 {
 	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
 
-	gaim_account_connect(account);
+	/* XXX - connect with correct status */
+	gaim_account_connect(account, gaim_account_get_status(account, "online"));
 }
 
 void
@@ -143,7 +144,7 @@ gaim_connection_register(GaimConnection *gc)
 
 
 void
-gaim_connection_connect(GaimConnection *gc)
+gaim_connection_connect(GaimConnection *gc, GaimStatus *status)
 {
 	GaimAccount *account;
 	GaimConnectionUiOps *ops;
@@ -201,7 +202,7 @@ gaim_connection_connect(GaimConnection *gc)
 
 	gaim_debug_info("connection", "Calling serv_login\n");
 
-	serv_login(account);
+	serv_login(account, status);
 }
 
 void
@@ -320,10 +321,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		/* Set the time the account came online */
 		time(&gc->login_time);
-
-		/* XXX - STATUS - Need to handle away at login here. */
-		if (gaim_presence_is_online(presence) == FALSE)
-			gaim_presence_set_status_active(presence, "online", TRUE);
 
 		if (gaim_prefs_get_bool("/core/logging/log_system") &&
 		   gaim_prefs_get_bool("/core/logging/log_own_states")){

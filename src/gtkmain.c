@@ -112,14 +112,14 @@ dologin_named(const char *name)
 			account = gaim_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
 				ret = 0;
-				gaim_account_connect(account);
+				//gaim_account_connect(account);
 			}
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
 		account = (GaimAccount *)gaim_accounts_get_all()->data;
 		ret = 0;
-		gaim_account_connect(account);
+		//gaim_account_connect(account);
 	}
 
 	return ret;

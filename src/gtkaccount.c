@@ -49,8 +49,7 @@ enum
 {
 	COLUMN_ICON,
 	COLUMN_SCREENNAME,
-	COLUMN_ONLINE,
-	COLUMN_AUTOLOGIN,
+	COLUMN_ENABLED,
 	COLUMN_PROTOCOL,
 	COLUMN_DATA,
 	COLUMN_PULSE_DATA,
@@ -112,7 +111,6 @@ typedef struct
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
 	GtkWidget *remember_pass_check;
-	GtkWidget *auto_login_check;
 
 	/* User Options */
 	GtkWidget *user_frame;
@@ -733,13 +731,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->remember_pass_check);
 
-	/* Auto log in */
-	dialog->auto_login_check =
-		gtk_check_button_new_with_label(_("Auto log in"));
-	gtk_box_pack_start(GTK_BOX(vbox), dialog->auto_login_check,
-					   FALSE, FALSE, 0);
-	gtk_widget_show(dialog->auto_login_check);
-
 	/* Set the fields. */
 	if (dialog->account != NULL) {
 		if (gaim_account_get_password(dialog->account))
@@ -753,10 +744,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
 				gaim_account_get_remember_password(dialog->account));
-
-		gtk_toggle_button_set_active(
-				GTK_TOGGLE_BUTTON(dialog->auto_login_check),
-				gaim_account_get_auto_login(dialog->account, GAIM_GTK_UI));
 	}
 
 	if (dialog->prpl_info != NULL &&
@@ -1354,11 +1341,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
 
-	/* Auto Login */
-	gaim_account_set_auto_login(dialog->account, GAIM_GTK_UI,
-			gtk_toggle_button_get_active(
-				GTK_TOGGLE_BUTTON(dialog->auto_login_check)));
-
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
@@ -1762,12 +1744,11 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 			if (!gaim_account_is_connected(account))
 				gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 		}
-
 		gtk_list_store_set(dialog->model, &iter,
-						   COLUMN_ICON, scale,
-						   COLUMN_ONLINE, gaim_account_is_connected(account),
-						   COLUMN_PULSE_DATA, NULL,
-						   -1);
+				   COLUMN_ICON, scale,
+				   COLUMN_PULSE_DATA, NULL,
+				   -1);
+
 
 		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
 		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
@@ -2035,84 +2016,27 @@ close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 	gaim_gtk_accounts_window_hide();
 }
 
-static void
-online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
-{
-	AccountsWindow *dialog = (AccountsWindow *)data;
-	GaimAccount *account;
-	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
-	GtkTreeIter iter;
-	GaimGtkPulseData *pulse_data;
-	gboolean online;
-
-	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
-	gtk_tree_model_get(model, &iter,
-					   COLUMN_DATA, &account,
-					   COLUMN_ONLINE, &online,
-					   -1);
-
-	if (online)
-	{
-		account->gc->wants_to_die = TRUE;
-		gaim_account_disconnect(account);
-	}
-	else
-	{
-		GdkPixbuf *pixbuf;
-
-		pulse_data = g_new0(GaimGtkPulseData, 1);
-		pulse_data->pulse_to_grey = TRUE;
-		pulse_data->pulse_value   = 0;
-		pulse_data->account       = account;
-		pulse_data->model         = model;
-
-		pixbuf = create_prpl_icon(account);
-
-		if (pixbuf != NULL)
-		{
-			pulse_data->online_pixbuf =
-				gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-			g_object_unref(G_OBJECT(pixbuf));
-		}
-
-		if (pulse_data->online_pixbuf == NULL)
-		{
-			g_free(pulse_data);
-		}
-		else
-		{
-			pulse_data->timeout = g_timeout_add(100,
-					(GSourceFunc)account_pulse_update, pulse_data);
-
-			gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-							   COLUMN_PULSE_DATA, pulse_data, -1);
-		}
-
-		gaim_account_connect(account);
-	}
-}
 
 static void
-autologin_cb(GtkCellRendererToggle *renderer, gchar *path_str,
+enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 			   gpointer data)
 {
 	AccountsWindow *dialog = (AccountsWindow *)data;
 	GaimAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
-	gboolean autologin;
+	gboolean enabled;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter,
 					   COLUMN_DATA, &account,
-					   COLUMN_AUTOLOGIN, &autologin,
+					   COLUMN_ENABLED, &enabled,
 					   -1);
 
-	gaim_account_set_auto_login(account, GAIM_GTK_UI, !autologin);
+	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
 
 	gtk_list_store_set(dialog->model, &iter,
-					   COLUMN_AUTOLOGIN, !autologin,
+					   COLUMN_ENABLED, !enabled,
 					   -1);
 }
 
@@ -2141,28 +2065,14 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 					   "text", COLUMN_SCREENNAME);
 	dialog->screenname_col = column;
 
-	/* Online? */
+	/* Enabled */
 	renderer = gtk_cell_renderer_toggle_new();
 
 	g_signal_connect(G_OBJECT(renderer), "toggled",
-			 G_CALLBACK(online_cb), dialog);
+					 G_CALLBACK(enabled_cb), dialog);
 
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-						    -1, _("Online"),
-						    renderer,
-						    "active", COLUMN_ONLINE,
-						    NULL);
-	column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), 1);
-	gtk_tree_view_column_set_resizable(column, TRUE);
-
-	/* Auto Log In? */
-	renderer = gtk_cell_renderer_toggle_new();
-
-	g_signal_connect(G_OBJECT(renderer), "toggled",
-					 G_CALLBACK(autologin_cb), dialog);
-
-	column = gtk_tree_view_column_new_with_attributes(_("Auto Log In"),
-			renderer, "active", COLUMN_AUTOLOGIN, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Enabled"),
+			renderer, "active", COLUMN_ENABLED, NULL);
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
@@ -2200,8 +2110,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, scale,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
-			COLUMN_ONLINE, gaim_account_is_connected(account),
-			COLUMN_AUTOLOGIN, gaim_account_get_auto_login(account, GAIM_GTK_UI),
+			COLUMN_ENABLED, gaim_account_get_enabled(account, GAIM_GTK_UI),
 			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
 			COLUMN_DATA, account,
 			-1);
@@ -2275,8 +2184,7 @@ create_accounts_list(AccountsWindow *dialog)
 	/* Create the list model. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 									   GDK_TYPE_PIXBUF, G_TYPE_STRING,
-									   G_TYPE_BOOLEAN, G_TYPE_BOOLEAN,
-									   G_TYPE_STRING, G_TYPE_POINTER,
+									   G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER,
 									   G_TYPE_POINTER);
 
 	/* And now the actual treeview */

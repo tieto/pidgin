@@ -25,6 +25,7 @@
 #include "internal.h"
 
 #include "blist.h"
+#include "core.h"
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
@@ -639,7 +640,7 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 		GaimAccount *account = gaim_presence_get_account(presence);
 		GaimAccountUiOps *ops = gaim_accounts_get_ui_ops();
 
-		if (gaim_account_is_connected(account))
+		if (gaim_account_get_enabled(account, gaim_core_get_ui()))
 		{
 			GaimPluginProtocolInfo *prpl_info = NULL;
 			GaimPlugin *prpl;

@@ -44,7 +44,7 @@
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
-void serv_login(GaimAccount *account)
+void serv_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -70,7 +70,7 @@ void serv_login(GaimAccount *account)
 
 		gaim_signal_emit(gaim_accounts_get_handle(),
 						 "account-connecting", account);
-		prpl_info->login(account);
+		prpl_info->login(account, status);
 	}
 }
 

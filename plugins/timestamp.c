@@ -57,11 +57,23 @@ static gboolean do_timestamp (gpointer data)
 	is_conversation_active = GPOINTER_TO_INT(gaim_conversation_get_data(c, "timestamp-conv-active"));
 	
 	if (is_conversation_active){
-		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(conv->imhtml));
+		int y, height;
+		GdkRectangle rect;
+		gboolean scroll = TRUE;
+		GtkWidget *imhtml = conv->imhtml;
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml));
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gaim_conversation_set_data(c, "timestamp-conv-active", GINT_TO_POINTER(FALSE));
 		strftime(mdate, sizeof(mdate), "\n%H:%M", localtime(&tim));
+		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+		if(((y + height) - (rect.y + rect.height)) > height
+		   && gtk_text_buffer_get_char_count(buffer)){
+			scroll = FALSE;
+		}
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
+		if (scroll)
+			gtk_imhtml_scroll_to_end(imhtml);
 	}
 	else
 		gaim_conversation_set_data(c, "timestamp-enabled", GINT_TO_POINTER(FALSE));

@@ -57,6 +57,7 @@ typedef enum
 
 #include "account.h"
 #include "plugin.h"
+#include "status.h"
 
 typedef struct
 {
@@ -130,10 +131,11 @@ void gaim_connection_destroy(GaimConnection *gc);
  * Logs in to this connection.
  *
  * @param gc The connection to log in.
+ * @param status The status to login to.
  *
  * @see gaim_connection_disconnect()
  */
-void gaim_connection_connect(GaimConnection *gc);
+void gaim_connection_connect(GaimConnection *gc, GaimStatus *status);
 
 /**
  * Registers a connection.

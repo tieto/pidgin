@@ -183,14 +183,14 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 
 	g_signal_connect(G_OBJECT(entry), "key_press_event",
 	                 G_CALLBACK(key_press_cb), selector);
-
+#if 0
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 	                    selector, GAIM_CALLBACK(signed_on_off_cb),
 	                    selector);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
 	                    selector, GAIM_CALLBACK(signed_on_off_cb),
 	                    selector);
-
+#endif 
 	rebuild_list(selector);
 }
 
@@ -295,14 +295,16 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 
 		gtk_text_buffer_set_text(buffer, text, -1);
 
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 		{
-			GaimConnection *gc = (GaimConnection *)l->data;
-			GaimAccount *account = gaim_connection_get_account(gc);
+			GaimAccount *account = (GaimAccount*)l->data;
 			GaimStatusType *status_type;
+			
+			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+				continue;
 
 			status_type = gaim_account_get_status_type(account,
-													   status_type_id);
+								   status_type_id);
 
 			if (status_type == NULL)
 				continue;
@@ -314,8 +316,8 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			else
 			{
 				gaim_account_set_status(account,
-										status_type_id, TRUE,
-										NULL);
+							status_type_id, TRUE,
+							NULL);
 			}
 		}
 
@@ -353,11 +355,13 @@ insert_text_timeout_cb(gpointer data)
 
 		message = gtk_imhtml_get_markup(GTK_IMHTML(selector->priv->entry));
 
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 		{
-			GaimConnection *gc = (GaimConnection *)l->data;
-			GaimAccount *account = gaim_connection_get_account(gc);
+			GaimAccount *account = (GaimAccount*)l->data;
 			GaimStatusType *status_type;
+			
+			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+				continue;
 
 			status_type = gaim_account_get_status_type(account,
 			              status_type_id);
@@ -493,6 +497,8 @@ static void
 rebuild_list(GaimGtkStatusSelector *selector)
 {
 	gboolean single_prpl = TRUE;
+	GList *accounts;
+	gboolean enabled = FALSE;
 	GaimAccount *first_account = NULL;
 	const char *first_prpl_type = NULL;
 	GList *l;
@@ -510,10 +516,18 @@ rebuild_list(GaimGtkStatusSelector *selector)
 #endif
 
 	/*
-	 * If no accounts are connected then gray ourself out and get
+	 * If no accounts are enabled then gray ourself out and get
 	 * outta hee.
 	 */
-	if (gaim_connections_get_all() == NULL)
+	for(accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
+		GaimAccount *a = accounts->data;
+		if (gaim_account_get_enabled(a, GAIM_GTK_UI)) {
+			enabled = TRUE;
+			break;
+		}
+	}
+			
+	if (enabled == FALSE)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(selector), FALSE);
 		return;
@@ -526,14 +540,21 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	 * who use only one account, or one single protocol. Everyone else
 	 * gets Available and Away and a list of saved statuses.
 	 */
-	for (l = gaim_connections_get_all(); l != NULL && single_prpl; l = l->next)
+	for (l = gaim_accounts_get_all(); l != NULL && single_prpl; l = l->next)
 	{
-		GaimConnection *gc = (GaimConnection *)l->data;
-		GaimAccount *account = gaim_connection_get_account(gc);
+		GaimAccount *account = l->data;
 		GaimPluginProtocolInfo *prpl_info;
+		GaimPlugin *plugin;
 		const char *basename;
 
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+			continue;
+
+		plugin = gaim_find_prpl(account->protocol_id);
+		if (!plugin)
+			continue;
+
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 		basename = prpl_info->list_icon(account, NULL);
 
 		if (first_prpl_type == NULL)

@@ -113,10 +113,11 @@ void gaim_account_destroy(GaimAccount *account);
  * Connects to an account.
  *
  * @param account The account to connect to.
+ * @param status  The status the account should use when logging in.
  *
  * @return The gaim connection.
  */
-GaimConnection *gaim_account_connect(GaimAccount *account);
+	GaimConnection *gaim_account_connect(GaimAccount *account, GaimStatus *status);
 
 /**
  * Registers an account.
@@ -240,15 +241,15 @@ void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
 void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
 
 /**
- * Sets whether or not this account should auto-login for the specified
+ * Sets whether or not this account is enabled for the specified
  * UI.
  *
  * @param account The account.
  * @param ui      The UI.
- * @param value   @c TRUE if it should check for mail.
+ * @param value   @c TRUE if it is enabled.
  */
-void gaim_account_set_auto_login(GaimAccount *account, const char *ui,
-								 gboolean value);
+void gaim_account_set_enabled(GaimAccount *account, const char *ui,
+			      gboolean value);
 
 /**
  * Sets the account's proxy information.
@@ -458,16 +459,16 @@ gboolean gaim_account_get_remember_password(const GaimAccount *account);
 gboolean gaim_account_get_check_mail(const GaimAccount *account);
 
 /**
- * Returns whether or not this account should auto-login for the
+ * Returns whether or not this account is enabled for the
  * specified UI.
  *
  * @param account The account.
  * @param ui      The UI.
  *
- * @return @c TRUE if it should auto-login on this UI.
+ * @return @c TRUE if it enabled on this UI.
  */
-gboolean gaim_account_get_auto_login(const GaimAccount *account,
-									 const char *ui);
+gboolean gaim_account_get_enabled(const GaimAccount *account,
+				  const char *ui);
 
 /**
  * Returns the account's proxy information.
@@ -693,6 +694,13 @@ void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
  * @return A list of all accounts.
  */
 GList *gaim_accounts_get_all(void);
+
+/**
+ * Returns a list of all enabled accounts
+ *
+ * @return A list of all enabled accounts.
+ */
+GList *gaim_accounts_get_all_active(void);
 
 /**
  * Finds an account with the specified name and protocol id.

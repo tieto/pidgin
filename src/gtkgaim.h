@@ -31,6 +31,11 @@
 
 #include <gtk/gtk.h>
 
+/**
+ * Our UI's identifier.
+ */
+#define GAIM_GTK_UI "gtk-gaim"
+
 #ifndef _WIN32
 # define GAIM_ALERT_TITLE ""
 #else

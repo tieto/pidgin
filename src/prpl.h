@@ -210,7 +210,7 @@ struct _GaimPluginProtocolInfo
 	/* All the server-related functions */
 
 	/** This must be implemented. */
-	void (*login)(GaimAccount *);
+	void (*login)(GaimAccount *, GaimStatus *);
 
 	/** This must be implemented. */
 	void (*close)(GaimConnection *);

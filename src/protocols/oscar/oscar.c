@@ -1706,13 +1706,21 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	ck[1] = 0x65;
 }
 
-static void oscar_login(GaimAccount *account) {
+static void oscar_login(GaimAccount *account, GaimStatus *status) {
 	aim_session_t *sess;
 	aim_conn_t *conn;
 	GaimConnection *gc = gaim_account_get_connection(account);
 	OscarData *od = gc->proto_data = g_new0(OscarData, 1);
+	GaimStatusType *status_type;
+	GaimStatusPrimitive primitive;
+
+	status_type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(status_type);
 
 	gaim_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
+	
+	if (primitive == GAIM_STATUS_OFFLINE)
+		return;
 
 	if (!aim_snvalid(gaim_account_get_username(account))) {
 		gchar *buf;
@@ -5553,7 +5561,7 @@ static void
 oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	OscarData *od = (OscarData *)gc->proto_data;
+	OscarData *od = NULL;
 	GaimStatusType *status_type;
 	GaimStatusPrimitive primitive;
 	GaimPresence *presence;
@@ -5568,15 +5576,21 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
 
+	if (!gaim_status_is_active(status)) /* Is this right?  I'm confused. */
+		return;
+
 	gaim_debug_info("oscar", "Setting status to %s\n", status_id);
 
-	if (od->rights.maxawaymsglen == 0)
+	if (gc)
+		od = (OscarData *)gc->proto_data;
+	
+	if (od && od->rights.maxawaymsglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
-							_("You have probably requested to set your "
-							  "away message before the login procedure "
-							  "completed.  You remain in a \"present\" "
-							  "state; try setting it again when you are "
-							  "fully connected."));
+				    _("You have probably requested to set your "
+				      "away message before the login procedure "
+				      "completed.  You remain in a \"present\" "
+				      "state; try setting it again when you are "
+				      "fully connected."));
 
 	if (primitive == GAIM_STATUS_AVAILABLE) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
@@ -5681,13 +5695,20 @@ static void
 oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	OscarData *od = (OscarData *)gc->proto_data;
+	GaimStatusType *type = gaim_status_get_type(status);
+	int primitive = gaim_status_type_get_primitive(type);
 
-	if (od->icq)
-		oscar_set_status_icq(account, status);
-	else
-		oscar_set_status_aim(account, status);
+	if (primitive == !GAIM_STATUS_OFFLINE && !gc) {
+		gaim_account_connect(account, status);
+	} else if (primitive == GAIM_STATUS_OFFLINE && gc) {
+		gaim_account_disconnect(account);
+	} else {
 
+		if (aim_sn_is_icq(gaim_account_get_username(account)))
+			oscar_set_status_icq(account, status);
+		else
+			oscar_set_status_aim(account, status);
+	}
 	return;
 }
 
@@ -6868,12 +6889,12 @@ oscar_status_types(GaimAccount *account)
 	/* Oscar-common status types */
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
-									 _("Offline"), FALSE, FALSE, FALSE);
+									 _("Offline"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
 									 OSCAR_STATUS_ID_ONLINE,
-									 _("Online"), FALSE, FALSE, FALSE);
+									 _("Online"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,

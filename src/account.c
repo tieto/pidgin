@@ -227,7 +227,7 @@ gaim_account_register(GaimAccount *account)
 }
 
 GaimConnection *
-gaim_account_connect(GaimAccount *account)
+gaim_account_connect(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 
@@ -241,7 +241,7 @@ gaim_account_connect(GaimAccount *account)
 	gaim_debug_info("account", "Connecting to account %p. gc = %p\n",
 					account, gc);
 
-	gaim_connection_connect(gc);
+	gaim_connection_connect(gc, status);
 
 	return gc;
 }
@@ -508,8 +508,8 @@ gaim_account_set_check_mail(GaimAccount *account, gboolean value)
 }
 
 void
-gaim_account_set_auto_login(GaimAccount *account, const char *ui,
-							gboolean value)
+gaim_account_set_enabled(GaimAccount *account, const char *ui,
+			 gboolean value)
 {
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
@@ -829,7 +829,7 @@ gaim_account_get_check_mail(const GaimAccount *account)
 }
 
 gboolean
-gaim_account_get_auto_login(const GaimAccount *account, const char *ui)
+gaim_account_get_enabled(const GaimAccount *account, const char *ui)
 {
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(ui      != NULL, FALSE);
@@ -1631,8 +1631,8 @@ gaim_accounts_auto_login(const char *ui)
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = l->data;
 
-		if (gaim_account_get_auto_login(account, ui))
-			gaim_account_connect(account);
+		if (gaim_account_get_enabled(account, ui))
+			gaim_account_connect(account, gaim_account_get_status(account, "online"));
 	}
 }
 
