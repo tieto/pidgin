@@ -78,7 +78,6 @@ EXTRA_DIST =	about_small.xpm			\
 		scream.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\
-		send-file-small.png	\
 		signon.png \
 		small.xpm			\
 		smile.xpm			\
