@@ -401,14 +401,14 @@ static void gjab_recv(gjconn gjc)
 	if (!gjc || gjc->state == JCONN_STATE_OFF)
 		return;
 
-	if ((len = read(gjc->fd, buf, sizeof(buf) - 1))) {
+	if ((len = read(gjc->fd, buf, sizeof(buf))) > 0) {
 		struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 		buf[len] = '\0';
 		debug_printf("input (len %d): %s\n", len, buf);
 		XML_Parse(gjc->parser, buf, len, 0);
 		if (jd->die)
 			signoff(GJ_GC(gjc));
-	} else if (len <= 0) {
+	} else if (len < 0 || errno != EAGAIN) {
 		STATE_EVT(JCONN_STATE_OFF)
 	}
 }
@@ -686,7 +686,7 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 /*
  * keep track of away msg same as yahoo plugin
  */
-static void jabber_track_away(gjconn gjc, jpacket p, char *name)
+static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 {
 	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 	gpointer val = g_hash_table_lookup(jd->hash, name);
@@ -695,15 +695,19 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name)
 	char *status = NULL;
 	char *msg = NULL;
 
-	if((show = xmlnode_get_tag_data(p->x, "show")) != NULL) {
-		if (!strcasecmp(show, "away")) {
-			vshow = _("Away");
-		} else if (!strcasecmp(show, "chat")) {
-			vshow = _("Online");
-		} else if (!strcasecmp(show, "xa")) {
-			vshow = _("Extended Away");
-		} else if (!strcasecmp(show, "dnd")) {
-			vshow = _("Do Not Disturb");
+	if (type && (strcasecmp(type, "unavailable") == 0)) {
+		vshow = _("Unavailable");
+	} else {
+		if((show = xmlnode_get_tag_data(p->x, "show")) != NULL) {
+			if (!strcasecmp(show, "away")) {
+				vshow = _("Away");
+			} else if (!strcasecmp(show, "chat")) {
+				vshow = _("Online");
+			} else if (!strcasecmp(show, "xa")) {
+				vshow = _("Extended Away");
+			} else if (!strcasecmp(show, "dnd")) {
+				vshow = _("Do Not Disturb");
+			}
 		}
 	}
 
@@ -715,6 +719,8 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name)
 			(vshow == NULL? "" : vshow),
 			(vshow == NULL || status == NULL? "" : ": "),
 			(status == NULL? "" : status));
+	} else {
+		msg = g_strdup(_("Online"));
 	}
 
 	if (val) {
@@ -845,11 +851,12 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				if (!find_chat_buddy(jc->b, p->from->resource)) {
 					add_chat_buddy(jc->b, p->from->resource);
 				} else if ((y = xmlnode_get_tag(p->x, "status"))) {
-					char buf[8192];
+					char *buf;
 
-					g_snprintf(buf, sizeof(buf), "%s@%s/%s",
+					buf = g_strdup_printf("%s@%s/%s",
 						p->from->user, p->from->server, p->from->resource);
-					jabber_track_away(gjc, p, buf);
+					jabber_track_away(gjc, p, buf, NULL);
+					g_free(buf);
 
 				}
 			} else if (jc->b && msg) {
@@ -949,6 +956,9 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				resources = resources->next;
 			}
 
+		/* keep track of away msg same as yahoo plugin */
+		jabber_track_away(gjc, p, normalize(b->name), type);
+
 		if (type && (strcasecmp(type, "unavailable") == 0)) {
 			if (resources) {
 				g_free(resources->data);
@@ -958,9 +968,6 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				serv_got_update(GJ_GC(gjc), buddy, 0, 0, 0, 0, 0, 0);
 			}
 		} else {
-			/* keep track of away msg same as yahoo plugin */
-			jabber_track_away(gjc, p, normalize(b->name));
-
 			if (!resources) {
 				b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
 			}
@@ -970,6 +977,12 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		}
 	} else {
 		if (who->resource) {
+			char *buf;
+
+			buf = g_strdup_printf("%s@%s/%s", who->user, who->server, who->resource);
+			jabber_track_away(gjc, p, buf, type);
+			g_free(buf);
+
 			if (type && !strcasecmp(type, "unavailable")) {
 				struct jabber_data *jd;
 				if (!jc && !(jc = find_existing_chat(GJ_GC(gjc), who))) {
@@ -998,11 +1011,6 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				}
 				if (!find_chat_buddy(jc->b, who->resource)) {
 					add_chat_buddy(jc->b, who->resource);
-				} else {
-					char buf[8192];
-					g_snprintf(buf, sizeof(buf), "%s@%s/%s",
-						who->user, who->server, who->resource);
-					jabber_track_away(gjc, p, buf);
 				}
 			}
 		}
@@ -1544,6 +1552,63 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 	return 1;
 }
 
+/*
+ * Add/update buddy's roster entry on server
+ */
+static void jabber_roster_update(struct gaim_connection *gc, char *name)
+{
+	xmlnode x, y;
+	char *realwho;
+	gjconn gjc;
+	struct buddy *buddy = NULL;
+	struct group *buddy_group = NULL;
+	
+	if(gc && gc->proto_data && ((struct jabber_data *)gc->proto_data)->gjc && name) {
+		gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+
+		if (!strchr(name, '@'))
+			realwho = g_strdup_printf("%s@%s", name, gjc->user->server);
+		else {
+			jid who = jid_new(gjc->p, name);
+			if (who->user == NULL) {
+				/* FIXME: transport */
+				return;
+			}
+			realwho = g_strdup_printf("%s@%s", who->user, who->server);
+		}
+
+
+		x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
+		y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+		xmlnode_put_attrib(y, "jid", realwho);
+
+
+		/* If we can find the buddy, there's an alias for him, it's not 0-length
+		 * and it doesn't match his JID, add the "name" attribute.
+		 */
+		if((buddy = find_buddy(gc, realwho)) != NULL &&
+			buddy->show != NULL && strcmp(realwho, buddy->show)) {
+
+			xmlnode_put_attrib(y, "name", buddy->show);
+		}
+
+		/*
+		 * Find out what group the buddy's in and send that along
+		 * with the roster item.
+		 */
+		if((buddy_group = find_group_by_buddy(gc, realwho)) != NULL) {
+			xmlnode z;
+			z = xmlnode_insert_tag(y, "group");
+			xmlnode_insert_cdata(z, buddy_group->name, -1);
+		}
+
+		gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
+
+		xmlnode_free(x);
+		g_free(realwho);
+	}
+}
+
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 {
 	xmlnode x, y;
@@ -1572,38 +1637,13 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 		realwho = g_strdup_printf("%s@%s", who->user, who->server);
 	}
 
-
-	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
-	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
-	xmlnode_put_attrib(y, "jid", realwho);
-
-	/* If we can find the buddy, there's an alias for him and
-	 * it's not 0-length, add the "name" attribute.
-	 */
-	if((buddy = find_buddy(gc, realwho)) != NULL &&
-		buddy->show != NULL && (buddy->show)[0] != '\0') {
-
-		xmlnode_put_attrib(y, "name", buddy->show);
-	}
-
-	/*
-	 * Find out what group the buddy's in and send that along
-	 * with the roster item.
-	 */
-	if((buddy_group = find_group_by_buddy(gc, realwho)) != NULL) {
-		xmlnode z;
-		z = xmlnode_insert_tag(y, "group");
-		xmlnode_insert_cdata(z, buddy_group->name, -1);
-	}
-
-	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
-	xmlnode_free(x);
-
 	x = xmlnode_new_tag("presence");
 	xmlnode_put_attrib(x, "to", realwho);
 	xmlnode_put_attrib(x, "type", "subscribe");
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
 	xmlnode_free(x);
+
+	jabber_roster_update(gc, realwho);
 
 	g_free(realwho);
 }
@@ -1976,7 +2016,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
 
 	if((status = g_hash_table_lookup(jd->hash, realwho)) == NULL) {
-		status = _("Online");
+		status = _("Unknown");
 	}
 	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
 
@@ -2315,7 +2355,7 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 	}
 
 	if((status = g_hash_table_lookup(jd->hash, buddy)) == NULL) {
-		status = _("Online");
+		status = _("Unknown");
 	}
 	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
 

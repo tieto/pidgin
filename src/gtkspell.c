@@ -55,7 +55,18 @@ static void entry_insert_cb(GtkText *gtktext,
 static void set_up_signal();
 
 int gtkspell_running() {
-	return (spell_pid > 0);
+	return (spell_pid > 0? spell_pid : 0);
+}
+
+/*
+ * Set to "gtkspell not running" status
+ *
+ * May seem a bit silly, but it allows us to keep the file-global
+ * variable from going program-global.  And if we need to do
+ * something else additional later, well...
+ */
+void gtkspell_notrunning() {
+    spell_pid = 0;
 }
 
 /*
@@ -168,11 +179,6 @@ int gtkspell_start(char *path, char * args[]) {
 	if (gtkspell_running()) {
 		error_print("gtkspell_start called while already running.\n");
 		gtkspell_stop();
-	}
-
-	if (!signal_set_up) {
-		set_up_signal();
-		signal_set_up = 1;
 	}
 
 	pipe(fd_write);
@@ -689,21 +695,3 @@ void gtkspell_detach(GtkText *gtktext) {
 	gtkspell_uncheck_all(gtktext);
 }
 
-static void sigchld(int param) {
-	if (gtkspell_running() &&
-		(waitpid(spell_pid, NULL, WNOHANG) == spell_pid)) {
-		spell_pid = 0;
-	} else {
-		/* a default SIGCHLD handler.
-		 * what else to do here? */
-		waitpid(-1, NULL, WNOHANG);
-	}
-}
-
-static void set_up_signal() {
-	struct sigaction sigact;
-	memset(&sigact, 0, sizeof(struct sigaction));
-
-	sigact.sa_handler = sigchld;
-	sigaction(SIGCHLD, &sigact, NULL);
-}

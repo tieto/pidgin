@@ -55,12 +55,23 @@ extern int gtkspell_running();
 /* Is gtkspell running?
  *
  * Return:
- * 	nonzero if it running
+ * 	nonzero, positive pid if it's running
  * 	zero if is not running
  *
  * Example:
  *  if (gtkspell_running())
  *  	printf("gtkspell is running.\n");
+ */
+
+extern void gtkspell_notrunning(void);
+/*
+ * Set gtkspell status to "not running"
+ * Intended to be used only by signal-catcher
+ * when the SIGCHLD signal it catches matches
+ * the gtkspell process i.d.
+ *
+ * Example:
+ *	gtkspell_notrunning();
  */
 
 extern void gtkspell_attach(GtkText *text);

@@ -1,8 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.55:
-	* Better Jabber list management when using multiple
-	  resources (Thanks Jim Seymour)
+	* Jabber improvements (Thanks Jim Seymour)
 	* Various sound cleanups (Thanks Robert McQueen)
 	* Login process shown in single window (Thanks Michael 
 	  Golden)

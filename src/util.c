@@ -35,6 +35,7 @@
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "gtkspell.h"
 
 char *full_date()
 {
@@ -616,10 +617,18 @@ char *date()
 void clean_pid(void)
 {
 	int status;
-	pid_t pid;
+	pid_t pid, spell_pid;
 
-	printf ("clean_pid\n");
-	pid = waitpid(-1, &status, WNOHANG);
+	while((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+		if((spell_pid = gtkspell_running()) != 0 && pid == spell_pid) {
+			gtkspell_notrunning();
+		}
+	}
+	if(pid < 0 && errno != ECHILD) {
+		char errmsg[BUFSIZ];
+		sprintf(errmsg, "Warning: waitpid() returned %d", pid);
+		perror(errmsg);
+	}
 }
 
 struct aim_user *find_user(const char *name, int protocol)

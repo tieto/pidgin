@@ -84,6 +84,28 @@ int opt_debug = 0;
 
 void BuddyTickerCreateWindow(void);
 
+#if HAVE_SIGNAL_H
+/*
+ * Lists of signals we wish to catch and those we wish to ignore.
+ * Each list terminated with -1
+ */
+static int catch_sig_list[] = {
+	SIGSEGV,
+	SIGHUP,
+	SIGINT,
+	SIGTERM,
+	SIGQUIT,
+	SIGCHLD,
+	-1
+};
+
+static int ignore_sig_list[] = {
+	SIGPIPE,
+	-1
+};
+#endif
+
+
 void cancel_logon(void)
 {
 #ifdef USE_APPLET
@@ -408,6 +430,9 @@ void sighandler(int sig)
 		break;
 	case SIGCHLD:
 		clean_pid();
+#if HAVE_SIGNAL_H
+		signal(SIGCHLD, sighandler);	/* restore signal catching on this one! */
+#endif
 		break;
 	default:
 		debug_printf("caught signal %d\n", sig);
@@ -527,6 +552,10 @@ int main(int argc, char *argv[])
 {
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+#if HAVE_SIGNAL_H
+	int sig_indx;	/* for setting up signal catching */
+	void (*prev_sig_disp)();
+#endif
 #ifndef USE_APPLET
 	int opt, opt_user = 0;
 	int i;
@@ -573,13 +602,23 @@ int main(int argc, char *argv[])
 
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
-	signal(SIGSEGV, sighandler);
-	signal(SIGHUP, sighandler);
-	signal(SIGINT, sighandler);
-	signal(SIGTERM, sighandler);
-	signal(SIGQUIT, sighandler);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGCHLD, sighandler);
+	/* jseymour: whatever the fsck that means */
+	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
+		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
+			char errmsg[BUFSIZ];
+			sprintf(errmsg, "Warning: couldn't set signal %d for catching",
+				catch_sig_list[sig_indx]);
+			perror(errmsg);
+		}
+	}
+	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
+		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
+			char errmsg[BUFSIZ];
+			sprintf(errmsg, "Warning: couldn't set signal %d to ignore",
+				ignore_sig_list[sig_indx]);
+			perror(errmsg);
+		}
+	}
 #endif
 
 
