@@ -17,6 +17,7 @@ version 0.72
 	* If SSL is not enabled, MSN will load, but error on connect.
 	* Disable Jabber SASL auth until the standard stabilizes
 	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* Dutch translation updated (Vincent van Adrighem)
