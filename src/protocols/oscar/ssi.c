@@ -1347,7 +1347,8 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 /*
  * Subtype 0x0008 - Incoming SSI add.
  *
- * XXX - It would probably be good for the client to actually do something when it gets this.
+ * Sent by the server, for example, when someone is added to 
+ * your "Recent Buddies" group.
  */
 static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
@@ -1377,8 +1378,6 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
-
-		free(name);
 	}
 
 	return ret;
