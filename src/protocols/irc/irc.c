@@ -136,8 +136,10 @@ static void process_data_init(char *buf, char *cmd, char *word[], char *eol[], g
 			buf[j++] = 0;
 			word[wordcount] = &buf[j];
 			eol[wordcount++] = cmd + 1;
-			if (wordcount == PDIWORDS - 1)
-				*cmd-- = 0;
+			if (wordcount == PDIWORDS - 1) {
+				buf[j] = 0;
+				return;
+			}
 			space = TRUE;
 			break;
 		default:
