@@ -1136,7 +1136,7 @@ static void del_acct_func(GtkTreeModel *model, GtkTreePath *path,
 
 		g_snprintf(buf, sizeof(buf),
 				   _("Are you sure you want to delete %s?"), u->username);
-		do_ask_dialog(buf, NULL, u, _("Delete"), do_del_acct, _("Cancel"), NULL);
+		do_ask_dialog(buf, NULL, u, _("Delete"), do_del_acct, _("Cancel"), NULL, FALSE);
 	}
 }
 

@@ -1984,5 +1984,5 @@ static void accept_file_dialog(struct ft_request *ft) {
 	} else {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
-	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft);
+	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft, FALSE);
 }

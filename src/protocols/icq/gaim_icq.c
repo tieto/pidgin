@@ -276,7 +276,7 @@ static void icq_acc_auth(struct icq_auth *iq)
 	iqnew->nick = g_strdup(iq->nick);
 
 	g_snprintf(msg, sizeof(msg), "Add %ld to your buddy list?", iq->uin);
-	do_ask_dialog(msg, NULL, iqnew, _("Add"), icq_add_after_auth, _("Cancel"), icq_den_auth);
+	do_ask_dialog(msg, NULL, iqnew, _("Add"), icq_add_after_auth, _("Cancel"), icq_den_auth, FALSE);
 	icq_den_auth(iq);
 }
 
@@ -294,7 +294,7 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
 			nick, first ? first : "", first && last ? " " : "", last ? last : "",
 			(first || last) && email ? ", " : "", email ? email : "");
-	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth);
+	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth, FALSE);
 }
 
 static void icq_login(struct aim_user *user) {

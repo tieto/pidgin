@@ -1143,7 +1143,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
 				ap->user, ap->friend, ap->gc->username);
 
-		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add);
+		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, FALSE);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
@@ -1293,7 +1293,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->gc = gc;
                          
 		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
-				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add);
+				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, FALSE);
 			}
 		    }
 			

@@ -1649,7 +1649,7 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 
 		jap->gjc = gjc;
 		jap->user = g_strdup(Jid);
-		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add);
+		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add, FALSE);
 
 		g_free(msg);
 		xmlnode_free(g);	/* Never needed it here anyway */

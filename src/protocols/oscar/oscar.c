@@ -2049,7 +2049,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
 				userinfo->sn, gc->username);
-		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im);
+		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im, FALSE);
 	} else {
 		debug_printf("Unknown reqclass %hu\n", args->reqclass);
 	}
@@ -2195,7 +2195,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				data->gc = gc;
 				data->name = g_strdup_printf("%lu", args->uin);
 				data->nick = NULL;
-				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant);
+				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, FALSE);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2249,7 +2249,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+2]);
 					data->nick = g_strdup(text[i*2+1]);
-					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data);
+					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, FALSE);
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -4256,7 +4256,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 					data->gc = gc;
 					data->name = g_strdup(retval->name);
 					data->nick = NULL;
-					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest);
+					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest, FALSE);
 
 					g_free(dialog_msg);
 					g_free(nombre);
@@ -4301,7 +4301,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data);
+	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -4335,7 +4335,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant);
+	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -4848,7 +4848,7 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	data->who = who;
 	data->gc = gc;
 	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
-	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im);
+	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, FALSE);
 }
 
 static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {

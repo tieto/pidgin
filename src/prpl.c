@@ -163,7 +163,7 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
                                    if (!strcmp(r,notext))  \
                                            notext = l;     
 
-void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont)
+void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont, int modal)
 {
 	GtkWidget *window;
 	GtkWidget *hbox;
@@ -192,7 +192,12 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	STOCK_ITEMIZE("Yes", GTK_STOCK_YES);
 	STOCK_ITEMIZE("No", GTK_STOCK_NO);
 
-	window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
+	window = gtk_dialog_new_with_buttons("", NULL, 0, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
+
+	if (modal) {
+		gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+	}
+
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_ask_callback), doask);
 	
@@ -636,7 +641,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 	if (find_buddy(gc, ga->who))
 		do_error_dialog(buf, NULL, GAIM_INFO);
 	else
-		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add);
+		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add, FALSE);
 }
 
 static GtkWidget *regdlg = NULL;
