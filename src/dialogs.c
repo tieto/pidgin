@@ -791,9 +791,7 @@ void show_add_buddy(char *buddy, char *group)
 	gtk_widget_show(frame);
         gtk_window_set_title(GTK_WINDOW(a->window), "Gaim - Add Buddy");
         gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
-	gtk_container_add(GTK_CONTAINER(frame), topbox);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
         gtk_container_add(GTK_CONTAINER(a->window), frame);
 	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
         gtk_widget_realize(a->window);
