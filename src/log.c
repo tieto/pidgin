@@ -134,7 +134,8 @@ static void _gaim_logsize_user_free_key(struct _gaim_logsize_user *lu)
 
 int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account)
 {
-	int size;
+	gpointer ptrsize;
+	int size = 0;
 	GSList *n;
 	struct _gaim_logsize_user *lu;
 
@@ -142,7 +143,8 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	lu->name = g_strdup(gaim_normalize(account, name));
 	lu->account = account;
 
-	if((size = GPOINTER_TO_INT(g_hash_table_lookup(logsize_users, lu)))) {
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		size = GPOINTER_TO_INT(ptrsize);
 		g_free(lu->name);
 		g_free(lu);
 	} else {
