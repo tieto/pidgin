@@ -145,8 +145,8 @@ static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, 
 	if (proxy_recv_line(fd, &inputline) < 0)
 		return -1;
 
-	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING) == 0) ||
-	     (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2) == 0)))) {
+	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING)) == 0) ||
+	     (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
 		while (strlen(inputline) > 1) {
 			free(inputline);
 			if (proxy_recv_line(fd, &inputline) < 0)
