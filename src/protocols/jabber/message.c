@@ -450,7 +450,7 @@ int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
 	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jabber_get_resource(who));
 
-	if(jbr && !(jbr->capabilities & JABBER_CAP_COMPOSING))
+	if(!jbr || !(jbr->capabilities & JABBER_CAP_COMPOSING))
 		return 0;
 
 	jm = g_new0(JabberMessage, 1);
