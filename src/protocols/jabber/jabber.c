@@ -700,7 +700,8 @@ static void startElement(void *userdata, const char *name, const char **attribs)
 			/* special case: name == stream:stream */
 			/* id attrib of stream is stored for digest auth */
 			gjc->sid = g_strdup(xmlnode_get_attrib(x, "id"));
-			/* STATE_EVT(JCONN_STATE_AUTH) */
+			gjc->state = JCONN_STATE_ON;
+			STATE_EVT(JCONN_STATE_ON);
 			xmlnode_free(x);
 		} else {
 			gjc->current = x;
@@ -788,9 +789,6 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	gjab_send_raw(gjc, "<?xml version='1.0'?>");
 	gjab_send_raw(gjc, t);
 	xmlnode_free(x);
-
-	gjc->state = JCONN_STATE_ON;
-	STATE_EVT(JCONN_STATE_ON);
 
 	gc = GJ_GC(gjc);
 	gc->inpa = gaim_input_add(gjc->fd, GAIM_INPUT_READ, jabber_callback, gc);
