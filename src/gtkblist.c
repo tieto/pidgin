@@ -2796,8 +2796,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				g_string_append_printf(str, _("\n<b>Idle:</b> %s"), tmp);
 				g_free(tmp);
 			}
-			else
-				g_string_append_printf(str, _("\n<b>Idle</b>"));
 		}
 
 		/* Last Seen */
