@@ -776,7 +776,7 @@ make_proxy_dropdown(void)
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("Use Global Proxy Settings"),
-			1, GAIM_PROXY_USE_GLOBAL
+			1, GAIM_PROXY_USE_GLOBAL,
 			-1);
 
 	gtk_list_store_append(model, &iter);
