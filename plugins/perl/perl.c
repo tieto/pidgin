@@ -315,11 +315,11 @@ load_perl_plugin(GaimPlugin *plugin)
 	dSP;
 	ENTER;
 	SAVETMPS;
-	PUSHMARK(SP);
+	PUSHMARK(sp);
 	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
 	PUTBACK;
 
-	perl_call_pv(gps->load_sub, G_NOARGS | G_EVAL | G_SCALAR);
+	perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
 	if (SvTRUE(ERRSV)) {
@@ -350,11 +350,11 @@ unload_perl_plugin(GaimPlugin *plugin)
 	dSP;
 	ENTER;
 	SAVETMPS;
-	PUSHMARK(SP);
+	PUSHMARK(sp);
 	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
 	PUTBACK;
 
-	perl_call_pv(gps->unload_sub, G_NOARGS | G_EVAL | G_SCALAR);
+	perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
 	if (SvTRUE(ERRSV)) {
