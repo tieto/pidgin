@@ -903,6 +903,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		break;
 	case 433:
 		do_prompt_dialog(_("That nick is already in use.  Please enter a new nick"), gc->displayname, gc, irc_change_nick, NULL);
+		break;
 	default:
 		if (n > 400 && n < 502) {
 			char errmsg[IRC_BUF_LEN];
