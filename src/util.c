@@ -3220,7 +3220,8 @@ gaim_escape_filename(const char *str)
 	g_return_val_if_fail(str != NULL, NULL);
 
 	for (i = 0; i < strlen(str); i++) {
-		if (isalnum(str[i]) || str[i] == '@')
+		if (isalnum(str[i]) || str[i] == '@' || str[i] == '-' ||
+				str[i] == '_' || str[i] == '.' || str[i] == '#')
 			buf[j++] = str[i];
 		else {
 			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
