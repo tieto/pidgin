@@ -1699,6 +1699,16 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->format_spans = imhtml->format_spans->next;
 	}
 	g_list_free(del);
+
+	del = imhtml->scalables;
+	while (del) {
+		GtkIMHtmlScalable *scale = del->data;
+		scale->free(scale);
+		del = del->next;
+	}
+	g_list_free(imhtml->scalables);
+	imhtml->scalables = NULL;
+
 	imhtml->edit.bold = NULL;
 	imhtml->edit.italic = NULL;
 	imhtml->edit.underline = NULL;
@@ -2556,7 +2566,6 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml)
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
 {
-	char *text;
 	GtkTextIter start, end;
 
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
