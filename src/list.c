@@ -1283,3 +1283,41 @@ gaim_get_blist_ui_ops(void)
 {
 	return blist_ui_ops;
 }
+
+int gaim_blist_get_group_size(struct group *group, gboolean offline) {
+	GaimBlistNode *node;
+	int count = 0;
+
+	if(!group)
+		return 0;
+
+	for(node = group->node.child; node; node = node->next) {
+		if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			struct buddy *b = (struct buddy *)node;
+			if(b->account->gc || offline)
+				count++;
+		}
+	}
+
+	return count;
+}
+
+int gaim_blist_get_group_online_count(struct group *group) {
+	GaimBlistNode *node;
+	int count = 0;
+
+	if(!group)
+		return 0;
+
+	for(node = group->node.child; node; node = node->next) {
+		if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			struct buddy *b = (struct buddy *)node;
+			if(b->present)
+				count++;
+		}
+	}
+
+	return count;
+}
+
+

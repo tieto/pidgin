@@ -355,6 +355,23 @@ gboolean gaim_group_on_account(struct group *g, struct gaim_account *account);
 void gaim_blist_remove_account(struct gaim_account *account);
 
 
+/**
+ * Determines the total size of a group
+ *
+ * @param group  The group
+ * @param offline Count buddies in offline accounts
+ * @return The number of buddies in the group
+ */
+int gaim_blist_get_group_size(struct group *group, gboolean offline);
+
+/**
+ * Determines the number of online buddies in a group
+ *
+ * @param group The group
+ * @return The number of online buddies in the group, or 0 if the group is NULL
+ */
+int gaim_blist_get_group_online_count(struct group *group);
+
 /*@}*/
 
 /****************************************************************************************/

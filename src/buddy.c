@@ -356,15 +356,18 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 		sw = nw = ne = NULL; /* So that only the se icon will composite */
 	}
 
-		
+
 	if (b->present == 2) {
+		struct gaim_gtk_blist_node *gtknode;
 		/* If b->present is 2, that means this buddy has just signed on.  We use the "login" icon for the
 		 * status, and we set a timeout to change it to a normal icon after 10 seconds. */
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
 		status = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
-		g_timeout_add(10000, (GSourceFunc)gaim_reset_present_icon, b);
-		
+
+		gtknode = GAIM_GTK_BLIST_NODE((GaimBlistNode*)b);
+		gtknode->timer = g_timeout_add(10000, (GSourceFunc)gaim_reset_present_icon, b);
+
 		/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and 
 		   then it will look up protoname from the theme */
 	} else {
@@ -730,6 +733,32 @@ void gaim_gtk_blist_update_toolbar() {
 		gtk_widget_show_all(gtkblist->bbox);
 }
 
+static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
+{
+	struct gaim_gtk_blist_node *gtknode;
+	GtkTreeIter iter;
+
+	if (!node->ui_data)
+		return;
+
+	gtknode = (struct gaim_gtk_blist_node *)node->ui_data;
+
+	if (gtknode->timer > 0) {
+		g_source_remove(gtknode->timer);
+		gtknode->timer = 0;
+	}
+
+	if (get_iter_from_node(node, &iter)) {
+		gtk_tree_store_remove(gtkblist->treemodel, &iter);
+		if(GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_blist_get_group_online_count((struct group *)node->parent) == 0) {
+			GtkTreeIter groupiter;
+			if(get_iter_from_node(node->parent, &groupiter))
+				gtk_tree_store_remove(gtkblist->treemodel, &groupiter);
+		}
+	}
+}
+
+
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	struct gaim_gtk_blist_node *gtknode;
@@ -832,26 +861,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		if (avatar != NULL)
 			g_object_unref(avatar);
 
-	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry){
-		gtk_tree_store_remove(gtkblist->treemodel, &iter);
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry) {
+		gaim_gtk_blist_remove(list, node);
 	}
-}
-
-static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
-{
-	struct gaim_gtk_blist_node *gtknode;
-	GtkTreeIter iter;
-
-	if (!node->ui_data)
-		return;
-
-	gtknode = (struct gaim_gtk_blist_node *)node->ui_data;
-
-	if (gtknode->timer > 0)
-		g_source_remove(gtknode->timer);
-
-	if (get_iter_from_node(node, &iter))
-		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 }
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
