@@ -1961,7 +1961,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 			gaim_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
 
-			start = memchr(yd->rxqueue, 'Y', yd->rxlen);
+			start = memchr(yd->rxqueue + 1, 'Y', yd->rxlen - 1);
 			if (start) {
 				g_memmove(yd->rxqueue, start, yd->rxlen - (start - yd->rxqueue));
 				yd->rxlen -= start - yd->rxqueue;
