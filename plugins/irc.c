@@ -47,7 +47,7 @@
 #include "pixmaps/ok.xpm"
 
 /* FIXME: We shouldn't have hard coded servers and ports :-) */
-#define IRC_SERVER "irc.undernet.org"
+#define IRC_SERVER "irc.mozilla.org"
 #define IRC_PORT 6667
 
 #define IRC_BUF_LEN 4096
@@ -192,7 +192,7 @@ struct irc_channel * find_channel_by_id (struct gaim_connection *gc, int id) {
 void irc_chat_send( struct gaim_connection *gc, int id, char *message) {
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
-	struct irc_channel *channel = g_new0(struct irc_channel, 1);
+	struct irc_channel *channel = NULL;
 	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN + 1);
 
 	/* First lets get our current channel */
@@ -201,6 +201,7 @@ void irc_chat_send( struct gaim_connection *gc, int id, char *message) {
 
 	if (!channel) {
 		/* If for some reason we've lost our channel, let's bolt */
+		g_free(buf);
 		return;
 	}
 	
@@ -365,6 +366,9 @@ void irc_callback ( struct gaim_connection * gc ) {
 				add_chat_buddy(convo, buf2[i]);
 			}
 		}
+
+		/* And free our pointers */
+		g_strfreev (buf2);
 	
 		return;
 		
@@ -432,7 +436,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 		gchar u_channel[128];
 		gchar u_nick[128];
 
-		struct irc_channel *channel = g_new0(struct irc_channel, 1);
+		struct irc_channel *channel;
 		int id;
 		int j;
 		GList *test = NULL;
@@ -472,7 +476,6 @@ void irc_callback ( struct gaim_connection * gc ) {
 			serv_got_chat_left(gc, channel->id);
 
 			idata->channels = g_list_remove(idata->channels, channel);
-			g_free(channel);	
 		} else {
 			struct conversation *convo = NULL;
 			
@@ -614,12 +617,26 @@ void irc_handler(gpointer data, gint source, GdkInputCondition condition) {
 
 void irc_close(struct gaim_connection *gc) {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	GList *chats = idata->channels;
+	struct irc_channel *cc;
+
 	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN);
 
-	g_snprintf(buf, IRC_BUF_LEN, "QUIT :GAIM [www.marko.net/gaim]\n");
+	g_snprintf(buf, IRC_BUF_LEN, "QUIT :Download GAIM [www.marko.net/gaim]\n");
 	write(idata->fd, buf, strlen(buf));
 
 	g_free(buf);
+
+	while (chats) {
+		cc = (struct irc_channel *)chats->data;
+		g_free(cc->name);
+		chats = g_list_remove(chats, cc);
+		g_free(cc);
+	}
+	
+	if (gc->inpa)
+		gdk_input_remove(gc->inpa);
+
 	close(idata->fd);
 	g_free(gc->proto_data);
 }
