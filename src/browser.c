@@ -636,7 +636,8 @@ void open_url(GtkWidget *w, char *url)
 		if (pid == 0) {
 			char *args[4];
 			char command[1024];
-			
+			char *quoted = NULL;
+
 			if (web_browser == BROWSER_OPERA) {
 				args[0] = "opera";
 				args[1] = "-newwindow";
@@ -662,16 +663,17 @@ void open_url(GtkWidget *w, char *url)
 				args[1] = url;
 				args[2] = NULL;
 			} else if (web_browser == BROWSER_MANUAL) {
-				char *quoted = g_shell_quote(command);
 				g_snprintf(command, sizeof(command), web_command, quoted);
-				g_free(quoted);
+				quoted = g_shell_quote(command);
 				args[0] = "sh";
 				args[1] = "-c";
-				args[2] = command;
+				args[2] = quoted;
 				args[3] = NULL;
 			}
 
 			execvp(args[0], args);
+			if (quoted)
+				g_free(quoted);
 			_exit(0);
 		}
 	}
