@@ -255,7 +255,7 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	char *chan, *topic, *msg, *nick;
+	char *chan, *topic, *msg, *nick, *tmp;
 	GaimConversation *convo;
 
 	if (!strcmp(name, "topic")) {
@@ -272,17 +272,19 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	}
 	gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, topic);
 	/* If this is an interactive update, print it out */
+	tmp = gaim_escape_html(topic);
 	if (!strcmp(name, "topic")) {
 		nick = irc_mask_nick(from);
-		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick, topic);
+		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick, tmp);
 		g_free(nick);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
-		msg = g_strdup_printf(_("The topic for %s is: %s"), chan, topic);
+		msg = g_strdup_printf(_("The topic for %s is: %s"), chan, tmp);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
+	g_free(tmp);
 }
 
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args)

@@ -23,8 +23,10 @@
 #include "internal.h"
 
 #include "conversation.h"
-#include "notify.h"
 #include "debug.h"
+#include "notify.h"
+#include "util.c"
+
 #include "irc.h"
 
 
@@ -462,9 +464,11 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args[0]) {
 		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(convo));
 
-		if (topic)
-			buf = g_strdup_printf(_("current topic is: %s"), topic);
-		else
+		if (topic) {
+			char *tmp = gaim_escape_html(topic);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp);
+			g_free(tmp);
+		} else
 			buf = g_strdup(_("No topic is set"));
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), target, buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
