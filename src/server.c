@@ -633,6 +633,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME) {
 		char *tmp = g_strdup(normalize(name));
 		if (!g_strcasecmp(tmp, normalize(gc->username))) {
+			gc->evil = evil;
 			gc->correction_time = (signon - gc->login_time);
 			update_idle_times();
 		}
