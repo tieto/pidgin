@@ -751,6 +751,17 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
 		gaim_str_strip_cr(m);
+
+		if (!strcmp(m, "<ding>")) {
+			GaimConversation *c = gaim_conversation_new(GAIM_CONV_IM,
+			                                            gaim_connection_get_account(gc), im->from);
+			gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_RECV,
+			                   im->time);
+			g_free(m);
+			g_free(im);
+			continue;
+		}
+
 		m2 = yahoo_codes_to_html(m);
 		g_free(m);
 		serv_got_im(gc, im->from, m2, 0, im->time);
@@ -1136,7 +1147,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	unsigned char		digest2[20];
 	unsigned char		comparison_src[20]; 
 	unsigned char		magic_key_char[4];
-	unsigned char		*magic_ptr;
+	const unsigned char		*magic_ptr;
 
 	unsigned int		magic[64];
 	unsigned int		magic_work = 0;
@@ -1168,7 +1179,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 */
 	
 	magic_ptr = seed;
-	
+
 	while (*magic_ptr != (int)NULL) {
 		char   *loc;
 		

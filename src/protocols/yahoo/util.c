@@ -170,6 +170,19 @@ void yahoo_init_colorht()
 	/* remove these once we have proper support for <FADE> and <ALT> */
 	g_hash_table_insert(ht, "</fade>", "");
 	g_hash_table_insert(ht, "</alt>", "");
+
+	/* these are the normal html yahoo sends (besides <font>).
+	 * anything else will get turned into &lt;tag&gt;, so if I forgot
+	 * about something, please add it. Why Yahoo! has to send unescaped
+	 * <'s and >'s that aren't supposed to be html is beyond me.
+	 */
+	g_hash_table_insert(ht, "<b>", "<b>");
+	g_hash_table_insert(ht, "<i>", "<i>");
+	g_hash_table_insert(ht, "<u>", "<u>");
+
+	g_hash_table_insert(ht, "</b>", "</b>");
+	g_hash_table_insert(ht, "</i>", "</i>");
+	g_hash_table_insert(ht, "</u>", "</u>");
 }
 
 void yahoo_dest_colorht()
@@ -259,7 +272,7 @@ char *yahoo_codes_to_html(const char *x)
 			while (j++ < xs) {
 				if (x[j] != '>')
 					if (j == xs) {
-						g_string_append_c(s, '<');
+						g_string_append(s, "&lt;");
 						nomoreendtags = 1;
 					}
 					else
@@ -282,7 +295,7 @@ char *yahoo_codes_to_html(const char *x)
 					} else if (!strncmp(tmp->str, "<font ", 6)) {
 						_font_tags_fix_size(tmp, s);
 					} else {
-						g_string_append_c(s, '<');
+						g_string_append(s, "&lt;");
 						g_string_free(tmp, TRUE);
 						break;
 					}
@@ -297,7 +310,12 @@ char *yahoo_codes_to_html(const char *x)
 
 
 		} else {
-			g_string_append_c(s, x[i]);
+			if (x[i] == '<')
+				g_string_append(s, "&lt;");
+			else if (x[i] == '>')
+				g_string_append(s, "&gt;");
+			else
+				g_string_append_c(s, x[i]);
 		}
 	}
 

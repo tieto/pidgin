@@ -96,10 +96,10 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gnutls_transport_set_ptr(gnutls_data->session, GINT_TO_POINTER(source));
 
-	gaim_debug_info("gnutls", "Handshaking\n");
 
 	do
 	{
+		gaim_debug_info("gnutls", "Handshaking\n");
 		ret = gnutls_handshake(gnutls_data->session);
 	}
 	while ((ret == GNUTLS_E_AGAIN) || (ret == GNUTLS_E_INTERRUPTED));
