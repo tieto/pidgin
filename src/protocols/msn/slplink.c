@@ -585,7 +585,7 @@ gen_context(const char *file_name)
 	if (stat(file_name, &st) == 0)
 		size = st.st_size;
 
-	u8 = g_locale_to_utf8(g_basename(file_name), -1, NULL, NULL, NULL);
+	u8 = gaim_utf8_try_convert(g_basename(file_name));
 	uni = g_utf8_to_utf16(u8, -1, NULL, &uni_len, NULL);
 	g_free(u8);
 
