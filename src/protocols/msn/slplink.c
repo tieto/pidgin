@@ -447,7 +447,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		slpmsg->session_id = msg->msnslp_header.session_id;
 		slpmsg->size = msg->msnslp_header.total_size;
 		slpmsg->flags = msg->msnslp_header.flags;
-		slpmsg->buffer = g_malloc(slpmsg->size);
 
 		if (slpmsg->session_id)
 		{
@@ -471,10 +470,19 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				}
 			}
 		}
+		if (!slpmsg->fp)
+		{
+			slpmsg->buffer = g_try_malloc(slpmsg->size);
+			if (slpmsg->buffer == NULL)
+			{
+				gaim_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+				return;
+			}
+		}
 	}
 	else
 	{
-		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.id);
+		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.session_id, msg->msnslp_header.id);
 	}
 
 	if (slpmsg != NULL)
@@ -486,7 +494,13 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		}
 		else
 		{
-			memcpy(slpmsg->buffer + offset, data, len);
+			if ((offset + len) > slpmsg->size)
+			{
+				gaim_debug_error("msn", "Oversized slpmsg\n");
+				g_return_if_reached();
+			}
+			else
+				memcpy(slpmsg->buffer + offset, data, len);
 		}
 	}
 	else
@@ -544,7 +558,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 }
 
 MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long id)
+msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
 {
 	GList *e;
 
@@ -552,7 +566,7 @@ msn_slplink_message_find(MsnSlpLink *slplink, long id)
 	{
 		MsnSlpMessage *slpmsg = e->data;
 
-		if (slpmsg->id == id)
+		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
 			return slpmsg;
 	}
 

@@ -658,20 +658,17 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		g_string_append_printf(str, "%u ", msg->msnslp_header.session_id);
-		g_string_append_printf(str, "%u ", msg->msnslp_header.id);
-		g_string_append_printf(str, "%llu ", msg->msnslp_header.offset);
-		g_string_append(str, "\r\n");
-		g_string_append_printf(str, "%llu ",
-							   msg->msnslp_header.total_size);
-		g_string_append_printf(str, "%u ", msg->msnslp_header.length);
-		g_string_append_printf(str, "%u ", msg->msnslp_header.flags);
-		g_string_append(str, "\r\n");
-		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_id);
-		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_sub_id);
-		g_string_append_printf(str, "%lld ", msg->msnslp_header.ack_size);
-		g_string_append(str, "\r\n");
+		g_string_append_printf(str, "Session ID: %u\r\n", msg->msnslp_header.session_id);
+		g_string_append_printf(str, "ID:         %u\r\n", msg->msnslp_header.id);
+		g_string_append_printf(str, "Offset:     %llu\r\n", msg->msnslp_header.offset);
+		g_string_append_printf(str, "Total size: %llu\r\n", msg->msnslp_header.total_size);
+		g_string_append_printf(str, "Length:     %u\r\n", msg->msnslp_header.length);
+		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->msnslp_header.flags);
+		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->msnslp_header.ack_id);
+		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->msnslp_header.ack_sub_id);
+		g_string_append_printf(str, "ACK Size:   %lld\r\n", msg->msnslp_header.ack_size);
 
+#ifdef DEBUG_SLP_VERBOSE
 		if (body != NULL)
 		{
 			if (text_body)
@@ -696,9 +693,9 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				g_string_append(str, "\r\n");
 			}
 		}
+#endif
 
-		g_string_append_printf(str, "%u ", msg->msnslp_footer.value);
-		g_string_append(str, "\r\n");
+		g_string_append_printf(str, "Footer:     %u\r\n", msg->msnslp_footer.value);
 	}
 	else
 	{

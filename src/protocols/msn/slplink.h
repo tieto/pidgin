@@ -70,7 +70,7 @@ void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 void msn_slplink_unleash(MsnSlpLink *slplink);
 void msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg);
 void msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg);
-MsnSlpMessage *msn_slplink_message_find(MsnSlpLink *slplink, long id);
+MsnSlpMessage *msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id);
 void msn_slplink_append_slp_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_remove_slp_msg(MsnSlpLink *slplink,
 								 MsnSlpMessage *slpmsg);
