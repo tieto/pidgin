@@ -3884,14 +3884,17 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
 
-	annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
-	if(annipixbuf) {
-		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
-			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
-			if(pixbuf)
-				icon = gtk_image_new_from_pixbuf(pixbuf);
-		} else {
-			icon = gtk_image_new_from_animation(annipixbuf);
+	if (imhtml->format_functions & GTK_IMHTML_SMILEY)
+	{
+		annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
+		if(annipixbuf) {
+			if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+				pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
+				if(pixbuf)
+					icon = gtk_image_new_from_pixbuf(pixbuf);
+			} else {
+				icon = gtk_image_new_from_animation(annipixbuf);
+			}
 		}
 	}
 
