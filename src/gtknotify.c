@@ -126,7 +126,11 @@ gaim_gtk_notify_email(const char *subject, const char *from,
 					  GCallback cb, void *user_data)
 {
 	return gaim_gtk_notify_emails(1, TRUE,
-								  &subject, &from, &to, &url, cb, user_data);
+								  (subject == NULL ? NULL : &subject),
+								  (from    == NULL ? NULL : &from),
+								  (to      == NULL ? NULL : &to),
+								  (url     == NULL ? NULL : &url),
+								  cb, user_data);
 }
 
 static void *
@@ -149,11 +153,12 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	data->url = g_strdup(urls[0]);
 
 	/* Create the dialog. */
-	dialog = gtk_dialog_new_with_buttons("", NULL, 0,
-					     GTK_STOCK_CLOSE,      1,
-						 GAIM_STOCK_OPEN_MAIL, 0,
-					     NULL);
-	data->dialog = dialog;
+	data->dialog = dialog = gtk_dialog_new();
+
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, 1);
+
+	if (urls != NULL)
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GAIM_STOCK_OPEN_MAIL, 1);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(__email_response_cb), data);
