@@ -1022,13 +1022,13 @@ gaim_plugins_find_with_basename(const char *basename)
 
 		plugin = (GaimPlugin *)l->data;
 
-		if (plugin->path != NULL &&
-			(tmp = g_strrstr(plugin->path, basename)) != NULL)
-		{
-			tmp += strlen(basename);
-
-			if (*tmp == '\0')
+		if (plugin->path != NULL) {
+			tmp = g_path_get_basename(plugin->path);
+			if (!strcmp(tmp, basename)) {
+				g_free(tmp);
 				return plugin;
+			}
+			g_free(tmp)
 		}
 	}
 
