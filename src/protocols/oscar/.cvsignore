@@ -38,3 +38,4 @@ service.lo
 liboscar.def
 liboscar.lib
 liboscar.exp
+liboscar.dll

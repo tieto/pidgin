@@ -7,3 +7,6 @@ libgg.la
 libgg.lo
 iconv_string.lo
 common.lo
+*.def
+*.lib
+*.dll

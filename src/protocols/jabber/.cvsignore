@@ -26,3 +26,6 @@ xmlparse.lo
 xmlrole.lo
 xmltok.lo
 xstream.lo
+*.def
+*.lib
+*.dll

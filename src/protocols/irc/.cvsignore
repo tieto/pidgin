@@ -4,3 +4,7 @@ Makefile
 .libs
 irc.lo
 libirc.la
+*.def
+*.lib
+*.dll
+

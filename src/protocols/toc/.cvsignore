@@ -4,3 +4,6 @@ Makefile
 .libs
 libtoc.la
 toc.lo
+libtoc.dll
+libtoc.def
+libtoc.lib

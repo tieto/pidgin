@@ -13,3 +13,6 @@ yay.lo
 yahoo.lo
 md5.lo
 crypt.lo
+libyahoo.def
+libyahoo.lib
+libyahoo.dll
