@@ -53,6 +53,9 @@
 #include "locale.h"
 #include "gtkticker.h"
 
+static GtkWidget *name;
+static GtkWidget *pass;
+
 GList *permit = NULL;
 GList *deny = NULL;
 GList *log_conversations = NULL;
@@ -143,6 +146,76 @@ void gaim_setup(struct gaim_connection *gc) {
 }
 
 
+static void dologin(GtkWidget *widget, GtkWidget *w)
+{
+	struct aim_user *u;
+	char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
+	char *password = gtk_entry_get_text(GTK_ENTRY(pass));
+
+	if (!strlen(username)) {
+		do_error_dialog(_("Please enter your logon"), _("Signon Error"));
+		return;
+	}
+
+	if (!strlen(password)) {
+		do_error_dialog(_("Please enter your password"), _("Signon Error"));
+		return;
+	}
+
+	u = find_user(username);
+	if (!u) {
+		/* FIXME : add user */
+	}
+	g_snprintf(u->password, sizeof u->password, "%s", password);
+	save_prefs();
+	serv_login(u);
+}
+
+
+static void doenter(GtkWidget *widget, GtkWidget *w)
+{
+	if (widget == name) {
+		gtk_entry_set_text(GTK_ENTRY(pass), "");
+		gtk_entry_select_region(GTK_ENTRY(GTK_COMBO(name)->entry), 0, 0);
+		gtk_widget_grab_focus(pass);
+	} else if (widget == pass) {
+		dologin(widget, w);
+	}
+}
+
+
+static void combo_changed(GtkWidget *w, GtkWidget *combo)
+{
+	char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
+	struct aim_user *u;
+
+	u = find_user(txt);
+
+	if (u && u->options & OPT_USR_REM_PASS) {
+		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
+	} else {
+		gtk_entry_set_text(GTK_ENTRY(pass), "");
+	}
+}
+
+
+static GList *combo_user_names()
+{
+	GList *usr = aim_users;
+	GList *tmp = NULL;
+	struct aim_user *u;
+
+	if (!usr)
+		return g_list_append(NULL, "<unknown>");
+
+	while (usr) {
+		u = (struct aim_user *)usr->data;
+		tmp = g_list_append(tmp, g_strdup(u->username));
+		usr = usr->next;
+	}
+
+	return tmp;
+}
 
 
 void show_login()
@@ -152,11 +225,13 @@ void show_login()
 	GtkWidget *plugs;
 #endif
 	GtkWidget *accts;
+	GtkWidget *signon;
 	GtkWidget *cancel;
 	GtkWidget *reg;
 	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *sbox;
+	GtkWidget *label;
 	GtkWidget *table;
 
 	GtkWidget *pmw;
@@ -176,6 +251,8 @@ void show_login()
         /* Disallow resizing */
         gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
 	gtk_widget_realize(mainwindow);
+
+	signon   = gtk_button_new_with_label(_("Signon"));
 	accts    = gtk_button_new_with_label(_("Accounts"));
 	cancel   = gtk_button_new_with_label(_("Cancel"));
 	reg      = gtk_button_new_with_label(_("Register"));
@@ -184,9 +261,14 @@ void show_login()
 	plugs    = gtk_button_new_with_label(_("Plugins")); 
 #endif
 	table    = gtk_table_new(8, 2, FALSE);
+	name     = gtk_combo_new();
+	pass     = gtk_entry_new();
+
+	gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
 
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
+		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
@@ -198,6 +280,8 @@ void show_login()
 
 	/* Make the buttons do stuff */
 	/* Clicking the button initiates a login */
+	gtk_signal_connect(GTK_OBJECT(signon), "clicked",
+			   GTK_SIGNAL_FUNC(dologin), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(accts), "clicked",
 			   GTK_SIGNAL_FUNC(account_editor), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
@@ -214,6 +298,15 @@ void show_login()
 	/* Register opens the right URL */
 	gtk_signal_connect(GTK_OBJECT(reg), "clicked",
 			   GTK_SIGNAL_FUNC(open_url), "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
+	/* Enter in the username clears the password and sets
+	   the pointer in the password field */
+	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",
+			   GTK_SIGNAL_FUNC(doenter), mainwindow);
+	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
+			   GTK_SIGNAL_FUNC(combo_changed), name);
+
+	gtk_signal_connect(GTK_OBJECT(pass), "activate",
+			   GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
 			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	/* Homogenous spacing, 10 padding */
@@ -221,35 +314,54 @@ void show_login()
 	hbox = gtk_hbox_new(TRUE, 10);
 	sbox = gtk_vbox_new(TRUE, 5);
 	
-	gtk_box_pack_start(GTK_BOX(bbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), accts, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
 
+	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 #ifdef GAIM_PLUGINS
 	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 
 	/* Labels for selectors and text boxes */
+	label = gtk_label_new(_("Screen Name: "));
+	gtk_table_attach(GTK_TABLE(table), label, 0,1,2,3,0,0, 5, 5);
+	gtk_widget_show(label);
+	label = gtk_label_new(_("Password: "));
+	gtk_table_attach(GTK_TABLE(table), label, 0,1,3,4,0,0, 5, 5);
+	gtk_widget_show(label);
 
 	gtk_widget_show(options);
 #ifdef GAIM_PLUGINS
 	gtk_widget_show(plugs);
 #endif
+
+	/* Adjust sizes of inputs */
+	gtk_widget_set_usize(name,100,0);
+	gtk_widget_set_usize(pass,100,0);
+
 	
 	/* Attach the buttons at the bottom */
+	gtk_widget_show(signon);
 	gtk_widget_show(cancel);
 	gtk_widget_show(reg);
 	gtk_widget_show(accts);
 	gtk_widget_show(bbox);
 	gtk_widget_show(hbox);
 	gtk_widget_show(sbox);
-	gtk_table_attach(GTK_TABLE(table), accts, 0,2,6,7,0,0, 5, 5);
 	gtk_table_attach(GTK_TABLE(table), sbox, 0,2,7,8,0,0, 5, 5);
 	
 	/* Text fields */
+	
+	gtk_table_attach(GTK_TABLE(table),name,1,2,2,3,0,0,5,5);
+	gtk_widget_show(name);
+	gtk_table_attach(GTK_TABLE(table),pass,1,2,3,4,0,0,5,5);
+	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
+	gtk_widget_show(pass);
 	
 	gtk_container_border_width(GTK_CONTAINER(sbox), 10);	 
 	
@@ -258,6 +370,19 @@ void show_login()
 	gtk_widget_show(table);
         gtk_window_set_title(GTK_WINDOW(mainwindow),_("Gaim - Login"));
 
+
+	if (aim_users) {
+		struct aim_user *c = (struct aim_user *)aim_users->data;
+		sprintf(debug_buff, "First user is %s\n", c->username);
+		if (c->options & OPT_USR_REM_PASS) {
+			combo_changed(NULL, name);
+			gtk_widget_grab_focus(signon);
+		} else {
+			gtk_widget_grab_focus(pass);
+		}
+	} else {
+		gtk_widget_grab_focus(name);
+	}
 
         gtk_widget_realize(mainwindow);
 
