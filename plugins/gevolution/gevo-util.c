@@ -135,7 +135,8 @@ gevo_load_addressbook(EBook **book, GError **error)
 
 	g_return_val_if_fail(book != NULL, FALSE);
 
-#if EBOOK_CHECK_VERSION(0, 0, 93)
+/* #if EBOOK_CHECK_VERSION(0, 0, 94) */
+#ifdef LIBEBOOK_NEW_API
 	*book = e_book_new_system_addressbook(NULL);
 
 	if (book != NULL)

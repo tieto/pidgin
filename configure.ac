@@ -312,6 +312,15 @@ if test "x$enable_gevolution" = "xyes"; then
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
 
+	dnl This is necessary, because Evolution bumps the version just before
+	dnl release, and they broke the API in the current evolution-data-server
+	dnl release (0.0.93). Version checks won't work until 0.0.94, so we'll
+	dnl do this for now. Remove in a couple versions!
+	AC_CHECK_LIB(ebook, e_book_new_system_addressbook,
+	[
+		AC_DEFINE(LIBEBOOK_NEW_API, 1, [new API in libebook 0.0.94cvs])
+	], , $EVOLUTION_ADDRESSBOOK_LIBS)
+
 	dnl This can be removed in a few releases of Evolution, especially when
 	dnl it goes stable!
 	AC_MSG_CHECKING([libebook version])
