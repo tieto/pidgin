@@ -1665,7 +1665,7 @@ GtkWidget *away_message_page() {
 
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button(_("_Edit"), "edit.png", GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT, GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(create_away_mess), event_view);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);

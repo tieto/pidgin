@@ -65,7 +65,6 @@ void show_about(GtkWidget *w, void *data)
 	GtkWidget *text;
 	GtkWidget *sw;
 	GtkWidget *logo;
-
 	char abouttitle[45];
 
 	if (!about) {
@@ -81,20 +80,16 @@ void show_about(GtkWidget *w, void *data)
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 		gtk_container_add(GTK_CONTAINER(about), vbox);
-		gtk_widget_show(vbox);
 
 		frame = gtk_frame_new("Gaim v" VERSION);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-		gtk_widget_show(frame);
 
 		fbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
-		gtk_widget_show(fbox);
 
-		logo = gaim_pixmap(NULL, "logo.png");
+		logo = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
 		gtk_box_pack_start(GTK_BOX(fbox), logo, FALSE, FALSE, 0);
-		gtk_widget_show(logo);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
@@ -106,7 +101,6 @@ void show_about(GtkWidget *w, void *data)
 		gtk_container_add(GTK_CONTAINER(sw), text);
 		gtk_widget_set_size_request(sw, -1, 350);
 		gaim_setup_imhtml(text);
-
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				  _("Gaim is a modular Instant Messaging client capable of "
@@ -166,10 +160,6 @@ void show_about(GtkWidget *w, void *data)
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 
-		gtk_widget_show(text);
-		gtk_widget_show(sw);
-
-
 		/* Close Button */
 
 		hbox = gtk_hbox_new(FALSE, 5);
@@ -183,15 +173,14 @@ void show_about(GtkWidget *w, void *data)
 								 G_CALLBACK(destroy_about), G_OBJECT(about));
 		g_signal_connect(G_OBJECT(about), "destroy",
 						 G_CALLBACK(destroy_about), G_OBJECT(about));
-		gtk_widget_show(button);
 
 		/* this makes the sizes not work. */
 		/* GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT); */
 		/* gtk_widget_grab_default(button); */
 
-		gtk_widget_show(button);
 	}
 
 	/* Let's give'em something to talk about -- woah woah woah */
+	gtk_widget_show_all(about);
 	gtk_window_present(GTK_WINDOW(about));
 }

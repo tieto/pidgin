@@ -36,10 +36,6 @@
 #include "multi.h"
 #include "gaim.h"
 #include "sound.h"
-
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/tb_search.xpm"
-
 #include "pounce.h"
 
 void serv_login(struct gaim_account *account)
@@ -1239,11 +1235,11 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-	button = picture_button(window, _("Close"), cancel_xpm);
+	button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(des_popup), window);
 
-	button = picture_button(window, _("More Info"), tb_search_xpm);
+	button = gaim_pixbuf_button_from_stock(_("More Info"), GTK_STOCK_FIND, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(open_url), url);
 

@@ -827,19 +827,12 @@ invite_cb(GtkWidget *widget, struct gaim_conversation *conv)
 		struct gaim_connection *gc;
 		struct gaim_window *win;
 		struct gaim_gtk_window *gtkwin;
-		char *filename;
 		GtkWidget *label;
 		GtkWidget *vbox, *hbox;
 		GtkWidget *table;
 		GtkWidget *img;
 
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs",
-									"gaim_question.png", NULL);
-
-		img = gtk_image_new_from_file(filename);
-
-		g_free(filename);
-
+		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 
 		info = g_new0(struct InviteBuddyInfo, 1);
 		info->conv = conv;

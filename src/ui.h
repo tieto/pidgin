@@ -235,7 +235,6 @@ extern void unhide_buddy_list();
 extern void docklet_add();
 extern void docklet_remove();
 extern void docklet_toggle();
-extern GtkWidget *gaim_new_item(GtkWidget *, const char *);
 extern void update_idle_times();
 extern void build_imchat_box(gboolean);
 extern void show_xfer_dialog();
@@ -276,12 +275,9 @@ extern void set_color_selection(GtkWidget *selection, GdkColor color);
 extern void show_rename_group(GtkWidget *, struct group *);
 extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern void load_perl_script();
-extern GtkWidget *picture_button(GtkWidget *, char *, char **);
-extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonStyle);
 extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonStyle);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
-extern GtkWidget *gaim_pixbuf_toolbar_button_from_file(char *);
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();
 extern void show_privacy_options();
@@ -336,11 +332,7 @@ extern void load_smiley_theme(const char *file, gboolean load);
 extern GSList *get_proto_smileys(int protocol);
 
 /* Fucnctions in util.c */
-extern GtkWidget *gaim_pixmap(char *, char *);
-extern GdkPixbuf *gaim_pixbuf(char *, char *);
 extern GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
-extern GtkWidget *gaim_new_item_with_pixmap(GtkWidget *, const char *, char **, GtkSignalFunc, gpointer, guint, guint, char *);
 extern GtkWidget *gaim_new_item_from_stock(GtkWidget *, const char *, const char *, GtkSignalFunc, gpointer, guint, guint, char *);
-extern GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *, const char *, char *, GtkSignalFunc, gpointer, guint, guint, char *);
 
 #endif /* _UI_H_ */

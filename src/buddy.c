@@ -359,6 +359,8 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 
 		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Alias"));
 		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
+		image = gtk_image_new_from_stock(GAIM_STOCK_EDIT, GTK_ICON_SIZE_MENU);
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Remove"));
@@ -648,46 +650,36 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
-		{ N_("/Buddies/New _Instant Message..."), "<CTL>I", show_im_dialog, 0,
-	  "<StockItem>", GAIM_STOCK_IM },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, 
-	  "<StockItem>", GAIM_STOCK_CHAT },
+	{ N_("/Buddies/New _Instant Message..."), "<CTL>I", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
+	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
+	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0,
-	  "<StockItem>", GAIM_STOCK_INFO },
-	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD }, 
 	{ N_("/Buddies/Add a _Group..."), NULL, show_add_group, 0, NULL},
-	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Buddies/_Signoff"), "<CTL>D", signoff_all, 0, NULL },
-	{ N_("/Buddies/_Quit"), "<CTL>Q", do_quit, 0,
-	  "<StockItem>", GTK_STOCK_QUIT },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Buddies/_Signoff"), "<CTL>D", signoff_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
+	{ N_("/Buddies/_Quit"), "<CTL>Q", do_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Tools */ 
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/_Away"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/sep1"), NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/_File Transfers"), NULL, gaim_show_xfer_dialog, 0,
-	  "<StockItem>", GTK_STOCK_REVERT_TO_SAVED },
-	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
-	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
-	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0,
-	  "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
+	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/_File Transfers..."), NULL, gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
+	{ N_("/Tools/A_ccounts..."), "<CTL>A", account_editor, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
+	{ N_("/Tools/Preferences..."), "<CTL>P", show_prefs, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
+	{ N_("/Tools/Pr_ivacy..."), NULL, show_privacy_options, 0, "<StockItem>", GAIM_STOCK_PRIVACY },
+	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/View System _Log..."), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0,
-	  "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, NULL },
-	{ N_("/Help/_About"), NULL, show_about, 0, NULL },
-
+	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
+	{ N_("/Help/_Debug Window..."), NULL, toggle_debug, 0, NULL },
+	{ N_("/Help/_About..."), NULL, show_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
 /*********************************************************
@@ -1293,7 +1285,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Join a chat room"), NULL);
 	gtk_widget_show(button);
 
-	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_AWAY, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_ICON_AWAY, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
@@ -1462,7 +1454,7 @@ static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 	GaimBlistNode *sibling;
 	GtkTreeIter siblingiter;
 	GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
-			GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+			GAIM_STOCK_GROUP, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	struct group *group = (struct group *)node;
 	char *esc = g_markup_escape_text(group->name, -1);
 	char *mark;

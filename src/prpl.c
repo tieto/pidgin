@@ -32,10 +32,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/ok.xpm"
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/tb_forward.xpm"
-
 GSList *protocols = NULL;
 
 GtkWidget *protomenu = NULL;
@@ -206,11 +202,9 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	GtkWidget *hbox;
 	GtkWidget *label;
 	char labeltext[1024 * 2];
-	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
-	GtkWidget *img = gtk_image_new_from_file(filename);
+	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	struct doaskstruct *doask = g_new0(struct doaskstruct, 1);
 
-	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	/* This is ugly.  GTK Stock items will take a button with a label "gtk-cancel" and turn it into a 
@@ -319,11 +313,11 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	button = picture_button(window, _("Accept"), ok_xpm);
+	button = gaim_pixbuf_button_from_stock(_("OK"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(act_prompt), p);
 
-	button = picture_button(window, _("Cancel"), cancel_xpm);
+	button = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(des_win), window);
 
@@ -522,32 +516,29 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(mn->email_win), vbox);
-	gtk_widget_show(vbox);
 
 	mn->email_label = gtk_label_new(buf);
 	gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
 	gtk_label_set_line_wrap(GTK_LABEL(mn->email_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), mn->email_label, FALSE, TRUE, 5);
-	gtk_widget_show(mn->email_label);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	if (url) {
 		mn->url = g_strdup(url);
-		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
+		urlbut = gaim_pixbuf_button_from_stock(_("Open Mail"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(hbox), urlbut, 0, 0, 5);
 		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(open_url), mn->url);
 		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(des_email_win), mn);
 	}
 
-	close = picture_button(mn->email_win, _("Close"), cancel_xpm);
+	close = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 	gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
 	gtk_box_pack_end(GTK_BOX(hbox), close, 0, 0, 5);
 	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(des_email_win), mn);
 
-	gtk_widget_show(mn->email_win);
+	gtk_widget_show_all(mn->email_win);
 }
 
 struct icon_data {
@@ -827,37 +818,30 @@ void register_dialog()
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(regdlg), vbox);
-	gtk_widget_show(vbox);
 
 	reg_list = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), reg_list, FALSE, FALSE, 5);
-	gtk_widget_show(reg_list);
 
 	frame = gtk_frame_new(_("Registration Information"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 5);
-	gtk_widget_show(frame);
 
 	reg_area = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), reg_area);
-	gtk_widget_show(reg_area);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
 
-	close = picture_button(regdlg, _("Close"), cancel_xpm);
+	close = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
 	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(delete_regdlg), NULL);
-	gtk_widget_show(close);
 
-	reg_reg = picture_button(regdlg, _("Register"), ok_xpm);
+	reg_reg = gaim_pixbuf_button_from_stock(_("Register"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), reg_reg, FALSE, FALSE, 5);
-	gtk_widget_show(reg_reg);
 
 	/* fuck me */
 	reset_reg_dlg();
 
-	gtk_widget_show(regdlg);
+	gtk_widget_show_all(regdlg);
 }
 
 static gboolean delayed_unload(void *handle) {

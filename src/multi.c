@@ -1300,10 +1300,7 @@ static void do_pass_dlg(struct gaim_account *account)
 	GtkWidget *label;
 	GtkWidget *hbox, *vbox;
 	char *labeltext=NULL;
-	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_auth.png", NULL);
-	GtkWidget *img = gtk_image_new_from_file(filename);
-	g_free(filename);
-
+	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_AUTH, GTK_ICON_SIZE_DIALOG);
 
 	if (p) {
 		gtk_widget_show(p->win);
@@ -1850,7 +1847,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 
 	meter->progress = gtk_progress_bar_new ();
 
-	meter->button = gtk_button_new_with_label (_("Cancel"));
+	meter->button = gaim_pixbuf_button_from_stock (_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect (GTK_OBJECT (meter->button), "clicked", G_CALLBACK (cancel_signon), meter);
 
 	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -1910,7 +1907,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_table_set_row_spacings (GTK_TABLE (meter_win->table), 5);
 		gtk_table_set_col_spacings (GTK_TABLE (meter_win->table), 10);
 	
-		cancel_button = gtk_button_new_with_label (_("Cancel All"));
+		cancel_button = gaim_pixbuf_button_from_stock (_("Cancel All"), GTK_STOCK_QUIT, GAIM_BUTTON_HORIZONTAL);
 		g_signal_connect_swapped (GTK_OBJECT (cancel_button), "clicked", G_CALLBACK (loop_cancel), NULL);
 		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (cancel_button), FALSE, FALSE, 0);
 	

@@ -10,10 +10,6 @@
 
 #define GTK_ENABLE_BROKEN
 
-#include "pixmaps/refresh.xpm"
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_remove.xpm"
-
 #include "proxy.h"
 #include "gaim.h"
 
@@ -309,7 +305,6 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	vbox = make_frame(ret, _("Chat Rooms"));
 
 	table = gtk_table_new(4, 2, FALSE);
-	gtk_widget_show(table);
 
 	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
 
@@ -318,13 +313,9 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	sw1 = gtk_scrolled_window_new(NULL, NULL);
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 
-	ref_button = picture_button(prefs, _("Refresh"), refresh_xpm);
-	add_button = picture_button(prefs, _("Add"), gnome_add_xpm);
-	rem_button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
-	gtk_widget_show(list1);
-	gtk_widget_show(sw1);
-	gtk_widget_show(list2);
-	gtk_widget_show(sw2);
+	ref_button = gaim_pixbuf_button_from_stock(_("Refresh"), GTK_STOCK_REFRESH, GAIM_BUTTON_HORIZONTAL);
+	add_button = gaim_pixbuf_button_from_stock(_("Add"), GTK_STOCK_ADD, GAIM_BUTTON_HORIZONTAL);
+	rem_button = gaim_pixbuf_button_from_stock(_("Remove"), GTK_STOCK_REMOVE, GAIM_BUTTON_HORIZONTAL);
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw1), list1);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list2);
@@ -337,7 +328,6 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	g_signal_connect(GTK_OBJECT(add_button), "clicked", G_CALLBACK(add_chat), cp);
 
 	label = gtk_label_new(_("List of available chats"));
-	gtk_widget_show(label);
 
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_SHRINK, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), ref_button, 0, 1, 1, 2, GTK_SHRINK, GTK_SHRINK, 0, 0);
@@ -347,7 +337,6 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 
 
 	label = gtk_label_new(_("List of subscribed chats"));
-	gtk_widget_show(label);
 
 	gtk_table_attach(GTK_TABLE(table), label, 1, 2, 0, 1, GTK_SHRINK, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), sw2, 1, 2, 2, 3,
@@ -360,7 +349,6 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	strcpy(cr->name, _("Gaim Chat"));
 	cr->exchange = 4;
 	gtk_object_set_user_data(GTK_OBJECT(item), cr);
-	gtk_widget_show(item);
 	gtk_list_append_items(GTK_LIST(list1), g_list_append(NULL, item));
 
 
@@ -368,7 +356,6 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 		cr = (struct chat_room *)crs->data;
 		item = gtk_list_item_new_with_label(cr->name);
 		gtk_object_set_user_data(GTK_OBJECT(item), cr);
-		gtk_widget_show(item);
 		items = g_list_append(items, item);
 
 		crs = crs->next;

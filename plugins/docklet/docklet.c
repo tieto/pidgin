@@ -20,7 +20,6 @@
  */
 
 /* todo (in order of importance):
-    - check removing the icon factory actually frees the icons
     - unify the queue so we can have a global away without the dialog
     - handle and update tooltips to show your current accounts/queued messages?
     - show a count of queued messages in the unified queue
@@ -57,7 +56,6 @@ void gaim_plugin_remove();
 /* globals */
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *image = NULL;
-static GtkIconFactory *icon_factory = NULL;
 static enum docklet_status status;
 static enum docklet_status icon;
 
@@ -94,13 +92,11 @@ static void docklet_menu(GdkEventButton *event) {
 	switch (status) {
 		case offline:
 		case offline_connecting:
-			entry = gtk_menu_item_new_with_label(_("Auto-login"));
-			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+			gaim_new_item_from_stock(menu, _("Auto-login"), GAIM_STOCK_SIGN_ON, G_CALLBACK(auto_login), NULL, 0, 0, NULL);
 			break;
 		default:
-			gaim_new_item_from_stock(menu, _("New Message.."), GTK_STOCK_CONVERT, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
-			gaim_new_item_from_stock(menu, _("Join A Chat..."), GTK_STOCK_JUMP_TO, G_CALLBACK(join_chat), NULL, 0, 0, NULL);
+			gaim_new_item_from_stock(menu, _("New Message.."), GAIM_STOCK_IM, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
+			gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(join_chat), NULL, 0, 0, NULL);
 			break;
 	}
 
@@ -154,8 +150,8 @@ static void docklet_menu(GdkEventButton *event) {
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
-	gaim_new_item_from_stock(menu, _("File Transfers..."), GTK_STOCK_REVERT_TO_SAVED, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
-	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("File Transfers..."), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Accounts..."), GAIM_STOCK_ACCOUNTS, G_CALLBACK(account_editor), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
@@ -165,9 +161,7 @@ static void docklet_menu(GdkEventButton *event) {
 		case offline_connecting:
 			break;
 		default:
-			entry = gtk_menu_item_new_with_label(_("Signoff"));
-			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(signoff_all), NULL);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+			gaim_new_item_from_stock(menu, _("Signoff"), GTK_STOCK_CLOSE, G_CALLBACK(signoff_all), NULL, 0, 0, 0);
 			break;
 	}
 
@@ -203,23 +197,23 @@ static void docklet_update_icon() {
 
 	switch (icon) {
 		case offline:
-			icon_name = "gaim-docklet-offline";
+			icon_name = GAIM_STOCK_ICON_OFFLINE;
 			break;
 		case offline_connecting:
 		case online_connecting:
-			icon_name = "gaim-docklet-connect";
+			icon_name = GAIM_STOCK_ICON_CONNECT;
 			break;
 		case online:
-			icon_name = "gaim-docklet-online";
+			icon_name = GAIM_STOCK_ICON_ONLINE;
 			break;
 		case online_pending:
-			icon_name = "gaim-docklet-msgunread";
+			icon_name = GAIM_STOCK_ICON_ONLINE_MSG;
 			break;
 		case away:
-			icon_name = "gaim-docklet-away";
+			icon_name = GAIM_STOCK_ICON_AWAY;
 			break;
 		case away_pending:
-			icon_name = "gaim-docklet-msgpend";
+			icon_name = GAIM_STOCK_ICON_AWAY_MSG;
 			break;
 	}
 
@@ -400,35 +394,7 @@ static void gaim_buddy_back(struct gaim_connection *gc, char *who, void *data) {
 static void gaim_new_conversation(char *who, void *data) {
 } */
 
-static void docklet_register_icon(const char *name, char *fn) {
-	gchar *filename;
-
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", fn, NULL);
-	gtk_icon_factory_add(icon_factory, name,
-		gtk_icon_set_new_from_pixbuf(gdk_pixbuf_new_from_file(filename, NULL)));
-	g_free(filename);
-}
-
-static void docklet_register_icon_factory() {
-	icon_factory = gtk_icon_factory_new();
-	
-	docklet_register_icon("gaim-docklet-offline", "offline.png");
-	docklet_register_icon("gaim-docklet-connect", "connect.png");
-	docklet_register_icon("gaim-docklet-online", "online.png");
-	docklet_register_icon("gaim-docklet-msgunread", "msgunread.png");
-	docklet_register_icon("gaim-docklet-away", "away.png");
-	docklet_register_icon("gaim-docklet-msgpend", "msgpend.png");
-
-	gtk_icon_factory_add_default(icon_factory);
-}
-
-static void docklet_unregister_icon_factory() {
-	gtk_icon_factory_remove_default(icon_factory);
-}
-
 char *gaim_plugin_init(GModule *handle) {
-	docklet_register_icon_factory();
-
 	docklet_create(NULL);
 
 	gaim_signal_connect(handle, event_signon, gaim_signon, NULL);
@@ -459,8 +425,6 @@ void gaim_plugin_remove() {
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
-	
-	docklet_unregister_icon_factory();
 
 	/* do this while gaim has no other way to toggle the global mute */
 	gaim_sound_set_mute(FALSE);

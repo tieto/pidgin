@@ -31,7 +31,6 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "gtkimhtml.h"
-#include "pixmaps/join.xpm"
 #include "gtklist.h"
 
 GtkWidget *imaway = NULL;
@@ -277,10 +276,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 			gtk_widget_show(awayqueue);
 		}
 
-		back = picture_button(imaway, _("I'm Back!"), join_xpm);
+		back = gaim_pixbuf_button_from_stock(_("I'm Back!"), GTK_STOCK_JUMP_TO, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(back), "clicked", G_CALLBACK(do_im_back), imaway);
 		gtk_window_set_focus(GTK_WINDOW(imaway), back);
+		gtk_widget_show(back);
 
 		awaymessage = a;
 	} else {

@@ -293,7 +293,6 @@ void show_login()
 	GtkWidget *label;
 	GtkWidget *vbox2;
 	GList *tmp;
-	char *filename;
 
 	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
 	if (mainwindow) {
@@ -315,9 +314,7 @@ void show_login()
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(mainwindow), vbox);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "logo.png", NULL);
-	image = gtk_image_new_from_file(filename);
-	g_free(filename);
+	image = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 0);
 
 	vbox2 = gtk_vbox_new(FALSE, 0);
@@ -357,7 +354,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
 
 	/* And now for the buttons */
-	button = gaim_pixbuf_button(_("Accounts"), "accounts.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("Accounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(account_editor), mainwindow);
@@ -367,13 +364,13 @@ void show_login()
 	gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 #endif
 
-	button = gaim_pixbuf_button(_("Settings"), "preferences.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("Preferences"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(show_prefs), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button(_("Sign On"), "signon.png", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("Sign On"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(dologin), mainwindow);
@@ -538,7 +535,7 @@ static int ui_main()
 
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
-	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);
+	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim", "icons", "online.png", NULL);
 	icon = gdk_pixbuf_new_from_file(icon_path, NULL);
 	g_free(icon_path);
 	if (icon) {
