@@ -775,7 +775,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 				  info->idletime,
 				  infotype == AIM_GETINFO_GENERALINFO ? prof :
 		  		   away_subs(prof, current_user->username));
-	g_show_info_text(buf);
+	g_show_info_text(away_subs(buf, current_user->username));
 
 	return 1;
 }

@@ -1700,7 +1700,7 @@ void g_show_info_text(char *info)
 
 void g_show_info(char *url) {
 	char *url_text = grab_url(url);
-	g_show_info_text(url_text);
+	g_show_info_text(away_subs(url_text, current_user->username));
 	g_free(url_text);
 }
 
