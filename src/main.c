@@ -893,6 +893,7 @@ int main(int argc, char *argv[])
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
 
 	gaim_pounces_load();
+	gaim_status_load();
 
 #ifdef _WIN32
 	/* Various win32 initializations */

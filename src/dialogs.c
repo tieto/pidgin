@@ -28,6 +28,7 @@
 #include "privacy.h"
 #include "prpl.h"
 #include "request.h"
+#include "status.h"
 #include "util.h"
 
 #include "gtkblist.h"
@@ -3276,6 +3277,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 	}
 
 	do_away_menu(NULL);
+	gaim_status_sync();
 
 	return am;
 }

@@ -337,8 +337,10 @@ static void gaimrc_read_away(FILE *f)
 		if (!fgets(buf, sizeof(buf), f))
 			return;
 
-		if (buf[0] == '}')
+		if (buf[0] == '}') {
+			gaim_status_sync();
 			return;
+		}
 
 		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "message")) {
@@ -361,6 +363,7 @@ static void gaimrc_read_away(FILE *f)
 		g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
 		away_messages = g_slist_append(away_messages, a);
 	}
+	gaim_status_sync();
 }
 
 /*
