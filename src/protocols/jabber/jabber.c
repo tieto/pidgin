@@ -710,8 +710,17 @@ static void gjab_ssl_recv(gpointer data, GaimSslConnection *gsc,
 	static char buf[4096];
 	int len;
 	GaimConnection *gc = data;
-	struct jabber_data *jd = gc->proto_data;
-	gjconn gjc = jd->gjc;
+	struct jabber_data *jd;
+	gjconn gjc;
+
+
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
+		gaim_ssl_close(gsc);
+		return;
+	}
+
+	jd = gc->proto_data;
+	gjc= jd->gjc;
 
 	if (!gjc || gjc->state == JCONN_STATE_OFF)
 		return;
