@@ -561,7 +561,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 					   redraw_rect.x, redraw_rect.y, redraw_rect.width, redraw_rect.height);
 			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
 				(widget, event);
-;
 		}
 		
 		gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &start, tag->start);
@@ -590,7 +589,8 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		redraw_rect.width = visible_rect.width;
 		redraw_rect.height = visible_rect.height;
 		
-		
+		gdk_color_parse(tag->color, &color);
+		gdk_gc_set_rgb_fg_color(gc, &color);
 
 	
 		gdk_draw_rectangle(event->window,
