@@ -3112,11 +3112,11 @@ void update_icon(struct conversation *c)
 		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	}
 
-	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	gdk_pixbuf_unref(scale);
 
 	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(c->bbox), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
 
