@@ -582,6 +582,7 @@ extern void add_chat_buddy(struct conversation *, char *);
 extern void rename_chat_buddy(struct conversation *, char *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
 extern void show_new_buddy_chat(struct conversation *);
+extern void delete_chat(struct conversation *);
 extern void setup_buddy_chats();
 extern void build_imchat_box(gboolean);
 extern void do_quit();

@@ -468,15 +468,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		chats = g_list_remove(chats, c);
 		if (c->gc)
 			serv_chat_leave(c->gc, c->id);
-		else {
-			/* bah */
-			while (c->in_room) {
-				char *tmp = c->in_room->data;
-				c->in_room = g_list_remove(c->in_room, tmp);
-				g_free(tmp);
-			}
-			g_free(c);
-		}
+		else
+			delete_chat(c);
 	} else {
 		delete_conversation(c);
 	}

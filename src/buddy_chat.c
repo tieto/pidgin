@@ -1009,7 +1009,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show(win);
 }
 
-void chat_set_topic(struct conversation *b, char* who, char* topic) {
+void chat_set_topic(struct conversation *b, char* who, char* topic)
+{
 	gtk_entry_set_text(GTK_ENTRY(b->topic_text), topic);
 }
 
@@ -1023,6 +1024,19 @@ void handle_click_chat(GtkWidget *widget, GdkEventButton * event, struct chat_ro
 	}
 }
 
+void delete_chat(struct conversation *b)
+{
+	while (b->in_room) {
+		g_free(b->in_room->data);
+		b->in_room = g_list_remove(b->in_room, b->in_room->data);
+	}
+	while (b->ignored) {
+		g_free(b->ignored->data);
+		b->ignored = g_list_remove(b->ignored, b->ignored->data);
+	}
+	g_string_free(b->history, TRUE);
+	g_free(b);
+}
 
 void setup_buddy_chats()
 {

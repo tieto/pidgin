@@ -61,13 +61,10 @@ void serv_login(struct aim_user *user)
 
 void serv_close(struct gaim_connection *gc)
 {
-	GSList *bcs = gc->buddy_chats;
-	struct conversation *b;
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
+	while (gc->buddy_chats) {
+		struct conversation *b = gc->buddy_chats->data;
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
 		b->gc = NULL;
-		bcs = gc->buddy_chats;
 	}
 
 	if (gc->idle_timer > 0)
@@ -870,19 +867,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 
 	g->buddy_chats = g_slist_remove(g->buddy_chats, b);
 
-	while (b->in_room) {
-		char *tmp = b->in_room->data;
-		b->in_room = g_list_remove(b->in_room, tmp);
-		g_free(tmp);
-	}
-
-	while (b->ignored) {
-		g_free(b->ignored->data);
-		b->ignored = g_list_remove(b->ignored, b->ignored->data);
-	}
-
-	g_string_free(b->history, TRUE);
-	g_free(b);
+	delete_chat(b);
 }
 
 void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message, time_t mtime)
