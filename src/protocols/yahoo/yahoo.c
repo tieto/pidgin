@@ -53,7 +53,7 @@ extern char *yahoo_crypt(char *, char *);
 #define USEROPT_MAIL 0
 
 #define USEROPT_PAGERHOST 3
-#define YAHOO_PAGER_HOST "scs.yahoo.com"
+#define YAHOO_PAGER_HOST "cs.yahoo.com"
 #define USEROPT_PAGERPORT 4
 #define YAHOO_PAGER_PORT 5050
 
@@ -405,6 +405,12 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			break;
 		case 60: /* no clue */
 			 break;
+		case 16: /* Maybe this does more.  Maybe it doesn't. */
+			do_error_dialog("This version of the Yahoo! Messenger plugin is no longer"
+					"being supported.  The latest version of Gaim is available"
+					"at " WEBSITE ".\n\nYou may be disconnected shortly.",
+					"Gaim -- Yahoo! Error");
+			break;
 		default:
 			debug_printf("unknown status key %d\n", pair->key);
 			break;
@@ -712,7 +718,16 @@ static void yahoo_login(struct aim_user *user) {
 	yd->fd = -1;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 
-	if (proxy_connect(user->proto_opt[USEROPT_PAGERHOST][0] ?
+	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "scs.yahoo.com", strlen("scs.yahoo.com"))) {
+		/* As of this morning, Yahoo is no longer supporting its server at scs.yahoo.com
+		 * I don't like to edit the preferences in a prpl, but we'll keep this here
+		 * for a while until everybody's happy again. -5 Feb 2002*/
+		debug_printf("Setting new Yahoo! server.\n");
+		g_snprintf(user->proto_opt[USEROPT_PAGERHOST], strlen("cs.yahoo.com") + 1, "cs.yahoo.com");
+		save_prefs();
+	}
+	    
+       	if (proxy_connect(user->proto_opt[USEROPT_PAGERHOST][0] ?
 				user->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
 			   user->proto_opt[USEROPT_PAGERPORT][0] ?
 				atoi(user->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,
