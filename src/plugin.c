@@ -565,8 +565,13 @@ destroy_ipc_info(void *data)
 	GaimPluginIpcCommand *ipc_command = (GaimPluginIpcCommand *)data;
 	int i;
 
-	for (i = 0; i < ipc_command->num_params; i++)
-		gaim_value_destroy(ipc_command->params[i]);
+	if (ipc_command->params != NULL)
+	{
+		for (i = 0; i < ipc_command->num_params; i++)
+			gaim_value_destroy(ipc_command->params[i]);
+
+		g_free(ipc_command->params);
+	}
 
 	if (ipc_command->ret_value != NULL)
 		gaim_value_destroy(ipc_command->ret_value);
