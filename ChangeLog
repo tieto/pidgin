@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.77cvs
+version 0.77 (04/22/2004):
 	New Features:
 	* The System Log returns (Ka-Hing Cheung)
 	* Added a conversation-drag-ended signal (Etan Reisner)
