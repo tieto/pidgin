@@ -254,7 +254,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 		do {
 			count += ret;
 			ret = read(tdt->toc_fd,
-				   buffer + sizeof(struct sflap_hdr) + count, ntohs(hdr->len));
+				   buffer + sizeof(struct sflap_hdr) + count, ntohs(hdr->len) - count);
 		} while (count + ret < ntohs(hdr->len) && ret > 0);
 		buffer[sizeof(struct sflap_hdr) + count + ret] = '\0';
 		return ret;
