@@ -28,6 +28,7 @@ version 0.60:
 	* GTK2 Goodness:
 		- Preferences dialog
 		- SignOn Screen
+		- Conversation Window
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
 		- Buddy Icons
 		- IM Images
