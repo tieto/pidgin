@@ -11,6 +11,7 @@ version 0.11.0-pre7 (03/16/2001):
 	* Can log system notices: signons/signoffs, awayness and idleness
 	  (thanks Andrew Echols)
 	* MSN fixes
+	* Applet fixes
 
 version 0.11.0-pre6 (03/06/2001):
 	* Fixed bug with NAS support
