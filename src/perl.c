@@ -34,6 +34,8 @@
 
 #ifdef USE_PERL
 
+#define group perl_group
+
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
 #define HAS_UNION_SEMUN
@@ -49,6 +51,7 @@
 #include <dirent.h>
 #include <string.h>
 
+#undef group
 
 /* perl module support */
 extern void xs_init _((void));
@@ -175,13 +178,14 @@ void perl_autoload()
 {
 	DIR *dir;
 	struct dirent *ent;
+	struct dirent dirent_buf;
 	char *buf;
 	char *path;
 
 	path = gaim_user_dir();
 	dir = opendir(path);
 	if (dir) {
-		while ((ent = readdir(dir))) {
+		while ((readdir_r(dir,&dirent_buf,&ent),ent)) {
 			if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")) {
 				if (is_pl_file(ent->d_name)) {
 					buf = g_malloc(strlen(path) + strlen(ent->d_name) + 2);
