@@ -6,14 +6,18 @@
 	Presence (Invisible)
 0022: DONE (replace?)
 	Message Events
-0030: NEED
+0030: DONE
 	Service Discovery
 0045: DONE
 	Multi-User Chat
+0047: DONE
+	In-Band Bytestreams
 0054: DONE (ugly)
 	vCard
 0060: NEED
 	Pub-Sub
+0065: DONE
+	SOCKS5 Bytestreams
 0071: DONE (needs spec confirmation)
 	XHTML-IM
 0073: NEED
@@ -42,9 +46,9 @@
 	Software Version
 0093: NEED
 	Roster Item Exchange
-0095: NEED
+0095: DONE
 	Stream Initiation
-0096: NEED
+0096: DONE
 	File Transfer Stream Initiation Profile
 0100: NEED
 	Gateway Interaction (Transports)

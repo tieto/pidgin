@@ -80,6 +80,7 @@ C_SRC =			auth.c \
 			parser.c \
 			presence.c \
 			roster.c \
+			si.c \
 			win32/posix.uname.c
 
 

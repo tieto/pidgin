@@ -63,8 +63,8 @@ static void jabber_stream_init(JabberStream *js)
 
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
 				          "xmlns='jabber:client' "
-						  "xmlns:stream='http://etherx.jabber.org/streams'>",
-						  /* "version='1.0'>" */
+						  "xmlns:stream='http://etherx.jabber.org/streams' "
+						  "version='1.0'>",
 						  js->user->domain);
 
 	jabber_send_raw(js, open_stream);
@@ -72,7 +72,8 @@ static void jabber_stream_init(JabberStream *js)
 	g_free(open_stream);
 }
 
-static void jabber_session_initialized_cb(JabberStream *js, xmlnode *packet)
+static void
+jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 	if(type && !strcmp(type, "result")) {
@@ -87,12 +88,38 @@ static void jabber_session_init(JabberStream *js)
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
 	xmlnode *session;
 
-	jabber_iq_set_callback(iq, jabber_session_initialized_cb);
+	jabber_iq_set_callback(iq, jabber_session_initialized_cb, NULL);
 
 	session = xmlnode_new_child(iq->node, "session");
 	xmlnode_set_attrib(session, "xmlns", "urn:ietf:params:xml:ns:xmpp-session");
 
 	jabber_iq_send(iq);
+}
+
+static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
+		gpointer data)
+{
+	/* XXX: check for errors, re-set our ow js->user JID */
+
+	jabber_session_init(js);
+}
+
+static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
+{
+	if(xmlnode_get_child(packet, "mechanisms")) {
+		jabber_auth_start(js, packet);
+	} else if(xmlnode_get_child(packet, "bind")) {
+		xmlnode *bind, *resource;
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
+		bind = xmlnode_new_child(iq->node, "bind");
+		xmlnode_set_attrib(bind, "xmlns", "urn:ietf:params:xml:ns:xmpp-bind");
+		resource = xmlnode_new_child(bind, "resource");
+		xmlnode_insert_data(resource, js->user->resource, -1);
+
+		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
+
+		jabber_iq_send(iq);
+	}
 }
 
 static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
@@ -171,29 +198,14 @@ static void tls_init(JabberStream *js);
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet)
 {
-	const char *id = xmlnode_get_attrib(packet, "id");
-	const char *type = xmlnode_get_attrib(packet, "type");
-	JabberCallback *callback;
-
 	if(!strcmp(packet->name, "iq")) {
-		if(type && (!strcmp(type, "result") || !strcmp(type, "error")) && id
-				&& *id && (callback = g_hash_table_lookup(js->callbacks, id)))
-			callback(js, packet);
-		else
-			jabber_iq_parse(js, packet);
+		jabber_iq_parse(js, packet);
 	} else if(!strcmp(packet->name, "presence")) {
 		jabber_presence_parse(js, packet);
 	} else if(!strcmp(packet->name, "message")) {
 		jabber_message_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:features")) {
-		if(!js->registration && js->state == JABBER_STREAM_AUTHENTICATING) {
-			jabber_auth_start(js, packet);
-		} else if(js->state == JABBER_STREAM_REINITIALIZING) {
-			jabber_session_init(js);
-		} else {
-			gaim_debug(GAIM_DEBUG_WARNING, "jabber",
-					"Unexpected stream:features packet, ignoring\n", js->state);
-		}
+		jabber_stream_features_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:error")) {
 		jabber_stream_handle_error(js, packet);
 	} else if(!strcmp(packet->name, "challenge")) {
@@ -355,7 +367,7 @@ jabber_login(GaimAccount *account)
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, NULL);
+			g_free, g_free);
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -417,7 +429,7 @@ jabber_connection_schedule_close(JabberStream *js)
 }
 
 static void
-jabber_registration_result_cb(JabberStream *js, xmlnode *packet)
+jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
@@ -512,7 +524,7 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 	gaim_account_set_username(js->gc->account, username);
 	g_free(username);
 
-	jabber_iq_set_callback(iq, jabber_registration_result_cb);
+	jabber_iq_set_callback(iq, jabber_registration_result_cb, NULL);
 
 	jabber_iq_send(iq);
 
@@ -653,7 +665,7 @@ static void jabber_register_account(GaimAccount *account)
 	js->gc = gc;
 	js->registration = TRUE;
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, NULL);
+			g_free, g_free);
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();
 
@@ -724,6 +736,15 @@ static void jabber_close(GaimConnection *gc)
 	g_free(js);
 }
 
+static void jabber_server_probe(JabberStream *js)
+{
+	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+			"http://jabber.org/protocol/disco#items");
+
+	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+	jabber_iq_send(iq);
+}
+
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
 	js->state = state;
@@ -757,6 +778,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
 			jabber_presence_send(js->gc, js->gc->away_state, js->gc->away);
+			jabber_server_probe(js);
 			serv_finish_login(js->gc);
 			break;
 	}
@@ -898,7 +920,9 @@ static GList *jabber_away_states(GaimConnection *gc)
 	return m;
 }
 
-static void jabber_password_change_result_cb(JabberStream *js, xmlnode *packet)
+static void
+jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
+		gpointer data)
 {
 	const char *type;
 
@@ -954,7 +978,7 @@ static void jabber_password_change_cb(JabberStream *js,
 	y = xmlnode_new_child(query, "password");
 	xmlnode_insert_data(y, p1, -1);
 
-	jabber_iq_set_callback(iq, jabber_password_change_result_cb);
+	jabber_iq_set_callback(iq, jabber_password_change_result_cb, NULL);
 
 	jabber_iq_send(iq);
 

@@ -24,4 +24,4 @@
 
 void jabber_oob_parse(JabberStream *js, xmlnode *packet);
 
-#endif /* _GAIM_JABBER_JID_H_ */
+#endif /* _GAIM_JABBER_OOB_H_ */

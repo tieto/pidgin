@@ -34,12 +34,15 @@ typedef enum {
 	JABBER_IQ_NONE
 } JabberIqType;
 
+typedef void (JabberIqCallback)(JabberStream *js, xmlnode *packet, gpointer data);
+
 struct _JabberIq {
 	JabberIqType type;
 	char *id;
 	xmlnode *node;
 
-	JabberCallback *callback;
+	JabberIqCallback *callback;
+	gpointer callback_data;
 
 	JabberStream *js;
 };
@@ -50,7 +53,7 @@ JabberIq *jabber_iq_new_query(JabberStream *js, JabberIqType type,
 
 void jabber_iq_parse(JabberStream *js, xmlnode *packet);
 
-void jabber_iq_set_callback(JabberIq *iq, JabberCallback *cb);
+void jabber_iq_set_callback(JabberIq *iq, JabberIqCallback *cb, gpointer data);
 void jabber_iq_set_id(JabberIq *iq, const char *id);
 
 void jabber_iq_send(JabberIq *iq);

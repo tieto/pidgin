@@ -25,13 +25,14 @@
 #include "notify.h"
 #include "request.h"
 #include "util.h"
+#include "xmlnode.h"
 
 #include "buddy.h"
 #include "chat.h"
 #include "jabber.h"
 #include "iq.h"
 #include "presence.h"
-#include "xmlnode.h"
+#include "si.h"
 
 
 void jabber_buddy_free(JabberBuddy *jb)
@@ -530,7 +531,7 @@ void jabber_setup_set_info(GaimConnection *gc)
  ******/
 
 
-static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
+static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	GList *resources;
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -789,7 +790,7 @@ void jabber_buddy_get_info(GaimConnection *gc, const char *who)
 	vcard = xmlnode_new_child(iq->node, "vCard");
 	xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
 
-	jabber_iq_set_callback(iq, jabber_vcard_parse);
+	jabber_iq_set_callback(iq, jabber_vcard_parse, NULL);
 
 	jabber_iq_send(iq);
 }
@@ -807,6 +808,31 @@ void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, resource);
 	jabber_buddy_get_info(gc, full_jid);
 	g_free(full_jid);
+}
+
+
+
+static void jabber_buddy_ask_send_file(GaimConnection *gc, const char *name)
+{
+	JabberStream *js = gc->proto_data;
+	GaimXfer *xfer;
+	JabberSIXfer *jsx;
+
+	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, name);
+
+	xfer->data = jsx = g_new0(JabberSIXfer, 1);
+	jsx->js = js;
+
+	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+	gaim_xfer_set_start_fnc(xfer, jabber_si_xfer_start);
+	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
+	gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
+	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+	gaim_xfer_set_ack_fnc(xfer, jabber_si_xfer_ack);
+
+	js->file_transfers = g_list_append(js->file_transfers, xfer);
+
+	gaim_xfer_request(xfer);
 }
 
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
@@ -869,6 +895,25 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 	struct proto_buddy_menu *pbm;
 	JabberStream *js = gc->proto_data;
 	JabberBuddy *jb = jabber_buddy_find(js, name, TRUE);
+	GList *resources;
+	gboolean has_file_xfer = FALSE;
+
+	if(!jb)
+		return m;
+
+	for(resources = jb->resources; resources; resources = resources->next) {
+		JabberBuddyResource *jbr = resources->data;
+		if(jbr->capabilities & JABBER_CAP_SI_FILE_XFER)
+			has_file_xfer = TRUE;
+	}
+
+	if(has_file_xfer) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Send File");
+		pbm->callback = jabber_buddy_ask_send_file;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	}
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	if(jb->invisible & JABBER_INVIS_BUDDY) {

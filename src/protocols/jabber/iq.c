@@ -22,9 +22,11 @@
 #include "debug.h"
 #include "prefs.h"
 
+#include "buddy.h"
 #include "iq.h"
 #include "oob.h"
 #include "roster.h"
+#include "si.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -79,9 +81,16 @@ JabberIq *jabber_iq_new_query(JabberStream *js, JabberIqType type,
 	return iq;
 }
 
-void jabber_iq_set_callback(JabberIq *iq, JabberCallback *callback)
+typedef struct _JabberCallbackData {
+	JabberIqCallback *callback;
+	gpointer data;
+} JabberCallbackData;
+
+void
+jabber_iq_set_callback(JabberIq *iq, JabberIqCallback *callback, gpointer data)
 {
 	iq->callback = callback;
+	iq->callback_data = data;
 }
 
 void jabber_iq_set_id(JabberIq *iq, const char *id)
@@ -100,12 +109,17 @@ void jabber_iq_set_id(JabberIq *iq, const char *id)
 
 void jabber_iq_send(JabberIq *iq)
 {
+	JabberCallbackData *jcd;
 	g_return_if_fail(iq != NULL);
 
 	jabber_send(iq->js, iq->node);
 
-	if(iq->id && iq->callback)
-		g_hash_table_insert(iq->js->callbacks, g_strdup(iq->id), iq->callback);
+	if(iq->id && iq->callback) {
+		jcd = g_new0(JabberCallbackData, 1);
+		jcd->callback = iq->callback;
+		jcd->data = iq->callback_data;
+		g_hash_table_insert(iq->js->callbacks, g_strdup(iq->id), jcd);
+	}
 
 	jabber_iq_free(iq);
 }
@@ -205,35 +219,159 @@ static void jabber_iq_handle_version(JabberStream *js, xmlnode *packet)
 	jabber_iq_send(iq);
 }
 
+#define SUPPORT_FEATURE(x) \
+	feature = xmlnode_new_child(query, "feature"); \
+	xmlnode_set_attrib(feature, "var", x);
+
+
+void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
+	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	if(!from || !type)
+		return;
+
+	if(!strcmp(type, "get")) {
+		xmlnode *query, *identity, *feature;
+		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
+				"http://jabber.org/protocol/disco#info");
+
+		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
+
+		xmlnode_set_attrib(iq->node, "to", from);
+		query = xmlnode_get_child(iq->node, "query");
+
+		identity = xmlnode_new_child(query, "identity");
+		xmlnode_set_attrib(identity, "category", "client");
+		xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
+													 * handheld, pc, phone,
+													 * web */
+
+		SUPPORT_FEATURE("jabber:iq:last")
+		SUPPORT_FEATURE("jabber:iq:oob")
+		SUPPORT_FEATURE("jabber:iq:time")
+		SUPPORT_FEATURE("jabber:iq:version")
+		SUPPORT_FEATURE("jabber:x:conference")
+		SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
+		SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
+		SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
+		SUPPORT_FEATURE("http://jabber.org/protocol/muc")
+		SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
+		SUPPORT_FEATURE("http://jabber.org/protocol/si")
+		SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
+
+		jabber_iq_send(iq);
+	}else if(!strcmp(type, "result")) {
+		xmlnode *query = xmlnode_get_child(packet, "query");
+		xmlnode *child;
+		JabberID *jid;
+		JabberBuddy *jb;
+		JabberBuddyResource *jbr = NULL;
+
+		if(!(jid = jabber_id_new(from)))
+			return;
+
+		if(jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
+			jbr = jabber_buddy_find_resource(jb, jid->resource);
+
+		if(!jbr) {
+			jabber_id_free(jid);
+			return;
+		}
+
+		for(child = query->child; child; child = child->next) {
+			if(child->type != NODE_TYPE_TAG)
+				continue;
+
+			if(!strcmp(child->name, "feature")) {
+				const char *var = xmlnode_get_attrib(child, "var");
+				if(!var)
+					continue;
+
+				if(!strcmp(var, "http://jabber.org/protocol/si"))
+					jbr->capabilities |= JABBER_CAP_SI;
+				else if(!strcmp(var,
+							"http://jabber.org/protocol/si/profile/file-transfer"))
+					jbr->capabilities |= JABBER_CAP_SI_FILE_XFER;
+				else if(!strcmp(var, "http://jabber.org/protocol/bytestreams"))
+					jbr->capabilities |= JABBER_CAP_BYTESTREAMS;
+			}
+		}
+		jabber_id_free(jid);
+	}
+}
+
+void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
+	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	if(!strcmp(type, "get")) {
+		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
+				"http://jabber.org/protocol/disco#items");
+
+		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
+
+		xmlnode_set_attrib(iq->node, "to", from);
+		jabber_iq_send(iq);
+	}
+}
+
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
+	JabberCallbackData *jcd;
 	xmlnode *query;
 	const char *xmlns;
+	const char *type, *id;
 
 	query = xmlnode_get_child(packet, "query");
 
-	if(!query)
+	if(query) {
+
+		xmlns = xmlnode_get_attrib(query, "xmlns");
+
+		if(!xmlns)
+			return;
+
+		if(!strcmp(xmlns, "jabber:iq:roster")) {
+			jabber_roster_parse(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "jabber:iq:last")) {
+			jabber_iq_handle_last(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "jabber:iq:time")) {
+			jabber_iq_handle_time(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "jabber:iq:version")) {
+			jabber_iq_handle_version(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "jabber:iq:register")) {
+			jabber_register_parse(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "jabber:iq:oob")) {
+			jabber_oob_parse(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#info")) {
+			jabber_disco_info_parse(js, packet);
+			return;
+		} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#items")) {
+			jabber_disco_items_parse(js, packet);
+			return;
+		}
+	} else if(xmlnode_get_child(packet, "si")) {
+		jabber_si_parse(js, packet);
 		return;
+	}
 
-	xmlns = xmlnode_get_attrib(query, "xmlns");
+	/* If we got here, no pre-defined handlers got it, lets see if a special
+	 * callback got registered */
 
-	if(!xmlns)
-		return;
+	type = xmlnode_get_attrib(packet, "type");
+	id = xmlnode_get_attrib(packet, "id");
 
-	if(!strcmp(xmlns, "jabber:iq:roster")) {
-		jabber_roster_parse(js, packet);
-	} else if(!strcmp(xmlns, "jabber:iq:last")) {
-		jabber_iq_handle_last(js, packet);
-	} else if(!strcmp(xmlns, "jabber:iq:time")) {
-		jabber_iq_handle_time(js, packet);
-	} else if(!strcmp(xmlns, "jabber:iq:version")) {
-		jabber_iq_handle_version(js, packet);
-	} else if(!strcmp(xmlns, "jabber:iq:register")) {
-		jabber_register_parse(js, packet);
-	} else if(!strcmp(xmlns, "jabber:iq:oob")) {
-		jabber_oob_parse(js, packet);
-	} else {
-		gaim_debug(GAIM_DEBUG_WARNING, "jabber", "Unknown query: %s\n", xmlns);
+	if(type && (!strcmp(type, "result") || !strcmp(type, "error")) && id
+			&& *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
+		jcd->callback(js, packet, jcd->data);
+		g_free(jcd);
 	}
 }
 

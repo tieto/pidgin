@@ -68,6 +68,7 @@ typedef struct _JabberStream
 	GHashTable *callbacks;
 	int next_id;
 
+	GList *oob_file_transfers;
 	GList *file_transfers;
 
 	time_t idle;
@@ -78,8 +79,6 @@ typedef struct _JabberStream
 
 	gboolean registration;
 } JabberStream;
-
-typedef void (JabberCallback)(JabberStream *js, xmlnode *packet);
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);
 void jabber_send(JabberStream *js, xmlnode *data);

@@ -91,7 +91,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	xmlnode_free(auth);
 }
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet)
+static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *type = xmlnode_get_attrib(packet, "type");
 
@@ -122,7 +122,7 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet)
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 }
 
-static void auth_old_cb(JabberStream *js, xmlnode *packet)
+static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
 	xmlnode *query, *x;
@@ -163,7 +163,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet)
 		xmlnode_insert_data(x, pw, -1);
 	}
 
-	jabber_iq_set_callback(iq, auth_old_result_cb);
+	jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 
 	jabber_iq_send(iq);
 }
@@ -179,7 +179,7 @@ void jabber_auth_start_old(JabberStream *js)
 	username = xmlnode_new_child(query, "username");
 	xmlnode_insert_data(username, js->user->node, -1);
 
-	jabber_iq_set_callback(iq, auth_old_cb);
+	jabber_iq_set_callback(iq, auth_old_cb, NULL);
 
 	jabber_iq_send(iq);
 }
@@ -225,8 +225,8 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	y = g_strndup(result, 16);
 
-	a1 = g_strdup_printf("%s:%s:%s:%s@%s/%s", y, nonce, cnonce, jid->node,
-			jid->domain, jid->resource);
+	a1 = g_strdup_printf("%s:%s:%s:%s@%s", y, nonce, cnonce, jid->node,
+			jid->domain);
 
 	md5_init(&ctx);
 	md5_append(&ctx, a1, strlen(a1));
@@ -270,7 +270,14 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		char *enc_out;
 		GHashTable *parts;
 
+		if(!enc_in) {
+			gaim_connection_error(js->gc, _("Invalid response from server"));
+			return;
+		}
+
 		gaim_base64_decode(enc_in, &dec_in, NULL);
+		gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
+				strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
 
@@ -331,8 +338,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
 			g_string_append_printf(response, ",response=%s", auth_resp);
 			g_string_append_printf(response, ",charset=utf-8");
-			g_string_append_printf(response, ",authzid=\"%s@%s/%s\"",
-					js->user->node, js->user->domain, js->user->resource);
+			g_string_append_printf(response, ",authzid=\"%s@%s\"",
+					js->user->node, js->user->domain);
 
 			g_free(auth_resp);
 			g_free(cnonce);

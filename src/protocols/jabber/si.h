@@ -19,31 +19,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_JUTIL_H_
-#define _GAIM_JABBER_JUTIL_H_
+#ifndef _GAIM_JABBER_SI_H_
+#define _GAIM_JABBER_SI_H_
 
-#include "account.h"
+#include "ft.h"
 
+#include "jabber.h"
 
-typedef struct _JabberID {
-	char *node;
-	char *domain;
+typedef struct _JabberSIXfer {
+	JabberStream *js;
+
+	char *id;
 	char *resource;
-} JabberID;
 
-JabberID* jabber_id_new(const char *str);
-void jabber_id_free(JabberID *jid);
+	enum {
+		STREAM_METHOD_UNKNOWN,
+		STREAM_METHOD_BYTESTREAMS,
+		STREAM_METHOD_IBB,
+		STREAM_METHOD_UNSUPPORTED
+	} stream_method;
+} JabberSIXfer;
 
-char *jabber_get_resource(const char *jid);
-char *jabber_get_bare_jid(const char *jid);
+void jabber_si_parse(JabberStream *js, xmlnode *packet);
 
-time_t str_to_time(const char *timestamp);
-const char *jabber_get_state_string(int state);
+void jabber_si_xfer_init(GaimXfer *xfer);
+void jabber_si_xfer_start(GaimXfer *xfer);
+void jabber_si_xfer_end(GaimXfer *xfer);
+void jabber_si_xfer_cancel_send(GaimXfer *xfer);
+void jabber_si_xfer_cancel_recv(GaimXfer *xfer);
+void jabber_si_xfer_ack(GaimXfer *xfer, const char *buffer, size_t size);
 
-const char *jabber_normalize(const GaimAccount *account, const char *in);
 
-gboolean jabber_nodeprep_validate(const char *);
-gboolean jabber_nameprep_validate(const char *);
-gboolean jabber_resourceprep_validate(const char *);
-
-#endif /* _GAIM_JABBER_JUTIL_H_ */
+#endif /* _GAIM_JABBER_SI_H_ */

@@ -145,7 +145,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberID *jid;
 	JabberChat *chat;
 	JabberBuddy *jb;
-	JabberBuddyResource *jbr;
+	JabberBuddyResource *jbr = FALSE;
 	GaimBuddy *b;
 	char *buddy_name;
 	int state = 0;
@@ -298,6 +298,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(room_jid);
 	} else {
+		gboolean newly_online = FALSE;
 		if(state != JABBER_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO)) {
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					"got unexpected presence from %s, ignoring\n", from);
@@ -314,19 +315,30 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(state == JABBER_STATE_ERROR ||
-				(type && !strcasecmp(type, "unavailable")))
+				(type && !strcasecmp(type, "unavailable"))) {
 			jabber_buddy_remove_resource(jb, jid->resource);
-		else
+		} else {
+			if(!(jbr = jabber_buddy_find_resource(jb, jid->resource)))
+				newly_online = TRUE;
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
 					status);
+		}
 
-		jbr = jabber_buddy_find_resource(jb, jid->resource);
+		if(!jbr)
+			jbr = jabber_buddy_find_resource(jb, jid->resource);
 
 		if(jbr)
 			serv_got_update(js->gc, buddy_name, 1, 0, b->signon, b->idle,
 					jbr->state);
 		else
 			serv_got_update(js->gc, buddy_name, 0, 0, 0, 0, 0);
+
+		if(newly_online) {
+			JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+					"http://jabber.org/protocol/disco#info");
+			xmlnode_set_attrib(iq->node, "to", from);
+			jabber_iq_send(iq);
+		}
 
 		g_free(buddy_name);
 	}

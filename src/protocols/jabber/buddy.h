@@ -48,8 +48,11 @@ typedef struct _JabberBuddyResource {
 	int state;
 	char *status;
 	enum {
-		JABBER_CAP_XHTML     = 1 << 1,
-		JABBER_CAP_COMPOSING = 1 << 2
+		JABBER_CAP_XHTML        = 1 << 1,
+		JABBER_CAP_COMPOSING    = 1 << 2,
+		JABBER_CAP_SI           = 1 << 3,
+		JABBER_CAP_SI_FILE_XFER = 1 << 4,
+		JABBER_CAP_BYTESTREAMS  = 1 << 5
 	} capabilities;
 } JabberBuddyResource;
 

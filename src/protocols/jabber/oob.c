@@ -49,7 +49,8 @@ static void jabber_oob_xfer_init(GaimXfer *xfer)
 static void jabber_oob_xfer_free(GaimXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
-	jox->js->file_transfers = g_list_remove(jox->js->file_transfers, xfer);
+	jox->js->oob_file_transfers = g_list_remove(jox->js->oob_file_transfers,
+			xfer);
 
 	g_string_free(jox->headers, TRUE);
 	g_free(jox->address);
@@ -177,7 +178,7 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 	gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 
-	js->file_transfers = g_list_append(js->file_transfers, xfer);
+	js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
 
 	gaim_xfer_request(xfer);
 }
