@@ -127,7 +127,6 @@ static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 								  filename, strerror(errno));
 			break;
 		default:
-			msg = NULL;
 			msg = g_strdup_printf(_("Error accessing %s: \n%s.\n"),
 								  filename, strerror(errno));
 			break;
