@@ -47,7 +47,7 @@ extern "C" {
  *
  * @return The base-16 string.
  *
- * @see frombase16()
+ * @see gaim_base16_decode()
  */
 unsigned char *gaim_base16_encode(const unsigned char *str, int len);
 
@@ -59,7 +59,7 @@ unsigned char *gaim_base16_encode(const unsigned char *str, int len);
  *
  * @return The length of the returned string.
  *
- * @see tobase16()
+ * @see gaim_base16_encode()
  */
 int gaim_base16_decode(const char *str, unsigned char **ret_str);
 
@@ -79,7 +79,7 @@ int gaim_base16_decode(const char *str, unsigned char **ret_str);
  *
  * @return The base-64 version of @a str.
  *
- * @see frombase64()
+ * @see gaim_base64_decode()
  */
 unsigned char *gaim_base64_encode(const unsigned char *buf, size_t len);
 
@@ -90,7 +90,7 @@ unsigned char *gaim_base64_encode(const unsigned char *buf, size_t len);
  * @param ret_str The returned, non-base-64 string.
  * @param ret_len The returned string length.
  *
- * @see tobase64()
+ * @see gaim_base64_encode()
  */
 void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
 
@@ -110,7 +110,7 @@ void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
  *
  * @return The current local time.
  *
- * @see full_date()
+ * @see gaim_date_full()
  */
 char *gaim_date(void);
 
@@ -122,7 +122,7 @@ char *gaim_date(void);
  *
  * @return The date and time in human-readable form.
  *
- * @see date()
+ * @see gaim_date()
  */
 char *gaim_date_full(void);
 
