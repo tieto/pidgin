@@ -1345,8 +1345,8 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	yahoo_send_packet(yd, pack);
 	yahoo_packet_free(pack);
 
-	g_free(password_hash);
-	g_free(crypt_hash);
+	free(password_hash);
+	free(crypt_hash);
 }
 
 static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
