@@ -1348,12 +1348,13 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			break;
 		case 0x0008: {
 			char *fqcn, *name, *ck;
-			u_short instance, flags, maxmsglen, maxoccupancy, unknown;
+			u_short instance, flags, maxmsglen, maxoccupancy, unknown, exchange;
 			unsigned char createperms;
 			unsigned long createtime;
 
 			fqcn = va_arg(ap, char *);
 			instance = (u_short)va_arg(ap, u_int);
+			exchange = (u_short)va_arg(ap, u_int);
 			flags = (u_short)va_arg(ap, u_int);
 			createtime = va_arg(ap, unsigned long);
 			maxmsglen = (u_short)va_arg(ap, u_int);
@@ -1364,17 +1365,13 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			ck = va_arg(ap, char *);
 			va_end(ap);
 
-			sprintf(debug_buff, "created room: %s %d %d %lu %d %d %d %d %s %s\n", fqcn, instance, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
-			debug_print(debug_buff);
-			if (flags & 0x4) {
-				sprintf(debug_buff, "joining %s on exchange 5\n", name);
-				debug_print(debug_buff);
-				aim_chat_join(odata->sess, odata->conn, 5, ck);
-			} else 
-				sprintf(debug_buff, "joining %s on exchange 4\n", name);{
-				debug_print(debug_buff);
-				aim_chat_join(odata->sess, odata->conn, 4, ck);
-			}
+			debug_printf("created room: %s %d %d %d %lu %d %d %d %d %s %s\n",
+					fqcn,
+					exchange, instance, flags,
+					createtime,
+					maxmsglen, maxoccupancy, createperms, unknown,
+					name, ck);
+			aim_chat_join(odata->sess, odata->conn, exchange, ck);
 			}
 			break;
 		default:

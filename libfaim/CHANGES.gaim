@@ -1,4 +1,10 @@
 
+Tue Dec  5 00:13:58 UTC 2000 EWarmenhoven
+	- Holy crap, it's been a long time since I've updated this file.
+	  Well, actually, not much has changed. There's the beginnings
+	  of GetFile-send (someone requests to get a file from you, and
+	  you send it), but it's not really working well yet.
+
 Sat Oct 21 10:18:30 UTC 2000 EWarmenhoven
 	- After signing off chat room structs and input watchers weren't
 	  being removed. This definitely caused leaks (though small ones)

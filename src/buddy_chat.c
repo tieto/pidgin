@@ -413,6 +413,9 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	gtk_list_append_items(GTK_LIST(b->list), g_list_append(NULL, list_item));
 	gtk_widget_show(list_item);
 
+	g_snprintf(tmp, sizeof(tmp), _("%d people in room"), g_list_length(b->in_room));
+	gtk_label_set_text(GTK_LABEL(b->count), tmp);
+
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
 		play_sound(CHAT_JOIN);
 
@@ -451,6 +454,9 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
                 }
                 names = names->next;
         }
+
+	g_snprintf(tmp, sizeof(tmp), _("%d people in room"), g_list_length(b->in_room));
+	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
 		play_sound(CHAT_LEAVE);
@@ -528,174 +534,139 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *whisper;
 	GtkWidget *close;
 	GtkWidget *chatentry;
-        GtkWidget *lbox;
-        GtkWidget *bbox;
-        GtkWidget *bbox2;
-        GtkWidget *im, *ignore, *info;
-        GtkWidget *sw;
-        GtkWidget *sw2;
+	GtkWidget *lbox;
+	GtkWidget *bbox;
+	GtkWidget *bbox2;
+	GtkWidget *im, *ignore, *info;
+	GtkWidget *sw;
+	GtkWidget *sw2;
 	GtkWidget *vbox;
 	GtkWidget *vpaned;
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
 
-	int dispstyle;
-	
+	int dispstyle = set_dispstyle(1);
+
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
-        gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+	gtk_object_set_user_data(GTK_OBJECT(win), b);
+	gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+	gtk_container_border_width(GTK_CONTAINER(win), 10);
+	gtk_window_set_title(GTK_WINDOW(win), b->name);
+	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
+	gtk_widget_realize(win);
+	aol_icon(win->window);
 
 	vpaned = gtk_vpaned_new();
+	gtk_container_add(GTK_CONTAINER(win),vpaned);
+	gtk_widget_show( vpaned );
+
 	hpaned = gtk_hpaned_new();
+	gtk_paned_pack1(GTK_PANED(vpaned), hpaned, TRUE, FALSE);
+	gtk_widget_show( hpaned );
 
-	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
-	gtk_widget_realize(win);
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+					GTK_POLICY_NEVER,
+					GTK_POLICY_ALWAYS);
+	gtk_paned_pack1(GTK_PANED(hpaned), sw, TRUE, TRUE);
+	gtk_widget_set_usize(sw, 320, 150);
+	gtk_widget_show(sw);
 
-	dispstyle = set_dispstyle(1);
-
-	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
-	
-	invite_btn = picture_button2(win, _("Invite"), join_xpm, dispstyle);
-	whisper = picture_button2(win, _("Whisper"), tb_forward_xpm, dispstyle);
-        send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
-
-        im = picture_button2(win, _("IM"), tmp_send_xpm, FALSE);
-        ignore = picture_button2(win, _("Ignore"), close_xpm, FALSE);
-        info = picture_button2(win, _("Info"), tb_search_xpm, FALSE);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(invite_btn), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(whisper), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(send), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(im), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(ignore), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
-	}
-	
 	text = gtk_html_new(NULL, NULL);
-	
 	b->text = text;
+	gtk_container_add(GTK_CONTAINER(sw), text);
+	gtk_widget_show(text);
+	GTK_HTML (text)->hadj->step_increment = 10.0;
+	GTK_HTML (text)->vadj->step_increment = 10.0;
+
+	lbox = gtk_vbox_new(FALSE, 4);
+	gtk_paned_pack2(GTK_PANED(hpaned), lbox, TRUE, TRUE);
+	gtk_widget_show(lbox);
+
+	b->count = gtk_label_new(_("0 people in room"));
+	gtk_box_pack_start(GTK_BOX(lbox), b->count, FALSE, FALSE, 0);
+	gtk_widget_show(b->count);
+
+	sw2 = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
+				       GTK_POLICY_NEVER,
+				       GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
+	gtk_widget_show(sw2);
 
 	list = gtk_list_new();
 	b->list = list;
-
-        bbox = gtk_hbox_new(FALSE, 5);
-        bbox2 = gtk_hbox_new(TRUE, 0);
-        vbox = gtk_vbox_new(FALSE, 0);
-        lbox = gtk_vbox_new(FALSE, 4);
-
-	chatentry = gtk_text_new( NULL, NULL );
-	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
-	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
-	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
-	b->entry = chatentry;
-
-	gtk_widget_realize(win);
-
-	toolbar = build_conv_toolbar(b);
-
-	/* Hack something so we know have an entry click event */
-
-	gtk_signal_connect(GTK_OBJECT(chatentry), "activate", GTK_SIGNAL_FUNC(send_callback),b);
-	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), b);
-        /* Text box */
-
-        sw = gtk_scrolled_window_new (NULL, NULL);
-        gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                        GTK_POLICY_NEVER,
-                                        GTK_POLICY_ALWAYS);
-        gtk_widget_show(sw);
-        gtk_container_add(GTK_CONTAINER(sw), text);
-        gtk_widget_show(text);
-
-
-        GTK_HTML (text)->hadj->step_increment = 10.0;
-        GTK_HTML (text)->vadj->step_increment = 10.0;
-        gtk_widget_set_usize(sw, 320, 150);
-
-	gtk_paned_pack1(GTK_PANED(hpaned), sw, TRUE, TRUE);
-
-        sw2 = gtk_scrolled_window_new(NULL, NULL);
-        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
-                                       GTK_POLICY_NEVER,
-                                       GTK_POLICY_AUTOMATIC);
-        gtk_widget_show(sw2);
-        gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
-
-        gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 5);
-                                       
-        
-	gtk_paned_pack2(GTK_PANED(hpaned), lbox, TRUE, TRUE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
+	gtk_widget_set_usize(list, 150, -1);
 	gtk_widget_show(list);
 
+	bbox2 = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 5);
+	gtk_widget_show(bbox2);
 
-	gtk_widget_set_usize(list, 150, -1);
+	im = picture_button2(win, _("IM"), tmp_send_xpm, FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox2), im, dispstyle, dispstyle, 5);
+	gtk_signal_connect(GTK_OBJECT(im), "clicked", GTK_SIGNAL_FUNC(im_callback), b);
 
+	ignore = picture_button2(win, _("Ignore"), close_xpm, FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox2), ignore, dispstyle, dispstyle, 5);
+	gtk_signal_connect(GTK_OBJECT(ignore), "clicked", GTK_SIGNAL_FUNC(ignore_callback), b);
 
-	/* Ready and pack buttons */
-	gtk_object_set_user_data(GTK_OBJECT(win), b);
-	gtk_object_set_user_data(GTK_OBJECT(close), b);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback),b);
-	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback),b);
-	gtk_signal_connect(GTK_OBJECT(invite_btn), "clicked", GTK_SIGNAL_FUNC(invite_callback), b);
-	gtk_signal_connect(GTK_OBJECT(whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback), b);
+	info = picture_button2(win, _("Info"), tb_search_xpm, FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox2), info, dispstyle, dispstyle, 5);
+	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), b);
 
-        gtk_signal_connect(GTK_OBJECT(im), "clicked", GTK_SIGNAL_FUNC(im_callback), b);
-        gtk_signal_connect(GTK_OBJECT(ignore), "clicked", GTK_SIGNAL_FUNC(ignore_callback), b);
-        gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), b);
-
-
-        gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), invite_btn, dispstyle, dispstyle, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), whisper, dispstyle, dispstyle, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 5);
-
-        gtk_box_pack_start(GTK_BOX(bbox2), im, dispstyle, dispstyle, 5);
-        gtk_box_pack_start(GTK_BOX(bbox2), ignore, dispstyle, dispstyle, 5);
-        gtk_box_pack_start(GTK_BOX(bbox2), info, dispstyle, dispstyle, 5);
-	
-	/* pack and fill the rest */
-	
-	
-	gtk_paned_pack1(GTK_PANED(vpaned), hpaned, TRUE, FALSE);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
-
-	gtk_widget_show(send);
-	gtk_widget_show(invite_btn);
-	gtk_widget_show(whisper);
-        gtk_widget_show(close);
-        gtk_widget_show(im);
-        gtk_widget_show(ignore);
-        gtk_widget_show(info);
-        gtk_widget_show(bbox);
-        gtk_widget_show(lbox);
-        gtk_widget_show(bbox2);
 	gtk_widget_show(vbox);
-	gtk_widget_show( vpaned );
-	gtk_widget_show( hpaned );
-	gtk_widget_show(chatentry);
 
-	if (display_options & OPT_DISP_CHAT_BIG_ENTRY)
-       		gtk_widget_set_usize(chatentry, 320, 50);
-	else
-       		gtk_widget_set_usize(chatentry, 320, 25);
-	
-	gtk_container_add(GTK_CONTAINER(win),vpaned);
-	gtk_container_border_width(GTK_CONTAINER(win), 10);
+	toolbar = build_conv_toolbar(b);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, TRUE, TRUE, 5);
 
-	gtk_window_set_title(GTK_WINDOW(win), b->name);
-	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
-
-	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback),b);
+	chatentry = gtk_text_new( NULL, NULL );
+	b->entry = chatentry;
+	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
+	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
+	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
+	gtk_signal_connect(GTK_OBJECT(chatentry), "activate", GTK_SIGNAL_FUNC(send_callback),b);
+	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), b);
 	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), chatentry);
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(chatentry));
+	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 5);
+	if (display_options & OPT_DISP_CHAT_BIG_ENTRY)
+		gtk_widget_set_usize(chatentry, 320, 50);
+	else
+		gtk_widget_set_usize(chatentry, 320, 25);
+	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
+	gtk_widget_show(chatentry);
+
+        bbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+        gtk_widget_show(bbox);
+
+	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
+	b->close = close;
+	gtk_object_set_user_data(GTK_OBJECT(close), b);
+	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback),b);
+        gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 5);
+
+	invite_btn = picture_button2(win, _("Invite"), join_xpm, dispstyle);
+	b->invite = invite_btn;
+	gtk_signal_connect(GTK_OBJECT(invite_btn), "clicked", GTK_SIGNAL_FUNC(invite_callback), b);
+	gtk_box_pack_end(GTK_BOX(bbox), invite_btn, dispstyle, dispstyle, 5);
+
+	whisper = picture_button2(win, _("Whisper"), tb_forward_xpm, dispstyle);
+	b->whisper = whisper;
+	gtk_signal_connect(GTK_OBJECT(whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback), b);
+	gtk_box_pack_end(GTK_BOX(bbox), whisper, dispstyle, dispstyle, 5);
+
+        send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
+	b->send = send;
+	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback),b);
+	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 5);
 
 	b->font_dialog = NULL;
 	b->fg_color_dialog = NULL;	
@@ -703,10 +674,6 @@ void show_new_buddy_chat(struct conversation *b)
 	b->smiley_dialog = NULL;
 	b->link_dialog = NULL;
 	b->log_dialog = NULL;
-	b->send = send;
-	b->whisper = whisper;
-	b->invite = invite_btn;
-	b->close = close;
 	sprintf(b->fontface, "%s", fontface);
 	b->hasfont = 0;
 	b->bgcol = bgcolor;
@@ -714,9 +681,6 @@ void show_new_buddy_chat(struct conversation *b)
 	b->fgcol = fgcolor;
 	b->hasfg = 0;
 	
-	gtk_widget_realize(win);
-	aol_icon(win->window);
-
 	gtk_widget_show(win);
 }
 

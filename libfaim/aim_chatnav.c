@@ -384,7 +384,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	createperms = aimutil_get8(tmp->value);
 
       if ((userfunc = aim_callhandler(command->conn, 0x000d, 0x0009))) {
-	ret = userfunc(sess, command, snac->type, fqcn, instance, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
+	ret = userfunc(sess, command, snac->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
       }
      
       if (ck)

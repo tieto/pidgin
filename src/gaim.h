@@ -324,6 +324,7 @@ struct conversation {
         GList *in_room;
         GList *ignored;
         int id;
+	GtkWidget *count;
 	GtkWidget *list;
 	GtkWidget *whisper;
 	GtkWidget *invite;

@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Mon Dec  4 23:46:35 UTC 2000
+  - Add exchange to the create response callback (doh!)
+
  - Sat Dec  2 02:14:45 UTC 2000
   - Dumb bug in aim_clearhandlers()
 

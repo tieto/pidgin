@@ -43,6 +43,7 @@ Getting users' info
 Getting users' away messages
 Setting your dir info
 Warning users/getting warned
+Telling the server who's on your permit/deny lists
 Chat:
  - joining rooms
  - leaving rooms
@@ -54,7 +55,6 @@ Chat:
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
-Telling the server who's on your permit/deny lists
 Chat:
  - whispering (this will never happen)
 Getting dir info
@@ -68,9 +68,6 @@ KNOWN ISSUES
 ============
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
-
-- The permit/deny list stuff is really warped. I've commented it out; the code
-in libfaim is untested and it's causing way too many problems.
 
 - Gaim/TOC can do some RVOUS actions, and Gaim/Faim can do others. This is not
 because there is any difference in the protocols as far as the actual transfer
