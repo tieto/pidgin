@@ -279,8 +279,6 @@ static void icq_login(struct aim_user *user) {
 	if (bud_list_cache_exists(gc))
 		do_import(NULL, gc);
 
-	icq_UnsetProxy(link);
-
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
