@@ -4,7 +4,7 @@
  *
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 /* 
  * aim_logoff()

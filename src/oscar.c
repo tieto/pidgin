@@ -35,7 +35,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include "gaim.h"
-#include "aim.h"
+#include <aim.h>
 #include "gnome_applet_mgr.h"
 
 static int inpa = -1;
@@ -486,6 +486,9 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     msg);
 		} else if (rendtype == 1) {
 			/* FIXME : voice chat */
+		} else {
+			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
+			debug_print(debug_buff);
 		}
 		/* libfaim doesn't do file transfer yet, from what i can tell */
 	}

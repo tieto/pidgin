@@ -411,6 +411,9 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	gchar *buf4;
         int hdrlen;
 
+	/* FIXME : for USE_OSCAR, libfaim can send messages much longer
+	 * than this (I think it's about 7K rather than 4K. So we need
+	 * to do these checks a little bit differently here */
 	buf4 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
 	g_snprintf(buf, BUF_LONG, "%s", buf4);
 	g_free(buf4);

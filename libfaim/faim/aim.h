@@ -6,6 +6,10 @@
 #ifndef __AIM_H__
 #define __AIM_H__
 
+#define FAIM_VERSION_MAJOR 0
+#define FAIM_VERSION_MINOR 99
+#define FAIM_VERSION_MINORMINOR 0
+
 #include <faimconfig.h>
 #include <aim_cbtypes.h>
 
@@ -56,6 +60,31 @@
  * Current Maximum Length for Screen Names (not including NULL) 
  */
 #define MAXSNLEN 16
+
+/*
+ * Current Maximum Length for Instant Messages
+ *
+ * This was found basically by experiment, but not wholly
+ * accurate experiment.  It should not be regarded
+ * as completely correct.  But its a decent approximation.
+ *
+ * Note that although we can send this much, its impossible
+ * for WinAIM clients (up through the latest (4.0.1957)) to
+ * send any more than 1kb.  Amaze all your windows friends
+ * with uterrly oversized instant messages!
+ * 
+ */
+#define MAXMSGLEN 7988
+
+/*
+ * Current Maximum Length for Chat Room Messages
+ *
+ * This is actually defined by the protocol to be
+ * dynamic, but I have yet to see due cause to 
+ * define it dynamically here.  Maybe later.
+ *
+ */
+#define MAXCHATMSGLEN 512
 
 /*
  * Standard size of an AIM authorization cookie
@@ -523,6 +552,11 @@ char *aimutil_itemidx(char *toSearch, int index, char dl);
 
 int aim_snlen(const char *sn);
 int aim_sncmp(const char *sn1, const char *sn2);
+
+/* aim_meta.c */
+char *aim_getbuilddate(void);
+char *aim_getbuildtime(void);
+char *aim_getbuildstring(void);
 
 #endif /* __AIM_H__ */
 

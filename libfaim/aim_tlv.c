@@ -1,4 +1,4 @@
-#include <aim.h>
+#include <faim/aim.h>
 
 struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
 {

@@ -5,7 +5,7 @@
 
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 /* this just pushes the passed cookie onto the passed connection -- NO SNAC! */
 int aim_auth_sendcookie(struct aim_session_t *sess, 

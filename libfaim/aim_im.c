@@ -5,7 +5,7 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 
 /*
  * Send an ICBM (instant message).  
@@ -25,7 +25,10 @@ u_long aim_send_im(struct aim_session_t *sess,
   int curbyte,i;
   struct command_tx_struct *newpacket;
   
-  if (!(newpacket = aim_tx_new(0x0002, conn, 1152)))
+  if (strlen(msg) >= MAXMSGLEN)
+    return -1;
+
+  if (!(newpacket = aim_tx_new(0x0002, conn, strlen(msg)+256)))
     return -1;
 
   newpacket->lock = 1; /* lock struct */

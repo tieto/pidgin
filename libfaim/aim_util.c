@@ -4,13 +4,13 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 #include <ctype.h>
 
 #define AIMUTIL_USEMACROS
 
 #ifdef AIMUTIL_USEMACROS
-/* macros in aim.h */
+/* macros in faim/aim.h */
 #else
 inline int aimutil_put8(u_char *buf, u_char data)
 {

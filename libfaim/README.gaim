@@ -8,17 +8,28 @@ right now, I've been able to implement most of the features libfaim offers.
 
 I'm going to try to make as few modifications as possible to the libfaim code.
 The only two modifications I'll probably ever make to it are 1) to make my life
-easier (like putting all the .h files in the same directory as the .c files) or
-2) to fix a compilation error that I happen to be able to fix very easily (like
-with a typo or something). That means that what you're getting when you enable
-oscar is basically faimtest (the very instructional program included with the
-libfaim source on sourceforge) with the Gaim GTK front-end. I'll put any changes
-I make into a file, but so far, I haven't made any changes other than moving the
-.h files down a directory.
+easier or 2) to fix a compilation error. That means that what you're getting
+when you enable oscar is basically faimtest (the very instructional program
+included with the libfaim source on sourceforge) with the Gaim GTK front-end.
+I'll put any changes I make into a file. So far the few changes I've made have
+been to make a few printf's not print, and removing a few defines from a .h and
+putting them in the Makefile/build process.
 
 And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
 for anything other than laughs right now. Hopefully we'll get it working better
 soon (please help!).
+
+I think I'm ready to start dealing with bugs being reported against it now
+though. If you're going to report a bug, please check first that a) you're using
+the to-the-second absolute latest CVS version, b) it's not in the unsupported
+features/known issues lists below, c) someone hasn't already reported the bug on
+sourceforge (please check BOTH the open and closed bugs), and finally d) that
+you can reproduce it.
+
+Also, please *don't* IM me about a bug, as I have a tendency to forget things
+like that. Reporting it on sourceforge is a much better way of reporting bugs,
+because then other people can see that the bug is already known, and it's harder
+for me to forget.
 
 CURRENTLY SUPPORTED FEATURES
 ============================
@@ -58,6 +69,13 @@ while, evidently). So if you want to "whisper" to someone, just IM them.
 - Chat is really funny. I have no idea what's going on with it. I'm not sure I
 want to know. I'm not worried about it, I never use chat. It's not exactly high-
 priority.
+
+- The permit list sometimes has problems when you start gaim, but if you change
+to it in the middle of a session there don't seem to be any problems.
+
+- "Allow anyone" and "Deny some" serve the same function. That's not a bug. But
+"Allow anyone" works all the time (?) and "Deny some" doesn't work some of the
+time. That's a bug.
 
 - Gaim/TOC can do file transfers, but Gaim/Faim cannot. This is not because
 there is any difference in the two protocols as far as the actual transfer is

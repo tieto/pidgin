@@ -12,7 +12,7 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 
 u_long aim_newsnac(struct aim_session_t *sess,
 		   struct aim_snac_t *newsnac) 

@@ -5,7 +5,7 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 
 /*
  * Allocate a new tx frame.

@@ -6,7 +6,7 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 
 u_long aim_usersearch_address(struct aim_session_t *sess,
 			      struct aim_conn_t *conn, 

@@ -6,7 +6,7 @@
  *
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 void aim_connrst(struct aim_session_t *sess)
 {
@@ -34,7 +34,8 @@ void aim_conn_close(struct aim_conn_t *deadconn)
   deadconn->seqnum = 0;
   deadconn->lastactivity = 0;
   deadconn->forcedlatency = 0;
-  aim_clearhandlers(deadconn);
+  if (deadconn->handlerlist)
+    aim_clearhandlers(deadconn);
   deadconn->handlerlist = NULL;
   if (deadconn->priv)
     free(deadconn->priv);
@@ -238,6 +239,7 @@ void aim_session_init(struct aim_session_t *sess)
   sess->logininfo.email = NULL;
   sess->logininfo.regstatus = 0x00;
 
+  memset(sess->conns, 0, sizeof(struct aim_conn_t)*AIM_CONN_MAX);
   aim_connrst(sess);
 
   sess->queue_outgoing = NULL;

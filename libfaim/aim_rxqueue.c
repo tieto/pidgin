@@ -6,7 +6,7 @@
  * aim_rxhandlers.c.
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 /*
  * Grab a single command sequence off the socket, and enqueue

@@ -1,4 +1,13 @@
 
+Wed May 31 02:50:36 UTC 2000 EWarmenhoven
+	- Good fun things here. Sometimes I think Adam does things just to make
+	  it difficult for me, I swear (j/k :) ).
+	- I moved all the .h files into the faim/ directory because I'm tired
+	  of changing faim/aim.h to just aim.h every time Adam makes an update.
+	- libfaim can now send messages much longer than WinAIM or TOC can. But,
+	  the length checking code is still in conversation.c, and I haven't
+	  changed it yet, mostly because I'm lazy.
+
 Wed May 31 00:40:42 UTC 2000 EWarmenhoven
 	- Adam added a file to libfaim, aim_meta.c, that has one main function:
 	  to return the libfaim version and when it was build (date/time). So

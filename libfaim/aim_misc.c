@@ -11,7 +11,7 @@
  *
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 /*
  * aim_bos_setidle()

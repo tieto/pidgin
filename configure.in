@@ -48,7 +48,7 @@ if test "$enable_debug" = yes ; then
 fi
 
 if test "$enable_oscar" = yes ; then
-	GAIM_CFLAGS="$GAIM_CFLAGS -DUSE_OSCAR -I../libfaim"
+	GAIM_CFLAGS="$GAIM_CFLAGS -DUSE_OSCAR -I../libfaim/faim"
         GAIM_LDADD="$GAIM_LDADD -L../libfaim -lfaim"
         LIBFAIM_DO="libfaim.a"
 fi

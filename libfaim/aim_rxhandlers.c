@@ -10,7 +10,7 @@
  *
  */
 
-#include <aim.h>
+#include <faim/aim.h>
 
 /*
  * Bleck functions get called when there's no non-bleck functions

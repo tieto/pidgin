@@ -5,7 +5,7 @@
  *
  */
 
-#include <aim.h> 
+#include <faim/aim.h> 
 
 char *aim_chat_getname(struct aim_conn_t *conn)
 {
