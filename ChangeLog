@@ -2,7 +2,7 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.76cvs:
 	New Features:
-	* WYSIWYG text input (with much help from Gary Kramlich)
+	* WYSIWYG text input (with much help from Gary Kramlich and Kevin Strange)
 	* Ability to be invisible on AIM
 	* Chatroom list support (Tim Ringenbach)
 	* Added auto-completion for screen names to the New Instant Message and
