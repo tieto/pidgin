@@ -556,6 +556,43 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 
 		return;
 	}
+	else if (!strncmp("BYE ", buf, 4))
+	{
+		char **res;
+		struct msn_conn *mc;
+
+		res = g_strsplit(buf, " ", 0);
+
+		mc = find_msn_conn_by_user(res[1]);
+
+		if (mc)
+		{
+			/* Looks like we need to close up some stuff :-) */
+
+			if (mc->user)
+				free(mc->user);
+
+			if (mc->secret)
+				free(mc->secret);
+
+			if (mc->session)
+				free(mc->session);
+
+			if (mc->txqueue)
+				free(mc->txqueue);
+
+			gdk_input_remove(mc->inpa);
+			close(mc->fd);
+
+			msn_connections = g_slist_remove(msn_connections, mc);
+
+			g_free(mc);
+		}
+		
+		g_strfreev(res);	
+		return;
+	}
+	
 	else if (!strncmp("XFR ", buf, 4))
 	{
 		char **res;
