@@ -185,6 +185,8 @@ struct prpl {
 	void (* file_transfer_nextfile)	 (struct gaim_connection *, struct file_transfer *);
 	void (* file_transfer_data_chunk)(struct gaim_connection *, struct file_transfer *, const char *, int);
 	void (* file_transfer_done)	 (struct gaim_connection *, struct file_transfer *);
+	size_t (* file_transfer_read) (struct gaim_connection *, struct file_transfer *, int fd, char **buf);
+	size_t (* file_transfer_write) (struct gaim_connection *, struct file_transfer *, int fd, const char *buf, size_t size);
 };
 
 extern GSList *protocols;

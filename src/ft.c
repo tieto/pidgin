@@ -571,35 +571,50 @@ static void ft_callback(gpointer data, gint source,
 {
 	struct file_transfer *xfer = (struct file_transfer *)data;
 	int rt, i;
-	char buf[FT_BUFFER_SIZE];
+	char *buf = NULL;
 
 	if (condition & GAIM_INPUT_READ) {
-		rt = read(xfer->fd, buf, MIN(xfer->bytesleft, FT_BUFFER_SIZE));
+		if (xfer->gc->prpl->file_transfer_read)
+			rt = xfer->gc->prpl->file_transfer_read(xfer->gc, xfer,
+													xfer->fd, &buf);
+		else {
+			buf = g_new0(char, MIN(xfer->bytesleft, FT_BUFFER_SIZE));
+			rt = read(xfer->fd, buf, MIN(xfer->bytesleft, FT_BUFFER_SIZE));
+		}
+
 		/* XXX What if the transfer is interrupted while we
 		 * are inside read()?  How can this be handled safely?
 		 * -- wtm
 		 */
 		if (rt > 0) {
 			xfer->bytesleft -= rt;
-			for (i = 0; i < rt; i++) {
-				fprintf(xfer->file, "%c", buf[i]);
-			}
+			fwrite(buf, 1, rt, xfer->file);
 		}
 
 	}
 	else /* (condition & GAIM_INPUT_WRITE) */ {
 		int remain = MIN(xfer->bytesleft, FT_BUFFER_SIZE);
 
-		for (i = 0; i < remain; i++)
-			fscanf(xfer->file, "%c", &buf[i]);
+		buf = g_new0(char, remain);
 
-		rt = write(xfer->fd, buf, remain);
+		fread(buf, 1, remain, xfer->file);
+
+		if (xfer->gc->prpl->file_transfer_write)
+			rt = xfer->gc->prpl->file_transfer_write(xfer->gc, xfer, xfer->fd,
+													 buf, remain);
+		else
+			rt = write(xfer->fd, buf, remain);
+
 		if (rt > 0)
 			xfer->bytesleft -= rt;
 	}
 
-	if (rt < 0)
+	if (rt < 0) {
+		if (buf != NULL)
+			g_free(buf);
+
 		return;
+	}
 
 	xfer->bytessent += rt;
 
@@ -614,6 +629,9 @@ static void ft_callback(gpointer data, gint source,
 		xfer->file = 0;
 		ft_nextfile(xfer);
 	}
+
+	if (buf != NULL)
+		g_free(buf);
 }
 
 static void ft_nextfile(struct file_transfer *xfer)

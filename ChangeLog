@@ -106,6 +106,7 @@ version 0.60:
 	  (Thanks, Graham Booker)
 	* Fixed crashbug on empty rvous requests, thanks Brandon Scott (Xeon) and
   	  Matt Pandina for pointing this out (Brandon) and for the patch (Matt)
+ 	* File receive support for MSN (Thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

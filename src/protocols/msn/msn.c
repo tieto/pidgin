@@ -8,6 +8,7 @@
 #endif
 
 
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -58,7 +59,31 @@ G_MODULE_IMPORT GSList *connections;
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 
-			
+struct msn_file_transfer {
+	enum { MFT_SENDFILE_IN, MFT_SENDFILE_OUT } type;
+	struct file_transfer *xfer;
+	struct gaim_connection *gc;
+
+	int fd;
+	int inpa;
+
+	char *filename;
+
+	char *sn;
+	char ip[16];
+	int port;
+
+	unsigned long cookie;
+	unsigned long authcookie;
+
+	int len;
+
+	char *rxqueue;
+	int rxlen;
+	gboolean msg;
+	char *msguser;
+	int msglen;
+};
 
 struct msn_data {
 	int fd;
@@ -75,6 +100,7 @@ struct msn_data {
 	GSList *fl;
 	GSList *permit;
 	GSList *deny;
+	GSList *file_transfers;
 
 	char *kv;
 	char *sid;
@@ -111,6 +137,10 @@ struct msn_buddy {
 
 static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
+static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
+													unsigned long cookie);
+static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
+												  struct file_transfer *xfer);
 
 #define GET_NEXT(tmp)	while (*(tmp) && *(tmp) != ' ') \
 				(tmp)++; \
@@ -597,8 +627,243 @@ static char *msn_parse_format(char *mime)
 	g_string_free(ret, TRUE);
 	return cur;
 }
-			
-	
+
+static int msn_process_msnftp(struct msn_file_transfer *mft, char *buf)
+{
+	struct gaim_connection *gc = mft->gc;
+	char sendbuf[MSN_BUF_LEN];
+
+	if (!g_strncasecmp(buf, "VER MSNFTP", 10)) {
+
+		/* Send the USR string. */
+		g_snprintf(sendbuf, sizeof(sendbuf), "USR %s %ld\r\n",
+				   gc->username, mft->authcookie);
+
+		if (msn_write(mft->fd, sendbuf, strlen(sendbuf)) < 0) {
+			/* TODO: Clean up */
+			return 0;
+		}
+	}
+	else if (!g_strncasecmp(buf, "FIL", 3)) {
+		
+		char *tmp = buf;
+
+		GET_NEXT(tmp);
+
+		mft->len = atoi(tmp);
+
+		/* Send the TFR string, to request a start of transfer. */
+		g_snprintf(sendbuf, sizeof(sendbuf), "TFR\r\n");
+
+		gaim_input_remove(mft->inpa);
+		mft->inpa = 0;
+
+		if (msn_write(mft->fd, sendbuf, strlen(sendbuf)) < 0) {
+			/* TODO: Clean up */
+			return 0;
+		}
+
+		if (transfer_in_do(mft->xfer, mft->fd, mft->filename, mft->len)) {
+			debug_printf("MSN: transfer_in_do failed\n");
+		}
+	}
+
+	return 1;
+}
+
+static void msn_msnftp_callback(gpointer data, gint source,
+								GaimInputCondition cond)
+{
+	struct msn_file_transfer *mft = (struct msn_file_transfer *)data;
+	char buf[MSN_BUF_LEN];
+	int cont = 1;
+	int len;
+
+	if (mft->fd != source)
+		mft->fd = source;
+
+	len = read(mft->fd, buf, sizeof(buf));
+
+	if (len <= 0) {
+		/* TODO: Kill mft. */
+		return;
+	}
+
+	mft->rxqueue = g_realloc(mft->rxqueue, len + mft->rxlen);
+	memcpy(mft->rxqueue + mft->rxlen, buf, len);
+	mft->rxlen += len;
+
+	while (cont) {
+		char *end = mft->rxqueue;
+		int cmdlen;
+		char *cmd;
+		int i = 0;
+
+		if (!mft->rxlen)
+			return;
+
+		while (i + 1 < mft->rxlen) {
+			if (*end == '\r' && end[1] == '\n')
+				break;
+			end++; i++;
+		}
+		if (i + 1 == mft->rxlen)
+			return;
+
+		cmdlen = end - mft->rxqueue + 2;
+		cmd = mft->rxqueue;
+		mft->rxlen -= cmdlen;
+		if (mft->rxlen) {
+			mft->rxqueue = g_memdup(cmd + cmdlen, mft->rxlen);
+		} else {
+			mft->rxqueue = NULL;
+			cmd = g_realloc(cmd, cmdlen + 1);
+		}
+		cmd[cmdlen] = 0;
+
+		g_strchomp(cmd);
+		cont = msn_process_msnftp(mft, cmd);
+
+		g_free(cmd);
+	}
+}
+
+static void msn_msnftp_connect(gpointer data, gint source,
+							   GaimInputCondition cond)
+{
+	struct msn_file_transfer *mft = (struct msn_file_transfer *)data;
+	struct gaim_connection *gc = mft->gc;
+	char buf[MSN_BUF_LEN];
+
+	if (source == -1 || !g_slist_find(connections, gc)) {
+		debug_printf("Error establishing MSNFTP connection\n");
+		close(source);
+		/* TODO: Clean up */
+		return;
+	}
+
+	if (mft->fd != source)
+		mft->fd = source;
+
+	g_snprintf(buf, sizeof(buf), "VER MSNFTP\r\n");
+
+	if (msn_write(mft->fd, buf, strlen(buf)) < 0) {
+		/* TODO: Clean up */
+		return;
+	}
+
+	mft->inpa = gaim_input_add(mft->fd, GAIM_INPUT_READ,
+							   msn_msnftp_callback, mft);
+}
+
+static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
+{
+	struct msn_file_transfer *mft;
+	struct msn_data *md = ms->gc->proto_data;
+	char *tmp = msg;
+
+	if (strstr(msg, "Application-Name: File Transfer") &&
+		strstr(msg, "Invitation-Command: INVITE")) {
+
+		/*
+		 * First invitation message, requesting an ACCEPT or CANCEL from
+		 * the recipient. Used in incoming file transfers.
+		 */
+
+		char *filename;
+		char *cookie_s, *filesize_s;
+		size_t filesize;
+
+		tmp = strstr(msg, "Invitation-Cookie");
+		GET_NEXT(tmp);
+		cookie_s = tmp;
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		filename = tmp;
+
+		/* Needed for filenames with spaces */
+		tmp = strchr(tmp, '\r');
+		*tmp = '\0';
+		tmp += 2;
+
+		GET_NEXT(tmp);
+		filesize_s = tmp;
+		GET_NEXT(tmp);
+
+		mft = g_new0(struct msn_file_transfer, 1);
+		mft->gc = ms->gc;
+		mft->type = MFT_SENDFILE_IN;
+		mft->sn = g_strdup(ms->msguser);
+		mft->cookie = atoi(cookie_s);
+		mft->filename = g_strdup(filename);
+
+		filesize = atoi(filesize_s);
+
+		md->file_transfers = g_slist_append(md->file_transfers, mft);
+
+		mft->xfer = transfer_in_add(ms->gc, ms->msguser,
+									mft->filename, filesize, 1, NULL);
+	}
+	else if (strstr(msg, "Invitation-Command: ACCEPT")) {
+
+		/*
+		 * XXX I hope these checks don't return false positives, but they
+		 *     seem like they should work. The only issue is alternative
+		 *     protocols, *maybe*.
+		 */
+
+		if (strstr(msg, "AuthCookie:")) {
+
+			/*
+			 * Second invitation request, sent after the recipient accepts
+			 * the request. Used in incoming file transfers.
+			 */
+
+			char *cookie_s, *ip, *port_s, *authcookie_s;
+
+			tmp = strstr(msg, "Invitation-Cookie");
+			GET_NEXT(tmp);
+			cookie_s = tmp;
+			GET_NEXT(tmp);
+			GET_NEXT(tmp);
+			ip = tmp;
+			GET_NEXT(tmp);
+			GET_NEXT(tmp);
+			port_s = tmp;
+			GET_NEXT(tmp);
+			GET_NEXT(tmp);
+			authcookie_s = tmp;
+			GET_NEXT(tmp);
+
+			mft = find_mft_by_cookie(ms->gc, atoi(cookie_s));
+
+			if (!mft)
+			{
+				debug_printf("MSN: Cookie not found. File transfer aborted.\n");
+				return;
+			}
+
+			strncpy(mft->ip, ip, 16);
+			mft->port = atoi(port_s);
+			mft->authcookie = atoi(authcookie_s);
+
+			mft->fd = proxy_connect(mft->ip, mft->port, msn_msnftp_connect, mft);
+
+			if (ms->fd < 0) {
+				md->file_transfers = g_slist_remove(md->file_transfers, mft);
+				return;
+			}
+		}
+		else
+		{
+			/*
+			 * An accept message from the recipient. Used in outgoing
+			 * file transfers.
+			 */
+		}
+	}
+}
+
 static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 {
 	char *content, *agent, *format;
@@ -627,6 +892,19 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT, TYPING);
 			return;
 		} 
+
+	} else if (!g_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
+							  strlen("Content-Type: text/x-msmsgsinvite;"))) {
+
+		/*
+		 * NOTE: Other things, such as voice communication, would go in
+		 *       here too (since they send the same Content-Type). However,
+		 *       this is the best check for file transfer messages, so I'm
+		 *       calling msn_process_ft_invite_msg(). If anybody adds support
+		 *       for anything else that sends a text/x-msmsgsinvite, perhaps
+		 *       this should be changed. For now, it stays.
+		 */
+		msn_process_ft_msg(ms, content);
 
 	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
 				  strlen("Content-Type: text/plain"))) {
@@ -1775,6 +2053,206 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	return MSN_TYPING_SEND_TIMEOUT;
 }
 
+/* XXX Don't blame me. I stole this from the oscar module! */
+static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
+												  struct file_transfer *xfer)
+{
+	GSList *g = ((struct msn_data *)gc->proto_data)->file_transfers;
+	struct msn_file_transfer *f = NULL;
+
+	while (g) {
+		f = (struct msn_file_transfer *)g->data;
+		if (f->xfer == xfer)
+			break;
+
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
+/* XXX Don't blame me. I stole this from the oscar module! */
+static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
+													unsigned long cookie)
+{
+	GSList *g = ((struct msn_data *)gc->proto_data)->file_transfers;
+	struct msn_file_transfer *f = NULL;
+
+	while (g) {
+		f = (struct msn_file_transfer *)g->data;
+		if (f->cookie == cookie)
+			break;
+
+		g = g->next;
+		f = NULL;
+	}
+
+	return f;
+}
+
+static void msn_file_transfer_cancel(struct gaim_connection *gc,
+									 struct file_transfer *xfer)
+{
+	struct msn_data *md = gc->proto_data;
+	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
+	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
+	char header[MSN_BUF_LEN];
+	char buf[MSN_BUF_LEN];
+
+	if (!ms || !mft)
+	{
+		debug_printf("Eep! Returning from msn_file_transfer_cancel early");
+		return;
+	}
+
+	g_snprintf(header, sizeof(header),
+			   "MIME-Version: 1.0\r\n"
+			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
+			   "Invitation-Command: CANCEL\r\n"
+			   "Invitation-Cookie: %ld\r\n"
+			   "Cancel-Code: REJECT\r\n",
+			   mft->cookie);
+
+	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s\r\n\r\n",
+			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
+			   header);
+
+	md->file_transfers = g_slist_remove(md->file_transfers, mft);
+
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+	{
+		debug_printf("Uh oh! Killing switch.\n");
+		msn_kill_switch(ms);
+	}
+}
+
+static void msn_file_transfer_in(struct gaim_connection *gc,
+								 struct file_transfer *xfer, int offset)
+{
+	struct msn_data *md = gc->proto_data;
+	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
+	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
+	char header[MSN_BUF_LEN];
+	char buf[MSN_BUF_LEN];
+
+	if (!ms || !mft)
+	{
+		debug_printf("Eep! Returning from msn_file_transfer_in early");
+		return;
+	}
+
+	g_snprintf(header, sizeof(header),
+			   "MIME-Version: 1.0\r\n"
+			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
+			   "Invitation-Command: ACCEPT\r\n"
+			   "Invitation-Cookie: %ld\r\n"
+			   "Launch-Application: FALSE\r\n"
+			   "Request-Data: IP-Address:\r\n",
+			   mft->cookie);
+
+	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s\r\n\r\n",
+			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
+			   header);
+
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
+		msn_kill_switch(ms);
+		return;
+	}
+
+	mft->xfer = xfer;
+}
+
+static void msn_file_transfer_out(struct gaim_connection *gc,
+								  struct file_transfer *xfer,
+								  const char *name, int totfiles, int totsize)
+{
+	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
+	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
+	char header[MSN_BUF_LEN];
+	char buf[MSN_BUF_LEN];
+	struct stat sb;
+
+	if (!ms)
+		return;
+
+	if (totfiles > 1)
+		return;
+
+	if (stat(name, &sb) == -1)
+		return;
+
+	mft->cookie = 1 + (int)(sizeof(unsigned long) * rand() / (RAND_MAX + 1.0));
+
+	g_snprintf(header, sizeof(header),
+		"MIME-Version: 1.0\r\n"
+		"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
+		"Application-Name: File Transfer\r\n"
+		"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
+		"Invitation-Command: INVITE\r\n"
+		"Invitation-Cookie: %ld\r\n"
+		"Application-File: %s\r\n"
+		"Application-FileSize: %ld\r\n",
+		mft->cookie, name, sb.st_size);
+
+	g_snprintf(buf, sizeof(buf), "MSG %d A %d\r\n%s\r\n\r\n",
+			   ++ms->trId,
+			   strlen(header) + strlen("\r\n\r\n"),
+			   header);
+
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+		msn_kill_switch(ms);
+
+	debug_printf("\n");
+}
+
+static void msn_file_transfer_done(struct gaim_connection *gc,
+								   struct file_transfer *xfer)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
+	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "BYE 16777989\r\n");
+
+	msn_write(mft->fd, buf, strlen(buf));
+
+	md->file_transfers = g_slist_remove(md->file_transfers, mft);
+
+	gaim_input_remove(mft->inpa);
+
+	close(mft->fd);
+
+	g_free(mft->filename);
+	g_free(mft->sn);
+	g_free(mft);
+}
+
+static size_t msn_file_transfer_read(struct gaim_connection *gc,
+									 struct file_transfer *xfer, int fd,
+									 char **buf)
+{
+	unsigned char header[3];
+	size_t len, size;
+
+	if (read(fd, header, sizeof(header)) < 3)
+		return 0;
+
+	if (header[0] != 0) {
+		debug_printf("Invalid header[0]: %d. Aborting.\n", header[0]);
+		return 0;
+	}
+
+	size = header[1] | (header[2] << 8);
+
+	*buf = g_new0(char, size);
+
+	for (len = 0; len < size; len += read(fd, *buf + len, size - len));
+
+	return len;
+}
+
 static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	struct msn_data *md = gc->proto_data;
@@ -1989,6 +2467,20 @@ static void msn_reset_friend(struct gaim_connection *gc, char *who)
 	handle_buddy_rename(b, b->name);
 }
 
+static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	struct msn_file_transfer *mft = g_new0(struct msn_file_transfer, 1);
+
+	mft->type = MFT_SENDFILE_OUT;
+	mft->sn = g_strdup(destsn);
+	mft->gc = gc;
+
+	md->file_transfers = g_slist_append(md->file_transfers, mft);
+
+	mft->xfer = transfer_out_add(gc, mft->sn);
+}
+
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
@@ -1999,6 +2491,12 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Reset friendly name");
 	pbm->callback = msn_reset_friend;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Send File");
+	pbm->callback = msn_ask_send_file;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
@@ -2397,6 +2895,11 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->add_deny = msn_add_deny;
 	ret->rem_deny = msn_rem_deny;
 	ret->buddy_free = msn_buddy_free;
+	ret->file_transfer_cancel = msn_file_transfer_cancel;
+	ret->file_transfer_in = msn_file_transfer_in;
+	ret->file_transfer_out = msn_file_transfer_out;
+	ret->file_transfer_done = msn_file_transfer_done;
+	ret->file_transfer_read = msn_file_transfer_read;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Server:"));
