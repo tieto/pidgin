@@ -1815,7 +1815,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 							gdk_pixbuf_animation_get_height(ir->anim));
 			gtk_widget_show(ir->pix);
 			gdk_pixmap_unref(pm);
-			gdk_bitmap_unref(bm);
+			if (bm)
+				gdk_bitmap_unref(bm);
 
 			gdk_pixbuf_loader_close(load);
 
@@ -3238,8 +3239,13 @@ static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *
 	ir->pix = NULL;
 	ir->cnv = NULL;
 	
-	gdk_pixbuf_animation_unref(ir->anim);
-	ir->anim = NULL;
+	if (ir->anim) {
+		gdk_pixbuf_animation_unref(ir->anim);
+		ir->anim = NULL;
+	} else if (ir->unanim) {
+		gdk_pixbuf_unref(ir->unanim);
+		ir->unanim = NULL;
+	}
 	
 	ir->curframe = 0;
 	
