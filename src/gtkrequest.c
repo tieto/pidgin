@@ -23,10 +23,15 @@
 #include "gtkinternal.h"
 
 #include "debug.h"
+#include "prefs.h"
 
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "stock.h"
+
+#ifdef USE_GTKSPELL
+# include <gtkspell/gtkspell.h>
+#endif
 
 typedef struct
 {
@@ -289,6 +294,11 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 		entry = gtk_text_view_new();
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
+
+#ifdef USE_GTKSPELL
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+			gtkspell_new_attach(GTK_TEXT_VIEW(entry), NULL, NULL);
+#endif
 
 		gtk_container_add(GTK_CONTAINER(sw), entry);
 
@@ -620,6 +630,16 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 						textview = gtk_text_view_new();
 						gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
 												   TRUE);
+
+#ifdef USE_GTKSPELL
+						if (gaim_prefs_get_bool(
+								"/gaim/gtk/conversations/spellcheck"))
+						{
+							gtkspell_new_attach(GTK_TEXT_VIEW(widget),
+												NULL, NULL);
+						}
+#endif
+
 						gtk_container_add(GTK_CONTAINER(widget), textview);
 						gtk_widget_show(textview);
 
