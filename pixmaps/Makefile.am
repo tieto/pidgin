@@ -1,22 +1,17 @@
 SUBDIRS = protocols
-EXTRA_DIST =	about_small.xpm			\
-		accounts.png \
+EXTRA_DIST = accounts.png \
 		add.xpm				\
-		add_small.xpm			\
 		angel.xpm			\
 		arrow_down.xpm			\
 		arrow_right.xpm			\
 		away.png			\
 		away_big.xpm			\
-		away_small.xpm			\
 		bigsmile.xpm			\
 		block.xpm			\
-		block_small.xpm			\
 		broken.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
 		close.xpm			\
-		close_small.xpm			\
 		connect.png			\
 		crazy4.xpm			\
 		crossedlips.xpm			\
@@ -24,7 +19,6 @@ EXTRA_DIST =	about_small.xpm			\
 		download.xpm			\
 		edit.png			\
 		embarrassed.xpm			\
-		exit_small.xpm			\
 		farted.xpm			\
 		fontface2.xpm			\
 		gaim.png			\
@@ -40,7 +34,6 @@ EXTRA_DIST =	about_small.xpm			\
 		insert-image-small.png \
 		insert-link-small.png \
 		insert-smiley-small.png \
-		import_small.xpm		\
 		join.xpm			\
 		kiss.xpm			\
 		login_icon.xpm			\
@@ -59,17 +52,11 @@ EXTRA_DIST =	about_small.xpm			\
 		oneeye.xpm			\
 		online.png			\
 		panic.xpm			\
-		plugins_small.xpm		\
-		pounce_small.xpm		\
 		preferences.png	\
-		prefs_small.xpm			\
 		refresh.xpm			\
 		sad.xpm				\
 		save.xpm			\
-		save_small.xpm			\
 		scream.xpm			\
-		search_small.xpm		\
-		send_small.xpm			\
 		signon.png \
 		smile.xpm			\
 		smile8.xpm			\

@@ -55,19 +55,8 @@
 #include "pixmaps/logout_icon.xpm"
 #include "pixmaps/no_icon.xpm"
 
-#include "pixmaps/away_small.xpm"
 #include "pixmaps/away_big.xpm"
 
-#include "pixmaps/block_small.xpm"
-
-#include "pixmaps/add_small.xpm"
-#include "pixmaps/prefs_small.xpm"
-#include "pixmaps/search_small.xpm"
-#include "pixmaps/close_small.xpm"
-#include "pixmaps/exit_small.xpm"
-#include "pixmaps/pounce_small.xpm"
-
-#include "pixmaps/send_small.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/group.xpm"
@@ -2653,32 +2642,32 @@ void make_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	awaymenu = gtk_menu_new();
-	menuitem = gaim_new_item_with_pixmap(menu, _("Away"), away_small_xpm, NULL, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_from_stock(menu, _("Away"), NULL, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), awaymenu);
 	do_away_menu();
 
 	bpmenu = gtk_menu_new();
-	menuitem = gaim_new_item_with_pixmap(menu, _("Buddy Pounce"), pounce_small_xpm, NULL, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_from_stock(menu, _("Buddy Pounce"), NULL, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), bpmenu);
 	do_bp_menu();
 
 	gaim_separator(menu);
 
 #ifndef NO_MULTI
-	gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm,
+	gaim_new_item_from_stock(menu, _("Accounts"), NULL,
 				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
 
 	protomenu = gtk_menu_new();
-	menuitem = gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_from_stock(menu, _("Protocol Actions"), NULL, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
 
-	gaim_new_item_with_pixmap(menu, _("Privacy"), block_small_xpm,
+	gaim_new_item_from_stock(menu, _("Privacy"), NULL,
 				  GTK_SIGNAL_FUNC(show_privacy_options), NULL, 0, 0, 0);
-	gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm,
+	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES,
 				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
-	gaim_new_item_with_pixmap(menu, _("View System Log"), prefs_small_xpm,
+	gaim_new_item_from_stock(menu, _("View System Log"), NULL,
 				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
 
 	menu = gtk_menu_new();
