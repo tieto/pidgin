@@ -42,7 +42,7 @@ typedef struct _GaimStringref {
 					 *   for GC at the next idle handler...
 					 *   But you aren't going to touch this
 					 *   anyway, right? */
-	char value[0];	/**< The string contained in this ref.
+	char value[1];	/**< The string contained in this ref.
 					 *   Notice that it is simply "hanging
 					 *   off the end" of the ref ... this
 					 *   is to save an allocation. */

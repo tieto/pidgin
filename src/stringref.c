@@ -46,7 +46,7 @@ GaimStringref *gaim_stringref_new(const char *value)
 	if (value == NULL)
 		return NULL;
 
-	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
+	newref = g_malloc(sizeof(GaimStringref) + strlen(value));
 	strcpy(newref->value, value);
 	newref->ref = 1;
 
@@ -60,7 +60,7 @@ GaimStringref *gaim_stringref_new_noref(const char *value)
 	if (value == NULL)
 		return NULL;
 
-	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
+	newref = g_malloc(sizeof(GaimStringref) + strlen(value));
 	strcpy(newref->value, value);
 	newref->ref = 0x80000000;
 
