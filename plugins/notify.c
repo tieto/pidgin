@@ -2,6 +2,7 @@
 #include "gaim.h"
 
 #include <gtk/gtk.h>
+#include <string.h>
 
 void *handle;
 
@@ -9,6 +10,9 @@ void received_im(char **who, char **what, void *m) {
 	char buf[256];
 	struct conversation *cnv = find_conversation(*who);
 	GtkWindow *win;
+
+	if (!strcmp(*what, LAGOMETER_STR))
+		return;
 
 	if (cnv == NULL)
 		cnv = new_conversation(*who);
