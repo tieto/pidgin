@@ -294,6 +294,8 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			g_free(irc->nameconv);
 			irc->nameconv = NULL;
 		} else {
+			GList *users = NULL;
+
 			while (*cur) {
 				end = strchr(cur, ' ');
 				if (!end)
@@ -301,11 +303,21 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 				if (*cur == '@' || *cur == '%' || *cur == '+')
 					cur++;
 				tmp = g_strndup(cur, end - cur);
-				gaim_chat_add_user(GAIM_CHAT(convo), tmp, NULL);
-				g_free(tmp);
+				users = g_list_append(users, tmp);
 				cur = end;
 				if (*cur)
 					cur++;
+			}
+
+			if (users != NULL) {
+				GList *l;
+
+				gaim_chat_add_users(GAIM_CHAT(convo), users);
+
+				for (l = users; l != NULL; l = l->next)
+					g_free(l->data);
+
+				g_list_free(users);
 			}
 		}
 		g_free(names);

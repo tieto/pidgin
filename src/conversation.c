@@ -1932,6 +1932,34 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 }
 
 void
+gaim_chat_add_users(GaimChat *chat, GList *users)
+{
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
+	GList *l;
+
+	g_return_if_fail(chat  != NULL);
+	g_return_if_fail(users != NULL);
+
+	conv = gaim_chat_get_conversation(chat);
+	ops  = gaim_conversation_get_ui_ops(conv);
+
+	for (l = users; l != NULL; l = l->next) {
+		gaim_chat_set_users(chat,
+				g_list_insert_sorted(gaim_chat_get_users(chat),
+									 g_strdup((char *)l->data),
+									 insertname_compare));
+
+		gaim_event_broadcast(event_chat_buddy_join,
+				gaim_conversation_get_gc(conv), gaim_chat_get_id(chat),
+				(char *)l->data);
+	}
+
+	if (ops != NULL && ops->chat_add_users != NULL)
+		ops->chat_add_users(conv, users);
+}
+
+void
 gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 					  const char *new_user)
 {
@@ -2021,6 +2049,73 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
 
 		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
+	}
+}
+
+void
+gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason)
+{
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
+	char tmp[BUF_LONG];
+	GList *names, *l;
+
+	g_return_if_fail(chat  != NULL);
+	g_return_if_fail(users != NULL);
+
+	conv = gaim_chat_get_conversation(chat);
+	ops  = gaim_conversation_get_ui_ops(conv);
+
+	for (l = users; l != NULL; l = l->next) {
+		gaim_event_broadcast(event_chat_buddy_leave,
+							 gaim_conversation_get_gc(conv),
+							 gaim_chat_get_id(chat), l->data);
+	}
+
+	if (ops != NULL && ops->chat_remove_users != NULL)
+		ops->chat_remove_users(conv, users);
+
+	for (l = users; l != NULL; l = l->next) {
+		for (names = gaim_chat_get_users(chat);
+			 names != NULL;
+			 names = names->next) {
+
+			if (!gaim_utf8_strcasecmp((char *)names->data, (char *)l->data)) {
+				gaim_chat_set_users(chat,
+					g_list_remove(gaim_chat_get_users(chat), names->data));
+
+				break;
+			}
+		}
+	}
+
+	/* NOTE: Don't remove them from ignored in case they re-enter. */
+
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_leave")) {
+		if (reason != NULL && *reason != '\0') {
+			int i;
+			int size = g_list_length(users);
+			int max = MIN(10, size);
+			GList *l;
+
+			*tmp = '\0';
+
+			for (l = users, i = 0; i < max; i++, l = l->next) {
+				g_strlcat(tmp, (char *)l->data, sizeof(tmp));
+
+				if (i < max - 1)
+					g_strlcat(tmp, ", ", sizeof(tmp));
+			}
+
+			if (size > 10)
+				g_snprintf(tmp, sizeof(tmp),
+						   _("(+%d more)"), size - 10);
+
+			g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
+
+			gaim_conversation_write(conv, NULL, tmp, -1,
+									WFLAG_SYSTEM, time(NULL));
+		}
 	}
 }
 

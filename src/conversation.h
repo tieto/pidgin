@@ -143,9 +143,11 @@ struct _GaimConversationUiOps
 					   time_t mtime);
 
 	void (*chat_add_user)(GaimConversation *conv, const char *user);
+	void (*chat_add_users)(GaimConversation *conv, GList *users);
 	void (*chat_rename_user)(GaimConversation *conv,
 							 const char *old_name, const char *new_name);
 	void (*chat_remove_user)(GaimConversation *conv, const char *user);
+	void (*chat_remove_users)(GaimConversation *conv, GList *users);
 
 	void (*set_title)(GaimConversation *conv, const char *title);
 	void (*update_progress)(GaimConversation *conv, float percent);
@@ -915,6 +917,10 @@ GaimConversation *gaim_chat_get_conversation(const GaimChat *chat);
 /**
  * Sets the list of users in the chat room.
  *
+ * @note Calling this function will not update the display of the users.
+ *       Please use gaim_chat_add_user(), gaim_chat_add_users(),
+ *       gaim_chat_remove_user(), and gaim_chat_remove_users() instead.
+ *
  * @param chat  The chat.
  * @param users The list of users.
  *
@@ -1061,6 +1067,17 @@ void gaim_chat_add_user(GaimChat *chat, const char *user,
 						const char *extra_msg);
 
 /**
+ * Adds a list of users to a chat.
+ *
+ * The data is copied from @a users, so it is up to the developer to
+ * free this list after calling this function.
+ *
+ * @param chat      The chat.
+ * @param users     The list of users to add.
+ */
+void gaim_chat_add_users(GaimChat *chat, GList *users);
+
+/**
  * Renames a user in a chat.
  *
  * @param chat     The chat.
@@ -1073,12 +1090,23 @@ void gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 /**
  * Removes a user from a chat, optionally with a reason.
  *
+ * It is up to the developer to free this list after calling this function.
+ *
  * @param chat   The chat.
  * @param user   The user that is being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
 void gaim_chat_remove_user(GaimChat *chat, const char *user,
 						   const char *reason);
+
+/**
+ * Removes a list of users from a chat, optionally with a single reason.
+ *
+ * @param chat   The chat.
+ * @param users  The users that are being removed.
+ * @param reason The optional reason given for the removal. Can be @c NULL.
+ */
+void gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason);
 
 /**
  * Finds a chat with the specified chat ID.
