@@ -41,6 +41,10 @@
 /* XXX */
 #include "gaim.h"
 
+#ifdef _WIN32
+# include "wspell.h"
+#endif
+
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
 static GtkWidget *importdialog;
