@@ -16,8 +16,7 @@ void iconify_windows(void *data) {
 			GDK_WINDOW_XWINDOW(imaway->window),
 			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #ifdef USE_APPLET
-	gnome_buddy_hide();
-	set_applet_draw_closed();
+	applet_destroy_buddy();
 #else
 	XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(blist->window),

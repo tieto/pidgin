@@ -87,10 +87,16 @@ void load_plugin(GtkWidget *w, gpointer data)
 {
 	char *buf = g_malloc(BUF_LEN);
  
-	if (!plugin_dialog) {
-		plugin_dialog = gtk_file_selection_new("Gaim - Plugin List");
+	if (plugin_dialog) {
+		g_free(buf);
+		gtk_widget_show(plugin_dialog);
+		gdk_window_raise(plugin_dialog->window);
+		return;
+	}
 
-		gtk_file_selection_hide_fileop_buttons(
+	plugin_dialog = gtk_file_selection_new("Gaim - Plugin List");
+
+	gtk_file_selection_hide_fileop_buttons(
 					GTK_FILE_SELECTION(plugin_dialog));
 
 	if(getenv("PLUGIN_DIR") == NULL) {
@@ -108,8 +114,6 @@ void load_plugin(GtkWidget *w, gpointer data)
     
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(plugin_dialog)->cancel_button),
 			"clicked", GTK_SIGNAL_FUNC(destroy_plugins), NULL);
-
-	}
 
 	g_free(buf);
 	gtk_widget_show(plugin_dialog);
@@ -335,14 +339,18 @@ void unload(GtkWidget *w, gpointer data) {
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->handle == p->handle) {
-			callbacks = g_list_remove(callbacks, c);
+			callbacks = g_list_remove(callbacks, c->data);
 			g_free(g);
+			c = callbacks;
+			if (c == NULL) break;
 		}
 		c = c->next;
 	}
-	dlclose(p->handle);
+	/* don't ask me why this works */
+	if (callbacks != NULL) dlclose(p->handle);
 
 	plugins = g_list_remove(plugins, p);
+	g_free(p->filename);
 	g_free(p);
 	gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
@@ -394,8 +402,10 @@ void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (handle == g->handle && func == g->function) {
-			callbacks = g_list_remove(callbacks, g);
+			callbacks = g_list_remove(callbacks, c->data);
 			g_free(g);
+			c = callbacks;
+			if (c == NULL) break;
 		}
 		c = c->next;
 	}

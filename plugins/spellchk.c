@@ -48,7 +48,7 @@ void spell_check(char *who, char **message, void *m) {
 			struct replace_words *r;
 			r = (struct replace_words *)(w->data);
 			tmp = have_word(*message, word);
-			if (!strcmp(have_word(*message, word), r->bad)) {
+			if (!strcmp(tmp, r->bad)) {
 				substitute(message, word, strlen(r->bad),
 						r->good);
 				l += num_words(r->good) - num_words(r->bad);
