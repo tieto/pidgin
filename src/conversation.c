@@ -604,7 +604,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			return TRUE;
-		} else if (!(event->state & GDK_SHIFT_MASK) && (convo_options & OPT_CONVO_ENTER_SENDS)) {
+		} else if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) && (convo_options & OPT_CONVO_ENTER_SENDS)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			return TRUE;

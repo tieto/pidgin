@@ -669,12 +669,9 @@ struct msn_add_permit {
 static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
-	char *user;
 	char buf[MSN_BUF_LEN];
 
-	user = g_strdup(url_encode(map->user));
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, user, url_encode(map->friend));
-	g_free(user);
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(map->gc, "Write error");
 		signoff(map->gc);
@@ -1712,7 +1709,6 @@ static void msn_add_buddy(struct gaim_connection *gc, char *name)
 	if (l)
 		return;
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "ADD %d FL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1726,7 +1722,6 @@ static void msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "REM %d FL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1838,7 +1833,6 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			t = g_slist_append(t, who);
 			continue;
 		}
-		who = url_encode(who);
 		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
@@ -1866,7 +1860,6 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			t = g_slist_append(t, who);
 			continue;
 		}
-		who = url_encode(who);
 		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
@@ -1898,7 +1891,6 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1912,7 +1904,6 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1933,7 +1924,6 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -1947,7 +1937,6 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	who = url_encode(who);
 	g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");

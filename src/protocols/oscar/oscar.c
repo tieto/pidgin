@@ -1558,6 +1558,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[BUF_LONG];
 	char legend[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
+	gboolean away;
 	va_list ap;
 	char *asc;
 
@@ -1568,12 +1569,24 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	infotype = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
+	g_snprintf(legend, sizeof legend,
+			_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
+			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
+			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
+			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
+
+	away = infotype != AIM_GETINFO_GENERALINFO;
+	if (away && (!prof || !*prof)) {
+		g_show_info_text(gc, info->sn, away, legend, NULL);
+		return 1;
+	}
+
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
 				asctime(localtime(&info->membersince)));
 	else
 		asc = g_strdup("");
-
 	g_snprintf(buf, sizeof buf,
 			_("Username : <B>%s</B>  %s <BR>\n"
 			"%s"
@@ -1585,23 +1598,17 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			info->warnlevel/10,
 			asctime(localtime(&info->onlinesince)),
 			info->idletime);
-	g_snprintf(legend, sizeof legend,
-			_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
-			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
-			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
-			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
-	g_show_info_text(buf,
+	g_free(asc);
+
+	g_show_info_text(gc, info->sn, away, away ? "<br><hr>" : buf,
 			 (prof && strlen(prof)) ?
 				away_subs(prof, gc->username)
 				:
-				(infotype == AIM_GETINFO_GENERALINFO ?
-					_("<i>No Information Provided</i>") :
-					_("<i>User has no away message</i>")),
-			 legend,
+			 away ?
+				_("<i>User has no away message</i>") :
+				_("<i>No Information Provided</i>"),
+			 away ? legend : NULL,
 			 NULL);
-
-	g_free(asc);
 
 	return 1;
 }
@@ -2047,14 +2054,17 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 
 static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
+	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	struct aim_icq_simpleinfo *info;
 	char buf[16 * 1024];
+	char who[16];
 
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_simpleinfo *);
 	va_end(ap);
 
+	g_snprintf(who, sizeof who, "%lu", info->uin);
 	g_snprintf(buf, sizeof buf,
 		   "<B>UIN:</B> %lu<BR>"
 		   "<B>Nick:</B> %s<BR>"
@@ -2065,7 +2075,7 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		   info->first, info->last,
 		   info->email);
 
-	g_show_info_text(buf, NULL);
+	g_show_info_text(gc, who, FALSE, buf, NULL);
 
 	return 1;
 }
@@ -2107,7 +2117,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	at += g_snprintf(buf + at, len - at, "<B>%s has the following screen names:</B><BR>", address);
 	for (i = 0; i < num; i++)
 		at += g_snprintf(buf + at, len - at, "%s<BR>", &SNs[i * (MAXSNLEN + 1)]);
-	g_show_info_text(buf, NULL);
+	g_show_info_text(NULL, NULL, FALSE, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -2261,7 +2271,8 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 
 static void oscar_get_away_msg(struct gaim_connection *g, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
+	if (!odata->icq)
+		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
 
 static void oscar_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
@@ -2690,12 +2701,6 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Away Msg");
-	pbm->callback = oscar_get_away_msg;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
 	if (strcmp(n, normalize(who))) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Direct IM");
@@ -2908,6 +2913,7 @@ void oscar_init(struct prpl *ret) {
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;
+	ret->get_away = oscar_get_away_msg;
 	ret->set_dir = oscar_set_dir;
 	ret->get_dir = NULL; /* Oscar really doesn't have this */
 	ret->dir_search = oscar_dir_search;

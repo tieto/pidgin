@@ -926,6 +926,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 }
 
 static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
+	struct gaim_connection *gc = GJ_GC(j);
 	char buf[1024];
 	char *fn, *url, *email, *nickname, *status, *desc;
 	jid who;
@@ -960,7 +961,7 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	if (desc)
 		at += g_snprintf(buf + at, sizeof(buf) - at, "<HR>%s<br>\n", desc);
 
-	g_show_info_text(buf, NULL);
+	g_show_info_text(gc, buddy, FALSE, buf, NULL);
 	g_free(buddy);
 }
 

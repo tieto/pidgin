@@ -172,11 +172,30 @@ struct findbyinfo {
 };
 
 struct info_dlg {
+	struct gaim_connection *gc;
+	char *who;
 	GtkWidget *window;
 	GtkWidget *text;
-	GtkWidget *close;
 };
+static GSList *info_dlgs = NULL;
 
+static struct info_dlg *find_info_dlg(struct gaim_connection *gc, char *who)
+{
+	GSList *i = info_dlgs;
+	while (i) {
+		struct info_dlg *d = i->data;
+		i = i->next;
+		if (d->gc != gc)
+			continue;
+		if (d->who == NULL)
+			continue;
+		if (!who)
+			continue;
+		if (!g_strcasecmp(normalize(who), d->who))
+			return d;
+	}
+	return NULL;
+}
 
 struct set_info_dlg {
 	GtkWidget *window;
@@ -1732,6 +1751,9 @@ void show_set_info(struct gaim_connection *gc)
 
 static void info_dlg_free(GtkWidget *b, struct info_dlg *d)
 {
+	if (g_slist_find(info_dlgs, d))
+		info_dlgs = g_slist_remove(info_dlgs, d);
+	g_free(d->who);
 	g_free(d);
 }
 
@@ -1750,7 +1772,7 @@ gchar **info_img_handler(gchar *url)
 	return NULL;
 }
 
-void g_show_info_text(char *info, ...)
+void g_show_info_text(struct gaim_connection *gc, char *who, gboolean away, char *info, ...)
 {
 	GtkWidget *ok;
 	GtkWidget *label;
@@ -1761,41 +1783,48 @@ void g_show_info_text(char *info, ...)
 	char *more_info;
 	va_list ap;
 
-	struct info_dlg *b = g_new0(struct info_dlg, 1);
+	struct info_dlg *b = find_info_dlg(gc, who);
+	if (!b && away)
+		return;
+	if (!b) {
+		b = g_new0(struct info_dlg, 1);
+		b->gc = gc;
+		b->who = who ? g_strdup(normalize(who)) : NULL;
+		info_dlgs = g_slist_append(info_dlgs, b);
 
-	va_start(ap, info);
+		GAIM_DIALOG(b->window);
+		gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
+		gtk_container_border_width(GTK_CONTAINER(b->window), 5);
+		gtk_widget_realize(GTK_WIDGET(b->window));
+		gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(info_dlg_free), b);
+		aol_icon(b->window->window);
 
-	GAIM_DIALOG(b->window);
-	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
-	gtk_container_border_width(GTK_CONTAINER(b->window), 5);
-	bbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(b->window), bbox);
-	gtk_widget_realize(GTK_WIDGET(b->window));
-	ok = picture_button(b->window, _("OK"), ok_xpm);
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(info_dlg_free), b);
-	gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+		bbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(b->window), bbox);
 
-	label = gtk_label_new(_("Below are the results of your search: "));
+		label = gtk_label_new(_("Below are the results of your search: "));
+		gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-	text = gtk_imhtml_new(NULL, NULL);
-	b->text = text;
-	gtk_container_add(GTK_CONTAINER(sw), text);
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
 
-	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
-	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
-	gtk_widget_set_usize(sw, 300, 250);
-	gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
-	gaim_setup_imhtml(text);
+		text = gtk_imhtml_new(NULL, NULL);
+		b->text = text;
+		gtk_container_add(GTK_CONTAINER(sw), text);
+		GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
+		GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
+		gtk_widget_set_usize(sw, 300, 250);
+		gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
+		gaim_setup_imhtml(text);
 
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
+		ok = picture_button(b->window, _("OK"), ok_xpm);
+		gtk_signal_connect_object(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
+					  GTK_OBJECT(b->window));
+		gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
 
-	aol_icon(b->window->window);
-	gtk_widget_show_all(b->window);
+		gtk_widget_show_all(b->window);
+	}
 
 	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
 		options ^= GTK_IMHTML_NO_COLOURS;
@@ -1807,13 +1836,20 @@ void g_show_info_text(char *info, ...)
 	options ^= GTK_IMHTML_NO_TITLE;
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
+
 	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, options);
+
+	va_start(ap, info);
 	while ((more_info = va_arg(ap, char *)) != NULL)
 		 gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, options);
 	va_end(ap);
+
 	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", 0);
 
-	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
+	if (away)
+		info_dlgs = g_slist_remove(info_dlgs, b);
+	else
+		serv_get_away(gc, who);
 }
 
 /*------------------------------------------------------------------------*/

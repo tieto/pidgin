@@ -331,7 +331,7 @@ extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
 extern struct conversation *find_conversation(char *);
 
 /* Functions in dialogs.c */
-extern void g_show_info_text(char *, ...);
+extern void g_show_info_text(struct gaim_connection *, char *, gboolean, char *, ...);
 extern GtkWidget *do_error_dialog(char *, char *);
 extern void show_change_passwd(struct gaim_connection *);
 extern void show_set_dir(struct gaim_connection *);
@@ -384,6 +384,7 @@ extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern int  serv_chat_send(struct gaim_connection *, int, char *);
 extern void serv_got_popup(char *, char *, int, int);
+extern void serv_get_away(struct gaim_connection *, char *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);

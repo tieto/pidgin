@@ -382,7 +382,7 @@ static void toc_got_info(gpointer data, char *url_text)
 	if (!url_text)
 		return;
 
-	g_show_info_text(url_text, NULL);
+	g_show_info_text(NULL, NULL, FALSE, url_text, NULL);
 }
 
 static char *show_error_message()

@@ -162,6 +162,12 @@ void serv_get_info(struct gaim_connection *g, char *name)
 		g->prpl->get_info(g, name);
 }
 
+void serv_get_away(struct gaim_connection *g, char *name)
+{
+	if (g && g->prpl && g->prpl->get_away)
+		g->prpl->get_away(g, name);
+}
+
 void serv_get_dir(struct gaim_connection *g, char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->get_dir)

@@ -187,8 +187,11 @@ static void icq_invalid_uin(icq_Link *link) {
 
 static void icq_info_reply(icq_Link *link, unsigned long uin, const char *nick,
 			const char *first, const char *last, const char *email, char auth) {
+	struct gaim_connection *gc = link->icq_UserData;
 	char buf[16 * 1024];
+	char who[16];
 
+	g_snprintf(who, sizeof who, "%lu", uin);
 	g_snprintf(buf, sizeof buf,
 		   "<B>UIN:</B> %lu<BR>"
 		   "<B>Nick:</B> %s<BR>"
@@ -198,7 +201,7 @@ static void icq_info_reply(icq_Link *link, unsigned long uin, const char *nick,
 		   nick,
 		   first, last,
 		   email);
-	g_show_info_text(buf, NULL);
+	g_show_info_text(gc, who, FALSE, buf, NULL);
 }
 
 static void icq_web_pager(icq_Link *link, unsigned char hour, unsigned char minute,
