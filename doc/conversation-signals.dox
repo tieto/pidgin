@@ -412,7 +412,7 @@ void (*chat_invited)(GaimAccount *account, const char *inviter,
    Emitted when an account was invited to a chat.
   @param account        The account being invited.
   @param inviter        The username of the person inviting the account.
-  @param chat           The name of the chat your being invited to.
+  @param chat           The name of the chat you're being invited to.
   @param invite_message The optional invite message.
  @endsignaldef
 
