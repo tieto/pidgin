@@ -4,8 +4,8 @@
 
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
-Name "Gaim 0.60 alpha 2 (Win32)"
-OutFile "Install-Gaim0.60a2.exe"
+Name "Gaim 0.60 alpha 3 (Win32)"
+OutFile "gaim-0.60-alpha3.exe"
 Icon .\pixmaps\gaim-install.ico
 
 ; Some default compiler settings (uncomment and change at will):

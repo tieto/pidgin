@@ -29,7 +29,7 @@ version 0.60:
 		- Preferences dialog
 		- SignOn Screen
 		- Conversation Window (needs tooltips)
-		- Chat Window (sort of: needs menu bar, needs listview, tooltips)
+		- Chat Window (sort of: needs menu bar, tooltips)
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
 		- Buddy Icons
 		- IM Images
