@@ -263,8 +263,6 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 
 		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 	}
-
-	save_prefs();
 }
 
 static void
@@ -427,8 +425,6 @@ free_pounce(void *data)
 
 		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 	}
-
-	save_prefs();
 }
 
 struct gaim_pounce *

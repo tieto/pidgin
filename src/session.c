@@ -189,7 +189,7 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 
 	if (save_type == SmSaveGlobal || save_type == SmSaveBoth) {
 		/* may as well do something ... */
-		save_prefs();
+		/* or not -- save_prefs(); */
 	}
 
 	SmcSaveYourselfDone(conn, True);

@@ -359,7 +359,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	gaim_plugins_unregister_probe_notify_cb(update_plugin_list);
 
-	save_prefs();
 	prefs = NULL;
 	tree_v = NULL;
 	sound_entry = NULL;
@@ -454,7 +453,6 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	filename = g_value_get_string(&val);
 	load_smiley_theme(filename, TRUE);
 	g_value_unset (&val);
-	save_prefs();
 }
 
 GtkTreePath *theme_refresh_theme_list()

@@ -43,8 +43,6 @@ void rm_log(struct log_conversation *a)
 	}
 
 	log_conversations = g_list_remove(log_conversations, a);
-
-	save_prefs();
 }
 
 struct log_conversation *find_log_info(const char *name)

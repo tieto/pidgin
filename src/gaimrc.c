@@ -1349,7 +1349,6 @@ void load_prefs()
 		if (request_save_prefs) {
 			gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
 					   "Saving preferences on request\n");
-			save_prefs();
 			request_save_prefs = 0;
 		}
 	} else if (opt_rcfile_arg) {
@@ -1358,7 +1357,6 @@ void load_prefs()
 		set_defaults();
 	} else {
 		set_defaults();
-		save_prefs();
 	}
 
 	prefs_initial_load = 1;
@@ -1420,5 +1418,5 @@ load_pounces()
 	 * <      faceprint> ChipX86|Coding: because we're cool like that
 	 * <SeanEgan|Coding> damn straight
 	 */
-	save_prefs();
+	/* save_prefs(); -- I like the above comment :( */
 }

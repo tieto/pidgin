@@ -1937,8 +1937,6 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 		strncpy_withhtml(b->account->user_info, junk, sizeof b->account->user_info);
 		gc = b->account->gc;
 
-		save_prefs();
-
 		if (gc)
 			serv_set_info(gc, b->account->user_info);
 	}
@@ -2152,7 +2150,6 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 
 	serv_change_passwd(b->gc, orig, new1);
 	g_snprintf(b->gc->account->password, sizeof(b->gc->account->password), "%s", new1);
-	save_prefs();
 
 	destroy_dialog(NULL, b->window);
 	g_free(b);
@@ -2553,7 +2550,6 @@ void do_log(GtkWidget *w, struct gaim_conversation *c)
 			gaim_conversation_set_logging(c, TRUE);
 	}
 
-	save_prefs();
 	cancel_log(NULL, c);
 }
 
@@ -3311,7 +3307,6 @@ static struct away_message *save_away_message(struct create_away *ca)
 		away_messages = g_slist_insert_sorted(away_messages, am, sort_awaymsg_list);
 	}
 
-	save_prefs();
 	do_away_menu(NULL);
 
 	return am;
@@ -5070,8 +5065,6 @@ void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
         if (b->account) {
                 strncpy(b->account->user_info, tmp, sizeof b->account->user_info);
                 gc = b->account->gc;
-
-                save_prefs();
 
                 if (gc)
                         serv_set_info(gc, b->account->user_info);
