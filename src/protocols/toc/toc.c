@@ -115,7 +115,7 @@ struct signon {
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
 
-#define TOC_CONNECT_STEPS 4
+#define TOC_CONNECT_STEPS 3
 
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
@@ -136,7 +136,7 @@ static void toc_login(GaimAccount *account)
 
 	g_snprintf(buf, sizeof buf, _("Looking up %s"),
 			gaim_account_get_string(account, "server", TOC_HOST));
-	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
+	gaim_connection_update_progress(gc, buf, 0, TOC_CONNECT_STEPS);
 
 	gaim_debug(GAIM_DEBUG_INFO, "toc", "Client connects to TOC\n");
 	if (gaim_proxy_connect(account,
@@ -196,7 +196,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	gc->inpa = gaim_input_add(tdt->toc_fd, GAIM_INPUT_READ, toc_callback, gc);
 
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gaim_account_get_username(gc->account));
-	gaim_connection_update_progress(gc, buf, 2, TOC_CONNECT_STEPS);
+	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
 }
 
 static void toc_close(GaimConnection *gc)
@@ -613,7 +613,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			return;
 		}
 
-		gaim_connection_update_progress(gc, _("Waiting for reply..."), 3, TOC_CONNECT_STEPS);
+		gaim_connection_update_progress(gc, _("Waiting for reply..."), 2, TOC_CONNECT_STEPS);
 		return;
 	}
 
