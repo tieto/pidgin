@@ -151,15 +151,15 @@ filesel(GtkWidget *w, gpointer data)
 	g_hash_table_insert(args, "filesel", filesel);
 	g_hash_table_insert(args, "entry",   entry);
 
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
-					 "clicked",
-					 G_CALLBACK(pounce_update_entry_fields), args);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
-							 "clicked",
-							 G_CALLBACK(g_hash_table_destroy), args);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
-							 "clicked",
-							 G_CALLBACK(gtk_widget_destroy), filesel);
+	g_signal_connect(
+		GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
+		G_CALLBACK(pounce_update_entry_fields), args);
+	g_signal_connect_swapped(
+		G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button), "clicked",
+		G_CALLBACK(g_hash_table_destroy), args);
+	g_signal_connect_swapped(
+		G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button), "clicked",
+		G_CALLBACK(gtk_widget_destroy), filesel);
 
 	gtk_widget_show(filesel);
 }
@@ -228,7 +228,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
 
-	if (dialog->pounce == NULL) {
+	if (dialog->pounce == NULL)
+	{
 		dialog->pounce = gaim_pounce_new(GAIM_GTK_UI, dialog->account,
 										 name, events);
 	}
@@ -289,7 +290,7 @@ buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
 		return;
 
 	gtk_widget_set_sensitive(dialog->save_button,
-			*gtk_entry_get_text(entry) != '\0');
+		*gtk_entry_get_text(entry) != '\0');
 }
 
 static void
@@ -530,18 +531,23 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	gtk_widget_show(table);
 
-	dialog->open_win = gtk_check_button_new_with_mnemonic(_("Op_en an IM window"));
-	dialog->popup = gtk_check_button_new_with_mnemonic(_("_Popup notification"));
-	dialog->send_msg = gtk_check_button_new_with_mnemonic(_("Send a _message"));
-	dialog->exec_cmd = gtk_check_button_new_with_mnemonic(_("E_xecute a command"));
-	dialog->play_sound = gtk_check_button_new_with_mnemonic(_("P_lay a sound"));
+	dialog->open_win
+		= gtk_check_button_new_with_mnemonic(_("Op_en an IM window"));
+	dialog->popup
+		= gtk_check_button_new_with_mnemonic(_("_Popup notification"));
+	dialog->send_msg
+		= gtk_check_button_new_with_mnemonic(_("Send a _message"));
+	dialog->exec_cmd
+		= gtk_check_button_new_with_mnemonic(_("E_xecute a command"));
+	dialog->play_sound
+		= gtk_check_button_new_with_mnemonic(_("P_lay a sound"));
 
-	dialog->send_msg_entry   = gtk_entry_new();
-	dialog->exec_cmd_entry   = gtk_entry_new();
-	dialog->exec_cmd_browse = gtk_button_new_with_mnemonic(_("B_rowse..."));
-	dialog->play_sound_entry = gtk_entry_new();
+	dialog->send_msg_entry    = gtk_entry_new();
+	dialog->exec_cmd_entry    = gtk_entry_new();
+	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("B_rowse..."));
+	dialog->play_sound_entry  = gtk_entry_new();
 	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Bro_wse..."));
-	dialog->play_sound_test = gtk_button_new_with_mnemonic(_("Pre_view"));
+	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
 
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,   FALSE);
@@ -687,7 +693,8 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 					 G_CALLBACK(pounce_dnd_recv), dialog);
 
 	/* Set the values of stuff. */
-	if (cur_pounce != NULL) {
+	if (cur_pounce != NULL)
+	{
 		GaimPounceEvent events = gaim_pounce_get_events(cur_pounce);
 		const char *value;
 
@@ -726,28 +733,75 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
 													  "send-message",
-													  "message")) != NULL) {
-
+													  "message")) != NULL)
+		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry), value);
 		}
 
 		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
 													  "execute-command",
-													  "command")) != NULL) {
-
+													  "command")) != NULL)
+		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry), value);
 		}
 
 		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
 													  "play-sound",
-													  "filename")) != NULL) {
+													  "filename")) != NULL)
+		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry), value);
 		}
 	}
-	else {
+	else
+	{
+		GaimBuddy *buddy = NULL;
+
+		if (name != NULL)
+			buddy = gaim_find_buddy(account, name);
+
 		/* Set some defaults */
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg), TRUE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signon), TRUE);
+		if (buddy == NULL)
+		{
+			gtk_toggle_button_set_active(
+				GTK_TOGGLE_BUTTON(dialog->signon), TRUE);
+		}
+		else
+		{
+			if (!GAIM_BUDDY_IS_ONLINE(buddy))
+			{
+				gtk_toggle_button_set_active(
+					GTK_TOGGLE_BUTTON(dialog->signon), TRUE);
+			}
+			else
+			{
+				gboolean default_set = FALSE;
+
+				if (buddy->idle)
+				{
+					gtk_toggle_button_set_active(
+						GTK_TOGGLE_BUTTON(dialog->idle_return), TRUE);
+
+					default_set = TRUE;
+				}
+
+				if (buddy->uc & UC_UNAVAILABLE)
+				{
+					gtk_toggle_button_set_active(
+						GTK_TOGGLE_BUTTON(dialog->away_return), TRUE);
+
+					default_set = TRUE;
+				}
+
+				if (!default_set)
+				{
+					gtk_toggle_button_set_active(
+						GTK_TOGGLE_BUTTON(dialog->signon), TRUE);
+				}
+			}
+		}
+
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(dialog->popup), TRUE);
 	}
 
 	gtk_widget_show_all(vbox2);
@@ -786,7 +840,8 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	gboolean has_items = FALSE;
 	GList *bp;
 
-	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next) {
+	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next)
+	{
 		pounce = (GaimPounce *)bp->data;
 		buddy = gaim_pounce_get_pouncee(pounce);
 
@@ -801,9 +856,10 @@ fill_menu(GtkWidget *menu, GCallback cb)
 
 		/* Create a pixmap for the protocol icon. */
 		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
-		if(pixbuf) {
+		if (pixbuf != NULL)
+		{
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-					GDK_INTERP_BILINEAR);
+											GDK_INTERP_BILINEAR);
 
 			/* Now convert it to GtkImage */
 			image = gtk_image_new_from_pixbuf(scale);
@@ -883,7 +939,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	const char *pouncee;
 	const char *alias;
 	const char *proto_id;
-	
+
 	pouncee = gaim_pounce_get_pouncee(pounce);
 	account = gaim_pounce_get_pouncer(pounce);
 
@@ -891,51 +947,67 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 	alias = gaim_get_buddy_alias(buddy);
 
-	/*find the protocol id for the window title and/or message*/
+	/* Find the protocol id for the window title and/or message */
 	proto = gaim_find_prpl(gaim_account_get_protocol_id(account));
 	proto_id = proto->info->name;
 
-	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
+	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
+	{
 		conv = gaim_find_conversation_with_account(pouncee, account);
 
 		if (conv == NULL)
 			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "popup-notify")) {
+	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
+	{
 		char tmp[1024];
+		const char *name_shown;
 
-		/*Here we place the protocol name in the pounce dialog to lessen confusion about what
-		  protocol a pounce is for*/
+		/*
+		 * Here we place the protocol name in the pounce dialog to lessen
+		 * confusion about what protocol a pounce is for.
+		 */
 		g_snprintf(tmp, sizeof(tmp),
-				   (events & GAIM_POUNCE_TYPING) ? _("%s has started typing to you (%s)") :
-				   (events & GAIM_POUNCE_SIGNON) ? _("%s has signed on (%s)") :
-				   (events & GAIM_POUNCE_IDLE_RETURN) ? _("%s has returned from being idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY_RETURN) ? _("%s has returned from being away (%s)") :
-				   (events & GAIM_POUNCE_TYPING_STOPPED) ? _("%s has stopped typing to you %s") :
-				   (events & GAIM_POUNCE_SIGNOFF) ? _("%s has signed off (%s)") :
-				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away. (%s)") :
+				   (events & GAIM_POUNCE_TYPING) ?
+				   _("%s has started typing to you (%s)") :
+				   (events & GAIM_POUNCE_SIGNON) ?
+				   _("%s has signed on (%s)") :
+				   (events & GAIM_POUNCE_IDLE_RETURN) ?
+				   _("%s has returned from being idle (%s)") :
+				   (events & GAIM_POUNCE_AWAY_RETURN) ?
+				   _("%s has returned from being away (%s)") :
+				   (events & GAIM_POUNCE_TYPING_STOPPED) ?
+				   _("%s has stopped typing to you (%s)") :
+				   (events & GAIM_POUNCE_SIGNOFF) ?
+				   _("%s has signed off (%s)") :
+				   (events & GAIM_POUNCE_IDLE) ?
+				   _("%s has become idle (%s)") :
+				   (events & GAIM_POUNCE_AWAY) ?
+				   _("%s has gone away. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
 				   alias,proto_id);
 
-		/*Ok here is where I change the second argument, title,
-		  from NULL to the account name if that's all we have
-		  or the account alias if we have that*/
-		if(gaim_account_get_alias(account)) {
-		  gaim_notify_info(NULL, gaim_account_get_alias(account), tmp, (char*)gaim_date_full());
-		} else {
-		  gaim_notify_info(NULL, gaim_account_get_username(account), tmp, (char*)gaim_date_full());		 
-		}
+		/*
+		 * Ok here is where I change the second argument, title, from
+		 * NULL to the account name if that's all we have or the account
+		 * alias if we have that
+		 */
+		if ((name_shown = gaim_account_get_alias(account)) == NULL)
+			name_shown = gaim_account_get_username(account);
+
+		gaim_notify_info(NULL, name_shown, tmp, gaim_date_full());
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
+	if (gaim_pounce_action_is_enabled(pounce, "send-message"))
+	{
 		const char *message;
 
 		message = gaim_pounce_action_get_attribute(pounce, "send-message",
 												   "message");
 
-		if (message != NULL) {
+		if (message != NULL)
+		{
 			conv = gaim_find_conversation_with_account(pouncee, account);
 
 			if (conv == NULL)
@@ -948,13 +1020,15 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "execute-command")) {
+	if (gaim_pounce_action_is_enabled(pounce, "execute-command"))
+	{
 		const char *command;
 
 		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
 												   "command");
 
-		if (command != NULL) {
+		if (command != NULL)
+		{
 #ifndef _WIN32
 			int pid = fork();
 
@@ -970,26 +1044,28 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 				_exit(0);
 			}
-#else
+#else /* !_WIN32 */
 			STARTUPINFO StartInfo;
 			PROCESS_INFORMATION ProcInfo;
 
 			memset(&ProcInfo, 0, sizeof(ProcInfo));
 			memset(&StartInfo, 0 , sizeof(StartInfo));
 			StartInfo.cb = sizeof(StartInfo);
-			CreateProcess(NULL, (char *)command, NULL, NULL, 0, 0, NULL, NULL, &StartInfo, &ProcInfo);
+			CreateProcess(NULL, (char *)command, NULL, NULL, 0, 0, NULL,
+						  NULL, &StartInfo, &ProcInfo);
 			gaim_debug_info("pounce",
 							"Pounce execute command called for: %s\n",
 							command);
-#endif
+#endif /* !_WIN32 */
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "play-sound")) {
+	if (gaim_pounce_action_is_enabled(pounce, "play-sound"))
+	{
 		const char *sound;
 
-		sound = gaim_pounce_action_get_attribute(pounce, "play-sound",
-												 "filename");
+		sound = gaim_pounce_action_get_attribute(pounce,
+												 "play-sound", "filename");
 
 		if (sound != NULL)
 			gaim_sound_play_file(sound);
