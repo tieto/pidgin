@@ -1495,7 +1495,17 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 	GtkTreePath *path;
 
-	if (!gtkblist || !gtknode->row)
+	if (!gtknode) {
+		gaim_debug(GAIM_DEBUG_ERROR, "gtkblist", "buddy %s has no ui_data\n", ((struct buddy *)node)->name);
+		return FALSE;
+	}
+
+	if (!gtkblist) {
+		gaim_debug(GAIM_DEBUG_ERROR, "gtkblist", "get_iter_from_node was called, but we don't seem to have a blist\n");
+		return FALSE;
+	}
+
+	if (!gtknode->row)
 		return FALSE;
 
 	if ((path = gtk_tree_row_reference_get_path(gtknode->row)) == NULL)
@@ -1550,8 +1560,9 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 {
 	gaim_gtk_blist_hide_node(list, node);
 
-	g_free(node->ui_data);
-	node->ui_data = NULL;
+	/* There's something I don't understand here */
+	/* g_free(node->ui_data);
+	node->ui_data = NULL; */
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
