@@ -11,7 +11,7 @@ static char *yahoo_pompun[] = {
 "+ c #C96B37",
 "@ c #B96631",
 "# c #FD9A42",
-"$ c #FFFFFF",
+"k c #FFFFFF",
 "% c #FFFDB0",
 "& c #EA7A32",
 "* c #B86E25",
@@ -48,7 +48,7 @@ static char *yahoo_pompun[] = {
 "g c #29A96D",
 "h c #985B39",
 "j c #006831",
-"k c None",
+"$ c None",
 /* pixels */
 "$$$$$$$$$$$$$$$$$$$$$$$$$",
 "$$$$$$$$$$$$$$$$$$$$$$$$$",

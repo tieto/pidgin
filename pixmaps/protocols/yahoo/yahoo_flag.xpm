@@ -3,7 +3,7 @@ static char *yahoo_flag[] = {
 /* width height ncolors chars_per_pixel */
 "25 18 49 1",
 /* colors */
-"  c #FFFFFF",
+"x c #FFFFFF",
 ". c #FE623A",
 "X c #E6624A",
 "o c #AE7262",
@@ -51,7 +51,7 @@ static char *yahoo_flag[] = {
 "k c #9A9AB2",
 "l c #E68E72",
 "z c #706F78",
-"x c None",
+"  c None",
 /* pixels */
 "                         ",
 "                         ",

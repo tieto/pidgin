@@ -11,11 +11,11 @@ static char *yahoo_nothappy[] = {
 "+ c #8F8C33",
 "@ c #848200",
 "# c #FFFF33",
-"$ c #FFFFFF",
+"= c #FFFFFF",
 "% c #FFFF00",
 "& c #CCCC66",
 "* c #C4BF29",
-"= c None",
+"$ c None",
 /* pixels */
 "$$$$$$$$$$$$$$$$$$",
 "$$$$$$oooooo$$$$$$",

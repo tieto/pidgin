@@ -9,10 +9,10 @@ static char *yahoo_lamp[] = {
 "o c #999933",
 "O c #FFFF33",
 "+ c #000080",
-"@ c #FFFFFF",
+"% c #FFFFFF",
 "# c #FBFBFB",
 "$ c #CCCC66",
-"% c None",
+"@ c None",
 /* pixels */
 "@@@@@........@@@@@",
 "@@@...XXXXXX...@@@",

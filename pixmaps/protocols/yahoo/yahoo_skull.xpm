@@ -8,8 +8,8 @@ static char *yahoo_skull[] = {
 "X c #CCCCCC",
 "o c #666666",
 "O c #FFFFFF",
-"+ c #FBFBFB",
-"@ c None",
+"@ c #FBFBFB",
+"+ c None",
 /* pixels */
 "++++++++++++++++++",
 "+++............+++",

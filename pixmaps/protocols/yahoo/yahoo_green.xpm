@@ -8,10 +8,10 @@ static char *yahoo_green[] = {
 "X c #BFFF00",
 "o c #00540A",
 "O c #2A3F00",
-"+ c #FFFFFF",
+"$ c #FFFFFF",
 "@ c #2EA33B",
 "# c #FBFBFB",
-"$ c None",
+"+ c None",
 /* pixels */
 "++++++++++++++++++",
 "+++++oooooooo+++++",

@@ -22,10 +22,10 @@ static char *yahoo_sleep[] = {
 "> c #6699CC",
 ", c #FFFFFF",
 "< c #FFFF00",
-"1 c #FBFBFB",
+"4 c #FBFBFB",
 "2 c #CCCC66",
 "3 c #FFBD00",
-"4 c None",
+"1 c None",
 /* pixels */
 "111111@@@@@@111111",
 "111111@=,=,@111111",
