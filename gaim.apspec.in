@@ -34,6 +34,7 @@ unprepareBuild
 
 [Imports]
 rm -rf include
+rm -rf lib/pkgconfig
 find -name '*.la' | xargs rm
 echo '*' | import
 
