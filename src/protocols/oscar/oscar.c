@@ -289,6 +289,9 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
 
+/* prpl actions - remove this at some point */
+static void oscar_set_info(struct gaim_connection *gc, char *text);
+
 int ill_just_write_my_own_damn_round_function(double val) {
 	if ((val - (int)val) > 0.5)
 		return val+1;
@@ -3734,13 +3737,10 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 {
-	va_list ap;
-	fu16_t maxsiglen;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	char *unicode;
-	int unicode_len;
-	fu32_t flags;
+	va_list ap;
+	fu16_t maxsiglen;
 
 	va_start(ap, fr);
 	maxsiglen = (fu16_t) va_arg(ap, int);
@@ -4338,7 +4338,6 @@ static void oscar_set_dir(struct gaim_connection *g, const char *first, const ch
 	aim_setdirectoryinfo(od->sess, od->conn, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 }
-
 
 static void oscar_set_idle(struct gaim_connection *gc, int time) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
