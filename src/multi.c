@@ -240,7 +240,7 @@ static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, 
 
 static void ok_mod(GtkWidget *w, struct aim_user *u)
 {
-	char *txt;
+	const char *txt;
 	int i;
 
 	if (u) {
@@ -525,7 +525,7 @@ static void pass_cancel(GtkWidget *w, struct aim_user *u)
 
 static void pass_signon(GtkWidget *w, struct aim_user *u)
 {
-	char *txt = gtk_entry_get_text(GTK_ENTRY(u->passentry));
+	const char *txt = gtk_entry_get_text(GTK_ENTRY(u->passentry));
 	g_snprintf(u->password, sizeof(u->password), "%s", txt);
 #ifdef USE_APPLET
 	set_user_state(signing_on);
@@ -549,7 +549,7 @@ static void do_pass_dlg(struct aim_user *u)
 		gtk_widget_show(u->passprmt);
 		return;
 	}
-	u->passprmt = gtk_window_new(GTK_WINDOW_DIALOG);
+	u->passprmt = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_wmclass(GTK_WINDOW(u->passprmt), "password", "Gaim");
 	gtk_container_border_width(GTK_CONTAINER(u->passprmt), 5);
 	gtk_signal_connect(GTK_OBJECT(u->passprmt), "destroy", GTK_SIGNAL_FUNC(pass_des), u);
@@ -807,7 +807,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		GtkWidget *box, *label, *button;
 		char buf[256];
 
-		gc->meter = gtk_window_new(GTK_WINDOW_DIALOG);
+		gc->meter = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_policy(GTK_WINDOW(gc->meter), 0, 0, 1);
 		gtk_window_set_wmclass(GTK_WINDOW(gc->meter), "signon", "Gaim");
 		gtk_container_set_border_width(GTK_CONTAINER(gc->meter), 5);
