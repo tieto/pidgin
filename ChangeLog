@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.65:
+version 0.65 (06/16/2003):
 	* French translation updated (Eric (Zongo) Boumaour)
 	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues Collares Neto)
 	* Korean translation updated (Kyung-uk Son)
@@ -34,6 +34,7 @@ version 0.65:
 	* Stores your buddy icon on the server for AIM
 	* Support for non-ascii characters with Yahoo! Messenger
 	* Focus returns to the input box when you click elsewhere, like it used to
+	* New typing notification icons from Ximian
 
 version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.
