@@ -143,7 +143,7 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 
 	gaim_set_accessible_label (spin, label);
 	
-	return label;
+	return hbox;
 }
 
 static void
@@ -1100,8 +1100,6 @@ GtkWidget *network_page() {
 	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), table);
 
-
-
 	vbox = gaim_gtk_make_frame (ret, _("Ports"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1590,34 +1588,38 @@ GtkWidget *away_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
 	button = gaim_gtk_prefs_checkbox(_("Set away _when idle"),
 						   "/core/away/away_when_idle", vbox);
+
 	select = gaim_gtk_prefs_labeled_spin_button(vbox,
 			_("_Minutes before setting away:"), "/core/away/mins_before_away",
 			1, 24 * 60, sg);
-
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
 	prefs_away_menu = gtk_option_menu_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), prefs_away_menu);
-
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), prefs_away_menu);
 	default_away_menu_init(prefs_away_menu);
 	gtk_widget_show(prefs_away_menu);
 	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
+	gaim_set_accessible_label (prefs_away_menu, label);
+
 
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
 	}
-
-	gaim_set_accessible_label (prefs_away_menu, label);
 
 	gtk_widget_show_all(ret);
 
@@ -2449,7 +2451,7 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, NULL, notebook_page++);
 	prefs_notebook_add_page(_("IMs"), NULL, im_page(), &c, &p2, notebook_page++);
 	prefs_notebook_add_page(_("Chats"), NULL, chat_page(), &c, &p2, notebook_page++);
-	/* XXX */prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
