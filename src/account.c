@@ -271,8 +271,6 @@ gaim_account_set_connection(GaimAccount *account, GaimConnection *gc)
 	g_return_if_fail(account != NULL);
 
 	account->gc = gc;
-
-	schedule_accounts_save();
 }
 
 void
