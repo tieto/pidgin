@@ -608,10 +608,10 @@ void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
 GList *gaim_accounts_get_all(void);
 
 /**
- * Finds an account with the specified name and protocol number.
+ * Finds an account with the specified name and protocol id.
  *
  * @param name     The account username.
- * @param protocol The account protocol ID or number.
+ * @param protocol The account protocol ID.
  *
  * @return The account, if found, or @c FALSE otherwise.
  */
