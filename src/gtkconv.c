@@ -281,9 +281,14 @@ static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	GaimAccount *account;
 	char *buf, *clean;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	account = gaim_conversation_get_account(conv);
+
+	if (!gaim_account_is_connected(account))
+		return;
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	clean = gaim_markup_strip_html(buf);
