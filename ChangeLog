@@ -9,6 +9,9 @@ version 0.68:
 	* Yahoo color support (Tim Ringenbach (marv_sf))
 	* Yahoo and MSN get info support (Nathan Poznick)
 	* Fixed Jabber registrations.
+	* Fixed a problem where pouncing two users with the same name
+	  appeared in the same conversation window, and other related
+	  problems. (Robot101)
 	* Corrected problems with proxy preferences.
 	* Catalan translation updated (Robert Millan)
 	* Chinese (Simplified) translation updated (Funda Wang)
