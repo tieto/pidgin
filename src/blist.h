@@ -455,6 +455,14 @@ const char *gaim_get_buddy_alias_only(GaimBuddy *buddy);
 const char *gaim_get_buddy_alias(GaimBuddy *buddy);
 
 /**
+ * Returns the correct name to display for a blist chat.
+ *
+ * @param chat   The chat whose name will be returned.
+ * @return       The alias (if set), or first component value.
+ */
+const char *gaim_blist_chat_get_name(GaimBlistChat *chat);
+
+/**
  * Finds the buddy struct given a screenname and an account
  *
  * @param name    The buddy's screenname or NULL to search for more buddies with the same screenname

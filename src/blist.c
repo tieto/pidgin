@@ -1037,6 +1037,26 @@ const char *  gaim_get_buddy_alias (GaimBuddy *buddy)
 	return ret;
 }
 
+const char *gaim_blist_chat_get_name(GaimBlistChat *chat)
+{
+	if(chat->alias && *chat->alias) {
+		return chat->alias;
+	} else {
+		struct proto_chat_entry *pce;
+		GList *parts, *tmp;
+		char *ret;
+
+		parts = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+		pce = parts->data;
+		ret = g_hash_table_lookup(chat->components, pce->identifier);
+		for(tmp = parts; tmp; tmp = tmp->next)
+			g_free(tmp->data);
+		g_list_free(parts);
+
+		return ret;
+	}
+}
+
 GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 {
 	GaimBuddy *buddy;
