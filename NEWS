@@ -4,6 +4,18 @@
 
 	Herman: Win Gaim has been around for more than a year now.. Time Flies.
 
+	Christian: It's a good release. The main highlight really is
+	Nathan's Contact support, which is just beautiful. My buddy list
+	shrunk considerably. As Sean stated, MSN and Yahoo! work.  MSN
+	does not support the new MSN buddy icons and stuff, unfortunately,
+	but we'll see about 0.70.  There were a whole bunch of Perl fixes,
+	so hopefully there will be less complaints directed to my code in
+	that area ;) Among other new additions of mine are SSL support
+	(both Mozilla NSS and GNUTLS), Plugin IPC (letting plugins talk to
+	each other), and some visual niceties in the Accounts window.
+	Ka-Hing Cheung put in animated smileys, which should please many.
+	Yeah, good release. Just you wait until 0.70 though.
+
 0.68 (09/01/2003):
 	Rob: Wow. I am so incredibly tired.
 
