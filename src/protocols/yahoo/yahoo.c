@@ -902,16 +902,16 @@ static char *yahoo_decode(const char *text)
 	char *converted;
 	char *n, *new;
 	const char *end, *p;
-	int i;
+	int i, k;
 
 	n = new = g_malloc(strlen (text) + 1);
 	end = text + strlen(text);
 
 	for (p = text; p < end; p++, n++) {
 		if (*p == '\\') {
-			sscanf(p + 1, "%3o\n", &i);
+			sscanf(p + 1, "%3o%n\n", &i, &k);
 			*n = i;
-			p += 3;
+			p += k - 1;
 		}
 		else
 			*n = *p;
