@@ -12,8 +12,6 @@
 	Service Discovery
 0045: DONE
 	Multi-User Chat
-0052: NEED
-	File Transfer
 0054: DONE (ugly)
 	vCard
 0060: NEED
@@ -46,6 +44,10 @@
 	Software Version
 0093: NEED
 	Roster Item Exchange
+0095: NEED
+	Stream Initiation
+0096: NEED
+	File Transfer Stream Initiation Profile
 0100: NEED
 	Gateway Interaction (Transports)
 0115: WATCH
