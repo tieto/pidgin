@@ -346,10 +346,19 @@ GtkWidget *theme_page() {
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreePath *path = NULL;
+	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 1, 0},{"STRING", 2, 0}};
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can\nbe installed by dragging and dropping them onto the theme list."));
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, TRUE, 0);
+	gtk_widget_show(label);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
