@@ -262,11 +262,19 @@ void irc_callback ( struct gaim_connection * gc ) {
 	if ( (strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
+		gchar u_nick[128];
+		
 		struct irc_channel *channel;
 		int id;
 		int j;
 
-		for (j = 0, i = 1; buf[i] != '#'; j++, i++) {
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+
+		u_nick[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != '#'; j++, i++) {
 		}
 		
 		i++;
@@ -293,6 +301,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 			printf("IIII: I joined '%s' with a strlen() of '%d'\n", u_channel, strlen(u_channel));
 		} else {
 			/* Someone else joined. */
+			printf("%s has joined #%s\n", u_nick, u_channel);
 		}
 
 		return;
@@ -351,7 +360,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 		return;
 	}
 	
-	if ( (strstr(buf, "PRIVMSG ")) && (buf[0] == ':')) {
+	if ( (strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
 		gchar u_host[255];
 		gchar u_command[32];
@@ -415,7 +424,6 @@ void irc_callback ( struct gaim_connection * gc ) {
 		}
 		else {
 			/* Nope. Let's treat it as a private message */
-			printf("JUST GOT AN IM!!\n");
 			serv_got_im(gc, u_nick, u_message, 0);
 		}
 
