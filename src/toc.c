@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 986 $"
+#define REVISION "gaim:$Revision: 988 $"
 
 
 static unsigned int peer_ver=0;
@@ -617,6 +617,7 @@ void toc_callback( gpointer          data,
 	                ft->user = g_strdup(user);
 	                ft->size = totalsize;
 			sprintf(ft->UID, "%s", FILE_SEND_UID);
+			ft->gc = gc;
                 
 	                g_free(tmp);
 
@@ -645,6 +646,7 @@ void toc_callback( gpointer          data,
 				ft->message = NULL;
 			ft->user = g_strdup(user);
 			sprintf(ft->UID, "%s", FILE_GET_UID);
+			ft->gc = gc;
 
 			g_free(tmp);
 

@@ -62,9 +62,7 @@ static void free_ft(struct file_transfer *ft)
 
 static void warn_callback(GtkWidget *widget, struct file_transfer *ft)
 {
-	/* FIXME
-        show_warn_dialog(ft->user);
-	*/
+        show_warn_dialog(ft->gc, ft->user);
 }
 
 static void info_callback(GtkWidget *widget, struct file_transfer *ft)
@@ -78,7 +76,7 @@ static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 		return;
 	}
 	
-	serv_rvous_cancel(ft->user, ft->cookie, ft->UID);
+	serv_rvous_cancel(ft->gc, ft->user, ft->cookie, ft->UID);
 
 	free_ft(ft);
 }
@@ -230,7 +228,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
+	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
 
 	
 	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
@@ -328,7 +326,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-		serv_rvous_cancel(ft->user, tmp, ft->UID);
+		serv_rvous_cancel(ft->gc, ft->user, tmp, ft->UID);
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -462,7 +460,7 @@ static void send_file_callback(gpointer data, gint source,
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-		serv_rvous_cancel(ft->user, tmp, ft->UID);
+		serv_rvous_cancel(ft->gc, ft->user, tmp, ft->UID);
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -503,7 +501,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
+	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
 
 
 

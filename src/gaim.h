@@ -382,6 +382,7 @@ struct file_transfer {
         FILE *f;
         int fd;
 	char UID[2048];
+	struct gaim_connection *gc;
 };
 
 struct sflap_hdr {
@@ -634,7 +635,7 @@ extern void serv_get_dir(char *);
 extern void serv_set_idle(struct gaim_connection *, int);
 extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(char *);
-extern void serv_change_passwd(char *, char *);
+extern void serv_change_passwd(struct gaim_connection *, char *, char *);
 extern void serv_add_buddy(char *);
 extern void serv_add_buddies(GList *);
 extern void serv_remove_buddy(char *);
@@ -663,8 +664,8 @@ extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, 
 extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *);
-extern void serv_rvous_accept(char *, char *, char *);
-extern void serv_rvous_cancel(char *, char *, char *);
+extern void serv_rvous_accept(struct gaim_connection *, char *, char *, char *);
+extern void serv_rvous_cancel(struct gaim_connection *, char *, char *, char *);
 
 /* Functions in conversation.c */
 extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);

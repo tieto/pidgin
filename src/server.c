@@ -282,19 +282,15 @@ void serv_set_info(struct gaim_connection *g, char *info)
 	}
 }
 
-void serv_change_passwd(char *orig, char *new) {
-	/* FIXME: passwords are the kinds of things you don't want randomly changed;
-	 * this whole thing is commented out :-P
-	struct gaim_connection *g = connections->data;
+void serv_change_passwd(struct gaim_connection *g, char *orig, char *new) {
 	if (g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG); 
 		g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
 		sflap_send(g, buf, strlen(buf), TYPE_DATA);
 		g_free(buf);
 	} else if (g->protocol == PROTO_OSCAR) {
-		Oscar change_passwd FIXME
+		/* Oscar change_passwd FIXME */
 	}
-	*/
 }
 
 void serv_add_buddy(char *name)
@@ -1080,21 +1076,17 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
         chat_write(b, who, w, message);
 }
 
-void serv_rvous_accept(char *name, char *cookie, char *uid)
+void serv_rvous_accept(struct gaim_connection *g, char *name, char *cookie, char *uid)
 {
 	/* Oscar doesn't matter here because this won't ever be called for it */
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-void serv_rvous_cancel(char *name, char *cookie, char *uid)
+void serv_rvous_cancel(struct gaim_connection *g, char *name, char *cookie, char *uid)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
