@@ -1,5 +1,5 @@
 /*
- * $Id: icqbyteorder.h 1319 2000-12-19 10:08:29Z warmenhoven $
+ * $Id: icqbyteorder.h 1385 2001-01-04 22:46:19Z warmenhoven $
  *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *
@@ -60,6 +60,12 @@
  */
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 # include <arpa/nameser_compat.h>
+#endif
+
+/* put in by EWarmenhoven; jlsantiago told me what to do. I should send this on to the
+ * icqlib guys. */
+#ifdef hpux
+#include <arpa/nameser.h>
 #endif
 
 /*

@@ -660,46 +660,73 @@ static int yahoo_socket_connect(struct yahoo_context *ctx, char *host,
 	return servfd;
 }
 
-/* really ugly brute force approach - someone find a GPL'd/free
-   equivalent and replace this p.o.s. */
-static char *yahoo_urlencode(char *data)
+/*  
+ *  yahoo_urlencode(char *)
+ *
+ *
+ *  29/12/2000:
+ *
+ *  function modified to accept only one arg.
+ *  added code to reuse the buffer and check allocs.
+ *
+ *  -- Hrishikesh Desai <hrishi@mediaibc.com>
+ *
+ */
+
+
+static char *yahoo_urlencode(char *instr)
 {
-	static char *tmp = NULL;
-	char buf[4];
-	int i, len;
+	register int ipos, bpos; //input str pos., buffer pos.
+	static unsigned char *str=NULL;
+	int len=strlen(instr);
+	int tmp;
 
-	len = 3 * strlen(data) + 1;
-
-        if (tmp)
-                FREE(tmp);
-
-	if (!data)
-		return NULL;
-
-	/* change this at some point to re-use the buffer, no sense
-	   allocating repeatedly */
-	if (!(tmp = (char *) malloc(len)))
-                return NULL;
-	tmp[0] = 0;
-
-	for (i = 0; i < strlen(data); i++)
+	//attempt to reuse buffer
+	if(NULL==str)
+	str = (unsigned char *) malloc(3 * len + 1);
+	else
+	str = (unsigned char *) realloc(str,3 * len + 1);
+	
+	//malloc, realloc failed ?
+	if(errno==ENOMEM)
 	{
-		if (isdigit((int) (data[i])) ||
-			isalpha((int) data[i]) || data[i] == '_')
-		{
-			buf[0] = data[i];
-			buf[1] = 0;
-			strcat(tmp, buf);
-		}
-		else
-		{
-			sprintf(buf, "%%%.2X", data[i]);
-			strcat(tmp, buf);
-		}
+	perror("libyahoo[yahoo_urlencode]");
+	//return ref. to empty string, so's prog. or whatever wont crash
+	return "";
+	}
+	
+	ipos=bpos=0;
+
+	while(ipos<len)
+	{
+	
+	//using inverted logic frm original code....
+	if (!isdigit((int) (instr[ipos])) 
+	&& !isalpha((int) instr[ipos]) && instr[ipos] != '_')
+	{
+	tmp=instr[ipos] / 16;
+	str[bpos++]='%';
+	str[bpos++]=( (tmp < 10)?(tmp+'0'):(tmp+'A'-10));
+	tmp=instr[ipos] % 16;
+	str[bpos++]=( (tmp < 10)?(tmp+'0'):(tmp+'A'-10));
+	}
+	else
+	{
+	str[bpos++]=instr[ipos];
+	}
+	
+	ipos++;
 	}
 
-	return tmp;
+	str[bpos] = '\0';
+	
+	//free extra alloc'ed mem.
+	tmp=strlen(str);
+	str = (unsigned char *) realloc(str,tmp + 1);
+	
+	return ( str);
 }
+
 
 static int yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
 	int datalen)
