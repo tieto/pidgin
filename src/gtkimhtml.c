@@ -257,8 +257,7 @@ static void url_open(GtkWidget *w, struct url_data *data) {
 static void url_copy(GtkWidget *w, gchar *url) {
 	GtkClipboard *clipboard;
 
-	clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(),
-					GDK_SELECTION_CLIPBOARD);
+	clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_set_text(clipboard, url, -1);
 }
 
