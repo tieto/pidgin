@@ -1463,8 +1463,8 @@ gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->default_font = gtk_imhtml_font_load (imhtml, NULL, FALSE, FALSE, 0);
 	if (imhtml->default_font == NULL)
 		g_warning ("GtkIMHtml: Could not load default font!");
-	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->black);
-	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->white);
+	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
+	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -1989,7 +1989,8 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 		    gint        strike,
 		    FontDetail *font,
 		    GdkColor   *bg,
-		    gchar      *url)
+		    gchar      *url,
+		    gint	pre)
 {
 	GtkIMHtmlBit *bit = NULL;
 
@@ -2005,11 +2006,19 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 	if ((text != NULL) && (strlen (text) != 0))
 		bit->text = g_strdup (text);
 
-	if ((font != NULL) || bold || italics) {
-		if (font && (bold || italics || font->size || font->face)) {
-			bit->font = gtk_imhtml_font_load (imhtml, font->face, bold, italics, font->size);
-		} else if (bold || italics) {
-			bit->font = gtk_imhtml_font_load (imhtml, NULL, bold, italics, 0);
+	if ((font != NULL) || bold || italics || pre) {
+		if (font && (bold || italics || font->size || font->face || pre)) {
+			if (pre) {
+				bit->font = gtk_imhtml_font_load (imhtml, "courier", bold, italics, font->size);
+			} else {
+				bit->font = gtk_imhtml_font_load (imhtml, font->face, bold, italics, font->size);
+			}
+		} else if (bold || italics || pre) {
+			if (pre) {
+				bit->font = gtk_imhtml_font_load (imhtml, "Courier", bold, italics, 0);
+			} else {
+				bit->font = gtk_imhtml_font_load (imhtml, NULL, bold, italics, 0);
+			}
 		}
 
 		if (font && (type != TYPE_BR)) {
@@ -2052,14 +2061,14 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 }
 
 #define NEW_TEXT_BIT    gtk_imhtml_new_bit (imhtml, TYPE_TEXT, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url)
+				fonts ? fonts->data : NULL, bg, url, pre)
 #define NEW_SMILEY_BIT  gtk_imhtml_new_bit (imhtml, TYPE_SMILEY, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url)
-#define NEW_SEP_BIT     gtk_imhtml_new_bit (imhtml, TYPE_SEP, NULL, 0, 0, 0, 0, NULL, bg, NULL)
+				fonts ? fonts->data : NULL, bg, url, pre)
+#define NEW_SEP_BIT     gtk_imhtml_new_bit (imhtml, TYPE_SEP, NULL, 0, 0, 0, 0, NULL, bg, NULL, 0)
 #define NEW_BR_BIT      gtk_imhtml_new_bit (imhtml, TYPE_BR, NULL, 0, 0, 0, 0, \
-				fonts ? fonts->data : NULL, bg, NULL)
+				fonts ? fonts->data : NULL, bg, NULL, 0)
 #define NEW_COMMENT_BIT gtk_imhtml_new_bit (imhtml, TYPE_COMMENT, ws, bold, italics, underline, strike, \
-				fonts ? fonts->data : NULL, bg, url)
+				fonts ? fonts->data : NULL, bg, url, pre)
 
 #define NEW_BIT(bit) { GtkIMHtmlBit *tmp = bit; if (tmp != NULL) \
 				newbits = g_list_append (newbits, tmp); }
@@ -2165,7 +2174,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		strike = 0,
 		sub = 0,
 		sup = 0,
-		title = 0;
+		title = 0,
+		pre = 0;
 	GSList *fonts = NULL;
 	GdkColor *bg = NULL;
 	gchar *url = NULL;
@@ -2333,6 +2343,16 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				NEW_BIT (NEW_TEXT_BIT);
 				if (sup) {
 					sup--;
+				}
+			} else if (!g_strcasecmp (tag, "<PRE>")) {
+				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
+				pre++;
+			} else if (!g_strcasecmp (tag, "</PRE>")) {
+				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
+				if (pre) {
+					pre--;
 				}
 			} else if (!g_strcasecmp (tag, "<TITLE>")) {
 				if (options & GTK_IMHTML_NO_TITLE) {
@@ -2737,8 +2757,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			} else if (!g_strcasecmp (tag, "<P>") ||
 				   !g_strcasecmp (tag, "</P>") ||
 				   !g_strncasecmp (tag, "<P ", strlen ("<P ")) ||
-				   !g_strcasecmp (tag, "<PRE>") ||
-				   !g_strcasecmp (tag, "</PRE>") ||
 				   !g_strcasecmp (tag, "<H3>") ||
 				   !g_strncasecmp (tag, "<H3 ", strlen ("<H3 ")) ||
 				   !g_strcasecmp (tag, "</H3>") ||
@@ -2961,6 +2979,10 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		while (title) {
 			retval = g_string_append (retval, "</TITLE>");
 			title--;
+		}
+		while (pre) {
+			retval = g_string_append (retval, "</PRE>");
+			pre--;
 		}
 	}
 	g_free (ws);
