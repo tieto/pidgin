@@ -531,7 +531,7 @@ void show_new_buddy_chat(struct buddy_chat *b)
         gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
 
         gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 5);
                                        
         
 	gtk_paned_pack2(GTK_PANED(hpaned), lbox, TRUE, TRUE);
