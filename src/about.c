@@ -143,7 +143,6 @@ void show_about(GtkWidget *w, void *data)
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">Current Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_(""
 				"  <b>Catalan (ca)</b> - Robert Millan &lt;<a href=\"mailto: zeratul2@wanadoo.es\">zeratul2@wanadoo.es</a>&gt;<br>"
 				"  <b>Czech (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
 				"  <b>Danish (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
@@ -161,12 +160,11 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>Swedish (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
 				"  <b>Simplified Chinese (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
 				"  <b>Traditional Chinese (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt; and Paladin R. Liu &lt;<a href=\"mailto: paladin@ms1.hinet.net\">paladin@ms1.hinet.net</a><br>"
-				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+				"<BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">Past Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_(""
 				"  <b>Amharic (am)</b> - Daniel Yacob<br>"
 				"  <b>Bulgarian (bg)</b> - Hristo Todorov<br>"
 				"  <b>Catalan (ca)</b> - JM Pérez Cáncer<br>"
@@ -184,7 +182,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>Slovak (sk)</b> - Daniel Režný<br>"
 				"  <b>Swedish (sv)</b> - Christian Rose<br>"
 				"  <b>Chinese (zh_CN, zh_TW)</b> - Hashao, Rocky S. Lee<br>"
-				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+				"<BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 
