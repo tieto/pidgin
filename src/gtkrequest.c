@@ -440,8 +440,13 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+#if 0
+	/* HIG says no to this :( */
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(win), title);
+#endif
+
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
@@ -465,6 +470,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
 
 		g_free(label_text);
 	}
@@ -487,9 +493,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 			frame = gaim_gtk_make_frame(vbox,
 				gaim_request_field_group_get_title(group));
 		}
-		else {
+		else
 			frame = vbox;
-		}
 
 		field_count = g_list_length(field_list);
 

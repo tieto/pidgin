@@ -827,5 +827,3 @@ gaim_get_request_ui_ops(void)
 {
 	return request_ui_ops;
 }
-
-
