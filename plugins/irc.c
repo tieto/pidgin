@@ -339,6 +339,7 @@ static struct conversation *find_conversation_by_name(struct gaim_connection *gc
 	struct conversation *b = NULL;
 
 	while (bc) {
+		int x;
 		b = (struct conversation *)bc->data;
 
 		if (g_strcasecmp(name, b->name) == 0) {
@@ -376,6 +377,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	} while (buf[i++] != '\n');
 
 	buf[--i] = '\0';
+	g_strchomp(buf);
 	g_print("%s\n", buf);
 
 	/* Check for errors */
@@ -574,6 +576,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		strcpy(u_channel, buf + i);
 
+		g_strchomp(u_channel);
+
 		/* Looks like we're going to join the channel for real 
 		 * now.  Let's create a valid channel structure and add 
 		 * it to our list.  Let's make sure that
@@ -582,6 +586,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		channel = find_channel_by_name(gc, u_channel);
 
 		if (!channel) {
+
 			chat_id++;
 
 			channel = g_new0(struct irc_channel, 1);
