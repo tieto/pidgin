@@ -1743,8 +1743,8 @@ static void sound_page()
 	gtk_widget_show(vbox);
 
 	for (j=0; j < NUM_SOUNDS; j++) {
-		/* no entry for the buddy pounce sound, it's configurable per-pounce */
-		if (j == SND_POUNCE_DEFAULT)
+		/* no entry for sounds without an option */
+		if (sounds[j].opt == 0)
 			continue;
 
 		/* seperators before SND_RECEIVE and SND_CHAT_JOIN */

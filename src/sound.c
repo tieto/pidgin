@@ -58,14 +58,14 @@
 struct sound_struct sounds[NUM_SOUNDS] = {
 	N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive),
 	N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave),
-	N_("Message recieved begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
 	N_("Message recieved"), OPT_SOUND_RECV, Receive, sizeof(Receive),
+	N_("Message recieved begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive),
 	N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send),
 	N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive),
 	N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave),
 	N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send),
 	N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive),
-	NULL, NULL, &RedAlert, sizeof(RedAlert)
+	NULL, 0, RedAlert, sizeof(RedAlert)
 };
 
 static int check_dev(char *dev)
@@ -413,7 +413,7 @@ void play_file(char *filename)
 	}
 
 	else if (sound_options & OPT_SOUND_NORMAL) {
-		debug_printf("attempting to play audio file with internal method -- this is unlikely to work");
+		debug_printf("attempting to play audio file with internal method -- this is unlikely to work\n");
 	}
 
 	pid = fork();
@@ -549,12 +549,12 @@ void play_sound(int sound)
 		return;
 
 	if (sound >= NUM_SOUNDS) {
-		debug_printf("sorry old fruit... can't say I know that sound: ", sound);
+		debug_printf("sorry old fruit... can't say I know that sound: ", sound, "\n");
 		return;
 	}
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
-	if ((sound_options & sounds[sound].opt) || (sounds[sound].opt == NULL)) {
+	if ((sound_options & sounds[sound].opt) || (sounds[sound].opt == 0)) {
 		if (sound_file[sound]) {
 			play_file(sound_file[sound]);
 		} else {
