@@ -1479,6 +1479,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtknode = node->ui_data;
 
 	if (node->child && node->child->next && GAIM_BLIST_NODE_IS_CONTACT(node) && !gtknode->contact_expanded) {
+		GtkTreeIter i;
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
 		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.  We'll draw the tip above
 				       the cursor so that the user can see the included buddies */
@@ -1489,18 +1490,11 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
-		while (1) {
-			GtkTreePath *path2;
+		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
 			GdkRectangle rect;
 			gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
 			gtkblist->contact_rect.height += rect.height;
-			path2 = path;
 			gtk_tree_path_next(path); 
-			if (path2 == path) {
-				gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path2, NULL, &rect);
-				gtkblist->contact_rect.height += rect.height;
-				break;
-			}
 		}
 	}
 
@@ -1566,15 +1560,24 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 	x -= ((w >> 1) + 4);
 
-	if ((x + w) > scr_w)
-		x -= (x + w + 5) - scr_w;
-	else if (x < 0)
-		x = 0;
-
 	if ((y + h + 4) > scr_h || tooltip_top)
 		y = y - h - 5;
 	else
 		y = y + 6;
+
+	if (y < 0)
+		y = 0;
+	
+	if (y != 0) {
+		if ((x + w) > scr_w)
+			x -= (x + w + 5) - scr_w;
+		else if (x < 0)
+			x = 0;
+	} else {
+		x -= (w / 2 + 10);
+		if (x < 0)
+			x += w + 15;
+	}
 
 	g_object_unref (layout);
 	g_free(tooltiptext);
