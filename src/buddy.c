@@ -1827,13 +1827,13 @@ void unhide_buddy_list() {
 			/* don't move it off screen */
 			if (blist_pos.x >= gdk_screen_width()) {
 				blist_pos.x = gdk_screen_width() - 100;
-			} else if (blist_pos.x <= 0) {
+			} else if (blist_pos.x < 0) {
 				blist_pos.x = 100;
 			}
 
 			if (blist_pos.y >= gdk_screen_height()) {
 				blist_pos.y = gdk_screen_height() - 100;
-			} else if (blist_pos.y <= 0) {
+			} else if (blist_pos.y < 0) {
 				blist_pos.y = 100;
 			}
 
