@@ -287,6 +287,8 @@ static GtkWidget *generate_list()
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win),
 								   GTK_POLICY_AUTOMATIC,
 								   GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(win),
+										GTK_SHADOW_IN);
 
 	/* Create the list model. */
 	model = gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN,
@@ -1174,7 +1176,6 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	GtkWidget *button;	/* used for many things */
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
-	GtkWidget *frame;
 
 	if (acctedit) {
 		gtk_window_present(GTK_WINDOW(acctedit));
@@ -1194,15 +1195,10 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_container_add(GTK_CONTAINER(acctedit), vbox);
 
 	sw = generate_list();
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_container_add(GTK_CONTAINER(frame), sw);
-	gtk_widget_show(frame);
-
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
 #if 0
 	vbox2 = gtk_vbox_new(TRUE, 5);
