@@ -1485,6 +1485,16 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	struct gaim_connection *gc = sess->aux_data;
 
 	switch (args->type) {
+		case 0x0001: { /* An almost-normal instant message.  Mac ICQ sends this.  It's peculiar. */
+			char *uin, *message;
+			uin = g_strdup_printf("%lu", args->uin);
+			message = g_strdup(args->msg);
+			strip_linefeed(message);
+			serv_got_im(gc, uin, message, 0, time(NULL), -1);
+			g_free(uin);
+			g_free(message);
+		} break;
+
 		case 0x0006: { /* Someone requested authorization */
 			gaim_icq_authask(gc, args->uin, args->msg);
 		} break;
