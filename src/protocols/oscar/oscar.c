@@ -5419,15 +5419,14 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
-	GSList *curg = gaim_blist_groups(), *curg1, *curb;
+	GSList *curg = gaim_blist_groups(), *curg1;
 	int num=0;
 
 	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
 	for (curg1 = curg; curg1; curg1=g_slist_next(curg1)) {
 		struct group *group = curg1->data;
-		GSList *curb = gaim_blist_members(group);
-		GSList *curb1;
+		GSList *curb = gaim_blist_members(group), *curb1;
 		for (curb1=curb; curb1; curb1=g_slist_next(curb1)) {
 			struct buddy *buddy = curb1->data;
 			if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {

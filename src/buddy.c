@@ -106,6 +106,11 @@ static void gtk_blist_show_systemlog_cb()
        show_log(NULL);
 }
 
+static void gtk_blist_show_onlinehelp_cb()
+{
+       open_url(NULL, "http://gaim.sourceforge.net/documentation.php");
+}
+
 static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 {
 	GtkTreeIter iter;
@@ -538,7 +543,7 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Help/Online _Help"), "F1", NULL, 0,
+	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0,
 	  "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, NULL },
 	{ N_("/Help/_About"), NULL, show_about, 0, NULL },
