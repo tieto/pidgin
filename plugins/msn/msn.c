@@ -252,14 +252,11 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 
 	g_strchomp(buf);
 
-	printf("!!MSN(%d) ==> %s\n", source, buf);
-	printf("Got here.\n");
+	printf("MSN(%d) ==> %s\n", source, buf);
 
 	if (!strncmp("USR ", buf, 4))
 	{
 		char **res;
-
-		printf("Got here2.\n");
 
 		res = g_strsplit(buf, " ", 0);
 		printf("%s\n",res[2]);
@@ -358,6 +355,24 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		return;
 
+	}
+	else if (!strncmp("BYE ", buf, 4))
+	{
+		char **res;
+		struct msn_conn *mc;
+
+		res = g_strsplit(buf, " ", 0);
+
+		mc = find_msn_conn_by_user(res[1]);
+
+		if (mc)
+		{
+			/* Looks like we need to close up some stuff :-) */
+			free_msn_conn(mc);
+		}
+		
+		g_strfreev(res);	
+		return;
 	}
 	else if (!strncmp("MSG ", buf, 4))
 	{
@@ -516,6 +531,54 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		return;
 	}
+	else if (!strncmp("FLN ", buf, 4))
+	{
+		/* Someone signed off */
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+
+		serv_got_update(gc, res[1], 0, 0, 0, 0, 0, 0);
+
+		g_strfreev(res);
+
+		return;
+	}
+	if ( (!strncmp("NLN ", buf, 4)) || (!strncmp("ILN ", buf, 4)))
+	{
+		int status;
+		int query;
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+
+		if (strcasecmp(res[0], "NLN") == 0)
+			query = 1;
+		else
+			query = 2;
+
+		if (!strcasecmp(res[query], "NLN"))
+			status = UC_NORMAL;
+		else if (!strcasecmp(res[query], "BSY"))
+			status = UC_NORMAL | (MSN_BUSY << 5);
+		else if (!strcasecmp(res[query], "IDL"))
+			status = UC_NORMAL | (MSN_IDLE << 5);
+		else if (!strcasecmp(res[query], "BRB"))
+			status = UC_NORMAL | (MSN_BRB << 5);
+		else if (!strcasecmp(res[query], "AWY"))
+			status = UC_UNAVAILABLE;
+		else if (!strcasecmp(res[query], "PHN"))
+			status = UC_NORMAL | (MSN_PHONE << 5);
+		else if (!strcasecmp(res[query], "LUN"))
+			status = UC_NORMAL | (MSN_LUNCH << 5);
+		else
+			status = UC_NORMAL;
+
+		serv_got_update(gc, res[query+1], 1, 0, 0, 0, status, 0);
+
+		g_strfreev(res);
+		return;
+	}
 
 }
 
@@ -625,75 +688,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		g_strfreev(res);
 		return;
 	}
-	else if (!strncmp("FLN ", buf, 4))
-	{
-		/* Someone signed off */
-		char **res;
 
-		res = g_strsplit(buf, " ", 0);
-
-		serv_got_update(gc, res[1], 0, 0, 0, 0, 0, 0);
-
-		g_strfreev(res);
-
-		return;
-	}
-	if ( (!strncmp("NLN ", buf, 4)) || (!strncmp("ILN ", buf, 4)))
-	{
-		int status;
-		int query;
-		char **res;
-
-		res = g_strsplit(buf, " ", 0);
-
-		if (strcasecmp(res[0], "NLN") == 0)
-			query = 1;
-		else
-			query = 2;
-
-		if (!strcasecmp(res[query], "NLN"))
-			status = UC_NORMAL;
-		else if (!strcasecmp(res[query], "BSY"))
-			status = UC_NORMAL | (MSN_BUSY << 5);
-		else if (!strcasecmp(res[query], "IDL"))
-			status = UC_NORMAL | (MSN_IDLE << 5);
-		else if (!strcasecmp(res[query], "BRB"))
-			status = UC_NORMAL | (MSN_BRB << 5);
-		else if (!strcasecmp(res[query], "AWY"))
-			status = UC_UNAVAILABLE;
-		else if (!strcasecmp(res[query], "PHN"))
-			status = UC_NORMAL | (MSN_PHONE << 5);
-		else if (!strcasecmp(res[query], "LUN"))
-			status = UC_NORMAL | (MSN_LUNCH << 5);
-		else
-			status = UC_NORMAL;
-
-		serv_got_update(gc, res[query+1], 1, 0, 0, 0, status, 0);
-
-		g_strfreev(res);
-		return;
-	}
-
-	
-	else if (!strncmp("BYE ", buf, 4))
-	{
-		char **res;
-		struct msn_conn *mc;
-
-		res = g_strsplit(buf, " ", 0);
-
-		mc = find_msn_conn_by_user(res[1]);
-
-		if (mc)
-		{
-			/* Looks like we need to close up some stuff :-) */
-			free_msn_conn(mc);
-		}
-		
-		g_strfreev(res);	
-		return;
-	}
-	
 	else if (!strncmp("XFR ", buf, 4))
 	{
 		char **res;
