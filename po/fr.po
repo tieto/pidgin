@@ -2,7 +2,7 @@
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # FIRST AUTHOR <sebfrance@ifrance.com>, 2001.
 # sebfrance <sebfrance@ifrance.com>, 2002.
-# Stéphane Pontier <stephane.pontier@free.fr>, 2002.
+# Stephane Pontier <stephane.pontier@free.fr>, 2002.
 # Stephane Wirtel <stephane.wirtel@belgacom.net>, 2002.
 #
 msgid ""
