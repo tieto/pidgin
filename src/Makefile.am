@@ -132,6 +132,7 @@ gaim_coreheaders = \
 	sslconn.h \
 	util.h \
 	value.h \
+	version.h \
 	xmlnode.h
 
 bin_PROGRAMS = gaim gaim-remote
