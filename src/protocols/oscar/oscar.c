@@ -4145,7 +4145,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
-	aim_ssi_cleanlist(sess, fr->conn);
+	/* aim_ssi_cleanlist(sess, fr->conn); */
 
 	/* Add from server list to local list */
 	tmp = 0;
