@@ -1730,7 +1730,7 @@ void show_conv(struct conversation *c)
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	c->window = win;
 	gtk_object_set_user_data(GTK_OBJECT(win), c);
-        gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
+	gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 	gtk_container_border_width(GTK_CONTAINER(win), 10);
 	gtk_widget_realize(win);
@@ -1743,10 +1743,11 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
 
 	paned = gtk_vpaned_new();
+	gtk_paned_set_gutter_size(GTK_PANED(paned), 15);
 	gtk_container_add(GTK_CONTAINER(win), paned);
 	gtk_widget_show(paned);
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
 
@@ -1754,8 +1755,8 @@ void show_conv(struct conversation *c)
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), 
 			GTK_POLICY_NEVER, 
 			GTK_POLICY_ALWAYS);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-	gtk_widget_set_usize(sw, 320, 150);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_set_usize(sw, 320, 175);
 	gtk_widget_show(sw);
 
 	text = gtk_html_new(NULL, NULL);
@@ -1766,7 +1767,7 @@ void show_conv(struct conversation *c)
 	GTK_HTML (text)->vadj->step_increment = 10.0;
 	gtk_widget_show(text);
 
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
 	gtk_widget_show(vbox2);
 
@@ -1788,7 +1789,7 @@ void show_conv(struct conversation *c)
 	c->entry = entry;
 
 	toolbar = build_conv_toolbar(c);
-	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
 
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
@@ -1803,11 +1804,11 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(c->entry));
-	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
 
 	bbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
 
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
