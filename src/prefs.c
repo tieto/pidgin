@@ -2023,14 +2023,19 @@ void set_display_option(GtkWidget *w, int *option)
 {
 	display_options = display_options ^ (int)option;
 
-	if (blist && ((int)option == OPT_DISP_NO_BUTTONS))
+	if (blist && ((int)option == OPT_DISP_NO_BUTTONS)) {
 		build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
+		update_button_pix();
+	}
 
 	if (blist && ((int)option == OPT_DISP_SHOW_GRPNUM))
 		update_num_groups();
 
 	if (blist && ((int)option == OPT_DISP_NO_MT_GRP))
 		toggle_show_empty_groups();
+
+	if (blist && ((int)option == OPT_DISP_SHOW_BUTTON_XPM))
+		update_button_pix();
 
 #ifdef USE_APPLET
 	update_pixmaps();
