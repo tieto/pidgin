@@ -411,7 +411,7 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup(_("Tray Icon"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window."));
+	desc.description = g_strdup(_("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ (although the icon doesn't flash yet =)."));
 	desc.authors = g_strdup(_("Robert McQueen &lt;robot101@debian.org>"));
 	desc.url = g_strdup(WEBSITE);
 	return &desc;

@@ -2008,7 +2008,8 @@ void hide_buddy_list() {
 /* mostly used by code in this file */
 void unhide_buddy_list() {
 	if (blist) {
-		if (blist_options & OPT_BLIST_SAVED_WINDOWS && blist_pos.width != 0) {
+		if (!GTK_WIDGET_VISIBLE(blist) && blist_options & OPT_BLIST_SAVED_WINDOWS &&
+		      blist_pos.width != 0) {
 			/* don't move it off screen */
 			if (blist_pos.x >= gdk_screen_width()) {
 				blist_pos.x = gdk_screen_width() - 100;
@@ -2470,14 +2471,24 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 }
 
 static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void *data) {
-	if (event->x != blist_pos.x ||
-	    event->y != blist_pos.y ||
-	    event->width != blist_pos.width ||
-	    event->height != blist_pos.height) {
-		blist_pos.x = event->x > 0 ? event->x : 0;
-		blist_pos.y = event->y > 0 ? event->y : 0;
-		blist_pos.width = event->width;
-		blist_pos.height = event->height;
+	/* unfortunately GdkEventConfigure ignores the window gravity, but  *
+	 * the only way we have of setting the position doesn't. we have to *
+	 * call get_position and get_size because they do pay attention to  *
+	 * the gravity. this is inefficient and I agree it sucks, but it's  *
+	 * more likely to work correctly.                        - Robot101 */
+	gint x, y, width, height;
+
+	gtk_window_get_position(GTK_WINDOW(blist), &x, &y);
+	gtk_window_get_size(GTK_WINDOW(blist), &width, &height);
+
+	if (x != blist_pos.x ||
+	    y != blist_pos.y ||
+	    width != blist_pos.width ||
+	    height != blist_pos.height) {
+		blist_pos.x = x;
+		blist_pos.y = y;
+		blist_pos.width = width;
+		blist_pos.height = height;
 		save_prefs();
 	}
 }

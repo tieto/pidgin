@@ -179,12 +179,12 @@ struct prpl {
 	char *(* normalize)(const char *);
 
 	/* transfer files */
-	void (* file_transfer_cancel)    (struct gaim_connection *, struct file_transfer *);
-	void (* file_transfer_in)  (struct gaim_connection *, struct file_transfer *, int);
-	void (* file_transfer_out) (struct gaim_connection *, struct file_transfer *, const char *, int, int);
-	void (* file_transfer_nextfile)  (struct gaim_connection *, struct file_transfer *);
+	void (* file_transfer_cancel)	 (struct gaim_connection *, struct file_transfer *);
+	void (* file_transfer_in)	 (struct gaim_connection *, struct file_transfer *, int);
+	void (* file_transfer_out)	 (struct gaim_connection *, struct file_transfer *, const char *, int, int);
+	void (* file_transfer_nextfile)	 (struct gaim_connection *, struct file_transfer *);
 	void (* file_transfer_data_chunk)(struct gaim_connection *, struct file_transfer *, const char *, int);
-	void (* file_transfer_done)      (struct gaim_connection *, struct file_transfer *);
+	void (* file_transfer_done)	 (struct gaim_connection *, struct file_transfer *);
 };
 
 extern GSList *protocols;
