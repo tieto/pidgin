@@ -47,7 +47,7 @@ version 0.78cvs
 	  work now, if at least one side isn't behind a NAT or firewall.
 	* Made the recieve-*-msg signals match the sending ones (Stu Tomlinson)
 	* Documentation updates (Gary Kramlich, Stu Tomlinson)
-	* Control-F works right in the System Log Viewer (Stu Tomlinson)
+	* ALT-F works right in the System Log Viewer (Stu Tomlinson)
 
 	Preference Changes:
 	* Added a "none" smiley theme to replace the "Show graphical
