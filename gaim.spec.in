@@ -78,12 +78,10 @@ make prefix=$RPM_BUILD_ROOT%{prefix} sysconfdir=$RPM_BUILD_ROOT%{sysconfdir} ins
 %doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog plugins/PERL-HOWTO
 %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
-%{prefix}/share/sounds/gaim/*
 %{prefix}/share/pixmaps/gaim.xpm
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
 %{sysconfdir}/CORBA/servers/*
 %{prefix}/share/applets/Network/*
-%{sysconfdir}/sound/events/*
 
 %clean
 rm -r $RPM_BUILD_ROOT
