@@ -196,7 +196,6 @@ static void apply_cb(GtkWidget *button, void *data)
 		if (sound_file[r])
 			g_free(sound_file[r]);
 		sound_file[r] = sound_file_new[r];
-		sound_file_new[r] = NULL;
 	}
 	if (away_options != away_options_new)		
 		set_away_options();
@@ -1119,11 +1118,16 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 {
 	guint32 tmp_sound = sound_options;
+	char *save_me=NULL;
 	if (!(sound_options & OPT_SOUND_WHEN_AWAY))
 		sound_options ^= OPT_SOUND_WHEN_AWAY;
 	if (!(sound_options & sounds[sound_row_sel].opt))
 		sound_options ^= sounds[sound_row_sel].opt;
+	save_me = sound_file[sound_row_sel];
+	sound_file[sound_row_sel] = sound_file_new[sound_row_sel];
 	play_sound(sound_row_sel);
+	
+	sound_file[sound_row_sel] = save_me;
 	sound_options = tmp_sound;
 }
 
