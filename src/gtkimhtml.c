@@ -449,15 +449,17 @@ static gint
 text_width(PangoContext *context, PangoFontDescription *desc,
 		   const char *text, gint len)
 {
-	PangoLayout *layout;
+	static PangoLayout *layout = NULL;
 	int width;
 
-	layout = pango_layout_new(context);
+	if (layout == NULL)
+		layout = pango_layout_new(context);
+
 	pango_layout_set_font_description(layout, desc);
 	pango_layout_set_text(layout, text, len);
 	pango_layout_get_pixel_size(layout, &width, NULL);
 
-	g_object_unref(G_OBJECT(layout));
+ 	/* g_object_unref(G_OBJECT(layout)); */
 
 	return width;
 }
