@@ -27,10 +27,6 @@
 #include "gaim.h"
 #include "conversation.h"
 
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/ok.xpm"
-/*#include "pixmaps/no_icon.xpm"*/
-
 #define LOGIN_STEPS 5
 
 GSList *connections;
