@@ -364,10 +364,10 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
     if(gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")){
         linked_text = gaim_markup_linkify(text);
         gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
-                                           options, images);
+										   options, images);
         g_free(linked_text);
-    } 
-	gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
+    } else
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
 
 	if (images) {
 		GSList *tmp;
