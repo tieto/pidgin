@@ -62,7 +62,7 @@ int yahoo_write_cmd(struct yahoo_session *session, struct yahoo_conn *conn,
 	yahoo_storeint(pkt->magic_id, conn->magic_id);
 	yahoo_storeint(pkt->msgtype, msgtype);
 
-	strcpy(pkt->nick1, session->name);
+	strcpy(pkt->nick1, session->login);
 	strcpy(pkt->nick2, active_id);
 
 	strncpy(pkt->content, buf, 1024);
