@@ -33,15 +33,4 @@
  */
 void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
 
-/**
- * Parses the Gaim message formatting (html) into the MSN format.
- *
- * @param html			The html message to format.
- * @param attributes	The returned attributes string.
- * @param message		The returned message string.
- *
- * @return The new message.
- */
-void msn_import_html(const char *html, char **attributes, char **message);
-
 #endif /* _MSN_UTILS_H_ */
