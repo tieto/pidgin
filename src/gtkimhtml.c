@@ -2829,7 +2829,7 @@ image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
 		} else {
 			dirname = g_strdup(filename);
 		}
-		gtk_file_selection_set_filename(image->filesel, dirname);
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), dirname);
 		g_free(dirname);
 		g_free(filename);
 		return;
@@ -2885,12 +2885,12 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 	image->filesel = gtk_file_selection_new(_("Save Image"));
 	if (image->filename != NULL)
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), image->filename);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)), "delete_event",
+							 G_CALLBACK(image_save_cancel_cb), image);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button),
+							 "clicked", G_CALLBACK(image_save_cancel_cb), image);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
 					 G_CALLBACK(image_save_check_if_exists_cb), image);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
-							 G_CALLBACK(image_save_cancel_cb), image);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button), "clicked",
-							 G_CALLBACK(image_save_cancel_cb), image);
 #endif /* FILECHOOSER */
 
 	gtk_widget_show(image->filesel);
