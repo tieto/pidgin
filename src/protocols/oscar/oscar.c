@@ -2214,7 +2214,7 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (chan == 2) {
 		char *cookie = va_arg(ap, char *);
-		va_end(va);
+		va_end(ap);
 
 		return gaim_parse_clientauto_rend(sess, who, reason,
 				cookie);
