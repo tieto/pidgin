@@ -426,8 +426,10 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		c = strtok(NULL, ":");
 		parse_toc_buddy_list(gc, c, 0);
 	} else if (!strcasecmp(c, "NICK")) {
+		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
 		g_snprintf(gc->username, sizeof(gc->username), "%s", c);
+		*/
 	} else if (!strcasecmp(c, "IM_IN")) {
 		char *away, *message;
 		int a = 0;
