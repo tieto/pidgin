@@ -83,7 +83,7 @@ and import it manually.)
 
 - If you receive a message that's too large, gaim segfaults. I haven't watched
 this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
-problem is.
+problem is. I think this actually happens on the TOC side of things too.
 
 - Gaim/TOC can do file transfers, but Gaim/Faim cannot. This is not because
 there is any difference in the two protocols as far as the actual transfer is

@@ -1,4 +1,11 @@
 
+Thu Jun  1 09:36:04 UTC 2000 EWarmenhoven
+	- The buddy list and permit/deny list get set before you finish signing
+	  on now, so you shouldn't flash on the buddy lists of people you're
+	  denying. This should also help some (not all) signin problems.
+	- Added more debug_print statements to oscar.c and server.c to try to
+	  figure out why chat's not working.
+
 Wed May 31 19:15:38 UTC 2000 EWarmenhoven
 	- Signon works better; oscar_callback takes an aim_conn_t instead of an
 	  aim_session_t now to try and prevent reported connection errors.

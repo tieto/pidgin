@@ -160,7 +160,10 @@ void serv_send_im(char *name, char *message, int away)
                    message, ((away) ? " auto" : ""));
 	sflap_send(buf, strlen(buf), TYPE_DATA);
 #else
-	oscar_send_im(name, message, away);
+	if (away)
+		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
+	else
+		aim_send_im(gaim_sess, gaim_conn, name, 0, message);
 #endif
         if (!away)
                 serv_touch_idle();
@@ -479,6 +482,8 @@ void serv_join_chat(int exchange, char *name)
         g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
         sflap_send(buf, -1, TYPE_DATA);
 #else
+	sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
+	debug_print(debug_buff);
 	aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
 #endif
 }

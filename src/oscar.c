@@ -90,6 +90,9 @@ int oscar_login(char *username, char *password) {
 	struct aim_user *u;
 	char buf[256];
 
+	sprintf(debug_buff, "Logging in %s\n", username);
+	debug_print(debug_buff);
+
 	sess = g_new0(struct aim_session_t, 1);
 	aim_session_init(sess);
 	/* we need an immediate queue because we don't use a while-loop to
@@ -153,14 +156,9 @@ int oscar_login(char *username, char *password) {
 				"%s", password);
 	save_prefs();
 
-	return 0;
-}
+	debug_print("Password sent, waiting for response\n");
 
-int oscar_send_im(char *name, char *msg, int away) {
-	if (away)
-		return aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, msg);
-	else
-		return aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
+	return 0;
 }
 
 void oscar_close() {
@@ -172,6 +170,7 @@ void oscar_close() {
 		gdk_input_remove(inpa);
 	inpa = -1;
 	aim_logoff(gaim_sess);
+	debug_print("Signed off.\n");
 }
 
 extern void auth_failed();
@@ -184,6 +183,17 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	debug_print(debug_buff);
 
 	if (sess->logininfo.errorcode) {
+		switch (sess->logininfo.errorcode) {
+		case 0x18:
+			do_error_dialog("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer.", "Gaim - Error");
+			break;
+		case 0x05:
+			do_error_dialog("Incorrect nickname or password.", "Gaim - Error");
+			break;
+		case 0x1c:
+			do_error_dialog("AOL has decided your client is too old. Please download a newer version from http://www.marko.net/gaim/", "Gaim - Error");
+			break;
+		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
 				sess->logininfo.errorcode);
 		debug_print(debug_buff);
@@ -266,11 +276,11 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_bos_setprivacyflags(sess, command->conn, 0x00000003);
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_ADS);
-		aim_setversions(sess, command->conn);
 		aim_bos_setgroupperm(sess, command->conn, 0x1f);
 		debug_print("done with BOS ServerReady\n");
 		break;
 	case AIM_CONN_TYPE_CHATNAV:
+		debug_print("chatnav: got server ready\n");
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
@@ -278,6 +288,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chatnav_reqrights(sess, command->conn);
 		break;
 	case AIM_CONN_TYPE_CHAT:
+		debug_print("chat: got server ready\n");
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
@@ -288,6 +299,8 @@ int gaim_server_ready(struct aim_session_t *sess,
 		serv_got_joined_chat(id++, aim_chat_getname(command->conn));
 		break;
 	default: /* huh? */
+		sprintf(debug_buff, "server ready: got unexpected connection type %04x\n", command->conn->type);
+		debug_print(debug_buff);
 		break;
 	}
 	return 1;
@@ -313,19 +326,14 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 	switch(serviceid) {
 	case 0x0005: /* Ads */
+		debug_print("Received Ads, finishing login\n");
 		sprintf(buddies, "%s&", current_user->username);
 		aim_bos_setbuddylist(sess, command->conn, buddies);
 		aim_bos_setprofile(sess, command->conn, current_user->user_info,
 					NULL, gaim_caps);
-		
 		aim_seticbmparam(sess, command->conn);
-
-		aim_bos_clientready(sess, command->conn);
-
-		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 		aim_conn_setlatency(command->conn, 1);
 
-		debug_print("Roger that, all systems go\n");
 #ifdef USE_APPLET
 		make_buddy();
 		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
@@ -348,8 +356,13 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		if (bud_list_cache_exists())
 			do_import(NULL, 0);
 
+		aim_bos_clientready(sess, command->conn);
+		debug_print("Roger that, all systems go\n");
+		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
+
 		break;
 	case 0x7: /* Authorizer */
+		debug_print("Reconnecting with authorizor...\n");
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR)
@@ -378,6 +391,9 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 			debug_print("unable to connect to chat server\n");
 			return 1;
 		}
+		sprintf(debug_buff, "Connected to chat room %s\n", roomname);
+		debug_print(debug_buff);
+
 		aim_chat_attachname(tstconn, roomname);
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
@@ -483,7 +499,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     userinfo->sn,
 					     msg);
 		} else if (rendtype == 1) {
-			/* FIXME : voice chat */
+			/* voice chat */
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -507,11 +523,11 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	subtype = aimutil_get16(command->data+2);
 
 	switch (family) {
-/*	case 0x0001:
+	case 0x0001:
 		if (subtype == 0x000a)
 			sprintf(buf, "You are sending messages too fast.");
 		break;
-*/	case 0x0002:
+	case 0x0002:
 		if (subtype == 0x0001)
 			sprintf(buf, "Unknown SNAC error (I'm hungry)");
 		break;
@@ -587,9 +603,42 @@ int gaim_parse_motd(struct aim_session_t *sess,
 
 int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
-	/* FIXME */
-	debug_print("inside chatnav_info\n");
-	aim_conn_close(command->conn);
+	va_list ap = va_start(ap, command);
+	u_short type = va_arg(ap, u_short);
+
+	switch(type) {
+		case 0x0002: {
+			int maxrooms;
+			struct aim_chat_exchangeinfo *exchanges;
+			int exchangecount, i = 0;
+
+			maxrooms = va_arg(ap, u_char);
+			exchangecount = va_arg(ap, int);
+			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
+			va_end(ap);
+
+			debug_print("chat info: Chat Rights:\n");
+			sprintf(debug_buff, "chat info: \tMax Concurrent Rooms: %d\n", maxrooms);
+			debug_print(debug_buff);
+			sprintf(debug_buff, "chat info: \tExchange List: (%d total)\n", exchangecount);
+			debug_print(debug_buff);
+			while (i < exchangecount) {
+				sprintf(debug_buff, "chat info: \t\t%x: %s (%s/%s)\n",
+						exchanges[i].number,
+						exchanges[i].name,
+						exchanges[i].charset1,
+						exchanges[i].lang1);
+				debug_print(debug_buff);
+				i++;
+			}
+			}
+			break;
+		default:
+			va_end(ap);
+			sprintf(debug_buff, "chatnav info: unknown type (%04x)\n", type);
+			debug_print(debug_buff);
+			break;
+	}
 	return 1;
 }
 
