@@ -869,12 +869,11 @@ char *gaim_try_conv_to_utf8(const char *str)
 	}
 
 	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
-	if (utf8 && converted == strlen (str)) {
+	if (utf8) 
 		return(utf8);
-	} else if (utf8) {
-		g_free(utf8);
-	}
-
+	
+	g_free(utf8);
+	
 	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
 	if (utf8 && converted == strlen (str)) {
 		return(utf8);
