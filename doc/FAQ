@@ -36,7 +36,8 @@ III. Problems
 
 IV. Programming
 	1. I have a patch for gaim!
-	2. Can you teach me how to program GTK?
+	2. I have a plugin for gaim!
+	3. Can you teach me how to program GTK?
 
 V. Miscellaneous
         1. Can I talk to you on IM?
@@ -67,12 +68,13 @@ it mostly out -- Look for 'faim'.  We use TOC, which is completely open and
 documented. 
 
 	2. Where can I find info on it?
-		Go to <http://www.aim.aol.com/tik> and download a copy of TiK.
-In it you will find a document called PROTOCOL which describes the protocol in
-full.
+		In the document called PROTOCOL. It's the version that was
+published with AOL's TiK client version 0.75, which appears to be the last
+one ever published.
 
 	3. What other clients use this protocol?
-		Go to <http://www.aim.aol.com/tik>.  There is a list there.
+		There are a few other Unix programs that use it, I think. I
+really couldn't tell you though. AOL used to keep a list of them, but no more.
 
 	4. TCP or UDP?
 		TCP.
@@ -116,7 +118,6 @@ will no longer be needed.
 
         7. I'm not a native English speaker and I would like a translated   
            version of gaim.
-
 		By all means, IM me at 'Zilding' or email me at
 jimduchek@ou.edu.  I'm working on standard GNU locale support for the next
 version of gaim, and I'm going to need translations.  If you can do a
@@ -136,7 +137,11 @@ III. Problems
 libraries.  If you have them it _WILL_ compile with them, if not it won't. 
 If it compiles with them, you don't need to be running the ESD daemon, it'll
 automatically fallback to using /dev/dsp.  Make sure that gaim has proper
-permissions to talk to /dev/dsp and /dev/audio though!  
+permissions to talk to /dev/dsp and /dev/audio though!
+		The GNOME client now goes through GNOME for its sounds. If
+sounds aren't playing, make sure you've got them turned on in the GNOME
+control center. (The reason this was done was to make it more easily
+configurable.)
 
 	2. My buddy list disappeared!
 		You didn't back up your buddy list, did you?  You never back
@@ -155,19 +160,17 @@ send me information on how to send a URL to your browser remotely (or point
 me at the source to the browser, I might be able to figure it out.). 
 
 	5. I'm using the GNOME client.  I have a bug.
-		Too smeggin' bad.  :)  I personally do NOT write any of the
-GNOME code.  If you find bugs in the GNOME client, I will accept emails
-describing these bugs, so I can pass them on to the correct person.
-I will also accept PATCHES to fix these bugs (but not like any of y'all
-ever do anything but whine about bugs anyway, who am I kidding ;).  
-If you IM me whining about a GNOME bug, you will probably be ignored.
+		GNOME bugs should be reported to Eric Warmenhoven (IM:
+EWarmenhoven (how original)), who is now maintaining that part of the code. If
+you ask the other guys about it, they'll just point you at him.
 	
 	6. I have a bug not described here.
 		Well, it could be a few things.  Firstly, you MUST HAVE GTK+
 VERSION 1.2.3 installed!  Please state in any bug report that you ARE using
 1.2.3, otherwise you have a chance of being ignored.  With that said ;)
 email me at jimduchek@ou.edu, I would like to hear your bug reports (but
-please, not your problems installing GTK).
+please, not your problems installing GTK). Also, sourceforge.net has a bug
+tracking system for us at <http://sourceforge.net/bugs/?group_id=235>.
 
 	7. I have Mandrake 6.0 and GAIM doesnt work!
 
@@ -187,7 +190,7 @@ IV. Programming
 	1. I have a patch for gaim!
 		Nice.  Think about your patch though.  First, does it have
 to do with AIM?  I won't apply patches for stock tickers, search engines,
-etc.  We're working on plug-ins if you really want bloat like that. 
+etc.  Rewrite it as a plug-in if you really want bloat like that. 
 Second, is it useful?  A lot of patches I get are horribly unuseful except
 in very specific situations (ie YOUR situation).  Thirdly, your code 
 will not retain your copyright.  All code submitted must be protected by 
@@ -202,10 +205,18 @@ This is C.  C programmers don't write like that.  I don't write like that.
 I don't want to READ code like that.  I want a homogenous coding style
 on this program, and it's gonna be MY coding style. :)
 	Now, if you've managed to get through all that and I haven't
-discouraged you entirely, my email address is jimduchek@ou.edu, you can
-send your patches there.
+discouraged you entirely, send your patches to Rob Flynn (rob@linuxpimps.com).
 
-	2. Can you teach me how to program GTK?
+	2. I have a plugin for gaim!
+		Cool. Before you release it to anyone though, make sure you
+understand that if it does anything useful, it is necessarily licenced under
+the GPL. It's that whole "code that uses GPL'ed code is thus GPL'ed" clause.
+Also, don't send it to us. It's not that we don't want it, but there are
+better places to put it. Head over to sourceforge.net and submit it there
+<http://sourceforge.net/patch/?group_id=235>. It'll be available more quickly
+that way. 
+
+	3. Can you teach me how to program GTK?
 		Yes, I can.  But no, I'm not going to. There's a really
 nice tutorial at http://www.gtk.org.  If you're a fairly experienced 
 programmer, and you get stuck on something odd, IM me, I'm usually happy to

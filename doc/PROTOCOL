@@ -19,6 +19,11 @@
 # of TiK (http://www.aim.aol.com/tik/) for the latest version of this
 # doc.
 
+# Note from Eric Warmenhoven, random guy -- this appears to be the last
+# published version of the protocol, and AOL has stopped hosting the TiK
+# program. This was taken from the last version of TiK I could find, version
+# 0.75.
+
 Version: TOC1.0
 
 This document describes the protocol between TOC and TOC clients.
@@ -159,7 +164,7 @@ toc_add_permit [ <User 1> [<User 2> [...]]]
     in permit mode, no arguments does nothing
     and your permit list remains the same.
 
-toc_add_deny [ <User 1> [<User 2> [... ]]]
+toc_add_deny [ <User 1> [<User 2> [...]]]
     ADD the following people to your deny mode. If
     you are in permit mode it will switch you to
     deny mode first.  With no arguments and in permit
@@ -252,6 +257,35 @@ toc_set_idle <idle secs>
     keep incrementing this number, so do not repeatedly call with new
     idle times.
 
+toc_set_caps [ <Capability 1> [<Capability 2> [...]]]
+    Set my capabilities.  All capabilities that we support need to
+    be sent at the same time.  Capabilities are represented by
+    UUIDs.  
+
+toc_rvous_propose  - Not Implemented Yet
+
+toc_rvous_accept <nick> <cookie> <service> <tlvlist>
+    Accept a rendezvous proposal from the user <nick>.
+    <cookie> is the cookie from the RVOUS_PROPOSE
+    message.  <service> is the UUID the proposal was
+    for. <tlvlist> contains a list of tlv tags followed by
+    base64 encoded values.
+
+toc_rvous_cancel <nick> <cookie> <service> <tlvlist>
+    Cancel a rendezvous proposal from the user <nick>.
+    <cookie> is the cookie from the RVOUS_PROPOSE
+    message.  <service> is the UUID the proposal was
+    for. <tlvlist> contains a list of tlv tags followed by
+    base64 encoded values.
+
+toc_format_nickname <new_format>
+    Reformat a user's nickname.  An ADMIN_NICK_STATUS or ERROR message will 
+    be sent back to the client.
+
+toc_change_passwd <existing_passwd new_passwd>
+    Change a user's password.  An ADMIN_PASSWD_STATUS or ERROR message will 
+    be sent back to the client.
+
 
 TOC -> Client
 ==============
@@ -306,6 +340,13 @@ ERROR:<Error Code>:Var args
    902   - Warning of $1 not currently available
    903   - A message has been dropped, you are exceeding
 	   the server speed limit
+
+   * Admin Errors  *
+   911   - Error validating input
+   912   - Invalid account
+   913   - Error encountered while processing request
+   914   - Service unavailable
+
    * Chat Errors  *
    950   - Chat in $1 is unavailable.
 
@@ -361,11 +402,26 @@ GOTO_URL:<Window Name>:<Url>
    Goto a URL.  Window Name is the suggested internal name of the window
    to use.  (Java supports this.) 
 
-DIR_STATUS:<Return Code>
+DIR_STATUS:<Return Code>:<Optional args>
+   <Return Code> is always 0 for success status.
+
+ADMIN_NICK_STATUS:<Return Code>:<Optional args>
+   <Return Code> is always 0 for success status.
+
+ADMIN_PASSWD_STATUS:<Return Code>:<Optional args>
+   <Return Code> is always 0 for success status.
    
 
 PAUSE
    Tells TIC to pause so we can do migration
+
+RVOUS_PROPOSE:<user>:<uuid>:<cookie>:<seq>:<rip>:<pip>:<vip>:<port>
+              [:tlv tag1:tlv value1[:tlv tag2:tlv value2[:...]]]
+   Another user has proposed that we rendezvous with them to
+   perform the service specified by <uuid>.  They want us
+   to connect to them, we have their rendezvous ip, their 
+   proposer_ip, and their verified_ip. The tlv values are 
+   base64 encoded.
 
 Typical Signon Process
 ======================
