@@ -258,12 +258,16 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	gboolean do_timer = FALSE;
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
+		int old_present = buddy->present;
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
 		do_timer = TRUE;
-		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
-		if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
-			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
+
+		if(old_present != GAIM_BUDDY_SIGNING_OFF) {
+			((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
+			if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
+				((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
+		}
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
@@ -1354,9 +1358,9 @@ void gaim_blist_add_account(GaimAccount *account)
 					ops->update(gaimbuddylist, cnode);
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
-					((GaimGroup *)gnode)->online++;
-					((GaimGroup *)gnode)->currentsize++;
-					ops->update(gaimbuddylist, cnode);
+				((GaimGroup *)gnode)->online++;
+				((GaimGroup *)gnode)->currentsize++;
+				ops->update(gaimbuddylist, cnode);
 			}
 		}
 		ops->update(gaimbuddylist, gnode);
