@@ -1699,7 +1699,7 @@ void do_pounce(char *name, int when)
         
 	who = g_strdup(normalize(name));
 
-	while(bp) {
+	while (bp) {
 		b = (struct buddy_pounce *)bp->data;
 		bp = bp->next; /* increment the list here because rem_bp can make our handle bad */
 
@@ -1712,14 +1712,17 @@ void do_pounce(char *name, int when)
 		if (u->gc == NULL) continue;
 		
                 if (!strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
-			if (b->options & OPT_POUNCE_POPUP)
-			{
+			if (b->options & OPT_POUNCE_POPUP) {
 				c = find_conversation(name);
 				if (c == NULL)
+
+				c->gc = u->gc;
+				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
+						g_slist_index(connections, u->gc));
+				update_buttons_by_protocol(c);
 					c = new_conversation(name);
 			}
-			if (b->options & OPT_POUNCE_SEND_IM)
-			{
+			if (b->options & OPT_POUNCE_SEND_IM) {
                         	c = find_conversation(name);
                         	if (c == NULL)
                                 	c = new_conversation(name);
@@ -1732,8 +1735,7 @@ void do_pounce(char *name, int when)
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t)NULL));
                                 serv_send_im(u->gc, name, b->message, 0);
 			}
-			if (b->options & OPT_POUNCE_COMMAND)
-			{
+			if (b->options & OPT_POUNCE_COMMAND) {
 				int pid = fork();
 
 				if (pid == 0) {
@@ -1748,12 +1750,11 @@ void do_pounce(char *name, int when)
 					gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
 				}
 			}
-			if (b->options & OPT_POUNCE_SOUND)
-			{
+			if (b->options & OPT_POUNCE_SOUND) {
 				if(strlen(b->sound))
-					play_file(b->sound); //play given sound
+					play_file(b->sound);
 				else
-					play_sound(POUNCE_DEFAULT); //play default sound
+					play_sound(POUNCE_DEFAULT);
 			}
                         
 			if (!(b->options & OPT_POUNCE_SAVE))
