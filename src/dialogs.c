@@ -1801,28 +1801,87 @@ void show_find_info()
 
 void show_find_email()
 {
-        GtkWidget *cancel;
-        GtkWidget *ok;
         GtkWidget *label;
         GtkWidget *bbox;
         GtkWidget *vbox;
         GtkWidget *topbox;
+	GtkWidget *frame;
+	GtkWidget *icon_i;
+	GdkPixmap *icon;
+	GdkBitmap *mask;
+	GtkWidget *button_box;
+	GtkWidget *button;
 
         struct findbyemail *b = g_new0(struct findbyemail, 1);
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_widget_show(b->window);
         dialogwindows = g_list_prepend(dialogwindows, b->window); 
 
-        cancel = gtk_button_new_with_label(_("Cancel"));
-        ok = gtk_button_new_with_label(_("OK"));
+	frame = gtk_frame_new(_("Search for Buddy"));
 
-        bbox = gtk_hbox_new(TRUE, 10);
+	bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
 
         b->emailentry = gtk_entry_new();
 
-        gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+	/* Build OK Button */
+
+	button = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("OK"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+                           GTK_SIGNAL_FUNC(do_find_email), b);
+
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+
+	gtk_widget_show(button);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	button = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+	
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+
+	gtk_widget_show(button);
+
+	/* End of Cancel Button */
 
         label = gtk_label_new(_("Email"));
         gtk_widget_show(label);
@@ -1834,22 +1893,18 @@ void show_find_email()
 
         gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-        gtk_signal_connect(GTK_OBJECT(cancel), "clicked", 
-                         GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-        gtk_signal_connect(GTK_OBJECT(ok), "clicked",
-                           GTK_SIGNAL_FUNC(do_find_email), b);
         gtk_signal_connect(GTK_OBJECT(b->emailentry), "activate",
                            GTK_SIGNAL_FUNC(do_find_email), b);
 
-        gtk_widget_show(ok);
-        gtk_widget_show(cancel);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
         gtk_widget_show(b->emailentry);
-        gtk_widget_show(topbox);
+	gtk_widget_show(frame);
+	gtk_widget_show(topbox);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
         gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->emailentry);
-        gtk_container_add(GTK_CONTAINER(b->window), vbox);
+        gtk_container_add(GTK_CONTAINER(b->window), frame);
         gtk_container_border_width(GTK_CONTAINER(b->window), 10);
         gtk_widget_realize(b->window);
         aol_icon(b->window->window);
