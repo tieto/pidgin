@@ -3054,7 +3054,7 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user)
 		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
 	} else
-		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
+		gtk_entry_set_text(GTK_ENTRY(entry), "5190");
 
 	gtk_widget_show(entry);
 }
