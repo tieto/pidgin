@@ -1334,27 +1334,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 
-	if (!c->is_chat && !g_list_find(conversations, c))
-		return;
-
 	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
 
-	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
-
-	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
-
-	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
-		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COLOURS;
-
-	if (convo_options & OPT_CONVO_IGNORE_FONTS)
-		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_FONTS;
-
-	if (convo_options & OPT_CONVO_IGNORE_SIZES)
-		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
-
-	if (!(logging_options & OPT_LOG_STRIP_HTML))
-		gtk_font_options = gtk_font_options ^ GTK_IMHTML_RETURN_LOG;
+	if (!c->is_chat && !g_list_find(conversations, c))
+		return;
 
 	if (!c->is_chat || !(c->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if (!who) {
@@ -1380,6 +1364,36 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 	}
 
+	/* XXX CUI: this is really bad and should be moved somewhere else later. */
+	if (c->gc) {
+		int index = g_slist_index(connections, c->gc);
+		int sname = strlen(who);
+		int swhat = strlen(what);
+		UI_build_broadcast(CUI_TYPE_MESSAGE, CUI_MESSAGE_RECV,
+				sizeof(index), &index,
+				sizeof(sname), &sname,
+				sname, who,
+				sizeof(flags), &flags,
+				sizeof(swhat), &swhat,
+				swhat, what,
+				sizeof(mtime), &mtime, -1);
+	}
+
+	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+
+	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
+
+	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COLOURS;
+
+	if (convo_options & OPT_CONVO_IGNORE_FONTS)
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_FONTS;
+
+	if (convo_options & OPT_CONVO_IGNORE_SIZES)
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
+
+	if (!(logging_options & OPT_LOG_STRIP_HTML))
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_RETURN_LOG;
 
 	if (flags & WFLAG_SYSTEM) {
 		if (convo_options & OPT_CONVO_SHOW_TIME)

@@ -156,7 +156,9 @@ extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
 
 /* Functions in core.c */
 extern gint UI_write(struct UI *, guchar *, int);
+extern void UI_build_write(struct UI *, guchar, guchar, ...);
 extern void UI_broadcast(guchar *data, int);
+extern void UI_build_broadcast(guchar, guchar, ...);
 /* Don't ever use these; when gaim-core is done these will be
  * merged into the core's main() and won't be called directly */
 extern int core_main();

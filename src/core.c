@@ -34,11 +34,49 @@
 #include <errno.h>
 #include <signal.h>
 #include <getopt.h>
+#include <stdarg.h>
 
 #include "gaim.h"
 
 static gint UI_fd = -1;
 GSList *uis = NULL;
+
+static guchar *UI_build(int *len, guchar type, guchar subtype, va_list args1)
+{
+	va_list args2;
+	guchar *buffer;
+	int pos;
+	int size;
+	void *data;
+
+	G_VA_COPY(args2, args1);
+
+	buffer = g_malloc(sizeof(guchar) * 2 + 4);
+	*len = sizeof(guchar) * 2 + 4;
+	pos = 0;
+
+	memcpy(buffer + pos, &type, sizeof(type)); pos += sizeof(type);
+	memcpy(buffer + pos, &subtype, sizeof(subtype)); pos += sizeof(subtype);
+
+	/* we come back and do size last */
+	pos += 4;
+
+	size = va_arg(args2, int);
+	while (size != -1) {
+		*len += size;
+		buffer = g_realloc(buffer, *len);
+
+		data = va_arg(args2, void *);
+		memcpy(buffer + pos, data, size);
+		pos += size;
+
+		size = va_arg(args2, int);
+	}
+
+	va_end(args2);
+
+	return buffer;
+}
 
 gint UI_write(struct UI *ui, guchar *data, gint len)
 {
@@ -53,6 +91,21 @@ gint UI_write(struct UI *ui, guchar *data, gint len)
 	return sent;
 }
 
+void UI_build_write(struct UI *ui, guchar type, guchar subtype, ...)
+{
+	va_list ap;
+	gchar *data;
+	int len;
+
+	va_start(ap, subtype);
+	data = UI_build(&len, type, subtype, ap);
+	va_end(ap);
+
+	UI_write(ui, data, len);
+
+	g_free(data);
+}
+
 void UI_broadcast(guchar *data, gint len)
 {
 	GSList *u = uis;
@@ -61,6 +114,24 @@ void UI_broadcast(guchar *data, gint len)
 		UI_write(ui, data, len);
 		u = u->next;
 	}
+}
+
+void UI_build_broadcast(guchar type, guchar subtype, ...)
+{
+	va_list ap;
+	gchar *data;
+	int len;
+
+	if (!uis)
+		return;
+
+	va_start(ap, subtype);
+	data = UI_build(&len, type, subtype, ap);
+	va_end(ap);
+
+	UI_broadcast(data, len);
+
+	g_free(data);
 }
 
 static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
@@ -290,9 +361,11 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		case CUI_TYPE_BUDDY:
 			buddy_handler(ui, subtype, in);
 			break;
+			*/
 		case CUI_TYPE_MESSAGE:
 			message_handler(ui, subtype, in);
 			break;
+			/*
 		case CUI_TYPE_CHAT:
 			chat_handler(ui, subtype, in);
 			break;
