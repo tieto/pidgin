@@ -26,8 +26,14 @@
 #endif
 
 
-#include <netdb.h>
 #include <gtk/gtk.h>
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN
+#undef MIN
+#endif
+#include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -49,6 +55,10 @@
 #define IQ_NONE -1
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
+
+#define USEROPT_SERVER   0
+#define USEROPT_PORT     1
+#define USEROPT_RESOURCE 2
 
 typedef struct gjconn_struct
 {
@@ -586,100 +596,45 @@ static void jabber_handlestate(gjconn j, int state)
 static void jabber_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-
-        debug_printf("jabber_login (u=%s/p=%s)\n", user->username, user->password);
+	char *tmp;
 
 	set_login_progress(gc, 1, "Connecting");
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-        if (!(jd->jc = gjab_new(user->username, user->password, gc))) {
+	tmp = g_strdup_printf("%s@%s/%s", user->username,
+		user->proto_opt[USEROPT_SERVER][0] ? user->proto_opt[USEROPT_SERVER] : "jabber.com",
+		user->proto_opt[USEROPT_RESOURCE][0] ? user->proto_opt[USEROPT_RESOURCE] : "GAIM");
+
+        debug_printf("jabber_login (u=%s)\n", tmp);
+
+        if (!(jd->jc = gjab_new(tmp, user->password, gc))) {
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
+		g_free(jd);
+		g_free(tmp);
                 return;
         }
+	g_free(tmp);
 
         gjab_state_handler(jd->jc, jabber_handlestate);
         gjab_packet_handler(jd->jc, jabber_handlepacket);
         gjab_start(jd->jc);
 
 
-        gc->user = user; /* XXX I assume this is okay...OSCAR does it */
-
 	gc->inpa = gdk_input_add(jd->jc->fd, 
                                  GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
                                  jabber_callback, gc);
 
         return;
-
-        //signoff(gc);
-
-#if 0
-	struct yahoo_options opt;
-	struct yahoo_context *ctxt;
-	opt.connect_mode = YAHOO_CONNECT_NORMAL;
-	opt.proxy_host = NULL;
-	ctxt = yahoo_init(user->username, user->password, &opt);
-	yd->ctxt = ctxt;
-
-	set_login_progress(gc, 1, "Connecting");
-	while (gtk_events_pending())
-		gtk_main_iteration();
-
-	if (!ctxt || !yahoo_connect(ctxt)) {
-		debug_printf("Yahoo: Unable to connect\n");
-		hide_login_progress(gc, "Unable to connect");
-		signoff(gc);
-		return;
-	}
-
-	debug_printf("Yahoo: connected\n");
-
-	set_login_progress(gc, 3, "Getting Config");
-	while (gtk_events_pending())
-		gtk_main_iteration();
-
-	yahoo_get_config(ctxt);
-
-	if (yahoo_cmd_logon(ctxt, YAHOO_STATUS_AVAILABLE)) {
-		debug_printf("Yahoo: Unable to login\n");
-		hide_login_progress(gc, "Unable to login");
-		signoff(gc);
-		return;
-	}
-
-	if (ctxt->buddies) {
-		struct yahoo_buddy **buddies;
-		
-		for (buddies = ctxt->buddies; *buddies; buddies++) {
-			struct yahoo_buddy *bud = *buddies;
-			struct buddy *b;
-			struct group *g;
-
-			b = find_buddy(gc, bud->id);
-			if (!b) add_buddy(gc, bud->group, bud->id, bud->id);
-		}
-	}
-
-	debug_printf("Yahoo: logged in %s\n", gc->username);
-	account_online(gc);
-	serv_finish_login(gc);
-
-	gc->inpa = gdk_input_add(ctxt->sockfd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				yahoo_callback, gc);
-#endif
 }
 
 static void jabber_close(struct gaim_connection *gc) {
-#if 0
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	if (gc->inpa)
-		gdk_input_remove(gc->inpa);
-	gc->inpa = -1;
-	yahoo_cmd_logoff(yd->ctxt);
-	g_free(yd);
-#endif
+	struct jabber_data *jd = gc->proto_data;
+	gdk_input_remove(gc->inpa);
+	gjab_stop(jd->jc);
+	g_free(jd);
 }
 
 static void jabber_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
@@ -701,29 +656,93 @@ static void jabber_send_im(struct gaim_connection *gc, char *who, char *message,
         gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 }
 
-static void jabber_keepalive(struct gaim_connection *gc) {
-#if 0
-	yahoo_cmd_ping(((struct yahoo_data *)gc->proto_data)->ctxt);
-#endif
+static void jabber_print_option(GtkEntry *entry, struct aim_user *user) {
+	int entrynum;
+
+	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_SERVER)
+		g_snprintf(user->proto_opt[USEROPT_SERVER],
+				sizeof(user->proto_opt[USEROPT_SERVER]),
+				"%s", gtk_entry_get_text(entry));
+	else if (entrynum == USEROPT_PORT)
+		g_snprintf(user->proto_opt[USEROPT_PORT],
+				sizeof(user->proto_opt[USEROPT_PORT]),
+				"%s", gtk_entry_get_text(entry));
+	else if (entrynum == USEROPT_RESOURCE)
+		g_snprintf(user->proto_opt[USEROPT_RESOURCE],
+				sizeof(user->proto_opt[USEROPT_RESOURCE]),
+				"%s", gtk_entry_get_text(entry));
 }
 
-static void jabber_add_buddy(struct gaim_connection *gc, char *name) {
-#if 0
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct yahoo_buddy *tmpbuddy;
-	struct group *g = find_group_by_buddy(gc, name);
-	char *group = NULL;
+static void jabber_user_opts(GtkWidget *book, struct aim_user *user) {
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
 
-	if (g) {
-		group = g->name;
-	} else if (yd->ctxt && yd->ctxt->buddies[0]) {
-		tmpbuddy = yd->ctxt->buddies[0];
-		group = tmpbuddy->group;
-	}
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+				 gtk_label_new("Jabber Options"));
+	gtk_widget_show(vbox);
 
-	if (group)
-		yahoo_add_buddy(yd->ctxt, name, gc->username, group, "");
-#endif
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Server:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SERVER);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_SERVER][0])
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SERVER]);
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), "jabber.com");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_PORT][0])
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), "5222");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Resource:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_RESOURCE);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_RESOURCE][0])
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_RESOURCE]);
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), "GAIM");
+	gtk_widget_show(entry);
 }
 
 static struct prpl *my_protocol = NULL;
@@ -734,6 +753,7 @@ void Jabber_init(struct prpl *ret) {
 	ret->name = jabber_name;
 	ret->list_icon = NULL;
 	ret->action_menu = NULL;
+	ret->user_opts = jabber_user_opts;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;
@@ -746,7 +766,7 @@ void Jabber_init(struct prpl *ret) {
 	ret->dir_search = NULL;
 	ret->set_idle = NULL;
 	ret->change_passwd = NULL;
-	ret->add_buddy = jabber_add_buddy;
+	ret->add_buddy = NULL;
 	ret->add_buddies = NULL;
 	ret->remove_buddy = NULL;
 	ret->add_permit = NULL;
@@ -761,7 +781,7 @@ void Jabber_init(struct prpl *ret) {
 	ret->chat_leave = NULL;
 	ret->chat_whisper = NULL;
 	ret->chat_send = NULL;
-	ret->keepalive = jabber_keepalive;
+	ret->keepalive = NULL;
 
 	my_protocol = ret;
 }
