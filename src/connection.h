@@ -53,8 +53,9 @@ typedef enum
 
 } GaimConnectionState;
 
+#include <time.h>
+
 #include "account.h"
-#include "internal.h"
 #include "plugin.h"
 
 typedef struct

@@ -59,7 +59,7 @@ typedef fu16_t flap_seqnum_t;
  */
 #ifdef WIN32_INDLL
 #define faim_export __declspec(dllexport)
-#else 
+#else
 #define faim_export __declspec(dllimport)
 #endif /* WIN32_INDLL */
 #define faim_internal
@@ -323,7 +323,7 @@ typedef struct aim_conn_s {
 	void *priv; /* misc data the client may want to store */
 	void *internal; /* internal conn-specific libfaim data */
 	time_t lastactivity; /* time of last transmit */
-	int forcedlatency; 
+	int forcedlatency;
 	void *handlerlist;
 	void *sessv; /* pointer to parent session */
 	void *inside; /* only accessible from inside libfaim */
@@ -353,9 +353,9 @@ typedef struct aim_bstream_s {
 typedef struct aim_frame_s {
 	fu8_t hdrtype; /* defines which piece of the union to use */
 	union {
-		struct { 
+		struct {
 			fu8_t channel;
-			flap_seqnum_t seqnum;     
+			flap_seqnum_t seqnum;
 		} flap;
 		struct {
 			fu8_t magic[4];	/* ODC2 or OFT2 */
@@ -412,7 +412,7 @@ typedef struct aim_session_s {
 	 *  
 	 */
 	aim_frame_t *queue_outgoing;
-	aim_frame_t *queue_incoming; 
+	aim_frame_t *queue_incoming;
 
 	/*
 	 * Tx Enqueuing function.
@@ -780,7 +780,7 @@ struct aim_incomingim_ch1_args {
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	fu32_t icbmflags; /* some flags apply only to ->msg, not all mpmsg */
-	
+
 	/* Only provided if message has a human-readable section */
 	char *msg;
 	int msglen;
