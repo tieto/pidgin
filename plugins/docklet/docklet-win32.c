@@ -1,4 +1,4 @@
-/*
+*
  * System tray icon (aka docklet) plugin for Gaim
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
@@ -41,9 +41,9 @@
 /*
  *  DEFINES, MACROS & DATA TYPES
  */
-#define GAIM_SYSTRAY_HINT _("Gaim Instant Messenger")
-#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim Instant Messenger - Signed off")
-#define GAIM_SYSTRAY_AWAY_HINT _("Gaim Instant Messenger - Away")
+#define GAIM_SYSTRAY_HINT _("Gaim Instant Messengnger")
+#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim Instant Messenging - Signed off")
+#define GAIM_SYSTRAY_AWAY_HINT _("Gaim Instant Messengingy- Away")
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 
 /*

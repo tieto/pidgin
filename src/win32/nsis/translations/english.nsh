@@ -9,7 +9,7 @@
 LangString GTK_INSTALLER_NEEDED			${LANG_ENGLISH} "The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
 
 ; Components Page
-LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messenger (required)"
+LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messenging (required)"
 LangString GTK_SECTION_TITLE				${LANG_ENGLISH} "GTK+ Runtime Environment (required)"
 LangString GTK_THEMES_SECTION_TITLE			${LANG_ENGLISH} "GTK+ Themes"
 LangString GTK_NOTHEME_SECTION_TITLE		${LANG_ENGLISH} "No Theme"
