@@ -96,13 +96,22 @@ static GtkWidget *aliasname = NULL;
 static GtkWidget *rename_dialog = NULL;
 static GtkWidget *rename_bud_dialog = NULL;
 
+struct confirm_del {
+	GtkWidget *window;
+	GtkWidget *label;
+	GtkWidget *ok;
+	GtkWidget *cancel;
+	GtkWidget *checkbox;	
+	char name[1024];
+	struct gaim_connection *gc;
+};
+
 struct create_away {
 	GtkWidget *window;
 	GtkWidget *entry;
 	GtkWidget *text;
 	struct away_message *mess;
 };
-
 
 struct warning {
 	GtkWidget *window;
@@ -413,16 +422,115 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	gtk_box_pack_start(GTK_BOX(fbox), bbox, FALSE, FALSE, 5);
 	gtk_widget_show(bbox);
 
-	warn = picture_button(w->window, _("Warn"), warn_xpm);
-	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(do_warn), w);
-
 	cancel = picture_button(w->window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), w->window);
 
+	warn = picture_button(w->window, _("Warn"), warn_xpm);
+	gtk_box_pack_end(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(do_warn), w);
+
 	gtk_widget_show(w->window);
 }
+
+void do_remove_buddy(GtkWidget *w, struct buddy *b)
+{
+	struct group *g = find_group_by_buddy(b->gc, b->name);
+	struct gaim_connection *gc = b->gc;
+	struct conversation *cv;
+
+	if (!b)
+		return;
+
+	debug_printf(_("Removing '%s' from buddylist.\n"), b->name);
+	serv_remove_buddy(b->gc, b->name, g->name);
+	remove_buddy(gc, g, b);
+	do_export(gc);
+	build_edit_tree();
+
+	cv = find_conversation(b->name);
+
+	if (cv)
+		update_convo_add_button(cv);
+
+}
+
+void toggle_confirm_del_cb(GtkWidget *w, int opt)
+{
+	im_options = im_options ^ opt;
+}
+
+void show_confirm_del(struct gaim_connection *gc, gchar *name)
+{
+	struct confirm_del *b = g_new0(struct confirm_del, 1);
+	struct buddy *bd;
+	GtkWidget *hbox;
+	GtkWidget *vbox;
+	GtkWidget *fbox;
+	GtkWidget *frame;
+	gchar tmp[2048];
+
+	GAIM_DIALOG(b->window);
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
+
+	g_snprintf(tmp, sizeof(tmp), _("Gaim - Remove %s?"), name);
+	gtk_window_set_title(GTK_WINDOW(b->window), tmp);
+	gtk_window_set_wmclass(GTK_WINDOW(b->window), "confirm_del", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
+	gtk_signal_connect(GTK_OBJECT(b->window), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	gtk_widget_realize(b->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(b->window), vbox);
+	gtk_widget_show(vbox);
+
+	frame = gtk_frame_new(_("Remove Buddy"));
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
+	gtk_widget_show(frame);	
+
+	fbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+	gtk_widget_show(fbox);
+
+	g_snprintf(tmp, sizeof(tmp), _("You are about to remove '%s' from\nyour buddylist. Do you want to continue?"), name);
+	b->label = gtk_label_new(tmp);
+	gtk_misc_set_alignment(GTK_MISC(b->label), 0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(b->label), GTK_JUSTIFY_LEFT);
+	gtk_box_pack_start(GTK_BOX(fbox), b->label, FALSE, FALSE, 0);
+	gtk_widget_show(b->label);
+
+	b->checkbox = gtk_check_button_new_with_label(_("Do not ask me this question again"));
+	gtk_signal_connect(GTK_OBJECT(b->checkbox), "clicked",
+			   GTK_SIGNAL_FUNC(toggle_confirm_del_cb), (int *)OPT_IM_DONT_CONFIRM_DEL);
+	gtk_box_pack_start(GTK_BOX(fbox), b->checkbox, FALSE, FALSE, 0);
+	gtk_widget_show(b->checkbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	b->ok = picture_button(b->window, _("Accept"), ok_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), b->ok, FALSE, FALSE, 5);
+
+	bd = find_buddy(gc, name);
+
+	if (bd)
+		gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(do_remove_buddy), bd);
+	
+	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	
+	gtk_widget_show(b->window);	
+}
+
 
 
 /*------------------------------------------------------------------------*/
@@ -3758,6 +3866,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 	gtk_widget_show_all(rename_dialog);
 }
+
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for renaming buddies                                       */

@@ -540,13 +540,10 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	struct buddy *b = find_buddy(c->gc, c->name);
 	if (b) {
-		struct group *g = find_group_by_buddy(c->gc, c->name);
-		debug_printf(_("Removing '%s' from buddylist.\n"), c->name);
-		serv_remove_buddy(c->gc, c->name, g->name);
-		remove_buddy(c->gc, g, b);
-		do_export(c->gc);
-		build_edit_tree();
-		update_convo_add_button(c);
+		if (im_options & OPT_IM_DONT_CONFIRM_DEL)
+			show_confirm_del(c->gc, c->name);
+		else
+			do_remove_buddy(NULL, b);
 	} else if (c->gc)
 		show_add_buddy(c->gc, c->name, NULL, NULL);
 
