@@ -136,9 +136,12 @@ AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session mana
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall -g3 -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
+
+CFLAGS="$CFLAGS -Wall -g3"
+AC_SUBST(CFLAGS)
 
 AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
 *** GLib 2.0 is required to build Gaim; please make sure you have the GLib
@@ -706,7 +709,6 @@ fi
 
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall -g"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
