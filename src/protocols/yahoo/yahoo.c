@@ -658,7 +658,7 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 		yahoo_process_list(gc, pkt);
 		break;
 	default:
-		debug_printf("unhandled service %d\n", pkt->service);
+		debug_printf("unhandled service 0x%02x\n", pkt->service);
 		break;
 	}
 }
@@ -705,7 +705,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		pkt = yahoo_packet_new(0, 0, 0);
 
 		pkt->service = yahoo_get16(yd->rxqueue + pos); pos += 2;
-		debug_printf("Yahoo Service: %d Status: %d\n", pkt->service, pkt->status);
+		debug_printf("Yahoo Service: 0x%02x Status: %d\n", pkt->service, pkt->status);
 		pkt->status = yahoo_get32(yd->rxqueue + pos); pos += 4;
 		pkt->id = yahoo_get32(yd->rxqueue + pos); pos += 4;
 
