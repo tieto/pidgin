@@ -2695,9 +2695,9 @@ void make_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item_with_pixmap(menu, _("Online Help"), add_small_xpm, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
-	gaim_new_item_with_pixmap(menu, _("Debug Window"), search_small_xpm, GTK_SIGNAL_FUNC(clicked_debug), NULL, 0, 0, NULL);
-	gaim_new_item_with_pixmap(menu, _("About Gaim"), about_small_xpm, GTK_SIGNAL_FUNC(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
+	gaim_new_item_from_stock(menu, _("Online Help"), GTK_STOCK_HELP, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Debug Window"), NULL, GTK_SIGNAL_FUNC(clicked_debug), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("About Gaim"), NULL, GTK_SIGNAL_FUNC(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
 	
 	gtk_widget_show(menubar);
 
