@@ -28,6 +28,7 @@
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "stock.h"
+#include "ui.h"
 
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
@@ -264,8 +265,10 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Descriptive label */
 	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-								 "%s</span>\n\n%s",
-								 primary, (secondary ? secondary : ""));
+								 "%s</span>%s%s",
+								 primary,
+								 (secondary ? "\n\n" : ""),
+								 (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -288,12 +291,13 @@ gaim_gtk_request_input(const char *title, const char *primary,
 		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 											GTK_SHADOW_IN);
 
-		gtk_widget_set_size_request(sw, 300, 75);
+		gtk_widget_set_size_request(sw, 320, 130);
 
 		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 		entry = gtk_text_view_new();
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
+		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
 
 #ifdef USE_GTKSPELL
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
@@ -412,8 +416,10 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 	/* Descriptive label */
 	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-								 "%s</span>\n\n%s",
-								 primary, (secondary ? secondary : ""));
+								 "%s</span>%s%s",
+								 primary,
+								 (secondary ? "\n\n" : ""),
+								 (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -498,8 +504,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	if (primary != NULL || secondary != NULL) {
 		label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-									 "%s</span>\n\n%s",
+									 "%s</span>%s%s",
 									 (primary ? primary : ""),
+									 (secondary ? "\n\n" : ""),
 									 (secondary ? secondary : ""));
 
 		label = gtk_label_new(NULL);
@@ -630,6 +637,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 						textview = gtk_text_view_new();
 						gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
 												   TRUE);
+						gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview),
+													GTK_WRAP_WORD_CHAR);
 
 #ifdef USE_GTKSPELL
 						if (gaim_prefs_get_bool(
