@@ -1993,13 +1993,7 @@ static void set_misc_option(GtkWidget *w, int option)
 {
 	misc_options ^= option;
 
-	if (option == OPT_MISC_DEBUG) {
-		if ((misc_options & OPT_MISC_DEBUG))
-			gaim_gtk_debug_window_show();
-		else
-			gaim_gtk_debug_window_hide();
-	}
-	else if(option == OPT_MISC_USE_SERVER_ALIAS) {
+	if(option == OPT_MISC_USE_SERVER_ALIAS) {
 		/* XXX blist reset the aliases here */
 		gaim_conversation_foreach(gaim_conversation_autoset_title);
 	}

@@ -232,7 +232,7 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 			ts_s = g_strdup("");
 	}
 
-	if ((misc_options & OPT_MISC_DEBUG) &&
+	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled") &&
 		debug_win != NULL && !debug_win->paused) {
 
 		gchar *esc_s, *cat_s, *s;

@@ -923,7 +923,7 @@ int main(int argc, char *argv[])
 		opt_user_arg = NULL;
 	}
 
-	if (misc_options & OPT_MISC_DEBUG)
+	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
 		gaim_gtk_debug_window_show();
 
 	static_proto_init();
