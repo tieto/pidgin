@@ -1921,6 +1921,8 @@ int gaim_parse_msgerr(struct aim_session_t *sess,
 
 int gaim_parse_locerr(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	va_list ap;
 	char *destn;
 	unsigned short reason;
@@ -1930,6 +1932,11 @@ int gaim_parse_locerr(struct aim_session_t *sess,
 	reason = (unsigned short)va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
+
+	if (!od->ewarmenhoven && !g_strcasecmp(destn, "ewarmenhoven")) {
+		od->ewarmenhoven = TRUE;
+		return 1;
+	}
 
 	sprintf(buf, _("User information for %s unavailable: %s"), destn,
 			(reason < msgerrreasonlen) ? msgerrreason[reason] : _("Reason unknown"));
@@ -1966,7 +1973,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	infotype = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
 
-	if (!od->ewarmenhoven) {
+	if (!g_strcasecmp(info->sn, "ewarmenhoven") && !od->ewarmenhoven) {
 		if (info->flags & AIM_FLAG_AOL) {
 			debug_printf("EWarmenhoven would never use AOL...\n");
 			aim_send_im(sess, command->conn, "EWarmenhoven", 0,
