@@ -49,7 +49,6 @@ gaim_prpl_num_to_id(GaimProtocol protocol)
 		case GAIM_PROTO_MOO:      return "prpl-moo";     break;
 		case GAIM_PROTO_TREPIA:   return "prpl-trepia";  break;
 		case GAIM_PROTO_BLOGGER:  return "prpl-blogger"; break;
-		case GAIM_PROTO_NOVELL:  return "prpl-novell"; break;
 
 		default:
 			break;
@@ -76,7 +75,6 @@ gaim_prpl_id_to_num(const char *id)
 	else if (!strcmp(id, "prpl-moo"))     return GAIM_PROTO_MOO;
 	else if (!strcmp(id, "prpl-trepia"))  return GAIM_PROTO_TREPIA;
 	else if (!strcmp(id, "prpl-blogger")) return GAIM_PROTO_BLOGGER;
-	else if (!strcmp(id, "prpl-novell"))  return GAIM_PROTO_NOVELL;
 
 	return -1;
 }

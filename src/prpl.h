@@ -66,7 +66,11 @@ typedef enum
 	GAIM_PROTO_BATTLENET,   /**< Battle.NET protocol       */
 	GAIM_PROTO_SSCP,	/**< SSCP (ConfMgr) protocol   */
 	GAIM_PROTO_BLOGGER,	/**< Blogger xml-rpc protocol  */
-	GAIM_PROTO_NOVELL,	/**< GroupWise Messenger protocol  */
+	/* If you add any more prpl numbers,  then a curse will
+	 * be placed upon your keyboard the likes of which the
+	 * world has never known. prpl numbers are no longer
+	 * necessary.  --Nathan
+	 * */
 	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
