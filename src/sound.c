@@ -19,6 +19,7 @@
  *
  */
 
+#ifndef USE_APPLET
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
@@ -288,6 +289,41 @@ void play_sound(int sound)
 			play(Receive, sizeof(Receive));
 		break;
        }
-
-			
 }
+
+#else /* USE_APPLET */
+
+#include "gaim.h"
+#include <libgnome/gnome-triggers.h>
+void play_sound(int sound)
+{
+
+	switch(sound) {
+	case BUDDY_ARRIVE:
+		if (sound_options & OPT_SOUND_LOGIN)
+			gnome_triggers_do("", "program", "gaim_applet", "login", NULL);
+		break;
+	case BUDDY_LEAVE:
+		if (sound_options & OPT_SOUND_LOGOUT)
+			gnome_triggers_do("", "program", "gaim_applet", "leave", NULL);
+		break;
+	case SEND:
+		if (sound_options & OPT_SOUND_SEND)
+			gnome_triggers_do("", "program", "gaim_applet", "send", NULL);
+		break;
+        case FIRST_RECEIVE:
+		if (sound_options & OPT_SOUND_FIRST_RCV)
+			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+		break;
+        case RECEIVE:
+		if (sound_options & OPT_SOUND_RECV)
+			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+		break;
+	case AWAY:
+		if (sound_options & OPT_SOUND_WHEN_AWAY)
+			gnome_triggers_do("", "program", "gaim_applet", "recv", NULL);
+		break;
+       }
+}
+
+#endif /* USE_APPLET */

@@ -1,5 +1,6 @@
 
-EXTRA_DIST = gaim_applet.gnorba gaim_applet.desktop buddytrans
+EXTRA_DIST = gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
+	buddytrans
 
 if GNOMEAPPLET
 
@@ -10,6 +11,10 @@ gaimgnorba_DATA = $(gaim_GNORBA)
 gaim_DESKTOP = gaim_applet.desktop
 gaimdesktopdir = $(datadir)/applets/Network
 gaimdesktop_DATA = $(gaim_DESKTOP)
+
+gaim_SOUND = gaim_applet.soundlist
+gaimsounddir = $(sysconfdir)/sound/events
+gaimsound_DATA = $(gaim_SOUND)
 
 endif
 

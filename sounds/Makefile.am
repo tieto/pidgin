@@ -18,4 +18,7 @@ Send.h: au2h Send.au
 Receive.h: au2h Receive.au                              
 	./au2h Receive.au Receive.h                  
 
-
+if GNOMEAPPLET
+gaimsoundsdir = $(datadir)/sounds/gaim
+gaimsounds_DATA = $(EXTRA_DIST)
+endif

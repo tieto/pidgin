@@ -1,0 +1,18 @@
+[__section_info__]
+description=Gaim soundlist
+
+[login]
+file=gaim/BuddyArrive.au
+description=User signed on
+
+[leave]
+file=gaim/BuddyLeave.au
+description=User signed off
+
+[send]
+file=gaim/Send.au
+description=Send a message
+
+[recv]
+file=gaim/Receive.au
+description=Receive a message
