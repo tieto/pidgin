@@ -506,7 +506,7 @@ static void nap_add_buddy(struct gaim_connection *gc, char *name)
 	nap_write_packet(gc, 0xCF, name);
 }
 
-static void nap_remove_buddy(struct gaim_connection *gc, char *name)
+static void nap_remove_buddy(struct gaim_connection *gc, char *name, char *group)
 {
 	nap_write_packet(gc, 0x12F, name);
 }

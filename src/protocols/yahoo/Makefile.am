@@ -11,8 +11,7 @@ st = -DSTATIC
 pkg_LTLIBRARIES =
 noinst_LIBRARIES = libyahoo.a
 
-libyahoo_a_SOURCES = \
-	buddy.c conn.c internal.h login.c misc.c outgoing.c rxhandlers.c yay.c yay.h
+libyahoo_a_SOURCES = yahoo.c
 
 else
 
@@ -20,7 +19,6 @@ st =
 pkg_LTLIBRARIES = libyahoo.la
 noinst_LIBRARIES =
 
-libyahoo_la_SOURCES = \
-	buddy.c conn.c internal.h login.c misc.c outgoing.c rxhandlers.c yay.c yay.h
+libyahoo_la_SOURCES = yahoo.c
 
 endif

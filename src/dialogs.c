@@ -3767,13 +3767,32 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 {
 	char *new_name;
 	struct buddy *b;
+	GSList *gr;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = gtk_object_get_user_data(obj);
 
+	if (!g_slist_find(connections, b->gc)) {
+		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
+		return;
+	}
+
+	gr = b->gc->groups;
+	while (gr) {
+		if (g_slist_find(((struct group *)gr->data)->members, b))
+			break;
+		gr = gr->next;
+	}
+	if (!gr) {
+		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
+		return;
+	}
+
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, b->name)) {
+		struct group *g = find_group_by_buddy(b->gc, b->name);
 		char *prevname = g_strdup(b->name);
-		serv_remove_buddy(b->gc, b->name);
+		if (g)
+			serv_remove_buddy(b->gc, b->name, g->name);
 		if (!strcmp(b->name, b->show))
 			 g_snprintf(b->show, sizeof(b->show), "%s", new_name);
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);

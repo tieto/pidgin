@@ -1511,7 +1511,7 @@ static void msn_add_buddy(struct gaim_connection *gc, char *name)
 	}
 }
 
-static void msn_rem_buddy(struct gaim_connection *gc, char *who)
+static void msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 {
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];

@@ -250,23 +250,23 @@ void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 }
 
 
-void serv_remove_buddy(struct gaim_connection *g, char *name)
+void serv_remove_buddy(struct gaim_connection *g, char *name, char *group)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->remove_buddy)
-		g->prpl->remove_buddy(g, name);
+		g->prpl->remove_buddy(g, name, group);
 }
 
-void serv_remove_buddies(struct gaim_connection *gc, GList *g)
+void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
 {
 	if (!g_slist_find(connections, gc))
 		return;
 	if (!gc->prpl)
 		return;		/* how the hell did that happen? */
 	if (gc->prpl->remove_buddies)
-		gc->prpl->remove_buddies(gc, g);
+		gc->prpl->remove_buddies(gc, g, group);
 	else {
 		while (g) {
-			serv_remove_buddy(gc, g->data);
+			serv_remove_buddy(gc, g->data, group);
 			g = g->next;
 		}
 	}

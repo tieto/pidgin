@@ -538,17 +538,17 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
-	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
+	struct buddy *b = find_buddy(c->gc, c->name);
+	if (b) {
+		struct group *g = find_group_by_buddy(c->gc, c->name);
 		debug_printf(_("Removing '%s' from buddylist.\n"), c->name);
-		serv_remove_buddy(c->gc, c->name);
-		remove_buddy(c->gc, find_group_by_buddy(c->gc, c->name), find_buddy(c->gc, c->name));
+		serv_remove_buddy(c->gc, c->name, g->name);
+		remove_buddy(c->gc, g, b);
 		do_export(c->gc);
 		build_edit_tree();
 		update_convo_add_button(c);
-	} else {
-		if (c->gc)
-			show_add_buddy(c->gc, c->name, NULL, NULL);
-	}
+	} else if (c->gc)
+		show_add_buddy(c->gc, c->name, NULL, NULL);
 
 	gtk_widget_grab_focus(c->entry);
 }

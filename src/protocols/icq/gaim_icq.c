@@ -386,7 +386,7 @@ static void icq_add_buddies(struct gaim_connection *gc, GList *whos) {
 	}
 }
 
-static void icq_rem_buddy(struct gaim_connection *gc, char *who) {
+static void icq_rem_buddy(struct gaim_connection *gc, char *who, char *group) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	icq_ContactRemove(id->link, atol(who));
 }

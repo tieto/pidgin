@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2576 2001-10-21 00:14:41Z robflynn $
+ * $Id: gg.c 2694 2001-11-06 23:58:24Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -616,7 +616,7 @@ static void agg_add_buddy(struct gaim_connection *gc, char *who)
 	gg_add_notify(gd->sess, strtol(who, (char **)NULL, 10));
 }
 
-static void agg_rem_buddy(struct gaim_connection *gc, char *who)
+static void agg_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))

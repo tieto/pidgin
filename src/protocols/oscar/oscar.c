@@ -2291,7 +2291,7 @@ static void oscar_add_buddies(struct gaim_connection *g, GList *buddies) {
 	aim_bos_setbuddylist(odata->sess, odata->conn, buf);
 }
 
-static void oscar_remove_buddy(struct gaim_connection *g, char *name) {
+static void oscar_remove_buddy(struct gaim_connection *g, char *name, char *group) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	aim_remove_buddy(odata->sess, odata->conn, name);
 }

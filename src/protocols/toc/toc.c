@@ -1037,7 +1037,7 @@ static void toc_add_buddies(struct gaim_connection *g, GList *buddies)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_remove_buddy(struct gaim_connection *g, char *name)
+static void toc_remove_buddy(struct gaim_connection *g, char *name, char *group)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
@@ -1045,7 +1045,7 @@ static void toc_remove_buddy(struct gaim_connection *g, char *name)
 	toc_set_config(g);
 }
 
-static void toc_remove_buddies(struct gaim_connection *g, GList *buddies)
+static void toc_remove_buddies(struct gaim_connection *g, GList *buddies, char *group)
 {
 	char buf[BUF_LEN * 2];
 	int n;

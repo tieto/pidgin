@@ -999,6 +999,7 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 		 * we change the group that the buddy is in */
 		struct group *old_g, *new_g = (struct group *)ptype;
 		struct buddy *s = NULL, *buddy = (struct buddy *)ctype;
+		gboolean add = FALSE;
 		int pos;
 
 		if (buddy->gc != new_g->gc) {
@@ -1015,7 +1016,7 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 				og->members = g_slist_remove(og->members, a);
 			} else {
 				/* we don't have this buddy yet; let's add him */
-				serv_add_buddy(new_g->gc, buddy->name);
+				add = TRUE;
 			}
 		}
 
@@ -1034,6 +1035,10 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 				new_g->members = g_slist_prepend(new_g->members, buddy);
 		} else
 			new_g->members = g_slist_append(new_g->members, buddy);
+
+		/* we do the add after it's added locally so that prpls can find it if necessary */
+		if (add)
+			serv_add_buddy(new_g->gc, buddy->name);
 
 		do_export(buddy->gc);
 		if (buddy->gc != new_g->gc) {
@@ -1245,7 +1250,7 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			b = (struct buddy *)type;
 			g = find_group_by_buddy(b->gc, b->name);
 			gct = b->gc;
-			serv_remove_buddy(b->gc, b->name);
+			serv_remove_buddy(b->gc, b->name, g->name);
 			remove_buddy(b->gc, g, b);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
 			do_export(gct);

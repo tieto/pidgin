@@ -1338,7 +1338,8 @@ static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int fl
 }
 
 /* IRC doesn't have a buddy list, but we can still figure out who's online with ISON */
-static void irc_fake_buddy(struct gaim_connection *gc, char *who) {}
+static void irc_add_buddy(struct gaim_connection *gc, char *who) {}
+static void irc_remove_buddy(struct gaim_connection *gc, char *who, char *group) {}
 
 static GList *irc_chat_info(struct gaim_connection *gc)
 {
@@ -1461,8 +1462,8 @@ void irc_init(struct prpl *ret)
 	ret->login = irc_login;
 	ret->close = irc_close;
 	ret->send_im = irc_send_im;
-	ret->add_buddy = irc_fake_buddy;
-	ret->remove_buddy = irc_fake_buddy;
+	ret->add_buddy = irc_add_buddy;
+	ret->remove_buddy = irc_remove_buddy;
 	ret->chat_info = irc_chat_info;
 	ret->join_chat = irc_join_chat;
 	ret->chat_leave = irc_chat_leave;

@@ -10,3 +10,4 @@ misc.lo
 outgoing.lo
 rxhandlers.lo
 yay.lo
+yahoo.lo

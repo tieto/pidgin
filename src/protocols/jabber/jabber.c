@@ -1301,7 +1301,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 	g_free(realwho);
 }
 
-static void jabber_remove_buddy(struct gaim_connection *gc, char *name)
+static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *group)
 {
 	xmlnode x, y;
 	char *realwho;

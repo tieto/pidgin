@@ -86,7 +86,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 
 	gc->groups = g_slist_remove(gc->groups, delg);
 
-	serv_remove_buddies(gc, tmp);
+	serv_remove_buddies(gc, tmp, rem_g->name);
 	while (tmp) {
 		g_free(tmp->data);
 		tmp = g_list_remove(tmp, tmp->data);
