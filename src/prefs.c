@@ -1519,7 +1519,7 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd)
 
 	gaim_button(label, &sound_options, opt, hbox);
 
-	button = gtk_button_new_with_label(_("Play"));
+	button = gtk_button_new_with_label(_("Test"));
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 3);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(test_sound), (void *)snd);
 	gtk_widget_show(button);
@@ -1556,8 +1556,14 @@ static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
 
 static void set_sound_driver(GtkWidget *w, int option)
 {
+	if (option == OPT_SOUND_CMD)
+		gtk_widget_set_sensitive(sndcmd, TRUE);
+	else
+		gtk_widget_set_sensitive(sndcmd, FALSE);
+
 	sound_options &= ~(OPT_SOUND_NORMAL | OPT_SOUND_BEEP |
-			   OPT_SOUND_NAS | OPT_SOUND_ARTSC | OPT_SOUND_ESD);
+			   OPT_SOUND_NAS | OPT_SOUND_ARTSC |
+			   OPT_SOUND_ESD | OPT_SOUND_CMD);
 	sound_options |= option;
 	save_prefs();
 }
@@ -1671,13 +1677,22 @@ static void sound_page()
 	i++;
 #endif
 
-	opt = gtk_menu_item_new_with_label("Native");
+	opt = gtk_menu_item_new_with_label("Internal");
 	gtk_signal_connect(GTK_OBJECT(opt), "activate",
 			   GTK_SIGNAL_FUNC(set_sound_driver), 
 			   (gpointer)OPT_SOUND_NORMAL);
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 	if ((sound_options & OPT_SOUND_NORMAL) && !driver) driver = i;
+	i++;
+
+	opt = gtk_menu_item_new_with_label("Command");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_CMD);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_CMD) && !driver) driver = i;
 	i++;
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
@@ -1693,7 +1708,7 @@ static void sound_page()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Command to play sound files\n(%s for filename; internal if empty)"));
+	label = gtk_label_new(_("Command to play sound files\n(%s for filename)"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
@@ -1702,6 +1717,7 @@ static void sound_page()
 	gtk_entry_set_text(GTK_ENTRY(sndcmd), sound_cmd);
 	gtk_box_pack_end(GTK_BOX(hbox), sndcmd, FALSE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(sndcmd), "focus_out_event", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
+	gtk_widget_set_sensitive(sndcmd, (OPT_SOUND_CMD & sound_options));
 	gtk_widget_show(sndcmd);
 
 	frame = gtk_frame_new(_("Events"));

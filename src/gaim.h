@@ -276,6 +276,7 @@ extern guint sound_options;
 #define OPT_SOUND_NAS			0x00004000
 #define OPT_SOUND_ARTSC			0x00008000
 #define OPT_SOUND_ESD			0x00010000
+#define OPT_SOUND_CMD			0x00020000
 
 #define BUDDY_ARRIVE 0
 #define BUDDY_LEAVE 1

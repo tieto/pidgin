@@ -403,7 +403,7 @@ void play_file(char *filename)
 	else if (pid == 0) {
 		alarm(30);
 		
-		if (sound_cmd[0]) {
+		if ((sound_options & OPT_SOUND_CMD) && sound_cmd[0]) {
 			char *args[4];
 			char command[4096];
 
@@ -460,6 +460,12 @@ void play(unsigned char *data, int size)
 		gdk_beep();
 		return;
 	}
+
+	else if ((sound_options & OPT_SOUND_CMD) && sound_cmd[0]) {
+		debug_printf("can't play internal sound with external command -- skipping\n");
+		return;
+	}
+
 	pid = fork();
 	
 	if (pid < 0)

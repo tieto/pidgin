@@ -189,7 +189,7 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_widget_show(tophbox);
 
 	/* Left side: frame with list of plugin file names */
-	frame = gtk_frame_new(_("Plugins"));
+	frame = gtk_frame_new(_("Loaded Plugins"));
 	gtk_box_pack_start(GTK_BOX(tophbox), frame, FALSE, FALSE, 0);
 	gtk_widget_set_usize(frame, 140, -1);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 6);
