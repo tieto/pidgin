@@ -7,6 +7,7 @@ version 0.64 (05/29/2003):
 	* New mail notification dialog.
 	* Several bug fixes in MSN.
 	* Conversation window buddy icon bugs were fixed.
+	* Russian translation updated (Dzmitry Chekmarou)
 
 version 0.63 (05/16/2003):
 	* A rewrite of the plugin API. Plugin authors will need to change their
