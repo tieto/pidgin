@@ -37,13 +37,12 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#if HAVE_CRYPT_H
-#include <crypt.h>
-#endif
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
+
+extern char *yahoo_crypt(char *, char *);
 
 #include "pixmaps/status-away.xpm"
 #include "pixmaps/status-here.xpm"
@@ -782,7 +781,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	yahoo_packet_hash(pkt, 0, gc->username);
 	yahoo_packet_hash(pkt, 1, gc->username);
-	yahoo_packet_hash(pkt, 6, crypt(gc->password, "$1$_2S43d5f$"));
+	yahoo_packet_hash(pkt, 6, yahoo_crypt(gc->password, "$1$_2S43d5f$"));
 
 	yahoo_send_packet(yd, pkt);
 
