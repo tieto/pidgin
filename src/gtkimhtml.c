@@ -2803,8 +2803,8 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 	   it's a png */
 	if (!type){
 		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."));
-		type = g_strdup("png");
+						_("Unable to guess the image type based on the file extension supplied.  Using \".image\""));
+		type = g_strdup("image");
 	}
 
 	gdk_pixbuf_save(image->pixbuf, filename, type, &error, NULL);

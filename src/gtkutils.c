@@ -241,7 +241,7 @@ GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
 GtkWidget *
 gaim_pixbuf_toolbar_button_from_stock(const char *icon)
 {
-	GtkWidget *button, *image,  *bbox;
+	GtkWidget *button, *image, *bbox;
 
 	button = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
