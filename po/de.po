@@ -151,7 +151,7 @@ msgstr "Buddy-Alert Hinzufügen"
 
 #: src/buddy.c:569 src/buddy.c:1017 src/buddy.c:1987 src/dialogs.c:1480
 msgid "Permit"
-msgstr "Zalassen
+msgstr "Zalassen"
 
 #: src/buddy.c:585 src/dialogs.c:1475
 msgid "Deny"
@@ -397,7 +397,7 @@ msgstr ""
 
 #: src/buddy_chat.c:642 src/conversation.c:1195
 msgid "Decrease font size"
-msgstr "Schrift kleiner
+msgstr "Schrift kleiner"
 
 #: src/buddy_chat.c:643 src/conversation.c:1196
 msgid "Normal"
@@ -405,7 +405,7 @@ msgstr ""
 
 #: src/buddy_chat.c:643 src/conversation.c:1196
 msgid "Normal font size"
-msgstr "Schrift normal
+msgstr "Schrift normal"
 
 #: src/buddy_chat.c:644 src/conversation.c:1197
 msgid "Big"
@@ -458,7 +458,7 @@ msgstr "Warnen"
 
 #: src/conversation.c:1106
 msgid "Block"
-msgstr "Sperren
+msgstr "Sperren"
 
 #: src/conversation.c:1200 src/conversation.c:1201
 msgid "Font"
