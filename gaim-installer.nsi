@@ -80,6 +80,7 @@ SetDateSave on
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
   !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+  !define MUI_LANGDLL_ALWAYSSHOW
 
 ;--------------------------------
 ;Languages
@@ -216,6 +217,9 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Call DoWeNeedGtk
   Pop $R0
   Pop $R6
+
+  ; Pass on the language we are using to GTK+ installer via registry..
+  WriteRegStr HKCU "${GTK_REG_KEY}" "Installer Language" "$LANGUAGE"
 
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
