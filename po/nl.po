@@ -8087,7 +8087,7 @@ msgstr "Verplaatsen van gaim instellingenmap naar:"
 #~ msgstr "Stad:"
 
 #~ msgid "State:"
-#~ msgstr "Privincie:"
+#~ msgstr "Provincie:"
 
 #~ msgid "<B>%s has the following screen names:</B><BR>"
 #~ msgstr "<B>%s heeft de volgende bijnamen:</B><BR>"

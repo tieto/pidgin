@@ -38,7 +38,6 @@ src/about.c
 src/account.c
 src/away.c
 src/blist.c
-src/buddy_chat.c
 src/connection.c
 src/conversation.c
 src/dialogs.c
