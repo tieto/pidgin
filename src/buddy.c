@@ -1345,11 +1345,13 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 
 		if (*type == EDIT_BUDDY) {
+			struct gaim_connection *gct;
 			b = (struct buddy *)type;
 			g = find_group_by_buddy(b->gc, b->name);
+			gct = b->gc;
 			remove_buddy(b->gc, g, b);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
-			do_export(b->gc);
+			do_export(gct);
 		} else if (*type == EDIT_GROUP) {
 			remove_group(((struct group *)type)->gc, (struct group *)type);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
