@@ -26,10 +26,10 @@ Url:        http://gaim.sf.net/
 Source:     %{name}-%{version}.tar.gz
 Packager:   Rob Flynn <rob@marko.net>
 BuildRoot:  /var/tmp/%{name}-%{version}-root
-Requires:   gtk2 >= 2.0.0
 Prefix:     %{prefix}
 
-BuildRequires: libao-devel >= 0.8.3
+Requires:   gtk2 >= 2.0.0
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool
 
 %description
 Gaim allows you to talk to anyone using a variety of messaging 
