@@ -2686,9 +2686,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 
 		/* Contact Alias */
 		if (GAIM_BLIST_NODE_IS_CONTACT(node) &&
-			(gaim_contact_get_alias(c) != NULL))
+			(c->alias != NULL))
 		{
-			tmp = g_markup_escape_text(gaim_contact_get_alias(c), -1);
+			tmp = g_markup_escape_text(c->alias, -1);
 			g_string_append_printf(str, _("\n<b>Contact Alias:</b> %s"), tmp);
 			g_free(tmp);
 		}
