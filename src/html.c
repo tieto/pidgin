@@ -91,7 +91,7 @@ gchar *strip_html(const gchar *text)
 
 struct g_url *parse_url(char *url)
 {
-	struct g_url *test = (struct g_url*)malloc(sizeof(struct g_url));
+	struct g_url *test = g_new0(struct g_url);
 	char scan_info[255];
 	char port[5];
 	int f;
