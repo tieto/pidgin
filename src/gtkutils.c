@@ -887,7 +887,7 @@ account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
 	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
 												 "show_all"));
 
-	check_account_func = g_object_get_data(G_OBJECT(item),
+	check_account_func = g_object_get_data(G_OBJECT(optmenu),
 										   "check_account_func");
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
@@ -930,7 +930,7 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	/* Set some data. */
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 	g_object_set_data(G_OBJECT(optmenu), "show_all", GINT_TO_POINTER(show_all));
-	g_object_set_data(G_OBJECT(optmenu), "chck_account_func",
+	g_object_set_data(G_OBJECT(optmenu), "check_account_func",
 					  check_account_func);
 
 	/* Create and set the actual menu. */
