@@ -53,6 +53,27 @@ GList *chats = NULL;
 GtkWidget *all_chats = NULL;
 GtkWidget *chat_notebook = NULL;
 
+static char *ignored(struct conversation *b, char *who)
+{
+	GList *ignore = b->ignored;
+	while (ignore) {
+		char *ign = ignore->data;
+		if (!g_strcasecmp(who, ign))
+			return ign;
+		if (*ign == '+' && !g_strcasecmp(who, ign + 1))
+			return ign;
+		if (*ign == '@') {
+			ign++;
+			if (*ign == '+' && !g_strcasecmp(who, ign + 1))
+				return ign;
+			if (*ign != '+' && !g_strcasecmp(who, ign))
+				return ign;
+		}
+		ignore = ignore->next;
+	}
+	return NULL;
+}
+
 
 static void destroy_join_chat()
 {
@@ -669,7 +690,6 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 
 void chat_write(struct conversation *b, char *who, int flag, char *message, time_t mtime)
 {
-	GList *ignore = b->ignored;
 	char *str;
 
 	if (!b->is_chat) {
@@ -677,22 +697,8 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 		return;
 	}
 
-	while (ignore) {
-		char *ign = ignore->data;
-		if (!g_strcasecmp(who, ign))
-			return;
-		if (*ign == '+' && !g_strcasecmp(who, ign + 1))
-			return;
-		if (*ign == '@') {
-			ign++;
-			if (*ign == '+' && !g_strcasecmp(who, ign + 1))
-				return;
-			if (*ign != '+' && !g_strcasecmp(who, ign))
-				return;
-		}
-		ignore = ignore->next;
-	}
-
+	if (ignored(b, who))
+		return;
 
 	if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize (who));
@@ -817,7 +823,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		if (g_list_find_custom(b->ignored, gtk_object_get_user_data(obj), (GCompareFunc)strcmp))
+		if (ignored(b, gtk_object_get_user_data(obj)))
 			button = gtk_menu_item_new_with_label(_("Un-Ignore"));
 		else
 			button = gtk_menu_item_new_with_label(_("Ignore"));
@@ -847,20 +853,12 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	char tmp[BUF_LONG];
 	GtkWidget *list_item;
 	int pos;
-	GList *ignored;
 
 	plugin_event(event_chat_buddy_join, b->gc, (void *)b->id, name, 0);
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
 	pos = g_list_index(b->in_room, name);
 
-	ignored = b->ignored;
-	while (ignored) {
-		if (!g_strcasecmp(name, ignored->data))
-			 break;
-		ignored = ignored->next;
-	}
-
-	if (ignored) {
+	if (ignored(b, buddy)) {
 		g_snprintf(tmp, sizeof(tmp), "X %s", name);
 		list_item = gtk_list_item_new_with_label(tmp);
 	} else
@@ -893,8 +891,8 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 
 	char *name = g_strdup(new);
 	GtkWidget *list_item;
+	char *ign;
 	int pos;
-	GList *ignored = b->ignored;
 
 	char tmp[BUF_LONG];
 
@@ -924,16 +922,19 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
 	pos = g_list_index(b->in_room, name);
 
-	while (ignored) {
-		if (!g_strcasecmp(old, ignored->data))
-			break;
-		ignored = ignored->next;
-	}
+	ign = ignored(b, old);
 
-	if (ignored) {
-		g_free(ignored->data);
-		b->ignored = g_list_remove(b->ignored, ignored->data);
-		b->ignored = g_list_append(b->ignored, g_strdup(name));
+	if (ign) {
+		g_free(ign);
+		b->ignored = g_list_remove(b->ignored, ign);
+
+		/* we haven't added them yet. if we find them, don't add them again */
+		if (!ignored(b, new))
+			b->ignored = g_list_append(b->ignored, g_strdup(name));
+
+		g_snprintf(tmp, sizeof(tmp), "X %s", name);
+		list_item = gtk_list_item_new_with_label(tmp);
+	} else if (ignored(b, new)) {
 		g_snprintf(tmp, sizeof(tmp), "X %s", name);
 		list_item = gtk_list_item_new_with_label(tmp);
 	} else
@@ -1025,7 +1026,8 @@ void im_callback(GtkWidget *w, struct conversation *b)
 void ignore_callback(GtkWidget *w, struct conversation *b)
 {
 	char *name;
-	GList *i, *ignored;
+	GList *i;
+	char *ign;
 	int pos;
 	GtkWidget *list_item;
 	char tmp[80];
@@ -1039,16 +1041,11 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 
 	pos = gtk_list_child_position(GTK_LIST(b->list), i->data);
 
-	ignored = b->ignored;
-	while (ignored) {
-		if (!g_strcasecmp(name, ignored->data))
-			 break;
-		ignored = ignored->next;
-	}
+	ign = ignored(b, name);
 
-	if (ignored) {
-		g_free(ignored->data);
-		b->ignored = g_list_remove(b->ignored, ignored->data);
+	if (ign) {
+		g_free(ign);
+		b->ignored = g_list_remove(b->ignored, ign);
 		g_snprintf(tmp, sizeof tmp, "%s", name);
 	} else {
 		b->ignored = g_list_append(b->ignored, g_strdup(name));
@@ -1477,16 +1474,9 @@ void chat_tabize()
 			while (r) {
 				char *name = r->data;
 				GtkWidget *list_item;
-				GList *ignored = c->ignored;
 				char tmp[BUF_LONG];
 
-				while (ignored) {
-					if (!g_strcasecmp(name, ignored->data))
-						 break;
-					ignored = ignored->next;
-				}
-
-				if (ignored) {
+				if (ignored(c, name)) {
 					g_snprintf(tmp, sizeof(tmp), "X %s", name);
 					list_item = gtk_list_item_new_with_label(tmp);
 				} else
@@ -1526,16 +1516,9 @@ void chat_tabize()
 			while (r) {
 				char *name = r->data;
 				GtkWidget *list_item;
-				GList *ignored = c->ignored;
 				char tmp[BUF_LONG];
 
-				while (ignored) {
-					if (!g_strcasecmp(name, ignored->data))
-						 break;
-					ignored = ignored->next;
-				}
-
-				if (ignored) {
+				if (ignored(c, name)) {
 					g_snprintf(tmp, sizeof(tmp), "X %s", name);
 					list_item = gtk_list_item_new_with_label(tmp);
 				} else
