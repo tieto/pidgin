@@ -1538,7 +1538,6 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				jc->state = JCS_ACTIVE;
 			} else {
 				/* no, we're not supposed to be. */
-				g_free(msg);
 				return;
 			}
 		}
@@ -1581,7 +1580,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 
 static void jabber_handlepresence(gjconn gjc, jpacket p)
 {
-	char *to, *from, *type;
+	char *from, *type;
 	GaimBuddy *b = NULL;
 	gaim_jid gjid;
 	char *buddy;
@@ -1593,7 +1592,6 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	int priority = 0;
 	struct jabber_buddy_data *jbd;
 
-	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
 
