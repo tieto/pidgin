@@ -37,6 +37,7 @@ Telling the server who's on your permit/deny lists (buggy)
 Chat:
  - joining rooms
  - leaving rooms
+ - getting invited
  - talking
 
 CURRENTLY UNSUPPORTED FEATURES
@@ -45,7 +46,7 @@ Warning users/getting warned
 Chat:
  - whispering
  - refreshing the chatlist in the preferences dialog
- - invitations (both to and from you)
+ - inviting someone
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
