@@ -128,8 +128,11 @@ char* wgaim_escape_dirsep( char* filename ) {
 void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y) {
 	LONG style,  extended_style;
 	RECT trect;
-	HWND hWnd = GDK_WINDOW_HWND(GTK_WIDGET(window)->window);
+	HWND hWnd;
 
+	if(!GTK_WIDGET_REALIZED(GTK_WIDGET(window)))
+		gtk_widget_realize(GTK_WIDGET(window));
+	hWnd = GDK_WINDOW_HWND(GTK_WIDGET(window)->window);
 	style = GetWindowLong(hWnd, GWL_STYLE);
 	extended_style = GetWindowLong (hWnd, GWL_EXSTYLE);
 	GetClientRect (hWnd, &trect);
