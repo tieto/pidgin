@@ -1988,7 +1988,7 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 
 void hide_buddy_list() {
 	#ifdef USE_APPLET
-	applet_destroy_buddy();
+	applet_destroy_buddy(NULL, NULL, NULL);
 #else
 	XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(blist->window),
