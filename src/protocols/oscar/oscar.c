@@ -4248,7 +4248,7 @@ static int gaim_reqinfo_timeout(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * too quickly.
 	 */
 	if (od->getinfotimer == 0)
-		od->getinfotimer = gaim_timeout_add(1200, gaim_reqinfo_timeout_cb, sess);
+		od->getinfotimer = gaim_timeout_add(1500, gaim_reqinfo_timeout_cb, sess);
 
 	return 1;
 }
@@ -5572,10 +5572,11 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
-#if 0
-		/* Set an available message */
-		aim_srv_setavailmsg(od->sess, text);
-#endif
+
+		text_html = gaim_status_get_attr_string(status, "message");
+		if (text_html != NULL) {
+			aim_srv_setavailmsg(od->sess, text_html);
+		}
 
 	} else if (primitive == GAIM_STATUS_AWAY) {
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
@@ -6865,9 +6866,11 @@ oscar_status_types(GaimAccount *account)
 									 _("Online"), FALSE, FALSE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-									 OSCAR_STATUS_ID_AVAILABLE,
-									 _("Available"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+										   OSCAR_STATUS_ID_AVAILABLE,
+										   _("Available"), TRUE, TRUE, FALSE,
+										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
@@ -6879,7 +6882,7 @@ oscar_status_types(GaimAccount *account)
 
 	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
 									 OSCAR_STATUS_ID_INVISIBLE,
-									 _("Invisible"), TRUE, TRUE, TRUE);
+									 _("Invisible"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	if (aim_sn_is_icq(gaim_account_get_username(account)) == FALSE )
