@@ -31,6 +31,10 @@
 #include "md5.h"
 #include "util.h"
 #include "sslconn.h"
+#include "request.h"
+
+static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
+		gpointer data);
 
 gboolean
 jabber_process_starttls(JabberStream *js, xmlnode *packet)
@@ -52,11 +56,65 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	return FALSE;
 }
 
+static void finish_plaintext_authentication(JabberStream *js)
+{
+	if(js->auth_type == JABBER_AUTH_PLAIN) {
+		xmlnode *auth;
+		GString *response;
+		char *enc_out;
+
+		auth = xmlnode_new("auth");
+		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+
+		response = g_string_new("");
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response, js->user->node);
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response,
+				gaim_account_get_password(js->gc->account));
+
+		enc_out = gaim_base64_encode(response->str, response->len);
+
+		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
+		xmlnode_insert_data(auth, enc_out, -1);
+		g_free(enc_out);
+		g_string_free(response, TRUE);
+
+		jabber_send(js, auth);
+		xmlnode_free(auth);
+	} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
+		JabberIq *iq;
+		xmlnode *query, *x;
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
+		query = xmlnode_get_child(iq->node, "query");
+		x = xmlnode_new_child(query, "username");
+		xmlnode_insert_data(x, js->user->node, -1);
+		x = xmlnode_new_child(query, "resource");
+		xmlnode_insert_data(x, js->user->resource, -1);
+		x = xmlnode_new_child(query, "password");
+		xmlnode_insert_data(x, gaim_account_get_password(js->gc->account), -1);
+		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
+		jabber_iq_send(iq);
+	}
+}
+
+static void allow_plaintext_auth(GaimAccount *account)
+{
+	gaim_account_set_bool(account, "auth_plain_in_clear", TRUE);
+
+	finish_plaintext_authentication(account->gc->proto_data);
+}
+
+static void disallow_plaintext_auth(GaimAccount *account)
+{
+	gaim_connection_error(account->gc, _("Server requires plaintext authentication over an unencrypted stream"));
+}
+
 void
 jabber_auth_start(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *mechs, *mechnode;
-	xmlnode *auth;
 
 	gboolean digest_md5 = FALSE, plain=FALSE;
 
@@ -84,48 +142,33 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		g_free(mech_name);
 	}
 
-	auth = xmlnode_new("auth");
-	xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
 
 	if(digest_md5) {
-		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
+		xmlnode *auth;
+
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
+		auth = xmlnode_new("auth");
+		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
+
+		jabber_send(js, auth);
+		xmlnode_free(auth);
 	} else if(plain) {
-		GString *response;
-		char *enc_out;
+		js->auth_type = JABBER_AUTH_PLAIN;
 
 		if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
-			/* XXX: later, make this yes/no so they can just click to enable it */
-			gaim_connection_error(js->gc,
-					_("Server requires plaintext authentication over an unencrypted stream"));
-			xmlnode_free(auth);
+			gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+					_("Plaintext Authentication"),
+					_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+					2, js->gc->account, allow_plaintext_auth,
+					disallow_plaintext_auth);
 			return;
 		}
-
-		response = g_string_new("");
-		response = g_string_append_len(response, "\0", 1);
-		response = g_string_append(response, js->user->node);
-		response = g_string_append_len(response, "\0", 1);
-		response = g_string_append(response,
-				gaim_account_get_password(js->gc->account));
-
-		enc_out = gaim_base64_encode(response->str, response->len);
-
-		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
-		xmlnode_insert_data(auth, enc_out, -1);
-		g_free(enc_out);
-		g_string_free(response, TRUE);
-
-		js->auth_type = JABBER_AUTH_PLAIN;
+		finish_plaintext_authentication(js);
 	} else {
 		gaim_connection_error(js->gc,
 				_("Server does not use any supported authentication method"));
-		xmlnode_free(auth);
-		return;
 	}
-
-	jabber_send(js, auth);
-	xmlnode_free(auth);
 }
 
 static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
@@ -166,7 +209,6 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
 	xmlnode *query, *x;
-	gboolean digest = FALSE;
 	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *pw = gaim_account_get_password(js->gc->account);
 
@@ -191,32 +233,16 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
-			digest = TRUE;
-		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account,
-						"auth_plain_in_clear", FALSE)) {
-				/* XXX: later, make this yes/no so they can just click to enable it */
-				gaim_connection_error(js->gc,
-						_("Server requires plaintext authentication over an unencrypted stream"));
-				return;
-			}
-		} else {
-			gaim_connection_error(js->gc,
-					_("Server does not use any supported authentication method"));
-			return;
-		}
-
-		iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-		query = xmlnode_get_child(iq->node, "query");
-		x = xmlnode_new_child(query, "username");
-		xmlnode_insert_data(x, js->user->node, -1);
-		x = xmlnode_new_child(query, "resource");
-		xmlnode_insert_data(x, js->user->resource, -1);
-
-		if(digest) {
 			unsigned char hashval[20];
 			char *s, h[41], *p;
 			int i;
+
+			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
+			query = xmlnode_get_child(iq->node, "query");
+			x = xmlnode_new_child(query, "username");
+			xmlnode_insert_data(x, js->user->node, -1);
+			x = xmlnode_new_child(query, "resource");
+			xmlnode_insert_data(x, js->user->resource, -1);
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
@@ -226,14 +252,25 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				snprintf(p, 3, "%02x", hashval[i]);
 			xmlnode_insert_data(x, h, -1);
 			g_free(s);
+			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
+			jabber_iq_send(iq);
+
+		} else if(xmlnode_get_child(query, "password")) {
+			if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account,
+						"auth_plain_in_clear", FALSE)) {
+				gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+						_("Plaintext Authentication"),
+						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+						2, js->gc->account, allow_plaintext_auth,
+						disallow_plaintext_auth);
+				return;
+			}
+			finish_plaintext_authentication(js);
 		} else {
-			x = xmlnode_new_child(query, "password");
-			xmlnode_insert_data(x, pw, -1);
+			gaim_connection_error(js->gc,
+					_("Server does not use any supported authentication method"));
+			return;
 		}
-
-		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
-
-		jabber_iq_send(iq);
 	}
 }
 
