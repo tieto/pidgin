@@ -24,6 +24,27 @@
  *
  */
 
+/* TODO conversations have an a_virgin member which seems to be used to detect
+ * when a conversation was created remotely as opposed to remotely, look at
+ * code for sounds on first message to see how it's used and use it to allow
+ * for notifying on first message I don't think this is going to work because
+ * the check for this in the source comes after all the conversation signals
+ * are fired. */
+
+/* TODO
+ * 22:22:17 <seanegan> deryni: speaking of notify.c... you know what else
+ * might be a neat feature?
+ * 22:22:30 <seanegan> Changing the window icon.
+ * 22:23:25 <deryni> seanegan: To what?
+ * 22:23:42 <seanegan> deryni: I dunno. Flash it between the regular icon and
+ * blank or something.
+ * 22:23:53 <deryni> Also I think gaim might re-set that sort of frequently,
+ * but I'd have to look.
+ * 22:25:16 <seanegan> deryni: I keep my conversations in one workspace and am 
+ * frequently in an another, and the icon flashing in the pager would be a
+ * neat visual clue.
+ */
+
 /*
  * From Etan, 2002:
  *  -Added config dialog
@@ -73,7 +94,6 @@
 #include "gtkgaim.h"
 #include "gtkprefs.h"
 
-#include "debug.h"
 #include "prefs.h"
 #include "signals.h"
 #include "version.h"
@@ -103,17 +123,17 @@ static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event, gpoint
 static void apply_method();
 static void apply_notify();
 
-/* raise function */
-static void handle_raise(GaimConvWindow *window);
-
 /* string function */
-static void handle_string(GaimConvWindow *window);
+static void handle_string(GaimConvWindow *gaimwin);
 
 /* count function */
-static void handle_count(GaimConvWindow *window);
+static void handle_count(GaimConvWindow *gaimwin);
 
 /* urgent function */
-static void handle_urgent(GaimConvWindow *window, gboolean add);
+static void handle_urgent(GaimConvWindow *gaimwin, gboolean add);
+
+/* raise function */
+static void handle_raise(GaimConvWindow *gaimwin);
 
 /****************************************/
 /* Begin doing stuff below this line... */
@@ -468,13 +488,6 @@ handle_string(GaimConvWindow *gaimwin)
 }
 
 static void
-handle_raise(GaimConvWindow *gaimwin)
-{
-	GtkWindow *window = GTK_WINDOW(GAIM_GTK_WINDOW(gaimwin)->window);
-	gtk_window_present(window);
-}
-
-static void
 handle_count(GaimConvWindow *gaimwin)
 {
 	GtkWindow *window;
@@ -485,8 +498,8 @@ handle_count(GaimConvWindow *gaimwin)
 	window = GTK_WINDOW(GAIM_GTK_WINDOW(gaimwin)->window);
 	g_return_if_fail(window != NULL);
 
-	g_snprintf(newtitle, sizeof(newtitle), "[%d] %s", count_messages(gaimwin),
-	           gtk_window_get_title(window));
+	g_snprintf(newtitle, sizeof(newtitle), "[%d] %s",
+	           count_messages(gaimwin), gtk_window_get_title(window));
 	gtk_window_set_title(window, newtitle);
 }
 
@@ -500,7 +513,8 @@ handle_urgent(GaimConvWindow *gaimwin, gboolean add)
 	g_return_if_fail(gtkwin->window != NULL);
 	g_return_if_fail(gtkwin->window->window != NULL);
 
-	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window));
+	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window),
+	                    GDK_WINDOW_XWINDOW(gtkwin->window->window));
 	if (add)
 		hints->flags |= XUrgencyHint;
 	else
@@ -508,6 +522,12 @@ handle_urgent(GaimConvWindow *gaimwin, gboolean add)
 	XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window),
 	            GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
 	XFree(hints);
+}
+
+static void
+handle_raise(GaimConvWindow *gaimwin)
+{
+	gaim_conv_window_raise(gaimwin);
 }
 
 static void
@@ -644,9 +664,6 @@ get_config_frame(GaimPlugin *plugin)
 	frame = gaim_gtk_make_frame(ret, _("Notification Methods"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	
-	/* Raise method button */
-	gaim_gtk_prefs_checkbox("R_aise window", "/plugins/gtk/X11/notify/method_raise", vbox);
 
 	/* String method button */
 	hbox = gtk_hbox_new(FALSE, 18);
@@ -684,6 +701,14 @@ get_config_frame(GaimPlugin *plugin)
 	                             gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_urgent");
+
+	/* Raise window method button */
+	toggle = gtk_check_button_new_with_mnemonic(_("R_aise conversation window"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
+	                             gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_raise"));
+	g_signal_connect(G_OBJECT(toggle), "toggled",
+	                 G_CALLBACK(method_toggle_cb), "method_raise");
 
 	/*---------- "Notification Removals" ----------*/
 	frame = gaim_gtk_make_frame(ret, _("Notification Removal"));
