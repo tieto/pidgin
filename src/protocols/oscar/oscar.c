@@ -130,7 +130,7 @@ struct chat_connection {
 	int inpa;
 	int id;
 	GaimConnection *gc; /* i hate this. */
-	GaimConversation *cnv; /* bah. */
+	GaimConversation *conv; /* bah. */
 	int maxlen;
 	int maxvis;
 };
@@ -559,24 +559,21 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, char *new
 	if (userinfo != NULL)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 
-
-
-
-	if (GAIM_BUDDY_IS_ONLINE(b)) {
-		if (isdigit(b->name[0])) {
-			tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
-			oscar_string_append(str, newline, _("Status"), tmp);
-			g_free(tmp);
+	if (b != NULL) {
+		if (GAIM_BUDDY_IS_ONLINE(b)) {
+			if (isdigit(b->name[0])) {
+				tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
+				oscar_string_append(str, newline, _("Status"), tmp);
+				g_free(tmp);
+			}
+		} else {
+			char *tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
+			if (aim_ssi_waitingforauth(od->sess->ssi.local, tmp, b->name))
+				oscar_string_append(str, newline, _("Status"), _("Not Authorized"));
+			else
+				oscar_string_append(str, newline, _("Status"), _("Offline"));
 		}
-	} else {
-		char *tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
-		if (aim_ssi_waitingforauth(od->sess->ssi.local, tmp, b->name))
-			oscar_string_append(str, newline, _("Status"), _("Not Authorized"));
-		else
-			oscar_string_append(str, newline, _("Status"), _("Offline"));
 	}
-
-
 
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char *tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
@@ -689,7 +686,7 @@ static struct chat_connection *find_oscar_chat_by_conv(GaimConnection *gc,
 
 	while (g) {
 		c = (struct chat_connection *)g->data;
-		if (c->cnv == conv)
+		if (c->conv == conv)
 			break;
 		g = g->next;
 		c = NULL;
@@ -701,7 +698,7 @@ static struct chat_connection *find_oscar_chat_by_conv(GaimConnection *gc,
 static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimConversation *cnv;
+	GaimConversation *conv;
 	struct direct_im *dim;
 	char *sn;
 	char buf[256];
@@ -720,11 +717,11 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	else 
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), sn);
 
-	cnv = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
-	if (cnv)
-		gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+	conv = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
+	if (conv)
+		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 
-	gaim_conversation_update_progress(cnv, 0);
+	gaim_conversation_update_progress(conv, 0);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -1667,7 +1664,7 @@ static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	chatcon = find_oscar_chat_by_conn(gc, fr->conn);
 	chatcon->id = id;
-	chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
+	chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
 
 	return 1;
 }
@@ -2175,7 +2172,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	struct direct_im *dim = data;
 	GaimConnection *gc = dim->gc;
 	OscarData *od = gc->proto_data;
-	GaimConversation *cnv;
+	GaimConversation *conv;
 	char buf[256];
 	struct sockaddr name;
 	socklen_t name_len = 1;
@@ -2192,13 +2189,13 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 
 	dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
-	cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
+	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
 
 	/* This is the best way to see if we're connected or not */
 	if (getpeername(source, &name, &name_len) == 0) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 		dim->connected = TRUE;
-		gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 	
@@ -3071,6 +3068,9 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimConversation *conv;
 	char *buf;
 	va_list ap;
 	fu16_t chan, nummissed, reason;
@@ -3139,7 +3139,12 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   userinfo->sn);
 			break;
 	}
-	gaim_notify_error(sess->aux_data, NULL, buf, NULL);
+
+	conv = gaim_find_conversation_with_account(userinfo->sn, account);
+	if (conv != NULL)
+		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
+	else
+		gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -3549,7 +3554,7 @@ static int gaim_conv_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c->cnv), info[i].sn, NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c->conv), info[i].sn, NULL);
 
 	return 1;
 }
@@ -3572,7 +3577,7 @@ static int gaim_conv_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c->cnv), info[i].sn, NULL);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c->conv), info[i].sn, NULL);
 
 	return 1;
 }
@@ -5888,7 +5893,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimConversation *cnv;
+	GaimConversation *conv;
 	struct direct_im *dim;
 	char buf[256];
 	char *sn;
@@ -5909,14 +5914,14 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "DirectIM: initiate success to %s\n", sn);
 	dim = find_direct_im(od, sn);
 
-	cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
+	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
 	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
-	gaim_conversation_write(cnv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+	gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_odc_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_odc_typing, 0);
