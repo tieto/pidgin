@@ -289,6 +289,13 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
 
+int ill_just_write_my_own_damn_round_function(double val) {
+	if ((val - (int)val) > 0.5)
+		return val+1;
+	else
+		return val;
+}
+
 static void gaim_free_name_data(struct name_data *data) {
 	g_free(data->name);
 	g_free(data->nick);
@@ -1771,7 +1778,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		free(b16);
 	}
 
-	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon, time_idle, type);
+	serv_got_update(gc, info->sn, 1, ill_just_write_my_own_damn_round_function(info->warnlevel/10.0), signon, time_idle, type);
 
 	return 1;
 }
@@ -3042,7 +3049,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"%s\n"
 			"<hr>\n"),
 			info->sn, images(info->flags),
-			info->warnlevel/10,
+			ill_just_write_my_own_damn_round_function(info->warnlevel/10.0),
 			onlinesince ? onlinesince : "",
 			membersince ? membersince : "",
 			idle ? idle : "");
@@ -3478,7 +3485,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, newevil / 10);
+	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, ill_just_write_my_own_damn_round_function(newevil/10.0));
 
 	return 1;
 }
@@ -3492,7 +3499,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	gc->evil = info->warnlevel/10;
+	gc->evil = ill_just_write_my_own_damn_round_function(info->warnlevel/10.0);
 
 	if (info->onlinesince)
 		gc->login_time_official = info->onlinesince;
