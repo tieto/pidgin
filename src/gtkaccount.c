@@ -588,9 +588,8 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
 			/* The gdk-pixbuf documentation is wrong. gdk_pixbuf_save returns TRUE if it was successful,
 			 * FALSE if an error was set. */
-			if (gdk_pixbuf_format_is_writable(format) &&
-				gdk_pixbuf_save(pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
-				break;
+			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
+					break;
 		}
 		if (!error) {
 			g_free(random);
