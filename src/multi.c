@@ -1237,7 +1237,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
-	button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);

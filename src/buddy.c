@@ -60,7 +60,6 @@
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/group.xpm"
-#include "pixmaps/logout_menu.xpm"
 
 #include "pixmaps/arrow_down.xpm"
 #include "pixmaps/arrow_right.xpm"

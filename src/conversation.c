@@ -2628,7 +2628,6 @@ void update_convo_status(struct conversation *c) {
 		int offs = ((convo_options & OPT_CONVO_COMBINE) &&
 			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
 			g_list_length(conversations) : 0;
-		GList *ws = (c->is_chat ? chats : conversations);
 		GtkWidget *label = c->tab_label;
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
