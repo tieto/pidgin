@@ -14,7 +14,7 @@
 
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 
-//Set the default to 5 minutes.
+/* Set the default to 5 minutes. */
 static int timestamp = 5 * 60 * 1000;
 
 static GSList *timestamp_timeouts;
@@ -25,7 +25,7 @@ gboolean do_timestamp (gpointer data)
 	char *buf;
 	char mdate[6];
 	time_t tim = time(NULL);
-	
+
 	if (!g_list_find(gaim_get_conversations(), c))
 		return FALSE;
 
@@ -105,6 +105,7 @@ plugin_load(GaimPlugin *plugin)
 	GList *cnvs;
 	GaimConversation *c;
 
+	timestamp_timeouts = NULL;
 	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
 		c = cnvs->data;
 		timestamp_new_convo(c->name);
