@@ -41,6 +41,12 @@ static void historize(GaimConversation *c)
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0,
 			TRUE, 0, 0);
 	g_free(history);
+	for (;logs;logs = logs->next) {
+		GaimLog *log = logs->data;
+		g_free(log->name);
+		g_free(log);
+	}
+	
 }
 
 static gboolean

@@ -67,7 +67,12 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	g_hash_table_remove(log_viewers, ht);
 	g_free(ht->screenname);
 	g_free(ht);
-	g_free(lv);
+	for (;lv->logs;lv->logs = lv->logs->next) {
+		GaimLog *log = lv->logs->data;
+		g_free(log->name);
+		g_free(log);
+	}
+	g_free(lv);		
 	gtk_widget_destroy(w);
 
 	return TRUE;
