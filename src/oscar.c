@@ -534,8 +534,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		userinfo  = va_arg(ap, struct aim_userinfo_s *);
 		msg       = va_arg(ap, char *);
 		icbmflags = va_arg(ap, u_int);
-		flag1     = va_arg(ap, u_short);
-		flag2     = va_arg(ap, u_short);
+		flag1     = (u_short)va_arg(ap, u_int);
+		flag2     = (u_short)va_arg(ap, u_int);
 		va_end(ap);
 
 		serv_got_im(userinfo->sn, msg, icbmflags & AIM_IMFLAGS_AWAY);
@@ -624,7 +624,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	info = va_arg(ap, struct aim_userinfo_s *);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
-	infotype = va_arg(ap, u_short);
+	infotype = (u_short)va_arg(ap, u_int);
 	va_end(ap);
 
 	if (prof == NULL || !strlen(prof)) {
@@ -655,7 +655,7 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	va_list ap;
 
 	va_start(ap, command);
-	id  = va_arg(ap, u_short);
+	id  = (u_short)va_arg(ap, u_int);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
@@ -674,7 +674,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 	u_short type;
 
 	va_start(ap, command);
-	type = va_arg(ap, u_short);
+	type = (u_short)va_arg(ap, u_int);
 
 	switch(type) {
 		case 0x0002: {

@@ -14,6 +14,7 @@ version 0.9.20:
 	   when you have a large buddylist.
 	* Dialog windows are now prettier
 	* Fixed the LC_ALL compile problem on Solaris boxes 
+	* Fixed PPC and ARM compile problem with oscar.c
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces
