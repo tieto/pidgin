@@ -69,7 +69,6 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
-	GtkWidget *a_table;
 	GtkWidget *label;
 	GtkWidget *pixmap;
 	GtkStyle *style;
@@ -77,12 +76,15 @@ void show_about(GtkWidget *w, void *null)
 	GdkBitmap *bm;
 	GtkWidget *hbox;
 	GtkWidget *button;
+	GtkWidget *text;
 
 	char abouttitle[45];
 
 	if (!about) {
 
 		about = gtk_window_new(GTK_WINDOW_DIALOG);
+
+		gtk_widget_set_usize(GTK_WIDGET(about), 450, 450);
 
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About GAIM v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
@@ -99,7 +101,7 @@ void show_about(GtkWidget *w, void *null)
 		frame = gtk_frame_new("Gaim " VERSION);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-		fbox = gtk_hbox_new(FALSE, 5);
+		fbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
 
@@ -114,62 +116,21 @@ void show_about(GtkWidget *w, void *null)
 
 		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
 
-		/* Set up the author table */
-		a_table = gtk_table_new(8, 2, TRUE);
-		gtk_table_set_row_spacings(GTK_TABLE(a_table), 5);
-		gtk_table_set_col_spacings(GTK_TABLE(a_table), 5);
+		label = gtk_label_new(_("GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
+			"using Gtk+ and is licensed under the GPL.\n\n"
+			"URL: " WEBSITE));
 
-		label =
-		    gtk_label_new(_
-				  ("GAIM is a client that supports AOL's Instant Messenger protocol. "
-				   "It is written using Gtk+ and is licensed under the GPL.\n"
-				   "URL: " WEBSITE));
-		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 2, 0, 2);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 
-		/* Rob */
-		label = gtk_label_new("Rob Flynn (Maintainer)");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 2, 3);
+		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
 
-		label = gtk_label_new("rob@marko.net");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 2, 3);
+		text = gtk_text_new(NULL, NULL); 
 
-		/* Eric */
-		label = gtk_label_new("Eric Warmenhoven");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 3, 4);
-
-		label = gtk_label_new("warmenhoven@yahoo.com");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 3, 4);
+		gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL, _("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nJim Duchek\nMark Spencer (original author)   markster@marko.net"), 199);
 		
-		/* Bmiller */
-		label = gtk_label_new("Benjamin Miller");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 4, 5);
-		
-		/* Decklin */
-		label = gtk_label_new("Decklin Foster");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 5, 6);
+		gtk_widget_show(text);
 
-		/* Jim */
-		label = gtk_label_new("Jim Duchek");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 6, 7);
-
-		/* Mark */
-		label = gtk_label_new("Mark Spencer");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 0, 1, 7, 8);
-
-		label = gtk_label_new("markster@marko.net");
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(a_table), label, 1, 2, 7, 8);
-
-		gtk_box_pack_start(GTK_BOX(fbox), a_table, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(fbox), text, TRUE, TRUE, 0);
 
 		/* Close Button */
 
