@@ -7,6 +7,8 @@ version 0.80 (07/15/2004):
 	  replacing or removing the file. (Andrew Whewell)
 	* Fixed a bug in the transparency plugin causing buddy list settings
 	  to also apply to all conversation windows. (Kevin Stange)
+	* Only attempt to execute URIs with the schemas http, https,
+	  ftp, or mailto
 	* Updated gtk-wimp to 0.6.1
 	* Updated GTK+ to 2.4.3 (rev a)
 	* Installer translations for: Slovak
