@@ -7,9 +7,9 @@ version 0.46:
 	* Better applet icon drawing (thanks to Ari Pollak)
 	* An extraordinary number of bug fixes
 	* Updated Korean translation
-	* Ability to stop animation on buddy icons, hide certain
-	  buddy icons, and save people's buddy icons, all through
-	  a right-click menu
+	* Ability to stop animation on buddy icons, restart animation,
+	* hide certain buddy icons, and save people's buddy icons, all 
+	* through a right-click menu
 	* Event handlers in perl passed arguments as elements of
 	  an array rather than all concatenated as a string, making
 	  perl much easier to use (thanks Dennis Lambe Jr.)
