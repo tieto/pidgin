@@ -191,10 +191,17 @@ void serv_add_buddy(struct gaim_connection *g, char *name)
 		(*g->prpl->add_buddy)(g, name);
 }
 
-void serv_add_buddies(struct gaim_connection *g, GList * buddies)
+void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 {
-	if (g->prpl && g->prpl->add_buddies)
-		(*g->prpl->add_buddies)(g, buddies);
+	if (g->prpl) {
+		if (g->prpl->add_buddies)
+			(*g->prpl->add_buddies)(g, buddies);
+		else if (g->prpl->add_buddy)
+			while (buddies) {
+				(*g->prpl->add_buddy)(g, buddies->data);
+				buddies = buddies->next;
+			}
+	}
 }
 
 

@@ -221,6 +221,7 @@ struct buddy {
 	time_t idle;
         int uc;
 	gushort caps; /* woohoo! */
+	void *proto_data; /* what a hack */
 };
 
 struct buddy_show {

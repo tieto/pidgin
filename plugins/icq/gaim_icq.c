@@ -12,6 +12,8 @@
 #include "pixmaps/gnomeicu-occ.xpm"
 #include "pixmaps/gnomeicu-ffc.xpm"
 
+#define USEROPT_NICK 0
+
 struct icq_data {
 	ICQLINK *link;
 	int cur_status;
@@ -199,11 +201,34 @@ static void icq_req_notify(struct icq_link *link, unsigned long id, int result,
 				unsigned int length, void *data) {
 }
 
+static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned char minute,
+		unsigned char day, unsigned char month, unsigned short year, const char *nick,
+		const char *email, const char *msg) {
+	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	char *who = g_strdup_printf("ICQ Web Pager: %s (%s)", nick, email);
+	char *what = g_strdup(msg);
+	serv_got_im(gc, who, what, 0);
+	g_free(who);
+	g_free(what);
+}
+
+static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned char minute,
+		unsigned char day, unsigned char month, unsigned short year, const char *nick,
+		const char *email, const char *msg) {
+	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
+	char *who = g_strdup_printf("ICQ Mail Express: %s (%s)", nick, email);
+	char *what = g_strdup(msg);
+	serv_got_im(gc, who, what, 0);
+	g_free(who);
+	g_free(what);
+}
+
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
 	ICQLINK *link = id->link = icq_ICQLINKNew(atol(user->username), user->password,
-			g_strdup("gaim user") /* hehe :) */, TRUE);
+			user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
+			TRUE);
 	int icqSocket;
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;
@@ -212,6 +237,8 @@ static void icq_login(struct aim_user *user) {
 	link->icq_Disconnected = icq_logged_off;
 	link->icq_RecvMessage = icq_msg_incoming;
 	link->icq_RecvURL = icq_url_incoming;
+	link->icq_RecvWebPager = icq_web_pager;
+	link->icq_RecvMailExpress = icq_mail_express;
 	link->icq_UserOnline = icq_user_online;
 	link->icq_UserOffline = icq_user_offline;
 	link->icq_UserStatusUpdate = icq_user_status;
@@ -337,11 +364,59 @@ static void icq_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *w
 	gtk_widget_show(button);
 }
 
+static void icq_print_option(GtkEntry *entry, struct aim_user *user) {
+	int entrynum;
+
+	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_NICK)
+		g_snprintf(user->proto_opt[USEROPT_NICK],
+				sizeof(user->proto_opt[USEROPT_NICK]),
+				"%s", gtk_entry_get_text(entry));
+}
+
+static void icq_user_opts(GtkWidget *book, struct aim_user *user) {
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("ICQ Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Nick");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_NICK);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			GTK_SIGNAL_FUNC(icq_print_option), user);
+	if (user->proto_opt[USEROPT_NICK][0])
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_NICK]);
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), "gaim user");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+}
+
 static void icq_init(struct prpl *ret) {
 	ret->protocol = PROTO_ICQ;
 	ret->name = icq_name;
 	ret->list_icon = icq_list_icon;
 	ret->action_menu = icq_action_menu;
+	ret->user_opts = icq_user_opts;
 	ret->login = icq_login;
 	ret->close = icq_close;
 	ret->send_im = icq_send_msg;
