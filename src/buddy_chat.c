@@ -321,7 +321,7 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
         
 	gtk_widget_grab_focus(GTK_WIDGET(b->entry));
 
-
+	serv_set_idle(0);
 }
 
 
