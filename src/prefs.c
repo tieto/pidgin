@@ -683,8 +683,8 @@ GtkWidget *tab_page() {
 	vbox = make_frame (ret, _("Tab Options"));
 	gaim_button(_("Show IMs and chats in _same tabbed window."), &convo_options, OPT_CONVO_COMBINE, vbox);
 	button = gaim_button(_("Show _close button on tabs."), &convo_options, OPT_CONVO_NO_X_ON_TAB, vbox);
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(button), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)));
 	convo_options ^= OPT_CONVO_NO_X_ON_TAB;
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(button), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)));
 
 
 	gtk_widget_show_all(ret);
