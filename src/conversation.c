@@ -2479,7 +2479,10 @@ void update_convo_font()
 #if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
-#define SCALE 50
+
+#define SCALE(x) ((gdk_pixbuf_animation_get_width(x) <= 48 && gdk_pixbuf_animation_get_height(x) <= 48) \
+		 ? 48 : 50)
+#define SCALEBUF(x) ((gdk_pixbuf_get_width(x) <= 48 && gdk_pixbuf_get_height(x) <= 48) ? 48 : 50)
 
 static gboolean redraw_icon(gpointer data)
 {
@@ -2506,9 +2509,9 @@ static gboolean redraw_icon(gpointer data)
 	case GDK_PIXBUF_FRAME_RETAIN:
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_height(c->anim), 1),
 				GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
@@ -2516,9 +2519,9 @@ static gboolean redraw_icon(gpointer data)
 		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, &bm);
 		gc = gdk_gc_new(pm);
 		gdk_draw_pixmap(pm, gc, src, 0, 0,
-				MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
+				MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
+				MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_height(c->anim), 1),
 				-1, -1);
 		gdk_pixmap_unref(src);
@@ -2528,9 +2531,9 @@ static gboolean redraw_icon(gpointer data)
 	case GDK_PIXBUF_FRAME_DISPOSE:
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_height(c->anim), 1),
 				GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
@@ -2544,9 +2547,9 @@ static gboolean redraw_icon(gpointer data)
 		frame = frames->data;
 		buf = gdk_pixbuf_frame_get_pixbuf(frame);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_height(c->anim), 1),
 				GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
@@ -2616,9 +2619,9 @@ void update_icon(struct conversation *c)
 		GList *frames = gdk_pixbuf_animation_get_frames(c->anim);
 		GdkPixbuf *buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
 		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+				MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_width(c->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+				MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
 					gdk_pixbuf_animation_get_height(c->anim), 1),
 				GDK_INTERP_NEAREST);
 
@@ -2628,12 +2631,14 @@ void update_icon(struct conversation *c)
 			c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 		}
 	} else {
+		int s;
 		c->unanim = gdk_pixbuf_loader_get_pixbuf(load);
 		if (!c->unanim) {
 			gdk_pixbuf_loader_close(load);
 			return;
 		}
-		scale = gdk_pixbuf_scale_simple(c->unanim, SCALE, SCALE, GDK_INTERP_NEAREST);
+		s = SCALEBUF(c->unanim);
+		scale = gdk_pixbuf_scale_simple(c->unanim, s, s, GDK_INTERP_NEAREST);
 	}
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
