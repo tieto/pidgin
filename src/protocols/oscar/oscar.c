@@ -6421,6 +6421,12 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 		return -E2BIG;
 	}
 
+	if (charset == AIM_CHARSET_ASCII)
+		charsetstr = "us-ascii";
+	else if (charset == AIM_CHARSET_UNICODE)
+		charsetstr = "unicode-2-0";
+	else if (charset == AIM_CHARSET_CUSTOM)
+		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od->sess, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
 
