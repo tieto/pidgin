@@ -26,6 +26,7 @@
 
 void yahoo_init_colorht();
 void yahoo_dest_colorht();
-char *yahoo_codes_to_html(char *x);
+char *yahoo_codes_to_html(const char *x);
+char *yahoo_html_to_codes(const char *src);
 
 #endif /* _YAHOO_H_ */

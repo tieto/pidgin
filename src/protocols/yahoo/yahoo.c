@@ -204,7 +204,7 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 	int pos = 0;
 
 	while (pos + 1 < len) {
-		char key[64], *value = NULL;
+		char key[64], *value = NULL, *esc;
 		int accept;
 		int x;
 
@@ -238,8 +238,10 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 			pair->value = g_strdup(value);
 			g_free(value);
 			pkt->hash = g_slist_append(pkt->hash, pair);
+			esc = g_strescape(pair->value, NULL);
 			gaim_debug(GAIM_DEBUG_MISC, "yahoo",
-					   "Key: %d  \tValue: %s\n", pair->key, pair->value);
+					   "Key: %d  \tValue: %s\n", pair->key, esc);
+			g_free(esc);
 		} else {
 			g_free(pair);
 		}
@@ -975,6 +977,8 @@ static void yahoo_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
+	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR;
+
 	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	yd->fd = -1;
@@ -1197,7 +1201,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
-	char *msg = g_strdup(what);
+	char *msg = yahoo_html_to_codes(what);
 
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, who);
@@ -1207,7 +1211,9 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
-	
+
+	g_free(msg);
+
 	return 1;
 }
 
@@ -1549,7 +1555,7 @@ static GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_YAHOO,
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_USE_POINTSIZE,
+	OPT_PROTO_MAIL_CHECK,
 	NULL,
 	NULL,
 	yahoo_list_icon,

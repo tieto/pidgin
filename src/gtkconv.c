@@ -427,7 +427,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 			strcpy(buf, buf2);
 		}
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
+		if (!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) && gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
 			g_snprintf(buf2, limit,
 					   "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
 					   gtkconv->bg_color.red   / 256,
@@ -5429,6 +5429,9 @@ gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 
 		if (win != NULL)
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+
+		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
+				!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
 	}
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {

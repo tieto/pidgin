@@ -59,7 +59,7 @@ static GHashTable *ht = NULL;
 void yahoo_init_colorht()
 {
 	ht = g_hash_table_new(g_str_hash, g_str_equal);
-
+/* the numbers in comments are what gyach uses, but i think they're incorrect */
 	g_hash_table_insert(ht, "30", "<FONT COLOR=\"#000000\">"); /* black */
 	g_hash_table_insert(ht, "31", "<FONT COLOR=\"#0000FF\">"); /* blue */
 	g_hash_table_insert(ht, "32", "<FONT COLOR=\"#008080\">"); /* cyan */      /* 00b2b2 */
@@ -77,6 +77,14 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "x2", "</I>");
 	g_hash_table_insert(ht,  "4",  "<U>");
 	g_hash_table_insert(ht, "x4", "</U>");
+
+	/* these just tell us the text they surround is supposed
+	 * to be a link. gaim figures that out on its own so we
+	 * just ignore it.
+	 */
+	g_hash_table_insert(ht, "l", ""); /* link start */
+	g_hash_table_insert(ht, "xl", ""); /* link end */
+
 
 	g_hash_table_insert(ht, "<black>",  "<FONT COLOR=\"#000000\">");
 	g_hash_table_insert(ht, "<blue>",   "<FONT COLOR=\"#0000FF\">");
@@ -110,10 +118,50 @@ void yahoo_dest_colorht()
 	g_hash_table_destroy(ht);
 }
 
-char *yahoo_codes_to_html(char *x)
+static int point_to_html(int x)
+{
+	if (x < 9)
+		return 1;
+	if (x < 11)
+		return 2;
+	if (x < 13)
+		return 3;
+	if (x < 17)
+		return 4;
+	if (x < 25)
+		return 5;
+	if (x < 35)
+		return 6;
+	return 7;
+}
+static void _font_tags_fix_size(GString *tag, GString *dest)
+{
+	char *x, *end;
+	int size;
+
+	if (((x = strstr(tag->str, "size"))) && ((x = strchr(tag->str, '=')))) {
+		while (*x && !g_ascii_isdigit(*x))
+			x++;
+		if (*x) {
+			size = strtol(x, &end, 10);
+			size = point_to_html(size);
+			g_string_append_len(dest, tag->str, x - tag->str);
+			g_string_append_printf(dest, "%d", size);
+			g_string_append(dest, end);
+		} else {
+			g_string_append(dest, tag->str);
+			return;
+		}
+	} else {
+		g_string_append(dest, tag->str);
+		return;
+	}
+}
+
+char *yahoo_codes_to_html(const char *x)
 {
 	GString *s, *tmp;
-	int i, j, xs, nomoreendtags = 0;
+	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
 	char *match, *ret;
 
 
@@ -147,7 +195,7 @@ char *yahoo_codes_to_html(char *x)
 
 
 		} else if (!nomoreendtags && (x[i] == '<')) {
-			j = i + 1;
+			j = i;
 
 			while (j++ < xs) {
 				if (x[j] != '>')
@@ -163,15 +211,17 @@ char *yahoo_codes_to_html(char *x)
 
 					if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
-					else if (!g_ascii_strncasecmp(tmp->str, "<FADE ", 6) ||
-						!g_ascii_strncasecmp(tmp->str, "<ALT ", 5) ||
-						!g_ascii_strncasecmp(tmp->str, "<SND ", 5)) {
+					else if (!strncmp(tmp->str, "<fade ", 6) ||
+						!strncmp(tmp->str, "<alt ", 5) ||
+						!strncmp(tmp->str, "<snd ", 5)) {
 
-						/* remove this if gtkhtml ever supports any of these */
+						/* remove this if gtkimhtml ever supports any of these */
 						i = j;
 						g_string_free(tmp, TRUE);
 						break;
 
+					} else if (!strncmp(tmp->str, "<font ", 6)) {
+						_font_tags_fix_size(tmp, s);
 					} else {
 						g_string_append_c(s, '<');
 						g_string_free(tmp, TRUE);
@@ -194,6 +244,345 @@ char *yahoo_codes_to_html(char *x)
 
 	ret = s->str;
 	g_string_free(s, FALSE);
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "Returning string: '%s'.\n", ret);
+	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
+	return ret;
+}
+
+/* borrowed from gtkimhtml */
+#define MAX_FONT_SIZE 7
+#define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
+static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
+
+enum fatype { size, color, face, junk };
+typedef struct {
+	enum fatype type;
+	union {
+		int size;
+		char *color;
+		char *face;
+		char *junk;
+	} u;
+} fontattr;
+
+static void fontattr_free(fontattr *f)
+{
+	if (f->type == color)
+		g_free(f->u.color);
+	else if (f->type == face)
+		g_free(f->u.face);
+	g_free(f);
+}
+
+static void yahoo_htc_queue_cleanup(GQueue *q)
+{
+	char *tmp;
+
+	while ((tmp = g_queue_pop_tail(q)))
+		g_free(tmp);
+	g_queue_free(q);
+}
+
+static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
+				int len, GQueue *colors, GQueue *tags, GQueue *ftattr)
+{
+
+	int m, n, vstart;
+	gboolean quote = 0, done = 0;
+
+	m = *j;
+
+	while (1) {
+		m++;
+
+		if (m >= len) {
+			g_string_append(dest, &src[*i]);
+			*i = len;
+			break;
+		}
+
+		if (src[m] == '=') {
+			n = vstart = m;
+			while (1) {
+				n++;
+
+				if (n >= len) {
+					m = n;
+					break;
+				}
+
+				if (src[n] == '"')
+					if (!quote) {
+						quote = 1;
+						vstart = n;
+						continue;
+					} else {
+						done = 1;
+					}
+
+				if (!quote && ((src[n] == ' ') || (src[n] == '>')))
+					done = 1;
+
+				if (done) {
+					if (!g_ascii_strncasecmp(&src[*j+1], "FACE", m - *j - 1)) {
+						fontattr *f;
+
+						f = g_new(fontattr, 1);
+						f->type = face;
+						f->u.face = g_strndup(&src[vstart+1], n-vstart-1);
+						if (!ftattr)
+							ftattr = g_queue_new();
+						g_queue_push_tail(ftattr, f);
+						m = n;
+						break;
+					} else if (!g_ascii_strncasecmp(&src[*j+1], "SIZE", m - *j - 1)) {
+						fontattr *f;
+
+						f = g_new(fontattr, 1);
+						f->type = size;
+						f->u.size = POINT_SIZE(strtol(&src[vstart+1], NULL, 10));
+						if (!ftattr)
+							ftattr = g_queue_new();
+						g_queue_push_tail(ftattr, f);
+						m = n;
+						break;
+					} else if (!g_ascii_strncasecmp(&src[*j+1], "COLOR", m - *j - 1)) {
+						fontattr *f;
+
+						f = g_new(fontattr, 1);
+						f->type = color;
+						f->u.color = g_strndup(&src[vstart+1], n-vstart-1);
+						if (!ftattr)
+							ftattr = g_queue_new();
+						g_queue_push_head(ftattr, f);
+						m = n;
+						break;
+					} else {
+						fontattr *f;
+
+						f = g_new(fontattr, 1);
+						f->type = junk;
+						f->u.junk = g_strndup(&src[*j+1], n-*j);
+						if (!ftattr)
+							ftattr = g_queue_new();
+						g_queue_push_tail(ftattr, f);
+						m = n;
+						break;
+					}
+
+				}
+			}
+		}
+
+		if (src[m] == ' ')
+			*j = m;
+
+
+
+		if (src[m] == '>') {
+			gboolean needendtag = 0;
+			fontattr *f;
+			GString *tmp = g_string_new(NULL);
+			char *colorstr;
+
+			if (!g_queue_is_empty(ftattr)) {
+				while ((f = g_queue_pop_tail(ftattr))) {
+					switch (f->type) {
+					case size:
+						if (!needendtag) {
+							needendtag = 1;
+							g_string_append(dest, "<font ");
+						}
+
+						g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
+						fontattr_free(f);
+						break;
+					case face:
+						if (!needendtag) {
+							needendtag = 1;
+							g_string_append(dest, "<font ");
+						}
+
+						g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
+						fontattr_free(f);
+						break;
+					case junk:
+						if (!needendtag) {
+							needendtag = 1;
+							g_string_append(dest, "<font ");
+						}
+
+						g_string_append(dest, f->u.junk);
+						fontattr_free(f);
+						break;
+
+					case color:
+						if (needendtag) {
+							g_string_append(tmp, "</font>");
+							dest->str[dest->len-1] = '>';
+							needendtag = 0;
+						}
+
+						colorstr = g_queue_peek_tail(colors);
+						g_string_append(tmp, colorstr ? colorstr : "\033[#000000m");
+						g_string_append_printf(dest, "\033[%sm", f->u.color);
+						g_queue_push_tail(colors, g_strdup_printf("\033[%sm", f->u.color));
+						fontattr_free(f);
+						break;
+					}
+				}
+
+				g_queue_free(ftattr);
+				ftattr = NULL;
+
+				if (needendtag) {
+					dest->str[dest->len-1] = '>';
+					g_queue_push_tail(tags, g_strdup("</font>"));
+					g_string_free(tmp, TRUE);
+				} else {
+					g_queue_push_tail(tags, tmp->str);
+					g_string_free(tmp, FALSE);
+				}
+			}
+
+			*i = *j = m;
+			break;
+		}
+	}
+
+}
+
+char *yahoo_html_to_codes(const char *src)
+{
+	int i, j, m, n, vstart, len;
+	GString *dest;
+	char *ret, *esc;
+	GQueue *colors, *tags;
+	GQueue *ftattr = NULL;
+
+
+	colors = g_queue_new();
+	tags = g_queue_new();
+
+	dest = g_string_sized_new(strlen(src));
+
+	for (i = 0, len = strlen(src); i < len; i++) {
+
+		if (src[i] == '<') {
+			j = i;
+
+			while (1) {
+				j++;
+
+				if (j >= len) { /* no '>' */
+					g_string_append_len(dest, &src[i], len - i);
+					i = len;
+
+					break;
+				}
+
+				if (src[j] == '<') {
+					g_string_append_len(dest, &src[i], j - i);
+					i = j - 1;
+					if (ftattr) {
+						fontattr *f;
+
+						while ((f = g_queue_pop_head(ftattr)))
+							fontattr_free(f);
+						g_queue_free(ftattr);
+						ftattr = NULL;
+					}
+					break;
+				}
+
+				if (src[j] == ' ') {
+					if (!g_ascii_strncasecmp(&src[i+1], "BODY", j - i - 1)) {
+						char *t = strchr(&src[j], '>');
+						if (!t) {
+							g_string_append(dest, &src[i]);
+							i = len;
+							break;
+						} else {
+							i = t - src;
+							break;
+						}
+					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
+						while (1) {
+							if (++j >= len) {
+								g_string_append(dest, &src[i]);
+								i = len;
+								break;
+							}
+							if (src[j] == '>') {
+								g_string_append_len(dest, &src[i], j - i + 1);
+								i = j;
+								break;
+							}
+						}
+					} else { /* yay we have a font tag */
+						_parse_font_tag(src, dest, &i, &j, len, colors, tags, ftattr);
+					}
+
+					break;
+				}
+
+				if (src[j] == '>') {
+					int sublen = j - i - 1;
+
+					if (sublen) {
+						if (!g_ascii_strncasecmp(&src[i+1], "B", sublen)) {
+							g_string_append(dest, "\033[1m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/B", sublen)) {
+							g_string_append(dest, "\033[x1m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "I", sublen)) {
+							g_string_append(dest, "\033[2m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/I", sublen)) {
+							g_string_append(dest, "\033[x2m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "U", sublen)) {
+							g_string_append(dest, "\033[4m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/U", sublen)) {
+							g_string_append(dest, "\033[x4m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/BODY", sublen)) {
+							/* mmm, </body> tags. *BURP* */
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && g_queue_peek_tail(tags)) {
+							char *etag, *cl;
+
+							etag = g_queue_pop_tail(tags);
+							if (etag) {
+								g_string_append(dest, etag);
+								if (!strcmp(etag, "</font>")) {
+									cl = g_queue_pop_tail(colors);
+									if (cl)
+										g_free(cl);
+								}
+								g_free(etag);
+							}
+						} else {
+							g_string_append_len(dest, &src[i], j - i + 1);
+						}
+					} else {
+						g_string_append_len(dest, &src[i], j - i + 1);
+					}
+
+					i = j;
+					break;
+				}
+
+			}
+
+		} else {
+			g_string_append_c(dest, src[i]);
+		}
+	}
+
+	ret = dest->str;
+	g_string_free(dest, FALSE);
+
+	esc = g_strescape(ret, NULL);
+	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	g_free(esc);
+
+	yahoo_htc_queue_cleanup(colors);
+	yahoo_htc_queue_cleanup(tags);
+
 	return ret;
 }
