@@ -4268,6 +4268,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
+	gint close_button_width, close_button_height, focus_width, focus_pad;
 
 	name      = gaim_conversation_get_name(conv);
 	conv_type = gaim_conversation_get_type(conv);
@@ -4364,7 +4365,20 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
-	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close), 16, 16);
+	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &close_button_width, &close_button_height);
+	if (gtk_check_version(2, 4, 2) == NULL)
+	{
+		/* Need to account for extra padding around the gtkbutton */
+		gtk_widget_style_get(GTK_WIDGET(gtkconv->close),
+							 "focus-line-width", &focus_width,
+							 "focus-padding", &focus_pad,
+							 NULL);
+		close_button_width += (focus_width + focus_pad) * 2;
+		close_button_height += (focus_width + focus_pad) * 2;
+	}
+	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close),
+								close_button_width, close_button_height);
+
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
 	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 	gtk_widget_show(close_image);
