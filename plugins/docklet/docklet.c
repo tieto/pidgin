@@ -1,4 +1,4 @@
-/* System tray docklet plugin for Gaim
+/* System tray icon (aka docklet) plugin for Gaim
  * Copyright (C) 2002 Robert McQueen <robot101@debian.org>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
@@ -20,10 +20,9 @@
  */
 
 /* todo (in order of importance):
-    - don't crash when the plugin gets unloaded (it seems to crash after
-       the plugin has gone, when gtk updates the button in the plugins
-       dialog. backtrace is always useless. weird)
-    - handle and update tooltips to show your current accounts
+    - don't crash when the plugin gets unloaded (may be a libegg bug,
+       see #101467 in gnome bugzilla)
+    - handle and update tooltips to show your current accounts ?
     - dernyi's account status menu in the right click
     - store icons in gtk2 stock icon thing (needs doing for the whole prog)
     - optional pop up notices when GNOME2's system-tray-applet supports it
@@ -49,8 +48,9 @@ enum docklet_status {
 };
 
 /* functions */
-static void docklet_create();
+static gboolean docklet_create();
 static void docklet_update_status();
+void gaim_plugin_remove();
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
@@ -218,9 +218,9 @@ static void docklet_update_icon() {
 		g_object_unref(unscaled);
 		g_object_unref(scaled);
 
-		debug_printf("Docklet: updated icon to %s\n",filename);
+		debug_printf("Tray Icon: updated icon to %s\n",filename);
 	} else {
-		debug_printf("Docklet: failed to load icon from %s\n",filename);
+		debug_printf("Tray Icon: failed to load icon from %s\n",filename);
 	}
 
 	g_free(filename);
@@ -259,27 +259,32 @@ static void docklet_update_status() {
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
-	debug_printf("Docklet: embedded\n");
+	debug_printf("Tray Icon: embedded\n");
 	docklet_add();
 }
 
 static void docklet_destroyed(GtkWidget *widget, void *data) {
-	debug_printf("Docklet: destroyed\n");
-	docklet_flush_queue();
+	debug_printf("Tray Icon: destroyed\n");
+
 	docklet_remove();
-	docklet_create();
+
+	docklet_flush_queue();
+
+	g_object_unref(G_OBJECT(docklet));
+	docklet = NULL;
+
+	g_idle_add(docklet_create, NULL);
 }
 
-static void docklet_create() {
+static gboolean docklet_create(void *data) {
 	GtkWidget *box;
 
 	if (docklet) {
-		/* if this is being called when a docklet exists, it's because that
-		   docklet is in the process of being destroyed. all we need to do
-		   is tell gobject we're not interested in it any more, and throw
-		   the pointer away. */
-		g_object_unref(G_OBJECT(docklet));
-		docklet = NULL;
+		/* if this is being called when a tray icon exists, it's because
+		   something messed up. try destroying it before we proceed,
+		   although docklet_refcount may be all hosed. hopefully won't happen. */
+		debug_printf("Tray Icon: trying to create icon but it already exists?\n");
+		gaim_plugin_remove();
 	}
 
 	docklet = egg_tray_icon_new("Gaim");
@@ -299,7 +304,9 @@ static void docklet_create() {
 	docklet_update_status();
 	docklet_update_icon();
 
-	debug_printf("Docklet: created\n");
+	debug_printf("Tray Icon: created\n");
+
+	return FALSE; /* for when we're called by the glib idle handler */
 }
 
 static void gaim_signon(struct gaim_connection *gc, void *data) {
@@ -341,7 +348,7 @@ static void gaim_new_conversation(char *who, void *data) {
 } */
 
 char *gaim_plugin_init(GModule *handle) {
-	docklet_create();
+	docklet_create(NULL);
 
 	gaim_signal_connect(handle, event_signon, gaim_signon, NULL);
 	gaim_signal_connect(handle, event_signoff, gaim_signoff, NULL);
@@ -364,11 +371,13 @@ void gaim_plugin_remove() {
 
 	docklet_flush_queue();
 
-	g_object_unref(G_OBJECT(docklet));
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));
 
-	debug_printf("Docklet: removed\n");
+	g_object_unref(G_OBJECT(docklet));
+	docklet = NULL;
+
+	debug_printf("Tray Icon: removed\n");
 }
 
 GtkWidget *gaim_plugin_config_gtk() {
@@ -379,7 +388,7 @@ GtkWidget *gaim_plugin_config_gtk() {
 	frame = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
 
-	vbox = make_frame(frame, _("Docklet Configuration"));
+	vbox = make_frame(frame, _("Tray Icon Configuration"));
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -388,7 +397,7 @@ GtkWidget *gaim_plugin_config_gtk() {
 	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_blist_show), NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0); */
 
-	toggle = gtk_check_button_new_with_mnemonic(_("_Hide new messages until docklet is clicked"));
+	toggle = gtk_check_button_new_with_mnemonic(_("_Hide new messages until tray icon is clicked"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), away_options & OPT_AWAY_QUEUE_UNREAD);
 	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_queue), NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
@@ -409,9 +418,9 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 }
 
 char *name() {
-	return _("System Tray Docklet");
+	return _("System Tray Icon");
 }
 
 char *description() {
-	return _("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window.");
+	return _("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ (although the icon doesn't flash yet =).");
 }
