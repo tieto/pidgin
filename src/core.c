@@ -473,11 +473,13 @@ int core_main()
 	/*
 	GMainLoop *loop;
 	 */
+#ifndef _WIN32
+	GIOChannel *channel;
+#endif
 
 	gaim_blist_load();
 
 #ifndef _WIN32
-	GIOChannel *channel;
 
 	UI_fd = open_socket();
 	if (UI_fd < 0)
