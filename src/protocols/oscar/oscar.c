@@ -5452,7 +5452,6 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_start(ap, fr);
 	type = va_arg(ap, int);
 
-gaim_debug(GAIM_DEBUG_ERROR, "XXX", "got self icon info, type is 0x%04hx, flags is 0x%02hhx\n", type, flags);
 	switch(type) {
 		case 0x0000:
 		case 0x0001: {

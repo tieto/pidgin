@@ -278,11 +278,12 @@ FILE *open_log_file(const char *name, int is_chat)
 void system_log(enum log_event what, GaimConnection *gc,
 				struct buddy *who, int why)
 {
-	GaimAccount *account;
+	GaimAccount *account = NULL;
 	FILE *fd;
 	char text[256], html[256];
 
-	account = gaim_connection_get_account(gc);
+	if (gc != NULL)
+		account = gaim_connection_get_account(gc);
 
 	if ((why & OPT_LOG_MY_SIGNON &&
 		 !gaim_prefs_get_bool("/gaim/gtk/logging/log_own_states")) ||
