@@ -1653,10 +1653,12 @@ gaim_markup_linkify(const char *text)
 char *
 gaim_escape_html(const char *html) {
 	const char *c = html;
-	GString *ret = g_string_new("");
+	GString *ret;
 
 	if (html == NULL)
 		return NULL;
+
+	ret = g_string_new("");
 
 	while (*c) {
 		switch (*c) {
