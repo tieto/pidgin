@@ -15,7 +15,7 @@ GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 ## VARIABLE DEFINITIONS
 ##
 
-TARGET = IdleTrac
+TARGET = idletracker
 
 # Compiler Options
 
@@ -33,20 +33,15 @@ include $(GAIM_TOP)/src/win32/global.mak
 ## INCLUDE PATHS
 ##
 
-INCLUDE_PATHS +=	-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
-			-I$(GAIM_TOP)
+INCLUDE_PATHS +=
 
-
-LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src
-
+LIB_PATHS =
 
 ##
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			IdleTracker.c
+C_SRC =			idletracker.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
