@@ -235,7 +235,7 @@ static int can_play_artsc()
 {
 	int error;
 
-	error = artsc_init();
+	error = arts_init();
 	if (error < 0)
 		return 0;
 
