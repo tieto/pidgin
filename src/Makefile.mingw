@@ -83,7 +83,6 @@ DLL_C_SRC =		about.c \
 			debug.c \
 			dialogs.c \
 			dnd-hints.c \
-			event.c \
 			ft.c \
 			gaim-disclosure.c \
 			gaimrc.c \
@@ -117,6 +116,7 @@ DLL_C_SRC =		about.c \
 			prpl.c \
 			request.c \
 			server.c \
+			signals.c \
 			sound.c \
 			status.c \
 			stock.c \

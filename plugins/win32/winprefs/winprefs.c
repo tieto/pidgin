@@ -30,6 +30,7 @@
 #include "internal.h"
 #include "gtkinternal.h"
 
+#include "core.h"
 #include "prefs.h"
 #include "debug.h"
 
@@ -37,6 +38,7 @@
 #include "gtkutils.h"
 #include "gtkblist.h"
 #include "gtkappbar.h"
+#include "signals.h"
 
 /*
  *  MACROS & DEFINES
@@ -145,11 +147,11 @@ static void blist_destroy_cb() {
         gaim_debug(GAIM_DEBUG_INFO, "winprefs", "blist_destroy_cb\n");
         blist_save_state();
         blist_set_dockable(FALSE);
-        gaim_signal_connect(plugin_id, event_signon, blist_create_cb, NULL);
+        gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
 }
 
 static gboolean blist_create_cb_remove(gpointer data) {
-        gaim_signal_disconnect(plugin_id, event_signon, blist_create_cb);
+        gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb));
         return FALSE;
 }
 
@@ -290,11 +292,11 @@ gboolean plugin_load(GaimPlugin *plugin) {
                 g_signal_connect(blist, "destroy", blist_destroy_cb, NULL);
         }
         else
-                gaim_signal_connect(plugin, event_signon, blist_create_cb, NULL);
+                gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
 
         wgaim_im_blink_state(gaim_prefs_get_bool(OPT_WINPREFS_IM_BLINK));
 
-        gaim_signal_connect(plugin, event_quit, gaim_quit_cb, NULL);
+        gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
 
         return TRUE;
 }

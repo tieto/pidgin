@@ -22,6 +22,7 @@
 #include <gdk/gdkwin32.h>
 #include "internal.h"
 
+#include "core.h"
 #include "prefs.h"
 #include "debug.h"
 
@@ -29,6 +30,7 @@
 #include "gtkplugin.h"
 #include "gtkblist.h"
 #include "gtkutils.h"
+#include "signals.h"
 
 /*
  *  MACROS & DEFINES
@@ -172,15 +174,13 @@ gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) 
 	return FALSE;
 }
 
-static void gaim_new_conversation(char *who) {
+static void gaim_new_conversation(GaimConversation *c) {
 	GList *wl, *wl1;
 	GtkWidget *vbox=NULL;
 	GtkWidget *win=NULL;
-	GaimConversation *c;
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
 
-	c = gaim_find_conversation(who);
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
@@ -277,8 +277,12 @@ G_MODULE_EXPORT gboolean plugin_load(GaimPlugin *plugin) {
         imalpha = gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA);
         blalpha = gaim_prefs_get_int(OPT_WINTRANS_BL_ALPHA);
 
-	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); 
-	gaim_signal_connect(plugin, event_signon, blist_created, NULL);
+	gaim_signal_connect((void*)gaim_conversations_get_handle(), 
+                            "conversation-created", 
+                            plugin, 
+                            GAIM_CALLBACK(gaim_new_conversation), 
+                            NULL); 
+	gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin, GAIM_CALLBACK(blist_created), NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 
 	if(blist) {
