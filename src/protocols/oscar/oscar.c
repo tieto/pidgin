@@ -3087,11 +3087,16 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	/*
-	 * If the message is being sent to an ICQ user then strip any HTML,
-	 * because HTML should not be sent over ICQ as a means to format a message.
+	 * If the message is being received by an ICQ user then escape any HTML,
+	 * because HTML should is not sent over ICQ as a means to format a message.
+	 * so any HTML we receive is intended to be displayed
+	 *
+	 * Note: There *may* be some clients which send messages as HTML formatted -
+	 *       they need to be special-cased somehow.
 	 */
-	if (isdigit(gaim_account_get_username(account)[0])) {
-		gchar *tmp2 = gaim_markup_strip_html(tmp);
+	if (isdigit(gaim_account_get_username(account)[0]) && isdigit(userinfo->sn[0])) {
+		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
+		gchar *tmp2 = gaim_escape_html(tmp);
 		g_free(tmp);
 		tmp = tmp2;
 	}
@@ -5152,12 +5157,25 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		 * If we're IMing an ICQ user then send newlines as CR/LF and
 		 * strip all HTML
 		 */
-		if (isdigit(name[0])) {
-			tmpmsg2 = gaim_markup_strip_html(message);
-			tmpmsg = gaim_str_add_cr(tmpmsg2);
-			g_free(tmpmsg2);
-		} else
-			tmpmsg = gaim_strdup_withhtml(message);
+		if (isdigit(name[0]) ) {
+			/* being sent to an ICQ user */
+			if (!isdigit(gaim_account_get_username(gc->account)[0])) {
+				/* from an AIM user - ICQ receiving from AIM *expects the messsage to be HTML formatted* */
+				tmpmsg = gaim_str_add_cr(message);
+			} else {
+				/* from an ICQ user - do nothing */
+				tmpmsg = g_strdup(message);
+			}
+		} else {
+			/* being sent to an AIM user */
+			if (isdigit(gaim_account_get_username(gc->account)[0])) {
+				/* from an ICQ user */
+				tmpmsg2 = gaim_strdup_withhtml(message);
+				tmpmsg = gaim_escape_html(tmpmsg2);
+				g_free(tmpmsg2);
+			} else
+				tmpmsg = gaim_strdup_withhtml(message);
+		}
 		len = strlen(tmpmsg);
 
 		args.flags |= oscar_encoding_check(tmpmsg);
