@@ -449,26 +449,30 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 		bit = bits->data;
 		chunks = bit->chunks;
 		if (DRAW_IMG (bit)) {
-			line = chunks->data;
-			if ((line->x <= x + width) &&
-			    (line->y <= y + height) &&
-			    (x <= line->x + line->width) &&
-			    (y <= line->y + line->height))
-				draw_img (imhtml, line);
+			if (chunks) {
+				line = chunks->data;
+				if ((line->x <= x + width) &&
+				    (line->y <= y + height) &&
+				    (x <= line->x + line->width) &&
+				    (y <= line->y + line->height))
+					draw_img (imhtml, line);
+			}
 		} else if (bit->type == TYPE_SEP) {
-			line = chunks->data;
-			if ((line->x <= x + width) &&
-			    (line->y <= y + height) &&
-			    (x <= line->x + line->width) &&
-			    (y <= line->y + line->height))
-				draw_line (imhtml, line);
+			if (chunks) {
+				line = chunks->data;
+				if ((line->x <= x + width) &&
+				    (line->y <= y + height) &&
+				    (x <= line->x + line->width) &&
+				    (y <= line->y + line->height))
+					draw_line (imhtml, line);
 
-			line = chunks->next->data;
-			if ((line->x <= x + width) &&
-			    (line->y <= y + height) &&
-			    (x <= line->x + line->width) &&
-			    (y <= line->y + line->height))
-				draw_text (imhtml, line);
+				line = chunks->next->data;
+				if ((line->x <= x + width) &&
+				    (line->y <= y + height) &&
+				    (x <= line->x + line->width) &&
+				    (y <= line->y + line->height))
+					draw_text (imhtml, line);
+			}
 		} else {
 			while (chunks) {
 				line = chunks->data;
