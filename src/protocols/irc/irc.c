@@ -1471,7 +1471,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 
 		/* OK, It is a chat or IM message.  Here, let's translate the IRC formatting into
-		 * good ol' fashioned gtkimhtml style hypertext markup. */
+		 * good ol' fashioned imhtml style hypertext markup. */
 
 
 		is_closing = FALSE;
