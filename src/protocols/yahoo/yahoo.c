@@ -2561,7 +2561,7 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 	struct yahoo_packet *pkt;
 	GaimGroup *g;
 	char *group = NULL;
-	char *grp2 = NULL;
+	char *group2 = NULL;
 
 	if (!yd->logged_in)
 		return;
@@ -2576,15 +2576,15 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 			group = "Buddies";
 	}
 
-	grp2 = yahoo_string_encode(gc, group, NULL);
+	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
-	yahoo_packet_hash(pkt, 65, grp2);
+	yahoo_packet_hash(pkt, 65, group2);
 	yahoo_packet_hash(pkt, 14, "");
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
-	g_free(grp2);
+	g_free(group2);
 }
 
 static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *group)
