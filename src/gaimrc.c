@@ -1150,14 +1150,12 @@ static void set_defaults()
 		OPT_CONVO_CHECK_SPELLING;
 
 	im_options =
-		OPT_IM_POPUP |
 		OPT_IM_LOGON |
 		OPT_IM_BUTTON_XPM |
 		OPT_IM_ONE_WINDOW ;
 
 	chat_options =
 		OPT_CHAT_LOGON |
-		OPT_CHAT_POPUP |
 		OPT_CHAT_BUTTON_XPM |
 		OPT_CHAT_TAB_COMPLETE |
 		OPT_CHAT_ONE_WINDOW;
