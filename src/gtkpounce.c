@@ -879,15 +879,21 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	GaimConversation *conv;
 	GaimAccount *account;
 	GaimBuddy *buddy;
+	GaimPlugin *proto;
 	const char *pouncee;
 	const char *alias;
-
+	const char *proto_id;
+	
 	pouncee = gaim_pounce_get_pouncee(pounce);
 	account = gaim_pounce_get_pouncer(pounce);
 
 	buddy = gaim_find_buddy(account, pouncee);
 
 	alias = gaim_get_buddy_alias(buddy);
+
+	/*find the protocol id for the window title and/or message*/
+	proto = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	proto_id = proto->info->name;
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
 		conv = gaim_find_conversation_with_account(pouncee, account);
@@ -899,19 +905,28 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	if (gaim_pounce_action_is_enabled(pounce, "popup-notify")) {
 		char tmp[1024];
 
+		/*Here we place the protocol name in the pounce dialog to lessen confusion about what
+		  protocol a pounce is for*/
 		g_snprintf(tmp, sizeof(tmp),
-				   (events & GAIM_POUNCE_TYPING) ? _("%s has started typing to you") :
-				   (events & GAIM_POUNCE_SIGNON) ? _("%s has signed on") :
-				   (events & GAIM_POUNCE_IDLE_RETURN) ? _("%s has returned from being idle") :
-				   (events & GAIM_POUNCE_AWAY_RETURN) ? _("%s has returned from being away") :
-				   (events & GAIM_POUNCE_TYPING_STOPPED) ? _("%s has stopped typing to you") :
-				   (events & GAIM_POUNCE_SIGNOFF) ? _("%s has signed off") :
-				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle") :
-				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away.") :
+				   (events & GAIM_POUNCE_TYPING) ? _("%s has started typing to you (%s)") :
+				   (events & GAIM_POUNCE_SIGNON) ? _("%s has signed on (%s)") :
+				   (events & GAIM_POUNCE_IDLE_RETURN) ? _("%s has returned from being idle (%s)") :
+				   (events & GAIM_POUNCE_AWAY_RETURN) ? _("%s has returned from being away (%s)") :
+				   (events & GAIM_POUNCE_TYPING_STOPPED) ? _("%s has stopped typing to you %s") :
+				   (events & GAIM_POUNCE_SIGNOFF) ? _("%s has signed off (%s)") :
+				   (events & GAIM_POUNCE_IDLE) ? _("%s has become idle (%s)") :
+				   (events & GAIM_POUNCE_AWAY) ? _("%s has gone away. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
-				   alias);
+				   alias,proto_id);
 
-		gaim_notify_info(NULL, NULL, tmp, (char*)gaim_date_full());
+		/*Ok here is where I change the second argument, title,
+		  from NULL to the account name if that's all we have
+		  or the account alias if we have that*/
+		if(gaim_account_get_alias(account)) {
+		  gaim_notify_info(NULL, gaim_account_get_alias(account), tmp, (char*)gaim_date_full());
+		} else {
+		  gaim_notify_info(NULL, gaim_account_get_username(account), tmp, (char*)gaim_date_full());		 
+		}
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
