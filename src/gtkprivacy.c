@@ -236,11 +236,6 @@ select_account_cb(GtkWidget *dropdown, GaimAccount *account,
 
 	dialog->account = account;
 
-	gaim_debug(GAIM_DEBUG_MISC, "select_account_cb",
-			   "dialog = %p\n", dialog);
-	gaim_debug(GAIM_DEBUG_MISC, "select_account_cb",
-			   "menu_entry_count = %d\n", menu_entry_count);
-
 	for (i = 0; i < menu_entry_count; i++) {
 		if (menu_entries[i].num == account->perm_deny) {
 			gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->type_menu), i);
@@ -315,20 +310,12 @@ remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 		return;
 
 	if (dialog->in_allow_list) {
-		const char *new_name;
-
-		new_name = find_permit_block_by_name(dialog->account->permit, name);
-
-		if (new_name != NULL)
-			gaim_privacy_permit_remove(dialog->account, new_name);
+		if (find_permit_block_by_name(dialog->account->permit, name))
+			gaim_privacy_permit_remove(dialog->account, name);
 	}
 	else {
-		const char *new_name;
-
-		new_name = find_permit_block_by_name(dialog->account->deny, name);
-
-		if (new_name != NULL)
-			gaim_privacy_deny_remove(dialog->account, new_name);
+		if (find_permit_block_by_name(dialog->account->deny, name))
+			gaim_privacy_deny_remove(dialog->account, name);
 	}
 }
 
