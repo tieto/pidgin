@@ -268,6 +268,17 @@ static GList *combo_user_names()
 	return tmp;
 }
 
+static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
+{
+	if(docklet_count) {
+#if _WIN32
+		wgaim_systray_minimize(mainwindow);
+#endif
+		gtk_widget_hide(mainwindow);
+	} else
+		do_quit();
+}
+
 void show_login()
 {
 	GdkPixbuf *icon;
@@ -294,7 +305,7 @@ void show_login()
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
 	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
 	g_signal_connect(G_OBJECT(mainwindow), "delete_event",
-					 G_CALLBACK(do_quit), mainwindow);
+					 G_CALLBACK(login_window_closed), mainwindow);
 
 
 	icon = gaim_pixbuf(NULL, "gaim.png");
