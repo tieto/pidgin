@@ -170,14 +170,17 @@ static void gaim_gtk_blist_add_buddy_cb()
 	GaimBlistNode *node;
 	GValue val;
 
-	gtk_tree_selection_get_selected(sel, NULL, &iter);
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+		node = g_value_get_pointer(&val);
 	
-	if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
-		show_add_buddy(NULL, NULL, ((struct group*)node->parent)->name, NULL);
-	else if (GAIM_BLIST_NODE_IS_GROUP(node))
-		show_add_buddy(NULL, NULL, ((struct group*)node)->name, NULL);
+		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
+			show_add_buddy(NULL, NULL, ((struct group*)node->parent)->name, NULL);
+		else if (GAIM_BLIST_NODE_IS_GROUP(node))
+			show_add_buddy(NULL, NULL, ((struct group*)node)->name, NULL);
+	} else {
+		show_add_buddy(NULL,NULL,NULL,NULL);
+	}
 	
 }
 
@@ -239,7 +242,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 	gchar *filename = NULL;	
 	const char *protoname = NULL;
 
-	char *se,*sw,*nw,*ne;
+	char *se = NULL, *sw = NULL ,*nw = NULL ,*ne = NULL;
 	
 	int scalesize = 30;
 
@@ -574,7 +577,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 								    node->parent->parent ? node->parent->parent->ui_data : NULL, insertatiter);
 					gtk_tree_store_set(gtkblist->treemodel, iter2, 
 							   STATUS_ICON_COLUMN, gtk_widget_render_icon
-							   (gtkblist->treeview,GTK_STOCK_OPEN,GTK_ICON_SIZE_LARGE_TOOLBAR,NULL),
+							   (gtkblist->treeview,GTK_STOCK_OPEN,GTK_ICON_SIZE_SMALL_TOOLBAR,NULL),
 							   NAME_COLUMN, mark,
 							   NODE_COLUMN, node->parent,
 							   -1);
