@@ -1183,7 +1183,7 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("HTTP User:");
+	label = gtk_label_new("Proxy User:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -1201,7 +1201,7 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new("HTTP Password:");
+	label = gtk_label_new("Proxy Password:");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 

@@ -458,30 +458,11 @@ static void s5_canread_again(gpointer data, gint source, GdkInputCondition cond)
 	return;
 }
 
-static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
+static void s5_sendconnect(gpointer data, gint source)
 {
 	unsigned char buf[512];
 	struct PHB *phb = data;
 	int hlen = strlen(phb->host);
-
-	gdk_input_remove(phb->inpa);
-	debug_printf("able to read\n");
-
-	if (read(source, buf, 2) < 2) {
-		close(source);
-		phb->func(phb->data, -1, GDK_INPUT_READ);
-		g_free(phb->host);
-		g_free(phb);
-		return;
-	}
-
-	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-		close(source);
-		phb->func(phb->data, -1, GDK_INPUT_READ);
-		g_free(phb->host);
-		g_free(phb);
-		return;
-	}
 
 	buf[0] = 0x05;
 	buf[1] = 0x01;		/* CONNECT */
@@ -495,12 +476,106 @@ static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
 	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
 	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s5_canread_again, phb);
+}
+
+static void s5_readauth(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char buf[512];
+	struct PHB *phb = data;
+
+	gdk_input_remove(phb->inpa);
+	debug_printf("got auth response\n");
+
+	if (read(source, buf, 2) < 2) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	if ((buf[0] != 0x01) || (buf[1] == 0x00)) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	s5_sendconnect(phb, source);
+}
+
+static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char buf[512];
+	struct PHB *phb = data;
+
+	gdk_input_remove(phb->inpa);
+	debug_printf("able to read\n");
+
+	if (read(source, buf, 2) < 2) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	if (buf[1] == 0x02) {
+		unsigned int i = strlen(phb->user), j = strlen(phb->pass);
+		buf[0] = 0x01; /* version 1 */
+		buf[1] = i;
+		memcpy(buf+2, phb->user, i);
+		buf[2+i] = j;
+		memcpy(buf+2+i+1, phb->pass, j);
+		if (write(source, buf, 3+i+j) < 3+i+j) {
+			close(source);
+			phb->func(phb->data, -1, GDK_INPUT_READ);
+			g_free(phb->user);
+			g_free(phb->pass);
+			g_free(phb->host);
+			g_free(phb);
+			return;
+		}
+
+		phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s5_readauth, phb);
+	} else {
+		s5_sendconnect(phb, source);
+	}
 }
 
 static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
@@ -516,6 +591,10 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -524,14 +603,25 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
-	buf[1] = 0x01;
-	buf[2] = 0x00;
-	i = 3;
+	if (phb->user) {
+		buf[1] = 0x02;	/* two methods */
+		buf[2] = 0x00;	/* no authentication */
+		buf[3] = 0x02;	/* username/password authentication */
+		i = 4;
+	} else {
+		buf[1] = 0x01;
+		buf[2] = 0x00;
+		i = 3;
+	}
 
 	if (write(source, buf, i) < i) {
 		debug_printf("unable to write\n");
 		close(source);
 		phb->func(phb->data, -1, GDK_INPUT_READ);
+		if (phb->user) {
+			g_free(phb->user);
+			g_free(phb->pass);
+		}
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -542,6 +632,7 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 
 static int proxy_connect_socks5(char *host, unsigned short port,
 				char *proxyhost, unsigned short proxyport,
+				char *user, char *pass,
 				struct PHB *phb)
 {
 	int fd = -1;
@@ -565,6 +656,10 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 		return -1;
 	}
 
+	if (user && pass && user[0] && pass[0]) {
+		phb->user = g_strdup(user);
+		phb->pass = g_strdup(pass);
+	}
 	phb->host = g_strdup(host);
 	phb->port = port;
 
@@ -575,6 +670,10 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, s5_canwrite, phb);
 		} else {
 			close(fd);
+			if (phb->user) {
+				g_free(phb->user);
+				g_free(phb->pass);
+			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -585,6 +684,10 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
+			if (phb->user) {
+				g_free(phb->user);
+				g_free(phb->pass);
+			}
 			g_free(phb->host);
 			g_free(phb);
 			return -1;
@@ -619,7 +722,7 @@ int proxy_connect(char *host, int port,
 	else if (proxytype == PROXY_SOCKS4)
 		return proxy_connect_socks4(host, port, proxyhost, proxyport, phb);
 	else if (proxytype == PROXY_SOCKS5)
-		return proxy_connect_socks5(host, port, proxyhost, proxyport, phb);
+		return proxy_connect_socks5(host, port, proxyhost, proxyport, user, pass, phb);
 
 	g_free(phb);
 	return -1;
