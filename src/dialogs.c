@@ -3394,14 +3394,22 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 {
 	gchar buf[BUF_LONG];
-	long offset = (long)gtk_object_get_user_data(GTK_OBJECT(w));
-	int options = (int)gtk_object_get_data(GTK_OBJECT(w), "options");
-	gchar *name = gtk_object_get_data(GTK_OBJECT(w), "name");
+	long offset;
+	int options;
+	gchar *name;
+	GtkWidget *bbox;
+	GtkWidget *window;
 	FILE *fp;
 	char filename[256];
 	int i=0;
 	GString *string;
+	guint block;
 
+	offset = (long)gtk_object_get_user_data(GTK_OBJECT(w));
+	options = (int)gtk_object_get_data(GTK_OBJECT(w), "options");
+	name = gtk_object_get_data(GTK_OBJECT(w), "name");
+	bbox = gtk_object_get_data(GTK_OBJECT(w), "box");
+	window = gtk_object_get_data(GTK_OBJECT(w), "window");
 	string = g_string_new("");
 
 	if (name) {
@@ -3418,6 +3426,10 @@ static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 		do_error_dialog(buf, "Error!");
 		return;
 	}
+
+	gtk_widget_set_sensitive(bbox, FALSE);
+	gtk_signal_disconnect_by_func(GTK_OBJECT(window), GTK_SIGNAL_FUNC(destroy_dialog), window);
+	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(dont_destroy), window);
 
 	fseek(fp, offset, SEEK_SET);
 	gtk_imhtml_clear(GTK_IMHTML(layout));
@@ -3444,6 +3456,10 @@ static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 	}
 	gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
 	gtk_imhtml_append_text(GTK_IMHTML(layout), "<BR>", options);
+
+	gtk_widget_set_sensitive(bbox, TRUE);
+	gtk_signal_disconnect(GTK_OBJECT(window), block);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
 	g_string_free(string, TRUE);
 	fclose(fp);
 }
@@ -3456,6 +3472,7 @@ void show_log(char *name)
 	GtkWidget *window;
 	GtkWidget *box;
 	GtkWidget *hbox;
+	GtkWidget *bbox;
 	GtkWidget *sw;
 	GtkWidget *layout;
 	GtkWidget *close_button;
@@ -3495,6 +3512,8 @@ void show_log(char *name)
 	aol_icon(window->window);
 
 	layout = gtk_imhtml_new(NULL, NULL);
+	bbox = gtk_hbox_new(FALSE, 0);
+
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), box);
@@ -3541,6 +3560,8 @@ void show_log(char *name)
 				gtk_object_set_user_data(GTK_OBJECT(item), (gpointer)offset);
 				gtk_object_set_data(GTK_OBJECT(item), "options", (gpointer)options);
 				gtk_object_set_data(GTK_OBJECT(item), "name", (gpointer)name);
+				gtk_object_set_data(GTK_OBJECT(item), "box", (gpointer)bbox);
+				gtk_object_set_data(GTK_OBJECT(item), "window", (gpointer)window);
 				gtk_signal_connect(GTK_OBJECT(item), "select", GTK_SIGNAL_FUNC(log_show_convo), layout);
 				gtk_container_add(GTK_CONTAINER(list), item);
 				gtk_widget_show(item);
@@ -3548,6 +3569,9 @@ void show_log(char *name)
 		}
 		fclose(fp);
 	}
+
+	gtk_signal_disconnect(GTK_OBJECT(window), block);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
 
 	frame = gtk_frame_new(_("Conversation"));
 	gtk_widget_show(frame);
@@ -3563,21 +3587,21 @@ void show_log(char *name)
 	gtk_container_add(GTK_CONTAINER(sw), layout);
 	gaim_setup_imhtml(layout);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(bbox, FALSE);
 
 	close_button = picture_button(window, _("Close"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
-	gtk_widget_set_sensitive(close_button, FALSE);
+	gtk_box_pack_end(GTK_BOX(bbox), close_button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
 
 	clear_button = picture_button(window, _("Clear"), close_xpm);
 	gtk_object_set_user_data(GTK_OBJECT(clear_button), window);
-	gtk_box_pack_end(GTK_BOX(hbox), clear_button, FALSE, FALSE, 5);
-	gtk_widget_set_sensitive(clear_button, FALSE);
+	gtk_box_pack_end(GTK_BOX(bbox), clear_button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(clear_button), "clicked", GTK_SIGNAL_FUNC(show_clear_log), name);
 
 	save_button = picture_button(window, _("Save"), save_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), save_button, FALSE, FALSE, 5);
-	gtk_widget_set_sensitive(save_button, FALSE);
+	gtk_box_pack_end(GTK_BOX(bbox), save_button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(save_button), "clicked", GTK_SIGNAL_FUNC(show_save_log), name);
 
 	gtk_widget_show_all(window);				
 	
@@ -3585,20 +3609,14 @@ void show_log(char *name)
 		gtk_object_set_user_data(GTK_OBJECT(layout), (gpointer)0);
 		gtk_object_set_data(GTK_OBJECT(layout), "options", (gpointer)options);
 		gtk_object_set_data(GTK_OBJECT(layout), "name", (gpointer)NULL);
+		gtk_object_set_data(GTK_OBJECT(layout), "box", (gpointer)bbox);
+		gtk_object_set_data(GTK_OBJECT(layout), "window", (gpointer)window);
 		log_show_convo(layout, layout);
 	} else {
 		gtk_list_select_item(GTK_LIST(list), 0);
 	}
-
-	gtk_signal_disconnect(GTK_OBJECT(window), block);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
-	gtk_signal_connect(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
-	gtk_signal_connect(GTK_OBJECT(clear_button), "clicked", GTK_SIGNAL_FUNC(show_clear_log), name);
-	gtk_signal_connect(GTK_OBJECT(save_button), "clicked", GTK_SIGNAL_FUNC(show_save_log), name);
 	
-	gtk_widget_set_sensitive(close_button, TRUE);
-	gtk_widget_set_sensitive(clear_button, TRUE);
-	gtk_widget_set_sensitive(save_button, TRUE);
+	gtk_widget_set_sensitive(bbox, TRUE);
 
 	return;
 }
