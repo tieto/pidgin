@@ -68,7 +68,7 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 		return;
 	if (source < 0) {
 		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who, _("Unable to connect."));
-		gaim_xfer_end(xfer);
+		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 
@@ -122,6 +122,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;
+	char *filename;
 
 	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
 			   "AAA - in yahoo_sendfile_connected\n");
@@ -138,7 +139,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 
 	if (source < 0) {
 		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who, _("Unable to connect."));
-		gaim_xfer_end(xfer);
+		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 
@@ -153,7 +154,8 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	yahoo_packet_hash(pkt, 0, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, xfer->who);
 	yahoo_packet_hash(pkt, 14, "");
-	yahoo_packet_hash(pkt, 27, gaim_xfer_get_local_filename(xfer));
+	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+	yahoo_packet_hash(pkt, 27, filename);
 	yahoo_packet_hash(pkt, 28, size);
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
@@ -179,6 +181,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	g_free(size);
 	g_free(post);
 	g_free(buf);
+	g_free(filename);
 }
 
 static void yahoo_xfer_init(GaimXfer *xfer)
@@ -517,5 +520,5 @@ void yahoo_send_file(GaimConnection *gc, const char *who, const char *file)
 	gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
 
 	/* Now perform the request */
-	gaim_xfer_request_accepted(xfer, g_strdup(file));
+	gaim_xfer_request_accepted(xfer, file);
 }

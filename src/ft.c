@@ -40,6 +40,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 
 	xfer = g_new0(GaimXfer, 1);
 
+	xfer->ref = 1;
 	xfer->type    = type;
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
@@ -55,14 +56,14 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	return xfer;
 }
 
-void
+static void
 gaim_xfer_destroy(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
 
 	g_return_if_fail(xfer != NULL);
 
-	if (!xfer->completed)
+	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_STARTED)
 		gaim_xfer_cancel_local(xfer);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
@@ -83,6 +84,25 @@ gaim_xfer_destroy(GaimXfer *xfer)
 }
 
 void
+gaim_xfer_ref(GaimXfer *xfer)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->ref++;
+}
+
+void
+gaim_xfer_unref(GaimXfer *xfer)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->ref--;
+
+	if (xfer->ref == 0)
+		gaim_xfer_destroy(xfer);
+}
+
+void
 gaim_xfer_request(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
@@ -99,15 +119,11 @@ gaim_xfer_request(GaimXfer *xfer)
 }
 
 void
-gaim_xfer_request_accepted(GaimXfer *xfer, char *filename)
+gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 {
 	GaimXferType type;
 
 	if (xfer == NULL || filename == NULL) {
-
-		if (filename != NULL)
-			g_free(filename);
-
 		return;
 	}
 
@@ -126,8 +142,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, char *filename)
 			gaim_xfer_error(type, xfer->who, msg);
 
 			g_free(msg);
-			g_free(filename);
-
+			gaim_xfer_unref(xfer);
 			return;
 		}
 
@@ -139,8 +154,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, char *filename)
 			gaim_xfer_error(type, xfer->who, msg);
 
 			g_free(msg);
-			g_free(filename);
-
+			gaim_xfer_unref(xfer);
 			return;
 		}
 
@@ -153,7 +167,6 @@ gaim_xfer_request_accepted(GaimXfer *xfer, char *filename)
 		gaim_xfer_set_local_filename(xfer, filename);
 	}
 
-	g_free(filename);
 
 	xfer->ops.init(xfer);
 }
@@ -163,9 +176,10 @@ gaim_xfer_request_denied(GaimXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
 
-	gaim_xfer_destroy(xfer);
+	if (xfer->ops.request_denied != NULL)
+		xfer->ops.request_denied(xfer);
 
-	/* TODO */
+	gaim_xfer_unref(xfer);
 }
 
 GaimXferType
@@ -184,12 +198,24 @@ gaim_xfer_get_account(const GaimXfer *xfer)
 	return xfer->account;
 }
 
-GaimXferCancelType
+GaimXferStatusType
+gaim_xfer_get_status(const GaimXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, GAIM_XFER_STATUS_UNKNOWN);
+
+	return xfer->status;
+}
+
+gboolean
 gaim_xfer_is_canceled(const GaimXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, TRUE);
 
-	return xfer->canceled;
+	if ((gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) ||
+	    (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_REMOTE))
+		return TRUE;
+	else
+		return FALSE;
 }
 
 gboolean
@@ -197,7 +223,7 @@ gaim_xfer_is_completed(const GaimXfer *xfer)
 {
 	g_return_val_if_fail(xfer != NULL, TRUE);
 
-	return xfer->completed;
+	return (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_DONE);
 }
 
 const char *
@@ -285,11 +311,11 @@ gaim_xfer_get_remote_port(const GaimXfer *xfer)
 }
 
 static void
-gaim_xfer_set_canceled(GaimXfer *xfer, GaimXferCancelType canceled)
+gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
 
-	xfer->canceled = canceled;
+	xfer->status = status;
 }
 
 void
@@ -299,7 +325,8 @@ gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed)
 
 	g_return_if_fail(xfer != NULL);
 
-	xfer->completed = completed;
+	if (completed == TRUE)
+		gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_DONE);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -357,6 +384,12 @@ gaim_xfer_set_init_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 	xfer->ops.init = fnc;
 }
 
+void gaim_xfer_set_request_denied_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->ops.request_denied = fnc;
+}
 
 void
 gaim_xfer_set_read_fnc(GaimXfer *xfer, size_t (*fnc)(char **, GaimXfer *))
@@ -565,6 +598,8 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 	xfer->bytes_remaining = gaim_xfer_get_size(xfer);
 	xfer->bytes_sent      = 0;
 
+	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_STARTED);
+
 	if (type == GAIM_XFER_RECEIVE) {
 		cond = GAIM_INPUT_READ;
 
@@ -597,7 +632,7 @@ gaim_xfer_end(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	/* See if we are actually trying to cancel this. */
-	if (!xfer->completed) {
+	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_DONE) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
@@ -617,6 +652,8 @@ gaim_xfer_end(GaimXfer *xfer)
 		fclose(xfer->dest_fp);
 		xfer->dest_fp = NULL;
 	}
+
+	gaim_xfer_unref(xfer);
 }
 
 void
@@ -626,7 +663,7 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 
 	g_return_if_fail(xfer != NULL);
 
-	gaim_xfer_set_canceled(xfer, GAIM_XFER_CANCEL_LOCAL);
+	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
@@ -658,6 +695,8 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 		ui_ops->cancel_local(xfer);
 
 	xfer->bytes_remaining = 0;
+
+	gaim_xfer_unref(xfer);
 }
 
 void
@@ -667,7 +706,7 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 
 	g_return_if_fail(xfer != NULL);
 
-	gaim_xfer_set_canceled(xfer, GAIM_XFER_CANCEL_REMOTE);
+	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
@@ -699,6 +738,8 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 		ui_ops->cancel_remote(xfer);
 
 	xfer->bytes_remaining = 0;
+
+	gaim_xfer_unref(xfer);
 }
 
 void

@@ -80,6 +80,7 @@ typedef struct
 	GtkWidget *filesel;
 	GtkTreeIter iter;
 	time_t start_time;
+	gboolean in_list;
 
 	char *name;
 
@@ -97,6 +98,12 @@ enum
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
+
+
+/**************************************************************************
+ * Prototype(s)
+ **************************************************************************/
+static int choose_file(GaimXfer *xfer);
 
 /**************************************************************************
  * Utility Functions
@@ -766,7 +773,10 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
+	gaim_xfer_ref(xfer);
+
 	data = GAIM_GTKXFER(xfer);
+	data->in_list = TRUE;
 
 	gaim_gtkxfer_dialog_show(dialog);
 
@@ -823,12 +833,12 @@ gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
 	if (data == NULL)
 		return;
 
+	if (!data->in_list)
+		return;
+
+	data->in_list = FALSE;
+
 	gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &data->iter);
-
-	g_free(data->name);
-	g_free(data);
-
-	xfer->ui_data = NULL;
 
 	dialog->num_transfers--;
 
@@ -836,6 +846,8 @@ gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
 		gaim_gtkxfer_dialog_hide(dialog);
 	else
 		ensure_row_selected(dialog);
+
+	gaim_xfer_unref(xfer);
 }
 
 void
@@ -846,7 +858,6 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 	GdkPixbuf *pixbuf;
 	gchar *status;
 
-
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
@@ -856,19 +867,8 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 		return;
 
 
-	if ((gaim_xfer_is_canceled(xfer) == GAIM_XFER_CANCEL_LOCAL) && (dialog->auto_clear)) {
-		gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &data->iter);
-
-		g_free(data->name);
-		g_free(data);
-
-		xfer->ui_data = NULL;
-
-		dialog->num_transfers--;
-
-		if (dialog->num_transfers == 0 && !dialog->keep_open)
-			gaim_gtkxfer_dialog_hide(dialog);
-
+	if ((gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) && (dialog->auto_clear)) {
+		gaim_gtkxfer_dialog_remove_xfer(dialog, xfer);
 		return;
 	}
 
@@ -878,7 +878,7 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 									GAIM_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
-	if (gaim_xfer_is_canceled(xfer) == GAIM_XFER_CANCEL_LOCAL)
+	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL)
 		status = _("Canceled");
 	else
 		status = _("Failed");
@@ -905,6 +905,9 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 	g_return_if_fail(xfer != NULL);
 
 	if ((data = GAIM_GTKXFER(xfer)) == NULL)
+		return;
+
+	if (data->in_list == FALSE)
 		return;
 
 	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
@@ -958,13 +961,26 @@ gaim_gtkxfer_new_xfer(GaimXfer *xfer)
 static void
 gaim_gtkxfer_destroy(GaimXfer *xfer)
 {
-	gaim_gtkxfer_dialog_remove_xfer(xfer_dialog, xfer);
+	GaimGtkXferUiData *data;
+
+	data = GAIM_GTKXFER(xfer);
+	if (data) {
+		if (data->name)
+			g_free(data->name);
+		g_free(data);
+		xfer->ui_data = NULL;
+	}
 }
 
 static gboolean
 choose_file_close_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-	gaim_xfer_request_denied((GaimXfer *)user_data);
+	GaimXfer *xfer = (GaimXfer *)user_data;
+	GaimGtkXferUiData *data;
+
+	data = GAIM_GTKXFER(xfer);
+	data->filesel = NULL;
+	gaim_xfer_request_denied(xfer);
 
 	return FALSE;
 }
@@ -976,11 +992,9 @@ choose_file_cancel_cb(GtkButton *button, gpointer user_data)
 	GaimGtkXferUiData *data;
 
 	data = GAIM_GTKXFER(xfer);
-
-	gaim_xfer_request_denied(xfer);
-
 	gtk_widget_destroy(data->filesel);
 	data->filesel = NULL;
+	gaim_xfer_request_denied(xfer);
 }
 
 static int
@@ -992,10 +1006,7 @@ do_overwrite_cb(GaimXfer *xfer)
 
 	gaim_xfer_request_accepted(xfer, data->name);
 
-	/*
-	 * No, we don't want to free data->name. gaim_xfer_request_accepted
-	 * will deal with it.
-	 */
+	g_free(data->name);
 	data->name = NULL;
 
 	return 0;
@@ -1011,7 +1022,7 @@ dont_overwrite_cb(GaimXfer *xfer)
 	g_free(data->name);
 	data->name = NULL;
 
-	gaim_xfer_request_denied(xfer);
+	choose_file(xfer);
 
 	return 0;
 }
@@ -1068,7 +1079,7 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 								G_CALLBACK(dont_overwrite_cb));
 		}
 		else {
-			gaim_xfer_request_accepted(xfer, g_strdup(name));
+			gaim_xfer_request_accepted(xfer, name);
 		}
 	}
 
@@ -1174,25 +1185,20 @@ static void
 gaim_gtkxfer_update_progress(GaimXfer *xfer, double percent)
 {
 	gaim_gtkxfer_dialog_update_xfer(xfer_dialog, xfer);
-
-	/* See if it's removed. */
-	/* XXX - This caused some bad stuff, and I don't see a point to it */
-#if 0
-	if (xfer->ui_data == NULL)
-		gaim_xfer_destroy(xfer);
-#endif
 }
 
 static void
 gaim_gtkxfer_cancel_local(GaimXfer *xfer)
 {
-	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
+	if (xfer_dialog)
+		gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 static void
 gaim_gtkxfer_cancel_remote(GaimXfer *xfer)
 {
-	gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
+	if (xfer_dialog)
+		gaim_gtkxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 static GaimXferUiOps ops =

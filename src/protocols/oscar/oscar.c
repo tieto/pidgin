@@ -717,7 +717,7 @@ static void oscar_close(GaimConnection *gc) {
 	while (od->file_transfers) {
 		GaimXfer *xfer;
 		xfer = (GaimXfer *)od->file_transfers->data;
-		gaim_xfer_destroy(xfer);
+		gaim_xfer_cancel_local(xfer);
 	}
 	while (od->requesticon) {
 		char *sn = od->requesticon->data;
