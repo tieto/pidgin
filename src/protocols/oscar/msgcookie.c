@@ -16,16 +16,15 @@
 
 /**
  * aim_cachecookie - appends a cookie to the cookie list
- * @sess: session to add to
- * @cookie: pointer to struct to append
  *
  * if cookie->cookie for type cookie->type is found, updates the
  * ->addtime of the found structure; otherwise adds the given cookie
  * to the cache
  *
- * returns -1 on error, 0 on append, 1 on update.  the cookie you pass
- * in may be free'd, so don't count on its value after calling this!
- * 
+ * @param sess session to add to
+ * @param cookie pointer to struct to append
+ * @return returns -1 on error, 0 on append, 1 on update.  the cookie you pass
+ *         in may be free'd, so don't count on its value after calling this!
  */
 faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie)
 {
@@ -52,13 +51,13 @@ faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie)
 
 /**
  * aim_uncachecookie - grabs a cookie from the cookie cache (removes it from the list)
- * @sess: session to grab cookie from
- * @cookie: cookie string to look for
- * @type: cookie type to look for
  *
  * takes a cookie string and a cookie type and finds the cookie struct associated with that duple, removing it from the cookie list ikn the process.
  *
- * if found, returns the struct; if none found (or on error), returns NULL:
+ * @param sess session to grab cookie from
+ * @param cookie cookie string to look for
+ * @param type cookie type to look for
+ * @return if found, returns the struct; if none found (or on error), returns NULL:
  */
 faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *cookie, int type)
 {
@@ -81,13 +80,12 @@ faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *coo
 
 /**
  * aim_mkcookie - generate an aim_msgcookie_t *struct from a cookie string, a type, and a data pointer.
- * @c: pointer to the cookie string array
- * @type: cookie type to use
- * @data: data to be cached with the cookie
  *
- * returns NULL on error, a pointer to the newly-allocated cookie on
- * success.
- *
+ * @param c pointer to the cookie string array
+ * @param type cookie type to use
+ * @param data data to be cached with the cookie
+ * @return returns NULL on error, a pointer to the newly-allocated
+ *         cookie on success.
  */
 faim_internal aim_msgcookie_t *aim_mkcookie(fu8_t *c, int type, void *data) 
 {
@@ -108,13 +106,12 @@ faim_internal aim_msgcookie_t *aim_mkcookie(fu8_t *c, int type, void *data)
 
 /**
  * aim_checkcookie - check to see if a cookietuple has been cached
- * @sess: session to check for the cookie in
- * @cookie: pointer to the cookie string array
- * @type: type of the cookie to look for
  *
- * this returns a pointer to the cookie struct (still in the list) on
- * success; returns NULL on error/not found
- *
+ * @param sess session to check for the cookie in
+ * @param cookie pointer to the cookie string array
+ * @param type type of the cookie to look for
+ * @return returns a pointer to the cookie struct (still in the list)
+ *         on success; returns NULL on error/not found
  */
 
 faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *sess, const fu8_t *cookie, int type)
@@ -146,15 +143,15 @@ faim_internal int aim_dumpcookie(aim_session_t *sess, aim_msgcookie_t *cookie)
 
 /**
  * aim_cookie_free - free an aim_msgcookie_t struct
- * @sess: session to remove the cookie from
- * @cookiep: the address of a pointer to the cookie struct to remove
  *
  * this function removes the cookie *cookie from teh list of cookies
  * in sess, and then frees all memory associated with it. including
  * its data! if you want to use the private data after calling this,
  * make sure you copy it first.
  *
- * returns -1 on error, 0 on success.
+ * @param sess session to remove the cookie from
+ * @param cookie the address of a pointer to the cookie struct to remove
+ * @return returns -1 on error, 0 on success.
  *
  */
 faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie) 

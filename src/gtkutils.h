@@ -329,8 +329,8 @@ gboolean gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
  * Sets an ATK name for a given widget.  Also sets the labelled-by 
  * and label-for ATK relationships.
  *
- * @w The widget that we want to name.
- * @l A GtkLabel that we want to use as the ATK name for the widget.
+ * @param w The widget that we want to name.
+ * @param l A GtkLabel that we want to use as the ATK name for the widget.
  */
 void gaim_set_accessible_label(GtkWidget *w, GtkWidget *l);
 

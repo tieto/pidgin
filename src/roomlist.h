@@ -179,7 +179,7 @@ void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress);
  * whether or not we're busy downloading a room list or not.
  *
  * @param list The room list.
- * @returns True if we're downloading it, or false if we're not.
+ * @return True if we're downloading it, or false if we're not.
  */
 gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list);
 

@@ -476,12 +476,6 @@ strbreakup (const char *string,
 
 /**
  * gtk_source_iter_forward_search:
- * @iter: start of search
- * @str: a search string
- * @flags: flags affecting how the search is done
- * @match_start: return location for start of match, or %NULL
- * @match_end: return location for end of match, or %NULL
- * @limit: bound for the search, or %NULL for the end of the buffer
  * 
  * Searches forward for @str. Any match is returned by setting 
  * @match_start to the first character of the match and @match_end to the 
@@ -503,8 +497,14 @@ strbreakup (const char *string,
  * Same as gtk_text_iter_forward_search(), but supports case insensitive
  * searching.
  * 
- * Return value: whether a match was found
- **/
+ * @param iter start of search
+ * @param str a search string
+ * @param flags flags affecting how the search is done
+ * @param match_start return location for start of match, or %NULL
+ * @param match_end return location for end of match, or %NULL
+ * @param limit bound for the search, or %NULL for the end of the buffer
+ * @return returns whether a match was found
+ */
 gboolean
 gtk_source_iter_forward_search (const GtkTextIter   *iter,
 				const gchar         *str,
@@ -596,18 +596,18 @@ gtk_source_iter_forward_search (const GtkTextIter   *iter,
 
 /**
  * gtk_source_iter_backward_search:
- * @iter: a #GtkTextIter where the search begins
- * @str: search string
- * @flags: bitmask of flags affecting the search
- * @match_start: return location for start of match, or %NULL
- * @match_end: return location for end of match, or %NULL
- * @limit: location of last possible @match_start, or %NULL for start of buffer
  * 
  * Same as gtk_text_iter_backward_search(), but supports case insensitive
  * searching.
  * 
- * Return value: whether a match was found
- **/
+ * @param iter a #GtkTextIter where the search begins
+ * @param str search string
+ * @param flags bitmask of flags affecting the search
+ * @param match_start return location for start of match, or %NULL
+ * @param match_end return location for end of match, or %NULL
+ * @param limit location of last possible @match_start, or %NULL for start of buffer
+ * @return returns whether a match was found
+ */
 gboolean
 gtk_source_iter_backward_search (const GtkTextIter   *iter,
 				 const gchar         *str,
