@@ -1015,7 +1015,7 @@ void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
 
 	a->account = gaim_gtk_account_option_menu_new(
-			gaim_connection_get_account(gc), FALSE,
+			gc ? gaim_connection_get_account(gc) : NULL, FALSE,
 			G_CALLBACK(addbuddy_select_account), NULL, a);
 
 	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
