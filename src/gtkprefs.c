@@ -889,8 +889,6 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
 	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 
-	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
-				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),

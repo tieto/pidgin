@@ -43,6 +43,8 @@ version 2.0.0
 	* Removed conversation buttons
 	* Removed "Raise conversation window" preferences, default to "no"
 	* Removed "Show alias in tabs/titles," default to "Yes".
+	* Removed "Show formatting toolbars," made the option in the
+	  conversation menu affect the global preference.
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:

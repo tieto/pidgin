@@ -150,8 +150,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 {
 	GaimGtkConversation *gtkconv;
 	GaimConvWindow *win = gaim_conversation_get_window(conv);
-	gboolean saveheight;
-
+	
 	if (!GTK_WIDGET_VISIBLE(w))
 		return FALSE;
 
@@ -159,9 +158,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		return FALSE;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	/* we only save the new height if the formatting toolbar visibility matches the pref */
-	saveheight = (gtkconv->show_formatting_toolbar == gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
 
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the tab bar
 	 * will fit, but then I don't want new windows taking up the entire screen.  I check to see if there is only one
@@ -172,8 +168,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
-			if (saveheight)
-				gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
 		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
@@ -183,8 +178,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
-			if (saveheight)
-				gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
 		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
@@ -1200,13 +1194,8 @@ menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtkconv->show_formatting_toolbar =
-		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-
-	if (gtkconv->show_formatting_toolbar)
-		gtk_widget_show(gtkconv->toolbar);
-	else
-		gtk_widget_hide(gtkconv->toolbar);
+	gaim_prefs_set_bool("/gaim/gtk/conversations/show_formatting_toolbar",
+			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
 
 static void
@@ -2855,7 +2844,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_check_menu_item_set_active(
 			GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
-			gtkconv->show_formatting_toolbar);
+			gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_timestamps),
 				       gtkconv->show_timestamps);
@@ -3539,7 +3528,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Options"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
-	{ N_("/Options/Show Formatting _Toolbar"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show T_imestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
 };
 
@@ -3647,7 +3636,7 @@ setup_menubar(GaimConvWindow *win)
 									N_("/Options/Enable Sounds"));
 	gtkwin->menu.show_formatting_toolbar =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-									N_("/Options/Show Formatting Toolbar"));
+									N_("/Options/Show Formatting Toolbars"));
 	gtkwin->menu.show_timestamps =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Options/Show Timestamps"));
@@ -4361,10 +4350,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		gtkconv->make_sound = TRUE;
 
-		gtkconv->show_formatting_toolbar = gaim_prefs_get_bool(
-				"/gaim/gtk/conversations/show_formatting_toolbar");
-
-		if (gtkconv->show_formatting_toolbar)
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"))
 			gtk_widget_show(gtkconv->toolbar);
 		else
 			gtk_widget_hide(gtkconv->toolbar);
@@ -5770,12 +5756,11 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 		win     = gaim_conversation_get_window(conv);
 		gtkwin  = GAIM_GTK_WINDOW(win);
 
-		gtkconv->show_formatting_toolbar = (gboolean)GPOINTER_TO_INT(value);
 		gtk_check_menu_item_set_active(
 				GTK_CHECK_MENU_ITEM(gtkwin->menu.show_formatting_toolbar),
-				gtkconv->show_formatting_toolbar);
+				(gboolean)GPOINTER_TO_INT(value));
 
-		if (gtkconv->show_formatting_toolbar)
+		if ((gboolean)GPOINTER_TO_INT(value))
 			gtk_widget_show(gtkconv->toolbar);
 		else
 			gtk_widget_hide(gtkconv->toolbar);
