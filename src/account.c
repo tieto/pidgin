@@ -172,6 +172,26 @@ gaim_account_destroy(GaimAccount *account)
 }
 
 GaimConnection *
+gaim_account_register(GaimAccount *account)
+{
+	GaimConnection *gc;
+
+	g_return_val_if_fail(account != NULL, NULL);
+
+	if (gaim_account_get_connection(account) != NULL)
+		return NULL;
+
+	gc = gaim_connection_new(account);
+
+	gaim_debug(GAIM_DEBUG_INFO, "account",
+			"Registering account %p. gc = %p\n", account, gc);
+
+	gaim_connection_register(gc);
+
+	return gc;
+}
+
+GaimConnection *
 gaim_account_connect(GaimAccount *account)
 {
 	GaimConnection *gc;

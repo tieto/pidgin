@@ -4276,7 +4276,7 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
  */
 void jabber_register_user(GaimAccount *account)
 {
-	GaimConnection *gc = gaim_connection_new(account);
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 

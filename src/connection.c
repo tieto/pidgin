@@ -97,6 +97,53 @@ static void request_pass_ok_cb(GaimAccount *account, const char *entry)
 	gaim_account_connect(account);
 }
 
+void
+gaim_connection_register(GaimConnection *gc)
+{
+	GaimAccount *account;
+	GaimConnectionUiOps *ops;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	g_return_if_fail(gc != NULL);
+
+	gaim_debug(GAIM_DEBUG_INFO, "connection",
+			"Registering.  gc = %p\n", gc);
+
+	ops = gaim_get_connection_ui_ops();
+
+	if (gc->prpl != NULL)
+	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	else {
+	        gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
+						 gaim_account_get_username(gaim_connection_get_account(gc)));
+
+		gaim_debug(GAIM_DEBUG_ERROR, "connection",
+			   "Could not get prpl info for %p\n", gc);
+		gaim_notify_error(NULL, _("Registration Error"),
+				  message, NULL);
+		g_free(message);
+		return;
+	}
+
+	account = gaim_connection_get_account(gc);
+
+	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
+		return;
+
+	gaim_connection_set_state(gc, GAIM_CONNECTING);
+
+	connections = g_list_append(connections, gc);
+
+	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
+
+	/* set this so we don't auto-reconnect after registering */
+	gc->wants_to_die = TRUE;
+
+	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling register_user\n");
+
+	prpl_info->register_user(account);
+}
+
 
 void
 gaim_connection_connect(GaimConnection *gc)

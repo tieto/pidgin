@@ -97,6 +97,15 @@ void gaim_account_destroy(GaimAccount *account);
 GaimConnection *gaim_account_connect(GaimAccount *account);
 
 /**
+ * Registers an account.
+ *
+ * @param account The account to register.
+ *
+ * @return The gaim connection.
+ */
+GaimConnection *gaim_account_register(GaimAccount *account);
+
+/**
  * Disconnects from an account.
  *
  * @param account The account to disconnect from.

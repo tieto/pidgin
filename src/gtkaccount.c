@@ -1106,12 +1106,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	GaimAccount *account = dialog->account;
 	GaimPluginProtocolInfo *prpl_info = dialog->prpl_info;
 
 	ok_account_prefs_cb(NULL, dialog);
 
-	prpl_info->register_user(account);
+	gaim_account_register(dialog->account);
 }
 
 void

@@ -127,6 +127,13 @@ void gaim_connection_destroy(GaimConnection *gc);
 void gaim_connection_connect(GaimConnection *gc);
 
 /**
+ * Registers a connection.
+ *
+ * @param gc The connection to register.
+ */
+void gaim_connection_register(GaimConnection *gc);
+
+/**
  * Signs a connection off.
  
  * @param gc The connection to sign off.
