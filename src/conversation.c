@@ -1902,6 +1902,7 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 	GaimConversationUiOps *ops;
 	GaimConvChatBuddy *cb;
 	char tmp[BUF_LONG];
+	gboolean quiet;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(user != NULL);
@@ -1909,8 +1910,8 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 	conv = gaim_conv_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "chat-buddy-joining", conv, user);
+	quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+					 "chat-buddy-joining", conv, user, flags));
 
 	cb = gaim_conv_chat_cb_new(user, flags);
 
@@ -1920,17 +1921,19 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 	if (ops != NULL && ops->chat_add_user != NULL)
 		ops->chat_add_user(conv, user);
 
-	if (extra_msg == NULL)
-		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
-	else
-		g_snprintf(tmp, sizeof(tmp),
-				   _("%s [<I>%s</I>] entered the room."),
-				   user, extra_msg);
+	if (!quiet) {
+		if (extra_msg == NULL)
+			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
+		else
+			g_snprintf(tmp, sizeof(tmp),
+					   _("%s [<I>%s</I>] entered the room."),
+					   user, extra_msg);
 
-	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "chat-buddy-joined", conv, user);
+					 "chat-buddy-joined", conv, user, flags);
 }
 
 void
@@ -2036,6 +2039,7 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	GaimConversationUiOps *ops;
 	GaimConvChatBuddy *cb;
 	char tmp[BUF_LONG];
+	gboolean quiet;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(user != NULL);
@@ -2043,8 +2047,8 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	conv = gaim_conv_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-leaving",
-					 conv, user, reason);
+	quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+				"chat-buddy-leaving", conv, user, reason));
 
 	if (ops != NULL && ops->chat_remove_user != NULL)
 		ops->chat_remove_user(conv, user);
@@ -2059,13 +2063,15 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
-	if (reason != NULL && *reason != '\0')
-		g_snprintf(tmp, sizeof(tmp),
-				   _("%s left the room (%s)."), user, reason);
-	else
-		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
+	if (!quiet) {
+		if (reason != NULL && *reason != '\0')
+			g_snprintf(tmp, sizeof(tmp),
+					   _("%s left the room (%s)."), user, reason);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
 
-	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
 					 conv, user, reason);
@@ -2079,6 +2085,7 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 	GaimConvChatBuddy *cb;
 	char tmp[BUF_LONG];
 	GList *l;
+	gboolean quiet;
 
 	g_return_if_fail(chat  != NULL);
 	g_return_if_fail(users != NULL);
@@ -2089,8 +2096,8 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 	for (l = users; l != NULL; l = l->next) {
 		const char *user = (const char *)l->data;
 
-		gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-leaving",
-						 conv, user, reason);
+		quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+								"chat-buddy-leaving", conv, user, reason));
 	}
 
 	if (ops != NULL && ops->chat_remove_users != NULL)
@@ -2113,7 +2120,7 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
-	if (reason != NULL && *reason != '\0') {
+	if (!quiet && reason != NULL && *reason != '\0') {
 		int i;
 		int size = g_list_length(users);
 		int max = MIN(10, size);
@@ -2881,7 +2888,8 @@ gaim_conversations_init(void)
 										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "chat-buddy-joining",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_UINT,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING),
@@ -2903,7 +2911,8 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "chat-buddy-leaving",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING),

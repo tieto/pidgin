@@ -344,12 +344,14 @@ buddy_typing_cb(GaimConversation *conv, void *data)
 					gaim_conversation_get_name(conv));
 }
 
-static void
+static gboolean
 chat_buddy_joining_cb(GaimConversation *conv, const char *user,
 					  GaimConvChatBuddyFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "chat-buddy-joining (%s, %s, %d)\n",
 					gaim_conversation_get_name(conv), user, flags);
+
+	return FALSE;
 }
 
 static void
@@ -368,12 +370,14 @@ chat_buddy_flags_cb(GaimConversation *conv, const char *user,
 					gaim_conversation_get_name(conv), user, oldflags, newflags);
 }
 
-static void
+static gboolean
 chat_buddy_leaving_cb(GaimConversation *conv, const char *user,
 					  const char *reason, void *data)
 {
 	gaim_debug_misc("signals test", "chat-buddy-leaving (%s, %s, %s)\n",
 					gaim_conversation_get_name(conv), user, reason);
+
+	return FALSE;
 }
 
 static void

@@ -331,12 +331,13 @@ void (*buddy_typing)(GaimConversation *conv);
 
  @signaldef chat-buddy-joining
   @signalproto
-void (*chat_buddy_joining)(GaimConversation *conv, const char *name,
+gboolean (*chat_buddy_joining)(GaimConversation *conv, const char *name,
                            GaimConvChatBuddyFlags flags);
   @endsignalproto
   @signaldesc
    Emitted when a buddy is joining a chat, before the list of
    users in the chat updates to include the new user.
+  @return @c TRUE if the join should be hidden, or @c FALSE otherwise.
   @param conv The chat conversation.
   @param name The name of the user that is joining the conversation.
   @param flags The flags of the user that is joining the conversation.
@@ -370,12 +371,13 @@ void (*chat_buddy_flags)(GaimConversation *conv, const char *name,
 
  @signaldef chat-buddy-leaving
   @signalproto
-void (*chat_buddy_leaving)(GaimConversation *conv, const char *name,
+gboolean (*chat_buddy_leaving)(GaimConversation *conv, const char *name,
                            const char *reason);
   @endsignalproto
   @signaldesc
    Emitted when a user is leaving a chat, before the user list is updated.
    This may include an optional reason why the user is leaving.
+  @return @c TRUE if the leave should be hidden, or @c FALSE otherwise.
   @param conv   The chat conversation.
   @param name   The name of the user that is leaving the chat.
   @param reason The optional reason why the user is leaving.
