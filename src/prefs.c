@@ -123,16 +123,6 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	/*
-	   prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
-	   gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
-	   gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
-
-	   sep = gtk_hseparator_new();
-	   gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	   gtk_widget_show(sep);
-	 */
-
 	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options,
 		    OPT_DISP_COOL_LOOK, box);
 	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER,
