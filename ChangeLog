@@ -4,6 +4,7 @@ version 0.65:
 	* Massive internal core/ui splitting
 	* Russian translation updated (Dzmitry Chekmarou)
 	* New account dialog.
+	* Added Trepia support.
 
 version 0.64 (05/29/2003):
 	* Buddy list sorting in buddy list preferences.

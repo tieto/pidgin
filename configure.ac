@@ -104,6 +104,7 @@ for i in $STATIC_PRPLS ; do
 		napster) static_napster=yes ;;
 		oscar) static_oscar=yes ;;
 		toc) static_toc=yes ;;
+		trepia) static_trepia=yes ;;
 		yahoo) static_yahoo=yes ;;
 		zephyr) static_zephyr=yes ;;
 		*) echo "Invalid static protocol $i!!" ; exit ;;
@@ -116,6 +117,7 @@ AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
+AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
@@ -426,6 +428,7 @@ AC_OUTPUT([Makefile
 	   src/protocols/napster/Makefile
 	   src/protocols/oscar/Makefile
 	   src/protocols/toc/Makefile
+	   src/protocols/trepia/Makefile
 	   src/protocols/yahoo/Makefile
 	   src/protocols/zephyr/Makefile
 	   gaim.spec

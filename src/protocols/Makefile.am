@@ -1,4 +1,4 @@
-DIST_SUBDIRS = gg irc jabber msn napster oscar toc yahoo zephyr
+DIST_SUBDIRS = gg irc jabber msn napster oscar toc trepia yahoo zephyr
 
 if PRPLS
 
