@@ -247,8 +247,8 @@ struct _GaimPluginProtocolInfo
 					   const char *state, const char *country,
 					   const char *email);
 	void (*set_idle)(GaimConnection *, int idletime);
-	void (*change_passwd)(GaimConnection *, const char *old,
-						  const char *new);
+	void (*change_passwd)(GaimConnection *, const char *old_pass,
+						  const char *new_pass);
 	void (*add_buddy)(GaimConnection *, const char *name);
 	void (*add_buddies)(GaimConnection *, GList *buddies);
 	void (*remove_buddy)(GaimConnection *, char *name, char *group);
