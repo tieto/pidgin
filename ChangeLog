@@ -9,6 +9,7 @@ version 0.75cvs :
 	* Touch-up various dialogs to follow the Gnome Human Interface
 	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
 	  Ka-Hing Cheung)
+	* Mozilla Firebird support (Chris (darth_sebulba04))
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* English (British) translation re-added (Luke Ross (lukeross))

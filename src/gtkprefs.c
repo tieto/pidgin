@@ -1217,9 +1217,10 @@ static GList *get_available_browsers()
 		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Konqueror"), "kfmclient"},
-		{N_("Galeon"), "galeon"}
+		{N_("Galeon"), "galeon"},
+		{N_("Firebird"), "mozilla-firebird"}
 	};
-	static const int num_possible_browsers = 5;
+	static const int num_possible_browsers = 6;
 
 	GList *browsers = NULL;
 	int i = 0;
