@@ -408,7 +408,7 @@ GtkIMHtmlScalable *gtk_imhtml_hr_new();
  *
  * @param scale The GTK IM/HTML scalable.
  */
-void gtk_imhtml_hr_free(GtkIMHtmlScalable scale*);
+void gtk_imhtml_hr_free(GtkIMHtmlScalable *scale);
 
 /**
  * Rescales a GTK IM/HTML scalable horizontal rule to a given size.
@@ -417,7 +417,7 @@ void gtk_imhtml_hr_free(GtkIMHtmlScalable scale*);
  * @param width  The new width.
  * @param height The new height.
  */
-void gtk_imhtml_hr_scale(GtkIMHtmlScalable scale*, int width, int height);
+void gtk_imhtml_hr_scale(GtkIMHtmlScalable *scale, int width, int height);
 
 /**
  * Adds a GTK IM/HTML scalable horizontal rule to a given GTK IM/HTML at
@@ -427,7 +427,7 @@ void gtk_imhtml_hr_scale(GtkIMHtmlScalable scale*, int width, int height);
  * @param imhtml The GTK IM/HTML.
  * @param iter   The GtkTextIter at which to add the scalable.
  */
-void gtk_imhtml_hr_add_to(GtkIMHtmlScalable scale*, GtkIMHtml *, GtkTextIter *);
+void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *, GtkTextIter *);
 
 /**
  * Finds and highlights a given string in a GTK IM/HTML.
