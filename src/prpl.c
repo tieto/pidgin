@@ -57,12 +57,7 @@ gaim_prpl_got_account_login_time(GaimAccount *account, const char *name,
 
 	presence = gaim_account_get_presence(account);
 
-	/*
-	 * TODO: Set a presence's sign-on time. We don't support this yet.
-	 */
-	gaim_debug_warning("prpl",
-					   "Attempting to set an account's sign-on time, but we "
-					   "don't support this yet! FIX IT!\n");
+	gaim_presence_set_login_time(presence, login_time);
 }
 
 static gboolean
@@ -197,7 +192,7 @@ gaim_prpl_got_account_warning_level(GaimAccount *account, const char *username,
 {
 	GaimPresence *presence;
 	unsigned int old_level;
-	char buf2[1024];
+	gchar *buf;
 
 	g_return_if_fail(account != NULL);
 
@@ -212,14 +207,20 @@ gaim_prpl_got_account_warning_level(GaimAccount *account, const char *username,
 	if (old_level >= level)
 		return;
 
-	g_snprintf(buf2, sizeof(buf2),
-			   _("%s has just been warned by %s.\n"
-				 "Your new warning level is %d%%"),
-			   gaim_account_get_username(account),
-			   (username == NULL ? _("an anonymous person") : username),
-			   level);
+	if (username == NULL)
+		buf = g_strdup_printf(_("%s has just been warned by an anonymous "
+								"person.\nYour new warning level is %d%%"),
+							  gaim_account_get_username(account),
+							  level);
+	else
+		buf = g_strdup_printf(_("%s has just been warned by %s.\n"
+								"Your new warning level is %d%%"),
+							  gaim_account_get_username(account),
+							  username, level);
 
-	gaim_notify_info(NULL, NULL, buf2, NULL);
+	gaim_notify_info(NULL, NULL, buf, NULL);
+
+	g_free(buf);
 }
 
 void
@@ -227,6 +228,7 @@ gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {
 	GaimBuddy *buddy;
+	GaimPresence *presence;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
@@ -235,7 +237,9 @@ gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 	if ((buddy = gaim_find_buddy(account, name)) == NULL)
 		return;
 
-	gaim_presence_set_idle(gaim_buddy_get_presence(buddy), idle, idle_time);
+	presence = gaim_buddy_get_presence(buddy);
+
+	gaim_presence_set_idle(presence, idle, idle_time);
 }
 
 void
@@ -304,6 +308,7 @@ gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
 		unsigned int level)
 {
 	GaimBuddy *buddy;
+	GaimPresence *presence;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
@@ -311,7 +316,9 @@ gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
 	if ((buddy = gaim_find_buddy(account, name)) == NULL)
 		return;
 
-	gaim_presence_set_warning_level(gaim_buddy_get_presence(buddy), level);
+	presence = gaim_buddy_get_presence(buddy);
+
+	gaim_presence_set_warning_level(presence, level);
 }
 
 void
@@ -380,7 +387,6 @@ gaim_find_prpl(const char *id)
 
 		/* Just In Case (TM) */
 		if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
-
 			if (!strcmp(plugin->info->id, id))
 				return plugin;
 		}
