@@ -57,8 +57,6 @@ static NOTIFYICONDATA wgaim_nid;
 static SYSTRAY_STATE st_state=SYSTRAY_STATE_OFFLINE;
 static HMENU systray_menu=0;
 static HMENU systray_away_menu=0;
-/* UTF-8 to locale conversion */
-gchar *locenc=NULL;
 
 /*
  *  GLOBALS
@@ -89,6 +87,7 @@ static HMENU systray_create_awy_menu(void) {
 	int item_count = SYSTRAY_CMND_SET_AWY;
 	struct away_message *a = NULL;
 	GSList *awy = away_messages;
+	char* locenc=NULL;
 
 	/* Delete previous away submenu */
 	if(systray_away_menu) {
@@ -112,6 +111,7 @@ static HMENU systray_create_awy_menu(void) {
 }
 
 static void systray_show_menu(int x, int y, BOOL connected) {
+	char* locenc=NULL;
 	/* need to call this so that the menu disappears if clicking outside
            of the menu scope */
 	SetForegroundWindow(systray_hwnd);
@@ -303,6 +303,8 @@ static HWND systray_create_hiddenwin() {
 }
 
 static void systray_create_menu(void) {
+	char* locenc=NULL;
+
 	/* create popup menu */
 	if((systray_menu = CreatePopupMenu())) {
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_PREFS, 
@@ -324,6 +326,8 @@ static void systray_create_menu(void) {
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
+	char* locenc=NULL;
+
 	ZeroMemory(&wgaim_nid,sizeof(wgaim_nid));
 	wgaim_nid.cbSize=sizeof(NOTIFYICONDATA);
 	wgaim_nid.hWnd=hWnd;
@@ -338,6 +342,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 }
 
 static void systray_change_icon(HICON icon, char* text) {
+	char *locenc=NULL;
 	wgaim_nid.hIcon = icon;
 	locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
 	lstrcpy(wgaim_nid.szTip, locenc);
