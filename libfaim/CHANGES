@@ -1,6 +1,61 @@
 
 No release numbers
 ------------------
+ - Mon Mar  5 01:19:48 UTC 2001
+  - Fix typo in last CHANGES entry.
+  - Add fix from Eric to keep efence from complaining about malloc(0)
+  - Add .cvsignore files (also from Eric)
+  - Throw in josh's latest OFT/ODC kludges
+  - Completly remove all calls to printf and (unbounded) sprintf
+  - Add aim_setdebuggingcb()
+  - Remove preprocessor-based debug semantics (faimconfig.h)
+  - faimdprintf() now calls a user-specified callback to do printing
+  - Rearrange aim_tx_new() parameters to be more sensical, add sess
+  - Do some sanity checking in aim_tx_new()
+  - Add #defines to keep printf from compiling inside libfaim
+  - Who knows what else. (in total, this patch is nearly 5k lines)
+
+ - Fri Mar  2 02:17:22 UTC 2001
+  - Add aim_fingerprintclient(). (AB will trust this, but you shouldn't.)
+  - Add some EXTRA_DIST to Makefile.am
+
+ - Mon Feb 26 01:46:34 UTC 2001
+  - Fix swapped bytes in aim_caps[]. Thanks to 
+      Bruce Miller <bmiller@ics.uci.edu> for pointing this out.
+
+ - Sun Feb 11 01:07:36 UTC 2001
+  - Make secondary connections to the authorizer work again
+  - Make aim_auth_changepasswd() work again.
+  - Add aim_auth_setversions(), aim_auth_getinfo(), aim_auth_setemail(),
+    aim_auth_reqconfirm()
+  - Add middle handlers for responses to all of above.
+  - Add examples of above to faimtest (start with 'reqauth')
+ 
+ - Fri Feb  9 22:31:22 UTC 2001
+  - Add aim_tx_setenqueue().
+
+ - Thu Feb  8 20:12:39 UTC 2001
+  - Let TLV functions out of aim.h if FAIM_NEED_TLV is defined.
+
+ - Thu Feb  8 02:31:25 UTC 2001
+  - Remove aim_purgecookies() -- never used anyway
+  - Clean up a few bits of aim_msgcookie.c
+  - Remove AIM_CONN_MAX constant (hasn't been relevent in ages)
+  - Change commentary on synchro in aim.h
+  - Add NOPLOCKS and make them default
+  - Make faim/aim.h more of a mess; try to keep interfaces hiddenish.
+  - Add #define FAIM_INTERNAL to top of every file
+  - Remove aim_countconn (no one uses it anyway)
+  - Add aim_cloneconn() (cringe.)
+  - Throw in josh's getfile patch (and then munge it enough to break it)
+  - Add getopt() to faimtest.
+  - Remove aim_buildcode.h/mkbuildinfo.sh crap.
+  - Clean up aim_cleansnacs()
+  - There may have been other stuff too.  As always, the diff is the 
+    most accurate changelog there is.
+  - *** FT is currently more broken than it was before.  Also, this patch
+    introduces even more memory leaks.  You've been warned.
+
  - Sun Dec 17 07:19:04 UTC 2000
   - Update the capability block list
 

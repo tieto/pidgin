@@ -4,7 +4,7 @@
  *
  */
 
-#include <faim/aim.h>
+#include <aim.h>
 #include <ctype.h>
 
 #ifdef AIMUTIL_USEMACROS

@@ -195,13 +195,18 @@
 #define AIM_CB_OFT_DIRECTIMINITIATE 0x0005
 
 #define AIM_CB_OFT_GETFILECONNECTREQ 0x0006 /* connect request -- actually an OSCAR CAP*/
-#define AIM_CB_OFT_GETFILEFILEREQ 0x0007    /* recieved file request */
-#define AIM_CB_OFT_GETFILEFILESEND 0x0008   /* recieved file request confirm -- send data */
-#define AIM_CB_OFT_GETFILECOMPLETE 0x0009   /* recieved file send complete*/
-#define AIM_CB_OFT_GETFILEINITIATE 0x000a   /* request for file get acknowledge */
-#define AIM_CB_OFT_GETFILEDISCONNECT 0x000b   /* OFT connection disconnected.*/
+#define AIM_CB_OFT_GETFILELISTINGREQ 0x0007 /* OFT listing.txt request */
+#define AIM_CB_OFT_GETFILEFILEREQ 0x0008    /* received file request */
+#define AIM_CB_OFT_GETFILEFILESEND 0x0009   /* received file request confirm -- send data */
+#define AIM_CB_OFT_GETFILECOMPLETE 0x000a   /* received file send complete*/
+#define AIM_CB_OFT_GETFILEINITIATE 0x000b   /* request for file get acknowledge */
+#define AIM_CB_OFT_GETFILEDISCONNECT 0x000c   /* OFT connection disconnected.*/
+#define AIM_CB_OFT_GETFILELISTING 0x000d   /* OFT listing.txt received.*/
+#define AIM_CB_OFT_GETFILERECEIVE 0x000e   /* OFT file incoming.*/
+#define AIM_CB_OFT_GETFILELISTINGRXCONFIRM 0x000f
+#define AIM_CB_OFT_GETFILESTATE4 0x0010
 
-#define AIM_CB_OFT_SENDFILEDISCONNECT 0x000c   /* OFT connection disconnected.*/
+#define AIM_CB_OFT_SENDFILEDISCONNECT 0x0020   /* OFT connection disconnected.*/
 
 
 

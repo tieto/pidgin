@@ -5,19 +5,13 @@
  *
  */
 
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 #include "md5.h"
 
 static int aim_encode_password_md5(const char *password, const char *key, md5_byte_t *digest);
 static int aim_encode_password(const char *password, unsigned char *encoded);
-
-/*
- * FIXME: Reimplement the TIS stuff.
- */
-#ifdef TIS_TELNET_PROXY
-#include "tis_telnet_proxy.h"
-#endif
 
 faim_export int aim_sendconnack(struct aim_session_t *sess,
 				struct aim_conn_t *conn)
@@ -26,7 +20,7 @@ faim_export int aim_sendconnack(struct aim_session_t *sess,
   
   struct command_tx_struct *newpacket;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0001, conn, 4)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0001, 4)))
     return -1;
 
   newpacket->lock = 1;
@@ -109,7 +103,7 @@ faim_export int aim_request_login(struct aim_session_t *sess,
 
   aim_sendconnack(sess, conn);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+2+2+strlen(sn))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+2+strlen(sn))))
     return -1;
 
   newpacket->lock = 1;
@@ -156,7 +150,7 @@ faim_export int aim_send_login (struct aim_session_t *sess,
   if (!clientinfo || !sn || !password)
     return -1;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
     return -1;
 
   newpacket->lock = 1;
@@ -396,7 +390,7 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
     ; /* no idea what this is */
 
 
-  if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0003)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0017, 0x0003)))
     ret = userfunc(sess, command, sn, errorcode, errurl, regstatus, email, bosip, cookie, latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo, latestbeta, latestbetabuild, latestbetaurl, latestbetainfo);
 
 
@@ -448,7 +442,7 @@ faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx
   memcpy(key, command->data+12, keylen);
   key[keylen] = '\0';
   
-  if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0007)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0017, 0x0007)))
     ret = userfunc(sess, command, (char *)key);
 
   free(key);  
@@ -472,7 +466,7 @@ faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess,
   struct command_tx_struct *tx;
   struct aim_tlvlist_t *tlvlist = NULL;
 
-  if (!(tx = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0004, conn, 1152)))
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0004, 1152)))
     return -1;
   
   tx->lock = 1;
@@ -521,7 +515,7 @@ faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_
   struct command_tx_struct *tx;
   int i = 0;
 
-  if (!(tx = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+0x22)))
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+0x22)))
     return -1;
 
   tx->lock = 1;
@@ -560,7 +554,7 @@ faim_export unsigned long aim_sendredirect(struct aim_session_t *sess,
   struct aim_tlvlist_t *tlvlist = NULL;
   int i = 0;
 
-  if (!(tx = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
     return -1;
 
   tx->lock = 1;

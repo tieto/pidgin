@@ -1,4 +1,6 @@
-#include <faim/aim.h>
+
+#define FAIM_INTERNAL
+#include <aim.h>
 
 /**
  * aim_readtlvchain - Read a TLV chain from a buffer.
@@ -47,10 +49,9 @@ faim_export struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
 	       * theres no special cases to this special case.
 	       *   - mid (30jun2000)
 	       */
-	      if ((type == 0x0013) && (length != 0x0002)) {
-		printf("faim: skipping TLV t(0013) with invalid length (0x%04x)\n", length);
+	      if ((type == 0x0013) && (length != 0x0002))
 		length = 0x0002;
-	      } else {
+	      else {
 		cur = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
 		memset(cur, 0x00, sizeof(struct aim_tlvlist_t));
 

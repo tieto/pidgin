@@ -6,8 +6,8 @@
  *
  */
 
-
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 struct aim_priv_inforeq {
   char sn[MAXSNLEN+1];
@@ -26,7 +26,7 @@ faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
   if (!sess || !conn || !sn)
     return 0;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 12+1+strlen(sn))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 12+1+strlen(sn))))
     return -1;
 
   newpacket->lock = 1;
@@ -67,7 +67,7 @@ faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
   snac = aim_remsnac(sess, snacid);
 
   if (!snac) {
-    printf("faim: locerr: got an locate-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
+    faimdprintf(sess, 0, "locerr: got an locate-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
     dest = NULL;
   } else
     dest = snac->data;
@@ -77,7 +77,7 @@ faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
   /*
    * Call client.
    */
-  userfunc = aim_callhandler(command->conn, 0x0002, 0x0001);
+  userfunc = aim_callhandler(sess, command->conn, 0x0002, 0x0001);
   if (userfunc)
     ret =  userfunc(sess, command, dest, reason);
   else
@@ -129,7 +129,7 @@ u_char aim_caps[8][16] = {
    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
 };
 
-faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
+faim_internal unsigned short aim_getcap(struct aim_session_t *sess, unsigned char *capblock, int buflen)
 {
   u_short ret = 0;
   int y;
@@ -153,10 +153,7 @@ faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
       }
     }
     if (!identified) {
-      faimdprintf(1, "faim: unknown capability ");
-      for (y = 0; y < 0x10; y++)
-        faimdprintf(2, "%02x ", capblock[offset+y]);
-      faimdprintf(1, "\n");
+      faimdprintf(sess, 0, "unknown capability!\n");
       ret |= 0xff00;
     }
 
@@ -212,7 +209,7 @@ faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
  * AIM is fairly regular about providing user info.  This
  * is a generic routine to extract it in its standard form.
  */
-faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinfo)
+faim_internal int aim_extractuserinfo(struct aim_session_t *sess, unsigned char *buf, struct aim_userinfo_s *outinfo)
 {
   int i = 0;
   int tlvcnt = 0;
@@ -376,9 +373,7 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
 	if (!len)
 	  break;
 	
-	outinfo->capabilities = aim_getcap(buf+i+4, len);
-	if (outinfo->capabilities & 0xff00)
-          faimdprintf(2, "%s\n", outinfo->sn);
+	outinfo->capabilities = aim_getcap(sess, buf+i+4, len);
       }
       break;
       
@@ -422,28 +417,29 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
     default:
       {
 	int len,z = 0, y = 0, x = 0;
-	char tmpstr[80];
-	printf("faim: userinfo: **warning: unexpected TLV:\n");
-	printf("faim: userinfo:   sn    =%s\n", outinfo->sn);
-	printf("faim: userinfo:   curtlv=0x%04x\n", curtlv);
-	printf("faim: userinfo:   type  =0x%04x\n",aimutil_get16(&buf[i]));
-	printf("faim: userinfo:   length=0x%04x\n", len = aimutil_get16(&buf[i+2]));
-	printf("faim: userinfo:   data: \n");
+	char tmpstr[160];
+
+        faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV:\n");
+	faimdprintf(sess, 0, "userinfo:   sn    =%s\n", outinfo->sn);
+	faimdprintf(sess, 0, "userinfo:   curtlv=0x%04x\n", curtlv);
+	faimdprintf(sess, 0, "userinfo:   type  =0x%04x\n",aimutil_get16(&buf[i]));
+	faimdprintf(sess, 0, "userinfo:   length=0x%04x\n", len = aimutil_get16(&buf[i+2]));
+	faimdprintf(sess, 0, "userinfo:   data: \n");
 	while (z<len)
 	  {
-	    x = sprintf(tmpstr, "faim: userinfo:      ");
+	    x = snprintf(tmpstr, sizeof(tmpstr), "userinfo:      ");
 	    for (y = 0; y < 8; y++)
 	      {
 		if (z<len)
 		  {
-		    sprintf(tmpstr+x, "%02x ", buf[i+4+z]);
+		    snprintf(tmpstr+x, sizeof(tmpstr)-x, "%02x ", buf[i+4+z]);
 		    z++;
 		    x += 3;
 		  }
 		else
 		  break;
 	      }
-	    printf("%s\n", tmpstr);
+	    faimdprintf(sess, 0, "%s\n", tmpstr);
 	  }
       }
       break;
@@ -479,9 +475,9 @@ faim_internal int aim_parse_oncoming_middle(struct aim_session_t *sess,
   rxcallback_t userfunc=NULL;
 
   i = 10;
-  i += aim_extractuserinfo(command->data+i, &userinfo);
+  i += aim_extractuserinfo(sess, command->data+i, &userinfo);
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING);
+  userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING);
   if (userfunc)
     i = userfunc(sess, command, &userinfo);
 
@@ -503,7 +499,7 @@ faim_internal int aim_parse_offgoing_middle(struct aim_session_t *sess,
   strncpy(sn, (char *)command->data+11, (int)command->data[10]);
   sn[(int)command->data[10]] = '\0';
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING);
+  userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING);
   if (userfunc)
     i = userfunc(sess, command, sn);
 
@@ -532,7 +528,7 @@ faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
   origsnac = aim_remsnac(sess, snacid);
 
   if (!origsnac || !origsnac->data) {
-    printf("faim: parse_userinfo_middle: major problem: no snac stored!\n");
+    faimdprintf(sess, 0, "parse_userinfo_middle: major problem: no snac stored!\n");
     return 1;
   }
 
@@ -546,7 +542,7 @@ faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
     /*
      * extractuserinfo will give us the basic metaTLV information
      */
-    i += aim_extractuserinfo(command->data+i, &userinfo);
+    i += aim_extractuserinfo(sess, command->data+i, &userinfo);
   
     /*
      * However, in this command, there's usually more TLVs following...
@@ -567,7 +563,7 @@ faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
       text = aim_gettlv_str(tlvlist, 0x0004, 1);
     }
 
-    userfunc = aim_callhandler(command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
+    userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
     if (userfunc) {
       i = userfunc(sess,
 		   command, 
@@ -582,7 +578,7 @@ faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
     aim_freetlvchain(&tlvlist);
     break;
   default:
-    printf("faim: parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
+    faimdprintf(sess, 0, "parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
     break;
   }
 
@@ -652,7 +648,7 @@ faim_export int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_con
   if (!sess || !conn || !info)
     return 0;
 
-  if (!(tx = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
     return -1;
 
   tx->lock = 1;
@@ -680,7 +676,7 @@ faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_con
   if (!sess || !conn || !sn)
     return 0;
 
-  if (!(tx = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+1+strlen(sn))))
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
     return -1;
 
   tx->lock = 1;

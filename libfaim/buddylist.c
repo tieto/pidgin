@@ -1,10 +1,13 @@
 
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 /*
  * aim_add_buddy()
  *
  * Adds a single buddy to your buddy list after login.
+ *
+ * XXX this should just be an extension of setbuddylist()
  *
  */
 faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
@@ -17,7 +20,7 @@ faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
    if(!sn)
      return -1;
 
-   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+1+strlen(sn))))
+   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
      return -1;
 
    newpacket->lock = 1;
@@ -33,6 +36,11 @@ faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
    return sess->snac_nextid;
 }
 
+/*
+ * XXX generalise to support removing multiple buddies (basically, its
+ * the same as setbuddylist() but with a different snac subtype).
+ *
+ */
 faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
 					   struct aim_conn_t *conn, 
 					   char *sn )
@@ -43,7 +51,7 @@ faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
    if(!sn)
      return -1;
 
-   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+1+strlen(sn))))
+   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
      return -1;
 
    newpacket->lock = 1;
@@ -89,7 +97,7 @@ faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
   if (aim_gettlv(tlvlist, 0x0002, 1))
     maxwatchers = aim_gettlv16(tlvlist, 0x0002, 1);
   
-  if ((userfunc = aim_callhandler(command->conn, 0x0003, 0x0003)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0003, 0x0003)))
     ret =  userfunc(sess, command, maxbuddies, maxwatchers);
 
   aim_freetlvchain(&tlvlist);

@@ -6,7 +6,8 @@
  * aim_rxhandlers.c.
  */
 
-#include <faim/aim.h> 
+#define FAIM_INTERNAL
+#include <aim.h> 
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -72,8 +73,10 @@ faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *c
    */
   if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) 
     return aim_get_command_rendezvous(sess, conn);
-  if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) 
+  if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
+    faimdprintf(sess, 0, "out on fd %d\n", conn->fd);
     return 0; 
+  }
 
   /*
    * Read FLAP header.  Six bytes:
@@ -95,7 +98,7 @@ faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *c
    * or we break.  We must handle it just in case.
    */
   if (generic[0] != 0x2a) {
-    faimdprintf(1, "Bad incoming data!");
+    faimdprintf(sess, 1, "Bad incoming data!");
     aim_conn_close(conn);
     faim_mutex_unlock(&conn->active);
     return -1;

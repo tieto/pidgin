@@ -5,7 +5,8 @@
  *
  */
 
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -23,13 +24,26 @@
  * chan = channel for OSCAR, hdrtype for OFT
  *
  */
-faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int chan, struct aim_conn_t *conn, int datalen)
+faim_internal struct command_tx_struct *aim_tx_new(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned char framing, int chan, int datalen)
 {
   struct command_tx_struct *newtx;
 
   if (!conn) {
-    printf("aim_tx_new: ERROR: no connection specified\n");
+    faimdprintf(sess, 0, "aim_tx_new: ERROR: no connection specified\n");
     return NULL;
+  }
+
+  /* For sanity... */
+  if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) || (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT)) {
+    if (framing != AIM_FRAMETYPE_OFT) {
+      faimdprintf(sess, 0, "aim_tx_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
+      return NULL;
+    }
+  } else {
+    if (framing != AIM_FRAMETYPE_OSCAR) {
+      faimdprintf(sess, 0, "aim_tx_new: attempted to allocate inappropriate frame type for FLAP connection\n");
+      return NULL;
+    }
   }
 
   newtx = (struct command_tx_struct *)malloc(sizeof(struct command_tx_struct));
@@ -52,7 +66,7 @@ faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int ch
     newtx->hdr.oft.type = chan;
     newtx->hdr.oft.hdr2len = 0; /* this will get setup by caller */
   } else { 
-    printf("tx_new: unknown framing\n");
+    faimdprintf(sess, 0, "tx_new: unknown framing\n");
   }
 
   return newtx;
@@ -74,13 +88,12 @@ faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int ch
  * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
  *
  */
-faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
-					     struct command_tx_struct *newpacket)
+static int aim_tx_enqueue__queuebased(struct aim_session_t *sess, struct command_tx_struct *newpacket)
 {
   struct command_tx_struct *cur;
 
   if (newpacket->conn == NULL) {
-      faimdprintf(1, "aim_tx_enqueue: WARNING: enqueueing packet with no connecetion\n");
+      faimdprintf(sess, 1, "aim_tx_enqueue: WARNING: enqueueing packet with no connecetion\n");
       newpacket->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
   }
  
@@ -106,12 +119,6 @@ faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
 
   newpacket->lock = 0; /* unlock so it can be sent */
 
-#if debug == 2
-  faimdprintf(2, "calling aim_tx_printqueue()\n");
-  aim_tx_printqueue(sess);
-  faimdprintf(2, "back from aim_tx_printqueue()\n");
-#endif
-
   return 0;
 }
 
@@ -126,10 +133,10 @@ faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
  * right here. 
  * 
  */
-faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_struct *newpacket)
+static int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_struct *newpacket)
 {
   if (newpacket->conn == NULL) {
-    faimdprintf(1, "aim_tx_enqueue: ERROR: packet has no connection\n");
+    faimdprintf(sess, 1, "aim_tx_enqueue: ERROR: packet has no connection\n");
     if (newpacket->data)
       free(newpacket->data);
     free(newpacket);
@@ -147,6 +154,25 @@ faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct c
   if (newpacket->data)
     free(newpacket->data);
   free(newpacket);
+
+  return 0;
+}
+
+faim_export int aim_tx_setenqueue(struct aim_session_t *sess, int what,  int (*func)(struct aim_session_t *, struct command_tx_struct *))
+{
+  if (!sess)
+    return -1;
+
+  if (what == AIM_TX_QUEUED)
+    sess->tx_enqueue = &aim_tx_enqueue__queuebased;
+  else if (what == AIM_TX_IMMEDIATE) 
+    sess->tx_enqueue = &aim_tx_enqueue__immediate;
+  else if (what == AIM_TX_USER) {
+    if (!func)
+      return -1;
+    sess->tx_enqueue = func;
+  } else
+    return -1; /* unknown action */
 
   return 0;
 }
@@ -182,41 +208,6 @@ faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *conn)
   faim_mutex_unlock(&conn->seqnum_lock);
   return ret;
 }
-
-/*
- *  aim_tx_printqueue()
- *
- *  This is basically for debuging purposes only.  It dumps all the
- *  records in the tx queue and their current status.  Very helpful
- *  if the queue isn't working quite right.
- *
- */
-#if debug == 2
-faim_internal int aim_tx_printqueue(struct aim_session_t *sess)
-{
-  struct command_tx_struct *cur;
-
-  faimdprintf(2, "\ncurrent aim_queue_outgoing...\n");
-  faimdprintf(2, "\ttype seqnum  len  lock sent\n");  
-
-  if (sess->queue_outgoing == NULL)
-    faimdprintf(2, "aim_tx_flushqueue(): queue empty");
-  else {
-      for (cur = sess->queue_outgoing; cur; cur = cur->next) {
-	  faimdprintf(2, "\t  %2x  %2x   %4x %4x   %1d    %1d\n", 
-		      cur->hdrtype,
-		      (cur->hdrtype==AIM_FRAMETYPE_OFT)?cur->hdr.oft.type:cur->hdr.oscar.type, 
-		      (cur->hdrtype==AIM_FRAMETYPE_OSCAR)?cur->seqnum:0, 
-		      cur->commandlen, cur->lock, 
-		      cur->sent);
-      }
-  }
-
-  faimdprintf(2, "\n(done printing queue)\n");
-  
-  return 0;
-}
-#endif
 
 /*
  *  aim_tx_flushqueue()
@@ -311,12 +302,21 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
   }
 
   if ((cur->hdrtype == AIM_FRAMETYPE_OFT) && cur->commandlen) {
+    int curposi;
+    for(curposi = 0; curposi < cur->commandlen; curposi++)
+      faimdprintf(sess, 0, "%02x ", cur->data[curposi]);
+
     if (send(cur->conn->fd, cur->data, cur->commandlen, 0) != (int)cur->commandlen) {
       /* 
        * Theres nothing we can do about this since we've already sent the 
        * header!  The connection is unstable.
        */
+      faim_mutex_unlock(&cur->conn->active);
+      cur->sent = 1;
+      aim_conn_close(cur->conn);
+      return 0; /* bail out */
     }
+
   }
 
   cur->sent = 1; /* mark the struct as sent */
@@ -324,21 +324,20 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
 
   faim_mutex_unlock(&cur->conn->active);
 
-#if debug > 2
-  faimdprintf(2, "\nPacket:");
-  for (i = 0; i < (cur->commandlen + 6); i++) {
-    if ((i % 8) == 0) {
-      faimdprintf(2, "\n\t");
+  if (sess->debug >= 2) {
+    int i;
+
+    faimdprintf(sess, 2, "\nOutgoing packet: (only valid for OSCAR)");
+    for (i = 0; i < buflen; i++) {
+      if (!(i % 8)) 
+	faimdprintf(sess, 2, "\n\t");
+      faimdprintf(sess, 2, "0x%02x ", curPacket[i]);
     }
-    if (curPacket[i] >= ' ' && curPacket[i]<127) {
-      faimdprintf(2, "%c=%02x ", curPacket[i], curPacket[i]);
-    } else {
-      faimdprintf(2, "0x%2x ", curPacket[i]);
-    }
+    faimdprintf(sess, 2, "\n");
   }
-  faimdprintf(2, "\n");
-#endif
+
   cur->lock = 0; /* unlock the struct */
+
   free(curPacket); /* free up full-packet buffer */
 
   return 1; /* success */
@@ -348,14 +347,10 @@ faim_export int aim_tx_flushqueue(struct aim_session_t *sess)
 {
   struct command_tx_struct *cur;
    
-#if debug > 1
-  int i = 0;
-#endif
-
   if (sess->queue_outgoing == NULL)
     return 0;
 
-  faimdprintf(2, "beginning txflush...\n");
+  faimdprintf(sess, 2, "beginning txflush...\n");
   for (cur = sess->queue_outgoing; cur; cur = cur->next) {
     /* only process if its unlocked and unsent */
     if (!cur->lock && !cur->sent) {
@@ -372,6 +367,7 @@ faim_export int aim_tx_flushqueue(struct aim_session_t *sess)
 	sleep((cur->conn->lastactivity + cur->conn->forcedlatency) - time(NULL));
       }
 
+      /* XXX XXX XXX this should call the custom "queuing" function!! */
       if (aim_tx_sendframe(sess, cur) == -1)
 	break;
     }

@@ -3,7 +3,8 @@
  *
  */
 
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 faim_export unsigned long aim_ads_clientready(struct aim_session_t *sess,
 					      struct aim_conn_t *conn)
@@ -11,7 +12,7 @@ faim_export unsigned long aim_ads_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 0x1a)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 0x1a)))
     return -1;
 
   newpacket->lock = 1;

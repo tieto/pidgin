@@ -771,7 +771,7 @@ extern void show_export_dialog();
 extern void show_import_dialog();
 extern void show_new_bp();
 extern void show_log_dialog(struct conversation *);
-extern void show_find_email();
+extern void show_find_email(struct gaim_connection *gc);
 extern void show_find_info();
 extern void g_show_info (struct aim_user *, char *);
 extern void g_show_info_text (char *);

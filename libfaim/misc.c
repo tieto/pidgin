@@ -11,7 +11,8 @@
  *
  */
 
-#include <faim/aim.h> 
+#define FAIM_INTERNAL
+#include <aim.h> 
 
 /*
  * aim_bos_setidle()
@@ -80,7 +81,7 @@ faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *sess,
   listcount = aimutil_itemcnt(localcpy, '&');
   packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
     return -1;
 
   newpacket->lock = 1;
@@ -157,18 +158,14 @@ faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
   i = 0;
   tmpptr = strtok(localcpy, "&");
   while ((tmpptr != NULL) && (i < 150)) {
-#if debug > 0
-    printf("---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-#endif
+    faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
     len += 1+strlen(tmpptr);
     i++;
     tmpptr = strtok(NULL, "&");
   }
-#if debug > 0
-  printf("*** send buddy list len: %d (%x)\n", len, len);
-#endif
+  faimdprintf(sess, 2, "*** send buddy list len: %d (%x)\n", len, len);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, len)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, len)))
     return -1;
 
   newpacket->lock = 1;
@@ -181,9 +178,7 @@ faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
   i = 0;
   tmpptr = strtok(localcpy, "&");
   while ((tmpptr != NULL) & (i < 150)) {
-#if debug > 0
-    printf("---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-#endif
+    faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
     newpacket->data[j] = strlen(tmpptr);
     memcpy(&(newpacket->data[j+1]), tmpptr, strlen(tmpptr));
     j += 1+strlen(tmpptr);
@@ -216,7 +211,7 @@ faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i = 0, tmp, caplen;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152+strlen(profile)+1+(awaymsg?strlen(awaymsg):0))))
     return -1;
 
   i += aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
@@ -288,7 +283,7 @@ faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
   if (aim_gettlv(tlvlist, 0x0002, 1)) 
     maxdenies = aim_gettlv16(tlvlist, 0x0002, 1);
   
-  if ((userfunc = aim_callhandler(command->conn, 0x0009, 0x0003)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0009, 0x0003)))
     ret = userfunc(sess, command, maxpermits, maxdenies);
 
   aim_freetlvchain(&tlvlist);
@@ -305,18 +300,7 @@ faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
 faim_export unsigned long aim_bos_clientready(struct aim_session_t *sess,
 					      struct aim_conn_t *conn)
 {
-#define AIM_TOOL_JAVA   0x0001
-#define AIM_TOOL_MAC    0x0002
-#define AIM_TOOL_WIN16  0x0003
-#define AIM_TOOL_WIN32  0x0004
-#define AIM_TOOL_MAC68K 0x0005
-#define AIM_TOOL_MACPPC 0x0006
-  struct aim_tool_version {
-    unsigned short group;
-    unsigned short version;
-    unsigned short tool;
-    unsigned short toolversion;
-  } tools[] = {
+  struct aim_tool_version tools[] = {
     {0x0001, 0x0003,    AIM_TOOL_WIN32, 0x0686},
     {0x0002, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
     {0x0003, 0x0001,    AIM_TOOL_WIN32, 0x0001},
@@ -331,7 +315,7 @@ faim_export unsigned long aim_bos_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 1152)))
     return -1;
 
   newpacket->lock = 1;
@@ -374,7 +358,7 @@ faim_export unsigned long aim_bos_ackrateresp(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int packlen = 20, i=0;
 
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
+  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
     return (sess->snac_nextid);
   
   newpacket->lock = 1;
@@ -429,7 +413,7 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + (4*12))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + (4*12))))
     return -1;
 
   newpacket->lock = 1;
@@ -515,7 +499,7 @@ faim_export unsigned long aim_flap_nop(struct aim_session_t *sess,
 {
   struct command_tx_struct *newpacket;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0005, conn, 0)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0005, 0)))
     return sess->snac_nextid;
 
   newpacket->lock = 1;
@@ -566,7 +550,7 @@ faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *
   struct command_tx_struct *newpacket;
   int curbyte;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, strlen(destsn)+13)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, strlen(destsn)+13)))
     return -1;
 
   newpacket->lock = 1;
@@ -618,7 +602,7 @@ faim_internal unsigned long aim_genericreq_n(struct aim_session_t *sess,
 {
   struct command_tx_struct *newpacket;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10)))
     return 0;
 
   newpacket->lock = 1;
@@ -647,7 +631,7 @@ faim_internal unsigned long aim_genericreq_l(struct aim_session_t *sess,
   if (!longdata)
     return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+sizeof(u_long))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+sizeof(u_long))))
     return -1;
 
   newpacket->lock = 1;
@@ -675,7 +659,7 @@ faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
   if (!shortdata)
     return aim_genericreq_n(sess, conn, family, subtype);
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+sizeof(u_short))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+sizeof(u_short))))
     return -1;
 
   newpacket->lock = 1;
@@ -724,7 +708,7 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int packlen = 10+16, i=0;
 
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen)))
+  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen)))
     return (sess->snac_nextid);
   
   newpacket->lock = 1;
@@ -775,7 +759,7 @@ faim_export unsigned long aim_setdirectoryinfo(struct aim_session_t *sess, struc
   if(zip)
     packlen += (strlen(zip) + 4);
     
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen+10)))
+  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen+10)))
     return -1;
 
   newpacket->lock = 1;
@@ -832,7 +816,7 @@ faim_export unsigned long aim_setuserinterests(struct aim_session_t *sess, struc
     packlen += (strlen(interest5) + 4) ;
 
     
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, packlen+10)))
+  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, packlen+10)))
     return -1;
 
   newpacket->lock = 1;
@@ -871,7 +855,7 @@ faim_export unsigned long aim_icq_setstatus(struct aim_session_t *sess,
   
   data = 0x00030000 | status; /* yay for error checking ;^) */
 
-  if(!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10 + 4)))
+  if(!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + 4)))
     return -1;
 
   newpacket->lock = 1;

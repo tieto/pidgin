@@ -1,12 +1,14 @@
 /*
+ * Handle ChatNav.
  *
- *
- *
+ * [The ChatNav(igation) service does various things to keep chat
+ *  alive.  It provides room information, room searching and creating, 
+ *  as well as giving users the right ("permission") to use chat.]
  *
  */
 
-#include <faim/aim.h>
-
+#define FAIM_INTERNAL
+#include <aim.h>
 
 /*
  * conn must be a chatnav connection!
@@ -25,7 +27,7 @@ faim_export unsigned long aim_chatnav_clientready(struct aim_session_t *sess,
   struct command_tx_struct *newpacket; 
   int i;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 0x20)))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 0x20)))
     return -1;
 
   newpacket->lock = 1;
@@ -64,17 +66,15 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
   snacid = aimutil_get32(command->data+6);
   snac = aim_remsnac(sess, snacid);
 
-  if (!snac)
-    {
-      printf("faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snacid);
-      return 1;
-    }
+  if (!snac) {
+    faimdprintf(sess, 0, "faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snacid);
+    return 1;
+  }
   
-  if (snac->family != 0x000d)
-    {
-      printf("faim: chatnav_parse_info: recieved response that maps to corrupt request! (fam=%04x)\n", snac->family);
-      return 1;
-    }
+  if (snac->family != 0x000d) {
+    faimdprintf(sess, 0, "faim: chatnav_parse_info: recieved response that maps to corrupt request! (fam=%04x)\n", snac->family);
+    return 1;
+  }
 
   /*
    * We now know what the original SNAC subtype was.
@@ -136,7 +136,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 
 		classperms = aim_gettlv16(innerlist, 0x0002, 1);
 		
-		printf("faim: class permissions %x\n", classperms);
+		faimdprintf(sess, 1, "faim: class permissions %x\n", classperms);
 	      }
 
 	      /*
@@ -229,14 +229,8 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	  /*
 	   * Call client.
 	   */
-	  userfunc = aim_callhandler(command->conn, 0x000d, 0x0009);
-	  if (userfunc)
-	    ret = userfunc(sess, 
-			   command, 
-			   snac->type,
-			   maxrooms,
-			   curexchange, 
-			   exchanges);
+	  if ((userfunc = aim_callhandler(sess, command->conn, 0x000d, 0x0009)))
+	    ret = userfunc(sess, command, snac->type, maxrooms, curexchange, exchanges);
 	  curexchange--;
 	  while(curexchange >= 0)
 	    {
@@ -258,19 +252,19 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 	  break;
       }
     case 0x0003: /* request exchange info */
-      printf("faim: chatnav_parse_info: resposne to exchange info\n");
+      faimdprintf(sess, 0, "chatnav_parse_info: resposne to exchange info\n");
       break;
     case 0x0004: /* request room info */
-      printf("faim: chatnav_parse_info: response to room info\n");
+       faimdprintf(sess, 0, "chatnav_parse_info: response to room info\n");
       break;
     case 0x0005: /* request more room info */
-      printf("faim: chatnav_parse_info: response to more room info\n");
+       faimdprintf(sess, 0, "chatnav_parse_info: response to more room info\n");
       break;
     case 0x0006: /* request occupant list */
-      printf("faim: chatnav_parse_info: response to occupant info\n");
+       faimdprintf(sess, 0, "chatnav_parse_info: response to occupant info\n");
       break;
     case 0x0007: /* search for a room */
-      printf("faim: chatnav_parse_info: search results\n");
+       faimdprintf(sess, 0, "chatnav_parse_info: search results\n");
       break;
     case 0x0008: { /* create room */
       /*
@@ -293,20 +287,20 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
        */
       struct aim_tlvlist_t *tlvlist, *innerlist;
       char *ck = NULL, *fqcn = NULL, *name = NULL;
-      unsigned short exchange, instance, unknown, flags, maxmsglen, maxoccupancy;
+      unsigned short exchange = 0, instance = 0, unknown = 0, flags = 0, maxmsglen = 0, maxoccupancy = 0;
       unsigned long createtime = 0;
-      unsigned char createperms;
+      unsigned char createperms = 0;
       int i, cklen;
       struct aim_tlv_t *bigblock;
 
       i = 10;
       if (!(tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i))) {
-	printf("faim: unable to read top tlv in create room response\n");
+	faimdprintf(sess, 0, "unable to read top tlv in create room response\n");
 	break;
       }
 
       if (!(bigblock = aim_gettlv(tlvlist, 0x0004, 1))) {
-	printf("faim: no bigblock in top tlv in create room response\n");
+	faimdprintf(sess, 0, "no bigblock in top tlv in create room response\n");
 	aim_freetlvchain(&tlvlist);
 	break;
       }
@@ -327,7 +321,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       i += 2;
 
       if (aimutil_get8(bigblock->value+i) != 0x02) {
-	printf("faim: unknown detaillevel in create room response (0x%02x)\n", aimutil_get8(bigblock->value+i));
+	 faimdprintf(sess, 0, "unknown detaillevel in create room response (0x%02x)\n", aimutil_get8(bigblock->value+i));
 	aim_freetlvchain(&tlvlist);
 	free(ck);	
 	break;
@@ -338,7 +332,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       i += 2;
 
       if (!(innerlist = aim_readtlvchain(bigblock->value+i, bigblock->length-i))) {
-	printf("faim: unable to read inner tlv chain in create room response\n");
+	faimdprintf(sess, 0, "unable to read inner tlv chain in create room response\n");
 	aim_freetlvchain(&tlvlist);
 	free(ck);
 	break;
@@ -365,7 +359,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       if (aim_gettlv(innerlist, 0x00d5, 1))
 	createperms = aim_gettlv8(innerlist, 0x00d5, 1);
 
-      if ((userfunc = aim_callhandler(command->conn, 0x000d, 0x0009))) {
+      if ((userfunc = aim_callhandler(sess, command->conn, 0x000d, 0x0009))) {
 	ret = userfunc(sess, command, snac->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
       }
      
@@ -381,7 +375,7 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
       break;
     }
     default: /* unknown */
-      printf("faim: chatnav_parse_info: unknown request subtype (%04x)\n", snac->type);
+      faimdprintf(sess, 0, "chatnav_parse_info: unknown request subtype (%04x)\n", snac->type);
     }
 
   if (snac && snac->data)
@@ -400,7 +394,7 @@ faim_export unsigned long aim_chatnav_createroom(struct aim_session_t *sess,
   struct command_tx_struct *newpacket; 
   int i;
 
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+12+strlen("invite")+strlen(name))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+12+strlen("invite")+strlen(name))))
     return -1;
 
   newpacket->lock = 1;

@@ -141,6 +141,7 @@ struct addbp {
 struct findbyemail {
 	GtkWidget *window;
 	GtkWidget *emailentry;
+	struct gaim_connection *gc;
 };
 
 struct findbyinfo {
@@ -2008,8 +2009,9 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 
 	email = gtk_entry_get_text(GTK_ENTRY(b->emailentry));
 	
-	/* FIXME : email search. not sure if even works; not important */
-	if (connections)
+	if (b->gc)
+		serv_dir_search(b->gc, "","","","","","","", email);
+	else
 		serv_dir_search(connections->data, "","","","","","","", email);
  
 	destroy_dialog(NULL, b->window);
@@ -2175,7 +2177,7 @@ void show_find_info()
         gtk_widget_show(b->window);
 }        
 
-void show_find_email()
+void show_find_email(struct gaim_connection *gc)
 {
         GtkWidget *label;
         GtkWidget *bbox;
@@ -2185,6 +2187,8 @@ void show_find_email()
 	GtkWidget *button;
 
         struct findbyemail *b = g_new0(struct findbyemail, 1);
+	if (g_slist_find(connections, gc))
+		b->gc = gc;
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_email", "Gaim");

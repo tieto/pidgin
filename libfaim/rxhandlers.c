@@ -7,7 +7,8 @@
  *
  */
 
-#include <faim/aim.h>
+#define FAIM_INTERNAL
+#include <aim.h>
 
 /*
  * Bleck functions get called when there's no non-bleck functions
@@ -174,9 +175,9 @@ faim_internal int bleck(struct aim_session_t *sess,struct command_rx_struct *wor
   subtype= aimutil_get16(workingPtr->data+2);
 
   if((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-    printf("bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
+    faimdprintf(sess, 0, "bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
   else
-    printf("bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
+    faimdprintf(sess, 0, "bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
 
   return 1;
 }
@@ -193,7 +194,7 @@ faim_export int aim_conn_addhandler(struct aim_session_t *sess,
   if (!conn)
     return -1;
 
-  faimdprintf(1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
+  faimdprintf(sess, 1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
 
   if (!(newcb = (struct aim_rxcblist_t *)calloc(1, sizeof(struct aim_rxcblist_t))))
     return -1;
@@ -240,29 +241,31 @@ faim_export int aim_clearhandlers(struct aim_conn_t *conn)
  return 0;
 }
 
-faim_internal rxcallback_t aim_callhandler(struct aim_conn_t *conn,
-					 u_short family,
-					 u_short type)
+faim_internal rxcallback_t aim_callhandler(struct aim_session_t *sess,
+					   struct aim_conn_t *conn,
+					   unsigned short family,
+					   unsigned short type)
 {
   struct aim_rxcblist_t *cur;
 
   if (!conn)
     return NULL;
 
-  faimdprintf(1, "aim_callhandler: calling for %04x/%04x\n", family, type);
+  faimdprintf(sess, 1, "aim_callhandler: calling for %04x/%04x\n", family, type);
   
-  cur = conn->handlerlist;
-  while(cur)
-    {
-      if ( (cur->family == family) && (cur->type == type) )
-	return cur->handler;
-      cur = cur->next;
-    }
+  for (cur = conn->handlerlist; cur; cur = cur->next) {
+    if ((cur->family == family) && (cur->type == type))
+      return cur->handler;
+  }
 
-  if (type==0xffff)
-    return NULL;
+  if (type == AIM_CB_SPECIAL_DEFAULT) {
+    faimdprintf(sess, 1, "aim_callhandler: no default handler for family 0x%04x\n", family);
+    return NULL; /* prevent infinite recursion */
+  }
 
-  return aim_callhandler(conn, family, 0xffff);
+  faimdprintf(sess, 1, "aim_callhandler: no handler for  0x%04x/0x%04x\n", family, type);
+
+  return aim_callhandler(sess, conn, family, AIM_CB_SPECIAL_DEFAULT);
 }
 
 faim_internal int aim_callhandler_noparam(struct aim_session_t *sess,
@@ -272,7 +275,7 @@ faim_internal int aim_callhandler_noparam(struct aim_session_t *sess,
 					  struct command_rx_struct *ptr)
 {
   rxcallback_t userfunc = NULL;
-  userfunc = aim_callhandler(conn, family, type);
+  userfunc = aim_callhandler(sess, conn, family, type);
   if (userfunc)
     return userfunc(sess, ptr);
   return 1; /* XXX */
@@ -307,7 +310,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
   struct command_rx_struct *workingPtr = NULL;
   
   if (sess->queue_incoming == NULL) {
-    faimdprintf(1, "parse_generic: incoming packet queue empty.\n");
+    faimdprintf(sess, 1, "parse_generic: incoming packet queue empty.\n");
     return 0;
   } else {
     workingPtr = sess->queue_incoming;
@@ -326,7 +329,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	   (workingPtr->conn->type != AIM_CONN_TYPE_RENDEZVOUS)) || 
 	  ((workingPtr->hdrtype == AIM_FRAMETYPE_OSCAR) && 
 	   (workingPtr->conn->type == AIM_CONN_TYPE_RENDEZVOUS))) {
-	printf("faim: rxhandlers: incompatible frame type %d on connection type 0x%04x\n", workingPtr->hdrtype, workingPtr->conn->type);
+	faimdprintf(sess, 0, "rxhandlers: incompatible frame type %d on connection type 0x%04x\n", workingPtr->hdrtype, workingPtr->conn->type);
 	workingPtr->handled = 1;
 	continue;
       }
@@ -347,7 +350,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	
 	head = aimutil_get32(workingPtr->data);
 	if ((head == 0x00000001) && (workingPtr->commandlen == 4)) {
-	  faimdprintf(1, "got connection ack on auth line\n");
+	  faimdprintf(sess, 1, "got connection ack on auth line\n");
 	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
 	} else if (workingPtr->hdr.oscar.type == 0x04) {
 	  /* Used only by the older login protocol */
@@ -370,16 +373,27 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    else
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
 	    break;
+
 	  case 0x0001:
 	    if (subtype == 0x0003)
 	      workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
+	    else if (subtype == 0x0007)
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
+	    else if (subtype == 0x0018)
+	      workingPtr->handled = aim_parse_hostversions(sess, workingPtr);
 	    else
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0xffff, workingPtr);
 	    break;
+
 	  case 0x0007:
-	    if (subtype == 0x0005)
-	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
+	    if (subtype == 0x0003)
+	      workingPtr->handled = aim_parse_infochange(sess, workingPtr);
+	    else if (subtype == 0x0005)
+	      workingPtr->handled = aim_parse_infochange(sess, workingPtr);
+	    else if (subtype == 0x0007)
+	      workingPtr->handled = aim_parse_accountconfirm(sess, workingPtr);
 	    break;
+
 	  case AIM_CB_FAM_SPECIAL:
 	    if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
@@ -387,6 +401,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    } else
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
 	    break;
+
 	  default:
 	    break;
 	  }
@@ -515,10 +530,10 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	case 0x000a:  /* Family: User lookup */
 	  switch (subtype) {
 	  case 0x0001:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x000a, 0x0001, workingPtr);
+	    workingPtr->handled = aim_parse_searcherror(sess, workingPtr);
 	    break;
 	  case 0x0003:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x000a, 0x0003, workingPtr);
+	    workingPtr->handled = aim_parse_searchreply(sess, workingPtr);
 	    break;
 	  default:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_LOK, AIM_CB_LOK_DEFAULT, workingPtr);
@@ -534,7 +549,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	  break;
 	}
 	case 0x0013: {
-	  printf("lalala: 0x%04x/0x%04x\n", family, subtype);
+	  faimdprintf(sess, 0, "lalala: 0x%04x/0x%04x\n", family, subtype);
 	  break;
 	}
 	case AIM_CB_FAM_SPECIAL: 
@@ -546,6 +561,22 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	} /* switch(family) */
 	break;
       } /* AIM_CONN_TYPE_BOS */
+      case AIM_CONN_TYPE_ADS: {
+	unsigned short family;
+	unsigned short subtype;
+
+	family = aimutil_get16(workingPtr->data);
+	subtype= aimutil_get16(workingPtr->data+2);
+
+	if ((family == 0x0000) && (subtype == 0x00001)) {
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
+	} else if ((family == 0x0001) && (subtype == 0x0003)) {
+	  workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
+	} else {
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+	}
+	break;
+      }
       case AIM_CONN_TYPE_CHATNAV: {
 	u_short family;
 	u_short subtype;
@@ -592,9 +623,9 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	  else if (subtype == 0x0006)
 	    workingPtr->handled = aim_chat_parse_incoming(sess, workingPtr);
 	  else	
-	    printf("Chat: unknown snac %04x/%04x\n", family, subtype); 
+	    faimdprintf(sess, 0, "Chat: unknown snac %04x/%04x\n", family, subtype); 
 	} else {
-	  printf("Chat: unknown snac %04x/%04x\n", family, subtype);
+	  faimdprintf(sess, 0, "Chat: unknown snac %04x/%04x\n", family, subtype);
 	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_DEFAULT, workingPtr);
 	}
 	break;
@@ -602,13 +633,13 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
       case AIM_CONN_TYPE_RENDEZVOUS: {
 	/* make sure that we only get OFT frames on these connections */
 	if (workingPtr->hdrtype != AIM_FRAMETYPE_OFT) {
-	  printf("faim: internal error: non-OFT frames on OFT connection\n");
+	  faimdprintf(sess, 0, "internal error: non-OFT frames on OFT connection\n");
 	  workingPtr->handled = 1; /* get rid of it */
 	  break;
 	}
 	
 	/* XXX: implement this */
-	printf("faim: OFT frame!\n");
+	faimdprintf(sess, 0, "faim: OFT frame!\n");
 	
 	break;
       }
@@ -617,7 +648,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	break;
       }
       default:
-	printf("\ninternal error: unknown connection type (very bad.) (type = %d, fd = %d, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->commandlen);
+	faimdprintf(sess, 0, "internal error: unknown connection type (very bad.) (type = %d, fd = %d, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->commandlen);
 	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
 	break;
       }	
@@ -653,7 +684,7 @@ faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct com
   memset(sn, 0, sizeof(sn));
   strncpy(sn, (char *)command->data+i, snlen);
 
-  if ((userfunc = aim_callhandler(command->conn, 0x0004, 0x000c)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0004, 0x000c)))
     ret =  userfunc(sess, command, type, sn);
 
   return ret;
@@ -740,7 +771,7 @@ faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct
   maxavg = aimutil_get32(command->data+i);
   i += 4;
 
-  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x000a)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x000a)))
     ret =  userfunc(sess, command, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
 
   return ret;
@@ -760,9 +791,9 @@ faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct
 
   memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
   if (command->commandlen-i)
-    i += aim_extractuserinfo(command->data+i, &userinfo);
+    i += aim_extractuserinfo(sess, command->data+i, &userinfo);
 
-  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0010)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0010)))
     ret = userfunc(sess, command, newevil, &userinfo);
   
   return ret;
@@ -800,7 +831,7 @@ faim_internal int aim_parsemotd_middle(struct aim_session_t *sess,
     return ret;
   }
   
-  userfunc = aim_callhandler(command->conn, 0x0001, 0x0013);
+  userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0013);
   if (userfunc)
     ret =  userfunc(sess, command, id, msg);
 
@@ -825,12 +856,84 @@ faim_internal int aim_parse_hostonline(struct aim_session_t *sess,
   for (i = 0; i < famcount; i++)
     families[i] = aimutil_get16(command->data+((i*2)+10));
 
-  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0003)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0003)))
     ret = userfunc(sess, command, famcount, families);
 
   free(families);
 
   return ret;  
+}
+
+faim_internal int aim_parse_accountconfirm(struct aim_session_t *sess,
+					   struct command_rx_struct *command)
+{
+  rxcallback_t userfunc = NULL;
+  int ret = 1;
+  int status = -1;
+
+  status = aimutil_get16(command->data+10);
+
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0007, 0x0007)))
+    ret = userfunc(sess, command, status);
+
+  return ret;  
+}
+
+faim_internal int aim_parse_infochange(struct aim_session_t *sess,
+				       struct command_rx_struct *command)
+{
+  unsigned short subtype; /* called for both reply and change-reply */
+  int i;
+
+  subtype = aimutil_get16(command->data+2);
+
+  /*
+   * struct {
+   *    unsigned short perms;
+   *    unsigned short tlvcount;
+   *    aim_tlv_t tlvs[tlvcount];
+   *  } admin_info[n];
+   */
+  for (i = 10; i < command->commandlen; ) {
+    int perms, tlvcount;
+
+    perms = aimutil_get16(command->data+i);
+    i += 2;
+
+    tlvcount = aimutil_get16(command->data+i);
+    i += 2;
+
+    while (tlvcount) {
+      rxcallback_t userfunc;
+      struct aim_tlv_t *tlv;
+      int str = 0;
+
+      if ((aimutil_get16(command->data+i) == 0x0011) ||
+	  (aimutil_get16(command->data+i) == 0x0004))
+	str = 1;
+
+      if (str)
+	tlv = aim_grabtlvstr(command->data+i);
+      else
+	tlv = aim_grabtlv(command->data+i);
+
+      /* XXX fix so its only called once for the entire packet */
+      if ((userfunc = aim_callhandler(sess, command->conn, 0x0007, subtype)))
+	userfunc(sess, command, perms, tlv->type, tlv->length, tlv->value, str);
+
+      if (tlv)
+	i += 2+2+tlv->length;
+
+      if (tlv && tlv->value)
+	free(tlv->value);
+      if (tlv)
+	free(tlv);
+
+      tlvcount--;
+    }
+  }
+
+  return 1;
 }
 
 faim_internal int aim_parse_hostversions(struct aim_session_t *sess,
@@ -842,7 +945,7 @@ faim_internal int aim_parse_hostversions(struct aim_session_t *sess,
 
   vercount = (command->commandlen-10)/4;
   
-  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0018)))
+  if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0018)))
     ret = userfunc(sess, command, vercount, command->data+10);
 
   return ret;  
@@ -873,7 +976,7 @@ faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
      * Chat hack.
      *
      */
-    if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0005)))
+    if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0005)))
       ret =  userfunc(sess, command, serviceid, ip, cookie, sess->pendingjoin, (int)sess->pendingjoinexchange);
       free(sess->pendingjoin);
       sess->pendingjoin = NULL;
@@ -881,7 +984,7 @@ faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
   } else if (!serviceid || !ip || !cookie) { /* yeep! */
     ret = 1;
   } else {
-    if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0005)))
+    if ((userfunc = aim_callhandler(sess, command->conn, 0x0001, 0x0005)))
       ret =  userfunc(sess, command, serviceid, ip, cookie);
   }
 
@@ -903,17 +1006,17 @@ faim_internal int aim_parse_unknown(struct aim_session_t *sess,
   if (!sess || !command)
     return 1;
 
-  faimdprintf(1, "\nRecieved unknown packet:");
+  faimdprintf(sess, 1, "\nRecieved unknown packet:");
 
   for (i = 0; i < command->commandlen; i++)
     {
       if ((i % 8) == 0)
-	faimdprintf(1, "\n\t");
+	faimdprintf(sess, 1, "\n\t");
 
-      faimdprintf(1, "0x%2x ", command->data[i]);
+      faimdprintf(sess, 1, "0x%2x ", command->data[i]);
     }
   
-  faimdprintf(1, "\n\n");
+  faimdprintf(sess, 1, "\n\n");
 
   return 1;
 }
@@ -936,7 +1039,7 @@ faim_internal int aim_negchan_middle(struct aim_session_t *sess,
   if (aim_gettlv(tlvlist, 0x000b, 1))
     msg = aim_gettlv_str(tlvlist, 0x000b, 1);
 
-  if ((userfunc = aim_callhandler(command->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR))) 
+  if ((userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR))) 
     ret =  userfunc(sess, command, code, msg);
 
   aim_freetlvchain(&tlvlist);
@@ -968,7 +1071,7 @@ faim_internal int aim_parse_generalerrs(struct aim_session_t *sess,
   if (command->commandlen > 10)
     error = aimutil_get16(command->data+10);
 
-  if ((userfunc = aim_callhandler(command->conn, family, subtype))) 
+  if ((userfunc = aim_callhandler(sess, command->conn, family, subtype))) 
     ret = userfunc(sess, command, error);
 
   return ret;
