@@ -4816,8 +4816,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		smiley_themeize(gtkconv->imhtml);
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-			update_tab_icon(conv);
+		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
 			 type == GAIM_CONV_UPDATE_UNSEEN) {
@@ -4881,12 +4880,10 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
 		generate_send_as_items(win, NULL);
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-			update_tab_icon(conv);
+		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_AWAY) {
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-			update_tab_icon(conv);
+		update_tab_icon(conv);
 	}
 	else if(type == GAIM_CONV_UPDATE_ADD ||
 			type == GAIM_CONV_UPDATE_REMOVE) {
