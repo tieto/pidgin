@@ -136,30 +136,34 @@ void jabber_iq_free(JabberIq *iq)
 static void jabber_iq_handle_last(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
+	const char *type;
 	const char *from;
 	const char *id;
 	xmlnode *query;
 	char *idle_time;
 
+	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:last");
-	jabber_iq_set_id(iq, id);
-	xmlnode_set_attrib(iq->node, "to", from);
+	if(type && !strcmp(type, "get")) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:last");
+		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
 
-	query = xmlnode_get_child(iq->node, "query");
+		query = xmlnode_get_child(iq->node, "query");
 
-	idle_time = g_strdup_printf("%ld", js->idle ? time(NULL) - js->idle : 0);
-	xmlnode_set_attrib(query, "seconds", idle_time);
-	g_free(idle_time);
+		idle_time = g_strdup_printf("%ld", js->idle ? time(NULL) - js->idle : 0);
+		xmlnode_set_attrib(query, "seconds", idle_time);
+		g_free(idle_time);
 
-	jabber_iq_send(iq);
+		jabber_iq_send(iq);
+	}
 }
 
 static void jabber_iq_handle_time(JabberStream *js, xmlnode *packet)
 {
-	const char *from, *id;
+	const char *type, *from, *id;
 	JabberIq *iq;
 	char buf[1024];
 	xmlnode *query;
@@ -168,57 +172,66 @@ static void jabber_iq_handle_time(JabberStream *js, xmlnode *packet)
 	time(&now_t);
 	localtime_r(&now_t, &now);
 
+	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
-	jabber_iq_set_id(iq, id);
-	xmlnode_set_attrib(iq->node, "to", from);
+	if(type && !strcmp(type, "get")) {
 
-	query = xmlnode_get_child(iq->node, "query");
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
+		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
 
-	strftime(buf, sizeof(buf), "%Y%m%dT%T", &now);
-	xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
-	strftime(buf, sizeof(buf), "%Z", &now);
-	xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
-	strftime(buf, sizeof(buf), "%d %b %Y %T", &now);
-	xmlnode_insert_data(xmlnode_new_child(query, "display"), buf, -1);
+		query = xmlnode_get_child(iq->node, "query");
 
-	jabber_iq_send(iq);
+		strftime(buf, sizeof(buf), "%Y%m%dT%T", &now);
+		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
+		strftime(buf, sizeof(buf), "%Z", &now);
+		xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
+		strftime(buf, sizeof(buf), "%d %b %Y %T", &now);
+		xmlnode_insert_data(xmlnode_new_child(query, "display"), buf, -1);
+
+		jabber_iq_send(iq);
+	}
 }
 
 static void jabber_iq_handle_version(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
-	const char *from, *id;
+	const char *type, *from, *id;
 	xmlnode *query;
 	char *os = NULL;
 
-	if(!gaim_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
-		struct utsname osinfo;
+	type = xmlnode_get_attrib(packet, "type");
 
-		uname(&osinfo);
-		os = g_strdup_printf("%s %s %s", osinfo.sysname, osinfo.release,
-				osinfo.machine);
+	if(type && !strcmp(type, "get")) {
+
+		if(!gaim_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
+			struct utsname osinfo;
+
+			uname(&osinfo);
+			os = g_strdup_printf("%s %s %s", osinfo.sysname, osinfo.release,
+					osinfo.machine);
+		}
+
+		from = xmlnode_get_attrib(packet, "from");
+		id = xmlnode_get_attrib(packet, "id");
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:version");
+		xmlnode_set_attrib(iq->node, "to", from);
+		jabber_iq_set_id(iq, id);
+
+		query = xmlnode_get_child(iq->node, "query");
+
+		xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
+		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
+		if(os) {
+			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
+			g_free(os);
+		}
+
+		jabber_iq_send(iq);
 	}
-
-	from = xmlnode_get_attrib(packet, "from");
-	id = xmlnode_get_attrib(packet, "id");
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:version");
-	xmlnode_set_attrib(iq->node, "to", from);
-	jabber_iq_set_id(iq, id);
-
-	query = xmlnode_get_child(iq->node, "query");
-
-	xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
-	xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
-	if(os) {
-		xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
-		g_free(os);
-	}
-
-	jabber_iq_send(iq);
 }
 
 #define SUPPORT_FEATURE(x) \
@@ -267,7 +280,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		*/
 
 		jabber_iq_send(iq);
-	}else if(!strcmp(type, "result")) {
+	} else if(!strcmp(type, "result")) {
 		xmlnode *query = xmlnode_get_child(packet, "query");
 		xmlnode *child;
 		JabberID *jid;
