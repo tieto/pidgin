@@ -16,6 +16,10 @@ version 0.79cvs:
 	* Added MSN buddy icons (Felipe Contreras)
 	* Added MSN file transfer (Felipe Contreras)
 	* MSN's idle state now actually sets a buddy idle.
+	* Buddy pounce defaults are now more sane, and apply to the state the
+	  buddy is currently in. For example, if the buddy is idle, set
+	  "Return from idle" by default. The last action(s) used are the
+	  defaults for the next pounce.
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze

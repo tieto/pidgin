@@ -188,7 +188,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
 
-	if (*name == '\0') {
+	if (*name == '\0')
+	{
 		gaim_notify_error(NULL, NULL,
 						  _("Please enter a buddy to pounce."), NULL);
 		return;
@@ -239,7 +240,7 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 		gaim_pounce_set_pouncee(dialog->pounce, name);
 	}
 
-	/* Actions*/
+	/* Actions */
 	gaim_pounce_action_set_enabled(dialog->pounce, "open-window",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
 	gaim_pounce_action_set_enabled(dialog->pounce, "popup-notify",
@@ -257,6 +258,18 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 									 "command", command);
 	gaim_pounce_action_set_attribute(dialog->pounce, "play-sound",
 									 "filename", sound);
+
+	/* Set the defaults for next time. */
+	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/open-window",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
+	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/popup-notify",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)));
+	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/send-message",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)));
+	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/execute-command",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)));
+	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/play-sound",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)));
 
 	gaim_pounce_set_save(dialog->pounce,
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce)));
@@ -800,8 +813,16 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 			}
 		}
 
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(dialog->popup), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
+			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/open-window"));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->popup),
+			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/popup-notify"));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg),
+			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/send-message"));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd),
+			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/execute-command"));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->play_sound),
+			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/play-sound"));
 	}
 
 	gtk_widget_show_all(vbox2);
@@ -1106,4 +1127,17 @@ gaim_gtk_pounces_init(void)
 {
 	gaim_pounces_register_handler(GAIM_GTK_UI, pounce_cb, new_pounce,
 								  free_pounce);
+
+	gaim_prefs_add_none("/gaim/gtk/pounces");
+	gaim_prefs_add_none("/gaim/gtk/pounces/default_actions");
+	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/open-window",
+						FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/popup-notify",
+						FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/send-message",
+						TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/execute-command",
+						FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/play-sound",
+						FALSE);
 }
