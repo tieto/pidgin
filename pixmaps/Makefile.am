@@ -23,8 +23,8 @@ pixmap_DATA = gaim.xpm
 if GNOMEAPPLET
 gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`
 gnomedata    = `@GNOME_CONFIG@ --datadir`
-gaimpixmapdir = $(gnomedata)/pixmaps/gaim
-gaimpixmap_DATA = aimicon.xpm
+gaimpixmapdir = $(gnomedata)/pixmaps
+gaimpixmap_DATA = gaim.xpm
 gaimgnomedir = $(gnomedata)/pixmaps/gaim/gnome
 gaimgnome_DATA = 
 gaimgnomepixmapsdir = $(gnomedata)/pixmaps/gaim
