@@ -1,0 +1,102 @@
+#!/usr/bin/perl -w
+#
+#  gaim
+# 
+#  Copyright (C) 1998 - 2000, Mark Spencer <markster@marko.net>
+# 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+# 
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# 
+#  ---
+#
+#  Buddy List Conversion Script Written By: John Assalone <assalonej@kpe.com>
+#        Modifications by: Rob Flynn <IM: Rob Flynn> <rflynn@blueridge.net>
+#	 Obfuscated by: Schuyler Erle <IM: sderle> <schuyler@tridity.org>
+#
+#  Use this script to convert the new WinAIM buddy list format to gaim's format.
+#
+#  Syntax: ./buddytrans buddy.list gaimlist
+#
+
+use strict;
+use 5.003;
+
+sub translate_lst
+{
+	my $src = shift;
+	my ($line, $field, $name, $out);
+
+	$out = "m 1\n";
+
+	for $line (grep(/\w/o, split(/[\r\n]+/o, $src))) { 
+		($field, $name) = ($line =~ /^\s*(\w)\w*\s+(.+)$/go);
+		$name =~ y/"//d;
+		$out .= "$field $name\n" if $field and $name;
+	}
+
+	$out
+}
+
+sub translate_blt
+{
+	my $src		= shift;
+	my $out		= "m 1\n";
+	my $grp;
+
+	$src =~ s/^.*?Buddy\s+{.*?list\s+{//gos;
+
+	while ( $src =~ / } | 
+		(?: "([^"]+)" | (\S+) ) \s* 
+		(?: {(.+?)} | ([^\n]+) ) \s*/gosx ) { 
+
+		last unless defined( $grp = $1 || $2 );
+			
+		$out .= join( "\n", "g $grp", 
+			map 	{ "b $_" } 
+			grep 	{ defined($_) and /\S/o } 
+			split	( /"([^"]+)"|\s+/, ($3 || $4) ) ) 
+			. "\n" 
+	}
+
+	$out;
+}
+
+sub buddy_trans
+{
+	my ($src_file, $dest_file) = @_;
+
+	die "Syntax: $0 buddy.lst gaimlist\n"
+		unless ($src_file and $dest_file);
+	
+	
+	open SOURCE, "<$src_file" or die "$!: $src_file\n";
+	my $src = do { local $/ = undef; <SOURCE> };
+	close SOURCE;
+
+	if (-e $dest_file) {
+    		print STDERR "$dest_file already exists! Continue? ";
+    		unless (-t and <STDIN> =~ /^y/io) {
+			print STDERR "Aborted.\n";
+			exit -1
+		}
+	} 
+
+	open DEST, ">$dest_file" or die "$!: $dest_file\n";
+	print DEST ($src =~ /{/os) ? translate_blt($src) : translate_lst($src);
+	close DEST;
+
+	0;
+}
+
+buddy_trans( @ARGV );
