@@ -1064,7 +1064,7 @@ oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 	return NULL;
 }
 
-static void oscar_ask_sendfile(struct gaim_connection *gc, char *destsn) {
+static void oscar_ask_sendfile(struct gaim_connection *gc, const char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
 	/* You want to send a file to someone else, you're so generous */
@@ -2443,7 +2443,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 	gaim_free_name_data(data);
 }
 
-static void gaim_auth_sendrequest(struct gaim_connection *gc, char *name) {
+static void gaim_auth_sendrequest(struct gaim_connection *gc, const char *name) {
 	struct name_data *data = g_new(struct name_data, 1);
 	struct buddy *buddy;
 	gchar *dialog_msg, *nombre;
@@ -4157,9 +4157,9 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	}
 	return 0;
 }
-static void oscar_ask_direct_im(struct gaim_connection *gc, char *name);
+static void oscar_ask_direct_im(struct gaim_connection *gc, const char *name);
 
-static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int len, int imflags) {
+static int oscar_send_im(struct gaim_connection *gc, const char *name, const char *message, int len, int imflags) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
@@ -4282,7 +4282,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	return ret;
 }
 
-static void oscar_get_info(struct gaim_connection *g, char *name) {
+static void oscar_get_info(struct gaim_connection *g, const char *name) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	if (od->icq)
 		aim_icq_getallinfo(od->sess, name);
@@ -4293,7 +4293,7 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 		aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
 
-static void oscar_get_away(struct gaim_connection *g, char *who) {
+static void oscar_get_away(struct gaim_connection *g, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	if (od->icq) {
 		struct buddy *budlight = gaim_find_buddy(g->account, who);
@@ -5425,6 +5425,7 @@ struct ask_do_dir_im {
 };
 
 static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
+	g_free(data->who);
 	g_free(data);
 }
 
@@ -5434,6 +5435,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	struct direct_im *dim;
 
 	if (!g_slist_find(connections, gc)) {
+		g_free(data->who);
 		g_free(data);
 		return;
 	}
@@ -5449,6 +5451,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 			debug_printf("Gave up on old direct IM, trying again\n");
 		} else {
 			do_error_dialog("DirectIM already open.", NULL, GAIM_ERROR);
+			g_free(data->who);
 			g_free(data);
 			return;
 		}
@@ -5469,13 +5472,14 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 		g_free(dim);
 	}
 
+	g_free(data->who);
 	g_free(data);
 }
 
-static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
+static void oscar_ask_direct_im(struct gaim_connection *gc, const char *who) {
 	char buf[BUF_LONG];
 	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
-	data->who = who;
+	data->who = g_strdup(who);
 	data->gc = gc;
 	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
 	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
@@ -5608,7 +5612,7 @@ static GList *oscar_away_states(struct gaim_connection *gc)
 	return m;
 }
 
-static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
+static GList *oscar_buddy_menu(struct gaim_connection *gc, const char *who) {
 	struct oscar_data *od = gc->proto_data;
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;

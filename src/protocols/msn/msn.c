@@ -1416,7 +1416,7 @@ static size_t msn_file_transfer_read(struct gaim_connection *gc,
 }
 #endif
 
-static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
+static int msn_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
 {
 	struct msn_data *md = gc->proto_data;
 	struct msn_switchboard *ms = msn_find_switch(gc, who);
@@ -1649,7 +1649,7 @@ static char *msn_tooltip_text(struct buddy *b) {
 	return NULL;
 }
 
-static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *msn_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
 #if 0

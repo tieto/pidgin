@@ -4,8 +4,8 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
- *	$Id: zephyr.h 2432 2001-10-03 19:38:28Z warmenhoven $
+ *	$Author: faceprint $
+ *	$Id: zephyr.h 5500 2003-04-15 04:18:00Z faceprint $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
@@ -92,7 +92,7 @@ typedef struct _ZNotice_t {
     char		*z_class_inst;
     char		*z_opcode;
     char		*z_sender;
-    char		*z_recipient;
+    const char		*z_recipient;
     char		*z_default_format;
     char		*z_multinotice;
     ZUnique_Id_t	z_multiuid;

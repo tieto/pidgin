@@ -361,7 +361,7 @@ static void icq_close(struct gaim_connection *gc) {
 	g_free(id);
 }
 
-static int icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int len, int flags) {
+static int icq_send_msg(struct gaim_connection *gc, const char *who, const char *msg, int len, int flags) {
 	if (!(flags & IM_FLAG_AWAY) && (strlen(msg) > 0)) {
 		struct icq_data *id = (struct icq_data *)gc->proto_data;
 		long w = atol(who);
@@ -457,7 +457,7 @@ static const char *icq_list_icon(struct gaim_account *a, struct buddy *b) {
 	return icon_online_xpm;
 	}*/
 
-static void icq_get_info(struct gaim_connection *gc, char *who) {
+static void icq_get_info(struct gaim_connection *gc, const char *who) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	icq_SendInfoReq(id->link, atol(who));
 }

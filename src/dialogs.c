@@ -150,7 +150,7 @@ struct alias_dialog_info
 
 static GSList *info_dlgs = NULL;
 
-static struct info_dlg *find_info_dlg(struct gaim_connection *gc, char *who)
+static struct info_dlg *find_info_dlg(struct gaim_connection *gc, const char *who)
 {
 	GSList *i = info_dlgs;
 	while (i) {
@@ -2012,7 +2012,7 @@ static void info_dlg_free(GtkWidget *b, struct info_dlg *d)
  *
  * i wish this were my client. if i were i wouldn't have to deal with this shit.
  */
-void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *info, ...)
+void g_show_info_text(struct gaim_connection *gc, const char *who, int away, const char *info, ...)
 {
 	GtkWidget *ok;
 	GtkWidget *label;

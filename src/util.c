@@ -137,17 +137,15 @@ gchar *sec_to_text(guint sec)
 	return ret;
 }
 
-gint linkify_text(char *text)
+char *linkify_text(const char *text)
 {
-	char *c, *t, *q = NULL;
-	char *cpy = g_malloc(strlen(text) * 3 + 1);
+	const char *c, *t, *q = NULL;
+	char *tmp;
 	char url_buf[BUF_LEN * 4];
-	int cnt = 0;
+	GString *ret = g_string_new("");
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
 
-	strncpy(cpy, text, strlen(text));
-	cpy[strlen(text)] = 0;
-	c = cpy;
+	c = text;
 	while (*c) {
 		if(!q && (*c == '\"' || *c == '\'')) {
 			q = c;
@@ -159,12 +157,13 @@ gint linkify_text(char *text)
 				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
 					break;
 				}
-				text[cnt++] = *c;
+				ret = g_string_append_c(ret, *c);
 				c++;
 				if (!(*c))
 					break;
 			}
-		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) || (!g_ascii_strncasecmp(c, "https://", 8)))) {
+		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
+					(!g_ascii_strncasecmp(c, "https://", 8)))) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -178,8 +177,8 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
-							  url_buf, url_buf);
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							url_buf, url_buf);
 					c = t;
 					break;
 				}
@@ -206,9 +205,9 @@ gint linkify_text(char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
-						cnt += g_snprintf(&text[cnt], 1024,
-								 "<A HREF=\"http://%s\">%s</A>", url_buf,
-								 url_buf);
+						g_string_append_printf(ret,
+								"<A HREF=\"http://%s\">%s</A>", url_buf,
+								url_buf);
 						c = t;
 						break;
 					}
@@ -225,8 +224,8 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
-							  url_buf, url_buf);
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							url_buf, url_buf);
 					c = t;
 					break;
 				}
@@ -247,9 +246,9 @@ gint linkify_text(char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
-						cnt += g_snprintf(&text[cnt], 1024,
-								  "<A HREF=\"ftp://%s\">%s</A>", url_buf,
-								  url_buf);
+						g_string_append_printf(ret,
+								"<A HREF=\"ftp://%s\">%s</A>", url_buf,
+								url_buf);
 						c = t;
 						break;
 					}
@@ -266,7 +265,7 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							  url_buf, url_buf);
 					c = t;
 					break;
@@ -276,7 +275,7 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (c != cpy && (*c == '@')) {
+		} else if (c != text && (*c == '@')) {
 			char *tmp;
 			int flag;
 			int len = 0;
@@ -291,7 +290,7 @@ gint linkify_text(char *text)
 			t = c;
 			while (flag) {
 				if (badchar(*t)) {
-					cnt -= (len - 1);
+					ret = g_string_truncate(ret, ret->len - (len - 1));
 					break;
 				} else {
 					len++;
@@ -303,8 +302,8 @@ gint linkify_text(char *text)
 					url_buf[len] = 0;
 					g_free(tmp);
 					t--;
-					if (t < cpy) {
-						cnt = 0;
+					if (t < text) {
+						ret = g_string_assign(ret, "");
 						break;
 					}
 				}
@@ -319,12 +318,8 @@ gint linkify_text(char *text)
 					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 						*d = '\0';
 
-					cnt += g_snprintf(&text[cnt], 1024,
-							  "<A HREF=\"mailto:%s\">%s</A>", url_buf,
-							  url_buf);
-					text[cnt] = 0;
-
-
+					g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
+							url_buf, url_buf);
 					c = t;
 
 					break;
@@ -341,13 +336,13 @@ gint linkify_text(char *text)
 		if (*c == 0)
 			break;
 
-		text[cnt++] = *c;
+		ret = g_string_append_c(ret, *c);
 		c++;
 
 	}
-	text[cnt] = 0;
-	g_free(cpy);
-	return cnt;
+	tmp = ret->str;
+	g_string_free(ret, FALSE);
+	return tmp;
 }
 
 
@@ -892,7 +887,7 @@ void strip_linefeed(gchar *text)
 	g_free(text2);
 }
 
-char *add_cr(char *text)
+char *add_cr(const char *text)
 {
 	char *ret = NULL;
 	int count = 0, i, j;

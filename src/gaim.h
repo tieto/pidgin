@@ -349,7 +349,7 @@ extern void remove_chat_buddy(struct gaim_conversation *, char *, char *);
 #endif
 
 /* Functions in dialogs.c */
-extern void g_show_info_text(struct gaim_connection *, char *, int, char *, ...);
+extern void g_show_info_text(struct gaim_connection *, const char *, int, const char *, ...);
 extern GtkWidget *do_error_dialog(const char *, const char *, int type);
 extern void show_change_passwd(struct gaim_connection *);
 extern void show_set_dir(struct gaim_connection *);
@@ -412,7 +412,7 @@ extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern int  serv_chat_send(struct gaim_connection *, int, char *);
 extern void serv_got_popup(char *, char *, int, int);
-extern void serv_get_away(struct gaim_connection *, char *);
+extern void serv_get_away(struct gaim_connection *, const char *);
 extern void serv_alias_buddy(struct buddy *);
 extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
 extern void serv_rename_group(struct gaim_connection *, struct group *, const char *);

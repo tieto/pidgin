@@ -106,13 +106,11 @@ char *date(void);
 /**
  * Adds the necessary HTML code to turn URIs into HTML links in a string.
  *
- * The string passed must be able to store at least BUF_LEN * 2 bytes.
- *
  * @param str The string to linkify.
- * 
- * @return The length of the new string.
+ *
+ * @return The linkified text.
  */
-gint linkify_text(char *str);
+char *linkify_text(const char *str);
 
 /**
  * Converts seconds into a human-readable form.
@@ -247,7 +245,7 @@ gchar *strdup_withhtml(const gchar *src);
  *
  * @return The string with carriage returns.
  */
-char *add_cr(char *);
+char *add_cr(const char *);
 
 /**
  * Strips all linefeeds from a string.

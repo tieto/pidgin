@@ -1014,7 +1014,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
+static int toc_send_im(struct gaim_connection *gc, const char *name, const char *message, int len, int flags)
 {
 	char buf[BUF_LEN * 2];
 	char *tmp = g_malloc(strlen(message) * 4 + 1); /* 4 because \n gets replaced with <BR> */
@@ -1042,14 +1042,14 @@ static void toc_set_config(struct gaim_connection *gc)
 	g_free(buf);
 }
 
-static void toc_get_info(struct gaim_connection *g, char *name)
+static void toc_get_info(struct gaim_connection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_get_dir(struct gaim_connection *g, char *name)
+static void toc_get_dir(struct gaim_connection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
@@ -1307,7 +1307,7 @@ static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 	*ne = emblems[3];
 }
 
-static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *toc_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;

@@ -175,7 +175,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 	GaimConversationType type;
 	struct gaim_connection *gc;
 	struct gaim_conversation_ui_ops *ops;
-	char *buf, *buf2, *buffy;
+	char *buf, *buf2, *buffy = NULL;
 	gulong length = 0;
 	gboolean binary = FALSE;
 	int plugin_return;
@@ -212,12 +212,11 @@ common_send(struct gaim_conversation *conv, const char *message)
 
 	buf2 = g_malloc(limit);
 
-	if (gc->flags & OPT_CONN_HTML) {
-		if (convo_options & OPT_CONVO_SEND_LINKS)
-			linkify_text(buf);
-	}
+	if (gc->flags & OPT_CONN_HTML && convo_options & OPT_CONVO_SEND_LINKS)
+		buffy =linkify_text(buf);
+	else
+		buffy = g_strdup(buf);
 
-	buffy = g_strdup(buf);
 	plugin_return = plugin_event(
 			(type == GAIM_CONV_IM ? event_im_send : event_chat_send),
 			gc,

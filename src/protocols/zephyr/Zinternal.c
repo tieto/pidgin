@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: faceprint $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology.
@@ -20,7 +20,7 @@
 
 #ifndef lint
 static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 2432 2001-10-03 19:38:28Z warmenhoven $";
+  "$Id: Zinternal.c 5500 2003-04-15 04:18:00Z faceprint $";
 static const char copyright[] =
   "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif
@@ -58,7 +58,7 @@ void *__Z_debug_print_closure;
 
 #define min(a,b) ((a)<(b)?(a):(b))
 
-static int Z_AddField __P((char **ptr, char *field, char *end));
+static int Z_AddField __P((char **ptr, const char *field, char *end));
 static int find_or_insert_uid __P((ZUnique_Id_t *uid, ZNotice_Kind_t kind));
 
 /* Find or insert uid in the old uids buffer.  The buffer is a sorted
@@ -754,8 +754,7 @@ Code_t Z_FormatRawHeader(notice, buffer, buffer_len, len, cstart, cend)
 }
 
 static int
-Z_AddField(ptr, field, end)
-    char **ptr, *field, *end;
+Z_AddField(char **ptr, const char *field, char *end)
 {
     register int len;
 

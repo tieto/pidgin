@@ -1022,7 +1022,7 @@ static void jabber_change_passwd(struct gaim_connection *gc, const char *old, co
 /*
  * Return pointer to jabber_buddy_data if buddy found.  Create if necessary.
  */
-static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, char *buddy, gboolean create)
+static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, const char *buddy, gboolean create)
 {
 	struct jabber_data *jd = gc->proto_data;
 	gpointer val;
@@ -1052,7 +1052,7 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
  * default being the highest priority one.
  */
 
-static jab_res_info jabber_find_resource(struct gaim_connection *gc, char *who)
+static jab_res_info jabber_find_resource(struct gaim_connection *gc, const char *who)
 {
 	GSList *resources;
 	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, who, FALSE);
@@ -1212,7 +1212,7 @@ static void jabber_track_convo_thread(gjconn gjc, char *name, char *thread_id)
 	}
 }
 
-static char *jabber_get_convo_thread(gjconn gjc, char *name)
+static char *jabber_get_convo_thread(gjconn gjc, const char *name)
 {
 	char *ct = NULL;
 	jab_res_info jri = jabber_find_resource(GJ_GC(gjc), name);
@@ -2443,7 +2443,7 @@ static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
 	g_free(xhtml);
 }
 
-static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
+static int jabber_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
 {
 	xmlnode x, y;
 	char *thread_id = NULL;
@@ -2686,7 +2686,7 @@ static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *na
 /*
  * Unsubscribe a buddy from our presence
  */
-static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, char *name)
+static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, const char *name)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	char *realwho;
@@ -2703,7 +2703,7 @@ static void jabber_unsubscribe_buddy_from_us(struct gaim_connection *gc, char *n
 /*
  * Common code for setting ourselves invisible/visible to buddy
  */
-static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, char *name, gboolean invisible)
+static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, const char *name, gboolean invisible)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 	char *realwho;
@@ -2735,7 +2735,7 @@ static void jabber_invisible_to_buddy_common(struct gaim_connection *gc, char *n
 /*
  * Make ourselves temporarily invisible to a buddy
  */
-static void jabber_invisible_to_buddy(struct gaim_connection *gc, char *name)
+static void jabber_invisible_to_buddy(struct gaim_connection *gc, const char *name)
 {
 	jabber_invisible_to_buddy_common(gc, name, TRUE);
 }
@@ -2743,7 +2743,7 @@ static void jabber_invisible_to_buddy(struct gaim_connection *gc, char *name)
 /*
  * Make ourselves visible to a buddy
  */
-static void jabber_visible_to_buddy(struct gaim_connection *gc, char *name)
+static void jabber_visible_to_buddy(struct gaim_connection *gc, const char *name)
 {
 	jabber_invisible_to_buddy_common(gc, name, FALSE);
 }
@@ -3103,7 +3103,7 @@ static char *jabber_normalize(const char *s)
 	}
 }
 
-static void jabber_get_info(struct gaim_connection *gc, char *who) {
+static void jabber_get_info(struct gaim_connection *gc, const char *who) {
 	xmlnode x;
 	char *id;
 	char *realwho;
@@ -3128,7 +3128,7 @@ static void jabber_get_info(struct gaim_connection *gc, char *who) {
 	xmlnode_free(x);
 }
 
-static void jabber_get_error_msg(struct gaim_connection *gc, char *who) {
+static void jabber_get_error_msg(struct gaim_connection *gc, const char *who) {
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
 	gchar **str_arr = (gchar **) g_new(gpointer, 3);
@@ -3156,7 +3156,7 @@ static void jabber_get_error_msg(struct gaim_connection *gc, char *who) {
 	g_free(final);
 }
 
-static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
+static void jabber_get_away_msg(struct gaim_connection *gc, const char *who) {
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
 	int num_resources;
@@ -3261,7 +3261,8 @@ static char *jabber_tooltip_text(struct buddy *b)
 			g_free(stripped);
 			g_free(text);
 		}
-	} else if(jbd && (jbd->subscription & JABBER_SUB_PENDING ||
+	} else if(jbd && !GAIM_BUDDY_IS_ONLINE(b) &&
+			(jbd->subscription & JABBER_SUB_PENDING ||
 				!(jbd->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("<b>Status:</b> Not Authorized"));
 	}
@@ -3282,14 +3283,15 @@ static char *jabber_status_text(struct buddy *b)
 		}
 		ret = g_markup_escape_text(stripped, strlen(stripped));
 		g_free(stripped);
-	} else if(jbd && (jbd->subscription & JABBER_SUB_PENDING ||
+	} else if(jbd && !GAIM_BUDDY_IS_ONLINE(b) &&
+			(jbd->subscription & JABBER_SUB_PENDING ||
 				!(jbd->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
 	}
 	return ret;
 }
 
-static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
+static GList *jabber_buddy_menu(struct gaim_connection *gc, const char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct buddy *b = gaim_find_buddy(gc->account, who);
@@ -3330,6 +3332,15 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 		pbm->callback = jabber_unsubscribe_buddy_from_us;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
+
+		if(jbd && !GAIM_BUDDY_IS_ONLINE(b) &&
+				!(jbd->subscription & JABBER_SUB_TO)) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Re-request authorization");
+			pbm->callback = jabber_add_buddy;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		}
 	}
 
 	return m;

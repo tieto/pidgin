@@ -208,7 +208,7 @@ struct prpl
 	GList *user_splits;
 	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
 	GList *user_opts;
-	GList *(* buddy_menu)(struct gaim_connection *, char *);
+	GList *(* buddy_menu)(struct gaim_connection *, const char *);
 	GList *(* chat_info)(struct gaim_connection *);
 
 	/* All the server-related functions */
@@ -222,13 +222,13 @@ struct prpl
 	 */
 	void (* login)		(struct gaim_account *);
 	void (* close)		(struct gaim_connection *);
-	int  (* send_im)	(struct gaim_connection *, char *who, char *message,
+	int  (* send_im)	(struct gaim_connection *, const char *who, const char *message,
 						 int len, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
 	int  (* send_typing)    (struct gaim_connection *, char *name, int typing);
-	void (* get_info)	(struct gaim_connection *, char *who);
+	void (* get_info)	(struct gaim_connection *, const char *who);
 	void (* set_away)	(struct gaim_connection *, char *state, char *message);
-	void (* get_away)       (struct gaim_connection *, char *who);
+	void (* get_away)       (struct gaim_connection *, const char *who);
 	void (* set_dir)	(struct gaim_connection *, const char *first,
 							   const char *middle,
 							   const char *last,
@@ -237,7 +237,7 @@ struct prpl
 							   const char *state,
 							   const char *country,
 							   int web);
-	void (* get_dir)	(struct gaim_connection *, char *who);
+	void (* get_dir)	(struct gaim_connection *, const char *who);
 	void (* dir_search)	(struct gaim_connection *, const char *first,
 							   const char *middle,
 							   const char *last,

@@ -94,7 +94,7 @@ struct proto_actions_menu {
 
 struct proto_buddy_menu {
 	char *label;
-	void (*callback)(struct gaim_connection *, char *);
+	void (*callback)(struct gaim_connection *, const char *);
 	struct gaim_connection *gc;
 };
 

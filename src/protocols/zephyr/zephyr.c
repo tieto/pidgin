@@ -779,7 +779,7 @@ static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	return 0;
 }
 
-static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int len, int flags) {
+static int zephyr_send_im(struct gaim_connection *gc, const char *who, const char *im, int len, int flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
@@ -808,7 +808,6 @@ static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int l
 		"From: @bold($1) <$sender>\n\n$2";
 	notice.z_message_len = strlen(im) + strlen(sig) + 4;
 	notice.z_message = buf;
-	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
 	return 1;
 }
@@ -824,7 +823,7 @@ static char *zephyr_normalize(const char *orig)
 	return buf;
 }
 
-static void zephyr_zloc(struct gaim_connection *gc, char *who)
+static void zephyr_zloc(struct gaim_connection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 	
@@ -836,7 +835,7 @@ static void zephyr_zloc(struct gaim_connection *gc, char *who)
 					g_strdup(zephyr_normalize(who)));
 }
 
-static GList *zephyr_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *zephyr_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;

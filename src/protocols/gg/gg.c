@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5419 2003-04-07 23:17:27Z faceprint $
+ * $Id: gg.c 5500 2003-04-15 04:18:00Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -265,7 +265,7 @@ static GList *agg_away_states(struct gaim_connection *gc)
 }
 
 /* Enhance these functions, more options and such stuff */
-static GList *agg_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *agg_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -582,7 +582,7 @@ static void agg_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
-static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int len, int flags)
+static int agg_send_im(struct gaim_connection *gc, const char *who, const char *msg, int len, int flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	gchar *imsg;
@@ -1210,7 +1210,7 @@ static GList *agg_actions(struct gaim_connection *gc)
 	return m;
 }
 
-static void agg_get_info(struct gaim_connection *gc, char *who)
+static void agg_get_info(struct gaim_connection *gc, const char *who)
 {
 	struct agg_http *srch = g_new0(struct agg_http, 1);
 	srch->gc = gc;

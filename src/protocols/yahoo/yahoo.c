@@ -1067,7 +1067,7 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
-static void yahoo_game(struct gaim_connection *gc, char *name) {
+static void yahoo_game(struct gaim_connection *gc, const char *name) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char *game = g_hash_table_lookup(yd->games, name);
 	char *t;
@@ -1123,7 +1123,7 @@ static char *yahoo_tooltip_text(struct buddy *b)
 	return NULL;
 }
 
-static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
+static GList *yahoo_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -1190,7 +1190,7 @@ static GList *yahoo_actions(struct gaim_connection *gc) {
 	return m;
 }
 
-static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
+static int yahoo_send_im(struct gaim_connection *gc, const char *who, const char *what, int len, int flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);

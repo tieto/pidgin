@@ -204,7 +204,7 @@ void serv_get_info(struct gaim_connection *g, char *name)
 		g->prpl->get_info(g, name);
 }
 
-void serv_get_away(struct gaim_connection *g, char *name)
+void serv_get_away(struct gaim_connection *g, const char *name)
 {
 	if (g && g->prpl && g->prpl->get_away)
 		g->prpl->get_away(g, name);
@@ -557,7 +557,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids
  */
-void serv_got_im(struct gaim_connection *gc, char *name, char *message,
+void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 				 guint32 flags, time_t mtime, gint len)
 {
 	char *buffy;
@@ -566,6 +566,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	int away = 0;
 
 	struct gaim_conversation *cnv;
+
+	char *message, *name;
 
 	/*
 	 * Pay no attention to the man behind the curtain.
@@ -579,13 +581,13 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	 */
 
 	if (flags & IM_FLAG_GAIMUSER)
-		debug_printf("%s is a gaim user.\n", name);
+		debug_printf("%s is a gaim user.\n", who);
 
 	/*
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	cnv = gaim_find_conversation_with_account(name, gc->account);
+	cnv = gaim_find_conversation_with_account(who, gc->account);
 
 	/*
 	 * Plugin stuff. we pass a char ** but we don't want to pass what's
@@ -595,9 +597,9 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	 * I really don't want you to be dealing with it.
 	 */
 	if (len < 0) {
-		buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
-		strcpy(buffy, message);
-		angel = g_strdup(name);
+		buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
+		strcpy(buffy, msg);
+		angel = g_strdup(who);
 		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, &flags);
 
 		if (!buffy || !angel || plugin_return) {
@@ -610,8 +612,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 		name = angel;
 		message = buffy;
 	} else {
-		name = g_strdup(name);
-		message = g_memdup(message, len);
+		name = g_strdup(who);
+		message = g_memdup(msg, len);
 	}
 
 #if 0
@@ -638,8 +640,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	 * If you can't figure this out, stop reading right now.
 	 * "We're not worthy! We're not worthy!"
 	 */
-	if ((len < 0) && (convo_options & OPT_CONVO_SEND_LINKS))
-		linkify_text(message);
+	if ((len < 0) && (convo_options & OPT_CONVO_SEND_LINKS)) {
+		buffy = linkify_text(message);
+		g_free(message);
+		message = buffy;
+	}
 
 	/*
 	 * Um. When we call gaim_conversation_write with the message we received,
@@ -687,7 +692,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			gchar path[10];
 
 			qm = g_new0(struct queued_message, 1);
-				g_snprintf(qm->name, sizeof(qm->name), "%s", name);
+			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
 			qm->account = gc->account;
 			qm->tm = mtime;
@@ -1188,11 +1193,15 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
 	who = angel;
 	message = buffy;
 
+
+
 	buf = g_malloc(MAX(strlen(message) * 2, 8192));
 	strcpy(buf, message);
 
 	if (convo_options & OPT_CONVO_SEND_LINKS)
-		linkify_text(buf);
+		buf = linkify_text(message);
+	else
+		buf = g_strdup(message);
 
 	if (whisper)
 		w = WFLAG_WHISPER;
