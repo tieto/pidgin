@@ -60,6 +60,23 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
  *              Callbacks                          *
  ***************************************************/
 
+static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model(tv);
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
+
+	if(gtk_tree_selection_get_selected(sel, &model, &iter)){
+		GaimBlistNode *node;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
+		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
+			gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+	}
+
+
+}
+
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	GaimBlistNode *node;
 	GtkTreeIter iter;
@@ -168,20 +185,17 @@ static void gaim_gtk_blist_add_buddy_cb()
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	GtkTreeIter iter;
 	GaimBlistNode *node;
-	GValue val;
 
-	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-		node = g_value_get_pointer(&val);
-	
+	if(gtk_tree_selection_get_selected(sel, NULL, &iter)){
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
 			show_add_buddy(NULL, NULL, ((struct group*)node->parent)->name, NULL);
 		else if (GAIM_BLIST_NODE_IS_GROUP(node))
 			show_add_buddy(NULL, NULL, ((struct group*)node)->name, NULL);
-	} else {
-		show_add_buddy(NULL,NULL,NULL,NULL);
 	}
-	
+	else{
+		show_add_buddy(NULL, NULL, NULL, NULL);
+	}
 }
 
 
@@ -515,6 +529,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	button = gaim_pixbuf_button_from_stock(_("IM"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
+gtkblist->treeview);
+
 	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
