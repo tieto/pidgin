@@ -588,6 +588,10 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		}
 	} else if (isdigit(*buf)) {
 		handle_errcode(buf, TRUE);
+
+		if (atoi(buf) == 217)
+			msn_kill_switch(ms);
+
 	} else {
 		debug_printf("Unhandled message!\n");
 	}
