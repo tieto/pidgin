@@ -1,5 +1,9 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.9.12:
+	* Segfault fix for PPC/Alpha/etc machines with log(0)
+	  Thanks to Todd Cohen for this one.
+
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
 	* Another memory leak fix
