@@ -378,7 +378,8 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 			GET_NEXT(tmp);
 			user = tmp;
 			remove_chat_buddy(ms->chat, user);
-		}
+		} else
+			msn_kill_switch(ms);
 	} else if (!g_strncasecmp(buf, "CAL", 3)) {
 	} else if (!g_strncasecmp(buf, "IRO", 3)) {
 		char *tot, *user, *tmp = buf;
@@ -426,7 +427,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
-		char *msg, *content, *skiphead, *utf, *final;
+		char *msg, *content, *utf;
 		int len;
 
 		GET_NEXT(tmp);
@@ -448,32 +449,32 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 		}
 
 		content = strstr(msg, "Content-Type: ");
-		if (content) {
-			if (g_strncasecmp(content, "Content-Type: text/plain",
-					    strlen("Content-Type: text/plain"))) {
-				g_free(msg);
-				return;
-			}
-		}
-
-		skiphead = strstr(msg, "\r\n\r\n");
-		if (!skiphead || !skiphead[4]) {
+		if (!content) {
 			g_free(msg);
 			return;
 		}
-		skiphead += 4;
-		utf = utf8_to_str(skiphead);
-		len = MAX(strlen(utf) + 1, BUF_LEN);
-		final = g_malloc(len);
-		g_snprintf(final, len, "%s", utf);
-		g_free(utf);
+		if (!g_strncasecmp(content, "Content-Type: text/plain",
+				     strlen("Content-Type: text/plain"))) {
+			char *final, *skiphead;
+			skiphead = strstr(msg, "\r\n\r\n");
+			if (!skiphead || !skiphead[4]) {
+				g_free(msg);
+				return;
+			}
+			skiphead += 4;
+			utf = utf8_to_str(skiphead);
+			len = MAX(strlen(utf) + 1, BUF_LEN);
+			final = g_malloc(len);
+			g_snprintf(final, len, "%s", utf);
+			g_free(utf);
 
-		if (ms->chat)
-			serv_got_chat_in(gc, ms->chat->id, user, 0, final, time(NULL));
-		else
-			serv_got_im(gc, user, final, 0, time(NULL));
+			if (ms->chat)
+				serv_got_chat_in(gc, ms->chat->id, user, 0, final, time(NULL));
+			else
+				serv_got_im(gc, user, final, 0, time(NULL));
 
-		g_free(final);
+			g_free(final);
+		}
 		g_free(msg);
 	} else if (!g_strncasecmp(buf, "NAK", 3)) {
 		do_error_dialog("A message may not have been received.", "MSN Error");
