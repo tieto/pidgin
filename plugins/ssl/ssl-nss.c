@@ -20,14 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
+#include "debug.h"
 #include "plugin.h"
+#include "sslconn.h"
 
 #define SSL_NSS_PLUGIN_ID "ssl-nss"
 
 #ifdef HAVE_NSS
-
-#include "debug.h"
-#include "sslconn.h"
 
 #include <nspr.h>
 #include <private/pprio.h>

@@ -20,14 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
+#include "debug.h"
 #include "plugin.h"
+#include "sslconn.h"
 
 #define SSL_GNUTLS_PLUGIN_ID "ssl-gnutls"
 
 #ifdef HAVE_GNUTLS
-
-#include "debug.h"
-#include "sslconn.h"
 
 #include <gnutls/gnutls.h>
 
