@@ -49,6 +49,7 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "jabber.h"
+#include "proxy.h"
 
 #include "pixmaps/available.xpm"
 #include "pixmaps/available-away.xpm"
@@ -72,6 +73,12 @@
 
 #define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
+
+#define USEROPT_PROXYSERV 2
+#define USEROPT_PROXYPORT 3
+#define USEROPT_PROXYTYPE 4
+#define USEROPT_USER      5
+#define USEROPT_PASS      6
 
 typedef struct gjconn_struct {
 	/* Core structure */
@@ -105,9 +112,11 @@ static void gjab_state_handler(gjconn j, gjconn_state_h h);
 static void gjab_packet_handler(gjconn j, gjconn_packet_h h);
 static void gjab_start(gjconn j);
 static void gjab_stop(gjconn j);
+/*
 static int gjab_getfd(gjconn j);
 static jid gjab_getjid(gjconn j);
 static char *gjab_getsid(gjconn j);
+*/
 static char *gjab_getid(gjconn j);
 static void gjab_send(gjconn j, xmlnode x);
 static void gjab_send_raw(gjconn j, const char *str);
@@ -226,6 +235,7 @@ static void gjab_stop(gjconn j)
 	j->parser = NULL;
 }
 
+/*
 static int gjab_getfd(gjconn j)
 {
 	if (j)
@@ -249,6 +259,7 @@ static char *gjab_getsid(gjconn j)
 	else
 		return NULL;
 }
+*/
 
 static char *gjab_getid(gjconn j)
 {
@@ -394,6 +405,14 @@ static void endElement(void *userdata, const char *name)
 	j->current = x;
 }
 
+static void jabber_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)data;
+	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
+
+	gjab_recv(jd->jc);
+}
+
 static void charData(void *userdata, const char *s, int slen)
 {
 	gjconn j = (gjconn) userdata;
@@ -402,29 +421,26 @@ static void charData(void *userdata, const char *s, int slen)
 		xmlnode_insert_cdata(j->current, s, slen);
 }
 
-static void gjab_start(gjconn j)
+static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
 {
 	xmlnode x;
 	char *t, *t2;
+	gjconn j = data;
+	struct gaim_connection *gc;
 
-	if (!j || j->state != JCONN_STATE_OFF)
-		return;
-
-	j->parser = XML_ParserCreate(NULL);
-	XML_SetUserData(j->parser, (void *)j);
-	XML_SetElementHandler(j->parser, startElement, endElement);
-	XML_SetCharacterDataHandler(j->parser, charData);
-
-	j->fd = make_netsocket(5222, j->user->server, NETSOCKET_CLIENT);
-	if (j->fd < 0) {
+	if (source == -1) {
 		STATE_EVT(JCONN_STATE_OFF)
-		    return;
+		return;
 	}
+
+	if (j->fd != source)
+		j->fd = source;
+
 	j->state = JCONN_STATE_CONNECTED;
 	STATE_EVT(JCONN_STATE_CONNECTED)
 
-	    /* start stream */
-	    x = jutil_header(NS_CLIENT, j->user->server);
+	/* start stream */
+	x = jutil_header(NS_CLIENT, j->user->server);
 	t = xmlnode2str(x);
 	/* this is ugly, we can create the string here instead of jutil_header */
 	/* what do you think about it? -madcat */
@@ -436,15 +452,35 @@ static void gjab_start(gjconn j)
 	xmlnode_free(x);
 
 	j->state = JCONN_STATE_ON;
-	STATE_EVT(JCONN_STATE_ON)
+	STATE_EVT(JCONN_STATE_ON);
+
+	gc = GJ_GC(j);
+	gc->inpa = gdk_input_add(j->fd, GDK_INPUT_READ, jabber_callback, gc);
 }
 
-static void jabber_callback(gpointer data, gint source, GdkInputCondition condition)
+static void gjab_start(gjconn j)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)data;
-	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
+	struct aim_user *user;
 
-	gjab_recv(jd->jc);
+	if (!j || j->state != JCONN_STATE_OFF)
+		return;
+
+	user = GJ_GC(j)->user;
+
+	j->parser = XML_ParserCreate(NULL);
+	XML_SetUserData(j->parser, (void *)j);
+	XML_SetElementHandler(j->parser, startElement, endElement);
+	XML_SetCharacterDataHandler(j->parser, charData);
+
+	j->fd = proxy_connect(j->user->server, 5222,
+			user->proto_opt[USEROPT_PROXYSERV], atoi(user->proto_opt[USEROPT_PROXYPORT]),
+			atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+			user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+			gjab_connected, j);
+	if (j->fd < 0) {
+		STATE_EVT(JCONN_STATE_OFF)
+		return;
+	}
 }
 
 static struct conversation *find_chat(struct gaim_connection *gc, char *name)
@@ -588,7 +624,6 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 
 			serv_got_chat_invite(GJ_GC(j), room, 0, from, msg);
 		} else if (msg) {
-			struct conversation *b;
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
 			if ((jc = find_existing_chat(GJ_GC(j), p->from)) != NULL) /* whisper */
@@ -637,7 +672,6 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		if (!jc) {
 			/* we're not in this chat. are we supposed to be? */
 			struct jabber_data *jd = GJ_GC(j)->proto_data;
-			GSList *pc = jd->pending_chats;
 			if ((jc = find_pending_chat(GJ_GC(j), p->from)) != NULL) {
 				/* yes, we're supposed to be. so now we are. */
 				jc->b = serv_got_joined_chat(GJ_GC(j), i++, p->from->user);
@@ -677,12 +711,12 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 static void jabber_handlepresence(gjconn j, jpacket p)
 {
 	char *to, *from, *type;
-	struct buddy *b;
+	struct buddy *b = NULL;
 	jid who;
 	char *buddy;
 	xmlnode y;
 	char *show;
-	int state;
+	int state = UC_NORMAL;
 	GSList *resources;
 	char *res;
 	struct conversation *cnv = NULL;
@@ -839,7 +873,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 		if ((g = xmlnode_get_firstchild(x))) {
 			while (g) {
 				if (strncasecmp(xmlnode_get_name(g), "group", 5) == 0) {
-					struct buddy *b;
+					struct buddy *b = NULL;
 					char *groupname, *buddyname;
 
 					if (who->user == NULL) {
@@ -945,7 +979,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 		gjab_reqroster(j);
 	} else {
 		xmlnode xerr;
-		char *errmsg = NULL, *tmp;
+		char *errmsg = NULL;
 		int errcode = 0;
 
 		debug_printf("auth failed\n");
@@ -996,12 +1030,12 @@ static void jabber_handleversion(gjconn j, xmlnode iqnode) {
 static void jabber_handletime(gjconn j, xmlnode iqnode) {
 	xmlnode querynode, x;
 	char *id, *from;
-	time_t *now_t; 
+	time_t now_t; 
 	struct tm *now;
 	char buf[1024];
 
-	time(now_t);
-	now = localtime(now_t);
+	time(&now_t);
+	now = localtime(&now_t);
 
 	id = xmlnode_get_attrib(iqnode, "id");
 	from = xmlnode_get_attrib(iqnode, "from");
@@ -1038,7 +1072,7 @@ static void jabber_handlelast(gjconn j, xmlnode iqnode) {
 	xmlnode_put_attrib(x, "to", from);
 	xmlnode_put_attrib(x, "id", id);
 	querytag = xmlnode_get_tag(x, "query");
-	g_snprintf(idle_time, sizeof idle_time, "%i", jd->idle ? time(NULL) - jd->idle : 0);
+	g_snprintf(idle_time, sizeof idle_time, "%ld", jd->idle ? time(NULL) - jd->idle : 0);
 	xmlnode_put_attrib(querytag, "seconds", idle_time);
 
 	gjab_send(j, x);
@@ -1065,7 +1099,6 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		   	xmlnode querynode;
-			char *xmlns, *from;
 			querynode = xmlnode_get_tag(p->x, "query");
 		   	if(NSCHECK(querynode, NS_VERSION)) {
 			   	jabber_handleversion(j, p->x);
@@ -1168,12 +1201,6 @@ static void jabber_login(struct aim_user *user)
 	gjab_state_handler(jd->jc, jabber_handlestate);
 	gjab_packet_handler(jd->jc, jabber_handlepacket);
 	gjab_start(jd->jc);
-
-	if (user->gc && gc->proto_data)
-		gc->inpa = gdk_input_add(jd->jc->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				jabber_callback, gc);
-
-	return;
 }
 
 static gboolean jabber_destroy_hash(gpointer key, gpointer val, gpointer data) {
@@ -1304,7 +1331,7 @@ static char **jabber_list_icon(int uc)
 
 static void jabber_join_chat(struct gaim_connection *gc, int exch, char *name)
 {
-	xmlnode x, y;
+	xmlnode x;
 	char *realwho;
 	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
 	GSList *pc = ((struct jabber_data *)gc->proto_data)->pending_chats;
@@ -1425,7 +1452,6 @@ static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	GSList *bcs = gc->buddy_chats;
 	struct conversation *b;
 	struct jabber_data *jd = gc->proto_data;
-	gjconn j = jd->jc;
 	xmlnode x, y;
 	struct jabber_chat *jc;
 	char *chatname;
@@ -1470,7 +1496,6 @@ static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, c
 	GSList *bcs = gc->buddy_chats;
 	struct conversation *b;
 	struct jabber_data *jd = gc->proto_data;
-	gjconn j = jd->jc;
 	xmlnode x, y;
 	struct jabber_chat *jc;
 	char *chatname;
@@ -1648,7 +1673,7 @@ static void regpacket(jconn j, jpacket p)
 				} else if (here == 1) {
 					x = jutil_iqnew(JPACKET__SET, NS_AUTH);
 					here = 2;
-				} else if (here == 0) {
+				} else { /* here == 0 */
 					here = 1;
 					x = jutil_iqnew(JPACKET__GET, NS_AUTH);
 				}
@@ -1794,10 +1819,6 @@ static void jabber_info(GtkObject *obj, char *who) {
 
 static void jabber_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	GtkWidget *button;
-	char buf[1024];
-	struct buddy *b = find_buddy(gc, who);
-	struct jabber_data *jd = gc->proto_data;
-	char *status;
 	
 	button = gtk_menu_item_new_with_label(_("Get Info"));
 	gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -1874,6 +1895,167 @@ static void jabber_set_idle(struct gaim_connection *gc, int idle) {
    	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
+static void jabber_print_option(GtkEntry *entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_PROXYSERV) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYSERV],
+			sizeof(user->proto_opt[USEROPT_PROXYSERV]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYPORT) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
+			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_USER) {
+		g_snprintf(user->proto_opt[USEROPT_USER],
+			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PASS) {
+		g_snprintf(user->proto_opt[USEROPT_PASS],
+			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
+	}
+}
+
+static void jabber_print_optionrad(GtkRadioButton *entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
+			sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
+}
+
+static void jabber_user_opts(GtkWidget *book, struct aim_user *user)
+{
+	/* so here, we create the new notebook page */
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *first, *opt;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Jabber Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(jabber_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(jabber_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(jabber_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(jabber_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYSERV);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYSERV][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYSERV]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYSERV]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy User:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_USER][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Password:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (user->proto_opt[USEROPT_PASS][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
+	}
+	gtk_widget_show(entry);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret)
@@ -1885,7 +2067,7 @@ void Jabber_init(struct prpl *ret)
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;
 	ret->buddy_menu = jabber_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = jabber_user_opts;
 	ret->draw_new_user = jabber_draw_new_user;
 	ret->do_new_user = jabber_do_new_user;
 	ret->login = jabber_login;
