@@ -1308,7 +1308,7 @@ faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
  * suspicious.
  *
  */
-static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, struct aim_incomingim_ch1_args *args)
+static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinfo, fu8_t *data, int len, struct aim_incomingim_ch1_args *args)
 {
 	/* Should this be ASCII -> UNICODE -> Custom */
 	static const fu16_t charsetpri[] = {
@@ -1334,7 +1334,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 		msglen = aimbs_get16(&mbs);
 		if (msglen > aim_bstream_empty(&mbs))
 		{
-			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.");
+			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
 			break;
 		}
 
@@ -1474,7 +1474,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			 * The rest of the TLV contains one or more message
 			 * blocks...
 			 */
-			incomingim_ch1_parsemsgs(sess, bs->data + bs->offset /* XXX evil!!! */, length - 2 - 2 - args.featureslen, &args);
+			incomingim_ch1_parsemsgs(sess, userinfo, bs->data + bs->offset /* XXX evil!!! */, length - 2 - 2 - args.featureslen, &args);
 
 		} else if (type == 0x0003) { /* Server Ack Requested */
 

@@ -13,6 +13,7 @@
 
 #include <ctype.h>
 
+#ifdef USE_XOR_FOR_ICQ
 /**
  * Encode a password using old XOR method
  *
@@ -52,6 +53,7 @@ static int aim_encode_password(const char *password, fu8_t *encoded)
 
 	return 0;
 }
+#endif
 
 #ifdef USE_OLD_MD5
 static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
@@ -131,6 +133,7 @@ faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16
 	return 0;
 }
 
+#ifdef USE_XOR_FOR_ICQ
 /*
  * Part two of the ICQ hack.  Note the ignoring of the key.
  */
@@ -178,6 +181,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 
 	return 0;
 }
+#endif
 
 /*
  * Subtype 0x0002
@@ -218,9 +222,11 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	if (!ci || !sn || !password)
 		return -EINVAL;
 
+#ifdef USE_XOR_FOR_ICQ
 	/* If we're signing on an ICQ account then use the older, XOR login method */
 	if (isdigit(sn[0]))
 		return goddamnicq2(sess, conn, sn, password, ci);
+#endif
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
@@ -396,6 +402,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	return ret;
 }
 
+#ifdef USE_XOR_FOR_ICQ
 /*
  * Subtype 0x0007 (kind of) - Send a fake type 0x0007 SNAC to the client
  *
@@ -443,6 +450,7 @@ static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 
 	return 0;
 }
+#endif
 
 /*
  * Subtype 0x0006
@@ -463,8 +471,10 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
+#ifdef USE_XOR_FOR_ICQ
 	if (isdigit(sn[0]))
 		return goddamnicq(sess, conn, sn);
+#endif
 
 	aim_sendflapver(sess, conn);
 
