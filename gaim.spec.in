@@ -18,11 +18,19 @@ Provides:   libgaim-remote0
 Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
 BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
 %endif
+%{?_with_silc:BuildRequires: libsilc-devel}
+
+%if %{?_with_silc:1}%{!?_with_silc:0}
+%package silc
+Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
+Group:      Applications/Internet
+Requires:   gaim = 1:%{version}
+%endif
 
 %package devel
-Summary: Development headers, documentation, and libraries for Gaim.
-Group: Applications/Internet
-Requires: gaim = %{epoch}:%{version}
+Summary:    Development headers, documentation, and libraries for Gaim.
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
 
 %description
 Gaim allows you to talk to anyone using a variety of messaging 
@@ -37,8 +45,12 @@ unique features, such as perl scripting, TCL scripting and C plugins.
 Gaim is NOT affiliated with or endorsed by America Online, Inc., 
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
-%description devel
+%if %{?_with_silc:1}%{!?_with_silc:0}
+%description silc
+SILC (Secure Internet Live Conferencing) plugin for Gaim
+%endif
 
+%description devel
 The gaim-devel package contains the header files, developer
 documentation, and libraries required for development of gaim scripts
 and plugins.
@@ -54,7 +66,10 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --libdir=%{_libdir} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
-                                    --with-perl-lib=%{buildroot}%{_prefix}
+                                    --with-perl-lib=%{buildroot}%{_prefix} \
+                                    %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
+                                    %{?_with_silc:--with-silc-libs=%{_libdir}/silc}
+
 make %{?_smp_mflags}
 
 %install
@@ -65,12 +80,16 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 
-rm -f $RPM_BUILD_ROOT/%{_libdir}/perl5/*/*/perllocal.pod
+rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/*/*/perllocal.pod
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
+find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
+	sed "s@^$RPM_BUILD_ROOT@@g" | \
+	grep -v libsilcgaim.so > %{name}-%{version}-coreplugins
 
 %clean
 rm -rf %{buildroot}
 
-%files
+%files -f %{name}-%{version}-coreplugins
 %defattr(-, root, root)
 
 %doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS COPYRIGHT
@@ -79,7 +98,6 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
-%attr(755, root, root) %{_libdir}/gaim/*
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
 %attr(755, root, root) %{_libdir}/perl5
 
@@ -90,7 +108,15 @@ rm -rf %{buildroot}
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 
+%if %{?_with_silc:1}%{!?_with_silc:0}
+%files silc
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libsilcgaim.*
+%endif
+
 %files devel
+%defattr(-, root, root)
 
 %doc plugins/HOWTO
 %doc HACKING PROGRAMMING_NOTES
