@@ -404,6 +404,7 @@ static void
 __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GaimAccountOption *option;
+	GaimAccount *account;
 	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *check;
@@ -426,6 +427,8 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		return;
 	}
 
+	account = dialog->account;
+
 	/* Build the protocol options frame. */
 	g_snprintf(buf, sizeof(buf), _("%s Options"), dialog->plugin->info->name);
 
@@ -446,10 +449,13 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		switch (gaim_account_option_get_type(option)) {
 			case GAIM_PREF_BOOLEAN:
-				if (dialog->account == NULL)
+				if (account == NULL ||
+					gaim_account_get_protocol(account) != dialog->protocol) {
+
 					bool_value = gaim_account_option_get_default_bool(option);
+				}
 				else
-					bool_value = gaim_account_get_bool(dialog->account,
+					bool_value = gaim_account_get_bool(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_bool(option));
 
@@ -464,10 +470,13 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_INT:
-				if (dialog->account == NULL)
+				if (account == NULL ||
+					gaim_account_get_protocol(account) != dialog->protocol) {
+
 					int_value = gaim_account_option_get_default_int(option);
+					}
 				else
-					int_value = gaim_account_get_int(dialog->account,
+					int_value = gaim_account_get_int(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_int(option));
 
@@ -485,10 +494,13 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_STRING:
-				if (dialog->account == NULL)
+				if (account == NULL ||
+					gaim_account_get_protocol(account) != dialog->protocol) {
+
 					str_value = gaim_account_option_get_default_string(option);
+				}
 				else
-					str_value = gaim_account_get_string(dialog->account,
+					str_value = gaim_account_get_string(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_string(option));
 
