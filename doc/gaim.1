@@ -1,0 +1,163 @@
+.\" Copyright (c) 2000, Dennis Ristuccia <dennis@vertex.978.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH GAIM 1
+.SH NAME
+gaim v0.9.16 \- Instant Messaging client
+.SH SYNOPSIS
+.TP 5
+\fBgaim\fR
+.SH DESCRIPTION
+.PP
+\fBgaim\fR is based on the published Toc protocol from AOL, writen in GTK.
+
+The following sections describe how to use \fBgaim\fR.
+.TP
+\fIAccounts\fR
+How to use your online messenger account.
+.TP
+\fIBuddies list\fR
+How to use and edit your Buddy list.
+.TP
+\fICommunication\fR
+How to send instant messages and files. (File transfer not yet available)
+.TP
+\fIPreferences\fR
+What the preferences do.
+.TP
+\fIPlugins\fR
+Plugin options.
+.TP
+\fISCREEN NAME\fR
+A \fBScreen Name\fR is how a person can be contacted once signed on.
+.SH ACCOUNTS
+The first time you start \fBgaim\fR, you will be presented
+with a dialog box.  Enter your
+AIM screen name \fScreen Name\fR field and 
+enter the password in the \fIPassword\fR field.  Gaim will add multiple accounts,
+by simple typing in another screen name in the \fScreen Name\fR field. You must use existing accounts, because 
+\fBgaim\fR does not support creating accounts.  
+.SH Buddies LIST
+The \fBgaim\fR Buddy list contains \fIGroups\fB,
+and \fIBuddies\fR.
+.PP
+You may export Buddy lists from \fBgaim\fR by using the \fBExport Buddy List\fR
+option under \fBFile\fR.
+.PP
+You may also import saved Buddy lists from \fBgaim\fR by using the \fBImport
+Buddy List\fR option under \fBFile\fR.
+.PP
+To add a new Buddy, under the \fIEdit Buddies\fR tab,
+click on the \fIAdd\fR button.  In the \fIAdd\fR dialog: Enter their online Screen
+Name, Select the group you would like them to be a member of in the \fITo Group\fR
+field. 
+.PP
+.PP
+To create a new group, add a new account as above, and instead of
+selecting an existing group in the \fIGroup\fR field, enter the name
+of the group you wish to create.
+.PP
+To delete a Group, or Buddy, click on its name in the
+\fIEdit Buddies\fR tab, then click on the \fIRemove\fR button.
+.SH COMMUNICATION
+The \fIOnline\fR tab shows your Buddy list of online Buddies. Next to each
+Screen name is a icon indicating if a Buddy is a \fINormal AIM User, AOL User, Trial AIM User,
+Administrator,\fR or \fIAway\fR.
+.SS Messages
+To send a message to a Buddy, double
+click on the Buddy under the \fIOnline\fR tab,
+and type your message in the field at the bottom of the conversation
+window.  Messages received from a Buddy will use the existing
+conversation window with the Buddy or will open a new one if it does
+not exist.  If the \fIIgnore unknown users\fR option is selected, messages
+from an unknown person will be ignored.  Otherwise, a conversation window with an \fIAdd\fR button, which you can click on to 
+add them to your Buddy list.
+.SS File Transfer
+Currently only files can be recieve. A option to Send files will added in
+later versions.
+.SH PREFERENCES
+The preferences are accessed by selecting \fIPreferences\fR from the
+\fITools\fR menu.
+.SH PLUGINS
+The plugins are accessed by selecting \fIPreferences\fR from the
+\fITools\fR menu.
+.PP
+Plugin files are to be placed in $(HOME)/.gaim/plugins/ \- To load a plugin
+click on the \fILoad Plugin\fR button and select the plugin desired
+.PP
+To unload a plugin select which plugin you want to remove and click the
+\fIUnload Plugin\fR button.
+.SH Permit
+To add a user to Permit/Deny them, select the \fIPermit\fR tab and click on
+the add button. Type the \fIScreen Name\fR of the desired person in the
+\fBAdd\fR field, and select Permit/Deny.
+.PP
+To remove a \fIScreen Name\fR select the \fIScreen Name\fR and click on the
+\fIRemove\fR button.
+.SH FILES
+$(HOME)/.gaimrc \- Gaim Config File
+.br
+$(HOME)/.gaim/SCREENNAME/ \- SCREENNAME's conversation logs
+.br
+$(HOME)/.gaim/plugins/ \- Gaim Plugin Files
+.SH BUGS
+Known bugs are at http://sourceforge.net/bugs/?group_id=235
+.SH BUG REPORTS
+If you find a bug in \fBgaim\fR, please submit a bug form at
+http://sourceforge.net/bugs/?group_id=235
+.PP
+Before sending a bug report, please verify that you have the latest 
+version of \fBgaim\fR.  Many bugs (major and minor) are fixed 
+at each release, and if yours is out of date, the problem may already 
+have been solved.
+.SH SEE ALSO
+\fIhttp://www.marko.net/gaim/\fR
+.SH LICENSE
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+.PP
+This program is distributed in the hope that it will be useful, but
+\fBWITHOUT ANY WARRANTY\fR; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License 
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple PLace, Suite 330, Boston, MA  02111-1307  USA
+.SH AUTHORS
+The authors of \fBgaim\fR are:
+.PP
+ Rob Flynn <rob@linuxpimps.com> \- IM: RobFlynn
+.br
+ Eric Warmenhoven <warmenhoven@yahoo.com> \- IM: EWarmenhoven
+.br
+ Jim Duchek <jim@linuxpimps.com> \- IM: Zilding
+.br
+ Mark Spencer <markster@marko.net> \- IM: Markster97
+.br
+ Jeramey A. Crawford <jac@alfalfa-scooter.net> \- IM: FlynOrange
+.PP
+
+The manpage was written by Dennis Ristuccia <dennis@vertex.978.org> IM: D3nnisR
+
+.\" WOO!
