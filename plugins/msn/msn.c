@@ -87,6 +87,29 @@ GSList *msn_connections = NULL;
 unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
 
+void free_msn_conn(struct msn_conn *mc)
+{
+	if (mc->user)
+		free(mc->user);
+
+	if (mc->secret)
+		free(mc->secret);
+
+	if (mc->session)
+		free(mc->session);
+
+	if (mc->txqueue)
+		free(mc->txqueue);
+
+	gdk_input_remove(mc->inpa);
+	close(mc->fd);
+
+	msn_connections = g_slist_remove(msn_connections, mc);
+
+	g_free(mc);
+}
+
+
 struct msn_conn *find_msn_conn_by_user(gchar * user)
 {
 	struct msn_conn *mc;
@@ -200,10 +223,9 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 	bzero(buf, MSN_BUF_LEN);
 	do 
 	{
-		if (read(source, buf + i, 1) < 0)
+		if (!read(source, buf + i, 1))
 		{
-			hide_login_progress(gc, "Read error");
-			signoff(gc);
+			free_msn_conn(mc);
 			return;
 		}
 
@@ -262,10 +284,16 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		
 	do 
 	{
-		if (read(source, buf + i, 1) < 0)
+		if (!read(source, buf + i, 1))
 		{
-			hide_login_progress(gc, "Read error");
-			signoff(gc);
+			if (md->fd == source)
+			{
+				hide_login_progress(gc, "Read error");
+				signoff(gc);
+			}
+
+			close(source);
+			
 			return;
 		}
 
@@ -516,7 +544,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		
 	do 
 	{
-		if (read(source, buf + i, 1) < 0)
+		if (!read(source, buf + i, 1))
 		{
 			hide_login_progress(gc, "Read error");
 			signoff(gc);
@@ -568,25 +596,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		if (mc)
 		{
 			/* Looks like we need to close up some stuff :-) */
-
-			if (mc->user)
-				free(mc->user);
-
-			if (mc->secret)
-				free(mc->secret);
-
-			if (mc->session)
-				free(mc->session);
-
-			if (mc->txqueue)
-				free(mc->txqueue);
-
-			gdk_input_remove(mc->inpa);
-			close(mc->fd);
-
-			msn_connections = g_slist_remove(msn_connections, mc);
-
-			g_free(mc);
+			free_msn_conn(mc);
 		}
 		
 		g_strfreev(res);	
