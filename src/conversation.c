@@ -813,10 +813,10 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 		win = gaim_conv_window_new();
 
+		gaim_conv_window_add_conversation(win, conv);
+
 		/* Ensure the window is visible. */
 		gaim_conv_window_show(win);
-
-		gaim_conv_window_add_conversation(win, conv);
 	}
 	else
 	{
@@ -2358,8 +2358,9 @@ conv_placement_last_created_win(GaimConversation *conv)
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
-		gaim_conv_window_show(win);
+
 		gaim_conv_window_add_conversation(win, conv);
+		gaim_conv_window_show(win);
 	}
 	else
 		gaim_conv_window_add_conversation(win, conv);
@@ -2375,8 +2376,9 @@ conv_placement_last_created_win_type(GaimConversation *conv)
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
-		gaim_conv_window_show(win);
+
 		gaim_conv_window_add_conversation(win, conv);
+		gaim_conv_window_show(win);
 	}
 	else
 		gaim_conv_window_add_conversation(win, conv);

@@ -4438,7 +4438,9 @@ gaim_gtk_new_window(GaimConvWindow *win)
 	/* Create the window. */
 	gtkwin->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkwin->window), "conversation");
+	gtk_window_set_resizable(GTK_WINDOW(gtkwin->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
+	GTK_WINDOW(gtkwin->window)->allow_shrink = TRUE;
 
 	g_signal_connect(G_OBJECT(gtkwin->window), "delete_event",
 					 G_CALLBACK(close_win_cb), win);
