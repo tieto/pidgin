@@ -392,12 +392,12 @@ static void trap_gdb_bug()
 
 static void cope_with_gdb_brokenness()
 {
+#ifdef __linux__
 	static gboolean already_done = FALSE;
 	char s[256], e[512];
 	int n;
 	pid_t ppid;
 
-#ifdef __linux__
 	if(already_done)
 		return;
 	already_done = TRUE;
