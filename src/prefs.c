@@ -2569,10 +2569,8 @@ static void set_blist_option(GtkWidget *w, int option)
 	if (!blist)
 		return;
 
-	if (option == OPT_BLIST_NO_BUTTONS) {
+	if (option == OPT_BLIST_NO_BUTTONS)
 		build_imchat_box(!(blist_options & OPT_BLIST_NO_BUTTONS));
-		update_button_pix();
-	}
 
 	if (option == OPT_BLIST_SHOW_GRPNUM)
 		update_num_groups();
@@ -2580,7 +2578,7 @@ static void set_blist_option(GtkWidget *w, int option)
 	if (option == OPT_BLIST_NO_MT_GRP)
 		toggle_show_empty_groups();
 
-	if (option == OPT_BLIST_SHOW_BUTTON_XPM)
+	if ((option == OPT_BLIST_SHOW_BUTTON_XPM) || (option == OPT_BLIST_NO_BUTTONS))
 		update_button_pix();
 
 	if (option == OPT_BLIST_SHOW_PIXMAPS)
