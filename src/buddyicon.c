@@ -205,6 +205,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	char *filename;
 	const char *old_icon;
 	size_t len;
+	struct stat st;
 	FILE *file = NULL;
 
 	g_return_if_fail(icon  != NULL);
@@ -219,8 +220,6 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	dirname  = gaim_buddy_icons_get_cache_dir();
 	filename = g_build_filename(dirname, random, NULL);
 	old_icon = gaim_blist_node_get_string((GaimBlistNode*)buddy, "buddy_icon");
-
-	g_free(random);
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
 	{
@@ -240,12 +239,23 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 		fclose(file);
 	}
 
-	if (old_icon != NULL)
-		unlink(old_icon);
-
-	gaim_blist_node_set_string((GaimBlistNode *)buddy, "buddy_icon", filename);
-
 	g_free(filename);
+
+	if (old_icon != NULL)
+	{
+		if(!stat(old_icon, &st))
+			unlink(old_icon);
+		else {
+			filename = g_build_filename(dirname, random, NULL);
+			if(!stat(filename, &st))
+				unlink(filename);
+			g_free(filename);
+		}
+	}
+
+	gaim_blist_node_set_string((GaimBlistNode *)buddy, "buddy_icon", random);
+
+	g_free(random);
 }
 
 void
@@ -345,6 +355,7 @@ gaim_buddy_icons_find(GaimAccount *account, const char *username)
 {
 	GHashTable *icon_cache;
 	GaimBuddyIcon *ret = NULL;
+	char *filename = NULL;
 
 	g_return_val_if_fail(account  != NULL, NULL);
 	g_return_val_if_fail(username != NULL, NULL);
@@ -362,8 +373,13 @@ gaim_buddy_icons_find(GaimAccount *account, const char *username)
 		if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
 			return NULL;
 
-		if (!stat(file, &st)) {
-			FILE *f = fopen(file, "rb");
+		if (!stat(file, &st))
+			filename = g_strdup(file);
+		else
+			filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), file, NULL);
+
+		if (!stat(filename, &st)) {
+			FILE *f = fopen(filename, "rb");
 			if (f) {
 				char *data = g_malloc(st.st_size);
 				fread(data, 1, st.st_size, f);
@@ -373,9 +389,11 @@ gaim_buddy_icons_find(GaimAccount *account, const char *username)
 				gaim_buddy_icon_set_data(ret, data, st.st_size);
 				gaim_buddy_icon_unref(ret);
 				g_free(data);
+				g_free(filename);
 				return ret;
 			}
 		}
+		g_free(filename);
 	}
 
 	return ret;
