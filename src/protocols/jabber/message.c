@@ -199,7 +199,7 @@ static void handle_groupchat_invite(JabberMessage *jm)
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	g_hash_table_replace(components, g_strdup("room"), g_strdup(jid->node));
-	g_hash_table_replace(components, g_strdup("server"), g_strdup(jid->node));
+	g_hash_table_replace(components, g_strdup("server"), g_strdup(jid->domain));
 	g_hash_table_replace(components, g_strdup("handle"),
 			g_strdup(jm->js->user->node));
 	g_hash_table_replace(components, g_strdup("password"),
