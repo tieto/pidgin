@@ -219,14 +219,14 @@ GtkTreePath *theme_refresh_theme_list()
 	GdkPixbuf *pixbuf;
 	GSList *themes;
 	GtkTreeIter iter;
-	GtkTreePath *path;
+	GtkTreePath *path = NULL;
 	int ind = 0;
 
 
 	smiley_theme_probe();
-	
+
 	if (!smiley_themes)
-		return;
+		return NULL;
 
 	themes = smiley_themes;
 
@@ -239,7 +239,7 @@ GtkTreePath *theme_refresh_theme_list()
 						    theme->name, theme->author, theme->desc);; 
 		gtk_list_store_append (smiley_theme_store, &iter);
 		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
-		
+
 		gtk_list_store_set(smiley_theme_store, &iter,
 				   0, pixbuf,
 				   1, description,
@@ -307,9 +307,8 @@ static void theme_got_url(gpointer data, char *themedata, unsigned long len) {
 	g_free(path);
 }
 
-gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
+void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
 				guint info, guint t, gpointer data) {
-	GList *dcl = dc->targets;
 	gchar *name = sd->data;
 
 	if ((sd->length >= 0) && (sd->format == 8)) {
@@ -324,7 +323,7 @@ gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
 			gchar *tail;
-			
+
 			if ((tail = strrchr(name, '.')) == NULL)
 				return;
 
@@ -345,15 +344,11 @@ gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 GtkWidget *theme_page() {
 	GtkWidget *ret;
 	GtkWidget *sw;
-	GSList *themes;
-	GtkTreeIter iter;
 	GtkWidget *view;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreePath *path = NULL;
-	GdkPixbuf *pixbuf;
-	int ind =0;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 1, 0},{"STRING", 2, 0}};
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -377,9 +372,11 @@ GtkWidget *theme_page() {
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-	
-	gtk_tree_selection_select_path(sel, path);
-	gtk_tree_path_free(path);
+
+	if(path) {
+		gtk_tree_selection_select_path(sel, path);
+		gtk_tree_path_free(path);
+	}
 
 	col = gtk_tree_view_column_new_with_attributes ("Icon",
 							rend,
