@@ -28,7 +28,7 @@
 
 typedef struct
 {
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	int type;           /* c */
 

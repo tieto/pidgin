@@ -125,17 +125,26 @@ _remove_user_fnc(gpointer key, gpointer value, gpointer user_data)
 static void
 __clear_user_list(TrepiaSession *session)
 {
-	GaimBlistNode *gnode, *bnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		bnode = gnode->child;
-		while(bnode) {
-			struct buddy *buddy = (struct buddy *)bnode;
-			if(GAIM_BLIST_NODE_IS_BUDDY(bnode) &&
-					buddy->account == session->gc->account) {
-				bnode = bnode->next;
-				gaim_blist_remove_buddy(buddy);
+		cnode = gnode->child;
+
+		while(cnode) {
+			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				bnode = cnode->child;
+				cnode = cnode->next;
+				while(bnode) {
+					GaimBuddy *buddy = (GaimBuddy *)bnode;
+					if(GAIM_BLIST_NODE_IS_BUDDY(bnode) &&
+						buddy->account == session->gc->account) {
+						bnode = bnode->next;
+						gaim_blist_remove_buddy(buddy);
+					} else {
+						bnode = bnode->next;
+					}
+				}
 			} else {
-				bnode = bnode->next;
+				cnode = cnode->next;
 			}
 		}
 	}
@@ -343,13 +352,13 @@ set_profile(GaimConnection *gc)
  **************************************************************************/
 
 static const char *
-trepia_list_icon(GaimAccount *a, struct buddy *b)
+trepia_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "trepia";
 }
 
 static void
-trepia_list_emblems(struct buddy *b, char **se, char **sw,
+trepia_list_emblems(GaimBuddy *b, char **se, char **sw,
 				 char **nw, char **ne)
 {
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
@@ -361,7 +370,7 @@ trepia_list_emblems(struct buddy *b, char **se, char **sw,
 }
 
 static char *
-trepia_status_text(struct buddy *b)
+trepia_status_text(GaimBuddy *b)
 {
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
 	const char *value;
@@ -374,7 +383,7 @@ trepia_status_text(struct buddy *b)
 }
 
 static char *
-trepia_tooltip_text(struct buddy *b)
+trepia_tooltip_text(GaimBuddy *b)
 {
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
 	const char *value;
@@ -490,7 +499,7 @@ static void
 trepia_visit_homepage(GaimConnection *gc, const char *who)
 {
 	TrepiaProfile *profile;
-	struct buddy *b;
+	GaimBuddy *b;
 	const char *value;
 
 	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
@@ -504,7 +513,7 @@ static GList *
 trepia_buddy_menu(GaimConnection *gc, const char *who)
 {
 	TrepiaProfile *profile;
-	struct buddy *b;
+	GaimBuddy *b;
 	const char *value = NULL;
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -656,7 +665,7 @@ _parse_data(TrepiaSession *session, char *buf)
 	TrepiaProfile *profile = NULL;
 	int ret;
 	char *buffer;
-	struct buddy *b;
+	GaimBuddy *b;
 	int id = 0;
 	const char *value;
 	char *username;
@@ -858,7 +867,7 @@ _parse_data(TrepiaSession *session, char *buf)
 				b = gaim_find_buddy(account, username);
 
 				if (b == NULL) {
-					struct group *g;
+					GaimGroup *g;
 
 					g = gaim_find_group(_("Local Users"));
 
@@ -869,7 +878,7 @@ _parse_data(TrepiaSession *session, char *buf)
 
 					b = gaim_buddy_new(account, username, NULL);
 
-					gaim_blist_add_buddy(b, g, NULL);
+					gaim_blist_add_buddy(b, NULL, g, NULL);
 				}
 
 				profile->buddy = b;
@@ -894,7 +903,8 @@ _parse_data(TrepiaSession *session, char *buf)
 
 					gaim_base64_decode(value, &icon, &icon_len);
 
-					set_icon_data(session->gc, username, icon, icon_len);
+					gaim_buddy_icons_set_for_user(session->gc->account,
+							username, icon, icon_len);
 
 					g_free(icon);
 
@@ -1137,7 +1147,7 @@ trepia_send_im(GaimConnection *gc, const char *who, const char *message,
 {
 	TrepiaSession *session = gc->proto_data;
 	TrepiaProfile *profile;
-	struct buddy *b;
+	GaimBuddy *b;
 	char *escaped_msg;
 	char *buffer;
 
@@ -1182,7 +1192,7 @@ trepia_rem_buddy(GaimConnection *gc, const char *who, const char *group)
 }
 
 static void
-trepia_buddy_free(struct buddy *b)
+trepia_buddy_free(GaimBuddy *b)
 {
 	if (b->proto_data != NULL) {
 		trepia_profile_destroy(b->proto_data);
