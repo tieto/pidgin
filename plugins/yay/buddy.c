@@ -58,7 +58,7 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 
 	send = g_strconcat("GET ",
 			session->proxy_type ? "http://" : "",
-			session->proxy_type ? YAHOO_DATA_HOST : "",
+			session->proxy_type ? session->auth_host : "",
 			"/config/set_buddygrp?.bg=", grp,
 			"&.src=bl&.cmd=a&.bdl=", bdy,
 			"&.id=", id,
@@ -66,7 +66,7 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 			"&.amsg=", msg,
 			" HTTP/1.0\r\n",
 			"User-Agent: " YAHOO_USER_AGENT "\r\n"
-			"Host: " YAHOO_DATA_HOST "\r\n"
+			"Host: ", session->auth_host, "\r\n"
 			"Cookie: ", session->cookie,
 			"\r\n\r\n", NULL);
 	g_free(grp);
@@ -124,7 +124,7 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 
 	send = g_strconcat("GET ",
 			session->proxy_type ? "http://" : "",
-			session->proxy_type ? YAHOO_DATA_HOST : "",
+			session->proxy_type ? session->auth_host : "",
 			"/config/set_buddygrp?.bg=", grp,
 			"&.src=bl&.cmd=d&.bdl=", bdy,
 			"&.id=", id,
@@ -132,7 +132,7 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 			"&.amsg=", msg,
 			" HTTP/1.0\r\n",
 			"User-Agent: " YAHOO_USER_AGENT "\r\n"
-			"Host: " YAHOO_DATA_HOST "\r\n"
+			"Host: ", session->auth_host, "\r\n"
 			"Cookie: ", session->cookie,
 			"\r\n\r\n", NULL);
 	g_free(grp);

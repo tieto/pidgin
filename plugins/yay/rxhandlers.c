@@ -363,7 +363,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		} else if (conn->type == YAHOO_CONN_TYPE_PROXY) {
 			char buf[1024];
 			g_snprintf(buf, sizeof(buf), "CONNECT %s:%d HTTP/1.1\r\n\r\n",
-					YAHOO_PAGER_HOST, YAHOO_PAGER_PORT);
+					session->pager_host, session->pager_port);
 			YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
 			yahoo_write(session, conn, buf, strlen(buf));
 		}

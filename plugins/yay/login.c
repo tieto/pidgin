@@ -44,10 +44,10 @@ int yahoo_send_login(struct yahoo_session *session, const char *name, const char
 	at = g_snprintf(buf, 1024 + strlen(name) + strlen(password),
 			"GET %s%s/config/ncclogin?login=%s&passwd=%s&n=1 HTTP/1.0\r\n"
 			"User-Agent: " YAHOO_USER_AGENT "\r\n"
-			"Host: " YAHOO_AUTH_HOST "\r\n\r\n",
+			"Host: %s\r\n\r\n",
 			session->proxy_type ? "http://" : "",
-			session->proxy_type ? YAHOO_AUTH_HOST "" : " ",
-			a, b);
+			session->proxy_type ? session->auth_host : "",
+			a, b, session->auth_host);
 
 	g_free(a);
 	g_free(b);

@@ -128,25 +128,8 @@ struct yahoo_conn *yahoo_new_conn(struct yahoo_session *session, int type, const
 	conn->type = type;
 
 	if (yahoo_connector) {
-		const char *realhost = host;
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "Connecting using user-specified connect routine");
-		if (!host) {
-			switch (type) {
-				case YAHOO_CONN_TYPE_AUTH:
-					realhost = YAHOO_AUTH_HOST;
-					port = YAHOO_AUTH_PORT;
-					break;
-				case YAHOO_CONN_TYPE_MAIN:
-					realhost = YAHOO_PAGER_HOST;
-					port = YAHOO_PAGER_PORT;
-					break;
-				case YAHOO_CONN_TYPE_DUMB:
-					realhost = YAHOO_DATA_HOST;
-					port = YAHOO_DATA_PORT;
-					break;
-			}
-		}
-		if ((*yahoo_connector)(session, realhost, port, conn) < 0) {
+		if ((*yahoo_connector)(session, host, port, conn) < 0) {
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "connect failed");
 			g_free(conn);
 			return NULL;
@@ -155,30 +138,14 @@ struct yahoo_conn *yahoo_new_conn(struct yahoo_session *session, int type, const
 		return conn;
 	}
 
-	if (host) {
-		conn->socket = yahoo_connect_host(session, host, port, &status);
-	} else if (session->proxy_type) {
+	if (session->proxy_type) {
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "connecting to proxy");
 		conn->socket = yahoo_connect_host(session, session->proxy_host,
 				session->proxy_port, &status);
 		if (type == YAHOO_CONN_TYPE_MAIN)
 			conn->type = YAHOO_CONN_TYPE_PROXY;
-	} else {
-		switch (type) {
-			case YAHOO_CONN_TYPE_AUTH:
-				conn->socket = yahoo_connect_host(session, YAHOO_AUTH_HOST,
-						YAHOO_AUTH_PORT, &status);
-				break;
-			case YAHOO_CONN_TYPE_MAIN:
-				conn->socket = yahoo_connect_host(session, YAHOO_PAGER_HOST,
-						YAHOO_PAGER_PORT, &status);
-				break;
-			case YAHOO_CONN_TYPE_DUMB:
-				conn->socket = yahoo_connect_host(session, YAHOO_DATA_HOST,
-						YAHOO_DATA_PORT, &status);
-				break;
-		}
-	}
+	} else
+		conn->socket = yahoo_connect_host(session, host, port, &status);
 
 	if (conn->socket < 0) {
 		g_free(conn);
@@ -235,7 +202,19 @@ int yahoo_connect(struct yahoo_session *session, const char *host, int port)
 	if (!session)
 		return 0;
 
-	if (!yahoo_new_conn(session, YAHOO_CONN_TYPE_AUTH, host, port))
+	if (session->auth_host)
+		g_free(session->auth_host);
+	if (host && *host)
+		session->auth_host = g_strdup(host);
+	else
+		session->auth_host = g_strdup(YAHOO_AUTH_HOST);
+
+	if (port)
+		session->auth_port = port;
+	else
+		session->auth_port = YAHOO_AUTH_PORT;
+
+	if (!yahoo_new_conn(session, YAHOO_CONN_TYPE_AUTH, session->auth_host, session->auth_port))
 		return 0;
 
 	return 1;
@@ -246,7 +225,19 @@ int yahoo_major_connect(struct yahoo_session *session, const char *host, int por
 	if (!session)
 		return 0;
 
-	if (!yahoo_new_conn(session, YAHOO_CONN_TYPE_MAIN, host, port))
+	if (session->pager_host)
+		g_free(session->pager_host);
+	if (host && *host)
+		session->pager_host = g_strdup(host);
+	else
+		session->pager_host = g_strdup(YAHOO_PAGER_HOST);
+
+	if (port)
+		session->pager_port = port;
+	else
+		session->pager_port = YAHOO_AUTH_PORT;
+
+	if (!yahoo_new_conn(session, YAHOO_CONN_TYPE_MAIN, session->pager_host, session->pager_port))
 		return 0;
 
 	return 1;
@@ -307,6 +298,12 @@ int yahoo_disconnect(struct yahoo_session *session)
 		g_free(grp);
 		session->groups = g_list_remove(session->groups, grp);
 	}
+	if (session->auth_host)
+		g_free(session->auth_host);
+	session->auth_host = NULL;
+	if (session->pager_host)
+		g_free(session->pager_host);
+	session->pager_host = NULL;
 	return 0;
 }
 

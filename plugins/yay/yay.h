@@ -41,8 +41,6 @@ struct yahoo_session;
 #define YAHOO_AUTH_PORT 80
 #define YAHOO_PAGER_HOST "cs.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
-#define YAHOO_DATA_HOST YAHOO_AUTH_HOST
-#define YAHOO_DATA_PORT YAHOO_AUTH_PORT
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE,
@@ -132,6 +130,11 @@ struct yahoo_session {
 	int proxy_type;
 	char *proxy_host;
 	int proxy_port;
+
+	char *auth_host;
+	int auth_port;
+	char *pager_host;
+	int pager_port;
 
 	char *name;
 
