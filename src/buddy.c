@@ -821,6 +821,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 		char *tmp = prpl->status_text(b);
 
 		if(tmp) {
+			g_strdelimit(tmp, "\n", ' ');
 			if(strlen(tmp) > 20)
 				statustext = g_strdup_printf("%.20s... ", tmp);
 			else
