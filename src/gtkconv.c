@@ -4124,24 +4124,24 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 				gtkconv->tab_label))));
 
 		if (im != NULL && gaim_im_get_typing_state(im) == TYPING) {
-			style->fg[0].red   = 0x0000;
-			style->fg[0].green = 0x9999;
-			style->fg[0].blue  = 0x0000;
+			style->fg[0].red   = 0x4646;
+			style->fg[0].green = 0xA0A0;
+			style->fg[0].blue  = 0x4646;
 		}
 		else if (im != NULL && gaim_im_get_typing_state(im) == TYPED) {
-			style->fg[0].red   = 0xFFFF;
-			style->fg[0].green = 0xBBBB;
-			style->fg[0].blue  = 0x2222;
+			style->fg[0].red   = 0xD1D1;
+			style->fg[0].green = 0x9494;
+			style->fg[0].blue  = 0x0C0C;
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK) {
-			style->fg[0].red   = 0x0000;
-			style->fg[0].green = 0x0000;
-			style->fg[0].blue  = 0xCCCC;
+			style->fg[0].red   = 0x4B4B;
+			style->fg[0].green = 0x6969;
+			style->fg[0].blue  = 0x8383;
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
-			style->fg[0].red   = 0xCCCC;
-			style->fg[0].green = 0x0000;
-			style->fg[0].blue  = 0x0000;
+			style->fg[0].red   = 0xDFDF;
+			style->fg[0].green = 0x4242;
+			style->fg[0].blue  = 0x1E1E;
 		}
 
 		gtk_widget_set_style(gtkconv->tab_label, style);
