@@ -204,6 +204,24 @@ faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, co
 }
 
 /**
+ * aim_addtlvtochain8 - Add a 8bit integer to a TLV chain
+ * @list: Destination chain
+ * @type: TLV type to add
+ * @val: Value to add
+ *
+ * Adds a one-byte unsigned integer to a TLV chain.
+ *
+ */
+faim_internal int aim_addtlvtochain8(aim_tlvlist_t **list, const fu16_t t, const fu8_t v)
+{
+	fu8_t v8[1];
+
+	aimutil_put8(v8, v);
+
+	return aim_addtlvtochain_raw(list, t, 1, v8);
+}
+
+/**
  * aim_addtlvtochain16 - Add a 16bit integer to a TLV chain
  * @list: Destination chain
  * @type: TLV type to add

@@ -171,6 +171,8 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	 */
 	if ((*deadconn)->type == AIM_CONN_TYPE_RENDEZVOUS)
 		aim_conn_kill_rend(sess, *deadconn);
+	else if ((*deadconn)->type == AIM_CONN_TYPE_CHAT)
+		aim_conn_kill_chat(sess, *deadconn);
 
 	if ((*deadconn)->inside) {
 		aim_conn_inside_t *inside = (aim_conn_inside_t *)(*deadconn)->inside;
@@ -864,8 +866,6 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	aim_connrst(sess);
 	sess->queue_outgoing = NULL;
 	sess->queue_incoming = NULL;
-	sess->pendingjoin = NULL;
-	sess->pendingjoinexchange = 0;
 	aim_initsnachash(sess);
 	sess->msgcookies = NULL;
 	sess->snacid_next = 0x00000001;

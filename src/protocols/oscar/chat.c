@@ -8,16 +8,37 @@
 #define FAIM_INTERNAL
 #include <aim.h> 
 
+/* Stored in the ->priv of chat connections */
+struct chatconnpriv {
+	fu16_t exchange;
+	char *name;
+	fu16_t instance;
+};
+
+faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn)
+{
+	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->priv;
+
+	if (ccp)
+		free(ccp->name);
+	free(ccp);
+
+	return;
+}
+
 faim_export char *aim_chat_getname(aim_conn_t *conn)
 {
-	
+	struct chatconnpriv *ccp;
+
 	if (!conn)
 		return NULL;
-	
+
 	if (conn->type != AIM_CONN_TYPE_CHAT)
 		return NULL;
 
-	return (char *)conn->priv; /* yuck ! */
+	ccp = (struct chatconnpriv *)conn->priv;
+
+	return ccp->name;
 }
 
 /* XXX get this into conn.c -- evil!! */
@@ -26,21 +47,25 @@ faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 	aim_conn_t *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
+		struct chatconnpriv *ccp = (struct chatconnpriv *)cur->priv;
+
 		if (cur->type != AIM_CONN_TYPE_CHAT)
 			continue;
 		if (!cur->priv) {
 			faimdprintf(sess, 0, "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
 			continue;
 		}
-		if (strcmp((char *)cur->priv, name) == 0)
+
+		if (strcmp(ccp->name, name) == 0)
 			break;
 	}
 
 	return cur;
 }
 
-faim_export int aim_chat_attachname(aim_conn_t *conn, const char *roomname)
+faim_export int aim_chat_attachname(aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance)
 {
+	struct chatconnpriv *ccp;
 
 	if (!conn || !roomname)
 		return -EINVAL;
@@ -48,7 +73,14 @@ faim_export int aim_chat_attachname(aim_conn_t *conn, const char *roomname)
 	if (conn->priv)
 		free(conn->priv);
 
-	conn->priv = strdup(roomname);
+	if (!(ccp = malloc(sizeof(struct chatconnpriv))))
+		return -ENOMEM;
+
+	ccp->exchange = exchange;
+	ccp->name = strdup(roomname);
+	ccp->instance = instance;
+
+	conn->priv = (void *)ccp;
 
 	return 0;
 }
@@ -95,7 +127,7 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 		aimutil_put8(ckstr+i, (fu8_t) rand());
 
 	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
-	cookie->data = strdup(conn->priv); /* chat hack dependent */
+	cookie->data = NULL; /* XXX store something useful here */
 
 	aim_cachecookie(sess, cookie);
 
@@ -186,15 +218,20 @@ faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exch
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
+	struct chatsnacinfo csi;
 	
 	if (!sess || !conn || !roomname || !strlen(roomname))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+9+strlen(roomname)+2)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
 		return -ENOMEM;
 
+	memset(&csi, 0, sizeof(csi));
+	csi.exchange = exchange;
+	strncpy(csi.name, roomname, sizeof(csi.name));
+	csi.instance = instance;
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, roomname, strlen(roomname)+1);
+	snacid = aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, &csi, sizeof(csi));
 	aim_putsnac(&fr->data, 0x0001, 0x0004, 0x0000, snacid);
 
 	/*
@@ -205,18 +242,6 @@ faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exch
 	aim_addtlvtochain_chatroom(&tl, 0x0001, exchange, roomname, instance);
 	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
-
-	/*
-	 * Chat hack.
-	 *
-	 * XXX: A problem occurs here if we request a channel
-	 *      join but it fails....pendingjoin will be nonnull
-	 *      even though the channel is never going to get a
-	 *      redirect!
-	 *
-	 */
-	sess->pendingjoin = strdup(roomname);
-	sess->pendingjoinexchange = exchange;
 
 	aim_tx_enqueue(sess, fr);
 
@@ -371,7 +396,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	fu16_t tlvcount = 0;
 	aim_tlvlist_t *tlvlist;
 	char *roomdesc = NULL;
-	fu16_t unknown_c9 = 0;
+	fu16_t flags = 0;
 	fu32_t creationtime = 0;
 	fu16_t maxmsglen = 0, maxvisiblemsglen = 0;
 	fu16_t unknown_d2 = 0, unknown_d5 = 0;
@@ -424,10 +449,10 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	}
 
 	/* 
-	 * Type 0x00c9: Unknown. (2 bytes)
+	 * Type 0x00c9: Flags. (AIM_CHATROOM_FLAG)
 	 */
 	if (aim_gettlv(tlvlist, 0x00c9, 1))
-		unknown_c9 = aim_gettlv16(tlvlist, 0x00c9, 1);
+		flags = aim_gettlv16(tlvlist, 0x00c9, 1);
 
 	/* 
 	 * Type 0x00ca: Creation time (4 bytes)
@@ -504,7 +529,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 				usercount,
 				userinfo,	
 				roomdesc,
-				unknown_c9,
+				flags,
 				creationtime,
 				maxmsglen,
 				unknown_d2,

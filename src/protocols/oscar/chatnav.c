@@ -20,11 +20,14 @@ faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn)
 
 faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, fu16_t exchange)
 {
+	static const char ck[] = {"create"};
+	static const char lang[] = {"en"};
+	static const char charset[] = {"us-ascii"};
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+12+strlen("invite")+strlen(name))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x000d, 0x0008, 0x0000, NULL, 0);
@@ -33,9 +36,9 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	/* exchange */
 	aimbs_put16(&fr->data, exchange);
 
-	/* room cookie */
-	aimbs_put8(&fr->data, strlen("invite"));
-	aimbs_putraw(&fr->data, "invite", strlen("invite"));
+	/* action cookie */
+	aimbs_put8(&fr->data, strlen(ck));
+	aimbs_putraw(&fr->data, ck, strlen(ck));
 
 	/* 
 	 * instance
@@ -48,8 +51,9 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	/* detail level */
 	aimbs_put8(&fr->data, 0x01);
 
-	/* room name */
 	aim_addtlvtochain_raw(&tl, 0x00d3, strlen(name), name);
+	aim_addtlvtochain_raw(&tl, 0x00d6, strlen(charset), charset);
+	aim_addtlvtochain_raw(&tl, 0x00d7, strlen(lang), lang);
 
 	/* tlvcount */
 	aimbs_put16(&fr->data, aim_counttlvchain(&tl));
@@ -93,12 +97,21 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		aim_bstream_init(&tbs, exchangetlv->value, exchangetlv->length);
 
 		curexchange++;
-	
+
 		exchanges = realloc(exchanges, curexchange * sizeof(struct aim_chat_exchangeinfo));
 
 		/* exchange number */
 		exchanges[curexchange-1].number = aimbs_get16(&tbs);
 		innerlist = aim_readtlvchain(&tbs);
+
+		/* 
+		 * Type 0x000a: Unknown.
+		 *
+		 * Usually three bytes: 0x0114 (exchange 1) or 0x010f (others).
+		 *
+		 */
+		if (aim_gettlv(innerlist, 0x000a, 1))
+			;
 
 		/* 
 		 * Type 0x000d: Unknown.
@@ -124,10 +137,16 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		}
 
 		/*
-		 * Type 0x00c9: Unknown
+		 * Type 0x00c9: Flags
+		 *
+		 * 1 Evilable
+		 * 2 Nav Only
+		 * 4 Instancing Allowed
+		 * 8 Occupant Peek Allowed
+		 *
 		 */ 
 		if (aim_gettlv(innerlist, 0x00c9, 1))
-			;
+			exchanges[curexchange-1].flags = aim_gettlv16(innerlist, 0x00c9, 1);
 		      
 		/*
 		 * Type 0x00ca: Creation Date 
@@ -154,12 +173,18 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 			;
 
 		/*
-		 * Type 0x00d3: Exchange Name
+		 * Type 0x00d3: Exchange Description
 		 */
 		if (aim_gettlv(innerlist, 0x00d3, 1))	
 			exchanges[curexchange-1].name = aim_gettlv_str(innerlist, 0x00d3, 1);
 		else
 			exchanges[curexchange-1].name = NULL;
+
+		/*
+		 * Type 0x00d4: Exchange Description URL
+		 */
+		if (aim_gettlv(innerlist, 0x00d4, 1))	
+			;
 
 		/*
 		 * Type 0x00d5: Creation Permissions
@@ -207,6 +232,12 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		else
 			exchanges[curexchange-1].lang2 = NULL;
 		      
+		/*
+		 * Type 0x00da: Unknown
+		 */
+		if (aim_gettlv(innerlist, 0x00da, 1))	
+			;
+
 		aim_freetlvchain(&innerlist);
 	}
 
@@ -306,6 +337,18 @@ static int parseinfo_create(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 /*
  * Since multiple things can trigger this callback, we must lookup the 
  * snacid to determine the original snac subtype that was called.
+ *
+ * XXX This isn't really how this works.  But this is:  Every d/9 response
+ * has a 16bit value at the beginning. That matches to:
+ *    Short Desc = 1
+ *    Full Desc = 2
+ *    Instance Info = 4
+ *    Nav Short Desc = 8
+ *    Nav Instance Info = 16
+ * And then everything is really asynchronous.  There is no specific 
+ * attachment of a response to a create room request, for example.  Creating
+ * the room yields no different a response than requesting the room's info.
+ *
  */
 static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
@@ -363,8 +406,8 @@ faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod)
 
 	mod->family = 0x000d;
 	mod->version = 0x0001;
-	mod->toolid = 0x0004; /* XXX this doesn't look right */
-	mod->toolversion = 0x0001; /* XXX nor does this */
+	mod->toolid = 0x0010;
+	mod->toolversion = 0x047c;
 	mod->flags = 0;
 	strncpy(mod->name, "chatnav", sizeof(mod->name));
 	mod->snachandler = snachandler;

@@ -130,48 +130,42 @@ typedef fu16_t flap_seqnum_t;
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
 /*
- * Client info.  Filled in by the client and passed
- * in to aim_login().  The information ends up
- * getting passed to OSCAR through the initial
- * login command.
- *
- * XXX: Should this be per-session? -mid
+ * Client info.  Filled in by the client and passed in to 
+ * aim_send_login().  The information ends up getting passed to OSCAR
+ * through the initial login command.
  *
  */
 struct client_info_s {
-	char clientstring[100]; /* arbitrary size */
+	const char *clientstring;
+	fu16_t clientid;
 	int major;
 	int minor;
+	int point;
 	int build;
-	char country[3];
-	char lang[3];
-	int major2;
-	int minor2;
-	long unknown;
+	const char *country; /* two-letter abbrev */
+	const char *lang; /* two-letter abbrev */
 };
 
 #define AIM_CLIENTINFO_KNOWNGOOD_3_5_1670 { \
 	"AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
+	0x0004, \
 	0x0003, \
 	0x0005, \
+	0x0000, \
 	0x0686, \
 	"us", \
 	"en", \
-	0x0004, \
-	0x0000, \
-	0x0000002a, \
 }
 
 #define AIM_CLIENTINFO_KNOWNGOOD_4_1_2010 { \
 	  "AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
 	  0x0004, \
+	  0x0004, \
 	  0x0001, \
+	  0x0000, \
 	  0x07da, \
 	  "us", \
 	  "en", \
-	  0x0004, \
-	  0x0000, \
-	  0x0000004b, \
 }
 
 /*
@@ -336,14 +330,6 @@ typedef struct aim_session_s {
 	int (*tx_enqueue)(struct aim_session_s *, aim_frame_t *);
 
 	/*
-	 * This is a dreadful solution to the what-room-are-we-joining
-	 * problem.  (There's no connection between the service
-	 * request and the resulting redirect.)
-	 */ 
-	char *pendingjoin;
-	fu16_t pendingjoinexchange;
-
-	/*
 	 * Outstanding snac handling 
 	 *
 	 * XXX: Should these be per-connection? -mid
@@ -465,6 +451,7 @@ faim_internal fu8_t aim_gettlv8(aim_tlvlist_t *list, const fu16_t type, const in
 faim_internal fu16_t aim_gettlv16(aim_tlvlist_t *list, const fu16_t t, const int n);
 faim_internal fu32_t aim_gettlv32(aim_tlvlist_t *list, const fu16_t t, const int n);
 faim_internal int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list);
+faim_internal int aim_addtlvtochain8(aim_tlvlist_t **list, const fu16_t t, const fu8_t v);
 faim_internal int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t t, const fu16_t v);
 faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t type, const fu32_t v);
 faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v);
@@ -518,6 +505,18 @@ struct aim_authresp_info {
 	fu8_t *cookie;
 	struct aim_clientrelease latestrelease;
 	struct aim_clientrelease latestbeta;
+};
+
+/* Callback data for redirect. */
+struct aim_redirect_data {
+	fu16_t group;
+	const char *ip;
+	const fu8_t *cookie;
+	struct { /* group == AIM_CONN_TYPE_CHAT */
+		fu16_t exchange;
+		const char *room;
+		fu16_t instance;
+	} chat;
 };
 
 faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
@@ -926,8 +925,15 @@ faim_export int aim_remove_buddy(aim_session_t *, aim_conn_t *, const char *);
 /* aim_search.c */
 faim_export int aim_usersearch_address(aim_session_t *, aim_conn_t *, const char *);
 
+/* These apply to exchanges as well. */
+#define AIM_CHATROOM_FLAG_EVILABLE 0x0001
+#define AIM_CHATROOM_FLAG_NAV_ONLY 0x0002
+#define AIM_CHATROOM_FLAG_INSTANCING_ALLOWED 0x0004
+#define AIM_CHATROOM_FLAG_OCCUPANT_PEEK_ALLOWED 0x0008
+
 struct aim_chat_exchangeinfo {
 	fu16_t number;
+	fu16_t flags;
 	char *name;
 	char *charset1;
 	char *lang1;
@@ -939,7 +945,7 @@ struct aim_chat_exchangeinfo {
 #define AIM_CHATFLAGS_AWAY      0x0002
 faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen);
 faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance);
-faim_export int aim_chat_attachname(aim_conn_t *conn, const char *roomname);
+faim_export int aim_chat_attachname(aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance);
 faim_export char *aim_chat_getname(aim_conn_t *conn);
 faim_export aim_conn_t *aim_chat_getconn(aim_session_t *, const char *name);
 

@@ -100,14 +100,13 @@ faim_export int aim_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t ser
 /* Redirect (group 1, type 5) */
 static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	int serviceid;
-	fu8_t *cookie;
-	char *ip;
+	struct aim_redirect_data redir;
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
-	char *chathack = NULL;
-	int chathackex = 0;
+	aim_snac_t *origsnac = NULL;
 	int ret = 0;
+
+	memset(&redir, 0, sizeof(redir));
 
 	tlvlist = aim_readtlvchain(bs);
 
@@ -118,26 +117,30 @@ static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		return 0;
 	}
 
-	serviceid = aim_gettlv16(tlvlist, 0x000d, 1);
-	ip = aim_gettlv_str(tlvlist, 0x0005, 1);
-	cookie = aim_gettlv_str(tlvlist, 0x0006, 1);
+	redir.group = aim_gettlv16(tlvlist, 0x000d, 1);
+	redir.ip = aim_gettlv_str(tlvlist, 0x0005, 1);
+	redir.cookie = aim_gettlv_str(tlvlist, 0x0006, 1);
 
-	/*
-	 * Chat hack.
-	 */
-	if ((serviceid == AIM_CONN_TYPE_CHAT) && sess->pendingjoin) {
-		chathack = sess->pendingjoin;
-		chathackex = sess->pendingjoinexchange;
-		sess->pendingjoin = NULL;
-		sess->pendingjoinexchange = 0;
+	/* Fetch original SNAC so we can get csi if needed */
+	origsnac = aim_remsnac(sess, snac->id);
+
+	if ((redir.group == AIM_CONN_TYPE_CHAT) && origsnac) {
+		struct chatsnacinfo *csi = (struct chatsnacinfo *)origsnac->data;
+
+		redir.chat.exchange = csi->exchange;
+		redir.chat.room = csi->name;
+		redir.chat.instance = csi->instance;
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, serviceid, ip, cookie, chathack, chathackex);
+		ret = userfunc(sess, rx, &redir);
 
-	free(ip);
-	free(cookie);
-	free(chathack);
+	free((void *)redir.ip);
+	free((void *)redir.cookie);
+
+	if (origsnac)
+		free(origsnac->data);
+	free(origsnac);
 
 	aim_freetlvchain(&tlvlist);
 

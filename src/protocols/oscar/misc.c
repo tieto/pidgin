@@ -169,16 +169,6 @@ faim_export int aim_send_warning(aim_session_t *sess, aim_conn_t *conn, const ch
 }
 
 /*
- * aim_debugconn_sendconnect()
- *
- * For aimdebugd.  If you don't know what it is, you don't want to.
- */
-faim_export int aim_debugconn_sendconnect(aim_session_t *sess, aim_conn_t *conn)
-{
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEBUGCONN_CONNECT);
-}
-
-/*
  * Generic routine for sending commands.
  *
  *

@@ -127,6 +127,13 @@ faim_internal int aim_oft_buildheader(unsigned char *,struct aim_fileheader_t *)
 
 faim_internal int aim_parse_unknown(aim_session_t *, aim_frame_t *, ...);
 
+/* Stored in ->priv of the service request SNAC for chats. */
+struct chatsnacinfo {
+	fu16_t exchange;
+	char name[128];
+	fu16_t instance;
+};
+
 /* these are used by aim_*_clientready */
 #define AIM_TOOL_JAVA   0x0001
 #define AIM_TOOL_MAC    0x0002
@@ -209,6 +216,8 @@ faim_internal int aim_request_directim(aim_session_t *sess, const char *destsn, 
 faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, const char *filename, fu16_t numfiles, fu32_t totsize, fu8_t *ip, fu16_t port, fu8_t *ckret);
 faim_internal void aim_conn_close_rend(aim_session_t *sess, aim_conn_t *conn);
 faim_internal void aim_conn_kill_rend(aim_session_t *sess, aim_conn_t *conn);
+
+faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn);
 
 /* These are all handled internally now. */
 faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn);

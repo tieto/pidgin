@@ -105,7 +105,8 @@ struct oscar_data {
 struct chat_connection {
 	char *name;
 	char *show; /* AOL did something funny to us */
-	fu16_t exchange; /* XXX should have instance here too */
+	fu16_t exchange;
+	fu16_t instance;
 	int fd; /* this is redundant since we have the conn below */
 	aim_conn_t *conn;
 	int inpa;
@@ -155,7 +156,7 @@ static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) 
 	return m;
 }
 
-static char *extract_name(char *name) {
+static char *extract_name(const char *name) {
 	char *tmp;
 	int i, j;
 	char *x = strchr(name, '-');
@@ -858,6 +859,7 @@ static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct chat_connection *chatcon;
 	static int id = 1;
 
+	aim_conn_addhandler(sess, fr->conn, 0x000e, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
@@ -874,6 +876,7 @@ static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int conninitdone_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 
+	aim_conn_addhandler(sess, fr->conn, 0x000d, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
 
 	aim_clientready(sess, fr->conn);
@@ -971,15 +974,12 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 			GAIM_INPUT_READ,
 			oscar_callback, tstconn);
 	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
-	aim_chat_attachname(tstconn, ccon->name);
 }
 
 /* Hrmph. I don't know how to make this look better. --mid */
 static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	fu16_t serviceid;
-	char *ip;
-	fu8_t *cookie;
+	struct aim_redirect_data *redir;
 	struct gaim_connection *gc = sess->aux_data;
 	struct aim_user *user = gc->user;
 	aim_conn_t *tstconn;
@@ -991,19 +991,18 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 
 	va_start(ap, fr);
-	serviceid = (fu16_t)va_arg(ap, unsigned int);
-	ip = va_arg(ap, char *);
-	cookie = (fu8_t *)va_arg(ap, unsigned char *);
+	redir = va_arg(ap, struct aim_redirect_data *);
+	va_end(ap);
 
-	for (i = 0; i < (int)strlen(ip); i++) {
-		if (ip[i] == ':') {
-			port = atoi(&(ip[i+1]));
+	for (i = 0; i < (int)strlen(redir->ip); i++) {
+		if (redir->ip[i] == ':') {
+			port = atoi(&(redir->ip[i+1]));
 			break;
 		}
 	}
-	host = g_strndup(ip, i);
+	host = g_strndup(redir->ip, i);
 
-	switch(serviceid) {
+	switch(redir->group) {
 	case 0x7: /* Authorizer */
 		debug_printf("Reconnecting with authorizor...\n");
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
@@ -1025,7 +1024,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, cookie);
+		aim_sendcookie(sess, tstconn, redir->cookie);
 		break;
 	case 0xd: /* ChatNav */
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
@@ -1044,16 +1043,11 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, cookie);
+		aim_sendcookie(sess, tstconn, redir->cookie);
 		break;
 	case 0xe: /* Chat */
 		{
-		char *roomname;
-		fu16_t exchange;
 		struct chat_connection *ccon;
-
-		roomname = va_arg(ap, char *);
-		exchange = (fu16_t)va_arg(ap, unsigned int);
 
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, NULL);
 		if (tstconn == NULL) {
@@ -1068,9 +1062,10 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon->conn = tstconn;
 		ccon->gc = gc;
 		ccon->fd = -1;
-		ccon->name = g_strdup(roomname);
-		ccon->exchange = exchange;
-		ccon->show = extract_name(roomname);
+		ccon->name = g_strdup(redir->chat.room);
+		ccon->exchange = redir->chat.exchange;
+		ccon->instance = redir->chat.instance;
+		ccon->show = extract_name(redir->chat.room);
 		
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
 		ccon->conn->fd = proxy_connect(host, port, oscar_chat_connect, ccon);
@@ -1083,16 +1078,14 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(ccon);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, cookie);
-		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
+		aim_sendcookie(sess, tstconn, redir->cookie);
+		debug_printf("Connected to chat room %s exchange %d\n", ccon->name, ccon->exchange);
 		}
 		break;
 	default: /* huh? */
-		debug_printf("got redirect for unknown service 0x%04x\n", serviceid);
+		debug_printf("got redirect for unknown service 0x%04x\n", redir->group);
 		break;
 	}
-
-	va_end(ap);
 
 	g_free(host);
 	return 1;
