@@ -3262,21 +3262,28 @@ move_next_tab(struct gaim_conversation *conv)
 
 static void
 conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
-			  GtkSelectionData *sd, guint info, guint t, struct gaim_conversation *conv)
+			  GtkSelectionData *sd, guint info, guint t,
+			  struct gaim_conversation *conv)
 {
 	struct gaim_window *win = conv->window;
 	struct gaim_conversation *c;
-       	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
+
+	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GaimBlistNode *n = NULL;
 		memcpy(&n, sd->data, sizeof(n));
+
 		if (!GAIM_BLIST_NODE_IS_BUDDY(n))
 			return;
-		c = gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)n)->account, ((struct buddy*)n)->name);
-		gaim_window_add_conversation (win, c);
+
+		c = gaim_conversation_new(GAIM_CONV_IM,
+								  ((struct buddy *)n)->account,
+								  ((struct buddy *)n)->name);
+
+		gaim_window_add_conversation(win, c);
 	}
 
-		/* do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
-		   NULL, GAIM_WARNING); */
+	/* do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
+	   NULL, GAIM_WARNING); */
 }
 
 /**************************************************************************
@@ -3545,6 +3552,9 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gtkconv->make_sound = TRUE;
 	}
 
+	g_signal_connect_swapped(G_OBJECT(pane), "focus",
+							 G_CALLBACK(gtk_widget_grab_focus), gtkconv->entry);
+
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
 
 	/* Close button. */
@@ -3566,6 +3576,7 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
 	gtk_misc_set_padding(GTK_MISC(gtkconv->tab_label), 4, 0);
 #endif
+
 
 	/* Pack it all together. */
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
