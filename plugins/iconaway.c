@@ -20,7 +20,7 @@ extern void applet_destroy_buddy();
 
 void iconify_windows(GaimConnection *gc, char *state,
 					 char *message, void *data) {
-	struct gaim_window *win;
+	GaimWindow *win;
 	GList *windows;
 
 	if (!imaway || !gc->away)
@@ -33,10 +33,10 @@ void iconify_windows(GaimConnection *gc, char *state,
 		 windows != NULL;
 		 windows = windows->next) {
 
-		win = (struct gaim_window *)windows->data;
+		win = (GaimWindow *)windows->data;
 
 		if (GAIM_IS_GTK_WINDOW(win)) {
-			struct gaim_gtk_window *gtkwin;
+			GaimGtkWindow *gtkwin;
 
 			gtkwin = GAIM_GTK_WINDOW(win);
 

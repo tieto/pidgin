@@ -30,10 +30,10 @@
 static void
 stroke_close(GtkWidget *widget, void *data)
 {
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
-	conv = (struct gaim_conversation *)data;
+	conv = (GaimConversation *)data;
 
 	/* Double-check */
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
@@ -48,11 +48,11 @@ stroke_close(GtkWidget *widget, void *data)
 static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
-	struct gaim_conversation *conv;
-	struct gaim_window *win;
+	GaimConversation *conv;
+	GaimWindow *win;
 	unsigned int index;
 
-	conv  = (struct gaim_conversation *)data;
+	conv  = (GaimConversation *)data;
 	win   = gaim_conversation_get_window(conv);
 	index = gaim_conversation_get_index(conv);
 
@@ -67,11 +67,11 @@ stroke_prev_tab(GtkWidget *widget, void *data)
 static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
-	struct gaim_conversation *conv;
-	struct gaim_window *win;
+	GaimConversation *conv;
+	GaimWindow *win;
 	unsigned int index;
 
-	conv  = (struct gaim_conversation *)data;
+	conv  = (GaimConversation *)data;
 	win   = gaim_conversation_get_window(conv);
 	index = gaim_conversation_get_index(conv);
 
@@ -86,10 +86,10 @@ stroke_next_tab(GtkWidget *widget, void *data)
 void
 stroke_new_win(GtkWidget *widget, void *data)
 {
-	struct gaim_window *new_win, *old_win;
-	struct gaim_conversation *conv;
+	GaimWindow *new_win, *old_win;
+	GaimConversation *conv;
 
-	conv    = (struct gaim_conversation *)data;
+	conv    = (GaimConversation *)data;
 	old_win = gaim_conversation_get_window(conv);
 
 	if (gaim_window_get_conversation_count(old_win) <= 1)
@@ -104,9 +104,9 @@ stroke_new_win(GtkWidget *widget, void *data)
 }
 
 static void
-attach_signals(struct gaim_conversation *conv)
+attach_signals(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -124,7 +124,7 @@ attach_signals(struct gaim_conversation *conv)
 static void
 new_conv_cb(char *who)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 
 	conv = gaim_find_conversation(who);
 
@@ -153,11 +153,11 @@ toggle_draw_cb(GtkToggleButton *toggle, gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	GList *l;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -173,12 +173,12 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 	GList *l;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;

@@ -99,7 +99,7 @@ void serv_close(GaimConnection *gc)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	while (gc->buddy_chats) {
-		struct gaim_conversation *b = gc->buddy_chats->data;
+		GaimConversation *b = gc->buddy_chats->data;
 
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
 
@@ -189,7 +189,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name);
 int serv_send_im(GaimConnection *gc, char *name, char *message,
 				 int len, int flags)
 {
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -757,7 +757,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	int plugin_return;
 	int away = 0;
 
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 
 	char *message, *name;
 
@@ -1087,7 +1087,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (loggedin) {
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
-			struct gaim_conversation *c = gaim_find_conversation(b->name);
+			GaimConversation *c = gaim_find_conversation(b->name);
 			if (c != NULL &&
 				gaim_prefs_get_bool("/core/conversations/im/show_login")) {
 
@@ -1115,7 +1115,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		}
 	} else {
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
-			struct gaim_conversation *c = gaim_find_conversation(b->name);
+			GaimConversation *c = gaim_find_conversation(b->name);
 			if (c != NULL &&
 				gaim_prefs_get_bool("/core/conversations/im/show_login")) {
 
@@ -1173,8 +1173,8 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 int state) {
 
 	struct buddy *b;
-	struct gaim_conversation *cnv = gaim_find_conversation(name);
-	struct gaim_im *im;
+	GaimConversation *cnv = gaim_find_conversation(name);
+	GaimIm *im;
 
 	if (!cnv)
 		return;
@@ -1198,8 +1198,8 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
-	struct gaim_conversation *c = gaim_find_conversation(name);
-	struct gaim_im *im;
+	GaimConversation *c = gaim_find_conversation(name);
+	GaimIm *im;
 	struct buddy *b;
 
 	if (!c)
@@ -1270,11 +1270,11 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 							   G_CALLBACK(chat_invite_data_free));
 }
 
-struct gaim_conversation *serv_got_joined_chat(GaimConnection *gc,
+GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 											   int id, const char *name)
 {
-	struct gaim_conversation *b;
-	struct gaim_chat *chat;
+	GaimConversation *b;
+	GaimChat *chat;
 
 	b = gaim_conversation_new(GAIM_CONV_CHAT, gc->account, name);
 	chat = GAIM_CHAT(b);
@@ -1320,11 +1320,11 @@ struct gaim_conversation *serv_got_joined_chat(GaimConnection *gc,
 void serv_got_chat_left(GaimConnection *g, int id)
 {
 	GSList *bcs;
-	struct gaim_conversation *conv = NULL;
-	struct gaim_chat *chat = NULL;
+	GaimConversation *conv = NULL;
+	GaimChat *chat = NULL;
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
-		conv = (struct gaim_conversation *)bcs->data;
+		conv = (GaimConversation *)bcs->data;
 
 		chat = GAIM_CHAT(conv);
 
@@ -1352,14 +1352,14 @@ void serv_got_chat_in(GaimConnection *g, int id, char *who,
 {
 	int w;
 	GSList *bcs;
-	struct gaim_conversation *conv = NULL;
-	struct gaim_chat *chat = NULL;
+	GaimConversation *conv = NULL;
+	GaimChat *chat = NULL;
 	char *buf;
 	char *buffy, *angel;
 	int plugin_return;
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
-		conv = (struct gaim_conversation *)bcs->data;
+		conv = (GaimConversation *)bcs->data;
 
 		chat = GAIM_CHAT(conv);
 

@@ -77,7 +77,7 @@ toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 }
 
 static void
-gaim_gtk_remove_tags(struct gaim_gtk_conversation *gtkconv, const char *tag)
+gaim_gtk_remove_tags(GaimGtkConversation *gtkconv, const char *tag)
 {
 	GtkTextIter start, end, m_start, m_end;
 
@@ -111,7 +111,7 @@ gaim_gtk_remove_tags(struct gaim_gtk_conversation *gtkconv, const char *tag)
 }
 
 void
-gaim_gtk_surround(struct gaim_gtk_conversation *gtkconv,
+gaim_gtk_surround(GaimGtkConversation *gtkconv,
 				  const char *pre, const char *post)
 {
 	GtkTextIter start, end;
@@ -201,7 +201,7 @@ invert_tags(GtkTextBuffer *buffer, const char *s1, const char *s2,
 }
 
 void
-gaim_gtk_advance_past(struct gaim_gtk_conversation *gtkconv,
+gaim_gtk_advance_past(GaimGtkConversation *gtkconv,
 					  const char *pre, const char *post)
 {
 	GtkTextIter current_pos, start, end;
@@ -222,7 +222,7 @@ gaim_gtk_advance_past(struct gaim_gtk_conversation *gtkconv,
 }
 
 void
-gaim_gtk_set_font_face(struct gaim_gtk_conversation *gtkconv,
+gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
 					   const char *font)
 {
 	char *pre_fontface;
@@ -247,7 +247,7 @@ gaim_gtk_set_font_face(struct gaim_gtk_conversation *gtkconv,
 
 static int
 des_save_icon(GtkObject *obj, GdkEvent *e,
-			  struct gaim_gtk_conversation *gtkconv)
+			  GaimGtkConversation *gtkconv)
 {
 	gtk_widget_destroy(gtkconv->u.im->save_icon);
 	gtkconv->u.im->save_icon = NULL;
@@ -256,9 +256,9 @@ des_save_icon(GtkObject *obj, GdkEvent *e,
 }
 
 static void
-do_save_icon(GtkObject *obj, struct gaim_conversation *c)
+do_save_icon(GtkObject *obj, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	FILE *file;
 	const char *f;
 	
@@ -290,7 +290,7 @@ do_save_icon(GtkObject *obj, struct gaim_conversation *c)
 }
 
 static void
-cancel_save_icon(GtkObject *obj, struct gaim_gtk_conversation *gtkconv)
+cancel_save_icon(GtkObject *obj, GaimGtkConversation *gtkconv)
 {
 	gtk_widget_destroy(gtkconv->u.im->save_icon);
 	gtkconv->u.im->save_icon = NULL;
@@ -298,9 +298,9 @@ cancel_save_icon(GtkObject *obj, struct gaim_gtk_conversation *gtkconv)
 
 
 void
-gaim_gtk_save_icon_dialog(GtkObject *obj, struct gaim_conversation *conv)
+gaim_gtk_save_icon_dialog(GtkObject *obj, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char buf[BUF_LEN];
 
 	if (conv == NULL || gaim_conversation_get_type(conv) != GAIM_CONV_IM)

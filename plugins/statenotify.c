@@ -3,7 +3,7 @@
 static void
 write_status(GaimConnection *gc, char *who, const char *message)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	struct buddy *b;
 	char buf[256];
 

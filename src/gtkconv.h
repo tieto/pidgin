@@ -24,20 +24,23 @@
 #ifndef _GAIM_GTK_CONVERSATION_H_
 #define _GAIM_GTK_CONVERSATION_H_
 
+#include "conversation.h"
+
 /**************************************************************************
  * @name Structures
  **************************************************************************/
+/*@{*/
 
-struct gaim_gtk_window;
-struct gaim_gtk_conversation;
-struct gaim_gtk_im_pane;
-struct gaim_gtk_chat_pane;
+typedef struct _GaimGtkWindow       GaimGtkWindow;
+typedef struct _GaimGtkImPane       GaimGtkImPane;
+typedef struct _GaimGtkChatPane     GaimGtkChatPane;
+typedef struct _GaimGtkConversation GaimGtkConversation;
 
 /**
  * A GTK+ representation of a graphical window containing one or more
  * conversations.
  */
-struct gaim_gtk_window
+struct _GaimGtkWindow
 {
 	GtkWidget *window;           /**< The window.                      */
 	GtkWidget *notebook;         /**< The notebook of conversations.   */
@@ -71,7 +74,7 @@ struct gaim_gtk_window
 /**
  * GTK+ Instant Message panes.
  */
-struct gaim_gtk_im_pane
+struct _GaimGtkImPane
 {
 	GtkWidget *warn;
 	GtkWidget *block;
@@ -94,7 +97,7 @@ struct gaim_gtk_im_pane
 /**
  * GTK+ Chat panes.
  */
-struct gaim_gtk_chat_pane
+struct _GaimGtkChatPane
 {
 	GtkWidget *count;
 	GtkWidget *list;
@@ -106,7 +109,7 @@ struct gaim_gtk_chat_pane
 /**
  * A GTK+ conversation pane.
  */
-struct gaim_gtk_conversation
+struct _GaimGtkConversation
 {
 	gboolean make_sound;
 	gboolean has_font;
@@ -169,23 +172,25 @@ struct gaim_gtk_conversation
 
 	union
 	{
-		struct gaim_gtk_im_pane   *im;
-		struct gaim_gtk_chat_pane *chat;
+		GaimGtkImPane   *im;
+		GaimGtkChatPane *chat;
 
 	} u;
 };
 
 #define GAIM_GTK_WINDOW(win) \
-	((struct gaim_gtk_window *)(win)->ui_data)
+	((GaimGtkWindow *)(win)->ui_data)
 
 #define GAIM_GTK_CONVERSATION(conv) \
-	((struct gaim_gtk_conversation *)(conv)->ui_data)
+	((GaimGtkConversation *)(conv)->ui_data)
 
 #define GAIM_IS_GTK_WINDOW(win) \
 	(gaim_window_get_ui_ops(win) == gaim_get_gtk_window_ui_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
 	(gaim_conversation_get_ui_ops(conv) == gaim_get_gtk_conversation_ui_ops())
+
+/*@}*/
 
 /**************************************************************************
  * @name GTK+ Conversation API
@@ -202,21 +207,21 @@ void gaim_gtk_conversation_init(void);
  *
  * @return The GTK window operations structure.
  */
-struct gaim_window_ui_ops *gaim_get_gtk_window_ui_ops(void);
+GaimWindowUiOps *gaim_get_gtk_window_ui_ops(void);
 
 /**
  * Returns the UI operations structure for GTK conversations.
  *
  * @return The GTK conversation operations structure.
  */
-struct gaim_conversation_ui_ops *gaim_get_gtk_conversation_ui_ops(void);
+GaimConversationUiOps *gaim_get_gtk_conversation_ui_ops(void);
 
 /**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.
  */
-void gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv);
+void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
 
 /**
  * Updates the font buttons on all conversations to reflect any changed
@@ -230,7 +235,7 @@ void gaim_gtkconv_update_font_buttons(void);
  *
  * @param conv The conversation to update.
  */
-void gaim_gtkconv_update_font_colors(struct gaim_conversation *conv);
+void gaim_gtkconv_update_font_colors(GaimConversation *conv);
 
 /**
  * Updates the font faces of each conversation to the new font
@@ -238,7 +243,7 @@ void gaim_gtkconv_update_font_colors(struct gaim_conversation *conv);
  *
  * @param conv The conversation to update.
  */
-void gaim_gtkconv_update_font_face(struct gaim_conversation *conv);
+void gaim_gtkconv_update_font_face(GaimConversation *conv);
 
 /**
  * Updates the tab positions on all conversation windows to reflect any
@@ -263,7 +268,7 @@ void gaim_gtkconv_update_im_button_style();
  *
  * @param conv The conversation.
  */
-void gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv);
+void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
 
 /**
  * Returns the window at the specified X, Y location.
@@ -275,7 +280,7 @@ void gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv);
  *
  * @return The GTK+ window at the location, if it exists, or @c NULL otherwise.
  */
-struct gaim_window *gaim_gtkwin_get_at_xy(int x, int y);
+GaimWindow *gaim_gtkwin_get_at_xy(int x, int y);
 
 /**
  * Returns the index of the tab at the specified X, Y location in a notebook.
@@ -286,7 +291,7 @@ struct gaim_window *gaim_gtkwin_get_at_xy(int x, int y);
  *
  * @return The index of the tab at the location.
  */
-int gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y);
+int gaim_gtkconv_get_tab_at_xy(GaimWindow *win, int x, int y);
 
 /**
  * Returns the index of the destination tab at the
@@ -301,7 +306,7 @@ int gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y);
  *
  * @return The index of the tab at the location.
  */
-int gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y);
+int gaim_gtkconv_get_dest_tab_at_xy(GaimWindow *win, int x, int y);
 
 /*@}*/
 

@@ -797,7 +797,7 @@ XS (XS_GAIM_user_info)
 XS (XS_GAIM_write_to_conv)
 {
 	char *nick, *who, *what;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	int junk;
 	int send, wflags;
 	dXSARGS;
@@ -853,7 +853,7 @@ XS (XS_GAIM_print_to_conv)
 	GaimConnection *gc;
 	char *nick, *what;
 	int isauto;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	unsigned int junk;
 	dXSARGS;
 	items = 0;
@@ -887,7 +887,7 @@ XS (XS_GAIM_print_to_chat)
 	GaimConnection *gc;
 	int id;
 	char *what;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	GSList *bcs;
 	unsigned int junk;
 	dXSARGS;
@@ -903,7 +903,7 @@ XS (XS_GAIM_print_to_chat)
 	}
 	bcs = gc->buddy_chats;
 	while (bcs) {
-		b = (struct gaim_conversation *)bcs->data;
+		b = (GaimConversation *)bcs->data;
 
 		if (gaim_chat_get_id(gaim_conversation_get_chat_data(b)) == id)
 			break;

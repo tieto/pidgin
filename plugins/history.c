@@ -17,8 +17,8 @@
 
 void historize (char *name, void *data)
 {
-	struct gaim_conversation *c = gaim_find_conversation(name);
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *c = gaim_find_conversation(name);
+	GaimGtkConversation *gtkconv;
 	struct stat st;
 	FILE *fd;
 	char *userdir = g_strdup(gaim_user_dir());

@@ -246,7 +246,7 @@ void gaim_blist_alias_chat(struct chat *chat, const char *alias)
 void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 
 	g_free(buddy->alias);
 

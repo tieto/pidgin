@@ -208,7 +208,7 @@ struct linkdlg {
 	GtkWidget *text;
 	GtkWidget *toggle;
 	GtkWidget *entry;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 };
 
 struct passwddlg {
@@ -247,9 +247,9 @@ gchar* gtk_text_view_get_text(GtkTextView *text, gboolean include_hidden_chars)
 /*  Destroys                                                              */
 /*------------------------------------------------------------------------*/
 
-static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct gaim_conversation *c)
+static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	gchar *object_data;
 
 	object_data = g_object_get_data(G_OBJECT(w), "dialog_type");
@@ -352,7 +352,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-	struct gaim_conversation *c = gaim_find_conversation(who);
+	GaimConversation *c = gaim_find_conversation(who);
 
 	struct warning *w = g_new0(struct warning, 1);
 	w->who = who;
@@ -412,7 +412,7 @@ void do_remove_chat(struct chat *chat)
 void do_remove_buddy(struct buddy *b)
 {
 	struct group *g;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	gchar *name;
 
 	if (!b)
@@ -441,7 +441,7 @@ void do_remove_group(struct group *g)
 	while (b) {
 		if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
 			struct buddy *bd = (struct buddy *)b;
-			struct gaim_conversation *c = gaim_find_conversation(bd->name);
+			GaimConversation *c = gaim_find_conversation(bd->name);
 			if(bd->account->gc) {
 				serv_remove_buddy(bd->account->gc, bd->name, g->name);
 				gaim_blist_remove_buddy(bd);
@@ -501,7 +501,7 @@ void show_confirm_del_group(struct group *g)
 static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	const char *who;
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	GaimAccount *account;
 
 	if (resp == GTK_RESPONSE_OK) {
@@ -846,12 +846,12 @@ void show_info_dialog()
 /*  The dialog for adding buddies                                         */
 /*------------------------------------------------------------------------*/
 
-extern void add_callback(GtkWidget *, struct gaim_conversation *);
+extern void add_callback(GtkWidget *, GaimConversation *);
 
 void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp, *who, *whoalias;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	struct buddy *b;
 	struct group *g;
 	void *icon_data;
@@ -2507,9 +2507,9 @@ void show_add_perm(GaimConnection *gc, char *who, gboolean permit)
 /*  Functions Called To Add A Log                                          */
 /*------------------------------------------------------------------------*/
 
-void cancel_log(GtkWidget *widget, struct gaim_conversation *c)
+void cancel_log(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -2523,9 +2523,9 @@ void cancel_log(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv->dialogs.log = NULL;
 }
 
-void do_log(GtkWidget *w, struct gaim_conversation *c)
+void do_log(GtkWidget *w, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	struct log_conversation *l;
 	const char *file;
 	char path[PATHSIZE];
@@ -2553,9 +2553,9 @@ void do_log(GtkWidget *w, struct gaim_conversation *c)
 	cancel_log(NULL, c);
 }
 
-void show_log_dialog(struct gaim_conversation *c)
+void show_log_dialog(GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char *buf = g_malloc(BUF_LEN);
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -2808,9 +2808,9 @@ void show_find_email(GaimConnection *gc)
 /* Link Dialog                                          */
 /*------------------------------------------------------*/
 
-void cancel_link(GtkWidget *widget, struct gaim_conversation *c)
+void cancel_link(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -2825,7 +2825,7 @@ void cancel_link(GtkWidget *widget, struct gaim_conversation *c)
 
 void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char *open_tag;
 	const char *urltext, *showtext;
 
@@ -2856,10 +2856,10 @@ void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 	destroy_dialog(NULL, b->window);
 }
 
-void show_insert_link(GtkWidget *linky, struct gaim_conversation *c)
+void show_insert_link(GtkWidget *linky, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 	GtkWidget *table;
 	GtkWidget *label;
 	GtkWidget *hbox;
@@ -2954,9 +2954,9 @@ void show_insert_link(GtkWidget *linky, struct gaim_conversation *c)
 GtkWidget *fgcseld = NULL;
 GtkWidget *bgcseld = NULL;
 
-void cancel_fgcolor(GtkWidget *widget, struct gaim_conversation *c)
+void cancel_fgcolor(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -2970,9 +2970,9 @@ void cancel_fgcolor(GtkWidget *widget, struct gaim_conversation *c)
 	gtkconv->dialogs.fg_color = NULL;
 }
 
-void cancel_bgcolor(GtkWidget *widget, struct gaim_conversation *c)
+void cancel_bgcolor(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -2989,8 +2989,8 @@ void cancel_bgcolor(GtkWidget *widget, struct gaim_conversation *c)
 void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
 	GdkColor text_color;
-	struct gaim_conversation *c;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *c;
+	GaimGtkConversation *gtkconv;
 	char *open_tag;
 
 	open_tag = g_malloc(30);
@@ -3020,8 +3020,8 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
 	GdkColor text_color;
-	struct gaim_conversation *c;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *c;
+	GaimGtkConversation *gtkconv;
 	char *open_tag;
 
 	open_tag = g_malloc(30);
@@ -3048,9 +3048,9 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	cancel_bgcolor(NULL, c);
 }
 
-void show_fgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
+void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GtkWidget *colorsel;
 	GdkColor fgcolor;
 
@@ -3100,9 +3100,9 @@ void show_fgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 	gdk_window_raise(gtkconv->dialogs.fg_color->window);
 }
 
-void show_bgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
+void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GtkWidget *colorsel;
 	GdkColor bgcolor;
 
@@ -3156,9 +3156,9 @@ void show_bgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 /*  Font Selection Dialog                                                 */
 /*------------------------------------------------------------------------*/
 
-void cancel_font(GtkWidget *widget, struct gaim_conversation *c)
+void cancel_font(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -3178,7 +3178,7 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	   but for now only works with font face */
 	int i = 0;
 	char *fontname;
-	struct gaim_conversation *c = g_object_get_data(G_OBJECT(fontsel),
+	GaimConversation *c = g_object_get_data(G_OBJECT(fontsel),
 			"gaim_conversation");
 
 	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
@@ -3215,9 +3215,9 @@ void destroy_fontsel(GtkWidget *w, gpointer d)
 	fontseld = NULL;
 }
 
-void show_font_dialog(struct gaim_conversation *c, GtkWidget *font)
+void show_font_dialog(GaimConversation *c, GtkWidget *font)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char fonttif[128];
 	const char *fontface;
 
@@ -3475,9 +3475,9 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 /* smiley dialog */
 
-void close_smiley_dialog(GtkWidget *widget, struct gaim_conversation *c)
+void close_smiley_dialog(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -3492,9 +3492,9 @@ void close_smiley_dialog(GtkWidget *widget, struct gaim_conversation *c)
 	}
 }
 
-void insert_smiley_text(GtkWidget *widget, struct gaim_conversation *c)
+void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
 	GtkTextMark *select_mark, *insert_mark;
 	GtkTextIter select_iter, insert_iter;
@@ -3514,11 +3514,11 @@ void insert_smiley_text(GtkWidget *widget, struct gaim_conversation *c)
 	close_smiley_dialog(NULL, c);
 }
 
-static void add_smiley(struct gaim_conversation *c, GtkWidget *table, int row, int col, char *filename, char *face)
+static void add_smiley(GaimConversation *c, GtkWidget *table, int row, int col, char *filename, char *face)
 {
 	GtkWidget *image;
 	GtkWidget *button;
-	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(c);
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	image = gtk_image_new_from_file(filename);
 	button = gtk_button_new();
@@ -3546,9 +3546,9 @@ static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
 	return TRUE;
 }
 
-void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
+void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GtkWidget *dialog;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;

@@ -44,7 +44,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml);
  * @param pre     The prefix string.
  * @param post    The postfix string.
  */
-void gaim_gtk_surround(struct gaim_gtk_conversation *gtkconv,
+void gaim_gtk_surround(GaimGtkConversation *gtkconv,
 					   const char *pre, const char *post);
 
 /**
@@ -54,7 +54,7 @@ void gaim_gtk_surround(struct gaim_gtk_conversation *gtkconv,
  * @param pre     The prefix string.
  * @param post    The postfix string.
  */
-void gaim_gtk_advance_past(struct gaim_gtk_conversation *gtkconv,
+void gaim_gtk_advance_past(GaimGtkConversation *gtkconv,
 						   const char *pre, const char *post);
 
 /**
@@ -63,7 +63,7 @@ void gaim_gtk_advance_past(struct gaim_gtk_conversation *gtkconv,
  * @param conv The conversation.
  * @param font The new font.
  */
-void gaim_gtk_set_font_face(struct gaim_gtk_conversation *gtkconv,
+void gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
 							const char *font);
 
 /**
@@ -72,7 +72,7 @@ void gaim_gtk_set_font_face(struct gaim_gtk_conversation *gtkconv,
  * @param obj  @c NULL
  * @param conv The conversation.
  */
-void gaim_gtk_save_icon_dialog(GtkObject *obj, struct gaim_conversation *conv);
+void gaim_gtk_save_icon_dialog(GtkObject *obj, GaimConversation *conv);
 
 /**
  * Returns the display style for buttons for the specified conversation

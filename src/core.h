@@ -128,7 +128,7 @@ extern void serv_got_typing(GaimConnection *, const char *, int, int);
 extern void serv_got_typing_stopped(GaimConnection *, const char *);
 extern void serv_got_eviled(GaimConnection *, const char *, int);
 extern void serv_got_chat_invite(GaimConnection *, const char *, const char *, const char *, GHashTable *);
-extern struct gaim_conversation *serv_got_joined_chat(GaimConnection *, int, const char *);
+extern GaimConversation *serv_got_joined_chat(GaimConnection *, int, const char *);
 extern void serv_got_chat_left(GaimConnection *, int);
 extern void serv_got_chat_in(GaimConnection *, int, char *, int, char *, time_t);
 extern void serv_got_alias(GaimConnection *, const char *, const char *);

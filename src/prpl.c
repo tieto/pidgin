@@ -220,7 +220,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 
 void set_icon_data(GaimConnection *gc, const char *who, void *data, int len)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	struct icon_data tmp;
 	GList *l;
 	struct icon_data *id;

@@ -62,7 +62,7 @@ static void dequeue_message(GtkTreeIter *iter)
 {
 	gchar *name;
 	GSList *templist;
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
 
@@ -109,7 +109,7 @@ void purge_away_queue(GSList **queue)
 {
 	GSList *q = *queue;
 	struct queued_message *qm;
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 	GaimAccount *account;
 
 	while (q) {

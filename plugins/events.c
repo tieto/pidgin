@@ -161,7 +161,7 @@ static evt_got_typing(struct gaim_connection *gc, char *who, void *data)
 	printf("event_got_typing: %s\n", who);
 }
 
-static evt_del_conversation(struct gaim_conversation *c, void *data)
+static evt_del_conversation(GaimConversation *c, void *data)
 {
 	printf("event_del_conversation\n");
 }

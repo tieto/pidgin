@@ -38,22 +38,23 @@
 #include "win32dep.h"
 #endif
 
-struct ConvPlacementData
+typedef struct
 {
 	char *name;
-	gaim_conv_placement_fnc fnc;
-};
+	GaimConvPlacementFunc fnc;
+
+} ConvPlacementData;
 
 #define SEND_TYPED_TIMEOUT 5000
 
-static struct gaim_window_ui_ops *win_ui_ops = NULL;
+static GaimWindowUiOps *win_ui_ops = NULL;
 
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
 static GList *windows = NULL;
 static GList *conv_placement_fncs = NULL;
-static gaim_conv_placement_fnc place_conv = NULL;
+static GaimConvPlacementFunc place_conv = NULL;
 static int place_conv_index = -1;
 
 static gint
@@ -138,8 +139,8 @@ static gboolean
 reset_typing(gpointer data)
 {
 	char *name = (char *)data;
-	struct gaim_conversation *c = gaim_find_conversation(name);
-	struct gaim_im *im;
+	GaimConversation *c = gaim_find_conversation(name);
+	GaimIm *im;
 
 	if (!c)
 		return FALSE;
@@ -156,7 +157,7 @@ reset_typing(gpointer data)
 static gboolean
 send_typed(gpointer data)
 {
-	struct gaim_conversation *conv = (struct gaim_conversation *)data;
+	GaimConversation *conv = (GaimConversation *)data;
 	GaimConnection *gc;
 	const char *name;
 
@@ -176,11 +177,11 @@ send_typed(gpointer data)
 }
 
 static void
-common_send(struct gaim_conversation *conv, const char *message)
+common_send(GaimConversation *conv, const char *message)
 {
 	GaimConversationType type;
 	GaimConnection *gc;
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversationUiOps *ops;
 	char *buf, *buf2, *buffy = NULL;
 	gulong length = 0;
 	gboolean binary = FALSE;
@@ -251,7 +252,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 	g_free(buffy);
 
 	if (type == GAIM_CONV_IM) {
-		struct gaim_im *im = GAIM_IM(conv);
+		GaimIm *im = GAIM_IM(conv);
 
 		buffy = g_strdup(buf);
 		gaim_event_broadcast(event_im_displayed_sent, gc,
@@ -429,7 +430,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 }
 
 static void
-update_conv_indexes(struct gaim_window *win)
+update_conv_indexes(GaimWindow *win)
 {
 	GList *l;
 	int i;
@@ -438,18 +439,18 @@ update_conv_indexes(struct gaim_window *win)
 		 l != NULL;
 		 l = l->next, i++) {
 
-		struct gaim_conversation *conv = (struct gaim_conversation *)l->data;
+		GaimConversation *conv = (GaimConversation *)l->data;
 
 		conv->conversation_pos = i;
 	}
 }
 
-struct gaim_window *
+GaimWindow *
 gaim_window_new(void)
 {
-	struct gaim_window *win;
+	GaimWindow *win;
 
-	win = g_malloc0(sizeof(struct gaim_window));
+	win = g_malloc0(sizeof(GaimWindow));
 
 	win->ui_ops = gaim_get_win_ui_ops();
 
@@ -462,9 +463,9 @@ gaim_window_new(void)
 }
 
 void
-gaim_window_destroy(struct gaim_window *win)
+gaim_window_destroy(GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 	GList *node;
 
 	if (win == NULL)
@@ -487,7 +488,7 @@ gaim_window_destroy(struct gaim_window *win)
 		node = g_list_first(gaim_window_get_conversations(win));
 		while(node != NULL)
 		{
-			struct gaim_conversation *conv = node->data;
+			GaimConversation *conv = node->data;
 
 			node = g_list_next(node);
 
@@ -508,9 +509,9 @@ gaim_window_destroy(struct gaim_window *win)
 }
 
 void
-gaim_window_show(struct gaim_window *win)
+gaim_window_show(GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL)
 		return;
@@ -524,9 +525,9 @@ gaim_window_show(struct gaim_window *win)
 }
 
 void
-gaim_window_hide(struct gaim_window *win)
+gaim_window_hide(GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL)
 		return;
@@ -540,9 +541,9 @@ gaim_window_hide(struct gaim_window *win)
 }
 
 void
-gaim_window_raise(struct gaim_window *win)
+gaim_window_raise(GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL)
 		return;
@@ -556,9 +557,9 @@ gaim_window_raise(struct gaim_window *win)
 }
 
 void
-gaim_window_flash(struct gaim_window *win)
+gaim_window_flash(GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL)
 		return;
@@ -572,9 +573,9 @@ gaim_window_flash(struct gaim_window *win)
 }
 
 void
-gaim_window_set_ui_ops(struct gaim_window *win, struct gaim_window_ui_ops *ops)
+gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops)
 {
-	struct gaim_conversation_ui_ops *conv_ops = NULL;
+	GaimConversationUiOps *conv_ops = NULL;
 	GList *l;
 
 	if (win == NULL || win->ui_ops == ops)
@@ -595,7 +596,7 @@ gaim_window_set_ui_ops(struct gaim_window *win, struct gaim_window_ui_ops *ops)
 		 l != NULL;
 		 l = l->next) {
 
-		struct gaim_conversation *conv = (struct gaim_conversation *)l;
+		GaimConversation *conv = (GaimConversation *)l;
 
 		gaim_conversation_set_ui_ops(conv, conv_ops);
 
@@ -604,8 +605,8 @@ gaim_window_set_ui_ops(struct gaim_window *win, struct gaim_window_ui_ops *ops)
 	}
 }
 
-struct gaim_window_ui_ops *
-gaim_window_get_ui_ops(const struct gaim_window *win)
+GaimWindowUiOps *
+gaim_window_get_ui_ops(const GaimWindow *win)
 {
 	if (win == NULL)
 		return NULL;
@@ -614,10 +615,9 @@ gaim_window_get_ui_ops(const struct gaim_window *win)
 }
 
 int
-gaim_window_add_conversation(struct gaim_window *win,
-							 struct gaim_conversation *conv)
+gaim_window_add_conversation(GaimWindow *win, GaimConversation *conv)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL || conv == NULL)
 		return -1;
@@ -648,11 +648,11 @@ gaim_window_add_conversation(struct gaim_window *win,
 	return win->conversation_count - 1;
 }
 
-struct gaim_conversation *
-gaim_window_remove_conversation(struct gaim_window *win, unsigned int index)
+GaimConversation *
+gaim_window_remove_conversation(GaimWindow *win, unsigned int index)
 {
-	struct gaim_window_ui_ops *ops;
-	struct gaim_conversation *conv;
+	GaimWindowUiOps *ops;
+	GaimConversation *conv;
 	GList *node;
 
 	if (win == NULL || index >= gaim_window_get_conversation_count(win))
@@ -661,7 +661,7 @@ gaim_window_remove_conversation(struct gaim_window *win, unsigned int index)
 	ops = gaim_window_get_ui_ops(win);
 
 	node = g_list_nth(gaim_window_get_conversations(win), index);
-	conv = (struct gaim_conversation *)node->data;
+	conv = (GaimConversation *)node->data;
 
 	if (ops != NULL && ops->remove_conversation != NULL)
 		ops->remove_conversation(win, conv);
@@ -685,11 +685,11 @@ gaim_window_remove_conversation(struct gaim_window *win, unsigned int index)
 }
 
 void
-gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
+gaim_window_move_conversation(GaimWindow *win, unsigned int index,
 							  unsigned int new_index)
 {
-	struct gaim_window_ui_ops *ops;
-	struct gaim_conversation *conv;
+	GaimWindowUiOps *ops;
+	GaimConversation *conv;
 	GList *l;
 
 	if (win == NULL || index >= gaim_window_get_conversation_count(win) ||
@@ -711,7 +711,7 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 		return;
 	}
 
-	conv = (struct gaim_conversation *)l->data;
+	conv = (GaimConversation *)l->data;
 
 	/* Update the UI part of this. */
 	ops = gaim_window_get_ui_ops(win);
@@ -731,19 +731,18 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 	update_conv_indexes(win);
 }
 
-struct gaim_conversation *
-gaim_window_get_conversation_at(const struct gaim_window *win,
-								unsigned int index)
+GaimConversation *
+gaim_window_get_conversation_at(const GaimWindow *win, unsigned int index)
 {
 	if (win == NULL || index >= gaim_window_get_conversation_count(win))
 		return NULL;
 
-	return (struct gaim_conversation *)g_list_nth_data(
+	return (GaimConversation *)g_list_nth_data(
 		gaim_window_get_conversations(win), index);
 }
 
 size_t
-gaim_window_get_conversation_count(const struct gaim_window *win)
+gaim_window_get_conversation_count(const GaimWindow *win)
 {
 	if (win == NULL)
 		return 0;
@@ -752,9 +751,9 @@ gaim_window_get_conversation_count(const struct gaim_window *win)
 }
 
 void
-gaim_window_switch_conversation(struct gaim_window *win, unsigned int index)
+gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL || index < 0 ||
 		index >= gaim_window_get_conversation_count(win))
@@ -769,10 +768,10 @@ gaim_window_switch_conversation(struct gaim_window *win, unsigned int index)
 		gaim_window_get_conversation_at(win, index), 0);
 }
 
-struct gaim_conversation *
-gaim_window_get_active_conversation(const struct gaim_window *win)
+GaimConversation *
+gaim_window_get_active_conversation(const GaimWindow *win)
 {
-	struct gaim_window_ui_ops *ops;
+	GaimWindowUiOps *ops;
 
 	if (win == NULL)
 		return NULL;
@@ -786,7 +785,7 @@ gaim_window_get_active_conversation(const struct gaim_window *win)
 }
 
 GList *
-gaim_window_get_conversations(const struct gaim_window *win)
+gaim_window_get_conversations(const GaimWindow *win)
 {
 	if (win == NULL)
 		return NULL;
@@ -800,24 +799,24 @@ gaim_get_windows(void)
 	return windows;
 }
 
-struct gaim_window *
+GaimWindow *
 gaim_get_first_window_with_type(GaimConversationType type)
 {
 	GList *wins, *convs;
-	struct gaim_window *win;
-	struct gaim_conversation *conv;
+	GaimWindow *win;
+	GaimConversation *conv;
 
 	if (type == GAIM_CONV_UNKNOWN)
 		return NULL;
 
 	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-		win = (struct gaim_window *)wins->data;
+		win = (GaimWindow *)wins->data;
 
 		for (convs = gaim_window_get_conversations(win);
 			 convs != NULL;
 			 convs = convs->next) {
 
-			conv = (struct gaim_conversation *)convs->data;
+			conv = (GaimConversation *)convs->data;
 
 			if (gaim_conversation_get_type(conv) == type)
 				return win;
@@ -827,12 +826,12 @@ gaim_get_first_window_with_type(GaimConversationType type)
 	return NULL;
 }
 
-struct gaim_window *
+GaimWindow *
 gaim_get_last_window_with_type(GaimConversationType type)
 {
 	GList *wins, *convs;
-	struct gaim_window *win;
-	struct gaim_conversation *conv;
+	GaimWindow *win;
+	GaimConversation *conv;
 
 	if (type == GAIM_CONV_UNKNOWN)
 		return NULL;
@@ -841,13 +840,13 @@ gaim_get_last_window_with_type(GaimConversationType type)
 		 wins != NULL;
 		 wins = wins->prev) {
 
-		win = (struct gaim_window *)wins->data;
+		win = (GaimWindow *)wins->data;
 
 		for (convs = gaim_window_get_conversations(win);
 			 convs != NULL;
 			 convs = convs->next) {
 
-			conv = (struct gaim_conversation *)convs->data;
+			conv = (GaimConversation *)convs->data;
 
 			if (gaim_conversation_get_type(conv) == type)
 				return win;
@@ -860,11 +859,11 @@ gaim_get_last_window_with_type(GaimConversationType type)
 /**************************************************************************
  * Conversation API
  **************************************************************************/
-struct gaim_conversation *
+GaimConversation *
 gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 					  const char *name)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 
 	if (type == GAIM_CONV_UNKNOWN)
 		return NULL;
@@ -873,7 +872,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	if ((conv = gaim_find_conversation_with_account(name, account)) != NULL)
 		return conv;
 
-	conv = g_malloc0(sizeof(struct gaim_conversation));
+	conv = g_malloc0(sizeof(GaimConversation));
 
 	conv->type         = type;
 	conv->account      = account;
@@ -886,7 +885,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 	if (type == GAIM_CONV_IM)
 	{
-		conv->u.im = g_malloc0(sizeof(struct gaim_im));
+		conv->u.im = g_malloc0(sizeof(GaimIm));
 		conv->u.im->conv = conv;
 
 		ims = g_list_append(ims, conv);
@@ -896,7 +895,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
-		conv->u.chat = g_malloc0(sizeof(struct gaim_chat));
+		conv->u.chat = g_malloc0(sizeof(GaimChat));
 		conv->u.chat->conv = conv;
 
 		chats = g_list_append(chats, conv);
@@ -917,7 +916,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	if (windows == NULL ||
 		!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
 
-		struct gaim_window *win;
+		GaimWindow *win;
 
 		win = gaim_window_new();
 		gaim_window_add_conversation(win, conv);
@@ -938,11 +937,11 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 }
 
 void
-gaim_conversation_destroy(struct gaim_conversation *conv)
+gaim_conversation_destroy(GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_window *win;
-	struct gaim_conversation_ui_ops *ops;
+	GaimWindow *win;
+	GaimConversationUiOps *ops;
 	GaimConnection *gc;
 	const char *name;
 	GList *node;
@@ -1069,7 +1068,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 }
 
 GaimConversationType
-gaim_conversation_get_type(const struct gaim_conversation *conv)
+gaim_conversation_get_type(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return GAIM_CONV_UNKNOWN;
@@ -1078,8 +1077,8 @@ gaim_conversation_get_type(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
-							 struct gaim_conversation_ui_ops *ops)
+gaim_conversation_set_ui_ops(GaimConversation *conv,
+							 GaimConversationUiOps *ops)
 {
 	if (conv == NULL || conv->ui_ops == ops)
 		return;
@@ -1092,8 +1091,8 @@ gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
 	conv->ui_ops = ops;
 }
 
-struct gaim_conversation_ui_ops *
-gaim_conversation_get_ui_ops(struct gaim_conversation *conv)
+GaimConversationUiOps *
+gaim_conversation_get_ui_ops(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1102,8 +1101,7 @@ gaim_conversation_get_ui_ops(struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_account(struct gaim_conversation *conv,
-						   GaimAccount *account)
+gaim_conversation_set_account(GaimConversation *conv, GaimAccount *account)
 {
 	if (conv == NULL || account == gaim_conversation_get_account(conv))
 		return;
@@ -1114,7 +1112,7 @@ gaim_conversation_set_account(struct gaim_conversation *conv,
 }
 
 GaimAccount *
-gaim_conversation_get_account(const struct gaim_conversation *conv)
+gaim_conversation_get_account(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1123,7 +1121,7 @@ gaim_conversation_get_account(const struct gaim_conversation *conv)
 }
 
 GaimConnection *
-gaim_conversation_get_gc(const struct gaim_conversation *conv)
+gaim_conversation_get_gc(const GaimConversation *conv)
 {
 	GaimAccount *account;
 
@@ -1139,9 +1137,9 @@ gaim_conversation_get_gc(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_title(struct gaim_conversation *conv, const char *title)
+gaim_conversation_set_title(GaimConversation *conv, const char *title)
 {
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversationUiOps *ops;
 
 	if (conv == NULL || title == NULL)
 		return;
@@ -1158,7 +1156,7 @@ gaim_conversation_set_title(struct gaim_conversation *conv, const char *title)
 }
 
 const char *
-gaim_conversation_get_title(const struct gaim_conversation *conv)
+gaim_conversation_get_title(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1167,7 +1165,7 @@ gaim_conversation_get_title(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_autoset_title(struct gaim_conversation *conv)
+gaim_conversation_autoset_title(GaimConversation *conv)
 {
 	GaimAccount *account;
 	struct buddy *b;
@@ -1191,7 +1189,7 @@ gaim_conversation_autoset_title(struct gaim_conversation *conv)
 }
 
 int
-gaim_conversation_get_index(const struct gaim_conversation *conv)
+gaim_conversation_get_index(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return 0;
@@ -1200,8 +1198,7 @@ gaim_conversation_get_index(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_unseen(struct gaim_conversation *conv,
-							 GaimUnseenState state)
+gaim_conversation_set_unseen(GaimConversation *conv, GaimUnseenState state)
 {
 	if (conv == NULL)
 		return;
@@ -1212,23 +1209,23 @@ gaim_conversation_set_unseen(struct gaim_conversation *conv,
 }
 
 void
-gaim_conversation_foreach(void (*func)(struct gaim_conversation *conv))
+gaim_conversation_foreach(void (*func)(GaimConversation *conv))
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	GList *l;
 
 	if (func == NULL)
 		return;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		func(conv);
 	}
 }
 
 GaimUnseenState
-gaim_conversation_get_unseen(const struct gaim_conversation *conv)
+gaim_conversation_get_unseen(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return 0;
@@ -1237,7 +1234,7 @@ gaim_conversation_get_unseen(const struct gaim_conversation *conv)
 }
 
 const char *
-gaim_conversation_get_name(const struct gaim_conversation *conv)
+gaim_conversation_get_name(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1246,7 +1243,7 @@ gaim_conversation_get_name(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_logging(struct gaim_conversation *conv, gboolean log)
+gaim_conversation_set_logging(GaimConversation *conv, gboolean log)
 {
 	if (conv == NULL)
 		return;
@@ -1257,7 +1254,7 @@ gaim_conversation_set_logging(struct gaim_conversation *conv, gboolean log)
 }
 
 gboolean
-gaim_conversation_is_logging(const struct gaim_conversation *conv)
+gaim_conversation_is_logging(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return FALSE;
@@ -1266,7 +1263,7 @@ gaim_conversation_is_logging(const struct gaim_conversation *conv)
 }
 
 GList *
-gaim_conversation_get_send_history(const struct gaim_conversation *conv)
+gaim_conversation_get_send_history(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1275,8 +1272,7 @@ gaim_conversation_get_send_history(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_history(struct gaim_conversation *conv,
-							  GString *history)
+gaim_conversation_set_history(GaimConversation *conv, GString *history)
 {
 	if (conv == NULL)
 		return;
@@ -1285,7 +1281,7 @@ gaim_conversation_set_history(struct gaim_conversation *conv,
 }
 
 GString *
-gaim_conversation_get_history(const struct gaim_conversation *conv)
+gaim_conversation_get_history(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1293,8 +1289,8 @@ gaim_conversation_get_history(const struct gaim_conversation *conv)
 	return conv->history;
 }
 
-struct gaim_window *
-gaim_conversation_get_window(const struct gaim_conversation *conv)
+GaimWindow *
+gaim_conversation_get_window(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1302,8 +1298,8 @@ gaim_conversation_get_window(const struct gaim_conversation *conv)
 	return conv->window;
 }
 
-struct gaim_im *
-gaim_conversation_get_im_data(const struct gaim_conversation *conv)
+GaimIm *
+gaim_conversation_get_im_data(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1314,8 +1310,8 @@ gaim_conversation_get_im_data(const struct gaim_conversation *conv)
 	return conv->u.im;
 }
 
-struct gaim_chat *
-gaim_conversation_get_chat_data(const struct gaim_conversation *conv)
+GaimChat *
+gaim_conversation_get_chat_data(const GaimConversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
@@ -1327,7 +1323,7 @@ gaim_conversation_get_chat_data(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_data(struct gaim_conversation *conv, const char *key,
+gaim_conversation_set_data(GaimConversation *conv, const char *key,
 						   gpointer data)
 {
 	if (conv == NULL || key == NULL)
@@ -1337,7 +1333,7 @@ gaim_conversation_set_data(struct gaim_conversation *conv, const char *key,
 }
 
 gpointer
-gaim_conversation_get_data(struct gaim_conversation *conv, const char *key)
+gaim_conversation_get_data(GaimConversation *conv, const char *key)
 {
 	if (conv == NULL || key == NULL)
 		return NULL;
@@ -1363,10 +1359,10 @@ gaim_get_chats(void)
 	return chats;
 }
 
-struct gaim_conversation *
+GaimConversation *
 gaim_find_conversation(const char *name)
 {
-	struct gaim_conversation *c = NULL;
+	GaimConversation *c = NULL;
 	char *cuser;
 	GList *cnv;
 
@@ -1376,7 +1372,7 @@ gaim_find_conversation(const char *name)
 	cuser = g_strdup(normalize(name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
-		c = (struct gaim_conversation *)cnv->data;
+		c = (GaimConversation *)cnv->data;
 
 		if (!gaim_utf8_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))))
 			break;
@@ -1389,10 +1385,11 @@ gaim_find_conversation(const char *name)
 	return c;
 }
 
-struct gaim_conversation *
-gaim_find_conversation_with_account(const char *name, const GaimAccount *account)
+GaimConversation *
+gaim_find_conversation_with_account(const char *name,
+									const GaimAccount *account)
 {
-	struct gaim_conversation *c = NULL;
+	GaimConversation *c = NULL;
 	char *cuser;
 	GList *cnv;
 
@@ -1402,9 +1399,10 @@ gaim_find_conversation_with_account(const char *name, const GaimAccount *account
 	cuser = g_strdup(normalize(name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
-		c = (struct gaim_conversation *)cnv->data;
+		c = (GaimConversation *)cnv->data;
 
-		if (!gaim_utf8_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))) &&
+		if (!gaim_utf8_strcasecmp(cuser,
+								  normalize(gaim_conversation_get_name(c))) &&
 			account == gaim_conversation_get_account(c)) {
 
 			break;
@@ -1419,15 +1417,15 @@ gaim_find_conversation_with_account(const char *name, const GaimAccount *account
 }
 
 void
-gaim_conversation_write(struct gaim_conversation *conv, const char *who,
+gaim_conversation_write(GaimConversation *conv, const char *who,
 						const char *message, size_t length, int flags,
 						time_t mtime)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
 	GaimAccount *account;
-	struct gaim_conversation_ui_ops *ops;
-	struct gaim_window *win;
+	GaimConversationUiOps *ops;
+	GaimWindow *win;
 	struct buddy *b;
 	GaimUnseenState unseen;
 	/* int logging_font_options = 0; */
@@ -1517,10 +1515,9 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 }
 
 void
-gaim_conversation_update_progress(struct gaim_conversation *conv,
-								  float percent)
+gaim_conversation_update_progress(GaimConversation *conv, float percent)
 {
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversationUiOps *ops;
 
 	if (conv == NULL)
 		return;
@@ -1539,10 +1536,9 @@ gaim_conversation_update_progress(struct gaim_conversation *conv,
 }
 
 void
-gaim_conversation_update(struct gaim_conversation *conv,
-						 GaimConvUpdateType type)
+gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 {
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversationUiOps *ops;
 
 	if (conv == NULL)
 		return;
@@ -1556,8 +1552,8 @@ gaim_conversation_update(struct gaim_conversation *conv,
 /**************************************************************************
  * IM Conversation API
  **************************************************************************/
-struct gaim_conversation *
-gaim_im_get_conversation(struct gaim_im *im)
+GaimConversation *
+gaim_im_get_conversation(const GaimIm *im)
 {
 	if (im == NULL)
 		return NULL;
@@ -1566,7 +1562,7 @@ gaim_im_get_conversation(struct gaim_im *im)
 }
 
 void
-gaim_im_set_typing_state(struct gaim_im *im, int state)
+gaim_im_set_typing_state(GaimIm *im, int state)
 {
 	if (im == NULL)
 		return;
@@ -1575,7 +1571,7 @@ gaim_im_set_typing_state(struct gaim_im *im, int state)
 }
 
 int
-gaim_im_get_typing_state(const struct gaim_im *im)
+gaim_im_get_typing_state(const GaimIm *im)
 {
 	if (im == NULL)
 		return 0;
@@ -1584,9 +1580,9 @@ gaim_im_get_typing_state(const struct gaim_im *im)
 }
 
 void
-gaim_im_start_typing_timeout(struct gaim_im *im, int timeout)
+gaim_im_start_typing_timeout(GaimIm *im, int timeout)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	const char *name;
 
 	if (im == NULL)
@@ -1603,7 +1599,7 @@ gaim_im_start_typing_timeout(struct gaim_im *im, int timeout)
 }
 
 void
-gaim_im_stop_typing_timeout(struct gaim_im *im)
+gaim_im_stop_typing_timeout(GaimIm *im)
 {
 	if (im == NULL)
 		return;
@@ -1616,7 +1612,7 @@ gaim_im_stop_typing_timeout(struct gaim_im *im)
 }
 
 guint
-gaim_im_get_typing_timeout(const struct gaim_im *im)
+gaim_im_get_typing_timeout(const GaimIm *im)
 {
 	if (im == NULL)
 		return 0;
@@ -1625,7 +1621,7 @@ gaim_im_get_typing_timeout(const struct gaim_im *im)
 }
 
 void
-gaim_im_set_type_again(struct gaim_im *im, time_t val)
+gaim_im_set_type_again(GaimIm *im, time_t val)
 {
 	if (im == NULL)
 		return;
@@ -1634,7 +1630,7 @@ gaim_im_set_type_again(struct gaim_im *im, time_t val)
 }
 
 time_t
-gaim_im_get_type_again(const struct gaim_im *im)
+gaim_im_get_type_again(const GaimIm *im)
 {
 	if (im == NULL)
 		return 0;
@@ -1643,7 +1639,7 @@ gaim_im_get_type_again(const struct gaim_im *im)
 }
 
 void
-gaim_im_start_type_again_timeout(struct gaim_im *im)
+gaim_im_start_type_again_timeout(GaimIm *im)
 {
 	if (im == NULL)
 		return;
@@ -1653,7 +1649,7 @@ gaim_im_start_type_again_timeout(struct gaim_im *im)
 }
 
 void
-gaim_im_stop_type_again_timeout(struct gaim_im *im)
+gaim_im_stop_type_again_timeout(GaimIm *im)
 {
 	if (im == NULL)
 		return;
@@ -1666,7 +1662,7 @@ gaim_im_stop_type_again_timeout(struct gaim_im *im)
 }
 
 guint
-gaim_im_get_type_again_timeout(const struct gaim_im *im)
+gaim_im_get_type_again_timeout(const GaimIm *im)
 {
 	if (im == NULL)
 		return 0;
@@ -1675,7 +1671,7 @@ gaim_im_get_type_again_timeout(const struct gaim_im *im)
 }
 
 void
-gaim_im_update_typing(struct gaim_im *im)
+gaim_im_update_typing(GaimIm *im)
 {
 	if (im == NULL)
 		return;
@@ -1685,10 +1681,10 @@ gaim_im_update_typing(struct gaim_im *im)
 }
 
 void
-gaim_im_write(struct gaim_im *im, const char *who, const char *message,
+gaim_im_write(GaimIm *im, const char *who, const char *message,
 			  size_t len, int flags, time_t mtime)
 {
-	struct gaim_conversation *c;
+	GaimConversation *c;
 
 	if (im == NULL || message == NULL)
 		return;
@@ -1703,7 +1699,7 @@ gaim_im_write(struct gaim_im *im, const char *who, const char *message,
 }
 
 void
-gaim_im_send(struct gaim_im *im, const char *message)
+gaim_im_send(GaimIm *im, const char *message)
 {
 	if (im == NULL || message == NULL)
 		return;
@@ -1715,8 +1711,8 @@ gaim_im_send(struct gaim_im *im, const char *message)
  * Chat Conversation API
  **************************************************************************/
 
-struct gaim_conversation *
-gaim_chat_get_conversation(struct gaim_chat *chat)
+GaimConversation *
+gaim_chat_get_conversation(const GaimChat *chat)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1725,7 +1721,7 @@ gaim_chat_get_conversation(struct gaim_chat *chat)
 }
 
 GList *
-gaim_chat_set_users(struct gaim_chat *chat, GList *users)
+gaim_chat_set_users(GaimChat *chat, GList *users)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1736,7 +1732,7 @@ gaim_chat_set_users(struct gaim_chat *chat, GList *users)
 }
 
 GList *
-gaim_chat_get_users(const struct gaim_chat *chat)
+gaim_chat_get_users(const GaimChat *chat)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1745,7 +1741,7 @@ gaim_chat_get_users(const struct gaim_chat *chat)
 }
 
 void
-gaim_chat_ignore(struct gaim_chat *chat, const char *name)
+gaim_chat_ignore(GaimChat *chat, const char *name)
 {
 	if (chat == NULL || name == NULL)
 		return;
@@ -1759,7 +1755,7 @@ gaim_chat_ignore(struct gaim_chat *chat, const char *name)
 }
 
 void
-gaim_chat_unignore(struct gaim_chat *chat, const char *name)
+gaim_chat_unignore(GaimChat *chat, const char *name)
 {
 	GList *item;
 
@@ -1781,7 +1777,7 @@ gaim_chat_unignore(struct gaim_chat *chat, const char *name)
 }
 
 GList *
-gaim_chat_set_ignored(struct gaim_chat *chat, GList *ignored)
+gaim_chat_set_ignored(GaimChat *chat, GList *ignored)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1792,7 +1788,7 @@ gaim_chat_set_ignored(struct gaim_chat *chat, GList *ignored)
 }
 
 GList *
-gaim_chat_get_ignored(const struct gaim_chat *chat)
+gaim_chat_get_ignored(const GaimChat *chat)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1801,7 +1797,7 @@ gaim_chat_get_ignored(const struct gaim_chat *chat)
 }
 
 const char *
-gaim_chat_get_ignored_user(const struct gaim_chat *chat, const char *user)
+gaim_chat_get_ignored_user(const GaimChat *chat, const char *user)
 {
 	GList *ignored;
 
@@ -1831,7 +1827,7 @@ gaim_chat_get_ignored_user(const struct gaim_chat *chat, const char *user)
 }
 
 gboolean
-gaim_chat_is_user_ignored(const struct gaim_chat *chat, const char *user)
+gaim_chat_is_user_ignored(const GaimChat *chat, const char *user)
 {
 	if (chat == NULL || user == NULL)
 		return FALSE;
@@ -1840,7 +1836,7 @@ gaim_chat_is_user_ignored(const struct gaim_chat *chat, const char *user)
 }
 
 void
-gaim_chat_set_topic(struct gaim_chat *chat, const char *who, const char *topic)
+gaim_chat_set_topic(GaimChat *chat, const char *who, const char *topic)
 {
 	if (chat == NULL)
 		return;
@@ -1856,7 +1852,7 @@ gaim_chat_set_topic(struct gaim_chat *chat, const char *who, const char *topic)
 }
 
 const char *
-gaim_chat_get_topic(const struct gaim_chat *chat)
+gaim_chat_get_topic(const GaimChat *chat)
 {
 	if (chat == NULL)
 		return NULL;
@@ -1865,7 +1861,7 @@ gaim_chat_get_topic(const struct gaim_chat *chat)
 }
 
 void
-gaim_chat_set_id(struct gaim_chat *chat, int id)
+gaim_chat_set_id(GaimChat *chat, int id)
 {
 	if (chat == NULL)
 		return;
@@ -1874,7 +1870,7 @@ gaim_chat_set_id(struct gaim_chat *chat, int id)
 }
 
 int
-gaim_chat_get_id(const struct gaim_chat *chat)
+gaim_chat_get_id(const GaimChat *chat)
 {
 	if (chat == NULL)
 		return -1;
@@ -1883,11 +1879,11 @@ gaim_chat_get_id(const struct gaim_chat *chat)
 }
 
 void
-gaim_chat_write(struct gaim_chat *chat, const char *who,
-				const char *message, int flags, time_t mtime)
+gaim_chat_write(GaimChat *chat, const char *who, const char *message,
+				int flags, time_t mtime)
 {
 	GaimAccount *account;
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	GaimConnection *gc;
 
 	if (chat == NULL || who == NULL || message == NULL)
@@ -1929,7 +1925,7 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 }
 
 void
-gaim_chat_send(struct gaim_chat *chat, const char *message)
+gaim_chat_send(GaimChat *chat, const char *message)
 {
 	if (chat == NULL || message == NULL)
 		return;
@@ -1938,11 +1934,10 @@ gaim_chat_send(struct gaim_chat *chat, const char *message)
 }
 
 void
-gaim_chat_add_user(struct gaim_chat *chat, const char *user,
-				   const char *extra_msg)
+gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 {
-	struct gaim_conversation *conv;
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
 	char tmp[BUF_LONG];
 
 	if (chat == NULL || user == NULL)
@@ -1975,11 +1970,11 @@ gaim_chat_add_user(struct gaim_chat *chat, const char *user,
 }
 
 void
-gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
+gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 					  const char *new_user)
 {
-	struct gaim_conversation *conv;
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
 	char tmp[BUF_LONG];
 	GList *names;
 
@@ -2023,11 +2018,10 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 }
 
 void
-gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
-					  const char *reason)
+gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 {
-	struct gaim_conversation *conv;
-	struct gaim_conversation_ui_ops *ops;
+	GaimConversation *conv;
+	GaimConversationUiOps *ops;
 	char tmp[BUF_LONG];
 	GList *names;
 
@@ -2067,14 +2061,14 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 	}
 }
 
-struct gaim_conversation *
-gaim_find_chat(GaimConnection *gc, int id)
+GaimConversation *
+gaim_find_chat(const GaimConnection *gc, int id)
 {
 	GList *l;
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 
 	for (l = gaim_get_chats(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (gaim_chat_get_id(GAIM_CHAT(conv)) == id &&
 			gaim_conversation_get_gc(conv) == gc)
@@ -2089,9 +2083,9 @@ gaim_find_chat(GaimConnection *gc, int id)
  **************************************************************************/
 /* This one places conversations in the last made window. */
 static void
-conv_placement_last_created_win(struct gaim_conversation *conv)
+conv_placement_last_created_win(GaimConversation *conv)
 {
-	struct gaim_window *win;
+	GaimWindow *win;
 
 	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
 		win = g_list_last(gaim_get_windows())->data;
@@ -2110,9 +2104,9 @@ conv_placement_last_created_win(struct gaim_conversation *conv)
 
 /* This one places each conversation in its own window. */
 static void
-conv_placement_new_window(struct gaim_conversation *conv)
+conv_placement_new_window(GaimConversation *conv)
 {
-	struct gaim_window *win;
+	GaimWindow *win;
 
 	win = gaim_window_new();
 
@@ -2127,9 +2121,9 @@ conv_placement_new_window(struct gaim_conversation *conv)
  * open windows will get a new window.
  */
 static void
-conv_placement_by_group(struct gaim_conversation *conv)
+conv_placement_by_group(GaimConversation *conv)
 {
-	struct gaim_window *win;
+	GaimWindow *win;
 	GaimConversationType type;
 
 	type = gaim_conversation_get_type(conv);
@@ -2155,18 +2149,18 @@ conv_placement_by_group(struct gaim_conversation *conv)
 
 		/* Go through the list of IMs and find one with this group. */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			struct gaim_window *win2;
-			struct gaim_conversation *conv2;
+			GaimWindow *win2;
+			GaimConversation *conv2;
 			struct buddy *b2;
 			struct group *g2 = NULL;
 
-			win2 = (struct gaim_window *)wins->data;
+			win2 = (GaimWindow *)wins->data;
 
 			for (convs = gaim_window_get_conversations(win2);
 				 convs != NULL;
 				 convs = convs->next) {
 
-				conv2 = (struct gaim_conversation *)convs->data;
+				conv2 = (GaimConversation *)convs->data;
 
 				b2 = gaim_find_buddy(gaim_conversation_get_account(conv2),
 								gaim_conversation_get_name(conv2));
@@ -2189,7 +2183,7 @@ conv_placement_by_group(struct gaim_conversation *conv)
 
 /* This groups things by account.  Otherwise, the same semantics as above */
 static void
-conv_placement_by_account(struct gaim_conversation *conv)
+conv_placement_by_account(GaimConversation *conv)
 {
 	GaimConversationType type;
 	GList *wins, *convs;
@@ -2202,16 +2196,16 @@ conv_placement_by_account(struct gaim_conversation *conv)
 
 	/* Go through the list of IMs and find one with this group. */
 	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-		struct gaim_window *win2;
-		struct gaim_conversation *conv2;
+		GaimWindow *win2;
+		GaimConversation *conv2;
 
-		win2 = (struct gaim_window *)wins->data;
+		win2 = (GaimWindow *)wins->data;
 
 		for (convs = gaim_window_get_conversations(win2);
 				convs != NULL;
 				convs = convs->next) {
 
-			conv2 = (struct gaim_conversation *)convs->data;
+			conv2 = (GaimConversation *)convs->data;
 
 			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
 				 type == gaim_conversation_get_type(conv2)) &&
@@ -2229,11 +2223,11 @@ conv_placement_by_account(struct gaim_conversation *conv)
 }
 
 static int
-add_conv_placement_fnc(const char *name, gaim_conv_placement_fnc fnc)
+add_conv_placement_fnc(const char *name, GaimConvPlacementFunc fnc)
 {
-	struct ConvPlacementData *data;
+	ConvPlacementData *data;
 
-	data = g_malloc0(sizeof(struct ConvPlacementData));
+	data = g_malloc0(sizeof(ConvPlacementData));
 
 	data->name = g_strdup(name);
 	data->fnc  = fnc;
@@ -2259,7 +2253,7 @@ ensure_default_funcs(void)
 }
 
 int
-gaim_conv_placement_add_fnc(const char *name, gaim_conv_placement_fnc fnc)
+gaim_conv_placement_add_fnc(const char *name, GaimConvPlacementFunc fnc)
 {
 	if (name == NULL || fnc == NULL)
 		return -1;
@@ -2273,14 +2267,14 @@ gaim_conv_placement_add_fnc(const char *name, gaim_conv_placement_fnc fnc)
 void
 gaim_conv_placement_remove_fnc(int index)
 {
-	struct ConvPlacementData *data;
+	ConvPlacementData *data;
 	GList *node;
 
 	if (index < 0 || index > g_list_length(conv_placement_fncs))
 		return;
 
 	node = g_list_nth(conv_placement_fncs, index);
-	data = (struct ConvPlacementData *)node->data;
+	data = (ConvPlacementData *)node->data;
 
 	g_free(data->name);
 	g_free(data);
@@ -2300,7 +2294,7 @@ gaim_conv_placement_get_fnc_count(void)
 const char *
 gaim_conv_placement_get_name(int index)
 {
-	struct ConvPlacementData *data;
+	ConvPlacementData *data;
 
 	ensure_default_funcs();
 
@@ -2315,10 +2309,10 @@ gaim_conv_placement_get_name(int index)
 	return data->name;
 }
 
-gaim_conv_placement_fnc
+GaimConvPlacementFunc
 gaim_conv_placement_get_fnc(int index)
 {
-	struct ConvPlacementData *data;
+	ConvPlacementData *data;
 
 	ensure_default_funcs();
 
@@ -2334,9 +2328,9 @@ gaim_conv_placement_get_fnc(int index)
 }
 
 int
-gaim_conv_placement_get_fnc_index(gaim_conv_placement_fnc fnc)
+gaim_conv_placement_get_fnc_index(GaimConvPlacementFunc fnc)
 {
-	struct ConvPlacementData *data;
+	ConvPlacementData *data;
 	GList *node;
 	int i;
 
@@ -2346,7 +2340,7 @@ gaim_conv_placement_get_fnc_index(gaim_conv_placement_fnc fnc)
 		 node != NULL;
 		 node = node->next, i++) {
 
-		data = (struct ConvPlacementData *)node->data;
+		data = (ConvPlacementData *)node->data;
 
 		if (data->fnc == fnc)
 			return i;
@@ -2364,7 +2358,7 @@ gaim_conv_placement_get_active(void)
 void
 gaim_conv_placement_set_active(int index)
 {
-	gaim_conv_placement_fnc fnc;
+	GaimConvPlacementFunc fnc;
 
 	ensure_default_funcs();
 
@@ -2378,12 +2372,12 @@ gaim_conv_placement_set_active(int index)
 }
 
 void
-gaim_set_win_ui_ops(struct gaim_window_ui_ops *ops)
+gaim_set_win_ui_ops(GaimWindowUiOps *ops)
 {
 	win_ui_ops = ops;
 }
 
-struct gaim_window_ui_ops *
+GaimWindowUiOps *
 gaim_get_win_ui_ops(void)
 {
 	return win_ui_ops;

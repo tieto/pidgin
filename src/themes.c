@@ -193,7 +193,7 @@ void load_smiley_theme(const char *file, gboolean load)
 		GList *cnv;
 
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
-			struct gaim_conversation *conv = cnv->data;
+			GaimConversation *conv = cnv->data;
 
 			if (GAIM_IS_GTK_CONVERSATION(conv))
 				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);

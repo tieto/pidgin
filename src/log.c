@@ -27,7 +27,7 @@
 
 void rm_log(struct log_conversation *a)
 {
-	struct gaim_conversation *cnv = gaim_find_conversation(a->name);
+	GaimConversation *cnv = gaim_find_conversation(a->name);
 
 	/* Added the following if statements for sanity check */
 	if (!a)
@@ -69,12 +69,12 @@ struct log_conversation *find_log_info(const char *name)
 void update_log_convs()
 {
 	GList *cnv;
-	struct gaim_conversation *c;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *c;
+	GaimGtkConversation *gtkconv;
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 
-		c = (struct gaim_conversation *)cnv->data;
+		c = (GaimConversation *)cnv->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(c))
 			continue;
@@ -94,7 +94,7 @@ void update_log_convs()
 
 static void do_save_convo(GObject *obj, GtkWidget *wid)
 {
-	struct gaim_conversation *c = g_object_get_data(obj, "gaim_conversation");
+	GaimConversation *c = g_object_get_data(obj, "gaim_conversation");
 	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	FILE *f;
 
@@ -122,7 +122,7 @@ static void do_save_convo(GObject *obj, GtkWidget *wid)
 }
 
 
-void save_convo(GtkWidget *save, struct gaim_conversation *c)
+void save_convo(GtkWidget *save, GaimConversation *c)
 {
 	char buf[BUF_LONG];
 	GtkWidget *window = gtk_file_selection_new(_("Gaim - Save Conversation"));

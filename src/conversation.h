@@ -28,14 +28,15 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
-typedef enum _GaimConversationType GaimConversationType;
-typedef enum _GaimUnseenState      GaimUnseenState;
-typedef enum _GaimConvUpdateType   GaimConvUpdateType;
-struct gaim_window_ui_ops;
-struct gaim_window;
-struct gaim_conversation;
-struct gaim_im;
-struct gaim_chat;
+typedef enum   _GaimConversationType  GaimConversationType;
+typedef enum   _GaimUnseenState       GaimUnseenState;
+typedef enum   _GaimConvUpdateType    GaimConvUpdateType;
+typedef struct _GaimWindowUiOps       GaimWindowUiOps;
+typedef struct _GaimWindow            GaimWindow;
+typedef struct _GaimConversationUiOps GaimConversationUiOps;
+typedef struct _GaimConversation      GaimConversation;
+typedef struct _GaimIm                GaimIm;
+typedef struct _GaimChat              GaimChat;
 
 /**
  * A type of conversation.
@@ -90,80 +91,76 @@ enum _GaimConvUpdateType
  * Conversation window operations.
  *
  * Any UI representing a window must assign a filled-out gaim_window_ops
- * structure to the gaim_window.
+ * structure to the GaimWindow.
  */
-struct gaim_window_ui_ops
+struct _GaimWindowUiOps
 {
-	struct gaim_conversation_ui_ops *(*get_conversation_ui_ops)(void);
+	GaimConversationUiOps *(*get_conversation_ui_ops)(void);
 
-	void (*new_window)(struct gaim_window *win);
-	void (*destroy_window)(struct gaim_window *win);
+	void (*new_window)(GaimWindow *win);
+	void (*destroy_window)(GaimWindow *win);
 
-	void (*show)(struct gaim_window *win);
-	void (*hide)(struct gaim_window *win);
-	void (*raise)(struct gaim_window *win);
-	void (*flash)(struct gaim_window *win);
+	void (*show)(GaimWindow *win);
+	void (*hide)(GaimWindow *win);
+	void (*raise)(GaimWindow *win);
+	void (*flash)(GaimWindow *win);
 
-	void (*switch_conversation)(struct gaim_window *win, unsigned int index);
-	void (*add_conversation)(struct gaim_window *win,
-							 struct gaim_conversation *conv);
-	void (*remove_conversation)(struct gaim_window *win,
-								struct gaim_conversation *conv);
-	void (*move_conversation)(struct gaim_window *win,
-							  struct gaim_conversation *conv,
+	void (*switch_conversation)(GaimWindow *win, unsigned int index);
+	void (*add_conversation)(GaimWindow *win, GaimConversation *conv);
+	void (*remove_conversation)(GaimWindow *win, GaimConversation *conv);
+	void (*move_conversation)(GaimWindow *win, GaimConversation *conv,
 							  unsigned int newIndex);
-	int (*get_active_index)(const struct gaim_window *win);
+	int (*get_active_index)(const GaimWindow *win);
 };
 
 /**
  * Conversation operations and events.
  *
  * Any UI representing a conversation must assign a filled-out
- * gaim_conversation_ui_ops structure to the gaim_conversation.
+ * GaimConversationUiOps structure to the GaimConversation.
  */
-struct gaim_conversation_ui_ops
+struct _GaimConversationUiOps
 {
-	void (*destroy_conversation)(struct gaim_conversation *conv);
-	void (*write_chat)(struct gaim_conversation *conv, const char *who,
+	void (*destroy_conversation)(GaimConversation *conv);
+	void (*write_chat)(GaimConversation *conv, const char *who,
 					   const char *message, int flags, time_t mtime);
-	void (*write_im)(struct gaim_conversation *conv, const char *who,
+	void (*write_im)(GaimConversation *conv, const char *who,
 					 const char *message, size_t len, int flags, time_t mtime);
-	void (*write_conv)(struct gaim_conversation *conv, const char *who,
+	void (*write_conv)(GaimConversation *conv, const char *who,
 					   const char *message, size_t length, int flags,
 					   time_t mtime);
 
-	void (*chat_add_user)(struct gaim_conversation *conv, const char *user);
-	void (*chat_rename_user)(struct gaim_conversation *conv,
+	void (*chat_add_user)(GaimConversation *conv, const char *user);
+	void (*chat_rename_user)(GaimConversation *conv,
 							 const char *old_name, const char *new_name);
-	void (*chat_remove_user)(struct gaim_conversation *conv, const char *user);
+	void (*chat_remove_user)(GaimConversation *conv, const char *user);
 
-	void (*set_title)(struct gaim_conversation *conv,
-					  const char *title);
-	void (*update_progress)(struct gaim_conversation *conv, float percent);
+	void (*set_title)(GaimConversation *conv, const char *title);
+	void (*update_progress)(GaimConversation *conv, float percent);
 
 	/* Events */
-	void (*updated)(struct gaim_conversation *conv, GaimConvUpdateType type);
+	void (*updated)(GaimConversation *conv, GaimConvUpdateType type);
 };
 
 /**
  * A core representation of a graphical window containing one or more
  * conversations.
  */
-struct gaim_window
+struct _GaimWindow
 {
 	GList *conversations;              /**< The conversations in the window. */
 	size_t conversation_count;         /**< The number of conversations.     */
 
-	struct gaim_window_ui_ops *ui_ops; /**< UI-specific window operations.   */
+	GaimWindowUiOps *ui_ops;           /**< UI-specific window operations.   */
 	void *ui_data;                     /**< UI-specific data.                */
 };
 
 /**
  * Data specific to Instant Messages.
  */
-struct gaim_im
+struct _GaimIm
 {
-	struct gaim_conversation *conv;    /**< The parent conversation.     */
+	GaimConversation *conv;            /**< The parent conversation.     */
 
 	int    typing_state;               /**< The current typing state.    */
 	guint  typing_timeout;             /**< The typing timer handle.     */
@@ -176,9 +173,9 @@ struct gaim_im
 /**
  * Data specific to Chats.
  */
-struct gaim_chat
+struct _GaimChat
 {
-	struct gaim_conversation *conv;  /**< The parent conversation.      */
+	GaimConversation *conv;          /**< The parent conversation.      */
 
 	GList *in_room;                  /**< The users in the room.        */
 	GList *ignored;                  /**< Ignored users.                */
@@ -191,14 +188,14 @@ struct gaim_chat
  * A core representation of a conversation between two or more people.
  *
  * The conversation can be an IM or a chat. Each conversation is kept
- * in a gaim_window and has a UI representation.
+ * in a GaimWindow and has a UI representation.
  */
-struct gaim_conversation
+struct _GaimConversation
 {
 	GaimConversationType type;  /**< The type of conversation.          */
 
-	GaimAccount *account;  /**< The user using this conversation.  */
-	struct gaim_window *window; /**< The parent window.                 */
+	GaimAccount *account;       /**< The user using this conversation.  */
+	GaimWindow *window;         /**< The parent window.                 */
 
 	int conversation_pos;       /**< The position in the window's list. */
 
@@ -214,19 +211,19 @@ struct gaim_conversation
 
 	union
 	{
-		struct gaim_im   *im;   /**< IM-specific data.                  */
-		struct gaim_chat *chat; /**< Chat-specific data.                */
+		GaimIm   *im;           /**< IM-specific data.                  */
+		GaimChat *chat;         /**< Chat-specific data.                */
 		void *misc;             /**< Misc. data.                        */
 
 	} u;
 
-	struct gaim_conversation_ui_ops *ui_ops; /**< UI-specific operations. */
+	GaimConversationUiOps *ui_ops;           /**< UI-specific operations. */
 	void *ui_data;                           /**< UI-specific data.       */
 
-	GHashTable *data;                 /**< Plugin-specific data.   */
+	GHashTable *data;                        /**< Plugin-specific data.   */
 };
 
-typedef void (*gaim_conv_placement_fnc)(struct gaim_conversation *);
+typedef void (*GaimConvPlacementFunc)(GaimConversation *);
 
 /**************************************************************************/
 /** @name Conversation Window API                                         */
@@ -241,42 +238,42 @@ typedef void (*gaim_conv_placement_fnc)(struct gaim_conversation *);
  *
  * @return The new conversation window.
  */
-struct gaim_window *gaim_window_new(void);
+GaimWindow *gaim_window_new(void);
 
 /**
  * Destroys the specified conversation window and all conversations in it.
  *
  * @param win The window to destroy.
  */
-void gaim_window_destroy(struct gaim_window *win);
+void gaim_window_destroy(GaimWindow *win);
 
 /**
  * Shows the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_show(struct gaim_window *win);
+void gaim_window_show(GaimWindow *win);
 
 /**
  * Hides the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_hide(struct gaim_window *win);
+void gaim_window_hide(GaimWindow *win);
 
 /**
  * Raises the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_raise(struct gaim_window *win);
+void gaim_window_raise(GaimWindow *win);
 
 /**
  * Causes the window to flash for IM notification, if the UI supports this.
  * 
  * @param win The window.
  */
-void gaim_window_flash(struct gaim_window *win);
+void gaim_window_flash(GaimWindow *win);
 
 /**
  * Sets the specified window's UI window operations structure.
@@ -284,8 +281,7 @@ void gaim_window_flash(struct gaim_window *win);
  * @param win The window.
  * @param ops The UI window operations structure.
  */
-void gaim_window_set_ui_ops(struct gaim_window *win,
-							struct gaim_window_ui_ops *ops);
+void gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops);
 
 /**
  * Returns the specified window's UI window operations structure.
@@ -294,8 +290,7 @@ void gaim_window_set_ui_ops(struct gaim_window *win,
  *
  * @return The UI window operations structure.
  */
-struct gaim_window_ui_ops *gaim_window_get_ui_ops(
-		const struct gaim_window *win);
+GaimWindowUiOps *gaim_window_get_ui_ops(const GaimWindow *win);
 
 /**
  * Adds a conversation to this window.
@@ -307,8 +302,7 @@ struct gaim_window_ui_ops *gaim_window_get_ui_ops(
  *
  * @return The new index of the conversation in the window.
  */
-int gaim_window_add_conversation(struct gaim_window *win,
-								 struct gaim_conversation *conv);
+int gaim_window_add_conversation(GaimWindow *win, GaimConversation *conv);
 
 /**
  * Removes the conversation at the specified index from the window.
@@ -320,8 +314,8 @@ int gaim_window_add_conversation(struct gaim_window *win,
  *
  * @return The conversation removed.
  */
-struct gaim_conversation *gaim_window_remove_conversation(
-		struct gaim_window *win, unsigned int index);
+GaimConversation *gaim_window_remove_conversation(GaimWindow *win,
+												  unsigned int index);
 
 /**
  * Moves the conversation at the specified index in a window to a new index.
@@ -330,8 +324,8 @@ struct gaim_conversation *gaim_window_remove_conversation(
  * @param index     The index of the conversation to move.
  * @param new_index The new index.
  */
-void gaim_window_move_conversation(struct gaim_window *win,
-								   unsigned int index, unsigned int new_index);
+void gaim_window_move_conversation(GaimWindow *win, unsigned int index,
+								   unsigned int new_index);
 
 /**
  * Returns the conversation in the window at the specified index.
@@ -343,8 +337,8 @@ void gaim_window_move_conversation(struct gaim_window *win,
  *
  * @return The conversation at the specified index.
  */
-struct gaim_conversation *gaim_window_get_conversation_at(
-		const struct gaim_window *win, unsigned int index);
+GaimConversation *gaim_window_get_conversation_at(const GaimWindow *win,
+												  unsigned int index);
 
 /**
  * Returns the number of conversations in the window.
@@ -353,7 +347,7 @@ struct gaim_conversation *gaim_window_get_conversation_at(
  *
  * @return The number of conversations.
  */
-size_t gaim_window_get_conversation_count(const struct gaim_window *win);
+size_t gaim_window_get_conversation_count(const GaimWindow *win);
 
 /**
  * Switches the active conversation to the one at the specified index.
@@ -363,8 +357,7 @@ size_t gaim_window_get_conversation_count(const struct gaim_window *win);
  * @param win   The window.
  * @param index The new index.
  */
-void gaim_window_switch_conversation(struct gaim_window *win,
-									 unsigned int index);
+void gaim_window_switch_conversation(GaimWindow *win, unsigned int index);
 
 /**
  * Returns the active conversation in the window.
@@ -373,8 +366,7 @@ void gaim_window_switch_conversation(struct gaim_window *win,
  *
  * @return The active conversation.
  */
-struct gaim_conversation *gaim_window_get_active_conversation(
-		const struct gaim_window *win);
+GaimConversation *gaim_window_get_active_conversation(const GaimWindow *win);
 
 /**
  * Returns the list of conversations in the specified window.
@@ -383,7 +375,7 @@ struct gaim_conversation *gaim_window_get_active_conversation(
  *
  * @return The list of conversations.
  */
-GList *gaim_window_get_conversations(const struct gaim_window *win);
+GList *gaim_window_get_conversations(const GaimWindow *win);
 
 /**
  * Returns a list of all windows.
@@ -399,7 +391,7 @@ GList *gaim_get_windows(void);
  *
  * @return The window if found, or @c NULL if not found.
  */
-struct gaim_window *gaim_get_first_window_with_type(GaimConversationType type);
+GaimWindow *gaim_get_first_window_with_type(GaimConversationType type);
 
 /**
  * Returns the last window containing a conversation of the specified type.
@@ -408,7 +400,7 @@ struct gaim_window *gaim_get_first_window_with_type(GaimConversationType type);
  *
  * @return The window if found, or @c NULL if not found.
  */
-struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
+GaimWindow *gaim_get_last_window_with_type(GaimConversationType type);
 
 /*@}*/
 
@@ -427,9 +419,9 @@ struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
  *
  * @return The new conversation.
  */
-struct gaim_conversation *gaim_conversation_new(GaimConversationType type,
-												GaimAccount *account,
-												const char *name);
+GaimConversation *gaim_conversation_new(GaimConversationType type, 
+										GaimAccount *account,
+										const char *name);
 
 /**
  * Destroys the specified conversation and removes it from the parent
@@ -440,7 +432,7 @@ struct gaim_conversation *gaim_conversation_new(GaimConversationType type,
  *
  * @param conv The conversation to destroy.
  */
-void gaim_conversation_destroy(struct gaim_conversation *conv);
+void gaim_conversation_destroy(GaimConversation *conv);
 
 /**
  * Returns the specified conversation's type.
@@ -449,8 +441,7 @@ void gaim_conversation_destroy(struct gaim_conversation *conv);
  *
  * @return The conversation's type.
  */
-GaimConversationType gaim_conversation_get_type(
-		const struct gaim_conversation *conv);
+GaimConversationType gaim_conversation_get_type(const GaimConversation *conv);
 
 /**
  * Sets the specified conversation's UI operations structure.
@@ -458,8 +449,8 @@ GaimConversationType gaim_conversation_get_type(
  * @param conv The conversation.
  * @param ops  The UI conversation operations structure.
  */
-void gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
-								  struct gaim_conversation_ui_ops *ops);
+void gaim_conversation_set_ui_ops(GaimConversation *conv,
+								  GaimConversationUiOps *ops);
 
 /**
  * Returns the specified conversation's UI operations structure.
@@ -468,8 +459,8 @@ void gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
  *
  * @return The operations structure.
  */
-struct gaim_conversation_ui_ops *gaim_conversation_get_ui_ops(
-		struct gaim_conversation *conv);
+GaimConversationUiOps *gaim_conversation_get_ui_ops(
+		const GaimConversation *conv);
 
 /**
  * Sets the specified conversation's gaim_account.
@@ -480,8 +471,8 @@ struct gaim_conversation_ui_ops *gaim_conversation_get_ui_ops(
  * @param conv The conversation.
  * @param account The gaim_account.
  */
-void gaim_conversation_set_account(struct gaim_conversation *conv,
-								GaimAccount *account);
+void gaim_conversation_set_account(GaimConversation *conv,
+								   GaimAccount *account);
 
 /**
  * Returns the specified conversation's gaim_account.
@@ -493,8 +484,7 @@ void gaim_conversation_set_account(struct gaim_conversation *conv,
  *
  * @return The conversation's gaim_account.
  */
-GaimAccount *gaim_conversation_get_account(
-		const struct gaim_conversation *conv);
+GaimAccount *gaim_conversation_get_account(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's gaim_connection.
@@ -505,8 +495,7 @@ GaimAccount *gaim_conversation_get_account(
  *
  * @return The conversation's gaim_connection.
  */
-GaimConnection *gaim_conversation_get_gc(
-		const struct gaim_conversation *conv);
+GaimConnection *gaim_conversation_get_gc(const GaimConversation *conv);
 
 /**
  * Sets the specified conversation's title.
@@ -514,8 +503,7 @@ GaimConnection *gaim_conversation_get_gc(
  * @param conv  The conversation.
  * @param title The title.
  */
-void gaim_conversation_set_title(struct gaim_conversation *conv,
-								 const char *title);
+void gaim_conversation_set_title(GaimConversation *conv, const char *title);
 
 /**
  * Returns the specified conversation's title.
@@ -524,7 +512,7 @@ void gaim_conversation_set_title(struct gaim_conversation *conv,
  *
  * @return The title.
  */
-const char *gaim_conversation_get_title(const struct gaim_conversation *conv);
+const char *gaim_conversation_get_title(const GaimConversation *conv);
 
 /**
  * Automatically sets the specified conversation's title.
@@ -534,7 +522,7 @@ const char *gaim_conversation_get_title(const struct gaim_conversation *conv);
  *
  * @param conv The conversation.
  */
-void gaim_conversation_autoset_title(struct gaim_conversation *conv);
+void gaim_conversation_autoset_title(GaimConversation *conv);
 
 /**
  * Returns the specified conversation's index in the parent window.
@@ -543,7 +531,7 @@ void gaim_conversation_autoset_title(struct gaim_conversation *conv);
  *
  * @return The current index in the parent window.
  */
-int gaim_conversation_get_index(const struct gaim_conversation *conv);
+int gaim_conversation_get_index(const GaimConversation *conv);
 
 /**
  * Sets the conversation's unseen state.
@@ -551,7 +539,7 @@ int gaim_conversation_get_index(const struct gaim_conversation *conv);
  * @param conv  The conversation.
  * @param state The new unseen state.
  */
-void gaim_conversation_set_unseen(struct gaim_conversation *conv,
+void gaim_conversation_set_unseen(GaimConversation *conv,
 								  GaimUnseenState state);
 
 /**
@@ -561,8 +549,7 @@ void gaim_conversation_set_unseen(struct gaim_conversation *conv,
  *
  * @param The conversation's unseen state.
  */
-GaimUnseenState gaim_conversation_get_unseen(
-		const struct gaim_conversation *conv);
+GaimUnseenState gaim_conversation_get_unseen(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's name.
@@ -571,22 +558,21 @@ GaimUnseenState gaim_conversation_get_unseen(
  *
  * @return The conversation's name.
  */
-const char *gaim_conversation_get_name(const struct gaim_conversation *conv);
+const char *gaim_conversation_get_name(const GaimConversation *conv);
 
 /**
  * Enables or disables logging for this conversation.
  *
  * @param log @c TRUE if logging should be enabled, or @c FALSE otherwise.
  */
-void gaim_conversation_set_logging(struct gaim_conversation *conv,
-								   gboolean log);
+void gaim_conversation_set_logging(GaimConversation *conv, gboolean log);
 
 /**
  * Returns whether or not logging is enabled for this conversation.
  *
  * @return @c TRUE if logging is enabled, or @c FALSE otherwise.
  */
-gboolean gaim_conversation_is_logging(const struct gaim_conversation *conv);
+gboolean gaim_conversation_is_logging(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's send history.
@@ -595,8 +581,7 @@ gboolean gaim_conversation_is_logging(const struct gaim_conversation *conv);
  *
  * @return The conversation's send history.
  */
-GList *gaim_conversation_get_send_history(
-		const struct gaim_conversation *conv);
+GList *gaim_conversation_get_send_history(const GaimConversation *conv);
 
 /**
  * Sets the specified conversation's history.
@@ -604,8 +589,7 @@ GList *gaim_conversation_get_send_history(
  * @param conv    The conversation.
  * @param history The history.
  */
-void gaim_conversation_set_history(struct gaim_conversation *conv,
-								   GString *history);
+void gaim_conversation_set_history(GaimConversation *conv, GString *history);
 
 /**
  * Returns the specified conversation's history.
@@ -614,7 +598,7 @@ void gaim_conversation_set_history(struct gaim_conversation *conv,
  *
  * @return The conversation's history.
  */
-GString *gaim_conversation_get_history(const struct gaim_conversation *conv);
+GString *gaim_conversation_get_history(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's parent window.
@@ -623,8 +607,7 @@ GString *gaim_conversation_get_history(const struct gaim_conversation *conv);
  *
  * @return The conversation's parent window.
  */
-struct gaim_window *gaim_conversation_get_window(
-		const struct gaim_conversation *conv);
+GaimWindow *gaim_conversation_get_window(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's IM-specific data.
@@ -635,8 +618,7 @@ struct gaim_window *gaim_conversation_get_window(
  *
  * @return The IM-specific data.
  */
-struct gaim_im *gaim_conversation_get_im_data(
-		const struct gaim_conversation *conv);
+GaimIm *gaim_conversation_get_im_data(const GaimConversation *conv);
 
 #define GAIM_IM(c) (gaim_conversation_get_im_data(c))
 
@@ -649,8 +631,7 @@ struct gaim_im *gaim_conversation_get_im_data(
  *
  * @return The chat-specific data.
  */
-struct gaim_chat *gaim_conversation_get_chat_data(
-		const struct gaim_conversation *conv);
+GaimChat *gaim_conversation_get_chat_data(const GaimConversation *conv);
 
 #define GAIM_CHAT(c) (gaim_conversation_get_chat_data(c))
 
@@ -661,8 +642,8 @@ struct gaim_chat *gaim_conversation_get_chat_data(
  * @param key  The unique key.
  * @param data The data to assign.
  */
-void gaim_conversation_set_data(struct gaim_conversation *conv,
-								const char *key, gpointer data);
+void gaim_conversation_set_data(GaimConversation *conv, const char *key,
+								gpointer data);
 
 /**
  * Returns extra data in a conversation.
@@ -672,8 +653,7 @@ void gaim_conversation_set_data(struct gaim_conversation *conv,
  *
  * @return The data associated with the key.
  */
-gpointer gaim_conversation_get_data(struct gaim_conversation *conv,
-									const char *key);
+gpointer gaim_conversation_get_data(GaimConversation *conv, const char *key);
 
 /**
  * Returns a list of all conversations.
@@ -705,7 +685,7 @@ GList *gaim_get_chats(void);
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-struct gaim_conversation *gaim_find_conversation(const char *name);
+GaimConversation *gaim_find_conversation(const char *name);
 
 /**
  * Finds a conversation with the specified name and user.
@@ -715,7 +695,7 @@ struct gaim_conversation *gaim_find_conversation(const char *name);
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-struct gaim_conversation *gaim_find_conversation_with_account(
+GaimConversation *gaim_find_conversation_with_account(
 		const char *name, const GaimAccount *account);
 
 /**
@@ -739,7 +719,7 @@ struct gaim_conversation *gaim_find_conversation_with_account(
  * @see gaim_im_write()
  * @see gaim_chat_write()
  */
-void gaim_conversation_write(struct gaim_conversation *conv, const char *who,
+void gaim_conversation_write(GaimConversation *conv, const char *who,
 							 const char *message, size_t length, int flags,
 							 time_t mtime);
 
@@ -752,8 +732,7 @@ void gaim_conversation_write(struct gaim_conversation *conv, const char *who,
  * @param conv    The conversation.
  * @param percent The percentage.
  */
-void gaim_conversation_update_progress(struct gaim_conversation *conv,
-									   float percent);
+void gaim_conversation_update_progress(GaimConversation *conv, float percent);
 
 /**
  * Updates the visual status and UI of a conversation.
@@ -761,15 +740,14 @@ void gaim_conversation_update_progress(struct gaim_conversation *conv,
  * @param conv The conversation.
  * @param type The update type.
  */
-void gaim_conversation_update(struct gaim_conversation *conv,
-							  GaimConvUpdateType type);
+void gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type);
 
 /**
  * Calls a function on each conversation.
  *
  * @param func The function.
  */
-void gaim_conversation_foreach(void (*func)(struct gaim_conversation *conv));
+void gaim_conversation_foreach(void (*func)(GaimConversation *conv));
 
 /*@}*/
 
@@ -786,7 +764,7 @@ void gaim_conversation_foreach(void (*func)(struct gaim_conversation *conv));
  *
  * @return The parent conversation.
  */
-struct gaim_conversation *gaim_im_get_conversation(struct gaim_im *im);
+GaimConversation *gaim_im_get_conversation(const GaimIm *im);
 
 /**
  * Sets the IM's typing state.
@@ -794,7 +772,7 @@ struct gaim_conversation *gaim_im_get_conversation(struct gaim_im *im);
  * @param im    The IM.
  * @param state The typing state.
  */
-void gaim_im_set_typing_state(struct gaim_im *im, int state);
+void gaim_im_set_typing_state(GaimIm *im, int state);
 
 /**
  * Returns the IM's typing state.
@@ -803,7 +781,7 @@ void gaim_im_set_typing_state(struct gaim_im *im, int state);
  *
  * @return The IM's typing state.
  */
-int gaim_im_get_typing_state(const struct gaim_im *im);
+int gaim_im_get_typing_state(const GaimIm *im);
 
 /**
  * Starts the IM's typing timeout.
@@ -811,14 +789,14 @@ int gaim_im_get_typing_state(const struct gaim_im *im);
  * @param im      The IM.
  * @param timeout The timeout.
  */
-void gaim_im_start_typing_timeout(struct gaim_im *im, int timeout);
+void gaim_im_start_typing_timeout(GaimIm *im, int timeout);
 
 /**
  * Stops the IM's typing timeout.
  *
  * @param im The IM.
  */
-void gaim_im_stop_typing_timeout(struct gaim_im *im);
+void gaim_im_stop_typing_timeout(GaimIm *im);
 
 /**
  * Returns the IM's typing timeout.
@@ -827,7 +805,7 @@ void gaim_im_stop_typing_timeout(struct gaim_im *im);
  *
  * @return The timeout.
  */
-guint gaim_im_get_typing_timeout(const struct gaim_im *im);
+guint gaim_im_get_typing_timeout(const GaimIm *im);
 
 /**
  * Sets the IM's time until it should send another typing notification.
@@ -835,7 +813,7 @@ guint gaim_im_get_typing_timeout(const struct gaim_im *im);
  * @param im  The IM.
  * @param val The time.
  */
-void gaim_im_set_type_again(struct gaim_im *im, time_t val);
+void gaim_im_set_type_again(GaimIm *im, time_t val);
 
 /**
  * Returns the IM's time until it should send another typing notification.
@@ -844,21 +822,21 @@ void gaim_im_set_type_again(struct gaim_im *im, time_t val);
  *
  * @return The time.
  */
-time_t gaim_im_get_type_again(const struct gaim_im *im);
+time_t gaim_im_get_type_again(const GaimIm *im);
 
 /**
  * Starts the IM's type again timeout.
  *
  * @param im      The IM.
  */
-void gaim_im_start_type_again_timeout(struct gaim_im *im);
+void gaim_im_start_type_again_timeout(GaimIm *im);
 
 /**
  * Stops the IM's type again timeout.
  *
  * @param im The IM.
  */
-void gaim_im_stop_type_again_timeout(struct gaim_im *im);
+void gaim_im_stop_type_again_timeout(GaimIm *im);
 
 /**
  * Returns the IM's type again timeout interval.
@@ -867,14 +845,14 @@ void gaim_im_stop_type_again_timeout(struct gaim_im *im);
  *
  * @return The type again timeout interval.
  */
-guint gaim_im_get_type_again_timeout(const struct gaim_im *im);
+guint gaim_im_get_type_again_timeout(const GaimIm *im);
 
 /**
  * Updates the visual typing notification for an IM conversation.
  *
  * @param im The IM.
  */
-void gaim_im_update_typing(struct gaim_im *im);
+void gaim_im_update_typing(GaimIm *im);
 
 /**
  * Writes to an IM.
@@ -890,7 +868,7 @@ void gaim_im_update_typing(struct gaim_im *im);
  * @param flag    The flags.
  * @param mtime   The time the message was sent.
  */
-void gaim_im_write(struct gaim_im *im, const char *who,
+void gaim_im_write(GaimIm *im, const char *who,
 				   const char *message, size_t len, int flag, time_t mtime);
 
 /**
@@ -899,7 +877,7 @@ void gaim_im_write(struct gaim_im *im, const char *who,
  * @param im      The IM.
  * @param message The message to send.
  */
-void gaim_im_send(struct gaim_im *im, const char *message);
+void gaim_im_send(GaimIm *im, const char *message);
 
 /*@}*/
 
@@ -916,7 +894,7 @@ void gaim_im_send(struct gaim_im *im, const char *message);
  *
  * @return The parent conversation.
  */
-struct gaim_conversation *gaim_chat_get_conversation(struct gaim_chat *chat);
+GaimConversation *gaim_chat_get_conversation(const GaimChat *chat);
 
 /**
  * Sets the list of users in the chat room.
@@ -926,7 +904,7 @@ struct gaim_conversation *gaim_chat_get_conversation(struct gaim_chat *chat);
  *
  * @return The list passed.
  */
-GList *gaim_chat_set_users(struct gaim_chat *chat, GList *users);
+GList *gaim_chat_set_users(GaimChat *chat, GList *users);
 
 /**
  * Returns a list of users in the chat room.
@@ -935,7 +913,7 @@ GList *gaim_chat_set_users(struct gaim_chat *chat, GList *users);
  *
  * @return The list of users.
  */
-GList *gaim_chat_get_users(const struct gaim_chat *chat);
+GList *gaim_chat_get_users(const GaimChat *chat);
 
 /**
  * Ignores a user in a chat room.
@@ -943,7 +921,7 @@ GList *gaim_chat_get_users(const struct gaim_chat *chat);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void gaim_chat_ignore(struct gaim_chat *chat, const char *name);
+void gaim_chat_ignore(GaimChat *chat, const char *name);
 
 /**
  * Unignores a user in a chat room.
@@ -951,7 +929,7 @@ void gaim_chat_ignore(struct gaim_chat *chat, const char *name);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void gaim_chat_unignore(struct gaim_chat *chat, const char *name);
+void gaim_chat_unignore(GaimChat *chat, const char *name);
 
 /**
  * Sets the list of ignored users in the chat room.
@@ -961,7 +939,7 @@ void gaim_chat_unignore(struct gaim_chat *chat, const char *name);
  *
  * @return The list passed.
  */
-GList *gaim_chat_set_ignored(struct gaim_chat *chat, GList *ignored);
+GList *gaim_chat_set_ignored(GaimChat *chat, GList *ignored);
 
 /**
  * Returns the list of ignored users in the chat room.
@@ -970,7 +948,7 @@ GList *gaim_chat_set_ignored(struct gaim_chat *chat, GList *ignored);
  *
  * @return The list of ignored users.
  */
-GList *gaim_chat_get_ignored(const struct gaim_chat *chat);
+GList *gaim_chat_get_ignored(const GaimChat *chat);
 
 /**
  * Returns the actual name of the specified ignored user, if it exists in
@@ -986,7 +964,7 @@ GList *gaim_chat_get_ignored(const struct gaim_chat *chat);
  * @return The ignored user if found, complete with prefixes, or @c NULL
  *         if not found.
  */
-const char *gaim_chat_get_ignored_user(const struct gaim_chat *chat,
+const char *gaim_chat_get_ignored_user(const GaimChat *chat,
 									   const char *user);
 
 /**
@@ -997,7 +975,7 @@ const char *gaim_chat_get_ignored_user(const struct gaim_chat *chat,
  *
  * @return @c TRUE if the user is in the ignore list; @c FALSE otherwise.
  */
-gboolean gaim_chat_is_user_ignored(const struct gaim_chat *chat,
+gboolean gaim_chat_is_user_ignored(const GaimChat *chat,
 								   const char *user);
 
 /**
@@ -1007,7 +985,7 @@ gboolean gaim_chat_is_user_ignored(const struct gaim_chat *chat,
  * @param who   The user that set the topic.
  * @param topic The topic.
  */
-void gaim_chat_set_topic(struct gaim_chat *chat, const char *who,
+void gaim_chat_set_topic(GaimChat *chat, const char *who,
 						 const char *topic);
 
 /**
@@ -1017,7 +995,7 @@ void gaim_chat_set_topic(struct gaim_chat *chat, const char *who,
  *
  * @return The chat's topic.
  */
-const char *gaim_chat_get_topic(const struct gaim_chat *chat);
+const char *gaim_chat_get_topic(const GaimChat *chat);
 
 /**
  * Sets the chat room's ID.
@@ -1025,7 +1003,7 @@ const char *gaim_chat_get_topic(const struct gaim_chat *chat);
  * @param chat The chat.
  * @param id   The ID.
  */
-void gaim_chat_set_id(struct gaim_chat *chat, int id);
+void gaim_chat_set_id(GaimChat *chat, int id);
 
 /**
  * Returns the chat room's ID.
@@ -1034,7 +1012,7 @@ void gaim_chat_set_id(struct gaim_chat *chat, int id);
  *
  * @return The ID.
  */
-int gaim_chat_get_id(const struct gaim_chat *chat);
+int gaim_chat_get_id(const GaimChat *chat);
 
 /**
  * Writes to a chat.
@@ -1045,7 +1023,7 @@ int gaim_chat_get_id(const struct gaim_chat *chat);
  * @param flag    The flags.
  * @param mtime   The time the message was sent.
  */
-void gaim_chat_write(struct gaim_chat *chat, const char *who,
+void gaim_chat_write(GaimChat *chat, const char *who,
 					 const char *message, int flag, time_t mtime);
 
 /**
@@ -1054,7 +1032,7 @@ void gaim_chat_write(struct gaim_chat *chat, const char *who,
  * @param chat    The chat.
  * @param message The message to send.
  */
-void gaim_chat_send(struct gaim_chat *chat, const char *message);
+void gaim_chat_send(GaimChat *chat, const char *message);
 
 /**
  * Adds a user to a chat.
@@ -1063,7 +1041,7 @@ void gaim_chat_send(struct gaim_chat *chat, const char *message);
  * @param user      The user to add.
  * @param extra_msg An extra message to display with the join message.
  */
-void gaim_chat_add_user(struct gaim_chat *chat, const char *user,
+void gaim_chat_add_user(GaimChat *chat, const char *user,
 						const char *extra_msg);
 
 /**
@@ -1073,7 +1051,7 @@ void gaim_chat_add_user(struct gaim_chat *chat, const char *user,
  * @param old_user The old username.
  * @param new_user The new username.
  */
-void gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
+void gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 						   const char *new_user);
 
 /**
@@ -1083,7 +1061,7 @@ void gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
  * @param user   The user that is being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
-void gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
+void gaim_chat_remove_user(GaimChat *chat, const char *user,
 						   const char *reason);
 
 /**
@@ -1094,7 +1072,7 @@ void gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
  *
  * @return The chat conversation.
  */
-struct gaim_conversation *gaim_find_chat(GaimConnection *gc, int id);
+GaimConversation *gaim_find_chat(const GaimConnection *gc, int id);
 
 /*@}*/
 
@@ -1111,7 +1089,7 @@ struct gaim_conversation *gaim_find_chat(GaimConnection *gc, int id);
  *
  * @return The index of this entry.
  */
-int gaim_conv_placement_add_fnc(const char *name, gaim_conv_placement_fnc fnc);
+int gaim_conv_placement_add_fnc(const char *name, GaimConvPlacementFunc fnc);
 
 /**
  * Removes a conversation placement function from the list of possible
@@ -1147,7 +1125,7 @@ const char *gaim_conv_placement_get_name(int index);
  *
  * @return A pointer to the function.
  */
-gaim_conv_placement_fnc gaim_conv_placement_get_fnc(int index);
+GaimConvPlacementFunc gaim_conv_placement_get_fnc(int index);
 
 /**
  * Returns the index of the specified conversation placement function.
@@ -1157,7 +1135,7 @@ gaim_conv_placement_fnc gaim_conv_placement_get_fnc(int index);
  * @return The index of the conversation, or -1 if the function is not
  *         registered.
  */
-int gaim_conv_placement_get_fnc_index(gaim_conv_placement_fnc fnc);
+int gaim_conv_placement_get_fnc_index(GaimConvPlacementFunc fnc);
 
 /**
  * Returns the index of the active conversation placement function.
@@ -1186,15 +1164,15 @@ void gaim_conv_placement_set_active(int index);
  *
  * @param ops The UI operations structure.
  */
-void gaim_set_win_ui_ops(struct gaim_window_ui_ops *ops);
+void gaim_set_win_ui_ops(GaimWindowUiOps *ops);
 
 /**
  * Returns the gaim window UI operations structure to be used in
  * new windows.
  *
- * @return A filled-out gaim_window_ui_ops structure.
+ * @return A filled-out GaimWindowUiOps structure.
  */
-struct gaim_window_ui_ops *gaim_get_win_ui_ops(void);
+GaimWindowUiOps *gaim_get_win_ui_ops(void);
 
 /*@}*/
 

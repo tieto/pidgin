@@ -268,7 +268,7 @@ extern void system_log(enum log_event, GaimConnection *, struct buddy *, int);
 extern void rm_log(struct log_conversation *);
 extern struct log_conversation *find_log_info(const char *);
 extern void update_log_convs();
-extern void save_convo(GtkWidget *save, struct gaim_conversation *c);
+extern void save_convo(GtkWidget *save, GaimConversation *c);
 extern char *html_logize(const char *p);
 
 /*------------------------------------------------------------------------*/

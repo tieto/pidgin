@@ -322,7 +322,7 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 static void
 pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 {
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 	GaimAccount *account;
 	struct gaim_gtkpounce_data *pounce_data;
 	const char *pouncee;

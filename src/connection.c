@@ -127,7 +127,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 	 *     notification system.
 	 */
 	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-		struct gaim_window *win = (struct gaim_window *)wins->data;
+		GaimWindow *win = (GaimWindow *)wins->data;
 		gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
 								 GAIM_CONV_ACCOUNT_OFFLINE);
 	}
@@ -191,7 +191,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		 *     notification system.
 		 */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			struct gaim_window *win = (struct gaim_window *)wins->data;
+			GaimWindow *win = (GaimWindow *)wins->data;
 			gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}

@@ -1039,7 +1039,7 @@ handle_uri(char *uri)
  	/* aim:goim?screenname=screenname&message=message */
 	if (!g_ascii_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
 		char *who, *what;
-		struct gaim_conversation *c;
+		GaimConversation *c;
 		uri = uri + strlen("aim:goim?");
 		
 		if (!(who = strstr(uri, "screenname="))) {
@@ -1071,7 +1071,7 @@ handle_uri(char *uri)
 		g_free(who);
 
 		if (what) {
-			struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(c);
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(c);
 
 			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, what, -1);
 			g_free(what);

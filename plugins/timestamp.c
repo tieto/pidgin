@@ -19,7 +19,7 @@ static GSList *timestamp_timeouts;
 
 gboolean do_timestamp (gpointer data)
 {
-	struct gaim_conversation *c = (struct gaim_conversation *)data;
+	GaimConversation *c = (GaimConversation *)data;
 	char *buf;
 	char mdate[6];
 	time_t tim = time(NULL);
@@ -36,7 +36,7 @@ gboolean do_timestamp (gpointer data)
 
 void timestamp_new_convo(char *name)
 {
-	struct gaim_conversation *c = gaim_find_conversation(name);
+	GaimConversation *c = gaim_find_conversation(name);
 	do_timestamp(c);
 
 	timestamp_timeouts = g_slist_append(timestamp_timeouts,
@@ -101,7 +101,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	GList *cnvs;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 
 	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
 		c = cnvs->data;

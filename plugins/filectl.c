@@ -72,7 +72,7 @@ void run_commands() {
 				signoff_all(NULL, NULL);
 			free(arg1);
 		} else if (!strncasecmp(command, "send", 4)) {
-			struct gaim_conversation *c;
+			GaimConversation *c;
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
 			c = find_conversation(arg1);

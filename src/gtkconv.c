@@ -91,15 +91,16 @@ static char nick_colors[][8] = {
 	((gdk_pixbuf_animation_get_width(x) <= 48 && \
 	  gdk_pixbuf_animation_get_height(x) <= 48) ? 48 : 50)
 
-struct InviteBuddyInfo
+typedef struct
 {
 	GtkWidget *window;
 
 	GtkWidget *entry;
 	GtkWidget *message;
 
-	struct gaim_conversation *conv;
-};
+	GaimConversation *conv;
+
+} InviteBuddyInfo;
 
 char fontface[128] = { 0 };
 int fontsize = 3;
@@ -109,23 +110,23 @@ static GtkWidget *invite_dialog = NULL;
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void check_everything(GtkTextBuffer *buffer);
 static void set_toggle(GtkWidget *tb, gboolean active);
-static void move_next_tab(struct gaim_conversation *conv);
-static void do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv);
-static void do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv);
-static void do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv);
-static void do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv);
-static void do_normal(GtkWidget *small, struct gaim_gtk_conversation *gtkconv);
-static void do_big(GtkWidget *small, struct gaim_gtk_conversation *gtkconv);
-static void toggle_font(GtkWidget *font, struct gaim_conversation *conv);
-static void toggle_fg_color(GtkWidget *color, struct gaim_conversation *conv);
-static void toggle_bg_color(GtkWidget *color, struct gaim_conversation *conv);
-static void got_typing_keypress(struct gaim_conversation *conv, gboolean first);
+static void move_next_tab(GaimConversation *conv);
+static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
+static void do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv);
+static void do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv);
+static void do_small(GtkWidget *small, GaimGtkConversation *gtkconv);
+static void do_normal(GtkWidget *small, GaimGtkConversation *gtkconv);
+static void do_big(GtkWidget *small, GaimGtkConversation *gtkconv);
+static void toggle_font(GtkWidget *font, GaimConversation *conv);
+static void toggle_fg_color(GtkWidget *color, GaimConversation *conv);
+static void toggle_bg_color(GtkWidget *color, GaimConversation *conv);
+static void got_typing_keypress(GaimConversation *conv, gboolean first);
 static GList *generate_invite_user_names(GaimConnection *gc);
-static void add_chat_buddy_common(struct gaim_conversation *conv,
+static void add_chat_buddy_common(GaimConversation *conv,
 								  const char *name, int pos);
-static void tab_complete(struct gaim_conversation *conv);
-static void update_typing_icon(struct gaim_conversation *conv);
-static gboolean update_send_as_selection(struct gaim_window *win);
+static void tab_complete(GaimConversation *conv);
+static void update_typing_icon(GaimConversation *conv);
+static gboolean update_send_as_selection(GaimWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
 /**************************************************************************
@@ -134,9 +135,9 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
 static void
 do_insert_image_cb(GObject *obj, GtkWidget *wid)
 {
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_im *im;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimIm *im;
 	const char *name;
 	const char *filename;
 	char *buf;
@@ -180,7 +181,7 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 static gint
 close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
-	struct gaim_window *win = (struct gaim_window *)d;
+	GaimWindow *win = (GaimWindow *)d;
 
 	gaim_window_destroy(win);
 
@@ -190,7 +191,7 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static gint
 close_conv_cb(GtkWidget *w, gpointer d)
 {
-	struct gaim_conversation *conv = (struct gaim_conversation *)d;
+	GaimConversation *conv = (GaimConversation *)d;
 
 	gaim_conversation_destroy(conv);
 
@@ -198,19 +199,21 @@ close_conv_cb(GtkWidget *w, gpointer d)
 }
 
 static void
-cancel_insert_image_cb(GtkWidget *unused, struct gaim_gtk_conversation *gtkconv)
+cancel_insert_image_cb(GtkWidget *unused, GaimGtkConversation *gtkconv)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
+								 FALSE);
 
 	if (gtkconv->dialogs.image)
 		gtk_widget_destroy(gtkconv->dialogs.image);
+
 	gtkconv->dialogs.image = NULL;
 }
 
 static void
-insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
+insert_image_cb(GtkWidget *save, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char buf[BUF_LONG];
 	GtkWidget *window;
 
@@ -238,9 +241,9 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 }
 
 static void
-insert_link_cb(GtkWidget *w, struct gaim_conversation *conv)
+insert_link_cb(GtkWidget *w, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -255,9 +258,9 @@ insert_link_cb(GtkWidget *w, struct gaim_conversation *conv)
 }
 
 static void
-insert_smiley_cb(GtkWidget *smiley, struct gaim_conversation *conv)
+insert_smiley_cb(GtkWidget *smiley, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -272,7 +275,7 @@ insert_smiley_cb(GtkWidget *smiley, struct gaim_conversation *conv)
 static void
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
+	GaimWindow *win = (GaimWindow *)data;
 
 	save_convo(NULL, gaim_window_get_active_conversation(win));
 }
@@ -280,8 +283,8 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
-	struct gaim_conversation *conv;
+	GaimWindow *win = (GaimWindow *)data;
+	GaimConversation *conv;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -290,9 +293,9 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimWindow *win = (GaimWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	conv    = gaim_window_get_active_conversation(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -303,8 +306,8 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimWindow *win = (GaimWindow *)data;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(gaim_window_get_active_conversation(win));
 
@@ -315,7 +318,7 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
+	GaimWindow *win = (GaimWindow *)data;
 
 	close_conv_cb(NULL, gaim_window_get_active_conversation(win));
 }
@@ -323,8 +326,8 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
-	struct gaim_conversation *conv;
+	GaimWindow *win = (GaimWindow *)data;
+	GaimConversation *conv;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -335,9 +338,9 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	struct gaim_window *win = (struct gaim_window *)data;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimWindow *win = (GaimWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -359,9 +362,9 @@ entry_key_pressed_cb_1(GtkTextBuffer *buffer)
 }
 
 static void
-send_cb(GtkWidget *widget, struct gaim_conversation *conv)
+send_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	char *buf, *buf2;
 	GtkTextIter start_iter, end_iter;
 	int limit;
@@ -472,7 +475,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 static void
-add_cb(GtkWidget *widget, struct gaim_conversation *conv)
+add_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimConnection *gc;
 	struct buddy *b;
@@ -491,14 +494,14 @@ add_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 static void
-info_cb(GtkWidget *widget, struct gaim_conversation *conv)
+info_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-		struct gaim_gtk_chat_pane *gtkchat;
+		GaimGtkChatPane *gtkchat;
 		GtkTreeIter iter;
 		GtkTreeModel *model;
 		GtkTreeSelection *sel;
@@ -525,7 +528,7 @@ info_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 static void
-warn_cb(GtkWidget *widget, struct gaim_conversation *conv)
+warn_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	show_warn_dialog(gaim_conversation_get_gc(conv),
 					 (char *)gaim_conversation_get_name(conv));
@@ -534,7 +537,7 @@ warn_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 static void
-block_cb(GtkWidget *widget, struct gaim_conversation *conv)
+block_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimConnection *gc;
 
@@ -547,11 +550,11 @@ block_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 void
-im_cb(GtkWidget *widget, struct gaim_conversation *conv)
+im_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	struct gaim_conversation *conv2;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimConversation *conv2;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	GaimAccount *account;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -586,11 +589,11 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 }
 
 static void
-ignore_cb(GtkWidget *w, struct gaim_conversation *conv)
+ignore_cb(GtkWidget *w, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_chat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
+	GaimChat *chat;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -622,10 +625,10 @@ ignore_cb(GtkWidget *w, struct gaim_conversation *conv)
 }
 
 static void
-menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
+menu_im_cb(GtkWidget *w, GaimConversation *conv)
 {
 	const char *who;
-	struct gaim_conversation *conv2;
+	GaimConversation *conv2;
 	GaimAccount *account;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
@@ -641,7 +644,7 @@ menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
 }
 
 static void
-menu_info_cb(GtkWidget *w, struct gaim_conversation *conv)
+menu_info_cb(GtkWidget *w, GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
@@ -665,7 +668,7 @@ menu_info_cb(GtkWidget *w, struct gaim_conversation *conv)
 }
 
 static void
-menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
+menu_away_cb(GtkWidget *w, GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
@@ -687,7 +690,7 @@ menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
 }
 
 static void
-menu_add_cb(GtkWidget *w, struct gaim_conversation *conv)
+menu_add_cb(GtkWidget *w, GaimConversation *conv)
 {
 	GaimConnection *gc;
 	struct buddy *b;
@@ -707,11 +710,11 @@ menu_add_cb(GtkWidget *w, struct gaim_conversation *conv)
 
 static gint
 right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
-					struct gaim_conversation *conv)
+					GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GaimAccount *account;
 	GtkTreePath *path;
@@ -748,7 +751,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	if (*who == '+') who++;
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
-		struct gaim_conversation *c;
+		GaimConversation *c;
 
 		if ((c = gaim_find_conversation(who)) == NULL)
 			c = gaim_conversation_new(GAIM_CONV_IM, account, who);
@@ -829,10 +832,10 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static void
-do_invite(GtkWidget *w, int resp, struct InviteBuddyInfo *info)
+do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 {
 	const char *buddy, *message;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(info->conv);
 
@@ -858,14 +861,14 @@ do_invite(GtkWidget *w, int resp, struct InviteBuddyInfo *info)
 }
 
 static void
-invite_cb(GtkWidget *widget, struct gaim_conversation *conv)
+invite_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	struct InviteBuddyInfo *info = NULL;
+	InviteBuddyInfo *info = NULL;
 
 	if (invite_dialog == NULL) {
 		GaimConnection *gc;
-		struct gaim_window *win;
-		struct gaim_gtk_window *gtkwin;
+		GaimWindow *win;
+		GaimGtkWindow *gtkwin;
 		GtkWidget *label;
 		GtkWidget *vbox, *hbox;
 		GtkWidget *table;
@@ -873,7 +876,7 @@ invite_cb(GtkWidget *widget, struct gaim_conversation *conv)
 
 		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 
-		info = g_new0(struct InviteBuddyInfo, 1);
+		info = g_new0(InviteBuddyInfo, 1);
 		info->conv = conv;
 
 		gc     = gaim_conversation_get_gc(conv);
@@ -977,12 +980,12 @@ invite_cb(GtkWidget *widget, struct gaim_conversation *conv)
 static gboolean
 entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
-	struct gaim_window *win;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_window *gtkwin;
+	GaimWindow *win;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 
-	conv    = (struct gaim_conversation *)data;
+	conv    = (GaimConversation *)data;
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
@@ -1267,9 +1270,9 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 static void
 menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
-	struct gaim_window *win = g_object_get_data(m, "user_data");
+	GaimWindow *win = g_object_get_data(m, "user_data");
 	GaimAccount *account = g_object_get_data(m, "gaim_account");
-	struct gaim_conversation *conv;
+	GaimConversation *conv;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -1280,7 +1283,7 @@ static void
 insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 			   gchar *new_text, gint new_text_length, gpointer user_data)
 {
-	struct gaim_conversation *conv = (struct gaim_conversation *)user_data;
+	GaimConversation *conv = (GaimConversation *)user_data;
 
 	if (conv == NULL)
 		return;
@@ -1296,8 +1299,8 @@ static void
 delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 			   GtkTextIter *end_pos, gpointer user_data)
 {
-	struct gaim_conversation *conv = (struct gaim_conversation *)user_data;
-	struct gaim_im *im;
+	GaimConversation *conv = (GaimConversation *)user_data;
+	GaimIm *im;
 
 	if (conv == NULL)
 		return;
@@ -1325,7 +1328,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 }
 
 static void
-notebook_init_grab(struct gaim_gtk_window *gtkwin, GtkWidget *widget)
+notebook_init_grab(GaimGtkWindow *gtkwin, GtkWidget *widget)
 {
 	static GdkCursor *cursor = NULL;
 
@@ -1354,10 +1357,9 @@ notebook_init_grab(struct gaim_gtk_window *gtkwin, GtkWidget *widget)
 }
 
 static gboolean
-notebook_motion_cb(GtkWidget *widget, GdkEventButton *e,
-				   struct gaim_window *win)
+notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -1376,8 +1378,8 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e,
 		}
 	}
 	else { /* Otherwise, draw the arrows. */
-		struct gaim_window *dest_win;
-		struct gaim_gtk_window *dest_gtkwin;
+		GaimWindow *dest_win;
+		GaimGtkWindow *dest_gtkwin;
 		GtkNotebook *dest_notebook;
 		GtkWidget *tab, *last_vis_tab = NULL;
 		gint nb_x, nb_y, page_num, i, last_vis_tab_loc = -1;
@@ -1417,7 +1419,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e,
 			 l != NULL;
 			 l = l->next, i++) {
 
-			struct gaim_conversation *conv = l->data;
+			GaimConversation *conv = l->data;
 
 			tab = GAIM_GTK_CONVERSATION(conv)->tabby;
 
@@ -1489,10 +1491,9 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e,
 }
 
 static gboolean
-notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e,
-				  struct gaim_window *win)
+notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -1515,10 +1516,9 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e,
  * THANK YOU GALEON!
  */
 static gboolean
-notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
-				  struct gaim_window *win)
+notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	gint nb_x, nb_y, x_rel, y_rel;
 	GList *l;
 	int tab_clicked;
@@ -1560,7 +1560,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 
 	/* Find out which tab was dragged. */
 	for (l = gaim_window_get_conversations(win); l != NULL; l = l->next) {
-		struct gaim_conversation *conv = l->data;
+		GaimConversation *conv = l->data;
 		GtkWidget *tab = GAIM_GTK_CONVERSATION(conv)->tabby;
 
 		if (!GTK_WIDGET_VISIBLE(tab))
@@ -1600,13 +1600,12 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 }
 
 static gboolean
-notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
-					struct gaim_window *win)
+notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimWindow *win)
 {
-	struct gaim_window *dest_win;
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_window *dest_gtkwin;
-	struct gaim_conversation *conv;
+	GaimWindow *dest_win;
+	GaimGtkWindow *gtkwin;
+	GaimGtkWindow *dest_gtkwin;
+	GaimConversation *conv;
 	GtkNotebook *dest_notebook;
 	gint dest_page_num;
 
@@ -1670,9 +1669,9 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 		if (gaim_window_get_conversation_count(win) > 1) {
 			/* Make a new window to stick this to. */
-			struct gaim_window *new_win;
-			struct gaim_gtk_window *new_gtkwin;
-			struct gaim_gtk_conversation *gtkconv;
+			GaimWindow *new_win;
+			GaimGtkWindow *new_gtkwin;
+			GaimGtkConversation *gtkconv;
 			gint win_width, win_height;
 
 			gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -1734,13 +1733,13 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 				gpointer user_data)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_window *win;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_window *gtkwin;
+	GaimWindow *win;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 	GaimConnection *gc;
 
-	win = (struct gaim_window *)user_data;
+	win = (GaimWindow *)user_data;
 
 	conv = gaim_window_get_conversation_at(win, page_num);
 
@@ -1793,7 +1792,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
  * Utility functions
  **************************************************************************/
 static void
-do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv)
+do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(bold)))
 		gaim_gtk_surround(gtkconv, "<B>", "</B>");
@@ -1804,7 +1803,7 @@ do_bold(GtkWidget *bold, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv)
+do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(italic)))
 		gaim_gtk_surround(gtkconv, "<I>", "</I>");
@@ -1815,7 +1814,7 @@ do_italic(GtkWidget *italic, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv)
+do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(underline)))
 		gaim_gtk_surround(gtkconv, "<U>", "</U>");
@@ -1826,7 +1825,7 @@ do_underline(GtkWidget *underline, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
+do_small(GtkWidget *small, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(small)))
 		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
@@ -1837,7 +1836,7 @@ do_small(GtkWidget *small, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-do_normal(GtkWidget *normal, struct gaim_gtk_conversation *gtkconv)
+do_normal(GtkWidget *normal, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(normal)))
 		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
@@ -1848,7 +1847,7 @@ do_normal(GtkWidget *normal, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-do_big(GtkWidget *large, struct gaim_gtk_conversation *gtkconv)
+do_big(GtkWidget *large, GaimGtkConversation *gtkconv)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(large)))
 		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
@@ -1859,9 +1858,9 @@ do_big(GtkWidget *large, struct gaim_gtk_conversation *gtkconv)
 }
 
 static void
-toggle_font(GtkWidget *font, struct gaim_conversation *conv)
+toggle_font(GtkWidget *font, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -1874,9 +1873,9 @@ toggle_font(GtkWidget *font, struct gaim_conversation *conv)
 }
 
 static void
-toggle_fg_color(GtkWidget *color, struct gaim_conversation *conv)
+toggle_fg_color(GtkWidget *color, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -1889,9 +1888,9 @@ toggle_fg_color(GtkWidget *color, struct gaim_conversation *conv)
 }
 
 static void
-toggle_bg_color(GtkWidget *color, struct gaim_conversation *conv)
+toggle_bg_color(GtkWidget *color, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -1906,10 +1905,10 @@ toggle_bg_color(GtkWidget *color, struct gaim_conversation *conv)
 static void
 check_everything(GtkTextBuffer *buffer)
 {
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
-	conv = (struct gaim_conversation *)g_object_get_data(G_OBJECT(buffer),
+	conv = (GaimConversation *)g_object_get_data(G_OBJECT(buffer),
 														 "user_data");
 
 	if (conv == NULL)
@@ -1927,9 +1926,9 @@ set_toggle(GtkWidget *tb, gboolean active)
 }
 
 static void
-got_typing_keypress(struct gaim_conversation *conv, gboolean first)
+got_typing_keypress(GaimConversation *conv, gboolean first)
 {
-	struct gaim_im *im;
+	GaimIm *im;
 
 	/*
 	 * We know we got something, so we at least have to make sure we don't
@@ -1958,11 +1957,11 @@ got_typing_keypress(struct gaim_conversation *conv, gboolean first)
 }
 
 static void
-update_typing_icon(struct gaim_conversation *conv)
+update_typing_icon(GaimConversation *conv)
 {
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_im *im = NULL;
-	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GaimGtkWindow *gtkwin;
+	GaimIm *im = NULL;
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
@@ -2001,11 +2000,11 @@ update_typing_icon(struct gaim_conversation *conv)
 }
 
 static gboolean
-update_send_as_selection(struct gaim_window *win)
+update_send_as_selection(GaimWindow *win)
 {
 	GaimAccount *account;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_window *gtkwin;
+	GaimConversation *conv;
+	GaimGtkWindow *gtkwin;
 	GtkWidget *menu;
 	GList *child;
 
@@ -2049,10 +2048,9 @@ update_send_as_selection(struct gaim_window *win)
 }
 
 static void
-generate_send_as_items(struct gaim_window *win,
-					   struct gaim_conversation *deleted_conv)
+generate_send_as_items(GaimWindow *win, GaimConversation *deleted_conv)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	GtkWidget *menu;
 	GtkWidget *menuitem;
 	GList *gcs;
@@ -2076,10 +2074,10 @@ generate_send_as_items(struct gaim_window *win,
 			 convs != NULL;
 			 convs = convs->next) {
 
-			struct gaim_conversation *conv;
+			GaimConversation *conv;
 			GaimAccount *account;
 
-			conv = (struct gaim_conversation *)convs->data;
+			conv = (GaimConversation *)convs->data;
 			account = gaim_conversation_get_account(conv);
 
 			if (account->gc == NULL) {
@@ -2179,14 +2177,14 @@ generate_send_as_items(struct gaim_window *win,
 		 convs != NULL;
 		 convs = convs->next) {
 
-		struct gaim_conversation *conv;
+		GaimConversation *conv;
 		GaimAccount *account;
 		GtkWidget *box;
 		GtkWidget *label;
 		GtkWidget *image;
 		GdkPixbuf *pixbuf, *scale;
 
-		conv = (struct gaim_conversation *)convs->data;
+		conv = (GaimConversation *)convs->data;
 
 		if (conv == deleted_conv)
 			continue;
@@ -2293,12 +2291,11 @@ generate_invite_user_names(GaimConnection *gc)
 }
 
 static void
-add_chat_buddy_common(struct gaim_conversation *conv, const char *name,
-					  int pos)
+add_chat_buddy_common(GaimConversation *conv, const char *name, int pos)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_chat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
+	GaimChat *chat;
 	GtkTreeIter iter;
 	GtkListStore *ls;
 
@@ -2317,10 +2314,10 @@ add_chat_buddy_common(struct gaim_conversation *conv, const char *name,
 }
 
 static void
-tab_complete(struct gaim_conversation *conv)
+tab_complete(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_chat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimChat *chat;
 	GtkTextIter cursor, word_start, start_buffer;
 	int start;
 	int most_matched = -1;
@@ -2578,9 +2575,9 @@ item_factory_translate_func (const char *path, gpointer func_data)
 }
 
 static GtkWidget *
-setup_menubar(struct gaim_window *win)
+setup_menubar(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	GtkAccelGroup *accel_group;
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -2619,11 +2616,11 @@ setup_menubar(struct gaim_window *win)
 }
 
 static void
-setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
+setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 {
 	GaimConnection *gc;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_im_pane *gtkim;
+	GaimGtkConversation *gtkconv;
+	GaimGtkImPane *gtkim;
 	GaimConversationType type = GAIM_CONV_IM;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -2719,12 +2716,12 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 }
 
 static void
-setup_chat_buttons(struct gaim_conversation *conv, GtkWidget *parent)
+setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 {
 	GaimConnection *gc;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
+	GaimGtkWindow *gtkwin;
 	GtkWidget *sep;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -2763,9 +2760,9 @@ setup_chat_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 }
 
 static GtkWidget *
-build_conv_toolbar(struct gaim_conversation *conv)
+build_conv_toolbar(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *button;
@@ -2944,11 +2941,11 @@ build_conv_toolbar(struct gaim_conversation *conv)
 }
 
 static GtkWidget *
-setup_chat_pane(struct gaim_conversation *conv)
+setup_chat_pane(GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
 	GtkWidget *vbox, *hbox;
@@ -3173,10 +3170,10 @@ setup_chat_pane(struct gaim_conversation *conv)
 }
 
 static GtkWidget *
-setup_im_pane(struct gaim_conversation *conv)
+setup_im_pane(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_im_pane *gtkim;
+	GaimGtkConversation *gtkconv;
+	GaimGtkImPane *gtkim;
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -3276,10 +3273,10 @@ setup_im_pane(struct gaim_conversation *conv)
 }
 
 static void
-move_next_tab(struct gaim_conversation *conv)
+move_next_tab(GaimConversation *conv)
 {
-	struct gaim_conversation *next_conv = NULL;
-	struct gaim_window *win;
+	GaimConversation *next_conv = NULL;
+	GaimWindow *win;
 	GList *l;
 	int index, i;
 
@@ -3291,7 +3288,7 @@ move_next_tab(struct gaim_conversation *conv)
 		 l != NULL;
 		 l = l->next) {
 
-		next_conv = (struct gaim_conversation *)l->data;
+		next_conv = (GaimConversation *)l->data;
 
 		if (gaim_conversation_get_unseen(next_conv) > 0)
 			break;
@@ -3306,7 +3303,7 @@ move_next_tab(struct gaim_conversation *conv)
 			 l != NULL && i < index;
 			 l = l->next) {
 
-			next_conv = (struct gaim_conversation *)l->data;
+			next_conv = (GaimConversation *)l->data;
 
 			if (gaim_conversation_get_unseen(next_conv) > 0)
 				break;
@@ -3332,10 +3329,10 @@ move_next_tab(struct gaim_conversation *conv)
 static void
 conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t,
-			  struct gaim_conversation *conv)
+			  GaimConversation *conv)
 {
-	struct gaim_window *win = conv->window;
-	struct gaim_conversation *c;
+	GaimWindow *win = conv->window;
+	GaimConversation *c;
 
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GaimBlistNode *n = NULL;
@@ -3355,21 +3352,21 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 /**************************************************************************
  * GTK+ window ops
  **************************************************************************/
-static struct gaim_conversation_ui_ops *
+static GaimConversationUiOps *
 gaim_gtk_get_conversation_ui_ops(void)
 {
 	return gaim_get_gtk_conversation_ui_ops();
 }
 
 static void
-gaim_gtk_new_window(struct gaim_window *win)
+gaim_gtk_new_window(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	GtkPositionType pos;
 	GtkWidget *testidea;
 	GtkWidget *menubar;
 
-	gtkwin = g_malloc0(sizeof(struct gaim_gtk_window));
+	gtkwin = g_malloc0(sizeof(GaimGtkWindow));
 
 	win->ui_data = gtkwin;
 
@@ -3425,9 +3422,9 @@ gaim_gtk_new_window(struct gaim_window *win)
 }
 
 static void
-gaim_gtk_destroy_window(struct gaim_window *win)
+gaim_gtk_destroy_window(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	gtk_widget_destroy(gtkwin->window);
 
@@ -3438,25 +3435,25 @@ gaim_gtk_destroy_window(struct gaim_window *win)
 }
 
 static void
-gaim_gtk_show(struct gaim_window *win)
+gaim_gtk_show(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	gtk_widget_show(gtkwin->window);
 }
 
 static void
-gaim_gtk_hide(struct gaim_window *win)
+gaim_gtk_hide(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	gtk_widget_hide(gtkwin->window);
 }
 
 static void
-gaim_gtk_raise(struct gaim_window *win)
+gaim_gtk_raise(GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	gtk_widget_show(gtkwin->window);
 	gtk_window_deiconify(GTK_WINDOW(gtkwin->window));
@@ -3464,19 +3461,19 @@ gaim_gtk_raise(struct gaim_window *win)
 }
 
 static void
-gaim_gtk_flash(struct gaim_window *win)
+gaim_gtk_flash(GaimWindow *win)
 {
 #ifdef _WIN32
-	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	wgaim_im_blink(gtkwin->window);
 #endif
 }
 
 static void
-gaim_gtk_switch_conversation(struct gaim_window *win, unsigned int index)
+gaim_gtk_switch_conversation(GaimWindow *win, unsigned int index)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -3492,12 +3489,11 @@ static const GtkTargetEntry te[] =
 };
 
 static void
-gaim_gtk_add_conversation(struct gaim_window *win,
-						  struct gaim_conversation *conv)
+gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 {
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_conversation *gtkconv, *focus_gtkconv;
-	struct gaim_conversation *focus_conv;
+	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv, *focus_gtkconv;
+	GaimConversation *focus_conv;
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;
@@ -3510,14 +3506,14 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	gtkwin    = GAIM_GTK_WINDOW(win);
 
 	if (conv->ui_data != NULL) {
-		gtkconv = (struct gaim_gtk_conversation *)conv->ui_data;
+		gtkconv = (GaimGtkConversation *)conv->ui_data;
 
 		tab_cont = gtkconv->tab_cont;
 
 		new_ui = FALSE;
 	}
 	else {
-		gtkconv = g_malloc0(sizeof(struct gaim_gtk_conversation));
+		gtkconv = g_malloc0(sizeof(GaimGtkConversation));
 		conv->ui_data = gtkconv;
 
 		/* Setup some initial variables. */
@@ -3531,12 +3527,12 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gaim_gtkconv_update_font_face(conv);
 
 		if (conv_type == GAIM_CONV_CHAT) {
-			gtkconv->u.chat = g_malloc0(sizeof(struct gaim_gtk_chat_pane));
+			gtkconv->u.chat = g_malloc0(sizeof(GaimGtkChatPane));
 
 			pane = setup_chat_pane(conv);
 		}
 		else if (conv_type == GAIM_CONV_IM) {
-			gtkconv->u.im = g_malloc0(sizeof(struct gaim_gtk_im_pane));
+			gtkconv->u.im = g_malloc0(sizeof(GaimGtkImPane));
 			gtkconv->u.im->a_virgin = TRUE;
 
 			pane = setup_im_pane(conv);
@@ -3690,11 +3686,10 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 }
 
 static void
-gaim_gtk_remove_conversation(struct gaim_window *win,
-							 struct gaim_conversation *conv)
+gaim_gtk_remove_conversation(GaimWindow *win, GaimConversation *conv)
 {
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv;
 	unsigned int index;
 	GaimConversationType conv_type;
 
@@ -3725,12 +3720,11 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 }
 
 static void
-gaim_gtk_move_conversation(struct gaim_window *win,
-						   struct gaim_conversation *conv,
+gaim_gtk_move_conversation(GaimWindow *win, GaimConversation *conv,
 						   unsigned int new_index)
 {
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv;
 
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -3743,16 +3737,16 @@ gaim_gtk_move_conversation(struct gaim_window *win,
 }
 
 static int
-gaim_gtk_get_active_index(const struct gaim_window *win)
+gaim_gtk_get_active_index(const GaimWindow *win)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
 	return gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
 }
 
-static struct gaim_window_ui_ops window_ui_ops =
+static GaimWindowUiOps window_ui_ops =
 {
 	gaim_gtk_get_conversation_ui_ops,
 	gaim_gtk_new_window,
@@ -3769,10 +3763,10 @@ static struct gaim_window_ui_ops window_ui_ops =
 };
 
 static void
-update_convo_add_button(struct gaim_conversation *conv)
+update_convo_add_button(GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GaimConnection *gc;
 	GaimConversationType type;
 	GtkWidget *parent;
@@ -3814,7 +3808,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->u.im->add);
 }
 
-struct gaim_window_ui_ops *
+GaimWindowUiOps *
 gaim_get_gtk_window_ui_ops(void)
 {
 	return &window_ui_ops;
@@ -3824,9 +3818,9 @@ gaim_get_gtk_window_ui_ops(void)
  * Conversation UI operations
  **************************************************************************/
 static void
-gaim_gtkconv_destroy(struct gaim_conversation *conv)
+gaim_gtkconv_destroy(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtkconv->dialogs.fg_color != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.fg_color);
@@ -3871,10 +3865,11 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 }
 
 static void
-gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
-					  const char *message, size_t len, int flags, time_t mtime)
+gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
+					  const char *message, size_t len, int flags,
+					  time_t mtime)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -3906,10 +3901,10 @@ gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
 }
 
 static void
-gaim_gtkconv_write_chat(struct gaim_conversation *conv, const char *who,
+gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 						const char *message, int flags, time_t mtime)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -3942,12 +3937,12 @@ gaim_gtkconv_write_chat(struct gaim_conversation *conv, const char *who,
 }
 
 static void
-gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
+gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 						const char *message, size_t length, int flags,
 						time_t mtime)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_window *win;
+	GaimGtkConversation *gtkconv;
+	GaimWindow *win;
 	GaimConnection *gc;
 	int gtk_font_options = 0;
 	GString *log_str;
@@ -4250,11 +4245,11 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 }
 
 static void
-gaim_gtkconv_chat_add_user(struct gaim_conversation *conv, const char *user)
+gaim_gtkconv_chat_add_user(GaimConversation *conv, const char *user)
 {
-	struct gaim_chat *chat;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimChat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	char tmp[BUF_LONG];
 	int num_users;
 	int pos;
@@ -4281,12 +4276,12 @@ gaim_gtkconv_chat_add_user(struct gaim_conversation *conv, const char *user)
 }
 
 static void
-gaim_gtkconv_chat_rename_user(struct gaim_conversation *conv,
-							  const char *old_name, const char *new_name)
+gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
+							  const char *new_name)
 {
-	struct gaim_chat *chat;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimChat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GList *names;
@@ -4337,11 +4332,11 @@ gaim_gtkconv_chat_rename_user(struct gaim_conversation *conv,
 }
 
 static void
-gaim_gtkconv_chat_remove_user(struct gaim_conversation *conv, const char *user)
+gaim_gtkconv_chat_remove_user(GaimConversation *conv, const char *user)
 {
-	struct gaim_chat *chat;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
+	GaimChat *chat;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GList *names;
@@ -4398,11 +4393,11 @@ gaim_gtkconv_chat_remove_user(struct gaim_conversation *conv, const char *user)
 }
 
 static void
-gaim_gtkconv_set_title(struct gaim_conversation *conv, const char *title)
+gaim_gtkconv_set_title(GaimConversation *conv, const char *title)
 {
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_window *win;
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkConversation *gtkconv;
+	GaimWindow *win;
+	GaimGtkWindow *gtkwin;
 
 	win = gaim_conversation_get_window(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
@@ -4415,13 +4410,13 @@ gaim_gtkconv_set_title(struct gaim_conversation *conv, const char *title)
 }
 
 static void
-gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
+gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 {
-	struct gaim_window *win;
-	struct gaim_gtk_window *gtkwin;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_chat_pane *gtkchat;
-	struct gaim_chat *chat;
+	GaimWindow *win;
+	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
+	GaimChat *chat;
 
 	win     = gaim_conversation_get_window(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
@@ -4439,7 +4434,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
 			 type == GAIM_CONV_UPDATE_UNSEEN) {
 		GtkStyle *style;
-		struct gaim_im *im = NULL;
+		GaimIm *im = NULL;
 
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
@@ -4506,7 +4501,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	}
 }
 
-static struct gaim_conversation_ui_ops conversation_ui_ops =
+static GaimConversationUiOps conversation_ui_ops =
 {
 	gaim_gtkconv_destroy,            /* destroy_conversation */
 	gaim_gtkconv_write_chat,         /* write_chat           */
@@ -4520,7 +4515,7 @@ static struct gaim_conversation_ui_ops conversation_ui_ops =
 	gaim_gtkconv_updated             /* updated              */
 };
 
-struct gaim_conversation_ui_ops *
+GaimConversationUiOps *
 gaim_get_gtk_conversation_ui_ops(void)
 {
 	return &conversation_ui_ops;
@@ -4530,7 +4525,7 @@ gaim_get_gtk_conversation_ui_ops(void)
  * Public conversation utility functions
  **************************************************************************/
 static void
-remove_icon(struct gaim_gtk_conversation *gtkconv)
+remove_icon(GaimGtkConversation *gtkconv)
 {
 	if (gtkconv == NULL)
 		return;
@@ -4557,8 +4552,8 @@ remove_icon(struct gaim_gtk_conversation *gtkconv)
 static gboolean
 redraw_icon(gpointer data)
 {
-	struct gaim_conversation *conv = (struct gaim_conversation *)data;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv = (GaimConversation *)data;
+	GaimGtkConversation *gtkconv;
 
 	GdkPixbuf *buf;
 	GdkPixbuf *scale;
@@ -4602,9 +4597,9 @@ redraw_icon(gpointer data)
 }
 
 static void
-start_anim(GtkObject *obj, struct gaim_conversation *conv)
+start_anim(GtkObject *obj, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	int delay;
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
@@ -4620,9 +4615,9 @@ start_anim(GtkObject *obj, struct gaim_conversation *conv)
 }
 
 static void
-stop_anim(GtkObject *obj, struct gaim_conversation *conv)
+stop_anim(GtkObject *obj, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
@@ -4636,9 +4631,9 @@ stop_anim(GtkObject *obj, struct gaim_conversation *conv)
 }
 
 static gboolean
-icon_menu(GtkObject *obj, GdkEventButton *e, struct gaim_conversation *conv)
+icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	static GtkWidget *menu = NULL;
 	GtkWidget *button;
 
@@ -4691,9 +4686,9 @@ icon_menu(GtkObject *obj, GdkEventButton *e, struct gaim_conversation *conv)
 }
 
 void
-gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
+gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 
 	char filename[256];
 	FILE *file;
@@ -4841,11 +4836,11 @@ void
 gaim_gtkconv_update_font_buttons(void)
 {
 	GList *l;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -4867,9 +4862,9 @@ gaim_gtkconv_update_font_buttons(void)
 }
 
 void
-gaim_gtkconv_update_font_colors(struct gaim_conversation *conv)
+gaim_gtkconv_update_font_colors(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
@@ -4884,9 +4879,9 @@ gaim_gtkconv_update_font_colors(struct gaim_conversation *conv)
 }
 
 void
-gaim_gtkconv_update_font_face(struct gaim_conversation *conv)
+gaim_gtkconv_update_font_face(GaimConversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv;
+	GaimGtkConversation *gtkconv;
 	
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
@@ -4897,12 +4892,12 @@ gaim_gtkconv_update_font_face(struct gaim_conversation *conv)
 }
 
 void
-gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
+gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	struct gaim_window *win;
-	struct gaim_gtk_window *gtkwin = NULL;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimWindow *win;
+	GaimGtkWindow *gtkwin = NULL;
+	GaimGtkConversation *gtkconv;
 	GaimConnection *gc;
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
@@ -4990,11 +4985,11 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 	}
 }
 
-struct gaim_window *
+GaimWindow *
 gaim_gtkwin_get_at_xy(int x, int y)
 {
-	struct gaim_window *win = NULL;
-	struct gaim_gtk_window *gtkwin;
+	GaimWindow *win = NULL;
+	GaimGtkWindow *gtkwin;
 	GdkWindow *gdkwin;
 	GList *l;
 
@@ -5004,7 +4999,7 @@ gaim_gtkwin_get_at_xy(int x, int y)
 		gdkwin = gdk_window_get_toplevel(gdkwin);
 
 	for (l = gaim_get_windows(); l != NULL; l = l->next) {
-		win = (struct gaim_window *)l->data;
+		win = (GaimWindow *)l->data;
 
 		if (!GAIM_IS_GTK_WINDOW(win))
 			continue;
@@ -5019,9 +5014,9 @@ gaim_gtkwin_get_at_xy(int x, int y)
 }
 
 int
-gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y)
+gaim_gtkconv_get_tab_at_xy(GaimWindow *win, int x, int y)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	GList *l;
 	gint nb_x, nb_y, x_rel, y_rel;
 	GtkNotebook *notebook;
@@ -5043,7 +5038,7 @@ gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y)
 		 l != NULL;
 		 l = l->next, i++) {
 
-		struct gaim_conversation *conv = l->data;
+		GaimConversation *conv = l->data;
 		tab = GAIM_GTK_CONVERSATION(conv)->tab_label;
 
 		if (!GTK_WIDGET_MAPPED(tab))
@@ -5087,9 +5082,9 @@ gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y)
 }
 
 int
-gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y)
+gaim_gtkconv_get_dest_tab_at_xy(GaimWindow *win, int x, int y)
 {
-	struct gaim_gtk_window *gtkwin;
+	GaimGtkWindow *gtkwin;
 	GList *l;
 	gint nb_x, nb_y, x_rel, y_rel;
 	GtkNotebook *notebook;
@@ -5110,7 +5105,7 @@ gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y)
 		 l != NULL;
 		 l = l->next, i++) {
 
-		struct gaim_conversation *conv = l->data;
+		GaimConversation *conv = l->data;
 		tab = GAIM_GTK_CONVERSATION(conv)->tab_label;
 
 		if (!GTK_WIDGET_MAPPED(tab))
@@ -5151,11 +5146,11 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					  gpointer data)
 {
 	GList *l;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -5174,11 +5169,11 @@ show_timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
 						gpointer data)
 {
 	GList *l;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -5195,13 +5190,13 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 {
 #ifdef USE_GTKSPELL
 	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 	GtkSpell *spell;
 
 	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
 		
-		conv = (struct gaim_conversation *)cl->data;
+		conv = (GaimConversation *)cl->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -5223,11 +5218,11 @@ show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					 gpointer data)
 {
 	GList *cl;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
-		conv = (struct gaim_conversation *)cl->data;
+		conv = (GaimConversation *)cl->data;
 
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
@@ -5244,13 +5239,13 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 {
 	GList *l;
 	GtkPositionType pos;
-	struct gaim_window *win;
-	struct gaim_gtk_window *gtkwin;
+	GaimWindow *win;
+	GaimGtkWindow *gtkwin;
 
 	pos = GPOINTER_TO_INT(value);
 
 	for (l = gaim_get_windows(); l != NULL; l = l->next) {
-		win = (struct gaim_window *)l->data;
+		win = (GaimWindow *)l->data;
 
 		if (!GAIM_IS_GTK_WINDOW(win))
 			continue;
@@ -5266,11 +5261,11 @@ im_button_type_pref_cb(const char *name, GaimPrefType type,
 					   gpointer value, gpointer data)
 {
 	GList *l;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
 
 	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		conv = (struct gaim_conversation *)l->data;
+		conv = (GaimConversation *)l->data;
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		setup_im_buttons(conv, gtk_widget_get_parent(gtkconv->send));
@@ -5288,11 +5283,11 @@ animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 
 	if (value) {
 		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			start_anim(NULL, (struct gaim_conversation *)l->data);
+			start_anim(NULL, (GaimConversation *)l->data);
 	}
 	else {
 		for (l = gaim_get_ims(); l != NULL; l = l->next)
-			stop_anim(NULL, (struct gaim_conversation *)l->data);
+			stop_anim(NULL, (GaimConversation *)l->data);
 	}
 }
 
@@ -5312,16 +5307,16 @@ chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	GtkWidget *parent;
 	GaimConversationType conv_type = GAIM_CONV_CHAT;
 	GSList *bcs;
-	struct gaim_conversation *conv;
-	struct gaim_gtk_conversation *gtkconv;
-	struct gaim_gtk_window *gtkwin;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 
 	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
 
 		g = (GaimConnection *)l->data;
 
 		for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
-			conv = (struct gaim_conversation *)bcs->data;
+			conv = (GaimConversation *)bcs->data;
 
 			if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
 				continue;
