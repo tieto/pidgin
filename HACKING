@@ -152,7 +152,7 @@ account.[ch]:
 accountopt.[ch]:
 	Api and implemenation for account options. I'm not precisely
 	sure how this meshes with account.[ch]
-	
+
 away.c:
   This takes care of most of the away stuff: setting the away message
   (do_away_message); coming back (do_im_back); drawing the away window;
@@ -161,16 +161,12 @@ away.c:
   who know how it works and I don't think any of us know why it works
   that way.
 
-browser.c:
-  Code for opening a browser window. Most of the code is trying to deal
-  with Netscape. The most important function here is open_url. Have fun.
-
 blist.[ch]:
 	This takes care of the buddy list backend, the blist.xml file,
 	importing old buddy list files, and related things like
 	finding buddies and groups. buddies, contacts, and groups
-	are controled from these files. 
-	
+	are controled from these files.
+
 buddy_chat.c:
   This takes care of the buddy chat stuff. This used to be a lot bigger
   until the chat and IM windows got merged in the code. Now it mostly
@@ -201,7 +197,7 @@ gaimrc.c:
   This controls everything about the .gaimrc file. There's not really much
   to say about it; this is probably one of the better designed and easier
   to follow files in gaim. The important functions are towards the bottom.
-  	This file is also utterly deprecated. It is used only for importing
+	This file is also utterly deprecated. It is used only for importing
 	on upgrade. the prefs.c and prefs.h files replace the control,
 	and gtkprefs.c replaces the gui component.
 
@@ -210,11 +206,6 @@ gtkimhtml.c:
   was different than GNOME's GtkHTML). It's self-contained (it doesn't
   use any of gaim's code) and is actually a separate project from gaim
   (but is maintained by Eric).
-
-html.c:
-  Don't ask my why this is called html.c. Most of it is just grab_url,
-  which does like the name says; it downloads a URL to show in the
-  GtkHTML widget.  http.c would be a more appropriate name, but that's OK.
 
 idle.c:
   This file used to be entirely #if 0'd out of existance. However, thanks
@@ -248,15 +239,15 @@ multi.c:
 
 prefs.c:
 	Read the documentation on this file. This handles the backend
-	side of prefs. 
+	side of prefs.
 
 proxy.c:
   Adam (of libfaim glory) got bored one day and rewrote this file, so
   now everything actually works. The main function is proxy_connect,
   which figures out which proxy you want to use (if you want to use one
   at all) and passes off the data to the appropriate function. This file
-  should be pretty straight-forward.	
-  	Except I STRONGLY suspect that time has broken this file.
+  should be pretty straight-forward.
+ 	Except I STRONGLY suspect that time has broken this file.
 
 prpl.c:
   This file is what lets gaim dynamically load protocols, sort of. All

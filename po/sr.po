@@ -7,17 +7,16 @@
 # This file is distributed under the same license as the Gaim package.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.71\n"
+"Project-Id-Version: gaim 0.73\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-29 00:00-0500\n"
-"PO-Revision-Date: 2003-10-29 17:17+0100\n"
+"POT-Creation-Date: 2003-11-15 12:57-0500\n"
+"PO-Revision-Date: 2003-11-15 19:15+0100\n"
 "Last-Translator: Данило Шеган <dsegan@gmx.net>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3;    plural=n%10==1 && n%100!=11 ? 0 :    n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3;    plural=n%10==1 && n%100!=11 ? 0 :    n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. *< api_version
 #. *< type
@@ -26,14 +25,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/autorecon.c:105
+#: plugins/autorecon.c:104
 msgid "Auto-Reconnect"
 msgstr "Аутоматско очување везе"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/autorecon.c:108 plugins/autorecon.c:110
+#: plugins/autorecon.c:107 plugins/autorecon.c:109
 msgid "When you are kicked offline, this reconnects you."
 msgstr "Када се веза прекине, аутоматски се поново успоставља."
 
@@ -55,6 +54,69 @@ msgstr "Провери пошту"
 msgid "Check email every X seconds.\n"
 msgstr "Проверавај е-пошту сваких Н секунди.\n"
 
+#: plugins/contact_priority.c:82
+msgid "Point values to use when..."
+msgstr "Вредности поена који се користе када је..."
+
+#: plugins/contact_priority.c:91
+msgid "Buddy is offline:"
+msgstr "Другар неповезан:"
+
+#: plugins/contact_priority.c:105
+msgid "Buddy is away:"
+msgstr "Другар одсутан:"
+
+#: plugins/contact_priority.c:119
+msgid "Buddy is idle:"
+msgstr "Другар миран:"
+
+#: plugins/contact_priority.c:133
+msgid "Use last matching buddy"
+msgstr "Користи последњег одговарајућег другара"
+
+#. Explanation
+#: plugins/contact_priority.c:139
+msgid ""
+"The buddy with the lowest score is the buddy who will have priority in the "
+"contact.\n"
+"The default values (offline = 4,away = 2, and idle = 1)\n"
+"will use what used to be the built-in order active->idle->away->away+idle-"
+">offline."
+msgstr ""
+"Другар са најмањим резултатом је другар који ће имати првенство за ступање у везу.\n"
+"Подразумеване вредности (неповезан = 4, одсутан = 2 и миран = 1)\n"
+"ће користити оно што је било уграђен распоред активан->миран->одсутан->одсутан+миран->неповезан."
+
+#: plugins/contact_priority.c:142
+msgid "Point values to use for Account..."
+msgstr "Вредности поена који се користе за налог..."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/contact_priority.c:191
+msgid "Contact Priority"
+msgstr "Првенство контакта"
+
+#. *< name
+#. *< version
+#. *< summary
+#: plugins/contact_priority.c:194
+msgid ""
+"Allows for controlling the values associated with different buddy states."
+msgstr "Дозвољава управљање вредностима везаним за разна стања другара."
+
+#. *< description
+#: plugins/contact_priority.c:196
+msgid ""
+"Allows for changing the point values of idle/away/offline states for buddies "
+"in contact priority computations."
+msgstr "Дозвољава измену вредности поена за мирна/одсутна/неповезана стања другара при рачунању првенства контакта."
+
 #.
 #. *  DEFINES, MACROS & DATA TYPES
 #.
@@ -70,7 +132,7 @@ msgstr "Гаим — Одјављен"
 msgid "Gaim - Away"
 msgstr "Гаим — Одсутан"
 
-#: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1770
+#: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1768
 msgid "Auto-login"
 msgstr "Аутоматска пријава"
 
@@ -86,12 +148,12 @@ msgstr "Прикључи се разговору..."
 msgid "New..."
 msgstr "Нова..."
 
-#: plugins/docklet/docklet.c:153 src/gtkblist.c:2269 src/gtkpounce.c:411
-#: src/gtkprefs.c:1462 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
-#: src/protocols/jabber/jabber.c:892 src/protocols/jabber/jutil.c:98
-#: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2839
-#: src/protocols/oscar/oscar.c:4539 src/protocols/oscar/oscar.c:5485
-#: src/protocols/oscar/oscar.c:6086
+#: plugins/docklet/docklet.c:153 src/gtkblist.c:2313 src/gtkpounce.c:411
+#: src/gtkprefs.c:1467 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
+#: src/protocols/jabber/jabber.c:928 src/protocols/jabber/jutil.c:98
+#: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2844
+#: src/protocols/oscar/oscar.c:4588 src/protocols/oscar/oscar.c:5534
+#: src/protocols/oscar/oscar.c:6135
 msgid "Away"
 msgstr "Одсутан"
 
@@ -108,11 +170,11 @@ msgid "File Transfers"
 msgstr "Преноси датотека"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1929 src/main.c:323
+#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1927 src/main.c:323
 msgid "Accounts"
 msgstr "Налози"
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2326 src/main.c:333
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2331 src/main.c:333
 msgid "Preferences"
 msgstr "Поставке"
 
@@ -338,15 +400,15 @@ msgstr "(Нема"
 msgid "Change"
 msgstr "измене"
 
-#: plugins/history.c:96
+#: plugins/history.c:65
 msgid "History"
 msgstr "Историјат"
 
-#: plugins/history.c:98
+#: plugins/history.c:67
 msgid "Shows recently logged conversations in new conversations."
 msgstr "Приказује последње забележене разговоре међу новим разговорима."
 
-#: plugins/history.c:99
+#: plugins/history.c:68
 msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
@@ -585,14 +647,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/signals-test.c:502
+#: plugins/signals-test.c:465
 msgid "Signals Test"
 msgstr "Проба сигнала"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/signals-test.c:505 plugins/signals-test.c:507
+#: plugins/signals-test.c:468 plugins/signals-test.c:470
 msgid "Test to see that all signals are working properly."
 msgstr "Проверава да ли сви сигнали исправно раде."
 
@@ -653,14 +715,14 @@ msgstr "Замењује текст у одлазећим порукама пр�
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ssl/ssl-gnutls.c:192
+#: plugins/ssl/ssl-gnutls.c:197
 msgid "GNUTLS"
 msgstr "GNUTLS"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-gnutls.c:195 plugins/ssl/ssl-gnutls.c:197
+#: plugins/ssl/ssl-gnutls.c:200 plugins/ssl/ssl-gnutls.c:202
 msgid "Provides SSL support through GNUTLS."
 msgstr "Обезбеђује ССЛ подршку кроз GNUTLS."
 
@@ -671,14 +733,14 @@ msgstr "Обезбеђује ССЛ подршку кроз GNUTLS."
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ssl/ssl-nss.c:290
+#: plugins/ssl/ssl-nss.c:296
 msgid "NSS"
 msgstr "NSS"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ssl/ssl-nss.c:293 plugins/ssl/ssl-nss.c:295
+#: plugins/ssl/ssl-nss.c:299 plugins/ssl/ssl-nss.c:301
 msgid "Provides SSL support through Mozilla NSS."
 msgstr "Обезбеђује ССЛ подршку кроз Мозилин NSS."
 
@@ -865,8 +927,8 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Покрени Гаим при покретању Виндоуса."
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2109
-#: src/gtkprefs.c:2259
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2150
+#: src/gtkprefs.c:2264
 msgid "Buddy List"
 msgstr "Списак другара"
 
@@ -886,7 +948,7 @@ msgstr "_Одржавај прозор са списком другара на �
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:880
-#: src/gtkprefs.c:2260
+#: src/gtkprefs.c:2265
 msgid "Conversations"
 msgstr "Разговори"
 
@@ -953,160 +1015,160 @@ msgstr "подршка"
 msgid "Crazy Patch Writers"
 msgstr "Луди писци исправки"
 
-#: src/about.c:144
+#: src/about.c:145
 msgid "Retired Developers"
 msgstr "Пензионисани програмери"
 
-#: src/about.c:145
+#: src/about.c:146
 msgid "former libfaim maintainer"
 msgstr "претходни одржавалац libfaim-а"
 
-#: src/about.c:146
+#: src/about.c:147
 msgid "former lead developer"
 msgstr "бивши главни програмер"
 
-#: src/about.c:149
+#: src/about.c:150
 msgid "former maintainer"
 msgstr "бивши одржавалац"
 
-#: src/about.c:150
+#: src/about.c:151
 msgid "former Jabber developer"
 msgstr "бивши Џабер програмер"
 
-#: src/about.c:151
+#: src/about.c:152
 msgid "original author"
 msgstr "први аутор"
 
-#: src/about.c:154
+#: src/about.c:155
 msgid "hacker and designated driver [lazy bum]"
 msgstr "хакер и одређени покретач [лења буба]"
 
-#: src/about.c:162
+#: src/about.c:163
 msgid "Current Translators"
 msgstr "Текући преводиоци"
 
-#: src/about.c:163 src/about.c:193
+#: src/about.c:164 src/about.c:195
 msgid "Catalan"
 msgstr "Каталонски"
 
-#: src/about.c:164 src/about.c:194
+#: src/about.c:165 src/about.c:196
 msgid "Czech"
 msgstr "Чешки"
 
-#: src/about.c:165
+#: src/about.c:166
 msgid "Danish"
 msgstr "Дански"
 
-#: src/about.c:166 src/about.c:195
+#: src/about.c:167 src/about.c:197
 msgid "German"
 msgstr "Немачки"
 
-#: src/about.c:167 src/about.c:196
+#: src/about.c:168 src/about.c:198
 msgid "Spanish"
 msgstr "Шпански"
 
-#: src/about.c:168
+#: src/about.c:169
 msgid "Finnish"
 msgstr "Фински"
 
-#: src/about.c:169 src/about.c:197
+#: src/about.c:170 src/about.c:199
 msgid "French"
 msgstr "Француски"
 
-#: src/about.c:170
+#: src/about.c:171
 msgid "Hindi"
 msgstr "Хинду"
 
-#: src/about.c:171
+#: src/about.c:172
 msgid "Hungarian"
 msgstr "Мађарски"
 
-#: src/about.c:172 src/about.c:199
+#: src/about.c:173 src/about.c:201
 msgid "Italian"
 msgstr "Италијански"
 
-#: src/about.c:173 src/about.c:201
+#: src/about.c:174 src/about.c:203
 msgid "Korean"
 msgstr "Корејски"
 
-#: src/about.c:174
+#: src/about.c:175
 msgid "Dutch; Flemish"
 msgstr "Холандски; Фламански"
 
-#: src/about.c:175 src/about.c:203
-msgid "Polish"
-msgstr "Пољски"
-
 #: src/about.c:176
-msgid "Portuguese"
-msgstr "Португалски"
-
-#: src/about.c:177
-msgid "Portuguese-Brazil"
-msgstr "Португалски у Бразилу"
-
-#: src/about.c:178
-msgid "Romanian"
-msgstr "Румунски"
-
-#: src/about.c:179 src/about.c:204
-msgid "Russian"
-msgstr "Руски"
-
-#: src/about.c:180
-msgid "Serbian"
-msgstr "Српски"
-
-#: src/about.c:181 src/about.c:206
-msgid "Swedish"
-msgstr "Шведски"
-
-#: src/about.c:182
-msgid "Simplified Chinese"
-msgstr "Поједностављени кинески"
-
-#: src/about.c:183
-msgid "Traditional Chinese"
-msgstr "Традиционални кинески"
-
-#: src/about.c:190
-msgid "Past Translators"
-msgstr "Претходни преводиоци"
-
-#: src/about.c:191
-msgid "Amharic"
-msgstr "Амхарски"
-
-#: src/about.c:192
-msgid "Bulgarian"
-msgstr "Бугарски"
-
-#: src/about.c:198
-msgid "Hebrew"
-msgstr "Хебрејски"
-
-#: src/about.c:200
-msgid "Japanese"
-msgstr "Јапански"
-
-#: src/about.c:202
 msgid "Norwegian"
 msgstr "Норвешки"
 
-#: src/about.c:205
+#: src/about.c:177 src/about.c:204
+msgid "Polish"
+msgstr "Пољски"
+
+#: src/about.c:178
+msgid "Portuguese"
+msgstr "Португалски"
+
+#: src/about.c:179
+msgid "Portuguese-Brazil"
+msgstr "Португалски у Бразилу"
+
+#: src/about.c:180
+msgid "Romanian"
+msgstr "Румунски"
+
+#: src/about.c:181 src/about.c:205
+msgid "Russian"
+msgstr "Руски"
+
+#: src/about.c:182
+msgid "Serbian"
+msgstr "Српски"
+
+#: src/about.c:183 src/about.c:207
+msgid "Swedish"
+msgstr "Шведски"
+
+#: src/about.c:184
+msgid "Simplified Chinese"
+msgstr "Поједностављени кинески"
+
+#: src/about.c:185
+msgid "Traditional Chinese"
+msgstr "Традиционални кинески"
+
+#: src/about.c:192
+msgid "Past Translators"
+msgstr "Претходни преводиоци"
+
+#: src/about.c:193
+msgid "Amharic"
+msgstr "Амхарски"
+
+#: src/about.c:194
+msgid "Bulgarian"
+msgstr "Бугарски"
+
+#: src/about.c:200
+msgid "Hebrew"
+msgstr "Хебрејски"
+
+#: src/about.c:202
+msgid "Japanese"
+msgstr "Јапански"
+
+#: src/about.c:206
 msgid "Slovak"
 msgstr "Словачки"
 
-#: src/about.c:207
+#: src/about.c:208
 msgid "Chinese"
 msgstr "Кинески"
 
-#: src/about.c:220 src/dialogs.c:2282 src/gtkrequest.c:205
+#: src/about.c:221 src/dialogs.c:2190 src/gtkrequest.c:205
 #: src/protocols/msn/msn.c:247
 msgid "Close"
 msgstr "Затвори"
 
-#: src/account.c:275 src/protocols/jabber/jabber.c:942
+#: src/account.c:275 src/protocols/jabber/jabber.c:980
 msgid "New passwords do not match."
 msgstr "Нове лозинке се не поклапају."
 
@@ -1138,14 +1200,14 @@ msgstr "Унесите текућу лозинку и нову лозинку."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:334 src/connection.c:193 src/dialogs.c:1813
-#: src/dialogs.c:1830 src/dialogs.c:1873 src/gtkblist.c:1472
-#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:987
+#: src/account.c:334 src/connection.c:193 src/dialogs.c:1730
+#: src/dialogs.c:1747 src/dialogs.c:1790 src/gtkblist.c:1512
+#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:1025
 #: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
 #: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
-#: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2534
-#: src/protocols/oscar/oscar.c:6136 src/protocols/oscar/oscar.c:6232
-#: src/protocols/oscar/oscar.c:6281 src/protocols/oscar/oscar.c:6362
+#: src/protocols/oscar/oscar.c:2455 src/protocols/oscar/oscar.c:2535
+#: src/protocols/oscar/oscar.c:6185 src/protocols/oscar/oscar.c:6281
+#: src/protocols/oscar/oscar.c:6330 src/protocols/oscar/oscar.c:6412
 #: src/protocols/yahoo/yahoo.c:2232 src/request.h:852
 msgid "OK"
 msgstr "У реду"
@@ -1153,22 +1215,22 @@ msgstr "У реду"
 #. Cancel button.
 #: src/account.c:335 src/account.c:369 src/buddy_chat.c:375
 #: src/connection.c:194 src/dialogs.c:467 src/dialogs.c:479 src/dialogs.c:492
-#: src/dialogs.c:513 src/dialogs.c:898 src/dialogs.c:1647 src/dialogs.c:1814
-#: src/dialogs.c:1831 src/dialogs.c:1874 src/dialogs.c:1988
-#: src/gtkaccount.c:1624 src/gtkaccount.c:2092 src/gtkblist.c:1473
-#: src/gtkblist.c:3408 src/gtkconn.c:147 src/gtkprivacy.c:568
+#: src/dialogs.c:513 src/dialogs.c:898 src/dialogs.c:1564 src/dialogs.c:1731
+#: src/dialogs.c:1748 src/dialogs.c:1791 src/dialogs.c:1907
+#: src/gtkaccount.c:1622 src/gtkaccount.c:2090 src/gtkblist.c:1513
+#: src/gtkblist.c:3452 src/gtkconn.c:148 src/gtkprivacy.c:568
 #: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
 #: src/gtkrequest.c:203 src/protocols/icq/gaim_icq.c:277
-#: src/protocols/jabber/buddy.c:520 src/protocols/jabber/jabber.c:631
-#: src/protocols/jabber/jabber.c:988 src/protocols/msn/msn.c:182
+#: src/protocols/jabber/buddy.c:512 src/protocols/jabber/jabber.c:657
+#: src/protocols/jabber/jabber.c:1026 src/protocols/msn/msn.c:182
 #: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
 #: src/protocols/msn/msn.c:215 src/protocols/msn/msn.c:228
-#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:2455
-#: src/protocols/oscar/oscar.c:2490 src/protocols/oscar/oscar.c:2535
-#: src/protocols/oscar/oscar.c:5964 src/protocols/oscar/oscar.c:6137
-#: src/protocols/oscar/oscar.c:6233 src/protocols/oscar/oscar.c:6282
-#: src/protocols/oscar/oscar.c:6347 src/protocols/oscar/oscar.c:6363
-#: src/protocols/trepia/trepia.c:338 src/protocols/yahoo/yahoo.c:2233
+#: src/protocols/oscar/oscar.c:2419 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:2491 src/protocols/oscar/oscar.c:2536
+#: src/protocols/oscar/oscar.c:6013 src/protocols/oscar/oscar.c:6186
+#: src/protocols/oscar/oscar.c:6282 src/protocols/oscar/oscar.c:6331
+#: src/protocols/oscar/oscar.c:6396 src/protocols/oscar/oscar.c:6413
+#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2233
 #: src/request.h:852 src/request.h:862
 msgid "Cancel"
 msgstr "Откажи"
@@ -1178,9 +1240,9 @@ msgstr "Откажи"
 msgid "Change user information for %s"
 msgstr "Измени податке о кориснику за %s"
 
-#: src/account.c:368 src/dialogs.c:894 src/dialogs.c:1635 src/dialogs.c:2291
-#: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:519
-#: src/protocols/trepia/trepia.c:337
+#: src/account.c:368 src/dialogs.c:894 src/dialogs.c:1552 src/dialogs.c:2199
+#: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:511
+#: src/protocols/trepia/trepia.c:346
 msgid "Save"
 msgstr "Сачувај"
 
@@ -1204,16 +1266,16 @@ msgstr "Уклони поруку за одсуство"
 msgid "Set All Away"
 msgstr "Постави одсуство за све"
 
-#: src/blist.c:548 src/gtkprefs.c:2262
+#: src/blist.c:550 src/gtkprefs.c:2267
 msgid "Chats"
 msgstr "Разговори"
 
-#: src/blist.c:643 src/blist.c:830 src/blist.c:2038 src/gtkblist.c:2886
+#: src/blist.c:645 src/blist.c:833 src/blist.c:2041 src/gtkblist.c:2930
 #: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1159
 msgid "Buddies"
 msgstr "Другари"
 
-#: src/blist.c:1130
+#: src/blist.c:1133
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1231,29 +1293,29 @@ msgstr[2] ""
 "%d другара из групе %s није уклоњено пошто њихови налози нису пријављени. "
 "Ови другари и њихова група нису уклоњени.\n"
 
-#: src/blist.c:1139
+#: src/blist.c:1142
 msgid "Group not removed"
 msgstr "Група није уклоњена"
 
-#: src/blist.c:1189 src/gtkaccount.c:159 src/gtkutils.c:839
-#: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:571
+#: src/blist.c:1192 src/gtkaccount.c:159 src/gtkutils.c:841
+#: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:563
 msgid "Unknown"
 msgstr "Непознато"
 
-#: src/blist.c:1512
+#: src/blist.c:1515
 msgid "Invalid Groupname"
 msgstr "Неисправан назив групе"
 
-#: src/blist.c:2155
+#: src/blist.c:2158
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr "Дошло је до грешке при обради списка другара. Списак није учитан."
 
-#: src/blist.c:2157
+#: src/blist.c:2160
 msgid "Buddy List Error"
 msgstr "Грешка у списку другара"
 
-#: src/buddy_chat.c:316 src/gtkblist.c:3300
+#: src/buddy_chat.c:316 src/gtkblist.c:3344
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -1286,7 +1348,7 @@ msgstr "Недостаје додатак за протокол %s"
 msgid "Registration Error"
 msgstr "Грешка при регистрацији"
 
-#: src/connection.c:170 src/gtkconn.c:278
+#: src/connection.c:170
 msgid "Connection Error"
 msgstr "Грешка при повезивању"
 
@@ -1303,55 +1365,55 @@ msgstr "Не могу да пошаљем поруку. Порука је пре
 msgid "Unable to send message."
 msgstr "Не могу да пошаљем поруку."
 
-#: src/conversation.c:1903
+#: src/conversation.c:1907
 #, c-format
 msgid "%s entered the room."
 msgstr "%s је ушао(ла) у причаоницу."
 
-#: src/conversation.c:1906
+#: src/conversation.c:1910
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] је ушао(ла) у причаоницу."
 
-#: src/conversation.c:1991
+#: src/conversation.c:1995
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s је променио(ла) име у %s"
 
-#: src/conversation.c:2033
+#: src/conversation.c:2037
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s је напустио(ла) причаоницу (%s)."
 
-#: src/conversation.c:2035
+#: src/conversation.c:2039
 #, c-format
 msgid "%s left the room."
 msgstr "%s је напустио(ла) причаоницу."
 
 # bug: plural-forms
-#: src/conversation.c:2108
+#: src/conversation.c:2112
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d порука)"
 
-#: src/conversation.c:2110
+#: src/conversation.c:2114
 #, c-format
 msgid " left the room (%s)."
 msgstr "напусти причаоницу (%s)."
 
-#: src/conversation.c:2392
+#: src/conversation.c:2396
 msgid "Last created window"
 msgstr "Последње направљени прозор"
 
-#: src/conversation.c:2394
+#: src/conversation.c:2398
 msgid "New window"
 msgstr "Нови прозор"
 
-#: src/conversation.c:2396
+#: src/conversation.c:2400
 msgid "By group"
 msgstr "Према групи"
 
-#: src/conversation.c:2398
+#: src/conversation.c:2402
 msgid "By account"
 msgstr "Према налогу"
 
@@ -1458,8 +1520,8 @@ msgid ""
 "view.\n"
 msgstr "Унесите име особе чије податке желите да видите.\n"
 
-#: src/dialogs.c:853 src/protocols/jabber/jabber.c:998
-#: src/protocols/oscar/oscar.c:6430 src/protocols/toc/toc.c:1532
+#: src/dialogs.c:853 src/protocols/jabber/jabber.c:1036
+#: src/protocols/oscar/oscar.c:6481 src/protocols/toc/toc.c:1532
 msgid "Set User Info"
 msgstr "Постави податке о кориснику"
 
@@ -1468,19 +1530,15 @@ msgstr "Постави податке о кориснику"
 msgid "Changing info for %s:"
 msgstr "Мењам податке за %s:"
 
-#: src/dialogs.c:964
-msgid "Log Conversation"
-msgstr "Дневник разговора"
-
-#: src/dialogs.c:1060
+#: src/dialogs.c:977
 msgid "Insert Link"
 msgstr "Убаци везу"
 
-#: src/dialogs.c:1062
+#: src/dialogs.c:979
 msgid "Insert"
 msgstr "Убаци"
 
-#: src/dialogs.c:1084
+#: src/dialogs.c:1001
 msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
@@ -1488,104 +1546,104 @@ msgstr ""
 "Унесите Интернет адресу и опис везе коју желите да убаците. Опис није "
 "обавезан.\n"
 
-#: src/dialogs.c:1102 src/protocols/jabber/buddy.c:257
-#: src/protocols/jabber/jabber.c:612
+#: src/dialogs.c:1019 src/protocols/jabber/buddy.c:249
+#: src/protocols/jabber/jabber.c:638
 msgid "URL"
 msgstr "Интернет адреса"
 
-#: src/dialogs.c:1112 src/gtkprefs.c:601 src/gtkprefs.c:1798
-#: src/protocols/jabber/buddy.c:271 src/protocols/jabber/buddy.c:746
+#: src/dialogs.c:1029 src/gtkprefs.c:601 src/gtkprefs.c:1803
+#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:738
 msgid "Description"
 msgstr "Опис"
 
-#: src/dialogs.c:1248 src/dialogs.c:1265
+#: src/dialogs.c:1165 src/dialogs.c:1182
 msgid "Select Text Color"
 msgstr "Изаберите боју текста"
 
-#: src/dialogs.c:1300 src/dialogs.c:1317
+#: src/dialogs.c:1217 src/dialogs.c:1234
 msgid "Select Background Color"
 msgstr "Изаберите боју позадине"
 
-#: src/dialogs.c:1402 src/dialogs.c:1428
+#: src/dialogs.c:1319 src/dialogs.c:1345
 msgid "Select Font"
 msgstr "Изаберите писмо"
 
-#: src/dialogs.c:1494
+#: src/dialogs.c:1411
 msgid "You cannot save an away message with a blank title"
 msgstr "Не можете снимити поруку за одсуство без наслова"
 
-#: src/dialogs.c:1496
+#: src/dialogs.c:1413
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Наведите и наслов поруке, или изаберите „Користи“ за коришћење без снимања."
 
-#: src/dialogs.c:1506
+#: src/dialogs.c:1423
 msgid "You cannot create an empty away message"
 msgstr "Не можете направити празну поруку за одсуство"
 
-#: src/dialogs.c:1571 src/dialogs.c:1579
+#: src/dialogs.c:1488 src/dialogs.c:1496
 msgid "New away message"
 msgstr "Нова порука за одсуство"
 
-#: src/dialogs.c:1589
+#: src/dialogs.c:1506
 msgid "Away title: "
 msgstr "Наслов одсуства: "
 
-#: src/dialogs.c:1639
+#: src/dialogs.c:1556
 msgid "Save & Use"
 msgstr "Сачувај и користи"
 
-#: src/dialogs.c:1643
+#: src/dialogs.c:1560
 msgid "Use"
 msgstr "Користи"
 
 #. show everything
-#: src/dialogs.c:1792
+#: src/dialogs.c:1709
 msgid "Smile!"
 msgstr "Смешак!"
 
-#: src/dialogs.c:1810
+#: src/dialogs.c:1727
 msgid "Alias Chat"
 msgstr "Надени име разговору"
 
-#: src/dialogs.c:1810
+#: src/dialogs.c:1727
 msgid "Alias chat"
 msgstr "Надени име разговору"
 
-#: src/dialogs.c:1811
+#: src/dialogs.c:1728
 msgid "Please enter an aliased name for this chat."
 msgstr "Унесите ново име за овај разговор."
 
-#: src/dialogs.c:1827
+#: src/dialogs.c:1744
 msgid "Alias Contact"
 msgstr "Надени име контакту"
 
-#: src/dialogs.c:1827
+#: src/dialogs.c:1744
 msgid "Alias contact"
 msgstr "Надени име контакту"
 
-#: src/dialogs.c:1828
+#: src/dialogs.c:1745
 msgid "Please enter an aliased name for this contact."
 msgstr "Унесите ново име за овај контакт."
 
-#: src/dialogs.c:1859
+#: src/dialogs.c:1776
 msgid "_Screenname"
 msgstr "_Име:"
 
-#: src/dialogs.c:1864 src/gtkblist.c:810 src/gtkblist.c:903 src/gtkblist.c:909
+#: src/dialogs.c:1781 src/gtkblist.c:838 src/gtkblist.c:931 src/gtkblist.c:937
 msgid "_Alias"
 msgstr "Н_адени име"
 
-#: src/dialogs.c:1868
+#: src/dialogs.c:1785
 msgid "Alias Buddy"
 msgstr "Надени име другару"
 
-#: src/dialogs.c:1869
+#: src/dialogs.c:1786
 msgid "Alias buddy"
 msgstr "Надени име другару"
 
-#: src/dialogs.c:1870
+#: src/dialogs.c:1787
 msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list."
@@ -1593,52 +1651,52 @@ msgstr ""
 "Унесите име које желите да наденете изабраној особи, или преименујте овај "
 "контакт у списку другара."
 
-#: src/dialogs.c:1906 src/dialogs.c:1913
+#: src/dialogs.c:1823 src/dialogs.c:1830
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "Не могу да пишем у %s."
 
-#: src/dialogs.c:1937
+#: src/dialogs.c:1854
 msgid "Save Log File"
 msgstr "Сачувај датотеку дневника"
 
-#: src/dialogs.c:1965
+#: src/dialogs.c:1882
 #, c-format
 msgid "Couldn't remove file %s."
 msgstr "Не могу да уклоним датотеку %s."
 
-#: src/dialogs.c:1982
+#: src/dialogs.c:1901
 #, c-format
 msgid "You are about to remove the log file for %s.  Do you want to continue?"
 msgstr "Уклањате дневник разговора за %s. Да ли желите да наставите?"
 
-#: src/dialogs.c:1984 src/dialogs.c:1986
+#: src/dialogs.c:1902 src/dialogs.c:2072
+msgid "System Log"
+msgstr "Системски дневник"
+
+#: src/dialogs.c:1903 src/dialogs.c:1905
 msgid "Remove Log"
 msgstr "Уклони дневник"
 
-#: src/dialogs.c:2012 src/dialogs.c:2185
+#: src/dialogs.c:1933 src/dialogs.c:2093
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "Не могу да отворим датотеку дневника %s."
 
-#: src/dialogs.c:2162
+#: src/dialogs.c:2070
 #, c-format
 msgid "Conversations with %s"
 msgstr "Разговори са %s"
 
-#: src/dialogs.c:2164
-msgid "System Log"
-msgstr "Системски дневник"
-
-#: src/dialogs.c:2206 src/protocols/jabber/jabber.c:617
+#: src/dialogs.c:2114 src/protocols/jabber/jabber.c:643
 msgid "Date"
 msgstr "Датум"
 
-#: src/dialogs.c:2263
+#: src/dialogs.c:2171
 msgid "Log"
 msgstr "Дневник рада"
 
-#: src/dialogs.c:2286
+#: src/dialogs.c:2194
 msgid "Clear"
 msgstr "Очисти"
 
@@ -1750,23 +1808,23 @@ msgstr ""
 msgid "sorry, i ran out for a while. bbl"
 msgstr "Жалим, али мене нема. Вратићу се једног дана, не знам ни ја кад!"
 
-#: src/gaimrc.c:369 src/gaimrc.c:1460
+#: src/gaimrc.c:373 src/gaimrc.c:1464
 msgid "boring default"
 msgstr "Подразумевано (не тако) досадно"
 
-#: src/gaimrc.c:1267 src/gtkblist.c:2070
+#: src/gaimrc.c:1271 src/gtkblist.c:2111
 msgid "Alphabetical"
 msgstr "По азбучном реду"
 
-#: src/gaimrc.c:1269 src/gtkblist.c:2071
+#: src/gaimrc.c:1273 src/gtkblist.c:2112
 msgid "By status"
 msgstr "По стању"
 
-#: src/gaimrc.c:1271 src/gtkblist.c:2072
+#: src/gaimrc.c:1275 src/gtkblist.c:2113
 msgid "By log size"
 msgstr "По величини дневника"
 
-#: src/gaimrc.c:1558
+#: src/gaimrc.c:1562
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Не могу да отворим датотеку %s за поставке."
@@ -1782,7 +1840,7 @@ msgstr ""
 "<b>Величина:</b> %s\n"
 "<b>Димензије слике:</b> %dx%d"
 
-#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3070
+#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3077
 msgid "Buddy Icon"
 msgstr "Сличица другара"
 
@@ -1804,7 +1862,7 @@ msgstr "Име:"
 msgid "Password:"
 msgstr "Лозинка:"
 
-#: src/gtkaccount.c:469 src/gtkblist.c:3040 src/gtkblist.c:3359
+#: src/gtkaccount.c:469 src/gtkblist.c:3084 src/gtkblist.c:3403
 msgid "Alias:"
 msgstr "Надимак:"
 
@@ -1901,58 +1959,58 @@ msgstr "_Корисничко име:"
 msgid "Pa_ssword:"
 msgstr "_Лозинка:"
 
-#: src/gtkaccount.c:1220
+#: src/gtkaccount.c:1218
 msgid "Add Account"
 msgstr "Додај налог"
 
-#: src/gtkaccount.c:1222
+#: src/gtkaccount.c:1220
 msgid "Modify Account"
 msgstr "Измени налог"
 
 #. Add the disclosure
-#: src/gtkaccount.c:1246
+#: src/gtkaccount.c:1244
 msgid "Show more options"
 msgstr "Покажи више поставки"
 
-#: src/gtkaccount.c:1247
+#: src/gtkaccount.c:1245
 msgid "Show fewer options"
 msgstr "Покажи мање поставки"
 
 #. Register button
-#: src/gtkaccount.c:1274 src/protocols/jabber/jabber.c:630
+#: src/gtkaccount.c:1272 src/protocols/jabber/jabber.c:656
 msgid "Register"
 msgstr "Региструј се"
 
-#: src/gtkaccount.c:1619
+#: src/gtkaccount.c:1617
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Да ли сте сигурни да желите обрисати %s?"
 
-#: src/gtkaccount.c:1623 src/gtkrequest.c:206
+#: src/gtkaccount.c:1621 src/gtkrequest.c:206
 msgid "Delete"
 msgstr "Обриши"
 
-#: src/gtkaccount.c:1736
+#: src/gtkaccount.c:1734
 msgid "Screen Name"
 msgstr "Име"
 
-#: src/gtkaccount.c:1759 src/protocols/jabber/jabber.c:890
-#: src/protocols/oscar/oscar.c:2845 src/protocols/oscar/oscar.c:4537
-#: src/protocols/oscar/oscar.c:6085 src/protocols/yahoo/yahoo.c:2032
+#: src/gtkaccount.c:1757 src/protocols/jabber/jabber.c:926
+#: src/protocols/oscar/oscar.c:2850 src/protocols/oscar/oscar.c:4586
+#: src/protocols/oscar/oscar.c:6134 src/protocols/yahoo/yahoo.c:2032
 #: src/protocols/zephyr/zephyr.c:886 src/protocols/zephyr/zephyr.c:896
 msgid "Online"
 msgstr "На вези"
 
-#: src/gtkaccount.c:1777
+#: src/gtkaccount.c:1775
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/gtkaccount.c:2067
+#: src/gtkaccount.c:2065
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s учини %s својим другаром%s%s%s"
 
-#: src/gtkaccount.c:2081
+#: src/gtkaccount.c:2079
 msgid ""
 "\n"
 "\n"
@@ -1962,184 +2020,184 @@ msgstr ""
 "\n"
 "Да ли желите да додате њу или њега у свој списак другара?"
 
-#: src/gtkaccount.c:2085
+#: src/gtkaccount.c:2083
 msgid "Gaim - Information"
 msgstr "Гаим — подаци"
 
-#: src/gtkaccount.c:2089
+#: src/gtkaccount.c:2087
 msgid "Add buddy to your list?"
 msgstr "Додати другара у Ваш списак?"
 
-#: src/gtkaccount.c:2091 src/gtkblist.c:3407 src/gtkconv.c:1234
-#: src/gtkconv.c:3123 src/gtkconv.c:4304 src/gtkrequest.c:207
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2687
+#: src/gtkaccount.c:2089 src/gtkblist.c:3451 src/gtkconv.c:1258
+#: src/gtkconv.c:3149 src/gtkconv.c:4355 src/gtkrequest.c:207
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2692
 msgid "Add"
 msgstr "Додај"
 
-#: src/gtkblist.c:783
+#: src/gtkblist.c:811
 msgid "_Get Info"
 msgstr "Прибави пода_тке"
 
-#: src/gtkblist.c:786
+#: src/gtkblist.c:814
 msgid "_IM"
 msgstr "_Порука"
 
-#: src/gtkblist.c:788
+#: src/gtkblist.c:816
 msgid "Add Buddy _Pounce"
 msgstr "Додај _заседу другару"
 
-#: src/gtkblist.c:790
+#: src/gtkblist.c:818
 msgid "View _Log"
 msgstr "Преглед дневни_ка"
 
-#: src/gtkblist.c:812 src/gtkblist.c:905 src/gtkblist.c:914
+#: src/gtkblist.c:840 src/gtkblist.c:933 src/gtkblist.c:942
 msgid "_Remove"
 msgstr "_Уклони"
 
-#: src/gtkblist.c:884
+#: src/gtkblist.c:912
 msgid "Add a _Buddy"
 msgstr "_Додај другара"
 
-#: src/gtkblist.c:886
+#: src/gtkblist.c:914
 msgid "Add a C_hat"
 msgstr "Додај _разговор"
 
-#: src/gtkblist.c:888
+#: src/gtkblist.c:916
 msgid "_Delete Group"
 msgstr "У_клони групу"
 
-#: src/gtkblist.c:890
+#: src/gtkblist.c:918
 msgid "_Rename"
 msgstr "Пре_именуј"
 
-#: src/gtkblist.c:898
+#: src/gtkblist.c:926
 msgid "_Join"
 msgstr "_Прикључи се"
 
-#: src/gtkblist.c:900
+#: src/gtkblist.c:928
 msgid "Auto-Join"
 msgstr "Аутоматска пријава"
 
-#: src/gtkblist.c:911 src/gtkblist.c:941
+#: src/gtkblist.c:939 src/gtkblist.c:969
 msgid "_Collapse"
 msgstr "_Скупи"
 
-#: src/gtkblist.c:946
+#: src/gtkblist.c:974
 msgid "_Expand"
 msgstr "_Разгранај"
 
 #. Buddies menu
-#: src/gtkblist.c:1422
+#: src/gtkblist.c:1462
 msgid "/_Buddies"
 msgstr "/_Другари"
 
-#: src/gtkblist.c:1423
+#: src/gtkblist.c:1463
 msgid "/Buddies/New _Instant Message..."
 msgstr "/Другари/_Нова брза порука..."
 
-#: src/gtkblist.c:1424
+#: src/gtkblist.c:1464
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Другари/_Прикључи се разговору..."
 
-#: src/gtkblist.c:1425
+#: src/gtkblist.c:1465
 msgid "/Buddies/Get _User Info..."
 msgstr "/Другари/Прибави податке о _кориснику..."
 
-#: src/gtkblist.c:1427
+#: src/gtkblist.c:1467
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Другари/Прикажи неп_овезане другаре"
 
-#: src/gtkblist.c:1428
+#: src/gtkblist.c:1468
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Другари/Прикажи _празне групе"
 
-#: src/gtkblist.c:1429
+#: src/gtkblist.c:1469
 msgid "/Buddies/_Add a Buddy..."
 msgstr "/Другари/_Додај другара..."
 
-#: src/gtkblist.c:1430
+#: src/gtkblist.c:1470
 msgid "/Buddies/Add a C_hat..."
 msgstr "/Другари/Додај разго_вор..."
 
-#: src/gtkblist.c:1431
+#: src/gtkblist.c:1471
 msgid "/Buddies/Add a _Group..."
 msgstr "/Другари/Додај _групу..."
 
-#: src/gtkblist.c:1433
+#: src/gtkblist.c:1473
 msgid "/Buddies/_Signoff"
 msgstr "/Другари/_Одјава"
 
-#: src/gtkblist.c:1434
+#: src/gtkblist.c:1474
 msgid "/Buddies/_Quit"
 msgstr "/Другари/И_злаз"
 
 #. Tools
-#: src/gtkblist.c:1437
+#: src/gtkblist.c:1477
 msgid "/_Tools"
 msgstr "/_Алати"
 
-#: src/gtkblist.c:1438
+#: src/gtkblist.c:1478
 msgid "/Tools/_Away"
 msgstr "/Алати/_Одсутан"
 
-#: src/gtkblist.c:1439
+#: src/gtkblist.c:1479
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Алати/_Заседа другару"
 
-#: src/gtkblist.c:1440
+#: src/gtkblist.c:1480
 msgid "/Tools/P_rotocol Actions"
 msgstr "/Алати/А_кције по протоколу"
 
-#: src/gtkblist.c:1442
+#: src/gtkblist.c:1482
 msgid "/Tools/A_ccounts"
 msgstr "/Алати/_Налози"
 
-#: src/gtkblist.c:1443
+#: src/gtkblist.c:1483
 msgid "/Tools/_File Transfers..."
 msgstr "/Алати/Преноси _датотека..."
 
-#: src/gtkblist.c:1444
+#: src/gtkblist.c:1484
 msgid "/Tools/Preferences"
 msgstr "/Алати/Поставке"
 
-#: src/gtkblist.c:1445
+#: src/gtkblist.c:1485
 msgid "/Tools/Pr_ivacy"
 msgstr "/Алати/_Приватност"
 
-#: src/gtkblist.c:1447
+#: src/gtkblist.c:1487
 msgid "/Tools/View System _Log"
 msgstr "/Алати/Преглед _системског дневника рада"
 
 #. Help
-#: src/gtkblist.c:1450
+#: src/gtkblist.c:1490
 msgid "/_Help"
 msgstr "/_Помоћ"
 
-#: src/gtkblist.c:1451
+#: src/gtkblist.c:1491
 msgid "/Help/Online _Help"
 msgstr "/Помоћ/Помоћ из _програма"
 
-#: src/gtkblist.c:1452
+#: src/gtkblist.c:1492
 msgid "/Help/_Debug Window"
 msgstr "/Помоћ/Прозор за налажење _грешака"
 
-#: src/gtkblist.c:1453
+#: src/gtkblist.c:1493
 msgid "/Help/_About"
 msgstr "/Помоћ/_О програму"
 
-#: src/gtkblist.c:1469
+#: src/gtkblist.c:1509
 msgid "Rename Group"
 msgstr "Преименуј групу"
 
-#: src/gtkblist.c:1469
+#: src/gtkblist.c:1509
 msgid "New group name"
 msgstr "Назив нове групе"
 
-#: src/gtkblist.c:1470
+#: src/gtkblist.c:1510
 msgid "Please enter a new name for the selected group."
 msgstr "Унесите нови назив за изабрану групу."
 
-#: src/gtkblist.c:1499
+#: src/gtkblist.c:1539
 #, c-format
 msgid ""
 "\n"
@@ -2148,16 +2206,16 @@ msgstr ""
 "\n"
 "<b>Налог:</b> %s"
 
-#: src/gtkblist.c:1562 src/protocols/oscar/oscar.c:5465
+#: src/gtkblist.c:1602 src/protocols/oscar/oscar.c:5514
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Стање:</b> Неповезан"
 
-#: src/gtkblist.c:1574
+#: src/gtkblist.c:1614
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:1589
+#: src/gtkblist.c:1629
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2165,13 +2223,15 @@ msgstr ""
 "\n"
 "<b>Налог:</b>"
 
-#: src/gtkblist.c:1590
+#: src/gtkblist.c:1630
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
-msgstr "\n<b>Контакт познат као:</b>"
+msgstr ""
+"\n"
+"<b>Контакт познат као:</b>"
 
-#: src/gtkblist.c:1591
+#: src/gtkblist.c:1631
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2179,7 +2239,7 @@ msgstr ""
 "\n"
 "<b>Познат као:</b>"
 
-#: src/gtkblist.c:1592
+#: src/gtkblist.c:1632
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2187,7 +2247,7 @@ msgstr ""
 "\n"
 "<b>Надимак:</b>"
 
-#: src/gtkblist.c:1593
+#: src/gtkblist.c:1633
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2195,7 +2255,7 @@ msgstr ""
 "\n"
 "<b>Неактиван:</b>"
 
-#: src/gtkblist.c:1594
+#: src/gtkblist.c:1634
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2203,7 +2263,7 @@ msgstr ""
 "\n"
 "<b>Упозорен:</b>"
 
-#: src/gtkblist.c:1596
+#: src/gtkblist.c:1636
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2211,7 +2271,7 @@ msgstr ""
 "\n"
 "<b>Опис:</b> сабласно"
 
-#: src/gtkblist.c:1597
+#: src/gtkblist.c:1637
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2219,7 +2279,7 @@ msgstr ""
 "\n"
 "<b>Стање:</b> сјајно"
 
-#: src/gtkblist.c:1598
+#: src/gtkblist.c:1638
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2227,85 +2287,85 @@ msgstr ""
 "\n"
 "<b>Стање:</b> разбија"
 
-#: src/gtkblist.c:1866
+#: src/gtkblist.c:1906
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Неактиван (%dh%02dm) "
 
-#: src/gtkblist.c:1868
+#: src/gtkblist.c:1908
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Неактиван (%dm) "
 
-#: src/gtkblist.c:1873
+#: src/gtkblist.c:1913
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Упозорен (%d%%) "
 
-#: src/gtkblist.c:1876
+#: src/gtkblist.c:1916
 msgid "Offline "
 msgstr "Неповезан"
 
-#: src/gtkblist.c:2068 src/gtkprefs.c:841 src/gtkprefs.c:1490
+#: src/gtkblist.c:2109 src/gtkprefs.c:841 src/gtkprefs.c:1495
 msgid "None"
 msgstr "Ништа"
 
-#: src/gtkblist.c:2133
+#: src/gtkblist.c:2177
 msgid "/Tools/Away"
 msgstr "/Алати/Одсутан"
 
-#: src/gtkblist.c:2136
+#: src/gtkblist.c:2180
 msgid "/Tools/Buddy Pounce"
 msgstr "/Алати/Заседа другару"
 
-#: src/gtkblist.c:2139
+#: src/gtkblist.c:2183
 msgid "/Tools/Protocol Actions"
 msgstr "/Алати/Акције по протоколу"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:2223
+#: src/gtkblist.c:2267
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Другари/Прикажи неповезане другаре"
 
-#: src/gtkblist.c:2225
+#: src/gtkblist.c:2269
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Другари/Прикажи празне групе"
 
-#: src/gtkblist.c:2243 src/gtkconv.c:1193
+#: src/gtkblist.c:2287 src/gtkconv.c:1217
 msgid "IM"
 msgstr "Порука"
 
-#: src/gtkblist.c:2249
+#: src/gtkblist.c:2293
 msgid "Send a message to the selected buddy"
 msgstr "Пошаљи поруку изабраном другару"
 
-#: src/gtkblist.c:2252 src/protocols/napster/napster.c:529
+#: src/gtkblist.c:2296 src/protocols/napster/napster.c:529
 msgid "Get Info"
 msgstr "Подаци"
 
-#: src/gtkblist.c:2258
+#: src/gtkblist.c:2302
 msgid "Get information on the selected buddy"
 msgstr "Прибави податке о изабраном другару"
 
-#: src/gtkblist.c:2261 src/protocols/oscar/oscar.c:3079
+#: src/gtkblist.c:2305 src/protocols/oscar/oscar.c:3086
 msgid "Chat"
 msgstr "Разговор"
 
-#: src/gtkblist.c:2266
+#: src/gtkblist.c:2310
 msgid "Join a chat room"
 msgstr "Прикључи се причаоници"
 
-#: src/gtkblist.c:2274
+#: src/gtkblist.c:2318
 msgid "Set an away message"
 msgstr "Постави поруку за одсуство"
 
-#: src/gtkblist.c:2982 src/protocols/yahoo/yahoo.c:2166
+#: src/gtkblist.c:3026 src/protocols/yahoo/yahoo.c:2166
 msgid "Add Buddy"
 msgstr "Додај другара"
 
-#: src/gtkblist.c:3005
+#: src/gtkblist.c:3049
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2315,24 +2375,24 @@ msgstr ""
 "унети и алијас или надимак за другара. Алијас ће се приказивати уместо "
 "имена, кад год је то могуће.\n"
 
-#: src/gtkblist.c:3027 src/main.c:289
+#: src/gtkblist.c:3071 src/main.c:289
 msgid "Screen Name:"
 msgstr "Корисничко име:"
 
-#: src/gtkblist.c:3053 src/gtkblist.c:3370
+#: src/gtkblist.c:3097 src/gtkblist.c:3414
 msgid "Group:"
 msgstr "Група:"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:3062 src/gtkblist.c:3340
+#: src/gtkblist.c:3106 src/gtkblist.c:3384
 msgid "Account:"
 msgstr "Налог:"
 
-#: src/gtkblist.c:3307
+#: src/gtkblist.c:3351
 msgid "Add Chat"
 msgstr "Додај разговор"
 
-#: src/gtkblist.c:3330
+#: src/gtkblist.c:3374
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2340,70 +2400,77 @@ msgstr ""
 "Унесите име које желите да наденете разговору, и податке о разговору који "
 "желите да додате у списак другара.\n"
 
-#: src/gtkblist.c:3404
+#: src/gtkblist.c:3448
 msgid "Add Group"
 msgstr "Додај групу"
 
-#: src/gtkblist.c:3404
+#: src/gtkblist.c:3448
 msgid "Add a new group"
 msgstr "Додај нову групу"
 
-#: src/gtkblist.c:3405
+#: src/gtkblist.c:3449
 msgid "Please enter the name of the group to be added."
 msgstr "Унесите назив групе коју желите да додате."
 
-#: src/gtkblist.c:3920
+#: src/gtkblist.c:3964
 msgid "No actions available"
 msgstr "Нема доступних акција"
 
-#: src/gtkconn.c:57 src/gtkconn.c:241 src/gtkconn.c:252
+#: src/gtkconn.c:58 src/gtkconn.c:242 src/gtkconn.c:253
 msgid "Done."
 msgstr "Готово."
 
-#: src/gtkconn.c:136
+#: src/gtkconn.c:137
 msgid "Signon: "
 msgstr "Пријава:"
 
-#: src/gtkconn.c:194
+#: src/gtkconn.c:195
 msgid "Signon"
 msgstr "Пријава"
 
-#: src/gtkconn.c:207
+#: src/gtkconn.c:208
 msgid "Cancel All"
 msgstr "Откажи све"
 
-#: src/gtkconn.c:274
-#, c-format
-msgid "%s has been disconnected"
-msgstr "%s се одјавио(ла)"
-
-#: src/gtkconn.c:277
+#: src/gtkconn.c:362
 msgid "Reason Unknown."
 msgstr "Разлог непознат."
 
-#: src/gtkconv.c:185
+#: src/gtkconn.c:371
+msgid "Reconnect"
+msgstr "Поново се повежи"
+
+#: src/gtkconn.c:410
+msgid "Account"
+msgstr "Налог"
+
+#: src/gtkconn.c:418
+msgid "Time"
+msgstr "Време"
+
+#: src/gtkconv.c:186
 msgid "That file already exists"
 msgstr "Датотека већ постоји."
 
-#: src/gtkconv.c:186 src/gtkft.c:1034
+#: src/gtkconv.c:187 src/gtkft.c:1034
 msgid "Would you like to overwrite it?"
 msgstr "Да ли желите да је препишете?"
 
-#: src/gtkconv.c:241
+#: src/gtkconv.c:242
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "Не могу да сачувам слику: %s.\n"
 
-#: src/gtkconv.c:303
+#: src/gtkconv.c:312
 msgid "Gaim - Insert Image"
 msgstr "Гаим — убаци слику"
 
-#: src/gtkconv.c:607
+#: src/gtkconv.c:616
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Гаим — позови другара у причаоницу"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:635
+#: src/gtkconv.c:644
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -2411,15 +2478,15 @@ msgstr ""
 "Унесите име корисника кога желите да позовете, а по жељи додајте и поруку у "
 "позивницу."
 
-#: src/gtkconv.c:656
+#: src/gtkconv.c:665
 msgid "_Buddy:"
 msgstr "_Другар:"
 
-#: src/gtkconv.c:676
+#: src/gtkconv.c:685
 msgid "_Message:"
 msgstr "_Порука:"
 
-#: src/gtkconv.c:772
+#: src/gtkconv.c:781
 msgid ""
 "<span weight='bold' size='larger'>Enter a search phrase\n"
 "</span>"
@@ -2427,309 +2494,299 @@ msgstr ""
 "<span weight='bold' size='larger'>Унесите израз за претрагу\n"
 "</span>"
 
-#: src/gtkconv.c:779
+#: src/gtkconv.c:788
 msgid "Search term: "
 msgstr "Тражи израз:"
 
-#: src/gtkconv.c:1201
+#: src/gtkconv.c:1225
 msgid "Un-Ignore"
 msgstr "Не игнориши"
 
-#: src/gtkconv.c:1203 src/gtkprefs.c:774
+#: src/gtkconv.c:1227 src/gtkprefs.c:774
 msgid "Ignore"
 msgstr "Игнориши"
 
 #. Info button
-#: src/gtkconv.c:1212 src/gtkconv.c:3146
+#: src/gtkconv.c:1236 src/gtkconv.c:3172
 msgid "Info"
 msgstr "Подаци"
 
-#: src/gtkconv.c:1221
+#: src/gtkconv.c:1245
 msgid "Get Away Msg"
 msgstr "Прибави поруку за одсуство"
 
-#: src/gtkconv.c:1232 src/gtkconv.c:3129 src/gtkconv.c:4289
+#: src/gtkconv.c:1256 src/gtkconv.c:3155 src/gtkconv.c:4340
 #: src/gtkrequest.c:208
 msgid "Remove"
 msgstr "Уклони"
 
-#: src/gtkconv.c:2349
+#: src/gtkconv.c:2373
 msgid "User is typing..."
 msgstr "Корисник куца..."
 
-#: src/gtkconv.c:2357
+#: src/gtkconv.c:2381
 msgid "User has typed something and paused"
 msgstr "Корисник је нешто укуцао и застао"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2460
+#: src/gtkconv.c:2484
 msgid "_Send As"
 msgstr "Пошаљи _као"
 
-#: src/gtkconv.c:2920
+#: src/gtkconv.c:2944
 msgid "Gaim - Save Conversation"
 msgstr "Гаим — сачувај разговор"
 
 #. Conversation menu
-#: src/gtkconv.c:2937
+#: src/gtkconv.c:2961
 msgid "/_Conversation"
 msgstr "/_Разговор"
 
-#: src/gtkconv.c:2939
+#: src/gtkconv.c:2963
 msgid "/Conversation/_Save As..."
 msgstr "/Разговор/_Сачувај као..."
 
-#: src/gtkconv.c:2941
+#: src/gtkconv.c:2965
 msgid "/Conversation/View _Log"
 msgstr "/Разговор/Погледај _дневник"
 
-#: src/gtkconv.c:2942
+#: src/gtkconv.c:2966
 msgid "/Conversation/Search..."
 msgstr "/Разговор/Претрага..."
 
-#: src/gtkconv.c:2946
+#: src/gtkconv.c:2970
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Разговор/Додај _заседу другару..."
 
-#: src/gtkconv.c:2948
+#: src/gtkconv.c:2972
 msgid "/Conversation/A_lias..."
 msgstr "/Разговор/_Надени име..."
 
-#: src/gtkconv.c:2950
+#: src/gtkconv.c:2974
 msgid "/Conversation/_Get Info..."
 msgstr "/Разговор/При_бави податке..."
 
-#: src/gtkconv.c:2952
+#: src/gtkconv.c:2976
 msgid "/Conversation/In_vite..."
 msgstr "/Разговор/_Позови..."
 
-#: src/gtkconv.c:2957
+#: src/gtkconv.c:2981
 msgid "/Conversation/Insert _URL..."
 msgstr "/Разговор/_Убаци Интернет адресу..."
 
-#: src/gtkconv.c:2959
+#: src/gtkconv.c:2983
 msgid "/Conversation/Insert _Image..."
 msgstr "/Разговор/Убаци с_лику..."
 
-#: src/gtkconv.c:2964
+#: src/gtkconv.c:2988
 msgid "/Conversation/_Warn..."
 msgstr "/Разговор/_Упозори..."
 
-#: src/gtkconv.c:2966
+#: src/gtkconv.c:2990
 msgid "/Conversation/_Block..."
 msgstr "/Разговор/_Блокирај..."
 
-#: src/gtkconv.c:2968
+#: src/gtkconv.c:2992
 msgid "/Conversation/_Add..."
 msgstr "/Разговор/_Додај..."
 
-#: src/gtkconv.c:2970
+#: src/gtkconv.c:2994
 msgid "/Conversation/_Remove..."
 msgstr "/Разговор/_Уклони..."
 
-#: src/gtkconv.c:2975
+#: src/gtkconv.c:2999
 msgid "/Conversation/_Close"
 msgstr "/Разговор/_Заврши"
 
 #. Options
-#: src/gtkconv.c:2979
+#: src/gtkconv.c:3003
 msgid "/_Options"
 msgstr "/_Избори"
 
-#: src/gtkconv.c:2980
+#: src/gtkconv.c:3004
 msgid "/Options/Enable _Logging"
 msgstr "/Избори/Омогући _дневник рада"
 
-#: src/gtkconv.c:2981
+#: src/gtkconv.c:3005
 msgid "/Options/Enable _Sounds"
 msgstr "/Избори/Омогући з_вуке"
 
-#: src/gtkconv.c:2982
+#: src/gtkconv.c:3006
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Избори/Прикажи _алатке за форматирање"
 
-#: src/gtkconv.c:3022
+#: src/gtkconv.c:3048
 msgid "/Conversation/View Log"
 msgstr "/Разговор/Прикажи дневник"
 
-#: src/gtkconv.c:3027
+#: src/gtkconv.c:3053
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Разговор/Додај _заседу другару..."
 
-#: src/gtkconv.c:3031
+#: src/gtkconv.c:3057
 msgid "/Conversation/Alias..."
 msgstr "/Разговор/Надени име..."
 
-#: src/gtkconv.c:3035
+#: src/gtkconv.c:3061
 msgid "/Conversation/Get Info..."
 msgstr "/Разговор/Прибави податке..."
 
-#: src/gtkconv.c:3039
+#: src/gtkconv.c:3065
 msgid "/Conversation/Invite..."
 msgstr "/Разговор/Подаци..."
 
-#: src/gtkconv.c:3045
+#: src/gtkconv.c:3071
 msgid "/Conversation/Insert URL..."
 msgstr "/Разговор/Убаци Интернет адресу..."
 
-#: src/gtkconv.c:3049
+#: src/gtkconv.c:3075
 msgid "/Conversation/Insert Image..."
 msgstr "/Разговор/Убаци слику..."
 
-#: src/gtkconv.c:3055
+#: src/gtkconv.c:3081
 msgid "/Conversation/Warn..."
 msgstr "/Разговор/Упозори..."
 
-#: src/gtkconv.c:3059
+#: src/gtkconv.c:3085
 msgid "/Conversation/Block..."
 msgstr "/Разговор/Блокирај..."
 
-#: src/gtkconv.c:3063
+#: src/gtkconv.c:3089
 msgid "/Conversation/Add..."
 msgstr "/Разговор/Додај..."
 
-#: src/gtkconv.c:3067
+#: src/gtkconv.c:3093
 msgid "/Conversation/Remove..."
 msgstr "/Разговор/Уклони..."
 
-#: src/gtkconv.c:3073
+#: src/gtkconv.c:3099
 msgid "/Options/Enable Logging"
 msgstr "/Избори/Омогући записе"
 
-#: src/gtkconv.c:3076
+#: src/gtkconv.c:3102
 msgid "/Options/Enable Sounds"
 msgstr "/Избори/Омогући звуке"
 
-#: src/gtkconv.c:3079
+#: src/gtkconv.c:3105
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Избори/Прикажи алатке за форматирање"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3103 src/gtkconv.c:3105 src/gtkconv.c:3203 src/gtkconv.c:3205
-#: src/gtkconv.c:6111
+#: src/gtkconv.c:3129 src/gtkconv.c:3131 src/gtkconv.c:3229 src/gtkconv.c:3231
+#: src/gtkconv.c:6063
 msgid "Send"
 msgstr "Пошаљи"
 
-#: src/gtkconv.c:3126 src/gtkconv.c:4307
+#: src/gtkconv.c:3152 src/gtkconv.c:4358
 msgid "Add the user to your buddy list"
 msgstr "Додавање корисника у Ваш списак другара"
 
-#: src/gtkconv.c:3132 src/gtkconv.c:4292
+#: src/gtkconv.c:3158 src/gtkconv.c:4343
 msgid "Remove the user from your buddy list"
 msgstr "Уклањање корисника са Вашег списак другара"
 
 #. Warn button
-#: src/gtkconv.c:3139
+#: src/gtkconv.c:3165
 msgid "Warn"
 msgstr "Упозори"
 
-#: src/gtkconv.c:3143
+#: src/gtkconv.c:3169
 msgid "Warn the user"
 msgstr "Упозори корисника"
 
-#: src/gtkconv.c:3150 src/gtkconv.c:3588
+#: src/gtkconv.c:3176 src/gtkconv.c:3614
 msgid "Get the user's information"
 msgstr "Прибави податке о кориснику"
 
 #. Block button
-#: src/gtkconv.c:3153 src/gtkprivacy.c:605 src/gtkprivacy.c:616
+#: src/gtkconv.c:3179 src/gtkprivacy.c:605 src/gtkprivacy.c:616
 msgid "Block"
 msgstr "Блокирај"
 
-#: src/gtkconv.c:3157
+#: src/gtkconv.c:3183
 msgid "Block the user"
 msgstr "Блокирај корисника"
 
 #. Invite
-#: src/gtkconv.c:3215 src/gtkconv.c:6114
+#: src/gtkconv.c:3241 src/gtkconv.c:6066
 msgid "Invite"
 msgstr "Позови"
 
-#: src/gtkconv.c:3218
+#: src/gtkconv.c:3244
 msgid "Invite a user"
 msgstr "Позови корисника"
 
-#: src/gtkconv.c:3257
+#: src/gtkconv.c:3283
 msgid "Bold"
 msgstr "Масно"
 
-#: src/gtkconv.c:3268
+#: src/gtkconv.c:3294
 msgid "Italic"
 msgstr "Курзив"
 
-#: src/gtkconv.c:3279
+#: src/gtkconv.c:3305
 msgid "Underline"
 msgstr "Подвучено"
 
-#: src/gtkconv.c:3295
+#: src/gtkconv.c:3321
 msgid "Larger font size"
 msgstr "Већа слова"
 
-#: src/gtkconv.c:3307
+#: src/gtkconv.c:3333
 msgid "Normal font size"
 msgstr "Обична слова"
 
-#: src/gtkconv.c:3319
+#: src/gtkconv.c:3345
 msgid "Smaller font size"
 msgstr "Мања слова"
 
-#: src/gtkconv.c:3336
+#: src/gtkconv.c:3362
 msgid "Font Face"
 msgstr "Писмо"
 
-#: src/gtkconv.c:3348
+#: src/gtkconv.c:3374
 msgid "Foreground font color"
 msgstr "Боја текста"
 
-#: src/gtkconv.c:3360
+#: src/gtkconv.c:3386
 msgid "Background color"
 msgstr "Боја позадине"
 
-#: src/gtkconv.c:3375
+#: src/gtkconv.c:3401
 msgid "Insert image"
 msgstr "Убаци слику"
 
-#: src/gtkconv.c:3386
+#: src/gtkconv.c:3412
 msgid "Insert link"
 msgstr "Убаци везу"
 
-#: src/gtkconv.c:3397
+#: src/gtkconv.c:3423
 msgid "Insert smiley"
 msgstr "Убаци смешак"
 
-#: src/gtkconv.c:3457
+#: src/gtkconv.c:3483
 msgid "Topic:"
 msgstr "Тема:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3508
+#: src/gtkconv.c:3534
 msgid "0 people in room"
 msgstr "Нема никога у причаоници"
 
-#: src/gtkconv.c:3565
+#: src/gtkconv.c:3591
 msgid "IM the user"
 msgstr "Пошаљи брзу поруку кориснику"
 
-#: src/gtkconv.c:3577
+#: src/gtkconv.c:3603
 msgid "Ignore the user"
 msgstr "Игнориши корисника"
 
-#: src/gtkconv.c:4072 src/server.c:1382
-#, c-format
-msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
-msgstr "<HR><BR><H3 Align=Center> —— Нови разговор @ %s ——</H3><BR>\n"
-
-#: src/gtkconv.c:4076 src/server.c:1385
-#, c-format
-msgid "---- New Conversation @ %s ----\n"
-msgstr "—— Нови разговори @  %s ——\n"
-
-#: src/gtkconv.c:4112
+#: src/gtkconv.c:4156
 msgid "Close conversation"
 msgstr "Окончај разговор"
 
-#: src/gtkconv.c:4805 src/gtkconv.c:4837 src/gtkconv.c:4958 src/gtkconv.c:5025
+#: src/gtkconv.c:4756 src/gtkconv.c:4788 src/gtkconv.c:4909 src/gtkconv.c:4976
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -2737,19 +2794,19 @@ msgstr[0] "%d особа у причаоници."
 msgstr[1] "%d особе у причаоници."
 msgstr[2] "%d особа у причаоници."
 
-#: src/gtkconv.c:5358
+#: src/gtkconv.c:5310
 msgid "Animate"
 msgstr "Анимирај"
 
-#: src/gtkconv.c:5363
+#: src/gtkconv.c:5315
 msgid "Hide Icon"
 msgstr "Сакриј иконицу"
 
-#: src/gtkconv.c:5369
+#: src/gtkconv.c:5321
 msgid "Save Icon As..."
 msgstr "Сачувај иконицу као..."
 
-#: src/gtkconv.c:5848 src/gtkconv.c:5851
+#: src/gtkconv.c:5800 src/gtkconv.c:5803
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Разговор/Заврши"
 
@@ -2866,19 +2923,19 @@ msgstr "Гаим — Сачувај као..."
 msgid "%s wants to send you %s (%s)"
 msgstr "%s жели да Вам пошаље %s (%s)"
 
-#: src/gtkimhtml.c:605
+#: src/gtkimhtml.c:614
 msgid "_Copy E-Mail Address"
 msgstr "_Копирај адресу е-поште"
 
-#: src/gtkimhtml.c:617
+#: src/gtkimhtml.c:626
 msgid "_Copy Link Location"
 msgstr "_Копирај адресу везе"
 
-#: src/gtkimhtml.c:627
+#: src/gtkimhtml.c:636
 msgid "_Open Link in Browser"
 msgstr "_Отвори везу у прегледнику"
 
-#: src/gtkimhtml.c:1733
+#: src/gtkimhtml.c:1744
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -2886,20 +2943,24 @@ msgstr ""
 "Гаим није успео да погоди врсту записа слике на основу наведеног наставка "
 "датотеке. Подразумевано се ради о PNG запису."
 
-#: src/gtkimhtml.c:1741
+#: src/gtkimhtml.c:1752
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Грешка при снимању слике: %s"
 
-#: src/gtkimhtml.c:1750
+#: src/gtkimhtml.c:1761
 msgid "Save Image"
 msgstr "Сачувај слику"
 
-#: src/gtkimhtml.c:1773
+#: src/gtkimhtml.c:1784
 msgid "_Save Image..."
 msgstr "_Сачувај слику..."
 
-#: src/gtknotify.c:209
+#: src/gtklog.c:184
+msgid "Conversations with"
+msgstr "Разговори са"
+
+#: src/gtknotify.c:211
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
@@ -2907,17 +2968,17 @@ msgstr[0] "%s је примио %d нову поруку."
 msgstr[1] "%s је примио %d нове поруке."
 msgstr[2] "%s је примио %d нових порука."
 
-#: src/gtknotify.c:217
+#: src/gtknotify.c:219
 #, c-format
 msgid "<span weight=\"bold\">From:</span> %s\n"
 msgstr "<span weight=\"bold\">Од:</span> %s\n"
 
-#: src/gtknotify.c:222
+#: src/gtknotify.c:224
 #, c-format
 msgid "<span weight=\"bold\">Subject:</span> %s\n"
 msgstr "<span weight=\"bold\">Тема:</span> %s\n"
 
-#: src/gtknotify.c:226
+#: src/gtknotify.c:228
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
@@ -2928,7 +2989,7 @@ msgstr ""
 "\n"
 "%s%s%s%s"
 
-#: src/gtknotify.c:241
+#: src/gtknotify.c:243
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
@@ -2939,21 +3000,21 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtknotify.c:412 src/gtknotify.c:432 src/gtknotify.c:440
+#: src/gtknotify.c:428 src/gtknotify.c:448 src/gtknotify.c:456
 msgid "Unable to open URL"
 msgstr "Не могу да отворим адресу"
 
-#: src/gtknotify.c:413
+#: src/gtknotify.c:429
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Изабрана је „ручна“ наредба за веб читач, а наредба није постављена."
 
-#: src/gtknotify.c:430
+#: src/gtknotify.c:446
 #, c-format
 msgid "The browser \"%s\" is invalid."
 msgstr "Читач „%s“ је неисправан."
 
-#: src/gtknotify.c:437
+#: src/gtknotify.c:453
 #, c-format
 msgid "Error launching \"command\": %s"
 msgstr "Грешка при извршавању „наредбе“: %s"
@@ -3001,7 +3062,7 @@ msgstr "Одјави се"
 msgid "Return from away"
 msgstr "Врати се са одсуства"
 
-#: src/gtkpounce.c:415 src/gtkprefs.c:1487 src/protocols/msn/state.c:30
+#: src/gtkpounce.c:415 src/gtkprefs.c:1492 src/protocols/msn/state.c:30
 #: src/protocols/yahoo/yahoo.c:2028
 msgid "Idle"
 msgstr "Неактиван"
@@ -3047,7 +3108,7 @@ msgstr "Пусти звук"
 msgid "Browse"
 msgstr "Претражи"
 
-#: src/gtkpounce.c:468 src/gtkprefs.c:2076
+#: src/gtkpounce.c:468 src/gtkprefs.c:2081
 msgid "Test"
 msgstr "Испробај"
 
@@ -3424,8 +3485,8 @@ msgid "_Host"
 msgstr "_Име сервера"
 
 #: src/gtkprefs.c:1142 src/protocols/irc/irc.c:553
-#: src/protocols/jabber/jabber.c:1111 src/protocols/msn/msn.c:1635
-#: src/protocols/napster/napster.c:642 src/protocols/trepia/trepia.c:1335
+#: src/protocols/jabber/jabber.c:1152 src/protocols/msn/msn.c:1640
+#: src/protocols/napster/napster.c:642 src/protocols/trepia/trepia.c:1345
 msgid "Port"
 msgstr "Порт"
 
@@ -3486,79 +3547,79 @@ msgstr "Поставке веб прегледника"
 msgid "Open new _window by default"
 msgstr "Отварање новог _прозора је подразумевано"
 
-#: src/gtkprefs.c:1319
+#: src/gtkprefs.c:1320
 msgid "Message Logs"
 msgstr "Дневник порука"
 
-#: src/gtkprefs.c:1320
+#: src/gtkprefs.c:1323
+msgid "Log _Format:"
+msgstr "Облик _дневника:"
+
+#: src/gtkprefs.c:1327
 msgid "_Log all instant messages"
 msgstr "Бележи све _брзе поруке"
 
-#: src/gtkprefs.c:1322
+#: src/gtkprefs.c:1329
 msgid "Log all c_hats"
 msgstr "Бележи све _разговоре"
 
-#: src/gtkprefs.c:1324
-msgid "Strip _HTML from logs"
-msgstr "_Избаци HTML из дневника"
-
-#: src/gtkprefs.c:1327
+#: src/gtkprefs.c:1332
 msgid "System Logs"
 msgstr "Системски дневник"
 
-#: src/gtkprefs.c:1328
+#: src/gtkprefs.c:1333
 msgid "Log when buddies _sign on/sign off"
 msgstr "Бележи када се другари _пријављују/одјављују"
 
-#: src/gtkprefs.c:1330
+#: src/gtkprefs.c:1335
 msgid "Log when buddies become _idle/un-idle"
 msgstr "Бележи када су другари _неактивни/активни"
 
-#: src/gtkprefs.c:1332
+#: src/gtkprefs.c:1337
 msgid "Log when buddies go away/come _back"
 msgstr "Бележи када су другари _одсустни/присутни"
 
-#: src/gtkprefs.c:1334
+#: src/gtkprefs.c:1339
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Бележи _личне пријаве/неактивност/одсуства"
 
-#: src/gtkprefs.c:1336
+#: src/gtkprefs.c:1341
 msgid "I_ndividual log file for each buddy's signons"
 msgstr "Појединачна датотека денвника за _сваког другара"
 
-#: src/gtkprefs.c:1379
+#: src/gtkprefs.c:1384
 msgid "Sound Options"
 msgstr "Поставке звука"
 
-#: src/gtkprefs.c:1380
+#: src/gtkprefs.c:1385
 msgid "_No sounds when you log in"
 msgstr "_Без звука по пријави"
 
-#: src/gtkprefs.c:1382
+#: src/gtkprefs.c:1387
 msgid "_Sounds while away"
 msgstr "Звук је _активан док сте одсутни"
 
-#: src/gtkprefs.c:1386
+#: src/gtkprefs.c:1391
 msgid "Sound Method"
 msgstr "Начин оглашавања"
 
-#: src/gtkprefs.c:1387
+#: src/gtkprefs.c:1392
 msgid "_Method:"
 msgstr "_Начин:"
 
-#: src/gtkprefs.c:1389
+#: src/gtkprefs.c:1394
 msgid "Console beep"
 msgstr "Конзолни звук"
 
-#: src/gtkprefs.c:1391
+#: src/gtkprefs.c:1396
 msgid "Automatic"
 msgstr "Аутоматски"
 
-#: src/gtkprefs.c:1398
+#: src/gtkprefs.c:1403
 msgid "Command"
 msgstr "Наредба"
 
-#: src/gtkprefs.c:1408
+#: src/gtkprefs.c:1413
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -3567,67 +3628,67 @@ msgstr ""
 "Наредба за звук:\n"
 "(%s за назив датотеке)"
 
-#: src/gtkprefs.c:1463
+#: src/gtkprefs.c:1468
 msgid "_Sending messages removes away status"
 msgstr "Слање порука Вас враћа са _одсуства"
 
-#: src/gtkprefs.c:1465
+#: src/gtkprefs.c:1470
 msgid "_Queue new messages when away"
 msgstr "Одлажи у _ред поруке на одсуству"
 
-#: src/gtkprefs.c:1468
+#: src/gtkprefs.c:1473
 msgid "Auto-response"
 msgstr "Аутоматски одговор"
 
-#: src/gtkprefs.c:1471
+#: src/gtkprefs.c:1476
 msgid "Seconds before _resending:"
 msgstr "Број _секунди пре поновног слања:"
 
-#: src/gtkprefs.c:1474
+#: src/gtkprefs.c:1479
 msgid "_Send auto-response"
 msgstr "Слање _аутоматског одговор"
 
-#: src/gtkprefs.c:1476
+#: src/gtkprefs.c:1481
 msgid "_Only send auto-response when idle"
 msgstr "Слање аутоматског одговора само када сте _неактивни"
 
-#: src/gtkprefs.c:1478
+#: src/gtkprefs.c:1483
 msgid "Send auto-response in _active conversations"
 msgstr "Слање аутоматског одговора у а_ктивним разговорима"
 
-#: src/gtkprefs.c:1488
+#: src/gtkprefs.c:1493
 msgid "Idle _time reporting:"
 msgstr "Пријављивање неак_тивности:"
 
-#: src/gtkprefs.c:1491
+#: src/gtkprefs.c:1496
 msgid "Gaim usage"
 msgstr "Активност у Гаиму"
 
-#: src/gtkprefs.c:1494
+#: src/gtkprefs.c:1499
 msgid "X usage"
 msgstr "Активност у ИКС-има"
 
-#: src/gtkprefs.c:1496
+#: src/gtkprefs.c:1501
 msgid "Windows usage"
 msgstr "Активност у Виндоусу"
 
-#: src/gtkprefs.c:1504
+#: src/gtkprefs.c:1509
 msgid "Auto-away"
 msgstr "Аутоматско одуство"
 
-#: src/gtkprefs.c:1505
+#: src/gtkprefs.c:1510
 msgid "Set away _when idle"
 msgstr "Идете на о_дсуство када сте неактивни"
 
-#: src/gtkprefs.c:1507
+#: src/gtkprefs.c:1512
 msgid "_Minutes before setting away:"
 msgstr "Број _минута пре одласка на одсуство:"
 
-#: src/gtkprefs.c:1514
+#: src/gtkprefs.c:1519
 msgid "Away m_essage:"
 msgstr "_Порука за одсуство:"
 
-#: src/gtkprefs.c:1576
+#: src/gtkprefs.c:1581
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3642,7 +3703,7 @@ msgstr ""
 "<span weight=\"bold\">Веб страница:</span>\t\t%s\n"
 "<span weight=\"bold\">Датотека:</span>\t%s"
 
-#: src/gtkprefs.c:1581
+#: src/gtkprefs.c:1586
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3657,97 +3718,97 @@ msgstr ""
 "<span weight=\"bold\">Интернет адреса:</span>  %s\n"
 "<span weight=\"bold\">Датотека:</span>  %s"
 
-#: src/gtkprefs.c:1762
+#: src/gtkprefs.c:1767
 msgid "Load"
 msgstr "Учитај"
 
-#: src/gtkprefs.c:1769 src/protocols/jabber/jabber.c:562
-#: src/protocols/msn/msn.c:1323 src/protocols/trepia/trepia.c:392
+#: src/gtkprefs.c:1774 src/protocols/jabber/jabber.c:588
+#: src/protocols/msn/msn.c:1328 src/protocols/trepia/trepia.c:401
 msgid "Name"
 msgstr "Име"
 
-#: src/gtkprefs.c:1816
+#: src/gtkprefs.c:1821
 msgid "Details"
 msgstr "Детаљи"
 
-#: src/gtkprefs.c:1943
+#: src/gtkprefs.c:1948
 msgid "Sound Selection"
 msgstr "Избор звука"
 
-#: src/gtkprefs.c:2050
+#: src/gtkprefs.c:2055
 msgid "Play"
 msgstr "Пусти"
 
-#: src/gtkprefs.c:2057
+#: src/gtkprefs.c:2062
 msgid "Event"
 msgstr "Догађај"
 
-#: src/gtkprefs.c:2080
+#: src/gtkprefs.c:2085
 msgid "Reset"
 msgstr "Одбаци"
 
-#: src/gtkprefs.c:2084
+#: src/gtkprefs.c:2089
 msgid "Choose..."
 msgstr "Изабери..."
 
-#: src/gtkprefs.c:2218
+#: src/gtkprefs.c:2223
 msgid "_Edit"
 msgstr "_Уреди"
 
-#: src/gtkprefs.c:2254
+#: src/gtkprefs.c:2259
 msgid "Interface"
 msgstr "Сучеље"
 
-#: src/gtkprefs.c:2255
+#: src/gtkprefs.c:2260
 msgid "Smiley Themes"
 msgstr "Скупови смешака"
 
-#: src/gtkprefs.c:2256
+#: src/gtkprefs.c:2261
 msgid "Fonts"
 msgstr "Писма"
 
-#: src/gtkprefs.c:2257
+#: src/gtkprefs.c:2262
 msgid "Message Text"
 msgstr "Текст поруке"
 
-#: src/gtkprefs.c:2258
+#: src/gtkprefs.c:2263
 msgid "Shortcuts"
 msgstr "Пречице"
 
-#: src/gtkprefs.c:2261
+#: src/gtkprefs.c:2266
 msgid "IMs"
 msgstr "Брзе поруке"
 
-#: src/gtkprefs.c:2263
+#: src/gtkprefs.c:2268
 msgid "Proxy"
 msgstr "Прокси"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2266
+#: src/gtkprefs.c:2271
 msgid "Browser"
 msgstr "Прегледник"
 
-#: src/gtkprefs.c:2268
+#: src/gtkprefs.c:2273
 msgid "Logging"
 msgstr "Записивање"
 
-#: src/gtkprefs.c:2269
+#: src/gtkprefs.c:2274
 msgid "Sounds"
 msgstr "Звук"
 
-#: src/gtkprefs.c:2270
+#: src/gtkprefs.c:2275
 msgid "Sound Events"
 msgstr "Звучни догађаји"
 
-#: src/gtkprefs.c:2271
+#: src/gtkprefs.c:2276
 msgid "Away / Idle"
 msgstr "Одсуство / Неактивност"
 
-#: src/gtkprefs.c:2272
+#: src/gtkprefs.c:2277
 msgid "Away Messages"
 msgstr "Поруке за одсуство"
 
-#: src/gtkprefs.c:2275
+#: src/gtkprefs.c:2280
 msgid "Plugins"
 msgstr "Додаци"
 
@@ -3847,52 +3908,52 @@ msgstr "Не"
 msgid "Apply"
 msgstr "Примени"
 
-#: src/gtksound.c:60
+#: src/gtksound.c:61
 msgid "Buddy logs in"
 msgstr "Другар се пријавио"
 
-#: src/gtksound.c:61
+#: src/gtksound.c:62
 msgid "Buddy logs out"
 msgstr "Другар се одјавио"
 
-#: src/gtksound.c:62
+#: src/gtksound.c:63
 msgid "Message received"
 msgstr "Порука примљена"
 
-#: src/gtksound.c:63
+#: src/gtksound.c:64
 msgid "Message received begins conversation"
 msgstr "Примљена порука започиње разговор"
 
-#: src/gtksound.c:64
+#: src/gtksound.c:65
 msgid "Message sent"
 msgstr "Порука послата"
 
-#: src/gtksound.c:65
+#: src/gtksound.c:66
 msgid "Person enters chat"
 msgstr "Особа се прикључује разговору"
 
-#: src/gtksound.c:66
+#: src/gtksound.c:67
 msgid "Person leaves chat"
 msgstr "Особа напушта разговор"
 
-#: src/gtksound.c:67
+#: src/gtksound.c:68
 msgid "You talk in chat"
 msgstr "Најгласнији сте тренутно у разговору"
 
-#: src/gtksound.c:68
+#: src/gtksound.c:69
 msgid "Others talk in chat"
 msgstr "Остали су гласнији тренутно у разговору"
 
-#: src/gtksound.c:71
+#: src/gtksound.c:72
 msgid "Someone says your name in chat"
 msgstr "Неко помиње Ваше име у разговору"
 
-#: src/gtksound.c:153
+#: src/gtksound.c:156
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
 msgstr "Не могу репродуковати звук зато што изабрана датотека (%s) не постоји."
 
-#: src/gtksound.c:169
+#: src/gtksound.c:172
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
@@ -3900,7 +3961,7 @@ msgstr ""
 "Не могу репродуковати звук зато што је изабрана „Наредба“ за начин "
 "оглашавања, али наредба није постављена."
 
-#: src/gtksound.c:178
+#: src/gtksound.c:184
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
@@ -3909,131 +3970,53 @@ msgstr ""
 "Не могу репродуковати звук зато што се не може покренути постављена звучна "
 "наредба: %s"
 
-#: src/gtkutils.c:286
+#: src/gtkutils.c:288
 msgid "Can't save icon file to disk."
 msgstr "Не могу сачувати датотеку са иконицом на диск."
 
-#: src/gtkutils.c:321
+#: src/gtkutils.c:323
 msgid "Gaim - Save Icon"
 msgstr "Гаим — Сачувај иконицу"
 
-#: src/log.c:30
-msgid "Error in specifying buddy conversation."
-msgstr "Грешка при навођењу другарског разговора."
+#: src/log.c:79
+msgid "<b><font color=\"red\">The logger has no read function</font></b>"
+msgstr "<b><font color=\"red\">Дневник не омогућава читање</font></b>"
 
-#: src/log.c:36
-msgid "Unable to find conversation log"
-msgstr "Не могу пронаћи дневник разговора"
+#: src/log.c:370
+msgid "XML"
+msgstr "XML"
 
-#: src/log.c:119 src/log.c:140 src/log.c:153
+#: src/log.c:448
 #, c-format
-msgid "Unable to make directory %s for logging"
-msgstr "Не могу направити директоријум %s за дневнике."
+msgid "<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
+msgstr "<font color=\"#16569E\">(%s) <b>%s <САМО-ОДГОВОР>:</b></font> %s<br/>\n"
 
-#: src/log.c:207 src/log.c:223
+#: src/log.c:450
 #, c-format
-msgid "IM Sessions with %s\n"
-msgstr "Сесије брзих порука са %s\n"
+msgid "<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
+msgstr "<font color=\"#A82F2F\">(%s) <b>%s <САМО-ОДГОВОР>:</b></font> %s<br/>\n"
 
-#: src/log.c:210 src/log.c:226
-#, c-format
-msgid "IM Sessions with %s"
-msgstr "Сесије брзих порука са %s"
+#: src/log.c:478 src/log.c:602
+msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
+msgstr "<font color=\"red\"><b>log->logger_data је NULL!</b></font>"
 
-#: src/log.c:270
+#: src/log.c:488 src/log.c:612
 #, c-format
-msgid "+++ %s (%s) signed on @ %s"
-msgstr "+++ %s (%s) се пријавио(ла) @ %s"
+msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
+msgstr "<font color=\"red\"><b>Не могу да читам датотеку: %s</b></font>"
 
-#: src/log.c:275
-#, c-format
-msgid "+++ %s (%s) signed off @ %s"
-msgstr "+++ %s (%s) се одјавио(ла) @ %s"
+#: src/log.c:492
+msgid "HTML"
+msgstr "HTML"
 
-#: src/log.c:280
+#: src/log.c:572
 #, c-format
-msgid "+++ %s (%s) changed away state @ %s"
-msgstr "+++ %s (%s) је променио(ла) стање одсутности @ %s"
+msgid "(%s) %s <AUTO-REPLY>: %s\n"
+msgstr "(%s) %s <САМО-ОДГОВОР>: %s\n"
 
-#: src/log.c:285
-#, c-format
-msgid "+++ %s (%s) came back @ %s"
-msgstr "+++ %s (%s) се вратио(ла) @ %s"
-
-#: src/log.c:290
-#, c-format
-msgid "+++ %s (%s) became idle @ %s"
-msgstr "+++ %s (%s) је неактиван(на) @ %s"
-
-#: src/log.c:295
-#, c-format
-msgid "+++ %s (%s) returned from idle @ %s"
-msgstr "+++ %s (%s) се активирао(ла) @ %s"
-
-#: src/log.c:300
-#, c-format
-msgid "+++ Program exit @ %s"
-msgstr "+++ Програм затворен @ %s"
-
-#: src/log.c:307
-#, c-format
-msgid "%s (%s) reported that %s (%s) signed on @ %s"
-msgstr "%s (%s) је известио да се %s (%s) пријавио @ %s"
-
-#: src/log.c:312
-#, c-format
-msgid "%s (%s) reported that %s (%s) signed off @ %s"
-msgstr "%s (%s) је известио да се %s (%s) одјавио @ %s"
-
-#: src/log.c:317
-#, c-format
-msgid "%s (%s) reported that %s (%s) went away @ %s"
-msgstr "%s (%s) је известио да је %s (%s) отишао на одсуство @ %s"
-
-#: src/log.c:322
-#, c-format
-msgid "%s (%s) reported that %s (%s) came back @ %s"
-msgstr "%s (%s) је известио да се %s (%s) вратио @ %s"
-
-#: src/log.c:327
-#, c-format
-msgid "%s (%s) reported that %s (%s) became idle @ %s"
-msgstr "%s (%s) је известио да је %s (%s) неактиван @ %s"
-
-#: src/log.c:333
-#, c-format
-msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
-msgstr "%s (%s) је известио да се %s (%s) активирао @ %s"
-
-#: src/log.c:345
-#, c-format
-msgid "%s (%s) reported that %s signed on @ %s"
-msgstr "%s (%s) је известио да се %s пријавио @ %s"
-
-#: src/log.c:350
-#, c-format
-msgid "%s (%s) reported that %s signed off @ %s"
-msgstr "%s (%s) је известио да се %s одјавио @ %s"
-
-#: src/log.c:355
-#, c-format
-msgid "%s (%s) reported that %s went away @ %s"
-msgstr "%s (%s) је известио да је %s отишао на одсуство @ %s"
-
-#: src/log.c:360
-#, c-format
-msgid "%s (%s) reported that %s came back @ %s"
-msgstr "%s (%s) је известио да се %s вратио @ %s"
-
-#: src/log.c:365
-#, c-format
-msgid "%s (%s) reported that %s became idle @ %s"
-msgstr "%s (%s) је известио да је %s неактиван @ %s"
-
-#: src/log.c:371
-#, c-format
-msgid "%s (%s) reported that %s returned from idle @ %s"
-msgstr "%s (%s) је известио да се %s активирао @ %s"
+#: src/log.c:616
+msgid "Plain text"
+msgstr "Обичан текст"
 
 #: src/main.c:148
 msgid "Please enter your login."
@@ -4128,10 +4111,10 @@ msgstr "Доступан само за пријатеље"
 msgid "Away for friends only"
 msgstr "Одсутан само за пријатеље"
 
-#: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:895
-#: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2843
-#: src/protocols/oscar/oscar.c:4527 src/protocols/oscar/oscar.c:4554
-#: src/protocols/oscar/oscar.c:6091 src/protocols/yahoo/yahoo.c:2026
+#: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:931
+#: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2848
+#: src/protocols/oscar/oscar.c:4576 src/protocols/oscar/oscar.c:4603
+#: src/protocols/oscar/oscar.c:6140 src/protocols/yahoo/yahoo.c:2026
 #: src/protocols/yahoo/yahoo.c:2324 src/protocols/yahoo/yahoo.c:2415
 msgid "Invisible"
 msgstr "Невидљив"
@@ -4250,7 +4233,7 @@ msgstr "Гаду-Гаду претрага"
 msgid "Active"
 msgstr "Активан"
 
-#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3907
+#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3954
 msgid "UIN"
 msgstr "Кориснички број"
 
@@ -4259,13 +4242,13 @@ msgid "First name"
 msgstr "Име"
 
 #. Last Name
-#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:582
-#: src/protocols/oscar/oscar.c:3915 src/protocols/trepia/trepia.c:265
+#: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:608
+#: src/protocols/oscar/oscar.c:3962 src/protocols/trepia/trepia.c:274
 msgid "Last Name"
 msgstr "Презиме"
 
 #: src/protocols/gg/gg.c:677 src/protocols/gg/gg.c:1389
-#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3909
+#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3956
 msgid "Nick"
 msgstr "Надимак"
 
@@ -4279,16 +4262,16 @@ msgid "Sex"
 msgstr "Пол"
 
 #. City
-#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:592
-#: src/protocols/oscar/oscar.c:3961 src/protocols/oscar/oscar.c:3977
-#: src/protocols/trepia/trepia.c:322 src/protocols/trepia/trepia.c:421
+#: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:618
+#: src/protocols/oscar/oscar.c:4008 src/protocols/oscar/oscar.c:4024
+#: src/protocols/trepia/trepia.c:331 src/protocols/trepia/trepia.c:430
 msgid "City"
 msgstr "Град"
 
 #. res[0] == username
-#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1261
-#: src/protocols/msn/msn.c:1503 src/protocols/napster/napster.c:387
-#: src/protocols/oscar/oscar.c:2885 src/protocols/oscar/oscar.c:3190
+#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1266
+#: src/protocols/msn/msn.c:1508 src/protocols/napster/napster.c:387
+#: src/protocols/oscar/oscar.c:2890 src/protocols/oscar/oscar.c:3197
 #: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2581
 #: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2623
 #: src/protocols/yahoo/yahoo.c:2810 src/protocols/zephyr/zephyr.c:355
@@ -4395,8 +4378,8 @@ msgstr ""
 msgid "Directory Search"
 msgstr "Претрага именика"
 
-#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1005
-#: src/protocols/oscar/oscar.c:6442 src/protocols/toc/toc.c:1546
+#: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1043
+#: src/protocols/oscar/oscar.c:6495 src/protocols/toc/toc.c:1546
 msgid "Change Password"
 msgstr "Промена лозинке"
 
@@ -4451,15 +4434,15 @@ msgstr ""
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:184
 #: src/protocols/msn/notification.c:948 src/protocols/msn/notification.c:1269
-#: src/protocols/msn/notification.c:1435 src/protocols/oscar/oscar.c:2615
-#: src/protocols/oscar/oscar.c:5085
+#: src/protocols/msn/notification.c:1435 src/protocols/oscar/oscar.c:2620
+#: src/protocols/oscar/oscar.c:5134
 msgid "Authorize"
 msgstr "Овласти"
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:185
 #: src/protocols/msn/notification.c:949 src/protocols/msn/notification.c:1271
-#: src/protocols/msn/notification.c:1437 src/protocols/oscar/oscar.c:2617
-#: src/protocols/oscar/oscar.c:5086
+#: src/protocols/msn/notification.c:1437 src/protocols/oscar/oscar.c:2622
+#: src/protocols/oscar/oscar.c:5135
 msgid "Deny"
 msgstr "Одбиј"
 
@@ -4568,7 +4551,7 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Додатак за ИРЦ протокол"
 
 #: src/protocols/irc/irc.c:550 src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1101 src/protocols/napster/napster.c:637
+#: src/protocols/jabber/jabber.c:1142 src/protocols/napster/napster.c:637
 msgid "Server"
 msgstr "Сервер"
 
@@ -4577,7 +4560,7 @@ msgid "Encoding"
 msgstr "Начин записа"
 
 #: src/protocols/irc/irc.c:559 src/protocols/irc/msgs.c:191
-#: src/protocols/jabber/jabber.c:552
+#: src/protocols/jabber/jabber.c:578
 msgid "Username"
 msgstr "Корисничко име"
 
@@ -4757,201 +4740,201 @@ msgstr "Веза је прекинута"
 msgid "Server requires SSL for login"
 msgstr "Сервер захтева ССЛ за пријаву"
 
-#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:366
-#: src/protocols/jabber/auth.c:378
+#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:281
+#: src/protocols/jabber/auth.c:380 src/protocols/jabber/auth.c:392
 msgid "Invalid response from server"
 msgstr "Неисправан одговор сервера"
 
-#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:137
+#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:143
 msgid "Server does not use any supported authentication method"
 msgstr "Сервер не користи ниједан од подржаних начина идентификовања"
 
-#: src/protocols/jabber/auth.c:287
+#: src/protocols/jabber/auth.c:301
 msgid "Invalid challenge from server"
 msgstr "Неисправан изазов сервера"
 
-#: src/protocols/jabber/auth.c:381
+#: src/protocols/jabber/auth.c:395
 msgid "Bad Protocol"
 msgstr "Лош протокол"
 
-#: src/protocols/jabber/auth.c:384
+#: src/protocols/jabber/auth.c:398
 msgid "Encryption Required"
 msgstr "Обавезно је шифровање"
 
-#: src/protocols/jabber/auth.c:387
+#: src/protocols/jabber/auth.c:401
 msgid "Invalid authzid"
 msgstr "Неисправан authzid"
 
-#: src/protocols/jabber/auth.c:390
+#: src/protocols/jabber/auth.c:404
 msgid "Invalid Mechanism"
 msgstr "Неисправан механизам"
 
-#: src/protocols/jabber/auth.c:392
+#: src/protocols/jabber/auth.c:406
 msgid "Invalid Realm"
 msgstr "Неисправан домен"
 
-#: src/protocols/jabber/auth.c:395
+#: src/protocols/jabber/auth.c:409
 msgid "Mechanism Too Weak"
 msgstr "Механизам је преслаб"
 
-#: src/protocols/jabber/auth.c:398 src/protocols/jabber/jabber.c:131
-#: src/protocols/jabber/jabber.c:830 src/protocols/jabber/jabber.c:880
-#: src/protocols/oscar/oscar.c:5493
+#: src/protocols/jabber/auth.c:412 src/protocols/jabber/jabber.c:158
+#: src/protocols/jabber/jabber.c:866 src/protocols/jabber/jabber.c:916
+#: src/protocols/oscar/oscar.c:5542
 msgid "Not Authorized"
 msgstr "Неовлашћен"
 
-#: src/protocols/jabber/auth.c:401
+#: src/protocols/jabber/auth.c:415
 msgid "Temporary Authentication Failure"
 msgstr "Привремено неуспешна идентификација"
 
-#: src/protocols/jabber/auth.c:403
+#: src/protocols/jabber/auth.c:417
 msgid "Authentication Failure"
 msgstr "Неуспешна идентификација"
 
-#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:605
+#: src/protocols/jabber/buddy.c:245 src/protocols/jabber/buddy.c:597
 msgid "Full Name"
 msgstr "Пуно име"
 
-#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:618
+#: src/protocols/jabber/buddy.c:246 src/protocols/jabber/buddy.c:610
 msgid "Family Name"
 msgstr "Презиме"
 
-#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:622
+#: src/protocols/jabber/buddy.c:247 src/protocols/jabber/buddy.c:614
 msgid "Given Name"
 msgstr "Име"
 
-#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:633
-#: src/protocols/jabber/jabber.c:572 src/protocols/yahoo/yahoo.c:2675
+#: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:625
+#: src/protocols/jabber/jabber.c:598 src/protocols/yahoo/yahoo.c:2675
 msgid "Nickname"
 msgstr "Надимак"
 
-#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:661
+#: src/protocols/jabber/buddy.c:250 src/protocols/jabber/buddy.c:653
 msgid "Street Address"
 msgstr "Улица"
 
-#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:657
+#: src/protocols/jabber/buddy.c:251 src/protocols/jabber/buddy.c:649
 msgid "Extended Address"
 msgstr "Проширена адреса"
 
-#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:665
+#: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:657
 msgid "Locality"
 msgstr "Локалитет"
 
-#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:669
+#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:661
 msgid "Region"
 msgstr "Област"
 
-#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:673
-#: src/protocols/jabber/jabber.c:602
+#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:665
+#: src/protocols/jabber/jabber.c:628
 msgid "Postal Code"
 msgstr "Поштански број"
 
 #. Country
-#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:678
-#: src/protocols/trepia/trepia.c:330 src/protocols/trepia/trepia.c:439
+#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:670
+#: src/protocols/trepia/trepia.c:339 src/protocols/trepia/trepia.c:448
 msgid "Country"
 msgstr "Држава"
 
-#: src/protocols/jabber/buddy.c:264 src/protocols/jabber/buddy.c:689
-#: src/protocols/jabber/buddy.c:696
+#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:681
+#: src/protocols/jabber/buddy.c:688
 msgid "Telephone"
 msgstr "Телефон"
 
-#: src/protocols/jabber/buddy.c:265 src/protocols/jabber/buddy.c:707
-#: src/protocols/jabber/buddy.c:715 src/protocols/yahoo/yahoo.c:2669
+#: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:699
+#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2669
 msgid "Email"
 msgstr "Е-пошта"
 
-#: src/protocols/jabber/buddy.c:266 src/protocols/jabber/buddy.c:730
+#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:722
 msgid "Organization Name"
 msgstr "Назив организације"
 
-#: src/protocols/jabber/buddy.c:267 src/protocols/jabber/buddy.c:734
+#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:726
 msgid "Organization Unit"
 msgstr "Одељење у организацији"
 
-#: src/protocols/jabber/buddy.c:268 src/protocols/jabber/buddy.c:740
+#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:732
 msgid "Title"
 msgstr "Титула"
 
 # „радно место‟ у организацији?
-#: src/protocols/jabber/buddy.c:269 src/protocols/jabber/buddy.c:743
+#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:735
 msgid "Role"
 msgstr "Улога"
 
-#: src/protocols/jabber/buddy.c:270 src/protocols/jabber/buddy.c:636
-#: src/protocols/oscar/oscar.c:3941
+#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:628
+#: src/protocols/oscar/oscar.c:3988
 msgid "Birthday"
 msgstr "Рођендан"
 
-#: src/protocols/jabber/buddy.c:514 src/protocols/jabber/buddy.c:515
+#: src/protocols/jabber/buddy.c:506 src/protocols/jabber/buddy.c:507
 msgid "Edit Jabber vCard"
 msgstr "Уређивање Џабер визит-карте"
 
-#: src/protocols/jabber/buddy.c:516
+#: src/protocols/jabber/buddy.c:508
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable."
 msgstr ""
 "Све доле наведене опције нису обавезне. Унесите само податке које желите."
 
-#: src/protocols/jabber/buddy.c:554
+#: src/protocols/jabber/buddy.c:546
 msgid "Jabber ID"
 msgstr "Џабер ИД"
 
-#: src/protocols/jabber/buddy.c:564 src/protocols/jabber/buddy.c:571
-#: src/protocols/jabber/buddy.c:582 src/protocols/jabber/jabber.c:867
-#: src/protocols/jabber/jabber.c:880
+#: src/protocols/jabber/buddy.c:556 src/protocols/jabber/buddy.c:563
+#: src/protocols/jabber/buddy.c:574 src/protocols/jabber/jabber.c:903
+#: src/protocols/jabber/jabber.c:916
 msgid "Status"
 msgstr "Стање"
 
-#: src/protocols/jabber/buddy.c:580 src/protocols/jabber/jabber.c:1104
+#: src/protocols/jabber/buddy.c:572 src/protocols/jabber/jabber.c:1145
 msgid "Resource"
 msgstr "Ресурс"
 
-#: src/protocols/jabber/buddy.c:626
+#: src/protocols/jabber/buddy.c:618
 msgid "Middle Name"
 msgstr "Име оца"
 
 # Ovo je svrha ovog polja kod nas, pa neka ostane ovako
-#: src/protocols/jabber/buddy.c:641 src/protocols/jabber/jabber.c:587
-#: src/protocols/oscar/oscar.c:3958 src/protocols/oscar/oscar.c:3974
+#: src/protocols/jabber/buddy.c:633 src/protocols/jabber/jabber.c:613
+#: src/protocols/oscar/oscar.c:4005 src/protocols/oscar/oscar.c:4021
 msgid "Address"
 msgstr "Улица"
 
-#: src/protocols/jabber/buddy.c:653
+#: src/protocols/jabber/buddy.c:645
 msgid "P.O. Box"
 msgstr "Поштански фах"
 
-#: src/protocols/jabber/buddy.c:759
+#: src/protocols/jabber/buddy.c:751
 msgid "Photo"
 msgstr "Слика"
 
-#: src/protocols/jabber/buddy.c:759
+#: src/protocols/jabber/buddy.c:751
 msgid "Logo"
 msgstr "Логотип"
 
-#: src/protocols/jabber/buddy.c:773
+#: src/protocols/jabber/buddy.c:765
 msgid "Jabber Profile"
 msgstr "Џабер профил"
 
-#: src/protocols/jabber/buddy.c:875
+#: src/protocols/jabber/buddy.c:904
 msgid "Un-hide From"
 msgstr "Не сакривај од"
 
-#: src/protocols/jabber/buddy.c:878
+#: src/protocols/jabber/buddy.c:907
 msgid "Temporarily Hide From"
 msgstr "Привремено сакриј од"
 
-#: src/protocols/jabber/buddy.c:886
+#: src/protocols/jabber/buddy.c:915
 msgid "Cancel Presence Notification"
 msgstr "Откажи обавештења о присуству"
 
-#: src/protocols/jabber/buddy.c:894
+#: src/protocols/jabber/buddy.c:923
 msgid "(Re-)Request authorization"
 msgstr "(Поново) захтевај овлашћење"
 
-#: src/protocols/jabber/buddy.c:900
+#: src/protocols/jabber/buddy.c:929
 msgid "Unsubscribe"
 msgstr "Одјави се"
 
@@ -4967,135 +4950,135 @@ msgstr "Сервер:"
 msgid "Handle:"
 msgstr "Надимак:"
 
-#: src/protocols/jabber/chat.c:174
+#: src/protocols/jabber/chat.c:158
 #, c-format
 msgid "%s is not a valid room name"
 msgstr "%s није исправан назив собе"
 
-#: src/protocols/jabber/chat.c:175
+#: src/protocols/jabber/chat.c:159
 msgid "Invalid Room Name"
 msgstr "Неисправно име собе"
 
-#: src/protocols/jabber/chat.c:180
+#: src/protocols/jabber/chat.c:164
 #, c-format
 msgid "%s is not a valid server name"
 msgstr "%s није исправан назив сервера"
 
-#: src/protocols/jabber/chat.c:181 src/protocols/jabber/chat.c:182
+#: src/protocols/jabber/chat.c:165 src/protocols/jabber/chat.c:166
 msgid "Invalid Server Name"
 msgstr "Неисправно име сервера"
 
-#: src/protocols/jabber/chat.c:186
+#: src/protocols/jabber/chat.c:170
 #, c-format
 msgid "%s is not a valid room handle"
 msgstr "%s није исправна ручка собе"
 
-#: src/protocols/jabber/chat.c:187 src/protocols/jabber/chat.c:188
+#: src/protocols/jabber/chat.c:171 src/protocols/jabber/chat.c:172
 msgid "Invalid Room Handle"
 msgstr "Неисправна ручка собе"
 
-#: src/protocols/jabber/jabber.c:81
+#: src/protocols/jabber/jabber.c:82
 msgid "Error initializing session"
 msgstr "Грешка при покретању сесије"
 
-#: src/protocols/jabber/jabber.c:106
+#: src/protocols/jabber/jabber.c:133
 msgid "Bad Format"
 msgstr "Лош облик"
 
-#: src/protocols/jabber/jabber.c:108
+#: src/protocols/jabber/jabber.c:135
 msgid "Bad Namespace Prefix"
 msgstr "Лош предметак простора имена"
 
-#: src/protocols/jabber/jabber.c:111
+#: src/protocols/jabber/jabber.c:138
 msgid "Resource Conflict"
 msgstr "Судар ресурса"
 
-#: src/protocols/jabber/jabber.c:113
+#: src/protocols/jabber/jabber.c:140
 msgid "Connection Timeout"
 msgstr "Временски рок везе"
 
-#: src/protocols/jabber/jabber.c:115
+#: src/protocols/jabber/jabber.c:142
 msgid "Host Gone"
 msgstr "Домаћин је нестао"
 
-#: src/protocols/jabber/jabber.c:117
+#: src/protocols/jabber/jabber.c:144
 msgid "Host Unknown"
 msgstr "Домаћин је непознат"
 
-#: src/protocols/jabber/jabber.c:119
+#: src/protocols/jabber/jabber.c:146
 msgid "Improper Addressing"
 msgstr "Неодговарајуће адресирање"
 
-#: src/protocols/jabber/jabber.c:121
+#: src/protocols/jabber/jabber.c:148
 msgid "Internal Server Error"
 msgstr "Унутрашња грешка сервера"
 
-#: src/protocols/jabber/jabber.c:123
+#: src/protocols/jabber/jabber.c:150
 msgid "Invalid ID"
 msgstr "Неисправан ИБ"
 
-#: src/protocols/jabber/jabber.c:125
+#: src/protocols/jabber/jabber.c:152
 msgid "Invalid Namespace"
 msgstr "Неисправан простор имена"
 
-#: src/protocols/jabber/jabber.c:127
+#: src/protocols/jabber/jabber.c:154
 msgid "Invalid XML"
 msgstr "Неисправан XML"
 
-#: src/protocols/jabber/jabber.c:129
+#: src/protocols/jabber/jabber.c:156
 msgid "Non-matching Hosts"
 msgstr "Непоклапајући домаћини"
 
-#: src/protocols/jabber/jabber.c:133
+#: src/protocols/jabber/jabber.c:160
 msgid "Policy Violation"
 msgstr "Прекорачење овлашћења"
 
-#: src/protocols/jabber/jabber.c:135
+#: src/protocols/jabber/jabber.c:162
 msgid "Remote Connection Failed"
 msgstr "Удаљена веза неуспешна"
 
-#: src/protocols/jabber/jabber.c:137
+#: src/protocols/jabber/jabber.c:164
 msgid "Resource Constraint"
 msgstr "Ограничење ресурса"
 
-#: src/protocols/jabber/jabber.c:139
+#: src/protocols/jabber/jabber.c:166
 msgid "Restricted XML"
 msgstr "Ограничени XML"
 
-#: src/protocols/jabber/jabber.c:141
+#: src/protocols/jabber/jabber.c:168
 msgid "See Other Host"
 msgstr "Погледајте другог домаћина"
 
-#: src/protocols/jabber/jabber.c:143
+#: src/protocols/jabber/jabber.c:170
 msgid "System Shutdown"
 msgstr "Гашење система"
 
-#: src/protocols/jabber/jabber.c:145
+#: src/protocols/jabber/jabber.c:172
 msgid "Undefined Condition"
 msgstr "Недефинисани услов"
 
-#: src/protocols/jabber/jabber.c:147
-msgid "Unsupported Condition"
-msgstr "Неподржани услов"
+#: src/protocols/jabber/jabber.c:174
+msgid "Unsupported Encoding"
+msgstr "Неподржано кодирање"
 
 # строфа баш и није одговарајућа :-)
-#: src/protocols/jabber/jabber.c:149
+#: src/protocols/jabber/jabber.c:176
 msgid "Unsupported Stanza Type"
 msgstr "Неподржана врста одељка"
 
-#: src/protocols/jabber/jabber.c:151
+#: src/protocols/jabber/jabber.c:178
 msgid "Unsupported Version"
 msgstr "Неподржано издање"
 
-#: src/protocols/jabber/jabber.c:153
+#: src/protocols/jabber/jabber.c:180
 msgid "XML Not Well Formed"
 msgstr "XML није добро сачињен"
 
-#: src/protocols/jabber/jabber.c:155
+#: src/protocols/jabber/jabber.c:182
 msgid "Stream Error"
 msgstr "Грешка тока"
 
-#: src/protocols/jabber/jabber.c:233 src/protocols/msn/httpmethod.c:216
+#: src/protocols/jabber/jabber.c:245 src/protocols/msn/httpmethod.c:216
 #: src/protocols/msn/msn.c:82 src/protocols/msn/msn.c:102
 #: src/protocols/msn/msn.c:160 src/protocols/msn/msn.c:260
 #: src/protocols/msn/msn.c:536 src/protocols/msn/msn.c:647
@@ -5109,153 +5092,157 @@ msgstr "Грешка тока"
 #: src/protocols/msn/msn.c:1094 src/protocols/msn/msn.c:1115
 #: src/protocols/msn/msn.c:1126 src/protocols/msn/msn.c:1137
 #: src/protocols/msn/msn.c:1161 src/protocols/msn/msn.c:1173
-#: src/protocols/msn/msn.c:1238 src/protocols/msn/notification.c:179
+#: src/protocols/msn/msn.c:1243 src/protocols/msn/notification.c:179
 #: src/protocols/msn/notification.c:207 src/protocols/msn/notification.c:1668
-#: src/protocols/msn/notification.c:1688 src/protocols/trepia/trepia.c:239
-#: src/protocols/trepia/trepia.c:740 src/protocols/trepia/trepia.c:1023
-#: src/protocols/trepia/trepia.c:1067 src/protocols/trepia/trepia.c:1166
-#: src/protocols/trepia/trepia.c:1222
+#: src/protocols/msn/notification.c:1688 src/protocols/trepia/trepia.c:248
+#: src/protocols/trepia/trepia.c:749 src/protocols/trepia/trepia.c:1033
+#: src/protocols/trepia/trepia.c:1077 src/protocols/trepia/trepia.c:1176
+#: src/protocols/trepia/trepia.c:1232
 msgid "Write error"
 msgstr "Грешка при писању"
 
-#: src/protocols/jabber/jabber.c:270 src/protocols/jabber/jabber.c:290
+#: src/protocols/jabber/jabber.c:282 src/protocols/jabber/jabber.c:302
 msgid "Read Error"
 msgstr "Грешка при читању"
 
-#: src/protocols/jabber/jabber.c:367 src/protocols/jabber/jabber.c:661
+#: src/protocols/jabber/jabber.c:356
+msgid "SSL Handshake Failed"
+msgstr "Неуспешно SSL руковање"
+
+#: src/protocols/jabber/jabber.c:393 src/protocols/jabber/jabber.c:687
 msgid "Invalid Jabber ID"
 msgstr "Неисправан Џабер ИБ"
 
-#: src/protocols/jabber/jabber.c:401 src/protocols/jabber/jabber.c:695
-#: src/protocols/trepia/trepia.c:1106
+#: src/protocols/jabber/jabber.c:427 src/protocols/jabber/jabber.c:721
+#: src/protocols/trepia/trepia.c:1116
 msgid "Unable to create socket"
 msgstr "Не могу начинити сокет"
 
-#: src/protocols/jabber/jabber.c:426
+#: src/protocols/jabber/jabber.c:452
 #, c-format
 msgid "Registration of %s@%s successful"
 msgstr "Регистрација %s@%s успешна"
 
-#: src/protocols/jabber/jabber.c:428 src/protocols/jabber/jabber.c:429
+#: src/protocols/jabber/jabber.c:454 src/protocols/jabber/jabber.c:455
 msgid "Registration Successful"
 msgstr "Регистрација успешна"
 
-#: src/protocols/jabber/jabber.c:438
+#: src/protocols/jabber/jabber.c:464
 msgid "Unknown Error"
 msgstr "Непозната грешка"
 
-#: src/protocols/jabber/jabber.c:441
+#: src/protocols/jabber/jabber.c:467
 #, c-format
 msgid "Registration of %s@%s failed: %s"
 msgstr "Регистрација %s@%s неуспешна: %s"
 
-#: src/protocols/jabber/jabber.c:443 src/protocols/jabber/jabber.c:444
+#: src/protocols/jabber/jabber.c:469 src/protocols/jabber/jabber.c:470
 msgid "Registration Failed"
 msgstr "Грешка при регистрацији"
 
-#: src/protocols/jabber/jabber.c:542 src/protocols/jabber/jabber.c:543
+#: src/protocols/jabber/jabber.c:568 src/protocols/jabber/jabber.c:569
 msgid "Already Registered"
 msgstr "Већ је регистрован"
 
-#: src/protocols/jabber/jabber.c:556 src/protocols/jabber/jabber.c:975
+#: src/protocols/jabber/jabber.c:582 src/protocols/jabber/jabber.c:1013
 msgid "Password"
 msgstr "Лозинка"
 
-#: src/protocols/jabber/jabber.c:567
+#: src/protocols/jabber/jabber.c:593
 msgid "E-Mail"
 msgstr "Е-пошта"
 
 #. First Name
-#: src/protocols/jabber/jabber.c:577 src/protocols/oscar/oscar.c:3912
-#: src/protocols/trepia/trepia.c:258
+#: src/protocols/jabber/jabber.c:603 src/protocols/oscar/oscar.c:3959
+#: src/protocols/trepia/trepia.c:267
 msgid "First Name"
 msgstr "Име"
 
 #. State
-#: src/protocols/jabber/jabber.c:597 src/protocols/oscar/oscar.c:3964
-#: src/protocols/oscar/oscar.c:3980 src/protocols/trepia/trepia.c:326
-#: src/protocols/trepia/trepia.c:430
+#: src/protocols/jabber/jabber.c:623 src/protocols/oscar/oscar.c:4011
+#: src/protocols/oscar/oscar.c:4027 src/protocols/trepia/trepia.c:335
+#: src/protocols/trepia/trepia.c:439
 msgid "State"
 msgstr "Област"
 
-#: src/protocols/jabber/jabber.c:607
+#: src/protocols/jabber/jabber.c:633
 msgid "Phone"
 msgstr "Телефон"
 
-#: src/protocols/jabber/jabber.c:625
+#: src/protocols/jabber/jabber.c:651
 msgid "Please fill out the information below to register your new account."
 msgstr "Молим испуните податке испод да региструјете нови налог."
 
-#: src/protocols/jabber/jabber.c:628 src/protocols/jabber/jabber.c:629
+#: src/protocols/jabber/jabber.c:654 src/protocols/jabber/jabber.c:655
 msgid "Register New Jabber Account"
 msgstr "Региструј нови Џабер налог"
 
-#: src/protocols/jabber/jabber.c:734 src/protocols/msn/dispatch.c:219
+#: src/protocols/jabber/jabber.c:769 src/protocols/msn/dispatch.c:219
 #: src/protocols/msn/msn.c:481 src/protocols/napster/napster.c:487
-#: src/protocols/oscar/oscar.c:693 src/protocols/trepia/trepia.c:1100
+#: src/protocols/oscar/oscar.c:694 src/protocols/trepia/trepia.c:1110
 #: src/protocols/yahoo/yahoo.c:1923
 msgid "Connecting"
 msgstr "Успостављање везе"
 
-#: src/protocols/jabber/jabber.c:738
+#: src/protocols/jabber/jabber.c:773
 msgid "Initializing Stream"
 msgstr "Покретање тока"
 
-#: src/protocols/jabber/jabber.c:744
+#: src/protocols/jabber/jabber.c:779
 msgid "Authenticating"
 msgstr "Идентификација"
 
-#: src/protocols/jabber/jabber.c:752
+#: src/protocols/jabber/jabber.c:787
 msgid "Re-initializing Stream"
 msgstr "Поновно покретање тока"
 
-#: src/protocols/jabber/jabber.c:875 src/protocols/jabber/jabber.c:926
+#: src/protocols/jabber/jabber.c:911 src/protocols/jabber/jabber.c:964
 #: src/protocols/jabber/presence.c:270
 msgid "Error"
 msgstr "Грешка"
 
-#: src/protocols/jabber/jabber.c:891 src/protocols/jabber/jutil.c:101
+#: src/protocols/jabber/jabber.c:927 src/protocols/jabber/jutil.c:101
 #: src/protocols/jabber/presence.c:82
 msgid "Chatty"
 msgstr "Причљив"
 
-#: src/protocols/jabber/jabber.c:893 src/protocols/jabber/jutil.c:104
+#: src/protocols/jabber/jabber.c:929 src/protocols/jabber/jutil.c:104
 #: src/protocols/jabber/presence.c:87
 msgid "Extended Away"
 msgstr "Продужено одсуство"
 
-#: src/protocols/jabber/jabber.c:894 src/protocols/jabber/jutil.c:107
-#: src/protocols/jabber/presence.c:89 src/protocols/oscar/oscar.c:2833
-#: src/protocols/oscar/oscar.c:4542 src/protocols/oscar/oscar.c:6087
+#: src/protocols/jabber/jabber.c:930 src/protocols/jabber/jutil.c:107
+#: src/protocols/jabber/presence.c:89 src/protocols/oscar/oscar.c:2838
+#: src/protocols/oscar/oscar.c:4591 src/protocols/oscar/oscar.c:6136
 msgid "Do Not Disturb"
 msgstr "Не узнемиравај"
 
-#: src/protocols/jabber/jabber.c:908
+#: src/protocols/jabber/jabber.c:946
 msgid "Password Changed"
 msgstr "Лозинка измењена"
 
-#: src/protocols/jabber/jabber.c:909
+#: src/protocols/jabber/jabber.c:947
 msgid "Your password has been changed."
 msgstr "Ваша лозинка је измењена."
 
-#: src/protocols/jabber/jabber.c:919
+#: src/protocols/jabber/jabber.c:957
 #, c-format
 msgid "Error changing password: %s"
 msgstr "Грешка при измени лозинке: %s"
 
-#: src/protocols/jabber/jabber.c:923
+#: src/protocols/jabber/jabber.c:961
 msgid "Unknown error occurred changing password"
 msgstr "Дошло је до непознате грешке при измени лозинке"
 
-#: src/protocols/jabber/jabber.c:980
+#: src/protocols/jabber/jabber.c:1018
 msgid "Password (again)"
 msgstr "Лозинка (поновите)"
 
-#: src/protocols/jabber/jabber.c:985 src/protocols/jabber/jabber.c:986
+#: src/protocols/jabber/jabber.c:1023 src/protocols/jabber/jabber.c:1024
 msgid "Change Jabber Password"
 msgstr "Измените Џабер лозинку"
 
-#: src/protocols/jabber/jabber.c:986
+#: src/protocols/jabber/jabber.c:1024
 msgid "Please enter your new password"
 msgstr "Унесите нову лозинку"
 
@@ -5269,15 +5256,15 @@ msgstr "Унесите нову лозинку"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:1081 src/protocols/jabber/jabber.c:1083
+#: src/protocols/jabber/jabber.c:1122 src/protocols/jabber/jabber.c:1124
 msgid "Jabber Protocol Plugin"
 msgstr "Додатак за Џабер протокол"
 
-#: src/protocols/jabber/jabber.c:1107
+#: src/protocols/jabber/jabber.c:1148
 msgid "Force Old SSL"
 msgstr "Наметни стари ССЛ"
 
-#: src/protocols/jabber/jabber.c:1115
+#: src/protocols/jabber/jabber.c:1156
 msgid "Connect server"
 msgstr "Повезивање са сервером"
 
@@ -5318,13 +5305,22 @@ msgstr "Непозната грешка у присуству"
 msgid "The user %s wants to add you to their buddy list."
 msgstr "Корисник %s жели да Вас дода на свој списак другара."
 
-#: src/protocols/jabber/presence.c:260 src/protocols/oscar/oscar.c:2944
+#: src/protocols/jabber/presence.c:260 src/protocols/oscar/oscar.c:2949
 msgid "Unknown error"
 msgstr "Непозната грешка"
 
 #: src/protocols/jabber/presence.c:266
 msgid "Unable to join chat"
 msgstr "Не могу приступити разговору"
+
+#: src/protocols/jabber/si.c:233
+#, c-format
+msgid "Could not send %s to %s, protocol not supported."
+msgstr "Не могу да пошаљем %s за %s, протокол није подржана."
+
+#: src/protocols/jabber/si.c:234 src/protocols/jabber/si.c:235
+msgid "File Send Failed"
+msgstr "Неуспешно слање датотеке"
 
 #: src/protocols/msn/dispatch.c:42 src/protocols/msn/notification.c:278
 #: src/protocols/msn/notification.c:520
@@ -5480,7 +5476,7 @@ msgstr "Недостају обавезна поља"
 msgid "Too many hits to a FND"
 msgstr "Превише погодака у FND"
 
-#: src/protocols/msn/error.c:107 src/protocols/oscar/oscar.c:182
+#: src/protocols/msn/error.c:107 src/protocols/oscar/oscar.c:183
 msgid "Not logged in"
 msgstr "Непријављен"
 
@@ -5566,7 +5562,7 @@ msgstr "Другарско име се превише брзо мења"
 msgid "Server too busy"
 msgstr "Сервер је презаузет"
 
-#: src/protocols/msn/error.c:190 src/protocols/oscar/oscar.c:1075
+#: src/protocols/msn/error.c:190 src/protocols/oscar/oscar.c:1076
 #: src/protocols/toc/toc.c:659
 msgid "Authentication failed"
 msgstr "Неуспешна идентификација"
@@ -5742,73 +5738,73 @@ msgstr ""
 "МСН корисничко име мора бити облика „корисник@сервер.цс“. Вероватно сте "
 "желели „%s@hotmail.com“. У вашем списку забрана нису учињене измене."
 
-#: src/protocols/msn/msn.c:1262 src/protocols/yahoo/yahoo.c:2582
+#: src/protocols/msn/msn.c:1267 src/protocols/yahoo/yahoo.c:2582
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Грешка при преузимању профила</b></body></html>"
 
 #. Age
-#: src/protocols/msn/msn.c:1330 src/protocols/oscar/oscar.c:3946
-#: src/protocols/trepia/trepia.c:276 src/protocols/trepia/trepia.c:404
+#: src/protocols/msn/msn.c:1335 src/protocols/oscar/oscar.c:3993
+#: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:413
 #: src/protocols/yahoo/yahoo.c:2693
 msgid "Age"
 msgstr "Старост"
 
 #. Gender
-#: src/protocols/msn/msn.c:1337 src/protocols/oscar/oscar.c:3932
-#: src/protocols/trepia/trepia.c:270 src/protocols/trepia/trepia.c:412
+#: src/protocols/msn/msn.c:1342 src/protocols/oscar/oscar.c:3979
+#: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:421
 #: src/protocols/yahoo/yahoo.c:2705
 msgid "Gender"
 msgstr "Пол"
 
-#: src/protocols/msn/msn.c:1345 src/protocols/yahoo/yahoo.c:2699
+#: src/protocols/msn/msn.c:1350 src/protocols/yahoo/yahoo.c:2699
 msgid "Marital Status"
 msgstr "Брачно стање"
 
-#: src/protocols/msn/msn.c:1352 src/protocols/yahoo/yahoo.c:2687
+#: src/protocols/msn/msn.c:1357 src/protocols/yahoo/yahoo.c:2687
 msgid "Location"
 msgstr "Место"
 
-#: src/protocols/msn/msn.c:1360 src/protocols/yahoo/yahoo.c:2711
+#: src/protocols/msn/msn.c:1365 src/protocols/yahoo/yahoo.c:2711
 msgid "Occupation"
 msgstr "Занимање"
 
-#: src/protocols/msn/msn.c:1377 src/protocols/msn/msn.c:1383
-#: src/protocols/msn/msn.c:1390 src/protocols/msn/msn.c:1397
-#: src/protocols/msn/msn.c:1404
+#: src/protocols/msn/msn.c:1382 src/protocols/msn/msn.c:1388
+#: src/protocols/msn/msn.c:1395 src/protocols/msn/msn.c:1402
+#: src/protocols/msn/msn.c:1409
 msgid "A Little About Me"
 msgstr "Понешто о мени"
 
-#: src/protocols/msn/msn.c:1413 src/protocols/msn/msn.c:1426
-#: src/protocols/msn/msn.c:1433
+#: src/protocols/msn/msn.c:1418 src/protocols/msn/msn.c:1431
+#: src/protocols/msn/msn.c:1438
 msgid "Favorite Things"
 msgstr "Омиљене ствари"
 
-#: src/protocols/msn/msn.c:1442 src/protocols/msn/msn.c:1448
-#: src/protocols/msn/msn.c:1455
+#: src/protocols/msn/msn.c:1447 src/protocols/msn/msn.c:1453
+#: src/protocols/msn/msn.c:1460
 msgid "Hobbies and Interests"
 msgstr "Хобији и интересовања"
 
-#: src/protocols/msn/msn.c:1464 src/protocols/msn/msn.c:1470
+#: src/protocols/msn/msn.c:1469 src/protocols/msn/msn.c:1475
 #: src/protocols/yahoo/yahoo.c:2755
 msgid "Favorite Quote"
 msgstr "Омиљена изрека"
 
-#: src/protocols/msn/msn.c:1478 src/protocols/yahoo/yahoo.c:2799
+#: src/protocols/msn/msn.c:1483 src/protocols/yahoo/yahoo.c:2799
 msgid "Last Updated"
 msgstr "Последња допуна"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1489 src/protocols/trepia/trepia.c:280
-#: src/protocols/trepia/trepia.c:448
+#: src/protocols/msn/msn.c:1494 src/protocols/trepia/trepia.c:289
+#: src/protocols/trepia/trepia.c:457
 msgid "Homepage"
 msgstr "Лична страница"
 
-#: src/protocols/msn/msn.c:1511 src/protocols/yahoo/yahoo.c:2817
+#: src/protocols/msn/msn.c:1516 src/protocols/yahoo/yahoo.c:2817
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Подаци о кориснику %s недоступни"
 
-#: src/protocols/msn/msn.c:1513 src/protocols/yahoo/yahoo.c:2819
+#: src/protocols/msn/msn.c:1518 src/protocols/yahoo/yahoo.c:2819
 msgid "The user's profile is empty."
 msgstr "Профил корисника је празан."
 
@@ -5822,15 +5818,15 @@ msgstr "Профил корисника је празан."
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1611 src/protocols/msn/msn.c:1613
+#: src/protocols/msn/msn.c:1616 src/protocols/msn/msn.c:1618
 msgid "MSN Protocol Plugin"
 msgstr "Додатак за МСН протокол"
 
-#: src/protocols/msn/msn.c:1630 src/protocols/trepia/trepia.c:1330
+#: src/protocols/msn/msn.c:1635 src/protocols/trepia/trepia.c:1340
 msgid "Login server"
 msgstr "Сервер за пријаву"
 
-#: src/protocols/msn/msn.c:1640
+#: src/protocols/msn/msn.c:1645
 msgid "Use HTTP Method"
 msgstr "Користи HTTP режим"
 
@@ -5864,7 +5860,7 @@ msgstr ""
 msgid "MSN Nexus server returned invalid information."
 msgstr "МСН Нексус сервер је вратио неисправне податке."
 
-#: src/protocols/msn/notification.c:640 src/protocols/trepia/trepia.c:677
+#: src/protocols/msn/notification.c:640 src/protocols/trepia/trepia.c:686
 msgid "Retrieving buddy list"
 msgstr "Преузимам списак другара"
 
@@ -5873,7 +5869,7 @@ msgid "Unable to connect to passport server"
 msgstr "Не могу да се повежем на сервер пасоша"
 
 #: src/protocols/msn/notification.c:708 src/protocols/msn/notification.c:740
-#: src/protocols/oscar/oscar.c:1361
+#: src/protocols/oscar/oscar.c:1362
 msgid "Password sent"
 msgstr "Лозинка послата"
 
@@ -6000,7 +5996,7 @@ msgstr ""
 msgid "%s requested a PING"
 msgstr "%s захтева пинг"
 
-#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5156
+#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5205
 #: src/protocols/toc/toc.c:1259
 msgid "Join what group:"
 msgstr "Прикључи се групи (којој?):"
@@ -6019,180 +6015,180 @@ msgstr "Прикључи се групи (којој?):"
 msgid "NAPSTER Protocol Plugin"
 msgstr "Додатак за Напстер протокол"
 
-#: src/protocols/oscar/oscar.c:178
+#: src/protocols/oscar/oscar.c:179
 msgid "Invalid error"
 msgstr "Неисправна грешка (!!!)"
 
-#: src/protocols/oscar/oscar.c:179
+#: src/protocols/oscar/oscar.c:180
 msgid "Invalid SNAC"
 msgstr "Неисправан SNAC"
 
-#: src/protocols/oscar/oscar.c:180
+#: src/protocols/oscar/oscar.c:181
 msgid "Rate to host"
 msgstr "Брзина према серверу"
 
-#: src/protocols/oscar/oscar.c:181
+#: src/protocols/oscar/oscar.c:182
 msgid "Rate to client"
 msgstr "Брзина према клијенту"
 
-#: src/protocols/oscar/oscar.c:183
+#: src/protocols/oscar/oscar.c:184
 msgid "Service unavailable"
 msgstr "Услуга је недоступна"
 
-#: src/protocols/oscar/oscar.c:184
+#: src/protocols/oscar/oscar.c:185
 msgid "Service not defined"
 msgstr "Услуга није установљена"
 
-#: src/protocols/oscar/oscar.c:185
+#: src/protocols/oscar/oscar.c:186
 msgid "Obsolete SNAC"
 msgstr "Превазиђени SNAC"
 
-#: src/protocols/oscar/oscar.c:186
+#: src/protocols/oscar/oscar.c:187
 msgid "Not supported by host"
 msgstr "Домаћин не подржава"
 
-#: src/protocols/oscar/oscar.c:187
+#: src/protocols/oscar/oscar.c:188
 msgid "Not supported by client"
 msgstr "Клијент не подржава"
 
-#: src/protocols/oscar/oscar.c:188
+#: src/protocols/oscar/oscar.c:189
 msgid "Refused by client"
 msgstr "Клијент је одбио"
 
-#: src/protocols/oscar/oscar.c:189
+#: src/protocols/oscar/oscar.c:190
 msgid "Reply too big"
 msgstr "Одговор је предугачак"
 
-#: src/protocols/oscar/oscar.c:190
+#: src/protocols/oscar/oscar.c:191
 msgid "Responses lost"
 msgstr "Одговори су изгубљени"
 
-#: src/protocols/oscar/oscar.c:191
+#: src/protocols/oscar/oscar.c:192
 msgid "Request denied"
 msgstr "Захтев је одбијен"
 
-#: src/protocols/oscar/oscar.c:192
+#: src/protocols/oscar/oscar.c:193
 msgid "Busted SNAC payload"
 msgstr "Упропашћен је SNAC користан пакет"
 
-#: src/protocols/oscar/oscar.c:193
+#: src/protocols/oscar/oscar.c:194
 msgid "Insufficient rights"
 msgstr "Недовољно овлашћења"
 
-#: src/protocols/oscar/oscar.c:194
+#: src/protocols/oscar/oscar.c:195
 msgid "In local permit/deny"
 msgstr "Дозволи/забрани у локалу"
 
-#: src/protocols/oscar/oscar.c:195
+#: src/protocols/oscar/oscar.c:196
 msgid "Too evil (sender)"
 msgstr "Превише зао (пошиљалац)"
 
-#: src/protocols/oscar/oscar.c:196
+#: src/protocols/oscar/oscar.c:197
 msgid "Too evil (receiver)"
 msgstr "Превише зао (прималац)"
 
-#: src/protocols/oscar/oscar.c:197
+#: src/protocols/oscar/oscar.c:198
 msgid "User temporarily unavailable"
 msgstr "Корисник привремено недоступан"
 
-#: src/protocols/oscar/oscar.c:198
+#: src/protocols/oscar/oscar.c:199
 msgid "No match"
 msgstr "Нема поклапања"
 
-#: src/protocols/oscar/oscar.c:199
+#: src/protocols/oscar/oscar.c:200
 msgid "List overflow"
 msgstr "Прекорачење списка"
 
-#: src/protocols/oscar/oscar.c:200
+#: src/protocols/oscar/oscar.c:201
 msgid "Request ambiguous"
 msgstr "Захтев је двосмислен"
 
-#: src/protocols/oscar/oscar.c:201
+#: src/protocols/oscar/oscar.c:202
 msgid "Queue full"
 msgstr "Ред је пун"
 
-#: src/protocols/oscar/oscar.c:202
+#: src/protocols/oscar/oscar.c:203
 msgid "Not while on AOL"
 msgstr "Не док је на АОЛ-у"
 
-#: src/protocols/oscar/oscar.c:474
+#: src/protocols/oscar/oscar.c:475
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Непосредан разговор са %s је затворен"
 
-#: src/protocols/oscar/oscar.c:476
+#: src/protocols/oscar/oscar.c:477
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Непосредан разговор са %s је неуспешан"
 
-#: src/protocols/oscar/oscar.c:534 src/protocols/toc/toc.c:218
+#: src/protocols/oscar/oscar.c:535 src/protocols/toc/toc.c:218
 #: src/protocols/toc/toc.c:625 src/protocols/toc/toc.c:641
 #: src/protocols/toc/toc.c:709
 msgid "Disconnected."
 msgstr "Веза је прекинута."
 
-#: src/protocols/oscar/oscar.c:546 src/protocols/toc/toc.c:885
+#: src/protocols/oscar/oscar.c:547 src/protocols/toc/toc.c:885
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Веза са причаоницом %s је прекинута."
 
-#: src/protocols/oscar/oscar.c:562
+#: src/protocols/oscar/oscar.c:563
 msgid "Chat is currently unavailable"
 msgstr "Разговор тренутно није могућ"
 
-#: src/protocols/oscar/oscar.c:633 src/protocols/oscar/oscar.c:689
+#: src/protocols/oscar/oscar.c:634 src/protocols/oscar/oscar.c:690
 msgid "Couldn't connect to host"
 msgstr "Не могу да се повежем са домаћином"
 
-#: src/protocols/oscar/oscar.c:643
+#: src/protocols/oscar/oscar.c:644
 msgid "Screen name sent"
 msgstr "Надимак послат"
 
-#: src/protocols/oscar/oscar.c:677
+#: src/protocols/oscar/oscar.c:678
 msgid "Unable to login to AIM"
 msgstr "Не могу да се пријавим на АИМ"
 
-#: src/protocols/oscar/oscar.c:778 src/protocols/oscar/oscar.c:1166
+#: src/protocols/oscar/oscar.c:779 src/protocols/oscar/oscar.c:1167
 msgid "Could Not Connect"
 msgstr "Не могу да се повежем"
 
-#: src/protocols/oscar/oscar.c:786
+#: src/protocols/oscar/oscar.c:787
 msgid "Connection established, cookie sent"
 msgstr "Веза је успостављена, колачић је послат"
 
-#: src/protocols/oscar/oscar.c:853 src/protocols/oscar/oscar.c:866
-#: src/protocols/oscar/oscar.c:871
+#: src/protocols/oscar/oscar.c:854 src/protocols/oscar/oscar.c:867
+#: src/protocols/oscar/oscar.c:872
 msgid "File Transfer Aborted"
 msgstr "Пренос датотеке је обустваљен"
 
 # Mogu reci i "server soket", ali preveliko znacenje mogu ljudi dati "server" delu, i ne razumeti.
-#: src/protocols/oscar/oscar.c:854
+#: src/protocols/oscar/oscar.c:855
 msgid "Unable to establish listener socket."
 msgstr "Не могу да успоставим сокет за везу."
 
 # Ovo je FD kao broj koji je ekvivalentan "file handle"-u, odnosno, to je jedinstvena oznaka otvorenog fajla za pristup; sta znaci "establish" u ovom kontekstu mi nije jasno
-#: src/protocols/oscar/oscar.c:867
+#: src/protocols/oscar/oscar.c:868
 msgid "Unable to establish file descriptor."
 msgstr "Не могу да успоставим описник датотеке."
 
-#: src/protocols/oscar/oscar.c:872
+#: src/protocols/oscar/oscar.c:873
 msgid "Unable to create new connection."
 msgstr "Не могу да успоставим нову везу."
 
-#: src/protocols/oscar/oscar.c:1052 src/protocols/toc/toc.c:571
+#: src/protocols/oscar/oscar.c:1053 src/protocols/toc/toc.c:571
 msgid "Incorrect nickname or password."
 msgstr "Неисправан надимак или лозинка."
 
-#: src/protocols/oscar/oscar.c:1057
+#: src/protocols/oscar/oscar.c:1058
 msgid "Your account is currently suspended."
 msgstr "Ваш налог је тренутно недоступан."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:1061
+#: src/protocols/oscar/oscar.c:1062
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Услуга АОЛ брзих порука је привремено недоступна."
 
-#: src/protocols/oscar/oscar.c:1066
+#: src/protocols/oscar/oscar.c:1067
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6200,22 +6196,22 @@ msgstr ""
 "Успостављали сте и прекидали везу сувише често. Сачекајте десет минута па "
 "покушајте поново. Ако наставите да покушавате, мораћете да сачекате још дуже."
 
-#: src/protocols/oscar/oscar.c:1071
+#: src/protocols/oscar/oscar.c:1072
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Издање клијента који користите је застарело. Освежите га на %s"
 
-#: src/protocols/oscar/oscar.c:1103
+#: src/protocols/oscar/oscar.c:1104
 msgid "Internal Error"
 msgstr "Унутрашња грешка"
 
-#: src/protocols/oscar/oscar.c:1173
+#: src/protocols/oscar/oscar.c:1174
 msgid "Received authorization"
 msgstr "Примио овлашћење"
 
 # Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
-#: src/protocols/oscar/oscar.c:1208 src/protocols/oscar/oscar.c:1238
-#: src/protocols/oscar/oscar.c:1326
+#: src/protocols/oscar/oscar.c:1209 src/protocols/oscar/oscar.c:1239
+#: src/protocols/oscar/oscar.c:1327
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -6224,29 +6220,29 @@ msgstr ""
 "Веза се ускоро може прекинути. Можда желите да користите ТОЦ док се ово не "
 "исправи. Погледајте %s за допуне."
 
-#: src/protocols/oscar/oscar.c:1211 src/protocols/oscar/oscar.c:1241
-msgid "Gaim was Unable to get a valid AIM login hash."
-msgstr "Гаим није успео да преузме исправан хеш за пријаву на АИМ."
+#: src/protocols/oscar/oscar.c:1212 src/protocols/oscar/oscar.c:1242
+msgid "Gaim was unable to get a valid AIM login hash."
+msgstr "Гаим није успео да прими исправан хеш за пријаву на АИМ."
 
-#: src/protocols/oscar/oscar.c:1329
-msgid "Gaim was Unable to get a valid login hash."
-msgstr "Гаим није успео да преузме исправан хеш за пријаву."
+#: src/protocols/oscar/oscar.c:1330
+msgid "Gaim was unable to get a valid login hash."
+msgstr "Гаим није успео да прими исправан хеш за пријаву."
 
-#: src/protocols/oscar/oscar.c:1911 src/protocols/oscar/oscar.c:5594
+#: src/protocols/oscar/oscar.c:1912 src/protocols/oscar/oscar.c:5643
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Непосредан разговор са %s је омогућен"
 
-#: src/protocols/oscar/oscar.c:2240 src/protocols/oscar/oscar.c:2262
+#: src/protocols/oscar/oscar.c:2241 src/protocols/oscar/oscar.c:2263
 msgid "(There was an error receiving this message)"
 msgstr "(Дошло је до грешке при пријему ове поруке)"
 
-#: src/protocols/oscar/oscar.c:2409
+#: src/protocols/oscar/oscar.c:2410
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s је управо затражио непосредну везу са %s"
 
-#: src/protocols/oscar/oscar.c:2412
+#: src/protocols/oscar/oscar.c:2413
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -6256,23 +6252,23 @@ msgstr ""
 "слика. Пошто ће се Ваша ИП адреса приказати, ово се може сматрати "
 "нарушавањем приватности."
 
-#: src/protocols/oscar/oscar.c:2417 src/protocols/oscar/oscar.c:5963
+#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:6012
 msgid "Connect"
 msgstr "Успостави везу"
 
-#: src/protocols/oscar/oscar.c:2444
+#: src/protocols/oscar/oscar.c:2445
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Дај ми овлашћење како бих могао да те додам у списак другара."
 
-#: src/protocols/oscar/oscar.c:2452
+#: src/protocols/oscar/oscar.c:2453
 msgid "Authorization Request Message:"
 msgstr "Порука уз захтев за овлашћење:"
 
-#: src/protocols/oscar/oscar.c:2453
+#: src/protocols/oscar/oscar.c:2454
 msgid "Please authorize me!"
 msgstr "Овласти ме!"
 
-#: src/protocols/oscar/oscar.c:2481
+#: src/protocols/oscar/oscar.c:2482
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -6281,23 +6277,23 @@ msgstr ""
 "Корисник %s захтева овлашћење пре него што га можете додати у списак "
 "другара. Да ли желите да пошаљете захтев за овлашћење?"
 
-#: src/protocols/oscar/oscar.c:2486 src/protocols/oscar/oscar.c:2488
+#: src/protocols/oscar/oscar.c:2487 src/protocols/oscar/oscar.c:2489
 msgid "Request Authorization"
 msgstr "Захтевај овлашћење"
 
-#: src/protocols/oscar/oscar.c:2524 src/protocols/oscar/oscar.c:2526
-#: src/protocols/oscar/oscar.c:2533 src/protocols/oscar/oscar.c:2605
-#: src/protocols/oscar/oscar.c:2625 src/protocols/oscar/oscar.c:2981
-#: src/protocols/oscar/oscar.c:3037 src/protocols/oscar/oscar.c:5077
-#: src/protocols/oscar/oscar.c:5123
+#: src/protocols/oscar/oscar.c:2525 src/protocols/oscar/oscar.c:2527
+#: src/protocols/oscar/oscar.c:2534 src/protocols/oscar/oscar.c:2610
+#: src/protocols/oscar/oscar.c:2630 src/protocols/oscar/oscar.c:2986
+#: src/protocols/oscar/oscar.c:3043 src/protocols/oscar/oscar.c:5126
+#: src/protocols/oscar/oscar.c:5172
 msgid "No reason given."
 msgstr "Разлог није наведен."
 
-#: src/protocols/oscar/oscar.c:2532
+#: src/protocols/oscar/oscar.c:2533
 msgid "Authorization Denied Message:"
 msgstr "Разлог одбијања овлашћења:"
 
-#: src/protocols/oscar/oscar.c:2605
+#: src/protocols/oscar/oscar.c:2610
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -6307,11 +6303,11 @@ msgstr ""
 "разлог:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2613 src/protocols/oscar/oscar.c:5083
+#: src/protocols/oscar/oscar.c:2618 src/protocols/oscar/oscar.c:5132
 msgid "Authorization Request"
 msgstr "Захтев за овлашћење"
 
-#: src/protocols/oscar/oscar.c:2625
+#: src/protocols/oscar/oscar.c:2630
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -6322,17 +6318,17 @@ msgstr ""
 "а навео је следећи разлог:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2626
+#: src/protocols/oscar/oscar.c:2631
 msgid "ICQ authorization denied."
 msgstr "ICQ овлашћење одбијено."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:2633
+#: src/protocols/oscar/oscar.c:2638
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr "Korisnik %u је прихватио Ваш захтев да га додате у списак другара."
 
-#: src/protocols/oscar/oscar.c:2641
+#: src/protocols/oscar/oscar.c:2646
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -6345,7 +6341,7 @@ msgstr ""
 "Од: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2649
+#: src/protocols/oscar/oscar.c:2654
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -6358,7 +6354,7 @@ msgstr ""
 "Од: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2657
+#: src/protocols/oscar/oscar.c:2662
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -6371,20 +6367,20 @@ msgstr ""
 "Порука гласи:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2678
+#: src/protocols/oscar/oscar.c:2683
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "ICQ корисник %u Вам је послао контакт: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:2684
+#: src/protocols/oscar/oscar.c:2689
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Да ли желите да додате овај контакт у списак другара?"
 
-#: src/protocols/oscar/oscar.c:2688
+#: src/protocols/oscar/oscar.c:2693
 msgid "Decline"
 msgstr "Одбиј"
 
-#: src/protocols/oscar/oscar.c:2770
+#: src/protocols/oscar/oscar.c:2775
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
@@ -6392,7 +6388,7 @@ msgstr[0] "Пропустили сте %hu поруку од %s зато што 
 msgstr[1] "Пропустили сте %hu поруке од %s зато што су биле неисправне."
 msgstr[2] "Пропустили сте %hu порука од %s зато што су биле неисправне."
 
-#: src/protocols/oscar/oscar.c:2779
+#: src/protocols/oscar/oscar.c:2784
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
@@ -6400,7 +6396,7 @@ msgstr[0] "Пропустили сте %hu поруку од %s зато што 
 msgstr[1] "Пропустили сте %hu поруке од %s зато што су биле превелике."
 msgstr[2] "Пропустили сте %hu порука од %s зато што су биле превелике."
 
-#: src/protocols/oscar/oscar.c:2788
+#: src/protocols/oscar/oscar.c:2793
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -6410,7 +6406,7 @@ msgstr[0] "Пропустили сте %hu поруку од %s зато што 
 msgstr[1] "Пропустили сте %hu поруке од %s зато што је ограничење прекорачено."
 msgstr[2] "Пропустили сте %hu порука од %s зато што је ограничење прекорачено."
 
-#: src/protocols/oscar/oscar.c:2797
+#: src/protocols/oscar/oscar.c:2802
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -6418,7 +6414,7 @@ msgstr[0] "Пропустили сте %hu поруку од %s зато што 
 msgstr[1] "Пропустили сте %hu поруке од %s зато што је он/она превише злочест."
 msgstr[2] "Пропустили сте %hu порука од %s зато што је он/она превише злочест."
 
-#: src/protocols/oscar/oscar.c:2806
+#: src/protocols/oscar/oscar.c:2811
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
@@ -6426,7 +6422,7 @@ msgstr[0] "Пропустили сте %hu поруку од %s зато што 
 msgstr[1] "Пропустили сте %hu поруке од %s зато што сте ви превише злочести."
 msgstr[2] "Пропустили сте %hu порука од %s зато што сте ви превише злочести."
 
-#: src/protocols/oscar/oscar.c:2815
+#: src/protocols/oscar/oscar.c:2820
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
@@ -6434,152 +6430,152 @@ msgstr[0] "Пропустили сте %hu поруку од %s из непоз�
 msgstr[1] "Пропустили сте %hu поруке од %s из непознатих разлога."
 msgstr[2] "Пропустили сте %hu порука од %s из непознатих разлога."
 
-#: src/protocols/oscar/oscar.c:2831 src/protocols/oscar/oscar.c:4551
-#: src/protocols/oscar/oscar.c:6090
+#: src/protocols/oscar/oscar.c:2836 src/protocols/oscar/oscar.c:4600
+#: src/protocols/oscar/oscar.c:6139
 msgid "Free For Chat"
 msgstr "Доступан за разговор"
 
-#: src/protocols/oscar/oscar.c:2835 src/protocols/oscar/oscar.c:4545
-#: src/protocols/oscar/oscar.c:6088
+#: src/protocols/oscar/oscar.c:2840 src/protocols/oscar/oscar.c:4594
+#: src/protocols/oscar/oscar.c:6137
 msgid "Not Available"
 msgstr "Недоступан"
 
-#: src/protocols/oscar/oscar.c:2837 src/protocols/oscar/oscar.c:4548
-#: src/protocols/oscar/oscar.c:6089
+#: src/protocols/oscar/oscar.c:2842 src/protocols/oscar/oscar.c:4597
+#: src/protocols/oscar/oscar.c:6138
 msgid "Occupied"
 msgstr "Заузет"
 
-#: src/protocols/oscar/oscar.c:2841
+#: src/protocols/oscar/oscar.c:2846
 msgid "Web Aware"
 msgstr "Пратим веб"
 
-#: src/protocols/oscar/oscar.c:2884
+#: src/protocols/oscar/oscar.c:2889
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>Кориснички број:</B> %s<BR><B>Стање:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:2943
+#: src/protocols/oscar/oscar.c:2948
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC пријављује грешку: %s\n"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:2979
+#: src/protocols/oscar/oscar.c:2984
 #, c-format
 msgid "Your message to %s did not get sent:"
 msgstr "Ваша порука за %s није послата:"
 
-#: src/protocols/oscar/oscar.c:3035
+#: src/protocols/oscar/oscar.c:3041
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "Подаци о кориснику %s недоступни:"
 
-#: src/protocols/oscar/oscar.c:3073
+#: src/protocols/oscar/oscar.c:3080
 msgid "Voice"
 msgstr "Глас"
 
-#: src/protocols/oscar/oscar.c:3076
+#: src/protocols/oscar/oscar.c:3083
 msgid "AIM Direct IM"
 msgstr "Непосредна АИМ порука"
 
-#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:6189
+#: src/protocols/oscar/oscar.c:3089 src/protocols/oscar/oscar.c:6238
 msgid "Get File"
 msgstr "Прибави датотеку"
 
-#: src/protocols/oscar/oscar.c:3085 src/protocols/oscar/oscar.c:6181
+#: src/protocols/oscar/oscar.c:3092 src/protocols/oscar/oscar.c:6230
 msgid "Send File"
 msgstr "Пошаљи датотеку"
 
-#: src/protocols/oscar/oscar.c:3089
+#: src/protocols/oscar/oscar.c:3096
 msgid "Games"
 msgstr "Игре"
 
-#: src/protocols/oscar/oscar.c:3092
+#: src/protocols/oscar/oscar.c:3099
 msgid "Add-Ins"
 msgstr "Додаци"
 
-#: src/protocols/oscar/oscar.c:3095
+#: src/protocols/oscar/oscar.c:3102
 msgid "Send Buddy List"
 msgstr "Пошаљи списак другара"
 
-#: src/protocols/oscar/oscar.c:3098
+#: src/protocols/oscar/oscar.c:3105
 msgid "ICQ Direct Connect"
 msgstr "Непосредна ICQ веза"
 
-#: src/protocols/oscar/oscar.c:3101
+#: src/protocols/oscar/oscar.c:3108
 msgid "AP User"
 msgstr "АП корисник"
 
-#: src/protocols/oscar/oscar.c:3104
+#: src/protocols/oscar/oscar.c:3111
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:3107
+#: src/protocols/oscar/oscar.c:3114
 msgid "Nihilist"
 msgstr "Нихилиста"
 
-#: src/protocols/oscar/oscar.c:3110
+#: src/protocols/oscar/oscar.c:3117
 msgid "ICQ Server Relay"
 msgstr "ICQ преусмеравање сервера"
 
-#: src/protocols/oscar/oscar.c:3113
+#: src/protocols/oscar/oscar.c:3120
 msgid "Old ICQ UTF8"
 msgstr "Стари ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3116
+#: src/protocols/oscar/oscar.c:3123
 msgid "Trillian Encryption"
 msgstr "Трилијан енкрипција"
 
-#: src/protocols/oscar/oscar.c:3119
+#: src/protocols/oscar/oscar.c:3126
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3122
+#: src/protocols/oscar/oscar.c:3129
 msgid "Hiptop"
 msgstr "Врхкука"
 
-#: src/protocols/oscar/oscar.c:3125
+#: src/protocols/oscar/oscar.c:3132
 msgid "Security Enabled"
 msgstr "Безбедност укључена"
 
-#: src/protocols/oscar/oscar.c:3154
+#: src/protocols/oscar/oscar.c:3161
 #, c-format
 msgid "Username: <b>%s</b><br>\n"
 msgstr "Корисничко име: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3155
+#: src/protocols/oscar/oscar.c:3162
 #, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
 msgstr "Ниво упозорења: <b>%d%%</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3158
+#: src/protocols/oscar/oscar.c:3165
 #, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "На вези од: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3162
+#: src/protocols/oscar/oscar.c:3169
 #, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "Члан од: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3167
+#: src/protocols/oscar/oscar.c:3174
 #, c-format
 msgid "Idle: <b>%s</b>"
 msgstr "Неактивност: <b>%s</b>"
 
-#: src/protocols/oscar/oscar.c:3170
+#: src/protocols/oscar/oscar.c:3177
 msgid "Idle: <b>Active</b>"
 msgstr "Неактивност: <b>активан</b>"
 
-#: src/protocols/oscar/oscar.c:3209
+#: src/protocols/oscar/oscar.c:3216
 msgid "Your AIM connection may be lost."
 msgstr "Можда АИМ веза прекинута."
 
-#: src/protocols/oscar/oscar.c:3603
+#: src/protocols/oscar/oscar.c:3610
 msgid "Rate limiting error."
 msgstr "Грешка при ограничавању брзине."
 
-#: src/protocols/oscar/oscar.c:3604
+#: src/protocols/oscar/oscar.c:3611
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -6587,7 +6583,7 @@ msgstr ""
 "Последња порука није послата зато што сте прекорачили дозвољену брзину. "
 "Сачекајте 10 секунди и пробајте поново."
 
-#: src/protocols/oscar/oscar.c:3665
+#: src/protocols/oscar/oscar.c:3672
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
@@ -6595,109 +6591,109 @@ msgstr ""
 "Веза је прекинута зато што сте се пријавили под овим именом са неког другог "
 "места."
 
-#: src/protocols/oscar/oscar.c:3667
+#: src/protocols/oscar/oscar.c:3674
 msgid "You have been signed off for an unknown reason."
 msgstr "Одјављени сте из непознатих разлога."
 
-#: src/protocols/oscar/oscar.c:3698
+#: src/protocols/oscar/oscar.c:3705
 msgid "Finalizing connection"
 msgstr "Довршава повезивање"
 
-#: src/protocols/oscar/oscar.c:3918 src/protocols/oscar/oscar.c:3924
+#: src/protocols/oscar/oscar.c:3965 src/protocols/oscar/oscar.c:3971
 msgid "Email Address"
 msgstr "Адреса е-поште"
 
-#: src/protocols/oscar/oscar.c:3929
+#: src/protocols/oscar/oscar.c:3976
 msgid "Mobile Phone"
 msgstr "Мобилни телефон"
 
-#: src/protocols/oscar/oscar.c:3932 src/protocols/trepia/trepia.c:272
-#: src/protocols/trepia/trepia.c:413
+#: src/protocols/oscar/oscar.c:3979 src/protocols/trepia/trepia.c:281
+#: src/protocols/trepia/trepia.c:422
 msgid "Female"
 msgstr "Женски"
 
-#: src/protocols/oscar/oscar.c:3932 src/protocols/trepia/trepia.c:271
-#: src/protocols/trepia/trepia.c:413
+#: src/protocols/oscar/oscar.c:3979 src/protocols/trepia/trepia.c:280
+#: src/protocols/trepia/trepia.c:422
 msgid "Male"
 msgstr "Мушки"
 
-#: src/protocols/oscar/oscar.c:3949
+#: src/protocols/oscar/oscar.c:3996
 msgid "Personal Web Page"
 msgstr "Лична веб страница"
 
-#: src/protocols/oscar/oscar.c:3952
+#: src/protocols/oscar/oscar.c:3999
 msgid "Additional Information"
 msgstr "Додатни подаци"
 
-#: src/protocols/oscar/oscar.c:3956
+#: src/protocols/oscar/oscar.c:4003
 msgid "Home Address"
 msgstr "Кућна адреса"
 
-#: src/protocols/oscar/oscar.c:3967 src/protocols/oscar/oscar.c:3983
+#: src/protocols/oscar/oscar.c:4014 src/protocols/oscar/oscar.c:4030
 msgid "Zip Code"
 msgstr "Поштански број"
 
-#: src/protocols/oscar/oscar.c:3972
+#: src/protocols/oscar/oscar.c:4019
 msgid "Work Address"
 msgstr "Адреса на послу"
 
-#: src/protocols/oscar/oscar.c:3988
+#: src/protocols/oscar/oscar.c:4035
 msgid "Work Information"
 msgstr "Подаци о послу"
 
-#: src/protocols/oscar/oscar.c:3990
+#: src/protocols/oscar/oscar.c:4037
 msgid "Company"
 msgstr "Предузеће"
 
-#: src/protocols/oscar/oscar.c:3993
+#: src/protocols/oscar/oscar.c:4040
 msgid "Division"
 msgstr "Одељење"
 
-#: src/protocols/oscar/oscar.c:3996
+#: src/protocols/oscar/oscar.c:4043
 msgid "Position"
 msgstr "Позиција"
 
-#: src/protocols/oscar/oscar.c:3999
+#: src/protocols/oscar/oscar.c:4046
 msgid "Web Page"
 msgstr "Веб страница"
 
-#: src/protocols/oscar/oscar.c:4005
+#: src/protocols/oscar/oscar.c:4052
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "ICQ подаци за %s"
 
-#: src/protocols/oscar/oscar.c:4055
+#: src/protocols/oscar/oscar.c:4102
 msgid "Pop-Up Message"
 msgstr "Искачућа порука"
 
-#: src/protocols/oscar/oscar.c:4076
+#: src/protocols/oscar/oscar.c:4123
 #, c-format
 msgid "The following screennames are associated with %s"
 msgstr "Наредни надимци су у вези са %s"
 
-#: src/protocols/oscar/oscar.c:4080
+#: src/protocols/oscar/oscar.c:4127
 msgid "Search Results"
 msgstr "Резултати претраге"
 
-#: src/protocols/oscar/oscar.c:4097
+#: src/protocols/oscar/oscar.c:4144
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Није пронађено нити једно поклапање за адресу е-поште %s"
 
-#: src/protocols/oscar/oscar.c:4118
+#: src/protocols/oscar/oscar.c:4165
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Требате да примите е-пошту ради потврђивања %s."
 
-#: src/protocols/oscar/oscar.c:4120
+#: src/protocols/oscar/oscar.c:4167
 msgid "Account Confirmation Requested"
 msgstr "Захтева се потврда налога"
 
-#: src/protocols/oscar/oscar.c:4148
+#: src/protocols/oscar/oscar.c:4195
 msgid "Error Changing Account Info"
 msgstr "Грешка при измени података о налогу"
 
-#: src/protocols/oscar/oscar.c:4151
+#: src/protocols/oscar/oscar.c:4198
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6706,7 +6702,7 @@ msgstr ""
 "Грешка 0x%04x: Не могу да испишем корисничко име зато што се тражено име "
 "разликује од оригинала."
 
-#: src/protocols/oscar/oscar.c:4154
+#: src/protocols/oscar/oscar.c:4201
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6715,7 +6711,7 @@ msgstr ""
 "Грешка 0x%04x: Не могу да испишем корисничко име зато што се тражено име "
 "завршава размаком."
 
-#: src/protocols/oscar/oscar.c:4157
+#: src/protocols/oscar/oscar.c:4204
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6724,7 +6720,7 @@ msgstr ""
 "Грешка 0x%04x: Не могу да испишем корисничко име зато што је тражено име "
 "предугачко."
 
-#: src/protocols/oscar/oscar.c:4160
+#: src/protocols/oscar/oscar.c:4207
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -6733,7 +6729,7 @@ msgstr ""
 "Грешка 0x%04x: Не могу променити адресу е-поште зато што је већ послат "
 "захтев за ово корисничко име."
 
-#: src/protocols/oscar/oscar.c:4163
+#: src/protocols/oscar/oscar.c:4210
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -6742,7 +6738,7 @@ msgstr ""
 "Грешка 0x%04x: Не могу променити адресу е-поште зато што је превише "
 "корисничких имена повезано са датом адресом."
 
-#: src/protocols/oscar/oscar.c:4166
+#: src/protocols/oscar/oscar.c:4213
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -6751,12 +6747,12 @@ msgstr ""
 "Грешка 0x%04x: Не могу променити адресу е-поште зато што је унета адреса "
 "неисправна."
 
-#: src/protocols/oscar/oscar.c:4169
+#: src/protocols/oscar/oscar.c:4216
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Грешка 0x%04x: Непозната грешка."
 
-#: src/protocols/oscar/oscar.c:4179
+#: src/protocols/oscar/oscar.c:4226
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -6765,20 +6761,20 @@ msgstr ""
 "Ваше корисничко име тренутно изгледа овако:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4180 src/protocols/oscar/oscar.c:4187
+#: src/protocols/oscar/oscar.c:4227 src/protocols/oscar/oscar.c:4234
 msgid "Account Info"
 msgstr "Подаци о налогу"
 
-#: src/protocols/oscar/oscar.c:4185
+#: src/protocols/oscar/oscar.c:4232
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "Адреса е-поште за %s је %s"
 
-#: src/protocols/oscar/oscar.c:4415
+#: src/protocols/oscar/oscar.c:4464
 msgid "Unable to set AIM profile."
 msgstr "Не могу да поставим АИМ профил."
 
-#: src/protocols/oscar/oscar.c:4416
+#: src/protocols/oscar/oscar.c:4465
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -6789,7 +6785,7 @@ msgstr ""
 "повежете."
 
 # bug: plural-forms
-#: src/protocols/oscar/oscar.c:4443
+#: src/protocols/oscar/oscar.c:4492
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -6807,15 +6803,15 @@ msgstr[2] ""
 "Највећа дозвољена величина профила од %d бајтова је прекорачена. Гаим га је "
 "скратио и поставио."
 
-#: src/protocols/oscar/oscar.c:4448
+#: src/protocols/oscar/oscar.c:4497
 msgid "Profile too long."
 msgstr "Профил је предугачак."
 
-#: src/protocols/oscar/oscar.c:4465
+#: src/protocols/oscar/oscar.c:4514
 msgid "Unable to set AIM away message."
 msgstr "Не могу да поставим поруку за АИМ одсуство."
 
-#: src/protocols/oscar/oscar.c:4466
+#: src/protocols/oscar/oscar.c:4515
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -6826,7 +6822,7 @@ msgstr ""
 "покушајте поново када се прописно повежете."
 
 # bug: plural-forms
-#: src/protocols/oscar/oscar.c:4506
+#: src/protocols/oscar/oscar.c:4555
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -6844,15 +6840,15 @@ msgstr[2] ""
 "Највећа дозвољена дужина поруке за одсуство од %d бајтова је прекорачена. "
 "Гаим је скратио поруку, и започео одсуство."
 
-#: src/protocols/oscar/oscar.c:4511
+#: src/protocols/oscar/oscar.c:4560
 msgid "Away message too long."
 msgstr "Порука за одсуство је предугачка."
 
-#: src/protocols/oscar/oscar.c:4725
+#: src/protocols/oscar/oscar.c:4774
 msgid "Unable To Retrieve Buddy List"
 msgstr "Не могу преузети списак другара"
 
-#: src/protocols/oscar/oscar.c:4726
+#: src/protocols/oscar/oscar.c:4775
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -6861,12 +6857,12 @@ msgstr ""
 "Привремено, Гаим није успео да преузме Ваш списак другара са АИМ сервера. "
 "Списак другара није нестао, и вероватно ће бити доступан за неколико сати."
 
-#: src/protocols/oscar/oscar.c:4818 src/protocols/oscar/oscar.c:4819
-#: src/protocols/oscar/oscar.c:4824
+#: src/protocols/oscar/oscar.c:4867 src/protocols/oscar/oscar.c:4868
+#: src/protocols/oscar/oscar.c:4873
 msgid "Orphans"
 msgstr "Сирочићи"
 
-#: src/protocols/oscar/oscar.c:4990
+#: src/protocols/oscar/oscar.c:5039
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -6875,15 +6871,15 @@ msgstr ""
 "Не могу да додам другара %s зато што имате превише другара у списку. "
 "Уклоните некога и покушајте поново."
 
-#: src/protocols/oscar/oscar.c:4990 src/protocols/oscar/oscar.c:5003
+#: src/protocols/oscar/oscar.c:5039 src/protocols/oscar/oscar.c:5052
 msgid "(no name)"
 msgstr "(без имена)"
 
-#: src/protocols/oscar/oscar.c:4991 src/protocols/oscar/oscar.c:5004
+#: src/protocols/oscar/oscar.c:5040 src/protocols/oscar/oscar.c:5053
 msgid "Unable To Add"
 msgstr "Не могу да додам"
 
-#: src/protocols/oscar/oscar.c:5003
+#: src/protocols/oscar/oscar.c:5052
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -6894,7 +6890,7 @@ msgstr ""
 "већ имате највише дозвољених другара у Вашем списку."
 
 # Is it "them"? Or "him/her"?
-#: src/protocols/oscar/oscar.c:5038
+#: src/protocols/oscar/oscar.c:5087
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -6903,11 +6899,11 @@ msgstr ""
 "Корисник %s Вам дозвољава да га додате у списак другара. Да ли желите да га "
 "додате?"
 
-#: src/protocols/oscar/oscar.c:5044
+#: src/protocols/oscar/oscar.c:5093
 msgid "Authorization Given"
 msgstr "Овлашћење је дато"
 
-#: src/protocols/oscar/oscar.c:5077
+#: src/protocols/oscar/oscar.c:5126
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -6917,17 +6913,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:5119
+#: src/protocols/oscar/oscar.c:5168
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "Корисник %s је одобрио Ваш захтев да га додате у списак другара."
 
-#: src/protocols/oscar/oscar.c:5120
+#: src/protocols/oscar/oscar.c:5169
 msgid "Authorization Granted"
 msgstr "Захтев одобрен"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:5123
+#: src/protocols/oscar/oscar.c:5172
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -6938,56 +6934,56 @@ msgstr ""
 "разлога:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5124
+#: src/protocols/oscar/oscar.c:5173
 msgid "Authorization Denied"
 msgstr "Захтев одбијен"
 
-#: src/protocols/oscar/oscar.c:5161 src/protocols/toc/toc.c:1264
+#: src/protocols/oscar/oscar.c:5210 src/protocols/toc/toc.c:1264
 msgid "Exchange:"
 msgstr "Размена:"
 
-#: src/protocols/oscar/oscar.c:5398
+#: src/protocols/oscar/oscar.c:5447
 msgid "<b>Status:</b> "
 msgstr "<b>Стање:</b> "
 
-#: src/protocols/oscar/oscar.c:5407
+#: src/protocols/oscar/oscar.c:5456
 msgid "<b>Logged In:</b> "
 msgstr "<b>Пријављен:</b> "
 
-#: src/protocols/oscar/oscar.c:5419
+#: src/protocols/oscar/oscar.c:5468
 msgid "<b>IP Address:</b> "
 msgstr "<b>ИП адреса:</b> "
 
-#: src/protocols/oscar/oscar.c:5427
+#: src/protocols/oscar/oscar.c:5476
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Могућности:</b> "
 
-#: src/protocols/oscar/oscar.c:5434
+#: src/protocols/oscar/oscar.c:5483
 msgid "<b>Available:</b> "
 msgstr "<b>Доступно:</b> "
 
-#: src/protocols/oscar/oscar.c:5452
+#: src/protocols/oscar/oscar.c:5501
 msgid "<b>Away Message:</b> "
 msgstr "<b>Порука за одсуство:</b>"
 
-#: src/protocols/oscar/oscar.c:5461
+#: src/protocols/oscar/oscar.c:5510
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Стање:</b> Неовлашћен"
 
-#: src/protocols/oscar/oscar.c:5495 src/protocols/yahoo/yahoo.c:2030
+#: src/protocols/oscar/oscar.c:5544 src/protocols/yahoo/yahoo.c:2030
 msgid "Offline"
 msgstr "Неповезан"
 
-#: src/protocols/oscar/oscar.c:5943
+#: src/protocols/oscar/oscar.c:5992
 msgid "Unable to open Direct IM"
 msgstr "Не могу да пошаљем непосредну брзу поруку"
 
-#: src/protocols/oscar/oscar.c:5956
+#: src/protocols/oscar/oscar.c:6005
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Изабрали сте да успоставите везу за непосредне брзе поруке са %s."
 
-#: src/protocols/oscar/oscar.c:5959
+#: src/protocols/oscar/oscar.c:6008
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -6995,53 +6991,53 @@ msgstr ""
 "Како ово разоткрива Вашу ИП адресу, може се сматрати нарушавањем "
 "приватности. Желите ли да наставите?"
 
-#: src/protocols/oscar/oscar.c:6134
+#: src/protocols/oscar/oscar.c:6183
 msgid "Buddy Comment:"
 msgstr "Примедба за другара:"
 
-#: src/protocols/oscar/oscar.c:6150
+#: src/protocols/oscar/oscar.c:6199
 msgid "Edit Buddy Comment"
 msgstr "Уреди примедбу за другара"
 
-#: src/protocols/oscar/oscar.c:6158
+#: src/protocols/oscar/oscar.c:6207
 msgid "Get Status Msg"
 msgstr "Прибави поруку о стању"
 
-#: src/protocols/oscar/oscar.c:6173
+#: src/protocols/oscar/oscar.c:6222
 msgid "Direct IM"
 msgstr "Непосредна порука"
 
-#: src/protocols/oscar/oscar.c:6202
+#: src/protocols/oscar/oscar.c:6251
 msgid "Re-request Authorization"
 msgstr "Понови захтев за овлашћење"
 
-#: src/protocols/oscar/oscar.c:6223
+#: src/protocols/oscar/oscar.c:6272
 msgid "The new formatting is invalid."
 msgstr "Нови запис је неисправан."
 
-#: src/protocols/oscar/oscar.c:6224
+#: src/protocols/oscar/oscar.c:6273
 msgid "Screenname formatting can change only capitalization and whitespace."
 msgstr ""
 "Запис корисничког имена се може променити само у величини слова и броју "
 "размака."
 
-#: src/protocols/oscar/oscar.c:6230
+#: src/protocols/oscar/oscar.c:6279
 msgid "New screenname formatting:"
 msgstr "Нови запис корисничког имена:"
 
-#: src/protocols/oscar/oscar.c:6279
+#: src/protocols/oscar/oscar.c:6328
 msgid "Change Address To:"
 msgstr "Промена адресе у:"
 
-#: src/protocols/oscar/oscar.c:6323
+#: src/protocols/oscar/oscar.c:6372
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>не чекате на овлашћење</i>"
 
-#: src/protocols/oscar/oscar.c:6326
+#: src/protocols/oscar/oscar.c:6375
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Очекујете овлашћење од следећих другара"
 
-#: src/protocols/oscar/oscar.c:6327
+#: src/protocols/oscar/oscar.c:6376
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -7049,63 +7045,63 @@ msgstr ""
 "Можете поновити захтев за овлашћење од ових другара десним кликом на њих и "
 "избором „Понови захтев за овлашћење“."
 
-#: src/protocols/oscar/oscar.c:6341
+#: src/protocols/oscar/oscar.c:6390
 msgid "Find Buddy by E-mail"
 msgstr "Пронађи другара помоћу адресе е-поште"
 
-#: src/protocols/oscar/oscar.c:6342
+#: src/protocols/oscar/oscar.c:6391
 msgid "Search for a buddy by e-mail address"
 msgstr "Пронађи другара помоћу адресе е-поште"
 
-#: src/protocols/oscar/oscar.c:6343
+#: src/protocols/oscar/oscar.c:6392
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Укуцајте е-поштанску адресу другара кога тражите."
 
-#: src/protocols/oscar/oscar.c:6346
+#: src/protocols/oscar/oscar.c:6395
 msgid "Search"
 msgstr "Тражи"
 
-#: src/protocols/oscar/oscar.c:6359
+#: src/protocols/oscar/oscar.c:6409
 msgid "Available Message:"
 msgstr "Порука за доступност:"
 
-#: src/protocols/oscar/oscar.c:6360
+#: src/protocols/oscar/oscar.c:6410
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Обављам посао и надам се ометању — шибни ми поруку!"
 
-#: src/protocols/oscar/oscar.c:6436
+#: src/protocols/oscar/oscar.c:6488
 msgid "Set Available Message"
 msgstr "Постави поруку за доступност"
 
-#: src/protocols/oscar/oscar.c:6449
+#: src/protocols/oscar/oscar.c:6502
 msgid "Change Password (URL)"
 msgstr "Измена лозинке (Интернет адреса)"
 
-#: src/protocols/oscar/oscar.c:6457
+#: src/protocols/oscar/oscar.c:6510
 msgid "Configure IM Forwarding (URL)"
 msgstr "Подеси прослеђивање брзих порука (адреса)"
 
-#: src/protocols/oscar/oscar.c:6468
+#: src/protocols/oscar/oscar.c:6521
 msgid "Format Screenname"
 msgstr "Запис корисничког имена"
 
-#: src/protocols/oscar/oscar.c:6474
+#: src/protocols/oscar/oscar.c:6527
 msgid "Confirm Account"
 msgstr "Потврдите налог"
 
-#: src/protocols/oscar/oscar.c:6480
+#: src/protocols/oscar/oscar.c:6533
 msgid "Display Current Registered Address"
 msgstr "Прикажи тренутно регистровану адресу"
 
-#: src/protocols/oscar/oscar.c:6486
+#: src/protocols/oscar/oscar.c:6539
 msgid "Change Current Registered Address"
 msgstr "Измени тренутно регистровану адресу"
 
-#: src/protocols/oscar/oscar.c:6495
+#: src/protocols/oscar/oscar.c:6548
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Прикажи другаре за које се чека овлашћење"
 
-#: src/protocols/oscar/oscar.c:6503
+#: src/protocols/oscar/oscar.c:6556
 msgid "Search for Buddy by Email"
 msgstr "Пронађи другара према адреси е-поште"
 
@@ -7119,15 +7115,15 @@ msgstr "Пронађи другара према адреси е-поште"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6624 src/protocols/oscar/oscar.c:6626
+#: src/protocols/oscar/oscar.c:6677 src/protocols/oscar/oscar.c:6679
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Додатак за AIM/ICQ протоколе"
 
-#: src/protocols/oscar/oscar.c:6643
+#: src/protocols/oscar/oscar.c:6696
 msgid "Auth host"
 msgstr "Домаћин за идентификацију"
 
-#: src/protocols/oscar/oscar.c:6648
+#: src/protocols/oscar/oscar.c:6701
 msgid "Auth port"
 msgstr "Порт"
 
@@ -7349,75 +7345,75 @@ msgid "TOC port"
 msgstr "ТОЦ порт"
 
 #. Basic Profile group.
-#: src/protocols/trepia/trepia.c:254
+#: src/protocols/trepia/trepia.c:263
 msgid "Basic Profile"
 msgstr "Основни профил"
 
 #. E-Mail Address
-#: src/protocols/trepia/trepia.c:285
+#: src/protocols/trepia/trepia.c:294
 msgid "E-Mail Address"
 msgstr "Адреса е-поште"
 
-#: src/protocols/trepia/trepia.c:291
+#: src/protocols/trepia/trepia.c:300
 msgid "Profile Information"
 msgstr "Подаци о профилу"
 
 #. Instant Messagers
-#: src/protocols/trepia/trepia.c:297
+#: src/protocols/trepia/trepia.c:306
 msgid "Instant Messagers"
 msgstr "Брзи пошиљаоци"
 
 #. AIM
-#: src/protocols/trepia/trepia.c:301
+#: src/protocols/trepia/trepia.c:310
 msgid "AIM"
 msgstr "АИМ"
 
 #. ICQ
-#: src/protocols/trepia/trepia.c:305
+#: src/protocols/trepia/trepia.c:314
 msgid "ICQ UIN"
 msgstr "ICQ број"
 
 #. MSN
-#: src/protocols/trepia/trepia.c:309
+#: src/protocols/trepia/trepia.c:318
 msgid "MSN"
 msgstr "МСН"
 
 #. Yahoo
-#: src/protocols/trepia/trepia.c:313
+#: src/protocols/trepia/trepia.c:322
 msgid "Yahoo"
 msgstr "Јаху"
 
 #. I'm From
-#: src/protocols/trepia/trepia.c:318
+#: src/protocols/trepia/trepia.c:327
 msgid "I'm From"
 msgstr "Ја сам из"
 
 #. Call the dialog.
-#: src/protocols/trepia/trepia.c:335
+#: src/protocols/trepia/trepia.c:344
 msgid "Set your Trepia profile data."
 msgstr "Постави податке у Трепиа профилу."
 
-#: src/protocols/trepia/trepia.c:459
+#: src/protocols/trepia/trepia.c:468
 msgid "Profile"
 msgstr "Профил"
 
-#: src/protocols/trepia/trepia.c:481
+#: src/protocols/trepia/trepia.c:490
 msgid "Set Profile"
 msgstr "Постави профил"
 
-#: src/protocols/trepia/trepia.c:517
+#: src/protocols/trepia/trepia.c:526
 msgid "Visit Homepage"
 msgstr "Посети личну страницу"
 
-#: src/protocols/trepia/trepia.c:863 src/protocols/trepia/trepia.c:866
+#: src/protocols/trepia/trepia.c:872 src/protocols/trepia/trepia.c:875
 msgid "Local Users"
 msgstr "Локални корисници"
 
-#: src/protocols/trepia/trepia.c:962
+#: src/protocols/trepia/trepia.c:972
 msgid "Read error"
 msgstr "Грешка при читању"
 
-#: src/protocols/trepia/trepia.c:1063
+#: src/protocols/trepia/trepia.c:1073
 msgid "Logging in"
 msgstr "Пријава"
 
@@ -7431,7 +7427,7 @@ msgstr "Пријава"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/trepia/trepia.c:1311 src/protocols/trepia/trepia.c:1313
+#: src/protocols/trepia/trepia.c:1321 src/protocols/trepia/trepia.c:1323
 msgid "Trepia Protocol Plugin"
 msgstr "Додатак за Трепиа протокол"
 
@@ -7755,7 +7751,7 @@ msgstr "Прихвати"
 msgid "Please enter your password"
 msgstr "Унесите Вашу лозинку"
 
-#: src/server.c:949
+#: src/server.c:948
 #, c-format
 msgid "(%d message)"
 msgid_plural "(%d messages)"
@@ -7764,21 +7760,21 @@ msgstr[1] "(%d поруке)"
 msgstr[2] "(%d порука)"
 
 # bug: plural-forms
-#: src/server.c:962
+#: src/server.c:961
 msgid "(1 message)"
 msgstr "(1 порука)"
 
-#: src/server.c:1145 src/server.c:1155
+#: src/server.c:1142 src/server.c:1152
 #, c-format
 msgid "%s logged in."
-msgstr "%s је пријављен."
+msgstr "%s се пријави."
 
-#: src/server.c:1172 src/server.c:1180
+#: src/server.c:1169 src/server.c:1177
 #, c-format
 msgid "%s logged out."
-msgstr "%s је одјављен."
+msgstr "%s се одјави."
 
-#: src/server.c:1227
+#: src/server.c:1224
 #, c-format
 msgid ""
 "%s has just been warned by %s.\n"
@@ -7787,11 +7783,11 @@ msgstr ""
 "%s је управо упозорен од стране %s.\n"
 "Ваш нови ниво обазривости је %d%%"
 
-#: src/server.c:1230
+#: src/server.c:1227
 msgid "an anonymous person"
 msgstr "анонимна особа"
 
-#: src/server.c:1333
+#: src/server.c:1330
 #, c-format
 msgid ""
 "User '%s' invites %s to buddy chat room: '%s'\n"
@@ -7800,12 +7796,12 @@ msgstr ""
 "Корисник „%s“ позива %s у причаоницу: „%s“\n"
 "%s"
 
-#: src/server.c:1337
+#: src/server.c:1334
 #, c-format
 msgid "User '%s' invites %s to buddy chat room: '%s'\n"
 msgstr "Корисник „%s“ позива %s у причаоницу: „%s“\n"
 
-#: src/server.c:1343
+#: src/server.c:1340
 msgid "Accept chat invitation?"
 msgstr "Прихвати позив на разговор?"
 
@@ -7824,36 +7820,36 @@ msgstr "_Измени"
 msgid "_Open Mail"
 msgstr "_Отвори пошту"
 
-#: src/util.c:1587
+#: src/util.c:1590
 msgid "Calculating..."
 msgstr "Рачунам..."
 
-#: src/util.c:1590
+#: src/util.c:1593
 msgid "Unknown."
 msgstr "Непознато."
 
-#: src/util.c:1621 src/util.c:1626 src/util.c:1631 src/util.c:1634
+#: src/util.c:1624 src/util.c:1629 src/util.c:1634 src/util.c:1637
 msgid "day"
 msgid_plural "days"
 msgstr[0] "дан"
 msgstr[1] "дана"
 msgstr[2] "дана"
 
-#: src/util.c:1622 src/util.c:1626 src/util.c:1640 src/util.c:1642
+#: src/util.c:1625 src/util.c:1629 src/util.c:1643 src/util.c:1645
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "час"
 msgstr[1] "часа"
 msgstr[2] "часова"
 
-#: src/util.c:1622 src/util.c:1631 src/util.c:1640 src/util.c:1645
+#: src/util.c:1625 src/util.c:1634 src/util.c:1643 src/util.c:1648
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "минут"
 msgstr[1] "минута"
 msgstr[2] "минута"
 
-#: src/util.c:1977
+#: src/util.c:1980
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Грешка при отварању везе.\n"
 
@@ -7864,6 +7860,93 @@ msgstr "Обавештење"
 #: src/win32/win32dep.c:388
 msgid "Moving Gaim user settings directory to:"
 msgstr "Премести директоријум подешавања Гаим корисника у:"
+
+#~ msgid "Log Conversation"
+#~ msgstr "Дневник разговора"
+
+#~ msgid "%s has been disconnected"
+#~ msgstr "%s се одјавио(ла)"
+
+#~ msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
+#~ msgstr "<HR><BR><H3 Align=Center> —— Нови разговор @ %s ——</H3><BR>\n"
+
+#~ msgid "---- New Conversation @ %s ----\n"
+#~ msgstr "—— Нови разговори @  %s ——\n"
+
+#~ msgid "Strip _HTML from logs"
+#~ msgstr "_Избаци HTML из дневника"
+
+#~ msgid "Error in specifying buddy conversation."
+#~ msgstr "Грешка при навођењу другарског разговора."
+
+#~ msgid "Unable to find conversation log"
+#~ msgstr "Не могу пронаћи дневник разговора"
+
+#~ msgid "Unable to make directory %s for logging"
+#~ msgstr "Не могу направити директоријум %s за дневнике."
+
+#~ msgid "IM Sessions with %s\n"
+#~ msgstr "Сесије брзих порука са %s\n"
+
+#~ msgid "IM Sessions with %s"
+#~ msgstr "Сесије брзих порука са %s"
+
+#~ msgid "+++ %s (%s) signed on @ %s"
+#~ msgstr "+++ %s (%s) се пријавио(ла) @ %s"
+
+#~ msgid "+++ %s (%s) signed off @ %s"
+#~ msgstr "+++ %s (%s) се одјавио(ла) @ %s"
+
+#~ msgid "+++ %s (%s) changed away state @ %s"
+#~ msgstr "+++ %s (%s) је променио(ла) стање одсутности @ %s"
+
+#~ msgid "+++ %s (%s) came back @ %s"
+#~ msgstr "+++ %s (%s) се вратио(ла) @ %s"
+
+#~ msgid "+++ %s (%s) became idle @ %s"
+#~ msgstr "+++ %s (%s) је неактиван(на) @ %s"
+
+#~ msgid "+++ %s (%s) returned from idle @ %s"
+#~ msgstr "+++ %s (%s) се активирао(ла) @ %s"
+
+#~ msgid "+++ Program exit @ %s"
+#~ msgstr "+++ Програм затворен @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) signed on @ %s"
+#~ msgstr "%s (%s) је известио да се %s (%s) пријавио @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) signed off @ %s"
+#~ msgstr "%s (%s) је известио да се %s (%s) одјавио @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) went away @ %s"
+#~ msgstr "%s (%s) је известио да је %s (%s) отишао на одсуство @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) came back @ %s"
+#~ msgstr "%s (%s) је известио да се %s (%s) вратио @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) became idle @ %s"
+#~ msgstr "%s (%s) је известио да је %s (%s) неактиван @ %s"
+
+#~ msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
+#~ msgstr "%s (%s) је известио да се %s (%s) активирао @ %s"
+
+#~ msgid "%s (%s) reported that %s signed on @ %s"
+#~ msgstr "%s (%s) је известио да се %s пријавио @ %s"
+
+#~ msgid "%s (%s) reported that %s signed off @ %s"
+#~ msgstr "%s (%s) је известио да се %s одјавио @ %s"
+
+#~ msgid "%s (%s) reported that %s went away @ %s"
+#~ msgstr "%s (%s) је известио да је %s отишао на одсуство @ %s"
+
+#~ msgid "%s (%s) reported that %s came back @ %s"
+#~ msgstr "%s (%s) је известио да се %s вратио @ %s"
+
+#~ msgid "%s (%s) reported that %s became idle @ %s"
+#~ msgstr "%s (%s) је известио да је %s неактиван @ %s"
+
+#~ msgid "%s (%s) reported that %s returned from idle @ %s"
+#~ msgstr "%s (%s) је известио да се %s активирао @ %s"
 
 #~ msgid "Portuguese-Portugal"
 #~ msgstr "Португалски у Португалији"
