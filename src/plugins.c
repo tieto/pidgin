@@ -780,6 +780,6 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 	tmp = event_name(event);
 	sprintf(debug_buff, "%s: %s\n", tmp, buf);
 	debug_print(debug_buff);
-	perl_event(event, buf);
+	perl_event(tmp, buf);
 #endif
 }

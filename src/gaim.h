@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 810 $"
+#define REVISION "gaim:$Revision: 816 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -738,7 +738,7 @@ extern void perl_init();
 extern void perl_autoload();
 extern int perl_load_file(char *);
 extern void perl_end();
-extern int perl_event(enum gaim_event, char *);
+extern int perl_event(char *, char *);
 extern void load_perl_script(GtkWidget *, gpointer);
 extern void unload_perl_scripts(GtkWidget *, gpointer);
 extern void list_perl_scripts(GtkWidget *, gpointer);

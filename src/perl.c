@@ -485,14 +485,14 @@ XS (XS_AIM_print_to_chat)
 	serv_chat_send(c->id, what);
 }
 
-int perl_event(enum gaim_event event, char *args)
+int perl_event(char *event, char *args)
 {
 	GList *handler;
 	struct _perl_event_handlers *data;
 
 	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
 		data = handler->data;
-		if (!strcmp(event_name(event), data->event_type))
+		if (!strcmp(event, data->event_type))
 			execute_perl(data->handler_name, args);
 	}
 
@@ -510,6 +510,8 @@ XS (XS_AIM_add_event_handler)
 	handler->event_type = g_strdup(SvPV(ST(0), junk));
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
 	perl_event_handlers = g_list_append(perl_event_handlers, handler);
+	sprintf(debug_buff, "registered perl event handler for %s\n", handler->event_type);
+	debug_print(debug_buff);
 	XSRETURN_EMPTY;
 }
 
@@ -532,7 +534,7 @@ XS (XS_AIM_add_timeout_handler)
 	items = 0;
 
 	handler = g_new0(struct _perl_timeout_handlers, 1);
-	timeout = atol(SvPV(ST(0), junk));
+	timeout = 1000 * atol(SvPV(ST(0), junk));
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);

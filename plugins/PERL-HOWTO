@@ -16,6 +16,9 @@ when something takes quite a bit of trickery not offered by perl. But for
 the most part things should be written in Perl. It's more stable than
 plugins.
 
+There's a really quick simple perl script in this directory, gaim.pl, that
+should show most of the functions. Most things should be self-explanatory.
+
 Everything available in normal perl scripts should be available in gaim's
 perl interface, so I'm not going to bother describing that. The important
 things are the functions provided by gaim's internal AIM module, which is
@@ -107,8 +110,9 @@ AIM::add_event_handler(event, function)
 	short-circut gaim (that is, your script will be called in order it was added,
 	despite what other scripts do, and afterwards, execution will continue as
 	normal). Names of buddies and chat rooms will be in quotes, and all other
-	values (like text messages) will not be.
+	values (like text messages) will not be. (Watch the debug window to get a
+	better feel for this, or better yet, look at the bottom of plugins.c.)
 
 AIM::add_timeout_handler(integer, function)
 	This calls function after integer number of seconds. It only calls function
-	once, so if you want to keep calling function, keep reading the handler.
+	once, so if you want to keep calling function, keep readding the handler.
