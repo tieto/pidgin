@@ -139,8 +139,6 @@ gaim_plugin_pref_new_with_name_and_label(char *name, char *label) {
 
 void
 gaim_plugin_pref_destroy(GaimPluginPref *pref) {
-	GList *l, *ll;
-
 	g_return_if_fail(pref);
 
 	if(pref->name) {
