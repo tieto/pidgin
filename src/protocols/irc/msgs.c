@@ -780,7 +780,8 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
-                                      (args[1] && *args[1]) ? ": " : "", args[1]);
+                                      (args[1] && *args[1]) ? ": " : "",
+				      (args[1] && *args[1]) ? args[1] : "");
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
