@@ -2431,7 +2431,7 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 		blist_pos.x = x;
 		blist_pos.y = y;
 	} else {		/* Is a size event */
-		if (blist_pos.xoff != x || blist_pos.yoff != y || blist_pos.width != width)
+		if (blist_pos.xoff != x || blist_pos.yoff != y || blist_pos.width != width || blist_pos.height != height)
 			save = 1;
 
 		blist_pos.width = width;
