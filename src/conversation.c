@@ -299,10 +299,18 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	        gtk_widget_destroy(c->window);
 	c->window = NULL;
 
-	if (c->is_chat)
+	if (c->is_chat) {
 		serv_chat_leave(c->id);
-	else
+	} else {
+		if (c->is_direct) {
+			if (!USE_OSCAR) {
+				/* FIXME */
+			} else {
+				aim_conn_kill(c->conn);
+			}
+		}
 	        delete_conversation(c);
+	}
 
         return TRUE;
 }

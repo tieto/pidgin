@@ -157,17 +157,28 @@ void serv_finish_login()
 
 void serv_send_im(char *name, char *message, int away)
 {
-	if (!USE_OSCAR) {
-		char buf[MSG_LEN - 7];
+	struct conversation *cnv = find_conversation(name);
+	if (!cnv || !cnv->is_direct) {
+		if (!USE_OSCAR) {
+			char buf[MSG_LEN - 7];
 
-	        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-	                   message, ((away) ? " auto" : ""));
-		sflap_send(buf, strlen(buf), TYPE_DATA);
+		        g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
+		                   message, ((away) ? " auto" : ""));
+			sflap_send(buf, strlen(buf), TYPE_DATA);
+		} else {
+			if (away)
+				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
+			else
+				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_ACK, message);
+		}
 	} else {
-		if (away)
-			aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
-		else
-			aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_ACK, message);
+		if (!USE_OSCAR) {
+			/* FIXME */
+		} else {
+			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
+			debug_print(debug_buff);
+			aim_send_im_direct(gaim_sess, cnv->conn, message);
+		}
 	}
         if (!away)
                 serv_touch_idle();
@@ -176,20 +187,20 @@ void serv_send_im(char *name, char *message, int away)
 void serv_get_info(char *name)
 {
 	if (!USE_OSCAR) {
-        char buf[MSG_LEN];
-        g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
-        sflap_send(buf, -1, TYPE_DATA);
+        	char buf[MSG_LEN];
+	        g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
+	        sflap_send(buf, -1, TYPE_DATA);
 	} else {
-	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_GENERALINFO);
+		aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_GENERALINFO);
 	}
 }
 
 void serv_get_away_msg(char *name)
 {
 	if (!USE_OSCAR) {
-	/* HAHA! TOC doesn't have this yet */
+		/* HAHA! TOC doesn't have this yet */
 	} else {
-	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
+		aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
 	}
 }
 
@@ -1089,4 +1100,23 @@ void serv_rvous_cancel(char *name, char *cookie, char *uid)
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(buf, strlen(buf), TYPE_DATA);
+}
+
+void serv_do_imimage(GtkWidget *w, char *name) {
+	if (!USE_OSCAR) {
+	} else {
+		oscar_do_directim(name);
+	}
+}
+
+void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *conn)
+{
+	if (!USE_OSCAR) {
+		/* FIXME */
+	} else {
+		struct conversation *cnv = find_conversation(name);
+		if (!cnv) cnv = new_conversation(name);
+		cnv->is_direct = 1;
+		cnv->conn = conn;
+	}
 }

@@ -526,7 +526,7 @@ u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 
-struct aim_conn_t * aim_directim_intiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
+struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
 int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
 struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
 

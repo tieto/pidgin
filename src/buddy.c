@@ -476,6 +476,14 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+
+#if 0
+		button = gtk_menu_item_new_with_label(_("Direct IM"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(serv_do_imimage), b->name);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+#endif
 	}
 
 		button = gtk_menu_item_new_with_label(_("Toggle Logging"));

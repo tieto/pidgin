@@ -43,6 +43,7 @@
 
 static int inpa = -1;
 static int paspa = -1;
+static int cnpa = -1;
 struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
@@ -69,7 +70,6 @@ struct chat_connection *find_oscar_chat(char *name) {
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
-static int gaim_chat_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_handle_redirect  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_oncoming   (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_offgoing   (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -84,6 +84,9 @@ static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_msgack     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_struct *, ...);
+
+static int gaim_directim_incoming  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_typing    (struct aim_session_t *, struct command_rx_struct *, ...);
 
 extern void auth_failed();
 
@@ -326,6 +329,7 @@ int gaim_auth_server_ready(struct aim_session_t *sess,
 
 int gaim_server_ready(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
+	static int id = 1;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_bos_reqrate(sess, command->conn);
@@ -343,26 +347,25 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chatnav_clientready(sess, command->conn);
 		aim_chatnav_reqrights(sess, command->conn);
 		break;
+	case AIM_CONN_TYPE_CHAT:
+		debug_print("chat: got server ready\n");
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+		aim_bos_reqrate(sess, command->conn);
+		aim_bos_ackrateresp(sess, command->conn);
+		aim_chat_clientready(sess, command->conn);
+		serv_got_joined_chat(id++, aim_chat_getname(command->conn));
+		break;
+	case AIM_CONN_TYPE_RENDEZVOUS:
+		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
+		break;
 	default: /* huh? */
 		sprintf(debug_buff, "server ready: got unexpected connection type %04x\n", command->conn->type);
 		debug_print(debug_buff);
 		break;
 	}
-	return 1;
-}
-
-int gaim_chat_server_ready(struct aim_session_t *sess,
-			   struct command_rx_struct *command, ...) {
-	static int id = 1;
-	debug_print("chat: got server ready\n");
-	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
-	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
-	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
-	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
-	aim_bos_reqrate(sess, command->conn);
-	aim_bos_ackrateresp(sess, command->conn);
-	aim_chat_clientready(sess, command->conn);
-	serv_got_joined_chat(id++, aim_chat_getname(command->conn));
 	return 1;
 }
 
@@ -440,6 +443,8 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
+		cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, tstconn);
 		}
 		debug_print("chatnav: connected\n");
 		break;
@@ -467,7 +472,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		oscar_chats = g_list_append(oscar_chats, ccon);
 		
 		aim_chat_attachname(tstconn, roomname);
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_chat_server_ready, 0);
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
 		}
 		break;
@@ -579,6 +584,32 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		} else if (rendtype & AIM_CAPS_BUDDYICON) {
 			/* bah */
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
+			/* DirectIM stuff */
+			struct aim_directim_priv *priv;
+			struct aim_conn_t *newconn;
+
+			userinfo = va_arg(ap, struct aim_userinfo_s *);
+			priv = va_arg(ap, struct aim_directim_priv *);
+			va_end(ap);
+
+			sprintf(debug_buff, "DirectIM request from %s (%s)\n", userinfo->sn, priv->ip);
+			debug_print(debug_buff);
+
+			if (!(newconn = aim_directim_connect(sess, command->conn, priv))) {
+				debug_print("imimage: could not connect\n");
+				return 1;
+			}
+
+			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
+			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
+
+			gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, newconn);
+
+			sprintf(debug_buff, "DirectIM: connected to %s\n", userinfo->sn);
+			debug_print(debug_buff);
+
+			serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -715,6 +746,8 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				i++;
 			}
 			}
+			gdk_input_remove(cnpa);
+			cnpa = -1;
 			aim_conn_kill(sess, &command->conn);
 			break;
 		default:
@@ -852,3 +885,42 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 
 	return 1;
 };
+
+int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *sn = NULL, *msg = NULL;
+	struct aim_conn_t *conn;
+
+	va_start(ap, command);
+	conn = va_arg(ap, struct aim_conn_t *);
+	sn = va_arg(ap, char *);
+	msg = va_arg(ap, char *);
+	va_end(ap);
+
+	sprintf(debug_buff, "Got DirectIM message from %s\n", sn);
+	debug_print(debug_buff);
+
+	serv_got_im(sn, msg, 0);
+
+	return 1;
+}
+
+int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *sn;
+
+	ap = va_start(ap, command);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	/* I had to leave this. It's just too funny. It reminds me of my sister. */
+	sprintf(debug_buff, "ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
+	debug_print(debug_buff);
+
+	return 1;
+}
+
+void oscar_do_directim(char *name) {
+	struct aim_conn_t *newconn = aim_directim_initiate(gaim_sess, gaim_conn, NULL, name);
+	gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
+}

@@ -273,6 +273,10 @@ struct conversation {
 
 	/* something to distinguish */
 	gboolean is_chat;
+
+	/* DirectIM stuff */
+	gboolean is_direct;
+	struct aim_conn_t *conn; /* needed for Oscar */
 };
 
 struct file_header {
@@ -375,7 +379,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 482 $"
+#define REVISION "gaim:$Revision: 521 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -574,6 +578,7 @@ extern void serv_chat_invite(int, char *, char *);
 extern void serv_chat_leave(int);
 extern void serv_chat_whisper(int, char *, char *);
 extern void serv_chat_send(int, char *);
+extern void serv_do_imimage(GtkWidget *, char *);
 
 /* output from serv */
 extern void serv_got_update(char *, int, int, time_t, time_t, int);
@@ -623,6 +628,7 @@ extern int connect_address(unsigned int, unsigned short);
 extern int oscar_login(char *, char *);
 extern void oscar_close();
 extern struct chat_connection *find_oscar_chat(char *name);
+extern void oscar_do_directim(char *);
 
 /* Functions in toc.c */
 extern void toc_close();
