@@ -3579,10 +3579,11 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
+	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
+	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
-	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
-
+	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
+	
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"),

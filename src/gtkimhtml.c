@@ -1614,6 +1614,7 @@ void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
 	GtkTextIter start, end;
+	GList *del = imhtml->format_spans;
 	
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
@@ -1628,6 +1629,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		g_free(span);
 		imhtml->format_spans = imhtml->format_spans->next;
 	}
+	g_list_free(del);
 	imhtml->edit.bold = NULL;
 	imhtml->edit.italic = NULL;
 	imhtml->edit.underline = NULL;
