@@ -216,26 +216,26 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	prpl = find_prpl(((struct buddy*)node)->account->protocol);
 
 	if(prpl && prpl->get_info) {
-		menuitem = gtk_image_menu_item_new_with_mnemonic("_Get Info");
+		menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Get Info"));
 		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_info_cb), node);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	}
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic("_IM");
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_IM"));
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_im_cb), node);
 	image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic("_Alias");
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("_Alias"));
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic("Add Buddy _Pounce");
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("Add Buddy _Pounce"));
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_bp_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic("View _Log");
+	menuitem = gtk_image_menu_item_new_with_mnemonic(_("View _Log"));
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_showlog_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
