@@ -60,6 +60,8 @@ src/gtkprivacy.c
 src/gtkrequest.c
 src/gtkroomlist.c
 src/gtksound.c
+src/gtkstatus.c
+src/gtkstatusselector.c
 src/gtkstock.c
 src/gtkutils.c
 src/log.c
@@ -84,6 +86,7 @@ src/protocols/jabber/si.c
 src/protocols/jabber/xdata.c
 src/protocols/msn/cmdproc.c
 src/protocols/msn/command.c
+src/protocols/msn/dialog.c
 src/protocols/msn/directconn.c
 src/protocols/msn/error.c
 src/protocols/msn/group.c
