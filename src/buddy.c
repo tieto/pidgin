@@ -283,6 +283,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 			g_free(bs->name);
 			g_free(bs);
 		}
+		update_num_group(gs);
 	} else {
 		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
 		update_idle_time(bs);
@@ -819,6 +820,7 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 		if (bs) {
 			if (g_slist_find(bs->connlist, gc)) {
 				bs->connlist = g_slist_remove(bs->connlist, gc);
+				update_num_group(gs);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -834,14 +836,10 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
 						g_free(gs);
-					} else
-						update_num_group(gs);
-				} else
-					update_num_group(gs);
-			} else
-				update_num_group(gs);
-		} else
-			update_num_group(gs);
+					}
+				}
+			}
+		}
 	}
 
 	c = find_conversation(rem_b->name);
@@ -963,6 +961,7 @@ void redo_buddy_list()
 							bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
 					}
 					bs->connlist = g_slist_append(bs->connlist, gc);
+					update_num_group(gs);
 				}
 			}
 		}
@@ -2076,8 +2075,10 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gs = new_group_show(g->name);
 		if ((bs = find_buddy_show(gs, b->name)) == NULL)
 			bs = new_buddy_show(gs, b, (char **)login_icon_xpm);
-		if (!g_slist_find(bs->connlist, gc))
+		if (!g_slist_find(bs->connlist, gc)) {
 			bs->connlist = g_slist_append(bs->connlist, gc);
+			update_num_group(gs);
+		}
 		if (b->present == 1) {
 			if (bs->sound != 2)
 				play_sound(BUDDY_ARRIVE);
@@ -2096,7 +2097,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			if (bs->log_timer > 0)
 				gtk_timeout_remove(bs->log_timer);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
-			update_num_group(gs);
 			if ((bs->sound != 2) && (im_options & OPT_IM_LOGON)) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
@@ -2138,10 +2138,10 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			play_sound(BUDDY_LEAVE);
 
 		bs->connlist = g_slist_remove(bs->connlist, gc);
+		update_num_group(gs);
 		if (bs->log_timer > 0)
 			gtk_timeout_remove(bs->log_timer);
 		bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
-		update_num_group(gs);
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, logout_icon_xpm);
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
