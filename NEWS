@@ -1,5 +1,13 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
+0.11.0-pre15 (08/28/2001):
+	Eric: This isn't a real release. Really. It's just a quick thing
+	because pre14 doesn't cut it for some people. Also not counting
+	the month break that I took it's been a month since the last
+	release, so it's about time. You should all be using CVS anyway.
+	Instructions are at http://gaim.sourceforge.net/cvs.shmtl. And
+	don't forget to report bugs! http://gaim.sourceforge.net/bug.php3.
+
 0.11.0-pre14 (06/17/2001):
 	Eric: Wee. Lots of fun things. BIG bug fix release. I did a lot of
 	stupid things in the last one, hehe. You all forgive me though,
