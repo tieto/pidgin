@@ -178,6 +178,118 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
+#if 0
+static char* unescape_filename(const char *escaped) {
+	const char *c = escaped;
+	GString *ret;
+
+	if (escaped == NULL)
+		return NULL;
+
+	ret = g_string_new("");
+
+	/**
+	 *  <>:"/\ |?*'&$ 
+	 *	The above chars are "taboo" for gaim log names and are URL escaped
+	 *  % is also escaped so we can convert back easily
+	 */
+
+	while (*c) {
+		if (*c == '%') {
+			if (*(c + 1) && *(c + 2)) {
+				char hex[2];
+				hex[0] = *(c + 1);
+				hex[1] = *(c + 2);
+				unsigned char *nonhex;
+				gaim_base16_decode(hex, &nonhex);
+				ret = g_string_append_c(ret, *nonhex);
+				g_free(nonhex);
+				c += 2;
+			}
+		} else {
+			ret = g_string_append_c(ret, *c);
+		}
+		c++;
+	}
+
+	return g_string_free(ret, FALSE);
+}
+#endif
+
+static char* escape_filename(const char *unescaped) {
+	const char *c = unescaped;
+	char *hex;
+	GString *ret;
+
+	if (unescaped == NULL)
+		return NULL;
+
+	ret = g_string_new("");
+
+	/**
+	 *  <>:"/\ |?*'&$ 
+	 *	The above chars are "taboo" for gaim log names and are URL escaped
+	 *  % is also escaped so we can convert back easily
+	 */
+
+	while (*c) {
+		switch (*c) {
+			case '<':
+			case '>':
+			case ':':
+			case '"':
+			case '/':
+			case '\\':
+			case ' ':
+			case '|':
+			case '?':
+			case '*':
+			case '\'':
+			case '&':
+			case '$':
+			case '%':
+				hex = g_strdup_printf ("%%%X", (int) *c);
+				ret = g_string_append(ret, hex);
+				g_free(hex);
+				break;
+			default:
+				ret = g_string_append_c(ret, *c);
+		}
+		c++;
+	}
+
+	return g_string_free(ret, FALSE);
+}
+
+static char* gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account) {
+	char *acct_name = escape_filename(gaim_normalize(account,
+				gaim_account_get_username(account)));
+	char *target;
+	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
+	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(
+			gaim_find_prpl(gaim_account_get_protocol_id(account))
+			)->list_icon(account, NULL);
+	
+	char *dir;
+
+	if (type == GAIM_LOG_CHAT) {
+		char *temp = g_strdup_printf("%s.chat", gaim_normalize(account, name));
+		target = escape_filename(temp);
+		g_free(temp);
+	} else if(type == GAIM_LOG_SYSTEM) {
+		target = g_strdup(".system");
+	} else {
+		target = escape_filename(gaim_normalize(account, name));
+	}
+
+
+	dir = g_build_filename(gaim_user_dir(), "logs", prpl, acct_name, target, NULL);
+	g_free(target);
+	g_free(acct_name);
+
+	return dir;
+}
+
 /****************************************************************************
  * LOGGER FUNCTIONS *********************************************************
  ****************************************************************************/
@@ -336,37 +448,19 @@ struct generic_logger_data {
 };
 
 static void log_writer_common(GaimLog *log, GaimMessageFlags type,
-							  const char *prpl, time_t time,
-							  const char *ext)
+		time_t time, const char *ext)
 {
 	char date[64];
 	struct generic_logger_data *data = log->logger_data;
 
 	if(!data) {
 		/* This log is new */
-		char *ud = gaim_user_dir();
-		char *acct_name = g_strdup(gaim_normalize(log->account,
-					gaim_account_get_username(log->account)));
-		char *target;
-		char *dir;
-		char *filename, *path;
-
-		if (log->type == GAIM_LOG_CHAT) {
-			target = g_strdup_printf("%s.chat", gaim_normalize(log->account,
-						log->name));
-		} else if(log->type == GAIM_LOG_SYSTEM) {
-			target = g_strdup(".system");
-		} else {
-			target = g_strdup(gaim_normalize(log->account, log->name));
-		}
+		char *dir, *filename, *path;
+		
+		dir = gaim_log_get_log_dir(log->type, log->name, log->account);
+		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S", localtime(&log->time));
-
-		dir = g_build_filename(ud, "logs",
-				       prpl, acct_name, target, NULL);
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(target);
-		g_free(acct_name);
 
 		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
 
@@ -392,26 +486,12 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 	GDir *dir;
 	GList *list = NULL;
 	const char *filename;
-	char *me;
-	const char *prpl;
 	char *path;
 
 	if(!account)
 		return NULL;
 
-	if (type == GAIM_LOG_CHAT)
-		me = g_strdup_printf("%s.chat", gaim_normalize(account, gaim_account_get_username(account)));
-	else
-		me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
-
-	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
-	prpl = GAIM_PLUGIN_PROTOCOL_INFO
-		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
-	if(type == GAIM_LOG_SYSTEM)
-		path = g_build_filename(gaim_user_dir(),"logs", prpl, me, name, NULL);
-	else
-		path = g_build_filename(gaim_user_dir(),"logs", prpl, me, gaim_normalize(account, name), NULL);
-	g_free(me);
+	path = gaim_log_get_log_dir(type, name, account);
 
 	if (!(dir = g_dir_open(path, 0, NULL))) {
 		g_free(path);
@@ -472,25 +552,11 @@ static void xml_logger_write(GaimLog *log,
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
 		 */
-		char *ud = gaim_user_dir();
-		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
-		char *dir;
+		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
 		FILE *file;
-
-		if (log->type == GAIM_LOG_CHAT) {
-			char *chat = g_strdup_printf("%s.chat", guy);
-			g_free(guy);
-			guy = chat;
-		}
-
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(guy);
 
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
@@ -509,6 +575,10 @@ static void xml_logger_write(GaimLog *log,
 		fprintf(log->logger_data, "<conversation time='%s' screenname='%s' protocol='%s'>\n",
 			date, log->name, prpl);
 	}
+
+	/* if we can't write to the file, give up before we hurt ourselves */
+	if(!data->file)
+		return;
 
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	gaim_markup_html_to_xhtml(message, &xhtml, NULL);
@@ -569,7 +639,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	if(!data) {
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		log_writer_common(log, type, prpl, time, ".html");
+		log_writer_common(log, type, time, ".html");
 
 		data = log->logger_data;
 
@@ -707,7 +777,7 @@ static void txt_logger_write(GaimLog *log,
 		 */
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		log_writer_common(log, type, prpl, time, ".txt");
+		log_writer_common(log, type, time, ".txt");
 
 		data = log->logger_data;
 
