@@ -28,7 +28,7 @@ Gaim v0.59 \- Instant Messaging client
 
 .SH DESCRIPTION
 .PP
-\fBgaim\fR is an Instant Messaging (IM) client designed primarily for use with AOL Instant Messager (AIM).  However, it supports most other popular IM protocols including ICQ, MSN Messager, Jabber, Yahoo!, IRC, Napster, and Zephyr. 
+\fBgaim\fR is a GTK-based Instant Messaging (IM) client designed primarily for use with AOL Instant Messager (AIM).  However, it supports most other popular IM protocols including ICQ, MSN Messager, Jabber, Yahoo!, IRC, Napster, Zephyr, and Gadu-Gadu.
 
 .SH OPTIONS
 The following options are provided by \fBgaim\fR using the standard GNU command line syntax.
@@ -36,8 +36,14 @@ The following options are provided by \fBgaim\fR using the standard GNU command 
 .B \-a, \-\-acct
 Launch the \fBaccount editor\fR rather than the login window on start.
 .TP
-.B \-w, \-\-away[=MESG]
-Automatically go away on signon.  You may optionally use the MESG parameter to set the away message.
+.B \-d, \-\-debug
+Print debugging messages to stdout.  These are the same debugging messages that are displayed in the \fBdebug window\fR.
+.TP
+.B \-f, \-\-file=FILE
+Use FILE as the configuration file instead of ~/.gaimrc.
+.TP
+.B \-h, \-\-help
+Print this help and exit.
 .TP
 .B \-l, \-\-login[=NAME]
 Automatically login on start using the default account or the account specified by the NAME parameter.
@@ -45,8 +51,11 @@ Automatically login on start using the default account or the account specified 
 .B \-u, \-\-user=NAME
 Use account NAME as default.
 .TP
-.B \-f, \-\-file=FILE
-Use FILE as the configuration file instead of ~/.gaimrc.
+.B \-v, \-\-version
+Display the version information window.
+.TP
+.B \-w, \-\-away[=MESG]
+Automatically go away on signon.  You may optionally use the MESG parameter to set the away message.
 
 .SH BUDDY LIST
 The \fBBuddy List Window\fR is \fBgaim\fR's main interface window.  The focus of this window is the \fBBuddy List\fR itself.  This is a list of your contacts whose presence you have been notified of.
@@ -382,7 +391,7 @@ The retired authors of \fBgaim\fR are:
 
 .PP
 
-This manpage was originally written by Dennis Ristuccia <dennis@dennisr.net> AIM: D3nnisR.  It has been updated and largely rewritten by Sean Egan <sean@posseweb.org> AIM: SeanEgn
+This manpage was originally written by Dennis Ristuccia <dennis@dennisr.net> AIM: D3nnisR.  It has been updated and largely rewritten by Sean Egan <bj91704@binghamton.edu> AIM: SeanEgn
 
 .\" WOO!
 .\" Agreed, Dennis, agreed.
