@@ -1,0 +1,31 @@
+/* XPM */
+static char * free_icon_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"12 12 13 1",
+/* colors */
+" 	c None",
+".	c #9999cc",
+"X	c #cccccc",
+"o	c Gray60",
+"O	c #666666",
+"+	c white",
+"@	c #ffccff",
+"#	c #99cc99",
+"$	c #cc99cc",
+"%	c #333333",
+"&	c #336666",
+"*	c #663333",
+"=	c Gray0",
+/* pixels */
+"            ",
+"   .Xoo.X   ",
+"  XXXXXoO.  ",
+" .XX+XXooOX ",
+" XoX@X#oOOO ",
+" ooX#$ooO%& ",
+" ooooooOO*% ",
+" oOOoOOO%%O ",
+" X%OOO&%%=# ",
+"  o%%%%%=o  ",
+"   oO%%Oo   ",
+"            "};

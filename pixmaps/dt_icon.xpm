@@ -1,0 +1,21 @@
+/* XPM */
+static char * dt_icon_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"12 12 3 1",
+/* colors */
+" 	c None",
+".	c #336699",
+"X	c #9999ff",
+/* pixels */
+"            ",
+"            ",
+" .......... ",
+" .XXXXXXXX. ",
+" .XXXXXXXX. ",
+"  .XXXXXX.  ",
+"  .XXXXXX.  ",
+" .XXXXXXXX. ",
+" .XXXXXXXX. ",
+" .......... ",
+"            ",
+"            "};

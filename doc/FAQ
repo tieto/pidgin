@@ -1,0 +1,321 @@
+GAIM: The Pimpin' Penguin IM Clone Thats Good For The Soul 
+
+Here's the FAQ.  PLEASE don't bother me about anything on this list.  You
+will be ignored or pointed at the FAQ -- I have been extremely short of time
+lately!  Feel free to contact any of us with praise or ideas.  If you have
+ideas or bug problems, please use email, because I like to keep records of
+that kinda stuff and I don't log all my conversations.  Enjoy gaim!
+					- Jim Duchek <jimduchek@ou.edu>
+
+I. The Protocol
+	1. Is it the same protocol as the Windows client uses?
+	2. Where can I find info on it?
+	3. What other clients use this protocol?
+	4. TCP or UDP?
+	5. So the buddy list is stored on the server?
+
+II. The Client
+	1. What does 'gaim' stand for?
+	2. How do I make multiple groups?
+	3. How come there's no file transfer?
+	4. Why no AOL logo?
+	5. Where are my log files stored?
+	6. Can I use my Windows 95 Buddylist with Gaim?
+        7. I'm not a native English speaker and I would like a translated
+           version of gaim.
+        8. I've got a proxy, and I'd like to use GAIM.
+	
+III. Problems
+        1. WAAAAAH!  My sound doesn't work!
+	2. My buddy list disappeared!
+	3. I click on URLs, but Netscape doesn't popup!
+	4. I don't use Netscape.
+	5. I'm using the GNOME client.  I have a bug. 
+        6. I have a bug not described here.
+	7. I have Mandrake 6.0 and GAIM doesnt work!
+
+IV. Programming
+	1. I have a patch for gaim!
+	2. Can you teach me how to program GTK?
+
+V. Miscellaneous
+        1. Can I talk to you on IM?
+        2. I want to write an IM client.  Will you help me?
+        3. I have money.  I need some software written.  Can you help?
+	4. I have hardware here that's not being used, or money.  Can 
+           you use it?
+	5. I would like to send you beer.
+	6. Are you going to port this thing to Windows?
+	7. Why the GPL?
+	8. I use *BSD and I hate the penguin! I want daemon images!
+	9. Can I design a logo for you?
+       10. What is a wagii?
+       11. Speaking of the penguin, I heard a rumour you have a tattoo of
+	   it.  Is that true?
+       12. What Window Manager do you use?  What distribution do you use?
+           What other stupid things can you ask me that don't really matter
+           but ya'll ask me anyway?
+       13. Is XX a good Harddrive, YY a good monitor and ZZ a good CPU?
+       14. Who designed the new logo?	
+       15. I want to contribute to the effort.  Where can I send beer to?
+
+I. The Protocol
+	1. Is it the same protocol as the Windows client uses?
+		No.  The Windows client uses Oscar, which is proprietary
+and undocumented.  Some people have used network tools and such to figure
+it mostly out -- Look for 'faim'.  We use TOC, which is completely open and
+documented. 
+
+	2. Where can I find info on it?
+		Go to <http://www.aim.aol.com/tik> and download a copy of TiK.
+In it you will find a document called PROTOCOL which describes the protocol in
+full.
+
+	3. What other clients use this protocol?
+		Go to <http://www.aim.aol.com/tik>.  There is a list there.
+
+	4. TCP or UDP?
+		TCP.
+
+	5. So the buddy list is stored on the server?
+		Yep.
+
+
+II. The Client
+	1. What does 'gaim' stand for?
+		It's basically the letter 'g' tacked on to the beginning of
+'AIM' (which is fairly obvious).  G stands for all sorts of good things. 
+Girls, Godzilla, GTK, graham crackers, whatever.
+
+	2. How do I make multiple groups?
+		When adding a new buddy, you just type in a new group name.
+Future versions intend to handle this and renaming groups better.
+
+	3. How come there's no file transfer?
+		The TOC server doesn't (yet) support file transfer. Be
+patient!  It is coming.
+
+	4. Why no AOL logo?
+		AOL's legal staff told us no-no.
+
+	5. Where are my log files stored?
+		After you select `log all conversations' you may be wondering
+where your log files are stored. Well, they are currently, by default, stored
+under $HOME/.gaim/YourScreenName/.  If your screen name is Zilding then you
+will find your logs under: $HOME/.gaim/Zilding/.  This will eventually become
+configurable.
+	
+       6. Can I use my Windows 95 buddylist with Gaim?
+		Well, you are in luck.  As of the 0.9.5 release there is a 
+small perl script called 'buddytrans' that is included with the distribution.
+If you installed the RPM copy of GAIM then you can find the script in
+/usr/bin/buddytrans.  The correct script syntax is: 
+buddytrans buddy.lst gaim.list.  You can then import `gaim.list' from inside
+gaim.  This will eventually be fully incorporated into GAIM and the script
+will no longer be needed.
+
+        7. I'm not a native English speaker and I would like a translated   
+           version of gaim.
+
+		By all means, IM me at 'Zilding' or email me at
+jimduchek@ou.edu.  I'm working on standard GNU locale support for the next
+version of gaim, and I'm going to need translations.  If you can do a
+translation for us, I'd greatly appreciate it!  Just let me know and I'll
+give you detailed instructions on how to do it.
+ 
+	8. I'm behind a proxy, and I'd like to use GAIM.
+		Well, I'm planning to add more 'real' proxy support in the
+future, but it's not all that high on my priority list.  For now, try
+changing the two PORT defines in gaim.h to 21 -- The TOC server listens on
+ALL ports, and a lot of proxy servers allow port 21 to pass through.
+
+
+III. Problems
+	1. WAAAAAH!  My sound doesn't work!
+		./configure should autodetect whether or not you have ESD
+libraries.  If you have them it _WILL_ compile with them, if not it won't. 
+If it compiles with them, you don't need to be running the ESD daemon, it'll
+automatically fallback to using /dev/dsp.  Make sure that gaim has proper
+permissions to talk to /dev/dsp and /dev/audio though!  
+
+	2. My buddy list disappeared!
+		You didn't back up your buddy list, did you?  You never back
+anything up!  Oh well.  The TOC server loses lists from time to time, it
+happens to me as well.  (And no, I never have a backup ;).  I intend to
+support saving lists on your own computer in the future.
+
+        3. I click on URLs, but Netscape doesn't popup!
+		Netscape either needs to be running on the current display
+(gaim should handle remote netscape windows OK.), or 'netscape' needs to be
+in your path.
+
+        4. I don't use Netscape. 
+		I'm very interested in supporting other web browsers.  Do
+send me information on how to send a URL to your browser remotely (or point
+me at the source to the browser, I might be able to figure it out.). 
+
+	5. I'm using the GNOME client.  I have a bug.
+		Too smeggin' bad.  :)  I personally do NOT write any of the
+GNOME code.  If you find bugs in the GNOME client, I will accept emails
+describing these bugs, so I can pass them on to the correct person.
+I will also accept PATCHES to fix these bugs (but not like any of y'all
+ever do anything but whine about bugs anyway, who am I kidding ;).  
+If you IM me whining about a GNOME bug, you will probably be ignored.
+	
+	6. I have a bug not described here.
+		Well, it could be a few things.  Firstly, you MUST HAVE GTK+
+VERSION 1.2.3 installed!  Please state in any bug report that you ARE using
+1.2.3, otherwise you have a chance of being ignored.  With that said ;)
+email me at jimduchek@ou.edu, I would like to hear your bug reports (but
+please, not your problems installing GTK).
+
+	7. I have Mandrake 6.0 and GAIM doesnt work!
+
+Bob Meyer <meyer_rm@yahoo.com> writes:
+
+Here's the solution:
+        * Get esound-0.2.12-4mdk.i586.rpm and
+          esound-devel-0.2.12-4mdk.i586.rpm from any Mandrake mirror.
+        * rpm --upgrade esound-0.2.12-4mdk.i586.rpm
+        * rpm -- upgrade esound-devel-0.2.12-4mdk.i586.rpm
+
+Don't use EVIL 'updates' tool.  It's broke.. really bad.
+
+	Mandrake 6.1, with its newer libraries, appears to fix this problem.
+
+IV. Programming
+	1. I have a patch for gaim!
+		Nice.  Think about your patch though.  First, does it have
+to do with AIM?  I won't apply patches for stock tickers, search engines,
+etc.  We're working on plug-ins if you really want bloat like that. 
+Second, is it useful?  A lot of patches I get are horribly unuseful except
+in very specific situations (ie YOUR situation).  Thirdly, your code 
+will not retain your copyright.  All code submitted must be protected by 
+the GPL and the copyright will be given to Mark Spencer.  If you don't 
+like this, don't send me your patches.  You will be given authorship credit, 
+don't worry -- I just want a homogenous copyright on the program.  Lastly,
+does your code match the coding style already present in gaim?  I like my
+brackets where I like them.  I do NOT like, in fact I positively HATE, I
+DESPISE, with a PASSION, the convention of variablesLikeThis.  And 
+functionsLikeThis.  If you do that, fine.  It's great.  But guess what?
+This is C.  C programmers don't write like that.  I don't write like that.
+I don't want to READ code like that.  I want a homogenous coding style
+on this program, and it's gonna be MY coding style. :)
+	Now, if you've managed to get through all that and I haven't
+discouraged you entirely, my email address is jimduchek@ou.edu, you can
+send your patches there.
+
+	2. Can you teach me how to program GTK?
+		Yes, I can.  But no, I'm not going to. There's a really
+nice tutorial at http://www.gtk.org.  If you're a fairly experienced 
+programmer, and you get stuck on something odd, IM me, I'm usually happy to
+help.  If you had a little BASIC experience in high school and are having
+trouble making a button widget do anything when you click it, buy a book on
+C and read the damn GTK tutorial, I'm a busy person.
+
+
+V. Miscellaneous
+	1. Can I talk to you on IM?
+		Sure.  My IM name is Zilding.  The rest of the crew's IM names
+can be found in various places.  Keep in mind though, I'm a very busy person. 
+This IM name is used for friends as well as for gaim (I don't just log this
+guy in when I want to talk to gaim people).  So please, don't IM me just to
+chat, or to answer various Linux questions.  I'd like to be able to answer
+everyone's questions on whatever (I usually do know the answer, or at least
+where to find it!) but I just don't have time.  Things like this will
+usually be ignored.  Other things to keep in mind when talking to me:  Don't
+start off with 'I have a gaim question', 'Can I ask a question?', 'Hello?',
+'Are you there?', 'Is this the gaim guy?', 'gaim doesn't work', 'I can't get
+gaim to compile' or anything else like that.  Why?  If you'll notice in all
+of the above statements, nothing useful has been said.  I'm often away from
+my computer.  I suggest if you are having a serious problem or you have a
+question, just ASK THE QUESTION, right off, I don't require any preliminary
+stuff.  Simply sending me "gaim segfaults when I do 'blah blah click blah'"
+to start a conversation is fine -- I don't consider it rude, please just ask
+the question.  If I don't answer within a few minutes, leave your email
+address, I will get back to you sooner or later.  Lastly, do NOT abbreviate
+'you' as 'u', 'are' as 'r', 'to' as '2', 'for' as '4', or any of those other
+annoying AOLisms.  They bother me greatly, and as I work long hours and am
+an insomniac (probably because I'm such a mean bastard ;), I'm likely to
+make fun of you, or more likely ignore you completely.  I don't require
+perfect English but it'd be nice.
+
+
+	2. I want to write an IM client.  Will you help me?
+		No, unless you're writing one commercially.  Email me for
+rates -- I'm not all that expensive. :)
+
+	3. I have money.  I need some software written.  Can you help?
+		Oh yes.  My email address is jimduchek@ou.edu, my IM is Zilding.
+	
+	4. I have hardware that's not being used, or money.  Can you use it?
+		Almost always.  I'm a broke college student.  We're all
+broke here.  Flat busted.  Money would always help.  If you have some useful
+equipment (or even useless equipment!  I like old mainframes and
+workstations ;), do send it to us!  I might be able to scratch together
+shipping money even. :)
+
+	5. I would like to send you beer.
+		OK.
+
+	6. Are you going to port this thing to Windows?
+		I've been mulling it over and playing with cygwin on the
+tiny Windows partition I do have on my laptop (It's required for school),
+but I'm not sure yet.  I actually do have a version of gaim running on it
+now, as of 7/20.  However, the Win32 port of GTK has some issues that need
+to be resolved before I can even attempt to release this.  Some of my WIN32
+patches are included in this release, usually under an #ifdef _WIN32 (which
+cygwin and I think other windows compilers set).  
+
+	7. Why the GPL?
+		I like the GPL.  
+
+	8. I use *BSD and I hate the penguin!  I want daemon images!
+		I do have a nice pixmap of the daemon, and one of these days
+I will do a second set of buttons.  You'll have to wait (or send me button
+pixmaps yourself).  I still don't understand why ya'll hate the penguin
+though, maybe it's just jealousy cause our OS gets all the media attention? 
+I kinda like the daemon :)
+
+	9. Can I design a logo for you?
+		Sure!  Do your best.  Entries may be emailed to: 
+gaimlogo@blueridge.net.  After we get a nice supply of entries we'll sort
+through them and pick the winner.
+
+       10. What is a wagii?
+		Interesting question that you ask, there.  `Wagii' is the 
+official celebratory cry of gaim.  Anytime you are feeling happy or excited,
+just remember all of the hard work that we have done to provide you with 
+this wonderful, free piece of software -- as the pure, raw, emotion flows
+through you, maybe you too will let out the cry of -- Wagii.
+		Its also the sound a Penguin Samurai makes :)
+
+       11. Speaking of the penguin, I heard a rumour you have a tattoo of  
+           it.  Is that true?
+		Hehe.  Yes, that is true.  He's on my left upper arm.  If
+you'd like to see a picture, visit <http://www.woodsoup.org/~sbaker/tux/doc/>.
+It's a 'history of Tux' and there's a pic of my tattoo at the bottom.  A pic
+of my tattoo is also in the LIMP, and linux.remotepoint.com.  There's also a
+picture of the two matching Tux tattoos that a husband and wife have in
+there.  I've heard a rumour someone at Red Hat has one as well.  BTW -- no,
+it really didn't hurt, and yes, I was sober ;)
+
+       12. What Window Manager do you use?  What distribution do you use?
+           What other stupid things can you ask me that don't really matter
+           but ya'll ask me anyway?
+		I use WindowMaker, without any GNOME or KDE bits.  I don't
+really use a distro, per se, as it used to be a Red Hat distro a long time
+ago, but since then I've custom-installed by hand from one hard drive to
+another, so it really doesn't resemble Red Hat anymore, and I've written
+most of the rc. scripts from scratch.  Please don't ask me Red Hat
+questions, also I hate it when people assume that Red Hat == Linux. 
+
+      13. Is XX a good harddrive, YY a good monitor, and ZZ a good CPU?
+               Hmm, we're kinda poor so we cant be positive... if you wanna
+send us some hardware we'll use it though and tell you how good it is *wink*
+
+      14. Who designed the new logo?
+	       A good guy named Naru Sundar.
+
+      15. I want to contribute to the effort.  Where can I send beer to?
+               IM Zilding or email him at jimduchek@ou.edu.

@@ -1,0 +1,221 @@
+/*
+ * gaim
+ *
+ * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkprivate.h>
+#include <gdk/gdkx.h>
+#include "gaim.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+
+gchar * strip_html(gchar * text)
+{
+	int i, j;
+	int visible = 1;
+	gchar *text2 = g_malloc(strlen(text) + 1);
+	
+	strcpy(text2, text);
+	for (i = 0, j = 0;text2[i]; i++)
+	{
+		if(text2[i]=='<')
+		{	
+			visible = 0;
+			continue;
+		}
+		else if(text2[i]=='>')
+		{
+			visible = 1;
+			continue;
+		}
+		if(visible)
+		{
+			text2[j++] = text2[i];
+		}
+	}
+	text2[j] = '\0';
+	return text2;
+}
+
+struct g_url parse_url(char *url)
+{
+	struct g_url test;
+	char scan_info[255];
+	char port[5];
+	int f;
+
+	if (strstr(url, "http://"))
+		g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+	else
+		g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+	f = sscanf(url, scan_info, test.address, port, test.page);
+	if (f == 1) {
+		if (strstr(url, "http://"))
+			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+		else
+			g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+        f = sscanf(url, scan_info, test.address, test.page);
+        g_snprintf(port, sizeof(test.port), "80");
+        port[2] = 0;
+	}
+	if (f == 1) {
+		if (strstr(url, "http://"))
+			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]");
+        else
+		g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]");
+		f = sscanf(url, scan_info, test.address);
+		g_snprintf(test.page, sizeof(test.page), "%c", '\0');
+	}
+
+	sscanf(port, "%d", &test.port);
+	return test;
+}
+
+char *grab_url(char *url)
+{
+	struct g_url website;
+	char *webdata = NULL;
+        int sock;
+        int len;
+	int datalen = 0;
+	struct hostent *host;
+	struct sockaddr_in site;
+	char buf[256];
+	char data;
+        FILE *sockfile;
+        int startsaving = 0;
+        GtkWidget *pw = NULL, *pbar = NULL, *label;
+
+        website = parse_url(url);
+
+	host = gethostbyname(website.address);
+	if (!host) { return g_strdup("g001: Error resolving host\n"); }
+
+	site.sin_family = AF_INET;
+	site.sin_addr.s_addr = *(long *)(host->h_addr);
+	site.sin_port = htons(website.port);
+
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock < 0) { return g_strdup("g002: Socket Error\n"); }
+
+	if (connect(sock, (struct sockaddr *)&site, sizeof(site)))
+		return g_strdup("g003: Error opening connection.\n");
+
+	sockfile = fdopen(sock, "r+");
+
+	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\n\n", website.page);
+	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
+	debug_print(debug_buff);
+	fputs(buf, sockfile);
+
+        webdata = NULL;
+        len = 0;
+	
+	while ((data = fgetc(sockfile)) != -1) {
+		if (!data)
+			continue;
+		
+		if (!startsaving && data == '<') {
+#ifdef HAVE_STRSTR
+			char *cs = strstr(webdata, "Content-Length");
+			if (cs) {
+				char tmpbuf[1024];
+				sscanf(cs, "Content-Length: %d", &datalen);
+
+                                g_snprintf(tmpbuf, 1024, "Getting %d bytes from %s", datalen, url);
+                                pw = gtk_dialog_new();
+
+				label = gtk_label_new(tmpbuf);
+				gtk_widget_show(label);
+				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->vbox),
+						   label, FALSE, FALSE, 5);
+				
+				pbar = gtk_progress_bar_new();
+				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->action_area),
+						   pbar, FALSE, FALSE, 5);
+                                gtk_widget_show(pbar);
+                                
+                                gtk_window_set_title(GTK_WINDOW(pw), "Getting Data");
+                                
+                                gtk_widget_realize(pw);
+                                aol_icon(pw->window);
+
+                                gtk_widget_show(pw);
+                        } else
+				datalen = 0;
+#else
+			datalen = 0;
+#endif
+			g_free(webdata);
+			webdata = NULL;
+			len = 0;
+			startsaving = 1;
+		}
+
+		len++;
+		webdata = g_realloc(webdata, len);
+		webdata[len - 1] = data;
+
+		if (pbar)
+			gtk_progress_bar_update(GTK_PROGRESS_BAR(pbar),
+                                                ((100 * len) / datalen) / 100.0);
+		
+		while (gtk_events_pending())
+			gtk_main_iteration();
+	}
+
+        webdata = g_realloc(webdata, len+1);
+        webdata[len] = 0;
+
+
+        g_snprintf(debug_buff, sizeof(debug_buff), "Receieved: '%s'\n", webdata);
+        debug_print(debug_buff);
+
+        if (pw)
+                gtk_widget_destroy(pw);
+
+	close(sock);
+	return webdata;
+}
+
+char *fix_url(gchar *buf)
+{
+	char *new,*tmp;
+	int size;
+
+	size=8;
+	size+=strlen(quad_addr);
+	tmp=strchr(strchr(buf,':')+1,':');
+	size+=strlen(tmp);
+	new=g_malloc(size);
+	strcpy(new,"http://");
+	strcat(new,quad_addr);
+	strcat(new,tmp);
+	return(new);
+}
+
+

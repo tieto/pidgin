@@ -1,0 +1,27 @@
+/* XPM */
+static char *normal_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"22 17 4 1",
+"  c Gray0",
+". c Magenta",
+"X c Gray60",
+"o c None",
+/* pixels */
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"ooooooooooo oooooooooo",
+"oooooooooo   ooooooooo",
+"oooooooooo   ooooooooo",
+"ooooooooo  o  oooooooo",
+"ooooooooo     oooooooo",
+"oooooooo  ooo  ooooooo",
+"oooooooo  ooo  ooooooo",
+"ooooooo    o    oooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo",
+"oooooooooooooooooooooo"
+};

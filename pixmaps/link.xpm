@@ -1,0 +1,26 @@
+/* Cute little link :) */
+
+static char *link_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"14 14 5 1",
+"  c #2f2f60",
+". c #6060cf",
+"X c None",
+"o c #cfcfff",
+"O c Gray100",
+/* pixels */
+"XXXXXXXXXXX  X",
+"XXXXXXXXXX oO ",
+"XXXXXX    oO. ",
+"XXXXX oO oO. X",
+"XXXX oO oO. XX",
+"XXX oO  ..  XX",
+"XX oO XX  o XX",
+"X oO XXO oO XX",
+"X O  XO oO XXX",
+"X  oX  oO XXXX",
+"X oO. oO XXXXX",
+" oO. oO XXXXXX",
+" O.    XXXXXXX",
+"   XXXXXXXXXXX"
+};
