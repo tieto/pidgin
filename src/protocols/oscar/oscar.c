@@ -58,7 +58,7 @@
 static int gaim_caps = AIM_CAPS_CHAT |
 		       AIM_CAPS_BUDDYICON |
 		       AIM_CAPS_IMIMAGE;
-static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02, 0x66};
+static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02};
 
 struct oscar_data {
 	aim_session_t *sess;
@@ -1267,9 +1267,6 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 	char *tmp = g_malloc(BUF_LONG);
 	struct gaim_connection *gc = sess->aux_data;
 	int flags = 0;
-
-	if ((sizeof(gaim_features) == args->featureslen) && !memcmp(gaim_features, args->features, args->featureslen))
-		flags |= IM_FLAG_GAIMUSER;
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
 		flags |= IM_FLAG_AWAY;
