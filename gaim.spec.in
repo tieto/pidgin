@@ -97,6 +97,32 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Oct 18 2001 Rob Flynn <rob@marko.net> (0.46 release)
+- New applet icons (courtesy David Raeman)
+- ICQ works on big-endian platforms, e.g. sparc and ppc (thanks to Nathan Walp and Ben Miller)
+- Better applet icon drawing (thanks to Ari Pollak)
+- An extraordinary number of bug fixes
+- Updated Korean translation
+- Ability to stop animation on buddy icons, restart animation, hide certain buddy icons, and save people's buddy icons, all through a right-click menu
+- Event handlers in perl passed arguments as elements of an array rather than all concatenated as a string, making perl much easier to use (thanks Dennis Lambe Jr.)
+- Can pass an argument to timeout_handlers in perl (thanks Artem Litvinovich)
+- Redesigned Modify Account window (thanks Sean Egan)
+- Add buddy dialog now lets you select which protocol to add the buddy to
+- Pressing 'signon' on the first screen for accounts that do not require passwords no longer incorrectly displays an error message.
+
+* Thu Oct 04 2001 Rob Flynn <rob@marko.net> (0.45 release)
+- New plugin event: event_chat_send_invite
+- Major updates to the perl system (reread PERL-HOWTO and SIGNALS)
+- Major updates to event_chat_* events for plugins (reread SIGNALS)
+- Some GtkIMHtml improvements
+- Various bugfixes
+- Nick Highlighting in chat
+- Tab-completion for nicks in chat (thanks to Sean Egan)
+- Large internal reworkings
+- New Protocol: Gadu-Gadu, written by Arkadiusz Miskiewicz
+- Can choose buddy icon to send (for Oscar)
+- New Translation: Polish translation by Przemysaw Suek
+
 * Thu Sep 20 2001 Rob Flynn <rob@marko.net> (0.44 release)
 - More sane scaling of buddy icons (intelligently scale to either 48x48 or 50x50 depending on icon)
 - Have you ever had it happen where you cancel a login and Gaim starts using all the available processing power? I think I fixed that.
