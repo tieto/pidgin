@@ -530,6 +530,17 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 	}
 }
 
+static void nap_draw_new_user(GtkWidget *box)
+{
+	GtkWidget *label;
+
+	label = gtk_label_new(_("Napster registration is currently under development"));
+
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+}
+
 static char** nap_list_icon(int uc)
 {
 	return napster_xpm;
@@ -571,6 +582,7 @@ void nap_init(struct prpl *ret)
 	ret->chat_whisper = NULL;
 	ret->chat_send = nap_chat_send;
 	ret->keepalive = NULL;
+	ret->draw_new_user = nap_draw_new_user;
 
 	my_protocol = ret;
 }
