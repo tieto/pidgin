@@ -35,6 +35,7 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
+#include "sound.h"
 
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/tb_search.xpm"
@@ -899,22 +900,58 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 
 	gaim_blist_update_buddy_status(b, type);
 	
-	gaim_blist_update_buddy_presence(b, loggedin);
 
 	if (loggedin) {
-		if (!b->present) {
-			//b->present = 1;
+		if (!b->present == 1) {
+			struct gaim_conversation *c = gaim_find_conversation(b->name);
+			if (c) {
+				char *tmp = g_strdup_printf(_("%s logged in."), gaim_get_buddy_alias(b));
+				gaim_conversation_write(c, NULL, tmp, -1,
+							WFLAG_SYSTEM, time(NULL));
+				g_free(tmp);
+			} else if (awayqueue && find_queue_total_by_name(b->name)) {
+				struct queued_message *qm = g_new0(struct queued_message, 1);
+				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
+				qm->message = g_strdup_printf(_("%s logged in."),
+							      gaim_get_buddy_alias(b));
+				qm->account = gc->account;
+				qm->tm = time(NULL);
+				qm->flags = WFLAG_SYSTEM;
+				qm->len = -1;
+				message_queue = g_slist_append(message_queue, qm);
+			}
+			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
 			do_pounce(gc, b->name, OPT_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
-		if (b->present) {
+		if (b->present == 1) {
+			struct gaim_conversation *c = gaim_find_conversation(b->name);
+			if (c) {
+				char *tmp = g_strdup_printf(_("%s logged out."), gaim_get_buddy_alias(b));
+				gaim_conversation_write(c, NULL, tmp, -1,
+							WFLAG_SYSTEM, time(NULL));
+				g_free(tmp);
+			} else if (awayqueue && find_queue_total_by_name(b->name)) {
+				struct queued_message *qm = g_new0(struct queued_message, 1);
+				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
+				qm->message = g_strdup_printf(_("%s logged out."),
+							      gaim_get_buddy_alias(b));
+				qm->account = gc->account;
+				qm->tm = time(NULL);
+				qm->flags = WFLAG_SYSTEM;
+				qm->len = -1;
+				message_queue = g_slist_append(message_queue, qm);
+			}
+			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
 			plugin_event(event_buddy_signoff, gc, b->name);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
-		b->present = 0;
-	}
+	}	
+	
+	gaim_blist_update_buddy_presence(b, loggedin);
+
 }
 
 

@@ -1120,12 +1120,15 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 					expand = TRUE;
 				}
-
+				
 				oldersibling = node->prev;
 				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter))
 					oldersibling = oldersibling->prev;
 
 				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
+				
+				if (blist_options & OPT_BLIST_POPUP)
+					gtk_window_present(GTK_WINDOW(gtkblist->window));
 
 				if (expand) {       /* expand was set to true if this is the first element added to a group.  In such case
 						     * we expand the group node */
@@ -1204,6 +1207,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry) {
 		gaim_gtk_blist_remove(list, node);
+		if (blist_options & OPT_BLIST_POPUP)
+			gtk_window_present(GTK_WINDOW(gtkblist->window));
 	}
 }
 
