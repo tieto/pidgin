@@ -66,7 +66,6 @@ static int gaim_caps = AIM_CAPS_CHAT |
 #if USE_PIXBUF
 		       AIM_CAPS_BUDDYICON |
 #endif
-		       AIM_CAPS_GETFILE |
 		       AIM_CAPS_IMIMAGE;
 
 static GtkWidget *join_chat_spin = NULL;
@@ -90,7 +89,6 @@ struct oscar_data {
 
 	GSList *oscar_chats;
 	GSList *direct_ims;
-	GSList *getfiles;
 	GSList *hasicons;
 
         gboolean killme;
@@ -122,30 +120,6 @@ struct ask_direct {
 	struct gaim_connection *gc;
 	char *sn;
 	struct aim_directim_priv *priv;
-};
-
-struct ask_getfile {
-	struct gaim_connection *gc;
-	char *sn;
-	char *cookie;
-	char *ip;
-};
-
-struct getfile_transfer {
-	struct gaim_connection *gc;
-	char *receiver;
-	char *filename;
-	struct aim_conn_t *conn;
-	struct aim_fileheader_t *fh;
-	int gip;
-	int gop;
-	FILE *listing;
-	FILE *file;
-	GtkWidget *window;
-	GtkWidget *meter;
-	GtkWidget *label;
-	long pos;
-	long size;
 };
 
 #if USE_PIXBUF
@@ -180,23 +154,6 @@ static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	g_free(n);
 	return m;
 }
-
-/*
-static struct getfile_transfer *find_getfile_transfer(struct oscar_data *od, struct aim_conn_t *conn) {
-	GSList *g = od->getfiles;
-	struct getfile_transfer *n = NULL;
-
-	while (g) {
-		n = (struct getfile_transfer *)g->data;
-		if (n->conn == conn)
-			return n;
-		n = NULL;
-		g = g->next;
-	}
-
-	return n;
-}
-*/
 
 static char *extract_name(char *name) {
 	char *tmp;
@@ -1309,292 +1266,6 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	return TRUE;
 }
 
-/*
-static void cancel_getfile(gpointer w, struct ask_getfile *g) {
-	g_free(g->ip);
-	g_free(g->cookie);
-	g_free(g->sn);
-	g_free(g);
-}
-
-static void cancel_getfile_file(GtkObject *obj, struct ask_getfile *g) {
-	GtkWidget *w = gtk_object_get_user_data(obj);
-	gtk_widget_destroy(w);
-	cancel_getfile(w, g);
-}
-
-static void cancel_getfile_cancel(GtkObject *obj, struct ask_getfile *g) {
-	GtkWidget *w = gtk_object_get_user_data(obj);
-	gtk_widget_destroy(w);
-}
-
-static void interrupt_getfile(GtkObject *obj, struct getfile_transfer *gt) {
-	struct gaim_connection *gc = gt->gc;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-
-	gtk_widget_destroy(gt->window);
-	gaim_input_remove(gt->gip);
-	if (gt->gop > 0)
-		gaim_input_remove(gt->gop);
-	aim_conn_kill(od->sess, &gt->conn);
-	od->getfiles = g_slist_remove(od->getfiles, gt);
-	g_free(gt->receiver);
-	g_free(gt->filename);
-	fclose(gt->listing);
-	g_free(gt);
-}
-
-static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct getfile_transfer *gt;
-	char buf[2048];
-	GtkWidget *label;
-	GtkWidget *button;
-
-	va_list ap;
-	struct aim_conn_t *oftconn;
-	struct aim_fileheader_t *fh;
-	char *cookie;
-
-	va_start(ap, command);
-	oftconn = va_arg(ap, struct aim_conn_t *);
-	fh = va_arg(ap, struct aim_fileheader_t *);
-	cookie = va_arg(ap, char *);
-	va_end(ap);
-
-	gt = find_getfile_transfer(od, oftconn);
-
-	if (gt->window)
-		return 1;
-
-	gt->window = gtk_dialog_new();
-	gtk_window_set_title(GTK_WINDOW(gt->window), _("Gaim - File Transfer"));
-	gtk_widget_realize(gt->window);
-	aol_icon(gt->window->window);
-
-	g_snprintf(buf, sizeof buf, _("Sending %s to %s"), fh->name, gt->receiver);
-	label = gtk_label_new(buf);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->vbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	gt->meter = gtk_progress_bar_new();
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), gt->meter, FALSE, FALSE, 5);
-	gtk_widget_show(gt->meter);
-
-	gt->label = gtk_label_new("0 %");
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), gt->label, FALSE, FALSE, 5);
-	gtk_widget_show(gt->label);
-
-	button = picture_button(gt->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(interrupt_getfile), gt);
-
-	gtk_widget_show(gt->window);
-
-	return 1;
-}
-
-static void getfile_send_callback(gpointer data, gint source, GaimInputCondition condition) {
-	struct getfile_transfer *gt = (struct getfile_transfer *)data;
-	int result;
-
-	result = aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, -1, 1024);
-	gt->pos += result;
-	if (result == 0) {
-		gaim_input_remove(gt->gop); gt->gop = 0;
-	} else if (result == -1) {
-		do_error_dialog(_("Error in transfer"), "Gaim");
-		gaim_input_remove(gt->gop); gt->gop = 0;
-		interrupt_getfile(NULL, gt);
-	}
-}
-
-static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct getfile_transfer *gt;
-
-	va_list ap;
-	struct aim_conn_t *oftconn;
-	struct aim_fileheader_t *fh;
-	char *cookie;
-
-	va_start(ap, command);
-	oftconn = va_arg(ap, struct aim_conn_t *);
-	fh = va_arg(ap, struct aim_fileheader_t *);
-	cookie = va_arg(ap, char *);
-	va_end(ap);
-
-	gt = find_getfile_transfer(od, oftconn);
-
-	if (gt->gop > 0) {
-		debug_printf("already have output watcher?\n");
-		return 1;
-	}
-
-	if ((gt->file = fopen(gt->filename, "r")) == NULL) {
-		interrupt_getfile(NULL, gt);
-		return 1;
-	}
-	gt->pos = 0;
-	gt->fh = g_memdup(fh, sizeof(struct aim_fileheader_t));
-	fseek(gt->file, 0, SEEK_SET);
-
-	gt->gop = gaim_input_add(gt->conn->fd, GAIM_INPUT_WRITE, getfile_send_callback, gt);
-
-	return 1;
-}
-
-static int gaim_getfile_complete(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct getfile_transfer *gt;
-
-	va_list ap;
-	struct aim_conn_t *conn;
-	struct aim_fileheader_t *fh;
-
-	va_start(ap, command);
-	conn = va_arg(ap, struct aim_conn_t *);
-	fh = va_arg(ap, struct aim_fileheader_t *);
-	va_end(ap);
-
-	gt = find_getfile_transfer(od, conn);
-
-	gtk_widget_destroy(gt->window);
-	gt->window = NULL;
-	do_error_dialog(_("Transfer complete."), "Gaim");
-
-	return 1;
-}
-
-static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct getfile_transfer *gt;
-
-	va_list ap;
-	struct aim_conn_t *conn;
-	char *sn;
-
-	va_start(ap, command);
-	conn = va_arg(ap, struct aim_conn_t *);
-	sn = va_arg(ap, char *);
-	va_end(ap);
-
-	gt = find_getfile_transfer(od, conn);
-	od->getfiles = g_slist_remove(od->getfiles, gt);
-	gaim_input_remove(gt->gip);
-	if (gt->gop > 0)
-		gaim_input_remove(gt->gop);
-	g_free(gt->receiver);
-	g_free(gt->filename);
-	aim_conn_kill(sess, &conn);
-	fclose(gt->listing);
-	g_free(gt);
-
-	debug_printf("getfile disconnect\n");
-
-	return 1;
-}
-
-static void oscar_getfile_callback(gpointer data, gint source, GaimInputCondition condition) {
-	struct getfile_transfer *gf = data;
-	struct gaim_connection *gc = gf->gc;
-	struct oscar_data *od = gc->proto_data;
-
-	gaim_input_remove(gf->gip);
-	gf->gip = gaim_input_add(source, GAIM_INPUT_READ, oscar_callback, gf->conn);
-
-	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ, gaim_getfile_filereq, 0);
-	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND, gaim_getfile_filesend, 0);
-	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE, gaim_getfile_complete, 0);
-	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEDISCONNECT, gaim_getfile_disconnect, 0);
-}
-
-static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
-	GtkWidget *w = gtk_object_get_user_data(obj);
-	char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(w));
-	struct gaim_connection *gc = g->gc;
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct getfile_transfer *gf;
-	struct stat st;
-	struct tm *ft;
-	char tmppath[256];
-	FILE *file;
-	static int current = 0;
-	struct aim_conn_t *newconn;
-
-	if (file_is_dir(filename, w))
-		return;
-
-	if (stat(filename, &st) != 0) {
-		gtk_widget_destroy(w);
-		do_error_dialog(_("Error examining file"), _("GetFile Error"));
-		cancel_getfile(w, g);
-		return;
-	}
-
-	g_snprintf(tmppath, sizeof tmppath, "/%s/gaim%d%d", g_get_tmp_dir(), getpid(), current++);
-	if ((file = fopen(tmppath, "w+")) == NULL) {
-		gtk_widget_destroy(w);
-		do_error_dialog(_("Could not open temporary file, aborting"), _("GetFile Error"));
-		cancel_getfile(w, g);
-		return;
-	}
-
-	gf = g_new0(struct getfile_transfer, 1);
-	gf->gc = gc;
-	gf->filename = g_strdup(filename);
-	gf->listing = file;
-	gf->receiver = g_strdup(g->sn);
-	gf->size = st.st_size;
-
-	ft = localtime(&st.st_ctime);
-	fprintf(file, "%2d/%2d/%4d %2d:%2d %8ld ",
-			ft->tm_mon + 1, ft->tm_mday, ft->tm_year + 1900,
-			ft->tm_hour + 1, ft->tm_min + 1, (long)st.st_size);
-	fprintf(file, "%s\r\n", g_basename(filename));
-	rewind(file);
-
-	aim_oft_registerlisting(od->sess, file, "");
-	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, file, AIM_CAPS_GETFILE)) == NULL) {
-		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
-		do_error_dialog(_("Error connecting for transfer"), _("GetFile Error"));
-		g_free(gf->filename);
-		fclose(file);
-		g_free(gf);
-		gtk_widget_destroy(w);
-		return;
-	}
-
-	gtk_widget_destroy(w);
-
-	od->getfiles = g_slist_append(od->getfiles, gf);
-	gf->conn = newconn;
-	gf->gip = gaim_input_add(newconn->fd, GAIM_INPUT_WRITE, oscar_getfile_callback, gf);
-}
-
-static int accept_getfile(gpointer w, struct ask_getfile *g) {
-	GtkWidget *window;
-	window = gtk_file_selection_new(_("Gaim - Send File..."));
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(window));
-	gtk_object_set_user_data(GTK_OBJECT(window), window);
-	gtk_signal_connect(GTK_OBJECT(window), "destroy",
-			   GTK_SIGNAL_FUNC(cancel_getfile_file), g);
-	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), window);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
-			   GTK_SIGNAL_FUNC(do_getfile), g);
-	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button), window);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_getfile_cancel), g);
-	gtk_widget_show(window);
-
-	return TRUE;
-}
-*/
-
 #if USE_PIXBUF
 static gboolean redraw_anim(gpointer data)
 {
@@ -1761,27 +1432,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				g_free(name);
 		} else if (args->reqclass & AIM_CAPS_SENDFILE) {
 		} else if (args->reqclass & AIM_CAPS_GETFILE) {
-			/*
-			char *ip, *cookie;
-			struct ask_getfile *g = g_new0(struct ask_getfile, 1);
-			char buf[256];
-
-			userinfo = va_arg(ap, struct aim_userinfo_s *);
-			ip = va_arg(ap, char *);
-			cookie = va_arg(ap, char *);
-			va_end(ap);
-
-			debug_printf("%s received getfile request from %s (%s), cookie = %s\n",
-					gc->username, userinfo->sn, ip, cookie);
-
-			g->gc = gc;
-			g->sn = g_strdup(userinfo->sn);
-			g->cookie = g_strdup(cookie);
-			g->ip = g_strdup(ip);
-			g_snprintf(buf, sizeof buf, "%s has just asked to get a file from %s.",
-					userinfo->sn, gc->username);
-			do_ask_dialog(buf, g, accept_getfile, cancel_getfile);
-			*/
 		} else if (args->reqclass & AIM_CAPS_VOICE) {
 		} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
 #if USE_PIXBUF
