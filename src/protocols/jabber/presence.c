@@ -60,6 +60,8 @@ void jabber_presence_send(GaimConnection *gc, const char *state,
 		stripped = g_strdup("");
 	}
 
+	if(gc->away)
+		g_free(gc->away);
 	gc->away = stripped;
 
 	presence = jabber_presence_create(state, msg);
