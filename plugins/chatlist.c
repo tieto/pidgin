@@ -66,7 +66,7 @@ static void setup_buddy_chats()
 		return;
 
 	item = gtk_tree_item_new_with_label(_("Buddy Chat"));
-	gtk_signal_connect(GTK_OBJECT(item), "destroy", GTK_SIGNAL_FUNC(des_item), NULL);
+	g_signal_connect(GTK_OBJECT(item), "destroy", G_CALLBACK(des_item), NULL);
 	gtk_tree_append(GTK_TREE(buddies), item);
 	gtk_tree_item_expand(GTK_TREE_ITEM(item));
 	gtk_widget_show(item);
@@ -81,8 +81,8 @@ static void setup_buddy_chats()
 		gtk_object_set_user_data(GTK_OBJECT(titem), cr);
 		gtk_tree_append(GTK_TREE(tree), titem);
 		gtk_widget_show(titem);
-		gtk_signal_connect(GTK_OBJECT(titem), "button_press_event",
-				   GTK_SIGNAL_FUNC(handle_click_chat), cr);
+		g_signal_connect(GTK_OBJECT(titem), "button_press_event",
+				   G_CALLBACK(handle_click_chat), cr);
 		crs = crs->next;
 	}
 
@@ -325,9 +325,9 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	cp->list1 = list1;
 	cp->list2 = list2;
 
-	gtk_signal_connect(GTK_OBJECT(ref_button), "clicked", GTK_SIGNAL_FUNC(refresh_list), cp);
-	gtk_signal_connect(GTK_OBJECT(rem_button), "clicked", GTK_SIGNAL_FUNC(remove_chat), cp);
-	gtk_signal_connect(GTK_OBJECT(add_button), "clicked", GTK_SIGNAL_FUNC(add_chat), cp);
+	g_signal_connect(GTK_OBJECT(ref_button), "clicked", G_CALLBACK(refresh_list), cp);
+	g_signal_connect(GTK_OBJECT(rem_button), "clicked", G_CALLBACK(remove_chat), cp);
+	g_signal_connect(GTK_OBJECT(add_button), "clicked", G_CALLBACK(add_chat), cp);
 
 	label = gtk_label_new(_("List of available chats"));
 	gtk_widget_show(label);

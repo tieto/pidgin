@@ -735,12 +735,12 @@
 		gtk_box_pack_start_defaults( GTK_BOX(panel2), timeout_label );
 		gtk_box_pack_start_defaults( GTK_BOX(panel2), timeout_c );
 	
-		gtk_signal_connect_object(GTK_OBJECT(timeout_c), "changed",GTK_SIGNAL_FUNC(changed_cb),GTK_OBJECT(pb));
+		g_signal_connect_swapped(GTK_OBJECT(timeout_c), "changed",G_CALLBACK(changed_cb),GTK_OBJECT(pb));
 
-		gtk_signal_connect( GTK_OBJECT(timeout_a),"value_changed",
-		GTK_SIGNAL_FUNC(timeout_cb), timeout_c );
-		gtk_signal_connect( GTK_OBJECT(timeout_c),"changed",
-		GTK_SIGNAL_FUNC(timeout_cb), timeout_c );
+		g_signal_connect( GTK_OBJECT(timeout_a),"value_changed",
+		G_CALLBACK(timeout_cb), timeout_c );
+		g_signal_connect( GTK_OBJECT(timeout_c),"changed",
+		G_CALLBACK(timeout_cb), timeout_c );
 		gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON(timeout_c),
 		GTK_UPDATE_ALWAYS );
 
@@ -750,7 +750,7 @@
 
 		/* tik_syms var is her if want a default value */
 		gtk_entry_set_text(GTK_ENTRY(tik_syms_entry), props.tik_syms ? props.tik_syms : tik_syms);
-		gtk_signal_connect_object(GTK_OBJECT(tik_syms_entry), "changed",GTK_SIGNAL_FUNC(changed_cb),GTK_OBJECT(pb));
+		g_signal_connect_swapped(GTK_OBJECT(tik_syms_entry), "changed",G_CALLBACK(changed_cb),GTK_OBJECT(pb));
 
 		/* OUTPUT FORMAT and SCROLL DIRECTION */
 
@@ -767,19 +767,19 @@
 		if (strcmp(props.output,"default")!=0)
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
 							TRUE);
-		gtk_signal_connect_object(GTK_OBJECT(check),"toggled",
-				GTK_SIGNAL_FUNC(changed_cb),GTK_OBJECT(pb));
-		gtk_signal_connect(GTK_OBJECT(check),"toggled",
-				GTK_SIGNAL_FUNC(toggle_output_cb),NULL);
+		g_signal_connect_swapped(GTK_OBJECT(check),"toggled",
+				G_CALLBACK(changed_cb),GTK_OBJECT(pb));
+		g_signal_connect(GTK_OBJECT(check),"toggled",
+				G_CALLBACK(toggle_output_cb),NULL);
 
 		/* Set the checkbox according to current prefs */
 		if (strcmp(props.scroll,"right2left")!=0)
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check2),
 							TRUE);
-		gtk_signal_connect_object(GTK_OBJECT(check2),"toggled",
-				GTK_SIGNAL_FUNC(changed_cb),GTK_OBJECT(pb));
-		gtk_signal_connect(GTK_OBJECT(check2),"toggled",
-				GTK_SIGNAL_FUNC(toggle_scroll_cb),NULL);
+		g_signal_connect_swapped(GTK_OBJECT(check2),"toggled",
+				G_CALLBACK(changed_cb),GTK_OBJECT(pb));
+		g_signal_connect(GTK_OBJECT(check2),"toggled",
+				G_CALLBACK(toggle_scroll_cb),NULL);
 
 		/* COLOR */
 /*		upLabel = gtk_label_new(_("+ Color"));
@@ -790,8 +790,8 @@
 		gnome_color_picker_set_i8(GNOME_COLOR_PICKER (upColor), 
 					  ur, ug, ub, 255);
 		
-		gtk_signal_connect(GTK_OBJECT(upColor), "color_set",
-				GTK_SIGNAL_FUNC(ucolor_set_cb), NULL);
+		g_signal_connect(GTK_OBJECT(upColor), "color_set",
+				G_CALLBACK(ucolor_set_cb), NULL);
 
 		gtk_box_pack_start_defaults( GTK_BOX(panela), upLabel );
 		gtk_box_pack_start_defaults( GTK_BOX(panela), upColor );
@@ -804,8 +804,8 @@
 		gnome_color_picker_set_i8(GNOME_COLOR_PICKER (downColor), 
 					  dr, dg, db, 255);
 
-		gtk_signal_connect(GTK_OBJECT(downColor), "color_set",
-				GTK_SIGNAL_FUNC(dcolor_set_cb), NULL);
+		g_signal_connect(GTK_OBJECT(downColor), "color_set",
+				G_CALLBACK(dcolor_set_cb), NULL);
 
 		gtk_box_pack_start_defaults( GTK_BOX(panela), downLabel );
 		gtk_box_pack_start_defaults( GTK_BOX(panela), downColor );
@@ -830,12 +830,12 @@
 
 		gtk_container_add(GTK_CONTAINER(pb), vbox);
 
-		gtk_signal_connect_object(GTK_OBJECT(tik_syms_entry), 
-				   "changed",GTK_SIGNAL_FUNC(changed_cb),
+		g_signal_connect_swapped(GTK_OBJECT(tik_syms_entry), 
+				   "changed",G_CALLBACK(changed_cb),
 				   GTK_OBJECT(pb));
 
-		gtk_signal_connect(GTK_OBJECT(pb), "apply",
-				    GTK_SIGNAL_FUNC(apply_cb), NULL);
+		g_signal_connect(GTK_OBJECT(pb), "apply",
+				    G_CALLBACK(apply_cb), NULL);
 
 		gtk_widget_show_all(pb);
 	}
@@ -869,15 +869,15 @@
 		/* applet_widget_add (APPLET_WIDGET (applet), vbox); */
 		gtk_container_add(GTK_CONTAINER(applet), vbox);
 
-		gtk_signal_connect(GTK_OBJECT(drawing_area),"expose_event",
+		g_signal_connect(GTK_OBJECT(drawing_area),"expose_event",
 		(GtkSignalFunc) expose_event, NULL);
 
-		gtk_signal_connect(GTK_OBJECT(drawing_area),"configure_event",
+		g_signal_connect(GTK_OBJECT(drawing_area),"configure_event",
 		(GtkSignalFunc) configure_event, NULL);
 
 
-		destroycb = gtk_signal_connect(GTK_OBJECT(applet), "destroy",
-			GTK_SIGNAL_FUNC(remove_self), handle);
+		destroycb = g_signal_connect(GTK_OBJECT(applet), "destroy",
+			G_CALLBACK(remove_self), handle);
 
 
 

@@ -394,10 +394,10 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_BROWSE);
 	gtk_clist_column_titles_passive(GTK_CLIST(list));
 	gtk_container_add(GTK_CONTAINER(win), list);
-	gtk_signal_connect(GTK_OBJECT(list), "select_row",
-			   GTK_SIGNAL_FUNC(row_select), NULL);
-	gtk_signal_connect(GTK_OBJECT(list), "unselect_row",
-			   GTK_SIGNAL_FUNC(row_unselect), NULL);
+	g_signal_connect(GTK_OBJECT(list), "select_row",
+			   G_CALLBACK(row_select), NULL);
+	g_signal_connect(GTK_OBJECT(list), "unselect_row",
+			   G_CALLBACK(row_unselect), NULL);
 	gtk_widget_show(list);
 
 	hbox = gtk_hbox_new(FALSE, 2);
@@ -405,29 +405,29 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	gtk_widget_show(hbox);
 
 	button = gtk_button_new_with_label("Add New");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(list_add_new), NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			   G_CALLBACK(list_add_new), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
 	gtk_widget_set_usize(button, 100, 0);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label("Delete");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(list_delete), NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			   G_CALLBACK(list_delete), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
 	gtk_widget_set_usize(button, 100, 0);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label("Cancel");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(close_config), NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			   G_CALLBACK(close_config), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
 	gtk_widget_set_usize(button, 100, 0);
 	gtk_widget_show(button);
 
 	button = gtk_button_new_with_label("Save");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(save_list), NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			   G_CALLBACK(save_list), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, 0, 0, 0);
 	gtk_widget_set_usize(button, 100, 0);
 	gtk_widget_show(button);
@@ -438,14 +438,14 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 
 	bad_entry = gtk_entry_new_with_max_length(40);
 	gtk_widget_set_usize(bad_entry, 96, 0);
-	gtk_signal_connect(GTK_OBJECT(bad_entry), "changed",
-			   GTK_SIGNAL_FUNC(bad_changed), NULL);
+	g_signal_connect(GTK_OBJECT(bad_entry), "changed",
+			   G_CALLBACK(bad_changed), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, 0, 0, 0);
 	gtk_widget_show(bad_entry);
 
 	good_entry = gtk_entry_new_with_max_length(255);
-	gtk_signal_connect(GTK_OBJECT(good_entry), "changed",
-			   GTK_SIGNAL_FUNC(good_changed), NULL);
+	g_signal_connect(GTK_OBJECT(good_entry), "changed",
+			   G_CALLBACK(good_changed), NULL);
 	gtk_container_add(GTK_CONTAINER(hbox), good_entry);
 	gtk_widget_show(good_entry);
 

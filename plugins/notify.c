@@ -508,12 +508,12 @@ GtkWidget *gaim_plugin_config_gtk() {
 	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_IM);
-	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(7));
+	g_signal_connect(GTK_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(7));
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Chat windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_CHAT);
-	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(8));
+	g_signal_connect(GTK_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(8));
 
 	/*--------------*/
 	vbox = make_frame(ret, _("Notification Methods"));

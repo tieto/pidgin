@@ -91,8 +91,8 @@ BuddyTickerCreateWindow()
 		return;
 	debug_printf("Making ticker\n");
         tickerwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-        gtk_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
-                GTK_SIGNAL_FUNC (BuddyTickerDestroyWindow), "WM destroy");
+        g_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
+                G_CALLBACK (BuddyTickerDestroyWindow), "WM destroy");
         gtk_window_set_title (GTK_WINDOW(tickerwindow), "Gaim - Buddy Ticker");
         gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
 	gtk_widget_realize(tickerwindow);
@@ -164,8 +164,8 @@ BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm )
 	/* click detection */
 
         gtk_widget_set_events (p->ebox, GDK_BUTTON_PRESS_MASK);
-        gtk_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",
-                GTK_SIGNAL_FUNC(ButtonPressCallback), (gpointer) p);
+        g_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",
+                G_CALLBACK(ButtonPressCallback), (gpointer) p);
 
 	gtk_box_pack_start_defaults( GTK_BOX( p->hbox ), p->ebox );
 	gtk_widget_show( p->ebox );

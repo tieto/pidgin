@@ -64,7 +64,7 @@ static gboolean check_timeout(gpointer data)
 		mail = gtk_label_new("No mail messages.");
 		gtk_box_pack_start(GTK_BOX(vbox2), mail, FALSE, FALSE, 0);
 		gtk_box_reorder_child(GTK_BOX(vbox2), mail, 1);
-		gtk_signal_connect(GTK_OBJECT(mail), "destroy", GTK_SIGNAL_FUNC(maildes), NULL);
+		g_signal_connect(GTK_OBJECT(mail), "destroy", G_CALLBACK(maildes), NULL);
 		gtk_widget_show(mail);
 	}
 
