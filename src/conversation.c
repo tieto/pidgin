@@ -1484,15 +1484,6 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_widget_show(smiley_p);
 	gdk_bitmap_unref(mask);
 
-	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Color"), _("Text Color"),
-				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_fg_color), c);
-	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Color"), _("Background Color"),
-				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_bg_color), c);
-
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
 						_("Bold"), _("Bold Text"), _("Bold"), bold_p,
@@ -1519,23 +1510,39 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
 						_("Big"), _("Increase font size"), _("Big"),
 						big_p, GTK_SIGNAL_FUNC(do_big), entry);
+
+	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
+
 	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 						NULL, _("Font"), _("Select Font"),
 						_("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
+	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Color"), _("Text Color"),
+				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_fg_color), c);
+	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Color"), _("Background Color"),
+				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_bg_color), c);
+
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
+
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Link"), _("Insert Link"),
-						_("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
-	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Logging"), _("Enable logging"),
-						_("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
+						_("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c); 
 	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 						NULL, _("Smiley"), _("Insert smiley face"), _("Smiley"),
 						 smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
+
+	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
+
+	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Logging"), _("Enable logging"),
+						_("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
         speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Sound"), _("Enable sounds"),
