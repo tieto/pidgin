@@ -690,7 +690,7 @@ GtkWidget *font_page() {
 	vbox = gaim_gtk_make_frame(ret, _("Style"));
 	gaim_gtk_prefs_checkbox(_("_Bold"),
 			"/gaim/gtk/conversations/send_bold", vbox);
-	gaim_gtk_prefs_checkbox(_("_Italics"),
+	gaim_gtk_prefs_checkbox(_("_Italic"),
 			"/gaim/gtk/conversations/send_italic", vbox);
 	gaim_gtk_prefs_checkbox(_("_Underline"),
 			"/gaim/gtk/conversations/send_underline", vbox);
@@ -919,7 +919,7 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	gaim_gtk_prefs_checkbox(_("Send _URLs as Links"),
+	gaim_gtk_prefs_checkbox(_("Send _URLs as links"),
 				  "/core/conversations/send_urls_as_links", vbox);
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
