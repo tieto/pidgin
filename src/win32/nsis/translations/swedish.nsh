@@ -8,7 +8,7 @@
 ;;
 
 ; Startup GTK+ check
-LangString GTK_INSTALLER_NEEDED			${LANG_SWEDISH} "\"GTK+ runtime environment\" saknas eller behöver uppgraderas$\rInstallera v${GTK_VERSION} eller högre av GTK+."
+LangString GTK_INSTALLER_NEEDED			${LANG_SWEDISH} "$\"GTK+ runtime environment$\" saknas eller behöver uppgraderas$\rInstallera v${GTK_VERSION} eller högre av GTK+."
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_SWEDISH} "Gaim-snabbmeddelandeklient (obligatorisk)"
