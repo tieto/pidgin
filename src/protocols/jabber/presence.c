@@ -307,6 +307,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			chat->id = i++;
 			chat->muc = muc;
 			chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
+			gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
 		}
 
 		if(type && !strcmp(type, "unavailable")) {
@@ -331,15 +332,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						continue;
 					nick_change = TRUE;
 					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
-					if(!g_utf8_collate(jid->resource, chat->nick)) {
-						g_free(chat->nick);
-						chat->nick = g_strdup(nick);
-					}
 					break;
 				}
 			}
 			if(!nick_change) {
-				if(!strcmp(jid->resource, chat->nick)) {
+				if(!g_utf8_collate(jid->resource, gaim_conv_chat_get_nick(GAIM_CONV_CHAT(chat->conv)))) {
 					serv_got_chat_left(js->gc, chat->id);
 					jabber_chat_destroy(chat);
 				} else {

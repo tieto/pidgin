@@ -1102,7 +1102,8 @@ static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
 			if(!(server = g_hash_table_lookup(chat->components, "server")))
 				continue;
 
-			if(!g_utf8_collate(room, jid->node) && !g_utf8_collate(server, jid->domain)) {
+			if(jid->node && jid->domain &&
+					!g_utf8_collate(room, jid->node) && !g_utf8_collate(server, jid->domain)) {
 				jabber_id_free(jid);
 				return chat;
 			}

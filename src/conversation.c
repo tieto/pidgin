@@ -85,59 +85,27 @@ insertname_compare(gconstpointer one, gconstpointer two)
 }
 
 static gboolean
-find_nick(GaimConnection *gc, const char *message)
+find_nick(const char *nick, const char *message)
 {
-	GaimAccount *account;
 	char *msg, *who, *p;
-	const char *disp;
 	int n;
-
-	account = gaim_connection_get_account(gc);
+	gboolean ret = FALSE;
 
 	msg = g_utf8_strdown(message, -1);
 
-	who = g_utf8_strdown(gaim_account_get_username(account), -1);
+	who = g_utf8_strdown(nick, -1);
 	n = strlen(who);
 
 	if ((p = strstr(msg, who)) != NULL) {
 		if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
-			g_free(who);
-			g_free(msg);
-
-			return TRUE;
+			ret = TRUE;
 		}
 	}
 
 	g_free(who);
-
-	disp = gaim_connection_get_display_name(gc);
-
-
-	if(disp)  {
-		if (!gaim_utf8_strcasecmp(gaim_account_get_username(account), disp)) {
-			g_free(msg);
-
-			return FALSE;
-		}
-
-		who = g_utf8_strdown(disp, -1);
-		n = who ? strlen(who) : 0;
-
-		if (n > 0 && (p = strstr(msg, who)) != NULL) {
-			if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
-				g_free(who);
-				g_free(msg);
-
-				return TRUE;
-			}
-		}
-
-		g_free(who);
-	}
-
 	g_free(msg);
 
-	return FALSE;
+	return ret;
 }
 
 static gboolean
@@ -817,10 +785,17 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
+		const char *disp;
+
 		conv->u.chat = g_new0(GaimConvChat, 1);
 		conv->u.chat->conv = conv;
 
 		chats = g_list_append(chats, conv);
+		if((disp = gaim_connection_get_display_name(account->gc))) {
+			gaim_conv_chat_set_nick(conv->u.chat, disp);
+		} else {
+			gaim_conv_chat_set_nick(conv->u.chat, gaim_account_get_username(account));
+		}
 
 		gaim_conversation_set_logging(conv,
 				gaim_prefs_get_bool("/core/logging/log_chats"));
@@ -1855,20 +1830,17 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 
 	if (!(flags & GAIM_MESSAGE_WHISPER)) {
 		char *str;
-		const char *disp;
+		const char *nick;
 
 		str = g_strdup(gaim_normalize(account, who));
-		disp = gaim_connection_get_display_name(gc);
+		nick = gaim_conv_chat_get_nick(chat);
 
-		if (!gaim_utf8_strcasecmp(str, gaim_normalize(account, gaim_account_get_username(account))) ||
-			(disp && !gaim_utf8_strcasecmp(str, gaim_normalize(account, disp)))) {
-
+		if (!g_utf8_collate(str, gaim_normalize(account, nick))) {
 			flags |= GAIM_MESSAGE_SEND;
-		}
-		else {
+		} else {
 			flags |= GAIM_MESSAGE_RECV;
 
-			if (find_nick(gc, message))
+			if (find_nick(chat->nick, message))
 				flags |= GAIM_MESSAGE_NICK;
 		}
 
@@ -1969,6 +1941,7 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	GaimConversationUiOps *ops;
 	char tmp[BUF_LONG];
 	GList *names;
+	gboolean its_me = FALSE;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(old_user != NULL);
@@ -2002,9 +1975,19 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	else if (gaim_conv_chat_is_user_ignored(chat, new_user))
 		gaim_conv_chat_unignore(chat, new_user);
 
+	if(!g_utf8_collate(old_user, chat->nick)) {
+		gaim_conv_chat_set_nick(chat, new_user);
+		its_me = TRUE;
+	}
+
 	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change")) {
-		g_snprintf(tmp, sizeof(tmp),
-				   _("%s is now known as %s"), old_user, new_user);
+		if(its_me) {
+			g_snprintf(tmp, sizeof(tmp),
+					_("You are now known as %s"), new_user);
+		} else {
+			g_snprintf(tmp, sizeof(tmp),
+					_("%s is now known as %s"), old_user, new_user);
+		}
 
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
@@ -2164,6 +2147,20 @@ gaim_conv_chat_clear_users(GaimConvChat *chat)
 
 	g_list_free(users);
 	gaim_conv_chat_set_users(chat, NULL);
+}
+
+void gaim_conv_chat_set_nick(GaimConvChat *chat, const char *nick) {
+	g_return_if_fail(chat != NULL);
+
+	if(chat->nick)
+		g_free(chat->nick);
+	chat->nick = g_strdup(nick);
+}
+
+const char *gaim_conv_chat_get_nick(GaimConvChat *chat) {
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->nick;
 }
 
 GaimConversation *

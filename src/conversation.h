@@ -223,6 +223,7 @@ struct _GaimConvChat
 	char  *who;                      /**< The person who set the topic. */
 	char  *topic;                    /**< The topic.                    */
 	int    id;                       /**< The chat ID.                  */
+	char *nick;                      /**< Your nick in this chat.       */
 };
 
 /**
@@ -244,9 +245,9 @@ struct _GaimConversation
 	char *title;                /**< The window title.                  */
 
 	gboolean logging;           /**< The status of logging.             */
-	
+
 	GaimLog *log;               /**< This conversation's log            */
-	
+
 	GList *send_history;        /**< The send history.                  */
 	GString *history;           /**< The conversation history.          */
 
@@ -1178,6 +1179,22 @@ void gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users,
  * @param chat The chat.
  */
 void gaim_conv_chat_clear_users(GaimConvChat *chat);
+
+/**
+ * Sets your nickname (used for hilighting) for a chat.
+ *
+ * @param chat The chat.
+ * @param nick The nick.
+ */
+void gaim_conv_chat_set_nick(GaimConvChat *chat, const char *nick);
+
+/**
+ * Gets your nickname (used for hilighting) for a chat.
+ *
+ * @param chat The chat.
+ * @return  The nick.
+ */
+const char *gaim_conv_chat_get_nick(GaimConvChat *chat);
 
 /**
  * Finds a chat with the specified chat ID.

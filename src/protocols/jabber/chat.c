@@ -190,7 +190,6 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	chat->room = g_strdup(room);
 	chat->server = g_strdup(server);
-	chat->nick = g_strdup(handle);
 
 	g_hash_table_insert(js->chats, room_jid, chat);
 
@@ -233,7 +232,6 @@ void jabber_chat_destroy(JabberChat *chat)
 
 	g_free(chat->room);
 	g_free(chat->server);
-	g_free(chat->nick);
 	g_free(chat);
 }
 
@@ -588,8 +586,6 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 	xmlnode *presence;
 
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
-	gaim_debug(GAIM_DEBUG_INFO, "jabber", "%s is leaving chat %s\n",
-			chat->nick, room_jid);
 	presence = xmlnode_new("presence");
 	xmlnode_set_attrib(presence, "to", room_jid);
 	xmlnode_set_attrib(presence, "type", "unavailable");
