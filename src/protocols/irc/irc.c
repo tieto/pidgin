@@ -2038,7 +2038,8 @@ static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file
 	pos = htonl(ift->cur);
 	write(ift->fd, (char *)&pos, 4);
 
-//	printf("Cheap-O Progress Bar (%s) %d of %d: %2.0f\%\n", ift->name, ift->cur, ift->len, ((float)ift->cur/(float)ift->len) * 100);
+	// FIXME: You should check to verify that they received the data when
+	// you are sending a file ...
 }
 
 static void irc_file_transfer_cancel (struct gaim_connection *gc, struct file_transfer *xfer) {
