@@ -178,6 +178,7 @@ __get_mac_address(const char *ip)
 static void
 save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
 {
+	TrepiaSession *session = gc->proto_data;
 	const char *value;
 	char *buf, *temp;
 	int int_val;
@@ -205,12 +206,13 @@ save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
 	SET_STRING_FIELD("n", "country");
 	SET_STRING_FIELD("o", "state");
 	SET_STRING_FIELD("p", "city");
-	SET_STRING_FIELD("o", "state");
 
 	buf = g_strdup_printf("%s</K>", temp);
 
-	gaim_debug(GAIM_DEBUG_MISC, "trepia", "Setting profile: {%s}\n",
-			   buf);
+	if (trepia_write(session->fd, buf, strlen(buf)) < 0) {
+		gaim_connection_error(session->gc, _("Write error"));
+		return;
+	}
 }
 
 static void
