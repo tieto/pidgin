@@ -62,6 +62,7 @@ void set_default_away(GtkWidget *, gpointer);
 static GtkWidget *sounddialog = NULL;
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
+
 GtkWidget *prefs_away_list = NULL;
 GtkWidget *prefs_away_menu = NULL;
 GtkWidget *preftree = NULL;
@@ -942,9 +943,20 @@ void do_select_sound(GtkWidget *w, int snd) {
 	sound_file[snd] = g_strdup(file);
 
 	save_prefs();
+
+	/* Set our text entry */
+	gtk_entry_set_text(GTK_ENTRY(sndent[snd]), sound_file[snd]);
 	
 	/* Close the window! It's getting cold in here! */
 	close_sounddialog(NULL, sounddialog);
+}
+
+static void reset_sound(GtkWidget *button, int snd) {
+
+	/* This just resets a sound file back to default */
+	g_free(sound_file[snd]);
+	
+	gtk_entry_set_text(GTK_ENTRY(sndent[snd]), "(default)");
 }
 
 static void sel_sound(GtkWidget *button, int snd) {
@@ -987,6 +999,11 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
 
 	gaim_button(label, &sound_options, opt, hbox);
 
+	button = gtk_button_new_with_label(_("Reset"));
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(reset_sound), (void *)snd);
+	gtk_widget_show(button);
+
 	button = gtk_button_new_with_label(_("Choose"));
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_sound), (void *)snd);
@@ -994,10 +1011,12 @@ static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
 
 	entry = gtk_entry_new();
 	gtk_entry_set_editable(GTK_ENTRY(entry), FALSE);
+	
 	if (sound_file[snd])
 		gtk_entry_set_text(GTK_ENTRY(entry), sound_file[snd]);
 	else
 		gtk_entry_set_text(GTK_ENTRY(entry), "(default)");
+
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	sndent[snd] = entry;
 	gtk_widget_show(entry);
@@ -1771,7 +1790,7 @@ void show_prefs()
 	aol_icon(prefs->window);
 	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 630, 550);
+	gtk_widget_set_usize(prefs, 670, 550);
 	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
 			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
