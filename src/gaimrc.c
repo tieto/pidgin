@@ -598,32 +598,111 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 
 	/* I hate this part. We must convert the protocol options. */
 	switch (gaim_account_get_protocol(account)) {
+		/* TOC */
 		case GAIM_PROTO_TOC:
+			if (*p->value[0] == '\0')
+				gaim_account_set_string(account, "server", "toc.oscar.aol.com");
+			else
+				gaim_account_set_string(account, "server", p->value[0]);
+
+			if (*p->value[1] == '\0')
+				gaim_account_set_int(account, "port", 9898);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[1]));
+
+			break;
+
+		/* OSCAR */
 		case GAIM_PROTO_OSCAR:
-			gaim_account_set_string(account, "server", p->value[0]);
-			gaim_account_set_int(account, "port", atoi(p->value[1]));
+			if (*p->value[0] == '\0')
+				gaim_account_set_string(account, "server",
+										"login.oscar.aol.com");
+			else
+				gaim_account_set_string(account, "server", p->value[0]);
+
+			if (*p->value[1] == '\0')
+				gaim_account_set_int(account, "port", 5190);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[1]));
+
 			break;
 
+		/* Jabber */
 		case GAIM_PROTO_JABBER:
-			gaim_account_set_string(account, "connect_server", p->value[1]);
-			gaim_account_set_int(account, "port", atoi(p->value[0]));
+			if (*p->value[0] == '\0')
+				gaim_account_set_int(account, "port", 5222);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[0]));
+
+			if (*p->value[1] != '\0')
+				gaim_account_set_string(account, "connect_server", p->value[1]);
+
 			break;
 
-		case GAIM_PROTO_MSN:
+		/* Napster */
 		case GAIM_PROTO_NAPSTER:
-		case GAIM_PROTO_YAHOO:
-			gaim_account_set_string(account, "server", p->value[3]);
-			gaim_account_set_int(account, "port", atoi(p->value[4]));
+			if (*p->value[3] == '\0')
+				gaim_account_set_string(account, "server", "64.124.41.187");
+			else
+				gaim_account_set_string(account, "server", p->value[3]);
+
+			if (*p->value[4] == '\0')
+				gaim_account_set_int(account, "port", 8888);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[4]));
+
 			break;
 
+		/* Yahoo! */
+		case GAIM_PROTO_YAHOO:
+			if (*p->value[3] == '\0')
+				gaim_account_set_string(account, "server", "scs.yahoo.com");
+			else
+				gaim_account_set_string(account, "server", p->value[3]);
+
+			if (*p->value[4] == '\0')
+				gaim_account_set_int(account, "port", 5050);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[4]));
+
+			break;
+
+		/* MSN */
+		case GAIM_PROTO_MSN:
+			if (*p->value[3] == '\0')
+				gaim_account_set_string(account, "server",
+										"messenger.hotmail.com");
+			else
+				gaim_account_set_string(account, "server", p->value[3]);
+
+			if (*p->value[4] == '\0')
+				gaim_account_set_int(account, "port", 1863);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[4]));
+
+			break;
+
+		/* IRC */
 		case GAIM_PROTO_IRC:
-			if(strlen(p->value[0]) && !strchr(account->username, '@')) {
-				tmp = g_strdup_printf("%s@%s", account->username, p->value[0]);
+			if (*p->value[0] != '\0' &&
+				strchr(gaim_account_get_username(account), '@') == NULL) {
+
+				tmp = g_strdup_printf("%s@%s",
+					gaim_account_get_username(account), p->value[0]);
 				gaim_account_set_username(account, tmp);
 				g_free(tmp);
 			}
-			gaim_account_set_int(account, "port", atoi(p->value[1]));
-			gaim_account_set_string(account, "charset", p->value[2]);
+
+			if (*p->value[1] == '\0')
+				gaim_account_set_int(account, "port", 6667);
+			else
+				gaim_account_set_int(account, "port", atoi(p->value[1]));
+
+			if (*p->value[2] == '\0')
+				gaim_account_set_string(account, "charset", "ISO-8859-1");
+			else
+				gaim_account_set_string(account, "charset", p->value[2]);
+
 			break;
 
 		default:
