@@ -1,0 +1,506 @@
+/**
+ * @file cmds.c
+ * 
+ * gaim
+ *
+ * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "internal.h"
+
+#include "conversation.h"
+#include "notify.h"
+#include "debug.h"
+#include "irc.h"
+
+
+static void irc_do_mode(struct irc_conn *irc, const char *target, const char *sign, char **ops);
+
+int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	GaimConversation *convo = gaim_find_conversation_with_account(target, irc->account);
+	char *buf;
+
+	if (!convo)
+		return;
+
+	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
+	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
+		gaim_im_write(GAIM_IM(convo), "", buf, -1, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+	else
+		gaim_chat_write(GAIM_CHAT(convo), "", buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+	g_free(buf);
+
+	return 1;
+}
+
+int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf, *message, *cur;
+
+	if (args[0] && strcmp(cmd, "back")) {
+		message = strdup(args[0]);
+		for (cur = message; *cur; cur++) {
+			if (*cur == '\n')
+				*cur = ' ';
+		}
+		buf = irc_format(irc, "v:", "AWAY", message);
+		g_free(message);
+	} else {
+		buf = irc_format(irc, "v", "AWAY");
+	}
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	char *action, *dst, **newargs;
+	const char *src;
+	GaimConversation *convo;
+
+	if (!args || !args[0] || !gc)
+		return 0;
+
+	action = g_malloc(strlen(args[0]) + 9);
+
+	sprintf(action, "\001ACTION ");
+
+	src = args[0];
+	dst = action + 8;
+	while (*src) {
+		if (*src == '\n') {
+			if (*(src + 1) == '\0') {
+				break;
+			} else {
+				*dst++ = ' ';
+				src++;
+				continue;
+			}
+		}
+		*dst++ = *src++;
+	}
+	*dst++ = '\001';
+	*dst = '\0';
+
+	newargs = g_new0(char *, 2);
+	newargs[0] = g_strdup(target);
+	newargs[1] = action;
+	irc_cmd_privmsg(irc, cmd, target, (const char **)newargs);
+	g_free(newargs[0]);
+	g_free(newargs[1]);
+	g_free(newargs);
+
+	convo = gaim_find_conversation_with_account(target, irc->account);
+	if (convo && gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) {
+		action = g_strdup_printf("/me %s", args[0]);
+		if (action[strlen(action) - 1] == '\n')
+			action[strlen(action) - 1] = '\0';
+		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(convo)),
+				 gaim_connection_get_display_name(gc),
+				 0, action, time(NULL));
+		g_free(action);
+	}
+
+	return 1;
+}
+
+int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0] || !(args[1] || target))
+		return 0;
+
+	buf = irc_format(irc, "vnc", "INVITE", args[0], args[1] ? args[1] : target);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_join(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	if (args[1])
+		buf = irc_format(irc, "vcv", "JOIN", args[0], args[1]);
+	else
+		buf = irc_format(irc, "vc", "JOIN", args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+	GaimConversation *convo;
+
+	if (!args || !args[0])
+		return 0;
+
+	convo = gaim_find_conversation_with_account(target, irc->account);
+	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
+		return;
+
+	if (args[1])
+		buf = irc_format(irc, "vcn:", "KICK", target, args[0], args[1]);
+	else
+		buf = irc_format(irc, "vcn", "KICK", target, args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	GaimConnection *gc;
+	char *buf;
+
+	if (!args)
+		return 0;
+
+	if (!strcmp(cmd, "mode")) {
+		if (!args[0] && (*target == '#' || *target == '&'))
+			buf = irc_format(irc, "vc", "MODE", target);
+		else if (args[0] && (*args[0] == '+' || *args[0] == '-'))
+			buf = irc_format(irc, "vcv", "MODE", target, args[0]);
+		else if (args[0])
+			buf = irc_format(irc, "vv", "MODE", args[0]);
+		else
+			return;
+	} else if (!strcmp(cmd, "umode")) {
+		if (!args[0])
+			return;
+		gc = gaim_account_get_connection(irc->account);
+		buf = irc_format(irc, "vnv", "MODE", gaim_connection_get_display_name(gc), args[0]);
+	}
+	irc_send(irc, buf);
+	g_free(buf);
+		
+
+	return 0;
+}
+
+int irc_cmd_names(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args)
+		return 0;
+
+	buf = irc_format(irc, "vc", "NAMES", args[0] ? args[0] : target);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	irc->nameconv = g_strdup(target);
+
+	return 0;
+}
+
+int irc_cmd_nick(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	buf = irc_format(irc, "v:", "NICK", args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_op(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char **nicks, **ops, *sign, *mode;
+	int i = 0, used = 0;
+
+	if (!args || !args[0] || !*args[0])
+		return 0;
+
+	if (!strcmp(cmd, "op")) {
+		sign = "+";
+		mode = "o";
+	} else if (!strcmp(cmd, "deop")) {
+		sign = "-";
+		mode = "o";
+	} else if (!strcmp(cmd, "voice")) {
+		sign = "+";
+		mode = "v";
+	} else if (!strcmp(cmd, "devoice")) {
+		sign = "-";
+		mode = "v";
+	} else {
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "invalid 'op' command '%s'\n", cmd);
+		return 0;
+	}
+
+	nicks = g_strsplit(args[0], " ", -1);
+
+	for (i = 0; nicks[i]; i++)
+		/* nothing */;
+	ops = g_new0(char *, i * 2 + 1);
+
+	for (i = 0; nicks[i]; i++) {
+		if (!*nicks[i])
+			continue;
+		ops[used++] = mode;
+		ops[used++] = nicks[i];
+	}
+
+	irc_do_mode(irc, target, sign, ops);
+	g_free(ops);
+
+	return;
+}
+
+int irc_cmd_part(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args)
+		return 0;
+
+	if (args[1])
+		buf = irc_format(irc, "vc:", "PART", args[0] ? args[0] : target, args[1]);
+	else
+		buf = irc_format(irc, "vc", "PART", args[0] ? args[0] : target);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_ping(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *stamp;
+	char *buf;
+
+	if (args && args[0]) {
+		if (*args[0] == '#' || *args[0] == '&')
+			return 0;
+		stamp = g_strdup_printf("\001PING %lu\001", time(NULL));
+		buf = irc_format(irc, "vn:", "PRIVMSG", args[0], stamp);
+		g_free(stamp);
+	} else {
+		stamp = g_strdup_printf("%s %d", target, time(NULL));
+		buf = irc_format(irc, "v:", "PING", stamp);
+		g_free(stamp);
+	}
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_privmsg(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	const char *cur, *end;
+	char *msg, *buf;
+
+	if (!args || !args[0] || !args[1])
+		return 0;
+
+	cur = args[1];
+	end = args[1];
+	while (*end && *cur) {
+		end = strchr(cur, '\n');
+		if (!end)
+			end = cur + strlen(cur);
+		msg = g_strndup(cur, end - cur);
+		buf = irc_format(irc, "vt:", "PRIVMSG", args[0], msg);
+		irc_send(irc, buf);
+		g_free(msg);
+		g_free(buf);
+		cur = end + 1;
+	}
+
+	return 0;
+}
+
+int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	buf = irc_format(irc, "v:", "QUIT", (args && args[0]) ? args[0] : "Download Gaim: " WEBSITE);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	buf = irc_format(irc, "v", args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	GaimConversation *convo;
+	GaimConnection *gc;
+
+	if (!args || !args[0])
+		return 0;
+
+	convo = gaim_conversation_new(GAIM_CONV_IM, irc->account, args[0]);
+
+	if (args[1]) {
+		gc = gaim_account_get_connection(irc->account);
+		irc_cmd_privmsg(irc, cmd, target, args);
+		gaim_im_write(GAIM_IM(convo), gaim_connection_get_display_name(gc),
+			      args[1], -1, WFLAG_SEND, time(NULL));
+	}
+
+	return 0;
+}
+
+int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	if (*target != '#' && *target != '&') /* not a channel, punt */
+		return 0;
+
+	if (args[1])
+		buf = irc_format(irc, "vcn:", "REMOVE", target, args[0], args[1]);
+	else
+		buf = irc_format(irc, "vcn", "REMOVE", target, args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+	const char *topic;
+	GaimConversation *convo;
+
+	if (!args)
+		return 0;
+
+	convo = gaim_find_conversation_with_account(target, irc->account);
+	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
+		return;
+
+	if (!args[0]) {
+		topic = gaim_chat_get_topic (GAIM_CHAT(convo));
+
+		if (topic)
+			buf = g_strdup_printf("current topic is: %s", topic);
+		else
+			buf = g_strdup(_("No topic is set"));
+		gaim_chat_write(GAIM_CHAT(convo), target, buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		g_free(buf);
+
+		return 0;
+	}
+
+	buf = irc_format(irc, "vt:", "TOPIC", target, args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return;
+
+	if (!strcmp(cmd, "wallops"))
+		buf = irc_format(irc, "v:", "WALLOPS", args[0]);
+	else if (!strcmp(cmd, "operwall"))
+		buf = irc_format(irc, "v:", "OPERWALL", args[0]);
+
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
+int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	buf = irc_format(irc, "vn", "WHOIS", args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+	irc->whois.nick = g_strdup(args[0]);
+
+	return 0;
+}
+
+static void irc_do_mode(struct irc_conn *irc, const char *target, const char *sign, char **ops)
+{
+	char *buf, mode[5];
+	int i = 0;
+
+	if (!sign)
+		return;
+
+	while (ops[i]) {
+		if (ops[i + 2] && ops[i + 4]) {
+			g_snprintf(mode, sizeof(mode), "%s%s%s%s", sign,
+				   ops[i], ops[i + 2], ops[i + 4]);
+			buf = irc_format(irc, "vcvnnn", "MODE", target, mode,
+					 ops[i + 1], ops[i + 3], ops[i + 5]);
+			i += 6;
+		} else if (ops[i + 2]) {
+			g_snprintf(mode, sizeof(mode), "%s%s%s",
+				   sign, ops[i], ops[i + 2]);
+			buf = irc_format(irc, "vcvnn", "MODE", target, mode,
+					 ops[i + 1], ops[i + 3]);
+			i += 4;
+		} else {
+			g_snprintf(mode, sizeof(mode), "%s%s", sign, ops[i]);
+			buf = irc_format(irc, "vcvn", "MODE", target, mode, ops[i + 1]);
+			i += 2;
+		}
+		irc_send(irc, buf);
+		g_free(buf);
+	}
+}

@@ -2,7 +2,7 @@ Makefile.in
 Makefile
 .deps
 .libs
-irc.lo
+*.lo
 libirc.la
 *.def
 *.lib
