@@ -57,53 +57,56 @@ SetDateSave on
 !define GTK_DEFAULT_THEME_ENGINE_DIR	"lib\gtk-2.0\2.2.0\engines"
 
 ;--------------------------------
-;Modern UI Configuration
-
-  !define MUI_CUSTOMPAGECOMMANDS
-
-  !define MUI_WELCOMEPAGE
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-	!define MUI_COMPONENTSPAGE_SMALLDESC
-  !define MUI_DIRECTORYPAGE
-  !define MUI_FINISHPAGE
-  
-  !define MUI_ABORTWARNING
-
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
-
-#  ;Remember the installer language
-#  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-#  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
-#  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
-
-;--------------------------------
 ;Pages
   
-  !insertmacro MUI_PAGECOMMAND_WELCOME
-  !insertmacro MUI_PAGECOMMAND_LICENSE
-  !insertmacro MUI_PAGECOMMAND_COMPONENTS
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_COMPONENTS
   Page custom ShowGtkInstallDirChooser GtkInstallDirVerify
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  !insertmacro MUI_PAGECOMMAND_INSTFILES
-  !insertmacro MUI_PAGECOMMAND_FINISH
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_FINISH
+
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+
+;--------------------------------
+;Modern UI Configuration
+
+  !define MUI_COMPONENTSPAGE_SMALLDESC
+  !define MUI_ABORTWARNING
+
+  ;Remember the installer language
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 ;--------------------------------
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
+  !insertmacro MUI_LANGUAGE "German"
+  !insertmacro MUI_LANGUAGE "Dutch"
+  !insertmacro MUI_LANGUAGE "French"
+  !insertmacro MUI_LANGUAGE "SimpChinese"
 
 ;--------------------------------
 ;Translations
 
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
-
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\german.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
 
 ;--------------------------------
 ;Data
   
-  LicenseData "./COPYING"
+  LicenseData /LANG=${LANG_ENGLISH}	"./COPYING"
+  LicenseData /LANG=${LANG_GERMAN}	"./COPYING"
+  LicenseData /LANG=${LANG_DUTCH}	"./COPYING"
+  LicenseData /LANG=${LANG_FRENCH}	"./COPYING"
+  LicenseData /LANG=${LANG_SIMPCHINESE} "./COPYING"
 
 ;--------------------------------
 ;Reserve Files
@@ -111,6 +114,7 @@ SetDateSave on
 
   ReserveFile "${GAIM_NSIS_INCLUDE_PATH}\gtkInstall.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+  !insertmacro MUI_RESERVEFILE_LANGDLL 
   ReserveFile "${NSISDIR}\Plugins\AccessControl.dll"
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
@@ -434,8 +438,8 @@ Section Uninstall
     ; The WinPrefs plugin may have left this behind..
     DeleteRegValue HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
     DeleteRegValue HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
-#    ; Remove Language prefrence info
-#    DeleteRegKey ${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
+    ; Remove Language preference info
+    DeleteRegKey ${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
 
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
@@ -904,17 +908,17 @@ Function .onInit
   !insertmacro UnselectSection ${SecGtkBluecurve}
   !insertmacro UnselectSection ${SecGtkLighthouseblue}
 
-#  ; Display Language selection dialog
-#  !insertmacro MUI_LANGDLL_DISPLAY
+  ; Display Language selection dialog
+  !insertmacro MUI_LANGDLL_DISPLAY
 
 FunctionEnd
 
-#Function un.onInit
-#
-#  ; Get stored language prefrence
-#  !insertmacro MUI_UNGETLANGUAGE
-#  
-#FunctionEnd
+Function un.onInit
+
+  ; Get stored language prefrence
+  !insertmacro MUI_UNGETLANGUAGE
+  
+FunctionEnd
 
 Function .onSelChange
   Push $0
