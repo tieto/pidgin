@@ -1886,7 +1886,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	button = gaim_pixbuf_button_from_stock(_("_Create"), "gtk-execute", GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Save"), "gtk-execute", GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_new_bp), b);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
