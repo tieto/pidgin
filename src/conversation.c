@@ -605,10 +605,20 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		} else {
+			int oldpos;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-			pos = gtk_editable_get_position(GTK_EDITABLE(entry));
+			oldpos = pos = gtk_editable_get_position(GTK_EDITABLE(entry));
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
+			if (oldpos == pos)
+				gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
 		}
+	} else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm')) {
+		int oldpos;
+		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+		oldpos = pos = gtk_editable_get_position(GTK_EDITABLE(entry));
+		gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
+		if (oldpos == pos)
+			gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
 	} else if (event->state & GDK_CONTROL_MASK) {
 		if (convo_options & OPT_CONVO_CTL_CHARS) {
 			switch (event->keyval) {
