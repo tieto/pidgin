@@ -442,11 +442,11 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_free(yd);
 }
 
-static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
+static int yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	GSList *l = yd->offline;
 
-	if (away || !strlen(message)) return;
+	if (away || !strlen(message)) return 0;
 
 	while (l) {
 		if (!strcmp(who, l->data))
@@ -458,6 +458,7 @@ static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, 
 		yahoo_send_message(yd->sess, yd->active_id, who, message);
 	else
 		yahoo_send_message_offline(yd->sess, yd->active_id, who, message);
+	return 0;
 }
 
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {

@@ -2443,14 +2443,14 @@ static char *oscar_name() {
 	return "Oscar";
 }
 
-static void oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
+static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	if (dim) {
-		aim_send_im_direct(odata->sess, dim->conn, message);
+		return aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
 		if (away)
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+			return aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else {
 			int flags = AIM_IMFLAGS_ACK;
 #if USE_PIXBUF
@@ -2469,7 +2469,7 @@ static void oscar_send_im(struct gaim_connection *gc, char *name, char *message,
 				debug_printf("sending buddy icon request with message\n");
 			}
 #endif
-			aim_send_im(odata->sess, odata->conn, name, flags, message);
+			return aim_send_im(odata->sess, odata->conn, name, flags, message);
 		}
 	}
 }

@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <ctype.h>
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
@@ -752,21 +753,16 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 {
 	char *buf, *buf2;
 	int limit;
+	int err = 0;
 
 	if (!c->gc)
 		return;
 
 	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-	/* uncomment this if you want no limit on outgoing messages.
-	 * if you uncomment this, you'll probably get kicked off if
-	 * you send one that's too big.
-	 limit = strlen(buf2) * 2;
-	 */
-	limit = 7985 << 2;
+	limit = 32 * 1024; /* you shouldn't be sending more than 32k in your messages. that's a book. */
 	buf = g_malloc(limit);
 	g_snprintf(buf, limit, "%s", buf2);
 	g_free(buf2);
-	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 	if (!strlen(buf)) {
 		g_free(buf);
 		return;
@@ -858,7 +854,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		buffy = g_strdup(buf);
 		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
 		if (buffy) {
-			serv_send_im(c->gc, c->name, buffy, 0);
+			err = serv_send_im(c->gc, c->name, buffy, 0);
 			g_free(buffy);
 		}
 
@@ -871,16 +867,25 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		/* no sound because we do that when we receive our message */
 	}
 
-	if (general_options & OPT_GEN_BACK_ON_IM) {
-		if (awaymessage != NULL) {
-			do_im_back();
-		} else if (c->gc->away) {
-			serv_set_away(c->gc, GAIM_AWAY_CUSTOM, NULL);
-		}
-	}
-
 	g_free(buf2);
 	g_free(buf);
+
+	if (err < 0) {
+		if (err == -E2BIG)
+			do_error_dialog(_("Unable to send message: too large"), _("Message Error"));
+		else
+			do_error_dialog(_("Unable to send message: Unknown reason"), _("Message Error"));
+	} else {
+		gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
+
+		if (general_options & OPT_GEN_BACK_ON_IM) {
+			if (awaymessage != NULL) {
+				do_im_back();
+			} else if (c->gc->away) {
+				serv_set_away(c->gc, GAIM_AWAY_CUSTOM, NULL);
+			}
+		}
+	}
 }
 
 int entry_key_pressed(GtkWidget *w, GtkWidget *entry)

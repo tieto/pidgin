@@ -217,12 +217,14 @@ static struct browse_window *find_browse_window_by_name(struct gaim_connection *
 	return NULL;
 }
 
-static void nap_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static int nap_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 	gchar buf[NAP_BUF_LEN];
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s %s", who, message);
 	nap_write_packet(gc, 0xCD, buf);
+
+	return 0;
 }
 
 static struct nap_channel *find_channel_by_name(struct gaim_connection *gc, char *name)

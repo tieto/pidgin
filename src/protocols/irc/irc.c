@@ -162,7 +162,7 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 }
 
 
-static void irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static int irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
@@ -195,7 +195,7 @@ static void irc_send_im(struct gaim_connection *gc, char *who, char *message, in
 			irc_get_info(gc, temp);
 			g_free(temp);
 
-			return;
+			return 0;
 		}
 
 	} else {
@@ -205,6 +205,7 @@ static void irc_send_im(struct gaim_connection *gc, char *who, char *message, in
 	write(idata->fd, buf, strlen(buf));
 
 	g_free(buf);
+	return 0;
 }
 
 static int find_id_by_name(struct gaim_connection *gc, char *name)

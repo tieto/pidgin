@@ -647,7 +647,7 @@ extern void serv_login(struct aim_user *);
 extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
 extern void serv_finish_login();
-extern void serv_send_im(struct gaim_connection *, char *, char *, int);
+extern int  serv_send_im(struct gaim_connection *, char *, char *, int);
 extern void serv_get_info(struct gaim_connection *, char *);
 extern void serv_get_away_msg(struct gaim_connection *, char *);
 extern void serv_get_dir(struct gaim_connection *, char *);

@@ -741,14 +741,18 @@ static char *toc_name()
 	return "TOC";
 }
 
-static void toc_send_im(struct gaim_connection *gc, char *name, char *message, int away)
+static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
 	char buf[BUF_LEN * 2];
 
 	escape_text(message);
+	if (strlen(message) + 52 > MSG_LEN)
+		return -E2BIG;
 	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
 		   message, ((away) ? " auto" : ""));
 	sflap_send(gc, buf, -1, TYPE_DATA);
+	
+	return 0;
 }
 
 static void toc_set_config(struct gaim_connection *gc)

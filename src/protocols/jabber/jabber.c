@@ -1215,14 +1215,14 @@ static void jabber_close(struct gaim_connection *gc)
 	gc->proto_data = NULL;
 }
 
-static void jabber_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
 	xmlnode x, y;
 	char *realwho;
 	gjconn j = ((struct jabber_data *)gc->proto_data)->jc;
 
 	if (!who || !message)
-		return;
+		return 0;
 
 	x = xmlnode_new_tag("message");
 	if (!strchr(who, '@'))
@@ -1243,6 +1243,7 @@ static void jabber_send_im(struct gaim_connection *gc, char *who, char *message,
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 	xmlnode_free(x);
+	return 0;
 }
 
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)

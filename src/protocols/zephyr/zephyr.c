@@ -722,7 +722,7 @@ static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	g_free(buf);
 }
 
-static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {
+static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
@@ -753,6 +753,7 @@ static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int 
 	notice.z_message = buf;
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
+	return 0;
 }
 
 static char *zephyr_normalize(const char *orig)

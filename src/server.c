@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <errno.h>
 #include <gtk/gtk.h>
 #ifdef USE_SCREENSAVER
 #include <X11/Xlib.h>
@@ -119,13 +120,16 @@ void serv_finish_login(struct gaim_connection *gc)
 
 
 
-void serv_send_im(struct gaim_connection *gc, char *name, char *message, int away)
+int serv_send_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
+	int val = -EINVAL;
 	if (gc->prpl && gc->prpl->send_im)
-		(*gc->prpl->send_im)(gc, name, message, away);
+		val = (*gc->prpl->send_im)(gc, name, message, away);
 
 	if (!away)
 		serv_touch_idle(gc);
+
+	return val;
 }
 
 void serv_get_info(struct gaim_connection *g, char *name)

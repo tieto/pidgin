@@ -347,7 +347,7 @@ static void icq_close(struct gaim_connection *gc) {
 	g_free(id);
 }
 
-static void icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int away) {
+static int icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int away) {
 	if (!away && (strlen(msg) > 0)) {
 		struct icq_data *id = (struct icq_data *)gc->proto_data;
 		GSList *l = id->thru_serv;
@@ -359,6 +359,7 @@ static void icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int a
 		}
 		icq_SendMessage(id->link, w, msg, l ? ICQ_SEND_THRUSERVER : ICQ_SEND_BESTWAY);
 	}
+	return 0;
 }
 
 static void icq_keepalive(struct gaim_connection *gc) {

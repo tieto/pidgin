@@ -87,7 +87,7 @@ struct prpl {
 	/* all the server-related functions */
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);
-	void (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
+	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
 	void (* get_info)	(struct gaim_connection *, char *who);
 	void (* set_away)	(struct gaim_connection *, char *state, char *message);
