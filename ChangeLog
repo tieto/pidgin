@@ -30,6 +30,8 @@ version 0.79cvs:
 	  installed. (Stu Tomlinson)
 	* Headers for gaim-remote now reside in gaim/ instead of
 	  gaim-include/.
+	* Basic YCHT support, which allows joining Yahoo! Chats when
+	  logged in using the web messenger method
 
 	Bug Fixes:
 	* Switched Yahoo! (not Japan) over to using Web Messenger auth

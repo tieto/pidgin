@@ -150,6 +150,8 @@ struct yahoo_buddy_icon_upload_data {
 	guint watcher;
 };
 
+struct _YchtConn;
+
 struct yahoo_data {
 	int fd;
 	guchar *rxqueue;
@@ -176,6 +178,8 @@ struct yahoo_data {
 	/* ew. we have to check the icon before we connect,
 	 * but can't upload it til we're connected. */
 	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
+
+	struct _YchtConn *ycht;
 };
 
 struct yahoo_pair {

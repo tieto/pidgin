@@ -54,4 +54,8 @@ GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc);
 void yahoo_roomlist_cancel(GaimRoomlist *list);
 void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category);
 
+/* util */
+void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers);
+void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason);
+
 #endif /* _YAHOO_CHAT_H_ */

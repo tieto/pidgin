@@ -41,6 +41,7 @@
 
 #include "yahoo.h"
 #include "yahoochat.h"
+#include "ycht.h"
 
 #define YAHOO_CHAT_ID (1)
 
@@ -53,6 +54,10 @@ static void yahoo_chat_online(GaimConnection *gc)
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 
+	if (yd->wm) {
+		ycht_connection_open(gc);
+		return;
+	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE,0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
@@ -70,7 +75,7 @@ static gint _mystrcmpwrapper(gconstpointer a, gconstpointer b)
 }
 
 /* this is slow, and different from the gaim_* version in that it (hopefully) won't add a user twice */
-static void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
+void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
 {
 	GList *users, *i, *j;
 
@@ -84,7 +89,7 @@ static void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
 	}
 }
 
-static void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason)
+void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason)
 {
 	GList *users;
 
@@ -714,6 +719,13 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	char *eroom;
 	gboolean utf8 = 1;
 
+	if (yd->wm) {
+		g_return_if_fail(yd->ycht != NULL);
+
+		ycht_chat_leave(yd->ycht, room, logout);
+		return;
+	}
+
 	eroom = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
@@ -796,6 +808,12 @@ static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room,
 	char *msg1, *msg2, *room2;
 	gboolean utf8 = TRUE;
 
+	if (yd->wm) {
+		g_return_val_if_fail(yd->ycht != NULL, 1);
+
+		return ycht_chat_send(yd->ycht, room, what);
+	}
+
 	msg1 = g_strdup(what);
 
 	if (meify(msg1, -1))
@@ -835,6 +853,13 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 	char *room2;
 	gboolean utf8 = TRUE;
 
+	if (yd->wm) {
+		g_return_if_fail(yd->ycht != NULL);
+
+		ycht_chat_join(yd->ycht, room);
+		return;
+	}
+
 	/* apparently room names are always utf8, or else always not utf8,
 	 * so we don't have to actually pass the flag in the packet. Or something. */
 	room2 = yahoo_string_encode(gc, room, &utf8);
@@ -859,6 +884,13 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	struct yahoo_packet *pkt;
 	char *room2, *msg2 = NULL;
 	gboolean utf8 = TRUE;
+
+	if (yd->wm) {
+		g_return_if_fail(yd->ycht != NULL);
+
+		ycht_chat_send_invite(yd->ycht, room, buddy, msg);
+		return;
+	}
 
 	room2 = yahoo_string_encode(gc, room, &utf8);
 	if (msg)
@@ -885,6 +917,13 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
 	struct yahoo_packet *pkt;
 
 	yd = gc->proto_data;
+
+	if (yd->wm) {
+		g_return_if_fail(yd->ycht != NULL);
+
+		ycht_chat_goto_user(yd->ycht, name);
+		return;
+	}
 
 	if (!yd->chat_online)
 		yahoo_chat_online(gc);

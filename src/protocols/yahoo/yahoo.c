@@ -39,6 +39,7 @@
 #include "yahoo.h"
 #include "yahoo_friend.h"
 #include "yahoochat.h"
+#include "ycht.h"
 #include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
@@ -2417,6 +2418,8 @@ static void yahoo_close(GaimConnection *gc) {
 		g_free(yd->picture_url);
 	if (yd->picture_upload_todo)
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
+	if (yd->ycht)
+		ycht_connection_close(yd->ycht);
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 	g_free(yd);
@@ -2991,6 +2994,11 @@ static void yahoo_keepalive(GaimConnection *gc)
 	if (!yd->chat_online)
 		return;
 
+	if (yd->wm) {
+		ycht_chat_send_keepalive(yd->ycht);
+		return;
+	}
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 109, gaim_connection_get_display_name(gc));
 	yahoo_send_packet(yd, pkt);
@@ -3336,7 +3344,14 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Chat Room List Url"), "room_list", YAHOO_ROOMLIST_URL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	
+#if 0
+	option = gaim_account_option_string_new(_("YCHT Host"), "ycht-server", YAHOO_YCHT_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_int_new(_("YCHT Port"), "ycht-port", YAHOO_YCHT_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
+
 	my_protocol = plugin;
 
 	yahoo_init_colorht();

@@ -75,6 +75,7 @@ C_SRC =			yahoo.c \
 			yahoo_profile.c \
 			yahoo_picture.c \
 			yahoo_friend.c \
+			ycht.c \
 			crypt.c \
 			util.c
 

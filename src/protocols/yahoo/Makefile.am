@@ -18,7 +18,9 @@ YAHOOSOURCES = \
 	yahoo_friend.c \
 	yahoo_picture.c \
 	yahoo_picture.h \
-	yahoo_profile.c
+	yahoo_profile.c \
+	ycht.c \
+	ycht.h
 
 AM_CFLAGS = $(st)
 
