@@ -1,13 +1,40 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.11:
+version 0.9.13 (03/27/2000):
+	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)
+	* Double Log-Out Message Fixed
+	* GNOME compile error fixed
+	* Away Message Problem Fixed
+	* Fixed URL Right Click Menus
+	* Conversation Loggin now shows Full Date and Time
+	* Internal Change to Buddy List
+ 
+version 0.9.12 (03/25/2000):
+	* Segfault fix for PPC/Alpha/etc machines with log(0)
+	  Thanks to Todd Cohen for this one.
+	* Small internal change to the way prefs work
+	* GNOME Applet support works better
+	  (thanks to Eric Warmenhoven for the patch)
+	* Support for displaying true type fonts
+	* Lag-O-Meter does not send lag-test if not selected 
+	* Fixed problem with saving away messages which contain spaces
+	  and numbers.
+	* Various GNOME Applet Enhancements (thanks AGAIN to 
+	  Eric.  Someone needs to stop this boy :-) ) 
+	* A lot of random, obscure bugs fixed
+	* All of the major and I believe all of the minor memory leaks are 
+	  now fixed
+	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me)
+	
+version 0.9.11 (03/22/2000):
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
 	* Another memory leak fix
 	* New .gaimrc format
 	* Better support for multiple screen names
 	* Font Properties
 	* Saving of buddylist window position 
-	* Fixed a problem with GAIM and Mozilla
+	* Fixed a problem with GAIM and the Netscape-branded version
+	  of Mozilla 
 	* New Sound Properties
 	* More General Properties
 	* Bigger Text-Entry field (Thanks to CrazyDavy for this one)
