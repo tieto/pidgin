@@ -23,6 +23,8 @@
 #ifndef _YAHOO_H_
 #define _YAHOO_H_
 
+#include "prpl.h"
+
 enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_LOGON = 1,
 	YAHOO_SERVICE_LOGOFF,
@@ -100,16 +102,15 @@ enum yahoo_status {
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
 	YAHOO_STATUS_TYPING = 0x16
 };
-#define YAHOO_STATUS_GAME 0x2 /* Games don't fit into the regular status model */
 
 struct yahoo_data {
 	int fd;
 	guchar *rxqueue;
 	int rxlen;
-	GHashTable *hash;
-	GHashTable *games;
+	GHashTable *friends;
 	int current_status;
 	gboolean logged_in;
+	GString *tmp_serv_blist, *tmp_serv_ilist;
 	GSList *confs;
 	unsigned int conf_id; /* just a counter */
 	gboolean chat_online;
@@ -127,6 +128,15 @@ struct yahoo_packet {
 	guint32 status;
 	guint32 id;
 	GSList *hash;
+};
+
+struct yahoo_friend { /* we'll call them friends, so we don't confuse them with GaimBuddy */
+	enum yahoo_status status;
+	char *msg;
+	char *game;
+	int idle;
+	int away;
+	gboolean sms;
 };
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id);

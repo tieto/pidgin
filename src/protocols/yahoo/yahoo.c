@@ -58,6 +58,28 @@ extern char *yahoo_crypt(const char *, const char *);
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
+static void yahoo_add_buddy(GaimConnection *gc, const char *who);
+
+static struct yahoo_friend *yahoo_friend_new()
+{
+	struct yahoo_friend *ret;
+
+	ret = g_new0(struct yahoo_friend, 1);
+	ret->status = YAHOO_STATUS_OFFLINE;
+
+	return ret;
+}
+
+static void yahoo_friend_free(gpointer p)
+{
+	struct yahoo_friend *f = p;
+	if (f->msg)
+		g_free(f->msg);
+	if (f->game)
+		g_free(f->game);
+	g_free(f);
+}
+
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
 {
 	struct yahoo_packet *pkt = g_new0(struct yahoo_packet, 1);
@@ -275,16 +297,21 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 	g_free(pkt);
 }
 
+static void yahoo_update_status(GaimConnection *gc, const char *name, struct yahoo_friend *f)
+{
+	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
+		return;
+
+	serv_got_update(gc, name, 1, 0, 0, f->idle, f->away ? UC_UNAVAILABLE : 0);
+}
+
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
+	struct yahoo_friend *f = NULL;
 	char *name = NULL;
-	int state = 0;
-	int gamestate = 0;
-	char *msg = NULL;
-	int away = 0;
-	int idle = 0;
+
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -316,58 +343,79 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 7: /* the current buddy */
 			name = pair->value;
+			f = g_hash_table_lookup(yd->friends, name);
+			if (!f) {
+				f = yahoo_friend_new();
+				g_hash_table_insert(yd->friends, g_strdup(name), f);
+			}
 			break;
 		case 10: /* state */
-			state = strtol(pair->value, NULL, 10);
-			if (state >= YAHOO_STATUS_BRB && state <= YAHOO_STATUS_STEPPEDOUT)
-				away = 1;
+			if (!f)
+				break;
+
+			f->status = strtol(pair->value, NULL, 10);
+			if ((f->status >= YAHOO_STATUS_BRB) && (f->status <= YAHOO_STATUS_STEPPEDOUT))
+				f->away = 1;
+			else
+				f->away = 0;
+			if (f->status == YAHOO_STATUS_IDLE)
+				f->idle = time(NULL);
+			if (f->status != YAHOO_STATUS_CUSTOM) {
+				g_free(f->msg);
+				f->msg = NULL;
+			}
+			if (f->status == YAHOO_STATUS_AVAILABLE)
+				f->idle = 0;
 			break;
 		case 19: /* custom message */
-			msg = pair->value;
+			if (f) {
+				if (f->msg)
+					g_free(f->msg);
+				f->msg = g_strdup(pair->value);
+			}
 			break;
 		case 11: /* this is the buddy's session id */
 			break;
 		case 17: /* in chat? */
 			break;
-		case 47: /* is custom status away or not? 2=idle?*/
-			away = strtol(pair->value, NULL, 10);
+		case 47: /* is custom status away or not? 2=idle*/
+			if (!f)
+				break;
+			f->away = strtol(pair->value, NULL, 10);
+			if (f->away == 2)
+				f->idle = time(NULL);
 			break;
-		case 137:
-			idle = time(NULL) - strtol(pair->value, NULL, 10);
+		case 138: /* either we're not idle, or we are but won't say how long */
+			if (!f)
+				break;
+
+			if (f->idle)
+				f->idle = -1;
+			break;
+		case 137: /* usually idle time in seconds, sometimes login time */
+			if (!f)
+				break;
+
+			if (f->status != YAHOO_STATUS_AVAILABLE)
+				f->idle = time(NULL) - strtol(pair->value, NULL, 10);
 			break;
 		case 13: /* bitmask, bit 0 = pager, bit 1 = chat, bit 2 = game */
-			if (pkt->service == YAHOO_SERVICE_LOGOFF ||
-			    strtol(pair->value, NULL, 10) == 0) {
+			if (strtol(pair->value, NULL, 10) == 0) {
+				if (f)
+					f->status = YAHOO_STATUS_OFFLINE;
 				serv_got_update(gc, name, 0, 0, 0, 0, 0);
 				break;
 			}
-			if (g_hash_table_lookup(yd->games, name))
-				gamestate = YAHOO_STATUS_GAME;
-			if (state == YAHOO_STATUS_CUSTOM) {
-				gpointer val = g_hash_table_lookup(yd->hash, name);
-				if (val) {
-					g_free(val);
-					g_hash_table_insert(yd->hash, name,
-							msg ? g_strdup(msg) : g_malloc0(1));
-				} else
-					g_hash_table_insert(yd->hash, g_strdup(name),
-							msg ? g_strdup(msg) : g_malloc0(1));
-			}
-			if (state == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
-			else if (state == YAHOO_STATUS_IDLE)
-				serv_got_update(gc, name, 1, 0, 0, (idle?idle:time(NULL)), (state << 2) | UC_UNAVAILABLE | gamestate);
-			else {
-				if (away)
-					serv_got_update(gc, name, 1, 0, 0, idle, (state << 2) | UC_UNAVAILABLE | gamestate);
-				else
-					serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | gamestate);
-			}
-			away = 0;
-			idle = 0;
+
+			if (f)
+				yahoo_update_status(gc, name, f);
 			break;
-		case 60: /* SMS, but comes after 13. but name hasnt been destroyed yet. */
-			 break;
+		case 60: /* SMS */
+			if (f) {
+				f->sms = strtol(pair->value, NULL, 10);
+				yahoo_update_status(gc, name, f);
+			}
+			break;
 		case 16: /* Custom error message */
 			gaim_notify_error(gc, NULL, pair->value, NULL);
 			break;
@@ -388,60 +436,100 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	gboolean got_serv_list = FALSE;
 	GaimBuddy *b;
 	GaimGroup *g;
+	struct yahoo_friend *f = NULL;
+	struct yahoo_data *yd = gc->proto_data;
+
+	char **lines;
+	char **split;
+	char **buddies;
+	char **tmp, **bud;
 
 	while (l) {
-		char **lines;
-		char **split;
-		char **buddies;
-		char **tmp, **bud;
-
 		struct yahoo_pair *pair = l->data;
 		l = l->next;
 
 		switch (pair->key) {
 		case 87:
-			lines = g_strsplit(pair->value, "\n", -1);
-			for (tmp = lines; *tmp; tmp++) {
-				split = g_strsplit(*tmp, ":", 2);
-				if (!split)
-					continue;
-				if (!split[0] || !split[1]) {
-					g_strfreev(split);
-					continue;
-				}
-				buddies = g_strsplit(split[1], ",", -1);
-				for (bud = buddies; bud && *bud; bud++)
-					if (!(b = gaim_find_buddy(gc->account,  *bud))) {
-						if (!(g = gaim_find_group(split[0]))) {
-							g = gaim_group_new(split[0]);
-							gaim_blist_add_group(g, NULL);
-						}
-						b = gaim_buddy_new(gc->account, *bud, NULL);
-						gaim_blist_add_buddy(b, NULL, g, NULL);
-						export = TRUE;
-					}
-				g_strfreev(buddies);
-				g_strfreev(split);
-			}
-			g_strfreev(lines);
+			if (!yd->tmp_serv_blist)
+				yd->tmp_serv_blist = g_string_new(pair->value);
+			else
+				g_string_append(yd->tmp_serv_blist, pair->value);
 			break;
 		case 88:
-			buddies = g_strsplit(pair->value, ",", -1);
-			for (bud = buddies; bud && *bud; bud++) {
-				/* The server is already ignoring the user */
-				got_serv_list = TRUE;
-				gaim_privacy_deny_add(gc->account, *bud, 1);
-			}
-			g_strfreev(buddies);
+			if (!yd->tmp_serv_ilist)
+				yd->tmp_serv_ilist = g_string_new(pair->value);
+			else
+				g_string_append(yd->tmp_serv_ilist, pair->value);
 			break;
-		}
-
-		if (got_serv_list) {
-			gc->account->perm_deny = 4;
-			serv_set_permit_deny(gc);
 		}
 	}
 
+	if (pkt->status != 0)
+		return;
+
+	if (yd->tmp_serv_blist) {
+		lines = g_strsplit(yd->tmp_serv_blist->str, "\n", -1);
+		for (tmp = lines; *tmp; tmp++) {
+			split = g_strsplit(*tmp, ":", 2);
+			if (!split)
+				continue;
+			if (!split[0] || !split[1]) {
+				g_strfreev(split);
+				continue;
+			}
+			buddies = g_strsplit(split[1], ",", -1);
+			for (bud = buddies; bud && *bud; bud++) {
+				if (!(f = g_hash_table_lookup(yd->friends, *bud))) {
+					f = yahoo_friend_new(*bud);
+					g_hash_table_insert(yd->friends, g_strdup(*bud), f);
+				}
+				if (!(b = gaim_find_buddy(gc->account,  *bud))) {
+					if (!(g = gaim_find_group(split[0]))) {
+						g = gaim_group_new(split[0]);
+						gaim_blist_add_group(g, NULL);
+					}
+					b = gaim_buddy_new(gc->account, *bud, NULL);
+					gaim_blist_add_buddy(b, NULL, g, NULL);
+					export = TRUE;
+				} /*else { do something here is gaim and yahoo don't agree on the buddies group
+					GaimGroup *tmpgp;
+
+					tmpgp = gaim_find_buddys_group(b);
+					if (!tmpgp || !gaim_utf8_strcasecmp(tmpgp->name, split[0])) {
+						GaimGroup *ng;
+						if (!(ng = gaim_find_group(split[0])) {
+							g = gaim_group_new(split[0]);
+							gaim_blist_add_group(g, NULL);
+						} */
+
+			}
+			g_strfreev(buddies);
+			g_strfreev(split);
+		}
+		g_strfreev(lines);
+
+		g_string_free(yd->tmp_serv_blist, TRUE);
+		yd->tmp_serv_blist = NULL;
+	}
+
+
+	if (yd->tmp_serv_ilist) {
+		buddies = g_strsplit(yd->tmp_serv_ilist->str, ",", -1);
+		for (bud = buddies; bud && *bud; bud++) {
+			/* The server is already ignoring the user */
+			got_serv_list = TRUE;
+			gaim_privacy_deny_add(gc->account, *bud, 1);
+		}
+		g_strfreev(buddies);
+
+		g_string_free(yd->tmp_serv_ilist, TRUE);
+		yd->tmp_serv_ilist = NULL;
+	}
+
+	if (got_serv_list) {
+		gc->account->perm_deny = 4;
+		serv_set_permit_deny(gc);
+	}
 	if (export)
 		gaim_blist_save();
 }
@@ -452,8 +540,10 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *from = NULL;
 	char *stat = NULL;
 	char *game = NULL;
+	struct yahoo_friend *f = NULL;
 	GSList *l = pkt->hash;
 	struct yahoo_data *yd = (struct yahoo_data*) gc->proto_data;
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 4)
@@ -467,7 +557,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (!msg)
+	if (!from || !msg)
 		return;
 
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
@@ -477,29 +567,26 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		GaimBuddy *bud = gaim_find_buddy(gc->account, from);
-		void *free1=NULL, *free2=NULL;
+
 		if (!bud) {
 			gaim_debug(GAIM_DEBUG_WARNING, "yahoo",
 					   "%s is playing a game, and doesn't want "
 					   "you to know.\n", from);
 		}
 
+		f = g_hash_table_lookup(yd->friends, from);
+		if (!f)
+			return; /* if they're not on the list, don't bother */
+
+		if (f->game) {
+			g_free(f->game);
+			f->game = NULL;
+		}
+
 		if (*stat == '1') {
-			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
-				g_free(free1);
-				g_free(free2);
-			}
-			g_hash_table_insert (yd->games, g_strdup(from), g_strdup(game));
+			f->game = g_strdup(game);
 			if (bud)
-				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME);
-		} else {
-			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
-				g_free(free1);
-				g_free(free2);
-				g_hash_table_remove (yd->games, from);
-			}
-			if (bud)
-				serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME);
+				yahoo_update_status(gc, from, f);
 		}
 	}
 }
@@ -573,6 +660,7 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 	char *msg = NULL;
 	GSList *l = pkt->hash;
 	GString *buf = NULL;
+	struct yahoo_data *yd = gc->proto_data;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -596,6 +684,8 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg);
 		gaim_notify_info(gc, NULL, buf->str, NULL);
 		g_string_free(buf, TRUE);
+		g_hash_table_remove(yd->friends, who);
+		serv_got_update(gc, who, 0, 0, 0, 0, 0);
 	}
 }
 
@@ -695,6 +785,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *sn   = NULL;
 	GSList *l = pkt->hash;
 	struct yahoo_data *yd = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -707,7 +798,6 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	
 	if (seed) {
 		struct yahoo_packet *pack;
-		GaimAccount *account = gaim_connection_get_account(gc);
 		const char *name = normalize(gaim_account_get_username(account));
 		const char *pass = gaim_account_get_password(account);
 
@@ -803,7 +893,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 		md5_finish(&ctx, result);
 		to_y64(result96, result, 16);
 
-		pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_AVAILABLE, 0);
+		pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
 		yahoo_packet_hash(pack, 0, name);
 		yahoo_packet_hash(pack, 6, result6);
 		yahoo_packet_hash(pack, 96, result96);
@@ -955,6 +1045,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_NEWCONTACT:
 		yahoo_process_contact(gc, pkt);
 		break;
+	case YAHOO_SERVICE_AUTHRESP:
+		yahoo_process_authresp(gc, pkt);
+		break;
 	case YAHOO_SERVICE_LIST:
 		yahoo_process_list(gc, pkt);
 		break;
@@ -963,9 +1056,6 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_IGNORECONTACT:
 		yahoo_process_ignore(gc, pkt);
-		break;
-	case YAHOO_SERVICE_AUTHRESP:
-		yahoo_process_authresp(gc, pkt);
 		break;
 	case YAHOO_SERVICE_CONFINVITE:
 	case YAHOO_SERVICE_CONFADDINVITE:
@@ -1117,8 +1207,7 @@ static void yahoo_login(GaimAccount *account) {
 	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	yd->fd = -1;
-	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
-	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
+	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
@@ -1131,21 +1220,13 @@ static void yahoo_login(GaimAccount *account) {
 
 }
 
-static gboolean yahoo_destroy_hash(gpointer key, gpointer val, gpointer data)
-{
-	g_free(key);
-	g_free(val);
-	return TRUE;
-}
-
 static void yahoo_close(GaimConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
-	g_hash_table_destroy(yd->hash);
-	g_hash_table_foreach_remove(yd->games, yahoo_destroy_hash, NULL);
-	g_hash_table_destroy(yd->games);
 
+	g_hash_table_destroy(yd->friends);
 	g_slist_free(yd->confs);
+	if (yd->chat_name)
+		g_free(yd->chat_name);
 
 	if (yd->fd >= 0)
 		close(yd->fd);
@@ -1167,13 +1248,30 @@ static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 {
 	int i = 0;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
+	GaimAccount *account;
+	GaimConnection *gc;
+	struct yahoo_data *yd;
+	struct yahoo_friend *f;
+
+	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
+	  				     !(yd = gc->proto_data))
+		return;
+
+	f = g_hash_table_lookup(yd->friends, b->name);
+	if (!f) {
+		*se = "notauthorized";
+		return;
+	}
+
 	if (b->present == GAIM_BUDDY_OFFLINE) {
 		*se = "offline";
 		return;
 	} else {
-		if (b->uc & UC_UNAVAILABLE)
+		if (f->away)
 			emblems[i++] = "away";
-		if (b->uc & YAHOO_STATUS_GAME)
+		if (f->sms)
+			emblems[i++] = "wireless";
+		if (f->game)
 			emblems[i++] = "game";
 	}
 	*se = emblems[0];
@@ -1207,6 +1305,8 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 		return _("Invisible");
 	case YAHOO_STATUS_IDLE:
 		return _("Idle");
+	case YAHOO_STATUS_OFFLINE:
+		return _("Offline");
 	default:
 		return _("Online");
 	}
@@ -1234,12 +1334,19 @@ static void yahoo_initiate_conference(GaimConnection *gc, const char *name)
 
 static void yahoo_game(GaimConnection *gc, const char *name) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	char *game = g_hash_table_lookup(yd->games, name);
+	char *game = NULL;
 	char *t;
 	char url[256];
+	struct yahoo_friend *f;
 
+	f = g_hash_table_lookup(yd->friends, name);
+	if (!f)
+		return;
+
+	game = f->game;
 	if (!game)
 		return;
+
 	t = game = g_strdup(strstr(game, "ante?room="));
 	while (*t != '\t')
 		t++;
@@ -1252,40 +1359,70 @@ static void yahoo_game(GaimConnection *gc, const char *name) {
 static char *yahoo_status_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
+	struct yahoo_friend *f = NULL;
+	char *stripped = NULL;
 
-	if ((b->uc & UC_UNAVAILABLE) && ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
-		&& ((b->uc >> 2) != YAHOO_STATUS_IDLE))
-			return g_strdup(yahoo_get_status_string(b->uc >> 2));
-	else if ((b->uc >> 2) == YAHOO_STATUS_CUSTOM) {
-		char *stripped = strip_html(g_hash_table_lookup(yd->hash, b->name));
-		if(stripped) {
-			char *ret = g_markup_escape_text(stripped, strlen(stripped));
-			g_free(stripped);
-			return ret;
-		}
-	}
+	f = g_hash_table_lookup(yd->friends, b->name);
+	if (!f)
+		return g_strdup(_("Not on server list"));
+
+	switch (f->status) {
+	case YAHOO_STATUS_AVAILABLE:
+		return NULL;
+	case YAHOO_STATUS_IDLE:
+		if (f->idle == -1)
+			return g_strdup(yahoo_get_status_string(f->status));
+		return NULL;
+	case YAHOO_STATUS_CUSTOM:
+		if (!f->msg)
+			return NULL;
+		stripped = strip_html(f->msg);
+		if (stripped) {
+ 			char *ret = g_markup_escape_text(stripped, strlen(stripped));
+ 			g_free(stripped);
+ 			return ret;
+ 		}
+		return NULL;
+	default:
+		return g_strdup(yahoo_get_status_string(f->status));
+ 	}
+
 	return NULL;
 }
 
 static char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	if ((b->uc & UC_UNAVAILABLE) || ((b->uc >> 2) == YAHOO_STATUS_CUSTOM)) {
-		char *status;
-		char *ret;
-		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
-			status = g_strdup(yahoo_get_status_string(b->uc >> 2));
-		else
-			status = strip_html(g_hash_table_lookup(yd->hash, b->name));
-		if(status) {
-			char *escaped = g_markup_escape_text(status, strlen(status));
-			ret = g_strdup_printf(_("<b>Status:</b> %s"), escaped);
-			g_free(status);
-			g_free(escaped);
-			return ret;
+	struct yahoo_friend *f;
+	char *escaped, *status, *ret;
+
+	f = g_hash_table_lookup(yd->friends, b->name);
+	if (!f)
+		status = g_strdup(_("Not on server list"));
+	else
+		switch (f->status) {
+		case YAHOO_STATUS_IDLE:
+			if (f->idle == -1) {
+				status = g_strdup(yahoo_get_status_string(f->status));
+				break;
+			}
+			return NULL;
+		case YAHOO_STATUS_CUSTOM:
+			if (!f->msg)
+				return NULL;
+			status = strip_html(f->msg);
+			break;
+		default:
+			status = g_strdup(yahoo_get_status_string(f->status));
+			break;
 		}
-	}
-	return NULL;
+
+	escaped = g_markup_escape_text(status, strlen(status));
+	ret = g_strdup_printf(_("<b>Status:</b> %s"), escaped);
+	g_free(status);
+	g_free(escaped);
+
+	return ret;
 }
 
 static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
@@ -1293,9 +1430,23 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	GaimBuddy *b = gaim_find_buddy(gc->account, who); /* this should never be null. if it is,
-						  segfault and get the bug report. */
 	static char buf2[1024];
+	struct yahoo_friend *f;
+
+	f = g_hash_table_lookup(yd->friends, who);
+
+	if (!f) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Add Buddy");
+		pbm->callback = yahoo_add_buddy;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+
+		return m;
+	}
+
+	if (f->status == YAHOO_STATUS_OFFLINE)
+		return NULL;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Join in Chat");
@@ -1309,28 +1460,28 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
-	if (b->uc | YAHOO_STATUS_GAME) {
-		char *game = g_hash_table_lookup(yd->games, b->name);
+	if (f->game) {
+		char *game = f->game;
 		char *room;
+		char *t;
+
 		if (!game)
 			return m;
-		if (game) {
-			char *t;
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
-				return m;
-			while (*room && *room != '\t')          /* skip to the tab */
-				room++;
-			t = room++;                             /* room as now at the name */
-			while (*t != '\n')
-				t++;                            /* replace the \n with a space */
-			*t = ' ';
-			g_snprintf(buf2, sizeof buf2, "%s", room);
-			pbm->label = buf2;
-			pbm->callback = yahoo_game;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
-		}
+
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
+			return m;
+		while (*room && *room != '\t')          /* skip to the tab */
+			room++;
+		t = room++;                             /* room as now at the name */
+		while (*t != '\n')
+			t++;                            /* replace the \n with a space */
+		*t = ' ';
+		g_snprintf(buf2, sizeof buf2, "%s", room);
+		pbm->label = buf2;
+		pbm->callback = yahoo_game;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
 	}
 
 	return m;
@@ -1471,8 +1622,11 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
-		yahoo_packet_hash(pkt, 47, "1");
 		yahoo_packet_hash(pkt, 19, msg);
+		if (gc->is_idle)
+			yahoo_packet_hash(pkt, 47, "2");
+		else
+			yahoo_packet_hash(pkt, 47, "1");
 	}
 
 	yahoo_send_packet(yd, pkt);
@@ -1490,12 +1644,23 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	} else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
+	} else if (idle && gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
+		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_IDLE, 0);
+	} else if (!idle && gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
+		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
 	}
 
 	if (pkt) {
 		char buf[4];
 		g_snprintf(buf, sizeof(buf), "%d", yd->current_status);
 		yahoo_packet_hash(pkt, 10, buf);
+		if (gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
+			yahoo_packet_hash(pkt, 19, gc->away);
+			if (idle)
+				yahoo_packet_hash(pkt, 47, "2");
+			else
+				yahoo_packet_hash(pkt, 47, "1"); /* fixme when available messages are possible */
+		}
 		yahoo_send_packet(yd, pkt);
 		yahoo_packet_free(pkt);
 	}
@@ -1564,6 +1729,12 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who)
 static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	struct yahoo_friend *f;
+
+	if (!(f = g_hash_table_lookup(yd->friends, who)))
+		return;
+
+	g_hash_table_remove(yd->friends, who);
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
@@ -1908,7 +2079,6 @@ init_plugin(GaimPlugin *plugin)
 										 YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-
 	my_protocol = plugin;
 
 	yahoo_init_colorht();
