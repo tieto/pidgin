@@ -50,6 +50,8 @@ gchar *strip_html(const gchar *text)
 	int visible = 1;
 	gchar *text2 = g_strdup(text);
 
+	g_return_val_if_fail(text != NULL, NULL);
+
 	for (i = 0, j = 0; text2[i]; i++) {
 		if (text2[i] == '<') {
 			k = i + 1;
