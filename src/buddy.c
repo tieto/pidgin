@@ -463,7 +463,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b)
 
 	
 	/* Idle gray buddies affects the whole row.  This converts the status icon to greyscale. */
-	if (b->idle) 
+	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0, FALSE);
 	return scale;
 }
@@ -478,7 +478,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 		return NULL;
 	
 	if (buf) {
-		if (b->idle) {
+		if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS) {
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0, FALSE);
 		}
 		return gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
@@ -491,16 +491,16 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	char *name = gaim_get_buddy_alias(b);
 	char *esc = g_markup_escape_text(name, strlen(name)), *text = NULL;
 	/* XXX Clean up this crap */
-	
+
 	int ihrs, imin;
 	char *idletime = "";
 	char *warning = idletime;
-       	time_t t;
+	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if (b->idle > 0) {
+		if (b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS) {
 			text =  g_strdup_printf("<span color='gray'>%s</span>",
-						esc);	
+						esc);
 			g_free(esc);
 			return text;
 		} else {
@@ -511,29 +511,29 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	time(&t);
 	ihrs = (t - b->idle) / 3600;
 	imin = ((t - b->idle) / 60) % 60;
-	
+
 	if (b->idle) {
 		if (ihrs)
 			idletime = g_strdup_printf(_("Idle (%dh%02dm)"), ihrs, imin);
 		else
 			idletime = g_strdup_printf(_("Idle (%dm)"), imin);
 	}
-	
+
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("Warned (%d%%)"), b->evil);
-	
-	if (b->idle) 
+
+	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		text =  g_strdup_printf("<span color='grey'>%s</span>\n<span color='gray' size='smaller'>%s %s</span>",
 					esc,
 					idletime, warning);
 	else
-		text = g_strdup_printf("%s\n<span color='gray' size='smaller'>%s</span>", esc, warning);
+		text = g_strdup_printf("%s\n<span color='gray' size='smaller'>%s %s</span>", esc, idletime, warning);
 
 	if (idletime[0])
 		g_free(idletime);
 	if (warning[0])
 		g_free(warning);
-	
+
 	return text;
 }
 
@@ -679,19 +679,51 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 		gaim_gtk_blist_update(list, group);
 		buddy = group->child;
 		while (buddy) {
-			gaim_gtk_blist_update(list, buddy);		
+			gaim_gtk_blist_update(list, buddy);
 			buddy = buddy->next;
 		}
 		group = group->next;
 	}
 }
 
+static gboolean get_iter_from_node_helper(GaimBlistNode *node, GtkTreeIter *iter, GtkTreeIter *root) {
+	do {
+		GaimBlistNode *n;
+		GtkTreeIter child;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), root, NODE_COLUMN, &n, -1);
+		if(n == node) {
+			*iter = *root;
+			return TRUE;
+		}
+
+		if(gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &child, root)) {
+			if(get_iter_from_node_helper(node,iter,&child))
+				return TRUE;
+		}
+	} while(gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel), root));
+
+	return FALSE;
+}
+
+static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
+	GtkTreeIter root;
+
+	if (!gtkblist)
+		return FALSE;
+
+	if(!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gtkblist->treemodel), &root))
+		return FALSE;
+
+	return get_iter_from_node_helper(node, iter, &root);
+}
+
 void gaim_gtk_blist_update_toolbar() {
 	if (!gtkblist)
 		return;
-	
+
 	gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox), gaim_gtk_blist_update_toolbar_icons, NULL);
-	
+
 	if (blist_options & OPT_BLIST_NO_BUTTONS)
 		gtk_widget_hide(gtkblist->bbox);
 	else
@@ -701,69 +733,60 @@ void gaim_gtk_blist_update_toolbar() {
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	struct gaim_gtk_blist_node *gtknode;
-	GtkTreeIter *iter;
+	GtkTreeIter iter;
 	gboolean expand = FALSE;
+	gboolean new_entry = FALSE;
 
 	if (!gtkblist)
 		return;
-	
+
 	gtknode = GAIM_GTK_BLIST_NODE(node);
-	iter = gtknode->iter;
 
 
-	if (!iter) { /* This is a newly added node */
+	if (!get_iter_from_node(node, &iter)) { /* This is a newly added node */
+		new_entry = TRUE;
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			if (((struct buddy*)node)->present) {
-				if(node->parent && node->parent &&
-				   !GAIM_GTK_BLIST_NODE(node->parent)->iter) {
-					
-					/* This buddy's group has not yet been added.  We do that here */
+				GtkTreeIter groupiter;
+				GaimBlistNode *oldersibling;
+				GtkTreeIter oldersiblingiter;
 
+				if(node->parent && !get_iter_from_node(node->parent, &groupiter)) {
+					/* This buddy's group has not yet been added.  We do that here */
 					char *mark = g_strdup_printf("<span weight='bold'>%s</span>",  ((struct group*)node->parent)->name);
-					GtkTreeIter *iter2 = g_new0(GtkTreeIter, 1);
-					GaimBlistNode *insertat = node->parent->prev;
-					GtkTreeIter *insertatiter = NULL;
+					oldersibling = node->parent->prev;
 
 					/* We traverse backwards through the buddy list to find the node in the tree to insert it after */
-					while (insertat && !GAIM_GTK_BLIST_NODE(insertat)->iter)
-						insertat = insertat->prev;
-
-					if (insertat)
-						insertatiter = GAIM_GTK_BLIST_NODE(insertat)->iter;
+					while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter))
+						oldersibling = oldersibling->prev;
 
 					/* This is where we create the node and add it. */
-					gtk_tree_store_insert_after(gtkblist->treemodel, iter2, 
-								    node->parent->parent ?
-									GAIM_GTK_BLIST_NODE(node->parent->parent)->iter : NULL, insertatiter);
-					gtk_tree_store_set(gtkblist->treemodel, iter2, 
+					gtk_tree_store_insert_after(gtkblist->treemodel, &groupiter, NULL, oldersibling ? &oldersiblingiter : NULL);
+					gtk_tree_store_set(gtkblist->treemodel, &groupiter,
 							   STATUS_ICON_COLUMN, gtk_widget_render_icon
 							   (gtkblist->treeview,GTK_STOCK_OPEN,GTK_ICON_SIZE_SMALL_TOOLBAR,NULL),
 							   NAME_COLUMN, mark,
 							   NODE_COLUMN, node->parent,
 							   -1);
 
-					GAIM_GTK_BLIST_NODE(node->parent)->iter = iter2;
 					expand = TRUE;
 				}
-				iter = g_new0(GtkTreeIter, 1);
 
-				GAIM_GTK_BLIST_NODE(node)->iter = iter;
+				oldersibling = node->prev;
+				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter))
+					oldersibling = oldersibling->prev;
 
-				gtk_tree_store_insert_after (gtkblist->treemodel, iter, node->parent  ? GAIM_GTK_BLIST_NODE(node->parent)->iter : NULL,
-							     node->prev ? GAIM_GTK_BLIST_NODE(node->prev)->iter : NULL);
-			
-							   
+				gtk_tree_store_insert_after(gtkblist->treemodel, &iter, &groupiter, oldersibling ? &oldersiblingiter : NULL);
+
 				if (expand) {       /* expand was set to true if this is the first element added to a group.  In such case
 						     * we expand the group node */
-					GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), GAIM_GTK_BLIST_NODE(node->parent)->iter);
-					gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), path, TRUE);	
+					GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
+					gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), path, TRUE);
 				}
-
-				GAIM_GTK_BLIST_NODE(node)->iter = iter;
 			}
-		} 
+		}
 	}
-	
+
 	if (GAIM_BLIST_NODE_IS_BUDDY(node) && ((struct buddy*)node)->present) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
@@ -773,30 +796,30 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		avatar = gaim_gtk_blist_get_buddy_icon((struct buddy*)node);
 		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node);
 
-		if ((((struct buddy*)node)->idle > 0) &&  
+		if ((((struct buddy*)node)->idle > 0) &&
 		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_IDLETIME))) {
 			time_t t;
 			int ihrs, imin;
 			time(&t);
 			ihrs = (t - ((struct buddy *)node)->idle) / 3600;
 			imin = ((t - ((struct buddy*)node)->idle) / 60) % 60;
-			idle = g_strdup_printf("%d:%02d", ihrs, imin); 
+			idle = g_strdup_printf("%d:%02d", ihrs, imin);
 		}
 
-		if ((((struct buddy*)node)->evil > 0) &&  
+		if ((((struct buddy*)node)->evil > 0) &&
 		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_WARN))) {
-			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil); 
+			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil);
 		}
 
-		gtk_tree_store_set(gtkblist->treemodel, iter, 
+		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_COLUMN, status,
 				   NAME_COLUMN, mark,
 				   WARNING_COLUMN, warning,
 				   IDLE_COLUMN, idle,
-				   BUDDY_ICON_COLUMN, avatar, 
+				   BUDDY_ICON_COLUMN, avatar,
 				   NODE_COLUMN, node,
 				   -1);
-			
+
 		g_free(mark);
 		if (idle)
 			g_free(idle);
@@ -809,18 +832,15 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		if (avatar != NULL)
 			g_object_unref(avatar);
 
-	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && GAIM_GTK_BLIST_NODE(node)->iter){
-		gtk_tree_store_remove(GTK_TREE_STORE(gtkblist->treemodel), GAIM_GTK_BLIST_NODE(node)->iter);
-
-		g_free(GAIM_GTK_BLIST_NODE(node)->iter);
-		GAIM_GTK_BLIST_NODE(node)->iter = NULL;
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry){
+		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 	}
-	
 }
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	struct gaim_gtk_blist_node *gtknode;
+	GtkTreeIter iter;
 
 	if (!node->ui_data)
 		return;
@@ -830,8 +850,8 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (gtknode->timer > 0)
 		g_source_remove(gtknode->timer);
 
-	if (gtknode->iter != NULL)
-		gtk_tree_store_remove(gtkblist->treemodel, gtknode->iter);
+	if (get_iter_from_node(node, &iter))
+		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 }
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
@@ -842,7 +862,7 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
 {
 	if (show) {
-		gtk_window_present(gtkblist->window);
+		gtk_window_present(GTK_WINDOW(gtkblist->window));
 	} else {
 		if (!connections || docklet_count) {
 #ifdef _WIN32
@@ -974,3 +994,4 @@ create_prpl_icon(struct gaim_account *account)
 	}
 	return status;
 }
+

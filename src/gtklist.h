@@ -56,7 +56,6 @@ struct gaim_gtk_buddy_list {
  */
 struct gaim_gtk_blist_node
 {
-	GtkTreeIter *iter;               /**< The tree iterator. */
 	uint timer;                      /**< The timer handle.  */
 };
 
