@@ -767,8 +767,7 @@ static void nap_login(struct aim_user *user)
 	int i;
 	int status;
 
-//	host = gethostbyname("208.184.216.24");
-	host = gethostbyname("213.254.1.82");
+	host = gethostbyname("n184.napster.com");
 
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
@@ -802,6 +801,7 @@ static void nap_login(struct aim_user *user)
 	
 	/* And set up the input watcher */
 	ndata->inpa = gdk_input_add(ndata->fd, GDK_INPUT_READ, nap_login_callback, gc);
+
 
 }
 
