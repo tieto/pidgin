@@ -3117,14 +3117,17 @@ static void insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIter *i
 static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
 {
 	GaimGroup *group;
+	int count;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP(node));
 
 	group = (GaimGroup*)node;
 
-	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups") ||
-			gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies") ||
-			gaim_blist_get_group_online_count(group) > 0) {
+	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"))
+		count = gaim_blist_get_group_size(group, FALSE);
+	else
+		count = gaim_blist_get_group_online_count(group);
+	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups") || count > 0) {
 		char *mark, *esc;
 		GtkTreeIter iter;
 
