@@ -47,7 +47,7 @@ static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
 static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
 static GtkWidget *newmain = NULL;	/* the notebook that holds options */
 static struct aim_user tmpusr = { "", "", "", OPT_USR_REM_PASS, DEFAULT_PROTO,
-		{ "", "", "", "", "", "", "" }, NULL, NULL, NULL, NULL, NULL, NULL,
+		{ "", "", "", "", "", "", "" }, "", NULL, NULL, NULL, NULL, NULL,
 		NULL, NULL, OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL };
 
 static void generate_prpl_options(struct aim_user *, GtkWidget *);

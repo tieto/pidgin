@@ -122,7 +122,7 @@ struct aim_user {
 	char proto_opt[7][256];
 
 	/* buddy icon file */
-	char *iconfile;
+	char iconfile[256];
 
 	struct gaim_connection *gc;
 

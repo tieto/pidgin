@@ -482,6 +482,19 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	for (i = 0; i < 7; i++)
 		g_snprintf(u->proto_opt[i], sizeof u->proto_opt[i], "%s", p->value[i]);
 
+	if (!fgets(buf, sizeof(buf), f))
+		return u;
+
+	if (!strcmp(buf, "\t}"))
+		return u;
+
+	p = parse_line(buf);
+
+	if (strcmp(p->option, "iconfile"))
+		return u;
+
+	g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", p->value[0]);
+
 	return u;
 
 }
@@ -517,6 +530,7 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 	for (i = 0; i < 7; i++)
 		fprintf(f, " { %s }", u->proto_opt[i]);
 	fprintf(f, "\n");
+	fprintf(f, "\t\ticonfile { %s }\n", u->iconfile);
 }
 
 
