@@ -1,4 +1,4 @@
-/** @page account-signals Account Signals
+/** @page connection-signals Connection Signals
 
  @signals
   @signal signing-on
@@ -29,7 +29,7 @@ void (*signed_on)(GaimConnection *gc);
 
  @signaldef signing-off
   @signalproto
-void (*signing_off)(GaimCoffnectioff *gc);
+void (*signing_off)(GaimConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection is about to sign off.
@@ -38,7 +38,7 @@ void (*signing_off)(GaimCoffnectioff *gc);
 
  @signaldef signed-off
   @signalproto
-void (*signed_off)(GaimCoffnectioff *gc);
+void (*signed_off)(GaimConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection has signed off.
