@@ -1,3 +1,12 @@
+version 1.0.2 (10/20/2004):
+	* Updated GTK+ to 2.4.10 (rev b)
+	  This revision updates glib to 2.4.7 and pango to 1.6.0, fixing the
+	  dreaded 'UDP port pollution' and 'crash on symbol font' bugs
+	  respectively.
+	* Installer translations for: Albanian
+
+version 1.0.1 (10/07/2004):
+
 version 1.0.0 (09/17/2004):
 	* The "Start Gaim on Windows startup" setting is preserved
 	  when Gaim is reinstalled (Daniel Atallah)

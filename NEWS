@@ -1,5 +1,27 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.0.2 (10/19/2004):
+	Stu: I'm new around here. I tried to reduce the number of bugs in the bug
+	tracker, but it turns out that the only way to achieve that is to actually
+	_fix_ the bugs. So I fixed a couple, and then sneaked some patches out of
+	the patch tracker to fix some others. Sadly the bug tracker was not
+	significantly affected, maybe if I learn C I'll be able to make more of an
+	impact.
+
+	Luke: Don't let Stu fool you, he has done a marvelous job on this release,
+	and deserves a lot of credit for it. And a number of those bug fixes are
+	critical ones that he discovered and fixed himself. So go update. Now.
+
+	Nathan: On the other hand, Nathan has done nothing for this release.  Why
+	do we keep him around again?
+
+	Tim: So, I'm married now, and in Huntsville. I don't remember if I did
+	anything for this release or not, probably not. Bleeter has been more
+	active lately though, perhaps we'll see lots of cool things from him
+	soon.
+
+	Sean: I'm down here with the "didn't do anything" guys.
+
 1.0.1 (10/07/2004):
 	Congratulations to Tim & Kim on their wedding!
 

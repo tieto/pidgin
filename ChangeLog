@@ -20,6 +20,21 @@ version 2.0.0
 	  Made screenname colors automatically adjust themselves to compensate for
 	  background color.
 
+version 1.0.2 (10/19/2004):
+	Bug Fixes:
+	* MSN file transfers work on big endian machines (Jean-Francois Roy and
+	  Evan Schoenberg)
+	* Fixed the MSN signon crash with Miranda users in the buddy list
+	* Fixed sending messages to MSN Web Messenger users (Damien Ayers)
+	* Fixed some memory leaks in the MSN plugin (Evan Schoenberg)
+	* Fixed a crash viewing certain MSN user profiles (Evan Schoenberg)
+	* Fixed a crash sending a file on MSN when the file is unreadable
+	* Fixed a crash deleting accounts (Andrew Hart)
+	* Fixed a crash inviting to chats (Andrew Hart)
+	* Fixed a bug in Yahoo privacy handling (Peter Lawler)
+	* Fixed a crash trying to join a chat from the docklet when not signed in
+	  to a chat-capable account (Daniel Atallah)
+
 version 1.0.1 (10/07/2004):
 	New Features:
 	* Use the GNOME default browser when opening links if you're running GNOME
