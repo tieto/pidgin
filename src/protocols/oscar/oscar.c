@@ -48,8 +48,8 @@
 #include "multi.h"
 #include "prpl.h"
 #include "core.h"
-#include "aim.h"
 #include "proxy.h"
+#include "aim.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -2336,9 +2336,9 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 		struct group *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
+			aim_ssi_sendauthrequest(od->sess, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 			if (!aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 1);
+				aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 1);
 		}
 	}
 }
@@ -2393,7 +2393,7 @@ static void gaim_auth_grant(struct name_data *data) {
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
 		show_got_added(gc, NULL, data->name, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
 #else
-		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
+		aim_ssi_sendauthreply(od->sess, data->name, 0x01, NULL);
 #endif
 	}
 
@@ -2409,7 +2409,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 #ifdef NOSSI
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
 #else
-		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, msg ? msg : _("No reason given."));
+		aim_ssi_sendauthreply(od->sess, data->name, 0x00, msg ? msg : _("No reason given."));
 #endif
 	}
 }
@@ -3432,7 +3432,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 
 	bi = g_hash_table_lookup(od->buddyinfo, (char *)od->requesticon->data);
 	if (bi && (bi->iconcsumlen > 0)) {
-		aim_icon_requesticon(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
+		aim_icon_request(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
 		return FALSE;
 	} else {
 		char *sn = od->requesticon->data;
@@ -3576,8 +3576,8 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 #ifndef NOSSI
 	debug_printf("ssi: requesting ssi list\n");
-	aim_ssi_reqrights(sess, fr->conn);
-	aim_ssi_reqdata(sess, fr->conn, sess->ssi.timestamp, sess->ssi.numitems);
+	aim_ssi_reqrights(sess);
+	aim_ssi_reqdata(sess, sess->ssi.timestamp, sess->ssi.numitems);
 #endif
 
 	aim_bos_reqlocaterights(sess, fr->conn);
@@ -4366,12 +4366,11 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 
 	if (strcmp(state, _("Invisible"))) {
 		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->account->permdeny)
-			aim_ssi_setpermdeny(od->sess, od->conn, gc->account->permdeny,
-					0xffffffff);
+			aim_ssi_setpermdeny(od->sess, gc->account->permdeny, 0xffffffff);
 		gc->account->permdeny = 4;
 	} else {
 		if (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03)
-			aim_ssi_setpermdeny(od->sess, od->conn, 0x03, 0xffffffff);
+			aim_ssi_setpermdeny(od->sess, 0x03, 0xffffffff);
 		gc->account->permdeny = 3;
 	}
 
@@ -4441,7 +4440,7 @@ static void oscar_add_buddy(struct gaim_connection *gc, const char *name) {
 		struct group *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", name, group->name);
-			aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 		}
 	}
 #endif
@@ -4470,7 +4469,7 @@ static void oscar_add_buddies(struct gaim_connection *gc, GList *buddies) {
 			struct group *group = gaim_find_buddys_group(buddy);
 			if (buddy && group) {
 				debug_printf("ssi: adding buddy %s to group %s\n", (const char *)buddies->data, group->name);
-				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+				aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 			}
 			buddies = buddies->next;
 		}
@@ -4485,7 +4484,7 @@ static void oscar_remove_buddy(struct gaim_connection *gc, char *name, char *gro
 #else
 	if (od->sess->ssi.received_data) {
 		debug_printf("ssi: deleting buddy %s from group %s\n", name, group);
-		aim_ssi_delbuddy(od->sess, od->conn, name, group);
+		aim_ssi_delbuddy(od->sess, name, group);
 	}
 #endif
 }
@@ -4500,7 +4499,7 @@ static void oscar_remove_buddies(struct gaim_connection *gc, GList *buddies, con
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
 			debug_printf("ssi: deleting buddy %s from group %s\n", (char *)buddies->data, group);
-			aim_ssi_delbuddy(od->sess, od->conn, buddies->data, group);
+			aim_ssi_delbuddy(od->sess, buddies->data, group);
 			buddies = buddies->next;
 		}
 	}
@@ -4512,7 +4511,7 @@ static void oscar_move_buddy(struct gaim_connection *gc, const char *name, const
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (od->sess->ssi.received_data && strcmp(old_group, new_group)) {
 		debug_printf("ssi: moving buddy %s from group %s to group %s\n", name, old_group, new_group);
-		aim_ssi_movebuddy(od->sess, od->conn, old_group, new_group, name);
+		aim_ssi_movebuddy(od->sess, old_group, new_group, name);
 	}
 }
 
@@ -4522,7 +4521,7 @@ static void oscar_alias_buddy(struct gaim_connection *gc, const char *name, cons
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, name);
 		if (gname) {
 			debug_printf("ssi: changing the alias for buddy %s to %s\n", name, alias);
-			aim_ssi_aliasbuddy(od->sess, od->conn, gname, name, alias);
+			aim_ssi_aliasbuddy(od->sess, gname, name, alias);
 		}
 	}
 }
@@ -4536,7 +4535,7 @@ static void oscar_rename_group(struct gaim_connection *g, const char *old_group,
 			oscar_add_buddies(g, members);
 			debug_printf("ssi: moved all buddies from group %s to %s\n", old_group, new_group);
 		} else {
-			aim_ssi_rename_group(od->sess, od->conn, old_group, new_group);
+			aim_ssi_rename_group(od->sess, old_group, new_group);
 			debug_printf("ssi: renamed group %s to %s\n", old_group, new_group);
 		}
 	}
@@ -4615,7 +4614,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
-	aim_ssi_cleanlist(sess, fr->conn);
+	aim_ssi_cleanlist(sess);
 
 	/* Add from server list to local list */
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
@@ -4732,11 +4731,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							/* Store local alias on server */
 							char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
 							if (!alias && buddy->alias && strlen(buddy->alias))
-								aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
+								aim_ssi_aliasbuddy(sess, group->name, buddy->name, buddy->alias);
 							free(alias);
 						} else {
 							debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
-							aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+							aim_ssi_addbuddy(sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 						}
 					}
 				}
@@ -4746,7 +4745,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (cur=gc->account->permit; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 					debug_printf("ssi: adding permit %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_addpermit(sess, od->conn, cur->data);
+					aim_ssi_addpermit(sess, cur->data);
 				}
 		}
 
@@ -4755,13 +4754,13 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (cur=gc->account->deny; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
 					debug_printf("ssi: adding deny %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_adddeny(sess, od->conn, cur->data);
+					aim_ssi_adddeny(sess, cur->data);
 				}
 		}
 		/* Presence settings (idle time visibility) */
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
 			if (report_idle && !(tmp & 0x400))
-				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
+				aim_ssi_setpresence(sess, tmp | 0x400);
 	} /* end adding buddies from local list to server list */
 
 	{ /* Check for maximum number of buddies */
@@ -5432,7 +5431,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	signoff_blocked(gc);
 #else
 	if (od->sess->ssi.received_data)
-		aim_ssi_setpermdeny(od->sess, od->conn, gc->account->permdeny, 0xffffffff);
+		aim_ssi_setpermdeny(od->sess, gc->account->permdeny, 0xffffffff);
 #endif
 }
 
@@ -5444,7 +5443,7 @@ static void oscar_add_permit(struct gaim_connection *gc, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	debug_printf("ssi: About to add a permit\n");
 	if (od->sess->ssi.received_data)
-		aim_ssi_addpermit(od->sess, od->conn, who);
+		aim_ssi_addpermit(od->sess, who);
 #endif
 }
 
@@ -5456,7 +5455,7 @@ static void oscar_add_deny(struct gaim_connection *gc, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	debug_printf("ssi: About to add a deny\n");
 	if (od->sess->ssi.received_data)
-		aim_ssi_adddeny(od->sess, od->conn, who);
+		aim_ssi_adddeny(od->sess, who);
 #endif
 }
 
@@ -5468,7 +5467,7 @@ static void oscar_rem_permit(struct gaim_connection *gc, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	debug_printf("ssi: About to delete a permit\n");
 	if (od->sess->ssi.received_data)
-		aim_ssi_delpermit(od->sess, od->conn, who);
+		aim_ssi_delpermit(od->sess, who);
 #endif
 }
 
@@ -5480,7 +5479,7 @@ static void oscar_rem_deny(struct gaim_connection *gc, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	debug_printf("ssi: About to delete a deny\n");
 	if (od->sess->ssi.received_data)
-		aim_ssi_deldeny(od->sess, od->conn, who);
+		aim_ssi_deldeny(od->sess, who);
 #endif
 }
 

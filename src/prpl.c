@@ -521,11 +521,6 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	close = picture_button(mn->email_win, _("Close"), cancel_xpm);
-	gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
-	gtk_box_pack_end(GTK_BOX(hbox), close, 0, 0, 5);
-	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(des_email_win), mn);
-
 	if (url) {
 		mn->url = g_strdup(url);
 		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
@@ -533,6 +528,11 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(open_url), mn->url);
 		g_signal_connect(GTK_OBJECT(urlbut), "clicked", G_CALLBACK(des_email_win), mn);
 	}
+
+	close = picture_button(mn->email_win, _("Close"), cancel_xpm);
+	gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
+	gtk_box_pack_end(GTK_BOX(hbox), close, 0, 0, 5);
+	g_signal_connect(GTK_OBJECT(close), "clicked", G_CALLBACK(des_email_win), mn);
 
 	gtk_widget_show(mn->email_win);
 }

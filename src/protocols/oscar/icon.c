@@ -10,13 +10,74 @@
 #include <aim.h>
 
 /**
+ * Subtype 0x0002 - Upload your icon.
+ *
+ * @param sess The oscar session.
+ * @param conn The icon connection for this session.
+ * @param num The reference number of the icon you are uploading.
+ * @param icon The raw data of the icon image file.
+ * @param iconlen Length of the raw data of the icon image file.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_icon_upload(aim_session_t *sess, int num, const fu8_t *icon, fu16_t iconlen)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !num || !icon || !iconlen)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 2 + 2+iconlen)))
+		return -ENOMEM;
+	snacid = aim_cachesnac(sess, 0x0010, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0010, 0x0002, 0x0000, snacid);
+
+	/* The reference number for the icon */
+	aimbs_put16(&fr->data, num);
+
+	/* The icon */
+	aimbs_put16(&fr->data, iconlen);
+	aimbs_putraw(&fr->data, icon, iconlen);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/**
+ * Subtype 0x0003 - Acknowledgement for uploading a buddy icon.
+ *
+ * You get this honky after you upload a buddy icon.
+ */
+static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	fu16_t something, somethingelse;
+	fu8_t onemorething;
+
+	something = aimbs_get16(bs);
+	somethingelse = aimbs_get16(bs);
+	onemorething = aimbs_get8(bs);
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx);
+
+	return ret;
+}
+
+/**
  * Subtype 0x0004 - Request someone's icon.
  *
  * @param sess The oscar session.
  * @param conn The icon connection for this session.
+ * @param sn The screen name of the person who's icon you are requesting.
+ * @param iconcsum The MD5 checksum of the icon you are requesting.
+ * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const fu8_t *iconcsum, fu16_t iconcsumlen)
+faim_export int aim_icon_request(aim_session_t *sess, const char *sn, const fu8_t *iconcsum, fu16_t iconcsumlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -48,7 +109,6 @@ faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const 
 	return 0;
 }
 
-
 /**
  * Subtype 0x0005 - Receive a buddy icon.
  *
@@ -56,10 +116,9 @@ faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const 
  */
 static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	aim_rxcallback_t userfunc;
-	int i;
-	char *sn;
 	int ret = 0;
+	aim_rxcallback_t userfunc;
+	char *sn;
 	fu16_t flags, iconlen;
 	fu8_t number, iconcsumlen, *iconcsum, *icon;
 
@@ -84,7 +143,9 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-	if (snac->subtype == 0x0005)
+	if (snac->subtype == 0x0003)
+		return uploadack(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0005)
 		return parseicon(sess, mod, rx, snac, bs);
 
 	return 0;

@@ -1126,7 +1126,8 @@ faim_export int aim_usersearch_interest(aim_session_t *, const char *, const cha
 
 
 /* icon.c */
-faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
+faim_export int aim_icon_upload(aim_session_t *sess, int num, const fu8_t *icon, fu16_t iconlen);
+faim_export int aim_icon_request(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
 
 
 
@@ -1164,19 +1165,20 @@ faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name);
 
 
 /* ssi.c */
-#define AIM_SSI_TYPE_BUDDY         0x0000
-#define AIM_SSI_TYPE_GROUP         0x0001
-#define AIM_SSI_TYPE_PERMIT        0x0002
-#define AIM_SSI_TYPE_DENY          0x0003
-#define AIM_SSI_TYPE_PDINFO        0x0004
-#define AIM_SSI_TYPE_PRESENCEPREFS 0x0005
+#define AIM_SSI_TYPE_BUDDY		0x0000
+#define AIM_SSI_TYPE_GROUP		0x0001
+#define AIM_SSI_TYPE_PERMIT		0x0002
+#define AIM_SSI_TYPE_DENY		0x0003
+#define AIM_SSI_TYPE_PDINFO		0x0004
+#define AIM_SSI_TYPE_PRESENCEPREFS	0x0005
+#define AIM_SSI_TYPE_ICONINFO		0x0014
 
-#define AIM_SSI_ACK_SUCCESS      0x0000
-#define AIM_SSI_ACK_ITEMNOTFOUND 0x0002
-#define AIM_SSI_ACK_IDNUMINUSE   0x000a
-#define AIM_SSI_ACK_ATMAX        0x000c
-#define AIM_SSI_ACK_INVALIDNAME  0x000d
-#define AIM_SSI_ACK_AUTHREQUIRED 0x000e
+#define AIM_SSI_ACK_SUCCESS		0x0000
+#define AIM_SSI_ACK_ITEMNOTFOUND	0x0002
+#define AIM_SSI_ACK_IDNUMINUSE		0x000a
+#define AIM_SSI_ACK_ATMAX		0x000c
+#define AIM_SSI_ACK_INVALIDNAME		0x000d
+#define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
 struct aim_ssi_item {
 	char *name;
@@ -1196,15 +1198,15 @@ struct aim_ssi_tmp {
 };
 
 /* These build the actual SNACs and queue them to be sent */
-/* 0x0002 */ faim_export int aim_ssi_reqrights(aim_session_t *sess, aim_conn_t *conn);
-/* 0x0005 */ faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t localstamp, fu16_t localrev);
+/* 0x0002 */ faim_export int aim_ssi_reqrights(aim_session_t *sess);
+/* 0x0005 */ faim_export int aim_ssi_reqdata(aim_session_t *sess, time_t localstamp, fu16_t localrev);
 /* 0x0007 */ faim_export int aim_ssi_enable(aim_session_t *sess);
-/* 0x0008 */ faim_export int aim_ssi_addmoddel(aim_session_t *sess, aim_conn_t *conn);
-/* 0x0011 */ faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
-/* 0x0012 */ faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
-/* 0x0014 */ faim_export int aim_ssi_sendauth(aim_session_t *sess, aim_conn_t *conn, char *sn, char *msg);
-/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, aim_conn_t *conn, char *sn, char *msg);
-/* 0x001a */ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, aim_conn_t *conn, char *sn, fu8_t reply, char *msg);
+/* 0x0008 */ faim_export int aim_ssi_addmoddel(aim_session_t *sess);
+/* 0x0011 */ faim_export int aim_ssi_modbegin(aim_session_t *sess);
+/* 0x0012 */ faim_export int aim_ssi_modend(aim_session_t *sess);
+/* 0x0014 */ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg);
+/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, char *msg);
+/* 0x001a */ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, char *msg);
 
 /* Client functions for retrieving SSI data */
 faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, fu16_t gid, fu16_t bid);
@@ -1217,19 +1219,20 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
-faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
-faim_export int aim_ssi_addpermit(aim_session_t *sess, aim_conn_t *conn, const char *name);
-faim_export int aim_ssi_adddeny(aim_session_t *sess, aim_conn_t *conn, const char *name);
-faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const char *name, const char *group);
-faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const char *name);
-faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const char *name);
-faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn);
-faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char *sn, const char *alias);
-faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn);
-faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t permdeny, fu32_t vismask);
-faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence);
+faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
+faim_export int aim_ssi_addpermit(aim_session_t *sess, const char *name);
+faim_export int aim_ssi_adddeny(aim_session_t *sess, const char *name);
+faim_export int aim_ssi_delbuddy(aim_session_t *sess, const char *name, const char *group);
+faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name);
+faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name);
+faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn);
+faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias);
+faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, const char *newgn);
+faim_export int aim_ssi_cleanlist(aim_session_t *sess);
+faim_export int aim_ssi_deletelist(aim_session_t *sess);
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t vismask);
+faim_export int aim_ssi_setpresence(aim_session_t *sess, fu32_t presence);
+faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen);
 
 
 

@@ -3165,7 +3165,7 @@ msgstr ""
 #: src/buddy.c:853
 #, c-format
 msgid "Idle (%dh%02dm) "
-msgstr "사용안함 (%d시간%02분)"
+msgstr "사용안함 (%d시간%02d분)"
 
 #: src/buddy.c:855
 #, c-format

@@ -466,15 +466,14 @@ faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn
  * call addmoddel.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int aim_ssi_sync(aim_session_t *sess, aim_conn_t *conn)
+static int aim_ssi_sync(aim_session_t *sess)
 {
 	struct aim_ssi_item *cur1, *cur2;
 	struct aim_ssi_tmp *cur, *new;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* If we're waiting for an ack, we shouldn't do anything else */
@@ -550,7 +549,7 @@ static int aim_ssi_sync(aim_session_t *sess, aim_conn_t *conn)
 
 	/* We're out of stuff to do, so tell the AIM servers we're done and exit */
 	if (!sess->ssi.pending) {
-		aim_ssi_modend(sess, conn);
+		aim_ssi_modend(sess);
 		return 0;
 	}
 
@@ -559,7 +558,7 @@ static int aim_ssi_sync(aim_session_t *sess, aim_conn_t *conn)
 	sess->ssi.waiting_for_ack = 1;
 
 	/* Now go mail off our data and wait 4 to 6 weeks */
-	aim_ssi_addmoddel(sess, conn);
+	aim_ssi_addmoddel(sess);
 
 	return 0;
 }
@@ -615,12 +614,14 @@ static int aim_ssi_freelist(aim_session_t *sess)
  * Delete all SSI data.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_deletelist(aim_session_t *sess)
 {
 	struct aim_ssi_item *cur, *del;
+
+	if (!sess)
+		return -EINVAL;
 
 	/* Free the local list */
 	cur = sess->ssi.local;
@@ -634,7 +635,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 	sess->ssi.local = NULL;
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -646,12 +647,14 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
  * 3) Deletes any empty groups
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 {
 	struct aim_ssi_item *cur, *next;
+
+	if (!sess)
+		return -EINVAL;
 
 	/* Delete any buddies, permits, or denies with empty names. */
 	/* If there are any buddies directly in the master group, add them to a real group. */
@@ -663,14 +666,14 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 		next = cur->next;
 		if (!cur->name) {
 			if (cur->type == AIM_SSI_TYPE_BUDDY)
-				aim_ssi_delbuddy(sess, conn, NULL, NULL);
+				aim_ssi_delbuddy(sess, NULL, NULL);
 			else if (cur->type == AIM_SSI_TYPE_PERMIT)
-				aim_ssi_delpermit(sess, conn, NULL);
+				aim_ssi_delpermit(sess, NULL);
 			else if (cur->type == AIM_SSI_TYPE_DENY)
-				aim_ssi_deldeny(sess, conn, NULL);
+				aim_ssi_deldeny(sess, NULL);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(sess->ssi.local, cur->gid, 0x0000)))) {
-			aim_ssi_addbuddy(sess, conn, cur->name, "orphans", NULL, NULL, NULL, 0);
-			aim_ssi_delbuddy(sess, conn, cur->name, NULL);
+			aim_ssi_addbuddy(sess, cur->name, "orphans", NULL, NULL, NULL, 0);
+			aim_ssi_delbuddy(sess, cur->name, NULL);
 		}
 		cur = next;
 	}
@@ -698,7 +701,6 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
  * Add a buddy to the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item.
  * @param group The group of the item.
  * @param alias The alias/nickname of the item, or NULL.
@@ -706,12 +708,12 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
  * @param smsnum The locally assigned SMS number, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
+faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
 {
 	struct aim_ssi_item *parent;
 	aim_tlvlist_t *data = NULL;
 
-	if (!sess || !conn || !name || !group)
+	if (!sess || !name || !group)
 		return -EINVAL;
 
 	/* Find the parent */
@@ -746,7 +748,7 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 	aim_ssi_itemlist_rebuildgroup(sess->ssi.local, group);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -755,20 +757,20 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
  * Add a permit buddy to the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item..
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addpermit(aim_session_t *sess, aim_conn_t *conn, const char *name)
+faim_export int aim_ssi_addpermit(aim_session_t *sess, const char *name)
 {
-	if (!sess || !conn || !name)
+
+	if (!sess || !name)
 		return -EINVAL;
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&sess->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -777,20 +779,20 @@ faim_export int aim_ssi_addpermit(aim_session_t *sess, aim_conn_t *conn, const c
  * Add a deny buddy to the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item..
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_adddeny(aim_session_t *sess, aim_conn_t *conn, const char *name)
+faim_export int aim_ssi_adddeny(aim_session_t *sess, const char *name)
 {
-	if (!sess || !conn || !name)
+
+	if (!sess || !name)
 		return -EINVAL;
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&sess->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -799,16 +801,15 @@ faim_export int aim_ssi_adddeny(aim_session_t *sess, aim_conn_t *conn, const cha
  * Deletes a buddy from the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item, or NULL.
  * @param group The group of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const char *name, const char *group)
+faim_export int aim_ssi_delbuddy(aim_session_t *sess, const char *name, const char *group)
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* Find the buddy */
@@ -835,7 +836,7 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 	}
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -844,15 +845,14 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
  * Deletes a permit buddy from the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const char *name)
+faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name)
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* Find the item */
@@ -863,7 +863,7 @@ faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const c
 	aim_ssi_itemlist_del(&sess->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -872,15 +872,14 @@ faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const c
  * Deletes a deny buddy from the list.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param name The name of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const char *name)
+faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name)
 {
 	struct aim_ssi_item *del;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* Find the item */
@@ -891,7 +890,7 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
 	aim_ssi_itemlist_del(&sess->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -901,16 +900,15 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
  * buddy and re-adds it.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param oldgn The group that the buddy is currently in.
  * @param newgn The group that the buddy should be moved in to.
  * @param sn The name of the buddy to be moved.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn)
+faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn)
 {
-	aim_ssi_addbuddy(sess, conn, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
-	aim_ssi_delbuddy(sess, conn, sn, oldgn);
+	aim_ssi_addbuddy(sess, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
+	aim_ssi_delbuddy(sess, sn, oldgn);
 	return 0;
 }
 
@@ -918,18 +916,17 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const c
  * Change the alias stored on the server for a given buddy.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param gn The group that the buddy is currently in.
  * @param sn The screen name of the buddy.
  * @param alias The new alias for the buddy.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char *sn, const char *alias)
+faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias)
 {
 	struct aim_ssi_item *tmp;
 	aim_tlvlist_t *data = NULL;
 
-	if (!sess || !conn || !gn || !sn)
+	if (!sess || !gn || !sn)
 		return -EINVAL;
 
 	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
@@ -946,7 +943,7 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const 
 	tmp->data = data;
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -955,16 +952,15 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const 
  * Rename a group.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param oldgn The old group name.
  * @param newgn The new group name.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn)
+faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, const char *newgn)
 {
 	struct aim_ssi_item *group;
 
-	if (!sess || !conn || !oldgn || !newgn)
+	if (!sess || !oldgn || !newgn)
 		return -EINVAL;
 
 	if (!(group = aim_ssi_itemlist_finditem(sess->ssi.local, oldgn, NULL, AIM_SSI_TYPE_GROUP)))
@@ -975,7 +971,7 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, cons
 	strcpy(group->name, newgn);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -984,7 +980,6 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, cons
  * Stores your permit/deny setting on the server, and starts using it.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param permdeny Your permit/deny setting.  Can be one of the following:
  *        1 - Allow all users
  *        2 - Block all users
@@ -995,12 +990,12 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, cons
  *        visible.  See the AIM_FLAG_BLEH #defines in aim.h
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t permdeny, fu32_t vismask)
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t vismask)
 {
 	struct aim_ssi_item *tmp;
 	aim_tlvlist_t *data = NULL;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* Need to add the x00ca TLV to the TLV chain */
@@ -1018,7 +1013,51 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t
 	}
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
+
+	return 0;
+}
+
+/**
+ * Set buddy icon information
+ *
+ * @param sess The oscar session.
+ * @param iconcsum The MD5 checksum of the icon you are using.
+ * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen)
+{
+	struct aim_ssi_item *tmp;
+	aim_tlvlist_t *data = NULL;
+	fu8_t *csumdata;
+
+	if (!sess || !iconsum || !iconsumlen)
+		return -EINVAL;
+
+	/* Create the data for the TLV containing the icon checksum */
+	if (!(csumdata = (fu8_t *)malloc((iconsumlen+2)*sizeof(fu8_t))))
+		return -ENOMEM;
+	csumdata[0] = 0x00;
+	csumdata[1] = 0x10;
+	memcpy(&csumdata[2], iconsum, iconsumlen);
+
+	/* Need to add the x0131 TLV to the TLV chain */
+	aim_addtlvtochain_noval(&data, 0x0131);
+
+	/* Need to add the x00d5 TLV to the TLV chain */
+	aim_addtlvtochain_raw(&data, 0x00d5, 0x0012, csumdata);
+
+	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "0", AIM_SSI_TYPE_ICONINFO))) {
+		aim_freetlvchain(&tmp->data);
+		tmp->data = data;
+	} else {
+		tmp = aim_ssi_itemlist_add(&sess->ssi.local, "0", 0x0000, 0xFFFF, AIM_SSI_TYPE_ICONINFO, data);
+		aim_freetlvchain(&data);
+	}
+
+	/* Sync our local list with the server list */
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -1027,16 +1066,15 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t
  * Stores your setting for whether you should show up as idle or not.
  *
  * @param sess The oscar session.
- * @param conn The bos connection for this session.
  * @param presence I think it's a bitmask, but I only know what one of the bits is:
  *        0x00000400 - Allow others to see your idle time
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence) {
+faim_export int aim_ssi_setpresence(aim_session_t *sess, fu32_t presence) {
 	struct aim_ssi_item *tmp;
 	aim_tlvlist_t *data = NULL;
 
-	if (!sess || !conn)
+	if (!sess)
 		return -EINVAL;
 
 	/* Need to add the x00c9 TLV to the TLV chain */
@@ -1051,7 +1089,7 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 	}
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(sess, conn);
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -1059,8 +1097,13 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 /*
  * Subtype 0x0002 - Request SSI Rights.
  */
-faim_export int aim_ssi_reqrights(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_reqrights(aim_session_t *sess)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+		return -EINVAL;
+
 	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQRIGHTS);
 }
 
@@ -1123,12 +1166,13 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
  * Note that the client should never increment the revision, only the server.
  * 
  */
-faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t timestamp, fu16_t numitems)
+faim_export int aim_ssi_reqdata(aim_session_t *sess, time_t timestamp, fu16_t numitems)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+2)))
@@ -1223,14 +1267,15 @@ faim_export int aim_ssi_enable(aim_session_t *sess)
  * difference is the subtype that is set for the SNAC.
  * 
  */
-faim_export int aim_ssi_addmoddel(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	int snaclen;
 	struct aim_ssi_tmp *cur;
 
-	if (!sess || !conn || !sess->ssi.pending || !sess->ssi.pending->item)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sess->ssi.pending || !sess->ssi.pending->item)
 		return -EINVAL;
 
 	/* Calculate total SNAC size */
@@ -1518,7 +1563,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if (!sess->ssi.pending) {
 		sess->ssi.pending = NULL;
 		sess->ssi.waiting_for_ack = 0;
-		aim_ssi_sync(sess, rx->conn);
+		aim_ssi_sync(sess);
 	}
 
 	return ret;
@@ -1550,8 +1595,13 @@ static int parsedataunchanged(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * Tells the server you're going to start modifying data.
  * 
  */
-faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_modbegin(aim_session_t *sess)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+		return -EINVAL;
+
 	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_EDITSTART);
 }
 
@@ -1561,8 +1611,13 @@ faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn)
  * Tells the server you're finished modifying data.
  *
  */
-faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ssi_modend(aim_session_t *sess)
 {
+	aim_conn_t *conn;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+		return -EINVAL;
+
 	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_EDITSTOP);
 }
 
@@ -1572,12 +1627,13 @@ faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn)
  * Authorizes a contact so they can add you to their contact list.
  *
  */
-faim_export int aim_ssi_sendauth(aim_session_t *sess, aim_conn_t *conn, char *sn, char *msg)
+faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
@@ -1646,12 +1702,13 @@ static int receiveauthgrant(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * granted, denied, or dropped.
  *
  */
-faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, aim_conn_t *conn, char *sn, char *msg)
+faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, char *msg)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
@@ -1723,12 +1780,13 @@ static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * if reply=0x01 then grant
  *
  */
-faim_export int aim_ssi_sendauthreply(aim_session_t *sess, aim_conn_t *conn, char *sn, fu8_t reply, char *msg)
+faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, char *msg)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 1 + 2+(msg ? strlen(msg)+1 : 0) + 2)))
