@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-25 19:00-0300\n"
+"POT-Creation-Date: 2004-08-25 23:58-0400\n"
 "PO-Revision-Date: 2004-08-25 19:01-0300\n"
 "Last-Translator: Maurício de Lemos Rodrigues Collares Neto <mauricioc@gmail."
 "com>\n"
@@ -465,7 +465,7 @@ msgstr "Catálogo de endereços local"
 #: plugins/gevolution/add_buddy_dialog.c:144
 #: plugins/gevolution/add_buddy_dialog.c:155
 #: plugins/gevolution/assoc-buddy.c:82 plugins/gevolution/assoc-buddy.c:93
-#: src/gtkblist.c:2998 src/gtkprefs.c:959 src/gtkprefs.c:1011
+#: src/gtkblist.c:3011 src/gtkprefs.c:959 src/gtkprefs.c:1011
 #: src/gtkprefs.c:1823 src/protocols/jabber/jabber.c:924
 msgid "None"
 msgstr "Nenhuma"
@@ -495,8 +495,8 @@ msgid "Search"
 msgstr "Procurar"
 
 #: plugins/gevolution/add_buddy_dialog.c:564
-#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4038
-#: src/gtkblist.c:4376
+#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4051
+#: src/gtkblist.c:4389
 msgid "Group:"
 msgstr "Grupo:"
 
@@ -535,7 +535,7 @@ msgid "_Associate Buddy"
 msgstr "_Associar amigo"
 
 #: plugins/gevolution/gevo-util.c:65 plugins/gevolution/gevolution.c:89
-#: src/blist.c:774 src/blist.c:982 src/blist.c:1912 src/gtkblist.c:3857
+#: src/blist.c:774 src/blist.c:982 src/blist.c:1912 src/gtkblist.c:3870
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
 msgstr "Amigos"
@@ -1237,7 +1237,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Iniciar o Gaim junto com o Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:361 src/gtkblist.c:3043
+#: plugins/win32/winprefs/winprefs.c:361 src/gtkblist.c:3056
 #: src/gtkprefs.c:2416
 msgid "Buddy List"
 msgstr "Lista de amigos"
@@ -1306,7 +1306,7 @@ msgstr "Favor digitar sua senha atual e sua nova senha."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2371
+#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2384
 #: src/gtkdialogs.c:384 src/gtkdialogs.c:526 src/gtkdialogs.c:579
 #: src/gtkrequest.c:242 src/protocols/jabber/jabber.c:1048
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
@@ -1324,8 +1324,8 @@ msgid "OK"
 msgstr "OK"
 
 #: src/account.c:343 src/account.c:381 src/away.c:366 src/connection.c:199
-#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2372
-#: src/gtkblist.c:4414 src/gtkconn.c:169 src/gtkdialogs.c:385
+#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2385
+#: src/gtkblist.c:4427 src/gtkconn.c:169 src/gtkdialogs.c:385
 #: src/gtkdialogs.c:527 src/gtkdialogs.c:580 src/gtkdialogs.c:678
 #: src/gtkdialogs.c:700 src/gtkdialogs.c:720 src/gtkdialogs.c:756
 #: src/gtkdialogs.c:816 src/gtkdialogs.c:858 src/gtkdialogs.c:879
@@ -1766,7 +1766,7 @@ msgstr "Opções de conexão"
 msgid "Protocol:"
 msgstr "Protocolo:"
 
-#: src/gtkaccount.c:647 src/gtkblist.c:4010
+#: src/gtkaccount.c:647 src/gtkblist.c:4023
 msgid "Screen Name:"
 msgstr "Nome do usuário:"
 
@@ -1774,7 +1774,7 @@ msgstr "Nome do usuário:"
 msgid "Password:"
 msgstr "Senha:"
 
-#: src/gtkaccount.c:725 src/gtkblist.c:4024 src/gtkblist.c:4362
+#: src/gtkaccount.c:725 src/gtkblist.c:4037 src/gtkblist.c:4375
 msgid "Alias:"
 msgstr "Apelido:"
 
@@ -1934,7 +1934,7 @@ msgid "Add buddy to your list?"
 msgstr "Adicionar amigo à sua lista?"
 
 #. Add button
-#: src/gtkaccount.c:2505 src/gtkblist.c:4413 src/gtkconv.c:1402
+#: src/gtkaccount.c:2505 src/gtkblist.c:4426 src/gtkconv.c:1402
 #: src/gtkconv.c:3736 src/gtkconv.c:3807 src/gtkrequest.c:247
 #: src/protocols/icq/gaim_icq.c:276 src/protocols/oscar/oscar.c:3741
 #: src/protocols/silc/chat.c:593
@@ -1957,11 +1957,11 @@ msgstr ""
 msgid "_Account:"
 msgstr "_Conta:"
 
-#: src/gtkblist.c:1119 src/gtkblist.c:3196
+#: src/gtkblist.c:1119 src/gtkblist.c:3209
 msgid "Get _Info"
 msgstr "Ver _info"
 
-#: src/gtkblist.c:1122 src/gtkblist.c:3186
+#: src/gtkblist.c:1122 src/gtkblist.c:3199
 msgid "I_M"
 msgstr "_MI"
 
@@ -2027,129 +2027,129 @@ msgstr ""
 "Você não está conectado com uma conta que permita adicionar este amigo."
 
 #. Buddies menu
-#: src/gtkblist.c:2316
+#: src/gtkblist.c:2329
 msgid "/_Buddies"
 msgstr "/_Amigos"
 
-#: src/gtkblist.c:2317
+#: src/gtkblist.c:2330
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Amigos/Nova _mensagem instantânea..."
 
-#: src/gtkblist.c:2318
+#: src/gtkblist.c:2331
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Amigos/Entrar em um _bate-papo..."
 
-#: src/gtkblist.c:2319
+#: src/gtkblist.c:2332
 msgid "/Buddies/Get User _Info..."
 msgstr "/Amigos/Ver _informações do usuário..."
 
-#: src/gtkblist.c:2320
+#: src/gtkblist.c:2333
 msgid "/Buddies/View User _Log..."
 msgstr "/Amigos/Ver _log do usuário..."
 
-#: src/gtkblist.c:2322
+#: src/gtkblist.c:2335
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Amigos/Exibir amig_os desconectados"
 
-#: src/gtkblist.c:2323
+#: src/gtkblist.c:2336
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Amigos/Exibir grupos _vazios"
 
-#: src/gtkblist.c:2324
+#: src/gtkblist.c:2337
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Amigos/_Adicionar amigo..."
 
-#: src/gtkblist.c:2325
+#: src/gtkblist.c:2338
 msgid "/Buddies/Add C_hat..."
 msgstr "/Amigos/Adicionar bate-_papo..."
 
-#: src/gtkblist.c:2326
+#: src/gtkblist.c:2339
 msgid "/Buddies/Add _Group..."
 msgstr "/Amigos/Adicionar _grupo..."
 
-#: src/gtkblist.c:2328
+#: src/gtkblist.c:2341
 msgid "/Buddies/_Signoff"
 msgstr "/Amigos/_Desconectar"
 
-#: src/gtkblist.c:2329
+#: src/gtkblist.c:2342
 msgid "/Buddies/_Quit"
 msgstr "/Amigos/_Sair"
 
 #. Tools
-#: src/gtkblist.c:2332
+#: src/gtkblist.c:2345
 msgid "/_Tools"
 msgstr "/_Ferramentas"
 
-#: src/gtkblist.c:2333
+#: src/gtkblist.c:2346
 msgid "/Tools/_Away"
 msgstr "/Ferrramentas/_Ausência"
 
-#: src/gtkblist.c:2334
+#: src/gtkblist.c:2347
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Ferramentas/Notificação de amigo"
 
-#: src/gtkblist.c:2335
+#: src/gtkblist.c:2348
 msgid "/Tools/Account Ac_tions"
 msgstr "/Ferramentas/Ações de con_tas"
 
-#: src/gtkblist.c:2336
+#: src/gtkblist.c:2349
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Ferramentas/Ações de pl_ugins"
 
-#: src/gtkblist.c:2338
+#: src/gtkblist.c:2351
 msgid "/Tools/A_ccounts"
 msgstr "/Ferramentas/_Contas"
 
-#: src/gtkblist.c:2339
+#: src/gtkblist.c:2352
 msgid "/Tools/_File Transfers"
 msgstr "/Ferramentas/Transferências de arquivo"
 
-#: src/gtkblist.c:2340
+#: src/gtkblist.c:2353
 msgid "/Tools/R_oom List"
 msgstr "/Ferramentas/_Lista de salas"
 
-#: src/gtkblist.c:2341
+#: src/gtkblist.c:2354
 msgid "/Tools/Pr_eferences"
 msgstr "/Ferramentas/Pr_eferências"
 
-#: src/gtkblist.c:2342
+#: src/gtkblist.c:2355
 msgid "/Tools/Pr_ivacy"
 msgstr "/Ferramentas/Pr_ivacidade"
 
-#: src/gtkblist.c:2344
+#: src/gtkblist.c:2357
 msgid "/Tools/View System _Log"
 msgstr "/Ferramentas/Ver log do _sistema"
 
 #. Help
-#: src/gtkblist.c:2347
+#: src/gtkblist.c:2360
 msgid "/_Help"
 msgstr "/_Ajuda"
 
-#: src/gtkblist.c:2348
+#: src/gtkblist.c:2361
 msgid "/Help/Online _Help"
 msgstr "/Ajuda/_Ajuda online"
 
-#: src/gtkblist.c:2349
+#: src/gtkblist.c:2362
 msgid "/Help/_Debug Window"
 msgstr "/Ajuda/Janela de _debug"
 
-#: src/gtkblist.c:2350
+#: src/gtkblist.c:2363
 msgid "/Help/_About"
 msgstr "/Ajuda/_Sobre"
 
-#: src/gtkblist.c:2368
+#: src/gtkblist.c:2381
 msgid "Rename Group"
 msgstr "Renomear grupo"
 
-#: src/gtkblist.c:2368
+#: src/gtkblist.c:2381
 msgid "New group name"
 msgstr "Novo nome do grupo"
 
-#: src/gtkblist.c:2369
+#: src/gtkblist.c:2382
 msgid "Please enter a new name for the selected group."
 msgstr "Por favor digite um novo nome para o grupo selecionado."
 
-#: src/gtkblist.c:2397
+#: src/gtkblist.c:2410
 #, c-format
 msgid ""
 "\n"
@@ -2158,7 +2158,7 @@ msgstr ""
 "\n"
 "<b>Conta:</b> %s"
 
-#: src/gtkblist.c:2461
+#: src/gtkblist.c:2474
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2166,12 +2166,12 @@ msgstr ""
 "\n"
 "<b>Status:</b> Desconectado"
 
-#: src/gtkblist.c:2476
+#: src/gtkblist.c:2489
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2492
+#: src/gtkblist.c:2505
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2179,7 +2179,7 @@ msgstr ""
 "\n"
 "<b>Conta: </b>"
 
-#: src/gtkblist.c:2493
+#: src/gtkblist.c:2506
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2187,7 +2187,7 @@ msgstr ""
 "\n"
 "<b>Apelido do contato:</b>"
 
-#: src/gtkblist.c:2494
+#: src/gtkblist.c:2507
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2195,7 +2195,7 @@ msgstr ""
 "\n"
 "<b>Apelido (local):</b>"
 
-#: src/gtkblist.c:2495
+#: src/gtkblist.c:2508
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2203,7 +2203,7 @@ msgstr ""
 "\n"
 "<b>Apelido (remoto):</b>"
 
-#: src/gtkblist.c:2496
+#: src/gtkblist.c:2509
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2211,7 +2211,7 @@ msgstr ""
 "\n"
 "<b>Conectado por:</b>"
 
-#: src/gtkblist.c:2497
+#: src/gtkblist.c:2510
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2219,7 +2219,7 @@ msgstr ""
 "\n"
 "<b>Inativo por:</b>"
 
-#: src/gtkblist.c:2498
+#: src/gtkblist.c:2511
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2227,7 +2227,7 @@ msgstr ""
 "\n"
 "<b>Alertado:</b>"
 
-#: src/gtkblist.c:2500
+#: src/gtkblist.c:2513
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2235,7 +2235,7 @@ msgstr ""
 "\n"
 "<b>Descrição:</b> Assombroso"
 
-#: src/gtkblist.c:2501
+#: src/gtkblist.c:2514
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2243,7 +2243,7 @@ msgstr ""
 "\n"
 "<b>Status</b>: Incrível"
 
-#: src/gtkblist.c:2502
+#: src/gtkblist.c:2515
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2251,108 +2251,108 @@ msgstr ""
 "\n"
 "<b>Status</b>: Botando pra quebrar"
 
-#: src/gtkblist.c:2784
+#: src/gtkblist.c:2797
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Inativo (%dh%02dm) "
 
-#: src/gtkblist.c:2786
+#: src/gtkblist.c:2799
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inativo (%dm) "
 
-#: src/gtkblist.c:2791
+#: src/gtkblist.c:2804
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Alertado (%d%%) "
 
-#: src/gtkblist.c:2794
+#: src/gtkblist.c:2807
 msgid "Offline "
 msgstr "Desconectado "
 
 #. Make menu items sensitive/insensitive where appropriate
-#: src/gtkblist.c:2912
+#: src/gtkblist.c:2925
 msgid "/Buddies/Join a Chat..."
 msgstr "/Amigos/Entrar em um bate-papo..."
 
-#: src/gtkblist.c:2915
+#: src/gtkblist.c:2928
 msgid "/Tools/Room List"
 msgstr "/Ferramentas/Lista de salas"
 
-#: src/gtkblist.c:2918
+#: src/gtkblist.c:2931
 msgid "/Tools/Privacy"
 msgstr "/Ferramentas/Privacidade"
 
-#: src/gtkblist.c:3000
+#: src/gtkblist.c:3013
 msgid "Alphabetical"
 msgstr "Alfabética"
 
-#: src/gtkblist.c:3001
+#: src/gtkblist.c:3014
 msgid "By status"
 msgstr "Por status"
 
-#: src/gtkblist.c:3002
+#: src/gtkblist.c:3015
 msgid "By log size"
 msgstr "Por tamanho do log"
 
-#: src/gtkblist.c:3068
+#: src/gtkblist.c:3081
 msgid "/Tools/Away"
 msgstr "/Ferramentas/Ausência"
 
-#: src/gtkblist.c:3071
+#: src/gtkblist.c:3084
 msgid "/Tools/Buddy Pounce"
 msgstr "/Ferramentas/Notificação de amigos"
 
-#: src/gtkblist.c:3074
+#: src/gtkblist.c:3087
 msgid "/Tools/Account Actions"
 msgstr "/Ferramentas/Ações de contas"
 
-#: src/gtkblist.c:3077
+#: src/gtkblist.c:3090
 msgid "/Tools/Plugin Actions"
 msgstr "/Ferramentas/Ações de plugins"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3165
+#: src/gtkblist.c:3178
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Amigos/Exibir amigos desconectados"
 
-#: src/gtkblist.c:3167
+#: src/gtkblist.c:3180
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Amigos/Exibir grupos vazios"
 
-#: src/gtkblist.c:3192
+#: src/gtkblist.c:3205
 msgid "Send a message to the selected buddy"
 msgstr "Enviar uma mensagem para o amigo selecionado"
 
-#: src/gtkblist.c:3202
+#: src/gtkblist.c:3215
 msgid "Get information on the selected buddy"
 msgstr "Ver informações sobre o amigo selecionado"
 
-#: src/gtkblist.c:3206
+#: src/gtkblist.c:3219
 msgid "_Chat"
 msgstr "_Bate-papo"
 
-#: src/gtkblist.c:3211
+#: src/gtkblist.c:3224
 msgid "Join a chat room"
 msgstr "Entrar numa sala de bate-papo"
 
-#: src/gtkblist.c:3216
+#: src/gtkblist.c:3229
 msgid "_Away"
 msgstr "_Ausente"
 
-#: src/gtkblist.c:3221
+#: src/gtkblist.c:3234
 msgid "Set an away message"
 msgstr "Definir uma mensagem de ausência"
 
-#: src/gtkblist.c:3964 src/protocols/silc/buddy.c:731
+#: src/gtkblist.c:3977 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
 #: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2734
 msgid "Add Buddy"
 msgstr "Adicionar amigo"
 
-#: src/gtkblist.c:3988
+#: src/gtkblist.c:4001
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2364,15 +2364,15 @@ msgstr ""
 "possível.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4048 src/gtkblist.c:4342
+#: src/gtkblist.c:4061 src/gtkblist.c:4355
 msgid "Account:"
 msgstr "Conta:"
 
-#: src/gtkblist.c:4275
+#: src/gtkblist.c:4288
 msgid "This protocol does not support chat rooms."
 msgstr "Este protocolo não suporta salas de bate-papo."
 
-#: src/gtkblist.c:4291
+#: src/gtkblist.c:4304
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -2380,11 +2380,11 @@ msgstr ""
 "Atualmente, você não está conectado em nenhum protocolo que possui o recurso "
 "de bate-papo."
 
-#: src/gtkblist.c:4308
+#: src/gtkblist.c:4321
 msgid "Add Chat"
 msgstr "Adicionar bate-papo"
 
-#: src/gtkblist.c:4332
+#: src/gtkblist.c:4345
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2392,15 +2392,15 @@ msgstr ""
 "Por favor digite um apelido, e as informações apropriadas sobre o bate-papo "
 "que você gostaria de adicionar à sua lista de amigos.\n"
 
-#: src/gtkblist.c:4410
+#: src/gtkblist.c:4423
 msgid "Add Group"
 msgstr "Criar grupo"
 
-#: src/gtkblist.c:4411
+#: src/gtkblist.c:4424
 msgid "Please enter the name of the group to be added."
 msgstr "Por favor digite o nome do grupo a ser criado."
 
-#: src/gtkblist.c:4978 src/gtkblist.c:5075
+#: src/gtkblist.c:4991 src/gtkblist.c:5088
 msgid "No actions available"
 msgstr "Nenhuma ação disponível"
 
@@ -2845,11 +2845,11 @@ msgid_plural "%d people in room"
 msgstr[0] "%d pessoa na sala"
 msgstr[1] "%d pessoas na sala"
 
-#: src/gtkconv.c:5950 src/gtkconv.c:5953
+#: src/gtkconv.c:5951 src/gtkconv.c:5954
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Conversa/Fechar"
 
-#: src/gtkconv.c:6325
+#: src/gtkconv.c:6326
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -2857,12 +2857,12 @@ msgstr ""
 "say &lt;mensagem&gt;:  Envia uma mensagem normalmente, como se você não "
 "estivesse usando um comando."
 
-#: src/gtkconv.c:6328
+#: src/gtkconv.c:6329
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 "me &lt;ação&gt;:  Envia uma ação do tipo do IRC para um amigo ou bate-papo."
 
-#: src/gtkconv.c:6331
+#: src/gtkconv.c:6332
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -2870,7 +2870,7 @@ msgstr ""
 "debug &lt;opção&gt;:  Envia várias informações de depuração para a conversa "
 "atual."
 
-#: src/gtkconv.c:6335
+#: src/gtkconv.c:6336
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;comando&gt;:  Ajuda num comando específico."
 
@@ -5204,7 +5204,7 @@ msgstr "Servidor"
 msgid "Port"
 msgstr "Porta"
 
-#: src/protocols/irc/irc.c:681 src/protocols/oscar/oscar.c:7349
+#: src/protocols/irc/irc.c:681 src/protocols/oscar/oscar.c:7348
 #: src/protocols/zephyr/zephyr.c:1922
 msgid "Encoding"
 msgstr "Codificação"
@@ -6441,15 +6441,15 @@ msgstr ""
 msgid "File Send Failed"
 msgstr "Falha no envio de arquivo"
 
-#: src/protocols/msn/cmdproc.c:336
+#: src/protocols/msn/cmdproc.c:342
 msgid "Miscellaneous error"
 msgstr "Erro miscelâneo"
 
-#: src/protocols/msn/cmdproc.c:339
+#: src/protocols/msn/cmdproc.c:345
 msgid "You have signed on from another location."
 msgstr "Você conectou de outro local."
 
-#: src/protocols/msn/cmdproc.c:341
+#: src/protocols/msn/cmdproc.c:347
 msgid "The MSN servers are going down temporarily."
 msgstr "Os servidores MSN vão sair do ar temporariamente."
 
@@ -8613,55 +8613,55 @@ msgstr "Mensagem de 'Disponível':"
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Eu estou trabalhando e esperando uma distração--me mande uma mensagem!"
 
-#: src/protocols/oscar/oscar.c:7139 src/protocols/silc/silc.c:795
+#: src/protocols/oscar/oscar.c:7138 src/protocols/silc/silc.c:795
 msgid "Set User Info..."
 msgstr "Definir informações de usuário..."
 
-#: src/protocols/oscar/oscar.c:7144
+#: src/protocols/oscar/oscar.c:7143
 msgid "Set User Info (URL)..."
 msgstr "Definir informações de usuário (URL)..."
 
-#: src/protocols/oscar/oscar.c:7150
+#: src/protocols/oscar/oscar.c:7149
 msgid "Set Available Message..."
 msgstr "Definir mensagem de disponibilidade..."
 
-#: src/protocols/oscar/oscar.c:7155 src/protocols/silc/silc.c:791
+#: src/protocols/oscar/oscar.c:7154 src/protocols/silc/silc.c:791
 msgid "Change Password..."
 msgstr "Alterar senha..."
 
-#: src/protocols/oscar/oscar.c:7160
+#: src/protocols/oscar/oscar.c:7159
 msgid "Change Password (URL)"
 msgstr "Mudar senha (URL)"
 
-#: src/protocols/oscar/oscar.c:7164
+#: src/protocols/oscar/oscar.c:7163
 msgid "Configure IM Forwarding (URL)"
 msgstr "Configurar encaminhamento de mensagens (URL)"
 
-#: src/protocols/oscar/oscar.c:7173
+#: src/protocols/oscar/oscar.c:7172
 msgid "Format Screen Name..."
 msgstr "Formatar nome de usuário..."
 
-#: src/protocols/oscar/oscar.c:7177
+#: src/protocols/oscar/oscar.c:7176
 msgid "Confirm Account"
 msgstr "Confirmar conta"
 
-#: src/protocols/oscar/oscar.c:7181
+#: src/protocols/oscar/oscar.c:7180
 msgid "Display Currently Registered Address"
 msgstr "Mostrar o endereço registrado atualmente"
 
-#: src/protocols/oscar/oscar.c:7185
+#: src/protocols/oscar/oscar.c:7184
 msgid "Change Currently Registered Address..."
 msgstr "Mudar o endereço registrado atualmente..."
 
-#: src/protocols/oscar/oscar.c:7192
+#: src/protocols/oscar/oscar.c:7191
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostrar amigos esperando autorização"
 
-#: src/protocols/oscar/oscar.c:7198
+#: src/protocols/oscar/oscar.c:7197
 msgid "Search for Buddy by Email..."
 msgstr "Procurar por amigos por email..."
 
-#: src/protocols/oscar/oscar.c:7203
+#: src/protocols/oscar/oscar.c:7202
 msgid "Search for Buddy by Information"
 msgstr "Procurar por amigos por informações"
 
@@ -8676,15 +8676,15 @@ msgstr "Procurar por amigos por informações"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7322 src/protocols/oscar/oscar.c:7324
+#: src/protocols/oscar/oscar.c:7321 src/protocols/oscar/oscar.c:7323
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Plugin do protocolo AIM/ICQ"
 
-#: src/protocols/oscar/oscar.c:7343
+#: src/protocols/oscar/oscar.c:7342
 msgid "Auth host"
 msgstr "Host de autorização"
 
-#: src/protocols/oscar/oscar.c:7346
+#: src/protocols/oscar/oscar.c:7345
 msgid "Auth port"
 msgstr "Porta de autorização"
 
