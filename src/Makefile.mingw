@@ -81,7 +81,6 @@ DLL_C_SRC =		about.c \
 			accountopt.c \
 			away.c \
 			blist.c \
-			browser.c \
 			buddy_chat.c \
 			buddyicon.c \
 			connection.c \
@@ -133,6 +132,7 @@ DLL_C_SRC =		about.c \
 			themes.c \
 			util.c \
 			value.c \
+			xmlnode.c \
 			win32/win32dep.c \
 			win32/MinimizeToTray.c \
 			win32/libc_interface.c \

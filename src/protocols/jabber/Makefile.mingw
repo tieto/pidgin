@@ -79,7 +79,6 @@ C_SRC =			auth.c \
 			parser.c \
 			presence.c \
 			roster.c \
-			xmlnode.c \
 			win32/posix.uname.c
 
 
