@@ -841,17 +841,17 @@ int main(int argc, char *argv[])
 
 	gaim_plugins_probe(NULL);
 
-	gaim_set_blist(gaim_blist_new());
-	gaim_blist_load();
-
-	gaim_prefs_load();
-
 	/* we only read ~/.gaimrc (load_prefs()) if there is no accounts.xml
 	 * since prefs.xml existed alongside ~/.gaim in 0.64 */
 	if (!gaim_accounts_load()) {
 		load_prefs();
 		gaim_prefs_sync();
 	}
+
+	gaim_set_blist(gaim_blist_new());
+	gaim_blist_load();
+
+	gaim_prefs_load();
 
 	gaim_gtk_prefs_rename_old();
 
