@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.44:
+version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to
 	  either 48x48 or 50x50 depending on icon)
 	* Have you ever had it happen where you cancel a login and

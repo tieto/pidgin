@@ -50,39 +50,20 @@ Erg. Now the fun part. The part that you would have never guessed if you
 weren't me. (I know that you wouldn't have guessed this stuff because
 it isn't painfully obvious to me. Use the Source, Luke.)
 
-Let's start with the basics. PRPLs shouldn't use GTK at all. That said,
-they have to in no fewer than three functions: action_menu, user_opts, and
-draw_new_user (probably do_new_user too). Fortunately, all of these are
-optional. Unfortunatly, all of these are so incredibly useful that they
-probably aren't optional.  If you use GTK (other than gdk_input_add/remove
-for the connections) in any function other than these three I will hunt
-you down like the dog you are and kill you. (Oscar and TOC are excused
-temporarily because they existed long before all the other PRPLs.)
+Let's start with the basics. PRPLs shouldn't use GTK at all. If you use
+GTK I will hunt you down like the dog you are and kill you.
 
 You're probably wondering how you can do certain things without GTK. Well,
 you're just going to have to make do. Rely on the UI, that's why it's
 there.	A PRPL should have absolutely ZERO interaction with the user,
-it should all be handled by the UI. So far, about the only thing that's
-been added to gaim to aid in this goal is do_ask_dialog. But at least
-it's a start.
+it should all be handled by the UI.
 
-do_ask_dialogs is one of the worst creations ever to come from my ass. It
-must have been very late in the morning, just before I went to sleep,
-when I coded it. That's my excuse.
+So let's talk about what that means in a practical way. Have a socket that
+you want notification on? Use gaim_input functions; they work just like
+the gdk_input functions. Want to add a timeout? g_timeout_add and
+g_source_remove. Want to ask a question? do_ask_dialog. Etc.
 
-You pass it the question you want to ask, what to do on Yes, what to
-do on No, and optional data. The logic actually isn't like that at
-all. Given you call do_ask_dialog("Wanna?", mydata, yes_func, no_func),
-the logic is:
+Don't use the _options variables at all. The core should take care of all
+of that.
 
-if (clicked_yes)
-	yes_func();
-no_func();
-
-i.e. no_func() gets called regardless of what's clicked. So
-it's best to use it for freeing mydata, and not freeing mydata in
-yes_func. To be quite honest, I'm not sure no_func is needed. (I
-also seem to think that yes_func isn't entirely necessary either,
-except for the little part about it being the point of do_ask_dialog.)
-
-Um. So that was interesting.
+Um. I'm sure there's more.

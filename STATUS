@@ -1,10 +1,19 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-05-23 07:39:05 -0400 (Wed, 23 May 2001) $ by
+STATUS of GAIM CVS tree. Last modified $Date: 2001-09-20 04:13:25 -0400 (Thu, 20 Sep 2001) $ by
 $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
 relatively stable (we use it all the time), but has tendencies to be quirky at
 times.
+
+There always seems to be some iffy-ness by a lot of people about whether to
+use the CVS version or stick with a stable release. Use the CVS version. If
+you need a version that you know is reliable, then keep your favorite one in
+case of an emergency. But for the most part, gaim is not mission-critical
+software, and if you can help us find a few bugs before we release, all the
+better. (Also, CVS tends to be more stable than releases, since we get 10 or
+12 bug reports right after we make a release, and all those bugs are fixed
+within a day or two usually.)
 
 Each protocol is hacked by both Rob and Eric, though there is one person that
 kind of "owns" a protocol (mostly indicating that they were the person that
@@ -15,21 +24,10 @@ people to complain to when something doesn't work ;).
 OVERALL
 =======
 
-The current CVS tree is more or less back to "normal". It seems to be stable,
-and allows multiple connections (which should also be stable).
-
-There have been a lot of changes since 0.10.x; I think all of the bugs have
-been worked out but I'm sure there are still a lot remaining. Please, if you
-get bored one day, go on a big bug hunt.
-
-There always seems to be some iffy-ness by a lot of people about whether to
-use the CVS version or stick with a stable release. Use the CVS version. If
-you need a version that you know is reliable, then keep your favorite one in
-case of an emergency. But for the most part, gaim is not mission-critical
-software, and if you can help us find a few bugs before we release, all the
-better. (Also, CVS tends to be more stable than releases, since we get 10 or
-12 bug reports right after we make a release, and all those bugs are fixed
-within a day or two usually.)
+Everything right now is more or less peachy. I regularly use seven protocols
+at the same time and don't have any problems (all of them except Napster and
+Zephyr). You shouldn't be using 0.10.3; there are serious bugs in it (including
+a remote exploit). Always use CVS, or if not, the most recent release.
 
 
 Buddy List
@@ -59,9 +57,9 @@ every plugin is going to need to be rewritten.  Have fun porting from 0.10.x to
 Perl
 ====
 
-Perl also got a good reworking, but also has a few more features now. Again,
-porting from 0.10.x to 0.11.0 should be simple, but read the docs to see what's
-going on.
+Perl has its good side and bad side. It didn't completely survive the transition
+to multiple connections, but it was never really intended for more than a chatbot
+anyway, which should still work just wonderfully.
 
 
 TOC (Rob)
@@ -104,21 +102,20 @@ probably not my fault. Make sure to watch the debug window if you're having any
 problems.
 
 
-IRC (Rob)
+IRC (Eric)
 ===
 
 IRC currently supports signing on/off, sending and receiving messages,
 joining chat rooms and holding conversations within them.  The buddylist
-also works and users have the ability to send ping requests to the user
-by right clicking their name.  /me support is also added.  Other commands
-and functionality are planned but not yet implemented.
+also works. Several /commands work as well, /help in any window will show
+you a full list.
 
 
-MSN (Rob)
+MSN (Eric)
 ===
 
-MSN currently supports signing on/off, sending and receiving messages, adding
-and removing people to your permit/deny list and going away / idle.
+MSN currently supports signing on/off, sending and receiving messages, and going
+away/idle. You can also change your friendly name.
 
 
 ICQ (Eric)

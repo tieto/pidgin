@@ -6,7 +6,7 @@ Syd Logan - Super Hacker and Resident Designated Driver
 Jim Duchek <jimduchek@ou.edu> IM: Zilding (former maintainer)
 Mark Spencer <markster@marko.net>
 
-Build:
+* Build:
 
 ./configure ; make 
 for the stock version.  ./configure --help to see what option you can get.
@@ -24,7 +24,7 @@ If you want to build as a GNOME applet:
 then su to root and run "make install". 
 Afterwards panel->Add applet->Network->Gaim should be there.
 
-Run:
+* Run:
 
 type "./gaim"
 
@@ -42,7 +42,19 @@ global proxy configuration; however, if you have the proxy set to use a
 SOCKS5 proxy, ICQ will use it. If the proxy options aren't robust enough
 for you there are several libraries that you can link gaim against.
 
-Notes:
+* Plugins:
+
+If you do not wish to enable the plugin support within GAIM, run the
+./configure script with the --disable-plugins option and recompile your
+source code.  This will prevent the ability to load plugins.
+
+'make install' puts the plugins in $PREFIX/lib/gaim (PREFIX being what you
+specified when you ./configure'd - it defaults to /usr/local). Gaim looks
+for the plugins in that directory by default, but they do not have to be
+there to use them. Also, plugins have a .so extension by default, though
+they do not have to.
+
+* Notes:
 
 This should now compile under Solaris, Digital Unix, Irix, etc w/o a
 problem.
@@ -63,4 +75,3 @@ sourceforge page at http://sourceforge.net/projects/gaim/
 
 Keep your eyes out for updates, and I'll try to keep the program maintained.
 Other contributors and patches are welcomed.  Please read the FAQ first.
-
