@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <string.h>
 #include "icq.h"   /* well, we're doing ICQ, right? */
 #include "multi.h" /* needed for gaim_connection */
 #include "prpl.h"  /* needed for prpl */
