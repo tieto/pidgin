@@ -421,7 +421,7 @@ common_send(GaimConversation *conv, const char *message)
 			gaim_prefs_get_bool("/core/conversations/away_back_on_send")) {
 
 			if (awaymessage != NULL) {
-				do_im_back();
+				do_im_back(NULL, NULL);
 			}
 			else if (gc->away) {
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);

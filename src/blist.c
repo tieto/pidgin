@@ -761,7 +761,7 @@ struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
 		hb.name = normalize(n);
 		hb.account = account;
 		hb.group = group;
-		if (buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb))
+		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
 			return buddy;
 		group = ((GaimBlistNode*)group)->next;
 	}

@@ -1149,7 +1149,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	gaim_blist_update_buddy_presence(b, loggedin);
 
 	/* Now, update the rest of the buddies in the list */
-	while (b = gaim_find_buddy(gc->account, NULL)) {
+	while ((b = gaim_find_buddy(gc->account, NULL)) != NULL) {
 		gaim_blist_update_buddy_presence(b, loggedin);
 		gaim_blist_update_buddy_idle(b, idle);
 		gaim_blist_update_buddy_evil(b, evil);
