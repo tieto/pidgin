@@ -1839,6 +1839,9 @@ static GtkWidget *block_list = NULL;
 
 static void set_deny_mode(GtkWidget *w, int data)
 {
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	debug_printf("setting deny mode %d\n", data);
 	current_deny_gc->permdeny = data;
 	serv_set_permit_deny(current_deny_gc);
 	do_export(current_deny_gc);
@@ -1855,7 +1858,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *se
 		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
 						    label);
 	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
+	gtk_signal_connect(GTK_OBJECT(opt), "toggled", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
 	if (current_deny_gc->permdeny == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
