@@ -225,10 +225,8 @@ void do_away_menu()
 	if (imaway && applet)
 		applet_widget_register_callback(APPLET_WIDGET(applet),
 						"away", _("Back"), (AppletCallbackFunc)do_im_back, NULL);
-	else if (imaway)
+	else if (applet && !imaway)
 		insert_applet_away();
-	else
-		return;
 #endif
 
 	if (prefs_away_list != NULL) {
