@@ -299,6 +299,8 @@ void signoff()
                 groups = g_list_remove(groups, groups->data);
 	}
 
+	sprintf(debug_buff, "date: %s\n", full_date());
+	debug_print(debug_buff);
 	serv_close();
         destroy_all_dialogs();
         destroy_buddy();
