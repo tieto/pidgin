@@ -122,11 +122,9 @@ static gboolean sound_timeout(gpointer data)
  * oscar.c, after the buddy list is made and serv_finish_login is called */
 void gaim_setup(GaimConnection *gc)
 {
-	if (gaim_prefs_get_bool("/gaim/gtk/sound/enabled/login")
-			&& !gaim_prefs_get_bool("/gaim/gtk/sound/signon")) {
-		if(snd_tmout) {
+	if (gaim_prefs_get_bool("/gaim/gtk/sound/enabled/login")) {
+		if (snd_tmout)
 			g_source_remove(snd_tmout);
-		}
 		gaim_gtk_sound_set_login_mute(TRUE);
 		snd_tmout = gaim_timeout_add(10000, sound_timeout, NULL);
 	}

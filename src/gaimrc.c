@@ -1088,8 +1088,6 @@ static void gaimrc_read_options(FILE *f)
 					sound_options & OPT_SOUND_FIRST_RCV);
 			gaim_prefs_set_bool("/core/sound/when_away",
 					sound_options & OPT_SOUND_WHEN_AWAY);
-			gaim_prefs_set_bool("/gaim/gtk/sound/signon",
-					!(sound_options & OPT_SOUND_SILENT_SIGNON));
 			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/join_chat",
 					sound_options & OPT_SOUND_CHAT_JOIN);
 			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/chat_msg_recv",

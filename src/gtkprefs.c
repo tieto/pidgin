@@ -1495,10 +1495,6 @@ GtkWidget *sound_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
-#if 0 /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("Sounds when you _log in"),
-				   "/gaim/gtk/sound/signon", vbox);
-#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   "/gaim/gtk/sound/conv_focus", vbox);
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
@@ -2919,8 +2915,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
 	gaim_prefs_rename("/core/conversations/placement",
 					  "/gaim/gtk/conversations/placement");  
-	gaim_prefs_rename_boolean_toggle("/gaim/gtk/sound/silent_signon",
-									 "/gaim/gtk/sound/signon");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
@@ -2932,4 +2926,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
+	gaim_prefs_remove("/gaim/gtk/sound/signon");
+	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 }
