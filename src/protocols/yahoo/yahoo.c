@@ -109,8 +109,6 @@ enum yahoo_status {
 	YAHOO_STATUS_STEPPEDOUT,
 	YAHOO_STATUS_INVISIBLE = 12,
 	YAHOO_STATUS_CUSTOM = 99,
-	YAHOO_STATUS_CUSTOM_ICON = 100,
-	YAHOO_STATUS_CUSTOM_SMS = 101,
 	YAHOO_STATUS_IDLE = 999,
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
 	YAHOO_STATUS_TYPING = 0x16
@@ -125,7 +123,6 @@ struct yahoo_data {
 	GHashTable *games;
 	int current_status;
 	gboolean logged_in;
-	GString *partial_buddy_list;
 };
 
 struct yahoo_pair {
@@ -363,13 +360,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
-	GSList *l_tmp;
 	char *name = NULL;
 	int state = 0;
 	int gamestate = 0;
 	char *msg = NULL;
-	char *icon_state = NULL;
-	char *wireless = NULL;
 	int away = 0;
 	int idle = 0;
 
@@ -444,32 +438,17 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
 			else if (state == YAHOO_STATUS_IDLE)
 				serv_got_update(gc, name, 1, 0, 0, (idle?idle:time(NULL)), (state << 2) | UC_UNAVAILABLE | gamestate);
-			else if ((state == YAHOO_STATUS_CUSTOM)&&(icon_state)){
-				if (icon_state[0]=='0') serv_got_update(gc, name, 1, 0, 0, 0, 
-						(state << 2)| UC_UNAVAILABLE   | gamestate);
-				else serv_got_update(gc, name, 1, 0, 0, 0, 
-						(YAHOO_STATUS_CUSTOM_ICON << 2) | UC_UNAVAILABLE | gamestate);
-			} 
 			else {
 				if (away)
 					serv_got_update(gc, name, 1, 0, 0, idle, (state << 2) | UC_UNAVAILABLE | gamestate);
 				else
 					serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | gamestate);
 			}
-		
 			away = 0;
 			idle = 0;
-			msg=NULL;
-			icon_state=NULL;
 			break;
-		case 47: /* custom message */
-			icon_state = pair->value;
-			break;
-		case 60: /* SMS, comes after 13. but name hasnt been destroyed yet. :) */
-			wireless = pair->value;
-			if(wireless[0]=='1') 
-				serv_got_update(gc, name, 1, 0, 0, 0,  (YAHOO_STATUS_CUSTOM_SMS << 2) | UC_UNAVAILABLE | gamestate);			
-			break;
+		case 60: /* SMS, but comes after 13. but name hasnt been destroyed yet. */
+			 break;
 		case 16: /* Custom error message */
 			gaim_notify_error(gc, NULL, pair->value, NULL);
 			break;
@@ -489,53 +468,44 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	gboolean export = FALSE;
 	struct buddy *b;
 	struct group *g;
-	struct yahoo_data *yd = (struct yahoo_data*) gc->proto_data;
 
-	while(l) {
-		struct yahoo_pair *tmp_pair = l->data;
-		l=l->next;
-		if (tmp_pair->key == 87) {
-			if( yd->partial_buddy_list )
-				g_string_append(yd->partial_buddy_list,tmp_pair->value);
-			else
-				yd->partial_buddy_list=g_string_new(tmp_pair->value); }
-		else if((tmp_pair->key == 59) && (yd->partial_buddy_list)){
-			char *full_buddy_list;
-			if(yd->partial_buddy_list) full_buddy_list=yd->partial_buddy_list->str;
-			else full_buddy_list=tmp_pair->value;
+	while (l) {
+		char **lines;
+		char **split;
+		char **buddies;
+		char **tmp, **bud;
 
-			char **lines;
-			char **split;
-			char **buddies;
-			char **tmp, **bud;
+		struct yahoo_pair *pair = l->data;
+		l = l->next;
 
-			lines = g_strsplit(full_buddy_list, "\n", -1);
-			for (tmp = lines; *tmp; tmp++) {
-				split = g_strsplit(*tmp, ":", 2);
-				if (!split)
-					continue;
-				if (!split[0] || !split[1]) {
-					g_strfreev(split);
-					continue;
-				}
-				buddies = g_strsplit(split[1], ",", -1);
-				for (bud = buddies; bud && *bud; bud++)
-					if (!(b = gaim_find_buddy(gc->account,  *bud))) {
-						if (!(g = gaim_find_group(split[0]))) {
-							g = gaim_group_new(split[0]);
-							gaim_blist_add_group(g, NULL);
-						}
-						b = gaim_buddy_new(gc->account, *bud, NULL);
-						gaim_blist_add_buddy(b, g, NULL);
-						export = TRUE;
+		if (pair->key != 87)
+			continue;
+
+		lines = g_strsplit(pair->value, "\n", -1);
+		for (tmp = lines; *tmp; tmp++) {
+			split = g_strsplit(*tmp, ":", 2);
+			if (!split)
+				continue;
+			if (!split[0] || !split[1]) {
+				g_strfreev(split);
+				continue;
+			}
+			buddies = g_strsplit(split[1], ",", -1);
+			for (bud = buddies; bud && *bud; bud++)
+				if (!(b = gaim_find_buddy(gc->account,  *bud))) {
+					if (!(g = gaim_find_group(split[0]))) {
+						g = gaim_group_new(split[0]);
+						gaim_blist_add_group(g, NULL);
 					}
-				g_strfreev(buddies);
- 				g_strfreev(split);
- 			}
-			g_strfreev(lines);
-			g_free(yd->partial_buddy_list);
- 		}
- 	}
+					b = gaim_buddy_new(gc->account, *bud, NULL);
+					gaim_blist_add_buddy(b, g, NULL);
+					export = TRUE;
+				}
+			g_strfreev(buddies);
+			g_strfreev(split);
+		}
+		g_strfreev(lines);
+	}
 
 	if (export)
 		gaim_blist_save();
@@ -604,86 +574,29 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *msg = NULL;
 	char *from = NULL;
 	time_t tm = time(NULL);
-	/*GSList *l = pkt->hash;*/
-	GList *l;
-	GList * messages = NULL;
-	struct _m {
-		int  i_31;
-		int  i_32;
-		char *to;
-		char *from;
-		long tm;
-		char *msg;
-		int  utf8;
-	}; 
+	GSList *l = pkt->hash;
 
-	if ((pkt->status <= 1) || (pkt->status == 5)) {
-		struct _m *message = g_new0(struct _m, 1);
+	if (pkt->status <= 1 || pkt->status == 5) {
+		while (l) {
+			struct yahoo_pair *pair = l->data;
+			if (pair->key == 4)
+				from = pair->value;
+			if (pair->key == 15)
+				tm = strtol(pair->value, NULL, 10);
+			if (pair->key == 14) {
+				char *m;
 
-		for (l = pkt->hash; l; l = l->next) {
- 			struct yahoo_pair *pair = l->data;
-			if (pair->key == 1 || pair->key == 4)
-				message->from = pair->value;
-			else if (pair->key == 5)
-				message->to = pair->value;
-			else if (pair->key == 15)
-				message->tm = strtol(pair->value, NULL, 10);
-			else if (pair->key == 97)
-				message->utf8 = atoi(pair->value);
-			/* user message */  /* sys message */
-			else if (pair->key == 14 || pair->key == 16)
-				message->msg = pair->value;
-			else if (pair->key == 31) {
-				if(message->i_31) {
-					messages = g_list_append(messages, message);
-					message = g_new0(struct _m, 1);
-				}
-				message->i_31 = atoi(pair->value);
+				msg = pair->value;
+
+				strip_linefeed(msg);
+				m = yahoo_codes_to_html(msg);
+				serv_got_im(gc, from, m, 0, tm, -1);
+				g_free(m);
+
+				tm = time(NULL);
 			}
-			else if (pair->key == 32)
-				message->i_32 = atoi(pair->value);
-			else ;
-			/*	LOG(("yahoo_process_message: status: %d, key: %d, value: %s",
-				pkt->status, pair->key, pair->value));*/
+			l = l->next;
 		}
- 
-		messages = g_list_append(messages, message);
-
-		/*printf("Message vector made!\n");*/
- 
-		l=messages;
-		while(l){
-			message = l->data;
-			char *m;
-			int i, j;
-
-			m = message->msg;
-			/*printf("Stripping linefeed!\n");*/
-
-			strip_linefeed(m);
-			/*printf("Stripped!\n");*/
-
-			for (i = 0, j = 0; m[i]; i++) {
-				if (m[i] == 033) {
-					while (m[i] && (m[i] != 'm'))
-						i++;
-					if (!m[i])
-						i--;
-					continue;
-				}
-				m[j++] = m[i];
- 			}
-			m[j] = 0;
-			if (message->tm) tm = message->tm;
-			else tm = time(NULL);
-			serv_got_im(gc, message->from, message->msg, 0, tm, -1);
-			l=l->next;		
-		}	
-		for (l = messages; l; l=l->next) {
-			free(l->data);
- 		}
-		g_list_free(messages);
-
 	} else if (pkt->status == 2) {
 		gaim_notify_error(gc, NULL,
 						  _("Your Yahoo! message did not get sent."), NULL);
@@ -1159,42 +1072,13 @@ static const char *yahoo_list_icon(GaimAccount *a, struct buddy *b)
 static void yahoo_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	int i = 0;
-	int status=(b->uc >> 2);
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	if (b->present == GAIM_BUDDY_OFFLINE) {
 		*se = "offline";
 		return;
 	} else {
-		switch(status){
-			case YAHOO_STATUS_BRB:
-			case YAHOO_STATUS_BUSY:
-			case YAHOO_STATUS_NOTATHOME:
-			case YAHOO_STATUS_NOTATDESK:
-			case YAHOO_STATUS_NOTINOFFICE:
-			case YAHOO_STATUS_ONPHONE:
-			case YAHOO_STATUS_ONVACATION:
-			case YAHOO_STATUS_OUTTOLUNCH:
-			case YAHOO_STATUS_STEPPEDOUT:
-			case YAHOO_STATUS_CUSTOM_ICON :
-				emblems[i++]="offline";
-				break;
-			case YAHOO_STATUS_CUSTOM_SMS :
-				emblems[i++]="wireless";
-				break;
-			case YAHOO_STATUS_CUSTOM :
-				emblems[i++] = "away";
-				break;
-			case YAHOO_STATUS_AVAILABLE:
-			case YAHOO_STATUS_TYPING:
-			case YAHOO_STATUS_INVISIBLE:
-			case YAHOO_STATUS_IDLE :
-			case YAHOO_STATUS_OFFLINE:
-			default:
-				break;
-		}
-		/*      if (b->uc & UC_UNAVAILABLE)
-		 *                        emblems[i++] = "away";*/
-
+		if (b->uc & UC_UNAVAILABLE)
+			emblems[i++] = "away";
 		if (b->uc & YAHOO_STATUS_GAME)
 			emblems[i++] = "game";
 	}
@@ -1254,10 +1138,9 @@ static void yahoo_game(GaimConnection *gc, const char *name) {
 static char *yahoo_status_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	if (b->uc & UC_UNAVAILABLE) {
-		if (((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
-				&& ((b->uc >> 2) != YAHOO_STATUS_CUSTOM_ICON) 
-				&& ((b->uc >> 2) != YAHOO_STATUS_CUSTOM_SMS))
+
+	if ((b->uc & UC_UNAVAILABLE) && ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+		&& ((b->uc >> 2) != YAHOO_STATUS_IDLE))
 			return g_strdup(yahoo_get_status_string(b->uc >> 2));
 	else if ((b->uc >> 2) == YAHOO_STATUS_CUSTOM) {
 		char *stripped = strip_html(g_hash_table_lookup(yd->hash, b->name));
@@ -1404,8 +1287,7 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	struct yahoo_packet *pkt;
 	int service;
 	char s[4];
-	char icon_state[2];
- 
+
 	if (gc->away) {
 		g_free(gc->away);
 		gc->away = NULL;
@@ -1462,18 +1344,9 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	pkt = yahoo_packet_new(service, yd->current_status, 0);
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
-	if (yd->current_status == YAHOO_STATUS_CUSTOM){
-		if (msg[0]=='!'){
-			yahoo_packet_hash(pkt, 19, msg + 1 );
-			strcpy(icon_state,"1");
-			yahoo_packet_hash(pkt, 47, icon_state);
-
-		}     
-		else{         
-			yahoo_packet_hash(pkt, 19, msg);
-			strcpy(icon_state,"0");
-			yahoo_packet_hash(pkt, 47, icon_state);
-		}             
+	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
+		yahoo_packet_hash(pkt, 47, "1");
+		yahoo_packet_hash(pkt, 19, msg);
 	}
 
 	yahoo_send_packet(yd, pkt);
