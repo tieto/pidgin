@@ -1722,6 +1722,9 @@ void show_buddy_list()
 	GtkWidget *sw;
 	GtkWidget *menu;
 	GtkWidget *findmenu;
+#ifdef USE_PERL
+	GtkWidget *perlmenu;
+#endif
 	GtkWidget *setmenu;
 	GtkWidget *menubar;
 	GtkWidget *vbox;
@@ -1827,6 +1830,25 @@ void show_buddy_list()
 
 #ifdef GAIM_PLUGINS
         gaim_new_item(menu, _("Plugins"), GTK_SIGNAL_FUNC(show_plugins));
+#endif
+#ifdef USE_PERL
+	perlmenu = gtk_menu_new();
+	gtk_widget_show(perlmenu);
+	menuitem = gaim_new_item(menu, _("Perl"), NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), perlmenu);
+	gtk_widget_show(menuitem);
+	menuitem = gtk_menu_item_new_with_label(_("Load Script"));
+	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(load_perl_script), NULL);
+	gtk_widget_show(menuitem);
+	menuitem = gtk_menu_item_new_with_label(_("Unload All Scripts"));
+	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(unload_perl_scripts), NULL);
+	gtk_widget_show(menuitem);
+	menuitem = gtk_menu_item_new_with_label(_("List Scripts"));
+	gtk_menu_append(GTK_MENU(perlmenu), menuitem);
+	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(list_perl_scripts), NULL);
+	gtk_widget_show(menuitem);
 #endif
 
 	menu = gtk_menu_new();
