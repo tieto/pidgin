@@ -2675,6 +2675,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			}
 
 			g_string_append(str, tmp);
+			g_free(tmp);
 		}
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */
