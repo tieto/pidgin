@@ -1017,7 +1017,7 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
 	if (!(font_options & OPT_FONT_FGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_color_dialog), (void *)1);
+	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_fgcolor_dialog), NULL);
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
@@ -1032,7 +1032,7 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
 	if (!(font_options & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_color_dialog), (void *)2);
+	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_bgcolor_dialog), NULL);
 	gtk_widget_show(select);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);

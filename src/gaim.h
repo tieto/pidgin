@@ -273,7 +273,8 @@ struct conversation {
 	GtkWidget *strike;
 	GtkWidget *font;
 	GtkWidget *smiley;
-	GtkWidget *color_dialog;
+	GtkWidget *fg_color_dialog;
+	GtkWidget *bg_color_dialog;
 	GtkWidget *font_dialog;
 	GtkWidget *smiley_dialog;
 	GtkWidget *link_dialog;
@@ -407,7 +408,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 864 $"
+#define REVISION "gaim:$Revision: 868 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -801,8 +802,10 @@ extern void g_show_info_text (char *);
 extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
-extern void show_color_dialog(struct conversation *c, GtkWidget *color);
-extern void cancel_color(GtkWidget *widget, struct conversation *c);
+extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);
+extern void show_bgcolor_dialog(struct conversation *c, GtkWidget *color);
+extern void cancel_fgcolor(GtkWidget *widget, struct conversation *c);
+extern void cancel_bgcolor(GtkWidget *widget, struct conversation *c);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *,struct conversation *);

@@ -278,17 +278,19 @@ static int g_sendemail(char *name, char *email, int uname, int sname, char *coun
 static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversation *c)
 {
 	gchar *object_data;
-	dialogwindows = g_list_remove(dialogwindows, w);
-	gtk_widget_destroy(w);
-	
 	object_data = gtk_object_get_user_data(GTK_OBJECT(w));
 
 	if (GTK_IS_COLOR_SELECTION_DIALOG(w))
 	{
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->fgcolorbtn), FALSE);
+		if (w == c->fg_color_dialog) {
+			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->fgcolorbtn), FALSE);
+			c->fg_color_dialog = NULL;
+		} else {
+			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->bgcolorbtn), FALSE);
+			c->bg_color_dialog = NULL;
+		}
 		set_state_lock(0);
-		c->color_dialog = NULL;
 	}
 	else if (GTK_IS_FONT_SELECTION_DIALOG(w))
 	{
@@ -311,6 +313,9 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversatio
 		set_state_lock(0);
 		c->log_dialog = NULL;
 	}
+	
+	dialogwindows = g_list_remove(dialogwindows, w);
+	gtk_widget_destroy(w);
 	
 	return FALSE;
 }
@@ -2317,7 +2322,7 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 static GtkWidget *fgcseld = NULL;
 static GtkWidget *bgcseld = NULL;
 
-void cancel_color(GtkWidget *widget, struct conversation *c)
+void cancel_fgcolor(GtkWidget *widget, struct conversation *c)
 {
  	if (c->fgcolorbtn && widget)
 	{
@@ -2325,12 +2330,25 @@ void cancel_color(GtkWidget *widget, struct conversation *c)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->fgcolorbtn), FALSE);
 		set_state_lock(0);
 	}
-	dialogwindows = g_list_remove(dialogwindows, c->color_dialog);
-	gtk_widget_destroy(c->color_dialog);
-	c->color_dialog = NULL;
+	dialogwindows = g_list_remove(dialogwindows, c->fg_color_dialog);
+	gtk_widget_destroy(c->fg_color_dialog);
+	c->fg_color_dialog = NULL;
 }
 
-void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
+void cancel_bgcolor(GtkWidget *widget, struct conversation *c)
+{
+ 	if (c->bgcolorbtn && widget)
+	{
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->bgcolorbtn), FALSE);
+		set_state_lock(0);
+	}
+	dialogwindows = g_list_remove(dialogwindows, c->bg_color_dialog);
+	gtk_widget_destroy(c->bg_color_dialog);
+	c->bg_color_dialog = NULL;
+}
+
+void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
 	gdouble color[3];
 	GdkColor text_color;
@@ -2347,15 +2365,43 @@ void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
 	text_color.red = ((guint16)(color[0]*65535))>>8;
 	text_color.green = ((guint16)(color[1]*65535))>>8;
 	text_color.blue = ((guint16)(color[2]*65535))>>8;
+	
 	c->fgcol = text_color;
 	c->hasfg = 1;
-	
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
 	surround(c->entry, open_tag, "</FONT>");
 	sprintf(debug_buff,"#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	debug_print(debug_buff);
 	g_free(open_tag);
-	cancel_color(NULL, c);
+	cancel_fgcolor(NULL, c);
+}
+
+void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
+{
+	gdouble color[3];
+	GdkColor text_color;
+	struct conversation *c;
+	char *open_tag;
+
+	open_tag = g_malloc(30);
+
+	gtk_color_selection_get_color (colorsel, color);
+
+	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
+	/* GTK_IS_EDITABLE(c->entry); huh? */
+
+	text_color.red = ((guint16)(color[0]*65535))>>8;
+	text_color.green = ((guint16)(color[1]*65535))>>8;
+	text_color.blue = ((guint16)(color[2]*65535))>>8;
+	
+	c->bgcol = text_color;
+	c->hasbg = 1;
+	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
+	surround(c->entry, open_tag, "</BODY>");
+	sprintf(debug_buff,"#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
+	debug_print(debug_buff);
+	g_free(open_tag);
+	cancel_bgcolor(NULL, c);
 }
 
 static void destroy_colorsel(GtkWidget *w, gpointer d)
@@ -2389,11 +2435,11 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 	}
 }
 
-void show_color_dialog(struct conversation *c, GtkWidget *color)
+void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
 
-	if ((int)color == 1) { /* foreground */
+	if (color == NULL) { /* we came from the prefs */
 		if (fgcseld) return;
 		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
 		
@@ -2405,7 +2451,32 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 		gtk_widget_show(fgcseld);
 		gdk_window_raise(fgcseld->window);
 		return;
-	} else if ((int)color == 2) { /* background */
+	}
+
+	if (!c->fg_color_dialog) {
+		c->fg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+		
+		colorsel = GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->colorsel;
+
+		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
+		
+		gtk_signal_connect(GTK_OBJECT(c->fg_color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_fgcolor), colorsel);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->fg_color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_fgcolor), c);
+
+		gtk_widget_realize(c->fg_color_dialog);
+		aol_icon(c->fg_color_dialog->window);
+	}
+
+	gtk_widget_show(c->fg_color_dialog);
+	gdk_window_raise(c->fg_color_dialog->window);
+}
+
+void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
+{
+	GtkWidget *colorsel;
+
+	if (color == NULL) { /* we came from the prefs */
 		if (bgcseld) return;
 		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
 
@@ -2419,24 +2490,23 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 		return;
 	}
 
-    if (!c->color_dialog)
-	{
-		c->color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+	if (!c->bg_color_dialog) {
+		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 		
-		colorsel = GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->colorsel;
+		colorsel = GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->colorsel;
 
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
 		
-		gtk_signal_connect(GTK_OBJECT(c->color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_color), colorsel);
-		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_color), c);
+		gtk_signal_connect(GTK_OBJECT(c->bg_color_dialog), "delete_event", GTK_SIGNAL_FUNC(delete_event_dialog), c);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->ok_button), "clicked", GTK_SIGNAL_FUNC(do_bgcolor), colorsel);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_bgcolor), c);
 
-		gtk_widget_realize(c->color_dialog);
-		aol_icon(c->color_dialog->window);
+		gtk_widget_realize(c->bg_color_dialog);
+		aol_icon(c->bg_color_dialog->window);
 	}
 
-	gtk_widget_show(c->color_dialog);
-	gdk_window_raise(c->color_dialog->window);
+	gtk_widget_show(c->bg_color_dialog);
+	gdk_window_raise(c->bg_color_dialog->window);
 }
 
 /*------------------------------------------------------------------------*/

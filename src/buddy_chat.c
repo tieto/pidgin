@@ -674,7 +674,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback),b);
 
 	b->font_dialog = NULL;
-	b->color_dialog = NULL;	
+	b->fg_color_dialog = NULL;	
+	b->bg_color_dialog = NULL;	
 	b->smiley_dialog = NULL;
 	b->link_dialog = NULL;
 	b->log_dialog = NULL;

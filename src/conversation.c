@@ -238,8 +238,10 @@ struct log_conversation *find_log_info(char *name)
 void delete_conversation(struct conversation *c)
 {
         conversations = g_list_remove(conversations, c);
-	if (c->color_dialog)
-		gtk_widget_destroy(c->color_dialog);
+	if (c->fg_color_dialog)
+		gtk_widget_destroy(c->fg_color_dialog);
+	if (c->bg_color_dialog)
+		gtk_widget_destroy(c->bg_color_dialog);
 	if (c->font_dialog)
 		gtk_widget_destroy(c->font_dialog);
 	if (c->smiley_dialog)
@@ -365,9 +367,12 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	        gtk_widget_destroy(c->window);
 	c->window = NULL;
 
-	if (c->color_dialog)
-		gtk_widget_destroy(c->color_dialog);
-	c->color_dialog = NULL;
+	if (c->fg_color_dialog)
+		gtk_widget_destroy(c->fg_color_dialog);
+	c->fg_color_dialog = NULL;
+	if (c->bg_color_dialog)
+		gtk_widget_destroy(c->bg_color_dialog);
+	c->bg_color_dialog = NULL;
 	if (c->font_dialog)
 		gtk_widget_destroy(c->font_dialog);
 	c->font_dialog = NULL;
@@ -890,14 +895,26 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 	gtk_widget_grab_focus(entry);
 }
 
-void toggle_color(GtkWidget *color, struct conversation *c)
+void toggle_fg_color(GtkWidget *color, struct conversation *c)
 {
 	if (state_lock)
                 return;
 	if (GTK_TOGGLE_BUTTON(color)->active)
-		show_color_dialog(c, color);
-	else if (c->color_dialog)
-		cancel_color(color, c);
+		show_fgcolor_dialog(c, color);
+	else if (c->fg_color_dialog)
+		cancel_fgcolor(color, c);
+	else
+		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
+}
+
+void toggle_bg_color(GtkWidget *color, struct conversation *c)
+{
+	if (state_lock)
+                return;
+	if (GTK_TOGGLE_BUTTON(color)->active)
+		show_bgcolor_dialog(c, color);
+	else if (c->bg_color_dialog)
+		cancel_bgcolor(color, c);
 	else
 		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
 }
@@ -1461,11 +1478,11 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Color"), _("Text Color"),
-				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
+				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_fg_color), c);
 	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Color"), _("Background Color"),
-				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
+				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_bg_color), c);
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
@@ -1728,7 +1745,8 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(text);
 
 	c->font_dialog = NULL;
-	c->color_dialog = NULL;	
+	c->fg_color_dialog = NULL;	
+	c->bg_color_dialog = NULL;	
 	c->smiley_dialog = NULL;
 	c->link_dialog = NULL;
 	c->log_dialog = NULL;

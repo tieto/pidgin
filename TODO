@@ -1,10 +1,6 @@
 --- STUFF FOR 0.10.1 RELEASE ---
 	Execute Command on Buddy Pounce
 	Redesign the Foreground/Background color options under preferences.
-	Add ability to conversaton window to allow changing of foreground/
-		background colours per conversation window. This is done,
-		there just needs to be some way to actually change the
-		values.
 	Have a page in the prefs for the Applet
 	The about window is very ugly.  I think this shall be fixed.  
 		You know, I really like the gnome look to some apps
