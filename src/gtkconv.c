@@ -1640,16 +1640,19 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	GaimGtkConversation *gtkconv = data;
 
-	if (!(event->state & GDK_CONTROL_MASK)) {
-		if (event->type == GDK_KEY_RELEASE)
-			gtk_widget_grab_focus(gtkconv->entry);
+	if ((event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) ||
+		(event->keyval == GDK_Up) ||
+		(event->keyval == GDK_Down) ||
+		(event->keyval == GDK_Left) ||
+		(event->keyval == GDK_Right))
+			return FALSE;
 
-		gtk_widget_event(gtkconv->entry, (GdkEvent *)event);
+	if (event->type == GDK_KEY_RELEASE)
+		gtk_widget_grab_focus(gtkconv->entry);
 
-		return TRUE;
-	}
+	gtk_widget_event(gtkconv->entry, (GdkEvent *)event);
 
-	return FALSE;
+	return TRUE;
 }
 
 static void

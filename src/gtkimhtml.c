@@ -777,9 +777,9 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			   gaim_str_has_prefix(link, "ftp://")){
 				gtk_imhtml_insert_link(imhtml, link, link);
 			} else if (link=='\0') {
-				//Ignore blank lines
+				/* Ignore blank lines */
 			} else {
-				//Special reasons, aka images being put in via other tag, etc.
+				/* Special reasons, aka images being put in via other tag, etc. */
 			}
 		}
 
@@ -1186,11 +1186,11 @@ gtk_imhtml_get_css_opt (gchar       *style,
 	GString *ret;
 
 	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
-//		gboolean quote = FALSE;
+/*		gboolean quote = FALSE; */
 		if (*t == '\0') break;
 		while (*t && !((*t == ' ') /*&& !quote*/)) {
 /*			if (*t == '\"')
-				quote = ! quote;*/
+				quote = ! quote; */
 			t++;
 		}
 		while (*t && (*t == ' ')) t++;
@@ -1388,44 +1388,44 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					break;
 				case 13:	/* S */
 				case 14:	/* STRIKE */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					strike++;
 					break;
 				case 15:	/* /S */
 				case 16:	/* /STRIKE */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					if (strike)
 						strike--;
 					break;
 				case 17:	/* SUB */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					sub++;
 					break;
 				case 18:	/* /SUB */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					if (sub)
 						sub--;
 					break;
 				case 19:	/* SUP */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					sup++;
 				break;
 				case 20:	/* /SUP */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					if (sup)
 						sup--;
 					break;
 				case 21:	/* PRE */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					pre++;
 					break;
 				case 22:	/* /PRE */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					if (pre)
 						pre--;
 					break;
 				case 23:	/* TITLE */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					title++;
 					break;
 				case 24:	/* /TITLE */
@@ -1442,7 +1442,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				case 61:	/* BR (opt) */
 					ws[wpos] = '\n';
 					wpos++;
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					break;
 				case 26:        /* HR */
 				case 42:        /* HR (opt) */
@@ -1468,7 +1468,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						else
 							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
-						//NEW_BIT (NEW_TEXT_BIT);
+						/* NEW_BIT (NEW_TEXT_BIT); */
 						fonts = g_slist_remove (fonts, font);
 						if (font->face) {
 							gtk_imhtml_toggle_fontface(imhtml, NULL);
@@ -1574,7 +1574,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 								font->size = 100;
 						} else if (oldfont)
 							font->size = oldfont->size;
-						//	gtk_imhtml_font_set_size(imhtml, font->size);
+						/* gtk_imhtml_font_set_size(imhtml, font->size); */
 						g_free(size);
 						fonts = g_slist_prepend (fonts, font);
 					}
@@ -1588,7 +1588,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 							else
 								gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 							ws[0] = '\0'; wpos = 0;
-							//		NEW_BIT(NEW_TEXT_BIT);
+							/* NEW_BIT(NEW_TEXT_BIT); */
 							if (bg)
 								g_free(bg);
 							bg = bgcolor;
@@ -1628,7 +1628,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						}
 
 						scalable = gtk_imhtml_image_new(img, filename);
-						//NEW_BIT(NEW_SCALABLE_BIT);
+						/* NEW_BIT(NEW_SCALABLE_BIT); */
 						g_object_unref(G_OBJECT(img));
 					}
 				case 47:	/* P (opt) */
@@ -1665,7 +1665,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						else
 							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
-						//NEW_BIT (NEW_TEXT_BIT);
+						/* NEW_BIT (NEW_TEXT_BIT); */
 
 						font = g_new0 (GtkIMHtmlFontDetail, 1);
 						if (fonts)
@@ -1721,7 +1721,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						else
 							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
-						//NEW_BIT (NEW_TEXT_BIT);
+						/* NEW_BIT (NEW_TEXT_BIT); */
 						fonts = g_slist_remove (fonts, font);
 						if (font->face)
 							g_free (font->face);
@@ -1737,10 +1737,10 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				case 60:    /* SPAN */
 					break;
 				case 62:	/* comment */
-					//NEW_BIT (NEW_TEXT_BIT);
+					/* NEW_BIT (NEW_TEXT_BIT); */
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
-					//  NEW_BIT (NEW_COMMENT_BIT);
+					/* NEW_BIT (NEW_COMMENT_BIT); */
 					break;
 				default:
 					break;
@@ -1765,7 +1765,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 				ws[0] = '\0';
 				wpos = 0;
-				//NEW_BIT (NEW_TEXT_BIT);
+				/* NEW_BIT (NEW_TEXT_BIT); */
 			}
 			c++;
 			pos++;
@@ -1806,7 +1806,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 		gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 	ws[0] = '\0'; wpos = 0;
 
-	//NEW_BIT(NEW_TEXT_BIT);
+	/* NEW_BIT(NEW_TEXT_BIT); */
 	if (url) {
 		g_free (url);
 		if (str)
@@ -2325,7 +2325,11 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 {
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(imhtml), editable);
-	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable);
+	/*
+	 * We need a visible caret for accessibility, so mouseless
+	 * people can highlight stuff.
+	 */
+	/* gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable); */
 	imhtml->editable = editable;
 }
 
