@@ -439,12 +439,22 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		if (ms->chat)
 			add_chat_buddy(ms->chat, gc->username, NULL);
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
+		char *user, *tmp = buf;
+		GET_NEXT(tmp);
+		user = tmp;
+
 		if (ms->chat) {
-			char *user, *tmp = buf;
-			GET_NEXT(tmp);
-			user = tmp;
 			remove_chat_buddy(ms->chat, user, NULL);
 		} else {
+			char msgbuf[256];
+			struct conversation *cnv;
+
+			g_snprintf(msgbuf, sizeof(msgbuf),
+					   _("%s has closed the conversation window"), user);
+
+			if ((cnv = find_conversation(user)))
+				write_to_conv(cnv, msgbuf, WFLAG_SYSTEM, NULL, time(NULL), -1); 
+
 			msn_kill_switch(ms);
 			return 0;
 		}
