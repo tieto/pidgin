@@ -441,36 +441,41 @@ void
 gaim_marshal_VOID__POINTER(GaimCallback cb, va_list args, void *data,
 						   void **return_val)
 {
-	((void (*)(void *, void *))cb)(va_arg(args, void *), data);
+	void *arg1 = va_arg(args, void *);
+
+	((void (*)(void *, void *))cb)(arg1, data);
 }
 
 void
 gaim_marshal_VOID__POINTER_POINTER(GaimCallback cb, va_list args,
 								   void *data, void **return_val)
 {
-	((void (*)(void *, void *, void *))cb)(va_arg(args, void *),
-										   va_arg(args, void *),
-										   data);
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+
+	((void (*)(void *, void *, void *))cb)(arg1, arg2, data);
 }
 
 void
 gaim_marshal_VOID__POINTER_POINTER_UINT(GaimCallback cb, va_list args,
 										void *data, void **return_val)
 {
-	((void (*)(void *, void *, guint, void *))cb)(va_arg(args, void *),
-												  va_arg(args, void *),
-												  va_arg(args, guint),
-												  data);
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	guint arg3 = va_arg(args, guint);
+
+	((void (*)(void *, void *, guint, void *))cb)(arg1, arg2, arg3, data);
 }
 
 void
 gaim_marshal_VOID__POINTER_POINTER_POINTER(GaimCallback cb, va_list args,
 										   void *data, void **return_val)
 {
-	((void (*)(void *, void *, void *, void *))cb)(va_arg(args, void *),
-												   va_arg(args, void *),
-												   va_arg(args, void *),
-												   data);
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+
+	((void (*)(void *, void *, void *, void *))cb)(arg1, arg2, arg3, data);
 }
 
 void
@@ -479,9 +484,12 @@ gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER(GaimCallback cb,
 												   void *data,
 												   void **return_val)
 {
-	((void (*)(void *, void *, void *, void *, void *))cb)(
-		va_arg(args, void *), va_arg(args, void *),
-		va_arg(args, void *), va_arg(args, void *), data);
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	void *arg4 = va_arg(args, void *);
+
+	((void (*)(void *, void *, void *, void *, void *))cb)(arg1, arg2, arg3, arg4, data);
 }
 void
 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT(GaimCallback cb,
@@ -489,10 +497,14 @@ gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT(GaimCallback cb,
 													 void *data,
 													 void **return_val)
 {
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	guint arg4 = va_arg(args, guint);
+	guint arg5 = va_arg(args, guint);
+
 	((void (*)(void *, void *, void *, guint, guint, void *))cb)(
-			va_arg(args, void *), va_arg(args, void *),
-			va_arg(args, void *), va_arg(args, guint),
-			va_arg(args, guint), data);
+			arg1, arg2, arg3, arg4, arg5, data);
 }
 
 void
@@ -500,8 +512,9 @@ gaim_marshal_BOOLEAN__POINTER(GaimCallback cb, va_list args, void *data,
 							  void **return_val)
 {
 	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
 
-	ret_val = ((gboolean (*)(void *, void *))cb)(va_arg(args, void *), data);
+	ret_val = ((gboolean (*)(void *, void *))cb)(arg1, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
@@ -512,10 +525,10 @@ gaim_marshal_BOOLEAN__POINTER_POINTER(GaimCallback cb, va_list args,
 									  void *data, void **return_val)
 {
 	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
 
-	ret_val = ((gboolean (*)(void *, void *, void *))cb)(va_arg(args, void *),
-														 va_arg(args, void *),
-														 data);
+	ret_val = ((gboolean (*)(void *, void *, void *))cb)(arg1, arg2, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
@@ -528,11 +541,13 @@ gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT(GaimCallback cb,
 												   void **return_val)
 {
 	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	guint arg4 = va_arg(args, guint);
 
 	ret_val = ((gboolean (*)(void *, void *, void *, guint, void *))cb)(
-			va_arg(args, void *), va_arg(args, void *),
-			va_arg(args, void *), va_arg(args, guint),
-			data);
+			arg1, arg2, arg3, arg4, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
@@ -545,11 +560,13 @@ gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER(GaimCallback cb,
 													  void **return_val)
 {
 	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	void *arg4 = va_arg(args, void *);
 
 	ret_val = ((gboolean (*)(void *, void *, void *, void *, void *))cb)(
-			va_arg(args, void *), va_arg(args, void *),
-			va_arg(args, void *), va_arg(args, void *),
-			data);
+			arg1, arg2, arg3, arg4, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
@@ -560,12 +577,15 @@ gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER(
 		GaimCallback cb, va_list args, void *data, void **return_val)
 {
 	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	void *arg4 = va_arg(args, void *);
+	void *arg5 = va_arg(args, void *);
 
 	ret_val =
 		((gboolean (*)(void *, void *, void *, void *, void *, void *))cb)(
-			va_arg(args, void *), va_arg(args, void *),
-			va_arg(args, void *), va_arg(args, void *),
-			va_arg(args, void *), data);
+			arg1, arg2, arg3, arg4, arg5, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
