@@ -57,8 +57,6 @@
 
 #include "pixmaps/away_big.xpm"
 
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/group.xpm"
 
 #include "pixmaps/arrow_down.xpm"
@@ -492,9 +490,9 @@ void update_num_groups(void)
 void update_button_pix()
 {
 
-	adjust_pic(addbutton, _("Add"), (gchar **)gnome_add_xpm);
+	adjust_pic2(addbutton, _("Add"), GTK_STOCK_ADD); 
 	adjust_pic(groupbutton, _("Group"), (gchar **)group_xpm);
-	adjust_pic(rembutton, _("Remove"), (gchar **)gnome_remove_xpm);
+	adjust_pic2(rembutton, _("Remove"), GTK_STOCK_REMOVE);
 
 	if (!(blist_options & OPT_BLIST_NO_BUTTONS)) {
 		adjust_pic(awaybutton, _("Away"), (gchar **)away_big_xpm);
