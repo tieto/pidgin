@@ -70,6 +70,21 @@ msn_error_get_text(unsigned int type)
 		case 219:
 			g_snprintf(msg, sizeof(msg), _("Already in opposite list"));
 			break;
+		case 223:
+			g_snprintf(msg, sizeof(msg), _("Too many groups"));
+			break;
+		case 224:
+			g_snprintf(msg, sizeof(msg), _("Invalid group"));
+			break;
+		case 225:
+			g_snprintf(msg, sizeof(msg), _("User not in group"));
+			break;
+		case 229:
+			g_snprintf(msg, sizeof(msg), _("Group name too long"));
+			break;
+		case 230:
+			g_snprintf(msg, sizeof(msg), _("Cannot remove group zero"));
+			break;
 		case 231:
 			g_snprintf(msg, sizeof(msg),
 					   _("Tried to add a contact to a group "
@@ -84,6 +99,9 @@ msn_error_get_text(unsigned int type)
 
 		case 300:
 			g_snprintf(msg, sizeof(msg), _("Required fields missing"));
+			break;
+		case 301:
+			g_snprintf(msg, sizeof(msg), _("Too many hits to a FND"));
 			break;
 		case 302:
 			g_snprintf(msg, sizeof(msg), _("Not logged in"));
@@ -121,6 +139,9 @@ msn_error_get_text(unsigned int type)
 			g_snprintf(msg, sizeof(msg),
 					   _("Server is going down (abandon ship)"));
 			break;
+		case 605:
+			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
+			break;
 
 		case 707:
 			g_snprintf(msg, sizeof(msg), _("Error creating connection"));
@@ -147,15 +168,41 @@ msn_error_get_text(unsigned int type)
 		case 717:
 			g_snprintf(msg, sizeof(msg), _("Bad friend file"));
 			break;
+		case 731:
+			g_snprintf(msg, sizeof(msg), _("Not expected"));
+			break;
 
+		case 800:
+			g_snprintf(msg, sizeof(msg),
+					   _("Friendly name changes too rapidly"));
+			break;
+
+		case 910:
+		case 912:
+		case 918:
+		case 919:
+		case 921:
+		case 922:
+			g_snprintf(msg, sizeof(msg), _("Server too busy"));
+			break;
 		case 911:
+		case 917:
 			g_snprintf(msg, sizeof(msg), _("Authentication failed"));
 			break;
 		case 913:
 			g_snprintf(msg, sizeof(msg), _("Not allowed when offline"));
 			break;
+		case 914:
+		case 915:
+		case 916:
+			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
+			break;
         case 920:
 			g_snprintf(msg, sizeof(msg), _("Not accepting new users"));
+			break;
+        case 923:
+			g_snprintf(msg, sizeof(msg),
+					   _("Kids Passport without parental consent"));
 			break;
         case 924:
 			g_snprintf(msg, sizeof(msg),
