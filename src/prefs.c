@@ -340,9 +340,9 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 static void proxy_print_optionrad(GtkRadioButton * entry, int entrynum)
 {
 	if (entrynum == PROXY_NONE)
-		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
+		gtk_widget_set_sensitive(prefs_proxy_frame, FALSE);
 	else
-		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), TRUE);
+		gtk_widget_set_sensitive(prefs_proxy_frame, TRUE);
 
 	proxytype = entrynum;
 	save_prefs();
@@ -391,6 +391,9 @@ static void proxy_page()
 	gtk_widget_show(table);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 
+	frame = gtk_frame_new(_("Proxy Server"));
+	prefs_proxy_frame = frame;
+
 	first = gtk_radio_button_new_with_label(NULL, _("No Proxy"));
 	gtk_table_attach(GTK_TABLE(table), first, 0, 1, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
@@ -431,12 +434,9 @@ static void proxy_page()
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 
-	frame = gtk_frame_new(_("Proxy Server"));
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
 	gtk_widget_show(frame);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
-
-	prefs_proxy_frame = frame;
 
 	if (proxytype == PROXY_NONE)
 		gtk_widget_set_sensitive(GTK_WIDGET(frame), FALSE);
