@@ -330,7 +330,7 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 
 static GaimPluginLoaderInfo tcl_loader_info =
 {
-	GAIM_PLUGIN_LOADER_VERSION,
+	GAIM_PLUGIN_API_VERSION,
 	NULL,
 	tcl_probe_plugin,
 	tcl_load_plugin,
