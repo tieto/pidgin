@@ -1356,6 +1356,7 @@ static void font_page()
 
 static GtkWidget *sndent[NUM_SOUNDS];
 static GtkWidget *sndcmd = NULL;
+static char *last_sound_dir = NULL;
 
 void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 {
@@ -1396,6 +1397,10 @@ void do_select_sound(GtkWidget *w, int snd)
 
 	/* Close the window! It's getting cold in here! */
 	close_sounddialog(NULL, sounddialog);
+
+	if (last_sound_dir)
+		g_free(last_sound_dir);
+	last_sound_dir = g_dirname(sound_file[snd]);
 }
 
 static void reset_sound(GtkWidget *button, int snd)
@@ -1409,7 +1414,6 @@ static void reset_sound(GtkWidget *button, int snd)
 
 static void sel_sound(GtkWidget *button, int snd)
 {
-
 	char *buf = g_malloc(BUF_LEN);
 
 	if (!sounddialog) {
@@ -1417,7 +1421,7 @@ static void sel_sound(GtkWidget *button, int snd)
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
 
-		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
+		g_snprintf(buf, BUF_LEN - 1, "%s/", last_sound_dir ? last_sound_dir : g_get_home_dir());
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
 
