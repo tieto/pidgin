@@ -1154,7 +1154,9 @@ void remove_away_message(GtkWidget *widget, void *dummy)
 		return;
 	if (!i->next) {
 		int text_len = gtk_text_get_length(GTK_TEXT(away_text));
+		printf("Text: %s\n", GTK_TEXT(away_text));
 		gtk_text_set_point(GTK_TEXT(away_text), 0);
+		printf("Len: %d\n", text_len);
 		gtk_text_forward_delete(GTK_TEXT(away_text), text_len);
 	}
 	a = gtk_object_get_user_data(GTK_OBJECT(i->data));
