@@ -5527,6 +5527,7 @@ show_smileys_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->imhtml), (gboolean)GPOINTER_TO_INT(value));
+		gtk_imhtml_show_smileys(GTK_IMHTML(gtkconv->entry), (gboolean)GPOINTER_TO_INT(value));
 	}
 }
 

@@ -2931,6 +2931,11 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
 
+	if (!imhtml->show_smileys) {
+		gtk_text_buffer_insert_at_cursor(imhtml->text_buffer, smiley, strlen(smiley));
+		return;
+	}
+
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
 	g_object_set_data(G_OBJECT(anchor), "text_tag", unescaped);
