@@ -279,28 +279,6 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 /**************************************************************************
  * MIME Functions
  **************************************************************************/
-static char *
-gaim_mime_decode_word(const char *charset, const char *encoding, const char *str)
-{
-	char *decoded, *converted;
-	int len = 0;
-
-	if ((charset == NULL) || (encoding == NULL) || (str == NULL))
-		return NULL;
-
-	if (g_ascii_strcasecmp(encoding, "Q") == 0)
-		gaim_quotedp_decode(str, &decoded, &len);
-	else if (g_ascii_strcasecmp(encoding, "B") == 0)
-		gaim_base64_decode(str, &decoded, &len);
-	else
-		return NULL;
-
-	converted = g_convert(decoded, len, "utf-8", charset, NULL, NULL, NULL);
-	g_free(decoded);
-
-	return converted;
-}
-
 char *
 gaim_mime_decode_field(const char *str)
 {
@@ -399,75 +377,7 @@ gaim_mime_decode_field(const char *str)
 		n = strcpy(n, unencoded);
 
 	return new;
-#if 0
-	/*
-	 * This is KingAnt's function.  It should work, but I don't know if it 
-	 * follows the RFC fully.
-	 */
-	GString *donedeal;
-	char *orig, *start, *end, *end_of_last, *tmp;
-	char **encoded_word;
-	char *charset, *encoding, *word;
-
-	g_return_val_if_fail(str != NULL, NULL);
-
-	orig = g_strdup(str);
-	donedeal = g_string_sized_new(strlen(orig));
-
-	/* One iteration per encoded-word */
-	end_of_last = orig;
-	while ((start = strstr(end_of_last, "=?"))) {
-		/*
-		 * Get to the end of the encoded word by finding the first ?, 
-		 * the second ?, then finally the ?=  If we can't find any of 
-		 * these, then break out of here because this isn't actually an 
-		 * encoded word.
-		 */
-		if (((end = strstr(start + 2, "?")) == NULL) || 
-			((end = strstr(end + 1, "?")) == NULL) ||
-			((end = strstr(end + 2, "?=")) == NULL)) {
-			break;
-		}
-
-		/* Append everything from the end of the last encoded-word to the beginning of the next */
-		tmp = g_strndup(end_of_last, (start - end_of_last));
-		donedeal = g_string_append(donedeal, tmp);
-		g_free(tmp);
-
-		/* Split the encoded word */
-		tmp = g_strndup(start + 2, end - start - 2);
-		encoded_word = g_strsplit(tmp, "?", 3);
-		g_free(tmp);
-		charset = encoded_word[0];
-		encoding = charset != NULL ? encoded_word[1] : NULL;
-		word = encoding != NULL ? encoded_word[2] : NULL;
-
-		/* Convert the decoded word to utf8 and append it */
-		tmp = gaim_mime_decode_word(charset, encoding, word);
-		if (tmp != NULL) {
-			donedeal = g_string_append(donedeal, tmp);
-			g_free(tmp);
-		}
-
-		g_strfreev(encoded_word);
-
-		end_of_last = end + 2;
-	}
-
-	/* Append everything from the end of the last encoded-word to the end of the string */
-	tmp = g_strndup(end_of_last, ((orig + strlen(orig)) - end_of_last));
-	donedeal = g_string_append(donedeal, tmp);
-	g_free(tmp);
-
-	/* Free at last, free at last... */
-	tmp = donedeal->str;
-	g_string_free(donedeal, FALSE);
-	g_free(orig);
-
-	return tmp;
-#endif
 }
-
 
 
 /**************************************************************************

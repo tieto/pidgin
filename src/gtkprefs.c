@@ -822,7 +822,7 @@ GtkWidget *list_page() {
 		l = g_list_append(l, method->id);
 	}
 
-	gaim_gtk_prefs_dropdown_from_list(vbox, _("Sorting:"), GAIM_PREF_STRING,
+	gaim_gtk_prefs_dropdown_from_list(vbox, _("_Sorting:"), GAIM_PREF_STRING,
 			"/gaim/gtk/blist/sort_type", l);
 
 	g_list_free(l);
@@ -888,7 +888,7 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Send _URLs as Links"),
 				  "/core/conversations/send_urls_as_links", vbox);
 
-	gaim_gtk_prefs_checkbox(_("Show Formatting Toolbar"),
+	gaim_gtk_prefs_checkbox(_("Show _Formatting Toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 
 	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),

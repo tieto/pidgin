@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 8658 2004-01-03 16:22:44Z lschiere $
+ * $Id: gg.c 8756 2004-01-10 18:13:52Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -681,10 +681,10 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 			/* Hack, invalid_uin does what we really want here but may change in future */
 			if (invalid_uin(p))
 				ibuf =
-				    g_strconcat(oldibuf, "<B>", _("Birth year"), ":</B> <BR>\n", NULL);
+				    g_strconcat(oldibuf, "<B>", _("Birth Year"), ":</B> <BR>\n", NULL);
 			else
 				ibuf =
-				    g_strconcat(oldibuf, "<B>", _("Birth year"), ":</B> ", p, "<BR>\n",
+				    g_strconcat(oldibuf, "<B>", _("Birth Year"), ":</B> ", p, "<BR>\n",
 						NULL);
 			g_free(oldibuf);
 			break;
