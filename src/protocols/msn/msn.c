@@ -112,19 +112,19 @@ msn_set_mobile_phone_cb(GaimConnection *gc, const char *entry)
 }
 
 static void
-__enable_msn_pages_cb(GaimConnection *gc)
+enable_msn_pages_cb(GaimConnection *gc)
 {
 	msn_set_prp(gc, "MOB", "Y");
 }
 
 static void
-__disable_msn_pages_cb(GaimConnection *gc)
+disable_msn_pages_cb(GaimConnection *gc)
 {
 	msn_set_prp(gc, "MOB", "N");
 }
 
 static void
-__send_to_mobile_cb(MsnMobileData *data, const char *entry)
+send_to_mobile_cb(MsnMobileData *data, const char *entry)
 {
 	MsnSession *session = data->gc->proto_data;
 	MsnServConn *servconn = session->notification_conn;
@@ -153,7 +153,7 @@ __send_to_mobile_cb(MsnMobileData *data, const char *entry)
 }
 
 static void
-__close_mobile_page_cb(MsnMobileData *data, const char *entry)
+close_mobile_page_cb(MsnMobileData *data, const char *entry)
 {
 	g_free(data);
 }
@@ -212,13 +212,13 @@ msn_show_set_mobile_pages(GaimConnection *gc)
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
 						-1, gc, 3,
-						_("Allow"), G_CALLBACK(__enable_msn_pages_cb),
-						_("Disallow"), G_CALLBACK(__disable_msn_pages_cb),
+						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
+						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
 						_("Cancel"), NULL);
 }
 
 static void
-__show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
+show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
 {
 	MsnUser *user;
 	MsnSession *session = gc->proto_data;
@@ -232,8 +232,8 @@ __show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
 
 	gaim_request_input(gc, NULL, _("Send a mobile message."), NULL,
 					   NULL, TRUE,
-					   _("Page"), G_CALLBACK(__send_to_mobile_cb),
-					   _("Close"), G_CALLBACK(__close_mobile_page_cb),
+					   _("Page"), G_CALLBACK(send_to_mobile_cb),
+					   _("Close"), G_CALLBACK(close_mobile_page_cb),
 					   data);
 }
 
@@ -385,7 +385,7 @@ msn_buddy_menu(GaimConnection *gc, const char *who)
 		if (user->mobile) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label    = _("Send to Mobile");
-			pbm->callback = __show_send_to_mobile_cb;
+			pbm->callback = show_send_to_mobile_cb;
 			pbm->gc       = gc;
 			m = g_list_append(m, pbm);
 		}
@@ -1209,7 +1209,7 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
@@ -1229,4 +1229,4 @@ __init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_timeout_notice", TRUE);
 }
 
-GAIM_INIT_PLUGIN(msn, __init_plugin, info);
+GAIM_INIT_PLUGIN(msn, init_plugin, info);

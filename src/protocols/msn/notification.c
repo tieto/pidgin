@@ -39,7 +39,7 @@ static GHashTable *notification_msg_types = NULL;
  * Utility functions
  **************************************************************************/
 static gboolean
-__add_buddy(MsnServConn *servconn, MsnUser *user)
+add_buddy(MsnServConn *servconn, MsnUser *user)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -170,15 +170,15 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
  * Catch-all commands
  **************************************************************************/
 static gboolean
-__blank_cmd(MsnServConn *servconn, const char *command, const char **params,
-			size_t param_count)
+blank_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
 {
 	return TRUE;
 }
 
 static gboolean
-__unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
-			  size_t param_count)
+unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
+			size_t param_count)
 {
 	char buf[MSN_BUF_LEN];
 
@@ -211,8 +211,8 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Login
  **************************************************************************/
 static gboolean
-__ver_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+ver_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	size_t i;
@@ -241,8 +241,8 @@ __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__inf_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+inf_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -270,8 +270,8 @@ __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__usr_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+usr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimAccount *account = session->account;
@@ -336,8 +336,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Log out
  **************************************************************************/
 static gboolean
-__out_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+out_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 
@@ -359,8 +359,8 @@ __out_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Messages
  **************************************************************************/
 static gboolean
-__msg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+msg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
 
@@ -376,8 +376,8 @@ __msg_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Challenges
  **************************************************************************/
 static gboolean
-__chl_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+chl_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	char buf[MSN_BUF_LEN];
@@ -412,8 +412,8 @@ __chl_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Buddy Lists
  **************************************************************************/
 static gboolean
-__add_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+add_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnUser *user;
@@ -435,7 +435,7 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		msn_user_set_group_id(user, atoi(params[5]));
 
-		__add_buddy(servconn, user);
+		add_buddy(servconn, user);
 
 		return TRUE;
 	}
@@ -465,8 +465,8 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__adg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+adg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnGroup *group;
 	MsnSession *session = servconn->session;
@@ -485,8 +485,8 @@ __adg_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__blp_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+blp_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 
@@ -512,8 +512,8 @@ __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -552,8 +552,8 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__fln_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+fln_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 
@@ -563,8 +563,8 @@ __fln_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__iln_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+iln_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	int status = 0;
@@ -599,8 +599,8 @@ __iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnGroup *group;
@@ -632,8 +632,8 @@ __lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__lst_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+lst_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -760,7 +760,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			session->lists.forward = g_slist_remove(session->lists.forward,
 													user);
 
-			__add_buddy(servconn, user);
+			add_buddy(servconn, user);
 		}
 
 		session->syncing_lists = FALSE;
@@ -771,8 +771,8 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__nln_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+nln_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -806,8 +806,8 @@ __nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__prp_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+prp_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	const char *type, *value;
@@ -828,8 +828,8 @@ __prp_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__rea_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+rea_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -843,8 +843,8 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__reg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+reg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnGroup *group;
@@ -867,8 +867,8 @@ __reg_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__rem_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+rem_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 
@@ -936,8 +936,8 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__rmg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+rmg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnGroup *group;
@@ -954,8 +954,8 @@ __rmg_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Misc commands
  **************************************************************************/
 static gboolean
-__url_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+url_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimAccount *account = session->account;
@@ -1068,8 +1068,8 @@ __url_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Switchboards
  **************************************************************************/
 static gboolean
-__rng_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+rng_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard;
@@ -1114,8 +1114,8 @@ __rng_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard;
@@ -1183,7 +1183,7 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Message Types
  **************************************************************************/
 static gboolean
-__profile_msg(MsnServConn *servconn, MsnMessage *msg)
+profile_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	const char *value;
@@ -1206,7 +1206,7 @@ __profile_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
+initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -1247,7 +1247,7 @@ __initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__email_msg(MsnServConn *servconn, MsnMessage *msg)
+email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -1284,7 +1284,7 @@ __email_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__system_msg(MsnServConn *servconn, MsnMessage *msg)
+system_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	GHashTable *table;
 	const char *type_s;
@@ -1323,8 +1323,9 @@ __system_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	return TRUE;
 }
+
 static gboolean
-__connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *notification = data;
 	MsnSession *session = notification->session;
@@ -1355,7 +1356,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-__failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
+failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *notification = data;
 	GaimConnection *gc;
@@ -1373,53 +1374,53 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 	notification = msn_servconn_new(session);
 
 	msn_servconn_set_server(notification, server, port);
-	msn_servconn_set_connect_cb(notification, __connect_cb);
-	msn_servconn_set_failed_read_cb(notification, __failed_read_cb);
+	msn_servconn_set_connect_cb(notification, connect_cb);
+	msn_servconn_set_failed_read_cb(notification, failed_read_cb);
 
 	if (notification_commands == NULL) {
 		/* Register the command callbacks. */
-		msn_servconn_register_command(notification, "ADD",       __add_cmd);
-		msn_servconn_register_command(notification, "ADG",       __adg_cmd);
-		msn_servconn_register_command(notification, "BLP",       __blp_cmd);
-		msn_servconn_register_command(notification, "BPR",       __bpr_cmd);
-		msn_servconn_register_command(notification, "CHG",       __blank_cmd);
-		msn_servconn_register_command(notification, "CHL",       __chl_cmd);
-		msn_servconn_register_command(notification, "FLN",       __fln_cmd);
-		msn_servconn_register_command(notification, "GTC",       __blank_cmd);
-		msn_servconn_register_command(notification, "ILN",       __iln_cmd);
-		msn_servconn_register_command(notification, "INF",       __inf_cmd);
-		msn_servconn_register_command(notification, "LSG",       __lsg_cmd);
-		msn_servconn_register_command(notification, "LST",       __lst_cmd);
-		msn_servconn_register_command(notification, "MSG",       __msg_cmd);
-		msn_servconn_register_command(notification, "NLN",       __nln_cmd);
-		msn_servconn_register_command(notification, "OUT",       __out_cmd);
-		msn_servconn_register_command(notification, "PRP",       __prp_cmd);
-		msn_servconn_register_command(notification, "QNG",       __blank_cmd);
-		msn_servconn_register_command(notification, "QRY",       __blank_cmd);
-		msn_servconn_register_command(notification, "REA",       __rea_cmd);
-		msn_servconn_register_command(notification, "REG",       __reg_cmd);
-		msn_servconn_register_command(notification, "REM",       __rem_cmd);
-		msn_servconn_register_command(notification, "RMG",       __rmg_cmd);
-		msn_servconn_register_command(notification, "RNG",       __rng_cmd);
-		msn_servconn_register_command(notification, "SYN",       __blank_cmd);
-		msn_servconn_register_command(notification, "URL",       __url_cmd);
-		msn_servconn_register_command(notification, "USR",       __usr_cmd);
-		msn_servconn_register_command(notification, "VER",       __ver_cmd);
-		msn_servconn_register_command(notification, "XFR",       __xfr_cmd);
-		msn_servconn_register_command(notification, "_unknown_", __unknown_cmd);
+		msn_servconn_register_command(notification, "ADD",       add_cmd);
+		msn_servconn_register_command(notification, "ADG",       adg_cmd);
+		msn_servconn_register_command(notification, "BLP",       blp_cmd);
+		msn_servconn_register_command(notification, "BPR",       bpr_cmd);
+		msn_servconn_register_command(notification, "CHG",       blank_cmd);
+		msn_servconn_register_command(notification, "CHL",       chl_cmd);
+		msn_servconn_register_command(notification, "FLN",       fln_cmd);
+		msn_servconn_register_command(notification, "GTC",       blank_cmd);
+		msn_servconn_register_command(notification, "ILN",       iln_cmd);
+		msn_servconn_register_command(notification, "INF",       inf_cmd);
+		msn_servconn_register_command(notification, "LSG",       lsg_cmd);
+		msn_servconn_register_command(notification, "LST",       lst_cmd);
+		msn_servconn_register_command(notification, "MSG",       msg_cmd);
+		msn_servconn_register_command(notification, "NLN",       nln_cmd);
+		msn_servconn_register_command(notification, "OUT",       out_cmd);
+		msn_servconn_register_command(notification, "PRP",       prp_cmd);
+		msn_servconn_register_command(notification, "QNG",       blank_cmd);
+		msn_servconn_register_command(notification, "QRY",       blank_cmd);
+		msn_servconn_register_command(notification, "REA",       rea_cmd);
+		msn_servconn_register_command(notification, "REG",       reg_cmd);
+		msn_servconn_register_command(notification, "REM",       rem_cmd);
+		msn_servconn_register_command(notification, "RMG",       rmg_cmd);
+		msn_servconn_register_command(notification, "RNG",       rng_cmd);
+		msn_servconn_register_command(notification, "SYN",       blank_cmd);
+		msn_servconn_register_command(notification, "URL",       url_cmd);
+		msn_servconn_register_command(notification, "USR",       usr_cmd);
+		msn_servconn_register_command(notification, "VER",       ver_cmd);
+		msn_servconn_register_command(notification, "XFR",       xfr_cmd);
+		msn_servconn_register_command(notification, "_unknown_", unknown_cmd);
 
 		/* Register the message type callbacks. */
 		msn_servconn_register_msg_type(notification, "text/x-msmsgsprofile",
-									   __profile_msg);
+									   profile_msg);
 		msn_servconn_register_msg_type(notification,
 									   "text/x-msmsgsinitialemailnotification",
-									   __initial_email_msg);
+									   initial_email_msg);
 		msn_servconn_register_msg_type(notification,
 									   "text/x-msmsgsemailnotification",
-									   __email_msg);
+									   email_msg);
 		msn_servconn_register_msg_type(notification,
 									   "application/x-msmsgssystemmessage",
-									   __system_msg);
+									   system_msg);
 
 		/* Save these for future use. */
 		notification_commands  = notification->commands;

@@ -31,7 +31,7 @@ static const char alphabet[] =
 	"0123456789+/";
 
 static char *
-__base64_enc(const char *data, int len)
+base64_enc(const char *data, int len)
 {
 	char *dest;
 	char *buf;
@@ -71,8 +71,8 @@ __base64_enc(const char *data, int len)
 }
 
 static gboolean
-__get_buddy_icon_info(GaimAccount *account, char **base64,
-					  char **md5sum, int *file_size, int *base64_size)
+get_buddy_icon_info(GaimAccount *account, char **base64,
+					char **md5sum, int *file_size, int *base64_size)
 {
 	FILE *fp;
 	struct stat sb;
@@ -99,7 +99,7 @@ __get_buddy_icon_info(GaimAccount *account, char **base64,
 
 			buf[sb.st_size] = '\0';
 
-			temp = __base64_enc(buf, sb.st_size);
+			temp = base64_enc(buf, sb.st_size);
 
 			if (base64_size != NULL)
 				*base64_size = strlen(temp);
@@ -141,7 +141,7 @@ __get_buddy_icon_info(GaimAccount *account, char **base64,
 }
 
 static gboolean
-__send_icon_data(MsnSwitchBoard *swboard, MsnBuddyIconXfer *buddyicon)
+send_icon_data(MsnSwitchBoard *swboard, MsnBuddyIconXfer *buddyicon)
 {
 	GaimConnection *gc = swboard->servconn->session->account->gc;
 	char buf[MSN_BUF_LEN];
@@ -197,7 +197,7 @@ __send_icon_data(MsnSwitchBoard *swboard, MsnBuddyIconXfer *buddyicon)
 }
 
 static gboolean
-__process_invite(MsnServConn *servconn, const MsnMessage *msg)
+process_invite(MsnServConn *servconn, const MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
@@ -308,11 +308,11 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 
 		swboard->buddy_icon_xfer = buddyicon = msn_buddy_icon_xfer_new();
 
-		if (!__get_buddy_icon_info(gc->account,
-								   &buddyicon->data,
-								   &buddyicon->md5sum,
-								   &buddyicon->file_size,
-								   &buddyicon->total_size)) {
+		if (!get_buddy_icon_info(gc->account,
+								 &buddyicon->data,
+								 &buddyicon->md5sum,
+								 &buddyicon->file_size,
+								 &buddyicon->total_size)) {
 
 			msn_buddy_icon_xfer_destroy(buddyicon);
 
@@ -341,7 +341,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 			msn_switchboard_destroy(swboard);
 		}
 
-		return __send_icon_data(swboard, buddyicon);
+		return send_icon_data(swboard, buddyicon);
 	}
 	else if (!strcmp(command, "ACK")) {
 		swboard = (MsnSwitchBoard *)servconn->data;
@@ -349,7 +349,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 		buddyicon = swboard->buddy_icon_xfer;
 
 		if (buddyicon != NULL)
-			return __send_icon_data(swboard, buddyicon);
+			return send_icon_data(swboard, buddyicon);
 	}
 	else if (!strcmp(command, "COMPLETE")) {
 		const char *passport;
@@ -396,7 +396,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 }
 
 static gboolean
-__process_data(MsnServConn *servconn, const MsnMessage *msg)
+process_data(MsnServConn *servconn, const MsnMessage *msg)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard;
@@ -466,9 +466,9 @@ gboolean
 msn_buddy_icon_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	if (!strncmp(msn_message_get_body(msg), "ICON", 4))
-		return __process_data(servconn, msg);
+		return process_data(servconn, msg);
 	else
-		return __process_invite(servconn, msg);
+		return process_invite(servconn, msg);
 }
 
 void
@@ -486,7 +486,7 @@ msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 	if (gaim_account_get_buddy_icon(account) == NULL)
 		return; /* We don't have an icon to send. */
 
-	if (!__get_buddy_icon_info(account, NULL, &md5sum,
+	if (!get_buddy_icon_info(account, NULL, &md5sum,
 							   &file_size, &base64_size)) {
 		return;
 	}

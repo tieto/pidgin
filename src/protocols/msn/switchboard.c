@@ -31,7 +31,7 @@ static GHashTable *switchboard_msg_types = NULL;
  * Utility functions
  **************************************************************************/
 static gboolean
-__send_clientcaps(MsnSwitchBoard *swboard)
+send_clientcaps(MsnSwitchBoard *swboard)
 {
 	MsnMessage *msg;
 
@@ -61,15 +61,15 @@ __send_clientcaps(MsnSwitchBoard *swboard)
  * Catch-all commands
  **************************************************************************/
 static gboolean
-__blank_cmd(MsnServConn *servconn, const char *command, const char **params,
-			size_t param_count)
+blank_cmd(MsnServConn *servconn, const char *command, const char **params,
+		   size_t param_count)
 {
 	return TRUE;
 }
 
 static gboolean
-__unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
-			  size_t param_count)
+unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
+			 size_t param_count)
 {
 	gaim_debug(GAIM_DEBUG_ERROR, "msg",
 			   "Handled switchboard message: %s\n", command);
@@ -81,8 +81,8 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Switchboard Commands
  **************************************************************************/
 static gboolean
-__ans_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+ans_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -91,12 +91,12 @@ __ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 						   gaim_account_get_username(account), NULL);
 
-	return __send_clientcaps(swboard);
+	return send_clientcaps(swboard);
 }
 
 static gboolean
-__bye_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+bye_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -149,8 +149,8 @@ __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__iro_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+iro_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
 	GaimConnection *gc = account->gc;
@@ -174,8 +174,8 @@ __iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__joi_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+joi_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
 	GaimConnection *gc = account->gc;
@@ -212,12 +212,12 @@ __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 	}
 
-	return __send_clientcaps(swboard);
+	return send_clientcaps(swboard);
 }
 
 static gboolean
-__msg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+msg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
 
@@ -230,8 +230,8 @@ __msg_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__nak_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+nak_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	/*
 	 * TODO: Investigate this, as it seems to occur frequently with
@@ -244,8 +244,8 @@ __nak_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__out_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+out_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -259,8 +259,8 @@ __out_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__usr_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+usr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		 size_t param_count)
 {
 	MsnSwitchBoard *swboard = servconn->data;
 
@@ -278,7 +278,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
  * Message Types
  **************************************************************************/
 static gboolean
-__plain_msg(MsnServConn *servconn, MsnMessage *msg)
+plain_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -317,7 +317,7 @@ __plain_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__control_msg(MsnServConn *servconn, MsnMessage *msg)
+control_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -334,7 +334,7 @@ __control_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
+clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard = servconn->data;
@@ -356,7 +356,7 @@ __clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
  * Connect stuff
  **************************************************************************/
 static gboolean
-__connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
 	GaimAccount *account = servconn->session->account;
@@ -396,7 +396,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-__failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
+failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
 
@@ -414,8 +414,8 @@ msn_switchboard_new(MsnSession *session)
 	swboard = g_new0(MsnSwitchBoard, 1);
 
 	swboard->servconn = servconn = msn_servconn_new(session);
-	msn_servconn_set_connect_cb(servconn, __connect_cb);
-	msn_servconn_set_failed_read_cb(servconn, __failed_read_cb);
+	msn_servconn_set_connect_cb(servconn, connect_cb);
+	msn_servconn_set_failed_read_cb(servconn, failed_read_cb);
 
 	servconn->data = swboard;
 
@@ -423,27 +423,27 @@ msn_switchboard_new(MsnSession *session)
 
 	if (switchboard_commands == NULL) {
 		/* Register the command callbacks. */
-		msn_servconn_register_command(servconn, "ACK",       __blank_cmd);
-		msn_servconn_register_command(servconn, "ANS",       __ans_cmd);
-		msn_servconn_register_command(servconn, "BYE",       __bye_cmd);
-		msn_servconn_register_command(servconn, "CAL",       __blank_cmd);
-		msn_servconn_register_command(servconn, "IRO",       __iro_cmd);
-		msn_servconn_register_command(servconn, "JOI",       __joi_cmd);
-		msn_servconn_register_command(servconn, "MSG",       __msg_cmd);
-		msn_servconn_register_command(servconn, "NAK",       __nak_cmd);
-		msn_servconn_register_command(servconn, "NLN",       __blank_cmd);
-		msn_servconn_register_command(servconn, "OUT",       __out_cmd);
-		msn_servconn_register_command(servconn, "USR",       __usr_cmd);
-		msn_servconn_register_command(servconn, "_unknown_", __unknown_cmd);
+		msn_servconn_register_command(servconn, "ACK",      blank_cmd);
+		msn_servconn_register_command(servconn, "ANS",      ans_cmd);
+		msn_servconn_register_command(servconn, "BYE",      bye_cmd);
+		msn_servconn_register_command(servconn, "CAL",      blank_cmd);
+		msn_servconn_register_command(servconn, "IRO",      iro_cmd);
+		msn_servconn_register_command(servconn, "JOI",      joi_cmd);
+		msn_servconn_register_command(servconn, "MSG",      msg_cmd);
+		msn_servconn_register_command(servconn, "NAK",      nak_cmd);
+		msn_servconn_register_command(servconn, "NLN",      blank_cmd);
+		msn_servconn_register_command(servconn, "OUT",      out_cmd);
+		msn_servconn_register_command(servconn, "USR",      usr_cmd);
+		msn_servconn_register_command(servconn, "_unknown_",unknown_cmd);
 
 		/* Register the message type callbacks. */
-		msn_servconn_register_msg_type(servconn, "text/plain", __plain_msg);
+		msn_servconn_register_msg_type(servconn, "text/plain",plain_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-msmsgscontrol",
-									   __control_msg);
+									  control_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientcaps",
-									   __clientcaps_msg);
+									  clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
-									   __clientcaps_msg);
+									  clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "application/x-buddyicon",
 									   msn_buddy_icon_msg);
 

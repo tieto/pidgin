@@ -27,8 +27,8 @@
 static GHashTable *dispatch_commands = NULL;
 
 static gboolean
-__ver_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+ver_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 	size_t i;
@@ -57,8 +57,8 @@ __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__inf_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+inf_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -86,8 +86,8 @@ __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
-		  size_t param_count)
+xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = servconn->session->account->gc;
@@ -130,8 +130,8 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
-			  size_t param_count)
+unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
+			size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
 
@@ -150,7 +150,7 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
-__connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *dispatch = data;
 	MsnSession *session = dispatch->session;
@@ -179,7 +179,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-__failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
+failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *dispatch = data;
 	GaimConnection *gc;
@@ -197,15 +197,15 @@ msn_dispatch_new(MsnSession *session, const char *server, int port)
 	dispatch = msn_servconn_new(session);
 	
 	msn_servconn_set_server(dispatch, server, port);
-	msn_servconn_set_connect_cb(dispatch, __connect_cb);
-	msn_servconn_set_failed_read_cb(dispatch, __failed_read_cb);
+	msn_servconn_set_connect_cb(dispatch, connect_cb);
+	msn_servconn_set_failed_read_cb(dispatch, failed_read_cb);
 
 	if (dispatch_commands == NULL) {
 		/* Register the command callbacks. */
-		msn_servconn_register_command(dispatch, "VER",       __ver_cmd);
-		msn_servconn_register_command(dispatch, "INF",       __inf_cmd);
-		msn_servconn_register_command(dispatch, "XFR",       __xfr_cmd);
-		msn_servconn_register_command(dispatch, "_unknown_", __unknown_cmd);
+		msn_servconn_register_command(dispatch, "VER",       ver_cmd);
+		msn_servconn_register_command(dispatch, "INF",       inf_cmd);
+		msn_servconn_register_command(dispatch, "XFR",       xfr_cmd);
+		msn_servconn_register_command(dispatch, "_unknown_", unknown_cmd);
 
 		/* Save this for future use. */
 		dispatch_commands = dispatch->commands;

@@ -30,7 +30,7 @@ typedef struct
 } MsnQueueEntry;
 
 static gboolean
-__process_message(MsnServConn *servconn, MsnMessage *msg)
+process_message(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnServConnMsgCb cb;
 
@@ -52,7 +52,7 @@ __process_message(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-__process_single_line(MsnServConn *servconn, char *str)
+process_single_line(MsnServConn *servconn, char *str)
 {
 	MsnServConnCommandCb cb;
 	GSList *l, *l_next;
@@ -120,7 +120,7 @@ __process_single_line(MsnServConn *servconn, char *str)
 			servconn->msg_passport = g_strdup(msn_user_get_passport(sender));
 			servconn->msg_friendly = g_strdup(msn_user_get_name(sender));
 
-			__process_message(servconn, msg);
+			process_message(servconn, msg);
 
 			g_free(servconn->msg_passport);
 			g_free(servconn->msg_friendly);
@@ -136,7 +136,7 @@ __process_single_line(MsnServConn *servconn, char *str)
 }
 
 static gboolean
-__process_multi_line(MsnServConn *servconn, char *buffer)
+process_multi_line(MsnServConn *servconn, char *buffer)
 {
 	MsnMessage *msg;
 	char msg_str[MSN_BUF_LEN];
@@ -152,7 +152,7 @@ __process_multi_line(MsnServConn *servconn, char *buffer)
 
 	msg = msn_message_new_from_str(servconn->session, msg_str);
 
-	result = __process_message(servconn, msg);
+	result = process_message(servconn, msg);
 
 	msn_message_destroy(msg);
 
@@ -160,7 +160,7 @@ __process_multi_line(MsnServConn *servconn, char *buffer)
 }
 
 static void
-__connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
 
@@ -200,7 +200,7 @@ msn_servconn_connect(MsnServConn *servconn)
 	g_return_val_if_fail(!servconn->connected, TRUE);
 
 	i = gaim_proxy_connect(servconn->session->account, servconn->server,
-					  servconn->port, __connect_cb, servconn);
+					  servconn->port, connect_cb, servconn);
 
 	if (i == 0)
 		servconn->connected = TRUE;
@@ -452,7 +452,7 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 			msg[servconn->msg_len] = '\0';
 			servconn->parsing_msg = FALSE;
 
-			__process_multi_line(servconn, msg);
+			process_multi_line(servconn, msg);
 
 			servconn->msg_len = 0;
 			g_free(servconn->msg_passport);
@@ -492,7 +492,7 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 
 			g_strchomp(cmd);
 
-			cont = __process_single_line(servconn, cmd);
+			cont = process_single_line(servconn, cmd);
 
 			g_free(cmd);
 		}
