@@ -29,7 +29,7 @@
 #undef PACKAGE
 
 /* #ifdef USE_PERL */
-#if 0 /* still has problems */
+#if 0
 
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
@@ -174,6 +174,19 @@ void perl_init(int autoload)
 
 void perl_end()
 {
+	struct perlscript *scp;
+
+	while (perl_list) {
+		scp = perl_list->data;
+		perl_list = g_list_remove(perl_list, scp);
+		if (scp->shutdowncallback[0])
+			execute_perl(scp->shutdowncallback, "");
+		g_free(scp->name);
+		g_free(scp->version);
+		g_free(scp->shutdowncallback);
+		g_free(scp);
+	}
+
 	if (my_perl != NULL) {
 		perl_destruct(my_perl);
 		perl_free(my_perl);
@@ -242,6 +255,22 @@ XS (XS_AIM_ignore_list)
 
 XS (XS_AIM_get_info)
 {
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	switch(atoi(SvPV(ST(0), junk))) {
+	case 0:
+		XST_mPV(0, VERSION);
+		break;
+	case 1:
+		XST_mPV(0, current_user->username);
+		break;
+	default:
+		XST_mPV(0, "Error2");
+	}
+
+	XSRETURN(1);
 }
 
 #endif /* USE_PERL */

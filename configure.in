@@ -84,7 +84,7 @@ if test "$enable_perl" = yes ; then
 		AC_MSG_RESULT([not found, building without perl.])
 		enable_perl = no
 	else
-		PERL_LDFLAGS=`$perlpath -MExtUtils::Embed -e ldopts |$sedpath 's/-lgdbm //'`
+		PERL_LDFLAGS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
 		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-ldb //'`
 		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lndbm //'`
 		if test "$system" = "Linux"; then
