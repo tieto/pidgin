@@ -548,13 +548,18 @@ GtkWidget *proxy_page() {
 	return ret;
 }
 
+#ifndef _WIN32
 static void browser_print_option(GtkEntry *entry, void *nullish) {
 	g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(entry));
 }
+#endif
 
 GtkWidget *browser_page() {
 	GtkWidget *ret;
-	GtkWidget *vbox, *hbox;
+	GtkWidget *vbox;
+#ifndef _WIN32
+	GtkWidget *hbox;
+#endif
 	GtkWidget *label;
 	GtkSizeGroup *sg;
 
@@ -631,18 +636,23 @@ GtkWidget *logging_page() {
 
 static GtkWidget *sndcmd = NULL;
 
+#ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
 {
 	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
 }
+#endif
 
 GtkWidget *sound_page() {
 	GtkWidget *ret;
-	GtkWidget *label;
-	GtkWidget *vbox, *hbox;
+	GtkWidget *vbox;
 	GtkSizeGroup *sg;
+#ifndef _WIN32
 	GtkWidget *dd;
+	GtkWidget *hbox;
+	GtkWidget *label;
+#endif
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
