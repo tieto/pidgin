@@ -51,7 +51,7 @@ version 0.79 (06/24/2004):
 	* Protocol-specific settings for accounts were being removed whenever
 	  the account was modified. Now they're only removed when the protocol
 	  type changes, as it should be.
-	* Zepher bug fixes and memory leak plugs (Arun A Tharuvai)
+	* Zephyr bug fixes and memory leak plugs (Arun A Tharuvai)
 	* Rewrite of MSN buddylist support, which fixed a known syncronization
 	  bug and some others (Felipe Contreras)
 
