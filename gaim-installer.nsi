@@ -3,8 +3,8 @@
 
 ; NOTE: this .NSI script is designed for NSIS v2.0b0+
 
-Name "Gaim 0.60 alpha 4 (Win32)"
-OutFile "gaim-0.60-alpha4.exe"
+Name "Gaim ${GAIM_VERSION} (Win32)"
+OutFile "gaim-${GAIM_VERSION}.exe"
 Icon .\pixmaps\gaim-install.ico
 UninstallIcon .\pixmaps\gaim-install.ico
 
@@ -54,7 +54,7 @@ Section "" ; (default section)
   ; Read in Aspell install path
   ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\Aspell" ""
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
-  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "0.60a4"
+  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "${GAIM_VERSION}"
   ; Keep track of aspell install path, for when we uninstall
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "AspellPath" $R0
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
