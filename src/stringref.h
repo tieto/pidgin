@@ -26,13 +26,24 @@
 #define _GAIM_STRINGREF_H_
 
 /**
+ * The internal representation of a stringref.
+ *
  * @note For this structure to be useful, the string contained within
  * it must be immutable -- for this reason, do _not_ access it
  * directly!
  */
 typedef struct _GaimStringref {
-	int ref;
-	char value[0];
+	unsigned int ref;	/**< The reference count of this string.
+	                         *   Note that reference counts are only
+				 *   31 bits, and the high-order bit
+				 *   indicates whether this string is up
+				 *   for GC at the next idle handler...
+				 *   But you aren't going to touch this
+				 *   anyway, right? */
+	char value[0];		/**< The string contained in this ref.
+	                         *   Notice that it is simply "hanging
+				 *   off the end" of the ref ... this
+				 *   is to save an allocation. */
 } GaimStringref;
 
 /**
@@ -46,6 +57,20 @@ typedef struct _GaimStringref {
  *         of 1.
  */
 GaimStringref *gaim_stringref_new(const char *value);
+
+/**
+ * Creates an immutable reference-counted string object.  The newly
+ * created object will have a reference count of zero, and if it is
+ * not referenced before the next iteration of the mainloop it will
+ * be freed at that time.
+ *
+ * @param value This will be the value of the string; it will be
+ *              duplicated.
+ *
+ * @return A newly allocated string reference object with a refcount
+ *         of zero.
+ */
+GaimStringref *gaim_stringref_new_noref(const char *value);
 
 /**
  * Creates an immutable reference-counted string object from a printf
@@ -94,5 +119,27 @@ void gaim_stringref_unref(GaimStringref *stringref);
  * @return The contents of the string reference.
  */
 const char *gaim_stringref_value(const GaimStringref *stringref);
+
+/**
+ * Compare two stringrefs for string equality.  This returns the same
+ * value as strcmp would, where <0 indicates that s1 is "less than" s2
+ * in the ASCII lexicography, 0 indicates equality, etc.
+ *
+ * @param s1 The reference string.
+ *
+ * @param s2 The string to compare against the reference.
+ *
+ * @return An ordering indication on s1 and s2.
+ */
+int gaim_stringref_cmp(const GaimStringref *s1, const GaimStringref *s2);
+
+/**
+ * Find the length of the string inside a stringref.
+ *
+ * @param stringref The string in whose length we are interested.
+ *
+ * @return The length of the string in stringref
+ */
+size_t gaim_stringref_len(const GaimStringref *stringref);
 
 #endif /* _GAIM_STRINGREF_H_ */

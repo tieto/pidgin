@@ -1,5 +1,5 @@
 /**
- * @file stringref.c Reference-counted strings
+ * @file stringref.c Reference-counted immutable strings
  * @ingroup core
  *
  * gaim
@@ -29,6 +29,11 @@
 
 #include "stringref.h"
 
+static GList *gclist = NULL;
+
+static void stringref_free(GaimStringref *stringref);
+static gboolean gs_idle_cb(gpointer data);
+
 GaimStringref *gaim_stringref_new(const char *value)
 {
 	GaimStringref *newref;
@@ -39,6 +44,24 @@ GaimStringref *gaim_stringref_new(const char *value)
 	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
 	strcpy(newref->value, value);
 	newref->ref = 1;
+
+	return newref;
+}
+
+GaimStringref *gaim_stringref_new_noref(const char *value)
+{
+	GaimStringref *newref;
+
+	if (value == NULL)
+		return NULL;
+
+	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
+	strcpy(newref->value, value);
+	newref->ref = 0x80000000;
+
+	if (gclist == NULL)
+		g_idle_add(gs_idle_cb, NULL);
+	gclist = g_list_prepend(gclist, newref);
 
 	return newref;
 }
@@ -71,11 +94,54 @@ GaimStringref *gaim_stringref_ref(GaimStringref *stringref)
 void gaim_stringref_unref(GaimStringref *stringref)
 {
 	g_return_if_fail(stringref != NULL);
-	if (--stringref->ref == 0)
+	if ((--(stringref->ref) & 0x7fffffff) == 0) {
+		if (stringref->ref & 0x80000000)
+			gclist = g_list_remove(gclist, stringref);
 		g_free(stringref);
+	}
 }
 
 const char *gaim_stringref_value(const GaimStringref *stringref)
 {
 	return (stringref == NULL ? NULL : stringref->value);
+}
+
+int gaim_stringref_cmp(const GaimStringref *s1, const GaimStringref *s2)
+{
+	return (s1 == s2 ? 0 : strcmp(gaim_stringref_value(s1), gaim_stringref_value(s2)));
+}
+
+size_t gaim_stringref_len(const GaimStringref *stringref)
+{
+	return strlen(gaim_stringref_value(stringref));
+}
+
+static void stringref_free(GaimStringref *stringref)
+{
+#ifdef DEBUG
+	if (stringref->ref != 0) {
+		gaim_debug(GAIM_DEBUG_ERROR, "stringref", "Free of nonzero (%d) ref stringref!\n", stringref->ref);
+		return;
+	}
+#endif /* DEBUG */
+	g_free(stringref);
+}
+
+static gboolean gs_idle_cb(gpointer data)
+{
+	GaimStringref *ref;
+	GList *del;
+
+	while (gclist != NULL) {
+		ref = gclist->data;
+		ref->ref &= 0x7fffffff;
+		if (ref->ref == 0) {
+			stringref_free(ref);
+		}
+		del = gclist;
+		gclist = gclist->next;
+		g_list_free_1(del);
+	}
+
+	return FALSE;
 }
