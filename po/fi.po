@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.73\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-13 04:10+0200\n"
-"PO-Revision-Date: 2003-11-13 04:45+0200\n"
+"POT-Creation-Date: 2003-11-19 15:28+0200\n"
+"PO-Revision-Date: 2003-11-19 16:49+0200\n"
 "Last-Translator: Arto Alakulju <arto@alakulju.net>\n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -156,8 +156,8 @@ msgstr "Uusi..."
 #: src/gtkprefs.c:1467 src/protocols/gg/gg.c:51 src/protocols/irc/msgs.c:187
 #: src/protocols/jabber/jabber.c:928 src/protocols/jabber/jutil.c:98
 #: src/protocols/jabber/presence.c:84 src/protocols/oscar/oscar.c:2844
-#: src/protocols/oscar/oscar.c:4586 src/protocols/oscar/oscar.c:5532
-#: src/protocols/oscar/oscar.c:6133
+#: src/protocols/oscar/oscar.c:4588 src/protocols/oscar/oscar.c:5534
+#: src/protocols/oscar/oscar.c:6135
 msgid "Away"
 msgstr "Poissa"
 
@@ -410,15 +410,15 @@ msgstr "(Ei"
 msgid "Change"
 msgstr "vaihtoa"
 
-#: plugins/history.c:65
+#: plugins/history.c:75
 msgid "History"
 msgstr "Historia"
 
-#: plugins/history.c:67
+#: plugins/history.c:77
 msgid "Shows recently logged conversations in new conversations."
 msgstr "Näyttää osan edellistä keskustelua uudessa keskustelussa."
 
-#: plugins/history.c:68
+#: plugins/history.c:78
 msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
@@ -655,6 +655,31 @@ msgstr ""
 "(Jabber MSN, IRC, TOC). Paina 'Enter' viestinsyöttölaatikossa lähettääksesi. "
 "Katso debug-ikkunaa."
 
+#: plugins/relnot.c:62
+#, c-format
+msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgstr "Käyttämäsi Gaim-versio on %s. Uusin versio on %s.<hr>"
+
+#: plugins/relnot.c:68
+#, c-format
+msgid ""
+"<b>ChangeLog:</b>\n"
+"%s<br><br>"
+msgstr ""
+"<b>Muutosloki:</b>\n"
+"%s<br><br>"
+
+#: plugins/relnot.c:73
+#, c-format
+msgid ""
+"You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
+msgstr "Version %s voi ladata osoitteesta:<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
+
+#: plugins/relnot.c:77 plugins/relnot.c:78
+msgid "New Version Available"
+msgstr "Uusi versio saatavilla"
+
 #. *< api_version
 #. *< type
 #. *< ui_requirement
@@ -662,14 +687,39 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/signals-test.c:502
+#: plugins/relnot.c:133
+msgid "Release Notification"
+msgstr "Julkaisuilmoitus"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/relnot.c:136
+msgid "Checks periodically for new releases."
+msgstr "Tarkistaa määräajoin onko uusi Gaim-versio julkaistu."
+
+#. *  description
+#: plugins/relnot.c:138
+msgid ""
+"Checks periodically for new releases and notifies the user with the "
+"ChangeLog."
+msgstr "Tarkistaa määräajoin onko uusi Gaim-versio julkaistu ja huomauttaa käyttäjää näyttämällä muutoslokin."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/signals-test.c:465
 msgid "Signals Test"
 msgstr "Signaalitesti"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/signals-test.c:505 plugins/signals-test.c:507
+#: plugins/signals-test.c:468 plugins/signals-test.c:470
 msgid "Test to see that all signals are working properly."
 msgstr "Kokeile nähdäksesi että kaikki signaalit toimivat oikein."
 
@@ -1077,12 +1127,12 @@ msgid "Current Translators"
 msgstr "Nykyiset kielenkääntäjät"
 
 # NOTE source: netscape
-#: src/about.c:164 src/about.c:194
+#: src/about.c:164 src/about.c:195
 msgid "Catalan"
 msgstr "Katalaani"
 
 # NOTE source: netscape
-#: src/about.c:165 src/about.c:195
+#: src/about.c:165 src/about.c:196
 msgid "Czech"
 msgstr "Tsekki"
 
@@ -1090,11 +1140,11 @@ msgstr "Tsekki"
 msgid "Danish"
 msgstr "Tanska"
 
-#: src/about.c:167 src/about.c:196
+#: src/about.c:167 src/about.c:197
 msgid "German"
 msgstr "Saksa"
 
-#: src/about.c:168 src/about.c:197
+#: src/about.c:168 src/about.c:198
 msgid "Spanish"
 msgstr "Espanja"
 
@@ -1102,7 +1152,7 @@ msgstr "Espanja"
 msgid "Finnish"
 msgstr "Suomi"
 
-#: src/about.c:170 src/about.c:198
+#: src/about.c:170 src/about.c:199
 msgid "French"
 msgstr "Ranska"
 
@@ -1114,12 +1164,12 @@ msgstr "Hindi"
 msgid "Hungarian"
 msgstr "Unkari"
 
-#: src/about.c:173 src/about.c:200
+#: src/about.c:173 src/about.c:201
 msgid "Italian"
 msgstr "Italia"
 
 # NOTE source: netscape
-#: src/about.c:174 src/about.c:202
+#: src/about.c:174 src/about.c:203
 msgid "Korean"
 msgstr "Korea"
 
@@ -1129,72 +1179,72 @@ msgid "Dutch; Flemish"
 msgstr "Hollanti; Flaami"
 
 # NOTE source: netscape
-#: src/about.c:176 src/about.c:204
+#: src/about.c:176
+msgid "Norwegian"
+msgstr "Norja"
+
+# NOTE source: netscape
+#: src/about.c:177 src/about.c:204
 msgid "Polish"
 msgstr "Puola"
 
 # XXX
-#: src/about.c:177
+#: src/about.c:178
 msgid "Portuguese"
 msgstr "Portugali"
 
 # XXX
-#: src/about.c:178
+#: src/about.c:179
 msgid "Portuguese-Brazil"
 msgstr "Portugali (brasilialainen)"
 
 # NOTE source: netscape
-#: src/about.c:179
+#: src/about.c:180
 msgid "Romanian"
 msgstr "Romania"
 
-#: src/about.c:180 src/about.c:205
+#: src/about.c:181 src/about.c:205
 msgid "Russian"
 msgstr "Venäjä"
 
 # NOTE source: netscape
-#: src/about.c:181
+#: src/about.c:182
 msgid "Serbian"
 msgstr "Serbia"
 
-#: src/about.c:182 src/about.c:207
+#: src/about.c:183 src/about.c:207
 msgid "Swedish"
 msgstr "Ruotsi"
 
 # XXX source: netscape + google
-#: src/about.c:183
+#: src/about.c:184
 msgid "Simplified Chinese"
 msgstr "Kiina (yksinkertaistettu)"
 
 # XXX source: netscape + google
-#: src/about.c:184
+#: src/about.c:185
 msgid "Traditional Chinese"
 msgstr "Kiina (perinteinen)"
 
-#: src/about.c:191
+#: src/about.c:192
 msgid "Past Translators"
 msgstr "Aikaisemmat kielenkääntäjät"
 
-#: src/about.c:192
+#: src/about.c:193
 msgid "Amharic"
 msgstr "Amhara"
 
-#: src/about.c:193
+#: src/about.c:194
 msgid "Bulgarian"
 msgstr "Bulgaria"
 
-#: src/about.c:199
+#: src/about.c:200
 msgid "Hebrew"
 msgstr "Heprea"
 
-#: src/about.c:201
+#: src/about.c:202
 msgid "Japanese"
 msgstr "Japani"
-
-# NOTE source: netscape
-#: src/about.c:203
-msgid "Norwegian"
-msgstr "Norja"
 
 # NOTE source: netscape
 #: src/about.c:206
@@ -1205,7 +1255,7 @@ msgstr "Slovakki"
 msgid "Chinese"
 msgstr "Kiina"
 
-#: src/about.c:221 src/dialogs.c:2190 src/gtkrequest.c:205
+#: src/about.c:221 src/dialogs.c:2180 src/gtkrequest.c:198
 #: src/protocols/msn/msn.c:247
 msgid "Close"
 msgstr "Sulje"
@@ -1242,36 +1292,36 @@ msgstr "Anna nykyinen sekä uusi salasana."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:334 src/connection.c:193 src/dialogs.c:1730
-#: src/dialogs.c:1747 src/dialogs.c:1790 src/gtkblist.c:1512
-#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:1025
+#: src/account.c:334 src/connection.c:193 src/dialogs.c:1720
+#: src/dialogs.c:1737 src/dialogs.c:1780 src/gtkblist.c:1512
+#: src/gtkrequest.c:195 src/protocols/jabber/jabber.c:1025
 #: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
 #: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
 #: src/protocols/oscar/oscar.c:2455 src/protocols/oscar/oscar.c:2535
-#: src/protocols/oscar/oscar.c:6183 src/protocols/oscar/oscar.c:6279
-#: src/protocols/oscar/oscar.c:6328 src/protocols/oscar/oscar.c:6410
+#: src/protocols/oscar/oscar.c:6185 src/protocols/oscar/oscar.c:6281
+#: src/protocols/oscar/oscar.c:6330 src/protocols/oscar/oscar.c:6412
 #: src/protocols/yahoo/yahoo.c:2232 src/request.h:852
 msgid "OK"
 msgstr "OK"
 
 #. Cancel button.
-#: src/account.c:335 src/account.c:369 src/buddy_chat.c:375
-#: src/connection.c:194 src/dialogs.c:467 src/dialogs.c:479 src/dialogs.c:492
-#: src/dialogs.c:513 src/dialogs.c:898 src/dialogs.c:1564 src/dialogs.c:1731
-#: src/dialogs.c:1748 src/dialogs.c:1791 src/dialogs.c:1907
+#: src/account.c:335 src/account.c:369 src/buddy_chat.c:371
+#: src/connection.c:194 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
+#: src/dialogs.c:505 src/dialogs.c:890 src/dialogs.c:1554 src/dialogs.c:1721
+#: src/dialogs.c:1738 src/dialogs.c:1781 src/dialogs.c:1897
 #: src/gtkaccount.c:1622 src/gtkaccount.c:2090 src/gtkblist.c:1513
 #: src/gtkblist.c:3452 src/gtkconn.c:148 src/gtkprivacy.c:568
 #: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
-#: src/gtkrequest.c:203 src/protocols/icq/gaim_icq.c:277
+#: src/gtkrequest.c:196 src/protocols/icq/gaim_icq.c:277
 #: src/protocols/jabber/buddy.c:512 src/protocols/jabber/jabber.c:657
 #: src/protocols/jabber/jabber.c:1026 src/protocols/msn/msn.c:182
 #: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
 #: src/protocols/msn/msn.c:215 src/protocols/msn/msn.c:228
 #: src/protocols/oscar/oscar.c:2419 src/protocols/oscar/oscar.c:2456
 #: src/protocols/oscar/oscar.c:2491 src/protocols/oscar/oscar.c:2536
-#: src/protocols/oscar/oscar.c:6011 src/protocols/oscar/oscar.c:6184
-#: src/protocols/oscar/oscar.c:6280 src/protocols/oscar/oscar.c:6329
-#: src/protocols/oscar/oscar.c:6394 src/protocols/oscar/oscar.c:6411
+#: src/protocols/oscar/oscar.c:6013 src/protocols/oscar/oscar.c:6186
+#: src/protocols/oscar/oscar.c:6282 src/protocols/oscar/oscar.c:6331
+#: src/protocols/oscar/oscar.c:6396 src/protocols/oscar/oscar.c:6413
 #: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2233
 #: src/request.h:852 src/request.h:862
 msgid "Cancel"
@@ -1283,8 +1333,8 @@ msgid "Change user information for %s"
 msgstr "Vaihda käyttäjätietoja - %s"
 
 # src/menus.c:280
-#: src/account.c:368 src/dialogs.c:894 src/dialogs.c:1552 src/dialogs.c:2199
-#: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:511
+#: src/account.c:368 src/dialogs.c:886 src/dialogs.c:1542 src/dialogs.c:2189
+#: src/gtkrequest.c:202 src/protocols/jabber/buddy.c:511
 #: src/protocols/trepia/trepia.c:346
 msgid "Save"
 msgstr "Tallenna"
@@ -1309,16 +1359,16 @@ msgstr "Poista poissaoloviesti"
 msgid "Set All Away"
 msgstr "Aseta kaikki poissaoleviksi"
 
-#: src/blist.c:550 src/gtkprefs.c:2267
+#: src/blist.c:551 src/gtkprefs.c:2267
 msgid "Chats"
 msgstr "Ryhmäkeskustelut"
 
-#: src/blist.c:645 src/blist.c:833 src/blist.c:2041 src/gtkblist.c:2930
+#: src/blist.c:646 src/blist.c:834 src/blist.c:2042 src/gtkblist.c:2930
 #: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:1159
 msgid "Buddies"
 msgstr "Tuttavat"
 
-#: src/blist.c:1133
+#: src/blist.c:1134
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1329,30 +1379,30 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/blist.c:1142
+#: src/blist.c:1143
 msgid "Group not removed"
 msgstr "Ryhmää ei poistettu"
 
-#: src/blist.c:1192 src/gtkaccount.c:159 src/gtkutils.c:841
+#: src/blist.c:1193 src/gtkaccount.c:159 src/gtkutils.c:844
 #: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:563
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: src/blist.c:1515
+#: src/blist.c:1516
 msgid "Invalid Groupname"
 msgstr "Epäkelpo ryhmänimi"
 
-#: src/blist.c:2158
+#: src/blist.c:2159
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr "Virhe jäsenneltäessä tuttavalistaa. Sitä ei ole ladattu."
 
 # XXX probably better than forming yet another new compound?
-#: src/blist.c:2160
+#: src/blist.c:2161
 msgid "Buddy List Error"
 msgstr "Tuttavalistan virhe"
 
-#: src/buddy_chat.c:316 src/gtkblist.c:3344
+#: src/buddy_chat.c:312 src/gtkblist.c:3344
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -1360,20 +1410,20 @@ msgstr ""
 "Et ole kirjautuneena millään protokollalla jolla voisi käyttää "
 "ryhmäkeskustelua."
 
-#: src/buddy_chat.c:330
+#: src/buddy_chat.c:326
 msgid "Join Chat"
 msgstr "Liity ryhmäkeskusteluun"
 
-#: src/buddy_chat.c:336
+#: src/buddy_chat.c:332
 msgid "Buddy Chat"
 msgstr "Ryhmäkeskustelu"
 
-#: src/buddy_chat.c:346
+#: src/buddy_chat.c:342
 msgid "Join Chat As:"
 msgstr "Liity ryhmäkeskusteluun nimellä:"
 
 #. Join button.
-#: src/buddy_chat.c:369
+#: src/buddy_chat.c:365
 msgid "Join"
 msgstr "Liity"
 
@@ -1405,67 +1455,67 @@ msgstr "Viestiä ei voitu lähettää. Viesti on liian suuri."
 msgid "Unable to send message."
 msgstr "Viestiä ei voitu lähettää."
 
-#: src/conversation.c:1907
+#: src/conversation.c:1905
 #, c-format
 msgid "%s entered the room."
 msgstr "%s saapui huoneeseen."
 
-#: src/conversation.c:1910
+#: src/conversation.c:1908
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] saapui huoneeseen."
 
-#: src/conversation.c:1995
+#: src/conversation.c:1993
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s on nyt nimeltään %s"
 
-#: src/conversation.c:2037
+#: src/conversation.c:2035
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s poistui huoneesta (%s)."
 
-#: src/conversation.c:2039
+#: src/conversation.c:2037
 #, c-format
 msgid "%s left the room."
 msgstr "%s poistui huoneesta."
 
-#: src/conversation.c:2112
+#: src/conversation.c:2110
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d muuta)"
 
-#: src/conversation.c:2114
+#: src/conversation.c:2112
 #, c-format
 msgid " left the room (%s)."
 msgstr " poistui huoneesta (%s)."
 
-#: src/conversation.c:2396
+#: src/conversation.c:2394
 msgid "Last created window"
 msgstr "Viimeksi luotu ikkuna"
 
 # XXX
-#: src/conversation.c:2398
+#: src/conversation.c:2396
 msgid "New window"
 msgstr "Uusi ikkuna"
 
-#: src/conversation.c:2400
+#: src/conversation.c:2398
 msgid "By group"
 msgstr "Ryhmän mukaan"
 
-#: src/conversation.c:2402
+#: src/conversation.c:2400
 msgid "By account"
 msgstr "Tilin mukaan"
 
-#: src/dialogs.c:315
+#: src/dialogs.c:307
 msgid "Warn User"
 msgstr "Varoita käyttäjää"
 
-#: src/dialogs.c:318
+#: src/dialogs.c:310
 msgid "_Warn"
 msgstr "_Varoita"
 
-#: src/dialogs.c:334
+#: src/dialogs.c:326
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1476,25 +1526,25 @@ msgstr ""
 "Tämä nostaa %s:n varoitustasoa ja hän tulee saamaan kovemman "
 "taajuusrajoituksen.\n"
 
-#: src/dialogs.c:343
+#: src/dialogs.c:335
 msgid "Warn _anonymously?"
 msgstr "Varoitako _nimettömänä?"
 
-#: src/dialogs.c:350
+#: src/dialogs.c:342
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Nimettömät varoitukset ovat vähemmän ankaria.</b>"
 
-#: src/dialogs.c:463
+#: src/dialogs.c:455
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Olet poistamassa '%s':n tuttavalistaltasi.  Haluatko jatkaa?"
 
-#: src/dialogs.c:465 src/dialogs.c:466
+#: src/dialogs.c:457 src/dialogs.c:458
 msgid "Remove Buddy"
 msgstr "Poista tuttava"
 
-#: src/dialogs.c:475
+#: src/dialogs.c:467
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -1503,11 +1553,11 @@ msgstr ""
 "Olet poistamassa ryhmäkeskustelun nimeltä '%s' tuttavalistaltasi.  Haluatko "
 "jatkaa?"
 
-#: src/dialogs.c:477 src/dialogs.c:478
+#: src/dialogs.c:469 src/dialogs.c:470
 msgid "Remove Chat"
 msgstr "Poista ryhmäkeskustelu"
 
-#: src/dialogs.c:487
+#: src/dialogs.c:479
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1515,12 +1565,12 @@ msgid ""
 msgstr ""
 "Olet poistamassa ryhmää nimeltä '%s' tuttavalistaltasi.  Haluatko jatkaa?"
 
-#: src/dialogs.c:490 src/dialogs.c:491
+#: src/dialogs.c:482 src/dialogs.c:483
 msgid "Remove Group"
 msgstr "Poista ryhmä"
 
 # TODO Untranslated
-#: src/dialogs.c:508
+#: src/dialogs.c:500
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1530,160 +1580,160 @@ msgstr ""
 "tuttavalistaltasi.  Haluatko jatkaa?"
 
 # NOTE source: 0.59.8/0.60
-#: src/dialogs.c:511 src/dialogs.c:512
+#: src/dialogs.c:503 src/dialogs.c:504
 msgid "Remove Contact"
 msgstr "Poista kontakti"
 
-#: src/dialogs.c:660
+#: src/dialogs.c:652
 msgid "New Message"
 msgstr "Uusi viesti"
 
-#: src/dialogs.c:678
+#: src/dialogs.c:670
 msgid "Please enter the screenname of the person you would like to IM.\n"
 msgstr "Syötä sen henkilön näyttönimi, jolle haluat lähettää pikaviestin.\n"
 
-#: src/dialogs.c:694 src/dialogs.c:771
+#: src/dialogs.c:686 src/dialogs.c:763
 msgid "_Screenname:"
 msgstr "_Näyttönimi:"
 
-#: src/dialogs.c:709 src/dialogs.c:787 src/gtkpounce.c:358
+#: src/dialogs.c:701 src/dialogs.c:779 src/gtkpounce.c:358
 msgid "_Account:"
 msgstr "_Käyttäjätili:"
 
-#: src/dialogs.c:740
+#: src/dialogs.c:732
 msgid "Get User Info"
 msgstr "Hae käyttäjätiedot"
 
-#: src/dialogs.c:759
+#: src/dialogs.c:751
 msgid ""
 "Please enter the screenname of the person whose info you would like to "
 "view.\n"
 msgstr "Syötä sen henkilön näyttönimi, jonka tiedot haluat nähdä.\n"
 
-#: src/dialogs.c:853 src/protocols/jabber/jabber.c:1036
-#: src/protocols/oscar/oscar.c:6479 src/protocols/toc/toc.c:1532
+#: src/dialogs.c:845 src/protocols/jabber/jabber.c:1036
+#: src/protocols/oscar/oscar.c:6481 src/protocols/toc/toc.c:1532
 msgid "Set User Info"
 msgstr "Aseta käyttäjätiedot"
 
-#: src/dialogs.c:862
+#: src/dialogs.c:854
 #, c-format
 msgid "Changing info for %s:"
 msgstr "Muutetaan käyttäjätietoja %s:lle"
 
-#: src/dialogs.c:977
+#: src/dialogs.c:969
 msgid "Insert Link"
 msgstr "Lisää linkki"
 
-#: src/dialogs.c:979
+#: src/dialogs.c:971
 msgid "Insert"
 msgstr "Lisää"
 
-#: src/dialogs.c:1001
+#: src/dialogs.c:993
 msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
 msgstr ""
 "Syötä URL, jonka haluat liittää, sekä sen kuvaus. Kuvaus on valinnainen.\n"
 
-#: src/dialogs.c:1019 src/protocols/jabber/buddy.c:249
+#: src/dialogs.c:1011 src/protocols/jabber/buddy.c:249
 #: src/protocols/jabber/jabber.c:638
 msgid "URL"
 msgstr "URL"
 
-#: src/dialogs.c:1029 src/gtkprefs.c:601 src/gtkprefs.c:1803
+#: src/dialogs.c:1021 src/gtkprefs.c:601 src/gtkprefs.c:1803
 #: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:738
 msgid "Description"
 msgstr "Kuvaus"
 
-#: src/dialogs.c:1165 src/dialogs.c:1182
+#: src/dialogs.c:1157 src/dialogs.c:1174
 msgid "Select Text Color"
 msgstr "Valitse tekstin väri"
 
-#: src/dialogs.c:1217 src/dialogs.c:1234
+#: src/dialogs.c:1209 src/dialogs.c:1226
 msgid "Select Background Color"
 msgstr "Valitse taustaväri"
 
-#: src/dialogs.c:1319 src/dialogs.c:1345
+#: src/dialogs.c:1311 src/dialogs.c:1337
 msgid "Select Font"
 msgstr "Valitse kirjasin"
 
-#: src/dialogs.c:1411
+#: src/dialogs.c:1403
 msgid "You cannot save an away message with a blank title"
 msgstr "Et voi tallentaa poissaoloviestiä tyhjällä otsikolla"
 
-#: src/dialogs.c:1413
+#: src/dialogs.c:1405
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Anna viestille otsikko, tai valitse \"Käytä\" käyttääksesi tallentamatta."
 
-#: src/dialogs.c:1423
+#: src/dialogs.c:1415
 msgid "You cannot create an empty away message"
 msgstr "Et voi luoda tyhjää poissaoloviestiä"
 
-#: src/dialogs.c:1488 src/dialogs.c:1496
+#: src/dialogs.c:1480 src/dialogs.c:1488
 msgid "New away message"
 msgstr "Uusi poissaoloviesti"
 
-#: src/dialogs.c:1506
+#: src/dialogs.c:1498
 msgid "Away title: "
 msgstr "Poissaolon otsikko: "
 
-#: src/dialogs.c:1556
+#: src/dialogs.c:1546
 msgid "Save & Use"
 msgstr "Tallenna ja käytä"
 
-#: src/dialogs.c:1560
+#: src/dialogs.c:1550
 msgid "Use"
 msgstr "Käytä"
 
 #. show everything
-#: src/dialogs.c:1709
+#: src/dialogs.c:1699
 msgid "Smile!"
 msgstr "Hymyile!"
 
-#: src/dialogs.c:1727
+#: src/dialogs.c:1717
 msgid "Alias Chat"
 msgstr "Anna ryhmäkeskustelulle alias"
 
-#: src/dialogs.c:1727
+#: src/dialogs.c:1717
 msgid "Alias chat"
 msgstr "Anna ryhmäkeskustelulle alias"
 
-#: src/dialogs.c:1728
+#: src/dialogs.c:1718
 msgid "Please enter an aliased name for this chat."
 msgstr "Syötä aliasnimi ryhmäkeskustelulle."
 
-#: src/dialogs.c:1744
+#: src/dialogs.c:1734
 msgid "Alias Contact"
 msgstr "Anna kontaktiryhmälle alias"
 
 # XXX from similar string, likely wrong
-#: src/dialogs.c:1744
+#: src/dialogs.c:1734
 msgid "Alias contact"
 msgstr "Anna kontaktiryhmälle alias"
 
-#: src/dialogs.c:1745
+#: src/dialogs.c:1735
 msgid "Please enter an aliased name for this contact."
 msgstr "Anna alias tälle kontaktiryhmälle."
 
-#: src/dialogs.c:1776
+#: src/dialogs.c:1766
 msgid "_Screenname"
 msgstr "_Näyttönimi"
 
-#: src/dialogs.c:1781 src/gtkblist.c:838 src/gtkblist.c:931 src/gtkblist.c:937
+#: src/dialogs.c:1771 src/gtkblist.c:838 src/gtkblist.c:931 src/gtkblist.c:937
 msgid "_Alias"
 msgstr "_Alias"
 
-#: src/dialogs.c:1785
+#: src/dialogs.c:1775
 msgid "Alias Buddy"
 msgstr "Anna tuttavalle alias"
 
-#: src/dialogs.c:1786
+#: src/dialogs.c:1776
 msgid "Alias buddy"
 msgstr "Anna tuttavalle alias"
 
-#: src/dialogs.c:1787
+#: src/dialogs.c:1777
 msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list."
@@ -1692,53 +1742,53 @@ msgstr ""
 "tuttavalistalla."
 
 # NOTE relatively minor editing of similar string (Palvelimelle -> %s:lle)
-#: src/dialogs.c:1823 src/dialogs.c:1830
+#: src/dialogs.c:1813 src/dialogs.c:1820
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "%s:lle ei kyetty kirjoittamaan."
 
-#: src/dialogs.c:1854
+#: src/dialogs.c:1844
 msgid "Save Log File"
 msgstr "Tallenna lokitiedosto"
 
 # XXX editing of similar string
-#: src/dialogs.c:1882
+#: src/dialogs.c:1872
 #, c-format
 msgid "Couldn't remove file %s."
 msgstr "Ei voitu poistaa asetustiedostoa %s."
 
-#: src/dialogs.c:1901
+#: src/dialogs.c:1891
 #, c-format
 msgid "You are about to remove the log file for %s.  Do you want to continue?"
 msgstr "Olet poistamassa lokitiedostoa %s:lle.  Haluatko jatkaa?"
 
-#: src/dialogs.c:1902 src/dialogs.c:2072
+#: src/dialogs.c:1892 src/dialogs.c:2062
 msgid "System Log"
 msgstr "Järjestelmäloki"
 
-#: src/dialogs.c:1903 src/dialogs.c:1905
+#: src/dialogs.c:1893 src/dialogs.c:1895
 msgid "Remove Log"
 msgstr "Poista loki"
 
-#: src/dialogs.c:1933 src/dialogs.c:2093
+#: src/dialogs.c:1923 src/dialogs.c:2083
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "Ei voitu avata lokitiedostoa %s."
 
-#: src/dialogs.c:2070
+#: src/dialogs.c:2060
 #, c-format
 msgid "Conversations with %s"
 msgstr "Keskustelut %s:n kanssa"
 
-#: src/dialogs.c:2114 src/protocols/jabber/jabber.c:643
+#: src/dialogs.c:2104 src/protocols/jabber/jabber.c:643
 msgid "Date"
 msgstr "Ajankohta"
 
-#: src/dialogs.c:2171
+#: src/dialogs.c:2161
 msgid "Log"
 msgstr "Loki"
 
-#: src/dialogs.c:2194
+#: src/dialogs.c:2184
 msgid "Clear"
 msgstr "Tyhjennä"
 
@@ -1850,23 +1900,23 @@ msgstr ""
 msgid "sorry, i ran out for a while. bbl"
 msgstr "Hetkisen poissa."
 
-#: src/gaimrc.c:373 src/gaimrc.c:1464
+#: src/gaimrc.c:373 src/gaimrc.c:1450
 msgid "boring default"
 msgstr "Tylsä perusviesti"
 
-#: src/gaimrc.c:1271 src/gtkblist.c:2111
+#: src/gaimrc.c:1259 src/gtkblist.c:2111
 msgid "Alphabetical"
 msgstr "Aakkosellinen"
 
-#: src/gaimrc.c:1273 src/gtkblist.c:2112
+#: src/gaimrc.c:1261 src/gtkblist.c:2112
 msgid "By status"
 msgstr "Tilan mukaan"
 
-#: src/gaimrc.c:1275 src/gtkblist.c:2113
+#: src/gaimrc.c:1263 src/gtkblist.c:2113
 msgid "By log size"
 msgstr "Lokin koon mukaan"
 
-#: src/gaimrc.c:1562
+#: src/gaimrc.c:1548
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Ei voitu avata asetustiedostoa %s."
@@ -1882,7 +1932,7 @@ msgstr ""
 "<b>Tiedoston koko:</b> %s\n"
 "<b>Kuvan koko:</b> %dx%d"
 
-#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3075
+#: src/gtkaccount.c:318 src/protocols/oscar/oscar.c:3077
 msgid "Buddy Icon"
 msgstr "Tuttavakuvake"
 
@@ -2030,7 +2080,7 @@ msgstr "Rekisteröi"
 msgid "Are you sure you want to delete %s?"
 msgstr "Haluatko varmasti poistaa %s:n?"
 
-#: src/gtkaccount.c:1621 src/gtkrequest.c:206
+#: src/gtkaccount.c:1621 src/gtkrequest.c:199
 msgid "Delete"
 msgstr "Poista"
 
@@ -2039,8 +2089,8 @@ msgid "Screen Name"
 msgstr "Näyttönimi"
 
 #: src/gtkaccount.c:1757 src/protocols/jabber/jabber.c:926
-#: src/protocols/oscar/oscar.c:2850 src/protocols/oscar/oscar.c:4584
-#: src/protocols/oscar/oscar.c:6132 src/protocols/yahoo/yahoo.c:2032
+#: src/protocols/oscar/oscar.c:2850 src/protocols/oscar/oscar.c:4586
+#: src/protocols/oscar/oscar.c:6134 src/protocols/yahoo/yahoo.c:2032
 #: src/protocols/zephyr/zephyr.c:886 src/protocols/zephyr/zephyr.c:896
 msgid "Online"
 msgstr "Linjoilla"
@@ -2072,8 +2122,8 @@ msgstr "Gaim - Tietoja"
 msgid "Add buddy to your list?"
 msgstr "Lisää tuttava listalle?"
 
-#: src/gtkaccount.c:2089 src/gtkblist.c:3451 src/gtkconv.c:1258
-#: src/gtkconv.c:3149 src/gtkconv.c:4355 src/gtkrequest.c:207
+#: src/gtkaccount.c:2089 src/gtkblist.c:3451 src/gtkconv.c:1257
+#: src/gtkconv.c:3110 src/gtkconv.c:4312 src/gtkrequest.c:200
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2692
 msgid "Add"
 msgstr "Lisää"
@@ -2258,7 +2308,7 @@ msgstr ""
 "\n"
 "<b>Käyttäjätili:</b> %s"
 
-#: src/gtkblist.c:1602 src/protocols/oscar/oscar.c:5512
+#: src/gtkblist.c:1602 src/protocols/oscar/oscar.c:5514
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Tila:</b> Poissa linjoilta"
 
@@ -2385,7 +2435,7 @@ msgstr "/_Tuttavat/Näytä poissaolevat tuttavat"
 msgid "/Buddies/Show Empty Groups"
 msgstr "/_Tuttavat/Näytä tyhjät ryhmät"
 
-#: src/gtkblist.c:2287 src/gtkconv.c:1217
+#: src/gtkblist.c:2287 src/gtkconv.c:1216
 msgid "IM"
 msgstr "Pikaviesti"
 
@@ -2401,7 +2451,7 @@ msgstr "Hae tiedot"
 msgid "Get information on the selected buddy"
 msgstr "Hae tietoja valitusta tuttavasta"
 
-#: src/gtkblist.c:2305 src/protocols/oscar/oscar.c:3084
+#: src/gtkblist.c:2305 src/protocols/oscar/oscar.c:3086
 msgid "Chat"
 msgstr "Ryhmäkeskustelu"
 
@@ -2465,7 +2515,7 @@ msgstr "Lisää uusi ryhmä"
 msgid "Please enter the name of the group to be added."
 msgstr "Anna lisättävän ryhmän nimi."
 
-#: src/gtkblist.c:3964
+#: src/gtkblist.c:3950
 msgid "No actions available"
 msgstr "Ei toimintoja saatavilla."
 
@@ -2488,60 +2538,60 @@ msgstr "Kirjaudutaan sisään"
 msgid "Cancel All"
 msgstr "Peruuta kaikki"
 
-#: src/gtkconn.c:347
+#: src/gtkconn.c:359
 msgid "Reason Unknown."
 msgstr "Tuntematon syy."
 
-#: src/gtkconn.c:356
+#: src/gtkconn.c:368
 msgid "Reconnect"
 msgstr "Uudelleenyhdistys"
 
-#: src/gtkconn.c:404
+#: src/gtkconn.c:407
 msgid "Account"
 msgstr "Tili"
 
-#: src/gtkconn.c:412
+#: src/gtkconn.c:415
 msgid "Time"
 msgstr "Aika"
 
-#: src/gtkconv.c:186
+#: src/gtkconv.c:185
 msgid "That file already exists"
 msgstr "Tiedosto on jo olemassa"
 
-#: src/gtkconv.c:187 src/gtkft.c:1034
+#: src/gtkconv.c:186 src/gtkft.c:1034
 msgid "Would you like to overwrite it?"
 msgstr "Haluatko ylikirjoittaa sen?"
 
-#: src/gtkconv.c:242
+#: src/gtkconv.c:241
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "Kuvan tallennus epäonnistui: %s\n"
 
-#: src/gtkconv.c:312
+#: src/gtkconv.c:311
 msgid "Gaim - Insert Image"
 msgstr "Gaim - Liitä kuva"
 
-#: src/gtkconv.c:616
+#: src/gtkconv.c:615
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - Kutsu tuttava keskusteluhuoneeseen"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:644
+#: src/gtkconv.c:643
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr "Anna kutsuttavan käyttäjän nimi sekä vapaaehtoinen viesti."
 
-#: src/gtkconv.c:665
+#: src/gtkconv.c:664
 msgid "_Buddy:"
 msgstr "_Tuttava:"
 
 # src/sidebar.c:103
-#: src/gtkconv.c:685
+#: src/gtkconv.c:684
 msgid "_Message:"
 msgstr "_Viesti:"
 
-#: src/gtkconv.c:781
+#: src/gtkconv.c:780
 msgid ""
 "<span weight='bold' size='larger'>Enter a search phrase\n"
 "</span>"
@@ -2549,322 +2599,322 @@ msgstr ""
 "<span weight='bold' size='larger'>Anna hakutermi\n"
 "</span>"
 
-#: src/gtkconv.c:788
+#: src/gtkconv.c:787
 msgid "Search term: "
 msgstr "Haettava termi:"
 
-#: src/gtkconv.c:1225
+#: src/gtkconv.c:1224
 msgid "Un-Ignore"
 msgstr "Välitä"
 
-#: src/gtkconv.c:1227 src/gtkprefs.c:774
+#: src/gtkconv.c:1226 src/gtkprefs.c:774
 msgid "Ignore"
 msgstr "Älä välitä"
 
 #. Info button
-#: src/gtkconv.c:1236 src/gtkconv.c:3172
+#: src/gtkconv.c:1235 src/gtkconv.c:3133
 msgid "Info"
 msgstr "Tietoja"
 
-#: src/gtkconv.c:1245
+#: src/gtkconv.c:1244
 msgid "Get Away Msg"
 msgstr "Hae poissaoloviesti"
 
-#: src/gtkconv.c:1256 src/gtkconv.c:3155 src/gtkconv.c:4340
-#: src/gtkrequest.c:208
+#: src/gtkconv.c:1255 src/gtkconv.c:3116 src/gtkconv.c:4297
+#: src/gtkrequest.c:201
 msgid "Remove"
 msgstr "Poista"
 
-#: src/gtkconv.c:2373
+#: src/gtkconv.c:2372
 msgid "User is typing..."
 msgstr "Käyttäjä kirjoittaa..."
 
-#: src/gtkconv.c:2381
+#: src/gtkconv.c:2380
 msgid "User has typed something and paused"
 msgstr "Käyttäjä kirjoitti jotain ja keskeytti"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2484
+#: src/gtkconv.c:2483
 msgid "_Send As"
 msgstr "_Lähetä nimellä"
 
-#: src/gtkconv.c:2944
+#: src/gtkconv.c:2905
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - Tallenna keskustelu"
 
 #. Conversation menu
-#: src/gtkconv.c:2961
+#: src/gtkconv.c:2922
 msgid "/_Conversation"
 msgstr "/_Keskustelu"
 
-#: src/gtkconv.c:2963
+#: src/gtkconv.c:2924
 msgid "/Conversation/_Save As..."
 msgstr "/Keskustelu/_Tallenna nimellä..."
 
-#: src/gtkconv.c:2965
+#: src/gtkconv.c:2926
 msgid "/Conversation/View _Log"
 msgstr "/Keskustelu/Näytä_loki..."
 
-#: src/gtkconv.c:2966
+#: src/gtkconv.c:2927
 msgid "/Conversation/Search..."
 msgstr "/Keskustelu/Etsi..."
 
-#: src/gtkconv.c:2970
+#: src/gtkconv.c:2931
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Keskustelu/Lisää tuttava_ilmoitin..."
 
-#: src/gtkconv.c:2972
+#: src/gtkconv.c:2933
 msgid "/Conversation/A_lias..."
 msgstr "/Keskustelu/A_lias..."
 
-#: src/gtkconv.c:2974
+#: src/gtkconv.c:2935
 msgid "/Conversation/_Get Info..."
 msgstr "/Keskustelu/_Hae tiedot..."
 
-#: src/gtkconv.c:2976
+#: src/gtkconv.c:2937
 msgid "/Conversation/In_vite..."
 msgstr "/Keskustelu/Kut_su..."
 
-#: src/gtkconv.c:2981
+#: src/gtkconv.c:2942
 msgid "/Conversation/Insert _URL..."
 msgstr "/Keskustelu/Lisää _URL..."
 
-#: src/gtkconv.c:2983
+#: src/gtkconv.c:2944
 msgid "/Conversation/Insert _Image..."
 msgstr "/Keskustelu/Liitä _kuva..."
 
-#: src/gtkconv.c:2988
+#: src/gtkconv.c:2949
 msgid "/Conversation/_Warn..."
 msgstr "/Keskustelu/_Varoita..."
 
-#: src/gtkconv.c:2990
+#: src/gtkconv.c:2951
 msgid "/Conversation/_Block..."
 msgstr "/Keskustelu/E_stä..."
 
-#: src/gtkconv.c:2992
+#: src/gtkconv.c:2953
 msgid "/Conversation/_Add..."
 msgstr "/Keskustelu/_Lisää..."
 
-#: src/gtkconv.c:2994
+#: src/gtkconv.c:2955
 msgid "/Conversation/_Remove..."
 msgstr "/Keskustelu/_Poista..."
 
-#: src/gtkconv.c:2999
+#: src/gtkconv.c:2960
 msgid "/Conversation/_Close"
 msgstr "/Keskustelu/_Sulje"
 
 # src/menus.c:311
 #. Options
-#: src/gtkconv.c:3003
+#: src/gtkconv.c:2964
 msgid "/_Options"
 msgstr "/_Valinnat"
 
-#: src/gtkconv.c:3004
+#: src/gtkconv.c:2965
 msgid "/Options/Enable _Logging"
 msgstr "/Valinnat/_Lokiinkirjaus"
 
-#: src/gtkconv.c:3005
+#: src/gtkconv.c:2966
 msgid "/Options/Enable _Sounds"
 msgstr "/Valinnat/S_oita merkkiäänet"
 
-#: src/gtkconv.c:3006
+#: src/gtkconv.c:2967
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Valinnat/Näytä muokkaus-_työkalurivi"
 
-#: src/gtkconv.c:3048
+#: src/gtkconv.c:3009
 msgid "/Conversation/View Log"
 msgstr "/Keskustelu/Näytä loki..."
 
-#: src/gtkconv.c:3053
+#: src/gtkconv.c:3014
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Keskustelu/Lisää tuttavailmoitin..."
 
-#: src/gtkconv.c:3057
+#: src/gtkconv.c:3018
 msgid "/Conversation/Alias..."
 msgstr "/Keskustelu/Alias..."
 
-#: src/gtkconv.c:3061
+#: src/gtkconv.c:3022
 msgid "/Conversation/Get Info..."
 msgstr "/Keskustelu/Hae tiedot..."
 
-#: src/gtkconv.c:3065
+#: src/gtkconv.c:3026
 msgid "/Conversation/Invite..."
 msgstr "/Keskustelu/Kutsu..."
 
-#: src/gtkconv.c:3071
+#: src/gtkconv.c:3032
 msgid "/Conversation/Insert URL..."
 msgstr "/Keskustelu/Lisää URL..."
 
-#: src/gtkconv.c:3075
+#: src/gtkconv.c:3036
 msgid "/Conversation/Insert Image..."
 msgstr "/Keskustelu/Liitä kuva..."
 
-#: src/gtkconv.c:3081
+#: src/gtkconv.c:3042
 msgid "/Conversation/Warn..."
 msgstr "/Keskustelu/Varoita..."
 
-#: src/gtkconv.c:3085
+#: src/gtkconv.c:3046
 msgid "/Conversation/Block..."
 msgstr "/Keskustelu/Estä..."
 
-#: src/gtkconv.c:3089
+#: src/gtkconv.c:3050
 msgid "/Conversation/Add..."
 msgstr "/Keskustelu/Lisää..."
 
-#: src/gtkconv.c:3093
+#: src/gtkconv.c:3054
 msgid "/Conversation/Remove..."
 msgstr "/Keskustelu/Poista..."
 
-#: src/gtkconv.c:3099
+#: src/gtkconv.c:3060
 msgid "/Options/Enable Logging"
 msgstr "/Valinnat/Lokiinkirjaus"
 
-#: src/gtkconv.c:3102
+#: src/gtkconv.c:3063
 msgid "/Options/Enable Sounds"
 msgstr "/Valinnat/Soita merkkiäänet"
 
-#: src/gtkconv.c:3105
+#: src/gtkconv.c:3066
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Valinnat/Näytä muokkaus-työkalurivi"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3129 src/gtkconv.c:3131 src/gtkconv.c:3229 src/gtkconv.c:3231
-#: src/gtkconv.c:6063
+#: src/gtkconv.c:3090 src/gtkconv.c:3092 src/gtkconv.c:3190 src/gtkconv.c:3192
+#: src/gtkconv.c:6020
 msgid "Send"
 msgstr "Lähetä"
 
-#: src/gtkconv.c:3152 src/gtkconv.c:4358
+#: src/gtkconv.c:3113 src/gtkconv.c:4315
 msgid "Add the user to your buddy list"
 msgstr "Lisää käyttäjä tuttavalistalle"
 
-#: src/gtkconv.c:3158 src/gtkconv.c:4343
+#: src/gtkconv.c:3119 src/gtkconv.c:4300
 msgid "Remove the user from your buddy list"
 msgstr "Poista käyttäjä tuttavalistalta"
 
 #. Warn button
-#: src/gtkconv.c:3165
+#: src/gtkconv.c:3126
 msgid "Warn"
 msgstr "Varoita"
 
 # XXX partitive is wrong; should be accusative II
-#: src/gtkconv.c:3169
+#: src/gtkconv.c:3130
 msgid "Warn the user"
 msgstr "Varoita käyttäjää"
 
-#: src/gtkconv.c:3176 src/gtkconv.c:3614
+#: src/gtkconv.c:3137 src/gtkconv.c:3575
 msgid "Get the user's information"
 msgstr "Hae käyttäjätiedot"
 
 #. Block button
-#: src/gtkconv.c:3179 src/gtkprivacy.c:605 src/gtkprivacy.c:616
+#: src/gtkconv.c:3140 src/gtkprivacy.c:605 src/gtkprivacy.c:616
 msgid "Block"
 msgstr "Estä"
 
-#: src/gtkconv.c:3183
+#: src/gtkconv.c:3144
 msgid "Block the user"
 msgstr "Estä käyttäjä"
 
 #. Invite
-#: src/gtkconv.c:3241 src/gtkconv.c:6066
+#: src/gtkconv.c:3202 src/gtkconv.c:6023
 msgid "Invite"
 msgstr "Kutsu"
 
-#: src/gtkconv.c:3244
+#: src/gtkconv.c:3205
 msgid "Invite a user"
 msgstr "Kutsu käyttäjä"
 
-#: src/gtkconv.c:3283
+#: src/gtkconv.c:3244
 msgid "Bold"
 msgstr "Lihavoi"
 
-#: src/gtkconv.c:3294
+#: src/gtkconv.c:3255
 msgid "Italic"
 msgstr "Kursivoi"
 
-#: src/gtkconv.c:3305
+#: src/gtkconv.c:3266
 msgid "Underline"
 msgstr "Alleviivaa"
 
 # XXX might be wrong
-#: src/gtkconv.c:3321
+#: src/gtkconv.c:3282
 msgid "Larger font size"
 msgstr "Suurempi kirjasin koko"
 
-#: src/gtkconv.c:3333
+#: src/gtkconv.c:3294
 msgid "Normal font size"
 msgstr "Normaali kirjasin koko"
 
 # XXX might be wrong
-#: src/gtkconv.c:3345
+#: src/gtkconv.c:3306
 msgid "Smaller font size"
 msgstr "Pienempi kirjasin koko"
 
-#: src/gtkconv.c:3362
+#: src/gtkconv.c:3323
 msgid "Font Face"
 msgstr "Kirjasintyyppi"
 
-#: src/gtkconv.c:3374
+#: src/gtkconv.c:3335
 msgid "Foreground font color"
 msgstr "Kirjasimen etuala-väri"
 
-#: src/gtkconv.c:3386
+#: src/gtkconv.c:3347
 msgid "Background color"
 msgstr "Taustaväri"
 
-#: src/gtkconv.c:3401
+#: src/gtkconv.c:3362
 msgid "Insert image"
 msgstr "Liitä kuva"
 
-#: src/gtkconv.c:3412
+#: src/gtkconv.c:3373
 msgid "Insert link"
 msgstr "Lisää linkki"
 
-#: src/gtkconv.c:3423
+#: src/gtkconv.c:3384
 msgid "Insert smiley"
 msgstr "Lisää hymiö"
 
-#: src/gtkconv.c:3483
+#: src/gtkconv.c:3444
 msgid "Topic:"
 msgstr "Aihe:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3534
+#: src/gtkconv.c:3495
 msgid "0 people in room"
 msgstr "0 ihmistä huoneessa"
 
-#: src/gtkconv.c:3591
+#: src/gtkconv.c:3552
 msgid "IM the user"
 msgstr "Lähetä pikaviesti käyttäjälle"
 
-#: src/gtkconv.c:3603
+#: src/gtkconv.c:3564
 msgid "Ignore the user"
 msgstr "Älä välitä käyttäjästä"
 
-#: src/gtkconv.c:4156
+#: src/gtkconv.c:4113
 msgid "Close conversation"
 msgstr "Sulje keskustelu"
 
-#: src/gtkconv.c:4756 src/gtkconv.c:4788 src/gtkconv.c:4909 src/gtkconv.c:4976
+#: src/gtkconv.c:4713 src/gtkconv.c:4745 src/gtkconv.c:4866 src/gtkconv.c:4933
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d ihminen huoneessa"
 msgstr[1] "%d ihmistä huoneessa"
 
-#: src/gtkconv.c:5310
+#: src/gtkconv.c:5267
 msgid "Animate"
 msgstr "Animoi"
 
-#: src/gtkconv.c:5315
+#: src/gtkconv.c:5272
 msgid "Hide Icon"
 msgstr "Piilota kuvake"
 
-#: src/gtkconv.c:5321
+#: src/gtkconv.c:5278
 msgid "Save Icon As..."
 msgstr "Tallenna kuvake nimellä..."
 
-#: src/gtkconv.c:5800 src/gtkconv.c:5803
+#: src/gtkconv.c:5757 src/gtkconv.c:5760
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Keskustelu/Sulje"
 
@@ -3019,6 +3069,10 @@ msgstr "Tallenna kuva"
 #: src/gtkimhtml.c:1784
 msgid "_Save Image..."
 msgstr "_Tallenna kuva nimellä..."
+
+#: src/gtklog.c:244
+msgid "Conversations with"
+msgstr "Keskustelut:"
 
 #: src/gtknotify.c:211
 #, c-format
@@ -3554,7 +3608,7 @@ msgid "_Host"
 msgstr "_Isäntä"
 
 #: src/gtkprefs.c:1142 src/protocols/irc/irc.c:553
-#: src/protocols/jabber/jabber.c:1152 src/protocols/msn/msn.c:1640
+#: src/protocols/jabber/jabber.c:1152 src/protocols/msn/msn.c:1649
 #: src/protocols/napster/napster.c:642 src/protocols/trepia/trepia.c:1345
 msgid "Port"
 msgstr "Portti"
@@ -3631,30 +3685,6 @@ msgstr "Kirjaa kaikki pikaviestit _lokiin"
 #: src/gtkprefs.c:1329
 msgid "Log all c_hats"
 msgstr "Kirjaa kaikki _keskustelut lokiin"
-
-#: src/gtkprefs.c:1332
-msgid "System Logs"
-msgstr "Järjestelmälokit"
-
-#: src/gtkprefs.c:1333
-msgid "Log when buddies _sign on/sign off"
-msgstr "Kirjaa lokiin tuttavien kirjautumiset _sisään/ulos"
-
-#: src/gtkprefs.c:1335
-msgid "Log when buddies become _idle/un-idle"
-msgstr "Kirjaa lokiin tuttavien siirtymiset _jouten-/paikallaoleviksi"
-
-#: src/gtkprefs.c:1337
-msgid "Log when buddies go away/come _back"
-msgstr "Kirjaa lokiin tuttavien poistumiset/_palaamiset"
-
-#: src/gtkprefs.c:1339
-msgid "Log your _own signons/idleness/awayness"
-msgstr "Kirjaa lokiin _omat sisäänkirjautumiset/joutenolot/poissaolot"
-
-#: src/gtkprefs.c:1341
-msgid "I_ndividual log file for each buddy's signons"
-msgstr "O_ma lokitiedosto joka tuttavan sisäänkirjautumisille"
 
 #: src/gtkprefs.c:1384
 msgid "Sound Options"
@@ -3795,7 +3825,7 @@ msgid "Load"
 msgstr "Lataa"
 
 #: src/gtkprefs.c:1774 src/protocols/jabber/jabber.c:588
-#: src/protocols/msn/msn.c:1328 src/protocols/trepia/trepia.c:401
+#: src/protocols/msn/msn.c:1337 src/protocols/trepia/trepia.c:401
 msgid "Name"
 msgstr "Nimi"
 
@@ -3972,16 +4002,16 @@ msgstr "Haluatko varmasti estää %s?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:200 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:193 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "Yes"
 msgstr "Kyllä"
 
-#: src/gtkrequest.c:201 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:194 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "No"
 msgstr "Ei"
 
 # XXX dia uses "Sovella"
-#: src/gtkrequest.c:204
+#: src/gtkrequest.c:197
 msgid "Apply"
 msgstr "Toteuta"
 
@@ -4046,51 +4076,53 @@ msgid ""
 msgstr ""
 "Ei voitu soittaa ääntä, koska asetettua äänikomentoa ei voitu suorittaa: %s"
 
-#: src/gtkutils.c:288
+#: src/gtkutils.c:291
 msgid "Can't save icon file to disk."
 msgstr "Ikonitiedostoa ei voida tallentaa levylle."
 
-#: src/gtkutils.c:323
+#: src/gtkutils.c:326
 msgid "Gaim - Save Icon"
 msgstr "Gaim - Tallenna kuvake"
 
-#: src/log.c:79
+#: src/log.c:82
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Lokilla ei ole read-funktiota</font></b>"
 
-#: src/log.c:369
+#: src/log.c:409
 msgid "XML"
 msgstr "XML"
 
-#: src/log.c:447
+#: src/log.c:488
 #, c-format
 msgid "<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
-msgstr "<font color=\"#16569E\">(%s) <b>%s <AUTOMAATTIVASTAUS>:</b></font> %s<br/>\n"
+msgstr ""
+"<font color=\"#16569E\">(%s) <b>%s <AUTOMAATTIVASTAUS>:</b></font> %s<br/>\n"
 
-#: src/log.c:449
+#: src/log.c:490
 #, c-format
 msgid "<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
-msgstr "<font color=\"#A82F2F\">(%s) <b>%s <AUTOMAATTIVASTAUS>:</b></font> %s<br/>\n"
+msgstr ""
+"<font color=\"#A82F2F\">(%s) <b>%s <AUTOMAATTIVASTAUS>:</b></font> %s<br/>\n"
 
-#: src/log.c:477 src/log.c:601
+#: src/log.c:531 src/log.c:663
 msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
 msgstr "<font color=\"red\"><b>log->logger_data oli NULL!</b></font>"
 
-#: src/log.c:487 src/log.c:611
+#: src/log.c:541 src/log.c:673
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
 msgstr "<font color=\"red\"><b>Ei voitu lukea tiedostoa: %s</b></font>"
 
-#: src/log.c:491
+#: src/log.c:545
 msgid "HTML"
 msgstr "HTML"
 
-#: src/log.c:571
+#: src/log.c:623
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMAATTIVASTAUS>: %s\n"
 
-#: src/log.c:615
+#: src/log.c:677
 msgid "Plain text"
 msgstr "Teksti"
 
@@ -4108,7 +4140,7 @@ msgid "Login"
 msgstr "Sisäänkirjautuminen"
 
 #. full help text
-#: src/main.c:550
+#: src/main.c:551
 #, c-format
 msgid ""
 "Gaim %s\n"
@@ -4142,7 +4174,7 @@ msgstr ""
 "   -h, --help           näytä tämä viesti ja poistu\n"
 
 #. short message
-#: src/main.c:565
+#: src/main.c:566
 #, c-format
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s. Kirjoita '%s -h' saadaksesi lisää tietoja.\n"
@@ -4186,8 +4218,8 @@ msgstr "Poissa vain ystäville"
 
 #: src/protocols/gg/gg.c:53 src/protocols/jabber/jabber.c:931
 #: src/protocols/jabber/presence.c:91 src/protocols/oscar/oscar.c:2848
-#: src/protocols/oscar/oscar.c:4574 src/protocols/oscar/oscar.c:4601
-#: src/protocols/oscar/oscar.c:6138 src/protocols/yahoo/yahoo.c:2026
+#: src/protocols/oscar/oscar.c:4576 src/protocols/oscar/oscar.c:4603
+#: src/protocols/oscar/oscar.c:6140 src/protocols/yahoo/yahoo.c:2026
 #: src/protocols/yahoo/yahoo.c:2324 src/protocols/yahoo/yahoo.c:2415
 msgid "Invisible"
 msgstr "Näkymätön"
@@ -4306,7 +4338,7 @@ msgstr "Gadu-Gadu-hakukone"
 msgid "Active"
 msgstr "Aktiivinen"
 
-#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3952
+#: src/protocols/gg/gg.c:664 src/protocols/oscar/oscar.c:3954
 msgid "UIN"
 msgstr "UIN"
 
@@ -4316,12 +4348,12 @@ msgstr "Etunimi"
 
 #. Last Name
 #: src/protocols/gg/gg.c:673 src/protocols/jabber/jabber.c:608
-#: src/protocols/oscar/oscar.c:3960 src/protocols/trepia/trepia.c:274
+#: src/protocols/oscar/oscar.c:3962 src/protocols/trepia/trepia.c:274
 msgid "Last Name"
 msgstr "Sukunimi"
 
 #: src/protocols/gg/gg.c:677 src/protocols/gg/gg.c:1389
-#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3954
+#: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:3956
 msgid "Nick"
 msgstr "Kutsumanimi"
 
@@ -4336,19 +4368,19 @@ msgstr "Sukupuoli"
 
 #. City
 #: src/protocols/gg/gg.c:701 src/protocols/jabber/jabber.c:618
-#: src/protocols/oscar/oscar.c:4006 src/protocols/oscar/oscar.c:4022
+#: src/protocols/oscar/oscar.c:4008 src/protocols/oscar/oscar.c:4024
 #: src/protocols/trepia/trepia.c:331 src/protocols/trepia/trepia.c:430
 msgid "City"
 msgstr "Kunta"
 
 # XXX need to check for gradation problems
 #. res[0] == username
-#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1266
-#: src/protocols/msn/msn.c:1508 src/protocols/napster/napster.c:387
-#: src/protocols/oscar/oscar.c:2890 src/protocols/oscar/oscar.c:3195
+#: src/protocols/gg/gg.c:722 src/protocols/msn/msn.c:1275
+#: src/protocols/msn/msn.c:1517 src/protocols/napster/napster.c:387
+#: src/protocols/oscar/oscar.c:2890 src/protocols/oscar/oscar.c:3197
 #: src/protocols/toc/toc.c:498 src/protocols/yahoo/yahoo.c:2581
-#: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2623
-#: src/protocols/yahoo/yahoo.c:2810 src/protocols/zephyr/zephyr.c:355
+#: src/protocols/yahoo/yahoo.c:2603 src/protocols/yahoo/yahoo.c:2626
+#: src/protocols/yahoo/yahoo.c:2813 src/protocols/zephyr/zephyr.c:355
 msgid "Buddy Information"
 msgstr "Tuttavan tiedot"
 
@@ -4452,7 +4484,7 @@ msgid "Directory Search"
 msgstr "Haku hakemistosta"
 
 #: src/protocols/gg/gg.c:1204 src/protocols/jabber/jabber.c:1043
-#: src/protocols/oscar/oscar.c:6493 src/protocols/toc/toc.c:1546
+#: src/protocols/oscar/oscar.c:6495 src/protocols/toc/toc.c:1546
 msgid "Change Password"
 msgstr "Vaihda salasanaa"
 
@@ -4506,14 +4538,14 @@ msgstr "Käyttäjä %s (%s%s%s%s%s) haluaa luvan sinulta."
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:184
 #: src/protocols/msn/notification.c:948 src/protocols/msn/notification.c:1269
 #: src/protocols/msn/notification.c:1435 src/protocols/oscar/oscar.c:2620
-#: src/protocols/oscar/oscar.c:5132
+#: src/protocols/oscar/oscar.c:5134
 msgid "Authorize"
 msgstr "Salli"
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/presence.c:185
 #: src/protocols/msn/notification.c:949 src/protocols/msn/notification.c:1271
 #: src/protocols/msn/notification.c:1437 src/protocols/oscar/oscar.c:2622
-#: src/protocols/oscar/oscar.c:5133
+#: src/protocols/oscar/oscar.c:5135
 msgid "Deny"
 msgstr "Kiellä"
 
@@ -4656,7 +4688,7 @@ msgstr " <i>(ircop)</i>"
 msgid " <i>(identified)</i>"
 msgstr "<i>(tunnistettu)</i>"
 
-#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2681
+#: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2684
 msgid "Realname"
 msgstr "Oikea nimi"
 
@@ -4810,56 +4842,56 @@ msgstr "Yhteys katkennut"
 msgid "Server requires SSL for login"
 msgstr "Palvelin vaatiin SSL:n sisäänkirjautumista varten"
 
-#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:276
-#: src/protocols/jabber/auth.c:375 src/protocols/jabber/auth.c:387
+#: src/protocols/jabber/auth.c:59 src/protocols/jabber/auth.c:281
+#: src/protocols/jabber/auth.c:380 src/protocols/jabber/auth.c:392
 msgid "Invalid response from server"
 msgstr "Kelvoton vastaus palvelimelta"
 
-#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:139
+#: src/protocols/jabber/auth.c:86 src/protocols/jabber/auth.c:143
 msgid "Server does not use any supported authentication method"
 msgstr "Palvelin ei käytä mitään tuettuista tunnistautumismenetelmistä"
 
-#: src/protocols/jabber/auth.c:296
+#: src/protocols/jabber/auth.c:301
 msgid "Invalid challenge from server"
 msgstr "Virheellinen tunnistushaaste palvelimelta"
 
 # XXX
-#: src/protocols/jabber/auth.c:390
+#: src/protocols/jabber/auth.c:395
 msgid "Bad Protocol"
 msgstr "Epäkelpo protokolla"
 
-#: src/protocols/jabber/auth.c:393
+#: src/protocols/jabber/auth.c:398
 msgid "Encryption Required"
 msgstr "Vaatii salauksen"
 
 # XXX edit of similar string
-#: src/protocols/jabber/auth.c:396
+#: src/protocols/jabber/auth.c:401
 msgid "Invalid authzid"
 msgstr "Epäkelpo authzid"
 
-#: src/protocols/jabber/auth.c:399
+#: src/protocols/jabber/auth.c:404
 msgid "Invalid Mechanism"
 msgstr "Epäkelpo mekanismi"
 
-#: src/protocols/jabber/auth.c:401
+#: src/protocols/jabber/auth.c:406
 msgid "Invalid Realm"
 msgstr "Epäkelpo \"Realm\""
 
-#: src/protocols/jabber/auth.c:404
+#: src/protocols/jabber/auth.c:409
 msgid "Mechanism Too Weak"
 msgstr "Mekanismi liian heikko"
 
-#: src/protocols/jabber/auth.c:407 src/protocols/jabber/jabber.c:158
+#: src/protocols/jabber/auth.c:412 src/protocols/jabber/jabber.c:158
 #: src/protocols/jabber/jabber.c:866 src/protocols/jabber/jabber.c:916
-#: src/protocols/oscar/oscar.c:5540
+#: src/protocols/oscar/oscar.c:5542
 msgid "Not Authorized"
 msgstr "Ei valtuuksia"
 
-#: src/protocols/jabber/auth.c:410
+#: src/protocols/jabber/auth.c:415
 msgid "Temporary Authentication Failure"
 msgstr "Väliaikainen todennusvirhe"
 
-#: src/protocols/jabber/auth.c:412
+#: src/protocols/jabber/auth.c:417
 msgid "Authentication Failure"
 msgstr "Todennus epäonnistui"
 
@@ -4876,7 +4908,7 @@ msgid "Given Name"
 msgstr "Etunimi"
 
 #: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:625
-#: src/protocols/jabber/jabber.c:598 src/protocols/yahoo/yahoo.c:2675
+#: src/protocols/jabber/jabber.c:598 src/protocols/yahoo/yahoo.c:2678
 msgid "Nickname"
 msgstr "Kutsumanimi"
 
@@ -4913,7 +4945,7 @@ msgid "Telephone"
 msgstr "Puhelin"
 
 #: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:699
-#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2669
+#: src/protocols/jabber/buddy.c:707 src/protocols/yahoo/yahoo.c:2672
 msgid "Email"
 msgstr "Sähköposti"
 
@@ -4934,7 +4966,7 @@ msgid "Role"
 msgstr "Asema"
 
 #: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:628
-#: src/protocols/oscar/oscar.c:3986
+#: src/protocols/oscar/oscar.c:3988
 msgid "Birthday"
 msgstr "Syntymäpäivä"
 
@@ -4969,7 +5001,7 @@ msgid "Middle Name"
 msgstr "Muut etunimet"
 
 #: src/protocols/jabber/buddy.c:633 src/protocols/jabber/jabber.c:613
-#: src/protocols/oscar/oscar.c:4003 src/protocols/oscar/oscar.c:4019
+#: src/protocols/oscar/oscar.c:4005 src/protocols/oscar/oscar.c:4021
 msgid "Address"
 msgstr "Osoite"
 
@@ -5159,18 +5191,18 @@ msgstr "Datavirta(stream) -virhe"
 #: src/protocols/msn/msn.c:734 src/protocols/msn/msn.c:766
 #: src/protocols/msn/msn.c:774 src/protocols/msn/msn.c:807
 #: src/protocols/msn/msn.c:815 src/protocols/msn/msn.c:829
-#: src/protocols/msn/msn.c:838 src/protocols/msn/msn.c:852
-#: src/protocols/msn/msn.c:876 src/protocols/msn/msn.c:926
-#: src/protocols/msn/msn.c:964 src/protocols/msn/msn.c:1062
-#: src/protocols/msn/msn.c:1094 src/protocols/msn/msn.c:1115
-#: src/protocols/msn/msn.c:1126 src/protocols/msn/msn.c:1137
-#: src/protocols/msn/msn.c:1161 src/protocols/msn/msn.c:1173
-#: src/protocols/msn/msn.c:1243 src/protocols/msn/notification.c:179
-#: src/protocols/msn/notification.c:207 src/protocols/msn/notification.c:1668
-#: src/protocols/msn/notification.c:1688 src/protocols/trepia/trepia.c:248
-#: src/protocols/trepia/trepia.c:749 src/protocols/trepia/trepia.c:1033
-#: src/protocols/trepia/trepia.c:1077 src/protocols/trepia/trepia.c:1176
-#: src/protocols/trepia/trepia.c:1232
+#: src/protocols/msn/msn.c:838 src/protocols/msn/msn.c:853
+#: src/protocols/msn/msn.c:863 src/protocols/msn/msn.c:885
+#: src/protocols/msn/msn.c:935 src/protocols/msn/msn.c:973
+#: src/protocols/msn/msn.c:1071 src/protocols/msn/msn.c:1103
+#: src/protocols/msn/msn.c:1124 src/protocols/msn/msn.c:1135
+#: src/protocols/msn/msn.c:1146 src/protocols/msn/msn.c:1170
+#: src/protocols/msn/msn.c:1182 src/protocols/msn/msn.c:1252
+#: src/protocols/msn/notification.c:179 src/protocols/msn/notification.c:207
+#: src/protocols/msn/notification.c:1668 src/protocols/msn/notification.c:1688
+#: src/protocols/trepia/trepia.c:248 src/protocols/trepia/trepia.c:749
+#: src/protocols/trepia/trepia.c:1033 src/protocols/trepia/trepia.c:1077
+#: src/protocols/trepia/trepia.c:1176 src/protocols/trepia/trepia.c:1232
 msgid "Write error"
 msgstr "Virhe kirjoituksessa"
 
@@ -5226,14 +5258,14 @@ msgid "E-Mail"
 msgstr "Sähköposti"
 
 #. First Name
-#: src/protocols/jabber/jabber.c:603 src/protocols/oscar/oscar.c:3957
+#: src/protocols/jabber/jabber.c:603 src/protocols/oscar/oscar.c:3959
 #: src/protocols/trepia/trepia.c:267
 msgid "First Name"
 msgstr "Etunimi"
 
 #. State
-#: src/protocols/jabber/jabber.c:623 src/protocols/oscar/oscar.c:4009
-#: src/protocols/oscar/oscar.c:4025 src/protocols/trepia/trepia.c:335
+#: src/protocols/jabber/jabber.c:623 src/protocols/oscar/oscar.c:4011
+#: src/protocols/oscar/oscar.c:4027 src/protocols/trepia/trepia.c:335
 #: src/protocols/trepia/trepia.c:439
 msgid "State"
 msgstr "Lääni"
@@ -5286,7 +5318,7 @@ msgstr "Pidennetty poissaolo"
 
 #: src/protocols/jabber/jabber.c:930 src/protocols/jabber/jutil.c:107
 #: src/protocols/jabber/presence.c:89 src/protocols/oscar/oscar.c:2838
-#: src/protocols/oscar/oscar.c:4589 src/protocols/oscar/oscar.c:6134
+#: src/protocols/oscar/oscar.c:4591 src/protocols/oscar/oscar.c:6136
 msgid "Do Not Disturb"
 msgstr "Älä häiritse"
 
@@ -5817,80 +5849,80 @@ msgstr ""
 "MSN-näyttönimen tulee olla muodossa \"user@server.com\". Ehkäpä tarkoitit %"
 "s@hotmail.com. Muutoksia kielletyt-listalle ei tehty."
 
-#: src/protocols/msn/msn.c:1267 src/protocols/yahoo/yahoo.c:2582
+#: src/protocols/msn/msn.c:1276 src/protocols/yahoo/yahoo.c:2582
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Virhe haettaessa profiilia</b></body></html>"
 
 #. Age
-#: src/protocols/msn/msn.c:1335 src/protocols/oscar/oscar.c:3991
+#: src/protocols/msn/msn.c:1344 src/protocols/oscar/oscar.c:3993
 #: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:413
-#: src/protocols/yahoo/yahoo.c:2693
+#: src/protocols/yahoo/yahoo.c:2696
 msgid "Age"
 msgstr "Ikä"
 
 #. Gender
-#: src/protocols/msn/msn.c:1342 src/protocols/oscar/oscar.c:3977
+#: src/protocols/msn/msn.c:1351 src/protocols/oscar/oscar.c:3979
 #: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:421
-#: src/protocols/yahoo/yahoo.c:2705
+#: src/protocols/yahoo/yahoo.c:2708
 msgid "Gender"
 msgstr "Sukupuoli"
 
 # NOTE actual string used by msn itself; also "Siviili sääty" (2 words) there
-#: src/protocols/msn/msn.c:1350 src/protocols/yahoo/yahoo.c:2699
+#: src/protocols/msn/msn.c:1359 src/protocols/yahoo/yahoo.c:2702
 msgid "Marital Status"
 msgstr "Siviilisääty"
 
 # NOTE actual string used by msn itself
-#: src/protocols/msn/msn.c:1357 src/protocols/yahoo/yahoo.c:2687
+#: src/protocols/msn/msn.c:1366 src/protocols/yahoo/yahoo.c:2690
 msgid "Location"
 msgstr "Paikka"
 
 # src/menus.c:311
-#: src/protocols/msn/msn.c:1365 src/protocols/yahoo/yahoo.c:2711
+#: src/protocols/msn/msn.c:1374 src/protocols/yahoo/yahoo.c:2714
 msgid "Occupation"
 msgstr "Ammatti"
 
 # NOTE actual string used by msn itself, lit. "Self description"
-#: src/protocols/msn/msn.c:1382 src/protocols/msn/msn.c:1388
-#: src/protocols/msn/msn.c:1395 src/protocols/msn/msn.c:1402
-#: src/protocols/msn/msn.c:1409
+#: src/protocols/msn/msn.c:1391 src/protocols/msn/msn.c:1397
+#: src/protocols/msn/msn.c:1404 src/protocols/msn/msn.c:1411
+#: src/protocols/msn/msn.c:1418
 msgid "A Little About Me"
 msgstr "Oma kuvaus"
 
 # NOTE actual string used by msn itself
-#: src/protocols/msn/msn.c:1418 src/protocols/msn/msn.c:1431
-#: src/protocols/msn/msn.c:1438
+#: src/protocols/msn/msn.c:1427 src/protocols/msn/msn.c:1440
+#: src/protocols/msn/msn.c:1447
 msgid "Favorite Things"
 msgstr "Lempiasiat"
 
 # NOTE actual string used by msn itself
-#: src/protocols/msn/msn.c:1447 src/protocols/msn/msn.c:1453
-#: src/protocols/msn/msn.c:1460
+#: src/protocols/msn/msn.c:1456 src/protocols/msn/msn.c:1462
+#: src/protocols/msn/msn.c:1469
 msgid "Hobbies and Interests"
 msgstr "Harrastukset"
 
 # NOTE actual string used by msn itself
-#: src/protocols/msn/msn.c:1469 src/protocols/msn/msn.c:1475
-#: src/protocols/yahoo/yahoo.c:2755
+#: src/protocols/msn/msn.c:1478 src/protocols/msn/msn.c:1484
+#: src/protocols/yahoo/yahoo.c:2758
 msgid "Favorite Quote"
 msgstr "Lempisanonta"
 
-#: src/protocols/msn/msn.c:1483 src/protocols/yahoo/yahoo.c:2799
+#: src/protocols/msn/msn.c:1492 src/protocols/yahoo/yahoo.c:2802
 msgid "Last Updated"
 msgstr "Edellinen päivitys"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1494 src/protocols/trepia/trepia.c:289
+#: src/protocols/msn/msn.c:1503 src/protocols/trepia/trepia.c:289
 #: src/protocols/trepia/trepia.c:457
 msgid "Homepage"
 msgstr "Kotisivu"
 
-#: src/protocols/msn/msn.c:1516 src/protocols/yahoo/yahoo.c:2817
+#: src/protocols/msn/msn.c:1525 src/protocols/yahoo/yahoo.c:2820
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "%s:n käyttäjätiedot eivät ole saatavilla"
 
-#: src/protocols/msn/msn.c:1518 src/protocols/yahoo/yahoo.c:2819
+#: src/protocols/msn/msn.c:1527 src/protocols/yahoo/yahoo.c:2822
 msgid "The user's profile is empty."
 msgstr "Käyttäjän profiili on tyhjä."
 
@@ -5904,15 +5936,15 @@ msgstr "Käyttäjän profiili on tyhjä."
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1616 src/protocols/msn/msn.c:1618
+#: src/protocols/msn/msn.c:1625 src/protocols/msn/msn.c:1627
 msgid "MSN Protocol Plugin"
 msgstr "MSN-protokollaliitännäinen"
 
-#: src/protocols/msn/msn.c:1635 src/protocols/trepia/trepia.c:1340
+#: src/protocols/msn/msn.c:1644 src/protocols/trepia/trepia.c:1340
 msgid "Login server"
 msgstr "Sisäänkirjautumispalvelin"
 
-#: src/protocols/msn/msn.c:1645
+#: src/protocols/msn/msn.c:1654
 msgid "Use HTTP Method"
 msgstr "Käytä HTTP-menetelmää"
 
@@ -6081,7 +6113,7 @@ msgstr ""
 msgid "%s requested a PING"
 msgstr "%s pyysi PING-sanoman"
 
-#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5203
+#: src/protocols/napster/napster.c:543 src/protocols/oscar/oscar.c:5205
 #: src/protocols/toc/toc.c:1259
 msgid "Join what group:"
 msgstr "Mihin ryhmään liitytään:"
@@ -6315,7 +6347,7 @@ msgstr "Gaim ei saanut kelvollista AIM:n sisäänkirjautumis-hash:iä."
 msgid "Gaim was unable to get a valid login hash."
 msgstr "Gaim ei saanut kelvollista sisäänkirjautumis-hash:iä."
 
-#: src/protocols/oscar/oscar.c:1912 src/protocols/oscar/oscar.c:5641
+#: src/protocols/oscar/oscar.c:1912 src/protocols/oscar/oscar.c:5643
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Suora pikaviesti %s:n kanssa muodostettu"
@@ -6340,7 +6372,7 @@ msgstr ""
 "yksityisyysriskinä."
 
 # NOTE source: gftt
-#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:6010
+#: src/protocols/oscar/oscar.c:2418 src/protocols/oscar/oscar.c:6012
 msgid "Connect"
 msgstr "Yhdistä"
 
@@ -6372,8 +6404,8 @@ msgstr "Pyydä valtuutusta"
 #: src/protocols/oscar/oscar.c:2525 src/protocols/oscar/oscar.c:2527
 #: src/protocols/oscar/oscar.c:2534 src/protocols/oscar/oscar.c:2610
 #: src/protocols/oscar/oscar.c:2630 src/protocols/oscar/oscar.c:2986
-#: src/protocols/oscar/oscar.c:3042 src/protocols/oscar/oscar.c:5124
-#: src/protocols/oscar/oscar.c:5170
+#: src/protocols/oscar/oscar.c:3043 src/protocols/oscar/oscar.c:5126
+#: src/protocols/oscar/oscar.c:5172
 msgid "No reason given."
 msgstr "Syytä ei annettu."
 
@@ -6390,7 +6422,7 @@ msgstr ""
 "Käyttäjä %u haluaa lisätä sinut tuttavalistalleen seuraavasta syystä:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2618 src/protocols/oscar/oscar.c:5130
+#: src/protocols/oscar/oscar.c:2618 src/protocols/oscar/oscar.c:5132
 msgid "Authorization Request"
 msgstr "Valtuutuspyyntö"
 
@@ -6516,19 +6548,19 @@ msgstr[0] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 msgstr[1] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 
 # NOTE: source: gnomeicu
-#: src/protocols/oscar/oscar.c:2836 src/protocols/oscar/oscar.c:4598
-#: src/protocols/oscar/oscar.c:6137
+#: src/protocols/oscar/oscar.c:2836 src/protocols/oscar/oscar.c:4600
+#: src/protocols/oscar/oscar.c:6139
 msgid "Free For Chat"
 msgstr "Vapaana keskusteluun"
 
-#: src/protocols/oscar/oscar.c:2840 src/protocols/oscar/oscar.c:4592
-#: src/protocols/oscar/oscar.c:6135
+#: src/protocols/oscar/oscar.c:2840 src/protocols/oscar/oscar.c:4594
+#: src/protocols/oscar/oscar.c:6137
 msgid "Not Available"
 msgstr "Ei tavoittevissa"
 
 # NOTE: source: gnomeicu
-#: src/protocols/oscar/oscar.c:2842 src/protocols/oscar/oscar.c:4595
-#: src/protocols/oscar/oscar.c:6136
+#: src/protocols/oscar/oscar.c:2842 src/protocols/oscar/oscar.c:4597
+#: src/protocols/oscar/oscar.c:6138
 msgid "Occupied"
 msgstr "Varattu"
 
@@ -6552,119 +6584,119 @@ msgstr "SNAC antoi virheen: %s\n"
 msgid "Your message to %s did not get sent:"
 msgstr "Viestiäsi %s:lle ei lähetetty:"
 
-#: src/protocols/oscar/oscar.c:3040
+#: src/protocols/oscar/oscar.c:3041
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "%s:n käyttäjätiedot eivät ole saatavilla"
 
-#: src/protocols/oscar/oscar.c:3078
+#: src/protocols/oscar/oscar.c:3080
 msgid "Voice"
 msgstr "Ääni"
 
-#: src/protocols/oscar/oscar.c:3081
+#: src/protocols/oscar/oscar.c:3083
 msgid "AIM Direct IM"
 msgstr "AIM-suora pikaviesti"
 
-#: src/protocols/oscar/oscar.c:3087 src/protocols/oscar/oscar.c:6236
+#: src/protocols/oscar/oscar.c:3089 src/protocols/oscar/oscar.c:6238
 msgid "Get File"
 msgstr "Vastaanota tiedosto"
 
-#: src/protocols/oscar/oscar.c:3090 src/protocols/oscar/oscar.c:6228
+#: src/protocols/oscar/oscar.c:3092 src/protocols/oscar/oscar.c:6230
 msgid "Send File"
 msgstr "Lähetä tiedosto"
 
-#: src/protocols/oscar/oscar.c:3094
+#: src/protocols/oscar/oscar.c:3096
 msgid "Games"
 msgstr "Pelit"
 
-#: src/protocols/oscar/oscar.c:3097
+#: src/protocols/oscar/oscar.c:3099
 msgid "Add-Ins"
 msgstr "Lisäykset"
 
-#: src/protocols/oscar/oscar.c:3100
+#: src/protocols/oscar/oscar.c:3102
 msgid "Send Buddy List"
 msgstr "Lähetä tuttavalista"
 
-#: src/protocols/oscar/oscar.c:3103
+#: src/protocols/oscar/oscar.c:3105
 msgid "ICQ Direct Connect"
 msgstr "ICQ suorayhteys"
 
-#: src/protocols/oscar/oscar.c:3106
+#: src/protocols/oscar/oscar.c:3108
 msgid "AP User"
 msgstr "AP-käyttäjä"
 
-#: src/protocols/oscar/oscar.c:3109
+#: src/protocols/oscar/oscar.c:3111
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:3112
+#: src/protocols/oscar/oscar.c:3114
 msgid "Nihilist"
 msgstr "Nihilistinen"
 
-#: src/protocols/oscar/oscar.c:3115
+#: src/protocols/oscar/oscar.c:3117
 msgid "ICQ Server Relay"
 msgstr "ICQ-palvelimen välitys"
 
 # XXX edit of similar string
-#: src/protocols/oscar/oscar.c:3118
+#: src/protocols/oscar/oscar.c:3120
 msgid "Old ICQ UTF8"
 msgstr "Vanha ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3121
+#: src/protocols/oscar/oscar.c:3123
 msgid "Trillian Encryption"
 msgstr "Trillian-salaus"
 
-#: src/protocols/oscar/oscar.c:3124
+#: src/protocols/oscar/oscar.c:3126
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3127
+#: src/protocols/oscar/oscar.c:3129
 msgid "Hiptop"
 msgstr "Hiptop"
 
-#: src/protocols/oscar/oscar.c:3130
+#: src/protocols/oscar/oscar.c:3132
 msgid "Security Enabled"
 msgstr "Turvatoimet käytössä"
 
-#: src/protocols/oscar/oscar.c:3159
+#: src/protocols/oscar/oscar.c:3161
 #, c-format
 msgid "Username: <b>%s</b><br>\n"
 msgstr "Käyttäjänimi: <b>%s</b><br>\n"
 
 # NOTE source: 0.59.8/0.60
-#: src/protocols/oscar/oscar.c:3160
+#: src/protocols/oscar/oscar.c:3162
 #, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
 msgstr "Varoitustaso: <b>%d%%</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3163
+#: src/protocols/oscar/oscar.c:3165
 #, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "Kirjautuneena: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3167
+#: src/protocols/oscar/oscar.c:3169
 #, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "Rekisteröitynyt: <b>%s</b><br>\n"
 
-#: src/protocols/oscar/oscar.c:3172
+#: src/protocols/oscar/oscar.c:3174
 #, c-format
 msgid "Idle: <b>%s</b>"
 msgstr "Jouten: <b>%s</b>"
 
-#: src/protocols/oscar/oscar.c:3175
+#: src/protocols/oscar/oscar.c:3177
 msgid "Idle: <b>Active</b>"
 msgstr "Jouten: <b>Aktiivinen</b>"
 
-#: src/protocols/oscar/oscar.c:3214
+#: src/protocols/oscar/oscar.c:3216
 msgid "Your AIM connection may be lost."
 msgstr "AIM-yhteytesi saattaa olla katkennut."
 
-#: src/protocols/oscar/oscar.c:3608
+#: src/protocols/oscar/oscar.c:3610
 msgid "Rate limiting error."
 msgstr "Taajuusrajoitus virhe"
 
-#: src/protocols/oscar/oscar.c:3609
+#: src/protocols/oscar/oscar.c:3611
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -6673,119 +6705,119 @@ msgstr ""
 "sekuntia ja yritä uudelleen."
 
 # NOTE 0.59.8 (+ "koska")
-#: src/protocols/oscar/oscar.c:3670
+#: src/protocols/oscar/oscar.c:3672
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
 msgstr ""
 "Yhteytesi on katkennut koska olet kirjautunut sisään toisesta paikasta."
 
-#: src/protocols/oscar/oscar.c:3672
+#: src/protocols/oscar/oscar.c:3674
 msgid "You have been signed off for an unknown reason."
 msgstr "Yhteytesi on katkaistu tuntemattomasta syystä."
 
-#: src/protocols/oscar/oscar.c:3703
+#: src/protocols/oscar/oscar.c:3705
 msgid "Finalizing connection"
 msgstr "Viimeistellään yhteyttä"
 
-#: src/protocols/oscar/oscar.c:3963 src/protocols/oscar/oscar.c:3969
+#: src/protocols/oscar/oscar.c:3965 src/protocols/oscar/oscar.c:3971
 msgid "Email Address"
 msgstr "Sähköpostiosoite"
 
-#: src/protocols/oscar/oscar.c:3974
+#: src/protocols/oscar/oscar.c:3976
 msgid "Mobile Phone"
 msgstr "Matkapuhelin"
 
-#: src/protocols/oscar/oscar.c:3977 src/protocols/trepia/trepia.c:281
+#: src/protocols/oscar/oscar.c:3979 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:422
 msgid "Female"
 msgstr "Nainen"
 
-#: src/protocols/oscar/oscar.c:3977 src/protocols/trepia/trepia.c:280
+#: src/protocols/oscar/oscar.c:3979 src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:422
 msgid "Male"
 msgstr "Mies"
 
-#: src/protocols/oscar/oscar.c:3994
+#: src/protocols/oscar/oscar.c:3996
 msgid "Personal Web Page"
 msgstr "Henkilökohtainen kotisivu"
 
-#: src/protocols/oscar/oscar.c:3997
+#: src/protocols/oscar/oscar.c:3999
 msgid "Additional Information"
 msgstr "Lisätiedot"
 
-#: src/protocols/oscar/oscar.c:4001
+#: src/protocols/oscar/oscar.c:4003
 msgid "Home Address"
 msgstr "Kotiosoite"
 
-#: src/protocols/oscar/oscar.c:4012 src/protocols/oscar/oscar.c:4028
+#: src/protocols/oscar/oscar.c:4014 src/protocols/oscar/oscar.c:4030
 msgid "Zip Code"
 msgstr "Postinumero"
 
-#: src/protocols/oscar/oscar.c:4017
+#: src/protocols/oscar/oscar.c:4019
 msgid "Work Address"
 msgstr "Työosoite"
 
-#: src/protocols/oscar/oscar.c:4033
+#: src/protocols/oscar/oscar.c:4035
 msgid "Work Information"
 msgstr "Työtiedot"
 
 # NOTE: source: gnomeicu
-#: src/protocols/oscar/oscar.c:4035
+#: src/protocols/oscar/oscar.c:4037
 msgid "Company"
 msgstr "Yritys"
 
 # NOTE: source: gnomeicu
-#: src/protocols/oscar/oscar.c:4038
+#: src/protocols/oscar/oscar.c:4040
 msgid "Division"
 msgstr "Osasto"
 
 # XXX
-#: src/protocols/oscar/oscar.c:4041
+#: src/protocols/oscar/oscar.c:4043
 msgid "Position"
 msgstr "Paikka"
 
-#: src/protocols/oscar/oscar.c:4044
+#: src/protocols/oscar/oscar.c:4046
 msgid "Web Page"
 msgstr "Kotisivu"
 
-#: src/protocols/oscar/oscar.c:4050
+#: src/protocols/oscar/oscar.c:4052
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "%s:n ICQ-tiedot"
 
-#: src/protocols/oscar/oscar.c:4100
+#: src/protocols/oscar/oscar.c:4102
 msgid "Pop-Up Message"
 msgstr "Ponnahdusviesti"
 
-#: src/protocols/oscar/oscar.c:4121
+#: src/protocols/oscar/oscar.c:4123
 #, c-format
 msgid "The following screennames are associated with %s"
 msgstr "Seuraavat näyttönimet on assosioitu %s kanssa"
 
-#: src/protocols/oscar/oscar.c:4125
+#: src/protocols/oscar/oscar.c:4127
 msgid "Search Results"
 msgstr "Hakutulokset"
 
-#: src/protocols/oscar/oscar.c:4142
+#: src/protocols/oscar/oscar.c:4144
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Ei hakutuloksia sähköpostiosoitteelle %s"
 
-#: src/protocols/oscar/oscar.c:4163
+#: src/protocols/oscar/oscar.c:4165
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Sinun tulisi saada sähköpostiviesti %s:n varmistusta varten."
 
-#: src/protocols/oscar/oscar.c:4165
+#: src/protocols/oscar/oscar.c:4167
 msgid "Account Confirmation Requested"
 msgstr "Tilin varmistusta pyydetty"
 
-#: src/protocols/oscar/oscar.c:4193
+#: src/protocols/oscar/oscar.c:4195
 msgid "Error Changing Account Info"
 msgstr "Virhe muutettaessa käyttäjätilin tietoja"
 
-#: src/protocols/oscar/oscar.c:4196
+#: src/protocols/oscar/oscar.c:4198
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6794,7 +6826,7 @@ msgstr ""
 "Virhe 0x%04x: Näyttönimeä ei voi muotoilla koska pyydetty näyttönimi eroaa "
 "alkuperäisestä."
 
-#: src/protocols/oscar/oscar.c:4199
+#: src/protocols/oscar/oscar.c:4201
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6803,7 +6835,7 @@ msgstr ""
 "Virhe 0x%04x: Näyttönimeä ei voi muotoilla koska pyydetty näyttönimi päättyy "
 "välilyöntiin."
 
-#: src/protocols/oscar/oscar.c:4202
+#: src/protocols/oscar/oscar.c:4204
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -6812,7 +6844,7 @@ msgstr ""
 "Virhe 0x%04x: Näyttönimeä ei voi muotoilla koska pyydetty näyttönimi on "
 "liian pitkä."
 
-#: src/protocols/oscar/oscar.c:4205
+#: src/protocols/oscar/oscar.c:4207
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -6821,7 +6853,7 @@ msgstr ""
 "Virhe 0x04x: Sähköpostiosoitetta ei voida muuttaa koska tälle näyttönimelle "
 "on jo käsittelemätön muutospyyntö."
 
-#: src/protocols/oscar/oscar.c:4208
+#: src/protocols/oscar/oscar.c:4210
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -6830,7 +6862,7 @@ msgstr ""
 "Virhe 0x%04x: Sähköpostiosoitetta ei voida muuttaa koska annettu osoite on "
 "assosioitu liian moneen näyttönimeen."
 
-#: src/protocols/oscar/oscar.c:4211
+#: src/protocols/oscar/oscar.c:4213
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -6839,12 +6871,12 @@ msgstr ""
 "Virhe 0x%04x: Sähköpostiosoitetta ei voida muuttaa koska annettu osoite on "
 "virheellinen."
 
-#: src/protocols/oscar/oscar.c:4214
+#: src/protocols/oscar/oscar.c:4216
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Virhe 0x%04x: Tuntematon virhe."
 
-#: src/protocols/oscar/oscar.c:4224
+#: src/protocols/oscar/oscar.c:4226
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -6853,20 +6885,20 @@ msgstr ""
 "Näyttönimesi on tällä hetkellä muotoiltu seuraavasti:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4225 src/protocols/oscar/oscar.c:4232
+#: src/protocols/oscar/oscar.c:4227 src/protocols/oscar/oscar.c:4234
 msgid "Account Info"
 msgstr "Tilin tiedot"
 
-#: src/protocols/oscar/oscar.c:4230
+#: src/protocols/oscar/oscar.c:4232
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "%s:n sähköpostiosoite on %s"
 
-#: src/protocols/oscar/oscar.c:4462
+#: src/protocols/oscar/oscar.c:4464
 msgid "Unable to set AIM profile."
 msgstr "AIM-profiilia ei saatu asetettua."
 
-#: src/protocols/oscar/oscar.c:4463
+#: src/protocols/oscar/oscar.c:4465
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -6876,7 +6908,7 @@ msgstr ""
 "suoritettua loppuun. Profiilia ei asetettu. Yritä asettaa se kun "
 "kirjautuminen on suoritettu."
 
-#: src/protocols/oscar/oscar.c:4490
+#: src/protocols/oscar/oscar.c:4492
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -6889,15 +6921,15 @@ msgstr[0] ""
 msgstr[1] ""
 "Maksimi profiilin koko %d tavua ylitetty. Gaim on lyhentänyt sen puolestasi."
 
-#: src/protocols/oscar/oscar.c:4495
+#: src/protocols/oscar/oscar.c:4497
 msgid "Profile too long."
 msgstr "Profiili on liian pitkä"
 
-#: src/protocols/oscar/oscar.c:4512
+#: src/protocols/oscar/oscar.c:4514
 msgid "Unable to set AIM away message."
 msgstr "AIM-poissaoloviestin asettaminen epäonnistui."
 
-#: src/protocols/oscar/oscar.c:4513
+#: src/protocols/oscar/oscar.c:4515
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -6907,7 +6939,7 @@ msgstr ""
 "sisäänkirjautumisen päättymistä. Pysyt edelleen nykyisessä tilassa; yritä "
 "asettaa viesti kun kirjautumisprosessi on päättynyt."
 
-#: src/protocols/oscar/oscar.c:4553
+#: src/protocols/oscar/oscar.c:4555
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -6921,15 +6953,15 @@ msgstr[1] ""
 "Maksimi profiilin koko %d tavua ylitetty. Gaim on lyhentänyt sen puolestasi."
 
 # XXX
-#: src/protocols/oscar/oscar.c:4558
+#: src/protocols/oscar/oscar.c:4560
 msgid "Away message too long."
 msgstr "Poissaoloviesti on liian pitkä."
 
-#: src/protocols/oscar/oscar.c:4772
+#: src/protocols/oscar/oscar.c:4774
 msgid "Unable To Retrieve Buddy List"
 msgstr "Tuttavalistan nouto ei onnistunut"
 
-#: src/protocols/oscar/oscar.c:4773
+#: src/protocols/oscar/oscar.c:4775
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -6938,12 +6970,12 @@ msgstr ""
 "Gaim epäonnistui hakiessaan tuttavalistaa AIM-pavelimelta. Tuttavalistasi ei "
 "ole kadonnut, se tulee luultavasti saataville muutamassa tunnissa."
 
-#: src/protocols/oscar/oscar.c:4865 src/protocols/oscar/oscar.c:4866
-#: src/protocols/oscar/oscar.c:4871
+#: src/protocols/oscar/oscar.c:4867 src/protocols/oscar/oscar.c:4868
+#: src/protocols/oscar/oscar.c:4873
 msgid "Orphans"
 msgstr "Orvot"
 
-#: src/protocols/oscar/oscar.c:5037
+#: src/protocols/oscar/oscar.c:5039
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -6953,15 +6985,15 @@ msgstr ""
 "hyvä ja poista joku ja yritä uudelleen."
 
 # NOTE: source: balsa
-#: src/protocols/oscar/oscar.c:5037 src/protocols/oscar/oscar.c:5050
+#: src/protocols/oscar/oscar.c:5039 src/protocols/oscar/oscar.c:5052
 msgid "(no name)"
 msgstr "(nimetön)"
 
-#: src/protocols/oscar/oscar.c:5038 src/protocols/oscar/oscar.c:5051
+#: src/protocols/oscar/oscar.c:5040 src/protocols/oscar/oscar.c:5053
 msgid "Unable To Add"
 msgstr "Lisääminen epäonnistui"
 
-#: src/protocols/oscar/oscar.c:5050
+#: src/protocols/oscar/oscar.c:5052
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -6971,7 +7003,7 @@ msgstr ""
 "Ei voitu lisätä tuttavaa %s tuntemattomasta syystä. Yleisin syy tälle on se "
 "että listasi maksimituttavamäärä on ylittynyt."
 
-#: src/protocols/oscar/oscar.c:5085
+#: src/protocols/oscar/oscar.c:5087
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -6981,11 +7013,11 @@ msgstr ""
 "Haluatko lisätä heidät omalle listallesi?"
 
 # XXX
-#: src/protocols/oscar/oscar.c:5091
+#: src/protocols/oscar/oscar.c:5093
 msgid "Authorization Given"
 msgstr "Valtuutus annettu"
 
-#: src/protocols/oscar/oscar.c:5124
+#: src/protocols/oscar/oscar.c:5126
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -6995,17 +7027,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:5166
+#: src/protocols/oscar/oscar.c:5168
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "Käyttäjä %s on hyväksynyt pyyntösi lisätä hänet tuttavalistallesi."
 
-#: src/protocols/oscar/oscar.c:5167
+#: src/protocols/oscar/oscar.c:5169
 msgid "Authorization Granted"
 msgstr "Valtuutus hyväksytty"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:5170
+#: src/protocols/oscar/oscar.c:5172
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -7016,56 +7048,56 @@ msgstr ""
 "syystä:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5171
+#: src/protocols/oscar/oscar.c:5173
 msgid "Authorization Denied"
 msgstr "Valtuutus evätty"
 
-#: src/protocols/oscar/oscar.c:5208 src/protocols/toc/toc.c:1264
+#: src/protocols/oscar/oscar.c:5210 src/protocols/toc/toc.c:1264
 msgid "Exchange:"
 msgstr "Vaihto:"
 
-#: src/protocols/oscar/oscar.c:5445
+#: src/protocols/oscar/oscar.c:5447
 msgid "<b>Status:</b> "
 msgstr "<b>Tila:</b> "
 
-#: src/protocols/oscar/oscar.c:5454
+#: src/protocols/oscar/oscar.c:5456
 msgid "<b>Logged In:</b> "
 msgstr "<b>Kirjautuneena sisään:</b> "
 
-#: src/protocols/oscar/oscar.c:5466
+#: src/protocols/oscar/oscar.c:5468
 msgid "<b>IP Address:</b> "
 msgstr "<b>IP-osoite:</b> "
 
-#: src/protocols/oscar/oscar.c:5474
+#: src/protocols/oscar/oscar.c:5476
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Kyvyt:</b> "
 
-#: src/protocols/oscar/oscar.c:5481
+#: src/protocols/oscar/oscar.c:5483
 msgid "<b>Available:</b> "
 msgstr "<b>Tavoitettavissa:</b> "
 
-#: src/protocols/oscar/oscar.c:5499
+#: src/protocols/oscar/oscar.c:5501
 msgid "<b>Away Message:</b> "
 msgstr "<b>Poissaoloviesti:</b> "
 
-#: src/protocols/oscar/oscar.c:5508
+#: src/protocols/oscar/oscar.c:5510
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Tila:</b> Ei valtuutettu"
 
-#: src/protocols/oscar/oscar.c:5542 src/protocols/yahoo/yahoo.c:2030
+#: src/protocols/oscar/oscar.c:5544 src/protocols/yahoo/yahoo.c:2030
 msgid "Offline"
 msgstr "Poissa linjoilta"
 
-#: src/protocols/oscar/oscar.c:5990
+#: src/protocols/oscar/oscar.c:5992
 msgid "Unable to open Direct IM"
 msgstr "Ei voitu avata suoraa pikaviesti-yhteyttä"
 
-#: src/protocols/oscar/oscar.c:6003
+#: src/protocols/oscar/oscar.c:6005
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Olet päättänyt avata suoran pikaviestiyhteyden %s:n kanssa."
 
-#: src/protocols/oscar/oscar.c:6006
+#: src/protocols/oscar/oscar.c:6008
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -7073,53 +7105,53 @@ msgstr ""
 "Koska tämä paljastaa IP-osoitteesi se voidaan ajatella yksityisyysriskinä. "
 "Haluatko jatkaa? "
 
-#: src/protocols/oscar/oscar.c:6181
+#: src/protocols/oscar/oscar.c:6183
 msgid "Buddy Comment:"
 msgstr "Kommentti"
 
-#: src/protocols/oscar/oscar.c:6197
+#: src/protocols/oscar/oscar.c:6199
 msgid "Edit Buddy Comment"
 msgstr "Muokkaa kommenttia"
 
-#: src/protocols/oscar/oscar.c:6205
+#: src/protocols/oscar/oscar.c:6207
 msgid "Get Status Msg"
 msgstr "Hae tilaviesti"
 
-#: src/protocols/oscar/oscar.c:6220
+#: src/protocols/oscar/oscar.c:6222
 msgid "Direct IM"
 msgstr "Suora pikaviesti"
 
-#: src/protocols/oscar/oscar.c:6249
+#: src/protocols/oscar/oscar.c:6251
 msgid "Re-request Authorization"
 msgstr "Pyydä valtuutus uudelleen"
 
-#: src/protocols/oscar/oscar.c:6270
+#: src/protocols/oscar/oscar.c:6272
 msgid "The new formatting is invalid."
 msgstr "Uusi muotoilu on virheellinen."
 
-#: src/protocols/oscar/oscar.c:6271
+#: src/protocols/oscar/oscar.c:6273
 msgid "Screenname formatting can change only capitalization and whitespace."
 msgstr ""
 "Näyttönimen muotoilu voi vaikuttaa ainoastaan alkukirjaimeen sekä "
 "välilyönteihin."
 
-#: src/protocols/oscar/oscar.c:6277
+#: src/protocols/oscar/oscar.c:6279
 msgid "New screenname formatting:"
 msgstr "Uusi näyttönimen muotoilu:"
 
-#: src/protocols/oscar/oscar.c:6326
+#: src/protocols/oscar/oscar.c:6328
 msgid "Change Address To:"
 msgstr "Vaihda osoite:"
 
-#: src/protocols/oscar/oscar.c:6370
+#: src/protocols/oscar/oscar.c:6372
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>Et odota valtuutusta</i>"
 
-#: src/protocols/oscar/oscar.c:6373
+#: src/protocols/oscar/oscar.c:6375
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Odotat valtuutusta seuraavilta tuttavilta"
 
-#: src/protocols/oscar/oscar.c:6374
+#: src/protocols/oscar/oscar.c:6376
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -7128,64 +7160,64 @@ msgstr ""
 "nappia heihin ja valitsemalla \"Pyydä valtuutus uudelleen\"."
 
 # NOTE 0.59.8 <- TODO double-check
-#: src/protocols/oscar/oscar.c:6388
+#: src/protocols/oscar/oscar.c:6390
 msgid "Find Buddy by E-mail"
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
 # NOTE 0.59.8 <- TODO double-check
-#: src/protocols/oscar/oscar.c:6389
+#: src/protocols/oscar/oscar.c:6391
 msgid "Search for a buddy by e-mail address"
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
-#: src/protocols/oscar/oscar.c:6390
+#: src/protocols/oscar/oscar.c:6392
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Syötä etsimäsi tuttavan sähköpostiosoite."
 
-#: src/protocols/oscar/oscar.c:6393
+#: src/protocols/oscar/oscar.c:6395
 msgid "Search"
 msgstr "Etsi"
 
-#: src/protocols/oscar/oscar.c:6407
+#: src/protocols/oscar/oscar.c:6409
 msgid "Available Message:"
 msgstr "Paikallaoloviesti:"
 
-#: src/protocols/oscar/oscar.c:6408
+#: src/protocols/oscar/oscar.c:6410
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Olen työskentelemässä ja tahdon häiriöitä -- laita viestiä!"
 
-#: src/protocols/oscar/oscar.c:6486
+#: src/protocols/oscar/oscar.c:6488
 msgid "Set Available Message"
 msgstr "Uusi paikallaoloviesti"
 
-#: src/protocols/oscar/oscar.c:6500
+#: src/protocols/oscar/oscar.c:6502
 msgid "Change Password (URL)"
 msgstr "Vaihda salasanaa (URL)"
 
-#: src/protocols/oscar/oscar.c:6508
+#: src/protocols/oscar/oscar.c:6510
 msgid "Configure IM Forwarding (URL)"
 msgstr "Aseta pikaviestien edelleenlähetys (URL)"
 
-#: src/protocols/oscar/oscar.c:6519
+#: src/protocols/oscar/oscar.c:6521
 msgid "Format Screenname"
 msgstr "Muotoile näyttönimi:"
 
-#: src/protocols/oscar/oscar.c:6525
+#: src/protocols/oscar/oscar.c:6527
 msgid "Confirm Account"
 msgstr "Vahvista tili"
 
-#: src/protocols/oscar/oscar.c:6531
+#: src/protocols/oscar/oscar.c:6533
 msgid "Display Current Registered Address"
 msgstr "Näytä tämänhetkinen rekisteröity osoite"
 
-#: src/protocols/oscar/oscar.c:6537
+#: src/protocols/oscar/oscar.c:6539
 msgid "Change Current Registered Address"
 msgstr "Muuta tämänhetkistä rekisteröityä osoitetta"
 
-#: src/protocols/oscar/oscar.c:6546
+#: src/protocols/oscar/oscar.c:6548
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Näytä tuttavat jotka odottavat valtuutusta"
 
-#: src/protocols/oscar/oscar.c:6554
+#: src/protocols/oscar/oscar.c:6556
 msgid "Search for Buddy by Email"
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
@@ -7199,15 +7231,15 @@ msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6675 src/protocols/oscar/oscar.c:6677
+#: src/protocols/oscar/oscar.c:6677 src/protocols/oscar/oscar.c:6679
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ-protokollaliitännäinen"
 
-#: src/protocols/oscar/oscar.c:6694
+#: src/protocols/oscar/oscar.c:6696
 msgid "Auth host"
 msgstr "Kirjautumispalvelin"
 
-#: src/protocols/oscar/oscar.c:6699
+#: src/protocols/oscar/oscar.c:6701
 msgid "Auth port"
 msgstr "portti"
 
@@ -7472,7 +7504,7 @@ msgstr "Yahoo"
 #. I'm From
 #: src/protocols/trepia/trepia.c:327
 msgid "I'm From"
-msgstr ""
+msgstr "Olen kotoisin"
 
 #. Call the dialog.
 #: src/protocols/trepia/trepia.c:344
@@ -7655,7 +7687,7 @@ msgstr ""
 "<b>Tällä hetkellä profiileja, jotka on merkitty sisältämään aikuisviihdettä, "
 "ei tueta</b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2600 src/protocols/yahoo/yahoo.c:2620
+#: src/protocols/yahoo/yahoo.c:2600 src/protocols/yahoo/yahoo.c:2623
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
@@ -7663,44 +7695,44 @@ msgstr ""
 "Jos haluat katsoa tätä profiilia, sinun tulee seurata tätä linkkiä "
 "selaimessasi<br>"
 
-#: src/protocols/yahoo/yahoo.c:2619
+#: src/protocols/yahoo/yahoo.c:2622
 msgid ""
 "<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
 msgstr ""
 "<b>Ei-englanninkieliset profiilit eivät ole tuettuja tällä hetkellä.</"
 "b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo.c:2664
+#: src/protocols/yahoo/yahoo.c:2667
 msgid "Yahoo! ID"
 msgstr "Yahoo! ID"
 
 # NOTE from msn
-#: src/protocols/yahoo/yahoo.c:2724 src/protocols/yahoo/yahoo.c:2728
-#: src/protocols/yahoo/yahoo.c:2732
+#: src/protocols/yahoo/yahoo.c:2727 src/protocols/yahoo/yahoo.c:2731
+#: src/protocols/yahoo/yahoo.c:2735
 msgid "Hobbies"
 msgstr "Harrastukset"
 
-#: src/protocols/yahoo/yahoo.c:2743 src/protocols/yahoo/yahoo.c:2747
+#: src/protocols/yahoo/yahoo.c:2746 src/protocols/yahoo/yahoo.c:2750
 msgid "Latest News"
 msgstr "Uutiset"
 
-#: src/protocols/yahoo/yahoo.c:2765
+#: src/protocols/yahoo/yahoo.c:2768
 msgid "Home Page"
 msgstr "Kotisivu"
 
-#: src/protocols/yahoo/yahoo.c:2779
+#: src/protocols/yahoo/yahoo.c:2782
 msgid "Cool Link 1"
 msgstr "Linkki 1"
 
-#: src/protocols/yahoo/yahoo.c:2784
+#: src/protocols/yahoo/yahoo.c:2787
 msgid "Cool Link 2"
 msgstr "Linkki 2"
 
-#: src/protocols/yahoo/yahoo.c:2787
+#: src/protocols/yahoo/yahoo.c:2790
 msgid "Cool Link 3"
 msgstr "Linkki 3"
 
-#: src/protocols/yahoo/yahoo.c:2793
+#: src/protocols/yahoo/yahoo.c:2796
 msgid "Member Since"
 msgstr "Rekisteröitynyt"
 
@@ -7714,17 +7746,17 @@ msgstr "Rekisteröitynyt"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/yahoo/yahoo.c:2958 src/protocols/yahoo/yahoo.c:2960
+#: src/protocols/yahoo/yahoo.c:2961 src/protocols/yahoo/yahoo.c:2963
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo-protokollaliitännäinen"
 
 # XXX dropped "Pager" from the translation, it's not needed in the context
-#: src/protocols/yahoo/yahoo.c:2977
+#: src/protocols/yahoo/yahoo.c:2980
 msgid "Pager host"
 msgstr "Isäntä"
 
 # XXX dropped "Pager" from the translation, it's not needed in the context
-#: src/protocols/yahoo/yahoo.c:2982
+#: src/protocols/yahoo/yahoo.c:2985
 msgid "Pager port"
 msgstr "Portti"
 
@@ -7945,13 +7977,35 @@ msgstr[1] "minuuttia"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Virhe avattaessa yhteyttä.\n"
 
-#: src/win32/win32dep.c:387
+#: src/win32/win32dep.c:254
+msgid "Moving Gaim Settings.."
+msgstr "Siirretään Gaimin asetuksia..."
+
+#: src/win32/win32dep.c:257
+msgid "Moving Gaim user settings to: "
+msgstr "Siirretään Gaimin asetuksia:"
+
+#: src/win32/win32dep.c:259
 msgid "Notification"
 msgstr "Ilmoitus"
 
-#: src/win32/win32dep.c:388
-msgid "Moving Gaim user settings directory to:"
-msgstr "Gaimin käyttäjäasetushakemistoa siirretään:"
+#~ msgid "System Logs"
+#~ msgstr "Järjestelmälokit"
+
+#~ msgid "Log when buddies _sign on/sign off"
+#~ msgstr "Kirjaa lokiin tuttavien kirjautumiset _sisään/ulos"
+
+#~ msgid "Log when buddies become _idle/un-idle"
+#~ msgstr "Kirjaa lokiin tuttavien siirtymiset _jouten-/paikallaoleviksi"
+
+#~ msgid "Log when buddies go away/come _back"
+#~ msgstr "Kirjaa lokiin tuttavien poistumiset/_palaamiset"
+
+#~ msgid "Log your _own signons/idleness/awayness"
+#~ msgstr "Kirjaa lokiin _omat sisäänkirjautumiset/joutenolot/poissaolot"
+
+#~ msgid "I_ndividual log file for each buddy's signons"
+#~ msgstr "O_ma lokitiedosto joka tuttavan sisäänkirjautumisille"
 
 #~ msgid "Log Conversation"
 #~ msgstr "Kirjaa keskustelu lokiin"
