@@ -463,6 +463,12 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 	prefix = gaim_gtk_get_cmd_prefix();
 
+	if (!gaim_account_is_connected(account))
+		return;
+
+	if (gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
+		return;
+
 	if(gaim_prefs_get_bool("/gaim/gtk/conversations/enable_commands")) {
 		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
 		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
@@ -528,9 +534,6 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		g_free(cmd);
 	}
 
-
-	if (!gaim_account_is_connected(account))
-		return;
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
