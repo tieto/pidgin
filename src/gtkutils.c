@@ -232,31 +232,29 @@ gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 	button = gtk_button_new();
 
 	if (style == GAIM_BUTTON_HORIZONTAL) {
-			bbox = gtk_hbox_new(FALSE, 5);
-			ibox = gtk_hbox_new(FALSE, 0);
-			lbox = gtk_hbox_new(FALSE, 0);
-	}
-	else {
-			bbox = gtk_vbox_new(FALSE, 5);
-			ibox = gtk_vbox_new(FALSE, 0);
-			lbox = gtk_vbox_new(FALSE, 0);
+		bbox = gtk_hbox_new(FALSE, 0);
+		ibox = gtk_hbox_new(FALSE, 0);
+		lbox = gtk_hbox_new(FALSE, 0);
+	} else {
+		bbox = gtk_vbox_new(FALSE, 0);
+		ibox = gtk_vbox_new(FALSE, 0);
+		lbox = gtk_vbox_new(FALSE, 0);
 	}
 
-	gtk_container_add (GTK_CONTAINER(button), bbox);
-
-	gtk_box_pack_start_defaults(GTK_BOX(bbox), ibox);
-	gtk_box_pack_start_defaults(GTK_BOX(bbox), lbox);
+	gtk_container_add(GTK_CONTAINER(button), bbox);
 
 	if (icon) {
+		gtk_box_pack_start_defaults(GTK_BOX(bbox), ibox);
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
-		gtk_box_pack_end(GTK_BOX(ibox), image, FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(ibox), image, TRUE, TRUE, 0);
 	}
 
 	if (text) {
+		gtk_box_pack_start_defaults(GTK_BOX(bbox), lbox);
 		label = gtk_label_new(NULL);
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
-		gtk_box_pack_start(GTK_BOX(lbox), label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(lbox), label, TRUE, TRUE, 0);
 		gaim_set_accessible_label (button, label);
 	}
 
