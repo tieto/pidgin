@@ -546,6 +546,20 @@ msn_p2p_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSwitchBoard *swboard = servconn->data;
 	gboolean session_ended = FALSE;
 
+#if 0
+	FILE *fp;
+	size_t len;
+	char *buf;
+
+	buf = msn_message_to_string(msg, &len);
+	/* Windows doesn't like Unix paths */
+	fp = fopen("/tmp/msn-msg", "ab");
+	fwrite(buf, 1, len, fp);
+	fclose(fp);
+
+	g_free(buf);
+#endif
+
 	if (swboard->slp_session == NULL)
 		swboard->slp_session = msn_slp_session_new(swboard, FALSE);
 

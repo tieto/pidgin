@@ -128,7 +128,8 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (swboard->chat != NULL)
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->chat), user, NULL);
-	else {
+	else
+	{
 		const char *username;
 		GaimConversation *conv;
 		GaimBuddy *b;
@@ -141,22 +142,28 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		*buf = '\0';
 
-		if (param_count == 2 && atoi(params[1]) == 1) {
-			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_timeout_notice")) {
+		if (param_count == 2 && atoi(params[1]) == 1)
+		{
+			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_timeout_notice"))
+			{
 				g_snprintf(buf, sizeof(buf),
 						   _("The conversation has become inactive "
 							 "and timed out."));
 			}
 		}
-		else {
-			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_close_notice")) {
+		else
+		{
+			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_close_notice"))
+			{
 				g_snprintf(buf, sizeof(buf),
 						   _("%s has closed the conversation window."),
 						   username);
 			}
 		}
 
-		if (*buf != '\0' && (conv = gaim_find_conversation_with_account(user, account)) != NULL) {
+		if (*buf != '\0' &&
+			(conv = gaim_find_conversation_with_account(user, account)) != NULL)
+		{
 			gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM,
 									time(NULL));
 		}
@@ -183,7 +190,8 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 		if (swboard->chat == NULL) {
 			GaimConversation *conv;
 
-			conv = gaim_find_conversation_with_account(msn_user_get_passport(swboard->user), account);
+			conv = gaim_find_conversation_with_account(
+				msn_user_get_passport(swboard->user), account);
 
 			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 												 "MSN Chat");
@@ -638,9 +646,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	char *buf;
 	size_t len;
 	int ret;
-#if 0
 	FILE *fp;
-#endif
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);
@@ -662,8 +668,8 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	ret = msn_servconn_write(swboard->servconn, buf, len);
 
 #if 0
-        /* Windows doesn't like Unix paths */
-	fp = fopen("/tmp/msn-msg", "wb");
+	/* Windows doesn't like Unix paths */
+	fp = fopen("/tmp/msn-msg", "ab");
 	fwrite(buf, 1, len, fp);
 	fclose(fp);
 #endif
