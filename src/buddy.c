@@ -2661,7 +2661,7 @@ void show_buddy_list()
 	GtkWidget *tbox;
 
 	if (blist) {
-		unhide_buddy_list;
+		unhide_buddy_list();
 		return;
 	}
 
