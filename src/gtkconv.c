@@ -3459,6 +3459,8 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 
 	if (gaim_window_get_conversation_count(win) == 1)
 		update_send_as_selection(win);
+
+	gtk_object_sink(GTK_OBJECT(gtkconv->tooltips));
 }
 
 static void
@@ -3624,8 +3626,6 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		g_free(gtkconv->u.chat);
 	}
-
-	g_object_unref(G_OBJECT(gtkconv->tooltips));
 
 	g_free(gtkconv);
 }
