@@ -407,11 +407,14 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *sendertmp = g_strdup_printf("%s",gaim_zephyr_get_sender());
 		GaimConvImFlags flags = 0;
 		if (len > 0) {
+                       gchar* tmpescape;
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
 			g_strchomp(buf);
-			buf2 = zephyr_to_html(buf);
+                       tmpescape = gaim_escape_html(buf);
+			buf2 = zephyr_to_html(tmpescape);
 			g_free(buf);
+                       g_free(tmpescape);
 			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") &&
                             !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
