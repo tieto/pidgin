@@ -57,8 +57,11 @@ struct _GaimGtkXferDialog
 
 	GtkWidget *table;
 
-	GtkWidget *user_desc_label;
-	GtkWidget *user_label;
+	GtkWidget *local_user_desc_label;
+	GtkWidget *local_user_label;
+	GtkWidget *remote_user_desc_label;
+	GtkWidget *remote_user_label;
+	GtkWidget *protocol_label;
 	GtkWidget *filename_label;
 	GtkWidget *status_label;
 	GtkWidget *speed_label;
@@ -211,14 +214,24 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		g_object_unref(pixbuf);
 	}
 
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
-		gtk_label_set_markup(GTK_LABEL(dialog->user_desc_label),
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		gtk_label_set_markup(GTK_LABEL(dialog->local_user_desc_label),
+							 _("<b>Receiving As:</b>"));
+		gtk_label_set_markup(GTK_LABEL(dialog->remote_user_desc_label),
 							 _("<b>Receiving From:</b>"));
-	else
-		gtk_label_set_markup(GTK_LABEL(dialog->user_desc_label),
+	}
+	else {
+		gtk_label_set_markup(GTK_LABEL(dialog->remote_user_desc_label),
 							 _("<b>Sending To:</b>"));
+		gtk_label_set_markup(GTK_LABEL(dialog->local_user_desc_label),
+							 _("<b>Sending As:</b>"));
+	}
 
-	gtk_label_set_text(GTK_LABEL(dialog->user_label), xfer->who);
+	gtk_label_set_text(GTK_LABEL(dialog->local_user_label), 
+								 gaim_account_get_username(xfer->account));
+	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), xfer->who);
+	gtk_label_set_text(GTK_LABEL(dialog->protocol_label), 
+								 gaim_account_get_protocol_name(xfer->account));
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
@@ -536,7 +549,9 @@ make_info_table(GaimGtkXferDialog *dialog)
 
 	} labels[] =
 	{
-		{ &dialog->user_desc_label, &dialog->user_label, NULL },
+		{ &dialog->local_user_desc_label, &dialog->local_user_label, NULL },
+		{ &dialog->remote_user_desc_label, &dialog->remote_user_label, NULL },
+		{ &label, &dialog->protocol_label,		 _("Protocol:") },
 		{ &label, &dialog->filename_label,       _("Filename:") },
 		{ &label, &dialog->status_label,         _("Status:") },
 		{ &label, &dialog->speed_label,          _("Speed:") },
@@ -545,7 +560,7 @@ make_info_table(GaimGtkXferDialog *dialog)
 	};
 
 	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(8, 2, FALSE);
+	dialog->table = table = gtk_table_new(10, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
@@ -574,12 +589,12 @@ make_info_table(GaimGtkXferDialog *dialog)
 
 	/* Setup the progress bar */
 	dialog->progress = gtk_progress_bar_new();
-	gtk_table_attach(GTK_TABLE(table), dialog->progress, 0, 2, 6, 7,
+	gtk_table_attach(GTK_TABLE(table), dialog->progress, 0, 2, 8, 9,
 					 GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(dialog->progress);
 
 	sep = gtk_hseparator_new();
-	gtk_table_attach(GTK_TABLE(table), sep, 0, 2, 7, 8,
+	gtk_table_attach(GTK_TABLE(table), sep, 0, 2, 9, 10,
 					 GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(sep);
 
@@ -829,7 +844,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 					                     ? gaim_xfer_get_filename(xfer)
 							     : lfilename,
 					   COLUMN_SIZE, size_str,
-					   COLUMN_REMAINING, remaining_str,
+					   COLUMN_REMAINING, _("Waiting for transfer to begin"),
 					   COLUMN_DATA, xfer,
 					   -1);
 	g_free(lfilename);
@@ -963,7 +978,7 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 						   -1);
 
 		g_object_unref(pixbuf);
-	}
+	} 
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 

@@ -107,6 +107,59 @@ gaim_xfer_unref(GaimXfer *xfer)
 		gaim_xfer_destroy(xfer);
 }
 
+static void gaim_xfer_show_file_error(const char *filename)
+{
+	char *msg = NULL;
+
+	switch(errno) 
+	{
+		case ENOENT: 
+			msg = g_strdup_printf(_("%s does not exist.\n"), filename);
+			break;
+		case EISDIR: 
+			msg = g_strdup_printf(_("%s is a directory, not a file.\n"), filename);
+			break;
+		case ENOTDIR: 
+			msg = g_strdup_printf( _("A component of %s is not a directory.\n"), filename);
+			break;
+		case ELOOP: 
+			msg = g_strdup_printf( _("Too many symbolic links in path for %s\n"), filename);
+			break;
+		case EACCES: 
+			msg = g_strdup_printf( _("Permission denied accessing %s\n"), filename);
+			break;
+		case ENAMETOOLONG: 
+			msg = g_strdup_printf(_("File name too long: %s\n"), filename);
+			break;
+		case EROFS: 
+			msg = g_strdup_printf(_("Cannot write %s: Read only filesystem\n"), filename);
+			break;
+		case ENOSPC:
+			msg = g_strdup_printf(_("Cannot write %s: No space on filesystem\n"), filename);
+			break;
+		case ETXTBSY:
+			msg = g_strdup_printf(_("Cannot write %s: File is in use\n"), filename);
+			break;
+		case EMFILE:
+			msg = g_strdup_printf(_("Cannot open %s: Gaim has too many files open\n"), filename);
+			break;
+		case ENFILE:
+			msg = g_strdup_printf(_("Cannot open %s: Your user or system has too many files open\n"), filename);
+			break;
+		case ENOMEM:
+			msg = g_strdup_printf(_("Cannot open %s: Not enough memory\n"), filename);
+			break;
+		default:
+			msg = NULL;
+			break;
+	}
+
+	if( msg != NULL ) {
+		gaim_notify_error(NULL, NULL, msg, NULL);
+		g_free(msg);
+	}
+}
+
 static void
 gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 {
@@ -121,9 +174,7 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
-			gaim_notify_error(NULL, NULL,
-							  _("That file does not exist."), NULL);
-
+		  	gaim_xfer_show_file_error(filename);
 			gaim_xfer_request_denied(xfer);
 		}
 	}
@@ -135,19 +186,26 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 
 		gaim_xfer_request_denied(xfer);
 	}
+	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) &&
+			 S_ISDIR(st.st_mode)) {
+		/*
+		 * XXX - Sending a directory should be valid for some protocols.
+		 */
+		gaim_notify_error(NULL, NULL,
+						  _("Cannot send a directory."), NULL);
+
+		gaim_xfer_request_denied(xfer);
+	}
+	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) &&
+			 S_ISDIR(st.st_mode)) {
+				char *msg = g_strdup_printf(
+					_("%s is not a regular file. Cowardly refusing to overwrite it.\n"), filename);
+		gaim_notify_error(NULL, NULL, msg, NULL);
+		g_free(msg);
+		gaim_xfer_request_denied(xfer);
+	}
 	else {
-		if (S_ISDIR(st.st_mode)) {
-			/*
-			 * XXX - Sending a directory should be valid for some protocols.
-			 */
-			gaim_xfer_request_denied(xfer);
-		}
-		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, filename);
-		}
-		else {
-			gaim_xfer_request_accepted(xfer, filename);
-		}
+		gaim_xfer_request_accepted(xfer, filename);
 	}
 
 	gaim_xfer_unref(xfer);
@@ -265,6 +323,7 @@ void
 gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 {
 	GaimXferType type;
+	struct stat st;
 
 	if (xfer == NULL)
 		return;
@@ -278,8 +337,6 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 	}
 
 	if (type == GAIM_XFER_SEND) {
-		struct stat sb;
-
 		/* Check the filename. */
 		if (g_strrstr(filename, "..")) {
 			char *msg;
@@ -294,24 +351,17 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 			return;
 		}
 
-		if (stat(filename, &sb) == -1) {
-			char *msg;
-
-			msg = g_strdup_printf(_("%s was not found.\n"), filename);
-
-			gaim_xfer_error(type, xfer->who, msg);
-
-			g_free(msg);
+		if (stat(filename, &st) == -1) {
+		  	gaim_xfer_show_file_error(filename);
 			gaim_xfer_unref(xfer);
 			return;
 		}
 
 		gaim_xfer_set_local_filename(xfer, filename);
-		gaim_xfer_set_size(xfer, sb.st_size);
+		gaim_xfer_set_size(xfer, st.st_size);
 	}
 	else {
-		/* TODO: Sanity checks and file overwrite checks. */
-
+		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
 		gaim_xfer_set_local_filename(xfer, filename);
 	}
 
@@ -710,16 +760,12 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 {
 	GaimXferType type = gaim_xfer_get_type(xfer);
 
-	/*
-	 * We'll have already tried to open this earlier to make sure we can
-	 * read/write here. Should be safe.
-	 */
 	xfer->dest_fp = fopen(gaim_xfer_get_local_filename(xfer),
 						  type == GAIM_XFER_RECEIVE ? "wb" : "rb");
 
-	/* Just in case, though. */
 	if (xfer->dest_fp == NULL) {
-		gaim_xfer_cancel_local(xfer); /* ? */
+		gaim_xfer_show_file_error(gaim_xfer_get_local_filename(xfer));
+		gaim_xfer_cancel_local(xfer);
 		return;
 	}
 
