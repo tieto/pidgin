@@ -4707,6 +4707,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimPresence *presence = gaim_account_get_presence(account);
 	int warning_level;
 	va_list ap;
 	aim_userinfo_t *info;
@@ -4717,12 +4718,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	warning_level = info->warnlevel/10.0 + 0.5;
 
-	/*
-	 * XXX - Calling this is probably not good.  We just want to set the
-	 * warning level for our account, not tell the user that we were just
-	 * warned.
-	 */
-	gaim_prpl_got_account_warning_level(account, NULL, warning_level);
+	gaim_presence_set_warning_level(presence, warning_level);
 
 	return 1;
 }
