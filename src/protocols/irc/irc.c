@@ -428,6 +428,7 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 	struct irc_conn *irc = gc->proto_data;
 	GaimConversation *convo = gaim_find_chat(gc, id);
 	const char *args[2];
+	char *tmp;
 
 	if (!convo) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "chat send on nonexistent chat\n");
@@ -442,7 +443,10 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 	args[1] = what;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
-	serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, what, time(NULL));
+
+	tmp = gaim_escape_html(what);
+	serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp, time(NULL));
+	g_free(tmp);
 	return 0;
 }
 

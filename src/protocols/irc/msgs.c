@@ -798,8 +798,13 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 		g_free(nick);
 		return;
 	}
-	msg = irc_mirc2html(tmp);
+
+	msg = gaim_escape_html(tmp);
 	g_free(tmp);
+
+	tmp = irc_mirc2html(msg);
+	g_free(msg);
+	msg = tmp;
 	if (notice) {
 		tmp = g_strdup_printf("(notice) %s", msg);
 		g_free(msg);

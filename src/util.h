@@ -266,6 +266,16 @@ char *gaim_markup_strip_html(const char *str);
  */
 char *gaim_markup_linkify(const char *str);
 
+/**
+ * Escapes HTML special characters to be displayed literally.
+ * For example '&' is replaced by "&amp;" and so on
+ *
+ * @param html The string in which to escape any HTML special characters
+ *
+ * @return the text with HTML special characters escaped
+ */
+char *gaim_escape_html(const char *html);
+
 /*@}*/
 
 
