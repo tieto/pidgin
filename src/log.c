@@ -248,7 +248,7 @@ FILE *open_log_file(const char *name, int is_chat)
 			} else {
 				fprintf(fd, "<HTML><HEAD><TITLE>");
 				fprintf(fd, _("IM Sessions with %s"), name);
-				fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+				fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"#ffffff\">\n");
 			}
 		}
 
@@ -264,7 +264,7 @@ FILE *open_log_file(const char *name, int is_chat)
 		} else {
 			fprintf(fd, "<HTML><HEAD><TITLE>");
 			fprintf(fd, _("IM Sessions with %s"), name);
-			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n");
+			fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"#ffffff\">\n");
 		}
 	}
 
