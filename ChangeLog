@@ -9,6 +9,8 @@ version 0.53:
 	* Better selection in HTML widget (Thanks BMiller)
 	* New icons for ICQ (Thanks Kevin Miller)
 	* Editable buddy pounces (Thanks Jason Willis)
+	* Server side buddy lists in Oscar (Thanks KingAnt :-))
+	* Fix for the chatlist plugin
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)
