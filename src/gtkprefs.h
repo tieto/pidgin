@@ -41,13 +41,6 @@ void gaim_gtk_prefs_init(void);
 void gaim_gtk_prefs_show(void);
 
 /**
- * Sets the default away message.
- *
- * @todo This should be moved or renamed or something?
- */
-void set_default_away(GtkWidget *, gpointer);
-
-/**
  * Initializes the default away menu.
  *
  * @todo This should be moved or renamed or something?

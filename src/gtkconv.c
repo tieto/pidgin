@@ -2207,7 +2207,7 @@ gray_stuff_out(GaimConversation *conv)
 				gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
 
-		gtk_widget_set_sensitive(gtkwin->menu.block, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.block, (prpl_info->add_deny != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.add, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
@@ -3293,7 +3293,7 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 										   GAIM_STOCK_INVITE, GAIM_CONV_CHAT);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->invite,
 						 _("Invite a user"), NULL);
-	gtk_box_pack_end(GTK_BOX(parent), gtkchat->invite, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(parent), gtkchat->invite, FALSE, FALSE, 0);
 
 	/* Add button */
 	gtkconv->add = gaim_gtk_change_text(_("Add"), gtkconv->add,
@@ -3611,6 +3611,7 @@ setup_chat_pane(GaimConversation *conv)
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw2), GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
 	gtk_widget_show(sw2);
 
@@ -3643,7 +3644,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	gtkchat->list = list;
 
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
+	gtk_container_add(GTK_CONTAINER(sw2), list);
 
 	/* Setup the user list toolbar. */
 	bbox = gtk_hbox_new(TRUE, 5);

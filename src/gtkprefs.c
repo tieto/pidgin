@@ -97,7 +97,7 @@ static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
 
-void set_default_away(GtkWidget *, gpointer);
+static void set_default_away(GtkWidget *, gpointer);
 
 static void
 update_spin_value(GtkWidget *w, GtkWidget *spin)
@@ -569,7 +569,7 @@ GtkWidget *theme_page() {
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	smiley_theme_store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
@@ -1766,7 +1766,6 @@ static GtkWidget *plugin_page ()
 	rend = gtk_cell_renderer_toggle_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
 
-	
 	col = gtk_tree_view_column_new_with_attributes (_("Load"),
 							rend,
 							"active", 0,
@@ -2169,6 +2168,7 @@ GtkWidget *away_message_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
@@ -2191,15 +2191,17 @@ GtkWidget *away_message_page() {
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW(event_view), FALSE);
 	gtk_widget_show(event_view);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), event_view);
+	gtk_container_add(GTK_CONTAINER(sw), event_view);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	away_text = gtk_imhtml_new(NULL, NULL);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), away_text);
+	gtk_container_add(GTK_CONTAINER(sw), away_text);
+
 	gaim_setup_imhtml(away_text);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
 	g_signal_connect(G_OBJECT(sel), "changed",
