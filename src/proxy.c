@@ -480,7 +480,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			char servname[20];
 #else
 			struct sockaddr_in sin;
-			const socklen_t addrlen = sizeof(sin);
+			const size_t addrlen = sizeof(sin);
 #endif
 #ifdef HAVE_SIGNAL_H
 			signal(SIGHUP, SIG_DFL);
