@@ -36,12 +36,13 @@
  */
 typedef enum
 {
-	GAIM_NOTIFY_MESSAGE = 0, /**< Message notification.         */
-	GAIM_NOTIFY_EMAIL,       /**< Single e-mail notification.   */
-	GAIM_NOTIFY_EMAILS,      /**< Multiple e-mail notification. */
-	GAIM_NOTIFY_FORMATTED,   /**< Formatted text.               */
-	GAIM_NOTIFY_USERINFO,    /**< Formatted userinfo text.      */
-	GAIM_NOTIFY_URI          /**< URI notification or display.  */
+	GAIM_NOTIFY_MESSAGE = 0,   /**< Message notification.         */
+	GAIM_NOTIFY_EMAIL,         /**< Single e-mail notification.   */
+	GAIM_NOTIFY_EMAILS,        /**< Multiple e-mail notification. */
+	GAIM_NOTIFY_FORMATTED,     /**< Formatted text.               */
+	GAIM_NOTIFY_SEARCHRESULTS, /**< Buddy search results.         */
+	GAIM_NOTIFY_USERINFO,      /**< Formatted userinfo text.      */
+	GAIM_NOTIFY_URI            /**< URI notification or display.  */
 
 } GaimNotifyType;
 
@@ -74,6 +75,10 @@ typedef struct
 	void *(*notify_formatted)(const char *title, const char *primary,
 							  const char *secondary, const char *text,
 							  GCallback cb, void *user_data);
+	void *(*notify_searchresults)(GaimConnection *gc, const char *title,
+								  const char *primary, const char *secondary,
+								  const char **results, GCallback cb,
+								  void *user_data);
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
 							  const char *title, const char *primary,
 							  const char *secondary, const char *text,
@@ -174,6 +179,28 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 void *gaim_notify_formatted(void *handle, const char *title,
 							const char *primary, const char *secondary,
 							const char *text, GCallback cb, void *user_data);
+
+/**
+ * Displays results from a buddy search.  This can be, for example,
+ * a window with a list of all found buddies, where you are given the
+ * option of adding buddies to your buddy list.
+ *
+ * @param gc        The GaimConnection handle associated with the information.
+ * @param title     The title of the message.  If this is NULL, the title
+ *                  will be "Search	Results."
+ * @param primary   The main point of the message.
+ * @param secondary The secondary information.
+ * @param results   An array of null-terminated buddy names.
+ * @param cb        The callback to call when the user closes
+ *                  the notification.
+ * @param user_data The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_notify_searchresults(GaimConnection *gc, const char *title,
+								const char *primary, const char *secondary,
+								const char **results, GCallback cb,
+								void *user_data);
 
 /**
  * Displays user information with formatted text, passing information giving

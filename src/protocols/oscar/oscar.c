@@ -5197,7 +5197,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
 	gchar *secondary;
-	GString *text;
+	gchar **screennames;
 	int i, num;
 	va_list ap;
 	char *email, *SNs;
@@ -5208,14 +5208,19 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
+	/* TODO: Need to use ngettext() here */
 	secondary = g_strdup_printf(_("The following screen names are associated with %s"), email);
-	text = g_string_new("");
+
+	screennames = g_malloc((num + 1) * sizeof(gchar *));
 	for (i = 0; i < num; i++)
-		g_string_append_printf(text, "%s<br>", &SNs[i * (MAXSNLEN + 1)]);
-	gaim_notify_formatted(gc, NULL, _("Search Results"), secondary, text->str, NULL, NULL);
+		screennames[i] = g_strdup(&SNs[i * (MAXSNLEN + 1)]);
+	screennames[num] = NULL;
+
+	gaim_notify_searchresults(gc, NULL, NULL, secondary,
+							  (const char **)screennames, NULL, NULL);
 
 	g_free(secondary);
-	g_string_free(text, TRUE);
+	g_strfreev(screennames);
 
 	return 1;
 }

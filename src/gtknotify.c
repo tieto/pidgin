@@ -33,6 +33,7 @@
 #include "gtkstock.h"
 #include "util.h"
 
+#include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtknotify.h"
 #include "gtkutils.h"
@@ -45,6 +46,22 @@ typedef struct
 	GtkWidget *label;
 
 } GaimNotifyMailData;
+
+typedef struct
+{
+	GaimAccount *account;
+	GtkListStore *model;
+	GtkWidget *treeview;
+	GtkWidget *window;
+
+} GaimNotifySearchResultsData;
+
+enum
+{
+	COLUMN_ICON,
+	COLUMN_SCREENNAME,
+	NUM_COLUMNS
+};
 
 static void *gaim_gtk_notify_emails(size_t count, gboolean detailed,
 									const char **subjects,
@@ -71,6 +88,33 @@ static void
 formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 {
 	gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
+}
+
+static void
+searchresults_close_cb(GaimNotifySearchResultsData *data, GdkEvent *event, void *user_data)
+{
+	gaim_notify_close(GAIM_NOTIFY_SEARCHRESULTS, data);
+}
+
+static void
+add_buddy_helper_cb(GtkWidget *widget, GaimNotifySearchResultsData *data)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	gchar *buddy;
+
+	g_return_if_fail(data != NULL);
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(data->treeview));
+
+	if (gtk_tree_selection_get_selected(selection, &model, &iter))
+	{
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+						   COLUMN_SCREENNAME, &buddy, -1);
+		gaim_blist_request_add_buddy(data->account, buddy, NULL, NULL);
+		g_free(buddy);
+	}
 }
 
 static void *
@@ -378,6 +422,140 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 }
 
 static void *
+gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
+							  const char *primary, const char *secondary,
+							  const char **results, GCallback cb,
+							  void *user_data)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *button_area;
+	GtkWidget *label;
+	GtkWidget *close_button;
+	GtkWidget *add_button;
+	GtkWidget *sw;
+	GtkWidget *treeview;
+	GdkPixbuf *icon, *scaled;
+	GaimNotifySearchResultsData *data;
+	GtkListStore *model;
+	GtkCellRenderer *renderer;
+	GtkTreeIter iter;
+	int i;
+	char *label_text;
+
+	data = g_malloc(sizeof(GaimNotifySearchResultsData));
+
+	/* Create the window */
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(window), (title ? title :_("Search Results")));
+	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
+
+	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
+							 G_CALLBACK(searchresults_close_cb), data);
+
+	/* Setup the main vbox */
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+	gtk_widget_show(vbox);
+
+	/* Setup the descriptive label */
+	label_text = g_strdup_printf(
+			"<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
+			(primary ? primary : ""),
+			(primary && secondary ? "\n" : ""),
+			(secondary ? secondary : ""));
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), label_text);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+	g_free(label_text);
+
+	/* Setup the list model */
+	model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+
+	/* Setup the scrolled window containing the treeview */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
+
+	/* Setup the treeview */
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
+	gtk_widget_set_size_request(treeview, 250, 150);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
+								GTK_SELECTION_SINGLE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
+	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_widget_show(treeview);
+
+	/* icon column */
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+					-1, "Icon", renderer,
+					"pixbuf", COLUMN_ICON,
+					NULL);
+
+	/* screenname column */
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+					-1, "Screenname", renderer,
+					"text", COLUMN_SCREENNAME,
+					NULL);
+
+	/* Setup the button area */
+	button_area = gtk_hbutton_box_new();
+	gtk_box_pack_start(GTK_BOX(vbox), button_area, FALSE, FALSE, 0);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_area), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(button_area), 12);
+	gtk_widget_show(button_area);
+
+	/* Add the Add button */
+	add_button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_box_pack_start(GTK_BOX(button_area), add_button, FALSE, FALSE, 0);
+	gtk_widget_show(add_button);
+
+	/* Add the Close button */
+	close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(button_area), close_button, FALSE, FALSE, 0);
+	gtk_widget_show(close_button);
+
+	/* Add the buddies to the tree view */
+	icon = create_prpl_icon(gc->account);
+	scaled = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
+
+	for (i = 0; results[i] != NULL; i++)
+	{
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+						   COLUMN_ICON, scaled,
+						   COLUMN_SCREENNAME, results[i],
+						   -1);
+	}
+
+	data->account = gc->account;
+	data->model = model;
+	data->treeview = treeview;
+	data->window = window;
+
+	/* Connect Signals */
+	g_signal_connect(G_OBJECT(add_button), "clicked",
+					 G_CALLBACK(add_buddy_helper_cb), data);
+	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
+							 G_CALLBACK(searchresults_close_cb), data);
+
+	/* Show the window */
+	gtk_widget_show(window);
+	return data;
+}
+
+static void *
 gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
 						 const char *title, const char *primary,
 						 const char *secondary, const char *text,
@@ -397,6 +575,14 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 		gtk_widget_destroy(data->dialog);
 
 		g_free(data->url);
+		g_free(data);
+	}
+	else if (type == GAIM_NOTIFY_SEARCHRESULTS)
+	{
+		GaimNotifySearchResultsData *data = (GaimNotifySearchResultsData *)ui_handle;
+
+		gtk_widget_destroy(data->window);
+
 		g_free(data);
 	}
 	else
@@ -612,6 +798,7 @@ static GaimNotifyUiOps ops =
 	gaim_gtk_notify_email,
 	gaim_gtk_notify_emails,
 	gaim_gtk_notify_formatted,
+	gaim_gtk_notify_searchresults,
 	gaim_gtk_notify_userinfo,
 	gaim_gtk_notify_uri,
 	gaim_gtk_close_notify

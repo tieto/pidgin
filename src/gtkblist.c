@@ -3186,7 +3186,7 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 {
 	gboolean result;
 	gchar *enteredstring;
-	const gchar *withmarkup;
+	gchar *withmarkup;
 	gchar *nomarkup;
 	const gchar *normalized;
 
@@ -3198,6 +3198,7 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 
 	result = (g_strstr_len(normalized, strlen(normalized), enteredstring) == NULL);
 
+	g_free(withmarkup);
 	g_free(enteredstring);
 	g_free(nomarkup);
 

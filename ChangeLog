@@ -10,6 +10,7 @@ version 2.0.0
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 	* Screenname colors in chats now chosen intelligently from GNOME color
 	  palette
+	* New "find buddy" results dialog (Alex Converse)
 	* Yahoo! has the following new "/" commands:  /join, /buzz
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 	* If Gaim is exited with the buddy list hidden in the docklet, it will

@@ -89,20 +89,28 @@ static gboolean
 status_window_find_savedstatus(GtkTreeIter *iter, const char *title)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(status_window->model);
-	const char *cur;
+	char *cur;
 
 	if (!gtk_tree_model_get_iter_first(model, iter))
 		return FALSE;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
 	if (!strcmp(title, cur))
+	{
+		g_free(cur);
 		return TRUE;
+	}
+	g_free(cur);
 
 	while (gtk_tree_model_iter_next(model, iter))
 	{
 		gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
 		if (!strcmp(title, cur))
+		{
+			g_free(cur);
 			return TRUE;
+		}
+		g_free(cur);
 	}
 
 	return FALSE;
@@ -129,12 +137,13 @@ static void
 status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
-	const char *title;
+	char *title;
 	GaimSavedStatus *status;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
 	status = gaim_savedstatus_find(title);
+	g_free(title);
 	gaim_gtk_status_editor_show(status);
 }
 
@@ -166,7 +175,7 @@ static void
 status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
-	const char *title;
+	char *title;
 	char *title_escaped, *buf;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
@@ -174,7 +183,7 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	title_escaped = gaim_escape_html(title);
 	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title_escaped);
 	free(title_escaped);
-	gaim_request_action(NULL, NULL, buf, NULL, 0, g_strdup(title), 2,
+	gaim_request_action(NULL, NULL, buf, NULL, 0, title, 2,
 						_("Delete"), status_window_delete_confirm_cb,
 						_("Cancel"), g_free);
 	g_free(buf);
@@ -251,11 +260,16 @@ populate_saved_status_list(StatusWindow *dialog)
 static gboolean
 search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
 {
-	const char *haystack;
+	gboolean result;
+	char *haystack;
 
 	gtk_tree_model_get(model, iter, column, &haystack, -1);
 
-	return (gaim_strcasestr(haystack, key) == NULL);
+	result = (gaim_strcasestr(haystack, key) == NULL);
+
+	g_free(haystack);
+
+	return result;
 }
 
 static GtkWidget *
