@@ -514,7 +514,7 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 	}
 
 	if (group)
-		yahoo_add_buddy(yd->sess, yd->active_id, group, name, "");
+		yahoo_add_buddy(yd->sess, yd->active_id, group, normalize(name), "");
 }
 
 static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
