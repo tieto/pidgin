@@ -99,7 +99,7 @@ static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *t
 #define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
 
-enum { 
+enum {
 	TARGET_HTML,
 	TARGET_UTF8_STRING,
 	TARGET_COMPOUND_TEXT,
@@ -1009,9 +1009,9 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 	klass->toggle_format = imhtml_toggle_format;
 	klass->message_send = imhtml_message_send;
-	
+
 	gobject_class->finalize = gtk_imhtml_finalize;
-      	widget_class->drag_motion = gtk_text_view_drag_motion;
+	widget_class->drag_motion = gtk_text_view_drag_motion;
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
