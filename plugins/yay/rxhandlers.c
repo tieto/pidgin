@@ -196,9 +196,11 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 		yahoo_parse_status(sess, pkt);
 		break;
 	case YAHOO_SERVICE_NEWCONTACT:
-		if (yahoo_makeint(pkt->msgtype) == 3)
-			yahoo_parse_message(sess, pkt);
-		else
+		if (yahoo_makeint(pkt->msgtype) == 3) {
+			char **str_array = g_strsplit(pkt->content, ",,", 2);
+			CALLBACK(sess, YAHOO_HANDLE_BUDDYADDED, pkt->nick2, str_array[0], str_array[1]);
+			g_strfreev(str_array);
+		} else
 			yahoo_parse_status(sess, pkt);
 		break;
 	case YAHOO_SERVICE_IDACT:

@@ -153,6 +153,26 @@ static int yahoo_bounce(struct yahoo_session *sess, ...) {
 	return 1;
 }
 
+static int yahoo_buddyadded(struct yahoo_session *sess, ...) {
+	va_list ap;
+	char *id;
+	char *who;
+	char *msg;
+	char buf[2048];
+
+	va_start(ap, sess);
+	id = va_arg(ap, char *);
+	who = va_arg(ap, char *);
+	msg = va_arg(ap, char *);
+	va_end(ap);
+
+	g_snprintf(buf, sizeof(buf), _("%s has made %s their buddy%s%s"), who, id,
+			msg ? ": " : "", msg ? msg : "");
+	do_error_dialog(buf, _("Gaim - Buddy"));
+
+	return 1;
+}
+
 static void des_win(GtkWidget *w, struct yahoo_data *yd) {
 	gtk_widget_destroy(yd->email_win);
 	if (yd->email_win == w)
@@ -344,6 +364,7 @@ static void yahoo_login(struct aim_user *user) {
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_MESSAGE, yahoo_message);
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_BOUNCE, yahoo_bounce);
 	yahoo_add_handler(yd->sess, YAHOO_HANDLE_STATUS, yahoo_status);
+	yahoo_add_handler(yd->sess, YAHOO_HANDLE_BUDDYADDED, yahoo_buddyadded);
 }
 
 static gboolean yahoo_destroy_hash(gpointer key, gpointer val, gpointer data) {
