@@ -9,7 +9,7 @@ bin_PROGRAMS = gaim
 gaim_SOURCES = about.c aim.c away.c buddy.c buddy_chat.c conversation.c \
 	dialogs.c html.c prefs.c proxy.c toc.c sound.c gaim.h \
 	plugins.c network.c server.c browser.c util.c oscar.c gtkhtml.c \
-	idle.c gaimrc.c
+	idle.c gaimrc.c gnome_applet_mgr.c
 endif
 
 
