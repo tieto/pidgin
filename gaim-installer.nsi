@@ -74,8 +74,8 @@ SetDateSave on
   !insertmacro MUI_PAGECOMMAND_WELCOME
   !insertmacro MUI_PAGECOMMAND_LICENSE
   !insertmacro MUI_PAGECOMMAND_COMPONENTS
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
   Page custom ShowGtkInstallDirChooser GtkInstallDirVerify
+  !insertmacro MUI_PAGECOMMAND_DIRECTORY
   !insertmacro MUI_PAGECOMMAND_INSTFILES
   !insertmacro MUI_PAGECOMMAND_FINISH
 
