@@ -2119,8 +2119,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			ret_font = gdk_font_load (tmp); 
 		else {
 			/* For some reason, fontsets must end with a single * as an xlfd */
-			gchar *garbage = tmp;
-			tmp = g_strconcat(garbage, ",*", NULL);
 			ret_font = gdk_fontset_load (tmp); 
 		}
 		/* If the font didn't load, we change some of the xlfds one by one

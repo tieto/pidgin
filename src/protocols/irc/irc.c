@@ -1592,11 +1592,14 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2]) {
-			g_free(what);
-			return -EINVAL;
+			struct conversation *c;
+			c = irc_find_chat(gc, who);
+			g_snprintf(buf, sizeof(buf), _("Topic for %s is %s"), who, c->topic ? c->topic : "(no topic set)");
+			write_to_conv(c, buf, WFLAG_SYSTEM | WFLAG_NOLOG, NULL, time(NULL), -1);
+		} else {
+			g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, word_eol[2]);
+			irc_write(id->fd, buf, strlen(buf));
 		}
-		g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, word_eol[2]);
-		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "NICK")) {
 		if (!*word_eol[2]) {
 			g_free(what);
