@@ -666,7 +666,10 @@ rendezvous_prpl_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "available", _("Available"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "available", _("Available"), FALSE, TRUE, FALSE, "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE, "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
