@@ -3272,9 +3272,9 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
-			hide_login_progress(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
+			hide_login_progress_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
 		} else {
-			hide_login_progress(gc, _("You have been signed off for an unknown reason."));
+			hide_login_progress_error(gc, _("You have been signed off for an unknown reason."));
 		}
 	}
 
