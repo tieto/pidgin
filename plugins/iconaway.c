@@ -14,10 +14,11 @@ extern void applet_destroy_buddy();
 #endif
 
 void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
-	if (imaway)
-		XIconifyWindow(GDK_DISPLAY(),
-				GDK_WINDOW_XWINDOW(imaway->window),
-				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+	if (!gc->away)
+		return;
+	XIconifyWindow(GDK_DISPLAY(),
+			GDK_WINDOW_XWINDOW(imaway->window),
+			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #ifdef USE_APPLET
 	applet_destroy_buddy();
 #else
