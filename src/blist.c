@@ -1402,7 +1402,7 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 				chat_name = g_hash_table_lookup(chat->components,
 												pce->identifier);
 
-				if (chat->account == account &&
+				if (chat->account == account && chat_name != NULL &&
 					name != NULL && !strcmp(chat_name, name)) {
 
 					return chat;
