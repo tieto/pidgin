@@ -56,6 +56,7 @@ Telling the server who's on your permit/deny lists
 Warning users/getting warned
 Chat:
  - whispering (this will never happen)
+ - creating rooms (needed to join empty rooms)
 Getting/setting dir info
 Changing your password
 File Transfer (Get/Send)
