@@ -49,8 +49,6 @@ static GtkWidget *imdialog = NULL; /*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
 static GtkWidget *linkdialog, *exportdialog, *importdialog, *logdialog;
 
-static void accept_callback(GtkWidget *widget, struct file_transfer *t);
-
 struct create_away {
         GtkWidget *window;
         GtkWidget *entry;
@@ -1095,7 +1093,6 @@ void show_set_dir()
 void do_change_password(GtkWidget *widget, struct passwddlg *b)
 {
 	gchar *orig, *new1, *new2;
-	gchar *buf;
 
 	orig = gtk_entry_get_text(GTK_ENTRY(b->original));
 	new1 = gtk_entry_get_text(GTK_ENTRY(b->new1));
@@ -1369,9 +1366,6 @@ void g_show_info_text(char *info)
 	GtkWidget *text;
         GtkWidget *bbox;
         GtkWidget *sw;
-	GdkBitmap *mask;
-	GdkPixmap *face;
-	GtkWidget *face_p;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
 
@@ -1940,7 +1934,7 @@ void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtk_color_selection_get_color (colorsel, color);
 
 	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
-	GTK_IS_EDITABLE(c->entry);
+	/* GTK_IS_EDITABLE(c->entry); huh? */
 
 	text_color.red = ((guint16)(color[0]*65535))>>8;
 	text_color.green = ((guint16)(color[1]*65535))>>8;

@@ -271,7 +271,7 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
 void applet_do_signon(AppletWidget *widget, gpointer data) {
 	show_login();
 	if (general_options & OPT_GEN_REMEMBER_PASS)
-		dologin();
+		dologin(0, 0);
 }
 
 void insert_applet_away() {
@@ -469,7 +469,7 @@ void closeSignonPopup(){
 
 void closeOnlinePopup(){
     set_applet_draw_closed();
-    applet_destroy_buddy();
+    applet_destroy_buddy(0, 0, 0);
 }
 
 

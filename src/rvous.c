@@ -212,7 +212,6 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	struct file_header header;
 	int read_rv;
 	guint32 rcv;
-        char *c;
 	int cont = 1;
 	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL;
 	GtkWidget *button = NULL, *pct = NULL;
@@ -421,7 +420,7 @@ static void send_file_callback(gpointer data, gint source,
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
 
-	sprintf(debug_buff, "Sending %s to %s (%d bytes)\n", fhdr.name,
+	sprintf(debug_buff, "Sending %s to %s (%ld bytes)\n", fhdr.name,
 			ft->user, fhdr.totsize);
 	debug_print(debug_buff);
 
@@ -478,9 +477,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *buf2;
 	int read_rv;
 	struct file_header fhdr;
-	struct sockaddr_in sin;
-	guint32 rcv;
-	int cont;
+	guint32 rcv = 0;
 	char *c;
 	struct stat st;
 	struct tm *fortime;
@@ -590,7 +587,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 			fortime->tm_hour + 1, fortime->tm_min + 1,
 			st.st_size, c);
-	sprintf(debug_buff, "Sending listing.txt (%ld bytes) to %s\n",
+	sprintf(debug_buff, "Sending listing.txt (%d bytes) to %s\n",
 			ntohl(fhdr.size) + 1, ft->user);
 	debug_print(debug_buff);
 

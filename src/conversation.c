@@ -154,7 +154,7 @@ char *get_tag_by_prefix(GtkWidget *entry, const char *prefix)
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 	t = s;
 		
-	if (t = strstr(s, prefix))
+	if ((t = strstr(s, prefix)) != NULL)
 	{
 		for (i = 1; t[i] != '\0'; i++)
 		{
@@ -310,7 +310,7 @@ static int close_callback(GtkWidget *widget, struct conversation *c)
 void set_font_face(GtkWidget *widget, struct conversation *c)
 {
 	char *pre_fontface, *old_font_face;
-	int alloc = 0, length;
+	int alloc = 0;
 
 	if (!(font_options & OPT_FONT_FACE))
 		return;
@@ -330,7 +330,7 @@ void set_font_face(GtkWidget *widget, struct conversation *c)
 		pre_fontface = "<FONT FACE=\"Helvetica\">";
 	}
 
-	if (old_font_face = get_tag_by_prefix(c->entry, "<FONT FACE"))
+	if ((old_font_face = get_tag_by_prefix(c->entry, "<FONT FACE")) != NULL)
 	{	
 		remove_tags(c->entry, old_font_face);
 		remove_tags(c->entry, "</FONT>");

@@ -186,7 +186,6 @@ void serv_get_info(char *name)
 void serv_get_away_msg(char *name)
 {
 #ifndef USE_OSCAR
-	char buf[MSG_LEN];
 	/* HAHA! TOC doesn't have this yet */
 #else
 	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
@@ -319,7 +318,8 @@ void serv_add_buddies(GList *buddies)
 			aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
 			n = 0;
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", buddies->data);
+		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
+				(char *)buddies->data);
 		buddies = buddies->next;
 	}
 	aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
@@ -423,7 +423,7 @@ void serv_set_permit_deny()
 		}
 		while (list) {
 			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&",
-					list->data);
+					(char *)list->data);
 			list = list->next;
 		}
 		aim_bos_changevisibility(gaim_sess, gaim_conn,
@@ -433,7 +433,7 @@ void serv_set_permit_deny()
 		if (list == NULL) return;
 		while (list) {
 			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&",
-					list->data);
+					(char *)list->data);
 			list = list->next;
 		}
 		aim_bos_changevisibility(gaim_sess, gaim_conn,

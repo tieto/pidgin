@@ -350,6 +350,7 @@ int gaim_chat_server_ready(struct aim_session_t *sess,
 	aim_bos_ackrateresp(sess, command->conn);
 	aim_chat_clientready(sess, command->conn);
 	serv_got_joined_chat(id++, aim_chat_getname(command->conn));
+	return 1;
 }
 
 extern void gaim_setup();
@@ -362,8 +363,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	int serviceid;
 	char *ip;
 	char *cookie;
-
-	char buddies[BUF_LONG];
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);

@@ -45,9 +45,11 @@
 #include "pixmaps/speaker.xpm"
 #include "pixmaps/wood.xpm"
 
+/*
 #include "pixmaps/smile_happy.xpm"
 #include "pixmaps/smile_sad.xpm"
 #include "pixmaps/smile_wink.xpm"
+*/
 
 static GtkWidget *joinchat;
 static GtkWidget *entry;

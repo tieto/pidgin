@@ -386,7 +386,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 401 $"
+#define REVISION "gaim:$Revision: 421 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -592,6 +592,8 @@ extern void serv_got_chat_invite(char *, int, char *, char *);
 extern void serv_got_joined_chat(int, char *);
 extern void serv_got_chat_left(int);
 extern void serv_got_chat_in(int, char *, int, char *);
+extern void serv_rvous_accept(char *, char *, char *);
+extern void serv_rvous_cancel(char *, char *, char *);
 
 /* Functions in conversation.c */
 extern void write_to_conv(struct conversation *, char *, int);
@@ -617,6 +619,10 @@ extern void do_small(GtkWidget *, GtkWidget *);
 extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
 extern void do_link(GtkWidget *, GtkWidget *);
+extern int invert_tags(GtkWidget *, char *, char *, int);
+extern void quiet_set(GtkWidget *, int);
+extern int count_tag(GtkWidget *, char *, char *);
+extern void set_font_face(GtkWidget *, struct conversation *);
 
 /* Functions in network.c */
 extern unsigned int *get_address(char *);
@@ -737,6 +743,8 @@ extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
 extern void show_change_passwd();
+extern void do_import(GtkWidget *, void *);
+extern int bud_list_cache_exists();
 
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);

@@ -62,22 +62,26 @@ enum gaim_user_states {
 #define GAIM_GNOME_PENGUIN_CONNECT "gaim/gnome/penguin-connect.png"
 #define GAIM_GNOME_PENGUIN_ONLINE "gaim/gnome/penguin-online.png"
 
-gint init_applet_mgr();
-void applet_do_signon(AppletWidget *, gpointer);
+extern gint init_applet_mgr();
+extern void applet_do_signon(AppletWidget *, gpointer);
+extern void make_buddy();
+extern void cancel_logon();
+extern gint applet_destroy_buddy(GtkWidget *, GdkEvent *, gpointer *);
 
-void setUserState( enum gaim_user_states state );
-enum gaim_user_states getUserState();
+extern void setUserState( enum gaim_user_states state );
+extern enum gaim_user_states getUserState();
 
-void AppletCancelLogon(); /* Used to cancel a logon and reset the applet */ 
+extern void AppletCancelLogon();
 
-void set_applet_draw_open();
-void set_applet_draw_closed();
+extern void set_applet_draw_open();
+extern void set_applet_draw_closed();
 
-void insert_applet_away();
-void remove_applet_away();
+extern void insert_applet_away();
+extern void remove_applet_away();
 
-void update_pixmaps();
-void applet_set_tooltips(char *);
+extern void update_pixmaps();
+extern void applet_set_tooltips(char *);
+extern void dologin(GtkWidget *, GtkWidget *);
 
 #endif /*USE_APPLET*/
 #endif /*_GAIMGNOMEAPPLETMGR_H_*/

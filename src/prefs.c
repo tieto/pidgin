@@ -34,6 +34,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "proxy.h"
+#include "gnome_applet_mgr.h"
 
 struct prefs_data *pd = NULL;
 struct debug_window *dw = NULL;
@@ -211,6 +212,7 @@ manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 	return TRUE;
 }
 
+#ifndef USE_OSCAR
 static int
 connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 {
@@ -226,6 +228,7 @@ connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 	save_prefs();
 	return TRUE;
 }
+#endif
 
 
 
@@ -305,8 +308,6 @@ void build_prefs()
 {
 	GtkWidget *bbox;
 	GtkWidget *vbox;
-	GtkWidget *hbox;
-        GtkWidget *hbox2;
         GtkWidget *idlebox;
         GtkWidget *idleframe;
         GtkWidget *genbox;
@@ -328,6 +329,9 @@ void build_prefs()
 #ifndef USE_OSCAR /* sorry, since we don't control the comm we can't set
 		     the connection */
         GtkWidget *connection_page;
+        GtkWidget *connectopt;
+	GtkWidget *hbox;
+        GtkWidget *hbox2;
 #endif
 #ifdef USE_APPLET
 	GtkWidget *applet_page;
@@ -335,7 +339,6 @@ void build_prefs()
 #endif
         GtkWidget *label;
         GtkWidget *browseropt;
-        GtkWidget *connectopt;
         GtkWidget *idleopt;
 	        
         GList *awy = away_messages;
