@@ -49,6 +49,7 @@ void show_about(GtkWidget *w, void *data)
 	GtkWidget *text;
 	GtkWidget *bbox;
 	GtkWidget *button;
+	GtkTextIter iter;
 	char *str, *labeltext;
 
 	if (about != NULL)
@@ -217,7 +218,9 @@ void show_about(GtkWidget *w, void *data)
 	g_free(str);
 
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
-
+	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+	
 	/* Close Button */
 	bbox = gtk_hbutton_box_new();
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
