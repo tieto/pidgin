@@ -76,6 +76,14 @@ msn_object_new_from_string(const char *str)
 	GET_STRING_TAG(sha1d,    "SHA1D");
 	GET_STRING_TAG(sha1c,    "SHA1C");
 
+	/* If we are missing any of the required elements then discard the object */
+	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
+			|| obj->location == NULL || obj->friendly == NULL
+			|| obj->sha1d == NULL || obj->sha1c == NULL) {
+		msn_object_destroy(obj);
+		obj = NULL;
+	}
+
 	return obj;
 }
 

@@ -285,7 +285,7 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 
 	user->msnobj = obj;
 
-	if (user->list_op & MSN_LIST_FL_OP)
+	if ((obj != NULL) && (user->list_op & MSN_LIST_FL_OP))
 	{
 		/* TODO: I think we need better buddy icon core functions */
 		GaimAccount *account;
