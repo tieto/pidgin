@@ -4509,7 +4509,20 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 			}
 			aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
 			break;
-			default:
+		case 5:
+			GList *g = gc->groups;
+			at  = 0;
+			while (g) {
+			        list = ((struct group *)g->data)->members;
+				while (list) {
+					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
+					list = list->next;
+				}
+				g = g->next;
+			}			
+			aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
+			break;
+		default:
 			break;
 		}
 		signoff_blocked(gc);
