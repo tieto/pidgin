@@ -27,6 +27,15 @@
 #include "stock.h"
 #include "gtkblist.h"
 
+#ifdef _WIN32       
+# include <gdk/gdkwin32.h>
+#else
+# include <unistd.h>
+# include <gdk/gdkx.h>
+#endif
+
+#include <string.h>
+
 enum
 {
 	COLUMN_ICON,
@@ -46,6 +55,8 @@ typedef struct
 	GtkListStore *model;
 
 	GtkTreeViewColumn *screenname_col;
+
+	GtkTreeIter drag_iter;
 
 } AccountsDialog;
 
@@ -71,6 +82,116 @@ __signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
 		gtk_list_store_set(dialog->model, &iter,
 						   COLUMN_ONLINE, gaim_account_is_connected(account),
 						   -1);
+	}
+}
+
+static void
+__drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
+				   GtkSelectionData *data, guint info, guint time,
+				   AccountsDialog *dialog)
+{
+	if (data->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE)) {
+		GtkTreeRowReference *ref;
+		GtkTreePath *source_row;
+		GtkTreeIter iter;
+		GaimAccount *account = NULL;
+		GValue val = {0};
+
+		ref = g_object_get_data(G_OBJECT(ctx), "gtk-tree-view-source-row");
+		source_row = gtk_tree_row_reference_get_path(ref);
+
+		if (source_row == NULL)
+			return;
+
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter,
+								source_row);
+		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model), &iter,
+								 COLUMN_DATA, &val);
+
+		dialog->drag_iter = iter;
+
+		account = g_value_get_pointer(&val);
+
+		gtk_selection_data_set(data, gdk_atom_intern("GAIM_ACCOUNT", FALSE),
+							   8, (void *)&account, sizeof(account));
+
+		gtk_tree_path_free(source_row);
+	}
+}
+
+static void
+__drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
+						guint x, guint y, GtkSelectionData *sd,
+						guint info, guint t, AccountsDialog *dialog)
+{
+	if (sd->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE) && sd->data) {
+		size_t dest_index;
+		GaimAccount *a = NULL;
+		GtkTreePath *path = NULL;
+		GtkTreeViewDropPosition position;
+
+		memcpy(&a, sd->data, sizeof(a));
+
+		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
+											  &path, &position)) {
+
+			GtkTreeIter iter;
+			GaimAccount *account;
+			GValue val = {0};
+
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model), &iter,
+									 COLUMN_DATA, &val);
+
+			account = g_value_get_pointer(&val);
+
+			switch (position) {
+				case GTK_TREE_VIEW_DROP_AFTER:
+				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
+					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
+							   "after\n");
+					gtk_list_store_move_after(dialog->model,
+											  &dialog->drag_iter, &iter);
+					dest_index = g_list_index(gaim_accounts_get_all(),
+											  account) + 1;
+					break;
+
+				case GTK_TREE_VIEW_DROP_BEFORE:
+				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
+					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
+							   "before\n");
+					dest_index = g_list_index(gaim_accounts_get_all(),
+											  account);
+
+					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
+							   "iter = %p\n", &iter);
+					gaim_debug(GAIM_DEBUG_MISC, "gtkaccount",
+							   "account = %s\n",
+							   gaim_account_get_username(account));
+
+					/*
+					 * Somebody figure out why inserting before the first
+					 * account sometimes moves to the end, please :(
+					 */
+					if (dest_index == 0) {
+						gtk_list_store_move_after(dialog->model,
+												  &dialog->drag_iter, &iter);
+						gtk_list_store_swap(dialog->model, &iter,
+											&dialog->drag_iter);
+					}
+					else {
+						gtk_list_store_move_before(dialog->model,
+												   &dialog->drag_iter, &iter);
+					}
+
+					break;
+
+				default:
+					return;
+			}
+
+			gaim_accounts_reorder(a, dest_index);
+		}
 	}
 }
 
@@ -279,6 +400,7 @@ __create_accounts_list(AccountsDialog *dialog)
 {
 	GtkWidget *sw;
 	GtkWidget *treeview;
+	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
 
 	/* Create the scrolled window. */
 	sw = gtk_scrolled_window_new(0, 0);
@@ -298,7 +420,6 @@ __create_accounts_list(AccountsDialog *dialog)
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
-	gtk_tree_view_set_reorderable(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_tree_selection_set_mode(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
 			GTK_SELECTION_MULTIPLE);
@@ -309,6 +430,19 @@ __create_accounts_list(AccountsDialog *dialog)
 	__add_columns(treeview, dialog);
 
 	__populate_accounts_list(dialog);
+
+	/* Setup DND. I wanna be an orc! */
+	gtk_tree_view_enable_model_drag_source(
+			GTK_TREE_VIEW(treeview), GDK_BUTTON1_MASK, gte,
+			2, GDK_ACTION_COPY);
+	gtk_tree_view_enable_model_drag_dest(
+			GTK_TREE_VIEW(treeview), gte, 2,
+			GDK_ACTION_COPY | GDK_ACTION_MOVE);
+
+	g_signal_connect(G_OBJECT(treeview), "drag-data-received",
+					 G_CALLBACK(__drag_data_received_cb), dialog);
+	g_signal_connect(G_OBJECT(treeview), "drag-data-get",
+					 G_CALLBACK(__drag_data_get_cb), dialog);
 
 	return sw;
 }
