@@ -1593,8 +1593,7 @@ void save_prefs()
 					   "Error renaming %s to %s\n", filename_temp, filename);
 		} else {
 			fclose(f);
-			gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
-				   "Unable to create new .gaimrc file.  Preferences not updated.");
+			do_error_dialog(_("Unable to Save Preferences"), _("Gaim was unable to save your preferences.  Please verify that you have enough free space."), GAIM_ERROR);
 		}
 		is_saving_prefs = 0;
 	} else
