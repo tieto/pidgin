@@ -4583,6 +4583,52 @@ void load_perl_script()
 
 #endif /* USE_PERL */
 
+GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *icon)
+{
+	GtkWidget *button, *image,  *bbox;
+
+	button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
+	bbox = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add (GTK_CONTAINER(button), bbox);
+
+	image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(bbox);
+	return button;
+}
+
+GtkWidget *gaim_pixbuf_button_from_stock(char *text, char *icon, GaimButtonStyle style)
+{
+	GtkWidget *button, *image, *label, *bbox;
+	button = gtk_button_new();
+
+	if (style == GAIM_BUTTON_HORIZONTAL)
+			bbox = gtk_hbox_new(FALSE, 5);
+	else
+			bbox = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add (GTK_CONTAINER(button), bbox);
+
+	if (icon) {
+		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
+		gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	}
+	
+	if (text) {
+		label = gtk_label_new(NULL);
+		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
+		gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	}
+
+	gtk_widget_show_all(bbox);
+	return button;
+}
+
 GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonStyle style)
 {
 	GtkWidget *button, *image, *label, *bbox;

@@ -1450,3 +1450,140 @@ GdkPixbuf *gaim_pixbuf(char *subdir, char *iconfile) {
 
 		return pixbuf;
 }
+
+GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+{
+	GtkWidget *menuitem;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *image;
+
+	if (icon == NULL)
+		menuitem = gtk_menu_item_new_with_mnemonic(_(str));
+	else 
+		menuitem = gtk_image_menu_item_new_with_mnemonic(_(str));
+
+	if (menu)
+		gtk_menu_append(GTK_MENU(menu), menuitem);
+
+	if (sf)
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+
+	if (icon != NULL) {
+		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+	}
+
+	if (mod) {
+		label = gtk_label_new(mod);
+		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+		gtk_widget_show(label);
+	}
+/*
+	if (accel_key) {
+		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
+					   accel_mods, GTK_ACCEL_LOCKED);
+	}
+*/
+
+	gtk_widget_show_all(menuitem);
+
+	return menuitem;
+}
+
+GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *menu, const char *str, char *iconname, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+{
+	GtkWidget *menuitem;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *image;
+
+	if (iconname == NULL)
+		menuitem = gtk_menu_item_new_with_mnemonic(_(str));
+	else 
+		menuitem = gtk_image_menu_item_new_with_mnemonic(_(str));
+
+	if (menu)
+		gtk_menu_append(GTK_MENU(menu), menuitem);
+
+	if (sf)
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+
+	if (iconname != NULL) {
+		char *filename;
+
+		filename = g_build_filename (DATADIR, "pixmaps", "gaim", "menus", iconname, NULL);
+		debug_printf("Loading: %s\n", filename);
+		image = gtk_image_new_from_file(filename);
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+		g_free(filename);
+	}
+
+	if (mod) {
+		label = gtk_label_new(mod);
+		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+		gtk_widget_show(label);
+	}
+/*
+	if (accel_key) {
+		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
+					   accel_mods, GTK_ACCEL_LOCKED);
+	}
+*/
+
+	gtk_widget_show_all(menuitem);
+
+	return menuitem;
+}
+
+
+GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xpm, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+{
+	GtkWidget *menuitem;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *pixmap;
+	GdkPixmap *pm;
+	GdkBitmap *mask;
+
+	menuitem = gtk_menu_item_new();
+	if (menu)
+		gtk_menu_append(GTK_MENU(menu), menuitem);
+	if (sf)
+		/* passing 1 is necessary so if we sign off closing the account editor doesn't exit */
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+	gtk_widget_show(menuitem);
+
+	/* Create our container */
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
+
+	/* Create our pixmap and pack it */
+	gtk_widget_realize(menu->parent);
+	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
+	pixmap = gtk_pixmap_new(pm, mask);
+	gtk_widget_show(pixmap);
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(mask);
+	gtk_box_pack_start(GTK_BOX(hbox), pixmap, FALSE, FALSE, 2);
+
+	/* Create our label and pack it */
+	label = gtk_label_new(str);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+	gtk_widget_show(label);
+
+	if (mod) {
+		label = gtk_label_new(mod);
+		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
+		gtk_widget_show(label);
+	}
+/*
+	if (accel_key) {
+		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
+					   accel_mods, GTK_ACCEL_LOCKED);
+	}
+*/
+	return menuitem;
+}
+

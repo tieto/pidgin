@@ -124,6 +124,7 @@ struct conversation {
 	GtkWidget *smiley_dialog;
 	GtkWidget *link_dialog;
 	GtkWidget *log_dialog;
+	GtkSizeGroup *sg;
 	int makesound;
 	char fontface[128];
 	int hasfont;
@@ -457,6 +458,8 @@ extern void load_perl_script();
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonStyle);
+extern GtkWidget *gaim_pixbuf_button_from_stock(char *, char *, GaimButtonStyle);
+extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();
 extern void show_privacy_options();
@@ -506,5 +509,8 @@ extern void play_file(char *);
 /* Fucnctions in util.c */
 extern GtkWidget *gaim_pixmap(char *, char *);
 extern GdkPixbuf *gaim_pixbuf(char *, char *);
+extern GtkWidget *gaim_new_item_with_pixmap(GtkWidget *, const char *, char **, GtkSignalFunc, gpointer, guint, guint, char *);
+extern GtkWidget *gaim_new_item_from_stock(GtkWidget *, const char *, const char *, GtkSignalFunc, gpointer, guint, guint, char *);
+extern GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *, const char *, char *, GtkSignalFunc, gpointer, guint, guint, char *);
 
 #endif /* _UI_H_ */
