@@ -171,6 +171,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	GaimConnection *gc;
 	GString *info;
 	char *str;
+	int idle_days, idle_hours, idle_minutes, idle_seconds;
 
 	if (!irc->whois.nick) {
 		gaim_debug(GAIM_DEBUG_WARNING, "irc", "Unexpected End of WHOIS for %s\n", args[1]);
@@ -205,9 +206,15 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		g_free(irc->whois.channels);
 	}
 	if (irc->whois.idle) {
-		g_string_append_printf(info, _("<b>Idle for:</b> %d days, %02d:%02d:%02d<br>"),
-				       irc->whois.idle / 86400, (irc->whois.idle % 86400) / 3600,
-				       (irc->whois.idle % 3600) / 60, irc->whois.idle % 60);
+		idle_days=irc->whois.idle / 86400;
+		idle_hours=(irc->whois.idle % 86400) / 3600;
+		idle_minutes=(irc->whois.idle % 3600) / 60;
+		idle_seconds=irc->whois.idle % 60;
+		g_string_append_printf(info, ngettext(
+				       "<b>Idle for:</b> %d day, %02d:%02d:%02d<br>",
+				       "<b>Idle for:</b> %d days, %02d:%02d:%02d<br>",
+				       idle_days),
+				       idle_days, idle_hours, idle_minutes, idle_seconds);
 		g_string_append_printf(info, "<b>%s:</b> %s", _("Online since"), ctime(&irc->whois.signon));
 	}
 	if (!strcmp(irc->whois.nick, "Paco-Paco")) {

@@ -53,7 +53,10 @@ src/protocols/icq/timeout.c
 src/protocols/icq/udp.c
 src/protocols/icq/udphandle.c
 src/protocols/icq/util.c
+src/protocols/irc/cmds.c
 src/protocols/irc/irc.c
+src/protocols/irc/msgs.c
+src/protocols/irc/parse.c
 src/protocols/jabber/win32/posix.uname.c
 src/protocols/jabber/expat.c
 src/protocols/jabber/genhash.c
