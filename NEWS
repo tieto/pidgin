@@ -30,6 +30,14 @@
 	every time I say that, something breaks horribly right after we
 	release it.)
 
+	Luke: Okay, so Sean rocks and got Yahoo working again in 12 minutes.
+	Unfortunately, he took out the chat support in doing so. So use
+	conferences for now if you use yahoo. Users begging for file
+	transfer support should thank Tim 'marv' Ringenbach for Yahoo ft,
+	and everyone should be happy to note that 0.75 leaks far less than
+	0.74. Also, a lot of other bug fixes happened that escape my notice
+	right now.
+
 0.74 (11/25/2003):
 	Sean: Christian and Nathan were wrong.
 
