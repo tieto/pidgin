@@ -10,7 +10,9 @@ version 0.71
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
 	* Zepher formatting fixes (Arun A Tharuvai)
-	* Misc bug fix (Nathan Poznick)
+	* Get User Info in MSN and Yahoo now return an error indicating that
+	  the information doesn't exist if the profile is empty (parts by
+	  Nathan Poznick)
 	* Fix sort by idle to behave as it did pre-contact support (David
 	  Smock)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
