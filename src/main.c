@@ -145,23 +145,15 @@ static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null
 static void dologin(GtkWidget *widget, GtkWidget *w)
 {
 	GaimAccount *account;
-	const char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
+	GtkWidget *item;
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
-	if (*username == '\0') {
-		gaim_notify_error(NULL, NULL, _("Please enter your login."), NULL);
-		return;
-	}
+	item = gtk_menu_get_active(GTK_MENU(gtk_option_menu_get_menu(GTK_OPTION_MENU(name))));
+	account = g_object_get_data(G_OBJECT(item), "account");
 
-	/* if there is more than one user of the same name, then fuck 
-	 * them, they just have to use the account editor to sign in 
-	 * the second one */
-
-	account = gaim_accounts_find(username, NULL);
 	if (!account) {
-		account = gaim_account_new(username, GAIM_PROTO_DEFAULT);
-		gaim_account_set_remember_password(account, FALSE);
-		gaim_accounts_add(account);
+		gaim_notify_error(NULL, NULL, _("Please create an account."), NULL);
+		return;
 	}
 
 	gaim_account_set_password(account, (*password != '\0') ? password : NULL);
@@ -202,21 +194,8 @@ static int dologin_named(char *name)
 }
 
 
-static void doenter(GtkWidget *widget, GtkWidget *w)
+static void combo_changed(GtkWidget *menu, GaimAccount *account, gpointer data)
 {
-	gtk_entry_set_text(GTK_ENTRY(pass), "");
-	gtk_editable_select_region(GTK_EDITABLE(GTK_COMBO(name)->entry), 0, 0);
-	gtk_widget_grab_focus(pass);
-}
-
-
-static void combo_changed(GtkWidget *w, GtkWidget *combo)
-{
-	const char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
-	GaimAccount *account;
-
-	account = gaim_accounts_find(txt, NULL);
-
 	if (account && gaim_account_get_remember_password(account)) {
 		gtk_entry_set_text(GTK_ENTRY(pass), account->password);
 	} else {
@@ -224,24 +203,6 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
 	}
 }
 
-
-static GList *combo_user_names()
-{
-	GList *accts = gaim_accounts_get_all();
-	GList *tmp = NULL;
-	GaimAccount *account;
-
-	if (!accts)
-		return g_list_append(NULL, _("<New User>"));
-
-	while (accts) {
-		account = (GaimAccount *)accts->data;
-		tmp = g_list_append(tmp, account->username);
-		accts = accts->next;
-	}
-
-	return tmp;
-}
 
 static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
 {
@@ -262,7 +223,6 @@ void show_login()
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox2;
-	GList *tmp;
 
 	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
 	if (mainwindow) {
@@ -290,25 +250,22 @@ void show_login()
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
 
-	label = gtk_label_new(_("Screen Name:"));
+	/* why isn't there a gtk_label_new_with_markup? */
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Screen Name:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
-	name = gtk_combo_new();
-	tmp = combo_user_names();
-	gtk_combo_set_popdown_strings(GTK_COMBO(name), tmp);
-	g_list_free(tmp);
-	g_signal_connect(G_OBJECT(GTK_COMBO(name)->entry), "activate",
-					 G_CALLBACK(doenter), mainwindow);
-	g_signal_connect(G_OBJECT(GTK_COMBO(name)->entry), "changed",
-					 G_CALLBACK(combo_changed), name);
+	name = gaim_gtk_account_option_menu_new(NULL, TRUE, G_CALLBACK(combo_changed), NULL, NULL);
+
 	gtk_box_pack_start(GTK_BOX(vbox2), name, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
 
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
 
-	label = gtk_label_new(_("Password:"));
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Password:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
@@ -348,13 +305,14 @@ void show_login()
 		GaimAccount *account = gaim_accounts_get_all()->data;
 
 		if (gaim_account_get_remember_password(account)) {
-			combo_changed(NULL, name);
+			combo_changed(NULL, account, NULL);
 			gtk_widget_grab_focus(button);
 		} else {
 			gtk_widget_grab_focus(pass);
 		}
 	} else {
-		gtk_widget_grab_focus(name);
+		gaim_gtk_accounts_window_show();
+		gtk_widget_grab_focus(button);
 	}
 
 	/* And raise the curtain! */
