@@ -1,0 +1,6138 @@
+# translation of he.po to Hebrew
+# translation of gaim.po to Hebrew
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Pavel Bibergal <cyberkm@barak-online.net>, 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: he\n"
+"POT-Creation-Date: 2003-06-04 23:59+0000\n"
+"PO-Revision-Date: 2003-06-05 18:42+0000\n"
+"Last-Translator: Pavel Bibergal <cyberkm@barak-online.net>\n"
+"Language-Team: Hebrew <he@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: KBabel 1.0\n"
+
+#: plugins/docklet/docklet.c:91 src/win32/systray.c:359
+msgid "Auto-login"
+msgstr "כניסה אוטומתית"
+
+#: plugins/docklet/docklet.c:95
+msgid "New Message.."
+msgstr "הודעה חדשה..."
+
+#: plugins/docklet/docklet.c:96
+msgid "Join A Chat..."
+msgstr "הצתרף לשיחה..."
+
+#: plugins/docklet/docklet.c:127
+msgid "New..."
+msgstr "חדש..."
+
+#: plugins/docklet/docklet.c:131 src/protocols/gg/gg.c:71
+#: src/protocols/irc/irc.c:1033 src/protocols/jabber/jabber.c:1181
+#: src/protocols/jabber/jabber.c:3443 src/protocols/jabber/jabber.c:3497
+#: src/protocols/oscar/oscar.c:2822 src/protocols/oscar/oscar.c:4510
+#: src/protocols/oscar/oscar.c:5397 src/protocols/oscar/oscar.c:5727
+#: src/gtkblist.c:1529 src/gtkpounce.c:565 src/gtkprefs.c:1439
+msgid "Away"
+msgstr "רחוק מהמחשב"
+
+#: plugins/docklet/docklet.c:137 src/away.c:534
+msgid "Back"
+msgstr "חזר"
+
+#: plugins/docklet/docklet.c:145
+msgid "Mute Sounds"
+msgstr "השתק צלילים"
+
+#: plugins/docklet/docklet.c:150
+msgid "File Transfers..."
+msgstr "משלוח קבצים..."
+
+#: plugins/docklet/docklet.c:151
+msgid "Accounts..."
+msgstr "חשבונות..."
+
+#: plugins/docklet/docklet.c:152
+msgid "Preferences..."
+msgstr "העדפות..."
+
+#: plugins/docklet/docklet.c:161 src/win32/systray.c:159
+msgid "Signoff"
+msgstr "נתק"
+
+#: plugins/docklet/docklet.c:165
+msgid "Quit"
+msgstr "יציאה"
+
+#: plugins/docklet/docklet.c:462
+msgid "Tray Icon Configuration"
+msgstr "הגדרות סמל מגש המערכת"
+
+#: plugins/docklet/docklet.c:466
+msgid "_Hide new messages until tray icon is clicked"
+msgstr "_הסתר הודעות חדשות עד הלחיצה על סמל מגש המערכת"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/docklet/docklet.c:490
+msgid "System Tray Icon"
+msgstr "סמל מגש המערכת"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/docklet/docklet.c:493
+msgid "Displays an icon for Gaim in the system tray."
+msgstr "הצג סמל של גיים במגש המערכת"
+
+#. *  description
+#: plugins/docklet/docklet.c:495
+msgid ""
+"Interacts with a Notification Area applet (in GNOME or KDE, for example) to "
+"display the current status of Gaim, allow fast access to commonly used "
+"functions, and to toggle display of the buddy list or login window. Also "
+"allows messages to be queued until the icon is clicked, similar to ICQ."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/autorecon.c:85
+msgid "Auto-Reconnect"
+msgstr "התחבר מחדש בצורה אוטומתית"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/autorecon.c:88 plugins/autorecon.c:90
+msgid "When you are kicked offline, this reconnects you."
+msgstr "כאשר מנתקים אותך, מתחבר מחדש עצמאית"
+
+#: plugins/chkmail.c:89 plugins/chkmail.c:112 plugins/chkmail.c:121
+msgid "Mail Server"
+msgstr "שרת הדואר"
+
+#: plugins/chkmail.c:131
+#, c-format
+msgid "%s (%d new/%d total)"
+msgstr ""
+
+#: plugins/chkmail.c:203
+msgid "Check Mail"
+msgstr "בדוק דואר"
+
+#: plugins/chkmail.c:207
+msgid "Check email every X seconds.\n"
+msgstr "בדוק דואר כל מספר שניות. \n"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/events.c:225
+msgid "Event Test"
+msgstr "בדיקת אירוע"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/events.c:228 plugins/events.c:230
+msgid "Test to see that all events are working properly."
+msgstr "בודק שכל האירועים עובדים כמו שצריך"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/filectl.c:203
+msgid "Gaim File Control"
+msgstr "Gaim בקרת קבצים"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/filectl.c:206 plugins/filectl.c:208
+msgid "Allows you to control Gaim by entering commands in a file."
+msgstr "מאפשר לך לשלוט בגיים ע\"י הכנסת פקודות לקובץ"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gaiminc.c:72
+msgid "Gaim Demonstration Plugin"
+msgstr "תוסף הדגמה של גיים"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gaiminc.c:75
+msgid "An example plugin that does stuff - see the description."
+msgstr ""
+
+#. *  description
+#: plugins/gaiminc.c:77
+msgid ""
+"This is a really cool plugin that does a lot of stuff:\n"
+"- It tells you who wrote the program when you log in\n"
+"- It reverses all incoming text\n"
+"- It sends a message to people on your list immediately when they sign on"
+msgstr ""
+
+#: plugins/gtik.c:719
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:731
+msgid "Update Frequency in min"
+msgstr "תדירות העדכון (דקות)"
+
+#: plugins/gtik.c:747
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr ""
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:757
+msgid "Check this box to display only symbols and price:"
+msgstr ""
+
+#: plugins/gtik.c:758
+msgid "Check this box to scroll left to right:"
+msgstr ""
+
+#: plugins/gtik.c:994
+msgid "(No"
+msgstr "(לא"
+
+#: plugins/gtik.c:995
+msgid "Change"
+msgstr "שינוי"
+
+#: plugins/history.c:79
+msgid "History"
+msgstr "היסטוריה"
+
+#: plugins/history.c:81
+msgid "Shows recently logged conversations in new conversations."
+msgstr ""
+
+#: plugins/history.c:82
+msgid ""
+"When a new conversation is opened this plugin will insert the last XXX of "
+"the last conversation into the current conversation."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/iconaway.c:75
+msgid "Iconify on Away"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/iconaway.c:78 plugins/iconaway.c:80
+msgid "Iconifies the away box and the buddy list when you go away."
+msgstr ""
+
+#: plugins/idle.c:86 src/protocols/irc/irc.c:948
+msgid "Idle Time"
+msgstr ""
+
+#: plugins/idle.c:94
+msgid "Set"
+msgstr ""
+
+#: plugins/idle.c:99
+msgid "idle for"
+msgstr ""
+
+#: plugins/idle.c:106 plugins/timestamp.c:86
+msgid "minutes."
+msgstr ""
+
+#: plugins/idle.c:112
+msgid "_Set"
+msgstr ""
+
+#: plugins/idle.c:135
+msgid "I'dle Mak'er"
+msgstr ""
+
+#: plugins/idle.c:137 plugins/idle.c:138
+msgid "Allows you to hand-configure how long you've been idle for"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/mailchk.c:149
+msgid "Mail Checker"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/mailchk.c:152 plugins/mailchk.c:154
+msgid "Checks for new local mail."
+msgstr ""
+
+#: plugins/notify.c:442
+msgid "Unable to write to config file"
+msgstr ""
+
+#: plugins/notify.c:443
+msgid "Notify plugin"
+msgstr ""
+
+#: plugins/notify.c:573
+msgid "Notify For"
+msgstr ""
+
+#: plugins/notify.c:574
+msgid "_IM windows"
+msgstr ""
+
+#: plugins/notify.c:579
+msgid "_Chat windows"
+msgstr "חלונות שיחה"
+
+#. --------------
+#: plugins/notify.c:585
+msgid "Notification Methods"
+msgstr ""
+
+#: plugins/notify.c:588
+msgid "Prepend _string into window title (hit enter to save):"
+msgstr ""
+
+#: plugins/notify.c:599
+msgid "_Quote window title"
+msgstr ""
+
+#: plugins/notify.c:604
+msgid "Set Window Manager \"_URGENT\" Hint"
+msgstr ""
+
+#: plugins/notify.c:609
+msgid "Insert c_ount of new messages into window title"
+msgstr ""
+
+#: plugins/notify.c:614
+msgid "_Notify even if conversation is in focus"
+msgstr ""
+
+#. --------------
+#: plugins/notify.c:620
+msgid "Notification Removal"
+msgstr ""
+
+#: plugins/notify.c:621
+msgid "Remove when conversation window gains _focus"
+msgstr ""
+
+#: plugins/notify.c:626
+msgid "Remove when conversation window _receives click"
+msgstr ""
+
+#: plugins/notify.c:631
+msgid "Remove when _typing in conversation window"
+msgstr ""
+
+#: plugins/notify.c:636
+msgid "Appl_y"
+msgstr "_התחל"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/notify.c:699
+msgid "Message Notification"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/notify.c:702 plugins/notify.c:704
+msgid "Provides a variety of ways of notifying you of unread messages."
+msgstr ""
+
+#: plugins/raw.c:152
+msgid "Raw"
+msgstr ""
+
+#: plugins/raw.c:154
+msgid "Lets you send raw input to text-based protocols."
+msgstr ""
+
+#: plugins/raw.c:155
+msgid ""
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"'Enter' in the entry box to send. Watch the debug window."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/simple.c:30
+msgid "Simple Plugin"
+msgstr "תוסף פשוט"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/simple.c:33 plugins/simple.c:35
+msgid "Tests to see that most things are working."
+msgstr "בודק עם רוב הדברים עובדים"
+
+#: plugins/spellchk.c:411
+msgid "Text Replacements"
+msgstr "החלפות הטקסט"
+
+#: plugins/spellchk.c:435
+msgid "You type"
+msgstr "אתה רושם"
+
+#: plugins/spellchk.c:447
+msgid "You send"
+msgstr "אתה שולח"
+
+#: plugins/spellchk.c:473
+msgid "Add a new text replacement"
+msgstr "הוסף טקסט להחלפה"
+
+#: plugins/spellchk.c:480
+msgid "You _type:"
+msgstr "אתה ר_ושם:"
+
+#: plugins/spellchk.c:494
+msgid "You _send:"
+msgstr "אתה _שולח:"
+
+#: plugins/spellchk.c:534
+msgid "Text replacement"
+msgstr "החלפת הטקסט"
+
+#: plugins/spellchk.c:536 plugins/spellchk.c:537
+msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr ""
+
+#: plugins/timestamp.c:72
+msgid "iChat Timestamp"
+msgstr ""
+
+#: plugins/timestamp.c:79
+msgid "Delay"
+msgstr ""
+
+#: plugins/timestamp.c:92
+msgid "_Apply"
+msgstr "_התחל"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/timestamp.c:145
+msgid "Timestamp"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/timestamp.c:148 plugins/timestamp.c:150
+msgid "Adds iChat-style timestamps to conversations every N minutes."
+msgstr ""
+
+#. Configuration frame
+#: plugins/gestures/gestures.c:210
+msgid "Mouse Gestures Configuration"
+msgstr ""
+
+#: plugins/gestures/gestures.c:217
+msgid "Middle mouse button"
+msgstr "לחצן אמצעי של העכבר"
+
+#: plugins/gestures/gestures.c:222
+msgid "Right mouse button"
+msgstr "לחצן ימני של העכבר"
+
+#. "Visual gesture display" checkbox
+#: plugins/gestures/gestures.c:234
+msgid "_Visual gesture display"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gestures/gestures.c:261
+msgid "Mouse Gestures"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gestures/gestures.c:264
+msgid "Provides support for mouse gestures"
+msgstr ""
+
+#. *  description
+#: plugins/gestures/gestures.c:266
+msgid ""
+"Allows support for mouse gestures in conversation windows.\n"
+"Drag the middle mouse button to perform certain actions:\n"
+"\n"
+"Drag down and then to the right to close a conversation.\n"
+"Drag up and then to the left to switch to the previous conversation.\n"
+"Drag up and then to the right to switch to the next conversation."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ticker/ticker.c:74 plugins/ticker/ticker.c:283
+msgid "Buddy Ticker"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ticker/ticker.c:286 plugins/ticker/ticker.c:288
+msgid "A horizontal scrolling version of the buddy list."
+msgstr ""
+
+#: plugins/win32/transparency/win2ktrans.c:123
+#: plugins/win32/transparency/win2ktrans.c:412
+#: plugins/win32/transparency/win2ktrans.c:446
+msgid "Opacity:"
+msgstr "שקיפות:"
+
+#. IM Convo trans options
+#: plugins/win32/transparency/win2ktrans.c:393
+msgid "IM Conversation Windows"
+msgstr ""
+
+#: plugins/win32/transparency/win2ktrans.c:394
+msgid "_IM window transparency"
+msgstr ""
+
+#: plugins/win32/transparency/win2ktrans.c:404
+msgid "_Show slider bar in IM window"
+msgstr ""
+
+#. Buddy List trans options
+#: plugins/win32/transparency/win2ktrans.c:429 src/gtkprefs.c:903
+msgid "Buddy List Window"
+msgstr "חלון רשימת הידידים"
+
+#: plugins/win32/transparency/win2ktrans.c:430
+msgid "_Keep Buddy List window on top"
+msgstr "חלון רשימת הידידים תמיד עליון"
+
+#: plugins/win32/transparency/win2ktrans.c:433
+msgid "_Buddy List window transparency"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/win32/transparency/win2ktrans.c:489
+msgid "Transparency"
+msgstr "שקיפות"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/win32/transparency/win2ktrans.c:492
+#: plugins/win32/transparency/win2ktrans.c:494
+msgid ""
+"This plugin enables variable alpha transparency on conversation windows.\n"
+"\n"
+"* Note: This plugin requires Win2000 or WinXP."
+msgstr ""
+
+#. IM Convo trans options
+#: plugins/win32/winprefs/winprefs.c:141
+msgid "Startup"
+msgstr "הפעלה"
+
+#: plugins/win32/winprefs/winprefs.c:142
+msgid "_Start Gaim on Windows startup"
+msgstr ""
+
+#: plugins/win32/winprefs/winprefs.c:170
+msgid "WinGaim Options"
+msgstr ""
+
+#: plugins/win32/winprefs/winprefs.c:172 plugins/win32/winprefs/winprefs.c:173
+msgid "Options specific to Windows Gaim."
+msgstr ""
+
+#: plugins/perl/perl.c:396
+msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/perl/perl.c:1382
+msgid "Perl Plugin Loader"
+msgstr ""
+
+#. *< name
+#. *< version
+#: plugins/perl/perl.c:1384 plugins/perl/perl.c:1385
+msgid "Provides support for loading perl plugins."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/statenotify.c:68
+msgid "Buddy State Notification"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/statenotify.c:71 plugins/statenotify.c:74
+msgid ""
+"Notifies in a conversation window when a buddy goes or returns from away or "
+"idle."
+msgstr ""
+
+#: src/protocols/gg/gg.c:69 src/protocols/jabber/jabber.c:1189
+#: src/protocols/msn/msn.c:308 src/protocols/msn/state.c:27
+#: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:1265
+#: src/protocols/yahoo/yahoo.c:1344
+msgid "Available"
+msgstr "זמין"
+
+#: src/protocols/gg/gg.c:70
+msgid "Available for friends only"
+msgstr "זמין רק לחברים"
+
+#: src/protocols/gg/gg.c:72
+msgid "Away for friends only"
+msgstr "מרוחק מהמחשב רק לחברים"
+
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:3446
+#: src/protocols/jabber/jabber.c:3509 src/protocols/oscar/oscar.c:2826
+#: src/protocols/oscar/oscar.c:4498 src/protocols/oscar/oscar.c:4525
+#: src/protocols/oscar/oscar.c:5732 src/protocols/yahoo/yahoo.c:1080
+#: src/protocols/yahoo/yahoo.c:1287 src/protocols/yahoo/yahoo.c:1354
+msgid "Invisible"
+msgstr "בלתי נראה"
+
+#: src/protocols/gg/gg.c:74
+msgid "Invisible for friends only"
+msgstr "בלתי נראה רק לחברים"
+
+#: src/protocols/gg/gg.c:75
+msgid "Unavailable"
+msgstr "לא זמין"
+
+#: src/protocols/gg/gg.c:159
+msgid "Unable to resolve hostname."
+msgstr ""
+
+#: src/protocols/gg/gg.c:162
+msgid "Unable to connect to server."
+msgstr "לא ניתן להתחבר לשרת"
+
+#: src/protocols/gg/gg.c:165
+msgid "Invalid response from server."
+msgstr "שגיעה בתגובה מהשרת"
+
+#: src/protocols/gg/gg.c:168
+msgid "Error while reading from socket."
+msgstr ""
+
+#: src/protocols/gg/gg.c:171
+msgid "Error while writing to socket."
+msgstr ""
+
+#: src/protocols/gg/gg.c:174
+msgid "Authentication failed."
+msgstr ""
+
+#: src/protocols/gg/gg.c:177
+msgid "Unknown Error Code."
+msgstr ""
+
+#: src/protocols/gg/gg.c:282
+#, c-format
+msgid "Status: %s"
+msgstr "מצב: %s"
+
+#: src/protocols/gg/gg.c:303
+msgid "Could not connect"
+msgstr "לא ניתן להתחבר"
+
+#: src/protocols/gg/gg.c:310
+msgid "Unable to read socket"
+msgstr ""
+
+#: src/protocols/gg/gg.c:420
+msgid "Unable to connect."
+msgstr ""
+
+#: src/protocols/gg/gg.c:436
+msgid "Reading data"
+msgstr "קורא נתונים"
+
+#: src/protocols/gg/gg.c:439
+msgid "Balancer handshake"
+msgstr ""
+
+#: src/protocols/gg/gg.c:442
+msgid "Reading server key"
+msgstr "קורא מפתח של השרת"
+
+#: src/protocols/gg/gg.c:445
+msgid "Exchanging key hash"
+msgstr ""
+
+#: src/protocols/gg/gg.c:454
+msgid "Critical error in GG library\n"
+msgstr ""
+
+#: src/protocols/gg/gg.c:473 src/protocols/gg/gg.c:569
+#, c-format
+msgid "Connect to %s failed"
+msgstr ""
+
+#: src/protocols/gg/gg.c:522
+msgid "Unable to ping server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:535
+msgid "Send as message"
+msgstr "שלח בתור הודעה"
+
+#: src/protocols/gg/gg.c:542
+msgid "Looking up GG server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:545
+msgid "Invalid Gadu-Gadu UIN specified"
+msgstr ""
+
+#: src/protocols/gg/gg.c:594
+msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
+msgstr ""
+
+#: src/protocols/gg/gg.c:657
+msgid "Couldn't get search results"
+msgstr ""
+
+#: src/protocols/gg/gg.c:662
+msgid "Gadu-Gadu Search Engine"
+msgstr ""
+
+#: src/protocols/gg/gg.c:687
+msgid "Active"
+msgstr "פעיל"
+
+#: src/protocols/gg/gg.c:688
+msgid "Yes"
+msgstr "כן"
+
+#: src/protocols/gg/gg.c:688
+msgid "No"
+msgstr "לא"
+
+#: src/protocols/gg/gg.c:692
+msgid "UIN"
+msgstr "מספר זיהוי"
+
+#: src/protocols/gg/gg.c:696
+msgid "First name"
+msgstr "שם פרטי"
+
+#: src/protocols/gg/gg.c:701
+msgid "Second Name"
+msgstr "שמ משפחה"
+
+#: src/protocols/gg/gg.c:705
+msgid "Nick"
+msgstr "כינוי"
+
+#: src/protocols/gg/gg.c:712 src/protocols/gg/gg.c:715
+msgid "Birth year"
+msgstr "שנת לידה"
+
+#: src/protocols/gg/gg.c:721 src/protocols/gg/gg.c:723
+#: src/protocols/gg/gg.c:725
+msgid "Sex"
+msgstr "מין:"
+
+#. Line 5
+#: src/protocols/gg/gg.c:729 src/dialogs.c:2065 src/dialogs.c:2709
+msgid "City"
+msgstr "עיר"
+
+#: src/protocols/gg/gg.c:762
+msgid "There is no Buddy List stored on the Gadu-Gadu server."
+msgstr ""
+
+#: src/protocols/gg/gg.c:770
+msgid "Couldn't Import Buddy List from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:831
+msgid "Buddy List successfully transferred to Gadu-Gadu server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:838
+msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:846
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:853
+msgid "Couldn't delete Buddy List from Gadu-Gadu server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:861
+msgid "Password changed successfully"
+msgstr "הסיסמא הוחלפה בהצלחה"
+
+#: src/protocols/gg/gg.c:867
+msgid "Password couldn't be changed"
+msgstr "לא ניתן להחליף סיסמא"
+
+#: src/protocols/gg/gg.c:979
+msgid "Error communicating with Gadu-Gadu server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:980
+msgid ""
+"Gaim was unable to complete your request due to a problem communicating with "
+"the Gadu-Gadu HTTP server.  Please try again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1008
+msgid "Unable to import Gadu-Gadu buddy list"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1009
+msgid ""
+"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1078
+msgid "Couldn't export buddy list"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1079 src/protocols/gg/gg.c:1102
+msgid "Gaim was unable to connect to the buddy list server.  Please try again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1101
+msgid "Unable to delete Gadu-Gadu buddy list"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1150
+msgid "Unable to access directory"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1151
+msgid ""
+"Gaim was unable to search the Directory because it was unable to connect to "
+"the directory server.  Please try again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1184
+msgid "Unable to change Gadu-Gadu password"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1185
+msgid ""
+"Gaim was unable to change your password due to an error connecting to the "
+"Gadu-Gadu server.  Please try again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1201
+msgid "Directory Search"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1209 src/protocols/jabber/jabber.c:4325
+#: src/protocols/oscar/oscar.c:5927 src/protocols/toc/toc.c:1453
+#: src/dialogs.c:2176 src/dialogs.c:2185
+msgid "Change Password"
+msgstr "שנה סיסמא"
+
+#: src/protocols/gg/gg.c:1217
+msgid "Import Buddy List from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1223
+msgid "Export Buddy List to Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1229
+msgid "Delete Buddy List from Server"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1262
+msgid "Unable to access user profile."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1263
+msgid ""
+"Gaim was unable to access this user's profile due to an error connecting to "
+"the directory server.  Please try again later."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/gg/gg.c:1375 src/protocols/gg/gg.c:1377
+msgid "Gadu-Gadu Protocol Plugin"
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:224
+msgid "Gaim encountered an error communicating with the ICQ server."
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2670
+#: src/dialogs.c:2477 src/gtkconv.c:813 src/gtkconv.c:2656 src/gtkconv.c:3798
+#: src/prpl.c:414
+msgid "Add"
+msgstr "הוסף"
+
+#. Cancel button.
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/irc/irc.c:1116
+#: src/protocols/irc/irc.c:1445 src/protocols/msn/msn.c:168
+#: src/protocols/msn/msn.c:179 src/protocols/msn/msn.c:190
+#: src/protocols/msn/msn.c:201 src/protocols/msn/msn.c:214
+#: src/protocols/oscar/oscar.c:2402 src/protocols/oscar/oscar.c:2439
+#: src/protocols/oscar/oscar.c:2474 src/protocols/oscar/oscar.c:2519
+#: src/protocols/oscar/oscar.c:5605 src/protocols/oscar/oscar.c:5810
+#: src/protocols/oscar/oscar.c:5858 src/protocols/yahoo/yahoo.c:1197
+#: src/buddy_chat.c:312 src/dialogs.c:470 src/dialogs.c:481 src/dialogs.c:493
+#: src/dialogs.c:2122 src/dialogs.c:2237 src/dialogs.c:2298 src/dialogs.c:2466
+#: src/dialogs.c:2651 src/dialogs.c:2800 src/dialogs.c:3469 src/dialogs.c:3961
+#: src/dialogs.c:4442 src/dialogs.c:5015 src/multi.c:177 src/prpl.c:415
+msgid "Cancel"
+msgstr "ביטול"
+
+#: src/protocols/icq/gaim_icq.c:294
+#, c-format
+msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1721
+#: src/protocols/msn/notification.c:461 src/protocols/msn/notification.c:721
+#: src/protocols/oscar/oscar.c:2598 src/protocols/oscar/oscar.c:5053
+msgid "Authorize"
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1722
+#: src/protocols/msn/notification.c:462 src/protocols/msn/notification.c:723
+#: src/protocols/oscar/oscar.c:2600 src/protocols/oscar/oscar.c:5054
+#: src/dialogs.c:2465
+msgid "Deny"
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:310
+msgid "Send message through server"
+msgstr "שלח הודעה דרך השרת"
+
+#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2375 src/protocols/jabber/jabber.c:4244
+#: src/protocols/jabber/jabber.c:4290 src/protocols/msn/dispatch.c:160
+#: src/protocols/msn/msn.c:422 src/protocols/msn/notification.c:1333
+#: src/protocols/napster/napster.c:515
+msgid "Unable to connect"
+msgstr "לא ניתן להתחבר"
+
+#: src/protocols/icq/gaim_icq.c:352
+msgid "Connecting..."
+msgstr "מתחבר..."
+
+#: src/protocols/icq/gaim_icq.c:497 src/protocols/oscar/oscar.c:3905
+msgid "Nick:"
+msgstr "כינוי:"
+
+#: src/protocols/icq/gaim_icq.c:498
+msgid "Gaim User"
+msgstr ""
+
+#: src/protocols/irc/irc.c:199
+msgid ""
+"(There was an error converting this message.  Check the 'Encoding' option in "
+"the Account Editor)"
+msgstr ""
+
+#: src/protocols/irc/irc.c:500 src/protocols/irc/irc.c:2624
+#, c-format
+msgid "DCC Chat with %s closed"
+msgstr ""
+
+#: src/protocols/irc/irc.c:553 src/protocols/irc/irc.c:2633
+#, c-format
+msgid "DCC Chat with %s established"
+msgstr ""
+
+#: src/protocols/irc/irc.c:688
+msgid "No topic is set"
+msgstr ""
+
+#: src/protocols/irc/irc.c:709 src/protocols/irc/irc.c:1766
+#, c-format
+msgid "<B>%s has changed the topic to: %s</B>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:754
+#, c-format
+msgid "-:- mode/%s [%c%c %s] by %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:931 src/protocols/irc/irc.c:944
+msgid "User"
+msgstr "משתמש"
+
+#: src/protocols/irc/irc.c:935
+msgid "Server"
+msgstr "שרת"
+
+#: src/protocols/irc/irc.c:939 src/protocols/irc/irc.c:1094
+#: src/protocols/irc/irc.c:1658
+msgid "IRC Operator"
+msgstr ""
+
+#: src/protocols/irc/irc.c:952
+msgid "Channels"
+msgstr "ערוצים"
+
+#: src/protocols/irc/irc.c:958
+#, c-format
+msgid "%s is an Identified User"
+msgstr ""
+
+#: src/protocols/irc/irc.c:973
+#, c-format
+msgid "%ld seconds [signon: %s]"
+msgstr ""
+
+#. RPL_REHASHING
+#: src/protocols/irc/irc.c:1094
+msgid "Rehashing server"
+msgstr ""
+
+#. ERR_NOSUCHNICK
+#: src/protocols/irc/irc.c:1097
+msgid "No such nick/channel"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1097 src/protocols/irc/irc.c:1100
+#: src/protocols/irc/irc.c:1105 src/protocols/irc/irc.c:1109
+#: src/protocols/irc/irc.c:1474 src/protocols/irc/irc.c:1616
+msgid "IRC Error"
+msgstr ""
+
+#. ERR_NOSUCHSERVER
+#: src/protocols/irc/irc.c:1100
+msgid "No such server"
+msgstr ""
+
+#. ERR_NOMOTD
+#. drop it - bringing up dialog for NOMOTD is annoying
+#. ERR_NONICKNAMEGIVEN
+#: src/protocols/irc/irc.c:1105
+msgid "No nickname given"
+msgstr ""
+
+#. ERR_NOPRIVILEGES
+#: src/protocols/irc/irc.c:1108
+msgid "You're not an IRC operator!"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1112
+msgid "That nick is already in use.  Please enter a new nick"
+msgstr ""
+
+#. Build OK Button
+#: src/protocols/irc/irc.c:1115 src/protocols/msn/msn.c:167
+#: src/protocols/msn/msn.c:178 src/protocols/msn/msn.c:189
+#: src/protocols/msn/msn.c:200 src/protocols/oscar/oscar.c:2438
+#: src/protocols/oscar/oscar.c:2518 src/protocols/oscar/oscar.c:5809
+#: src/protocols/oscar/oscar.c:5857 src/protocols/yahoo/yahoo.c:1196
+#: src/dialogs.c:2233 src/dialogs.c:2366 src/dialogs.c:2650 src/dialogs.c:2796
+#: src/dialogs.c:3954 src/dialogs.c:4436
+msgid "OK"
+msgstr "אישור"
+
+#: src/protocols/irc/irc.c:1401 src/protocols/irc/irc.c:1407
+#: src/protocols/irc/irc.c:1413 src/protocols/irc/irc.c:1427
+msgid "IRC CTCP info"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1437
+#, c-format
+msgid "%s would like to establish a DCC chat"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1440
+msgid ""
+"This requires a direct connection to be established between the two "
+"computers.  Messages sent will not pass through the IRC server"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1444 src/protocols/oscar/oscar.c:2401
+#: src/protocols/oscar/oscar.c:5604
+msgid "Connect"
+msgstr "התחבר"
+
+#: src/protocols/irc/irc.c:1471
+#, c-format
+msgid "Received an invalid file send request from %s."
+msgstr ""
+
+#: src/protocols/irc/irc.c:1552 src/protocols/msn/error.c:133
+#: src/protocols/msn/notification.c:292 src/protocols/msn/notification.c:734
+msgid "Unable to write"
+msgstr "לא ניתן לכתוב"
+
+#: src/protocols/irc/irc.c:1614
+#, c-format
+msgid "You have been kicked from %s: %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1619
+#, c-format
+msgid "Kicked by %s: %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1675 src/protocols/irc/irc.c:2934
+msgid "CTCP ClientInfo"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1681 src/protocols/irc/irc.c:2940
+msgid "CTCP UserInfo"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1687 src/protocols/irc/irc.c:2946
+msgid "CTCP Version"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1715 src/protocols/irc/irc.c:2952
+msgid "CTCP Ping"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1966 src/protocols/oscar/oscar.c:690
+#: src/protocols/toc/toc.c:255
+#, c-format
+msgid "Signon: %s"
+msgstr "מתחבר: %s"
+
+#: src/protocols/irc/irc.c:1980
+msgid "Unable to create socket"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2221
+#, c-format
+msgid "Topic for %s is %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2317
+#, c-format
+msgid "You have left %s"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2318
+msgid "IRC Part"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2373
+msgid "<I>Requesting DCC CHAT</I>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2390
+msgid "<B>Operator commands:<BR>REHASH RESTART</B>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2395
+msgid ""
+"<B>CTCP commands:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
+"<nick><BR>PING <nick></B><BR>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2403
+msgid "<B>DCC commands:<BR>CHAT <nick></B>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2408
+msgid ""
+"<B>Currently supported commands:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
+"TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
+"W WHOWAS<BR>Type /HELP OPER for operator commands<BR>Type /HELP CTCP for "
+"CTCP commands<BR>Type /HELP DCC for DCC commands"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2431
+msgid "<B>Unknown command</B>"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2491
+msgid "Channel:"
+msgstr "ערוץ:"
+
+#: src/protocols/irc/irc.c:2496 src/main.c:357
+msgid "Password:"
+msgstr "סיסמא:"
+
+#: src/protocols/irc/irc.c:2921
+msgid "DCC Chat"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/irc/irc.c:3027 src/protocols/irc/irc.c:3029
+msgid "IRC Protocol Plugin"
+msgstr "תוסף פרוטוקול IRC"
+
+#: src/protocols/irc/irc.c:3049 src/protocols/jabber/jabber.c:2962
+#: src/protocols/jabber/jabber.c:4422 src/protocols/napster/napster.c:660
+msgid "Server:"
+msgstr "שרת:"
+
+#: src/protocols/irc/irc.c:3054 src/protocols/jabber/jabber.c:4433
+#: src/protocols/msn/msn.c:1220 src/protocols/napster/napster.c:666
+msgid "Port:"
+msgstr "יציאה:"
+
+#: src/protocols/irc/irc.c:3060
+msgid "Encoding:"
+msgstr "קידוד:"
+
+#: src/protocols/jabber/jabber.c:989
+msgid "Unable to change password."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:990
+msgid ""
+"The current password you entered is incorrect.  Your password has not been "
+"changed."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:996
+msgid "Unable to change password"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:997
+msgid ""
+"The new password you entered is the same as your current password.  Your "
+"password remains the same."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1174 src/blist.c:721 src/gtkpounce.c:299
+msgid "Unknown"
+msgstr "לא ידוע"
+
+#. once again, we don't have to put anything here
+#: src/protocols/jabber/jabber.c:1183 src/protocols/jabber/jabber.c:3442
+#: src/protocols/jabber/jabber.c:3493
+msgid "Chatty"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1185 src/protocols/jabber/jabber.c:3444
+#: src/protocols/jabber/jabber.c:3501
+msgid "Extended Away"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1187 src/protocols/jabber/jabber.c:3445
+#: src/protocols/jabber/jabber.c:3505 src/protocols/oscar/oscar.c:2816
+#: src/protocols/oscar/oscar.c:4513 src/protocols/oscar/oscar.c:5728
+msgid "Do Not Disturb"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1426
+#, c-format
+msgid "Jabber Error %s"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1533
+#, c-format
+msgid "Error %s: %s"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1536
+msgid "Unknown Error in presence"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1714
+#, c-format
+msgid "The user %s wants to add you to their buddy list."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1742
+#, c-format
+msgid "The Jabber user %s does not exist and was therefore not added to your roster."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1745
+msgid "No such user."
+msgstr ""
+
+#. Should never happen.
+#: src/protocols/jabber/jabber.c:1836 src/protocols/msn/notification.c:87
+#: src/protocols/msn/notification.c:88 src/protocols/msn/notification.c:620
+#: src/blist.c:439 src/dialogs.c:922
+msgid "Buddies"
+msgstr "ידידים"
+
+#: src/protocols/jabber/jabber.c:1909
+msgid "Authenticating"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1944
+msgid "Unknown login error"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2294
+msgid "Password successfully changed."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2339 src/protocols/jabber/jabber.c:4242
+msgid "Connection lost"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2346
+msgid "Connected"
+msgstr "מחובר"
+
+#: src/protocols/jabber/jabber.c:2349
+msgid "Requesting Authentication Method"
+msgstr ""
+
+#. we have no chats yet
+#: src/protocols/jabber/jabber.c:2369 src/protocols/msn/dispatch.c:164
+#: src/protocols/msn/msn.c:413 src/protocols/napster/napster.c:507
+#: src/protocols/yahoo/yahoo.c:995
+msgid "Connecting"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2695
+#, c-format
+msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2697
+msgid "Unable to add buddy."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2698
+msgid "Jabber Error"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2957
+msgid "Room:"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2968
+msgid "Handle:"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2998
+msgid "Unable to join chat"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3234 src/protocols/jabber/jabber.c:3285
+#: src/protocols/jabber/jabber.c:3710
+msgid "Jabber ID"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3235
+msgid "Error"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3286 src/protocols/jabber/jabber.c:3345
+#: src/protocols/jabber/jabber.c:3356 src/protocols/jabber/jabber.c:3736
+msgid "Status"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3356 src/protocols/jabber/jabber.c:3378
+#: src/protocols/oscar/oscar.c:5401
+msgid "Not Authorized"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3391
+msgid "View Error Msg"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3403 src/gtkconv.c:800
+msgid "Get Away Msg"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3410
+msgid "Un-hide From"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3413
+msgid "Temporarily Hide From"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3420
+msgid "Cancel Presence Notification"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3428
+msgid "Re-request authorization"
+msgstr ""
+
+#. state is one of our own strings. it won't be NULL.
+#: src/protocols/jabber/jabber.c:3441 src/protocols/jabber/jabber.c:3491
+#: src/protocols/oscar/oscar.c:2828 src/protocols/oscar/oscar.c:4508
+#: src/protocols/oscar/oscar.c:5726 src/protocols/yahoo/yahoo.c:1084
+#: src/protocols/zephyr/zephyr.c:865 src/protocols/zephyr/zephyr.c:875
+msgid "Online"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3631
+msgid "Full Name"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3632
+msgid "Family Name"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3633
+msgid "Given Name"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3634
+msgid "Nickname"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3635 src/dialogs.c:2921
+msgid "URL"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3636
+msgid "Street Address"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3637
+msgid "Extended Address"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3638
+msgid "Locality"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3639
+msgid "Region"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3640
+msgid "Postal Code"
+msgstr ""
+
+#. Line 7
+#: src/protocols/jabber/jabber.c:3641 src/dialogs.c:2087 src/dialogs.c:2727
+msgid "Country"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3642
+msgid "Telephone"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3643 src/dialogs.c:2785
+msgid "Email"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3644
+msgid "Organization Name"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3645
+msgid "Organization Unit"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3646
+msgid "Title"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3647
+msgid "Role"
+msgstr "תפקיד"
+
+#: src/protocols/jabber/jabber.c:3648
+msgid "Birthday"
+msgstr "יום הולדת"
+
+#: src/protocols/jabber/jabber.c:3649 src/dialogs.c:2931 src/gtkprefs.c:658
+#: src/gtkprefs.c:1766
+msgid "Description"
+msgstr "תיאור"
+
+#: src/protocols/jabber/jabber.c:3674
+msgid ""
+"All items below are optional. Enter only the information with which you feel "
+"comfortable"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3675
+msgid "User Identity"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:4101
+msgid "Gaim - Edit Jabber vCard"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:4176
+msgid "Server Registration successful!"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:4198
+msgid "Unknown registration error"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:4311 src/protocols/oscar/oscar.c:5921
+#: src/protocols/toc/toc.c:1441 src/dialogs.c:2261
+msgid "Set User Info"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/jabber/jabber.c:4400 src/protocols/jabber/jabber.c:4402
+msgid "Jabber Protocol Plugin"
+msgstr "תוסף פרוטוקול Jabber"
+
+#: src/protocols/jabber/jabber.c:4428
+msgid "Resource:"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:4439
+msgid "Connect Server:"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:45 src/protocols/msn/notification.c:229
+msgid "Protocol not supported"
+msgstr "הפרוטוקול אינו נתמך"
+
+#: src/protocols/msn/dispatch.c:51
+msgid "Unable to request INF\n"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:68 src/protocols/msn/notification.c:252
+msgid "Unable to login using MD5"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:77
+msgid "Unable to send USR\n"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:82 src/protocols/msn/notification.c:266
+msgid "Requesting to send password"
+msgstr "מבקש אישור לשליחת סיסמא"
+
+#: src/protocols/msn/dispatch.c:99
+msgid "Got invalid XFR\n"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:126
+msgid "Unable to transfer"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:147
+msgid "Unable to parse message."
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:171 src/protocols/msn/notification.c:405
+#: src/protocols/msn/notification.c:1342
+msgid "Unable to write to server"
+msgstr ""
+
+#: src/protocols/msn/dispatch.c:175 src/protocols/msn/notification.c:1349
+msgid "Syncing with server"
+msgstr "מתאם עם השרת"
+
+#: src/protocols/msn/dispatch.c:189 src/protocols/msn/notification.c:1363
+msgid "Error reading from server"
+msgstr ""
+
+#: src/protocols/msn/error.c:33
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/error.c:37
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/error.c:40
+msgid "Invalid User"
+msgstr ""
+
+#: src/protocols/msn/error.c:44
+msgid "Fully Qualified Domain Name missing"
+msgstr ""
+
+#: src/protocols/msn/error.c:47
+msgid "Already Login"
+msgstr ""
+
+#: src/protocols/msn/error.c:50
+msgid "Invalid Username"
+msgstr ""
+
+#: src/protocols/msn/error.c:53
+msgid "Invalid Friendly Name"
+msgstr ""
+
+#: src/protocols/msn/error.c:56
+msgid "List Full"
+msgstr "הרשימה מלאה"
+
+#: src/protocols/msn/error.c:59
+msgid "Already there"
+msgstr ""
+
+#: src/protocols/msn/error.c:62
+msgid "Not on list"
+msgstr ""
+
+#: src/protocols/msn/error.c:65
+msgid "User is offline"
+msgstr ""
+
+#: src/protocols/msn/error.c:68
+msgid "Already in the mode"
+msgstr ""
+
+#: src/protocols/msn/error.c:71
+msgid "Already in opposite list"
+msgstr ""
+
+#: src/protocols/msn/error.c:75
+msgid "Tried to add a contact to a group that doesn't exist"
+msgstr ""
+
+#: src/protocols/msn/error.c:79
+msgid "Switchboard failed"
+msgstr ""
+
+#: src/protocols/msn/error.c:82
+msgid "Notify Transfer failed"
+msgstr ""
+
+#: src/protocols/msn/error.c:86
+msgid "Required fields missing"
+msgstr ""
+
+#: src/protocols/msn/error.c:89 src/protocols/oscar/oscar.c:193
+msgid "Not logged in"
+msgstr ""
+
+#: src/protocols/msn/error.c:93
+msgid "Internal server error"
+msgstr ""
+
+#: src/protocols/msn/error.c:96
+msgid "Database server error"
+msgstr ""
+
+#: src/protocols/msn/error.c:99
+msgid "File operation error"
+msgstr ""
+
+#: src/protocols/msn/error.c:102
+msgid "Memory allocation error"
+msgstr ""
+
+#: src/protocols/msn/error.c:105
+msgid "Wrong CHL value sent to server"
+msgstr ""
+
+#: src/protocols/msn/error.c:109
+msgid "Server busy"
+msgstr "שרת עסוק"
+
+#: src/protocols/msn/error.c:112
+msgid "Server unavailable"
+msgstr "שרת לא זמין"
+
+#: src/protocols/msn/error.c:115
+msgid "Peer Notification server down"
+msgstr ""
+
+#: src/protocols/msn/error.c:118
+msgid "Database connect error"
+msgstr ""
+
+#: src/protocols/msn/error.c:122
+msgid "Server is going down (abandon ship)"
+msgstr ""
+
+#: src/protocols/msn/error.c:126
+msgid "Error creating connection"
+msgstr ""
+
+#: src/protocols/msn/error.c:130
+msgid "CVR parameters are either unknown or not allowed"
+msgstr ""
+
+#: src/protocols/msn/error.c:136
+msgid "Session overload"
+msgstr ""
+
+#: src/protocols/msn/error.c:139
+msgid "User is too active"
+msgstr ""
+
+#: src/protocols/msn/error.c:142
+msgid "Too many sessions"
+msgstr ""
+
+#: src/protocols/msn/error.c:145
+msgid "Not expected"
+msgstr ""
+
+#: src/protocols/msn/error.c:148
+msgid "Bad friend file"
+msgstr ""
+
+#: src/protocols/msn/error.c:152
+msgid "Authentication failed"
+msgstr ""
+
+#: src/protocols/msn/error.c:155
+msgid "Not allowed when offline"
+msgstr ""
+
+#: src/protocols/msn/error.c:158
+msgid "Not accepting new users"
+msgstr ""
+
+#: src/protocols/msn/error.c:162
+msgid "Passport account not yet verified"
+msgstr ""
+
+#: src/protocols/msn/error.c:166
+#, c-format
+msgid "Unknown Error Code %d"
+msgstr ""
+
+#: src/protocols/msn/msn.c:57
+msgid "Your new MSN friendly name is too long."
+msgstr ""
+
+#: src/protocols/msn/msn.c:69 src/protocols/msn/msn.c:88
+#: src/protocols/msn/msn.c:146 src/protocols/msn/msn.c:468
+#: src/protocols/msn/msn.c:579 src/protocols/msn/msn.c:595
+#: src/protocols/msn/msn.c:630 src/protocols/msn/msn.c:646
+#: src/protocols/msn/msn.c:678 src/protocols/msn/msn.c:686
+#: src/protocols/msn/msn.c:719 src/protocols/msn/msn.c:727
+#: src/protocols/msn/msn.c:741 src/protocols/msn/msn.c:750
+#: src/protocols/msn/msn.c:764 src/protocols/msn/msn.c:773
+#: src/protocols/msn/msn.c:795 src/protocols/msn/msn.c:845
+#: src/protocols/msn/msn.c:883 src/protocols/msn/msn.c:976
+#: src/protocols/msn/msn.c:1000 src/protocols/msn/msn.c:1020
+#: src/protocols/msn/msn.c:1031 src/protocols/msn/msn.c:1042
+#: src/protocols/msn/msn.c:1066 src/protocols/msn/msn.c:1078
+#: src/protocols/msn/notification.c:127 src/protocols/msn/notification.c:156
+#: src/protocols/msn/notification.c:907 src/protocols/msn/notification.c:927
+msgid "Write error"
+msgstr ""
+
+#: src/protocols/msn/msn.c:163
+msgid "Set your friendly name."
+msgstr ""
+
+#: src/protocols/msn/msn.c:164
+msgid "This is the name that other MSN buddies will see you as."
+msgstr ""
+
+#: src/protocols/msn/msn.c:176
+msgid "Set your home phone number."
+msgstr ""
+
+#: src/protocols/msn/msn.c:187
+msgid "Set your work phone number."
+msgstr ""
+
+#: src/protocols/msn/msn.c:198
+msgid "Set your mobile phone number."
+msgstr ""
+
+#: src/protocols/msn/msn.c:207
+msgid "Allow MSN Mobile pages?"
+msgstr ""
+
+#: src/protocols/msn/msn.c:208
+msgid ""
+"Do you want to allow or disallow people on your buddy list to send you MSN "
+"Mobile pages to your cell phone or other mobile device?"
+msgstr ""
+
+#: src/protocols/msn/msn.c:212
+msgid "Allow"
+msgstr ""
+
+#: src/protocols/msn/msn.c:213
+msgid "Disallow"
+msgstr ""
+
+#: src/protocols/msn/msn.c:230
+msgid "Send a mobile message."
+msgstr ""
+
+#: src/protocols/msn/msn.c:232
+msgid "Page"
+msgstr "דף"
+
+#: src/protocols/msn/msn.c:233 src/about.c:169 src/dialogs.c:4251
+#: src/prpl.c:515 src/server.c:1462
+msgid "Close"
+msgstr "סגור"
+
+#: src/protocols/msn/msn.c:296 src/protocols/yahoo/yahoo.c:1135
+#, c-format
+msgid "<b>Status:</b> %s"
+msgstr ""
+
+#: src/protocols/msn/msn.c:309 src/protocols/msn/msn.c:555
+#: src/protocols/msn/state.c:32
+msgid "Away From Computer"
+msgstr "מרוחק מהמחשב"
+
+#: src/protocols/msn/msn.c:310 src/protocols/msn/msn.c:557
+#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:1062
+#: src/protocols/yahoo/yahoo.c:1269 src/protocols/yahoo/yahoo.c:1345
+msgid "Be Right Back"
+msgstr "חוזר עוד שניה"
+
+#: src/protocols/msn/msn.c:311 src/protocols/msn/msn.c:559
+#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:1064
+#: src/protocols/yahoo/yahoo.c:1271 src/protocols/yahoo/yahoo.c:1346
+msgid "Busy"
+msgstr "עסוק"
+
+#: src/protocols/msn/msn.c:312 src/protocols/msn/msn.c:561
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:1072
+#: src/protocols/yahoo/yahoo.c:1279 src/protocols/yahoo/yahoo.c:1350
+msgid "On The Phone"
+msgstr ""
+
+#: src/protocols/msn/msn.c:313 src/protocols/msn/msn.c:563
+#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:1076
+#: src/protocols/yahoo/yahoo.c:1283 src/protocols/yahoo/yahoo.c:1352
+msgid "Out To Lunch"
+msgstr "אוכל"
+
+#: src/protocols/msn/msn.c:314 src/protocols/msn/msn.c:565
+#: src/protocols/zephyr/zephyr.c:862 src/protocols/zephyr/zephyr.c:877
+msgid "Hidden"
+msgstr "מוסתר"
+
+#: src/protocols/msn/msn.c:326
+msgid "Set Friendly Name"
+msgstr ""
+
+#: src/protocols/msn/msn.c:334
+msgid "Set Home Phone Number"
+msgstr ""
+
+#: src/protocols/msn/msn.c:340
+msgid "Set Work Phone Number"
+msgstr ""
+
+#: src/protocols/msn/msn.c:346
+msgid "Set Mobile Phone Number"
+msgstr ""
+
+#: src/protocols/msn/msn.c:355
+msgid "Enable/Disable Mobile Devices"
+msgstr ""
+
+#: src/protocols/msn/msn.c:362
+msgid "Allow/Disallow Mobile Pages"
+msgstr ""
+
+#: src/protocols/msn/msn.c:384
+msgid "Send to Mobile"
+msgstr "שלח לפלאפון"
+
+#: src/protocols/msn/msn.c:659
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
+"%s@hotmail.com. No changes were made to your allow list."
+msgstr ""
+
+#: src/protocols/msn/msn.c:663 src/protocols/msn/msn.c:703
+msgid "Invalid MSN screenname"
+msgstr ""
+
+#: src/protocols/msn/msn.c:699
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
+"%s@hotmail.com. No changes were made to your block list."
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/msn/msn.c:1194 src/protocols/msn/msn.c:1196
+msgid "MSN Protocol Plugin"
+msgstr "תוסף פרוטוקול MSN"
+
+#: src/protocols/msn/msn.c:1214
+msgid "Login Server:"
+msgstr "שרת:"
+
+#: src/protocols/msn/notification.c:235
+msgid "Unable to request INF"
+msgstr ""
+
+#: src/protocols/msn/notification.c:261
+msgid "Unable to send USR"
+msgstr ""
+
+#: src/protocols/msn/notification.c:297
+msgid "Retrieving buddy list"
+msgstr "מקבל רשימת הידידים"
+
+#: src/protocols/msn/notification.c:323
+msgid "Unable to send password"
+msgstr "לא ניתן לשלוח סיסמא"
+
+#: src/protocols/msn/notification.c:328
+msgid "Password sent"
+msgstr "הסיסמא נשלחה"
+
+#: src/protocols/msn/notification.c:346
+msgid "You have been disconnected. You have signed on from another location."
+msgstr ""
+
+#: src/protocols/msn/notification.c:351
+msgid "You have been disconnected. The MSN servers are going down temporarily."
+msgstr ""
+
+#: src/protocols/msn/notification.c:457
+#, c-format
+msgid "The user %s (%s) wants to add %s to his or her buddy list."
+msgstr ""
+
+#: src/protocols/msn/notification.c:715
+#, c-format
+msgid "The user %s (%s) wants to add you to their buddy list."
+msgstr ""
+
+#: src/protocols/msn/notification.c:1126
+msgid "Got invalid XFR"
+msgstr ""
+
+#: src/protocols/msn/notification.c:1168
+msgid "Unable to transfer to notification server"
+msgstr ""
+
+#: src/protocols/msn/notification.c:1304
+#, c-format
+msgid ""
+"The MSN server will shut down for maintenance in %d minute(s). You will "
+"automatically be signed out at that time. Please finish any conversations in "
+"progress.\n"
+"\n"
+"After the maintenance has been completed, you will be able to successfully "
+"sign in."
+msgstr ""
+
+#: src/protocols/msn/state.c:30 src/protocols/yahoo/yahoo.c:1082
+#: src/gtkpounce.c:569 src/gtkprefs.c:1461
+msgid "Idle"
+msgstr ""
+
+#: src/protocols/msn/switchboard.c:122
+msgid "The conversation has become inactive and timed out."
+msgstr ""
+
+#: src/protocols/msn/switchboard.c:126
+#, c-format
+msgid "%s has closed the conversation window."
+msgstr ""
+
+#: src/protocols/msn/switchboard.c:230
+msgid "An MSN message may not have been received."
+msgstr ""
+
+#: src/protocols/napster/napster.c:249
+msgid "Unable to read header from server"
+msgstr ""
+
+#: src/protocols/napster/napster.c:326
+#, c-format
+msgid "users: %s, files: %s, size: %sGB"
+msgstr ""
+
+#. MSG_SERVER_HOTLIST_ERROR
+#: src/protocols/napster/napster.c:337
+#, c-format
+msgid "Unable to add \"%s\" to your Napster hotlist"
+msgstr ""
+
+#: src/protocols/napster/napster.c:345
+msgid "You were disconnected from the server."
+msgstr ""
+
+#. MSG_CLIENT_WHOIS
+#: src/protocols/napster/napster.c:401
+#, c-format
+msgid "%s requested your information"
+msgstr ""
+
+#: src/protocols/napster/napster.c:431
+msgid ""
+"You were disconnected from the server, because you logged on from a "
+"different location"
+msgstr ""
+
+#. MSG_CLIENT_PING
+#: src/protocols/napster/napster.c:437
+#, c-format
+msgid "%s requested a PING"
+msgstr ""
+
+#: src/protocols/napster/napster.c:551 src/gtkblist.c:1512
+msgid "Get Info"
+msgstr "הצג פרטים"
+
+#: src/protocols/napster/napster.c:565 src/protocols/oscar/oscar.c:5124
+#: src/protocols/toc/toc.c:1195
+msgid "Join what group:"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/napster/napster.c:641 src/protocols/napster/napster.c:643
+msgid "NAPSTER Protocol Plugin"
+msgstr "תוסף פרוטוקול Napster"
+
+#: src/protocols/oscar/oscar.c:189
+msgid "Invalid error"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:190
+msgid "Invalid SNAC"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:191
+msgid "Rate to host"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:192
+msgid "Rate to client"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:194
+msgid "Service unavailable"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:195
+msgid "Service not defined"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:196
+msgid "Obsolete SNAC"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:197
+msgid "Not supported by host"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:198
+msgid "Not supported by client"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:199
+msgid "Refused by client"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:200
+msgid "Reply too big"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:201
+msgid "Responses lost"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:202
+msgid "Request denied"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:203
+msgid "Busted SNAC payload"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:204
+msgid "Insufficient rights"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:205
+msgid "In local permit/deny"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:206
+msgid "Too evil (sender)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:207
+msgid "Too evil (receiver)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:208
+msgid "User temporarily unavailable"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:209
+msgid "No match"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:210
+msgid "List overflow"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:211
+msgid "Request ambiguous"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:212
+msgid "Queue full"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:213
+msgid "Not while on AOL"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:484
+#, c-format
+msgid "Direct IM with %s closed"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:486
+#, c-format
+msgid "Direct IM with %s failed"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:542 src/protocols/toc/toc.c:602
+#: src/protocols/toc/toc.c:615 src/protocols/toc/toc.c:678
+msgid "Disconnected."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:554 src/protocols/toc/toc.c:855
+#, c-format
+msgid "You have been disconnected from chat room %s."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:570
+msgid "Chat is currently unavailable"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:644 src/protocols/oscar/oscar.c:701
+msgid "Couldn't connect to host"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:686
+msgid "Unable to login to AIM"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:793 src/protocols/oscar/oscar.c:1179
+msgid "Could Not Connect"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:800
+msgid "Connection established, cookie sent"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:867 src/protocols/oscar/oscar.c:880
+#: src/protocols/oscar/oscar.c:885
+msgid "File Transfer Aborted"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:868
+msgid "Unable to establish listener socket."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:881
+msgid "Unable to establish file descriptor."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:886
+msgid "Unable to create new connection."
+msgstr ""
+
+#. Incorrect nick/password
+#: src/protocols/oscar/oscar.c:1069 src/protocols/toc/toc.c:551
+msgid "Incorrect nickname or password."
+msgstr ""
+
+#. Suspended account
+#: src/protocols/oscar/oscar.c:1073
+msgid "Your account is currently suspended."
+msgstr ""
+
+#. service temporarily unavailable
+#: src/protocols/oscar/oscar.c:1077
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr ""
+
+#. connecting too frequently
+#: src/protocols/oscar/oscar.c:1081
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+
+#. client too old
+#: src/protocols/oscar/oscar.c:1085
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1089 src/protocols/toc/toc.c:633
+msgid "Authentication Failed"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1117
+msgid "Internal Error"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1218 src/protocols/oscar/oscar.c:1248
+#: src/protocols/oscar/oscar.c:1336
+#, c-format
+msgid ""
+"You may be disconnected shortly.  You may want to use TOC until this is "
+"fixed.  Check %s for updates."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1221 src/protocols/oscar/oscar.c:1251
+msgid "Gaim was Unable to get a valid AIM login hash."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1339
+msgid "Gaim was Unable to get a valid login hash."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1896 src/protocols/oscar/oscar.c:5442
+#, c-format
+msgid "Direct IM with %s established"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2225 src/protocols/oscar/oscar.c:2247
+msgid "(There was an error receiving this message)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2393
+#, c-format
+msgid "%s has just asked to directly connect to %s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2396
+msgid ""
+"This requires a direct connection between the two computers and is necessary "
+"for IM Images.  Because your IP address will be revealed, this may be "
+"considered a privacy risk."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2428
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2436
+msgid "Authorization Request Message:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2437
+msgid "Please authorize me!"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2465
+#, c-format
+msgid ""
+"The user %s requires authorization before being added to a buddy list.  Do "
+"you want to send an authorization request?"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2470 src/protocols/oscar/oscar.c:2472
+msgid "Request Authorization"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2508 src/protocols/oscar/oscar.c:2510
+#: src/protocols/oscar/oscar.c:2517 src/protocols/oscar/oscar.c:2588
+#: src/protocols/oscar/oscar.c:2608 src/protocols/oscar/oscar.c:2983
+#: src/protocols/oscar/oscar.c:3035 src/protocols/oscar/oscar.c:5045
+#: src/protocols/oscar/oscar.c:5091
+msgid "No reason given."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2516
+msgid "Authorization Denied Message:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2588
+#, c-format
+msgid ""
+"The user %u wants to add you to their buddy list for the following reason:\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2596 src/protocols/oscar/oscar.c:5051
+msgid "Authorization Request"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2608
+#, c-format
+msgid ""
+"The user %u has denied your request to add them to your contact list for the "
+"following reason:\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2609
+msgid "ICQ authorization denied."
+msgstr ""
+
+#. Someone has granted you authorization
+#: src/protocols/oscar/oscar.c:2616
+#, c-format
+msgid "The user %u has granted your request to add them to your contact list."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2624
+#, c-format
+msgid ""
+"You have received a special message\n"
+"\n"
+"From: %s [%s]\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2632
+#, c-format
+msgid ""
+"You have received an ICQ page\n"
+"\n"
+"From: %s [%s]\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2640
+#, c-format
+msgid ""
+"You have received an ICQ email from %s [%s]\n"
+"\n"
+"Message is:\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2661
+#, c-format
+msgid "ICQ user %u has sent you a contact: %s (%s)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2667
+msgid "Do you want to add this contact to your Buddy List?"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2671
+msgid "Decline"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2753
+#, c-format
+msgid "You missed %hu message from %s because it was invalid."
+msgid_plural "You missed %hu messages from %s because they were invalid."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2762
+#, c-format
+msgid "You missed %hu message from %s because it was too large."
+msgid_plural "You missed %hu messages from %s because they were too large."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2771
+#, c-format
+msgid "You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2780
+#, c-format
+msgid "You missed %hu message from %s because he/she was too evil."
+msgid_plural "You missed %hu messages from %s because he/she was too evil."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2789
+#, c-format
+msgid "You missed %hu message from %s because you are too evil."
+msgid_plural "You missed %hu messages from %s because you are too evil."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2798
+#, c-format
+msgid "You missed %hu message from %s for an unknown reason."
+msgid_plural "You missed %hu messages from %s for an unknown reason."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/oscar/oscar.c:2814 src/protocols/oscar/oscar.c:4522
+#: src/protocols/oscar/oscar.c:5731
+msgid "Free For Chat"
+msgstr "פנוי לשיחה"
+
+#: src/protocols/oscar/oscar.c:2818 src/protocols/oscar/oscar.c:4516
+#: src/protocols/oscar/oscar.c:5729
+msgid "Not Available"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2820 src/protocols/oscar/oscar.c:4519
+#: src/protocols/oscar/oscar.c:5730
+msgid "Occupied"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2824
+msgid "Web Aware"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2884
+#, c-format
+msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2886
+#, c-format
+msgid "<B>Status:</B> %s<HR>%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2945
+#, c-format
+msgid "SNAC threw error: %s\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2946
+msgid "Unknown error"
+msgstr ""
+
+#. Data is assumed to be the destination sn
+#: src/protocols/oscar/oscar.c:2981
+#, c-format
+msgid "Your message to %s did not get sent:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3033
+#, c-format
+msgid "User information for %s unavailable:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3067
+msgid "Buddy Icon"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3070
+msgid "Voice"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3073 src/protocols/oscar/oscar.c:5755
+msgid "Direct IM"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3076 src/gtkblist.c:1521
+msgid "Chat"
+msgstr "שיחה"
+
+#: src/protocols/oscar/oscar.c:3079 src/protocols/oscar/oscar.c:5767
+msgid "Get File"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:5761
+msgid "Send File"
+msgstr "שלח קובץ"
+
+#: src/protocols/oscar/oscar.c:3086
+msgid "Games"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3089
+msgid "Add-Ins"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3092
+msgid "Send Buddy List"
+msgstr "שלח רשימת הידידים"
+
+#: src/protocols/oscar/oscar.c:3095
+msgid "EveryBuddy Bug"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3098
+msgid "AP User"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3101
+msgid "ICQ RTF"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3104
+msgid "Nihilist"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3107
+msgid "ICQ Server Relay"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3110
+msgid "ICQ Unknown"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3113
+msgid "Trillian Encryption"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3116
+msgid "ICQ UTF8"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3156
+msgid ""
+"<i>Unable to display information because it was sent in an unknown encoding."
+"</i>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3163
+#, c-format
+msgid "Online Since : <b>%s</b><br>\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3168
+#, c-format
+msgid "Member Since : <b>%s</b><br>\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3174
+#, c-format
+msgid "Idle : <b>%s</b>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3177
+msgid "Idle: <b>Active</b>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3179
+#, c-format
+msgid ""
+"Username : <b>%s</b>  %s <br>\n"
+"Warning Level : <b>%d %%</b><br>\n"
+"%s%s%s\n"
+"<hr>\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3211
+msgid "<i>User has no away message</i>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3222
+msgid "Client Capabilities: "
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3228
+msgid "<i>No Information Provided</i>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3252
+msgid "Your AIM connection may be lost."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3612
+msgid "Rate limiting error."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3613
+msgid ""
+"The last message was not sent because you are over the rate limit.  Please "
+"wait 10 seconds and try again."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3673
+msgid ""
+"You have been disconnected because you have signed on with this screen name "
+"at another location."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3675
+msgid "You have been signed off for an unknown reason."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3903
+msgid "UIN:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3908
+msgid "First Name:"
+msgstr "שם פרטי:"
+
+#: src/protocols/oscar/oscar.c:3911
+msgid "Last Name:"
+msgstr "שם משפחה:"
+
+#: src/protocols/oscar/oscar.c:3914 src/protocols/oscar/oscar.c:3920
+msgid "Email Address:"
+msgstr "כתובת דוא\"ל"
+
+#: src/protocols/oscar/oscar.c:3925
+msgid "Mobile Phone:"
+msgstr "מספר פלאפון:"
+
+#: src/protocols/oscar/oscar.c:3928
+msgid "Gender:"
+msgstr "מין"
+
+#: src/protocols/oscar/oscar.c:3928
+msgid "Female"
+msgstr "נקבה"
+
+#: src/protocols/oscar/oscar.c:3928
+msgid "Male"
+msgstr "זכר"
+
+#: src/protocols/oscar/oscar.c:3937
+msgid "Birthday:"
+msgstr "תאריך לידה:"
+
+#: src/protocols/oscar/oscar.c:3942
+msgid "Age:"
+msgstr "גיל:"
+
+#: src/protocols/oscar/oscar.c:3945
+msgid "Personal Web Page:"
+msgstr "כתובת אינטרנט:"
+
+#: src/protocols/oscar/oscar.c:3948
+msgid "Additional Information:"
+msgstr "מידע נוסף:"
+
+#: src/protocols/oscar/oscar.c:3952
+msgid "Home Address:"
+msgstr "כתובת:"
+
+#: src/protocols/oscar/oscar.c:3954 src/protocols/oscar/oscar.c:3970
+msgid "Address:"
+msgstr "רחוב:"
+
+#: src/protocols/oscar/oscar.c:3957 src/protocols/oscar/oscar.c:3973
+msgid "City:"
+msgstr "עיר:"
+
+#: src/protocols/oscar/oscar.c:3960 src/protocols/oscar/oscar.c:3976
+msgid "State:"
+msgstr "אזור:"
+
+#: src/protocols/oscar/oscar.c:3963 src/protocols/oscar/oscar.c:3979
+msgid "Zip Code:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3968
+msgid "Work Address:"
+msgstr "כתובת בעבודה:"
+
+#: src/protocols/oscar/oscar.c:3984
+msgid "Work Information:"
+msgstr "אודות העבודה"
+
+#: src/protocols/oscar/oscar.c:3986
+msgid "Company:"
+msgstr "חברה:"
+
+#: src/protocols/oscar/oscar.c:3989
+msgid "Division:"
+msgstr "מחלקה:"
+
+#: src/protocols/oscar/oscar.c:3992
+msgid "Position:"
+msgstr "תפקיד:"
+
+#: src/protocols/oscar/oscar.c:3995
+msgid "Web Page:"
+msgstr "אתר האינטרנט:"
+
+#: src/protocols/oscar/oscar.c:4063
+#, c-format
+msgid "<B>%s has the following screen names:</B><BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4081
+#, c-format
+msgid "No results found for email address %s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4102
+#, c-format
+msgid "You should receive an email asking to confirm %s."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4104
+msgid "Account Confirmation Requested"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4132
+msgid "Error Changing Account Info"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4135
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"differs from the original."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4138
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"ends in a space."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4141
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"is too long."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4144
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because there is already a "
+"request pending for this screen name."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4147
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address has "
+"too many screen names associated with it."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4150
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address is "
+"invalid."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4153
+#, c-format
+msgid "Error 0x%04x: Unknown error."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4163
+#, c-format
+msgid ""
+"Your screen name is currently formatted as follows:\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4164 src/protocols/oscar/oscar.c:4171
+msgid "Account Info"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4169
+#, c-format
+msgid "The email address for %s is %s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4393
+msgid "Unable to set AIM profile."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4394
+msgid ""
+"You have probably requested to set your profile before the login procedure "
+"completed.  Your profile remains unset; try setting it again when you are "
+"fully connected."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4423
+#, c-format
+msgid ""
+"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"truncated it for you."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4425
+msgid "Profile too long."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4441
+msgid "Unable to set AIM away message."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4442
+msgid ""
+"You have probably requested to set your away message before the login "
+"procedure completed.  You remain in a \"present\" state; try setting it "
+"again when you are fully connected."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4481
+#, c-format
+msgid ""
+"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"truncated it and set you away."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4483
+msgid "Away message too long."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4696
+msgid "Unable To Retrive Buddy List"
+msgstr "לא ניתן לקבל רשימת הידידים"
+
+#: src/protocols/oscar/oscar.c:4697
+msgid ""
+"Gaim was temporarily unable to retrive your buddy list from the AIM "
+"servers.  Your buddy list is not lost, and will probably become available in "
+"a few hours."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4788 src/protocols/oscar/oscar.c:4789
+#: src/protocols/oscar/oscar.c:4794
+msgid "Orphans"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4958
+#, c-format
+msgid ""
+"Could not add the buddy %s because you have too many buddies in your buddy "
+"list.  Please remove one and try again."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4958 src/protocols/oscar/oscar.c:4971
+msgid "(no name)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4959 src/protocols/oscar/oscar.c:4972
+msgid "Unable To Add"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:4971
+#, c-format
+msgid ""
+"Could not add the buddy %s for an unknown reason.  The most common reason "
+"for this is that you have the maximum number of allowed buddies in your "
+"buddy list."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5006
+#, c-format
+msgid ""
+"The user %s has given you permission to add you to their buddy list.  Do you "
+"want to add them?"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5012
+msgid "Authorization Given"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5045
+#, c-format
+msgid ""
+"The user %s wants to add you to their buddy list for the following reason:\n"
+"%s"
+msgstr ""
+
+#. Granted
+#: src/protocols/oscar/oscar.c:5087
+#, c-format
+msgid "The user %s has granted your request to add them to your contact list."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5088
+msgid "Authorization Granted"
+msgstr ""
+
+#. Denied
+#: src/protocols/oscar/oscar.c:5091
+#, c-format
+msgid ""
+"The user %s has denied your request to add them to your contact list for the "
+"following reason:\n"
+"%s"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5092
+msgid "Authorization Denied"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5129 src/protocols/toc/toc.c:1200
+msgid "Exchange:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5349
+msgid "<b>Status:</b> "
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5358
+msgid "<b>Logged In:</b> "
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5365
+msgid "<b>Capabilities:</b> "
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5373
+msgid "<b>Status:</b> Not Authorized"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5377 src/gtkblist.c:856
+msgid "<b>Status:</b> Offline"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5403
+msgid "Offline"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5584
+msgid "Unable to open Direct IM"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5597
+#, c-format
+msgid "You have selected to open a Direct IM connection with %s."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5600
+msgid ""
+"Because this reveals your IP address, it may be considered a privacy risk.  "
+"Do you wish to continue?"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5745
+msgid "Get Status Msg"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5779
+msgid "Re-request Authorization"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5800
+msgid "The new formatting is invalid."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5801
+msgid "Screenname formatting can change only capitalization and whitespace."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5807
+msgid "New screenname formatting:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5856
+msgid "Change Address To:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5869
+msgid "You are awaiting authorization from the following buddies:<BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5894
+msgid "<i>you are not waiting for authorization</i>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5899
+#, c-format
+msgid ""
+"%s<BR><BR>You can re-request authorization from these buddies by right-"
+"clicking on them and clicking \"Re-request authorization.\""
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5934
+msgid "Change Password (URL)"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5945
+msgid "Format Screenname"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5951
+msgid "Confirm Account"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5957
+msgid "Display Current Registered Address"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5963
+msgid "Change Current Registered Address"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5972
+msgid "Show Buddies Awaiting Authorization"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:5980
+msgid "Search for Buddy by Email"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/oscar/oscar.c:6100 src/protocols/oscar/oscar.c:6102
+msgid "AIM/ICQ Protocol Plugin"
+msgstr "תוסף פרוטוקולים Aim/ICQ"
+
+#: src/protocols/oscar/oscar.c:6120
+msgid "Auth Host:"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:6126
+msgid "Auth Port:"
+msgstr ""
+
+#: src/protocols/toc/toc.c:190
+#, c-format
+msgid "Looking up %s"
+msgstr ""
+
+#: src/protocols/toc/toc.c:490
+#, c-format
+msgid "Unable to write file %s."
+msgstr ""
+
+#: src/protocols/toc/toc.c:493
+#, c-format
+msgid "Unable to read file %s."
+msgstr ""
+
+#: src/protocols/toc/toc.c:496
+#, c-format
+msgid "Message too long, last %s bytes truncated."
+msgstr ""
+
+#: src/protocols/toc/toc.c:499
+#, c-format
+msgid "%s not currently logged in."
+msgstr ""
+
+#: src/protocols/toc/toc.c:502
+#, c-format
+msgid "Warning of %s not allowed."
+msgstr ""
+
+#: src/protocols/toc/toc.c:505
+msgid "A message has been dropped, you are exceeding the server speed limit."
+msgstr ""
+
+#: src/protocols/toc/toc.c:508
+#, c-format
+msgid "Chat in %s is not available."
+msgstr ""
+
+#: src/protocols/toc/toc.c:511
+#, c-format
+msgid "You are sending messages too fast to %s."
+msgstr ""
+
+#: src/protocols/toc/toc.c:514
+#, c-format
+msgid "You missed an IM from %s because it was too big."
+msgstr ""
+
+#: src/protocols/toc/toc.c:517
+#, c-format
+msgid "You missed an IM from %s because it was sent too fast."
+msgstr ""
+
+#: src/protocols/toc/toc.c:520
+msgid "Failure."
+msgstr ""
+
+#: src/protocols/toc/toc.c:523
+msgid "Too many matches."
+msgstr ""
+
+#: src/protocols/toc/toc.c:526
+msgid "Need more qualifiers."
+msgstr ""
+
+#: src/protocols/toc/toc.c:529
+msgid "Dir service temporarily unavailable."
+msgstr ""
+
+#: src/protocols/toc/toc.c:532
+msgid "Email lookup restricted."
+msgstr ""
+
+#: src/protocols/toc/toc.c:535
+msgid "Keyword ignored."
+msgstr ""
+
+#: src/protocols/toc/toc.c:538
+msgid "No keywords."
+msgstr ""
+
+#: src/protocols/toc/toc.c:541
+msgid "User has no directory information."
+msgstr ""
+
+#: src/protocols/toc/toc.c:545
+msgid "Country not supported."
+msgstr ""
+
+#: src/protocols/toc/toc.c:548
+#, c-format
+msgid "Failure unknown: %s."
+msgstr ""
+
+#: src/protocols/toc/toc.c:554
+msgid "The service is temporarily unavailable."
+msgstr ""
+
+#: src/protocols/toc/toc.c:557
+msgid "Your warning level is currently too high to log in."
+msgstr ""
+
+#: src/protocols/toc/toc.c:560
+msgid ""
+"You have been connecting and disconnecting too frequently.  Wait ten minutes "
+"and try again.  If you continue to try, you will need to wait even longer."
+msgstr ""
+
+#: src/protocols/toc/toc.c:562
+#, c-format
+msgid "An unknown signon error has occurred: %s."
+msgstr ""
+
+#: src/protocols/toc/toc.c:565
+#, c-format
+msgid "An unknown error, %d, has occurred.  Info: %s"
+msgstr ""
+
+#: src/protocols/toc/toc.c:582
+msgid "Connection Closed"
+msgstr ""
+
+#: src/protocols/toc/toc.c:620
+msgid "Waiting for reply..."
+msgstr ""
+
+#: src/protocols/toc/toc.c:685
+msgid "TOC has come back from its pause. You may now send messages again."
+msgstr ""
+
+#: src/protocols/toc/toc.c:874
+msgid "Password Change Successful"
+msgstr ""
+
+#: src/protocols/toc/toc.c:878
+msgid "TOC has sent a PAUSE command."
+msgstr ""
+
+#: src/protocols/toc/toc.c:879
+msgid ""
+"When this happens, TOC ignores any messages sent to it, and may kick you off "
+"if you send a message. Gaim will prevent anything from going through. This "
+"is only temporary, please be patient."
+msgstr ""
+
+#: src/protocols/toc/toc.c:1323
+msgid "Get Dir Info"
+msgstr ""
+
+#: src/protocols/toc/toc.c:1447
+msgid "Set Dir Info"
+msgstr ""
+
+#: src/protocols/toc/toc.c:1570
+#, c-format
+msgid "Could not open %s for writing!"
+msgstr ""
+
+#: src/protocols/toc/toc.c:1606
+msgid "File transfer failed; other side probably canceled."
+msgstr ""
+
+#: src/protocols/toc/toc.c:1651 src/protocols/toc/toc.c:1691
+#: src/protocols/toc/toc.c:1903
+msgid "Could not connect for transfer."
+msgstr ""
+
+#: src/protocols/toc/toc.c:1815
+msgid "Could not connect for transfer!"
+msgstr ""
+
+#: src/protocols/toc/toc.c:1848
+msgid "Could not write file header.  The file will not be transferred."
+msgstr ""
+
+#: src/protocols/toc/toc.c:1948 src/gtkft.c:1059
+msgid "Gaim - Save As..."
+msgstr ""
+
+#: src/protocols/toc/toc.c:1982
+#, c-format
+msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/protocols/toc/toc.c:1989
+#, c-format
+msgid "%s requests you to send them a file"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/toc/toc.c:2064 src/protocols/toc/toc.c:2066
+msgid "TOC Protocol Plugin"
+msgstr "תוסף פרוטוקול TOC"
+
+#: src/protocols/toc/toc.c:2084
+msgid "TOC Host:"
+msgstr "מארח TOC:"
+
+#: src/protocols/toc/toc.c:2090
+msgid "TOC Port:"
+msgstr "יציאה TOC:"
+
+#: src/protocols/yahoo/yahoo.c:602
+msgid "Your Yahoo! message did not get sent."
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:1066 src/protocols/yahoo/yahoo.c:1273
+#: src/protocols/yahoo/yahoo.c:1347
+msgid "Not At Home"
+msgstr "לא נמצא בבית"
+
+#: src/protocols/yahoo/yahoo.c:1068 src/protocols/yahoo/yahoo.c:1275
+#: src/protocols/yahoo/yahoo.c:1348
+msgid "Not At Desk"
+msgstr "לא ליד השולחן"
+
+#: src/protocols/yahoo/yahoo.c:1070 src/protocols/yahoo/yahoo.c:1277
+#: src/protocols/yahoo/yahoo.c:1349
+msgid "Not In Office"
+msgstr "לא נמצא במשרד"
+
+#: src/protocols/yahoo/yahoo.c:1074 src/protocols/yahoo/yahoo.c:1281
+#: src/protocols/yahoo/yahoo.c:1351
+msgid "On Vacation"
+msgstr "בחופשה"
+
+#: src/protocols/yahoo/yahoo.c:1078 src/protocols/yahoo/yahoo.c:1285
+#: src/protocols/yahoo/yahoo.c:1353
+msgid "Stepped Out"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:1194
+msgid "Active which ID?"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:1205
+msgid "Activate ID"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:1430
+msgid "Pager Host:"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:1436
+msgid "Pager Port:"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/yahoo/yahoo.c:1522 src/protocols/yahoo/yahoo.c:1524
+msgid "Yahoo Protocol Plugin"
+msgstr "תוסף פרוטוקול Yahoo"
+
+#: src/protocols/zephyr/zephyr.c:336
+#, c-format
+msgid "<b>User:</b> %s<br>"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:338
+#, c-format
+msgid "<b>Alias:</b> %s<br>"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:340
+msgid "<br>Hidden or not logged-in"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:344
+#, c-format
+msgid "<br>At %s since %s"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:573 src/protocols/zephyr/zephyr.c:574
+msgid "Anyone"
+msgstr "כל אחד"
+
+#: src/protocols/zephyr/zephyr.c:598
+msgid "Already logged in with Zephyr"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:599
+msgid ""
+"Because Zephyr uses your system username, you are unable to have multiple "
+"accounts on it when logged in as the same user."
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:847
+msgid "ZLocate"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:887
+msgid "Class:"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:892
+msgid "Instance:"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:897
+msgid "Recipient:"
+msgstr ""
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#: src/protocols/zephyr/zephyr.c:1029 src/protocols/zephyr/zephyr.c:1031
+msgid "Zephyr Protocol Plugin"
+msgstr "תוסף פרוטוקול Zephyr"
+
+#: src/about.c:74
+#, c-format
+msgid "About Gaim v%s"
+msgstr "אודות Gaim גירסה %s"
+
+#: src/about.c:106
+msgid ""
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ, "
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
+"written using Gtk+ and is licensed under the GPL.<BR><BR>"
+msgstr ""
+
+#: src/about.c:116
+msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr ""
+
+#: src/about.c:120
+msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
+msgstr ""
+
+#: src/about.c:122
+msgid ""
+"  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</"
+"A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
+"bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
+"'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
+"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo.com</"
+"A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' Doliner "
+"(developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
+msgstr ""
+
+#: src/about.c:137
+msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
+msgstr ""
+
+#: src/about.c:147
+msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
+msgstr ""
+
+#: src/about.c:149
+msgid ""
+"  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
+"lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
+"\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
+"Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
+"&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
+"Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
+msgstr ""
+
+#: src/away.c:222
+msgid "Gaim - Away!"
+msgstr ""
+
+#: src/away.c:282
+msgid "I'm Back!"
+msgstr ""
+
+#: src/away.c:387
+msgid "New Away Message"
+msgstr ""
+
+#: src/away.c:407
+msgid "Remove Away Message"
+msgstr ""
+
+#: src/away.c:602
+msgid "Set All Away"
+msgstr ""
+
+#: src/blist.c:367 src/gtkprefs.c:2192
+msgid "Chats"
+msgstr "שיחות"
+
+#: src/blist.c:679
+#, c-format
+msgid ""
+"%d buddies from group %s were not removed because their accounts were not "
+"logged in.  These buddies and the group were not removed.\n"
+msgstr ""
+
+#: src/blist.c:684
+msgid "Group not removed"
+msgstr ""
+
+#: src/blist.c:857
+msgid "Invalid Groupname"
+msgstr ""
+
+#: src/blist.c:1579
+msgid "An error was encountered parsing your buddy list.  It has not been loaded."
+msgstr ""
+
+#: src/blist.c:1581
+msgid "Buddy List Error"
+msgstr "שגיעה ברשימת הידידים"
+
+#. rob wants to inform the user that their buddy lists are
+#. * being converted
+#: src/blist.c:1587
+#, c-format
+msgid ""
+"Gaim is converting your old buddy lists to a new format, which will now be "
+"located at %s"
+msgstr ""
+
+#: src/blist.c:1590
+msgid "Converting Buddy List"
+msgstr "הופך רשימת הידידים"
+
+#: src/browser.c:430 src/browser.c:458
+msgid ""
+"Communication with the browser failed. Please close all windows and try "
+"again."
+msgstr ""
+
+#: src/browser.c:592
+msgid ""
+"Unable to launch your browser because the 'Manual' browser command has been "
+"chosen, but no command has been set."
+msgstr ""
+
+#: src/browser.c:609
+#, c-format
+msgid "There was an error launching your chosen browser: %s"
+msgstr ""
+
+#: src/buddy_chat.c:253 src/dialogs.c:1376
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
+msgstr ""
+
+#: src/buddy_chat.c:267
+msgid "Join Chat"
+msgstr "הצתרף לשיחה"
+
+#: src/buddy_chat.c:273
+msgid "Buddy Chat"
+msgstr "שיחת ידידים"
+
+#: src/buddy_chat.c:283
+msgid "Join Chat As:"
+msgstr ""
+
+#. Join button.
+#: src/buddy_chat.c:306
+msgid "Join"
+msgstr "הצתרף"
+
+#: src/conversation.c:405
+msgid "Unable to send message. The message is too large."
+msgstr ""
+
+#: src/conversation.c:413
+msgid "Unable to send message."
+msgstr "לא ניתן לשלוח הודעה"
+
+#: src/conversation.c:1967
+#, c-format
+msgid "%s entered the room."
+msgstr "%s נכנס לחדר"
+
+#: src/conversation.c:1970
+#, c-format
+msgid "%s [<I>%s</I>] entered the room."
+msgstr ""
+
+#: src/conversation.c:2019
+#, c-format
+msgid "%s is now known as %s"
+msgstr "%s ידוע  כעט בשם %s"
+
+#: src/conversation.c:2062
+#, c-format
+msgid "%s left the room (%s)."
+msgstr ""
+
+#: src/conversation.c:2064
+#, c-format
+msgid "%s left the room."
+msgstr ""
+
+#: src/conversation.c:2250
+msgid "Last created window"
+msgstr ""
+
+#: src/conversation.c:2252
+msgid "New window"
+msgstr ""
+
+#: src/conversation.c:2254
+msgid "By group"
+msgstr ""
+
+#: src/conversation.c:2256
+msgid "By account"
+msgstr ""
+
+#: src/dialogs.c:363
+msgid "Warn User"
+msgstr ""
+
+#: src/dialogs.c:363
+msgid "_Warn"
+msgstr ""
+
+#: src/dialogs.c:379
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
+"\n"
+"This will increase %s's warning level and he or she will be subject to "
+"harsher rate limiting.\n"
+msgstr ""
+
+#: src/dialogs.c:388
+msgid "Warn _anonymously?"
+msgstr ""
+
+#: src/dialogs.c:395
+msgid "<b>Anonymous warnings are less severe.</b>"
+msgstr ""
+
+#: src/dialogs.c:466
+#, c-format
+msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
+msgstr ""
+
+#: src/dialogs.c:468 src/dialogs.c:469
+msgid "Remove Buddy"
+msgstr "הסר ידיד"
+
+#: src/dialogs.c:477
+#, c-format
+msgid ""
+"You are about to remove the chat %s from your buddy list.  Do you want to "
+"continue?"
+msgstr ""
+
+#: src/dialogs.c:479 src/dialogs.c:480
+msgid "Remove Chat"
+msgstr "הסר שיחה"
+
+#: src/dialogs.c:488
+#, c-format
+msgid ""
+"You are about to remove the group %s and all its members from your buddy "
+"list.  Do you want to continue?"
+msgstr ""
+
+#: src/dialogs.c:491 src/dialogs.c:492
+msgid "Remove Group"
+msgstr "הסר קבוצה"
+
+#: src/dialogs.c:645
+msgid "New Message"
+msgstr ""
+
+#: src/dialogs.c:663
+msgid "Please enter the screenname of the person you would like to IM.\n"
+msgstr ""
+
+#: src/dialogs.c:679 src/dialogs.c:785 src/dialogs.c:3788
+msgid "_Screenname:"
+msgstr ""
+
+#: src/dialogs.c:694 src/dialogs.c:801 src/gtkpounce.c:519
+msgid "_Account:"
+msgstr ""
+
+#: src/dialogs.c:754
+msgid "Get User Info"
+msgstr ""
+
+#: src/dialogs.c:773
+msgid ""
+"Please enter the screenname of the person whose info you would like to "
+"view.\n"
+msgstr ""
+
+#: src/dialogs.c:956
+msgid "Add Group"
+msgstr ""
+
+#: src/dialogs.c:973
+msgid "Please enter the name of the group to be added.\n"
+msgstr ""
+
+#: src/dialogs.c:982 src/dialogs.c:4339
+msgid "_Group:"
+msgstr ""
+
+#: src/dialogs.c:1069
+msgid "Add Buddy"
+msgstr ""
+
+#: src/dialogs.c:1088
+msgid ""
+"Please enter the screen name of the person you would like to add to your "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
+"The alias will be displayed in place of the screen name whenever possible.\n"
+msgstr ""
+
+#: src/dialogs.c:1107
+msgid "Screen Name"
+msgstr ""
+
+#: src/dialogs.c:1120
+msgid "Alias"
+msgstr ""
+
+#: src/dialogs.c:1130
+msgid "Group"
+msgstr ""
+
+#. Set up stuff for the account box
+#: src/dialogs.c:1139
+msgid "Add To"
+msgstr ""
+
+#: src/dialogs.c:1383
+msgid "Add Chat"
+msgstr ""
+
+#: src/dialogs.c:1406
+msgid ""
+"Please enter an alias, and the appropriate information about the chat you "
+"would like to add to your buddy list.\n"
+msgstr ""
+
+#: src/dialogs.c:1415
+msgid "Account:"
+msgstr ""
+
+#: src/dialogs.c:1434
+msgid "Alias:"
+msgstr ""
+
+#: src/dialogs.c:1445
+msgid "Group:"
+msgstr ""
+
+#: src/dialogs.c:1782
+msgid "Privacy"
+msgstr ""
+
+#: src/dialogs.c:1793
+msgid "Changes to privacy settings take effect immediately."
+msgstr ""
+
+#: src/dialogs.c:1802
+msgid "Set privacy for:"
+msgstr ""
+
+#: src/dialogs.c:1819
+msgid "Allow all users to contact me"
+msgstr ""
+
+#: src/dialogs.c:1823
+msgid "Allow only users on my buddy list"
+msgstr ""
+
+#: src/dialogs.c:1827
+msgid "Allow only the users below"
+msgstr ""
+
+#: src/dialogs.c:1865
+msgid "Deny all users"
+msgstr ""
+
+#: src/dialogs.c:1869
+msgid "Block the users below"
+msgstr ""
+
+#: src/dialogs.c:1986
+msgid "Set Directory Info"
+msgstr ""
+
+#: src/dialogs.c:1994
+msgid "Directory Info"
+msgstr ""
+
+#: src/dialogs.c:2004
+#, c-format
+msgid "Setting Dir Info for %s:"
+msgstr ""
+
+#: src/dialogs.c:2017
+msgid "Allow Web Searches To Find Your Info"
+msgstr ""
+
+#. Line 1
+#: src/dialogs.c:2020 src/dialogs.c:2669
+msgid "First Name"
+msgstr ""
+
+#. Line 2
+#: src/dialogs.c:2031 src/dialogs.c:2679
+msgid "Middle Name"
+msgstr ""
+
+#. Line 3
+#: src/dialogs.c:2043 src/dialogs.c:2689
+msgid "Last Name"
+msgstr ""
+
+#. Line 4
+#: src/dialogs.c:2054 src/dialogs.c:2699
+msgid "Maiden Name"
+msgstr ""
+
+#. Line 6
+#: src/dialogs.c:2076 src/dialogs.c:2718
+msgid "State"
+msgstr ""
+
+#: src/dialogs.c:2118 src/dialogs.c:2294 src/dialogs.c:3457 src/dialogs.c:4260
+#: src/dialogs.c:5010
+msgid "Save"
+msgstr ""
+
+#: src/dialogs.c:2141
+msgid "New passwords do not match."
+msgstr ""
+
+#: src/dialogs.c:2147
+msgid "Fill out all fields completely."
+msgstr ""
+
+#: src/dialogs.c:2192
+#, c-format
+msgid "Changing password for %s:"
+msgstr ""
+
+#: src/dialogs.c:2200
+msgid "Original Password"
+msgstr ""
+
+#: src/dialogs.c:2211
+msgid "New Password"
+msgstr ""
+
+#: src/dialogs.c:2222
+msgid "New Password (again)"
+msgstr ""
+
+#: src/dialogs.c:2270
+#, c-format
+msgid "Changing info for %s:"
+msgstr ""
+
+#: src/dialogs.c:2352
+msgid "Below are the results of your search: "
+msgstr ""
+
+#: src/dialogs.c:2463
+msgid "Permit"
+msgstr ""
+
+#: src/dialogs.c:2495
+msgid "Add Permit"
+msgstr ""
+
+#: src/dialogs.c:2497
+msgid "Add Deny"
+msgstr ""
+
+#: src/dialogs.c:2564
+msgid "Log Conversation"
+msgstr ""
+
+#: src/dialogs.c:2645 src/dialogs.c:2778
+msgid "Search for Buddy"
+msgstr ""
+
+#: src/dialogs.c:2745
+msgid "Find Buddy By Info"
+msgstr ""
+
+#: src/dialogs.c:2772
+msgid "Find Buddy By Email"
+msgstr ""
+
+#: src/dialogs.c:2876
+msgid "Insert Link"
+msgstr ""
+
+#: src/dialogs.c:2878
+msgid "Insert"
+msgstr ""
+
+#: src/dialogs.c:2897
+msgid ""
+"Please enter the URL and description of the link that you want to insert.  "
+"The description is optional.\n"
+msgstr ""
+
+#: src/dialogs.c:3066 src/dialogs.c:3083
+msgid "Select Text Color"
+msgstr ""
+
+#: src/dialogs.c:3118 src/dialogs.c:3135
+msgid "Select Background Color"
+msgstr ""
+
+#: src/dialogs.c:3230 src/dialogs.c:3256
+msgid "Select Font"
+msgstr ""
+
+#: src/dialogs.c:3321
+msgid "You cannot save an away message with a blank title"
+msgstr ""
+
+#: src/dialogs.c:3323
+msgid "Please give the message a title, or choose \"Use\" to use without saving."
+msgstr ""
+
+#: src/dialogs.c:3333
+msgid "You cannot create an empty away message"
+msgstr ""
+
+#: src/dialogs.c:3398 src/dialogs.c:3406
+msgid "New away message"
+msgstr ""
+
+#: src/dialogs.c:3416
+msgid "Away title: "
+msgstr ""
+
+#: src/dialogs.c:3461
+msgid "Save & Use"
+msgstr ""
+
+#: src/dialogs.c:3465
+msgid "Use"
+msgstr ""
+
+#. show everything
+#: src/dialogs.c:3613
+msgid "Smile!"
+msgstr ""
+
+#: src/dialogs.c:3659 src/dialogs.c:3737
+msgid "Alias Buddy"
+msgstr ""
+
+#. Setup the label containing the description.
+#: src/dialogs.c:3688
+msgid "Please enter an aliased name for this chat.\n"
+msgstr ""
+
+#: src/dialogs.c:3700 src/dialogs.c:3802
+msgid "_Alias:"
+msgstr ""
+
+#. Setup the label containing the description.
+#: src/dialogs.c:3767
+msgid ""
+"Please enter an aliased name for the person below, or rename this contact in "
+"your buddy list.\n"
+msgstr ""
+
+#: src/dialogs.c:3856 src/dialogs.c:3863
+#, c-format
+msgid "Couldn't write to %s."
+msgstr ""
+
+#: src/dialogs.c:3887
+msgid "Save Log File"
+msgstr "שמור קובץ רישום"
+
+#: src/dialogs.c:3917
+#, c-format
+msgid "Couldn't remove file %s."
+msgstr ""
+
+#: src/dialogs.c:3936
+msgid "Clear Log"
+msgstr "נקה רישום"
+
+#: src/dialogs.c:3945
+msgid "Really clear log?"
+msgstr "באמת לרוקן את הרישום?"
+
+#: src/dialogs.c:3990
+#, c-format
+msgid "Couldn't open log file %s."
+msgstr ""
+
+#: src/dialogs.c:4132
+#, c-format
+msgid "Conversations with %s"
+msgstr ""
+
+#: src/dialogs.c:4134
+msgid "System Log"
+msgstr ""
+
+#: src/dialogs.c:4155
+#, c-format
+msgid "Couldn't open log file %s"
+msgstr ""
+
+#: src/dialogs.c:4176
+msgid "Date"
+msgstr ""
+
+#: src/dialogs.c:4233
+msgid "Log"
+msgstr ""
+
+#: src/dialogs.c:4255
+msgid "Clear"
+msgstr ""
+
+#: src/dialogs.c:4313
+msgid "Rename Group"
+msgstr ""
+
+#: src/dialogs.c:4330
+msgid "Please enter a new name for the selected group.\n"
+msgstr ""
+
+#: src/dialogs.c:4406 src/dialogs.c:4415
+msgid "Rename Buddy"
+msgstr ""
+
+#: src/dialogs.c:4422
+msgid "New name:"
+msgstr ""
+
+#: src/ft.c:135
+#, c-format
+msgid "%s is not a valid filename.\n"
+msgstr ""
+
+#: src/ft.c:149
+#, c-format
+msgid "%s was not found.\n"
+msgstr ""
+
+#: src/ft.c:741
+#, c-format
+msgid "File transfer to %s aborted.\n"
+msgstr ""
+
+#: src/ft.c:743
+#, c-format
+msgid "File transfer from %s aborted.\n"
+msgstr ""
+
+#: src/gaim-disclosure.c:253
+msgid "Expander Size"
+msgstr ""
+
+#: src/gaim-disclosure.c:254
+msgid "Size of the expander arrow"
+msgstr ""
+
+#: src/gaim-remote.c:33
+#, c-format
+msgid ""
+"Usage: %s command [OPTIONS] [URI]\n"
+"\n"
+"    COMMANDS:\n"
+"       uri                      Handle AIM: URI\n"
+"       quit                     Close running copy of Gaim\n"
+"\n"
+"    OPTIONS:\n"
+"       -h, --help [commmand]    Show help for command\n"
+msgstr ""
+
+#: src/gaim-remote.c:136 src/gaim-remote.c:152
+msgid "Gaim not running (on session 0)\n"
+msgstr ""
+
+#: src/gaim-remote.c:164
+msgid ""
+"\n"
+"Using AIM: URIs:\n"
+"Sending an IM to a screenname:\n"
+"\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+"In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
+"is the message to be sent.  '+' must be used in place of spaces.\n"
+"Please note the quoting used above - if you run this from a shell the '&'\n"
+"needs to be escaped, or the command will stop at that point.\n"
+"Also,the following will just open a conversation window to a screenname,\n"
+"with no message:\n"
+"\tgaim-remote uri aim:goim?screenname=Penguin\n"
+"\n"
+"Joining a chat:\n"
+"\tgaim-remote uri aim:gochat?roomname=PenguinLounge\n"
+"...joins the 'PenguinLounge' chat room.\n"
+"\n"
+"Adding a buddy to your buddy list:\n"
+"\tgaim-remote uri aim:addbuddy?screenname=Penguin\n"
+"...prompts you to add 'Penguin' to your buddy list.\n"
+msgstr ""
+
+#: src/gaim-remote.c:184
+msgid ""
+"\n"
+"Close running copy of Gaim\n"
+msgstr ""
+
+#. for people like myself, who are too lazy to add an away msg :)
+#: src/gaimrc.c:52
+msgid "sorry, i ran out for a while. bbl"
+msgstr ""
+
+#: src/gaimrc.c:367 src/gaimrc.c:1258
+msgid "boring default"
+msgstr "ברירת המחדל (משעמם)"
+
+#: src/gaimrc.c:1355
+#, c-format
+msgid "Could not open config file %s."
+msgstr ""
+
+#: src/gtkblist.c:403
+msgid "Add a _Buddy"
+msgstr ""
+
+#: src/gtkblist.c:404
+msgid "Add a C_hat"
+msgstr ""
+
+#: src/gtkblist.c:405
+msgid "_Delete Group"
+msgstr ""
+
+#: src/gtkblist.c:406
+msgid "_Rename"
+msgstr ""
+
+#: src/gtkblist.c:408
+msgid "_Join"
+msgstr ""
+
+#: src/gtkblist.c:409 src/gtkblist.c:440
+msgid "_Alias"
+msgstr ""
+
+#: src/gtkblist.c:410 src/gtkblist.c:441
+msgid "_Remove"
+msgstr "_הסר"
+
+#: src/gtkblist.c:419
+msgid "_Get Info"
+msgstr "ה_צג פרטים"
+
+#: src/gtkblist.c:421
+msgid "_IM"
+msgstr "הודעה מיידית"
+
+#: src/gtkblist.c:422
+msgid "Add Buddy _Pounce"
+msgstr ""
+
+#: src/gtkblist.c:423
+msgid "View _Log"
+msgstr ""
+
+#. Buddies menu
+#: src/gtkblist.c:744
+msgid "/_Buddies"
+msgstr "/_ידידים"
+
+#: src/gtkblist.c:745
+msgid "/Buddies/New _Instant Message..."
+msgstr ""
+
+#: src/gtkblist.c:746
+msgid "/Buddies/Join a _Chat..."
+msgstr ""
+
+#: src/gtkblist.c:747
+msgid "/Buddies/Get _User Info..."
+msgstr ""
+
+#: src/gtkblist.c:749
+msgid "/Buddies/Show _Offline Buddies"
+msgstr ""
+
+#: src/gtkblist.c:750
+msgid "/Buddies/Show _Empty Groups"
+msgstr ""
+
+#: src/gtkblist.c:751
+msgid "/Buddies/_Add a Buddy..."
+msgstr ""
+
+#: src/gtkblist.c:752
+msgid "/Buddies/Add a C_hat..."
+msgstr ""
+
+#: src/gtkblist.c:753
+msgid "/Buddies/Add a _Group..."
+msgstr ""
+
+#: src/gtkblist.c:755
+msgid "/Buddies/_Signoff"
+msgstr ""
+
+#: src/gtkblist.c:756
+msgid "/Buddies/_Quit"
+msgstr ""
+
+#. Tools
+#: src/gtkblist.c:759
+msgid "/_Tools"
+msgstr "/_כלים"
+
+#: src/gtkblist.c:760
+msgid "/Tools/_Away"
+msgstr ""
+
+#: src/gtkblist.c:761
+msgid "/Tools/Buddy _Pounce"
+msgstr ""
+
+#: src/gtkblist.c:762
+msgid "/Tools/P_rotocol Actions"
+msgstr ""
+
+#: src/gtkblist.c:764
+msgid "/Tools/A_ccounts..."
+msgstr "/כלים/ח_שבונות..."
+
+#: src/gtkblist.c:765
+msgid "/Tools/_File Transfers..."
+msgstr "/כלים/_משלוח קבצים..."
+
+#: src/gtkblist.c:766
+msgid "/Tools/Preferences..."
+msgstr "/כלים/העדפות..."
+
+#: src/gtkblist.c:767
+msgid "/Tools/Pr_ivacy..."
+msgstr ""
+
+#: src/gtkblist.c:769
+msgid "/Tools/View System _Log..."
+msgstr ""
+
+#. Help
+#: src/gtkblist.c:772
+msgid "/_Help"
+msgstr "/_עזרה"
+
+#: src/gtkblist.c:773
+msgid "/Help/Online _Help"
+msgstr ""
+
+#: src/gtkblist.c:774
+msgid "/Help/_Debug Window..."
+msgstr ""
+
+#: src/gtkblist.c:775
+msgid "/Help/_About..."
+msgstr ""
+
+#: src/gtkblist.c:809
+#, c-format
+msgid ""
+"\n"
+"<b>Account:</b> %s"
+msgstr ""
+
+#: src/gtkblist.c:868
+#, c-format
+msgid "%d%%"
+msgstr ""
+
+#: src/gtkblist.c:882
+msgid ""
+"\n"
+"<b>Account:</b>"
+msgstr ""
+
+#: src/gtkblist.c:883
+msgid ""
+"\n"
+"<b>Alias:</b>"
+msgstr ""
+
+#: src/gtkblist.c:884
+msgid ""
+"\n"
+"<b>Nickname:</b>"
+msgstr ""
+
+#: src/gtkblist.c:885
+msgid ""
+"\n"
+"<b>Idle:</b>"
+msgstr ""
+
+#: src/gtkblist.c:886
+msgid ""
+"\n"
+"<b>Warned:</b>"
+msgstr ""
+
+#: src/gtkblist.c:888
+msgid ""
+"\n"
+"<b>Description:</b> Spooky"
+msgstr ""
+
+#: src/gtkblist.c:889
+msgid ""
+"\n"
+"<b>Status</b>: Awesome"
+msgstr ""
+
+#: src/gtkblist.c:890
+msgid ""
+"\n"
+"<b>Status</b>: Rockin'"
+msgstr ""
+
+#: src/gtkblist.c:1186
+#, c-format
+msgid "Idle (%dh%02dm) "
+msgstr ""
+
+#: src/gtkblist.c:1188
+#, c-format
+msgid "Idle (%dm) "
+msgstr ""
+
+#: src/gtkblist.c:1192
+#, c-format
+msgid "Warned (%d%%) "
+msgstr ""
+
+#: src/gtkblist.c:1195
+msgid "Offline "
+msgstr ""
+
+#: src/gtkblist.c:1341 src/gtkblist.c:1345 src/gtkblist.c:2169
+#: src/gtkprefs.c:900 src/gtkprefs.c:1464
+msgid "None"
+msgstr "ללא"
+
+#: src/gtkblist.c:1342
+msgid "Alphabetical"
+msgstr ""
+
+#: src/gtkblist.c:1343
+msgid "By status"
+msgstr ""
+
+#: src/gtkblist.c:1344
+msgid "By log size"
+msgstr ""
+
+#: src/gtkblist.c:1370 src/gtkprefs.c:2189
+msgid "Buddy List"
+msgstr "רשימת הידידים"
+
+#: src/gtkblist.c:1394
+msgid "/Tools/Away"
+msgstr ""
+
+#: src/gtkblist.c:1397
+msgid "/Tools/Buddy Pounce"
+msgstr ""
+
+#: src/gtkblist.c:1400
+msgid "/Tools/Protocol Actions"
+msgstr ""
+
+#. set the Show Offline Buddies option. must be done
+#. * after the treeview or faceprint gets mad. -Robot101
+#.
+#: src/gtkblist.c:1483
+msgid "/Buddies/Show Offline Buddies"
+msgstr ""
+
+#: src/gtkblist.c:1485
+msgid "/Buddies/Show Empty Groups"
+msgstr ""
+
+#: src/gtkblist.c:1503 src/gtkconv.c:772
+msgid "IM"
+msgstr "הודעה"
+
+#: src/gtkblist.c:1509
+msgid "Send a message to the selected buddy"
+msgstr ""
+
+#: src/gtkblist.c:1518
+msgid "Get information on the selected buddy"
+msgstr "הצג פרטים על הידיד שנבחר"
+
+#: src/gtkblist.c:1526
+msgid "Join a chat room"
+msgstr ""
+
+#: src/gtkblist.c:1534
+msgid "Set an away message"
+msgstr ""
+
+#: src/gtkconv.c:220
+msgid "Gaim - Insert Image"
+msgstr ""
+
+#: src/gtkconv.c:780
+msgid "Un-Ignore"
+msgstr ""
+
+#: src/gtkconv.c:782 src/gtkprefs.c:830
+msgid "Ignore"
+msgstr ""
+
+#. Info button
+#: src/gtkconv.c:791 src/gtkconv.c:2679
+msgid "Info"
+msgstr "מידע"
+
+#: src/gtkconv.c:811 src/gtkconv.c:2662 src/gtkconv.c:3789
+msgid "Remove"
+msgstr "הסר"
+
+#: src/gtkconv.c:885
+msgid "Gaim - Invite Buddy Into Chat Room"
+msgstr ""
+
+#. Put our happy label in it.
+#: src/gtkconv.c:913
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+
+#: src/gtkconv.c:934
+msgid "_Buddy:"
+msgstr "_ידיד:"
+
+#: src/gtkconv.c:954
+msgid "_Message:"
+msgstr "ה_ודעה:"
+
+#: src/gtkconv.c:1983
+msgid "User is typing..."
+msgstr "המשתמש כותב כרגע..."
+
+#: src/gtkconv.c:1991
+msgid "User has typed something and paused"
+msgstr "המשתמש כתב משהו והפסיק"
+
+#. Build the Send As menu
+#: src/gtkconv.c:2098
+msgid "_Send As"
+msgstr "שלח בתור"
+
+#. Conversation menu
+#: src/gtkconv.c:2552
+msgid "/_Conversation"
+msgstr "/_שיחה"
+
+#: src/gtkconv.c:2553
+msgid "/Conversation/_Save As..."
+msgstr ""
+
+#: src/gtkconv.c:2555
+msgid "/Conversation/View _Log..."
+msgstr ""
+
+#: src/gtkconv.c:2557
+msgid "/Conversation/Insert _URL..."
+msgstr ""
+
+#: src/gtkconv.c:2559
+msgid "/Conversation/Insert _Image..."
+msgstr ""
+
+#: src/gtkconv.c:2562
+msgid "/Conversation/_Close"
+msgstr ""
+
+#. Options
+#: src/gtkconv.c:2566
+msgid "/_Options"
+msgstr ""
+
+#: src/gtkconv.c:2567
+msgid "/Options/Enable _Logging"
+msgstr ""
+
+#: src/gtkconv.c:2568
+msgid "/Options/Enable _Sounds"
+msgstr ""
+
+#: src/gtkconv.c:2604
+msgid "/Conversation/View Log..."
+msgstr ""
+
+#: src/gtkconv.c:2606
+msgid "/Conversation/Insert URL..."
+msgstr ""
+
+#: src/gtkconv.c:2608
+msgid "/Conversation/Insert Image..."
+msgstr ""
+
+#: src/gtkconv.c:2610
+msgid "/Options/Enable Logging"
+msgstr ""
+
+#: src/gtkconv.c:2612
+msgid "/Options/Enable Sounds"
+msgstr ""
+
+#. From right to left...
+#. Send button
+#: src/gtkconv.c:2636 src/gtkconv.c:2638 src/gtkconv.c:2736 src/gtkconv.c:2738
+#: src/gtkconv.c:5065
+msgid "Send"
+msgstr "שלח"
+
+#: src/gtkconv.c:2659 src/gtkconv.c:3801
+msgid "Add the user to your buddy list"
+msgstr "הוסף את המשתמש לרשימת הידידים שלך"
+
+#: src/gtkconv.c:2665 src/gtkconv.c:3792
+msgid "Remove the user from your buddy list"
+msgstr "הסר את המשתמש מרשימץ הידידים שלך"
+
+#. Warn button
+#: src/gtkconv.c:2672
+msgid "Warn"
+msgstr ""
+
+#: src/gtkconv.c:2676
+msgid "Warn the user"
+msgstr ""
+
+#: src/gtkconv.c:2683 src/gtkconv.c:3116
+msgid "Get the user's information"
+msgstr ""
+
+#. Block button
+#: src/gtkconv.c:2686
+msgid "Block"
+msgstr ""
+
+#: src/gtkconv.c:2690
+msgid "Block the user"
+msgstr ""
+
+#. Invite
+#: src/gtkconv.c:2748 src/gtkconv.c:5068
+msgid "Invite"
+msgstr ""
+
+#: src/gtkconv.c:2751
+msgid "Invite a user"
+msgstr ""
+
+#: src/gtkconv.c:2790
+msgid "Bold"
+msgstr ""
+
+#: src/gtkconv.c:2801
+msgid "Italic"
+msgstr ""
+
+#: src/gtkconv.c:2812
+msgid "Underline"
+msgstr ""
+
+#: src/gtkconv.c:2828
+msgid "Larger font size"
+msgstr ""
+
+#: src/gtkconv.c:2840
+msgid "Normal font size"
+msgstr ""
+
+#: src/gtkconv.c:2852
+msgid "Smaller font size"
+msgstr ""
+
+#: src/gtkconv.c:2869
+msgid "Font Face"
+msgstr ""
+
+#: src/gtkconv.c:2881
+msgid "Foreground font color"
+msgstr ""
+
+#: src/gtkconv.c:2893
+msgid "Background color"
+msgstr ""
+
+#: src/gtkconv.c:2908
+msgid "Insert image"
+msgstr ""
+
+#: src/gtkconv.c:2919
+msgid "Insert link"
+msgstr ""
+
+#: src/gtkconv.c:2930
+msgid "Insert smiley"
+msgstr ""
+
+#: src/gtkconv.c:2987
+msgid "Topic:"
+msgstr ""
+
+#. Setup the label telling how many people are in the room.
+#: src/gtkconv.c:3036
+msgid "0 people in room"
+msgstr ""
+
+#: src/gtkconv.c:3093
+msgid "IM the user"
+msgstr ""
+
+#: src/gtkconv.c:3105
+msgid "Ignore the user"
+msgstr ""
+
+#: src/gtkconv.c:3636
+msgid "Close conversation"
+msgstr ""
+
+#: src/gtkconv.c:4269 src/gtkconv.c:4391
+#, c-format
+msgid "%d person in room"
+msgid_plural "%d people in room"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/gtkconv.c:4751
+msgid "Disable Animation"
+msgstr ""
+
+#: src/gtkconv.c:4760
+msgid "Enable Animation"
+msgstr ""
+
+#: src/gtkconv.c:4767
+msgid "Hide Icon"
+msgstr ""
+
+#: src/gtkconv.c:4773
+msgid "Save Icon As..."
+msgstr ""
+
+#: src/gtkft.c:105
+msgid "Calculating..."
+msgstr ""
+
+#: src/gtkft.c:108
+msgid "Unknown."
+msgstr ""
+
+#: src/gtkft.c:145
+#, c-format
+msgid "%.2f KB/s"
+msgstr ""
+
+#: src/gtkft.c:220
+msgid "<b>Receiving From:</b>"
+msgstr ""
+
+#: src/gtkft.c:223
+msgid "<b>Sending To:</b>"
+msgstr "<b>שולח אל:</b>"
+
+#: src/gtkft.c:447
+msgid "Progress"
+msgstr ""
+
+#: src/gtkft.c:454
+msgid "Filename"
+msgstr ""
+
+#: src/gtkft.c:461
+msgid "Size"
+msgstr ""
+
+#: src/gtkft.c:468
+msgid "Remaining"
+msgstr ""
+
+#: src/gtkft.c:498
+msgid "Filename:"
+msgstr ""
+
+#: src/gtkft.c:499
+msgid "Status:"
+msgstr ""
+
+#: src/gtkft.c:500
+msgid "Speed:"
+msgstr ""
+
+#: src/gtkft.c:501
+msgid "Time Elapsed:"
+msgstr ""
+
+#: src/gtkft.c:502
+msgid "Time Remaining:"
+msgstr ""
+
+#: src/gtkft.c:568
+msgid "File Transfers"
+msgstr "משלוח קבצים"
+
+#: src/gtkft.c:597
+msgid "_Keep the dialog open"
+msgstr ""
+
+#: src/gtkft.c:607
+msgid "_Clear finished transfers"
+msgstr ""
+
+#. "Download Details" arrow
+#: src/gtkft.c:616
+msgid "Show download details"
+msgstr "הצג פרטי ההורדות"
+
+#: src/gtkft.c:617
+msgid "Hide download details"
+msgstr "הסתר פרטי ההורדות"
+
+#. Pause button
+#: src/gtkft.c:659
+msgid "_Pause"
+msgstr ""
+
+#. Resume button
+#: src/gtkft.c:669
+msgid "_Resume"
+msgstr "ה_משך"
+
+#: src/gtkft.c:1012
+msgid "That file does not exist."
+msgstr "הקובץ אינו קיים"
+
+#: src/gtkft.c:1019
+msgid "Cannot send a file of 0 bytes."
+msgstr "לא יכול לשלוח קובץ בגןדל של 0 ביתים"
+
+#: src/gtkft.c:1032
+msgid "That file already exists."
+msgstr "הקובץ כבר קיים"
+
+#: src/gtkft.c:1033
+msgid "Would you like to overwrite it?"
+msgstr "לשכתב?"
+
+#: src/gtkft.c:1057
+msgid "Gaim - Open..."
+msgstr ""
+
+#: src/gtkft.c:1106
+#, c-format
+msgid "%s wants to send you %s (%s)"
+msgstr ""
+
+#: src/gtkimhtml.c:346
+msgid "_Copy Link Location"
+msgstr "ה_עתק מיקום הקישור"
+
+#: src/gtkimhtml.c:353
+msgid "_Open Link in Browser"
+msgstr "_פתח את הקישור בדפדפן"
+
+#: src/gtkimhtml.c:1668
+msgid ""
+"Gaim was unable to guess the image type base on the file extension "
+"supplied.  Defaulting to PNG."
+msgstr ""
+
+#: src/gtkimhtml.c:1676
+#, c-format
+msgid "Error saving image: %s"
+msgstr ""
+
+#: src/gtkimhtml.c:1685
+msgid "Gaim - Save Image"
+msgstr ""
+
+#: src/gtkimhtml.c:1707
+msgid "_Save Image..."
+msgstr ""
+
+#: src/gtknotify.c:190
+#, c-format
+msgid "%s has %d new message."
+msgid_plural "%s has %d new messages."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/gtknotify.c:198
+#, c-format
+msgid "<span weight=\"bold\">From:</span> %s\n"
+msgstr ""
+
+#: src/gtknotify.c:203
+#, c-format
+msgid "<span weight=\"bold\">Subject:</span> %s\n"
+msgstr ""
+
+#: src/gtknotify.c:207
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
+"\n"
+"%s%s%s%s"
+msgstr ""
+
+#: src/gtknotify.c:222
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/gtkpounce.c:122
+msgid "Select a file"
+msgstr "בחר קובץ"
+
+#: src/gtkpounce.c:172
+msgid "Please enter a buddy to pounce."
+msgstr ""
+
+#: src/gtkpounce.c:345
+#, c-format
+msgid "%s has started typing to you"
+msgstr ""
+
+#: src/gtkpounce.c:346
+#, c-format
+msgid "%s has signed on"
+msgstr ""
+
+#: src/gtkpounce.c:347
+#, c-format
+msgid "%s has returned from being idle"
+msgstr ""
+
+#: src/gtkpounce.c:348
+#, c-format
+msgid "%s has returned from being away"
+msgstr ""
+
+#: src/gtkpounce.c:349
+#, c-format
+msgid "%s has stopped typing to you"
+msgstr ""
+
+#: src/gtkpounce.c:350
+#, c-format
+msgid "%s has signed off"
+msgstr ""
+
+#: src/gtkpounce.c:351
+#, c-format
+msgid "%s has become idle"
+msgstr ""
+
+#: src/gtkpounce.c:352
+#, c-format
+msgid "%s has gone away."
+msgstr "%s התרחק/ה מהמחשב"
+
+#: src/gtkpounce.c:353
+msgid "Unknown pounce event. Please report this!"
+msgstr ""
+
+#. "New Buddy Pounce"
+#: src/gtkpounce.c:494 src/gtkpounce.c:884
+msgid "New Buddy Pounce"
+msgstr ""
+
+#: src/gtkpounce.c:494
+msgid "Edit Buddy Pounce"
+msgstr ""
+
+#. Create the "Pounce Who" frame.
+#: src/gtkpounce.c:512
+msgid "Pounce Who"
+msgstr ""
+
+#: src/gtkpounce.c:534
+msgid "_Buddy Name:"
+msgstr ""
+
+#. Create the "Pounce When" frame.
+#: src/gtkpounce.c:553
+msgid "Pounce When"
+msgstr ""
+
+#: src/gtkpounce.c:561
+msgid "Sign on"
+msgstr "התחבר"
+
+#: src/gtkpounce.c:563
+msgid "Sign off"
+msgstr "נתק"
+
+#: src/gtkpounce.c:567
+msgid "Return from away"
+msgstr ""
+
+#: src/gtkpounce.c:571
+msgid "Return from idle"
+msgstr ""
+
+#: src/gtkpounce.c:573
+msgid "Buddy starts typing"
+msgstr ""
+
+#: src/gtkpounce.c:575
+msgid "Buddy stops typing"
+msgstr ""
+
+#. Create the "Pounce Action" frame.
+#: src/gtkpounce.c:604
+msgid "Pounce Action"
+msgstr ""
+
+#: src/gtkpounce.c:611
+msgid "Open an IM window"
+msgstr ""
+
+#: src/gtkpounce.c:612
+msgid "Popup notification"
+msgstr ""
+
+#: src/gtkpounce.c:613
+msgid "Send a message"
+msgstr "שלח הודעה"
+
+#: src/gtkpounce.c:614
+msgid "Execute a command"
+msgstr "הפעל פקודה"
+
+#: src/gtkpounce.c:615
+msgid "Play a sound"
+msgstr "נגן צליל"
+
+#: src/gtkpounce.c:619 src/gtkpounce.c:621
+msgid "Browse"
+msgstr "עיון"
+
+#: src/gtkpounce.c:622 src/gtkprefs.c:2016
+msgid "Test"
+msgstr "בדיקה"
+
+#: src/gtkpounce.c:705
+msgid "_Save this pounce after activation"
+msgstr ""
+
+#. "Remove Buddy Pounce"
+#: src/gtkpounce.c:891
+msgid "Remove Buddy Pounce"
+msgstr ""
+
+#: src/gtkprefs.c:435
+msgid "Interface Options"
+msgstr "הגדרות ממשק המשתמש"
+
+#: src/gtkprefs.c:437
+msgid "D_isplay remote nicknames if no alias is set"
+msgstr ""
+
+#: src/gtkprefs.c:618
+msgid ""
+"Select a smiley theme that you would like to use from the list below. New "
+"themes can be installed by dragging and dropping them onto the theme list."
+msgstr ""
+"בחר ערכת החיוכים מרשימה למטה. "
+"ערכות חדשות ניתן להתקין ע\"י גרירתם עך רשימת הערכות."
+
+#: src/gtkprefs.c:651
+msgid "Icon"
+msgstr "סמל"
+
+#: src/gtkprefs.c:724
+msgid "Style"
+msgstr "סגנון"
+
+#: src/gtkprefs.c:725
+msgid "_Bold"
+msgstr "_מודגש"
+
+#: src/gtkprefs.c:727
+msgid "_Italics"
+msgstr "_נתוי"
+
+#: src/gtkprefs.c:729
+msgid "_Underline"
+msgstr "_קו תחתון"
+
+#: src/gtkprefs.c:731
+msgid "_Strikethrough"
+msgstr "ק_ו חוצה"
+
+#: src/gtkprefs.c:734
+msgid "Face"
+msgstr "סוג"
+
+#: src/gtkprefs.c:737
+msgid "Use custo_m face"
+msgstr "השתמש בגופן מותאם אישית"
+
+#: src/gtkprefs.c:754
+msgid "Use custom si_ze"
+msgstr "השתמש בגודל מותאם אישית"
+
+#: src/gtkprefs.c:767
+msgid "Color"
+msgstr "צבע"
+
+#: src/gtkprefs.c:771
+msgid "_Text color"
+msgstr "צבע הטק_סט"
+
+#: src/gtkprefs.c:790
+msgid "Bac_kground color"
+msgstr "צבע הרקע"
+
+#: src/gtkprefs.c:818 src/gtkprefs.c:1036 src/gtkprefs.c:1089
+msgid "Display"
+msgstr "תצוגה"
+
+#: src/gtkprefs.c:819
+msgid "Show graphical _smileys"
+msgstr "הצג פרצופים מ_חייכים"
+
+#: src/gtkprefs.c:821
+msgid "Show _timestamp on messages"
+msgstr ""
+
+#: src/gtkprefs.c:823
+msgid "Show _URLs as links"
+msgstr ""
+
+#: src/gtkprefs.c:827
+msgid "_Highlight misspelled words"
+msgstr ""
+
+#: src/gtkprefs.c:831
+msgid "Ignore c_olors"
+msgstr ""
+
+#: src/gtkprefs.c:833
+msgid "Ignore font _faces"
+msgstr ""
+
+#: src/gtkprefs.c:835
+msgid "Ignore font si_zes"
+msgstr ""
+
+#: src/gtkprefs.c:848
+msgid "Send Message"
+msgstr "שליחת הודעה"
+
+#: src/gtkprefs.c:849
+msgid "_Enter sends message"
+msgstr "שלח הודעה בלחיצת \"Enter\""
+
+#: src/gtkprefs.c:851
+msgid "C_ontrol-Enter sends message"
+msgstr "שלח הודעה בלחיצת \"Ctrl+Enter\""
+
+#: src/gtkprefs.c:854
+msgid "Window Closing"
+msgstr "סגירת החלונות"
+
+#: src/gtkprefs.c:855
+msgid "E_scape closes window"
+msgstr "לחצן \"ESC\" סוגר חלונות"
+
+#: src/gtkprefs.c:857
+msgid "Control-_W closes window"
+msgstr "\"Ctrl+W\" סוגר חלונות"
+
+#: src/gtkprefs.c:860
+msgid "Insertions"
+msgstr "הכנסות"
+
+#: src/gtkprefs.c:861
+msgid "Control-{B/I/U/S} inserts _HTML tags"
+msgstr ""
+
+#: src/gtkprefs.c:863
+msgid "Control-(number) inserts _smileys"
+msgstr ""
+
+#: src/gtkprefs.c:880
+msgid "Buddy List Sorting"
+msgstr "סידור רשימת הידידים"
+
+#: src/gtkprefs.c:889
+msgid "Sorting:"
+msgstr "סדר:"
+
+#: src/gtkprefs.c:894
+msgid "Buddy List Toolbar"
+msgstr "סרגל כלים של רשימת הידידים"
+
+#: src/gtkprefs.c:895 src/gtkprefs.c:1006 src/gtkprefs.c:1062
+msgid "Show _buttons as:"
+msgstr "הצג לחצים בתור:"
+
+#: src/gtkprefs.c:897 src/gtkprefs.c:1008 src/gtkprefs.c:1064
+msgid "Pictures"
+msgstr "תמונות"
+
+#: src/gtkprefs.c:898 src/gtkprefs.c:1009 src/gtkprefs.c:1065
+msgid "Text"
+msgstr "טקסט"
+
+#: src/gtkprefs.c:899 src/gtkprefs.c:1010 src/gtkprefs.c:1066
+msgid "Pictures and text"
+msgstr "טקסט עם תמונות"
+
+#: src/gtkprefs.c:904
+msgid "_Raise window on events"
+msgstr ""
+
+#: src/gtkprefs.c:907
+msgid "Group Display"
+msgstr ""
+
+#. prefs_checkbox(_("Show _groups with no online buddies"), "/gaim/gtk/blist/show_empty_groups", vbox);
+#: src/gtkprefs.c:909
+msgid "Show _numbers in groups"
+msgstr ""
+
+#: src/gtkprefs.c:912
+msgid "Buddy Display"
+msgstr ""
+
+#: src/gtkprefs.c:913 src/gtkprefs.c:1031
+msgid "Show buddy _icons"
+msgstr ""
+
+#: src/gtkprefs.c:915
+msgid "Show _warning levels"
+msgstr ""
+
+#: src/gtkprefs.c:918
+msgid "Show idle _times"
+msgstr ""
+
+#: src/gtkprefs.c:932
+msgid "Dim i_dle buddies"
+msgstr ""
+
+#: src/gtkprefs.c:953 src/gtkprefs.c:2190
+msgid "Conversations"
+msgstr "שיחות"
+
+#: src/gtkprefs.c:961
+msgid "_Placement:"
+msgstr "מי_קום:"
+
+#: src/gtkprefs.c:970
+msgid "Send _URLs as Links"
+msgstr ""
+
+#: src/gtkprefs.c:973
+msgid "Tab Options"
+msgstr "הגדרות כרטיסיה"
+
+#: src/gtkprefs.c:975
+msgid "Show IMs and chats in _tabbed windows"
+msgstr "הצג שיחות והודעות מיידיות בכרטיסיות"
+
+#: src/gtkprefs.c:978
+msgid "Show _close button on tabs."
+msgstr "הצג לחצן סגירה על גבי כרטיסייה"
+
+#: src/gtkprefs.c:1005 src/gtkprefs.c:1061
+msgid "Window"
+msgstr "חלון"
+
+#: src/gtkprefs.c:1015 src/gtkprefs.c:1071
+msgid "New window _width:"
+msgstr ""
+
+#: src/gtkprefs.c:1018 src/gtkprefs.c:1074
+msgid "New window _height:"
+msgstr ""
+
+#: src/gtkprefs.c:1021 src/gtkprefs.c:1077
+msgid "_Entry field height:"
+msgstr ""
+
+#: src/gtkprefs.c:1024 src/gtkprefs.c:1080
+msgid "_Raise windows on events"
+msgstr ""
+
+#: src/gtkprefs.c:1026
+msgid "Hide window on _send"
+msgstr ""
+
+#: src/gtkprefs.c:1030
+msgid "Buddy Icons"
+msgstr "סמלי הידידים"
+
+#: src/gtkprefs.c:1033
+msgid "Enable buddy icon a_nimation"
+msgstr ""
+
+#: src/gtkprefs.c:1037
+msgid "Show _logins in window"
+msgstr ""
+
+#: src/gtkprefs.c:1039
+msgid "Show a_liases in tabs/titles"
+msgstr ""
+
+#: src/gtkprefs.c:1042
+msgid "Typing Notification"
+msgstr ""
+
+#: src/gtkprefs.c:1043
+msgid "Notify buddies that you are _typing to them"
+msgstr ""
+
+#: src/gtkprefs.c:1083
+msgid "Tab Completion"
+msgstr "השלמות"
+
+#: src/gtkprefs.c:1084
+msgid "_Tab-complete nicks"
+msgstr ""
+
+#: src/gtkprefs.c:1086
+msgid "_Old-style tab completion"
+msgstr ""
+
+#: src/gtkprefs.c:1090
+msgid "_Show people joining in window"
+msgstr ""
+
+#: src/gtkprefs.c:1092
+msgid "_Show people leaving in window"
+msgstr ""
+
+#: src/gtkprefs.c:1094
+msgid "Co_lorize screennames"
+msgstr ""
+
+#: src/gtkprefs.c:1112
+msgid "Proxy Type"
+msgstr "סוג המתווך"
+
+#: src/gtkprefs.c:1113
+msgid "Proxy _type:"
+msgstr "סוג ה_מתווך"
+
+#: src/gtkprefs.c:1115
+msgid "No proxy"
+msgstr "ללא מתווך"
+
+#: src/gtkprefs.c:1121
+msgid "Proxy Server"
+msgstr "הגדרות המתווך"
+
+#: src/gtkprefs.c:1134
+msgid "_Host"
+msgstr "מ_ארח"
+
+#: src/gtkprefs.c:1148
+msgid "Port"
+msgstr "י_ציאה"
+
+#: src/gtkprefs.c:1164
+msgid "_User"
+msgstr "מ_שתמש"
+
+#: src/gtkprefs.c:1178
+msgid "Pa_ssword"
+msgstr "סי_סמא"
+
+#: src/gtkprefs.c:1199
+#, c-format
+msgid "The entered manual browser '%s' is not valid. Hyperlinks will not work."
+msgstr ""
+
+#: src/gtkprefs.c:1220
+msgid "Konqueror"
+msgstr ""
+
+#: src/gtkprefs.c:1221
+msgid "Opera"
+msgstr ""
+
+#: src/gtkprefs.c:1222
+msgid "Galeon"
+msgstr ""
+
+#: src/gtkprefs.c:1223
+msgid "Netscape"
+msgstr ""
+
+#: src/gtkprefs.c:1224
+msgid "Mozilla"
+msgstr ""
+
+#: src/gtkprefs.c:1232
+msgid "Manual"
+msgstr "מותאם אישית"
+
+#: src/gtkprefs.c:1267
+msgid "Browser Selection"
+msgstr "בחירת הדפדפן"
+
+#: src/gtkprefs.c:1271
+msgid "_Browser"
+msgstr "דפדפן"
+
+#: src/gtkprefs.c:1281
+msgid "_Manual: "
+msgstr "_מותאם אישית: "
+
+#: src/gtkprefs.c:1303
+msgid "Browser Options"
+msgstr "הגדרות הדפדפן"
+
+#: src/gtkprefs.c:1304
+msgid "Open new _window by default"
+msgstr "פתח קישור בחלון חדש"
+
+#: src/gtkprefs.c:1319
+msgid "Message Logs"
+msgstr "רישום ההודעות"
+
+#: src/gtkprefs.c:1320
+msgid "_Log all instant messages"
+msgstr "_רשום את כל ההודעות"
+
+#: src/gtkprefs.c:1322
+msgid "Log all c_hats"
+msgstr "רשום את כל השי_חות"
+
+#: src/gtkprefs.c:1324
+msgid "Strip _HTML from logs"
+msgstr "הסר HTML מהרישומים"
+
+#: src/gtkprefs.c:1327
+msgid "System Logs"
+msgstr "רישומי מערכת"
+
+#: src/gtkprefs.c:1328
+msgid "Log when buddies _sign on/sign off"
+msgstr ""
+
+#: src/gtkprefs.c:1330
+msgid "Log when buddies become _idle/un-idle"
+msgstr ""
+
+#: src/gtkprefs.c:1332
+msgid "Log when buddies go away/come _back"
+msgstr ""
+
+#: src/gtkprefs.c:1334
+msgid "Log your _own signons/idleness/awayness"
+msgstr ""
+
+#: src/gtkprefs.c:1336
+msgid "I_ndividual log file for each buddy's signons"
+msgstr ""
+
+#: src/gtkprefs.c:1369
+msgid "Sound Options"
+msgstr "הגדרות הצליל"
+
+#: src/gtkprefs.c:1370
+msgid "_No sounds when you log in"
+msgstr ""
+
+#: src/gtkprefs.c:1372
+msgid "_Sounds while away"
+msgstr ""
+
+#: src/gtkprefs.c:1376
+msgid "Sound Method"
+msgstr "יציאת הצליל"
+
+#: src/gtkprefs.c:1377
+msgid "_Method"
+msgstr "דרך:"
+
+#: src/gtkprefs.c:1379
+msgid "Console beep"
+msgstr ""
+
+#: src/gtkprefs.c:1381
+msgid "Automatic"
+msgstr "אוטומתי"
+
+#: src/gtkprefs.c:1388
+msgid "Command"
+msgstr "פקודה"
+
+#: src/gtkprefs.c:1398
+#, c-format
+msgid ""
+"Sound c_ommand\n"
+"(%s for filename)"
+msgstr ""
+
+#: src/gtkprefs.c:1440
+msgid "_Sending messages removes away status"
+msgstr ""
+
+#: src/gtkprefs.c:1442
+msgid "_Queue new messages when away"
+msgstr ""
+
+#: src/gtkprefs.c:1445
+msgid "Auto-response"
+msgstr ""
+
+#: src/gtkprefs.c:1448
+msgid "Seconds before _resending:"
+msgstr ""
+
+#: src/gtkprefs.c:1451
+msgid "_Send auto-response"
+msgstr ""
+
+#: src/gtkprefs.c:1453
+msgid "_Only send auto-response when idle"
+msgstr ""
+
+#: src/gtkprefs.c:1455
+msgid "Send auto-response in active conversations"
+msgstr ""
+
+#: src/gtkprefs.c:1462
+msgid "Idle _time reporting:"
+msgstr ""
+
+#: src/gtkprefs.c:1465
+msgid "Gaim usage"
+msgstr ""
+
+#: src/gtkprefs.c:1468
+msgid "X usage"
+msgstr ""
+
+#: src/gtkprefs.c:1470
+msgid "Windows usage"
+msgstr ""
+
+#: src/gtkprefs.c:1478
+msgid "Auto-away"
+msgstr ""
+
+#: src/gtkprefs.c:1479
+msgid "Set away _when idle"
+msgstr ""
+
+#: src/gtkprefs.c:1481
+msgid "_Minutes before setting away:"
+msgstr ""
+
+#: src/gtkprefs.c:1488
+msgid "Away m_essage:"
+msgstr ""
+
+#: src/gtkprefs.c:1550
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>\t%s\n"
+"<span weight=\"bold\">Web site:</span>\t\t%s\n"
+"<span weight=\"bold\">File name:</span>\t%s"
+msgstr ""
+
+#: src/gtkprefs.c:1555
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>  %s\n"
+"<span weight=\"bold\">URL:</span>  %s\n"
+"<span weight=\"bold\">File name:</span>  %s"
+msgstr ""
+
+#: src/gtkprefs.c:1730
+msgid "Load"
+msgstr "טען"
+
+#: src/gtkprefs.c:1737
+msgid "Name"
+msgstr "שם"
+
+#: src/gtkprefs.c:1784
+msgid "Details"
+msgstr "פרטים"
+
+#: src/gtkprefs.c:1899
+msgid "Sound Selection"
+msgstr "בחירת הצליל"
+
+#: src/gtkprefs.c:1993
+msgid "Play"
+msgstr "נגן"
+
+#: src/gtkprefs.c:2000
+msgid "Event"
+msgstr ""
+
+#: src/gtkprefs.c:2020
+msgid "Reset"
+msgstr "אפס"
+
+#: src/gtkprefs.c:2024
+msgid "Choose..."
+msgstr "בחר..."
+
+#: src/gtkprefs.c:2148
+msgid "_Edit"
+msgstr "_ערוך"
+
+#: src/gtkprefs.c:2184
+msgid "Interface"
+msgstr "ממשק המשתמש"
+
+#: src/gtkprefs.c:2185
+msgid "Smiley Themes"
+msgstr "ערכות החיוכים"
+
+#: src/gtkprefs.c:2186
+msgid "Fonts"
+msgstr "גופנים"
+
+#: src/gtkprefs.c:2187
+msgid "Message Text"
+msgstr "טקסט ההודעות"
+
+#: src/gtkprefs.c:2188
+msgid "Shortcuts"
+msgstr "קיצורי מקשים"
+
+#: src/gtkprefs.c:2191
+msgid "IMs"
+msgstr "הודעות מיידיות"
+
+#: src/gtkprefs.c:2193
+msgid "Proxy"
+msgstr "מתווך"
+
+#. We use the registered default browser in windows
+#: src/gtkprefs.c:2196
+msgid "Browser"
+msgstr "דפדפן"
+
+#: src/gtkprefs.c:2198
+msgid "Logging"
+msgstr "רישום"
+
+#: src/gtkprefs.c:2199
+msgid "Sounds"
+msgstr "צלילים"
+
+#: src/gtkprefs.c:2200
+msgid "Sound Events"
+msgstr ""
+
+#: src/gtkprefs.c:2201
+msgid "Away / Idle"
+msgstr ""
+
+#: src/gtkprefs.c:2202
+msgid "Away Messages"
+msgstr ""
+
+#: src/gtkprefs.c:2205
+msgid "Plugins"
+msgstr "תוספים"
+
+#: src/gtkprefs.c:2255 src/main.c:383 src/win32/systray.c:355
+msgid "Preferences"
+msgstr "העדפות"
+
+#: src/gtkutils.c:285
+msgid "Can't save icon file to disk."
+msgstr "לא ניתן לשמור את הסמל לדיסק"
+
+#: src/gtkutils.c:320
+msgid "Gaim - Save Icon"
+msgstr ""
+
+#: src/html.c:322
+msgid "g003: Error opening connection.\n"
+msgstr ""
+
+#: src/log.c:35
+msgid "Error in specifying buddy conversation."
+msgstr ""
+
+#: src/log.c:41
+msgid "Unable to find conversation log"
+msgstr ""
+
+#: src/log.c:128
+msgid "Gaim - Save Conversation"
+msgstr ""
+
+#: src/log.c:169 src/log.c:190 src/log.c:203
+#, c-format
+msgid "Unable to make directory %s for logging"
+msgstr ""
+
+#: src/log.c:257 src/log.c:273
+#, c-format
+msgid "IM Sessions with %s\n"
+msgstr ""
+
+#: src/log.c:260 src/log.c:276
+#, c-format
+msgid "IM Sessions with %s"
+msgstr ""
+
+#: src/log.c:313
+#, c-format
+msgid "+++ %s (%s) signed on @ %s"
+msgstr ""
+
+#: src/log.c:318
+#, c-format
+msgid "+++ %s (%s) signed off @ %s"
+msgstr ""
+
+#: src/log.c:323
+#, c-format
+msgid "+++ %s (%s) changed away state @ %s"
+msgstr ""
+
+#: src/log.c:328
+#, c-format
+msgid "+++ %s (%s) came back @ %s"
+msgstr ""
+
+#: src/log.c:333
+#, c-format
+msgid "+++ %s (%s) became idle @ %s"
+msgstr ""
+
+#: src/log.c:338
+#, c-format
+msgid "+++ %s (%s) returned from idle @ %s"
+msgstr ""
+
+#: src/log.c:343
+#, c-format
+msgid "+++ Program exit @ %s"
+msgstr ""
+
+#: src/log.c:350
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed on @ %s"
+msgstr ""
+
+#: src/log.c:355
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed off @ %s"
+msgstr ""
+
+#: src/log.c:360
+#, c-format
+msgid "%s (%s) reported that %s (%s) went away @ %s"
+msgstr ""
+
+#: src/log.c:365
+#, c-format
+msgid "%s (%s) reported that %s (%s) came back @ %s"
+msgstr ""
+
+#: src/log.c:370
+#, c-format
+msgid "%s (%s) reported that %s (%s) became idle @ %s"
+msgstr ""
+
+#: src/log.c:376
+#, c-format
+msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
+msgstr ""
+
+#: src/log.c:388
+#, c-format
+msgid "%s (%s) reported that %s signed on @ %s"
+msgstr ""
+
+#: src/log.c:393
+#, c-format
+msgid "%s (%s) reported that %s signed off @ %s"
+msgstr ""
+
+#: src/log.c:398
+#, c-format
+msgid "%s (%s) reported that %s went away @ %s"
+msgstr ""
+
+#: src/log.c:403
+#, c-format
+msgid "%s (%s) reported that %s came back @ %s"
+msgstr ""
+
+#: src/log.c:408
+#, c-format
+msgid "%s (%s) reported that %s became idle @ %s"
+msgstr ""
+
+#: src/log.c:414
+#, c-format
+msgid "%s (%s) reported that %s returned from idle @ %s"
+msgstr ""
+
+#: src/main.c:189
+msgid "Please enter your login."
+msgstr ""
+
+#: src/main.c:281
+msgid "<New User>"
+msgstr "<משתמש חדש>"
+
+#: src/main.c:323
+msgid "Login"
+msgstr "כניסה"
+
+#: src/main.c:339
+msgid "Screen Name:"
+msgstr "שם לתצוגה:"
+
+#. And now for the buttons
+#: src/main.c:373
+msgid "Accounts"
+msgstr "חשבונות"
+
+#: src/main.c:389 src/win32/systray.c:191
+msgid "Sign On"
+msgstr "כניסה"
+
+#: src/multi.c:91
+msgid "Done."
+msgstr "מוכן."
+
+#: src/multi.c:167
+msgid "Signon: "
+msgstr "מתחבר: "
+
+#: src/multi.c:225
+msgid "Signon"
+msgstr "מתחבר"
+
+#: src/multi.c:237
+msgid "Cancel All"
+msgstr "בטל הכל"
+
+#: src/multi.c:292
+#, c-format
+msgid ""
+"%s\n"
+"%s: %s"
+msgstr ""
+
+#: src/multi.c:314
+#, c-format
+msgid "%s was unable to sign on"
+msgstr "לא ניתן להתחבר ל %s"
+
+#: src/multi.c:316
+msgid "Signon Error"
+msgstr "שגיעה בהתחברות"
+
+#: src/multi.c:329
+msgid "Notice"
+msgstr "הודעה"
+
+#: src/multi.c:343
+#, c-format
+msgid "%s has been signed off"
+msgstr "התנתק מ %s"
+
+#: src/multi.c:345
+msgid "Connection Error"
+msgstr "שגיעת התחברות"
+
+#: src/prpl.c:108
+msgid "No actions available"
+msgstr "לא ניתן לבצע פעולות"
+
+#: src/prpl.c:394
+#, c-format
+msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
+msgstr "%s%s%s%s הפך %s לחבר שלו/שלה %s%s%s"
+
+#: src/prpl.c:406
+msgid ""
+"\n"
+"\n"
+"Do you wish to add him or her to your buddy list?"
+msgstr ""
+"\n"
+"\n"
+"להוסים לרשימת ידידים?"
+
+#: src/prpl.c:409
+msgid "Gaim - Information"
+msgstr "גיים - מידע"
+
+#: src/prpl.c:412
+msgid "Add buddy to your list?"
+msgstr "להוסיף ידיד לרשימה שלך?"
+
+#: src/prpl.c:456
+msgid ""
+"You do not currently have any protocols available that are able to register "
+"new accounts."
+msgstr ""
+
+#: src/prpl.c:493
+msgid "Gaim - Registration"
+msgstr "גיים - הרשמה"
+
+#: src/prpl.c:506
+msgid "Registration Information"
+msgstr "פרטי הרשמה"
+
+#: src/prpl.c:520
+msgid "Register"
+msgstr "הרשם"
+
+#: src/server.c:57
+msgid "Please enter your password"
+msgstr "הכנס סיסמא:"
+
+#: src/server.c:884
+#, c-format
+msgid "(%d messages)"
+msgstr "(%d הודעות)"
+
+#: src/server.c:896
+msgid "(1 message)"
+msgstr "הודעה 1)"
+
+#: src/server.c:1094 src/server.c:1104
+#, c-format
+msgid "%s logged in."
+msgstr "%s התחבר"
+
+#: src/server.c:1122 src/server.c:1130
+#, c-format
+msgid "%s logged out."
+msgstr "%s התנתק"
+
+#: src/server.c:1164
+#, c-format
+msgid ""
+"%s has just been warned by %s.\n"
+"Your new warning level is %d%%"
+msgstr ""
+
+#: src/server.c:1167
+msgid "an anonymous person"
+msgstr "אלמוני"
+
+#: src/server.c:1257
+#, c-format
+msgid ""
+"User '%s' invites %s to buddy chat room: '%s'\n"
+"%s"
+msgstr ""
+"משתמש \"%s\" מזמין את \"%s\" לחדר שיחות \"%s\" "
+"\n"
+"%s"
+
+#: src/server.c:1261
+#, c-format
+msgid "User '%s' invites %s to buddy chat room: '%s'\n"
+msgstr ""
+"משתמש \"%s\" מזמין את \"%s\" לחדר שיחות \"%s\" "
+"\n"
+
+#: src/server.c:1267
+msgid "Accept chat invitation?"
+msgstr "לקבל הזמנה לשיחה?"
+
+#: src/server.c:1440
+msgid "Gaim - Popup"
+msgstr ""
+
+#: src/server.c:1467
+msgid "More Info"
+msgstr "פרטים"
+
+#: src/sound.c:80
+msgid "Buddy logs in"
+msgstr ""
+
+#: src/sound.c:81
+msgid "Buddy logs out"
+msgstr ""
+
+#: src/sound.c:82
+msgid "Message received"
+msgstr "הודעה התקבלה"
+
+#: src/sound.c:83
+msgid "Message received begins conversation"
+msgstr "הודעה התקבלה, מתחיל בדו-שיח"
+
+#: src/sound.c:84
+msgid "Message sent"
+msgstr "הודעה נשלחה"
+
+#: src/sound.c:85
+msgid "Person enters chat"
+msgstr ""
+
+#: src/sound.c:86
+msgid "Person leaves chat"
+msgstr ""
+
+#: src/sound.c:87
+msgid "You talk in chat"
+msgstr "אתה מדבר בשיחה"
+
+#: src/sound.c:88
+msgid "Others talk in chat"
+msgstr "אחרים מדברים בשיחה"
+
+#: src/sound.c:91
+msgid "Someone says your name in chat"
+msgstr "מישהו מזכיר את שמך בשיחה"
+
+#: src/sound.c:188
+#, c-format
+msgid "Unable to play sound because the chosen file (%s) does not exist."
+msgstr "לא ניתן להשמיע צליל, מכוון שקובץ \"%s\" לא קיים."
+
+#: src/sound.c:204
+msgid ""
+"Unable to play sound because the 'Command' sound method has been chosen, but "
+"no command has been set."
+msgstr "לא ניתן להשמיע צליל מכוון שנבחרה אופציה \"פקודה\", אך הפקודה לא הוכנסה."
+
+#: src/sound.c:213
+#, c-format
+msgid ""
+"Unable to play sound because the configured sound command could not be "
+"launched: %s"
+msgstr ""
+
+#: src/stock.c:88
+msgid "_Modify"
+msgstr "_ערוך"
+
+#: src/stock.c:89
+msgid "_Open Mail"
+msgstr "_פתח דואר"
+
+#: src/util.c:110 src/util.c:115 src/util.c:120 src/util.c:123
+msgid "day"
+msgid_plural "days"
+msgstr[0] "יום"
+msgstr[1] ""
+
+#: src/util.c:111 src/util.c:115 src/util.c:129 src/util.c:131
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "שעה"
+msgstr[1] ""
+
+#: src/util.c:111 src/util.c:120 src/util.c:129 src/util.c:134
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "דקה"
+msgstr[1] ""
+
+#. full help text
+#: src/util.c:726
+#, c-format
+msgid ""
+"Gaim %s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -a, --acct          display account editor window\n"
+"  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
+"                      name of away message to use)\n"
+"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+"                      account(s) to use, seperated by commas)\n"
+"  -n, --loginwin      don't automatically login; show login window\n"
+"  -u, --user=NAME     use account NAME\n"
+"  -f, --file=FILE     use FILE as config\n"
+"  -d, --debug         print debugging messages to stdout\n"
+"  -v, --version       display the current version and exit\n"
+"  -h, --help          display this help and exit\n"
+msgstr ""
+
+#. short message
+#: src/util.c:741
+#, c-format
+msgid "Gaim %s. Try `%s -h' for more information.\n"
+msgstr ""
+
+#: src/util.c:1037
+msgid "Not connected to AIM"
+msgstr "לא מחובר ל AIM"
+
+#: src/util.c:1046 src/util.c:1085
+msgid "No screenname given."
+msgstr "אין ניתן שם תצוגה."
+
+#: src/util.c:1122
+msgid "No roomname given."
+msgstr "לא ניתן שם החדר."
+
+#: src/util.c:1141
+msgid "Invalid AIM URI"
+msgstr ""
+
+#.
+#. *  DEFINES, MACROS & DATA TYPES
+#.
+#: src/win32/systray.c:36
+msgid "Gaim Instant Messenger"
+msgstr ""
+
+#: src/win32/systray.c:37
+msgid "Gaim Instant Messenger - Signed off"
+msgstr ""
+
+#: src/win32/systray.c:38
+msgid "Gaim Instant Messenger - Away"
+msgstr ""
+
+#: src/win32/systray.c:134
+msgid "New"
+msgstr "חדש"
+
+#: src/win32/systray.c:167
+msgid "Set Away Message"
+msgstr ""
+
+#: src/win32/systray.c:176
+msgid "I'm Back"
+msgstr "חזרתי"
+
+#: src/win32/systray.c:365
+msgid "Exit"
+msgstr "יציאה"
+
+#: src/plugin.c:232
+#, c-format
+msgid "The plugin %s did not return any valid plugin information"
+msgstr ""
+
+#: src/plugin.c:237
+msgid "Gaim was unable to load your plugin."
+msgstr "גיים לא מצליח לטעון את התוסף שלך."
+
+#. * Custom away message.
+#: src/prpl.h:172
+msgid "Custom"
+msgstr "מותאם אישית"
+
+#: src/gtkdebug.c:111
+msgid "Debug Window"
+msgstr ""
+
+#: src/gtkdebug.c:150
+msgid "Pause"
+msgstr "השהייה"
+
+#: src/gtkdebug.c:156
+msgid "Timestamps"
+msgstr ""
+
