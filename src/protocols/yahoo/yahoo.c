@@ -1827,7 +1827,7 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 			                      "This means either your password is incorrect, "
 			                      "or Yahoo!'s authencation scheme has changed. "
 			                      "Gaim will now attempt to log in using Web "
-			                      "Messenger authencation, will which result "
+			                      "Messenger authencation, which will result "
 			                      "in reduced functionality and features."));
 			return;
 		}
