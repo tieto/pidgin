@@ -759,6 +759,10 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		dialog->account = gaim_account_new(screenname, dialog->protocol);
 	}
+	else {
+		/* Protocol */
+		gaim_account_set_protocol(dialog->account, dialog->protocol);
+	}
 
 	/* Alias */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
