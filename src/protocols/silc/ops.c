@@ -935,7 +935,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			SilcUInt32 idle, mode;
 			SilcBuffer channels, user_modes;
 			SilcClientEntry client_entry;
-			char *buf, tmp[1024], *tmp2;
+			char *buf, tmp[1024], *tmp2, *title;
 			char *moodstr, *statusstr, *contactstr, *langstr, *devicestr, *tzstr, *geostr;
 			GString *s;
 
@@ -1082,8 +1082,9 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
-				/* XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who' */
-				gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
+			title = g_strdup_printf(_("Info for %s"), client_entry->nickname);
+			gaim_notify_userinfo(gc, client_entry->nickname, title, _("Buddy Information"), NULL, buf, NULL, NULL);
+			g_free(title);
 			g_free(buf);
 		}
 		break;
@@ -1091,7 +1092,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 	case SILC_COMMAND_WHOWAS:
 		{
 			SilcClientEntry client_entry;
-			char *buf, *nickname, *realname, *username, *tmp;
+			char *buf, *nickname, *realname, *username, *tmp, *title;
 			GString *s;
 
 			if (!success) {
@@ -1143,9 +1144,10 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 			}
 
+			title = g_strdup_printf(_("Info for %s"), client_entry->nickname);
 			buf = g_string_free(s, FALSE);
-			/* XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who' */
-			gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, buf, NULL, NULL);
+			gaim_notify_userinfo(gc, client_entry->nickname, title, _("Buddy Information"), NULL, buf, NULL, NULL);
+			g_free(title);
 			g_free(buf);
 		}
 		break;
