@@ -1451,6 +1451,16 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 	return FALSE;
 }
 
+static gboolean
+refocus_entry_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+	GaimGtkConversation *gtkconv = data;
+
+	gtk_widget_grab_focus(gtkconv->entry);
+
+	return FALSE;
+}
+
 static void
 menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
@@ -3350,6 +3360,8 @@ setup_chat_pane(GaimConversation *conv)
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "button_release_event",
+						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gaim_setup_imhtml(gtkconv->imhtml);
 
@@ -3540,6 +3552,8 @@ setup_im_pane(GaimConversation *conv)
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "button_release_event",
+						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
