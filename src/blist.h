@@ -571,15 +571,6 @@ GSList *gaim_find_buddies(GaimAccount *account, const char *name);
 GaimGroup *gaim_find_group(const char *name);
 
 /**
- * Finds a contact
- *
- * @param group   The group to look in
- * @param name    The name to look for
- * @return        The contact or NULL if the contact does not exist
- */
-GaimContact *gaim_find_contact(GaimGroup *group, const char *name);
-
-/**
  * Finds a chat by name.
  *
  * @param account The chat's account.
