@@ -787,6 +787,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
 	xmlnode_put_attrib(y, "jid", realwho);
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
+	xmlnode_free(x);
 
 	x = xmlnode_new_tag("presence");
 	xmlnode_put_attrib(x, "to", realwho);
@@ -817,6 +818,7 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name)
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 
 	g_free(realwho);
+	xmlnode_free(x);
 }
 
 static char **jabber_list_icon(int uc)
