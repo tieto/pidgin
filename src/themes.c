@@ -245,6 +245,9 @@ GSList *get_proto_smileys(const char *id) {
 	if(!current_smiley_theme)
 		return NULL;
 
+	if(!current_smiley_theme->list)
+		return NULL;
+
 	def = list = current_smiley_theme->list;
 
 	while(list) {

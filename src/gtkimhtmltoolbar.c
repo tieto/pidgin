@@ -574,8 +574,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 		if (toolbar->sml)
 			smileys = get_proto_smileys(toolbar->sml);
-		  else
-			  smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
+		else
+			smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
 
 		while(smileys) {
 			GtkIMHtmlSmiley *smiley = smileys->data;
@@ -586,28 +586,34 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			smileys = smileys->next;
 		}
 
-
-		width = floor(sqrt(g_slist_length(unique_smileys)));
-
 		GAIM_DIALOG(dialog);
+
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 		gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 		gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
-		smiley_table = gtk_table_new(width, width, TRUE);
+		if(g_slist_length(unique_smileys)) {
 
-		/* pack buttons */
+			width = floor(sqrt(g_slist_length(unique_smileys)));
 
-		while(unique_smileys) {
-			GtkIMHtmlSmiley *smiley = unique_smileys->data;
-			if(!smiley->hidden) {
-				add_smiley(toolbar, smiley_table, row, col, smiley->file, smiley->smile);
-				if(++col >= width) {
-					col = 0;
-					row++;
+			smiley_table = gtk_table_new(width, width, TRUE);
+
+			/* pack buttons */
+
+			while(unique_smileys) {
+				GtkIMHtmlSmiley *smiley = unique_smileys->data;
+				if(!smiley->hidden) {
+					add_smiley(toolbar, smiley_table, row, col, smiley->file, smiley->smile);
+					if(++col >= width) {
+						col = 0;
+						row++;
+					}
 				}
+				unique_smileys = unique_smileys->next;
 			}
-			unique_smileys = unique_smileys->next;
+		}
+		else {
+			smiley_table = gtk_label_new(_("This theme has no available smileys."));
 		}
 
 		gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
