@@ -3193,7 +3193,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	GdkFont *cfont;
 	GdkRectangle area;
 	char *ws,
-	  tag[BUF_LONG],
+	  *tag,
 	 *c,
 	 *url = NULL;
 	gint intag = 0,
@@ -3237,6 +3237,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	c = text;
 
 	ws = g_malloc(strlen(text) + 2);
+	tag = g_malloc(strlen(text) + 2);
 
 	while (*c)
 	{
@@ -3681,6 +3682,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 
 
 	g_free(ws);
+	g_free(tag);
 
 	gdk_window_get_size(html->html_area, NULL, &height);
 	area.height = height;
