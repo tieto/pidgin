@@ -46,12 +46,12 @@
 
 /* ------------------ Global Variables ----------------------- */
 
+GList *plugins   = NULL;
 GList *callbacks = NULL;
 
 /* ------------------ Local Variables ------------------------ */
 
 static GtkWidget *plugin_dialog = NULL;
-static GList     *plugins = NULL;
 
 static GtkWidget *pluglist;
 static GtkWidget *plugtext;
@@ -62,12 +62,13 @@ static GtkWidget *config;
 /* --------------- Function Declarations --------------------- */
 
        void show_plugins (GtkWidget *, gpointer);
+       void load_plugin  (char *);
 
        void gaim_signal_connect   (void *, enum gaim_event, void *, void *);
        void gaim_signal_disconnect(void *, enum gaim_event, void *);
 
 static void destroy_plugins  (GtkWidget *, gpointer);
-static void load_plugin  (GtkWidget *, gpointer);
+static void load_file        (GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
 static void unload           (GtkWidget *, gpointer);
 static void list_clicked     (GtkWidget *, struct gaim_plugin *);
@@ -82,7 +83,7 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 	plugin_dialog = NULL;
 }
 
-static void load_plugin(GtkWidget *w, gpointer data)
+static void load_file(GtkWidget *w, gpointer data)
 {
 	char *buf = g_malloc(BUF_LEN);
  
@@ -120,14 +121,22 @@ static void load_plugin(GtkWidget *w, gpointer data)
 }
 
 static void load_which_plugin(GtkWidget *w, gpointer data) {
+	load_plugin(gtk_file_selection_get_filename(
+					GTK_FILE_SELECTION(plugin_dialog)));
+
+	if (plugin_dialog)
+		gtk_widget_destroy(plugin_dialog);
+	plugin_dialog = NULL;
+}
+
+void load_plugin(char *filename) {
 	struct gaim_plugin *plug;
 	void (*gaim_plugin_init)();
 	char *(*cfunc)();
 	char *error;
 
 	plug = g_malloc(sizeof *plug);
-	plug->filename = g_strdup(gtk_file_selection_get_filename(
-					GTK_FILE_SELECTION(plugin_dialog)));
+	plug->filename = g_strdup(filename);
 	/* do NOT OR with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
@@ -138,10 +147,6 @@ static void load_which_plugin(GtkWidget *w, gpointer data) {
 		g_free(plug);
 		return;
 	}
-
-	if (plugin_dialog)
-		gtk_widget_destroy(plugin_dialog);
-	plugin_dialog = NULL;
 
 	gaim_plugin_init = dlsym(plug->handle, "gaim_plugin_init");
 	if ((error = (char *)dlerror()) != NULL) {
@@ -222,7 +227,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 
 	add = gtk_button_new_with_label("Load Plugin");
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
-			   GTK_SIGNAL_FUNC(load_plugin), NULL);
+			   GTK_SIGNAL_FUNC(load_file), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
 
 	config = gtk_button_new_with_label("Configure Plugin");

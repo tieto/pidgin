@@ -150,6 +150,7 @@ struct gaim_callback {
 	void *data;
 };
 
+extern GList *plugins;
 extern GList *callbacks;
 #endif
 
@@ -295,7 +296,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 149 $"
+#define REVISION "gaim:$Revision: 152 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -569,6 +570,7 @@ extern void play_sound(int);
 #ifdef GAIM_PLUGINS
 /* Functions in plugins.c */
 extern void show_plugins(GtkWidget *, gpointer);
+extern void load_plugin (char *);
 extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
 #endif

@@ -143,6 +143,8 @@ static int gaimrc_parse_tag(FILE *f)
 		return 1;
 	} else if (!strcmp(tag, "away")) {
 		return 2;
+	} else if (!strcmp(tag, "plugins")) {
+		return 3;
 	}
 
 	return -1;
@@ -232,8 +234,54 @@ static void gaimrc_write_away(FILE *f)
 	fprintf(f, "}\n");
 }
 
+#ifdef GAIM_PLUGINS
+static void gaimrc_write_plugins(FILE *f)
+{
+	GList *pl = plugins;
+	struct gaim_plugin *p;
 
+	fprintf(f, "plugins {\n");
 
+	while (pl) {
+		char *path;
+
+		p = (struct gaim_plugin *)pl->data;
+
+		path = escape_text2(p->filename);
+
+		fprintf(f, "\tplugin { %s }\n", path);
+
+		free(path);
+
+		pl = pl->next;
+	}
+
+	fprintf(f, "}\n");
+}
+
+static void gaimrc_read_plugins(FILE *f)
+{
+	struct parse *p;
+	char buf[4096];
+
+	buf[0] = 0;
+	
+	while (buf[0] != '}')
+	{
+		if (!fgets(buf, sizeof(buf), f))
+			return;
+		
+		if (buf[0] == '}')
+			return;
+
+		p = parse_line(buf);
+		if (!strcmp(p->option, "plugin"))
+		{
+			load_plugin(p->value[0]);
+		}
+	}
+}
+#endif /* GAIM_PLUGINS */
 
 static struct aim_user *gaimrc_read_user(FILE *f)
 {
@@ -520,6 +568,11 @@ void load_prefs()
                                 case 2:
                                         gaimrc_read_away(f);
                                         break;
+#ifdef GAIM_PLUGINS
+				case 3:
+					gaimrc_read_plugins(f);
+					break;
+#endif
 				default:
 					/* NOOP */
 					break;
@@ -543,6 +596,9 @@ void save_prefs()
 			gaimrc_write_users(f);
                         gaimrc_write_options(f);
                         gaimrc_write_away(f);
+#ifdef GAIM_PLUGINS
+			gaimrc_write_plugins(f);
+#endif
                         fclose(f);
                         chmod(buf, S_IRUSR | S_IWUSR);
                 }
