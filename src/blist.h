@@ -178,7 +178,7 @@ struct _GaimBlistUiOps
 {
 	void (*new_list)(GaimBuddyList *list); /**< Sets UI-specific data on a buddy list. */
 	void (*new_node)(GaimBlistNode *node); /**< Sets UI-specific data on a node. */
-	void (*show)(GaimBuddyList *list);     /**< The core will call this when its finished doing its core stuff */
+	void (*show)(GaimBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
 	void (*update)(GaimBuddyList *list,
 		       GaimBlistNode *node);       /**< This will update a node in the buddy list. */
 	void (*remove)(GaimBuddyList *list,
