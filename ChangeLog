@@ -58,6 +58,7 @@ version 0.78 (05/30/2004):
 	  be correct again.
 
 	Preference Changes:
+	* Added "Conversation placement - By conversation count"
 	* Added a "none" smiley theme to replace the "Show graphical
 	  smileys" option
 	* Replace default formatting preferences with a dialog to set a
@@ -80,9 +81,6 @@ version 0.78 (05/30/2004):
 	* Removed "Send autoresponse in active conversations", default to no
 	* Removed "Show people joining in window", default to yes
 	* Removed "Show people leaving in window", default to yes
-	* Removed "Show IMs and Chats in same window", default to yes
-	* Merged "IM" and "Chat" options under "Conversations"
-	* Reorganized Preference dialog
 
 version 0.77 (04/22/2004):
 	New Features:
