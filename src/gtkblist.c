@@ -3910,6 +3910,8 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		who = gtk_entry_get_text(GTK_ENTRY(data->entry));
 		grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(data->combo)->entry));
 		whoalias = gtk_entry_get_text(GTK_ENTRY(data->entry_for_alias));
+		if (*whoalias == '\0')
+			whoalias = NULL;
 
 		c = gaim_find_conversation_with_account(who, data->account);
 
