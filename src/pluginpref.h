@@ -76,7 +76,7 @@ void gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref
  * @return a GList of plugin preferences
  */
 GList *gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame);
- 
+
 /**
  * Create a new plugin preference
  *

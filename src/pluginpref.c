@@ -209,7 +209,7 @@ gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max) {
 				pref->name);
 		return;
 	}
-		
+
 	if(min > max) {
 		tmp = min;
 		min = max;

@@ -1998,8 +1998,7 @@ gaim_statuses_load(void)
 	gchar *filename;
 	gchar *msg;
 
-	if (user_dir == NULL)
-		return;
+	g_return_if_fail(user_dir != NULL);
 
 	filename = g_build_filename(user_dir, "status.xml", NULL);
 
@@ -2022,5 +2021,7 @@ gaim_statuses_load(void)
 void
 gaim_statuses_sync(void)
 {
-	/* TODO: Write me, baby. */
+	/* TODO: Only attempt to write if we've already read the file. */
+
+	//gaim_util_write_xml_file("status.xml", data);
 }

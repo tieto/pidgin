@@ -1930,6 +1930,125 @@ int gaim_build_dir (const char *path, int mode)
 }
 
 /*
+ * This function is long and beautiful, like my--um, yeah.  Anyway,
+ * it includes lots of error checking so as we don't overwrite
+ * people's settings if there is a problem writing the new values.
+ */
+gboolean
+gaim_util_write_xml_file(const char *filename, const char *data)
+{
+	const char *user_dir = gaim_user_dir();
+	gchar *filename_temp, *filename_full;
+	FILE *file;
+	size_t datalen, byteswritten;
+	struct stat st;
+
+	g_return_val_if_fail(user_dir != NULL, FALSE);
+
+	gaim_debug_info("util", "Writing file %s to directory %s\n",
+					filename, user_dir);
+
+	/* Ensure the user directory exists */
+	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
+	{
+		if (mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+		{
+			gaim_debug_error("util", "Error creating directory %s: %s\n",
+							 user_dir, strerror(errno));
+			return FALSE;
+		}
+	}
+
+	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.xml", user_dir, filename);
+	filename_temp = g_strdup_printf("%s.save", filename_full);
+
+	/* Remove an old temporary file, if one exists */
+	if (g_file_test(filename_temp, G_FILE_TEST_EXISTS))
+	{
+		if (unlink(filename_temp) == -1)
+		{
+			gaim_debug_error("util", "Error removing old file %s: %s\n",
+							 filename_temp, strerror(errno));
+		}
+	}
+
+	/* Open file */
+	file = fopen(filename_temp, "w");
+	if (file == NULL)
+	{
+		gaim_debug_error("util", "Error opening file %s for writing: %s\n",
+						 filename_temp, strerror(errno));
+		g_free(filename_full);
+		g_free(filename_temp);
+		return FALSE;
+	}
+
+	/* Write to file */
+	datalen = strlen(data);
+	byteswritten = fwrite(data, 1, datalen, file);
+
+	/* Close file */
+	if (fclose(file) != 0)
+	{
+		gaim_debug_error("util", "Error closing file %s: %s\n",
+						 filename_temp, strerror(errno));
+		g_free(filename_full);
+		g_free(filename_temp);
+		return FALSE;
+	}
+
+	/* Ensure the file is the correct size */
+	if (byteswritten != datalen)
+	{
+		gaim_debug_error("util", "Error writing to file %s: Wrote %z bytes "
+						 "but should have written %z; is your disk full?\n",
+						 filename_temp, byteswritten, datalen);
+		g_free(filename_full);
+		g_free(filename_temp);
+		return FALSE;
+	}
+	/* Use stat to be absolutely sure. */
+	if ((stat(filename_temp, &st) == -1) || (st.st_size != datalen))
+	{
+		gaim_debug_error("util", "Error writing data to file %s: "
+						 "Incomplete file written; is your disk full?\n",
+						 filename_temp);
+		g_free(filename_full);
+		g_free(filename_temp);
+		return FALSE;
+	}
+
+	/* Set file permissions */
+	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
+	{
+		gaim_debug_error("util", "Error setting permissions of file %s: %s\n",
+						 filename_temp, strerror(errno));
+	}
+
+	/* Remove the old file, if it exists */
+	if (g_file_test(filename_full, G_FILE_TEST_EXISTS))
+	{
+		if (unlink(filename_full) == -1)
+		{
+			gaim_debug_error("util", "Error removing old file %s: %s\n",
+							 filename_full, strerror(errno));
+		}
+	}
+
+	/* Rename to the REAL name */
+	if (rename(filename_temp, filename_full) == -1)
+	{
+		gaim_debug_error("util", "Error renaming %s to %s: %s\n",
+						 filename_temp, filename_full, strerror(errno));
+	}
+
+	g_free(filename_full);
+	g_free(filename_temp);
+
+	return TRUE;
+}
+
+/*
  * Like mkstemp() but returns a file pointer, uses a pre-set template,
  * uses the semantics of tempnam() for the directory to use and allocates
  * the space for the filepath.

@@ -2389,20 +2389,16 @@ void gaim_blist_sync()
 	char *filename;
 	char *filename_real;
 
-	if (!user_dir)
-		return;
+	g_return_if_fail(user_dir != NULL);
 
 	if (!blist_safe_to_write) {
-		gaim_debug(GAIM_DEBUG_WARNING, "blist save",
+		gaim_debug_warning("blist save",
 				   "AHH!! Tried to write the blist before we read it!\n");
 		return;
 	}
 
-	file = fopen(user_dir, "r");
-	if (!file)
+	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
 		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	else
-		fclose(file);
 
 	filename = g_build_filename(user_dir, "blist.xml.save", NULL);
 
@@ -2411,8 +2407,7 @@ void gaim_blist_sync()
 		fclose(file);
 		chmod(filename, S_IRUSR | S_IWUSR);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "blist save", "Unable to write %s\n",
-				   filename);
+		gaim_debug_error("blist", "Unable to write %s\n", filename);
 		g_free(filename);
 		return;
 	}
@@ -2427,7 +2422,7 @@ void gaim_blist_sync()
 	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
 
 	if (rename(filename, filename_real) < 0)
-		gaim_debug(GAIM_DEBUG_ERROR, "blist save",
+		gaim_debug_error("blist",
 				   "Error renaming %s to %s\n", filename, filename_real);
 
 	g_free(filename);

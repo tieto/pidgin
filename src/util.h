@@ -377,6 +377,20 @@ void set_gaim_user_dir(const char *dir);
 int gaim_build_dir(const char *path, int mode);
 
 /**
+ * Write a null-terminated string of data to a file of the given name
+ * in the Gaim user directory ($HOME/.gaim by default).  The data is
+ * typically a serialized version of one of Gaim's config files, such
+ * as prefs.xml, accounts.xml, etc.  And the string is typically
+ * obtained using xmlnode_to_formatted_str.
+ *
+ * @param filename The basename of the file to write in the gaim_user_dir.
+ * @param data     A null-terminated string of data to write.
+ *
+ * @return TRUE if the file was written successfully.  FALSE otherwise.
+ */
+gboolean gaim_util_write_xml_file(const char *filename, const char *data);
+
+/**
  * Creates a temporary file and returns a file pointer to it.
  *
  * This is like mkstemp(), but returns a file pointer and uses a

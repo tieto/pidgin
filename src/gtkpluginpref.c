@@ -56,7 +56,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 		case GAIM_PLUGIN_PREF_CHOICE:
 			gtk_label = gaim_gtk_prefs_dropdown_from_list(parent, pref_label,
 											  GAIM_PREF_STRING, pref_name,
-											  gaim_plugin_pref_get_choices(pref));						
+											  gaim_plugin_pref_get_choices(pref));
 			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
 
 			if(sg)
@@ -116,7 +116,7 @@ make_int_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 		case GAIM_PLUGIN_PREF_NONE:
 		default:
 			gaim_plugin_pref_get_bounds(pref, &min, &max);
-			gaim_gtk_prefs_labeled_spin_button(parent, pref_label, 
+			gaim_gtk_prefs_labeled_spin_button(parent, pref_label,
 					pref_name, min, max, sg);
 			break;
 	}
