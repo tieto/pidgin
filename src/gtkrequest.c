@@ -34,20 +34,45 @@ typedef struct
 
 	void *user_data;
 	GtkWidget *dialog;
-	GtkWidget *entry;
 
 	size_t cb_count;
 	GCallback *cbs;
+
+	union
+	{
+		struct
+		{
+			GtkWidget *entry;
+
+			gboolean multiline;
+
+		} input;
+
+	} u;
 
 } GaimRequestData;
 
 static void
 __input_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 {
-	if (id < data->cb_count && data->cbs[id] != NULL) {
-		((GaimRequestInputCb)data->cbs[id])(
-			gtk_entry_get_text(GTK_ENTRY(data->entry)), data->user_data);
+	const char *value;
+
+	if (data->u.input.multiline) {
+		GtkTextIter start_iter, end_iter;
+		GtkTextBuffer *buffer =
+			gtk_text_view_get_buffer(GTK_TEXT_VIEW(data->u.input.entry));
+
+		gtk_text_buffer_get_start_iter(buffer, &start_iter);
+		gtk_text_buffer_get_end_iter(buffer, &end_iter);
+
+		value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
+										 FALSE);
 	}
+	else
+		value = gtk_entry_get_text(GTK_ENTRY(data->u.input.entry));
+
+	if (id < data->cb_count && data->cbs[id] != NULL)
+		((GaimRequestInputCb)data->cbs[id])(value, data->user_data);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }
@@ -69,7 +94,7 @@ __text_to_stock(const char *text)
 	STOCK_ITEMIZE(_("Add"),    GTK_STOCK_ADD);
 	STOCK_ITEMIZE(_("Remove"), GTK_STOCK_REMOVE);
 
-	return NULL;
+	return text;
 }
 
 void *
@@ -153,11 +178,43 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	g_free(label_text);
 
 	/* Entry field. */
-	data->entry = entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+	data->u.input.multiline = multiline;
 
-	if (default_value != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry), default_value);
+	if (multiline) {
+		GtkWidget *sw;
+
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+									   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+											GTK_SHADOW_IN);
+
+		gtk_widget_set_size_request(sw, 300, 75);
+
+		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+
+		entry = gtk_text_view_new();
+		gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
+
+		gtk_container_add(GTK_CONTAINER(sw), entry);
+
+		if (default_value != NULL) {
+			GtkTextBuffer *buffer;
+
+			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(entry));
+			gtk_text_buffer_set_text(buffer, default_value, -1);
+		}
+	}
+	else {
+		entry = gtk_entry_new();
+
+		gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+
+		if (default_value != NULL)
+			gtk_entry_set_text(GTK_ENTRY(entry), default_value);
+	}
+
+	data->u.input.entry = entry;
 
 	/* Show everything. */
 	gtk_widget_show_all(dialog);
