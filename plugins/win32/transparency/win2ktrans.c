@@ -448,9 +448,9 @@ GtkWidget *get_config_frame(GaimPlugin *plugin) {
 
 	gtk_box_pack_start(GTK_BOX(trans_box), hbox, FALSE, FALSE, 5);
 
-	/* If this version of Windows dosn't support Transparency, grey out options */
+	/* If this version of Windows doesn't support Transparency, grey out options */
 	if(!has_transparency()) {
-		gaim_debug_warning(WINTRANS_PLUGIN_ID, "This version of windows dosn't support transparency\n");
+		gaim_debug_warning(WINTRANS_PLUGIN_ID, "This version of Windows doesn't support transparency\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(imtransbox), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
