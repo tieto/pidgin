@@ -3,9 +3,10 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.75cvs :
 	* WYSIWYG text input
 	* Yahoo! file transfer (Tim Ringenbach)
+	* Yahoo! chat joining fixes (Tim Ringenbach)
 	* Improved i18n support for MSN email notification (Felipe Contreras)
 	* Jabber SASL PLAIN support
-	* Touch-up various dialogs to follow the Gnome Human Interface 
+	* Touch-up various dialogs to follow the Gnome Human Interface
 	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
 	  Ka-Hing Cheung)
 	* Chinese (Simplified) translation updated (Funda Wang)
