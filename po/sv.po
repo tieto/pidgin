@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-10-28 09:58-0500\n"
-"PO-Revision-Date: 2003-10-29 23:03+0100\n"
+"PO-Revision-Date: 2003-11-13 21:32+0100\n"
 "Last-Translator: Tore Lundqvist <tlt@mima.x.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2279,7 +2279,7 @@ msgstr "/Kompisar/Visa tomma grupper"
 
 #: src/gtkblist.c:2243 src/gtkconv.c:1193
 msgid "IM"
-msgstr "Snabbmeddelande"
+msgstr "Meddelande"
 
 #: src/gtkblist.c:2249
 msgid "Send a message to the selected buddy"
@@ -2287,7 +2287,7 @@ msgstr "Skicka ett meddelande till den markerade kompisen"
 
 #: src/gtkblist.c:2252 src/protocols/napster/napster.c:529
 msgid "Get Info"
-msgstr "Hämta information"
+msgstr "Info"
 
 #: src/gtkblist.c:2258
 msgid "Get information on the selected buddy"
