@@ -448,10 +448,18 @@ msn_login(GaimAccount *account)
 	const char *server;
 	int port;
 
+	gc = gaim_account_get_connection(account);
+
+	if (!gaim_ssl_is_supported())
+	{
+		gaim_connection_error(gc,
+			_("SSL support is needed for MSN. Please install it."));
+
+		return;
+	}
+
 	server = gaim_account_get_string(account, "server", MSN_SERVER);
 	port   = gaim_account_get_int(account,    "port",   MSN_PORT);
-
-	gc = gaim_account_get_connection(account);
 
 	session = msn_session_new(account, server, port);
 	session->prpl = my_protocol;
@@ -1606,8 +1614,6 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
-
-	info.dependencies = g_list_append(info.dependencies, "core-ssl");
 
 	option = gaim_account_option_string_new(_("Login server"), "server",
 											MSN_SERVER);
