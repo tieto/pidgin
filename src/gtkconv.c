@@ -1397,29 +1397,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 		} /* End of switch */
-
-#if 0
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts")) {
-			switch (event->keyval) {
-
-
-			}
-			} /* End of switch */
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts")) {
-			char buf[7];
-
-			*buf = '\0';
-
-			switch (event->keyval) {
-
-			}
-
-
-		}
-#endif
-
 	}
+
 	/* If ALT (or whatever) was held down... */
 	else if (event->state & GDK_MOD1_MASK)
 	{
@@ -1432,6 +1411,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			return TRUE;
 		}
 	}
+
 	/* If neither CTRL nor ALT were held down... */
 	else
 	{
@@ -2133,9 +2113,7 @@ start_anim(GtkObject *obj, GaimConversation *conv)
 
 	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
 
-	if (gtkconv->u.im->anim)
-	    gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon,
-												  conv);
+    gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon, conv);
 }
 
 static void
@@ -2395,7 +2373,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		gtk_imhtmltoolbar_associate_smileys (GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(gaim_conversation_get_account(conv)));
 
-#if 0
 		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
@@ -2403,7 +2380,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.invite,
 								 (prpl_info->chat_invite != NULL));
-#endif
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if (gaim_find_buddy(gaim_conversation_get_account(conv),
@@ -2423,7 +2399,8 @@ gray_stuff_out(GaimConversation *conv)
 								 (prpl_info->add_deny != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.add, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
-		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link,
+								 gc->flags & GAIM_CONNECTION_HTML);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image,
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 	} else {
@@ -3886,6 +3863,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->bbox);
 
 	setup_im_buttons(conv, gtkconv->bbox);
+	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 
 	focus_chain = g_list_prepend (NULL, sw);
 	gtk_container_set_focus_chain (GTK_CONTAINER(vbox2), focus_chain);
@@ -5183,8 +5161,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (gtkconv->u.im->anim)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
-	else
-		gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 
 	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
 					gaim_conversation_get_name(conv))) != NULL) {

@@ -453,7 +453,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case GDK_End:
 			return TRUE;
 			break;
-#endif /* Gtk+ >= 2.2.0 */
+#endif /* !(Gtk+ >= 2.2.0) */
 		
 		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
 		case 'B':
