@@ -715,7 +715,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 			flag |= WFLAG_SEND;
 		} else {
 		       	flag |= WFLAG_RECV;
-			if (find_nick(g->gc, message))
+			if (find_nick(b->gc, message))
 				flag |= WFLAG_NICK;
 		}
 		g_free(str);
