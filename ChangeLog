@@ -6,7 +6,7 @@ version 0.74cvs
 version 0.73 (11/21/2003):
 	* New Logging format and code:
 		* fixes i18n issues with logs
-		* compatable with old logs
+		* compatible with old logs
 		* hopefully fixes segfault in viewing logs
 	* New disconnected account dialog (Thanks, Daniel Atallah)
 	* Fixes several Jabber bugs
