@@ -9,10 +9,12 @@ version 0.79:
 	* Added: gaim_conversation_has_focus() and gaim_conv_window_has_focus().
 	* Removed: gaim_blist_save()
 
-	Plugin API: v5
+	Protocol Plugin API: v5
 	* Changed: add_buddy, add_buddies, remove_buddy, remove_buddies,
 	  rename_group and remove_group to take GaimBuddy's and
 	  GaimGroup's consistently.
+	* Removed: OPT_PROTO_BUDDY_ICON (replaced by icon_spec)
+	* Added: icon_spec to the GaimPluginProtocolInfo struct
 
 version 0.78 (05/30/2004):
 	Plugin API: v4
