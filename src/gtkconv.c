@@ -789,141 +789,36 @@ menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-savelog_writefile_cb(GaimConversation *conv, gint id)
+savelog_writefile_cb(void *user_data, const char *filename)
 {
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
+	GaimConversation *conv = (GaimConversation *)user_data;
 	FILE *fp;
 	const char *name;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gtkconv->dialogs.savelog));
-#else /* FILECHOOSER */
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->dialogs.savelog));
-#endif /* FILECHOOSER */
-
-	gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
-
-	if (filename == NULL) {
-		gaim_notify_error(gtkconv->dialogs.savelog, NULL, _("Invalid file name."), NULL);
-		return;
-	}
-
 	if ((fp = fopen(filename, "w+")) == NULL) {
-		gaim_notify_error(gtkconv->dialogs.savelog, NULL, _("Unable to open file."), NULL);
+		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
 
 	name = gaim_conversation_get_name(conv);
-
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 	fprintf(fp, "%s", conv->history->str);
-
 	fclose(fp);
-
-	gtk_widget_destroy(gtkconv->dialogs.savelog);
-	gtkconv->dialogs.savelog = NULL;
 }
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-savelog_checkfile_cb(GtkWidget *widget, gint response, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
-
-	if (response != GTK_RESPONSE_ACCEPT) {
-		gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
-		gaim_request_close_with_handle(gtkconv->dialogs.savelog);
-		if (response == GTK_RESPONSE_CANCEL)
-			gtk_widget_destroy(gtkconv->dialogs.savelog);
-		gtkconv->dialogs.savelog = NULL;
-		return;
-	}
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-static void
-savelog_checkfile_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
-
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->dialogs.savelog));
-	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(gtkconv->dialogs.savelog))) {
-		return;
-	}
-#endif /* FILECHOOSER */
-
-	gaim_request_close_with_handle(gtkconv->dialogs.savelog);
-
-	if (g_file_test(filename, G_FILE_TEST_EXISTS))
-	{
-		gaim_request_yes_no(gtkconv->dialogs.savelog, NULL, _("That file already exists"),
-							_("Would you like to overwrite it?"), 1,
-							conv, G_CALLBACK(savelog_writefile_cb), NULL);
-	}
-	else
-		savelog_writefile_cb(conv, 1);
-}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-savelog_destroy_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	if (gtkconv->dialogs.savelog != NULL) {
-		gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
-		gaim_request_close_with_handle(gtkconv->dialogs.savelog);
-		gtk_widget_destroy(gtkconv->dialogs.savelog);
-		gtkconv->dialogs.savelog = NULL;
-	}
-}
-#endif
 
 static void
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
 	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gchar *buf;
 
-	if (gtkconv->dialogs.savelog != NULL) {
-		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.savelog));
-		return;
-	}
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	buf = g_strdup_printf("%s.html", gaim_normalize(conv->account, conv->name));
-	gtkconv->dialogs.savelog = gtk_file_chooser_dialog_new(_("Save Conversation"),
-					GTK_WINDOW(GAIM_GTK_WINDOW(win)->window),
-					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-					NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(gtkconv->dialogs.savelog),
-									GTK_RESPONSE_ACCEPT);
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(gtkconv->dialogs.savelog),
-									  buf);
-	g_signal_connect(G_OBJECT(gtkconv->dialogs.savelog), "response",
-					 G_CALLBACK(savelog_checkfile_cb), conv);
-#else /* FILECHOOSER */
-	buf = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.html", gaim_home_dir(),
-						  gaim_normalize(conv->account, conv->name));
-	gtkconv->dialogs.savelog = gtk_file_selection_new(_("Save Conversation"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.savelog), buf);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.savelog)->ok_button),
-					 "clicked", G_CALLBACK(savelog_checkfile_cb), conv);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.savelog)->cancel_button),
-					 "clicked", G_CALLBACK(savelog_destroy_cb), conv);
-	g_signal_connect(G_OBJECT(gtkconv->dialogs.savelog),
-					 "destroy", G_CALLBACK(savelog_destroy_cb), conv);
-#endif /* FILECHOOSER */
+
+	gaim_request_file(conv, _("Save Conversation"), buf, TRUE,
+					  G_CALLBACK(savelog_writefile_cb), NULL, conv);
 
 	g_free(buf);
-
-	gtk_widget_show_all(GTK_WIDGET(gtkconv->dialogs.savelog));
 }
 
 static void
@@ -2582,30 +2477,16 @@ remove_icon(GaimGtkConversation *gtkconv)
 }
 
 static void
-saveicon_writefile_cb(GaimConversation *conv, gint id)
+saveicon_writefile_cb(void *user_data, const char *filename)
 {
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
+	GaimConversation *conv = (GaimConversation *)user_data;
 	FILE *fp;
 	GaimBuddyIcon *icon;
 	const void *data;
 	size_t len;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gtkconv->u.im->saveicon));
-#else /* FILECHOOSER */
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->u.im->saveicon));
-#endif /* FILECHOOSER */
-
-	gaim_notify_close_with_handle(gtkconv->u.im->saveicon);
-
-	if (filename == NULL) {
-		gaim_notify_error(gtkconv->u.im->saveicon, NULL, _("Invalid file name."), NULL);
-		return;
-	}
-
 	if ((fp = fopen(filename, "wb")) == NULL) {
-		gaim_notify_error(gtkconv->u.im->saveicon, NULL, _("Unable to open file."), NULL);
+		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
 
@@ -2613,119 +2494,27 @@ saveicon_writefile_cb(GaimConversation *conv, gint id)
 	data = gaim_buddy_icon_get_data(icon, &len);
 
 	if ((len <= 0) || (data == NULL)) {
-		gaim_notify_error(gtkconv->u.im->saveicon, NULL, _("Unable to save icon file to disk."), NULL);
+		gaim_notify_error(conv, NULL, _("Unable to save icon file to disk."), NULL);
 		return;
 	}
 
 	fwrite(data, 1, len, fp);
 	fclose(fp);
-
-	gtk_widget_destroy(gtkconv->u.im->saveicon);
-	gtkconv->u.im->saveicon = NULL;
 }
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-saveicon_checkfile_cb(GtkWidget *widget, gint response, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
-
-	if (response != GTK_RESPONSE_ACCEPT) {
-		gaim_notify_close_with_handle(gtkconv->u.im->saveicon);
-		gaim_request_close_with_handle(gtkconv->u.im->saveicon);
-		if (response == GTK_RESPONSE_CANCEL)
-			gtk_widget_destroy(gtkconv->u.im->saveicon);
-		gtkconv->u.im->saveicon = NULL;
-		return;
-	}
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-static void
-saveicon_checkfile_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	const char *filename;
-
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->u.im->saveicon));
-	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(gtkconv->u.im->saveicon))) {
-		return;
-	}
-#endif /* FILECHOOSER */
-
-	gaim_request_close_with_handle(gtkconv->u.im->saveicon);
-
-	if (g_file_test(filename, G_FILE_TEST_EXISTS))
-	{
-		gaim_request_yes_no(gtkconv->u.im->saveicon, NULL, _("That file already exists"),
-							_("Would you like to overwrite it?"), 1,
-							conv, G_CALLBACK(saveicon_writefile_cb), NULL);
-	}
-	else
-		saveicon_writefile_cb(conv, 1);
-}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-saveicon_destroy_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	if (gtkconv->u.im->saveicon != NULL) {
-		gaim_notify_close_with_handle(gtkconv->u.im->saveicon);
-		gaim_request_close_with_handle(gtkconv->u.im->saveicon);
-		gtk_widget_destroy(gtkconv->u.im->saveicon);
-		gtkconv->u.im->saveicon = NULL;
-	}
-}
-#endif
 
 static void
 icon_menu_save_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	GaimConvWindow *win = (GaimConvWindow *)conv->window;
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gchar *buf;
 
 	g_return_if_fail(conv != NULL);
-	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
-	g_return_if_fail(GAIM_IS_GTK_CONVERSATION(conv));
 
-	if (gtkconv->u.im->saveicon != NULL) {
-		gtk_window_present(GTK_WINDOW(gtkconv->u.im->saveicon));
-		return;
-	}
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	buf = g_strdup_printf("%s.icon", gaim_normalize(conv->account, conv->name));
-	gtkconv->u.im->saveicon = gtk_file_chooser_dialog_new(_("Save Icon"),
-					GTK_WINDOW(GAIM_GTK_WINDOW(win)->window),
-					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-					NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(gtkconv->u.im->saveicon),
-									GTK_RESPONSE_ACCEPT);
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(gtkconv->u.im->saveicon),
-									  buf);
-	g_signal_connect(G_OBJECT(gtkconv->u.im->saveicon), "response",
-					 G_CALLBACK(saveicon_checkfile_cb), conv);
-#else /* FILECHOOSER */
-	buf = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.icon", gaim_home_dir(),
-						  gaim_normalize(conv->account, conv->name));
-	gtkconv->u.im->saveicon = gtk_file_selection_new(_("Save Icon"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->u.im->saveicon), buf);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->saveicon)->ok_button),
-					 "clicked", G_CALLBACK(saveicon_checkfile_cb), conv);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->saveicon)->cancel_button),
-					 "clicked", G_CALLBACK(saveicon_destroy_cb), conv);
-	g_signal_connect(G_OBJECT(gtkconv->u.im->saveicon),
-					 "destroy", G_CALLBACK(saveicon_destroy_cb), conv);
-#endif /* FILECHOOSER */
+
+	gaim_request_file(conv, _("Save Icon"), buf, TRUE,
+					 G_CALLBACK(saveicon_writefile_cb), NULL, conv);
 
 	g_free(buf);
-
-	gtk_widget_show_all(GTK_WIDGET(gtkconv->u.im->saveicon));
 }
 
 static gboolean
@@ -5027,11 +4816,8 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (gtkconv->dialogs.savelog != NULL) {
-		gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
-		gaim_request_close_with_handle(gtkconv->dialogs.savelog);
-		gtk_widget_destroy(gtkconv->dialogs.savelog);
-	}
+	/* If the "Save Conversation" or "Save Icon" dialogs are open then close them */
+	gaim_request_close_with_handle(conv);
 
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
@@ -5039,12 +4825,6 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		if (gtkconv->u.im->icon_timer != 0)
 			g_source_remove(gtkconv->u.im->icon_timer);
-
-		if (gtkconv->u.im->saveicon != NULL) {
-			gaim_notify_close_with_handle(gtkconv->u.im->saveicon);
-			gaim_request_close_with_handle(gtkconv->u.im->saveicon);
-			gtk_widget_destroy(gtkconv->u.im->saveicon);
-		}
 
 		if (gtkconv->u.im->anim != NULL)
 			g_object_unref(G_OBJECT(gtkconv->u.im->anim));
