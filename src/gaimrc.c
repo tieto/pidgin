@@ -995,7 +995,8 @@ static void set_defaults()
 	chat_options =
 		OPT_CHAT_LOGON |
 		OPT_CHAT_POPUP |
-		OPT_CHAT_BUTTON_XPM;
+		OPT_CHAT_BUTTON_XPM |
+		OPT_CHAT_TAB_COMPLETE;
 
 	font_options = 0;
 
