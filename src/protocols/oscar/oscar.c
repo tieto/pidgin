@@ -3576,14 +3576,22 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		gaim_debug_info("oscar",
 				   "%s received direct im request from %s (%s)\n",
-				   username, userinfo->sn, args->clientip);
+				   username, userinfo->sn, args->verifiedip);
 
 		d->gc = gc;
 		d->sn = g_strdup(userinfo->sn);
 		/* Let's use the clientip here, because I think that's what AIM does.
 		 * Besides, if the clientip is wrong, we'll probably timeout faster,
 		 * and then ask them to connect to us. */
-		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->clientip, args->port?args->port:5190);
+		/*
+		 * I disagree, let's use the verifiedip.  I think AIM tries the
+		 * verified IP first, then tries the client IP if that fails.  In
+		 * any case, there's a better chance the verified IP will be correct.
+		 * The client IP is what the other person _thinks_ their IP address
+		 * is.  The verified IP is the address that the AIM server sees the
+		 * other person using.
+		 */
+		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->verifiedip, args->port?args->port:5190);
 		memcpy(d->cookie, args->cookie, 8);
 		if (dim && !dim->connected && aim_odc_getcookie(dim->conn) && args->cookie &&
 		    (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
