@@ -1287,7 +1287,7 @@ FILE *gaim_mkstemp(gchar **fpath)
 
 	if(!tmpdir) {
 		if((tmpdir = tempnam(NULL, NULL)) == NULL) {
-			fprintf(stderr, "tempnam() failed, error: %d\n", errno);
+			debug_printf("Error: tempnam() failed, error: %d\n", errno);
 		} else {
 			char *t = strrchr(tmpdir, '/');
 			*t = '\0';
@@ -1297,11 +1297,11 @@ FILE *gaim_mkstemp(gchar **fpath)
 	if(tmpdir) {
 		if((*fpath = g_strdup_printf("%s/%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
 			if((fd = mkstemp(*fpath)) == -1) {
-				fprintf(stderr, "Couldn't make \"%s\", error: %d\n", *fpath, errno);
+				debug_printf("Error: Couldn't make \"%s\", error: %d\n", *fpath, errno);
 			} else {
 				if((fp = fdopen(fd, "r+")) == NULL) {
 					close(fd);
-					fprintf(stderr, "Couldn't fdopen(), error: %d\n", errno);
+					debug_printf("Error: Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
 			if(!fp) {
