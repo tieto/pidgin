@@ -1,7 +1,7 @@
 dn3l Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
 
-AM_INIT_AUTOMAKE([gaim], [0.9.17])
+AM_INIT_AUTOMAKE([gaim], [0.9.18])
 
 dnl Checks for programs.
 AM_PROG_LIBTOOL
