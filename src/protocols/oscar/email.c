@@ -62,6 +62,7 @@ faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn)
 
 /**
  * Subtype 0x0007 - Receive information about your email account
+ *
  * So I don't even know if you can have multiple 16 byte keys, 
  * but this is coded so it will handle that, and handle it well.
  * This tells you if you have unread mail or not, the URL you 

@@ -87,6 +87,7 @@ struct oscar_data {
 	guint cnpa;
 	guint paspa;
 	guint emlpa;
+	guint icopa;
 
 	GSList *create_rooms;
 
@@ -104,10 +105,12 @@ struct oscar_data {
 	GSList *direct_ims;
 	GSList *file_transfers;
 	GHashTable *buddyinfo;
+	GSList *requesticon;
 
 	gboolean killme;
 	gboolean icq;
 	GSList *evilhack;
+	guint icontimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -182,6 +185,9 @@ struct buddyinfo {
 	unsigned long ico_me_csum;
 	time_t ico_me_time;
 	gboolean ico_informed;
+
+	fu16_t iconstrlen;
+	fu8_t iconstr[30];
 };
 
 struct name_data {
@@ -289,6 +295,8 @@ static int gaim_chat_leave       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_info_update (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_incoming_msg(aim_session_t *, aim_frame_t *, ...);
 static int gaim_email_parseupdate(aim_session_t *, aim_frame_t *, ...);
+static int gaim_icon_error       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_icon_parseicon   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgack     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_ratechange (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
@@ -301,6 +309,7 @@ static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_email    (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_icon     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_mtn        (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locaterights(aim_session_t *, aim_frame_t *, ...);
@@ -337,6 +346,9 @@ static int oscar_sendfile_estblsh(aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_prompt (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_ack    (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
+
+/* for icons */
+static gboolean gaim_icon_timerfunc(gpointer data);
 
 static fu32_t check_encoding(const char *utf8);
 static fu32_t parse_encoding(const char *enc);
@@ -479,6 +491,12 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					od->emlpa = 0;
 					debug_printf("removing email input watcher\n");
 					aim_conn_kill(od->sess, &conn);
+				} else if (conn->type == AIM_CONN_TYPE_ICON) {
+					if (od->icopa > 0)
+						gaim_input_remove(od->icopa);
+					od->icopa = 0;
+					debug_printf("removing icon input watcher\n");
+					aim_conn_kill(od->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
 						gaim_odc_disconnect(od->sess, conn);
@@ -611,14 +629,17 @@ static void oscar_close(struct gaim_connection *gc) {
 		od->direct_ims = g_slist_remove(od->direct_ims, n);
 		g_free(n);
 	}
-
 /* BBB */
 	while (od->file_transfers) {
 		struct gaim_xfer *xfer;
 		xfer = (struct gaim_xfer *)od->file_transfers->data;
 		gaim_xfer_destroy(xfer);
 	}
-
+	while (od->requesticon) {
+		char *sn = od->requesticon->data;
+		od->requesticon = g_slist_remove(od->requesticon, sn);
+		free(sn);
+	}
 	g_hash_table_destroy(od->buddyinfo);
 	while (od->evilhack) {
 		g_free(od->evilhack->data);
@@ -644,6 +665,8 @@ static void oscar_close(struct gaim_connection *gc) {
 		gaim_input_remove(od->paspa);
 	if (od->emlpa > 0)
 		gaim_input_remove(od->emlpa);
+	if (od->icopa > 0)
+		gaim_input_remove(od->icopa);
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -1347,6 +1370,23 @@ static int conninitdone_email(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+
+	aim_conn_addhandler(sess, fr->conn, 0x0018, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ICO, AIM_CB_ICO_ERROR, gaim_icon_error, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_ICO, AIM_CB_ICO_RESPONSE, gaim_icon_parseicon, 0);
+
+	aim_clientready(sess, fr->conn);
+
+	if (od->icontimer)
+		g_source_remove(od->icontimer);
+	od->icontimer = g_timeout_add(100, gaim_icon_timerfunc, gc);
+
+	return 1;
+}
+
 static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
 	struct oscar_data *od;
@@ -1463,6 +1503,33 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 	debug_printf("email: connected\n");
 }
 
+static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition cond) {
+	struct gaim_connection *gc = data;
+	struct oscar_data *od;
+	aim_session_t *sess;
+	aim_conn_t *tstconn;
+
+	if (!g_slist_find(connections, gc)) {
+		close(source);
+		return;
+	}
+
+	od = gc->proto_data;
+	sess = od->sess;
+	tstconn = aim_getconn_type_all(sess, AIM_CONN_TYPE_ICON);
+	tstconn->fd = source;
+
+	if (source < 0) {
+		aim_conn_kill(sess, &tstconn);
+		debug_printf("unable to connect to icon server\n");
+		return;
+	}
+
+	aim_conn_completeconnect(sess, tstconn);
+	od->icopa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
+	debug_printf("icon: connected\n");
+}
+
 /* Hrmph. I don't know how to make this look better. --mid */
 static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
@@ -1570,6 +1637,25 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		debug_printf("Connected to chat room %s exchange %hu\n", ccon->name, ccon->exchange);
 	} break;
 
+	case 0x0010: { /* icon */
+		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON, NULL))) {
+			debug_printf("unable to connect to icon server\n");
+			g_free(host);
+			return 1;
+		}
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_icon, 0);
+
+		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
+		if (proxy_connect(account, host, port, oscar_icon_connect, gc) != 0) {
+			aim_conn_kill(sess, &tstconn);
+			debug_printf("unable to connect to icon server\n");
+			g_free(host);
+			return 1;
+		}
+		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
+	} break;
+
 	case 0x0018: { /* email */
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL, NULL))) {
 			debug_printf("unable to connect to email server\n");
@@ -1662,6 +1748,16 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
+
+	/* Server stored icon stuff */
+	if (info->iconstrlen) {
+		od->requesticon = g_slist_append(od->requesticon, strdup(normalize(info->sn)));
+		if (od->icontimer)
+			g_source_remove(od->icontimer);
+		od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+	}
+	bi->iconstrlen = info->iconstrlen;
+	memcpy(bi->iconstr, info->iconstr, info->iconstrlen);
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type);
@@ -3224,6 +3320,96 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	return 1;
+}
+
+static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	char *sn;
+
+	sn = od->requesticon->data;
+	debug_printf("removing %s from hash table\n", sn);
+	od->requesticon = g_slist_remove(od->requesticon, sn);
+	free(sn);
+
+	if (od->icontimer)
+		g_source_remove(od->icontimer);
+	od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+
+	return 1;
+}
+
+static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	GSList *cur;
+	va_list ap;
+	char *sn;
+	fu8_t *iconstr, *icon;
+	fu16_t iconstrlen, iconlen;
+
+	va_start(ap, fr);
+	sn = va_arg(ap, char *);
+	iconstr = va_arg(ap, fu8_t *);
+	iconstrlen = va_arg(ap, int);
+	icon = va_arg(ap, fu8_t *);
+	iconlen = va_arg(ap, int);
+	va_end(ap);
+
+	if (iconlen > 0)
+		set_icon_data(gc, sn, icon, iconlen);
+
+	cur = od->requesticon;
+	while (cur) {
+		char *cursn = cur->data;
+		if (!aim_sncmp(cursn, sn)) {
+			od->requesticon = g_slist_remove(od->requesticon, cursn);
+			free(cursn);
+			cur = od->requesticon;
+		} else
+			cur = cur->next;
+	}
+
+	if (od->icontimer)
+		g_source_remove(od->icontimer);
+	od->icontimer = g_timeout_add(250, gaim_icon_timerfunc, gc);
+
+	return 1;
+}
+
+static gboolean gaim_icon_timerfunc(gpointer data) {
+	struct gaim_connection *gc = data;
+	struct oscar_data *od = gc->proto_data;
+	struct buddy *b;
+	struct buddyinfo *bi;
+	aim_conn_t *conn;
+	char *buddy_icon;
+
+	if (!od->requesticon) {
+		debug_printf("no more icons to request\n");
+		return FALSE;
+	}
+
+	conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON);
+	if (!conn) {
+		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
+		return FALSE;
+	}
+
+	bi = g_hash_table_lookup(od->buddyinfo, (char *)od->requesticon->data);
+	b = gaim_find_buddy(gc->account, (char *)od->requesticon->data);
+	buddy_icon = gaim_buddy_get_setting(b, "buddy_icon");
+	if (bi && (bi->iconstrlen > 0) && !buddy_icon) {
+		aim_icon_requesticon(od->sess, od->requesticon->data, bi->iconstr, bi->iconstrlen);
+		return FALSE;
+	} else {
+		char *sn = od->requesticon->data;
+		od->requesticon = g_slist_remove(od->requesticon, sn);
+		free(sn);
+	}
+	free(buddy_icon);
+
+	return TRUE;
 }
 
 /*

@@ -618,10 +618,22 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 
 		} else if (type == 0x001d) {
 			/*
-			 * Type 29: Unknown.
+			 * Type = 0x001d
 			 *
-			 * Currently very rare. Always 18 bytes of mostly zero.
+			 * Buddy icon information.  This contains the info 
+			 * about the buddy icon that the user has stored on 
+			 * the server.
 			 */
+			char *iconstr;
+			outinfo->iconstrlen = length-4;
+			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
+			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
+			if (aim_bstream_empty(bs) >= outinfo->iconstrlen) {
+				iconstr = aimbs_getraw(bs, outinfo->iconstrlen);
+				memcpy(outinfo->iconstr, iconstr, outinfo->iconstrlen);
+			} else
+				outinfo->iconstrlen = 0;
+			free(iconstr);
 
 		} else if (type == 0x001e) {
 			/*

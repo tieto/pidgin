@@ -78,6 +78,7 @@ C_SRC =			admin.c		\
 			conn.c		\
 			email.c		\
 			ft.c		\
+			icon.c		\
 			icq.c		\
 			im.c		\
 			info.c		\

@@ -258,6 +258,7 @@ struct client_info_s {
 #define AIM_CONN_TYPE_CHATNAV		0x000d
 #define AIM_CONN_TYPE_CHAT		0x000e
 #define AIM_CONN_TYPE_SEARCH		0x000f
+#define AIM_CONN_TYPE_ICON		0x0010
 #define AIM_CONN_TYPE_EMAIL		0x0018
 
 /* they start getting arbitrary for rendezvous stuff =) */
@@ -476,6 +477,8 @@ typedef struct {
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
 	fu32_t present;
+	fu16_t iconstrlen;
+	fu8_t iconstr[30];
 } aim_userinfo_t;
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
@@ -1116,6 +1119,12 @@ struct aim_usersearch {
 faim_export int aim_usersearch_email(aim_session_t *, const char *, const char *);
 faim_export int aim_usersearch_name(aim_session_t *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
 faim_export int aim_usersearch_interest(aim_session_t *, const char *, const char *);
+
+
+
+/* icon.c */
+faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
+
 
 
 /* These apply to exchanges as well. */

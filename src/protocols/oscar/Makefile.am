@@ -18,6 +18,7 @@ OSCARSOURCES = \
 	email.c        \
 	faimconfig.h   \
 	ft.c           \
+	icon.c         \
 	icq.c          \
 	im.c           \
 	info.c         \

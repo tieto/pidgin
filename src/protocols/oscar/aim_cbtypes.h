@@ -179,12 +179,17 @@
 
 /*
  * SNAC Family: "New" Search
- *
- * Most of these are actually special.
  */ 
 #define AIM_CB_SCH_ERROR 0x0001
 #define AIM_CB_SCH_SEARCH 0x0002
 #define AIM_CB_SCH_RESULTS 0x0003
+
+/*
+ * SNAC Family: Buddy icons
+ */ 
+#define AIM_CB_ICO_ERROR 0x0001
+#define AIM_CB_ICO_REQUEST 0x0004
+#define AIM_CB_ICO_RESPONSE 0x0005
 
 /*
  * SNAC Family: ICQ
