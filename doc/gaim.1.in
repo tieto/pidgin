@@ -357,9 +357,9 @@ A Buddy Pounce is an automated trigger that occurs when a buddy returns to a nor
 \fBGaim\fR allows for perl scripting.  See \fIPerl Scripting HOWTO\fR in the Gaim documentation for more information about perl scripting.
 
 .SH FILES
-\fI/usr/local/bin/gaim\fR: \fBgaim\fR's default location.
+\fI@prefix@/bin/gaim\fR: \fBgaim\fR's location.
 .br
-\fI/usr/local/lib/gaim/\fR: \fBgaim\fR's plugins directory.
+\fI@prefix@/lib/gaim/\fR: \fBgaim\fR's plugins directory.
 .br
 \fI~/.gaim/prefs.xml\fR: \fBgaim\fR's configuration file.
 .br
