@@ -28,10 +28,10 @@ void gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, const char *func,
 void gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin);
 void gaim_perl_timeout_clear(void);
 
-void gaim_perl_signal_connect(GaimPlugin *plugin, void *handle,
+void gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 							  const char *signal, const char *func,
 							  void *data);
-void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *handle,
+void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
 								 const char *signal, const char *func);
 void gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin);
 void gaim_perl_signal_clear(void);

@@ -33,6 +33,25 @@ CODE:
 		croak("Unknown debug level type '%s'", level);
 
 void
+signal_connect(instance, signal, plugin, func, data)
+	void *instance
+	const char *signal
+	Gaim::Plugin plugin
+	const char *func
+	void *data
+CODE:
+	gaim_perl_signal_connect(plugin, instance, signal, func, data);
+
+void
+signal_disconnect(instance, signal, plugin, func)
+	void *instance
+	const char *signal
+	Gaim::Plugin plugin
+	const char *func
+CODE:
+	gaim_perl_signal_disconnect(plugin, instance, signal, func);
+
+void
 debug_misc(category, string)
 	const char *category
 	const char *string
