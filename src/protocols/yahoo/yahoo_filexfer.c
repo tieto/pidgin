@@ -250,7 +250,7 @@ guint calculate_length(const gchar *l, size_t len)
 size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 {
 	gchar buf[1024];
-	size_t len;
+	ssize_t len;
 	gchar *start = NULL;
 	gchar *length;
 	gchar *end;
@@ -262,9 +262,9 @@ size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 
 	len = read(xfer->fd, buf, sizeof(buf));
 
-	if (len == 0) {
+	if (len <= 0) {
 		if (xd->length && (xd->length == xd->bytes_in))
-			gaim_xfer_end(xfer);
+			gaim_xfer_set_completed(xfer, TRUE);
 		else
 			gaim_xfer_cancel_remote(xfer);
 		return 0;
