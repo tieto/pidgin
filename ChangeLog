@@ -9,11 +9,33 @@ version 0.81cvs:
 	* gaim-remote can now manipulate status (István Váradi)
 	* The text messages of Yahoo Audibles are now displayed, although
 	  the audio and graphics are not.
+	* Yahoo! away messages can be 255 characters long now
 
 	Bug Fixes:
 	* Use ISO date format for the system log (Eduardo Pérez)
 	* Long buddy lists with irc should cause flooding disconnects less
 	  (Stu Tomlinson)
+	* Better smiley substitution
+	* Fix a crash related to auto-expanding contacts at the bottom of
+	  buddy lists
+	* Fix a crash on Solaris when changing or viewing information for
+	  your AIM account (Format Screen Name, Change Email Address, etc.)
+	* HTML in OSCAR buddy comments is now escaped (and not rendered)
+	* Fix a crash when dragging a screen name to a conversation window
+	  for that screen name
+	* User-requested new conversation windows are now always given focus
+	* Pasting HTML into Gaim from certain sources no longer results in
+	  the spaces between some words being removed
+	* The alias of a contact is now displayed in more places when the
+	  alias of a buddy is not set
+	* .gaimrc is no longer imported
+	* Prevent a crash if you sign off and try to dequeue messages from
+	  the away dialog (Kevin Stange)
+	* Prevent a possible crash if gaim_gtkconv_write_conv is called
+	  with who as NULL (Kevin Stange)
+	* Prevent (null) or an empty string from being logged as the sender's
+	  name if the sender no longer has an alias because the account is
+	  signed off (Kevin Stange)
 
 version 0.80 (07/15/2004):
 	New Features:

@@ -512,20 +512,7 @@ static void gtk_blist_menu_info_cb(GtkWidget *w, GaimBuddy *b)
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, GaimBuddy *b)
 {
-	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_IM, b->account,
-			b->name);
-
-	if(conv) {
-		GaimConvWindow *win = gaim_conversation_get_window(conv);
-
-		gaim_conv_window_raise(win);
-		gaim_conv_window_switch_conversation(
-				gaim_conversation_get_window(conv),
-				gaim_conversation_get_index(conv));
-
-		if (GAIM_IS_GTK_WINDOW(win))
-			gtk_window_present(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window));
-	}
+	gaim_gtkdialogs_new_im(b->account, b->name);
 }
 
 static void gtk_blist_menu_send_file_cb(GtkWidget *w, GaimBuddy *b)
@@ -585,12 +572,12 @@ static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			gaim_conversation_new(GAIM_CONV_IM, ((GaimBuddy*)node)->account, ((GaimBuddy*)node)->name);
+			gaim_gtkdialogs_new_im(((GaimBuddy*)node)->account, ((GaimBuddy*)node)->name);
 			return;
 		} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 			GaimBuddy *buddy =
 				gaim_contact_get_priority_buddy((GaimContact*)node);
-			gaim_conversation_new(GAIM_CONV_IM, buddy->account, buddy->name);
+			gaim_gtkdialogs_new_im(buddy->account, buddy->name);
 			return;
 		}
 	}
@@ -943,19 +930,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 		else
 			buddy = (GaimBuddy*)node;
 
-		conv = gaim_conversation_new(GAIM_CONV_IM, buddy->account, buddy->name);
-
-		if(conv) {
-			GaimConvWindow *win = gaim_conversation_get_window(conv);
-
-			gaim_conv_window_raise(win);
-			gaim_conv_window_switch_conversation(
-				gaim_conversation_get_window(conv),
-				gaim_conversation_get_index(conv));
-
-			if (GAIM_IS_GTK_WINDOW(win))
-				gtk_window_present(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window));
-		}
+		gaim_gtkdialogs_new_im(buddy->account, buddy->name);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		serv_join_chat(((GaimChat *)node)->account->gc, ((GaimChat *)node)->components);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {

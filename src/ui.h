@@ -118,6 +118,7 @@ extern void alias_dialog_bud(GaimBuddy *);
 extern void alias_dialog_contact(GaimContact *);
 extern void alias_dialog_blist_chat(GaimChat *);
 extern void show_warn_dialog(GaimConnection *, const char *);
+extern void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_log_dialog();
