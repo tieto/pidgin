@@ -1,6 +1,6 @@
 
 EXTRA_DIST = gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
-	README.plugins HACKING STATUS
+	README.plugins HACKING STATUS gaim2blt.pl
 
 if GNOMEAPPLET
 
