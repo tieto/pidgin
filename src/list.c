@@ -439,7 +439,8 @@ void gaim_blist_remove_account(struct gaim_account *account)
 		while (buddy) {
 			if (account == ((struct buddy*)buddy)->account) {
 				((struct buddy*)buddy)->present = 0;
-				ops->remove(gaimbuddylist, buddy);
+				if(ops)
+					ops->remove(gaimbuddylist, buddy);
 			}
 			buddy = buddy->next;
 		}
