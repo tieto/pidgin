@@ -1655,17 +1655,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
-			case GDK_Return:
-			case GDK_KP_Enter:
-				if (gaim_prefs_get_bool(
-					"/gaim/gtk/conversations/ctrl_enter_sends"))
-				{
-					send_cb(NULL, conv);
-
-					return TRUE;
-				}
-				break;
-
 			case GDK_Up:
 				if (!conv->send_history)
 					break;
@@ -1775,17 +1764,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	{
 		switch (event->keyval)
 		{
-			case GDK_Return:
-			case GDK_KP_Enter:
-				if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) &&
-					gaim_prefs_get_bool("/gaim/gtk/conversations/enter_sends"))
-				{
-					send_cb(NULL, conv);
-					return TRUE;
-				}
-				break;
-
-			case GDK_Tab:
+		        case GDK_Tab:
 				return tab_complete(conv);
 				break;
 
@@ -4224,6 +4203,8 @@ setup_chat_pane(GaimConversation *conv)
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 					 G_CALLBACK(entry_key_press_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send",
+			 G_CALLBACK(send_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
@@ -4368,7 +4349,8 @@ setup_im_pane(GaimConversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_press_cb), conv);
+			 G_CALLBACK(entry_key_press_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send", G_CALLBACK(send_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
