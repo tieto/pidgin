@@ -4,6 +4,7 @@ version 0.11.0-pre11:
 	* MSN has the option to notify you of new hotmail
 	  messages
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
+	* Jabber can send/accept chat invites (due to mid)
 
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes
