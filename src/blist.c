@@ -238,7 +238,6 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 	}
 
 	buddy->timer = 0;
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
@@ -255,13 +254,13 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 
 void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	gboolean do_timer = FALSE;
+	gboolean do_something = FALSE;
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
 		int old_present = buddy->present;
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
-		do_timer = TRUE;
+		do_something = TRUE;
 
 		if(old_present != GAIM_BUDDY_SIGNING_OFF) {
 			((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
@@ -271,24 +270,27 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
-		do_timer = TRUE;
+		do_something = TRUE;
 	}
 
-	if(do_timer) {
+	if(do_something) {
 		if(buddy->timer > 0)
 			g_source_remove(buddy->timer);
 		buddy->timer = g_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
-	}
 
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
-	if (ops)
-		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+		if (ops)
+			ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+	}
 }
 
 
 void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	if(buddy->idle == idle)
+		return;
+
 	buddy->idle = idle;
 	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops)
@@ -298,6 +300,9 @@ void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 void  gaim_blist_update_buddy_evil (GaimBuddy *buddy, int warning)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	if(buddy->evil == warning)
+		return;
+
 	buddy->evil = warning;
 	if (ops)
 		ops->update(gaimbuddylist,(GaimBlistNode*)buddy);
@@ -1411,11 +1416,8 @@ void gaim_blist_remove_account(GaimAccount *account)
 							ops->remove(gaimbuddylist, bnode);
 					}
 				}
-				if(recompute) {
+				if(recompute)
 					gaim_contact_compute_priority_buddy((GaimContact*)cnode);
-						if(ops)
-							ops->remove(gaimbuddylist, bnode);
-				}
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
 				((GaimGroup*)gnode)->currentsize--;
