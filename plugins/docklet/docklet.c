@@ -221,6 +221,8 @@ docklet_blink_icon()
 			return FALSE; /* no more blinking */
 			break;
 	}
+
+	return FALSE;
 }
 
 static gboolean
