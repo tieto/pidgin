@@ -2972,6 +2972,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				}
 
 				if (!font || !(font->size || font->face || font->fore || font->back)) {
+					g_free (font);
 					intag = FALSE;
 					tpos = 0;
 					continue;
