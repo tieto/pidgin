@@ -159,12 +159,8 @@ perl_signal_cb(va_list args, void *data)
 					break;
 
 				case GAIM_TYPE_STRING:
-					gaim_debug_misc("perl", "Copying over %s\n",
-									*((char **)copy_args[i]));
 					g_free(*((char **)copy_args[i]));
 					*((char **)copy_args[i]) = g_strdup(SvPV(sv_args[i], na));
-					gaim_debug_misc("perl", "New value: %s\n",
-									*((char **)copy_args[i]));
 					break;
 
 				case GAIM_TYPE_POINTER:
