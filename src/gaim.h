@@ -37,7 +37,6 @@ extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 
 /* Functions in dialogs.c */
-extern void show_find_info(GaimConnection *);
 extern void show_confirm_del(GaimBuddy *);
 extern void show_confirm_del_group(GaimGroup *);
 extern void show_confirm_del_blist_chat(GaimBlistChat *);
