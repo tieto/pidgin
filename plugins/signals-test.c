@@ -157,7 +157,8 @@ signed_off_cb(GaimConnection *gc, void *data)
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static gboolean
-displaying_im_msg_cb(GaimConversation *conv, char **buffer, void *data)
+displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
+		     char **buffer, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "displaying-im-msg (%s, %s)\n",
@@ -174,7 +175,7 @@ displayed_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
 			   gaim_conversation_get_name(conv), buffer);
 }
 
-static gboolean
+static void
 sending_im_msg_cb(GaimAccount *account, char *recipient, char **buffer, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
@@ -182,7 +183,6 @@ sending_im_msg_cb(GaimAccount *account, char *recipient, char **buffer, void *da
 			   gaim_account_get_username(account), recipient,
 			   *buffer);
 
-	return FALSE;
 }
 
 static void
@@ -206,7 +206,8 @@ received_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
 }
 
 static gboolean
-displaying_chat_msg_cb(GaimConversation *conv, char **buffer, void *data)
+displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
+		       char **buffer, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "displaying-chat-msg (%s, %s)\n",
