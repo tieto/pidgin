@@ -29,7 +29,10 @@ conv_placement_by_number(GaimConversation *conv)
 {
 	GaimConvWindow *win = NULL;
 
-	win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
+	if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
+		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
+	else
+		win = g_list_last(gaim_get_windows())->data;
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
@@ -47,6 +50,10 @@ conv_placement_by_number(GaimConversation *conv)
 
 			for (l = gaim_get_windows(); l != NULL; l = l->next) {
 				win = (GaimConvWindow *)l->data;
+
+				if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
+					gaim_conversation_get_type(gaim_conv_window_get_active_conversation(win)) != gaim_conversation_get_type(conv))
+					continue;
 
 				count = gaim_conv_window_get_conversation_count(win);
 				if (count < max_count) {
@@ -90,9 +97,14 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-									"/plugins/gtk/extplacement/placement_number",
-									_("Number of conversations per window"));
+							"/plugins/gtk/extplacement/placement_number",
+							_("Number of conversations per window"));
 	gaim_plugin_pref_set_bounds(ppref, 1, 50);
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label(
+							"/plugins/gtk/extplacement/placement_number_separate",
+							_("Separate IM and Chat windows when placing by number"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
@@ -115,8 +127,8 @@ static GaimPluginInfo info =
 	VERSION,										/**< version		*/
 	N_("Extra conversation placement options."),	/**< summary		*/
 													/**  description	*/
-	N_("Either restrict the number of conversations per windows"
-	   " or use separate windows for IMs and Chats"),
+	N_("Restrict the number of conversations per windows,"
+	   " optionally separating IMs and Chats"),
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
 	GAIM_WEBSITE,									/**< homepage		*/
 	plugin_load,									/**< load			*/
@@ -133,6 +145,7 @@ init_plugin(GaimPlugin *plugin)
 {
 	gaim_prefs_add_none("/plugins/gtk/extplacement");
 	gaim_prefs_add_int("/plugins/gtk/extplacement/placement_number", 4);
+	gaim_prefs_add_bool("/plugins/gtk/extplacement/placement_number_separate", FALSE);
 }
 
 GAIM_INIT_PLUGIN(extplacement, init_plugin, info)
