@@ -613,10 +613,10 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			room = xmlnode_get_attrib(xmlns, "jid");
 
 			serv_got_chat_invite(GJ_GC(j), room, 0, from, msg);
-		} else if (msg) {
+		} else if (msg) { /* whisper */
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
-			if ((jc = find_existing_chat(GJ_GC(j), p->from)) != NULL) /* whisper */
+			if (((jc = find_existing_chat(GJ_GC(j), p->from)) != NULL) && jc->b)
 				serv_got_chat_in(GJ_GC(j), jc->b->id, p->from->resource, 1, m, time(NULL));
 			else {
 				if (find_conversation(jid_full(p->from)))
@@ -799,7 +799,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 					return;
 				}
 				jd = jc->gc->proto_data;
-				if (strcmp(who->resource, jc->Jid->resource)) {
+				if (strcmp(who->resource, jc->Jid->resource) && jc->b) {
 					remove_chat_buddy(jc->b, who->resource);
 					return;
 				}
@@ -808,7 +808,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				serv_got_chat_left(GJ_GC(j), jc->b->id);
 				g_free(jc);
 			} else {
-				if (!jc && !(jc = find_existing_chat(GJ_GC(j), who))) {
+				if ((!jc && !(jc = find_existing_chat(GJ_GC(j), who))) || !jc->b) {
 					g_free(buddy);
 					return;
 				}
@@ -1449,6 +1449,7 @@ static void jabber_chat_leave(struct gaim_connection *gc, int id)
 	xmlnode_put_attrib(x, "type", "unavailable");
 	gjab_send(j, x);
 	xmlnode_free(x);
+	jc->b = NULL;
 }
 
 static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
