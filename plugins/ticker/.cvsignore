@@ -4,3 +4,5 @@ Makefile.in
 .deps
 *.la
 *.lo
+*.def
+*.dll
