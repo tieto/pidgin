@@ -243,6 +243,9 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 {
 	int new_type = menu_entries[gtk_option_menu_get_history(optmenu)].num;
 
+	if (dialog->account->perm_deny == new_type)
+		return;
+
 	dialog->account->perm_deny = new_type;
 	serv_set_permit_deny(gaim_account_get_connection(dialog->account));
 
@@ -260,6 +263,8 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
+
+	gaim_blist_sync();
 }
 
 static void
