@@ -20,6 +20,7 @@
  */
 
 #include <string.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 #include "prpl.h"
 #include "multi.h"
@@ -894,7 +895,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 {
 	GList *l = GTK_CLIST(list)->selection;
 	int row = -1;
-	struct aim_user *u;
+	struct aim_user *u = NULL;
 	struct prpl *p = find_prpl(u->protocol);
 	while (l) {
 		row = (int)l->data;
@@ -1049,25 +1050,26 @@ static GSList *meters = NULL;
 
 GtkWidget* create_meter_pixmap (GtkWidget *widget, struct gaim_connection *gc)
 {
-	GdkColormap *colormap;
 	GdkPixmap *gdkpixmap;
 	GdkBitmap *mask;
 	GtkWidget *pixmap;
 	GtkStyle *style;
-	char **xpm; 
+	char **xpm = NULL; 
 	
 	style = gtk_widget_get_style( widget );
 	
 	if (gc->prpl->list_icon)
-		if (gc->prpl->protocol ==  PROTO_OSCAR) 
+		if (gc->prpl->protocol ==  PROTO_OSCAR) { 
 			/* This is such a bad hack to get the right icon
 			 * for OSCAR.  But it's pretty */
-			if (isdigit(*gc->username))
+			if (isdigit(*gc->username)) {
 				xpm = gc->prpl->list_icon(0);
-			else
+			} else {
 				xpm = gc->prpl->list_icon(0x10);
-		else 
+			}
+		} else { 
 			xpm = gc->prpl->list_icon (0);
+		}
 	if (xpm == NULL)
 		xpm = (char **)no_icon_xpm;
 	
@@ -1282,8 +1284,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 	if (!meter_win) {
 		GtkWidget *cancel_button;
 		GtkWidget *vbox;
-		GString *name;
-						
+				
 		meter_win = g_new0(struct meter_window, 1);
 		meter_win->rows=0;
 			
