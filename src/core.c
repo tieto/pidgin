@@ -410,10 +410,12 @@ static gint open_socket()
 				g_get_tmp_dir(), g_get_user_name(), getpid());
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
-		else
+		else {
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
-					"Failed to assign %s to a socket (Error: %s)",
-					saddr.sun_path, strerror(errno));
+				"Failed to assign %s to a socket (Error: %s)",	
+				saddr.sun_path, strerror(errno));
+			return -1;
+		}
 		umask(m);
 	} else
 		g_log(NULL, G_LOG_LEVEL_CRITICAL, "Unable to open socket: %s", strerror(errno));
