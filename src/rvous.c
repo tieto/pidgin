@@ -67,21 +67,12 @@ static void info_callback(GtkWidget *widget, struct file_transfer *ft)
 
 static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 {
-	char *send = g_malloc(256);
-
 	if (ft->accepted) {
-		g_free(send);
 		return;
 	}
 	
-#ifndef USE_OSCAR
-	g_snprintf(send, 255, "toc_rvous_cancel %s %s %s", normalize(ft->user),
-			ft->cookie, ft->UID);
-	sflap_send(send, strlen(send), TYPE_DATA);
-#else
-	/* FIXME : can we really do this? */
-#endif
-	g_free(send);
+	serv_rvous_cancel(ft->user, ft->cookie, ft->UID);
+
 	free_ft(ft);
 }
 
@@ -237,13 +228,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-#ifndef USE_OSCAR
-	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", normalize(ft->user),
-			ft->cookie, ft->UID);
-	sflap_send(send, strlen(send), TYPE_DATA);
-#else
-	/* FIXME (?) */
-#endif
+	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
 	g_free(send);
 
 	
@@ -346,12 +331,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-#ifndef USE_OSCAR
-		sprintf(buf, "toc_rvous_cancel %s %s %s", ft->user, tmp, ft->UID);
-		sflap_send(buf, strlen(buf), TYPE_DATA);
-#else
-		/* FIXME (?) */
-#endif
+		serv_rvous_cancel(ft->user, tmp, ft->UID);
 		close(ft->fd);
 		free_ft(ft);
 		g_free(header);
@@ -405,13 +385,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-#ifndef USE_OSCAR
-	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", normalize(ft->user),
-			ft->cookie, ft->UID);
-	sflap_send(send, strlen(send), TYPE_DATA);
-#else
-	/* FIXME */
-#endif
+	serv_rvous_accept(ft->user, ft->cookie, ft->UID);
 	g_free(send);
 
 
@@ -622,12 +596,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-#ifndef USE_OSCAR
-		sprintf(buf, "toc_rvous_cancel %s %s %s", ft->user, tmp, ft->UID);
-		sflap_send(buf, strlen(buf), TYPE_DATA);
-#else
-		/* FIXME */
-#endif
+		serv_rvous_cancel(ft->user, tmp, ft->UID);
 		g_free(buf);
 		close(ft->fd);
 		free_ft(ft);

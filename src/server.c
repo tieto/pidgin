@@ -924,5 +924,23 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
 
         chat_write(b, who, w, message);
 }
-        
 
+void serv_rvous_accept(char *name, char *cookie, char *uid)
+{
+	char buf[MSG_LEN];
+#ifndef USE_OSCAR
+	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
+			cookie, uid);
+	sflap_send(buf, strlen(buf), TYPE_DATA);
+#endif
+}
+
+void serv_rvous_cancel(char *name, char *cookie, char *uid)
+{
+	char buf[MSG_LEN];
+#ifndef USE_OSCAR
+	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
+			cookie, uid);
+	sflap_send(buf, strlen(buf), TYPE_DATA);
+#endif
+}
