@@ -230,6 +230,11 @@ void gaim_sound_play_file(char *filename)
 			afGetSampleFormat(file, AF_DEFAULT_TRACK, &in_fmt,
 					&format.bits);
 
+			/* XXX: libao doesn't seem to like 8-bit sounds, so we'll
+			 * let libaudiofile make them a bit better for us */
+			if(format.bits == 8)
+				format.bits = 16;
+
 			afSetVirtualSampleFormat(file, AF_DEFAULT_TRACK,
 					AF_SAMPFMT_TWOSCOMP, format.bits);
 
