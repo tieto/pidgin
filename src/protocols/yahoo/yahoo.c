@@ -965,6 +965,9 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	
 }
 
+/* I'm dishing out some uber-mad props to Cerulean Studios for cracking this
+ * and sending the fix!  Thanks guys. */
+
 static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 {
 	struct yahoo_packet *pack = NULL;

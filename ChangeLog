@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.70:
+version 0.70 (09/28/2003):
+	* Implemented Yahoo's new authentication method (Cerulean Studios)
 	* Robert "Robot101" McQueen cleaned and core/UI split IM 
 	  image support
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
