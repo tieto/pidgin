@@ -34,18 +34,6 @@ typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
 /**************************************************************************/
 /** @name Basic Protocol Information                                      */
 /**************************************************************************/
-/*@{*/
-
-/** Default protocol plugin description */
-#define GAIM_PRPL_DESC(x) \
-		"Allows gaim to use the " (x) " protocol.\n\n"      \
-		"Now that you have loaded this protocol, use the "  \
-		"Account Editor to add an account that uses this "  \
-		"protocol. You can access the Account Editor from " \
-		"the \"Accounts\" button on the login window or "   \
-		"in the \"Tools\" menu in the buddy list window."
-
-/*@}*/
 
 /**
  * Flags applicable to outgoing/incoming IMs from prpls.
@@ -85,12 +73,16 @@ typedef struct {
 	GaimIconScaleRules scale_rules;		/**< How to stretch this icon */
 } GaimBuddyIconSpec;
 
-/* This #define exists just to make it easier to fill out the buddy icon field in he prpl info struct for protocols that couldn't care less. */
+/**
+ * This #define exists just to make it easier to fill out the buddy icon
+ * field in the prpl info struct for protocols that couldn't care less.
+ */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}
 
 #include "blist.h"
 #include "proxy.h"
 #include "plugin.h"
+#include "roomlist.h"
 #include "status.h"
 
 struct proto_chat_entry {
@@ -128,8 +120,8 @@ typedef enum
 	/**
 	 * Don't require passwords for sign-in.
 	 *
-	 * Zephyr doesn't require passwords, so there's no need for
-	 * a password prompt.
+	 * Zephyr doesn't require passwords, so there's no
+	 * need for a password prompt.
 	 */
 	OPT_PROTO_NO_PASSWORD = 0x00000010,
 
@@ -141,21 +133,11 @@ typedef enum
 	OPT_PROTO_MAIL_CHECK = 0x00000020,
 
 	/**
-	 * Buddy icon support.
-	 *
-	 * Oscar and Jabber have buddy icons.
-	 *
-	 * *We'll do this a bit more sophisticated like, now.
-	 *
-	 * OPT_PROTO_BUDDY_ICON = 0x00000040,
-	 */
-
-	/**
 	 * Images in IMs.
 	 *
 	 * Oscar lets you send images in direct IMs.
 	 */
-	OPT_PROTO_IM_IMAGE = 0x00000080,
+	OPT_PROTO_IM_IMAGE = 0x00000040,
 
 	/**
 	 * Allow passwords to be optional.
@@ -163,20 +145,16 @@ typedef enum
 	 * Passwords in IRC are optional, and are needed for certain
 	 * functionality.
 	 */
-	OPT_PROTO_PASSWORD_OPTIONAL = 0x00000100,
+	OPT_PROTO_PASSWORD_OPTIONAL = 0x00000080,
 
 	/**
 	 * Allows font size to be specified in sane point size
 	 *
 	 * Probably just Jabber and Y!M
 	 */
-	OPT_PROTO_USE_POINTSIZE = 0x00000200
+	OPT_PROTO_USE_POINTSIZE = 0x00000100
 
 } GaimProtocolOptions;
-
-/** Some structs defined in roomlist.h */
-struct _GaimRoomlist;
-struct _GaimRoomlistRoom;
 
 /**
  * A protocol plugin information structure.
@@ -294,9 +272,9 @@ struct _GaimPluginProtocolInfo
 	GaimChat *(*find_blist_chat)(GaimAccount *account, const char *name);
 
 	/* room listing prpl callbacks */
-	struct _GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
-	void (*roomlist_cancel)(struct _GaimRoomlist *list);
-	void (*roomlist_expand_category)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *category);
+	GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
+	void (*roomlist_cancel)(GaimRoomlist *list);
+	void (*roomlist_expand_category)(GaimRoomlist *list, GaimRoomlistRoom *category);
 
 	/* file transfer callbacks */
 	gboolean (*can_receive_file)(GaimConnection *, const char *who);

@@ -21,20 +21,6 @@ CODE:
 	gaim_blist_update_buddy_presence(buddy, presence);
 
 void
-set_idle_time(buddy, idle)
-	Gaim::BuddyList::Buddy buddy
-	int idle
-CODE:
-	gaim_blist_update_buddy_idle(buddy, idle);
-
-void
-set_warning_percent(buddy, warning)
-	Gaim::BuddyList::Buddy buddy
-	int warning
-CODE:
-	gaim_blist_update_buddy_evil(buddy, warning);
-
-void
 rename(buddy, new_name)
 	Gaim::BuddyList::Buddy buddy
 	const char *new_name
