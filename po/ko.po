@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.58\n"
-"POT-Creation-Date: 2002-08-18 10:33-0700\n"
+"POT-Creation-Date: 2002-08-25 23:43-0400\n"
 "PO-Revision-Date: 2002-06-03 09:02+0900\n"
 "Last-Translator: A Lee <alee@debian.org>\n"
 "Language-Team: artsilly and alee team\n"
@@ -25,9 +25,9 @@ msgstr "가임 - 채팅"
 
 #: plugins/chatlist.c:339 src/about.c:165 src/aim.c:317 src/buddy.c:2690
 #: src/buddy_chat.c:1325 src/buddy_chat.c:1422 src/buddy_chat.c:1452
-#: src/conversation.c:2889 src/dialogs.c:592 src/dialogs.c:1527
-#: src/dialogs.c:4277 src/multi.c:1076 src/plugins.c:347 src/prefs.c:1854
-#: src/prpl.c:448 src/prpl.c:695 src/server.c:1097
+#: src/conversation.c:2919 src/dialogs.c:1541 src/dialogs.c:4292
+#: src/multi.c:1078 src/plugins.c:347 src/prpl.c:450 src/prpl.c:697
+#: src/server.c:1097
 msgid "Close"
 msgstr "닫기"
 
@@ -40,16 +40,17 @@ msgstr "채팅 옵션"
 msgid "Refresh"
 msgstr ""
 
+#. Put the buttons in the box
 #: plugins/chatlist.c:364 src/buddy.c:489 src/buddy.c:2802
-#: src/buddy_chat.c:1457 src/conversation.c:2406 src/conversation.c:2904
-#: src/dialogs.c:957 src/dialogs.c:1139 src/dialogs.c:1478 src/dialogs.c:1512
-#: src/dialogs.c:2507 src/multi.c:1060 src/prefs.c:1566
+#: src/buddy_chat.c:1457 src/conversation.c:2436 src/conversation.c:2934
+#: src/dialogs.c:971 src/dialogs.c:1153 src/dialogs.c:1492 src/dialogs.c:1526
+#: src/dialogs.c:2521 src/multi.c:1062
 msgid "Add"
 msgstr "추가"
 
 #: plugins/chatlist.c:365 src/buddy.c:491 src/buddy.c:2804
-#: src/buddy_chat.c:1459 src/conversation.c:2392 src/conversation.c:2901
-#: src/dialogs.c:1482 src/dialogs.c:1516 src/prefs.c:1578
+#: src/buddy_chat.c:1459 src/conversation.c:2422 src/conversation.c:2931
+#: src/dialogs.c:1496 src/dialogs.c:1530
 msgid "Remove"
 msgstr "삭제"
 
@@ -73,6 +74,7 @@ msgstr ""
 msgid "Enter symbols delimited with \"+\" in the box below."
 msgstr ""
 
+#. OUTPUT FORMAT and SCROLL DIRECTION
 #: plugins/gtik.c:737
 msgid "Check this box to display only symbols and price:"
 msgstr ""
@@ -91,7 +93,7 @@ msgstr "취소"
 msgid "Change"
 msgstr "채널:"
 
-#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1921
+#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1923
 msgid "Available"
 msgstr "메시지 받을 수 있음"
 
@@ -99,8 +101,8 @@ msgstr "메시지 받을 수 있음"
 msgid "Available for friends only"
 msgstr "친구들에게만 메시지 받을 수 있음"
 
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1141
-#: src/applet.c:197 src/buddy.c:494 src/buddy.c:2556 src/buddy.c:2701
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1143 src/buddy.c:494
+#: src/buddy.c:2556 src/buddy.c:2701 src/prefs.c:812
 msgid "Away"
 msgstr "자리비움"
 
@@ -116,7 +118,7 @@ msgstr "보이지 않도록 함"
 msgid "Invisible for friends only"
 msgstr "친구들에게만 보이지 않도록 함"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1137
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1139
 msgid "Unavailable"
 msgstr "메시지 받을 수 없음"
 
@@ -148,7 +150,7 @@ msgstr "인증 실패."
 msgid "Unknown Error Code."
 msgstr "알 수 없는 에러 코드."
 
-#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2052
+#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2054
 #, c-format
 msgid "Status: %s"
 msgstr "상태: %s"
@@ -218,16 +220,6 @@ msgstr "%s로의 연결이 끊겼습니다."
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "잘못된 가두-가두 UIN으로 메시지를 보내려고 하고있습니다."
 
-#: src/protocols/gg/gg.c:595 src/protocols/gg/gg.c:657
-#: src/protocols/gg/gg.c:762 src/protocols/gg/gg.c:768
-#: src/protocols/gg/gg.c:821 src/protocols/gg/gg.c:833
-#: src/protocols/gg/gg.c:845 src/protocols/gg/gg.c:956
-#: src/protocols/gg/gg.c:984 src/protocols/gg/gg.c:1043
-#: src/protocols/gg/gg.c:1066 src/protocols/gg/gg.c:1116
-#: src/protocols/gg/gg.c:1149 src/protocols/gg/gg.c:1214
-msgid "Gadu-Gadu Error"
-msgstr "가두-가두 에러"
-
 #: src/protocols/gg/gg.c:657
 msgid "Couldn't get search results"
 msgstr "검색 결과를 얻을 수 없습니다"
@@ -273,104 +265,151 @@ msgstr "생년"
 msgid "Sex"
 msgstr "성별"
 
-#: src/protocols/gg/gg.c:729 src/dialogs.c:2036 src/dialogs.c:2744
+#. Line 5
+#: src/protocols/gg/gg.c:729 src/dialogs.c:2050 src/dialogs.c:2758
 msgid "City"
 msgstr "시/군"
 
 #: src/protocols/gg/gg.c:761
-msgid "There is no Buddy List stored on server. Sorry!"
+#, fuzzy
+msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "서버에 친구 목록이 저장되어 있지 않습니다."
 
-#: src/protocols/gg/gg.c:768
+#: src/protocols/gg/gg.c:767
 msgid "Couldn't Import Buddies List from Server"
 msgstr "서버에서 친구 목록을 가져올 수 없습니다."
 
-#: src/protocols/gg/gg.c:815
-msgid "Buddy List successfully transferred to server"
+#: src/protocols/gg/gg.c:814
+#, fuzzy
+msgid "Buddy List successfully transferred to Gadu-Gadu server"
 msgstr "서버에서 친구 목록을 성공적으로 가져왔습니다."
 
-#: src/protocols/gg/gg.c:816 src/protocols/gg/gg.c:828
-#: src/protocols/gg/gg.c:840
-msgid "Gadu-Gadu Information"
-msgstr "가두-가두 정보"
-
-#: src/protocols/gg/gg.c:821
-msgid "Couldn't transfer Buddy List to server"
+#: src/protocols/gg/gg.c:819
+#, fuzzy
+msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "서버로 친구 목록을 전송할 수 없습니다."
 
-#: src/protocols/gg/gg.c:827
-msgid "Buddy List sucessfully deleted from server"
+#: src/protocols/gg/gg.c:825
+#, fuzzy
+msgid "Buddy List sucessfully deleted from Gadu-Gadu server"
 msgstr "서버에서 친구 목록이 삭제되었습니다."
 
-#: src/protocols/gg/gg.c:833
-msgid "Couldn't delete Buddy List from server"
+#: src/protocols/gg/gg.c:830
+#, fuzzy
+msgid "Couldn't delete Buddy List from Gadu-Gadu server"
 msgstr "서버에서 친구 목록을 삭제할 수 없습니다."
 
-#: src/protocols/gg/gg.c:839
+#: src/protocols/gg/gg.c:836
 msgid "Password changed successfully"
 msgstr "비밀번호가 성공적으로 변경되었습니다."
 
-#: src/protocols/gg/gg.c:845
+#: src/protocols/gg/gg.c:841
 msgid "Password couldn't be changed"
 msgstr "비밀번호를 변경할 수 없습니다."
 
-#: src/protocols/gg/gg.c:956
-msgid "Couldn't send http request"
-msgstr "http 요청을 보낼 수 없습니다."
+#: src/protocols/gg/gg.c:952
+msgid "Error communicating with Gadu-Gadu server"
+msgstr ""
 
-#: src/protocols/gg/gg.c:982
-#, c-format
-msgid "Buddies List import from Server failed (%s)"
-msgstr "서버에서 친구 목록을 가져오기 실패 (%s)"
+#: src/protocols/gg/gg.c:953
+msgid ""
+"Gaim was unable to complete your request due to a problem communicating to "
+"the Gadu-Gadu HTTP server.  Please try again later."
+msgstr ""
 
-#: src/protocols/gg/gg.c:1041
-#, c-format
-msgid "Buddies List export to Server failed (%s)"
-msgstr "친구 목록을 서버로 보내기 실패 (%s)"
+#: src/protocols/gg/gg.c:980
+msgid "Unable to import Gadu-Gadu buddy list"
+msgstr ""
 
-#: src/protocols/gg/gg.c:1064
-#, c-format
-msgid "Deletion of Buddies List from Server failed (%s)"
-msgstr "서버에서 친구 목록 지우기 실패 (%s)"
+#: src/protocols/gg/gg.c:981
+msgid ""
+"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"again later."
+msgstr ""
 
-#: src/protocols/gg/gg.c:1114 src/protocols/gg/gg.c:1212
-#, c-format
-msgid "Connect to search service failed (%s)"
-msgstr "검색 서비스에 연결 실패 (%s)"
+#: src/protocols/gg/gg.c:1038
+#, fuzzy
+msgid "Couldn't export buddy list"
+msgstr "서버에서 친구 목록을 가져올 수 없습니다."
 
-#: src/protocols/gg/gg.c:1147
-#, c-format
-msgid "Changing Password failed (%s)"
-msgstr "비밀번호 변경 실패 (%s)"
+#: src/protocols/gg/gg.c:1039 src/protocols/gg/gg.c:1061
+msgid ""
+"Gaim was unable to connect to the buddy list server.  Please try again later."
+msgstr ""
 
-#: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1175
+#: src/protocols/gg/gg.c:1060
+msgid "Unable to delete Gadu-Gadu buddy list"
+msgstr ""
+
+#: src/protocols/gg/gg.c:1108
+#, fuzzy
+msgid "Unable to access directory"
+msgstr "직접 메시지를 열 수 없음"
+
+#: src/protocols/gg/gg.c:1109
+msgid ""
+"Gaim was unable to search the Directory because it was unable to connect to "
+"the directory server.  Please tryagain later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1141
+#, fuzzy
+msgid "Unable to change Gadu-Gadu password"
+msgstr "소켓을 읽을 수 없습니다."
+
+#: src/protocols/gg/gg.c:1142
+msgid ""
+"Gaim was unable to change your password due to an error connecting to the "
+"Gadu-Gadu server.  Please try again later."
+msgstr ""
+
+#: src/protocols/gg/gg.c:1152 src/protocols/gg/gg.c:1169
 msgid "Directory Search"
 msgstr "디렉토리 검색"
 
-#: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
-#: src/protocols/jabber/jabber.c:3953 src/protocols/jabber/jabber.c:3966
-#: src/dialogs.c:2153
+#.
+#. } else if (!strcmp(act, _("Set Dir Info"))) {
+#. show_set_dir(gc);
+#.
+#: src/protocols/gg/gg.c:1154 src/protocols/gg/gg.c:1171
+#: src/protocols/jabber/jabber.c:3957 src/protocols/jabber/jabber.c:3970
+#: src/dialogs.c:2167
 msgid "Change Password"
 msgstr "비밀번호 변경"
 
-#: src/protocols/gg/gg.c:1162 src/protocols/gg/gg.c:1179
+#: src/protocols/gg/gg.c:1156 src/protocols/gg/gg.c:1173
 msgid "Import Buddies List from Server"
 msgstr "서버에서 친구 목록 가져오기"
 
-#: src/protocols/gg/gg.c:1164 src/protocols/gg/gg.c:1180
+#: src/protocols/gg/gg.c:1158 src/protocols/gg/gg.c:1174
 msgid "Export Buddies List to Server"
 msgstr "친구 목록을 서버로 보내기"
 
-#: src/protocols/gg/gg.c:1166 src/protocols/gg/gg.c:1181
+#: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1175
 msgid "Delete Buddies List from Server"
 msgstr "서버에서 친구 목록 삭제"
+
+#: src/protocols/gg/gg.c:1204
+#, fuzzy
+msgid "Unable to access user profile."
+msgstr "%s 파일을 읽을 수 없습니다."
+
+#: src/protocols/gg/gg.c:1205
+msgid ""
+"Gaim was unable to access this users profile due to an error connecting to "
+"the directory server.  Please try again later."
+msgstr ""
+
+#: src/protocols/icq/gaim_icq.c:233
+msgid "Gaim encountered an error communicating with the ICQ server."
+msgstr ""
 
 #: src/protocols/icq/gaim_icq.c:308
 msgid "Send message through server"
 msgstr "서버를 통해 메시지 보내기"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:3041 src/protocols/oscar/oscar.c:3608
+#: src/protocols/jabber/jabber.c:3045 src/protocols/oscar/oscar.c:3611
 #: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "정보 보기"
@@ -386,20 +425,16 @@ msgid "<B>%s has changed the topic to: %s</B>"
 msgstr "<B>%s 가 주제를 %s 로 바꾸었습니다</B>"
 
 #: src/protocols/irc/irc.c:825
-msgid "No such nick/channel"
-msgstr "그런 대화명이나 채널이 없습니다."
-
-#: src/protocols/irc/irc.c:825 src/protocols/irc/irc.c:828
-#: src/protocols/irc/irc.c:830 src/protocols/irc/irc.c:1073
-msgid "IRC Error"
-msgstr "IRC 오류"
+msgid "There is no such nick or channel on this IRC channel."
+msgstr ""
 
 #: src/protocols/irc/irc.c:828
-msgid "No such server"
-msgstr "그런 서버가 없습니다"
+msgid "There is no such IRC Server"
+msgstr ""
 
 #: src/protocols/irc/irc.c:830
-msgid "No nickname given"
+#, fuzzy
+msgid "No IRC nickname given"
 msgstr "대화명을 입력하지 않았습니다"
 
 #: src/protocols/irc/irc.c:976
@@ -414,8 +449,8 @@ msgid "Unable to write"
 msgstr "쓸 수 없습니다."
 
 #: src/protocols/irc/irc.c:1071
-#, c-format
-msgid "You have been kicked from %s: %s"
+#, fuzzy, c-format
+msgid "You have been kicked from %s:"
 msgstr "%s로부터 강제 퇴장되었습니다: %s"
 
 #: src/protocols/irc/irc.c:1076
@@ -427,10 +462,6 @@ msgstr "%s에게 강제 퇴장되었습니다: %s"
 #, c-format
 msgid "You have left %s"
 msgstr "%s를 남겨두었습니다."
-
-#: src/protocols/irc/irc.c:1582
-msgid "IRC Part"
-msgstr "IRC에서 나가기"
 
 #: src/protocols/irc/irc.c:1671
 msgid "Channel:"
@@ -445,230 +476,253 @@ msgid "DCC Chat"
 msgstr "DCC 채팅"
 
 #: src/protocols/jabber/jabber.c:950
-msgid "Incorrect current password! Password NOT Changed!"
-msgstr ""
-
-#: src/protocols/jabber/jabber.c:951 src/protocols/jabber/jabber.c:956
 #, fuzzy
-msgid "Password Change Error!"
-msgstr "가임 - 비밀번호 변경"
+msgid "Unable to change password."
+msgstr "소켓을 읽을 수 없습니다."
 
-#: src/protocols/jabber/jabber.c:955
-msgid "New password same as old password! Password NOT Changed!"
+#: src/protocols/jabber/jabber.c:951
+msgid ""
+"The current password you entered is incorrect.  Your password has not been "
+"changed."
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1115
+#: src/protocols/jabber/jabber.c:956
+#, fuzzy
+msgid "Unable to change password"
+msgstr "소켓을 읽을 수 없습니다."
+
+#: src/protocols/jabber/jabber.c:957
+msgid ""
+"The new password you entered is the same as your current passord.  Your "
+"password remains the same."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1117
 msgid "Unknown"
 msgstr "알려지지 않음"
 
-#: src/protocols/jabber/jabber.c:1143 src/protocols/jabber/jabber.c:1161
+#: src/protocols/jabber/jabber.c:1145 src/protocols/jabber/jabber.c:1163
 #: src/buddy.c:2862
 msgid "Online"
 msgstr "연결"
 
-#: src/protocols/jabber/jabber.c:1145
+#: src/protocols/jabber/jabber.c:1147
 msgid "Extended Away"
 msgstr "자리비움"
 
-#: src/protocols/jabber/jabber.c:1147
+#: src/protocols/jabber/jabber.c:1149
 msgid "Do Not Disturb"
 msgstr "방해금지"
 
-#: src/protocols/jabber/jabber.c:1457
+#: src/protocols/jabber/jabber.c:1347
+#, fuzzy, c-format
+msgid "Jabber Error %s"
+msgstr "재버 오류"
+
+#: src/protocols/jabber/jabber.c:1459
 #, c-format
 msgid "Error %s: %s"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1460
+#: src/protocols/jabber/jabber.c:1462
 #, fuzzy
 msgid "Unknown Error in presence"
 msgstr "알 수 없는 에러 코드."
 
-#: src/protocols/jabber/jabber.c:1630
+#: src/protocols/jabber/jabber.c:1632
 #, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr "%s님이 당신을 자신의 친구 목록에 추가하고 싶어합니다."
 
-#: src/protocols/jabber/jabber.c:1655
-msgid "No such user"
+#: src/protocols/jabber/jabber.c:1657
+#, c-format
+msgid ""
+"The Jabber user %s does not exist and was therefore not added to your roster."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1660
+#, fuzzy
+msgid "No such user."
 msgstr "그런 사용자 없음"
 
-#: src/protocols/jabber/jabber.c:1657 src/protocols/jabber/jabber.c:2413
-#: src/protocols/jabber/jabber.c:2681
-msgid "Jabber Error"
-msgstr "재버 오류"
-
-#: src/protocols/jabber/jabber.c:1742 src/protocols/msn/msn.c:1112
-#: src/dialogs.c:912
+#: src/protocols/jabber/jabber.c:1745 src/protocols/msn/msn.c:1114
+#: src/dialogs.c:926
 msgid "Buddies"
 msgstr "친구"
 
-#: src/protocols/jabber/jabber.c:1805
+#: src/protocols/jabber/jabber.c:1808
 msgid "Authenticating"
 msgstr "인증 확인 중"
 
-#: src/protocols/jabber/jabber.c:1842
+#: src/protocols/jabber/jabber.c:1845
 msgid "Unknown login error"
 msgstr "알 수 없는 로그인 에러"
 
-#: src/protocols/jabber/jabber.c:2033
+#: src/protocols/jabber/jabber.c:2036
 #, fuzzy
 msgid "Password successfully changed."
 msgstr "비밀번호가 성공적으로 변경되었습니다."
 
-#: src/protocols/jabber/jabber.c:2035
-#, fuzzy
-msgid "Password Change"
-msgstr "가임 - 비밀번호 변경"
-
-#: src/protocols/jabber/jabber.c:2077 src/protocols/jabber/jabber.c:3881
+#: src/protocols/jabber/jabber.c:2080 src/protocols/jabber/jabber.c:3885
 msgid "Connection lost"
 msgstr "연결이 끊김"
 
-#: src/protocols/jabber/jabber.c:2079 src/protocols/jabber/jabber.c:2111
-#: src/protocols/jabber/jabber.c:3883 src/protocols/jabber/jabber.c:3929
-#: src/protocols/msn/msn.c:1743 src/protocols/msn/msn.c:1772
+#: src/protocols/jabber/jabber.c:2082 src/protocols/jabber/jabber.c:2114
+#: src/protocols/jabber/jabber.c:3887 src/protocols/jabber/jabber.c:3933
+#: src/protocols/msn/msn.c:1745 src/protocols/msn/msn.c:1774
 msgid "Unable to connect"
 msgstr "연결할 수 없습니다"
 
-#: src/protocols/jabber/jabber.c:2085
+#: src/protocols/jabber/jabber.c:2088
 msgid "Connected"
 msgstr "연결됨"
 
-#: src/protocols/jabber/jabber.c:2088
+#: src/protocols/jabber/jabber.c:2091
 msgid "Requesting Authentication Method"
 msgstr "인증 방법을 요청하는 중"
 
-#: src/protocols/jabber/jabber.c:2106 src/protocols/msn/msn.c:1764
+#. we have no chats yet
+#: src/protocols/jabber/jabber.c:2109 src/protocols/msn/msn.c:1766
 msgid "Connecting"
 msgstr "연결 중"
 
-#: src/protocols/jabber/jabber.c:2412 src/protocols/jabber/jabber.c:2680
-msgid "Invalid Jabber I.D."
-msgstr "잘못된 재버 아이디"
+#: src/protocols/jabber/jabber.c:2415
+#, c-format
+msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
+msgstr ""
 
-#: src/protocols/jabber/jabber.c:2648
+#: src/protocols/jabber/jabber.c:2417
+msgid "Jabber Error"
+msgstr "재버 오류"
+
+#: src/protocols/jabber/jabber.c:2652
 msgid "Room:"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2652
+#: src/protocols/jabber/jabber.c:2656
 #, fuzzy
 msgid "Server:"
 msgstr "프록시 서버"
 
-#: src/protocols/jabber/jabber.c:2657
+#: src/protocols/jabber/jabber.c:2661
 msgid "Handle:"
 msgstr "처리:"
 
-#: src/protocols/jabber/jabber.c:2714
+#: src/protocols/jabber/jabber.c:2685
+#, fuzzy
+msgid "Unable to join chat"
+msgstr "연결할 수 없습니다"
+
+#: src/protocols/jabber/jabber.c:2718
 #, fuzzy
 msgid "Chats"
 msgstr "채팅"
 
-#: src/protocols/jabber/jabber.c:3029
+#: src/protocols/jabber/jabber.c:3033
 #, fuzzy
 msgid "View Error Msg"
 msgstr "지나간 대화 보기"
 
-#: src/protocols/jabber/jabber.c:3046 src/protocols/oscar/oscar.c:3621
+#: src/protocols/jabber/jabber.c:3050 src/protocols/oscar/oscar.c:3624
 #: src/buddy_chat.c:889
 msgid "Get Away Msg"
 msgstr "자리비움 메시지 보기"
 
-#: src/protocols/jabber/jabber.c:3053
+#: src/protocols/jabber/jabber.c:3057
 msgid "Un-hide From"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:3056
+#: src/protocols/jabber/jabber.c:3060
 msgid "Temporarily Hide From"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:3074
+#: src/protocols/jabber/jabber.c:3078
 msgid "Remove From Roster"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:3079
+#: src/protocols/jabber/jabber.c:3083
 #, fuzzy
 msgid "Cancel Presence Notification"
 msgstr "팝업창으로 정보 전달"
 
-#: src/protocols/jabber/jabber.c:3281
+#: src/protocols/jabber/jabber.c:3285
 msgid "Full Name"
 msgstr "성명"
 
-#: src/protocols/jabber/jabber.c:3282
+#: src/protocols/jabber/jabber.c:3286
 msgid "Family Name"
 msgstr "성"
 
-#: src/protocols/jabber/jabber.c:3283
+#: src/protocols/jabber/jabber.c:3287
 msgid "Given Name"
 msgstr "이름"
 
-#: src/protocols/jabber/jabber.c:3284
+#: src/protocols/jabber/jabber.c:3288
 msgid "Nickname"
 msgstr "별명"
 
-#: src/protocols/jabber/jabber.c:3285 src/dialogs.c:2937
+#: src/protocols/jabber/jabber.c:3289 src/dialogs.c:2951
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3286
+#: src/protocols/jabber/jabber.c:3290
 msgid "Street Address"
 msgstr "거리 주소"
 
-#: src/protocols/jabber/jabber.c:3287
+#: src/protocols/jabber/jabber.c:3291
 msgid "Extended Address"
 msgstr "나머지 주소"
 
-#: src/protocols/jabber/jabber.c:3288
+#: src/protocols/jabber/jabber.c:3292
 msgid "Locality"
 msgstr "위치"
 
-#: src/protocols/jabber/jabber.c:3289
+#: src/protocols/jabber/jabber.c:3293
 msgid "Region"
 msgstr "지역"
 
-#: src/protocols/jabber/jabber.c:3290
+#: src/protocols/jabber/jabber.c:3294
 msgid "Postal Code"
 msgstr "우편번호"
 
-#: src/protocols/jabber/jabber.c:3291 src/dialogs.c:2058 src/dialogs.c:2766
+#. Line 7
+#: src/protocols/jabber/jabber.c:3295 src/dialogs.c:2072 src/dialogs.c:2780
 msgid "Country"
 msgstr "국가"
 
-#: src/protocols/jabber/jabber.c:3292
+#: src/protocols/jabber/jabber.c:3296
 msgid "Telephone"
 msgstr "전화"
 
-#: src/protocols/jabber/jabber.c:3293 src/dialogs.c:2842
+#: src/protocols/jabber/jabber.c:3297 src/dialogs.c:2856
 msgid "Email"
 msgstr "메일"
 
-#: src/protocols/jabber/jabber.c:3294
+#: src/protocols/jabber/jabber.c:3298
 msgid "Organization Name"
 msgstr "기관 이름"
 
-#: src/protocols/jabber/jabber.c:3295
+#: src/protocols/jabber/jabber.c:3299
 msgid "Organization Unit"
 msgstr "기관 부서"
 
-#: src/protocols/jabber/jabber.c:3296
+#: src/protocols/jabber/jabber.c:3300
 msgid "Title"
 msgstr "제목"
 
-#: src/protocols/jabber/jabber.c:3297
+#: src/protocols/jabber/jabber.c:3301
 msgid "Role"
 msgstr "역할"
 
-#: src/protocols/jabber/jabber.c:3298
+#: src/protocols/jabber/jabber.c:3302
 msgid "Birthday"
 msgstr "생년월일"
 
-#: src/protocols/jabber/jabber.c:3299 src/dialogs.c:2945
+#: src/protocols/jabber/jabber.c:3303 src/dialogs.c:2959
 msgid "Description"
 msgstr "설명"
 
-#: src/protocols/jabber/jabber.c:3324
+#: src/protocols/jabber/jabber.c:3328
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -676,23 +730,23 @@ msgstr ""
 "나열된 모든 항목은 선택사항입니다. 입력해도 무방하다고 생각하는 정보만 입력하"
 "십시오."
 
-#: src/protocols/jabber/jabber.c:3325
+#: src/protocols/jabber/jabber.c:3329
 msgid "User Identity"
 msgstr "사용자 확인"
 
-#: src/protocols/jabber/jabber.c:3737
+#: src/protocols/jabber/jabber.c:3741
 msgid "Gaim - Edit Jabber vCard"
 msgstr "가임 - 재버 vCard 편집"
 
-#: src/protocols/jabber/jabber.c:3811
+#: src/protocols/jabber/jabber.c:3815
 msgid "Server Registration successful!"
 msgstr "서버에 성공적으로 등록했습니다!"
 
-#: src/protocols/jabber/jabber.c:3838
+#: src/protocols/jabber/jabber.c:3842
 msgid "Unknown registration error"
 msgstr "알 수 없는 등록 오류"
 
-#: src/protocols/jabber/jabber.c:3947 src/protocols/jabber/jabber.c:3962
+#: src/protocols/jabber/jabber.c:3951 src/protocols/jabber/jabber.c:3966
 msgid "Set User Info"
 msgstr "사용자 정보 입력"
 
@@ -859,116 +913,132 @@ msgstr ""
 msgid "Unknown Error Code"
 msgstr "알 수 없는 에러 코드."
 
-#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
-#: src/protocols/msn/msn.c:815 src/protocols/msn/msn.c:2116
-#: src/protocols/msn/msn.c:2285 src/protocols/msn/msn.c:2338
-msgid "MSN Error"
-msgstr "MSN 오류"
-
 #: src/protocols/msn/msn.c:558
-msgid "A message may not have been received."
+msgid "An MSN message may not have been received."
 msgstr ""
 
 #: src/protocols/msn/msn.c:815
-msgid "Gaim was unable to send a message"
+#, fuzzy
+msgid "Gaim was unable to send an MSN message"
 msgstr "메시지를 보낼 수 없습니다"
 
-#: src/protocols/msn/msn.c:919
+#: src/protocols/msn/msn.c:816
+msgid ""
+"Gaim encountered an error communicating with the MSN switchboard server.  "
+"Please try again later."
+msgstr ""
+
+#: src/protocols/msn/msn.c:921
 #, fuzzy, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "%s님이 당신을 자신의 친구 목록에 추가하고 싶어합니다."
 
-#: src/protocols/msn/msn.c:1076
+#: src/protocols/msn/msn.c:1078
 #, fuzzy, c-format
 msgid "The user %s (%s) wants to add you to their buddy list"
 msgstr "%s님이 당신을 자신의 친구 목록에 추가하고 싶어합니다."
 
-#: src/protocols/msn/msn.c:1177
+#: src/protocols/msn/msn.c:1179
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "다른 곳에서 같은 아이디로 로그인하여 연결이 끊겼습니다."
 
-#: src/protocols/msn/msn.c:1437 src/protocols/msn/msn.c:1681
+#: src/protocols/msn/msn.c:1439 src/protocols/msn/msn.c:1683
 #, fuzzy
 msgid "Error reading from server"
 msgstr "소켓에서 읽는 중에 에러가 발생했습니다."
 
-#: src/protocols/msn/msn.c:1570
+#: src/protocols/msn/msn.c:1572
 msgid "Requesting to send password"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1620
+#: src/protocols/msn/msn.c:1622
 #, fuzzy
 msgid "Unable to send password"
 msgstr "소켓을 읽을 수 없습니다."
 
-#: src/protocols/msn/msn.c:1625
+#: src/protocols/msn/msn.c:1627
 #, fuzzy
 msgid "Password sent"
 msgstr "비밀번호: "
 
-#: src/protocols/msn/msn.c:1750
+#: src/protocols/msn/msn.c:1752
 #, fuzzy
 msgid "Unable to write to server"
 msgstr "서버에 연결할 수 없습니다."
 
-#: src/protocols/msn/msn.c:1756
+#: src/protocols/msn/msn.c:1758
 #, fuzzy
 msgid "Synching with server"
 msgstr "서버에 등록"
 
-#: src/protocols/msn/msn.c:1922
+#: src/protocols/msn/msn.c:1924
 msgid "Away From Computer"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1923
+#: src/protocols/msn/msn.c:1925
 msgid "Be Right Back"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1924
+#: src/protocols/msn/msn.c:1926
 #, fuzzy
 msgid "Busy"
 msgstr "친구"
 
-#: src/protocols/msn/msn.c:1925
+#: src/protocols/msn/msn.c:1927
 msgid "On The Phone"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1926
+#: src/protocols/msn/msn.c:1928
 msgid "Out To Lunch"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1927
+#: src/protocols/msn/msn.c:1929
 #, fuzzy
 msgid "Hidden"
 msgstr "아이콘 숨기기"
 
-#: src/protocols/msn/msn.c:2043
+#: src/protocols/msn/msn.c:2045
 msgid "Reset friendly name"
 msgstr ""
 
-#: src/protocols/msn/msn.c:2116
-msgid "Friendly name too long."
+#: src/protocols/msn/msn.c:2118
+msgid "New MSN friendly name too long."
 msgstr ""
 
-#: src/protocols/msn/msn.c:2131 src/protocols/msn/msn.c:2152
+#: src/protocols/msn/msn.c:2133 src/protocols/msn/msn.c:2154
 #, fuzzy
 msgid "Set Friendly Name"
 msgstr "성"
 
-#: src/protocols/msn/msn.c:2132
+#: src/protocols/msn/msn.c:2134
 #, fuzzy
 msgid "Set Friendly Name:"
 msgstr "아이디: "
 
-#: src/protocols/msn/msn.c:2133
+#: src/protocols/msn/msn.c:2135
 msgid "Reset All Friendly Names"
 msgstr ""
 
-#: src/protocols/msn/msn.c:2285 src/protocols/msn/msn.c:2338
-msgid "Invalid name"
+#: src/protocols/msn/msn.c:2288
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
+"meant %s@hotmail.com.  No changes were made to your allow list."
+msgstr ""
+
+#: src/protocols/msn/msn.c:2291 src/protocols/msn/msn.c:2348
+#, fuzzy
+msgid "Invalid MSN screenname"
 msgstr "잘못된 이름"
 
-#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3224
+#: src/protocols/msn/msn.c:2345
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
+"meant %s@hotmail.com.  No changes were made to your block list."
+msgstr ""
+
+#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3227
 #: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "참가할 그룹:"
@@ -1001,60 +1071,55 @@ msgstr "끊어짐."
 msgid "You have been disconnected from chat room %s."
 msgstr "%s 대화실과의 연결이 끊겼습니다."
 
-#: src/protocols/oscar/oscar.c:395
-msgid "Chat Error!"
-msgstr "채팅 오류!"
-
 #: src/protocols/oscar/oscar.c:407
 msgid "Chat is currently unavailable"
 msgstr "지금은 채팅할 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:408
-msgid "Gaim - Chat"
-msgstr "가임 - 채팅"
-
-#: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
+#: src/protocols/oscar/oscar.c:466 src/protocols/oscar/oscar.c:526
 msgid "Couldn't connect to host"
 msgstr "호스트에 연결할 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:475
+#: src/protocols/oscar/oscar.c:474
 msgid "Password sent, waiting for response\n"
 msgstr "패스워드를 보내고 응답을 기다리는 중\n"
 
-#: src/protocols/oscar/oscar.c:508
+#: src/protocols/oscar/oscar.c:507
 msgid "internal connection error\n"
 msgstr "내부 연결 오류\n"
 
-#: src/protocols/oscar/oscar.c:509
+#: src/protocols/oscar/oscar.c:508
 msgid "Unable to login to AIM"
 msgstr "AIM 에 로그인할 수 없습니다"
 
-#: src/protocols/oscar/oscar.c:514
+#: src/protocols/oscar/oscar.c:513
 #, c-format
 msgid "Signon: %s"
 msgstr "연결: %s"
 
-#: src/protocols/oscar/oscar.c:586
+#: src/protocols/oscar/oscar.c:585
 msgid "Signed off.\n"
 msgstr "연결 끊어짐.\n"
 
-#: src/protocols/oscar/oscar.c:605 src/protocols/oscar/oscar.c:730
+#: src/protocols/oscar/oscar.c:604 src/protocols/oscar/oscar.c:729
 msgid "Could Not Connect"
 msgstr "연결할 수 없습니다"
 
-#: src/protocols/oscar/oscar.c:613
+#: src/protocols/oscar/oscar.c:612
 msgid "Connection established, cookie sent"
 msgstr "연결한 후 쿠키를 보냈습니다"
 
-#: src/protocols/oscar/oscar.c:639 src/protocols/toc/toc.c:459
+#. Incorrect nick/password
+#: src/protocols/oscar/oscar.c:638 src/protocols/toc/toc.c:459
 msgid "Incorrect nickname or password."
 msgstr "아이디나 패스워드가 틀렸습니다."
 
-#: src/protocols/oscar/oscar.c:644
+#. Suspended account
+#: src/protocols/oscar/oscar.c:643
 msgid "Your account is currently suspended."
 msgstr "계정이 현재 사용 유보 상태입니다."
 
-#: src/protocols/oscar/oscar.c:648
+#. connecting too frequently
+#: src/protocols/oscar/oscar.c:647
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -1062,26 +1127,49 @@ msgstr ""
 "너무 자주 연결하고 끊고 하였습니다. 10분을 기다린 후 다시 시도하십시요. 계속 "
 "시도한다면 기다려야 하는 시간이 더 길어집니다."
 
-#: src/protocols/oscar/oscar.c:653
+#. client too old
+#: src/protocols/oscar/oscar.c:652
 msgid "The client version you are using is too old. Please upgrade at "
 msgstr ""
 "사용하고 있는 클라이언트가 너무 오래되었습니다. 다음 위치에서 업그레이드하십"
 "시오. "
 
-#: src/protocols/oscar/oscar.c:657 src/protocols/toc/toc.c:542
+#: src/protocols/oscar/oscar.c:656 src/protocols/toc/toc.c:542
 msgid "Authentication Failed"
 msgstr "인증 실패"
 
-#: src/protocols/oscar/oscar.c:679
+#: src/protocols/oscar/oscar.c:678
 msgid "Internal Error"
 msgstr "내부 오류"
 
-#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3435
+#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:792
+#, fuzzy
+msgid "Gaim was Unable to get a valid AIM login hash."
+msgstr "메시지를 보낼 수 없습니다"
+
+#: src/protocols/oscar/oscar.c:768 src/protocols/oscar/oscar.c:793
+#: src/protocols/oscar/oscar.c:875
+msgid ""
+"You may be disconnected shortly.  You may want to use TOC until this is "
+"fixed.  Check "
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:769 src/protocols/oscar/oscar.c:794
+#: src/protocols/oscar/oscar.c:876
+msgid " for updates."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:874
+#, fuzzy
+msgid "Gaim was Unable to get valid login hash."
+msgstr "메시지를 보낼 수 없습니다"
+
+#: src/protocols/oscar/oscar.c:1250 src/protocols/oscar/oscar.c:3438
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "%s와 직접 연결됨"
 
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:1506 src/protocols/oscar/oscar.c:2456
 #, c-format
 msgid ""
 "The user %lu has denied your request to add them to your contact list for "
@@ -1092,121 +1180,109 @@ msgstr ""
 "다: \n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:1506 src/protocols/oscar/oscar.c:2456
 msgid "No reason given."
 msgstr "이유를 입력하지 않았습니다."
 
-#: src/protocols/oscar/oscar.c:1505 src/protocols/oscar/oscar.c:2457
-msgid "Gaim - ICQ Authorization Denied"
+#: src/protocols/oscar/oscar.c:1507
+#, fuzzy
+msgid "ICQ authorization denied."
 msgstr "가임 - ICQ 인증이 거부됨"
 
-#: src/protocols/oscar/oscar.c:1511 src/protocols/oscar/oscar.c:2463
+#: src/protocols/oscar/oscar.c:1513 src/protocols/oscar/oscar.c:2463
 #, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
 msgstr "%lu님이 당신의 친구 목록에 자신을 추가하는 것을 받아들였습니다."
 
-#: src/protocols/oscar/oscar.c:1512 src/protocols/oscar/oscar.c:2464
-msgid "Gaim - ICQ Authorization Granted"
-msgstr "가임 - ICQ 인증이 받아들여짐"
-
-#: src/protocols/oscar/oscar.c:1585
+#: src/protocols/oscar/oscar.c:1587
 #, c-format
 msgid "You missed %d message from %s because it was invalid."
 msgstr "%d개의 %s님이 보낸 메시지가 유효하지 않아 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1586
+#: src/protocols/oscar/oscar.c:1588
 #, c-format
 msgid "You missed %d messages from %s because they were invalid."
 msgstr "%d개의 %s님이 보낸 메시지가 유효하지 않아 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1595
+#: src/protocols/oscar/oscar.c:1597
 #, c-format
 msgid "You missed %d message from %s because it was too large."
 msgstr "%d개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1596
+#: src/protocols/oscar/oscar.c:1598
 #, c-format
 msgid "You missed %d messages from %s because they were too large."
 msgstr "%d개의 %s님이 보낸 메시지가 너무 커서 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1605
+#: src/protocols/oscar/oscar.c:1607
 #, c-format
 msgid "You missed %d message from %s because the rate limit has been exceeded."
 msgstr "%d개의 %s님이 보낸 메시지가 시간 제한을 초과해 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1606
+#: src/protocols/oscar/oscar.c:1608
 #, c-format
 msgid ""
 "You missed %d messages from %s because the rate limit has been exceeded."
 msgstr "%d개의 %s님이 보낸 메시지가 시간 제한을 초과해 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1615
+#: src/protocols/oscar/oscar.c:1617
 #, c-format
 msgid "You missed %d message from %s because it was too evil."
 msgstr ""
 "%d개의 %s님이 보낸 메시지가 금지 단어를 포함하고 있어 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1616
+#: src/protocols/oscar/oscar.c:1618
 #, c-format
 msgid "You missed %d messages from %s because they are too evil."
 msgstr ""
 "%d개의 %s님이 보낸 메시지가 금지 단어로 포함하고 있어 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1625
+#: src/protocols/oscar/oscar.c:1627
 #, c-format
 msgid "You missed %d message from %s because you are too evil."
 msgstr "금지 단어를 사용해서 %d개의 %s님이 보낸 메시지를 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1626
+#: src/protocols/oscar/oscar.c:1628
 #, c-format
 msgid "You missed %d messages from %s because you are too evil."
 msgstr "금지 단어를 사용해서 %d개의 %s님이 보낸 메시지를 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1634
+#: src/protocols/oscar/oscar.c:1636
 #, c-format
 msgid "You missed %d message from %s for unknown reasons."
 msgstr "알 수 없는 이유로 %d개의 %s님이 보낸 메시지를 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1635
+#: src/protocols/oscar/oscar.c:1637
 #, c-format
 msgid "You missed %d messages from %s for unknown reasons."
 msgstr "알 수 없는 이유로 %d개의 %s님이 보낸 메시지를 보여줄 수 없습니다."
 
-#: src/protocols/oscar/oscar.c:1640 src/protocols/oscar/oscar.c:1755
-#: src/protocols/oscar/oscar.c:1773 src/protocols/oscar/oscar.c:2226
-#: src/protocols/yahoo/yahoo.c:594 src/dialogs.c:3432 src/dialogs.c:3438
-msgid "Gaim - Error"
-msgstr "가임 - 오류"
-
-#: src/protocols/oscar/oscar.c:1703
+#: src/protocols/oscar/oscar.c:1705
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
 msgstr "<B>UIN:</B> %s<BR><B>상태:</B> %s<BR><HR><BR>%s<BR>"
 
-#: src/protocols/oscar/oscar.c:1705
+#: src/protocols/oscar/oscar.c:1707
 #, c-format
 msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
 msgstr "<B>상태:</B> %s<BR><HR><BR>%s<BR>"
 
-#: src/protocols/oscar/oscar.c:1734
+#: src/protocols/oscar/oscar.c:1736
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC 오류: %s\n"
 
-#: src/protocols/oscar/oscar.c:1736
-msgid "Gaim - Oscar SNAC Error"
-msgstr "가임 - 오스카 SNAC 오류"
-
-#: src/protocols/oscar/oscar.c:1753
+#: src/protocols/oscar/oscar.c:1755
 #, c-format
 msgid "Your message to %s did not get sent: %s"
 msgstr "%s님에게 메시지를 보내지 못했습니다: %s"
 
-#: src/protocols/oscar/oscar.c:1754 src/protocols/oscar/oscar.c:1772
-msgid "Reason unknown"
-msgstr "알 수 없는 이유"
+#: src/protocols/oscar/oscar.c:1756 src/protocols/oscar/oscar.c:1773
+#, fuzzy
+msgid "No reason was given."
+msgstr "이유를 입력하지 않았습니다."
 
-#: src/protocols/oscar/oscar.c:1771
+#: src/protocols/oscar/oscar.c:1772
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr "%s님의 사용자 정보를 받아올 수 없습니다: %s"
@@ -1311,30 +1387,72 @@ msgid "<i>No Information Provided</i>"
 msgstr "<i>정보가 없음</i>"
 
 #: src/protocols/oscar/oscar.c:1989
-msgid "Your connection may be lost."
+#, fuzzy
+msgid "Your AIM connection may be lost."
 msgstr "접속이 끊겼습니다."
 
-#: src/protocols/oscar/oscar.c:1990
-msgid "AOL error"
-msgstr "AOL 오류"
+#: src/protocols/oscar/oscar.c:2224
+msgid "Rate limiting error."
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:2225
+#, fuzzy
 msgid ""
-"The last message was not sent because you are over the rate limit. Please "
+"The last message was not sent because you are over the rate limit.  Please "
 "wait 10 seconds and try again."
 msgstr ""
 "너무 종종 메시지를 보내서 제한을 초과하여 마지막 메시지를 보낼 수 없었습니"
 "다. 10초 후 다시 시도하십시오."
 
-#: src/protocols/oscar/oscar.c:2589 src/protocols/oscar/oscar.c:3556
-#: src/protocols/toc/toc.c:1564 src/protocols/toc/toc.c:1581
-#: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
-#: src/protocols/toc/toc.c:1802 src/protocols/toc/toc.c:1832
-#: src/protocols/toc/toc.c:1888 src/dialogs.c:3982
-msgid "Error"
-msgstr "오류"
+#: src/protocols/oscar/oscar.c:2457
+#, fuzzy
+msgid "ICQ Authorization denied"
+msgstr "가임 - ICQ 인증이 거부됨"
 
-#: src/protocols/oscar/oscar.c:3207
+#: src/protocols/oscar/oscar.c:2464
+#, fuzzy
+msgid "ICQ Authorization Granted"
+msgstr "가임 - ICQ 인증이 받아들여짐"
+
+#: src/protocols/oscar/oscar.c:2791
+#, fuzzy
+msgid "Unable to set AIM profile."
+msgstr "%s 파일을 읽을 수 없습니다."
+
+#: src/protocols/oscar/oscar.c:2792
+msgid ""
+"You have probably requested to set your profile before the login procedure "
+"completed.  Your profile remains unset; try setting it again when you are "
+"fully connected."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2798
+#, c-format
+msgid ""
+"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"truncated and set it."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2818
+#, fuzzy
+msgid "Unable to set AIM away message."
+msgstr "메시지를 보낼 수 없습니다"
+
+#: src/protocols/oscar/oscar.c:2819
+msgid ""
+"You have probably requested to set your away message before the login "
+"procedure completed.  You remain in a \"present\" state; try setting it "
+"again when you are fully connected."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2834
+#, c-format
+msgid ""
+"The away message length of %d bytes has been exceeded.  Gaim has truncated "
+"it and set you away."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3210
 #, c-format
 msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
@@ -1344,19 +1462,15 @@ msgstr ""
 "습니다. 제한된 숫자보다 친구가 더 많을 경우 어떤 친구는 온라인으로 보이지 않"
 "을 수 있습니다."
 
-#: src/protocols/oscar/oscar.c:3210
-msgid "Gaim - Warning"
-msgstr "가임 - 경고"
-
-#: src/protocols/oscar/oscar.c:3228 src/protocols/toc/toc.c:1108
+#: src/protocols/oscar/oscar.c:3231 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
 msgstr "교환:"
 
-#: src/protocols/oscar/oscar.c:3556
+#: src/protocols/oscar/oscar.c:3559
 msgid "Unable to open Direct IM"
 msgstr "직접 메시지를 열 수 없음"
 
-#: src/protocols/oscar/oscar.c:3566
+#: src/protocols/oscar/oscar.c:3569
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
@@ -1367,7 +1481,7 @@ msgstr ""
 "IP 주소를 볼 수 있으며, 이는 보안상의 위험이 될 수 있습니다. 그래도 직접 접속"
 "할까요?"
 
-#: src/protocols/oscar/oscar.c:3583
+#: src/protocols/oscar/oscar.c:3586
 #, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
@@ -1376,7 +1490,7 @@ msgstr ""
 "<B>UIN:</B> %s<BR><B>상태:</B> %s<BR><HR><BR><I>상배방이 사용하는 프로그램이 "
 "상태 메시지를 보내는 것을 지원하지 않습니다.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3590
+#: src/protocols/oscar/oscar.c:3593
 #, fuzzy, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
@@ -1385,15 +1499,15 @@ msgstr ""
 "<B>UIN:</B> %s<BR><B>상태:</B> %s<BR><HR><BR><I>상배방이 사용하는 프로그램이 "
 "상태 메시지를 보내는 것을 지원하지 않습니다.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3615
+#: src/protocols/oscar/oscar.c:3618
 msgid "Get Status Msg"
 msgstr "상태 메시지 보기"
 
-#: src/protocols/oscar/oscar.c:3628
+#: src/protocols/oscar/oscar.c:3631
 msgid "Direct IM"
 msgstr "직접 연결"
 
-#: src/protocols/oscar/oscar.c:3636
+#: src/protocols/oscar/oscar.c:3639
 msgid "Get Capabilities"
 msgstr "사용 가능 서비스 보기"
 
@@ -1526,48 +1640,42 @@ msgid "TOC has come back from its pause. You may now send messages again."
 msgstr ""
 "TOC가 일시중지 상태에서 다시 시작되었습니다. 이제 메시지를 보낼 수 있습니다."
 
-#: src/protocols/toc/toc.c:599
-msgid "TOC Resume"
-msgstr "TOC 다시 시작"
-
-#: src/protocols/toc/toc.c:763
-msgid "Chat Error"
-msgstr "채팅 오류"
-
 #: src/protocols/toc/toc.c:782
 msgid "Password Change Successful"
 msgstr "비밀번호가 변경되었습니다."
 
-#: src/protocols/toc/toc.c:782 src/dialogs.c:2142
-msgid "Gaim - Password Change"
-msgstr "가임 - 비밀번호 변경"
+#: src/protocols/toc/toc.c:785
+msgid "TOC has sent a PAUSE command."
+msgstr ""
 
 #: src/protocols/toc/toc.c:785
+#, fuzzy
 msgid ""
-"TOC has sent a PAUSE command. When this happens, TOC ignores any messages "
-"sent to it, and may kick you off if you send a message. Gaim will prevent "
-"anything from going through. This is only temporary, please be patient."
+"When this happens, TOC ignores any messages sent to it, and may kick you off "
+"if you send a message. Gaim will prevent anything from going through. This "
+"is only temporary, please be patient."
 msgstr ""
 "TOC가 일시중지 명령을 보냈습니다. TOC는 일시중지 명령을 보내면 모든 메시지를 "
 "무시합니다. 그리고 만약 메시지를 보내면 강제로 접속종료될 수 있습니다. 이것"
 "은 일시적인 현상이니 신경쓰지 마십시오."
-
-#: src/protocols/toc/toc.c:788
-msgid "TOC Pause"
-msgstr "TOC 일시중지"
 
 #: src/protocols/toc/toc.c:1225
 msgid "Get Dir Info"
 msgstr "디렉토리 정보 보기"
 
 #: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
-#: src/protocols/toc/toc.c:1802 src/protocols/toc/toc.c:1888
+#: src/protocols/toc/toc.c:1888
+#, fuzzy
+msgid "Could not connect for transfer."
+msgstr "전송을 위해 연결할 수 없습니다!"
+
+#: src/protocols/toc/toc.c:1802
 msgid "Could not connect for transfer!"
 msgstr "전송을 위해 연결할 수 없습니다!"
 
 #: src/protocols/toc/toc.c:1832
-msgid "Could not write file header!"
-msgstr "파일 헤더를 쓸 수 없습니다!"
+msgid "Could not write file header.  The file will not be transferred."
+msgstr ""
 
 #: src/protocols/toc/toc.c:1921
 msgid "Gaim - Save As..."
@@ -1591,22 +1699,23 @@ msgid "%s requests you to send them a file"
 msgstr "%s님이 파일을 보내달라고 요청하였습니다"
 
 #: src/protocols/yahoo/yahoo.c:594
-msgid "Your message did not get sent."
+#, fuzzy
+msgid "Your Yahoo! message did not get sent."
 msgstr "메시지가 전달되지 않았습니다."
 
-#: src/protocols/zephyr/zephyr.c:840
+#: src/protocols/zephyr/zephyr.c:841
 msgid "ZLocate"
 msgstr "Z위치"
 
-#: src/protocols/zephyr/zephyr.c:877
+#: src/protocols/zephyr/zephyr.c:878
 msgid "Class:"
 msgstr "클래스:"
 
-#: src/protocols/zephyr/zephyr.c:881
+#: src/protocols/zephyr/zephyr.c:882
 msgid "Instance:"
 msgstr "인스턴스:"
 
-#: src/protocols/zephyr/zephyr.c:885
+#: src/protocols/zephyr/zephyr.c:886
 msgid "Recipient:"
 msgstr "받는사람:"
 
@@ -1630,10 +1739,11 @@ msgstr ""
 "URL:"
 
 #: src/about.c:137
+#, fuzzy
 msgid ""
 "\n"
 "\n"
-"IRC: #gaim on irc.openprojects.net"
+"IRC: #gaim on irc.freenode.net"
 msgstr ""
 "\n"
 "\n"
@@ -1677,6 +1787,9 @@ msgstr ""
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
 "Mark Spencer (원 저자)   [ markster@marko.net ]"
 
+#. this makes the sizes not work.
+#. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+#. gtk_widget_grab_default(button);
 #: src/about.c:185
 msgid "Web Site"
 msgstr "웹사이트"
@@ -1686,12 +1799,9 @@ msgid "Signoff"
 msgstr "연결 끊기"
 
 #: src/aim.c:162
-msgid "Please enter your logon"
+#, fuzzy
+msgid "Please enter your login."
 msgstr "사용자 계정을 입력하세요"
-
-#: src/aim.c:162 src/multi.c:1407 src/server.c:55
-msgid "Signon Error"
-msgstr "접속 오류"
 
 #: src/aim.c:260
 msgid "Gaim - Login"
@@ -1733,39 +1843,10 @@ msgstr "플러그인"
 msgid "Preferences"
 msgstr "환경설정"
 
-#: src/aim.c:841 src/multi.c:1479
+#: src/aim.c:841 src/multi.c:1481
 #, fuzzy
 msgid "Auto-login"
 msgstr "자동으로 로그인"
-
-#: src/applet.c:109
-msgid "Attempting to sign on...."
-msgstr "연결을 시도합니다...."
-
-#: src/applet.c:112
-msgid "Offline. Click to bring up login box."
-msgstr "접속되어 있지 않습니다. 클릭하면 로그인 화면이 나옵니다."
-
-#: src/applet.c:128
-#, c-format
-msgid "Away: %d pending."
-msgstr "자리비움: %d 동안"
-
-#: src/applet.c:131
-msgid "Away."
-msgstr "자리비움"
-
-#: src/applet.c:200 src/away.c:388
-msgid "New Away Message"
-msgstr "새 자리비움 메시지"
-
-#: src/applet.c:348
-msgid "Can't create Gaim applet!"
-msgstr "가임 애플릿을 만들 수 없습니다!"
-
-#: src/applet.c:368
-msgid "About..."
-msgstr "...에 대하여"
 
 #: src/away.c:202
 msgid "Gaim - Away!"
@@ -1779,6 +1860,10 @@ msgstr "내가 돌아왔다!"
 msgid "Back"
 msgstr "뒤로"
 
+#: src/away.c:388
+msgid "New Away Message"
+msgstr "새 자리비움 메시지"
+
 #: src/away.c:408
 msgid "Remove Away Message"
 msgstr "자리비움 메시지 지움"
@@ -1787,7 +1872,7 @@ msgstr "자리비움 메시지 지움"
 msgid "Set All Away"
 msgstr "모든 자리비움 메시지 사용"
 
-#: src/buddy.c:490 src/buddy.c:2803 src/dialogs.c:967 src/dialogs.c:1114
+#: src/buddy.c:490 src/buddy.c:2803 src/dialogs.c:981 src/dialogs.c:1128
 msgid "Group"
 msgstr "그룹"
 
@@ -1797,12 +1882,13 @@ msgid "IM"
 msgstr "메시지"
 
 #: src/buddy.c:497 src/buddy.c:2554 src/buddy_chat.c:880 src/buddy_chat.c:1289
-#: src/buddy_chat.c:1465 src/conversation.c:2922
+#: src/buddy_chat.c:1465 src/conversation.c:2952
 msgid "Info"
 msgstr "정보"
 
-#: src/buddy.c:653 src/buddy.c:823 src/dialogs.c:1106 src/dialogs.c:3836
-#: src/dialogs.c:3851
+#. Put the buttons in the box
+#: src/buddy.c:653 src/buddy.c:823 src/dialogs.c:1120 src/dialogs.c:3851
+#: src/dialogs.c:3866
 msgid "Alias"
 msgstr "별명"
 
@@ -1821,10 +1907,6 @@ msgstr "이름 바꾸기"
 #: src/buddy.c:830
 msgid "Un-Alias"
 msgstr "별명 지우기"
-
-#: src/buddy.c:1629 src/buddy.c:2706
-msgid "Buddy Pounce"
-msgstr "친구알림"
 
 #: src/buddy.c:1709
 msgid "New Buddy Pounce"
@@ -1883,7 +1965,7 @@ msgstr "%s님이 접속을 끊었습니다."
 msgid "Information on selected Buddy"
 msgstr "선택한 친구에 대한 정보"
 
-#: src/buddy.c:2589 src/dialogs.c:722
+#: src/buddy.c:2589 src/dialogs.c:736
 msgid "Send Instant Message"
 msgstr "메시지 보내기"
 
@@ -1911,7 +1993,7 @@ msgstr "채팅 참가"
 msgid "New Instant Message"
 msgstr "새 메시지"
 
-#: src/buddy.c:2673 src/dialogs.c:784
+#: src/buddy.c:2673 src/dialogs.c:798
 msgid "Get User Info"
 msgstr "사용자 정보 보기"
 
@@ -1922,6 +2004,10 @@ msgstr "친구목록 가져오기"
 #: src/buddy.c:2696
 msgid "Tools"
 msgstr "도구"
+
+#: src/buddy.c:2706
+msgid "Buddy Pounce"
+msgstr "친구알림"
 
 #: src/buddy.c:2719
 msgid "Protocol Actions"
@@ -1967,7 +2053,7 @@ msgstr "디버깅 창"
 msgid "About Gaim"
 msgstr "가임은..."
 
-#: src/buddy.c:2782 src/prefs.c:1660
+#: src/buddy.c:2782 src/prefs.c:1307
 msgid "Buddy List"
 msgstr "친구 목록"
 
@@ -2000,12 +2086,12 @@ msgid "Join Chat As:"
 msgstr "채팅 참가시 별명:"
 
 #: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:451
-#: src/dialogs.c:541 src/dialogs.c:740 src/dialogs.c:841 src/dialogs.c:959
-#: src/dialogs.c:1135 src/dialogs.c:1885 src/dialogs.c:2090 src/dialogs.c:2214
-#: src/dialogs.c:2274 src/dialogs.c:2496 src/dialogs.c:2678 src/dialogs.c:2853
-#: src/dialogs.c:2924 src/dialogs.c:3586 src/dialogs.c:3838 src/dialogs.c:4019
-#: src/dialogs.c:4394 src/dialogs.c:4500 src/dialogs.c:5185 src/multi.c:781
-#: src/multi.c:911 src/prpl.c:160 src/prpl.c:234
+#: src/dialogs.c:541 src/dialogs.c:754 src/dialogs.c:855 src/dialogs.c:973
+#: src/dialogs.c:1149 src/dialogs.c:1899 src/dialogs.c:2104 src/dialogs.c:2228
+#: src/dialogs.c:2288 src/dialogs.c:2510 src/dialogs.c:2692 src/dialogs.c:2867
+#: src/dialogs.c:2938 src/dialogs.c:3601 src/dialogs.c:3853 src/dialogs.c:4034
+#: src/dialogs.c:4409 src/dialogs.c:4515 src/dialogs.c:5199 src/multi.c:781
+#: src/multi.c:911 src/prpl.c:162 src/prpl.c:236
 msgid "Cancel"
 msgstr "취소"
 
@@ -2018,7 +2104,7 @@ msgstr "참가"
 msgid "Invite"
 msgstr "초대"
 
-#: src/buddy_chat.c:412 src/dialogs.c:1713 src/dialogs.c:3846
+#: src/buddy_chat.c:412 src/dialogs.c:1727 src/dialogs.c:3861
 msgid "Buddy"
 msgstr "친구"
 
@@ -2034,10 +2120,11 @@ msgstr "가임 - 대화실로 친구를 초대"
 msgid "Un-Ignore"
 msgstr "무시하지 않음"
 
-#: src/buddy_chat.c:873 src/buddy_chat.c:1285
+#: src/buddy_chat.c:873 src/buddy_chat.c:1285 src/prefs.c:379
 msgid "Ignore"
 msgstr "무시"
 
+#. don't remove them from ignored in case they re-enter
 #: src/buddy_chat.c:936 src/buddy_chat.c:1048 src/buddy_chat.c:1511
 #: src/buddy_chat.c:1544
 #, c-format
@@ -2081,15 +2168,15 @@ msgid "Whisper"
 msgstr "귓속말"
 
 #: src/buddy_chat.c:1341 src/buddy_chat.c:1418 src/buddy_chat.c:1467
-#: src/conversation.c:2933
+#: src/conversation.c:2963
 msgid "Send"
 msgstr "보내기"
 
-#: src/buddy_chat.c:1461 src/conversation.c:2910
+#: src/buddy_chat.c:1461 src/conversation.c:2940
 msgid "Block"
 msgstr "차단"
 
-#: src/buddy_chat.c:1463 src/conversation.c:2916 src/dialogs.c:426
+#: src/buddy_chat.c:1463 src/conversation.c:2946 src/dialogs.c:426
 #: src/dialogs.c:455
 msgid "Warn"
 msgstr "경고"
@@ -2103,16 +2190,14 @@ msgid "Gaim - Insert Image"
 msgstr "가임 - 그림 삽입"
 
 #: src/conversation.c:1336
-msgid "Unable to send message: too large"
+#, fuzzy
+msgid "Unable to send message.  The message is too large"
 msgstr "메시지를 보낼 수 없습니다 : 너무 큽니다."
 
-#: src/conversation.c:1336 src/conversation.c:1340
-msgid "Message Error"
-msgstr "메시지 오류"
-
 #: src/conversation.c:1340
-msgid "Unable to send message: Unknown reason"
-msgstr "메시지를 보낼 수 없습니다 : 알 수 없는 이유"
+#, fuzzy
+msgid "Unable to send message"
+msgstr "메시지를 보낼 수 없습니다 : 너무 큽니다."
 
 #: src/conversation.c:1559
 #, c-format
@@ -2124,156 +2209,156 @@ msgstr "현재는 %d에, "
 msgid "Setting position to %d\n"
 msgstr "%d로 위치를 옮깁니다\n"
 
-#: src/conversation.c:2187
+#: src/conversation.c:2217
 msgid "Bold Text"
 msgstr "두꺼운 글씨"
 
-#: src/conversation.c:2187 src/prefs.c:308
+#: src/conversation.c:2217
 msgid "Bold"
 msgstr "두껍게"
 
-#: src/conversation.c:2191
+#: src/conversation.c:2221
 msgid "Italics Text"
 msgstr "기울어진 글씨"
 
-#: src/conversation.c:2192 src/prefs.c:309
+#: src/conversation.c:2222
 msgid "Italics"
 msgstr "기울임"
 
-#: src/conversation.c:2195
+#: src/conversation.c:2225
 msgid "Underline Text"
 msgstr "밑줄 친 글씨"
 
-#: src/conversation.c:2196 src/prefs.c:310
+#: src/conversation.c:2226
 msgid "Underline"
 msgstr "밑줄"
 
-#: src/conversation.c:2200
+#: src/conversation.c:2230
 msgid "Strike through Text"
 msgstr "가운데줄 친 글씨"
 
-#: src/conversation.c:2200
+#: src/conversation.c:2230
 msgid "Strike"
 msgstr "가운데줄"
 
-#: src/conversation.c:2206
+#: src/conversation.c:2236
 msgid "Decrease font size"
 msgstr "글자 크기 줄이기"
 
-#: src/conversation.c:2206
+#: src/conversation.c:2236
 msgid "Small"
 msgstr "작게"
 
-#: src/conversation.c:2209
+#: src/conversation.c:2239
 msgid "Normal font size"
 msgstr "글자 크기 보통으로"
 
-#: src/conversation.c:2209
+#: src/conversation.c:2239
 msgid "Normal"
 msgstr "보통"
 
-#: src/conversation.c:2212
+#: src/conversation.c:2242
 msgid "Increase font size"
 msgstr "글자 크기 키우기"
 
-#: src/conversation.c:2212
+#: src/conversation.c:2242
 msgid "Big"
 msgstr "크게"
 
-#: src/conversation.c:2219 src/dialogs.c:3239 src/dialogs.c:3263
+#: src/conversation.c:2249 src/dialogs.c:3253 src/dialogs.c:3277
 msgid "Select Font"
 msgstr "글꼴 선택"
 
-#: src/conversation.c:2220
+#: src/conversation.c:2250
 msgid "Font"
 msgstr "글꼴"
 
-#: src/conversation.c:2223
+#: src/conversation.c:2253
 msgid "Text Color"
 msgstr "글자 색깔"
 
-#: src/conversation.c:2224 src/conversation.c:2228
+#: src/conversation.c:2254 src/conversation.c:2258 src/prefs.c:329
 msgid "Color"
 msgstr "색깔"
 
-#: src/conversation.c:2228
+#: src/conversation.c:2258
 msgid "Background Color"
 msgstr "글자 바탕 색깔"
 
-#: src/conversation.c:2235 src/dialogs.c:2918
+#: src/conversation.c:2265 src/dialogs.c:2932
 msgid "Insert Link"
 msgstr "링크 삽입"
 
-#: src/conversation.c:2236
+#: src/conversation.c:2266
 msgid "Link"
 msgstr "링크"
 
-#: src/conversation.c:2239
+#: src/conversation.c:2269
 msgid "Insert smiley face"
 msgstr "스마일리 아이콘 삽입"
 
-#: src/conversation.c:2239
+#: src/conversation.c:2269
 msgid "Smiley"
 msgstr "스마일리"
 
-#: src/conversation.c:2242
+#: src/conversation.c:2272
 msgid "Insert IM Image"
 msgstr "메시지 그림 삽입"
 
-#: src/conversation.c:2242
+#: src/conversation.c:2272
 msgid "Image"
 msgstr "그림"
 
-#: src/conversation.c:2249
+#: src/conversation.c:2279
 msgid "Enable logging"
 msgstr "기록 하기"
 
-#: src/conversation.c:2250 src/prefs.c:1667
+#: src/conversation.c:2280 src/prefs.c:1314
 msgid "Logging"
 msgstr "기록"
 
-#: src/conversation.c:2259
+#: src/conversation.c:2289
 msgid "Save Conversation"
 msgstr "대화 저장"
 
-#: src/conversation.c:2260 src/dialogs.c:2094 src/dialogs.c:2278
-#: src/dialogs.c:3598 src/dialogs.c:4286 src/dialogs.c:5193
+#: src/conversation.c:2290 src/dialogs.c:2108 src/dialogs.c:2292
+#: src/dialogs.c:3613 src/dialogs.c:4301 src/dialogs.c:5207
 msgid "Save"
 msgstr "저장"
 
-#: src/conversation.c:2264
+#: src/conversation.c:2294
 msgid "Toggle Sound"
 msgstr ""
 
-#: src/conversation.c:2265
+#: src/conversation.c:2295
 msgid "Sound"
 msgstr "소리"
 
-#: src/conversation.c:2752
+#: src/conversation.c:2782
 msgid "Gaim - Conversations"
 msgstr "가임 - 대화"
 
-#: src/conversation.c:2839
+#: src/conversation.c:2869
 msgid "Send message as: "
 msgstr "채팅시 사용할 계정:"
 
-#: src/conversation.c:3503
+#: src/conversation.c:3533
 msgid "Gaim - Save Icon"
 msgstr "가임 - 아이콘 저장"
 
-#: src/conversation.c:3537
+#: src/conversation.c:3567
 msgid "Disable Animation"
 msgstr "애니매이션 사용안함"
 
-#: src/conversation.c:3548
+#: src/conversation.c:3578
 msgid "Enable Animation"
 msgstr "애니매이션 사용함"
 
-#: src/conversation.c:3554
+#: src/conversation.c:3584
 msgid "Hide Icon"
 msgstr "아이콘 숨기기"
 
-#: src/conversation.c:3560
+#: src/conversation.c:3590
 msgid "Save Icon As..."
 msgstr "새 이름으로 아이콘 저장"
 
@@ -2317,383 +2402,404 @@ msgstr ""
 "정말 친구 목록에서 '%s'님을\n"
 "삭제할까요?"
 
-#: src/dialogs.c:531 src/prpl.c:164 src/prpl.c:238
+#: src/dialogs.c:531 src/prpl.c:166 src/prpl.c:240
 msgid "Accept"
 msgstr "예"
 
-#: src/dialogs.c:660 src/dialogs.c:745 src/dialogs.c:846 src/dialogs.c:1889
-#: src/dialogs.c:2218 src/dialogs.c:2369 src/dialogs.c:2677 src/dialogs.c:2857
-#: src/dialogs.c:2923 src/dialogs.c:4399 src/dialogs.c:4505 src/multi.c:786
-#: src/prefs.c:1831
+#. Build OK Button
+#: src/dialogs.c:674 src/dialogs.c:759 src/dialogs.c:860 src/dialogs.c:1903
+#: src/dialogs.c:2232 src/dialogs.c:2383 src/dialogs.c:2691 src/dialogs.c:2871
+#: src/dialogs.c:2937 src/dialogs.c:4414 src/dialogs.c:4520 src/multi.c:786
 msgid "OK"
 msgstr "확인"
 
-#: src/dialogs.c:712
+#: src/dialogs.c:726
 msgid "Gaim - IM user"
 msgstr "가임 - 메시지 보내기"
 
-#: src/dialogs.c:729
+#: src/dialogs.c:743
 msgid "IM who:"
 msgstr "보낼 친구"
 
-#: src/dialogs.c:793
+#: src/dialogs.c:807
 msgid "User:"
 msgstr "사용자:"
 
-#: src/dialogs.c:802
+#: src/dialogs.c:816
 msgid "Account:"
 msgstr "계정:"
 
-#: src/dialogs.c:851
+#. Finish up
+#: src/dialogs.c:865
 msgid "Gaim - Get User Info"
 msgstr "가임 - 사용자 정보 보기"
 
-#: src/dialogs.c:965
+#: src/dialogs.c:979
 msgid "Add Group"
 msgstr "그룹 추가"
 
-#: src/dialogs.c:990
+#: src/dialogs.c:1004
 msgid "Gaim - Add Group"
 msgstr "가임 - 그룹 추가"
 
-#: src/dialogs.c:1074
+#: src/dialogs.c:1088
 msgid "Gaim - Add Buddy"
 msgstr "가임 - 친구 추가"
 
-#: src/dialogs.c:1086
+#: src/dialogs.c:1100
 msgid "Add Buddy"
 msgstr "친구 추가"
 
-#: src/dialogs.c:1096
+#: src/dialogs.c:1110
 msgid "Contact"
 msgstr "아이디"
 
-#: src/dialogs.c:1122
+#. Set up stuff for the account box
+#: src/dialogs.c:1136
 msgid "Add To"
 msgstr "계정"
 
-#: src/dialogs.c:1417
+#: src/dialogs.c:1431
 #, fuzzy
 msgid "Gaim - Privacy"
 msgstr "가임 - 자리비움!"
 
-#: src/dialogs.c:1429
+#: src/dialogs.c:1443
 msgid "Privacy settings are affected immediately."
 msgstr ""
 
-#: src/dialogs.c:1437
+#: src/dialogs.c:1451
 msgid "Set privacy for:"
 msgstr "설정할 계정:"
 
-#: src/dialogs.c:1456
+#: src/dialogs.c:1470
 msgid "Allow all users to contact me"
 msgstr "모든 사용자가 연락할 수 있도록 허용"
 
-#: src/dialogs.c:1457
+#: src/dialogs.c:1471
 msgid "Allow only the users below"
 msgstr "허용 목록에 있는 사용자만 연락할 수 있도록 허용"
 
-#: src/dialogs.c:1459
+#: src/dialogs.c:1473
 msgid "Allow List"
 msgstr "허용 목록"
 
-#: src/dialogs.c:1490
+#: src/dialogs.c:1504
 msgid "Deny all users"
 msgstr "모든 사용자를 거부"
 
-#: src/dialogs.c:1491
+#: src/dialogs.c:1505
 msgid "Block the users below"
 msgstr "차단 목록에 있는 사용자를 차단"
 
-#: src/dialogs.c:1493
+#: src/dialogs.c:1507
 msgid "Block List"
 msgstr "차단 목록"
 
-#: src/dialogs.c:1546
+#: src/dialogs.c:1560
 msgid "Please enter a buddy to pounce."
 msgstr "친구알림에 등록할 친구를 입력하세요."
 
-#: src/dialogs.c:1546
-msgid "Buddy Pounce Error"
-msgstr "친구알림 오류"
-
-#: src/dialogs.c:1682
+#: src/dialogs.c:1696
 msgid "Gaim - New Buddy Pounce"
 msgstr "가임 - 새 친구알림"
 
-#: src/dialogs.c:1693
+#. <pounce type="who">
+#: src/dialogs.c:1707
 msgid "Pounce Who"
 msgstr "친구알림 - 누구?"
 
-#: src/dialogs.c:1704
+#: src/dialogs.c:1718
 msgid "Account"
 msgstr "계정"
 
-#: src/dialogs.c:1730
+#. </pounce type="who">
+#. <pounce type="when">
+#: src/dialogs.c:1744
 msgid "Pounce When"
 msgstr "친구알림 - 언제?"
 
-#: src/dialogs.c:1740
+#: src/dialogs.c:1754
 msgid "Pounce on sign on"
 msgstr "친구가 접속할 때 알림"
 
-#: src/dialogs.c:1749
+#: src/dialogs.c:1763
 msgid "Pounce on return from away"
 msgstr "친구가 자리비움에서 돌아올 때 알림"
 
-#: src/dialogs.c:1758
+#: src/dialogs.c:1772
 msgid "Pounce on return from idle"
 msgstr "친구가 사용한암에서 돌아올 때 알림"
 
-#: src/dialogs.c:1767
+#: src/dialogs.c:1781
 msgid "Pounce when buddy is typing to you"
 msgstr "친구가 나에게 타이핑을 하면 알림"
 
-#: src/dialogs.c:1777
+#. </pounce type="when">
+#. <pounce type="action">
+#: src/dialogs.c:1791
 msgid "Pounce Action"
 msgstr "친구알림 - 행동?"
 
-#: src/dialogs.c:1788
+#: src/dialogs.c:1802
 msgid "Open IM Window"
 msgstr "메시지 창 열기"
 
-#: src/dialogs.c:1797
+#: src/dialogs.c:1811
 msgid "Popup Notification"
 msgstr "팝업창으로 정보 전달"
 
-#: src/dialogs.c:1806
+#: src/dialogs.c:1820 src/prefs.c:395
 msgid "Send Message"
 msgstr "메시지 보내기"
 
-#: src/dialogs.c:1827
+#: src/dialogs.c:1841
 msgid "Execute command on pounce"
 msgstr "친구알림시 명령 실행"
 
-#: src/dialogs.c:1849
+#: src/dialogs.c:1863
 msgid "Play sound on pounce"
 msgstr "친구알림시 소리 내기"
 
-#: src/dialogs.c:1871
+#. </pounce type="action">
+#: src/dialogs.c:1885
 msgid "Save this pounce after activation"
 msgstr "다음번 작동시 이 친구알림을 저장"
 
-#: src/dialogs.c:1957
+#: src/dialogs.c:1971
 msgid "Gaim - Set Dir Info"
 msgstr "가임 - 디렉토리 정보 설정"
 
-#: src/dialogs.c:1966
+#: src/dialogs.c:1980
 msgid "Directory Info"
 msgstr "디렉토리 정보"
 
-#: src/dialogs.c:1988
+#: src/dialogs.c:2002
 msgid "Allow Web Searches To Find Your Info"
 msgstr "웹을 통하여 나의 정보를 검색할 수 있도록 허용"
 
-#: src/dialogs.c:1991 src/dialogs.c:2696
+#. Line 1
+#: src/dialogs.c:2005 src/dialogs.c:2710
 msgid "First Name"
 msgstr "성"
 
-#: src/dialogs.c:2002 src/dialogs.c:2708
+#. Line 2
+#: src/dialogs.c:2016 src/dialogs.c:2722
 msgid "Middle Name"
 msgstr "중간 이름"
 
-#: src/dialogs.c:2014 src/dialogs.c:2720
+#. Line 3
+#: src/dialogs.c:2028 src/dialogs.c:2734
 msgid "Last Name"
 msgstr "이름"
 
-#: src/dialogs.c:2025 src/dialogs.c:2732
+#. Line 4
+#: src/dialogs.c:2039 src/dialogs.c:2746
 msgid "Maiden Name"
 msgstr "결혼 전 이름"
 
-#: src/dialogs.c:2047 src/dialogs.c:2755
+#. Line 6
+#: src/dialogs.c:2061 src/dialogs.c:2769
 msgid "State"
 msgstr "시/도"
 
-#: src/dialogs.c:2112
+#: src/dialogs.c:2126
 msgid "New Passwords Do Not Match"
 msgstr "새 패스워드가 일치하지 않습니다"
 
-#: src/dialogs.c:2112 src/dialogs.c:2117
-msgid "Gaim - Change Password Error"
-msgstr "가임 - 비밀번호 변경 실패"
-
-#: src/dialogs.c:2117
+#: src/dialogs.c:2131
 msgid "Fill out all fields completely"
 msgstr "모든 항목을 완전히 채우십시요"
 
-#: src/dialogs.c:2172
+#: src/dialogs.c:2156
+msgid "Gaim - Password Change"
+msgstr "가임 - 비밀번호 변경"
+
+#: src/dialogs.c:2186
 msgid "Original Password"
 msgstr "예전 비밀번호"
 
-#: src/dialogs.c:2186
+#: src/dialogs.c:2200
 msgid "New Password"
 msgstr "새 비밀번호"
 
-#: src/dialogs.c:2200
+#: src/dialogs.c:2214
 msgid "New Password (again)"
 msgstr "새 비밀번호 확인"
 
-#: src/dialogs.c:2241
+#: src/dialogs.c:2255
 msgid "Gaim - Set User Info"
 msgstr "가임 - 사용자 정보 설정"
 
-#: src/dialogs.c:2353
+#: src/dialogs.c:2367
 msgid "Below are the results of your search: "
 msgstr "검색 결과는 다음과 같습니다: "
 
-#: src/dialogs.c:2486 src/dialogs.c:2493
+#: src/dialogs.c:2500 src/dialogs.c:2507
 msgid "Permit"
 msgstr "허용"
 
-#: src/dialogs.c:2488 src/dialogs.c:2495
+#: src/dialogs.c:2502 src/dialogs.c:2509
 msgid "Deny"
 msgstr "거부"
 
-#: src/dialogs.c:2532
+#: src/dialogs.c:2546
 msgid "Gaim - Add Permit"
 msgstr "가임 - 허용 목록 추가"
 
-#: src/dialogs.c:2534
+#: src/dialogs.c:2548
 msgid "Gaim - Add Deny"
 msgstr "가임 - 거부 목록 추가"
 
-#: src/dialogs.c:2594
+#: src/dialogs.c:2608
 msgid "Gaim - Log Conversation"
 msgstr "가임 - 대화 기록"
 
-#: src/dialogs.c:2672 src/dialogs.c:2835
+#: src/dialogs.c:2686 src/dialogs.c:2849
 msgid "Search for Buddy"
 msgstr "친구 찾기"
 
-#: src/dialogs.c:2800
+#: src/dialogs.c:2814
 msgid "Gaim - Find Buddy By Info"
 msgstr "가임 - 정보로 친구 찾기"
 
-#: src/dialogs.c:2829
+#: src/dialogs.c:2843
 msgid "Gaim - Find Buddy By Email"
 msgstr "가임 - 메일 주소로 친구 찾기"
 
-#: src/dialogs.c:2969
+#: src/dialogs.c:2983
 msgid "Gaim - Add URL"
 msgstr "가임 - URL 추가"
 
-#: src/dialogs.c:3083 src/dialogs.c:3104 src/dialogs.c:3158
+#: src/dialogs.c:3097 src/dialogs.c:3118 src/dialogs.c:3172
 msgid "Select Text Color"
 msgstr "글자 색깔 선택"
 
-#: src/dialogs.c:3137
+#: src/dialogs.c:3151
 msgid "Select Background Color"
 msgstr "글자 바탕색 선택"
 
-#: src/dialogs.c:3340
+#: src/dialogs.c:3354
 msgid "Import to:"
 msgstr "가져오기 :"
 
-#: src/dialogs.c:3364
+#: src/dialogs.c:3378
 msgid "Gaim - Import Buddy List"
 msgstr "가임 - 친구목록 가져오기"
 
-#: src/dialogs.c:3431
-msgid "You cannot create an away message with a blank title"
+#. We shouldn't allow a blank title
+#: src/dialogs.c:3445
+#, fuzzy
+msgid "You cannot save an away message with a blank title"
 msgstr "자리비움 메시지의 제목은 비어 있으면 안 됩니다"
 
-#: src/dialogs.c:3438
+#: src/dialogs.c:3446
+msgid ""
+"Please give the message a title, or choose \"Make Away\" to use without "
+"saving."
+msgstr ""
+
+#. We shouldn't allow a blank message
+#: src/dialogs.c:3453
 msgid "You cannot create an empty away message"
 msgstr "자리비움 메시지는 비어 있으면 안 됩니다"
 
-#: src/dialogs.c:3506
+#: src/dialogs.c:3521
 msgid "Gaim - New away message"
 msgstr "가임 - 새 자리비움 메시지"
 
-#: src/dialogs.c:3516
+#: src/dialogs.c:3531
 msgid "New away message"
 msgstr "새 자리비움 메시지"
 
-#: src/dialogs.c:3529
+#: src/dialogs.c:3544
 msgid "Away title: "
 msgstr "자리비움 제목: "
 
-#: src/dialogs.c:3590
+#: src/dialogs.c:3605
 msgid "Use"
 msgstr "사용"
 
-#: src/dialogs.c:3594
+#: src/dialogs.c:3609
 msgid "Save & Use"
 msgstr "저장 및 사용"
 
-#: src/dialogs.c:3791
+#. show everything
+#: src/dialogs.c:3806
 msgid "Smile!"
 msgstr "웃으세요!"
 
-#: src/dialogs.c:3844
+#: src/dialogs.c:3859
 msgid "Alias Buddy"
 msgstr "친구 별명 설정"
 
-#: src/dialogs.c:3877
+#: src/dialogs.c:3892
 msgid "Gaim - Alias Buddy"
 msgstr "가임 - 별명 설정"
 
-#: src/dialogs.c:3949
+#: src/dialogs.c:3933 src/dialogs.c:3940
+#, fuzzy, c-format
+msgid "Couldn't write to %s."
+msgstr "호스트에 연결할 수 없습니다."
+
+#: src/dialogs.c:3964
 msgid "Gaim - Save Log File"
 msgstr "가임 - 로그파일 저장"
 
-#: src/dialogs.c:3981
-#, c-format
-msgid "Unable to remove file %s - %s"
-msgstr "%s 파일을 지울 수 없습니다. - %s"
+#: src/dialogs.c:3996
+#, fuzzy, c-format
+msgid "Couldn't remove file %s."
+msgstr "설정 파일 %s를 열 수 없습니다."
 
-#: src/dialogs.c:4009
+#: src/dialogs.c:4024
 msgid "Really clear log?"
 msgstr "정말로 로그를 지울까요?"
 
-#: src/dialogs.c:4024
+#: src/dialogs.c:4039
 msgid "Okay"
 msgstr "확인"
 
-#: src/dialogs.c:4195
+#: src/dialogs.c:4210
 msgid "Date"
 msgstr "날짜"
 
-#: src/dialogs.c:4258
+#: src/dialogs.c:4273
 msgid "Conversation"
 msgstr "대화"
 
-#: src/dialogs.c:4281
+#: src/dialogs.c:4296
 msgid "Clear"
 msgstr "지우기"
 
-#: src/dialogs.c:4363
+#: src/dialogs.c:4378
 msgid "Gaim - Rename Group"
 msgstr "가임 - 그룹 이름 변경"
 
-#: src/dialogs.c:4373
+#: src/dialogs.c:4388
 msgid "Rename Group"
 msgstr "그룹 이름 변경"
 
-#: src/dialogs.c:4380 src/dialogs.c:4486
+#: src/dialogs.c:4395 src/dialogs.c:4501
 msgid "New name:"
 msgstr "새 이름:"
 
-#: src/dialogs.c:4469
+#: src/dialogs.c:4484
 msgid "Gaim - Rename Buddy"
 msgstr "가임 - 친구 이름 변경"
 
-#: src/dialogs.c:4479
+#: src/dialogs.c:4494
 msgid "Rename Buddy"
 msgstr "친구 이름 변경"
 
-#: src/dialogs.c:4563
+#. Below is basically stolen from plugins.c
+#: src/dialogs.c:4578
 msgid "Gaim - Select Perl Script"
 msgstr "가임 - 펄 스크립트 선택"
 
-#: src/gaimrc.c:1141
+#: src/gaimrc.c:1242
 #, c-format
 msgid "Could not open config file %s."
 msgstr "설정 파일 %s를 열 수 없습니다."
-
-#: src/gaimrc.c:1142
-msgid "Preferences Error"
-msgstr "환경설정 오류"
 
 #: src/html.c:183
 #, c-format
@@ -2704,10 +2810,10 @@ msgstr "받은내용: '%s'\n"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: 연결 오류.\n"
 
-#: src/module.c:106 src/module.c:112 src/module.c:122
+#: src/module.c:106 src/module.c:112
 #, fuzzy
-msgid "Plugin Error"
-msgstr "로그인 오류"
+msgid "Gaim was unable to load your plugin."
+msgstr "메시지를 보낼 수 없습니다"
 
 #: src/multi.c:454
 msgid "Gaim - Load Buddy Icon"
@@ -2721,7 +2827,7 @@ msgstr "친구 아이콘 파일:"
 msgid "Browse"
 msgstr "탐색"
 
-#: src/multi.c:513 src/prefs.c:1344
+#: src/multi.c:513 src/prefs.c:1066
 msgid "Reset"
 msgstr "리셋"
 
@@ -2762,17 +2868,22 @@ msgid "Enter Password"
 msgstr "패스워드"
 
 #: src/multi.c:948
+msgid "TOC not found."
+msgstr ""
+
+#: src/multi.c:949
 msgid ""
 "You have attempted to login an IM account using the TOC protocol.  Because "
 "this protocol is inferior to OSCAR, it is now compiled as a plugin by "
 "default.  To login, edit this account to use OSCAR or load the TOC plugin."
 msgstr ""
 
-#: src/multi.c:952 src/multi.c:956
-msgid "Login Error"
-msgstr "로그인 오류"
+#: src/multi.c:955
+#, fuzzy
+msgid "Protocol not found."
+msgstr "프로토콜 세부 설정"
 
-#: src/multi.c:954
+#: src/multi.c:956
 msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
@@ -2780,67 +2891,67 @@ msgstr ""
 "이 계정에 로그온할 수 없습니다. 해당 프로토콜을 설치하지 않았거나 해당 프로토"
 "콜에 로그인 기능이 없습니다."
 
-#: src/multi.c:985
+#: src/multi.c:987
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "정말 %s를 삭제할까요?"
 
-#: src/multi.c:1022
+#: src/multi.c:1024
 msgid "Gaim - Account Editor"
 msgstr "가임 - 계정 편집기"
 
-#: src/multi.c:1041
+#: src/multi.c:1043
 msgid "Select All"
 msgstr "모두 선택"
 
-#: src/multi.c:1046
+#: src/multi.c:1048
 msgid "Select Autos"
 msgstr "자동접속 선택"
 
-#: src/multi.c:1050
+#: src/multi.c:1052
 msgid "Select None"
 msgstr "모두 취소"
 
-#: src/multi.c:1064
+#: src/multi.c:1066
 msgid "Modify"
 msgstr "편집"
 
-#: src/multi.c:1068
+#: src/multi.c:1070
 msgid "Sign On/Off"
 msgstr "접속/끊기"
 
-#: src/multi.c:1072
+#: src/multi.c:1074
 msgid "Delete"
 msgstr "삭제"
 
-#: src/multi.c:1387
+#: src/multi.c:1389
 #, c-format
 msgid ""
 "%s\n"
 "%s: %s"
 msgstr ""
 
-#: src/multi.c:1406
+#: src/multi.c:1408
 #, c-format
 msgid "%s was unable to sign on"
 msgstr "%s가 연결할 수 없습니다"
 
-#: src/multi.c:1417
+#: src/multi.c:1409
+msgid "Signon Error"
+msgstr "접속 오류"
+
+#: src/multi.c:1419
 msgid "Notice"
 msgstr "알림"
 
-#: src/multi.c:1427
+#: src/multi.c:1429
 #, c-format
 msgid "%s has been signed off"
 msgstr "%s의 연결이 끊겼습니다"
 
-#: src/multi.c:1428
+#: src/multi.c:1430
 msgid "Connection Error"
 msgstr "연결 오류"
-
-#: src/perl.c:879
-msgid "Perl Scripts"
-msgstr "펄 스크립트"
 
 #: src/plugins.c:120
 msgid "Gaim - Plugin List"
@@ -2851,10 +2962,12 @@ msgstr "가임 - 플러그인 목록"
 msgid "Gaim - Plugins"
 msgstr "가임 - 플러그인 목록"
 
+#. Left side: frame with list of plugin file names
 #: src/plugins.c:221
 msgid "Loaded Plugins"
 msgstr "플러그인"
 
+#. Right side: frame with description and the filepath of plugin
 #: src/plugins.c:265
 #, fuzzy
 msgid "Selected Plugin"
@@ -2900,427 +3013,596 @@ msgstr "선택된 플러그인 사용안함"
 msgid "Close this window"
 msgstr "창 닫기"
 
-#: src/prefs.c:266
+#: src/prefs.c:279
 #, fuzzy
-msgid "Windows"
-msgstr "메시지 창"
+msgid "Interface Options"
+msgstr "일반 옵션"
 
-#: src/prefs.c:276
-msgid "Show Debug Window"
+#. This shouldn't have to wait for user to click OK or APPLY or whatnot
+#. This really shouldn't be in preferences at all
+#: src/prefs.c:282
+#, fuzzy
+msgid "Show _Debug Window"
 msgstr "디버그 창 보여줌"
 
-#: src/prefs.c:280 src/prefs.c:302
+#: src/prefs.c:285
+#, fuzzy
+msgid "Use _borderless buttons"
+msgstr "테두리없는 버튼 사용"
+
+#: src/prefs.c:301
 #, fuzzy
 msgid "Style"
 msgstr "시/도"
 
-#: src/prefs.c:286
-msgid "Use borderless buttons"
-msgstr "테두리없는 버튼 사용"
-
-#: src/prefs.c:311
+#: src/prefs.c:302
 #, fuzzy
-msgid "Strikethough"
+msgid "_Bold"
+msgstr "두껍게"
+
+#: src/prefs.c:303
+#, fuzzy
+msgid "_Italics"
+msgstr "기울임"
+
+#: src/prefs.c:304
+#, fuzzy
+msgid "_Underline"
+msgstr "밑줄"
+
+#: src/prefs.c:305
+#, fuzzy
+msgid "_Strikethough"
 msgstr "가운데줄 친 글씨"
 
-#: src/prefs.c:315
+#: src/prefs.c:307
 #, fuzzy
 msgid "Face"
 msgstr "취소"
 
-#: src/prefs.c:323
+#: src/prefs.c:310
 #, fuzzy
-msgid "Use custom face"
+msgid "Use custo_m face"
 msgstr "스마일리 아이콘 삽입"
 
-#: src/prefs.c:327 src/prefs.c:366 src/prefs.c:387
-msgid "Select"
-msgstr "선택"
-
-#: src/prefs.c:341
-msgid "Use custom size"
-msgstr ""
-
-#: src/prefs.c:359
+#: src/prefs.c:322
 #, fuzzy
-msgid "Text color"
+msgid "Use custom si_ze"
+msgstr "스마일리 아이콘 삽입"
+
+#: src/prefs.c:334
+#, fuzzy
+msgid "_Text color"
 msgstr "글자 색깔"
+
+#: src/prefs.c:350
+#, fuzzy
+msgid "Bac_kground color"
+msgstr "글자 바탕 색깔"
+
+#: src/prefs.c:373 src/prefs.c:468 src/prefs.c:508
+#, fuzzy
+msgid "Display"
+msgstr "친구 표시"
+
+#: src/prefs.c:374
+#, fuzzy
+msgid "Show graphical _smileys"
+msgstr "이모티콘을 그림으로 보여주기"
+
+#: src/prefs.c:375
+#, fuzzy
+msgid "Show _timestamp on messages"
+msgstr "메시지에 시간 표시"
+
+#: src/prefs.c:376
+#, fuzzy
+msgid "Show _URLs as links"
+msgstr "URL 을 링크로 보여주기"
+
+#: src/prefs.c:377
+#, fuzzy
+msgid "_Highlight misspelled words"
+msgstr "틀린 철자를 강조하여 표시"
+
+#: src/prefs.c:380
+#, fuzzy
+msgid "Ignore c_olors"
+msgstr "색깔 무시"
 
 #: src/prefs.c:381
 #, fuzzy
-msgid "Background color"
-msgstr "글자 바탕 색깔"
-
-#: src/prefs.c:419
-msgid "Show graphical smileys"
-msgstr "이모티콘을 그림으로 보여주기"
-
-#: src/prefs.c:420
-msgid "Show timestamp on messages"
-msgstr "메시지에 시간 표시"
-
-#: src/prefs.c:421
-msgid "Show URLs as links"
-msgstr "URL 을 링크로 보여주기"
-
-#: src/prefs.c:422
-msgid "Highlight misspelled words"
-msgstr "틀린 철자를 강조하여 표시"
-
-#: src/prefs.c:432
-msgid "Ignore colors"
-msgstr "색깔 무시"
-
-#: src/prefs.c:433
-msgid "Ignore font faces"
+msgid "Ignore font _faces"
 msgstr "글꼴 무시"
 
-#: src/prefs.c:434
-msgid "Ignore font sizes"
+#: src/prefs.c:382
+#, fuzzy
+msgid "Ignore font si_zes"
 msgstr "글자 크기 무시"
 
-#: src/prefs.c:435
-msgid "Ignore TiK Automated Messages"
+#: src/prefs.c:383
+#, fuzzy
+msgid "Ignore Ti_K Automated Messages"
 msgstr "TiK 자동화된 메시지 무시"
 
-#: src/prefs.c:455
-msgid "Enter sends message"
+#: src/prefs.c:396
+#, fuzzy
+msgid "_Enter sends message"
 msgstr "엔터키를 누르면 메시지 보내기"
 
-#: src/prefs.c:456
-msgid "Control-Enter sends message"
+#: src/prefs.c:397
+#, fuzzy
+msgid "C_ontrol-Enter sends message"
 msgstr "컨트롤-엔터키를 누르면 메시지 보내기"
 
-#: src/prefs.c:465
-msgid "Escape closes window"
+#: src/prefs.c:399
+#, fuzzy
+msgid "Window Closing"
+msgstr "메시지 창"
+
+#: src/prefs.c:400
+#, fuzzy
+msgid "E_scape closes window"
 msgstr "Esc 키를 누르면 창 닫음"
 
-#: src/prefs.c:466
-msgid "Control-W closes window"
+#: src/prefs.c:401
+#, fuzzy
+msgid "Control-_W closes window"
 msgstr "컨트롤-W 키를 누르면 창 닫음"
 
-#: src/prefs.c:476
-msgid "Control-{B/I/U/S} inserts HTML tags"
+#: src/prefs.c:404
+#, fuzzy
+msgid "Control-{B/I/U/S} inserts _HTML tags"
 msgstr "컨트롤-{B/I/U/S}를 사용해 HTL 태그 삽입"
 
-#: src/prefs.c:477
-msgid "Control-(number) inserts smileys"
+#: src/prefs.c:405
+#, fuzzy
+msgid "Control-(number) inserts _smileys"
 msgstr "컨트롤-(숫자)를 사용하여 그림 삽입"
 
-#: src/prefs.c:496
-msgid "Hide IM/Info/Chat buttons"
+#: src/prefs.c:417
+#, fuzzy
+msgid "Buttons"
+msgstr "아래"
+
+#: src/prefs.c:418
+#, fuzzy
+msgid "_Hide IM/Info/Chat buttons"
 msgstr "메시지/채팅/정보/자리비움 버튼 숨기기"
 
-#: src/prefs.c:497
-msgid "Show pictures on buttons"
+#: src/prefs.c:419
+#, fuzzy
+msgid "Show _pictures on buttons"
 msgstr "버튼을 그림으로 보여주기"
 
-#: src/prefs.c:507
-msgid "Automatically show buddy list on sign on"
-msgstr "로그온 할 때 친구목록을 자동으로 보여줌"
+#: src/prefs.c:421
+msgid "Buddy List Window"
+msgstr "친구목록창"
 
-#: src/prefs.c:509
-msgid "Display Buddy List near applet"
-msgstr "친구목록을 애플릿 부근에 표시"
-
-#: src/prefs.c:512
-msgid "Save Window Size/Position"
+#: src/prefs.c:422
+#, fuzzy
+msgid "_Save Window Size/Position"
 msgstr "일부 창의 위치와 크기 저장"
 
-#: src/prefs.c:513
+#: src/prefs.c:423
 #, fuzzy
-msgid "Raise Window on Events"
+msgid "_Raise Window on Events"
 msgstr "메시지가 오면 자동으로 창 올림"
 
-#: src/prefs.c:522
-msgid "Hide groups with no online buddies"
+#: src/prefs.c:425
+#, fuzzy
+msgid "Group Display"
+msgstr "그룹 표시"
+
+#: src/prefs.c:426
+#, fuzzy
+msgid "Hide _groups with no online buddies"
 msgstr "접속된 친구가 없는 그룹 숨기기"
 
-#: src/prefs.c:523
-msgid "Show numbers in groups"
+#: src/prefs.c:427
+#, fuzzy
+msgid "Show _numbers in groups"
 msgstr "그룹에 인원 표시"
 
-#: src/prefs.c:532
-msgid "Show buddy type icons"
+#: src/prefs.c:429
+#, fuzzy
+msgid "Buddy Display"
+msgstr "친구 표시"
+
+#: src/prefs.c:430
+#, fuzzy
+msgid "Show buddy type _icons"
 msgstr "친구 종류 그림 보여주기"
 
-#: src/prefs.c:533
-msgid "Show warning levels"
+#: src/prefs.c:431
+#, fuzzy
+msgid "Show _warning levels"
 msgstr "경고 수준 표시"
 
-#: src/prefs.c:534
-msgid "Show idle times"
+#: src/prefs.c:432
+#, fuzzy
+msgid "Show idle _times"
 msgstr "사용 안한 시간 보여주기"
 
-#: src/prefs.c:535
-msgid "Grey idle buddies"
+#: src/prefs.c:433
+#, fuzzy
+msgid "Grey i_dle buddies"
 msgstr "자리비운 친구를 회색으로 표시하기"
 
-#: src/prefs.c:564 src/prefs.c:626
-msgid "New window width:"
+#: src/prefs.c:450 src/prefs.c:492
+#, fuzzy
+msgid "Window"
+msgstr "메시지 창"
+
+#: src/prefs.c:457 src/prefs.c:499
+#, fuzzy
+msgid "New window _width:"
 msgstr "새 대화창의 가로 크기"
 
-#: src/prefs.c:565 src/prefs.c:627
-msgid "New window height:"
+#: src/prefs.c:458 src/prefs.c:500
+#, fuzzy
+msgid "New window _height:"
 msgstr "새 대화창의 세로 크기"
 
-#: src/prefs.c:566 src/prefs.c:628
-msgid "Entry widget height:"
+#: src/prefs.c:459 src/prefs.c:501
+#, fuzzy
+msgid "_Entry widget height:"
 msgstr "엔트리 위젯의 높이"
 
-#: src/prefs.c:567 src/prefs.c:629
-msgid "Raise windows on events"
+#: src/prefs.c:460 src/prefs.c:502
+#, fuzzy
+msgid "_Raise windows on events"
 msgstr "메시지가 오면 자동으로 창 올림"
 
-#: src/prefs.c:568
-msgid "Hide window on send"
+#: src/prefs.c:461
+#, fuzzy
+msgid "Hide window on _send"
 msgstr "메시지를 보낸 후 자동으로 창 닫기"
 
-#: src/prefs.c:577
-msgid "Hide Buddy Icons"
+#: src/prefs.c:464
+msgid "Buddy Icons"
+msgstr "친구 아이콘"
+
+#: src/prefs.c:465
+#, fuzzy
+msgid "Hide Buddy _Icons"
 msgstr "친구 아이콘 숨김"
 
-#: src/prefs.c:578
-msgid "Disable Buddy Icon Animation"
+#: src/prefs.c:466
+#, fuzzy
+msgid "Disable Buddy Icon A_nimation"
 msgstr "애니매이션 사용안함"
 
-#: src/prefs.c:587
-msgid "Show logins in window"
+#: src/prefs.c:469
+#, fuzzy
+msgid "Show _logins in window"
 msgstr "창에서 접속 보여주기"
 
-#: src/prefs.c:596
-msgid "Notify buddies that you are typing to them"
+#: src/prefs.c:471
+#, fuzzy
+msgid "Typing Notification"
+msgstr "팝업창으로 정보 전달"
+
+#: src/prefs.c:472
+#, fuzzy
+msgid "Notify buddies that you are _typing to them"
 msgstr "내가 친구에게 타이핑할 때 알림"
 
-#: src/prefs.c:638
-msgid "Tab-Complete Nicks"
+#: src/prefs.c:504
+msgid "Tab Completion"
+msgstr "자동완성"
+
+#: src/prefs.c:505
+#, fuzzy
+msgid "_Tab-Complete Nicks"
 msgstr "탭 키로 별명 자동완성하기"
 
-#: src/prefs.c:639
-msgid "Old-Style Tab Completion"
+#: src/prefs.c:506
+#, fuzzy
+msgid "_Old-Style Tab Completion"
 msgstr "예전 방식의 자동완성하기"
 
-#: src/prefs.c:648
-msgid "Show people joining/leaving in window"
+#: src/prefs.c:509
+#, fuzzy
+msgid "_Show people joining/leaving in window"
 msgstr "친구가 참가하는/떠나는것을 창으로 보여줌"
 
-#: src/prefs.c:649
-msgid "Colorize screennames"
+#: src/prefs.c:510
+msgid "Co_lorize screennames"
 msgstr ""
 
-#: src/prefs.c:674
+#: src/prefs.c:526
+msgid "IM Tabs"
+msgstr ""
+
+#: src/prefs.c:533
 #, fuzzy
 msgid ""
-"Show all Instant Messages in one tabbed\n"
+"Show all _Instant Messages in one tabbed\n"
 "window"
 msgstr "모든 채팅을 하나의 창에서 탭으로 보여줌"
 
-#: src/prefs.c:675
+#: src/prefs.c:534
 #, fuzzy
-msgid "Show aliases in tabs/titles"
+msgid "Show a_liases in tabs/titles"
 msgstr "탭 또는 제목에 별명 보여주기"
 
-#: src/prefs.c:690
-msgid "Show all chats in one tabbed window"
+#: src/prefs.c:536
+#, fuzzy
+msgid "Chat Tabs"
+msgstr "채팅"
+
+#: src/prefs.c:543
+#, fuzzy
+msgid "Show all c_hats in one tabbed window"
 msgstr "모든 채팅을 하나의 창에서 탭으로 보여줌"
 
-#: src/prefs.c:700
+#: src/prefs.c:546
+msgid "Combined Tabs"
+msgstr ""
+
+#: src/prefs.c:547
 #, fuzzy
 msgid ""
-"Show IMs and chats in same tabbed\n"
+"Show IMs and chats in _same tabbed\n"
 "window."
 msgstr "채팅도 대화와 같은 창에서 탭으로 보여줌"
 
-#: src/prefs.c:747
+#: src/prefs.c:549
+#, fuzzy
+msgid "Buddy List Tabs"
+msgstr "친구 목록"
+
+#: src/prefs.c:570
+msgid "Proxy Type"
+msgstr "프록시 종류"
+
+#: src/prefs.c:582
 msgid "Proxy Server"
 msgstr "프록시 서버"
 
-#: src/prefs.c:764
-msgid "Host"
+#: src/prefs.c:595
+#, fuzzy
+msgid "_Host"
 msgstr "호스트"
 
-#: src/prefs.c:780
+#: src/prefs.c:609
 msgid "Port"
 msgstr "포트"
 
-#: src/prefs.c:797
-msgid "User"
+#: src/prefs.c:625
+#, fuzzy
+msgid "_User"
 msgstr "사용자"
 
-#: src/prefs.c:813
-msgid "Password"
+#: src/prefs.c:639
+#, fuzzy
+msgid "Pa_ssword"
 msgstr "패스워드"
 
-#: src/prefs.c:873
+#: src/prefs.c:670
+msgid "Browser Selection"
+msgstr ""
+
+#: src/prefs.c:697
 #, fuzzy
-msgid "Open new window by default"
+msgid "Browser Options"
+msgstr "프록시 옵션"
+
+#: src/prefs.c:698
+#, fuzzy
+msgid "Open new _window by default"
 msgstr "기본으로 새 창 열기"
 
-#: src/prefs.c:892
-msgid "Log all conversations"
+#: src/prefs.c:710
+#, fuzzy
+msgid "Message Logs"
+msgstr "메시지"
+
+#: src/prefs.c:711
+#, fuzzy
+msgid "_Log all conversations"
 msgstr "모든 대화를 기록"
 
-#: src/prefs.c:893
-msgid "Strip HTML from logs"
+#: src/prefs.c:712
+#, fuzzy
+msgid "Strip _HTML from logs"
 msgstr "HTML 태그는 빼고 기록"
 
-#: src/prefs.c:902
-msgid "Log when buddies sign on/sign off"
+#: src/prefs.c:714
+#, fuzzy
+msgid "System Logs"
+msgstr "시스템 로그 보기"
+
+#: src/prefs.c:715
+#, fuzzy
+msgid "Log when buddies _sign on/sign off"
 msgstr "친구의 접속/종료 기록"
 
-#: src/prefs.c:904
-msgid "Log when buddies become idle/un-idle"
+#: src/prefs.c:717
+#, fuzzy
+msgid "Log when buddies become _idle/un-idle"
 msgstr "친구의 사용안함/사용함 기록"
 
-#: src/prefs.c:906
-msgid "Log when buddies go away/come back"
+#: src/prefs.c:719
+#, fuzzy
+msgid "Log when buddies go away/come _back"
 msgstr "자신의 자리비움/돌아옴 기록"
 
-#: src/prefs.c:907
-msgid "Log your own signons/idleness/awayness"
+#: src/prefs.c:720
+#, fuzzy
+msgid "Log your _own signons/idleness/awayness"
 msgstr "자신의 연결/사용안함/자리비움 기록"
 
-#: src/prefs.c:909
-msgid "Individual log file for each buddy's signons"
+#: src/prefs.c:722
+#, fuzzy
+msgid "I_ndividual log file for each buddy's signons"
 msgstr "친구가 들어올 때 마다 각각의 로그파일 사용"
 
-#: src/prefs.c:952
-msgid "No sounds when you log in"
+#: src/prefs.c:749
+msgid "Sound Options"
+msgstr "소리 옵션"
+
+#: src/prefs.c:750
+#, fuzzy
+msgid "_No sounds when you log in"
 msgstr "접속시 소리 사용 안함"
 
-#: src/prefs.c:953
-msgid "Sounds while away"
+#: src/prefs.c:751
+#, fuzzy
+msgid "_Sounds while away"
 msgstr "자리비움시 소리 냄"
 
-#: src/prefs.c:990
-#, c-format
+#: src/prefs.c:753
+#, fuzzy
+msgid "Sound Method"
+msgstr "소리 내는 방법"
+
+#: src/prefs.c:777
+#, fuzzy, c-format
 msgid ""
-"Sound command\n"
+"Sound c_ommand\n"
 "(%s for filename)"
 msgstr ""
 "소리를 연주할 명령어\n"
 "(%s는 파일 이름)"
 
-#: src/prefs.c:1032
-msgid "Sending messages removes away status"
+#: src/prefs.c:813
+#, fuzzy
+msgid "_Sending messages removes away status"
 msgstr "메시지를 보내면 자리비움 상태에서 나오기"
 
-#: src/prefs.c:1033
-msgid "Queue new messages when away"
+#: src/prefs.c:814
+#, fuzzy
+msgid "_Queue new messages when away"
 msgstr "자리비움중에 오는 새 메시지 기억"
 
-#: src/prefs.c:1034
-msgid "Ignore new conversations when away"
+#: src/prefs.c:815
+#, fuzzy
+msgid "_Ignore new conversations when away"
 msgstr "자리비움시 새로운 대화 무시"
 
-#: src/prefs.c:1046
-msgid "Seconds before resending:"
-msgstr ""
-
-#: src/prefs.c:1049
-msgid "Don't send auto-response"
+#: src/prefs.c:817
+#, fuzzy
+msgid "Auto-response"
 msgstr "자동 답변을 보내지 않음"
 
-#: src/prefs.c:1050
-msgid "Only send auto-response when idle"
-msgstr "사용안함시에만 자동 답변 보내기"
-
-#: src/prefs.c:1077
-msgid "Set away when idle"
+#: src/prefs.c:820
+msgid "Seconds before _resending:"
 msgstr ""
 
-#: src/prefs.c:1191
+#: src/prefs.c:822
+#, fuzzy
+msgid "_Don't send auto-response"
+msgstr "자동 답변을 보내지 않음"
+
+#: src/prefs.c:823
+#, fuzzy
+msgid "_Only send auto-response when idle"
+msgstr "사용안함시에만 자동 답변 보내기"
+
+#: src/prefs.c:828
+#, fuzzy
+msgid "Idle"
+msgstr "처리:"
+
+#: src/prefs.c:839
+#, fuzzy
+msgid "Auto-away"
+msgstr "자리비움"
+
+#: src/prefs.c:840
+msgid "Set away _when idle"
+msgstr ""
+
+#: src/prefs.c:954
 msgid "Gaim - Sound Configuration"
 msgstr "가임 - 소리 설정"
 
-#: src/prefs.c:1339
+#: src/prefs.c:1062
 msgid "Test"
 msgstr "테스트"
 
-#: src/prefs.c:1349
+#: src/prefs.c:1070
 msgid "Choose..."
 msgstr "선택"
 
-#: src/prefs.c:1587
+#: src/prefs.c:1239
 #, fuzzy
 msgid "_Edit"
 msgstr "편집"
 
-#: src/prefs.c:1590
-msgid "Edit"
-msgstr "편집"
-
-#: src/prefs.c:1656
+#: src/prefs.c:1303
 #, fuzzy
 msgid "Interface"
 msgstr "인스턴스:"
 
-#: src/prefs.c:1657
+#: src/prefs.c:1304
 #, fuzzy
 msgid "Fonts"
 msgstr "글꼴"
 
-#: src/prefs.c:1658
+#: src/prefs.c:1305
 #, fuzzy
 msgid "Message Text"
 msgstr "메시지"
 
-#: src/prefs.c:1659
+#: src/prefs.c:1306
 msgid "Shortcuts"
 msgstr ""
 
-#: src/prefs.c:1661
+#: src/prefs.c:1308
 msgid "IM Window"
 msgstr "메시지 창"
 
-#: src/prefs.c:1662
+#: src/prefs.c:1309
 #, fuzzy
 msgid "Chat Window"
 msgstr "그룹 채팅 창"
 
-#: src/prefs.c:1663
+#: src/prefs.c:1310
 msgid "Tabs"
 msgstr ""
 
-#: src/prefs.c:1664
+#: src/prefs.c:1311
 msgid "Proxy"
 msgstr "프록시"
 
-#: src/prefs.c:1665
+#: src/prefs.c:1312
 msgid "Browser"
 msgstr "브라우저"
 
-#: src/prefs.c:1668
+#: src/prefs.c:1315
 msgid "Sounds"
 msgstr "소리"
 
-#: src/prefs.c:1669
+#: src/prefs.c:1316
 #, fuzzy
 msgid "Sound Events"
 msgstr "소리"
 
-#: src/prefs.c:1670
+#: src/prefs.c:1317
 #, fuzzy
 msgid "Away / Idle"
 msgstr "자리비움 제목: "
 
-#: src/prefs.c:1671
+#: src/prefs.c:1318
 msgid "Away Messages"
 msgstr "자리비움"
 
-#: src/prefs.c:1732
+#: src/prefs.c:1380
 msgid "Gaim - Preferences"
 msgstr "가임 - 환경설정"
 
-#: src/prefs.c:1842
-msgid "Apply"
-msgstr ""
-
-#: src/prefs.c:1891
+#: src/prefs.c:1519
 msgid "Gaim debug output window"
 msgstr "가임 디버그 출력 창"
 
 #: src/prpl.c:70
+msgid "Incompatible protocol detected."
+msgstr ""
+
+#: src/prpl.c:71
 msgid ""
 "You have attempted to load a protocol which was not compiled from the same "
 "version of the source as this application was. Unfortunately, because it is "
@@ -3330,11 +3612,11 @@ msgstr ""
 "같은 버전의 소스에서 컴파일되지 않은 프로토콜을 로드하려고 시도했습니다. 정상"
 "적으로 로드할 수 없습니다."
 
-#: src/prpl.c:74
-msgid "Protocol Error"
-msgstr "프로토콜 오류"
+#: src/prpl.c:85
+msgid "Libicq.so detected."
+msgstr ""
 
-#: src/prpl.c:84
+#: src/prpl.c:86
 msgid ""
 "Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, "
 "it was probably not compiled from the same version of the source as this "
@@ -3342,42 +3624,33 @@ msgid ""
 "you use the AIM/ICQ protocol to connect to ICQ"
 msgstr ""
 
-#: src/prpl.c:88
-#, fuzzy
-msgid "Protocol Warning"
-msgstr "프로토콜 세부 설정"
-
-#: src/prpl.c:103
+#: src/prpl.c:105
 #, c-format
 msgid "%s was using %s, which got removed. %s is now offline."
 msgstr "%s는 삭제된 %s를 사용했습니다. %s는 지금 오프라인입니다."
 
-#: src/prpl.c:106
-msgid "Disconnect"
-msgstr "끊어짐"
-
-#: src/prpl.c:143
+#: src/prpl.c:145
 msgid "Accept?"
 msgstr "받아들일까요?"
 
-#: src/prpl.c:209
+#: src/prpl.c:211
 msgid "Gaim - Prompt"
 msgstr "가임 - 질문"
 
-#: src/prpl.c:429
+#: src/prpl.c:431
 msgid "Gaim - New Mail"
 msgstr "가임 - 새 편지"
 
-#: src/prpl.c:455
+#: src/prpl.c:457
 msgid "Open Mail"
 msgstr "편지 열기"
 
-#: src/prpl.c:580
+#: src/prpl.c:582
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s님이 %s를 친구 목록에 추가 했습니다%s%s%s"
 
-#: src/prpl.c:588
+#: src/prpl.c:590
 msgid ""
 "\n"
 "\n"
@@ -3387,21 +3660,21 @@ msgstr ""
 "\n"
 "내 친구 목록에 추가할까요?"
 
-#: src/prpl.c:631
+#: src/prpl.c:633
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
 msgstr "현재 새 계정을 등록할 수 있는 프로토콜이 없습니다."
 
-#: src/prpl.c:668
+#: src/prpl.c:670
 msgid "Gaim - Registration"
 msgstr "가임 - 등록"
 
-#: src/prpl.c:683
+#: src/prpl.c:685
 msgid "Registration Information"
 msgstr "등록 정보"
 
-#: src/prpl.c:700
+#: src/prpl.c:702
 msgid "Register"
 msgstr "등록"
 
@@ -3417,10 +3690,6 @@ msgstr "(%d 메시지)"
 #: src/server.c:616
 msgid "(1 message)"
 msgstr "(1 메시지)"
-
-#: src/server.c:808
-msgid "Warned"
-msgstr "경고됨"
 
 #: src/server.c:901
 msgid "Yes"
@@ -3478,11 +3747,168 @@ msgstr ""
 msgid "Someone says your name in chat"
 msgstr ""
 
+#~ msgid "Gadu-Gadu Error"
+#~ msgstr "가두-가두 에러"
+
+#~ msgid "Gadu-Gadu Information"
+#~ msgstr "가두-가두 정보"
+
+#~ msgid "Couldn't send http request"
+#~ msgstr "http 요청을 보낼 수 없습니다."
+
+#~ msgid "Buddies List import from Server failed (%s)"
+#~ msgstr "서버에서 친구 목록을 가져오기 실패 (%s)"
+
+#~ msgid "Buddies List export to Server failed (%s)"
+#~ msgstr "친구 목록을 서버로 보내기 실패 (%s)"
+
+#~ msgid "Deletion of Buddies List from Server failed (%s)"
+#~ msgstr "서버에서 친구 목록 지우기 실패 (%s)"
+
+#~ msgid "Connect to search service failed (%s)"
+#~ msgstr "검색 서비스에 연결 실패 (%s)"
+
+#~ msgid "Changing Password failed (%s)"
+#~ msgstr "비밀번호 변경 실패 (%s)"
+
+#~ msgid "No such nick/channel"
+#~ msgstr "그런 대화명이나 채널이 없습니다."
+
+#~ msgid "IRC Error"
+#~ msgstr "IRC 오류"
+
+#~ msgid "No such server"
+#~ msgstr "그런 서버가 없습니다"
+
+#~ msgid "IRC Part"
+#~ msgstr "IRC에서 나가기"
+
+#, fuzzy
+#~ msgid "Password Change Error!"
+#~ msgstr "가임 - 비밀번호 변경"
+
+#, fuzzy
+#~ msgid "Password Change"
+#~ msgstr "가임 - 비밀번호 변경"
+
+#~ msgid "Invalid Jabber I.D."
+#~ msgstr "잘못된 재버 아이디"
+
+#~ msgid "MSN Error"
+#~ msgstr "MSN 오류"
+
+#~ msgid "Invalid name"
+#~ msgstr "잘못된 이름"
+
+#~ msgid "Chat Error!"
+#~ msgstr "채팅 오류!"
+
+#~ msgid "Gaim - Chat"
+#~ msgstr "가임 - 채팅"
+
+#~ msgid "Gaim - Error"
+#~ msgstr "가임 - 오류"
+
+#~ msgid "Gaim - Oscar SNAC Error"
+#~ msgstr "가임 - 오스카 SNAC 오류"
+
+#~ msgid "Reason unknown"
+#~ msgstr "알 수 없는 이유"
+
+#~ msgid "AOL error"
+#~ msgstr "AOL 오류"
+
+#~ msgid "Error"
+#~ msgstr "오류"
+
+#~ msgid "Gaim - Warning"
+#~ msgstr "가임 - 경고"
+
+#~ msgid "TOC Resume"
+#~ msgstr "TOC 다시 시작"
+
+#~ msgid "Chat Error"
+#~ msgstr "채팅 오류"
+
+#~ msgid "TOC Pause"
+#~ msgstr "TOC 일시중지"
+
+#~ msgid "Could not write file header!"
+#~ msgstr "파일 헤더를 쓸 수 없습니다!"
+
+#~ msgid "Attempting to sign on...."
+#~ msgstr "연결을 시도합니다...."
+
+#~ msgid "Offline. Click to bring up login box."
+#~ msgstr "접속되어 있지 않습니다. 클릭하면 로그인 화면이 나옵니다."
+
+#~ msgid "Away: %d pending."
+#~ msgstr "자리비움: %d 동안"
+
+#~ msgid "Away."
+#~ msgstr "자리비움"
+
+#~ msgid "Can't create Gaim applet!"
+#~ msgstr "가임 애플릿을 만들 수 없습니다!"
+
+#~ msgid "About..."
+#~ msgstr "...에 대하여"
+
+#~ msgid "Message Error"
+#~ msgstr "메시지 오류"
+
+#~ msgid "Unable to send message: Unknown reason"
+#~ msgstr "메시지를 보낼 수 없습니다 : 알 수 없는 이유"
+
+#~ msgid "Buddy Pounce Error"
+#~ msgstr "친구알림 오류"
+
+#~ msgid "Gaim - Change Password Error"
+#~ msgstr "가임 - 비밀번호 변경 실패"
+
+#~ msgid "Unable to remove file %s - %s"
+#~ msgstr "%s 파일을 지울 수 없습니다. - %s"
+
+#~ msgid "Preferences Error"
+#~ msgstr "환경설정 오류"
+
+#, fuzzy
+#~ msgid "Plugin Error"
+#~ msgstr "로그인 오류"
+
+#~ msgid "Login Error"
+#~ msgstr "로그인 오류"
+
+#~ msgid "Perl Scripts"
+#~ msgstr "펄 스크립트"
+
+#~ msgid "Select"
+#~ msgstr "선택"
+
+#~ msgid "Automatically show buddy list on sign on"
+#~ msgstr "로그온 할 때 친구목록을 자동으로 보여줌"
+
+#~ msgid "Display Buddy List near applet"
+#~ msgstr "친구목록을 애플릿 부근에 표시"
+
+#~ msgid "Edit"
+#~ msgstr "편집"
+
+#~ msgid "Protocol Error"
+#~ msgstr "프로토콜 오류"
+
+#, fuzzy
+#~ msgid "Protocol Warning"
+#~ msgstr "프로토콜 세부 설정"
+
+#~ msgid "Disconnect"
+#~ msgstr "끊어짐"
+
+#~ msgid "Warned"
+#~ msgstr "경고됨"
+
 #~ msgid "Show Buddy Ticker"
 #~ msgstr "친구 찾기 창 보여줌"
-
-#~ msgid "General Options"
-#~ msgstr "일반 옵션"
 
 #~ msgid "All options take effect immediately unless otherwise noted."
 #~ msgstr "별다른 언급이 없으면 모든 옵션은 변경 즉시 적용됩니다."
@@ -3514,18 +3940,12 @@ msgstr ""
 #~ msgid "Galeon"
 #~ msgstr "갈레온"
 
-#~ msgid "Proxy Options"
-#~ msgstr "프록시 옵션"
-
 #~ msgid ""
 #~ "Not all protocols can use these proxy options. Please see the README file "
 #~ "for details."
 #~ msgstr ""
 #~ "프록시를 사용할 수 없는 프로토콜이 있습니다. 자세한 정보를 원하면 README "
 #~ "파일을 읽어보십시오."
-
-#~ msgid "Proxy Type"
-#~ msgstr "프록시 종류"
 
 #~ msgid "No Proxy"
 #~ msgstr "프록시 사용 안함"
@@ -3542,26 +3962,14 @@ msgstr ""
 #~ msgid "Buddy List Options"
 #~ msgstr "친구목록 옵션"
 
-#~ msgid "Buddy List Window"
-#~ msgstr "친구목록창"
-
 #~ msgid "Tab Placement:"
 #~ msgstr "탭 위치"
 
 #~ msgid "Top"
 #~ msgstr "위"
 
-#~ msgid "Bottom"
-#~ msgstr "아래"
-
 #~ msgid "Raise Buddy List on Signons and Signoffs"
 #~ msgstr "친구가 연결/종료할 때 친구목록 창 올림"
-
-#~ msgid "Group Displays"
-#~ msgstr "그룹 표시"
-
-#~ msgid "Buddy Displays"
-#~ msgstr "친구 표시"
 
 #~ msgid "Conversation Options"
 #~ msgstr "대화 옵션"
@@ -3605,17 +4013,11 @@ msgstr ""
 #~ msgid "Right"
 #~ msgstr "오른쪽"
 
-#~ msgid "Buddy Icons"
-#~ msgstr "친구 아이콘"
-
 #~ msgid "Chat Options"
 #~ msgstr "채팅 옵션"
 
 #~ msgid "Show conversations in the same tabbed window"
 #~ msgstr "대화도 채팅과 같은 창에서 탭으로 보여줌"
-
-#~ msgid "Tab Completion"
-#~ msgstr "자동완성"
 
 #~ msgid "Font Options"
 #~ msgstr "급꼴 옵션"
@@ -3629,12 +4031,6 @@ msgstr ""
 #~ msgid "Font Size for Text"
 #~ msgstr "텍스트에 사용할 글자 크기"
 
-#~ msgid "Sound Options"
-#~ msgstr "소리 옵션"
-
-#~ msgid "Sound method"
-#~ msgstr "소리 내는 방법"
-
 #~ msgid "Sound played when:"
 #~ msgstr "다음의 경우 소리 내기:"
 
@@ -3646,9 +4042,6 @@ msgstr ""
 
 #~ msgid "minutes using"
 #~ msgstr "분 동안 사용하지 않으면 다음 자리비움 메시지 사용: "
-
-#~ msgid "Messages"
-#~ msgstr "메시지"
 
 #~ msgid "Make Away"
 #~ msgstr "지금 자리비움"
