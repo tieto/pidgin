@@ -44,6 +44,7 @@ EXTRA_DIST =	ab.xpm				\
 		fontface.xpm			\
 		fontface2.xpm			\
 		free_icon.xpm			\
+		gaim.png			\
 		gaim.xpm			\
 		gg_suncloud.xpm			\
 		gg_sunred.xpm			\
