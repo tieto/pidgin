@@ -154,6 +154,14 @@ void gaim_setup(struct gaim_connection *gc)
 	}
 }
 
+static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null)
+{
+	if (event->button != 2)
+		return FALSE;
+
+	auto_login();
+	return TRUE;
+}
 
 static void dologin(GtkWidget *widget, GtkWidget *w)
 {
@@ -358,6 +366,7 @@ void show_login()
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(dologin), mainwindow);
+	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(domiddleclick), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 #ifdef _WIN32
