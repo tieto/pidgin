@@ -611,6 +611,7 @@ static void buddy_page()
 	gtk_widget_show(vbox);
 
 	gaim_button(_("Show idle times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
+	gaim_button(_("Grey idle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
 
 	gtk_widget_show(prefdialog);
 }

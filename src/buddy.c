@@ -1920,6 +1920,7 @@ static void update_idle_time(struct buddy_show *bs)
 	time_t t;
 	int ihrs, imin;
 	struct buddy *b;
+	GtkStyle *style;
 
 	char infotip[2048];
 	char warn[256];
@@ -1947,6 +1948,20 @@ static void update_idle_time(struct buddy_show *bs)
 		gtk_label_set(GTK_LABEL(bs->idle), "");
 	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
+
+	style = gtk_style_new();
+	gdk_font_unref(style->font);
+	style->font = gdk_font_ref(GTK_WIDGET(bs->label)->style->font);
+	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle) && (t - b->idle >= 1200)) {
+		style->fg[GTK_STATE_NORMAL].red =
+		  (style->fg[GTK_STATE_NORMAL].red / 3) * 2 + (style->bg[GTK_STATE_NORMAL].red / 3);
+		style->fg[GTK_STATE_NORMAL].green = 
+		  (style->fg[GTK_STATE_NORMAL].green / 3) * 2 + (style->bg[GTK_STATE_NORMAL].green / 3);
+		style->fg[GTK_STATE_NORMAL].blue = 
+		  (style->fg[GTK_STATE_NORMAL].blue / 3) * 2 + (style->bg[GTK_STATE_NORMAL].blue / 3);
+	}
+	gtk_widget_set_style(bs->label, style);
+	gtk_style_unref(style);
 
 	/* now we do the tooltip */
 	if (b->signon) {
