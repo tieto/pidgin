@@ -4495,6 +4495,9 @@ void re_show_multi_entry_entries(GtkWidget **entries_table,
 		gtk_widget_destroy(GTK_WIDGET (*entries_table));
 	}
 	*entries_table = gtk_table_new(rows, 3, FALSE);
+	gtk_table_set_col_spacings(GTK_TABLE(*entries_table), 5);
+	gtk_table_set_row_spacings(GTK_TABLE(*entries_table), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(*entries_table), 5);
 	gtk_container_add(GTK_CONTAINER (entries_frame), *entries_table);
 
 	for(rowNum = 0, multi_entry = multi_entry_items;
@@ -4608,8 +4611,10 @@ void show_multi_entry_dialog(gpointer data)
 	MultiEntryDlg *b = data;
 
 	GAIM_DIALOG(b->window);
+	gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), b->wmclass_name, b->wmclass_class);
 	gtk_window_set_title(GTK_WINDOW (b->window), b->title);
+
 	/* Clean up if user dismisses window via window manager! */
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(b->cancel), (gpointer) b);
 	gtk_widget_realize(b->window);
@@ -4630,26 +4635,27 @@ void show_multi_entry_dialog(gpointer data)
 	re_show_multi_entry_entries(&(b->entries_table), b->entries_frame, b->multi_entry_items);
 
 	b->texts_obox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX (vbox), b->texts_obox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX (vbox), b->texts_obox, TRUE, TRUE, 5);
 	gtk_widget_show(b->texts_obox);
 	b->texts_ibox = NULL;
 	re_show_multi_entry_textboxes(&(b->texts_ibox), b->texts_obox, b->multi_text_items);
 
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX (vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	button = picture_button(b->window, _("Cancel"), cancel_xpm);
+
 	/* Let "destroy handling" (set above) handle cleanup */
 	gtk_signal_connect_object(GTK_OBJECT (button), "clicked",
 		GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (b->window));
-	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
 	button = picture_button(b->window, _("Save"), save_xpm);
 	gtk_signal_connect(GTK_OBJECT (button), "clicked",
 		GTK_SIGNAL_FUNC (b->ok), (gpointer) b);
-	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
 	gtk_widget_show(vbox);
