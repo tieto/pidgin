@@ -5,7 +5,7 @@ version 0.77cvs
 	* The System Log returns (Ka-Hing Cheung)
 	* Added a conversation-drag-ended signal (Etan Reisner)
 	* Reorganized and cleaned up the MSN protocol plugin (Felipe Contreras)
-	* added the -c option to specify location of the .gaim directory, removed
+	* Added the -c option to specify location of the .gaim directory, removed
 	  the outdated -f option that no longer had any effect (Daniel Atallah)
 
 	Bug Fixes:
