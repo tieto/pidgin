@@ -120,15 +120,25 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m
 
 		switch (cmd->args[i]) {
 		case 'w':
-			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			(*args)[i] = g_strndup(cur, end - cur);
-			cur += end - cur;
+			if (!(end = strchr(cur, ' '))) {
+			  end = cur + strlen(cur);
+			  (*args)[i] = g_strndup(cur, end - cur);
+			  cur = end;
+			} else {
+			  (*args)[i] = g_strndup(cur, end - cur);
+			  cur = end + 1;
+			}
 			break;
 		case 'W':
-			if (!(end = strchr(cur, ' '))) end = cur + strlen(cur);
-			(*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
-			cur += end - cur;
-			break;
+		        if (!(end = strchr(cur, ' '))) {
+			  end = cur + strlen(cur);
+			  (*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
+			  cur = end;
+			} else {
+			  (*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
+			  cur = end +1;
+			}
+			break; 
 		case 's':
 			(*args)[i] = g_strdup(cur);
 			cur = cur + strlen(cur);
