@@ -5,6 +5,7 @@ version 0.73cvs:
 		* fixes i18n issues with logs
 		* compatable with old logs
 		* hopefully fixes segfault in viewing logs
+	* Fix several Jabber bugs
 	* German translation updated (Bjoern Voigt)
 
 version 0.72 (10/31/2003):

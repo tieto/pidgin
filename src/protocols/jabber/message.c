@@ -474,7 +474,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 
 	jm = g_new0(JabberMessage, 1);
 	jm->js = gc->proto_data;
-	jm->type = JABBER_MESSAGE_CHAT;
+	jm->type = JABBER_MESSAGE_GROUPCHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
