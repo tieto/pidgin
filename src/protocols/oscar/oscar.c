@@ -7615,6 +7615,7 @@ recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer 
 	}
 }
 
+#if USE_PRPL_PREFERENCES
 static GaimPluginPrefFrame *
 get_plugin_pref_frame(GaimPlugin *plugin)
 {
@@ -7631,6 +7632,7 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 	return frame;
 }
+#endif
 
 static GaimPluginProtocolInfo prpl_info =
 {
@@ -7700,9 +7702,11 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_send_file			/* send_file */
 };
 
+#if USE_PRPL_PREFERENCES
 static GaimPluginUiInfo prefs_info = {
 	get_plugin_pref_frame
 };
+#endif
 
 static GaimPluginInfo info =
 {
@@ -7731,7 +7735,11 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
+#if USE_PRPL_PREFERENCES
 	NULL,                                             /**< prefs_info     */
+#else
+	NULL,                                             /**< prefs_info     */
+#endif
 	oscar_actions
 };
 
