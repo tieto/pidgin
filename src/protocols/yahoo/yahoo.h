@@ -25,7 +25,7 @@
 
 #include "prpl.h"
 
-#define YAHOO_PAGER_HOST "scs.yahoo.com"
+#define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"

@@ -2048,6 +2048,18 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 
 #endif /* YAHOO_WEBMESSENGER */
 
+#ifndef YAHOO_WEBMESSENGER
+static void yahoo_server_check(GaimAccount *account)
+{
+	const char *server;
+
+	server = gaim_account_get_string(account, "server", YAHOO_PAGER_HOST);
+
+	if (strcmp(server, "scs.yahoo.com") == 0)
+		gaim_account_set_string(account, "server", YAHOO_PAGER_HOST);
+}
+#endif
+
 static void yahoo_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
@@ -2062,6 +2074,8 @@ static void yahoo_login(GaimAccount *account) {
 	yd->conf_id = 2;
 
 #ifndef YAHOO_WEBMESSENGER
+
+	yahoo_server_check(account);
 
 	if (gaim_proxy_connect(account,
 	                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
