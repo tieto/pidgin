@@ -179,8 +179,8 @@ static int yahoo_buddyadded(struct yahoo_session *sess, ...) {
 
 	va_start(ap, sess);
 	id = va_arg(ap, char *);
-	t = va_arg(ap, time_t);
 	who = va_arg(ap, char *);
+	t = va_arg(ap, time_t);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
