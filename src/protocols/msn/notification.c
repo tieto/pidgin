@@ -1810,7 +1810,7 @@ url_cmd(MsnServConn *servconn, const char *command, const char **params,
 		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n",
 				sendbuf); /* TODO Digest me (huh? -- ChipX86) */
 		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
-		fprintf(fd, "<input type=\"hiden\" name=\"js\" value=\"yes\">\n");
+		fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
 		fprintf(fd, "</form></body>\n");
 		fprintf(fd, "</html>\n");
 
@@ -2026,14 +2026,19 @@ initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 	unread = g_hash_table_lookup(table, "Inbox-Unread");
 
 	if (unread != NULL) {
-		const char *passport = msn_user_get_passport(session->user);
-		const char *url = session->passport_info.file;
 		int count = atoi(unread);
 
 		if (count != 0)
 		{
+			const char *passport = msn_user_get_passport(session->user);
+			const char *file = session->passport_info.file;
+			gchar *url;
+			while (*file && *file == '/')
+				++file;
+			url = g_strconcat ("file:///", file, 0);
 			gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
+			g_free (url);
 		}
 	}
 
