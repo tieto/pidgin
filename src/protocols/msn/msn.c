@@ -332,7 +332,7 @@ msn_tooltip_text(GaimBuddy *b)
 	char *text = NULL;
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
-		text = g_strdup_printf(_("<b>Status:</b> %s"),
+		text = g_strdup_printf("\n<b>%s:</b> %s", _("Status"),
 							   msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
 	}
 

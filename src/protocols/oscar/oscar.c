@@ -3156,21 +3156,6 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-#if 0
-static char *images(int flags) {
-	static char buf[1024];
-	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s",
-			(flags & AIM_FLAG_ACTIVEBUDDY) ? "<IMG SRC=\"ab_icon.gif\">" : "",
-			(flags & AIM_FLAG_UNCONFIRMED) ? "<IMG SRC=\"dt_icon.gif\">" : "",
-			(flags & AIM_FLAG_AOL) ? "<IMG SRC=\"aol_icon.gif\">" : "",
-			(flags & AIM_FLAG_ICQ) ? "<IMG SRC=\"icq_icon.gif\">" : "",
-			(flags & AIM_FLAG_ADMINISTRATOR) ? "<IMG SRC=\"admin_icon.gif\">" : "",
-			(flags & AIM_FLAG_FREE) ? "<IMG SRC=\"free_icon.gif\">" : "",
-			(flags & AIM_FLAG_WIRELESS) ? "<IMG SRC=\"wireless_icon.gif\">" : "");
-	return buf;
-}
-#endif
-
 static char *caps_string(guint caps)
 {
 	static char buf[512], *tmp;
@@ -5695,15 +5680,13 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimGroup *g = gaim_find_buddys_group(b);
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
-	gchar *tmp = NULL, *ret = g_strdup("");
+	GString *ret = g_string_new("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		if (isdigit(b->name[0])) {
 			char *status;
 			status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Status:</b> "), status, "\n", NULL);
-			g_free(tmp);
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), status);
 			g_free(status);
 		}
 
@@ -5713,35 +5696,26 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 							(bi->ipaddr & 0x00ff0000) >> 16,
 							(bi->ipaddr & 0x0000ff00) >> 8,
 							(bi->ipaddr & 0x000000ff));
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>IP Address:</b> "), tstr, "\n", NULL);
-			g_free(tmp);
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("IP Address"), tstr);
 			g_free(tstr);
 		}
 
 		if ((userinfo != NULL) && (userinfo->capabilities)) {
 			char *caps = caps_string(userinfo->capabilities);
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
-			g_free(tmp);
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Capabilities"), caps);
 		}
 
 		if (g && g->name) {
-			char *comment = NULL;
-			comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
+			char *comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
 			if (comment != NULL) {
-				tmp = ret;
-				ret = g_strconcat(tmp, _("<b>Buddy Comment:</b> "), comment, "\n", NULL);
-				free(tmp);
+				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Buddy Comment"), comment);
 				free(comment);
 			}
 		}
 
 		if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
 			gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
-			g_free(tmp);
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Available"), escaped);
 			g_free(escaped);
 		}
 
@@ -5760,28 +5734,18 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				g_free(tmp2);
 				tmp3 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
-				tmp = ret;
-				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
-				g_free(tmp);
+				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Away Message"), tmp3);
 			}
 		}
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
-		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name)) {
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Status:</b> Not Authorized"), "\n", NULL);
-			g_free(tmp);
-		} else {
-			tmp = ret;
-			ret = g_strconcat(tmp, _("<b>Status:</b> Offline"), "\n", NULL);
-			g_free(tmp);
-		}
+		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), _("Not Authorized"));
+		else
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), _("Offline"));
 	}
 
-	/* remove the trailing newline character */
-	if (ret && (strlen(ret) > 0))
-		ret[strlen(ret)-1] = '\0';
-	return ret;
+	return g_string_free(ret, FALSE);;
 }
 
 static char *oscar_status_text(GaimBuddy *b) {
@@ -6861,11 +6825,13 @@ static GList *oscar_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-/*	pam = g_new0(struct proto_actions_menu, 1);
+#if 0
+	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Search for Buddy by Information");
 	pam->callback = show_find_info;
 	pam->gc = gc;
-	m = g_list_append(m, pam); */
+	m = g_list_append(m, pam);
+#endif
 
 	return m;
 }

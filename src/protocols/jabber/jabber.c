@@ -895,7 +895,6 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
 			FALSE);
 	GString *ret = g_string_new("");
-	char *r = NULL;
 
 	if(jb) {
 		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
@@ -915,7 +914,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 			else
 				sub = _("None");
 		}
-		g_string_append_printf(ret, "<b>%s:</b> %s\n", _("Subscription"), sub);
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Subscription"), sub);
 
 		if(jbr) {
 			char *text = NULL;
@@ -926,7 +925,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 				g_free(stripped);
 			}
 
-			g_string_append_printf(ret, "<b>%s:</b> %s%s%s\n",
+			g_string_append_printf(ret, "\n<b>%s:</b> %s%s%s",
 					_("Status"),
 					jabber_get_state_string(jbr->state),
 					text ? ": " : "",
@@ -934,20 +933,12 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 			if(text)
 				g_free(text);
 		} else if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			g_string_append_printf(ret, "<b>%s:</b> %s\n",
+			g_string_append_printf(ret, "\n<b>%s:</b> %s",
 					_("Error"), jb->error_msg);
 		}
 	}
 
-	if(ret->len > 0) {
-		g_string_truncate(ret, ret->len-1);
-		r = ret->str;
-		g_string_free(ret, FALSE);
-	} else {
-		g_string_free(ret, TRUE);
-	}
-
-	return r;
+	return g_string_free(ret, FALSE);
 }
 
 static GList *jabber_away_states(GaimConnection *gc)

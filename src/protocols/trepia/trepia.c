@@ -389,95 +389,44 @@ trepia_tooltip_text(GaimBuddy *b)
 	const char *value;
 	const char *first_name, *last_name;
 	int int_value;
-	char *text = NULL;
-	char *tmp, *tmp2;
-
-	text = g_strdup("");
+	GString *ret = g_string_new("");
 
 	first_name = trepia_profile_get_first_name(profile);
 	last_name  = trepia_profile_get_last_name(profile);
 
-	if (first_name != NULL || last_name != NULL) {
-	    tmp = g_strdup_printf("<b>%s:</b> %s%s%s\n",_("Name"),
+	if (first_name != NULL || last_name != NULL)
+		g_string_append_printf(ret, "\n<b>%s:</b> %s%s%s", _("Name"),
 							  (first_name == NULL ? "" : first_name),
 							  (first_name == NULL ? "" : " "),
 							  (last_name == NULL ? "" : last_name));
 
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
+	if ((int_value = trepia_profile_get_age(profile)) != 0)
+		g_string_append_printf(ret, "\n<b>%s:</b> %d", _("Age"), int_value);
 
-	if ((int_value = trepia_profile_get_age(profile)) != 0) {
-		tmp = g_strdup_printf("<b>%s:</b> %d\n", _("Age"),int_value);
-
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
-
-	tmp = g_strdup_printf("<b>%s:</b> %s\n",_("Gender"),
+	g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Gender"),
 			(trepia_profile_get_sex(profile) == 'F' ? _("Female") : _("Male")));
 
-	tmp2 = g_strconcat(text, tmp, NULL);
-	g_free(tmp);
-	g_free(text);
-	text = tmp2;
+	if ((value = trepia_profile_get_city(profile)) != NULL)
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("City"), value);
 
-	if ((value = trepia_profile_get_city(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("City"), value);
+	if ((value = trepia_profile_get_state(profile)) != NULL)
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("State"), value);
 
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
+	if ((value = trepia_profile_get_country(profile)) != NULL)
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Country"), value);
 
-	if ((value = trepia_profile_get_state(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("State"), value);
-
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
-
-	if ((value = trepia_profile_get_country(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Country"), value);
-
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
-
-	if ((value = trepia_profile_get_homepage(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Homepage"), value);
-
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
-	}
+	if ((value = trepia_profile_get_homepage(profile)) != NULL)
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Homepage"), value);
 
 	if ((value = trepia_profile_get_profile(profile)) != NULL) {
 		char *escaped_val = g_markup_escape_text(value, -1);
 
-		tmp = g_strdup_printf("<b>%s:</b> %s\n", _("Profile"), escaped_val);
+		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Profile"), escaped_val);
 
 		g_free(escaped_val);
-
-		tmp2 = g_strconcat(text, tmp, NULL);
-		g_free(tmp);
-		g_free(text);
-		text = tmp2;
 	}
 
-	text[strlen(text) - 1] = '\0';
-
-	return text;
+	return g_string_free(ret, FALSE);
 }
 
 static GList *

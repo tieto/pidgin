@@ -306,13 +306,13 @@ static gchar *rendezvous_prpl_tooltip_text(GaimBuddy *b)
 	ret = g_string_new("");
 
 	if (rb->aim != NULL)
-		g_string_append_printf(ret, _("<b>AIM Screen name</b>: %s\n"), rb->aim);
+		g_string_append_printf(ret, "\n<b>%s</b>: %s", _("AIM Screen name"), rb->aim);
 
 	if (rb->msg != NULL) {
 		if (rb->status == UC_UNAVAILABLE)
-			g_string_append_printf(ret, _("<b>Away</b>: %s\n"), rb->msg);
+			g_string_append_printf(ret, "\n<b>%s</b>: %s", _("Away"), rb->msg);
 		else
-			g_string_append_printf(ret, _("<b>Available</b>: %s\n"), rb->msg);
+			g_string_append_printf(ret, "\n<b>%s</b>: %s", _("Available"), rb->msg);
 	}
 
 	/* XXX - Fix blist.c so we can prepend the \n's rather than appending them */

@@ -2383,7 +2383,7 @@ static char *yahoo_tooltip_text(GaimBuddy *b)
 
 	f = g_hash_table_lookup(yd->friends, b->name);
 	if (!f)
-		status = g_strdup(_("Not on server list"));
+		status = g_strdup_printf("\n%s", _("Not on server list"));
 	else
 		switch (f->status) {
 		case YAHOO_STATUS_IDLE:
@@ -2403,7 +2403,7 @@ static char *yahoo_tooltip_text(GaimBuddy *b)
 		}
 
 	escaped = g_markup_escape_text(status, strlen(status));
-	ret = g_strdup_printf(_("<b>Status:</b> %s"), escaped);
+	ret = g_strdup_printf(_("\n<b>%s:</b> %s"), _("Status"), escaped);
 	g_free(status);
 	g_free(escaped);
 

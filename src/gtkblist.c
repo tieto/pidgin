@@ -2442,7 +2442,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				       loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
 				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-				       statustext ? "\n" : "", statustext ? statustext : "",
+				       statustext ? "" : "", statustext ? statustext : "",
 				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
 				       !g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
 				       !g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
