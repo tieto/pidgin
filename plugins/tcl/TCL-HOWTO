@@ -149,6 +149,7 @@ gaim::buddy list
   and chats as described above.
 
 gaim::connection account gc
+gaim::connection displayname gc
 gaim::connection handle
 gaim::connection list
 
@@ -158,6 +159,9 @@ gaim::connection list
   'account' returns the Gaim account associated with 'gc'.  This
   account is the same account used by gaim::account and other
   commands.
+
+  'displayname' returns the display name (duh) of 'gc' as reported by
+  gaim_connection_get_display_name(gc).
 
   'handle' returns the gaim connections instance handle.  (See
   'gaim::signal connect').

@@ -400,8 +400,8 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
-	char *cmds[] = { "account", "handle", "list", NULL };
-	enum { CMD_CONN_ACCOUNT, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
+	char *cmds[] = { "account", "displayname", "handle", "list", NULL };
+	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
 	int error;
 	GList *cur;
 	GaimConnection *gc;
@@ -426,6 +426,18 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			return TCL_ERROR;
 		}
 		Tcl_SetIntObj(result, (int)gaim_connection_get_account(gc));
+		break;
+	case CMD_CONN_DISPLAYNAME:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "gc");
+			return TCL_ERROR;
+		}
+		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&gc);
+		if (error || !tcl_validate_gc(gc)) {
+			Tcl_SetStringObj(result, "invalid gc", -1);
+			return TCL_ERROR;
+		}
+		Tcl_SetStringObj(result, (char *)gaim_connection_get_display_name(gc), -1);
 		break;
 	case CMD_CONN_HANDLE:
 		if (objc != 2) {
