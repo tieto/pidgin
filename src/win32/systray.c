@@ -370,59 +370,6 @@ static void systray_update_status() {
 }
 
 /*
- * GAIM WINDOW FILTERS 
- **********************/
-
-static GdkFilterReturn st_buddywin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_SYSCOMMAND:
-		if( msg->wParam == SC_MINIMIZE ) {
-			hide_buddy_list();
-			return GDK_FILTER_REMOVE;
-		}
-		break;
-	case WM_CLOSE:
-		hide_buddy_list();
-		return GDK_FILTER_REMOVE;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
-static GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_CLOSE:
-		wgaim_systray_minimize(mainwindow);
-		gtk_widget_hide(mainwindow);
-		return GDK_FILTER_REMOVE;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
-static GdkFilterReturn st_backwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_SYSCOMMAND:
-		if( msg->wParam == SC_MINIMIZE ) {
-			if(imaway) {
-				wgaim_systray_minimize(imaway);
-				gtk_widget_hide(imaway);
-			}
-			return GDK_FILTER_REMOVE;
-		}
-		break;
-	}
-	return GDK_FILTER_CONTINUE;
-}
-
-/*
  * GAIM EVENT CALLBACKS
  ***********************/
 
@@ -449,6 +396,60 @@ static void st_im_recieve(struct gaim_connection *gc, void *data) {
 /*
  *  PUBLIC CODE
  */
+
+/*
+ * GAIM WINDOW FILTERS 
+ **********************/
+
+GdkFilterReturn st_buddywin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
+
+	MSG *msg = (MSG*)xevent;
+
+	switch( msg->message ) {
+	case WM_SYSCOMMAND:
+		if( msg->wParam == SC_MINIMIZE ) {
+			hide_buddy_list();
+			return GDK_FILTER_REMOVE;
+		}
+		break;
+	case WM_CLOSE:
+		hide_buddy_list();
+		return GDK_FILTER_REMOVE;
+	}
+
+	return GDK_FILTER_CONTINUE;
+}
+
+GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
+	MSG *msg = (MSG*)xevent;
+
+	switch( msg->message ) {
+	case WM_CLOSE:
+		wgaim_systray_minimize(mainwindow);
+		gtk_widget_hide(mainwindow);
+		return GDK_FILTER_REMOVE;
+	}
+
+	return GDK_FILTER_CONTINUE;
+}
+
+GdkFilterReturn st_backwin_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data) {
+	MSG *msg = (MSG*)xevent;
+
+	switch( msg->message ) {
+	case WM_SYSCOMMAND:
+		if( msg->wParam == SC_MINIMIZE ) {
+			if(imaway) {
+				wgaim_systray_minimize(imaway);
+				gtk_widget_hide(imaway);
+			}
+			return GDK_FILTER_REMOVE;
+		}
+		break;
+	}
+	return GDK_FILTER_CONTINUE;
+}
+
 
 /* Create a hidden window and associate it with the systray icon.
    We use this hidden window to proccess WM_TRAYMESSAGE msgs. */
@@ -482,26 +483,6 @@ void wgaim_systray_cleanup(void) {
 	systray_remove_nid();
 	DestroyMenu(systray_menu);
 	DestroyWindow(systray_hwnd);
-}
-
-/* This function is called after the buddy list has been created */
-void wgaim_created_blistwin( GtkWidget *blist ) {
-	gdk_window_add_filter (GTK_WIDGET(blist)->window,
-			       st_buddywin_filter,
-			       NULL);
-}
-
-/* This function is called after the login window has been created */
-void wgaim_created_loginwin( GtkWidget *loginwin ) {
-	gdk_window_add_filter (GTK_WIDGET(loginwin)->window,
-			       st_loginwin_filter,
-			       NULL);
-}
-
-void wgaim_created_backwin( GtkWidget *backwin ) {
-	gdk_window_add_filter (GTK_WIDGET(backwin)->window,
-			       st_backwin_filter,
-			       NULL);
 }
 
 void wgaim_systray_minimize( GtkWidget *window ) {
