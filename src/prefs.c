@@ -1539,7 +1539,6 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 		gtk_button_clicked(GTK_BUTTON(debugbutton));
 	if (misc_options & OPT_MISC_DEBUG) {
 		misc_options ^= OPT_MISC_DEBUG;
-		misc_options ^= OPT_MISC_DEBUG;
 		save_prefs();
 	}
 	g_free(dw);
