@@ -406,7 +406,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel = NULL;
 
-	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n\n%s\n%s",
+	label_text = g_strdup_printf(_("<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n\n%s\n%s"),
 				     gaim_account_get_username(gaim_connection_get_account(gc)), gaim_date_full(), 
 				     text ? text : _("Reason Unknown."));
 
