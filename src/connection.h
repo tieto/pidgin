@@ -83,6 +83,7 @@ struct _GaimConnection
 	                                  this here?)                        */
 
 	gboolean wants_to_die;	     /**< Wants to Die state.                */
+	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
 };
 
 #ifdef __cplusplus

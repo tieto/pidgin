@@ -82,6 +82,9 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (gc->away_state != NULL)
 		g_free(gc->away_state);
 
+	if (gc->disconnect_timeout)
+		g_source_remove(gc->disconnect_timeout);
+
 	g_free(gc);
 }
 
@@ -401,6 +404,10 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 	g_return_if_fail(text != NULL);
 
+	/* If we've already got one error, we don't need any more */
+	if(gc->disconnect_timeout)
+		return;
+
 	primary = g_strdup_printf(_("%s has been disconnected"),
 				gaim_account_get_username(gaim_connection_get_account(gc)));
 	secondary = g_strdup_printf("%s\n%s", full_date(),
@@ -414,7 +421,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
 
-	g_timeout_add(0, gaim_connection_disconnect_cb,
+	gc->disconnect_timeout = g_timeout_add(0, gaim_connection_disconnect_cb,
 			gaim_connection_get_account(gc));
 }
 
