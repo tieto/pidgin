@@ -9,12 +9,9 @@ EXTRA_DIST =	about_small.xpm			\
 		away.png			\
 		away_big.xpm			\
 		away_small.xpm			\
-		bgcolor.xpm			\
-		big.xpm				\
 		bigsmile.xpm			\
 		block.xpm			\
 		block_small.xpm			\
-		bold.xpm			\
 		broken.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
@@ -29,7 +26,6 @@ EXTRA_DIST =	about_small.xpm			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
 		farted.xpm			\
-		fgcolor.xpm			\
 		fontface.xpm			\
 		fontface2.xpm			\
 		gaim.png			\
@@ -46,10 +42,8 @@ EXTRA_DIST =	about_small.xpm			\
 		insert-smiley-small.png \
 		image_icon.xpm			\
 		import_small.xpm		\
-		italic.xpm			\
 		join.xpm			\
 		kiss.xpm			\
-		link.xpm			\
 		login_icon.xpm			\
 		logo.png		\
 		logo.xpm			\
@@ -61,7 +55,6 @@ EXTRA_DIST =	about_small.xpm			\
 		msgpend.png			\
 		msgunread.png			\
 		no_icon.xpm			\
-		normal.xpm			\
 		offline.png			\
 		ok.xpm				\
 		oneeye.xpm			\
@@ -79,7 +72,6 @@ EXTRA_DIST =	about_small.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\
 		signon.png \
-		small.xpm			\
 		smile.xpm			\
 		smile8.xpm			\
 		smile_icon.xpm			\
@@ -89,11 +81,10 @@ EXTRA_DIST =	about_small.xpm			\
 		status-game.xpm			\
 		status-here.xpm			\
 		status-idle.xpm			\
-		strike.xpm			\
 		tb_forward.xpm			\
 		tb_redo.xpm			\
 		tb_refresh.xpm			\
-		tb_search.xpm			\
+		tb_search.xpm	\
 		tb_undo.xpm			\
 		text_bigger.png			\
 		text_normal.png	\
@@ -101,10 +92,8 @@ EXTRA_DIST =	about_small.xpm			\
 		think.xpm			\
 		tmp_send.xpm			\
 		tongue.xpm			\
-		underline.xpm			\
 		warn.xpm			\
 		wink.xpm			\
-		wood.xpm			\
 		yell.xpm			
 
 

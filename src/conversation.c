@@ -50,19 +50,8 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/bold.xpm"
-#include "pixmaps/italic.xpm"
-#include "pixmaps/underline.xpm"
-#include "pixmaps/strike.xpm"
-#include "pixmaps/small.xpm"
-#include "pixmaps/normal.xpm"
-#include "pixmaps/big.xpm"
 #include "pixmaps/fontface.xpm"
-#include "pixmaps/fgcolor.xpm"
-#include "pixmaps/bgcolor.xpm"
-#include "pixmaps/link.xpm"
 #include "pixmaps/smile_icon.xpm"
-#include "pixmaps/wood.xpm"
 #include "pixmaps/search_small.xpm"
 #include "pixmaps/save_small.xpm"
 #include "pixmaps/speaker.xpm"
@@ -2236,7 +2225,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 
 }
 
-GtkWidget *build_conv_toolbar2(struct conversation *c)
+GtkWidget *build_conv_toolbar(struct conversation *c)
 {
 		GtkWidget *vbox;
 		GtkWidget *hbox;
@@ -2363,273 +2352,6 @@ GtkWidget *build_conv_toolbar2(struct conversation *c)
 		gtk_widget_show_all(vbox);
 
 		return vbox;
-}
-
-GtkWidget *build_conv_toolbar(struct conversation *c)
-{
-	GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i,
-	    *wood_i, *viewer_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i, *save_i, *image_i;
-	GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p,
-	    *wood_p, *viewer_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p, *save_p, *image_p;
-	GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *viewer,
-	    *fgcolorbtn, *bgcolorbtn, *link, *font, *smiley, *save, *image;
-	GdkBitmap *mask;
-	GtkWidget *toolbar;
-	GtkWidget *win;
-	GtkWidget *entry;
-
-	toolbar = gtk_toolbar_new();
-	win = c->window;
-	entry = c->entry;
-
-	bold_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, bold_xpm);
-	bold_p = gtk_pixmap_new(bold_i, mask);
-	gtk_widget_show(bold_p);
-	gdk_bitmap_unref(mask);
-
-	italic_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, italic_xpm);
-	italic_p = gtk_pixmap_new(italic_i, mask);
-	gtk_widget_show(italic_p);
-	gdk_bitmap_unref(mask);
-
-	underline_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
-						   &win->style->white, underline_xpm);
-	underline_p = gtk_pixmap_new(underline_i, mask);
-	gtk_widget_show(underline_p);
-	gdk_bitmap_unref(mask);
-
-	strike_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, strike_xpm);
-	strike_p = gtk_pixmap_new(strike_i, mask);
-	gtk_widget_show(strike_p);
-	gdk_bitmap_unref(mask);
-
-	small_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, small_xpm);
-	small_p = gtk_pixmap_new(small_i, mask);
-	gtk_widget_show(small_p);
-	gdk_bitmap_unref(mask);
-
-	normal_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, normal_xpm);
-	normal_p = gtk_pixmap_new(normal_i, mask);
-	gtk_widget_show(normal_p);
-	gdk_bitmap_unref(mask);
-
-	big_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, big_xpm);
-	big_p = gtk_pixmap_new(big_i, mask);
-	gtk_widget_show(big_p);
-	gdk_bitmap_unref(mask);
-
-	font_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, fontface_xpm);
-	font_p = gtk_pixmap_new(font_i, mask);
-	gtk_widget_show(font_p);
-	gdk_bitmap_unref(mask);
-
-	fgcolor_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, fgcolor_xpm);
-	fgcolor_p = gtk_pixmap_new(fgcolor_i, mask);
-	gtk_widget_show(fgcolor_p);
-	gdk_bitmap_unref(mask);
-
-	bgcolor_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, bgcolor_xpm);
-	bgcolor_p = gtk_pixmap_new(bgcolor_i, mask);
-	gtk_widget_show(bgcolor_p);
-	gdk_bitmap_unref(mask);
-
-	link_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, link_xpm);
-	link_p = gtk_pixmap_new(link_i, mask);
-	gtk_widget_show(link_p);
-	gdk_bitmap_unref(mask);
-
-	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_icon_xpm);
-	smiley_p = gtk_pixmap_new(smiley_i, mask);
-	gtk_widget_show(smiley_p);
-	gdk_bitmap_unref(mask);
-
-	image_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, image_icon_xpm);
-	image_p = gtk_pixmap_new(image_i, mask);
-	gtk_widget_show(image_p);
-	gdk_bitmap_unref(mask);
-
-	wood_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, wood_xpm);
-	wood_p = gtk_pixmap_new(wood_i, mask);
-	gtk_widget_show(wood_p);
-	gdk_bitmap_unref(mask);
-
-	viewer_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, search_small_xpm);
-	viewer_p = gtk_pixmap_new(viewer_i, mask);
-	gtk_widget_show(viewer_p);
-	gdk_bitmap_unref(mask);
-
-	save_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, save_small_xpm);
-	save_p = gtk_pixmap_new(save_i, mask);
-	gtk_widget_show(save_p);
-	gdk_bitmap_unref(mask);
-
-	speaker_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, speaker_xpm);
-	speaker_p = gtk_pixmap_new(speaker_i, mask);
-	gtk_widget_show(speaker_p);
-	gdk_bitmap_unref(mask);
-	c->makesound = 1;
-
-	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-					  NULL, _("Bold Text"), _("Bold"), bold_p,
-					  GTK_SIGNAL_FUNC(do_bold), entry);
-	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, NULL, _("Italics Text"),
-					    _("Italics"), italic_p, GTK_SIGNAL_FUNC(do_italic), entry);
-	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					       GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					       NULL, NULL, _("Underline Text"),
-					       _("Underline"), underline_p,
-					       GTK_SIGNAL_FUNC(do_underline), entry);
-	strike =
-	    gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				       NULL, _("Strike through Text"), _("Strike"), strike_p,
-				       GTK_SIGNAL_FUNC(do_strike), entry);
-
-	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-
-	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-					NULL, _("Decrease font size"), _("Small"),
-					small_p, GTK_SIGNAL_FUNC(do_small), entry);
-	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-					 NULL, _("Normal font size"), _("Normal"),
-					 normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
-	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-				      NULL, _("Increase font size"), _("Big"),
-				      big_p, GTK_SIGNAL_FUNC(do_big), entry);
-
-	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-
-	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, NULL, _("Select Font"),
-					  _("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
-	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-						NULL, NULL, _("Text Color"),
-						_("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_fg_color),
-						c);
-	bgcolorbtn =
-	    gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				       NULL, _("Background Color"), _("Color"), bgcolor_p,
-				       GTK_SIGNAL_FUNC(toggle_bg_color), c);
-
-	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-
-	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, NULL, _("Insert Link"),
-					  _("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);
-	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, NULL, _("Insert smiley face"), _("Smiley"),
-					    smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
-	image = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-					    NULL, _("Insert IM Image"), _("Image"),
-					    image_p, GTK_SIGNAL_FUNC(insert_image), c);
-	
-	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-
-	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					  GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					  NULL, NULL, _("Enable logging"),
-					  _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
-	state_lock = 1;
-	if (find_log_info(c->name))
-		 gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), TRUE);
-	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
-	state_lock = 0;
-
-	if (!c->is_chat) {
-		viewer = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-		            			NULL, _("Show Log Viewer"), _("Viewer"),
-						viewer_p, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name));
-	} else {
-		viewer = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-						NULL, _("Show Log Viewer"), _("Viewer"),
-        					viewer_p, GTK_SIGNAL_FUNC(chat_show_log), GINT_TO_POINTER(c->name));
-	}
-	
-	save = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
-				       NULL, _("Save Conversation"),
-				       _("Save"), save_p, GTK_SIGNAL_FUNC(save_convo), c);
-
-	speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					     GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					     NULL, NULL, _("Toggle Sound"),
-					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(toggle_sound), c);
-	c->makesound = 1;
-
-	/* use a slicker look if the user wants to */
-	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(bold), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(italic), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(underline), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(strike), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(small), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(normal), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(big), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(font), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(fgcolorbtn), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(bgcolorbtn), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(link), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(smiley), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(image), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(wood), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(viewer), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(save), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(speaker), GTK_RELIEF_NONE);
-	}
-
-	gtk_widget_show(toolbar);
-
-	gdk_pixmap_unref(bold_i);
-	gdk_pixmap_unref(italic_i);
-	gdk_pixmap_unref(underline_i);
-	gdk_pixmap_unref(strike_i);
-	gdk_pixmap_unref(small_i);
-	gdk_pixmap_unref(normal_i);
-	gdk_pixmap_unref(big_i);
-	gdk_pixmap_unref(font_i);
-	gdk_pixmap_unref(fgcolor_i);
-	gdk_pixmap_unref(bgcolor_i);
-	gdk_pixmap_unref(link_i);
-	gdk_pixmap_unref(smiley_i);
-	gdk_pixmap_unref(wood_i);
-	gdk_pixmap_unref(viewer_i);
-	gdk_pixmap_unref(save_i);
-	gdk_pixmap_unref(speaker_i);
-	gdk_pixmap_unref(image_i);
-
-	c->toolbar = toolbar;
-	c->bold = bold;
-	c->strike = strike;
-	c->italic = italic;
-	c->underline = underline;
-	c->log_button = wood;
-	c->viewer_button = viewer;
-	c->fgcolorbtn = fgcolorbtn;
-	c->bgcolorbtn = bgcolorbtn;
-	c->link = link;
-	c->wood = wood;
-	c->font = font;
-	c->smiley = smiley;
-	c->imagebtn = image;
-	c->speaker = speaker;
-	c->speaker_p = speaker_p;
-
-	if (c->is_chat)
-		gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
-	else
-		gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);		
-	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
-	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
-	gtk_widget_set_sensitive(c->underline, ((font_options & OPT_FONT_UNDERLINE)) ? FALSE : TRUE);
-	gtk_widget_set_sensitive(c->strike, ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
-
-	return toolbar;
 }
 
 static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
@@ -3198,7 +2920,7 @@ void show_conv(struct conversation *c)
 	if (!(im_options & OPT_IM_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
-	toolbar = build_conv_toolbar2(c);
+	toolbar = build_conv_toolbar(c);
 	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
 
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);

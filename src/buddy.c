@@ -51,6 +51,7 @@
 #include "win32dep.h"
 #endif
 
+#include "pixmaps/tb_search.xpm"
 #include "pixmaps/login_icon.xpm"
 #include "pixmaps/logout_icon.xpm"
 #include "pixmaps/no_icon.xpm"
@@ -75,7 +76,6 @@
 
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/send_small.xpm"
-#include "pixmaps/tb_search.xpm"
 #include "pixmaps/join.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
