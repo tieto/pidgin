@@ -27,7 +27,7 @@ LangString GTK_BLUECURVE_THEME_DESC			${LANG_DUTCH} "Het Bluecurve thema (standa
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_DUTCH} "Het Lighthouseblue thema."
 
 ; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_DUTCH} "Kies inatllatiemap"
+LangString GTK_PAGE_TITLE				${LANG_DUTCH} "Kies installatiemap"
 LangString GTK_PAGE_SUBTITLE				${LANG_DUTCH} "Kies de map waarin GTK+ geïnstalleerd moet worden"
 LangString GTK_PAGE_INSTALL_MSG1			${LANG_DUTCH} "Setup zal GTK+ in de volgende map installeren"
 LangString GTK_PAGE_INSTALL_MSG2			${LANG_DUTCH} "Om te installeren in een andere map klikt u op Bladeren en selecteert u een andere map. Klik op Volgende om door te gaan."
@@ -36,7 +36,7 @@ LangString GTK_UPGRADE_PROMPT				${LANG_DUTCH} "Er is een oude versie van GTK+ g
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_DUTCH} "Gaim (alleen verwijderen)"
-LangString GAIM_PROMPT_WIPEOUT			${LANG_DUTCH} "Uw aoude Gaim map staat op het punt om verwijderd te worden. Wilt u doorgaan?$\r$\rLet op: Alle door uzelf geïnstalleerde plugins zullen ook verwijderd worden.$\rDe gebruikersinstellingen van Gaim worden niet aangeraakt."
+LangString GAIM_PROMPT_WIPEOUT			${LANG_DUTCH} "Uw oude Gaim map staat op het punt om verwijderd te worden. Wilt u doorgaan?$\r$\rLet op: Alle door uzelf geïnstalleerde plugins zullen ook verwijderd worden.$\rDe gebruikersinstellingen van Gaim worden niet aangeraakt."
 LangString GAIM_PROMPT_DIR_EXISTS			${LANG_DUTCH} "De gegeven installatiemap bestaat al. Eventuele inhoud zal verwijderd worden. Wilt u doorgaan?"
 
 ; GTK+ Section Prompts
