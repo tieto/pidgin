@@ -31,6 +31,7 @@
 #define PROTO_MSN	4
 #define PROTO_IRC	5
 #define PROTO_FTP	6
+#define PROTO_VGATE	7
 
 typedef void (*proto_init)(struct prpl *);
 
