@@ -2657,6 +2657,10 @@ void make_buddy_list()
 	gaim_new_item_from_stock(menu, _("Accounts"), NULL,
 				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
+	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES,
+				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
+
+	gaim_separator(menu);
 
 	protomenu = gtk_menu_new();
 	menuitem = gaim_new_item_from_stock(menu, _("Protocol Actions"), NULL, NULL, NULL, 0, 0, 0);
@@ -2665,8 +2669,7 @@ void make_buddy_list()
 
 	gaim_new_item_from_stock(menu, _("Privacy"), NULL,
 				  GTK_SIGNAL_FUNC(show_privacy_options), NULL, 0, 0, 0);
-	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES,
-				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
+
 	gaim_new_item_from_stock(menu, _("View System Log"), NULL,
 				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
 
