@@ -62,7 +62,9 @@ static void free_ft(struct file_transfer *ft)
 
 static void warn_callback(GtkWidget *widget, struct file_transfer *ft)
 {
+	/* FIXME
         show_warn_dialog(ft->user);
+	*/
 }
 
 static void info_callback(GtkWidget *widget, struct file_transfer *ft)

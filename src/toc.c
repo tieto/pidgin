@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 985 $"
+#define REVISION "gaim:$Revision: 986 $"
 
 
 static unsigned int peer_ver=0;
@@ -53,7 +53,7 @@ static int toc_signon(struct gaim_connection *);
 
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
- * on success. FIXME: should this modify the UI? or just sign in? */
+ * on success. */
 struct gaim_connection *toc_login(char *username, char *password)
 {
 	char *config;

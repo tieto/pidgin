@@ -57,7 +57,7 @@ gint badchar(char c)
 	case '(':
 	case ')':
 	case '\0':
-	case '\n ':
+	case '\n':
 	case '<':
 	case '>':
 		return 1;

@@ -471,7 +471,7 @@ void block_callback(GtkWidget *widget, struct conversation *c)
 
 void warn_callback(GtkWidget *widget, struct conversation *c)
 {
-        show_warn_dialog(c->name);
+        show_warn_dialog(c->gc, c->name);
 	gtk_widget_grab_focus(c->entry);
 }
 

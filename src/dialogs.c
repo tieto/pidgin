@@ -92,6 +92,7 @@ struct warning {
         GtkWidget *window;
         GtkWidget *anon;
         char *who;
+	struct gaim_connection *gc;
 };
 
 struct addbuddy {
@@ -299,14 +300,14 @@ void destroy_all_dialogs()
 
 static void do_warn(GtkWidget *widget, struct warning *w)
 {
-        serv_warn(w->who, (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->anon))) ?
+        serv_warn(w->gc, w->who, (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->anon))) ?
                    1 : 0);
         
         destroy_dialog(NULL, w->window);
 }
 
 
-void show_warn_dialog(char *who)
+void show_warn_dialog(struct gaim_connection *gc, char *who)
 {
 	GtkWidget *cancel;
 	GtkWidget *warn;
@@ -357,6 +358,7 @@ void show_warn_dialog(char *who)
         gtk_widget_show(label);
 
         w->who = who;
+	w->gc = gc;
 	
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 

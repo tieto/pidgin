@@ -170,7 +170,8 @@ void serv_send_im(char *name, char *message, int away)
 
 void serv_get_info(char *name)
 {
-	/* FIXME */
+	/* FIXME: getting someone's info? how do you decide something like that? I think that
+	 * the buddy list/UI needs to be really changed before this gets fixed*/
 	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
         	char buf[MSG_LEN];
@@ -183,7 +184,7 @@ void serv_get_info(char *name)
 
 void serv_get_away_msg(char *name)
 {
-	/* FIXME */
+	/* FIXME: see the serv_get_info comment above :-P */
 	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 		/* HAHA! TOC doesn't have this yet */
@@ -194,7 +195,7 @@ void serv_get_away_msg(char *name)
 
 void serv_get_dir(char *name)
 {
-	/* FIXME */
+	/* FIXME: see the serv_get_info comment above :-P */
 	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
@@ -243,18 +244,24 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 
 void serv_set_away(char *message)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
-	        char buf[MSG_LEN];
-	        if (message) {
-			escape_text(message);
-	                g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
-		} else
-	                g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
-		sflap_send(g, buf, -1, TYPE_DATA);
-	} else if (g->protocol == PROTO_OSCAR) {
-		aim_bos_setprofile(g->oscar_sess, g->oscar_conn, g->user_info, message, gaim_caps);
+	/* FIXME: for now, setting away sets *everyone* to away */
+	GSList *c = connections;
+	struct gaim_connection *g;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		if (g->protocol == PROTO_TOC) {
+			char buf[MSG_LEN];
+			if (message) {
+				escape_text(message);
+				g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
+			} else
+				g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
+			sflap_send(g, buf, -1, TYPE_DATA);
+		} else if (g->protocol == PROTO_OSCAR) {
+			aim_bos_setprofile(g->oscar_sess, g->oscar_conn, g->user_info, message, gaim_caps);
+		}
+		c = c->next;
 	}
 }
 
@@ -276,7 +283,8 @@ void serv_set_info(struct gaim_connection *g, char *info)
 }
 
 void serv_change_passwd(char *orig, char *new) {
-	/* FIXME */
+	/* FIXME: passwords are the kinds of things you don't want randomly changed;
+	 * this whole thing is commented out :-P
 	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG); 
@@ -284,71 +292,91 @@ void serv_change_passwd(char *orig, char *new) {
 		sflap_send(g, buf, strlen(buf), TYPE_DATA);
 		g_free(buf);
 	} else if (g->protocol == PROTO_OSCAR) {
-		/* Oscar change_passwd FIXME */
+		Oscar change_passwd FIXME
 	}
+	*/
 }
 
 void serv_add_buddy(char *name)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
-		char buf[1024];
-		g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
-		sflap_send(g, buf, -1, TYPE_DATA);
-	} else if (g->protocol == PROTO_OSCAR) {
-		aim_add_buddy(g->oscar_sess, g->oscar_conn, name);
+	/* FIXME: this will need to be changed. for now all buddies will be added to
+	 * all connections :-P */
+	GSList *c = connections;
+	struct gaim_connection *g;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		if (g->protocol == PROTO_TOC) {
+			char buf[1024];
+			g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
+			sflap_send(g, buf, -1, TYPE_DATA);
+		} else if (g->protocol == PROTO_OSCAR) {
+			aim_add_buddy(g->oscar_sess, g->oscar_conn, name);
+		}
+		c = c->next;
 	}
 }
 
 void serv_add_buddies(GList *buddies)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
-		char buf[MSG_LEN];
-	        int n, num = 0;
+	/* FIXME: see the comment above for adding one buddy :-P */
+	GSList *c = connections;
+	struct gaim_connection *g;
 
-	        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
-	        while(buddies) {
-			/* i don't know why we choose 8, it just seems good */
-	                if (strlen(normalize(buddies->data)) > MSG_LEN - n - 8) {
-	                        sflap_send(g, buf, -1, TYPE_DATA);
-	                        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
-	                        num = 0;
-	                }
-	                ++num;
-	                n += g_snprintf(buf + n, sizeof(buf) - n, " %s", normalize(buddies->data));
-	                buddies = buddies->next;
-	        }
-		sflap_send(g, buf, -1, TYPE_DATA);
-	} else if (g->protocol == PROTO_OSCAR) {
-		char buf[MSG_LEN];
-		int n = 0;
-		while(buddies) {
-			if (n > MSG_LEN - 18) {
-				aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
-				n = 0;
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		if (g->protocol == PROTO_TOC) {
+			char buf[MSG_LEN];
+			int n, num = 0;
+
+			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+			while(buddies) {
+				/* i don't know why we choose 8, it just seems good */
+				if (strlen(normalize(buddies->data)) > MSG_LEN - n - 8) {
+					sflap_send(g, buf, -1, TYPE_DATA);
+					n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+					num = 0;
+				}
+				++num;
+				n += g_snprintf(buf + n, sizeof(buf)-n, " %s", normalize(buddies->data));
+				buddies = buddies->next;
 			}
-			n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
-					(char *)buddies->data);
-			buddies = buddies->next;
+			sflap_send(g, buf, -1, TYPE_DATA);
+		} else if (g->protocol == PROTO_OSCAR) {
+			char buf[MSG_LEN];
+			int n = 0;
+			while(buddies) {
+				if (n > MSG_LEN - 18) {
+					aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
+					n = 0;
+				}
+				n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
+						(char *)buddies->data);
+				buddies = buddies->next;
+			}
+			aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
 		}
-		aim_bos_setbuddylist(g->oscar_sess, g->oscar_conn, buf);
+		c = c->next;
 	}
 }
 
 
 void serv_remove_buddy(char *name)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
-		char buf[1024];
-		g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
-		sflap_send(g, buf, -1, TYPE_DATA);
-	} else if (g->protocol == PROTO_OSCAR) {
-		aim_remove_buddy(g->oscar_sess, g->oscar_conn, name);
+	/* FIXME: since we added them to all conns, we need to remove them from all conns */
+	GSList *c = connections;
+	struct gaim_connection *g;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		if (g->protocol == PROTO_TOC) {
+			char buf[1024];
+			g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
+			sflap_send(g, buf, -1, TYPE_DATA);
+		} else if (g->protocol == PROTO_OSCAR) {
+			aim_remove_buddy(g->oscar_sess, g->oscar_conn, name);
+		}
+		c = c->next;
 	}
 }
 
@@ -477,10 +505,8 @@ void serv_set_idle(struct gaim_connection *g, int time)
 }
 
 
-void serv_warn(char *name, int anon)
+void serv_warn(struct gaim_connection *g, char *name, int anon)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 		char *send = g_malloc(256);
 		g_snprintf(send, 255, "toc_evil %s %s", name,

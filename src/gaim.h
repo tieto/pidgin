@@ -643,7 +643,7 @@ extern void serv_add_deny(char *);
 extern void serv_set_permit_deny();
 extern void serv_build_config(char *, int, gboolean);
 extern void serv_save_config();
-extern void serv_warn(char *, int);
+extern void serv_warn(struct gaim_connection *, char *, int);
 extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
 extern void serv_dir_search(char *, char *, char *, char *, char *, char *, char *, char *);
 extern void serv_accept_chat(struct gaim_connection *, int);
@@ -810,7 +810,7 @@ extern void save_prefs();
 /* Functions in dialogs.c */
 extern void alias_dialog(struct buddy *);
 extern void do_export(GtkWidget *, void *);
-extern void show_warn_dialog(char *);
+extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
 extern void show_im_dialog();

@@ -426,8 +426,10 @@ XS (XS_AIM_command)
 		serv_set_idle(atoi(SvPV(ST(1), junk)));
 		*/
 	} else if (!strncasecmp(command, "warn", 4)) {
+		/* yet another perl FIXME
 		char *name = SvPV(ST(1), junk);
 		serv_warn(name, 0);
+		*/
 	}
 
 	XSRETURN(0);
