@@ -110,9 +110,9 @@ static void yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn 
 static void yahoo_parse_status(struct yahoo_session *sess, struct yahoo_packet *pkt)
 {
 	/* OK, I'm going to comment it this time. We either get:
-	 * gtkobject(99,(test)\001,6634CD3,0,1,0,0)
+	 * warmenhoven(99,(test)\001,6634CD3,0,1,0,0)
 	 * or
-	 * 2,gtkobject(0,6634CD3,0,1,0,0),warmenhoven(0,6C8C0C48,0,1,0,0)
+	 * 2,smarterchild(0,6634CD3,0,1,0,0),warmenhoven(0,6C8C0C48,0,1,0,0)
 	 *
 	 * in the first case, we only get one person, and we get a bunch of fields.
 	 * in the second case, the number is how many people we got, and then the
