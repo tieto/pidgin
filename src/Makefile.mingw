@@ -76,7 +76,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-DLL_C_SRC =		about.c \
+DLL_C_SRC =	\
 			account.c \
 			accountopt.c \
 			away.c \

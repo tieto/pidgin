@@ -63,7 +63,7 @@ void serv_add_deny(GaimConnection *, const char *);
 void serv_rem_permit(GaimConnection *, const char *);
 void serv_rem_deny(GaimConnection *, const char *);
 void serv_set_permit_deny(GaimConnection *);
-void serv_warn(GaimConnection *, const char *, int);
+void serv_warn(GaimConnection *, const char *, gboolean);
 void serv_set_dir(GaimConnection *, const char *, const char *,
 				  const char *, const char *, const char *,
 				  const char *, const char *, int);

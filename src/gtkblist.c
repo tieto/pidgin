@@ -2353,7 +2353,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, NULL },
-	{ N_("/Help/_About"), NULL, show_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, gaim_gtkdialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
 /*********************************************************

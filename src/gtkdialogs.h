@@ -32,6 +32,7 @@
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
 void gaim_gtkdialogs_destroy_all();
+void gaim_gtkdialogs_about();
 void gaim_gtkdialogs_im();
 void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
 void gaim_gtkdialogs_info();
@@ -45,9 +46,6 @@ void gaim_gtkdialogs_remove_buddy(GaimBuddy *);
 void gaim_gtkdialogs_remove_group(GaimGroup *);
 void gaim_gtkdialogs_remove_chat(GaimChat *);
 void gaim_gtkdialogs_remove_contact(GaimContact *);
-
-/* Functions in about.c */
-extern void show_about(GtkWidget *, void *);
 
 /* Everything after this should probably be moved elsewhere */
 

@@ -137,7 +137,6 @@ bin_PROGRAMS = gaim gaim-remote
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
-	about.c \
 	away.c \
 	dnd-hints.c \
 	gaim-disclosure.c \

@@ -5,7 +5,7 @@
 #include "connection.h"
 #include "conversation.h"
 
-/* include UI for show_about() */
+/* include UI for gaim_gtkdialogs_about() */
 #include "gtkplugin.h"
 #include "gtkdialogs.h"
 
@@ -15,7 +15,7 @@ static void
 echo_hi(GaimConnection *gc)
 {
 	/* this doesn't do much, just lets you know who we are :) */
-	show_about(NULL, NULL);
+	gaim_gtkdialogs_about(NULL, NULL);
 }
 
 static gboolean

@@ -5535,9 +5535,9 @@ static void oscar_set_away(GaimConnection *gc, const char *state, const char *me
 	return;
 }
 
-static void oscar_warn(GaimConnection *gc, const char *name, int anon) {
+static void oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
 	OscarData *od = (OscarData *)gc->proto_data;
-	aim_im_warn(od->sess, od->conn, name, anon ? AIM_WARN_ANON : 0);
+	aim_im_warn(od->sess, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
 }
 
 static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
