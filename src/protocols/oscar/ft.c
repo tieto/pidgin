@@ -1754,10 +1754,10 @@ static struct aim_fileheader_t *aim_oft_getfh(aim_bstream_t *bs)
 	fh->checksum = aimbs_get32(bs);
 	fh->rfrcsum = aimbs_get32(bs);
 	fh->rfsize = aimbs_get32(bs);
-	fh->cretime = aimbs_get16(bs);
-	fh->rfcsum = aimbs_get16(bs);
-	fh->nrecvd = aimbs_get16(bs);
-	fh->recvcsum = aimbs_get16(bs);
+	fh->cretime = aimbs_get32(bs);
+	fh->rfcsum = aimbs_get32(bs);
+	fh->nrecvd = aimbs_get32(bs);
+	fh->recvcsum = aimbs_get32(bs);
 	aimbs_getrawbuf(bs, fh->idstring, 32);
 	fh->flags = aimbs_get8(bs);
 	fh->lnameoffset = aimbs_get8(bs);
