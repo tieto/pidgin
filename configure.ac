@@ -373,7 +373,7 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 	fi
 
 	if test "x$nss_manual_check" = "xno"; then
-		PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes")
+		PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes", [])
 
 		if test "x$have_nss" = "xyes"; then
 			mozilla_nspr="mozilla-nspr"
