@@ -172,8 +172,9 @@ int toc_login(char *username, char *password)
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
 	sflap_send(buf2, -1, TYPE_DATA);
 
-	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s %s",
-		   FILE_SEND_UID, FILE_GET_UID);
+	g_snprintf(buf2, sizeof(buf2), "toc_set_caps %s %s %s %s %s",
+		   FILE_SEND_UID, FILE_GET_UID, B_ICON_UID, IMAGE_UID,
+		   VOICE_UID);
 	sflap_send(buf2, -1, TYPE_DATA);
 
         serv_finish_login();
@@ -603,21 +604,16 @@ void toc_callback( gpointer          data,
                 pip = strtok(NULL, ":");
                 vip = strtok(NULL, ":");
                 sscanf(strtok(NULL, ":"), "%d", &port);
-                for (i=0; i<4; i++) {
-                        sscanf(strtok(NULL, ":"), "%d", &unk[i]);
-                        if (unk[i] == 10001)
-                                break;
-                        messages[i] = frombase64(strtok(NULL, ":"));
-                }
-                
-                tmp = frombase64(strtok(NULL, ":"));
-		sprintf(debug_buff, "%d %d %d %d %d %d %d %d %s\n", tmp[0],
-				tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6],
-				tmp[7], tmp + 8);
-		debug_print(debug_buff);
 
 		if (!strcmp(uuid, FILE_SEND_UID)) {
 			/* we're getting a file */
+	                for (i=0; i<4; i++) {
+	                        sscanf(strtok(NULL, ":"), "%d", &unk[i]);
+	                        if (unk[i] == 10001)
+	                                break;
+	                        messages[i] = frombase64(strtok(NULL, ":"));
+	                }
+	                tmp = frombase64(strtok(NULL, ":"));
 	                subtype = tmp[1];
 	                files = tmp[3]; /* These are fine */
 
@@ -651,6 +647,13 @@ void toc_callback( gpointer          data,
 	                accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
+	                for (i=0; i<4; i++) {
+	                        sscanf(strtok(NULL, ":"), "%d", &unk[i]);
+	                        if (unk[i] == 10001)
+	                                break;
+	                        messages[i] = frombase64(strtok(NULL, ":"));
+	                }
+	                tmp = frombase64(strtok(NULL, ":"));
 			ft = g_new0(struct file_transfer, 1);
 
 			ft->cookie = g_strdup(cookie);
@@ -679,6 +682,13 @@ void toc_callback( gpointer          data,
 			sprintf(debug_buff,"don't know what to do with %s\n",
 					uuid);
 			debug_print(debug_buff);
+			tmp = g_malloc(BUF_LEN);
+			name = frombase64(cookie);
+			snprintf(tmp, BUF_LEN, "toc_rvous_cancel %s %s %s",
+					user, name, uuid);
+			sflap_send(tmp, strlen(tmp), TYPE_DATA);
+			free(name);
+			free(tmp);
 		}
 	} else {
 		sprintf(debug_buff,"don't know what to do with %s\n", c);

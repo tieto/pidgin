@@ -150,7 +150,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
         char *c;
 	int cont = 1;
 	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL, *button = NULL;
-        
+
 	if (!(ft->f = fopen(file,"w"))) {
 		buf = g_malloc(BUF_LONG);
                 g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
@@ -378,7 +378,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	buf = frombase64(ft->cookie);
 	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
 	debug_print(debug_buff);
-	fhdr->magic[0] = 'O'; fhdr->magic[1] = 'F'; fhdr->magic[2] = 'T'; fhdr->magic[3] = '2';
+	fhdr->magic[0] = 'O'; fhdr->magic[1] = 'F';
+	fhdr->magic[2] = 'T'; fhdr->magic[3] = '2';
 	fhdr->hdrlen = 256;
 	fhdr->hdrtype = 0x1108;
 	snprintf(fhdr->bcookie, 8, "%s", buf);
@@ -389,18 +390,18 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->filesleft = 1;
 	fhdr->totparts = 1;
 	fhdr->partsleft = 1;
-	fhdr->totsize = (long)st.st_size; /* total size of all available files */
-	/* size = 10 (date) + 1 + 5 (time) + 1 + 8 (size) + 1 + name + 2 = 30 + name */
+	fhdr->totsize = (long)st.st_size; /* combined size of all files */
+	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
 	fhdr->size = 30 + strlen(c); /* size of listing.txt */
 	fhdr->modtime = time(NULL); /* time since UNIX epoch */
-	fhdr->checksum = 0x10110000; /* ? */
+	fhdr->checksum = 0x89f70000; /* ? this is the only thing i have wrong */
 	fhdr->rfrcsum = 0;
 	fhdr->rfsize = 0;
 	fhdr->cretime = 0;
 	fhdr->rfcsum = 0;
 	fhdr->nrecvd = 0;
 	fhdr->recvcsum = 0;
-	snprintf(fhdr->idstring, 32, "Gaim");
+	snprintf(fhdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");
 	fhdr->flags = 0x02;		/* don't ask me why */
 	fhdr->lnameoffset = 0x1A;	/* ? still no clue */
 	fhdr->lsizeoffset = 0x10;	/* whatever */
@@ -476,7 +477,6 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 void accept_file_dialog(struct file_transfer *ft)
 {
         GtkWidget *accept, *info, *warn, *cancel;
-        GtkWidget *text = NULL, *sw;
         GtkWidget *label;
         GtkWidget *vbox, *bbox;
         char buf[1024];
@@ -509,28 +509,11 @@ void accept_file_dialog(struct file_transfer *ft)
 		g_snprintf(buf, sizeof(buf), "%s requests you to send them a file",
 				ft->user);
 	}
+        if (ft->message)
+		strncat(buf, ft->message, sizeof(buf) - strlen(buf));
         label = gtk_label_new(buf);
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 5);
-        
-        if (ft->message) {
-		/* we'll do this later
-                text = gaim_new_layout();
-                sw = gtk_scrolled_window_new (NULL, NULL);
-                gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                                GTK_POLICY_NEVER,
-                                                GTK_POLICY_AUTOMATIC);
-                gtk_widget_show(sw);
-                gtk_container_add(GTK_CONTAINER(sw), text);
-                gtk_widget_show(text);
-
-                gtk_layout_set_size(GTK_LAYOUT(text), 250, 100);
-                GTK_LAYOUT (text)->vadjustment->step_increment = 10.0;
-                gtk_widget_set_usize(sw, 250, 100);
-
-                gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 10);
-		*/
-        }
         gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 
         gtk_window_set_title(GTK_WINDOW(ft->window), "Gaim - File Transfer?");
