@@ -291,7 +291,7 @@ extern void update_all_buddies();
 extern void update_num_groups();
 extern void show_buddy_list();
 extern void refresh_buddy_window();
-extern void signoff_all(gpointer, gpointer);
+extern void signoff_all();
 extern void do_im_back();
 extern void set_buddy(struct gaim_connection *, struct buddy *);
 extern void build_edit_tree();

@@ -1275,6 +1275,7 @@ void do_quit()
 	/* then we remove everyone in a mass suicide */
 	remove_all_plugins();
 #endif
+	signoff_all();
 	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 #ifdef USE_PERL
 	perl_end();

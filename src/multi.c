@@ -1223,7 +1223,7 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	}
 }
 
-void signoff_all(gpointer w, gpointer d)
+void signoff_all()
 {
 	GSList *c = connections;
 	struct gaim_connection *g = NULL;
