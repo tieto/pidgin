@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12342 2005-03-26 23:25:18Z thekingant $
+ * $Id: gg.c 12354 2005-03-27 17:50:35Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -178,12 +178,19 @@ static char *handle_errcode(GaimConnection *gc, int errcode)
 
 static void agg_set_status(GaimAccount *account, GaimStatus *status)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	int status_num = gd->own_status;
+	GaimConnection *gc;
+	struct agg_data *gd;
+	int status_num;
 	const char *status_id;
 	char *msg = NULL;
 
+	gc = gaim_account_get_connection(account);
+
+	if (gc == NULL)
+		return;
+
+	gd = (struct agg_data *)gc->proto_data;
+	status_num = gd->own_status;
 	status_id = gaim_status_get_id(status);
 
 	if (!strcmp(status_id, "available"))
@@ -830,7 +837,6 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		/* Our signon is complete */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		serv_finish_login(gc);
 
 		break;
 	case GG_EVENT_CONN_FAILED:
@@ -888,7 +894,7 @@ static void agg_login(GaimAccount *account, GaimStatus *status)
 	 */
 
 	gd->sess->uin = (uin_t) strtol(account->username, (char **)NULL, 10);
-	gd->sess->password = g_strdup(account->password);
+	gd->sess->password = g_strdup(gaim_connection_get_password(gc));
 	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;

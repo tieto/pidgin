@@ -416,6 +416,4 @@ msn_session_finish_login(MsnSession *session)
 
 	/* Sync users */
 	msn_session_sync_users(session);
-
-	serv_finish_login(gc);
 }

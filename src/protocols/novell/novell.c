@@ -104,7 +104,6 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 
 		/* Tell Gaim that we are connected */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		serv_finish_login(gc);
 
 		_sync_contact_list(user);
 

@@ -151,7 +151,6 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (!yd->logged_in) {
 				gaim_connection_set_display_name(gc, pair->value);
 				gaim_connection_set_state(gc, GAIM_CONNECTED);
-				serv_finish_login(gc);
 				yd->logged_in = TRUE;
 				if (yd->picture_upload_todo) {
 					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);

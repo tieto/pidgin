@@ -1466,7 +1466,6 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 	case SILC_CLIENT_CONN_SUCCESS:
 	case SILC_CLIENT_CONN_SUCCESS_RESUME:
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		serv_finish_login(gc);
 		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 
 		/* Send any UMODEs configured for account */
@@ -1593,6 +1592,7 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 	GaimConnection *gc = client->application;
 	SilcGaim sg = gc->proto_data;
 	SilcGaimGetAuthMethod internal;
+	const char *password;
 
 	/* Progress */
 	if (sg->resuming)
@@ -1606,9 +1606,9 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 		completion(TRUE, SILC_AUTH_PUBLIC_KEY, NULL, 0, context);
 		return;
 	}
-	if (gc->account->password && *gc->account->password) {
-		completion(TRUE, SILC_AUTH_PASSWORD, gc->account->password,
-			   strlen(gc->account->password), context);
+	password = gaim_connection_get_password(gc);
+	if (password && *password) {
+		completion(TRUE, SILC_AUTH_PASSWORD, password, strlen(password), context);
 		return;
 	}
 

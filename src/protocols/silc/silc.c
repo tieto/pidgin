@@ -303,7 +303,7 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 	/* Load SILC key pair */
 	if (!silc_load_key_pair(gaim_prefs_get_string("/plugins/prpl/silc/pubkey"),
 				gaim_prefs_get_string("/plugins/prpl/silc/privkey"),
-				(account->password == NULL) ? "" : account->password, &client->pkcs,
+				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
 		gaim_connection_error(gc, ("Could not load SILC key pair"));
 		return;

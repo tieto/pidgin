@@ -56,26 +56,6 @@ void serv_touch_idle(GaimConnection *gc)
 		check_idle(gc);
 }
 
-void serv_finish_login(GaimConnection *gc)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimAccount *account;
-
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	account = gaim_connection_get_account(gc);
-
-	if (gaim_account_get_user_info(account) != NULL)
-		serv_set_info(gc, gaim_account_get_user_info(account));
-
-	if (gc->idle_timer > 0)
-		gaim_timeout_remove(gc->idle_timer);
-
-	gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
-	serv_touch_idle(gc);
-}
-
 /* This should return the elapsed time in seconds in which Gaim will not send
  * typing notifications.
  * if it returns zero, it will not send any more typing notifications
@@ -1237,7 +1217,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 void serv_send_file(GaimConnection *gc, const char *who, const char *file)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	
+
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 

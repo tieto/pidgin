@@ -1751,8 +1751,6 @@ static void zephyr_login(GaimAccount * account, GaimStatus *status)
 	if (read_zsubs)
 		process_zsubs(zephyr);
 
-	serv_finish_login(gc);
-
 	if (use_zeph02(zephyr)) {
 		zephyr->nottimer = gaim_timeout_add(100, check_notify_zeph02, gc);
 	} else if (use_tzc(zephyr)) {

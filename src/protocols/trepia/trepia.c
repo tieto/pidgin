@@ -637,7 +637,6 @@ _parse_data(TrepiaSession *session, char *buf)
 						_("Retrieving buddy list"), 2, TREPIA_CONNECT_STEPS);
 
 				gaim_connection_set_state(session->gc, GAIM_CONNECTED);
-				serv_finish_login(session->gc);
 				break;
 
 			case TREPIA_MSG_INCOMING: /* Incoming Message */

@@ -5066,7 +5066,6 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	od->rights.maxdenies = (guint)maxdenies;
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
-	serv_finish_login(gc);
 
 	gaim_debug_info("oscar", "buddy list loaded\n");
 

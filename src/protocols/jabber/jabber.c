@@ -832,7 +832,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			status = gaim_presence_get_active_status(gpresence);
 			jabber_presence_send(js->gc->account, status);
 			jabber_disco_items_server(js);
-			serv_finish_login(js->gc);
 			break;
 	}
 }

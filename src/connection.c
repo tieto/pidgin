@@ -27,6 +27,7 @@
 #include "blist.h"
 #include "connection.h"
 #include "debug.h"
+#include "gaim.h"
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
@@ -103,7 +104,7 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 	}
 	else
 	{
-		if ((password == NULL) &&
+		if (((password == NULL) || (*password == '\0')) &&
 			!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		{
@@ -115,7 +116,8 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 
 	gc = g_new0(GaimConnection, 1);
 	gc->prpl = prpl;
-	gc->password = g_strdup(password);
+	if ((password != NULL) && (*password != '\0'))
+		gc->password = g_strdup(password);
 	gaim_connection_set_account(gc, account);
 	gaim_connection_set_state(gc, GAIM_CONNECTING);
 	connections = g_list_append(connections, gc);
@@ -331,6 +333,15 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		serv_set_permit_deny(gc);
 
 		update_keepalive(gc, TRUE);
+
+		if (gaim_account_get_user_info(account) != NULL)
+			serv_set_info(gc, gaim_account_get_user_info(account));
+
+		if (gc->idle_timer > 0)
+			gaim_timeout_remove(gc->idle_timer);
+
+		gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
+		serv_touch_idle(gc);
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
 		GaimAccount *account = gaim_connection_get_account(gc);

@@ -203,7 +203,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 			silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     (gc->account->password == NULL) ? "" : gc->account->password,
+					     (gc->password == NULL) ? "" : gc->password,
 						 NULL, NULL, NULL, FALSE);
 			g_stat(file_public_key, &st);
 		} else {
@@ -228,7 +228,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 			silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     (gc->account->password == NULL) ? "" : gc->account->password,
+					     (gc->password == NULL) ? "" : gc->password,
 						 NULL, NULL, NULL, FALSE);
 			g_stat(file_private_key, &st);
 		} else {

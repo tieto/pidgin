@@ -733,7 +733,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		tdt->state = STATE_ONLINE;
 
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		serv_finish_login(gc);
 
 		/*
 		 * Add me to my buddy list so that we know the time when

@@ -277,7 +277,6 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		/* Our signon is complete */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		serv_finish_login(gc);
 
 		break;
 
