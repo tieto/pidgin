@@ -64,7 +64,9 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			perl.c
+C_SRC =			perl.c \
+			perl-common.c \
+			perl-handlers.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
