@@ -223,7 +223,14 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 	node = g_value_get_pointer(&val);
 	
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+		struct gaim_conversation *conv =
+			gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+		if(conv) {
+			gaim_window_raise(gaim_conversation_get_window(conv));
+			gaim_window_switch_conversation(
+				gaim_conversation_get_window(conv),
+				gaim_conversation_get_index(conv));
+		}
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		if (gtk_tree_view_row_expanded(tv, path))
 			gtk_tree_view_collapse_row(tv, path);
