@@ -116,6 +116,7 @@ attach_signals(struct gaim_conversation *conv)
 	gstroke_enable(gtkconv->imhtml);
 	gstroke_signal_connect(gtkconv->imhtml, "14789",  stroke_close,    conv);
 	gstroke_signal_connect(gtkconv->imhtml, "1456",   stroke_close,    conv);
+	gstroke_signal_connect(gtkconv->imhtml, "1489",   stroke_close,    conv);
 	gstroke_signal_connect(gtkconv->imhtml, "74123",  stroke_next_tab, conv);
 	gstroke_signal_connect(gtkconv->imhtml, "7456",   stroke_next_tab, conv);
 	gstroke_signal_connect(gtkconv->imhtml, "96321",  stroke_prev_tab, conv);
