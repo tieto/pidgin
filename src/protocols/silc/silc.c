@@ -842,7 +842,8 @@ silcgaim_send_im_resolved(SilcClient client,
 	char tmp[256], *nickname = NULL;
 	SilcClientEntry client_entry;
 
-	convo = gaim_find_conversation_with_account(im->nick, sg->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_IM, im->nick,
+							sg->account);
 	if (!convo)
 		return;
 
@@ -979,14 +980,10 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 		return GAIM_CMD_RET_FAILED;
 
 	if(args && args[0]) {
-		convo = gaim_find_conversation_with_account(args[0], gc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0],
+									gc->account);
 	} else
 		convo = conv;
-
-	if (gaim_conversation_get_type(convo) != GAIM_CONV_CHAT) {
-		*error = g_strdup(_("Failed to leave channel"));
-		return GAIM_CMD_RET_FAILED;
-	}
 
 	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo));
 

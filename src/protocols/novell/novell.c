@@ -194,7 +194,9 @@ _get_details_resp_send_msg(NMUser * user, NMERR_T ret_code,
 		if (user_record) {
 
 			/* Set the title for the conversation */
-			gconv =	gaim_find_conversation_with_account(nm_user_record_get_display_id(user_record),
+			/* XXX - Should this be GAIM_CONV_IM? */
+			gconv =	gaim_find_conversation_with_account(GAIM_CONV_ANY,
+														nm_user_record_get_display_id(user_record),
 														(GaimAccount *) user->client_data);
 			if (gconv) {
 
@@ -1760,7 +1762,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 							text, imflags,
 							nm_event_get_gmt(event));
 
-				gconv =	gaim_find_conversation_with_account(
+				gconv =	gaim_find_conversation_with_account(GAIM_CONV_IM,
 					nm_user_record_get_display_id(user_record),
 					(GaimAccount *) user->client_data);
 				if (gconv) {
@@ -2034,8 +2036,10 @@ _evt_undeliverable_status(NMUser * user, NMEvent * event)
 
 	ur = nm_find_user_record(user, nm_event_get_source(event));
 	if (ur) {
+		/* XXX - Should this be GAIM_CONV_IM? */
 		gconv =
-			gaim_find_conversation_with_account(nm_user_record_get_display_id(ur),
+			gaim_find_conversation_with_account(GAIM_CONV_ANY,
+												nm_user_record_get_display_id(ur),
 												user->client_data);
 		if (gconv) {
 			const char *name = nm_user_record_get_full_name(ur);

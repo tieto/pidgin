@@ -900,7 +900,8 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 	else
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), dim->name);
 
-	conv = gaim_find_conversation_with_account(dim->name, gaim_connection_get_account(dim->gc));
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, dim->name,
+											   gaim_connection_get_account(dim->gc));
 	if (conv) {
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		gaim_conversation_update_progress(conv, 0);
@@ -1151,7 +1152,8 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		dim->watcher = 0;
 	}
 
-	c = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
+	c = gaim_find_conversation_with_account(GAIM_CONV_IM, sn,
+											gaim_connection_get_account(gc));
 	if (c != NULL)
 		gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
@@ -5345,9 +5347,10 @@ static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimCon
 
 static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags imflags) {
 	OscarData *od = (OscarData *)gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
 	int ret = 0;
-	const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+	const char *iconfile = gaim_account_get_buddy_icon(account);
 	char *tmpmsg = NULL, *tmpmsg2 = NULL;
 
 	if (dim && dim->connected) {
@@ -5358,7 +5361,9 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		struct aim_sendimext_args args;
 		struct stat st;
 		gsize len;
-		GaimConversation *conv = gaim_find_conversation_with_account(name, gaim_connection_get_account(gc));
+		GaimConversation *conv;
+
+		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, account);
 
 		if (strstr(message, "<IMG "))
 			gaim_conversation_write(conv, "",
@@ -5366,10 +5371,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			                        "You must be Direct Connected to send IM Images."),
 			                        GAIM_MESSAGE_ERROR, time(NULL));
 
-		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, name));
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, name));
 		if (!bi) {
 			bi = g_new0(struct buddyinfo, 1);
-			g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, name)), bi);
+			g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(account, name)), bi);
 		}
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
@@ -5431,7 +5436,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		 */
 		if (aim_sn_is_icq(name) ) {
 			/* being sent to an ICQ user */
-			if (!aim_sn_is_icq(gaim_account_get_username(gc->account))) {
+			if (!aim_sn_is_icq(gaim_account_get_username(account))) {
 				/* from an AIM user - ICQ receiving from AIM *expects the messsage to be HTML formatted* */
 				tmpmsg = gaim_str_add_cr(message);
 			} else {
@@ -5440,7 +5445,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			}
 		} else {
 			/* being sent to an AIM user */
-			if (aim_sn_is_icq(gaim_account_get_username(gc->account))) {
+			if (aim_sn_is_icq(gaim_account_get_username(account))) {
 				/* from an ICQ user */
 				tmpmsg2 = gaim_strdup_withhtml(message);
 				tmpmsg = gaim_escape_html(tmpmsg2);

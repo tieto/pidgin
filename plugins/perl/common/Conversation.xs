@@ -99,7 +99,7 @@ find_with_account(name, account)
 	const char *name
 	Gaim::Account account
 CODE:
-	RETVAL = gaim_find_conversation_with_account(name, account);
+	RETVAL = gaim_find_conversation_with_account(GAIM_CONV_ANY, name, account);
 OUTPUT:
 	RETVAL
 

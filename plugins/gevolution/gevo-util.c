@@ -33,7 +33,7 @@ gevo_add_buddy(GaimAccount *account, const char *group_name,
 	GaimBuddy *buddy;
 	GaimGroup *group;
 
-	conv = gaim_find_conversation_with_account(screenname, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, screenname, account);
 
 	if ((group = gaim_find_group(group_name)) == NULL)
 	{

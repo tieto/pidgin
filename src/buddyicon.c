@@ -105,8 +105,8 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 		account  = gaim_buddy_icon_get_account(icon);
 		username = gaim_buddy_icon_get_username(icon);
 
-		conv = gaim_find_conversation_with_account(username, account);
-		if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, username, account);
+		if (conv != NULL)
 			gaim_conv_im_set_icon(GAIM_CONV_IM(conv), NULL);
 
 		for (list = sl = gaim_find_buddies(account, username); sl != NULL;
@@ -190,9 +190,9 @@ gaim_buddy_icon_update(GaimBuddyIcon *icon)
 
 	g_slist_free(list);
 
-	conv = gaim_find_conversation_with_account(username, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, username, account);
 
-	if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+	if (conv != NULL)
 		gaim_conv_im_set_icon(GAIM_CONV_IM(conv), icon);
 }
 

@@ -381,7 +381,7 @@ gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
 
-	conv = gaim_find_conversation_with_account(username, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, username, account);
 
 	if (conv == NULL)
 		conv = gaim_conversation_new(GAIM_CONV_IM, account, username);
@@ -765,7 +765,9 @@ gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
 					GaimConversation *conv;
 					buddy = (GaimBuddy*)bnode;
 					bnode = bnode->next;
-					conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
+					conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
+															   buddy->name,
+															   buddy->account);
 					if (gaim_account_is_connected(buddy->account)) {
 						serv_remove_buddy(buddy->account->gc, buddy, group);
 						gaim_blist_remove_buddy(buddy);
@@ -807,6 +809,7 @@ gaim_gtkdialogs_remove_group(GaimGroup *group)
 	g_free(text);
 }
 
+/* XXX - Some of this should be moved into the core, methinks. */
 static void
 gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 {
@@ -824,8 +827,7 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 	serv_remove_buddy(buddy->account->gc, buddy, group);
 	gaim_blist_remove_buddy(buddy);
 
-	conv = gaim_find_conversation_with_account(name, account);
-
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, account);
 	if (conv != NULL)
 		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 
@@ -864,7 +866,7 @@ gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
 	gaim_blist_remove_chat(chat);
 
 	if (name != NULL) {
-		conv = gaim_find_conversation_with_account(name, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_CHAT, name, account);
 		g_free(name);
 	}
 

@@ -20,7 +20,8 @@ write_status(GaimBuddy *buddy, const char *message)
 	char buf[256];
 	char *escaped;
 
-	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
+											   buddy->name, buddy->account);
 
 	if (conv == NULL)
 		return;
@@ -75,10 +76,10 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_away", _("Buddy Goes _Away"));
 	gaim_plugin_pref_frame_add(frame, ppref);
-	
+
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", _("Buddy Goes _Idle"));
 	gaim_plugin_pref_frame_add(frame, ppref);
-	
+
 	return frame;
 }
 

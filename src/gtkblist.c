@@ -3883,8 +3883,6 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		if (*whoalias == '\0')
 			whoalias = NULL;
 
-		c = gaim_find_conversation_with_account(who, data->account);
-
 		if ((g = gaim_find_group(grp)) == NULL)
 		{
 			g = gaim_group_new(grp);
@@ -3908,6 +3906,7 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		 * and gaim_blist_add_buddy().  Or something.  --Mark
 		 */
 
+		c = gaim_find_conversation_with_account(GAIM_CONV_IM, who, data->account);
 		if (c != NULL) {
 			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
@@ -4094,9 +4093,11 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 		if (GAIM_PLUGIN_PROTOCOL_INFO(data->account->gc->prpl)->get_chat_name != NULL)
 			chat_name = GAIM_PLUGIN_PROTOCOL_INFO(
 							data->account->gc->prpl)->get_chat_name(chat->components);
-		
+
 		if (chat_name != NULL) {
-			conv = gaim_find_conversation_with_account(chat_name, data->account);
+			conv = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+													   chat_name,
+													   data->account);
 			g_free(chat_name);
 		}
 

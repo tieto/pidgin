@@ -89,7 +89,7 @@ void run_commands() {
 			GaimConversation *c;
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
-			c = gaim_find_conversation(arg1);
+			c = gaim_find_conversation(GAIM_CONV_ANY, arg1);
 			if (c)
 			{
 				/* disable for now

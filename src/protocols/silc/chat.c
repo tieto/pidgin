@@ -967,8 +967,8 @@ void silcgaim_chat_join_done(SilcClient client,
 	/* Add channel to Gaim */
 	channel->context = SILC_32_TO_PTR(++sg->channel_ids);
 	serv_got_joined_chat(gc, sg->channel_ids, channel->channel_name);
-	convo = gaim_find_conversation_with_account(channel->channel_name,
-						    sg->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+							channel->channel_name, sg->account);
 	if (!convo)
 		return;
 

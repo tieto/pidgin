@@ -34,7 +34,7 @@ static void irc_do_mode(struct irc_conn *irc, const char *target, const char *si
 
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
-	GaimConversation *convo = gaim_find_conversation_with_account(target, irc->account);
+	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, target, irc->account);
 	char *buf;
 
 	if (!convo)
@@ -110,7 +110,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	g_free(newargs[1]);
 	g_free(newargs);
 
-	convo = gaim_find_conversation_with_account(target, irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, target, irc->account);
 	if (convo) {
 		action = g_strdup_printf("/me %s", args[0]);
 		if (action[strlen(action) - 1] == '\n')
@@ -167,8 +167,8 @@ int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, cons
 	if (!args || !args[0])
 		return 0;
 
-	convo = gaim_find_conversation_with_account(target, irc->account);
-	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, target, irc->account);
+	if (!convo)
 		return 0;
 
 	if (args[1])
@@ -436,8 +436,8 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args)
 		return 0;
 
-	convo = gaim_find_conversation_with_account(target, irc->account);
-	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, target, irc->account);
+	if (!convo)
 		return 0;
 
 	if (!args[0]) {

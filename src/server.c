@@ -267,7 +267,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	account  = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 
-	conv = gaim_find_conversation_with_account(name, gc->account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, imflags);
@@ -463,7 +463,7 @@ serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
 		b = buds->data;
 		gaim_blist_server_alias_buddy(b, alias);
 
-		conv = gaim_find_conversation_with_account(b->name, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, b->name, account);
 
 		if (conv != NULL && b->server_alias != NULL &&
 			strcmp(b->server_alias, alias))
@@ -790,7 +790,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	cnv = gaim_find_conversation_with_account(who, gc->account);
+	cnv = gaim_find_conversation_with_account(GAIM_CONV_IM, who, gc->account);
 
 	/*
 	 * Plugin stuff. we pass a char ** but we don't want to pass what's
@@ -1024,7 +1024,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 #if 0
 		if (docklet_count &&
 		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
-		    !gaim_find_conversation_with_account(name, gc->account)) {
+		    !gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account)) {
 			/*
 			 * We're gonna queue it up and wait for the user to ask for
 			 * it... probably by clicking the docklet or windows tray icon.
@@ -1058,9 +1058,10 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state) {
 
 	GaimBuddy *b;
-	GaimConversation *cnv = gaim_find_conversation_with_account(name, gc->account);
+	GaimConversation *cnv;
 	GaimConvIm *im;
 
+	cnv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
 	if (!cnv)
 		return;
 
@@ -1092,10 +1093,11 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
-	GaimConversation *c = gaim_find_conversation_with_account(name, gc->account);
+	GaimConversation *c;
 	GaimConvIm *im;
 	GaimBuddy *b;
 
+	c = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
 	if (!c)
 		return;
 

@@ -47,7 +47,8 @@ typedef enum
 	GAIM_CONV_UNKNOWN = 0, /**< Unknown conversation type. */
 	GAIM_CONV_IM,          /**< Instant Message.           */
 	GAIM_CONV_CHAT,        /**< Chat room.                 */
-	GAIM_CONV_MISC         /**< A misc. conversation.      */
+	GAIM_CONV_MISC,        /**< A misc. conversation.      */
+	GAIM_CONV_ANY          /**< Any type of conversation.  */
 
 } GaimConversationType;
 
@@ -783,24 +784,30 @@ GList *gaim_get_ims(void);
 GList *gaim_get_chats(void);
 
 /**
- * Finds the conversation with the specified name.
+ * Finds the conversation with the specified type and name.  In most
+ * cases you should use gaim_find_conversation_with_account() instead
+ * of this.
  *
+ * @param type The type of the conversation.
  * @param name The name of the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-GaimConversation *gaim_find_conversation(const char *name);
+GaimConversation *gaim_find_conversation(GaimConversationType type,
+										 const char *name);
 
 /**
- * Finds a conversation with the specified name and user.
+ * Finds a conversation with the specified type, name, and Gaim account.
  *
+ * @param type The type of the conversation.
  * @param name The name of the conversation.
  * @param account The gaim_account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
 GaimConversation *gaim_find_conversation_with_account(
-		const char *name, const GaimAccount *account);
+		GaimConversationType type, const char *name,
+		const GaimAccount *account);
 
 /**
  * Writes to a conversation window.

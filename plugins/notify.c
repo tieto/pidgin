@@ -234,7 +234,7 @@ im_sent_im(GaimAccount *account, char *receiver, const char *message) {
 	GaimConversation *conv = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		conv = gaim_find_conversation_with_account(receiver, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, receiver, account);
 		unnotify(conv, TRUE);
 	}
 }

@@ -118,7 +118,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1] || !args[2])
 		return;
 
-	convo = gaim_find_conversation_with_account(args[1], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[1], irc->account);
 	if (!convo)	/* XXX punt on channels we are not in for now */
 		return;
 
@@ -271,7 +271,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		topic = irc_mirc2txt (args[2]);
 	}
 
-	convo = gaim_find_conversation_with_account(chan, irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, chan, irc->account);
 	if (!convo) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
 	}
@@ -316,7 +316,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 	GaimConversation *convo;
 
 	if (!strcmp(name, "366")) {
-		convo = gaim_find_conversation_with_account(irc->nameconv ? irc->nameconv : args[1], irc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, irc->nameconv ? irc->nameconv : args[1], irc->account);
 		if (!convo) {
 			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a NAMES list for %s, which doesn't exist\n", args[2]);
 			g_string_free(irc->names, TRUE);
@@ -431,7 +431,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	GaimConnection *gc;
 	GaimConversation *convo;
 
-	convo = gaim_find_conversation_with_account(args[1], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, args[1], irc->account);
 	if (convo) {
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) /* does this happen? */
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[1], _("no such channel"),
@@ -456,7 +456,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 	GaimConnection *gc;
 	GaimConversation *convo;
 
-	convo = gaim_find_conversation_with_account(args[1], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[1], irc->account);
 	if (convo) {
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
@@ -468,7 +468,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 
 void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	GaimConversation *convo = gaim_find_conversation_with_account(args[1], irc->account);
+	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[1], irc->account);
 
 	gaim_debug(GAIM_DEBUG_INFO, "irc", "We're apparently not in %s, but tried to use it\n", args[1]);
 	if (convo) {
@@ -485,7 +485,7 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!args || !args[1] || !args[2])
 		return;
 
-	convo = gaim_find_conversation_with_account(args[1], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[1], irc->account);
 	if (!convo)
 		return;
 
@@ -583,7 +583,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
-	convo = gaim_find_conversation_with_account(args[0], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 	if (convo == NULL) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "JOIN for %s failed\n", args[0]);
 		g_free(nick);
@@ -605,7 +605,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	GaimConversation *convo = gaim_find_conversation_with_account(args[0], irc->account);
+	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 	char *nick = irc_mask_nick(from), *buf;
 
 	if (!gc) {
@@ -640,7 +640,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 	char *nick = irc_mask_nick(from), *buf;
 
 	if (*args[0] == '#' || *args[0] == '&') {	/* Channel	*/
-		convo = gaim_find_conversation_with_account(args[0], irc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 		if (!convo) {
 			gaim_debug(GAIM_DEBUG_ERROR, "irc", "MODE received for %s, which we are not in\n", args[0]);
 			g_free(nick);
@@ -769,7 +769,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	if (!args || !args[0] || !gc)
 		return;
 
-	convo = gaim_find_conversation_with_account(args[0], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 	if (!convo) {
 		gaim_debug(GAIM_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", args[0]);
 		return;
@@ -822,7 +822,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 		msg = g_strdup_printf(_("PING reply -- Lag: %lu seconds"), time(NULL) - oldstamp);
 	}
 
-	convo = gaim_find_conversation_with_account(parts[0], irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, parts[0], irc->account);
 	g_strfreev(parts);
 	if (convo) {
 		if (gaim_conversation_get_type (convo) == GAIM_CONV_CHAT)
@@ -876,7 +876,7 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	} else if (notice) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = gaim_find_conversation_with_account(args[0], irc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 		if (convo)
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else

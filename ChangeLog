@@ -15,6 +15,8 @@ version 2.0.0
 
 	Bug fixes:
 	* People using input methods can now use Enter again.
+	* Many problems related to having an IM conversation and a chat open
+	  with the same name (Andrew Hart)
 
 	Preference changes:
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."

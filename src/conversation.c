@@ -754,8 +754,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	g_return_val_if_fail(name    != NULL, NULL);
 
 	/* Check if this conversation already exists. */
-	if (((conv = gaim_find_conversation_with_account(name, account)) != NULL) &&
-	     (gaim_conversation_get_type(conv) == type))
+	if ((conv = gaim_find_conversation_with_account(type, name, account)) != NULL)
 	{
 		if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT ||
 		    gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
@@ -1320,50 +1319,63 @@ gaim_get_chats(void)
 }
 
 
-/* This is deprecated, right? */
+/*
+ * This is deprecated, right?  --SomeOne
+ *
+ * I don't know, I could see uses for it.  Specifically, a plugin
+ * that wants to know if you're talking to a specific person.
+ *        --KingAnt
+ */
 GaimConversation *
-gaim_find_conversation(const char *name)
+gaim_find_conversation(GaimConversationType type,
+					   const char *name)
 {
 	GaimConversation *c = NULL;
-	char *cuser;
+	gchar *name1;
+	const gchar *name2;
 	GList *cnv;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(gaim_normalize(NULL, name));
+	name1 = g_strdup(gaim_normalize(NULL, name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
+		name2 = gaim_normalize(NULL, gaim_conversation_get_name(c));
 
-		if (!gaim_utf8_strcasecmp(cuser, gaim_normalize(NULL, gaim_conversation_get_name(c))))
+		if ((type == gaim_conversation_get_type(c)) &&
+				!gaim_utf8_strcasecmp(name1, name2))
 			break;
 
 		c = NULL;
 	}
 
-	g_free(cuser);
+	g_free(name1);
 
 	return c;
 }
 
 GaimConversation *
-gaim_find_conversation_with_account(const char *name,
+gaim_find_conversation_with_account(GaimConversationType type,
+									const char *name,
 									const GaimAccount *account)
 {
 	GaimConversation *c = NULL;
-	char *cuser;
+	gchar *name1;
+	const gchar *name2;
 	GList *cnv;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(gaim_normalize(account, name));
+	name1 = g_strdup(gaim_normalize(account, name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
+		name2 = gaim_normalize(account, gaim_conversation_get_name(c));
 
-		if (!gaim_utf8_strcasecmp(cuser,
-								  gaim_normalize(account, gaim_conversation_get_name(c))) &&
-			account == gaim_conversation_get_account(c)) {
+		if ((type == gaim_conversation_get_type(c)) &&
+				(account == gaim_conversation_get_account(c)) &&
+				!gaim_utf8_strcasecmp(name1, name2)) {
 
 			break;
 		}
@@ -1371,7 +1383,7 @@ gaim_find_conversation_with_account(const char *name,
 		c = NULL;
 	}
 
-	g_free(cuser);
+	g_free(name1);
 
 	return c;
 }
@@ -1713,13 +1725,18 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 	g_return_val_if_fail(account !=NULL, FALSE);
 	g_return_val_if_fail(what != NULL, FALSE);
 
-	conv = gaim_find_conversation_with_account(who, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, account);
 	if (conv != NULL)
 		gaim_conversation_write(conv, NULL, what, GAIM_MESSAGE_ERROR, time(NULL));
 	else
 		return FALSE;
 	window = gaim_conversation_get_window(conv);
-	if (!gaim_conv_window_has_focus(window)) /* don't change the active conversation if the user is using this window */
+
+	/*
+	 * Change the active conversation to this conversation unless the
+	 * user is already using this window.
+	 */
+	if (!gaim_conv_window_has_focus(window))
 		gaim_conv_window_switch_conversation(window, gaim_conversation_get_index(conv));
 
 	gaim_conv_window_raise(window);

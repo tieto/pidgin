@@ -1810,7 +1810,8 @@ static void ignore_buddy(GaimBuddy *buddy) {
 
 	serv_add_deny(account->gc, name);
 
-	conv = gaim_find_conversation_with_account(name, account);
+	/* The follow should really be done by the core... */
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, account);
 
 	if (conv != NULL)
 		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
