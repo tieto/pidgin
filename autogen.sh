@@ -10,11 +10,18 @@ abort() {
 	exit 1
 }
 
-(gettextize --version) < /dev/null > /dev/null 2>&1 || {
-	echo;
-	echo "You must have gettext installed to compile Gaim";
-	echo;
-	exit;
+USE_AUTOPOINT=1
+
+(autopoint --version) < /dev/null > /dev/null 2>&1 || {
+
+	USE_AUTOPOINT=0
+
+	(gettextize --version) < /dev/null > /dev/null 2>&1 || {
+		echo;
+		echo "You must have gettext installed to compile Gaim";
+		echo;
+		exit;
+	}
 }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
@@ -53,31 +60,22 @@ echo;
 
 echo "Running gettextize, please ignore non-fatal messages...."
 
-# Get the major version of gettext.
-GETTEXT_VER=`gettextize --version | sed -n 's/^.*[0-9]\+\.\([0-9]\+\)\..*$/\1/p'`
-
-# Decide how we want to run gettext.
-if [ $GETTEXT_VER -eq 11 ]; then
+if [ $USE_AUTOPOINT -eq 1 ]; then
 	mv -f m4 m4~
 
-	# Gettext is pure evil. It DEMANDS that we press Return no matter
-	# what. This gets rid of their happy "feature" of doom.
-	sed 's:read .*< /dev/tty::' `which gettextize` > gaim-gettextize
-	chmod +x gaim-gettextize
-	echo n | ./gaim-gettextize --copy --force --intl --no-changelog || abort
-	rm gaim-gettextize
+	echo n | autopoint --force || exit;
 
-	# Now restore the things that brain-dead gettext modified.
+ 	# Now restore the things that brain-dead gettext modified.
 	[ -e configure.in~ ] && mv -f configure.in~ configure.in
 	[ -e configure.ac~ ] && mv -f configure.ac~ configure.ac
 	[ -e Makefile.am~ ]  && mv -f Makefile.am~  Makefile.am
 	rm -rf m4
 	mv -f m4~ m4
-
 	mv -f po/Makevars.template po/Makevars
 else
 	echo n | gettextize --copy --force || exit;
 fi
+
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
 
