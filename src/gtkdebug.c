@@ -108,7 +108,6 @@ static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
-	va_list ap;
 	gchar *esc_s, *arg_s, *cat_s, *s;
 
 	arg_s = g_strdup_vprintf(format, args);

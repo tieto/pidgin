@@ -91,7 +91,7 @@ get_config_frame(GaimPlugin *plugin)
 
         button = gtk_button_new_with_mnemonic(_("_Apply"));
         gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_timestamp), spinner);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_timestamp), spinner);
 	
 	gtk_widget_show_all(ret);
 	return ret;

@@ -327,11 +327,11 @@ gaim_gtk_save_icon_dialog(GtkObject *obj, struct gaim_conversation *conv)
 	gtk_file_selection_set_filename(
 		GTK_FILE_SELECTION(gtkconv->u.im->save_icon), buf);
 
-	g_signal_connect(GTK_OBJECT(gtkconv->u.im->save_icon), "delete_event",
+	g_signal_connect(G_OBJECT(gtkconv->u.im->save_icon), "delete_event",
 					 G_CALLBACK(des_save_icon), gtkconv);
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->save_icon)->ok_button), "clicked",
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->save_icon)->ok_button), "clicked",
 					 G_CALLBACK(do_save_icon), conv);
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->save_icon)->cancel_button), "clicked",
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->u.im->save_icon)->cancel_button), "clicked",
 					 G_CALLBACK(cancel_save_icon), gtkconv);
 
 	gtk_widget_show(gtkconv->u.im->save_icon);
@@ -393,6 +393,24 @@ gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	gtk_widget_set_sensitive(to_toggle, !sensitivity);
 }
 
+void
+gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
+{
+	gboolean sensitivity;
+	gpointer element;
+	int i;
+
+	for (i=0; i < data->len; i++) {
+		element = g_ptr_array_index(data,i);
+		if (element == NULL)
+			continue;
+
+		sensitivity = GTK_WIDGET_IS_SENSITIVE(element);
+
+		gtk_widget_set_sensitive(element, !sensitivity);	
+	}
+}
+
 void gaim_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
@@ -441,7 +459,7 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	if (sf)
-		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
+		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
 
 	if (icon != NULL) {
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);

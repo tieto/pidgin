@@ -4705,7 +4705,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, struct gaim_conversation *conv)
 
 	if (gtkconv->u.im->icon_timer) {
 		button = gtk_menu_item_new_with_label(_("Disable Animation"));
-		g_signal_connect(GTK_OBJECT(button), "activate",
+		g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(stop_anim), conv);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
@@ -4714,20 +4714,20 @@ icon_menu(GtkObject *obj, GdkEventButton *e, struct gaim_conversation *conv)
 			 !(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))) 
 	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
-		g_signal_connect(GTK_OBJECT(button), "activate",
+		g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(start_anim), conv);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
-	g_signal_connect_swapped(GTK_OBJECT(button), "activate",
+	g_signal_connect_swapped(G_OBJECT(button), "activate",
 							 G_CALLBACK(remove_icon), gtkconv);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
 	button = gtk_menu_item_new_with_label(_("Save Icon As..."));
-	g_signal_connect(GTK_OBJECT(button), "activate",
+	g_signal_connect(G_OBJECT(button), "activate",
 					 G_CALLBACK(gaim_gtk_save_icon_dialog), conv);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
@@ -4860,7 +4860,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(frame), event);
-	g_signal_connect(GTK_OBJECT(event), "button-press-event",
+	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), conv);
 	gtk_widget_show(event);
 

@@ -46,7 +46,7 @@ static void make_connect_menu(GtkWidget *box) {
 	while (c) {
 		g = (struct gaim_connection *)c->data;
 		opt = gtk_menu_item_new_with_label(g->username);
-		g_signal_connect(GTK_OBJECT(opt), "activate",
+		g_signal_connect(G_OBJECT(opt), "activate",
 				   G_CALLBACK(sel_gc), g);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
@@ -103,7 +103,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	button = gtk_button_new_with_mnemonic(_("_Set"));
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_idle), spinner);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_idle), spinner);
 
 	gtk_widget_show_all(ret);
 

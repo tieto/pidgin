@@ -1400,7 +1400,8 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
-	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_popup), window);
+	g_signal_connect(G_OBJECT(window), "destroy",
+					 G_CALLBACK(des_popup), window);
 	g_object_set_data(G_OBJECT(window), "url", url);
 	gtk_widget_realize(window);
 
@@ -1421,11 +1422,13 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(des_popup), window);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(des_popup), window);
 
 	button = gaim_pixbuf_button_from_stock(_("More Info"), GTK_STOCK_FIND, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(open_url), url);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(open_url), url);
 
 	gtk_widget_show_all(window);
 

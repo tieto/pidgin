@@ -110,7 +110,7 @@ static void redo_optmenu(struct gaim_connection *arg, gpointer x)
 			gc = c;
 		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
-		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_gc), c);
+		g_signal_connect(G_OBJECT(opt), "activate", G_CALLBACK(set_gc), c);
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 	}
@@ -131,7 +131,7 @@ char *gaim_plugin_init(GModule *h)
 	gaim_signal_connect(h, event_signoff, redo_optmenu, me);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(goodbye), NULL);
+	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(goodbye), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(window), hbox);
@@ -143,7 +143,7 @@ char *gaim_plugin_init(GModule *h)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(entry), "activate", G_CALLBACK(send_it), NULL);
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(send_it), NULL);
 
 	gtk_widget_show_all(window);
 

@@ -120,9 +120,9 @@ void save_convo(GtkWidget *save, struct gaim_conversation *c)
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 			"gaim_conversation", c);
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 			   "clicked", G_CALLBACK(do_save_convo), window);
-	g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
 				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
 }

@@ -72,7 +72,7 @@ static void setup_buddy_chats()
 		return;
 
 	item = gtk_tree_item_new_with_label(_("Buddy Chat"));
-	g_signal_connect(GTK_OBJECT(item), "destroy", G_CALLBACK(des_item), NULL);
+	g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(des_item), NULL);
 	gtk_tree_append(GTK_TREE(buddies), item);
 	gtk_tree_item_expand(GTK_TREE_ITEM(item));
 	gtk_widget_show(item);
@@ -84,10 +84,10 @@ static void setup_buddy_chats()
 	while (crs) {
 		struct chat_room *cr = (struct chat_room *)crs->data;
 		GtkWidget *titem = gtk_tree_item_new_with_label(cr->name);
-		gtk_object_set_user_data(GTK_OBJECT(titem), cr);
+		gtk_object_set_user_data(G_OBJECT(titem), cr);
 		gtk_tree_append(GTK_TREE(tree), titem);
 		gtk_widget_show(titem);
-		g_signal_connect(GTK_OBJECT(titem), "button_press_event",
+		g_signal_connect(G_OBJECT(titem), "button_press_event",
 				   G_CALLBACK(handle_click_chat), cr);
 		crs = crs->next;
 	}
@@ -151,7 +151,7 @@ static void ref_list_callback(gpointer data, char *text, unsigned long len)
 		return;
 
 	while (items) {
-		g_free(gtk_object_get_user_data(GTK_OBJECT(items->data)));
+		g_free(gtk_object_get_user_data(G_OBJECT(items->data)));
 		items = items->next;
 	}
 
@@ -163,7 +163,7 @@ static void ref_list_callback(gpointer data, char *text, unsigned long len)
 	cr = g_new0(struct chat_room, 1);
 	strcpy(cr->name, _("Gaim Chat"));
 	cr->exchange = 4;
-	gtk_object_set_user_data(GTK_OBJECT(item), cr);
+	gtk_object_set_user_data(G_OBJECT(item), cr);
 	gtk_widget_show(item);
 
 	items = g_list_append(NULL, item);
@@ -200,7 +200,7 @@ static void ref_list_callback(gpointer data, char *text, unsigned long len)
 			item = gtk_list_item_new_with_label(name);
 			gtk_widget_show(item);
 			items = g_list_append(items, item);
-			gtk_object_set_user_data(GTK_OBJECT(item), cr);
+			gtk_object_set_user_data(G_OBJECT(item), cr);
 			g_free(name);
 		}
 		c++;
@@ -221,7 +221,7 @@ static void add_chat(GtkWidget *w, gpointer *m)
 	GtkWidget *item;
 
 	if (sel) {
-		cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(sel->data));
+		cr = (struct chat_room *)gtk_object_get_user_data(G_OBJECT(sel->data));
 	} else
 		return;
 
@@ -235,7 +235,7 @@ static void add_chat(GtkWidget *w, gpointer *m)
 	cr2 = g_new0(struct chat_room, 1);
 	strcpy(cr2->name, cr->name);
 	cr2->exchange = cr->exchange;
-	gtk_object_set_user_data(GTK_OBJECT(item), cr2);
+	gtk_object_set_user_data(G_OBJECT(item), cr2);
 	gtk_widget_show(item);
 	sel = g_list_append(NULL, item);
 	gtk_list_append_items(GTK_LIST(cp->list2), sel);
@@ -254,7 +254,7 @@ static void remove_chat(GtkWidget *w, gpointer *m)
 
 	if (sel) {
 		item = (GtkWidget *)sel->data;
-		cr = (struct chat_room *)gtk_object_get_user_data(GTK_OBJECT(item));
+		cr = (struct chat_room *)gtk_object_get_user_data(G_OBJECT(item));
 	} else
 		return;
 
@@ -271,7 +271,7 @@ static void remove_chat(GtkWidget *w, gpointer *m)
 	while (crs) {
 		cr = (struct chat_room *)crs->data;
 		item = gtk_list_item_new_with_label(cr->name);
-		gtk_object_set_user_data(GTK_OBJECT(item), cr);
+		gtk_object_set_user_data(G_OBJECT(item), cr);
 		gtk_widget_show(item);
 		gtk_list_append_items(GTK_LIST(cp->list2), g_list_append(NULL, item));
 
@@ -323,9 +323,9 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	cp->list1 = list1;
 	cp->list2 = list2;
 
-	g_signal_connect(GTK_OBJECT(ref_button), "clicked", G_CALLBACK(refresh_list), cp);
-	g_signal_connect(GTK_OBJECT(rem_button), "clicked", G_CALLBACK(remove_chat), cp);
-	g_signal_connect(GTK_OBJECT(add_button), "clicked", G_CALLBACK(add_chat), cp);
+	g_signal_connect(G_OBJECT(ref_button), "clicked", G_CALLBACK(refresh_list), cp);
+	g_signal_connect(G_OBJECT(rem_button), "clicked", G_CALLBACK(remove_chat), cp);
+	g_signal_connect(G_OBJECT(add_button), "clicked", G_CALLBACK(add_chat), cp);
 
 	label = gtk_label_new(_("List of available chats"));
 
@@ -348,14 +348,14 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	cr = g_new0(struct chat_room, 1);
 	strcpy(cr->name, _("Gaim Chat"));
 	cr->exchange = 4;
-	gtk_object_set_user_data(GTK_OBJECT(item), cr);
+	gtk_object_set_user_data(G_OBJECT(item), cr);
 	gtk_list_append_items(GTK_LIST(list1), g_list_append(NULL, item));
 
 
 	while (crs) {
 		cr = (struct chat_room *)crs->data;
 		item = gtk_list_item_new_with_label(cr->name);
-		gtk_object_set_user_data(GTK_OBJECT(item), cr);
+		gtk_object_set_user_data(G_OBJECT(item), cr);
 		items = g_list_append(items, item);
 
 		crs = crs->next;

@@ -38,6 +38,7 @@
 #include "gaim.h"
 #include "gtkblist.h"
 #include "gtkplugin.h"
+#include "gtkdebug.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "sound.h"
@@ -466,9 +467,9 @@ GtkWidget *font_page() {
 
 	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
-	g_signal_connect(GTK_OBJECT(select), "clicked",
+	g_signal_connect(G_OBJECT(select), "clicked",
 					 G_CALLBACK(show_font_dialog), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 0);
 
@@ -479,7 +480,7 @@ GtkWidget *font_page() {
 	select = gaim_labeled_spin_button(hbox, NULL, &fontsize, 1, 7, NULL);
 	if (!(font_options & OPT_FONT_SIZE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	vbox = make_frame(ret, _("Color"));
@@ -493,14 +494,14 @@ GtkWidget *font_page() {
 	select = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 0);
 	pref_fg_picture = show_color_pref(hbox, TRUE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(update_color),
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(update_color),
 			   pref_fg_picture);
 
 	if (!(font_options & OPT_FONT_FGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
-	g_signal_connect(GTK_OBJECT(select), "clicked", G_CALLBACK(show_fgcolor_dialog), NULL);
+	g_signal_connect(G_OBJECT(select), "clicked", G_CALLBACK(show_fgcolor_dialog), NULL);
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
@@ -509,13 +510,14 @@ GtkWidget *font_page() {
 	select = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 0);
 	pref_bg_picture = show_color_pref(hbox, FALSE);
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(update_color),
-			   pref_bg_picture);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(update_color), pref_bg_picture);
 
 	if (!(font_options & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(select), "clicked", G_CALLBACK(show_bgcolor_dialog), NULL);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(select), "clicked",
+					 G_CALLBACK(show_bgcolor_dialog), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	gtk_widget_show_all(ret);
@@ -593,13 +595,13 @@ GtkWidget *list_page() {
 	b2 = gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
 	if (blist_options & OPT_BLIST_SHOW_ICONS)
 		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-			 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
 	b2 = gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
 	if (blist_options & OPT_BLIST_SHOW_ICONS)
 		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
-			 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
 	gaim_button(_("Dim i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
 
 	gtk_widget_show_all(ret);
@@ -799,8 +801,8 @@ GtkWidget *proxy_page() {
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(entry), "changed",
-			   G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
 	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyhost);
 
 	hbox = gtk_hbox_new(TRUE, 5);
@@ -813,8 +815,8 @@ GtkWidget *proxy_page() {
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(entry), "changed",
-			   G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
 	if (global_proxy_info.proxyport) {
 		char buf[128];
@@ -829,8 +831,8 @@ GtkWidget *proxy_page() {
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(entry), "changed",
-			   G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
 	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyuser);
 
 	hbox = gtk_hbox_new(TRUE, 5);
@@ -844,8 +846,8 @@ GtkWidget *proxy_page() {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 3, 4, GTK_FILL , 0, 0, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	g_signal_connect(GTK_OBJECT(entry), "changed",
-			   G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
 	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxypass);
 
 	gtk_widget_show_all(ret);
@@ -1045,7 +1047,8 @@ GtkWidget *sound_page() {
 
 	gtk_widget_set_sensitive(sndcmd, (sound_options & OPT_SOUND_CMD));
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
-	g_signal_connect(GTK_OBJECT(sndcmd), "changed", G_CALLBACK(sound_cmd_yeah), NULL);
+	g_signal_connect(G_OBJECT(sndcmd), "changed",
+					 G_CALLBACK(sound_cmd_yeah), NULL);
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1102,7 +1105,7 @@ GtkWidget *away_page() {
 	select = gaim_labeled_spin_button(vbox, _("_Minutes before setting away:"), &auto_away, 1, 24 * 60, sg);
 	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
@@ -1115,7 +1118,7 @@ GtkWidget *away_page() {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), prefs_away_menu);
 	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), prefs_away_menu);
 	default_away_menu_init(prefs_away_menu);
 	gtk_widget_show(prefs_away_menu);
@@ -1500,14 +1503,16 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
 
-		g_signal_connect(GTK_OBJECT(sounddialog), "destroy",
-				   G_CALLBACK(close_sounddialog), sounddialog);
+		g_signal_connect(G_OBJECT(sounddialog), "destroy",
+						 G_CALLBACK(close_sounddialog), sounddialog);
 
-		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
-				   "clicked", G_CALLBACK(do_select_sound), (int *)sound_row_sel);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
+						 "clicked",
+						 G_CALLBACK(do_select_sound), (int *)sound_row_sel);
 
-		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
-				   "clicked", G_CALLBACK(close_sounddialog), sounddialog);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
+						 "clicked",
+						 G_CALLBACK(close_sounddialog), sounddialog);
 	}
 
 	g_free(buf);
@@ -1607,15 +1612,15 @@ GtkWidget *sound_events_page() {
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
 
 	button = gtk_button_new_with_label(_("Test"));
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	button = gtk_button_new_with_label(_("Reset"));
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	button = gtk_button_new_with_label(_("Choose..."));
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	gtk_widget_show_all (ret);
@@ -1728,17 +1733,20 @@ GtkWidget *away_message_page() {
 	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(create_away_mess), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(create_away_mess), NULL);
 
 	button = gtk_button_new_from_stock (GTK_STOCK_REMOVE);
 	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(remove_away_message), event_view);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(remove_away_message), event_view);
 
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT, GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(create_away_mess), event_view);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(create_away_mess), event_view);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ret);
@@ -1845,7 +1853,8 @@ void show_prefs()
 	gtk_widget_realize(prefs);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	g_signal_connect(GTK_OBJECT(prefs), "destroy", G_CALLBACK(delete_prefs), NULL);
+	g_signal_connect(G_OBJECT(prefs), "destroy",
+					 G_CALLBACK(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -1928,7 +1937,8 @@ void show_prefs()
 
 	button = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
 	gtk_size_group_add_widget(sg, button);
-	g_signal_connect_swapped(GTK_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), prefs);
+	g_signal_connect_swapped(G_OBJECT(button), "clicked",
+							 G_CALLBACK(gtk_widget_destroy), prefs);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
@@ -2068,32 +2078,32 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	g_object_set_data(G_OBJECT(button), "options", options);
 
 	if (options == &misc_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_misc_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_misc_option), (int *)option);
 	} else if (options == &logging_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_logging_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_logging_option), (int *)option);
 	} else if (options == &blist_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_blist_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_blist_option), (int *)option);
 	} else if (options == &convo_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_convo_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_convo_option), (int *)option);
 	} else if (options == &im_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_im_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_im_option), (int *)option);
 	} else if (options == &chat_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_chat_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_chat_option), (int *)option);
 	} else if (options == &font_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_font_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_font_option), (int *)option);
 	} else if (options == &sound_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_sound_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_sound_option), (int *)option);
 	} else if (options == &away_options) {
-		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_away_option),
-				   (int *)option);
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(set_away_option), (int *)option);
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "gaim_button",
 				   "\"%s\" has no signal handler attached to it!\n", text);
@@ -2115,8 +2125,8 @@ void default_away_menu_init(GtkWidget *omenu)
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		opt = gtk_menu_item_new_with_label(a->name);
-		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_default_away),
-				   (gpointer)index);
+		g_signal_connect(G_OBJECT(opt), "activate",
+						 G_CALLBACK(set_default_away), (gpointer)index);
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
@@ -2268,8 +2278,8 @@ GtkWidget *gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *val
 	g_object_set_data(G_OBJECT(spin), "val", val);
 	gtk_widget_set_size_request(spin, 50, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(adjust), "value-changed",
-			G_CALLBACK(update_spin_value), GTK_WIDGET(spin));
+	g_signal_connect(G_OBJECT(adjust), "value-changed",
+					 G_CALLBACK(update_spin_value), GTK_WIDGET(spin));
 	gtk_widget_show(spin);
 
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
@@ -2391,8 +2401,8 @@ static GtkWidget *gaim_dropdown_from_list(GtkWidget *box, const gchar *title, in
 		opt = gtk_menu_item_new_with_label(text);
 		g_object_set_data(G_OBJECT(opt), "value", GINT_TO_POINTER(value));
 		g_object_set_data(G_OBJECT(opt), "clear", GINT_TO_POINTER(clear));
-		g_signal_connect(GTK_OBJECT(opt), "activate",
-				   G_CALLBACK(dropdown_set), (void *)option);
+		g_signal_connect(G_OBJECT(opt), "activate",
+						 G_CALLBACK(dropdown_set), (void *)option);
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
