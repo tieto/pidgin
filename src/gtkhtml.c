@@ -3345,11 +3345,8 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 							if (sscanf(d, "%x", &colorv)
 								&& !(options & HTML_OPTION_NO_COLOURS))
 							{
-								if (colorv != 0xffffff ||
-																		    !(display_options & OPT_DISP_IGN_WHITE)) {
-									current->color = get_color(colorv, map);
-									current->owncolor = 1;
-								}
+								current->color = get_color(colorv, map);
+								current->owncolor = 1;
 							}
 							else
 							{
@@ -3415,7 +3412,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					{
 						if (!strncasecmp(d, "BGCOLOR=", strlen("BGCOLOR=")))
 						{
-							d += strlen("COLOR=");
+							d += strlen("BGCOLOR=");
 							if (*d == '\"')
 								d++;
 							if (*d == '#')
@@ -3425,7 +3422,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 							if (sscanf(d, "%x", &colorv)
 								&& !(options & HTML_OPTION_NO_COLOURS))
 							{
-								if (colorv == 0xffffff &&
+								if (colorv != 0xffffff ||
 								    !(display_options & OPT_DISP_IGN_WHITE)) {
 									current->bgcol = get_color(colorv, map);
 									current->ownbg = 1;
