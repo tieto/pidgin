@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1192 $"
+#define REVISION "gaim:$Revision: 1218 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1156,7 +1156,7 @@ static void toc_add_permit(struct gaim_connection *gc, char *who) {
 static void toc_add_deny(struct gaim_connection *gc, char *who) {
 	char buf2[MSG_LEN];
 	if (gc->permdeny != 4) return;
-	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
+	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 }
 
@@ -1257,7 +1257,7 @@ void toc_init(struct prpl *ret) {
         ret->add_permit = toc_add_permit;
         ret->add_deny = toc_add_deny;
 	ret->rem_permit = toc_rem_permit;
-	ret->rem_deny = toc_add_deny;
+	ret->rem_deny = toc_rem_deny;
 	ret->set_permit_deny = toc_set_permit_deny;
         ret->warn = toc_warn;
         ret->accept_chat = toc_accept_chat;
