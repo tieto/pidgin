@@ -73,8 +73,35 @@ static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
 			gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
 	}
+}
 
+static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model(tv);
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
 
+	if(gtk_tree_selection_get_selected(sel, &model, &iter)){
+		GaimBlistNode *node;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
+		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			serv_get_info(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
+			return;
+		}
+	}
+	show_info_dialog();
+}
+
+static void gtk_blist_button_chat_cb(GtkWidget *w, gpointer data)
+{
+	/* FIXME: someday, we can check to see if we've selected a chat node */
+	join_chat();
+}
+
+static void gtk_blist_button_away_cb(GtkWidget *w, gpointer data)
+{
+	gtk_menu_popup(GTK_MENU(awaymenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
@@ -226,7 +253,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/sep1"), NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
-	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0, 
+	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0,
 	  "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/_File Transfers"), NULL, NULL, 0,
 	  "<StockItem>", GTK_STOCK_REVERT_TO_SAVED },
@@ -462,6 +489,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *sw;
 	GtkWidget *button;
+	GtkSizeGroup *sg;
 
 	if (gtkblist) {
 		gtk_widget_show(gtkblist->window);
@@ -480,6 +508,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_item_factory_create_items(ift, sizeof(blist_menu) / sizeof(*blist_menu),
 				      blist_menu, NULL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtk_item_factory_get_widget(ift, "<GaimMain>"), FALSE, FALSE, 0);
+
+	awaymenu = gtk_item_factory_get_widget(ift, "/Tools/Away");
+	do_away_menu();
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -524,23 +555,35 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	
 	/**************************** Button Box **************************************/
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkblist->bbox = gtk_hbox_new(TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->bbox, FALSE, FALSE, 0);
 	button = gaim_pixbuf_button_from_stock(_("IM"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
 gtkblist->treeview);
 
 	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_size_group_add_widget(sg, button);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
+gtkblist->treeview);
+
 	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_size_group_add_widget(sg, button);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_chat_cb), NULL);
+
 	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_AWAY, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_size_group_add_widget(sg, button);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
 
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
