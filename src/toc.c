@@ -40,7 +40,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 991 $"
+#define REVISION "gaim:$Revision: 998 $"
 
 
 static unsigned int peer_ver=0;
@@ -63,28 +63,35 @@ void toc_login(struct aim_user *user)
 	char buf[80];
 	char buf2[2048];
 
+	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
+	
 	g_snprintf(buf, sizeof(buf), "Looking up %s", aim_host);	
+	set_login_progress(gc, 1, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
 	sin = (struct in_addr *)get_address(aim_host);
 	if (!sin) {
 		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
-		hide_login_progress(user->username, buf);
+		hide_login_progress(gc, buf);
+		destroy_gaim_conn(gc);
 		return;
 	}
 	
 	g_snprintf(toc_addy, sizeof(toc_addy), "%s", inet_ntoa(*sin));
 	g_snprintf(buf, sizeof(buf), "Connecting to %s", inet_ntoa(*sin));
+	set_login_progress(gc, 2, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 	
 
 
-	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
-	
 	gc->toc_fd = connect_address(sin->s_addr, aim_port);
 
         if (gc->toc_fd < 0) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
 			 inet_ntoa(*sin));
-		hide_login_progress(gc->username, buf);
+		hide_login_progress(gc, buf);
 		destroy_gaim_conn(gc);
 		return;
         }
@@ -92,16 +99,22 @@ void toc_login(struct aim_user *user)
         g_free(sin);
 	
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
+	set_login_progress(gc, 3, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 	
 	if (toc_signon(gc) < 0) {
-		hide_login_progress(gc->username, "Disconnected.");
+		hide_login_progress(gc, "Disconnected.");
 		destroy_gaim_conn(gc);
 		return;
 	}
 
 	g_snprintf(buf, sizeof(buf), "Waiting for reply...");
+	set_login_progress(gc, 4, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 	if (toc_wait_signon(gc) < 0) {
-		hide_login_progress(gc->username, "Authentication Failed");
+		hide_login_progress(gc, "Authentication Failed");
 		destroy_gaim_conn(gc);
 		return;
 	}
@@ -111,6 +124,10 @@ void toc_login(struct aim_user *user)
 	save_prefs();
 
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
+	set_login_progress(gc, 5, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
 	config = toc_wait_config(gc);
 	gc->state = STATE_ONLINE;
 
@@ -342,7 +359,7 @@ void toc_callback( gpointer          data,
 
         buf = g_malloc(2 * BUF_LONG);
         if (wait_reply(gc, buf, 2 * BUF_LONG) < 0) {
-                hide_login_progress(gc->username, "Connection Closed");
+                hide_login_progress(gc, "Connection Closed");
                 signoff(gc); /* this will free gc for us */
                 g_free(buf);
 		return;

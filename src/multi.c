@@ -87,6 +87,8 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 	connections = g_slist_remove(connections, gc);
 	g_free(gc);
 	redo_convo_menus();
+	if (!connections && mainwindow)
+		gtk_widget_show(mainwindow);
 }
 
 struct gaim_connection *find_gaim_conn_by_name(char *name) {
@@ -620,6 +622,9 @@ void account_online(struct gaim_connection *gc)
 {
 	struct aim_user *u;
 	int i;
+	if (gc->meter)
+		gtk_widget_destroy(gc->meter);
+	gc->meter = NULL;
 	if (!acctedit) return;
 	u = find_user(gc->username);
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
@@ -653,4 +658,64 @@ void auto_login()
 		}
 		u = u->next;
 	}
+}
+
+static void meter_destroy(GtkWidget *meter, struct gaim_connection *gc) {
+	gtk_widget_destroy(meter);
+	gc->meter = NULL;
+}
+
+void set_login_progress(struct gaim_connection *gc, float howfar, char *message) {
+	if (mainwindow)
+		gtk_widget_hide(mainwindow);
+
+	if (!gc->meter) {
+		GtkWidget *box, *label;
+		char buf[256];
+
+		gc->meter = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_policy(GTK_WINDOW(gc->meter), 0, 0, 1);
+		gtk_window_set_wmclass(GTK_WINDOW(gc->meter), "signon", "Gaim");
+		gtk_container_set_border_width(GTK_CONTAINER(gc->meter), 5);
+		g_snprintf(buf, sizeof(buf), "%s Signing On", gc->username);
+		gtk_window_set_title(GTK_WINDOW(gc->meter), buf);
+		gtk_signal_connect(GTK_OBJECT(gc->meter), "destroy",
+				   GTK_SIGNAL_FUNC(meter_destroy), gc);
+		gtk_widget_realize(gc->meter);
+		aol_icon(gc->meter->window);
+
+		box = gtk_vbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(gc->meter), box);
+		gtk_widget_show(box);
+
+		label = gtk_label_new(buf);
+		gtk_box_pack_start(GTK_BOX(box), label, 0, 0, 5);
+		gtk_widget_show(label);
+
+		gc->progress = gtk_progress_bar_new();
+		gtk_widget_set_usize(gc->progress, 150, 0);
+		gtk_box_pack_start(GTK_BOX(box), gc->progress, 0, 0, 5);
+		gtk_widget_show(gc->progress);
+
+		gc->status = gtk_statusbar_new();
+		gtk_widget_set_usize(gc->status, 150, 0);
+		gtk_box_pack_start(GTK_BOX(box), gc->status, 0, 0, 5);
+		gtk_widget_show(gc->status);
+
+		gtk_widget_show(gc->meter);
+	}
+
+	gtk_progress_bar_update(GTK_PROGRESS_BAR(gc->progress), howfar / 5);
+	gtk_statusbar_pop(GTK_STATUSBAR(gc->status), 1);
+	gtk_statusbar_push(GTK_STATUSBAR(gc->status), 1, message);
+}
+
+void hide_login_progress(struct gaim_connection *gc, char *why)
+{
+	char buf[2048];
+	sprintf(buf, _("%s was unable to sign on: %s"), gc->username, why);
+	do_error_dialog(buf, _("Signon Error"));
+	if (gc->meter)
+		gtk_widget_destroy(gc->meter);
+	gc->meter = NULL;
 }

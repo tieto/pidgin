@@ -108,13 +108,6 @@ void cancel_logon(void)
 #endif /* USE_APPLET */
 }
 
-void hide_login_progress(char *name, char *why)
-{
-	char buf[2048];
-	sprintf(buf, _("%s was unable to sign on: %s"), name, why);
-	do_error_dialog(buf, _("Signon Error"));
-}
-
 static int snd_tmout;
 int logins_not_muted = 1;
 static void sound_timeout() {

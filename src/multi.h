@@ -69,6 +69,11 @@ struct gaim_connection {
 	time_t login_time;
 	time_t lastsent;
 	int is_idle;
+
+	/* stuff for a signin progress meter */
+	GtkWidget *meter;
+	GtkWidget *progress;
+	GtkWidget *status;
 };
 
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
@@ -85,5 +90,8 @@ void account_online(struct gaim_connection *);
 void account_offline(struct gaim_connection *);
 
 void auto_login();
+
+void set_login_progress(struct gaim_connection *, float, char *);
+void hide_login_progress(struct gaim_connection *, char *);
 
 #endif /* _GAIMMULTI_H_ */
