@@ -2688,7 +2688,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 	}
 
 	gaim_signal_emit(gaim_gtk_blist_get_handle(),
-			 "drawing-tooltip", node, &str->str);
+			 "drawing-tooltip", node, str);
 
 	return g_string_free(str, FALSE);
 }
@@ -4728,7 +4728,7 @@ void gaim_gtk_blist_init(void)
 	gaim_signal_register(gtk_blist_handle, "drawing-tooltip",
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+						 gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"));
 }
 
 void

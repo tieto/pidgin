@@ -120,7 +120,7 @@ extern "C" {
  * This function takes a type and, depending on that type, a sub-type
  * or specific type.
  *
- * If @a type is GAIM_TYPE_POINTER, the next parameter must be a
+ * If @a type is GAIM_TYPE_BOXED, the next parameter must be a
  * string representing the specific type.
  *
  * If @a type is GAIM_TYPE_SUBTYPE, the next parameter must be a
@@ -136,12 +136,13 @@ extern "C" {
 GaimValue *gaim_value_new(GaimType type, ...);
 
 /**
- * Creates a new outgoing GaimValue.
+ * Creates a new outgoing GaimValue.  If a value is an "outgoing" value
+ * it means the value can be modified by plugins and scripts.
  *
  * This function takes a type and, depending on that type, a sub-type
  * or specific type.
  *
- * If @a type is GAIM_TYPE_POINTER, the next parameter must be a
+ * If @a type is GAIM_TYPE_BOXED, the next parameter must be a
  * string representing the specific type.
  *
  * If @a type is GAIM_TYPE_SUBTYPE, the next parameter must be a
