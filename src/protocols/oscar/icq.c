@@ -551,6 +551,19 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
+static void icq_shutdown(aim_session_t *sess, aim_module_t *mod)
+{
+	struct aim_icq_info *del;
+
+	while (sess->icq_info) {
+		del = sess->icq_info;
+		sess->icq_info = sess->icq_info->next;
+		aim_icq_freeinfo(del);
+	}
+
+	return;
+}
+
 faim_internal int icq_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
@@ -561,6 +574,7 @@ faim_internal int icq_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->flags = 0;
 	strncpy(mod->name, "icq", sizeof(mod->name));
 	mod->snachandler = snachandler;
+	mod->shutdown = icq_shutdown;
 
 	return 0;
 }

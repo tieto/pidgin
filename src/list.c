@@ -404,6 +404,8 @@ struct group *gaim_find_group(const char *name)
 }
 struct group *gaim_find_buddys_group(struct buddy *buddy)
 {
+	if (!buddy)
+		return NULL;
 	return (struct group*)(((GaimBlistNode*)buddy)->parent);
 }
 

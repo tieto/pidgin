@@ -867,6 +867,7 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	aim_initsnachash(sess);
 	sess->msgcookies = NULL;
 	sess->icq_info = NULL;
+	sess->oft_info = NULL;
 	sess->snacid_next = 0x00000001;
 
 	sess->flags = 0;

@@ -2349,9 +2349,9 @@ static void gaim_auth_sendrequest(struct gaim_connection *gc, char *name) {
 	if (buddy && (gaim_get_buddy_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", name, gaim_get_buddy_alias_only(buddy));
 	else
-		nombre = g_strdup(name);
+		nombre = NULL;
 
-	dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), nombre);
+	dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), (nombre ? nombre : name));
 	data->gc = gc;
 	data->name = g_strdup(name);
 	data->nick = NULL;
