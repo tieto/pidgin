@@ -890,7 +890,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		 *
 		 *   -- ChipX86
 		 */
-		if (g_slist_find(gc->buddy_chats, conv) != NULL) {
+		if (gc && g_slist_find(gc->buddy_chats, conv) != NULL) {
 			serv_chat_leave(gc, gaim_chat_get_id(GAIM_CHAT(conv)));
 
 			return;
@@ -1010,10 +1010,17 @@ gaim_conversation_get_user(const struct gaim_conversation *conv)
 struct gaim_connection *
 gaim_conversation_get_gc(const struct gaim_conversation *conv)
 {
+	struct aim_user *user;
+
 	if (conv == NULL)
 		return NULL;
 
-	return gaim_conversation_get_user(conv)->gc;
+	user = gaim_conversation_get_user(conv);
+
+	if (user == NULL)
+		return NULL;
+
+	return user->gc;
 }
 
 void
