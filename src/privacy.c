@@ -34,7 +34,6 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who)
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
-	g_return_val_if_fail(gaim_account_is_connected(account), FALSE);
 
 	name = g_strdup(normalize(who));
 
@@ -50,7 +49,9 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who)
 
 	account->permit = g_slist_append(account->permit, g_strdup(who));
 
-	serv_add_permit(gaim_account_get_connection(account), who);
+	if (gaim_account_is_connected(account))
+		serv_add_permit(gaim_account_get_connection(account), who);
+
 	gaim_blist_save();
 
 	if (privacy_ops != NULL && privacy_ops->permit_added != NULL)
@@ -67,7 +68,6 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who)
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
-	g_return_val_if_fail(gaim_account_is_connected(account), FALSE);
 
 	name = g_strdup(normalize(who));
 
@@ -84,7 +84,9 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who)
 	account->permit = g_slist_remove(account->permit, l->data);
 	g_free(l->data);
 
-	serv_rem_deny(gaim_account_get_connection(account), who);
+	if (gaim_account_is_connected(account))
+		serv_rem_deny(gaim_account_get_connection(account), who);
+
 	gaim_blist_save();
 
 	if (privacy_ops != NULL && privacy_ops->permit_removed != NULL)
@@ -101,7 +103,6 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who)
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
-	g_return_val_if_fail(gaim_account_is_connected(account), FALSE);
 
 	name = g_strdup(normalize(who));
 
@@ -117,7 +118,9 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who)
 
 	account->deny = g_slist_append(account->deny, g_strdup(who));
 
-	serv_add_deny(gaim_account_get_connection(account), who);
+	if (gaim_account_is_connected(account))
+		serv_add_deny(gaim_account_get_connection(account), who);
+
 	gaim_blist_save();
 
 	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
@@ -134,7 +137,6 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who)
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
-	g_return_val_if_fail(gaim_account_is_connected(account), FALSE);
 
 	name = g_strdup(normalize(who));
 
@@ -151,7 +153,9 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who)
 	account->deny = g_slist_remove(account->deny, l->data);
 	g_free(l->data);
 
-	serv_rem_deny(gaim_account_get_connection(account), who);
+	if (gaim_account_is_connected(account))
+		serv_rem_deny(gaim_account_get_connection(account), who);
+
 	gaim_blist_save();
 
 	if (privacy_ops != NULL && privacy_ops->deny_removed != NULL)
