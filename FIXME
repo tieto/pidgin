@@ -14,6 +14,6 @@ Holy Crap.
 3. We need to modify nearly every function in server.c to determine which connection to do things on.
    The ones that still need to be modified have a FIXME comment in them.
    3.1. We need to modify the UI to let the user indicate which account to do things on.
-4. We need to completely modify the plugin/perl system to account for multiple connections.
+4. We need to completely modify the plugin/perl system to account for multiple connections. SOMEWHAT DONE
 
 And that's just the large things. There are countless trivial issues that need to be addressed.

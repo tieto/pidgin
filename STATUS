@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-14 17:24:53 -0400 (Sat, 14 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-16 16:14:18 -0400 (Mon, 16 Oct 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -65,13 +65,16 @@ and I prefer having gaim as an applet.) Anyway, the UI is still shakey (as is
 the rest of gaim) but it is at least functional now.
 
 
-Plugins/Perl
-============
+Plugins
+=======
 
-The current plugin/perl system is in complete disarray as things are being
-totally restructured inside gaim, in hopes of adding a more powerful plugin
-system (one that can hopefully support Protocol Plugins (see PRPL comments)).
-While The Change is taking place, most plugins won't compile (and we have set
-all plugins in gaim/plugins not to compile by default). However, ones that have
-been previously compiled may or may not work. The only way to know is to load
-the plugin and test it.
+The plugin system is mostly up and running again, with multi-connectivity added in
+appropriate places. There may still be some bugginess and it lacks some features
+that I want to add, but at least it's mostly working again.
+
+Perl
+====
+
+Perl doesn't work at all right now. You can still load and unload perl scripts, but
+they won't be able to do very much, unfortunately. I'll get it sorted out as soon as
+I figure out how to :-P
