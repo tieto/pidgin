@@ -1,20 +1,3 @@
-/* KNOWN BUGS:
- * 	if you are also using notify.so, it will open a new window to yourself.
- * 	it will not, however, write anything in that window. this is a problem
- * 	with notify.c. maybe one day i'll modify notify.c so that these two
- * 	plugins are more compatible. we'll see.
- *
- * This lagometer has a tendency to not at all show the same lag that the
- * built-in lagometer shows. My guess as to why this is (because they use the
- * exact same code) is because it sends the string more often. That's why I
- * included the configuration option to set the delay between updates.
- *
- * You can load this plugin even when you're not signed on, even though it
- * modifies the buddy list. This is because it checks to see that the buddy
- * list is actually there. In every case that I've been able to think of so
- * far, it does the right thing (tm).
- */
-
 #define GAIM_PLUGINS
 #include "gaim.h"
 
@@ -28,12 +11,12 @@
 #define MY_LAG_STRING "ZYXCHECKLAGXYZ"
 
 GModule *handle;
-GtkWidget *lagbox;
+GtkWidget *lagbox = NULL;
 GtkWidget *my_lagometer;
 struct timeval my_lag_tv;
 guint check_timeout = 0;
 guint delay = 10;
-static GtkWidget *confdlg;
+static GtkWidget *confdlg = NULL;
 struct gaim_connection *my_gc = NULL;
 
 static void avail_now(struct gaim_connection *, void *);
@@ -97,11 +80,11 @@ static void check_lag(struct gaim_connection *gc, char **who, char **message, vo
 	g_free(name);
 }
 
-static gint send_lag(struct gaim_connection *gc) {
+static gint send_lag() {
 	gettimeofday(&my_lag_tv, NULL);
-	if (g_slist_find(connections, gc)) {
+	if (g_slist_find(connections, my_gc)) {
 		char *m = g_strdup(MY_LAG_STRING);
-		serv_send_im(gc, gc->username, m, 1);
+		serv_send_im(my_gc, my_gc->username, m, 1);
 		g_free(m);
 		return TRUE;
 	} else {
@@ -128,18 +111,23 @@ static void got_signoff(struct gaim_connection *gc, void *m) {
 	lagbox = NULL;
 
 	if (g_slist_length(connections) > 1) {
-		if (connections->data == my_gc)
+		if (connections->data == my_gc) {
+			my_gc = NULL;
 			avail_now(connections->next->data, NULL);
-		else
+		} else {
+			my_gc = NULL;
 			avail_now(connections->data, NULL);
+		}
 	} else {
 		my_gc = NULL;
 	}
 }
 
 static void avail_now(struct gaim_connection *gc, void *m) {
+	if (my_gc)
+		return;
 	update_lag(0);
-	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, gc);
+	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, NULL);
 	my_gc = gc;
 }
 
@@ -162,13 +150,13 @@ char *gaim_plugin_init(GModule *h) {
 
 	confdlg = NULL;
 	lagbox = NULL;
+	my_gc = NULL;
 
+	gaim_signal_connect(handle, event_signon, avail_now, NULL);
 	gaim_signal_connect(handle, event_im_recv, check_lag, NULL);
 	gaim_signal_connect(handle, event_signoff, got_signoff, NULL);
 
-	if (!connections)
-		gaim_signal_connect(handle, event_signon, avail_now, NULL);
-	else
+	if (connections)
 		avail_now(connections->data, NULL);
 
 	return NULL;
@@ -182,7 +170,7 @@ static void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {
 		gtk_timeout_remove(check_timeout);
 	check_timeout = 0;
 	if (my_gc)
-		check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, my_gc);
+		check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, NULL);
 	gtk_widget_destroy(confdlg);
 	confdlg = NULL;
 }
