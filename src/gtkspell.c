@@ -355,10 +355,11 @@ static gboolean get_word_from_pos(GtkText* gtktext, int pos, char** buf,
 	}
 
 	if (buf) {
-		*buf = g_malloc(end - start + 1);
+		char *tmp = g_malloc(end - start + 1);
 		for (pos = start; pos < end; pos++) 
-			(*buf)[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
-		(*buf)[pos-start] = 0;
+			tmp[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
+		tmp[pos-start] = 0;
+		*buf = tmp;
 	}
 
 	if (pstart) *pstart = start;
