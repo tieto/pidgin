@@ -256,6 +256,14 @@ gtk_imhtml_remove_smileys (GtkIMHtml *imhtml)
 	imhtml->smiley_data = gtk_smiley_tree_new ();
 }
 
+void
+gtk_imhtml_reset_smileys (GtkIMHtml *imhtml) 
+{
+	gtk_imhtml_remove_smileys(imhtml);
+	gtk_imhtml_init_smileys (imhtml);
+}
+	
+
 struct im_image {
 	gchar *filename;
 	

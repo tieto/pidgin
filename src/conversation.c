@@ -2207,6 +2207,7 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 
 	update_icon(cnv);
 	update_checkbox(cnv);
+	update_smilies(cnv);
 }
 
 int set_dispstyle(int chat)
@@ -3380,6 +3381,7 @@ void update_smilies(struct conversation *c)
 	GSList *smilies;
 
 	if (c->gc->prpl->smiley_list) {
+		gtk_imhtml_remove_smileys(GTK_IMHTML(c->text));
 		smilies = c->gc->prpl->smiley_list();
 
 		while (smilies) {
@@ -3389,6 +3391,8 @@ void update_smilies(struct conversation *c)
 			gtk_imhtml_associate_smiley(GTK_IMHTML(c->text), smile->key, smile->xpm);
 			smilies = g_slist_next(smilies);
 		}
+	} else {
+		gtk_imhtml_reset_smileys(GTK_IMHTML(c->text));
 	}
 }
 
