@@ -24,7 +24,10 @@ Receiving IMs
 Being away/coming back
 Being idle
 Setting your info
-Getting other users' info
+Getting users' info
+Getting users' away messages (PLEASE do not use oscar/libfaim just because of
+	this, gaim with libfaim still really buggy, none of you will listen to
+	me anyway)
 Telling the server who's on your permit/deny lists (buggy)
 Chat:
  - joining rooms
@@ -38,7 +41,6 @@ Chat:
  - whispering
  - refreshing the chatlist in the preferences dialog
  - invitations (both to and from you)
-Getting users' away messages
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.

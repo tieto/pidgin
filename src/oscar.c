@@ -511,6 +511,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_userinfo_s *info;
 	char *prof_enc = NULL, *prof = NULL;
+	u_short infotype;
 	char buf[BUF_LONG];
 	va_list ap;
 
@@ -518,7 +519,13 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	info = va_arg(ap, struct aim_userinfo_s *);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
+	infotype = va_arg(ap, u_short);
 	va_end(ap);
+
+	if (prof == NULL || !strlen(prof)) {
+		do_error_dialog("User has no away message.", "Gaim - Away Msg");
+		return 1;
+	}
 
 	snprintf(buf, sizeof buf, "Username : <B>%s</B>\n<BR>"
 				  "Warning Level : <B>%d %%</B>\n<BR>"

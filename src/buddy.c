@@ -394,6 +394,12 @@ void pressed_dir_info(GtkWidget *widget, struct buddy *b)
 
 }
 
+void pressed_away_msg(GtkWidget *widget, struct buddy *b)
+{
+        serv_get_away_msg(b->name);
+
+}
+
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *b)
 {
         if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
@@ -429,6 +435,14 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+
+#ifdef USE_OSCAR /* FIXME : someday maybe TOC can do this too */
+		button = gtk_menu_item_new_with_label("Away Msg");
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+#endif
 
 		button = gtk_menu_item_new_with_label("Toggle Logging");
 		gtk_signal_connect(GTK_OBJECT(button), "activate",

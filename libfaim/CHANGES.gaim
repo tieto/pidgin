@@ -1,4 +1,7 @@
 
+Mon May 22 01:14:36 UTC 2000 EWarmenhoven
+	- You can now get users' away messages
+
 Sun May 21 11:42:22 UTC 2000 EWarmenhoven
 	- There were small changes to the libfaim code, which I updated
 	- Went ahead and implemented chat (since I said I wouldn't touch it

@@ -400,7 +400,11 @@ int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *
 #define AIM_CAPS_GETFILE 0x10
 #define AIM_CAPS_SENDFILE 0x20
 extern u_char aim_caps[6][16];
-u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *);
+
+#define AIM_GETINFO_GENERALINFO 0x00001
+#define AIM_GETINFO_AWAYMESSAGE 0x00003
+
+u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);
 int aim_parse_userinfo_middle(struct aim_session_t *, struct command_rx_struct *);
 int aim_parse_oncoming_middle(struct aim_session_t *, struct command_rx_struct *);

@@ -172,7 +172,17 @@ void serv_get_info(char *name)
         g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
 #else
-	aim_getinfo(gaim_sess, gaim_conn, name);
+	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_GENERALINFO);
+#endif
+}
+
+void serv_get_away_msg(char *name)
+{
+	char buf[MSG_LEN];
+#ifndef USE_OSCAR
+	/* HAHA! TOC doesn't have this yet */
+#else
+	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
 #endif
 }
 

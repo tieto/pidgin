@@ -9,9 +9,15 @@
 
 #include <aim.h>
 
+struct aim_priv_inforeq {
+  char sn[MAXSNLEN];
+  unsigned short infotype;
+};
+
 u_long aim_getinfo(struct aim_session_t *sess,
 		   struct aim_conn_t *conn, 
-		   const char *sn)
+		   const char *sn,
+		   unsigned short infotype)
 {
   struct command_tx_struct *newpacket;
   int i = 0;
@@ -26,7 +32,7 @@ u_long aim_getinfo(struct aim_session_t *sess,
 
   i = aim_putsnac(newpacket->data, 0x0002, 0x0005, 0x0000, sess->snac_nextid);
 
-  i += aimutil_put16(newpacket->data+i, 0x0001);
+  i += aimutil_put16(newpacket->data+i, infotype);
   i += aimutil_put8(newpacket->data+i, strlen(sn));
   i += aimutil_putstr(newpacket->data+i, sn, strlen(sn));
 
@@ -41,8 +47,9 @@ u_long aim_getinfo(struct aim_session_t *sess,
     snac.type = 0x0005;
     snac.flags = 0x0000;
 
-    snac.data = malloc(strlen(sn)+1);
-    strcpy(snac.data, sn);
+    snac.data = malloc(sizeof(struct aim_priv_inforeq));
+    strcpy(((struct aim_priv_inforeq *)snac.data)->sn, sn);
+    ((struct aim_priv_inforeq *)snac.data)->infotype = infotype;
 
     aim_newsnac(sess, &snac);
   }
@@ -356,59 +363,78 @@ int aim_parse_userinfo_middle(struct aim_session_t *sess,
 			      struct command_rx_struct *command)
 {
   struct aim_userinfo_s userinfo;
-  char *prof_encoding = NULL;
-  char *prof = NULL;
+  char *text_encoding = NULL;
+  char *text = NULL;
   u_int i = 0;
   rxcallback_t userfunc=NULL;
   struct aim_tlvlist_t *tlvlist;
+  struct aim_snac_t *origsnac = NULL;
+  u_long snacid;
+  struct aim_priv_inforeq *inforeq;
+  
+  snacid = aimutil_get32(&command->data[6]);
+  origsnac = aim_remsnac(sess, snacid);
 
-  {
-    u_long snacid = 0x000000000;
-    struct aim_snac_t *snac = NULL;
-
-    snacid = aimutil_get32(&command->data[6]);
-    snac = aim_remsnac(sess, snacid);
-
-    if (snac)
-      {
-	if (snac->data)
-	  free(snac->data);
-	else
-	  printf("faim: parse_userinfo_middle: warning: no ->data in cached SNAC\n");
-	free(snac);
-      }
-    else
-      printf("faim: parseuserinfo_middle: warning: no SNAC cached with for this response (%08lx)\n", snacid);
-
+  if (!origsnac || !origsnac->data) {
+    printf("faim: parse_userinfo_middle: major problem: no snac stored!\n");
+    return 1;
   }
-  
-  i = 10;
 
-  /*
-   * extractuserinfo will give us the basic metaTLV information
-   */
-  i += aim_extractuserinfo(command->data+i, &userinfo);
-  
-  /*
-   * However, in this command, there's usually more TLVs following...
-   */ 
-  tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
-  prof_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
-  prof = aim_gettlv_str(tlvlist, 0x0002, 1);
+  inforeq = (struct aim_priv_inforeq *)origsnac->data;
 
-  userfunc = aim_callhandler(command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
-  if (userfunc)
-    {
+  switch (inforeq->infotype) {
+  case AIM_GETINFO_GENERALINFO:
+  case AIM_GETINFO_AWAYMESSAGE:
+    i = 10;
+
+    /*
+     * extractuserinfo will give us the basic metaTLV information
+     */
+    i += aim_extractuserinfo(command->data+i, &userinfo);
+  
+    /*
+     * However, in this command, there's usually more TLVs following...
+     */ 
+    tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
+
+    /* 
+     * Depending on what informational text was requested, different
+     * TLVs will appear here.
+     *
+     * Profile will be 1 and 2, away message will be 3 and 4.
+     */
+    if (aim_gettlv(tlvlist, 0x0001, 1)) {
+      text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
+      text = aim_gettlv_str(tlvlist, 0x0002, 1);
+    } else if (aim_gettlv(tlvlist, 0x0003, 1)) {
+      text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
+      text = aim_gettlv_str(tlvlist, 0x0004, 1);
+    }
+
+    userfunc = aim_callhandler(command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
+    if (userfunc) {
       i = userfunc(sess,
 		   command, 
 		   &userinfo, 
-		   prof_encoding, 
-		   prof); 
+		   text_encoding, 
+		   text,
+		   inforeq->infotype); 
     }
   
-  free(prof_encoding);
-  free(prof);
-  aim_freetlvchain(&tlvlist);
+    free(text_encoding);
+    free(text);
+    aim_freetlvchain(&tlvlist);
+    break;
+  default:
+    printf("faim: parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
+    break;
+  }
+
+  if (origsnac) {
+    if (origsnac->data)
+      free(origsnac->data);
+    free(origsnac);
+  }
 
   return 1;
 }
@@ -499,3 +525,4 @@ int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, c
 
   return 0;
 }
+
