@@ -2218,14 +2218,14 @@ static void away_edit_sel (GtkWidget *dummy, void *tv)
 {
 	struct away_message *amt;
 	GtkTreeIter iter;
-	GtkListStore *ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(tv)));
+	GtkTreeModel *ls = gtk_tree_view_get_model(GTK_TREE_VIEW(tv));
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	GValue val = { 0, };
 
 	/* Get the pointer to the away message and pass that */
-	if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
+	if (! gtk_tree_selection_get_selected (sel, &ls, &iter))
 		return;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
+	gtk_tree_model_get_value (ls, &iter, 1, &val);
 	amt = g_value_get_pointer (&val);
 /* XXX CORE/UI
 	create_away_mess(NULL, amt);

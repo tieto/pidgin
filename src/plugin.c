@@ -177,6 +177,7 @@ gaim_plugin_probe(const char *filename)
 #ifdef GAIM_PLUGINS
 	GaimPlugin *plugin = NULL;
 	GaimPlugin *loader;
+	gpointer unpunned;
 	gboolean (*gaim_init_plugin)(GaimPlugin *);
 
 	gaim_debug_misc("plugins", "probing %s\n", filename);
@@ -207,7 +208,7 @@ gaim_plugin_probe(const char *filename)
 		}
 
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
-							 (gpointer *)&gaim_init_plugin)) {
+							 &unpunned)) {
 			g_module_close(plugin->handle);
 			plugin->handle = NULL;
 
@@ -219,6 +220,7 @@ gaim_plugin_probe(const char *filename)
 
 			return NULL;
 		}
+		gaim_init_plugin = unpunned;
 	}
 	else {
 		loader = find_loader_for_plugin(plugin);
