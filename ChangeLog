@@ -27,8 +27,11 @@ version 0.60:
 		- Plugins dialog (Ari Pollak)
 		- GtkIMHtml, sorta (Ari Pollak, Christian Hammond)
 		- Buddy Icons
+		- IM Images
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
+	* TOC no longer compiles statically by default--use OSCAR
+	* ICQ plugin no longer gets built--use OSCAR
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

@@ -2628,7 +2628,9 @@ void show_typing(struct conversation *c) {
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
+#if !GTK_CHECK_VERSION(1,3,0)
 		gdk_font_unref(gtk_style_get_font(style));
+#endif
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		style->fg[0].red = 0x0000;
 		style->fg[0].green = 0x9999;
@@ -2688,7 +2690,9 @@ gboolean reset_typing(char *name) {
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
+#if !GTK_CHECK_VERSION(1,3,0)
 		gdk_font_unref(gtk_style_get_font(style));
+#endif
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		c->unseen = 0;
 		gtk_widget_set_style(label, style);

@@ -36,7 +36,7 @@
 #include <locale.h>
 #endif
 
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
 #else
@@ -274,7 +274,7 @@ struct im_image {
 	gint width,height;
 	GtkIMHtml *imhtml;
 	GtkIMHtmlBit *bit;
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	GdkPixbuf *pb;
 #endif
 };
@@ -2673,7 +2673,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 		g_free (copy);
 	} else if ((bit->type == TYPE_SMILEY) || (bit->type == TYPE_IMG)) {
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	  if (bit->img) {
 			GdkPixbuf *imagepb = bit->img->pb;
 			GdkPixbuf *tmp = NULL;
@@ -3405,9 +3405,12 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					char *tmp, *imagedata, *e;
 					const gchar *alltext;
 					struct im_image *img;
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 					GdkPixbufLoader *load;
 					GdkPixbuf *imagepb = NULL;
+#if GTK_CHECK_VERSION(1,3,0)
+					GError *err;
+#endif
 #endif
 					NEW_BIT (NEW_TEXT_BIT);
 					if (!id || !datasize)
@@ -3447,16 +3450,22 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					if (img->len) {
 						img->data = g_malloc(img->len);
 						memcpy(img->data, imagedata, img->len);
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 						load = gdk_pixbuf_loader_new();
+
+#if GTK_CHECK_VERSION(1,3,0)
+						if (!gdk_pixbuf_loader_write(load, imagedata, 
+									img->len, &err))
+#else 
 						if (!gdk_pixbuf_loader_write(load, imagedata, img->len))
+#endif
 							g_print("IM Image corrupt or unreadable.\n");
 						else 
 							imagepb = gdk_pixbuf_loader_get_pixbuf(load);
 						img->pb = imagepb;
 #endif
 					}
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 					if (imagepb) {
 						bit = g_new0 (GtkIMHtmlBit, 1);
 						bit->type = TYPE_IMG;
@@ -3677,7 +3686,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 			gdk_pixmap_unref (bit->pm);
 		if (bit->bm)
 			gdk_bitmap_unref (bit->bm);
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 		if (bit->img) {
 			g_free(bit->img->filename);
 			g_free(bit->img->data);
@@ -3701,7 +3710,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->click = g_list_remove (imhtml->click, imhtml->click->data);
 	}
 	
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	while (imhtml->im_images) {
 		imhtml->im_images = g_list_remove(imhtml->im_images, imhtml->im_images->data);
 	}
@@ -3733,7 +3742,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->scroll_timer = 0;
 	}
 
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	g_list_free(imhtml->im_images);
 	imhtml->im_images = NULL;
 #endif

@@ -74,6 +74,14 @@ void load_protocol(proto_init pi, int size)
 				  " successfully loaded."), _("Protocol Error"));
 		return;
 	}
+	
+	if (p->protocol == PROTO_ICQ) 
+		do_error_dialog(_("Gaim has loaded the ICQ plugin.  This plugin has been deprecated. "
+				  "As such, it was probably not compiled from the same version of the "
+				  "source as this application was, and cannot be guaranteed to work.  "
+				  "It is reccomended that you use the AIM/ICQ protocol to connect to ICQ"),
+				_("Protocol Warning"));
+
 	p = g_new0(struct prpl, 1);
 	pi(p);
 	if ((old = find_prpl(p->protocol)) != NULL)

@@ -944,9 +944,16 @@ static void acct_signin(GtkWidget *w, gpointer d)
 			u->gc->wants_to_die = TRUE;
 			signoff(u->gc);
 		} else {
-			do_error_dialog(_("You cannot log this account in; you do not have "
-					  "the protocol it uses loaded, or the protocol does "
-					  "not have a login function."), _("Login Error"));
+			if (u->protocol == PROTO_TOC)
+				do_error_dialog(_("You have attempted to login an IM account using the "
+						 "TOC protocol.  Because this protocol is inferior to "
+						 "OSCAR, it is now compiled as a plugin by default.  "
+						 "To login, edit this account to use OSCAR or load the "
+						  "TOC plugin."), _("Login Error"));
+			else
+				do_error_dialog(_("You cannot log this account in; you do not have "
+						  "the protocol it uses loaded, or the protocol does "
+						  "not have a login function."), _("Login Error"));
 		}
 		l = l->next;
 	}
