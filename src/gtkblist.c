@@ -145,7 +145,9 @@ struct _gaim_gtk_blist_node {
 
 #ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
-/* This is based on a patch for drop shadows in GTK menus available at http://www.xfce.org/gtkmenu-shadow/ */
+/* This is based on a patch for drop shadows in GTK menus available at 
+ * http://www.xfce.org/gtkmenu-shadow/
+ */
 
 enum side {
   EAST_SIDE,
@@ -4368,6 +4370,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	if (alias != NULL)
 		gtk_entry_set_text(GTK_ENTRY(data->alias_entry), alias);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
+	gtk_entry_set_activates_default(GTK_ENTRY(data->alias_entry), TRUE);
 	gaim_set_accessible_label (data->alias_entry, label);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
