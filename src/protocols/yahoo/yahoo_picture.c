@@ -62,29 +62,6 @@ void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
 	g_free(d);
 }
 
-void yahoo_send_picture_info(GaimConnection *gc, const char *who)
-{
-	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt;
-	char *buf;
-
-	if (!yd->picture_url)
-		return;
-
-	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc));
-	yahoo_packet_hash(pkt, 5, who);
-	yahoo_packet_hash(pkt, 13, "2");
-	yahoo_packet_hash(pkt, 20, yd->picture_url);
-	buf = g_strdup_printf("%d", yd->picture_checksum);
-	yahoo_packet_hash(pkt, 192, buf);
-
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
-	g_free(buf);
-}
-
 void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
@@ -170,8 +147,10 @@ void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (who) {
 		if (icon == 2)
 			yahoo_send_picture_request(gc, who);
-		else if (icon == 0)
+		else if ((icon == 0) || (icon == 1)) {
 			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
+			gaim_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
+		}
 	}
 }
 
@@ -241,6 +220,28 @@ void yahoo_process_picture_upload(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+void yahoo_send_picture_info(GaimConnection *gc, const char *who)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+	char *buf;
+
+	if (!yd->picture_url)
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 13, "2");
+	yahoo_packet_hash(pkt, 20, yd->picture_url);
+	buf = g_strdup_printf("%d", yd->picture_checksum);
+	yahoo_packet_hash(pkt, 192, buf);
+
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+	g_free(buf);
+}
 
 void yahoo_send_picture_request(GaimConnection *gc, const char *who)
 {
