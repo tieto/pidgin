@@ -80,8 +80,8 @@
 #include "untar.h"
 
 #define mkdir(a,b) _mkdir((a))
-#define untar_error( error, args... )      gaim_debug(GAIM_DEBUG_ERROR, "untar", ## error ## , ## args )
-#define untar_warning( warning, args... )  gaim_debug(GAIM_DEBUG_WARNING, "untar", ## warning ## , ## args )
+#define untar_error( error, args... )      gaim_debug(GAIM_DEBUG_ERROR, "untar", error, ## args )
+#define untar_warning( warning, args... )  gaim_debug(GAIM_DEBUG_WARNING, "untar", warning, ## args )
 #define untar_verbose( args... )           gaim_debug(GAIM_DEBUG_INFO, "untar", ## args )
  
 #define WSIZE	32768	/* size of decompression buffer */

@@ -10,14 +10,6 @@
 
 #define EXPORT __declspec(dllexport)
 
-/* from msdn docs */
-typedef struct tagMOUSEHOOKSTRUCT {
-    POINT pt; 
-    HWND  hwnd; 
-    UINT  wHitTestCode; 
-    DWORD dwExtraInfo; 
-} MOUSEHOOKSTRUCT;
-
 static HANDLE hMapObject = NULL;
 static DWORD *lastTime = NULL;
 static HHOOK keyHook = NULL;

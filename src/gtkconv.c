@@ -124,9 +124,9 @@ static void move_next_tab(GaimConversation *conv);
 static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
 static void do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv);
 static void do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv);
-static void do_small(GtkWidget *small, GaimGtkConversation *gtkconv);
-static void do_normal(GtkWidget *small, GaimGtkConversation *gtkconv);
-static void do_big(GtkWidget *small, GaimGtkConversation *gtkconv);
+static void do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv);
+static void do_normal(GtkWidget *normal, GaimGtkConversation *gtkconv);
+static void do_big(GtkWidget *large, GaimGtkConversation *gtkconv);
 static void toggle_font(GtkWidget *font, GaimConversation *conv);
 static void toggle_fg_color(GtkWidget *color, GaimConversation *conv);
 static void toggle_bg_color(GtkWidget *color, GaimConversation *conv);
@@ -2092,9 +2092,9 @@ do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv)
 }
 
 static void
-do_small(GtkWidget *small, GaimGtkConversation *gtkconv)
+do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(small)))
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smalltb)))
 		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
 	else
 		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
