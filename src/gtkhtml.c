@@ -3345,8 +3345,11 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 							if (sscanf(d, "%x", &colorv)
 								&& !(options & HTML_OPTION_NO_COLOURS))
 							{
-								current->color = get_color(colorv, map);
-								current->owncolor = 1;
+								if (colorv != 0xffffff ||
+																		    !(display_options & OPT_DISP_IGN_WHITE)) {
+									current->color = get_color(colorv, map);
+									current->owncolor = 1;
+								}
 							}
 							else
 							{
@@ -3402,30 +3405,32 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 						}
 					}
 				}
-				else
-					if (!strncasecmp
-						(tag, "BODY BGCOLOR", strlen("BODY BGCOLOR")))
+				else if (!strncasecmp(tag, "BODY", strlen("BODY")))
 				{
 
-					char *d = tag;
-					/*
-					 * Ditch trailing \" 
-					 */
+					char *d;
 					current = push_state(current);
-					d += strlen("BODY BGCOLOR=");
-					if (*d == '\"')
-						d++;
-					if (*d == '#')
-						d++;
-					if (d[strlen(d) - 1] == '\"')
-						d[strlen(d) - 1] = 0;
-					if (sscanf(d, "%x", &colorv)
-						&& !(options & HTML_OPTION_NO_COLOURS))
+					html_strtok(tag, ' ');
+					while ((d = html_strtok(NULL, ' ')))
 					{
-						if (colorv == 0xffffff &&
-						    !(display_options & OPT_DISP_IGN_WHITE)) {
-							current->bgcol = get_color(colorv, map);
-							current->ownbg = 1;
+						if (!strncasecmp(d, "BGCOLOR=", strlen("BGCOLOR=")))
+						{
+							d += strlen("COLOR=");
+							if (*d == '\"')
+								d++;
+							if (*d == '#')
+								d++;
+							if (d[strlen(d) - 1] == '\"')
+								d[strlen(d) - 1] = 0;
+							if (sscanf(d, "%x", &colorv)
+								&& !(options & HTML_OPTION_NO_COLOURS))
+							{
+								if (colorv == 0xffffff &&
+								    !(display_options & OPT_DISP_IGN_WHITE)) {
+									current->bgcol = get_color(colorv, map);
+									current->ownbg = 1;
+								}
+							}
 						}
 					}
 				}
