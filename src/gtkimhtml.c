@@ -280,7 +280,8 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	}
 	
 	if(tip){
-		gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
+		if (GTK_IMHTML(imhtml)->editable)
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT, 
 							       gtk_imhtml_tip, imhtml);
 	}
@@ -488,7 +489,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
-
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "LINK", "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
@@ -1099,9 +1100,8 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                                  } \
                         } \
                         if (url) { \
-                                 texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL); \
                                  g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), g_strdup(url)); \
-                                 gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
+                                 gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "LINK", &siter, &iter); \
                                  texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, NULL); \
                                  g_object_set_data(G_OBJECT(texttag), "link_url", g_strdup(url)); \
                                  gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
@@ -1129,7 +1129,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	GString *str = NULL;
 	GtkTextIter iter, siter;
 	GtkTextMark *mark, *mark2;
-	GtkTextTag *texttag;
+	GtkTextTag *texttag = NULL;
 	gchar *ws;
 	gchar *tag;
 	gchar *url = NULL;
@@ -1998,11 +1998,12 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
 
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 {
-	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkIMHtmlFormatSpan *span;
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	if (!imhtml->edit.bold) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup("<b>");
 		span->end = NULL;
@@ -2020,11 +2021,12 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 
 gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 {
-	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkIMHtmlFormatSpan *span;
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	if (!imhtml->edit.italic) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup("<i>");
 		span->end = NULL;
@@ -2041,11 +2043,12 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 }
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 {
-	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkIMHtmlFormatSpan *span;
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	if (!imhtml->edit.underline) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup("<u>");
 		span->end = NULL;
@@ -2059,6 +2062,29 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		imhtml->edit.underline = NULL;
 	}
 	return imhtml->edit.underline != NULL;
+}
+
+void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text)
+{
+	GtkIMHtmlFormatSpan *span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	GtkTextTag *tag, *linktag;
+	
+	tag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, NULL);
+	g_object_set_data(G_OBJECT(tag), "link_url", g_strdup(url));
+	
+	linktag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "LINK");
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
+	span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	span->buffer = imhtml->text_buffer;
+	span->start_tag = g_strdup_printf("<a href='%s'>", url);
+	span->end_tag = g_strdup("</a>"); 
+
+	gtk_text_buffer_insert_with_tags(imhtml->text_buffer, &iter, text, strlen(text), linktag, tag, NULL);
+	span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 }
 
 int span_compare_begin(const GtkIMHtmlFormatSpan *a, const GtkIMHtmlFormatSpan *b, GtkTextBuffer *buffer)

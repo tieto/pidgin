@@ -934,8 +934,7 @@ void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 		if (!strlen(showtext))
 			showtext = urltext;
 
-		g_snprintf(open_tag, 2048, "<A HREF=\"%s\">%s", urltext, showtext);
-		gaim_gtk_surround(gtkconv, open_tag, "</A>");
+		gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), urltext, showtext);
 
 		g_free(open_tag);
 	}

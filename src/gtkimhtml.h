@@ -206,6 +206,8 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
+void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
+
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
 
