@@ -674,9 +674,13 @@ GtkWidget *sound_page() {
 		      "Console beep", OPT_SOUND_BEEP,
 #ifdef ESD_SOUND
 		      "ESD", OPT_SOUND_ESD,
-#endif /* ESD_SOUND */
+#endif
+#ifdef ARTSC_SOUND
 		      "ArtsC", OPT_SOUND_ARTSC,
+#endif
+#ifdef NAS_SOUND
 		      "NAS", OPT_SOUND_NAS,
+#endif
 		      "Internal", OPT_SOUND_NORMAL,
 		      "Command", OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);

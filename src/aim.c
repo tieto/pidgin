@@ -101,22 +101,31 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-
-void cancel_logon(void)
+void do_quit()
 {
-#ifdef GAIM_PLUGINS
-	/* first we tell those who have requested it we're quitting */
+	/* captain's log, stardate... */
+	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+
+	/* the self destruct sequence has been initiated */
 	plugin_event(event_quit);
 
-	/* then we remove everyone in a mass suicide */
+	/* transmission ends */
+	signoff_all();
+
+	/* record what we have before we blow it away... */
+	save_prefs();
+
+#ifdef GAIM_PLUGINS
+	/* jettison cargo */
 	remove_all_plugins();
-#endif /* GAIM_PLUGINS */
+#endif
+
 #ifdef USE_PERL
+	/* yup, perl too */
 	perl_end();
 #endif
 
-	save_prefs();
-
+	/* and end it all... */
 	gtk_main_quit();
 }
 
@@ -271,7 +280,7 @@ void show_login()
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
 	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
 	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event", 
-					GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
+					GTK_SIGNAL_FUNC(do_quit), mainwindow);
 
 
 	icon = gaim_pixbuf(NULL, "gaim.png");

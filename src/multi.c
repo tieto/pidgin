@@ -149,14 +149,14 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 	acctedit = NULL;
 	treeview = NULL;
 	if (!d && !blist && !mainwindow && !connections)
-		gtk_main_quit();
+		do_quit();
 }
 
 static gint acctedit_close(GtkWidget *w, gpointer d)
 {
 	gtk_widget_destroy(acctedit);
 	if (!d && !blist && !mainwindow && !connections)
-		gtk_main_quit();
+		do_quit();
 	return FALSE;
 }
 

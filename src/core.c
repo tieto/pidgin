@@ -495,7 +495,7 @@ int core_main()
 
 void core_quit()
 {
-	save_prefs();
+	/* don't save prefs after plugins are gone... */
 #ifndef _WIN32
 	{
 	char buf[1024];

@@ -40,13 +40,6 @@ static void destroy_about()
 	about = NULL;
 }
 
-
-static void version_exit()
-{
-	gtk_main_quit();
-}
-
-
 char *name()
 {
 	return PACKAGE;
@@ -62,7 +55,7 @@ char *version()
 	return VERSION;
 }
 
-void show_about(GtkWidget *w, void *null)
+void show_about(GtkWidget *w, void *data)
 {
 	GtkWidget *vbox;
 	GtkWidget *frame;
@@ -180,18 +173,10 @@ void show_about(GtkWidget *w, void *null)
 		button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-		if (null != (void *)2) {
-			/* 2 can be as sad as 1, it's the loneliest number since the number 1 */
-			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
-						  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
-			gtk_signal_connect(GTK_OBJECT(about), "destroy",
+		gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
+					  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+		gtk_signal_connect(GTK_OBJECT(about), "destroy",
 					   GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
-		} else {
-			gtk_signal_connect(GTK_OBJECT(button), "clicked",
-					   GTK_SIGNAL_FUNC(version_exit), NULL);
-			gtk_signal_connect(GTK_OBJECT(about), "destroy",
-					   GTK_SIGNAL_FUNC(version_exit), NULL);
-		}
 		gtk_widget_show(button);
 
 		/* this makes the sizes not work. */
@@ -203,6 +188,5 @@ void show_about(GtkWidget *w, void *null)
 
 	/* Let's give'em something to talk about -- woah woah woah */
 	gtk_widget_show(about);
-
-	gdk_window_raise(about->window);
+	gtk_window_present(about);
 }

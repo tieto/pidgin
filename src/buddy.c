@@ -1410,26 +1410,6 @@ void import_callback(GtkWidget *widget, void *null)
 	show_import_dialog();
 }
 
-void do_quit()
-{
-	/* first we tell those who have requested it we're quitting */
-	plugin_event(event_quit);
-
-	signoff_all();
-#ifdef GAIM_PLUGINS
-	/* then we remove everyone in a mass suicide */
-	remove_all_plugins();
-#endif
-	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-#ifdef USE_PERL
-	perl_end();
-#endif
-
-	save_prefs();
-
-	gtk_main_quit();
-}
-
 void add_buddy_callback(GtkWidget *widget, void *dummy)
 {
 	char *grp = NULL;

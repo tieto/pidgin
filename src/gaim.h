@@ -325,7 +325,6 @@ extern guint sound_options;
 #define NUM_SOUNDS 11
 
 extern char *sound_file[NUM_SOUNDS];
-extern int sound_order[];
 
 /* global sound struct */
 struct sound_struct {
@@ -358,8 +357,10 @@ extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
 
-/* Functions in buddy.c */
+/* Functions in aim.c */
 extern void do_quit();
+
+/* Functions in buddy.c */
 extern void signoff(struct gaim_connection *);
 extern void do_pounce(struct gaim_connection *, char *, int);
 void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,

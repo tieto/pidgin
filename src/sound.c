@@ -60,11 +60,10 @@
 
 gboolean mute_sounds = 0;
 
-/* description, option bit, default sound file                    *
- * if you want it to get displayed in the prefs dialog, it needs  *
- * to be added to the sound_order array in prefs.c, if not, and   *
- * it has no option bit, set it to 0. the order here has to match *
- * the defines in gaim.h.                               -Robot101 */
+/* description, option bit, default sound file             *
+ * set the option bit to 0 to have it not display in prefs *
+ * the order here has to match the defines in gaim.h.      *
+ *                                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
 	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "arrive.wav"},
 	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "leave.wav"},
@@ -78,12 +77,6 @@ struct sound_struct sounds[NUM_SOUNDS] = {
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, 0, "redalert.wav"},
 	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "redalert.wav"}
-};
-int sound_order[] = {
-	SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE,
-	SND_FIRST_RECEIVE, SND_RECEIVE, SND_SEND,
-	SND_CHAT_JOIN, SND_CHAT_LEAVE,
-	SND_CHAT_YOU_SAY, SND_CHAT_SAY, SND_CHAT_NICK, 0
 };
 
 #ifndef _WIN32
@@ -464,14 +457,11 @@ void play_sound(int sound)
 	if (mute_sounds)
 		return;
 	
-	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
-		return;
-
 	if ((sound == SND_BUDDY_ARRIVE) && !logins_not_muted)
 		return;
 
 	if (sound >= NUM_SOUNDS) {
-		debug_printf("sorry old fruit... can't say I know that sound: ", sound, "\n");
+		debug_printf("got request for unknown sound: %d\n", sound);
 		return;
 	}
 
