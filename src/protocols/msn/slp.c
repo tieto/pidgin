@@ -252,7 +252,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		const char *sha1c;
 		const char *file_name;
 		char *content;
-		gsize len;
+		int len;
 		int type;
 
 		/* Send Ok */
@@ -317,7 +317,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		GaimAccount *account;
 		GaimXfer *xfer;
 		char *bin;
-		gsize bin_len;
+		int bin_len;
 		guint32 file_size;
 		char *file_name;
 		gunichar2 *uni_name;

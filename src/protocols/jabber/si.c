@@ -509,7 +509,7 @@ static void jabber_si_xfer_send_request(GaimXfer *xfer)
 	xmlnode_set_attrib(file, "xmlns",
 			"http://jabber.org/protocol/si/profile/file-transfer");
 	xmlnode_set_attrib(file, "name", xfer->filename);
-	g_snprintf(buf, sizeof(buf), "%d", xfer->size);
+	g_snprintf(buf, sizeof(buf), "%zu", xfer->size);
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 

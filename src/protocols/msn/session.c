@@ -233,14 +233,14 @@ msn_session_sync_users(MsnSession *session)
 
 					group_name =
 						msn_userlist_find_group_name(local_user->userlist,
-													 (int)l->data);
+													 GPOINTER_TO_INT(l->data));
 
 					gid = msn_userlist_find_group_id(remote_user->userlist,
 													 group_name);
 
 					for (l2 = remote_user->group_ids; l2 != NULL; l2 = l2->next)
 					{
-						if ((int)l2->data == gid)
+						if (GPOINTER_TO_INT(l2->data) == gid)
 						{
 							found = TRUE;
 							break;

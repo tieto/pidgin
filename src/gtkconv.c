@@ -6268,7 +6268,7 @@ animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 	for (l = gaim_get_ims(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
-		gtkconv->u.im->animate = (gboolean)value;
+		gtkconv->u.im->animate = GPOINTER_TO_INT(value);
 	}
 
 	/* Now either stop or start animation for the active conversation in each window */

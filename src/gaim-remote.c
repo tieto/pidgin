@@ -261,13 +261,13 @@ send_command_send() {
 		(strlen(opts.to) < 10000) && (strlen(opts.from) < 10000) &&
 		(strlen(opts.protocol) < 20) && (strlen(opts.message) < 10000) )
 	{
-		sprintf(temp, "%04d%s", strlen(opts.to), opts.to);
+		sprintf(temp, "%04zd%s", strlen(opts.to), opts.to);
 		gaim_remote_packet_append_string(p, temp);
-		sprintf(temp, "%04d%s", strlen(opts.from), opts.from);
+		sprintf(temp, "%04zd%s", strlen(opts.from), opts.from);
 		gaim_remote_packet_append_string(p, temp);
-		sprintf(temp, "%04d%s", strlen(opts.protocol), opts.protocol);
+		sprintf(temp, "%04zd%s", strlen(opts.protocol), opts.protocol);
 		gaim_remote_packet_append_string(p, temp);
-		sprintf(temp, "%04d%s", strlen(opts.message), opts.message);
+		sprintf(temp, "%04zd%s", strlen(opts.message), opts.message);
 		gaim_remote_packet_append_string(p, temp);
 		sprintf(temp, "%d", 0); /* quiet flag - off for now */
 		gaim_remote_packet_append_string(p, temp);

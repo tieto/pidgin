@@ -160,7 +160,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		"Call-ID: {%s}\r\n"
 		"Max-Forwards: 0\r\n"
 		"Content-Type: %s\r\n"
-		"Content-Length: %d\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"\r\n",
 		header,
 		slplink->remote_user,

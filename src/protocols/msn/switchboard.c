@@ -339,7 +339,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *body_str;
 	char *body_enc;
 	char *body_final;
-	int body_len;
+	size_t body_len;
 	const char *passport;
 	const char *value;
 

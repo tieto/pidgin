@@ -52,7 +52,7 @@ msn_directconn_send_handshake(MsnDirectConn *directconn)
 		guint16 t4;
 		guint64 t5;
 
-		sscanf (directconn->nonce, "%08X-%04hX-%04hX-%04hX-%012llX", &t1, &t2, &t3, &t4, &t5);
+		sscanf (directconn->nonce, "%08X-%04hX-%04hX-%04hX-%012" G_GINT64_MODIFIER "X", &t1, &t2, &t3, &t4, &t5);
 
 		t1 = GUINT32_TO_LE(t1);
 		t2 = GUINT16_TO_LE(t2);

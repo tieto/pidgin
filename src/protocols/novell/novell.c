@@ -703,7 +703,7 @@ _get_details_resp_add_privacy_item(NMUser *user, NMERR_T ret_code,
 	GaimConnection *gc;
 	NMUserRecord *user_record = resp_data;
 	char *err;
-	gboolean allowed = (gboolean)user_data;
+	gboolean allowed = GPOINTER_TO_INT(user_data);
 	const char *display_id;
 
 	if (user == NULL)
@@ -850,7 +850,7 @@ _get_details_send_privacy_create(NMUser *user, NMERR_T ret_code,
 	GaimConnection *gc;
 	NMUserRecord *user_record = resp_data;
 	char *err;
-	gboolean allowed = (gboolean)user_data;
+	gboolean allowed = GPOINTER_TO_INT(user_data);
 	const char *dn, *display_id;
 
 	if (user == NULL)
@@ -2382,7 +2382,7 @@ novell_chat_invite(GaimConnection *gc, int id,
 
 	user_record = nm_find_user_record(user, who);
 	if (user_record == NULL) {
-		rc = nm_send_get_details(user, who, _get_details_resp_send_invite, (gpointer)id);
+		rc = nm_send_get_details(user, who, _get_details_resp_send_invite, GINT_TO_POINTER(id));
 		_check_for_disconnect(user, rc);
 		return;
 	}

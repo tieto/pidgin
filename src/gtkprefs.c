@@ -931,7 +931,7 @@ static void
 conversation_usetabs_cb(const char *name, GaimPrefType type, gpointer value,
                           gpointer data)
 {
-	gboolean usetabs = (gboolean)value;
+	gboolean usetabs = GPOINTER_TO_INT(value);
 
 	if (usetabs)
 		gtk_widget_set_sensitive(GTK_WIDGET(data), TRUE);
