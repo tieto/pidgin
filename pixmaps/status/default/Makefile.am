@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	na.png \
 	napster.png \
 	notauthorized.png \
+	novell.png \
 	occupied.png \
 	offline.png \
 	rendezvous.png \

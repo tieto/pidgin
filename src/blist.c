@@ -348,6 +348,17 @@ void gaim_blist_update_buddy_icon(GaimBuddy *buddy) {
 void  gaim_blist_rename_buddy (GaimBuddy *buddy, const char *name)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	struct _gaim_hbuddy *hb = g_new(struct _gaim_hbuddy, 1);
+
+	hb->name = g_strdup(gaim_normalize(buddy->account, buddy->name));
+	hb->account = buddy->account;
+	hb->group = ((GaimBlistNode *)buddy)->parent->parent;
+	g_hash_table_remove(gaimbuddylist->buddies, hb);
+
+	g_free(hb->name);
+	hb->name = g_strdup(gaim_normalize(buddy->account, name));
+	g_hash_table_replace(gaimbuddylist->buddies, hb, buddy);
+
 	g_free(buddy->name);
 	buddy->name = g_strdup(name);
 	if (ops)

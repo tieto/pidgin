@@ -66,6 +66,7 @@ typedef enum
 	GAIM_PROTO_BATTLENET,   /**< Battle.NET protocol       */
 	GAIM_PROTO_SSCP,	/**< SSCP (ConfMgr) protocol   */
 	GAIM_PROTO_BLOGGER,	/**< Blogger xml-rpc protocol  */
+	GAIM_PROTO_NOVELL,	/**< GroupWise Messenger protocol  */
 	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
