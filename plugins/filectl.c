@@ -9,12 +9,12 @@
 #include <string.h>
 #include <ctype.h>
 
-void *handle;
-int check;
-time_t mtime;
+static void *handle;
+static int check;
+static time_t mtime;
 
-void init_file();
-void check_file();
+static void init_file();
+static void check_file();
 
 extern void dologin(GtkWidget *, GtkWidget *);
 extern void do_quit();
@@ -36,7 +36,8 @@ void run_commands() {
 	while (fgets(buffer, sizeof buffer, file)) {
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = 0;
-		printf("read: %s\n", buffer);
+		sprintf(debug_buff, "read: %s\n", buffer);
+		debug_print(debug_buff);
 		command = getarg(buffer, 0, 0);
 		if        (!strncasecmp(command, "signon", 6)) {
 			if (!blist) {
@@ -116,8 +117,11 @@ void check_file() {
 	sprintf(file, "%s/.gaim/control", getenv("HOME"));
 
 	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
-		if (mtime != finfo.st_mtime)
+		if (mtime != finfo.st_mtime) {
+			sprintf(debug_buff, "control changed, checking\n");
+			debug_print(debug_buff);
 			run_commands();
+		}
 }
 
 char *getarg(char *line, int which, int remain) {
