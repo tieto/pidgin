@@ -3441,7 +3441,7 @@ yahoogaim_register_commands(void)
 	                  GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	gaim_cmd_register("buzz", "", GAIM_CMD_P_PLUGIN,
+	gaim_cmd_register("buzz", "", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_buzz,
 	                  _("buzz: Buzz a contact to get their attention"), NULL);
