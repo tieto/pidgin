@@ -1,16 +1,11 @@
 #include "internal.h"
 
-#include "blist.h"
-#include "conversation.h"
 #include "debug.h"
-#include "signals.h"
 #include "sound.h"
 #include "version.h"
 
 #include "gtkblist.h"
-#include "gtkgaim.h"
 #include "gtkplugin.h"
-#include "gtksound.h"
 
 #define MAILCHK_PLUGIN_ID "gtk-mailchk"
 
@@ -21,7 +16,8 @@
 static guint32 timer = 0;
 static GtkWidget *mail = NULL;
 
-static gint check_mail()
+static gint
+check_mail()
 {
 	static off_t oldsize = 0;
 	gchar *filename;
@@ -49,12 +45,14 @@ static gint check_mail()
 	return ret;
 }
 
-static void destroy_cb()
+static void
+destroy_cb()
 {
 	mail = NULL;
 }
 
-static gboolean check_timeout(gpointer data)
+static gboolean
+check_timeout(gpointer data)
 {
 	gint count = check_mail();
 	GaimBuddyList *list = gaim_get_blist();
@@ -89,7 +87,8 @@ static gboolean check_timeout(gpointer data)
 	return TRUE;
 }
 
-static void signon_cb(GaimConnection *gc)
+static void
+signon_cb(GaimConnection *gc)
 {
 	GaimBuddyList *list = gaim_get_blist();
 	if (list && GAIM_IS_GTK_BLIST(list) && !timer) {
@@ -98,7 +97,8 @@ static void signon_cb(GaimConnection *gc)
 	}
 }
 
-static void signoff_cb(GaimConnection *gc)
+static void
+signoff_cb(GaimConnection *gc)
 {
 	GaimBuddyList *list = gaim_get_blist();
 	if ((!list || !GAIM_IS_GTK_BLIST(list) || !GAIM_GTK_BLIST(list)->vbox) && timer) {
