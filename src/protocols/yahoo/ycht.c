@@ -400,10 +400,8 @@ void ycht_connection_close(YchtConn *ycht)
 
 static void ycht_connection_error(YchtConn *ycht, const gchar *error)
 {
-#if 0
-/* string freeze */
+
 	gaim_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server."), error);
-#endif
 	ycht_connection_close(ycht);
 }
 
@@ -416,8 +414,7 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 	len = read(ycht->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		/*ycht_connection_error(ycht, _("Unable to read"));*/
-		ycht_connection_error(ycht, NULL);
+		ycht_connection_error(ycht, _("Unable to read"));
 		return;
 	}
 
@@ -485,8 +482,7 @@ static void ycht_got_connected(gpointer data, gint source, GaimInputCondition co
 	char *buf;
 
 	if (source < 0) {
-		/*ycht_connection_error(ycht, _("Unable to connect."));*/
-		ycht_connection_error(ycht, NULL);
+		ycht_connection_error(ycht, _("Unable to connect."));
 		return;
 	}
 
@@ -522,8 +518,7 @@ void ycht_connection_open(GaimConnection *gc)
 	                       gaim_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
 	                       ycht_got_connected, ycht) != 0)
 	{
-		/*ycht_connection_error(ycht, _("Connection problem"));*/
-		ycht_connection_error(ycht, NULL);
+		ycht_connection_error(ycht, _("Connection problem"));
 		return;
 	}
 }
