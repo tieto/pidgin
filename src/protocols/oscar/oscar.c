@@ -1777,7 +1777,6 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			tmp = strdup(_("(There was an error receiving this message)"));
 		}
 	} else if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
-		int i;
 		tmp = g_convert(args->msg, args->msglen, "UTF-8", "ISO-8859-1", NULL, &convlen, &err);
 		if (err) {
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
@@ -3361,8 +3360,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			/* ISO-8859-1 is 0x00-0xbf in the first byte
 			 * followed by 0xc0-0xc3 in the second */
 			if ((unsigned char)message[i] < 0x80 || 
-			    ((unsigned char)message[i] & 0xc0 == 0x80 &&
-			     (unsigned char)message[i + 1] & 0xfc == 0xc0)) {
+			    (((unsigned char)message[i] & 0xc0) == 0x80 &&
+			     ((unsigned char)message[i + 1] & 0xfc) == 0xc0)) {
 				i++;
 				continue;
 			}
