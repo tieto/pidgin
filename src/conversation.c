@@ -1094,9 +1094,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	struct buddy *b;
 
 	if (!who) {
-		if (flags & WFLAG_SEND)
-			who = current_user->username;
-		else {
+		if (flags & WFLAG_SEND) {
+			b = find_buddy(current_user->username);
+			if (b)
+				who = b->show;
+			else
+				who = current_user->username;
+		} else {
 			b = find_buddy(c->name);
 			if (b)
 				who = b->show;
