@@ -1253,9 +1253,10 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 }
 
 static void
-menu_conv_sel_send_cb(GObject *m, struct gaim_account *account)
+menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
 	struct gaim_window *win = g_object_get_data(m, "user_data");
+	struct gaim_account *account = g_object_get_data(m, "gaim_account");
 	struct gaim_conversation *conv;
 
 	if (gaim_gtk_is_state_locked())
@@ -1986,26 +1987,10 @@ update_send_as_selection(struct gaim_window *win)
 		 child = child->next) {
 
 		GtkWidget *item = child->data;
-		GtkWidget *box;
-		GList *children;
-		GtkWidget *label;
-		const char *title;
+		struct gaim_account *item_account = g_object_get_data(G_OBJECT(item),
+				"gaim_account");
 
-		box = gtk_bin_get_child(GTK_BIN(item));
-
-		children = gtk_container_get_children(GTK_CONTAINER(box));
-
-		if(g_list_length(children) < 2)
-			continue;
-
-		label = g_list_nth_data(children, 1);
-
-		if (!GTK_IS_LABEL(label))
-			continue;
-
-		title = gtk_label_get_text(GTK_LABEL(label));
-
-		if (!strcmp(title, username)) {
+		if (account == item_account) {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
 			break;
 		}
@@ -2124,9 +2109,10 @@ generate_send_as_items(struct gaim_window *win,
 
 		/* Set our data and callbacks. */
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
+		g_object_set_data(G_OBJECT(menuitem), "gaim_account", gc->account);
 
 		g_signal_connect(G_OBJECT(menuitem), "activate",
-						 G_CALLBACK(menu_conv_sel_send_cb), gc->account);
+						 G_CALLBACK(menu_conv_sel_send_cb), NULL);
 
 		gtk_widget_show(menuitem);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
