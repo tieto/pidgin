@@ -126,6 +126,8 @@ static struct sockaddr_in *gaim_gethostbyname(char *host, int port)
 	if (!inet_aton(host, &sin.sin_addr)) {
 		struct hostent *hp;
 		if (!(hp = gethostbyname(host))) {
+			debug_printf("gaim_gethostbyname(\"%s\", %d) failed: %s",
+				     host, port, hstrerror(h_errno));
 			return NULL;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
