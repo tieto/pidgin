@@ -1710,7 +1710,7 @@ static gboolean redraw_anim(gpointer data)
 			break;
 	}
 	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
-	delay = gdk_pixbuf_frame_get_delay_time(frame);
+	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
 	ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
 	return FALSE;
 }
@@ -1858,7 +1858,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 
 				if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-					int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+					int delay =
+						MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
 					ir->curframe = 1;
 					ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
 				}
@@ -3265,7 +3266,7 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 		gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 
 		if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-			int delay = gdk_pixbuf_frame_get_delay_time(frames->data);
+			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
 			ir->curframe = 1;
 			ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
 		}

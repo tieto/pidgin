@@ -537,47 +537,6 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 	return FALSE;
 }
 
-static unsigned char *utf8_to_str(unsigned char *in)
-{
-	int n = 0,i = 0;
-	int inlen;
-	unsigned char *result;
-
-	if (!in)
-		return NULL;
-
-	inlen = strlen(in);
-
-	result = (unsigned char*)malloc(inlen+1);
-
-	while(n <= inlen-1) {
-		long c = (long)in[n];
-		if(c<0x80)
-			result[i++] = (char)c;
-		else {
-			if((c&0xC0) == 0xC0)
-				result[i++] = (char)(((c&0x03)<<6)|(((unsigned char)in[++n])&0x3F));
-			else if((c&0xE0) == 0xE0) {
-				if (n + 2 <= inlen) {
-					result[i] = (char)(((c&0xF)<<4)|(((unsigned char)in[++n])&0x3F));
-					result[i] = (char)(((unsigned char)result[i]) |(((unsigned char)in[++n])&0x3F));
-					i++;
-				} else n += 2;
-			}
-			else if((c&0xF0) == 0xF0)
-				n += 3;
-			else if((c&0xF8) == 0xF8)
-				n += 4;
-			else if((c&0xFC) == 0xFC)
-				n += 5;
-		}
-		n++;
-    }
-    result[i] = '\0';
-
-    return result;
-}
-
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
 	xmlnode y, xmlns, subj;
@@ -631,7 +590,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		}
 
 		if (msg)
-			free(msg);
+			g_free(msg);
 
 	} else if (!strcasecmp(type, "error")) {
 		if ((y = xmlnode_get_tag(p->x, "error"))) {
@@ -676,7 +635,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 				jd->pending_chats = g_slist_remove(jd->pending_chats, jc);
 			} else {
 				/* no, we're not supposed to be. */
-				free(msg);
+				g_free(msg);
 				return;
 			}
 		}
@@ -712,8 +671,8 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			}
 		}
 
-		free(msg);
-		free(topic);
+		g_free(msg);
+		g_free(topic);
 
 	} else {
 		debug_printf("unhandled message %s\n", type);

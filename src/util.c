@@ -1524,6 +1524,47 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 	fclose(fd);
 }
 
+unsigned char *utf8_to_str(unsigned char *in)
+{
+	int n = 0,i = 0;
+	int inlen;
+	unsigned char *result;
+
+	if (!in)
+		return NULL;
+
+	inlen = strlen(in);
+
+	result = g_malloc(inlen+1);
+
+	while(n <= inlen-1) {
+		long c = (long)in[n];
+		if(c<0x80)
+			result[i++] = (char)c;
+		else {
+			if((c&0xC0) == 0xC0)
+				result[i++] = (char)(((c&0x03)<<6)|(((unsigned char)in[++n])&0x3F));
+			else if((c&0xE0) == 0xE0) {
+				if (n + 2 <= inlen) {
+					result[i] = (char)(((c&0xF)<<4)|(((unsigned char)in[++n])&0x3F));
+					result[i] = (char)(((unsigned char)result[i]) |(((unsigned char)in[++n])&0x3F));
+					i++;
+				} else n += 2;
+			}
+			else if((c&0xF0) == 0xF0)
+				n += 3;
+			else if((c&0xF8) == 0xF8)
+				n += 4;
+			else if((c&0xFC) == 0xFC)
+				n += 5;
+		}
+		n++;
+    }
+    result[i] = '\0';
+
+    return result;
+}
+
 time_t get_time(int year, int month, int day, int hour, int min, int sec)
 {
 	struct tm tm;
