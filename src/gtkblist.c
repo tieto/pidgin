@@ -3028,7 +3028,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
-	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Protocol Actions"));
+	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
 	gaim_gtk_blist_update_protocol_actions();
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
