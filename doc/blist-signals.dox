@@ -49,6 +49,16 @@ void (*buddy_unidle)(struct buddy *buddy);
   @param buddy The buddy that returned from being idle.
  @endsignaldef
 
+ @signaldef buddy-idle-updated
+  @signalproto
+void (*buddy_idle_updated)(struct buddy *buddy);
+  @endsignalproto
+  @signaldesc
+   Emitted when a buddy's idle time changes. The exceptions are when the
+   buddy goes from being idle to being unidle, or from unidle to idle.
+  @param buddy The buddy whose idle time changed.
+ @endsignaldef
+
  @signaldef buddy-signed-on
   @signalproto
 void (*buddy_signed_on)(struct buddy *buddy);
