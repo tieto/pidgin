@@ -1664,7 +1664,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 
 	idata = gc->proto_data;
 
-	if (source != 1) {
+	if (source < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
 		return;
