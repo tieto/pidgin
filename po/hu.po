@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
-"POT-Creation-Date: 2003-05-17 18:16-0400\n"
-"PO-Revision-Date: 2003-05-20 22:36+0200\n"
+"POT-Creation-Date: 2003-05-30 19:11-0400\n"
+"PO-Revision-Date: 2003-06-03 22:14+0200\n"
 "Last-Translator: Zoltan Sutto <suttozoltan@chello.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: KBabel 1.0\n"
 
-#: plugins/docklet/docklet.c:94 src/multi.c:284 src/win32/systray.c:359
+#: plugins/docklet/docklet.c:94 src/multi.c:285 src/win32/systray.c:359
 msgid "Auto-login"
 msgstr "Automatikus bejelentkezés"
 
@@ -32,11 +32,11 @@ msgid "New..."
 msgstr "Új..."
 
 #: plugins/docklet/docklet.c:133 src/protocols/gg/gg.c:71
-#: src/protocols/irc/irc.c:1035 src/protocols/jabber/jabber.c:1179
-#: src/protocols/jabber/jabber.c:3402 src/protocols/jabber/jabber.c:3456
-#: src/protocols/oscar/oscar.c:2790 src/protocols/oscar/oscar.c:4466
-#: src/protocols/oscar/oscar.c:5343 src/protocols/oscar/oscar.c:5664
-#: src/gtkblist.c:1488 src/gtkpounce.c:564 src/prefs.c:1072
+#: src/protocols/irc/irc.c:1035 src/protocols/jabber/jabber.c:1182
+#: src/protocols/jabber/jabber.c:3444 src/protocols/jabber/jabber.c:3498
+#: src/protocols/oscar/oscar.c:2824 src/protocols/oscar/oscar.c:4509
+#: src/protocols/oscar/oscar.c:5395 src/protocols/oscar/oscar.c:5724
+#: src/gtkblist.c:1526 src/gtkpounce.c:566 src/gtkprefs.c:1141
 msgid "Away"
 msgstr "Távol"
 
@@ -255,8 +255,8 @@ msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
 msgstr ""
-"Ez a plugin beszúrja az utolsó XXX üzenetet új társalgás megnyitásakor "
-"az aktuális társalgás ablakába."
+"Ez a plugin beszúrja az utolsó XXX üzenetet új társalgás megnyitásakor az "
+"aktuális társalgás ablakába."
 
 #. *< api_version
 #. *< type
@@ -322,69 +322,69 @@ msgstr "Levél figyelõ"
 msgid "Checks for new local mail."
 msgstr "Új levél érkezését ellenõrzi."
 
-#: plugins/notify.c:439
+#: plugins/notify.c:442
 msgid "Unable to write to config file"
 msgstr "Nem sikerül írni a konfigurációs fájlba"
 
-#: plugins/notify.c:439
+#: plugins/notify.c:443
 msgid "Notify plugin"
 msgstr "Figyelmeztetõ plugin"
 
-#: plugins/notify.c:569
+#: plugins/notify.c:573
 msgid "Notify For"
 msgstr "Figyelmeztet"
 
-#: plugins/notify.c:570
+#: plugins/notify.c:574
 msgid "_IM windows"
 msgstr "_IM ablakok"
 
-#: plugins/notify.c:575
+#: plugins/notify.c:579
 msgid "_Chat windows"
 msgstr "_Csevegö ablakok"
 
 #. --------------
-#: plugins/notify.c:581
+#: plugins/notify.c:585
 msgid "Notification Methods"
 msgstr "Figyelmeztetés módja"
 
-#: plugins/notify.c:584
+#: plugins/notify.c:588
 msgid "Prepend _string into window title (hit enter to save):"
 msgstr "Szöveg megjelenítés az ablak címében (nyomj entert a mentéshez):"
 
-#: plugins/notify.c:595
+#: plugins/notify.c:599
 msgid "_Quote window title"
 msgstr "_Figyelmeztetõ ablak címe"
 
-#: plugins/notify.c:600
+#: plugins/notify.c:604
 msgid "Set Window Manager \"_URGENT\" Hint"
 msgstr "Ablakkezelõ tipp beállítása \"_SÜRGÕS\""
 
-#: plugins/notify.c:605
+#: plugins/notify.c:609
 msgid "Insert c_ount of new messages into window title"
 msgstr "Új üzenetek számának megjelenítése az ablak címében"
 
-#: plugins/notify.c:610
+#: plugins/notify.c:614
 msgid "_Notify even if conversation is in focus"
 msgstr "_Társalgás közben is figyelmeztet"
 
 #. --------------
-#: plugins/notify.c:616
+#: plugins/notify.c:620
 msgid "Notification Removal"
 msgstr "Fiygelmeztetõ eltávolítása"
 
-#: plugins/notify.c:617
+#: plugins/notify.c:621
 msgid "Remove when conversation window gains _focus"
 msgstr "Eltávolít ha a társalgás ablaka _aktívvá válik"
 
-#: plugins/notify.c:622
+#: plugins/notify.c:626
 msgid "Remove when conversation window _receives click"
 msgstr "Eltávolít a tá_rsalgás ablakára kattintáskor"
 
-#: plugins/notify.c:627
+#: plugins/notify.c:631
 msgid "Remove when _typing in conversation window"
 msgstr "Eltávolít a _társalgás ablakban gépeléskor"
 
-#: plugins/notify.c:632
+#: plugins/notify.c:636
 msgid "Appl_y"
 msgstr "Alkal_maz"
 
@@ -395,14 +395,14 @@ msgstr "Alkal_maz"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/notify.c:695
+#: plugins/notify.c:699
 msgid "Message Notification"
 msgstr "Üzenet figyelmeztetõ"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/notify.c:698 plugins/notify.c:700
+#: plugins/notify.c:702 plugins/notify.c:704
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr "Különbözõ figyelmeztetési lehetõséget nyújt az olvasatlan üzenetekre."
 
@@ -411,16 +411,16 @@ msgid "Raw"
 msgstr "Raw"
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-vased protocols."
-msgstr "Raw adatot küld text alapú protokoloknak."
+msgid "Lets you send raw input to text-based protocols."
+msgstr "Raw adatküldésre ad lehetõséget text alapú protokolok számára."
 
 #: plugins/raw.c:155
 msgid ""
-"Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Raw adatot küld text alapú protokoloknak (Jabber, MSN, IRC, TOC). Nyomd "
-"meg az 'Enter' billentyût a küldéshez. Figyeld a nyomkövetõ ablakot."
+"Raw adatküldésre ad lehetõséget text alapú protokolok számára (Jabber, MSN, IRC, TOC). "
+"Nyomd meg az 'Enter' billentyût a küldéshez. Figyeld a nyomkövetõ ablakot."
 
 #. *< api_version
 #. *< type
@@ -593,7 +593,7 @@ msgid "_Show slider bar in IM window"
 msgstr "C_súszka mutatása az IM ablakban"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:429 src/prefs.c:586
+#: plugins/win32/transparency/win2ktrans.c:429 src/gtkprefs.c:653
 msgid "Buddy List Window"
 msgstr "Partner lista ablaka"
 
@@ -647,7 +647,7 @@ msgstr "WinGaim opciók"
 msgid "Options specific to Windows Gaim."
 msgstr "Windows Gaim specifikus opciók"
 
-#: plugins/perl/perl.c:395
+#: plugins/perl/perl.c:396
 msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
 msgstr ""
 "GAIM:register nem megfelelõ paraméterekkel lett meghívva.  Nézz utána a PERL-"
@@ -660,13 +660,13 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:1377
+#: plugins/perl/perl.c:1376
 msgid "Perl Plugin Loader"
 msgstr "Perl Plugin betöltõ"
 
 #. *< name
 #. *< version
-#: plugins/perl/perl.c:1379 plugins/perl/perl.c:1380
+#: plugins/perl/perl.c:1378 plugins/perl/perl.c:1379
 msgid "Provides support for loading perl plugins."
 msgstr "Perl pluginok betöltésének támogatása."
 
@@ -689,14 +689,14 @@ msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr ""
-"Figyelmeztet egy társalgás ablakában amikor a partner távol van, inaktív, visszaérkezik "
-"vagy az inaktív állapota megszûnik."
+"Figyelmeztet egy társalgás ablakában amikor a partner távol van, inaktív, "
+"visszaérkezik vagy az inaktív állapota megszûnik."
 
-#: src/protocols/gg/gg.c:69 src/protocols/jabber/jabber.c:1187
-#: src/protocols/msn/msn.c:314 src/protocols/msn/state.c:27
+#: src/protocols/gg/gg.c:69 src/protocols/jabber/jabber.c:1190
+#: src/protocols/msn/msn.c:311 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:1269
-#: src/protocols/yahoo/yahoo.c:1348
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:1283
+#: src/protocols/yahoo/yahoo.c:1362
 msgid "Available"
 msgstr "Elérhetõ"
 
@@ -708,11 +708,11 @@ msgstr "Elérhetõ csak barátoknak"
 msgid "Away for friends only"
 msgstr "Távol csak barátoknak"
 
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:3405
-#: src/protocols/jabber/jabber.c:3468 src/protocols/oscar/oscar.c:2794
-#: src/protocols/oscar/oscar.c:4454 src/protocols/oscar/oscar.c:4481
-#: src/protocols/oscar/oscar.c:5669 src/protocols/yahoo/yahoo.c:1086
-#: src/protocols/yahoo/yahoo.c:1291 src/protocols/yahoo/yahoo.c:1358
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:3447
+#: src/protocols/jabber/jabber.c:3510 src/protocols/oscar/oscar.c:2828
+#: src/protocols/oscar/oscar.c:4497 src/protocols/oscar/oscar.c:4524
+#: src/protocols/oscar/oscar.c:5729 src/protocols/yahoo/yahoo.c:1098
+#: src/protocols/yahoo/yahoo.c:1305 src/protocols/yahoo/yahoo.c:1372
 msgid "Invisible"
 msgstr "Láthatatlan"
 
@@ -810,97 +810,97 @@ msgstr "GG kiszolgáló keresése"
 msgid "Invalid Gadu-Gadu UIN specified"
 msgstr "Érvénytelen a megadott Gadu-Gadu UIN"
 
-#: src/protocols/gg/gg.c:591
+#: src/protocols/gg/gg.c:592
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "Érvénytelen Gadu-Gadu UIN-re próbálsz meg üzenetet küldeni."
 
-#: src/protocols/gg/gg.c:654
+#: src/protocols/gg/gg.c:655
 msgid "Couldn't get search results"
 msgstr "Nem sikerül a keresés eredményét lekérdezni"
 
-#: src/protocols/gg/gg.c:659
+#: src/protocols/gg/gg.c:660
 msgid "Gadu-Gadu Search Engine"
 msgstr "Gadu-Gadu keresõ motor"
 
-#: src/protocols/gg/gg.c:684
+#: src/protocols/gg/gg.c:685
 msgid "Active"
 msgstr "Aktív"
 
-#: src/protocols/gg/gg.c:685 src/protocols/oscar/oscar.c:4965 src/gtkft.c:1031
+#: src/protocols/gg/gg.c:686
 msgid "Yes"
 msgstr "Igen"
 
-#: src/protocols/gg/gg.c:685 src/protocols/oscar/oscar.c:4965 src/gtkft.c:1032
+#: src/protocols/gg/gg.c:686
 msgid "No"
 msgstr "Nem"
 
-#: src/protocols/gg/gg.c:689
+#: src/protocols/gg/gg.c:690
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/gg/gg.c:693
+#: src/protocols/gg/gg.c:694
 msgid "First name"
 msgstr "Keresztnév"
 
-#: src/protocols/gg/gg.c:698
+#: src/protocols/gg/gg.c:699
 msgid "Second Name"
 msgstr "Vezetéknév"
 
-#: src/protocols/gg/gg.c:702
+#: src/protocols/gg/gg.c:703
 msgid "Nick"
 msgstr "Becenév"
 
-#: src/protocols/gg/gg.c:709 src/protocols/gg/gg.c:712
+#: src/protocols/gg/gg.c:710 src/protocols/gg/gg.c:713
 msgid "Birth year"
 msgstr "Születés éve"
 
-#: src/protocols/gg/gg.c:718 src/protocols/gg/gg.c:720
-#: src/protocols/gg/gg.c:722
+#: src/protocols/gg/gg.c:719 src/protocols/gg/gg.c:721
+#: src/protocols/gg/gg.c:723
 msgid "Sex"
 msgstr "Férfi/nõ"
 
 #. Line 5
-#: src/protocols/gg/gg.c:726 src/dialogs.c:2087 src/dialogs.c:2724
+#: src/protocols/gg/gg.c:727 src/dialogs.c:2040 src/dialogs.c:2679
 msgid "City"
 msgstr "Város"
 
-#: src/protocols/gg/gg.c:758
+#: src/protocols/gg/gg.c:760
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "Nincs tárolva partner lista a Gadu Gadu kiszolgálón."
 
-#: src/protocols/gg/gg.c:764
+#: src/protocols/gg/gg.c:768
 msgid "Couldn't Import Buddy List from Server"
 msgstr "Nem tudom a partner listát importálni a kiszolgálóról"
 
-#: src/protocols/gg/gg.c:824
+#: src/protocols/gg/gg.c:829
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
 msgstr "Partner lista sikeresen továbbítva a Gadu Gadu kiszolgálóra"
 
-#: src/protocols/gg/gg.c:829
+#: src/protocols/gg/gg.c:836
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "Nem sikerül a partner lista továbbítása a Gadu Gadu kiszolgálóra"
 
-#: src/protocols/gg/gg.c:835
+#: src/protocols/gg/gg.c:844
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr "Partner lista sikeresen törölve a Gadu Gadu kiszolgálóról"
 
-#: src/protocols/gg/gg.c:840
+#: src/protocols/gg/gg.c:851
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
 msgstr "Nem sikerül a partner lista törlése a Gadu Gadu kiszolgálóról"
 
-#: src/protocols/gg/gg.c:846
+#: src/protocols/gg/gg.c:859
 msgid "Password changed successfully"
 msgstr "Jelszó sikeresen megváltoztatva"
 
-#: src/protocols/gg/gg.c:851
+#: src/protocols/gg/gg.c:865
 msgid "Password couldn't be changed"
 msgstr "Jelszót nem sikerült megváltoztatni"
 
-#: src/protocols/gg/gg.c:962
+#: src/protocols/gg/gg.c:977
 msgid "Error communicating with Gadu-Gadu server"
 msgstr "Hiba a Gadu Gadu kiszolgálóval végzett kommunikációban"
 
-#: src/protocols/gg/gg.c:963
+#: src/protocols/gg/gg.c:978
 msgid ""
 "Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
@@ -908,11 +908,11 @@ msgstr ""
 "Gaim nem tudja a kérést befejezni a kiszolgálóval végzett kommunikáció "
 "hibája miatt.  Kérem késõbb próbálja újra."
 
-#: src/protocols/gg/gg.c:990
+#: src/protocols/gg/gg.c:1006
 msgid "Unable to import Gadu-Gadu buddy list"
 msgstr "Nem tudom a a Gadu Gadu partner listát importálni"
 
-#: src/protocols/gg/gg.c:991
+#: src/protocols/gg/gg.c:1007
 msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
@@ -920,25 +920,25 @@ msgstr ""
 "Gaim nem tudott a Gadu Gadu partner lista kiszolgálóhoz kapcsolódni. Kérem "
 "késõbb próbálja újra."
 
-#: src/protocols/gg/gg.c:1059
+#: src/protocols/gg/gg.c:1076
 msgid "Couldn't export buddy list"
 msgstr "Nem tudom a partner listát exportálni"
 
-#: src/protocols/gg/gg.c:1060 src/protocols/gg/gg.c:1082
+#: src/protocols/gg/gg.c:1077 src/protocols/gg/gg.c:1100
 msgid "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
 "Gaim nem tudott a partner lista kiszolgálóhoz kapcsolódni. Kérem késõbb "
 "próbálja újra."
 
-#: src/protocols/gg/gg.c:1081
+#: src/protocols/gg/gg.c:1099
 msgid "Unable to delete Gadu-Gadu buddy list"
 msgstr "Nem sikerült a Gadu-Gadu partner listát törölni"
 
-#: src/protocols/gg/gg.c:1129
+#: src/protocols/gg/gg.c:1148
 msgid "Unable to access directory"
 msgstr "A könyvtár elérése sikertelen"
 
-#: src/protocols/gg/gg.c:1130
+#: src/protocols/gg/gg.c:1149
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
@@ -946,11 +946,11 @@ msgstr ""
 "Gaim nem tudott keresni a Könyvtárban mert nem tudott a kiszolgálóhoz "
 "kapcsolódni.  Kérem késõbb próbálja újra."
 
-#: src/protocols/gg/gg.c:1162
+#: src/protocols/gg/gg.c:1182
 msgid "Unable to change Gadu-Gadu password"
 msgstr "Nem sikerült a Gadu-Gadu jelszavát megváltoztatni"
 
-#: src/protocols/gg/gg.c:1163
+#: src/protocols/gg/gg.c:1183
 msgid ""
 "Gaim was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
@@ -958,33 +958,33 @@ msgstr ""
 "Gaim nem tudta a jelszót megváltoztani mert nem tudott a Gadu-Gadu "
 "kiszolgálóhoz kapcsolódni.  Kérem késõbb próbálja újra."
 
-#: src/protocols/gg/gg.c:1177
+#: src/protocols/gg/gg.c:1199
 msgid "Directory Search"
 msgstr "Könyvtár keresése"
 
-#: src/protocols/gg/gg.c:1185 src/protocols/jabber/jabber.c:4291
-#: src/protocols/oscar/oscar.c:5855 src/protocols/toc/toc.c:1449
-#: src/dialogs.c:2194 src/dialogs.c:2203
+#: src/protocols/gg/gg.c:1207 src/protocols/jabber/jabber.c:4333
+#: src/protocols/oscar/oscar.c:5924 src/protocols/toc/toc.c:1453
+#: src/dialogs.c:2149 src/dialogs.c:2158
 msgid "Change Password"
 msgstr "Jelszó megváltoztatása"
 
-#: src/protocols/gg/gg.c:1193
+#: src/protocols/gg/gg.c:1215
 msgid "Import Buddy List from Server"
 msgstr "Partner lista importálása a kiszolgálóról"
 
-#: src/protocols/gg/gg.c:1199
+#: src/protocols/gg/gg.c:1221
 msgid "Export Buddy List to Server"
 msgstr "Partner lista exportálása a kiszolgálóra"
 
-#: src/protocols/gg/gg.c:1205
+#: src/protocols/gg/gg.c:1227
 msgid "Delete Buddy List from Server"
 msgstr "Partner lista törlése a kiszolgálóról"
 
-#: src/protocols/gg/gg.c:1237
+#: src/protocols/gg/gg.c:1260
 msgid "Unable to access user profile."
 msgstr "Nem sikerül elérni a felhasználói profilt."
 
-#: src/protocols/gg/gg.c:1238
+#: src/protocols/gg/gg.c:1261
 msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
@@ -1002,7 +1002,7 @@ msgstr ""
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/gg/gg.c:1349 src/protocols/gg/gg.c:1351
+#: src/protocols/gg/gg.c:1373 src/protocols/gg/gg.c:1375
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu protokol plugin"
 
@@ -1010,21 +1010,26 @@ msgstr "Gadu-Gadu protokol plugin"
 msgid "Gaim encountered an error communicating with the ICQ server."
 msgstr "Gaim hibába üzközött az ICQ kiszolgálóval végzett kommunkáció közben."
 
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2629
-#: src/dialogs.c:2491 src/gtkconv.c:806 src/gtkconv.c:2645 src/gtkconv.c:3791
-#: src/prpl.c:706
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2672
+#: src/dialogs.c:2446 src/gtkconv.c:807 src/gtkconv.c:2646 src/gtkconv.c:3790
+#: src/prpl.c:409
 msgid "Add"
 msgstr "Hozzáad"
 
 #. Cancel button.
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/irc/irc.c:1430
-#: src/protocols/oscar/oscar.c:2387 src/protocols/oscar/oscar.c:2450
-#: src/protocols/oscar/oscar.c:5544 src/protocols/toc/toc.c:1979
-#: src/buddy_chat.c:307 src/dialogs.c:467 src/dialogs.c:474 src/dialogs.c:482
-#: src/dialogs.c:2144 src/dialogs.c:2255 src/dialogs.c:2315 src/dialogs.c:2480
-#: src/dialogs.c:2666 src/dialogs.c:2815 src/dialogs.c:3460 src/dialogs.c:3952
-#: src/dialogs.c:4430 src/dialogs.c:5003 src/gtkft.c:1110 src/multi.c:1507
-#: src/multi.c:1871 src/prpl.c:250 src/prpl.c:706 src/server.c:1237
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/irc/irc.c:1118
+#: src/protocols/irc/irc.c:1447 src/protocols/msn/msn.c:171
+#: src/protocols/msn/msn.c:182 src/protocols/msn/msn.c:193
+#: src/protocols/msn/msn.c:204 src/protocols/msn/msn.c:217
+#: src/protocols/oscar/oscar.c:2404 src/protocols/oscar/oscar.c:2441
+#: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:2521
+#: src/protocols/oscar/oscar.c:5603 src/protocols/oscar/oscar.c:5807
+#: src/protocols/oscar/oscar.c:5855 src/protocols/yahoo/yahoo.c:1215
+#: src/buddy_chat.c:309 src/dialogs.c:471 src/dialogs.c:482 src/dialogs.c:494
+#: src/dialogs.c:2097 src/dialogs.c:2210 src/dialogs.c:2270 src/dialogs.c:2435
+#: src/dialogs.c:2621 src/dialogs.c:2770 src/dialogs.c:3418 src/dialogs.c:3910
+#: src/dialogs.c:4388 src/dialogs.c:4961 src/multi.c:1550 src/multi.c:1914
+#: src/prpl.c:410
 msgid "Cancel"
 msgstr "Mégsem"
 
@@ -1033,16 +1038,16 @@ msgstr "Mégsem"
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "%s partner (%s%s%s%s%s) szeretné ha engedélyeznéd õket."
 
-#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1682
-#: src/protocols/msn/notification.c:374 src/protocols/msn/notification.c:649
-#: src/protocols/oscar/oscar.c:2567 src/protocols/oscar/oscar.c:5000
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1722
+#: src/protocols/msn/notification.c:465 src/protocols/msn/notification.c:725
+#: src/protocols/oscar/oscar.c:2600 src/protocols/oscar/oscar.c:5051
 msgid "Authorize"
 msgstr "Engedélyez"
 
-#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1682
-#: src/protocols/msn/notification.c:375 src/protocols/msn/notification.c:650
-#: src/protocols/oscar/oscar.c:2567 src/protocols/oscar/oscar.c:5000
-#: src/dialogs.c:2479
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1723
+#: src/protocols/msn/notification.c:466 src/protocols/msn/notification.c:727
+#: src/protocols/oscar/oscar.c:2602 src/protocols/oscar/oscar.c:5052
+#: src/dialogs.c:2434
 msgid "Deny"
 msgstr "Elutasít"
 
@@ -1050,11 +1055,11 @@ msgstr "Elutasít"
 msgid "Send message through server"
 msgstr "Üzenet küldése a kiszolgálón keresztül"
 
-#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2300
-#: src/protocols/jabber/jabber.c:2335 src/protocols/jabber/jabber.c:4208
-#: src/protocols/jabber/jabber.c:4255 src/protocols/msn/dispatch.c:165
-#: src/protocols/msn/msn.c:429 src/protocols/msn/notification.c:1238
-#: src/protocols/napster/napster.c:512
+#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2376 src/protocols/jabber/jabber.c:4250
+#: src/protocols/jabber/jabber.c:4297 src/protocols/msn/dispatch.c:165
+#: src/protocols/msn/msn.c:426 src/protocols/msn/notification.c:1340
+#: src/protocols/napster/napster.c:515
 msgid "Unable to connect"
 msgstr "Nem sikerül kapcsolódni"
 
@@ -1062,7 +1067,7 @@ msgstr "Nem sikerül kapcsolódni"
 msgid "Connecting..."
 msgstr "Kapcsolatfelvétel..."
 
-#: src/protocols/icq/gaim_icq.c:497 src/protocols/oscar/oscar.c:3867
+#: src/protocols/icq/gaim_icq.c:497 src/protocols/oscar/oscar.c:3906
 msgid "Nick:"
 msgstr "Becenév:"
 
@@ -1078,12 +1083,12 @@ msgstr ""
 "(Hiba az üzenet konvertálása közben. Ellenõrizd a 'Kódolás' beállításait a "
 "Fiók szerkesztõben)"
 
-#: src/protocols/irc/irc.c:503 src/protocols/irc/irc.c:2613
+#: src/protocols/irc/irc.c:503 src/protocols/irc/irc.c:2630
 #, c-format
 msgid "DCC Chat with %s closed"
 msgstr "DCC csevegés a %s-el befejezõdött"
 
-#: src/protocols/irc/irc.c:556 src/protocols/irc/irc.c:2622
+#: src/protocols/irc/irc.c:556 src/protocols/irc/irc.c:2639
 #, c-format
 msgid "DCC Chat with %s established"
 msgstr "DCC csevegés létesítve %s-el "
@@ -1092,7 +1097,7 @@ msgstr "DCC csevegés létesítve %s-el "
 msgid "No topic is set"
 msgstr "Nincs beállítva téma"
 
-#: src/protocols/irc/irc.c:712 src/protocols/irc/irc.c:1752
+#: src/protocols/irc/irc.c:712 src/protocols/irc/irc.c:1769
 #, c-format
 msgid "<B>%s has changed the topic to: %s</B>"
 msgstr "<B>%s megváltoztatta a témát a következõre: %s</B>"
@@ -1111,7 +1116,7 @@ msgid "Server"
 msgstr "Kiszolgáló"
 
 #: src/protocols/irc/irc.c:942 src/protocols/irc/irc.c:1096
-#: src/protocols/irc/irc.c:1644
+#: src/protocols/irc/irc.c:1661
 msgid "IRC Operator"
 msgstr "IRC operátor"
 
@@ -1140,8 +1145,8 @@ msgid "No such nick/channel"
 msgstr "Nincs ilyen becenév/csatorna"
 
 #: src/protocols/irc/irc.c:1099 src/protocols/irc/irc.c:1102
-#: src/protocols/irc/irc.c:1107 src/protocols/irc/irc.c:1110
-#: src/protocols/irc/irc.c:1459 src/protocols/irc/irc.c:1602
+#: src/protocols/irc/irc.c:1107 src/protocols/irc/irc.c:1111
+#: src/protocols/irc/irc.c:1476 src/protocols/irc/irc.c:1619
 msgid "IRC Error"
 msgstr "IRC hiba"
 
@@ -1162,21 +1167,32 @@ msgstr "Nincs becenév megadva"
 msgid "You're not an IRC operator!"
 msgstr "Nem vagy IRC operátor!"
 
-#: src/protocols/irc/irc.c:1113
+#: src/protocols/irc/irc.c:1114
 msgid "That nick is already in use.  Please enter a new nick"
 msgstr "A becenév már használatban van. Kérem adjon meg egy újat."
 
-#: src/protocols/irc/irc.c:1393 src/protocols/irc/irc.c:1399
-#: src/protocols/irc/irc.c:1405 src/protocols/irc/irc.c:1419
+#. Build OK Button
+#: src/protocols/irc/irc.c:1117 src/protocols/msn/msn.c:170
+#: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
+#: src/protocols/msn/msn.c:203 src/protocols/oscar/oscar.c:2440
+#: src/protocols/oscar/oscar.c:2520 src/protocols/oscar/oscar.c:5806
+#: src/protocols/oscar/oscar.c:5854 src/protocols/yahoo/yahoo.c:1214
+#: src/dialogs.c:2206 src/dialogs.c:2338 src/dialogs.c:2620 src/dialogs.c:2766
+#: src/dialogs.c:3903 src/dialogs.c:4382
+msgid "OK"
+msgstr "Rendben"
+
+#: src/protocols/irc/irc.c:1403 src/protocols/irc/irc.c:1409
+#: src/protocols/irc/irc.c:1415 src/protocols/irc/irc.c:1429
 msgid "IRC CTCP info"
 msgstr "IRC CTCP infó"
 
-#: src/protocols/irc/irc.c:1429
+#: src/protocols/irc/irc.c:1439
 #, c-format
 msgid "%s would like to establish a DCC chat"
 msgstr "%s szeretne DCC csevegés létesíteni"
 
-#: src/protocols/irc/irc.c:1430
+#: src/protocols/irc/irc.c:1442
 msgid ""
 "This requires a direct connection to be established between the two "
 "computers.  Messages sent will not pass through the IRC server"
@@ -1184,76 +1200,76 @@ msgstr ""
 "Ehez közvetlen kapcsolatra van szükség a két számítógép között. Az elküldött "
 "üzenetek nem mennek keresztül az IRC kiszolgálón"
 
-#: src/protocols/irc/irc.c:1430 src/protocols/oscar/oscar.c:2387
-#: src/protocols/oscar/oscar.c:5544
+#: src/protocols/irc/irc.c:1446 src/protocols/oscar/oscar.c:2403
+#: src/protocols/oscar/oscar.c:5602
 msgid "Connect"
 msgstr "Kapcsolatfelvétel"
 
-#: src/protocols/irc/irc.c:1456
+#: src/protocols/irc/irc.c:1473
 #, c-format
 msgid "Received an invalid file send request from %s."
 msgstr "Érvénytelen fájl küldési kérelem érkezett %s partnertõl."
 
-#: src/protocols/irc/irc.c:1537 src/protocols/msn/error.c:132
-#: src/protocols/msn/notification.c:216 src/protocols/msn/notification.c:659
+#: src/protocols/irc/irc.c:1554 src/protocols/msn/error.c:133
+#: src/protocols/msn/notification.c:295 src/protocols/msn/notification.c:738
 msgid "Unable to write"
 msgstr "Sikertelen írás"
 
-#: src/protocols/irc/irc.c:1600
+#: src/protocols/irc/irc.c:1617
 #, c-format
 msgid "You have been kicked from %s: %s"
 msgstr "Kizártak a következõrõl %s: %s"
 
-#: src/protocols/irc/irc.c:1605
+#: src/protocols/irc/irc.c:1622
 #, c-format
 msgid "Kicked by %s: %s"
 msgstr "Kizáró %s: %s"
 
-#: src/protocols/irc/irc.c:1661 src/protocols/irc/irc.c:2923
+#: src/protocols/irc/irc.c:1678 src/protocols/irc/irc.c:2940
 msgid "CTCP ClientInfo"
 msgstr "CTCP kliens infó"
 
-#: src/protocols/irc/irc.c:1667 src/protocols/irc/irc.c:2929
+#: src/protocols/irc/irc.c:1684 src/protocols/irc/irc.c:2946
 msgid "CTCP UserInfo"
 msgstr "CTCP partner adatok"
 
-#: src/protocols/irc/irc.c:1673 src/protocols/irc/irc.c:2935
+#: src/protocols/irc/irc.c:1690 src/protocols/irc/irc.c:2952
 msgid "CTCP Version"
 msgstr "CTCP verzió"
 
-#: src/protocols/irc/irc.c:1701 src/protocols/irc/irc.c:2941
+#: src/protocols/irc/irc.c:1718 src/protocols/irc/irc.c:2958
 msgid "CTCP Ping"
 msgstr "CTCP Ping"
 
-#: src/protocols/irc/irc.c:1954 src/protocols/oscar/oscar.c:692
+#: src/protocols/irc/irc.c:1971 src/protocols/oscar/oscar.c:695
 #: src/protocols/toc/toc.c:255
 #, c-format
 msgid "Signon: %s"
 msgstr "Bejelentkezés: %s"
 
-#: src/protocols/irc/irc.c:2210
+#: src/protocols/irc/irc.c:2227
 #, c-format
 msgid "Topic for %s is %s"
 msgstr "%s a téma %s"
 
-#: src/protocols/irc/irc.c:2306
+#: src/protocols/irc/irc.c:2323
 #, c-format
 msgid "You have left %s"
 msgstr "Elhagytad a %s csatornát"
 
-#: src/protocols/irc/irc.c:2307
+#: src/protocols/irc/irc.c:2324
 msgid "IRC Part"
 msgstr "IRC terület"
 
-#: src/protocols/irc/irc.c:2362
+#: src/protocols/irc/irc.c:2379
 msgid "<I>Requesting DCC CHAT</I>"
 msgstr "<I>DCC csevegést kezdeményez</I>"
 
-#: src/protocols/irc/irc.c:2379
+#: src/protocols/irc/irc.c:2396
 msgid "<B>Operator commands:<BR>REHASH RESTART</B>"
 msgstr "<B>Operátor parancsok:<BR>REHASH RESTART</B>"
 
-#: src/protocols/irc/irc.c:2384
+#: src/protocols/irc/irc.c:2401
 msgid ""
 "<B>CTCP commands:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
 "<nick><BR>PING <nick></B><BR>"
@@ -1261,11 +1277,11 @@ msgstr ""
 "<B>CTCP parancsok:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
 "<nick><BR>PING <nick></B><BR>"
 
-#: src/protocols/irc/irc.c:2392
+#: src/protocols/irc/irc.c:2409
 msgid "<B>DCC commands:<BR>CHAT <nick></B>"
 msgstr "<B>DCC parancsok:<BR>CHAT <nick></B>"
 
-#: src/protocols/irc/irc.c:2397
+#: src/protocols/irc/irc.c:2414
 msgid ""
 "<B>Currently supported commands:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
 "TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
@@ -1277,19 +1293,19 @@ msgstr ""
 "WHOWAS<BR>/HELP OPER listázza az operátor parancsokat<BR>/HELP CTCP listázza "
 "a CTCP parancsokat<BR>/HELP DCC listázza a DCC parancsokat"
 
-#: src/protocols/irc/irc.c:2420
+#: src/protocols/irc/irc.c:2437
 msgid "<B>Unknown command</B>"
 msgstr "<B>Ismeretlen parancs</B>"
 
-#: src/protocols/irc/irc.c:2480
+#: src/protocols/irc/irc.c:2497
 msgid "Channel:"
 msgstr "Csatorna:"
 
-#: src/protocols/irc/irc.c:2485 src/main.c:346 src/multi.c:773
+#: src/protocols/irc/irc.c:2502 src/main.c:351 src/multi.c:809
 msgid "Password:"
 msgstr "Jelszó:"
 
-#: src/protocols/irc/irc.c:2910
+#: src/protocols/irc/irc.c:2927
 msgid "DCC Chat"
 msgstr "DCC csevegés"
 
@@ -1303,283 +1319,288 @@ msgstr "DCC csevegés"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/irc/irc.c:3016 src/protocols/irc/irc.c:3018
+#: src/protocols/irc/irc.c:3033 src/protocols/irc/irc.c:3035
 msgid "IRC Protocol Plugin"
 msgstr "IRC protokol plugin"
 
-#: src/protocols/irc/irc.c:3038 src/protocols/jabber/jabber.c:2921
-#: src/protocols/jabber/jabber.c:4388 src/protocols/napster/napster.c:657
+#: src/protocols/irc/irc.c:3055 src/protocols/jabber/jabber.c:2963
+#: src/protocols/jabber/jabber.c:4430 src/protocols/napster/napster.c:660
 msgid "Server:"
 msgstr "Kiszolgáló:"
 
-#: src/protocols/irc/irc.c:3043 src/protocols/jabber/jabber.c:4399
-#: src/protocols/msn/msn.c:1208 src/protocols/napster/napster.c:663
-#: src/multi.c:1099
+#: src/protocols/irc/irc.c:3060 src/protocols/jabber/jabber.c:4441
+#: src/protocols/msn/msn.c:1233 src/protocols/napster/napster.c:666
+#: src/multi.c:1135
 msgid "Port:"
 msgstr "Port:"
 
-#: src/protocols/irc/irc.c:3049
+#: src/protocols/irc/irc.c:3066
 msgid "Encoding:"
 msgstr "Kódolás:"
 
-#: src/protocols/jabber/jabber.c:989
+#: src/protocols/jabber/jabber.c:990
 msgid "Unable to change password."
 msgstr "Nem sikerül a jelszót megváltoztatni."
 
-#: src/protocols/jabber/jabber.c:990
+#: src/protocols/jabber/jabber.c:991
 msgid ""
 "The current password you entered is incorrect.  Your password has not been "
 "changed."
 msgstr "A megadott jelszó érvénytelen. A jelszó nem lett megváltoztatva."
 
-#: src/protocols/jabber/jabber.c:995
+#: src/protocols/jabber/jabber.c:997
 msgid "Unable to change password"
 msgstr "Nem sikerült a jelszót megváltoztatni"
 
-#: src/protocols/jabber/jabber.c:996
+#: src/protocols/jabber/jabber.c:998
 msgid ""
 "The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr "Az új és aktuális jelszavad megegyezik. A jelszó ugyanaz maradt."
 
-#: src/protocols/jabber/jabber.c:1172 src/blist.c:712 src/gtkpounce.c:296
+#: src/protocols/jabber/jabber.c:1175 src/blist.c:714 src/gtkpounce.c:298
 msgid "Unknown"
 msgstr "Ismeretlen"
 
 #. once again, we don't have to put anything here
-#: src/protocols/jabber/jabber.c:1181 src/protocols/jabber/jabber.c:3401
-#: src/protocols/jabber/jabber.c:3452
+#: src/protocols/jabber/jabber.c:1184 src/protocols/jabber/jabber.c:3443
+#: src/protocols/jabber/jabber.c:3494
 msgid "Chatty"
 msgstr "Csevegõ"
 
-#: src/protocols/jabber/jabber.c:1183 src/protocols/jabber/jabber.c:3403
-#: src/protocols/jabber/jabber.c:3460
+#: src/protocols/jabber/jabber.c:1186 src/protocols/jabber/jabber.c:3445
+#: src/protocols/jabber/jabber.c:3502
 msgid "Extended Away"
 msgstr "Nem vagyok a gépnél"
 
-#: src/protocols/jabber/jabber.c:1185 src/protocols/jabber/jabber.c:3404
-#: src/protocols/jabber/jabber.c:3464 src/protocols/oscar/oscar.c:2784
-#: src/protocols/oscar/oscar.c:4469 src/protocols/oscar/oscar.c:5665
+#: src/protocols/jabber/jabber.c:1188 src/protocols/jabber/jabber.c:3446
+#: src/protocols/jabber/jabber.c:3506 src/protocols/oscar/oscar.c:2818
+#: src/protocols/oscar/oscar.c:4512 src/protocols/oscar/oscar.c:5725
 msgid "Do Not Disturb"
 msgstr "Ne zavarj"
 
-#: src/protocols/jabber/jabber.c:1391
+#: src/protocols/jabber/jabber.c:1427
 #, c-format
 msgid "Jabber Error %s"
 msgstr "Jabber hiba %s"
 
-#: src/protocols/jabber/jabber.c:1498
+#: src/protocols/jabber/jabber.c:1534
 #, c-format
 msgid "Error %s: %s"
 msgstr "Hiba %s: %s"
 
-#: src/protocols/jabber/jabber.c:1501
+#: src/protocols/jabber/jabber.c:1537
 msgid "Unknown Error in presence"
 msgstr "Ismeretlen hiba történt"
 
-#: src/protocols/jabber/jabber.c:1677
+#: src/protocols/jabber/jabber.c:1715
 #, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr "%s partner szeretne téged a partnerei közé felvenni."
 
-#: src/protocols/jabber/jabber.c:1702
+#: src/protocols/jabber/jabber.c:1743
 #, c-format
 msgid "The Jabber user %s does not exist and was therefore not added to your roster."
 msgstr "%s Jabber partner nem létezik, ezért nem került fel a listádra."
 
-#: src/protocols/jabber/jabber.c:1705
+#: src/protocols/jabber/jabber.c:1746
 msgid "No such user."
 msgstr "Nincs ilyen partner."
 
-#: src/protocols/jabber/jabber.c:1796 src/protocols/msn/notification.c:549
-#: src/protocols/msn/notification.c:705 src/protocols/msn/notification.c:706
-#: src/blist.c:437 src/dialogs.c:960
+#. Should never happen.
+#: src/protocols/jabber/jabber.c:1837 src/protocols/msn/notification.c:88
+#: src/protocols/msn/notification.c:89 src/protocols/msn/notification.c:624
+#: src/blist.c:438 src/dialogs.c:913
 msgid "Buddies"
 msgstr "Partnerek"
 
-#: src/protocols/jabber/jabber.c:1869
+#: src/protocols/jabber/jabber.c:1910
 msgid "Authenticating"
 msgstr "Azonosítás"
 
-#: src/protocols/jabber/jabber.c:1903
+#: src/protocols/jabber/jabber.c:1944
 msgid "Unknown login error"
 msgstr "Ismeretlen bejelentkezési hiba"
 
-#: src/protocols/jabber/jabber.c:2253
+#: src/protocols/jabber/jabber.c:2294
 msgid "Password successfully changed."
 msgstr "Jelszó sikeresen megváltoztatva"
 
-#: src/protocols/jabber/jabber.c:2298 src/protocols/jabber/jabber.c:4206
+#: src/protocols/jabber/jabber.c:2339 src/protocols/jabber/jabber.c:4248
 msgid "Connection lost"
 msgstr "Kapcsolat megszakadt"
 
-#: src/protocols/jabber/jabber.c:2306
+#: src/protocols/jabber/jabber.c:2347
 msgid "Connected"
 msgstr "Kapcsolódva"
 
-#: src/protocols/jabber/jabber.c:2309
+#: src/protocols/jabber/jabber.c:2350
 msgid "Requesting Authentication Method"
 msgstr "Azonosítási módszer lekérdezése"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:2329 src/protocols/msn/dispatch.c:170
-#: src/protocols/msn/msn.c:423 src/protocols/napster/napster.c:504
-#: src/protocols/yahoo/yahoo.c:987
+#: src/protocols/jabber/jabber.c:2370 src/protocols/msn/dispatch.c:170
+#: src/protocols/msn/msn.c:420 src/protocols/napster/napster.c:507
+#: src/protocols/yahoo/yahoo.c:999
 msgid "Connecting"
 msgstr "Kapcsolatfelvétel"
 
-#: src/protocols/jabber/jabber.c:2655
+#: src/protocols/jabber/jabber.c:2696
 #, c-format
 msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
 msgstr "%s partner egy érvénytelen Jabber azonosító ezért nem került fel a listára."
 
-#: src/protocols/jabber/jabber.c:2657
+#: src/protocols/jabber/jabber.c:2698
+msgid "Unable to add buddy."
+msgstr "Nem sikerült felvenni a partnert."
+
+#: src/protocols/jabber/jabber.c:2699
 msgid "Jabber Error"
 msgstr "Jabber hiba"
 
-#: src/protocols/jabber/jabber.c:2916
+#: src/protocols/jabber/jabber.c:2958
 msgid "Room:"
 msgstr "Szoba:"
 
-#: src/protocols/jabber/jabber.c:2927
+#: src/protocols/jabber/jabber.c:2969
 msgid "Handle:"
 msgstr "Kezelõ:"
 
-#: src/protocols/jabber/jabber.c:2957
+#: src/protocols/jabber/jabber.c:2999
 msgid "Unable to join chat"
 msgstr "A csevegéshez nem sikerült kapcsolódni "
 
-#: src/protocols/jabber/jabber.c:3193 src/protocols/jabber/jabber.c:3244
-#: src/protocols/jabber/jabber.c:3669
+#: src/protocols/jabber/jabber.c:3235 src/protocols/jabber/jabber.c:3286
+#: src/protocols/jabber/jabber.c:3711
 msgid "Jabber ID"
 msgstr "Jabber ID"
 
-#: src/protocols/jabber/jabber.c:3194
+#: src/protocols/jabber/jabber.c:3236
 msgid "Error"
 msgstr "Hiba"
 
-#: src/protocols/jabber/jabber.c:3245 src/protocols/jabber/jabber.c:3304
-#: src/protocols/jabber/jabber.c:3315 src/protocols/jabber/jabber.c:3695
+#: src/protocols/jabber/jabber.c:3287 src/protocols/jabber/jabber.c:3346
+#: src/protocols/jabber/jabber.c:3357 src/protocols/jabber/jabber.c:3737
 msgid "Status"
 msgstr "Állapot"
 
-#: src/protocols/jabber/jabber.c:3315 src/protocols/jabber/jabber.c:3337
-#: src/protocols/oscar/oscar.c:5347
+#: src/protocols/jabber/jabber.c:3357 src/protocols/jabber/jabber.c:3379
+#: src/protocols/oscar/oscar.c:5399
 msgid "Not Authorized"
 msgstr "Nem engedélyezett"
 
-#: src/protocols/jabber/jabber.c:3350
+#: src/protocols/jabber/jabber.c:3392
 msgid "View Error Msg"
 msgstr "Hibaüzenet megjelenítése"
 
-#: src/protocols/jabber/jabber.c:3362 src/gtkconv.c:793
+#: src/protocols/jabber/jabber.c:3404 src/gtkconv.c:794
 msgid "Get Away Msg"
 msgstr "Távol üzenet lekérdezése"
 
-#: src/protocols/jabber/jabber.c:3369
+#: src/protocols/jabber/jabber.c:3411
 msgid "Un-hide From"
 msgstr "Rejtettség visszavonása"
 
-#: src/protocols/jabber/jabber.c:3372
+#: src/protocols/jabber/jabber.c:3414
 msgid "Temporarily Hide From"
 msgstr "Ideiglenesen elrejt"
 
-#: src/protocols/jabber/jabber.c:3379
+#: src/protocols/jabber/jabber.c:3421
 msgid "Cancel Presence Notification"
 msgstr "Jelenlét figyelmezetõ törlése"
 
-#: src/protocols/jabber/jabber.c:3387
+#: src/protocols/jabber/jabber.c:3429
 msgid "Re-request authorization"
 msgstr "Engedélyezés újra kérése"
 
 #. state is one of our own strings. it won't be NULL.
-#: src/protocols/jabber/jabber.c:3400 src/protocols/jabber/jabber.c:3450
-#: src/protocols/oscar/oscar.c:2796 src/protocols/oscar/oscar.c:4464
-#: src/protocols/oscar/oscar.c:5663 src/protocols/yahoo/yahoo.c:1090
-#: src/protocols/zephyr/zephyr.c:862 src/protocols/zephyr/zephyr.c:872
-#: src/multi.c:274
+#: src/protocols/jabber/jabber.c:3442 src/protocols/jabber/jabber.c:3492
+#: src/protocols/oscar/oscar.c:2830 src/protocols/oscar/oscar.c:4507
+#: src/protocols/oscar/oscar.c:5723 src/protocols/yahoo/yahoo.c:1102
+#: src/protocols/zephyr/zephyr.c:865 src/protocols/zephyr/zephyr.c:875
+#: src/multi.c:275
 msgid "Online"
 msgstr "Elérhetõ"
 
-#: src/protocols/jabber/jabber.c:3590
+#: src/protocols/jabber/jabber.c:3632
 msgid "Full Name"
 msgstr "Teljes név"
 
-#: src/protocols/jabber/jabber.c:3591
+#: src/protocols/jabber/jabber.c:3633
 msgid "Family Name"
 msgstr "Családnév"
 
-#: src/protocols/jabber/jabber.c:3592
+#: src/protocols/jabber/jabber.c:3634
 msgid "Given Name"
 msgstr "Keresztnév"
 
-#: src/protocols/jabber/jabber.c:3593
+#: src/protocols/jabber/jabber.c:3635
 msgid "Nickname"
 msgstr "Becenév"
 
-#: src/protocols/jabber/jabber.c:3594 src/dialogs.c:2936
+#: src/protocols/jabber/jabber.c:3636 src/dialogs.c:2891
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3595
+#: src/protocols/jabber/jabber.c:3637
 msgid "Street Address"
 msgstr "Utca"
 
-#: src/protocols/jabber/jabber.c:3596
+#: src/protocols/jabber/jabber.c:3638
 msgid "Extended Address"
 msgstr "További cím"
 
-#: src/protocols/jabber/jabber.c:3597
+#: src/protocols/jabber/jabber.c:3639
 msgid "Locality"
 msgstr "Helység"
 
-#: src/protocols/jabber/jabber.c:3598
+#: src/protocols/jabber/jabber.c:3640
 msgid "Region"
 msgstr "Régió"
 
-#: src/protocols/jabber/jabber.c:3599
+#: src/protocols/jabber/jabber.c:3641
 msgid "Postal Code"
 msgstr "Irányítószám"
 
 #. Line 7
-#: src/protocols/jabber/jabber.c:3600 src/dialogs.c:2109 src/dialogs.c:2742
+#: src/protocols/jabber/jabber.c:3642 src/dialogs.c:2062 src/dialogs.c:2697
 msgid "Country"
 msgstr "Ország"
 
-#: src/protocols/jabber/jabber.c:3601
+#: src/protocols/jabber/jabber.c:3643
 msgid "Telephone"
 msgstr "Telefonszám"
 
-#: src/protocols/jabber/jabber.c:3602 src/dialogs.c:2800
+#: src/protocols/jabber/jabber.c:3644 src/dialogs.c:2755
 msgid "Email"
 msgstr "E-mail"
 
-#: src/protocols/jabber/jabber.c:3603
+#: src/protocols/jabber/jabber.c:3645
 msgid "Organization Name"
 msgstr "Szervezet neve"
 
-#: src/protocols/jabber/jabber.c:3604
+#: src/protocols/jabber/jabber.c:3646
 msgid "Organization Unit"
 msgstr "Szervezeti egység"
 
-#: src/protocols/jabber/jabber.c:3605
+#: src/protocols/jabber/jabber.c:3647
 msgid "Title"
 msgstr "Beosztás"
 
-#: src/protocols/jabber/jabber.c:3606
+#: src/protocols/jabber/jabber.c:3648
 msgid "Role"
 msgstr "Funkció"
 
-#: src/protocols/jabber/jabber.c:3607
+#: src/protocols/jabber/jabber.c:3649
 msgid "Birthday"
 msgstr "Születésnap"
 
-#: src/protocols/jabber/jabber.c:3608 src/dialogs.c:2946 src/prefs.c:428
-#: src/prefs.c:1381
+#: src/protocols/jabber/jabber.c:3650 src/dialogs.c:2901 src/gtkprefs.c:413
+#: src/gtkprefs.c:1453
 msgid "Description"
 msgstr "Leírás"
 
-#: src/protocols/jabber/jabber.c:3633
+#: src/protocols/jabber/jabber.c:3675
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -1587,24 +1608,24 @@ msgstr ""
 "A következö kérdések közül csak azokra adj választ, melyek nem érintenek "
 "kényelmetlenül."
 
-#: src/protocols/jabber/jabber.c:3634
+#: src/protocols/jabber/jabber.c:3676
 msgid "User Identity"
 msgstr "Felhasználó identitás"
 
-#: src/protocols/jabber/jabber.c:4060
+#: src/protocols/jabber/jabber.c:4102
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Jabber vCard szerkesztése"
 
-#: src/protocols/jabber/jabber.c:4135
+#: src/protocols/jabber/jabber.c:4177
 msgid "Server Registration successful!"
 msgstr "Kiszolgáló regisztráció sikerült!"
 
-#: src/protocols/jabber/jabber.c:4162
+#: src/protocols/jabber/jabber.c:4204
 msgid "Unknown registration error"
 msgstr "Ismeretlen regisztrációs hiba"
 
-#: src/protocols/jabber/jabber.c:4277 src/protocols/oscar/oscar.c:5849
-#: src/protocols/toc/toc.c:1437 src/dialogs.c:2279
+#: src/protocols/jabber/jabber.c:4319 src/protocols/oscar/oscar.c:5918
+#: src/protocols/toc/toc.c:1441 src/dialogs.c:2234
 msgid "Set User Info"
 msgstr "Felhasználói infó beállítása"
 
@@ -1618,19 +1639,19 @@ msgstr "Felhasználói infó beállítása"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:4366 src/protocols/jabber/jabber.c:4368
+#: src/protocols/jabber/jabber.c:4408 src/protocols/jabber/jabber.c:4410
 msgid "Jabber Protocol Plugin"
 msgstr "Jabber protokol plugin"
 
-#: src/protocols/jabber/jabber.c:4394
+#: src/protocols/jabber/jabber.c:4436
 msgid "Resource:"
 msgstr "Erõforrás:"
 
-#: src/protocols/jabber/jabber.c:4405
+#: src/protocols/jabber/jabber.c:4447
 msgid "Connect Server:"
 msgstr "Kiszolgáló:"
 
-#: src/protocols/msn/dispatch.c:45 src/protocols/msn/notification.c:159
+#: src/protocols/msn/dispatch.c:45 src/protocols/msn/notification.c:232
 msgid "Protocol not supported"
 msgstr "Protokol nem támogatott"
 
@@ -1638,7 +1659,7 @@ msgstr "Protokol nem támogatott"
 msgid "Unable to request INF\n"
 msgstr "Információ kérés sikertelen\n"
 
-#: src/protocols/msn/dispatch.c:69 src/protocols/msn/notification.c:183
+#: src/protocols/msn/dispatch.c:69 src/protocols/msn/notification.c:256
 msgid "Unable to login using MD5"
 msgstr "Nem sikerül MD5 használatával bejelentkezni"
 
@@ -1646,7 +1667,7 @@ msgstr "Nem sikerül MD5 használatával bejelentkezni"
 msgid "Unable to send USR\n"
 msgstr "USR -t nem sikerül elküldeni\n"
 
-#: src/protocols/msn/dispatch.c:84 src/protocols/msn/notification.c:198
+#: src/protocols/msn/dispatch.c:84 src/protocols/msn/notification.c:271
 msgid "Requesting to send password"
 msgstr "Felkérés jelszó küldésére"
 
@@ -1662,176 +1683,176 @@ msgstr "Sikertelen átvitel"
 msgid "Unable to parse message."
 msgstr "Az üzenetet nem sikerült értelmezni."
 
-#: src/protocols/msn/dispatch.c:177 src/protocols/msn/notification.c:330
-#: src/protocols/msn/notification.c:1248
+#: src/protocols/msn/dispatch.c:177 src/protocols/msn/notification.c:409
+#: src/protocols/msn/notification.c:1350
 msgid "Unable to write to server"
 msgstr "Nem sikerül a kiszolgálóra írni"
 
-#: src/protocols/msn/dispatch.c:182 src/protocols/msn/notification.c:1255
+#: src/protocols/msn/dispatch.c:182 src/protocols/msn/notification.c:1357
 msgid "Syncing with server"
 msgstr "Szinkronizálás a kiszolgálóval"
 
-#: src/protocols/msn/dispatch.c:195 src/protocols/msn/notification.c:1268
+#: src/protocols/msn/dispatch.c:195 src/protocols/msn/notification.c:1370
 msgid "Error reading from server"
 msgstr "Hiba a kiszolgálóról olvasásakor."
 
-#: src/protocols/msn/error.c:32
+#: src/protocols/msn/error.c:33
 msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Szintaktikai hiba (valószínüleg Gaim hiba)"
 
-#: src/protocols/msn/error.c:36
+#: src/protocols/msn/error.c:37
 msgid "Invalid Parameter (probably a Gaim bug)"
 msgstr "Érvénytelen paraméter (valószínüleg Gaim hiba)"
 
-#: src/protocols/msn/error.c:39
+#: src/protocols/msn/error.c:40
 msgid "Invalid User"
 msgstr "Érvénytelen felhasználó"
 
-#: src/protocols/msn/error.c:43
+#: src/protocols/msn/error.c:44
 msgid "Fully Qualified Domain Name missing"
 msgstr "Domain név hiányzik"
 
-#: src/protocols/msn/error.c:46
+#: src/protocols/msn/error.c:47
 msgid "Already Login"
 msgstr "Már bejelentkeztél"
 
-#: src/protocols/msn/error.c:49
+#: src/protocols/msn/error.c:50
 msgid "Invalid Username"
 msgstr "Érvénytelen felhasználónév"
 
-#: src/protocols/msn/error.c:52
+#: src/protocols/msn/error.c:53
 msgid "Invalid Friendly Name"
 msgstr "Érvénytelen név"
 
-#: src/protocols/msn/error.c:55
+#: src/protocols/msn/error.c:56
 msgid "List Full"
 msgstr "Lista megtelt"
 
-#: src/protocols/msn/error.c:58
+#: src/protocols/msn/error.c:59
 msgid "Already there"
 msgstr "Már rajta van"
 
-#: src/protocols/msn/error.c:61
+#: src/protocols/msn/error.c:62
 msgid "Not on list"
 msgstr "Nincs a listán"
 
-#: src/protocols/msn/error.c:64
+#: src/protocols/msn/error.c:65
 msgid "User is offline"
 msgstr "Partner nem elérhetõ"
 
-#: src/protocols/msn/error.c:67
+#: src/protocols/msn/error.c:68
 msgid "Already in the mode"
 msgstr "Már be van állítva ez a mód"
 
-#: src/protocols/msn/error.c:70
+#: src/protocols/msn/error.c:71
 msgid "Already in opposite list"
 msgstr "A másik listán már szerepel"
 
-#: src/protocols/msn/error.c:74
+#: src/protocols/msn/error.c:75
 msgid "Tried to add a contact to a group that doesn't exist"
 msgstr "Nem létezõ csoporthoz próbáltad meg felvenni a partnert"
 
-#: src/protocols/msn/error.c:78
+#: src/protocols/msn/error.c:79
 msgid "Switchboard failed"
 msgstr "Switchboard sikertelen"
 
-#: src/protocols/msn/error.c:81
+#: src/protocols/msn/error.c:82
 msgid "Notify Transfer failed"
 msgstr "Figyelmeztetõ küldése sikertelen"
 
-#: src/protocols/msn/error.c:85
+#: src/protocols/msn/error.c:86
 msgid "Required fields missing"
 msgstr "Kötelezõ mezõk nincsenek kitöltve"
 
-#: src/protocols/msn/error.c:88 src/protocols/oscar/oscar.c:194
+#: src/protocols/msn/error.c:89 src/protocols/oscar/oscar.c:194
 msgid "Not logged in"
 msgstr "Nincs bejelentkezve"
 
-#: src/protocols/msn/error.c:92
+#: src/protocols/msn/error.c:93
 msgid "Internal server error"
 msgstr "Belsö kiszolgáló hiba"
 
-#: src/protocols/msn/error.c:95
+#: src/protocols/msn/error.c:96
 msgid "Database server error"
 msgstr "Adatbázis kiszolgáló hiba"
 
-#: src/protocols/msn/error.c:98
+#: src/protocols/msn/error.c:99
 msgid "File operation error"
 msgstr "Fájl mûveleti hiba"
 
-#: src/protocols/msn/error.c:101
+#: src/protocols/msn/error.c:102
 msgid "Memory allocation error"
 msgstr "Memória foglalási hiba"
 
-#: src/protocols/msn/error.c:104
+#: src/protocols/msn/error.c:105
 msgid "Wrong CHL value sent to server"
 msgstr "Hibás CHL érték elküldve a kiszolgálónak"
 
-#: src/protocols/msn/error.c:108
+#: src/protocols/msn/error.c:109
 msgid "Server busy"
 msgstr "Kiszolgáló foglalt"
 
-#: src/protocols/msn/error.c:111
+#: src/protocols/msn/error.c:112
 msgid "Server unavailable"
 msgstr "Kiszolgáló nem elérhetõ"
 
-#: src/protocols/msn/error.c:114
+#: src/protocols/msn/error.c:115
 msgid "Peer Notification server down"
 msgstr "Peer figyelmeztetõ kiszolgáló nem üzemel"
 
-#: src/protocols/msn/error.c:117
+#: src/protocols/msn/error.c:118
 msgid "Database connect error"
 msgstr "Adatbázis kapcsolat hiba "
 
-#: src/protocols/msn/error.c:121
+#: src/protocols/msn/error.c:122
 msgid "Server is going down (abandon ship)"
 msgstr "Kiszolgáló leáll (hagyd el a hajót)"
 
-#: src/protocols/msn/error.c:125
+#: src/protocols/msn/error.c:126
 msgid "Error creating connection"
 msgstr "Hiba a kapcsolat létesítésekor"
 
-#: src/protocols/msn/error.c:129
+#: src/protocols/msn/error.c:130
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Ismeretlen vagy nem engedélyezett CVR paraméterek"
 
-#: src/protocols/msn/error.c:135
+#: src/protocols/msn/error.c:136
 msgid "Session overload"
 msgstr "Folyamat túlterhelve"
 
-#: src/protocols/msn/error.c:138
+#: src/protocols/msn/error.c:139
 msgid "User is too active"
 msgstr "Nagyon aktív partner"
 
-#: src/protocols/msn/error.c:141
+#: src/protocols/msn/error.c:142
 msgid "Too many sessions"
 msgstr "Túl sok folyamat"
 
-#: src/protocols/msn/error.c:144
+#: src/protocols/msn/error.c:145
 msgid "Not expected"
 msgstr "Nem elfogadott"
 
-#: src/protocols/msn/error.c:147
+#: src/protocols/msn/error.c:148
 msgid "Bad friend file"
 msgstr "Hibás fájl"
 
-#: src/protocols/msn/error.c:151
+#: src/protocols/msn/error.c:152
 msgid "Authentication failed"
 msgstr "Azonosítás sikertelen"
 
-#: src/protocols/msn/error.c:154
+#: src/protocols/msn/error.c:155
 msgid "Not allowed when offline"
 msgstr "Nem elérhetõ kijelentkezett állapotban"
 
-#: src/protocols/msn/error.c:157
+#: src/protocols/msn/error.c:158
 msgid "Not accepting new users"
 msgstr "Nem fogad új partnereket"
 
-#: src/protocols/msn/error.c:161
+#: src/protocols/msn/error.c:162
 msgid "Passport account not yet verified"
 msgstr "Passport fiók még nincs ellenõrizve"
 
-#: src/protocols/msn/error.c:165
+#: src/protocols/msn/error.c:166
 #, c-format
 msgid "Unknown Error Code %d"
 msgstr "Ismeretlen hiba kód %d"
@@ -1840,167 +1861,166 @@ msgstr "Ismeretlen hiba kód %d"
 msgid "Your new MSN friendly name is too long."
 msgstr "MSN beceneved túl hosszú."
 
-#: src/protocols/msn/msn.c:72 src/protocols/msn/msn.c:92
-#: src/protocols/msn/msn.c:150 src/protocols/msn/msn.c:473
-#: src/protocols/msn/msn.c:582 src/protocols/msn/msn.c:598
-#: src/protocols/msn/msn.c:633 src/protocols/msn/msn.c:649
-#: src/protocols/msn/msn.c:681 src/protocols/msn/msn.c:690
-#: src/protocols/msn/msn.c:723 src/protocols/msn/msn.c:732
-#: src/protocols/msn/msn.c:747 src/protocols/msn/msn.c:757
-#: src/protocols/msn/msn.c:772 src/protocols/msn/msn.c:782
-#: src/protocols/msn/msn.c:804 src/protocols/msn/msn.c:855
-#: src/protocols/msn/msn.c:894 src/protocols/msn/msn.c:986
-#: src/protocols/msn/msn.c:1009 src/protocols/msn/msn.c:1024
-#: src/protocols/msn/msn.c:1036 src/protocols/msn/msn.c:1058
-#: src/protocols/msn/msn.c:1068 src/protocols/msn/notification.c:55
-#: src/protocols/msn/notification.c:85 src/protocols/msn/notification.c:858
+#: src/protocols/msn/msn.c:71 src/protocols/msn/msn.c:90
+#: src/protocols/msn/msn.c:148 src/protocols/msn/msn.c:470
+#: src/protocols/msn/msn.c:580 src/protocols/msn/msn.c:596
+#: src/protocols/msn/msn.c:631 src/protocols/msn/msn.c:647
+#: src/protocols/msn/msn.c:679 src/protocols/msn/msn.c:688
+#: src/protocols/msn/msn.c:721 src/protocols/msn/msn.c:730
+#: src/protocols/msn/msn.c:745 src/protocols/msn/msn.c:755
+#: src/protocols/msn/msn.c:770 src/protocols/msn/msn.c:780
+#: src/protocols/msn/msn.c:802 src/protocols/msn/msn.c:853
+#: src/protocols/msn/msn.c:892 src/protocols/msn/msn.c:984
+#: src/protocols/msn/msn.c:1009 src/protocols/msn/msn.c:1030
+#: src/protocols/msn/msn.c:1042 src/protocols/msn/msn.c:1054
+#: src/protocols/msn/msn.c:1079 src/protocols/msn/msn.c:1092
+#: src/protocols/msn/notification.c:128 src/protocols/msn/notification.c:158
+#: src/protocols/msn/notification.c:912 src/protocols/msn/notification.c:933
 msgid "Write error"
 msgstr "Írás hiba"
 
-#: src/protocols/msn/msn.c:162
-msgid "Set Friendly Name:"
-msgstr "Becenév beállítása:"
+#: src/protocols/msn/msn.c:166
+msgid "Set your friendly name."
+msgstr "Beceneved beállítása."
 
-#: src/protocols/msn/msn.c:171
-msgid "Set Home Phone Number:"
-msgstr "Otthoni telefonszám:"
+#: src/protocols/msn/msn.c:167
+msgid "This is the name that other MSN buddies will see you as."
+msgstr "Ezt a nevet fogják látni az MSN partnereid."
 
-#: src/protocols/msn/msn.c:181
-msgid "Set Work Phone Number:"
-msgstr "Munkahelyi telefonszám:"
+#: src/protocols/msn/msn.c:179
+msgid "Set your home phone number."
+msgstr "Otthoni telefonszám beállítása."
 
-#: src/protocols/msn/msn.c:191
-msgid "Set Mobile Phone Number:"
-msgstr "Mobil telefon:"
+#: src/protocols/msn/msn.c:190
+msgid "Set your work phone number."
+msgstr "Munkahelyi telefonszám beállítása."
 
-#: src/protocols/msn/msn.c:202
-msgid "MSN Mobile Support"
-msgstr "MSN mobil támogatás"
+#: src/protocols/msn/msn.c:201
+msgid "Set your mobile phone number."
+msgstr "Mobil telefonszám beállítása."
 
-#: src/protocols/msn/msn.c:203
-msgid "Do you want to enable or disable MSN Mobile device support?"
-msgstr "Engedélyezed vagy tiltod az MSN mobil eszköz támogatást?"
+#: src/protocols/msn/msn.c:210
+msgid "Allow MSN Mobile pages?"
+msgstr "Engedélyezed az MSN mobil oldalakat?"
 
-#: src/protocols/msn/msn.c:206
-msgid "Enable"
-msgstr "Engedélyez"
-
-#: src/protocols/msn/msn.c:207
-msgid "Disable"
-msgstr "Tilt"
-
-#: src/protocols/msn/msn.c:217
-msgid "MSN Mobile Pages"
-msgstr "MSN mobil oldalak"
-
-#: src/protocols/msn/msn.c:218
+#: src/protocols/msn/msn.c:211
 msgid ""
-"Do you want to allow or disallow people on your buddy list to send you "
-"mobile pages?"
+"Do you want to allow or disallow people on your buddy list to send you MSN "
+"Mobile pages to your cell phone or other mobile device?"
 msgstr ""
-"Engedélyezed vagy nem a listádon szereplõ partnereidnek, hogy mobil "
-"oldalakat küldjenek neked?"
+"Engedélyezed vagy nem, a listádon szereplõ partnereidnek, hogy mobil "
+"oldalakat küldjenek a mobil telefonodra vagy más mobil eszközre?"
 
-#: src/protocols/msn/msn.c:221
+#: src/protocols/msn/msn.c:215
 msgid "Allow"
 msgstr "Engedélyez"
 
-#: src/protocols/msn/msn.c:222
+#: src/protocols/msn/msn.c:216
 msgid "Disallow"
 msgstr "Nem engedélyez"
 
-#: src/protocols/msn/msn.c:239
-msgid "Send message:"
-msgstr "Üzenet küldése:"
+#: src/protocols/msn/msn.c:233
+msgid "Send a mobile message."
+msgstr "Mobil üzenet küldése."
 
-#: src/protocols/msn/msn.c:302 src/protocols/yahoo/yahoo.c:1141
+#: src/protocols/msn/msn.c:235
+msgid "Page"
+msgstr "Oldal"
+
+#: src/protocols/msn/msn.c:236 src/about.c:169 src/dialogs.c:4197
+#: src/prpl.c:510 src/server.c:1436
+msgid "Close"
+msgstr "Bezár"
+
+#: src/protocols/msn/msn.c:299 src/protocols/yahoo/yahoo.c:1153
 #, c-format
 msgid "<b>Status:</b> %s"
 msgstr "<b>Állapot:</b> %s"
 
-#: src/protocols/msn/msn.c:315 src/protocols/msn/msn.c:558
+#: src/protocols/msn/msn.c:312 src/protocols/msn/msn.c:556
 #: src/protocols/msn/state.c:32
 msgid "Away From Computer"
 msgstr "Nincs a gépnél"
 
-#: src/protocols/msn/msn.c:316 src/protocols/msn/msn.c:560
-#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:1068
-#: src/protocols/yahoo/yahoo.c:1273 src/protocols/yahoo/yahoo.c:1349
+#: src/protocols/msn/msn.c:313 src/protocols/msn/msn.c:558
+#: src/protocols/msn/state.c:31 src/protocols/yahoo/yahoo.c:1080
+#: src/protocols/yahoo/yahoo.c:1287 src/protocols/yahoo/yahoo.c:1363
 msgid "Be Right Back"
 msgstr "Rögtön jövök"
 
-#: src/protocols/msn/msn.c:317 src/protocols/msn/msn.c:562
-#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:1070
-#: src/protocols/yahoo/yahoo.c:1275 src/protocols/yahoo/yahoo.c:1350
+#: src/protocols/msn/msn.c:314 src/protocols/msn/msn.c:560
+#: src/protocols/msn/state.c:29 src/protocols/yahoo/yahoo.c:1082
+#: src/protocols/yahoo/yahoo.c:1289 src/protocols/yahoo/yahoo.c:1364
 msgid "Busy"
 msgstr "Elfoglalt"
 
-#: src/protocols/msn/msn.c:318 src/protocols/msn/msn.c:564
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:1078
-#: src/protocols/yahoo/yahoo.c:1283 src/protocols/yahoo/yahoo.c:1354
+#: src/protocols/msn/msn.c:315 src/protocols/msn/msn.c:562
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:1090
+#: src/protocols/yahoo/yahoo.c:1297 src/protocols/yahoo/yahoo.c:1368
 msgid "On The Phone"
 msgstr "Telefonálok"
 
-#: src/protocols/msn/msn.c:319 src/protocols/msn/msn.c:566
-#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:1082
-#: src/protocols/yahoo/yahoo.c:1287 src/protocols/yahoo/yahoo.c:1356
+#: src/protocols/msn/msn.c:316 src/protocols/msn/msn.c:564
+#: src/protocols/msn/state.c:34 src/protocols/yahoo/yahoo.c:1094
+#: src/protocols/yahoo/yahoo.c:1301 src/protocols/yahoo/yahoo.c:1370
 msgid "Out To Lunch"
 msgstr "Ebédelni mentem"
 
-#: src/protocols/msn/msn.c:320 src/protocols/msn/msn.c:568
-#: src/protocols/zephyr/zephyr.c:859 src/protocols/zephyr/zephyr.c:874
+#: src/protocols/msn/msn.c:317 src/protocols/msn/msn.c:566
+#: src/protocols/zephyr/zephyr.c:862 src/protocols/zephyr/zephyr.c:877
 msgid "Hidden"
 msgstr "Láthatatlan"
 
-#: src/protocols/msn/msn.c:332
+#: src/protocols/msn/msn.c:329
 msgid "Set Friendly Name"
 msgstr "Becenév beállítása"
 
-#: src/protocols/msn/msn.c:340
+#: src/protocols/msn/msn.c:337
 msgid "Set Home Phone Number"
 msgstr "Otthoni telefonszám"
 
-#: src/protocols/msn/msn.c:346
+#: src/protocols/msn/msn.c:343
 msgid "Set Work Phone Number"
 msgstr "Munkahelyi telefonszám"
 
-#: src/protocols/msn/msn.c:352
+#: src/protocols/msn/msn.c:349
 msgid "Set Mobile Phone Number"
 msgstr "Mobil telefon"
 
-#: src/protocols/msn/msn.c:361
+#: src/protocols/msn/msn.c:358
 msgid "Enable/Disable Mobile Devices"
 msgstr "Mobil eszközök engedélyezése/tiltása"
 
-#: src/protocols/msn/msn.c:368
+#: src/protocols/msn/msn.c:365
 msgid "Allow/Disallow Mobile Pages"
 msgstr "Mobill oldalak engedélyezése/tiltása"
 
-#: src/protocols/msn/msn.c:390
+#: src/protocols/msn/msn.c:387
 msgid "Send to Mobile"
 msgstr "Küldés mobil telefonra"
 
-#: src/protocols/msn/msn.c:662
+#: src/protocols/msn/msn.c:660
 #, c-format
 msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
 "%s@hotmail.com. No changes were made to your allow list."
 msgstr ""
-"Egy MSN fióknak \"user@server.com\" formátumnak kell megfelelnie. Lehet hogy te így "
-"gondoltad %s@hotmail.com. Nem történt a módosítás az engedélyezettek listáján."
+"Egy MSN fióknak \"user@server.com\" formátumnak kell megfelelnie. Lehet hogy "
+"te így gondoltad %s@hotmail.com. Nem történt a módosítás az engedélyezettek "
+"listáján."
 
-#: src/protocols/msn/msn.c:666 src/protocols/msn/msn.c:707
+#: src/protocols/msn/msn.c:664 src/protocols/msn/msn.c:705
 msgid "Invalid MSN screenname"
 msgstr "Érvénytelen MSN fióknév"
 
-#: src/protocols/msn/msn.c:703
+#: src/protocols/msn/msn.c:701
 #, c-format
 msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
 "%s@hotmail.com. No changes were made to your block list."
 msgstr ""
-"Egy MSN fióknak \"user@server.com\" formátumnak kell megfelelnie. Lehet hogy így"
-"gondoltad %s@hotmail.com. Nem történt a módosítás az tiltottak listáján."
+"Egy MSN fióknak \"user@server.com\" formátumnak kell megfelelnie. Lehet hogy "
+"ígygondoltad %s@hotmail.com. Nem történt a módosítás az tiltottak listáján."
 
 #. *< api_version
 #. *< type
@@ -2012,61 +2032,61 @@ msgstr ""
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1182 src/protocols/msn/msn.c:1184
+#: src/protocols/msn/msn.c:1207 src/protocols/msn/msn.c:1209
 msgid "MSN Protocol Plugin"
 msgstr "MSN protokol plugin"
 
-#: src/protocols/msn/msn.c:1202
+#: src/protocols/msn/msn.c:1227
 msgid "Login Server:"
 msgstr "Beléptetõ kiszolgáló:"
 
-#: src/protocols/msn/notification.c:166
+#: src/protocols/msn/notification.c:239
 msgid "Unable to request INF"
 msgstr "Információ kérés sikertelen"
 
-#: src/protocols/msn/notification.c:192
+#: src/protocols/msn/notification.c:265
 msgid "Unable to send USR"
 msgstr "USR -t nem sikerül elküldeni"
 
-#: src/protocols/msn/notification.c:222
+#: src/protocols/msn/notification.c:301
 msgid "Retrieving buddy list"
 msgstr "Partner lista fogadása"
 
-#: src/protocols/msn/notification.c:246
+#: src/protocols/msn/notification.c:325
 msgid "Unable to send password"
 msgstr "A jelszót nem sikerült elküldeni"
 
-#: src/protocols/msn/notification.c:252
+#: src/protocols/msn/notification.c:331
 msgid "Password sent"
 msgstr "Jelszó elküldve"
 
-#: src/protocols/msn/notification.c:269
+#: src/protocols/msn/notification.c:348
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "Kapcsolat megszakadt, mert bejelentkeztél egy másik helyrõl."
 
-#: src/protocols/msn/notification.c:275
+#: src/protocols/msn/notification.c:354
 msgid "You have been disconnected. The MSN servers are going down temporarily."
 msgstr "Kapcsolat megszakadt. Az MSN kiszolgálók ideiglenesen leállnak."
 
-#: src/protocols/msn/notification.c:370
+#: src/protocols/msn/notification.c:461
 #, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "%s (%s) partner szeretné %s-t a partnerei közzé felvenni."
 
-#: src/protocols/msn/notification.c:643
+#: src/protocols/msn/notification.c:719
 #, c-format
 msgid "The user %s (%s) wants to add you to their buddy list."
 msgstr "%s (%s) partner szeretne téged a partnerei közzé felvenni."
 
-#: src/protocols/msn/notification.c:1040
+#: src/protocols/msn/notification.c:1132
 msgid "Got invalid XFR"
 msgstr "Érvénytelen XFR"
 
-#: src/protocols/msn/notification.c:1083
+#: src/protocols/msn/notification.c:1175
 msgid "Unable to transfer to notification server"
 msgstr "Nem sikerül kommunikálni a figyelmeztetõ kiszolgálóval"
 
-#: src/protocols/msn/notification.c:1209
+#: src/protocols/msn/notification.c:1312
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute(s). You will "
@@ -2081,8 +2101,8 @@ msgstr ""
 "\n"
 "A karbantartás után sikeresen be tudsz majd jelentkezni. "
 
-#: src/protocols/msn/state.c:30 src/protocols/yahoo/yahoo.c:1088
-#: src/gtkpounce.c:568 src/prefs.c:1088
+#: src/protocols/msn/state.c:30 src/protocols/yahoo/yahoo.c:1100
+#: src/gtkpounce.c:570 src/gtkprefs.c:1157
 msgid "Idle"
 msgstr "Inaktív"
 
@@ -2095,11 +2115,7 @@ msgstr "Társalgás inaktívvá vált és az idõt túllépte."
 msgid "%s has closed the conversation window."
 msgstr "%s bezárta a társalgás ablakát."
 
-#.
-#. * TODO: Investigate this, as it seems to occur frequently with
-#. *       the old prpl.
-#.
-#: src/protocols/msn/switchboard.c:224
+#: src/protocols/msn/switchboard.c:225
 msgid "An MSN message may not have been received."
 msgstr "Az MSN üzenetet nem biztos hogy megkapták."
 
@@ -2118,38 +2134,34 @@ msgstr "felhasználók: %s, fájlok: %s, méret: %s GB"
 msgid "Unable to add \"%s\" to your Napster hotlist"
 msgstr "Nem sikerült \"%s\" felvenni a Napster listádra"
 
-#. MSG_SERVER_DISCONNECTING
-#. we have been kicked off =^(
-#: src/protocols/napster/napster.c:344
+#: src/protocols/napster/napster.c:345
 msgid "You were disconnected from the server."
 msgstr "Megszakadt a kapcsolat a kiszolgálóval."
 
 #. MSG_CLIENT_WHOIS
-#: src/protocols/napster/napster.c:400
+#: src/protocols/napster/napster.c:401
 #, c-format
 msgid "%s requested your information"
 msgstr "%s lekérdezte az adataidat."
 
-#. MSG_SERVER_GHOST
-#. Looks like someone logged in as us! =-O
-#: src/protocols/napster/napster.c:429
+#: src/protocols/napster/napster.c:431
 msgid ""
 "You were disconnected from the server, because you logged on from a "
 "different location"
 msgstr "Kapcsolatod megszakadt, mert bejelentkeztél egy másik helyrõl."
 
 #. MSG_CLIENT_PING
-#: src/protocols/napster/napster.c:434
+#: src/protocols/napster/napster.c:437
 #, c-format
 msgid "%s requested a PING"
 msgstr "%s-tõl PING kérés érkezett"
 
-#: src/protocols/napster/napster.c:548 src/gtkblist.c:1471
+#: src/protocols/napster/napster.c:551 src/gtkblist.c:1509
 msgid "Get Info"
 msgstr "Információ lekérdezése"
 
-#: src/protocols/napster/napster.c:562 src/protocols/oscar/oscar.c:5070
-#: src/protocols/toc/toc.c:1191
+#: src/protocols/napster/napster.c:565 src/protocols/oscar/oscar.c:5122
+#: src/protocols/toc/toc.c:1195
 msgid "Join what group:"
 msgstr "Kapcsolódás csoporthoz:"
 
@@ -2163,7 +2175,7 @@ msgstr "Kapcsolódás csoporthoz:"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/napster/napster.c:638 src/protocols/napster/napster.c:640
+#: src/protocols/napster/napster.c:641 src/protocols/napster/napster.c:643
 msgid "NAPSTER Protocol Plugin"
 msgstr "NAPSTER protokol plugin"
 
@@ -2278,65 +2290,65 @@ msgstr "Közvetlen IM %s-(val/vel) megszakadt"
 msgid "Disconnected."
 msgstr "Lekapcsolódva"
 
-#: src/protocols/oscar/oscar.c:556 src/protocols/toc/toc.c:854
+#: src/protocols/oscar/oscar.c:556 src/protocols/toc/toc.c:855
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Kiléptél a következõ csevegõ szobából %s."
 
-#: src/protocols/oscar/oscar.c:570
+#: src/protocols/oscar/oscar.c:572
 msgid "Chat is currently unavailable"
 msgstr "Csevegés jelenleg nem elérhetõ"
 
-#: src/protocols/oscar/oscar.c:643 src/protocols/oscar/oscar.c:705
+#: src/protocols/oscar/oscar.c:646 src/protocols/oscar/oscar.c:708
 msgid "Couldn't connect to host"
 msgstr "Nem sikerült a távoli géphez kapcsolódni"
 
-#: src/protocols/oscar/oscar.c:687
+#: src/protocols/oscar/oscar.c:690
 msgid "Unable to login to AIM"
 msgstr "Nem sikerült az AIM-re bejelentkezni"
 
-#: src/protocols/oscar/oscar.c:798 src/protocols/oscar/oscar.c:1181
+#: src/protocols/oscar/oscar.c:801 src/protocols/oscar/oscar.c:1187
 msgid "Could Not Connect"
 msgstr "Nem sikerült kapcsolódni"
 
-#: src/protocols/oscar/oscar.c:805
+#: src/protocols/oscar/oscar.c:808
 msgid "Connection established, cookie sent"
 msgstr "Kapcsolat létrejött, cookie elküldve"
 
-#: src/protocols/oscar/oscar.c:872 src/protocols/oscar/oscar.c:883
-#: src/protocols/oscar/oscar.c:887
+#: src/protocols/oscar/oscar.c:875 src/protocols/oscar/oscar.c:887
+#: src/protocols/oscar/oscar.c:892
 msgid "File Transfer Aborted"
 msgstr "Fájl küldés megszakítva"
 
-#: src/protocols/oscar/oscar.c:872
+#: src/protocols/oscar/oscar.c:876
 msgid "Unable to establish listener socket."
 msgstr "Foglalatot nem lehet megnyitni"
 
-#: src/protocols/oscar/oscar.c:883
+#: src/protocols/oscar/oscar.c:888
 msgid "Unable to establish file descriptor."
 msgstr "Fájl leírót nem sikerült megállapítani."
 
-#: src/protocols/oscar/oscar.c:887
+#: src/protocols/oscar/oscar.c:893
 msgid "Unable to create new connection."
 msgstr "Nem sikerült új kapcsolatot létrehozni."
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:1071 src/protocols/toc/toc.c:551
+#: src/protocols/oscar/oscar.c:1077 src/protocols/toc/toc.c:551
 msgid "Incorrect nickname or password."
 msgstr "Hibás becenév vagy jelszó."
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:1075
+#: src/protocols/oscar/oscar.c:1081
 msgid "Your account is currently suspended."
 msgstr "Fiók jelenleg felfüggesztve."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:1079
+#: src/protocols/oscar/oscar.c:1085
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL szolgáltatás átmenetileg nem elérhetõ."
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:1083
+#: src/protocols/oscar/oscar.c:1089
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -2345,21 +2357,21 @@ msgstr ""
 "folytatod,még többet kell majd várnod."
 
 #. client too old
-#: src/protocols/oscar/oscar.c:1087
+#: src/protocols/oscar/oscar.c:1093
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Az ügyfél program verzója régi. Kérlek frissítsd itt %s"
 
-#: src/protocols/oscar/oscar.c:1091 src/protocols/toc/toc.c:633
+#: src/protocols/oscar/oscar.c:1097 src/protocols/toc/toc.c:633
 msgid "Authentication Failed"
 msgstr "Ellenõrzés sikertlen"
 
-#: src/protocols/oscar/oscar.c:1119
+#: src/protocols/oscar/oscar.c:1125
 msgid "Internal Error"
 msgstr "Belsõ hiba"
 
-#: src/protocols/oscar/oscar.c:1220 src/protocols/oscar/oscar.c:1250
-#: src/protocols/oscar/oscar.c:1336
+#: src/protocols/oscar/oscar.c:1226 src/protocols/oscar/oscar.c:1256
+#: src/protocols/oscar/oscar.c:1344
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -2368,29 +2380,29 @@ msgstr ""
 "Hamarosan megszakad a kapcsolat. Helyreállításig akarod a TOC prokolt "
 "használni. Frissítés a következõ címen érhetõ el %s."
 
-#: src/protocols/oscar/oscar.c:1222 src/protocols/oscar/oscar.c:1252
+#: src/protocols/oscar/oscar.c:1229 src/protocols/oscar/oscar.c:1259
 msgid "Gaim was Unable to get a valid AIM login hash."
 msgstr "Gaim nem tudott érvényes AIM belépõt szerezni."
 
-#: src/protocols/oscar/oscar.c:1338
+#: src/protocols/oscar/oscar.c:1347
 msgid "Gaim was Unable to get a valid login hash."
 msgstr "Gaim nem tudott érvényes belépõt szerezni."
 
-#: src/protocols/oscar/oscar.c:1892 src/protocols/oscar/oscar.c:5388
+#: src/protocols/oscar/oscar.c:1901 src/protocols/oscar/oscar.c:5440
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Létrejött a közvetlen IM kapcsolat %s-(val/vel)"
 
-#: src/protocols/oscar/oscar.c:2219 src/protocols/oscar/oscar.c:2241
+#: src/protocols/oscar/oscar.c:2228 src/protocols/oscar/oscar.c:2250
 msgid "(There was an error receiving this message)"
 msgstr "(Hiba lépett fel az üzenet fogadása közben)"
 
-#: src/protocols/oscar/oscar.c:2386
+#: src/protocols/oscar/oscar.c:2395
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s felkérve a direct kapcsolatra %s-hoz"
 
-#: src/protocols/oscar/oscar.c:2387
+#: src/protocols/oscar/oscar.c:2398
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -2400,19 +2412,19 @@ msgstr ""
 "képekhez is. Ezzel elérhetõvé válik az IP címed, amit nem biztos hogy "
 "engedélyezni szeretnél."
 
-#: src/protocols/oscar/oscar.c:2413
+#: src/protocols/oscar/oscar.c:2430
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Engedélyezd, hogy felvehesselek a partnereim közé."
 
-#: src/protocols/oscar/oscar.c:2421
+#: src/protocols/oscar/oscar.c:2438
 msgid "Authorization Request Message:"
 msgstr "Engedélyezési kérelem üzenet:"
 
-#: src/protocols/oscar/oscar.c:2421
+#: src/protocols/oscar/oscar.c:2439
 msgid "Please authorize me!"
 msgstr "Engedélyezz engem!"
 
-#: src/protocols/oscar/oscar.c:2446
+#: src/protocols/oscar/oscar.c:2467
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -2421,23 +2433,23 @@ msgstr ""
 "%s engedélye szükséges a listára történõ felvételhez.  Akarsz küldeni egy "
 "engedélyezési kérelmet?"
 
-#: src/protocols/oscar/oscar.c:2450
+#: src/protocols/oscar/oscar.c:2472 src/protocols/oscar/oscar.c:2474
 msgid "Request Authorization"
 msgstr "Engedélyezés kérése"
 
-#: src/protocols/oscar/oscar.c:2484 src/protocols/oscar/oscar.c:2486
-#: src/protocols/oscar/oscar.c:2492 src/protocols/oscar/oscar.c:2560
-#: src/protocols/oscar/oscar.c:2574 src/protocols/oscar/oscar.c:2950
-#: src/protocols/oscar/oscar.c:3001 src/protocols/oscar/oscar.c:4995
-#: src/protocols/oscar/oscar.c:5037
+#: src/protocols/oscar/oscar.c:2510 src/protocols/oscar/oscar.c:2512
+#: src/protocols/oscar/oscar.c:2519 src/protocols/oscar/oscar.c:2590
+#: src/protocols/oscar/oscar.c:2610 src/protocols/oscar/oscar.c:2985
+#: src/protocols/oscar/oscar.c:3037 src/protocols/oscar/oscar.c:5043
+#: src/protocols/oscar/oscar.c:5089
 msgid "No reason given."
 msgstr "Nincs magyarázat."
 
-#: src/protocols/oscar/oscar.c:2492
+#: src/protocols/oscar/oscar.c:2518
 msgid "Authorization Denied Message:"
 msgstr "Engedélyezés elutasító üzenet:"
 
-#: src/protocols/oscar/oscar.c:2560
+#: src/protocols/oscar/oscar.c:2590
 #, c-format
 msgid ""
 "The user %lu wants to add you to their buddy list for the following reason:\n"
@@ -2447,11 +2459,11 @@ msgstr ""
 "magyarázattal:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2567 src/protocols/oscar/oscar.c:5000
+#: src/protocols/oscar/oscar.c:2598 src/protocols/oscar/oscar.c:5049
 msgid "Authorization Request"
 msgstr "Engedélyezési kérelem"
 
-#: src/protocols/oscar/oscar.c:2574
+#: src/protocols/oscar/oscar.c:2610
 #, c-format
 msgid ""
 "The user %lu has denied your request to add them to your contact list for "
@@ -2461,17 +2473,17 @@ msgstr ""
 "%lu partner elutasította a kérésed a következõ magyarázattal:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2575
+#: src/protocols/oscar/oscar.c:2611
 msgid "ICQ authorization denied."
 msgstr "ICQ engedélyezés elutasítva."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:2581
+#: src/protocols/oscar/oscar.c:2618
 #, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
 msgstr "%lu partner elfogadta a kérésed, hogy felvedd õt a partnereid közé."
 
-#: src/protocols/oscar/oscar.c:2588
+#: src/protocols/oscar/oscar.c:2626
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -2484,7 +2496,7 @@ msgstr ""
 "Személytõl: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2596
+#: src/protocols/oscar/oscar.c:2634
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -2497,7 +2509,7 @@ msgstr ""
 "Személytõl: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2604
+#: src/protocols/oscar/oscar.c:2642
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -2510,27 +2522,27 @@ msgstr ""
 "Az üzenet:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:2625
+#: src/protocols/oscar/oscar.c:2663
 #, c-format
 msgid "ICQ user %lu has sent you a contact: %s (%s)"
 msgstr "ICQ partner %lu küldött egy partnert: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:2629
+#: src/protocols/oscar/oscar.c:2669
 msgid "Do you want to add this contact to your Buddy List?"
 msgstr "Fel kívánod venni ezt a partnert a listádra?"
 
-#: src/protocols/oscar/oscar.c:2629
+#: src/protocols/oscar/oscar.c:2673
 msgid "Decline"
 msgstr "Elutasít"
 
-#: src/protocols/oscar/oscar.c:2713
+#: src/protocols/oscar/oscar.c:2755
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Nem kaptál meg %hu üzenetet %s-tõl, mert érvénytelen volt."
 msgstr[1] "Nem kaptál meg %d üzenetet %s-töl mert érvénytelen volt."
 
-#: src/protocols/oscar/oscar.c:2724
+#: src/protocols/oscar/oscar.c:2764
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
@@ -2541,177 +2553,177 @@ msgstr[1] "Nem kaptál meg %d üzenetet %s-töl mert túl hosszú volt."
 # #, c-format
 # msgid "You missed %d message from %s because the rate limit has been exceeded."
 # msgstr "Néhány %d üzenet nem érkezett meg mivel a korlátot meghaladta."
-#: src/protocols/oscar/oscar.c:2735
+#: src/protocols/oscar/oscar.c:2773
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] "Nem kaptál meg %hu üzenetet %s-tõl,mert meghaladta a korlátot."
 msgstr[1] "Nem kaptál meg %d üzenetet %s-töl,mert meghaladta a korlátot."
 
-#: src/protocols/oscar/oscar.c:2746
+#: src/protocols/oscar/oscar.c:2782
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "Nem kaptál meg %hu üzenetet %s-tõl,mert Õ nem kívánt partner."
 msgstr[1] "Nem kaptál meg %d üzenetet %s-töl,mert nagyon durva szövegü."
 
-#: src/protocols/oscar/oscar.c:2757
+#: src/protocols/oscar/oscar.c:2791
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "Nem kaptál meg %hu üzenetet %s-tõl, mert nem kívánt partner vagy."
 msgstr[1] "Nem kaptál meg %d üzenetet %s-töl, mert nagyon gonosz vagy."
 
-#: src/protocols/oscar/oscar.c:2767
+#: src/protocols/oscar/oscar.c:2800
 #, fuzzy, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Nem kaptál meg %hu üzenetet %s-tõl ismeretlen okból kifolyólag."
 msgstr[1] "Nem kaptál meg %d üzenetet %s-töl ismeretlen okokból."
 
-#: src/protocols/oscar/oscar.c:2782 src/protocols/oscar/oscar.c:4478
-#: src/protocols/oscar/oscar.c:5668
+#: src/protocols/oscar/oscar.c:2816 src/protocols/oscar/oscar.c:4521
+#: src/protocols/oscar/oscar.c:5728
 msgid "Free For Chat"
 msgstr "Ráérek csevegni"
 
-#: src/protocols/oscar/oscar.c:2786 src/protocols/oscar/oscar.c:4472
-#: src/protocols/oscar/oscar.c:5666
+#: src/protocols/oscar/oscar.c:2820 src/protocols/oscar/oscar.c:4515
+#: src/protocols/oscar/oscar.c:5726
 msgid "Not Available"
 msgstr "Nem elérhetõ"
 
-#: src/protocols/oscar/oscar.c:2788 src/protocols/oscar/oscar.c:4475
-#: src/protocols/oscar/oscar.c:5667
+#: src/protocols/oscar/oscar.c:2822 src/protocols/oscar/oscar.c:4518
+#: src/protocols/oscar/oscar.c:5727
 msgid "Occupied"
 msgstr "Elfoglalt"
 
-#: src/protocols/oscar/oscar.c:2792
+#: src/protocols/oscar/oscar.c:2826
 msgid "Web Aware"
 msgstr "Web képes"
 
-#: src/protocols/oscar/oscar.c:2852
+#: src/protocols/oscar/oscar.c:2886
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>Állapot:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:2854
+#: src/protocols/oscar/oscar.c:2888
 #, c-format
 msgid "<B>Status:</B> %s<HR>%s"
 msgstr "<B>Állapot:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:2913
+#: src/protocols/oscar/oscar.c:2947
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC hiba: %s\n"
 
-#: src/protocols/oscar/oscar.c:2914
+#: src/protocols/oscar/oscar.c:2948
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:2949
+#: src/protocols/oscar/oscar.c:2983
 #, c-format
 msgid "Your message to %s did not get sent:"
 msgstr "Üzeneted %s-nak/nek nem lett elküldve:"
 
-#: src/protocols/oscar/oscar.c:3000
+#: src/protocols/oscar/oscar.c:3035
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "%s partner információi nem elérhetõk:"
 
-#: src/protocols/oscar/oscar.c:3032
+#: src/protocols/oscar/oscar.c:3069
 msgid "Buddy Icon"
 msgstr "Partner Ikon"
 
-#: src/protocols/oscar/oscar.c:3035
+#: src/protocols/oscar/oscar.c:3072
 msgid "Voice"
 msgstr "Hang"
 
-#: src/protocols/oscar/oscar.c:3038 src/protocols/oscar/oscar.c:5692
+#: src/protocols/oscar/oscar.c:3075 src/protocols/oscar/oscar.c:5752
 msgid "Direct IM"
 msgstr "Közvetlen IM"
 
-#: src/protocols/oscar/oscar.c:3041 src/gtkblist.c:1480
+#: src/protocols/oscar/oscar.c:3078 src/gtkblist.c:1518
 msgid "Chat"
 msgstr "Csevegés"
 
-#: src/protocols/oscar/oscar.c:3044 src/protocols/oscar/oscar.c:5704
+#: src/protocols/oscar/oscar.c:3081 src/protocols/oscar/oscar.c:5764
 msgid "Get File"
 msgstr "Fájl letöltése"
 
-#: src/protocols/oscar/oscar.c:3047 src/protocols/oscar/oscar.c:5698
+#: src/protocols/oscar/oscar.c:3084 src/protocols/oscar/oscar.c:5758
 msgid "Send File"
 msgstr "Fájl küldése"
 
-#: src/protocols/oscar/oscar.c:3051
+#: src/protocols/oscar/oscar.c:3088
 msgid "Games"
 msgstr "Játékok"
 
-#: src/protocols/oscar/oscar.c:3054
+#: src/protocols/oscar/oscar.c:3091
 msgid "Add-Ins"
 msgstr "Kiegészítõk"
 
-#: src/protocols/oscar/oscar.c:3057
+#: src/protocols/oscar/oscar.c:3094
 msgid "Send Buddy List"
 msgstr "Partner lista küldése"
 
-#: src/protocols/oscar/oscar.c:3060
+#: src/protocols/oscar/oscar.c:3097
 msgid "EveryBuddy Bug"
 msgstr "EveryBuddy hiba"
 
-#: src/protocols/oscar/oscar.c:3063
+#: src/protocols/oscar/oscar.c:3100
 msgid "AP User"
 msgstr "AP partner"
 
-#: src/protocols/oscar/oscar.c:3066
+#: src/protocols/oscar/oscar.c:3103
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:3069
+#: src/protocols/oscar/oscar.c:3106
 msgid "Nihilist"
 msgstr "Nihilist"
 
-#: src/protocols/oscar/oscar.c:3072
+#: src/protocols/oscar/oscar.c:3109
 msgid "ICQ Server Relay"
 msgstr "ICQ közvetítõ kiszolgáló "
 
-#: src/protocols/oscar/oscar.c:3075
+#: src/protocols/oscar/oscar.c:3112
 msgid "ICQ Unknown"
 msgstr "ICQ ismeretlen"
 
-#: src/protocols/oscar/oscar.c:3078
+#: src/protocols/oscar/oscar.c:3115
 msgid "Trillian Encryption"
 msgstr "Trillian kódolás"
 
-#: src/protocols/oscar/oscar.c:3081
+#: src/protocols/oscar/oscar.c:3118
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:3120
+#: src/protocols/oscar/oscar.c:3157
 msgid ""
 "<i>Unable to display information because it was sent in an unknown encoding."
 "</i>"
 msgstr "<i>Információ kódólása ismeretlen, ezért nem lehet megjeleníteni.</i>"
 
-#: src/protocols/oscar/oscar.c:3127
+#: src/protocols/oscar/oscar.c:3164
 #, c-format
 msgid "Online Since : <b>%s</b><br>\n"
 msgstr "Elérhetõ már: <b>%s</b> óta<br>\n"
 
-#: src/protocols/oscar/oscar.c:3132
+#: src/protocols/oscar/oscar.c:3169
 #, c-format
 msgid "Member Since : <b>%s</b><br>\n"
 msgstr "Tag már: <b>%s</b> óta<br>\n"
 
-#: src/protocols/oscar/oscar.c:3138
+#: src/protocols/oscar/oscar.c:3175
 #, c-format
 msgid "Idle : <b>%s</b>"
 msgstr "Inaktív: <b>%s</b>"
 
-#: src/protocols/oscar/oscar.c:3141
+#: src/protocols/oscar/oscar.c:3178
 msgid "Idle: <b>Active</b>"
 msgstr "Inaktív: <b>Aktív</b>"
 
-#: src/protocols/oscar/oscar.c:3144
+#: src/protocols/oscar/oscar.c:3180
 #, c-format
 msgid ""
 "Username : <b>%s</b>  %s <br>\n"
@@ -2724,27 +2736,27 @@ msgstr ""
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 
-#: src/protocols/oscar/oscar.c:3176
+#: src/protocols/oscar/oscar.c:3212
 msgid "<i>User has no away message</i>"
 msgstr "<i>Partner nem rendelkezik üzenettel távollét esetére</i>"
 
-#: src/protocols/oscar/oscar.c:3187
+#: src/protocols/oscar/oscar.c:3223
 msgid "Client Capabilities: "
 msgstr "Ügyfél képességei: "
 
-#: src/protocols/oscar/oscar.c:3193
+#: src/protocols/oscar/oscar.c:3229
 msgid "<i>No Information Provided</i>"
 msgstr "<i>Nincs információ megadva</i>"
 
-#: src/protocols/oscar/oscar.c:3215
+#: src/protocols/oscar/oscar.c:3253
 msgid "Your AIM connection may be lost."
 msgstr "AIM kapcsolat valószínüleg megszakadt."
 
-#: src/protocols/oscar/oscar.c:3576
+#: src/protocols/oscar/oscar.c:3613
 msgid "Rate limiting error."
 msgstr "Sebesség korlátozási hiba."
 
-#: src/protocols/oscar/oscar.c:3577
+#: src/protocols/oscar/oscar.c:3614
 msgid ""
 "The last message was not sent because you are over the rate limit.  Please "
 "wait 10 seconds and try again."
@@ -2752,7 +2764,7 @@ msgstr ""
 "Az utolsó üzenet nem lett elküldve mert a korlátot meghaladtad.  Kérlek várj "
 "10 másodpercet és próbáld újra."
 
-#: src/protocols/oscar/oscar.c:3636
+#: src/protocols/oscar/oscar.c:3674
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
@@ -2760,126 +2772,126 @@ msgstr ""
 "Kapcsolatod megszakadt mivel egy másik helyrõl bejelentkeztél ezzel a fiók "
 "azonosítóval."
 
-#: src/protocols/oscar/oscar.c:3638
+#: src/protocols/oscar/oscar.c:3676
 msgid "You have been signed off for an unknown reason."
 msgstr "Kijelentkeztél eddig ismeretlen okból."
 
-#: src/protocols/oscar/oscar.c:3865
+#: src/protocols/oscar/oscar.c:3904
 msgid "UIN:"
 msgstr "UIN:"
 
-#: src/protocols/oscar/oscar.c:3870
+#: src/protocols/oscar/oscar.c:3909
 msgid "First Name:"
 msgstr "Keresztnév:"
 
-#: src/protocols/oscar/oscar.c:3873
+#: src/protocols/oscar/oscar.c:3912
 msgid "Last Name:"
 msgstr "Vezetéknév:"
 
-#: src/protocols/oscar/oscar.c:3876 src/protocols/oscar/oscar.c:3882
+#: src/protocols/oscar/oscar.c:3915 src/protocols/oscar/oscar.c:3921
 msgid "Email Address:"
 msgstr "E-mail cím:"
 
-#: src/protocols/oscar/oscar.c:3887
+#: src/protocols/oscar/oscar.c:3926
 msgid "Mobile Phone:"
 msgstr "Mobil telefon:"
 
-#: src/protocols/oscar/oscar.c:3890
+#: src/protocols/oscar/oscar.c:3929
 msgid "Gender:"
 msgstr "Neme:"
 
-#: src/protocols/oscar/oscar.c:3890
+#: src/protocols/oscar/oscar.c:3929
 msgid "Female"
 msgstr "Nõ"
 
-#: src/protocols/oscar/oscar.c:3890
+#: src/protocols/oscar/oscar.c:3929
 msgid "Male"
 msgstr "Férfi"
 
-#: src/protocols/oscar/oscar.c:3899
+#: src/protocols/oscar/oscar.c:3938
 msgid "Birthday:"
 msgstr "Születésnap:"
 
-#: src/protocols/oscar/oscar.c:3904
+#: src/protocols/oscar/oscar.c:3943
 msgid "Age:"
 msgstr "Kor:"
 
-#: src/protocols/oscar/oscar.c:3907
+#: src/protocols/oscar/oscar.c:3946
 msgid "Personal Web Page:"
 msgstr "Saját web oldal:"
 
-#: src/protocols/oscar/oscar.c:3910
+#: src/protocols/oscar/oscar.c:3949
 msgid "Additional Information:"
 msgstr "További adatok:"
 
-#: src/protocols/oscar/oscar.c:3914
+#: src/protocols/oscar/oscar.c:3953
 msgid "Home Address:"
 msgstr "Lakás cím:"
 
-#: src/protocols/oscar/oscar.c:3916 src/protocols/oscar/oscar.c:3932
+#: src/protocols/oscar/oscar.c:3955 src/protocols/oscar/oscar.c:3971
 msgid "Address:"
 msgstr "Utca:"
 
-#: src/protocols/oscar/oscar.c:3919 src/protocols/oscar/oscar.c:3935
+#: src/protocols/oscar/oscar.c:3958 src/protocols/oscar/oscar.c:3974
 msgid "City:"
 msgstr "Város:"
 
-#: src/protocols/oscar/oscar.c:3922 src/protocols/oscar/oscar.c:3938
+#: src/protocols/oscar/oscar.c:3961 src/protocols/oscar/oscar.c:3977
 msgid "State:"
 msgstr "Állam:"
 
-#: src/protocols/oscar/oscar.c:3925 src/protocols/oscar/oscar.c:3941
+#: src/protocols/oscar/oscar.c:3964 src/protocols/oscar/oscar.c:3980
 msgid "Zip Code:"
 msgstr "Irányítószám:"
 
-#: src/protocols/oscar/oscar.c:3930
+#: src/protocols/oscar/oscar.c:3969
 msgid "Work Address:"
 msgstr "Munkahely címe:"
 
-#: src/protocols/oscar/oscar.c:3946
+#: src/protocols/oscar/oscar.c:3985
 msgid "Work Information:"
 msgstr "Munkahelyi adatok:"
 
-#: src/protocols/oscar/oscar.c:3948
+#: src/protocols/oscar/oscar.c:3987
 msgid "Company:"
 msgstr "Cég:"
 
-#: src/protocols/oscar/oscar.c:3951
+#: src/protocols/oscar/oscar.c:3990
 msgid "Division:"
 msgstr "Divízió:"
 
-#: src/protocols/oscar/oscar.c:3954
+#: src/protocols/oscar/oscar.c:3993
 msgid "Position:"
 msgstr "Pozíció:"
 
-#: src/protocols/oscar/oscar.c:3957
+#: src/protocols/oscar/oscar.c:3996
 msgid "Web Page:"
 msgstr "Web oldal:"
 
-#: src/protocols/oscar/oscar.c:4027
+#: src/protocols/oscar/oscar.c:4064
 #, c-format
 msgid "<B>%s has the following screen names:</B><BR>"
 msgstr "<B>%s fióknevei a következõk:</B><BR>"
 
-#: src/protocols/oscar/oscar.c:4045
+#: src/protocols/oscar/oscar.c:4082
 #, c-format
 msgid "No results found for email address %s"
 msgstr "nem érkezett levél az %s email címre"
 
-#: src/protocols/oscar/oscar.c:4065
+#: src/protocols/oscar/oscar.c:4103
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Érkeznie kell egy %s jóváhagyásával kapcsolatos levélnek."
 
-#: src/protocols/oscar/oscar.c:4067
+#: src/protocols/oscar/oscar.c:4105
 msgid "Account Confirmation Requested"
 msgstr "Fiók jóváhagyás kérése"
 
-#: src/protocols/oscar/oscar.c:4095
+#: src/protocols/oscar/oscar.c:4133
 msgid "Error Changing Account Info"
 msgstr "Hiba a fiók adatainak megváltoztatása közben"
 
-#: src/protocols/oscar/oscar.c:4098
+#: src/protocols/oscar/oscar.c:4136
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -2888,7 +2900,7 @@ msgstr ""
 "Hiba 0x%04x: Nem sikerült a fiók azonosítót megformázni mert az eltér az "
 "eredetitõl."
 
-#: src/protocols/oscar/oscar.c:4101
+#: src/protocols/oscar/oscar.c:4139
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -2897,14 +2909,14 @@ msgstr ""
 "Hiba 0x%04x: Nem sikerült a fiók azonosítót megformázni mert a végén szóköz "
 "karakter szerepel."
 
-#: src/protocols/oscar/oscar.c:4104
+#: src/protocols/oscar/oscar.c:4142
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "is too long."
 msgstr "Hiba 0x%04x: Nem sikerült a fiók azonosítót megformázni mert az túl hosszú."
 
-#: src/protocols/oscar/oscar.c:4107
+#: src/protocols/oscar/oscar.c:4145
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -2913,7 +2925,7 @@ msgstr ""
 "Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet mert egy ilyen "
 "kérés már folyamatban van ehez a fiók azonosítóhoz."
 
-#: src/protocols/oscar/oscar.c:4110
+#: src/protocols/oscar/oscar.c:4148
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -2922,7 +2934,7 @@ msgstr ""
 "Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet mert túl sok fiók "
 "azonosítóval van társítva."
 
-#: src/protocols/oscar/oscar.c:4113
+#: src/protocols/oscar/oscar.c:4151
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -2931,12 +2943,12 @@ msgstr ""
 "Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet mert a cím "
 "érvénytelen."
 
-#: src/protocols/oscar/oscar.c:4116
+#: src/protocols/oscar/oscar.c:4154
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Hiba 0x%04x: Ismeretlen hiba."
 
-#: src/protocols/oscar/oscar.c:4126
+#: src/protocols/oscar/oscar.c:4164
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -2945,20 +2957,20 @@ msgstr ""
 "A fiók azonosítód a formátuma a következõ:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4127 src/protocols/oscar/oscar.c:4133
+#: src/protocols/oscar/oscar.c:4165 src/protocols/oscar/oscar.c:4171
 msgid "Account Info"
 msgstr "Fiók információk"
 
-#: src/protocols/oscar/oscar.c:4132
+#: src/protocols/oscar/oscar.c:4170
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "%s e-mail címe a következõ: %s"
 
-#: src/protocols/oscar/oscar.c:4354
+#: src/protocols/oscar/oscar.c:4392
 msgid "Unable to set AIM profile."
 msgstr "Nem sikerült beállítani az AIM profilt."
 
-#: src/protocols/oscar/oscar.c:4355
+#: src/protocols/oscar/oscar.c:4393
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -2967,22 +2979,22 @@ msgstr ""
 "A belépés megtörténte elõtt elõtt próbáltad meg beállítani a profilodat. "
 "Állítsd be megint ha már a bejelentkezés megtörtént."
 
-#: src/protocols/oscar/oscar.c:4382
+#: src/protocols/oscar/oscar.c:4422
 #, c-format
 msgid ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr "A profil méret elérte a maximális %d bájtot. A Gaim lecsonkította neked."
 
-#: src/protocols/oscar/oscar.c:4384
+#: src/protocols/oscar/oscar.c:4424
 msgid "Profile too long."
 msgstr "Profil túl nagy."
 
-#: src/protocols/oscar/oscar.c:4400
+#: src/protocols/oscar/oscar.c:4440
 msgid "Unable to set AIM away message."
 msgstr "AIM távollét üzenetét nem sikerült beállítani"
 
-#: src/protocols/oscar/oscar.c:4401
+#: src/protocols/oscar/oscar.c:4441
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -2991,24 +3003,24 @@ msgstr ""
 "A belépés megtörténte elõtt elõtt próbáltad meg beállítani a távollét "
 "üzenetét. Állítsd be megint ha már a bejelentkezés megtörtént."
 
-#: src/protocols/oscar/oscar.c:4437
+#: src/protocols/oscar/oscar.c:4480
 #, c-format
 msgid ""
 "The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it and set you away."
 msgstr ""
-"Az távol üzenet hossza %d bájt elérte a maximumot. Gaim lecsonkította "
-"és állapotodat Távol-ra változtatta."
+"Az távol üzenet hossza %d bájt elérte a maximumot. Gaim lecsonkította és "
+"állapotodat Távol-ra változtatta."
 
-#: src/protocols/oscar/oscar.c:4439
+#: src/protocols/oscar/oscar.c:4482
 msgid "Away message too long."
 msgstr "Távol üzenet túl nagy."
 
-#: src/protocols/oscar/oscar.c:4652
+#: src/protocols/oscar/oscar.c:4695
 msgid "Unable To Retrive Buddy List"
 msgstr "Nem sikerült lekérdezni a partnerek listáját"
 
-#: src/protocols/oscar/oscar.c:4652
+#: src/protocols/oscar/oscar.c:4696
 msgid ""
 "Gaim was temporarily unable to retrive your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -3018,12 +3030,12 @@ msgstr ""
 "kiszolgálóról. A partnereid nem vesztek el és néhány órán belül valószínüleg "
 "elérhetõvé válik."
 
-#: src/protocols/oscar/oscar.c:4742 src/protocols/oscar/oscar.c:4743
-#: src/protocols/oscar/oscar.c:4748
+#: src/protocols/oscar/oscar.c:4786 src/protocols/oscar/oscar.c:4787
+#: src/protocols/oscar/oscar.c:4792
 msgid "Orphans"
 msgstr "Árvák"
 
-#: src/protocols/oscar/oscar.c:4912
+#: src/protocols/oscar/oscar.c:4956
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -3032,25 +3044,25 @@ msgstr ""
 "%s partnert nem lehet felvenni a mert túl sok partner van a listádon. Törölj "
 "egyet közülük és próbáld újra."
 
-#: src/protocols/oscar/oscar.c:4912 src/protocols/oscar/oscar.c:4925
+#: src/protocols/oscar/oscar.c:4956 src/protocols/oscar/oscar.c:4969
 msgid "(no name)"
 msgstr "(nincs név)"
 
-#: src/protocols/oscar/oscar.c:4913 src/protocols/oscar/oscar.c:4926
+#: src/protocols/oscar/oscar.c:4957 src/protocols/oscar/oscar.c:4970
 msgid "Unable To Add"
 msgstr "Nem sikerült felvenni"
 
-#: src/protocols/oscar/oscar.c:4925
+#: src/protocols/oscar/oscar.c:4969
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
 "for this is that you have the maximum number of allowed buddies in your "
 "buddy list."
 msgstr ""
-"Ismeretlen ok miatt nem sikerült %s partnert felvenni. A legvalószínûbb ok, hogy "
-"elérted a listára maximálisan felvehetõ partnerek számát."
+"Ismeretlen ok miatt nem sikerült %s partnert felvenni. A legvalószínûbb ok, "
+"hogy elérted a listára maximálisan felvehetõ partnerek számát."
 
-#: src/protocols/oscar/oscar.c:4960
+#: src/protocols/oscar/oscar.c:5004
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -3059,11 +3071,11 @@ msgstr ""
 "%s partner megadta az engedélyt hogy felvedd a partnereid közzé. Fel akarod "
 "venni õt?"
 
-#: src/protocols/oscar/oscar.c:4965
+#: src/protocols/oscar/oscar.c:5010
 msgid "Authorization Given"
 msgstr "Engedély megadva"
 
-#: src/protocols/oscar/oscar.c:4995
+#: src/protocols/oscar/oscar.c:5043
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -3074,17 +3086,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:5033
+#: src/protocols/oscar/oscar.c:5085
 #, c-format
 msgid "The user %s has granted your request to add them to your contact list."
 msgstr "%s partner engedélyezi hogy felvedd a partnereid közé."
 
-#: src/protocols/oscar/oscar.c:5034
+#: src/protocols/oscar/oscar.c:5086
 msgid "Authorization Granted"
 msgstr "Engedélyez elfogadva"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:5037
+#: src/protocols/oscar/oscar.c:5089
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your contact list for the "
@@ -3095,48 +3107,48 @@ msgstr ""
 "magyarázattal:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5038
+#: src/protocols/oscar/oscar.c:5090
 msgid "Authorization Denied"
 msgstr "Engedélyez elutasítva"
 
-#: src/protocols/oscar/oscar.c:5075 src/protocols/toc/toc.c:1196
+#: src/protocols/oscar/oscar.c:5127 src/protocols/toc/toc.c:1200
 msgid "Exchange:"
 msgstr "Váltás:"
 
-#: src/protocols/oscar/oscar.c:5295
+#: src/protocols/oscar/oscar.c:5347
 msgid "<b>Status:</b> "
 msgstr "<b>Állapot:</b> "
 
-#: src/protocols/oscar/oscar.c:5304
+#: src/protocols/oscar/oscar.c:5356
 msgid "<b>Logged In:</b> "
 msgstr "<b>Bejelentkezve:</b>"
 
-#: src/protocols/oscar/oscar.c:5311
+#: src/protocols/oscar/oscar.c:5363
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Lehetõségek:</b> "
 
-#: src/protocols/oscar/oscar.c:5319
+#: src/protocols/oscar/oscar.c:5371
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Állapot:</b> Nem engedélyezett"
 
-#: src/protocols/oscar/oscar.c:5323 src/gtkblist.c:845
+#: src/protocols/oscar/oscar.c:5375 src/gtkblist.c:870
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Állapot:</b> Nem elérhetõ"
 
-#: src/protocols/oscar/oscar.c:5349
+#: src/protocols/oscar/oscar.c:5401
 msgid "Offline"
 msgstr "Nem elérhetõ"
 
-#: src/protocols/oscar/oscar.c:5530
+#: src/protocols/oscar/oscar.c:5582
 msgid "Unable to open Direct IM"
 msgstr "Nem sikerült megnyitni a közvetlen IM-et"
 
-#: src/protocols/oscar/oscar.c:5543
+#: src/protocols/oscar/oscar.c:5595
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Közvetlen IM kapcsolatot nyitását választottad %s partnerrel."
 
-#: src/protocols/oscar/oscar.c:5544
+#: src/protocols/oscar/oscar.c:5598
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -3144,39 +3156,39 @@ msgstr ""
 "Ezzel elérhetõvé válik az IP címed, amit nem biztos hogy engedélyezni "
 "szeretnél.Folytatni kívánod?"
 
-#: src/protocols/oscar/oscar.c:5682
+#: src/protocols/oscar/oscar.c:5742
 msgid "Get Status Msg"
 msgstr "Státusz üzenet lekérdezése"
 
-#: src/protocols/oscar/oscar.c:5716
+#: src/protocols/oscar/oscar.c:5776
 msgid "Re-request Authorization"
 msgstr "Engedélyezés újra kérése"
 
-#: src/protocols/oscar/oscar.c:5737
+#: src/protocols/oscar/oscar.c:5797
 msgid "The new formatting is invalid."
 msgstr "Az új formátum érvénytelen."
 
-#: src/protocols/oscar/oscar.c:5738
+#: src/protocols/oscar/oscar.c:5798
 msgid "Screenname formatting can change only capitalization and whitespace."
 msgstr "Fiók azonosító formátum csak nagybetûre váltásra és szóközre van hatással."
 
-#: src/protocols/oscar/oscar.c:5744
+#: src/protocols/oscar/oscar.c:5804
 msgid "New screenname formatting:"
 msgstr "Új fiók azonosító formátum:"
 
-#: src/protocols/oscar/oscar.c:5789
-msgid "Change Address To: "
+#: src/protocols/oscar/oscar.c:5853
+msgid "Change Address To:"
 msgstr "Cím megváltoztatása a következõre:"
 
-#: src/protocols/oscar/oscar.c:5799
+#: src/protocols/oscar/oscar.c:5866
 msgid "You are awaiting authorization from the following buddies:<BR>"
 msgstr "A következõ partnerektõl vársz engelyezést: <BR>"
 
-#: src/protocols/oscar/oscar.c:5824
+#: src/protocols/oscar/oscar.c:5891
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>nem vársz engedélyezésre</i>"
 
-#: src/protocols/oscar/oscar.c:5829
+#: src/protocols/oscar/oscar.c:5896
 #, c-format
 msgid ""
 "%s<BR><BR>You can re-request authorization from these buddies by right-"
@@ -3185,31 +3197,31 @@ msgstr ""
 "%s<BR><BR>Ellenõrzés kérést kérhetsz ezektõl a partnerektõl jobb egér "
 "kattintássalés válaszd \"Engedélyezés újra kérése.\""
 
-#: src/protocols/oscar/oscar.c:5862
+#: src/protocols/oscar/oscar.c:5931
 msgid "Change Password (URL)"
 msgstr "Jelszó megváltoztatása (URL)"
 
-#: src/protocols/oscar/oscar.c:5873
+#: src/protocols/oscar/oscar.c:5942
 msgid "Format Screenname"
 msgstr "Fiók azonosító formátuma:"
 
-#: src/protocols/oscar/oscar.c:5879
+#: src/protocols/oscar/oscar.c:5948
 msgid "Confirm Account"
 msgstr "Fiók jóváhagyása"
 
-#: src/protocols/oscar/oscar.c:5885
+#: src/protocols/oscar/oscar.c:5954
 msgid "Display Current Registered Address"
 msgstr "Regisztrált cím megjelenítése"
 
-#: src/protocols/oscar/oscar.c:5891
+#: src/protocols/oscar/oscar.c:5960
 msgid "Change Current Registered Address"
 msgstr "Regisztrált cím megváltoztatása"
 
-#: src/protocols/oscar/oscar.c:5900
+#: src/protocols/oscar/oscar.c:5969
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Engedélyezésre váró partnerek megjelenítése"
 
-#: src/protocols/oscar/oscar.c:5908
+#: src/protocols/oscar/oscar.c:5977
 msgid "Search for Buddy by Email"
 msgstr "Partner keresése e-mail alapján"
 
@@ -3223,15 +3235,15 @@ msgstr "Partner keresése e-mail alapján"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6028 src/protocols/oscar/oscar.c:6030
+#: src/protocols/oscar/oscar.c:6097 src/protocols/oscar/oscar.c:6099
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ protokol plugin"
 
-#: src/protocols/oscar/oscar.c:6048
+#: src/protocols/oscar/oscar.c:6117
 msgid "Auth Host:"
 msgstr "Azonosító kiszolgáló:"
 
-#: src/protocols/oscar/oscar.c:6054
+#: src/protocols/oscar/oscar.c:6123
 msgid "Auth Port:"
 msgstr "Azonosító port:"
 
@@ -3364,19 +3376,19 @@ msgstr "Kapcsolat lezárult"
 msgid "Waiting for reply..."
 msgstr "Válaszra várok ..."
 
-#: src/protocols/toc/toc.c:684
+#: src/protocols/toc/toc.c:685
 msgid "TOC has come back from its pause. You may now send messages again."
 msgstr "TOC újra aktív. Most már újra küldhetsz üzeneteket."
 
-#: src/protocols/toc/toc.c:873
+#: src/protocols/toc/toc.c:874
 msgid "Password Change Successful"
 msgstr "Jelszó sikeresen megváltoztatva"
 
-#: src/protocols/toc/toc.c:876
+#: src/protocols/toc/toc.c:878
 msgid "TOC has sent a PAUSE command."
 msgstr "TOC egy PAUSE parancsot küldött."
 
-#: src/protocols/toc/toc.c:876
+#: src/protocols/toc/toc.c:879
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
 "if you send a message. Gaim will prevent anything from going through. This "
@@ -3386,51 +3398,51 @@ msgstr ""
 "üzenetet küldesz. Gaim megakadályozza hogy bármi is átjusson. Ez csak "
 "ideiglenes, légy türelemmel."
 
-#: src/protocols/toc/toc.c:1319
+#: src/protocols/toc/toc.c:1323
 msgid "Get Dir Info"
 msgstr "Könyvtári adatok lekérdezése"
 
-#: src/protocols/toc/toc.c:1443
+#: src/protocols/toc/toc.c:1447
 msgid "Set Dir Info"
 msgstr "Könyvtári adatok beállítása"
 
-#: src/protocols/toc/toc.c:1566
+#: src/protocols/toc/toc.c:1570
 #, c-format
 msgid "Could not open %s for writing!"
 msgstr "%s nem nyitható meg írásra!"
 
-#: src/protocols/toc/toc.c:1644 src/protocols/toc/toc.c:1683
-#: src/protocols/toc/toc.c:1891
+#: src/protocols/toc/toc.c:1606
+msgid "File transfer failed; other side probably canceled."
+msgstr "Fájl átvitel sikertelen; valószínüleg a partner megszakította."
+
+#: src/protocols/toc/toc.c:1651 src/protocols/toc/toc.c:1691
+#: src/protocols/toc/toc.c:1903
 msgid "Could not connect for transfer."
 msgstr "Átvitelhez nem sikerült kapcsolatot létrehozni!"
 
-#: src/protocols/toc/toc.c:1806
+#: src/protocols/toc/toc.c:1815
 msgid "Could not connect for transfer!"
 msgstr "Átvitelhez nem sikerült kapcsolatot létrehozni!"
 
-#: src/protocols/toc/toc.c:1838
+#: src/protocols/toc/toc.c:1848
 msgid "Could not write file header.  The file will not be transferred."
 msgstr "Fájl fejlécét nem sikerült kiírni. A fájl nem lesz elküldve."
 
-#: src/protocols/toc/toc.c:1936 src/gtkft.c:1056
+#: src/protocols/toc/toc.c:1948 src/gtkft.c:1059
 msgid "Gaim - Save As..."
 msgstr "Gaim - Mentés mint..."
 
-#: src/protocols/toc/toc.c:1970
+#: src/protocols/toc/toc.c:1982
 #, fuzzy, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] "%s felkéri %s-t a következõ %d fájl fogadására: %s (%.2f %s)%s%s"
 msgstr[1] "%s felkéri %s-t a következõ %d fájl fogadására: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1977
+#: src/protocols/toc/toc.c:1989
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%s felkér hogy küldj neki egy fájlt"
-
-#: src/protocols/toc/toc.c:1979 src/gtkft.c:1109 src/server.c:1237
-msgid "Accept"
-msgstr "Elfogad"
 
 #. *< api_version
 #. *< type
@@ -3442,56 +3454,60 @@ msgstr "Elfogad"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/toc/toc.c:2049 src/protocols/toc/toc.c:2051
+#: src/protocols/toc/toc.c:2064 src/protocols/toc/toc.c:2066
 msgid "TOC Protocol Plugin"
 msgstr "TOC protokol plugin"
 
-#: src/protocols/toc/toc.c:2069
+#: src/protocols/toc/toc.c:2084
 msgid "TOC Host:"
 msgstr "TOC kiszolgáló:"
 
-#: src/protocols/toc/toc.c:2075
+#: src/protocols/toc/toc.c:2090
 msgid "TOC Port:"
 msgstr "Port:"
 
-#: src/protocols/yahoo/yahoo.c:604
+#: src/protocols/yahoo/yahoo.c:605
 msgid "Your Yahoo! message did not get sent."
 msgstr "Yahoo! üzeneted nem lett elküldve."
 
-#: src/protocols/yahoo/yahoo.c:1072 src/protocols/yahoo/yahoo.c:1277
-#: src/protocols/yahoo/yahoo.c:1351
+#: src/protocols/yahoo/yahoo.c:1084 src/protocols/yahoo/yahoo.c:1291
+#: src/protocols/yahoo/yahoo.c:1365
 msgid "Not At Home"
 msgstr "Nem vagyok itthon"
 
-#: src/protocols/yahoo/yahoo.c:1074 src/protocols/yahoo/yahoo.c:1279
-#: src/protocols/yahoo/yahoo.c:1352
+#: src/protocols/yahoo/yahoo.c:1086 src/protocols/yahoo/yahoo.c:1293
+#: src/protocols/yahoo/yahoo.c:1366
 msgid "Not At Desk"
 msgstr "Nem vagyok az asztalnál"
 
-#: src/protocols/yahoo/yahoo.c:1076 src/protocols/yahoo/yahoo.c:1281
-#: src/protocols/yahoo/yahoo.c:1353
+#: src/protocols/yahoo/yahoo.c:1088 src/protocols/yahoo/yahoo.c:1295
+#: src/protocols/yahoo/yahoo.c:1367
 msgid "Not In Office"
 msgstr "Nem vagy bent"
 
-#: src/protocols/yahoo/yahoo.c:1080 src/protocols/yahoo/yahoo.c:1285
-#: src/protocols/yahoo/yahoo.c:1355
+#: src/protocols/yahoo/yahoo.c:1092 src/protocols/yahoo/yahoo.c:1299
+#: src/protocols/yahoo/yahoo.c:1369
 msgid "On Vacation"
 msgstr "Vakációzom"
 
-#: src/protocols/yahoo/yahoo.c:1084 src/protocols/yahoo/yahoo.c:1289
-#: src/protocols/yahoo/yahoo.c:1357
+#: src/protocols/yahoo/yahoo.c:1096 src/protocols/yahoo/yahoo.c:1303
+#: src/protocols/yahoo/yahoo.c:1371
 msgid "Stepped Out"
 msgstr "Kilépett"
 
-#: src/protocols/yahoo/yahoo.c:1209
+#: src/protocols/yahoo/yahoo.c:1212
+msgid "Active which ID?"
+msgstr "Melyik azonosítót aktiválod?"
+
+#: src/protocols/yahoo/yahoo.c:1223
 msgid "Activate ID"
 msgstr "Aktív azonosító"
 
-#: src/protocols/yahoo/yahoo.c:1434
+#: src/protocols/yahoo/yahoo.c:1448
 msgid "Pager Host:"
 msgstr "Személyhívó kiszolgáló:"
 
-#: src/protocols/yahoo/yahoo.c:1440
+#: src/protocols/yahoo/yahoo.c:1454
 msgid "Pager Port:"
 msgstr "Port:"
 
@@ -3505,7 +3521,7 @@ msgstr "Port:"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/yahoo/yahoo.c:1526 src/protocols/yahoo/yahoo.c:1528
+#: src/protocols/yahoo/yahoo.c:1540 src/protocols/yahoo/yahoo.c:1542
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo protokol plugin"
 
@@ -3532,31 +3548,31 @@ msgstr "<br>%s-nél %s ideje"
 msgid "Anyone"
 msgstr "Bárki"
 
-#: src/protocols/zephyr/zephyr.c:597
+#: src/protocols/zephyr/zephyr.c:598
 msgid "Already logged in with Zephyr"
 msgstr "Már beléptél Zephyr használatával"
 
-#: src/protocols/zephyr/zephyr.c:597
+#: src/protocols/zephyr/zephyr.c:599
 msgid ""
 "Because Zephyr uses your system username, you are unable to have multiple "
 "accounts on it when logged in as the same user."
 msgstr ""
-"Mivel Zephyr protokol a rendszer felhasználónevedet használja, ezért nem lehet "
-"egyidejüleg több fiókod."
+"Mivel Zephyr protokol a rendszer felhasználónevedet használja, ezért nem "
+"lehet egyidejüleg több fiókod."
 
-#: src/protocols/zephyr/zephyr.c:844
+#: src/protocols/zephyr/zephyr.c:847
 msgid "ZLocate"
 msgstr "ZHely:"
 
-#: src/protocols/zephyr/zephyr.c:884
+#: src/protocols/zephyr/zephyr.c:887
 msgid "Class:"
 msgstr "Osztály:"
 
-#: src/protocols/zephyr/zephyr.c:889
+#: src/protocols/zephyr/zephyr.c:892
 msgid "Instance:"
 msgstr "Példány:"
 
-#: src/protocols/zephyr/zephyr.c:894
+#: src/protocols/zephyr/zephyr.c:897
 msgid "Recipient:"
 msgstr "Címzett:"
 
@@ -3570,7 +3586,7 @@ msgstr "Címzett:"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/zephyr/zephyr.c:1026 src/protocols/zephyr/zephyr.c:1028
+#: src/protocols/zephyr/zephyr.c:1029 src/protocols/zephyr/zephyr.c:1031
 msgid "Zephyr Protocol Plugin"
 msgstr "Zephyr protokol plugin"
 
@@ -3640,11 +3656,6 @@ msgstr ""
 "HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  Syd Logan "
 "(hacker és ügyeletes sofõr)<BR><BR>"
 
-#: src/about.c:169 src/dialogs.c:4239 src/prpl.c:500 src/prpl.c:806
-#: src/server.c:1428
-msgid "Close"
-msgstr "Bezár"
-
 #: src/away.c:221
 msgid "Gaim - Away!"
 msgstr "Gaim - Távol!"
@@ -3665,40 +3676,40 @@ msgstr "Távollét üzenetének eltávolítása"
 msgid "Set All Away"
 msgstr "Távol mindenhonnan"
 
-#: src/blist.c:365 src/prefs.c:1790
+#: src/blist.c:366 src/gtkprefs.c:1862
 msgid "Chats"
 msgstr "Csevegõk"
 
-#: src/blist.c:677
+#: src/blist.c:678
 #, c-format
 msgid ""
 "%d buddies from group %s were not removed because their accounts were not "
-"logged in.  These buddies, and the group were not removed.\n"
+"logged in.  These buddies and the group were not removed.\n"
 msgstr ""
 "%d partner a %s csoportból nem lett törölve mert fiókjaik nem léptek be.  "
-"Ezek a partnerek és a csoport nem lett törölve.\n"
+"Ezek a partnerek és a csoport nem lettek törölve.\n"
 
-#: src/blist.c:681
-msgid "Group Not Removed"
+#: src/blist.c:683
+msgid "Group not removed"
 msgstr "Csoport nem lett törölve"
 
-#: src/blist.c:848
+#: src/blist.c:850
 msgid "Invalid Groupname"
 msgstr "Érvénytelen csoportnév"
 
-#: src/blist.c:1570
+#: src/blist.c:1572
 msgid "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
 "A partner lista beolvasása közben hiba lépett fel.  A lista nem lett "
 "betöltve."
 
-#: src/blist.c:1572
+#: src/blist.c:1574
 msgid "Buddy List Error"
 msgstr "Partner lista hiba"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
-#: src/blist.c:1578
+#: src/blist.c:1580
 #, c-format
 msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
@@ -3707,108 +3718,108 @@ msgstr ""
 "Gaim a érgi partner listát új formátumura konvertálja, ami a következõ "
 "helyenlesz elérhetõ %s"
 
-#: src/blist.c:1581
+#: src/blist.c:1583
 msgid "Converting Buddy List"
 msgstr "Partner lista konvertálása"
 
-#: src/browser.c:426 src/browser.c:453
+#: src/browser.c:429 src/browser.c:457
 msgid ""
-"Communication with the browser failed.  Please close all windows and try "
+"Communication with the browser failed. Please close all windows and try "
 "again."
-msgstr "A böngészõvel nem válaszol. Zárj be minden ablakot és próbáld újra."
+msgstr "A böngészõ nem válaszol. Zárj be minden ablakot és próbáld újra."
 
-#: src/browser.c:586
+#: src/browser.c:589
 msgid ""
 "Unable to launch your browser because the 'Manual' browser command has been "
 "chosen, but no command has been set."
 msgstr "A böngészõt nem leeht elindítani, mert nincs megadva böngészõ."
 
-#: src/browser.c:601
+#: src/browser.c:606
 #, c-format
 msgid "There was an error launching your chosen browser: %s"
 msgstr "Hiba a megadott böngészõ indítása közben: %s"
 
-#: src/buddy_chat.c:249 src/dialogs.c:1405
+#: src/buddy_chat.c:250 src/dialogs.c:1358
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Nem vagy bejelentkezve olyan prokolollal ami csevegéshez szükség."
 
-#: src/buddy_chat.c:262
+#: src/buddy_chat.c:264
 msgid "Join Chat"
 msgstr "Csatlakozás csevegéshez"
 
-#: src/buddy_chat.c:268
+#: src/buddy_chat.c:270
 msgid "Buddy Chat"
 msgstr "Csevegés"
 
-#: src/buddy_chat.c:278
+#: src/buddy_chat.c:280
 msgid "Join Chat As:"
 msgstr "Csatlakozás mint:"
 
 #. Join button.
-#: src/buddy_chat.c:301
+#: src/buddy_chat.c:303
 msgid "Join"
 msgstr "Csatlakozás"
 
-#: src/conversation.c:402
+#: src/conversation.c:408
 msgid "Unable to send message. The message is too large."
 msgstr "Üzenetet nem sikerült elküldeni. Túl nagy."
 
-#: src/conversation.c:411
+#: src/conversation.c:416
 msgid "Unable to send message."
 msgstr "Üzenetet nem sikerült elküldeni."
 
-#: src/conversation.c:1972
+#: src/conversation.c:1977
 #, c-format
 msgid "%s entered the room."
 msgstr "%s belépett a szobába."
 
-#: src/conversation.c:1975
+#: src/conversation.c:1980
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] belépett a szobába."
 
-#: src/conversation.c:2024
+#: src/conversation.c:2029
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s ezentúl %s néven szerepel"
 
-#: src/conversation.c:2067
+#: src/conversation.c:2072
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s elhagyta a szobát (%s)."
 
-#: src/conversation.c:2069
+#: src/conversation.c:2074
 #, c-format
 msgid "%s left the room."
 msgstr "%s elhagyta a szobát."
 
-#: src/conversation.c:2253
+#: src/conversation.c:2258
 msgid "Last created window"
 msgstr "Utolsó létrehozott ablak"
 
-#: src/conversation.c:2255
+#: src/conversation.c:2260
 msgid "New window"
 msgstr "Új ablak"
 
-#: src/conversation.c:2257
+#: src/conversation.c:2262
 msgid "By group"
 msgstr "Csoport szerint"
 
-#: src/conversation.c:2259
+#: src/conversation.c:2264
 msgid "By account"
 msgstr "Fiók szerint"
 
-#: src/dialogs.c:363
+#: src/dialogs.c:364
 msgid "Warn User"
 msgstr "Partner figyelmeztetése"
 
-#: src/dialogs.c:363
+#: src/dialogs.c:364
 msgid "_Warn"
 msgstr "_Figyelmeztet"
 
-#: src/dialogs.c:379
+#: src/dialogs.c:380
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3820,66 +3831,66 @@ msgstr ""
 "\n"
 "Ez növeli %s figyelmeztetési szintjét.\n"
 
-#: src/dialogs.c:388
+#: src/dialogs.c:389
 msgid "Warn _anonymously?"
 msgstr "Figyelmeztetés _névtelenül?"
 
-#: src/dialogs.c:395
+#: src/dialogs.c:396
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>A névtelen figyelmeztetések kevésbé zavaróak.</b>"
 
-#: src/dialogs.c:466
+#: src/dialogs.c:467
 #, c-format
 msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Törölni akarod %s-t a partnereid közül.  Folytatod?"
 
-#: src/dialogs.c:467
+#: src/dialogs.c:469 src/dialogs.c:470
 msgid "Remove Buddy"
 msgstr "Partner törlése"
 
-#: src/dialogs.c:473
+#: src/dialogs.c:478
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Törölni akarod %s csevegést a listádról. Folytatod?"
 
-#: src/dialogs.c:474
+#: src/dialogs.c:480 src/dialogs.c:481
 msgid "Remove Chat"
 msgstr "Csevegés eltávolítítása"
 
-#: src/dialogs.c:480
+#: src/dialogs.c:489
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"
 msgstr "Törölni akarod %s csoportot és azok tagjait a partnereid közül. Folytatod?"
 
-#: src/dialogs.c:482
+#: src/dialogs.c:492 src/dialogs.c:493
 msgid "Remove Group"
 msgstr "Csoport törlése"
 
-#: src/dialogs.c:692
+#: src/dialogs.c:645
 msgid "New Message"
 msgstr "Új üzenet"
 
-#: src/dialogs.c:710
+#: src/dialogs.c:663
 msgid "Please enter the screenname of the person you would like to IM.\n"
 msgstr "Add meg a fiók azonosítóját annak a partnernek akinek üzenni szeretnél.\n"
 
-#: src/dialogs.c:726 src/dialogs.c:827 src/dialogs.c:3779
+#: src/dialogs.c:679 src/dialogs.c:780 src/dialogs.c:3737
 msgid "_Screenname:"
 msgstr "_Fiók azonosító:"
 
-#: src/dialogs.c:741 src/dialogs.c:843 src/gtkpounce.c:518
+#: src/dialogs.c:694 src/dialogs.c:796 src/gtkpounce.c:520
 msgid "_Account:"
 msgstr "F_iók:"
 
-#: src/dialogs.c:796
+#: src/dialogs.c:749
 msgid "Get User Info"
 msgstr "Partner adatainak lekérdezése"
 
-#: src/dialogs.c:815
+#: src/dialogs.c:768
 msgid ""
 "Please enter the screenname of the person whose info you would like to "
 "view.\n"
@@ -3887,23 +3898,23 @@ msgstr ""
 "Add meg a fiók azonosítóját annak a partnernek akinek az adatait meg "
 "szeretnéd tekinteni.\n"
 
-#: src/dialogs.c:994
+#: src/dialogs.c:947
 msgid "Add Group"
 msgstr "Csoport felvétele"
 
-#: src/dialogs.c:1011
+#: src/dialogs.c:964
 msgid "Please enter the name of the group to be added.\n"
 msgstr "Add meg a felvenni kíván csoport nevét.\n"
 
-#: src/dialogs.c:1020 src/dialogs.c:4327
+#: src/dialogs.c:973 src/dialogs.c:4285
 msgid "_Group:"
 msgstr "_Csoport"
 
-#: src/dialogs.c:1102
+#: src/dialogs.c:1055
 msgid "Add Buddy"
 msgstr "Partner felvétele"
 
-#: src/dialogs.c:1121
+#: src/dialogs.c:1074
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -3913,28 +3924,28 @@ msgstr ""
 "egy álnevet vagy becenevet a partnerhez. Az álnév a fiók azonosító helyett "
 "kerül megjelenítésre amennyiben lehetséges.\n"
 
-#: src/dialogs.c:1140
+#: src/dialogs.c:1093
 msgid "Screen Name"
 msgstr "Fiók azonosító: "
 
-#: src/dialogs.c:1153
+#: src/dialogs.c:1106
 msgid "Alias"
 msgstr "Álnév"
 
-#: src/dialogs.c:1163
+#: src/dialogs.c:1116
 msgid "Group"
 msgstr "Csoport"
 
 #. Set up stuff for the account box
-#: src/dialogs.c:1172
+#: src/dialogs.c:1125
 msgid "Add To"
 msgstr "Hozzáad"
 
-#: src/dialogs.c:1412
+#: src/dialogs.c:1365
 msgid "Add Chat"
 msgstr "Csevegés hozzáadása"
 
-#: src/dialogs.c:1435
+#: src/dialogs.c:1388
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -3942,174 +3953,168 @@ msgstr ""
 "Adj meg egy álnevet és a szükséges adatokat a listádra felvenni kívánt "
 "csevegéshez.\n"
 
-#: src/dialogs.c:1444
+#: src/dialogs.c:1397
 msgid "Account:"
 msgstr "Fiók:"
 
-#: src/dialogs.c:1463 src/multi.c:785
+#: src/dialogs.c:1416 src/multi.c:821
 msgid "Alias:"
 msgstr "Álnév:"
 
-#: src/dialogs.c:1474
+#: src/dialogs.c:1427
 msgid "Group:"
 msgstr "Csoport:"
 
-#: src/dialogs.c:1807
+#: src/dialogs.c:1760
 msgid "Privacy"
 msgstr "Biztonság"
 
-#: src/dialogs.c:1818
+#: src/dialogs.c:1771
 msgid "Changes to privacy settings take effect immediately."
 msgstr "A biztonsági beállítások azonnal hatályba lépnek."
 
-#: src/dialogs.c:1827
+#: src/dialogs.c:1780
 msgid "Set privacy for:"
 msgstr "Biztonság beállítása a következõre:"
 
-#: src/dialogs.c:1844
+#: src/dialogs.c:1797
 msgid "Allow all users to contact me"
 msgstr "Mindenki kapcsolatba léphet velem"
 
-#: src/dialogs.c:1848
+#: src/dialogs.c:1801
 msgid "Allow only users on my buddy list"
 msgstr "Csak a listán szereplõ partnerek engedélyezése"
 
-#: src/dialogs.c:1852
+#: src/dialogs.c:1805
 msgid "Allow only the users below"
 msgstr "Csak a következõ partnerek engedélyezése"
 
-#: src/dialogs.c:1890
+#: src/dialogs.c:1843
 msgid "Deny all users"
 msgstr "Minden partner elutasítása"
 
-#: src/dialogs.c:1894
+#: src/dialogs.c:1847
 msgid "Block the users below"
 msgstr "A következõ partnerek tiltása"
 
-#: src/dialogs.c:2009
+#: src/dialogs.c:1962
 msgid "Set Directory Info"
 msgstr "Könyvtári adatok beállítása"
 
-#: src/dialogs.c:2017
+#: src/dialogs.c:1970
 msgid "Directory Info"
 msgstr "Könyvtári adatok"
 
-#: src/dialogs.c:2027
+#: src/dialogs.c:1980
 #, c-format
 msgid "Setting Dir Info for %s:"
 msgstr "%s könyvtár adatinak beállítása:"
 
-#: src/dialogs.c:2039
+#: src/dialogs.c:1992
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Web keresõk megtalálhatják az adataimat"
 
 #. Line 1
-#: src/dialogs.c:2042 src/dialogs.c:2684
+#: src/dialogs.c:1995 src/dialogs.c:2639
 msgid "First Name"
 msgstr "Keresztnév"
 
 #. Line 2
-#: src/dialogs.c:2053 src/dialogs.c:2694
+#: src/dialogs.c:2006 src/dialogs.c:2649
 msgid "Middle Name"
 msgstr "Középsõ név"
 
 #. Line 3
-#: src/dialogs.c:2065 src/dialogs.c:2704
+#: src/dialogs.c:2018 src/dialogs.c:2659
 msgid "Last Name"
 msgstr "Vezetéknév"
 
 #. Line 4
-#: src/dialogs.c:2076 src/dialogs.c:2714
+#: src/dialogs.c:2029 src/dialogs.c:2669
 msgid "Maiden Name"
 msgstr "Leánykori név"
 
 #. Line 6
-#: src/dialogs.c:2098 src/dialogs.c:2733
+#: src/dialogs.c:2051 src/dialogs.c:2688
 msgid "State"
 msgstr "Állam"
 
-#: src/dialogs.c:2140 src/dialogs.c:2311 src/dialogs.c:3448 src/dialogs.c:4248
-#: src/dialogs.c:4998
+#: src/dialogs.c:2093 src/dialogs.c:2266 src/dialogs.c:3406 src/dialogs.c:4206
+#: src/dialogs.c:4956
 msgid "Save"
 msgstr "Mentés"
 
-#: src/dialogs.c:2162
-msgid "New Passwords Do Not Match"
-msgstr "Új jelszavak nem egyeznek"
+#: src/dialogs.c:2116
+msgid "New passwords do not match."
+msgstr "Új jelszavak nem egyeznek."
 
-#: src/dialogs.c:2167
-msgid "Fill out all fields completely"
-msgstr "Minden mezõt tölts ki"
+#: src/dialogs.c:2122
+msgid "Fill out all fields completely."
+msgstr "Minden mezõt tölts ki."
 
-#: src/dialogs.c:2210
+#: src/dialogs.c:2165
 #, c-format
 msgid "Changing password for %s:"
 msgstr "%s jelszavának megváltoztatása:"
 
-#: src/dialogs.c:2218
+#: src/dialogs.c:2173
 msgid "Original Password"
 msgstr "Eredeti jelszó"
 
-#: src/dialogs.c:2229
+#: src/dialogs.c:2184
 msgid "New Password"
 msgstr "Új jelszó"
 
-#: src/dialogs.c:2240
+#: src/dialogs.c:2195
 msgid "New Password (again)"
 msgstr "Új jelszó (mégegyszer)"
 
-#. Build OK Button
-#: src/dialogs.c:2251 src/dialogs.c:2383 src/dialogs.c:2665 src/dialogs.c:2811
-#: src/dialogs.c:3945 src/dialogs.c:4424 src/prpl.c:245
-msgid "OK"
-msgstr "Rendben"
-
-#: src/dialogs.c:2288
+#: src/dialogs.c:2243
 #, c-format
 msgid "Changing info for %s:"
 msgstr "%s információinak megváltoztatása:"
 
-#: src/dialogs.c:2369
+#: src/dialogs.c:2324
 msgid "Below are the results of your search: "
 msgstr "A keresés eredményei a következõk: "
 
-#: src/dialogs.c:2477
+#: src/dialogs.c:2432
 msgid "Permit"
 msgstr "Engedélyez"
 
-#: src/dialogs.c:2509
+#: src/dialogs.c:2464
 msgid "Add Permit"
 msgstr "Engedély felvétele"
 
-#: src/dialogs.c:2511
+#: src/dialogs.c:2466
 msgid "Add Deny"
 msgstr "Elutasítás felvétele"
 
-#: src/dialogs.c:2579
+#: src/dialogs.c:2534
 msgid "Log Conversation"
 msgstr "Társalgás naplózása"
 
-#: src/dialogs.c:2660 src/dialogs.c:2793
+#: src/dialogs.c:2615 src/dialogs.c:2748
 msgid "Search for Buddy"
 msgstr "Partner keresése"
 
-#: src/dialogs.c:2760
+#: src/dialogs.c:2715
 msgid "Find Buddy By Info"
 msgstr "Partner keresése adatok alapján"
 
-#: src/dialogs.c:2787
+#: src/dialogs.c:2742
 msgid "Find Buddy By Email"
 msgstr "Partner keresése email cím alapján"
 
-#: src/dialogs.c:2891
+#: src/dialogs.c:2846
 msgid "Insert Link"
 msgstr "Hivatkozás beszúrása"
 
-#: src/dialogs.c:2893
+#: src/dialogs.c:2848
 msgid "Insert"
 msgstr "Beszúrás"
 
-#: src/dialogs.c:2912
+#: src/dialogs.c:2867
 msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
@@ -4117,160 +4122,158 @@ msgstr ""
 "Add meg a hivatkozás URL-jét és leírást amit be akarsz szúrni.  A leírás "
 "opcionális.\n"
 
-#: src/dialogs.c:3077 src/dialogs.c:3094
+#: src/dialogs.c:3032 src/dialogs.c:3049
 msgid "Select Text Color"
 msgstr "Szöveg szín választás"
 
-#: src/dialogs.c:3125 src/dialogs.c:3142
+#: src/dialogs.c:3080 src/dialogs.c:3097
 msgid "Select Background Color"
 msgstr "Háttérszín választás"
 
-#: src/dialogs.c:3226 src/dialogs.c:3249
+#: src/dialogs.c:3181 src/dialogs.c:3204
 msgid "Select Font"
 msgstr "Betûtípus választás"
 
-#. We shouldn't allow a blank title
-#: src/dialogs.c:3314
+#: src/dialogs.c:3270
 msgid "You cannot save an away message with a blank title"
 msgstr "Cím nélkül nem tudod elmenteni a távollét üzenetet"
 
-#: src/dialogs.c:3315
+#: src/dialogs.c:3272
 msgid "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Adj az üzenetnek egy címet vagy válaszd a \"Használ\" gombot a mentés "
 "nélküli alkalmazáshoz."
 
-#. We shouldn't allow a blank message
-#: src/dialogs.c:3324
+#: src/dialogs.c:3282
 msgid "You cannot create an empty away message"
 msgstr "Üres távollét üzenetet nem hozhatsz létre"
 
-#: src/dialogs.c:3389 src/dialogs.c:3397
+#: src/dialogs.c:3347 src/dialogs.c:3355
 msgid "New away message"
 msgstr "Új távollét üzenet"
 
-#: src/dialogs.c:3407
+#: src/dialogs.c:3365
 msgid "Away title: "
 msgstr "Távollét fejléce: "
 
-#: src/dialogs.c:3452
+#: src/dialogs.c:3410
 msgid "Save & Use"
 msgstr "Ment és alkalmaz"
 
-#: src/dialogs.c:3456
+#: src/dialogs.c:3414
 msgid "Use"
 msgstr "Alkalmaz"
 
 #. show everything
-#: src/dialogs.c:3604
+#: src/dialogs.c:3562
 msgid "Smile!"
 msgstr "Mosolyog!"
 
-#: src/dialogs.c:3650 src/dialogs.c:3728
+#: src/dialogs.c:3608 src/dialogs.c:3686
 msgid "Alias Buddy"
 msgstr "Partner álneve"
 
 #. Setup the label containing the description.
-#: src/dialogs.c:3679
+#: src/dialogs.c:3637
 msgid "Please enter an aliased name for this chat.\n"
 msgstr "Adj meg egy álnevét ehhez a csevegéshez.\n"
 
-#: src/dialogs.c:3691 src/dialogs.c:3793
+#: src/dialogs.c:3649 src/dialogs.c:3751
 msgid "_Alias:"
 msgstr "Á_lnév:"
 
 #. Setup the label containing the description.
-#: src/dialogs.c:3758
+#: src/dialogs.c:3716
 msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list.\n"
 msgstr "Adj meg egy álnevet a partnerhez vagy nevezd át a partner listán.\n"
 
-#: src/dialogs.c:3847 src/dialogs.c:3854
+#: src/dialogs.c:3805 src/dialogs.c:3812
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "Nem lehet %s fájlba írni."
 
-#: src/dialogs.c:3878
+#: src/dialogs.c:3836
 msgid "Save Log File"
 msgstr "Napló fájl mentése"
 
-#: src/dialogs.c:3908
+#: src/dialogs.c:3866
 #, c-format
 msgid "Couldn't remove file %s."
 msgstr "Nem lehet a %s fájlt törölni."
 
-#: src/dialogs.c:3927
+#: src/dialogs.c:3885
 msgid "Clear Log"
 msgstr "Napló törlése"
 
-#: src/dialogs.c:3936
+#: src/dialogs.c:3894
 msgid "Really clear log?"
 msgstr "Tényleg törölni akarod a naplót?"
 
-#: src/dialogs.c:3981
+#: src/dialogs.c:3939
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "Nem lehet a %s naplófájlt megnyitni."
 
-#: src/dialogs.c:4120
+#: src/dialogs.c:4078
 #, c-format
 msgid "Conversations with %s"
 msgstr "Társalgások %s partnerrel"
 
-#: src/dialogs.c:4122
+#: src/dialogs.c:4080
 msgid "System Log"
 msgstr "Rendszernapló"
 
-#: src/dialogs.c:4143
+#: src/dialogs.c:4101
 #, c-format
 msgid "Couldn't open log file %s"
 msgstr "Nem lehet a %s naplófájlt megnyitni"
 
-#: src/dialogs.c:4164
+#: src/dialogs.c:4122
 msgid "Date"
 msgstr "Dátum"
 
-#: src/dialogs.c:4221
+#: src/dialogs.c:4179
 msgid "Log"
 msgstr "Napló"
 
-#: src/dialogs.c:4243
+#: src/dialogs.c:4201
 msgid "Clear"
 msgstr "Törlés"
 
-#: src/dialogs.c:4301
+#: src/dialogs.c:4259
 msgid "Rename Group"
 msgstr "Csoport átnevezése"
 
-#: src/dialogs.c:4318
+#: src/dialogs.c:4276
 msgid "Please enter a new name for the selected group.\n"
 msgstr "Add meg a kiválasztott csoport új nevét.\n"
 
-#: src/dialogs.c:4394 src/dialogs.c:4403
+#: src/dialogs.c:4352 src/dialogs.c:4361
 msgid "Rename Buddy"
 msgstr "Partner átnevezése"
 
-#: src/dialogs.c:4410
+#: src/dialogs.c:4368
 msgid "New name:"
 msgstr "Új név:"
 
-#: src/ft.c:130
+#: src/ft.c:135
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr "%s érvénytelen fájl név.\n"
 
-#: src/ft.c:144
+#: src/ft.c:149
 #, c-format
 msgid "%s was not found.\n"
 msgstr "%s találtam.\n"
 
-#: src/ft.c:738
+#: src/ft.c:741
 #, c-format
 msgid "File transfer to %s aborted.\n"
 msgstr "Megszakadt a fájl átvitel %s partnerhez.\n"
 
-#: src/ft.c:740
+#: src/ft.c:743
 #, c-format
 msgid "File transfer from %s aborted.\n"
 msgstr "Megszakadt a fájl átvitel %s partnertõl.\n"
@@ -4334,7 +4337,8 @@ msgstr ""
 "AIM használata: URI-k:\n"
 "Üzenet küldése egy fióknak:\n"
 "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-"Ebben az esetben, 'Penguin' akinek mi üzenetet szeretnénk küldeni, a 'hello world'\n"
+"Ebben az esetben, 'Penguin' akinek mi üzenetet szeretnénk küldeni, a 'hello "
+"world'\n"
 "pedig a küldendõ üzenet.  '+' jelet kell a szóközök helyett használni.\n"
 "Figyeld meg az idézõjelek használatát - ha ezt shellbõl futtatod az '&'\n"
 "jelet escape-elni kell vagy a parancs megszakad annál a pontnál.\n"
@@ -4359,175 +4363,175 @@ msgstr ""
 "Gaim futó példányának bezárása\n"
 
 #. for people like myself, who are too lazy to add an away msg :)
-#: src/gaimrc.c:50
+#: src/gaimrc.c:52
 msgid "sorry, i ran out for a while. bbl"
 msgstr "bocs, elugrottam egy kis idõre. késõbb leszek."
 
-#: src/gaimrc.c:292 src/gaimrc.c:325 src/gaimrc.c:1448
+#: src/gaimrc.c:295 src/gaimrc.c:328 src/gaimrc.c:1449
 msgid "boring default"
 msgstr "uncsi alapértelmezett"
 
-#: src/gaimrc.c:1546
+#: src/gaimrc.c:1547
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Nem lehet a %s konfigurációs fájlt megnyitni."
 
-#: src/gaimrc.c:1603
+#: src/gaimrc.c:1605
 msgid "Unable to Save Preferences"
 msgstr "Beállítások mentése sikertelen"
 
-#: src/gaimrc.c:1603
+#: src/gaimrc.c:1606
 msgid ""
-"Gaim was unable to save your preferences.  Please verify that you have "
-"enough free space."
+"Gaim was unable to save your preferences. Please verify that you have enough "
+"free space."
 msgstr ""
-"A Gaim nem tudta a beállításokat elmenteni. Ellenõrizd hogy van-e "
-"szabad hely."
+"A Gaim nem tudta a beállításokat elmenteni. Ellenõrizd hogy van-e szabad "
+"hely."
 
-#: src/gtkblist.c:382
+#: src/gtkblist.c:412
 msgid "Add a _Buddy"
 msgstr "P_artner felvétele"
 
-#: src/gtkblist.c:383
+#: src/gtkblist.c:413
 msgid "Add a C_hat"
 msgstr "Csevegés felvétele"
 
-#: src/gtkblist.c:384
+#: src/gtkblist.c:414
 msgid "_Delete Group"
 msgstr "_Csoport törlése"
 
-#: src/gtkblist.c:385
+#: src/gtkblist.c:415
 msgid "_Rename"
 msgstr "Á_tnevez"
 
-#: src/gtkblist.c:387
+#: src/gtkblist.c:417
 msgid "_Join"
 msgstr "Csatlakozás"
 
-#: src/gtkblist.c:388 src/gtkblist.c:419
+#: src/gtkblist.c:418 src/gtkblist.c:449
 msgid "_Alias"
 msgstr "Ál_név"
 
-#: src/gtkblist.c:389 src/gtkblist.c:420
+#: src/gtkblist.c:419 src/gtkblist.c:450
 msgid "_Remove"
 msgstr "_Elvátolít"
 
-#: src/gtkblist.c:398
+#: src/gtkblist.c:428
 msgid "_Get Info"
 msgstr "I_nformáció lekérdezése"
 
-#: src/gtkblist.c:400
+#: src/gtkblist.c:430
 msgid "_IM"
 msgstr "Azonnal_i üzenet"
 
-#: src/gtkblist.c:401
+#: src/gtkblist.c:431
 msgid "Add Buddy _Pounce"
 msgstr "_Partner figyelõ felvétele"
 
-#: src/gtkblist.c:402
+#: src/gtkblist.c:432
 msgid "View _Log"
 msgstr "Nap_ló megtekintése"
 
 #. Buddies menu
-#: src/gtkblist.c:733
+#: src/gtkblist.c:758
 msgid "/_Buddies"
 msgstr "/_Partnerek"
 
-#: src/gtkblist.c:734
+#: src/gtkblist.c:759
 msgid "/Buddies/New _Instant Message..."
 msgstr "/Partnerek/Új azonnal_i üzenet..."
 
-#: src/gtkblist.c:735
+#: src/gtkblist.c:760
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Partnerek/_Csatlakozás csevegéshez..."
 
-#: src/gtkblist.c:736
+#: src/gtkblist.c:761
 msgid "/Buddies/Get _User Info..."
 msgstr "/Partnerek/_Felhasználó adatainak lekérdezése"
 
-#: src/gtkblist.c:738
+#: src/gtkblist.c:763
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Partnerek/Nem elérhetõ partnerek megjelenítése"
 
-#: src/gtkblist.c:739
+#: src/gtkblist.c:764
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Partnerek/Ür_es csoportok megjelenítése"
 
-#: src/gtkblist.c:740
+#: src/gtkblist.c:765
 msgid "/Buddies/_Add a Buddy..."
 msgstr "/Partnerek/_Partner felvétele"
 
-#: src/gtkblist.c:741
+#: src/gtkblist.c:766
 msgid "/Buddies/Add a C_hat..."
 msgstr "/Partnerek/Csevegés felvétele..."
 
-#: src/gtkblist.c:742
+#: src/gtkblist.c:767
 msgid "/Buddies/Add a _Group..."
 msgstr "/Partnerek/C_soport felvétele..."
 
-#: src/gtkblist.c:744
+#: src/gtkblist.c:769
 msgid "/Buddies/_Signoff"
 msgstr "/Partnerek/K_ijelentkezés"
 
-#: src/gtkblist.c:745
+#: src/gtkblist.c:770
 msgid "/Buddies/_Quit"
 msgstr "/Partnerek/_Kilép"
 
 #. Tools
-#: src/gtkblist.c:748
+#: src/gtkblist.c:773
 msgid "/_Tools"
 msgstr "/_Eszközök"
 
-#: src/gtkblist.c:749
+#: src/gtkblist.c:774
 msgid "/Tools/_Away"
 msgstr "/Eszközök/_Távol"
 
-#: src/gtkblist.c:750
+#: src/gtkblist.c:775
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Eszközök/_Partner figyelõ"
 
-#: src/gtkblist.c:751
+#: src/gtkblist.c:776
 msgid "/Tools/P_rotocol Actions"
 msgstr "/Eszközök/P_rotokol mûveletek"
 
-#: src/gtkblist.c:753
+#: src/gtkblist.c:778
 msgid "/Tools/A_ccounts..."
 msgstr "/Eszközök/Fió_kok..."
 
-#: src/gtkblist.c:754
+#: src/gtkblist.c:779
 msgid "/Tools/_File Transfers..."
 msgstr "/Eszközök/_Fájlok küldése..."
 
-#: src/gtkblist.c:755
+#: src/gtkblist.c:780
 msgid "/Tools/Preferences..."
 msgstr "/Eszközök/Beállítások..."
 
-#: src/gtkblist.c:756
+#: src/gtkblist.c:781
 msgid "/Tools/Pr_ivacy..."
 msgstr "/Eszközök/B_iztonság..."
 
-#: src/gtkblist.c:758
+#: src/gtkblist.c:783
 msgid "/Tools/View System _Log..."
 msgstr "/Eszközök/_Rendszernapló megtekintése..."
 
 #. Help
-#: src/gtkblist.c:761
+#: src/gtkblist.c:786
 msgid "/_Help"
 msgstr "/_Súgó"
 
-#: src/gtkblist.c:762
+#: src/gtkblist.c:787
 msgid "/Help/Online _Help"
 msgstr "/Súgó/Online _súgó"
 
-#: src/gtkblist.c:763
+#: src/gtkblist.c:788
 msgid "/Help/_Debug Window..."
 msgstr "/Súgó/Ny_omkövetõ ablak..."
 
-#: src/gtkblist.c:764
+#: src/gtkblist.c:789
 msgid "/Help/_About..."
 msgstr "/Súgó/_Névjegy..."
 
-#: src/gtkblist.c:798
+#: src/gtkblist.c:823
 #, c-format
 msgid ""
 "\n"
@@ -4536,12 +4540,12 @@ msgstr ""
 "\n"
 "<b>Állapot:</b> %s"
 
-#: src/gtkblist.c:857
+#: src/gtkblist.c:882
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:871
+#: src/gtkblist.c:896
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -4549,7 +4553,7 @@ msgstr ""
 "\n"
 "<b>Fiók:</b>"
 
-#: src/gtkblist.c:872
+#: src/gtkblist.c:897
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -4557,7 +4561,7 @@ msgstr ""
 "\n"
 "<b>Álnév:</b>"
 
-#: src/gtkblist.c:873
+#: src/gtkblist.c:898
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -4565,7 +4569,7 @@ msgstr ""
 "\n"
 "<b>Becenév:</b>"
 
-#: src/gtkblist.c:874
+#: src/gtkblist.c:899
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -4573,7 +4577,7 @@ msgstr ""
 "\n"
 "<b>Inaktív:</b>"
 
-#: src/gtkblist.c:875
+#: src/gtkblist.c:900
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -4581,7 +4585,7 @@ msgstr ""
 "\n"
 "<b>Figyelmeztetve:</b>"
 
-#: src/gtkblist.c:877
+#: src/gtkblist.c:902
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -4589,95 +4593,124 @@ msgstr ""
 "\n"
 "<b>Leírás:</b> kémkedõ"
 
-#: src/gtkblist.c:1169
+#: src/gtkblist.c:903
+msgid ""
+"\n"
+"<b>Status</b>: Awesome"
+msgstr ""
+"\n"
+"<b>Állapot:</b>: Szuper"
+
+#: src/gtkblist.c:1195
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Inaktív (%dó%02dp) "
 
-#: src/gtkblist.c:1171
+#: src/gtkblist.c:1197
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inaktív (%dp)"
 
-#: src/gtkblist.c:1175
+#: src/gtkblist.c:1201
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Figyelmeztetve (%d%%) "
 
-#: src/gtkblist.c:1332 src/prefs.c:1787
+#: src/gtkblist.c:1204
+msgid "Offline "
+msgstr "Nem elérhetõ "
+
+#: src/gtkblist.c:1338 src/gtkblist.c:1342 src/gtkblist.c:2138
+#: src/gtkprefs.c:651 src/gtkprefs.c:1159
+msgid "None"
+msgstr "Nincs"
+
+#: src/gtkblist.c:1339
+msgid "Alphabetical"
+msgstr "ABC sorrend"
+
+#: src/gtkblist.c:1340
+msgid "By status"
+msgstr "Állapot szerint"
+
+#: src/gtkblist.c:1341
+msgid "By log size"
+msgstr "Napló mérete szerint"
+
+#: src/gtkblist.c:1367 src/gtkprefs.c:1859
 msgid "Buddy List"
 msgstr "Partner lista"
 
-#: src/gtkblist.c:1356
+#: src/gtkblist.c:1391
 msgid "/Tools/Away"
 msgstr "/Eszközök/Távol"
 
-#: src/gtkblist.c:1359
+#: src/gtkblist.c:1394
 msgid "/Tools/Buddy Pounce"
 msgstr "/Eszközök/Partner figyelõ"
 
-#: src/gtkblist.c:1362
+#: src/gtkblist.c:1397
 msgid "/Tools/Protocol Actions"
 msgstr "/Eszközök/Protokol mûveletek"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:1442
+#: src/gtkblist.c:1480
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Partnerek/Nem elérhetõ partnerek megjelenítése"
 
-#: src/gtkblist.c:1444
+#: src/gtkblist.c:1482
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Partnerek/Üres csoportok megjelenítése"
 
-#: src/gtkblist.c:1462 src/gtkconv.c:765
+#: src/gtkblist.c:1500 src/gtkconv.c:766
 msgid "IM"
 msgstr "IM"
 
-#: src/gtkblist.c:1468
+#: src/gtkblist.c:1506
 msgid "Send a message to the selected buddy"
 msgstr "Üzenet küldése a kiválasztott partnernek"
 
-#: src/gtkblist.c:1477
+#: src/gtkblist.c:1515
 msgid "Get information on the selected buddy"
 msgstr "Kiválasztott partner adatainak lekérdezése"
 
-#: src/gtkblist.c:1485
+#: src/gtkblist.c:1523
 msgid "Join a chat room"
 msgstr "Kapcsolódás csevegõszobához"
 
-#: src/gtkblist.c:1493
+#: src/gtkblist.c:1531
 msgid "Set an away message"
 msgstr "Távollét üzenet beállítása"
 
-#: src/gtkconv.c:218
+#: src/gtkconv.c:219
 msgid "Gaim - Insert Image"
 msgstr "Gaim - Kép beszúrása"
 
-#: src/gtkconv.c:773
+#: src/gtkconv.c:774
 msgid "Un-Ignore"
 msgstr "Visszavon"
 
-#: src/gtkconv.c:775 src/prefs.c:541
+#: src/gtkconv.c:776 src/gtkprefs.c:589
 msgid "Ignore"
 msgstr "Figyelmen kívül hagy"
 
 #. Info button
-#: src/gtkconv.c:784 src/gtkconv.c:2668
+#: src/gtkconv.c:785 src/gtkconv.c:2669
 msgid "Info"
 msgstr "Információ"
 
-#: src/gtkconv.c:804 src/gtkconv.c:2651 src/gtkconv.c:3782
+#: src/gtkconv.c:805 src/gtkconv.c:2652 src/gtkconv.c:3781
 msgid "Remove"
 msgstr "Eltávolít"
 
-#: src/gtkconv.c:878
+#: src/gtkconv.c:879
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - Partner inivitálása a csevegõ szobába"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:906
+#: src/gtkconv.c:907
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -4685,328 +4718,332 @@ msgstr ""
 "Add meg a partnernek a nevét akit invitálni szeretnél, és opcionálisan egy "
 "tetszõleges üzenet."
 
-#: src/gtkconv.c:927
+#: src/gtkconv.c:928
 msgid "_Buddy:"
 msgstr "_Partner:"
 
-#: src/gtkconv.c:947
+#: src/gtkconv.c:948
 msgid "_Message:"
 msgstr "Ü_zenet:"
 
-#: src/gtkconv.c:1976
+#: src/gtkconv.c:1977
 msgid "User is typing..."
 msgstr "Partner gépel..."
 
-#: src/gtkconv.c:1984
+#: src/gtkconv.c:1985
 msgid "User has typed something and paused"
 msgstr "Partner gépelt valamit és félbehagyta"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2091
+#: src/gtkconv.c:2092
 msgid "_Send As"
 msgstr "_Mentés mint..."
 
 #. Conversation menu
-#: src/gtkconv.c:2541
+#: src/gtkconv.c:2542
 msgid "/_Conversation"
 msgstr "/Társalgás"
 
-#: src/gtkconv.c:2542
+#: src/gtkconv.c:2543
 msgid "/Conversation/_Save As..."
 msgstr "/Társalgás/_Mentés mint..."
 
-#: src/gtkconv.c:2544
+#: src/gtkconv.c:2545
 msgid "/Conversation/View _Log..."
 msgstr "/Társalgás/Nap_ló megtekintése..."
 
-#: src/gtkconv.c:2546
+#: src/gtkconv.c:2547
 msgid "/Conversation/Insert _URL..."
 msgstr "/Társalgás/Hivatkozás _beszúrása..."
 
-#: src/gtkconv.c:2548
+#: src/gtkconv.c:2549
 msgid "/Conversation/Insert _Image..."
 msgstr "/Társalgás/Kép _beszúrása"
 
-#: src/gtkconv.c:2551
+#: src/gtkconv.c:2552
 msgid "/Conversation/_Close"
 msgstr "/Társalgás/_Bezár"
 
 #. Options
-#: src/gtkconv.c:2555
+#: src/gtkconv.c:2556
 msgid "/_Options"
 msgstr "/_Beállítások"
 
-#: src/gtkconv.c:2556
+#: src/gtkconv.c:2557
 msgid "/Options/Enable _Logging"
 msgstr "/Beállítások/Naplózás engedélyezése"
 
-#: src/gtkconv.c:2557
+#: src/gtkconv.c:2558
 msgid "/Options/Enable _Sounds"
 msgstr "/Beállítások/Hangok _engedélyezése"
 
-#: src/gtkconv.c:2593
+#: src/gtkconv.c:2594
 msgid "/Conversation/View Log..."
 msgstr "/Társalgás/Napló megtekintése..."
 
-#: src/gtkconv.c:2595
+#: src/gtkconv.c:2596
 msgid "/Conversation/Insert URL..."
 msgstr "/Társalgás/Hivatkozás beszúrása"
 
-#: src/gtkconv.c:2597
+#: src/gtkconv.c:2598
 msgid "/Conversation/Insert Image..."
 msgstr "/Társalgás/Kép beszúrása..."
 
-#: src/gtkconv.c:2599
+#: src/gtkconv.c:2600
 msgid "/Options/Enable Logging"
 msgstr "/Beállítások/Naplózás bekapcsolása"
 
-#: src/gtkconv.c:2601
+#: src/gtkconv.c:2602
 msgid "/Options/Enable Sounds"
 msgstr "/Beállítások/Hangok engedélyezése"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:2625 src/gtkconv.c:2627 src/gtkconv.c:2725 src/gtkconv.c:2727
-#: src/gtkconv.c:5022
+#: src/gtkconv.c:2626 src/gtkconv.c:2628 src/gtkconv.c:2726 src/gtkconv.c:2728
+#: src/gtkconv.c:5025
 msgid "Send"
 msgstr "Küldés"
 
-#: src/gtkconv.c:2648 src/gtkconv.c:3794
+#: src/gtkconv.c:2649 src/gtkconv.c:3793
 msgid "Add the user to your buddy list"
 msgstr "Partner felvétele a listára"
 
-#: src/gtkconv.c:2654 src/gtkconv.c:3785
+#: src/gtkconv.c:2655 src/gtkconv.c:3784
 msgid "Remove the user from your buddy list"
 msgstr "Partner eltávolítása a listáról"
 
 #. Warn button
-#: src/gtkconv.c:2661
+#: src/gtkconv.c:2662
 msgid "Warn"
 msgstr "Figyelmeztetés"
 
-#: src/gtkconv.c:2665
+#: src/gtkconv.c:2666
 msgid "Warn the user"
 msgstr "Partner figyelmeztetése"
 
-#: src/gtkconv.c:2672 src/gtkconv.c:3103
+#: src/gtkconv.c:2673 src/gtkconv.c:3104
 msgid "Get the user's information"
 msgstr "Partner adatainak lekérdezése."
 
 #. Block button
-#: src/gtkconv.c:2675
+#: src/gtkconv.c:2676
 msgid "Block"
 msgstr "Tiltás"
 
-#: src/gtkconv.c:2679
+#: src/gtkconv.c:2680
 msgid "Block the user"
 msgstr "Partner tiltása"
 
 #. Invite
-#: src/gtkconv.c:2737 src/gtkconv.c:5025
+#: src/gtkconv.c:2738 src/gtkconv.c:5028
 msgid "Invite"
 msgstr "Invitál"
 
-#: src/gtkconv.c:2740
+#: src/gtkconv.c:2741
 msgid "Invite a user"
 msgstr "Partner invitálása"
 
-#: src/gtkconv.c:2779
+#: src/gtkconv.c:2780
 msgid "Bold"
 msgstr "Félkövér"
 
-#: src/gtkconv.c:2790
+#: src/gtkconv.c:2791
 msgid "Italic"
 msgstr "Dõlt"
 
-#: src/gtkconv.c:2801
+#: src/gtkconv.c:2802
 msgid "Underline"
 msgstr "Aláhúzott"
 
-#: src/gtkconv.c:2817
+#: src/gtkconv.c:2818
 msgid "Larger font size"
 msgstr "Nagyobb betû méret"
 
-#: src/gtkconv.c:2829
+#: src/gtkconv.c:2830
 msgid "Normal font size"
 msgstr "Normál betû méret"
 
-#: src/gtkconv.c:2841
+#: src/gtkconv.c:2842
 msgid "Smaller font size"
 msgstr "Kisebb betûméret"
 
-#: src/gtkconv.c:2858
+#: src/gtkconv.c:2859
 msgid "Font Face"
 msgstr "Szöveg betûtípusa"
 
-#: src/gtkconv.c:2870
+#: src/gtkconv.c:2871
 msgid "Foreground font color"
 msgstr "Betû színe"
 
-#: src/gtkconv.c:2882
+#: src/gtkconv.c:2883
 msgid "Background color"
 msgstr "Háttérszín"
 
-#: src/gtkconv.c:2897
+#: src/gtkconv.c:2898
 msgid "Insert image"
 msgstr "Kép beszúrása"
 
-#: src/gtkconv.c:2908
+#: src/gtkconv.c:2909
 msgid "Insert link"
 msgstr "Hivatkozás beszúrása"
 
-#: src/gtkconv.c:2919
+#: src/gtkconv.c:2920
 msgid "Insert smiley"
 msgstr "Hangulatjel beszúrása"
 
-#: src/gtkconv.c:2976
+#: src/gtkconv.c:2977
 msgid "Topic:"
 msgstr "Téma:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3023
+#: src/gtkconv.c:3024
 msgid "0 people in room"
 msgstr "0 személy tartózkodik a szobában"
 
-#: src/gtkconv.c:3080
+#: src/gtkconv.c:3081
 msgid "IM the user"
 msgstr "Üzenet a partnernek"
 
-#: src/gtkconv.c:3092
+#: src/gtkconv.c:3093
 msgid "Ignore the user"
 msgstr "Partner figyelmenkivül hagyása"
 
-#: src/gtkconv.c:3623
+#: src/gtkconv.c:3622
 msgid "Close conversation"
 msgstr "Társalgás befejezése"
 
-#: src/gtkconv.c:4228 src/gtkconv.c:4350
+#: src/gtkconv.c:4227 src/gtkconv.c:4349
 #, fuzzy, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d személy tartózkodik a szobában"
 msgstr[1] "%d %s a szobában"
 
-#: src/gtkconv.c:4710
+#: src/gtkconv.c:4709
 msgid "Disable Animation"
 msgstr "Animáció tiltása"
 
-#: src/gtkconv.c:4719
+#: src/gtkconv.c:4718
 msgid "Enable Animation"
 msgstr "Animáció engedélyezése"
 
-#: src/gtkconv.c:4726
+#: src/gtkconv.c:4725
 msgid "Hide Icon"
 msgstr "Ikon elrejtése"
 
-#: src/gtkconv.c:4732
+#: src/gtkconv.c:4731
 msgid "Save Icon As..."
 msgstr "Ikon mentése mint"
 
-#: src/gtkft.c:103
+#: src/gtkft.c:105
 msgid "Calculating..."
 msgstr "Kiszámítás..."
 
-#: src/gtkft.c:106
+#: src/gtkft.c:108
 msgid "Unknown."
 msgstr "Ismeretlen."
 
-#: src/gtkft.c:143
+#: src/gtkft.c:145
 #, c-format
 msgid "%.2f KB/s"
 msgstr "%.2f KB/mp"
 
-#: src/gtkft.c:218
+#: src/gtkft.c:220
 msgid "<b>Receiving From:</b>"
 msgstr "<b>Fogadás partnertõl:</b>"
 
-#: src/gtkft.c:221
+#: src/gtkft.c:223
 msgid "<b>Sending To:</b>"
 msgstr "<b>Küldés partnernek:</b>"
 
-#: src/gtkft.c:445
+#: src/gtkft.c:447
 msgid "Progress"
 msgstr "Állapot"
 
-#: src/gtkft.c:452
+#: src/gtkft.c:454
 msgid "Filename"
 msgstr "Fájlnév"
 
-#: src/gtkft.c:459
+#: src/gtkft.c:461
 msgid "Size"
 msgstr "Méret"
 
-#: src/gtkft.c:466
+#: src/gtkft.c:468
 msgid "Remaining"
 msgstr "Hátralévõ"
 
-#: src/gtkft.c:496
+#: src/gtkft.c:498
 msgid "Filename:"
 msgstr "Fájlnév:"
 
-#: src/gtkft.c:497
+#: src/gtkft.c:499
 msgid "Status:"
 msgstr "Állapot:"
 
-#: src/gtkft.c:498
+#: src/gtkft.c:500
 msgid "Speed:"
 msgstr "Sebesség:"
 
-#: src/gtkft.c:499
+#: src/gtkft.c:501
 msgid "Time Elapsed:"
 msgstr "Eltelt idõ:"
 
-#: src/gtkft.c:500
+#: src/gtkft.c:502
 msgid "Time Remaining:"
 msgstr "Hátralévõ idõ:"
 
-#: src/gtkft.c:566
+#: src/gtkft.c:568
 msgid "File Transfers"
 msgstr "Fájlok küldés"
 
-#: src/gtkft.c:595
+#: src/gtkft.c:597
 msgid "_Keep the dialog open"
 msgstr "_Ablak maradjon nyitva"
 
-#: src/gtkft.c:605
+#: src/gtkft.c:607
 msgid "_Clear finished transfers"
 msgstr "_Befejezett átvitel törlése"
 
 #. "Download Details" arrow
-#: src/gtkft.c:614
+#: src/gtkft.c:616
 msgid "Show download details"
 msgstr "Letöltés részleteinek megjelenítése"
 
-#: src/gtkft.c:615
+#: src/gtkft.c:617
 msgid "Hide download details"
 msgstr "Letöltés részleteinek elrejtése"
 
 #. Pause button
-#: src/gtkft.c:657
+#: src/gtkft.c:659
 msgid "_Pause"
 msgstr "_Szüneteltet"
 
 #. Resume button
-#: src/gtkft.c:667
+#: src/gtkft.c:669
 msgid "_Resume"
 msgstr "Ú_jra"
 
-#: src/gtkft.c:1009
+#: src/gtkft.c:1012
 msgid "That file does not exist."
 msgstr "Fájl nem létezik."
 
-#: src/gtkft.c:1016
-msgid "Can not send a file of 0 bytes."
-msgstr "0 bájt hosszúságú fájl nem küldhetõ"
+#: src/gtkft.c:1019
+msgid "Cannot send a file of 0 bytes."
+msgstr "0 bájt hosszúságú fájl nem küldhetõ."
 
-#: src/gtkft.c:1028
-msgid "That file already exists. Would you like to overwrite it?"
-msgstr "A fájl már létezik. Szeretnéd felülírni?"
+#: src/gtkft.c:1032
+msgid "That file already exists."
+msgstr "Ez a fájl már létezik."
 
-#: src/gtkft.c:1054
+#: src/gtkft.c:1033
+msgid "Would you like to overwrite it?"
+msgstr "Szeretnéd felülírni?"
+
+#: src/gtkft.c:1057
 msgid "Gaim - Open..."
 msgstr "Gaim - Megnyitás..."
 
-#: src/gtkft.c:1103
+#: src/gtkft.c:1106
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s küldeni akar neked %s (%s)"
@@ -5040,511 +5077,195 @@ msgstr "Gaim - Kép mentése"
 msgid "_Save Image..."
 msgstr "Kép menté_se..."
 
-#: src/gtkpounce.c:121
+#: src/gtknotify.c:190
+#, fuzzy, c-format
+msgid "%s has %d new message."
+msgid_plural "%s has %d new messages."
+msgstr[0] "%s-nek %d új üzenete van."
+msgstr[1] "<i>Felhasználó nem rendelkezik üzenettel távollét esetére</i>"
+
+#: src/gtknotify.c:198
+#, c-format
+msgid "<span weight=\"bold\">From:</span> %s\n"
+msgstr "<span weight=\"bold\">Partnertõl:</span> %s\n"
+
+#: src/gtknotify.c:203
+#, c-format
+msgid "<span weight=\"bold\">Subject:</span> %s\n"
+msgstr "<span weight=\"bold\">Tárgy:</span> %s\n"
+
+#: src/gtknotify.c:207
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
+"\n"
+"%s%s%s%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Leveled érkezett!</span>\n"
+"\n"
+"%s%s%s%s"
+
+#: src/gtknotify.c:222
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
+"\n"
+"%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Leveled érkezett!</span>\n"
+"\n"
+"%s"
+
+#: src/gtkpounce.c:122
 msgid "Select a file"
 msgstr "Fájl kiválasztása"
 
-#: src/gtkpounce.c:170
+#: src/gtkpounce.c:172
 msgid "Please enter a buddy to pounce."
 msgstr "Add meg a figyelmeztetést"
 
-#: src/gtkpounce.c:342
+#: src/gtkpounce.c:344
 #, c-format
 msgid "%s has started typing to you"
 msgstr "%s gépel"
 
-#: src/gtkpounce.c:343
+#: src/gtkpounce.c:345
 #, c-format
 msgid "%s has signed on"
 msgstr "%s belépett"
 
-#: src/gtkpounce.c:344
+#: src/gtkpounce.c:346
 #, c-format
 msgid "%s has returned from being idle"
 msgstr "%s inaktív állapota megszûnt"
 
-#: src/gtkpounce.c:345
+#: src/gtkpounce.c:347
 #, c-format
 msgid "%s has returned from being away"
 msgstr "%s inaktív állapota megszûnt"
 
-#: src/gtkpounce.c:346
+#: src/gtkpounce.c:348
 #, c-format
 msgid "%s has stopped typing to you"
 msgstr "%s abbahagyta a gépelést"
 
-#: src/gtkpounce.c:347
+#: src/gtkpounce.c:349
 #, c-format
 msgid "%s has signed off"
 msgstr "%s kilépett"
 
-#: src/gtkpounce.c:348
+#: src/gtkpounce.c:350
 #, c-format
 msgid "%s has become idle"
 msgstr "%s állapota inaktív"
 
-#: src/gtkpounce.c:349
+#: src/gtkpounce.c:351
 #, c-format
 msgid "%s has gone away."
 msgstr "%s távol van."
 
-#: src/gtkpounce.c:350
+#: src/gtkpounce.c:352
 msgid "Unknown pounce event. Please report this!"
 msgstr "Ismeretlen partner figyelõ esemény. Kérjük jelentsd ezt!"
 
 #. "New Buddy Pounce"
-#: src/gtkpounce.c:493 src/gtkpounce.c:883
+#: src/gtkpounce.c:495 src/gtkpounce.c:885
 msgid "New Buddy Pounce"
 msgstr "Új"
 
-#: src/gtkpounce.c:493
+#: src/gtkpounce.c:495
 msgid "Edit Buddy Pounce"
 msgstr "Partner figyelõ szerkesztése"
 
 #. Create the "Pounce Who" frame.
-#: src/gtkpounce.c:511
+#: src/gtkpounce.c:513
 msgid "Pounce Who"
 msgstr "Kit figyelmeztetsz"
 
-#: src/gtkpounce.c:533
+#: src/gtkpounce.c:535
 msgid "_Buddy Name:"
 msgstr "_Partner neve:"
 
 #. Create the "Pounce When" frame.
-#: src/gtkpounce.c:552
+#: src/gtkpounce.c:554
 msgid "Pounce When"
 msgstr "Mikor"
 
-#: src/gtkpounce.c:560
+#: src/gtkpounce.c:562
 msgid "Sign on"
 msgstr "Bejelentkezés"
 
-#: src/gtkpounce.c:562
+#: src/gtkpounce.c:564
 msgid "Sign off"
 msgstr "Kijelentkezés"
 
-#: src/gtkpounce.c:566
+#: src/gtkpounce.c:568
 msgid "Return from away"
 msgstr "Visszatért távvolétbõl"
 
-#: src/gtkpounce.c:570
+#: src/gtkpounce.c:572
 msgid "Return from idle"
 msgstr "Visszatért inaktív állapotból"
 
-#: src/gtkpounce.c:572
+#: src/gtkpounce.c:574
 msgid "Buddy starts typing"
 msgstr "Partner elkezdett gépelni"
 
-#: src/gtkpounce.c:574
+#: src/gtkpounce.c:576
 msgid "Buddy stops typing"
 msgstr "Partner abbahagyta a gépelést"
 
 #. Create the "Pounce Action" frame.
-#: src/gtkpounce.c:603
+#: src/gtkpounce.c:605
 msgid "Pounce Action"
 msgstr "Figyelmeztetéskor"
 
-#: src/gtkpounce.c:610
+#: src/gtkpounce.c:612
 msgid "Open an IM window"
 msgstr "IM ablak megnyitása"
 
-#: src/gtkpounce.c:611
+#: src/gtkpounce.c:613
 msgid "Popup notification"
 msgstr "Elõugró figyelmeztetés"
 
-#: src/gtkpounce.c:612
+#: src/gtkpounce.c:614
 msgid "Send a message"
 msgstr "Üzenet küldése"
 
-#: src/gtkpounce.c:613
+#: src/gtkpounce.c:615
 msgid "Execute a command"
 msgstr "Parancs végrehajtása"
 
-#: src/gtkpounce.c:614
+#: src/gtkpounce.c:616
 msgid "Play a sound"
 msgstr "Hang lejátszása"
 
-#: src/gtkpounce.c:618 src/gtkpounce.c:620 src/multi.c:678
+#: src/gtkpounce.c:620 src/gtkpounce.c:622 src/multi.c:714
 msgid "Browse"
 msgstr "Tallóz"
 
-#: src/gtkpounce.c:621 src/prefs.c:1614
+#: src/gtkpounce.c:623 src/gtkprefs.c:1686
 msgid "Test"
 msgstr "Teszt"
 
-#: src/gtkpounce.c:704
+#: src/gtkpounce.c:706
 msgid "_Save this pounce after activation"
 msgstr "Figyelmezteté_s mentése aktiválás után"
 
 #. "Remove Buddy Pounce"
-#: src/gtkpounce.c:890
+#: src/gtkpounce.c:892
 msgid "Remove Buddy Pounce"
 msgstr "Partner figyelmeztetõ eltávolítása"
 
-#: src/gtkutils.c:318
-msgid "Gaim - Save Icon"
-msgstr "Gaim - Ikon mentése"
-
-#: src/html.c:326
-msgid "g003: Error opening connection.\n"
-msgstr "g003: Hiba a kapcsolat megnyitása közben.\n"
-
-#: src/log.c:118
-msgid "Gaim - Save Conversation"
-msgstr "Gaim - Társalgás mentése"
-
-#: src/log.c:159 src/log.c:180 src/log.c:193
-#, c-format
-msgid "Unable to make directory %s for logging"
-msgstr "Nem sikerült létrehozni a könyvtárat %s a naplózáshoz"
-
-#: src/log.c:247 src/log.c:263
-#, c-format
-msgid "IM Sessions with %s\n"
-msgstr "IM folyamat %s-(val/vel)\n"
-
-#: src/log.c:250 src/log.c:266
-#, c-format
-msgid "IM Sessions with %s"
-msgstr "IM folyamat %s-(val/vel)"
-
-#: src/log.c:297
-#, c-format
-msgid "+++ %s (%s) signed on @ %s"
-msgstr "+++ %s (%s) belépett @ %s"
-
-#: src/log.c:302
-#, c-format
-msgid "+++ %s (%s) signed off @ %s"
-msgstr "+++ %s (%s) kilépett @ %s"
-
-#: src/log.c:307
-#, c-format
-msgid "+++ %s (%s) changed away state @ %s"
-msgstr "+++ %s (%s) állapotát megváltoztatta @ %s"
-
-#: src/log.c:312
-#, c-format
-msgid "+++ %s (%s) came back @ %s"
-msgstr "+++ %s (%s) visszajött @ %s"
-
-#: src/log.c:317
-#, c-format
-msgid "+++ %s (%s) became idle @ %s"
-msgstr "+++ %s (%s) inaktív @ %s"
-
-#: src/log.c:322
-#, c-format
-msgid "+++ %s (%s) returned from idle @ %s"
-msgstr "+++ %s (%s) inaktív állapota megszünt @ %s"
-
-#: src/log.c:327
-#, c-format
-msgid "+++ Program exit @ %s"
-msgstr "+++ Program vége @ %s"
-
-#: src/log.c:334
-#, c-format
-msgid "%s (%s) reported that %s (%s) signed on @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) belépett @ %s"
-
-#: src/log.c:339
-#, c-format
-msgid "%s (%s) reported that %s (%s) signed off @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) kilépett @ %s"
-
-#: src/log.c:344
-#, c-format
-msgid "%s (%s) reported that %s (%s) went away @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) nincs a gépnél @ %s"
-
-#: src/log.c:349
-#, c-format
-msgid "%s (%s) reported that %s (%s) came back @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) visszajött @ %s"
-
-#: src/log.c:354
-#, c-format
-msgid "%s (%s) reported that %s (%s) became idle @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) inaktív @ %s"
-
-#: src/log.c:360
-#, c-format
-msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
-msgstr "%s (%s) jelenti, hogy %s (%s) inaktív állapota megszûnt @ %s"
-
-#: src/log.c:372
-#, c-format
-msgid "%s (%s) reported that %s signed on @ %s"
-msgstr "%s (%s) jelenti, hogy %s belépett @ %s"
-
-#: src/log.c:377
-#, c-format
-msgid "%s (%s) reported that %s signed off @ %s"
-msgstr "%s (%s) jelenti, hogy %s kilépett @ %s"
-
-#: src/log.c:382
-#, c-format
-msgid "%s (%s) reported that %s went away @ %s"
-msgstr "%s (%s) jelenti, hogy %s nincs a gépnél @ %s"
-
-#: src/log.c:387
-#, c-format
-msgid "%s (%s) reported that %s came back @ %s"
-msgstr "%s (%s) jelenti, hogy %s visszajött @ %s"
-
-#: src/log.c:392
-#, c-format
-msgid "%s (%s) reported that %s became idle @ %s"
-msgstr "%s (%s) jelenti, hogy %s inaktív lett @ %s"
-
-#: src/log.c:398
-#, c-format
-msgid "%s (%s) reported that %s returned from idle @ %s"
-msgstr "%s (%s) jelenti, hogy %s visszatért inaktív állapotból @ %s"
-
-#: src/main.c:181
-msgid "Please enter your login."
-msgstr "Add meg a belépéshez szükséges adatokat."
-
-#: src/main.c:270
-msgid "<New User>"
-msgstr "<Új felhasználó>"
-
-#: src/main.c:312
-msgid "Login"
-msgstr "Bejelentkezés"
-
-#: src/main.c:328
-msgid "Screen Name:"
-msgstr "Fiók azonosító: "
-
-#. And now for the buttons
-#: src/main.c:362
-msgid "Accounts"
-msgstr "Fiókok"
-
-#: src/main.c:372 src/prefs.c:1854 src/win32/systray.c:355
-msgid "Preferences"
-msgstr "Beállítások"
-
-#: src/main.c:378 src/win32/systray.c:191
-msgid "Sign On"
-msgstr "Bejelentkezés"
-
-#: src/multi.c:264
-msgid "Screenname"
-msgstr "Fiók azonosító"
-
-#: src/multi.c:292
-msgid "Protocol"
-msgstr "Protokol"
-
-#: src/multi.c:621
-msgid "Load Buddy Icon"
-msgstr "Ikon betöltése"
-
-#: src/multi.c:665
-msgid "Buddy Icon File:"
-msgstr "Ikon file:"
-
-#: src/multi.c:684 src/prefs.c:1618
-msgid "Reset"
-msgstr "Visszaállít"
-
-#: src/multi.c:711
-msgid "Login Options"
-msgstr "Bejelentkezés beállításai"
-
-#: src/multi.c:723
-msgid "Protocol:"
-msgstr "Protokol:"
-
-#: src/multi.c:738
-msgid "Screenname:"
-msgstr "Fiók azonosító:"
-
-#: src/multi.c:793
-msgid "Remember Password"
-msgstr "Jelszó mentése"
-
-#: src/multi.c:794
-msgid "Auto-Login"
-msgstr "Automatikus bejelentkezés"
-
-#: src/multi.c:851
-msgid "User Options"
-msgstr "Felhasználó beállításai"
-
-#: src/multi.c:861
-msgid "New Mail Notifications"
-msgstr "Figyelmeztessen új levél érkezésekor"
-
-#: src/multi.c:922
-#, c-format
-msgid "%s Options"
-msgstr "%s beállításai"
-
-#: src/multi.c:966
-msgid "Register with server"
-msgstr "Regisztráció a kiszolgálóval"
-
-#: src/multi.c:999
-msgid "Proxy Options"
-msgstr "Proxy beállításai"
-
-#: src/multi.c:1013
-msgid "Proxy _Type"
-msgstr "Proxy _típusa"
-
-#: src/multi.c:1022
-msgid "Use Global Proxy Settings"
-msgstr "Globális proxy beállítások használata"
-
-#: src/multi.c:1031
-msgid "No Proxy"
-msgstr "Nincs Proxy"
-
-#: src/multi.c:1083
-msgid "_Host:"
-msgstr "_Gépnév:"
-
-#: src/multi.c:1119
-msgid "_User:"
-msgstr "_Felhasználó:"
-
-#: src/multi.c:1135
-msgid "Pa_ssword:"
-msgstr "Jel_szó:"
-
-#: src/multi.c:1209
-msgid "Modify Account"
-msgstr "Fiók módosítása"
-
-#: src/multi.c:1228
-msgid "Show more options"
-msgstr "További opciók mutatása"
-
-#: src/multi.c:1228
-msgid "Show fewer options"
-msgstr "Kevesebb opció mutatása"
-
-#: src/multi.c:1339
-msgid "_Login"
-msgstr "Beje_lentkezés"
-
-#: src/multi.c:1357
-#, c-format
-msgid ""
-"Please enter your password for %s.\n"
-"\n"
-msgstr ""
-"Kérlek add meg a jelszavad a következõhöz %s.\n"
-"\n"
-
-#: src/multi.c:1368
-msgid "_Password"
-msgstr "_Jelszó"
-
-#: src/multi.c:1419
-msgid "TOC not found."
-msgstr "TOC nem található."
-
-#: src/multi.c:1420
-msgid ""
-"You have attempted to login an IM account using the TOC protocol.  Because "
-"this protocol is inferior to OSCAR, it is now compiled as a plugin by "
-"default.  To login, edit this account to use OSCAR or load the TOC plugin."
-msgstr ""
-"Megpróbáltál belépni a TOC protokoll használatával. Mivel ez nem a megfelelõ "
-"protokol az OSCAR IM-hez, ezért pluginként van lefordítva. A belépéshez "
-"módosítsd a fiókot OSCAR protokol használatára vagy töltsd be a TOC plugint."
-
-#: src/multi.c:1426
-msgid "Protocol not found."
-msgstr "Protokol nem található."
-
-#: src/multi.c:1427
-msgid ""
-"You cannot log this account in; you do not have the protocol it uses loaded, "
-"or the protocol does not have a login function."
-msgstr ""
-"Nem jelentkezhetsz be ezzel a fiókkal. Nincs vagy nem a megfelelõ protokol "
-"van betöltve ami ezt a funckiót végrehajtaná."
-
-#: src/multi.c:1506
-#, c-format
-msgid "Are you sure you want to delete %s?"
-msgstr "Biztos hogy törölni akarod %s fiókot?"
-
-#: src/multi.c:1507
-msgid "Delete"
-msgstr "Töröl"
-
-#: src/multi.c:1536
-msgid "Account Editor"
-msgstr "Fiók szerkesztõ"
-
-#: src/multi.c:1575
-msgid "_Modify"
-msgstr "_Módosítás"
-
-#: src/multi.c:1625
-msgid "Done."
-msgstr "Kész."
-
-#: src/multi.c:1861
-msgid "Signon: "
-msgstr "Bejelentkezés:"
-
-#: src/multi.c:1920
-msgid "Signon"
-msgstr "Bejelentkezés"
-
-#: src/multi.c:1932
-msgid "Cancel All"
-msgstr "Minden törlése"
-
-#: src/multi.c:1987
-#, c-format
-msgid ""
-"%s\n"
-"%s: %s"
-msgstr ""
-"%s\n"
-"%s: %s"
-
-#: src/multi.c:2009
-#, c-format
-msgid "%s was unable to sign on"
-msgstr "%s nem tudott bejelentkezni"
-
-#: src/multi.c:2010
-msgid "Signon Error"
-msgstr "Bejelentkezési hiba"
-
-#: src/multi.c:2021
-msgid "Notice"
-msgstr "Értesítés"
-
-#: src/multi.c:2033
-#, c-format
-msgid "%s has been signed off"
-msgstr "%s kilépett"
-
-#: src/multi.c:2034
-msgid "Connection Error"
-msgstr "Hiba a kapcsolatban"
-
-#: src/prefs.c:205
+#: src/gtkprefs.c:190
 msgid "Interface Options"
 msgstr "Felület beállításai"
 
-#: src/prefs.c:207
+#: src/gtkprefs.c:192
 msgid "D_isplay remote nicknames if no alias is set"
 msgstr "Becenév megjelenítése ha nincs álnév beállítva"
 
-#: src/prefs.c:388
+#: src/gtkprefs.c:373
 msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
@@ -5552,284 +5273,296 @@ msgstr ""
 "Válassz egy hangulatjelsablont az alábbi listából. Új sablonok is "
 "telepíthetõk. Fogd-és dobd módszerrel add õket a sablonok listájához."
 
-#: src/prefs.c:421
+#: src/gtkprefs.c:406
 msgid "Icon"
 msgstr "Ikon"
 
-#: src/prefs.c:455
+#: src/gtkprefs.c:501
 msgid "Style"
 msgstr "Stílus"
 
-#: src/prefs.c:456
+#: src/gtkprefs.c:502
 msgid "_Bold"
 msgstr "_Félkövér"
 
-#: src/prefs.c:457
+#: src/gtkprefs.c:503
 msgid "_Italics"
 msgstr "_Dõlt"
 
-#: src/prefs.c:458
+#: src/gtkprefs.c:504
 msgid "_Underline"
 msgstr "_Aláhúzott"
 
-#: src/prefs.c:459
+#: src/gtkprefs.c:505
 msgid "_Strikethrough"
 msgstr "Á_thúzott"
 
-#: src/prefs.c:461
+#: src/gtkprefs.c:507
 msgid "Face"
 msgstr "Betûtípus"
 
-#: src/prefs.c:464
+#: src/gtkprefs.c:510
 msgid "Use custo_m face"
 msgstr "Egyedi betûtípus használata"
 
-#: src/prefs.c:478
+#: src/gtkprefs.c:524
 msgid "Use custom si_ze"
 msgstr "Egyedi méret használata"
 
-#: src/prefs.c:486
+#: src/gtkprefs.c:532
 msgid "Color"
 msgstr "Szín"
 
-#: src/prefs.c:491
+#: src/gtkprefs.c:537
 msgid "_Text color"
 msgstr "_Szöveg színe"
 
-#: src/prefs.c:508
+#: src/gtkprefs.c:554
 msgid "Bac_kground color"
 msgstr "Háttérszín"
 
-#: src/prefs.c:534 src/prefs.c:676 src/prefs.c:717
+#: src/gtkprefs.c:580 src/gtkprefs.c:745 src/gtkprefs.c:786
 msgid "Display"
 msgstr "Megjelenítés"
 
-#: src/prefs.c:535
+#: src/gtkprefs.c:581
 msgid "Show graphical _smileys"
 msgstr "Grafikus hangulatjelek megjelenítése"
 
-#: src/prefs.c:536
+#: src/gtkprefs.c:582
 msgid "Show _timestamp on messages"
 msgstr "Idõpon_t megjelenítése az üzenetekben"
 
-#: src/prefs.c:537
+#: src/gtkprefs.c:583
 msgid "Show _URLs as links"
 msgstr "_URL-ek mutatása hivatkozásként"
 
-#: src/prefs.c:539
+#: src/gtkprefs.c:587
 msgid "_Highlight misspelled words"
 msgstr "_Helytelen szavak kiemelése"
 
-#: src/prefs.c:542
+#: src/gtkprefs.c:590
 msgid "Ignore c_olors"
 msgstr "Színek figyelmenkívül hagyása"
 
-#: src/prefs.c:543
+#: src/gtkprefs.c:591
 msgid "Ignore font _faces"
 msgstr "Betûtípusok figyelmenkívül hagyása"
 
-#: src/prefs.c:544
+#: src/gtkprefs.c:592
 msgid "Ignore font si_zes"
 msgstr "Betûméretek figyelmenkívül hagyása"
 
-#: src/prefs.c:556
+#: src/gtkprefs.c:604
 msgid "Send Message"
 msgstr "Üzenet küldése"
 
-#: src/prefs.c:557
+#: src/gtkprefs.c:605
 msgid "_Enter sends message"
 msgstr "_Enter küldi az üzenet"
 
-#: src/prefs.c:558
+#: src/gtkprefs.c:606
 msgid "C_ontrol-Enter sends message"
 msgstr "C_ontrol-Enter küldi az üzenetet"
 
-#: src/prefs.c:560
+#: src/gtkprefs.c:608
 msgid "Window Closing"
 msgstr "Ablak bezárás"
 
-#: src/prefs.c:561
+#: src/gtkprefs.c:609
 msgid "E_scape closes window"
 msgstr "E_scape bezárja az ablakot"
 
-#: src/prefs.c:562
+#: src/gtkprefs.c:610
 msgid "Control-_W closes window"
 msgstr "Control-_W bezárja az ablakot"
 
-#: src/prefs.c:565
+#: src/gtkprefs.c:612
+msgid "Insertions"
+msgstr "Beszúrások"
+
+#: src/gtkprefs.c:613
 msgid "Control-{B/I/U/S} inserts _HTML tags"
 msgstr "Control-{B/I/U/S} _HTML címkéket szúr be"
 
-#: src/prefs.c:566
+#: src/gtkprefs.c:614
 msgid "Control-(number) inserts _smileys"
 msgstr "Control-(szám) hangulatjelek be_szúrása"
 
-#: src/prefs.c:579
+#: src/gtkprefs.c:632
+msgid "Buddy List Sorting"
+msgstr "Partner lista rendezése"
+
+#: src/gtkprefs.c:641
+msgid "Sorting:"
+msgstr "Rendezés:"
+
+#: src/gtkprefs.c:646
 msgid "Buddy List Toolbar"
 msgstr "Partner lista eszközsora"
 
-#: src/prefs.c:580 src/prefs.c:659 src/prefs.c:702
+#: src/gtkprefs.c:647 src/gtkprefs.c:728 src/gtkprefs.c:771
 msgid "Show _buttons as:"
 msgstr "Gom_bok megjelenítése: "
 
-#: src/prefs.c:581 src/prefs.c:660 src/prefs.c:703
+#: src/gtkprefs.c:648 src/gtkprefs.c:729 src/gtkprefs.c:772
 msgid "Pictures"
 msgstr "Képek"
 
-#: src/prefs.c:582 src/prefs.c:661 src/prefs.c:704
+#: src/gtkprefs.c:649 src/gtkprefs.c:730 src/gtkprefs.c:773
 msgid "Text"
 msgstr "Szöveg"
 
-#: src/prefs.c:583 src/prefs.c:662 src/prefs.c:705
+#: src/gtkprefs.c:650 src/gtkprefs.c:731 src/gtkprefs.c:774
 msgid "Pictures and text"
 msgstr "Képek és szöveg"
 
-#: src/prefs.c:584 src/prefs.c:1090
-msgid "None"
-msgstr "Nincs"
-
-#: src/prefs.c:587
+#: src/gtkprefs.c:654
 msgid "_Raise window on events"
 msgstr "Ablak megjelenítése események bekövetkezteko_r"
 
-#: src/prefs.c:589
+#: src/gtkprefs.c:656
 msgid "Group Display"
 msgstr "Csoport megjelenítés"
 
 #. gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox);
-#: src/prefs.c:591
+#: src/gtkprefs.c:658
 msgid "Show _numbers in groups"
 msgstr "Számok megjele_nítése a csoportokban"
 
-#: src/prefs.c:593
+#: src/gtkprefs.c:660
 msgid "Buddy Display"
 msgstr "Partner megjelenítés"
 
-#: src/prefs.c:594
+#: src/gtkprefs.c:661
 msgid "Show buddy _icons"
 msgstr "IM típusának megfelelõ ikonok megjelenítése"
 
-#: src/prefs.c:595
+#: src/gtkprefs.c:662
 msgid "Show _warning levels"
 msgstr "Figyelmeztetési szint megjelenítése"
 
-#: src/prefs.c:600
+#: src/gtkprefs.c:667
 msgid "Show idle _times"
 msgstr "Inak_tív idõ megjelenítése"
 
-#: src/prefs.c:605
+#: src/gtkprefs.c:672
 msgid "Dim i_dle buddies"
 msgstr "Inaktív partnerek halványítva"
 
-#: src/prefs.c:623 src/prefs.c:1788
+#: src/gtkprefs.c:690 src/gtkprefs.c:1860
 msgid "Conversations"
 msgstr "Társalgások"
 
-#: src/prefs.c:631
+#: src/gtkprefs.c:698
 msgid "_Placement:"
 msgstr "Elhelyezés:"
 
-#: src/prefs.c:639
-msgid "Show IMs and chats in _same tabbed window."
+#: src/gtkprefs.c:706
+msgid "Show IMs and chats in _same tabbed window"
 msgstr "Üzenetek/csevegések megjelenítése ugyabban az ablakban"
 
-#: src/prefs.c:658 src/prefs.c:701
+#: src/gtkprefs.c:708
+msgid "Send _URLs as Links"
+msgstr "_URL-ek küldése hivatkozásként"
+
+#: src/gtkprefs.c:727 src/gtkprefs.c:770
 msgid "Window"
 msgstr "Ablak"
 
-#: src/prefs.c:665 src/prefs.c:708
+#: src/gtkprefs.c:734 src/gtkprefs.c:777
 msgid "New window _width:"
 msgstr "Új ablak szélessége:"
 
-#: src/prefs.c:666 src/prefs.c:709
+#: src/gtkprefs.c:735 src/gtkprefs.c:778
 msgid "New window _height:"
 msgstr "Új ablak magassága:"
 
-#: src/prefs.c:667 src/prefs.c:710
+#: src/gtkprefs.c:736 src/gtkprefs.c:779
 msgid "_Entry field height:"
 msgstr "Input doboz magassága:"
 
-#: src/prefs.c:668 src/prefs.c:711
+#: src/gtkprefs.c:737 src/gtkprefs.c:780
 msgid "_Raise windows on events"
 msgstr "Ablakok megjelenítése események bekövetkeztekor"
 
-#: src/prefs.c:669
+#: src/gtkprefs.c:738
 msgid "Hide window on _send"
 msgstr "Ablak elrejté_se küldéskor"
 
-#: src/prefs.c:672
+#: src/gtkprefs.c:741
 msgid "Buddy Icons"
 msgstr "Ikonok"
 
-#: src/prefs.c:673
+#: src/gtkprefs.c:742
 msgid "Hide buddy _icons"
 msgstr "Ikonok elrejtése"
 
-#: src/prefs.c:674
+#: src/gtkprefs.c:743
 msgid "Disable buddy icon a_nimation"
 msgstr "Ikon a_nimáció tiltása"
 
-#: src/prefs.c:677
+#: src/gtkprefs.c:746
 msgid "Show _logins in window"
 msgstr "Beje_lentkezések megjelenítése ablakban"
 
-#: src/prefs.c:678
+#: src/gtkprefs.c:747
 msgid "Show a_liases in tabs/titles"
 msgstr "Á_lnevek megjelenítése füleken/címekben"
 
-#: src/prefs.c:680
+#: src/gtkprefs.c:749
 msgid "Typing Notification"
 msgstr "Gépelés figyelmeztetõ"
 
-#: src/prefs.c:681
+#: src/gtkprefs.c:750
 msgid "Notify buddies that you are _typing to them"
 msgstr "Partnerek figyelmez_tetése gépeléskor"
 
-#: src/prefs.c:713
+#: src/gtkprefs.c:782
 msgid "Tab Completion"
 msgstr "Kiegészítés"
 
-#: src/prefs.c:714
+#: src/gtkprefs.c:783
 msgid "_Tab-complete nicks"
 msgstr "Becenév kiegészítése _TAB-al"
 
-#: src/prefs.c:715
+#: src/gtkprefs.c:784
 msgid "_Old-style tab completion"
 msgstr "Régi stílusú kiegészítés TAB-al"
 
-#: src/prefs.c:718
+#: src/gtkprefs.c:787
 msgid "_Show people joining/leaving in window"
 msgstr "Csatlakozó/kilépõ pertnerek mutatá_sa ablakban"
 
-#: src/prefs.c:719
+#: src/gtkprefs.c:788
 msgid "Co_lorize screennames"
 msgstr "Fióknevek színezése"
 
-#: src/prefs.c:736
+#: src/gtkprefs.c:805
 msgid "IM Tabs"
 msgstr "IM fülek"
 
-#: src/prefs.c:737 src/prefs.c:747
+#: src/gtkprefs.c:806 src/gtkprefs.c:816
 msgid "Tab _placement:"
 msgstr "Fül elhelyezése:"
 
-#: src/prefs.c:738 src/prefs.c:748
+#: src/gtkprefs.c:807 src/gtkprefs.c:817
 msgid "Top"
 msgstr "Felül"
 
-#: src/prefs.c:739 src/prefs.c:749
+#: src/gtkprefs.c:808 src/gtkprefs.c:818
 msgid "Bottom"
 msgstr "Alul"
 
-#: src/prefs.c:740 src/prefs.c:750
+#: src/gtkprefs.c:809 src/gtkprefs.c:819
 msgid "Left"
 msgstr "Bal oldalon"
 
-#: src/prefs.c:741 src/prefs.c:751
+#: src/gtkprefs.c:810 src/gtkprefs.c:820
 msgid "Right"
 msgstr "Jobb oldalon"
 
-#: src/prefs.c:743
+#: src/gtkprefs.c:812
 msgid ""
 "Show all _instant messages in one tabbed\n"
 "window"
@@ -5837,176 +5570,176 @@ msgstr ""
 "M_inden üzenet egyetlen füllel ellátot ablakban történõ\n"
 "megjelenítése"
 
-#: src/prefs.c:746
+#: src/gtkprefs.c:815
 msgid "Chat Tabs"
 msgstr "Csevegõ fülek"
 
-#: src/prefs.c:753
+#: src/gtkprefs.c:822
 msgid "Show all c_hats in one tabbed window"
 msgstr "Minden csevegés mutatása egyetlen füllel ellátot ablakban "
 
-#: src/prefs.c:756
+#: src/gtkprefs.c:825
 msgid "Tab Options"
 msgstr "Fül beállítások"
 
-#: src/prefs.c:757
+#: src/gtkprefs.c:826
 msgid "Show _close button on tabs."
 msgstr "Bezár gomb megjelenítése a füleken."
 
-#: src/prefs.c:777
+#: src/gtkprefs.c:846
 msgid "Proxy Type"
 msgstr "Proxy típusa"
 
-#: src/prefs.c:778
+#: src/gtkprefs.c:847
 msgid "Proxy _type:"
 msgstr "Proxy _típusa"
 
-#: src/prefs.c:779
+#: src/gtkprefs.c:848
 msgid "No proxy"
 msgstr "Nincs Proxy"
 
-#: src/prefs.c:784
+#: src/gtkprefs.c:853
 msgid "Proxy Server"
 msgstr "Proxy kiszolgáló"
 
-#: src/prefs.c:797
+#: src/gtkprefs.c:866
 msgid "_Host"
 msgstr "_Kiszolgáló"
 
-#: src/prefs.c:811
+#: src/gtkprefs.c:880
 msgid "Port"
 msgstr "Port"
 
-#: src/prefs.c:827
+#: src/gtkprefs.c:896
 msgid "_User"
 msgstr "_Felhasználó"
 
-#: src/prefs.c:841
+#: src/gtkprefs.c:910
 msgid "Pa_ssword"
 msgstr "_Jelszó"
 
-#: src/prefs.c:862
+#: src/gtkprefs.c:931
 #, c-format
 msgid "The entered manual browser '%s' is not valid. Hyperlinks will not work."
 msgstr "A megadott '%s' böngészõ érvénytelen. Hivatkozások nem fognak mûködni."
 
-#: src/prefs.c:883
+#: src/gtkprefs.c:952
 msgid "Konqueror"
 msgstr "Konqueror"
 
-#: src/prefs.c:884
+#: src/gtkprefs.c:953
 msgid "Opera"
 msgstr "Opera"
 
-#: src/prefs.c:885
+#: src/gtkprefs.c:954
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/prefs.c:886
+#: src/gtkprefs.c:955
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/prefs.c:887
+#: src/gtkprefs.c:956
 msgid "Mozilla"
 msgstr "Mozilla"
 
-#: src/prefs.c:895
+#: src/gtkprefs.c:964
 msgid "Manual"
 msgstr "Egyéni"
 
-#: src/prefs.c:919
+#: src/gtkprefs.c:988
 msgid "Browser Selection"
 msgstr "Böngészõ választás"
 
-#: src/prefs.c:923
+#: src/gtkprefs.c:992
 msgid "_Browser"
 msgstr "_Böngészõ"
 
-#: src/prefs.c:931
+#: src/gtkprefs.c:1000
 msgid "_Manual: "
 msgstr "_Egyéni"
 
-#: src/prefs.c:946
+#: src/gtkprefs.c:1015
 msgid "Browser Options"
 msgstr "Böngészõ beállítások"
 
-#: src/prefs.c:947
+#: src/gtkprefs.c:1016
 msgid "Open new _window by default"
 msgstr "Új ablak nyitása alapértelmezésben"
 
-#: src/prefs.c:961
+#: src/gtkprefs.c:1030
 msgid "Message Logs"
 msgstr "Üzenetek naplója"
 
-#: src/prefs.c:962
+#: src/gtkprefs.c:1031
 msgid "_Log all instant messages"
 msgstr "Minden üzenet nap_lózása"
 
-#: src/prefs.c:963
+#: src/gtkprefs.c:1032
 msgid "Log all c_hats"
 msgstr "Társalgások naplózása"
 
-#: src/prefs.c:964
+#: src/gtkprefs.c:1033
 msgid "Strip _HTML from logs"
 msgstr "HTML elemek ne kerüljenek a naplózásra"
 
-#: src/prefs.c:966
+#: src/gtkprefs.c:1035
 msgid "System Logs"
 msgstr "Rendszernapló"
 
-#: src/prefs.c:967
+#: src/gtkprefs.c:1036
 msgid "Log when buddies _sign on/sign off"
 msgstr "Partnerek be/kilépé_sének naplózása"
 
-#: src/prefs.c:969
+#: src/gtkprefs.c:1038
 msgid "Log when buddies become _idle/un-idle"
 msgstr "Partnerek (_in)aktivitásának naplózása"
 
-#: src/prefs.c:971
+#: src/gtkprefs.c:1040
 msgid "Log when buddies go away/come _back"
 msgstr "Partnerek jelen/távollétének naplózása"
 
-#: src/prefs.c:972
+#: src/gtkprefs.c:1041
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Saját belépés/táv_ollét/inaktivitás naplózása"
 
-#: src/prefs.c:974
+#: src/gtkprefs.c:1043
 msgid "I_ndividual log file for each buddy's signons"
 msgstr "Mi_nden belépõ partner külön naplófájllal rendelkezzen"
 
-#: src/prefs.c:1007
+#: src/gtkprefs.c:1076
 msgid "Sound Options"
 msgstr "Hangok beállítása"
 
-#: src/prefs.c:1008
+#: src/gtkprefs.c:1077
 msgid "_No sounds when you log in"
 msgstr "_Nincs hang bejelentkezéskor"
 
-#: src/prefs.c:1009
+#: src/gtkprefs.c:1078
 msgid "_Sounds while away"
 msgstr "Hang lejátszása mialatt távol"
 
-#: src/prefs.c:1012
+#: src/gtkprefs.c:1081
 msgid "Sound Method"
 msgstr "Hangok lejátszása"
 
-#: src/prefs.c:1013
+#: src/gtkprefs.c:1082
 msgid "_Method"
 msgstr "_Módszer"
 
-#: src/prefs.c:1016
+#: src/gtkprefs.c:1085
 msgid "Console beep"
 msgstr "Hangszóró"
 
-#: src/prefs.c:1018
+#: src/gtkprefs.c:1087
 msgid "Automatic"
 msgstr "Automatikus"
 
-#: src/prefs.c:1025
+#: src/gtkprefs.c:1094
 msgid "Command"
 msgstr "Parancs"
 
-#: src/prefs.c:1034
+#: src/gtkprefs.c:1103
 #, c-format
 msgid ""
 "Sound c_ommand\n"
@@ -6015,67 +5748,67 @@ msgstr ""
 "Hang lejátszó\n"
 "(%s fájl név megadáshoz)"
 
-#: src/prefs.c:1073
+#: src/gtkprefs.c:1142
 msgid "_Sending messages removes away status"
 msgstr "Üzenet küldé_se megszünteti a távollét állapotát"
 
-#: src/prefs.c:1074
+#: src/gtkprefs.c:1143
 msgid "_Queue new messages when away"
 msgstr "Új üzenetek várakozási sorba kerüljenek ha távol"
 
-#: src/prefs.c:1076
+#: src/gtkprefs.c:1145
 msgid "Auto-response"
 msgstr "Automatikus-válasz"
 
-#: src/prefs.c:1079
+#: src/gtkprefs.c:1148
 msgid "Seconds before _resending:"
 msgstr "Másodpe_rc újraküldés elõtt:"
 
-#: src/prefs.c:1081
+#: src/gtkprefs.c:1150
 msgid "_Don't send auto-response"
 msgstr "Nem kül_d automatikus válaszokat"
 
-#: src/prefs.c:1082
+#: src/gtkprefs.c:1151
 msgid "_Only send auto-response when idle"
 msgstr "Automatikus válasz küldése csak inaktív állap_otban"
 
-#: src/prefs.c:1083
+#: src/gtkprefs.c:1152
 msgid "Do_n't send auto-response in active conversations"
 msgstr "Nem küld automatikus választ aktív társalgás közbe_n"
 
-#: src/prefs.c:1089
+#: src/gtkprefs.c:1158
 msgid "Idle _time reporting:"
 msgstr "Inak_tív idõ jelentése:"
 
-#: src/prefs.c:1091
+#: src/gtkprefs.c:1160
 msgid "Gaim usage"
 msgstr "Gaim szerint"
 
-#: src/prefs.c:1094
+#: src/gtkprefs.c:1163
 msgid "X usage"
 msgstr "X szerint"
 
-#: src/prefs.c:1096
+#: src/gtkprefs.c:1165
 msgid "Windows usage"
 msgstr "Ablakok"
 
-#: src/prefs.c:1103
+#: src/gtkprefs.c:1172
 msgid "Auto-away"
 msgstr "Automatikus-távollét"
 
-#: src/prefs.c:1104
+#: src/gtkprefs.c:1173
 msgid "Set away _when idle"
 msgstr "Távol van ha inaktív"
 
-#: src/prefs.c:1105
+#: src/gtkprefs.c:1174
 msgid "_Minutes before setting away:"
 msgstr "Nincs a gépnél jelzés ennyi perc után:"
 
-#: src/prefs.c:1111
+#: src/gtkprefs.c:1180
 msgid "Away m_essage:"
 msgstr "Távol üz_enet"
 
-#: src/prefs.c:1166
+#: src/gtkprefs.c:1237
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -6090,7 +5823,7 @@ msgstr ""
 "<span weight=\"bold\">Web cím:</span>\t\t%s\n"
 "<span weight=\"bold\">Fájl név:</span>\t%s"
 
-#: src/prefs.c:1171
+#: src/gtkprefs.c:1242
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -6105,142 +5838,476 @@ msgstr ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Fájlnév:</span>  %s"
 
-#: src/prefs.c:1345
+#: src/gtkprefs.c:1417
 msgid "Load"
 msgstr "Betölt"
 
-#: src/prefs.c:1352
+#: src/gtkprefs.c:1424
 msgid "Name"
 msgstr "Név"
 
-#: src/prefs.c:1399
+#: src/gtkprefs.c:1471
 msgid "Details"
 msgstr "Részletek"
 
-#: src/prefs.c:1498
+#: src/gtkprefs.c:1570
 msgid "Sound Selection"
 msgstr "Hang kiválasztása"
 
-#: src/prefs.c:1591
+#: src/gtkprefs.c:1663
 msgid "Play"
 msgstr "Lejászás"
 
-#: src/prefs.c:1598
+#: src/gtkprefs.c:1670
 msgid "Event"
 msgstr "Esemény"
 
-#: src/prefs.c:1622
+#: src/gtkprefs.c:1690 src/multi.c:720
+msgid "Reset"
+msgstr "Visszaállít"
+
+#: src/gtkprefs.c:1694
 msgid "Choose..."
 msgstr "Kiválaszt..."
 
-#: src/prefs.c:1746
+#: src/gtkprefs.c:1818
 msgid "_Edit"
 msgstr "_Szerkeszt"
 
-#: src/prefs.c:1782
+#: src/gtkprefs.c:1854
 msgid "Interface"
 msgstr "Felület"
 
-#: src/prefs.c:1783
+#: src/gtkprefs.c:1855
 msgid "Smiley Themes"
 msgstr "Hangulatjel sablonok"
 
-#: src/prefs.c:1784
+#: src/gtkprefs.c:1856
 msgid "Fonts"
 msgstr "Betûtípusok"
 
-#: src/prefs.c:1785
+#: src/gtkprefs.c:1857
 msgid "Message Text"
 msgstr "Üzenet szövege"
 
-#: src/prefs.c:1786
+#: src/gtkprefs.c:1858
 msgid "Shortcuts"
 msgstr "Billentyûparancsok"
 
-#: src/prefs.c:1789
+#: src/gtkprefs.c:1861
 msgid "IMs"
 msgstr "IM-ek"
 
-#: src/prefs.c:1791
+#: src/gtkprefs.c:1863
 msgid "Tabs"
 msgstr "Fülek"
 
-#: src/prefs.c:1792
+#: src/gtkprefs.c:1864
 msgid "Proxy"
 msgstr "Proxy"
 
 #. We use the registered default browser in windows
-#: src/prefs.c:1795
+#: src/gtkprefs.c:1867
 msgid "Browser"
 msgstr "Böngészõ"
 
-#: src/prefs.c:1797
+#: src/gtkprefs.c:1869
 msgid "Logging"
 msgstr "Naplózás"
 
-#: src/prefs.c:1798
+#: src/gtkprefs.c:1870
 msgid "Sounds"
 msgstr "Hangok"
 
-#: src/prefs.c:1799
+#: src/gtkprefs.c:1871
 msgid "Sound Events"
 msgstr "Hangok eseményekhez"
 
-#: src/prefs.c:1800
+#: src/gtkprefs.c:1872
 msgid "Away / Idle"
 msgstr "Távol / Inaktív "
 
-#: src/prefs.c:1801
+#: src/gtkprefs.c:1873
 msgid "Away Messages"
 msgstr "Távollét üzenetek"
 
-#: src/prefs.c:1804
+#: src/gtkprefs.c:1876
 msgid "Plugins"
 msgstr "Pluginek"
 
-#: src/prpl.c:219
-msgid "Gaim - Prompt"
-msgstr "Gaim - Értesítõ"
+#: src/gtkprefs.c:1926 src/main.c:377 src/win32/systray.c:355
+msgid "Preferences"
+msgstr "Beállítások"
 
-#: src/prpl.c:302
+#: src/gtkutils.c:284
+msgid "Can't save icon file to disk."
+msgstr "Icon fájlt nem sikerült lemezre menteni."
+
+#: src/gtkutils.c:319
+msgid "Gaim - Save Icon"
+msgstr "Gaim - Ikon mentése"
+
+#: src/html.c:322
+msgid "g003: Error opening connection.\n"
+msgstr "g003: Hiba a kapcsolat megnyitása közben.\n"
+
+#: src/log.c:34
+msgid "Error in specifying buddy conversation."
+msgstr "Hiba a társalgás megadásában."
+
+#: src/log.c:40
+msgid "Unable to find conversation log"
+msgstr "Társalgás naplója nem található"
+
+#: src/log.c:132
+msgid "Gaim - Save Conversation"
+msgstr "Gaim - Társalgás mentése"
+
+#: src/log.c:173 src/log.c:194 src/log.c:207
+#, c-format
+msgid "Unable to make directory %s for logging"
+msgstr "Nem sikerült létrehozni a könyvtárat %s a naplózáshoz"
+
+#: src/log.c:261 src/log.c:277
+#, c-format
+msgid "IM Sessions with %s\n"
+msgstr "IM folyamat %s-(val/vel)\n"
+
+#: src/log.c:264 src/log.c:280
+#, c-format
+msgid "IM Sessions with %s"
+msgstr "IM folyamat %s-(val/vel)"
+
+#: src/log.c:311
+#, c-format
+msgid "+++ %s (%s) signed on @ %s"
+msgstr "+++ %s (%s) belépett @ %s"
+
+#: src/log.c:316
+#, c-format
+msgid "+++ %s (%s) signed off @ %s"
+msgstr "+++ %s (%s) kilépett @ %s"
+
+#: src/log.c:321
+#, c-format
+msgid "+++ %s (%s) changed away state @ %s"
+msgstr "+++ %s (%s) állapotát megváltoztatta @ %s"
+
+#: src/log.c:326
+#, c-format
+msgid "+++ %s (%s) came back @ %s"
+msgstr "+++ %s (%s) visszajött @ %s"
+
+#: src/log.c:331
+#, c-format
+msgid "+++ %s (%s) became idle @ %s"
+msgstr "+++ %s (%s) inaktív @ %s"
+
+#: src/log.c:336
+#, c-format
+msgid "+++ %s (%s) returned from idle @ %s"
+msgstr "+++ %s (%s) inaktív állapota megszünt @ %s"
+
+#: src/log.c:341
+#, c-format
+msgid "+++ Program exit @ %s"
+msgstr "+++ Program vége @ %s"
+
+#: src/log.c:348
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed on @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) belépett @ %s"
+
+#: src/log.c:353
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed off @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) kilépett @ %s"
+
+#: src/log.c:358
+#, c-format
+msgid "%s (%s) reported that %s (%s) went away @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) nincs a gépnél @ %s"
+
+#: src/log.c:363
+#, c-format
+msgid "%s (%s) reported that %s (%s) came back @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) visszajött @ %s"
+
+#: src/log.c:368
+#, c-format
+msgid "%s (%s) reported that %s (%s) became idle @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) inaktív @ %s"
+
+#: src/log.c:374
+#, c-format
+msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
+msgstr "%s (%s) jelenti, hogy %s (%s) inaktív állapota megszûnt @ %s"
+
+#: src/log.c:386
+#, c-format
+msgid "%s (%s) reported that %s signed on @ %s"
+msgstr "%s (%s) jelenti, hogy %s belépett @ %s"
+
+#: src/log.c:391
+#, c-format
+msgid "%s (%s) reported that %s signed off @ %s"
+msgstr "%s (%s) jelenti, hogy %s kilépett @ %s"
+
+#: src/log.c:396
+#, c-format
+msgid "%s (%s) reported that %s went away @ %s"
+msgstr "%s (%s) jelenti, hogy %s nincs a gépnél @ %s"
+
+#: src/log.c:401
+#, c-format
+msgid "%s (%s) reported that %s came back @ %s"
+msgstr "%s (%s) jelenti, hogy %s visszajött @ %s"
+
+#: src/log.c:406
+#, c-format
+msgid "%s (%s) reported that %s became idle @ %s"
+msgstr "%s (%s) jelenti, hogy %s inaktív lett @ %s"
+
+#: src/log.c:412
+#, c-format
+msgid "%s (%s) reported that %s returned from idle @ %s"
+msgstr "%s (%s) jelenti, hogy %s visszatért inaktív állapotból @ %s"
+
+#: src/main.c:186
+msgid "Please enter your login."
+msgstr "Add meg a belépéshez szükséges adatokat."
+
+#: src/main.c:275
+msgid "<New User>"
+msgstr "<Új felhasználó>"
+
+#: src/main.c:317
+msgid "Login"
+msgstr "Bejelentkezés"
+
+#: src/main.c:333
+msgid "Screen Name:"
+msgstr "Fiók azonosító: "
+
+#. And now for the buttons
+#: src/main.c:367
+msgid "Accounts"
+msgstr "Fiókok"
+
+#: src/main.c:383 src/win32/systray.c:191
+msgid "Sign On"
+msgstr "Bejelentkezés"
+
+#: src/multi.c:265
+msgid "Screenname"
+msgstr "Fiók azonosító"
+
+#: src/multi.c:293
+msgid "Protocol"
+msgstr "Protokol"
+
+#: src/multi.c:657
+msgid "Load Buddy Icon"
+msgstr "Ikon betöltése"
+
+#: src/multi.c:701
+msgid "Buddy Icon File:"
+msgstr "Ikon file:"
+
+#: src/multi.c:747
+msgid "Login Options"
+msgstr "Bejelentkezés beállításai"
+
+#: src/multi.c:759
+msgid "Protocol:"
+msgstr "Protokol:"
+
+#: src/multi.c:774
+msgid "Screenname:"
+msgstr "Fiók azonosító:"
+
+#: src/multi.c:829
+msgid "Remember Password"
+msgstr "Jelszó mentése"
+
+#: src/multi.c:830
+msgid "Auto-Login"
+msgstr "Automatikus bejelentkezés"
+
+#: src/multi.c:887
+msgid "User Options"
+msgstr "Felhasználó beállításai"
+
+#: src/multi.c:897
+msgid "New Mail Notifications"
+msgstr "Figyelmeztessen új levél érkezésekor"
+
+#: src/multi.c:958
+#, c-format
+msgid "%s Options"
+msgstr "%s beállításai"
+
+#: src/multi.c:1002
+msgid "Register with server"
+msgstr "Regisztráció a kiszolgálóval"
+
+#: src/multi.c:1035
+msgid "Proxy Options"
+msgstr "Proxy beállításai"
+
+#: src/multi.c:1049
+msgid "Proxy _Type"
+msgstr "Proxy _típusa"
+
+#: src/multi.c:1058
+msgid "Use Global Proxy Settings"
+msgstr "Globális proxy beállítások használata"
+
+#: src/multi.c:1067
+msgid "No Proxy"
+msgstr "Nincs Proxy"
+
+#: src/multi.c:1119
+msgid "_Host:"
+msgstr "_Gépnév:"
+
+#: src/multi.c:1155
+msgid "_User:"
+msgstr "_Felhasználó:"
+
+#: src/multi.c:1171
+msgid "Pa_ssword:"
+msgstr "Jel_szó:"
+
+#: src/multi.c:1245
+msgid "Modify Account"
+msgstr "Fiók módosítása"
+
+#: src/multi.c:1264
+msgid "Show more options"
+msgstr "További opciók mutatása"
+
+#: src/multi.c:1264
+msgid "Show fewer options"
+msgstr "Kevesebb opció mutatása"
+
+#: src/multi.c:1375
+msgid "_Login"
+msgstr "Beje_lentkezés"
+
+#: src/multi.c:1393
+#, c-format
+msgid ""
+"Please enter your password for %s.\n"
+"\n"
+msgstr ""
+"Kérlek add meg a jelszavad a következõhöz %s.\n"
+"\n"
+
+#: src/multi.c:1404
+msgid "_Password"
+msgstr "_Jelszó"
+
+#: src/multi.c:1456
+msgid "TOC not found."
+msgstr "TOC nem található."
+
+#: src/multi.c:1457
+msgid ""
+"You have attempted to login an IM account using the TOC protocol.  Because "
+"this protocol is inferior to OSCAR, it is now compiled as a plugin by "
+"default. To login, edit this account to use OSCAR or load the TOC plugin."
+msgstr ""
+"Megpróbáltál belépni a TOC protokoll használatával. Mivel ez nem a megfelelõ "
+"protokol az OSCAR IM-hez, ezért pluginként van lefordítva. A belépéshez "
+"módosítsd a fiókot OSCAR protokol használatára vagy töltsd be a TOC plugint."
+
+#: src/multi.c:1465
+msgid "Protocol not found."
+msgstr "Protokol nem található."
+
+#: src/multi.c:1466
+msgid ""
+"You cannot log this account in; you do not have the protocol it uses loaded, "
+"or the protocol does not have a login function."
+msgstr ""
+"Nem jelentkezhetsz be ezzel a fiókkal. Nincs vagy nem a megfelelõ protokol "
+"van betöltve ami ezt a funckiót végrehajtaná."
+
+#: src/multi.c:1546
+#, c-format
+msgid "Are you sure you want to delete %s?"
+msgstr "Biztos hogy törölni akarod %s fiókot?"
+
+#: src/multi.c:1549
+msgid "Delete"
+msgstr "Töröl"
+
+#: src/multi.c:1579
+msgid "Account Editor"
+msgstr "Fiók szerkesztõ"
+
+#: src/multi.c:1618
+msgid "_Modify"
+msgstr "_Módosítás"
+
+#: src/multi.c:1668
+msgid "Done."
+msgstr "Kész."
+
+#: src/multi.c:1904
+msgid "Signon: "
+msgstr "Bejelentkezés:"
+
+#: src/multi.c:1963
+msgid "Signon"
+msgstr "Bejelentkezés"
+
+#: src/multi.c:1975
+msgid "Cancel All"
+msgstr "Minden törlése"
+
+#: src/multi.c:2030
+#, c-format
+msgid ""
+"%s\n"
+"%s: %s"
+msgstr ""
+"%s\n"
+"%s: %s"
+
+#: src/multi.c:2051
+#, c-format
+msgid "%s was unable to sign on"
+msgstr "%s nem tudott bejelentkezni"
+
+#: src/multi.c:2052
+msgid "Signon Error"
+msgstr "Bejelentkezési hiba"
+
+#: src/multi.c:2063
+msgid "Notice"
+msgstr "Értesítés"
+
+#: src/multi.c:2075
+#, c-format
+msgid "%s has been signed off"
+msgstr "%s kilépett"
+
+#: src/multi.c:2076
+msgid "Connection Error"
+msgstr "Hiba a kapcsolatban"
+
+#: src/prpl.c:113
 msgid "No actions available"
 msgstr "Nincs elérhetõ funkció"
 
-#: src/prpl.c:452
-#, c-format
-msgid "%s has mail from %s: %s"
-msgstr "%s-nek levele érkezett %s-tõl: %s"
-
-#: src/prpl.c:452
-msgid "No Subject"
-msgstr "Nincs tárgy megadva"
-
-#: src/prpl.c:454
-#, c-format
-msgid "%s has new mail."
-msgstr "%s-nek új level van."
-
-#: src/prpl.c:457
-#, fuzzy, c-format
-msgid "%s has %d new message."
-msgid_plural "%s has %d new messages."
-msgstr[0] "%s-nek %d új üzenete van."
-msgstr[1] "<i>Felhasználó nem rendelkezik üzenettel távollét esetére</i>"
-
-#: src/prpl.c:473
-msgid "Gaim - New Mail"
-msgstr "Gaim - Új levél"
-
-#: src/prpl.c:492
-msgid "Open Mail"
-msgstr "Level megnyitása"
-
-#: src/prpl.c:694
+#: src/prpl.c:393
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s felvette %s-t a partnerei közzé %s%s%s"
 
-#: src/prpl.c:702
+#: src/prpl.c:401
 msgid ""
 "\n"
 "\n"
@@ -6250,56 +6317,56 @@ msgstr ""
 "\n"
 "Fel kívánod venni ezt a partnert a listádra?"
 
-#: src/prpl.c:704
+#: src/prpl.c:404
 msgid "Gaim - Information"
 msgstr "Gaim - Információ"
 
-#: src/prpl.c:706
-msgid "Gaim - Confirm"
-msgstr "Gaim - Jóváhagyás"
+#: src/prpl.c:407
+msgid "Add buddy to your list?"
+msgstr "Felveszed a partnert listádra?"
 
-#: src/prpl.c:747
+#: src/prpl.c:451
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
 msgstr "Nem rendelkezel új fiók regisztrálásához szükséges protokollal."
 
-#: src/prpl.c:784
+#: src/prpl.c:488
 msgid "Gaim - Registration"
 msgstr "Gaim - Regisztráció"
 
-#: src/prpl.c:797
+#: src/prpl.c:501
 msgid "Registration Information"
 msgstr "Regisztrációs adatok"
 
-#: src/prpl.c:811
+#: src/prpl.c:515
 msgid "Register"
 msgstr "Regisztráció"
 
-#: src/server.c:54
+#: src/server.c:57
 msgid "Please enter your password"
 msgstr "Kérlek add meg a jelszavad"
 
-#: src/server.c:880
+#: src/server.c:885
 #, c-format
 msgid "(%d messages)"
 msgstr "(%d üzenet)"
 
-#: src/server.c:892
+#: src/server.c:897
 msgid "(1 message)"
 msgstr "(1 üzenet)"
 
-#: src/server.c:1072 src/server.c:1079
+#: src/server.c:1077 src/server.c:1084
 #, c-format
 msgid "%s logged in."
 msgstr "%s bejelentkezett."
 
-#: src/server.c:1095 src/server.c:1102
+#: src/server.c:1100 src/server.c:1107
 #, c-format
 msgid "%s logged out."
 msgstr "%s kijelentkezett."
 
-#: src/server.c:1136
+#: src/server.c:1141
 #, c-format
 msgid ""
 "%s has just been warned by %s.\n"
@@ -6308,11 +6375,11 @@ msgstr ""
 "%s-t figyelmeztette %s.\n"
 "Figyelmeztetési szinted %d%%"
 
-#: src/server.c:1139
+#: src/server.c:1144
 msgid "an anonymous person"
 msgstr "ismeretlen személy"
 
-#: src/server.c:1227
+#: src/server.c:1232
 #, c-format
 msgid ""
 "User '%s' invites %s to buddy chat room: '%s'\n"
@@ -6321,80 +6388,84 @@ msgstr ""
 "'%s' invitálja %s-t külön csevegõ szobára: '%s'\n"
 "%s"
 
-#: src/server.c:1231
+#: src/server.c:1236
 #, c-format
 msgid "User '%s' invites %s to buddy chat room: '%s'\n"
 msgstr "'%s' invitálja %s-t külön csevegõ szobára: '%s'\n"
 
-#: src/server.c:1237
-msgid "Buddy Chat Invite"
-msgstr "Partner invitálása csevegésre"
+#: src/server.c:1242
+msgid "Accept chat invitation?"
+msgstr "Elfogadod a csevegésre invitálást?"
 
-#: src/server.c:1406
+#: src/server.c:1414
 msgid "Gaim - Popup"
 msgstr "Gaim - Értesítõ"
 
-#: src/server.c:1433
+#: src/server.c:1441
 msgid "More Info"
 msgstr "További információ"
 
-#: src/sound.c:78
+#: src/sound.c:79
 msgid "Buddy logs in"
 msgstr "Partner belép"
 
-#: src/sound.c:79
+#: src/sound.c:80
 msgid "Buddy logs out"
 msgstr "Partner kilép"
 
-#: src/sound.c:80
+#: src/sound.c:81
 msgid "Message received"
 msgstr "Üzenet fogadva"
 
-#: src/sound.c:81
+#: src/sound.c:82
 msgid "Message received begins conversation"
 msgstr "Társalgás kezdetét jelzõ üzenet"
 
-#: src/sound.c:82
+#: src/sound.c:83
 msgid "Message sent"
 msgstr "Üzenet elküldve"
 
-#: src/sound.c:83
+#: src/sound.c:84
 msgid "Person enters chat"
 msgstr "Személy csatlakozott a csevegéshez"
 
-#: src/sound.c:84
+#: src/sound.c:85
 msgid "Person leaves chat"
 msgstr "Személy elhagyta a csevegõt"
 
-#: src/sound.c:85
+#: src/sound.c:86
 msgid "You talk in chat"
 msgstr "Te beszélsz"
 
-#: src/sound.c:86
+#: src/sound.c:87
 msgid "Others talk in chat"
 msgstr "Mások beszélnek "
 
-#: src/sound.c:89
+#: src/sound.c:90
 msgid "Someone says your name in chat"
 msgstr "Valaki megemlítette a nevedet csevegés közben"
 
-#: src/sound.c:183
+#: src/sound.c:184
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
 msgstr "Hang lejátszása sikertelen, mert a megadott fájl (%s) nem létezik."
 
-#: src/sound.c:195
+#: src/sound.c:197
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
 msgstr "Hang lejátszása sikertelen, mert a lejátszáshoz nincs megadva külsõ program."
 
-#: src/sound.c:202
+#: src/sound.c:206
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
 "launched: %s"
 msgstr "Hang lejátszása sikertelen, mert a megadott program nem indítható: %s"
+
+#: src/stock.c:87
+msgid "_Open Mail"
+msgstr "Level megnyitása"
 
 #: src/util.c:109 src/util.c:114 src/util.c:119 src/util.c:122
 msgid "day"
@@ -6416,7 +6487,7 @@ msgstr[0] "perc"
 msgstr[1] "perc után a következ?vel"
 
 #. full help text
-#: src/util.c:717
+#: src/util.c:707
 #, c-format
 msgid ""
 "Gaim %s\n"
@@ -6450,24 +6521,24 @@ msgstr ""
 "  -h, --help          súgó megjelenítése és kilép\n"
 
 #. short message
-#: src/util.c:732
+#: src/util.c:722
 #, c-format
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s. Próbáld a `%s -h' további segítségért.\n"
 
-#: src/util.c:1020
+#: src/util.c:1010
 msgid "Not connected to AIM"
 msgstr "Nincs az AIM-hez kapcsolódva"
 
-#: src/util.c:1029 src/util.c:1068
+#: src/util.c:1019 src/util.c:1058
 msgid "No screenname given."
 msgstr "Nincs ilyen fiók azonosító."
 
-#: src/util.c:1105
+#: src/util.c:1095
 msgid "No roomname given."
 msgstr "Nincs ilyen szoba."
 
-#: src/util.c:1124
+#: src/util.c:1114
 msgid "Invalid AIM URI"
 msgstr "Érvénytelen AIM URI"
 
@@ -6502,12 +6573,12 @@ msgstr "Visszajöttem"
 msgid "Exit"
 msgstr "Kilép"
 
-#: src/plugin.c:227
+#: src/plugin.c:231
 #, c-format
 msgid "The plugin %s did not return any valid plugin information"
 msgstr "A %s plugin nem adott vissza érvényes plugin információt"
 
-#: src/plugin.c:231
+#: src/plugin.c:236
 msgid "Gaim was unable to load your plugin."
 msgstr "Gaim nem tudta a plugint betölteni."
 
@@ -6516,9 +6587,68 @@ msgstr "Gaim nem tudta a plugint betölteni."
 msgid "Custom"
 msgstr "Egyedi"
 
-#: src/gtkdebug.c:71
+#: src/gtkdebug.c:111
 msgid "Debug Window"
 msgstr "Nyomkövetõ ablak"
+
+#: src/gtkdebug.c:150
+msgid "Pause"
+msgstr "_Szüneteltet"
+
+#: src/gtkdebug.c:156
+msgid "Timestamps"
+msgstr "Idõbélyegek"
+
+#~ msgid "Set Friendly Name:"
+#~ msgstr "Becenév beállítása:"
+
+#~ msgid "Set Home Phone Number:"
+#~ msgstr "Otthoni telefonszám:"
+
+#~ msgid "Set Work Phone Number:"
+#~ msgstr "Munkahelyi telefonszám:"
+
+#~ msgid "Set Mobile Phone Number:"
+#~ msgstr "Mobil telefon:"
+
+#~ msgid "MSN Mobile Support"
+#~ msgstr "MSN mobil támogatás"
+
+#~ msgid "Do you want to enable or disable MSN Mobile device support?"
+#~ msgstr "Engedélyezed vagy tiltod az MSN mobil eszköz támogatást?"
+
+#~ msgid "Enable"
+#~ msgstr "Engedélyez"
+
+#~ msgid "Disable"
+#~ msgstr "Tilt"
+
+#~ msgid "Send message:"
+#~ msgstr "Üzenet küldése:"
+
+#~ msgid "Accept"
+#~ msgstr "Elfogad"
+
+#~ msgid "Gaim - Prompt"
+#~ msgstr "Gaim - Értesítõ"
+
+#~ msgid "%s has mail from %s: %s"
+#~ msgstr "%s-nek levele érkezett %s-tõl: %s"
+
+#~ msgid "No Subject"
+#~ msgstr "Nincs tárgy megadva"
+
+#~ msgid "%s has new mail."
+#~ msgstr "%s-nek új level van."
+
+#~ msgid "Gaim - New Mail"
+#~ msgstr "Gaim - Új levél"
+
+#~ msgid "Gaim - Confirm"
+#~ msgstr "Gaim - Jóváhagyás"
+
+#~ msgid "Buddy Chat Invite"
+#~ msgstr "Partner invitálása csevegésre"
 
 #~ msgid "Gaim - Buddy Ticker"
 #~ msgstr "Gaim - Partner figyelõ"
@@ -7051,9 +7181,6 @@ msgstr "Nyomkövetõ ablak"
 
 #~ msgid "Link"
 #~ msgstr "Hivatkozás"
-
-#~ msgid "Image"
-#~ msgstr "Kép"
 
 #~ msgid "Do you really want to warn %s?"
 #~ msgstr "Tényleg akarod %s-t figyelmeztetni?"
