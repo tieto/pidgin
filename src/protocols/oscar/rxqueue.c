@@ -182,9 +182,16 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	 * Rendezvous (client to client) connections do not speak FLAP, so this 
 	 * function will break on them.
 	 */
-	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS)
-		payloadlen = aim_get_command_rendezvous(sess, conn, newrx);
-	else if (conn->type == AIM_CONN_TYPE_LISTENER) {
+	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
+		int ret = aim_get_command_rendezvous(sess, conn, newrx);
+
+		if (ret < 0) {
+			free(newrx);
+			return -1;
+		}
+
+		payloadlen = ret;
+	} else if (conn->type == AIM_CONN_TYPE_LISTENER) {
 		faimdprintf(sess, 0, "AIM_CONN_TYPE_LISTENER on fd %d\n", conn->fd);
 		free(newrx);
 		return -1;

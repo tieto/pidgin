@@ -6,6 +6,8 @@
 #define FAIM_INTERNAL
 #include <aim.h> 
 
+#include <string.h>
+
 /* Stored in the ->priv of chat connections */
 struct chatconnpriv {
 	fu16_t exchange;

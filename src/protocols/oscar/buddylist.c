@@ -6,6 +6,8 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
+#include <string.h>
+
 /*
  * Subtype 0x0002 - Request rights.
  *

@@ -29,7 +29,7 @@ faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *form
 	return;
 }
 
-faim_export int aimutil_putstr(u_char *dest, const char *src, int len)
+faim_export int aimutil_putstr(char *dest, const char *src, int len)
 {
 	memcpy(dest, src, len);
 	return len;

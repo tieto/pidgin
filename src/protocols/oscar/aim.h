@@ -547,7 +547,7 @@ faim_export void aim_tx_purgequeue(aim_session_t *);
 
 faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval);
 
-faim_export int aim_conn_addhandler(aim_session_t *, aim_conn_t *conn, u_short family, u_short type, aim_rxcallback_t newhandler, u_short flags);
+faim_export int aim_conn_addhandler(aim_session_t *, aim_conn_t *conn, fu16_t family, fu16_t type, aim_rxcallback_t newhandler, fu16_t flags);
 faim_export int aim_clearhandlers(aim_conn_t *conn);
 
 faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group);
@@ -556,6 +556,7 @@ faim_export void aim_conn_close(aim_conn_t *deadconn);
 faim_export aim_conn_t *aim_newconn(aim_session_t *, int type, const char *dest);
 faim_export int aim_conngetmaxfd(aim_session_t *);
 faim_export aim_conn_t *aim_select(aim_session_t *, struct timeval *, int *);
+faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_conn_isready(aim_conn_t *);
 faim_export int aim_conn_setstatus(aim_conn_t *, int);
 faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn);
@@ -1377,18 +1378,18 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
  * their use.
  *
  */
-#define aimutil_put8(buf, data) ((*(buf) = (u_char)(data)&0xff),1)
+#define aimutil_put8(buf, data) ((*(buf) = (fu8_t)(data)&0xff),1)
 #define aimutil_get8(buf) ((*(buf))&0xff)
 #define aimutil_put16(buf, data) ( \
-		(*(buf) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+1) = (u_char)(data)&0xff),  \
+		(*(buf) = (fu8_t)((data)>>8)&0xff), \
+		(*((buf)+1) = (fu8_t)(data)&0xff),  \
 		2)
 #define aimutil_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
 #define aimutil_put32(buf, data) ( \
-		(*((buf)) = (u_char)((data)>>24)&0xff), \
-		(*((buf)+1) = (u_char)((data)>>16)&0xff), \
-		(*((buf)+2) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+3) = (u_char)(data)&0xff), \
+		(*((buf)) = (fu8_t)((data)>>24)&0xff), \
+		(*((buf)+1) = (fu8_t)((data)>>16)&0xff), \
+		(*((buf)+2) = (fu8_t)((data)>>8)&0xff), \
+		(*((buf)+3) = (fu8_t)(data)&0xff), \
 		4)
 #define aimutil_get32(buf) ((((*(buf))<<24)&0xff000000) + \
 		(((*((buf)+1))<<16)&0x00ff0000) + \
@@ -1423,7 +1424,7 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
 		(((*((buf)+3)) << 24) & 0xff000000))
 
 
-faim_export int aimutil_putstr(u_char *, const char *, int);
+faim_export int aimutil_putstr(char *, const char *, int);
 faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_util_getlocalip(fu8_t *ip);
 faim_export int aimutil_tokslen(char *toSearch, int index, char dl);

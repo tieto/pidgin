@@ -14,7 +14,7 @@ struct aim_rxcblist_s {
 	fu16_t family;
 	fu16_t type;
 	aim_rxcallback_t handler;
-	u_short flags;
+	fu16_t flags;
 	struct aim_rxcblist_s *next;
 };
 

@@ -96,7 +96,7 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src);
 faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr);
 
 /* rxhandlers.c */
-faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *conn, u_short family, u_short type);
+faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t type);
 faim_internal int aim_callhandler_noparam(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t type, aim_frame_t *ptr);
 faim_internal int aim_parse_unknown(aim_session_t *, aim_frame_t *, ...);
 faim_internal void aim_clonehandlers(aim_session_t *sess, aim_conn_t *dest, aim_conn_t *src);

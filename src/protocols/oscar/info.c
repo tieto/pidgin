@@ -242,7 +242,7 @@ static const struct {
 } aim_caps[] = {
 
 	/*
-	 * These are mostly in ascending numerical order.
+	 * These are in ascending numerical order.
 	 */
 	{AIM_CAPS_ICHAT,
 	 {0x09, 0x46, 0x00, 0x00, 0x4c, 0x7f, 0x11, 0xd1, 

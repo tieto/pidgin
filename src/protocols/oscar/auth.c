@@ -11,7 +11,7 @@
 
 #include "md5.h"
 
-static int aim_encode_password(const char *password, unsigned char *encoded);
+static int aim_encode_password(const char *password, fu8_t *encoded);
 
 /* 
  * This just pushes the passed cookie onto the passed connection, without
@@ -157,7 +157,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 	int passwdlen;
-	char *password_encoded;
+	fu8_t *password_encoded;
 
 	passwdlen = strlen(password);
 	if (!(password_encoded = (char *)malloc(passwdlen+1)))

@@ -6,6 +6,8 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
+#include <string.h>
+
 /* Subtype 0x0002 - Request BOS rights. */
 faim_export int aim_bos_reqrights(aim_session_t *sess, aim_conn_t *conn)
 {
