@@ -112,11 +112,12 @@ docklet_x11_update_icon(enum docklet_status icon)
 			break;
 	}
 
+	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+
 #if 0
 	GdkPixbuf *p;
 	GdkBitmap *mask = NULL;
 
-	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	p = gtk_widget_render_icon(GTK_WIDGET(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
 
 	if (p && (gdk_pixbuf_get_colorspace(p) == GDK_COLORSPACE_RGB) && (gdk_pixbuf_get_bits_per_sample(p) == 8)
