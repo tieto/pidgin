@@ -2045,12 +2045,14 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 			/*end my stuff*/
 
-
 			if (hb->text && hb->back != NULL) {
 				int hwidth, hheight, hei, tmpcnt;
 				hei = get_line_height(html, hb);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
+				/* we use a 2-pixel window border */
+				if (hb->x < 2)
+					hb->x = 2;
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
 							hb->x, hb->y - html->yoffset - hei - 6,
 							hwidth - shift - hb->x + 1, hei + hei + 2);
@@ -2058,7 +2060,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 					int eoff = hei + hei + 2;
 					eoff *= tmpcnt;
 					gdk_draw_rectangle(html->html_area, gc, TRUE,
-							1, hb->y - html->yoffset - hei - 6 + eoff,
+							2, hb->y - html->yoffset - hei - 6 + eoff,
 							hwidth, hei + hei + 2);
 				}
 			}
@@ -2094,14 +2096,14 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			gdk_window_get_size(html->html_area, &hwidth, &hheight);
 			gdk_gc_set_foreground(gc, hb->back);
 			gdk_draw_rectangle(html->html_area, gc, TRUE,
-						1, hb->y - html->yoffset,
+						2, hb->y - html->yoffset,
 						hwidth, 5);
 			for (tmpcnt = 0; tmpcnt < hb->newline; tmpcnt++) {
 				int eoff = hei + hei + 2;
 				eoff *= tmpcnt;
 				eoff += 5;
 				gdk_draw_rectangle(html->html_area, gc, TRUE,
-						1, hb->y - html->yoffset + eoff,
+						2, hb->y - html->yoffset + eoff,
 						hwidth, hei + hei + 2);
 			}
 		}
@@ -2134,7 +2136,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 				eoff *= tmpcnt;
 				eoff += 5;
 				gdk_draw_rectangle(html->html_area, gc, TRUE,
-						1, hb->y - html->yoffset + eoff,
+						2, hb->y - html->yoffset + eoff,
 						hwidth, hei + hei + 2);
 			}
 		}
