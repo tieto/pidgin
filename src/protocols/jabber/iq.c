@@ -254,8 +254,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
 			jcd->callback(js, packet, jcd->data);
 			g_hash_table_remove(js->iq_callbacks, id);
+			return;
 		}
-		return;
 	}
 
 	/* Apparently not, so lets see if we have a pre-defined handler */
