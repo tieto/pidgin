@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-#include "gtkinternal.h"
 #include "gtkblist.h"
+#include "gtkgaim.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
 #include "gaim-disclosure.h"
