@@ -1071,7 +1071,7 @@ struct aim_invite_priv {
 
 
 /* 0x000a - search.c */
-faim_export int aim_usersearch_address(aim_session_t *, aim_conn_t *, const char *);
+faim_export int aim_search_address(aim_session_t *, aim_conn_t *, const char *);
 
 
 
@@ -1110,8 +1110,8 @@ faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name);
 
 
 
-/* 0x000f - newsearch.c */
-struct aim_usersearch {
+/* 0x000f - odir.c */
+struct aim_odir {
 	char *first;
 	char *last;
 	char *middle;
@@ -1126,18 +1126,18 @@ struct aim_usersearch {
 	char *zip;
 	char *region;
 	char *address;
-	struct aim_usersearch *next;
+	struct aim_odir *next;
 };
 
-faim_export int aim_usersearch_email(aim_session_t *, const char *, const char *);
-faim_export int aim_usersearch_name(aim_session_t *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-faim_export int aim_usersearch_interest(aim_session_t *, const char *, const char *);
+faim_export int aim_odir_email(aim_session_t *, const char *, const char *);
+faim_export int aim_odir_name(aim_session_t *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
+faim_export int aim_odir_interest(aim_session_t *, const char *, const char *);
 
 
 
 /* 0x0010 - icon.c */
-faim_export int aim_icon_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen);
-faim_export int aim_icon_request(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
+faim_export int aim_bart_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen);
+faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
 
 
 

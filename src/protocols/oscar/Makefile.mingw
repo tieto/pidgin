@@ -70,6 +70,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			admin.c		\
 			adverts.c	\
 			auth.c 		\
+			bart.c		\
 			bos.c 		\
 			bstream.c	\
 			buddylist.c	\
@@ -78,14 +79,13 @@ C_SRC =			admin.c		\
 			conn.c		\
 			email.c		\
 			ft.c		\
-			icon.c		\
 			icq.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
 			misc.c		\
 			msgcookie.c	\
-			newsearch.c	\
+			odir.c		\
 			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\

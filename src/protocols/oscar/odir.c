@@ -19,7 +19,7 @@
  * @param email The email address you want to search for.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_usersearch_email(aim_session_t *sess, const char *region, const char *email)
+faim_export int aim_odir_email(aim_session_t *sess, const char *region, const char *email)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -68,7 +68,7 @@ faim_export int aim_usersearch_email(aim_session_t *sess, const char *region, co
  * @param address The street address where the person you want to seach for resides.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_usersearch_name(aim_session_t *sess, const char *region, const char *first, const char *middle, const char *last, const char *maiden, const char *nick, const char *city, const char *state, const char *country, const char *zip, const char *address)
+faim_export int aim_odir_name(aim_session_t *sess, const char *region, const char *first, const char *middle, const char *last, const char *maiden, const char *nick, const char *city, const char *state, const char *country, const char *zip, const char *address)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -123,7 +123,7 @@ faim_export int aim_usersearch_name(aim_session_t *sess, const char *region, con
  * @param interest1 An interest you want to search for.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_usersearch_interest(aim_session_t *sess, const char *region, const char *interest)
+faim_export int aim_odir_interest(aim_session_t *sess, const char *region, const char *interest)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -162,7 +162,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu16_t tmp, numresults;
-	struct aim_usersearch *results = NULL;
+	struct aim_odir *results = NULL;
 
 	tmp = aimbs_get16(bs); /* Unknown */
 	tmp = aimbs_get16(bs); /* Unknown */
@@ -172,9 +172,9 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 
 	/* Allocate a linked list, 1 node per result */
 	while (numresults) {
-		struct aim_usersearch *new;
+		struct aim_odir *new;
 		aim_tlvlist_t *tl = aim_readtlvchain_num(bs, aimbs_get16(bs));
-		new = (struct aim_usersearch *)malloc(sizeof(struct aim_usersearch));
+		new = (struct aim_odir *)malloc(sizeof(struct aim_odir));
 		new->first = aim_gettlv_str(tl, 0x0001, 1);
 		new->last = aim_gettlv_str(tl, 0x0002, 1);
 		new->middle = aim_gettlv_str(tl, 0x0003, 1);
@@ -199,7 +199,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 
 	/* Now free everything from above */
 	while (results) {
-		struct aim_usersearch *del = results;
+		struct aim_odir *del = results;
 		results = results->next;
 		free(del->first);
 		free(del->last);
@@ -230,7 +230,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int newsearch_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int odir_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000f;
@@ -238,7 +238,7 @@ faim_internal int newsearch_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "newsearch", sizeof(mod->name));
+	strncpy(mod->name, "odir", sizeof(mod->name));
 	mod->snachandler = snachandler;
 
 	return 0;

@@ -1,5 +1,5 @@
 /*
- * Family 0x0010 - Server stored buddy icons
+ * Family 0x0010 - Server stored buddy art
  *
  * Used for storing and retrieving your cute little buddy icon 
  * from the AIM servers.
@@ -18,7 +18,7 @@
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icon_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen)
+faim_export int aim_bart_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -76,7 +76,7 @@ static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icon_request(aim_session_t *sess, const char *sn, const fu8_t *iconcsum, fu16_t iconcsumlen)
+faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_t *iconcsum, fu16_t iconcsumlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -150,7 +150,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int icon_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int bart_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0010;
@@ -158,7 +158,7 @@ faim_internal int icon_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "icon", sizeof(mod->name));
+	strncpy(mod->name, "bart", sizeof(mod->name));
 	mod->snachandler = snachandler;
 
 	return 0;

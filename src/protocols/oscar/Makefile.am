@@ -15,6 +15,7 @@ OSCARSOURCES = \
 	aim_cbtypes.h  \
 	aim_internal.h \
 	auth.c         \
+	bart.c         \
 	bos.c          \
 	bstream.c      \
 	buddylist.c    \
@@ -24,7 +25,6 @@ OSCARSOURCES = \
 	email.c        \
 	faimconfig.h   \
 	ft.c           \
-	icon.c         \
 	icq.c          \
 	im.c           \
 	info.c         \
@@ -32,7 +32,7 @@ OSCARSOURCES = \
 	md5.h          \
 	misc.c         \
 	msgcookie.c    \
-	newsearch.c    \
+	odir.c         \
 	popups.c       \
 	rxhandlers.c   \
 	rxqueue.c      \

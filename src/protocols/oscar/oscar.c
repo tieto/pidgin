@@ -3577,7 +3577,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 				fclose(file);
 				gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "Uploading icon to icon server\n");
-				aim_icon_upload(od->sess, buf, st.st_size);
+				aim_bart_upload(od->sess, buf, st.st_size);
 			} else
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "Can't open buddy icon file!\n");
@@ -3597,7 +3597,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 
 	bi = g_hash_table_lookup(od->buddyinfo, (char *)od->requesticon->data);
 	if (bi && (bi->iconcsumlen > 0)) {
-		aim_icon_request(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
+		aim_bart_request(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
 		return FALSE;
 	} else {
 		char *sn = od->requesticon->data;
@@ -4649,7 +4649,7 @@ static void oscar_dir_search(GaimConnection *gc, const char *first, const char *
 			     const char *maiden, const char *city, const char *state, const char *country, const char *email) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (strlen(email))
-		aim_usersearch_address(od->sess, od->conn, email);
+		aim_search_address(od->sess, od->conn, email);
 }
 
 static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
@@ -5569,7 +5569,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 							fclose(file);
 							gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "Uploading icon to icon server\n");
-							aim_icon_upload(od->sess, buf, st.st_size);
+							aim_bart_upload(od->sess, buf, st.st_size);
 						} else
 							gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 								   "Can't open buddy icon file!\n");

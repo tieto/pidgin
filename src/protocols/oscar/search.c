@@ -40,7 +40,7 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
  * Subtype 0x0002
  *
  */
-faim_export int aim_usersearch_address(aim_session_t *sess, aim_conn_t *conn, const char *address)
+faim_export int aim_search_address(aim_session_t *sess, aim_conn_t *conn, const char *address)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
