@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: datallah $
+ *	$Author: nosnilmot $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -31,7 +31,6 @@ char *ZGetVariable(var)
     char *var;
 {
     char varfile[128], *ret;
-    char *get_varval();
 
     if (get_localvarfile(varfile))
 	return ((char *)0);
