@@ -2065,7 +2065,7 @@ static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
 			if(data->newline) {
 				gchar *lenstr = strstr(data->headers->str, "Content-Length: ");
 				if(lenstr) {
-					sscanf(lenstr, "Content-Length: %d", &size);
+					sscanf(lenstr, "Content-Length: %ld", &size);
 					gaim_xfer_set_size(xfer, size);
 				}
 				gaim_xfer_set_read_fnc(xfer, NULL);
