@@ -410,7 +410,7 @@ void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 void toggle_sound(GtkWidget *widget, struct conversation *c)
 {
 	if (state_lock)
-			return;
+		return;
 
 	c->makesound = !c->makesound;
 }
