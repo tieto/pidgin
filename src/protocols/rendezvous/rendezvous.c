@@ -270,6 +270,7 @@ static void rendezvous_handle_rr_srv(GaimConnection *gc, ResourceRecord *rr, con
  */
 static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 {
+	RendezvousData *rd = gc->proto_data;
 	gchar *name;
 
 	gaim_debug_misc("rendezvous", "Parsing resource record with domain name %s\n", rr->name);
@@ -295,10 +296,14 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 		case RENDEZVOUS_RRTYPE_PTR: {
 			gchar *rdata = rr->rdata;
 			if ((name = rendezvous_extract_name(rdata)) != NULL) {
-				if (rr->ttl > 0)
+				if (rr->ttl > 0) {
+					/* Add them to our buddy list and request their icon */
 					rendezvous_addtolocal(gc, name, "Rendezvous");
-				else
+					mdns_query(rd->fd, rdata, RENDEZVOUS_RRTYPE_NULL);
+				} else {
+					/* Remove them from our buddy list */
 					rendezvous_removefromlocal(gc, name, "Rendezvous");
+				}
 				g_free(name);
 			}
 		} break;
@@ -415,12 +420,42 @@ static void rendezvous_add_to_txt(RendezvousData *rd, const char *name, const ch
 	rd->mytxtdata = g_slist_append(rd->mytxtdata, node);
 }
 
+static void rendezvous_send_icon(GaimConnection *gc)
+{
+	RendezvousData *rd = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	const char *iconfile = gaim_account_get_buddy_icon(account);
+	struct stat st;
+	FILE *file;
+	unsigned char *rdata;
+	unsigned short rdlength;
+	gchar *myname;
+
+	if (iconfile == NULL)
+		return;
+
+	if (stat(iconfile, &st))
+		return;
+
+	if (!(file = fopen(iconfile, "rb")))
+		return;
+
+	rdlength = st.st_size;
+	rdata = g_malloc(rdlength);
+	fread(rdata, 1, rdlength, file);
+	fclose(file);
+
+	myname = g_strdup_printf("%s._presence._tcp.local", gaim_account_get_username(account));
+	mdns_advertise_null(rd->fd, myname, rdata, rdlength);
+	g_free(myname);
+}
+
 static void rendezvous_send_online(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *me;
-	char *myname, *mycomp;
+	const gchar *me;
+	gchar *myname, *mycomp;
 
 	me = gaim_account_get_username(account);
 	myname = g_strdup_printf("%s._presence._tcp.local", me);
@@ -452,6 +487,8 @@ static void rendezvous_send_online(GaimConnection *gc)
 	rendezvous_add_to_txt(rd, "last", gaim_account_get_string(account, "last", _("User")));
 	mdns_advertise_txt(rd->fd, myname, rd->mytxtdata);
 
+	rendezvous_send_icon(gc);
+
 	g_free(myname);
 	g_free(mycomp);
 }
@@ -478,7 +515,7 @@ static void rendezvous_prpl_login(GaimAccount *account)
 	gc->inpa = gaim_input_add(rd->fd, GAIM_INPUT_READ, rendezvous_callback, gc);
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 
-	mdns_query(rd->fd, "_presence._tcp.local");
+	mdns_query(rd->fd, "_presence._tcp.local", RENDEZVOUS_RRTYPE_ALL);
 	rendezvous_send_online(gc);
 }
 
@@ -527,7 +564,7 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_NO_PASSWORD,
+	OPT_PROTO_NO_PASSWORD | OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,
 	NULL,

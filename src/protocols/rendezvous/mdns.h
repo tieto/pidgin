@@ -61,6 +61,7 @@
 #define RENDEZVOUS_RRTYPE_PTR	12
 #define RENDEZVOUS_RRTYPE_TXT	16
 #define RENDEZVOUS_RRTYPE_SRV	33
+#define RENDEZVOUS_RRTYPE_ALL	255
 
 /*
  * Express for Men's
@@ -153,8 +154,9 @@ int mdns_send_dns(int fd, const DNSPacket *dns);
  *        be of the format "_presence._tcp.local" for example.
  * @return 0 if sucessful.
  */
-int mdns_query(int fd, const char *domain);
+int mdns_query(int fd, const char *domain, unsigned short type);
 
+int mdns_advertise_null(int fd, const char *name, const char *data, unsigned short rdlength);
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
 int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
 int mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target);
