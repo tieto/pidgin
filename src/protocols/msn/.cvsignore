@@ -2,9 +2,8 @@ Makefile.in
 Makefile
 .deps
 .libs
-libmsn.la
-md5.lo
-msn.lo
-libmsn.dll
-libmsn.def
-libmsn.lib
+*.lo
+*.la
+*.dll
+*.def
+*.lib
