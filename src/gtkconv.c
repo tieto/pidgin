@@ -4049,38 +4049,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 						 G_CALLBACK(conv_dnd_recv), conv);
 #endif
 
-		/*
-		 * Write the New Conversation log string.
-		 *
-		 * This should probably be elsewhere, but then, logging should
-		 * be moved out in some way, either via plugin or via a new API.
-		
-		if (gaim_conversation_is_logging(conv) &&
-			conv_type != GAIM_CONV_MISC) {
-
-			FILE *fd;
-			char filename[256];
-
-			g_snprintf(filename, sizeof(filename), "%s%s",
-					gaim_normalize(gaim_conversation_get_account(conv),name),
-					   (conv_type == GAIM_CONV_CHAT ? ".chat" : ""));
-
-			fd = open_log_file(filename, (conv_type == GAIM_CONV_CHAT));
-
-			if (fd) {
-				if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-					fprintf(fd,
-							_("<HR><BR><H3 Align=Center> "
-							"---- New Conversation @ %s ----</H3><BR>\n"),
-							gaim_date_full());
-				else
-					fprintf(fd, _("---- New Conversation @ %s ----\n"),
-							gaim_date_full());
-
-				fclose(fd);
-			}
-		}
-*/
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 5);
@@ -4545,18 +4513,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
 
-		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
-			char *t1 = gaim_markup_strip_html(buf);
-
-			conv->history = g_string_append(conv->history, t1);
-			conv->history = g_string_append(conv->history, "\n");
-
-			g_free(t1);
-		}
-		else {
-			conv->history = g_string_append(conv->history, buf);
-			conv->history = g_string_append(conv->history, "<BR>\n");
-		}
+		/* Add the message to a conversations scrollback buffer */
+		conv->history = g_string_append(conv->history, buf);
+		conv->history = g_string_append(conv->history, "<BR>\n");
 
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,

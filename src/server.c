@@ -1359,34 +1359,6 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 
 	gaim_conv_chat_set_id(chat, id);
 
-	/* TODO Move this to UI logging code! LOG
-	if (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") ||
-		find_log_info(gaim_conversation_get_name(conv))) {
-
-		FILE *fd;
-		char *filename;
-
-		filename = (char *)malloc(100);
-		g_snprintf(filename, 100, "%s.chat",
-				gaim_normalize(gaim_conversation_get_account(conv),
-					gaim_conversation_get_name(conv)));
-
-		fd = open_log_file(filename, TRUE);
-
-		if (fd) {
-			if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-				fprintf(fd,
-					_("<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"),
-					gaim_date_full());
-			else
-				fprintf(fd, _("---- New Conversation @ %s ----\n"), gaim_date_full());
-
-			fclose(fd);
-		}
-		free(filename);
-	}
-	*/
-
 	gaim_conv_window_show(gaim_conversation_get_window(conv));
 	gaim_conv_window_switch_conversation(gaim_conversation_get_window(conv),
 									gaim_conversation_get_index(conv));
