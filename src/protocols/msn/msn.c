@@ -85,6 +85,11 @@
 
 #define USEROPT_HOTMAIL 0
 
+#define USEROPT_MSNSERVER 3
+#define MSN_SERVER "messenger.hotmail.com"
+#define USEROPT_MSNPORT 4
+#define MSN_PORT 1863
+
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 
@@ -1769,8 +1774,10 @@ static void msn_login(struct aim_user *user)
 	set_login_progress(gc, 1, _("Connecting"));
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
-
-	md->fd = proxy_connect("messenger.hotmail.com", 1863, msn_login_connect, gc);
+	
+	md->fd = proxy_connect(user->proto_opt[USEROPT_MSNSERVER][0] ? user->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER, 
+			       user->proto_opt[USEROPT_MSNPORT][0] ? atoi(user->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,
+			       msn_login_connect, gc);
 	if (md->fd < 0) {
 		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
@@ -2388,6 +2395,26 @@ static void msn_buddy_free(struct buddy *b)
 		g_free(b->proto_data);
 }
 
+static GList *msn_user_opts()
+{
+	GList *m = NULL;
+	struct proto_user_opt *puo;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Server:";
+	puo->def = MSN_SERVER;
+	puo->pos = USEROPT_MSNSERVER;
+	m = g_list_append(m, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Port:";
+	puo->def = "1863";
+	puo->pos = USEROPT_MSNPORT;
+	m = g_list_append(m, puo);
+
+	return m;
+}
+
 GSList *msn_smiley_list() 
 { 
 	GSList *smilies = NULL;
@@ -2523,6 +2550,7 @@ void msn_init(struct prpl *ret)
 	ret->rem_deny = msn_rem_deny;
 	ret->buddy_free = msn_buddy_free;
 	ret->smiley_list = msn_smiley_list;
+	ret->user_opts = msn_user_opts;
 
 	my_protocol = ret;
 }

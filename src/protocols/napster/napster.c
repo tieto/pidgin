@@ -1,7 +1,7 @@
 /*
  * gaim - Napster Protocol Plugin
  *
- * Copyright (C) 2000-2001, Rob Flynn <rob@tgflinux.com>
+ * Copyright (C) 2000-2001, Rob Flynn <rob@marko.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,11 @@
 #include "pixmaps/napster.xpm"
 
 #define NAP_BUF_LEN 4096
+
+#define USEROPT_NAPSERVER 3
+#define NAP_SERVER "64.124.41.187"
+#define USEROPT_NAPPORT 4
+#define NAP_PORT 8888
 
 GSList *nap_connections = NULL;
 
@@ -434,7 +439,9 @@ static void nap_login(struct aim_user *user)
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct nap_data *ndata = gc->proto_data = g_new0(struct nap_data, 1);
 
-	ndata->fd = proxy_connect("64.124.41.187", 8888, nap_login_connect, gc);
+	ndata->fd = proxy_connect(user->proto_opt[USEROPT_NAPSERVER][0] ? user->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER, 
+			       user->proto_opt[USEROPT_NAPPORT][0] ? atoi(user->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,
+			       nap_login_connect, gc);
 	if (ndata->fd < 0) {
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
@@ -543,6 +550,27 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 	}
 }
 
+
+static GList *nap_user_opts()
+{
+	GList *m = NULL;
+	struct proto_user_opt *puo;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Server:";
+	puo->def = NAP_SERVER;
+	puo->pos = USEROPT_NAPSERVER;
+	m = g_list_append(m, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = "Port:";
+	puo->def = "8888";
+	puo->pos = USEROPT_NAPPORT;
+	m = g_list_append(m, puo);
+
+	return m;
+}
+
 static char** nap_list_icon(int uc)
 {
 	return napster_xpm;
@@ -555,7 +583,7 @@ void napster_init(struct prpl *ret)
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = nap_name;
 	ret->list_icon = nap_list_icon;
-	ret->user_opts = NULL;
+	ret->user_opts = nap_user_opts;
 	ret->login = nap_login;
 	ret->close = nap_close;
 	ret->send_im = nap_send_im;
