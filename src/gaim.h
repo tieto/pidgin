@@ -278,6 +278,7 @@ struct conversation {
 	/* DirectIM stuff */
 	gboolean is_direct;
 	struct aim_conn_t *conn; /* needed for Oscar */
+	int watcher;
 };
 
 struct file_header {
@@ -380,7 +381,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 523 $"
+#define REVISION "gaim:$Revision: 525 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

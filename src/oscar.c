@@ -85,8 +85,9 @@ static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_msgack     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_struct *, ...);
 
-static int gaim_directim_incoming  (struct aim_session_t *, struct command_rx_struct *, ...);
-static int gaim_directim_typing    (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_incoming(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_typing  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_initiate(struct aim_session_t *, struct command_rx_struct *, ...);
 
 extern void auth_failed();
 
@@ -104,14 +105,28 @@ static void oscar_callback(gpointer data, gint source,
 	}
 	if (condition & GDK_INPUT_READ) {
 		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
+			debug_print("got information on rendezvous\n");
 			if (aim_handlerendconnect(gaim_sess, conn) < 0) {
 				debug_print(_("connection error (rend)\n"));
 			}
 		} else {
+			char *direct = NULL;
+			if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
+			    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
+				direct = g_strdup(((struct aim_directim_priv *)conn->priv)->sn);
 			if (aim_get_command(gaim_sess, conn) >= 0) {
 				aim_rxdispatch(gaim_sess);
 			} else {
 				debug_print(_("connection error!\n"));
+				if (direct) {
+					struct conversation *cnv = find_conversation(direct);
+					debug_print("connection error for directim\n");
+					if (cnv) {
+						cnv->is_direct = 0;
+						cnv->conn = NULL;
+						gdk_input_remove(cnv->watcher);
+					}
+				}
 				aim_conn_kill(gaim_sess, &conn);
 				if (!aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS)) {
 					debug_print(_("major connection error\n"));
@@ -122,6 +137,7 @@ static void oscar_callback(gpointer data, gint source,
 					gdk_input_remove(inpa);
 				}
 			}
+			if (direct) g_free(direct);
 		}
 	}
 }
@@ -587,6 +603,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			/* DirectIM stuff */
 			struct aim_directim_priv *priv;
 			struct aim_conn_t *newconn;
+			int watcher;
 
 			userinfo = va_arg(ap, struct aim_userinfo_s *);
 			priv = va_arg(ap, struct aim_directim_priv *);
@@ -603,13 +620,13 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
 			aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
 
-			gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-					oscar_callback, newconn);
+			watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+						oscar_callback, newconn);
 
 			sprintf(debug_buff, "DirectIM: connected to %s\n", userinfo->sn);
 			debug_print(debug_buff);
 
-			serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn);
+			serv_got_imimage(priv->sn, priv->cookie, priv->ip, newconn, watcher);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -905,6 +922,34 @@ int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct 
 	return 1;
 }
 
+/* this is such a f*cked up function */
+int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	struct aim_directim_priv *priv;
+	struct aim_conn_t *newconn;
+	struct conversation *cnv;
+
+	va_start(ap, command);
+	newconn = va_arg(ap, struct aim_conn_t *);
+	va_end(ap);
+
+	priv = (struct aim_directim_priv *)newconn->priv;
+
+	sprintf(debug_buff, "DirectIM: initiate success to %s\n", priv->sn);
+	debug_print(debug_buff);
+
+	cnv = find_conversation(priv->sn);
+	cnv->conn = newconn;
+	gdk_input_remove(cnv->watcher);
+	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, newconn);
+
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_directim_typing, 0);
+
+	return 1;
+}
+
 int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
 	char *sn;
@@ -922,5 +967,9 @@ int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *c
 
 void oscar_do_directim(char *name) {
 	struct aim_conn_t *newconn = aim_directim_initiate(gaim_sess, gaim_conn, NULL, name);
-	gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
+	struct conversation *cnv = find_conversation(name); /* this will never be null because it just got set up */
+	cnv->is_direct = TRUE;
+	cnv->conn = newconn;
+	cnv->watcher = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
+	aim_conn_addhandler(gaim_sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE, gaim_directim_initiate, 0);
 }

@@ -822,7 +822,7 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
 	}
 #endif
         b->uc = type;
-	b->caps = caps;
+	if (caps) b->caps = caps;
         
         b->signon = signon;
 
@@ -1104,13 +1104,17 @@ void serv_rvous_cancel(char *name, char *cookie, char *uid)
 }
 
 void serv_do_imimage(GtkWidget *w, char *name) {
+	struct conversation *cnv = find_conversation(name);
+	if (!cnv) cnv = new_conversation(name);
+
 	if (!USE_OSCAR) {
+		/* FIXME */
 	} else {
 		oscar_do_directim(name);
 	}
 }
 
-void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *conn)
+void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *conn, int watcher)
 {
 	if (!USE_OSCAR) {
 		/* FIXME */
@@ -1119,5 +1123,6 @@ void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *con
 		if (!cnv) cnv = new_conversation(name);
 		cnv->is_direct = 1;
 		cnv->conn = conn;
+		cnv->watcher = watcher;
 	}
 }

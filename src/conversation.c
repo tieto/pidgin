@@ -306,7 +306,10 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 			if (!USE_OSCAR) {
 				/* FIXME */
 			} else {
-				aim_conn_kill(c->conn);
+				gdk_input_remove(c->watcher);
+				sprintf(debug_buff, "Closing DirectIM conversation (0x%x)\n", c->conn);
+				debug_print(debug_buff);
+				aim_conn_kill(gaim_sess, &c->conn);
 			}
 		}
 	        delete_conversation(c);

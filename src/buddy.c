@@ -472,19 +472,17 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		gtk_widget_show(button);
 
 	if (USE_OSCAR) {
-		button = gtk_menu_item_new_with_label(_("Away Msg"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
-#if 0
 		button = gtk_menu_item_new_with_label(_("Direct IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(serv_do_imimage), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-#endif
+
+		button = gtk_menu_item_new_with_label(_("Away Msg"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
 	}
 
 		button = gtk_menu_item_new_with_label(_("Toggle Logging"));
@@ -913,6 +911,7 @@ struct buddy *add_buddy(char *group, char *buddy)
         b->pix = gtk_pixmap_new(pm, bm);
 
         b->idle = 0;
+	b->caps = 0;
 			
 	gtk_widget_show(b->pix);
 
