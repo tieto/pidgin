@@ -1,7 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 2.0.0
+	New Features:
 	* gaim-remote can send text (John B. Silvestri)
+	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 
 version 0.83:
 	New Features:
