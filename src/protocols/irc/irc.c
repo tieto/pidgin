@@ -806,6 +806,19 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 		return FALSE;
 	}
 
+	if (!idata->online) {
+		/* Now lets sign ourselves on */
+		account_online(gc);
+		serv_finish_login(gc);
+
+		if (bud_list_cache_exists(gc))
+			do_import(gc, NULL);
+
+		/* we don't call this now because otherwise some IRC servers might not like us */
+		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);
+		idata->online = TRUE;
+	}
+
 	buf++;
 
 	process_data_init(pdibuf, buf, word, word_eol, FALSE);
@@ -934,19 +947,6 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	int i = 0;
 	gchar buf[1024];
 	gboolean off;
-
-	if (!idata->online) {
-		/* Now lets sign ourselves on */
-		account_online(gc);
-		serv_finish_login(gc);
-
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
-
-		/* we don't call this now because otherwise some IRC servers might not like us */
-		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);
-		idata->online = TRUE;
-	}
 
 	i = read(idata->fd, buf, 1024);
 	if (i <= 0) {
