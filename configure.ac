@@ -354,19 +354,14 @@ dnl #######################################################################
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]    Attempt to use GNUTLS for SSL support [default=yes]],
+	[  --enable-gnutls=[yes,no]    Attempt to use GNUTLS for SSL support (preferred) [default=yes]],
 	[enable_gnutls="$enableval"],
 	[enable_gnutls="yes"])
 
 AC_ARG_ENABLE(nss,
-	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=no]],
+	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=yes]],
 	[enable_nss="$enableval"],
-	[enable_nss="no"])
-
-if test "x$enable_nss" = "xyes"; then
-	enable_gnutls="no"
-	AC_MSG_WARN([NSS enabled. Disabling GNUTLS.])
-fi
+	[enable_nss="yes"])
 
 msg_ssl="None"
 
@@ -457,8 +452,7 @@ AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 dnl #
 dnl # Check for NSS if it's specified, or if GNUTLS checks failed.
 dnl #
-if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
-        "x$msg_ssl" = "xNone"; then
+if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 
 	AC_ARG_WITH(nspr-includes,
 		[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
@@ -584,6 +578,8 @@ if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
 			AC_MSG_RESULT(no)
 		fi
 
+		have_nss_includes="no"
+
 		if test "x$with_nss_includes" != "xno" -a \
 				"x$have_nspr_libs"    != "xno"; then
 
@@ -599,12 +595,12 @@ if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
 			fi
 
 			AC_CHECK_HEADERS(nss.h ssl.h smime.h,
-				[have_nss_includes="yes"],
-				[have_nss_includes="no"])
+				[moz_nss_includes="yes"],
+				[moz_nss_includes="no"])
 
 			CPPFLAGS=$CPPFLAGS_save
 
-			if test "x$have_nss_includes" = "xyes"; then
+			if test "x$moz_nss_includes" = "xyes"; then
 				have_nss_includes="yes"
 				NSS_CFLAGS="-I$with_nss_includes"
 			else
@@ -669,9 +665,9 @@ if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
 				NSS_LIBS="-L$with_nss_libs $nsslibs"
 
 				if test "$enable_nss" = "static"; then
-					msg_ssl="yes (Mozilla NSS, static)"
+					msg_ssl="Mozilla NSS (static)"
 				else
-					msg_ssl="yes (Mozilla NSS)"
+					msg_ssl="Mozilla NSS"
 				fi
 
 				enable_nss="yes"
@@ -682,7 +678,7 @@ if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
 			fi
 		else
 			AC_MSG_CHECKING(for Mozilla nss libraries)
-			AC_MSG_ERROR(no)
+			AC_MSG_RESULT(no)
 		fi
 
 		NSS_CFLAGS="$NSPR_CFLAGS $NSS_CFLAGS"
@@ -914,12 +910,12 @@ AC_CHECK_HEADERS(termios.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_OUTPUT([Makefile
-	       Doxyfile
-           doc/Makefile
+		   Doxyfile
+		   doc/Makefile
 		   doc/gaim.1
 		   doc/gaim-remote.1
 		   intl/Makefile
-           pixmaps/Makefile
+		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
 		   pixmaps/smileys/default/Makefile
 		   pixmaps/status/Makefile
@@ -946,7 +942,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/yahoo/Makefile
 		   src/protocols/zephyr/Makefile
 		   gaim.spec
-          ])
+		  ])
 
 echo
 echo $PACKAGE $VERSION
