@@ -480,7 +480,7 @@ void play(unsigned char *data, int size)
 
 #ifdef ARTSC_SOUND
 		/* ArtsC is the new second choice. */
-		else if (sound_options & OPT_SOUND_ARTSC) {
+		if (sound_options & OPT_SOUND_ARTSC) {
 			if (can_play_artsc()) {
 				if (play_artsc(data, size))
 					_exit(0);
@@ -490,7 +490,7 @@ void play(unsigned char *data, int size)
 
 #ifdef NAS_SOUND
 		/* NAS is our second choice setup. */
-		else if (sound_options & OPT_SOUND_NAS) {
+		if (sound_options & OPT_SOUND_NAS) {
 			if (can_play_nas()) {
 				if (play_nas(data, size))
 					_exit(0);
