@@ -2422,8 +2422,8 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					struct name_data *data = g_new(struct name_data, 1);
 					gchar *message = g_strdup_printf(_("ICQ user %lu has sent you a contact: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
 					data->gc = gc;
-					data->name = g_strdup(text[i*2+2]);
-					data->nick = g_strdup(text[i*2+1]);
+					data->name = g_strdup(text[i*2+1]);
+					data->nick = g_strdup(text[i*2+2]);
 					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 					g_free(message);
 				}
