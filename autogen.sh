@@ -1,5 +1,15 @@
 #!/bin/sh
 
+abort() {
+	# Don't break the tree if something goes wrong.
+	if [ -e m4~ ]; then
+		rm -rf m4
+		mv m4~ m4
+	fi
+
+	exit 1
+}
+
 (gettextize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
 	echo "You must have gettext installed to compile Gaim";
@@ -42,7 +52,26 @@ echo "Generating configuration files for Gaim, please wait...."
 echo;
 
 echo "Running gettextize, please ignore non-fatal messages...."
-echo n | gettextize --copy --force || exit;
+
+# Get the major version of gettext.
+GETTEXT_VER=`gettextize --version | sed -n 's/^.*[0-9]\+\.\([0-9]\+\)\..*$/\1/p'`
+
+# Decide how we want to run gettext.
+if [ $GETTEXT_VER -eq 11 ]; then
+	mv -f m4 m4~
+
+	echo n | gettextize --copy --force --intl --no-changelog || abort
+
+	# Now restore the things that brain-dead gettext modified.
+	[ -e configure.in~ ] && mv -f configure.in~ configure.in
+	[ -e Makefile.am~ ]  && mv -f Makefile.am~  Makefile.am
+	rm -rf m4
+	mv -f m4~ m4
+
+	mv -f po/Makevars.template po/Makevars
+else
+	echo n | gettextize --copy --force || exit;
+fi
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
 

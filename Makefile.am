@@ -1,5 +1,5 @@
 
-EXTRA_DIST = gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
+EXTRA_DIST = config.rpath gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
 	HACKING gaim2blt.pl licq2gaim.pl
 
 if DISTRIB

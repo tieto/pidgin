@@ -32,6 +32,7 @@ version 0.60:
 	  Etan Reisner)
 	* TOC no longer compiles statically by default--use OSCAR
 	* ICQ plugin no longer gets built--use OSCAR
+	* Added support for gettext 0.11.x.
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
