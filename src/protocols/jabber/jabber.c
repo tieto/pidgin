@@ -163,12 +163,23 @@ struct jabber_data {
 #define JABBER_BUD_INVIS  0x02	/* Invisible set on buddy */
 
 /*
+ * Used in jabber_buddy_data.subscription, below
+ */
+#define JABBER_SUB_NONE    0x0
+#define JABBER_SUB_PENDING 0x1
+#define JABBER_SUB_TO      0x2
+#define JABBER_SUB_FROM    0x4
+#define JABBER_SUB_BOTH    (JABBER_SUB_TO | JABBER_SUB_FROM)
+
+
+/*
  * It is *this* to which we point the buddy proto_data
  */
 struct jabber_buddy_data {
 	GSList *resources;
 	char *error_msg;
 	unsigned invisible;	/* We've set presence type invisible for this buddy */
+	unsigned subscription; /* subscription type for this buddy */
 };
 
 /*
@@ -247,10 +258,11 @@ static char *jabber_normalize(const char *s);
 static char *create_valid_jid(const char *given, char *server, char *resource)
 {
 	char *valid;
+	char *tmp;
 
-	if (!strchr(given, '@'))
+	if (!(tmp = strchr(given, '@')))
 		valid = g_strdup_printf("%s@%s/%s", given, server, resource);
-	else if (!strchr(strchr(given, '@'), '/'))
+	else if (!strchr(tmp, '/'))
 		valid = g_strdup_printf("%s/%s", given, resource);
 	else
 		valid = g_strdup(given);
@@ -1025,8 +1037,6 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
 
 	} else {
 		struct jabber_buddy_data *jbd = g_new0(struct jabber_buddy_data, 1);
-		jbd->error_msg = NULL;
-		jbd->resources = NULL;
 		jbd->invisible = JABBER_NOT_INVIS;
 		g_hash_table_insert(jd->buddies, g_strdup(realwho), jbd);
 		g_free(realwho);
@@ -1713,6 +1723,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	char *who, *name, *sub, *ask;
 	gaim_jid gjid;
 	struct buddy *b = NULL;
+	struct jabber_buddy_data *jbd = NULL;
 	char *buddyname, *groupname = NULL;
 
 	who = xmlnode_get_attrib(x, "jid");
@@ -1746,7 +1757,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
-			struct buddy *b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
+			b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			struct group *g;
 			if (groupname) {
 				if (!(g = gaim_find_group(groupname))) {
@@ -1792,6 +1803,18 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 		}
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		jabber_remove_gaim_buddy(GJ_GC(gjc), buddyname);
+	}
+	if(b && (jbd = jabber_find_buddy(b->account->gc, buddyname)) != NULL) {
+		jbd->subscription = JABBER_SUB_NONE;
+		if(!strcasecmp(sub, "to"))
+			jbd->subscription |= JABBER_SUB_TO;
+		else if(!strcasecmp(sub, "from"))
+			jbd->subscription |= JABBER_SUB_FROM;
+		else if(!strcasecmp(sub, "both"))
+			jbd->subscription |= JABBER_SUB_BOTH;
+
+		if(ask && !strcasecmp(ask, "subscribe"))
+			jbd->subscription |= JABBER_SUB_PENDING;
 	}
 
 	g_free(buddyname);
@@ -2400,20 +2423,16 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	xmlnode x, y;
-	char *realwho;
 	char *thread_id = NULL;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 
 	if (!who || !message)
 		return 0;
 
-	if((realwho = get_realwho(gjc, who, TRUE, NULL)) == NULL)
-		return 0;
-
 	x = xmlnode_new_tag("message");
-	xmlnode_put_attrib(x, "to", realwho);
+	xmlnode_put_attrib(x, "to", who);
 
-	thread_id = jabber_get_convo_thread(gjc, realwho);
+	thread_id = jabber_get_convo_thread(gjc, who);
 	if(thread_id)
 	{
 		if(strcmp(thread_id, "")) {
@@ -2422,8 +2441,6 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 		}
 		g_free(thread_id);
 	}
-
-	g_free(realwho);
 
 	xmlnode_insert_tag(x, "gaim");
 	xmlnode_put_attrib(x, "type", "chat");
@@ -2755,6 +2772,23 @@ static const char *jabber_list_icon(struct gaim_account *a, struct buddy *b)
 
 static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
+	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name);
+
+	if(jbd) {
+		if (jbd->error_msg)
+			*nw = "error";
+		if ((jbd->subscription & JABBER_SUB_BOTH) != JABBER_SUB_BOTH) {
+			if(jbd->subscription & JABBER_SUB_PENDING)
+				*ne = "pending";
+			else if(jbd->subscription & JABBER_SUB_FROM)
+				*ne = "sub_from";
+			else if(jbd->subscription & JABBER_SUB_TO)
+				*ne = "sub_to";
+			else
+				*ne = "sub_none";
+		}
+	}
+
 	if (b->present == 0) {
 		*se = "offline";
 	} else {
@@ -3047,7 +3081,7 @@ static char *jabber_normalize(const char *s)
 		g_free(u);
 
 		if (!strchr(buf, '@')) {
-			strcat(buf, "@jabber.org"); /* this isn't always right, but eh */
+			strcat(buf, "@" DEFAULT_SERVER); /* this isn't always right, but eh */
 		} else if ((u = strchr(strchr(buf, '@'), '/')) != NULL) {
 			*u = '\0';
 		}
@@ -4223,7 +4257,7 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup_printf("%d", 5222);
+	puo->def = g_strdup_printf("%d", DEFAULT_PORT);
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
