@@ -1914,6 +1914,13 @@ void show_debug()
 	}
 }
 
+void toggle_debug()
+{
+	misc_options ^= OPT_MISC_DEBUG;
+	show_debug();
+	save_prefs();
+}
+
 void debug_printf(char *fmt, ...)
 {
 	va_list ap;

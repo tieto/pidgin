@@ -3738,6 +3738,9 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 	gtk_widget_destroy(gtkconv->tab_cont);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		if (gtkconv->u.im->icon_timer != 0)
+			g_source_remove(gtkconv->u.im->icon_timer);
+
 		if (gtkconv->u.im->save_icon != NULL)
 			gtk_widget_destroy(gtkconv->u.im->save_icon);
 
