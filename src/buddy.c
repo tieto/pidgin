@@ -2895,6 +2895,8 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				g_free(n);
 				if (!d)
 					gc->permit = g_slist_append(gc->permit, name);
+				else
+					g_free(name);
 			} else if (*c == 'd') {
 				GSList *d = gc->deny;
 				char *n;
@@ -2909,6 +2911,8 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				g_free(n);
 				if (!d)
 					gc->deny = g_slist_append(gc->deny, name);
+				else
+					g_free(name);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
 				debug_printf("permdeny: %d\n", gc->permdeny);

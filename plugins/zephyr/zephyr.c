@@ -354,6 +354,8 @@ static gint check_loc(gpointer data)
 			chk = zephyr_normalize(b->name);
 			/* doesn't matter if this fails or not; we'll just move on to the next one */
 			ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
+			free(ald.user);
+			free(ald.version);
 			m = m->next;
 		}
 		gr = gr->next;

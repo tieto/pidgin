@@ -58,6 +58,7 @@ int gtkspell_running() {
 	return (spell_pid > 0);
 }
 
+/*
 static void error_print(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
@@ -65,6 +66,8 @@ static void error_print(const char *fmt, ...) {
 	vfprintf(stderr, fmt, ap);
 	va_end(ap);
 }
+*/
+#define error_print debug_printf
 
 /* functions to interface with pipe */
 static void writetext(char *text) {
@@ -586,6 +589,7 @@ void gtkspell_uncheck_all(GtkText *gtktext) {
 	gtk_text_forward_delete(gtktext, gtk_text_get_length(gtktext));
 	gtk_text_insert(gtktext, NULL, NULL, NULL, text, strlen(text));
 	gtk_text_thaw(gtktext);
+	g_free(text);
 
 	gtk_editable_set_position(GTK_EDITABLE(gtktext), origpos);
 	gtk_adjustment_set_value(gtktext->vadj, adj_value);

@@ -183,6 +183,7 @@ static void toc_close(struct gaim_connection *gc)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = 0;
 	close(((struct toc_data *)gc->proto_data)->toc_fd);
+	g_free(gc->proto_data);
 }
 
 static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)

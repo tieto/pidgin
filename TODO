@@ -3,6 +3,7 @@
 THE CORE:
 	Status labels in buddy list (mostly just for yahoo/msn)
 	Border for GtkIMHtml
+	Transparency for GtkIMHtml
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
 	Implement:
@@ -88,6 +89,7 @@ Zephyr:
 
 Future Plugins? :
 	ICQ through Oscar plugin (ICQ2000) (requires hacking libfaim :-/)
+		this would allow us to send SMS messages.
 	Hotline (Or is this a waste of time?.  Ill decide soon enough, heh)
 
 
