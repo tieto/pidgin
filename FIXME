@@ -3,4 +3,3 @@ GAIM: Items to be fixed
 make moving buddy list work again (adding/removing works)
 do Buddy Pounces on a per-connection basis
 get the permit/deny stuff put back
-have per-connection protocol options (e.g. which server to connect to for IRC)
