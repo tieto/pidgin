@@ -661,7 +661,6 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	disconnect_window_update_buttons(GTK_TREE_MODEL(list_store));
 
 	g_free(label_text);
-	gtk_window_present(GTK_WINDOW(disconnect_window->window));
 }
 /*
  * End of disconnected dialog
