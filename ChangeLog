@@ -13,7 +13,6 @@ version 0.77cvs
 	* The Clear button in privacy works (Robert Mibus)
 	* MSN error reporting works again (Stu Tomlinson)
 	* All away messages should now show up in tooltips
-	* Away/back status updates are now logged again (Ka-Hing Cheung)
 
 version 0.76 (04/01/2004):
 	New Features:
