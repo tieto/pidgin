@@ -522,6 +522,7 @@ msn_send_typing(struct gaim_connection *gc, char *who, int typing)
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_receiver(msg, user);
 	msn_message_set_charset(msg, NULL);
+	msn_message_set_flag(msg, 'U');
 	msn_message_set_attr(msg, "TypingUser", gc->username);
 	msn_message_set_attr(msg, "User-Agent", NULL);
 	msn_message_set_body(msg, "\r\n");
