@@ -52,7 +52,7 @@ gchar *title_string = "(*) ";
 /* predefine some functions, less warnings */
 void options(GtkWidget *widget, gpointer data);
 void un_star(GtkWidget *widget, gpointer data);
-int un_star_window(GtkWidget *widget, gpointer data);
+void un_star_window(GtkWidget *widget, gpointer data);
 int counter (char *buf, int *length);
 /*string functions */
 void string_add(GtkWidget *widget);
@@ -103,17 +103,24 @@ int notify(struct conversation *cnv) {
 
 guint unnotify(struct conversation *c, gboolean clean) {
 	guint option = 0;
+	/* The top level ifs check whether we are either cleaning all methods,
+	 * or whether we have that method is currently selected.
+	 * If we do then they are cleaned
+	 *
+	 * The second level ifs check if we removed something,
+	 * and if that method is currently selected.
+	 * If we did and it is then set option so that it can be re-added */
 	if (clean || (method & METHOD_QUOTE))
-		if(quote_remove(c->window))
+		if (quote_remove(c->window) && (method & METHOD_QUOTE))
 			option ^= METHOD_QUOTE;
 	if (clean || (method & METHOD_COUNT))
-		if (count_remove(c->window))
+		if (count_remove(c->window) && (method & METHOD_COUNT))
 			option ^= METHOD_COUNT;
 	if (clean || (method & METHOD_STRING))
-		if (string_remove(c->window))
+		if (string_remove(c->window) && (method & METHOD_STRING))
 			option ^= METHOD_STRING;
 	if (clean || (method & METHOD_URGENT))
-		if (urgent_remove(c))
+		if (urgent_remove(c) && (method & METHOD_URGENT))
 			option ^= METHOD_URGENT;
 	return option;
 }
@@ -167,6 +174,7 @@ int attach_signals(struct conversation *c) {
 		g_signal_connect(G_OBJECT(c->entry), "key-press-event", G_CALLBACK(un_star_window), NULL);
 	}
 
+	g_object_set_data(G_OBJECT(c->window), "user_data", c);
 	g_object_set_data(G_OBJECT(c->window), "notify_data", GUINT_TO_POINTER(choice));
 	return 0;
 }
@@ -182,13 +190,13 @@ void new_conv(char *who) {
 void chat_join(struct gaim_connection *gc, int id, char *room) {
 	struct conversation *c = find_chat(gc, id);
 
-	if (type & TYPE_CHAT)
+	if (c && (type & TYPE_CHAT))
 		attach_signals(c);
 	return;
 }
 
 void un_star(GtkWidget *widget, gpointer data) {
-	struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(widget));
+	struct conversation *c = g_object_get_data(G_OBJECT(widget), "user_data");
 
 	if (method & METHOD_QUOTE)
 		quote_remove(widget);
@@ -196,16 +204,15 @@ void un_star(GtkWidget *widget, gpointer data) {
 		count_remove(widget);
 	if (method & METHOD_STRING)
 		string_remove(widget);
-	if (method & METHOD_URGENT)
+	if (c && method & METHOD_URGENT)
 		urgent_remove(c);
 	return;
 }
 
-int un_star_window(GtkWidget *widget, gpointer data) {
+void un_star_window(GtkWidget *widget, gpointer data) {
 	GtkWidget *parent = gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW);
-	gtk_object_set_user_data(GTK_OBJECT(parent), gtk_object_get_user_data(GTK_OBJECT(widget)));
 	un_star(parent, data);
-	return 0;
+	return;
 }
 
 /* This function returns the number in [ ]'s or 0 */
@@ -423,17 +430,16 @@ void apply_options(GtkWidget *widget, gpointer data) {
 		if (options & NOTIFY_TYPE)
 			g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star_window, NULL);
 
-		/* needs rethinking to get the order of events to work
-		 * correctly, so that correct methods can get restored */
+		/* works except for count, always get reset to [1] */
 		/* clean off all notification markings */
 		notification = unnotify(c, TRUE);
 		/* re-add appropriate notification methods cleaned above */
+		if (notification & METHOD_STRING) /* re-add string */
+			string_add(c->window);
 		if (notification & METHOD_QUOTE) /* re-add quote */
 			quote_add(c->window);
 		if (notification & METHOD_COUNT) /* re-add count */
 			count_add(c->window);
-		if (notification & METHOD_STRING) /* re-add string */
-			string_add(c->window);
 		if (notification & METHOD_URGENT) /* re-add urgent */
 			urgent_add(c);
 		/* attach new unnotification signals */
