@@ -732,6 +732,84 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	return 0;
 }
 
+/*
+ * This can be used to send an ICQ authorization reply (deny or grant).  It is the "old way."  
+ * The new way is to use SSI.  I like the new way a lot better.  This seems like such a hack, 
+ * mostly because it's in network byte order.  Figuring this stuff out sometimes takes a while, 
+ * but thats ok, because it gives me time to try to figure out what kind of drugs the AOL people 
+ * were taking when they merged the two protocols.
+ *
+ * sn is the destination screen name
+ * type is the type of message.  0x0007 for authorization denied.  0x0008 for authorization granted
+ * message is the message you want to send, it should be null terminated
+ */
+faim_export int aim_send_im_ch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int i;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0002)))
+		return -EINVAL;
+
+	if (!sn || !type || !message)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+3+strlen(sn)+12+strlen(message)+1+4)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	/*
+	 * Cookie
+	 */
+	for (i=0; i<8; i++)
+		aimbs_put8(&fr->data, (fu8_t)rand());
+
+	/*
+	 * Channel (4)
+	 */
+	aimbs_put16(&fr->data, 0x0004);
+
+	/*
+	 * Dest sn
+	 */
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
+
+	/*
+	 * TLV t(0005)
+	 *
+	 * ICQ data (the UIN and the message).
+	 */
+	aimbs_put16(&fr->data, 0x0005);
+	aimbs_put16(&fr->data, 4 + 2+2+strlen(message)+1);
+
+	/*
+	 * Your UIN
+	 */
+	aimbs_putle32(&fr->data, atoi(sess->sn));
+
+	/*
+	 * TLV t(type) l(strlen(message)+1) v(message+NULL)
+	 */
+	aimbs_putle16(&fr->data, type);
+	aimbs_putle16(&fr->data, strlen(message)+1);
+	aimbs_putraw(&fr->data, message, strlen(message)+1);
+
+	/*
+	 * TLV t(0006) l(0000) v()
+	 */
+	aimbs_put16(&fr->data, 0x0006);
+	aimbs_put16(&fr->data, 0x0000);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int i, ret = 0;
@@ -1519,6 +1597,33 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
+static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, fu8_t *cookie)
+{
+	aim_bstream_t meat;
+	aim_rxcallback_t userfunc;
+	aim_tlv_t *block;
+	struct aim_incomingim_ch4_args args;
+	int ret;
+
+	/*
+	 * Make a bstream for the meaty part.  Yum.  Meat.
+	 */
+	if (!(block = aim_gettlv(tlvlist, 0x0005, 1)))
+		return -1;
+	aim_bstream_init(&meat, block->value, block->length);
+
+	args.uin = aimbs_getle32(&meat);
+	args.type = aimbs_getle16(&meat);
+	args.msg = aimbs_getraw(&meat, aimbs_getle16(&meat));
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, channel, userinfo, &args);
+
+	free(args.msg);
+
+	return ret;
+}
+
 /*
  * It can easily be said that parsing ICBMs is THE single
  * most difficult thing to do in the in AIM protocol.  In
@@ -1556,7 +1661,10 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	 * Channel 0x0002 is the Rendevous channel, which
 	 * is where Chat Invitiations and various client-client
 	 * connection negotiations come from.
-	 * 
+	 *
+	 * Channel 0x0004 is used for ICQ authorization, or 
+	 * possibly any system notice.
+	 *
 	 */
 	channel = aimbs_get16(bs);
 
@@ -1600,6 +1708,13 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 		ret = incomingim_ch2(sess, mod, rx, snac, channel, &userinfo, tlvlist, cookie);
 
+		aim_freetlvchain(&tlvlist);
+
+	} else if (channel == 4) {
+		aim_tlvlist_t *tlvlist;
+
+		tlvlist = aim_readtlvchain(bs);
+		ret = incomingim_ch4(sess, mod, rx, snac, channel, &userinfo, tlvlist, cookie);
 		aim_freetlvchain(&tlvlist);
 
 	} else {

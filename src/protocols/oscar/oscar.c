@@ -161,6 +161,11 @@ struct icon_req {
 	gboolean request;
 };
 
+struct icq_auth {
+	struct gaim_connection *gc;
+	fu32_t uin;
+};
+
 static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) {
 	GSList *d = od->direct_ims;
 	char *n = g_strdup(normalize(who));
@@ -1440,6 +1445,77 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	return 1;
 }
 
+static void gaim_icq_authgrant(gpointer w, struct icq_auth *data) {
+	char *uin, message;
+	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
+	uin = g_strdup_printf("%d", data->uin);
+	message = 0;
+	aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHGRANTED, &message);
+	show_got_added(data->gc, NULL, uin, NULL, NULL);
+	g_free(uin);
+	data->uin = 0;
+}
+
+static void gaim_icq_authdeny(gpointer w, struct icq_auth *data) {
+	if (data->uin) {
+		char *uin, *message;
+		struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
+		uin = g_strdup_printf("%d", data->uin);
+		message = g_strdup_printf("No reason given.");
+		aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHDENIED, message);
+		g_free(uin);
+		g_free(message);
+	}
+	g_free(data);
+}
+
+/*
+ * For when other people ask you for authorization
+ */
+static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
+	struct icq_auth *data = g_new(struct icq_auth, 1);
+	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
+	char *dialog_msg = g_strdup_printf("The user %d wants to add you to their buddy list for the following reason:\n\n%s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
+	debug_printf("Received an authorization request from UIN %ld\n", uin);
+	data->gc = gc;
+	data->uin = uin;
+	do_ask_dialog(dialog_msg, data, gaim_icq_authgrant, gaim_icq_authdeny);
+	g_free(dialog_msg);
+}
+
+static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args) {
+	struct gaim_connection *gc = sess->aux_data;
+
+	switch (args->type) {
+		case 0x0006: { /* Someone requested authorization */
+			gaim_icq_authask(gc, args->uin, args->msg);
+		} break;
+
+		case 0x0007: { /* Someone has denied you authorization */
+			char *dialog_msg;
+			dialog_msg = g_strdup_printf(_("The user %d has denied your request to add them to your contact list for the following reason:\n\n"), args->uin, args->msg ? args->msg : _("No reason given."));
+			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
+			g_free(dialog_msg);
+		} break;
+
+		case 0x0008: { /* Someone has granted you authorization */
+			char *dialog_msg;
+			dialog_msg = g_strdup_printf(_("The user %d has granted your request to add them to your contact list."), args->uin);
+			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
+			g_free(dialog_msg);
+		} break;
+
+		case 0x0012: {
+			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
+		} break;
+
+		default: {
+			debug_printf("Received a channel 4 message of unknown type (type 0x%04d).\n", args->type);
+		} break;
+	}
+
+	return 1;
+}
 
 static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int channel, ret = 0;
@@ -1450,24 +1526,28 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 	channel = va_arg(ap, int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 
-	/* channel 1: standard message */
-	if (channel == 1) {
-		struct aim_incomingim_ch1_args *args;
+	switch (channel) {
+		case 1: { /* standard message */
+			struct aim_incomingim_ch1_args *args;
+			args = va_arg(ap, struct aim_incomingim_ch1_args *);
+			ret = incomingim_chan1(sess, fr->conn, userinfo, args);
+		} break;
 
-		args = va_arg(ap, struct aim_incomingim_ch1_args *);
+		case 2: { /* rendevous */
+			struct aim_incomingim_ch2_args *args;
+			args = va_arg(ap, struct aim_incomingim_ch2_args *);
+			ret = incomingim_chan2(sess, fr->conn, userinfo, args);
+		} break;
 
-		ret = incomingim_chan1(sess, fr->conn, userinfo, args);
+		case 4: { /* ICQ */
+			struct aim_incomingim_ch4_args *args;
+			args = va_arg(ap, struct aim_incomingim_ch4_args *);
+			ret = incomingim_chan4(sess, fr->conn, userinfo, args);
+		} break;
 
-	} else if (channel == 2) {
-		struct aim_incomingim_ch2_args *args;
-
-		args = va_arg(ap, struct aim_incomingim_ch2_args *);
-
-		ret = incomingim_chan2(sess, fr->conn, userinfo, args);
-	} else if (channel == 3) {
-		printf("Chan 3\n");
-	} else if (channel == 4) {
-		printf("Chan 4\n");
+		default: {
+			debug_printf("ICBM received on unsupported channel (channel 0x%04d).", channel);
+		} break;
 	}
 
 	va_end(ap);
@@ -2269,16 +2349,44 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, struct aim_icq_offlinemsg *);
 	va_end(ap);
 
-	if (msg->type == 0x0001) {
-		char sender[32];
-		char *tmp = g_strdup(msg->msg);
-		time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
-		g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
-		strip_linefeed(tmp);
-		serv_got_im(gc, sender, tmp, 0, t, -1);
-		g_free(tmp);
-	} else {
-		debug_printf("unknown offline message type 0x%04x\n", msg->type);
+	debug_printf("Received offline message of type 0x%04x\n", msg->type);
+
+	switch (msg->type) {
+		case 0x0001: { /* Basic offline message */
+			char sender[32];
+			char *dialog_msg = g_strdup(msg->msg);
+			time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
+			g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
+			strip_linefeed(dialog_msg);
+			serv_got_im(gc, sender, dialog_msg, 0, t, -1);
+			g_free(dialog_msg);
+		} break;
+
+		case 0x0006: { /* Authorization request */
+			gaim_icq_authask(gc, msg->sender, msg->msg);
+		} break;
+
+		case 0x0007: { /* Someone has denied you authorization */
+			char *dialog_msg;
+			dialog_msg = g_strdup_printf(_("The user %d has denied your request to add them to your contact list for the following reason:\n\n"), msg->sender, msg->msg ? msg->msg : _("No reason given."));
+			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
+			g_free(dialog_msg);
+		} break;
+
+		case 0x0008: { /* Someone has granted you authorization */
+			char *dialog_msg;
+			dialog_msg = g_strdup_printf(_("The user %d has granted your request to add them to your contact list."), msg->sender);
+			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
+			g_free(dialog_msg);
+		} break;
+
+		case 0x0012: {
+			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
+		} break;
+
+		default: {
+			debug_printf("unknown offline message type 0x%04x\n", msg->type);
+		}
 	}
 
 	return 1;

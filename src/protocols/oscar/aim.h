@@ -832,6 +832,17 @@ struct aim_incomingim_ch2_args {
 	void *destructor; /* used internally only */
 };
 
+/* Valid values for channel 4 args->type */
+#define AIM_ICQMSG_AUTHREQUEST 0x0006
+#define AIM_ICQMSG_AUTHDENIED 0x0007
+#define AIM_ICQMSG_AUTHGRANTED 0x0008
+
+struct aim_incomingim_ch4_args {
+	fu32_t uin; /* Of the sender of the ICBM */
+	fu16_t type;
+	char *msg; /* Reason for auth request, deny, or accept */
+};
+
 faim_export int aim_send_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
 faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *args);
 faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short flags, const char *msg);
@@ -844,6 +855,7 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *dests
 faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, const char *addr, const fu8_t *cookie);
 
 faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize);
+faim_export int aim_send_im_ch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
 
 faim_export aim_conn_t *aim_getfile_initiate(aim_session_t *sess, aim_conn_t *conn, const char *destsn);
 faim_export int aim_oft_getfile_request(aim_session_t *sess, aim_conn_t *conn, const char *name, int size);
