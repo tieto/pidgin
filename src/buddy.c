@@ -1465,13 +1465,14 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				do_error_dialog(tmp, _("Buddy Pounce"));
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
-				c = find_conversation(name);
-				if (c == NULL)
-					c = new_conversation(name);
-
-				set_convo_gc(c, u->gc);
-
 				if (strlen(b->message) > 0) {
+					c = find_conversation(name);
+
+					if (c == NULL)
+						c = new_conversation(name);
+
+					set_convo_gc(c, u->gc);
+
 					write_to_conv(c, b->message, WFLAG_SEND, NULL, time((time_t) NULL));
 					serv_send_im(u->gc, name, b->message, 0);
 				}
