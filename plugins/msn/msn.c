@@ -125,6 +125,8 @@ void msn_read_line(char *buf, int fd)
 	char c;
 	int i = 0;
 
+	printf("%s (%d)\n", strerror(errno), errno);
+	
 	do {
 		status = recv(fd, &c, 1, 0);
 
@@ -140,6 +142,7 @@ void msn_read_line(char *buf, int fd)
 
 	/* I'm a bastard again :-) */
 	printf("MSN: %s\n", buf);
+	printf("%s (%d)\n", strerror(errno), errno);
 }
 
 int msn_connect(char *server, int port)
@@ -649,6 +652,12 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 	mdata = (struct msn_data *)gc->proto_data;
 	mc = find_msn_conn_by_user(who);
 
+	/* Are we trying to send a message to ourselves?  Naughty us! */
+	if (!g_strcasecmp(who, gc->username)) {
+		do_error_dialog("You cannot send a message to yourself!!", "GAIM: Msn Error");
+		return;
+	}
+	
 	if (mc == NULL) {
 		gchar buf2[4096];
 		gchar *address;
@@ -710,7 +719,7 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 		/* FIXME: This causes a delay.  I will make some sort of queing feature to prevent
 		 * this from being needed */
 
-		while (!strstr(buf2, "JOI")) {
+		while ((!strstr(buf2, "JOI")) && (!g_strncasecmp(buf2, "215", 3))) {
 			msn_read_line(&buf2, mc->fd);
 		}
 
