@@ -451,12 +451,14 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		}
 	} else {
 		if (chat_options & OPT_CHAT_ONE_WINDOW) {
-			if ((g_list_length(chats) > 1) ||
-					((convo_options & OPT_CONVO_COMBINE) &&
-					 (im_options & OPT_IM_ONE_WINDOW) && conversations)) {
+			if ((convo_options & OPT_CONVO_COMBINE) &&
+					 (im_options & OPT_IM_ONE_WINDOW) && conversations) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
 							 g_list_index(chats, c) +
 								g_list_length(conversations));
+			} else if (g_list_length(chats) > 1) {
+				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
+							 g_list_index(chats, c));
 			} else {
 				if (c->window)
 					gtk_widget_destroy(c->window);
@@ -1453,7 +1455,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 
-	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
+	if (c->is_chat && !g_list_find(chats, c))
 		return;
 
 	if (!c->is_chat && !g_list_find(conversations, c))
