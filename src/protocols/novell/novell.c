@@ -2158,11 +2158,11 @@ novell_tooltip_text(GaimBuddy * buddy)
 			}
 
 			if (text)
-				ret_text = g_strdup_printf(_("<b>Status:</b> %s\n"
+				ret_text = g_strdup_printf(_("\n<b>Status:</b> %s\n"
 											 "<b>Message:</b> %s"),
 										   status_str, text);
 			else
-				ret_text = g_strdup_printf(_("<b>Status:</b> %s"), status_str);
+				ret_text = g_strdup_printf(_("\n<b>Status:</b> %s"), status_str);
 		}
 	}
 
