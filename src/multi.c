@@ -54,7 +54,11 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 	g_snprintf(gc->username, sizeof(gc->username), "%s", username);
 	g_snprintf(gc->password, sizeof(gc->password), "%s", password);
 	gc->keepalive = -1;
+	gc->inpa = -1;
+	gc->buddy_chats = NULL;
 
+	/* this got moved to the void *proto_data, and each protocol can set this up
+	 * itself, thank you very much
 	switch(proto) {
 		case PROTO_TOC:
 			gc->toc_fd = -1;
@@ -72,10 +76,8 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 			gc->create_name = NULL;
 			gc->oscar_chats = NULL;
 			break;
-		default: /* damn plugins */
-			/* PRPL */
-			break;
 	}
+	*/
 
 	connections = g_slist_append(connections, gc);
 

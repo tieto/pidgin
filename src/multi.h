@@ -36,28 +36,15 @@ struct gaim_connection {
 	int protocol;
 	struct prpl *prpl;
 
-	/* let's do the oscar-specific stuff first since i know it better */
-	struct aim_session_t *oscar_sess;
-	struct aim_conn_t *oscar_conn; /* we don't particularly need this since it
-					  will be in oscar_sess, but it's useful to
-					  still keep our own reference to it */
-	int inpa; /* do we really need this? it's for the BOS conn */
-	int cnpa; /* chat nav input watcher */
-	int paspa; /* for changing passwords, which doesn't work yet */
+	/* all connections need an input watcher */
+	int inpa;
 
-	int create_exchange;
-	char *create_name;
-
-	GSList *oscar_chats;
+	/* all connections need a list of chats, even if they don't have chat */
 	GSList *buddy_chats;
 
-	/* that's all we need for oscar. now then, on to TOC.... */
-	int toc_fd;
-	int seqno;
-	int state;
-	/* int inpa; input watcher, dual-declared for oscar as well */
+	/* each connection then can have its own protocol-specific data */
+	void *proto_data;
 
-	/* now we'll do stuff that both of them need */
 	char username[64];
 	char password[32];
 	char user_info[2048];

@@ -391,14 +391,17 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		serv_chat_leave(c->gc, c->id);
 	} else {
 		if (c->is_direct) {
+			/* FIXME
 			if (c->gc->protocol == PROTO_OSCAR) {
 				gdk_input_remove(c->watcher);
 				sprintf(debug_buff, "Closing DirectIM conversation (%p)\n", c->conn);
 				debug_print(debug_buff);
-				aim_conn_kill(c->gc->oscar_sess, &c->conn);
+				aim_conn_kill(((struct oscar_data *)c->gc->proto_data)->sess,
+						&c->conn);
 			} else {
-				/* Direct IM TOC FIXME */
+				Direct IM TOC FIXME
 			}
+			*/
 		}
 	        delete_conversation(c);
 	}

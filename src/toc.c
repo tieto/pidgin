@@ -40,7 +40,13 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 998 $"
+#define REVISION "gaim:$Revision: 1008 $"
+
+struct toc_data {
+	int toc_fd;
+	int seqno;
+	int state;
+};
 
 
 static unsigned int peer_ver=0;
@@ -60,10 +66,12 @@ void toc_login(struct aim_user *user)
 	char *config;
         struct in_addr *sin;
 	struct gaim_connection *gc;
+	struct toc_data *tdt;
 	char buf[80];
 	char buf2[2048];
 
 	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
+	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	
 	g_snprintf(buf, sizeof(buf), "Looking up %s", aim_host);	
 	set_login_progress(gc, 1, buf);
@@ -86,9 +94,9 @@ void toc_login(struct aim_user *user)
 	
 
 
-	gc->toc_fd = connect_address(sin->s_addr, aim_port);
+	tdt->toc_fd = connect_address(sin->s_addr, aim_port);
 
-        if (gc->toc_fd < 0) {
+        if (tdt->toc_fd < 0) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
 			 inet_ntoa(*sin));
 		hide_login_progress(gc, buf);
@@ -129,7 +137,7 @@ void toc_login(struct aim_user *user)
 		gtk_main_iteration();
 
 	config = toc_wait_config(gc);
-	gc->state = STATE_ONLINE;
+	tdt->state = STATE_ONLINE;
 
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
@@ -176,7 +184,7 @@ void toc_close(struct gaim_connection *gc)
         if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = -1;
-	close(gc->toc_fd);
+	close(((struct toc_data *)gc->proto_data)->toc_fd);
 }
 
 unsigned char *roast_password(char *pass)
@@ -224,6 +232,7 @@ int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 	int slen=0;
 	struct sflap_hdr hdr;
 	char obuf[MSG_LEN];
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 
 	/* One _last_ 2048 check here!  This shouldn't ever
 	 * get hit though, hopefully.  If it gets hit on an IM
@@ -242,7 +251,7 @@ int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 		len = olen;
 	hdr.ast = '*';
 	hdr.type = type;
-	hdr.seqno = htons(gc->seqno++ & 0xffff);
+	hdr.seqno = htons(tdt->seqno++ & 0xffff);
         hdr.len = htons(len + (type == TYPE_SIGNON ? 0 : 1));
 
     sprintf(debug_buff,"Escaped message is '%s'\n",buf);
@@ -258,7 +267,7 @@ int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 	}
 	print_buffer(obuf, slen);
 
-	return write(gc->toc_fd, obuf, slen);
+	return write(tdt->toc_fd, obuf, slen);
 }
 
 
@@ -267,6 +276,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
         size_t res=-1;
 	int read_rv = -1;
 	struct sflap_hdr *hdr=(struct sflap_hdr *)buffer;
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
         char *c;
 
 	if(buflen < sizeof(struct sflap_hdr)) {
@@ -275,7 +285,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 	    return -1;
 	}
 
-        while((read_rv = read(gc->toc_fd, buffer, 1))) {
+        while((read_rv = read(tdt->toc_fd, buffer, 1))) {
 		if (read_rv < 0 || read_rv > 1)
 			return -1;
 		if (buffer[0] == '*')
@@ -283,7 +293,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 
 	}
 
-	read_rv = read(gc->toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
+	read_rv = read(tdt->toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
 
         if (read_rv < 0)
 		return read_rv;
@@ -302,7 +312,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 	}
 
         while (res < (sizeof(struct sflap_hdr) + ntohs(hdr->len))) {
-		read_rv = read(gc->toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
+		read_rv = read(tdt->toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
 		if(read_rv < 0) return read_rv;
 		res += read_rv;
 		/* my feeling is this will kill us. if there's data pending then we'll come right back
@@ -322,14 +332,14 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 	case TYPE_SIGNON:
 		memcpy(&peer_ver, buffer + sizeof(struct sflap_hdr), 4);
 		peer_ver = ntohl(peer_ver);
-		gc->seqno = ntohs(hdr->seqno);
-		gc->state = STATE_SIGNON_REQUEST;
+		tdt->seqno = ntohs(hdr->seqno);
+		tdt->state = STATE_SIGNON_REQUEST;
 		break;
 	case TYPE_DATA:
 		if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "SIGN_ON:", strlen("SIGN_ON:")))
-			gc->state = STATE_SIGNON_ACK;
+			tdt->state = STATE_SIGNON_ACK;
 		else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "CONFIG:", strlen("CONFIG:"))) {
-			gc->state = STATE_CONFIG;
+			tdt->state = STATE_CONFIG;
 		} else if (!strncasecmp(buffer + sizeof(struct sflap_hdr), "ERROR:", strlen("ERROR:"))) {
 			c = strtok(buffer + sizeof(struct sflap_hdr) + strlen("ERROR:"), ":");
 			show_error_dialog(c);
@@ -702,21 +712,22 @@ int toc_signon(struct gaim_connection *gc)
 	char buf[BUF_LONG];
 	int res;
 	struct signon so;
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 
-        sprintf(debug_buff,"State = %d\n", gc->state);
+        sprintf(debug_buff,"State = %d\n", tdt->state);
 	debug_print(debug_buff);
 
-	if ((res = write(gc->toc_fd, FLAPON, strlen(FLAPON))) < 0)
+	if ((res = write(tdt->toc_fd, FLAPON, strlen(FLAPON))) < 0)
 		return res;
 	/* Wait for signon packet */
 
-	gc->state = STATE_FLAPON;
+	tdt->state = STATE_FLAPON;
 
 	if ((res = wait_reply(gc, buf, sizeof(buf)) < 0))
 		return res;
 	
-	if (gc->state != STATE_SIGNON_REQUEST) {
-			sprintf(debug_buff, "State should be %d, but is %d instead\n", STATE_SIGNON_REQUEST, gc->state);
+	if (tdt->state != STATE_SIGNON_REQUEST) {
+			sprintf(debug_buff, "State should be %d, but is %d instead\n", STATE_SIGNON_REQUEST, tdt->state);
 			debug_print(debug_buff);
 			return -1;
 	}
@@ -743,13 +754,14 @@ int toc_signon(struct gaim_connection *gc)
 int toc_wait_signon(struct gaim_connection *gc)
 {
 	/* Wait for the SIGNON to be approved */
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	char buf[BUF_LONG];
 	int res;
 	res = wait_reply(gc, buf, sizeof(buf));
 	if (res < 0)
 		return res;
-	if (gc->state != STATE_SIGNON_ACK) {
-			sprintf(debug_buff, "State should be %d, but is %d instead\n",STATE_SIGNON_ACK, gc->state);
+	if (tdt->state != STATE_SIGNON_ACK) {
+			sprintf(debug_buff, "State should be %d, but is %d instead\n",STATE_SIGNON_ACK, tdt->state);
 			debug_print(debug_buff);
 		return -1;
 	}
@@ -785,6 +797,7 @@ gint win32_read()
 char *toc_wait_config(struct gaim_connection *gc)
 {
 	/* Waits for configuration packet, returning the contents of the packet */
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	static char buf[BUF_LONG];
 	int res;
 	res = wait_reply(gc, buf, sizeof(buf));
@@ -792,17 +805,17 @@ char *toc_wait_config(struct gaim_connection *gc)
 		return NULL;
 /* Apparently, the toc_config is optional.  *VERY* Optional
 */
-	if (gc->state != STATE_CONFIG) {
+	if (tdt->state != STATE_CONFIG) {
 		res = 0;
 	} else {
 		res = 1;
 	}
 	/* At this point, it's time to setup automatic handling of incoming packets */
-	gc->state = STATE_ONLINE;
+	tdt->state = STATE_ONLINE;
 #ifdef _WIN32
 	win32_r = gtk_timeout_add(1000, (GtkFunction)win32_read, NULL);
 #else
-	gc->inpa = gdk_input_add(gc->toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, gc);
+	gc->inpa = gdk_input_add(tdt->toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, gc);
 #endif
 	if (res)
 		return buf;
