@@ -39,6 +39,7 @@
 #include "gnome_applet_mgr.h"
 
 static int inpa = -1;
+static int paspa = -1;
 struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE;
@@ -104,7 +105,7 @@ static void oscar_callback(gpointer data, gint source,
 int oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
-	struct client_info_s info = {"Gaim/Faim", 3, 5, 1670, "us", "en"};
+	struct client_info_s info = {"Gaim/Faim", 4, 30, 3141, "us", "en"};
 	struct aim_user *u;
 	char buf[256];
 
@@ -279,9 +280,22 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	return 1;
 }
 
+gboolean change_password = FALSE;
+char *old_password;
+char *new_password;
+
 int gaim_auth_server_ready(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
+	debug_print("Authorization server is ready.\n");
 	aim_auth_clientready(sess, command->conn);
+	if (change_password) {
+		debug_print("Changing passwords...\n");
+		aim_auth_changepasswd(sess, command->conn, old_password,
+							   new_password);
+		g_free(old_password);
+		g_free(new_password);
+		change_password = FALSE;
+	}
 	return 1;
 }
 
@@ -389,8 +403,12 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR)
 			debug_print("unable to reconnect with authorizer\n");
-		else
+		else {
+			paspa = gdk_input_add(tstconn->fd,
+					GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, tstconn);
 			aim_auth_sendcookie(sess, tstconn, cookie);
+		}
 		}
 		break;
 	case 0xd: /* ChatNav */

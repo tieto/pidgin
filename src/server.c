@@ -260,12 +260,22 @@ void serv_set_info(char *info)
 #endif
 }
 
+extern gboolean change_password;
+extern char *old_password;
+extern char *new_password;
+
 void serv_change_passwd(char *orig, char *new) {
 #ifndef USE_OSCAR
 	char *buf = g_malloc(BUF_LONG); 
 	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
 	sflap_send(buf, strlen(buf), TYPE_DATA);
 	g_free(buf);
+#else
+	if (change_password) return;
+	change_password = TRUE;
+	old_password = g_strdup(orig);
+	new_password = g_strdup(new);
+	aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_AUTH);
 #endif
 }
 

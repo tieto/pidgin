@@ -375,7 +375,12 @@ int aim_rxdispatch(struct aim_session_t *sess)
       case AIM_CONN_TYPE_BOS: {
 	u_short family;
 	u_short subtype;
-	
+
+	if (workingPtr->type == 0x04) {
+	  workingPtr->handled = aim_negchan_middle(sess, workingPtr);
+	  break;
+	}
+
 	family = aimutil_get16(workingPtr->data);
 	subtype = aimutil_get16(workingPtr->data+2);
 	
@@ -685,6 +690,35 @@ int aim_parse_unknown(struct aim_session_t *sess,
   return 1;
 }
 
+
+int aim_negchan_middle(struct aim_session_t *sess,
+		       struct command_rx_struct *command)
+{
+  struct aim_tlvlist_t *tlvlist;
+  char *msg = NULL;
+  unsigned short code = 0;
+  struct aim_tlv_t *tmptlv;
+  rxcallback_t userfunc = NULL;
+  int ret = 1;
+
+  tlvlist = aim_readtlvchain(command->data, command->commandlen);
+
+  if ((tmptlv = aim_gettlv(tlvlist, 0x0009, 1)))
+    code = aimutil_get16(tmptlv->value);
+
+  if ((tmptlv = aim_gettlv(tlvlist, 0x000b, 1)))
+    msg = aim_gettlv_str(tlvlist, 0x000b, 1);
+
+  userfunc = aim_callhandler(command->conn, 
+			     AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR);
+  if (userfunc)
+    ret =  userfunc(sess, command, code, msg);
+
+  aim_freetlvchain(&tlvlist);
+  free(msg);
+
+  return ret;
+}
 
 /*
  * aim_parse_generalerrs()

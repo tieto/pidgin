@@ -10,8 +10,8 @@
 #define FAIM_VERSION_MINOR 99
 #define FAIM_VERSION_MINORMINOR 0
 
-#include <faimconfig.h>
-#include <aim_cbtypes.h>
+#include <faim/faimconfig.h>
+#include <faim/aim_cbtypes.h>
 
 #ifndef FAIM_USEPTHREADS
 #error pthreads are currently required.
@@ -71,7 +71,7 @@
  * Note that although we can send this much, its impossible
  * for WinAIM clients (up through the latest (4.0.1957)) to
  * send any more than 1kb.  Amaze all your windows friends
- * with uterrly oversized instant messages!
+ * with utterly oversized instant messages!
  * 
  */
 #define MAXMSGLEN 7988
@@ -329,6 +329,7 @@ int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
 int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
 int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *);
 int aim_encode_password(const char *, u_char *);
+int aimicq_encode_password(const char *password, u_char *encoded);
 unsigned long aim_sendauthresp(struct aim_session_t *sess, 
 			       struct aim_conn_t *conn, 
 			       char *sn, char *bosip, 
@@ -442,6 +443,7 @@ u_long aim_send_im(struct aim_session_t *, struct aim_conn_t *, char *, u_int, c
 int aim_parse_incoming_im_middle(struct aim_session_t *, struct command_rx_struct *);
 u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
+int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 
 /* aim_info.c */
 #define AIM_CAPS_BUDDYICON 0x01

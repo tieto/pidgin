@@ -80,7 +80,8 @@ int aim_send_login (struct aim_session_t *sess,
 {
   u_char *password_encoded = NULL;  /* to store encoded password */
   int curbyte=0;
-
+  int icqmode = 0;
+  
   struct command_tx_struct *newpacket;
 
   if (!clientinfo || !sn || !password)
@@ -88,6 +89,22 @@ int aim_send_login (struct aim_session_t *sess,
 
   if (!(newpacket = aim_tx_new(0x0002, conn, 1152)))
     return -1;
+
+  /*
+   * For ICQ logins, the client version must be at
+   * least as high as ICQ2000a.
+   */
+  if ((sn[0] >= '0') && (sn[0] <= '9')) {
+    icqmode = 1; /* needs a different password encoding */
+    if (clientinfo && (clientinfo->major < 4)) {
+      printf("faim: icq: version must be at least 4.30.3141 for ICQ OSCAR login\n");
+      return -1;
+    }
+    if (strlen(password) > 8) {
+      printf("faim: icq: password too long (8 char max)\n");
+      return -1;
+    }
+  }
 
 #ifdef SNACLOGIN 
   newpacket->commandlen = 10;
@@ -118,8 +135,10 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
 #else
   
-  newpacket->commandlen = 4 + 4+strlen(sn) + 4+strlen(password) + 6;
+  newpacket->commandlen = 4 + 4 + strlen(sn) + 4+strlen(password) + 6;
  
+  newpacket->commandlen += 8; /* tlv 0x0014 */
+
   if (clientinfo) {
     if (strlen(clientinfo->clientstring))
       newpacket->commandlen += 4+strlen(clientinfo->clientstring);
@@ -129,7 +148,6 @@ int aim_send_login (struct aim_session_t *sess,
     if (strlen(clientinfo->lang))
       newpacket->commandlen += 4+strlen(clientinfo->lang);
   }
-  newpacket->commandlen += 6;
 
   newpacket->lock = 1;
   newpacket->type = 0x01;
@@ -143,35 +161,38 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
   curbyte += aimutil_put16(newpacket->data+curbyte, strlen(password));
   password_encoded = (char *) malloc(strlen(password));
-  aim_encode_password(password, password_encoded);
+  if (icqmode)
+    aimicq_encode_password(password, password_encoded);
+  else
+    aim_encode_password(password, password_encoded);
   curbyte += aimutil_putstr(newpacket->data+curbyte, password_encoded, strlen(password));
   free(password_encoded);
   
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x0004);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a /*0x0004*/);
   
-  if (clientinfo) {
-    if (strlen(clientinfo->clientstring)) {
-      curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
-      curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->clientstring));
-      curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->clientstring, strlen(clientinfo->clientstring));
-    }
-    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major /*0x0001*/);
-    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor /*0x0001*/);
-    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0000);
-    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build /*0x0013*/);
-    if (strlen(clientinfo->country)) {
-      curbyte += aimutil_put16(newpacket->data+curbyte, 0x000e);
-      curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->country));
-      curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->country, strlen(clientinfo->country));
-    }
-    if (strlen(clientinfo->lang)) {
-      curbyte += aimutil_put16(newpacket->data+curbyte, 0x000f);
-      curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->lang));
-      curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->lang, strlen(clientinfo->lang));
-    }
+  if (strlen(clientinfo->clientstring)) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
+    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->clientstring));
+    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->clientstring, strlen(clientinfo->clientstring));
+  }
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major /*0x0001*/);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor /*0x0001*/);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0001);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build /*0x0013*/);
+
+  curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x00000055);
+
+  if (strlen(clientinfo->country)) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000e);
+    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->country));
+    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->country, strlen(clientinfo->country));
+  }
+  if (strlen(clientinfo->lang)) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000f);
+    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->lang));
+    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->lang, strlen(clientinfo->lang));
   }
 
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
 #endif
 
   newpacket->lock = 0;
@@ -205,6 +226,31 @@ int aim_encode_password(const char *password, u_char *encoded)
 
   int i;
   
+  for (i = 0; i < strlen(password); i++)
+      encoded[i] = (password[i] ^ encoding_table[i]);
+
+  return 0;
+}
+
+/*
+ * They changed the hash slightly for ICQ. 
+ *   This new hash may work for AIM too (though
+ *   the max password length for ICQ is only 
+ *   eight characters, where its 16 with AIM).
+ *
+ */
+int aimicq_encode_password(const char *password, u_char *encoded)
+{
+  u_char encoding_table[] = {
+    0xf3, 0x26, 0x81, 0xc4,
+    0x39, 0x86, 0xdb, 0x92
+  };
+
+  int i;
+
+  if (strlen(password) > 8)
+    return -1;
+
   for (i = 0; i < strlen(password); i++)
       encoded[i] = (password[i] ^ encoding_table[i]);
 
@@ -250,44 +296,45 @@ int aim_authparse(struct aim_session_t *sess,
    * Check for an error code.  If so, we should also
    * have an error url.
    */
-  if (aim_gettlv(tlvlist, 0x0008, 1))
-    {
-      struct aim_tlv_t *errtlv;
-      errtlv = aim_gettlv(tlvlist, 0x0008, 1);
-      sess->logininfo.errorcode = aimutil_get16(errtlv->value);
-      sess->logininfo.errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
-    }
+  if (aim_gettlv(tlvlist, 0x0008, 1)) {
+    struct aim_tlv_t *errtlv;
+    errtlv = aim_gettlv(tlvlist, 0x0008, 1);
+    sess->logininfo.errorcode = aimutil_get16(errtlv->value);
+    sess->logininfo.errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
+  }
   /* 
    * If we have both an IP number (0x0005) and a cookie (0x0006),
    * then the login was successful.
    */
-  else if (aim_gettlv(tlvlist, 0x0005, 1) && aim_gettlv(tlvlist, 0x0006, 1))
-    {
-      struct aim_tlv_t *tmptlv;
+  else if (aim_gettlv(tlvlist, 0x0005, 1) && aim_gettlv(tlvlist, 0x0006, 1)) {
+    struct aim_tlv_t *tmptlv;
 
-      /*
-       * IP address of BOS server.
-       */
-      sess->logininfo.BOSIP = aim_gettlv_str(tlvlist, 0x0005, 1);
-
-      /*
-       * Authorization Cookie
-       */
-      tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
-      memcpy(sess->logininfo.cookie, tmptlv->value, AIM_COOKIELEN);
-
-      /*
-       * The email address attached to this account
-       */
+    /*
+     * IP address of BOS server.
+     */
+    sess->logininfo.BOSIP = aim_gettlv_str(tlvlist, 0x0005, 1);
+    
+    /*
+     * Authorization Cookie
+     */
+    tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
+    memcpy(sess->logininfo.cookie, tmptlv->value, AIM_COOKIELEN);
+    
+    /*
+     * The email address attached to this account
+     *   Not available for ICQ logins.
+     */
+    if (aim_gettlv(tlvlist, 0x0011, 1))
       sess->logininfo.email = aim_gettlv_str(tlvlist, 0x0011, 1);
-
-      /*
-       * The registration status.  (Not real sure what it means.)
-       */
-      tmptlv = aim_gettlv(tlvlist, 0x0013, 1);
+    
+    /*
+     * The registration status.  (Not real sure what it means.)
+     *   Not available for ICQ logins.
+     */
+    if ((tmptlv = aim_gettlv(tlvlist, 0x0013, 1)))
       sess->logininfo.regstatus = aimutil_get16(tmptlv->value);
       
-    }
+  }
 
 #ifdef SNACLOGIN
   userfunc = aim_callhandler(command->conn, 0x0017, 0x0003);

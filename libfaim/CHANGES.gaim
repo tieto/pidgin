@@ -1,4 +1,10 @@
 
+Sat Jun  3 07:22:50 UTC 2000 EWarmenhoven
+	- Adam is by far the coolest person I know. He figured out how to get
+	  libfaim not only to use ICQ, but how to make it so that there aren't
+	  any client changes that are required - just use your UIN instead of
+	  your SN.
+
 Fri Jun  2 19:39:13 UTC 2000 EWarmenhoven
 	- Buddy lists no longer get sent individually, but all together (as
 	  many as fit in the buffer at one time). This should reduce a lot
