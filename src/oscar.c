@@ -2287,7 +2287,6 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 	struct gaim_connection *gc = sess->aux_data;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
-		sess->snac_nextid = 1;
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_bos_reqpersonalinfo(sess, command->conn);
 		aim_bos_reqlocaterights(sess, command->conn);

@@ -558,12 +558,31 @@ faim_internal unsigned long aim_genericreq_n(struct aim_session_t *sess,
 
   newpacket->lock = 1;
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
 
+  aim_tx_enqueue(sess, newpacket);
+
+  return sess->snac_nextid;
+}
+
+faim_internal unsigned long aim_genericreq_n_snacid(struct aim_session_t *sess,
+						    struct aim_conn_t *conn, 
+						    unsigned short family, 
+						    unsigned short subtype)
+{
+  struct command_tx_struct *newpacket;
+
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10)))
+    return 0;
+
+  newpacket->lock = 1;
+
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
   aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
 
   aim_tx_enqueue(sess, newpacket);
-  return sess->snac_nextid;
+
+  return sess->snac_nextid++;
 }
 
 /*
@@ -587,14 +606,14 @@ faim_internal unsigned long aim_genericreq_l(struct aim_session_t *sess,
 
   newpacket->lock = 1;
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
 
   /* copy in data */
   newlong = htonl(*longdata);
   memcpy(&(newpacket->data[10]), &newlong, sizeof(u_long));
 
   aim_tx_enqueue(sess, newpacket);
+
   return sess->snac_nextid;
 }
 
@@ -615,14 +634,14 @@ faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
 
   newpacket->lock = 1;
 
-  aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+  aim_putsnac(newpacket->data, family, subtype, 0x0000, 0x00000000);
 
   /* copy in data */
   newshort = htons(*shortdata);
   memcpy(&(newpacket->data[10]), &newshort, sizeof(u_short));
 
   aim_tx_enqueue(sess, newpacket);
+
   return sess->snac_nextid;
 }
 
@@ -664,8 +683,7 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
   
   newpacket->lock = 1;
 
-  i = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, sess->snac_nextid);
-  aim_cachesnac(sess, 0x0004, 0x0002, 0x0000, NULL, 0);
+  i = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, 0x00000000);
 
   i += aimutil_put16(newpacket->data+i, 0x0000); 
   i += aimutil_put16(newpacket->data+i, 0x0000);

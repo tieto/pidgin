@@ -16,9 +16,8 @@
 faim_export unsigned long aim_chatnav_reqrights(struct aim_session_t *sess,
 						struct aim_conn_t *conn)
 {
-  aim_genericreq_n(sess, conn, 0x000d, 0x0002);
 
-  return sess->snac_nextid;
+  return aim_genericreq_n_snacid(sess, conn, 0x000d, 0x0002);
 }
 
 faim_export unsigned long aim_chatnav_clientready(struct aim_session_t *sess,

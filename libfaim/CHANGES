@@ -1,6 +1,48 @@
 
 No release numbers
 ------------------
+ - Mon Jun  4 12:57:46 PDT 2001
+  - Fix chatnav.  Whoops.
+
+ - Mon Jun  4 12:45:18 PDT 2001
+  - Don't use snacid's for generic requests (gets around recent blocks)
+  - If they start doing snacid-based blocks again, an audit will have
+      to be done to see what WinAIM requests uses snacids for and what 
+      it leaves it blank for.  That will be tedious and I'm not going to 
+      do it. 
+
+ - Thu May 31 23:00:50 PDT 2001
+  - Store two hardcoded hashes in login.c.  Sigh.
+  - Add prototype for aim_callhandler_noparam in aim_internal.h
+
+ - Sat May 26 03:58:27 PDT 2001
+  - Aha! This is why I could never get icons to work before.
+  - Luckily the checksum is painfully simple.
+
+ - Sat May 26 01:37:39 PDT 2001
+  - So this is my big merge with the ActiveBuddy version...
+    - Remove use of tlvchains from IM parsing for better performance
+    - Add in buddy icon support
+    - Add support for sending UNICODE messages.
+  - Split up the more complicated options to aim_send_im into a structure
+      that is passed to aim_send_im_ext().  This makes it easier to send
+      simple messages, and only slightly harder to send complex ones.
+     - aim_send_im_ext() must be used if you're using buddy icons and/or you
+         are sending UNICODE messages.
+  - UNICODE is fully explained in commentary above aim_send_im_ext() in im.c.
+  - The ISO-8859-1 option is also added.  Use when necessary, to avoid making
+      WinAIM barf.
+  - This removes the msglen parameter to aim_send_im because that was only
+      needed to do UNICODE, which can now only be done by aim_send_im_ext.
+
+ - Wed May 23 18:05:46 PDT 2001
+  - I upgraded libtool.  Which broke the faimtest makefile.
+  - Parse locate rights
+  - You shouldn't ask so many questions, Eric.
+
+ - Wed May 16 12:48:13 PDT 2001
+  - Thanks Rob and Eric
+
  - Thu May 10 17:37:23 PDT 2001
   - I haven't had lunch yet.  What should I have?
 

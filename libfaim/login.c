@@ -809,21 +809,36 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
 
   } else {
 
-    if ((offset != 0x00001004) || (len != 0x00000004))
-      faimdprintf(sess, 0, "sendmemblock: WARNING: sending bad hash... you will be disconnected soon...\n");
-
     /* 
-     * This data is correct for AIM 3.5.1670, offset 0x03ffffff, 
-     * length 0x03ffffff (invalid).
+     * This data is correct for AIM 3.5.1670.
      *
-     * Using this block is as close to "legal" as you can get without
+     * Using these blocks is as close to "legal" as you can get without
      * using an AIM binary.
      *
      */
-    i += aimutil_put32(tx->data+i, 0x1df8cbae);
-    i += aimutil_put32(tx->data+i, 0x5523b839);
-    i += aimutil_put32(tx->data+i, 0xa0e10db3);
-    i += aimutil_put32(tx->data+i, 0xa46d3b39);
+    if ((offset == 0x03ffffff) && (len == 0x03ffffff)) {
+
+#if 1 /* with "AnrbnrAqhfzcd" */
+      i += aimutil_put32(tx->data+i, 0x44a95d26);
+      i += aimutil_put32(tx->data+i, 0xd2490423);
+      i += aimutil_put32(tx->data+i, 0x93b8821f);
+      i += aimutil_put32(tx->data+i, 0x51c54b01);
+#else /* no filename */
+      i += aimutil_put32(tx->data+i, 0x1df8cbae);
+      i += aimutil_put32(tx->data+i, 0x5523b839);
+      i += aimutil_put32(tx->data+i, 0xa0e10db3);
+      i += aimutil_put32(tx->data+i, 0xa46d3b39);
+#endif
+
+    } else if ((offset == 0x00001000) && (len == 0x00000000)) {
+
+      i += aimutil_put32(tx->data+i, 0xd41d8cd9);
+      i += aimutil_put32(tx->data+i, 0x8f00b204);
+      i += aimutil_put32(tx->data+i, 0xe9800998);
+      i += aimutil_put32(tx->data+i, 0xecf8427e);
+
+    } else
+      faimdprintf(sess, 0, "sendmemblock: WARNING: unknown hash request\n");
 
   }
 

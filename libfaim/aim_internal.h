@@ -45,6 +45,7 @@ faim_internal int locate_modfirst(struct aim_session_t *sess, aim_module_t *mod)
 faim_internal int general_modfirst(struct aim_session_t *sess, aim_module_t *mod);
 
 faim_internal unsigned long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
+faim_internal unsigned long aim_genericreq_n_snacid(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
 faim_internal unsigned long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
 faim_internal unsigned long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
@@ -61,6 +62,7 @@ faim_internal int aim_tx_printqueue(struct aim_session_t *);
 faim_internal int aim_tx_cleanqueue(struct aim_session_t *, struct aim_conn_t *);
 
 faim_internal aim_rxcallback_t aim_callhandler(struct aim_session_t *sess, struct aim_conn_t *conn, u_short family, u_short type);
+faim_internal int aim_callhandler_noparam(struct aim_session_t *sess, struct aim_conn_t *conn, u_short family, u_short type, struct command_rx_struct *ptr);
 
 /*
  * Generic SNAC structure.  Rarely if ever used.
