@@ -1,5 +1,5 @@
 /**
- * @file gtksavedstatus.h GTK+ Saved Status Editor UI
+ * @file gtksavedstatuses.h GTK+ Saved Status Editor UI
  * @ingroup gtkui
  *
  * gaim

@@ -96,7 +96,7 @@ const char *gaim_primitive_get_name_from_type(GaimStatusPrimitive type);
  * Lookup the value of a primitive status type based on the id.  The
  * ID is a unique plain-text name of the status, without spaces.
  *
- * @param type The unique ID of a primitive status type.
+ * @param id The unique ID of a primitive status type.
  *
  * @return The GaimStatusPrimitive value.
  */
