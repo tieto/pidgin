@@ -165,6 +165,8 @@ gaim_xfer_request_denied(struct gaim_xfer *xfer)
 	if (xfer == NULL)
 		return;
 
+	gaim_xfer_destroy(xfer);
+
 	/* TODO */
 }
 
