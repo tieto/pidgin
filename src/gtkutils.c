@@ -669,7 +669,7 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 		gtk_widget_show(hbox);
 
 		/* Load the image. */
-		proto_name = prpl_info->list_icon(NULL, NULL);
+		proto_name = prpl_info->list_icon(account, NULL);
 		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
 
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
