@@ -4147,18 +4147,23 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
+					char *gname_utf8 = gaim_try_conv_to_utf8(gname);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
+					char *alias_utf8 = gaim_try_conv_to_utf8(alias);
 					struct buddy *buddy = find_buddy(gc->user, curitem->name);
+					/* Should gname be freed here? -- elb */
+					free(alias);
 					if (buddy) {
 						/* Get server stored alias */
-						if (alias)
-							strcpy(buddy->alias, alias);
+						if (alias_utf8)
+							strcpy(buddy->alias, alias_utf8);
 					} else {
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
-						add_buddy(gc->user, (gname ? gname : "orphans"), curitem->name, alias);
+						add_buddy(gc->user, (gname_utf8 ? gname_utf8 : "orphans"), curitem->name, alias_utf8);
 						tmp++;
 					}
-					free(alias);
+					free(gname_utf8);
+					free(alias_utf8);
 				}
 			} break;
 

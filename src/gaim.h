@@ -472,8 +472,11 @@ extern char *add_cr(char *);
 extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int) G_GNUC_CONST;
 extern FILE *gaim_mkstemp(gchar **);
-extern char *convert_string(char *, const char *, const char *);
 extern const char *handle_uri(char *);
+/* This guy does its best to convert a string to UTF-8 from an unknown
+ * encoding by checking the locale and trying some sane defaults ...
+ * if everything fails it returns NULL. */
+char *gaim_try_conv_to_utf8(const char *str);
 
 /* Functions in log.h */
 extern FILE *open_log_file (const char *, int);

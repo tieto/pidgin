@@ -41,11 +41,6 @@
 
 #define PATHSIZE 1024
 
-/* This guy does its best to convert a string to UTF-8 from an unknown
- * encoding by checking the locale and trying some sane defaults ...
- * if everything fails it returns NULL. */
-static char *whatever_to_utf8(const char *str);
-
 void remove_buddy(struct buddy *rem_b)
 {
 	if(rem_b->user->gc) {
@@ -263,7 +258,7 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 				break;
 			if (*c == 'g') {
 				char *utf8 = NULL;
-				utf8 = whatever_to_utf8(c + 2);
+				utf8 = gaim_try_conv_to_utf8(c + 2);
 				if (utf8 == NULL) {
 					g_strlcpy(current, _("Invalid Groupname"), sizeof(current));
 				} else {
@@ -282,7 +277,7 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 
 				g_strlcpy(nm, c + 2, sizeof(nm));
 				if (a) {
-					utf8 = whatever_to_utf8(a);
+					utf8 = gaim_try_conv_to_utf8(a);
 					if (utf8 == NULL) {
 						debug_printf ("Failed to convert alias for '%s' to UTF-8\n", nm);
 					}
@@ -1209,30 +1204,4 @@ char *gaim_buddy_get_setting(struct buddy *b, const char *key) {
 	if(!b)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(b->settings, key));
-}
-
-static char *whatever_to_utf8(const char *str)
-{
-	int converted;
-	char *utf8;
-
-	if (g_utf8_validate(str, -1, NULL)) {
-		return g_strdup(str);
-	}
-
-	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
-	if (utf8 && converted == strlen (str)) {
-		return(utf8);
-	} else if (utf8) {
-		g_free(utf8);
-	}
-
-	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
-	if (utf8 && converted == strlen (str)) {
-		return(utf8);
-	} else if (utf8) {
-		g_free(utf8);
-	}
-
-	return(NULL);
 }
