@@ -22,7 +22,6 @@ version 0.65 (07/16/2003):
 	* Preferences moved to ~/.gaim/prefs.xml
 	* Account information moved to ~/.gaim/accounts.xml
 	* Pounces moved to ~/.gaim/pounces.xml
-	* Added support for the Trepia protocol
 	* Added protocol icons to various drop-down boxes
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
