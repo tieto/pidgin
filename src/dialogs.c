@@ -1980,7 +1980,7 @@ static void show_clear_log(GtkWidget *w, struct view_log *view)
 		return;
 
 	text = g_strdup_printf(_("You are about to remove the log file for %s.  Do you want to continue?"),
-						   view->name);
+						   view ? view->name : _("System Log"));
 	view->clear_handle = gaim_request_action(NULL, NULL, _("Remove Log"),
 											 text, -1, view, 2,
 											 _("Remove Log"),
