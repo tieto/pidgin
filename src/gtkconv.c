@@ -622,15 +622,6 @@ info_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static void
-warn_cb(GtkWidget *widget, GaimConversation *conv)
-{
-	gaim_gtkdialogs_warn(gaim_conversation_get_gc(conv),
-					 gaim_conversation_get_name(conv));
-
-	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
-}
-
-static void
 block_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimAccount *account;
@@ -1160,10 +1151,14 @@ menu_warn_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
 	GaimConversation *conv;
+	GaimConnection *gc;
 
 	conv = gaim_conv_window_get_active_conversation(win);
+	gc = gaim_conversation_get_gc(conv);
 
-	warn_cb(NULL, conv);
+	gaim_gtkdialogs_warn(gc, gaim_conversation_get_name(conv));
+
+	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
 
 static void
@@ -2723,7 +2718,6 @@ gray_stuff_out(GaimConversation *conv)
 		/* Deal with buttons */
 		gtk_widget_show(gtkconv->info);
 		gtk_widget_show(gtkconv->send);
-		gtk_widget_show(gtkconv->u.im->warn);
 		gtk_widget_show(gtkconv->u.im->block);
 		gtk_widget_show(gtkconv->u.im->send_file);
 
@@ -2804,7 +2798,6 @@ gray_stuff_out(GaimConversation *conv)
 			gtk_widget_set_sensitive(gtkconv->add, (prpl_info->add_buddy != NULL));
 			gtk_widget_set_sensitive(gtkconv->remove, (prpl_info->remove_buddy != NULL));
 			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->send_im != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->warn, (prpl_info->warn != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->block, (prpl_info->add_deny != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->send_file,
 				(prpl_info->send_file && (!prpl_info->can_receive_file ||
@@ -2872,7 +2865,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_set_sensitive(gtkconv->info, FALSE);
 		gtk_widget_set_sensitive(gtkconv->send, FALSE);
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-			gtk_widget_set_sensitive(gtkconv->u.im->warn, FALSE);
 			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
 			gtk_widget_set_sensitive(gtkconv->u.im->send_file, FALSE);
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
@@ -3814,13 +3806,6 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 	}
 
 	/* The buttons, from left to right */
-
-	/* Warn button */
-	gtkim->warn = gaim_gtkconv_button_new(GAIM_STOCK_WARN, _("Warn"),
-									_("Warn the user"),
-									gtkconv->tooltips, warn_cb, conv);
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(gtkconv->sg, gtkim->warn);
 
 	/* Block button */
 	gtkim->block = gaim_gtkconv_button_new(GAIM_STOCK_BLOCK, _("Block"),

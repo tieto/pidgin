@@ -115,7 +115,6 @@ struct _GaimGtkWindow
  */
 struct _GaimGtkImPane
 {
-	GtkWidget *warn;
 	GtkWidget *block;
 	GtkWidget *send_file;
 	GtkWidget *sep1;
