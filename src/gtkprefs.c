@@ -129,7 +129,10 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 	adjust = gtk_adjustment_new(val, min, max, 1, 1, 1);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 	g_object_set_data(G_OBJECT(spin), "val", key);
-	gtk_widget_set_size_request(spin, 50, -1);
+	if (max < 10000)
+		gtk_widget_set_size_request(spin, 50, -1);
+	else
+		gtk_widget_set_size_request(spin, 60, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(adjust), "value-changed",
 					 G_CALLBACK(update_spin_value), GTK_WIDGET(spin));
