@@ -337,9 +337,12 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GaimGtkRequestData *data;
 	GtkWidget *win;
 	GtkWidget *vbox;
+	GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
+	GtkWidget *sep;
+	GtkWidget *button;
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	GaimRequestFieldGroup *group;
@@ -560,6 +563,28 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	}
 
 	g_object_unref(sg);
+
+	/* Separator */
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	/* Button box. */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* Cancel button */
+	button = gtk_button_new_from_stock(text_to_stock(cancel_text));
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	/* OK button */
+	button = gtk_button_new_from_stock(text_to_stock(ok_text));
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
 
 	gtk_widget_show(win);
 
