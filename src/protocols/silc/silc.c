@@ -883,7 +883,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
-							  _("Unknown command"));
+					_("Unknown command"));
 		return 0;
 	}
 
@@ -1030,23 +1030,6 @@ static GaimCmdRet silcgaim_cmd_whois(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_chat_invite(GaimConversation *conv,
-		const char *cmd, char **args, char **error)
-{
-	int id;
-	GaimConnection *gc;
-
-	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
-	gc = gaim_conversation_get_gc(conv);
-
-	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
-
-	silcgaim_chat_invite(gc, id, NULL, args[0]);
-
-	return GAIM_CMD_RET_OK;
-}
-
 static GaimCmdRet silcgaim_cmd_msg(GaimConversation *conv,
 		const char *cmd, char **args, char **error)
 {
@@ -1177,6 +1160,50 @@ static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
+static GaimCmdRet silcgaim_cmd_quit(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	sg = gc->proto_data;
+
+	if (sg == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	silc_client_command_call(sg->client, sg->conn, NULL,
+				 "QUIT", (args && args[0]) ? args[0] : "Download Gaim: " GAIM_WEBSITE, NULL);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_call(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	sg = gc->proto_data;
+
+	if (sg == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	if (!silc_client_command_call(sg->client, sg->conn, args[0]))
+		return GAIM_CMD_RET_FAILED;
+
+	return GAIM_CMD_RET_OK;
+}
+
 
 /************************** Plugin Initialization ****************************/
 
@@ -1208,10 +1235,6 @@ silcgaim_register_commands(void)
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc",
 			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"));
-	gaim_cmd_register("invite", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_chat_invite,
-			_("invite &lt;nick&gt;:  Invite nick to join this channel"));
 	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_msg,
@@ -1228,10 +1251,77 @@ silcgaim_register_commands(void)
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_detach,
 			_("detach:  Detach this session"));
+	gaim_cmd_register("quit", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_quit,
+			"");
+	gaim_cmd_register("call", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_call,
+			"");
+	/* These below just get passed through for the silc client library to deal with */
+	gaim_cmd_register("kill", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("nick", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("cmode", "wws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("cumode", "wws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
 	gaim_cmd_register("umode", "w", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc", silcgaim_cmd_generic,
 			_("umode &lt;usermodes&gt;:  Set your user options"));
+	gaim_cmd_register("oper", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("kick", "wws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("info", "ww", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("ban", "ww", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("ping", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+#if 0 /* Gaim doesn't handle the reply for these yet */
+	gaim_cmd_register("stats", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("whowas", "ww", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("users", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+	gaim_cmd_register("getkey", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_generic,
+			"");
+#endif
 }
 
 static GaimPluginPrefFrame *

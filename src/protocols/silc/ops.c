@@ -51,7 +51,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	GaimConnection *gc = client->application;
 	SilcGaim sg = gc->proto_data;
 	GaimConversation *convo = NULL;
-	char *msg;
+	char *msg, *tmp;
 
 	if (!message)
 		return;
@@ -90,11 +90,13 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		if (!msg)
 			return;
 
+		tmp = gaim_escape_html(msg);
 		/* Send to Gaim */
 		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 				 sender->nickname ?
 				 sender->nickname : "<unknown>", 0,
-				 msg, time(NULL));
+				 tmp, time(NULL));
+		g_free(tmp);
 		g_free(msg);
 		return;
 	}
@@ -114,12 +116,15 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		return;
 	}
 
-	if (flags & SILC_MESSAGE_FLAG_UTF8)
+	if (flags & SILC_MESSAGE_FLAG_UTF8) {
+		tmp = gaim_escape_html((const char *)message);
 		/* Send to Gaim */
 		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 				 sender->nickname ?
 				 sender->nickname : "<unknown>", 0,
-				 (const char *)message, time(NULL));
+				 tmp, time(NULL));
+		g_free(tmp);
+	}
 }
 
 
@@ -138,7 +143,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	GaimConnection *gc = client->application;
 	SilcGaim sg = gc->proto_data;
 	GaimConversation *convo = NULL;
-	char *msg;
+	char *msg, *tmp;
 
 	if (!message)
 		return;
@@ -162,11 +167,13 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		if (!msg)
 			return;
 
+		tmp = gaim_escape_html(msg);
 		/* Send to Gaim */
 		serv_got_im(gc, sender->nickname ?
 			    sender->nickname : "<unknown>",
-			    msg, 0, time(NULL));
+			    tmp, 0, time(NULL));
 		g_free(msg);
+		g_free(tmp);
 		return;
 	}
 
@@ -185,11 +192,14 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		return;
 	}
 
-	if (flags & SILC_MESSAGE_FLAG_UTF8)
+	if (flags & SILC_MESSAGE_FLAG_UTF8) {
+		tmp = gaim_escape_html((const char *)message);
 		/* Send to Gaim */
 		serv_got_im(gc, sender->nickname ?
 			    sender->nickname : "<unknown>",
-			    (const char *)message, 0, time(NULL));
+			    tmp, 0, time(NULL));
+		g_free(tmp);
+	}
 }
 
 

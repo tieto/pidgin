@@ -1217,6 +1217,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 	SilcUInt32 flags;
 	int ret;
 	const char *msg2;
+	char *tmp;
 	gboolean found = FALSE;
 	gboolean sign = gaim_prefs_get_bool("/plugins/prpl/silc/sign_chat");
 
@@ -1282,9 +1283,12 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 	ret = silc_client_send_channel_message(client, conn, channel, key,
 					       flags, (unsigned char *)msg2,
 					       strlen(msg2), TRUE);
-	if (ret)
-		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, msg,
+	if (ret) {
+		tmp = gaim_escape_html(msg);
+		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp,
 				 time(NULL));
+		g_free(tmp);
+	}
 
 	return ret;
 }
