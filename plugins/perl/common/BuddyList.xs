@@ -89,3 +89,10 @@ PPCODE:
 				"Gaim::BuddyList::Group")));
 		}
 	}
+
+void *
+handle()
+CODE:
+	RETVAL = gaim_blist_get_handle();
+OUTPUT:
+	RETVAL
