@@ -2159,7 +2159,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 {
 	const gchar *c;
 	gboolean intag = FALSE;
-	gboolean tagquote = FALSE;
+	gint tagquote = 0;
 	gboolean incomment = FALSE;
 	gchar *ws;
 	gchar *tag;
@@ -2205,7 +2205,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	while (*c) {
 		if (*c == '<') {
-			if (intag && !tagquote) {
+			if (intag && (tagquote != 1)) {
 				char *d;
 				tag [tpos] = 0;
 				d = tag;
@@ -2264,6 +2264,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 			tag [tpos++] = *c++;
 			intag = TRUE;
+			tagquote = 0;
 		} else if (incomment && (*c == '-') && !g_strncasecmp (c, "-->", strlen ("-->"))) {
 			gchar *tmp;
 			ws [wpos] = 0;
@@ -2278,7 +2279,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			NEW_BIT (NEW_COMMENT_BIT);
 			incomment = FALSE;
 			c += strlen ("-->");
-		} else if (*c == '>' && intag && !tagquote) {
+		} else if (*c == '>' && intag && (tagquote != 1)) {
 			gboolean got_tag = FALSE;
 			tag [tpos++] = *c++;
 			tag [tpos] = 0;
@@ -2822,7 +2823,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 		} else if (intag) {
 			if (*c == '\"')
-				tagquote = !tagquote;
+				tagquote++;
 			tag [tpos++] = *c++;
 		} else if (incomment) {
 			ws [wpos++] = *c++;
