@@ -11,7 +11,7 @@
   preference panes for perl scripts will be possible.
  @endsection
 
- @section Writing your first perl script
+ @section first-script Writing your first perl script
   Enough of that. You want to know how to write a perl script, right?
 
   First off, we're going to assume here that you are familiar with perl. Perl
@@ -150,7 +150,7 @@ sub connection_signed_on_cb {
     Gaim::debug_info("my perl plugin",
                      "Account " . $account->get_username() . " signed on.\n");
 }
- 
+
 sub plugin_load {
     my $plugin = shift;
     my $data = "";
