@@ -465,7 +465,7 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	void (*gaim_plugin_config)();
 	char *error;
 
-	if (confighandle)
+	if (confighandle != 0)
 		gtk_signal_disconnect(GTK_OBJECT(config), confighandle);
 	text_len = gtk_text_get_length(GTK_TEXT(plugtext));
 	gtk_text_set_point(GTK_TEXT(plugtext), 0);
@@ -490,6 +490,7 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 		gtk_widget_destroy(plugwindow);
 	plugwindow = NULL;
 	config = NULL;
+	confighandle = 0;
 }
 
 void gaim_signal_connect(void *handle, enum gaim_event which,
