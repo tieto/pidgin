@@ -2250,14 +2250,14 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
 		/* Font Color */
-		button = gaim_pixbuf_toolbar_button_from_stock("gtk-select-color");
+		button = gaim_pixbuf_toolbar_button_from_file("change-fgcolor-small.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_fg_color), c);
 		c->fgcolorbtn = button; /* We should remember this */
 
 		/* Font Color */
-		button = gaim_pixbuf_toolbar_button_from_stock("gtk-select-color");
+		button = gaim_pixbuf_toolbar_button_from_file("change-bgcolor-small.png");
 		gtk_size_group_add_widget(sg, button);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_bg_color), c);

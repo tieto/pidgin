@@ -73,6 +73,8 @@ PIXMAPS_MENUS =	$(GAIM_PIXMAPS)/about_menu.png \
 
 PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/accounts.png \
+			$(GAIM_PIXMAPS)/change-bgcolor-small.png \
+			$(GAIM_PIXMAPS)/change-fgcolor-small.png \
 			$(GAIM_PIXMAPS)/preferences.png \
 			$(GAIM_PIXMAPS)/signon.png \
 			$(GAIM_PIXMAPS)/insert-image-small.png \

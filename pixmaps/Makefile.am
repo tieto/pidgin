@@ -14,6 +14,8 @@ EXTRA_DIST =
 		broken.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
+		change-bgcolor-small.png \
+		change-fgcolor-small.png \
 		close.xpm			\
 		connect.png			\
 		crazy4.xpm			\
