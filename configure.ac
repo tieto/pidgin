@@ -180,12 +180,15 @@ if test "x$enable_xss" = "xyes" ; then
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
 	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
 	if test \! "$XSS_LIBS" = "no"; then
+		oldCPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS -I$x_includes"
 		AC_TRY_COMPILE([
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 				],[],[
 				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])],[enable_xss=no]
 				)
+		CPPFLAGS="$oldCPPFLAGS"
 	else
 	       XSS_LIBS=""
 	       enable_xss=no
@@ -203,7 +206,10 @@ if test "x$enable_sm" = "xyes"; then
 	enable_sm=no
 	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
 	if test "$found_sm_lib" = "true"; then
+		oldCPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS -I$x_includes"
 		AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
+		CPPFLAGS="$oldCPPFLAGS"
 	fi
 else
 	SM_LIBS=""
@@ -250,11 +256,11 @@ if test "$enable_perl" = yes ; then
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lc //'`
 		AC_MSG_RESULT(ok)
 
-		oldLIBS=$LIBS
+		oldLIBS="$LIBS"
 		LIBS="$LIBS $PERL_LIBS"
 		AC_MSG_CHECKING(for libperl)
 		AC_CHECK_FUNCS(perl_run, [], enable_perl=no)
-		LIBS=$oldLIBS
+		LIBS="$oldLIBS"
 	fi
 fi
 
