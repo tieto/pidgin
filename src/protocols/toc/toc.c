@@ -54,9 +54,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 #define REVISION "penguin"
 
 #define TYPE_SIGNON    1
@@ -95,7 +92,7 @@ G_MODULE_IMPORT GSList *connections;
 #define UC_WIRELESS     0x20
 
 struct ft_request {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
         char *user;
 	char UID[2048];
         char *cookie;
@@ -139,6 +136,8 @@ struct signon {
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
 
+#define TOC_CONNECT_STEPS 3
+
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
 static void accept_file_dialog(struct ft_request *);
@@ -176,43 +175,42 @@ int toc_soc_close( int fd )
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
-static void toc_login(struct gaim_account *account)
+static void toc_login(GaimAccount *account)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	struct toc_data *tdt;
 	char buf[80];
 
-	gc = new_gaim_conn(account);
+	gc = gaim_account_get_connection(account);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	gc->flags |= OPT_CONN_HTML;
 	gc->flags |= OPT_CONN_AUTO_RESP;
 
 	g_snprintf(buf, sizeof buf, _("Looking up %s"),
-		   account->proto_opt[USEROPT_AUTH][0] ? account->proto_opt[USEROPT_AUTH] : TOC_HOST);
-	set_login_progress(gc, 1, buf);
+			gaim_account_get_string(account, "server", TOC_HOST));
+	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
 
 	debug_printf("* Client connects to TOC\n");
-	if (proxy_connect(account, account->proto_opt[USEROPT_AUTH][0] ?
-				account->proto_opt[USEROPT_AUTH] : TOC_HOST,
-				account->proto_opt[USEROPT_AUTHPORT][0] ?
-				atoi(account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+	if (proxy_connect(account,
+				gaim_account_get_string(account, "server", TOC_HOST),
+				gaim_account_get_int(account, "port", TOC_PORT),
 				toc_login_callback, gc) != 0 || !account->gc) {
-		g_snprintf(buf, sizeof(buf), "Connect to %s failed", account->proto_opt[USEROPT_AUTH]);
-		hide_login_progress(gc, buf);
-		signoff(gc);
+		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
+				gaim_account_get_string(account, "server", TOC_HOST));
+		gaim_connection_error(gc, buf);
 		return;
 	}
 }
 
 static void toc_login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct toc_data *tdt;
 	char buf[80];
 	struct sockaddr_in name;
 	socklen_t namelen;
 
-	if (!g_slist_find(connections, data)) {
+	if (!g_list_find(gaim_connections_get_all(), data)) {
 		toc_soc_close(source);
 		return;
 	}
@@ -221,8 +219,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 
 	if (source == -1) {
 		/* we didn't successfully connect. tdt->toc_fd is valid here */
-		hide_login_progress(gc, "Unable to connect.");
-		signoff(gc);
+		gaim_connection_error(gc, "Unable to connect.");
 		return;
 	}
 	tdt->toc_fd = source;
@@ -234,15 +231,12 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	 */
 	if (getpeername(tdt->toc_fd, (struct sockaddr *)&name, &namelen) == 0)
 		strncpy(tdt->toc_ip, inet_ntoa(name.sin_addr), sizeof(tdt->toc_ip));
-	else if (gc->account && gc->account->proto_opt[USEROPT_AUTH][0])
-		strncpy(tdt->toc_ip, gc->account->proto_opt[USEROPT_AUTH], sizeof(tdt->toc_ip));
 	else
-		strncpy(tdt->toc_ip, TOC_HOST, sizeof(tdt->toc_ip));
+		strncpy(tdt->toc_ip, gaim_account_get_string(gc->account, "server", TOC_HOST), sizeof(tdt->toc_ip));
 
 	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
-		hide_login_progress(gc, "Disconnected.");
-		signoff(gc);
+		gaim_connection_error(gc, "Disconnected.");
 		return;
 	}
 	tdt->state = STATE_FLAPON;
@@ -252,11 +246,11 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	 * toc_fd file descriptor, toc_callback is called, with gc passed as its data arg. */
 	gc->inpa = gaim_input_add(tdt->toc_fd, GAIM_INPUT_READ, toc_callback, gc);
 
-	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
-	set_login_progress(gc, 2, buf);
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gaim_account_get_username(gc->account));
+	gaim_connection_update_progress(gc, buf, 2, TOC_CONNECT_STEPS);
 }
 
-static void toc_close(struct gaim_connection *gc)
+static void toc_close(GaimConnection *gc)
 {
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
@@ -265,7 +259,7 @@ static void toc_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
-static void toc_build_config(struct gaim_account *account, char *s, int len, gboolean show)
+static void toc_build_config(GaimAccount *account, char *s, int len, gboolean show)
 {
 	GaimBlistNode *gnode,*bnode;
 	struct group *g;
@@ -275,10 +269,10 @@ static void toc_build_config(struct gaim_account *account, char *s, int len, gbo
 
 	int pos = 0;
 
-	if (!account->permdeny)
-		account->permdeny = 1;
+	if (!account->perm_deny)
+		account->perm_deny = 1;
 
-	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->permdeny);
+	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->perm_deny);
 	for(gnode = gaim_get_blist()->root; gnode && len > pos; gnode = gnode->next) {
 		g = (struct group *)gnode;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -376,7 +370,7 @@ static int escape_text(char *msg)
 	return cnt;
 }
 
-static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
+static int sflap_send(GaimConnection *gc, char *buf, int olen, int type)
 {
 	int len;
 	int slen = 0;
@@ -424,7 +418,7 @@ static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 	return toc_write(tdt->toc_fd, obuf, slen);
 }
 
-static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
+static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 {
 	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	struct sflap_hdr *hdr;
@@ -457,7 +451,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 		return 0;
 }
 
-static unsigned char *roast_password(char *pass)
+static unsigned char *roast_password(const char *pass)
 {
 	/* Trivial "encryption" */
 	static unsigned char rp[256];
@@ -570,17 +564,19 @@ static char *show_error_message()
 
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)data;
+	GaimConnection *gc = (GaimConnection *)data;
 	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	struct sflap_hdr *hdr;
 	struct signon so;
 	char buf[8 * 1024], *c;
 	char snd[BUF_LEN * 2];
 
+	const char *username = gaim_account_get_username(gc->account);
+	char *password;
+
 	/* there's data waiting to be read, so read it. */
 	if (wait_reply(gc, buf, 8 * 1024) <= 0) {
-		hide_login_progress_error(gc, _("Connection Closed"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Connection Closed"));
 		return;
 	}
 
@@ -594,30 +590,31 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		tdt->state = STATE_SIGNON_REQUEST;
 
 		debug_printf("* Client sends TOC FLAP SIGNON\n");
-		g_snprintf(so.username, sizeof(so.username), "%s", gc->username);
+		g_snprintf(so.username, sizeof(so.username), "%s", username);
 		so.ver = htonl(1);
 		so.tag = htons(1);
 		so.namelen = htons(strlen(so.username));
 		if (sflap_send(gc, (char *)&so, ntohs(so.namelen) + 8, TYPE_SIGNON) < 0) {
-			hide_login_progress(gc, _("Disconnected."));
-			signoff(gc);
+			gaim_connection_error(gc, _("Disconnected."));
 			return;
 		}
 
 		debug_printf("* Client sends TOC \"toc_signon\" message\n");
 		/* i hate icq. */
-		if (gc->username[0] >= '0' && gc->username[0] <= '9')
-			gc->password[9] = '\0';
+		if (username[0] >= '0' && username[0] <= '9')
+			password = g_strndup(gaim_account_get_password(gc->account), 8);
+		else
+			password = g_strdup(gaim_account_get_password(gc->account));
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
-			   AUTH_HOST, AUTH_PORT, normalize(gc->username),
-			   roast_password(gc->password), LANGUAGE, REVISION);
+			   AUTH_HOST, AUTH_PORT, normalize(username),
+			   roast_password(password), LANGUAGE, REVISION);
+		g_free(password);
 		if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
-			hide_login_progress(gc, _("Disconnected."));
-			signoff(gc);
+			gaim_connection_error(gc, _("Disconnected."));
 			return;
 		}
 
-		set_login_progress(gc, 3, _("Waiting for reply..."));
+		gaim_connection_update_progress(gc, _("Waiting for reply..."), 3, TOC_CONNECT_STEPS);
 		return;
 	}
 
@@ -628,10 +625,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				     buf + sizeof(struct sflap_hdr));
 			if (!g_ascii_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
 				strtok(buf + sizeof(struct sflap_hdr), ":");
-				hide_login_progress(gc, show_error_message());
+				gaim_connection_error(gc, show_error_message());
 			} else
-				hide_login_progress(gc, _("Authentication Failed"));
-			signoff(gc);
+				gaim_connection_error(gc, _("Authentication Failed"));
 			return;
 		}
 		/* we're supposed to check that it's really TOC v1 here but we know it is ;) */
@@ -643,7 +639,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		tdt->state = STATE_ONLINE;
 
-		account_online(gc);
+		gaim_connection_set_state(gc, GAIM_CONNECTED);
 		serv_finish_login(gc);
 
 		/* Client sends TOC toc_init_done message */
@@ -672,11 +668,12 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		else {
 			tdt->state = STATE_ONLINE;
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
-				   AUTH_HOST, AUTH_PORT, normalize(gc->username),
-				   roast_password(gc->password), LANGUAGE, REVISION);
+				   AUTH_HOST, AUTH_PORT,
+				   normalize(gaim_account_get_username(gc->account)),
+				   roast_password(gaim_account_get_password(gc->account)),
+				   LANGUAGE, REVISION);
 			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
-				hide_login_progress(gc, _("Disconnected."));
-				signoff(gc);
+				gaim_connection_error(gc, _("Disconnected."));
 				return;
 			}
 			g_snprintf(snd, sizeof snd, "toc_init_done");
@@ -749,9 +746,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		} else
 			time_idle = 0;
 
-		tmp = g_strdup(normalize(gc->username));
+		tmp = g_strdup(normalize(gaim_account_get_username(gc->account)));
 		if (!strcmp(tmp, normalize(c)))
-			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", c);
+			gaim_connection_set_display_name(gc, c);
 		g_free(tmp);
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
@@ -864,8 +861,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		url = strtok(NULL, ":");
 
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", tdt->toc_ip,
-				gc->account->proto_opt[USEROPT_AUTHPORT][0] ?
-					atoi(gc->account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+				gaim_account_get_int(gc->account, "port", TOC_PORT),
 				url);
 		grab_url(tmp, FALSE, toc_got_info, NULL);
 	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
@@ -1022,7 +1018,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(struct gaim_connection *gc, const char *name, const char *message, int len, int flags)
+static int toc_send_im(GaimConnection *gc, const char *name, const char *message, int len, int flags)
 {
 	char buf[BUF_LEN * 2];
 	char *tmp = g_malloc(strlen(message) * 4 + 1); /* 4 because \n gets replaced with <BR> */
@@ -1041,7 +1037,7 @@ static int toc_send_im(struct gaim_connection *gc, const char *name, const char 
 	return 1;
 }
 
-static void toc_set_config(struct gaim_connection *gc)
+static void toc_set_config(GaimConnection *gc)
 {
 	char *buf = g_malloc(MSG_LEN), snd[BUF_LEN * 2];
 	toc_build_config(gc->account, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
@@ -1050,21 +1046,21 @@ static void toc_set_config(struct gaim_connection *gc)
 	g_free(buf);
 }
 
-static void toc_get_info(struct gaim_connection *g, const char *name)
+static void toc_get_info(GaimConnection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_get_dir(struct gaim_connection *g, const char *name)
+static void toc_get_dir(GaimConnection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+static void toc_set_dir(GaimConnection *g, const char *first, const char *middle, const char *last,
 			const char *maiden, const char *city, const char *state, const char *country, int web)
 {
 	char buf2[BUF_LEN * 4], buf[BUF_LEN];
@@ -1075,7 +1071,7 @@ static void toc_set_dir(struct gaim_connection *g, const char *first, const char
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_dir_search(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+static void toc_dir_search(GaimConnection *g, const char *first, const char *middle, const char *last,
 			   const char *maiden, const char *city, const char *state, const char *country, const char *email)
 {
 	char buf[BUF_LONG];
@@ -1086,7 +1082,7 @@ static void toc_dir_search(struct gaim_connection *g, const char *first, const c
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_away(struct gaim_connection *g, char *state, char *message)
+static void toc_set_away(GaimConnection *g, char *state, char *message)
 {
 	char buf[BUF_LEN * 2];
 	if (g->away) {
@@ -1105,7 +1101,7 @@ static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_info(struct gaim_connection *g, char *info)
+static void toc_set_info(GaimConnection *g, char *info)
 {
 	char buf[BUF_LEN * 2], buf2[BUF_LEN * 2];
 	g_snprintf(buf2, sizeof buf2, "%s", info);
@@ -1114,14 +1110,14 @@ static void toc_set_info(struct gaim_connection *g, char *info)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_change_passwd(struct gaim_connection *g, const char *orig, const char *new)
+static void toc_change_passwd(GaimConnection *g, const char *orig, const char *new)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
 	sflap_send(g, buf, strlen(buf), TYPE_DATA);
 }
 
-static void toc_add_buddy(struct gaim_connection *g, const char *name)
+static void toc_add_buddy(GaimConnection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
@@ -1129,7 +1125,7 @@ static void toc_add_buddy(struct gaim_connection *g, const char *name)
 	toc_set_config(g);
 }
 
-static void toc_add_buddies(struct gaim_connection *g, GList *buddies)
+static void toc_add_buddies(GaimConnection *g, GList *buddies)
 {
 	char buf[BUF_LEN * 2];
 	int n;
@@ -1146,7 +1142,7 @@ static void toc_add_buddies(struct gaim_connection *g, GList *buddies)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_remove_buddy(struct gaim_connection *g, char *name, char *group)
+static void toc_remove_buddy(GaimConnection *g, char *name, char *group)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
@@ -1154,7 +1150,7 @@ static void toc_remove_buddy(struct gaim_connection *g, char *name, char *group)
 	toc_set_config(g);
 }
 
-static void toc_remove_buddies(struct gaim_connection *g, GList *buddies, const char *group)
+static void toc_remove_buddies(GaimConnection *g, GList *buddies, const char *group)
 {
 	char buf[BUF_LEN * 2];
 	int n;
@@ -1172,21 +1168,21 @@ static void toc_remove_buddies(struct gaim_connection *g, GList *buddies, const 
 	toc_set_config(g);
 }
 
-static void toc_set_idle(struct gaim_connection *g, int time)
+static void toc_set_idle(GaimConnection *g, int time)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_warn(struct gaim_connection *g, char *name, int anon)
+static void toc_warn(GaimConnection *g, char *name, int anon)
 {
 	char send[BUF_LEN * 2];
 	g_snprintf(send, 255, "toc_evil %s %s", name, ((anon) ? "anon" : "norm"));
 	sflap_send(g, send, -1, TYPE_DATA);
 }
 
-static GList *toc_chat_info(struct gaim_connection *gc)
+static GList *toc_chat_info(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -1207,7 +1203,7 @@ static GList *toc_chat_info(struct gaim_connection *gc)
 	return m;
 }
 
-static void toc_join_chat(struct gaim_connection *g, GHashTable *data)
+static void toc_join_chat(GaimConnection *g, GHashTable *data)
 {
 	char buf[BUF_LONG];
 	char *name, *exchange;
@@ -1226,7 +1222,7 @@ static void toc_join_chat(struct gaim_connection *g, GHashTable *data)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name)
+static void toc_chat_invite(GaimConnection *g, int id, const char *message, const char *name)
 {
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id,
@@ -1234,7 +1230,7 @@ static void toc_chat_invite(struct gaim_connection *g, int id, const char *messa
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_chat_leave(struct gaim_connection *g, int id)
+static void toc_chat_leave(GaimConnection *g, int id)
 {
 	GSList *bcs = g->buddy_chats;
 	struct gaim_conversation *b = NULL;
@@ -1261,7 +1257,7 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 	}
 }
 
-static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
+static void toc_chat_whisper(GaimConnection *g, int id, char *who, char *message)
 {
 	char buf2[BUF_LEN * 2];
 	escape_text(message);
@@ -1269,7 +1265,7 @@ static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char 
 	sflap_send(g, buf2, -1, TYPE_DATA);
 }
 
-static int toc_chat_send(struct gaim_connection *g, int id, char *message)
+static int toc_chat_send(GaimConnection *g, int id, char *message)
 {
 	char buf[BUF_LEN * 2];
 	escape_text(message);
@@ -1280,12 +1276,12 @@ static int toc_chat_send(struct gaim_connection *g, int id, char *message)
 	return 0;
 }
 
-static void toc_keepalive(struct gaim_connection *gc)
+static void toc_keepalive(GaimConnection *gc)
 {
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
-static const char *toc_list_icon(struct gaim_account *a, struct buddy *b)
+static const char *toc_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "aim";
 }
@@ -1314,7 +1310,7 @@ static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 	*ne = emblems[3];
 }
 
-static GList *toc_buddy_menu(struct gaim_connection *gc, const char *who)
+static GList *toc_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -1328,33 +1324,33 @@ static GList *toc_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static void toc_add_permit(struct gaim_connection *gc, const char *who)
+static void toc_add_permit(GaimConnection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->account->permdeny != 3)
+	if (gc->account->perm_deny != 3)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
 
-static void toc_add_deny(struct gaim_connection *gc, const char *who)
+static void toc_add_deny(GaimConnection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->account->permdeny != 4)
+	if (gc->account->perm_deny != 4)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
 
-static void toc_set_permit_deny(struct gaim_connection *gc)
+static void toc_set_permit_deny(GaimConnection *gc)
 {
 	char buf2[BUF_LEN * 2];
 	GSList *list;
 	int at;
 
-	switch (gc->account->permdeny) {
+	switch (gc->account->perm_deny) {
 	case 1:
 		/* permit all, deny none. to get here reliably we need to have been in permit
 		 * mode, and send an empty toc_add_deny message, which will switch us to deny none */
@@ -1413,26 +1409,26 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 	toc_set_config(gc);
 }
 
-static void toc_rem_permit(struct gaim_connection *gc, const char *who)
+static void toc_rem_permit(GaimConnection *gc, const char *who)
 {
-	if (gc->account->permdeny != 3)
+	if (gc->account->perm_deny != 3)
 		return;
 	toc_set_permit_deny(gc);
 }
 
-static void toc_rem_deny(struct gaim_connection *gc, const char *who)
+static void toc_rem_deny(GaimConnection *gc, const char *who)
 {
-	if (gc->account->permdeny != 4)
+	if (gc->account->perm_deny != 4)
 		return;
 	toc_set_permit_deny(gc);
 }
 
-static GList *toc_away_states(struct gaim_connection *gc)
+static GList *toc_away_states(GaimConnection *gc)
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
-static GList *toc_actions(struct gaim_connection *gc)
+static GList *toc_actions(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
@@ -1498,7 +1494,7 @@ struct file_header {
 struct file_transfer {
 	struct file_header hdr;
 
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	char *user;
 	char *cookie;
@@ -1664,7 +1660,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	struct gaim_account *account;
+	GaimAccount *account;
 	char buf[BUF_LEN * 2];
 
 	if (file_is_dir(dirname, old_ft->window))
@@ -1863,7 +1859,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	struct gaim_account *account;
+	GaimAccount *account;
 	char *buf, buf2[BUF_LEN * 2];
 
 	if (file_is_dir(dirname, old_ft->window))
@@ -1933,7 +1929,7 @@ static void toc_reject_ft(struct ft_request *ft) {
 
 
 static void toc_accept_ft(struct ft_request *fr) {
-	if(g_slist_find(connections, fr->gc)) {
+	if(g_list_find(gaim_connections_get_all(), fr->gc)) {
 		GtkWidget *window;
 		char buf[BUF_LEN];
 
@@ -1982,7 +1978,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 				"%s requests %s to accept %d file: %s (%.2f %s)%s%s",
 				"%s requests %s to accept %d files: %s (%.2f %s)%s%s",
 				ft->files),
-				ft->user, ft->gc->username, ft->files, 
+				ft->user, gaim_account_get_username(ft->gc->account), ft->files,
 				ft->filename, size, sizes[index], (ft->message) ? "\n" : "",
 				(ft->message) ? ft->message : "");
 	} else {

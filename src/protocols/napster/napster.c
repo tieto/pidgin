@@ -47,9 +47,6 @@
 #include "win32dep.h"
 #endif
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 #define USEROPT_NAPSERVER 3
 #define NAP_SERVER "64.124.41.187"
 #define USEROPT_NAPPORT 4
@@ -475,7 +472,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar *buf;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}

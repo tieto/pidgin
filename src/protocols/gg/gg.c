@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6007 2003-05-31 15:06:17Z faceprint $
+ * $Id: gg.c 6009 2003-05-31 15:40:32Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -84,9 +84,6 @@
 #define AGG_HTTP_PASSWORD_CHANGE	5
 
 #define UC_NORMAL 2
-
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
 
 struct agg_data {
 	struct gg_session *sess;
@@ -409,7 +406,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	struct gg_event *e;
 
 	debug_printf("GG login_callback...\n");
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -869,7 +866,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 
 	debug_printf("http_results: begin\n");
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		debug_printf("search_callback: g_slist_find error\n");
 		gaim_input_remove(hdata->inpa);
 		g_free(hdata);
@@ -937,7 +934,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 
 	debug_printf("http_req_callback: begin\n");
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		debug_printf("http_req_callback: g_slist_find error\n");
 		g_free(request);
 		g_free(hdata);
