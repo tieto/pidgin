@@ -229,7 +229,7 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		pos += 2;
 		pair->key = strtol(key, NULL, 10);
 
-		value = g_malloc(len - pos);
+		value = g_malloc(len - pos + 1);
 		x = 0;
 		while (pos + 1 < len) {
 			if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
