@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2819 2001-11-27 22:54:32Z warmenhoven $
+ * $Id: gg.c 2848 2001-12-02 20:42:30Z warmenhoven $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -482,11 +482,13 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_STATE_CONNECTING_HTTP:
 	case GG_STATE_WRITING_HTTP:
 		set_login_progress(gc, 2, _("Handshake"));
+		break;
 	case GG_STATE_CONNECTING_GG:
 		set_login_progress(gc, 3, _("Connecting to GG server"));
 		break;
 	case GG_STATE_WAITING_FOR_KEY:
 		set_login_progress(gc, 4, _("Waiting for server key"));
+		break;
 	case GG_STATE_SENDING_KEY:
 		set_login_progress(gc, 5, _("Sending key"));
 		break;
