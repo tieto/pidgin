@@ -1636,7 +1636,8 @@ rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 			friendly = passport;
 
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   passport, friendly, msn_group_get_id(group));
+				   passport, msn_url_encode(friendly),
+				   msn_group_get_id(group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
