@@ -7,6 +7,7 @@ version 0.9.19:
 	* Whispering in chat works (does anyone even use this?)
 	* HTML-tag buttons in chat
 	* Chat got all kinds of new features (like IRC-sytle /me)
+	* Chat in oscar works much better
 	* Locale support
 	* Many many bugfixes
 
