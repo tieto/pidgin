@@ -221,9 +221,7 @@ build_block_list(GaimGtkPrivacyDialog *dialog)
 static gint
 destroy_cb(GtkWidget *w, GdkEvent *event, GaimGtkPrivacyDialog *dialog)
 {
-	g_free(dialog);
-
-	privacy_dialog = NULL;
+	gaim_gtk_privacy_dialog_hide();
 
 	return 0;
 }
@@ -325,8 +323,10 @@ clear_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 }
 
 static void
-close_cb(GtkWidget *button, void *user_data)
+close_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 {
+	gtk_widget_destroy(dialog->win);
+
 	gaim_gtk_privacy_dialog_hide();
 }
 
@@ -514,7 +514,7 @@ gaim_gtk_privacy_dialog_hide(void)
 	if (privacy_dialog == NULL)
 		return;
 
-	gtk_widget_destroy(privacy_dialog->win);
+	g_free(privacy_dialog);
 	privacy_dialog = NULL;
 }
 
