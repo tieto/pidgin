@@ -252,7 +252,8 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 			pair->value = g_strdup(value);
 			g_free(value);
 			pkt->hash = g_slist_append(pkt->hash, pair);
-			debug_printf("Key: %d  \tValue: %s\n", pair->key, pair->value);
+			gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo",
+					   "Key: %d  \tValue: %s\n", pair->key, pair->value);
 		} else {
 			g_free(pair);
 		}
@@ -292,24 +293,36 @@ static void yahoo_packet_dump(guchar *data, int len)
 {
 #ifdef YAHOO_DEBUG
 	int i;
+
+	gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo", "");
+
 	for (i = 0; i + 1 < len; i += 2) {
-		if ((i % 16 == 0) && i)
-			debug_printf("\n");
-		debug_printf("%02x", data[i]);
-		debug_printf("%02x ", data[i+1]);
+		if ((i % 16 == 0) && i) {
+			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+			gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo", "");
+		}
+
+		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02x%02x ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		debug_printf("%02x", data[i]);
-	debug_printf("\n");
+		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02x", data[i]);
+
+	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+	gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo", "");
+
 	for (i = 0; i < len; i++) {
-		if ((i % 16 == 0) && i)
-			debug_printf("\n");
+		if ((i % 16 == 0) && i) {
+			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+			gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo", "");
+		}
+
 		if (isprint(data[i]))
-			debug_printf("%c ", data[i]);
+			gaim_debug(GAIM_DEBUG_MISC, NULL, "%c ", data[i]);
 		else
-			debug_printf(". ");
+			gaim_debug(GAIM_DEBUG_MISC, NULL, ". ");
 	}
-	debug_printf("\n");
+
+	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
 #endif
 }
 
@@ -436,7 +449,8 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			do_error_dialog(pair->value, NULL, GAIM_ERROR);
 			break;
 		default:
-			debug_printf("unknown status key %d\n", pair->key);
+			gaim_debug(GAIM_DEBUG_ERROR, "prpl-yahoo",
+					   "Unknown status key %d\n", pair->key);
 			break;
 		}
 
@@ -525,8 +539,12 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		struct buddy *bud = gaim_find_buddy(gc->account, from);
 		void *free1=NULL, *free2=NULL;
-		if (!bud)
-			debug_printf("%s is playing a game, and doesn't want you to know.\n", from);
+		if (!bud) {
+			gaim_debug(GAIM_DEBUG_WARNING, "prpl-yahoo",
+					   "%s is playing a game, and doesn't want "
+					   "you to know.\n", from);
+		}
+
 		if (*stat == '1') {
 			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
 				g_free(free1);
@@ -859,7 +877,8 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 		yahoo_process_auth(gc, pkt);
 		break;
 	default:
-		debug_printf("unhandled service 0x%02x\n", pkt->service);
+		gaim_debug(GAIM_DEBUG_ERROR, "prpl-yahoo",
+				   "Unhandled service 0x%02x\n", pkt->service);
 		break;
 	}
 }
@@ -896,7 +915,8 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		pos += 2;
 
 		pktlen = yahoo_get16(yd->rxqueue + pos); pos += 2;
-		debug_printf("%d bytes to read, rxlen is %d\n", pktlen, yd->rxlen);
+		gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo",
+				   "%d bytes to read, rxlen is %d\n", pktlen, yd->rxlen);
 
 		if (yd->rxlen < (YAHOO_PACKET_HDRLEN + pktlen))
 			return;
@@ -907,7 +927,9 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 		pkt->service = yahoo_get16(yd->rxqueue + pos); pos += 2;
 		pkt->status = yahoo_get32(yd->rxqueue + pos); pos += 4;
-		debug_printf("Yahoo Service: 0x%02x Status: %d\n", pkt->service, pkt->status);
+		gaim_debug(GAIM_DEBUG_MISC, "prpl-yahoo",
+				   "Yahoo Service: 0x%02x Status: %d\n",
+				   pkt->service, pkt->status);
 		pkt->id = yahoo_get32(yd->rxqueue + pos); pos += 4;
 
 		yahoo_packet_read(pkt, yd->rxqueue + pos, pktlen);
@@ -971,8 +993,10 @@ static void yahoo_login(struct gaim_account *account) {
 
 	if (!g_ascii_strncasecmp(account->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
 		/* Figured out the new auth method -- cs.yahoo.com likes to disconnect on buddy remove and add now */
-		debug_printf("Setting new Yahoo! server.\n");
-		g_snprintf(account->proto_opt[USEROPT_PAGERHOST], strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
+		gaim_debug(GAIM_DEBUG_INFO, "prpl-yahoo",
+				   "Setting new Yahoo! server.\n");
+		g_snprintf(account->proto_opt[USEROPT_PAGERHOST],
+				   strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
 		save_prefs();
 	}
 
