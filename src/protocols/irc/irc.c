@@ -311,44 +311,14 @@ handle_005(struct gaim_connection *gc, char *word[], char *word_eol[])
 	}
 }
 
-static char *
-int_to_col(int c)
-{
-	switch(c) {
-	case 1:
-		return "#ffffff";
-	case 2:
-		return "#000066";
-	case 3:
-		return "#006600";
-	case 4:
-		return "#ff0000";
-	case 5:
-		return "#660000";
-	case 6:
-		return "#660066";
-	case 7:
-		return "#666600";
-	case 8:
-		return "#cccc00";
-	case 9:
-		return "#33cc33";
-	case 10:
-		return "#00acac";
-	case 11:
-		return "#00ccac";
-	case 12:
-		return "#0000ff";
-	case 13:
-		return "#cc00cc";
-	case 14:
-		return "#666666";
-	case 15:
-		return "#00ccac";
-	default:
-		return "#000000";
-	}
-}
+static const char *irc_colors[] = {
+		"#000000", "#ffffff", "#000066", "#006600",
+		"#ff0000", "#660000", "#660066", "#666600",
+		"#cccc00", "#33cc33", "#00acac", "#00ccac",
+		"#0000ff", "#cc00cc", "#666666", "#00ccac"
+};
+
+#define int_to_col(c) (irc_colors[(((c)<0 || (c)> 15)?0:c)])
 
 static GString *
 encode_html(char *msg)
@@ -605,7 +575,7 @@ dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 	char buf[IRC_BUF_LEN];
 	chat->fd = source;
 	g_snprintf (buf, sizeof buf,
-		    "DCC Chat with %s established",
+		    _("DCC Chat with %s established"),
 		    chat->nick);
 	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
 		       time ((time_t) NULL), -1);
@@ -780,7 +750,7 @@ irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 	char buf[IRC_BUF_LEN];
 	char *nick = g_strndup(who, strchr(who, '!') - who);
 
-	g_snprintf(buf, sizeof(buf), "-:- mode/%s [%c%c %s] by %s", 
+	g_snprintf(buf, sizeof(buf), _("-:- mode/%s [%c%c %s] by %s"), 
 		   room, sign, mode, strlen(argstr) ? argstr : "",
 		   nick);
 	g_free(nick);
@@ -2116,7 +2086,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 				c = find_conversation(who);
 			}
 			if (c) {
-				write_to_conv(c, "<I>Requesting DCC CHAT</I>",
+				write_to_conv(c, _("<I>Requesting DCC CHAT</I>"),
 					      WFLAG_SYSTEM, NULL, 
 					      time(NULL), -1);
 			}
@@ -2133,22 +2103,22 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			return -EINVAL;
 		}
 		if (!g_strcasecmp(word[2], "OPER")) {
-			write_to_conv(c, "<B>Operator commands:<BR>"
-				      "REHASH RESTART</B>",
+			write_to_conv(c, _("<B>Operator commands:<BR>"
+				      "REHASH RESTART</B>"),
 				      WFLAG_NOLOG, NULL, time(NULL), -1);
 		} else if (!g_strcasecmp(word[2], "CTCP")) {
-			write_to_conv(c, "<B>CTCP commands:<BR>"
+			write_to_conv(c, _("<B>CTCP commands:<BR>"
 				      "CLIENTINFO <nick><BR>"
 				      "USERINFO <nick><BR>"
 				      "VERSION <nick><BR>"
-				      "PING <nick></B><BR>",
+				      "PING <nick></B><BR>"),
 				      WFLAG_NOLOG, NULL, time(NULL), -1);
 		} else if (!g_strcasecmp(word[2], "DCC")) {
-			write_to_conv(c, "<B>DCC commands:<BR>"
-				      "CHAT <nick></B>",
+			write_to_conv(c, _("<B>DCC commands:<BR>"
+				      "CHAT <nick></B>"),
 				      WFLAG_NOLOG, NULL, time(NULL), -1);
 		} else {
-			write_to_conv(c, "<B>Currently supported commands:<BR>"
+			write_to_conv(c, _("<B>Currently supported commands:<BR>"
 				      "WHOIS INVITE NICK LIST<BR>"
 				      "JOIN PART TOPIC KICK<BR>"
 				      "OP DEOP VOICE DEVOICE<BR>"
@@ -2156,7 +2126,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 				      "MODE VERSION W WHOWAS<BR>"
 				      "Type /HELP OPER for operator commands<BR>"
 				      "Type /HELP CTCP for CTCP commands<BR>"
-				      "Type /HELP DCC for DCC commands",
+				      "Type /HELP DCC for DCC commands"),
 				      WFLAG_NOLOG, NULL, time(NULL), -1);
 		}
 	} else {
@@ -2170,7 +2140,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(what);
 			return -EINVAL;
 		}
-		write_to_conv(c, "<B>Unknown command</B>", WFLAG_NOLOG, NULL, time(NULL), -1);
+		write_to_conv(c, _("<B>Unknown command</B>"), WFLAG_NOLOG, NULL, time(NULL), -1);
 	}
 	g_free(what);
 	return 0;
@@ -2360,7 +2330,7 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
 	convo = new_conversation (chat->nick);
-	g_snprintf (buf, sizeof buf, "DCC Chat with %s established",
+	g_snprintf (buf, sizeof buf, _("DCC Chat with %s established"),
 		    chat->nick);
 	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL, time ((time_t) NULL), -1);
 	debug_printf ("Chat with %s established\n", chat->nick);
