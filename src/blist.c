@@ -2038,7 +2038,7 @@ static void parse_contact(GaimGroup *group, xmlnode *cnode)
 			continue;
 		if(!strcmp(x->name, "buddy"))
 			parse_buddy(group, contact, x);
-		else if(strcmp(x->name, "setting"))
+		else if(!strcmp(x->name, "setting"))
 			parse_setting((GaimBlistNode*)contact, x);
 	}
 
