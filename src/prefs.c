@@ -57,6 +57,7 @@ static void prefs_build_sound(GtkWidget *);
 static void prefs_build_away(GtkWidget *);
 static void prefs_build_browser(GtkWidget *);
 static gint handle_delete(GtkWidget *, GdkEvent *, void *);
+static void delete_prefs(GtkWidget *, void *);
 
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
@@ -693,11 +694,69 @@ static void convo_page()
 	gtk_widget_show(prefdialog);
 }
 
+static void set_buttons_opt(GtkWidget *w, int data)
+{
+	int mask;
+	if (data & 0x1) /* set the first bit if we're affecting chat buttons */
+		mask = (OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM);
+	else
+		mask = (OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM);
+	display_options &= ~(mask);
+	display_options |= (data & mask);
+
+	if (data & 0x1)
+		update_chat_button_pix();
+	else
+		update_im_button_pix();
+}
+
+static void im_buttons_menu_init(GtkWidget *omenu)
+{
+	GtkWidget *menu, *opt;
+	int index;
+
+	switch (display_options & 
+		(OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM)) {
+	case OPT_DISP_CONV_BUTTON_TEXT:
+		index = 2;
+		break;
+	case OPT_DISP_CONV_BUTTON_XPM:
+		index = 1;
+		break;
+	default: /* both or neither */
+		index = 0;
+		break;
+	}
+
+	menu = gtk_menu_new();
+
+	opt = gtk_menu_item_new_with_label(_("Pictures and Text"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM));
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	opt = gtk_menu_item_new_with_label(_("Pictures Only"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)OPT_DISP_CONV_BUTTON_XPM);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	opt = gtk_menu_item_new_with_label(_("Text Only"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)OPT_DISP_CONV_BUTTON_TEXT);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), index);
+}
+
 static void im_page()
 {
 	GtkWidget *parent;
 	GtkWidget *box;
+	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *opt;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -714,7 +773,20 @@ static void im_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, box);
-	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CONV_SHOW_TEXT, box);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Show buttons as "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	opt = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 5);
+	im_buttons_menu_init(opt);
+	gtk_widget_show(opt);
+
 	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, box);
 	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, box);
@@ -723,11 +795,53 @@ static void im_page()
 	gtk_widget_show(prefdialog);
 }
 
+static void chat_buttons_menu_init(GtkWidget *omenu)
+{
+	GtkWidget *menu, *opt;
+	int index;
+
+	switch (display_options & 
+		(OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM)) {
+	case OPT_DISP_CHAT_BUTTON_TEXT:
+		index = 2;
+		break;
+	case OPT_DISP_CHAT_BUTTON_XPM:
+		index = 1;
+		break;
+	default: /* both or neither */
+		index = 0;
+		break;
+	}
+
+	menu = gtk_menu_new();
+
+	opt = gtk_menu_item_new_with_label(_("Pictures and Text"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM | 1));
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	opt = gtk_menu_item_new_with_label(_("Pictures Only"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_XPM | 1));
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	opt = gtk_menu_item_new_with_label(_("Text Only"));
+	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)(OPT_DISP_CHAT_BUTTON_TEXT | 1));
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), index);
+}
+
 static void chat_page()
 {
 	GtkWidget *parent;
 	GtkWidget *box;
+	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *opt;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -744,7 +858,21 @@ static void chat_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, box);
-	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CHAT_SHOW_TEXT, box);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Show buttons as "));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	opt = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 5);
+	chat_buttons_menu_init(opt);
+	gtk_widget_show(opt);
+
+
 	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CHAT_BIG_ENTRY, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_CHAT, box);
 
@@ -1587,6 +1715,8 @@ void show_prefs()
 	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
 	gtk_widget_set_usize(prefs, 600, 550);
+	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
+			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
@@ -1723,6 +1853,16 @@ static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
         return FALSE;
 }
 
+static void delete_prefs(GtkWidget *w, void *data)
+{
+	if (prefs) {
+		save_prefs();
+		gtk_widget_destroy(prefs);
+	}
+	prefs = NULL;
+}
+      
+
 void set_option(GtkWidget *w, int *option)
 {
 	*option = !(*option);
@@ -1763,9 +1903,6 @@ void set_display_option(GtkWidget *w, int *option)
 	if (blist) build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
 
 	if (blist) update_button_pix();
-
-	if ((int)option == OPT_DISP_CHAT_SHOW_TEXT) update_chat_button_pix();
-	if ((int)option == OPT_DISP_CONV_SHOW_TEXT) update_im_button_pix();
 
 #ifdef USE_APPLET
 	update_pixmaps();

@@ -520,7 +520,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
 
-	gboolean dispstyle;
+	int dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
@@ -532,7 +532,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 	gtk_widget_realize(win);
 
-	dispstyle = (display_options & OPT_DISP_CHAT_SHOW_TEXT) ? TRUE : FALSE;
+	dispstyle = set_dispstyle(1);
 
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
 	
@@ -763,13 +763,13 @@ void setup_buddy_chats()
 
 }
 
-static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm, int opt)
+static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm, int chat)
 {
-	gboolean dispstyle = (display_options & opt) ? TRUE : FALSE;
+	int dispstyle = set_dispstyle(chat);
 	GtkWidget *parent = button->parent;
 	gtk_widget_destroy(button);
 	button = picture_button2(win, text, xpm, dispstyle);
-	if (opt == OPT_DISP_CHAT_SHOW_TEXT)
+	if (chat == 1)
 		gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 5);
 	else
 		gtk_box_pack_end(GTK_BOX(parent), button, dispstyle, dispstyle, 0);
@@ -781,7 +781,7 @@ void update_chat_button_pix()
 {
 	GList *bcs = buddy_chats;
 	struct conversation *c;
-	int opt = OPT_DISP_CHAT_SHOW_TEXT;
+	int opt = 1;
 
 	while (bcs) {
 		c = (struct conversation *)bcs->data;
@@ -803,8 +803,8 @@ void update_im_button_pix()
 	GList *bcs = conversations;
 	struct conversation *c;
 	GtkWidget *parent;
-	int opt = OPT_DISP_CONV_SHOW_TEXT;
-	gboolean dispstyle = (display_options & opt) ? TRUE : FALSE;
+	int opt = 0;
+	int dispstyle = set_dispstyle(0);
 
 	while (bcs) {
 		c = (struct conversation *)bcs->data;

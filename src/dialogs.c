@@ -777,7 +777,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
         add_buddy(grp, who, NULL);
 
         if (c != NULL) {
-		gboolean dispstyle = (display_options & OPT_DISP_CONV_SHOW_TEXT) ? TRUE : FALSE;
+		int dispstyle = set_dispstyle(0);
 		GtkWidget *parent = c->add->parent;
 		gtk_widget_destroy(c->add);
 		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);

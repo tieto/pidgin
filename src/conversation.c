@@ -427,8 +427,11 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (find_buddy(c->name) != NULL) {
-		gboolean dispstyle = (display_options & OPT_DISP_CONV_SHOW_TEXT) ? TRUE : FALSE;
+		int dispstyle;
 		GtkWidget *parent = c->add->parent;
+
+		dispstyle = set_dispstyle(0);
+
 		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
 		debug_print(debug_buff);
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
@@ -1634,15 +1637,8 @@ void show_conv(struct conversation *c)
 	aol_icon(win->window);
         
 	c->window = win;
-       
-	if (display_options & OPT_DISP_CONV_SHOW_TEXT)
-	{
-		dispstyle = TRUE;
-	}
-	else
-	{
-		dispstyle = FALSE;
-	}
+
+	dispstyle = set_dispstyle(0);
 
 	send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
 	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);

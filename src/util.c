@@ -940,7 +940,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 }
 
 static GtkTooltips *tips = NULL;
-GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short showtext)
+GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short dispstyle)
 {
 	GtkWidget *button;
 	GtkWidget *button_box, *button_box_2;
@@ -960,23 +960,29 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short show
 	button_box_2 = gtk_vbox_new(FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
-	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-	pixmap = gtk_pixmap_new(pm, mask);
-	gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+	if (dispstyle == 2 || dispstyle == 0) {
+		pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
+		pixmap = gtk_pixmap_new(pm, mask);
+		gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
 
-	if (showtext)
+		gtk_widget_show(pixmap);
+
+	}
+
+	if (dispstyle == 2 || dispstyle == 1)
 	{
 		label = gtk_label_new(text);
 		gtk_widget_show(label);
 		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
 	}
 
-	gtk_widget_show(pixmap);
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box);
 	gtk_widget_show(button);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
+	if (dispstyle == 2 || dispstyle == 0) {
+		gdk_pixmap_unref(pm);
+		gdk_bitmap_unref(mask);
+	}
 	
 	gtk_tooltips_set_tip(tips, button, text, "Gaim");	
 	return button;
@@ -1153,4 +1159,38 @@ char *stylize(gchar *text, int length)
 	}
 	
 	return buf;
+}
+
+int set_dispstyle (int chat)
+{
+	int dispstyle;
+
+	if (chat) {
+		switch (display_options & (OPT_DISP_CHAT_BUTTON_TEXT | 
+					   OPT_DISP_CHAT_BUTTON_XPM)) {
+		case OPT_DISP_CHAT_BUTTON_TEXT:
+			  dispstyle = 1;
+			  break;
+		case OPT_DISP_CHAT_BUTTON_XPM:
+			  dispstyle = 0;
+			  break;
+		default: /* both or neither */
+			  dispstyle = 2;
+			  break;
+		}
+	} else {
+		switch (display_options & (OPT_DISP_CONV_BUTTON_TEXT | 
+					   OPT_DISP_CONV_BUTTON_XPM)) {
+		case OPT_DISP_CONV_BUTTON_TEXT:
+			  dispstyle = 1;
+			  break;
+		case OPT_DISP_CONV_BUTTON_XPM:
+			  dispstyle = 0;
+			  break;
+		default: /* both or neither */
+			  dispstyle = 2;
+			  break;
+		}
+	}
+	return dispstyle;
 }

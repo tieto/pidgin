@@ -414,7 +414,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 919 $"
+#define REVISION "gaim:$Revision: 925 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -517,11 +517,13 @@ extern int display_options;
 #define OPT_DISP_CHAT_LOGON       0x00000800
 #define OPT_DISP_IGN_WHITE        0x00001000
 #define OPT_DISP_NO_BUTTONS       0x00002000
-#define OPT_DISP_CONV_SHOW_TEXT   0x00004000 
-#define OPT_DISP_CHAT_SHOW_TEXT   0x00008000 
+#define OPT_DISP_CONV_BUTTON_TEXT 0x00004000 
+#define OPT_DISP_CHAT_BUTTON_TEXT 0x00008000 
 #define OPT_DISP_CONV_BIG_ENTRY   0x00010000
 #define OPT_DISP_CHAT_BIG_ENTRY   0x00020000
 #define OPT_DISP_NO_MT_GRP        0x00040000
+#define OPT_DISP_CONV_BUTTON_XPM  0x00080000
+#define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
@@ -609,6 +611,7 @@ extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern void translate_lst (FILE *, char *);
 extern void translate_blt (FILE *, char *);
 extern char *stylize(gchar *, int);
+extern int set_dispstyle (int);
 
 /* Functions in server.c */
 /* input to serv */
