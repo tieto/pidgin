@@ -72,7 +72,7 @@ int icq_SocketNew(int domain, int type, int protocol)
  * Creates a new socket by accepting a connection from a listening
  * socket.
  */
-int icq_SocketAccept(int listens, struct sockaddr *addr, socklen_t *addrlen)
+int icq_SocketAccept(int listens, struct sockaddr *addr, unsigned int *addrlen)
 {
   int s = accept(listens, addr, addrlen);
 

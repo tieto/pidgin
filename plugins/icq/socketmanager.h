@@ -45,7 +45,7 @@ struct icq_Socket_s
 };
 
 int icq_SocketNew(int domain, int type, int protocol);
-int icq_SocketAccept(int listens, struct sockaddr *addr, socklen_t *addrlen);
+int icq_SocketAccept(int listens, struct sockaddr *addr, unsigned int *addrlen);
 void icq_SocketAlloc(int socket_fd);
 int icq_SocketDelete(int socket_fd);
 void icq_SocketSetHandler(int socket_fd, int type, icq_SocketHandler handler,
