@@ -126,7 +126,6 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs);
 static struct group_show *find_gs_by_bs(struct buddy_show *b);
 static void update_num_group(struct group_show *gs);
-static void redo_buddy_list();
 
 void handle_group_rename(struct group *g, char *prevname)
 {
@@ -290,6 +289,33 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 
 void destroy_buddy()
 {
+	GSList *s = shows;
+	struct group_show *g;
+	GSList *m;
+	struct buddy_show *b;
+	while (s) {
+		g = (struct group_show *)s->data;
+		debug_printf("group_show still exists: %s\n", g->name);
+		m = g->members;
+		while (m) {
+			b = (struct buddy_show *)m->data;
+			debug_printf("buddy_show still exists: %s\n", b->name);
+			m = g_slist_remove(m, b);
+			if (b->log_timer > 0)
+				gtk_timeout_remove(b->log_timer);
+			b->log_timer = 0;
+			gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
+			g_free(b->show);
+			g_free(b->name);
+			g_free(b);
+		}
+		gtk_tree_remove_item(GTK_TREE(buddies), g->item);
+		s = g_slist_remove(s, g);
+		g_free(g->name);
+		g_free(g);
+	}
+	shows = NULL;
+
 	if (blist)
 		gtk_widget_destroy(blist);
 	blist = NULL;
@@ -471,86 +497,6 @@ gint applet_destroy_buddy(GtkWidget *widget, GdkEvent *event, gpointer *data)
 }
 
 #endif
-
-
-void signoff_all(GtkWidget *w, gpointer d)
-{
-	GSList *c = connections;
-	struct gaim_connection *g = NULL;
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		g->wants_to_die = TRUE;
-		signoff(g);
-		c = connections;
-	}
-}
-
-void signoff(struct gaim_connection *gc)
-{
-	plugin_event(event_signoff, gc, 0, 0, 0);
-	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-	update_keepalive(gc, FALSE);
-	convo_menu_remove(gc);
-	remove_icon_data(gc);
-	serv_close(gc);
-	redo_buddy_list();
-	build_edit_tree();
-	do_away_menu();
-	do_proto_menu();
-	redo_convo_menus();
-#ifdef USE_APPLET
-	if (connections)
-		set_user_state(online);
-#endif
-	update_connection_dependent_prefs();
-
-	if (connections)
-		return;
-
-	{
-		GSList *s = shows;
-		struct group_show *g;
-		GSList *m;
-		struct buddy_show *b;
-		while (s) {
-			g = (struct group_show *)s->data;
-			debug_printf("group_show still exists: %s\n", g->name);
-			m = g->members;
-			while (m) {
-				b = (struct buddy_show *)m->data;
-				debug_printf("buddy_show still exists: %s\n", b->name);
-				m = g_slist_remove(m, b);
-				if (b->log_timer > 0)
-					gtk_timeout_remove(b->log_timer);
-				b->log_timer = 0;
-				gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
-				g_free(b->show);
-				g_free(b->name);
-				g_free(b);
-			}
-			gtk_tree_remove_item(GTK_TREE(buddies), g->item);
-			s = g_slist_remove(s, g);
-			g_free(g->name);
-			g_free(g);
-		}
-		shows = NULL;
-	}
-
-	debug_printf("date: %s\n", full_date());
-	destroy_all_dialogs();
-	destroy_buddy();
-#ifdef USE_APPLET
-	set_user_state(offline);
-	applet_buddy_show = FALSE;
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
-	remove_applet_away();
-#else
-	show_login();
-#endif /* USE_APPLET */
-	if (misc_options & OPT_MISC_BUDDY_TICKER)
-		BuddyTickerSignoff();
-}
 
 void handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *g)
 {
@@ -991,7 +937,8 @@ gboolean edit_drag_compare_func(GtkCTree *ctree, GtkCTreeNode *source_node,
 }
 
 
-static void redo_buddy_list()
+/* you really shouldn't call this function */
+void redo_buddy_list()
 {
 	/* so here we can safely assume that we don't have to add or delete anything, we
 	 * just have to go through and reorder everything. remember, nothing is going to

@@ -747,7 +747,7 @@ extern void show_buddy_list();
 extern void refresh_buddy_window();
 extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
 extern void signoff(struct gaim_connection *);
-extern void signoff_all(GtkWidget *, gpointer);
+extern void signoff_all(gpointer, gpointer);
 extern void do_im_back();
 extern void set_buddy(struct gaim_connection *, struct buddy *);
 extern struct group *add_group(struct gaim_connection *, char *);
@@ -765,6 +765,7 @@ extern struct buddy *add_buddy(struct gaim_connection *, char *, char *, char *)
 extern void remove_group(struct gaim_connection *, struct group *);
 extern void toggle_buddy_pixmaps();
 extern void gaim_separator(GtkWidget *);
+extern void redo_buddy_list(); /* you really shouldn't call this function */
 
 /* Functions in away.c */
 extern void rem_away_mess(GtkWidget *, struct away_message *);

@@ -1080,6 +1080,59 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	gc->meter = NULL;
 }
 
+void signoff_all(gpointer w, gpointer d)
+{
+	GSList *c = connections;
+	struct gaim_connection *g = NULL;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		g->wants_to_die = TRUE;
+		signoff(g);
+		c = connections;
+	}
+}
+
+void signoff(struct gaim_connection *gc)
+{
+	/* core stuff */
+	debug_printf("date: %s\n", full_date());
+	plugin_event(event_signoff, gc, 0, 0, 0);
+	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+	update_keepalive(gc, FALSE);
+
+	/* UI stuff */
+	convo_menu_remove(gc);
+	remove_icon_data(gc);
+	serv_close(gc);
+	redo_buddy_list();
+	build_edit_tree();
+	do_away_menu();
+	do_proto_menu();
+	redo_convo_menus();
+#ifdef USE_APPLET
+	if (connections)
+		set_user_state(online);
+#endif
+	update_connection_dependent_prefs();
+
+	if (connections)
+		return;
+
+	destroy_all_dialogs();
+	destroy_buddy();
+#ifdef USE_APPLET
+	set_user_state(offline);
+	applet_buddy_show = FALSE;
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
+	remove_applet_away();
+#else
+	show_login();
+#endif /* USE_APPLET */
+	if (misc_options & OPT_MISC_BUDDY_TICKER)
+		BuddyTickerSignoff();
+}
+
 struct aim_user *new_user(const char *name, int proto, int opts)
 {
 	char *titles[4];

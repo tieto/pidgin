@@ -126,7 +126,8 @@ void show_about(GtkWidget *w, void *null)
 		label =
 		    gtk_label_new(
 				  _("GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
-				   "using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE));
+				   "using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
+				   "IRC: #gaim on irc.openprojects.net"));
 
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 
