@@ -17,6 +17,8 @@ version 0.78cvs
 	  Stoddard of Novell)
 	* Find and Save buttons on the debug window (Stu Tomlinson)
 	* Plugin Actions menu (Christopher (siege) O'Brien)
+	* Plugins can now add entries to the rclick menu of a group (Stu
+	  Tomlinson)
 
 	Bug Fixes:
 	* Novell 64bit fixes, better error messages, and buddy list sync fixes
