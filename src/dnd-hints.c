@@ -24,6 +24,10 @@
 #include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 typedef struct
 {
 	GtkWidget *widget;

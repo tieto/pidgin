@@ -28,6 +28,7 @@
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
 #else
+#include "win32dep.h"
 #ifdef small
 #undef small
 #endif

@@ -84,10 +84,11 @@ DLL_C_SRC =		aim.c \
 			conversation.c \
 			core.c \
 			dialogs.c \
-			dnd-utils.c \
+			dnd-hints.c \
 			ft.c \
 			gaimrc.c \
 			gtkconv.c \
+			gtkcellrendererprogress.c \
 			gtkimhtml.c \
 			gtkutils.c \
 			html.c \
@@ -103,6 +104,7 @@ DLL_C_SRC =		aim.c \
 			prpl.c \
 			server.c \
 			sound.c \
+			stock.c \
 			themes.c \
 			util.c \
 			win32/win32dep.c \

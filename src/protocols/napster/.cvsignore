@@ -4,3 +4,6 @@ Makefile
 .libs
 libnapster.la
 napster.lo
+libnapster.def
+libnapster.dll
+libnapster.lib

@@ -25,6 +25,10 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 static struct StockIcon
 {
 	const char *name;

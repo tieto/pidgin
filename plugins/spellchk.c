@@ -321,7 +321,9 @@ static void save_list()
 		return;
 	}
 
+	#ifndef _WIN32
 	fchmod(fd, S_IRUSR | S_IWUSR);
+	#endif
 		
 	if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {

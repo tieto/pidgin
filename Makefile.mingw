@@ -91,7 +91,7 @@ all:
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
-	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
+	$(MAKE) TYPE '$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
 
@@ -109,6 +109,7 @@ install: all
 	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw install
 	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw install
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
+	$(MAKE) TYPE='$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0
@@ -129,6 +130,7 @@ clean:
 	$(MAKE) -C $(IRC) -f Makefile.mingw clean
 	$(MAKE) -C $(JABBER) -f Makefile.mingw clean
 	$(MAKE) -C $(GG) -f Makefile.mingw clean
+	$(MAKE) -C $(NAPSTER) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)
