@@ -1,6 +1,11 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.74cvs
+version 0.75cvs :
+
+version 0.74 (11/25/2003):
+	* Sort-by-size log sorting fix
+	* Log directory umask fix for users of gaim-remote
+	* Fix Jabber room creation on MUC servers.
 	* Vietnamese translation added (T.M.Thanh,M.D.)
 
 version 0.73 (11/21/2003):

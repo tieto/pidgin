@@ -1,4 +1,18 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
+0.74 (11/25/2003):
+	Sean: Christian and Nathan were wrong.
+
+	Ethan: I don't know how solid or good this release will be, but
+	hopefully it's better than 0.73!  Not that 0.73 didn't rock or
+	anything, but for those users bit by its peculiar little bugs
+	it wasn't as nice as this will be.
+
+	Nathan: Jabber got some good tweaks, and logging doesn't eat
+	memory until the cows come home.  Which is good, because they
+	said they'll be out until late.
+
+	Luke: Always nice when directories get created correctly ;-)
+
 0.73 (11/21/2003):
 	Nathan: This should be a really solid release.  I fixed most if not
 	all of the idiotic Jabber bugs from 0.72, and re-enabled the SASL
