@@ -852,7 +852,8 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 
 		if ((g = xmlnode_get_firstchild(x))) {
 			while (g) {
-				if (strncasecmp(xmlnode_get_name(g), "group", 5) == 0) {
+				if (xmlnode_get_name(g) &&
+						g_strncasecmp(xmlnode_get_name(g), "group", 5) == 0) {
 					struct buddy *b = NULL;
 					char *groupname, *buddyname;
 
