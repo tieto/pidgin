@@ -1411,7 +1411,11 @@ void gaim_blist_remove_account(GaimAccount *account)
 							ops->remove(gaimbuddylist, bnode);
 					}
 				}
-				gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+				if(recompute) {
+					gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+						if(ops)
+							ops->remove(gaimbuddylist, bnode);
+				}
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
 				((GaimGroup*)gnode)->currentsize--;
