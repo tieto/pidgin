@@ -26,6 +26,8 @@
  * Well, I didn't see any work done on it for a while, so I'm going to try
  * my hand at it. - Eric warmenhoven@yahoo.com
  *
+ * Mike is my roomate.  I can assure you that he's lazy :-P  -- Rob rob@marko.net
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -618,7 +620,7 @@ char *event_name(enum gaim_event event)
 		sprintf(buf, "event_quit");
 		break;
 	case event_new_conversation:
-		sprintf(buf, "event_new_conversaion");
+		sprintf(buf, "event_new_conversation");
 		break;
 	default:
 		sprintf(buf, "event_unknown");
