@@ -1028,21 +1028,20 @@ static void zephyr_add_buddies(GaimConnection *gc, GList* buddies) {
 
 static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { 
         GaimBuddy *b;
-        fprintf(stderr,"In zephyr_remove_buddy\n");
-        if ((b=gaim_find_buddy(zgc->account,buddy)))
-                gaim_blist_remove_buddy(b);
-        else 
+        fprintf(stderr,"In zephyr_remove_buddy %s %s\n",buddy,group);
+        if (!(b=gaim_find_buddy(zgc->account,buddy))) {
                 fprintf(stderr,"attempt to remove non-existent buddy %s\n",buddy);
+            /*    gaim_blist_remove_buddy(b); */
+	}
 }
 
 static void zephyr_remove_buddies(GaimConnection *gc, GList *buddies, const char *group) {
         GaimBuddy *b;
         while(buddies) {
                 if ((b=gaim_find_buddy(zgc->account,buddies->data))) {
-                        gaim_blist_remove_buddy(b);
-                }  else {
                         fprintf(stderr,"attempt to remove non-existent buddy %s\n",(char *)buddies->data);
-                }
+                        /*  gaim_blist_remove_buddy(b); */
+                } 
         }      
 }
 
