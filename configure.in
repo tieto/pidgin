@@ -63,12 +63,13 @@ fi
 
 if test "x$enable_gnome" = "xyes" ; then
 	if test "x$enable_panel" = "xyes" ; then
-		GNOME_INIT(gnomeui applets gdk_pixbuf)
+		GNOME_INIT(applets)
 		GNOME_X_CHECKS
 		CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
 		AC_DEFINE(USE_APPLET)
 		AC_DEFINE(USE_GNOME)
-		LIBS="$LIBS $GTK_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS $GNOMEUI_LIBS"
+		GDK_PIXBUF_LIBS=`$GNOME_CONFIG --libs gdk_pixbuf`
+		LIBS="$LIBS $GTK_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS $GNOMEUI_LIBS $GDK_PIXBUF_LIBS"
 		AC_PATH_PROG(gaimpath, gaim_applet)
 	else
 		AC_PATH_PROG(gnomepath, gnome-config)
