@@ -1540,7 +1540,6 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 		else if (g_str_has_suffix(basename, ".desktop") && (item = gaim_desktop_item_new_from_file(filename))) {
 			GaimDesktopItemType dtype;
 			char key[64];
-			char *dot;
 			const char *itemname = NULL;
 
 #if GTK_CHECK_VERSION(2,6,0)
@@ -1554,6 +1553,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 			}
 #else
 			const char *lang = g_getenv("LANG");
+			char *dot;
 			dot = strchr(lang, '.');
 			if (dot)
 				*dot = '\0';
