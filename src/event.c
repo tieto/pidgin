@@ -160,6 +160,12 @@ gaim_signals_unregister_broadcast_func(GaimSignalBroadcastFunc func)
 	}
 }
 
+GList *
+gaim_signals_get_callbacks(void)
+{
+	return callbacks;
+}
+
 int
 gaim_event_broadcast(GaimEvent event, ...)
 {
@@ -408,9 +414,4 @@ gaim_event_get_name(GaimEvent event)
 	return buf;
 }
 
-GList *
-gaim_get_callbacks(void)
-{
-	return callbacks;
-}
 

@@ -118,6 +118,13 @@ void gaim_signals_register_broadcast_func(GaimSignalBroadcastFunc func,
 void gaim_signals_unregister_broadcast_func(GaimSignalBroadcastFunc func);
 
 /**
+ * Returns a list of all signal callbacks.
+ *
+ * @return A list of all signal callbacks.
+ */
+GList *gaim_signals_get_callbacks(void);
+
+/**
  * Broadcasts an event to all registered signal handlers.
  *
  * @param event The event to broadcast
@@ -135,12 +142,5 @@ int gaim_event_broadcast(GaimEvent event, ...);
  * @return A human-readable string of the name.
  */
 const char *gaim_event_get_name(GaimEvent event);
-
-/**
- * Returns a list of all signal callbacks.
- *
- * @return A list of all signal callbacks.
- */
-GList *gaim_get_callbacks(void);
 
 #endif /* _GAIM_EVENT_H_ */
