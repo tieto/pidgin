@@ -204,7 +204,7 @@ gboolean gaim_buddy_icons_is_caching(void);
 /**
  * Sets the directory used to store buddy icon cache files.
  *
- * @param dir The directory to store buddy icon cache files to.
+ * @param cache_dir The directory to store buddy icon cache files to.
  */
 void gaim_buddy_icons_set_cache_dir(const char *cache_dir);
 

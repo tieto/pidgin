@@ -240,7 +240,7 @@ gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
  * @param func       The function to execute.
  * @param marshal    The marshalling function.
  * @param ret_value  The return value type.
- * @param num_values The number of parameters.
+ * @param num_params The number of parameters.
  * @param ...        The parameter types.
  *
  * @return TRUE if the function was registered successfully, or

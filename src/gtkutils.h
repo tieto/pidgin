@@ -259,7 +259,7 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
 
 /**
- * Parses a message to find <IMG> tags with valid ID attributes that
+ * Parses a message to find \<IMG\> tags with valid ID attributes that
  * refer to images in Gaim's image store, and load them into a list
  * of GdkPixbufs. Image tags with missing ID paramaters, or those that
  * refer to images that are not in the store will have a corresponding
