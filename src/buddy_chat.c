@@ -604,7 +604,10 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label(_("Ignore"));
+		if (g_list_find_custom(b->ignored, gtk_object_get_user_data(obj), (GCompareFunc)strcmp))
+			button = gtk_menu_item_new_with_label(_("Un-Ignore"));
+		else
+			button = gtk_menu_item_new_with_label(_("Ignore"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_ign), b);
 		gtk_object_set_user_data(GTK_OBJECT(button), obj);
 		gtk_menu_append(GTK_MENU(menu), button);
@@ -834,6 +837,8 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_destroy(i->data);
 	gtk_widget_show(list_item);
+	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+			   GTK_SIGNAL_FUNC(right_click_chat), b);
 }
 
 static gint delete_all_chats(GtkWidget *w, GdkEventAny *e, gpointer d)

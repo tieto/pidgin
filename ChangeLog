@@ -5,6 +5,8 @@ version 0.45:
 	  SIGNALS)
 	* Major updates to event_chat_* events for plugins (reread
 	  SIGNALS)
+	* Some GtkIMHtml improvements
+	* Various bugfixes
 
 version 0.44 (09/20/2001):
 	* More sane scaling of buddy icons (intelligently scale to
