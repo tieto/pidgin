@@ -1090,6 +1090,9 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 		break;
 	case 402: /* ERR_NOSUCHSERVER */
 		do_error_dialog(_("No such server"), _("IRC Error"), GAIM_ERROR);
+		break;
+	case 422: /* ERR_NOMOTD */
+		break;  /* drop it - bringing up dialog for NOMOTD is annoying */
 	case 431: /* ERR_NONICKNAMEGIVEN */
 		do_error_dialog(_("No nickname given"), _("IRC Error"), GAIM_ERROR);
 		break;
