@@ -41,7 +41,7 @@ timestamp_la_SOURCES   = timestamp.c
 endif # PLUGINS
 
 EXTRA_DIST = \
-	ChangeLog PERL-HOWTO HOWTO SIGNALS \
+	ChangeLog HOWTO SIGNALS \
 	filectl.c \
 	mailchk.c \
 	gtik.c \
