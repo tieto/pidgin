@@ -35,6 +35,10 @@
 #include "proxy.h"
 #include "notify.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
 
 struct gaim_xfer *
@@ -378,7 +382,7 @@ gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
 	if (xfer == NULL)
 		return;
 
-	xfer->ops.read = fnc;
+	xfer->ops.ft_read = fnc;
 }
 
 void
@@ -389,7 +393,7 @@ gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
 	if (xfer == NULL)
 		return;
 
-	xfer->ops.write = fnc;
+	xfer->ops.ft_write = fnc;
 }
 
 void
@@ -455,13 +459,12 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 	else
 		s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
 
-	if (xfer->ops.read != NULL)
-		r = xfer->ops.read(buffer, xfer);
+	if (xfer->ops.ft_read != NULL)
+		r = xfer->ops.ft_read(buffer, xfer);
 	else {
 		*buffer = g_malloc0(s);
 
 		r = read(xfer->fd, *buffer, s);
-
 		if ((gaim_xfer_get_size > 0) &&
 			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
@@ -480,8 +483,8 @@ gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer, size_t size)
 
 	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
 
-	if (xfer->ops.write != NULL)
-		r = xfer->ops.write(buffer, s, xfer);
+	if (xfer->ops.ft_write != NULL)
+		r = xfer->ops.ft_write(buffer, s, xfer);
 	else
 		r = write(xfer->fd, buffer, s);
 
@@ -498,7 +501,6 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
-
 		if (r > 0)
 			fwrite(buffer, 1, r, xfer->dest_fp);
 	}

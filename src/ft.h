@@ -96,8 +96,8 @@ struct gaim_xfer
 		void (*end)(struct gaim_xfer *xfer);
 		void (*cancel_send)(struct gaim_xfer *xfer);
 		void (*cancel_recv)(struct gaim_xfer *xfer);
-		size_t (*read)(char **buffer, struct gaim_xfer *xfer);
-		size_t (*write)(const char *buffer, size_t size,
+		size_t (*ft_read)(char **buffer, struct gaim_xfer *xfer);
+		size_t (*ft_write)(const char *buffer, size_t size,
 						struct gaim_xfer *xfer);
 		void (*ack)(struct gaim_xfer *xfer, const char *buffer, 
 						size_t size);
