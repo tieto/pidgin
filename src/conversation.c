@@ -1454,7 +1454,8 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 	}
 
 	if (gaim_window_get_active_conversation(win) != conv) {
-		if ((flags & WFLAG_NICK) == WFLAG_NICK)
+		if ((flags & WFLAG_NICK) == WFLAG_NICK ||
+				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 			unseen = GAIM_UNSEEN_NICK;
 		else
 			unseen = GAIM_UNSEEN_TEXT;
