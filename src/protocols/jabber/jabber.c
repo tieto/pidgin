@@ -1501,27 +1501,6 @@ static void jabber_register_commands(void)
 	                  NULL);
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin) {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-	ppref = gaim_plugin_pref_new_with_label(_("Privacy"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/jabber/hide_os",
-													 _("Hide Operating System"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
-static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame
-};
-
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
@@ -1611,7 +1590,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
+	NULL,                                             /**< prefs_info     */
 	jabber_actions
 };
 
@@ -1653,8 +1632,7 @@ init_plugin(GaimPlugin *plugin)
 
 	my_protocol = plugin;
 
-	gaim_prefs_add_none("/plugins/prpl/jabber");
-	gaim_prefs_add_bool("/plugins/prpl/jabber/hide_os", FALSE);
+	gaim_prefs_remove("/plugins/prpl/jabber");
 
 	jabber_register_commands();
 }
