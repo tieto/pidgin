@@ -3286,17 +3286,22 @@ static void yahoo_set_permit_deny(GaimConnection *gc) {
 	acct = gc->account;
 
 	switch (acct->perm_deny) {
-		case 1:
-		case 3:
-		case 5:
+		/* privacy 1 */
+		case GAIM_PRIVACY_ALLOW_ALL:
+		/* privacy 3 */
+		case GAIM_PRIVACY_ALLOW_USERS:
 			for (deny = acct->deny;deny;deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
-		case 4:
+		/* privacy 5 */
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+		/* privacy 4 */
+		case GAIM_PRIVACY_DENY_USERS:
 			for (deny = acct->deny;deny;deny = deny->next)
 				yahoo_add_deny(gc, deny->data);
 			break;
-		case 2:
+		/* privacy 2 */
+		case GAIM_PRIVACY_DENY_ALL:
 		default:
 			break;
 	}
