@@ -26,6 +26,7 @@ AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
+	-I$(top_srcdir)/plugins \
 	-I$(top_srcdir)/src \
 	$(GTK_CFLAGS) \
 	$(DEBUG_CFLAGS)
