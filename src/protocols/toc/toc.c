@@ -2091,7 +2091,6 @@ static void accept_file_dialog(struct ft_request *ft) {
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_TOC,
 	OPT_PROTO_CORRECT_TIME,
 	NULL,
 	NULL,

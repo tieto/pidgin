@@ -231,13 +231,13 @@ GtkWidget *gaim_gtk_make_frame(GtkWidget *parent, const char *title);
 /**
  * Creates a drop-down option menu filled with protocols.
  *
- * @param protocol  The protocol to select by default.
+ * @param id        The protocol to select by default.
  * @param cb        The callback to call when a protocol is selected.
  * @param user_data Data to pass to the callback function.
  *
  * @return The drop-down option menu.
  */
-GtkWidget *gaim_gtk_protocol_option_menu_new(GaimProtocol protocol,
+GtkWidget *gaim_gtk_protocol_option_menu_new(const char *id,
 											 GCallback cb,
 											 gpointer user_data);
 

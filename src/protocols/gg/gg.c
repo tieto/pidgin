@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 8255 2003-11-25 07:16:11Z faceprint $
+ * $Id: gg.c 8631 2003-12-29 09:03:47Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1302,7 +1302,6 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_GADUGADU,
 	0,
 	NULL,
 	NULL,

@@ -982,7 +982,6 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_ZEPHYR,
 	OPT_PROTO_NO_PASSWORD,
 	NULL,
 	NULL,

@@ -249,8 +249,9 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 	const char *filename;
 	char *me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
 
+	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
 	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-		(gaim_find_prpl(gaim_account_get_protocol(account)))->list_icon(account, NULL);
+		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
 	char *path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
 
 	g_free(me);
@@ -430,7 +431,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
 		char *chat;
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
+			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
 		char *dir;
 		char *filename;
 
@@ -577,7 +578,7 @@ static void txt_logger_write(GaimLog *log,
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
 		char *chat;
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
+			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
 		char *dir;
 
 		if (log->type == GAIM_LOG_CHAT) {

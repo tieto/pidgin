@@ -467,7 +467,6 @@ static void irc_buddy_free(struct irc_buddy *ib)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_IRC,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,
 	NULL,

@@ -157,6 +157,6 @@ extern void session_end();
 extern void smiley_themeize(GtkWidget *);
 extern void smiley_theme_probe();
 extern void load_smiley_theme(const char *file, gboolean load);
-extern GSList *get_proto_smileys(int protocol);
+extern GSList *get_proto_smileys(const char *id);
 
 #endif /* _UI_H_ */

@@ -83,7 +83,7 @@ typedef enum
 		"in the \"Tools\" menu in the buddy list window."
 
 /** Default protocol */
-#define GAIM_PROTO_DEFAULT GAIM_PROTO_OSCAR
+#define GAIM_PROTO_DEFAULT "prpl-oscar"
 
 /*@}*/
 
@@ -194,7 +194,6 @@ typedef enum
  */
 struct _GaimPluginProtocolInfo
 {
-	GaimProtocol protocol;        /**< The protocol type.         */
 	GaimProtocolOptions options;  /**< Protocol options.          */
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
@@ -349,7 +348,7 @@ GaimProtocol gaim_prpl_id_to_num(const char *id);
  *
  * @param type The protocol plugin;
  */
-GaimPlugin *gaim_find_prpl(GaimProtocol type);
+GaimPlugin *gaim_find_prpl(const char *id);
 
 #ifdef __cplusplus
 }

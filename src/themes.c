@@ -236,8 +236,8 @@ void smiley_theme_probe()
 	}
 }
 
-GSList *get_proto_smileys(int protocol) {
-	GaimPlugin *proto = gaim_find_prpl(protocol);
+GSList *get_proto_smileys(const char *id) {
+	GaimPlugin *proto = gaim_find_prpl(id);
 	struct smiley_list *list, *def;
 
 	if(!current_smiley_theme)

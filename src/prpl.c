@@ -78,7 +78,7 @@ gaim_prpl_id_to_num(const char *id)
 }
 
 GaimPlugin *
-gaim_find_prpl(GaimProtocol type)
+gaim_find_prpl(const char *id)
 {
 	GList *l;
 	GaimPlugin *plugin;
@@ -89,7 +89,7 @@ gaim_find_prpl(GaimProtocol type)
 		/* Just In Case (TM) */
 		if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
 
-			if (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol == type)
+			if (!strcmp(plugin->info->id, id))
 				return plugin;
 		}
 	}

@@ -619,22 +619,22 @@ protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
-	GaimProtocol protocol;
+	const char *protocol;
 	gpointer user_data;
 
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
 
-	protocol = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "protocol"));
+	protocol = g_object_get_data(G_OBJECT(item), "protocol");
 	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
 
 	if (cb != NULL)
-		((void (*)(GtkWidget *, GaimProtocol, gpointer))cb)(item, protocol,
+		((void (*)(GtkWidget *, const char *, gpointer))cb)(item, protocol,
 															user_data);
 }
 
 GtkWidget *
-gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
+gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 								  gpointer user_data)
 {
 	GaimPluginProtocolInfo *prpl_info;
@@ -712,13 +712,12 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 		gtk_widget_show(label);
 
-		g_object_set_data(G_OBJECT(item), "protocol",
-						 GINT_TO_POINTER(prpl_info->protocol));
+		g_object_set_data(G_OBJECT(item), "protocol", plugin->info->id);
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
 
-		if (prpl_info->protocol == protocol)
+		if (!strcmp(plugin->info->id, id))
 			selected_index = i;
 	}
 
@@ -799,7 +798,7 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 		if (check_account_func && !check_account_func(account))
 			continue;
 
-		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
+		plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 		if (plugin != NULL)
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);

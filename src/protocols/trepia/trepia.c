@@ -1252,7 +1252,6 @@ trepia_register_user(GaimAccount *account)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_TREPIA,
 	OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,

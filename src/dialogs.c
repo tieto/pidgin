@@ -1339,13 +1339,12 @@ void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	GaimProtocol protocol = gaim_account_get_protocol(gaim_conversation_get_account(c));
-	GaimPlugin *proto = gaim_find_prpl(protocol);
-	
+	GaimPlugin *proto = gaim_find_prpl(gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
+
 	gtkconv = GAIM_GTK_CONVERSATION(c);
-	
+
 	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), proto->info->name, smiley_text);
-	
+
 	close_smiley_dialog(NULL, c);
 }
 
@@ -1397,7 +1396,7 @@ void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 
 	if(c->account)
 		smileys = get_proto_smileys(
-			gaim_account_get_protocol(gaim_conversation_get_account(c)));
+			gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
 	else
 		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
 

@@ -964,7 +964,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			b = (GaimBuddy *)node;
 
 		/* Protocol specific options */
-		prpl = gaim_find_prpl(gaim_account_get_protocol(b->account));
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
 
 		if (prpl != NULL)
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
@@ -1022,7 +1022,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 						gtk_widget_show(submenu);
 
-						prpl = gaim_find_prpl(gaim_account_get_protocol(buddy->account));
+						prpl = gaim_find_prpl(gaim_account_get_protocol_id(buddy->account));
 						prpl_info = prpl ? GAIM_PLUGIN_PROTOCOL_INFO(prpl) : NULL;
 
 						make_buddy_menu(submenu, prpl_info, buddy);
@@ -1744,7 +1744,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *text = NULL;
-	
+
 	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *chat = (GaimChat *)node;
 		char *name = NULL;
@@ -1752,7 +1752,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		GList *parts, *tmp;
 		GString *parts_text = g_string_new("");
 
-		prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 		parts = prpl_info->chat_info(chat->account->gc);
@@ -1809,7 +1809,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			b = (GaimBuddy *)node;
 		}
 
-		prpl = gaim_find_prpl(gaim_account_get_protocol(b->account));
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl_info && prpl_info->tooltip_text) {
@@ -1927,7 +1927,7 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSiz
 		else
 			account = chat->account;
 
-		prpl = gaim_find_prpl(gaim_account_get_protocol(account));
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 		if(!prpl)
 			return NULL;
 
@@ -2065,7 +2065,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		name = gaim_get_buddy_alias(b);
 	esc = g_markup_escape_text(name, strlen(name));
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol(b->account));
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
 
 	if (prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
@@ -3849,7 +3849,7 @@ create_prpl_icon(GaimAccount *account)
 	const char *protoname = NULL;
 	char buf[256];
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol(account));
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	if (prpl != NULL) {
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);

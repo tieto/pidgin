@@ -1568,7 +1568,6 @@ msn_get_info(GaimConnection *gc, const char *name)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_MSN,
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,

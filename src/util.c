@@ -1586,7 +1586,7 @@ gaim_normalize(const GaimAccount *account, const char *s)
 	const char *ret = NULL;
 
 	if(account)
-		prpl = gaim_find_prpl(gaim_account_get_protocol(account));
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	if(prpl)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);

@@ -133,10 +133,17 @@ static gint
 compare_prpl(GaimPlugin *a, GaimPlugin *b)
 {
 	/* neg if a before b, 0 if equal, pos if a after b */
-	return ((GAIM_IS_PROTOCOL_PLUGIN(a)
-			 ? GAIM_PLUGIN_PROTOCOL_INFO(a)->protocol : -1) -
-			((GAIM_IS_PROTOCOL_PLUGIN(b)
-			 ? GAIM_PLUGIN_PROTOCOL_INFO(b)->protocol : -1)));
+	if(GAIM_IS_PROTOCOL_PLUGIN(a)) {
+		if(GAIM_IS_PROTOCOL_PLUGIN(b))
+			return strcmp(a->info->name, b->info->name);
+		else
+			return -1;
+	} else {
+		if(GAIM_IS_PROTOCOL_PLUGIN(b))
+			return 1;
+		else
+			return 0;
+	}
 }
 
 GaimPlugin *
@@ -870,8 +877,7 @@ gaim_plugins_probe(const char *ext)
 				continue;
 			}
 
-			if (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol == GAIM_PROTO_ICQ ||
-				gaim_find_prpl(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol))
+			if (gaim_find_prpl(plugin->info->id))
 			{
 				/* Nothing to see here--move along, move along */
 				gaim_plugin_destroy(plugin);

@@ -500,7 +500,7 @@ char *gaim_chat_get_display_name(GaimChat *chat)
 		 GaimPluginProtocolInfo *prpl_info;
 		 struct proto_chat_entry *pce;
 
-		 prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
+		 prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 		 prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 		 parts = prpl_info->chat_info(chat->account->gc);
@@ -1349,7 +1349,7 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 
 				chat = (GaimChat*)node;
 
-				prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
+				prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 				parts = prpl_info->chat_info(

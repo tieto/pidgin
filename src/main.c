@@ -155,7 +155,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 
 	account = gaim_accounts_find(username, NULL);
 	if (!account) {
-		account = gaim_account_new(username, "prpl-oscar");
+		account = gaim_account_new(username, GAIM_PROTO_DEFAULT);
 		gaim_account_set_remember_password(account, FALSE);
 		gaim_accounts_add(account);
 	}
@@ -470,7 +470,7 @@ static void set_first_user(char *name)
 	account = gaim_accounts_find(name, NULL);
 
 	if (account == NULL) { /* new user */
-		account = gaim_account_new(name, "prpl-oscar");
+		account = gaim_account_new(name, GAIM_PROTO_DEFAULT);
 		gaim_accounts_add(account);
 	}
 

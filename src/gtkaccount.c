@@ -81,7 +81,6 @@ typedef struct
 	GaimGtkAccountDialogType type;
 
 	GaimAccount *account;
-	GaimProtocol protocol;
 	char *protocol_id;
 	GaimPlugin *plugin;
 	GaimPluginProtocolInfo *prpl_info;
@@ -152,9 +151,9 @@ static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
 
 static char *
-proto_name(int proto)
+proto_name(const char *id)
 {
-	GaimPlugin *p = gaim_find_prpl(proto);
+	GaimPlugin *p = gaim_find_prpl(id);
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }
@@ -192,12 +191,11 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
-set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
+set_account_protocol_cb(GtkWidget *item, const char *id,
 						  AccountPrefsDialog *dialog)
 {
-	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL) {
+	if ((dialog->plugin = gaim_find_prpl(id)) != NULL) {
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-		dialog->protocol  = dialog->prpl_info->protocol;
 
 		if (dialog->protocol_id != NULL)
 			g_free(dialog->protocol_id);
@@ -381,7 +379,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Protocol */
 	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(
-			dialog->protocol, G_CALLBACK(set_account_protocol_cb), dialog);
+			dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
 
 	add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
@@ -647,15 +645,13 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		switch (gaim_account_option_get_type(option)) {
 			case GAIM_PREF_BOOLEAN:
-				if (account == NULL ||
-					gaim_account_get_protocol(account) != dialog->protocol) {
-
+				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					bool_value = gaim_account_option_get_default_bool(option);
-				}
-				else
+				} else {
 					bool_value = gaim_account_get_bool(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_bool(option));
+				}
 
 				check = gtk_check_button_new_with_label(
 					gaim_account_option_get_text(option));
@@ -672,15 +668,13 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_INT:
-				if (account == NULL ||
-					gaim_account_get_protocol(account) != dialog->protocol) {
-
+				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					int_value = gaim_account_option_get_default_int(option);
-					}
-				else
+				} else {
 					int_value = gaim_account_get_int(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_int(option));
+				}
 
 				g_snprintf(buf, sizeof(buf), "%d", int_value);
 
@@ -700,15 +694,13 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				break;
 
 			case GAIM_PREF_STRING:
-				if (account == NULL ||
-					gaim_account_get_protocol(account) != dialog->protocol) {
-
+				if (account == NULL || !strcmp(gaim_account_get_protocol_id(account), dialog->protocol_id)) {
 					str_value = gaim_account_option_get_default_string(option);
-				}
-				else
+				} else {
 					str_value = gaim_account_get_string(account,
 						gaim_account_option_get_setting(option),
 						gaim_account_option_get_default_string(option));
+				}
 
 				entry = gtk_entry_new();
 
@@ -1198,16 +1190,14 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (dialog->account == NULL) {
-		dialog->protocol_id = g_strdup("prpl-oscar");
-		dialog->protocol = GAIM_PROTO_OSCAR;
+		dialog->protocol_id = g_strdup(GAIM_PROTO_DEFAULT);
 	}
 	else {
 		dialog->protocol_id =
 			g_strdup(gaim_account_get_protocol_id(dialog->account));
-		dialog->protocol = gaim_account_get_protocol(dialog->account);
 	}
 
-	if ((dialog->plugin = gaim_find_prpl(dialog->protocol)) != NULL)
+	if ((dialog->plugin = gaim_find_prpl(dialog->protocol_id)) != NULL)
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 
@@ -1805,7 +1795,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ONLINE, gaim_account_is_connected(account),
 			COLUMN_AUTOLOGIN, gaim_account_get_auto_login(account, GAIM_GTK_UI),
-			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
+			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol_id(account)),
 			COLUMN_DATA, account,
 			-1);
 

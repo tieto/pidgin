@@ -48,7 +48,7 @@ gaim_connection_new(GaimAccount *account)
 
 	gc = g_new0(GaimConnection, 1);
 
-	gc->prpl = gaim_find_prpl(gaim_account_get_protocol(account));
+	gc->prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	gaim_connection_set_account(gc, account);
 	gaim_account_set_connection(account, gc);

@@ -551,7 +551,6 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_NAPSTER,
 	OPT_PROTO_CHAT_TOPIC,
 	NULL,
 	NULL,

@@ -1083,7 +1083,6 @@ static GList *jabber_actions(GaimConnection *gc)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PROTO_JABBER,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,
 	NULL,

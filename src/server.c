@@ -40,7 +40,7 @@
 
 void serv_login(GaimAccount *account)
 {
-	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol(account));
+	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (account->gc == NULL || p == NULL)

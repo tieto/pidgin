@@ -137,10 +137,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 
 	gaim_account_set_username(account, username);
 
-	if(protocol_id)
-		gaim_account_set_protocol_id(account, protocol_id);
-	else
-		gaim_account_set_protocol(account, GAIM_PROTO_DEFAULT);
+	gaim_account_set_protocol_id(account, protocol_id ? protocol_id : GAIM_PROTO_DEFAULT);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
