@@ -316,9 +316,9 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
 
-	conv    = gaim_window_get_active_conversation(win);
+	conv = gaim_window_get_active_conversation(win);
 
-	if(!conv)
+	if (!conv)
 		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -1313,9 +1313,11 @@ notebook_init_grab(struct gaim_gtk_window *gtkwin, GtkWidget *widget)
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);
-	gdk_pointer_grab(gtkwin->notebook->window, FALSE,
-					 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
-					 NULL, cursor, GDK_CURRENT_TIME);
+
+	if (!gdk_pointer_is_grabbed())
+		gdk_pointer_grab(gtkwin->notebook->window, FALSE,
+						 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
+						 NULL, cursor, GDK_CURRENT_TIME);
 }
 
 static gboolean
@@ -1495,8 +1497,8 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 
 	if (gtkwin->in_drag) {
 		debug_printf("Already in the middle of a window "
-				"drag at tab_press_cb\n");
-		return FALSE;
+					 "drag at tab_press_cb\n");
+		return TRUE;
 	}
 
 	/* 
@@ -1590,9 +1592,8 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-	if (!gtkwin->in_predrag && !gtkwin->in_drag) {
-		return TRUE;
-	}
+	if (!gtkwin->in_predrag && !gtkwin->in_drag)
+		return FALSE;
 
 	/* Disconnect the motion signal. */
 	if (gtkwin->drag_motion_signal) {
@@ -1619,9 +1620,8 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 	/* If we're not in drag...        */
 	/* We're perfectly normal people! */
-	if (!gtkwin->in_drag) {
+	if (!gtkwin->in_drag)
 		return FALSE;
-	}
 
 	gtkwin->in_drag = FALSE;
 
