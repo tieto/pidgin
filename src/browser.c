@@ -582,20 +582,26 @@ void open_url(GtkWidget *w, char *url)
 		pid = fork();
 
 		if (pid == 0) {
+			/* args will be allocated below but we don't bother
+			 * freeing it since we're just going to exec and
+			 * exit */
 			char **args;
 			char command[1024];
 
 			if (web_browser == BROWSER_OPERA) {
+				args = g_new(char *, 4);
 				args[0] = "opera";
 				args[1] = "-newwindow";
 				args[2] = url;
 				args[3] = NULL;
 			} else if (web_browser == BROWSER_KONQ) {
+				args = g_new(char *, 4);
 				args[0] = "kfmclient";
 				args[1] = "openURL";
 				args[2] = url;
 				args[3] = NULL;
 			} else if (web_browser == BROWSER_GALEON) {
+				args = g_new(char *, 4);
 				args[0] = "galeon";
 				if (misc_options & OPT_MISC_BROWSER_POPUP) {
 					args[1] = "-w";
@@ -606,6 +612,7 @@ void open_url(GtkWidget *w, char *url)
 					args[2] = NULL;
 				}
 			} else if (web_browser == BROWSER_MOZILLA) {
+				args = g_new(char *, 4);
 				args[0] = "mozilla";
 				args[1] = url;
 				args[2] = NULL;
