@@ -43,7 +43,7 @@ static void *gaim_gtk_notify_emails(size_t count, gboolean detailed,
 									void *user_data);
 
 static void
-__email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
+email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 {
 	if (id == 0)
 		open_url(NULL, data->url);
@@ -161,7 +161,7 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 		gtk_dialog_add_button(GTK_DIALOG(dialog), GAIM_STOCK_OPEN_MAIL, 0);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
-					 G_CALLBACK(__email_response_cb), data);
+					 G_CALLBACK(email_response_cb), data);
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);

@@ -53,7 +53,7 @@ typedef struct
 } GaimRequestData;
 
 static void
-__input_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
+input_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 {
 	const char *value;
 
@@ -78,7 +78,7 @@ __input_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 }
 
 static void
-__action_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
+action_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 {
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		((GaimRequestActionCb)data->cbs[id])(data->user_data, id);
@@ -91,7 +91,7 @@ __action_response_cb(GtkDialog *dialog, gint id, GaimRequestData *data)
 		return (l);
 
 static const char *
-__text_to_stock(const char *text)
+text_to_stock(const char *text)
 {
 	STOCK_ITEMIZE(_("Yes"),    GTK_STOCK_YES);
 	STOCK_ITEMIZE(_("No"),     GTK_STOCK_NO);
@@ -135,13 +135,13 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	dialog = gtk_dialog_new_with_buttons("", NULL, 0,
-					     __text_to_stock(cancel_text), 1,
-					     __text_to_stock(ok_text),     0,
+					     text_to_stock(cancel_text), 1,
+					     text_to_stock(ok_text),     0,
 					     NULL);
 	data->dialog = dialog;
 
 	g_signal_connect(G_OBJECT(dialog), "response",
-					 G_CALLBACK(__input_response_cb), data);
+					 G_CALLBACK(input_response_cb), data);
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
@@ -272,7 +272,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 	for (i = 0; i < action_count; i++) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
-							  __text_to_stock(buttons[2 * i]), i);
+							  text_to_stock(buttons[2 * i]), i);
 
 		data->cbs[i] = buttons[2 * i + 1];
 	}
@@ -280,7 +280,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	g_free(buttons);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
-					 G_CALLBACK(__action_response_cb), data);
+					 G_CALLBACK(action_response_cb), data);
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);

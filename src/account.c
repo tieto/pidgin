@@ -93,7 +93,7 @@ static guint    accounts_save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
 static void
-__delete_setting(void *data)
+delete_setting(void *data)
 {
 	GaimAccountSetting *setting = (GaimAccountSetting *)data;
 
@@ -107,7 +107,7 @@ __delete_setting(void *data)
 }
 
 static gboolean
-__accounts_save_cb(gpointer unused)
+accounts_save_cb(gpointer unused)
 {
 	gaim_accounts_sync();
 	accounts_save_timer = 0;
@@ -119,7 +119,7 @@ static void
 schedule_accounts_save()
 {
 	if (!accounts_save_timer)
-		accounts_save_timer = g_timeout_add(5000, __accounts_save_cb, NULL);
+		accounts_save_timer = g_timeout_add(5000, accounts_save_cb, NULL);
 }
 
 GaimAccount *
@@ -135,7 +135,7 @@ gaim_account_new(const char *username, GaimProtocol protocol)
 	gaim_account_set_protocol(account, protocol);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
-											  g_free, __delete_setting);
+											  g_free, delete_setting);
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 
@@ -333,7 +333,7 @@ gaim_account_clear_settings(GaimAccount *account)
 	g_hash_table_destroy(account->settings);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
-											  g_free, __delete_setting);
+											  g_free, delete_setting);
 }
 
 void
@@ -392,7 +392,7 @@ gaim_account_set_bool(GaimAccount *account, const char *name, gboolean value)
 }
 
 static GHashTable *
-_get_ui_settings_table(GaimAccount *account, const char *ui)
+get_ui_settings_table(GaimAccount *account, const char *ui)
 {
 	GHashTable *table;
 
@@ -400,7 +400,7 @@ _get_ui_settings_table(GaimAccount *account, const char *ui)
 	
 	if (table == NULL) {
 		table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-									  __delete_setting);
+									  delete_setting);
 		g_hash_table_insert(account->ui_settings, g_strdup(ui), table);
 	}
 
@@ -424,7 +424,7 @@ gaim_account_set_ui_int(GaimAccount *account, const char *ui,
 	setting->ui            = g_strdup(ui);
 	setting->value.integer = value;
 
-	table = _get_ui_settings_table(account, ui);
+	table = get_ui_settings_table(account, ui);
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
@@ -448,7 +448,7 @@ gaim_account_set_ui_string(GaimAccount *account, const char *ui,
 	setting->ui           = g_strdup(ui);
 	setting->value.string = g_strdup(value);
 
-	table = _get_ui_settings_table(account, ui);
+	table = get_ui_settings_table(account, ui);
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
@@ -472,7 +472,7 @@ gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 	setting->ui         = g_strdup(ui);
 	setting->value.bool = value;
 
-	table = _get_ui_settings_table(account, ui);
+	table = get_ui_settings_table(account, ui);
 
 	g_hash_table_insert(table, g_strdup(name), setting);
 
@@ -702,7 +702,7 @@ gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 
 /* XML Stuff */
 static void
-__free_parser_data(gpointer user_data)
+free_parser_data(gpointer user_data)
 {
 	AccountParserData *data = user_data;
 
@@ -716,11 +716,11 @@ __free_parser_data(gpointer user_data)
 }
 
 static void
-__start_element_handler(GMarkupParseContext *context,
-						const gchar *element_name,
-						const gchar **attribute_names,
-						const gchar **attribute_values,
-						gpointer user_data, GError **error)
+start_element_handler(GMarkupParseContext *context,
+					  const gchar *element_name,
+					  const gchar **attribute_names,
+					  const gchar **attribute_values,
+					  gpointer user_data, GError **error)
 {
 	const char *value;
 	AccountParserData *data = user_data;
@@ -785,8 +785,8 @@ __start_element_handler(GMarkupParseContext *context,
 }
 
 static void
-__end_element_handler(GMarkupParseContext *context, const gchar *element_name,
-					  gpointer user_data,  GError **error)
+end_element_handler(GMarkupParseContext *context, const gchar *element_name,
+					gpointer user_data,  GError **error)
 {
 	AccountParserData *data = user_data;
 	gchar *buffer;
@@ -927,8 +927,8 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 }
 
 static void
-__text_handler(GMarkupParseContext *context, const gchar *text,
-			   gsize text_len, gpointer user_data, GError **error)
+text_handler(GMarkupParseContext *context, const gchar *text,
+			 gsize text_len, gpointer user_data, GError **error)
 {
 	AccountParserData *data = user_data;
 
@@ -940,9 +940,9 @@ __text_handler(GMarkupParseContext *context, const gchar *text,
 
 static GMarkupParser accounts_parser =
 {
-	__start_element_handler,
-	__end_element_handler,
-	__text_handler,
+	start_element_handler,
+	end_element_handler,
+	text_handler,
 	NULL,
 	NULL
 };
@@ -975,7 +975,7 @@ gaim_accounts_load()
 	parser_data = g_new0(AccountParserData, 1);
 
 	context = g_markup_parse_context_new(&accounts_parser, 0,
-										 parser_data, __free_parser_data);
+										 parser_data, free_parser_data);
 
 	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
@@ -1008,7 +1008,7 @@ gaim_accounts_load()
 }
 
 static void
-_write_setting(gpointer key, gpointer value, gpointer user_data)
+write_setting(gpointer key, gpointer value, gpointer user_data)
 {
 	GaimAccountSetting *setting;
 	const char *name;
@@ -1033,7 +1033,7 @@ _write_setting(gpointer key, gpointer value, gpointer user_data)
 }
 
 static void
-_write_ui_setting_list(gpointer key, gpointer value, gpointer user_data)
+write_ui_setting_list(gpointer key, gpointer value, gpointer user_data)
 {
 	GHashTable *table;
 	const char *ui;
@@ -1044,7 +1044,7 @@ _write_ui_setting_list(gpointer key, gpointer value, gpointer user_data)
 	fp    = (FILE *)user_data;
 
 	fprintf(fp, "  <settings ui='%s'>\n", ui);
-	g_hash_table_foreach(table, _write_setting, fp);
+	g_hash_table_foreach(table, write_setting, fp);
 	fprintf(fp, "  </settings>\n");
 }
 
@@ -1088,10 +1088,10 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 	}
 
 	fprintf(fp, "  <settings>\n");
-	g_hash_table_foreach(account->settings, _write_setting, fp);
+	g_hash_table_foreach(account->settings, write_setting, fp);
 	fprintf(fp, "  </settings>\n");
 
-	g_hash_table_foreach(account->ui_settings, _write_ui_setting_list, fp);
+	g_hash_table_foreach(account->ui_settings, write_ui_setting_list, fp);
 
 	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL &&
 		(proxy_type = gaim_proxy_info_get_type(proxy_info)) != GAIM_PROXY_NONE)

@@ -32,6 +32,7 @@ typedef struct _GaimBlistNode GaimBlistNode;
 
 /* TODO Namespace these! */
 struct chat;
+struct buddy;
 
 #include "account.h"
 

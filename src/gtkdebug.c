@@ -64,7 +64,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 }
 
 static gboolean
-__configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
+configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
 		gaim_prefs_set_int("/gaim/gtk/debug/width",  event->width);
@@ -75,19 +75,19 @@ __configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 }
 
 static void
-__clear_cb(GtkWidget *w, DebugWindow *win)
+clear_cb(GtkWidget *w, DebugWindow *win)
 {
 	gtk_imhtml_clear(GTK_IMHTML(win->text));
 }
 
 static void
-__pause_cb(GtkWidget *w, DebugWindow *win)
+pause_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->paused = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 }
 
 static void
-__timestamps_cb(GtkWidget *w, DebugWindow *win)
+timestamps_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 
@@ -127,7 +127,7 @@ debug_window_new(void)
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
 					 G_CALLBACK(debug_window_destroy), NULL);
 	g_signal_connect(G_OBJECT(win->window), "configure_event",
-					 G_CALLBACK(__configure_cb), win);
+					 G_CALLBACK(configure_cb), win);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -154,7 +154,7 @@ debug_window_new(void)
 
 		/* Clear button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-								 NULL, NULL, G_CALLBACK(__clear_cb), win, -1);
+								 NULL, NULL, G_CALLBACK(clear_cb), win, -1);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
@@ -162,13 +162,13 @@ debug_window_new(void)
 		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 								   GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
 								   _("Pause"), NULL, NULL,
-								   NULL, G_CALLBACK(__pause_cb), win);
+								   NULL, G_CALLBACK(pause_cb), win);
 
 		/* Timestamps */
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 											GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 											NULL, _("Timestamps"), NULL, NULL,
-											NULL, G_CALLBACK(__timestamps_cb),
+											NULL, G_CALLBACK(timestamps_cb),
 											win);
 
 		win->timestamps_handle =
@@ -225,7 +225,7 @@ gaim_gtk_debug_init(void)
 	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
 
 	gaim_prefs_connect_callback("/gaim/gtk/debug/enabled",
-			debug_enabled_cb, NULL);
+								debug_enabled_cb, NULL);
 }
 
 void

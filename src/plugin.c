@@ -98,7 +98,7 @@ is_so_file(const char *filename, const char *ext)
 }
 
 static gboolean
-__loader_supports_file(GaimPlugin *loader, const char *filename)
+loader_supports_file(GaimPlugin *loader, const char *filename)
 {
 	GList *l, *exts;
 	GaimPlugin *plugin;
@@ -119,7 +119,7 @@ __loader_supports_file(GaimPlugin *loader, const char *filename)
 }
 
 static GaimPlugin *
-__find_loader_for_plugin(const GaimPlugin *plugin)
+find_loader_for_plugin(const GaimPlugin *plugin)
 {
 	GaimPlugin *loader;
 	GList *l;
@@ -131,7 +131,7 @@ __find_loader_for_plugin(const GaimPlugin *plugin)
 		loader = l->data;
 
 		if (loader->info->type == GAIM_PLUGIN_LOADER &&
-			__loader_supports_file(loader, plugin->path)) {
+			loader_supports_file(loader, plugin->path)) {
 
 			return loader;
 		}
@@ -213,7 +213,7 @@ gaim_plugin_probe(const char *filename)
 		}
 	}
 	else {
-		loader = __find_loader_for_plugin(plugin);
+		loader = find_loader_for_plugin(plugin);
 
 		if (loader == NULL) {
 			gaim_plugin_destroy(plugin);
@@ -278,7 +278,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 		GaimPlugin *loader;
 		GaimPluginLoaderInfo *loader_info;
 
-		loader = __find_loader_for_plugin(plugin);
+		loader = find_loader_for_plugin(plugin);
 
 		if (loader == NULL)
 			return FALSE;
@@ -358,7 +358,7 @@ gaim_plugin_unload(GaimPlugin *plugin)
 		GaimPlugin *loader;
 		GaimPluginLoaderInfo *loader_info;
 
-		loader = __find_loader_for_plugin(plugin);
+		loader = find_loader_for_plugin(plugin);
 
 		if (loader == NULL)
 			return FALSE;
@@ -449,7 +449,7 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		GaimPlugin *loader;
 		GaimPluginLoaderInfo *loader_info;
 
-		loader = __find_loader_for_plugin(plugin);
+		loader = find_loader_for_plugin(plugin);
 
 		if (loader == NULL)
 			return;

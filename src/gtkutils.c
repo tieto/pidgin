@@ -526,7 +526,7 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 }
 
 static void
-__protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
+protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
@@ -639,7 +639,7 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
 
 	g_signal_connect(G_OBJECT(optmenu), "changed",
-					 G_CALLBACK(__protocol_menu_cb), cb);
+					 G_CALLBACK(protocol_menu_cb), cb);
 
 	g_object_unref(sg);
 

@@ -90,7 +90,7 @@ static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 static int ao_driver = -1;
 #endif /* USE_AO */
 
-static void __pref_sound_method_changed(const char *name, GaimPrefType type,
+static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 		gpointer val, gpointer data);
 
 static void gaim_gtk_sound_init(void)
@@ -129,7 +129,7 @@ static void gaim_gtk_sound_init(void)
 #endif /* USE_AO */
 
 	gaim_prefs_connect_callback("/gaim/gtk/sound/method",
-			__pref_sound_method_changed, NULL);
+			_pref_sound_method_changed, NULL);
 	gaim_prefs_trigger_callback("/gaim/gtk/sound/method");
 }
 
@@ -321,7 +321,7 @@ GaimSoundUiOps *gaim_get_gtk_sound_ui_ops(void)
 }
 
 
-static void __pref_sound_method_changed(const char *name, GaimPrefType type,
+static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 		gpointer val, gpointer data) {
 	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
 		return;
