@@ -4569,8 +4569,8 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
-	gaim_prefs_add_int("/gaim/gtk/blist/width", 200);
-	gaim_prefs_add_int("/gaim/gtk/blist/height", 500);
+	gaim_prefs_add_int("/gaim/gtk/blist/width", 309); /* Golden ratio, baby */
+	gaim_prefs_add_int("/gaim/gtk/blist/height", 500); /* Golden ratio, baby */
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */

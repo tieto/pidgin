@@ -179,7 +179,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	gtk_window_set_title(GTK_WINDOW(about), _("About Gaim"));
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
-	gtk_window_set_default_size(GTK_WINDOW(about), 400, 550);
+	gtk_window_set_default_size(GTK_WINDOW(about), 340, 550); /* Golden ratio in da hizzy */
 
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
