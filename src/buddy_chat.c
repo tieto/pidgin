@@ -39,7 +39,7 @@
 #include "pixmaps/join.xpm"
 #include "pixmaps/close.xpm"
 
-static GtkWidget *joinchat;
+GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
 static GtkWidget *entry;
 static GtkWidget *invite;
@@ -83,7 +83,7 @@ static void destroy_invite()
 }
 
 
-static void do_join_chat()
+void do_join_chat()
 {
 	if (joinchat) {
 		if (joinchatgc->prpl->draw_join_chat)
@@ -104,15 +104,17 @@ static void default_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) 
 	
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
+	gtk_widget_show(rowbox);
 
 	label = gtk_label_new(_("Join what group:"));
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-
-	gtk_widget_show(label);
+	gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
+	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
 	gtk_widget_show(entry);
-	gtk_widget_show(rowbox);
 }
 
 static void rebuild_jc()
@@ -248,7 +250,7 @@ void join_chat()
 
 		join = picture_button(joinchat, _("Join"), join_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(join), "clicked", GTK_SIGNAL_FUNC(do_join_chat), joinchat);
+		gtk_signal_connect(GTK_OBJECT(join), "clicked", GTK_SIGNAL_FUNC(do_join_chat), NULL);
 	}
 	gtk_widget_show_all(joinchat);
 }

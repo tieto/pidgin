@@ -436,6 +436,8 @@ extern GList *chats;
 extern GtkWidget *all_chats;
 extern GtkWidget *chat_notebook;
 
+extern GtkWidget *joinchat;
+
 /* Globals in away.c */
 extern struct away_message *awaymessage;
 extern struct away_message *default_away;
@@ -583,6 +585,7 @@ extern void update_im_button_pix();
 extern void update_chat_tabs();
 extern void update_im_tabs();
 extern void update_idle_times();
+extern void do_join_chat();
 
 /* Functions in html.c */
 extern struct g_url parse_url(char *);

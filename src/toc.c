@@ -945,6 +945,8 @@ static void toc_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
 
 	join_chat_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(rowbox), join_chat_entry, TRUE, TRUE, 0);
+	gtk_window_set_focus(GTK_WINDOW(joinchat), join_chat_entry);
+	gtk_signal_connect(GTK_OBJECT(join_chat_entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
 	gtk_widget_show(join_chat_entry);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
