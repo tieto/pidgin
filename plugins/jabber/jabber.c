@@ -836,11 +836,8 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 				debug_printf("error %d: %s\n\n",
 					     atoi(xmlnode_get_attrib(x, "code")),
 					     xmlnode_get_data(xmlnode_get_firstchild(x)));
-				hide_login_progress(GJ_GC(j),
-						    xmlnode_get_data(xmlnode_get_firstchild(x)));
 
-			} else
-				hide_login_progress(GJ_GC(j), "unknown error");
+			}
 
 			xmlnode_free(p->x);
 			gjab_send_raw(j, "</stream:stream>");
