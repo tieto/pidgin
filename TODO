@@ -6,7 +6,8 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
-	font buttons stay depressed after being clicked once, only raise when clicked a second time.
+	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
+		smiles and links do not.
 	bug selecting people in channel user list? (this is a bug on all the gtk2 stuff) [ROB]
 	replace legend in info dialog with link to status icons page
 	buddy ticker stays around when you sign off - showing the buddies who were online
