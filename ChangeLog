@@ -6,6 +6,7 @@ version 0.63:
 	* Perl script support is now provided in the perl plugin.
 	* Debugging is core/ui split, and has a new API with support for
 	  debug levels and categories.
+	* Support for adding chats to your buddy list.
 
 version 0.62 (04/23/2003):
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
