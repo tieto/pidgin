@@ -766,6 +766,19 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	g_free(nick);
 }
 
+void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	char *msg;
+
+	if (!args || !args[1] || !args[2] || !gc)
+		return;
+
+	msg = g_strdup_printf(_("Cannot join %s:"), args[1]);
+	gaim_notify_error(gc, _("Cannot join channel"), msg, args[2]);
+	g_free(msg);
+}
+
 void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
