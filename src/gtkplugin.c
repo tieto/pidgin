@@ -59,9 +59,6 @@ gaim_gtk_plugins_save(void)
 			p->info->type != GAIM_PLUGIN_LOADER) {
 
 			files = g_list_append(files, p->path);
-
-			gaim_debug(GAIM_DEBUG_INFO, "gtkplugin",
-					   "Adding %s to save list.\n", p->path);
 		}
 	}
 

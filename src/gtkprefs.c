@@ -2813,7 +2813,7 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/logging/individual_logs", FALSE);
 
 	/* Plugins */
-	gaim_prefs_add_string_list("/gaim/gtk/plugins", NULL);
+	gaim_prefs_add_none("/gaim/gtk/plugins");
 	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
 
 	/* Smiley Themes */
