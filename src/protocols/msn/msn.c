@@ -1284,7 +1284,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			}
 			gaim_privacy_permit_add(gc->user, who);
 		} else if (!g_strcasecmp(which, "BL") && pos) {
-			gaim_privacy_deny_remove(gc->user, who);
+			gaim_privacy_deny_add(gc->user, who);
 		} else if (!g_strcasecmp(which, "RL")) {
 		    if (pos) {
 			while(perm) {
