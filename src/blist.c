@@ -1458,7 +1458,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 	}
 }
 
-void parse_toc_buddy_list(GaimAccount *account, char *config)
+static void parse_toc_buddy_list(GaimAccount *account, char *config)
 {
 	char *c;
 	char current[256];
