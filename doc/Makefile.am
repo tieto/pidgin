@@ -6,6 +6,7 @@ EXTRA_DIST = \
 	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
+	TCL-HOWTO.dox \
 	account-signals.dox \
 	blist-signals.dox \
 	connection-signals.dox \
