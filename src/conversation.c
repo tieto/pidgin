@@ -60,6 +60,8 @@
 #include "pixmaps/mrt.xpm"
 #include "pixmaps/download.xpm"
 
+static GtkTooltips *tabtips = NULL;
+
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
 
 int state_lock = 0;
@@ -200,20 +202,13 @@ struct conversation *find_conversation(char *name)
 void rm_log(struct log_conversation *a)
 {
 	struct conversation *cnv = find_conversation(a->name);
-	char buf[128];
 
 	log_conversations = g_list_remove(log_conversations, a);
 
 	save_prefs();
 
-	if (cnv) {
-		if (!(logging_options & OPT_LOG_ALL))
-			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, cnv->name);
-		else
-			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, cnv->name);
-		if (!(im_options & OPT_IM_ONE_WINDOW))
-			gtk_window_set_title(GTK_WINDOW(cnv->window), buf);
-	}
+	if (cnv && !(im_options & OPT_IM_ONE_WINDOW))
+		set_convo_title(cnv);
 }
 
 struct log_conversation *find_log_info(char *name)
@@ -1873,6 +1868,8 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 
 	cnv->gc = c;
 
+	set_convo_title(cnv);
+
 	update_buttons_by_protocol(cnv);
 
 	update_icon(cnv);
@@ -2029,6 +2026,8 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	c->gc = gc;
 
+	set_convo_title(c);
+		
 	update_buttons_by_protocol(c);
 
 	update_icon(c);
@@ -2126,7 +2125,6 @@ void show_conv(struct conversation *c)
 {
 	GtkWidget *win;
 	GtkWidget *cont;
-	char buf[256];
 	GtkWidget *text;
 	GtkWidget *sw;
 	GtkWidget *send;
@@ -2160,6 +2158,7 @@ void show_conv(struct conversation *c)
 	c->hasfg = 0;
 
 	if (im_options & OPT_IM_ONE_WINDOW) {
+		GtkWidget *page;
 		if (!all_convos) {
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
@@ -2172,6 +2171,11 @@ void show_conv(struct conversation *c)
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
+			if (!tabtips) {
+				tabtips = gtk_tooltips_new();
+				if (!(im_options & OPT_IM_ALIAS_TAB))
+					gtk_tooltips_disable(tabtips);
+			}
 			if (im_options & OPT_IM_SIDE_TAB) {
 				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
@@ -2200,8 +2204,14 @@ void show_conv(struct conversation *c)
 
 		cont = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
+		/* this doesn't actually matter since we're resetting it once we're out of the if/else */
 		gtk_notebook_append_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name));
 		gtk_widget_show(cont);
+
+		page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
+						 g_list_index(conversations, c));
+		page = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook), page);
+		gtk_tooltips_set_tip(tabtips, page->parent, c->name, c->name);
 	} else {
 		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		c->window = win;
@@ -2211,14 +2221,10 @@ void show_conv(struct conversation *c)
 		gtk_container_border_width(GTK_CONTAINER(win), 10);
 		gtk_widget_realize(win);
 		aol_icon(win->window);
-		if ((find_log_info(c->name)) || ((logging_options & OPT_LOG_ALL)))
-			 g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
-		else
-			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
-		gtk_window_set_title(GTK_WINDOW(win), buf);
 		gtk_signal_connect(GTK_OBJECT(win), "delete_event",
 				   GTK_SIGNAL_FUNC(delete_event_convo), c);
 	}
+	set_convo_title(c);
 
 	paned = gtk_vpaned_new();
 	gtk_paned_set_gutter_size(GTK_PANED(paned), 15);
@@ -2503,14 +2509,40 @@ void tabize()
 	}
 }
 
-void set_convo_tab_label(struct conversation *c, char *text)
+void set_convo_title(struct conversation *c)
 {
-	gtk_label_set_text(GTK_LABEL(gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
-								gtk_notebook_get_nth_page(GTK_NOTEBOOK
-											  (convo_notebook),
-											  g_list_index
-											  (conversations,
-											   c)))), text);
+	struct buddy *b;
+	char *text;
+	int index;
+	GtkNotebook *nb;
+
+	if (!convo_notebook) {
+		char buf[256];
+		if ((find_log_info(c->name)) || (logging_options & OPT_LOG_ALL))
+			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
+		else
+			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
+		gtk_window_set_title(GTK_WINDOW(c->window), buf);
+		return;
+	}
+
+	if ((im_options & OPT_IM_ALIAS_TAB) && c->gc && ((b = find_buddy(c->gc, c->name)) != NULL))
+		text = b->show;
+	else
+		text = c->name;
+
+	nb = GTK_NOTEBOOK(convo_notebook);
+	index = g_list_index(conversations, c);
+	gtk_notebook_set_tab_label_text(nb, gtk_notebook_get_nth_page(nb, index), text);
+}
+
+void set_convo_titles()
+{
+	GList *c = conversations;
+	while (c) {
+		set_convo_title(c->data);
+		c = c->next;
+	}
 }
 
 void raise_convo_tab(struct conversation *c)

@@ -665,34 +665,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	/* server with what's in our record.  We want to */
 	/* store things how THEY want it... */
 	if (strcmp(name, b->name)) {
-		GList *cnv = conversations;
-		struct conversation *cv;
-
-		char *who = g_malloc(80);
-
-		strcpy(who, normalize(name));
-
-		while (cnv) {
-			cv = (struct conversation *)cnv->data;
-			if (!g_strcasecmp(who, normalize(cv->name))) {
-				if (im_options & OPT_IM_ONE_WINDOW) {
-					set_convo_tab_label(cv, b->name);
-				} else {
-					g_snprintf(cv->name, sizeof(cv->name), "%s", name);
-					if (find_log_info(name) || (logging_options & OPT_LOG_ALL))
-						 g_snprintf(who, 63, LOG_CONVERSATION_TITLE, name);
-					else
-						g_snprintf(who, 63, CONVERSATION_TITLE, name);
-					gtk_window_set_title(GTK_WINDOW(cv->window), who);
-					/* was g_free(buf), but break gives us that
-					 * and freeing twice is not good --Sumner */
-					break;
-				}
-			}
-			cnv = cnv->next;
-		}
-		g_free(who);
-		who = g_strdup(b->name);
+		char *who = g_strdup(b->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
 		handle_buddy_rename(b, who);
 		g_free(who);

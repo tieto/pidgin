@@ -239,6 +239,7 @@ void handle_group_rename(struct group *g, char *prevname)
 
 void handle_buddy_rename(struct buddy *b, char *prevname)
 {
+	struct conversation *cnv;
 	struct buddy_show *bs;
 	struct group_show *gs;
 	struct group *g;
@@ -254,6 +255,9 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	else
 		g_snprintf(buf, sizeof(buf), "%s", b->name);
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), c, 0, buf);
+
+	if ((cnv = find_conversation(b->name)) != NULL)
+		set_convo_title(cnv);
 
 	gs = find_group_show(prevname);
 

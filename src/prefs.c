@@ -906,6 +906,7 @@ static void im_page()
 			vbox2);
 	gaim_button(_("Raise windows on events"), &im_options, OPT_IM_POPUP, vbox2);
 	gaim_button(_("Show logins in window"), &im_options, OPT_IM_LOGON, vbox2);
+	gaim_button(_("Show aliases in tabs"), &im_options, OPT_IM_ALIAS_TAB, vbox2);
 
 	frame = gtk_frame_new(_("Window Sizes"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
@@ -2628,6 +2629,9 @@ static void set_im_option(GtkWidget *w, int option)
 
 	if (option == OPT_IM_HIDE_ICONS)
 		set_hide_icons();
+
+	if (option == OPT_IM_ALIAS_TAB)
+		set_convo_titles();
 
 	save_prefs();
 }

@@ -336,7 +336,7 @@ extern void do_join_chat();
 extern void gaim_setup_imhtml(GtkWidget *);
 extern void update_convo_add_button(struct conversation *);
 extern void raise_convo_tab(struct conversation *);
-extern void set_convo_tab_label(struct conversation *, char *);
+extern void set_convo_title(struct conversation *);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
 extern void delete_conversation(struct conversation *);
@@ -373,6 +373,7 @@ extern void chat_tabize();
 extern void update_convo_color();
 extern void update_convo_font();
 extern void set_hide_icons();
+extern void set_convo_titles();
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);

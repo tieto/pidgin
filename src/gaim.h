@@ -242,6 +242,7 @@ extern guint im_options;
 #define OPT_IM_SIDE_TAB			0x00000020
 #define OPT_IM_BR_TAB			0x00000040
 #define OPT_IM_HIDE_ICONS		0x00000080
+#define OPT_IM_ALIAS_TAB		0x00002000
 
 extern guint chat_options;
 #define OPT_CHAT_ONE_WINDOW		0x00000001
