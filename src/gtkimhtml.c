@@ -35,6 +35,13 @@
 #include <locale.h>
 #endif
 
+#if GTK_CHECK_VERSION(1,3,0)
+#define GTK_IMHTML_GET_STYLE_FONT(style) gtk_style_get_font (style)
+#else
+#define GTK_IMHTML_GET_STYLE_FONT(style) (style)->font
+#define GTK_CLASS_TYPE(class) (class)->type
+#endif
+
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
 #include "pixmaps/burp.xpm"
@@ -319,7 +326,11 @@ static GdkColor *gtk_imhtml_get_color           (const gchar *);
 static gint      gtk_imhtml_motion_notify_event (GtkWidget *, GdkEventMotion *);
 
 static void
+#if GTK_CHECK_VERSION(1,3,0)
+gtk_imhtml_finalize (GObject *object)
+#else
 gtk_imhtml_destroy (GtkObject *object)
+#endif
 {
 	GtkIMHtml *imhtml;
 
@@ -387,8 +398,12 @@ gtk_imhtml_destroy (GtkObject *object)
 
 	gtk_smiley_tree_destroy (imhtml->smiley_data);
 
+#if GTK_CHECK_VERSION(1,3,0)
+	G_OBJECT_CLASS (parent_class)->finalize (object);
+#else
 	if (GTK_OBJECT_CLASS (parent_class)->destroy != NULL)
 		(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
+#endif
 }
 
 static void
@@ -420,8 +435,13 @@ gtk_imhtml_realize (GtkWidget *widget)
 					 &attributes, attributes_mask);
 	gdk_window_set_user_data (widget->window, widget);
 
+#if GTK_CHECK_VERSION(1,3,0)
+	attributes.x = widget->style->xthickness + BORDER_SIZE;
+	attributes.y = widget->style->xthickness + BORDER_SIZE;
+#else
 	attributes.x = widget->style->klass->xthickness + BORDER_SIZE;
 	attributes.y = widget->style->klass->xthickness + BORDER_SIZE;
+#endif
 	attributes.width = MAX (1, (gint) widget->allocation.width - (gint) attributes.x * 2);
 	attributes.height = MAX (1, (gint) widget->allocation.height - (gint) attributes.y * 2);
 	attributes.event_mask = gtk_widget_get_events (widget)
@@ -436,7 +456,7 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	imhtml->default_font = gdk_font_ref (GTK_WIDGET (imhtml)->style->font);
+	imhtml->default_font = gdk_font_ref (GTK_IMHTML_GET_STYLE_FONT (widget->style));
 
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
@@ -699,7 +719,11 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	GList *chunks;
 	struct line_info *line;
 	gfloat x, y;
+#if GTK_CHECK_VERSION(1,3,0)
+	guint32 width, height;
+#else
 	gint width, height;
+#endif
 
 	x = GTK_LAYOUT (imhtml)->hadjustment->value;
 	y = GTK_LAYOUT (imhtml)->vadjustment->value;
@@ -752,6 +776,7 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	gtk_imhtml_draw_focus (GTK_WIDGET (imhtml));
 }
 
+#if !GTK_CHECK_VERSION(1,3,0)
 static void
 gtk_imhtml_draw (GtkWidget    *widget,
 		 GdkRectangle *area)
@@ -761,6 +786,7 @@ gtk_imhtml_draw (GtkWidget    *widget,
 	imhtml = GTK_IMHTML (widget);
 	gtk_imhtml_draw_exposed (imhtml);
 }
+#endif
 
 static void
 gtk_imhtml_style_set (GtkWidget *widget,
@@ -888,6 +914,22 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 
 	widget->allocation = *allocation;
 
+#if GTK_CHECK_VERSION(1,3,0)
+	new_xsize = MAX (1, (gint) allocation->width -
+			    (gint) (widget->style->xthickness + BORDER_SIZE) * 2);
+	new_ysize = MAX (1, (gint) allocation->height -
+			    (gint) (widget->style->ythickness + BORDER_SIZE) * 2);
+
+	if (GTK_WIDGET_REALIZED (widget)) {
+		gint x = widget->style->xthickness + BORDER_SIZE;
+		gint y = widget->style->ythickness + BORDER_SIZE;
+		gdk_window_move_resize (widget->window,
+					allocation->x, allocation->y,
+					allocation->width, allocation->height);
+		gdk_window_move_resize (layout->bin_window,
+					x, y, new_xsize, new_ysize);
+	}
+#else
 	new_xsize = MAX (1, (gint) allocation->width -
 			    (gint) (widget->style->klass->xthickness + BORDER_SIZE) * 2);
 	new_ysize = MAX (1, (gint) allocation->height -
@@ -902,6 +944,7 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 		gdk_window_move_resize (layout->bin_window,
 					x, y, new_xsize, new_ysize);
 	}
+#endif
 
 	layout->hadjustment->page_size = new_xsize;
 	layout->hadjustment->page_increment = new_xsize / 2;
@@ -1279,14 +1322,16 @@ static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
 	GtkStyle *style;
+	GdkFont *font;
 	gint y, baseline_skip, gap;
 
 	style = imhtml->tip_window->style;
+	font = GTK_IMHTML_GET_STYLE_FONT (style);
 
-	gap = (style->font->ascent + style->font->descent) / 4;
+	gap = (font->ascent + font->descent) / 4;
 	if (gap < 2)
 		gap = 2;
-	baseline_skip = style->font->ascent + style->font->descent + gap;
+	baseline_skip = font->ascent + font->descent + gap;
 
 	if (!imhtml->tip_bit)
 		return FALSE;
@@ -1294,7 +1339,7 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 	gtk_paint_flat_box (style, imhtml->tip_window->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			   NULL, imhtml->tip_window, "tooltip", 0, 0, -1, -1);
 
-	y = style->font->ascent + 4;
+	y = font->ascent + 4;
 	gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
 			  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->url);
 
@@ -1307,6 +1352,7 @@ gtk_imhtml_tip (gpointer data)
 	GtkIMHtml *imhtml = data;
 	GtkWidget *widget = GTK_WIDGET (imhtml);
 	GtkStyle *style;
+	GdkFont *font;
 	gint gap, x, y, w, h, scr_w, scr_h, baseline_skip;
 
 	if (!imhtml->tip_bit || !GTK_WIDGET_DRAWABLE (widget)) {
@@ -1328,16 +1374,17 @@ gtk_imhtml_tip (gpointer data)
 
 	gtk_widget_ensure_style (imhtml->tip_window);
 	style = imhtml->tip_window->style;
+	font = GTK_IMHTML_GET_STYLE_FONT (style);
 
 	scr_w = gdk_screen_width ();
 	scr_h = gdk_screen_height ();
 
-	gap = (style->font->ascent + style->font->descent) / 4;
+	gap = (font->ascent + font->descent) / 4;
 	if (gap < 2)
 		gap = 2;
-	baseline_skip = style->font->ascent + style->font->descent + gap;
+	baseline_skip = font->ascent + font->descent + gap;
 
-	w = 8 + gdk_string_width (style->font, imhtml->tip_bit->url);
+	w = 8 + gdk_string_width (font, imhtml->tip_bit->url);
 	h = 8 - gap + baseline_skip;
 
 	gdk_window_get_pointer (NULL, &x, &y, NULL);
@@ -1357,7 +1404,7 @@ gtk_imhtml_tip (gpointer data)
 		if (imhtml->tip_bit->font)
 			y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
 		else
-			y = y + style->font->ascent + style->font->descent;
+			y = y + font->ascent + font->descent;
 
 	gtk_widget_set_usize (imhtml->tip_window, w, h);
 	gtk_widget_set_uposition (imhtml->tip_window, x, y);
@@ -1755,10 +1802,16 @@ gtk_imhtml_set_scroll_adjustments (GtkLayout     *layout,
 static void
 gtk_imhtml_class_init (GtkIMHtmlClass *class)
 {
+#if GTK_CHECK_VERSION(1,3,0)
+	GObjectClass  *gobject_class;
+#endif
 	GtkObjectClass *object_class;
 	GtkWidgetClass *widget_class;
 	GtkLayoutClass *layout_class;
 
+#if GTK_CHECK_VERSION(1,3,0)
+	gobject_class = (GObjectClass*) class;
+#endif
 	object_class = (GtkObjectClass*) class;
 	widget_class = (GtkWidgetClass*) class;
 	layout_class = (GtkLayoutClass*) class;
@@ -1768,19 +1821,25 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 	signals [URL_CLICKED] =
 		gtk_signal_new ("url_clicked",
 				GTK_RUN_FIRST,
-				object_class->type,
+				GTK_CLASS_TYPE (object_class),
 				GTK_SIGNAL_OFFSET (GtkIMHtmlClass, url_clicked),
 				gtk_marshal_NONE__POINTER,
 				GTK_TYPE_NONE, 1,
 				GTK_TYPE_POINTER);
 
+#if GTK_CHECK_VERSION(1,3,0)
+	gobject_class->finalize = gtk_imhtml_finalize;
+#else
 	gtk_object_class_add_signals (object_class, signals, LAST_SIGNAL);
 
 	object_class->destroy = gtk_imhtml_destroy;
+#endif
 
 	widget_class->realize = gtk_imhtml_realize;
+#if !GTK_CHECK_VERSION(1,3,0)
 	widget_class->draw = gtk_imhtml_draw;
 	widget_class->draw_focus = gtk_imhtml_draw_focus;
+#endif
 	widget_class->style_set = gtk_imhtml_style_set;
 	widget_class->expose_event  = gtk_imhtml_expose_event;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
@@ -3451,6 +3510,17 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y);
 
+#if GTK_CHECK_VERSION(1,3,0)
+	if (!(options & GTK_IMHTML_NO_SCROLL) &&
+	    scrolldown &&
+	    (imhtml->y >= MAX (1,
+			       (GTK_WIDGET (imhtml)->allocation.height -
+				(GTK_WIDGET (imhtml)->style->ythickness + BORDER_SIZE) * 2))))
+		gtk_adjustment_set_value (vadj, imhtml->y -
+					  MAX (1, (GTK_WIDGET (imhtml)->allocation.height - 
+						   (GTK_WIDGET (imhtml)->style->ythickness +
+						    BORDER_SIZE) * 2)));
+#else
 	if (!(options & GTK_IMHTML_NO_SCROLL) &&
 	    scrolldown &&
 	    (imhtml->y >= MAX (1,
@@ -3460,6 +3530,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					  MAX (1, (GTK_WIDGET (imhtml)->allocation.height - 
 						   (GTK_WIDGET (imhtml)->style->klass->ythickness +
 						    BORDER_SIZE) * 2)));
+#endif
 
 	if (url) {
 		g_free (url);
