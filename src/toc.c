@@ -913,6 +913,10 @@ void parse_toc_buddy_list(char *config, int from_do_import)
       
 	serv_add_buddies(bud);
         serv_set_permit_deny();
+	if (blist) {
+		build_edit_tree();
+		build_permit_tree();
+	}
 
 	}
 
