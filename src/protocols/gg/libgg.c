@@ -1,4 +1,4 @@
-/* $Id: libgg.c 2412 2001-10-01 06:56:34Z warmenhoven $ */
+/* $Id: libgg.c 2488 2001-10-10 20:03:17Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -26,6 +26,8 @@
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <errno.h>
 #include <string.h>
@@ -210,7 +212,13 @@ int gg_connect(void *addr, int port, int async)
 	}
 
 	if (async) {
+#ifdef FIONBIO
 		if (ioctl(sock, FIONBIO, &one) == -1) {
+#else
+		int flags = fcntl (sock, F_GETFL);
+		if (flags < 0 ||
+			fcntl (sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+#endif
 			gg_debug(GG_DEBUG_MISC, "-- ioctl() failed. errno = %d (%s)\n", errno, strerror(errno));
 			return -1;
 		}

@@ -1,4 +1,4 @@
-/* $Id: libgg.h 2412 2001-10-01 06:56:34Z warmenhoven $ */
+/* $Id: libgg.h 2488 2001-10-10 20:03:17Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -25,6 +25,10 @@ extern "C" {
 #endif
 
 #define GG_DEBUG 1
+
+#ifndef INADDR_NONE
+#define INADDR_NONE 0xffffffff
+#endif
 
 /*
  * typ zmiennej okre¶laj±cej numerek danej osoby.
