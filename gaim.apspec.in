@@ -26,7 +26,7 @@ It is written using Gtk+ and is licensed under the GPL.
 Gaim is NOT affiliated with or endorsed by AOL.
 
 [BuildPrepare]
-prepareBuild --disable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl
+prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl
 
 
 [BuildUnprepare]
@@ -45,14 +45,8 @@ require @68k.org/libaudiofile 0.0
 require @xiph.org/libao 2.0
 require @gtkspell.sourceforge.net/gtkspell 0.0
 
-# ap alpha: while gnutls do not provide autopackages, we package this ourselves
-repo="http://autopackage.org/downloads/0.7"
-registerRepository @gnutls.org/gnutls $repo/gnutls.xml
-registerRepository @gnupg.org/libgcrypt $repo/libgcrypt.xml
-registerRepository @gnupg.org/libgpg-error $repo/libgpg-error.xml
-unset repo
+require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @mozilla.org/nss 3; }
 
-require @gnutls.org/gnutls 11.1
 
 [Install]
 # Put your installation script here

@@ -1042,13 +1042,18 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 void gaim_conv_im_send(GaimConvIm *im, const char *message);
 
 /**
- * Adds a smiley to the conversation's smiley tree.
+ * Adds a smiley to the conversation's smiley tree. If this returns
+ * @c TRUE you should call gaim_conv_custom_smiley_write() one or more
+ * times, and then gaim_conv_custom_smiley_close(). If this returns
+ * @c FALSE, either the conv or smile were invalid, or the icon was
+ * found in the cache. In either case, calling write or close would
+ * be an error.
  *
  * @param conv The conversation to associate the smiley with.
  * @param smile The text associated with the smiley
  * @param cksum_type The type of checksum.
  * @param chksum The checksum, as a NUL terminated base64 string.
- * @return      @c TRUE if an icon is excepted, else FALSE. Note that
+ * @return      @c TRUE if an icon is expected, else FALSE. Note that
  *              it is an error to never call gaim_conv_custom_smiley_close if
  *              this function returns @c TRUE, but an error to call it if
  *              @c FALSE is returned.
