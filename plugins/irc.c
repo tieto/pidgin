@@ -533,6 +533,33 @@ void irc_callback ( struct gaim_connection * gc ) {
 	
 		/* Now, lets check the message to see if there's anything special in it */
 		if (u_message[0] == '\001') {
+			if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
+				/* Looks like we have a version request.  Let
+				 * us handle it thusly */
+				
+				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:www.marko.net/gaim%c\n", u_nick, '\001', VERSION, '\001'); 
+
+				write(idata->fd, buf, strlen(buf));
+
+				/* And get the heck out of dodge */
+				return;
+			}
+			
+			if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
+				/* Someone's triyng to ping us.  Let's respond */
+				gchar u_arg[24];
+
+				strcpy(u_arg, u_message + 6);
+				u_arg[strlen(u_arg)-1] = '\0';
+
+				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001', u_arg, '\001'); 
+
+				write(idata->fd, buf, strlen(buf));
+
+				/* And get the heck out of dodge */
+				return;
+			}
+
 			if (g_strncasecmp(u_message, "\001ACTION ", 8) == 0) {
 				/* Looks like we have an action. Let's parse it a little */
 				strcpy(buf, u_message);
