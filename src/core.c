@@ -236,7 +236,7 @@ static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 		if (!data)
 			return;
 		memcpy(&id, data, sizeof(id));
-		account = g_slist_nth_data(gaim_accounts, id);
+		account = g_list_nth_data(gaim_accounts_get_all(), id);
 		if (account)
 			serv_login(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */

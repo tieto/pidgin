@@ -326,6 +326,14 @@ gboolean gaim_accounts_load();
 void gaim_accounts_sync();
 
 /**
+ * Reorders an account.
+ *
+ * @param account   The account to reorder.
+ * @param new_index The new index for the account.
+ */
+void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
+
+/**
  * Returns a list of all accounts.
  *
  * @return A list of all accounts.

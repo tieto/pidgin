@@ -157,7 +157,6 @@
 #define OPT_ACCT_REM_PASS	0x00000004
 #define OPT_ACCT_MAIL_CHECK      0x00000008
 
-GSList *gaim_accounts = NULL;
 static guint misc_options;
 static guint logging_options;
 static guint blist_options;
@@ -589,6 +588,36 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	}
 #endif
 
+	/* I hate this part. We must convert the protocol options. */
+	switch (gaim_account_get_protocol(account)) {
+		case GAIM_PROTO_TOC:
+		case GAIM_PROTO_OSCAR:
+		case GAIM_PROTO_JABBER:
+			gaim_account_set_string(account, "server", p->value[0]);
+			gaim_account_set_int(account, "port", atoi(p->value[1]));
+			break;
+
+		case GAIM_PROTO_MSN:
+		case GAIM_PROTO_NAPSTER:
+		case GAIM_PROTO_YAHOO:
+			gaim_account_set_string(account, "server", p->value[3]);
+			gaim_account_set_int(account, "port", atoi(p->value[4]));
+			break;
+
+		case GAIM_PROTO_IRC:
+			gaim_account_set_string(account, "server", p->value[0]);
+			gaim_account_set_int(account, "port", atoi(p->value[1]));
+			gaim_account_set_string(account, "charset", p->value[2]);
+			break;
+
+		case GAIM_PROTO_GADUGADU:
+			gaim_account_set_string(account, "nick", p->value[0]);
+			break;
+
+		default:
+			break;
+	}
+
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
 
@@ -663,9 +692,7 @@ static void gaimrc_read_users(FILE *f)
 
 		if (strcmp(p->option, "user")==0 ||
 		    strcmp(p->option, "current_user")==0) {
-			if((account=gaimrc_read_user(f))!=NULL)
-				gaim_accounts = g_slist_append(gaim_accounts, account);
-			else {
+			if((account=gaimrc_read_user(f))==NULL) {
 				gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
 						   "Error reading in users from .gaimrc\n");
 				return;

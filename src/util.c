@@ -571,7 +571,7 @@ void clean_pid(void)
 GaimAccount *gaim_account_find(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));
-	GSList *accts = gaim_accounts;
+	GList *accts = gaim_accounts_get_all();
 	GaimAccount *account;
 
 	while (accts) {

@@ -1562,7 +1562,7 @@ static gboolean gaim_blist_read(const char *filename) {
 }
 
 void gaim_blist_load() {
-	GSList *accts;
+	GList *accts;
 	char *user_dir = gaim_user_dir();
 	char *filename;
 	char *msg;
@@ -1581,7 +1581,7 @@ void gaim_blist_load() {
 			gaim_notify_error(NULL, NULL, _("Buddy List Error"), msg);
 			g_free(msg);
 		}
-	} else if(g_slist_length(gaim_accounts)) {
+	} else if(g_list_length(gaim_accounts_get_all())) {
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
@@ -1595,7 +1595,7 @@ void gaim_blist_load() {
 			gtk_main_iteration();
 
 		/* read in the old lists, then save to the new format */
-		for(accts = gaim_accounts; accts; accts = accts->next) {
+		for(accts = gaim_accounts_get_all(); accts; accts = accts->next) {
 			do_import(accts->data, NULL);
 		}
 		gaim_blist_save();
@@ -1659,7 +1659,8 @@ static void blist_print_chat_components(gpointer key, gpointer data,
 }
 
 static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
-	GSList *accounts, *buds;
+	GList *accounts;
+	GSList *buds;
 	GaimBlistNode *gnode,*bnode;
 	struct group *group;
 	struct buddy *bud;
@@ -1727,7 +1728,10 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 	fprintf(file, "\t</blist>\n");
 	fprintf(file, "\t<privacy>\n");
 
-	for(accounts = gaim_accounts; accounts; accounts = accounts->next) {
+	for(accounts = gaim_accounts_get_all();
+		accounts != NULL;
+		accounts = accounts->next) {
+
 		GaimAccount *account = accounts->data;
 		char *acct_name = g_markup_escape_text(account->username, -1);
 		if(!exp_acct || account == exp_acct) {

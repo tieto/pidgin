@@ -232,7 +232,7 @@ static int dologin_named(char *name)
 		}
 		g_strfreev(names);
 	} else {		/* no name given, use default */
-		account = (GaimAccount *)gaim_accounts->data;
+		account = (GaimAccount *)gaim_accounts_get_all()->data;
 
 		if (gaim_account_get_remember_password(account)) {
 			retval = 0;
@@ -273,7 +273,7 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
 
 static GList *combo_user_names()
 {
-	GSList *accts = gaim_accounts;
+	GList *accts = gaim_accounts_get_all();
 	GList *tmp = NULL;
 	GaimAccount *account;
 
@@ -394,8 +394,8 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	/* Now grab the focus that we need */
-	if (gaim_accounts) {
-		GaimAccount *account = gaim_accounts->data;
+	if (gaim_accounts_get_all()) {
+		GaimAccount *account = gaim_accounts_get_all()->data;
 
 		if (gaim_account_get_remember_password(account)) {
 			combo_changed(NULL, name);
@@ -589,16 +589,11 @@ static void set_first_user(char *name)
 
 	account = gaim_account_find(name, -1);
 
-	if (!account) {		/* new user */
-		account = g_new0(GaimAccount, 1);
-		g_snprintf(account->username, sizeof(account->username), "%s", name);
-		account->protocol = GAIM_PROTO_DEFAULT;
-		gaim_accounts = g_slist_prepend(gaim_accounts, account);
-	} else {		/* user already exists */
-		gaim_accounts = g_slist_remove(gaim_accounts, account);
-		gaim_accounts = g_slist_prepend(gaim_accounts, account);
-	}
-	save_prefs();
+	if (account == NULL)   /* new user */
+		account = gaim_account_new(name, GAIM_PROTO_DEFAULT);
+
+	/* Place it as the first user. */
+	gaim_accounts_reorder(account, 0);
 }
 
 #ifdef _WIN32
@@ -893,8 +888,11 @@ int main(int argc, char *argv[])
 	gaim_gtk_prefs_init();
 	gaim_accounts_load();
 
-	if (!gaim_prefs_load())
+	if (!gaim_prefs_load()) {
 		load_prefs();
+		gaim_prefs_sync();
+		gaim_accounts_sync();
+	}
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();

@@ -36,6 +36,7 @@
 
 typedef enum
 {
+	TAG_NONE = 0,
 	TAG_PROTOCOL,
 	TAG_NAME,
 	TAG_PASSWORD,
@@ -585,6 +586,8 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->setting_name = NULL;
 	}
 
+	data->tag = TAG_NONE;
+
 	g_free(buffer);
 }
 
@@ -793,6 +796,37 @@ gaim_accounts_sync(void)
 	g_free(filename_real);
 }
 
+void
+gaim_accounts_reorder(GaimAccount *account, size_t new_index)
+{
+	size_t index;
+	GList *l;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(new_index > 0 && new_index < g_list_length(accounts));
+
+	index = g_list_index(accounts, account);
+
+	if (index == -1) {
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+				   "Unregistered account (%s) discovered during reorder!\n",
+				   gaim_account_get_username(account));
+		return;
+	}
+
+	l = g_list_nth(accounts, index);
+
+	if (new_index > index)
+		new_index--;
+
+	/* Remove the old one. */
+	accounts = g_list_delete_link(accounts, l);
+
+	/* Insert it where it should go. */
+	accounts = g_list_insert(accounts, account, new_index);
+
+	schedule_accounts_save();
+}
 
 GList *
 gaim_accounts_get_all(void)

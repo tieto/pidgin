@@ -77,7 +77,7 @@ static void dequeue_message(GtkTreeIter *iter)
 			if (!gaim_utf8_strcasecmp(qm->name, name)) {
 				GaimAccount *account = NULL;
 
-				if (g_slist_index(gaim_accounts, qm->account) >= 0)
+				if (g_list_index(gaim_accounts_get_all(), qm->account) >= 0)
 					account = qm->account;
 
 				cnv = gaim_find_conversation(name);
@@ -117,7 +117,7 @@ void purge_away_queue(GSList **queue)
 
 		account = NULL;
 
-		if (g_slist_index(gaim_accounts, qm->account) >= 0)
+		if (g_list_index(gaim_accounts_get_all(), qm->account) >= 0)
 			account = qm->account;
 
 		cnv = gaim_find_conversation(qm->name);

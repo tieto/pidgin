@@ -281,14 +281,17 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 	GtkWidget *opt_menu;
 	GtkWidget *menu;
 	GtkWidget *item;
-	GSList *l;
+	GList *l;
 	char buf[2048];
 	int count, place = 0;
 
 	opt_menu = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
-	for (l = gaim_accounts, count = 0; l != NULL; l = l->next, count++) {
+	for (l = gaim_accounts_get_all(), count = 0;
+		 l != NULL;
+		 l = l->next, count++) {
+
 		account = (GaimAccount *)l->data;
 
 		prpl = gaim_find_prpl(account->protocol);
@@ -480,7 +483,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	}
 	else {
 		dialog->pounce  = NULL;
-		dialog->account = gaim_accounts->data;
+		dialog->account = gaim_accounts_get_all()->data;
 	}
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);

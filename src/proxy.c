@@ -1243,7 +1243,7 @@ static void connection_host_resolved(GSList *hosts, gpointer data, const char *e
 int
 proxy_connect(GaimAccount *account, const char *host, int port, GaimInputFunction func, gpointer data)
 {
-	char *connecthost = host;
+	const char *connecthost = host;
 	int connectport = port;
 	struct PHB *phb = g_new0(struct PHB, 1);
 	if(!account || !account->gpi)

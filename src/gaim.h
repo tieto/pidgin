@@ -193,26 +193,12 @@ extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
 extern int opt_debug;
 
-extern GSList *gaim_accounts;
 extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 
 /* Functions in main.c */
 extern void do_quit();
-
-/* Functions in gtkblist.c */
-extern void signoff(GaimConnection *);
-
-/* Functions in buddy_chat.c */
-#if 0
-extern void show_new_buddy_chat(struct gaim_conversation *);
-extern void chat_set_topic(struct gaim_conversation*, char*, char*);
-/*extern void add_chat_buddy(struct gaim_conversation *, char *);*/
-extern void add_chat_buddy(struct gaim_conversation *, char *, char *);
-extern void rename_chat_buddy(struct gaim_conversation *, char *, char *);
-extern void remove_chat_buddy(struct gaim_conversation *, char *, char *);
-#endif
 
 /* Functions in dialogs.c */
 extern void g_show_info_text(GaimConnection *, const char *, int, const char *, ...);

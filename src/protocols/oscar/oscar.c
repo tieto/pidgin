@@ -71,7 +71,6 @@
 static GaimPlugin *my_protocol = NULL;
 
 /* For win32 compatability */
-G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT int report_idle;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
@@ -512,7 +511,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
       
 	od = (struct oscar_data *)gc->proto_data;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we 
 		 * can really do is return? */
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
@@ -630,7 +629,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	aim_session_t *sess;
 	aim_conn_t *conn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -780,7 +779,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	aim_session_t *sess;
 	aim_conn_t *bosconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1442,7 +1441,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1471,7 +1470,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1501,7 +1500,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		g_free(ccon->show);
 		g_free(ccon->name);
@@ -1533,7 +1532,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1562,7 +1561,7 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 	aim_session_t *sess;
 	aim_conn_t *tstconn;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
@@ -1878,7 +1877,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	struct sockaddr name;
 	socklen_t name_len = 1;
 	
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		g_free(dim);
 		return;
 	}
@@ -2092,7 +2091,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	char *host; int port = 4443;
 	int i, rc;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		cancel_direct_im(d);
 		return;
 	}
@@ -2419,7 +2418,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 static void gaim_auth_request(struct name_data *data, char *msg) {
 	GaimConnection *gc = data->gc;
 
-	if (g_slist_find(connections, gc)) {
+	if (g_list_find(gaim_connections_get_all(), gc)) {
 		struct oscar_data *od = gc->proto_data;
 		struct buddy *buddy = gaim_find_buddy(gc->account, data->name);
 		struct group *group = gaim_find_buddys_group(buddy);
@@ -2445,7 +2444,7 @@ static void gaim_auth_request_msgprompt(struct name_data *data) {
 static void gaim_auth_dontrequest(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
-	if (g_slist_find(connections, gc)) {
+	if (g_list_find(gaim_connections_get_all(), gc)) {
 		/* struct oscar_data *od = gc->proto_data; */
 		/* XXX - Take the buddy out of our buddy list */
 	}
@@ -2483,7 +2482,7 @@ static void gaim_auth_sendrequest(GaimConnection *gc, const char *name) {
 static void gaim_auth_grant(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
-	if (g_slist_find(connections, gc)) {
+	if (g_list_find(gaim_connections_get_all(), gc)) {
 		struct oscar_data *od = gc->proto_data;
 #ifdef NOSSI
 		struct buddy *buddy;
@@ -2504,7 +2503,7 @@ static void gaim_auth_grant(struct name_data *data) {
 static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 	GaimConnection *gc = data->gc;
 
-	if (g_slist_find(connections, gc)) {
+	if (g_list_find(gaim_connections_get_all(), gc)) {
 		struct oscar_data *od = gc->proto_data;
 #ifdef NOSSI
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
@@ -2526,7 +2525,7 @@ static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
 static void gaim_icq_contactadd(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
-	if (g_slist_find(connections, gc)) {
+	if (g_list_find(gaim_connections_get_all(), gc)) {
 		show_add_buddy(gc, data->name, NULL, data->nick);
 	}
 
@@ -5548,7 +5547,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	struct oscar_data *od;
 	struct direct_im *dim;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		g_free(data->who);
 		g_free(data);
 		return;
