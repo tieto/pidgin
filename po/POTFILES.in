@@ -1,3 +1,7 @@
+plugins/msn/msn.c
+plugins/icq/gaim_icq.c
+plugins/yay/yay.c
+plugins/napster.c
 src/about.c
 src/aim.c
 src/applet.c
@@ -6,12 +10,13 @@ src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/dialogs.c
-src/gtkimhtml.c
+src/gaimrc.c
 src/html.c
 src/multi.c
 src/oscar.c
 src/perl.c
 src/plugins.c
 src/prefs.c
+src/prpl.c
 src/server.c
 src/toc.c

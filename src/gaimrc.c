@@ -812,54 +812,63 @@ void load_prefs()
 	char buf[1024];
 	int ver = 0;
 
-	if (getenv("HOME")) {
+	if (opt_rcfile_arg)
+		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
+	else if (getenv("HOME"))
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
-		if ((f = fopen(buf, "r"))) {
-			fgets(buf, sizeof(buf), f);
-			sscanf(buf, "# .gaimrc v%d", &ver);
-			if ((ver <= 1) || (buf[0] != '#')) {
-				fclose(f);
-				set_defaults(FALSE);
-				save_prefs();
-				load_prefs();
-				return;
-			}
+	else {
+		set_defaults(TRUE);
+		return;
+	}
 
-			while (!feof(f)) {
-				switch (gaimrc_parse_tag(f)) {
-				case -1:
-					/* Let the loop end, EOF */
-					break;
-				case 0:
-					gaimrc_read_users(f);
-					break;
-				case 1:
-					gaimrc_read_options(f);
-					break;
-				case 2:
-					gaimrc_read_away(f);
-					break;
-#ifdef GAIM_PLUGINS
-				case 3:
-					gaimrc_read_plugins(f);
-					break;
-#endif
-				case 4:
-					gaimrc_read_pounce(f);
-					break;
-				case 5:
-					gaimrc_read_chat(f);
-					break;
-				case 6:
-					gaimrc_read_sounds(f);
-					break;
-				default:
-					/* NOOP */
-					break;
-				}
-			}
+	if ((f = fopen(buf, "r"))) {
+		fgets(buf, sizeof(buf), f);
+		sscanf(buf, "# .gaimrc v%d", &ver);
+		if ((ver <= 1) || (buf[0] != '#')) {
 			fclose(f);
+			set_defaults(FALSE);
+			save_prefs();
+			load_prefs();
+			return;
 		}
+
+		while (!feof(f)) {
+			switch (gaimrc_parse_tag(f)) {
+			case -1:
+				/* Let the loop end, EOF */
+				break;
+			case 0:
+				gaimrc_read_users(f);
+				break;
+			case 1:
+				gaimrc_read_options(f);
+				break;
+			case 2:
+				gaimrc_read_away(f);
+				break;
+#ifdef GAIM_PLUGINS
+			case 3:
+				gaimrc_read_plugins(f);
+				break;
+#endif
+			case 4:
+				gaimrc_read_pounce(f);
+				break;
+			case 5:
+				gaimrc_read_chat(f);
+				break;
+			case 6:
+				gaimrc_read_sounds(f);
+				break;
+			default:
+				/* NOOP */
+				break;
+			}
+		}
+		fclose(f);
+	} else if (opt_rcfile_arg) {
+		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
+		do_error_dialog(buf, _("Preferences Error"));
 	}
 
 	if ((ver == 2) || (buf[0] != '#')) {
@@ -872,22 +881,26 @@ void save_prefs()
 	FILE *f;
 	char buf[BUF_LONG];
 
-	if (getenv("HOME")) {
+	if (opt_rcfile_arg)
+		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
+	else if (getenv("HOME"))
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
-		if ((f = fopen(buf, "w"))) {
-			fprintf(f, "# .gaimrc v%d\n", 4);
-			gaimrc_write_users(f);
-			gaimrc_write_options(f);
-			gaimrc_write_sounds(f);
-			gaimrc_write_away(f);
-			gaimrc_write_pounce(f);
-			gaimrc_write_chat(f);
+	else
+		return;
+
+	if ((f = fopen(buf, "w"))) {
+		fprintf(f, "# .gaimrc v%d\n", 4);
+		gaimrc_write_users(f);
+		gaimrc_write_options(f);
+		gaimrc_write_sounds(f);
+		gaimrc_write_away(f);
+		gaimrc_write_pounce(f);
+		gaimrc_write_chat(f);
 #ifdef GAIM_PLUGINS
-			gaimrc_write_plugins(f);
+		gaimrc_write_plugins(f);
 #endif
-			fclose(f);
-			chmod(buf, S_IRUSR | S_IWUSR);
-		}
+		fclose(f);
+		chmod(buf, S_IRUSR | S_IWUSR);
 	}
 }
 

@@ -401,8 +401,9 @@ extern GSList *away_messages;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
-int opt_away;
-char *opt_away_arg;
+extern int opt_away;
+extern char *opt_away_arg;
+extern char *opt_rcfile_arg;
 
 
 /* Globals in away.c */

@@ -73,6 +73,7 @@ GtkWidget *mainwindow = NULL;
 
 int opt_away = 0;
 char *opt_away_arg = NULL;
+char *opt_rcfile_arg = NULL;
 
 void BuddyTickerCreateWindow(void);
 
@@ -424,6 +425,8 @@ int main(int argc, char *argv[])
 		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
 		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
 		 "Use account NAME", "NAME"},
+		{"file", 'f', POPT_ARG_STRING, &opt_rcfile_arg, 'f',
+		 "Use FILE as config", "FILE"},
 		{0, 0, 0, 0, 0, 0, 0}
 	};
 #else
@@ -433,6 +436,7 @@ int main(int argc, char *argv[])
 		{"help", no_argument, NULL, 'h'},
 		{"login", optional_argument, NULL, 'l'},
 		{"user", required_argument, NULL, 'u'},
+		{"file", required_argument, NULL, 'f'},
 		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
@@ -511,6 +515,31 @@ int main(int argc, char *argv[])
 			}
 			strcpy(argv[i], " ");
 		}
+		/* --file option */
+		else if (strstr (argv[i], "--fi") == argv[i]) {
+			char *equals;
+			if ((equals = strchr(argv[i], '=')) != NULL) {
+				/* --file=FILE */
+				opt_rcfile_arg = g_strdup (equals+1);
+			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				/* --file FILE */
+				opt_rcfile_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy (argv[i], " ");
+		}
+		/* -f option */
+		else if (strstr (argv[i], "-f") == argv[i]) {
+			if (strlen (argv[i]) > 2) {
+				/* -fFILE */
+				opt_rcfile_arg = g_strdup (argv[i]+2);
+			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				/* -f FILE */
+				opt_rcfile_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy(argv[i], " ");
+		}
 	}
 
 	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
@@ -519,7 +548,7 @@ int main(int argc, char *argv[])
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv, "ahl::w::u:v",
+	while ((opt = getopt_long(argc, argv, "ahl::w::u:f::v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
@@ -536,6 +565,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'a':	/* account editor */
 			opt_acct = 1;
+			break;
+		case 'f':
+			opt_rcfile_arg = g_strdup (optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = 1;

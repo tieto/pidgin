@@ -1114,6 +1114,7 @@ void show_usage(int mode, char *name)
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use)\n"
 		       "  -u, --user=NAME     use account NAME\n"
+		       "  -f, --file=FILE     use FILE as config\n"
 		       "  -v, --version       display version information window\n"
 		       "  -h, --help          display this help and exit\n", name);
 		break;
