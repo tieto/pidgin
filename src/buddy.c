@@ -1161,7 +1161,36 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 	update_num_groups();
 }
 
+void
+create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
+				 GdkPixmap **pixmap, GdkBitmap **mask)
+{
+    /* This whole thing is a hack--but it looks nice.
+     * Probably should have a prpl->icon(struct gaim_connection *) to
+     * do this. */
+	GtkStyle *style;
+	char **xpm = NULL; 
 
+	if (widget == NULL || gc == NULL || pixmap == NULL || mask == NULL)
+		return;
+	
+	style = gtk_widget_get_style( widget );
+	
+	if (gc->prpl->list_icon)
+		if (gc->prpl->protocol ==  PROTO_OSCAR) { 
+			if (isdigit(*gc->username)) {
+				xpm = gc->prpl->list_icon(0);
+			} else {
+				xpm = gc->prpl->list_icon(0x10);
+			}
+		} else { 
+			xpm = gc->prpl->list_icon (0);
+		}
+	if (xpm == NULL)
+		xpm = (char **)no_icon_xpm;
+	
+	*pixmap = gdk_pixmap_create_from_xpm_d(widget->window, mask, &style->bg[GTK_STATE_NORMAL], xpm);
+}
 
 void build_edit_tree()
 {
@@ -1185,10 +1214,18 @@ void build_edit_tree()
 		z = (struct gaim_connection *)con->data;
 
 		if (g_slist_length(connections) > 1) {
+			GdkPixmap *pixmap;
+			GdkBitmap *mask;
+
 			text[0] = z->username;
 
+			create_prpl_icon(blist, z, &pixmap, &mask);
+
 			c = gtk_ctree_insert_node(GTK_CTREE(edittree), NULL,
-						  NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
+						  NULL, text, 3, pixmap, mask, pixmap, mask, 0, 1);
+
+			gdk_pixmap_unref (pixmap);
+			gdk_bitmap_unref (mask);
 
 			gtk_ctree_node_set_row_data(GTK_CTREE(edittree), c, z);
 		} else
@@ -1197,6 +1234,7 @@ void build_edit_tree()
 		grp = z->groups;
 
 		while (grp) {
+			
 			g = (struct group *)grp->data;
 
 			text[0] = g->name;

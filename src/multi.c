@@ -1074,27 +1074,8 @@ GtkWidget* create_meter_pixmap (GtkWidget *widget, struct gaim_connection *gc)
 	GdkPixmap *gdkpixmap;
 	GdkBitmap *mask;
 	GtkWidget *pixmap;
-	GtkStyle *style;
-	char **xpm = NULL; 
-	
-	style = gtk_widget_get_style( widget );
-	
-	if (gc->prpl->list_icon)
-		if (gc->prpl->protocol ==  PROTO_OSCAR) { 
-			/* This is such a bad hack to get the right icon
-			 * for OSCAR.  But it's pretty */
-			if (isdigit(*gc->username)) {
-				xpm = gc->prpl->list_icon(0);
-			} else {
-				xpm = gc->prpl->list_icon(0x10);
-			}
-		} else { 
-			xpm = gc->prpl->list_icon (0);
-		}
-	if (xpm == NULL)
-		xpm = (char **)no_icon_xpm;
-	
-	gdkpixmap = gdk_pixmap_create_from_xpm_d(widget->window, &mask, &style->bg[GTK_STATE_NORMAL], xpm);
+
+	create_prpl_icon (widget, gc, &gdkpixmap, &mask);
 			
 	pixmap = gtk_pixmap_new (gdkpixmap, mask);
 	gdk_pixmap_unref (gdkpixmap);
