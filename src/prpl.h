@@ -39,7 +39,10 @@ struct prpl {
 	int protocol;
 	char *(* name)();
 
+	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
+	/* returns a GtkMenu * for use in the buddy list */
+	void (* action_menu)(GtkWidget *, struct gaim_connection *, char *);
 
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);

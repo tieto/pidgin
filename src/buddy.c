@@ -250,27 +250,10 @@ void pressed_ticker(char *buddy)
 	}
 }
 
-void pressed_info(GtkWidget *widget, struct buddy_show *b)
-{
-        serv_get_info(b->name);
-}
-
 void pressed_alias(GtkWidget *widget, struct buddy_show *b)
 {
 	struct buddy *m = find_buddy(connections->data, b->name);
 	alias_dialog(m);
-}
-
-void pressed_dir_info(GtkWidget *widget, struct buddy_show *b)
-{
-        serv_get_dir(b->name);
-
-}
-
-void pressed_away_msg(GtkWidget *widget, struct buddy_show *b)
-{
-        serv_get_away_msg(b->name);
-
 }
 
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
@@ -286,10 +269,12 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
                         c = new_conversation(b->name);
                 }
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-		/* FIXME: first, create a menu of each signed on name. then for each of those,
-		 * make a submenu based on which protocol is being used. this will help clarify
-		 * a lot of the UI and connection issues */
-                GtkWidget *menu, *button;
+		GtkWidget *menu;
+		GtkWidget *button;
+		GtkWidget *menuitem;
+		GtkWidget *conmenu;
+		GSList *cn = b->connlist;
+		struct gaim_connection *g;
 		/* We're gonna make us a menu right here */
 
 		menu = gtk_menu_new();
@@ -300,43 +285,43 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label(_("Info"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_info), b);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
 		button = gtk_menu_item_new_with_label(_("Alias"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_alias), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		button = gtk_menu_item_new_with_label(_("Dir Info"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_dir_info), b);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
-		button = gtk_menu_item_new_with_label(_("Away Msg"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
-		button = gtk_menu_item_new_with_label(_("Toggle Logging"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(log_callback), b->name);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
-
+		/* FIXME: for now, we're not going to do buddy pounces from the menu,
+		 * since the person is already online. when we do per-connection pounces,
+		 * then this'll come back
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+		*/
 
-                
+		if (g_slist_length(cn) > 1) {
+			while (cn) {
+				g = (struct gaim_connection *)cn->data;
+				if (g->prpl->action_menu) {
+					menuitem = gtk_menu_item_new_with_label(g->username);
+					gtk_menu_append(GTK_MENU(menu), menuitem);
+					gtk_widget_show(menuitem);
+					
+					conmenu = gtk_menu_new();
+					gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), conmenu);
+					gtk_widget_show(conmenu);
+
+					(*g->prpl->action_menu)(conmenu, g, b->name);
+				}
+				cn = g_slist_next(cn);
+			}
+		} else {
+			g = (struct gaim_connection *)cn->data;
+			if (g->prpl->action_menu)
+				(*g->prpl->action_menu)(menu, g, b->name);
+		}
 		
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
@@ -630,6 +615,8 @@ void build_edit_tree()
 	struct buddy *b;
 	char *text[1];
 
+	if (!blist) return;
+
 	gtk_clist_freeze(GTK_CLIST(edittree));
 	gtk_clist_clear(GTK_CLIST(edittree));
 	
@@ -858,7 +845,7 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 static void im_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GList *i;
-	struct buddy *b = NULL;
+	struct buddy_show *b = NULL;
 	struct conversation *c;
 	i = GTK_TREE_SELECTION(tree);
 	if (i) {
@@ -882,7 +869,7 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 static void info_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GList *i;
-	struct buddy *b = NULL;
+	struct buddy_show *b = NULL;
 	i = GTK_TREE_SELECTION(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
@@ -892,7 +879,7 @@ static void info_callback(GtkWidget *widget, GtkTree *tree)
         }
 	if (!b->name)
 		return;
-        serv_get_info(b->name);
+        serv_get_info(b->connlist->data, b->name);
 }
 
 
@@ -1414,11 +1401,11 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (b->present == 1) {
 			play_sound(BUDDY_ARRIVE);
 			b->present = 2;
-			if (b->log_timer > 0)
-				gtk_timeout_remove(b->log_timer);
+			if (bs->log_timer > 0)
+				gtk_timeout_remove(bs->log_timer);
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
-			b->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 		} else {
 			if (gc->prpl->list_icon)
 				xpm = (*gc->prpl->list_icon)(b->uc);
@@ -1438,9 +1425,9 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gs = find_group_show(g->name);
 		bs = find_buddy_show(gs, b->name);
 		bs->connlist = g_slist_remove(bs->connlist, gc);
-		if (b->log_timer > 0)
-			gtk_timeout_remove(b->log_timer);
-		b->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+		if (bs->log_timer > 0)
+			gtk_timeout_remove(bs->log_timer);
+		bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, logout_icon_xpm);
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);

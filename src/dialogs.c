@@ -568,7 +568,9 @@ static void do_info(GtkWidget *widget, GtkWidget *infoentry)
 		return;
 	}
 	
-	serv_get_info(who);
+	/* FIXME: what do we want to do about this case? */
+	if (connections)
+		serv_get_info(connections->data, who);
 
 	g_free(who);
 }

@@ -446,9 +446,9 @@ void info_callback(GtkWidget *w, struct conversation *c)
 	        else
 	                return;
 
-	        serv_get_info(name);
+	        serv_get_info(c->gc, name);
 	} else {
-	        serv_get_info(c->name);
+	        serv_get_info(c->gc, c->name);
 		gtk_widget_grab_focus(c->entry);
 	}
 }

@@ -202,7 +202,6 @@ struct gaim_plugin {
 	char *filename;
 	char *description;
 	void *handle;
-	int   remove;
 };
 
 struct gaim_callback {
@@ -220,7 +219,6 @@ struct buddy {
 	char name[80];
 	char show[80];
         int present;
-        int log_timer;
 	int evil;
 	time_t signon;
 	time_t idle;
@@ -628,9 +626,9 @@ extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
 extern void serv_finish_login();
 extern void serv_send_im(struct gaim_connection *, char *, char *, int);
-extern void serv_get_info(char *);
-extern void serv_get_away_msg(char *);
-extern void serv_get_dir(char *);
+extern void serv_get_info(struct gaim_connection *, char *);
+extern void serv_get_away_msg(struct gaim_connection *, char *);
+extern void serv_get_dir(struct gaim_connection *, char *);
 extern void serv_set_idle(struct gaim_connection *, int);
 extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(char *);

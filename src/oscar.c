@@ -1345,10 +1345,39 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
+static void oscar_info(GtkObject *obj, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+	serv_get_info(gc, who);
+}
+
+static void oscar_away_msg(GtkObject *obj, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+	serv_get_away_msg(gc, who);
+}
+
+static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+	GtkWidget *button;
+
+	button = gtk_menu_item_new_with_label(_("Get Info"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(oscar_info), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label(_("Get Away Msg"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(oscar_away_msg), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
+	ret->action_menu = oscar_action_menu;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;

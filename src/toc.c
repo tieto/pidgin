@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1040 $"
+#define REVISION "gaim:$Revision: 1042 $"
 
 struct toc_data {
 	int toc_fd;
@@ -1115,10 +1115,39 @@ static char **toc_list_icon(int uc) {
 	return NULL;
 }
 
+static void toc_info(GtkObject *obj, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+	serv_get_info(gc, who);
+}
+
+static void toc_dir_info(GtkObject *obj, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+	serv_get_dir(gc, who);
+}
+
+static void toc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+	GtkWidget *button;
+
+	button = gtk_menu_item_new_with_label(_("Get Info"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(toc_info), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label(_("Get Dir Info"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(toc_dir_info), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
 void toc_init(struct prpl *ret) {
         ret->protocol = PROTO_TOC;
         ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
+	ret->action_menu = toc_action_menu;
         ret->login = toc_login;
         ret->close = toc_close;
         ret->send_im = toc_send_im;

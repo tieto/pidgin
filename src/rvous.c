@@ -67,7 +67,7 @@ static void warn_callback(GtkWidget *widget, struct file_transfer *ft)
 
 static void info_callback(GtkWidget *widget, struct file_transfer *ft)
 {
-        serv_get_info(ft->user);
+	serv_get_info(ft->gc, ft->user);
 }
 
 static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)

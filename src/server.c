@@ -112,36 +112,20 @@ void serv_send_im(struct gaim_connection *gc, char *name, char *message, int awa
                 serv_touch_idle(gc);
 }
 
-void serv_get_info(char *name)
+void serv_get_info(struct gaim_connection *g, char *name)
 {
-	/* FIXME: getting someone's info? how do you decide something like that? I think that
-	 * the buddy list/UI needs to be really changed before this gets fixed*/
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-
 	if (g && g->prpl && g->prpl->get_info)
 		(*g->prpl->get_info)(g, name);
 }
 
-void serv_get_away_msg(char *name)
+void serv_get_away_msg(struct gaim_connection *g, char *name)
 {
-	/* FIXME: see the serv_get_info comment above :-P */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-
 	if (g && g->prpl && g->prpl->get_away_msg)
 		(*g->prpl->get_away_msg)(g, name);
 }
 
-void serv_get_dir(char *name)
+void serv_get_dir(struct gaim_connection *g, char *name)
 {
-	/* FIXME: see the serv_get_info comment above :-P */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-
 	if (g && g->prpl && g->prpl->get_dir)
 		(*g->prpl->get_dir)(g, name);
 }
