@@ -210,21 +210,25 @@ xmlnode_get_child(xmlnode *parent, const char *name)
 char *
 xmlnode_get_data(xmlnode *node)
 {
-	GString *str;
-	char *ret;
+	GString *str = NULL;
+	char *ret = NULL;
 	xmlnode *c;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	str = g_string_new("");
 
 	for(c = node->child; c; c = c->next) {
-		if(c->type == NODE_TYPE_DATA)
+		if(c->type == NODE_TYPE_DATA) {
+			if(!str)
+				str = g_string_new("");
 			str = g_string_append_len(str, c->data, c->data_sz);
+		}
 	}
 
-	ret = str->str;
-	g_string_free(str, FALSE);
+	if(str) {
+		ret = str->str;
+		g_string_free(str, FALSE);
+	}
 
 	return ret;
 }
