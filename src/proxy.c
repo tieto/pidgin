@@ -407,7 +407,7 @@ static void cope_with_gdb_brokenness()
 	ppid = getppid();
 	snprintf(s, 300, "/proc/%d/exe", ppid);
 	n = readlink(s, e, sizeof(e));
-	e[MAX(n,sizeof(e)-1)] = '\0';
+	e[MIN(n,sizeof(e)-1)] = '\0';
 	
 	if(strstr(e,"gdb")) {
 		gaim_debug(GAIM_DEBUG_INFO, "dns",
