@@ -322,9 +322,9 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 		}
 
 		if (message) {
-			buf = g_malloc(strlen(message) + 1);
+			buf = g_malloc(strlen(message) * 4 + 1);
 			if (gc->flags & OPT_CONN_HTML)
-				strncpy(buf, message, strlen(message) + 1);
+				strncpy_withhtml(buf, message, strlen(message) * 4 + 1);
 			else
 				strncpy_nohtml(buf, message, strlen(message) + 1);
 		}
