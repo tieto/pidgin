@@ -74,9 +74,9 @@ gchar *strip_html(gchar *text)
 	return text2;
 }
 
-static struct g_url parse_url(char *url)
+static struct g_url *parse_url(char *url)
 {
-	struct g_url test;
+	struct g_url *test = g_new0(struct g_url, 1);
 	char scan_info[255];
 	char port[5];
 	int f;
@@ -87,7 +87,7 @@ static struct g_url parse_url(char *url)
 	else
 		g_snprintf(scan_info, sizeof(scan_info),
 			   "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?=+^]");
-	f = sscanf(url, scan_info, test.address, port, test.page);
+	f = sscanf(url, scan_info, test->address, port, test->page);
 	if (f == 1) {
 		if (strstr(url, "http://"))
 			g_snprintf(scan_info, sizeof(scan_info),
@@ -95,8 +95,8 @@ static struct g_url parse_url(char *url)
 		else
 			g_snprintf(scan_info, sizeof(scan_info),
 				   "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?=+^]");
-		f = sscanf(url, scan_info, test.address, test.page);
-		g_snprintf(port, sizeof(test.port), "80");
+		f = sscanf(url, scan_info, test->address, test->page);
+		g_snprintf(port, sizeof(test->port), "80");
 		port[2] = 0;
 	}
 	if (f == 1) {
@@ -104,18 +104,18 @@ static struct g_url parse_url(char *url)
 			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]");
 		else
 			g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]");
-		f = sscanf(url, scan_info, test.address);
-		g_snprintf(test.page, sizeof(test.page), "%c", '\0');
+		f = sscanf(url, scan_info, test->address);
+		g_snprintf(test->page, sizeof(test->page), "%c", '\0');
 	}
 
-	sscanf(port, "%d", &test.port);
+	sscanf(port, "%d", &test->port);
 	return test;
 }
 
 struct grab_url_data {
 	void (*callback)(gpointer, char *);
 	gpointer data;
-	struct g_url website;
+	struct g_url *website;
 	char *url;
 
 	int inpa;
@@ -133,6 +133,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 	if (sock == -1) {
 		gunk->callback(gunk->data, NULL);
+		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
 		return;
@@ -140,7 +141,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 	if (!gunk->sentreq) {
 		char buf[256];
-		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", gunk->website.page);
+		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", gunk->website->page);
 		debug_printf("Request: %s\n", buf);
 		write(sock, buf, strlen(buf));
 		fcntl(sock, F_SETFL, O_NONBLOCK);
@@ -178,6 +179,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		gunk->callback(gunk->data, gunk->webdata);
 		if (gunk->webdata)
 			g_free(gunk->webdata);
+		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
 	} else {
@@ -186,6 +188,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		gunk->callback(gunk->data, NULL);
 		if (gunk->webdata)
 			g_free(gunk->webdata);
+		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
 	}
@@ -201,8 +204,9 @@ void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
 	gunk->url = g_strdup(url);
 	gunk->website = parse_url(url);
 
-	if ((sock = proxy_connect(gunk->website.address, gunk->website.port,
+	if ((sock = proxy_connect(gunk->website->address, gunk->website->port,
 				  grab_url_callback, gunk)) < 0) {
+		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
 		callback(data, g_strdup(_("g003: Error opening connection.\n")));

@@ -277,7 +277,7 @@ static void message_handler(struct UI *ui, guchar subtype, guchar *data)
 	}
 }
 
-static gint gaim_recv(GIOChannel *source, void *buf, gint len)
+static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 {
 	gint total = 0;
 	gint cur;
@@ -322,7 +322,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		return FALSE;
 	}
 
-	if (gaim_recv(source, &len, sizeof(len)) != sizeof(len)) {
+	if (gaim_recv(source, (guchar *)&len, sizeof(len)) != sizeof(len)) {
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_close(ui->channel);

@@ -19,6 +19,9 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include "gtkimhtml.h"
 #include <X11/Xlib.h>
 #include <gdk/gdkx.h>
@@ -27,6 +30,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <math.h>
+#ifdef HAVE_LANGINFO_CODESET
+#include <langinfo.h>
+#include <locale.h>
+#endif
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -78,6 +85,21 @@ struct _GtkSmileyTree {
 	GtkSmileyTree **children;
 	gchar **image;
 };
+
+static gchar* getcharset()
+{
+	static gchar charset[64];
+#ifdef HAVE_LANGINFO_CODESET
+	gchar *ch = nl_langinfo(CODESET);
+	if (strncasecmp(ch, "iso-", 4) == 0)
+		g_snprintf(charset, sizeof(charset), "iso%s", ch + 4);
+	else
+		g_snprintf(charset, sizeof(charset), ch);
+#else
+	g_snprintf(charset, sizeof(charset), "iso8859-*");
+#endif
+	return charset;
+}
 
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
@@ -348,9 +370,12 @@ gtk_imhtml_destroy (GtkObject *object)
 	}
 	imhtml->tip_bit = NULL;
 
-	gdk_font_unref (imhtml->default_font);
-	gdk_color_free (imhtml->default_fg_color);
-	gdk_color_free (imhtml->default_bg_color);
+	if (imhtml->default_font)
+		gdk_font_unref (imhtml->default_font);
+	if (imhtml->default_fg_color)
+		gdk_color_free (imhtml->default_fg_color);
+	if (imhtml->default_bg_color)
+		gdk_color_free (imhtml->default_bg_color);
 
 	gdk_cursor_destroy (imhtml->hand_cursor);
 	gdk_cursor_destroy (imhtml->arrow_cursor);
@@ -406,9 +431,14 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
+	imhtml->default_font = gdk_font_ref (GTK_WIDGET (imhtml)->style->font);
+
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
 				   &widget->style->base [GTK_STATE_NORMAL]);
+
+	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
+	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
 
 	gdk_window_show (GTK_LAYOUT (imhtml)->bin_window);
 }
@@ -1781,53 +1811,60 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		return gdk_fontset_load ("-*-*-*-*-*-*-*-*-*-*-*-*-*-*,*");
 	}
 
-	g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-%d-*-*-*-*-iso8859-*",
+	g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-%d-*-*-*-*-%s",
 		    choice,
 		    bold ? "bold" : "medium",
 		    italics ? 'i' : 'r',
-		    size);
+		    size,
+		    getcharset());
 	font = gdk_font_load (buf);
 
 	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-%d-*-*-*-*-iso8859-*",
+		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-%d-*-*-*-*-%s",
 			    choice,
 			    bold ? "bold" : "medium",
-			    size);
+			    size,
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
 	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-*-*-*-*-*-iso8859-*",
+		g_snprintf (buf, sizeof (buf), "-*-%s-%s-%c-*-*-*-*-*-*-*-*-%s",
 			    choice,
 			    bold ? "bold" : "medium",
-			    italics ? 'i' : 'r');
+			    italics ? 'i' : 'r',
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
 	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-*-*-*-*-*-iso8859-*",
+		g_snprintf (buf, sizeof (buf), "-*-%s-%s-o-*-*-*-*-*-*-*-*-%s",
 			    choice,
-			    bold ? "bold" : "medium");
+			    bold ? "bold" : "medium",
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
 	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-iso8859-*",
+		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-%s",
 			    choice,
-			    italics ? 'i' : 'r');
+			    italics ? 'i' : 'r',
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
 	if (!font) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-iso8859-*",
+		g_snprintf (buf, sizeof (buf), "-*-%s-*-%c-*-*-*-*-*-*-*-*-%s",
 			    choice,
-			    italics ? 'o' : '*');
+			    italics ? 'o' : '*',
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
 	if (!font && italics) {
-		g_snprintf (buf, sizeof (buf), "-*-%s-*-*-*-*-*-*-*-*-*-*-iso8859-*",
-			    choice);
+		g_snprintf (buf, sizeof (buf), "-*-%s-*-*-*-*-*-*-*-*-*-*-%s",
+			    choice,
+			    getcharset());
 		font = gdk_font_load (buf);
 	}
 
@@ -1914,9 +1951,7 @@ gtk_imhtml_init (GtkIMHtml *imhtml)
 		{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT }
 	};
 
-	imhtml->default_font = gdk_font_ref (GTK_WIDGET (imhtml)->style->font);
-	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
-	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
+	imhtml->default_font = gtk_imhtml_font_load (imhtml, DEFAULT_FONT_NAME, FALSE, FALSE, 0);
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 

@@ -199,7 +199,7 @@ static int yahoo_newmail(struct yahoo_session *sess, ...) {
 	count = va_arg(ap, int);
 	va_end(ap);
 
-	connection_has_mail(gc, count, NULL, NULL);
+	connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
 
 	return 1;
 }
@@ -644,7 +644,7 @@ static void yahoo_act_id(gpointer data, char *entry) {
 
 static void yahoo_do_action(struct gaim_connection *gc, char *act) {
 	if (!strcmp(act, "Activate ID")) {
-		do_prompt_dialog("Activate which ID:", gc, yahoo_act_id, NULL);
+		do_prompt_dialog("Activate which ID:", gc->displayname, gc, yahoo_act_id, NULL);
 	}
 }
 

@@ -2118,7 +2118,6 @@ void show_conv(struct conversation *c)
 	GtkWidget *toolbar;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkStyle *style;
 	int dispstyle = set_dispstyle(0);
 
 	c->font_dialog = NULL;
@@ -2322,10 +2321,6 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(send);
 
 	update_buttons_by_protocol(c);
-
-	style = gtk_widget_get_style(GTK_WIDGET(entry));
-	gtk_imhtml_set_defaults(GTK_IMHTML(text), 0, &style->fg[GTK_STATE_NORMAL],
-				&style->base[GTK_STATE_NORMAL]);
 
 	gtk_widget_show(win);
 }

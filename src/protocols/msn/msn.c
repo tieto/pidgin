@@ -20,6 +20,8 @@
 			"User-Agent: Gaim/" VERSION "\r\n" \
 			"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; PF=0\r\n\r\n"
 
+#define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
+
 #define MSN_ONLINE  1
 #define MSN_BUSY    2
 #define MSN_IDLE    3
@@ -269,20 +271,20 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 		char *x = strstr(data, "Inbox-Unread:");
 		if (!x) return;
 		x += strlen("Inbox-Unread: ");
-		connection_has_mail(gc, atoi(x), NULL, NULL);
+		connection_has_mail(gc, atoi(x), NULL, NULL, HOTMAIL_URL);
 	} else if (strstr(data, "Content-Type: text/x-msmsgsemailnotification;")) {
 		char *from = strstr(data, "From:");
 		char *subject = strstr(data, "Subject:");
 		char *x;
 		if (!from || !subject) {
-			connection_has_mail(gc, 1, NULL, NULL);
+			connection_has_mail(gc, 1, NULL, NULL, HOTMAIL_URL);
 			return;
 		}
 		from += strlen("From: ");
 		x = strstr(from, "\r\n"); *x = 0;
 		subject += strlen("Subject: ");
 		x = strstr(subject, "\r\n"); *x = 0;
-		connection_has_mail(gc, -1, from, subject);
+		connection_has_mail(gc, -1, from, subject, HOTMAIL_URL);
 	}
 }
 
@@ -831,6 +833,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 	} else if (!g_strncasecmp(buf, "PRP", 3)) {
+	} else if (!g_strncasecmp(buf, "QNG", 3)) {
 	} else if (!g_strncasecmp(buf, "QRY", 3)) {
 	} else if (!g_strncasecmp(buf, "REA", 3)) {
 		char *friend, *tmp = buf;
@@ -1438,7 +1441,7 @@ static void msn_act_id(gpointer data, char *entry)
 static void msn_do_action(struct gaim_connection *gc, char *act)
 {
 	if (!strcmp(act, "Set Friendly Name")) {
-		do_prompt_dialog("Set Friendly Name:", gc, msn_act_id, NULL);
+		do_prompt_dialog("Set Friendly Name:", gc->displayname, gc, msn_act_id, NULL);
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2531 2001-10-16 23:24:35Z warmenhoven $
+ * $Id: gg.c 2554 2001-10-18 20:56:59Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -20,7 +20,9 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #include <netdb.h>
 #include <unistd.h>
@@ -40,6 +42,7 @@
 #endif
 #ifdef HAVE_ICONV
 #include <iconv.h>
+#include "iconv_string.h"
 #endif
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
@@ -89,35 +92,12 @@ static char *agg_name()
 
 static gchar *charset_convert(const gchar *locstr, char *encsrc, char *encdst)
 {
+       gchar *result = NULL;
 #ifdef HAVE_ICONV
-	gchar *dststr;
-	size_t loclen, dstlen;
-	gchar *fsave, *tsave;
-	size_t count;
-	static iconv_t cd = (iconv_t)(-1);
-
-	if (cd == (iconv_t)(-1)) {
-		cd = iconv_open(encdst, encsrc);
-		if (cd == (iconv_t)(-1)) {
-			return g_strdup(locstr);
-		}
-	}
-
-	loclen = strlen(locstr);
-	/* we are ready for multibyte conversions */
-	dstlen = MB_LEN_MAX * loclen;
-	dststr = g_new0(gchar, dstlen + 1);
-	fsave = (gchar *)locstr;
-	tsave = dststr;
-	count = iconv(cd, &fsave, &loclen, &tsave, &dstlen);
-	if (count == -1) {
-		g_free(dststr);
-		return g_strdup(locstr);
-	}
-	return dststr;
-#else
-	return g_strdup(locstr);
+        if (iconv_string(encdst, encsrc, locstr, locstr+strlen(locstr)+1, &result, NULL) < 0)
 #endif
+	return g_strdup(locstr);
+	return result;
 }
 
 static gboolean invalid_uin(char *uin)

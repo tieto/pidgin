@@ -100,7 +100,7 @@ AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screen
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
-	CFLAGS="$CFLAGS -Wall -g"
+	CFLAGS="$CFLAGS -Wall -g3"
 	AC_DEFINE(DEBUG)
 fi
 

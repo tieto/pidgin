@@ -27,6 +27,7 @@
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
+#include "pixmaps/tb_forward.xpm"
 
 GSList *protocols = NULL;
 
@@ -176,7 +177,7 @@ static void act_prompt(GtkWidget *w, struct _prompt *p)
 	gtk_widget_destroy(p->window);
 }
 
-void do_prompt_dialog(const char *text, void *data, void *doit, void *dont)
+void do_prompt_dialog(const char *text, const char *def, void *data, void *doit, void *dont)
 {
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -212,6 +213,8 @@ void do_prompt_dialog(const char *text, void *data, void *doit, void *dont)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+	if (def)
+		gtk_entry_set_text(GTK_ENTRY(entry), text);
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(act_prompt), p);
 	p->entry = entry;
 
@@ -346,6 +349,7 @@ struct mail_notify {
 	struct gaim_connection *gc;
 	GtkWidget *email_win;
 	GtkWidget *email_label;
+	char *url;
 };
 GSList *mailnots = NULL;
 
@@ -368,11 +372,18 @@ static void des_email_win(GtkWidget *w, struct mail_notify *mn)
 	}
 	debug_printf("removing mail notification\n");
 	mailnots = g_slist_remove(mailnots, mn);
+	if (mn->url)
+		g_free(mn->url);
 	g_free(mn);
 }
 
-void connection_has_mail(struct gaim_connection *gc, int count, const char *from, const char *subject)
+void connection_has_mail(struct gaim_connection *gc, int count, const char *from, const char *subject, const char *url)
 {
+	GtkWidget *hbox;
+	GtkWidget *vbox;
+	GtkWidget *urlbut;
+	GtkWidget *close;
+
 	struct mail_notify *mn;
 	char buf[2048];
 
@@ -387,65 +398,55 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 	if (count < 0 && from && subject) {
 		g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, subject);
-		if (!mn->email_win) {
-			GtkWidget *close;
-
-			mn->email_win = gtk_dialog_new();
-			gtk_window_set_policy(GTK_WINDOW(mn->email_win), 0, 0, 1);
-			gtk_container_set_border_width(GTK_CONTAINER(mn->email_win), 5);
-			gtk_window_set_title(GTK_WINDOW(mn->email_win), "New Mail");
-			gtk_signal_connect(GTK_OBJECT(mn->email_win), "destroy",
-					   GTK_SIGNAL_FUNC(des_email_win), mn);
-			gtk_widget_realize(mn->email_win);
-			aol_icon(mn->email_win->window);
-
-			mn->email_label = gtk_label_new(buf);
-			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(mn->email_win)->vbox),
-					   mn->email_label, 0, 0, 5);
-			gtk_widget_show(mn->email_label);
-
-			close = picture_button(mn->email_win, _("Close"), cancel_xpm);
-			gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
-			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(mn->email_win)->action_area),
-					   close, 0, 0, 5);
-			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
-					   GTK_SIGNAL_FUNC(des_email_win), mn);
-
-			gtk_widget_show(mn->email_win);
-		}
-		gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
 	} else if (count) {
 		g_snprintf(buf, sizeof buf, "%s has %d new message%s.",
 			   gc->username, count, count == 1 ? "" : "s");
-		if (!mn->email_win) {
-			GtkWidget *close;
-
-			mn->email_win = gtk_dialog_new();
-			gtk_window_set_policy(GTK_WINDOW(mn->email_win), 0, 0, 1);
-			gtk_container_set_border_width(GTK_CONTAINER(mn->email_win), 5);
-			gtk_window_set_title(GTK_WINDOW(mn->email_win), "New Mail");
-			gtk_signal_connect(GTK_OBJECT(mn->email_win), "destroy",
-					   GTK_SIGNAL_FUNC(des_email_win), mn);
-			gtk_widget_realize(mn->email_win);
-			aol_icon(mn->email_win->window);
-
-			mn->email_label = gtk_label_new(buf);
-			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(mn->email_win)->vbox),
-					   mn->email_label, 0, 0, 5);
-			gtk_widget_show(mn->email_label);
-
-			close = picture_button(mn->email_win, _("Close"), cancel_xpm);
-			gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
-			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(mn->email_win)->action_area),
-					   close, 0, 0, 5);
-			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
-					   GTK_SIGNAL_FUNC(des_email_win), mn);
-
-			gtk_widget_show(mn->email_win);
-		}
-		gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
-	} else if (mn->email_win)
+	} else if (mn->email_win) {
 		gtk_widget_destroy(mn->email_win);
+		return;
+	}
+
+	if (mn->email_win) {
+		gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
+		return;
+	}
+
+
+	mn->email_win = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_wmclass(GTK_WINDOW(mn->email_win), "mail", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(mn->email_win), FALSE, TRUE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(mn->email_win), _("Gaim - New Mail"));
+	gtk_signal_connect(GTK_OBJECT(mn->email_win), "destroy", GTK_SIGNAL_FUNC(des_email_win), mn);
+	gtk_widget_realize(mn->email_win);
+	aol_icon(mn->email_win->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(mn->email_win), vbox);
+	gtk_widget_show(vbox);
+
+	mn->email_label = gtk_label_new(buf);
+	gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
+	gtk_box_pack_start(GTK_BOX(vbox), mn->email_label, 0, 0, 5);
+	gtk_widget_show(mn->email_label);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	close = picture_button(mn->email_win, _("Close"), cancel_xpm);
+	gtk_window_set_focus(GTK_WINDOW(mn->email_win), close);
+	gtk_box_pack_end(GTK_BOX(hbox), close, 0, 0, 5);
+	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
+
+	if (url) {
+		mn->url = g_strdup(url);
+		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
+		gtk_box_pack_end(GTK_BOX(hbox), urlbut, 0, 0, 5);
+		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(open_url_nw), mn->url);
+	}
+
+	gtk_widget_show(mn->email_win);
 }
 
 struct icon_data {
