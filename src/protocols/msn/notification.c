@@ -823,6 +823,20 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
+not_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
+{
+	GaimConnection *gc = servconn->session->account->gc;
+
+	servconn->parsing_msg  = TRUE;
+	servconn->msg_passport = NULL;
+	servconn->msg_friendly = NULL;
+	servconn->msg_len      = atoi(params[0]);
+
+	return TRUE;
+}
+
+static gboolean
 prp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
@@ -1411,6 +1425,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "LST",       lst_cmd);
 		msn_servconn_register_command(notification, "MSG",       msg_cmd);
 		msn_servconn_register_command(notification, "NLN",       nln_cmd);
+		msn_servconn_register_command(notification, "NOT",       not_cmd);
 		msn_servconn_register_command(notification, "OUT",       out_cmd);
 		msn_servconn_register_command(notification, "PRP",       prp_cmd);
 		msn_servconn_register_command(notification, "QNG",       blank_cmd);
