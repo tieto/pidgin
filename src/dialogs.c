@@ -424,12 +424,17 @@ void do_remove_group(struct group *g)
 		if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
 			struct buddy *bd = (struct buddy *)b;
 			GaimConversation *c = gaim_find_conversation(bd->name);
-			if(bd->account->gc) {
+			if (gaim_account_is_connected(bd->account)) {
 				serv_remove_buddy(bd->account->gc, bd->name, g->name);
 				gaim_blist_remove_buddy(bd);
 
 				if (c != NULL)
 					gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+			}
+		} else if(GAIM_BLIST_NODE_IS_CHAT(b)) {
+			struct chat *chat = (struct chat *)b;
+			if (gaim_account_is_connected(chat->account)) {
+				gaim_blist_remove_chat(chat);
 			}
 		}
 		b = b->next;

@@ -2003,7 +2003,7 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	file = gaim_prefs_get_string(pref);
 	g_free(pref);
 	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	g_value_unset (&val);
 	if (sounddialog)
 		gtk_widget_destroy(sounddialog);
@@ -2090,7 +2090,7 @@ GtkWidget *sound_events_page() {
 			gaim_gtk_sound_get_event_option(0));
 	file = gaim_prefs_get_string(pref);
 	g_free(pref);
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
 
