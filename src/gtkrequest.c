@@ -857,8 +857,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				field = fl->data;
 
-				if (!gaim_request_field_is_visible(field))
+				if (!gaim_request_field_is_visible(field)) {
+					col_num--;
 					continue;
+				}
 
 				type = gaim_request_field_get_type(field);
 
