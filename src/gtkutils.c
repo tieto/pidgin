@@ -749,8 +749,8 @@ gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
 
 	if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
 		/* append a / if needed */
-		if (path[strlen(path) - 1] != '/') {
-			dirname = g_strconcat(path, "/", NULL);
+		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
+			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
 		} else {
 			dirname = g_strdup(path);
 		}
