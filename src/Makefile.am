@@ -105,7 +105,7 @@ CORESOURCES = \
 	util.c \
 	util.h \
 	value.c \
-	value.h \
+	value.h
 
 bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES = \
