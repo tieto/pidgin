@@ -514,6 +514,7 @@ Section Uninstall
 
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
+    RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autorecon.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
@@ -543,16 +544,20 @@ Section Uninstall
     RMDir "$INSTDIR\sounds"
     Delete "$INSTDIR\gaim.dll"
     Delete "$INSTDIR\gaim.exe"
-    Delete "$INSTDIR\${GAIM_UNINST_EXE}"
     Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libgtkspell.dll"
-    Delete "$INSTDIR\perl56.dll"
-    ;Remove possible GTK+ files and folders..
-    RMDir \r "$INSTDIR\lib"
-    RMDir \r "$INSTDIR\share"
-    RMDir \r "$INSTDIR\locale"
-    RMDir \r "$INSTDIR\bin"
-    Delete "$INSTDIR\*.dll"
+    Delete "$INSTDIR\nspr4.dll"
+    Delete "$INSTDIR\nss3.dll"
+    Delete "$INSTDIR\nssckbi.dll"
+    Delete "$INSTDIR\plc4.dll"
+    Delete "$INSTDIR\plds4.dll"
+    Delete "$INSTDIR\softokn3.dll"
+    Delete "$INSTDIR\ssl3.dll"
+    Delete "$INSTDIR\${GAIM_UNINST_EXE}"
+    !ifdef DEBUG
+    Delete "$INSTDIR\exchndl.dll"
+    !endif
+
     ;Try to remove Gaim install dir .. if empty
     RMDir "$INSTDIR"
 
