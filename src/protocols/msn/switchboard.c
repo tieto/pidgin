@@ -325,7 +325,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	if (swboard->chat != NULL)
 		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)),
-						 servconn->msg_passport, flags, body, time(NULL));
+						 servconn->msg_passport, 0, body, time(NULL));
 	else
 		serv_got_im(gc, servconn->msg_passport, body, flags, time(NULL), -1);
 
