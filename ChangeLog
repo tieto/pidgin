@@ -6,6 +6,7 @@ version 0.59
 	* Spanish translation updated (Thanks, Alex)
 	* Traditional Chinese translation updated (Thanks, Paladin Liu)
 	* Czech translation added (Thanks, Honza)
+	* Polish translation updated (Thanks Przemyslaw Sulek)
 	* Squashed a bug in buddy right-click menu handling
 	  that crashed Gaim.  In the process: found and
 	  eliminated some memory leaks.
