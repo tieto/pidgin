@@ -1161,6 +1161,7 @@ char *convert_string(char *str, const char *destset, const char *srcset)
 	return ret;
 #else
 	return g_strdup(str);
+#endif
 }
 
 void strip_linefeed(gchar *text)
