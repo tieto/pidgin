@@ -422,16 +422,21 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 		serv_finish_login();
 		gaim_setup();
+
+		aim_bos_clientready(sess, command->conn);
+		debug_print("Roger that, all systems go\n");
+
+		/* FIXME: this should really go before clientready to prevent
+		 * flashing on the people on the deny list. But if it goes there
+		 * the buddy list may be too big and cause us to sign off
+		 * prematurely. but the permit/deny stuff isn't working right now
+		 * anyway so this is a good enough fix for right now :-P */
 		if (bud_list_cache_exists())
 			do_import(NULL, 0);
 
 		debug_print("buddy list loaded\n");
 
 		setup_buddy_chats();
-
-		aim_bos_clientready(sess, command->conn);
-		debug_print("Roger that, all systems go\n");
-
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
 		break;
