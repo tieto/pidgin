@@ -15,7 +15,7 @@ LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 
 
-ALL_LINGUAS="am bg ca cs da de en_GB es fi fr he hu it ja ko nl no pl pt_BR ro ru sk sr sv zh_CN zh_TW"
+ALL_LINGUAS="am bg ca cs da de en_GB es fi fr he hu it ja ko nl no pl pt_BR ro ru sk sr sr@Latn sv zh_CN zh_TW"
 AM_GNU_GETTEXT_VERSION(0.10.40)
 AM_GNU_GETTEXT
 
