@@ -728,6 +728,10 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	if (plugin_event(event_chat_recv, g, b->name, who, message))
 		 return;
 
+	if (general_options & OPT_GEN_SEND_LINKS) {
+		linkify_text(message);
+	}
+
 	if (whisper)
 		w = WFLAG_WHISPER;
 	else

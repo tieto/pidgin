@@ -1579,6 +1579,7 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 	char *msg;
 	struct gaim_connection *gc = sess->aux_data;
+	char *tmp;
 
 	GSList *bcs = gc->buddy_chats;
 	struct conversation *b = NULL;
@@ -1597,7 +1598,10 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	if (!b)
 		return 0;
 
-	serv_got_chat_in(gc, b->id, info->sn, 0, msg);
+	tmp = g_malloc(BUF_LONG);
+	g_snprintf(tmp, BUF_LONG, "%s", msg);
+	serv_got_chat_in(gc, b->id, info->sn, 0, tmp);
+	g_free(tmp);
 
 	return 1;
 }
