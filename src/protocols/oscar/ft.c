@@ -249,7 +249,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0001, 0)))
 		return -ENOMEM;
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
-	fr->hdr.rend.hdrlen = hdrlen;
+	fr->hdr.rend.hdrlen = hdrlen + 8;
 
 	if (!(hdr = calloc(1, hdrlen))) {
 		aim_frame_destroy(fr);
@@ -328,7 +328,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 		return -ENOMEM;
 
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
-	fr->hdr.rend.hdrlen = hdrlen;
+	fr->hdr.rend.hdrlen = hdrlen + 8;
 
 	if (!(hdr = calloc(1, hdrlen + len))) {
 		aim_frame_destroy(fr);
