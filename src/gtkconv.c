@@ -1725,7 +1725,8 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimWindow *win)
 
 		pos = gaim_window_add_conversation(dest_win, conv);
 
-		gaim_window_move_conversation(dest_win, pos, dest_page_num);
+		if (pos != dest_page_num)
+			gaim_window_move_conversation(dest_win, pos, dest_page_num);
 
 		gaim_window_switch_conversation(dest_win, dest_page_num);
 	}
