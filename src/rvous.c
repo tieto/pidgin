@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #include <gtk/gtk.h>
 #include "gaim.h"
@@ -149,7 +150,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	guint32 rcv;
         char *c;
 	int cont = 1;
-	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL, *button = NULL;
+	GtkWidget *fw = NULL, *fbar = NULL, *label = NULL;
+	GtkWidget *button = NULL, *pct = NULL;
 
 	if (!(ft->f = fopen(file,"w"))) {
 		buf = g_malloc(BUF_LONG);
@@ -248,19 +250,21 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	
 	fw = gtk_dialog_new();
 	buf = g_malloc(2048);
-	snprintf(buf, 2048, "Receiving %s from %s (%d bytes)", ft->filename,
-			ft->user, ft->size);
+	snprintf(buf, 2048, "Receiving %s from %s", ft->filename, ft->user);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->vbox), label, 0, 0, 5);
 	gtk_widget_show(label);
 	fbar = gtk_progress_bar_new();
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), fbar, 0, 0, 5);
 	gtk_widget_show(fbar);
+	pct = gtk_label_new("0 %");
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), pct, 0, 0, 5);
+	gtk_widget_show(pct);
 	button = gtk_button_new_with_label("Cancel");
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
 	gtk_widget_show(button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
-	gtk_window_set_title(GTK_WINDOW(fw), "File Transfer");
+	gtk_window_set_title(GTK_WINDOW(fw), "Gaim - File Transfer");
 	gtk_widget_realize(fw);
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
@@ -284,11 +288,14 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		rcv += read_rv;
 		for (i = 0; i < read_rv; i++)
 			fprintf(ft->f, "%c", buf[i]);
-		snprintf(buf, 2048, "Receiving %s from %s (%d / %d bytes)",
-				header + 186, ft->user, rcv, ft->size);
+		snprintf(buf, 2048, "Receiving %s from %s",
+				header + 186, ft->user);
 		gtk_label_set_text(GTK_LABEL(label), buf);
 		gtk_progress_bar_update(GTK_PROGRESS_BAR(fbar),
 					(float)(rcv)/(float)(ft->size));
+		sprintf(buf, "%d / %d K (%2.0f %%)", rcv/1024, ft->size/1024,
+				100*((float)rcv)/((float)ft->size));
+		gtk_label_set_text(GTK_LABEL(pct), buf);
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
