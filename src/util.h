@@ -370,11 +370,11 @@ char *gaim_strdup_withhtml(const char *src);
 char *gaim_str_add_cr(const char *str);
 
 /**
- * Strips all linefeeds from a string.
+ * Strips all carriage returns from a string.
  *
- * @param str The string to strip linefeeds from.
+ * @param str The string to strip carriage returns from.
  */
-void gaim_str_strip_linefeed(char *str);
+void gaim_str_strip_cr(char *str);
 
 /**
  * Given a string, this replaces one substring with another

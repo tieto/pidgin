@@ -686,7 +686,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 				msg = pair->value;
 
-				gaim_str_strip_linefeed(msg);
+				gaim_str_strip_cr(msg);
 				m = yahoo_codes_to_html(msg);
 				serv_got_im(gc, from, m, 0, tm);
 				g_free(m);

@@ -1516,7 +1516,7 @@ gaim_str_add_cr(const char *text)
 }
 
 void
-gaim_str_strip_linefeed(char *text)
+gaim_str_strip_cr(char *text)
 {
 	int i, j;
 	char *text2;

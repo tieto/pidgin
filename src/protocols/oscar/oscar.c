@@ -2265,7 +2265,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	/* gaim_str_strip_linefeed(tmp); */
+	/* gaim_str_strip_cr(tmp); */
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
@@ -2565,7 +2565,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	for (numtoks=0; msg1[numtoks]; numtoks++);
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
-		gaim_str_strip_linefeed(msg1[i]);
+		gaim_str_strip_cr(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
 		if (err) {
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",

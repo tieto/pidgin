@@ -73,7 +73,7 @@ char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 	g_return_val_if_fail(log && log->logger, NULL);
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags);
-		gaim_str_strip_linefeed(ret);
+		gaim_str_strip_cr(ret);
 		return ret;
 	}
 	return (_("<b><font color=\"red\">The logger has no read function</font></b>"));
