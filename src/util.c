@@ -806,7 +806,7 @@ void show_usage(int mode, char *name)
 		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
 		       "                      name of away message to use)\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use)\n"
+		       "                      account(s) to use, seperated by commas)\n"
 		       "  -n, --loginwin      don't automatically login; show login window\n"
 		       "  -u, --user=NAME     use account NAME\n"
 		       "  -f, --file=FILE     use FILE as config\n"
@@ -818,43 +818,6 @@ void show_usage(int mode, char *name)
 		printf("Gaim %s. Try `%s -h' for more information.\n", VERSION, name);
 		break;
 	}
-}
-
-
-/* <name> is a comma-separated list of names, or NULL
-   if NULL and there is at least one user defined in .gaimrc, try to login.
-   if not NULL, parse <name> into separate strings, look up each one in 
-   .gaimrc and, if it's there, try to login.
-   returns:  0 if successful
-            -1 if no user was found that had a saved password
-*/
-int do_auto_login(char *name)
-{
-	struct aim_user *u;
-	char **names, **n;
-	int retval = -1;
-
-	if (name !=NULL) {	/* list of names given */
-		names = g_strsplit(name, ",", 32);
-		for (n = names; *n != NULL; n++) {
-			u = find_user(*n, -1);
-			if (u) {	/* found a user */
-				if (u->options & OPT_USR_REM_PASS) {
-					retval = 0;
-					serv_login(u);
-				}
-			}
-		}
-		g_strfreev(names);
-	} else {		/* no name given, use default */
-		u = (struct aim_user *)aim_users->data;
-		if (u->options & OPT_USR_REM_PASS) {
-			retval = 0;
-			serv_login(u);
-		}
-	}
-
-	return retval;
 }
 
 GSList *message_split(char *message, int limit)

@@ -165,20 +165,44 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	save_prefs();
 	serv_login(u);
 }
-#if 0
-static void dologin_all(GtkWidget *widget, GtkWidget *w)
+
+/* <name> is a comma-separated list of names, or NULL
+   if NULL and there is at least one user defined in .gaimrc, try to login.
+   if not NULL, parse <name> into separate strings, look up each one in 
+   .gaimrc and, if it's there, try to login.
+   returns:  0 if successful
+            -1 if no user was found that had a saved password
+*/
+static int dologin_named(char *name)
 {
 	struct aim_user *u;
-	GSList *users = aim_users;
+	char **names, **n;
+	int retval = -1;
 
-	while (users) {
-		u = users->data;
-		if (u->options & OPT_USR_AUTO)
+	if (name !=NULL) {	/* list of names given */
+		names = g_strsplit(name, ",", 32);
+		for (n = names; *n != NULL; n++) {
+			u = find_user(*n, -1);
+			if (u) {	/* found a user */
+				if (u->options & OPT_USR_REM_PASS) {
+					retval = 0;
+					serv_login(u);
+				}
+			}
+		}
+		g_strfreev(names);
+	} else {		/* no name given, use default */
+		u = (struct aim_user *)aim_users->data;
+		if (u->options & OPT_USR_REM_PASS) {
+			retval = 0;
 			serv_login(u);
-		users = users->next;
+		}
 	}
+
+	return retval;
 }
-#endif
+
+
 static void doenter(GtkWidget *widget, GtkWidget *w)
 {
 	if (widget == name) {
@@ -516,7 +540,7 @@ int gaim_main(int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
-	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, do_login_ret = -1;
+	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, dologin_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
@@ -794,7 +818,7 @@ int main(int argc, char *argv[])
 
 	/* deal with --login */
 	if (opt_login) {
-		do_login_ret = do_auto_login(opt_login_arg);
+		dologin_ret = dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
 			g_free(opt_login_arg);
 			opt_login_arg = NULL;
@@ -806,7 +830,7 @@ int main(int argc, char *argv[])
 
 	if (opt_acct) {
 		account_editor(NULL, NULL);
-	} else if ((do_login_ret == -1) && !connections)
+	} else if ((dologin_ret == -1) && !connections)
 		show_login();
 #ifdef _WIN32
 	/* Various win32 initializations */

@@ -1,8 +1,9 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=Gaim
-Comment=Multi-protocol Instant Messaging Client 
-Exec=gaim 
+Comment=Multi-protocol Instant Messaging Client
+Exec=gaim
 Icon=gaim.png
-Info=Gaim
-Terminal=0
+Terminal=false
 Type=Application
+Categories=Application;Network;

@@ -1138,9 +1138,7 @@ void account_online(struct gaim_connection *gc)
 	gaim_setup(gc);
 
 	gc->user->connecting = FALSE;
-	if (connecting_count) {
-		connecting_count--;
-	}
+	connecting_count--;
 	debug_printf("connecting_count: %d\n", connecting_count);
 
 	plugin_event(event_signon, gc);
@@ -1439,9 +1437,7 @@ void signoff(struct gaim_connection *gc)
 	   this user was ever on-line or not */
 	if (gc->user->connecting) {
 		gc->user->connecting = FALSE;
-		if (connecting_count) {
-			connecting_count--;
-		}
+		connecting_count--;
 	}
 	debug_printf("connecting_count: %d\n", connecting_count);
 	serv_close(gc);

@@ -2047,9 +2047,7 @@ void docklet_add() {
 }
 
 void docklet_remove() {
-	if (docklet_count) {
-		docklet_count--;
-	}
+	docklet_count--;
 	debug_printf("docklet_count: %d\n",docklet_count);
 	if (!docklet_count) {
 		if (connections) {
@@ -2064,7 +2062,7 @@ void docklet_toggle() {
 	/* Useful for the docklet plugin and also for the win32 tray icon*/
 	/* This is called when one of those is clicked--it will show/hide the 
 	   buddy list/login window--depending on which is active */
-	if (connections) {
+	if (connections && blist) {
 		if (GTK_WIDGET_VISIBLE(blist)) {
 			if (GAIM_WINDOW_ICONIFIED(blist)) {
 				unhide_buddy_list();
@@ -2074,6 +2072,9 @@ void docklet_toggle() {
 		} else {
 			unhide_buddy_list();
 		}
+	} else if (connections) {
+		/* we're logging in or something... do nothing */
+		debug_printf("docklet_toggle called with connections but no blist!\n");
 	} else {
 		if (GTK_WIDGET_VISIBLE(mainwindow)) {
 			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {

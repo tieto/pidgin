@@ -456,7 +456,6 @@ extern void check_gaim_versions();
 extern char *away_subs(char *, char *);
 extern char *stylize(gchar *, int);
 extern void show_usage (int, char *);
-extern int do_auto_login (char *);
 extern char *gaim_home_dir();
 extern char *gaim_user_dir();
 extern void strncpy_nohtml(gchar *, const gchar *, size_t);

@@ -94,6 +94,8 @@ version 0.60:
 	* Option to have AIM over oscar notify you if you have 
 	  unread mail (Thanks, Mark Doliner)
 	* Fix first message in tab not displaying bug (Thanks Etan Reisner)
+	* Switch the .desktop file to the new KDE/GNOME common vfolder 
+	  format (Thanks Robert McQueen).
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

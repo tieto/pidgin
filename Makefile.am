@@ -4,7 +4,7 @@ EXTRA_DIST = gaim.spec.in gaim.desktop \
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
 
-pixmapdir = $(datadir)/gnome/apps/Internet
+pixmapdir = $(datadir)/applications
 pixmap_DATA = gaim.desktop
 
 SUBDIRS = m4 sounds plugins pixmaps doc po intl src

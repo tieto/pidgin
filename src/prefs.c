@@ -403,11 +403,6 @@ GtkWidget *list_page() {
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-/* fixme: docklet
-	gaim_button(_("Automatically show buddy list on sign on"), &blist_options_new,
-		    OPT_BLIST_APP_BUDDY_SHOW, vbox);
-	gaim_button(_("Display Buddy List near applet"), &blist_options_new, OPT_BLIST_NEAR_APPLET, vbox); */
-
 	vbox = make_frame (ret, _("Buttons"));
 	gaim_button(_("_Hide IM/Info/Chat buttons"), &blist_options_new, OPT_BLIST_NO_BUTTONS, vbox);
 	gaim_button(_("Show _pictures on buttons"), &blist_options_new, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
