@@ -55,6 +55,8 @@
 #define USEROPT_SOCKSHOST 2
 #define USEROPT_SOCKSPORT 3
 
+#define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
+
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE | AIM_CAPS_IMIMAGE;
 
 static GtkWidget *join_chat_spin = NULL;
@@ -637,8 +639,8 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 			g_free(pos);
 			return;
 		}
-		g_snprintf(buf, sizeof(buf), "GET http://gaim.sourceforge.net/aim_data.php3?"
-				"offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
+		g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
+				"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 				pos->offset, pos->len, pos->modname ? pos->modname : "");
 		write(pos->conn->fd, buf, strlen(buf));
 		if (pos->modname)
@@ -1499,6 +1501,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	char buf[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
+	char *asc;
 
 	va_start(ap, command);
 	info = va_arg(ap, struct aim_userinfo_s *);
@@ -1507,33 +1510,37 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	infotype = (u_short)va_arg(ap, u_int);
 	va_end(ap);
 
-	if (prof == NULL || !strlen(prof)) {
-		/* no info/away message */
-		char buf[1024];
-		sprintf(buf, _("%s has no %s."), info->sn,
-				(infotype == AIM_GETINFO_GENERALINFO) ? "information" : "away message");
-		do_error_dialog(buf, _("Gaim - Error"));
-		plugin_event(event_error, (void *)977, 0, 0, 0);
-		return 1;
-	}
+	asc = g_strdup(asctime(localtime(&info->membersince)));
 
-	g_snprintf(buf, sizeof buf, _("Username : <B>%s</B>  %s <BR>\n"
-				  "Warning Level : <B>%d %%</B><BR>\n"
-				  "Online Since : <B>%s</B><BR>\n"
-				  "Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
-				  "%s"
-				  "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
-				  "<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
-				  "<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
-				  "<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-				  "<IMG SRC=\"admin_icon.gif\"> : Administrator"),
-				  info->sn, images(info->flags),
-				  info->warnlevel/10,
-				  asctime(localtime(&info->onlinesince)),
-				  info->idletime,
-				  infotype == AIM_GETINFO_GENERALINFO ? prof :
- 				  away_subs(prof, gc->username));
+	g_snprintf(buf, sizeof buf,
+			_("Username : <B>%s</B>  %s <BR>\n"
+			"Member Since : <B>%s</B>\n"
+			"Warning Level : <B>%d %%</B><BR>\n"
+			"Online Since : <B>%s</B><BR>\n"
+			"Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
+			"%s"
+			"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
+			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
+			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
+			"<IMG SRC=\"admin_icon.gif\"> : Administrator"),
+			info->sn, images(info->flags),
+			asc,
+			info->warnlevel/10,
+			asctime(localtime(&info->onlinesince)),
+			info->idletime,
+			(prof && strlen(prof)) ?
+				(infotype == AIM_GETINFO_GENERALINFO ?
+					prof :
+					away_subs(prof, gc->username))
+				:
+				(infotype == AIM_GETINFO_GENERALINFO ?
+					_("<i>No Information Provided</i>") :
+					_("<i>User has no away message</i>")));
+
 	g_show_info_text(away_subs(buf, gc->username));
+
+	g_free(asc);
 
 	return 1;
 }
