@@ -2786,7 +2786,7 @@ static char *caps_string(guint caps)
 
 	if (!caps) {
 		strncpy(buf, _("<i>none advertised</i>"), sizeof(buf));
-	} else while (bit <= 0x10000) {
+	} else while (bit <= 0x20000) {
 		if (bit & caps) {
 			switch (bit) {
 			case 0x1:
