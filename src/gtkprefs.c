@@ -451,7 +451,7 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	const char *filename;
 	GValue val = { 0, };
-	
+
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
@@ -2758,7 +2758,7 @@ static void
 smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					 gpointer data)
 {
-	if (strcmp(name, ""))
+	if (!strcmp(name, "/gaim/gtk/smileys/theme"))
 		load_smiley_theme((const char *)value, TRUE);
 }
 

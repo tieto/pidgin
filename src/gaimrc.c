@@ -1135,8 +1135,7 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "web_command")) {
 			gaim_prefs_set_string("/gaim/gtk/browsers/command", p->value[0]);
 		} else if (!strcmp(p->option, "smiley_theme")) {
-			/* XXX: the smiley theme stuff needs converting */
-			load_smiley_theme(p->value[0], TRUE);
+			gaim_prefs_set_string("/gaim/gtk/smileys/theme", p->value[0]);
 		} else if (!strcmp(p->option, "conv_size")) {
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width",
 					atoi(p->value[0]));
