@@ -302,7 +302,8 @@ gaim_mime_decode_field(const char *str)
 
 	for (unencoded = cur = str; (encoded = cur = strstr(cur, "=?")); unencoded = cur) {
 		gboolean found_word = FALSE;
-		int i, num, len, dec_len;
+		int i, num, dec_len;
+		gsize len;
 		char *decoded, *converted;
 		char *tokens[3];
 

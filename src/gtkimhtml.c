@@ -553,7 +553,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
 
 	if (info == TARGET_HTML) {
-		int len;
+		gsize len;
 		char *selection;
 		GString *str = g_string_new(NULL);
 		if (primary) {

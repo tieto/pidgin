@@ -5626,7 +5626,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	char *buf, *buf2;
 	char *charset = NULL;
 	int encoding;
-	int len;
+	gsize len;
 
 	if (!(conv = gaim_find_chat(gc, id)))
 		return -EINVAL;
