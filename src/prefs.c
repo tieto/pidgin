@@ -710,12 +710,6 @@ GtkWidget *tab_page() {
 	gaim_button(_("Show all c_hats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
 		    vbox);
 
-	vbox = make_frame (ret, _("Buddy List Tabs"));
-	dd = gaim_dropdown(vbox, _("Tab _placement:"), &blist_options, OPT_BLIST_BOTTOM_TAB,
-		      _("Top"), 0,
-		      _("Bottom"), OPT_BLIST_BOTTOM_TAB, NULL);
-	gtk_size_group_add_widget(sg, dd);
-
 	vbox = make_frame (ret, _("Tab Options"));
 	button = gaim_button(_("Show _close button on tabs."), &convo_options, OPT_CONVO_NO_X_ON_TAB, vbox);
 	convo_options ^= OPT_CONVO_NO_X_ON_TAB;

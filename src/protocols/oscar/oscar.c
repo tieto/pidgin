@@ -227,8 +227,6 @@ struct buddyinfo {
 
 	fu16_t iconcsumlen;
 	fu8_t iconcsum[30];
-
-	double shoesize;
 };
 
 struct name_data {
@@ -1833,9 +1831,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		free(b16);
 	}
 
-	bi->shoesize = (rand()%5)+7;
-	if (rand()%2)  bi->shoesize+=0.5;
-
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon, time_idle, type);
 
 	return 1;
@@ -3080,13 +3075,6 @@ static char *oscar_tooltip_text(struct buddy *b) {
 			yay = g_strconcat(tmp, _("\n<b>Status:</b> "), status, NULL);
 			g_free(tmp);
 			g_free(status);
-		}
-
-		{
-			char *tmp;
-			tmp = yay;
-			yay = g_strdup_printf("%s\n<b>Shoe Size:</b> %2.1f", tmp, bi->shoesize);
-			g_free(tmp);
 		}
 
 		return yay;
@@ -5208,21 +5196,18 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 		emblems[i++] = "offline";
 
 	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
-/*		int uc = b->uc >> 16;
+		int uc = b->uc >> 16;
 		if (uc & AIM_ICQ_STATE_INVISIBLE)
-			emblems[i++] = "icq_invisible";
+			emblems[i++] = "invisible";
 		else if (uc & AIM_ICQ_STATE_CHAT)
-			emblems[i++] = "icq_chat";
+			emblems[i++] = "freeforchat";
 		else if (uc & AIM_ICQ_STATE_DND)
-			emblems[i++] = "icq_dnd";
+			emblems[i++] = "dnd";
 		else if (uc & AIM_ICQ_STATE_OUT)
-			emblems[i++] = "icq_out";
+			emblems[i++] = "na";
 		else if (uc & AIM_ICQ_STATE_BUSY)
-			emblems[i++] = "icq_busy";
+			emblems[i++] = "occupied";
 		else if (uc & AIM_ICQ_STATE_AWAY)
-			emblems[i++] = "icq_away";
-*/
-		if (b->uc & UC_UNAVAILABLE) 
 			emblems[i++] = "away";
 	} else {
 		if (b->uc & UC_UNAVAILABLE) 

@@ -315,7 +315,6 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(show_rename_group), node);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		
 		/* Protocol specific options */
 		prpl = find_prpl(((struct buddy*)node)->account->protocol);
 
