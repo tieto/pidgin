@@ -31,7 +31,8 @@ typedef struct _GaimPluginPref			GaimPluginPref;
 
 typedef enum {
 	GAIM_PLUGIN_PREF_NONE,
-	GAIM_PLUGIN_PREF_CHOICE
+	GAIM_PLUGIN_PREF_CHOICE,
+	GAIM_PLUGIN_PREF_INFO,   /**< no-value label */
 } GaimPluginPrefType;
 
 #include <glib.h>
