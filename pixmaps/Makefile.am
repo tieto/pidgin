@@ -33,6 +33,7 @@ EXTRA_DIST =
 		gnome_preferences.xpm		\
 		gnome_remove.xpm 		\
 		group.xpm			\
+		import-menu.png \
 		insert-image-small.png \
 		insert-link-small.png \
 		insert-smiley-small.png \

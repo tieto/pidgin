@@ -2620,7 +2620,7 @@ void make_buddy_list()
 
 	gaim_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("Import Buddy List"), GTK_STOCK_EXECUTE,
+	gaim_new_item_from_pixbuf(menu, _("Import Buddy List"), "import-menu.png",
 				  GTK_SIGNAL_FUNC(import_callback), NULL, 0, 0, 0);
 
 	gaim_separator(menu);
