@@ -6,7 +6,7 @@ src/protocols/msn/msn.c
 src/protocols/napster/napster.c
 src/protocols/oscar/oscar.c
 src/protocols/toc/toc.c
-src/protocols/yahoo/yay.c
+src/protocols/yahoo/yahoo.c
 src/protocols/zephyr/zephyr.c
 src/about.c
 src/aim.c
