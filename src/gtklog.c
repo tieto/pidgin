@@ -210,20 +210,40 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
      /* Logs are made from trees in real life. 
         This is a tree made from logs */
 {
+	char month[30];
 	char title[64];
-	char *title_utf8; /* temporary variable for utf8 conversion */
-	GtkTreeIter iter;
+	char prev_top_month[30];
+	char *utf8_tmp; /* temporary variable for utf8 conversion */
+	GtkTreeIter toplevel, child;
 	GList *logs = lv->logs;
 	while (logs) {
 		GaimLog *log = logs->data;
+		
+		strftime(month, sizeof(month), "%B %Y", localtime(&log->time));
 		strftime(title, sizeof(title), "%c", localtime(&log->time));
-		title_utf8 = gaim_utf8_try_convert(title);
-		strncpy(title, title_utf8, sizeof(title));
-		g_free(title_utf8);
-		gtk_tree_store_append (lv->treestore, &iter, NULL);
-		gtk_tree_store_set(lv->treestore, &iter,
-				   0, title,
-				   1, log, -1);
+		
+		/* do utf8 conversions */
+		utf8_tmp = gaim_utf8_try_convert(month);
+		strncpy(month, utf8_tmp, sizeof(month));
+		utf8_tmp = gaim_utf8_try_convert(title);
+		strncpy(title, utf8_tmp, sizeof(title));
+		g_free(utf8_tmp);
+		
+		if (strncmp(month, prev_top_month, sizeof(month)) != 0) {
+			/* top level */
+			gtk_tree_store_append(lv->treestore, &toplevel, NULL);
+			gtk_tree_store_set(lv->treestore, &toplevel, 0, month, 1, NULL, -1);
+			
+			/* sub */
+			gtk_tree_store_append(lv->treestore, &child, &toplevel);
+			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
+			
+			strncpy(prev_top_month, month, sizeof(prev_top_month));
+		} else {
+			gtk_tree_store_append(lv->treestore, &child, &toplevel);
+			gtk_tree_store_set(lv->treestore, &child, 0, title, 1, log, -1);
+		}
+		   
 		logs = logs->next;
 	}
 }
