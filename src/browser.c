@@ -34,6 +34,9 @@
 #include <gdk/gdkwin32.h>
 #else
 #include <unistd.h>
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX 255
+#endif
 #include <gdk/gdkx.h>
 #endif
 #include <stdio.h>
@@ -69,6 +72,10 @@ static GdkAtom GDKA_MOZILLA_LOCK = 0;
 static GdkAtom GDKA_MOZILLA_COMMAND = 0;
 static GdkAtom GDKA_MOZILLA_RESPONSE = 0;
 
+static char *window_check_mozilla_version(Window);
+static const char *get_lock_data();
+static GdkFilterReturn netscape_response_cb(XEvent *, GdkEvent *, GdkWindow *);
+static gboolean netscape_command(const char *);
 
 static int netscape_lock;
 
@@ -202,6 +209,33 @@ static void mozilla_remote_init_atoms()
 		GDKA_MOZILLA_RESPONSE = gdk_atom_intern(MOZILLA_RESPONSE_PROP, 0);
 }
 
+static char *window_check_mozilla_version(Window window) {
+
+	Atom type;
+	int format;
+	unsigned long nitems, bytesafter;
+	unsigned char *version = 0;
+	gchar *retval = NULL;
+
+	if (XGetWindowProperty(gdk_display, window, 
+					gdk_x11_atom_to_xatom(GDKA_MOZILLA_VERSION),
+					0, (65536 / sizeof(long)),
+					False, XA_STRING,
+					&type, &format, &nitems, &bytesafter,
+					&version) != Success) {	
+		return NULL;
+	}
+
+	if (!version) {
+		return NULL;
+	}
+
+	retval = g_strdup(version);
+	XFree(version);
+
+	return retval;
+}
+
 static GdkWindow *mozilla_remote_find_window()
 {
 	int i;
@@ -210,7 +244,21 @@ static GdkWindow *mozilla_remote_find_window()
 	unsigned int nkids;
 	Window result = 0;
 	Window tenative = 0;
-	unsigned char *tenative_version = 0;
+	unsigned char *tenative_version = 0, *version = 0;
+	static GdkWindow *remote_window = NULL;
+
+	if (remote_window != NULL) {
+		version = window_check_mozilla_version(GDK_WINDOW_XID(remote_window));
+
+		if (version != NULL) {
+			g_free(version);
+			return remote_window;
+		}
+		g_free(version);
+
+		gdk_window_destroy(remote_window);
+		remote_window = NULL;
+	}
 
 	if (!XQueryTree(gdk_display, root, &root2, &parent, &kids, &nkids)) {
 		debug_printf("%s: XQueryTree failed on display %s\n", progname,
@@ -227,32 +275,25 @@ static GdkWindow *mozilla_remote_find_window()
 	}
 
 	for (i = nkids - 1; i >= 0; i--) {
-		Atom type;
-		int format;
-		unsigned long nitems, bytesafter;
-		unsigned char *version = 0;
 		Window w = GClientWindow(gdk_display, kids[i]);
-		int status = XGetWindowProperty(gdk_display, w, 
-						gdk_x11_atom_to_xatom(GDKA_MOZILLA_VERSION),
-						0, (65536 / sizeof(long)),
-						False, XA_STRING,
-						&type, &format, &nitems, &bytesafter,
-						&version);
 
-		if (!version)
+        version = window_check_mozilla_version(w);
+
+		if (version == NULL) {
 			continue;
+		}
 
 		if (strcmp((char *)version, expected_mozilla_version) && !tenative) {
 			tenative = w;
 			tenative_version = version;
 			continue;
 		}
-		XFree(version);
-		if (status == Success && type != None) {
+
+		g_free(version);
+
 			result = w;
 			break;
 		}
-	}
 
 	XFree(kids);
 
@@ -279,35 +320,41 @@ static GdkWindow *mozilla_remote_find_window()
 }
 
 
-static char *lock_data = 0;
+static const char *get_lock_data() {
+	static char *lock_data = NULL;
 
-static void mozilla_remote_obtain_lock(GdkWindow * window)
-{
-	Bool locked = False;
+	if (lock_data == NULL) {
+		char hostname[HOST_NAME_MAX + 1] = {0}; 
 
-	if (!lock_data) {
-		lock_data = (char *)g_malloc(255);
-		sprintf(lock_data, "pid%d@", getpid());
-		if (gethostname(lock_data + strlen(lock_data), 100)) {
-			return;
+		if (gethostname(hostname, HOST_NAME_MAX + 1) == 0) {
+			lock_data = g_strdup_printf("pid%d@%s", getpid(), hostname);
+		} else {
+			lock_data = g_strdup_printf("pid%d", getpid());
 		}
 	}
 
-	do {
+	return lock_data;
+}
+
+static gboolean mozilla_remote_obtain_lock(GdkWindow * window)
+{
+	gboolean locked = False;
+	const char *lock_data = get_lock_data();
 		int result;
 		GdkAtom actual_type;
 		gint actual_format;
 		gint nitems;
 		unsigned char *data = 0;
 
-		result = gdk_property_get(window, GDKA_MOZILLA_LOCK,
+	gdk_x11_grab_server();
+	if (!gdk_property_get(window, GDKA_MOZILLA_LOCK,
 					  gdk_x11_xatom_to_atom (XA_STRING), 0,
 					  (65536 / sizeof(long)), 0,
-					  &actual_type, &actual_format, &nitems, &data);
-		if (result != Success || actual_type == None) {
+				  &actual_type, &actual_format, &nitems, &data)) {
+
 			/* It's not now locked - lock it. */
-			debug_printf("%s: (writing " MOZILLA_LOCK_PROP
-				     " \"%s\" to 0x%x)\n", progname, lock_data, (unsigned int)window);
+		debug_printf("%s: (writing " MOZILLA_LOCK_PROP " \"%s\" to 0x%x)\n", 
+					 progname, lock_data, (unsigned int) window);
 
 			gdk_property_change(window, GDKA_MOZILLA_LOCK, 
 					    gdk_x11_xatom_to_atom (XA_STRING),
@@ -316,15 +363,9 @@ static void mozilla_remote_obtain_lock(GdkWindow * window)
 			locked = True;
 		}
 
-		if (!locked) {
-			/* Then just fuck it. */
 			if (data)
 				g_free(data);
-			return;
-		}
-		if (data)
-			g_free(data);
-	} while (!locked);
+	gdk_x11_ungrab_server();
 }
 
 
@@ -332,9 +373,10 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 {
 	int result = 0;
 	GdkAtom actual_type;
-	gint actual_format;
+	gint actual_format; 
 	gint nitems;
 	unsigned char *data = 0;
+	const char *lock_data = get_lock_data();
 
 	debug_printf("%s: (deleting " MOZILLA_LOCK_PROP
 		     " \"%s\" from 0x%x)\n", progname, lock_data, (unsigned int)window);
@@ -343,7 +385,8 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 				  gdk_x11_xatom_to_atom (XA_STRING),
 				  0, (65536 / sizeof(long)),
 				  1, &actual_type, &actual_format, &nitems, &data);
-	if (result != Success) {
+
+	if (result != TRUE) {
 		debug_printf("%s: unable to read and delete " MOZILLA_LOCK_PROP " property\n", progname);
 		return;
 	} else if (!data || !*data) {
@@ -356,12 +399,67 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 		return;
 	}
 
-	if (data)
-		g_free(data);
+	XFree(data);
 }
 
+static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated, GdkWindow *window)
+{
+	Atom actual_type, mozilla_response;
+	Window xid;
+	int actual_format;
+	unsigned long nitems, bytes_after;
+	unsigned char *data = 0;
+	char *error = NULL;
 
-static int mozilla_remote_command(GdkWindow * window, const char *command, Bool raise_p)
+	if (window == NULL || GDK_WINDOW_OBJECT(window)->destroyed) {
+		do_error_dialog(_("Communication with the browser failed.  Please close all "
+					      "windows and try again."), NULL, GAIM_ERROR);
+		debug_printf("netscape_response_cb called with NULL window.\n");
+		return GDK_FILTER_CONTINUE;
+	}
+
+	mozilla_response = gdk_x11_atom_to_xatom(GDKA_MOZILLA_RESPONSE);
+    xid = GDK_WINDOW_XID(window);
+
+	/* If the event isn't what we want then let gtk handle it */
+	if (event->xany.type != PropertyNotify ||
+		event->xproperty.state != PropertyNewValue ||
+		event->xproperty.window != xid ||
+		event->xproperty.atom != mozilla_response) {
+		return GDK_FILTER_CONTINUE;
+	}
+
+	if (XGetWindowProperty (gdk_display, xid, mozilla_response,
+							 0, (65536 / sizeof (long)),
+							 True, 
+							 XA_STRING, 
+							 &actual_type, &actual_format,
+							 &nitems, &bytes_after,
+							 &data) != Success 
+		|| data == NULL || (data[0] != '1' && data[0] != '2')) {
+
+		do_error_dialog(_("Communication with the browser failed.  Please close all "
+					      "windows and try again."), NULL, GAIM_ERROR);
+	} 
+
+    if (data[0] == '1') {
+		/* Netscape isn't ready yet */
+		debug_printf("Remote Netscape window isn't ready yet.\n");
+		return GDK_FILTER_REMOVE;
+	} 
+	
+	if (data[0] == '2') {
+		/* Yay! It worked */ 
+		debug_printf("Successfully sent command to remote Netscape window.\n");
+	}
+
+	gdk_window_remove_filter(window, (GdkFilterFunc) netscape_response_cb, window); 
+	mozilla_remote_free_lock(window);
+	netscape_lock = 0;
+	return GDK_FILTER_REMOVE;
+}
+
+static void mozilla_remote_command(GdkWindow * window, const char *command, Bool raise_p)
 {
 	int result = 0;
 	Bool done = False;

@@ -65,9 +65,11 @@ GtkWidget *prefs_proxy_frame = NULL;
 GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
 GtkWidget *gaim_labeled_spin_button(GtkWidget *, const gchar *, int*, int, int, GtkSizeGroup *);
 static GtkWidget *gaim_dropdown(GtkWidget *, const gchar *, int *, int, ...);
+static GtkWidget *gaim_dropdown_from_list(GtkWidget *, const gchar *, int *, int, GList *); 
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
+static gboolean program_is_valid(const char *);
 
 struct debug_window *dw = NULL;
 GtkWidget *prefs = NULL;
@@ -781,10 +783,56 @@ GtkWidget *proxy_page() {
 }
 
 #ifndef _WIN32
-static void browser_print_option(GtkEntry *entry, void *nullish) {
-	g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(entry));
+static void manual_browser_set(GtkButton *button, GtkEntry *entry) {
+
+	const char *program = gtk_entry_get_text(entry);
+	if (!program_is_valid(program)) {
+		char *error = g_strdup_printf(_("The entered manual browser "
+					                    "'%s' is not valid. Hyperlinks will "
+										"not work."), program); 
+		do_error_dialog(error, NULL, GAIM_WARNING);
+	}
+
+	g_strlcpy(web_command, program, sizeof(web_command));
+}
+
+static void manual_browser_reset(GtkButton *button, GtkEntry *entry) {
+	gtk_entry_set_text(entry, web_command);
 }
 #endif
+
+static GList *get_available_browsers() 
+{
+	struct browser {
+		char *name;
+        char *command;
+		int id; 
+	};
+
+	static struct browser possible_browsers[] = {
+		{N_("Konqueror"), "kfmclient", BROWSER_KONQ},
+		{N_("Opera"), "opera", BROWSER_OPERA}, 
+		{N_("Galeon"), "galeon", BROWSER_GALEON},
+		{N_("Netscape"), "netscape", BROWSER_NETSCAPE},
+		{N_("Mozilla"), "mozilla", BROWSER_MOZILLA},
+	};
+	static const int num_possible_browsers = 5;
+
+	GList *browsers = NULL;
+	int i = 0;
+
+	browsers = g_list_prepend(browsers, GINT_TO_POINTER(BROWSER_MANUAL));
+	browsers = g_list_prepend(browsers, _("Manual"));
+    for (i = 0; i < num_possible_browsers; i++) {
+		if (program_is_valid(possible_browsers[i].command)) {
+			browsers = g_list_prepend(browsers, 
+									  GINT_TO_POINTER(possible_browsers[i].id));
+			browsers = g_list_prepend(browsers, possible_browsers[i].name);
+		}
+	}
+
+	return browsers;
+}
 
 GtkWidget *browser_page() {
 	GtkWidget *ret;
@@ -794,6 +842,7 @@ GtkWidget *browser_page() {
 #endif
 	GtkWidget *label;
 	GtkSizeGroup *sg;
+	GList *browsers = NULL;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -802,17 +851,14 @@ GtkWidget *browser_page() {
 #ifndef _WIN32
 	/* Registered default browser is used by Windows */
 	vbox = make_frame (ret, _("Browser Selection"));
-	label = gaim_dropdown(vbox, _("_Browser"), &web_browser, -1,
-			      "Netscape", BROWSER_NETSCAPE,
-			      "Konqueror", BROWSER_KONQ,
-			      "Mozilla", BROWSER_MOZILLA,
-			      _("Manual"), BROWSER_MANUAL,
-/* fixme: GNOME binary helper
-			      _("GNOME URL Handler"), BROWSER_GNOME, */
-			      "Galeon", BROWSER_GALEON,
-			      "Opera", BROWSER_OPERA, NULL);
+
+	browsers = get_available_browsers();
+	if (browsers != NULL) {
+		label = gaim_dropdown_from_list(vbox,_("_Browser"), &web_browser, -1, 
+				                        browsers);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
+	}
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -823,15 +869,27 @@ GtkWidget *browser_page() {
 	browser_entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), browser_entry);
 	if (web_browser != BROWSER_MANUAL)
-		gtk_widget_set_sensitive(browser_entry, FALSE);
+		gtk_widget_set_sensitive(hbox, FALSE);
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
-	g_signal_connect(GTK_OBJECT(browser_entry), "changed",
-			   G_CALLBACK(browser_print_option), NULL);
+	g_signal_connect_swapped(GTK_OBJECT(browser_entry), "activate",
+					   G_CALLBACK(manual_browser_set), NULL);
+	label = gtk_button_new_with_label(_("Set"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	g_signal_connect(GTK_OBJECT(label), "clicked", 
+					   G_CALLBACK(manual_browser_set), browser_entry);
+	label = gtk_button_new_with_label(_("Reset"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	g_signal_connect(GTK_OBJECT(label), "clicked", 
+					   G_CALLBACK(manual_browser_reset), browser_entry);
+
 #endif /* end !_WIN32 */
+	if (browsers != NULL) {
 	vbox = make_frame (ret, _("Browser Options"));
+
 	label = gaim_button(_("Open new _window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);
+	}
 #ifdef _WIN32
 	/* Until I figure out how to implement this on windows */
 	gtk_widget_set_sensitive(label, FALSE);
@@ -2119,6 +2177,32 @@ void set_default_away(GtkWidget *w, gpointer i)
 		default_away = g_slist_nth_data(away_messages, (int)i);
 }
 
+static gboolean program_is_valid(const char *program) 
+{
+	GError *error = NULL;
+	char **argv; 
+	gboolean is_valid = FALSE;
+
+	if (program == NULL || *program == '\0') {
+		return FALSE;
+	}
+
+	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
+		debug_printf("Could not parse program '%s': ", error->message);
+		return FALSE;
+	}
+
+	if (argv == NULL) {
+		return FALSE;
+	}
+
+	is_valid = g_find_program_in_path(argv[0]) != NULL;
+
+	g_strfreev(argv);
+
+	return is_valid;
+}
+
 static void update_spin_value(GtkWidget *w, GtkWidget *spin)
 {
 	int *value = gtk_object_get_user_data(GTK_OBJECT(spin));
@@ -2179,9 +2263,9 @@ void dropdown_set(GtkObject *w, int *option)
 			gtk_widget_set_sensitive(prefs_proxy_frame, TRUE);
 	} else if (option == &web_browser) {
 		if (opt == BROWSER_MANUAL)
-			gtk_widget_set_sensitive(browser_entry, TRUE);
+			gtk_widget_set_sensitive(gtk_widget_get_parent(browser_entry), TRUE);
 		else
-			gtk_widget_set_sensitive(browser_entry, FALSE);
+			gtk_widget_set_sensitive(gtk_widget_get_parent(browser_entry), FALSE);
 	} else if (option == (int*)&sound_options) {
 		if (opt == OPT_SOUND_CMD)
 			gtk_widget_set_sensitive(sndcmd, TRUE);
@@ -2206,13 +2290,44 @@ void dropdown_set(GtkObject *w, int *option)
 
 static GtkWidget *gaim_dropdown(GtkWidget *box, const gchar *title, int *option, int clear, ...)
 {
-	va_list menuitems;
+	va_list ap;
+	GList *menuitems = NULL;
+	GtkWidget *dropdown = NULL;
+	char *name;
+	int id;
+
+	va_start(ap, clear);
+	while ((name = va_arg(ap, char *)) != NULL) {
+		id = va_arg(ap, int);
+
+		menuitems = g_list_prepend(menuitems, name);
+		menuitems = g_list_prepend(menuitems, GINT_TO_POINTER(id));
+	}
+	va_end(ap);
+
+	if (menuitems == NULL) {
+		return;
+	}
+
+	menuitems = g_list_reverse(menuitems);
+
+	dropdown = gaim_dropdown_from_list(box, title, option, clear, menuitems);
+
+	g_list_free(menuitems);
+
+	return dropdown;
+}
+
+static GtkWidget *gaim_dropdown_from_list(GtkWidget *box, const gchar *title, int *option, int clear, GList *menuitems)
+{
 	GtkWidget *dropdown, *opt, *menu;
 	GtkWidget *label;
 	gchar     *text;
 	int       value;
 	int       o = 0;
 	GtkWidget *hbox;
+
+	g_return_val_if_fail(menuitems != NULL, NULL);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add (GTK_CONTAINER (box), hbox);
@@ -2222,19 +2337,17 @@ static GtkWidget *gaim_dropdown(GtkWidget *box, const gchar *title, int *option,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	va_start(menuitems, clear);
-	text = va_arg(menuitems, gchar *);
-
-	if (!text)
-		return NULL;
-
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
 
-	while (text) {
-		value = va_arg(menuitems, int);
+	while (menuitems != NULL && (text = (char *) menuitems->data) != NULL) {
+		menuitems = g_list_next(menuitems);
+		g_return_val_if_fail(menuitems != NULL, NULL);
+		value = GPOINTER_TO_INT(menuitems->data);
+		menuitems = g_list_next(menuitems);
+
 		opt = gtk_menu_item_new_with_label(text);
 		gtk_object_set_user_data(GTK_OBJECT(opt), (void *)value);
 		gtk_object_set_data(GTK_OBJECT(opt), "clear", (void *)clear);
@@ -2246,11 +2359,9 @@ static GtkWidget *gaim_dropdown(GtkWidget *box, const gchar *title, int *option,
 		if (((clear > -1) && ((*option & value) == value)) || *option == value) {
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
-		text = va_arg(menuitems, gchar *);
 		o++;
-	}
 
-	va_end(menuitems);
+	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
