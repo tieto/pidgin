@@ -277,6 +277,16 @@ gaim_account_set_remember_password(GaimAccount *account, gboolean value)
 }
 
 void
+gaim_account_set_check_mail(GaimAccount *account, gboolean value)
+{
+	g_return_if_fail(account != NULL);
+
+	account->check_mail = value;
+
+	schedule_accounts_save();
+}
+
+void
 gaim_account_set_int(GaimAccount *account, const char *name, int value)
 {
 	GaimAccountSetting *setting;

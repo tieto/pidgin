@@ -568,9 +568,12 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "user_opts"))
 		return account;
 
-	/* TODO: Handle OPT_ACCT_AUTO and OPT_ACCT_MAIL_CHECK */
+	/* TODO: Handle OPT_ACCT_AUTO */
 
 	flags = atoi(p->value[0]);
+
+	if (flags & OPT_ACCT_MAIL_CHECK)
+		gaim_account_set_check_mail(account, TRUE);
 
 	if (!(flags & OPT_ACCT_REM_PASS))
 		gaim_account_set_remember_password(account, FALSE);
