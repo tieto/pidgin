@@ -150,10 +150,10 @@ struct conversation *new_conversation(char *name)
 		if (fd) {
 			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,
-					_("<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"),
+					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
 					full_date());
 			else
-				fprintf(fd, _(" ---- New Conversation @ %s ----\n"), full_date());
+				fprintf(fd, " ---- New Conversation @ %s ----\n", full_date());
 			fclose(fd);
 		} else
 			/* do we want to do something here? */ ;
