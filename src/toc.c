@@ -48,7 +48,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1476 $"
+#define REVISION "gaim:$Revision: 1479 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1418,13 +1418,14 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 		fprintf(ft->file, "%c", buf[i]);
 
 	if (ft->recvsize == ntohl(ft->hdr.size)) {
-		ft->hdr.hdrtype = 0x402;
+		ft->hdr.hdrtype = htons(0x0204);
 		ft->hdr.filesleft = htons(ntohs(ft->hdr.filesleft) - 1);
 		ft->hdr.partsleft = htons(ntohs(ft->hdr.partsleft) - 1);
 		ft->hdr.recvcsum = ft->hdr.checksum; /* uh... */
 		ft->hdr.nrecvd = htons(ntohs(ft->hdr.nrecvd) + 1);
 		ft->hdr.flags = 0;
 		write(source, ft, 256);
+		debug_header(ft);
 		ft->recvsize = 0;
 		fclose(ft->file);
 		if (ft->hdr.filesleft == 0) {
@@ -1492,6 +1493,8 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 	struct file_transfer *ft = data;
 
 	if (cond & GDK_INPUT_EXCEPTION) {
+		do_error_dialog("The file tranfer has been aborted; the other side most likely"
+				" cancelled.", "Error");
 		gdk_input_remove(ft->inpa);
 		close(source);
 		g_free(ft->filename);
@@ -1519,7 +1522,7 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 		return;
 	}
 
-	if (ft->hdr.hdrtype == 0x0811) {
+	if (ft->hdr.hdrtype == htons(0x1108)) {
 		struct tm *fortime;
 		struct stat st;
 
@@ -1533,24 +1536,25 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 				fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 				fortime->tm_hour + 1, fortime->tm_min + 1, (long)st.st_size,
 				g_basename(ft->filename));
-		write(source, ft, 256);
+		write(source, buf, ntohl(ft->hdr.size));
 		return;
 	}
 
-	if (ft->hdr.hdrtype == 0x0912) {
+	if (ft->hdr.hdrtype == htons(0x1209)) {
 		read(source, ft, 8);
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 		return;
 	}
 
-	if (ft->hdr.hdrtype == 0x0b12) {
+	if (ft->hdr.hdrtype == htons(0x120b)) {
 		read(source, ft, 8);
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
-		if (ft->hdr.hdrtype != 0xc12) {
+		if (ft->hdr.hdrtype != htons(0x120c)) {
 			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
+			do_error_dialog(buf, "Error");
 			gdk_input_remove(ft->inpa);
 			close(source);
 			g_free(ft->filename);
@@ -1661,10 +1665,10 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	hdr = (struct file_header *)ft;
 	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
 	hdr->hdrlen = htons(256);
-	hdr->hdrtype = 0x0811;
+	hdr->hdrtype = htons(0x1108);
 	buf = frombase64(ft->cookie);
 	g_snprintf(hdr->bcookie, 8, "%s", buf);
-	g_free (buf);
+	g_free(buf);
 	hdr->totfiles = htons(1); hdr->filesleft = htons(1);
 	hdr->totparts = htons(1); hdr->partsleft = htons(1);
 	hdr->totsize = htonl((long)st.st_size); /* combined size of all files */

@@ -67,7 +67,7 @@
 #define UC_XA   0x98
 #define UC_DND  0x118
 
-#define DEFAULT_SERVER "jabber.com"
+#define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
 
 typedef struct gjconn_struct {
