@@ -2683,10 +2683,15 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
-	color.red = 0x0000;
+	style = gtk_style_new();
+	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
+	gtk_widget_set_style(label, style);
+	gtk_style_unref(style);
+/*	color.red = 0x0000;
 	color.green = 0x0000;
 	color.blue = 0x0000;
 	gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &color);
+*/
 	if (c)
 		c->unseen = 0;
 
@@ -2739,9 +2744,15 @@ void update_convo_status(struct conversation *c) {
 			color.green = 0x0000;
 			color.blue = 0x0000;
 		} else {
-			color.red = 0x0000;
-			color.green = 0x0000;
-			color.blue = 0x0000;
+			style = gtk_style_new();
+			gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
+			gtk_widget_set_style(label, style);
+			gtk_style_unref(style);
+			/*
+				color.red = 0x0000;
+				color.green = 0x0000;
+				color.blue = 0x0000;
+			*/
 		}
 		gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &color);
 			debug_printf("setting style\n");
