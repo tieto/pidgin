@@ -68,11 +68,11 @@ static gboolean flash_window_cb(gpointer data) {
 
 static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, WGAIM_FLASH_INFO *finfo) {
 	/* Stop flashing and remove filter */
-	debug_printf("Removing timeout\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
 	g_source_remove(finfo->t_handle);
-	debug_printf("Disconnecting signal handler\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
 	g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
-	debug_printf("done\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
 }
 
 static void load_winver_specific_procs(void) {
@@ -151,9 +151,9 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 	FARPROC proc = 0;
 
 	if(!(hmod=GetModuleHandle(dllname))) {
-		debug_printf("%s not found. Loading it..\n", dllname);
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "%s not found. Loading it..\n", dllname);
 		if(!(hmod = LoadLibrary(dllname))) {
-			debug_printf("Could not load: %s\n", dllname);
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Could not load: %s\n", dllname);
 			return NULL;
 		}
 		else
@@ -161,12 +161,12 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
  	}
 
 	if((proc=GetProcAddress(hmod, procedure))) {
-		debug_printf("This version of %s contains %s\n", 
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "This version of %s contains %s\n",
 			     dllname, procedure);
 		return proc;
 	}
 	else {
-		debug_printf("Function: %s not found in dll: %s\n", 
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Function %s not found in dll %s\n", 
 			     procedure, dllname);
 		if(did_load) {
 			/* unload dll */
@@ -185,13 +185,13 @@ char* wgaim_install_dir(void) {
 	hmod = GetModuleHandle(NULL);
 	if( hmod == 0 ) {
 		buf = g_win32_error_message( GetLastError() );
-		debug_printf("GetModuleHandle error: %s\n", buf);
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleHandle error: %s\n", buf);
 		free(buf);
 		return NULL;
 	}
 	if(GetModuleFileName( hmod, (char*)&install_dir, MAXPATHLEN ) == 0) {
 		buf = g_win32_error_message( GetLastError() );
-		debug_printf("GetModuleFileName error: %s\n", buf);
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleFileName error: %s\n", buf);
 		free(buf);
 		return NULL;
 	}
@@ -249,19 +249,19 @@ int wgaim_gz_decompress(const char* in, const char* out) {
 
 	if((fin = gzopen(in, "rb"))) {
 		if(!(fout = fopen(out, "wb"))) {
-			debug_printf("wgaim_gz_decompress: Error opening file: %s\n", out);
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error opening file: %s\n", out);
 			gzclose(fin);
 			return 0;
 		}
 	}
 	else {
-		debug_printf("wgaim_gz_decompress: gzopen failed to open: %s\n", in);
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzopen failed to open: %s\n", in);
 		return 0;
 	}
 
 	while((ret=gzread(fin, buf, 1024))) {
 		if(fwrite(buf, 1, ret, fout) < ret) {
-			debug_printf("wgaim_gz_decompress: Error writing %d bytes to file\n", ret);
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
 			return 0;
@@ -271,7 +271,7 @@ int wgaim_gz_decompress(const char* in, const char* out) {
 	gzclose(fin);
 
 	if(ret < 0) {
-		debug_printf("wgaim_gz_decompress: gzread failed while reading: %s\n", in);
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzread failed while reading: %s\n", in);
 		return 0;
 	}
 
@@ -288,14 +288,14 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
 			ret=1;
 		else {
-			debug_printf("wgaim_gz_untar: Failure untaring %s\n", tmpfile);
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failure untaring %s\n", tmpfile);
 			ret=0;
 		}
 		unlink(tmpfile);
 		return ret;
 	}
 	else {
-		debug_printf("wgaim_gz_untar: Failed to gz decompress %s\n", filename);
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failed to gz decompress %s\n", filename);
 		return 0;
 	}
 }
@@ -309,7 +309,7 @@ void wgaim_init(void) {
 	char newenv[128];
 	char* drmingw;
 
-	debug_printf("wgaim_init\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init\n");
 
 	/* Load exception handler if we have it */
 	drmingw = g_build_filename(wgaim_install_dir(), "exchndl.dll", NULL);
@@ -335,18 +335,18 @@ void wgaim_init(void) {
 
 	if ( LOBYTE( wsaData.wVersion ) != 2 ||
 			HIBYTE( wsaData.wVersion ) != 2 ) {
-		debug_printf("Could not find a usable WinSock DLL.  Oh well.\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup( );
 	}
 
 	/* get default locale */
 	locale = g_win32_getlocale();
-	debug_printf("Language profile used: %s\n", locale);
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Language profile used: %s\n", locale);
 
 	/* Aspell config */
 	sprintf(newenv, "LANG=%s", locale);
 	if(putenv(newenv)<0)
-		debug_printf("putenv failed\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(locale);
 
 	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
@@ -356,13 +356,13 @@ void wgaim_init(void) {
 	*/
 	sprintf(newenv, "PANGO_WIN32_NO_UNISCRIBE=1");
 	if(putenv(newenv)<0)
-		debug_printf("putenv failed\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 
 	/*
 	 *  IdleTracker Initialization
 	 */
 	if(!wgaim_set_idlehooks())
-		debug_printf("Failed to initialize idle tracker\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
 }
@@ -370,7 +370,7 @@ void wgaim_init(void) {
 /* Windows Cleanup */
 
 void wgaim_cleanup(void) {
-	debug_printf("wgaim_cleanup\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_cleanup\n");
 
 	/* winsock cleanup */
 	WSACleanup( );

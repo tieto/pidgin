@@ -25,12 +25,13 @@
 #include "gaim.h"
 #include "gtkplugin.h"
 #include "gtkblist.h"
+#include "prefs.h"
 #include "win32dep.h"
 
 /*
  *  MACROS & DEFINES
  */
-#define WINTRANS_PLUGIN_ID              "win-gaim-trans"
+#define WINTRANS_PLUGIN_ID              "gtk-win-trans"
 #define WINTRANS_VERSION                1
 
 /* These defines aren't found in mingw's winuser.h */
@@ -41,12 +42,6 @@
 #ifndef WS_EX_LAYERED
 #define WS_EX_LAYERED                   0x00080000
 #endif
-
-/* Transparency plugin configuration */
-#define OPT_WGAIM_IMTRANS               0x00000001
-#define OPT_WGAIM_SHOW_IMTRANS          0x00000002
-#define OPT_WGAIM_BLTRANS               0x00000004
-#define OPT_WGAIM_BUDDYWIN_ONTOP        0x00000008
 
 #define blist (gaim_get_blist()?(GAIM_GTK_BLIST(gaim_get_blist())?((GAIM_GTK_BLIST(gaim_get_blist()))->window):NULL):NULL)
 
@@ -66,28 +61,31 @@ typedef struct {
 /*
  *  LOCALS
  */
+static const char *OPT_WINTRANS_IM_ENABLED="/plugins/gtk/win32/wintrans/im_enabled";
+static const char *OPT_WINTRANS_IM_ALPHA  ="/plugins/gtk/win32/wintrans/im_alpha";
+static const char *OPT_WINTRANS_IM_SLIDER ="/plugins/gtk/win32/wintrans/im_slider";
+static const char *OPT_WINTRANS_BL_ENABLED="/plugins/gtk/win32/wintrans/bl_enabled";
+static const char *OPT_WINTRANS_BL_ALPHA  ="/plugins/gtk/win32/wintrans/bl_alpha";
+static const char *OPT_WINTRANS_BL_ON_TOP ="/plugins/gtk/win32/wintrans/bl_on_top";
 static int imalpha = 255;
 static int blalpha = 255;
-guint trans_options = 0;
 GList *window_list = NULL;
 
 /*
  *  PROTOS
  */
 BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags)=NULL;
-static void save_trans_prefs();
 
 /*
  *  CODE
  */
-static GtkWidget *wgaim_button(const char *text, guint *options, int option, GtkWidget *page) {
-	GtkWidget *button;
+static GtkWidget *wgaim_button(const char *text, const char *pref, GtkWidget *page) {
+        GtkWidget *button;
 	button = gtk_check_button_new_with_mnemonic(text);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (*options & option));
-	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
-	g_object_set_data(G_OBJECT(button), "options", options);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), gaim_prefs_get_bool(pref));
+        gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
-	return button;
+        return button;
 }
 
 /* Set window transparency level */
@@ -164,7 +162,7 @@ static slider_win* find_slidwin( GtkWidget *win ) {
 gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 	slider_win *slidwin=NULL;
 	/* Remove window from the window list */
-	debug_printf("win2ktrans.dll: Conv window destoyed.. removing from list\n");
+	gaim_debug(GAIM_DEBUG_INFO, WINTRANS_PLUGIN_ID, "Conv window destoyed.. removing from list\n");
 
 	if((slidwin=find_slidwin(widget))) {
 		window_list = g_list_remove(window_list, (gpointer)slidwin);
@@ -188,8 +186,7 @@ static void gaim_new_conversation(char *who) {
 	win = gtkwin->window;
 
 	/* check prefs to see if we want trans */
-	if ((trans_options & OPT_WGAIM_IMTRANS) &&
-	    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+	if (gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
 		/* Look up this window to see if it already has a scroller */
 		if(!find_slidwin(win)) {
 			GtkWidget *slider_box=NULL;
@@ -202,7 +199,7 @@ static void gaim_new_conversation(char *who) {
 				if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
 					vbox = GTK_WIDGET(wl->data);
 				else {
-					debug_printf("no vbox found\n");
+					gaim_debug(GAIM_DEBUG_ERROR, WINTRANS_PLUGIN_ID, "no vbox found\n");
 					return;
 				}
 			}
@@ -224,20 +221,20 @@ static void gaim_new_conversation(char *who) {
 			return;
 	}
 	
-	if((trans_options & OPT_WGAIM_IMTRANS) &&
-	   !(trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED) &&
+	   !gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
 		set_wintrans(win, imalpha);
 	}
 }
 
 static void blist_created() {
 	if(blist) {
-		if(trans_options & OPT_WGAIM_BUDDYWIN_ONTOP)
+		if(gaim_prefs_get_bool(OPT_WINTRANS_BL_ON_TOP))
 			SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		else
 			SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-		if(trans_options & OPT_WGAIM_BLTRANS)
+		if(gaim_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
 			set_wintrans(blist, blalpha);
 		else
 			set_wintrans_off(blist);
@@ -249,105 +246,34 @@ static void alpha_change(GtkWidget *w, gpointer data) {
 	*alpha = gtk_range_get_value(GTK_RANGE(w));
 }
 
+static void alpha_pref_set_int(GtkWidget *w, GdkEventFocus *e, const char *pref) {
+        int alpha = 0;
+        if (pref == OPT_WINTRANS_IM_ALPHA)
+                alpha = imalpha;
+        else if (pref == OPT_WINTRANS_BL_ALPHA)
+                alpha = blalpha;
+
+        gaim_prefs_set_int(pref, alpha);
+}
+
 static void bl_alpha_change(GtkWidget *w, gpointer data) {
 	alpha_change(w, data);
 	if(blist)
 		change_alpha(w, blist);
 }
 
-/* Load options */
-static void load_trans_prefs() {
-	FILE *f;
-	char buf[1024];
-	int ver=0;
-	char tag[256];
-
-	if (gaim_home_dir())
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaim" G_DIR_SEPARATOR_S "wintransrc", gaim_home_dir());
-	else
-		return;
-
-	if ((f = fopen(buf, "r"))) {
-		fgets(buf, sizeof(buf), f);
-		sscanf(buf, "# wintransrc v%d", &ver);
-		if ((ver > 1) || (buf[0] != '#'))
-			return;
-
-		while (!feof(f)) {
-			fgets(buf, sizeof(buf), f);
-			sscanf(buf, "%s {", tag);
-			if (strcmp(tag, "options")==0) {
-				fgets(buf, sizeof(buf), f);
-				sscanf(buf, "\ttrans_options { %d", &trans_options);
-				continue;
-			} else if (strcmp(tag, "trans")==0) {
-				int num;
-				for(fgets(buf, sizeof(buf), f);buf[0] != '}' && !feof(f);fgets(buf, sizeof(buf), f)) {
-					sscanf(buf, "\t%s { %d", tag, &num);
-					if(strcmp(tag, "imalpha")==0) {
-						imalpha = num;
-					}
-					else if(strcmp(tag, "blalpha")==0) {
-						blalpha = num;
-					}
-				}
-			}
-		}
-	}
-	else
-		save_trans_prefs();
-	blist_created();
-}
-
-/* Save options */
-
-static void write_options(FILE *f) {
-	fprintf(f, "options {\n");
-	fprintf(f, "\ttrans_options { %u }\n", trans_options);
-	fprintf(f, "}\n");
-}
-
-static void write_trans(FILE *f) {
-	fprintf(f, "trans {\n");
-	fprintf(f, "\timalpha { %d }\n", imalpha);
-	fprintf(f, "\tblalpha { %d }\n", blalpha);
-	fprintf(f, "}\n");
-}
-
-static void save_trans_prefs() {
-	FILE *f;
-	char buf[1024];
-
-	if (gaim_home_dir()) {
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaim" G_DIR_SEPARATOR_S "wintransrc", gaim_home_dir());
-	}
-	else
-		return;
-
-	if ((f = fopen(buf, "w"))) {
-		fprintf(f, "# wintransrc v%d\n", WINTRANS_VERSION);
-		write_trans(f);
-		write_options(f);
-		fclose(f);
-	}
-	else
-		debug_printf("Error opening wintransrc\n");
-}
-
-static void set_trans_option(GtkWidget *w, int option) {
-	trans_options ^= option;
-	save_trans_prefs();
-
-	if(option == OPT_WGAIM_BUDDYWIN_ONTOP) {
+static void set_trans_option(GtkWidget *w, const char *pref) {
+        gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
+	if(pref == OPT_WINTRANS_BL_ON_TOP) {
 		if(blist) {
-			if(trans_options & OPT_WGAIM_BUDDYWIN_ONTOP)
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 				SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 			else
 				SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		}
-	} else if(option == OPT_WGAIM_BLTRANS) {
+	} else if(pref == OPT_WINTRANS_BL_ENABLED) {
 		if(blist) {
-			if(trans_options & OPT_WGAIM_BLTRANS)
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 				set_wintrans(blist, blalpha);
 			else
 				set_wintrans_off(blist);
@@ -359,16 +285,22 @@ static void set_trans_option(GtkWidget *w, int option) {
  *  EXPORTED FUNCTIONS
  */
 G_MODULE_EXPORT gboolean plugin_load(GaimPlugin *plugin) {
+        imalpha = gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA);
+        blalpha = gaim_prefs_get_int(OPT_WINTRANS_BL_ALPHA);
+
 	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); 
 	gaim_signal_connect(plugin, event_signon, blist_created, NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
-	load_trans_prefs();
+
+	if(blist) {
+	        blist_created();
+	}
 
 	return TRUE;
 }
 
 G_MODULE_EXPORT gboolean plugin_unload(GaimPlugin *plugin) {
-	debug_printf("Removing win2ktrans.dll plugin\n");
+	gaim_debug(GAIM_DEBUG_INFO, WINTRANS_PLUGIN_ID, "Removing win2ktrans.dll plugin\n");
 
 	/* Remove slider bars */
 	if(window_list) {
@@ -403,18 +335,18 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 
 	/* IM Convo trans options */
 	imtransbox = gaim_gtk_make_frame (ret, _("IM Conversation Windows"));
-	button = wgaim_button(_("_IM window transparency"), &trans_options, OPT_WGAIM_IMTRANS, imtransbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_IMTRANS);
+	button = wgaim_button(_("_IM window transparency"), OPT_WINTRANS_IM_ENABLED, imtransbox);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_IM_ENABLED);
 
 	trans_box =  gtk_vbox_new(FALSE, 18);
-	if (!(trans_options & OPT_WGAIM_IMTRANS))
+	if (!gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED))
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
 
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
 	
-	button = wgaim_button(_("_Show slider bar in IM window"), &trans_options, OPT_WGAIM_SHOW_IMTRANS, trans_box);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_SHOW_IMTRANS);
+	button = wgaim_button(_("_Show slider bar in IM window"), OPT_WINTRANS_IM_SLIDER, trans_box);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_IM_SLIDER);
 
 	gtk_box_pack_start(GTK_BOX(imtransbox), trans_box, FALSE, FALSE, 5);
 
@@ -429,7 +361,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
 	
 	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(alpha_change), (void*)&imalpha);
-	gtk_signal_connect(GTK_OBJECT(slider), "focus-out-event", GTK_SIGNAL_FUNC(save_trans_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(slider), "focus-out-event", GTK_SIGNAL_FUNC(alpha_pref_set_int), (void *)OPT_WINTRANS_IM_ALPHA);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
 
@@ -439,14 +371,14 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	
 	/* Buddy List trans options */
 	bltransbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
-	button = wgaim_button(_("_Keep Buddy List window on top"), &trans_options, OPT_WGAIM_BUDDYWIN_ONTOP, bltransbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_BUDDYWIN_ONTOP);
+	button = wgaim_button(_("_Keep Buddy List window on top"), OPT_WINTRANS_BL_ON_TOP, bltransbox);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_BL_ON_TOP);
 
-	button = wgaim_button(_("_Buddy List window transparency"), &trans_options, OPT_WGAIM_BLTRANS, bltransbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_BLTRANS);
+	button = wgaim_button(_("_Buddy List window transparency"), OPT_WINTRANS_BL_ENABLED, bltransbox);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_BL_ENABLED);
 
 	trans_box =  gtk_vbox_new(FALSE, 18);
-	if (!(trans_options & OPT_WGAIM_BLTRANS))
+	if (!gaim_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
@@ -463,7 +395,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
 	
 	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(bl_alpha_change), (void*)&blalpha);
-	gtk_signal_connect(GTK_OBJECT(slider), "focus-out-event", GTK_SIGNAL_FUNC(save_trans_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(slider), "focus-out-event", GTK_SIGNAL_FUNC(alpha_pref_set_int), (void *)OPT_WINTRANS_BL_ALPHA);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
 
@@ -473,7 +405,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 
 	/* If this version of Windows dosn't support Transparency, grey out options */
 	if(!has_transparency()) {
-		debug_printf("This version of windows dosn't support transparency\n");
+		gaim_debug(GAIM_DEBUG_WARNING, WINTRANS_PLUGIN_ID, "This version of windows dosn't support transparency\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(imtransbox), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
@@ -516,8 +448,16 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
+  gaim_prefs_add_none("/plugins/gtk/win32");
+  gaim_prefs_add_none("/plugins/gtk/win32/wintrans");
+  gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/im_enabled", FALSE);
+  gaim_prefs_add_int("/plugins/gtk/win32/wintrans/im_alpha", 255);
+  gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/im_slider", FALSE);
+  gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/bl_enabled", FALSE);
+  gaim_prefs_add_int("/plugins/gtk/win32/wintrans/bl_alpha", 255);
+  gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/bl_on_top", FALSE);
 }
 
-GAIM_INIT_PLUGIN(wintrans, __init_plugin, info);
+GAIM_INIT_PLUGIN(wintrans, init_plugin, info);

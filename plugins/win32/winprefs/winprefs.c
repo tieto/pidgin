@@ -29,7 +29,7 @@
 /*
  *  MACROS & DEFINES
  */
-#define WINPREFS_PLUGIN_ID             "gaim-winprefs"
+#define WINPREFS_PLUGIN_ID               "gtk-win-prefs"
 #define WINPREFS_VERSION                 1
 
 /*
@@ -63,7 +63,7 @@ static int open_run_key(PHKEY phKey, REGSAM samDesired) {
 					      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
 					      0,  samDesired,  phKey));
 	else {
-		gaim_debug(3, WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
+		gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
 		return 0;
 	}
 	return 1;
@@ -83,7 +83,7 @@ static void set_winprefs_option(GtkWidget *w, const char *key) {
 			if((size = GetModuleFileName(wgaim_hinstance(),
 						     (LPBYTE)buffer,
 						     sizeof(buffer)))==0) {
-				gaim_debug(3, WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
+				gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
 				RegCloseKey(hKey);
 				return;
 			}
@@ -94,11 +94,11 @@ static void set_winprefs_option(GtkWidget *w, const char *key) {
 							  REG_SZ,
 							  buffer,
 							  size))
-				gaim_debug(3, WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
+				gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
  		}
 		else {
 			if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
-				gaim_debug(3, WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
+				gaim_debug(GAIM_DEBUG_ERROR, WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
 		}
 		RegCloseKey(hKey);
 	}
