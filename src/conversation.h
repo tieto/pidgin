@@ -115,8 +115,8 @@ typedef enum
 	GAIM_MESSAGE_NICK      = 0x0020, /**< Contains your nick.      */
 	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.              */
 	GAIM_MESSAGE_WHISPER   = 0x0080, /**< Whispered message.       */
-	GAIM_MESSAGE_IMAGES    = 0x0100  /**< Message contains images. */
-
+	GAIM_MESSAGE_IMAGES    = 0x0100, /**< Message contains images. */
+	GAIM_MESSAGE_ERROR     = 0x0200  /**< Error message.           */
 } GaimMessageFlags;
 
 #include "account.h"

@@ -1492,7 +1492,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	win = gaim_conversation_get_window(conv);
 
 	/* Tab highlighting */
-	if (!(flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_SYSTEM))
+	if (!(flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_SYSTEM) && !(flags & GAIM_MESSAGE_ERROR))
 		return;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
@@ -1504,7 +1504,8 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
 				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 			unseen = GAIM_UNSEEN_NICK;
-		else if ((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM &&
+		else if ((((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
+			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR)) &&
 				 gaim_conversation_get_unseen(conv) != GAIM_UNSEEN_TEXT)
 			unseen = GAIM_UNSEEN_EVENT;
 		else

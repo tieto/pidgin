@@ -4584,6 +4584,23 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		conv->history = g_string_append(conv->history, buf);
 		conv->history = g_string_append(conv->history, "<BR>\n");
 
+	} else if (flags & GAIM_MESSAGE_ERROR) {
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
+			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
+				   mdate, message);
+		else
+			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><B>%s</B></FONT>", message);
+		
+		g_snprintf(buf2, sizeof(buf2),
+			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
+			   sml_attrib, mdate, message);
+		
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
+						   buf2, 0, images);
+		
+		/* Add the message to a conversations scrollback buffer */
+		conv->history = g_string_append(conv->history, buf);
+		conv->history = g_string_append(conv->history, "<BR>\n");
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
