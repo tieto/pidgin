@@ -1134,7 +1134,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title")) {
 		if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if(account && ((b = gaim_find_buddy(account, name)) != NULL))
-				text = gaim_buddy_get_contact_alias(b);
+				text = gaim_buddy_get_local_alias(b);
 		} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
 				text = chat->alias;
@@ -2734,14 +2734,6 @@ static void
 update_titles_pref_cb(const char *name, GaimPrefType type,
 					  gpointer value, gpointer data)
 {
-	/*
-	 * If the use_server_alias option was changed, and use_alias_for_title
-	 * is false, then we don't have to do anything here.
-	 */
-	if (!strcmp(name, "/core/buddies/use_server_alias") &&
-		!gaim_prefs_get_bool("/core/conversations/use_alias_for_title"))
-		return;
-
 	gaim_conversation_foreach(gaim_conversation_autoset_title);
 }
 
@@ -2789,9 +2781,6 @@ gaim_conversations_init(void)
 	/* Connect callbacks for changed preferences */
 	gaim_prefs_connect_callback(handle, "/core/conversations/use_alias_for_title",
 			update_titles_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/core/buddies/use_server_alias",
-			update_titles_pref_cb, NULL);
-
 
 	/**********************************************************************
 	 * Register signals

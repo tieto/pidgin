@@ -1431,9 +1431,8 @@ const char *gaim_buddy_get_contact_alias(GaimBuddy *buddy)
 	if ((c != NULL) && (c->alias != NULL))
 		return c->alias;
 
-	/* The server alias, if preferences say so */
-	if ((buddy->server_alias) && (*buddy->server_alias) &&
-			(gaim_prefs_get_bool("/core/buddies/use_server_alias")))
+	/* The server alias */
+	if ((buddy->server_alias) && (*buddy->server_alias))
 		return buddy->server_alias;
 
 	/* The buddy's user name (i.e. no alias) */
@@ -1459,6 +1458,25 @@ const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 	return buddy->name;
 }
 
+const char *gaim_buddy_get_local_alias(GaimBuddy *buddy)
+{
+	GaimContact *c;
+
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	/* Search for an alias for the buddy. In order of precedence: */
+	/* The buddy alias */
+	if (buddy->alias != NULL)
+		return buddy->alias;
+
+	/* The contact alias */
+	c = gaim_buddy_get_contact(buddy);
+	if ((c != NULL) && (c->alias != NULL))
+		return c->alias;
+
+	/* The buddy's user name (i.e. no alias) */
+	return buddy->name;
+}
 
 const char *gaim_chat_get_name(GaimChat *chat)
 {

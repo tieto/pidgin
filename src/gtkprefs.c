@@ -388,23 +388,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	}
 }
 
-/* These are the pages in the preferences notebook */
-GtkWidget *interface_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	vbox = gaim_gtk_make_frame(ret, _("Interface Options"));
-
-	gaim_gtk_prefs_checkbox(_("D_isplay remote nicknames if no alias is set"),
-			"/core/buddies/use_server_alias", vbox);
-
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
 static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	const char *filename;
@@ -2174,7 +2157,6 @@ void prefs_notebook_init() {
 	GtkTreeIter p, c, c2;
 	GList *l;
 	GaimPlugin *plug;
-	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c2, &c, notebook_page++);

@@ -34,6 +34,7 @@ version 2.0.0
 	  Made screenname colors automatically adjust themselves to compensate for
 	  background color.
 	* Removed "Raise Buddy List Window on Events" defaulted to "No"
+	* Removed "Display remote nicknames if no alias is set"
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:

@@ -553,8 +553,8 @@ void gaim_blist_remove_group(GaimGroup *group);
  * Returns the alias of a buddy.
  *
  * @param buddy   The buddy whose name will be returned.
- * @return        The alias (if set), server alias (if set and preference
- *                is to display server aliases), or NULL.
+ * @return        The alias (if set), server alias (if set),
+ *                or NULL.
  */
 const char *gaim_buddy_get_alias_only(GaimBuddy *buddy);
 
@@ -570,6 +570,15 @@ const char *gaim_buddy_get_alias_only(GaimBuddy *buddy);
  */
 const char *gaim_buddy_get_contact_alias(GaimBuddy *buddy);
 
+/**
+ * Returns the correct alias for this user, ignoring server aliases.  Used
+ * when a user-recognizable name is required.  In order: buddy's alias; buddy's
+ * contact alias; buddy's user name.
+ * 
+ * @param buddy  The buddy whose alias will be returned.
+ * @return       The appropriate name or alias.
+ */
+const char *gaim_buddy_get_local_alias(GaimBuddy *buddy);
 
 /**
  * Returns the correct name to display for a buddy. In order of precedence:
@@ -716,7 +725,6 @@ int gaim_blist_get_group_online_count(GaimGroup *group);
 /** @name Buddy list file management API                                                */
 /****************************************************************************************/
 
-/*@{*/
 /**
  * Parses the toc-style buddy list used in older versions of Gaim and for SSI in toc.c
  *
@@ -730,12 +738,6 @@ void gaim_blist_parse_toc_buddy_list(GaimAccount *account, char *config);
  * Loads the buddy list from ~/.gaim/blist.xml.
  */
 void gaim_blist_load();
-
-/**
- * Force an immediate write of the buddy list.  Normally the buddy list is
- * saved automatically a few seconds after a change is made.
- */
-void gaim_blist_sync();
 
 /**
  * Requests from the user information needed to add a buddy to the
