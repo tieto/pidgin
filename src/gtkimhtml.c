@@ -1236,6 +1236,11 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);	
 	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
+	gtk_imhtml_clipboard_clear(NULL, imhtml);
+	gtk_text_buffer_move_mark (imhtml->text_buffer,
+				   gtk_text_buffer_get_mark (imhtml->text_buffer, "insert"),
+				   &iter);
+
 	if(((y + height) - (rect.y + rect.height)) > height 
 	   && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
 		options |= GTK_IMHTML_NO_SCROLL;
@@ -2073,13 +2078,13 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 {
 	GtkIMHtmlFormatSpan *span = NULL;
 	GtkTextIter end;
-
+	
 	gtk_text_iter_forward_chars(iter, len);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
 	gtk_text_iter_forward_char(&end);
 
-	//if (!gtk_text_iter_equal(&end, iter))
-	//	return;
+	if (!gtk_text_iter_equal(&end, iter))
+		return;
 
 	
 	if ((span = imhtml->edit.bold)) {
