@@ -56,7 +56,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	        applet_widget_register_callback(APPLET_WIDGET(applet),
         	        "buddy",
                 	_("Buddy List"),
-      		        (AppletCallbackFunc)make_buddy,
+      		        (AppletCallbackFunc)createOnlinePopup,
                 	NULL);
 	}
   MRI_user_status = online;
@@ -90,7 +90,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         if(!blist) applet_widget_register_callback(APPLET_WIDGET(applet),
                                                    "buddy",
                                                    _("Buddy List"),
-                                                   (AppletCallbackFunc)make_buddy,
+                                                   (AppletCallbackFunc)createOnlinePopup,
                                                    NULL);
         applet_widget_register_callback(APPLET_WIDGET(applet),
                                         "away",

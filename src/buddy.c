@@ -276,7 +276,7 @@ gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 			"buddy",
 			_("Buddy List"),
-			(AppletCallbackFunc)make_buddy,
+			(AppletCallbackFunc)createOnlinePopup,
 			NULL);
 	return (TRUE);
 }
@@ -294,7 +294,14 @@ void gnome_buddy_set_pos( gint x, gint y ){
 }
 
 GtkRequisition gnome_buddy_get_dimentions(){
-	return blist->requisition;
+	if (general_options & OPT_GEN_SAVED_WINDOWS) {
+		GtkRequisition r;
+		r.width = blist_pos.width;
+		r.height = blist_pos.height;
+		return r;
+	} else {
+		return blist->requisition;
+	}
 }
 
 #endif

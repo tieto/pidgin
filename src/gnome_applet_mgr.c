@@ -279,7 +279,7 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "buddy",
                 _("Buddy List"),
-                (AppletCallbackFunc)make_buddy,
+                (AppletCallbackFunc)createOnlinePopup,
                 NULL);
 	*/
 }

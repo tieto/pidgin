@@ -145,7 +145,7 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 	 applet_widget_register_callback(APPLET_WIDGET(applet),
 			 "buddy",
 			 _("Buddy List"),
-			 (AppletCallbackFunc)make_buddy,
+			 (AppletCallbackFunc)createOnlinePopup,
 			 NULL);
 	 applet_widget_register_callback(APPLET_WIDGET(applet),
 			 "signoff",

@@ -290,7 +290,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 104 $"
+#define REVISION "gaim:$Revision: 117 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -547,7 +547,7 @@ extern void hide_login_progress(char *);
 extern void set_login_progress(int, char *);
 extern void show_login();
 #ifdef USE_APPLET
-extern void make_buddy();
+extern void createOnlinePopup();
 extern void applet_show_login(AppletWidget *, gpointer);
 extern void gnome_buddy_show();
 extern void gnome_buddy_hide();
