@@ -245,6 +245,10 @@ struct buddy_pounce {
         char message[2048];
 	int popup;
 	int sendim;
+	
+	int signon;
+	int unaway;
+	int unidle;
 };
 
 struct away_message {

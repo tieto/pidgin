@@ -1377,7 +1377,6 @@ void do_bp_menu()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);
         gtk_widget_show(remmenu);
 
-
         sep = gtk_hseparator_new();
 	menuitem = gtk_menu_item_new();
 	gtk_menu_append(GTK_MENU(bpmenu), menuitem);
@@ -1398,8 +1397,6 @@ void do_bp_menu()
                 gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), messmenu);
                 gtk_widget_show(menuitem);
                 
-
-
                 mess = gtk_menu_item_new_with_label(b->message);
                 gtk_menu_append(GTK_MENU(messmenu), mess);
                 gtk_widget_show(mess);

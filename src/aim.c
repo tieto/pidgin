@@ -621,6 +621,7 @@ int main(int argc, char *argv[])
 		account_editor (NULL, NULL);
 	} else if (do_login_ret == -1)
 		show_login();
+
         gtk_main();
         
 #endif /* USE_APPLET */

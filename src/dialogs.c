@@ -116,6 +116,10 @@ struct addbp {
         GtkWidget *messentry;
 	GtkWidget *sendim;
 	GtkWidget *openwindow;
+	GtkWidget *p_signon;
+	GtkWidget *p_unaway;
+	GtkWidget *p_unidle;
+	GtkWidget *menu;
 };
 
 struct findbyemail {
@@ -1040,14 +1044,69 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 		bp->sendim = 1;
 	else
 		bp->sendim = 0;
+	
+	if (GTK_TOGGLE_BUTTON(b->p_signon)->active)
+		bp->signon = 1;
+	else
+		bp->signon = 0;
+	
+	if (GTK_TOGGLE_BUTTON(b->p_unaway)->active)
+		bp->unaway = 1;
+	else
+		bp->unaway = 0;
+	
+	if (GTK_TOGGLE_BUTTON(b->p_unidle)->active)
+		bp->unidle = 1;
+	else
+		bp->unidle = 0;
 
         buddy_pounces = g_list_append(buddy_pounces, bp);
 	
         do_bp_menu();
         
         destroy_dialog(NULL, b->window);
+
 	save_prefs();
         g_free(b);
+}
+
+static void pounce_user_menu(struct addbp *b, GtkWidget *box)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkWidget *opt;
+	GList *u = aim_users;
+	struct aim_user *a;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Pounce buddy as:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	optmenu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 5);
+	gtk_widget_show(optmenu);
+
+	menu = gtk_menu_new();
+
+	while (u) {
+		a = (struct aim_user *)u->data;
+		opt = gtk_menu_item_new_with_label(a->username);
+		gtk_object_set_user_data(GTK_OBJECT(opt), a);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_widget_show(opt);
+		u = u->next;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+
+	b->menu = optmenu;
 }
 
 
@@ -1082,16 +1141,35 @@ void show_new_bp(char *name)
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	/* Pounce as menu */
+	pounce_user_menu(b, vbox);
+	
         /* Put the buttons in the box */
         label = gtk_label_new(_("Buddy To Pounce:"));
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox), b->nameentry, FALSE, FALSE, 0);
 
-	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window on Buddy Logon"));
+	/* Set up the different options */
+	b->p_signon = gtk_check_button_new_with_label(_("Sign On"));
+	b->p_unaway = gtk_check_button_new_with_label(_("Return from away"));
+	b->p_unidle = gtk_check_button_new_with_label(_("Return from idle"));
+
+	/* Show them */
+	gtk_widget_show(b->p_signon);
+	gtk_widget_show(b->p_unaway);
+	gtk_widget_show(b->p_unidle);
+
+	/* And pack'em */
+	gtk_box_pack_start(GTK_BOX(vbox), b->p_signon, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), b->p_unaway, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), b->p_unidle, FALSE, FALSE, 0);
+
+	/* And now the other stuff */	
+	b->openwindow = gtk_check_button_new_with_label(_("Open IM window on pounce"));
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
 	
-	b->sendim = gtk_check_button_new_with_label(_("Send IM on Buddy Logon")); 
+	b->sendim = gtk_check_button_new_with_label(_("Send IM on pounce")); 
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 
 	gtk_widget_show(b->openwindow);

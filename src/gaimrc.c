@@ -36,6 +36,7 @@
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
+#define MAX_VALUES 7
 
 GList *aim_users = NULL;
 int general_options;
@@ -51,7 +52,7 @@ char *sound_file[NUM_SOUNDS];
 
 struct parse {
         char option[256];
-        char value[6][256];
+        char value[MAX_VALUES][256];
 };
 
 static struct parse *parse_line(char *line)
@@ -60,8 +61,13 @@ static struct parse *parse_line(char *line)
         int inopt = 1, inval = 0, curval = -1;
         int optlen = 0, vallen = 0;
         static struct parse p;
-        
+        int x;
 
+	for (x = 0; x < MAX_VALUES; x++) {
+		p.value[x][0] = 0;
+	}
+	
+	
         while(*c) {
                 if (*c == '\t') {
                         c++;
@@ -115,6 +121,7 @@ static struct parse *parse_line(char *line)
                 }
                 c++;
         }
+
         return &p;
 }
 
@@ -277,7 +284,23 @@ static void gaimrc_read_pounce(FILE *f)
 
 			b->popup = atoi(p->value[2]);
 			b->sendim = atoi(p->value[3]);
-		
+
+			/* Let's check our version and see what's going on here */
+			if ((p->value[4]) && (strlen(p->value[4]) > 0))
+			{
+				/* If we have data, lets use it */
+				b->signon = atoi(p->value[4]);		
+				b->unaway = atoi(p->value[5]);		
+				b->unidle = atoi(p->value[6]);		
+			}
+			else
+			{
+				/* Otherwise, we have old info.  Let's adjust */
+				b->signon = 1;
+				b->unaway = 0;
+				b->unidle = 0;
+			}
+
 			filter_break(b->message);
 			buddy_pounces = g_list_append(buddy_pounces, b);
 		}
@@ -295,7 +318,6 @@ static void gaimrc_write_pounce(FILE *f)
 	{
 		while (pnc) {
 			char *str1, *str2;
-			int popup, sendim;
 
 			b = (struct buddy_pounce *)pnc->data;
 
@@ -306,10 +328,8 @@ static void gaimrc_write_pounce(FILE *f)
 				str2 = malloc(1);
 				str2[0] = 0;
 			}
-			popup = b->popup;
-			sendim = b->sendim;
 
-			fprintf(f, "\tentry { %s } { %s } { %d } { %d }\n", str1, str2, popup, sendim);
+			fprintf(f, "\tentry { %s } { %s } { %d } { %d } { %d } { %d } { %d }\n", str1, str2, b->popup, b->sendim, b->signon, b->unaway, b->unidle);
 
 			/* escape_text2 uses malloc(), so we don't want to g_free these */
 			free(str1);
@@ -841,7 +861,6 @@ void load_prefs()
 	if ( (ver == 2) || (buf[0] != '#')) {
 		set_defaults(TRUE);
 	}
-	
 }
 
 void save_prefs()
@@ -852,7 +871,7 @@ void save_prefs()
 	if (getenv("HOME")) {
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
 		if ((f = fopen(buf,"w"))) {
-			fprintf(f, "# .gaimrc v%d\n", 3);
+			fprintf(f, "# .gaimrc v%d\n", 4);
 			gaimrc_write_users(f);
 			gaimrc_write_options(f);
 			gaimrc_write_sounds(f);
