@@ -66,6 +66,11 @@ char *description()
 	return WEBSITE;
 }
 
+char *version()
+{
+	return VERSION;
+}
+
 void show_about(GtkWidget *w, void *null)
 {
 	GtkWidget *vbox;
