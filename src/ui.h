@@ -67,6 +67,12 @@
 #define GAIM_WARNING 2
 #define GAIM_INFO 3
 
+typedef enum {
+		GAIM_BUTTON_HORIZONTAL,
+		GAIM_BUTTON_VERTICAL
+} GaimButtonStyle;
+
+
 struct debug_window {
 	GtkWidget *window;
 	GtkWidget *entry;
@@ -450,7 +456,7 @@ extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern void load_perl_script();
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
-extern GtkWidget *pixbuf_button(char *, char *);
+extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonStyle);
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();
 extern void show_privacy_options();
@@ -496,5 +502,9 @@ extern int find_queue_total_by_name(char *);
 /* Functions in sound.c */
 extern void play_sound(int);
 extern void play_file(char *);
+
+/* Fucnctions in util.c */
+extern GtkWidget *gaim_pixmap(char *, char *);
+extern GdkPixbuf *gaim_pixbuf(char *, char *);
 
 #endif /* _UI_H_ */

@@ -1432,7 +1432,7 @@ GtkWidget *away_message_page() {
 
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = pixbuf_button(_("_Edit"), "edit.png");
+	button = gaim_pixbuf_button(_("_Edit"), "edit.png", GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), event_view);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);

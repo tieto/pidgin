@@ -1,5 +1,6 @@
 SUBDIRS = protocols
 EXTRA_DIST =	about_small.xpm			\
+		accounts.png \
 		add.xpm				\
 		add_small.xpm			\
 		angel.xpm			\
@@ -47,6 +48,7 @@ EXTRA_DIST =	about_small.xpm			\
 		kiss.xpm			\
 		link.xpm			\
 		login_icon.xpm			\
+		logo.png		\
 		logo.xpm			\
 		logout_icon.xpm			\
 		logout_menu.xpm			\
@@ -64,6 +66,7 @@ EXTRA_DIST =	about_small.xpm			\
 		panic.xpm			\
 		plugins_small.xpm		\
 		pounce_small.xpm		\
+		preferences.png	\
 		prefs_small.xpm			\
 		refresh.xpm			\
 		sad.xpm				\
@@ -72,6 +75,7 @@ EXTRA_DIST =	about_small.xpm			\
 		scream.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\
+		signon.png \
 		small.xpm			\
 		smile.xpm			\
 		smile8.xpm			\
@@ -99,7 +103,7 @@ EXTRA_DIST =	about_small.xpm			\
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
-gaimbuttonpix_DATA = edit.png
+gaimbuttonpix_DATA = edit.png accounts.png signon.png preferences.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png 

@@ -1409,3 +1409,44 @@ const char *handle_uri(char *uri) {
 	
 	return NULL;
 }
+
+GtkWidget *gaim_pixmap(char *subdir, char *iconfile) {
+		char *filename;
+		GtkWidget *image;
+
+		if (subdir != NULL)
+				filename = g_build_filename (DATADIR, "pixmaps", "gaim", subdir, iconfile, NULL);
+		else
+				filename = g_build_filename (DATADIR, "pixmaps", "gaim", iconfile, NULL);
+
+		debug_printf("Loading: %s\n", filename);
+
+		image = gtk_image_new_from_file(filename);
+
+		g_free(filename);
+
+		return image;
+}
+
+GdkPixbuf *gaim_pixbuf(char *subdir, char *iconfile) {
+		char *filename;
+		GdkPixbuf *pixbuf;
+		GError *err = NULL;
+
+		if (subdir != NULL)
+				filename = g_build_filename (DATADIR, "pixmaps", "gaim", subdir, iconfile, NULL);
+		else
+				filename = g_build_filename (DATADIR, "pixmaps", "gaim", iconfile, NULL);
+
+		debug_printf("Loading: %s\n", filename);
+
+		pixbuf = gdk_pixbuf_new_from_file(filename, &err);
+		if (!pixbuf) {
+				/* FIXME: Maybe we should handle this error */
+				g_error_free(err);
+		}
+
+		g_free(filename);
+
+		return pixbuf;
+}

@@ -224,62 +224,49 @@ static GList *combo_user_names()
 	return tmp;
 }
 
-
 void show_login()
 {
-	GtkWidget *signon_all;
-	GtkWidget *options;
-	GtkWidget *plugs;
-#ifndef NO_MULTI
-	GtkWidget *accts;
-#endif
-	GtkWidget *signon;
-	GtkWidget *cancel;
-	GtkWidget *reg;
-	GtkWidget *bbox;
+	GdkPixbuf *icon;
+	GtkWidget *image;
+	GtkWidget *vbox;
+	GtkWidget *button;
 	GtkWidget *hbox;
-	GtkWidget *sbox;
 	GtkWidget *label;
-	GtkWidget *table;
-
-	GtkWidget *pmw;
-	GdkPixmap *pm;
-	GtkStyle *style;
-	GdkBitmap *mask;
-
 	GList *tmp;
 
+	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
 	if (mainwindow) {
-		gtk_window_present(GTK_WINDOW(mainwindow));
-		return;
+			gtk_window_present(GTK_WINDOW(mainwindow));
+			return;
 	}
 
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
-	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
-			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 	gtk_widget_realize(mainwindow);
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
+	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
+	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event", 
+					GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 
-	table = gtk_table_new(8, 2, FALSE);
-	gtk_container_add(GTK_CONTAINER(mainwindow), table);
-	gtk_widget_show(table);
 
-	style = gtk_widget_get_style(mainwindow);
-	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
-					  &style->bg[GTK_STATE_NORMAL], (gchar **)gaim_logo_xpm);
-	pmw = gtk_pixmap_new(pm, mask);
-	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
-	gtk_widget_show(pmw);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
+	icon = gaim_pixbuf(NULL, "gaim.png");
+	if (icon) {
+			gtk_window_set_icon(GTK_WINDOW(mainwindow), icon);
+			gdk_pixbuf_unref(icon);
+	}
 
-	label = gtk_label_new(_("Screen Name: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, 0, 0, 5, 5);
-	gtk_widget_show(label);
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(mainwindow), vbox);
+
+	image = gaim_pixmap(NULL, "logo.png");
+	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Screen Name:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	name = gtk_combo_new();
 	tmp = combo_user_names();
@@ -289,92 +276,47 @@ void show_login()
 			   GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
 			   GTK_SIGNAL_FUNC(combo_changed), name);
-	gtk_widget_set_usize(name, 100, 0);
-	gtk_table_attach(GTK_TABLE(table), name, 1, 2, 2, 3, 0, 0, 5, 5);
-	gtk_widget_show(name);
+	gtk_box_pack_start(GTK_BOX(vbox), name, FALSE, TRUE, 0);
 
-	label = gtk_label_new(_("Password: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, 0, 0, 5, 5);
-	gtk_widget_show(label);
+	label = gtk_label_new(_("Password:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	pass = gtk_entry_new();
-	gtk_widget_set_usize(pass, 100, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	gtk_signal_connect(GTK_OBJECT(pass), "activate", GTK_SIGNAL_FUNC(doenter), mainwindow);
-	gtk_table_attach(GTK_TABLE(table), pass, 1, 2, 3, 4, 0, 0, 5, 5);
-	gtk_widget_show(pass);
+	gtk_box_pack_start(GTK_BOX(vbox), pass, FALSE, TRUE, 0);
 
-	sbox = gtk_vbox_new(TRUE, 5);
-	gtk_container_border_width(GTK_CONTAINER(sbox), 10);
-	gtk_table_attach(GTK_TABLE(table), sbox, 0, 2, 7, 8, 0, 0, 5, 5);
-	gtk_widget_show(sbox);
+	/* Now for the button box */
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
 
-	bbox = gtk_hbox_new(TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
-	gtk_widget_show(bbox);
+	/* And now for the buttons */
+	button = gaim_pixbuf_button("Accounts", "accounts.png", GAIM_BUTTON_VERTICAL);
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	cancel = gtk_button_new_with_label(_("Quit"));
-#ifndef NO_MULTI
-	accts = gtk_button_new_with_label(_("Accounts"));
+#ifdef NO_MULTI
+	gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 #endif
-	signon = gtk_button_new_with_label(_("Signon"));
 
-	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-#ifndef NO_MULTI
-		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
-#endif
-		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
-	}
+	button = gaim_pixbuf_button("Settings", "preferences.png", GAIM_BUTTON_VERTICAL);
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(show_prefs), mainwindow);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
-#ifndef NO_MULTI
-	gtk_signal_connect(GTK_OBJECT(accts), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
-#endif
-	gtk_signal_connect(GTK_OBJECT(signon), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
+	button = gaim_pixbuf_button("Sign On", "signon.png", GAIM_BUTTON_VERTICAL);
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
-#ifndef NO_MULTI
-	gtk_box_pack_start(GTK_BOX(bbox), accts, TRUE, TRUE, 0);
-#endif
-	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
-
-	gtk_widget_show(cancel);
-#ifndef NO_MULTI
-	gtk_widget_show(accts);
-#endif
-	gtk_widget_show(signon);
-
-	hbox = gtk_hbox_new(TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
-	gtk_widget_show(hbox);
-
-	reg = gtk_button_new_with_label(_("Auto-login"));
-	options = gtk_button_new_with_label(_("Options"));
-	plugs = gtk_button_new_with_label(_("About"));
-	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
-	}
-
-	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(dologin_all), NULL);
-	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
-	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_about), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
-
-	gtk_widget_show(reg);
-	gtk_widget_show(options);
-	gtk_widget_show(plugs);
-
+	/* Now grab the focus that we need */
 	if (aim_users) {
 		struct aim_user *c = (struct aim_user *)aim_users->data;
 		if (c->options & OPT_USR_REM_PASS) {
 			combo_changed(NULL, name);
-			gtk_widget_grab_focus(signon);
+			gtk_widget_grab_focus(button);
 		} else {
 			gtk_widget_grab_focus(pass);
 		}
@@ -382,7 +324,9 @@ void show_login()
 		gtk_widget_grab_focus(name);
 	}
 
-	gtk_widget_show(mainwindow);
+	/* And raise the curtain! */
+	gtk_widget_show_all(mainwindow);
+
 }
 
 #if HAVE_SIGNAL_H

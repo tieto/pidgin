@@ -106,6 +106,7 @@ static GtkWidget *aliasname = NULL;
 static GtkWidget *rename_dialog = NULL;
 static GtkWidget *rename_bud_dialog = NULL;
 
+
 struct confirm_del {
 	GtkWidget *window;
 	GtkWidget *label;
@@ -4582,12 +4583,18 @@ void load_perl_script()
 
 #endif /* USE_PERL */
 
-GtkWidget *pixbuf_button(char *text, char *iconfile)
+GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonStyle style)
 {
 	GtkWidget *button, *image, *label, *bbox;
 	button = gtk_button_new();
-	bbox = gtk_hbox_new(FALSE, 5);
+
+	if (style == GAIM_BUTTON_HORIZONTAL)
+			bbox = gtk_hbox_new(FALSE, 5);
+	else
+			bbox = gtk_vbox_new(FALSE, 0);
+
 	gtk_container_add (GTK_CONTAINER(button), bbox);
+
 	if (iconfile) {
 		char *filename;
 		filename = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", iconfile, NULL);
@@ -4596,6 +4603,7 @@ GtkWidget *pixbuf_button(char *text, char *iconfile)
 		gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
 		g_free(filename);
 	}
+	
 	if (text) {
 		label = gtk_label_new(NULL);
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
