@@ -1678,7 +1678,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
 			"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
-			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy <br>"));
+			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"));
 
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
@@ -2451,7 +2451,7 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 
 static void oscar_set_away(struct gaim_connection *gc, char *state, char *message) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	char away[1025];
+	char away[4096];
 	if (!od->icq) {
 		if (message)
 			g_snprintf(away, sizeof(away), "%s", message);
@@ -2460,8 +2460,8 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 			g_free (gc->away);
 		gc->away = NULL;
 		if (message) {
-			if (strlen(message) > 1024)
-				do_error_dialog("Maximum away length (1024) exceeded, truncating",
+			if (strlen(message) > sizeof(away))
+				do_error_dialog("Maximum away length exceeded, truncating",
 						"Info Too Long");
 			gc->away = g_strdup (message);
 		}
