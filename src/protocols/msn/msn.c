@@ -1230,6 +1230,7 @@ static GList *msn_away_states()
 	m = g_list_append(m, "Busy");
 	m = g_list_append(m, "On The Phone");
 	m = g_list_append(m, "Out To Lunch");
+	m = g_list_append(m, "Hidden");
 
 	return m;
 }
@@ -1258,6 +1259,8 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 			away = "PHN";
 		else if (!strcmp(state, "Out To Lunch"))
 			away = "LUN";
+		else if (!strcmp(state, "Hidden"))
+			away = "HDN";
 		else {
 			gc->away = NULL;
 			away = "NLN";
