@@ -848,6 +848,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		char *which, *who, *friend, *tmp = buf;
 		struct msn_add_permit *ap; /* for any as yet undealt with buddies who've added you to their buddy list when you were off-line.  How dare they! */
 		GSList *perm = gc->permit; /* current permit list */
+		GSList *denyl = gc->deny;
 		char msg[MSN_BUF_LEN];
 		int new = 1;
 		int pos, tot;
@@ -882,7 +883,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 					new = 0;
 				perm = perm->next;
 			}
-
+			while(denyl) {
+			  if(!g_strcasecmp(denyl->data, who))
+			    new = 0;
+			  denyl = denyl->next;
+			}
 			if(new) {
 				debug_printf("Unresolved MSN RL entry\n");
 				ap = g_new0(struct msn_add_permit, 1);
