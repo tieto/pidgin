@@ -36,6 +36,8 @@
 #define PROTO_JABBER	8
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
+/* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Eric or Rob if you'd like
+ * to create a new PRPL. */
 
 #define DEFAULT_PROTO   PROTO_OSCAR
 
