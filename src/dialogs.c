@@ -814,26 +814,6 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 	destroy_dialog(NULL, a->window);
 }
 
-void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
-{
-	const char *grp;
-	struct group *g;
-
-	if (resp == GTK_RESPONSE_OK) {
-		grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
-
-		if (!a->gc)
-			a->gc = gaim_connections_get_all()->data;
-
-		g = gaim_group_new(grp);
-		gaim_blist_add_group (g, NULL);
-		gaim_blist_save();
-	}
-
-	destroy_dialog(NULL, a->window);
-}
-
-
 static GList *groups_tree()
 {
 	GList *tmp = NULL;
@@ -864,9 +844,26 @@ static void free_dialog(GtkWidget *w, struct addbuddy *a)
 }
 
 
-void show_add_group(GaimConnection *gc)
+static void
+add_group_cb(GaimConnection *gc, const char *group_name)
 {
+	struct group *g;
 
+	g = gaim_group_new(group_name);
+	gaim_blist_add_group(g, NULL);
+	gaim_blist_save();
+}
+
+void
+show_add_group(GaimConnection *gc)
+{
+	gaim_request_input(NULL, _("Add Group"), _("Add a new group"),
+					   _("Please enter the name of the group to be added."),
+					   NULL, FALSE, FALSE,
+					   _("Add"), G_CALLBACK(add_group_cb),
+					   _("Cancel"), NULL, gc);
+
+#if 0
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
 	struct gaim_gtk_buddy_list *gtkblist;
@@ -915,6 +912,7 @@ void show_add_group(GaimConnection *gc)
 
 	gtk_widget_show_all(a->window);
 	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
+#endif
 }
 
 static void
