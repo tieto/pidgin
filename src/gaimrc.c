@@ -517,7 +517,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "ident"))
 		return NULL;
 
-	account = gaim_account_new(p->value[0], GAIM_PROTO_DEFAULT);
+	account = gaim_account_new(p->value[0], "prpl-oscar");
 
 	gaim_account_set_password(account, p->value[1]);
 	gaim_account_set_remember_password(account, TRUE);

@@ -222,6 +222,9 @@ gaim_pounce_action_register(GaimPounce *pounce, const char *name)
 	g_return_if_fail(pounce != NULL);
 	g_return_if_fail(name   != NULL);
 
+	if (g_hash_table_lookup(pounce->actions, name) != NULL)
+		return;
+
 	action_data = g_new0(GaimPounceActionData, 1);
 
 	action_data->name    = g_strdup(name);
@@ -551,6 +554,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->event_type = NULL;
 	}
 	else if (!strcmp(element_name, "action")) {
+		gaim_pounce_action_register(data->pounce, data->action_name);
 		gaim_pounce_action_set_enabled(data->pounce, data->action_name, TRUE);
 
 		g_free(data->action_name);

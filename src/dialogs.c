@@ -1164,11 +1164,16 @@ static void rebuild_addchat_entries(struct addchat *ac) {
 static void addchat_select_account(GObject *w, GaimConnection *gc)
 {
 	struct addchat *ac = g_object_get_data(w, "addchat");
+	GaimAccount *account;
 
-	if(ac->account->protocol == gc->account->protocol) {
-		ac->account = gc->account;
+	account = gaim_connection_get_account(gc);
+
+	if (gaim_account_get_protocol(ac->account) ==
+		gaim_account_get_protocol(account)) {
+
+		ac->account = account;
 	} else {
-		ac->account = gc->account;
+		ac->account = account;
 		rebuild_addchat_entries(ac);
 	}
 }
@@ -3511,7 +3516,8 @@ void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 		return;
 
 	if(c->account)
-		smileys = get_proto_smileys(c->account->protocol);
+		smileys = get_proto_smileys(
+			gaim_account_get_protocol(gaim_conversation_get_account(c)));
 	else
 		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
 

@@ -83,6 +83,7 @@ typedef struct
 
 	GaimAccount *account;
 	GaimProtocol protocol;
+	const char *protocol_id;
 	GaimPlugin *plugin;
 	GaimPluginProtocolInfo *prpl_info;
 
@@ -183,10 +184,10 @@ static void
 set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 						  AccountPrefsDialog *dialog)
 {
-	dialog->protocol = protocol;
-
-	if ((dialog->plugin = gaim_find_prpl(dialog->protocol)) != NULL)
+	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL)
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+
+	dialog->protocol_id = dialog->plugin->info->id;
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
@@ -925,11 +926,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 
-		dialog->account = gaim_account_new(screenname, dialog->protocol);
+		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
 	}
 	else {
 		/* Protocol */
-		gaim_account_set_protocol(dialog->account, dialog->protocol);
+		gaim_account_set_protocol_id(dialog->account, dialog->protocol_id);
 	}
 
 	/* Alias */

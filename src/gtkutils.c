@@ -809,3 +809,101 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 
 	return optmenu;
 }
+
+char *stylize(const gchar *text, int length)
+{
+	gchar *buf;
+	char *tmp = g_malloc(length);
+
+	buf = g_malloc(length);
+	g_snprintf(buf, length, "%s", text);
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
+		g_snprintf(tmp, length, "<B>%s</B>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic")) {
+		g_snprintf(tmp, length, "<I>%s</I>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline")) {
+		g_snprintf(tmp, length, "<U>%s</U>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough")) {
+		g_snprintf(tmp, length, "<S>%s</S>", buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font")) {
+		const char *fontface;
+
+		fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
+
+		g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
+		int fontsize = gaim_prefs_get_int("/gaim/gtk/conversations/font_size");
+
+		g_snprintf(tmp, length, "<FONT SIZE=\"%d\">%s</FONT>", fontsize, buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
+		GdkColor fgcolor;
+
+		gdk_color_parse(
+			gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+			&fgcolor);
+
+		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
+				   fgcolor.red/256, fgcolor.green/256, fgcolor.blue/256, buf);
+		strcpy(buf, tmp);
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
+		GdkColor bgcolor;
+
+		gdk_color_parse(
+			gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+			&bgcolor);
+
+		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
+				   bgcolor.red/256, bgcolor.green/256, bgcolor.blue/256, buf);
+		strcpy(buf, tmp);
+	}
+
+	g_free(tmp);
+	return buf;
+}
+
+void show_usage(int mode, const char *name)
+{
+	switch (mode) {
+	case 0:		/* full help text */
+		printf(_("Gaim %s\n"
+		       "Usage: %s [OPTION]...\n\n"
+		       "  -a, --acct          display account editor window\n"
+		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
+		       "                      name of away message to use)\n"
+		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		       "                      account(s) to use, seperated by commas)\n"
+		       "  -n, --loginwin      don't automatically login; show login window\n"
+		       "  -u, --user=NAME     use account NAME\n"
+		       "  -f, --file=FILE     use FILE as config\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -v, --version       display the current version and exit\n"
+		       "  -h, --help          display this help and exit\n"), VERSION, name);
+		break;
+	case 1:		/* short message */
+		printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		break;
+	}
+}
+
+

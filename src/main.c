@@ -46,6 +46,7 @@
 #include "gtkprefs.h"
 #include "gtkrequest.h"
 #include "gtksound.h"
+#include "gtkutils.h"
 #include "stock.h"
 
 #include "ui.h"
@@ -240,7 +241,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 
 	account = gaim_accounts_find(username, -1);
 	if (!account) {
-		account = gaim_account_new(username, GAIM_PROTO_DEFAULT);
+		account = gaim_account_new(username, "prpl-oscar");
 
 		gaim_account_set_remember_password(account, TRUE);
 	}
@@ -552,7 +553,7 @@ static void set_first_user(char *name)
 	account = gaim_accounts_find(name, -1);
 
 	if (account == NULL)   /* new user */
-		account = gaim_account_new(name, GAIM_PROTO_DEFAULT);
+		account = gaim_account_new(name, "prpl-oscar");
 
 	/* Place it as the first user. */
 	gaim_accounts_reorder(account, 0);

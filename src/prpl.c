@@ -30,6 +30,54 @@
 /* XXX */
 #include "gtkconv.h"
 
+const char *
+gaim_prpl_num_to_id(GaimProtocol protocol)
+{
+	g_return_val_if_fail(protocol >= 0 && protocol < GAIM_PROTO_UNTAKEN, NULL);
+
+	switch (protocol)
+	{
+		case GAIM_PROTO_TOC:      return "prpl-toc";     break;
+		case GAIM_PROTO_OSCAR:    return "prpl-oscar";   break;
+		case GAIM_PROTO_YAHOO:    return "prpl-yahoo";   break;
+		case GAIM_PROTO_ICQ:      return "prpl-icq";     break;
+		case GAIM_PROTO_MSN:      return "prpl-msn";     break;
+		case GAIM_PROTO_IRC:      return "prpl-irc";     break;
+		case GAIM_PROTO_JABBER:   return "prpl-jabber";  break;
+		case GAIM_PROTO_NAPSTER:  return "prpl-napster"; break;
+		case GAIM_PROTO_ZEPHYR:   return "prpl-zephyr";  break;
+		case GAIM_PROTO_GADUGADU: return "prpl-gg";      break;
+		case GAIM_PROTO_MOO:      return "prpl-moo";     break;
+		case GAIM_PROTO_TREPIA:   return "prpl-trepia";  break;
+
+		default:
+			break;
+	}
+
+	return NULL;
+}
+
+GaimProtocol
+gaim_prpl_id_to_num(const char *id)
+{
+	g_return_val_if_fail(id != NULL, -1);
+
+	if      (!strcmp(id, "prpl-toc"))     return GAIM_PROTO_TOC;
+	else if (!strcmp(id, "prpl-oscar"))   return GAIM_PROTO_OSCAR;
+	else if (!strcmp(id, "prpl-yahoo"))   return GAIM_PROTO_YAHOO;
+	else if (!strcmp(id, "prpl-icq"))     return GAIM_PROTO_ICQ;
+	else if (!strcmp(id, "prpl-msn"))     return GAIM_PROTO_MSN;
+	else if (!strcmp(id, "prpl-irc"))     return GAIM_PROTO_IRC;
+	else if (!strcmp(id, "prpl-jabber"))  return GAIM_PROTO_JABBER;
+	else if (!strcmp(id, "prpl-napster")) return GAIM_PROTO_NAPSTER;
+	else if (!strcmp(id, "prpl-zephyr"))  return GAIM_PROTO_ZEPHYR;
+	else if (!strcmp(id, "prpl-gg"))      return GAIM_PROTO_GADUGADU;
+	else if (!strcmp(id, "prpl-moo"))     return GAIM_PROTO_MOO;
+	else if (!strcmp(id, "prpl-trepia"))  return GAIM_PROTO_TREPIA;
+
+	return -1;
+}
+
 GaimPlugin *
 gaim_find_prpl(GaimProtocol type)
 {

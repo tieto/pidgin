@@ -305,16 +305,22 @@ struct _GaimPluginProtocolInfo
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
 /**
- * Compares two protocol plugins, based off their protocol plugin number.
+ * Returns the plugin ID for a protocol number.
  *
- * @param a The first protocol plugin.
- * @param b The second protocol plugin.
+ * @param protocol The protocol number.
  *
- * @return <= 1 if the first plugin's number is smaller than the second;
- *         0 if the first plugin's number is equal to the second; or
- *         >= 1 if the first plugin's number is greater than the second.
+ * @return The plugin ID for those numbers that support it.
  */
-gint gaim_prpl_compare(GaimPlugin *a, GaimPlugin *b);
+const char *gaim_prpl_num_to_id(GaimProtocol protocol);
+
+/**
+ * Returns the plugin number for a protocol ID.
+ *
+ * @param protocol_id The protocol ID.
+ *
+ * @return The protocol ID for valid protocol plugin IDs.
+ */
+GaimProtocol gaim_prpl_id_to_num(const char *id);
 
 /**
  * Finds a protocol plugin structure of the specified type.

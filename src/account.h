@@ -49,7 +49,6 @@ struct _GaimAccount
 	gboolean remember_pass;     /**< Remember the password.      */
 	gboolean check_mail;        /**< Check for mail.             */
 
-	GaimProtocol protocol;      /**< The account protocol.       */
 	char *protocol_id;          /**< The ID of the protocol.     */
 
 	GaimConnection *gc;         /**< The connection handle.      */
@@ -67,10 +66,10 @@ struct _GaimAccount
 /**
  * Creates a new account.
  *
- * @param username The username.
- * @param protocol The protocol.
+ * @param username    The username.
+ * @param protocol_id The protocol ID.
  */
-GaimAccount *gaim_account_new(const char *username, GaimProtocol protocol);
+GaimAccount *gaim_account_new(const char *username, const char *protocol_id);
 
 /**
  * Destroys an account.
@@ -144,6 +143,15 @@ void gaim_account_set_buddy_icon(GaimAccount *account, const char *icon);
  * @param protocol The protocol.
  */
 void gaim_account_set_protocol(GaimAccount *account, GaimProtocol protocol);
+
+/**
+ * Sets the account's protocol ID.
+ *
+ * @param account     The account.
+ * @param protocol_id The protocol ID.
+ */
+void gaim_account_set_protocol_id(GaimAccount *account,
+								  const char *protocol_id);
 
 /**
  * Sets the account's connection.
@@ -321,6 +329,15 @@ const char *gaim_account_get_buddy_icon(const GaimAccount *account);
 GaimProtocol gaim_account_get_protocol(const GaimAccount *account);
 
 /**
+ * Returns the account's protocol ID.
+ *
+ * @param account The account.
+ *
+ * @return The protocol ID.
+ */
+const char *gaim_account_get_protocol_id(const GaimAccount *account);
+
+/**
  * Returns the account's connection.
  *
  * @param account The account.
@@ -492,13 +509,24 @@ void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
 GList *gaim_accounts_get_all(void);
 
 /**
- * Finds an account with the specified name and protocol.
+ * Finds an account with the specified name and protocol number.
  *
  * @param name     The account username.
- * @param protocol The account protocol.
+ * @param protocol The account protocol number.
  *
  * @return The account, if found, or @c FALSE otherwise.
  */
 GaimAccount *gaim_accounts_find(const char *name, GaimProtocol protocol);
+
+/**
+ * Finds an account with the specified name and protocol ID.
+ *
+ * @param name        The account username.
+ * @param protocol_id The account protocol ID.
+ *
+ * @return The account, if found, or @c FALSE otherwise.
+ */
+GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
+											 const char *protocol_id);
 
 #endif /* _GAIM_ACCOUNTS_H_ */

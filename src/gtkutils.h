@@ -205,4 +205,28 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 											gboolean show_all, GCallback cb,
 											gpointer user_data);
 
+/**
+ * Stylizes the specified text using HTML, according to the current
+ * font options.
+ *
+ * @param text The text to stylize.
+ * @param len  The intended length of the new buffer.
+ *
+ * @return A newly allocated string of length @a len, containing the
+ *         stylized version of @a text.
+ *
+ * @todo Move this to a UI-specific file.
+ */
+char *stylize(const gchar *text, int len);
+
+/**
+ * Shows the usage options for the gaim binary.
+ *
+ * @param mode @c 0 for full options, or @c 1 for a short summary.
+ * @param name The name of the binary.
+ * 
+ * @todo Move this to the binary, when a library is formed.
+ */
+void show_usage(int mode, const char *name);
+
 #endif /* _GAIM_GTK_UTILS_H_ */

@@ -114,21 +114,22 @@ schedule_accounts_save()
 }
 
 GaimAccount *
-gaim_account_new(const char *username, GaimProtocol protocol)
+gaim_account_new(const char *username, const char *protocol_id)
 {
 	GaimAccount *account;
 
-	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(username    != NULL, NULL);
+	g_return_val_if_fail(protocol_id != NULL, NULL);
 
-	account = gaim_accounts_find(username, protocol);
+	account = gaim_accounts_find_with_prpl_id(username, protocol_id);
 
 	if (account != NULL)
 		return account;
 
 	account = g_new0(GaimAccount, 1);
 
-	gaim_account_set_username(account, username);
-	gaim_account_set_protocol(account, protocol);
+	gaim_account_set_username(account,    username);
+	gaim_account_set_protocol_id(account, protocol_id);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
@@ -270,20 +271,21 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 void
 gaim_account_set_protocol(GaimAccount *account, GaimProtocol protocol)
 {
-	GaimPlugin *plugin;
-
 	g_return_if_fail(account != NULL);
 
-	plugin = gaim_find_prpl(protocol);
+	gaim_account_set_protocol_id(account, gaim_prpl_num_to_id(protocol));
+}
 
-	g_return_if_fail(plugin != NULL);
-
-	account->protocol = protocol;
+void
+gaim_account_set_protocol_id(GaimAccount *account, const char *protocol_id)
+{
+	g_return_if_fail(account     != NULL);
+	g_return_if_fail(protocol_id != NULL);
 
 	if (account->protocol_id != NULL)
 		g_free(account->protocol_id);
 
-	account->protocol_id = g_strdup(plugin->info->id);
+	account->protocol_id = g_strdup(protocol_id);
 
 	schedule_accounts_save();
 }
@@ -547,7 +549,15 @@ gaim_account_get_protocol(const GaimAccount *account)
 {
 	g_return_val_if_fail(account != NULL, -1);
 
-	return account->protocol;
+	return gaim_prpl_id_to_num(gaim_account_get_protocol_id(account));
+}
+
+const char *
+gaim_account_get_protocol_id(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->protocol_id;
 }
 
 GaimConnection *
@@ -814,38 +824,18 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	data->buffer = NULL;
 
 	if (data->tag == TAG_PROTOCOL) {
-		GList *l;
-		GaimPlugin *plugin;
-
 		data->protocol_id = g_strdup(buffer);
-		data->protocol = -1;
-
-		for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
-			plugin = (GaimPlugin *)l->data;
-
-			if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
-				if (!strcmp(plugin->info->id, buffer)) {
-					data->protocol =
-						GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol;
-
-					break;
-				}
-			}
-		}
 	}
 	else if (data->tag == TAG_NAME) {
 		if (data->in_proxy) {
 			gaim_proxy_info_set_username(data->proxy_info, buffer);
 		}
 		else {
-			data->account = gaim_account_new(buffer, data->protocol);
-
-			if (data->account->protocol_id != NULL)
-				g_free(data->account->protocol_id);
-
-			data->account->protocol_id = data->protocol_id;
+			data->account = gaim_account_new(buffer, data->protocol_id);
 
 			gaim_accounts_add(data->account);
+
+			g_free(data->protocol_id);
 
 			data->protocol_id = NULL;
 		}
@@ -1301,11 +1291,39 @@ gaim_accounts_find(const char *name, GaimProtocol protocol)
 
 		if (!strcmp(normalize(gaim_account_get_username(account)), who)) {
 			if (protocol != -1) {
-				if (account->protocol == protocol)
+				if (gaim_account_get_protocol(account) == protocol)
 					break;
 			}
 			else
 				break;
+		}
+
+		account = NULL;
+	}
+
+	g_free(who);
+
+	return account;
+}
+
+GaimAccount *
+gaim_accounts_find_with_prpl_id(const char *name, const char *protocol_id)
+{
+	GaimAccount *account = NULL;
+	GList *l;
+	char *who;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	who = g_strdup(normalize(name));
+
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+		account = (GaimAccount *)l->data;
+
+		if (!strcmp(normalize(gaim_account_get_username(account)), who) &&
+			!strcmp(account->protocol_id, protocol_id)) {
+
+			break;
 		}
 
 		account = NULL;

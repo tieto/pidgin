@@ -158,7 +158,9 @@ joinchat_choose(GtkWidget *w, GaimConnection *g)
 	if (joinchatgc == g)
 		return;
 
-	if(joinchatgc->account->protocol == g->account->protocol) {
+	if (gaim_account_get_protocol(joinchatgc->account) ==
+		gaim_account_get_protocol(g->account)) {
+
 		joinchatgc = g;
 	} else {
 		joinchatgc = g;

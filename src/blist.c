@@ -1139,8 +1139,21 @@ static void do_import(GaimAccount *account, const char *filename)
 		g_snprintf(path, sizeof(path), "%s", filename);
 	} else {
 		char *g_screenname = get_screenname_filename(account->username);
+		const char *username;
 		char *file = gaim_user_dir();
-		int protocol = (account->protocol == GAIM_PROTO_OSCAR) ? (isalpha(account->username[0]) ? GAIM_PROTO_TOC : GAIM_PROTO_ICQ): account->protocol;
+		GaimProtocol prpl_num;
+		int protocol;
+		
+		prpl_num = gaim_account_get_protocol(account);
+
+		protocol = prpl_num;
+
+		if (prpl_num == GAIM_PROTO_OSCAR) {
+			if ((username = gaim_account_get_username(account)) != NULL) {
+				protocol = (isalpha(*username)
+							? GAIM_PROTO_TOC : GAIM_PROTO_ICQ);
+			}
+		}
 
 		if (file != (char *)NULL) {
 			snprintf(path, PATHSIZE, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, protocol);
@@ -1728,7 +1741,8 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 						fprintf(file, "\t\t\t<person name=\"%s\">\n",
 								bud_alias ? bud_alias : bud_name);
 						fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
-								"account=\"%s\">\n", bud->account->protocol,
+								"account=\"%s\">\n",
+								gaim_account_get_protocol(bud->account),
 								acct_name);
 						fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
 						if(bud_alias) {
@@ -1747,7 +1761,9 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 					struct chat *chat = (struct chat *)bnode;
 					if(!exp_acct || chat->account == exp_acct) {
 						char *acct_name = g_markup_escape_text(chat->account->username, -1);
-						fprintf(file, "\t\t\t<chat protocol=\"%d\" account=\"%s\">\n", chat->account->protocol, acct_name);
+						fprintf(file, "\t\t\t<chat protocol=\"%d\" account=\"%s\">\n",
+								gaim_account_get_protocol(chat->account),
+								acct_name);
 						if(chat->alias) {
 							char *chat_alias = g_markup_escape_text(chat->alias, -1);
 							fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
@@ -1779,7 +1795,8 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 		char *acct_name = g_markup_escape_text(account->username, -1);
 		if(!exp_acct || account == exp_acct) {
 			fprintf(file, "\t\t<account protocol=\"%d\" name=\"%s\" "
-					"mode=\"%d\">\n", account->protocol, acct_name, account->perm_deny);
+					"mode=\"%d\">\n", gaim_account_get_protocol(account),
+					acct_name, account->perm_deny);
 			for(buds = account->permit; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);
 				fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
