@@ -2709,7 +2709,7 @@ irc_init(struct prpl *ret)
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Server:");
-	puo->def = g_strdup("irc.openprojects.net");
+	puo->def = g_strdup("irc.freenode.net");
 	puo->pos = USEROPT_SERV;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
