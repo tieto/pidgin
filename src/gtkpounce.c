@@ -408,21 +408,21 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_widget_show(table);
 
 	dialog->signon =
-		gtk_check_button_new_with_label(_("Sign on"));
+		gtk_check_button_new_with_mnemonic(_("_Sign on"));
 	dialog->signoff =
-		gtk_check_button_new_with_label(_("Sign off"));
+		gtk_check_button_new_with_mnemonic(_("Sign _off"));
 	dialog->away =
-		gtk_check_button_new_with_label(_("Away"));
+		gtk_check_button_new_with_mnemonic(_("A_way"));
 	dialog->away_return =
-		gtk_check_button_new_with_label(_("Return from away"));
+		gtk_check_button_new_with_mnemonic(_("Re_turn from away"));
 	dialog->idle =
-		gtk_check_button_new_with_label(_("Idle"));
+		gtk_check_button_new_with_mnemonic(_("_Idle"));
 	dialog->idle_return =
-		gtk_check_button_new_with_label(_("Return from idle"));
+		gtk_check_button_new_with_mnemonic(_("Retur_n from idle"));
 	dialog->typing =
-		gtk_check_button_new_with_label(_("Buddy starts typing"));
+		gtk_check_button_new_with_mnemonic(_("Buddy starts _typing"));
 	dialog->stop_typing =
-		gtk_check_button_new_with_label(_("Buddy stops typing"));
+		gtk_check_button_new_with_mnemonic(_("Buddy stops t_yping"));
 
 	gtk_table_attach(GTK_TABLE(table), dialog->signon,      0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
@@ -458,18 +458,18 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	gtk_widget_show(table);
 
-	dialog->open_win = gtk_check_button_new_with_label(_("Open an IM window"));
-	dialog->popup = gtk_check_button_new_with_label(_("Popup notification"));
-	dialog->send_msg = gtk_check_button_new_with_label(_("Send a message"));
-	dialog->exec_cmd = gtk_check_button_new_with_label(_("Execute a command"));
-	dialog->play_sound = gtk_check_button_new_with_label(_("Play a sound"));
+	dialog->open_win = gtk_check_button_new_with_mnemonic(_("Op_en an IM window"));
+	dialog->popup = gtk_check_button_new_with_mnemonic(_("_Popup notification"));
+	dialog->send_msg = gtk_check_button_new_with_mnemonic(_("Send a _message"));
+	dialog->exec_cmd = gtk_check_button_new_with_mnemonic(_("E_xecute a command"));
+	dialog->play_sound = gtk_check_button_new_with_mnemonic(_("P_lay a sound"));
 
 	dialog->send_msg_entry   = gtk_entry_new();
 	dialog->exec_cmd_entry   = gtk_entry_new();
-	dialog->exec_cmd_browse = gtk_button_new_with_label(_("Browse"));
+	dialog->exec_cmd_browse = gtk_button_new_with_mnemonic(_("B_rowse..."));
 	dialog->play_sound_entry = gtk_entry_new();
-	dialog->play_sound_browse = gtk_button_new_with_label(_("Browse"));
-	dialog->play_sound_test = gtk_button_new_with_label(_("Test"));
+	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Bro_wse..."));
+	dialog->play_sound_test = gtk_button_new_with_mnemonic(_("Pre_view"));
 
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,   FALSE);
@@ -552,7 +552,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	/* Now the last part, where we have the Save checkbox */
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
-		_("_Save this pounce after activation"));
+		_("Sav_e this pounce after activation"));
 
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->save_pounce, FALSE, FALSE, 0);
 
