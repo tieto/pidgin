@@ -636,7 +636,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 
 /* Note: The below win32 implementation is actually platform independent.
    Perhaps this can be used in place of the above platform dependent code.
-*/ 
+*/
 
 typedef struct _dns_tdata {
 	char *hostname;
@@ -660,8 +660,12 @@ static gpointer dns_thread(gpointer data) {
 	dns_tdata *td = (dns_tdata*)data;
 	struct hostent *hp;
 
-	if(!(hp = gethostbyname(td->hostname)))
-		goto failure;
+	if(!(hp = gethostbyname(td->hostname))) {
+		g_free(td->hostname);
+		g_free(td);
+		return 0;
+	}
+
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 	sin.sin_family = hp->h_addrtype;
@@ -672,11 +676,7 @@ static gpointer dns_thread(gpointer data) {
 	/* back to main thread */
 	g_idle_add(dns_main_thread_cb, td);
 	return 0;
- failure:
-	g_free(td->hostname);
-	g_free(td);
-	return 0;
-} 
+}
 
 int gaim_gethostbyname_async(const char *hostname, int port,
 							  dns_callback_t callback, gpointer data) {
