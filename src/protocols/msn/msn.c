@@ -58,8 +58,8 @@ struct msn_buddy {
 	char *friend;
 };
 
-static void msn_login_callback(gpointer, gint, GdkInputCondition);
-static void msn_login_xfr_connect(gpointer, gint, GdkInputCondition);
+static void msn_login_callback(gpointer, gint, GaimInputCondition);
+static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
 
 #define GET_NEXT(tmp)	while (*(tmp) && !isspace(*(tmp))) \
 				(tmp)++; \
@@ -322,7 +322,7 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	struct msn_data *md = gc->proto_data;
 
 	if (ms->inpa)
-		gdk_input_remove(ms->inpa);
+		gaim_input_remove(ms->inpa);
 	close(ms->fd);
 	if (ms->sessid)
 		g_free(ms->sessid);
@@ -339,7 +339,7 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	g_free(ms);
 }
 
-static void msn_switchboard_callback(gpointer data, gint source, GdkInputCondition cond)
+static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
@@ -494,7 +494,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	}
 }
 
-static void msn_rng_connect(gpointer data, gint source, GdkInputCondition cond)
+static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
@@ -523,10 +523,10 @@ static void msn_rng_connect(gpointer data, gint source, GdkInputCondition cond)
 	}
 
 	md->switches = g_slist_append(md->switches, ms);
-	ms->inpa = gdk_input_add(ms->fd, GDK_INPUT_READ, msn_switchboard_callback, ms);
+	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ, msn_switchboard_callback, ms);
 }
 
-static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition cond)
+static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
@@ -548,7 +548,7 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition con
 		return;
 	}
 
-	ms->inpa = gdk_input_add(ms->fd, GDK_INPUT_READ, msn_switchboard_callback, ms);
+	ms->inpa = gaim_input_add(ms->fd, GAIM_INPUT_READ, msn_switchboard_callback, ms);
 }
 
 struct msn_add_permit {
@@ -577,7 +577,7 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 	g_free(map);
 }
 
-static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
+static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct msn_data *md = gc->proto_data;
@@ -885,7 +885,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 			ms->fd = proxy_connect(host, port, msn_ss_xfr_connect, ms);
 		} else {
 			close(md->fd);
-			gdk_input_remove(md->inpa);
+			gaim_input_remove(md->inpa);
 			md->inpa = 0;
 			md->fd = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
@@ -897,7 +897,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 	}
 }
 
-static void msn_login_xfr_connect(gpointer data, gint source, GdkInputCondition cond)
+static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct msn_data *md;
@@ -924,10 +924,10 @@ static void msn_login_xfr_connect(gpointer data, gint source, GdkInputCondition 
 		return;
 	}
 
-	md->inpa = gdk_input_add(md->fd, GDK_INPUT_READ, msn_login_callback, gc);
+	md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_login_callback, gc);
 }
 
-static void msn_login_callback(gpointer data, gint source, GdkInputCondition cond)
+static void msn_login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct msn_data *md = gc->proto_data;
@@ -1004,8 +1004,8 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			account_online(gc);
 			serv_finish_login(gc);
 
-			gdk_input_remove(md->inpa);
-			md->inpa = gdk_input_add(md->fd, GDK_INPUT_READ, msn_callback, gc);
+			gaim_input_remove(md->inpa);
+			md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_callback, gc);
 		} else if (strstr(buf, "MD5")) {
 			char *challenge = buf;
 			char buf2[MSN_BUF_LEN];
@@ -1065,7 +1065,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			port = 1863;
 
 		close(md->fd);
-		gdk_input_remove(md->inpa);
+		gaim_input_remove(md->inpa);
 		md->inpa = 0;
 		md->fd = 0;
 		md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
@@ -1079,7 +1079,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 	}
 }
 
-static void msn_login_connect(gpointer data, gint source, GdkInputCondition cond)
+static void msn_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct msn_data *md;
@@ -1106,7 +1106,7 @@ static void msn_login_connect(gpointer data, gint source, GdkInputCondition cond
 		return;
 	}
 
-	md->inpa = gdk_input_add(md->fd, GDK_INPUT_READ, msn_login_callback, gc);
+	md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_login_callback, gc);
 	set_login_progress(gc, 2, "Synching with server");
 }
 
@@ -1127,7 +1127,7 @@ static void msn_close(struct gaim_connection *gc)
 	struct msn_data *md = gc->proto_data;
 	close(md->fd);
 	if (md->inpa)
-		gdk_input_remove(md->inpa);
+		gaim_input_remove(md->inpa);
 	while (md->switches)
 		msn_kill_switch(md->switches->data);
 	while (md->fl) {

@@ -22,7 +22,7 @@
 
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#include <config.h>
 #endif
 #include <netdb.h>
 #include <gtk/gtk.h>
@@ -126,8 +126,8 @@ struct signon {
 static GtkWidget *join_chat_spin = NULL;
 static GtkWidget *join_chat_entry = NULL;
 
-static void toc_login_callback(gpointer, gint, GdkInputCondition);
-static void toc_callback(gpointer, gint, GdkInputCondition);
+static void toc_login_callback(gpointer, gint, GaimInputCondition);
+static void toc_callback(gpointer, gint, GaimInputCondition);
 static unsigned char *roast_password(char *);
 static void accept_file_dialog(struct ft_request *);
 
@@ -162,7 +162,7 @@ static void toc_login(struct aim_user *user)
 	}
 }
 
-static void toc_login_callback(gpointer data, gint source, GdkInputCondition cond)
+static void toc_login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct toc_data *tdt;
@@ -196,7 +196,7 @@ static void toc_login_callback(gpointer data, gint source, GdkInputCondition con
 	/* i know a lot of people like to look at gaim to see how TOC works. so i'll comment
 	 * on what this does. it's really simple. when there's data ready to be read from the
 	 * toc_fd file descriptor, toc_callback is called, with gc passed as its data arg. */
-	gc->inpa = gdk_input_add(tdt->toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, gc);
+	gc->inpa = gaim_input_add(tdt->toc_fd, GAIM_INPUT_READ, toc_callback, gc);
 
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 2, buf);
@@ -205,7 +205,7 @@ static void toc_login_callback(gpointer data, gint source, GdkInputCondition con
 static void toc_close(struct gaim_connection *gc)
 {
 	if (gc->inpa > 0)
-		gdk_input_remove(gc->inpa);
+		gaim_input_remove(gc->inpa);
 	gc->inpa = 0;
 	close(((struct toc_data *)gc->proto_data)->toc_fd);
 	g_free(gc->proto_data);
@@ -310,7 +310,7 @@ static void toc_got_info(gpointer data, char *url_text)
 	g_show_info_text(url_text);
 }
 
-static void toc_callback(gpointer data, gint source, GdkInputCondition condition)
+static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
 	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
@@ -318,13 +318,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 	struct signon so;
 	char buf[8 * 1024], *c;
 	char snd[BUF_LEN * 2];
-
-	if (condition & GDK_INPUT_EXCEPTION) {
-		debug_printf("gdk_input exception! check internet connection\n");
-		hide_login_progress(gc, _("Connection Closed"));
-		signoff(gc);
-		return;
-	}
 
 	/* there's data waiting to be read, so read it. */
 	if (wait_reply(gc, buf, 8 * 1024) <= 0) {
@@ -1411,25 +1404,12 @@ static void debug_header(struct file_transfer *ft) {
 			f->name);
 }
 
-static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition cond)
+static void toc_send_file_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	char buf[BUF_LONG];
 	int rt, i;
 
 	struct file_transfer *ft = data;
-
-	if (cond & GDK_INPUT_EXCEPTION) {
-		gdk_input_remove(ft->inpa);
-		close(source);
-		g_free(ft->filename);
-		g_free(ft->user);
-		g_free(ft->ip);
-		g_free(ft->cookie);
-		if (ft->file)
-			fclose(ft->file);
-		g_free(ft);
-		return;
-	}
 
 	if (ft->hdr.hdrtype != 0x202) {
 		char *buf;
@@ -1452,7 +1432,7 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 				buf = g_strdup_printf("Could not open %s for writing!", ft->filename);
 				do_error_dialog(buf, _("Error"));
 				g_free(buf);
-				gdk_input_remove(ft->inpa);
+				gaim_input_remove(ft->inpa);
 				close(source);
 				g_free(ft->filename);
 				g_free(ft->user);
@@ -1469,7 +1449,7 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 						ft->hdr.name);
 				do_error_dialog(buf, _("Error"));
 				g_free(buf);
-				gdk_input_remove(ft->inpa);
+				gaim_input_remove(ft->inpa);
 				close(source);
 				g_free(ft->filename);
 				g_free(ft->user);
@@ -1485,7 +1465,7 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	rt = read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
 	if (rt < 0) {
 		do_error_dialog("File transfer failed; other side probably canceled.", "Error");
-		gdk_input_remove(ft->inpa);
+		gaim_input_remove(ft->inpa);
 		close(source);
 		g_free(ft->user);
 		g_free(ft->ip);
@@ -1511,7 +1491,7 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 		ft->recvsize = 0;
 		fclose(ft->file);
 		if (ft->hdr.filesleft == 0) {
-			gdk_input_remove(ft->inpa);
+			gaim_input_remove(ft->inpa);
 			close(source);
 			g_free(ft->filename);
 			g_free(ft->user);
@@ -1522,7 +1502,7 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	}
 }
 
-static void toc_send_file_connect(gpointer data, gint src, GdkInputCondition cond)
+static void toc_send_file_connect(gpointer data, gint src, GaimInputCondition cond)
 {
 	struct file_transfer *ft = data;
 
@@ -1536,7 +1516,7 @@ static void toc_send_file_connect(gpointer data, gint src, GdkInputCondition con
 		return;
 	}
 
-	ft->inpa = gdk_input_add(src, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_send_file_callback, ft);
+	ft->inpa = gaim_input_add(src, GAIM_INPUT_READ, toc_send_file_callback, ft);
 }
 
 static void toc_send_file(gpointer a, struct file_transfer *old_ft)
@@ -1579,28 +1559,13 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	}
 }
 
-static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition cond)
+static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	char buf[BUF_LONG];
 
 	struct file_transfer *ft = data;
 
-	if (cond & GDK_INPUT_EXCEPTION) {
-		do_error_dialog("The file tranfer has been aborted; the other side most likely"
-				" cancelled.", "Error");
-		gdk_input_remove(ft->inpa);
-		close(source);
-		g_free(ft->filename);
-		g_free(ft->user);
-		g_free(ft->ip);
-		g_free(ft->cookie);
-		if (ft->file)
-			fclose(ft->file);
-		g_free(ft);
-		return;
-	}
-
-	if (cond & GDK_INPUT_WRITE) {
+	if (cond & GAIM_INPUT_WRITE) {
 		int remain = MIN(ntohl(ft->hdr.totsize) - ft->recvsize, 1024);
 		int i;
 		for (i = 0; i < remain; i++)
@@ -1608,8 +1573,8 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 		write(source, buf, remain);
 		ft->recvsize += remain;
 		if (ft->recvsize == ntohl(ft->hdr.totsize)) {
-			gdk_input_remove(ft->inpa);
-			ft->inpa = gdk_input_add(source, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+			gaim_input_remove(ft->inpa);
+			ft->inpa = gaim_input_add(source, GAIM_INPUT_READ,
 						 toc_get_file_callback, ft);
 		}
 		return;
@@ -1648,7 +1613,7 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 		if (ft->hdr.hdrtype != htons(0x120c)) {
 			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
 			do_error_dialog(buf, "Error");
-			gdk_input_remove(ft->inpa);
+			gaim_input_remove(ft->inpa);
 			close(source);
 			g_free(ft->filename);
 			g_free(ft->user);
@@ -1672,8 +1637,8 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
-		gdk_input_remove(ft->inpa);
-		ft->inpa = gdk_input_add(source, GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+		gaim_input_remove(ft->inpa);
+		ft->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
 					 toc_get_file_callback, ft);
 		return;
 	}
@@ -1683,7 +1648,7 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
-		gdk_input_remove(ft->inpa);
+		gaim_input_remove(ft->inpa);
 		close(source);
 		g_free(ft->filename);
 		g_free(ft->user);
@@ -1696,7 +1661,7 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 	}
 }
 
-static void toc_get_file_connect(gpointer data, gint src, GdkInputCondition cond)
+static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition cond)
 {
 	struct file_transfer *ft = data;
 	struct file_header *hdr;
@@ -1743,7 +1708,7 @@ static void toc_get_file_connect(gpointer data, gint src, GdkInputCondition cond
 		return;
 	}
 
-	ft->inpa = gdk_input_add(src, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_get_file_callback, ft);
+	ft->inpa = gaim_input_add(src, GAIM_INPUT_READ, toc_get_file_callback, ft);
 }
 
 static void toc_get_file(gpointer a, struct file_transfer *old_ft)

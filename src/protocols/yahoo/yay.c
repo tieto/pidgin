@@ -332,7 +332,7 @@ static int yahoo_online(struct yahoo_session *sess, ...) {
 	return 1;
 }
 
-static void yahoo_pending(gpointer data, gint source, GdkInputCondition condition) {
+static void yahoo_pending(gpointer data, gint source, GaimInputCondition condition) {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
@@ -347,7 +347,7 @@ static void yahoo_notify(struct yahoo_session *sess, int socket, int type, int c
 		struct conn *c = g_new0(struct conn, 1);
 		c->socket = socket;
 		c->type = type;
-		c->inpa = gdk_input_add(socket, type, yahoo_pending, gc);
+		c->inpa = gaim_input_add(socket, type, yahoo_pending, gc);
 		yd->conns = g_list_append(yd->conns, c);
 	} else {
 		GList *c = yd->conns;
@@ -355,7 +355,7 @@ static void yahoo_notify(struct yahoo_session *sess, int socket, int type, int c
 			struct conn *m = c->data;
 			if ((m->socket == socket) && (m->type == type)) {
 				yd->conns = g_list_remove(yd->conns, m);
-				gdk_input_remove(m->inpa);
+				gaim_input_remove(m->inpa);
 				g_free(m);
 				return;
 			}
@@ -364,7 +364,7 @@ static void yahoo_notify(struct yahoo_session *sess, int socket, int type, int c
 	}
 }
 
-static void yahoo_got_connected(gpointer data, gint source, GdkInputCondition cond) {
+static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond) {
 	struct connect *con = data;
 
 	debug_printf("got connected (possibly)\n");

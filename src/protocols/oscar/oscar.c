@@ -21,7 +21,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#include <config.h>
 #endif
 
 
@@ -318,7 +318,7 @@ static char *msgerrreason[] = {
 static int msgerrreasonlen = 25;
 
 static void oscar_callback(gpointer data, gint source,
-				GdkInputCondition condition) {
+				GaimInputCondition condition) {
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
 	struct aim_session_t *sess = aim_conn_getsess(conn);
 	struct gaim_connection *gc = sess ? sess->aux_data : NULL;
@@ -339,12 +339,7 @@ static void oscar_callback(gpointer data, gint source,
 		return;
 	}
 
-	if (condition & GDK_INPUT_EXCEPTION) {
-		hide_login_progress(gc, _("Disconnected."));
-		signoff(gc);
-		return;
-	}
-	if (condition & GDK_INPUT_READ) {
+	if (condition & GAIM_INPUT_READ) {
 		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
 			debug_printf("got information on rendezvous\n");
 			if (aim_handlerendconnect(odata->sess, conn) < 0) {
@@ -367,7 +362,7 @@ static void oscar_callback(gpointer data, gint source,
 					debug_printf("disconnected from chat room %s\n", c->name);
 					c->conn = NULL;
 					if (c->inpa > 0)
-						gdk_input_remove(c->inpa);
+						gaim_input_remove(c->inpa);
 					c->inpa = 0;
 					c->fd = -1;
 					aim_conn_kill(odata->sess, &conn);
@@ -375,7 +370,7 @@ static void oscar_callback(gpointer data, gint source,
 					do_error_dialog(buf, _("Chat Error!"));
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (odata->cnpa > 0)
-						gdk_input_remove(odata->cnpa);
+						gaim_input_remove(odata->cnpa);
 					odata->cnpa = 0;
 					debug_printf("removing chatnav input watcher\n");
 					if (odata->create_exchange) {
@@ -388,7 +383,7 @@ static void oscar_callback(gpointer data, gint source,
 					aim_conn_kill(odata->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
 					if (odata->paspa > 0)
-						gdk_input_remove(odata->paspa);
+						gaim_input_remove(odata->paspa);
 					odata->paspa = 0;
 					debug_printf("removing authconn input watcher\n");
 					aim_conn_kill(odata->sess, &conn);
@@ -421,7 +416,7 @@ static void oscar_debug(struct aim_session_t *sess, int level, const char *forma
 	g_free(s);
 }
 
-static void oscar_login_connect(gpointer data, gint source, GdkInputCondition cond)
+static void oscar_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct oscar_data *odata;
@@ -444,7 +439,7 @@ static void oscar_login_connect(gpointer data, gint source, GdkInputCondition co
 	}
 
 	aim_conn_completeconnect(sess, conn);
-	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ,
 			oscar_callback, conn);
 	debug_printf(_("Password sent, waiting for response\n"));
 }
@@ -505,7 +500,7 @@ static void oscar_close(struct gaim_connection *gc) {
 	while (odata->oscar_chats) {
 		struct chat_connection *n = odata->oscar_chats->data;
 		if (n->inpa > 0)
-			gdk_input_remove(n->inpa);
+			gaim_input_remove(n->inpa);
 		g_free(n->name);
 		g_free(n->show);
 		odata->oscar_chats = g_slist_remove(odata->oscar_chats, n);
@@ -514,7 +509,7 @@ static void oscar_close(struct gaim_connection *gc) {
 	while (odata->direct_ims) {
 		struct direct_im *n = odata->direct_ims->data;
 		if (n->watcher > 0)
-			gdk_input_remove(n->watcher);
+			gaim_input_remove(n->watcher);
 		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
 		g_free(n);
 	}
@@ -537,11 +532,11 @@ static void oscar_close(struct gaim_connection *gc) {
 	}
 #endif
 	if (gc->inpa > 0)
-		gdk_input_remove(gc->inpa);
+		gaim_input_remove(gc->inpa);
 	if (odata->cnpa > 0)
-		gdk_input_remove(odata->cnpa);
+		gaim_input_remove(odata->cnpa);
 	if (odata->paspa > 0)
-		gdk_input_remove(odata->paspa);
+		gaim_input_remove(odata->paspa);
 	aim_session_kill(odata->sess);
 	g_free(odata->sess);
 	odata->sess = NULL;
@@ -550,7 +545,7 @@ static void oscar_close(struct gaim_connection *gc) {
 	debug_printf(_("Signed off.\n"));
 }
 
-static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond) {
+static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition cond) {
 	struct gaim_connection *gc = data;
 	struct oscar_data *odata;
 	struct aim_session_t *sess;
@@ -572,7 +567,7 @@ static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond
 	}
 
 	aim_conn_completeconnect(sess, bosconn);
-	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ,
 			oscar_callback, bosconn);
 	set_login_progress(gc, 4, _("Connection established, cookie sent"));
 }
@@ -718,7 +713,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		return 0;
 	}
 	aim_auth_sendcookie(sess, bosconn, cookie);
-	gdk_input_remove(gc->inpa);
+	gaim_input_remove(gc->inpa);
 	return 1;
 }
 
@@ -732,7 +727,7 @@ struct pieceofcrap {
 	unsigned int inpa;
 };
 
-static void damn_you(gpointer data, gint source, GdkInputCondition c)
+static void damn_you(gpointer data, gint source, GaimInputCondition c)
 {
 	struct pieceofcrap *pos = data;
 	struct oscar_data *od = pos->gc->proto_data;
@@ -752,7 +747,7 @@ static void damn_you(gpointer data, gint source, GdkInputCondition c)
 	if (in != '\n') {
 		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
 				" You may be disconnected shortly.", "Login Error");
-		gdk_input_remove(pos->inpa);
+		gaim_input_remove(pos->inpa);
 		close(pos->fd);
 		g_free(pos);
 		return;
@@ -763,13 +758,13 @@ static void damn_you(gpointer data, gint source, GdkInputCondition c)
 	for (x = 0; x < 16; x++)
 		debug_printf("%02x ", (unsigned char)m[x]);
 	debug_printf("\n");
-	gdk_input_remove(pos->inpa);
+	gaim_input_remove(pos->inpa);
 	close(pos->fd);
 	aim_sendmemblock(od->sess, pos->conn, 0, 16, m, AIM_SENDMEMBLOCK_FLAG_ISHASH);
 	g_free(pos);
 }
 
-static void straight_to_hell(gpointer data, gint source, GdkInputCondition cond) {
+static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond) {
 	struct pieceofcrap *pos = data;
 	char buf[BUF_LONG];
 
@@ -788,7 +783,7 @@ static void straight_to_hell(gpointer data, gint source, GdkInputCondition cond)
 	write(pos->fd, buf, strlen(buf));
 	if (pos->modname)
 		g_free(pos->modname);
-	pos->inpa = gdk_input_add(pos->fd, GDK_INPUT_READ, damn_you, pos);
+	pos->inpa = gaim_input_add(pos->fd, GAIM_INPUT_READ, damn_you, pos);
 	return;
 }
 
@@ -947,7 +942,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 	return 1;
 }
 
-static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition cond)
+static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct oscar_data *odata;
@@ -970,12 +965,12 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
-	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	odata->cnpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
 }
 
-static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition cond)
+static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct oscar_data *odata;
@@ -998,12 +993,12 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 	}
 
 	aim_conn_completeconnect(sess, tstconn);
-	odata->paspa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	odata->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
 }
 
-static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition cond)
+static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct chat_connection *ccon = data;
 	struct gaim_connection *gc = ccon->gc;
@@ -1032,8 +1027,8 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 	}
 
 	aim_conn_completeconnect(sess, ccon->conn);
-	ccon->inpa = gdk_input_add(tstconn->fd,
-			GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	ccon->inpa = gaim_input_add(tstconn->fd,
+			GAIM_INPUT_READ,
 			oscar_callback, tstconn);
 	odata->oscar_chats = g_slist_append(odata->oscar_chats, ccon);
 	aim_chat_attachname(tstconn, ccon->name);
@@ -1220,12 +1215,12 @@ static void delete_direct_im(gpointer w, struct direct_im *d) {
 	struct oscar_data *od = (struct oscar_data *)d->gc->proto_data;
 
 	od->direct_ims = g_slist_remove(od->direct_ims, d);
-	gdk_input_remove(d->watcher);
+	gaim_input_remove(d->watcher);
 	aim_conn_kill(od->sess, &d->conn);
 	g_free(d);
 }
 
-static void oscar_directim_callback(gpointer data, gint source, GdkInputCondition condition) {
+static void oscar_directim_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct direct_im *dim = data;
 	struct gaim_connection *gc = dim->gc;
 	struct oscar_data *od = gc->proto_data;
@@ -1251,7 +1246,7 @@ static void oscar_directim_callback(gpointer data, gint source, GdkInputConditio
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
 
-	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 					oscar_callback, dim->conn);
 }
 
@@ -1333,9 +1328,9 @@ static void interrupt_getfile(GtkObject *obj, struct getfile_transfer *gt) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
 	gtk_widget_destroy(gt->window);
-	gdk_input_remove(gt->gip);
+	gaim_input_remove(gt->gip);
 	if (gt->gop > 0)
-		gdk_input_remove(gt->gop);
+		gaim_input_remove(gt->gop);
 	aim_conn_kill(od->sess, &gt->conn);
 	od->getfiles = g_slist_remove(od->getfiles, gt);
 	g_free(gt->receiver);
@@ -1395,17 +1390,17 @@ static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_st
 	return 1;
 }
 
-static void getfile_send_callback(gpointer data, gint source, GdkInputCondition condition) {
+static void getfile_send_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct getfile_transfer *gt = (struct getfile_transfer *)data;
 	int result;
 
 	result = aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, -1, 1024);
 	gt->pos += result;
 	if (result == 0) {
-		gdk_input_remove(gt->gop); gt->gop = 0;
+		gaim_input_remove(gt->gop); gt->gop = 0;
 	} else if (result == -1) {
 		do_error_dialog(_("Error in transfer"), "Gaim");
-		gdk_input_remove(gt->gop); gt->gop = 0;
+		gaim_input_remove(gt->gop); gt->gop = 0;
 		interrupt_getfile(NULL, gt);
 	}
 }
@@ -1441,7 +1436,7 @@ static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_s
 	gt->fh = g_memdup(fh, sizeof(struct aim_fileheader_t));
 	fseek(gt->file, 0, SEEK_SET);
 
-	gt->gop = gdk_input_add(gt->conn->fd, GDK_INPUT_WRITE, getfile_send_callback, gt);
+	gt->gop = gaim_input_add(gt->conn->fd, GAIM_INPUT_WRITE, getfile_send_callback, gt);
 
 	return 1;
 }
@@ -1485,9 +1480,9 @@ static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx
 
 	gt = find_getfile_transfer(od, conn);
 	od->getfiles = g_slist_remove(od->getfiles, gt);
-	gdk_input_remove(gt->gip);
+	gaim_input_remove(gt->gip);
 	if (gt->gop > 0)
-		gdk_input_remove(gt->gop);
+		gaim_input_remove(gt->gop);
 	g_free(gt->receiver);
 	g_free(gt->filename);
 	aim_conn_kill(sess, &conn);
@@ -1499,13 +1494,13 @@ static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx
 	return 1;
 }
 
-static void oscar_getfile_callback(gpointer data, gint source, GdkInputCondition condition) {
+static void oscar_getfile_callback(gpointer data, gint source, GaimInputCondition condition) {
 	struct getfile_transfer *gf = data;
 	struct gaim_connection *gc = gf->gc;
 	struct oscar_data *od = gc->proto_data;
 
-	gdk_input_remove(gf->gip);
-	gf->gip = gdk_input_add(source, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, gf->conn);
+	gaim_input_remove(gf->gip);
+	gf->gip = gaim_input_add(source, GAIM_INPUT_READ, oscar_callback, gf->conn);
 
 	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ, gaim_getfile_filereq, 0);
 	aim_conn_addhandler(od->sess, gf->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND, gaim_getfile_filesend, 0);
@@ -1573,7 +1568,7 @@ static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 
 	od->getfiles = g_slist_append(od->getfiles, gf);
 	gf->conn = newconn;
-	gf->gip = gdk_input_add(newconn->fd, GDK_INPUT_WRITE, oscar_getfile_callback, gf);
+	gf->gip = gaim_input_add(newconn->fd, GAIM_INPUT_WRITE, oscar_getfile_callback, gf);
 }
 
 static int accept_getfile(gpointer w, struct ask_getfile *g) {
@@ -2671,7 +2666,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 		if (odata)
 			odata->oscar_chats = g_slist_remove(odata->oscar_chats, c);
 		if (c->inpa > 0)
-			gdk_input_remove(c->inpa);
+			gaim_input_remove(c->inpa);
 		if (g && odata->sess)
 			aim_conn_kill(odata->sess, &c->conn);
 		g_free(c->name);
@@ -2773,9 +2768,9 @@ static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_
 	if (!dim->cnv) dim->cnv = new_conversation(priv->sn);
 	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
 			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
-	gdk_input_remove(dim->watcher);
+	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
-	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 					oscar_callback, dim->conn);
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), priv->sn);
 	write_to_conv(dim->cnv, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL));
@@ -2831,7 +2826,7 @@ static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_r
 
 	dim = find_direct_im(od, sn);
 	od->direct_ims = g_slist_remove(od->direct_ims, dim);
-	gdk_input_remove(dim->watcher);
+	gaim_input_remove(dim->watcher);
 	gtk_signal_disconnect_by_data(GTK_OBJECT(dim->cnv->window), dim);
 
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
@@ -2888,7 +2883,7 @@ static void oscar_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
 	dim->conn = aim_directim_initiate(od->sess, od->conn, NULL, data->who);
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
-		dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 						oscar_callback, dim->conn);
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
 					gaim_directim_initiate, 0);

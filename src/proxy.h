@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <gtk/gtk.h>
+#include <glib.h>
 
 #define PROXY_NONE 0
 #define PROXY_HTTP 1
@@ -43,6 +43,15 @@ extern int  proxytype;
 extern char proxyuser[128];
 extern char proxypass[128];
 
-extern int proxy_connect(char *host, int port, GdkInputFunction func, gpointer data);
+typedef enum {
+	GAIM_INPUT_READ = 1 << 0,
+	GAIM_INPUT_WRITE = 1 << 1
+} GaimInputCondition;
+typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
+
+extern gint gaim_input_add(int, GaimInputCondition, GaimInputFunction, gpointer);
+extern void gaim_input_remove(gint);
+
+extern int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data);
 
 #endif

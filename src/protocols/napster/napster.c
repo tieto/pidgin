@@ -19,7 +19,7 @@
  *
  */
 
-#include "../config.h"
+#include <config.h>
 
 #include <netdb.h>
 #include <gtk/gtk.h>
@@ -306,7 +306,7 @@ static struct nap_file_request * find_request_by_fd(struct gaim_connection *gc, 
 	return NULL;
 }
 
-static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condition)
+static void nap_ctc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
@@ -338,7 +338,7 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 		if (buf[0] != '1')
 		{
 			do_error_dialog("Uh Oh", "Uh Oh");
-			gdk_input_remove(req->inpa);
+			gaim_input_remove(req->inpa);
 			ndata->requests = g_slist_remove(ndata->requests, req);
 			g_free(req->name);
 			g_free(req->file);
@@ -367,7 +367,7 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 
 		/* If we have a zero file size then something bad happened */
 		if (filesize == 0) {
-			gdk_input_remove(req->inpa);
+			gaim_input_remove(req->inpa);
 			ndata->requests = g_slist_remove(ndata->requests, req);
 			g_free(req->name);
 			g_free(req->file);
@@ -449,7 +449,7 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 	if (req->size >= req->total) {
 		printf("Download complete.\n");
 		nap_write_packet(gc, 0xdb, "\n"); /* Tell the server we're finished */
-		gdk_input_remove(req->inpa);
+		gaim_input_remove(req->inpa);
 
 		ndata->requests = g_slist_remove(ndata->requests, req);
 
@@ -465,7 +465,7 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 	}
 }
 
-static void nap_get_file_connect(gpointer data, gint source, GdkInputCondition cond)
+static void nap_get_file_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	char buf[NAP_BUF_LEN];
 	struct nap_file_request *req = data;
@@ -494,7 +494,7 @@ static void nap_get_file_connect(gpointer data, gint source, GdkInputCondition c
 	ndata->requests = g_slist_append(ndata->requests, req);
 
 	/* And start monitoring */
-	req->inpa = gdk_input_add(req->fd, GDK_INPUT_READ, nap_ctc_callback, gc);
+	req->inpa = gaim_input_add(req->fd, GAIM_INPUT_READ, nap_ctc_callback, gc);
 }
 
 static void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, gchar *host, unsigned int port)
@@ -518,7 +518,7 @@ static void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, g
 	}
 }
 
-static void nap_callback(gpointer data, gint source, GdkInputCondition condition)
+static void nap_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
@@ -835,7 +835,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 }
 
 
-static void nap_login_callback(gpointer data, gint source, GdkInputCondition condition)
+static void nap_login_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
@@ -855,7 +855,7 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 	if (command == 0x00)
 	{
 		do_error_dialog(buf, "Gaim: Napster Error");
-		gdk_input_remove(ndata->inpa);
+		gaim_input_remove(ndata->inpa);
 		ndata->inpa = 0;
 		close(source);
 		signoff(gc);
@@ -867,9 +867,9 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 		ndata->email = g_strdup(buf);
 
 		/* Remove old inpa, add new one */
-		gdk_input_remove(ndata->inpa);
+		gaim_input_remove(ndata->inpa);
 		ndata->inpa = 0;
-		gc->inpa = gdk_input_add(ndata->fd, GDK_INPUT_READ, nap_callback, gc);
+		gc->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_callback, gc);
 
 		/* Our signon is complete */
 		account_online(gc);
@@ -883,7 +883,7 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 }
 
 
-static void nap_login_connect(gpointer data, gint source, GdkInputCondition cond)
+static void nap_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct gaim_connection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
@@ -903,7 +903,7 @@ static void nap_login_connect(gpointer data, gint source, GdkInputCondition cond
 	nap_write_packet(gc, 0x02, buf);
 	
 	/* And set up the input watcher */
-	ndata->inpa = gdk_input_add(ndata->fd, GDK_INPUT_READ, nap_login_callback, gc);
+	ndata->inpa = gaim_input_add(ndata->fd, GAIM_INPUT_READ, nap_login_callback, gc);
 }
 
 
@@ -985,7 +985,7 @@ static void nap_close(struct gaim_connection *gc)
 	struct nap_file_request *req;
 	
 	if (gc->inpa)
-		gdk_input_remove(gc->inpa);
+		gaim_input_remove(gc->inpa);
 
 	while (ndata->channels) {
 		channel = (struct nap_channel *)ndata->channels->data;
@@ -1007,7 +1007,7 @@ static void nap_close(struct gaim_connection *gc)
 		g_free(req->name);
 		g_free(req->file);
 		if (req->inpa) {
-			gdk_input_remove(req->inpa);
+			gaim_input_remove(req->inpa);
 		}
 		ndata->requests = g_slist_remove(ndata->requests, req);
 		g_free(req);

@@ -393,7 +393,7 @@ static void endElement(void *userdata, const char *name)
 	j->current = x;
 }
 
-static void jabber_callback(gpointer data, gint source, GdkInputCondition condition)
+static void jabber_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
@@ -409,7 +409,7 @@ static void charData(void *userdata, const char *s, int slen)
 		xmlnode_insert_cdata(j->current, s, slen);
 }
 
-static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
+static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	xmlnode x;
 	char *t, *t2;
@@ -452,7 +452,7 @@ static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
 	STATE_EVT(JCONN_STATE_ON);
 
 	gc = GJ_GC(j);
-	gc->inpa = gdk_input_add(j->fd, GDK_INPUT_READ, jabber_callback, gc);
+	gc->inpa = gaim_input_add(j->fd, GAIM_INPUT_READ, jabber_callback, gc);
 }
 
 static void gjab_start(gjconn j)
@@ -1206,7 +1206,7 @@ static void jabber_close(struct gaim_connection *gc)
 	struct jabber_data *jd = gc->proto_data;
 	g_hash_table_foreach_remove(jd->hash, jabber_destroy_hash, NULL);
 	g_hash_table_destroy(jd->hash);
-	gdk_input_remove(gc->inpa);
+	gaim_input_remove(gc->inpa);
 	close(jd->jc->fd);
 	gtk_timeout_add(50, jabber_free, jd->jc);
 	jd->jc = NULL;
@@ -1672,7 +1672,7 @@ static void regstate(jconn j, int state)
 	static int catch = 0;
 	switch (state) {
 		case JCONN_STATE_OFF:
-			gdk_input_remove(reginpa);
+			gaim_input_remove(reginpa);
 			reginpa = 0;
 			jab_delete(j);
 			break;
@@ -1776,7 +1776,7 @@ static void regpacket(jconn j, jpacket p)
 	xmlnode_free(p->x);
 }
 
-static void regjcall(gpointer data, gint source, GdkInputCondition cond)
+static void regjcall(gpointer data, gint source, GaimInputCondition cond)
 {
 	gjab_recv((gjconn)regjconn);
 }
@@ -1819,7 +1819,7 @@ static void jabber_do_new_user()
 	jab_packet_handler(regjconn, regpacket);
 
 	jab_start(regjconn);
-	reginpa = gdk_input_add(jab_getfd(regjconn), GDK_INPUT_READ, regjcall, NULL);
+	reginpa = gaim_input_add(jab_getfd(regjconn), GAIM_INPUT_READ, regjcall, NULL);
 }
 
 static char *jabber_normalize(const char *s)

@@ -20,7 +20,7 @@
  *
  */
 
-#include "../config.h"
+#include <config.h>
 
 
 #include <netdb.h>
@@ -568,7 +568,7 @@ static struct conversation *find_conversation_by_name(struct gaim_connection *gc
 
 
 
-static void irc_callback(gpointer data, gint source, GdkInputCondition condition)
+static void irc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	int i = 0;
@@ -1835,10 +1835,10 @@ static void irc_close(struct gaim_connection *gc)
 	}
 
 	if (gc->inpa)
-		gdk_input_remove(gc->inpa);
+		gaim_input_remove(gc->inpa);
 
 	if (idata->inpa)
-		gdk_input_remove(idata->inpa);
+		gaim_input_remove(idata->inpa);
 
 	close(idata->fd);
 	g_free(gc->proto_data);
@@ -1862,7 +1862,7 @@ static void irc_chat_leave(struct gaim_connection *gc, int id)
 	g_free(buf);
 }
 
-static void irc_login_callback(gpointer data, gint source, GdkInputCondition condition)
+static void irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct gaim_connection *gc = data;
 	struct irc_data *idata;
@@ -1893,7 +1893,7 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 		return;
 	}
 
-	idata->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_callback, gc);
+	idata->inpa = gaim_input_add(idata->fd, GAIM_INPUT_READ, irc_callback, gc);
 	idata->inpa = 0;
 
 	/* Now lets sign ourselves on */
