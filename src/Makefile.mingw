@@ -105,6 +105,7 @@ DLL_C_SRC =		about.c \
 			gtklog.c \
 			gtknotify.c \
 			gtkplugin.c \
+			gtkpluginpref.c \
 			gtkpounce.c \
 			gtkprefs.c \
 			gtkprivacy.c \
