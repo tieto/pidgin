@@ -844,11 +844,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
 			statustext = g_strdup(_("<b>Status:</b> Offline"));
 
-		if (b->idle > 0) {
-			time_t t;
-			time(&t);
-			idletime = g_strdup(sec_to_text(t-b->idle));
-		}
+		if (b->idle > 0)
+			idletime = sec_to_text(time(NULL) - b->idle);
 
 		if(b->alias && b->alias[0])
 			aliastext = g_markup_escape_text(b->alias, -1);

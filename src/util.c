@@ -93,7 +93,7 @@ G_GNUC_CONST static gint badchar(char c)
 gchar *sec_to_text(guint sec)
 {
 	guint daze, hrs, min;
-	char *ret = g_malloc(256);
+	char *ret = NULL;
 
 	daze = sec / (60 * 60 * 24);
 	hrs = (sec % (60 * 60 * 24)) / (60 * 60);
@@ -104,33 +104,33 @@ gchar *sec_to_text(guint sec)
 		if (hrs || min) {
 			if (hrs) {
 				if (min) {
-					g_snprintf(ret, 256,
+					ret = g_strdup_printf(
 						   "%d %s, %d %s, %d %s.",
 						   daze, ngettext("day","days",daze),
 						   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
 				} else {
-					g_snprintf(ret, 256,
+					ret = g_strdup_printf(
 						   "%d %s, %d %s.",
 						   daze, ngettext("day","days",daze), hrs, ngettext("hour","hours",hrs));
 				}
 			} else {
-				g_snprintf(ret, 256,
+				ret = g_strdup_printf(
 					   "%d %s, %d %s.",
 					   daze, ngettext("day","days",daze), min, ngettext("minute","minutes",min));
 			}
 		} else
-			g_snprintf(ret, 256, "%d %s.", daze, ngettext("day","days",daze));
+			ret = g_strdup_printf("%d %s.", daze, ngettext("day","days",daze));
 	} else {
 		if (hrs) {
 			if (min) {
-				g_snprintf(ret, 256,
+				ret = g_strdup_printf(
 					   "%d %s, %d %s.",
 					   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
 			} else {
-				g_snprintf(ret, 256, "%d %s.", hrs, ngettext("hour","hours",hrs));
+				ret = g_strdup_printf("%d %s.", hrs, ngettext("hour","hours",hrs));
 			}
 		} else {
-			g_snprintf(ret, 256, "%d %s.", min, ngettext("minute","minutes",min));
+			ret = g_strdup_printf("%d %s.", min, ngettext("minute","minutes",min));
 		}
 	}
 
