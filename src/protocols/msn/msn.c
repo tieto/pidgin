@@ -1597,6 +1597,8 @@ static void msn_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		*se = "offline";
 	else if (b->uc >> 1 == 2 || b->uc >> 1 == 6)
 		*se = "occupied";
+	else if (b->uc)
+		*se = "away";
 }
 
 static char *msn_get_away_text(int s)
