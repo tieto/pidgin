@@ -590,13 +590,13 @@ static void sel_icon_dlg(GtkWidget *w, struct mod_account *ma)
 	dlg = gtk_file_selection_new(_("Load Buddy Icon"));
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(dlg));
 	if (ma->iconfile) {
-		char *tmp = g_dirname(ma->iconfile);
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), tmp);
+		char *tmp = g_path_get_dirname(ma->iconfile);
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, tmp);
 		g_free(tmp);
 	} else {
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), buf);
 	}
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), buf);
 
 	g_signal_connect(GTK_OBJECT(dlg), "destroy", G_CALLBACK(des_icon_sel), ma);
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(dlg)->cancel_button), "clicked",

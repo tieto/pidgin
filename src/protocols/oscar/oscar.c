@@ -109,9 +109,7 @@ struct oscar_data {
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *file_transfers;
-	GSList *hasicons;
-	GHashTable *supports_tn;
-	GHashTable *buddy_caps;
+	GHashTable *buddyinfo;
 
 	gboolean killme;
 	gboolean icq;
@@ -175,12 +173,21 @@ struct oscar_xfer_data {
 	struct gaim_connection *gc;
 };
 
-struct icon_req {
-	char *user;
-	time_t timestamp;
-	unsigned long length;
-	unsigned long checksum;
-	gboolean request;
+/* Various PRPL-specific buddy info that we want to keep track of */
+struct buddyinfo {
+	time_t signon;
+	int caps;
+	gboolean typingnot;
+
+	unsigned long ico_len;
+	unsigned long ico_csum;
+	time_t ico_time;
+	gboolean ico_need;
+
+	unsigned long ico_me_len;
+	unsigned long ico_me_csum;
+	time_t ico_me_time;
+	gboolean ico_informed;
 };
 
 struct name_data {
@@ -549,8 +556,7 @@ static void oscar_login(struct gaim_account *account) {
 		gc->flags |= OPT_CONN_HTML;
 		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
-	od->supports_tn = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-	od->buddy_caps = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -618,14 +624,7 @@ static void oscar_close(struct gaim_connection *gc) {
 		gaim_xfer_destroy(xfer);
 	}
 
-	while (od->hasicons) {
-		struct icon_req *n = od->hasicons->data;
-		g_free(n->user);
-		od->hasicons = g_slist_remove(od->hasicons, n);
-		g_free(n);
-	}
-	g_hash_table_destroy(od->supports_tn);
-	g_hash_table_destroy(od->buddy_caps);
+	g_hash_table_destroy(od->buddyinfo);
 	while (od->evilhack) {
 		g_free(od->evilhack->data);
 		od->evilhack = g_slist_remove(od->evilhack, od->evilhack->data);
@@ -1581,11 +1580,12 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	aim_userinfo_t *info;
+	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
 	int caps = 0;
 	va_list ap;
+	aim_userinfo_t *info;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -1632,8 +1632,13 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!aim_sncmp(gc->username, info->sn))
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
 
-	g_hash_table_replace(od->buddy_caps, g_strdup(normalize(info->sn)),
-			GINT_TO_POINTER(caps));
+	bi = g_hash_table_lookup(od->buddyinfo, normalize(info->sn));
+	if (!bi) {
+		bi = g_new0(struct buddyinfo, 1);
+		g_hash_table_insert(od->buddyinfo, g_strdup(normalize(info->sn)), bi);
+	}
+	bi->signon = info->onlinesince ? info->onlinesince : (info->sessionlen + time(NULL));
+	bi->caps = caps;
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type);
@@ -1936,39 +1941,36 @@ static void accept_direct_im(struct ask_direct *d) {
 }
 
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
-	char *tmp;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
+	char *tmp;
 	int flags = 0;
 	int convlen;
 	GError *err = NULL;
+	struct buddyinfo *bi;
+
+	bi = g_hash_table_lookup(od->buddyinfo, normalize(userinfo->sn));
+	if (!bi) {
+		bi = g_new0(struct buddyinfo, 1);
+		g_hash_table_insert(od->buddyinfo, g_strdup(normalize(userinfo->sn)), bi);
+	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
 		flags |= IM_FLAG_AWAY;
 
-	if ((args->icbmflags & AIM_IMFLAGS_HASICON) && (args->iconlen) && (args->iconsum) && (args->iconstamp)) {
-		struct icon_req *ir = NULL;
-		GSList *h = od->hasicons;
+	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT)
+		bi->typingnot = TRUE;
+	else
+		bi->typingnot = FALSE;
 
+	if ((args->icbmflags & AIM_IMFLAGS_HASICON) && (args->iconlen) && (args->iconsum) && (args->iconstamp)) {
 		debug_printf("%s has an icon\n", userinfo->sn);
-		while (h) {
-			ir = h->data;
-			if (!aim_sncmp(userinfo->sn, ir->user))
-				break;
-			h = h->next;
+		if ((args->iconlen != bi->ico_len) || (args->iconsum != bi->ico_csum) || (args->iconstamp != bi->ico_time)) {
+			bi->ico_need = TRUE;
+			bi->ico_len = args->iconlen;
+			bi->ico_csum = args->iconsum;
+			bi->ico_time = args->iconstamp;
 		}
-		if (!h) {
-			ir = g_new0(struct icon_req, 1);
-			ir->user = g_strdup(normalize(userinfo->sn));
-			od->hasicons = g_slist_append(od->hasicons, ir);
-		}
-		if ((args->iconlen != ir->length) ||
-		    (args->iconsum != ir->checksum) ||
-		    (args->iconstamp != ir->timestamp))
-			ir->request = TRUE;
-		ir->length = args->iconlen;
-		ir->checksum = args->iconsum;
-		ir->timestamp = args->iconstamp;
 	}
 
 	if (gc->account->iconfile[0] && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
@@ -2030,12 +2032,6 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
 		}
-	}
-
-	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
-		char *who = g_strdup(normalize(userinfo->sn));
-		if (!g_hash_table_lookup(od->supports_tn, who))
-			g_hash_table_insert(od->supports_tn, who, (gpointer)1);
 	}
 
 	/* strip_linefeed(tmp); */
@@ -2857,11 +2853,14 @@ static char *caps_string(guint caps)
 }
 
 static char *oscar_tooltip_text(struct buddy *b) {
-	struct oscar_data *od = b->account->gc->proto_data;
-	guint caps = GPOINTER_TO_INT(g_hash_table_lookup(od->buddy_caps,
-				normalize(b->name)));
+	struct gaim_connection *gc = b->account->gc;
+	struct oscar_data *od = gc->proto_data;
+	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
-	return g_strdup_printf(_("<b>Capabilities:</b> %s"), caps_string(caps));
+	if (bi)
+		return g_strdup_printf(_("<b>Online Since</b> %s<b>Capabilities:</b> %s"), asctime(localtime(&bi->signon)), caps_string(bi->caps));
+	else
+		return NULL;
 }
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -3804,7 +3803,8 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	if (dim)
 		aim_odc_send_typing(od->sess, dim->conn, typing);
 	else {
-		if (g_hash_table_lookup(od->supports_tn, normalize(name))) {
+		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
+		if (bi && bi->typingnot) {
 			if (typing == TYPING)
 				aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
 			else if (typing == TYPED)
@@ -3837,15 +3837,20 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		oscar_ask_direct_im(gc, name);
 		return -ENOTCONN;
 	}
+
 	if (imflags & IM_FLAG_AWAY) {
 		ret = aim_im_sendch1(od->sess, name, AIM_IMFLAGS_AWAY, message);
 	} else {
+		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
-		GSList *h = od->hasicons;
-		struct icon_req *ir = NULL;
-		char *who = normalize(name);
 		struct stat st;
 		int len;
+
+		bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
+		if (!bi) {
+			bi = g_new0(struct buddyinfo, 1);
+			g_hash_table_insert(od->buddyinfo, g_strdup(normalize(name)), bi);
+		}
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 		if (od->icq) {
@@ -3857,16 +3862,10 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			args.featureslen = sizeof(features_aim);
 		}
 
-		while (h) {
-			ir = h->data;
-			if (ir->request && !strcmp(who, ir->user))
-				break;
-			h = h->next;
-			}
-		if (h) {
-			ir->request = FALSE;
+		if (bi->ico_need) {
+			debug_printf("Sending buddy icon request with message\n");
 			args.flags |= AIM_IMFLAGS_BUDDYREQ;
-			debug_printf("sending buddy icon request with message\n");
+			bi->ico_need = FALSE;
 		}
 
 		if (gc->account->iconfile[0] && !stat(gc->account->iconfile, &st)) {
@@ -3879,8 +3878,18 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				args.iconsum   = aimutil_iconsum(buf, st.st_size);
 				args.iconstamp = st.st_mtime;
 
-				args.flags |= AIM_IMFLAGS_HASICON;
-				debug_printf("Claiming to have an icon.\n");
+				if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time))
+					bi->ico_informed = FALSE;
+
+				if (!bi->ico_informed) {
+					debug_printf("Claiming to have a buddy icon\n");
+					args.flags |= AIM_IMFLAGS_HASICON;
+					bi->ico_me_len = args.iconlen;
+					bi->ico_me_csum = args.iconsum;
+					bi->ico_me_time = args.iconstamp;
+					bi->ico_informed = TRUE;
+				}
+
 
 				fclose(file);
 				g_free(buf);
