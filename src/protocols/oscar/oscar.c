@@ -4188,7 +4188,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimBuddy *buddy;
-	struct buddyinfo *bi;
+	struct buddyinfo *bi = NULL;
 	gchar who[16];
 	GString *str;
 	gchar *primary, *utf8;
