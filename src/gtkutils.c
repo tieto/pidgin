@@ -691,12 +691,14 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	menu = gtk_menu_new();
 	gtk_widget_show(menu);
 
-	sg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (show_all)
 		list = gaim_accounts_get_all();
 	else
 		list = gaim_connections_get_all();
+
+	gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Populating menu\n");
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
 		GaimPluginProtocolInfo *prpl_info = NULL;
@@ -709,6 +711,8 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 
 			account = gaim_connection_get_account(gc);
 		}
+
+		gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Adding item.\n");
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
 
@@ -768,9 +772,11 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
 
-		if (account == default_account)
+		if (default_account != NULL && account == default_account)
 			selected_index = i;
 	}
+
+	gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Done populating menu\n");
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 

@@ -596,10 +596,10 @@ void show_ee_dialog(int ee)
 	gtk_widget_show_all(window);
 }
 
-void show_info_select_account(GObject *w, GaimConnection *gc)
+void show_info_select_account(GObject *w, GaimAccount *account,
+							  struct getuserinfo *info)
 {
-	struct getuserinfo *info = g_object_get_data(w, "getuserinfo");
-	info->gc = gc;
+	info->gc = gaim_account_get_connection(account);
 }
 
 static void dialog_set_ok_sensitive(GtkWidget *entry, GtkWidget *dlg) {
@@ -612,12 +612,8 @@ void show_im_dialog()
 {
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
-	GtkWidget *table, *menu, *opt;
-	GList *g = gaim_connections_get_all();
-	GaimConnection *c;
-	GaimAccount *account;
+	GtkWidget *table;
 	struct gaim_gtk_buddy_list *gtkblist;
-	char buf[256];
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	struct getuserinfo *info = NULL;
 
@@ -678,36 +674,11 @@ void show_im_dialog()
 			gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
 			gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
-			info->account = gtk_option_menu_new();
+			info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
+					G_CALLBACK(show_info_select_account), info);
+
 			gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
-
-			menu = gtk_menu_new();
-
-			while (g) {
-				c = (GaimConnection *)g->data;
-
-				if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->send_im) {
-					g = g->next;
-					continue;
-				}
-
-				account = gaim_connection_get_account(c);
-
-				g_snprintf(buf, sizeof(buf), "%s (%s)",
-						   gaim_account_get_username(account),
-						   c->prpl->info->name);
-				opt = gtk_menu_item_new_with_label(buf);
-				g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
-
-				g_signal_connect(G_OBJECT(opt), "activate",
-						   G_CALLBACK(show_info_select_account), c);
-
-				gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-				g = g->next;
-			}
-
-			gtk_option_menu_set_menu(GTK_OPTION_MENU(info->account), menu);
 		}
 
 		g_signal_connect(G_OBJECT(imdialog), "response", G_CALLBACK(do_im), info);
@@ -723,13 +694,9 @@ void show_info_dialog()
 	GtkWidget *window, *hbox, *vbox;
 	GtkWidget *label;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	GtkWidget *table, *menu, *opt;
-	GList *g = gaim_connections_get_all();
-	GaimConnection *c;
-	GaimAccount *account;
+	GtkWidget *table;
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
 	struct gaim_gtk_buddy_list *gtkblist;
-	char buf[256];
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
@@ -785,36 +752,11 @@ void show_info_dialog()
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
-		info->account = gtk_option_menu_new();
+		info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
+				G_CALLBACK(show_info_select_account), info);
+
 		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
-		
-		menu = gtk_menu_new();
-
-		while (g) {
-			c = (GaimConnection *)g->data;
-
-			if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->get_info) {
-				g = g->next;
-				continue;
-			}
-
-			account = gaim_connection_get_account(c);
-
-			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gaim_account_get_username(account),
-					   c->prpl->info->name);
-			opt = gtk_menu_item_new_with_label(buf);
-			g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
-
-			g_signal_connect(G_OBJECT(opt), "activate",
-					   G_CALLBACK(show_info_select_account), c);
-
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-			g = g->next;
-		}
-		
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(info->account), menu);
 	}
 
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
