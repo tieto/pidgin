@@ -356,6 +356,10 @@ void pressed_im(GtkWidget *widget, struct buddy_show *b)
 		gdk_window_show(c->window->window);
 	} else {
 		c = new_conversation(b->name);
+
+		c->gc = b->connlist->data;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
+				g_slist_index(connections, b->connlist->data));
 	}
 }
 
@@ -389,6 +393,10 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
                         gdk_window_show(c->window->window);
                 } else {
                         c = new_conversation(b->name);
+
+			c->gc = b->connlist->data;
+			gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
+					g_slist_index(connections, b->connlist->data));
                 }
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
 		GtkWidget *menu;
@@ -628,6 +636,8 @@ static void redo_buddy_list() {
 	GSList *gr;
 	struct group *g;
 	struct buddy *b;
+
+	if (!blist) return;
 
 	while (s) {
 		gs = (struct group_show *)s->data;
