@@ -140,7 +140,7 @@ gint linkify_text(char *text)
                                 if (!(*c))
                                         break;
                         }
-                } else if (!strncasecmp(c, "http://", 7)) {
+                } else if ( (!strncasecmp(c, "http://", 7) || (!strncasecmp(c, "https://", 8)))) {
                         t = c;
                         while(1) {
                                 if (badchar(*t)) {

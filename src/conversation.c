@@ -1458,6 +1458,15 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_widget_show(smiley_p);
 	gdk_bitmap_unref(mask);
 
+	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Color"), _("Text Color"),
+				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
+	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Color"), _("Background Color"),
+				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
+
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
 						_("Bold"), _("Bold Text"), _("Bold"), bold_p,
@@ -1493,14 +1502,6 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Link"), _("Insert Link"),
 						_("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
-	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Color"), _("Text Color"),
-				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
-	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-					    NULL, _("Color"), _("Background Color"),
-				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Logging"), _("Enable logging"),
