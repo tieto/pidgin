@@ -485,6 +485,9 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
 
+	if (!p)
+		return;
+
 	if (u && u->opt_entries) {
 		g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
@@ -493,7 +496,7 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 		tmpusr.opt_entries = NULL;
 	}
 
-	if (p && p->user_opts) {
+	if (p->user_opts) {
 		GList *op = (*p->user_opts)();
 		GList *tmp = op;
 
@@ -584,10 +587,21 @@ static void show_acct_mod(struct aim_user *u)
 	book = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(box), book, FALSE, FALSE, 0);
 
-	if (u)
-		u->tmp_protocol = u->protocol;
-	else
-		tmpusr.tmp_protocol = tmpusr.protocol;
+	if (u) {
+		if (find_prpl(u->protocol))
+			u->tmp_protocol = u->protocol;
+		else if (protocols)
+			u->tmp_protocol = ((struct prpl *)protocols->data)->protocol;
+		else
+			u->tmp_protocol = -1;
+	} else {
+		if (find_prpl(tmpusr.protocol))
+			tmpusr.tmp_protocol = tmpusr.protocol;
+		else if (protocols)
+			tmpusr.tmp_protocol = ((struct prpl *)protocols->data)->protocol;
+		else
+			tmpusr.tmp_protocol = -1;
+	}
 	generate_general_options(u, book);
 	generate_prpl_options(u, book);
 
@@ -615,19 +629,19 @@ static void show_acct_mod(struct aim_user *u)
 	
 	if (u) {
 		p = find_prpl(u->tmp_protocol);
-		if (p->options & OPT_PROTO_NO_PASSWORD) {
+		if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_hide(u->pwdbox);
 			gtk_widget_hide(u->rempass);
 		}
-		if (!(p->options & OPT_PROTO_MAIL_CHECK))
+		if (p && (!(p->options & OPT_PROTO_MAIL_CHECK)))
 			gtk_widget_hide(u->checkmail);
 	} else {
 		p = find_prpl(tmpusr.tmp_protocol);
-		if (p->options & OPT_PROTO_NO_PASSWORD) {
+		if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_hide(tmpusr.pwdbox);
 			gtk_widget_hide(tmpusr.rempass);
 		}
-		if (!(p->options & OPT_PROTO_MAIL_CHECK))
+		if (p && (!(p->options & OPT_PROTO_MAIL_CHECK)))
 			gtk_widget_hide(tmpusr.checkmail);
 	}
 }
