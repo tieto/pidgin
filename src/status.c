@@ -1444,9 +1444,9 @@ gaim_presence_compare(const GaimPresence *presence1,
 	if ((presence1 == NULL && presence2 == NULL) || (presence1 == presence2))
 		return 0;
 	else if (presence1 == NULL)
-		return -1;
-	else if (presence2 == NULL)
 		return 1;
+	else if (presence2 == NULL)
+		return -1;
 
 	/* Compute the score of the first set of statuses. */
 	for (l = gaim_presence_get_statuses(presence1); l != NULL; l = l->next)
@@ -1459,7 +1459,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 	}
 
 	/* Compute the score of the second set of statuses. */
-	for (l = gaim_presence_get_statuses(presence1); l != NULL; l = l->next)
+	for (l = gaim_presence_get_statuses(presence2); l != NULL; l = l->next)
 	{
 		GaimStatus *status = (GaimStatus *)l->data;
 		GaimStatusType *type = gaim_status_get_type(status);
