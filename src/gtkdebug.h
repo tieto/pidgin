@@ -26,6 +26,11 @@
 #include "debug.h"
 
 /**
+ * Initializes the GTK+ debug system.
+ */
+void gaim_gtk_debug_init(void);
+
+/**
  * Shows the debug window.
  */
 void gaim_gtk_debug_window_show(void);

@@ -887,6 +887,8 @@ int main(int argc, char *argv[])
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
 
+	gaim_gtk_debug_init();
+
 	if (!gaim_prefs_load()) {
 		load_prefs();
 		gaim_prefs_sync();

@@ -2782,14 +2782,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
 
-	/* Debug window preferences. */
-	gaim_prefs_add_none("/gaim/gtk/debug");
-	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
-	gaim_prefs_add_int("/gaim/gtk/debug/width",  400);
-	gaim_prefs_add_int("/gaim/gtk/debug/height", 150);
-
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
 	gaim_prefs_add_string("/gaim/gtk/idle/reporting_method", "system");

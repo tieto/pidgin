@@ -181,6 +181,31 @@ debug_window_new(void)
 	return win;
 }
 
+static void
+debug_enabled_cb(const char *name, GaimPrefType type, gpointer value,
+				 gpointer data)
+{
+	if (debug_win == NULL)
+		gaim_gtk_debug_window_show();
+	else
+		gaim_gtk_debug_window_hide();
+}
+
+void
+gaim_gtk_debug_init(void)
+{
+	/* Debug window preferences. */
+	gaim_prefs_add_none("/gaim/gtk/debug");
+	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/debug/width",  400);
+	gaim_prefs_add_int("/gaim/gtk/debug/height", 150);
+
+	gaim_prefs_connect_callback("/gaim/gtk/debug/enabled",
+								debug_enabled_cb, NULL);
+}
+
 void
 gaim_gtk_debug_window_show(void)
 {
