@@ -76,7 +76,7 @@ struct msn_conn {
 	int fd;
 };
 
-void msn_handler(gpointer data, gint source, GdkInputCondition condition);
+void msn_callback(gpointer data, gint fd, GdkInputCondition condition);
 
 GSList *msn_connections = NULL;
 
@@ -242,8 +242,9 @@ void msn_cancel_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 	g_free(ap);
 }
 
-void msn_callback(struct gaim_connection *gc, gint fd)
+void msn_callback(gpointer data, gint fd, GdkInputCondition condition)
 {
+	struct gaim_connection *gc = data;
 	struct msn_data *mdata;
 	char c;
 	int i = 0;
@@ -454,7 +455,7 @@ void msn_callback(struct gaim_connection *gc, gint fd)
 
 		mc->user = g_strdup(resps[5]);
 
-		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_handler, gc);
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_callback, gc);
 
 		g_snprintf(buf, 4096, "ANS 1 %s %s %s\n", gc->username, resps[4], resps[1]);
 		write(mc->fd, buf, strlen(buf));
@@ -468,12 +469,6 @@ void msn_callback(struct gaim_connection *gc, gint fd)
 
 	g_strfreev(resps);
 
-}
-
-
-void msn_handler(gpointer data, gint source, GdkInputCondition condition)
-{
-	msn_callback(data, source);
 }
 
 void msn_login(struct aim_user *user)
@@ -642,7 +637,7 @@ void msn_login(struct aim_user *user)
 		do_import(NULL, gc);
 
 	/* We want to do this so that we can read what's going on */
-	gc->inpa = gdk_input_add(mdata->fd, GDK_INPUT_READ, msn_handler, gc);
+	gc->inpa = gdk_input_add(mdata->fd, GDK_INPUT_READ, msn_callback, gc);
 }
 
 void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
@@ -705,7 +700,7 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 		}
 
 		mc->user = g_strdup(who);
-		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_handler, gc);
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_callback, gc);
 
 		msn_connections = g_slist_append(msn_connections, mc);
 
