@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.63:
+version 0.63 (05/16/2003):
 	* A rewrite of the plugin API. Plugin authors will need to change their
 	  code based off the changes found in other plugins.
 	* Perl script support is now provided in the perl plugin.
