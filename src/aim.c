@@ -504,8 +504,6 @@ static int ui_main()
 		debug_printf("Failed to load icon from %s/pixmaps/gaim.png\n",DATADIR);
 	}
 
-	gdk_pixbuf_unref(icon);
-	
 	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
 
 	UI_fd = open_socket(name);
