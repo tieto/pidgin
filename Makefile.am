@@ -1,3 +1,4 @@
+AUTOMAKE_OPTIONS = dist-bzip2
 
 EXTRA_DIST = gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
 	HACKING STATUS gaim2blt.pl
