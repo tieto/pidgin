@@ -90,6 +90,7 @@ C_SRC =			cmdproc.c \
 			slpsession.c \
 			state.c \
 			switchboard.c \
+			sync.c \
 			table.c \
 			transaction.c \
 			user.c \
