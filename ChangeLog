@@ -6,14 +6,15 @@ version 0.76cvs:
 	* Ability to be invisible on AIM
 	* Chatroom list support (Tim Ringenbach)
 	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
-	* Improved accessibility support for screen readers and other
-	  accessibility tools (Marc Mulcahy)
-	* Improved accessibility in conversation windows (Nathan Fredrickson)
-	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
+	* Support for Mozilla Firefox (Chris Friesen and Nathan Fredrickson)
 	* Local IP address information can be changed in Preferences
 	  (Tim Ringenbach)
 	* Improved local IP address detection (Tim Ringenbach)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
+	* Improved accessibility support for screen readers and other
+	  accessibility tools (Marc Mulcahy)
+	* Improved accessibility in conversation windows (Nathan Fredrickson)
+	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
 
 	Bug Fixes:
 	* Various buffer overflow fixes (Stefan Esser)

@@ -430,6 +430,8 @@ gaim_gtk_notify_uri(const char *uri)
 		command = g_strdup_printf("mozilla \"%s\"", uri);
 	} else if (!strcmp(web_browser, "mozilla-firebird")) {
 		command = g_strdup_printf("mozilla-firebird \"%s\"", uri);
+	} else if (!strcmp(web_browser, "firefox")) {
+		command = g_strdup_printf("firefox \"%s\"", uri);
 	} else if (!strcmp(web_browser, "custom")) {
 		const char *web_command;
 
