@@ -348,14 +348,12 @@ common_send(GaimConversation *conv, const char *message)
 					strncpy(bigbuf + offset, "</BINARY>",
 							strlen("<BINARY>") + 1);
 
-					err = serv_send_im(gc,
-						(char *)gaim_conversation_get_name(conv),
-						bigbuf, length, imflags);
+					err = serv_send_im(gc, gaim_conversation_get_name(conv),
+									   bigbuf, length, imflags);
 				}
 				else
-					err = serv_send_im(gc,
-						(char *)gaim_conversation_get_name(conv),
-						buffy, -1, imflags);
+					err = serv_send_im(gc, gaim_conversation_get_name(conv),
+									   buffy, -1, imflags);
 
 				if (err > 0) {
 					GSList *tempy;
@@ -382,7 +380,7 @@ common_send(GaimConversation *conv, const char *message)
 					g_free(bigbuf);
 			}
 			else {
-				err = serv_send_im(gc, (char *)gaim_conversation_get_name(conv),
+				err = serv_send_im(gc, gaim_conversation_get_name(conv),
 								   buffy, -1, imflags);
 
 				if (err > 0)
@@ -425,7 +423,6 @@ common_send(GaimConversation *conv, const char *message)
 			}
 		}
 	}
-
 }
 
 static void
@@ -960,10 +957,10 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if (gaim_prefs_get_bool("/core/conversations/im/send_typing"))
-				serv_send_typing(gc, (char *)name, GAIM_NOT_TYPING);
+				serv_send_typing(gc, name, GAIM_NOT_TYPING);
 
 			if (gc && prpl_info->convo_closed != NULL)
-				prpl_info->convo_closed(gc, (char *)name);
+				prpl_info->convo_closed(gc, name);
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			/*
