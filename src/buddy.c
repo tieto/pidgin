@@ -610,12 +610,9 @@ void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
 static void menu_click(GtkObject *obj, char *who)
 {
 	GList *list = gtk_object_get_user_data(obj);
-	GList *first = g_list_first(list);
 	struct proto_buddy_menu *pbm = list->data;
 	if (pbm->callback)
 		pbm->callback(pbm->gc, who);
-	g_list_foreach(first, (GFunc)g_free, NULL);
-	g_list_free(first);
 }
 
 static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
@@ -636,13 +633,28 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		if (im_options & OPT_IM_ONE_WINDOW)
 			raise_convo_tab(c);
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-		GtkWidget *menu;
+		static GtkWidget *menu = NULL;
+		static GList *mo_top = NULL;
 		GtkWidget *button;
 		GtkWidget *menuitem;
 		GtkWidget *conmenu;
 		GSList *cn = b->connlist;
 		struct gaim_connection *g;
 		/* We're gonna make us a menu right here */
+
+		/*
+		 * If a menu already exists, destroy it before creating a new one,
+		 * thus freeing-up the memory it occupied.  Same for its associated
+		 * (prpl menu items) GList.
+		 */
+		if(menu) {
+			gtk_widget_destroy(menu);
+			if(mo_top) {
+				g_list_foreach(mo_top, (GFunc)g_free, NULL);
+				g_list_free(mo_top);
+				mo_top = NULL;
+			}
+		}
 
 		menu = gtk_menu_new();
 
@@ -673,7 +685,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			while (cn) {
 				g = (struct gaim_connection *)cn->data;
 				if (g->prpl->buddy_menu) {
-					GList *mo = g->prpl->buddy_menu(g, b->name);
+					GList *mo = mo_top = g->prpl->buddy_menu(g, b->name);
 
 					menuitem = gtk_menu_item_new_with_label(g->username);
 					gtk_menu_append(GTK_MENU(menu), menuitem);
@@ -702,7 +714,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		} else {
 			g = (struct gaim_connection *)cn->data;
 			if (g->prpl->buddy_menu) {
-				GList *mo = g->prpl->buddy_menu(g, b->name);
+				GList *mo = mo_top = g->prpl->buddy_menu(g, b->name);
 
 				while (mo) {
 					struct proto_buddy_menu *pbm = mo->data;
@@ -772,7 +784,7 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	GtkCTreeNode *node;
 	int *type;
 	int row, column;
-	GtkWidget *menu;
+	static GtkWidget *menu = NULL;
 	GtkWidget *button;
 
 	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
@@ -783,6 +795,16 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 
 	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
 	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if(menu) {
+		gtk_widget_destroy(menu);
+		menu = NULL;	/* safety measure */
+	}
+
 	if (*type == EDIT_GROUP) {
 		struct group *group = (struct group *)type;
 		menu = gtk_menu_new();
@@ -1507,11 +1529,18 @@ void chat_callback(GtkWidget *widget, GtkTree *tree)
 static void away_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GSList *awy = away_messages;
-	GtkWidget *menu;
+	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
 
 	if (!awy)
 		return;
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if(menu)
+		gtk_widget_destroy(menu);
 
 	menu = gtk_menu_new();
 
