@@ -1204,7 +1204,6 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 	} else if (!g_strncasecmp(buf, "ILN", 3)) {
 		char *state, *user, *friend, *tmp = buf;
-		struct buddy *b;
 		int status = 0;
 
 		GET_NEXT(tmp);

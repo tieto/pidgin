@@ -1131,8 +1131,8 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 			new->bid = cur->bid;
 			new->type = cur->type;
 			new->data = aim_tlvlist_copy(cur->data);
+			new->next = NULL;
 		}
-		new->next = NULL;
 
 		sess->ssi.received_data = 1;
 

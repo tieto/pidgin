@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: robflynn $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -18,6 +18,7 @@ static char rcsid_ZVariables_c[] = "$Header$";
 #endif
 
 #include <internal.h>
+#include "gaim.h"
 
 #include <ctype.h>
 #include <pwd.h>

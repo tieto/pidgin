@@ -11,6 +11,7 @@
 #include "gtkimhtml.h"
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 #define HISTORY_SIZE (4 * 1024)
 
