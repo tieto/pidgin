@@ -1,32 +1,44 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl -w
+# Original by Andy Harrison,
+# Rewrite by Decklin Foster,
+# Available under the GPL.
 
-##  gaim buddy list to aim blt format converter
-my $top = 1;
-if ($ARGV[0] && $ARGV[1]) {
-	open (FILE,$ARGV[0]);
-	print "Config {\n version 1\n}\nUser {\n screename $ARGV[1]\n}\nBuddy {\n list {\n";
-	foreach $line (<FILE>) {
-		chomp ($line);
-		$line =~ s/^ +//;			## strip any preceding spaces
-		next unless $line =~ /^[bg]/;    	## Ignore everything but the b and g lines
-		@buddy = split(//,$line);		## strip off the first 2 chars of the line.
-		shift @buddy;				##   crappy way to do it, but I didn't want to
-		shift @buddy;				##   mess up screen names with spaces in them.
-		foreach $char (@buddy) {
-			$buddy .= $char;
-		}
-		@screenname = split(/:/,$buddy);	## split off the aliases
-		
-		if ($line =~ /^g/) {
-			print "  }\n" unless $top;
-			print "  $screenname[0] {\n";
-			$top = 0;
-		} elsif ($line =~ /^b/) {
-			print "   $screenname[0]\n";
-		}
-	$buddy = undef;
-	}
-	print "  }\n }\n}\n";
-} else {
-	print "\n\n\n\tExample:\n\n\t\tgaim2blt.pl gaim.buddy.file YourScreenName\n\n\n\n";
+package Gaim2Blt;
+use strict;
+use Getopt::Std;
+use vars qw(%opts $in_group);
+
+getopts('s:', \%opts);
+die "usage: $0 -s 'screen name' gaim.buddy\n" unless $opts{s};
+
+print <<"EOF";
+Config {
+  version 1
 }
+User {
+  screenname "$opts{s}"
+}
+Buddy {
+  list {
+EOF
+
+while (<>) {
+    chomp;
+    my ($type, $args) = split ' ', $_, 2;
+    next unless $type;
+
+    if ($type eq 'g') {
+        print "    }\n" if ($in_group);
+        print "    $args {\n";
+        $in_group = 1;
+    } elsif ($type eq 'b') {
+        my ($buddy, $alias) = split /:/, $args;
+        print qq(      "$buddy"\n);
+    }
+}
+
+print <<"EOF";
+    }
+  }
+}
+EOF
