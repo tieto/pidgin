@@ -40,6 +40,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "gtkhtml.h"
+#include "prpl.h"
 
 #include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/cancel.xpm"
@@ -2767,7 +2768,8 @@ bud_list_cache_exists(struct gaim_connection *gc)
 
 	file = gaim_user_dir();
 	if ( file != (char *) NULL ) {
-		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname, gc->protocol); 
+		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname,
+				(gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
 		if ( !stat(path, &sbuf) ) {
 			debug_printf("%s exists.\n", path);
 			ret = TRUE;
@@ -2839,7 +2841,8 @@ void do_export(GtkWidget *w, void *dummy)
 				for (i = 0; i < strlen(g->username); i++)
 					g_screenname[i] = toupper(g->username[i]);
 				g_screenname[i] = '\0';
-				sprintf(path, "%s/%s.%d.blist", file, g_screenname, g->protocol);
+				sprintf(path, "%s/%s.%d.blist", file, g_screenname,
+						(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
 				if ((f = fopen(path,"w"))) {
 					debug_printf("writing %s\n", path);
 					toc_build_config(g, buf, 8192 - 1, TRUE);
