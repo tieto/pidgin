@@ -3929,7 +3929,7 @@ msgstr "새 메시지"
 
 #: src/dialogs.c:664
 msgid "Please enter the screenname of the person you would like to IM.\n"
-msgstr "메신저로 보내려는 상대의 아이디를 넣어 주십시오."
+msgstr "메신저로 보내려는 상대의 아이디를 넣어 주십시오.\n"
 
 #: src/dialogs.c:680 src/dialogs.c:786 src/dialogs.c:3789
 msgid "_Screenname:"

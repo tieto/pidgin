@@ -19,10 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-/* No, he's right, real men do only communicate by cvs commits.
- */
-
 #include "internal.h"
 
 #include "account.h"
@@ -3868,8 +3864,8 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
-
-	/* XXX - Should call aim_bos_setidle with 0x0000 */
+/*	aim_srv_setavailmsg(sess, NULL); */
+	aim_bos_setidle(sess, fr->conn, 0);
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(sess);
@@ -5848,25 +5844,32 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 #endif
 	} else {
 		struct buddy *b = gaim_find_buddy(gc->account, who);
+		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
-		if ((aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who)) && GAIM_BUDDY_IS_ONLINE(b)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Direct IM");
-			pbm->callback = oscar_ask_direct_im;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
+		if (b && bi && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
+			if (bi->caps & AIM_CAPS_IMIMAGE) {
+				pbm = g_new0(struct proto_buddy_menu, 1);
+				pbm->label = _("Direct IM");
+				pbm->callback = oscar_ask_direct_im;
+				pbm->gc = gc;
+				m = g_list_append(m, pbm);
+			}
 
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Send File");
-			pbm->callback = oscar_ask_sendfile;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
+			if (bi->caps & AIM_CAPS_SENDFILE) {
+				pbm = g_new0(struct proto_buddy_menu, 1);
+				pbm->label = _("Send File");
+				pbm->callback = oscar_ask_sendfile;
+				pbm->gc = gc;
+				m = g_list_append(m, pbm);
+			}
 #if 0
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Get File");
-			pbm->callback = oscar_ask_getfile;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
+			if (bi->caps & AIM_CAPS_GETFILE) {
+				pbm = g_new0(struct proto_buddy_menu, 1);
+				pbm->label = _("Get File");
+				pbm->callback = oscar_ask_getfile;
+				pbm->gc = gc;
+				m = g_list_append(m, pbm);
+			}
 #endif
 		}
 	}
@@ -6002,6 +6005,21 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 	g_free(text);
 }
 
+static void oscar_setavailmsg(GaimConnection *gc, char *text) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+
+	aim_srv_setavailmsg(od->sess, text);
+}
+
+static void oscar_show_setavailmsg(GaimConnection *gc)
+{
+	gaim_request_input(gc, NULL, _("Available Message:"),
+					   NULL, _("Please talk to me, I'm lonely! (and single)"), TRUE,
+					   _("OK"), G_CALLBACK(oscar_setavailmsg),
+					   _("Cancel"), NULL,
+					   gc);
+}
+
 static void oscar_show_chpassurl(GaimConnection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -6052,6 +6070,14 @@ static GList *oscar_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
+#if 0
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Set Available Message");
+	pam->callback = oscar_show_setavailmsg;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+#endif
+
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");
 	pam->callback = show_change_passwd;
@@ -6070,7 +6096,7 @@ static GList *oscar_actions(GaimConnection *gc)
 		/* AIM actions */
 		m = g_list_append(m, NULL);
 
-	       	pam = g_new0(struct proto_actions_menu, 1);
+		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Format Screenname");
 		pam->callback = oscar_show_format_screenname;
 		pam->gc = gc;

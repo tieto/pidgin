@@ -734,9 +734,9 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 }
 
 /* 
- * Subtype 0x001e - Set Extended Status
+ * Subtype 0x001e - Extended Status
  *
- * Currently only works if using ICQ.
+ * Sets your ICQ status (available, away, do not disturb, etc.)
  *
  * These are the same TLVs seen in user info.  You can 
  * also set 0x0008 and 0x000c.
@@ -764,6 +764,55 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
 	
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/* 
+ * Subtype 0x001e - Extended Status.
+ *
+ * Sets your "available" message.  This is currently only supported by iChat 
+ * and Gaim.
+ *
+ * These are the same TLVs seen in user info.  You can 
+ * also set 0x0008 and 0x000c.
+ */
+faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0001)))
+		return -EINVAL;
+
+	if (msg) {
+		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 2)))
+			return -ENOMEM;
+
+		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
+		aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+
+		aimbs_put16(&fr->data, 0x001d);
+		aimbs_put16(&fr->data, strlen(msg)+2);
+		aimbs_putraw(&fr->data, msg, strlen(msg));
+		aimbs_put16(&fr->data, 0x0000);
+	} else {
+		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + 8)))
+			return -ENOMEM;
+
+		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
+		aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+
+		aimbs_put16(&fr->data, 0x001d);
+		aimbs_put16(&fr->data, 0x0008);
+		aimbs_put16(&fr->data, 0x0002);
+		aimbs_put16(&fr->data, 0x0404);
+		aimbs_put16(&fr->data, 0x0000);
+		aimbs_put16(&fr->data, 0x0000);
+	}
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -976,7 +1025,8 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 			} break;
 		}
 	}
-		return ret;
+
+	return ret;
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)

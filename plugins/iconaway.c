@@ -9,6 +9,8 @@
 
 #ifdef _WIN32
 __declspec(dllimport) GtkWidget *imaway;
+#else
+G_MODULE_IMPORT GtkWidget *imaway;
 #endif
 
 #ifdef USE_APPLET
