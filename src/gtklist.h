@@ -82,7 +82,18 @@ struct gaim_blist_ui_ops *gaim_get_gtk_blist_ui_ops(void);
  */
 GdkPixbuf *create_prpl_icon(struct gaim_account *account);
 
-
+/**
+ * Refreshes all the nodes of the buddy list.
+ * This should only be called when something changes to affect most of the nodes (such as a ui preference changing)
+ *
+ * @param list   This is the core list that gets updated from
+ */
 void gaim_gtk_blist_refresh(struct gaim_buddy_list *list);
+
+/**
+ * Tells the buddy list to update its toolbar based on the preferences
+ *
+ */
+void gaim_gtk_blist_update_toolbar();
 
 #endif /* _GAIM_GTK_LIST_H_ */

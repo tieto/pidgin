@@ -62,6 +62,32 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
  *              Callbacks                          *
  ***************************************************/
 
+static void gtk_blist_menu_im_cb(GtkWidget *w, struct buddy *b)
+{
+       gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+}
+
+static void gtk_blist_menu_alias_cb(GtkWidget *w, struct buddy *b)
+{
+       alias_dialog_bud(b);
+}
+
+static void gtk_blist_menu_bp_cb(GtkWidget *w, struct buddy *b)
+{
+       show_new_bp(b->name, b->account->gc, b->idle,
+                               b->uc & UC_UNAVAILABLE, NULL);
+}
+
+static void gtk_blist_menu_showlog_cb(GtkWidget *w, struct buddy *b)
+{
+       show_log(b->name);
+}
+
+static void gtk_blist_show_systemlog_cb()
+{
+       show_log(NULL);
+}
+
 static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 {
 	GtkTreeIter iter;
@@ -118,6 +144,11 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 	
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		if (gtk_tree_view_row_expanded(tv, path))
+			gtk_tree_view_collapse_row(tv, path);
+		else
+			gtk_tree_view_expand_row(tv,path,FALSE);
 	}
 }
 
@@ -169,17 +200,21 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	}
 	
 	menuitem = gtk_image_menu_item_new_with_mnemonic("_IM");
- 	image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_im_cb), node);
+	image = gtk_image_new_from_stock(GAIM_STOCK_IM, GTK_ICON_SIZE_MENU);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);	
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	
 	menuitem = gtk_image_menu_item_new_with_mnemonic("_Alias");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_alias_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	
 	menuitem = gtk_image_menu_item_new_with_mnemonic("Add Buddy _Pounce");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_bp_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	
 	menuitem = gtk_image_menu_item_new_with_mnemonic("View _Log");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_blist_menu_showlog_cb), node);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gtk_widget_show_all(menu);
@@ -222,11 +257,21 @@ static void gaim_gtk_blist_add_buddy_cb()
 		else if (GAIM_BLIST_NODE_IS_GROUP(node))
 			show_add_buddy(NULL, NULL, ((struct group*)node)->name, NULL);
 	}
-	else{
+	else {
 		show_add_buddy(NULL, NULL, NULL, NULL);
 	}
 }
 
+static void gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer data) {
+	if (GTK_IS_IMAGE(widget)) {
+		if (blist_options & OPT_BLIST_SHOW_BUTTON_XPM)
+			gtk_widget_show(widget);
+		else
+			gtk_widget_hide(widget);
+	} else if (GTK_IS_CONTAINER(widget)) {
+		gtk_container_foreach(GTK_CONTAINER(widget), gaim_gtk_blist_update_toolbar_icons, NULL);
+	}
+}
 
 /***************************************************
  *            Crap                                 *
@@ -262,13 +307,13 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/sep2"), NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
-	{ N_("/Tools/View System _Log"), NULL, NULL, 0, NULL },
+	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", NULL, 0,
 	  "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, NULL, 0, NULL },
+	{ N_("/Help/_Debug Window"), NULL, show_debug, 0, NULL },
 	{ N_("/Help/_About"), NULL, show_about, 0, NULL },
 
 };
@@ -583,15 +628,15 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
-gtkblist->treeview);
-
+			 gtkblist->treeview);
+	
 	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
-gtkblist->treeview);
-
+			 gtkblist->treeview);
+	
 	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -607,6 +652,9 @@ gtkblist->treeview);
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
 	gtk_widget_show_all(gtkblist->window);
+	
+	gaim_gtk_blist_update_toolbar();
+
 }
 
 void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
@@ -623,6 +671,18 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
 		}
 		group = group->next;
 	}
+}
+
+void gaim_gtk_blist_update_toolbar() {
+	if (!gtkblist)
+		return;
+	
+	gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox), gaim_gtk_blist_update_toolbar_icons, NULL);
+	
+	if (blist_options & OPT_BLIST_NO_BUTTONS)
+		gtk_widget_hide(gtkblist->bbox);
+	else
+		gtk_widget_show_all(gtkblist->bbox);
 }
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
@@ -694,21 +754,41 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (GAIM_BLIST_NODE_IS_BUDDY(node) && ((struct buddy*)node)->present) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
-		
+		char *warning = NULL, *idle = NULL;
+
 		status = gaim_gtk_blist_get_status_icon((struct buddy*)node);
 		avatar = gaim_gtk_blist_get_buddy_icon((struct buddy*)node);
 		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node);
-		
+
+		if ((((struct buddy*)node)->idle > 0) &&  
+		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_IDLETIME))) {
+			time_t t;
+			int ihrs, imin;
+			time(&t);
+			ihrs = (t - ((struct buddy *)node)->idle) / 3600;
+			imin = ((t - ((struct buddy*)node)->idle) / 60) % 60;
+			idle = g_strdup_printf("%d:%02d", ihrs, imin); 
+		}
+
+		if ((((struct buddy*)node)->evil > 0) &&  
+		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_WARN))) {
+			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil); 
+		}
+
 		gtk_tree_store_set(gtkblist->treemodel, iter, 
 				   STATUS_ICON_COLUMN, status,
 				   NAME_COLUMN, mark,
-				   WARNING_COLUMN, "",
-				   IDLE_COLUMN, "",
+				   WARNING_COLUMN, warning,
+				   IDLE_COLUMN, idle,
 				   BUDDY_ICON_COLUMN, avatar, 
 				   NODE_COLUMN, node,
 				   -1);
 			
 		g_free(mark);
+		if (idle)
+			g_free(idle);
+		if (warning)
+			g_free(warning);
 
 		if (status != NULL)
 			g_object_unref(status);

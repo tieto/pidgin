@@ -1975,7 +1975,10 @@ static void set_blist_option(GtkWidget *w, int option)
 	if (!gtkblist)
 		return;
 	
-	gaim_gtk_blist_refresh(gaim_get_blist());
+	if (option == OPT_BLIST_NO_BUTTONS || option == OPT_BLIST_NO_BUTTONS)
+		gaim_gtk_blist_update_toolbar();
+	else
+		gaim_gtk_blist_refresh(gaim_get_blist());
 
 }
 
