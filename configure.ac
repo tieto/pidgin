@@ -102,7 +102,7 @@ if test "x$enable_gnome" = "xyes" ; then
 		CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
 		AC_DEFINE(USE_APPLET)
 		AC_DEFINE(USE_GNOME)
-		UI_LIBS="$GTK_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS $GNOMEUI_LIBS"
+		UI_LIBS="$UI_LIBS $GTK_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS $GNOMEUI_LIBS"
 		AC_PATH_PROG(gaimpath, gaim_applet)
 	else
 		AC_PATH_PROG(gnomepath, gnome-config)
@@ -120,7 +120,7 @@ if test "x$enable_gnome" = "xyes" ; then
 			else
 				AC_MSG_RESULT(ok)
 				CFLAGS="$CFLAGS $GNOME_CFLAGS"
-				UI_LIBS="`$gnomepath gnomeui --libs 2>/dev/null`"
+				UI_LIBS="$UI_LIBS `$gnomepath gnomeui --libs 2>/dev/null`"
 				AC_DEFINE(USE_GNOME)
 				GNOME_CONFIG="$gnomepath"
 				AC_SUBST(GNOME_CONFIG)
@@ -139,7 +139,7 @@ if test "x$enable_gnome" != "xyes" ; then
 *** GTK+ is required to build Gaim; please make sure you have the GTK+
 *** development headers installed. The latest version of GTK+ is
 *** always available at http://www.gtk.org/.]),gthread)
-	UI_LIBS="$GTK_LIBS"
+	UI_LIBS="$UI_LIBS $GTK_LIBS"
 	AC_PATH_PROG(gaimpath, gaim)
 fi
 CFLAGS="$CFLAGS $GTK_CFLAGS"
@@ -155,7 +155,7 @@ if test "x$enable_pixbuf" = "xyes" ; then
 		AC_SUBST(GDK_PIXBUF_CFLAGS)
 		AC_SUBST(GDK_PIXBUF_LIBS)
 		CFLAGS="$CFLAGS $GDK_PIXBUF_CFLAGS"
-		UI_LIBS="$GDK_PIXBUF_LIBS"
+		UI_LIBS="$UI_LIBS $GDK_PIXBUF_LIBS"
 		dnl We should be doing checks to see that the header files and functions exist. eh.
 		AC_DEFINE(USE_PIXBUF)
 		use_pixbuf=yes
