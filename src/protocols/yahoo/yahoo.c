@@ -911,7 +911,7 @@ static char *yahoo_decode(const char *text)
 		if (*p == '\\') {
 			sscanf(p + 1, "%3o%n\n", &i, &k);
 			*n = i;
-			p += k - 1;
+			p += k;
 		}
 		else
 			*n = *p;
