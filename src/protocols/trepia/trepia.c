@@ -175,11 +175,17 @@ static char *
 trepia_status_text(struct buddy *b)
 {
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
+	const char *value;
+	char *text = NULL;
 
-	if (trepia_profile_get_profile(profile) != NULL)
-		return g_strdup(trepia_profile_get_profile(profile));
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "trepia_status_text\n");
+	gaim_debug(GAIM_DEBUG_MISC, "trepia", "profile = '%s'\n",
+			   trepia_profile_get_profile(profile));
 
-	return NULL;
+	if ((value = trepia_profile_get_profile(profile)) != NULL)
+		text = g_strdup(value);
+
+	return text;
 }
 
 static char *
@@ -191,7 +197,6 @@ trepia_tooltip_text(struct buddy *b)
 	int int_value;
 	char *text = NULL;
 	char *tmp, *tmp2;
-	char *c;
 
 	text = g_strdup("");
 
@@ -247,6 +252,15 @@ trepia_tooltip_text(struct buddy *b)
 
 	if ((value = trepia_profile_get_country(profile)) != NULL) {
 		tmp = g_strdup_printf("<b>Country:</b> %s\n", value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
+	if ((value = trepia_profile_get_profile(profile)) != NULL) {
+		tmp = g_strdup_printf("<b>Profile:</b> %s\n", value);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
@@ -500,64 +514,64 @@ __parse_data(TrepiaSession *session, char *buf)
 					trepia_profile_set_sex(profile, *value);
 
 				/* Location */
-				trepia_profile_set_location(profile,
-						g_hash_table_lookup(info, "p"));
+				if ((value = g_hash_table_lookup(info, "p")) != NULL)
+					trepia_profile_set_location(profile, value);
 
 				/* First Name */
-				trepia_profile_set_first_name(profile,
-						g_hash_table_lookup(info, "g"));
+				if ((value = g_hash_table_lookup(info, "g")) != NULL)
+					trepia_profile_set_first_name(profile, value);
 
 				/* Last Name */
-				trepia_profile_set_last_name(profile,
-						g_hash_table_lookup(info, "h"));
+				if ((value = g_hash_table_lookup(info, "h")) != NULL)
+					trepia_profile_set_last_name(profile, value);
 
 				/* Profile */
-				trepia_profile_set_profile(profile,
-						g_hash_table_lookup(info, "o"));
+				if ((value = g_hash_table_lookup(info, "o")) != NULL)
+					trepia_profile_set_profile(profile, value);
 
 				/* E-mail */
-				trepia_profile_set_email(profile,
-						g_hash_table_lookup(info, "e"));
+				if ((value = g_hash_table_lookup(info, "e")) != NULL)
+					trepia_profile_set_email(profile, value);
 
 				/* AIM */
-				trepia_profile_set_aim(profile,
-						g_hash_table_lookup(info, "j"));
+				if ((value = g_hash_table_lookup(info, "j")) != NULL)
+					trepia_profile_set_aim(profile, value);
 
 				/* MSN */
-				trepia_profile_set_msn(profile,
-						g_hash_table_lookup(info, "k"));
+				if ((value = g_hash_table_lookup(info, "k")) != NULL)
+					trepia_profile_set_msn(profile, value);
 
 				/* Yahoo */
-				trepia_profile_set_yahoo(profile,
-						g_hash_table_lookup(info, "l"));
+				if ((value = g_hash_table_lookup(info, "l")) != NULL)
+					trepia_profile_set_yahoo(profile, value);
 
 				/* Homepage */
-				trepia_profile_set_homepage(profile,
-						g_hash_table_lookup(info, "f"));
+				if ((value = g_hash_table_lookup(info, "f")) != NULL)
+					trepia_profile_set_homepage(profile, value);
 
 				/* Country */
-				trepia_profile_set_country(profile,
-						g_hash_table_lookup(info, "r"));
+				if ((value = g_hash_table_lookup(info, "r")) != NULL)
+					trepia_profile_set_country(profile, value);
 
 				/* State */
-				trepia_profile_set_state(profile,
-						g_hash_table_lookup(info, "s"));
+				if ((value = g_hash_table_lookup(info, "s")) != NULL)
+					trepia_profile_set_state(profile, value);
 
 				/* City */
-				trepia_profile_set_city(profile,
-						g_hash_table_lookup(info, "t"));
+				if ((value = g_hash_table_lookup(info, "t")) != NULL)
+					trepia_profile_set_city(profile, value);
 
 				/* Languages */
-				trepia_profile_set_languages(profile,
-						g_hash_table_lookup(info, "u"));
+				if ((value = g_hash_table_lookup(info, "u")) != NULL)
+					trepia_profile_set_languages(profile, value);
 
 				/* School */
-				trepia_profile_set_school(profile,
-						g_hash_table_lookup(info, "v"));
+				if ((value = g_hash_table_lookup(info, "v")) != NULL)
+					trepia_profile_set_school(profile, value);
 
 				/* Company */
-				trepia_profile_set_company(profile,
-						g_hash_table_lookup(info, "w"));
+				if ((value = g_hash_table_lookup(info, "w")) != NULL)
+					trepia_profile_set_company(profile, value);
 
 				/* Login Name */
 				if ((value = g_hash_table_lookup(info, "d")) != NULL) {
@@ -576,6 +590,10 @@ __parse_data(TrepiaSession *session, char *buf)
 
 					g_free(icon);
 				}
+
+				gaim_debug(GAIM_DEBUG_INFO, "trepia", "Calling serv_got_update\n");
+				serv_got_update(session->gc, id, 1, 0,
+								trepia_profile_get_login_time(profile), 0, 0);
 				break;
 
 			case TREPIA_MEMBER_OFFLINE:
