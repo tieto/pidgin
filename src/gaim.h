@@ -356,8 +356,8 @@ struct conversation {
 	gboolean is_chat;
 };
 
-#define CONVERSATION_TITLE "Gaim - %s"
-#define LOG_CONVERSATION_TITLE "Gaim - %s (logged)"
+#define CONVERSATION_TITLE "%s - Gaim"
+#define LOG_CONVERSATION_TITLE "%s - Gaim (logged)"
 
 #define AOL_SRCHSTR "/community/aimcheck.adp/url="
 
