@@ -561,11 +561,11 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 		warning = g_strdup_printf(_("<b>Warned:</b> %d%%"), b->evil);
 
 	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-			       "%s %s %s"  /* Alias */
-			       "%s %s %s"  /* Nickname */
-			       "%s %s"     /* Idle */
-			       "%s %s"     /* Warning */
-			       "%s %s",    /* Status */
+			       "%s%s %s"  /* Alias */
+			       "%s%s %s"  /* Nickname */
+			       "%s%s"     /* Idle */
+			       "%s%s"     /* Warning */
+			       "%s%s",    /* Status */
 			       b->name,
 			       b->alias && b->alias[0] ? "\n" : "", b->alias && b->alias[0] ? _("<b>Alias:</b> ") : "", b->alias ? b->alias : "", 
 			       b->server_alias ? "\n" : "", b->server_alias ? _("<b>Nickname:</b> ") : "", b->server_alias ? b->server_alias : "", 

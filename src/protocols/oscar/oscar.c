@@ -2860,7 +2860,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
 	if (bi)
-		return g_strdup_printf(_("<b>Online Since</b> %s<b>Capabilities:</b> %s"), asctime(localtime(&bi->signon)), caps_string(bi->caps));
+		return g_strdup_printf(_("<b>Online Since:</b> %s<b>Capabilities:</b> %s"), asctime(localtime(&bi->signon)), caps_string(bi->caps));
 	else
 		return NULL;
 }
