@@ -351,7 +351,8 @@ static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, str
 {
 	int pos;
 	if (event->keyval == GDK_Return) {
-		if (!(event->state & GDK_SHIFT_MASK)) {
+		if (!(event->state & GDK_SHIFT_MASK)
+				&& (general_options & OPT_GEN_ENTER_SENDS)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		} else {
