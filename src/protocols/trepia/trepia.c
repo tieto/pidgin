@@ -180,6 +180,7 @@ set_profile(GaimConnection *gc)
 
 	fields = gaim_request_fields_new();
 
+	/* Basic Profile group. */
 	group = gaim_request_field_group_new(_("Basic Profile"));
 	gaim_request_fields_add_group(fields, group);
 
@@ -213,6 +214,52 @@ set_profile(GaimConnection *gc)
 										  FALSE);
 	gaim_request_field_group_add_field(group, field);
 
+	/* Profile String */
+	field = gaim_request_field_string_new("profile",
+										  _("Profile Information"), NULL,
+										  TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+
+	/* Instant Messagers */
+	group = gaim_request_field_group_new(_("Instant Messagers"));
+	gaim_request_fields_add_group(fields, group);
+
+	/* AIM */
+	field = gaim_request_field_string_new("aim", _("AIM"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* ICQ */
+	field = gaim_request_field_string_new("icq", _("ICQ UIN"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* MSN */
+	field = gaim_request_field_string_new("msn", _("MSN"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* Yahoo */
+	field = gaim_request_field_string_new("yahoo", _("Yahoo"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+
+	/* I'm From */
+	group = gaim_request_field_group_new(_("I'm From"));
+	gaim_request_fields_add_group(fields, group);
+
+	/* Country */
+	field = gaim_request_field_string_new("country", _("Country"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* State */
+	field = gaim_request_field_string_new("state", _("State"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	/* City */
+	field = gaim_request_field_string_new("city", _("City"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+
+	/* Call the dialog. */
 	gaim_request_fields(gc, NULL, _("Set your Trepia profile data."),
 						NULL, fields,
 						_("Save"), G_CALLBACK(save_profile_cb),
