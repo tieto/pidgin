@@ -1721,7 +1721,6 @@ void do_pounce(char *name, int when)
 				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
 						g_slist_index(connections, u->gc));
 				update_buttons_by_protocol(c);
-					c = new_conversation(name);
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
                         	c = find_conversation(name);
