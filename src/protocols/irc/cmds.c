@@ -122,6 +122,35 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	return 1;
 }
 
+int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	GaimConversation *convo = gaim_find_conversation_with_account(target, irc->account);
+
+	/* XXX we should eventually have per-command help */
+
+	if (!convo)
+		return 0;
+
+	if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) {
+		gaim_chat_write(GAIM_CHAT(convo), "", _("<B>Supported IRC Commands:</B><BR>"
+							"AWAY INVITE JOIN KICK<BR>"
+							"ME MODE MSG NAMES<BR>"
+							"NICK OP DEOP OPERWALL<BR>"
+							"PART PING QUERY QUIT<BR>"
+							"QUOTE REMOVE TOPIC UMODE<BR>"
+							"VOICE DEVOICE WALLOPS WHOIS<BR>"),
+				WFLAG_NOLOG, time(NULL));
+	} else {
+		gaim_im_write(GAIM_IM(convo), "", _("<B>Supported IRC Commands:</B><BR>"
+						    "AWAY JOIN ME MODE<BR>"
+						    "MSG NICK OPERWALL PING<BR>"
+						    "QUERY QUIT QUOTE UMODE<BR>"
+						    "WALLOPS WHOIS"), -1, WFLAG_NOLOG, time(NULL));
+	}
+
+	return 0;
+}
+
 int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;

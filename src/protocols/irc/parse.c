@@ -102,6 +102,7 @@ static struct _irc_user_cmd {
 	{ "away", ":", irc_cmd_away },
 	{ "deop", ":", irc_cmd_op },
 	{ "devoice", ":", irc_cmd_op },
+	{ "help", "v", irc_cmd_help },
 	{ "invite", ":", irc_cmd_invite },
 	{ "j", "cv", irc_cmd_join },
 	{ "join", "cv", irc_cmd_join },
