@@ -53,6 +53,8 @@ version 0.78cvs
 	* Print Gadu-Gadu messages to the debug window instead of the console
 	* Updated and standardized blist signals (Gary Kramlich)
 	* Made the recieve-*-msg signals match the sending ones (Stu Tomlinson)
+	* The idle time for the buddy-idle and buddy-unidle signals should
+	  be correct again.
 
 	Preference Changes:
 	* Added "Conversation placement - By conversation count"

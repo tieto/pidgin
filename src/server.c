@@ -1136,7 +1136,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	}
 
 	if (!old_idle && idle) {
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
@@ -1149,8 +1148,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			g_free(tmp);
 		}
 	} else if (old_idle && !idle) {
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-
 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
@@ -1204,6 +1201,14 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	gaim_blist_update_buddy_evil(b, evil);
 	gaim_blist_update_buddy_status(b, type);
 
+	if (!old_idle && idle)
+	{
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
+	}
+	else if (old_idle && !idle)
+	{
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
+	}
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
