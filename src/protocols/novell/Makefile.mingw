@@ -75,6 +75,7 @@ C_SRC =	nmfield.c \
 		nmevent.c \
 		nmmessage.c \
 		nmrequest.c \
+		nmrtf.c \
 		nmuser.c \
 		nmuserrecord.c \
 		novell.c

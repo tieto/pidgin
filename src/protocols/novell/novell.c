@@ -37,8 +37,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static gboolean set_permit = FALSE;
-
 static gboolean
 _is_disconnect_error(NMERR_T err);
 
@@ -104,7 +102,6 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 		}
 
 		_sync_contact_list(user);
-		_sync_privacy_lists(user);
 
 		/* Tell Gaim that we are connected */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
@@ -1685,6 +1682,9 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 	GaimConversation *gconv;
 	NMConference *conference;
 	GaimConvImFlags imflags;
+	char *text = NULL;
+
+	text = g_markup_escape_text(nm_event_get_text(event), -1);
 
 	conference = nm_event_get_conference(event);
 	if (conference) {
@@ -1703,7 +1703,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 
 				serv_got_im(gaim_account_get_connection(user->client_data),
 							nm_user_record_get_display_id(user_record),
-							nm_event_get_text(event), imflags,
+							text, imflags,
 							nm_event_get_gmt(event));
 
 				gconv =	gaim_find_conversation_with_account(
@@ -1715,8 +1715,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 					if (contact) {
 
 						gaim_conversation_set_title(
-							gconv,
-							nm_contact_get_display_name(contact));
+							gconv, nm_contact_get_display_name(contact));
 
 
 					} else {
@@ -1759,12 +1758,12 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 
 				serv_got_chat_in(gaim_account_get_connection(user->client_data),
 								 gaim_conv_chat_get_id(GAIM_CONV_CHAT(chat)),
-								 name,
-								 0, nm_event_get_text(event),
-								 nm_event_get_gmt(event));
+								 name, 0, text, nm_event_get_gmt(event));
 			}
 		}
 	}
+
+	g_free(text);
 }
 
 static void
@@ -2161,7 +2160,7 @@ novell_send_im(GaimConnection * gc, const char *name,
 		return 0;
 
 	/* Create a new message */
-	message = nm_create_message(gaim_markup_strip_html(message_body));
+	message = nm_create_message(message_body);
 
 	/* Need to get the DN for the buddy so we can look up the convo */
 	dn = nm_lookup_dn(user, name);
@@ -2371,7 +2370,7 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 	if (user == NULL)
 		return -1;
 
-	message = nm_create_message(gaim_markup_strip_html(text));
+	message = nm_create_message(text);
 
 	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 		conference = cnode->data;
@@ -3083,8 +3082,9 @@ novell_set_permit_deny(GaimConnection *gc)
 	if (user == NULL)
 		return;
 
-	if (set_permit == FALSE) {
-		set_permit = TRUE;
+	if (user->privacy_synched == FALSE) {
+		_sync_privacy_lists(user);
+		user->privacy_synched = TRUE;
 		return;
 	}
 
@@ -3285,7 +3285,7 @@ static GList *
 novell_blist_node_menu(GaimBlistNode *node)
 {
 	GList *list = NULL;
-	GaimBlistNodeAction *act;	
+	GaimBlistNodeAction *act;
 
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		act = gaim_blist_node_action_new(_("Initiate _Chat"),
@@ -3294,6 +3294,23 @@ novell_blist_node_menu(GaimBlistNode *node)
 	}
 
 	return list;
+}
+
+static void
+novell_keepalive(GaimConnection *gc)
+{
+	NMUser *user;
+	NMERR_T rc = NM_OK;
+
+	if (gc == NULL)
+		return;
+
+	user = gc->proto_data;
+	if (user == NULL)
+		return;
+
+	rc = nm_send_keepalive(user, NULL, NULL);
+	_check_for_disconnect(user, rc);
 }
 
 static GaimPluginProtocolInfo prpl_info = {
@@ -3328,12 +3345,12 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_set_permit_deny,
 	NULL,						/* warn */
 	NULL,						/* join_chat */
-	NULL,						/* reject_chat ?? */
+	NULL,						/* reject_chat */
 	novell_chat_invite,			/* chat_invite */
 	novell_chat_leave,
 	NULL,						/* chat_whisper */
 	novell_chat_send,
-	NULL,						/* keepalive */
+	novell_keepalive,
 	NULL,						/* register_user */
 	NULL,						/* get_cb_info */
 	NULL,						/* get_cb_away_msg */

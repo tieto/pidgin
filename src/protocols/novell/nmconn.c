@@ -383,6 +383,7 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 	int bytes_to_send;
 	int ret;
 	NMField *request = NULL;
+	char *str = NULL;
 
 	if (conn == NULL || cmd == NULL)
 		return NMERR_BAD_PARM;
@@ -415,14 +416,13 @@ nm_send_request(NMConn * conn, char *cmd, NMField * fields, NMRequest ** req)
 
 	/* Add the transaction id to the request fields */
 	if (rc == NM_OK) {
-		request = nm_copy_field_array(fields);
-		if (request) {
-			char *str = g_strdup_printf("%d", ++(conn->trans_id));
+		if (fields)
+			request = nm_copy_field_array(fields);
 
-			request = nm_field_add_pointer(request, NM_A_SZ_TRANSACTION_ID, 0,
-										   NMFIELD_METHOD_VALID, 0,
-										   str, NMFIELD_TYPE_UTF8);
-		}
+		str = g_strdup_printf("%d", ++(conn->trans_id));
+		request = nm_field_add_pointer(request, NM_A_SZ_TRANSACTION_ID, 0,
+									   NMFIELD_METHOD_VALID, 0,
+									   str, NMFIELD_TYPE_UTF8);
 	}
 
 	/* Send the request to the server */

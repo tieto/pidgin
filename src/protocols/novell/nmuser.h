@@ -124,6 +124,9 @@ struct _NMUser
 	 */
 	gpointer client_data;
 
+	/* Have the privacy lists been synched yet */
+	gboolean privacy_synched;
+
 };
 
 #define	NM_STATUS_UNKNOWN			0
@@ -557,6 +560,18 @@ nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
 NMERR_T
 nm_send_set_privacy_default(NMUser *user, gboolean default_deny,
 							nm_response_cb callback, gpointer data);
+
+/**
+ *	Send a ping to the server
+ *
+ *  @param	user			The logged in User
+ *	@param	callback		Function to call when we get the response from the server
+ *  @param	data			User defined data
+ *
+ *	@return	NM_OK if successfully sent, error otherwise
+ */
+NMERR_T
+nm_send_keepalive(NMUser *user, nm_response_cb callback, gpointer data);
 
 /**
  *	Reads a response/event from the server and processes it.

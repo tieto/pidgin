@@ -23,6 +23,8 @@ version 0.79cvs:
 	  defaults for the next pounce.
 
 	Bug Fixes:
+	* Better handling of character sets in RTF for Novell (Mike Stoddard of
+	  Novell)
 	* Non-looping animated icons no longer cause Gaim to freeze
 	* Fixed a crash in SILC that sometimes happened when resolving
 	  the buddy list (Pekka Riikonen)

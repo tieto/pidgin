@@ -31,20 +31,17 @@
 /* This is the template that we wrap outgoing messages in, since the other
  * GW Messenger clients expect messages to be in RTF.
  */
-#define RTF_TEMPLATE 	"{\\rtf1\\fbidis\\ansi\\ansicpg1252\\deff0\\deflang1033"\
-                        "{\\fonttbl{\\f0\\fswiss\\fprq2\\fcharset0 "\
-                        "Microsoft Sans Serif;}}\n{\\colortbl ;\\red0"\
-                        "\\green0\\blue0;}\n\\viewkind4\\uc1\\pard\\ltrpar"\
-                        "\\li50\\ri50\\cf1\\f0\\fs20 %s\\par\n}"
+#define RTF_TEMPLATE 	"{\\rtf1\\ansi\n"\
+                        "{\\fonttbl{\\f0\\fnil Unknown;}}\n"\
+						"{\\colortbl ;\\red0\\green0\\blue0;}\n"\
+						"\\uc1\\cf1\\f0\\fs24 %s\\par\n}"
 #define NM_MAX_MESSAGE_SIZE 2048
 
 static NMERR_T nm_process_response(NMUser * user);
-
 static void _update_contact_list(NMUser * user, NMField * fields);
-
-static void
-_handle_multiple_get_details_login_cb(NMUser * user, NMERR_T ret_code,
-									  gpointer resp_data, gpointer user_data);
+static void _handle_multiple_get_details_login_cb(NMUser * user, NMERR_T ret_code,
+												  gpointer resp_data, gpointer user_data);
+static char * nm_rtfize_text(char *text);
 
 /**
  * See header for comments on on "public" functions
@@ -540,7 +537,7 @@ NMERR_T
 nm_send_message(NMUser * user, NMMessage * message, nm_response_cb callback)
 {
 	NMERR_T rc = NM_OK;
-	char *text;
+	char *text, *rtfized;
 	NMField *fields = NULL, *tmp = NULL;
 	NMRequest *req = NULL;
 	NMConference *conf;
@@ -572,20 +569,23 @@ nm_send_message(NMUser * user, NMMessage * message, nm_response_cb callback)
 		if (strlen(text) > NM_MAX_MESSAGE_SIZE)
 			text[NM_MAX_MESSAGE_SIZE] = 0;
 
+		rtfized = nm_rtfize_text(text);
+
+		gaim_debug_info("novell", "message text is: %s\n", text);
+		gaim_debug_info("novell", "message rtf is: %s\n", rtfized);
+
 		tmp = nm_field_add_pointer(tmp, NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_METHOD_VALID, 0,
-								   g_strdup_printf(RTF_TEMPLATE, text), NMFIELD_TYPE_UTF8);
+								   rtfized, NMFIELD_TYPE_UTF8);
 
 		tmp = nm_field_add_number(tmp, NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_METHOD_VALID, 0,
 								  0, NMFIELD_TYPE_UDWORD);
 
 		tmp = nm_field_add_pointer(tmp, NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_METHOD_VALID, 0,
-								   g_strdup(text), NMFIELD_TYPE_UTF8);
+								   text, NMFIELD_TYPE_UTF8);
 
 		fields = nm_field_add_pointer(fields, NM_A_FA_MESSAGE, 0, NMFIELD_METHOD_VALID, 0,
 									  tmp, NMFIELD_TYPE_ARRAY);
 		tmp = NULL;
-
-		g_free(text);
 
 		/* Add participants */
 		count = nm_conference_get_participant_count(conf);
@@ -1116,9 +1116,6 @@ nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
 		nm_conn_add_request_item(user->conn, req);
 	}
 
-	if (rc == NM_OK) {
-	}
-
 	if (fields)
 		nm_free_fields(&fields);
 
@@ -1150,6 +1147,25 @@ nm_send_set_privacy_default(NMUser *user, gboolean default_deny,
 
 	if (fields)
 		nm_free_fields(&fields);
+
+	return rc;
+}
+
+NMERR_T
+nm_send_keepalive(NMUser *user, nm_response_cb callback, gpointer data)
+{
+	NMERR_T rc = NM_OK;
+	NMRequest *req = NULL;
+
+	if (user == NULL)
+		return NMERR_BAD_PARM;
+
+	rc = nm_send_request(user->conn, "ping", NULL, &req);
+	if (rc == NM_OK && req) {
+		nm_request_set_callback(req, callback);
+		nm_request_set_user_define(req, data);
+		nm_conn_add_request_item(user->conn, req);
+	}
 
 	return rc;
 }
@@ -1449,6 +1465,7 @@ _create_privacy_list(NMUser * user, NMRequest *request)
 
 	if (need_details) {
 
+		nm_request_add_ref(request);
 		nm_send_multiple_get_details(user, need_details,
 									 _handle_multiple_get_details_login_cb, request);
 
@@ -1648,6 +1665,7 @@ _handle_multiple_get_details_login_cb(NMUser * user, NMERR_T ret_code,
 	if ((cb = nm_request_get_callback(request))) {
 		cb(user, ret_code, nm_request_get_data(request),
 		   nm_request_get_user_define(request));
+		nm_release_request(request);
 	}
 }
 
@@ -1793,8 +1811,8 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 				if (list != NULL) {
 
 					done = FALSE;
-					nm_request_add_ref(request);
 					nm_request_set_user_define(request, list);
+					nm_request_add_ref(request);
 					for (node = list; node; node = node->next) {
 
 						nm_send_get_details(user, (const char *) node->data,
@@ -1909,7 +1927,6 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 
 		cb(user, ret_code, nm_request_get_data(request),
 		   nm_request_get_user_define(request));
-
 	}
 
 	return rc;
@@ -1935,7 +1952,9 @@ nm_process_response(NMUser * user)
 			req = nm_conn_find_request(conn, atoi((char *) field->ptr_value));
 			if (req != NULL) {
 				rc = nm_call_handler(user, req, fields);
+				nm_conn_remove_request_item(conn, req);
 			}
+
 		}
 	}
 
@@ -2219,4 +2238,83 @@ _update_contact_list(NMUser * user, NMField * fields)
 		}
 		cursor++;
 	}
+}
+
+static char *
+nm_rtfize_text(char *text)
+{
+	GString *gstr = NULL;
+	unsigned char *pch;
+	char *uni_str = NULL, *rtf = NULL;
+	int bytes;
+	gunichar uc;
+
+	gstr = g_string_sized_new(strlen(text)*2);
+	pch = text;
+	while (*pch) {
+		if ((*pch) <= 0x7F) {
+			switch (*pch) {
+				case '{':
+				case '}':
+				case '\\':
+					gstr = g_string_append_c(gstr, '\\');
+					gstr = g_string_append_c(gstr, *pch);
+					break;
+				case '\n':
+					gstr = g_string_append(gstr, "\\par ");
+					break;
+				default:
+					gstr = g_string_append_c(gstr, *pch);
+					break;
+			}
+			pch++;
+		} else {
+			/* convert the utf-8 character to ucs-4 for rtf encoding */
+			if(*pch <= 0xDF) {
+				uc = ((((gunichar)pch[0]) & 0x001F) << 6) |
+					(((gunichar)pch[1]) & 0x003F);
+				bytes = 2;
+			} else if(*pch <= 0xEF) {
+				uc = ((((gunichar)pch[0]) & 0x000F) << 12) |
+					((((gunichar)pch[1]) & 0x003F) << 6) |
+					(((gunichar)pch[2]) & 0x003F);
+				bytes = 3;
+			} else if (*pch <= 0xF7) {
+				uc = ((((gunichar)pch[0]) & 0x0007) << 18) |
+					((((gunichar)pch[1]) & 0x003F) << 12) |
+					((((gunichar)pch[2]) & 0x003F) << 6) |
+					(((gunichar)pch[3]) & 0x003F);
+				bytes = 4;
+			} else if (*pch <= 0xFB) {
+				uc = ((((gunichar)pch[0]) & 0x0003) << 24) |
+					((((gunichar)pch[1]) & 0x003F) << 18) |
+					((((gunichar)pch[2]) & 0x003F) << 12) |
+					((((gunichar)pch[3]) & 0x003F) << 6) |
+					(((gunichar)pch[4]) & 0x003F);
+				bytes = 5;
+			} else if (*pch <= 0xFD) {
+				uc = ((((gunichar)pch[0]) & 0x0001) << 30) |
+					((((gunichar)pch[1]) & 0x003F) << 24) |
+					((((gunichar)pch[2]) & 0x003F) << 18) |
+					((((gunichar)pch[3]) & 0x003F) << 12) |
+					((((gunichar)pch[4]) & 0x003F) << 6) |
+					(((gunichar)pch[5]) & 0x003F);
+				bytes = 6;
+			} else {
+				/* should never happen ... bogus utf-8! */
+				gaim_debug_info("novell", "bogus utf-8 lead byte: 0x%X\n", pch[0]);
+				uc = 0x003F;
+				bytes = 1;
+			}
+			uni_str = g_strdup_printf("\\u%d?", uc);
+			gaim_debug_info("novell", "unicode escaped char %s\n", uni_str);
+			gstr = g_string_append(gstr, uni_str);
+			pch += bytes;
+			g_free(uni_str);
+		}
+	}
+
+	rtf = g_strdup_printf(RTF_TEMPLATE, gstr->str);
+	g_string_free(gstr, TRUE);
+	return rtf;
 }

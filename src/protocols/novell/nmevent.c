@@ -25,6 +25,7 @@
 #include "nmfield.h"
 #include "nmconn.h"
 #include "nmuserrecord.h"
+#include "nmrtf.h"
 
 struct _NMEvent
 {
@@ -51,66 +52,6 @@ struct _NMEvent
 	int ref_count;
 
 };
-
-/* Return a copy of src minus the RTF  */
-static char *
-_strip_rtf(const char *src, int len)
-{
-	const char *p = src;
-	char *q;
-	char *dest = g_new0(char, len + 1);
-	int level = 0;
-
-	/* Make sure we are dealing with rtf */
-	if (strncmp("{\\rtf1", src, strlen("{\\rtf1")) != 0) {
-		strncpy(dest, src, len);
-		return dest;
-	}
-	p += strlen("{\\rtf1");
-
-	q = dest;
-	while (*p != '\0') {
-		if (*p == '\\') {
-			if (level == 0) {
-				if (*(p + 1) == '\\' || *(p + 1) == '{' || *(p + 1) == '}') {
-					*q++ = *(p + 1);
-					p++;
-				} else if (*(p + 1) == 't' && *(p + 2) == 'a' && *(p + 3) == 'b') {
-					*q++ = '\t';
-					p++;
-				}
-			}
-			p++;
-		} else if (*p == '{') {
-			level++;
-			p++;
-		} else if (*p == '}') {
-			level--;
-			p++;
-		} else if (level == 0) {
-			if ((*p == ' ' || *p == '\r') && (*(p + 1) != '\\')) {
-				p++;
-
-				if (*p == '\n' &&
-					(*(p + 1) == '{' || *(p + 1) == '}' || *(p + 1) == '\\')) {
-					p++;
-				} else {
-					/* We found some text */
-					while (*p != '\0' && *p != '\\' && *p != '{' && *p != '}') {
-						*q++ = *p;
-						p++;
-					}
-				}
-			} else {
-				p++;
-			}
-		} else {
-			p++;
-		}
-	}
-
-	return dest;
-}
 
 /* Handle getdetails response and set the new user record into the event */
 static void
@@ -228,8 +169,11 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 
 			/* Auto replies are not in RTF format! */
 			if (!autoreply) {
+				NMRtfContext *ctx;
 
-				nortf = _strip_rtf((const char *) msg, size);
+				ctx = nm_rtf_init();
+				nortf = nm_rtf_strip_formatting(ctx, msg);
+				nm_rtf_deinit(ctx);
 
 				gaim_debug(GAIM_DEBUG_INFO, "novell",
 						   "Message without RTF is %s\n", nortf);

@@ -18,6 +18,8 @@ NOVELLSOURCES = \
 		nmmessage.c \
 		nmrequest.h \
 		nmrequest.c \
+		nmrtf.h \
+		nmrtf.c \
 		nmuser.h \
 		nmuser.c \
 		nmuserrecord.h \
