@@ -407,7 +407,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 
 	pkt = yahoo_packet_new(0xc2, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	size = g_strdup_printf("%d", d->str->len);
+	size = g_strdup_printf("%" G_GSIZE_FORMAT, d->str->len);
 	/* 1 = me, 38 = expire time(?), 0 = me, 28 = size, 27 = filename, 14 = NULL, 29 = data */
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 38, "604800"); /* time til expire */
@@ -422,7 +422,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
 	post = g_strdup_printf("POST /notifyft HTTP/1.0\r\n"
-	                       "Content-length: %d\r\n"
+	                       "Content-length: %" G_GSIZE_FORMAT "\r\n"
 	                       "Host: %s:%d\r\n"
 	                       "Cookie: %s\r\n"
 	                       "\r\n",

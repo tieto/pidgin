@@ -2403,12 +2403,13 @@ static int zephyr_send_typing(GaimConnection *gc, const char *who, int typing) {
 		gaim_debug_info("zephyr", "who is null\n");
 		recipient = local_zephyr_normalize(zephyr,"");
 	} else {
+		char *comma = strrchr(who, ',');
 		/* Don't ping broadcast (chat) recipients */
 		/* The strrchr case finds a realm-stripped broadcast subscription
 		   e.g. comma is the last character in the string */
-		if ((strrchr(who, ',') && ((strrchr(who, ',') == (who+strlen(who)-1)) || ((char *)(strrchr(who, ',')[1] == '@')))))
+		if (comma && ( (*(comma+1) == '\0') || (*(comma+1) == '@')))
 			return 0;
-		
+
 		recipient = local_zephyr_normalize(zephyr,who);
 	}
 

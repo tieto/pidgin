@@ -117,7 +117,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	size = g_strdup_printf("%d", gaim_xfer_get_size(xfer));
+	size = g_strdup_printf("%" G_GSIZE_FORMAT, gaim_xfer_get_size(xfer));
 
 	yahoo_packet_hash(pkt, 0, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, xfer->who);
@@ -131,7 +131,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
 	post = g_strdup_printf("POST /notifyft HTTP/1.0\r\n"
-	                       "Content-length: %d\r\n"
+	                       "Content-length: %" G_GSIZE_FORMAT "\r\n"
 	                       "Host: %s:%d\r\n"
 	                       "Cookie: %s\r\n"
 	                       "\r\n",
