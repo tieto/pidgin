@@ -1,1 +1,5 @@
-Make sure the stupid smiley's dont run off the edge of the gtk_html widget (needs to wrap the image around).
+GAIM: Items to be fixed
+------------------------
+
+Make sure the stupid smiley's dont run off the edge of the gtk_html 
+widget (needs to wrap the image around).
