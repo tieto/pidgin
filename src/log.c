@@ -173,17 +173,24 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
-static char* gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account) {
-	char *acct_name = g_strdup(gaim_escape_filename(gaim_normalize(account,
-				gaim_account_get_username(account))));
+static char *
+gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
+{
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info;
+	const char *prpl_name;
+	char *acct_name;
 	const char *target;
-	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
-	/* XXX: this is in fact a HORRIBLE way to do this, because if we can't find the prpl (plugin won't load) then this goes BOOM.  Someone make a better way...*/
-	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(
-			gaim_find_prpl(gaim_account_get_protocol_id(account))
-			)->list_icon(account, NULL);
-
 	char *dir;
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	if (!prpl)
+		return NULL;
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_name = prpl_info->list_icon(account, NULL);
+
+	acct_name = g_strdup(gaim_escape_filename(gaim_normalize(account,
+				gaim_account_get_username(account))));
 
 	if (type == GAIM_LOG_CHAT) {
 		char *temp = g_strdup_printf("%s.chat", gaim_normalize(account, name));
@@ -195,10 +202,10 @@ static char* gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccoun
 		target = gaim_escape_filename(gaim_normalize(account, name));
 	}
 
-
-	dir = g_build_filename(gaim_user_dir(), "logs", prpl, acct_name, target, NULL);
+	dir = g_build_filename(gaim_user_dir(), "logs", prpl_name, acct_name, target, NULL);
 
 	g_free(acct_name);
+
 	return dir;
 }
 
@@ -368,8 +375,11 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 	if(!data) {
 		/* This log is new */
 		char *dir, *filename, *path;
-		
+
 		dir = gaim_log_get_log_dir(log->type, log->name, log->account);
+		if (dir == NULL)
+			return;
+
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S", localtime(&log->time));
@@ -390,7 +400,7 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 			return;
 		}
 		g_free(path);
-	}	
+	}
 }
 
 static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
@@ -404,6 +414,8 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 		return NULL;
 
 	path = gaim_log_get_log_dir(type, name, account);
+	if (path == NULL)
+		return NULL;
 
 	if (!(dir = g_dir_open(path, 0, NULL))) {
 		g_free(path);
@@ -459,6 +471,7 @@ static void xml_logger_write(GaimLog *log,
 {
 	char date[64];
 	char *xhtml = NULL;
+
 	if (!log->logger_data) {
 		/* This log is new.  We could use the loggers 'new' function, but
 		 * creating a new file there would result in empty files in the case
@@ -466,6 +479,10 @@ static void xml_logger_write(GaimLog *log,
 		 */
 		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
 		FILE *file;
+
+		if (dir == NULL)
+			return;
+
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
