@@ -485,12 +485,12 @@ void signoff(struct gaim_connection *gc)
 	plugin_event(event_signoff, gc, 0, 0, 0);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	update_keepalive(gc, FALSE);
+	redo_convo_menus(gc);
 	serv_close(gc);
 	redo_buddy_list();
 	build_edit_tree();
 	do_away_menu();
 	do_proto_menu();
-	redo_convo_menus();
 #ifdef USE_APPLET
 	if (connections)
 		set_user_state(online);

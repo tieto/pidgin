@@ -1855,7 +1855,7 @@ static void create_convo_menu(struct conversation *cnv)
 	}
 }
 
-void redo_convo_menus()
+void redo_convo_menus(struct gaim_connection *gc)
 {
 	GList *c = conversations;
 	struct conversation *C;
@@ -1866,8 +1866,14 @@ void redo_convo_menus()
 
 		create_convo_menu(C);
 
-		if (g_slist_index(connections, C->gc) >= 0)
+		if (!gc)
 			continue;
+
+		if (C->gc != gc)
+			continue;
+
+		if (C->gc && C->gc->prpl && C->gc->prpl->remove_convo)
+			(*C->gc->prpl->remove_convo)(C->gc, C);
 
 		set_convo_gc(C, connections ? connections->data : NULL);
 	}
