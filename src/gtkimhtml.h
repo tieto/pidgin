@@ -55,20 +55,21 @@ typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
 
 typedef enum {
-	GTK_IMHTML_BOLD =      1 << 0,
-	GTK_IMHTML_ITALIC =    1 << 1,
-	GTK_IMHTML_UNDERLINE = 1 << 2,
-	GTK_IMHTML_GROW =      1 << 3,
-	GTK_IMHTML_SHRINK =    1 << 4,
-	GTK_IMHTML_FACE =      1 << 5,
-	GTK_IMHTML_FORECOLOR = 1 << 6,
-	GTK_IMHTML_BACKCOLOR = 1 << 7,
-	GTK_IMHTML_LINK =      1 << 8,
-	GTK_IMHTML_IMAGE =     1 << 9,
-	GTK_IMHTML_SMILEY =    1 << 10,
-	GTK_IMHTML_LINKDESC =  1 << 11,
-	GTK_IMHTML_STRIKE =    1 << 12,
-	GTK_IMHTML_ALL =      -1
+	GTK_IMHTML_BOLD =       1 << 0,
+	GTK_IMHTML_ITALIC =     1 << 1,
+	GTK_IMHTML_UNDERLINE =  1 << 2,
+	GTK_IMHTML_GROW =       1 << 3,
+	GTK_IMHTML_SHRINK =     1 << 4,
+	GTK_IMHTML_FACE =       1 << 5,
+	GTK_IMHTML_FORECOLOR =  1 << 6,
+	GTK_IMHTML_BACKCOLOR =  1 << 7,
+	GTK_IMHTML_BACKGROUND = 1 << 8,
+	GTK_IMHTML_LINK =       1 << 9,
+	GTK_IMHTML_IMAGE =      1 << 10,
+	GTK_IMHTML_SMILEY =     1 << 11,
+	GTK_IMHTML_LINKDESC =   1 << 12,
+	GTK_IMHTML_STRIKE =     1 << 13,
+	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
 
 struct _GtkIMHtml {
@@ -106,6 +107,7 @@ struct _GtkIMHtml {
 		gboolean strike:1;
 		gchar *forecolor;
 		gchar *backcolor;
+		gchar *background;
 		gchar *fontface;
 		int fontsize;
 		GtkTextTag *link;
@@ -116,7 +118,6 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
-	GSList *backcolor_tags;
 };
 
 struct _GtkIMHtmlClass {
@@ -135,6 +136,7 @@ struct _GtkIMHtmlFontDetail {
 	gchar *face;
 	gchar *fore;
 	gchar *back;
+	gchar *bg;
 	gchar *sml;
 	gboolean underline;
 };
@@ -523,6 +525,16 @@ char *gtk_imhtml_get_current_fontface(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml);
 
 /**
+ * Returns a string containing the selected font background color at the current
+ * position in a GTK IM/HTML.
+ *
+ * @param imhtml The GTK IM/HTML.
+ *
+ * @return A string containg the font background color or @c NULL if none is set.
+ */
+char *gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml);
+
+/**
  * Returns a string containing the selected background color at the current
  * position in a GTK IM/HTML.
  *
@@ -530,7 +542,7 @@ char *gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml);
  *
  * @return A string containg the background color or @c NULL if none is set.
  */
-char *gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml);
+char *gtk_imhtml_get_current_background(GtkIMHtml *imhtml);
 
 /**
  * Returns a integer containing the selected HTML font size at the current
@@ -608,6 +620,17 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
  * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
  */
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
+
+/**
+ * Toggles a background color at the current location or selection in a GTK
+ * IM/HTML.
+ *
+ * @param imhtml The GTK IM/HTML.
+ * @param color  The HTML-style color, or @c NULL or "" to clear the color.
+ *
+ * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
+ */
+gboolean gtk_imhtml_toggle_background(GtkIMHtml *imhtml, const char *color);
 
 /**
  * Toggles a font face at the current location or selection in a GTK IM/HTML.
