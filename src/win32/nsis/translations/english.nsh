@@ -12,7 +12,7 @@ LangString GTK_INSTALLER_NEEDED			${LANG_ENGLISH} "The GTK+ runtime environment 
 
 ; License Page
 LangString GAIM_LICENSE_BUTTON			${LANG_ENGLISH} "Next >"
-LangString GAIM_LICENSE_BOTTOM_TEXT		${LANG_ENGLISH} "$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
+LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_ENGLISH} "$(^Name) is released under the GPL license. The license is provided here for information purposes only. $_CLICK"
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_ENGLISH} "Gaim Instant Messaging Client (required)"
@@ -34,7 +34,7 @@ LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_ENGLISH} "The Lighthouseblue th
 LangString GTK_UPGRADE_PROMPT				${LANG_ENGLISH} "An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
 
 ; Installer Finish Page
-LangString GAIM_FINISH_VISIT_WEB_SITE			${LANG_ENGLISH} "Visit the Windows Gaim Web Page"
+LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_ENGLISH} "Visit the Windows Gaim Web Page"
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_ENGLISH} "Gaim (remove only)"

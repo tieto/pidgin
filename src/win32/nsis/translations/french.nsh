@@ -5,10 +5,15 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Eric Boumaour <zongo@nekeme.net>, 2003.
+;;  Version 2
 ;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_FRENCH} "Les bibliothèques de l'environnement GTK+ ne sont pas installées ou nécessitent une mise à jour.$\rVeuillez installer les bibliothèques GTK+ v${GTK_VERSION} ou plus récentes."
+
+; License Page
+LangString GAIM_LICENSE_BUTTON			${LANG_FRENCH} "Suivant >"
+LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_FRENCH} "$(^Name) est disponible sous licence GPL. Le texte de licence suivant est fourni uniquement à titre informatif. $_CLICK" 
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_FRENCH} "Gaim messagerie instantanée (obligatoire)"
@@ -26,13 +31,11 @@ LangString GTK_WIMP_THEME_DESC			${LANG_FRENCH} "GTK-Wimp (imitateur de Windows)
 LangString GTK_BLUECURVE_THEME_DESC			${LANG_FRENCH} "Thème Bluecurve"
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_FRENCH} "Thème Lighthouseblue"
 
-; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_FRENCH} "Emplacement de l'installation"
-LangString GTK_PAGE_SUBTITLE				${LANG_FRENCH} "Choisissez le répertoire dans lequel installer GTK+"
-LangString GTK_PAGE_INSTALL_MSG1			${LANG_FRENCH} "GTK+ sera installé dans le répertoire suivant"
-LangString GTK_PAGE_INSTALL_MSG2			${LANG_FRENCH} "Pour l'installer dans un répertoire différent, cliquez Parcourir et choisissez un autre répertoire. Cliquez sur Suivant pour continuer."
-LangString GTK_PAGE_UPGRADE_MSG1			${LANG_FRENCH} "GTK+ sera mis à jour dans le répertoire suivant"
+; GTK+ Dir Selector Page
 LangString GTK_UPGRADE_PROMPT				${LANG_FRENCH} "Une ancienne version des bibliothèques GTK+ a été trouvée. Voulez-vous la mettre à jour ?$\rNote : Gaim peut ne pas fonctionner sans cela."
+
+; Installer Finish Page
+LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_FRENCH} "Visitez la page web de Gaim Windows" 
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_FRENCH} "Gaim (supprimer uniquement)"
@@ -50,4 +53,3 @@ LangString GTK_NO_THEME_INSTALL_RIGHTS		${LANG_FRENCH} "Vous n'avez pas les perm
 LangString un.GAIM_UNINSTALL_ERROR_1         	${LANG_FRENCH} "Les clefs de Gaim n'ont pas été trouvées dans la base de registres.$\rL'application a peut-être été installée par un utilisateur différent."
 LangString un.GAIM_UNINSTALL_ERROR_2         	${LANG_FRENCH} "Vous n'avez pas les permissions pour supprimer cette application."
 
-;; vim:syn=winbatch:encoding=8bit-cp1252:
