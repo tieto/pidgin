@@ -690,7 +690,7 @@ __parse_message(const char *buf, TrepiaMessageType *type, GHashTable **info)
 }
 
 static gboolean
-__parse_data(TrepiaSession *session, char *buf)
+_parse_data(TrepiaSession *session, char *buf)
 {
 	GHashTable *info;
 	GaimAccount *account;
@@ -991,7 +991,7 @@ __parse_data(TrepiaSession *session, char *buf)
 }
 
 static void
-__data_cb(gpointer data, gint source, GaimInputCondition cond)
+_data_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	TrepiaSession *session = data;
 	int i = 0;
@@ -1038,7 +1038,7 @@ __data_cb(gpointer data, gint source, GaimInputCondition cond)
 
 			gaim_debug(GAIM_DEBUG_MISC, "trepia", "S: %s\n", buffer);
 
-			ret = __parse_data(session, buffer);
+			ret = _parse_data(session, buffer);
 
 			g_free(buffer);
 		}
@@ -1113,7 +1113,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_free(buffer);
 
 	session->gc->inpa = gaim_input_add(session->fd, GAIM_INPUT_READ,
-									   __data_cb, session);
+									   _data_cb, session);
 }
 
 static void

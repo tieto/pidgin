@@ -323,7 +323,7 @@ static const char alphabet[] =
 char *tobase64(const unsigned char *buf, size_t len)
 {
 	char *s = NULL, *rv = NULL;
-	unsigned char tmp;
+	unsigned long tmp;
 
 	s = g_malloc((4 * (len + 1)) / 3 + 1);
 
