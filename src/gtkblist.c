@@ -3541,8 +3541,6 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			idle = g_strdup_printf("(%d:%02d)", ihrs, imin);
 		else
 			idle = g_strdup_printf("(%d)", imin);
-
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated", buddy);
 	}
 
 	if (buddy->evil > 0)

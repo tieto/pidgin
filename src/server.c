@@ -42,6 +42,9 @@
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 
+static void add_idle_buddy(GaimBuddy *buddy);
+static void remove_idle_buddy(GaimBuddy *buddy);
+
 void serv_login(GaimAccount *account)
 {
 	GaimPlugin *p = gaim_find_prpl(gaim_account_get_protocol_id(account));
@@ -420,6 +423,12 @@ void serv_add_buddies(GaimConnection *gc, GList *buddies)
 void serv_remove_buddy(GaimConnection *g, const char *name, const char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimBuddy *buddy;
+
+	buddy = gaim_find_buddy(gaim_connection_get_account(g), name);
+
+	if (buddy->idle > 0)
+		remove_idle_buddy(buddy);
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
@@ -1055,7 +1064,51 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	g_free(message);
 }
 
+/*
+ * NOTE: This is a bit hacky, but needed for core support for the
+ *       buddy-idle-updated signal. It's temporary, and will be replaced
+ *       with better code in the status rewrite.
+ */
+static GList *idle_buddies = NULL;
+static guint idle_buddy_timeout_id = 0;
 
+static gboolean
+idle_timeout_cb(void)
+{
+	GList *l;
+
+	for (l = idle_buddies; l != NULL; l = l->next)
+	{
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated",
+						 l->data);
+	}
+
+	return TRUE;
+}
+
+static void
+add_idle_buddy(GaimBuddy *buddy)
+{
+	idle_buddies = g_list_append(idle_buddies, buddy);
+
+	if (idle_buddy_timeout_id == 0)
+	{
+		idle_buddy_timeout_id = gaim_timeout_add(10000,
+			(GSourceFunc)idle_timeout_cb, NULL);
+	}
+}
+
+static void
+remove_idle_buddy(GaimBuddy *buddy)
+{
+	idle_buddies = g_list_remove(idle_buddies, buddy);
+
+	if (idle_buddies == NULL)
+	{
+		gaim_timeout_remove(idle_buddy_timeout_id);
+		idle_buddy_timeout_id = 0;
+	}
+}
 
 void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type)
@@ -1219,14 +1272,14 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	if (!old_idle && idle)
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
+
+		add_idle_buddy(b);
 	}
 	else if (old_idle && !idle)
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-	}
-	else if (old_idle != idle)
-	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated", b);
+
+		remove_idle_buddy(b);
 	}
 
 	if (c != NULL)
