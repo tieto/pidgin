@@ -1,7 +1,25 @@
 /*
- *  win32dep.h
+ * gaim
+ *
+ * File: win32dep.h
+ *
+ * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
-
 #ifndef _WIN32DEP_H_
 #define _WIN32DEP_H_
 #include <winsock.h>
@@ -51,16 +69,6 @@ extern void wgaim_cleanup(void);
 /* Temp solution for gtk_window_get_pos & gtk_window_move conflict */
 #define gtk_window_move( window, x, y ) \
 wgaim_gtk_window_move( ## window ##, ## x ##, ## y ## )
-
-/*
- *  Gtk specific
- */
-/* Needed for accessing global variables outside the current module */
-#ifdef G_MODULE_IMPORT
-#undef G_MODULE_IMPORT
-#endif
-#define G_MODULE_IMPORT __declspec(dllimport)
-
 
 #endif /* _WIN32DEP_H_ */
 

@@ -1,10 +1,11 @@
 /*
- * gaim - Windows Gaim systray module
+ * gaim
  *
  * File: systray.c
  * Date: November, 2002
+ * Description: Windows Gaim systray module
  * 
- * Copyright (C) 2002, Herman Bloggs <hermanator12002@yahoo.com>
+ * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +24,17 @@
  */
 #include <windows.h>
 #include <gdk/gdkwin32.h>
-#include "resource.h"
-#include "gaim.h"
-#include "win32dep.h"
-#include "MinimizeToTray.h"
-#include "ui.h"
+
+#include "internal.h"
 #include "gtkblist.h"
+#include "gtkprefs.h"
+#include "debug.h"
+
+#include "gaim.h"
+#include "ui.h"
+
+#include "resource.h"
+#include "MinimizeToTray.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
