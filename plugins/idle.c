@@ -79,7 +79,7 @@ static void make_connect_menu(GtkWidget *box) {
 struct gaim_plugin_description desc;
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Idle Maker");
+	desc.name = g_strdup("I'dle Mak'er");
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup("Allows you to hand-configure how long you've been idle for");
 	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
