@@ -1,5 +1,4 @@
---- STUFF FOR 0.10.1 RELEASE ---
-	Allow users to select sounds for various events
+--- STUFF FOR 0.11.1 RELEASE ---
 	Execute Command on Buddy Pounce
 	The about window is very ugly.  I think this shall be fixed.  
 		You know, I really like the gnome look to some apps
@@ -16,7 +15,3 @@
 			GtkTicker)
 		Have Alt access the menu in the buddy list, and ctl-char
 			access items in those menus
-
-
-	Maybe someday in the future gaim will be able to support multiple
-		connections, so you can log on as 2+ names at once. Maybe.

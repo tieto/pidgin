@@ -47,7 +47,7 @@
 #include "pixmaps/ok.xpm"
 
 /* FIXME: We shouldn't have hard coded servers and ports :-) */
-#define IRC_SERVER "irc.mozilla.org"
+#define IRC_SERVER "irc.undernet.org"
 #define IRC_PORT 6667
 
 #define IRC_BUF_LEN 4096
