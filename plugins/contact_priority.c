@@ -91,6 +91,7 @@ get_config_frame(GaimPlugin *plugin)
 	label = gtk_label_new_with_mnemonic(_("Buddy is offline:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	adj = gtk_adjustment_new(offline, -20, 20, 1, 1, 1);
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
@@ -104,6 +105,7 @@ get_config_frame(GaimPlugin *plugin)
 	label = gtk_label_new_with_mnemonic(_("Buddy is away:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	adj = gtk_adjustment_new(away, -20, 20, 1, 1, 1);
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
@@ -117,6 +119,7 @@ get_config_frame(GaimPlugin *plugin)
 	label = gtk_label_new_with_mnemonic(_("Buddy is idle:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	adj = gtk_adjustment_new(idle, -20, 20, 1, 1, 1);
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
