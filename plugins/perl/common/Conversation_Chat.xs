@@ -81,7 +81,7 @@ write(chat, who, message, flags)
 	const char *message
 	int flags
 CODE:
-	gaim_chat_write(chat, who, message, flags, time(NULL);
+	gaim_chat_write(chat, who, message, flags, time(NULL));
 
 void
 gaim_chat_send(chat, message)
