@@ -431,7 +431,7 @@ static gboolean check_at(GtkText *gtktext, int from_pos) {
 		if (highlight.pixel == 0) {
 			/* add an entry for the highlight in the color map. */
 			GdkColormap *gc = gtk_widget_get_colormap(GTK_WIDGET(gtktext));
-			gdk_colormap_alloc_color(gc, &highlight, FALSE, TRUE);;
+			gdk_colormap_alloc_color(gc, &highlight, FALSE, TRUE);
 		}
 		change_color(gtktext, start, end, &highlight);
 		if (buf)

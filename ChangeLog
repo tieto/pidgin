@@ -1,5 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.49:
+	* Can compile against GTK+ 2.0 (version 1.3.10)
+
 version 0.48 (11/18/2001):
 	* Right-click on links to open/copy URL
 	* Yahoo changes

@@ -2441,7 +2441,7 @@ static void build_debug()
 	if (!dw)
 		dw = g_new0(struct debug_window, 1);
 
-	dw->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	GAIM_DIALOG(dw->window);
 	gtk_window_set_title(GTK_WINDOW(dw->window), _("Gaim debug output window"));
 	gtk_window_set_wmclass(GTK_WINDOW(dw->window), "debug_out", "Gaim");
 	gtk_signal_connect(GTK_OBJECT(dw->window), "delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);

@@ -127,7 +127,7 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 	GtkWidget *hbox;
 	GtkWidget *button;
 
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	GAIM_DIALOG(window);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "accept", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
@@ -192,7 +192,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	p->doit = doit;
 	p->dont = dont;
 
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	GAIM_DIALOG(window);
 	p->window = window;
 	gtk_window_set_wmclass(GTK_WINDOW(window), "prompt", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
@@ -413,7 +413,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	}
 
 
-	mn->email_win = gtk_window_new(GTK_WINDOW_DIALOG);
+	GAIM_DIALOG(mn->email_win);
 	gtk_window_set_wmclass(GTK_WINDOW(mn->email_win), "mail", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(mn->email_win), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(mn->email_win), _("Gaim - New Mail"));

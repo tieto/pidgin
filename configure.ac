@@ -83,8 +83,9 @@ AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto })
 
+AC_ARG_ENABLE(gtk2,    [  --enable-gtk2           compile using GTK 2 (BROKEN)],,enable_gtk2=no)
 AC_ARG_ENABLE(gnome,   [  --disable-gnome         compile without Gnome bits],,enable_gnome=yes)
-AC_ARG_ENABLE(pixbuf,   [  --disable-pixbuf        compile without GdkPixbuf (needed for Buddy Icons)],,enable_pixbuf=yes)
+AC_ARG_ENABLE(pixbuf,  [  --disable-pixbuf        compile without GdkPixbuf (needed for Buddy Icons)],,enable_pixbuf=yes)
 AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,enable_panel=$enable_distrib)
 
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
@@ -102,6 +103,32 @@ AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Ker
 if test "$enable_debug" = yes ; then
 	CFLAGS="$CFLAGS -Wall -g3"
 	AC_DEFINE(DEBUG)
+fi
+
+if test "x$enable_gtk2" = "xyes" ; then
+	dnl AM_PATH_GTK_2_0(1.3.10,[
+	dnl		enable_gnome=no
+	dnl		enable_pixbuf=no
+	dnl		CFLAGS="$CFLAGS -DGTK_ENABLE_BROKEN"
+	dnl		UI_LIBS="$UI_LIBS $GTK_LIBS"
+	dnl		],enable_gtk2=no)
+
+	AC_PATH_PROG(pkgcfg, pkg-config)
+	if test "x$pkgcfg" = "x" ; then
+		enable_gtk2=no
+	else
+		GTK_VER=`$pkgcfg gtk+-2.0 --modversion 2>/dev/null`
+		if test "x$GTK_VER" = "x" ; then
+			enable_gtk2=no
+		else
+			GTK_CFLAGS=`$pkgcfg gtk+-2.0 --cflags`
+			CFLAGS="$CFLAGS -DGTK_ENABLE_BROKEN"
+			GTK_LIBS=`$pkgcfg gtk+-2.0 --libs`
+			UI_LIBS="$UI_LIBS $GTK_LIBS"
+			enable_gnome=no
+			enable_pixbuf=no
+		fi
+	fi
 fi
 
 if test "x$enable_gnome" = "xyes" ; then
@@ -139,7 +166,7 @@ if test "x$enable_gnome" = "xyes" ; then
 	fi
 fi
 
-if test "x$enable_gnome" != "xyes" ; then
+if test "x$enable_gnome" != "xyes" -a "x$enable_gtk2" != "xyes" ; then
 	AM_PATH_GLIB(1.2.3,,AC_MSG_ERROR([
 *** GLib is required to build Gaim; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
@@ -393,24 +420,35 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Allow Multiple Connections.. : $enable_multi
-echo Build Protocol Plugins...... : $enable_prpls
-echo Protocols to link statically : $STATIC_PRPLS
+echo Allow Multiple Connections.... : $enable_multi
+echo Build Protocol Plugins........ : $enable_prpls
+echo Protocols to link statically.. : $STATIC_PRPLS
 echo
-echo Build with GNOME bits....... : $enable_gnome
-echo Use GdkPixbuf for Icons..... : $use_pixbuf
-echo Build as GNOME applet....... : $enable_panel
+if test "x$enable_panel" = "xyes" ; then
+	echo UI Library.................... : GNOME Panel
+elif test "x$enable_gnome" = "xyes" ; then
+	echo UI Library.................... : GNOME App
+elif test "x$enable_gtk2" = "xyes" ; then
+	echo UI Library.................... : GTK+ 2.0
+else
+	echo UI Library.................... : GTK+ 1.2
+fi
+if test "x$enable_gtk2" = "xyes" ; then
+	echo Use GdkPixbuf for Buddy Icons. : yes
+else
+	echo Use GdkPixbuf for Buddy Icons. : $enable_pixbuf
+fi
 echo
-echo Build with Plugin support... : $enable_plugins
-echo Build with Perl support..... : $enable_perl
+echo Build with Plugin support..... : $enable_plugins
+echo Build with Perl support....... : $enable_perl
 echo
-echo Use XScreenSaver Extension.. : $enable_xss
+echo Use XScreenSaver Extension.... : $enable_xss
 echo
-echo Build with ESD.............. : $enable_esd
-echo Build with NAS.............. : $enable_nas
-echo Build with ArtsC............ : $enable_artsc
+echo Build with ESD................ : $enable_esd
+echo Build with NAS................ : $enable_nas
+echo Build with ArtsC.............. : $enable_artsc
 echo
-echo Print debugging messages.... : $enable_debug
+echo Print debugging messages...... : $enable_debug
 echo
 eval eval echo Gaim will be installed in $bindir.
 if test "x$gaimpath" != "x" ; then

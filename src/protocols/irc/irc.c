@@ -725,7 +725,7 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 				rename_chat_buddy(b, tmp, buf);
 				r = b->in_room;
 				g_free(tmp);
-				break;;
+				break;
 			} else
 				r = r->next;
 		}

@@ -22,6 +22,7 @@
  */
 
 #include "gtkticker.h"
+#include <gtk/gtk.h>
 
 static void gtk_ticker_compute_offsets (GtkTicker    *ticker);
 static void gtk_ticker_class_init    (GtkTickerClass    *klass);
@@ -94,7 +95,9 @@ gtk_ticker_class_init (GtkTickerClass *class)
   widget_class->realize = gtk_ticker_realize;
   widget_class->size_request = gtk_ticker_size_request;
   widget_class->size_allocate = gtk_ticker_size_allocate;
+#if ! GTK_CHECK_VERSION(1,3,0)
   widget_class->draw = gtk_ticker_draw;
+#endif
   widget_class->expose_event = gtk_ticker_expose;
 
   container_class->add = gtk_ticker_add_real;

@@ -711,12 +711,12 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				break;
 			}
 			if (buf[0]) {
-				if (GTK_EDITABLE(c->entry)->has_selection) {
-					int finish = GTK_EDITABLE(c->entry)->selection_end_pos;
+				if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
+					int finish = GTK_OLD_EDITABLE(c->entry)->selection_end_pos;
 					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
 								 buf, strlen(buf), &finish);
 				} else {
-					pos = GTK_EDITABLE(c->entry)->current_pos;
+					pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
 					gtk_editable_insert_text(GTK_EDITABLE(c->entry),
 								 buf, strlen(buf), &pos);
 				}
@@ -779,6 +779,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 	} else if ((event->keyval == GDK_Tab) && c->is_chat && (chat_options & OPT_CHAT_TAB_COMPLETE)) {
 	        tab_complete(c);
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+		return TRUE;
 	} else if (((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
 		   (event->state & GDK_MOD1_MASK) && (event->keyval > '0') && (event->keyval <= '9')) {
@@ -787,7 +788,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
 
-	return TRUE;
+	return FALSE;
 }
 
 
@@ -941,7 +942,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 int entry_key_pressed(GtkWidget *w, GtkWidget *entry)
 {
 	check_everything(w);
-	return TRUE;
+	return FALSE;
 }
 
 /*------------------------------------------------------------------------*/
@@ -954,8 +955,8 @@ int count_tag(GtkWidget *entry, char *s1, char *s2)
 	int res = 0;
 	char *tmp, *tmpo, h;
 	tmpo = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	h = tmpo[GTK_EDITABLE(entry)->current_pos];
-	tmpo[GTK_EDITABLE(entry)->current_pos] = '\0';
+	h = tmpo[GTK_OLD_EDITABLE(entry)->current_pos];
+	tmpo[GTK_OLD_EDITABLE(entry)->current_pos] = '\0';
 	tmp = tmpo;
 	do {
 		p1 = strstr(tmp, s1);
@@ -978,7 +979,7 @@ int count_tag(GtkWidget *entry, char *s1, char *s2)
 			}
 		}
 	} while (p1 || p2);
-	tmpo[GTK_EDITABLE(entry)->current_pos] = h;
+	tmpo[GTK_OLD_EDITABLE(entry)->current_pos] = h;
 	g_free(tmpo);
 	return res;
 }
@@ -986,8 +987,8 @@ int count_tag(GtkWidget *entry, char *s1, char *s2)
 
 int invert_tags(GtkWidget *entry, char *s1, char *s2, int really)
 {
-	int start = GTK_EDITABLE(entry)->selection_start_pos;
-	int finish = GTK_EDITABLE(entry)->selection_end_pos;
+	int start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
+	int finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
 	char *s;
 
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
@@ -1009,8 +1010,8 @@ int invert_tags(GtkWidget *entry, char *s1, char *s2, int really)
 void remove_tags(GtkWidget *entry, char *tag)
 {
 	char *s, *t;
-	int start = GTK_EDITABLE(entry)->selection_start_pos;
-	int finish = GTK_EDITABLE(entry)->selection_end_pos;
+	int start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
+	int finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
 	int temp;
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 	t = s;
@@ -1090,7 +1091,7 @@ static char *html_logize(char *p)
 
 void surround(GtkWidget *entry, char *pre, char *post)
 {
-	int temp, pos = GTK_EDITABLE(entry)->current_pos;
+	int temp, pos = GTK_OLD_EDITABLE(entry)->current_pos;
 	int dummy;
 	int start, finish;
 
@@ -1098,11 +1099,11 @@ void surround(GtkWidget *entry, char *pre, char *post)
 		gtkspell_detach(GTK_TEXT(entry));
 	}
 
-	if (GTK_EDITABLE(entry)->has_selection) {
+	if (GTK_OLD_EDITABLE(entry)->has_selection) {
 		remove_tags(entry, pre);
 		remove_tags(entry, post);
-		start = GTK_EDITABLE(entry)->selection_start_pos;
-		finish = GTK_EDITABLE(entry)->selection_end_pos;
+		start = GTK_OLD_EDITABLE(entry)->selection_start_pos;
+		finish = GTK_OLD_EDITABLE(entry)->selection_end_pos;
 		if (start > finish) {
 			dummy = finish;
 			finish = start;
@@ -1142,7 +1143,7 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 	if (invert_tags(entry, pre, post, 1))
 		return;
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	pos = GTK_EDITABLE(entry)->current_pos;
+	pos = GTK_OLD_EDITABLE(entry)->current_pos;
 	debug_printf(_("Currently at %d, "), pos);
 	s2 = strstr(&s[pos], post);
 	if (s2) {
@@ -1606,8 +1607,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
-		gdk_font_unref(style->font);
-		style->font = gdk_font_ref(label->style->font);
+		gdk_font_unref(gtk_style_get_font(style));
+		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		if (flags & WFLAG_NICK) {
 			style->fg[0].red = 0x0000;
 			style->fg[0].green = 0x0000;
@@ -2111,8 +2112,8 @@ static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, 
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
 	style = gtk_style_new();
-	gdk_font_unref(style->font);
-	style->font = gdk_font_ref(label->style->font);
+	gdk_font_unref(gtk_style_get_font(style));
+	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
 	c->unseen = 0;

@@ -75,10 +75,6 @@ Gadu-Gadu:
 	There's probably 100 other things but since I've hardly used the Windows
 		client before I'm not sure what any of them are
 
-Future Plugins? :
-	ICQ through Oscar plugin (ICQ2000) (requires hacking libfaim :-/)
-		this would allow us to send SMS messages.
-
 ----
 THE UIS:
 
@@ -111,6 +107,8 @@ GTK:
 		Have tooltips on the passing buddies on the ticker
 		Have a stock ticker (a plugin could easily make use of
 			GtkTicker)
+
+	Buddy Icons need to be converted to use new gdk-pixbuf (GTK2)
 
 
 Then, of course, are all the Bugs that need to be fixed

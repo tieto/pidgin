@@ -37,6 +37,18 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #endif
 
+#if GTK_CHECK_VERSION(1,3,0)
+#define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
+			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
+#define GdkWindowPrivate GdkWindowObject
+#define gtk_toolbar_new(x,y) gtk_toolbar_new()
+#else
+#define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_DIALOG)
+#define GTK_OLD_EDITABLE(x) GTK_EDITABLE(x)
+#define gtk_style_get_font(style) (style)->font
+#define gtk_style_set_font(s, f) (s)->font = f
+#endif
+
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KFM                   1
 #define BROWSER_MANUAL                2

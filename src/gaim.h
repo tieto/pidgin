@@ -82,6 +82,11 @@
 #define CUI_CHAT_RECV		6
 
 
+#define BROWSER_NETSCAPE              0
+#define BROWSER_KFM                   1
+#define BROWSER_MANUAL                2
+/*#define BROWSER_INTERNAL              3*/
+#define BROWSER_GNOME                 4
 
 #define IM_FLAG_AWAY     0x01
 #define IM_FLAG_CHECKBOX 0x02

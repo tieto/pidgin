@@ -256,7 +256,7 @@ void join_chat()
 	}
 
 	if (!joinchat) {
-		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
+		GAIM_DIALOG(joinchat);
 		gtk_window_set_wmclass(GTK_WINDOW(joinchat), "joinchat", "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, TRUE, TRUE);
 		gtk_widget_realize(joinchat);
@@ -386,7 +386,7 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 	GtkWidget *frame;
 
 	if (!invite) {
-		invite = gtk_window_new(GTK_WINDOW_DIALOG);
+		GAIM_DIALOG(invite);
 		gtk_widget_realize(invite);
 
 		cancel = picture_button(invite, _("Cancel"), cancel_xpm);
@@ -463,7 +463,7 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 
 void tab_complete(struct conversation *c)
 {
-	int pos = GTK_EDITABLE(c->entry)->current_pos;
+	int pos = GTK_OLD_EDITABLE(c->entry)->current_pos;
 	int start = pos;
 	int most_matched = -1;
 	char *entered, *partial = NULL;
@@ -1093,8 +1093,8 @@ static void chat_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, g
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
 	style = gtk_style_new();
-	gdk_font_unref(style->font);
-	style->font = gdk_font_ref(label->style->font);
+	gdk_font_unref(gtk_style_get_font(style));
+	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
 	b->unseen = 0;

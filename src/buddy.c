@@ -500,15 +500,17 @@ gint applet_destroy_buddy(GtkWidget *widget, GdkEvent *event, gpointer *data)
 
 #endif
 
-void handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *g)
+static int handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *g)
 {
 	if (event->type == GDK_2BUTTON_PRESS) {
 		if (GTK_TREE_ITEM(widget)->expanded)
 			gtk_tree_item_collapse(GTK_TREE_ITEM(widget));
 		else
 			gtk_tree_item_expand(GTK_TREE_ITEM(widget));
-	} else if ((event->type == GDK_BUTTON_PRESS) && (event->button == 3)) {
+		return TRUE;
 	}
+
+	return FALSE;
 }
 
 void pressed_im_bud(GtkWidget *widget, struct buddy *b)
@@ -585,10 +587,10 @@ static void menu_click(GtkObject *obj, char *who)
 	g_list_free(first);
 }
 
-void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
+static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
 {
 	if (!b->connlist)
-		return;
+		return FALSE;
 	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
 		struct conversation *c;
 
@@ -708,6 +710,8 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 
 		/* Anything for other buttons? :) */
 	}
+
+	return FALSE;
 }
 
 static void un_alias(GtkWidget *a, struct buddy *b)
@@ -734,10 +738,10 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	GtkWidget *button;
 
 	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
-		return TRUE;
+		return FALSE;
 
 	if (!gtk_clist_get_selection_info(GTK_CLIST(edittree), event->x, event->y, &row, &column))
-		return TRUE;
+		return FALSE;
 
 	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
 	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
@@ -752,6 +756,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		gtk_widget_show(button);
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
+
+		return TRUE;
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
 		menu = gtk_menu_new();
@@ -793,9 +799,11 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		gtk_widget_show(button);
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
+
+		return TRUE;
 	}
 
-	return TRUE;
+	return FALSE;
 }
 
 
@@ -2357,7 +2365,7 @@ void show_buddy_list()
 	}
 
 #ifdef USE_APPLET
-	blist = gtk_window_new(GTK_WINDOW_DIALOG);
+	GAIM_DIALOG(blist);
 #else
 	blist = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #endif
