@@ -148,7 +148,7 @@ extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern int find_queue_total_by_name(char *);
 
 /* Functions in session.c */
-extern void session_init(gchar *, gchar *);
+extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();
 
 /* Functions in themes.c */

@@ -604,7 +604,7 @@ int main(int argc, char *argv[])
 {
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, dologin_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
-	char *opt_session_arg = NULL;
+	char *opt_session_arg = NULL, *opt_config_dir_arg = NULL;
 	char *plugin_search_paths[3];
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
@@ -775,6 +775,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'c':	/* use specified config dir */
 			set_gaim_user_dir(optarg);
+			opt_config_dir_arg = g_strdup(optarg);
 			break;
 		case 's':	/* use existing session ID */
 			opt_session_arg = g_strdup(optarg);
@@ -865,12 +866,17 @@ int main(int argc, char *argv[])
 	ui_main();
 
 #ifdef USE_SM
-	session_init(argv[0], opt_session_arg);
+	session_init(argv[0], opt_session_arg, opt_config_dir_arg);
 #endif
 	if (opt_session_arg != NULL) {
 		g_free(opt_session_arg);
 		opt_session_arg = NULL;
-	};
+	}
+	
+	if (opt_config_dir_arg != NULL) {
+		g_free(opt_config_dir_arg);
+		opt_config_dir_arg = NULL;
+	}
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {

@@ -137,13 +137,13 @@ static void ice_init() {
 
 /* my magic utility function */
 
-static gchar **session_make_command(gchar *client_id) {
+static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 	gint i = 2;
 	gint j = 0;
 	gchar **ret;
 
 	if (client_id) i += 2;
-	i += 2; /* we will specify gaim's user dir */
+	if (config_dir)	i += 2; /* we will specify gaim's user dir */
 
 	ret = g_new(gchar *, i);
 	ret[j++] = g_strdup(myself);
@@ -153,8 +153,10 @@ static gchar **session_make_command(gchar *client_id) {
 		ret[j++] = g_strdup(client_id);
 	}
 
-	ret[j++] = g_strdup("--config");
-	ret[j++] = g_strdup(gaim_user_dir());
+	if (config_dir) {
+		ret[j++] = g_strdup("--config");
+		ret[j++] = g_strdup(config_dir);
+	}
 
 	ret[j++] = NULL;
 
@@ -274,7 +276,7 @@ static void session_set_array(SmcConn conn, gchar *name, gchar *array[]) {
 
 /* setup functions */
 
-void session_init(gchar *argv0, gchar *previous_id) {
+void session_init(gchar *argv0, gchar *previous_id, gchar *config_dir) {
 #ifdef USE_SM
 	SmcCallbacks callbacks;
 	gchar *client_id = NULL;
@@ -358,7 +360,7 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	gaim_debug(GAIM_DEBUG_MISC, "Session Management",
 			   "Using %s as command\n", myself);
 
-	cmd = session_make_command(NULL);
+	cmd = session_make_command(NULL, config_dir);
 	session_set_array(session, SmCloneCommand, cmd);
 	g_strfreev(cmd);
 
@@ -371,7 +373,7 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	session_set_array(session, SmDiscardCommand, cmd);
 	g_strfreev(cmd);
 
-	cmd = session_make_command(client_id);
+	cmd = session_make_command(client_id, config_dir);
 	session_set_array(session, SmRestartCommand, cmd);
 	g_strfreev(cmd);
 
