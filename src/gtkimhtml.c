@@ -1929,7 +1929,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		} else
 			newvals = g_memdup (xflds, 16 * sizeof (xflds));
 
-		if ((i < ADSTYL) && !xflds [ADSTYL][0])
+		if ((i > ADSTYL) && !xflds [ADSTYL][0])
 			newvals [ADSTYL] = "*";
 
 		if (bold)
