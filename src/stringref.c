@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdarg.h>
 
+#include "debug.h"
 #include "stringref.h"
 
 static GList *gclist = NULL;
