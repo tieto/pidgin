@@ -292,10 +292,11 @@ void serv_dir_search(struct gaim_connection *g, const char *first,
 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
 	if (!strcmp(gc->away_state, state) && !strcmp(gc->away, message))
 		return;
 
-	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
