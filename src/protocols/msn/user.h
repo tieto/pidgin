@@ -176,6 +176,23 @@ void msn_user_set_work_phone(MsnUser *user, const char *number);
 void msn_user_set_mobile_phone(MsnUser *user, const char *number);
 
 /**
+ * Sets the MSNObject for a user.
+ *
+ * @param user The user.
+ * @param obj  The MSNObject.
+ */
+void msn_user_set_object(MsnUser *user, MsnObject *obj);
+
+/**
+ * Sets the client information for a user.
+ *
+ * @param user The user.
+ * @param info The client information.
+ */
+void msn_user_set_client_caps(MsnUser *user, GHashTable *info);
+
+
+/**
  * Returns the passport account for a user.
  *
  * @param user The user.
@@ -230,12 +247,13 @@ const char *msn_user_get_work_phone(const MsnUser *user);
 const char *msn_user_get_mobile_phone(const MsnUser *user);
 
 /**
- * Sets the client information for a user.
+ * Returns the MSNObject for a user.
  *
  * @param user The user.
- * @param info The client information.
+ *
+ * @return The MSNObject.
  */
-void msn_user_set_client_caps(MsnUser *user, GHashTable *info);
+MsnObject *msn_user_get_object(const MsnUser *user);
 
 /**
  * Returns the client information for a user.

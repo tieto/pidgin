@@ -187,6 +187,28 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
 }
 
+void
+msn_user_set_object(MsnUser *user, MsnObject *obj)
+{
+	g_return_if_fail(user != NULL);
+
+	if (user->msnobj != NULL)
+		msn_object_destroy(user->msnobj);
+
+	user->msnobj = obj;
+}
+
+void
+msn_user_set_client_caps(MsnUser *user, GHashTable *info)
+{
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(info != NULL);
+
+	if (user->clientcaps != NULL)
+		g_hash_table_destroy(user->clientcaps);
+
+	user->clientcaps = info;
+}
 
 const char *
 msn_user_get_passport(const MsnUser *user)
@@ -236,16 +258,12 @@ msn_user_get_mobile_phone(const MsnUser *user)
 	return user->phone.mobile;
 }
 
-void
-msn_user_set_client_caps(MsnUser *user, GHashTable *info)
+MsnObject *
+msn_user_get_object(const MsnUser *user)
 {
-	g_return_if_fail(user != NULL);
-	g_return_if_fail(info != NULL);
+	g_return_val_if_fail(user != NULL, NULL);
 
-	if (user->clientcaps != NULL)
-		g_hash_table_destroy(user->clientcaps);
-
-	user->clientcaps = info;
+	return user->msnobj;
 }
 
 GHashTable *
