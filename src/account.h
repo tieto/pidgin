@@ -492,13 +492,6 @@ void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
 GList *gaim_accounts_get_all(void);
 
 /**
- * Returns a list of all active accounts.
- *
- * @return A list of all accounts.
- */
-GList *gaim_accounts_get_active(void);
-
-/**
  * Finds an account with the specified name and protocol.
  *
  * @param name     The account username.

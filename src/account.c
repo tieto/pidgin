@@ -80,7 +80,6 @@ typedef struct
 } AccountParserData;
 
 static GList   *accounts = NULL;
-static GList   *active_accounts = NULL;
 static guint    accounts_save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
@@ -171,9 +170,6 @@ gaim_account_connect(GaimAccount *account)
 
 	gaim_connection_connect(gc);
 
-	if (gaim_account_is_connected(account))
-		active_accounts = g_list_append(active_accounts, account);
-
 	return gc;
 }
 
@@ -184,8 +180,6 @@ gaim_account_disconnect(GaimAccount *account)
 	g_return_if_fail(gaim_account_is_connected(account));
 
 	gaim_connection_disconnect(account->gc);
-
-	active_accounts = g_list_remove(active_accounts, account);
 
 	account->gc = NULL;
 }
@@ -1269,12 +1263,6 @@ GList *
 gaim_accounts_get_all(void)
 {
 	return accounts;
-}
-
-GList *
-gaim_accounts_get_active(void)
-{
-	return active_accounts;
 }
 
 GaimAccount *

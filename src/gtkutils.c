@@ -696,13 +696,19 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	if (show_all)
 		list = gaim_accounts_get_all();
 	else
-		list = gaim_accounts_get_active();
+		list = gaim_connections_get_all();
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
 		GaimPluginProtocolInfo *prpl_info = NULL;
 		GaimPlugin *plugin;
 
-		account = (GaimAccount *)p->data;
+		if (show_all)
+			account = (GaimAccount *)p->data;
+		else {
+			GaimConnection *gc = (GaimConnection *)p->data;
+
+			account = gaim_connection_get_account(gc);
+		}
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
 
