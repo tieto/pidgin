@@ -777,7 +777,8 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 		gtk_widget_show(image);
 
 		g_snprintf(buf, sizeof(buf), "%s (%s)",
-				   gaim_account_get_username(account), plugin->info->name);
+				   gaim_account_get_username(account), 
+				   (plugin != NULL) ? plugin->info->name : _("Unknown"));
 
 		/* Create the label. */
 		label = gtk_label_new(buf);
