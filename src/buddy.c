@@ -1702,6 +1702,8 @@ static char *caps_string(gushort caps)
 	return buf;
 }
 
+/* for this we're just going to assume the first connection that registered the buddy.
+ * if it's not the one you were hoping for then you're shit out of luck */
 static void update_idle_time(struct buddy_show *bs) {
 	/* this also updates the tooltip since that has idle time in it */
 	char idlet[16];
@@ -1709,64 +1711,59 @@ static void update_idle_time(struct buddy_show *bs) {
 	int ihrs, imin;
 	struct buddy *b;
 
-	char infotip[256];
+	char infotip[2048];
 	char warn[256];
 	char caps[256];
 	char *sotime, *itime;
 
 	time(&t);
-	if (g_slist_length(bs->connlist) == 1) {
-		b = find_buddy(bs->connlist->data, bs->name);
-		if (!b) return;
-		ihrs = (t - b->idle) / 3600; imin = ((t - b->idle) / 60) % 60;
+	b = find_buddy(bs->connlist->data, bs->name);
+	if (!b) return;
+	ihrs = (t - b->idle) / 3600; imin = ((t - b->idle) / 60) % 60;
 
-		if (ihrs)
-			g_snprintf(idlet, sizeof idlet, "(%d:%02d)", ihrs, imin);
-		else
-			g_snprintf(idlet, sizeof idlet, "(%d)", imin);
+	if (ihrs)
+		g_snprintf(idlet, sizeof idlet, "(%d:%02d)", ihrs, imin);
+	else
+		g_snprintf(idlet, sizeof idlet, "(%d)", imin);
 
-		gtk_widget_hide(bs->idle);
-		if (b->idle)
-			gtk_label_set(GTK_LABEL(bs->idle), idlet);
-		else
-			gtk_label_set(GTK_LABEL(bs->idle), "");
-		if (display_options & OPT_DISP_SHOW_IDLETIME)
-			gtk_widget_show(bs->idle);
+	gtk_widget_hide(bs->idle);
+	if (b->idle)
+		gtk_label_set(GTK_LABEL(bs->idle), idlet);
+	else
+		gtk_label_set(GTK_LABEL(bs->idle), "");
+	if (display_options & OPT_DISP_SHOW_IDLETIME)
+		gtk_widget_show(bs->idle);
 
-		/* now we do the tooltip */
-		sotime = sec_to_text(t - b->signon +
-				((struct gaim_connection *)bs->connlist->data)->correction_time);
+	/* now we do the tooltip */
+	sotime = sec_to_text(t - b->signon +
+			((struct gaim_connection *)bs->connlist->data)->correction_time);
 
-		if (b->idle)
-			itime = sec_to_text(t - b->idle);
-		else {
-			itime = g_malloc(1); itime[0] = 0;
-		}
-
-		if (b->evil)
-			g_snprintf(warn, sizeof warn, _("Warnings: %d%%\n"), b->evil);
-		else
-			warn[0] = '\0';
-
-		if (b->caps)
-			g_snprintf(caps, sizeof caps, _("Capabilities: %s\n"), caps_string(b->caps));
-		else
-			caps[0] = '\0';
-
-		g_snprintf(infotip, sizeof infotip, _("Alias: %s               \nScreen Name: %s\n"
-							"Logged in: %s\n%s%s%s%s%s"),
-							b->show, b->name, sotime, warn,
-							(b->idle ? _("Idle: ") : ""), itime,
-							(b->idle ? "\n" : ""), caps);
-
-		gtk_tooltips_set_tip(tips, GTK_WIDGET(bs->item), infotip, "");
-
-		g_free(sotime);
-		g_free(itime);
-	} else {
-		/* FIXME : how do we do tooltips and idletime if 2 connections report a buddy?
-		 * keep in mind that we can't assume both connections are the same protocol */
+	if (b->idle)
+		itime = sec_to_text(t - b->idle);
+	else {
+		itime = g_malloc(1); itime[0] = 0;
 	}
+
+	if (b->evil)
+		g_snprintf(warn, sizeof warn, _("Warnings: %d%%\n"), b->evil);
+	else
+		warn[0] = '\0';
+
+	if (b->caps)
+		g_snprintf(caps, sizeof caps, _("Capabilities: %s\n"), caps_string(b->caps));
+	else
+		caps[0] = '\0';
+
+	g_snprintf(infotip, sizeof infotip, _("Alias: %s               \nScreen Name: %s\n"
+				"Logged in: %s\n%s%s%s%s%s"),
+				b->show, b->name, sotime, warn,
+				(b->idle ? _("Idle: ") : ""), itime,
+				(b->idle ? "\n" : ""), caps);
+
+	gtk_tooltips_set_tip(tips, GTK_WIDGET(bs->item), infotip, "");
+
+	g_free(sotime);
+	g_free(itime);
 }
 
 void update_idle_times() {

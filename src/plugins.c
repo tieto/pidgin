@@ -107,8 +107,7 @@ static void load_file(GtkWidget *w, gpointer data)
 					GTK_FILE_SELECTION(plugin_dialog));
 
 	if (!last_dir)
-		/* someone FIXME please, how do we get the dir from configure? */
-		buf = g_strdup("/usr/local/lib/gaim/");
+		buf = g_strdup(LIBDIR);
 	else
 		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
 

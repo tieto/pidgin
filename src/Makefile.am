@@ -64,7 +64,7 @@ gaim_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
-CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" $(DEBUG_CFLAGS)
+CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS)
 LIBS += $(DEBUG_LIBS)
 
 EXTRA_DIST =	convo.h \
