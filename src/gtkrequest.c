@@ -1376,14 +1376,14 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 #else /* FILECHOOSER */
 file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
-	gchar *name;
+	const gchar *name;
 
-	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog)));
+	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
 	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
 		/* Descend into directory? */
 		/* Close dialog? */
 		return;
-	data->u.file.name = name;
+	data->u.file.name = g_strdup(name);
 #endif /* FILECHOOSER */
 
 	if ((data->u.file.savedialog == TRUE) &&
