@@ -1,3 +1,12 @@
+Everything in this file should be considered old and potentially out of
+date.  For more reliable information, install doxygen and graphiz dot, 
+then run 
+make docs
+in the gaim source tree. This will produce html docs in gaim/docs/html 
+that will provide an api reference and in the related pages section, 
+information on perl and c plugins. 
+
+
 Ok, this howto is going to be really short and sweet and to the point.
 
 First off, before you do anything else, in all of the files for your plugin,
