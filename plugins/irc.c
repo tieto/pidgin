@@ -70,6 +70,8 @@ static char *irc_name()
 	return "IRC";
 }
 
+static void irc_get_info(struct gaim_connection *gc, char *who);
+	
 char *name()
 {
 	return "IRC";
@@ -185,6 +187,15 @@ static void irc_send_im(struct gaim_connection *gc, char *who, char *message, in
 			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%cACTION %s%c\n", who, '\001', temp, '\001');
 			g_free(temp);
 		} 
+		else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 7);
+			irc_get_info(gc, temp);
+			g_free(temp);
+
+			return;
+		}	
+				
 	}
 	else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG %s :%s\n", who, message);
@@ -293,17 +304,30 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 
 
 	/* Before we actually send this, we should check to see if they're trying
-	 * To issue a /me command and handle it properly. */
+	 * To issue a command and handle it properly. */
 
-	if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
-		/* We have /me!! We have /me!! :-) */
+	if (message[0] == '/')
+	{
+		if ((g_strncasecmp(message, "/me ", 4) == 0) && (strlen(message) > 4)) {
+			/* We have /me!! We have /me!! :-) */
 
-		gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
-		strcpy(temp, message + 4);
-		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
-			   '\001');
-		g_free(temp);
-	} else {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+			strcpy(temp, message + 4);
+			g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%cACTION %s%c\n", channel->name, '\001', temp,
+				   '\001');
+			g_free(temp);
+		}
+		else if (!g_strncasecmp(message, "/whois ", 7) && (strlen(message) > 7)) {
+			gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+
+			strcpy(temp, message + 7);
+			irc_get_info(gc, temp);
+			g_free(temp);
+
+			return;
+		}	
+	}
+	else {
 		g_snprintf(buf, IRC_BUF_LEN, "PRIVMSG #%s :%s\n", channel->name, message);
 	}
 
