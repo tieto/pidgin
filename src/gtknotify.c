@@ -581,7 +581,7 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 
 		g_free(data);
 	}
-	else
+	else if (ui_handle != NULL)
 		gtk_widget_destroy(GTK_WIDGET(ui_handle));
 }
 
