@@ -84,6 +84,8 @@ struct gaim_xfer
 	size_t bytes_sent;            /**< The number of bytes sent.           */
 	size_t bytes_remaining;       /**< The number of bytes remaining.      */
 
+	gboolean completed;           /**< File Transfer is completed.         */
+
 	/* I/O operations. */
 	struct
 	{
@@ -259,6 +261,14 @@ const char *gaim_xfer_get_remote_ip(const struct gaim_xfer *xfer);
  * @return The port number on the other end.
  */
 unsigned int gaim_xfer_get_remote_port(const struct gaim_xfer *xfer);
+
+/**
+ * Sets the completed state for the file transfer.
+ *
+ * @param xfer      The file transfer.
+ * @param completed The completed state.
+ */
+void gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed);
 
 /**
  * Sets the filename for the file transfer.

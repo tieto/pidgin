@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -63,7 +63,7 @@ gaim_xfer_destroy(struct gaim_xfer *xfer)
 	if (xfer == NULL)
 		return;
 
-	if (xfer->bytes_remaining > 0) {
+	if (!xfer->completed) {
 		gaim_xfer_cancel(xfer);
 		return;
 	}
@@ -282,6 +282,15 @@ gaim_xfer_get_remote_port(const struct gaim_xfer *xfer)
 }
 
 void
+gaim_xfer_set_completed(struct gaim_xfer *xfer, gboolean completed)
+{
+	if(xfer == NULL)
+		return;
+
+	xfer->completed = completed;
+}
+
+void
 gaim_xfer_set_filename(struct gaim_xfer *xfer, const char *filename)
 {
 	if (xfer == NULL)
@@ -310,6 +319,9 @@ gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
 {
 	if (xfer == NULL)
 		return;
+
+	if(xfer->size == 0)
+		xfer->bytes_remaining = size - xfer->bytes_sent;
 
 	xfer->size = size;
 }
@@ -414,6 +426,9 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 		*buffer = g_malloc0(s);
 
 		r = read(xfer->fd, *buffer, s);
+
+		if(r == 0)
+			gaim_xfer_set_completed(xfer, TRUE);
 	}
 
 	return r;
@@ -472,7 +487,8 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	if (r < 0)
 		return;
 
-	xfer->bytes_remaining -= r;
+	if(gaim_xfer_get_size(xfer) > 0)
+		xfer->bytes_remaining -= r;
 	xfer->bytes_sent += r;
 
 	if (xfer->ops.ack != NULL)
@@ -483,7 +499,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
 
-	if (r == 0)
+	if (xfer->completed)
 		gaim_xfer_end(xfer);
 }
 
@@ -575,7 +591,7 @@ gaim_xfer_end(struct gaim_xfer *xfer)
 		return;
 
 	/* See if we are actually trying to cancel this. */
-	if (gaim_xfer_get_bytes_remaining(xfer) > 0) {
+	if (!xfer->completed) {
 		gaim_xfer_cancel(xfer);
 		return;
 	}
