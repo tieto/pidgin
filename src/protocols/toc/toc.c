@@ -176,7 +176,7 @@ static void toc_login(GaimAccount *account)
 			gaim_account_get_string(account, "server", TOC_HOST));
 	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
 
-	debug_printf("* Client connects to TOC\n");
+	gaim_debug(GAIM_DEBUG_INFO, "toc", "Client connects to TOC\n");
 	if (gaim_proxy_connect(account,
 				gaim_account_get_string(account, "server", TOC_HOST),
 				gaim_account_get_int(account, "port", TOC_PORT),
@@ -220,7 +220,8 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	else
 		strncpy(tdt->toc_ip, gaim_account_get_string(gc->account, "server", TOC_HOST), sizeof(tdt->toc_ip));
 
-	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
+	gaim_debug(GAIM_DEBUG_INFO, "toc",
+			   "Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
 		gaim_connection_error(gc, _("Disconnected."));
 		return;
@@ -411,13 +412,13 @@ static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 	 * but this'll stop a segfault.
 	 */
 	if (len > MSG_LEN) {
-		debug_printf("message too long, truncating\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "toc", "message too long, truncating\n");
 		escaped[MSG_LEN - 1] = '\0';
 		len = MSG_LEN;
 	}
 
 	if (olen < 0)
-		debug_printf("TOC C: %s\n", escaped);
+		gaim_debug(GAIM_DEBUG_INFO, "toc", "C: %s\n", escaped);
 
 	hdr.ast = '*';
 	hdr.type = type;
@@ -450,7 +451,7 @@ static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 	int ret;
 
 	if (toc_read(tdt->toc_fd, buffer, sizeof(struct sflap_hdr)) < 0) {
-		debug_printf("error, couldn't read flap header\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "toc", "Couldn't read flap header\n");
 		return -1;
 	}
 
@@ -458,7 +459,9 @@ static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 
 	if (buflen < ntohs(hdr->len)) {
 		/* fake like there's a read error */
-		debug_printf("buffer too small (have %d, need %d)\n", buflen, ntohs(hdr->len));
+		gaim_debug(GAIM_DEBUG_ERROR, "toc",
+				   "buffer too small (have %d, need %d)\n",
+				   buflen, ntohs(hdr->len));
 		return -1;
 	}
 
@@ -608,13 +611,14 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	if (tdt->state == STATE_FLAPON) {
 		hdr = (struct sflap_hdr *)buf;
 		if (hdr->type != TYPE_SIGNON)
-			debug_printf("problem, hdr->type != TYPE_SIGNON\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "toc", "hdr->type != TYPE_SIGNON\n");
 		else
-			debug_printf("* TOC sends Client FLAP SIGNON\n");
+			gaim_debug(GAIM_DEBUG_INFO, "toc",
+					   "TOC sends Client FLAP SIGNON\n");
 		tdt->seqno = ntohs(hdr->seqno);
 		tdt->state = STATE_SIGNON_REQUEST;
 
-		debug_printf("* Client sends TOC FLAP SIGNON\n");
+		gaim_debug(GAIM_DEBUG_INFO, "toc", "Client sends TOC FLAP SIGNON\n");
 		g_snprintf(so.username, sizeof(so.username), "%s", username);
 		so.ver = htonl(1);
 		so.tag = htons(1);
@@ -624,7 +628,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			return;
 		}
 
-		debug_printf("* Client sends TOC \"toc_signon\" message\n");
+		gaim_debug(GAIM_DEBUG_INFO, "toc",
+				   "Client sends TOC \"toc_signon\" message\n");
 		/* i hate icq. */
 		if (username[0] >= '0' && username[0] <= '9')
 			password = g_strndup(gaim_account_get_password(gc->account), 8);
@@ -644,9 +649,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 
 	if (tdt->state == STATE_SIGNON_REQUEST) {
-		debug_printf("* TOC sends client SIGN_ON reply\n");
+		gaim_debug(GAIM_DEBUG_INFO, "toc", "TOC sends client SIGN_ON reply\n");
 		if (g_ascii_strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
-			debug_printf("Didn't get SIGN_ON! buf was: %s\n",
+			gaim_debug(GAIM_DEBUG_ERROR, "toc",
+					   "Didn't get SIGN_ON! buf was: %s\n",
 				     buf + sizeof(struct sflap_hdr));
 			if (!g_ascii_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
 				strtok(buf + sizeof(struct sflap_hdr), ":");
@@ -656,7 +662,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			return;
 		}
 		/* we're supposed to check that it's really TOC v1 here but we know it is ;) */
-		debug_printf("TOC version: %s\n", buf + sizeof(struct sflap_hdr) + 8);
+		gaim_debug(GAIM_DEBUG_INFO, "toc",
+				   "TOC version: %s\n", buf + sizeof(struct sflap_hdr) + 8);
 
 		/* we used to check for the CONFIG here, but we'll wait until we've sent our
 		 * version of the config and then the toc_init_done message. we'll come back to
@@ -668,7 +675,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_finish_login(gc);
 
 		/* Client sends TOC toc_init_done message */
-		debug_printf("* Client sends TOC toc_init_done message\n");
+		gaim_debug(GAIM_DEBUG_INFO, "toc",
+				   "Client sends TOC toc_init_done message\n");
 		g_snprintf(snd, sizeof snd, "toc_init_done");
 		sflap_send(gc, snd, -1, TYPE_DATA);
 
@@ -682,14 +690,16 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		return;
 	}
 
-	debug_printf("TOC S: %s\n", buf + sizeof(struct sflap_hdr));
+	gaim_debug(GAIM_DEBUG_INFO, "toc", "S: %s\n",
+			   buf + sizeof(struct sflap_hdr));
 
 	c = strtok(buf + sizeof(struct sflap_hdr), ":");	/* Ditch the first part */
 
 	if (!g_ascii_strcasecmp(c, "SIGN_ON")) {
 		/* we should only get here after a PAUSE */
 		if (tdt->state != STATE_PAUSE)
-			debug_printf("got SIGN_ON but not PAUSE!\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "toc",
+					   "got SIGN_ON but not PAUSE!\n");
 		else {
 			tdt->state = STATE_ONLINE;
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
@@ -973,9 +983,11 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			for (i--; i >= 0; i--)
 				g_free(messages[i]);
 
-			debug_printf("English translation of RVOUS_PROPOSE: %s requests Send File (i.e."
-				" send a file to you); %s:%d (verified_ip:port), %d files at"
-				" total size of %d bytes.\n", user, vip, port, files, totalsize);
+			gaim_debug(GAIM_DEBUG_MISC, "toc",
+					   "English translation of RVOUS_PROPOSE: %s requests "
+					   "Send File (i.e. send a file to you); %s:%d "
+					   "(verified_ip:port), %d files at total size of "
+					   "%d bytes.\n", user, vip, port, files, totalsize);
 			accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* they want us to send a file */
@@ -1027,7 +1039,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			}
 			frombase64(strtok(NULL, ":"), (char **)&icon, NULL);
 
-			debug_printf("received icon of length %d\n", icon->len);
+			gaim_debug(GAIM_DEBUG_MISC, "toc",
+			           "received icon of length %d\n", icon->len);
 			g_free(icon);
 			for (i--; i >= 0; i--)
 				g_free(messages[i]);
@@ -1035,11 +1048,13 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		} else if (!strcmp(uuid, IMAGE_UID)) {
 			/* aka Direct IM */
 		} else {
-			debug_printf("Don't know what to do with RVOUS UUID %s\n", uuid);
+			gaim_debug(GAIM_DEBUG_ERROR, "toc",
+					   "Don't know what to do with RVOUS UUID %s\n", uuid);
 			/* do we have to do anything here? i think it just times out */
 		}
 	} else {
-		debug_printf("don't know what to do with %s\n", c);
+		gaim_debug(GAIM_DEBUG_ERROR, "toc",
+				   "don't know what to do with %s\n", c);
 	}
 }
 
@@ -1103,7 +1118,9 @@ static void toc_dir_search(GaimConnection *g, const char *first, const char *mid
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle,
 		   last, maiden, city, state, country, email);
-	debug_printf("Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden,
+	gaim_debug(GAIM_DEBUG_INFO, "toc",
+			   "Searching for: %s,%s,%s,%s,%s,%s,%s\n",
+			   first, middle, last, maiden,
 		     city, state, country);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
@@ -1554,7 +1571,7 @@ struct file_transfer {
 
 static void debug_header(struct file_transfer *ft) {
 	struct file_header *f = (struct file_header *)ft;
-	debug_printf("TOC FT HEADER:\n"
+	gaim_debug(GAIM_DEBUG_MISC, "toc", "FT HEADER:\n"
 			"\t%s %d 0x%04x\n"
 			"\t%s %d %d\n"
 			"\t%d %d %d %d %d %d\n"

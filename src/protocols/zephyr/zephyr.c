@@ -87,17 +87,16 @@ static int last_id = 0;
 /* just for debugging
 static void handle_unknown(ZNotice_t notice)
 {
-	debug_printf("z_packet: %s\n", notice.z_packet);
-	debug_printf("z_version: %s\n", notice.z_version);
-	debug_printf("z_kind: %d\n", notice.z_kind);
-	debug_printf("z_class: %s\n", notice.z_class);
-	debug_printf("z_class_inst: %s\n", notice.z_class_inst);
-	debug_printf("z_opcode: %s\n", notice.z_opcode);
-	debug_printf("z_sender: %s\n", notice.z_sender);
-	debug_printf("z_recipient: %s\n", notice.z_recipient);
-	debug_printf("z_message: %s\n", notice.z_message);
-	debug_printf("z_message_len: %d\n", notice.z_message_len);
-	debug_printf("\n");
+	gaim_debug(GAIM_DEBUG_MISC, "z_packet: %s\n", notice.z_packet);
+	gaim_debug(GAIM_DEBUG_MISC, "z_version: %s\n", notice.z_version);
+	gaim_debug(GAIM_DEBUG_MISC, "z_kind: %d\n", notice.z_kind);
+	gaim_debug(GAIM_DEBUG_MISC, "z_class: %s\n", notice.z_class);
+	gaim_debug(GAIM_DEBUG_MISC, "z_class_inst: %s\n", notice.z_class_inst);
+	gaim_debug(GAIM_DEBUG_MISC, "z_opcode: %s\n", notice.z_opcode);
+	gaim_debug(GAIM_DEBUG_MISC, "z_sender: %s\n", notice.z_sender);
+	gaim_debug(GAIM_DEBUG_MISC, "z_recipient: %s\n", notice.z_recipient);
+	gaim_debug(GAIM_DEBUG_MISC, "z_message: %s\n", notice.z_message);
+	gaim_debug(GAIM_DEBUG_MISC, "z_message_len: %d\n", notice.z_message_len);
 }
 */
 
@@ -429,7 +428,7 @@ static gint check_notify(gpointer data)
 			break;
 		default:
 			/* we'll just ignore things for now */
-			debug_printf("ZEPHYR: Unhandled Notice\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "zephyr", "Unhandled notice.\n");
 			break;
 		}
 
@@ -548,11 +547,11 @@ static void process_zsubs()
 					g_free(tmp);
 					sub.zsub_recipient = recip;
 					if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
-						debug_printf("Zephyr: Couldn't subscribe to %s, %s, "
-									   "%s\n",
-										sub.zsub_class,
-										sub.zsub_classinst,
-										sub.zsub_recipient);
+						gaim_debug(GAIM_DEBUG_ERROR, "zephyr",
+								   "Couldn't subscribe to %s, %s, %s\n",
+								   sub.zsub_class,
+								   sub.zsub_classinst,
+								   sub.zsub_recipient);
 					}
 					subscrips = g_slist_append(subscrips,
 								new_triple(triple[0], triple[1], recip));
@@ -615,7 +614,8 @@ static void zephyr_login(GaimAccount *account)
 
 	/* we don't care if this fails. i'm lying right now. */
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
-		debug_printf("Zephyr: Couldn't subscribe to messages!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "zephyr",
+				   "Couldn't subscribe to messages!\n");
 	}
 
 	gaim_connection_set_state(zgc, GAIM_CONNECTED);
