@@ -86,51 +86,6 @@ void update_log_convs()
 	}
 }
 
-static void do_save_convo(GObject *obj, GtkWidget *wid)
-{
-	GaimConversation *c = g_object_get_data(obj, "gaim_conversation");
-	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
-	FILE *f;
-
-	if (file_is_dir(filename, wid))
-		return;
-
-	if (!((gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
-		   g_list_find(gaim_get_ims(), c)) ||
-		  (gaim_conversation_get_type(c) == GAIM_CONV_CHAT &&
-		   g_list_find(gaim_get_chats(), c))))
- 		filename = NULL;
-
-	gtk_widget_destroy(wid);
-
-	if (!filename)
-		return;
-
-	f = fopen(filename, "w+");
-
-	if (!f)
-		return;
-
-	fprintf(f, "%s", c->history->str);
-	fclose(f);
-}
-
-
-void save_convo(GtkWidget *save, GaimConversation *c)
-{
-	char buf[BUF_LONG];
-	GtkWidget *window = gtk_file_selection_new(_("Gaim - Save Conversation"));
-	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-			"gaim_conversation", c);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-			   "clicked", G_CALLBACK(do_save_convo), window);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
-	gtk_widget_show(window);
-}
-
 static FILE *open_gaim_log_file(const char *name, int *flag)
 {
 	char *buf;

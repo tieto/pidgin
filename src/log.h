@@ -57,7 +57,6 @@ void system_log(enum log_event, GaimConnection *, struct buddy *, int);
 void rm_log(struct log_conversation *);
 struct log_conversation *find_log_info(const char *);
 void update_log_convs();
-void save_convo(GtkWidget *save, GaimConversation *c);
 char *html_logize(const char *p);
 
 #endif /* _GAIM_LOG_H_ */

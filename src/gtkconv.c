@@ -135,10 +135,42 @@ static void tab_complete(GaimConversation *conv);
 static void update_typing_icon(GaimConversation *conv);
 static gboolean update_send_as_selection(GaimWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
+static void save_convo(GtkWidget *save, GaimConversation *c);
 
 /**************************************************************************
  * Callbacks
  **************************************************************************/
+static void
+do_save_convo(GObject *obj, GtkWidget *wid)
+{
+	GaimConversation *c = g_object_get_data(obj, "gaim_conversation");
+	const char *filename;
+	FILE *fp;
+
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+
+	if (file_is_dir(filename, wid))
+		return;
+
+	if (!((gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
+		   g_list_find(gaim_get_ims(), c)) ||
+		  (gaim_conversation_get_type(c) == GAIM_CONV_CHAT &&
+		   g_list_find(gaim_get_chats(), c))))
+ 		filename = NULL;
+
+	gtk_widget_destroy(wid);
+
+	if (filename == NULL)
+		return;
+
+	if ((fp = fopen(filename, "w+")) == NULL)
+		return;
+
+	fprintf(fp, "%s", c->history->str);
+
+	fclose(fp);
+}
+
 static void
 do_insert_image_cb(GObject *obj, GtkWidget *wid)
 {
@@ -2692,6 +2724,26 @@ meify(char *message, size_t len)
 	}
 
 	return FALSE;
+}
+
+static void
+save_convo(GtkWidget *save, GaimConversation *c)
+{
+	char buf[BUF_LONG];
+	GtkWidget *window;
+
+	window = gtk_file_selection_new(_("Gaim - Save Conversation"));
+
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log",
+			   gaim_home_dir(), normalize(c->name));
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			"gaim_conversation", c);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			   "clicked", G_CALLBACK(do_save_convo), window);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
+	gtk_widget_show(window);
 }
 
 static GtkItemFactoryEntry menu_items[] =
