@@ -292,13 +292,9 @@ static int dologin_named(char *name)
 
 static void doenter(GtkWidget *widget, GtkWidget *w)
 {
-	if (widget == name) {
-		gtk_entry_set_text(GTK_ENTRY(pass), "");
-		gtk_editable_select_region(GTK_EDITABLE(GTK_COMBO(name)->entry), 0, 0);
-		gtk_widget_grab_focus(pass);
-	} else if (widget == pass) {
-		dologin(widget, w);
-	}
+	gtk_entry_set_text(GTK_ENTRY(pass), "");
+	gtk_editable_select_region(GTK_EDITABLE(GTK_COMBO(name)->entry), 0, 0);
+	gtk_widget_grab_focus(pass);
 }
 
 
@@ -407,7 +403,7 @@ void show_login()
 	pass = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	g_signal_connect(G_OBJECT(pass), "activate",
-					 G_CALLBACK(doenter), mainwindow);
+					 G_CALLBACK(dologin), mainwindow);
 	gtk_box_pack_start(GTK_BOX(vbox2), pass, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
 

@@ -48,7 +48,6 @@ typedef struct
 	void (*connect_progress)(GaimConnection *gc, const char *text,
 							 size_t step, size_t step_count);
 	void (*connected)(GaimConnection *gc);
-	void (*request_pass)(GaimConnection *gc);
 	void (*disconnected)(GaimConnection *gc, const char *reason);
 	void (*notice)(GaimConnection *gc, const char *text);
 

@@ -79,6 +79,8 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		((GaimRequestInputCb)data->cbs[id])(data->user_data, value);
+	else
+		((GaimRequestInputCb)data->cbs[1])(data->user_data, value);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);
 }
@@ -205,7 +207,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	/* Create the dialog. */
-	dialog = gtk_dialog_new_with_buttons("", NULL, 0,
+	dialog = gtk_dialog_new_with_buttons(title, NULL, 0,
 					     text_to_stock(cancel_text), 1,
 					     text_to_stock(ok_text),     0,
 					     NULL);
@@ -343,6 +345,8 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	if (title != NULL)
+		gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	for (i = 0; i < action_count; i++) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
@@ -436,6 +440,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	if (title != NULL)
+		gtk_window_set_title(GTK_WINDOW(win), title);
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);

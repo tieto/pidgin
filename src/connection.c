@@ -85,6 +85,21 @@ gaim_connection_destroy(GaimConnection *gc)
 	g_free(gc);
 }
 
+static void request_pass_ok_cb(GaimConnection *gc, const char *entry)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+
+	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
+
+	gaim_connection_connect(gc);
+}
+
+static void request_pass_cancel_cb(GaimConnection *gc, const char *entry)
+{
+	gaim_connection_destroy(gc);
+}
+
+
 void
 gaim_connection_connect(GaimConnection *gc)
 {
@@ -103,14 +118,19 @@ gaim_connection_connect(GaimConnection *gc)
 
 	account = gaim_connection_get_account(gc);
 
+	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
+		return;
+
 	if (!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
 		gaim_account_get_password(account) == NULL) {
 
 		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requesting password\n");
 
-		if (ops != NULL && ops->request_pass != NULL)
-			ops->request_pass(gc);
+		gaim_request_input(gc, NULL, _("Please enter your password"), NULL, 
+						   NULL, FALSE, TRUE,
+						   _("OK"), G_CALLBACK(request_pass_ok_cb),
+						   _("Cancel"), G_CALLBACK(request_pass_cancel_cb), gc);
 
 		return;
 	}
