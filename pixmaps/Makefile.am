@@ -6,6 +6,8 @@ EXTRA_DIST =	ab.xpm				\
 		admin_icon.xpm			\
 		aimicon.xpm			\
 		angel.xpm			\
+		arrow_down.xpm			\
+		arrow_right.xpm			\
 		aol_icon.xpm			\
 		available-away.xpm		\
 		available-chat.xpm		\

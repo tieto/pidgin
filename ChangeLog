@@ -5,6 +5,7 @@ version 0.56:
 	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
 	* Russian Translation Updated (thanks Grigory Bakunov)
 	* libjabber upgraded to most recent stable version
+	* Buddylist looks a little better
 	
 version 0.55 (03/29/2002):
 	* Jabber improvements (Thanks Jim Seymour)

@@ -74,6 +74,9 @@
 #include "pixmaps/group.xpm"
 #include "pixmaps/logout_menu.xpm"
 
+#include "pixmaps/arrow_down.xpm"
+#include "pixmaps/arrow_right.xpm"
+
 static GtkTooltips *tips;
 static GtkAccelGroup *accel;
 static GtkWidget *editpane;
@@ -89,6 +92,9 @@ GtkWidget *buddies;
 
 void BuddyTickerLogonTimeout(gpointer data);
 void BuddyTickerLogoutTimeout(gpointer data);
+
+typedef struct _GtkTreePixmaps GtkTreePixmaps;
+
 
 struct buddy_show {
 	GtkWidget *item;
@@ -1798,26 +1804,77 @@ static int buddy_number(char *group, char *buddy)
 	return -1;
 }
 
+
+
 static struct group_show *new_group_show(char *group)
 {
 	struct group_show *g = g_new0(struct group_show, 1);
 	int pos = group_number(group);
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+	GtkStyle *style;
+	GtkStyle *style2;
+	int j;
 
 	g->name = g_strdup(group);
 
 	g->item = gtk_tree_item_new();
-	gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
+
 	gtk_signal_connect(GTK_OBJECT(g->item), "button_press_event",
 			   GTK_SIGNAL_FUNC(handle_click_group), g);
+
+	gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
+
 	gtk_widget_show(g->item);
 
 	g->label = gtk_label_new(group);
 	gtk_misc_set_alignment(GTK_MISC(g->label), 0.0, 0.5);
-	gtk_container_add(GTK_CONTAINER(g->item), g->label);
 	gtk_widget_show(g->label);
 
+	gtk_container_add(GTK_CONTAINER(g->item), g->label);
+
+	style = gtk_style_new();
+//	style->font = gdk_font_load("-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
+
+	style->fg[0].red = 104 * 255;
+	style->fg[0].green = 20 * 255;
+	style->fg[0].blue = 20* 255;
+	
+	gtk_widget_set_style(GTK_WIDGET(g->label), style);
+
+
 	shows = g_slist_insert(shows, g, pos);
+
+	/* Rob does drugs - this is still evil, damn you becausse I SAID SO! */
+
+	pm = gdk_pixmap_create_from_xpm_d(g->item->window, 
+		&bm, NULL, arrow_down_xpm);
+
+	gtk_pixmap_set(GTK_PIXMAP(GTK_TREE_ITEM(g->item)->minus_pix_widget), 
+		pm, bm);
+
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(bm);
+
+	pm = gdk_pixmap_create_from_xpm_d(buddies->window, 
+		&bm, NULL, arrow_right_xpm);
+
+	gtk_pixmap_set(GTK_PIXMAP(GTK_TREE_ITEM(g->item)->plus_pix_widget), 
+		pm, bm);
+
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(bm);
+
+	style = gtk_widget_get_style(GTK_TREE_ITEM(g->item)->pixmaps_box);
+	style2 = gtk_widget_get_style(g->item);
+	style->bg[0] = style2->base[0];
+
+	gtk_widget_set_style(GTK_TREE_ITEM(g->item)->pixmaps_box, style);
+
+	/* bad drugs */
+
 	update_num_group(g);
+	
 	return g;
 }
 
@@ -2638,14 +2695,12 @@ void show_buddy_list()
 
 	notebook = gtk_notebook_new();
 
-
-
-
 	/* Do buddy list stuff */
 	/* FIXME: spacing on both panes is ad hoc */
 	buddypane = gtk_vbox_new(FALSE, 1);
 
 	buddies = gtk_tree_new();
+	gtk_tree_set_view_lines(GTK_TREE(buddies), FALSE);
 	sw = gtk_scrolled_window_new(NULL, NULL);
 
 	tips = gtk_tooltips_new();
