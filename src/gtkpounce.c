@@ -321,7 +321,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	}
 	else {
 		dialog->pounce  = NULL;
-		dialog->account = gaim_accounts_get_all()->data;
+		dialog->account = gaim_connection_get_account((GaimConnection *)gaim_connections_get_all()->data);
 	}
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
