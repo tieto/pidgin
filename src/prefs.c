@@ -151,8 +151,6 @@ static void set_font_options();
 static void set_sound_options();
 static void set_away_options();
 
-extern void BuddyTickerShow();
-
 #define PROXYHOST 0
 #define PROXYPORT 1
 #define PROXYTYPE 2
@@ -276,7 +274,6 @@ GtkWidget *interface_page() {
 
 	/* These shouldn't have to wait for user to click OK or APPLY or whatnot */
 	/* They really shouldn't be in preferences at all */
-	gaim_button(_("Show Buddy Ticker"), &misc_options, OPT_MISC_BUDDY_TICKER, vbox);
 	debugbutton = gaim_button(_("Show Debug Window"), &misc_options, OPT_MISC_DEBUG, vbox);
 	gtk_widget_show (vbox);
 
@@ -1967,9 +1964,6 @@ static void set_misc_option(GtkWidget *w, int option)
 	if (option == OPT_MISC_DEBUG)
 		show_debug();
 
-	if (option == OPT_MISC_BUDDY_TICKER)
-		BuddyTickerShow();
-
 	save_prefs();
 }
 
@@ -2119,9 +2113,9 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(button), options);
 
-	/* So that the ticker and debug window happen immediately
-	 * I don't think they should be "preferences," anyway. */
-	if (options == &misc_options && (option == OPT_MISC_DEBUG || option == OPT_MISC_BUDDY_TICKER))
+	/* So that the debug window happens immediately
+	 * I don't think it should be "preferences," anyway. */
+	if (options == &misc_options && option == OPT_MISC_DEBUG)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_misc_option),
 				   (int *)option);
 	else

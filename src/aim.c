@@ -57,7 +57,6 @@
 #include <signal.h>
 #endif
 #include "locale.h"
-#include "gtkticker.h"
 #include "gtkspell.h"
 #ifndef USE_APPLET
 #include <getopt.h>
@@ -82,8 +81,6 @@ int opt_away = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
-
-void BuddyTickerCreateWindow(void);
 
 #if HAVE_SIGNAL_H
 /*

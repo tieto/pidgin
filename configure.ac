@@ -432,6 +432,7 @@ AC_OUTPUT([Makefile
            pixmaps/protocols/msn/Makefile
            pixmaps/protocols/yahoo/Makefile
 	   plugins/Makefile
+	   plugins/ticker/Makefile
 	   po/Makefile.in 
            sounds/Makefile
 	   src/Makefile

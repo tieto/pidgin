@@ -683,7 +683,6 @@ static struct replace disp_replace[] = {
 { /* OPT_DISP_IGNORE_COLOUR */		0x00000020, &convo_options, OPT_CONVO_IGNORE_COLOUR },
 { /* OPT_DISP_SHOW_LOGON */		0x00000040,    &im_options, OPT_IM_LOGON },
 { /* OPT_DISP_SHOW_SMILEY */		0x00000100, &convo_options, OPT_CONVO_SHOW_SMILEY },
-{ /* OPT_DISP_SHOW_BUDDYTICKER */	0x00000200,  &misc_options, OPT_MISC_BUDDY_TICKER },
 { /* OPT_DISP_COOL_LOOK */		0x00000400,  &misc_options, OPT_MISC_COOL_LOOK },
 { /* OPT_DISP_CHAT_LOGON */		0x00000800,  &chat_options, OPT_CHAT_LOGON },
 { /* OPT_DISP_NO_BUTTONS */		0x00002000, &blist_options, OPT_BLIST_NO_BUTTONS },
@@ -828,6 +827,13 @@ static void gaimrc_read_options(FILE *f)
 
 	if (!away_resend)
 		away_resend = 120;
+
+	if (misc_options & OPT_MISC_BUDDY_TICKER) {
+		char *tickerplugin = g_build_filename(LIBDIR, "ticker.so", NULL);
+		load_plugin(tickerplugin);
+		g_free(tickerplugin);
+		misc_options &= ~OPT_MISC_BUDDY_TICKER;
+	} 
 }
 
 static void gaimrc_write_options(FILE *f)

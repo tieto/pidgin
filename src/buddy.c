@@ -94,9 +94,6 @@ GtkWidget *blist = NULL;
 GtkWidget *bpmenu;
 GtkWidget *buddies;
 
-void BuddyTickerLogonTimeout(gpointer data);
-void BuddyTickerLogoutTimeout(gpointer data);
-
 typedef struct _GtkTreePixmaps GtkTreePixmaps;
 
 
@@ -303,8 +300,6 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 		}
 		update_num_group(gs);
 	} else {
-		if (misc_options & OPT_MISC_BUDDY_TICKER)
-			BuddyTickerSetAlias(b->name, b->show);
 		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
 		update_idle_time(bs);
 	}
@@ -587,19 +582,6 @@ void pressed_log(GtkWidget *widget, char *name)
 void show_syslog()
 {
 	show_log(NULL);
-}
-
-void pressed_ticker(char *buddy)
-{
-	struct conversation *c;
-
-	c = find_conversation(buddy);
-
-	if (c != NULL) {
-		gdk_window_show(c->window->window);
-	} else {
-		c = new_conversation(buddy);
-	}
 }
 
 void pressed_alias_bs(GtkWidget *widget, struct buddy_show *bs)
@@ -2110,8 +2092,6 @@ static gint log_timeout(struct buddy_show *b)
 		gtk_widget_show(b->pix);
 		if (!(blist_options & OPT_BLIST_SHOW_PIXMAPS))
 			gtk_widget_hide(b->pix);
-		if (misc_options & OPT_MISC_BUDDY_TICKER)
-			BuddyTickerSetPixmap(b->name, pm, bm);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
 		gtk_timeout_remove(b->log_timer);
@@ -2346,10 +2326,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
-			if (misc_options & OPT_MISC_BUDDY_TICKER) {
-				BuddyTickerAddUser(b->name, b->show, pm, bm);
-				gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogonTimeout, b->name);
-			}
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 			b->present = 2;
@@ -2385,8 +2361,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_show(bs->pix);
 			if (!(blist_options & OPT_BLIST_SHOW_PIXMAPS))
 				gtk_widget_hide(bs->pix);
-			if (misc_options & OPT_MISC_BUDDY_TICKER)
-				BuddyTickerSetPixmap(b->name, pm, bm);
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 		}
@@ -2415,10 +2389,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 		gtk_widget_show(bs->pix);
-		if (misc_options & OPT_MISC_BUDDY_TICKER) {
-			BuddyTickerSetPixmap(b->name, pm, bm);
-			gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogoutTimeout, b->name);
-		}
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
 		if ((bs->sound != 1) && (im_options & OPT_IM_LOGON)) {

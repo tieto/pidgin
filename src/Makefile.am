@@ -15,7 +15,6 @@ gaim_applet_SOURCES =	about.c \
 			gaimrc.c \
 			gtkimhtml.c \
 			gtkspell.c \
-			gtkticker.c \
 			html.c \
 			idle.c \
 			list.c \
@@ -29,7 +28,6 @@ gaim_applet_SOURCES =	about.c \
 			prpl.c \
 			server.c \
 			sound.c \
-			ticker.c \
 			util.c
 gaim_applet_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_applet_LDFLAGS = -export-dynamic
@@ -49,7 +47,6 @@ gaim_SOURCES =	about.c \
 		gaimrc.c \
 		gtkimhtml.c \
 		gtkspell.c \
-		gtkticker.c \
 		html.c \
 		idle.c \
 		list.c \
@@ -63,7 +60,6 @@ gaim_SOURCES =	about.c \
 		prpl.c \
 		server.c \
 		sound.c \
-		ticker.c \
 		util.c
 gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
@@ -84,7 +80,6 @@ EXTRA_DIST =	applet.h \
 		getopt1.c \
 		gtkimhtml.h \
 		gtkspell.h \
-		gtkticker.h \
 		md5.h \
 		multi.h \
 		prpl.h \

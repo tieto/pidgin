@@ -1,3 +1,5 @@
+SUBDIRS = ticker
+
 CFLAGS += -I\$(top_srcdir) -I\$(top_srcdir)/src -DVERSION=\"$(VERSION)\"
 SUFFIXES = .c .so
 .c.so:

@@ -517,13 +517,4 @@ extern int find_queue_total_by_name(char *);
 extern void play_sound(int);
 extern void play_file(char *);
 
-/* Fucntions in ticker.c */
-void SetTickerPrefs();
-void BuddyTickerSignOff();
-void BuddyTickerAddUser(char *, char *, GdkPixmap *, GdkBitmap *);
-void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
-void BuddyTickerSetAlias(char *, char *);
-void BuddyTickerSetNames();
-void BuddyTickerSignoff();
-
 #endif /* _UI_H_ */

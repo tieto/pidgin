@@ -1482,8 +1482,6 @@ void signoff(struct gaim_connection *gc)
 #else
 	show_login();
 #endif /* USE_APPLET */
-	if (misc_options & OPT_MISC_BUDDY_TICKER)
-		BuddyTickerSignoff();
 }
 
 struct aim_user *new_user(const char *name, int proto, int opts)
