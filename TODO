@@ -289,7 +289,6 @@ Jabber:
 		and changing conf. rm. nicks results in wrong nick re-appearing
 		(to other clients) and crash on close of conference dialog.
 	Server Admin operations (messages, etc.)
-	Support new server feature for "invisibility"
 	Add option for user info to be published or not in JUD.
 	Ability to "IM" conference room "buddies"
 	Some way to see/list roster items to which you have no subscription
@@ -324,7 +323,6 @@ Gadu-Gadu:
 
 ----
 THE UIS:
-	make timestamp same size as nicks (optional?)
 
 GTK1.2(some of this applies to gtk2 also):
 	preference to ignore colors not being used or not being saved. in 0.59.5
@@ -337,7 +335,6 @@ GTK1.2(some of this applies to gtk2 also):
 	BUG: hidden smilies don't always work right in protocols with specific smilies. even aim.
 		this is somewhat transitory, and very annoying.
 	copy grabs html as well as text. 
-	tooltip for mute sound is wrong. should read "Mute" not "Sound" when sounds are on
 	bug report: The pixmaps arrow_down.xpm and arrow_right.xpm don't have proper 
 		transparency... it only causes problems if your GTK theme is pixmap based
 	bug: if you remove a group in one prpl, it disappears from the online tab
@@ -346,7 +343,6 @@ GTK1.2(some of this applies to gtk2 also):
 	right click on url gives browser choice (preference option)
 	option to choose person on blist when adding to permit/deny lists
 	prpl specfic smiles in group chats.
-	alias's in chat list/invite
 	make output of /list searchable
 	option not to raise windows on event while away
 	make entry widget height preference a relative size, that is it doesn't change the
