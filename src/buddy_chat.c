@@ -27,6 +27,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "gtkhtml.h"
+#include <gdk/gdkkeysyms.h>
 
 static GtkWidget *joinchat;
 static GtkWidget *entry;
@@ -325,6 +326,25 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 }
 
 
+static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, struct buddy_chat *b)
+{
+	int pos;
+	if (event->keyval == GDK_Return) {
+		if (!(event->state & GDK_SHIFT_MASK)) {
+			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", b);
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+		} else {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "keypress_event");
+			pos = gtk_editable_get_position(GTK_EDITABLE(entry));
+			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
+		}
+	}
+
+	return TRUE;
+
+}
+
+
 void update_chat_list(struct buddy_chat *b)
 {
         GtkWidget *list_item;
@@ -506,6 +526,7 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	/* Hack something so we know have an entry click event */
 
 	gtk_signal_connect(GTK_OBJECT(chatentry), "activate", GTK_SIGNAL_FUNC(send_callback),b);
+	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(chat_keypress_callback), b);
         /* Text box */
 
         sw = gtk_scrolled_window_new (NULL, NULL);

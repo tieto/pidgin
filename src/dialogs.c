@@ -1418,6 +1418,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         build_permit_tree();
 
         serv_save_config();
+	do_export(0, 0);
 
         destroy_dialog(NULL, p->window);
 }

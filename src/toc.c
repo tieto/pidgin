@@ -138,24 +138,24 @@ int toc_login(char *username, char *password)
 
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
 	set_login_progress(5, buf);
-        if ((config=toc_wait_config()) == NULL) {
-		hide_login_progress("No Configuration");
-		set_state(STATE_OFFLINE);
-		return -1;
+	config = toc_wait_config();
 
-	}
-
-        
 #ifdef USE_APPLET
 	make_buddy();
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
                 gnome_buddy_show();
-                parse_toc_buddy_list(config, 0);
+		if (config != NULL)
+			parse_toc_buddy_list(config, 0);
+		else
+			do_import(0, 0);
 		createOnlinePopup();
                 set_applet_draw_open();
         } else {
                 gnome_buddy_hide();
-                parse_toc_buddy_list(config, 0);
+		if (config != NULL)
+			parse_toc_buddy_list(config, 0);
+		else
+			do_import(0, 0);
                 set_applet_draw_closed();
         }
 
@@ -165,7 +165,10 @@ int toc_login(char *username, char *password)
 #else
         gtk_widget_hide(mainwindow);
 	show_buddy_list();
-        parse_toc_buddy_list(config, 0);
+	if (config != NULL)
+		parse_toc_buddy_list(config, 0);
+	else
+		do_import(0, 0);
         refresh_buddy_window();
 #endif
         
@@ -438,6 +441,8 @@ void toc_callback( gpointer          data,
 		
                 serv_got_update(c, logged, evil, signon, time_idle, type);
 
+	} else if (!strcasecmp(c, "CONFIG")) {
+		/* do we want to load the buddy list again here? */
 	} else if (!strcasecmp(c, "ERROR")) {
 		c = strtok(NULL,":");
 		show_error_dialog(c);
@@ -789,25 +794,27 @@ char *toc_wait_config()
 	/* Waits for configuration packet, returning the contents of the packet */
 	static char buf[BUF_LEN];
 	int res;
-        res = wait_reply(buf, sizeof(buf));
+	res = wait_reply(buf, sizeof(buf));
 	if (res < 0)
 		return NULL;
-/* Apparently, the toc_config is optional.  *VERY* Optional 
-	if (state != STATE_CONFIG) {
-        sprintf(debug_buff , "State should be %d, but is %d instead\n",STATE_CONFIG, state);
-		debug_print(debug_buff);
- 
-		return NULL;
-	}
+/* Apparently, the toc_config is optional.  *VERY* Optional
 */
+	if (state != STATE_CONFIG) {
+		res = 0;
+	} else {
+		res = 1;
+	}
 	/* At this point, it's time to setup automatic handling of incoming packets */
-        state = STATE_ONLINE;
+	state = STATE_ONLINE;
 #ifdef _WIN32
-        win32_r = gtk_timeout_add(1000, (GtkFunction)win32_read, NULL);
+	win32_r = gtk_timeout_add(1000, (GtkFunction)win32_read, NULL);
 #else
-        inpa = gdk_input_add(toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, NULL);
+	inpa = gdk_input_add(toc_fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_callback, NULL);
 #endif
-	return buf;
+	if (res)
+		return buf;
+	else
+		return NULL;
 }
 
 #endif /* USE_OSCAR */
