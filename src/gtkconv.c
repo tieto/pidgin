@@ -749,17 +749,17 @@ menu_search_cb(gpointer data, guint action, GtkWidget *widget)
 
 	if (gtkconv->dialogs.search)
 		return;
-	
+
 	gtkconv->dialogs.search = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkwin->window),
 							      GTK_DIALOG_DESTROY_WITH_PARENT,
-							      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, 
+							      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 							      GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
 	gtk_container_set_border_width (GTK_CONTAINER(gtkconv->dialogs.search), 6);
 	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(gtkconv->dialogs.search), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 12);
 	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 6);
-	
+
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -773,7 +773,7 @@ menu_search_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	
+
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	label = gtk_label_new(_("Search term: "));
@@ -784,10 +784,10 @@ menu_search_cb(gpointer data, guint action, GtkWidget *widget)
 	s = g_malloc(sizeof(struct _search));
 	s->gtkconv = gtkconv;
 	s->entry = entry;
-	
+
 	gtk_dialog_set_default_response (GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "response", G_CALLBACK(do_search_cb), s);
-	
+
 	gtk_widget_show_all(gtkconv->dialogs.search);
 }
 
@@ -5280,6 +5280,15 @@ stop_anim(GtkObject *obj, GaimConversation *conv)
 	gtkconv->u.im->icon_timer = 0;
 }
 
+static void
+toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
+{
+	if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
+		start_anim(NULL, conv);
+	else
+		stop_anim(NULL, conv);
+}
+
 static gboolean
 icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 {
@@ -5301,21 +5310,12 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 
 	menu = gtk_menu_new();
 
-	if (gtkconv->u.im->icon_timer) {
-		button = gtk_menu_item_new_with_label(_("Disable Animation"));
-		g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(stop_anim), conv);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
-	}
-	else if (gtkconv->u.im->anim &&
-			 !(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
+	if (gtkconv->u.im->anim &&
+		!(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
 	{
-		button = gtk_menu_item_new_with_label(_("Enable Animation"));
-		g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(start_anim), conv);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
+		gaim_new_check_item(menu, _("Animate"),
+							G_CALLBACK(toggle_icon_animate_cb), conv,
+							gtkconv->u.im->icon_timer);
 	}
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
@@ -5324,11 +5324,9 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
-	button = gtk_menu_item_new_with_label(_("Save Icon As..."));
-	g_signal_connect(G_OBJECT(button), "activate",
-					 G_CALLBACK(gaim_gtk_save_icon_dialog), conv);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-	gtk_widget_show(button);
+	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
+							 G_CALLBACK(gaim_gtk_save_icon_dialog), conv,
+							 0, 0, NULL);
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 
