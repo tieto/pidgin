@@ -1884,7 +1884,7 @@ void show_buddy_list()
 
         gtk_widget_show(menubar);
 
-	vbox       = gtk_vbox_new(FALSE, 10);
+	vbox       = gtk_vbox_new(FALSE, 5);
         
         notebook = gtk_notebook_new();
 
