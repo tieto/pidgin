@@ -721,7 +721,7 @@ void show_im_dialog()
 	
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
-		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
 		info->entry = gtk_entry_new();
