@@ -86,7 +86,7 @@ gint check_idle(struct gaim_connection *gc)
 	/* If we're not reporting idle times to the server, still use Gaim
 	   usage for auto-away, but quit here so we don't report to the 
 	   server */
-	if (report_idle == 0) {
+	if (report_idle == IDLE_NONE) {
 		return TRUE;
 	}
 
