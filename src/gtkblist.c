@@ -2450,7 +2450,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		}
 
 		if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
-			statustext = g_strdup(_("<b>Status:</b> Offline"));
+			statustext = g_strdup(_("\n<b>Status:</b> Offline"));
 
 		if (b->signon > 0)
 			loggedin = gaim_str_seconds_to_string(time(NULL) - b->signon);
