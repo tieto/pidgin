@@ -120,7 +120,7 @@ static GaimPluginInfo info =
 	VERSION,
 	N_("Allows you to hand-configure how long you've been idle for"),
 	N_("Allows you to hand-configure how long you've been idle for"),
-	"Eric Warmenhoven &lt;eric@warmenhoven.org>",
+	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
 	NULL,
 	NULL,
