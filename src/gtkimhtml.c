@@ -2321,9 +2321,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if ((font->size != 3) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)))
 							gtk_imhtml_font_set_size(imhtml, 3);
 
+
+						fonts = g_slist_remove (fonts, font);
 						g_free(font);
 
-						fonts = fonts->next;
 						if (fonts) {
 							GtkIMHtmlFontDetail *font = fonts->data;
 
@@ -3814,8 +3815,11 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 	GObject *object;
 	GtkTextIter start, end;
 	struct backcolor_tag *bct = NULL;
+
 	if (imhtml->edit.backcolor != NULL)
 		g_free(imhtml->edit.backcolor);
+
+	imhtml->edit.backcolor = NULL;
 
 	if (color && strcmp(color, "") != 0) {
 		imhtml->edit.backcolor = g_strdup(color);
