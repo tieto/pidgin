@@ -31,20 +31,26 @@
 #include "gtkinternal.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
+void gaim_gtkdialogs_im();
+void gaim_gtkdialogs_info();
+void gaim_gtkdialogs_log();
+void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
+void gaim_gtkdialogs_warn(GaimConnection *, const char *);
+
 void alias_dialog_bud(GaimBuddy *);
 void alias_dialog_contact(GaimContact *);
 void alias_dialog_blist_chat(GaimChat *);
-void show_warn_dialog(GaimConnection *, const char *);
-void gaim_gtkdialogs_new_im(GaimAccount *, const char *);
-void show_im_dialog();
-void show_info_dialog();
-void show_log_dialog();
-void destroy_all_dialogs();
 void create_away_mess(GtkWidget *, void *);
 void show_confirm_del(GaimBuddy *);
 void show_confirm_del_group(GaimGroup *);
 void show_confirm_del_blist_chat(GaimChat *);
 void show_confirm_del_contact(GaimContact *);
+void destroy_all_dialogs();
+
+/* Functions in about.c */
+extern void show_about(GtkWidget *, void *);
+
+/* Everything after this should probably be moved elsewhere */
 
 /**
  * Our UI's identifier.
@@ -55,14 +61,6 @@ void show_confirm_del_contact(GaimContact *);
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
-
-/* This is backwards-compatibility code for old versions of GTK+ (2.2.1 and
- * earlier).  It defines the new wrap behavior (unknown in earlier versions)
- * as the old (slightly buggy) wrap behavior.
- */
-#ifndef GTK_WRAP_WORD_CHAR
-#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-#endif
 
 #define DEFAULT_FONT_FACE "Helvetica"
 
@@ -114,9 +112,6 @@ extern GtkListStore *awayqueuestore;
 /* Globals in themes.c */
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
-
-/* Functions in about.c */
-extern void show_about(GtkWidget *, void *);
 
 /* Functions in main.c */
 extern void show_login();

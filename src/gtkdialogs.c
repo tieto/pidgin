@@ -131,7 +131,7 @@ static void do_warn(GtkWidget *widget, gint resp, struct warning *w)
 	g_free(w);
 }
 
-void show_warn_dialog(GaimConnection *gc, const char *who)
+void gaim_gtkdialogs_warn(GaimConnection *gc, const char *who)
 {
 	char *labeltext;
 	GtkWidget *hbox, *vbox;
@@ -440,7 +440,7 @@ new_im_cb(gpointer data, GaimRequestFields *fields)
 }
 
 void
-show_im_dialog(void)
+gaim_gtkdialogs_im(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -496,7 +496,7 @@ get_info_cb(gpointer data, GaimRequestFields *fields)
 }
 
 void
-show_info_dialog(void)
+gaim_gtkdialogs_info(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -548,7 +548,7 @@ get_log_cb(gpointer data, GaimRequestFields *fields)
 }
 
 void
-show_log_dialog(void)
+gaim_gtkdialogs_log(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;

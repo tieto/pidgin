@@ -602,7 +602,7 @@ info_cb(GtkWidget *widget, GaimConversation *conv)
 static void
 warn_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	show_warn_dialog(gaim_conversation_get_gc(conv),
+	gaim_gtkdialogs_warn(gaim_conversation_get_gc(conv),
 					 gaim_conversation_get_name(conv));
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
@@ -777,7 +777,7 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 static void
 menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	show_im_dialog();
+	gaim_gtkdialogs_im();
 }
 
 static void

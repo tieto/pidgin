@@ -580,7 +580,7 @@ static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 			return;
 		}
 	}
-	show_im_dialog();
+	gaim_gtkdialogs_im();
 }
 
 static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
@@ -602,7 +602,7 @@ static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
 			return;
 		}
 	}
-	show_info_dialog();
+	gaim_gtkdialogs_info();
 }
 
 static void
@@ -2319,10 +2319,10 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
+	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", gaim_gtkdialogs_im, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
-	{ N_("/Buddies/Get User _Info..."), "<CTL>I", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", show_log_dialog, 0, NULL },
+	{ N_("/Buddies/Get User _Info..."), "<CTL>I", gaim_gtkdialogs_info, 0, "<StockItem>", GAIM_STOCK_INFO },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", gaim_gtkdialogs_log, 0, NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
