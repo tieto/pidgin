@@ -3060,6 +3060,7 @@ gaim_plugin_oscar_parse_im_part(fu16_t charset, fu16_t charsubset, fu8_t *data, 
 		break;
 
 		case AIM_IMCHARSET_ASCII:
+		case 0x000d: /* Mobile AIM client on a Nokia 3100 and an LG VX6000 */
 		default: /* Unknown, hope for valid UTF-8... */
 			if (g_utf8_validate(data, datalen, NULL)) {
 				ret = g_strndup(data, datalen);
@@ -4962,7 +4963,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		alias = who;
 	primary = g_strdup_printf(_("ICQ Info for %s"), alias);
-	gaim_notify_userinfo(gc, buddy->name, NULL, primary, NULL, str->str, NULL, NULL);
+	gaim_notify_userinfo(gc, who, NULL, primary, NULL, str->str, NULL, NULL);
 	g_free(primary);
 	g_string_free(str, TRUE);
 
