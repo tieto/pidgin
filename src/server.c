@@ -842,6 +842,7 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 #else
 	char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
 	serv_join_chat(0, i); /* for oscar, it doesn't use the id anyway */
+	g_free(i);
 	gtk_widget_destroy(w2);
 #endif
 }
@@ -883,7 +884,7 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 #ifndef USE_OSCAR
         gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
 #else
-	gtk_object_set_user_data(GTK_OBJECT(d), (void *)name);
+	gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
 #endif
 
 
