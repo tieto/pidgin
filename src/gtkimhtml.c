@@ -1164,8 +1164,11 @@ gtk_imhtml_tip (gpointer data)
 
 	if ((y + h + + 4) > scr_h)
 		y = y - imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
-	else
-		y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
+	else 
+		if (imhtml->tip_bit->font)
+			y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
+		else
+			y = y + style->font->ascent + style->font->descent;
 
 	gtk_widget_set_usize (imhtml->tip_window, w, h);
 	gtk_widget_set_uposition (imhtml->tip_window, x, y);
