@@ -17,8 +17,8 @@ GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.4
 IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
-NSS_DIR :=		../../win32-dev/nss-3.8
-NSPR_DIR :=		../../win32-dev/nspr-4.3
+NSS_DIR :=		../../win32-dev/nss-3.9
+NSPR_DIR :=		../../win32-dev/nspr-4.4.1
 
 ##
 ## VARIABLE DEFINITIONS
@@ -32,7 +32,7 @@ CFLAGS =
 
 DEFINES =
 
-LDFLAGS = -mwindows
+LDFLAGS = -mconsole -mwindows
 
 #-mconsole
 #-mwindows

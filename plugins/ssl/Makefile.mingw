@@ -12,8 +12,8 @@ GTK_TOP :=		../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../..
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
-NSS_DIR :=              ../../../win32-dev/nss-3.8
-NSPR_DIR :=             ../../../win32-dev/nspr-4.3
+NSS_DIR :=              ../../../win32-dev/nss-3.9
+NSPR_DIR :=             ../../../win32-dev/nspr-4.4.1
 
 ##
 ## VARIABLE DEFINITIONS
