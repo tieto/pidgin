@@ -2009,6 +2009,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		title = 0,
 		pre = 0;
 
+	gboolean br = FALSE;
+
 	GSList *fonts = NULL;
 	GObject *object;
 	GtkIMHtmlScalable *scalable = NULL;
@@ -2026,6 +2028,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 			ws[wpos] = '\0';
+			br = FALSE;
 			switch (type)
 				{
 				case 1:		/* B */
@@ -2149,6 +2152,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 61:	/* BR (opt) */
 					ws[wpos] = '\n';
 					wpos++;
+					br = TRUE;
 					break;
 				case 26:        /* HR */
 				case 42:        /* HR (opt) */
@@ -2559,7 +2563,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[0] = '\0';
 				wpos = 0;
 				/* NEW_BIT (NEW_TEXT_BIT); */
-			} else {
+			} else if (!br) {  /* Don't insert a space immediately after an HTML break */
 				/* A newline is defined by HTML as whitespace, which means we have to replace it with a word boundary.
 				 * word breaks vary depending on the language used, so the correct thing to do is to use Pango to determine
 				 * what language this is, determine the proper word boundary to use, and insert that. I'm just going to insert
