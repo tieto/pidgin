@@ -138,7 +138,7 @@ void join_chat()
 		c = c->next;
 	}
 	if (gc == NULL) {
-		do_error_dialog("You are not currently signed on with any protocols the have "
+		do_error_dialog("You are not currently signed on with any protocols that have "
 				"the ability to chat.", "Unable to chat");
 		return;
 	}
