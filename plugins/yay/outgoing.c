@@ -35,7 +35,8 @@ int yahoo_write(struct yahoo_session *session, struct yahoo_conn *conn, void *bu
 		yahoo_close(session, conn);
 		YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "error sending");
 		if (type == YAHOO_CONN_TYPE_DUMB)
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 		return 0;
 	}
 

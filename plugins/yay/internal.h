@@ -30,7 +30,6 @@
 #define YAHOO_USER_AGENT "Mozilla/4.6 (libyay/1.0)"
 
 #define YAHOO_PRINT(x, y, z) if (yahoo_print) (*yahoo_print)(x, y, z)
-#define CALLBACK(x, y, ...) if (x->callbacks[y].function) (*x->callbacks[y].function)(x, ##__VA_ARGS__)
 
 struct yahoo_conn {
 	int type;

@@ -33,7 +33,8 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 	for (it = str_array; *it; it++) {
 		if (!strncmp(*it, "ERROR", strlen("ERROR"))) {
 			yahoo_close(session, conn);
-			CALLBACK(session, YAHOO_HANDLE_BADPASSWORD);
+			if (session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)
+				(*session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)(session);
 			return 1;
 		} else if (!strncmp(*it, "Set-Cookie: ", strlen("Set-Cookie: "))) {
 			char **sa;
@@ -48,7 +49,8 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 			if (!session->cookie) {
 				yahoo_close(session, conn);
 				YAHOO_PRINT(session, YAHOO_LOG_ERROR, "did not get cookie");
-				CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+				if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+					(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 				return 1;
 			}
 
@@ -98,7 +100,8 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 
 	g_strfreev(str_array);
 	yahoo_close(session, conn);
-	CALLBACK(session, YAHOO_HANDLE_LOGINCOOKIE);
+	if (session->callbacks[YAHOO_HANDLE_LOGINCOOKIE].function)
+		(*session->callbacks[YAHOO_HANDLE_LOGINCOOKIE].function)(session);
 	return 0;
 }
 
@@ -146,8 +149,11 @@ static void yahoo_parse_status(struct yahoo_session *sess, struct yahoo_packet *
 			g_free(x);
 		}
 
-		CALLBACK(sess, YAHOO_HANDLE_STATUS, who, atoi(vals[0]), end,
-				atoi(vals[c - 3]), atoi(vals[c - 2]), atoi(vals[c - 1]));
+		if (sess->callbacks[YAHOO_HANDLE_STATUS].function)
+			(*sess->callbacks[YAHOO_HANDLE_STATUS].function)(sess, who, atoi(vals[0]),
+									 end, atoi(vals[c - 3]),
+									 atoi(vals[c - 2]),
+									 atoi(vals[c - 1]));
 
 		if (c > 6)
 			g_free(end);
@@ -165,11 +171,14 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 	switch(type) {
 	case YAHOO_MESSAGE_NORMAL:
 		str_array = g_strsplit(pkt->content, ",,", 2);
-		CALLBACK(sess, YAHOO_HANDLE_MESSAGE, pkt->nick2, str_array[0], str_array[1]);
+		if (sess->callbacks[YAHOO_HANDLE_MESSAGE].function)
+			(*sess->callbacks[YAHOO_HANDLE_MESSAGE].function)(sess, pkt->nick2,
+									  str_array[0], str_array[1]);
 		g_strfreev(str_array);
 		break;
 	case YAHOO_MESSAGE_BOUNCE:
-		CALLBACK(sess, YAHOO_HANDLE_BOUNCE);
+		if (sess->callbacks[YAHOO_HANDLE_BOUNCE].function)
+			(*sess->callbacks[YAHOO_HANDLE_BOUNCE].function)(sess);
 		break;
 	default:
 		g_snprintf(buf, sizeof(buf), "unhandled message type %d: %s", type, pkt->content);
@@ -189,7 +198,8 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 	switch(service) {
 	case YAHOO_SERVICE_LOGON:
 		if (yahoo_makeint(pkt->msgtype) == 0)
-			CALLBACK(sess, YAHOO_HANDLE_ONLINE);
+			if (sess->callbacks[YAHOO_HANDLE_ONLINE].function)
+				(*sess->callbacks[YAHOO_HANDLE_ONLINE].function)(sess);
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
@@ -198,19 +208,26 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 	case YAHOO_SERVICE_NEWCONTACT:
 		if (yahoo_makeint(pkt->msgtype) == 3) {
 			char **str_array = g_strsplit(pkt->content, ",,", 2);
-			CALLBACK(sess, YAHOO_HANDLE_BUDDYADDED, pkt->nick2, str_array[0], str_array[1]);
+			if (sess->callbacks[YAHOO_HANDLE_BUDDYADDED].function)
+				(*sess->callbacks[YAHOO_HANDLE_BUDDYADDED].function)(sess,
+										     pkt->nick2,
+										     str_array[0],
+										     str_array[1]);
 			g_strfreev(str_array);
 		} else
 			yahoo_parse_status(sess, pkt);
 		break;
 	case YAHOO_SERVICE_IDACT:
-		CALLBACK(sess, YAHOO_HANDLE_ACTIVATE, pkt->content);
+		if (sess->callbacks[YAHOO_HANDLE_ACTIVATE].function)
+			(*sess->callbacks[YAHOO_HANDLE_ACTIVATE].function)(sess);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
 		yahoo_parse_message(sess, pkt);
 		break;
 	case YAHOO_SERVICE_NEWMAIL:
-		CALLBACK(sess, YAHOO_HANDLE_NEWMAIL, strlen(pkt->content) ? atoi(pkt->content) : 0);
+		if (sess->callbacks[YAHOO_HANDLE_NEWMAIL].function)
+			(*sess->callbacks[YAHOO_HANDLE_NEWMAIL].function)(sess, strlen(pkt->content) ?
+									  atoi(pkt->content) : 0);
 		break;
 	default:
 		g_snprintf(buf, sizeof(buf), "unhandled service type %d: %s", service, pkt->content);
@@ -238,7 +255,8 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		if (error) {
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "unable to connect");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 
@@ -253,9 +271,11 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			(*yahoo_socket_notify)(session, socket, YAHOO_SOCKET_READ, TRUE);
 
 		if (conn->type == YAHOO_CONN_TYPE_AUTH) {
-			CALLBACK(session, YAHOO_HANDLE_AUTHCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)(session);
 		} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
-			CALLBACK(session, YAHOO_HANDLE_MAINCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)(session);
 		} else if (conn->type == YAHOO_CONN_TYPE_DUMB) {
 			YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "sending to buddy list host");
 			yahoo_write(session, conn, conn->txqueue, strlen(conn->txqueue));
@@ -279,13 +299,15 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			g_free(buf);
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read auth response");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
 		if (yahoo_parse_config(session, conn, buf)) {
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not parse auth response");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 		}
 		g_free(buf);
 	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
@@ -295,14 +317,16 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		if ((read(socket, &pkt, 8) != 8) || strcmp(pkt.version, "YHOO1.0")) {
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "invalid version type");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 
 		if (read(socket, &pkt.len, 4) != 4) {
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read length");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 		len = yahoo_makeint(pkt.len);
@@ -310,7 +334,8 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		if (read(socket, &pkt.service, len - 12) != len - 12) {
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "could not read data");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 		yahoo_parse_packet(session, conn, &pkt);
@@ -337,7 +362,8 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			g_free(buf);
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_ERROR, "error reading from proxy");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 			return;
 		}
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
@@ -345,11 +371,13 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		    !strncasecmp(buf, HTTP_GOODSTRING2, strlen(HTTP_GOODSTRING2))) {
 			conn->type = YAHOO_CONN_TYPE_MAIN;
 			YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "proxy connected successfully");
-			CALLBACK(session, YAHOO_HANDLE_MAINCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)(session);
 		} else {
 			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_ERROR, "proxy could not connect");
-			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			if (session->callbacks[YAHOO_HANDLE_DISCONNECT].function)
+				(*session->callbacks[YAHOO_HANDLE_DISCONNECT].function)(session);
 		}
 		g_free(buf);
 	}
