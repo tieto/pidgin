@@ -13,6 +13,7 @@ version 0.55:
 	  devices (Thanks Mark Doliner)
 	* Updated Polish Translation (Thanks Przemyslaw Sulek)
 	* Fixed bug in MSN smilies that crashed PPC (and other?) platforms
+	* Updated Spanish Translation (Thanks Amaya)
 
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
