@@ -2193,14 +2193,14 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	/* The file menu */
 	menuitem = gaim_new_item(NULL, _("File"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
-	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuitem);
 
 	gaim_new_item_from_stock(menu, _("_Save Conversation"), "gtk-save-as", GTK_SIGNAL_FUNC(save_convo), c, 0, 0, NULL); 
 
 	gaim_new_item_from_stock(menu, _("View _History"), NULL, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name), 0, 0, NULL); 
 
 	menuitem = gtk_menu_item_new();
-	gtk_menu_append(GTK_MENU(menu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 /*
 	c->sendfile_btn = gaim_new_item_from_pixbuf(menu, _("Send File"), "send-file-small.png", NULL, NULL, 0, 0, NULL); */
 
@@ -2208,7 +2208,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert _Image"), "insert-image-small.png", GTK_SIGNAL_FUNC(insert_image), c, 0, 0, NULL); 
 
 	menuitem = gtk_menu_item_new();
-	gtk_menu_append(GTK_MENU(menu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gaim_new_item_from_stock(menu, _("_Close"), "gtk-close", GTK_SIGNAL_FUNC(close_callback), c, 0, 0, NULL); 
 
@@ -2217,7 +2217,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 
 	menuitem = gaim_new_item(NULL, _("Options"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
-	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuitem);
 
 	/* Logging */
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Logging"));
@@ -2236,7 +2236,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 
 	/* Sounds */
 
-	gtk_menu_append(GTK_MENU(menu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Sounds"));
 	c->makesound = 1;
@@ -2244,7 +2244,7 @@ GtkWidget *build_conv_menubar(struct conversation *c)
 	state_lock = 1;
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), TRUE);
 	state_lock = 0;
-	gtk_menu_append(GTK_MENU(menu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 
 
@@ -2505,7 +2505,7 @@ static void create_convo_menu(struct conversation *cnv)
 			gtk_signal_connect(GTK_OBJECT(opt), "activate",
 					   GTK_SIGNAL_FUNC(convo_sel_send), c);
 			gtk_widget_show(opt);
-			gtk_menu_append(GTK_MENU(menu), opt);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 			g = g->next;
 		}
 
@@ -3616,26 +3616,26 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 	if (c->icon_timer) {
 		button = gtk_menu_item_new_with_label(_("Disable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
-		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
 	 else if (c->anim && !(gdk_pixbuf_animation_is_static_image(c->anim))) 
 	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
-		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
 	gtk_signal_connect_object(GTK_OBJECT(button), "activate",
 				  GTK_SIGNAL_FUNC(remove_icon), (void *)c);
-	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
 	button = gtk_menu_item_new_with_label(_("Save Icon As..."));
 	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(save_icon), c);
-	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
