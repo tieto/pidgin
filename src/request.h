@@ -705,6 +705,26 @@ GaimRequestField *gaim_request_field_list_new(const char *id, const char *text,
 void gaim_request_field_list_set_items(GaimRequestField *field, GList *items);
 
 /**
+ * Sets whether or not a list field allows multiple selection.
+ *
+ * @param field        The list field.
+ * @param multi_select TRUE if multiple selection is enabled,
+ *                     or FALSE otherwise.
+ */
+void gaim_request_field_list_set_multi_select(GaimRequestField *field,
+											  gboolean multi_select);
+
+/**
+ * Returns whether or not a list field allows multiple selection.
+ *
+ * @param field The list field.
+ *
+ * @return TRUE if multiple selection is enabled, or FALSE otherwise.
+ */
+gboolean gaim_request_field_list_get_multi_select(
+	const GaimRequestField *field);
+
+/**
  * Adds an item to a list field.
  *
  * @param field The list field.

@@ -663,6 +663,25 @@ gaim_request_field_list_set_items(GaimRequestField *field, GList *items)
 }
 
 void
+gaim_request_field_list_set_multi_select(GaimRequestField *field,
+										 gboolean multi_select)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+
+	field->u.list.multiple_selection = multi_select;
+}
+
+gboolean
+gaim_request_field_list_get_multi_select(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, FALSE);
+
+	return field->u.list.multiple_selection;
+}
+
+void
 gaim_request_field_list_add(GaimRequestField *field, const char *item)
 {
 	g_return_if_fail(field != NULL);
