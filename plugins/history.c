@@ -95,6 +95,7 @@ static GaimPluginInfo info =
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 

@@ -366,7 +366,9 @@ static GaimPluginInfo tcl_info =
 	tcl_unload,
 	NULL,
 	NULL,
-	&tcl_loader_info
+	&tcl_loader_info,
+	NULL,
+	NULL
 };
 
 #ifdef _WIN32

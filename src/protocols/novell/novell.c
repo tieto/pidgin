@@ -3342,29 +3342,30 @@ static GaimPluginProtocolInfo prpl_info = {
 };
 
 static GaimPluginInfo info = {
-	GAIM_PLUGIN_API_VERSION,						  /**< api_version    */
-	GAIM_PLUGIN_PROTOCOL,							  /**< type           */
-	NULL,											  /**< ui_requirement */
-	0,												  /**< flags          */
-	NULL,											  /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,							  /**< priority       */
-
-	"prpl-novell",									  /**< id             */
-	"GroupWise",								 /**< name           */
-	VERSION,										  /**< version        */
+	GAIM_PLUGIN_API_VERSION,		/**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,			/**< type           */
+	NULL,					/**< ui_requirement */
+	0,					/**< flags          */
+	NULL,					/**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,			/**< priority       */
+	"prpl-novell",				/**< id             */
+	"GroupWise",				/**< name           */
+	VERSION,				/**< version        */
 	/**  summary        */
 	N_("Novell GroupWise Messenger Protocol Plugin"),
 	/**  description    */
 	N_("Novell GroupWise Messenger Protocol Plugin"),
-	NULL,											  /**< author         */
-	GAIM_WEBSITE,									  /**< homepage       */
+	NULL,					/**< author         */
+	GAIM_WEBSITE,				/**< homepage       */
 
-	NULL,											  /**< load           */
-	NULL,											  /**< unload         */
-	NULL,											  /**< destroy        */
+	NULL,					/**< load           */
+	NULL,					/**< unload         */
+	NULL,					/**< destroy        */
 
-	NULL,											  /**< ui_info        */
-	&prpl_info										  /**< extra_info     */
+	NULL,					/**< ui_info        */
+	&prpl_info,				/**< extra_info     */
+	NULL,
+	NULL
 };
 
 static void

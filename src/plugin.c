@@ -364,7 +364,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 	if (load_cb != NULL)
 		load_cb(plugin, load_cb_data);
 
-	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-unload", plugin);
+	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-load", plugin);
 
 	return TRUE;
 

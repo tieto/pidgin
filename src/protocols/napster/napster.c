@@ -645,7 +645,9 @@ static GaimPluginInfo info =
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
-	&prpl_info                                        /**< extra_info     */
+	&prpl_info,                                       /**< extra_info     */
+	NULL,
+	NULL
 };
 
 static void init_plugin(GaimPlugin *plugin)

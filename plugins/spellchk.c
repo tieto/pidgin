@@ -542,6 +542,8 @@ static GaimPluginInfo info =
 	NULL,
 	NULL,
 	&ui_info,
+	NULL,
+	NULL,
 	NULL
 };
 

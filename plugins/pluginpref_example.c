@@ -129,7 +129,8 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
-	&prefs_info                                       /**< prefs_info     */
+	&prefs_info,                                      /**< prefs_info     */
+	NULL
 };
 
 static void

@@ -472,7 +472,9 @@ static GaimPluginInfo info =
 	plugin_destroy,                                   /**< destroy        */
 
 	&ui_info,                                         /**< ui_info        */
-	NULL                                              /**< extra_info     */
+	NULL,                                             /**< extra_info     */
+	NULL,
+	NULL
 };
 
 static void
