@@ -8,6 +8,8 @@ version 0.11.0-pre14:
 	* Some HTML widget changes
 	* Can specify hosts/ports for Yahoo (thanks Jeremy Brooks)
 	* Many many bugfixes
+	* Fixed an Oscar chat bug (In your user preferences, make sure
+	  the auth port is 5190, not 9898)
 
 version 0.11.0-pre13 (06/06/2001):
 	* Can view/set chat topic in Jabber (thanks faceprint)
