@@ -388,6 +388,7 @@ void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	serv_finish_login (gc);
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
