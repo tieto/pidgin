@@ -4,6 +4,7 @@
 #include "config.h"
 
 #include "gaim.h"
+#include "prefs.h"
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
 #include <sys/stat.h>
@@ -50,7 +51,8 @@ void historize (char *name, void *data)
 	if(*tmp == '<')
 		options |= GTK_IMHTML_NO_NEWLINE;
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")) {		tmp2 = linkify_text(tmp);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
+		tmp2 = linkify_text(tmp);
 	else
 		tmp2 = g_strdup(tmp);
 
