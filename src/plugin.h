@@ -47,8 +47,6 @@ typedef enum
 #define GAIM_PRIORITY_HIGHEST  9999
 #define GAIM_PRIORITY_LOWEST  -9999
 
-#define GAIM_PLUGIN_ID_UNSET { 0, 0, 0, 0 }
-
 /**
  * Detailed information about a plugin.
  *
@@ -200,7 +198,7 @@ gboolean gaim_plugin_unload(GaimPlugin *plugin);
  * Reloads a plugin.
  *
  * @param plugin The old plugin handle.
- * 
+ *
  * @return @c TRUE if successful, or @c FALSE otherwise.
  *
  * @see gaim_plugin_load()
@@ -243,7 +241,6 @@ void gaim_plugins_set_search_paths(size_t count, char **paths);
  * Unloads all loaded plugins.
  */
 void gaim_plugins_unload_all(void);
-
 
 /**
  * Destroys all registered plugins.

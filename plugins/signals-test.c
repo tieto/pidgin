@@ -211,7 +211,7 @@ displaying_chat_msg_cb(GaimConversation *conv, char **buffer, void *data)
 			   "displaying-chat-msg (%s, %s)\n",
 			   gaim_conversation_get_name(conv), *buffer);
 
-	return FALES;
+	return FALSE;
 }
 
 static void

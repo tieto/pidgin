@@ -234,11 +234,78 @@ gboolean
 gaim_plugin_load(GaimPlugin *plugin)
 {
 #ifdef GAIM_PLUGINS
+	GList *dep_list = NULL;
+	GList *l;
+
 	g_return_val_if_fail(plugin != NULL, FALSE);
 	g_return_val_if_fail(plugin->error == NULL, FALSE);
 
 	if (gaim_plugin_is_loaded(plugin))
 		return TRUE;
+
+	/*
+	 * Go through the list of the plugin's dependencies.
+	 *
+	 * First pass: Make sure all the plugins needed are probed.
+	 */
+	for (l = plugin->info->dependencies; l != NULL; l = l->next)
+	{
+		const char *dep_name = (const char *)l->data;
+		GaimPlugin *dep_plugin;
+
+		dep_plugin = gaim_plugins_find_with_id(dep_name);
+
+		if (dep_plugin == NULL)
+		{
+			char buf[BUFSIZ];
+
+			g_snprintf(buf, sizeof(buf),
+					   _("The required plugin %s was not found. "
+						 "Please install this plugin and try again."),
+					   dep_name);
+
+			gaim_notify_error(NULL, NULL,
+							  _("Gaim was unable to load your plugin."),
+							  buf);
+
+			if (dep_list != NULL)
+				g_list_free(dep_list);
+
+			return FALSE;
+		}
+
+		dep_list = g_list_append(dep_list, dep_plugin);
+	}
+
+	/* Second pass: load all the required plugins. */
+	for (l = dep_list; l != NULL; l = l->next)
+	{
+		GaimPlugin *dep_plugin = (GaimPlugin *)l->data;
+
+		if (!gaim_plugin_is_loaded(dep_plugin))
+		{
+			if (!gaim_plugin_load(dep_plugin))
+			{
+				char buf[BUFSIZ];
+
+				g_snprintf(buf, sizeof(buf),
+						   _("The required plugin %s was unable to load."),
+						   plugin->info->name);
+
+				gaim_notify_error(NULL, NULL,
+								  _("Gaim was unable to load your plugin."),
+								  buf);
+
+				if (dep_list != NULL)
+					g_list_free(dep_list);
+
+				return FALSE;
+			}
+		}
+	}
+
+	if (dep_list != NULL)
+		g_list_free(dep_list);
 
 	if (plugin->native_plugin) {
 		if (plugin->info != NULL) {
@@ -703,10 +770,11 @@ gaim_plugins_find_with_id(const char *id)
 
 	g_return_val_if_fail(id != NULL, NULL);
 
-	for (l = plugins; l != NULL; l = l->next) {
+	for (l = plugins; l != NULL; l = l->next)
+	{
 		plugin = l->data;
 
-		if (!strcmp(plugin->info->id, id))
+		if (plugin->info->id != NULL && !strcmp(plugin->info->id, id))
 			return plugin;
 	}
 
