@@ -1878,7 +1878,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 
 	/* Get the destination page number. */
 	dest_page_num = gaim_gtkconv_get_dest_tab_at_xy(dest_win,
-													e->x_root, e->y_root);
+							e->x_root, e->y_root);
 
 	if (win == dest_win) {
 		gaim_conv_window_move_conversation(win,
@@ -1901,6 +1901,33 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 
 	return TRUE;
+}
+
+static GdkPixbuf *get_tab_icon(GaimConversation *conv)
+{
+	GaimAccount *account = gaim_conversation_get_account(conv);
+	const char *name = gaim_conversation_get_name(conv);
+	GdkPixbuf *status = NULL;
+
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		GaimBuddy *b = gaim_find_buddy(account, name);
+		if (b != NULL) {
+			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
+					GAIM_STATUS_ICON_SMALL);
+		}
+	}
+
+	if (!status) {
+		GdkPixbuf *pixbuf;
+		pixbuf = create_prpl_icon(account);
+
+		if (pixbuf) {
+			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
+					GDK_INTERP_BILINEAR);
+			g_object_unref(pixbuf);
+		}
+	}
+	return status;
 }
 
 static void
@@ -1933,6 +1960,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		GdkPixbuf *pixbuf;
 		gtk_widget_show(gtkwin->menu.view_log);
 
 		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE) {
@@ -1951,7 +1979,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtk_widget_show(gtkwin->menu.block);
 
 		if (gaim_find_buddy(gaim_conversation_get_account(conv),
-							gaim_conversation_get_name(conv)) == NULL) {
+				    gaim_conversation_get_name(conv)) == NULL) {
 
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
@@ -1970,6 +1998,15 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		
+		if (gtkconv->u.im->anim) {
+			pixbuf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+			gtk_window_set_icon(GTK_WINDOW(gtkwin->window), pixbuf);
+		} else {
+			pixbuf = get_tab_icon(conv);
+			gtk_window_set_icon(GTK_WINDOW(gtkwin->window), pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
+		}
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		gtk_widget_show(gtkwin->menu.invite);
@@ -1986,7 +2023,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtk_widget_hide(gtkwin->menu.block);
 
 		if (gaim_find_chat(gaim_conversation_get_gc(conv),
-						   gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv))) == NULL) {
+				   gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv))) == NULL) {
 
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
@@ -1998,23 +2035,23 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 		gtk_widget_set_sensitive(gtkwin->menu.add,    FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
-
+		
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 	}
-
+	
 	update_typing_icon(conv);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
-								   gaim_conversation_is_logging(conv));
-
+				       gaim_conversation_is_logging(conv));
+	
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.sounds),
-								   gtkconv->make_sound);
-
+				       gtkconv->make_sound);
+	
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
-						 gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }
 
 /**************************************************************************
@@ -3943,8 +3980,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtkconv->make_sound = TRUE;
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
-								 G_CALLBACK(gtk_widget_grab_focus),
-								 gtkconv->entry);
+					 G_CALLBACK(gtk_widget_grab_focus),
+					 gtkconv->entry);
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
@@ -3998,7 +4035,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gtk_widget_show(tabby);
 	gtk_widget_show(menu_tabby);
 
-
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gaim_gtkconv_update_buddy_icon(conv);
+	
 	/* Add this pane to the conversations notebook. */
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby);
 	gtk_notebook_set_menu_label(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, menu_tabby);
@@ -4019,9 +4058,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 			gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)));
 	focus_gtkconv = GAIM_GTK_CONVERSATION(focus_conv);
 	gtk_widget_grab_focus(focus_gtkconv->entry);
-
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-		gaim_gtkconv_update_buddy_icon(conv);
 
 	if (!new_ui)
 		g_object_unref(gtkconv->tab_cont);
@@ -4893,31 +4929,13 @@ update_tab_icon(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	GaimAccount *account;
 	const char *name;
-	GaimBuddy *b;
 	GdkPixbuf *status = NULL;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-		b = gaim_find_buddy(account, name);
-		if (b != NULL) {
-			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
-					GAIM_STATUS_ICON_SMALL);
-		}
-	}
-
-	if (!status) {
-		GdkPixbuf *pixbuf;
-		pixbuf = create_prpl_icon(account);
-
-		if (pixbuf) {
-			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
-					GDK_INTERP_BILINEAR);
-			g_object_unref(pixbuf);
-		}
-	}
+	status = get_tab_icon(conv);
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
@@ -5231,6 +5249,7 @@ void
 gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
 	char filename[256];
 	FILE *file;
@@ -5371,6 +5390,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (bm)
 		g_object_unref(G_OBJECT(bm));
+
+	/* The buddy icon code needs badly to be fixed. */
+	buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), buf);
 }
 
 void
