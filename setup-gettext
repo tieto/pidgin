@@ -47,21 +47,21 @@ find_gettext() {
 install() {
 	[ -f configure.in ] && {
 		cp configure.in .tmp-configure.in
-		sed -f 's/^AM_GNU_GETTEXT\(.*\)$/AM_GNU_GETTEXT\1\
+		sed -e 's/^AM_GNU_GETTEXT\(.*\)$/AM_GNU_GETTEXT\1\
 AM_GNU_GETTEXT_VERSION(0.10.40)/' < .tmp-configure.in > configure.in
 		rm .tmp-configure.in
 	}
 
 	[ -f configure.ac ] && {
 		cp configure.ac .tmp-configure.ac
-		sed -f 's/^AM_GNU_GETTEXT\(.*\)$/AM_GNU_GETTEXT\1\
+		sed -e 's/^AM_GNU_GETTEXT\(.*\)$/AM_GNU_GETTEXT\1\
 AM_GNU_GETTEXT_VERSION(0.10.40)/' < .tmp-configure.ac > configure.ac
 		rm .tmp-configure.ac
 	}
 
 	[ -f autogen.sh ] && {
 		cp autogen.sh .tmp-autogen.sh
-		sed -f 's/\(gettextize\|autopoint\) --version/.\/setup-gettext --gettext-tool/1' -f 's/^\(echo.*|[\t ]*\)\?\(gettextize\|autopoint\) -.*$/.\/setup-gettext/1' < .tmp-autogen.sh > autogen.sh
+		sed -e 's/\(gettextize\|autopoint\) --version/.\/setup-gettext --gettext-tool/1' -f 's/^\(echo.*|[\t ]*\)\?\(gettextize\|autopoint\) -.*$/.\/setup-gettext/1' < .tmp-autogen.sh > autogen.sh
 		rm .tmp-autogen.sh
 	}
 
