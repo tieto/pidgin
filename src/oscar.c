@@ -1625,6 +1625,7 @@ static void oscar_direct_im(GtkObject *obj, char *who) {
 
 static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	GtkWidget *button;
+	char *n = g_strdup(normalize(gc->username));
 
 	button = gtk_menu_item_new_with_label(_("Get Info"));
 	gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -1640,12 +1641,15 @@ static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
 
-	button = gtk_menu_item_new_with_label(_("Direct IM"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			   GTK_SIGNAL_FUNC(oscar_direct_im), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	if (strcmp(n, normalize(who))) {
+		button = gtk_menu_item_new_with_label(_("Direct IM"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(oscar_direct_im), who);
+		gtk_object_set_user_data(GTK_OBJECT(button), gc);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+	}
+	g_free(n);
 }
 
 void oscar_init(struct prpl *ret) {
