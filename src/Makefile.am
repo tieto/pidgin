@@ -67,6 +67,8 @@ CORESOURCES = \
 	ft.h \
 	imgstore.c \
 	imgstore.h \
+	log.c \
+	log.h \
 	md5.c \
 	md5.h \
 	multi.h \
@@ -157,8 +159,6 @@ gaim_SOURCES = \
 	gtkutils.h \
 	idle.c \
 	internal.h \
-	log.c \
-	log.h \
 	main.c \
 	session.c \
 	stock.c \

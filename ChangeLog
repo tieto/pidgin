@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.73cvs:
+version 0.73 (11/21/2003):
 	* New Logging format and code:
 		* fixes i18n issues with logs
 		* compatable with old logs

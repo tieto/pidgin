@@ -1,4 +1,13 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
+0.73 (11/21/2003):
+	Nathan: This should be a really solid release.  I fixed most if not
+	all of the idiotic Jabber bugs from 0.72, and re-enabled the SASL
+	login stuff, now that it is finalized in the XMPP drafts.  Oh, and
+	we now have a release notification plugin, so you can find out when
+	the latest and greatest version of Gaim is out without breaking that
+	reload button in your browser.  There's other fun new stuff, but I
+	forget what it is.
+
 0.72 (10/30/2003):
 	Sean: I think I'll go as the Gaim logo guy for Halloween.  That
 	would be a cool costume.
