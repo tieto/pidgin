@@ -373,8 +373,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *entry;
-	GtkWidget *label;
-	GdkColor color;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
@@ -493,15 +491,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->remember_pass_check);
-
-	/* The plain text password warning */
-	/* XXX - This color should be from the GTK theme and not hardcoded */
-	label = gtk_label_new_with_mnemonic(_("Warning: Passwords are stored in plain text!"));
-	gdk_color_parse("red", &color);
-	gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &color);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(dialog->remember_pass_check), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_showhide), label);
 
 	/* Auto-Login */
 	dialog->auto_login_check =
