@@ -211,6 +211,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   void *user_data)
+
 {
 	GaimGtkRequestData *data;
 	GtkWidget *dialog;
@@ -266,11 +267,11 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
-	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-								 "%s</span>%s%s",
-								 primary,
-								 (secondary ? "\n\n" : ""),
-								 (secondary ? secondary : ""));
+	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
+								 "%s</span>%s%s" : "%s%s%s"),
+								 (primary ? primary : ""),
+								 ((primary && secondary) ? "\n\n" : ""),
+ 								 (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -415,11 +416,11 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
-	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-								 "%s</span>%s%s",
-								 primary,
-								 (secondary ? "\n\n" : ""),
-								 (secondary ? secondary : ""));
+	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
+								 "%s</span>%s%s" : "%s%s%s"),
+								 (primary ? primary : ""),
+								 ((primary && secondary) ? "\n\n" : ""),
+ 								 (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -503,11 +504,11 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (primary != NULL || secondary != NULL) {
-		label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
-									 "%s</span>%s%s",
+		label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
+									 "%s</span>%s%s" : "%s%s%s"),
 									 (primary ? primary : ""),
-									 (secondary ? "\n\n" : ""),
-									 (secondary ? secondary : ""));
+									 ((primary && secondary) ? "\n\n" : ""),
+	 								 (secondary ? secondary : ""));
 
 		label = gtk_label_new(NULL);
 

@@ -630,7 +630,6 @@ gaim_request_input(void *handle, const char *title, const char *primary,
 {
 	GaimRequestUiOps *ops;
 
-	g_return_val_if_fail(primary != NULL, NULL);
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 
@@ -667,7 +666,6 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(primary != NULL,  NULL);
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 	g_return_val_if_fail(choice_count > 0, NULL);
@@ -693,7 +691,6 @@ gaim_request_choice_varg(void *handle, const char *title,
 {
 	GaimRequestUiOps *ops;
 
-	g_return_val_if_fail(primary != NULL,  NULL);
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 	g_return_val_if_fail(choice_count > 0, NULL);
@@ -729,7 +726,6 @@ gaim_request_action(void *handle, const char *title, const char *primary,
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(primary != NULL,  NULL);
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
@@ -749,7 +745,6 @@ gaim_request_action_varg(void *handle, const char *title,
 {
 	GaimRequestUiOps *ops;
 
-	g_return_val_if_fail(primary != NULL,  NULL);
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	ops = gaim_request_get_ui_ops();

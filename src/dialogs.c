@@ -1483,8 +1483,8 @@ alias_chat_cb(GaimChat *chat, const char *new_alias)
 void
 alias_dialog_blist_chat(GaimChat *chat)
 {
-	gaim_request_input(NULL, _("Alias Chat"), _("Alias chat"),
-					   _("Please enter an aliased name for this chat."),
+	gaim_request_input(NULL, _("Alias Chat"), NULL,
+					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE,
 					   _("OK"), G_CALLBACK(alias_chat_cb),
 					   _("Cancel"), NULL, chat);
@@ -1500,22 +1500,17 @@ alias_contact_cb(GaimContact *contact, const char *new_alias)
 void
 alias_dialog_contact(GaimContact *contact)
 {
-	gaim_request_input(NULL, _("Alias Contact"), _("Alias contact"),
-			_("Please enter an aliased name for this contact."),
-			contact->alias, FALSE, FALSE,
-			_("OK"), G_CALLBACK(alias_contact_cb),
-			_("Cancel"), NULL, contact);
+	gaim_request_input(NULL, _("Alias Contact"), NULL,
+					   _("Enter an alias for this contact."),
+					   contact->alias, FALSE, FALSE,
+					   _("OK"), G_CALLBACK(alias_contact_cb),
+					   _("Cancel"), NULL, contact);
 }
 
 static void
-alias_buddy_cb(GaimBuddy *buddy, GaimRequestFields *fields)
+alias_buddy_cb(GaimBuddy *buddy, const char *alias)
 {
-	const char *alias;
-
-	alias = gaim_request_fields_get_string(fields, "alias");
-
-	gaim_blist_alias_buddy(buddy,
-						   (alias != NULL && *alias != '\0') ? alias : NULL);
+	gaim_blist_alias_buddy(buddy, (alias != NULL && *alias != '\0') ? alias : NULL);
 	serv_alias_buddy(buddy);
 	gaim_blist_save();
 }
@@ -1523,30 +1518,12 @@ alias_buddy_cb(GaimBuddy *buddy, GaimRequestFields *fields)
 void
 alias_dialog_bud(GaimBuddy *b)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	char *secondary = g_strdup_printf(_("Enter an alias for %s."), b->name);
 
-	fields = gaim_request_fields_new();
+	gaim_request_input(NULL, _("Alias Buddy"), NULL,
+					   secondary, b->alias, FALSE, FALSE,
+					   _("OK"), G_CALLBACK(alias_buddy_cb),
+					   _("Cancel"), NULL, b);
 
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
-
-	field = gaim_request_field_string_new("screenname", _("_Screenname"),
-										  b->name, FALSE);
-	gaim_request_field_string_set_editable(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("alias", _("_Alias"),
-										  b->alias, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	gaim_request_fields(NULL, _("Alias Buddy"),
-						_("Alias buddy"),
-						_("Please enter an aliased name for the person "
-						  "below, or rename this contact in your buddy list."),
-						fields,
-						_("OK"), G_CALLBACK(alias_buddy_cb),
-						_("Cancel"), NULL,
-						b);
+	g_free(secondary);
 }
