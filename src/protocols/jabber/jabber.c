@@ -1221,6 +1221,12 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
+	option = gaim_account_option_bool_new(
+			_("Allow plaintext auth over unencrypted streams"),
+			"auth_plain_in_clear", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+			option);
+
 	option = gaim_account_option_int_new(_("Port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);

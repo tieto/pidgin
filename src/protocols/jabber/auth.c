@@ -84,10 +84,19 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	if(digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
-	} else if(plain && js->gsc != NULL) { /* only do plain if we're encrypted */
-		GString *response = g_string_new("");
+	} else if(plain) {
+		GString *response;
 		char *enc_out;
 
+		if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+			/* XXX: later, make this yes/no so they can just click to enable it */
+			gaim_connection_error(js->gc,
+					_("Server requires plaintext authentication over an unencrypted stream"));
+			xmlnode_free(auth);
+			return;
+		}
+
+		response = g_string_new("");
 		response = g_string_append_len(response, "\0", 1);
 		response = g_string_append(response, js->user->node);
 		response = g_string_append_len(response, "\0", 1);
@@ -99,6 +108,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 		xmlnode_insert_data(auth, enc_out, -1);
 		g_free(enc_out);
+		g_string_free(response, TRUE);
 
 		js->auth_type = JABBER_AUTH_PLAIN;
 	} else {
@@ -176,7 +186,15 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
 			digest = TRUE;
-		} else if(!xmlnode_get_child(query, "password")) {
+		} else if(xmlnode_get_child(query, "password")) {
+			if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account,
+						"auth_plain_in_clear", FALSE)) {
+				/* XXX: later, make this yes/no so they can just click to enable it */
+				gaim_connection_error(js->gc,
+						_("Server requires plaintext authentication over an unencrypted stream"));
+				return;
+			}
+		} else {
 			gaim_connection_error(js->gc,
 					_("Server does not use any supported authentication method"));
 			return;
