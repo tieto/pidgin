@@ -1438,11 +1438,6 @@ void gaim_blist_add_account(GaimAccount *account)
 							((GaimContact*)cnode)->currentsize++;
 							if(((GaimContact*)cnode)->currentsize == 1)
 								((GaimGroup*)gnode)->currentsize++;
-							if(GAIM_BUDDY_IS_ONLINE((GaimBuddy*)bnode)) {
-								((GaimContact*)cnode)->online++;
-								if(((GaimContact*)cnode)->online == 1)
-									((GaimGroup*)gnode)->online++;
-							}
 							ops->update(gaimbuddylist, bnode);
 						}
 					}
