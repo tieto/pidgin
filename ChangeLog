@@ -25,6 +25,7 @@ version 0.59 (05/31/2002):
 	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 	* Internal sounds can be played by commands (thanks Lex Spoon)
 	* Auto-login item in applet menu (thanks Chris Boyle)
+	* Fixed MSN "Unkown Error Code"
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)

@@ -354,6 +354,10 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 	char buf[MSN_BUF_LEN];
 	struct msn_data *md = gc->proto_data;
 
+	if (strchr(gc->username, '@') != strstr(gc->username, "@hotmail.com"))
+		/* We can only get Hotmail notification from hotmail users */
+		return;
+
 	if (!md->passport) {
 		g_snprintf(buf, sizeof(buf), "URL %d INBOX\r\n", ++md->trId);
 
