@@ -475,13 +475,12 @@ gaim_window_destroy(struct gaim_window *win)
 	 */
 	if (gaim_window_get_conversation_count(win) > 0) {
 
-		for (node = g_list_first(gaim_window_get_conversations(win));
-			 node != NULL;
-			 node = g_list_next(node))
+		node = g_list_first(gaim_window_get_conversations(win));
+		while(node != NULL)
 		{
-			struct gaim_conversation *conv;
+			struct gaim_conversation *conv = node->data;
 
-			conv = (struct gaim_conversation *)node->data;
+			node = g_list_next(node);
 
 			gaim_conversation_destroy(conv);
 		}
