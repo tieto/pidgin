@@ -126,6 +126,9 @@ struct aim_user {
 	 * like which server to connect to, etc */
 	char proto_opt[7][256];
 
+	/* buddy icon file */
+	char *iconfile;
+
 	struct gaim_connection *gc;
 
 	/* stuff for modify window */

@@ -1286,13 +1286,14 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 		ir->timestamp = args->iconstamp;
 	}
 
-	if (gc->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
+	/*if (gc->user->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {*/
+	if (gc->user->iconfile) {
 		FILE *file;
 		struct stat st;
 
-		if (!stat(gc->iconfile, &st)) {
+		if (!stat(gc->user->iconfile, &st)) {
 			char *buf = g_malloc(st.st_size);
-			file = fopen(gc->iconfile, "r");
+			file = fopen(gc->user->iconfile, "r");
 			if (file) {
 				fread(buf, 1, st.st_size, file);
 				aim_send_icon(sess, conn, userinfo->sn, buf, st.st_size,
@@ -2076,8 +2077,12 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			struct icon_req *ir = NULL;
 			char *who = normalize(name);
 			struct stat st;
+			static fu8_t features[] = {0x01, 0x01, 0x01, 0x02, 0x66};
 
-			args.flags = AIM_IMFLAGS_ACK;
+			args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+
+			args.features = features;
+			args.featureslen = sizeof(features);
 
 			while (h) {
 				ir = h->data;
@@ -2091,8 +2096,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				debug_printf("sending buddy icon request with message\n");
 			}
 
-			if (gc->iconfile && !stat(gc->iconfile, &st)) {
-				FILE *file = fopen(gc->iconfile, "r");
+			if (gc->user->iconfile && !stat(gc->user->iconfile, &st)) {
+				FILE *file = fopen(gc->user->iconfile, "r");
 				if (file) {
 					char *buf = g_malloc(st.st_size);
 					fread(buf, 1, st.st_size, file);
