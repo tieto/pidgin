@@ -170,6 +170,7 @@ static void draw_cursor(GtkHtml * html);
 static void undraw_cursor(GtkHtml * html);
 
 static int get_line_max_height(GtkHtml *, GtkHtmlBit *);
+static void get_line_max_extents(GtkHtml *, GtkHtmlBit *, int *, int *);
 
 static GtkWidgetClass *parent_class = NULL;
 
@@ -2045,11 +2046,10 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			/*end my stuff*/
 
 			if (hb->text && hb->back != NULL) {
-				int hwidth, hheight, hei, tmpcnt;
+				int hwidth, hheight, tmpcnt, max_ascent, max_descent;
 				
 				/* get the gtkhtmlbit at the start of each line, and use it as the starting point to calculate the
 				max height of each line and set the background-rectangle's size accordingly */
-				/* FIXME: only works for fontsize <= 3, large fonts still have whitespace above them */
 				/* FIXME: should also include a method of eliminating 'gaps' between different line using
 				different text sizes */
 				if (!start_of_line)
@@ -2066,8 +2066,8 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 					else
 						start_of_line = hb;
 				}
-					
-				hei = get_line_max_height(html, start_of_line);
+				
+				get_line_max_extents(html, start_of_line, &max_ascent, &max_descent);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				/* we use a 2-pixel window border */
@@ -2075,14 +2075,14 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 					hb->x = 2;
 
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
-							hb->x, hb->y - html->yoffset - hei - 6,
-							hwidth - shift - hb->x + 1, hei + hei + 2);
+							hb->x, hb->y - html->yoffset - max_ascent - max_descent - 2,
+							hwidth - shift - hb->x + 1, max_ascent + max_descent + 8);
 				for (tmpcnt = 1; tmpcnt < hb->newline; tmpcnt++) {
-					int eoff = hei + hei + 2;
+					int eoff = max_ascent + max_descent + 2;
 					eoff *= tmpcnt;
 					gdk_draw_rectangle(html->html_area, gc, TRUE,
-							2, hb->y - html->yoffset - hei - 6 + eoff,
-							hwidth, hei + hei + 2);
+							2, hb->y - html->yoffset - max_ascent - max_descent - 2 + eoff,
+							hwidth, max_ascent + max_descent + 2);
 				}
 			}
 
@@ -2095,6 +2095,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 			gdk_draw_string(html->html_area, hb->font, gc, shift + hb->x,
 							hb->y - html->yoffset, hb->text);
+		
 			if (hb->uline)
 				gdk_draw_line(html->html_area, gc, shift + hb->x,
 							  hb->y - html->yoffset,
@@ -2912,7 +2913,7 @@ static void gtk_html_add_text(GtkHtml * html,
 	GdkGC *gc;
 	int nl = 0,
 	  nl2 = 0;
-	int maxwidth;
+	int maxwidth, ascent, descent;
 	gint lb;
 	GList *hbits;
 	size_t num = 0;
@@ -3030,7 +3031,8 @@ static void gtk_html_add_text(GtkHtml * html,
 		if (!count) {
 			/* FIXME : sometimes we need to add newline, sometimes we don't */
 			hbits = g_list_last(html->html_bits);
-			if (!hbits) return; /* does this ever happen? */
+			if (!hbits)
+				return; /* does this ever happen? */
 			hb = (GtkHtmlBit *)hbits->data;
 			hb->newline++;
 		}
@@ -3060,9 +3062,9 @@ static void gtk_html_add_text(GtkHtml * html,
 
 	}
 
-	height = cfont->ascent + cfont->descent + 2;
-
-
+	gdk_text_extents(cfont, "yG", strlen("yG"), NULL, NULL, NULL, &ascent, &descent);
+	height = ascent + descent + 2;
+	
 	if ((int) (html->vadj->upper - html->current_y) < (int) (height * 2))
 	{
 		int val;
@@ -3486,9 +3488,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 						{
 							d += strlen("COLOR=");
 							if (*d == '\"')
-							{
 								d++;
-							}
 							if (*d == '#')
 								d++;
 							if (d[strlen(d) - 1] == '\"')
@@ -3499,17 +3499,12 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 								current->color = get_color(colorv, map);
 								current->owncolor = 1;
 							}
-							else
-							{
-							}
 						}
 						if (!strncasecmp(d, "FACE=", strlen("FACE=")))
 						{
 							d += strlen("FACE=");
 							if (*d == '\"')
-							{
 								d++;
-							}
 							if (d[strlen(d) - 1] == '\"')
 								d[strlen(d) - 1] = 0;
 							strcpy(current->font, d);
@@ -3529,9 +3524,6 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 								current->bgcol = get_color(colorv, map);
 								current->ownbg = 1;
 							}
-							else
-							{
-							}
 						}
 						else if (!strncasecmp(d, "SIZE=", strlen("SIZE=")))
 						{
@@ -3541,12 +3533,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 							if (*d == '+')
 								d++;
 							if (sscanf(d, "%d", &colorv))
-							{
 								current->size = colorv;
-							}
-							else
-							{
-							}
 						}
 						else if (strncasecmp(d, "PTSIZE=", strlen("PTSIZE=")))
 						{
@@ -3555,7 +3542,6 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 				}
 				else if (!strncasecmp(tag, "BODY", strlen("BODY")))
 				{
-
 					char *d;
 					current = push_state(current);
 					html_strtok(tag, ' ');
@@ -4446,34 +4432,6 @@ void gtk_html_thaw(GtkHtml * html)
 	}
 }
 
-/*
-static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
-{
-	int height, max_height = 0;
-	GList *hbits = html->html_bits;
-	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
-/*
-	hbits = g_list_find(hbits, start);
-
-	while (hbits)
-	{
-		hbit = hbits->data;	
-		if (hbit->font)
-			height = gdk_text_height(hbit->font, "C", 1);	
-
-		if (max_height < height)
-			max_height = height;
-		if (hbit->newline)
-			break;
-		hbits = hbits->next;
-	}
-
-	if (max_height == 0)
-		max_height = gdk_text_height(hbit->font, "C", 1);	
-		
-	return max_height;
-}
-*/
 static int get_line_max_height(GtkHtml *html, GtkHtmlBit *start)
 {
 	int height, max_height = 0;
@@ -4497,6 +4455,40 @@ static int get_line_max_height(GtkHtml *html, GtkHtmlBit *start)
 
 	if (!max_height)
 		max_height = gdk_text_height(hbit->font, "C", 1);	
-		
+
 	return max_height;
+}
+
+static void get_line_max_extents(GtkHtml *html, GtkHtmlBit *start, int *max_acsent, int *max_descent)
+{
+	int acsent, descent;
+	GList *hbits = html->html_bits;
+	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
+
+	*max_acsent = 0;
+	*max_descent = 0;
+	
+	hbits = g_list_find(hbits, start);
+
+	while (hbits)
+	{
+		hbit = (GtkHtmlBit *)hbits->data;	
+		if (hbit->font)
+			gdk_text_extents(hbit->font, "yG", strlen("yG"), NULL, NULL, NULL, &acsent, &descent);
+
+		if (*max_acsent < acsent)
+			*max_acsent = acsent;
+		if (*max_descent < descent)
+			*max_descent =descent;
+		if (hbit->newline)
+			break;
+		hbits = hbits->next;
+	}
+
+	if (!*max_acsent)
+		gdk_text_extents(hbit->font, "yG", strlen("yG"), NULL, NULL, NULL, max_acsent, NULL);
+	if (!*max_descent)
+		gdk_text_extents(hbit->font, "yG", strlen("yG"), NULL, NULL, NULL, NULL, max_descent);
+
+	return;
 }
