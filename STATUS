@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-03-22 16:05:23 -0500 (Thu, 22 Mar 2001) $ by $Author: robflynn $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-03-23 06:37:41 -0500 (Fri, 23 Mar 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -70,9 +70,8 @@ being worked on.
 Oscar (Eric)
 =====
 
-Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
-details on Oscar. Oscar can be used to sign into ICQ; though you should use the
-ICQ plugin as it offers more functionality.
+Oscar is working reasonably well.  Oscar can be used to sign into ICQ; though
+you should use the ICQ plugin as it offers more functionality.
 
 Oscar can get people's away messages, so you should use it if that's what's
 important to you. Oscar also supports requesting and accepting Direct IM

@@ -3718,8 +3718,15 @@ show_log (char *name)
 
 	string = g_string_new("");
 
-	g_snprintf(filename, 256, "%s/logs/%s.log", 
-	gaim_user_dir(), normalize(name));
+	if (name) {
+		char *tmp = gaim_user_dir();
+		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
+		g_free(tmp);
+	} else {
+		char *tmp = gaim_user_dir();
+		g_snprintf(filename, 256, "%s/logs/system", tmp);
+		g_free(tmp);
+	}
 	if ((fp = fopen(filename, "r")) == NULL) {
 		g_snprintf(buf, BUF_LONG, "Unable to open log file %s", filename);
 		do_error_dialog(buf, "Error!");

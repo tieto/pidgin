@@ -27,5 +27,3 @@
 		Have tooltips on the passing buddies on the ticker
 		Have a stock ticker (a plugin could easily make use of
 			GtkTicker)
-		Have Alt access the menu in the buddy list, and ctl-char
-			access items in those menus
