@@ -155,4 +155,4 @@ clean:
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)
-	rm -rf Install-Gaim*.exe
+	rm -rf gaim*.exe
