@@ -1517,6 +1517,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	g_string_append(s, "</body></html>\n");
 
 #if PHOTO_SUPPORT
+	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
+	photo_url_text = msn_get_photo_url(url_text);
 
 	/* Marshall the existing state */
 	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
@@ -1529,7 +1531,6 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	info2_data->title = title;
 
 	/* Try to put the photo in there too, if there's one */
-	photo_url_text = msn_get_photo_url(url_text);
 	if (photo_url_text) {
 		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
 				info2_data);
