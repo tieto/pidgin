@@ -778,6 +778,12 @@ int main(int argc, char *argv[])
 #if GAIM_PLUGINS || USE_PERL
 	gaim_probe_plugins();
 #endif
+
+#ifdef _WIN32
+	/* Various win32 initializations */
+	wgaim_init();
+#endif
+
 	load_prefs();
 	core_main();
 #ifndef _WIN32
@@ -812,15 +818,13 @@ int main(int argc, char *argv[])
 		account_editor(NULL, NULL);
 	} else if ((dologin_ret == -1) && !connections)
 		show_login();
-#ifdef _WIN32
-	/* Various win32 initializations */
-	wgaim_init();
-#endif
 
 	gtk_main();
 	core_quit();
 	/* don't need ui_quit here because ui doesn't create anything */
-
+#ifdef _WIN32
+	wgaim_cleanup();
+#endif
 	return 0;
 
 }

@@ -22,6 +22,7 @@ extern GdkFilterReturn wgaim_window_filter(GdkXEvent *xevent,
 					   GdkEvent *event, 
 					   gpointer data);
 extern void wgaim_init(void);
+extern void wgaim_cleanup(void);
 
 /*
  *  MACROS

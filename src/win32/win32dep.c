@@ -145,8 +145,34 @@ GdkFilterReturn wgaim_window_filter( GdkXEvent *xevent, GdkEvent *event, gpointe
 /* Windows Initializations */
 
 void wgaim_init(void) {
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	int err;
 	char* locale=0;
 	char newenv[128];
+
+	debug_printf("wgaim_init\n");
+	/*
+	 *  Winsock init
+	 */
+	wVersionRequested = MAKEWORD( 2, 2 );
+
+	err = WSAStartup( wVersionRequested, &wsaData );
+	if ( err != 0 ) {
+		return 1;
+	}
+
+	/* Confirm that the winsock DLL supports 2.2 */
+	/* Note that if the DLL supports versions greater than
+	   2.2 in addition to 2.2, it will still return 2.2 in 
+	   wVersion since that is the version we requested. */
+
+	if ( LOBYTE( wsaData.wVersion ) != 2 ||
+			HIBYTE( wsaData.wVersion ) != 2 ) {
+		debug_printf("Could not find a usable WinSock DLL.  Oh well.\n");
+		WSACleanup( );
+		return 1;
+	}
 
 	/* Filter to catch systray events */
 	gdk_add_client_message_filter (GDK_POINTER_TO_ATOM (WM_TRAYMESSAGE),
@@ -165,9 +191,23 @@ void wgaim_init(void) {
 		debug_printf("putenv failed\n");
 	g_free(locale);
 
-	/* IdleTracker Initialization */
+	/*
+	 *  IdleTracker Initialization
+	 */
 	if(!IdleTrackerInit())
 		debug_printf("IdleTracker failed to initialize\n");
+}
+
+/* Windows Cleanup */
+
+void wgaim_cleanup(void) {
+	debug_printf("wgaim_cleanup\n");
+
+	/* winsock cleanup */
+	WSACleanup( );
+
+	/* IdleTracker cleanup */
+	IdleTrackerTerm();
 }
 
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
