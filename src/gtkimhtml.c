@@ -60,7 +60,6 @@
 #include "pixmaps/yell.xpm"
 
 #define MAX_FONT_SIZE 7
-#define DEFAULT_FONT_SIZE 3
 
 #define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
@@ -3052,9 +3051,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						font->fore = gdk_color_copy (oldfont->fore);
 					if (!font->back && oldfont->back)
 						font->back = gdk_color_copy (oldfont->back);
-				} else {
-					if (!font->size)
-						font->size = DEFAULT_FONT_SIZE;
 				}
 
 				fonts = g_slist_prepend (fonts, font);
