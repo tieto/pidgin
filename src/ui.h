@@ -280,8 +280,7 @@ extern struct away_message *awaymessage;
 extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
-extern GtkWidget *awayqueue;
-extern GtkListStore *awayqueuestore;
+extern GtkWidget *clistqueue; 
 
 /* Globals in buddy.c */
 extern GtkWidget *buddies;

@@ -2398,7 +2398,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->show);
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
-				} else if (awayqueue && find_queue_total_by_name(b->name)) {
+				} else if (clistqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 					qm->message = g_strdup_printf(_("%s logged in."), b->show);
@@ -2457,7 +2457,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->show);
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
-			} else if (awayqueue && find_queue_total_by_name(b->name)) {
+			} else if (clistqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 				qm->message = g_strdup_printf(_("%s logged out."), b->show);
@@ -2609,7 +2609,7 @@ void make_buddy_list()
 
 	blist = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_STATIC);
+	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_NORTH_WEST);
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
 	gtk_window_set_role(GTK_WINDOW(blist), "buddy_list");
