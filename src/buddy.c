@@ -1386,7 +1386,9 @@ void set_buddy(struct buddy *b)
 
                 
 
-                if (!GTK_WIDGET_VISIBLE(b->item)) {
+		/* this check should also depend on whether they left,
+		 * and signed on again before they got erased */
+                if (!GTK_WIDGET_VISIBLE(b->item) || b->present == 1) {
 #ifdef GAIM_PLUGINS
 			GList *c = callbacks;
 			struct gaim_callback *g;
@@ -1403,6 +1405,7 @@ void set_buddy(struct buddy *b)
 #endif
 			
 			play_sound(BUDDY_ARRIVE);
+			b->present = 2;
 
 			who = g_malloc(sizeof(b->name) + 10);
 			strcpy(who, b->name);
