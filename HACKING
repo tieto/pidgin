@@ -143,7 +143,7 @@ gnome_applet_mgr.c:
   of it works, but it has functionsLikeThis. I hate looking at this
   file, but I'm too lazy to change the functions. The best functions
   are things like set_applet_draw_open, whose sole purpose is to set a
-  global variable to TRUE.
+  global variable to TRUE. [ note 8/22/00 - I finally changed this file. ]
 
 gtkhtml.c:
   This is really just one big hack. It started off as an HTML widget that
