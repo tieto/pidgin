@@ -2045,7 +2045,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2636
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
-msgstr "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>"
+msgstr "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 
 #: src/protocols/oscar/oscar.c:2638
 #, c-format
