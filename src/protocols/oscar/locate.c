@@ -842,7 +842,7 @@ faim_export int aim_locate_reqrights(aim_session_t *sess)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQRIGHTS);
+	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQRIGHTS);
 }
 
 /*

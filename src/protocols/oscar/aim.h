@@ -375,8 +375,6 @@ typedef struct aim_msgcookie_s {
 } aim_msgcookie_t;
 
 /* Values for sess->flags */
-#define AIM_SESS_FLAGS_SNACLOGIN         0x00000001
-#define AIM_SESS_FLAGS_XORLOGIN          0x00000002
 #define AIM_SESS_FLAGS_NONBLOCKCONNECT   0x00000004
 #define AIM_SESS_FLAGS_DONTTIMEOUTONICBM 0x00000008
 
@@ -1349,8 +1347,8 @@ struct aim_emailinfo {
 	struct aim_emailinfo *next;
 };
 
-faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_email_sendcookies(aim_session_t *sess);
+faim_export int aim_email_activate(aim_session_t *sess);
 
 
 

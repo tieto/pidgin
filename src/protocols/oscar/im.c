@@ -166,7 +166,7 @@ faim_export int aim_im_reqparams(aim_session_t *sess)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
+	return aim_genericreq_n_snacid(sess, conn, 0x0004, 0x0004);
 }
 
 /**

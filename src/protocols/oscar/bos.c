@@ -12,7 +12,7 @@
 /* Subtype 0x0002 - Request BOS rights. */
 faim_export int aim_bos_reqrights(aim_session_t *sess, aim_conn_t *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
+	return aim_genericreq_n_snacid(sess, conn, 0x0009, 0x0002);
 }
 
 /* Subtype 0x0003 - BOS Rights. */

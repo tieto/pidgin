@@ -18,12 +18,13 @@
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_sendcookies(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_email_sendcookies(aim_session_t *sess)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_EML)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16+16)))
@@ -140,12 +141,13 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_activate(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_email_activate(aim_session_t *sess)
 {
+	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_EML)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+16)))

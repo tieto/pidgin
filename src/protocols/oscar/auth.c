@@ -11,6 +11,8 @@
 
 #include "md5.h"
 
+#include <ctype.h>
+
 /**
  * Encode a password using old XOR method
  *
@@ -221,11 +223,8 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	if (!ci || !sn || !password)
 		return -EINVAL;
 
-	/*
-	 * What the XORLOGIN flag _really_ means is that its an ICQ login,
-	 * which is really stupid and painful, so its not done here.
-	 */
-	if (sess->flags & AIM_SESS_FLAGS_XORLOGIN)
+	/* If we're signing on an ICQ account then use the older, XOR login method */
+	if (isdigit(sn[0]))
 		return goddamnicq2(sess, conn, sn, password, ci);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
@@ -443,9 +442,6 @@ static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 	aim_frame_t fr;
 	aim_rxcallback_t userfunc;
 	
-	sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
-	sess->flags |= AIM_SESS_FLAGS_XORLOGIN;
-
 	fr.conn = conn;
 	
 	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
@@ -475,8 +471,6 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 
 	if ((sn[0] >= '0') && (sn[0] <= '9'))
 		return goddamnicq(sess, conn, sn);
-
-	sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
 
 	aim_sendflapver(sess, conn);
 

@@ -16,7 +16,7 @@
  */
 faim_export int aim_bos_reqbuddyrights(aim_session_t *sess, aim_conn_t *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
+	return aim_genericreq_n_snacid(sess, conn, 0x0003, 0x0002);
 }
 
 /*

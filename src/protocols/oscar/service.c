@@ -151,7 +151,7 @@ static int redirect(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 /* Subtype 0x0006 - Request Rate Information. */
 faim_internal int aim_reqrates(aim_session_t *sess, aim_conn_t *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
+	return aim_genericreq_n_snacid(sess, conn, 0x0001, 0x0006);
 }
 
 /*
@@ -491,7 +491,7 @@ static int serverresume(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 /* Subtype 0x000e - Request self-info */
 faim_export int aim_reqpersonalinfo(aim_session_t *sess, aim_conn_t *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
+	return aim_genericreq_n_snacid(sess, conn, 0x0001, 0x000e);
 }
 
 /* Subtype 0x000f - Self User Info */
@@ -660,6 +660,8 @@ faim_export int aim_bos_setprivacyflags(aim_session_t *sess, aim_conn_t *conn, f
  * WinAIM sends these every 4min or so to keep the connection alive.  Its not 
  * really necessary.
  *
+ * Wha?  No?  Since when?  I think WinAIM sends an empty channel 3 
+ * SNAC as a no-op...
  */
 faim_export int aim_nop(aim_session_t *sess, aim_conn_t *conn)
 {

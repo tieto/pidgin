@@ -852,13 +852,12 @@ static void defaultdebugcb(aim_session_t *sess, int level, const char *format, v
 }
 
 /**
- * aim_session_init - Initializes a session structure
- * @sess: Session to initialize
- * @flags: Flags to use. Any of %AIM_SESS_FLAGS %OR'd together.
- * @debuglevel: Level of debugging output (zero is least)
+ * Initializes a session structure by setting the initial values 
+ * stuff in the aim_session_t struct.
  *
- * Sets up the initial values for a session.
- *
+ * @param sess Session to initialize.
+ * @param flags Flags to use. nAny of %AIM_SESS_FLAGS %OR'd together.
+ * @param debuglevel Level of debugging output (zero is least).
  */
 faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debuglevel)
 {
@@ -896,11 +895,6 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 
 	sess->authinfo = NULL;
 
-	/*
-	 * Default to SNAC login unless XORLOGIN is explicitly set.
-	 */
-	if (!(flags & AIM_SESS_FLAGS_XORLOGIN))
-		sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
 	sess->flags |= flags;
 
 	/*

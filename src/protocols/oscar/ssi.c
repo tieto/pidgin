@@ -1105,7 +1105,7 @@ faim_export int aim_ssi_reqrights(aim_session_t *sess)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQRIGHTS);
+	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQRIGHTS);
 }
 
 /*

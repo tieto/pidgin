@@ -276,6 +276,7 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 static gboolean gaim_icon_timerfunc(gpointer data);
 
 /* prpl actions - remove this at some point */
+/* Because I don't like forward declarations?  I think that was why... */
 static void oscar_set_info(GaimConnection *gc, const char *text);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -626,7 +627,6 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	od = gc->proto_data;
 	sess = od->sess;
 	conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
-	
 	conn->fd = source;
 
 	if (source < 0) {
@@ -636,14 +636,16 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 
 	aim_conn_completeconnect(sess, conn);
 	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ, oscar_callback, conn);
+	aim_request_login(sess, conn, gaim_account_get_username(gaim_connection_get_account(gc)));
+
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
-			   "Password sent, waiting for response\n");
+			   "Screen name sent, waiting for response\n");
+	gaim_connection_update_progress(gc, _("Screen name sent"), 1, 6);
 }
 
 static void oscar_login(GaimAccount *account) {
 	aim_session_t *sess;
 	aim_conn_t *conn;
-	char buf[256];
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct oscar_data *od = gc->proto_data = g_new0(struct oscar_data, 1);
 
@@ -658,12 +660,12 @@ static void oscar_login(GaimAccount *account) {
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
 	sess = g_new0(aim_session_t, 1);
-
 	aim_session_init(sess, AIM_SESS_FLAGS_NONBLOCKCONNECT, 0);
 	aim_setdebuggingcb(sess, oscar_debug);
-
-	/* we need an immediate queue because we don't use a while-loop to
-	 * see if things need to be sent. */
+	/*
+	 * We need an immediate queue because we don't use a while-loop 
+	 * to see if things need to be sent.
+	 */
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
 	od->sess = sess;
 	sess->aux_data = gc;
@@ -676,9 +678,6 @@ static void oscar_login(GaimAccount *account) {
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gaim_account_get_username(account));
-	gaim_connection_update_progress(gc, buf, 2, 5);
-
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
@@ -690,7 +689,8 @@ static void oscar_login(GaimAccount *account) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
 	}
-	aim_request_login(sess, conn, gaim_account_get_username(account));
+
+	gaim_connection_update_progress(gc, _("Connecting"), 0, 6);
 }
 
 static void oscar_close(GaimConnection *gc) {
@@ -782,7 +782,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
 	gaim_connection_update_progress(gc,
-			_("Connection established, cookie sent"), 4, 5);
+			_("Connection established, cookie sent"), 4, 6);
 }
 
 /* BBB */
@@ -1169,6 +1169,8 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_sendcookie(sess, bosconn, info->cookielen, info->cookie);
 	gaim_input_remove(gc->inpa);
 
+	gaim_connection_update_progress(gc, _("Received authorization"), 4, 6);
+
 	return 1;
 }
 
@@ -1331,9 +1333,12 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimAccount *ac = gaim_connection_get_account(gc);
-	struct oscar_data *od = gc->proto_data;
+#if 0
+	struct client_info_s info = {"gaim", 7, 3, 2003, "us", "en", 0x0004, 0x0000, 0x04b};
+#endif
 	va_list ap;
 	char *key;
 
@@ -1346,13 +1351,12 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
 					   gaim_account_get_password(account), &info, key);
 	} else {
-#if 0
-		struct client_info_s info = {"gaim", 7, 3, 2003, "us", "en", 0x0004, 0x0000, 0x04b};
-#endif
 		struct client_info_s info = CLIENTINFO_AIM_KNOWNGOOD;
 		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),
 					   gaim_account_get_password(account), &info, key);
 	}
+
+	gaim_connection_update_progress(gc, _("Password sent"), 3, 6);
 
 	return 1;
 }
@@ -1394,8 +1398,8 @@ static int conninitdone_email(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, fr->conn, 0x0018, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_EML, AIM_CB_EML_MAILSTATUS, gaim_email_parseupdate, 0);
 
-	aim_email_sendcookies(sess, fr->conn);
-	aim_email_activate(sess, fr->conn);
+	aim_email_sendcookies(sess);
+	aim_email_activate(sess);
 	aim_clientready(sess, fr->conn);
 
 	return 1;
