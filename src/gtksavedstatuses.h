@@ -25,6 +25,7 @@
 #ifndef _GAIM_GTKSAVEDSTATUSES_H_
 #define _GAIM_GTKSAVEDSTATUSES_H_
 
+#include "savedstatuses.h"
 #include "status.h"
 
 /**
@@ -36,6 +37,11 @@ void gaim_gtk_status_window_show(void);
  * Hides the status window.
  */
 void gaim_gtk_status_window_hide(void);
+
+/**
+ * Shows a status editor (used for editing a single saved status).
+ */
+void gaim_gtk_status_editor_show(GaimSavedStatus *status);
 
 /**
  * Returns the gtkstatus handle.

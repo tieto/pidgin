@@ -42,19 +42,28 @@
 
 enum
 {
+	STATUS_WINDOW_COLUMN_TITLE,
+	STATUS_WINDOW_COLUMN_TYPE,
+	STATUS_WINDOW_COLUMN_MESSAGE,
+	STATUS_WINDOW_NUM_COLUMNS
+};
+
+enum
+{
 	STATUS_EDITOR_COLUMN_CUSTOM_STATUS,
 	STATUS_EDITOR_COLUMN_ICON,
 	STATUS_EDITOR_COLUMN_SCREENNAME,
 	STATUS_EDITOR_NUM_COLUMNS
 };
 
-enum
+typedef struct
 {
-	STATUS_WINDOW_COLUMN_TITLE,
-	STATUS_WINDOW_COLUMN_TYPE,
-	STATUS_WINDOW_COLUMN_MESSAGE,
-	STATUS_WINDOW_NUM_COLUMNS
-};
+	GtkWidget *window;
+	GtkListStore *model;
+	GtkWidget *treeview;
+	GtkWidget *modify_button;
+	GtkWidget *delete_button;
+} StatusWindow;
 
 typedef struct
 {
@@ -69,19 +78,375 @@ typedef struct
 	GtkIMHtml *message;
 } StatusEditor;
 
-typedef struct
-{
-	GtkWidget *window;
-	GtkListStore *model;
-	GtkWidget *treeview;
-	GtkWidget *modify_button;
-	GtkWidget *delete_button;
-} StatusWindow;
-
 static StatusWindow *status_window = NULL;
 
-static void add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status);
-static gboolean status_window_find_savedstatus(GtkTreeIter *iter, const char *title);
+
+/**************************************************************************
+* Status window
+**************************************************************************/
+
+static gboolean
+status_window_find_savedstatus(GtkTreeIter *iter, const char *title)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(status_window->model);
+	const char *cur;
+
+	if (!gtk_tree_model_get_iter_first(model, iter))
+		return FALSE;
+
+	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
+	if (!strcmp(title, cur))
+		return TRUE;
+
+	while (gtk_tree_model_iter_next(model, iter))
+	{
+		gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
+		if (!strcmp(title, cur))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	StatusWindow *dialog = user_data;
+
+	dialog->window = NULL;
+	gaim_gtk_status_window_hide();
+
+	return FALSE;
+}
+
+static void
+status_window_add_cb(GtkButton *button, gpointer user_data)
+{
+	gaim_gtk_status_editor_show(NULL);
+}
+
+static void
+status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
+							 GtkTreeIter *iter, gpointer user_data)
+{
+	const char *title;
+	GaimSavedStatus *status;
+
+	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
+
+	status = gaim_savedstatus_find(title);
+	gaim_gtk_status_editor_show(status);
+}
+
+static void
+status_window_modify_cb(GtkButton *button, gpointer user_data)
+{
+	StatusWindow *dialog = user_data;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, status_window_modify_foreach, user_data);
+}
+
+static void
+status_window_delete_confirm_cb(char *title)
+{
+	GtkTreeIter iter;
+
+	if (status_window_find_savedstatus(&iter, title))
+		gtk_list_store_remove(status_window->model, &iter);
+
+	gaim_savedstatus_delete(title);
+
+	g_free(title);
+}
+
+static void
+status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
+							 GtkTreeIter *iter, gpointer user_data)
+{
+	const char *title;
+	char *buf;
+
+	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
+
+	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
+	gaim_request_action(NULL, NULL, buf, NULL, 0, g_strdup(title), 2,
+						_("Delete"), status_window_delete_confirm_cb,
+						_("Cancel"), g_free);
+	g_free(buf);
+}
+
+static void
+status_window_delete_cb(GtkButton *button, gpointer user_data)
+{
+	StatusWindow *dialog = user_data;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, status_window_delete_foreach, user_data);
+}
+
+static void
+status_window_close_cb(GtkButton *button, gpointer user_data)
+{
+	gaim_gtk_status_window_hide();
+}
+
+static void
+status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+	StatusWindow *dialog = user_data;
+	gboolean selected = FALSE;
+
+#if GTK_CHECK_VERSION(2,2,0)
+	selected = (gtk_tree_selection_count_selected_rows(sel) > 0);
+#else
+	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &selected);
+#endif
+
+	gtk_widget_set_sensitive(dialog->modify_button, selected);
+	gtk_widget_set_sensitive(dialog->delete_button, selected);
+}
+
+static void
+add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status)
+{
+	GtkTreeIter iter;
+	const char *title;
+	const char *type;
+	char *message;
+
+	title = gaim_savedstatus_get_title(saved_status);
+	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
+	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
+	if (strlen(message) > 70)
+		strcpy(&message[68], "...");
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+					   STATUS_WINDOW_COLUMN_TITLE, title,
+					   STATUS_WINDOW_COLUMN_TYPE, type,
+					   STATUS_WINDOW_COLUMN_MESSAGE, message,
+					   -1);
+	free(message);
+}
+
+static void
+populate_saved_status_list(StatusWindow *dialog)
+{
+	const GList *saved_statuses;
+
+	gtk_list_store_clear(dialog->model);
+
+	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
+			saved_statuses = g_list_next(saved_statuses))
+	{
+		add_status_to_saved_status_list(dialog->model, saved_statuses->data);
+	}
+}
+
+static GtkWidget *
+create_saved_status_list(StatusWindow *dialog)
+{
+	GtkWidget *sw;
+	GtkWidget *treeview;
+	GtkTreeSelection *sel;
+	GtkTreeViewColumn *column;
+	GtkCellRenderer *renderer;
+
+	/* Create the scrolled window */
+	sw = gtk_scrolled_window_new(0, 0);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_widget_show(sw);
+
+	/* Create the list model */
+	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
+									   G_TYPE_STRING,
+									   G_TYPE_STRING,
+									   G_TYPE_STRING);
+
+	/* Create the treeview */
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
+	dialog->treeview = treeview;
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(status_selected_cb), dialog);
+
+	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_widget_show(treeview);
+
+
+	/* Add columns */
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Title"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_sort_column_id(column,
+											STATUS_WINDOW_COLUMN_TITLE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   STATUS_WINDOW_COLUMN_TITLE);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Type"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_sort_column_id(column,
+											STATUS_WINDOW_COLUMN_TYPE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   STATUS_WINDOW_COLUMN_TYPE);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Message"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_sort_column_id(column,
+											STATUS_WINDOW_COLUMN_MESSAGE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   STATUS_WINDOW_COLUMN_MESSAGE);
+
+	/* Populate list */
+	populate_saved_status_list(dialog);
+
+	return sw;
+}
+
+static gboolean
+configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
+{
+	if (GTK_WIDGET_VISIBLE(widget)) {
+		gaim_prefs_set_int("/gaim/gtk/status/dialog/width",  event->width);
+		gaim_prefs_set_int("/gaim/gtk/status/dialog/height", event->height);
+	}
+
+	return FALSE;
+}
+
+void
+gaim_gtk_status_window_show(void)
+{
+	StatusWindow *dialog;
+	GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *list;
+	GtkWidget *sep;
+	GtkWidget *vbox;
+	GtkWidget *win;
+	int width, height;
+
+	if (status_window != NULL) {
+		gtk_window_present(GTK_WINDOW(status_window->window));
+		return;
+	}
+
+	status_window = dialog = g_new0(StatusWindow, 1);
+
+	width  = gaim_prefs_get_int("/gaim/gtk/status/dialog/width");
+	height = gaim_prefs_get_int("/gaim/gtk/status/dialog/height");
+
+	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
+	gtk_window_set_role(GTK_WINDOW(win), "statuses");
+	gtk_window_set_title(GTK_WINDOW(win), _("Saved Statuses"));
+	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+
+	g_signal_connect(G_OBJECT(win), "delete_event",
+					 G_CALLBACK(status_window_destroy_cb), dialog);
+	g_signal_connect(G_OBJECT(win), "configure_event",
+					 G_CALLBACK(configure_cb), dialog);
+
+	/* Setup the vbox */
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(win), vbox);
+	gtk_widget_show(vbox);
+
+	/* List of saved status states */
+	list = create_saved_status_list(dialog);
+	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
+
+	/* Separator... */
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	/* Button box. */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* Add button */
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_window_add_cb), dialog);
+
+	/* Modify button */
+	button = gtk_button_new_from_stock(GAIM_STOCK_MODIFY);
+	dialog->modify_button = button;
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_window_modify_cb), dialog);
+
+	/* Delete button */
+	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	dialog->delete_button = button;
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_window_delete_cb), dialog);
+
+	/* Close button */
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_window_close_cb), dialog);
+
+	gtk_widget_show(win);
+}
+
+void
+gaim_gtk_status_window_hide(void)
+{
+	if (status_window == NULL)
+		return;
+
+	if (status_window->window != NULL)
+		gtk_widget_destroy(status_window->window);
+
+	g_free(status_window);
+	status_window = NULL;
+}
+
+
+/**************************************************************************
+* Status editor
+**************************************************************************/
 
 static gboolean
 status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -462,363 +827,10 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_widget_show(win);
 }
 
-static gboolean
-status_window_find_savedstatus(GtkTreeIter *iter, const char *title)
-{
-	GtkTreeModel *model = GTK_TREE_MODEL(status_window->model);
-	const char *cur;
 
-	if (!gtk_tree_model_get_iter_first(model, iter))
-		return FALSE;
-
-	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
-	if (!strcmp(title, cur))
-		return TRUE;
-
-	while (gtk_tree_model_iter_next(model, iter))
-	{
-		gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &cur, -1);
-		if (!strcmp(title, cur))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-static gboolean
-status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-	StatusWindow *dialog = user_data;
-
-	dialog->window = NULL;
-	gaim_gtk_status_window_hide();
-
-	return FALSE;
-}
-
-static void
-status_window_add_cb(GtkButton *button, gpointer user_data)
-{
-	gaim_gtk_status_editor_show(NULL);
-}
-
-static void
-status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
-							 GtkTreeIter *iter, gpointer user_data)
-{
-	const char *title;
-	GaimSavedStatus *status;
-
-	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-
-	status = gaim_savedstatus_find(title);
-	gaim_gtk_status_editor_show(status);
-}
-
-static void
-status_window_modify_cb(GtkButton *button, gpointer user_data)
-{
-	StatusWindow *dialog = user_data;
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-
-	gtk_tree_selection_selected_foreach(selection, status_window_modify_foreach, user_data);
-}
-
-static void
-status_window_delete_confirm_cb(char *title)
-{
-	GtkTreeIter iter;
-
-	if (status_window_find_savedstatus(&iter, title))
-		gtk_list_store_remove(status_window->model, &iter);
-
-	gaim_savedstatus_delete(title);
-
-	g_free(title);
-}
-
-static void
-status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
-							 GtkTreeIter *iter, gpointer user_data)
-{
-	const char *title;
-	char *buf;
-
-	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-
-	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
-	gaim_request_action(NULL, NULL, buf, NULL, 0, g_strdup(title), 2,
-						_("Delete"), status_window_delete_confirm_cb,
-						_("Cancel"), g_free);
-	g_free(buf);
-}
-
-static void
-status_window_delete_cb(GtkButton *button, gpointer user_data)
-{
-	StatusWindow *dialog = user_data;
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-
-	gtk_tree_selection_selected_foreach(selection, status_window_delete_foreach, user_data);
-}
-
-static void
-status_window_close_cb(GtkButton *button, gpointer user_data)
-{
-	gaim_gtk_status_window_hide();
-}
-
-static void
-status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
-{
-	StatusWindow *dialog = user_data;
-	gboolean selected = FALSE;
-
-#if GTK_CHECK_VERSION(2,2,0)
-	selected = (gtk_tree_selection_count_selected_rows(sel) > 0);
-#else
-	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &selected);
-#endif
-
-	gtk_widget_set_sensitive(dialog->modify_button, selected);
-	gtk_widget_set_sensitive(dialog->delete_button, selected);
-}
-
-static void
-add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status)
-{
-	GtkTreeIter iter;
-	const char *title;
-	const char *type;
-	char *message;
-
-	title = gaim_savedstatus_get_title(saved_status);
-	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
-	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
-	if (strlen(message) > 70)
-		strcpy(&message[68], "...");
-
-	gtk_list_store_append(model, &iter);
-	gtk_list_store_set(model, &iter,
-					   STATUS_WINDOW_COLUMN_TITLE, title,
-					   STATUS_WINDOW_COLUMN_TYPE, type,
-					   STATUS_WINDOW_COLUMN_MESSAGE, message,
-					   -1);
-	free(message);
-}
-
-static void
-populate_saved_status_list(StatusWindow *dialog)
-{
-	const GList *saved_statuses;
-
-	gtk_list_store_clear(dialog->model);
-
-	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
-			saved_statuses = g_list_next(saved_statuses))
-	{
-		add_status_to_saved_status_list(dialog->model, saved_statuses->data);
-	}
-}
-
-static GtkWidget *
-create_saved_status_list(StatusWindow *dialog)
-{
-	GtkWidget *sw;
-	GtkWidget *treeview;
-	GtkTreeSelection *sel;
-	GtkTreeViewColumn *column;
-	GtkCellRenderer *renderer;
-
-	/* Create the scrolled window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_widget_show(sw);
-
-	/* Create the list model */
-	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
-									   G_TYPE_STRING,
-									   G_TYPE_STRING,
-									   G_TYPE_STRING);
-
-	/* Create the treeview */
-	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
-	dialog->treeview = treeview;
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
-
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(status_selected_cb), dialog);
-
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
-	gtk_widget_show(treeview);
-
-
-	/* Add columns */
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Title"));
-	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_sort_column_id(column,
-											STATUS_WINDOW_COLUMN_TITLE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(column, renderer, "text",
-									   STATUS_WINDOW_COLUMN_TITLE);
-
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Type"));
-	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_sort_column_id(column,
-											STATUS_WINDOW_COLUMN_TYPE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(column, renderer, "text",
-									   STATUS_WINDOW_COLUMN_TYPE);
-
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Message"));
-	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_sort_column_id(column,
-											STATUS_WINDOW_COLUMN_MESSAGE);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(column, renderer, "text",
-									   STATUS_WINDOW_COLUMN_MESSAGE);
-
-	/* Populate list */
-	populate_saved_status_list(dialog);
-
-	return sw;
-}
-
-static gboolean
-configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
-{
-	if (GTK_WIDGET_VISIBLE(widget)) {
-		gaim_prefs_set_int("/gaim/gtk/status/dialog/width",  event->width);
-		gaim_prefs_set_int("/gaim/gtk/status/dialog/height", event->height);
-	}
-
-	return FALSE;
-}
-
-void
-gaim_gtk_status_window_show(void)
-{
-	StatusWindow *dialog;
-	GtkWidget *bbox;
-	GtkWidget *button;
-	GtkWidget *list;
-	GtkWidget *sep;
-	GtkWidget *vbox;
-	GtkWidget *win;
-	int width, height;
-
-	if (status_window != NULL) {
-		gtk_window_present(GTK_WINDOW(status_window->window));
-		return;
-	}
-
-	status_window = dialog = g_new0(StatusWindow, 1);
-
-	width  = gaim_prefs_get_int("/gaim/gtk/status/dialog/width");
-	height = gaim_prefs_get_int("/gaim/gtk/status/dialog/height");
-
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
-	gtk_window_set_role(GTK_WINDOW(win), "statuses");
-	gtk_window_set_title(GTK_WINDOW(win), _("Saved Statuses"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
-
-	g_signal_connect(G_OBJECT(win), "delete_event",
-					 G_CALLBACK(status_window_destroy_cb), dialog);
-	g_signal_connect(G_OBJECT(win), "configure_event",
-					 G_CALLBACK(configure_cb), dialog);
-
-	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
-
-	/* List of saved status states */
-	list = create_saved_status_list(dialog);
-	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
-
-	/* Separator... */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-
-	/* Button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
-	/* Add button */
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(status_window_add_cb), dialog);
-
-	/* Modify button */
-	button = gtk_button_new_from_stock(GAIM_STOCK_MODIFY);
-	dialog->modify_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(status_window_modify_cb), dialog);
-
-	/* Delete button */
-	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	dialog->delete_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(status_window_delete_cb), dialog);
-
-	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(status_window_close_cb), dialog);
-
-	gtk_widget_show(win);
-}
-
-void
-gaim_gtk_status_window_hide(void)
-{
-	if (status_window == NULL)
-		return;
-
-	if (status_window->window != NULL)
-		gtk_widget_destroy(status_window->window);
-
-	g_free(status_window);
-	status_window = NULL;
-}
+/**************************************************************************
+* GTK saved status glue
+**************************************************************************/
 
 void *
 gaim_gtk_status_get_handle()
