@@ -69,7 +69,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=${prefix} --sysconfdir=${sysconfdir
 make
 
 %install
-make prefix=$RPM_BUILD_ROOT%{prefix} sysconfdir=$RPM_BUILD_ROOT%{sysconfdir} install-strip
+make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install-strip
 
 %files
 %defattr(-,root,root)

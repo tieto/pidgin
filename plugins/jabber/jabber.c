@@ -328,7 +328,7 @@ static void gjab_recv(gjconn j)
 		buf[len] = '\0';
 		debug_printf("input: %s\n", buf);
 		XML_Parse(j->parser, buf, len, 0);
-	} else if (len < 0) {
+	} else if (len <= 0) {
 		STATE_EVT(JCONN_STATE_OFF);
 		gjab_stop(j);
 	}

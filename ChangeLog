@@ -1,5 +1,9 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.11.0-pre7:
+	* Can build RPMs as non-root
+	* New yahoo library
+
 version 0.11.0-pre6 (03/06/2001):
 	* Fixed bug with NAS support
 	* Napster plugin is included again
