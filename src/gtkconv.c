@@ -1657,18 +1657,14 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 			struct gaim_gtk_window *new_gtkwin;
 			struct gaim_gtk_conversation *gtkconv;
 			gint win_width, win_height;
-			gboolean noisy;
 
 			gtkconv = GAIM_GTK_CONVERSATION(conv);
-			noisy = gtkconv->make_sound;
 
 			new_win = gaim_window_new();
 
 			gaim_window_add_conversation(new_win,
 					gaim_window_remove_conversation(win,
 							gaim_conversation_get_index(conv)));
-
-			gtkconv->make_sound = noisy;
 
 			new_gtkwin = GAIM_GTK_WINDOW(new_win);
 
