@@ -91,6 +91,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	char *username, *password;
 	char *request_str;
 	char *buffer = NULL;
+	guint32 ctint;
 	size_t s;
 
 	nexus = data;
@@ -105,10 +106,12 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	password =
 		g_strdup(gaim_url_encode(gaim_account_get_password(session->account)));
 
+	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
+
 	request_str = g_strdup_printf(
 		"GET %s HTTP/1.1\r\n"
 		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s,pwd=%s,"
-		"lc=%s,id=%s,tw=%s,fs=%s,ru=%s,ct=%s,kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
+		"lc=%s,id=%s,tw=%s,fs=%s,ru=%s,ct=%" G_GUINT32_FORMAT ",kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
 		"User-Agent: MSMSGS\r\n"
 		"Host: %s\r\n"
 		"Connection: Keep-Alive\r\n"
@@ -122,7 +125,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		(char *)g_hash_table_lookup(nexus->challenge_data, "tw"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "fs"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ct"),
+		ctint,
 		(char *)g_hash_table_lookup(nexus->challenge_data, "kpp"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "kv"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "ver"),

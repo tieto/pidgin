@@ -1246,7 +1246,7 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 
-	/* msn_table_add_cmd(cbs_table, NULL, "XFR", xfr_cmd); */
+	msn_table_add_cmd(cbs_table, NULL, "XFR", xfr_cmd);
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	/* msn_table_add_error(cbs_table, "REA", rea_error); */
