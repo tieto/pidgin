@@ -85,6 +85,7 @@ struct oscar_data {
 
 struct chat_connection {
 	char *name;
+	char *show; /* AOL did something funny to us */
 	int exchange;
 	int fd; /* this is redundant since we have the conn below */
 	struct aim_conn_t *conn;
@@ -164,7 +165,32 @@ static struct getfile_transfer *find_getfile_transfer(struct oscar_data *od, str
 }
 */
 
-struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
+static char *extract_name(char *name) {
+	char *tmp;
+	int i, j;
+	char *x = strchr(name, '-');
+	if (!x) return;
+	x = strchr(++x, '-');
+	if (!x) return;
+	tmp = g_strdup(++x);
+
+	for (i = 0, j = 0; x[i]; i++) {
+		if (x[i] != '%')
+			tmp[j++] = x[i];
+		else {
+			char hex[3];
+			hex[0] = x[++i];
+			hex[1] = x[++i];
+			hex[2] = 0;
+			sscanf(hex, "%x", &tmp[j++]);
+		}
+	}
+
+	tmp[j] = 0;
+	return tmp;
+}
+
+static struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
 	struct chat_connection *c = NULL;
 	if (gc->protocol != PROTO_OSCAR) return NULL;
@@ -466,6 +492,7 @@ void oscar_close(struct gaim_connection *gc) {
 		if (n->inpa > 0)
 			gdk_input_remove(n->inpa);
 		g_free(n->name);
+		g_free(n->show);
 		c = g_slist_remove(c, n);
 		g_free(n);
 	}
@@ -703,19 +730,29 @@ int gaim_memrequest(struct aim_session_t *sess,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
-	/*
+	/* uncomment this when you're convinced it's right. remember, it's been wrong before.
 	if (offset > AIM_MAX_FILE_SIZE || len > AIM_MAX_FILE_SIZE) {
-		char buf[8];
-		buf[0] = offset & 0xff;
-		buf[1] = (offset >> 8) & 0xff;
-		buf[2] = (offset >> 16) & 0xff;
-		buf[3] = (offset >> 24) & 0xff;
-		buf[4] = len & 0xff;
-		buf[5] = (len >> 8) & 0xff;
-		buf[6] = (len >> 16) & 0xff;
-		buf[7] = (len >> 24) & 0xff;
+		char *buf;
+		int i = 8;
+		if (modname)
+			i += strlen(modname);
+		buf = g_malloc(i);
+		i = 0;
+		if (modname) {
+			memcpy(buf, modname, strlen(modname));
+			i += strlen(modname);
+		}
+		buf[i++] = offset & 0xff;
+		buf[i++] = (offset >> 8) & 0xff;
+		buf[i++] = (offset >> 16) & 0xff;
+		buf[i++] = (offset >> 24) & 0xff;
+		buf[i++] = len & 0xff;
+		buf[i++] = (len >> 8) & 0xff;
+		buf[i++] = (len >> 16) & 0xff;
+		buf[i++] = (len >> 24) & 0xff;
 		debug_printf("len + offset is invalid, hashing request\n");
-		aim_sendmemblock(sess, command->conn, offset, 8, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
+		aim_sendmemblock(sess, command->conn, offset, i, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
+		g_free(buf);
 		return 1;
 	}
 	*/
@@ -816,7 +853,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chat_clientready(sess, command->conn);
 		chatcon = find_oscar_chat_by_conn(gc, command->conn);
 		chatcon->id = id;
-		serv_got_joined_chat(gc, id++, aim_chat_getname(command->conn));
+		serv_got_joined_chat(gc, id++, chatcon->show);
 		break;
 	case AIM_CONN_TYPE_RENDEZVOUS:
 		break;
@@ -892,6 +929,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		ccon->fd = tstconn->fd;
 		ccon->name = g_strdup(roomname);
 		ccon->exchange = exchange;
+		ccon->show = extract_name(roomname);
 		
 		ccon->inpa = gdk_input_add(tstconn->fd,
 				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
@@ -1673,15 +1711,20 @@ int gaim_chat_join(struct aim_session_t *sess,
 
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
+	struct chat_connection *c = NULL;
 
 	va_start(ap, command);
 	count = va_arg(ap, int);
 	info  = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
-	while(bcs) {
+	c = find_oscar_chat_by_conn(g, command->conn);
+	if (!c)
+		return 1;
+
+	while (bcs) {
 		b = (struct conversation *)bcs->data;
-		if (!strcasecmp(b->name, (char *)command->conn->priv))
+		if (!strcasecmp(b->name, c->show))
 			break;	
 		bcs = bcs->next;
 		b = NULL;
@@ -1704,15 +1747,20 @@ int gaim_chat_leave(struct aim_session_t *sess,
 
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
+	struct chat_connection *c = NULL;
 
 	va_start(ap, command);
 	count = va_arg(ap, int);
 	info  = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
-	while(bcs) {
+	c = find_oscar_chat_by_conn(g, command->conn);
+	if (!c)
+		return 1;
+
+	while (bcs) {
 		b = (struct conversation *)bcs->data;
-		if (!strcasecmp(b->name, (char *)command->conn->priv))
+		if (!strcasecmp(b->name, c->show))
 			break;	
 		bcs = bcs->next;
 		b = NULL;
@@ -1749,8 +1797,12 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 
 	while(bcs) {
 		b = (struct conversation *)bcs->data;
-		if (!strcasecmp(b->name, (char *)command->conn->priv))
+		tmp = extract_name(command->conn->priv);
+		if (!strcasecmp(b->name, tmp)) {
+			g_free(tmp);
 			break;
+		}
+		g_free(tmp);
 		bcs = bcs->next;
 		b = NULL;
 	}
@@ -2236,6 +2288,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 		if (g && odata->sess)
 			aim_conn_kill(odata->sess, &c->conn);
 		g_free(c->name);
+		g_free(c->show);
 		g_free(c);
 	}
 	/* we do this because with Oscar it doesn't tell us we left */
@@ -2247,6 +2300,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	struct aim_conn_t *cn; 
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
+	struct chat_connection *c = NULL;
 
 	while (bcs) {
 		b = (struct conversation *)bcs->data;
@@ -2258,8 +2312,18 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	if (!b)
 		return;
 
-	cn = aim_chat_getconn(odata->sess, b->name);
-	aim_chat_send_im(odata->sess, cn, 0, message, strlen(message));
+	bcs = odata->oscar_chats;
+	while (bcs) {
+		c = (struct chat_connection *)bcs->data;
+		if (!strcmp(b->name, c->show))
+			break;
+		bcs = bcs->next;
+		c = NULL;
+	}
+	if (!c)
+		return;
+
+	aim_chat_send_im(odata->sess, c->conn, 0, message, strlen(message));
 }
 
 static char **oscar_list_icon(int uc) {
