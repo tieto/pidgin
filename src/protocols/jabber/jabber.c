@@ -2523,7 +2523,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		 */
 		if(alias && alias[0] != '\0') {
 			my_alias = alias;
-		} else if((buddy = find_buddy(gc, realwho)) != NULL) {
+		} else if((buddy = find_buddy(gc, realwho)) != NULL && buddy->alias[0]) {
 			my_alias = buddy->alias;
 		}
 
