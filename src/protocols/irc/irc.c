@@ -3,6 +3,7 @@
  *
  * gaim
  *
+ * Copyright (C) 2003, Robbert Haarman <gaim@inglorion.net>
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
  * Copyright (C) 2000-2003, Rob Flynn <rob@tgflinux.com>
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
@@ -146,7 +147,16 @@ static GList *irc_actions(GaimConnection *gc)
 
 static GList *irc_buddy_menu(GaimConnection *gc, const char *who)
 {
-	return NULL;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+	
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Send File");
+	pbm->callback = irc_dccsend_send_ask;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+	
+	return m;
 }
 
 static GList *irc_chat_join_info(GaimConnection *gc)

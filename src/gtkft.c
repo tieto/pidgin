@@ -150,10 +150,10 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 
 	if (time_remaining != NULL) {
 		if (gaim_xfer_get_size(xfer) == 0) {
-			*time_remaining = g_strdup("Unknown");
+			*time_remaining = g_strdup(_("Unknown"));
 		}
 		else if (gaim_xfer_is_completed(xfer)) {
-			*time_remaining = g_strdup("Finished");
+			*time_remaining = g_strdup(_("Finished"));
 		}
 		else {
 			int h, m, s;
@@ -932,7 +932,7 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 
 		gtk_list_store_set(GTK_LIST_STORE(xfer_dialog->model), &data->iter,
 						   COLUMN_STATUS, pixbuf,
-						   COLUMN_REMAINING, "Finished",
+						   COLUMN_REMAINING, _("Finished"),
 						   -1);
 
 		g_object_unref(pixbuf);

@@ -24,6 +24,8 @@ version 0.76cvs:
 	  required fields and account fields.
 	* Moved more dialogs to the request API for interface consistency
 	  (Send Message, Get User Info, and Insert Link dialogs)
+	* Jabber file transfer
+	* IRC file transfer (Tim Ringenbach)
 
 	Bug Fixes:
 	* You can now use :/ as a smiley safely (Nathan Owens)

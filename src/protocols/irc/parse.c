@@ -1,10 +1,10 @@
 /**
  * @file parse.c
- * 
+ *
  * gaim
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -307,6 +307,9 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 		buf = irc_format(irc, "vt:", "NOTICE", from, "\001VERSION Gaim IRC\001");
 		irc_send(irc, buf);
 		g_free(buf);
+	} else if (!strncmp(cur, "DCC SEND ", 9)) {
+		irc_dccsend_recv(irc, from, msg + 10);
+		return NULL;
 	}
 
 	ctcp = g_strdup(msg + 1);

@@ -2,7 +2,7 @@ EXTRA_DIST = PROTOCOL Makefile.mingw
 
 pkgdir = $(libdir)/gaim
 
-IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h
+IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h dcc_send.c
 
 AM_CFLAGS = $(st)
 

@@ -36,6 +36,7 @@
 
 #define IRC_INITIAL_BUFSIZE 1024
 
+
 enum { IRC_USEROPT_SERVER, IRC_USEROPT_PORT, IRC_USEROPT_CHARSET };
 enum irc_state { IRC_STATE_NEW, IRC_STATE_ESTABLISHED };
 
@@ -153,4 +154,6 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
+void irc_dccsend_send_ask(GaimConnection *gc, const char *dst);
+void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg);
 #endif /* _GAIM_IRC_H */

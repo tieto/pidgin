@@ -512,6 +512,16 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	else {
 		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
 
+		/* this is so the prpl can keep the connection open
+		   if it needs to for some odd reason. */
+		if (s == 0) {
+			if(xfer->watcher) {
+				gaim_input_remove(xfer->watcher);
+				xfer->watcher = 0;
+			}
+			return;
+		}
+
 		buffer = g_malloc0(s);
 
 		fread(buffer, 1, s, xfer->dest_fp);
