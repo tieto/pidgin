@@ -4009,6 +4009,8 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 	gtk_widget_show_all(rename_bud_dialog);
 }
 
+#ifdef USE_PERL
+
 static GtkWidget *perl_config = NULL;
 static char *perl_last_dir = NULL;
 
@@ -4081,3 +4083,5 @@ void load_perl_script()
 	gtk_widget_show(perl_config);
 	gdk_window_raise(perl_config->window);
 }
+
+#endif /* USE_PERL */
