@@ -181,7 +181,7 @@ __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 		return FALSE;
 	}
 
-	set_login_progress(gc, 3, _("Requesting to send password"));
+	set_login_progress(gc, 4, _("Requesting to send password"));
 
 	return TRUE;
 }
@@ -190,7 +190,8 @@ static gboolean
 __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	MsnSession *session = servconn->session;
+	struct gaim_connection *gc = session->account->gc;
 	char outparams[MSN_BUF_LEN];
 
 	/* We're either getting the challenge or the OK. Let's find out. */
@@ -203,6 +204,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 			return FALSE;
 		}
+
+		set_login_progress(session->account->gc, 4, _("Retrieving buddy list"));
 	}
 	else {
 		/* Challenge */
@@ -1068,7 +1071,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		return FALSE;
 	}
 
-	set_login_progress(session->account->gc, 2, _("Syncing with server"));
+	set_login_progress(session->account->gc, 4, _("Syncing with server"));
 
 	return TRUE;
 }
