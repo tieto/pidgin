@@ -37,6 +37,7 @@ typedef struct _JabberChat {
 	int id;
 	GaimConversation *conv;
 	gboolean muc;
+	gboolean xhtml;
 } JabberChat;
 
 GList *jabber_chat_info(GaimConnection *gc);

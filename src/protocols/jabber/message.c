@@ -460,13 +460,14 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	return 1;
 }
 
-int jabber_message_send_chat(GaimConnection *gc, int id, const char *message)
+int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 {
 	JabberChat *chat;
 	JabberMessage *jm;
 	JabberStream *js = gc->proto_data;
+	char *buf, *xhtml;
 
-	if(!message)
+	if(!msg)
 		return 0;
 
 	chat = jabber_chat_find_by_id(js, id);
@@ -476,7 +477,15 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *message)
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	gaim_markup_html_to_xhtml(message, &jm->xhtml, &jm->body);
+	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
+
+	gaim_markup_html_to_xhtml(buf, &xhtml, &jm->body);
+	g_free(buf);
+
+	if(chat->xhtml)
+		jm->xhtml = xhtml;
+	else
+		g_free(xhtml);
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);
