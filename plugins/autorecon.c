@@ -9,8 +9,6 @@
 
 #define AUTORECON_PLUGIN_ID "core-autorecon"
 
-G_MODULE_IMPORT GSList *gaim_accounts;
-
 #define INITIAL 8000
 #define MAXTIME 2048000
 
@@ -22,7 +20,7 @@ static gboolean do_signon(gpointer data) {
 	GaimAccount *account = data;
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "do_signon called\n");
 
-	if (g_slist_index(gaim_accounts, account) < 0)
+	if (g_list_index(gaim_accounts_get_all(), account) < 0)
 		return FALSE;
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
 	gaim_account_connect(account);

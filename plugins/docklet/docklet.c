@@ -158,7 +158,7 @@ static void docklet_menu(GdkEventButton *event) {
 		case offline_connecting:
 			break;
 		default:
-			gaim_new_item_from_stock(menu, _("Signoff"), GTK_STOCK_CLOSE, G_CALLBACK(signoff_all), NULL, 0, 0, 0);
+			gaim_new_item_from_stock(menu, _("Signoff"), GTK_STOCK_CLOSE, G_CALLBACK(gaim_connections_disconnect_all), NULL, 0, 0, 0);
 			break;
 	}
 

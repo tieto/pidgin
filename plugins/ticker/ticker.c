@@ -50,9 +50,6 @@ typedef struct {
 
 GList *tickerbuds = NULL;
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 static gboolean buddy_ticker_destroy_window(GtkWidget *window,
 		GdkEventAny *event, gpointer data) {
 	if(window)
@@ -196,7 +193,7 @@ void signon_cb(GaimConnection *gc, char *who) {
 }
 
 void signoff_cb(GaimConnection *gc) {
-	if (!connections) {
+	if (!gaim_connections_get_all()) {
 		while(tickerbuds) {
 			g_free(tickerbuds->data);
 			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
@@ -246,7 +243,7 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(plugin, event_buddy_away, away_cb, NULL);
 	gaim_signal_connect(plugin, event_buddy_back, away_cb, NULL);
 
-	if (connections)
+	if (gaim_connections_get_all())
 		buddy_ticker_show();
 
 	return TRUE;
