@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1378 $"
+#define REVISION "gaim:$Revision: 1380 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1173,6 +1173,7 @@ static void toc_do_new_user()
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
+	ret->options = OPT_PROTO_HTML;
 	ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
 	ret->action_menu = toc_action_menu;

@@ -2258,6 +2258,7 @@ static void oscar_do_new_user()
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
+	ret->options = OPT_PROTO_HTML;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->action_menu = oscar_action_menu;

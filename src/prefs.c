@@ -1116,6 +1116,7 @@ static void event_page()
 static struct away_message *cur_message;
 static char *edited_message;
 static GtkWidget *away_text;
+static GtkWidget *make_away_button = NULL;;
 
 void away_list_clicked(GtkWidget *widget, struct away_message *a)
 {
@@ -1166,6 +1167,7 @@ static void paldest(GtkWidget *m, gpointer n)
 {
 	gtk_widget_destroy(prefs_away_list);
 	prefs_away_list = NULL;
+	make_away_button = NULL;
 }
 
 static void do_away_mess(GtkWidget *m, gpointer n)
@@ -1302,9 +1304,11 @@ static void away_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), button);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
 
-	button = picture_button(prefs, _("Make Away"), gnome_preferences_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_away_mess), NULL);
-	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
+	make_away_button = picture_button(prefs, _("Make Away"), gnome_preferences_xpm);
+	gtk_signal_connect(GTK_OBJECT(make_away_button), "clicked", GTK_SIGNAL_FUNC(do_away_mess), NULL);
+	gtk_box_pack_start(GTK_BOX(bot), make_away_button, TRUE, FALSE, 5);
+	if (!connections)
+		gtk_widget_set_sensitive(make_away_button, FALSE);
 
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), NULL);
@@ -1449,7 +1453,6 @@ static void browser_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Browser Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -1801,8 +1804,8 @@ static void deny_page()
 	gtk_widget_show(prefdialog);
 }
 
-void update_connection_dependent_prefs()
-{				/* what a crappy name */
+void update_connection_dependent_prefs()	/* what a crappy name */
+{
 	gboolean needdeny = FALSE;
 	GSList *c = connections;
 	struct gaim_connection *gc = NULL;
@@ -1830,6 +1833,13 @@ void update_connection_dependent_prefs()
 		build_block_list();
 	} else if (needdeny && !deny_node) {
 		prefs_build_deny();
+	}
+
+	if (make_away_button) {
+		if (connections)
+			gtk_widget_set_sensitive(make_away_button, TRUE);
+		else
+			gtk_widget_set_sensitive(make_away_button, FALSE);
 	}
 }
 

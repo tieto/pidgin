@@ -623,41 +623,43 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 	buf2 = g_malloc(limit);
 
-	if (font_options & OPT_FONT_BOLD) {
-		g_snprintf(buf2, limit, "<B>%s</B>", buf);
-		strcpy(buf, buf2);
-	}
+	if (c->gc->prpl->options & OPT_PROTO_HTML) {
+		if (font_options & OPT_FONT_BOLD) {
+			g_snprintf(buf2, limit, "<B>%s</B>", buf);
+			strcpy(buf, buf2);
+		}
 
-	if (font_options & OPT_FONT_ITALIC) {
-		g_snprintf(buf2, limit, "<I>%s</I>", buf);
-		strcpy(buf, buf2);
-	}
+		if (font_options & OPT_FONT_ITALIC) {
+			g_snprintf(buf2, limit, "<I>%s</I>", buf);
+			strcpy(buf, buf2);
+		}
 
-	if (font_options & OPT_FONT_UNDERLINE) {
-		g_snprintf(buf2, limit, "<U>%s</U>", buf);
-		strcpy(buf, buf2);
-	}
+		if (font_options & OPT_FONT_UNDERLINE) {
+			g_snprintf(buf2, limit, "<U>%s</U>", buf);
+			strcpy(buf, buf2);
+		}
 
-	if (font_options & OPT_FONT_STRIKE) {
-		g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
-		strcpy(buf, buf2);
-	}
+		if (font_options & OPT_FONT_STRIKE) {
+			g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
+			strcpy(buf, buf2);
+		}
 
-	if ((font_options & OPT_FONT_FACE) || c->hasfont) {
-		g_snprintf(buf2, limit, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
-		strcpy(buf, buf2);
-	}
+		if ((font_options & OPT_FONT_FACE) || c->hasfont) {
+			g_snprintf(buf2, limit, "<FONT FACE=\"%s\">%s</FONT>", c->fontface, buf);
+			strcpy(buf, buf2);
+		}
 
-	if ((font_options & OPT_FONT_FGCOL) || c->hasfg) {
-		g_snprintf(buf2, limit, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red,
-			   c->fgcol.green, c->fgcol.blue, buf);
-		strcpy(buf, buf2);
-	}
+		if ((font_options & OPT_FONT_FGCOL) || c->hasfg) {
+			g_snprintf(buf2, limit, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", c->fgcol.red,
+				   c->fgcol.green, c->fgcol.blue, buf);
+			strcpy(buf, buf2);
+		}
 
-	if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
-		g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red,
-			   c->bgcol.green, c->bgcol.blue, buf);
-		strcpy(buf, buf2);
+		if ((font_options & OPT_FONT_BGCOL) || c->hasbg) {
+			g_snprintf(buf2, limit, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", c->bgcol.red,
+				   c->bgcol.green, c->bgcol.blue, buf);
+			strcpy(buf, buf2);
+		}
 	}
 
 	{

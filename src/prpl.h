@@ -35,10 +35,16 @@
 #define PROTO_JABBER	8
 #define PROTO_NAPSTER	9
 
+#define OPT_PROTO_HTML  0x00000001
+/* there should be more here eventually... These should all be stuff that other
+ * plugins can't do (for example, TOC and Oscar and Jabber can do HTML in messages,
+ * but IRC etc can't, so TOC/Oscar/Jabber have _HTML set but not IRC. */
+
 typedef void (*proto_init)(struct prpl *);
 
 struct prpl {
 	int protocol;
+	int options;
 	char *(* name)();
 
 	/* returns the XPM associated with the given user class */
