@@ -1037,10 +1037,11 @@ faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
 
 /* These handle the local variables */
-faim_export int aim_ssi_inlist(aim_session_t *sess, aim_conn_t *conn, char *name, fu16_t type);
-faim_export char *aim_ssi_getparentgroup(aim_session_t *sess, aim_conn_t *conn, char *name);
-faim_export int aim_ssi_getpermdeny(aim_session_t *sess, aim_conn_t *conn);
-faim_export fu32_t aim_ssi_getpresence(aim_session_t *sess, aim_conn_t *conn);
+faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, fu16_t gid, fu16_t bid);
+faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, char *gn, char *sn, fu16_t type);
+faim_export struct aim_ssi_item *aim_ssi_itemlist_findparent(struct aim_ssi_item *list, char *sn);
+faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list);
+faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list);
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
 faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
@@ -1052,7 +1053,7 @@ faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type);
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny);
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t permdeny, fu32_t vismask);
 faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence);
 
 struct aim_icq_offlinemsg {

@@ -2785,7 +2785,7 @@ static void oscar_add_buddy(struct gaim_connection *g, char *name) {
 	if (odata->icq) {
 		aim_add_buddy(odata->sess, odata->conn, name);
 	} else {
-		if ((odata->sess->ssi.received_data) && !(aim_ssi_inlist(odata->sess, odata->conn, name, 0x0000))) {
+		if ((odata->sess->ssi.received_data) && !(aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, name, 0x0000))) {
 			debug_printf("ssi: adding buddy %s to group %s\n", name, find_group_by_buddy(g, name)->name);
 			aim_ssi_addbuddies(odata->sess, odata->conn, find_group_by_buddy(g, name)->name, &name, 1);
 		}
@@ -2813,13 +2813,13 @@ static void oscar_add_buddies(struct gaim_connection *g, GList *buddies) {
 			for (curgrp=g->groups; curgrp; curgrp=g_slist_next(curgrp)) {
 				tmp = 0;
 				for (curbud=((struct group*)curgrp->data)->members; curbud; curbud=curbud->next)
-					if (!aim_ssi_inlist(odata->sess, odata->conn, ((struct buddy*)curbud->data)->name, 0x0000))
+					if (!aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000))
 						tmp++;
 				if (tmp) {
 					char **sns = (char **)malloc(tmp*sizeof(char*));
 					tmp = 0;
 					for (curbud=((struct group*)curgrp->data)->members; curbud; curbud=curbud->next)
-						if (!aim_ssi_inlist(odata->sess, odata->conn, ((struct buddy*)curbud->data)->name, 0x0000)) {
+						if (!aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000)) {
 							debug_printf("ssi: adding buddy %s to group %s\n", ((struct buddy*)curbud->data)->name, ((struct group*)curgrp->data)->name);
 							sns[tmp] = (char *)((struct buddy*)curbud->data)->name;
 							tmp++;
@@ -2847,8 +2847,8 @@ static void oscar_remove_buddy(struct gaim_connection *g, char *name, char *grou
 		aim_remove_buddy(odata->sess, odata->conn, name);
 	} else {
 		if (odata->sess->ssi.received_data) {
-			char *ssigroup;
-			while (aim_ssi_inlist(odata->sess, odata->conn, name, 0x0000) && (ssigroup = aim_ssi_getparentgroup(odata->sess, odata->conn, name)) && !aim_ssi_delbuddies(odata->sess, odata->conn, ssigroup, &name, 1))
+			struct aim_ssi_item *ssigroup;
+			while (aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, name, 0x0000) && (ssigroup = aim_ssi_itemlist_findparent(odata->sess->ssi.items, name)) && !aim_ssi_delbuddies(odata->sess, odata->conn, ssigroup->name, &name, 1))
 				debug_printf("ssi: deleted buddy %s from group %s\n", name, group);
 		}
 	}
@@ -2865,14 +2865,14 @@ static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, char
 			GList *cur;
 			int tmp = 0;
 			for (cur=buddies; cur; cur=cur->next)
-				if (aim_ssi_inlist(odata->sess, odata->conn, cur->data, 0x0000))
+				if (aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, cur->data, 0x0000))
 					tmp++;
 			if (tmp) {
 				char **sns;
 				sns = (char **)malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (cur=buddies; cur; cur=cur->next)
-					if (aim_ssi_inlist(odata->sess, odata->conn, cur->data, 0x0000)) {
+					if (aim_ssi_itemlist_finditem(odata->sess->ssi.items, NULL, cur->data, 0x0000)) {
 						debug_printf("ssi: deleting buddy %s from group %s\n", cur->data, group);
 						sns[tmp] = cur->data;
 						tmp++;
@@ -2919,7 +2919,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_ssi_enable(sess, fr->conn);
 
 	/* Clean the buddy list */
-	/* aim_ssi_cleanlist(sess, fr->conn); */
+	aim_ssi_cleanlist(sess, fr->conn);
 
 	/* Add from server list to local list */
 	tmp = 0;
@@ -2972,7 +2972,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0004: /* Permit/deny setting */
 				if (curitem->data) {
 					fu8_t permdeny;
-					if ((permdeny = aim_ssi_getpermdeny(sess, fr->conn)) && (permdeny != gc->permdeny)) {
+					if ((permdeny = aim_ssi_getpermdeny(sess->ssi.items)) && (permdeny != gc->permdeny)) {
 						debug_printf("ssi: changing permdeny from %d to %d\n", gc->permdeny, permdeny);
 						gc->permdeny = permdeny;
 						tmp++;
@@ -2998,13 +2998,13 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			GSList *curbud;
 			tmp = 0;
 			for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
-				if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)curbud->data)->name, 0x0000))
+				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000))
 					tmp++;
 			if (tmp) {
 				sns = (char **)malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
-					if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)curbud->data)->name, 0x0000)) {
+					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000)) {
 						debug_printf("ssi: adding buddy %s from local list to server list\n", ((struct buddy*)curbud->data)->name);
 						sns[tmp] = ((char *)((struct buddy*)curbud->data)->name);
 						tmp++;
@@ -3019,13 +3019,13 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (gc->permit) {
 			tmp = 0;
 			for (cur=gc->permit; cur; cur=cur->next)
-				if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0002))
+				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0002))
 					tmp++;
 			if (tmp) {
 				sns = (char **)malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (cur=gc->permit; cur; cur=cur->next)
-					if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0002)) {
+					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0002)) {
 						debug_printf("ssi: adding permit %s from local list to server list\n", cur->data);
 						sns[tmp] = cur->data;
 						tmp++;
@@ -3039,13 +3039,13 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (gc->deny) {
 			tmp = 0;
 			for (cur=gc->deny; cur; cur=cur->next)
-				if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0003))
+				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0003))
 					tmp++;
 			if (tmp) {
 				sns = (char **)malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (cur=gc->deny; cur; cur=cur->next)
-					if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0003)) {
+					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0003)) {
 						debug_printf("ssi: adding deny %s from local list to server list\n", cur->data);
 						sns[tmp] = cur->data;
 						tmp++;
@@ -3056,10 +3056,23 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 
 		/* Presence settings (idle time visibility) */
-		if ((tmp = aim_ssi_getpresence(sess, fr->conn)) != 0xFFFFFFFF)
+		if ((tmp = aim_ssi_getpresence(sess->ssi.items)) != 0xFFFFFFFF)
 			if (report_idle && !(tmp & 0x400))
 				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
-	}
+
+		/* Check for maximum number of buddies */
+		for (cur=gc->groups, tmp=0; cur; cur=g_slist_next(cur)) {
+			tmp = tmp + g_slist_length(cur->data->members);
+			
+		if (tmp > odata->rights.maxbuddies) {
+			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
+							     "  Until you are below the limit, some buddies will not show up as online."), 
+							   odata->rights.maxbuddies, tmp);
+			do_error_dialog(dialog_msg, _("Gaim - Warning"));
+			g_free(dialog_msg);
+		}
+
+	} /* end if (gc) */
 
 	return 1;
 }
@@ -3520,7 +3533,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		signoff_blocked(gc);
 	} else {
 		if (od->sess->ssi.received_data)
-			aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny);
+			aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny, 0xffffffff);
 	}
 }
 

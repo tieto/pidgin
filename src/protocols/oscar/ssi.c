@@ -5,6 +5,15 @@
  * such as a users buddy list, permit/deny list, and permit/deny preferences, 
  * to be stored on the server, so that they can be accessed from any client.
  *
+ * We keep a copy of the ssi data in sess->ssi, because the data needs to be 
+ * accessed for various reasons.  So all the "aim_ssi_itemlist_bleh" functions 
+ * near the top just manage the local data.
+ *
+ * The SNAC sending and receiving functions are lower down in the file, and 
+ * they're simpler.  They are in the order of the subtypes they deal with, 
+ * starting with the request rights function (subtype 0x0002), then parse 
+ * rights (subtype 0x0003), then--well, you get the idea.
+ *
  * This is entirely too complicated.
  * You don't know the half of it.
  *
@@ -16,63 +25,231 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
-/*
- * Checks if the given screen name is anywhere in our buddy list.
+/**
+ * Locally add a new item to the given item list.
+ *
+ * @param list A pointer to a pointer to the current list of items.
+ * @param parent A pointer to the parent group, or NULL if the item should have no 
+ *        parent group (ie. the group ID# should be 0).
+ * @param name A null terminated string of the name of the new item, or NULL if the 
+ *        item should have no name.
+ * @param type The type of the item, 0x0001 for a contact, 0x0002 for a group, etc.
+ * @return The newly created item.
  */
-faim_export int aim_ssi_inlist(aim_session_t *sess, aim_conn_t *conn, char *name, fu16_t type)
+static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, struct aim_ssi_item *parent, char *name, fu16_t type)
 {
-	struct aim_ssi_item *cur;
-	if (!sess && !conn && !name)
-		return -EINVAL;
-	for (cur=sess->ssi.items; cur; cur=cur->next)
-		if ((cur->type==type) && (cur->name) && (!aim_sncmp(cur->name, name)))
-			return 1;
-	return 0;
-}
+	int i;
+	struct aim_ssi_item *cur, *newitem;
 
-/*
- * Return the parent group of a given buddy.
- */
-faim_export char *aim_ssi_getparentgroup(aim_session_t *sess, aim_conn_t *conn, char *name)
-{
-	fu16_t gid;
-	struct aim_ssi_item *cur;
-	if (!sess && !conn && !name)
+	if (!(newitem = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item))))
 		return NULL;
-	for (cur=sess->ssi.items; cur && (cur->type!=AIM_SSI_TYPE_BUDDY || !cur->name || aim_sncmp(cur->name, name)); cur=cur->next)
-	if (!cur)
-		return NULL;
-	gid = cur->gid;
-	for (cur=sess->ssi.items; cur; cur=cur->next)
-		if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == gid) && (cur->name))
-			return cur->name;
-	return 0;
-}
 
-/*
- * Returns a pointer to an item with the given name and type, or NULL if one does not exist.
- */
-static struct aim_ssi_item *get_ssi_item(struct aim_ssi_item *items, char *name, fu16_t type)
-{
-	struct aim_ssi_item *cur;
+	/* Set the name */
 	if (name) {
-		for (cur=items; cur; cur=cur->next)
-			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, name)))
-				return cur;
-	 } else { /* return the given type with gid 0 */
-		for (cur=items; cur; cur=cur->next)
-			if ((cur->type == type) && (cur->gid == 0x0000))
-				return cur;
+		if (!(newitem->name = (char *)malloc((strlen(name)+1)*sizeof(char)))) {
+			free(newitem);
+			return NULL;
+		}
+		strcpy(newitem->name, name);
+	} else
+		newitem->name = NULL;
+
+	/* Set the group ID# and the buddy ID# */
+	newitem->gid = 0x0000;
+	newitem->bid = 0x0000;
+	if (type == AIM_SSI_TYPE_GROUP) {
+		if (name)
+			do {
+				newitem->gid += 0x0001;
+				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+					if ((cur->gid == newitem->gid) && (cur->gid == newitem->gid))
+						i=1;
+			} while (i);
+	} else {
+		if (parent)
+			newitem->gid = parent->gid;
+		do {
+			newitem->bid += 0x0001;
+			for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+				if ((cur->bid == newitem->bid) && (cur->gid == newitem->gid))
+					i=1;
+		} while (i);
 	}
+
+	/* Set the rest */
+	newitem->type = type;
+	newitem->data = NULL;
+	newitem->next = *list;
+	*list = newitem;
+
+	return newitem;
+}
+
+/**
+ * Locally rebuild the 0x00c8 TLV in the additional data of the given group.
+ *
+ * @param list A pointer to a pointer to the current list of items.
+ * @param parentgroup A pointer to the group who's additional data you want to rebuild.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+static int aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item **list, struct aim_ssi_item *parentgroup)
+{
+	int newlen, i;
+	struct aim_ssi_item *cur;
+
+	/* Free the old additional data */
+	if (parentgroup->data) {
+		aim_freetlvchain((aim_tlvlist_t **)&parentgroup->data);
+		parentgroup->data = NULL;
+	}
+
+	/* Find the length for the new additional data */
+	newlen = 0;
+	if (parentgroup->gid == 0x0000) {
+		for (cur=*list; cur; cur=cur->next)
+			if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP))
+				newlen += 2;
+	} else {
+		for (cur=*list; cur; cur=cur->next)
+			if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
+				newlen += 2;
+	}
+
+	/* Rebuild the additional data */
+	if (newlen>0) {
+		fu8_t *newdata;
+
+		if (!(newdata = (fu8_t *)malloc((newlen)*sizeof(fu8_t))))
+			return -ENOMEM;
+		newlen = 0;
+		if (parentgroup->gid == 0x0000) {
+			for (cur=*list; cur; cur=cur->next)
+				if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP))
+						aimutil_put16(newdata+newlen*2, cur->gid);
+		} else {
+			for (cur=*list; cur; cur=cur->next)
+				if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
+						aimutil_put16(newdata+newlen*2, cur->bid);
+		}
+		aim_addtlvtochain_raw((aim_tlvlist_t **)&(parentgroup->data), 0x00c8, newlen, newdata);
+
+		free(newdata);
+	}
+
+	return 0;
+}
+
+/**
+ * Locally free all of the stored buddy list information.
+ *
+ * @param sess The oscar session.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+static int aim_ssi_freelist(aim_session_t *sess)
+{
+	struct aim_ssi_item *cur, *delitem;
+
+	cur = sess->ssi.items;
+	while (cur) {
+		if (cur->name)  free(cur->name);
+		if (cur->data)  aim_freetlvchain((aim_tlvlist_t **)&cur->data);
+		delitem = cur;
+		cur = cur->next;
+		free(delitem);
+	}
+
+	sess->ssi.items = NULL;
+	sess->ssi.revision = 0;
+	sess->ssi.timestamp = (time_t)0;
+
+	return 0;
+}
+
+/**
+ * Locally find an item given a group ID# and a buddy ID#.
+ *
+ * @param list A pointer to the current list of items.
+ * @param gid The group ID# of the desired item.
+ * @param bid The buddy ID# of the desired item.
+ * @return Return a pointer to the item if found, else return NULL;
+ */
+faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, fu16_t gid, fu16_t bid)
+{
+	struct aim_ssi_item *cur;
+	for (cur=list; cur; cur=cur->next)
+		if ((cur->gid == gid) && (cur->bid == bid))
+			return cur;
 	return NULL;
 }
 
-/*
- * Returns the permit/deny byte
+/**
+ * Locally find an item given a group name, screen name, and type.  If group name 
+ * and screen name are null, then just return the first item of the given type.
+ *
+ * @param list A pointer to the current list of items.
+ * @param gn The group name of the desired item.
+ * @param bn The buddy name of the desired item.
+ * @param type The type of the desired item.
+ * @return Return a pointer to the item if found, else return NULL;
  */
-faim_export int aim_ssi_getpermdeny(aim_session_t *sess, aim_conn_t *conn)
+faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, char *gn, char *sn, fu16_t type)
 {
-	struct aim_ssi_item *cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PDINFO);
+	struct aim_ssi_item *cur;
+	if (!list)
+		return NULL;
+
+	if (gn && sn) { /* For finding buddies in groups */
+		for (cur=list; cur; cur=cur->next)
+			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, sn))) {
+				struct aim_ssi_item *curg;
+				for (curg=list; curg; curg=curg->next)
+					if ((curg->type == AIM_SSI_TYPE_GROUP) && (curg->gid == cur->gid) && (curg->name) && !(aim_sncmp(curg->name, gn)))
+						return cur;
+			}
+
+	} else if (sn) { /* For finding groups, permits, denies, and ignores */
+		for (cur=list; cur; cur=cur->next)
+			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, sn)))
+				return cur;
+
+	/* For stuff without names--permit deny setting, visibility mask, etc. */
+	} else for (cur=list; cur; cur=cur->next) {
+		if (cur->type == type)
+			return cur;
+	}
+
+	return NULL;
+}
+
+/**
+ * Locally find the parent item of the given buddy name.
+ *
+ * @param list A pointer to the current list of items.
+ * @param bn The buddy name of the desired item.
+ * @return Return a pointer to the item if found, else return NULL;
+ */
+faim_export struct aim_ssi_item *aim_ssi_itemlist_findparent(struct aim_ssi_item *list, char *sn)
+{
+	struct aim_ssi_item *cur, *curg;
+	if (!list || !sn)
+		return NULL;
+	if (!(cur = aim_ssi_itemlist_finditem(list, NULL, sn, AIM_SSI_TYPE_BUDDY)))
+		return NULL;
+	for (curg=list; curg; curg=curg->next)
+		if ((curg->type == AIM_SSI_TYPE_GROUP) && (curg->gid == cur->gid))
+			return curg;
+	return NULL;
+}
+
+/**
+ * Locally find the permit/deny setting item, and return the setting.
+ *
+ * @param list A pointer to the current list of items.
+ * @return Return the current SSI permit deny setting, or 0 if no setting was found.
+ */
+faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list)
+{
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PDINFO);
 	if (cur) {
 		aim_tlvlist_t *tlvlist = cur->data;
 		if (tlvlist) {
@@ -81,18 +258,20 @@ faim_export int aim_ssi_getpermdeny(aim_session_t *sess, aim_conn_t *conn)
 				return aimutil_get8(tlv->value);
 		}
 	}
-
 	return 0;
 }
 
-/*
- * Returns the presence flag
- * I'm pretty sure this is a bitmask, but really have no evidence for that.
- * 0x00000400 - Show up as visible to others
+/**
+ * Locally find the presence flag item, and return the setting.  The returned setting is a 
+ * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines 
+ * in aim.h
+ *
+ * @param list A pointer to the current list of items.
+ * @return Return the current visibility mask.
  */
-faim_export fu32_t aim_ssi_getpresence(aim_session_t *sess, aim_conn_t *conn)
+faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
 {
-	struct aim_ssi_item *cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
+	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
 	if (cur) {
 		aim_tlvlist_t *tlvlist = cur->data;
 		if (tlvlist) {
@@ -101,12 +280,18 @@ faim_export fu32_t aim_ssi_getpresence(aim_session_t *sess, aim_conn_t *conn)
 				return aimutil_get32(tlv->value);
 		}
 	}
-
 	return 0xFFFFFFFF;
 }
 
-/*
- * Add the given packet to the holding queue.
+/**
+ * Add the given packet to the holding queue.  We totally need to send SSI SNACs one at 
+ * a time, so we have a local queue where packets get put before they are sent, and 
+ * then we send stuff one at a time, nice and orderly-like.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param fr The newly created SNAC that you want to send.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 static int aim_ssi_enqueue(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
 {
@@ -128,8 +313,14 @@ static int aim_ssi_enqueue(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *f
 	return 0;
 }
 
-/*
- * Send the next SNAC from the holding queue.
+/**
+ * Send the next SNAC from the holding queue.  This is called 
+ * automatically when an ack from an add, mod, or del is received.  
+ * If the queue is empty, it sends the modend SNAC.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 static int aim_ssi_dispatch(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -152,107 +343,13 @@ static int aim_ssi_dispatch(aim_session_t *sess, aim_conn_t *conn)
 	return 0;
 }
 
-/*
- * Rebuild the additional data for the given group(s).
- */
-static int aim_ssi_rebuildgroup(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item *parentgroup)
-{
-	int newlen;
-	struct aim_ssi_item *cur;
-
-	if (!sess || !conn || !parentgroup)
-		return -EINVAL;
-
-	/* Free the old additional data */
-	if (parentgroup->data) {
-		aim_freetlvchain((aim_tlvlist_t **)&parentgroup->data);
-		parentgroup->data = NULL;
-	}
-
-	/* Find the length for the new additional data */
-	newlen = 0;
-	if (parentgroup->gid == 0x0000) {
-		for (cur=sess->ssi.items; cur; cur=cur->next)
-			if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP))
-				newlen += 2;
-	} else {
-		for (cur=sess->ssi.items; cur; cur=cur->next)
-			if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
-				newlen += 2;
-	}
-
-	/* Rebuild the additional data */
-	if (newlen>0) {
-		aim_bstream_t tbs;
-		tbs.len = newlen+4;
-		tbs.offset = 0;
-		if (!(tbs.data = (fu8_t *)malloc((tbs.len)*sizeof(fu8_t))))
-			return -ENOMEM;
-		aimbs_put16(&tbs, 0x00c8);
-		aimbs_put16(&tbs, tbs.len-4);
-		if (parentgroup->gid == 0x0000) {
-			for (cur=sess->ssi.items; cur; cur=cur->next)
-				if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP))
-						aimbs_put16(&tbs, cur->gid);
-		} else {
-			for (cur=sess->ssi.items; cur; cur=cur->next)
-				if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
-					aimbs_put16(&tbs, cur->bid);
-		}
-		tbs.offset = 0;
-		parentgroup->data = (void *)aim_readtlvchain(&tbs);
-		free(tbs.data);
-
-/* XXX - WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY does this crash?
-		fu8_t *newdata;
-		if (!(newdata = (fu8_t *)malloc((newlen)*sizeof(fu8_t))))
-			return -ENOMEM;
-		newlen = 0;
-		if (parentgroup->gid == 0x0000) {
-			for (cur=sess->ssi.items; cur; cur=cur->next)
-				if ((cur->gid != 0x0000) && (cur->type == AIM_SSI_TYPE_GROUP)) {
-						memcpy(&newdata[newlen*2], &cur->gid, 2);
-						newlen += 2;
-				}
-		} else {
-			for (cur=sess->ssi.items; cur; cur=cur->next)
-				if ((cur->gid == parentgroup->gid) && (cur->type == AIM_SSI_TYPE_BUDDY)) {
-						memcpy(&newdata[newlen*2], &cur->bid, 2);
-						newlen += 2;
-				}
-		}
-		aim_addtlvtochain_raw((aim_tlvlist_t **)&parentgroup->data, 0x00c8, newlen, newdata);
-		free(newdata); */
-	}
-
-	return 0;
-}
-
-/*
- * Clears all of our locally stored buddy list information.
- */
-static int aim_ssi_freelist(aim_session_t *sess)
-{
-	struct aim_ssi_item *cur, *delitem;
-
-	cur = sess->ssi.items;
-	while (cur) {
-		if (cur->name)  free(cur->name);
-		if (cur->data)  aim_freetlvchain((aim_tlvlist_t **)&cur->data);
-		delitem = cur;
-		cur = cur->next;
-		free(delitem);
-	}
-
-	sess->ssi.revision = 0;
-	sess->ssi.items = NULL;
-	sess->ssi.timestamp = (time_t)0;
-
-	return 0;
-}
-
-/*
- * This removes all ssi data from server and local copy.
+/**
+ * Send SNACs necessary to remove all SSI data from the server list, 
+ * and then free the local copy as well.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -278,29 +375,34 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 	return 0;
 }
 
-/*
- * This "cleans" the ssi list.  It makes sure all buddies are in a group, and 
- * all groups have additional data for the buddies that are in them.  It does 
- * this by rebuilding the additional data for every group, sending mod SNACs
- * as necessary.
+/**
+ * This "cleans" the ssi list.  It does a few things, with the intent of making 
+ * sure there ain't nothin' wrong with your SSI.
+ *   -Make sure all buddies are in a group, and all groups have the correct 
+ *     additional data.
+ *   -Make sure there are no empty groups in the list.  While there is nothing 
+ *     wrong empty groups in the SSI, it's wiser to not have them.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 {
-	unsigned int num_to_be_fixed;
+	unsigned int i;
 	struct aim_ssi_item *cur, *parentgroup;
 
 	/* Make sure we actually need to clean out the list */
-	for (cur=sess->ssi.items, num_to_be_fixed=0; cur; cur=cur->next) {
+	for (cur=sess->ssi.items, i=0; cur && !i; cur=cur->next)
 		/* Any buddies directly in the master group */
 		if ((cur->type == AIM_SSI_TYPE_BUDDY) && (cur->gid == 0x0000))
-			num_to_be_fixed++;
-	}
-	if (!num_to_be_fixed)
+			i++;
+	if (!i)
 		return 0;
 
-	/* Remove all the additional data from all groups and buddies */
+	/* Remove all the additional data from all groups */
 	for (cur=sess->ssi.items; cur; cur=cur->next)
-		if (cur->data && ((cur->type == AIM_SSI_TYPE_BUDDY) || (cur->type == AIM_SSI_TYPE_GROUP))) {
+		if ((cur->data) && (cur->type == AIM_SSI_TYPE_GROUP)) {
 			aim_freetlvchain((aim_tlvlist_t **)&cur->data);
 			cur->data = NULL;
 		}
@@ -309,7 +411,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 	/* there is a group to put them in.  Any group, any group at all. */
 	for (cur=sess->ssi.items; ((cur) && ((cur->type != AIM_SSI_TYPE_BUDDY) || (cur->gid != 0x0000))); cur=cur->next);
 	if (!cur) {
-		for (parentgroup=sess->ssi.items; ((parentgroup) && ((parentgroup->type!=AIM_SSI_TYPE_GROUP) || (parentgroup->gid!=0x0000))); parentgroup=parentgroup->next);
+		for (parentgroup=sess->ssi.items; ((parentgroup) && (parentgroup->type!=AIM_SSI_TYPE_GROUP) && (parentgroup->gid==0x0000)); parentgroup=parentgroup->next);
 		if (!parentgroup) {
 			char *newgroup;
 			newgroup = (char*)malloc(strlen("Unknown")*sizeof(char));
@@ -332,12 +434,45 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 	/* Rebuild additional data for all groups */
 	for (parentgroup=sess->ssi.items; parentgroup; parentgroup=parentgroup->next)
 		if (parentgroup->type == AIM_SSI_TYPE_GROUP)
-			aim_ssi_rebuildgroup(sess, conn, parentgroup);
+			aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup);
 
 	/* Send a mod snac for all groups */
+	i = 0;
 	for (cur=sess->ssi.items; cur; cur=cur->next)
 		if (cur->type == AIM_SSI_TYPE_GROUP)
-			aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_MOD);
+			i++;
+	if (i > 0) {
+		/* Allocate an array of pointers to each of the groups */
+		struct aim_ssi_item **groups;
+		if (!(groups = (struct aim_ssi_item **)malloc(i*sizeof(struct aim_ssi_item *))))
+			return -ENOMEM;
+
+		for (cur=sess->ssi.items, i=0; cur; cur=cur->next)
+			if (cur->type == AIM_SSI_TYPE_GROUP)
+				groups[i] = cur;
+
+		aim_ssi_addmoddel(sess, conn, groups, i, AIM_CB_SSI_MOD);
+		free(groups);
+	}
+
+	/* Send a del snac for any empty groups */
+	i = 0;
+	for (cur=sess->ssi.items; cur; cur=cur->next)
+		if ((cur->type == AIM_SSI_TYPE_GROUP) && !(cur->data))
+			i++;
+	if (i > 0) {
+		/* Allocate an array of pointers to each of the groups */
+		struct aim_ssi_item **groups;
+		if (!(groups = (struct aim_ssi_item **)malloc(i*sizeof(struct aim_ssi_item *))))
+			return -ENOMEM;
+
+		for (cur=sess->ssi.items, i=0; cur; cur=cur->next)
+			if ((cur->type == AIM_SSI_TYPE_GROUP) && !(cur->data))
+				groups[i] = cur;
+
+		aim_ssi_addmoddel(sess, conn, groups, i, AIM_CB_SSI_DEL);
+		free(groups);
+	}
 
 	/* Begin sending SSI SNACs */
 	aim_ssi_dispatch(sess, conn);
@@ -345,117 +480,88 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 	return 0;
 }
 
-/*
- * The next few functions take data as screen names and groups, 
- * modifies the ssi item list, and calls the functions to 
- * add, mod, or del an item or items.
+/**
+ * Add an array of screen names to the given group.
  *
- * These are what the client should call.  The client should 
- * also make sure it's not adding a buddy that's already in 
- * the list (using aim_ssi_inlist).
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param gn The name of the group to which you want to add these names.
+ * @param sn An array of null terminated strings of the names you want to add.
+ * @param num The number of screen names you are adding (size of the sn array).
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num)
 {
-	struct aim_ssi_item *cur, *parentgroup, **newitems;
-	fu16_t i, j;
+	struct aim_ssi_item *parentgroup, **newitems;
+	fu16_t i;
 
 	if (!sess || !conn || !gn || !sn || !num)
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = get_ssi_item(sess->ssi.items, gn, AIM_SSI_TYPE_GROUP))) {
+	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn, AIM_SSI_TYPE_GROUP))) {
 		aim_ssi_addgroups(sess, conn, &gn, 1);
-		if (!(parentgroup = get_ssi_item(sess->ssi.items, gn, AIM_SSI_TYPE_GROUP)))
+		if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn, AIM_SSI_TYPE_GROUP)))
 			return -ENOMEM;
 	}
 
 	/* Allocate an array of pointers to each of the new items */
 	if (!(newitems = (struct aim_ssi_item **)malloc(num*sizeof(struct aim_ssi_item *))))
 		return -ENOMEM;
-	memset(newitems, 0, num*sizeof(struct aim_ssi_item *));
 
-	/* The following for loop iterates once per item that needs to be added. */
-	/* For each i, create an item and tack it onto the newitems array */
-	for (i=0; i<num; i++) {
-		if (!(newitems[i] = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
+	/* Add items to the local list, and index them in the array */
+	for (i=0; i<num; i++)
+		if (!(newitems[i] = aim_ssi_itemlist_add(&sess->ssi.items, parentgroup, sn[i], AIM_SSI_TYPE_BUDDY))) {
 			free(newitems);
 			return -ENOMEM;
 		}
-		if (!(newitems[i]->name = (char *)malloc((strlen(sn[i])+1)*sizeof(char)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
-			free(newitems[i]);
-			free(newitems);
-			return -ENOMEM;
-		}
-		strcpy(newitems[i]->name, sn[i]);
-		newitems[i]->gid = parentgroup->gid;
-		newitems[i]->bid = i ? newitems[i-1]->bid : 0;
-		do {
-			newitems[i]->bid += 0x0001;
-			for (cur=sess->ssi.items, j=0; ((cur) && (!j)); cur=cur->next)
-				if ((cur->bid == newitems[i]->bid) && (cur->gid == newitems[i]->gid) && (cur->type == AIM_SSI_TYPE_BUDDY))
-					j=1;
-		} while (j);
-		newitems[i]->type = AIM_SSI_TYPE_BUDDY;
-		newitems[i]->data = NULL;
-		newitems[i]->next = i ? newitems[i-1] : NULL;
-	}
-
-	/* Add the items to our list */
-	newitems[0]->next = sess->ssi.items;
-	sess->ssi.items = newitems[num-1];
 
 	/* Send the add item SNAC */
-	aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD);
+	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+		free(newitems);
+		return -i;
+	}
 
 	/* Free the array of pointers to each of the new items */
 	free(newitems);
 
 	/* Rebuild the additional data in the parent group */
-	aim_ssi_rebuildgroup(sess, conn, parentgroup);
+	if (i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup))
+		return i;
 
 	/* Send the mod item SNAC */
-	aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD);
+	if (i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD))
+		return i;
 
 	/* Begin sending SSI SNACs */
-	aim_ssi_dispatch(sess, conn);
+	if (!(i = aim_ssi_dispatch(sess, conn)))
+		return i;
 
 	return 0;
 }
 
-/*
- * This adds the master group (the group containing all groups) if it doesn't exist.
- * It's called by aim_ssi_addgroups, if your list is empty.
+/**
+ * Add the master group (the group containing all groups).  This is called by 
+ * aim_ssi_addgroups, if necessary.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn) {
+faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn)
+{
 	struct aim_ssi_item *newitem;
 
 	if (!sess || !conn)
 		return -EINVAL;
 
-	/* Allocate an array of pointers to each of the new items */
-	if (!(newitem = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item))))
+	/* Add the item to the local list, and keep a pointer to it */
+	if (!(newitem = aim_ssi_itemlist_add(&sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
 		return -ENOMEM;
-	memset(newitem, 0, sizeof(struct aim_ssi_item));
-
-	/* memset to 0 sets most of the vars to what they should be */
-	newitem->type = AIM_SSI_TYPE_GROUP;
-
-	/* Add the item to our list */
-	newitem->next = sess->ssi.items;
-	sess->ssi.items = newitem;
 
 	/* If there are any existing groups (technically there shouldn't be, but */
 	/* just in case) then add their group ID#'s to the additional data */
-	if (sess->ssi.items)
-		aim_ssi_rebuildgroup(sess, conn, newitem);
+	aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, newitem);
 
 	/* Send the add item SNAC */
 	aim_ssi_addmoddel(sess, conn, &newitem, 1, AIM_CB_SSI_ADD);
@@ -466,149 +572,124 @@ faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn) {
 	return 0;
 }
 
+/**
+ * Add an array of groups to the list.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param gn An array of null terminated strings of the names you want to add.
+ * @param num The number of groups names you are adding (size of the sn array).
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num)
 {
-	struct aim_ssi_item *cur, *parentgroup, **newitems;
-	fu16_t i, j;
+	struct aim_ssi_item *parentgroup, **newitems;
+	fu16_t i;
 
 	if (!sess || !conn || !gn || !num)
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_GROUP))) {
+	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP))) {
 		aim_ssi_addmastergroup(sess, conn);
-		if (!(parentgroup = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_GROUP)))
+		if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
 			return -ENOMEM;
 	}
 
 	/* Allocate an array of pointers to each of the new items */
 	if (!(newitems = (struct aim_ssi_item **)malloc(num*sizeof(struct aim_ssi_item *))))
 		return -ENOMEM;
-	memset(newitems, 0, num*sizeof(struct aim_ssi_item *));
 
-	/* The following for loop iterates once per item that needs to be added. */
-	/* For each i, create an item and tack it onto the newitems array */
-	for (i=0; i<num; i++) {
-		if (!(newitems[i] = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
+	/* Add items to the local list, and index them in the array */
+	for (i=0; i<num; i++)
+		if (!(newitems[i] = aim_ssi_itemlist_add(&sess->ssi.items, parentgroup, gn[i], AIM_SSI_TYPE_GROUP))) {
 			free(newitems);
 			return -ENOMEM;
 		}
-		if (!(newitems[i]->name = (char *)malloc((strlen(gn[i])+1)*sizeof(char)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
-			free(newitems[i]);
-			free(newitems);
-			return -ENOMEM;
-		}
-		strcpy(newitems[i]->name, gn[i]);
-		newitems[i]->gid = i ? newitems[i-1]->gid : 0;
-		do {
-			newitems[i]->gid += 0x0001;
-			for (cur=sess->ssi.items, j=0; ((cur) && (!j)); cur=cur->next)
-				if ((cur->gid == newitems[i]->gid) && (cur->type == AIM_SSI_TYPE_GROUP))
-					j=1;
-		} while (j);
-		newitems[i]->bid = 0x0000;
-		newitems[i]->type = AIM_SSI_TYPE_GROUP;
-		newitems[i]->data = NULL;
-		newitems[i]->next = i ? newitems[i-1] : NULL;
-	}
-
-	/* Add the items to our list */
-	newitems[0]->next = sess->ssi.items;
-	sess->ssi.items = newitems[num-1];
 
 	/* Send the add item SNAC */
-	aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD);
+	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+		free(newitems);
+		return -i;
+	}
 
 	/* Free the array of pointers to each of the new items */
 	free(newitems);
 
 	/* Rebuild the additional data in the parent group */
-	aim_ssi_rebuildgroup(sess, conn, parentgroup);
+	if (i = aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup))
+		return i;
 
 	/* Send the mod item SNAC */
-	aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD);
+	if (i = aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD))
+		return i;
 
 	/* Begin sending SSI SNACs */
-	aim_ssi_dispatch(sess, conn);
+	if (!(i = aim_ssi_dispatch(sess, conn)))
+		return i;
 
 	return 0;
 }
 
-/*
- * Add permit or deny buddies to the permit or deny list.
- * The buddies are passed as an array of pointers to char strings.
+/**
+ * Add an array of a certain type of item to the list.  This can be used for 
+ * permit buddies, deny buddies, ICQ's ignore buddies, and probably other 
+ * types, also.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param sn An array of null terminated strings of the names you want to add.
+ * @param num The number of groups names you are adding (size of the sn array).
+ * @param type The type of item you want to add.  See the AIM_SSI_TYPE_BLEH 
+ *        #defines in aim.h.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type)
 {
-	struct aim_ssi_item *cur, **newitems;
-	fu16_t i, j;
+	struct aim_ssi_item **newitems;
+	fu16_t i;
 
-	if (!sess || !conn || !sn || !num || (type!=AIM_SSI_TYPE_PERMIT && type!=AIM_SSI_TYPE_DENY))
+	if (!sess || !conn || !sn || !num)
 		return -EINVAL;
 
 	/* Allocate an array of pointers to each of the new items */
 	if (!(newitems = (struct aim_ssi_item **)malloc(num*sizeof(struct aim_ssi_item *))))
 		return -ENOMEM;
-	memset(newitems, 0, num*sizeof(struct aim_ssi_item *));
 
-	/* The following for loop iterates once per item that needs to be added. */
-	/* For each i, create an item and tack it onto the newitems array */
-	for (i=0; i<num; i++) {
-		if (!(newitems[i] = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
+	/* Add items to the local list, and index them in the array */
+	for (i=0; i<num; i++)
+		if (!(newitems[i] = aim_ssi_itemlist_add(&sess->ssi.items, NULL, sn[i], type))) {
 			free(newitems);
 			return -ENOMEM;
 		}
-		if (!(newitems[i]->name = (char *)malloc((strlen(sn[i])+1)*sizeof(char)))) {
-			for (j=0; j<(i-1); j++) {
-				free(newitems[j]->name);
-				free(newitems[j]);
-			}
-			free(newitems[i]);
-			free(newitems);
-			return -ENOMEM;
-		}
-		strcpy(newitems[i]->name, sn[i]);
-		newitems[i]->gid = 0x0000;
-		newitems[i]->bid = i ? newitems[i-1]->bid : 0x0000;
-		do {
-			newitems[i]->bid += 0x0001;
-			for (cur=sess->ssi.items, j=0; ((cur) && (!j)); cur=cur->next)
-				if ((cur->bid == newitems[i]->bid) && ((cur->type == AIM_SSI_TYPE_PERMIT) || (cur->type == AIM_SSI_TYPE_DENY)))
-					j=1;
-		} while (j);
-		newitems[i]->type = type;
-		newitems[i]->data = NULL;
-		newitems[i]->next = i ? newitems[i-1] : NULL;
-	}
-
-	/* Add the items to our list */
-	newitems[0]->next = sess->ssi.items;
-	sess->ssi.items = newitems[num-1];
 
 	/* Send the add item SNAC */
-	aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD);
+	if (i = aim_ssi_addmoddel(sess, conn, newitems, num, AIM_CB_SSI_ADD)) {
+		free(newitems);
+		return -i;
+	}
 
 	/* Free the array of pointers to each of the new items */
 	free(newitems);
 
 	/* Begin sending SSI SNACs */
-	aim_ssi_dispatch(sess, conn);
+	if (!(i = aim_ssi_dispatch(sess, conn)))
+		return i;
 
 	return 0;
 }
 
+/**
+ * Move a buddy from one group to another group.  This basically just deletes the 
+ * buddy and re-adds it.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param oldgn The group that the buddy is currently in.
+ * @param newgn The group that the buddy should be moved in to.
+ * @param sn The name of the buddy to be moved.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn, char *sn)
 {
 	struct aim_ssi_item **groups, *buddy, *cur;
@@ -618,7 +699,7 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 		return -EINVAL;
 
 	/* Look up the buddy */
-	if (!(buddy = get_ssi_item(sess->ssi.items, sn, AIM_SSI_TYPE_BUDDY)))
+	if (!(buddy = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, sn, AIM_SSI_TYPE_BUDDY)))
 		return -ENOMEM;
 
 	/* Allocate an array of pointers to the two groups */
@@ -626,13 +707,13 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 		return -ENOMEM;
 
 	/* Look up the old parent group */
-	if (!(groups[0] = get_ssi_item(sess->ssi.items, oldgn, AIM_SSI_TYPE_GROUP))) {
+	if (!(groups[0] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, oldgn, AIM_SSI_TYPE_GROUP))) {
 		free(groups);
 		return -ENOMEM;
 	}
 
 	/* Look up the new parent group */
-	if (!(groups[1] = get_ssi_item(sess->ssi.items, newgn, AIM_SSI_TYPE_GROUP))) {
+	if (!(groups[1] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, newgn, AIM_SSI_TYPE_GROUP))) {
 		free(groups);
 		return -ENOMEM;
 	}
@@ -653,8 +734,8 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 	} while (i);
 
 	/* Rebuild the additional data in the two parent groups */
-	aim_ssi_rebuildgroup(sess, conn, groups[0]);
-	aim_ssi_rebuildgroup(sess, conn, groups[1]);
+	aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, groups[0]);
+	aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, groups[1]);
 
 	/* Send the add item SNAC */
 	aim_ssi_addmoddel(sess, conn, &buddy, 1, AIM_CB_SSI_ADD);
@@ -671,6 +752,16 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 	return 0;
 }
 
+/**
+ * Delete an array of screen names from the given group.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param gn The name of the group from which you want to delete these names.
+ * @param sn An array of null terminated strings of the names you want to delete.
+ * @param num The number of screen names you are deleting (size of the sn array).
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num)
 {
 	struct aim_ssi_item *cur, *parentgroup, **delitems;
@@ -680,7 +771,7 @@ faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = get_ssi_item(sess->ssi.items, gn, AIM_SSI_TYPE_GROUP)))
+	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn, AIM_SSI_TYPE_GROUP)))
 		return -EINVAL;
 
 	/* Allocate an array of pointers to each of the items to be deleted */
@@ -689,7 +780,7 @@ faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 
 	/* Make the delitems array a pointer to the aim_ssi_item structs to be deleted */
 	for (i=0; i<num; i++) {
-		if (!(delitems[i] = get_ssi_item(sess->ssi.items, sn[i], AIM_SSI_TYPE_BUDDY))) {
+		if (!(delitems[i] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, sn[i], AIM_SSI_TYPE_BUDDY))) {
 			free(delitems);
 			return -EINVAL;
 		}
@@ -718,7 +809,7 @@ faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 	free(delitems);
 
 	/* Rebuild the additional data in the parent group */
-	aim_ssi_rebuildgroup(sess, conn, parentgroup);
+	aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup);
 
 	/* Send the mod item SNAC */
 	aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD);
@@ -733,14 +824,23 @@ faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *
 	return 0;
 }
 
-faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn) {
+/**
+ * Delete the master group from the item list.  There can be only one.
+ * Er, so just find the one master group and delete it.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn)
+{
 	struct aim_ssi_item *cur, *delitem;
 
 	if (!sess || !conn)
 		return -EINVAL;
 
 	/* Make delitem a pointer to the aim_ssi_item to be deleted */
-	if (!(delitem = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_GROUP)))
+	if (!(delitem = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
 		return -EINVAL;
 
 	/* Remove delitem from the item list */
@@ -768,6 +868,15 @@ faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn) {
 	return 0;
 }
 
+/**
+ * Delete an array of groups.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param gn An array of null terminated strings of the groups you want to delete.
+ * @param num The number of groups you are deleting (size of the gn array).
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num) {
 	struct aim_ssi_item *cur, *parentgroup, **delitems;
 	int i;
@@ -776,7 +885,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_GROUP)))
+	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
 		return -EINVAL;
 
 	/* Allocate an array of pointers to each of the items to be deleted */
@@ -785,7 +894,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 
 	/* Make the delitems array a pointer to the aim_ssi_item structs to be deleted */
 	for (i=0; i<num; i++) {
-		if (!(delitems[i] = get_ssi_item(sess->ssi.items, gn[i], AIM_SSI_TYPE_GROUP))) {
+		if (!(delitems[i] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, gn[i], AIM_SSI_TYPE_GROUP))) {
 			free(delitems);
 			return -EINVAL;
 		}
@@ -814,7 +923,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 	free(delitems);
 
 	/* Rebuild the additional data in the parent group */
-	aim_ssi_rebuildgroup(sess, conn, parentgroup);
+	aim_ssi_itemlist_rebuildgroup(&sess->ssi.items, parentgroup);
 
 	/* Send the mod item SNAC */
 	aim_ssi_addmoddel(sess, conn, &parentgroup, 1, AIM_CB_SSI_MOD);
@@ -829,6 +938,17 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 	return 0;
 }
 
+/**
+ * Delete an array of a certain type of item from the list.  This can be 
+ * used for permit buddies, deny buddies, ICQ's ignore buddies, and 
+ * probably other types, also.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param sn An array of null terminated strings of the items you want to delete.
+ * @param num The number of items you are deleting (size of the sn array).
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
 faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type) {
 	struct aim_ssi_item *cur, **delitems;
 	int i;
@@ -842,7 +962,7 @@ faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn
 
 	/* Make the delitems array a pointer to the aim_ssi_item structs to be deleted */
 	for (i=0; i<num; i++) {
-		if (!(delitems[i] = get_ssi_item(sess->ssi.items, sn[i], type))) {
+		if (!(delitems[i] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, sn[i], type))) {
 			free(delitems);
 			return -EINVAL;
 		}
@@ -876,17 +996,22 @@ faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn
 	return 0;
 }
 
-/*
+/**
  * Stores your permit/deny setting on the server, and starts using it.
- * The permit/deny byte should be:
- * 	1 - Allow all users
- * 	2 - Block all users
- * 	3 - Allow only the users below
- * 	4 - Block the users below
- * 	5 - Allow only users on my buddy list
- * To block AIM users, change the x00cb tlv from xffff to x0004
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param permdeny Your permit/deny setting.  Can be one of the following:
+ *        1 - Allow all users
+ *        2 - Block all users
+ *        3 - Allow only the users below
+ *        4 - Block only the users below
+ *        5 - Allow only users on my buddy list
+ * @param vismask A bitmask of the class of users to whom you want to be 
+ *        visible.  See the AIM_FLAG_BLEH #defines in aim.h
+ * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny) {
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t permdeny, fu32_t vismask) {
 	struct aim_ssi_item *cur, *tmp;
 	fu16_t j;
 	aim_tlv_t *tlv;
@@ -895,7 +1020,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 		return -EINVAL;
 
 	/* Look up the permit/deny settings item */
-	cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PDINFO);
+	cur = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_PDINFO);
 
 	if (cur) {
 		/* The permit/deny item exists */
@@ -912,31 +1037,27 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 			aim_addtlvtochain8((aim_tlvlist_t**)&cur->data, 0x00ca, permdeny);
 		}
 
+		if (cur->data && (tlv = aim_gettlv(cur->data, 0x00cb, 1))) {
+			/* Just change the value of the x00cb TLV */
+			if (tlv->length != 4) {
+				tlv->length = 4;
+				free(tlv->value);
+				tlv->value = (fu8_t *)malloc(4*sizeof(fu8_t));
+			}
+			aimutil_put32(tlv->value, vismask);
+		} else {
+			/* Need to add the x00cb TLV to the TLV chain */
+			aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00cb, vismask);
+		}
+
 		/* Send the mod item SNAC */
 		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_MOD);
 	} else {
 		/* Need to add the permit/deny item */
-		if (!(cur = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item))))
+		if (!(cur = aim_ssi_itemlist_add(&sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_PDINFO)))
 			return -ENOMEM;
-		cur->name = NULL;
-		cur->gid = 0x0000;
-		cur->bid = 0x007a; /* XXX - Is this number significant? */
-		do {
-			cur->bid += 0x0001;
-			for (tmp=sess->ssi.items, j=0; ((tmp) && (!j)); tmp=tmp->next)
-				if (tmp->bid == cur->bid)
-					j=1;
-		} while (j);
-		cur->type = AIM_SSI_TYPE_PDINFO;
-		cur->data = NULL;
 		aim_addtlvtochain8((aim_tlvlist_t**)&cur->data, 0x00ca, permdeny);
-		aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00cb, 0xffffffff);
-
-		/* Add the item to our list */
-		cur->next = sess->ssi.items;
-		sess->ssi.items = cur;
-
-		/* Send the add item SNAC */
+		aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00cb, vismask);
 		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_ADD);
 	}
 
@@ -946,10 +1067,14 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int p
 	return 0;
 }
 
-/*
+/**
  * Stores your setting for whether you should show up as idle or not.
- * presence is a bitmask (at least, I think so...)
- * 0x00000400 if you want others to see your idle time
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param presence I think it's a bitmask, but I only know what one of the bits is:
+ *        0x00000400 - Allow others to see your idle time
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_t presence) {
 	struct aim_ssi_item *cur, *tmp;
@@ -960,7 +1085,7 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 		return -EINVAL;
 
 	/* Look up the item */
-	cur = get_ssi_item(sess->ssi.items, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
+	cur = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
 
 	if (cur) {
 		/* The item exists */
@@ -981,26 +1106,9 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_MOD);
 	} else {
 		/* Need to add the item */
-		if (!(cur = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item))))
+		if (!(cur = aim_ssi_itemlist_add(&sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS)))
 			return -ENOMEM;
-		cur->name = NULL;
-		cur->gid = 0x0000;
-		cur->bid = 0x007a; /* XXX - Is this number significant? */
-		do {
-			cur->bid += 0x0001;
-			for (tmp=sess->ssi.items, j=0; ((tmp) && (!j)); tmp=tmp->next)
-				if (tmp->bid == cur->bid)
-					j=1;
-		} while (j);
-		cur->type = AIM_SSI_TYPE_PRESENCEPREFS;
-		cur->data = NULL;
 		aim_addtlvtochain32((aim_tlvlist_t**)&cur->data, 0x00c9, presence);
-
-		/* Add the item to our list */
-		cur->next = sess->ssi.items;
-		sess->ssi.items = cur;
-
-		/* Send the add item SNAC */
 		aim_ssi_addmoddel(sess, conn, &cur, 1, AIM_CB_SSI_ADD);
 	}
 
@@ -1074,6 +1182,14 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	fu8_t fmtver; /* guess */
 	fu16_t revision;
 	fu32_t timestamp;
+
+	/* When you set the version for the SSI family to 2-4, the beginning of this changes.
+	 * Instead of the version and then the revision, there is "0x0006" and then a type 
+	 * 0x0001 TLV containing the 2 byte SSI family version that you sent earlier.  Also, 
+	 * the SNAC flags go from 0x0000 to 0x8000.  I guess the 0x0006 is the length of the 
+	 * TLV(s) that follow.  The rights SNAC does the same thing, with the differing flag 
+	 * and everything.
+	 */
 
 	fmtver = aimbs_get8(bs); /* Version of ssi data.  Should be 0x00 */
 	revision = aimbs_get16(bs); /* # of times ssi data has been modified */
