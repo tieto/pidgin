@@ -37,6 +37,64 @@ static GHashTable *notification_msg_types = NULL;
 G_MODULE_IMPORT GSList *connections;
 
 /**************************************************************************
+ * Utility functions
+ **************************************************************************/
+static gboolean
+__add_buddy(MsnServConn *servconn, MsnUser *user)
+{
+	MsnSession *session = servconn->session;
+	struct gaim_connection *gc = session->account->gc;
+	struct buddy *b;
+
+	b = gaim_find_buddy(gc->account, msn_user_get_passport(user));
+
+	if (b == NULL) {
+		struct group *g = NULL;
+		const char *group_name = NULL;
+		int group_id;
+
+		group_id = msn_user_get_group_id(user);
+
+		if (group_id > -1) {
+			group_name = g_hash_table_lookup(session->group_names,
+											 &group_id);
+		}
+
+		if (group_name == NULL) {
+			gaim_debug(GAIM_DEBUG_WARNING, "msn",
+					   "Group ID %d for user %s was not defined.\n",
+					   group_id, msn_user_get_passport(user));
+		}
+		else if ((g = gaim_find_group(group_name)) == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Group '%s' appears in server-side "
+					   "buddy list, but not here!",
+					   group_name);
+		}
+
+		if (g == NULL) {
+			if ((g = gaim_find_group(_("Buddies"))) == NULL) {
+				g = gaim_group_new(_("Buddies"));
+				gaim_blist_add_group(g, NULL);
+			}
+		}
+
+		b = gaim_buddy_new(gc->account,
+						   msn_user_get_passport(user), NULL);
+
+		gaim_blist_add_buddy(b, g, NULL);
+	}
+
+	b->proto_data = user;
+
+	serv_got_alias(gc, (char *)msn_user_get_passport(user),
+				   (char *)msn_user_get_name(user));
+
+	return TRUE;
+}
+
+
+/**************************************************************************
  * Callbacks
  **************************************************************************/
 static void
@@ -344,6 +402,7 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
+	MsnUser *user;
 	struct gaim_connection *gc = session->account->gc;
 	MsnPermitAdd *pa;
 	GSList *sl;
@@ -356,7 +415,14 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	friend = msn_url_decode(params[4]);
 
-	if (g_ascii_strcasecmp(list, "RL"))
+	if (!g_ascii_strcasecmp(list, "FL")) {
+		user = msn_user_new(session, passport, friend);
+
+		__add_buddy(servconn, user);
+
+		return TRUE;
+	}
+	else if (g_ascii_strcasecmp(list, "RL"))
 		return TRUE;
 
 	for (sl = gc->account->permit; sl != NULL; sl = sl->next) {
@@ -364,9 +430,11 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 			return TRUE;
 	}
 
-	pa = g_new0(MsnPermitAdd, 1);
-	pa->user = msn_user_new(session, passport, friend);
-	pa->gc = gc;
+	user = msn_user_new(session, passport, friend);
+
+	pa       = g_new0(MsnPermitAdd, 1);
+	pa->user = user;
+	pa->gc   = gc;
 
 	g_snprintf(msg, sizeof(msg),
 			   _("The user %s (%s) wants to add %s to his or her buddy list."),
@@ -684,54 +752,11 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		while (session->lists.forward != NULL) {
 			MsnUser *user = session->lists.forward->data;
-			struct buddy *b;
-
-			b = gaim_find_buddy(gc->account, msn_user_get_passport(user));
 
 			session->lists.forward = g_slist_remove(session->lists.forward,
 													user);
 
-			if (b == NULL) {
-				struct group *g = NULL;
-				const char *group_name = NULL;
-				int group_id;
-
-				group_id = msn_user_get_group_id(user);
-
-				if (group_id > -1) {
-					group_name = g_hash_table_lookup(session->group_names,
-													 &group_id);
-				}
-
-				if (group_name == NULL) {
-					gaim_debug(GAIM_DEBUG_WARNING, "msn",
-							   "Group ID %d for user %s was not defined.\n",
-							   group_id, passport);
-				}
-				else if ((g = gaim_find_group(group_name)) == NULL) {
-					gaim_debug(GAIM_DEBUG_ERROR, "msn",
-							   "Group '%s' appears in server-side "
-							   "buddy list, but not here!",
-							   group_name);
-				}
-
-				if (g == NULL) {
-					if ((g = gaim_find_group(_("Buddies"))) == NULL) {
-						g = gaim_group_new(_("Buddies"));
-						gaim_blist_add_group(g, NULL);
-					}
-				}
-
-				b = gaim_buddy_new(gc->account,
-								   msn_user_get_passport(user), NULL);
-
-				gaim_blist_add_buddy(b, g, NULL);
-			}
-
-			b->proto_data = user;
-
-			serv_got_alias(gc, (char *)msn_user_get_passport(user),
-						   (char *)msn_user_get_name(user));
+			__add_buddy(servconn, user);
 		}
 
 		session->syncing_lists = FALSE;
