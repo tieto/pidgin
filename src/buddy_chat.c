@@ -1110,6 +1110,9 @@ void show_new_buddy_chat(struct conversation *b)
 void chat_set_topic(struct conversation *b, char* who, char* topic)
 {
 	gtk_entry_set_text(GTK_ENTRY(b->topic_text), topic);
+	if (b->topic)
+		g_free(b->topic);
+	b->topic = g_strdup(topic);
 }
 
 
@@ -1125,6 +1128,8 @@ void delete_chat(struct conversation *b)
 		b->ignored = g_list_remove(b->ignored, b->ignored->data);
 	}
 	g_string_free(b->history, TRUE);
+	if (b->topic)
+		g_free(b->topic);
 	g_free(b);
 }
 
@@ -1219,12 +1224,14 @@ void update_im_button_pix()
 
 void chat_tabize()
 {
+	int pos = 0;
 	/* evil, evil i tell you! evil! */
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		GList *x = chats;
 		while (x) {
 			struct conversation *c = x->data;
 			GtkWidget *imhtml, *win;
+			GList *r = c->in_room;
 
 			imhtml = c->text;
 			win = c->window;
@@ -1236,6 +1243,38 @@ void chat_tabize()
 					GTK_SIGNAL_FUNC(close_callback), c);
 			gtk_widget_destroy(win);
 
+			if (c->topic)
+				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
+
+			while (r) {
+				char *name = r->data;
+				GtkWidget *list_item;
+				GList *ignored = c->ignored;
+				char tmp[BUF_LONG];
+
+				while (ignored) {
+					if (!g_strcasecmp(name, ignored->data))
+						break;
+					ignored = ignored->next;
+				}
+
+				if (ignored) {
+					g_snprintf(tmp, sizeof(tmp), "X %s", name);
+					list_item = gtk_list_item_new_with_label(tmp);
+				} else
+					list_item = gtk_list_item_new_with_label(name);
+
+				gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+						   GTK_SIGNAL_FUNC(right_click_chat), c);
+				gtk_list_insert_items(GTK_LIST(c->list),
+						g_list_append(NULL, list_item), pos);
+				gtk_widget_show(list_item);
+
+				r = r->next;
+				pos++;
+			}
+
 			x = x->next;
 		}
 	} else {
@@ -1245,12 +1284,45 @@ void chat_tabize()
 		while (x) {
 			struct conversation *c = x->data;
 			GtkWidget *imhtml;
+			GList *r = c->in_room;
 
 			imhtml = c->text;
 			show_new_buddy_chat(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
+
+			if (c->topic)
+				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
+
+			while (r) {
+				char *name = r->data;
+				GtkWidget *list_item;
+				GList *ignored = c->ignored;
+				char tmp[BUF_LONG];
+
+				while (ignored) {
+					if (!g_strcasecmp(name, ignored->data))
+						break;
+					ignored = ignored->next;
+				}
+
+				if (ignored) {
+					g_snprintf(tmp, sizeof(tmp), "X %s", name);
+					list_item = gtk_list_item_new_with_label(tmp);
+				} else
+					list_item = gtk_list_item_new_with_label(name);
+
+				gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+						   GTK_SIGNAL_FUNC(right_click_chat), c);
+				gtk_list_insert_items(GTK_LIST(c->list),
+						g_list_append(NULL, list_item), pos);
+				gtk_widget_show(list_item);
+
+				r = r->next;
+				pos++;
+			}
 
 			x = x->next;
 		}

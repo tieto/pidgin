@@ -393,6 +393,7 @@ struct conversation {
 	/* stuff used just for chat */
         GList *in_room;
         GList *ignored;
+	char *topic;
         int id;
 	GtkWidget *count;
 	GtkWidget *list;
