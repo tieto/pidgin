@@ -883,7 +883,7 @@ void Jabber_init(struct prpl *ret)
 
 char *gaim_plugin_init(GModule *handle)
 {
-	load_protocol(Jabber_init);
+	load_protocol(Jabber_init, sizeof(struct prpl));
 	return NULL;
 }
 

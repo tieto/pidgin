@@ -55,10 +55,19 @@ static gint proto_compare(struct prpl *a, struct prpl *b)
 	return a->protocol - b->protocol;
 }
 
-void load_protocol(proto_init pi)
+void load_protocol(proto_init pi, int size)
 {
-	struct prpl *p = g_new0(struct prpl, 1);
+	struct prpl *p;
 	struct prpl *old;
+	if (size != sizeof(struct prpl)) {
+		do_error_dialog(_("You have attempted to load a protocol which was not compiled"
+				" from the same version of the source as this application was."
+				" Unfortunately, because it is not the same version I cannot"
+				" safely tell you which one it was. Needless to say, it was not"
+				" successfully loaded."), _("Protocol Error"));
+		return;
+	}
+	p = g_new0(struct prpl, 1);
 	pi(p);
 	if ((old = find_prpl(p->protocol)) == NULL)
 		unload_protocol(old);
@@ -90,8 +99,8 @@ void unload_protocol(struct prpl *p)
 
 void static_proto_init()
 {
-	load_protocol(toc_init);
-	load_protocol(oscar_init);
+	load_protocol(toc_init, sizeof(struct prpl));
+	load_protocol(oscar_init, sizeof(struct prpl));
 }
 
 static void des_win(GtkWidget *a, GtkWidget *b)

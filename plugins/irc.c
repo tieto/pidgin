@@ -1131,7 +1131,7 @@ static void irc_init(struct prpl *ret)
 
 char *gaim_plugin_init(GModule * handle)
 {
-	load_protocol(irc_init);
+	load_protocol(irc_init, sizeof(struct prpl));
 	return NULL;
 }
 

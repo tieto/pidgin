@@ -519,7 +519,7 @@ void Yahoo_init(struct prpl *ret) {
 }
 
 char *gaim_plugin_init(GModule *handle) {
-	load_protocol(Yahoo_init);
+	load_protocol(Yahoo_init, sizeof(struct prpl));
 	return NULL;
 }
 

@@ -883,7 +883,7 @@ void msn_init(struct prpl *ret)
 
 char *gaim_plugin_init(GModule * handle)
 {
-	load_protocol(msn_init);
+	load_protocol(msn_init, sizeof(struct prpl));
 	return NULL;
 }
 

@@ -481,7 +481,7 @@ static void icq_init(struct prpl *ret) {
 }
 
 char *gaim_plugin_init(GModule *handle) {
-	load_protocol(icq_init);
+	load_protocol(icq_init, sizeof(struct prpl));
 	return NULL;
 }
 
