@@ -70,6 +70,21 @@ struct chat_connection *find_oscar_chat(char *name) {
 	return c;
 }
 
+static struct chat_connection *find_oscar_chat_by_conn(struct aim_conn_t *conn) {
+	GList *g = oscar_chats;
+	struct chat_connection *c = NULL;
+
+	while (g) {
+		c = (struct chat_connection *)g->data;
+		if (c->conn == conn)
+			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
+
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_login      (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -133,10 +148,17 @@ static void oscar_callback(gpointer data, gint source,
 					hide_login_progress(_("Disconnected."));
 					auth_failed();
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
-					/* FIXME: we got disconnected from a chat room, but
-					 * libfaim won't tell us which room */
-					debug_print("connection error for chat...\n");
+					struct chat_connection *c = find_oscar_chat_by_conn(conn);
+					char buf[BUF_LONG];
+					sprintf(debug_buff, "disconnected from chat room %s\n", c->name);
+					debug_print(debug_buff);
+					c->conn = NULL;
+					gdk_input_remove(c->inpa);
+					c->inpa = -1;
+					c->fd = -1;
 					aim_conn_kill(gaim_sess, &conn);
+					sprintf(buf, _("You have been disconnected from chat room %s."), c->name);
+					do_error_dialog(buf, _("Chat Error!"));
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					gdk_input_remove(cnpa);
 					cnpa = -1;
