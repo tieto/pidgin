@@ -440,7 +440,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",      /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
