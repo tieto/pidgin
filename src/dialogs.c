@@ -1747,8 +1747,12 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 
 void cancel_color(GtkWidget *widget, GtkWidget *color)
 {
-	if (color)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(color), FALSE);		
+ 	if (color)
+        {
+        	set_state_lock(1);
+        	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(color), FALSE);
+        	set_state_lock(0);
+	}
 	destroy_dialog(NULL, colordialog);
 }
 
