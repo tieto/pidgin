@@ -13,7 +13,7 @@ Author=Penguin Pimps
 smile.png			:) :-)
 sad.png				:( :-(
 wink.png			;) ;-)
-tongue.png			:-P :-p
+tongue.png			:-P
 scream.png			=-O =-o
 kiss.png			:-*
 yell.png			>:o	>:O
@@ -23,8 +23,8 @@ burp.png			:-!
 embarrassed.png		:-[
 cry.png				:'(
 think.png			:-/	:-\
-crossedlips.png		:-X	:-x
-bigsmile.png		:-D	:-d
+crossedlips.png		:-X
+bigsmile.png		:-D
 angel.png			O:-)
 
 [MSN]
@@ -45,7 +45,7 @@ msn_clock.png		(o)	(O)
 msn_coffee.png		(C)	(c)
 msn_coins.png		(mo)
 msn_computer.png	(co)
-msn_cry.gif			:'(	:`(
+msn_cry.gif			:'(
 msn_deadflower.png	(W)	(w)
 msn_devil.png		(6)
 msn_dog.png			(&)
@@ -74,7 +74,7 @@ msn_nerd.png		8-|
 msn_neutral.png		:-|	:|
 msn_note.png		(8)
 msn_ooooh.png		:-O	:O	:-o	:o
-msn_party.gif		<:o)	<:O)
+msn_party.gif		<:o)
 msn_phone.png		(T)	(t)
 msn_photo.png		(P)	(p)
 msn_pizza.png		(pi)
@@ -85,10 +85,10 @@ msn_rainbow.png		(r)	(R)
 msn_run.png			({)
 msn_runback.png		(})
 msn_sad.png			:-(	:(	:-<
-msn_sarcastic.png	^o)	^O)
+msn_sarcastic.png	^o)
 msn_secret.png		:-*
 msn_sheep.png		(bah)
-msn_sick.png		+o(	+O(
+msn_sick.png		+o(
 msn_sleep.png		(S)
 msn_sleepy.gif		|-)
 msn_smiley.png		:-)	:)
@@ -97,7 +97,7 @@ msn_soccer.png		(so)
 msn_star.png		(*)
 msn_stormy.png		(st)
 msn_sun.png			(#)
-msn_teeth.png		8o|	8O|
+msn_teeth.png		8o|
 msn_think.gif		*-)
 msn_thumbdown.png	(N)	(n)
 msn_thumbup.png		(Y)	(y)
@@ -105,25 +105,25 @@ msn_tongue.png		:-P	:P	:-p	:p
 msn_turtle.png		(tu)
 msn_umbrella.png	(um)
 msn_weird.png		:-S	:-s	:s	:S
-msn_wink.gif		;)	;-)	:S-
+msn_wink.gif		;)	;-)
 msn_xbox.png		(xx)
 
 [Yahoo]
-yahoo_angel.gif		o:) o:-) O:-) O:) 0:-)
+yahoo_angel.gif		o:-) O:-) 0:-)
 yahoo_angry.gif		X-( x-( X( x(
 yahoo_batting.gif	;;)
 yahoo_bigsmile.gif	:D :-D
 yahoo_blush.gif		:">
 yahoo_bye.gif		=;
 yahoo_clap.gif		=D>
-yahoo_clown.gif		:o) :O) <@:) :0))
+yahoo_clown.gif		:o) :O) :0)
 yahoo_cry.gif		:(( :-((
 yahoo_devil.gif		>:)
-yahoo_doh.gif		#-o #-O #O #o
+yahoo_doh.gif		#-o #-O
 yahoo_drool.gif		=P~
 yahoo_eyebrow.gif	/:) /:-)
-yahoo_eyeroll.gif	8-| 8|
-yahoo_glasses.gif	:B :-B
+yahoo_eyeroll.gif	8-|
+yahoo_glasses.gif	:-B
 yahoo_kiss.gif		:* :-*
 yahoo_laughloud.gif	:)) :-))
 yahoo_love.gif		:x :-x :X :-X
@@ -132,37 +132,37 @@ yahoo_neutral.gif	:| :-|
 yahoo_ooooh.gif		:O :-O
 yahoo_question.gif	:-\ :-/
 yahoo_sad.gif		:( :-(
-yahoo_shhhh.gif		:-$ :$
-yahoo_sick.gif		:-& :&
-yahoo_silent.gif	[-( [(
-yahoo_silly.gif		8-} 8}
-yahoo_sleep.gif		I-) |-) I-|
+yahoo_shhhh.gif		:-$
+yahoo_sick.gif		:-&
+yahoo_silent.gif	[-(
+yahoo_silly.gif		8-}
+yahoo_sleep.gif		I-) |-)
 yahoo_smiley.gif	:-) :) (: (-:
 yahoo_sunglas.gif	B-)
 yahoo_tired.gif		(:|
-yahoo_think.gif		:-? :?
+yahoo_think.gif		:-?
 yahoo_tongue.gif	:-p :-P :p :P
 yahoo_wink.gif		;-) ;)
-yahoo_worried.gif	:-s :-S :s :S
+yahoo_worried.gif	:-s :-S
 
 # These are like supposed to be hidden.  I'm not hiding them
 yahoo_alien.gif		=:) =:-)
-yahoo_alien2.gif	>-) >)
-yahoo_beatup.gif	b-( b(
+yahoo_alien2.gif	>-)
+yahoo_beatup.gif	b-(
 yahoo_chicken.gif	~:>
 yahoo_coffee.gif	~o)
-yahoo_cow.gif		3:-0 3:-O 3:-o 3:O
+yahoo_cow.gif		3:-0 3:-O 3:-o
 yahoo_cowboy.gif	<):)
 yahoo_dance.gif		\:D/
 yahoo_flower.gif	@};-
-yahoo_frustrated.gif	:-L :L
+yahoo_frustrated.gif	:-L
 yahoo_ghost.gif		8-X
 yahoo_huggs.gif		>:D<
 yahoo_hypnotized.gif	@-)
 yahoo_idea.gif		*-:)
 yahoo_liar.gif		:^o
 yahoo_monkey.gif	:(|)
-yahoo_moneyeyes.gif	$-) $)
+yahoo_moneyeyes.gif	$-)
 yahoo_peace.gif		:)>-
 yahoo_pig.gif		:@)
 yahoo_pray.gif		[-o<
