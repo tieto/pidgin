@@ -149,7 +149,7 @@ int gaim_prefs_get_int(const char *name);
  * @param name The name of the pref
  * @return The value of the pref
  */
-char *gaim_prefs_get_string(const char *name);
+const char *gaim_prefs_get_string(const char *name);
 
 /**
  * Add a callback to a pref (and its children)
@@ -165,7 +165,7 @@ void gaim_prefs_disconnect_callback(guint callback_id);
 /**
  * Read preferences
  */
-void gaim_prefs_load();
+gboolean gaim_prefs_load();
 
 /**
  * Force an immediate write of preferences

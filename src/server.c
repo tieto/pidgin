@@ -208,8 +208,10 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message,
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
 
-	if (gc->away && away_options & OPT_AWAY_DELAY_IN_USE &&
-			!(away_options & OPT_AWAY_NO_AUTO_RESP)) {
+	if (gc->away &&
+		!gaim_prefs_get_bool("/core/away/auto_response/in_active_conv") &&
+		gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
+
 		time_t t;
 		struct queued_away_response *qar;
 		time(&t);
@@ -856,7 +858,8 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		 * this to be queued properly, we have to make sure that the
 		 * imaway dialog actually exists, first.
 		 */
-		if (!cnv && awayqueue && (away_options & OPT_AWAY_QUEUE)) {
+		if (!cnv && awayqueue &&
+			gaim_prefs_get_bool("/core/away/queue_messages")) {
 			/* 
 			 * Alright, so we're going to queue it. Neat, eh? :)
 			 * So first we create something to store the message, and add
@@ -923,8 +926,10 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		 *    is set
 		 */
 		if (!(gc->flags & OPT_CONN_AUTO_RESP) ||
-			(away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away) ||
-			((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
+			!gaim_prefs_get_bool("/core/away/auto_response/enabled") ||
+			*gc->away == '\0' ||
+			(!gc->is_idle &&
+			 gaim_prefs_get_bool("/core/away/auto_response/idle_only"))) {
 
 			g_free(name);
 			g_free(message);
@@ -957,8 +962,11 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, IM_FLAG_AWAY);
-		if (!cnv && awayqueue && (away_options & OPT_AWAY_QUEUE)) {
+		if (!cnv && awayqueue &&
+			gaim_prefs_get_bool("/core/away/queue_messages")) {
+
 			struct queued_message *qm;
+
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_strdup(away_subs(tmpmsg, alias));
@@ -979,6 +987,8 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		 * earlier), then play a sound indicating we've received it and
 		 * then display it. Easy.
 		 */
+#if 0
+		/* XXX This is never TRUE, since nothing sets OPT_AWAY_QUEUE_UNREAD */
 		if (away_options & OPT_AWAY_QUEUE_UNREAD &&
 			!gaim_find_conversation(name) && docklet_count) {
 
@@ -995,16 +1005,18 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 			qm->flags = away | WFLAG_RECV;
 			qm->len = len;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
-		} else {
+		}
+		else {
+#endif
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
-
-			/* CONV XXX gaim_conversation_set_name(cnv, name); */
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
 						  away | WFLAG_RECV, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
+#if 0
 		}
+#endif
 	}
 
 	gaim_event_broadcast(event_im_displayed_rcvd, gc, name, message, flags, mtime);
@@ -1073,12 +1085,17 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	if (loggedin) {
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
 			struct gaim_conversation *c = gaim_find_conversation(b->name);
-			if (c && (im_options & OPT_IM_LOGON)) {
-				char *tmp = g_strdup_printf(_("%s logged in."), gaim_get_buddy_alias(b));
+			if (c != NULL &&
+				gaim_prefs_get_bool("/core/conversations/im/show_login")) {
+
+				char *tmp = g_strdup_printf(_("%s logged in."),
+											gaim_get_buddy_alias(b));
+
 				gaim_conversation_write(c, NULL, tmp, -1,
 							WFLAG_SYSTEM, time(NULL));
 				g_free(tmp);
-			} else if (awayqueue && find_queue_total_by_name(b->name)) {
+			}
+			else if (awayqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 				qm->message = g_strdup_printf(_("%s logged in."),
@@ -1096,8 +1113,11 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	} else {
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
 			struct gaim_conversation *c = gaim_find_conversation(b->name);
-			if (c && (im_options & OPT_IM_LOGON)) {
-				char *tmp = g_strdup_printf(_("%s logged out."), gaim_get_buddy_alias(b));
+			if (c != NULL &&
+				gaim_prefs_get_bool("/core/conversations/im/show_login")) {
+
+				char *tmp = g_strdup_printf(_("%s logged out."),
+											gaim_get_buddy_alias(b));
 				gaim_conversation_write(c, NULL, tmp, -1,
 							WFLAG_SYSTEM, time(NULL));
 				g_free(tmp);
@@ -1258,7 +1278,8 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 
 	gaim_chat_set_id(chat, id);
 
-	if ((logging_options & OPT_LOG_CHATS) ||
+	/* TODO Move this to UI logging code! */
+	if (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") ||
 		find_log_info(gaim_conversation_get_name(b))) {
 
 		FILE *fd;
@@ -1270,7 +1291,7 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 		fd = open_log_file(filename, TRUE);
 		
 		if (fd) {
-			if (!(logging_options & OPT_LOG_STRIP_HTML))
+			if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 				fprintf(fd,
 					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
 					full_date());

@@ -57,6 +57,12 @@ struct buddy;
 #include "notify.h"
 #include "request.h"
 
+/* XXX Temporary! */
+#define OPT_LOG_BUDDY_SIGNON    0x00000004
+#define OPT_LOG_BUDDY_IDLE		0x00000008
+#define OPT_LOG_BUDDY_AWAY		0x00000010
+#define OPT_LOG_MY_SIGNON		0x00000020
+
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1
 

@@ -884,8 +884,9 @@ int main(int argc, char *argv[])
 
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
-	gaim_prefs_load();
-	load_prefs();
+
+	if (!gaim_prefs_load())
+		load_prefs();
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();

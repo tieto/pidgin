@@ -52,18 +52,124 @@
 #define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")
 #define MAX_VALUES 10
 
+#define OPT_FONT_BOLD			0x00000001
+#define OPT_FONT_ITALIC			0x00000002
+#define OPT_FONT_UNDERLINE		0x00000008
+#define OPT_FONT_STRIKE			0x00000010
+#define OPT_FONT_FACE			0x00000020
+#define OPT_FONT_FGCOL			0x00000040
+#define OPT_FONT_BGCOL			0x00000080
+#define OPT_FONT_SIZE			0x00000100
+
+#define OPT_MISC_DEBUG			0x00000001
+#define OPT_MISC_BROWSER_POPUP		0x00000002
+#define OPT_MISC_BUDDY_TICKER		0x00000004
+#define OPT_MISC_STEALTH_TYPING		0x00000010
+#define OPT_MISC_USE_SERVER_ALIAS	0x00000020
+
+#define OPT_LOG_CONVOS			0x00000001
+#define OPT_LOG_STRIP_HTML		0x00000002
+#define OPT_LOG_INDIVIDUAL		0x00000040
+#define OPT_LOG_CHATS			0x00000100
+
+#define OPT_BLIST_APP_BUDDY_SHOW	0x00000001
+#define OPT_BLIST_SAVED_WINDOWS		0x00000002
+#define OPT_BLIST_NEAR_APPLET		0x00000004
+#define OPT_BLIST_SHOW_GRPNUM		0x00000008
+#define OPT_BLIST_SHOW_PIXMAPS		0x00000010
+#define OPT_BLIST_SHOW_IDLETIME		0x00000020
+#define OPT_BLIST_SHOW_BUTTON_XPM	0x00000040
+#define OPT_BLIST_NO_BUTTON_TEXT	0x00000080
+#define OPT_BLIST_NO_MT_GRP		0x00000100
+#define OPT_BLIST_SHOW_WARN		0x00000200
+#define OPT_BLIST_GREY_IDLERS		0x00000400
+/* define OPT_BLIST_TOMBSTONE		0x00000800 */
+#define OPT_BLIST_POPUP                 0x00001000
+#define OPT_BLIST_SHOW_ICONS            0x00002000 
+#define OPT_BLIST_SHOW_OFFLINE          0x00004000
+
+#define OPT_CONVO_ENTER_SENDS		0x00000001
+#define OPT_CONVO_SEND_LINKS		0x00000002
+#define OPT_CONVO_CHECK_SPELLING	0x00000004
+#define OPT_CONVO_CTL_CHARS		0x00000008
+#define OPT_CONVO_CTL_SMILEYS		0x00000010
+#define OPT_CONVO_ESC_CAN_CLOSE		0x00000020
+#define OPT_CONVO_CTL_ENTER		0x00000040
+#define OPT_CONVO_F2_TOGGLES		0x00000080
+#define OPT_CONVO_SHOW_TIME		0x00000100
+#define OPT_CONVO_IGNORE_COLOUR		0x00000200
+#define OPT_CONVO_SHOW_SMILEY		0x00000400
+#define OPT_CONVO_IGNORE_FONTS		0x00000800
+#define OPT_CONVO_IGNORE_SIZES		0x00001000
+#define OPT_CONVO_COMBINE		0x00002000
+#define OPT_CONVO_CTL_W_CLOSES          0x00004000
+#define OPT_CONVO_NO_X_ON_TAB		0x00008000
+
+#define OPT_IM_POPUP			0x00000001
+#define OPT_IM_LOGON			0x00000002
+#define OPT_IM_BUTTON_TEXT		0x00000004
+#define OPT_IM_BUTTON_XPM		0x00000008
+#define OPT_IM_ONE_WINDOW		0x00000010
+#define OPT_IM_SIDE_TAB			0x00000020
+#define OPT_IM_BR_TAB			0x00000040
+#define OPT_IM_HIDE_ICONS		0x00000080
+#define OPT_IM_NO_ANIMATION		0x00000100
+#define OPT_IM_ALIAS_TAB		0x00002000
+#define OPT_IM_POPDOWN			0x00004000
+
+#define OPT_CHAT_ONE_WINDOW		0x00000001
+#define OPT_CHAT_BUTTON_TEXT		0x00000002
+#define OPT_CHAT_BUTTON_XPM		0x00000004
+#define OPT_CHAT_LOGON			0x00000008
+#define OPT_CHAT_POPUP			0x00000010
+#define OPT_CHAT_SIDE_TAB		0x00000020
+#define OPT_CHAT_BR_TAB			0x00000040
+#define OPT_CHAT_TAB_COMPLETE		0x00000080
+#define OPT_CHAT_OLD_STYLE_TAB		0x00000100
+#define OPT_CHAT_COLORIZE               0x00000200
+
+#define OPT_SOUND_LOGIN			0x00000001
+#define OPT_SOUND_LOGOUT		0x00000002
+#define OPT_SOUND_RECV			0x00000004
+#define OPT_SOUND_SEND			0x00000008
+#define OPT_SOUND_FIRST_RCV		0x00000010
+#define OPT_SOUND_WHEN_AWAY		0x00000020
+#define OPT_SOUND_SILENT_SIGNON		0x00000040
+#define OPT_SOUND_THROUGH_GNOME		0x00000080
+#define OPT_SOUND_CHAT_JOIN		0x00000100
+#define OPT_SOUND_CHAT_SAY		0x00000200
+#define OPT_SOUND_BEEP			0x00000400
+#define OPT_SOUND_CHAT_PART		0x00000800
+#define OPT_SOUND_CHAT_YOU_SAY		0x00001000
+#define OPT_SOUND_NORMAL		0x00002000
+#define OPT_SOUND_NAS			0x00004000
+#define OPT_SOUND_ARTS			0x00008000
+#define OPT_SOUND_ESD			0x00010000
+#define OPT_SOUND_CMD			0x00020000
+#define OPT_SOUND_CHAT_NICK             0x00040000
+
+#define OPT_AWAY_BACK_ON_IM		0x00000002
+/* #define OPT_AWAY_TOMBSTONE		0x00000004 */
+#define OPT_AWAY_AUTO			0x00000008
+#define OPT_AWAY_NO_AUTO_RESP		0x00000010
+#define OPT_AWAY_QUEUE			0x00000020
+#define OPT_AWAY_IDLE_RESP		0x00000040
+#define OPT_AWAY_QUEUE_UNREAD           0x00000080
+#define OPT_AWAY_DELAY_IN_USE		0x00000100
+
+
 GSList *gaim_accounts = NULL;
-guint misc_options;
-guint logging_options;
-guint blist_options;
-guint convo_options;
-guint im_options;
-guint conv_placement_option;
-guint chat_options;
-guint font_options;
-guint sound_options;
-guint away_options;
-guint away_resend;
+static guint misc_options;
+static guint logging_options;
+static guint blist_options;
+static guint convo_options;
+static guint im_options;
+static guint conv_placement_option;
+static guint chat_options;
+static guint font_options;
+static guint sound_options;
+static guint away_options;
+static guint away_resend;
 static guint is_loading_prefs = 0;
 static guint request_save_prefs = 0;
 static guint is_saving_prefs = 0;
@@ -78,6 +184,9 @@ int web_browser;
 struct save_pos blist_pos;
 struct window_size conv_size, buddy_chat_size;
 char web_command[2048] = "";
+
+static GdkColor fgcolor;
+static GdkColor bgcolor;
 
 struct parse {
 	char option[256];
@@ -923,6 +1032,10 @@ static void gaimrc_read_options(FILE *f)
 			convo_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "im_options")) {
 			im_options = atoi(p->value[0]);
+
+			gaim_prefs_set_bool("/gaim/gtk/conversations/hide_im_on_send",
+								(im_options & OPT_IM_POPDOWN));
+
 		} else if (!strcmp(p->option, "conv_placement")) {
 			conv_placement_option = atoi(p->value[0]);
 			gaim_conv_placement_set_active(conv_placement_option);
@@ -930,6 +1043,24 @@ static void gaimrc_read_options(FILE *f)
 			chat_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "font_options")) {
 			font_options = atoi(p->value[0]);
+
+			gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold",
+								(font_options & OPT_FONT_BOLD));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic",
+								(font_options & OPT_FONT_ITALIC));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline",
+								(font_options & OPT_FONT_UNDERLINE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/send_strikethrough",
+								(font_options & OPT_FONT_STRIKE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_font",
+								(font_options & OPT_FONT_FACE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_size",
+								(font_options & OPT_FONT_SIZE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_fgcolor",
+								(font_options & OPT_FONT_FGCOL));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_bgcolor",
+								(font_options & OPT_FONT_BGCOL));
+
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
 			gaim_sound_change_output_method();
@@ -937,17 +1068,30 @@ static void gaimrc_read_options(FILE *f)
 			away_options = atoi(p->value[0]);
 			away_resend = atoi(p->value[1]);
 		} else if (!strcmp(p->option, "font_face")) {
-			g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
+			gaim_prefs_set_string("/gaim/gtk/conversations/font_face",
+								  p->value[0]);
 		} else if (!strcmp(p->option, "font_size")) {
-			fontsize = atoi(p->value[0]);
+			gaim_prefs_set_int("/gaim/gtk/conversations/font_size", atoi(p->value[0]));
 		} else if (!strcmp(p->option, "foreground")) {
+			char buf[8];
 			fgcolor.red = atoi(p->value[0]);
 			fgcolor.green = atoi(p->value[1]);
 			fgcolor.blue = atoi(p->value[2]);
+
+			g_snprintf(buf, sizeof(buf), "#%2x%2x%2x",
+					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
+			gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", buf);
+
 		} else if (!strcmp(p->option, "background")) {
+			char buf[8];
 			bgcolor.red = atoi(p->value[0]);
 			bgcolor.green = atoi(p->value[1]);
 			bgcolor.blue = atoi(p->value[2]);
+
+			g_snprintf(buf, sizeof(buf), "#%2x%2x%2x",
+					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
+			gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);
+
 		} else if (!strcmp(p->option, "report_idle")) {
 			report_idle = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "web_browser")) {
@@ -1054,8 +1198,8 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tfont_options { %u }\n", font_options);
 	fprintf(f, "\tsound_options { %u }\n", sound_options);
 	fprintf(f, "\taway_options { %u } { %u }\n", away_options, away_resend);
-	fprintf(f, "\tfont_face { %s }\n", fontface);
-	fprintf(f, "\tfont_size { %d }\n", fontsize);
+	fprintf(f, "\tfont_face { %s }\n", gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+	fprintf(f, "\tfont_size { %d }\n", gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
 	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
 	fprintf(f, "\tbackground { %d } { %d } { %d }\n", bgcolor.red, bgcolor.green, bgcolor.blue);
 	fprintf(f, "\treport_idle { %d }\n", report_idle);

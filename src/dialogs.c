@@ -50,15 +50,13 @@
 #include "prpl.h"
 #include "gtkblist.h"
 #include "notify.h"
+#include "prefs.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
 #define PATHSIZE 1024
-
-GdkColor bgcolor;
-GdkColor fgcolor;
 
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
@@ -2343,12 +2341,15 @@ void g_show_info_text(struct gaim_connection *gc, const char *who, int away, con
 		gtk_widget_show_all(b->window);
 	}
 
-	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
 		options ^= GTK_IMHTML_NO_COLOURS;
-	if (convo_options & OPT_CONVO_IGNORE_FONTS)
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
 		options ^= GTK_IMHTML_NO_FONTS;
-	if (convo_options & OPT_CONVO_IGNORE_SIZES)
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
 		options ^= GTK_IMHTML_NO_SIZES;
+
 	options ^= GTK_IMHTML_NO_COMMENTS;
 	options ^= GTK_IMHTML_NO_TITLE;
 	options ^= GTK_IMHTML_NO_NEWLINE;
@@ -3022,8 +3023,12 @@ void show_fgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 {
 	struct gaim_gtk_conversation *gtkconv;
 	GtkWidget *colorsel;
+	GdkColor fgcolor;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
+
+	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+					&fgcolor);
 
 	if (color == NULL) {	/* we came from the prefs */
 		if (fgcseld)
@@ -3070,8 +3075,12 @@ void show_bgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 {
 	struct gaim_gtk_conversation *gtkconv;
 	GtkWidget *colorsel;
+	GdkColor bgcolor;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
+
+	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+					&bgcolor);
 
 	if (color == NULL) {	/* we came from the prefs */
 		if (bgcseld)
@@ -3143,21 +3152,31 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	struct gaim_conversation *c = g_object_get_data(G_OBJECT(fontsel),
 			"gaim_conversation");
 
+	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
+
 	if (c) {
-		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
 		while(fontname[i] && !isdigit(fontname[i])) {
 			i++;
 		}
 		fontname[i] = 0;
 		gaim_gtk_set_font_face(GAIM_GTK_CONVERSATION(c), fontname);
 	} else {
+		char *c;
+
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-		while(fontface[i] && !isdigit(fontname[i]) && i < sizeof(fontface)) { 
-			fontface[i] = fontname[i];
-			i++;
+
+		for (c = fontname; *c != '\0'; c++) {
+			if (isdigit(*c)) {
+				*(--c) = '\0';
+				break;
+			}
 		}
-		fontface[i] = 0;
+
+		/* Try this. */
+		gaim_prefs_set_string("/gaim/gtk/conversations/font_face", fontname);
 	}
+
+	g_free(fontname);
 
 	cancel_font(NULL, c);
 }
@@ -3172,14 +3191,19 @@ void show_font_dialog(struct gaim_conversation *c, GtkWidget *font)
 {
 	struct gaim_gtk_conversation *gtkconv;
 	char fonttif[128];
+	const char *fontface;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (!font) {		/* we came from the prefs dialog */
 		if (fontseld)
 			return;
+
 		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
-		if (fontface[0]) {
+
+		fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
+
+		if (fontface != NULL && *fontface != '\0') {
 			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontface);
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
 								fonttif);
@@ -4063,11 +4087,14 @@ void show_log(char *nm)
 	long offset = 0;
 
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
-	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
 		options ^= GTK_IMHTML_NO_COLOURS;
-	if (convo_options & OPT_CONVO_IGNORE_FONTS)
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
 		options ^= GTK_IMHTML_NO_FONTS;
-	if (convo_options & OPT_CONVO_IGNORE_SIZES)
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
 		options ^= GTK_IMHTML_NO_SIZES;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -4415,7 +4442,7 @@ GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *icon)
 
 GtkWidget *
 gaim_pixbuf_button_from_stock(const char *text, const char *icon,
-							  GaimButtonStyle style)
+							  GaimButtonOrientation style)
 {
 	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox;
 	button = gtk_button_new();
@@ -4451,7 +4478,7 @@ gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 	return button;
 }
 
-GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonStyle style)
+GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonOrientation style)
 {
 	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox;
 	button = gtk_button_new();

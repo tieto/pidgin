@@ -372,9 +372,6 @@ common_send(struct gaim_conversation *conv, const char *message)
 					else
 						gaim_im_write(im, NULL, buffy, -1, WFLAG_SEND,
 									  time(NULL));
-
-					if (im_options & OPT_IM_POPDOWN)
-						gaim_window_hide(gaim_conversation_get_window(conv));
 				}
 
 				if (binary)
@@ -384,12 +381,8 @@ common_send(struct gaim_conversation *conv, const char *message)
 				err = serv_send_im(gc, (char *)gaim_conversation_get_name(conv),
 								   buffy, -1, imflags);
 
-				if (err > 0) {
+				if (err > 0)
 					gaim_im_write(im, NULL, buf, -1, WFLAG_SEND, time(NULL));
-
-					if (im_options & OPT_IM_POPDOWN)
-						gaim_window_hide(gaim_conversation_get_window(conv));
-				}
 			}
 
 			g_free(buffy);
@@ -417,7 +410,9 @@ common_send(struct gaim_conversation *conv, const char *message)
 		}
 	}
 	else {
-		if (err > 0 && (away_options & OPT_AWAY_BACK_ON_IM)) {
+		if (err > 0 &&
+			gaim_prefs_get_bool("/core/conversations/away_back_on_send")) {
+
 			if (awaymessage != NULL) {
 				do_im_back();
 			}
@@ -893,7 +888,7 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 		ims = g_list_append(ims, conv);
 
 		gaim_conversation_set_logging(conv,
-									  (logging_options & OPT_LOG_CONVOS));
+				gaim_prefs_get_bool("/gaim/gtk/logging/log_conversations"));
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
@@ -902,7 +897,8 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 
 		chats = g_list_append(chats, conv);
 
-		gaim_conversation_set_logging(conv, (logging_options & OPT_LOG_CHATS));
+		gaim_conversation_set_logging(conv,
+				gaim_prefs_get_bool("/gaim/gtk/logging/log_chats"));
 	}
 
 	conversations = g_list_append(conversations, conv);
@@ -915,8 +911,8 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 	 * created window.
 	 */
 	if (windows == NULL ||
-		(type == GAIM_CONV_IM && !(im_options & OPT_IM_ONE_WINDOW)) ||
-		(type == GAIM_CONV_CHAT && !(chat_options & OPT_CHAT_ONE_WINDOW))) {
+		!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+
 		struct gaim_window *win;
 
 		win = gaim_window_new();
@@ -960,7 +956,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-			if (!(misc_options & OPT_MISC_STEALTH_TYPING))
+			if (gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 				serv_send_typing(gc, (char *)name, NOT_TYPING);
 
 			if (gc && prpl_info->convo_closed != NULL)
@@ -1179,7 +1175,7 @@ gaim_conversation_autoset_title(struct gaim_conversation *conv)
 	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (((im_options & OPT_IM_ALIAS_TAB) == OPT_IM_ALIAS_TAB) &&
+	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title") &&
 		account != NULL && ((b = gaim_find_buddy(account, name)) != NULL)) {
 
 		text = gaim_get_buddy_alias(b);
@@ -1490,15 +1486,6 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 
 	win = gaim_conversation_get_window(conv);
 
-	if (!(flags & WFLAG_NOLOG) &&
-		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-		  (chat_options & OPT_CHAT_POPUP)) ||
-		 (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-		  ((im_options & OPT_IM_POPUP) || (im_options & OPT_IM_POPDOWN))))) {
-
-		gaim_window_show(win);
-	}
-
 	/* Tab highlighting */
 	if (!(flags & WFLAG_RECV) && !(flags & WFLAG_SYSTEM))
 		return;
@@ -1701,9 +1688,6 @@ gaim_im_write(struct gaim_im *im, const char *who, const char *message,
 	c = gaim_im_get_conversation(im);
 
 	/* Raise the window, if specified in prefs. */
-	if (!(flags & WFLAG_NOLOG) & (im_options & OPT_IM_POPUP))
-		gaim_window_raise(gaim_conversation_get_window(c));
-
 	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
 		c->ui_ops->write_im(c, who, message, len, flags, mtime);
 	else
@@ -1907,10 +1891,6 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 	if (gaim_chat_is_user_ignored(chat, who))
 		return;
 
-	/* Raise the window, if specified in prefs. */
-	if (!(flags & WFLAG_NOLOG) & (chat_options & OPT_CHAT_POPUP))
-		gaim_window_raise(gaim_conversation_get_window(conv));
-
 	if (!(flags & WFLAG_WHISPER)) {
 		char *str;
 
@@ -1972,7 +1952,7 @@ gaim_chat_add_user(struct gaim_chat *chat, const char *user,
 	if (ops != NULL && ops->chat_add_user != NULL)
 		ops->chat_add_user(conv, user);
 
-	if (chat_options & OPT_CHAT_LOGON) {
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_join")) {
 		if (extra_msg == NULL)
 			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
 		else
@@ -2024,7 +2004,7 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 	else if (gaim_chat_is_user_ignored(chat, new_user))
 		gaim_chat_unignore(chat, new_user);
 
-	if (chat_options & OPT_CHAT_LOGON) {
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change")) {
 		g_snprintf(tmp, sizeof(tmp),
 				   _("%s is now known as %s"), old_user, new_user);
 
@@ -2066,7 +2046,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
-	if (chat_options & OPT_CHAT_LOGON) {
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_leave")) {
 		if (reason != NULL && *reason != '\0')
 			g_snprintf(tmp, sizeof(tmp),
 					   _("%s left the room (%s)."), user, reason);
@@ -2103,7 +2083,7 @@ conv_placement_last_created_win(struct gaim_conversation *conv)
 {
 	struct gaim_window *win;
 
-	if (convo_options & OPT_CONVO_COMBINE)
+	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
 		win = g_list_last(gaim_get_windows())->data;
 	else
 		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
@@ -2223,15 +2203,17 @@ conv_placement_by_account(struct gaim_conversation *conv)
 
 			conv2 = (struct gaim_conversation *)convs->data;
 
-			if (((convo_options & OPT_CONVO_COMBINE) ||
-						type == gaim_conversation_get_type(conv2)) &&
-					account == gaim_conversation_get_account(conv2)) {
+			if ((gaim_prefs_get_bool("/core/conversations/combine_chat_im") ||
+				 type == gaim_conversation_get_type(conv2)) &&
+				account == gaim_conversation_get_account(conv2)) {
+
 				gaim_window_add_conversation(win2, conv);
 				return;
 			}
 
 		}
 	}
+
 	/* Make a new window. */
 	conv_placement_new_window(conv);
 }

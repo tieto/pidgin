@@ -97,8 +97,55 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/core");
 
 	/* XXX: this is where you would want to put prefs declarations */
+
+	/* Away */
+	gaim_prefs_add_none("/core/away");
+	gaim_prefs_add_bool("/core/away/queue_messages", FALSE);
+	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);
+
+	/* Away -> Auto Response */
+	gaim_prefs_add_none("/core/away/auto_response");
+	gaim_prefs_add_bool("/core/away/auto_response/enabled", TRUE);
+	gaim_prefs_add_bool("/core/away/auto_response/in_active_conv", TRUE);
+	gaim_prefs_add_bool("/core/away/auto_response/idle_only", FALSE);
+
+	/* Buddies */
+	gaim_prefs_add_none("/core/buddies");
+	gaim_prefs_add_bool("/core/buddies/use_server_alias", TRUE);
+
+	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
 	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
+	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
+	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
+	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
+
+	/* Conversations -> Chat */
+	gaim_prefs_add_none("/core/conversations/chat");
+	gaim_prefs_add_bool("/core/conversations/chat/show_join", TRUE);
+	gaim_prefs_add_bool("/core/conversations/chat/show_leave", TRUE);
+	gaim_prefs_add_bool("/core/conversations/chat/show_nick_change", TRUE);
+
+	/* Conversations -> IM */
+	gaim_prefs_add_none("/core/conversations/im");
+	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
+	gaim_prefs_add_bool("/core/conversations/im/show_logoff", TRUE);
+	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
+
+	/* Proxy */
+	gaim_prefs_add_none("/core/proxy");
+	gaim_prefs_add_int("/core/proxy/type");
+
+	/* Sound */
+	gaim_prefs_add_none("/core/sound");
+	gaim_prefs_add_bool("/core/sound/command", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_arts", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_beep", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_custom", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_esd", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_nas", TRUE);
+	gaim_prefs_add_bool("/core/sound/use_sys_default", TRUE);
+	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 }
 
 static char *pref_full_name(struct gaim_pref *pref) {
@@ -370,7 +417,7 @@ int gaim_prefs_get_int(const char *name) {
 	return pref->value.integer;
 }
 
-char *gaim_prefs_get_string(const char *name) {
+const char *gaim_prefs_get_string(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
 	g_return_val_if_fail(pref != NULL, NULL);
@@ -596,7 +643,7 @@ static GMarkupParser prefs_parser = {
 	NULL
 };
 
-void gaim_prefs_load() {
+gboolean gaim_prefs_load() {
 	gchar *filename = g_build_filename(gaim_user_dir(), "prefs.xml", NULL);
 	gchar *contents = NULL;
 	gsize length;
@@ -606,7 +653,7 @@ void gaim_prefs_load() {
 
 	if(!filename) {
 		prefs_is_loaded = TRUE;
-		return;
+		return FALSE;
 	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Reading %s\n", filename);
@@ -616,7 +663,7 @@ void gaim_prefs_load() {
 				error->message);
 		g_error_free(error);
 		prefs_is_loaded = TRUE;
-		return;
+		return FALSE;
 	}
 
 	context = g_markup_parse_context_new(&prefs_parser, 0, NULL, NULL);
@@ -625,7 +672,7 @@ void gaim_prefs_load() {
 		g_markup_parse_context_free(context);
 		g_free(contents);
 		prefs_is_loaded = TRUE;
-		return;
+		return FALSE;
 	}
 
 	if(!g_markup_parse_context_end_parse(context, NULL)) {
@@ -633,7 +680,7 @@ void gaim_prefs_load() {
 		g_markup_parse_context_free(context);
 		g_free(contents);
 		prefs_is_loaded = TRUE;
-		return;
+		return FALSE;
 	}
 
 	g_markup_parse_context_free(context);
@@ -642,6 +689,7 @@ void gaim_prefs_load() {
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Finished reading %s\n", filename);
 	g_free(filename);
 	prefs_is_loaded = TRUE;
-}
 
+	return TRUE;
+}
 

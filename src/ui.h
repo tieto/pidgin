@@ -86,9 +86,19 @@
 #define GAIM_WARNING 2
 #define GAIM_INFO 3
 
-typedef enum {
-		GAIM_BUTTON_HORIZONTAL,
-		GAIM_BUTTON_VERTICAL
+typedef enum
+{
+	GAIM_BUTTON_HORIZONTAL,
+	GAIM_BUTTON_VERTICAL
+
+} GaimButtonOrientation;
+
+typedef enum
+{
+	GAIM_BUTTON_TEXT,
+	GAIM_BUTTON_IMAGE,
+	GAIM_BUTTON_TEXT_IMAGE
+
 } GaimButtonStyle;
 
 /* XXX CUI: save_pos and window_size are used by gaimrc.c which is core.
@@ -164,11 +174,7 @@ extern GtkWidget *awayqueue;
 extern GtkListStore *awayqueuestore;
 
 /* Globals in dialog.c */
-extern char fontface[128];
 extern char fontxfld[256];
-extern int fontsize;
-extern GdkColor bgcolor;
-extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
 extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
@@ -281,8 +287,8 @@ extern void set_color_selection(GtkWidget *selection, GdkColor color);
 extern void show_rename_group(GtkWidget *, struct group *);
 extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern void load_perl_script();
-extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonStyle);
-extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonStyle);
+extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
+extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();

@@ -33,6 +33,7 @@
 #include "gtkimhtml.h"
 #include "gtkblist.h"
 #include "plugin.h"
+#include "prefs.h"
 
 GtkWidget *imaway = NULL;
 
@@ -160,7 +161,7 @@ void toggle_away_queue()
 	if (!awayqueue || !awayqueuesw)
 		return;
 
-	if (away_options & OPT_AWAY_QUEUE) {
+	if (gaim_prefs_get_bool("/core/away/queue_messages")) {
 		gtk_widget_show(awayqueue);
 		gtk_widget_show(awayqueuesw);
 	} else {
@@ -273,7 +274,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		g_signal_connect(G_OBJECT(awayqueue), "button_press_event", G_CALLBACK(dequeue_cb), NULL);
 
 
-		if (away_options & OPT_AWAY_QUEUE) {
+		if (gaim_prefs_get_bool("/core/away/queue_messages")) {
 			gtk_widget_show(awayqueuesw);
 			gtk_widget_show(awayqueue);
 		}

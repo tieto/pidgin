@@ -37,6 +37,7 @@
 #include "prpl.h"
 #include "blist.h"
 #include "notify.h"
+#include "prefs.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -698,13 +699,19 @@ void  gaim_blist_remove_group (struct group *group)
 }
 
 char *gaim_get_buddy_alias_only(struct buddy *b) {
-        if(!b)
-                return NULL;
-        if(b->alias && b->alias[0])
-                return b->alias;
-        else if((misc_options & OPT_MISC_USE_SERVER_ALIAS) && b->server_alias)
-                return b->server_alias;
-        return NULL;
+	if(!b)
+		return NULL;
+
+	if(b->alias && b->alias[0]) {
+		return b->alias;
+	}
+	else if (b->server_alias != NULL &&
+			 gaim_prefs_get_bool("/core/buddies/use_server_alias")) {
+
+		return b->server_alias;
+	}
+
+	return NULL;
 }
 
 char *  gaim_get_buddy_alias (struct buddy *buddy)

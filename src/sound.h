@@ -119,7 +119,7 @@ char *gaim_sound_get_event_file(GaimSoundEventID event);
  * @param event The event.
  * @return The option.
  */
-guint gaim_sound_get_event_option(GaimSoundEventID event);
+const char *gaim_sound_get_event_option(GaimSoundEventID event);
 
 /**
  * Get the label for an event.

@@ -50,6 +50,7 @@
 #include "gaim.h"
 #include "sound.h"
 #include "notify.h"
+#include "prefs.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -57,7 +58,7 @@
 
 struct gaim_sound_event {
 	char *label;
-	guint opt;
+	char *pref;
 	char *def;
 };
 
@@ -76,18 +77,18 @@ static char *sound_cmd = NULL;
  * the order here has to match the defines in gaim.h.      *
  *                                               -Robot101 */
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
-	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "arrive.wav"},
-	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "leave.wav"},
-	{N_("Message received"), OPT_SOUND_RECV, "receive.wav"},
-	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "receive.wav"},
-	{N_("Message sent"), OPT_SOUND_SEND, "send.wav"},
-	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "arrive.wav"},
-	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "leave.wav"},
-	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "send.wav"},
-	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "receive.wav"},
+	{N_("Buddy logs in"), "/gaim/gtk/sound/login", "arrive.wav"},
+	{N_("Buddy logs out"), "/gaim/gtk/sound/logout", "leave.wav"},
+	{N_("Message received"), "/gaim/gtk/sound/message_recv", "receive.wav"},
+	{N_("Message received begins conversation"), "/gaim/gtk/sound/first_message_recv", "receive.wav"},
+	{N_("Message sent"), "/gaim/gtk/sound/send_im", "send.wav"},
+	{N_("Person enters chat"), "/gaim/gtk/sound/join_chat", "arrive.wav"},
+	{N_("Person leaves chat"), "/gaim/gtk/sound/left_chat", "leave.wav"},
+	{N_("You talk in chat"), "/gaim/gtk/sound/send_chat_msg", "send.wav"},
+	{N_("Others talk in chat"), "/gaim/gtk/sound/chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, 0, "redalert.wav"},
-	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "redalert.wav"}
+	{N_("Someone says your name in chat"), "/gaim/gtk/sound/nick_said", "redalert.wav"}
 };
 
 static char *sound_file[GAIM_NUM_SOUNDS];
@@ -109,19 +110,22 @@ void gaim_sound_change_output_method() {
 #ifdef USE_AO
 	ao_driver = -1;
 
-	if ((sound_options & OPT_SOUND_ESD) || (sound_options & OPT_SOUND_ARTS) ||
-			(sound_options & OPT_SOUND_NORMAL)) {
+	if (gaim_prefs_get_bool("/core/sound/use_esd") ||
+		gaim_prefs_get_bool("/core/sound/use_arts") ||
+		gaim_prefs_get_bool("/core/sound/use_sys_default")) {
+
 		check_ao_init();
-		if (ao_driver == -1 && (sound_options & OPT_SOUND_ESD)) {
+
+		if (ao_driver == -1 && gaim_prefs_get_bool("/core/sound/use_esd"))
 			ao_driver = ao_driver_id("esd");
-		}
-		if(ao_driver == -1 && (sound_options & OPT_SOUND_ARTS)) {
+
+		if (ao_driver == -1 && gaim_prefs_get_bool("/core/sound/use_arts"))
 			ao_driver = ao_driver_id("arts");
-		}
-		if (ao_driver == -1) {
+
+		if (ao_driver == -1)
 			ao_driver = ao_default_driver_id();
-		}
 	}
+
 	if(ao_driver != -1) {
 		ao_info *info = ao_driver_info(ao_driver);
 		gaim_debug(GAIM_DEBUG_INFO, "sound",
@@ -129,7 +133,7 @@ void gaim_sound_change_output_method() {
 	}
 #endif /* USE_AO */
 #ifdef USE_NAS
-	if((sound_options & OPT_SOUND_NAS))
+	if (gaim_prefs_get_bool("/core/sound/use_nas"))
 		gaim_debug(GAIM_DEBUG_INFO, "sound",
 				   "Sound output driver loaded: NAS output\n");
 #endif /* USE_NAS */
@@ -172,10 +176,10 @@ void gaim_sound_play_file(char *filename)
 	if (mute_sounds)
 		return;
 
-	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
+	if (awaymessage && !gaim_prefs_get_bool("/core/sound/while_away"))
 		return; /* check here in case a buddy pounce plays a file while away */
 
-	if (sound_options & OPT_SOUND_BEEP) {
+	if (gaim_prefs_get_bool("/core/sound/use_beep")) {
 		gdk_beep();
 		return;
 	}
@@ -188,11 +192,14 @@ void gaim_sound_play_file(char *filename)
 	}
 
 #ifndef _WIN32
-	if ((sound_options & OPT_SOUND_CMD)) {
+	if (gaim_prefs_get_bool("/core/sound/use_custom")) {
+		const char *sound_cmd;
 		char *command;
 		GError *error = NULL;
 
-		if(!sound_cmd) {
+		sound_cmd = gaim_prefs_get_string("/core/sound/command");
+
+		if (!sound_cmd || *sound_cmd == '\0') {
 			gaim_notify_error(NULL, NULL,
 							  _("Unable to play sound because the "
 								"'Command' sound method has been chosen, "
@@ -218,7 +225,7 @@ void gaim_sound_play_file(char *filename)
 		return;
 	else if (pid == 0) {
 #ifdef USE_NAS_AUDIO
-		if ((sound_options & OPT_SOUND_NAS)) {
+		if (gaim_prefs_get_bool("/core/sound/use_nas")) {
 			if (play_file_nas(filename))
 				_exit(0);
 		}
@@ -301,7 +308,7 @@ void gaim_sound_play_event(GaimSoundEventID event)
 	}
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
-	if ((sound_options & sounds[event].opt) || (sounds[event].opt == 0)) {
+	if (sounds[event].pref == NULL || gaim_prefs_get_bool(sounds[event].pref)) {
 		if (sound_file[event]) {
 			gaim_sound_play_file(sound_file[event]);
 		} else {
@@ -349,12 +356,12 @@ char *gaim_sound_get_event_file(GaimSoundEventID event)
 	return sound_file[event];
 }
 
-guint gaim_sound_get_event_option(GaimSoundEventID event)
+const char *gaim_sound_get_event_option(GaimSoundEventID event)
 {
 	if(event >= GAIM_NUM_SOUNDS)
 		return 0;
 
-	return sounds[event].opt;
+	return sounds[event].pref;
 }
 
 char *gaim_sound_get_event_label(GaimSoundEventID event)

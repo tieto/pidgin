@@ -50,6 +50,7 @@
 #include <gdk/gdkprivate.h>
 #include "gaim.h"
 #include "notify.h"
+#include "prefs.h"
 
 #ifndef _WIN32
 
@@ -544,7 +545,7 @@ void open_url(GtkWidget *w, char *url)
 		case BROWSER_NETSCAPE: {
 			char *args = NULL;
 
-			if (misc_options & OPT_MISC_BROWSER_POPUP)
+			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
 				args = g_strdup_printf("OpenURL(%s, new-window)", url);
 			else
 				args = g_strdup_printf("OpenURL(%s)", url);
@@ -562,7 +563,7 @@ void open_url(GtkWidget *w, char *url)
 			} break;
 
 		case BROWSER_OPERA:
-			if (misc_options & OPT_MISC_BROWSER_POPUP)
+			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
 				command = g_strdup_printf("opera -newwindow \"%s\"", url);
 			else
 				command = g_strdup_printf("opera \"%s\"", url);
@@ -573,7 +574,7 @@ void open_url(GtkWidget *w, char *url)
 			break;
 
 		case BROWSER_GALEON:
-			if (misc_options & OPT_MISC_BROWSER_POPUP)
+			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
 				command = g_strdup_printf("galeon -w \"%s\"", url);
 			else
 				command = g_strdup_printf("galeon \"%s\"", url);

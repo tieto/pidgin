@@ -45,6 +45,7 @@
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "prefs.h"
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -654,45 +655,63 @@ char *stylize(const gchar *text, int length)
 	buf = g_malloc(length);
 	g_snprintf(buf, length, "%s", text);
 
-	if (font_options & OPT_FONT_BOLD) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
 		g_snprintf(tmp, length, "<B>%s</B>", buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_ITALIC) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic")) {
 		g_snprintf(tmp, length, "<I>%s</I>", buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_UNDERLINE) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline")) {
 		g_snprintf(tmp, length, "<U>%s</U>", buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_STRIKE) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough")) {
 		g_snprintf(tmp, length, "<S>%s</S>", buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_FACE) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font")) {
+		const char *fontface;
+
+		fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
+
 		g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_SIZE) {
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
+		int fontsize = gaim_prefs_get_int("/gaim/gtk/conversations/font_size");
+
 		g_snprintf(tmp, length, "<FONT SIZE=\"%d\">%s</FONT>", fontsize, buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_FGCOL) {
-		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red/256,
-			   fgcolor.green/256, fgcolor.blue/256, buf);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
+		GdkColor fgcolor;
+
+		gdk_color_parse(
+			gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+			&fgcolor);
+
+		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
+				   fgcolor.red/256, fgcolor.green/256, fgcolor.blue/256, buf);
 		strcpy(buf, tmp);
 	}
 
-	if (font_options & OPT_FONT_BGCOL) {
-		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red/256,
-			   bgcolor.green/256, bgcolor.blue/256, buf);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_bgcolor")) {
+		GdkColor bgcolor;
+
+		gdk_color_parse(
+			gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+			&bgcolor);
+
+		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
+				   bgcolor.red/256, bgcolor.green/256, bgcolor.blue/256, buf);
 		strcpy(buf, tmp);
 	}
 
