@@ -1194,6 +1194,5 @@ proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 			return -1;
 	}
 	
-	gaim_gethostbyname_async(connecthost, connectport, connection_host_resolved, phb);
-	return 0;
+	return gaim_gethostbyname_async(connecthost, connectport, connection_host_resolved, phb);
 }
