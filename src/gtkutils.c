@@ -792,7 +792,7 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			account = gaim_connection_get_account(gc);
 		}
 
-		if (check_account_func == NULL || !check_account_func(account))
+		if (check_account_func && !check_account_func(account))
 			continue;
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
