@@ -150,6 +150,7 @@ static int is_pl_file(char *filename)
 	if (!filename[0]) return 0;
 	len = strlen(filename);
 	len -= 3;
+	if (len < 0) return 0;
 	return (!strncmp(filename + len, ".pl", 3));
 }
 
