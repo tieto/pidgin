@@ -1748,8 +1748,8 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 		g_free(n);
 		if (!d) {
 			p->gc->deny = g_slist_append(p->gc->deny, name);
-			build_block_list();
 			serv_add_deny(p->gc, name);
+			build_block_list();
 			do_export(p->gc);
 		} else
 			g_free(name);
@@ -1765,8 +1765,8 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 		g_free(n);
 		if (!d) {
 			p->gc->permit = g_slist_append(p->gc->permit, name);
-			build_allow_list();
 			serv_add_permit(p->gc, name);
+			build_allow_list();
 			do_export(p->gc);
 		} else
 			g_free(name);
