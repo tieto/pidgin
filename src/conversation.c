@@ -243,20 +243,14 @@ common_send(GaimConversation *conv, const char *message)
 			"displaying-im-msg" : "displaying-chat-msg"),
 			gaim_conversation_get_account(conv), conv, &displayed));
 
-	if (displayed == NULL) {
-		g_free(sent);
-		return;
-	}
-
 	if (plugin_return) {
 		g_free(displayed);
-		g_free(sent);
-		return;
+		displayed = NULL;
+	} else {
+		gaim_signal_emit(gaim_conversations_get_handle(),
+			(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
+			gaim_conversation_get_account(conv), conv, displayed);
 	}
-
-	gaim_signal_emit(gaim_conversations_get_handle(),
-		(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		gaim_conversation_get_account(conv), conv, displayed);
 
 	if (type == GAIM_CONV_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
@@ -277,7 +271,7 @@ common_send(GaimConversation *conv, const char *message)
 			err = serv_send_im(gc, gaim_conversation_get_name(conv),
 							    sent, imflags);
 
-			if (err > 0)
+			if ((err > 0) && (displayed != NULL))
 				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
 
 			if (im->images != NULL) {
@@ -2583,6 +2577,24 @@ gaim_conversations_init(void)
 	/**********************************************************************
 	 * Register signals
 	 **********************************************************************/
+	gaim_signal_register(handle, "writing-im-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
+	gaim_signal_register(handle, "wrote-im-msg",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
@@ -2625,6 +2637,24 @@ gaim_conversations_init(void)
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
 						 gaim_value_new_outgoing(GAIM_TYPE_UINT));
+
+	gaim_signal_register(handle, "writing-chat-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+
+	gaim_signal_register(handle, "wrote-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "displaying-chat-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
