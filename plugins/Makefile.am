@@ -44,4 +44,4 @@ endif
 
 EXTRA_DIST = ChangeLog PERL-HOWTO CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
 	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
-	toc_commands.c events.c gaim.pl irc.c
+	toc_commands.c events.c gaim.pl irc.c napster.c
