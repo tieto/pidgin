@@ -4445,7 +4445,8 @@ static int get_line_max_height(GtkHtml *html, GtkHtmlBit *start)
 		hbit = (GtkHtmlBit *)hbits->data;	
 		if (hbit->font)
 			height = gdk_text_height(hbit->font, "C", 1);	
-
+		else if(hbit->type == HTML_BIT_PIXMAP)
+			height = 19;
 		if (max_height < height)
 			max_height = height;
 		if (hbit->newline)
@@ -4475,7 +4476,12 @@ static void get_line_max_extents(GtkHtml *html, GtkHtmlBit *start, int *max_acse
 		hbit = (GtkHtmlBit *)hbits->data;	
 		if (hbit->font)
 			gdk_text_extents(hbit->font, "yG", strlen("yG"), NULL, NULL, NULL, &acsent, &descent);
-
+		else if (hbit->type == HTML_BIT_PIXMAP)
+		{
+			acsent =9;
+			descent = 8;
+		}
+		
 		if (*max_acsent < acsent)
 			*max_acsent = acsent;
 		if (*max_descent < descent)
