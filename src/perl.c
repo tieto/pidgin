@@ -28,8 +28,8 @@
 #endif
 #undef PACKAGE
 
-/*#ifdef USE_PERL /**/
-#if 0 /**/
+#ifdef USE_PERL /**/
+/*#if 0 /**/
 
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
@@ -60,23 +60,25 @@ static GList *perl_list = NULL;
 static GList *perl_timeout_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
-XS (XS_AIM_register);			/* so far so good */
-/* XS (XS_AIM_add_message_handler);	/* um... */
-/* XS (XS_AIM_add_command_handler);	/* once again, um... */
-/* XS (XS_AIM_add_print_handler);	/* can i really do this? */
-XS (XS_AIM_add_timeout_handler);	/* ok, this i can do */
-/* XS (XS_AIM_print);			/* how am i going to do this */
-/* XS (XS_AIM_print_with_channel);	/* print_to_conversation? */
-/* XS (XS_AIM_send_raw);		/* this i can do for toc, but for oscar... ? */
-XS (XS_AIM_command);			/* this should be easier */
-/* XS (XS_AIM_command_with_server);	/* FIXME: this should probably be removed */
-XS (XS_AIM_channel_list);		/* probably return conversation list (online buddies?) */
-/* XS (XS_AIM_server_list);		/* huh? does this apply? */
-XS (XS_AIM_user_list);			/* return the buddy list */
-/* XS (XS_AIM_user_info);		/* we'll see.... */
-XS (XS_AIM_ignore_list);		/* deny list? */
-/* XS (XS_AIM_dcc_list);		/* wha? */
-XS (XS_AIM_get_info);			/* this i can do too */
+/* dealing with gaim */
+XS(XS_AIM_register);
+XS(XS_AIM_get_info);
+XS(XS_AIM_print); /* lemme figure this one out... */
+
+/* list stuff */
+XS(XS_AIM_buddy_list);
+XS(XS_AIM_online_list);
+XS(XS_AIM_deny_list); /* also returns permit list */
+
+/* server stuff */
+XS(XS_AIM_command);
+XS(XS_AIM_user_info); /* given name, return struct buddy members */
+
+/* handler commands */
+XS(XS_AIM_add_message_handler);
+XS(XS_AIM_add_command_handler);
+XS(XS_AIM_add_timeout_handler);
+
 
 /* perl module support */
 extern void xs_init _((void));
@@ -155,22 +157,19 @@ void perl_init(int autoload)
 #endif
 
 	newXS ("AIM::register", XS_AIM_register, "AIM");
-/*	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM"); */
-/*	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM"); */
-/*	newXS ("AIM::add_print_handler", XS_AIM_add_print_handler, "AIM"); */
-	newXS ("AIM::add_timeout_handler", XS_AIM_add_timeout_handler, "AIM");
-/*	newXS ("AIM::print", XS_AIM_print, "AIM"); */
-/*	newXS ("AIM::print_with_channel", XS_AIM_print_with_channel, "AIM"); */
-/*	newXS ("AIM::send_raw", XS_AIM_send_raw, "AIM"); */
-	newXS ("AIM::command", XS_AIM_command, "AIM");
-/*	newXS ("AIM::command_with_server", XS_AIM_command_with_server, "AIM"); */
-	newXS ("AIM::channel_list", XS_AIM_channel_list, "AIM");
-/*	newXS ("AIM::server_list", XS_AIM_server_list, "AIM"); */
-	newXS ("AIM::user_list", XS_AIM_user_list, "AIM");
-/*	newXS ("AIM::user_info", XS_AIM_user_info, "AIM"); */
-	newXS ("AIM::ignore_list", XS_AIM_ignore_list, "AIM");
-/*	newXS ("AIM::dcc_list", XS_AIM_dcc_list, "AIM"); */
 	newXS ("AIM::get_info", XS_AIM_get_info, "AIM");
+	newXS ("AIM::print", XS_AIM_print, "AIM");
+
+	newXS ("AIM::buddy_list", XS_AIM_buddy_list, "AIM");
+	newXS ("AIM::online_list", XS_AIM_online_list, "AIM");
+	newXS ("AIM::deny_list", XS_AIM_deny_list, "AIM");
+
+	newXS ("AIM::command", XS_AIM_command, "AIM");
+	newXS ("AIM::user_info", XS_AIM_user_info, "AIM");
+
+	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM");
+	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM");
+	newXS ("AIM::add_timeout_handler", XS_AIM_add_timeout_handler, "AIM");
 
 	/* FIXME */
 	if (autoload) {
@@ -232,9 +231,85 @@ XS (XS_AIM_register)
 	XSRETURN (1);
 }
 
-/* XS (XS_AIM_add_message_handler);	/* um... */
-/* XS (XS_AIM_add_command_handler);	/* once again, um... */
-/* XS (XS_AIM_add_print_handler);	/* can i really do this? */
+XS (XS_AIM_get_info)
+{
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	switch(atoi(SvPV(ST(0), junk))) {
+	case 0:
+		XST_mPV(0, VERSION);
+		break;
+	case 1:
+		XST_mPV(0, current_user->username);
+		break;
+	/* FIXME */
+	default:
+		XST_mPV(0, "Error2");
+	}
+
+	XSRETURN(1);
+}
+
+XS (XS_AIM_print)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_buddy_list)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_online_list)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_deny_list)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_command)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_user_info)
+{
+	int junk;
+	struct buddy *buddy;
+	char *nick;
+	dXSARGS;
+	items = 0;
+
+	nick = SvPV(ST(0), junk);
+	if (!nick[0])
+		XSRETURN(0);
+	buddy = find_buddy(nick);
+	if (!buddy)
+		XSRETURN(0);
+	XST_mPV(0, buddy->name);
+	XST_mPV(1, buddy->present ? "Online" : "Offline");
+	XST_mIV(2, buddy->evil);
+	XST_mIV(3, buddy->signon);
+	XST_mIV(4, buddy->idle);
+	XST_mIV(5, buddy->uc);
+	XST_mIV(6, buddy->caps);
+	XSRETURN(6);
+}
+
+XS (XS_AIM_add_message_handler)
+{
+	/* FIXME */
+}
+
+XS (XS_AIM_add_command_handler)
+{
+	/* FIXME */
+}
 
 static int perl_timeout(struct _perl_timeout_handlers *handler)
 {
@@ -260,54 +335,6 @@ XS (XS_AIM_add_timeout_handler)
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);
 	XSRETURN_EMPTY;
-}
-
-/* XS (XS_AIM_print);			/* how am i going to do this */
-/* XS (XS_AIM_print_with_channel);	/* print_to_conversation? */
-/* XS (XS_AIM_send_raw);		/* this i can do for toc, but for oscar... ? */
-
-XS (XS_AIM_command)
-{
-}
-
-/* XS (XS_AIM_command_with_server);	/* FIXME: this should probably be removed */
-
-XS (XS_AIM_channel_list)		/* online buddies? */
-{
-}
-
-/* XS (XS_AIM_server_list);		/* huh? does this apply? */
-
-XS (XS_AIM_user_list)			/* buddy list */
-{
-}
-
-/* XS (XS_AIM_user_info);		/* we'll see.... */
-
-XS (XS_AIM_ignore_list)			/* deny list */
-{
-}
-
-/* XS (XS_AIM_dcc_list);		/* wha? */
-
-XS (XS_AIM_get_info)
-{
-	int junk;
-	dXSARGS;
-	items = 0;
-
-	switch(atoi(SvPV(ST(0), junk))) {
-	case 0:
-		XST_mPV(0, VERSION);
-		break;
-	case 1:
-		XST_mPV(0, current_user->username);
-		break;
-	default:
-		XST_mPV(0, "Error2");
-	}
-
-	XSRETURN(1);
 }
 
 #endif /* USE_PERL */
