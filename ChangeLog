@@ -23,7 +23,7 @@ version 0.79cvs:
 	  defaults for the next pounce
 	* Yahoo buddy icon support
 	* Selected buddy icons will automatically convert to the appropriate
-	  format for the protocol.
+	  format for the protocol. (GTK 2.4 only)
 	* Dragging an image file into the Modify Account dialog will set that
 	  as a buddy icon.
 
