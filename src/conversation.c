@@ -127,12 +127,14 @@ struct conversation *new_conversation(char *name)
 		FILE *fd;
 
 		fd = open_log_file(c->name);
-		if (!(general_options & OPT_GEN_STRIP_HTML))
-			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", full_date()); 
-		else
-			fprintf(fd, " ---- New Conversation @ %s ----\n", full_date()); 
-
-		fclose(fd);
+		if (fd > 0) {
+			if (!(general_options & OPT_GEN_STRIP_HTML))
+				fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", full_date()); 
+			else
+				fprintf(fd, " ---- New Conversation @ %s ----\n", full_date()); 
+			fclose(fd);
+		} else
+			/* do we want to do something here? */ ;
 	}
 
 	if (connections)
