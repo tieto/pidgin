@@ -220,12 +220,14 @@ msn_session_find_switch_with_passport(const MsnSession *session,
 	g_return_val_if_fail(session != NULL, NULL);
 	g_return_val_if_fail(passport != NULL, NULL);
 
-	for (l = session->switches; l != NULL; l = l->next) {
+	for (l = session->switches; l != NULL; l = l->next)
+	{
 		swboard = (MsnSwitchBoard *)l->data;
 
-		if (!swboard->hidden &&
+		if (!swboard->hidden && !swboard->chat_id &&
 			!g_ascii_strcasecmp(passport,
-								msn_user_get_passport(swboard->user))) {
+								msn_user_get_passport(swboard->user)))
+		{
 			return swboard;
 		}
 	}

@@ -193,7 +193,9 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 			conv = gaim_find_conversation_with_account(
 				msn_user_get_passport(swboard->user), account);
 
-			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
+			servconn->session->last_chat_id++;
+			swboard->chat_id = servconn->session->last_chat_id;
+			swboard->chat = serv_got_joined_chat(gc, swboard->chat_id,
 												 "MSN Chat");
 
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
@@ -225,8 +227,9 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		conv = gaim_find_conversation_with_account(
 			msn_user_get_passport(swboard->user), account);
 
-		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
-											 "MSN Chat");
+		servconn->session->last_chat_id++;
+		swboard->chat_id = servconn->session->last_chat_id;
+		swboard->chat = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 						   msn_user_get_passport(swboard->user), NULL);
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
@@ -295,7 +298,10 @@ out_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (swboard->chat != NULL)
-		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)));
+	{
+		serv_got_chat_left(gc,
+			gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)));
+	}
 
 	msn_switchboard_destroy(swboard);
 
@@ -309,7 +315,8 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (!msn_switchboard_send_command(swboard, "CAL",
-									  msn_user_get_passport(swboard->user))) {
+									  msn_user_get_passport(swboard->user)))
+	{
 		msn_switchboard_destroy(swboard);
 
 		return FALSE;
@@ -357,8 +364,11 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	}
 
 	if (swboard->chat != NULL)
-		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)),
+	{
+		serv_got_chat_in(gc,
+						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)),
 						 servconn->msg_passport, 0, body, time(NULL));
+	}
 	else
 		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL));
 

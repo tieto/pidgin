@@ -101,6 +101,9 @@ struct _MsnSession
 	char *dest_group_name;
 	MsnUser *moving_user;
 	MsnGroup *old_group;
+
+	/* The last chat ID. */
+	int last_chat_id;
 };
 
 /**

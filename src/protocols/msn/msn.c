@@ -269,7 +269,9 @@ initiate_chat_cb(GaimConnection *gc, const char *passport)
 
 	swboard->total_users = 1;
 
-	swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id, "MSN Chat");
+	session->last_chat_id++;
+	swboard->chat_id = session->last_chat_id;
+	swboard->chat = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 							gaim_account_get_username(account), NULL);
@@ -455,7 +457,9 @@ msn_login(GaimAccount *account)
 	if (!gaim_ssl_is_supported())
 	{
 		gaim_connection_error(gc,
-			_("SSL support is needed for MSN. Please install a supported SSL library. See http://gaim.sf.net/faq-ssl.php for more information."));
+			_("SSL support is needed for MSN. Please install a supported "
+			  "SSL library. See http://gaim.sf.net/faq-ssl.php for more "
+			  "information."));
 
 		return;
 	}
