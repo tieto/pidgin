@@ -1007,13 +1007,12 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 	unsigned int  magic[64];
 	unsigned int  magic_work = 0;
-	unsigned int  value = 0;
-	
+
+	char comparison_src[20]; 
 	int x;
 	int cnt = 0;
 	int magic_cnt = 0;
 	int magic_len;
-	int times = 0;
 	
 	memset(&pass_hash_xor1, 0, 64);
 	memset(&pass_hash_xor2, 0, 64);
@@ -1107,67 +1106,46 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		magic[magic_cnt+1] = byte1;
 	}
 	
-	/* Magic: Phase 3.  Final phase; this gives us our 
-	 * key. */
+	/* Magic: Phase 3.  This computes 20 bytes.  The first 4 bytes are used as our magic 
+	 * key (and may be changed later); the next 16 bytes are an MD5 sum of the magic key 
+	 * plus 3 bytes.  The 3 bytes are found by looping, and they represent the offsets 
+	 * into particular functions we'll later call to potentially alter the magic key. 
+	 * 
+	 * %-) 
+	 */ 
 	
-	magic_cnt = 1;
+	magic_cnt = 1; 
+	x = 0; 
 	
-	for (;;) {
-		unsigned int cl = magic[magic_cnt] & 0xff;
-		unsigned int bl = magic[magic_cnt+1] & 0xff;
+	do { 
+		unsigned int     bl = 0;  
+		unsigned int     cl = magic[magic_cnt++]; 
 		
-		if (!bl || !cl)
-			break;
-		
-		if (magic_cnt > magic_len)
-			break;
-		
-		if (cl <= 0x7f)
-			bl = cl;
-		else {
-			if (cl >= 0x0e0) {
-				cl = cl & 0x0f;
-				cl = cl << 6;
-				bl = bl & 0x3f;
-				bl = cl + bl;
-				bl = bl << 6;
-			} else {
-				cl = cl & 0x1f;
-				cl = cl << 6;
-				bl = cl;
-			}
-			
-			cl = magic[magic_cnt+2];
-			
-			if (!cl)
-				break;
-			
-			cl = cl & 0x3f;
-			bl = bl + cl;
-		}
-		
-		/* Result is bl.
-		 */
-		
-		magic_cnt += 3;
-
- 		if (times == 0) {
-			value |= (bl & 0xff) << 8; 
-			value |= (bl & 0xff00) >> 8;           
-		} else { 
-			value |= (bl & 0xff) << 24; 
-			value |= (bl & 0xff00) << 8;           
+		if (magic_cnt >= magic_len) 
 			break; 
-		} 
 		
-		times++;
-	}
+		if (cl > 0x7F) { 
+			if (cl < 0xe0)  
+				bl = cl = (cl & 0x1f) << 6;  
+			else { 
+				bl = magic[magic_cnt++];  
+                              cl = (cl & 0x0f) << 6;  
+                              bl = ((bl & 0x3f) + cl) << 6;  
+			}  
+			
+			cl = magic[magic_cnt++];  
+			bl = (cl & 0x3f) + bl;  
+		} else 
+			bl = cl;  
+		
+		comparison_src[x++] = (bl & 0xff00) >> 8;  
+		comparison_src[x++] = bl & 0xff;  
+	} while (x < 20); 
+	
+	/* First four bytes are magic key. */
+	for (x = 0; x < 4; x++) 
+		magic_key_char[x] = comparison_src[x];
 
-	/* Dump magic key into a char for SHA1 action. */
-	magic_key_char[0] = value & 0xff;
-	magic_key_char[1] = (value >> 8) & 0xff;
-	magic_key_char[2] = (value >> 16) & 0xff;
-	magic_key_char[3] = (value >> 24) & 0xff;
 
 	/* Get password and crypt hashes as per usual. */
 	md5_init(&ctx);
