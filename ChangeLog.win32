@@ -1,3 +1,9 @@
+version 0.71:
+
+version 0.70 (09/28/2003):
+	* Fixed an icon caching bug which showed up after gaim's data dir was
+	  moved in 0.69. Cached aim buddy icons were not showing up.
+
 version 0.69 (09/24/2003):
 	* Perl plugin loader is back (now using perl58).
 	* Gaim now performs 'dll hell' check on startup.
