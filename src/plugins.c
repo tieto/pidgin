@@ -91,11 +91,10 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 
 static void load_file(GtkWidget *w, gpointer data)
 {
-	char *buf = g_malloc(BUF_LEN);
+	gchar *buf;
 	FILE *fd;
  
 	if (plugin_dialog) {
-		g_free(buf);
 		gtk_widget_show(plugin_dialog);
 		gdk_window_raise(plugin_dialog->window);
 		return;
@@ -106,7 +105,7 @@ static void load_file(GtkWidget *w, gpointer data)
 	gtk_file_selection_hide_fileop_buttons(
 					GTK_FILE_SELECTION(plugin_dialog));
 
-	g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
+	buf = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S, PLUGIN_DIR, NULL);
 	fd = fopen(buf, "r");
 	if (!fd)
 		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -158,17 +157,15 @@ void load_plugin(char *filename) {
 			debug_print(debug_buff);
 			return;
 		}
-		c = c->next;
+		c = g_list_next(c);
 	}
 	plug = g_malloc(sizeof *plug);
-	if (filename[0] != '/') {
-		char *buf = g_malloc(BUF_LEN);
-		g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
-		plug->filename = g_malloc(strlen(buf) + strlen(filename) + 1);
-		sprintf(plug->filename, "%s%s", buf, filename);
-		g_free(buf);
-	} else
+	if (filename[0] != '/')
+		plug->filename = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S,
+			PLUGIN_DIR, filename, NULL);
+	else
 		plug->filename = g_strdup(filename);
+
 	sprintf(debug_buff, "Loading %s\n", filename);
 	debug_print(debug_buff);
 	/* do NOT `OR' with RTLD_GLOBAL, otherwise plugins may conflict
@@ -210,7 +207,7 @@ void load_plugin(char *filename) {
 					break;
 				}
 			} else {
-				c = c->next;
+				c = g_list_next(c);
 			}
 		}
 		gaim_plugin_error = dlsym(plug->handle, "gaim_plugin_error");
@@ -257,7 +254,6 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	GtkWidget *close;
 	GList     *plugs = plugins;
 	struct gaim_plugin *p;
-	gchar buffer[1024];
 
 	if (plugwindow) return;
 
@@ -275,6 +271,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	topbox = gtk_hbox_new(FALSE, 0);
 	botbox = gtk_hbox_new(FALSE, 0);
 
+	/* Left side: list of plugin file names */
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
 				       GTK_POLICY_AUTOMATIC,
@@ -284,6 +281,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), pluglist);
 	gtk_box_pack_start(GTK_BOX(topbox), sw2, TRUE, TRUE, 0);
 
+	/* Right side: the text description of the plugin */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				       GTK_POLICY_AUTOMATIC,
@@ -295,6 +293,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_text_set_word_wrap(GTK_TEXT(plugtext), TRUE);
 	gtk_text_set_editable(GTK_TEXT(plugtext), FALSE);
 
+	/* Build the bottom button bar */
 	add = gtk_button_new_with_label(_("Load Plugin"));
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
 			   GTK_SIGNAL_FUNC(load_file), NULL);
@@ -325,12 +324,6 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_box_pack_start(GTK_BOX(page), topbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(page), botbox, FALSE, FALSE, 0);
 
-	if (plugs != NULL) {
-		p = (struct gaim_plugin *)plugs->data;
-		g_snprintf(buffer, sizeof(buffer), "%s", p->filename);
-		gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, buffer, -1);
-	}
-
 	while (plugs) {
 		p = (struct gaim_plugin *)plugs->data;
 		label = gtk_label_new(p->filename);
@@ -344,8 +337,10 @@ void show_plugins(GtkWidget *w, gpointer data) {
 		gtk_container_add(GTK_CONTAINER(pluglist), list_item);
 		gtk_widget_show(list_item);
 
-		plugs = plugs->next;
+		plugs = g_list_next(plugs);
 	}
+	
+	/* Make the first item selected */
 	if (plugins != NULL)
 		gtk_list_select_item(GTK_LIST(pluglist), 0);
 
@@ -386,7 +381,7 @@ void update_show_plugins() {
 		gtk_widget_show(label);
 		gtk_container_add(GTK_CONTAINER(pluglist), list_item);
 		gtk_widget_show(list_item);
-		plugs = plugs->next;
+		plugs = g_list_next(plugs);
 	}
 	if (plugins != NULL)
 		gtk_list_select_item(GTK_LIST(pluglist), 0);
@@ -409,6 +404,7 @@ void unload(GtkWidget *w, gpointer data) {
 
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
 
+	/* Attempt to call the plugin's remove function (if there) */
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
 	if ((error = (char *)dlerror()) == NULL)
 		(*gaim_plugin_remove)();
@@ -436,7 +432,7 @@ void gaim_plugin_unload(void *handle) {
 		if (handle == p->handle)
 			break;
 		p = NULL;
-		i = i->next;
+		i = g_list_next(i);
 	}
 
 	if (!p)
@@ -447,6 +443,7 @@ void gaim_plugin_unload(void *handle) {
 
 	sprintf(debug_buff, "%d callbacks to search\n", g_list_length(callbacks));
 	debug_print(debug_buff);
+
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->handle == p->handle) {
@@ -460,9 +457,10 @@ void gaim_plugin_unload(void *handle) {
 				break;
 			}
 		} else {
-			c = c->next;
+			c = g_list_next(c);
 		}
 	}
+	/* remove callbacks later (this will g_free p) */
 	p->remove = gtk_timeout_add(5000, (GtkFunction)remove_callback, p);
 
 	plugins = g_list_remove(plugins, p);
@@ -473,7 +471,7 @@ void gaim_plugin_unload(void *handle) {
 }
 
 void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
-	gchar buffer[2048];
+	gchar *temp;
 	guint text_len;
 	void (*gaim_plugin_config)();
 	char *error;
@@ -484,9 +482,11 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	gtk_text_set_point(GTK_TEXT(plugtext), 0);
 	gtk_text_forward_delete(GTK_TEXT(plugtext), text_len);
 
-	g_snprintf(buffer, sizeof buffer, "%s\n%s", p->name, p->description);
-	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, buffer, -1);
+	temp = g_strdup_printf("%s\n%s", p->name, p->description);
+	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, temp, -1);
+	g_free(temp);
 
+	/* Find out if this plug-in has a configuration function */
 	gaim_plugin_config = dlsym(p->handle, "gaim_plugin_config");
 	if ((error = (char *)dlerror()) == NULL) {
 		confighandle = gtk_signal_connect(GTK_OBJECT(config), "clicked",
@@ -522,6 +522,7 @@ void gaim_signal_connect(void *handle, enum gaim_event which,
 void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
 	GList *c = callbacks;
 	struct gaim_callback *g = NULL;
+
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (handle == g->handle && func == g->function) {
@@ -530,7 +531,7 @@ void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
 			c = callbacks;
 			if (c == NULL) break;
 		}
-		c = c->next;
+		c = g_list_next(c);
 	}
 }
 
