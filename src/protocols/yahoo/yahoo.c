@@ -1917,38 +1917,28 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char buf[1024], buf2[256], *i = buf, *r = buf2, *rend;
-	int len, o = 0;
+	char buf[1024], *i = buf;
+	int len;
+	GString *s;
 
 	len = read(source, buf, sizeof(buf)-1);
 	if (len <= 0  || strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302"))) {
 		gaim_connection_error(gc, _("Unable to read"));
 		return;
 	}
+
+	s = g_string_sized_new(len);
 	buf[sizeof(buf)-1] = '\0';
-	buf2[0] = '\0';
-	rend = r + sizeof(buf2);
-	
-	while ((i = strstr(i, "Set-Cookie: ")) && o < 2) {
-		i += strlen("Set-Cookie: "); 
-		for (;*i != ';' && r < rend; r++, i++) {
-			*r = *i;
-		}
-		if (r >= rend-2) {
-			*r = '\0';
-			r = buf2;
-		}
-		*r=';';
-		r++;
-		*r=' ';
-		r++;
-		o++;
+
+	while ((i = strstr(i, "Set-Cookie: "))) {
+		i += strlen("Set-Cookie: ");
+		for (;*i != ';'; i++)
+			g_string_append_c(s, *i);
+
+		g_string_append(s, "; ");
 	}
-	/* Get rid of that "; " */
-	if (r > buf2) {
-		*(r-2) = '\0';
-	}
-	yd->auth = g_strdup(buf2);
+
+	yd->auth = g_string_free(s, FALSE);
 	gaim_input_remove(gc->inpa);
 	close(source);
 	/* Now we have our cookies to login with.  I'll go get the milk. */
