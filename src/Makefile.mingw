@@ -101,6 +101,7 @@ DLL_C_SRC =		about.c \
 			module.c \
 			multi.c \
 			perl.c \
+			pounce.c \
 			prefs.c \
 			proxy.c \
 			prpl.c \
