@@ -382,6 +382,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 
 
 	if (info == TARGET_HTML) {
+		char *selection;
 		int len;
 		GString *str = g_string_new(NULL);
 		text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
@@ -390,7 +391,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		str = g_string_append_unichar(str, 0xfeff);
 		str = g_string_append(str, text);
 		str = g_string_append_unichar(str, 0x0000);
-		char *selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
+		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set (selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
 		g_string_free(str, TRUE);
 		g_free(selection);
