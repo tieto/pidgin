@@ -1094,6 +1094,7 @@ static void toc_add_permit(struct gaim_connection *gc, char *who)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
+	toc_set_config(gc);
 }
 
 static void toc_add_deny(struct gaim_connection *gc, char *who)
@@ -1103,6 +1104,7 @@ static void toc_add_deny(struct gaim_connection *gc, char *who)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
+	toc_set_config(gc);
 }
 
 static void toc_set_permit_deny(struct gaim_connection *gc)
@@ -1167,6 +1169,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 	default:
 		break;
 	}
+	toc_set_config(gc);
 }
 
 static void toc_rem_permit(struct gaim_connection *gc, char *who)
