@@ -952,28 +952,6 @@ void redo_buddy_list()
 	update_idle_times();
 }
 
-void
-reset_convo_gcs()
-{
-	GList *l;
-	struct gaim_conversation *c;
-
-	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		c = (struct gaim_conversation *)l->data;
-
-		if (!g_slist_find(connections, gaim_conversation_get_gc(c))) {
-			struct gaim_account *account;
-
-			if (connections == NULL)
-				account = ((struct gaim_connection *)connections->data)->account;
-			else
-				account = NULL;
-
-			gaim_conversation_set_account(c, account);
-		}
-	}
-}
-
 static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child,
 						   GtkCTreeNode *parent, GtkCTreeNode *sibling,
 						   gpointer data)
@@ -2242,7 +2220,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 					qm->message = g_strdup_printf(_("%s logged in."),
 							get_buddy_alias(b));
-					qm->gc = gc;
+					qm->account = gc->account;
 					qm->tm = time(NULL);
 					qm->flags = WFLAG_SYSTEM;
 					qm->len = -1;
@@ -2305,7 +2283,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 						get_buddy_alias(b));
 				qm->message = g_strdup_printf(_("%s logged out."),
 						get_buddy_alias(b));
-				qm->gc = gc;
+				qm->account = gc->account;
 				qm->tm = time(NULL);
 				qm->flags = WFLAG_SYSTEM;
 				qm->len = -1;

@@ -40,10 +40,10 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include "gaim.h"
 #include "multi.h"
 #include "core.h"
 #include "prpl.h"
-#include "gaim.h"
 #include "proxy.h"
 
 #ifdef _WIN32

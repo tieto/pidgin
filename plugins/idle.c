@@ -9,8 +9,8 @@
 #define GAIM_PLUGINS
 #endif
 
-#include "multi.h"
 #include "gaim.h"
+#include "multi.h"
 #include <sys/time.h>
 
 static struct gaim_connection *gc = NULL;

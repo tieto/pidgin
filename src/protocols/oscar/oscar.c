@@ -44,9 +44,9 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#include "gaim.h"
 #include "multi.h"
 #include "prpl.h"
-#include "gaim.h"
 #include "core.h"
 #include "aim.h"
 #include "proxy.h"

@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "icq.h"   /* well, we're doing ICQ, right? */
+#include "gaim.h"  /* needed for every other damn thing */
 #include "multi.h" /* needed for gaim_connection */
 #include "prpl.h"  /* needed for prpl */
-#include "gaim.h"  /* needed for every other damn thing */
 #include "proxy.h"
 
 #include "pixmaps/protocols/icq/gnomeicu-online.xpm"

@@ -44,9 +44,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/stat.h>
+#include "gaim.h"
 #include "multi.h"
 #include "prpl.h"
-#include "gaim.h"
 #ifdef MAX
 #undef MAX
 #endif

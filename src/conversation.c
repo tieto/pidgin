@@ -1373,7 +1373,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 						const char *message, size_t length, int flags,
 						time_t mtime)
 {
-	struct gaim_connection *gc;
+	struct gaim_account *account;
 	struct gaim_conversation_ui_ops *ops;
 	struct gaim_window *win;
 	struct buddy *b;
@@ -1388,10 +1388,10 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 	if (ops == NULL || ops->write_conv == NULL)
 		return;
 
-	gc = gaim_conversation_get_gc(conv);
+	account = gaim_conversation_get_account(conv);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-		(gc == NULL || !g_slist_find(gc->buddy_chats, conv)))
+		(account->gc == NULL || !g_slist_find(account->gc->buddy_chats, conv)))
 		return;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
@@ -1399,23 +1399,23 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		return;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
-		!(gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		!(account->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 		if (who == NULL) {
-			if ((flags & WFLAG_SEND) == WFLAG_SEND) {
-				b = find_buddy(gc->account, gc->username);
+			if ((flags & WFLAG_SEND)) {
+				b = find_buddy(account, account->gc->username);
 
 				if (b != NULL && strcmp(b->name, get_buddy_alias(b)))
 					who = get_buddy_alias(b);
-				else if (*gc->account->alias)
-					who = gc->account->alias;
-				else if (*gc->displayname)
-					who = gc->displayname;
+				else if (*account->alias)
+					who = account->alias;
+				else if (*account->gc->displayname)
+					who = account->gc->displayname;
 				else
-					who = gc->username;
+					who = account->gc->username;
 			}
 			else {
-				b = find_buddy(gc->account, gaim_conversation_get_name(conv));
+				b = find_buddy(account, gaim_conversation_get_name(conv));
 
 				if (b != NULL)
 					who = get_buddy_alias(b);
@@ -1424,7 +1424,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 			}
 		}
 		else {
-			b = find_buddy(gc->account, who);
+			b = find_buddy(account, who);
 
 			if (b != NULL)
 				who = get_buddy_alias(b);

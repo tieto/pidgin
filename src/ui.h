@@ -29,6 +29,8 @@
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+#include "core.h"
+#include "multi.h"
 #include "gtkconv.h"
 #include "gtkft.h"
 #include "gtkutils.h"
@@ -230,11 +232,12 @@ struct buddy_pounce {
 
 /* this is used for queuing messages received while away. This is really a UI function
  * which is why the struct is here. */
+
 struct queued_message {
 	char name[80];
 	char *message;
 	time_t tm;
-	struct gaim_connection *gc;
+	struct gaim_account *account;
 	int flags;
 	int len;
 };

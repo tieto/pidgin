@@ -41,9 +41,9 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include "gaim.h"
 #include "multi.h"
 #include "prpl.h"
-#include "gaim.h"
 #include "proxy.h"
 #include "md5.h"
 

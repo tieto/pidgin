@@ -686,7 +686,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
-			qm->gc = gc;
+			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = WFLAG_RECV | away;
 			qm->len = len;
@@ -790,7 +790,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_strdup(away_subs(tmpmsg, alias));
-			qm->gc = gc;
+			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = WFLAG_SEND | WFLAG_AUTO;
 			qm->len = -1;
@@ -818,7 +818,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_strdup(message);
-			qm->gc = gc;
+			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = away | WFLAG_RECV;
 			qm->len = len;

@@ -2508,7 +2508,7 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	/* Now, um, just kind of all over the place. Huh? */
 
 	/* Add button */
-	if (find_buddy(gaim_conversation_get_gc(conv)->account,
+	if (find_buddy(gaim_conversation_get_account(conv),
 				   gaim_conversation_get_name(conv)) == NULL) {
 		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
 										  GTK_STOCK_ADD, type);
@@ -3852,8 +3852,11 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, -1, 0);
 
-		with_font_tag = g_strdup_printf("<font sml=\"%s\">%s</font>",
+		if(gc)
+			with_font_tag = g_strdup_printf("<font sml=\"%s\">%s</font>",
 										gc->prpl->name, new_message);
+		else
+			with_font_tag = g_strdup(new_message);
 
 		log_str = gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
 										 with_font_tag, length,

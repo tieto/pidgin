@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4894 2003-02-23 02:21:17Z lschiere $
+ * $Id: gg.c 4896 2003-02-24 00:29:54Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -44,10 +44,10 @@
 #include <ctype.h>
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
+#include "gaim.h"
 #include "multi.h"
 #include "core.h"
 #include "prpl.h"
-#include "gaim.h"
 #include "proxy.h"
 
 #ifdef _WIN32

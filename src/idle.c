@@ -37,8 +37,8 @@
 #endif
 #endif /* USE_SCREENSAVER */
 
-#include "multi.h"
 #include "gaim.h"
+#include "multi.h"
 #include "prpl.h"
 
 #define IDLEMARK 600   	/* 10 minutes! */
