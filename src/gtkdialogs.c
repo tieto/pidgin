@@ -65,6 +65,7 @@ struct translator {
 static struct developer developers[] = {
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Sean Egan",					N_("lead developer"), "sean.egan@binghamton.edu"},
+	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
@@ -78,7 +79,6 @@ static struct developer developers[] = {
 };
 
 static struct developer patch_writers[] = {
-	{"Daniel 'datallah' Atallah",	NULL,	NULL},
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
