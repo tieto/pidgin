@@ -39,6 +39,12 @@ static GaimRoomlistUiOps *ops = NULL;
 /**************************************************************************/
 /*@{*/
 
+void gaim_roomlist_show_with_account(GaimAccount *account)
+{
+	if (ops && ops->show_with_account)
+		ops->show_with_account(account);
+}
+
 GaimRoomlist *gaim_roomlist_new(GaimAccount *account)
 {
 	GaimRoomlist *list;

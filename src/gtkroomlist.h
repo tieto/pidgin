@@ -45,7 +45,8 @@ void gaim_gtk_roomlist_dialog_show(void);
 GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void);
 
 /**
- * Create a new room list dialog with no account selector.
+ * Create a new room list dialog and fetch the list on
+ * the specified account.
  *
  * @param account The account to force.
  * @return The new dialog.

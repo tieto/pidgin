@@ -94,6 +94,7 @@ struct _GaimRoomlistField {
  * The room list ops to be filled out by the UI.
  */
 struct _GaimRoomlistUiOps {
+	void (*show_with_account)(GaimAccount *account); /**< Force the ui to pop up a dialog and get the list */
 	void (*new)(GaimRoomlist *list); /**< A new list was created. */
 	void (*set_fields)(GaimRoomlist *list, GList *fields); /**< Sets the columns. */
 	void (*add_room)(GaimRoomlist *list, GaimRoomlistRoom *room); /**< Add a room to the list. */
@@ -110,6 +111,17 @@ extern "C" {
 /** @name Room List API                                                   */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * This is used to get the room list on an account, asking the UI
+ * to pop up a dialog with the specified account already selected,
+ * and pretend the user clicked the get list button.
+ * While we're pretending, predend I didn't say anything about dialogs
+ * or buttons, since this is the core.
+ *
+ * @param account The account to get the list on.
+ */
+void gaim_roomlist_show_with_account(GaimAccount *account);
 
 /**
  * Returns a newly created room list object.

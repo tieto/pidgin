@@ -206,11 +206,7 @@ int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 int irc_cmd_list(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
-	char *buf;
-
-	buf = irc_format(irc, "v", "LIST");
-	irc_send(irc, buf);
-	g_free(buf);
+	gaim_roomlist_show_with_account(irc->account);
 
 	return 0;
 }

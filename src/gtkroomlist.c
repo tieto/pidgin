@@ -343,29 +343,28 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
 
-	/* accounts dropdown list */
-	if (!account) {
-		account_hbox = gtk_hbox_new(FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
-		gtk_widget_show(account_hbox);
 
+	if (!account)
 		dialog->account = first_account;
-		label = gtk_label_new(NULL);
-		gtk_box_pack_start(GTK_BOX(account_hbox), label, TRUE, TRUE, 0);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_widget_show(label);
-
-		dialog->account_widget = gaim_gtk_account_option_menu_new(first_account, FALSE,
-				G_CALLBACK(dialog_select_account_cb), accounts_filter_func, dialog);
-
-		gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
-		gtk_widget_show(dialog->account_widget);
-
-	} else {
+	else
 		dialog->account = account;
-	}
+	/* accounts dropdown list */
+	account_hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
+	gtk_widget_show(account_hbox);
+
+	label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(account_hbox), label, TRUE, TRUE, 0);
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_widget_show(label);
+
+	dialog->account_widget = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
+	                         G_CALLBACK(dialog_select_account_cb), accounts_filter_func, dialog);
+
+	gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
+	gtk_widget_show(dialog->account_widget);
 
 	/* scrolled window */
 	dialog->sw = gtk_scrolled_window_new(NULL, NULL);
@@ -432,6 +431,17 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void)
 {
 	return gaim_gtk_roomlist_dialog_new_with_account(NULL);
+}
+
+static void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account)
+{
+	GaimGtkRoomlistDialog *dialog;
+
+	dialog = gaim_gtk_roomlist_dialog_new_with_account(account);
+	if (!dialog)
+		return;
+
+	list_button_cb(GTK_BUTTON(dialog->list_button), dialog);
 }
 
 void gaim_gtk_roomlist_dialog_show(void)
@@ -701,6 +711,7 @@ static void gaim_gtk_roomlist_destroy(GaimRoomlist *list)
 }
 
 static GaimRoomlistUiOps ops = {
+	gaim_gtk_roomlist_dialog_show_with_account,
 	gaim_gtk_roomlist_new,
 	gaim_gtk_roomlist_set_fields,
 	gaim_gtk_roomlist_add_room,

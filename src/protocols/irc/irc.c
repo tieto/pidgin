@@ -488,6 +488,7 @@ static GaimRoomlist *irc_roomlist_get_list(GaimConnection *gc)
 	struct irc_conn *irc;
 	GList *fields = NULL;
 	GaimRoomlistField *f;
+	char *buf;
 
 	irc = gc->proto_data;
 
@@ -507,7 +508,9 @@ static GaimRoomlist *irc_roomlist_get_list(GaimConnection *gc)
 
 	gaim_roomlist_set_fields(irc->roomlist, fields);
 
-	irc_cmd_list(irc, "LIST", NULL, NULL);
+	buf = irc_format(irc, "v", "LIST");
+	irc_send(irc, buf);
+	g_free(buf);
 
 	return irc->roomlist;
 }
