@@ -53,7 +53,7 @@ static void make_connect_menu(GtkWidget *box) {
 		g = (GaimConnection *)c->data;
 		account = gaim_connection_get_account(g);
 
-		opt = gtk_menu_item_new_with_label(gaim_account_get_username(g));
+		opt = gtk_menu_item_new_with_label(gaim_account_get_username(account));
 		g_signal_connect(G_OBJECT(opt), "activate",
 				   G_CALLBACK(sel_gc), g);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
