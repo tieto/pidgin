@@ -21,6 +21,7 @@
  */
 #include "msn.h"
 #include "msg.h"
+#include "page.h"
 #include "session.h"
 #include "state.h"
 #include "utils.h"
@@ -33,6 +34,13 @@ static GaimPlugin *my_protocol = NULL;
 G_MODULE_IMPORT GSList *connections;
 
 static char *msn_normalize(const char *str);
+
+typedef struct
+{
+	struct gaim_connection *gc;
+	const char *passport;
+
+} MsnMobileData;
 
 static void
 msn_act_id(gpointer data, char *entry)
@@ -116,6 +124,36 @@ __disable_msn_pages_cb(struct gaim_connection *gc)
 	msn_set_prp(gc, "MOB", "N");
 }
 
+static void
+__send_to_mobile_cb(MsnMobileData *data, const char *entry)
+{
+	MsnSession *session = data->gc->proto_data;
+	MsnServConn *servconn = session->notification_conn;
+	MsnUser *user;
+	MsnPage *page;
+	char *page_str;
+
+	user = msn_user_new(session, data->passport, NULL);
+
+	page = msn_page_new();
+	msn_page_set_receiver(page, user);
+	msn_page_set_transaction_id(page, ++session->trId);
+	msn_page_set_body(page, entry);
+
+	page_str = msn_page_build_string(page);
+
+	msn_user_destroy(user);
+	msn_page_destroy(page);
+
+	if (!msn_servconn_write(servconn, page_str, strlen(page_str))) {
+
+		hide_login_progress(data->gc, _("Write error"));
+		signoff(data->gc);
+	}
+
+	g_free(page_str);
+}
+
 /* -- */
 
 static void
@@ -184,6 +222,24 @@ msn_show_set_mobile_pages(struct gaim_connection *gc)
 				  _("Disallow"), __disable_msn_pages_cb,
 				  session->prpl->handle, FALSE);
 }
+
+static void
+__show_send_to_mobile_cb(struct gaim_connection *gc, const char *passport)
+{
+	MsnUser *user;
+	MsnSession *session = gc->proto_data;
+	MsnMobileData *data;
+
+	user = msn_users_find_with_passport(session->users, passport);
+
+	data = g_new0(MsnMobileData, 1);
+	data->gc = gc;
+	data->passport = passport;
+
+	do_prompt_dialog(_("Send message:"), NULL,
+					 data, __send_to_mobile_cb, g_free);
+}
+
 
 /**************************************************************************
  * Protocol Plugin ops
@@ -312,7 +368,19 @@ msn_actions(struct gaim_connection *gc)
 static GList *
 msn_buddy_menu(struct gaim_connection *gc, const char *who)
 {
+	struct proto_buddy_menu *pbm;
+	struct buddy *b;
 	GList *m = NULL;
+
+	b = gaim_find_buddy(gc->account, who);
+
+	if (MSN_MOBILE(b->uc)) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label    = _("Send to Mobile");
+		pbm->callback = __show_send_to_mobile_cb;
+		pbm->gc       = gc;
+		m = g_list_append(m, pbm);
+	}
 
 	return m;
 }

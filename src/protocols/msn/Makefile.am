@@ -16,6 +16,8 @@ MSNSOURCES = \
 	msn.h \
 	notification.c \
 	notification.h \
+	page.c \
+	page.h \
 	servconn.c \
 	servconn.h \
 	session.c \
