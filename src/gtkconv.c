@@ -2064,13 +2064,17 @@ generate_send_as_items(struct gaim_window *win,
 
 	/* Fill it with entries. */
 	for (gcs = connections; gcs != NULL; gcs = gcs->next) {
+
+		char buf[256];
 		struct gaim_connection *gc;
 
 		found_online = TRUE;
 
 		gc = (struct gaim_connection *)gcs->data;
 
-		menuitem = gtk_radio_menu_item_new_with_label(group, gc->username);
+		g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
+
+		menuitem = gtk_radio_menu_item_new_with_label(group, buf);
 		group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);

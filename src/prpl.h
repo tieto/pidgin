@@ -89,7 +89,9 @@ typedef enum
 	 * TOC and Oscar send HTML-encoded messages;
 	 * most other protocols don't.
 	 */
-//	#define OPT_PROTO_HTML            0x00000001 this should be per-connection */
+#if 0
+	#define OPT_PROTO_HTML            0x00000001 this should be per-connection */
+#endif
 
 	/**
 	 * Synchronize the time between the local computer and the server.
