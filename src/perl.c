@@ -126,7 +126,7 @@ static SV *execute_perl(char *function, char *args)
 
 	if (perl_cmd)
 		g_free(perl_cmd);
-	perl_cmd = g_malloc(strlen(function) + strlen(args) + 2 + 10);
+	perl_cmd = g_malloc(strlen(function) + (strlen(args) * 2) + 2 + 10);
 	sprintf(perl_cmd, "&%s('%s')", function, escape_quotes(args));
 #ifndef HAVE_PERL_EVAL_PV
 	return (perl_eval_pv(perl_cmd, TRUE));
