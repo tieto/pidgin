@@ -919,63 +919,12 @@ void show_add_group(GaimConnection *gc)
 	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
 }
 
-static void addbuddy_select_account(GObject *w, GaimConnection *gc)
+static void
+addbuddy_select_account(GObject *w, GaimAccount *account,
+						struct addbuddy *b)
 {
-	struct addbuddy *b = g_object_get_data(w, "addbuddy");
-
 	/* Save our account */
-	b->gc = gc;
-}
-
-static void create_online_user_names(struct addbuddy *b)
-{
-	char buf[2048]; /* Never hurts to be safe ;-) */
-	GList *g = gaim_connections_get_all();
-	GaimConnection *c;
-	GaimAccount *account;
-	GtkWidget *menu, *opt;
-	int count = 0;
-	int place = 0;
-
-	menu = gtk_menu_new();
-
-	while (g) {
-		c = (GaimConnection *)g->data;
-
-		account = gaim_connection_get_account(c);
-
-		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				   gaim_account_get_username(account),
-				   c->prpl->info->name);
-		opt = gtk_menu_item_new_with_label(buf);
-		g_object_set_data(G_OBJECT(opt), "addbuddy", b);
-		g_signal_connect(G_OBJECT(opt), "activate",
-				G_CALLBACK(addbuddy_select_account),
-				c);
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-
-		/* Now check to see if it's our current menu */
-		if (c == b->gc) {
-			place = count;
-			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
-			gtk_option_menu_set_history(GTK_OPTION_MENU(b->account), count);
-
-			/* Do the cha cha cha */
-		}
-
-		count++;
-
-		g = g->next;
-	}
-
-	gtk_option_menu_remove_menu(GTK_OPTION_MENU(b->account));
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(b->account), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(b->account), place);
-
-	gtk_widget_show(b->account);
-	gtk_widget_show(b->account->parent);
-
+	b->gc = gaim_account_get_connection(account);
 }
 
 void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
@@ -1066,14 +1015,15 @@ void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
 
-	a->account = gtk_option_menu_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
+	a->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
+			G_CALLBACK(addbuddy_select_account), a);
 
-	create_online_user_names(a);
+	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
 
 	/* End of account box */
 
-	g_signal_connect(G_OBJECT(a->window), "response", G_CALLBACK(do_add_buddy), a);
+	g_signal_connect(G_OBJECT(a->window), "response",
+					 G_CALLBACK(do_add_buddy), a);
 
 	gtk_widget_show_all(a->window);
 
@@ -1223,45 +1173,111 @@ static void addchat_select_account(GObject *w, GaimConnection *gc)
 static void create_online_account_menu_for_add_chat(struct addchat *ac)
 {
 	char buf[2048]; /* Never hurts to be safe ;-) */
-	GList *g = gaim_connections_get_all();
+	GList *g;
 	GaimConnection *c;
 	GaimAccount *account;
 	GtkWidget *menu, *opt;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *scale;
+	GtkSizeGroup *sg;
+	char *filename;
+	const char *proto_name;
 	int count = 0;
 	int place = 0;
 
 	menu = gtk_menu_new();
 
-	while (g) {
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	for (g = gaim_connections_get_all(); g != NULL; g = g->next) {
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		GaimPlugin *plugin;
+
 		c = (GaimConnection *)g->data;
 		account = gaim_connection_get_account(c);
 
-		if (GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->join_chat) {
-			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gaim_account_get_username(account),
-					   c->prpl->info->name);
-			opt = gtk_menu_item_new_with_label(buf);
-			g_object_set_data(G_OBJECT(opt), "addchat", ac);
-			g_signal_connect(G_OBJECT(opt), "activate",
-					G_CALLBACK(addchat_select_account),
-					c);
-			gtk_widget_show(opt);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+		plugin = c->prpl;
 
-			/* Now check to see if it's our current menu */
-			if (c->account == ac->account) {
-				place = count;
-				gtk_menu_item_activate(GTK_MENU_ITEM(opt));
-				gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), count);
+		if (plugin == NULL)
+			continue;
 
-				/* Do the cha cha cha */
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		if (prpl_info == NULL || prpl_info->join_chat == NULL)
+			continue;
+
+		opt = gtk_menu_item_new();
+
+		/* Create the hbox. */
+		hbox = gtk_hbox_new(FALSE, 4);
+		gtk_container_add(GTK_CONTAINER(opt), hbox);
+		gtk_widget_show(hbox);
+
+		/* Load the image. */
+		if (prpl_info != NULL) {
+			proto_name = prpl_info->list_icon(NULL, NULL);
+			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+										"default", buf, NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+			if (pixbuf != NULL) {
+				/* Scale and insert the image */
+				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+												GDK_INTERP_BILINEAR);
+				image = gtk_image_new_from_pixbuf(scale);
+
+				g_object_unref(G_OBJECT(pixbuf));
+				g_object_unref(G_OBJECT(scale));
 			}
+			else
+				image = gtk_image_new();
+		}
+		else
+			image = gtk_image_new();
 
-			count++;
+		gtk_size_group_add_widget(sg, image);
+
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+		gtk_widget_show(image);
+
+		g_snprintf(buf, sizeof(buf), "%s (%s)",
+				   gaim_account_get_username(account),
+				   c->prpl->info->name);
+
+		/* Create the label. */
+		label = gtk_label_new(buf);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
+
+
+		g_object_set_data(G_OBJECT(opt), "addchat", ac);
+		g_signal_connect(G_OBJECT(opt), "activate",
+						 G_CALLBACK(addchat_select_account), c);
+		gtk_widget_show(opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+
+		/* Now check to see if it's our current menu */
+		if (c->account == ac->account) {
+			place = count;
+			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
+			gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu),
+										count);
+
+			/* Do the cha cha cha */
 		}
 
-		g = g->next;
+		count++;
 	}
+
+	g_object_unref(sg);
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(ac->account_menu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(ac->account_menu), menu);

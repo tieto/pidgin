@@ -214,9 +214,6 @@ create_joinchat_menu(GtkWidget *box)
 
 		account = gaim_connection_get_account(g);
 
-		g_snprintf(buf, sizeof(buf), "%s (%s)",
-				   gaim_account_get_username(account), g->prpl->info->name);
-
 		opt = gtk_menu_item_new();
 
 		/* Create the hbox. */
