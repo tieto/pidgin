@@ -184,7 +184,7 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	}
 
 	free(*deadconn);
-	deadconn = NULL;
+	*deadconn = NULL;
 
 	return;
 }
