@@ -1406,7 +1406,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 						who = gaim_conversation_get_name(conv);
 				}
 			}
-			else {
+			else if ((who != NULL) && (*who != '\0')) {
 				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
