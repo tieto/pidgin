@@ -106,6 +106,9 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	struct group *g;
 	char *good;
 
+	if (!g_slist_find(connections, gc))
+		return NULL;
+
 	if ((b = find_buddy(gc, buddy)) != NULL)
 		return b;
 
@@ -145,6 +148,8 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 	struct group *g = find_group(gc, group);
 	if (g)
 		return g;
+	if (!g_slist_find(connections, gc))
+		return NULL;
 	g = (struct group *)g_new0(struct group, 1);
 	if (!g)
 		return NULL;
@@ -170,6 +175,8 @@ struct group *find_group(struct gaim_connection *gc, char *group)
 
 	strcpy(grpname, normalize (group));
 	if (gc) {
+		if (!g_slist_find(connections, gc))
+			return NULL;
 		grp = gc->groups;
 		while (grp) {
 			g = (struct group *)grp->data;
@@ -278,6 +285,8 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 	char *(*norm)(const char *);
 
 	if (gc) {
+		if (!g_slist_find(connections, gc))
+			return NULL;
 		if (gc->prpl->normalize)
 			norm = gc->prpl->normalize;
 		else

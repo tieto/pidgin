@@ -162,21 +162,21 @@ void serv_get_info(struct gaim_connection *g, char *name)
 
 void serv_get_dir(struct gaim_connection *g, char *name)
 {
-	if (g && g->prpl && g->prpl->get_dir)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->get_dir)
 		(*g->prpl->get_dir)(g, name);
 }
 
 void serv_set_dir(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
-	if (g && g->prpl && g->prpl->set_dir)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_dir)
 		(*g->prpl->set_dir)(g, first, middle, last, maiden, city, state, country, web);
 }
 
 void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
-	if (g && g->prpl && g->prpl->dir_search)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->dir_search)
 		(*g->prpl->dir_search)(g, first, middle, last, maiden, city, state, country, email);
 }
 
@@ -218,7 +218,7 @@ void serv_set_away_all(char *message)
 
 void serv_set_info(struct gaim_connection *g, char *info)
 {
-	if (g->prpl && g->prpl->set_info) {
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_info) {
 		plugin_event(event_set_info, g, info, 0, 0);
 		(*g->prpl->set_info)(g, info);
 	}
@@ -226,19 +226,19 @@ void serv_set_info(struct gaim_connection *g, char *info)
 
 void serv_change_passwd(struct gaim_connection *g, char *orig, char *new)
 {
-	if (g->prpl && g->prpl->change_passwd)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->change_passwd)
 		(*g->prpl->change_passwd)(g, orig, new);
 }
 
 void serv_add_buddy(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->add_buddy)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_buddy)
 		(*g->prpl->add_buddy)(g, name);
 }
 
 void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 {
-	if (g->prpl) {
+	if (g && g_slist_find(connections, g) && g->prpl) {
 		if (g->prpl->add_buddies)
 			(*g->prpl->add_buddies)(g, buddies);
 		else if (g->prpl->add_buddy)
@@ -252,12 +252,14 @@ void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 
 void serv_remove_buddy(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->remove_buddy)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->remove_buddy)
 		(*g->prpl->remove_buddy)(g, name);
 }
 
 void serv_remove_buddies(struct gaim_connection *gc, GList *g)
 {
+	if (!g_slist_find(connections, gc))
+		return;
 	if (!gc->prpl)
 		return;		/* how the hell did that happen? */
 	if (gc->prpl->remove_buddies)
@@ -272,25 +274,25 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g)
 
 void serv_add_permit(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->add_permit)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_permit)
 		(*g->prpl->add_permit)(g, name);
 }
 
 void serv_add_deny(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->add_deny)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_deny)
 		(*g->prpl->add_deny)(g, name);
 }
 
 void serv_rem_permit(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->rem_permit)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_permit)
 		(*g->prpl->rem_permit)(g, name);
 }
 
 void serv_rem_deny(struct gaim_connection *g, char *name)
 {
-	if (g->prpl && g->prpl->rem_deny)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_deny)
 		(*g->prpl->rem_deny)(g, name);
 }
 
@@ -299,26 +301,26 @@ void serv_set_permit_deny(struct gaim_connection *g)
 	/* this is called when either you import a buddy list, and make lots of changes that way,
 	 * or when the user toggles the permit/deny mode in the prefs. In either case you should
 	 * probably be resetting and resending the permit/deny info when you get this. */
-	if (g->prpl && g->prpl->set_permit_deny)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_permit_deny)
 		(*g->prpl->set_permit_deny)(g);
 }
 
 
 void serv_set_idle(struct gaim_connection *g, int time)
 {
-	if (g->prpl && g->prpl->set_idle)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_idle)
 		(*g->prpl->set_idle)(g, time);
 }
 
 void serv_warn(struct gaim_connection *g, char *name, int anon)
 {
-	if (g->prpl && g->prpl->warn)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->warn)
 		(*g->prpl->warn)(g, name, anon);
 }
 
 void serv_join_chat(struct gaim_connection *g, GList *data)
 {
-	if (g->prpl && g->prpl->join_chat)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->join_chat)
 		(*g->prpl->join_chat)(g, data);
 }
 
@@ -326,7 +328,7 @@ void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *na
 {
 	char *buffy = message && *message ? g_strdup(message) : NULL;
 	plugin_event(event_chat_send_invite, g, (void *)id, name, &buffy);
-	if (g->prpl && g->prpl->chat_invite)
+	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->chat_invite)
 		(*g->prpl->chat_invite)(g, id, buffy, name);
 	if (buffy)
 		g_free(buffy);
@@ -334,8 +336,6 @@ void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *na
 
 void serv_chat_leave(struct gaim_connection *g, int id)
 {
-	/* i think this is the only one this should be necessary for since this is the
-	 * only thing that could possibly get called after the connection is closed */
 	if (!g_slist_find(connections, g))
 		return;
 
