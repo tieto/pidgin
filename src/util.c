@@ -46,6 +46,10 @@
 #include "gaim.h"
 #include "prpl.h"
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
