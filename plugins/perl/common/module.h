@@ -22,14 +22,14 @@ typedef struct group *Gaim__Group;
 
 typedef GaimAccount *     Gaim__Account;
 typedef GaimBuddy *       Gaim__BuddyList__Buddy;
-typedef GaimBlistChat *   Gaim__BuddyList__Chat;
+typedef GaimChat *   Gaim__BuddyList__Chat;
 typedef GaimGroup *       Gaim__BuddyList__Group;
 typedef GaimContact *     Gaim__BuddyList__Contact;
 typedef GaimConnection *  Gaim__Connection;
 typedef GaimConversation *Gaim__Conversation;
-typedef GaimChat *        Gaim__Conversation__Chat;
-typedef GaimIm *          Gaim__Conversation__IM;
-typedef GaimWindow *      Gaim__ConvWindow;
+typedef GaimConvChat *        Gaim__Conversation__Chat;
+typedef GaimConvIm *          Gaim__Conversation__IM;
+typedef GaimConvWindow *      Gaim__ConvWindow;
 typedef GaimPlugin *      Gaim__Plugin;
 
 typedef GaimDebugLevel Gaim__DebugLevel;

@@ -5,6 +5,7 @@ version 0.71
 	  they are away.
 	* Re-write of Jabber protocol plugin
 	* Massive core/UI splitting.
+	* Conversation API changes.
 	* SSL support can now be provided by third party plugins.
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins

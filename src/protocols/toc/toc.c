@@ -735,7 +735,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			message++;
 		message++;
 
-		a = (away && (*away == 'T')) ? GAIM_IM_AUTO_RESP : 0;
+		a = (away && (*away == 'T')) ? GAIM_CONV_IM_AUTO_RESP : 0;
 
 		serv_got_im(gc, c, message, a, time(NULL));
 	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
@@ -823,16 +823,16 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		char *in, *buddy;
 		GSList *bcs = gc->buddy_chats;
 		GaimConversation *b = NULL;
-		GaimChat *chat;
+		GaimConvChat *chat;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 		in = strtok(NULL, ":");
 
-		chat = GAIM_CHAT(b);
+		chat = GAIM_CONV_CHAT(b);
 
 		while (bcs) {
 			b = (GaimConversation *)bcs->data;
-			if (id == gaim_chat_get_id(chat))
+			if (id == gaim_conv_chat_get_id(chat))
 				break;
 			bcs = bcs->next;
 			b = NULL;
@@ -843,10 +843,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (in && (*in == 'T'))
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				gaim_chat_add_user(chat, buddy, NULL);
+				gaim_conv_chat_add_user(chat, buddy, NULL);
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				gaim_chat_remove_user(chat, buddy, NULL);
+				gaim_conv_chat_remove_user(chat, buddy, NULL);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
 		int id;
@@ -870,7 +870,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		while (bcs) {
 			b = (GaimConversation *)bcs->data;
-			if (id == gaim_chat_get_id(GAIM_CHAT(b)))
+			if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
 				break;
 			b = NULL;
 			bcs = bcs->next;
@@ -1056,7 +1056,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(GaimConnection *gc, const char *name, const char *message, GaimImFlags flags)
+static int toc_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags flags)
 {
 	char *buf1, *buf2;
 
@@ -1068,7 +1068,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 		return -E2BIG;
 	}
 	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", gaim_normalize(name), buf1, 
-						   ((flags & GAIM_IM_AUTO_RESP) ? " auto" : ""));
+						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
 #else
 	/* This doesn't work yet.  See the comments below for details */
@@ -1092,7 +1092,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 	}
 
 	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", gaim_normalize(name), buf1, 
-						   ((flags & GAIM_IM_AUTO_RESP) ? "auto" : ""));
+						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? "auto" : ""));
 	g_free(buf1);
 #endif
 
@@ -1305,7 +1305,7 @@ static void toc_chat_leave(GaimConnection *g, int id)
 
 	while (bcs) {
 		b = (GaimConversation *)bcs->data;
-		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
+		if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
 			break;
 		b = NULL;
 		bcs = bcs->next;

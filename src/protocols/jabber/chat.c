@@ -238,7 +238,7 @@ void jabber_chat_destroy(JabberChat *chat)
 
 gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name)
 {
-	GList *m = gaim_chat_get_users(GAIM_CHAT(conv));
+	GList *m = gaim_conv_chat_get_users(GAIM_CONV_CHAT(conv));
 
 	while(m) {
 		if(!strcmp(m->data, name))

@@ -55,7 +55,7 @@ static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimWindow *win;
+	GaimConvWindow *win;
 	unsigned int index;
 
 	conv  = (GaimConversation *)data;
@@ -63,50 +63,50 @@ stroke_prev_tab(GtkWidget *widget, void *data)
 	index = gaim_conversation_get_index(conv);
 
 	if (index == 0)
-		index = gaim_window_get_conversation_count(win) - 1;
+		index = gaim_conv_window_get_conversation_count(win) - 1;
 	else
 		index--;
 
-	gaim_window_switch_conversation(win, index);
+	gaim_conv_window_switch_conversation(win, index);
 }
 
 static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimWindow *win;
+	GaimConvWindow *win;
 	unsigned int index;
 
 	conv  = (GaimConversation *)data;
 	win   = gaim_conversation_get_window(conv);
 	index = gaim_conversation_get_index(conv);
 
-	if (index == gaim_window_get_conversation_count(win) - 1)
+	if (index == gaim_conv_window_get_conversation_count(win) - 1)
 		index = 0;
 	else
 		index++;
 
-	gaim_window_switch_conversation(win, index);
+	gaim_conv_window_switch_conversation(win, index);
 }
 
 void
 stroke_new_win(GtkWidget *widget, void *data)
 {
-	GaimWindow *new_win, *old_win;
+	GaimConvWindow *new_win, *old_win;
 	GaimConversation *conv;
 
 	conv    = (GaimConversation *)data;
 	old_win = gaim_conversation_get_window(conv);
 
-	if (gaim_window_get_conversation_count(old_win) <= 1)
+	if (gaim_conv_window_get_conversation_count(old_win) <= 1)
 		return;
 
-	new_win = gaim_window_new();
+	new_win = gaim_conv_window_new();
 
-	gaim_window_remove_conversation(old_win, gaim_conversation_get_index(conv));
-	gaim_window_add_conversation(new_win, conv);
+	gaim_conv_window_remove_conversation(old_win, gaim_conversation_get_index(conv));
+	gaim_conv_window_add_conversation(new_win, conv);
 
-	gaim_window_show(new_win);
+	gaim_conv_window_show(new_win);
 }
 
 static void

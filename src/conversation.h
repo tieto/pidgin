@@ -29,12 +29,12 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
-typedef struct _GaimWindowUiOps       GaimWindowUiOps;
-typedef struct _GaimWindow            GaimWindow;
+typedef struct _GaimConvWindowUiOps   GaimConvWindowUiOps;
+typedef struct _GaimConvWindow        GaimConvWindow;
 typedef struct _GaimConversationUiOps GaimConversationUiOps;
 typedef struct _GaimConversation      GaimConversation;
-typedef struct _GaimIm                GaimIm;
-typedef struct _GaimChat              GaimChat;
+typedef struct _GaimConvIm            GaimConvIm;
+typedef struct _GaimConvChat          GaimConvChat;
 
 /**
  * A type of conversation.
@@ -112,6 +112,7 @@ typedef enum
 	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.              */
 	GAIM_MESSAGE_WHISPER   = 0x0080, /**< Whispered message.       */
 	GAIM_MESSAGE_IMAGES    = 0x0100  /**< Message contains images. */
+
 } GaimMessageFlags;
 
 #include "account.h"
@@ -121,27 +122,27 @@ typedef enum
 /**
  * Conversation window operations.
  *
- * Any UI representing a window must assign a filled-out gaim_window_ops
- * structure to the GaimWindow.
+ * Any UI representing a window must assign a filled-out gaim_conv_window_ops
+ * structure to the GaimConvWindow.
  */
-struct _GaimWindowUiOps
+struct _GaimConvWindowUiOps
 {
 	GaimConversationUiOps *(*get_conversation_ui_ops)(void);
 
-	void (*new_window)(GaimWindow *win);
-	void (*destroy_window)(GaimWindow *win);
+	void (*new_window)(GaimConvWindow *win);
+	void (*destroy_window)(GaimConvWindow *win);
 
-	void (*show)(GaimWindow *win);
-	void (*hide)(GaimWindow *win);
-	void (*raise)(GaimWindow *win);
-	void (*flash)(GaimWindow *win);
+	void (*show)(GaimConvWindow *win);
+	void (*hide)(GaimConvWindow *win);
+	void (*raise)(GaimConvWindow *win);
+	void (*flash)(GaimConvWindow *win);
 
-	void (*switch_conversation)(GaimWindow *win, unsigned int index);
-	void (*add_conversation)(GaimWindow *win, GaimConversation *conv);
-	void (*remove_conversation)(GaimWindow *win, GaimConversation *conv);
-	void (*move_conversation)(GaimWindow *win, GaimConversation *conv,
+	void (*switch_conversation)(GaimConvWindow *win, unsigned int index);
+	void (*add_conversation)(GaimConvWindow *win, GaimConversation *conv);
+	void (*remove_conversation)(GaimConvWindow *win, GaimConversation *conv);
+	void (*move_conversation)(GaimConvWindow *win, GaimConversation *conv,
 							  unsigned int newIndex);
-	int (*get_active_index)(const GaimWindow *win);
+	int (*get_active_index)(const GaimConvWindow *win);
 };
 
 /**
@@ -154,9 +155,11 @@ struct _GaimConversationUiOps
 {
 	void (*destroy_conversation)(GaimConversation *conv);
 	void (*write_chat)(GaimConversation *conv, const char *who,
-					   const char *message, GaimMessageFlags flags, time_t mtime);
+					   const char *message, GaimMessageFlags flags,
+					   time_t mtime);
 	void (*write_im)(GaimConversation *conv, const char *who,
-					 const char *message, GaimMessageFlags flags, time_t mtime);
+					 const char *message, GaimMessageFlags flags,
+					 time_t mtime);
 	void (*write_conv)(GaimConversation *conv, const char *who,
 					   const char *message, GaimMessageFlags flags,
 					   time_t mtime);
@@ -179,19 +182,19 @@ struct _GaimConversationUiOps
  * A core representation of a graphical window containing one or more
  * conversations.
  */
-struct _GaimWindow
+struct _GaimConvWindow
 {
 	GList *conversations;              /**< The conversations in the window. */
 	size_t conversation_count;         /**< The number of conversations.     */
 
-	GaimWindowUiOps *ui_ops;           /**< UI-specific window operations.   */
+	GaimConvWindowUiOps *ui_ops;       /**< UI-specific window operations.   */
 	void *ui_data;                     /**< UI-specific data.                */
 };
 
 /**
  * Data specific to Instant Messages.
  */
-struct _GaimIm
+struct _GaimConvIm
 {
 	GaimConversation *conv;            /**< The parent conversation.     */
 
@@ -208,7 +211,7 @@ struct _GaimIm
 /**
  * Data specific to Chats.
  */
-struct _GaimChat
+struct _GaimConvChat
 {
 	GaimConversation *conv;          /**< The parent conversation.      */
 
@@ -223,14 +226,14 @@ struct _GaimChat
  * A core representation of a conversation between two or more people.
  *
  * The conversation can be an IM or a chat. Each conversation is kept
- * in a GaimWindow and has a UI representation.
+ * in a GaimConvWindow and has a UI representation.
  */
 struct _GaimConversation
 {
 	GaimConversationType type;  /**< The type of conversation.          */
 
 	GaimAccount *account;       /**< The user using this conversation.  */
-	GaimWindow *window;         /**< The parent window.                 */
+	GaimConvWindow *window;     /**< The parent window.                 */
 
 	int conversation_pos;       /**< The position in the window's list. */
 
@@ -246,8 +249,8 @@ struct _GaimConversation
 
 	union
 	{
-		GaimIm   *im;           /**< IM-specific data.                  */
-		GaimChat *chat;         /**< Chat-specific data.                */
+		GaimConvIm   *im;       /**< IM-specific data.                  */
+		GaimConvChat *chat;     /**< Chat-specific data.                */
 		void *misc;             /**< Misc. data.                        */
 
 	} u;
@@ -273,46 +276,46 @@ extern "C" {
  * Creates a new conversation window.
  *
  * This window is added to the list of windows, but is not shown until
- * gaim_window_show() is called.
+ * gaim_conv_window_show() is called.
  *
  * @return The new conversation window.
  */
-GaimWindow *gaim_window_new(void);
+GaimConvWindow *gaim_conv_window_new(void);
 
 /**
  * Destroys the specified conversation window and all conversations in it.
  *
  * @param win The window to destroy.
  */
-void gaim_window_destroy(GaimWindow *win);
+void gaim_conv_window_destroy(GaimConvWindow *win);
 
 /**
  * Shows the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_show(GaimWindow *win);
+void gaim_conv_window_show(GaimConvWindow *win);
 
 /**
  * Hides the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_hide(GaimWindow *win);
+void gaim_conv_window_hide(GaimConvWindow *win);
 
 /**
  * Raises the specified conversation window.
  *
  * @param win The window.
  */
-void gaim_window_raise(GaimWindow *win);
+void gaim_conv_window_raise(GaimConvWindow *win);
 
 /**
  * Causes the window to flash for IM notification, if the UI supports this.
  *
  * @param win The window.
  */
-void gaim_window_flash(GaimWindow *win);
+void gaim_conv_window_flash(GaimConvWindow *win);
 
 /**
  * Sets the specified window's UI window operations structure.
@@ -320,7 +323,8 @@ void gaim_window_flash(GaimWindow *win);
  * @param win The window.
  * @param ops The UI window operations structure.
  */
-void gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops);
+void gaim_conv_window_set_ui_ops(GaimConvWindow *win,
+								 GaimConvWindowUiOps *ops);
 
 /**
  * Returns the specified window's UI window operations structure.
@@ -329,7 +333,7 @@ void gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops);
  *
  * @return The UI window operations structure.
  */
-GaimWindowUiOps *gaim_window_get_ui_ops(const GaimWindow *win);
+GaimConvWindowUiOps *gaim_conv_window_get_ui_ops(const GaimConvWindow *win);
 
 /**
  * Adds a conversation to this window.
@@ -341,7 +345,8 @@ GaimWindowUiOps *gaim_window_get_ui_ops(const GaimWindow *win);
  *
  * @return The new index of the conversation in the window.
  */
-int gaim_window_add_conversation(GaimWindow *win, GaimConversation *conv);
+int gaim_conv_window_add_conversation(GaimConvWindow *win,
+									  GaimConversation *conv);
 
 /**
  * Removes the conversation at the specified index from the window.
@@ -353,8 +358,8 @@ int gaim_window_add_conversation(GaimWindow *win, GaimConversation *conv);
  *
  * @return The conversation removed.
  */
-GaimConversation *gaim_window_remove_conversation(GaimWindow *win,
-												  unsigned int index);
+GaimConversation *gaim_conv_window_remove_conversation(GaimConvWindow *win,
+													   unsigned int index);
 
 /**
  * Moves the conversation at the specified index in a window to a new index.
@@ -363,8 +368,9 @@ GaimConversation *gaim_window_remove_conversation(GaimWindow *win,
  * @param index     The index of the conversation to move.
  * @param new_index The new index.
  */
-void gaim_window_move_conversation(GaimWindow *win, unsigned int index,
-								   unsigned int new_index);
+void gaim_conv_window_move_conversation(GaimConvWindow *win,
+										unsigned int index,
+										unsigned int new_index);
 
 /**
  * Returns the conversation in the window at the specified index.
@@ -376,8 +382,8 @@ void gaim_window_move_conversation(GaimWindow *win, unsigned int index,
  *
  * @return The conversation at the specified index.
  */
-GaimConversation *gaim_window_get_conversation_at(const GaimWindow *win,
-												  unsigned int index);
+GaimConversation *gaim_conv_window_get_conversation_at(
+		const GaimConvWindow *win, unsigned int index);
 
 /**
  * Returns the number of conversations in the window.
@@ -386,7 +392,7 @@ GaimConversation *gaim_window_get_conversation_at(const GaimWindow *win,
  *
  * @return The number of conversations.
  */
-size_t gaim_window_get_conversation_count(const GaimWindow *win);
+size_t gaim_conv_window_get_conversation_count(const GaimConvWindow *win);
 
 /**
  * Switches the active conversation to the one at the specified index.
@@ -396,7 +402,8 @@ size_t gaim_window_get_conversation_count(const GaimWindow *win);
  * @param win   The window.
  * @param index The new index.
  */
-void gaim_window_switch_conversation(GaimWindow *win, unsigned int index);
+void gaim_conv_window_switch_conversation(GaimConvWindow *win,
+										  unsigned int index);
 
 /**
  * Returns the active conversation in the window.
@@ -405,7 +412,8 @@ void gaim_window_switch_conversation(GaimWindow *win, unsigned int index);
  *
  * @return The active conversation.
  */
-GaimConversation *gaim_window_get_active_conversation(const GaimWindow *win);
+GaimConversation *gaim_conv_window_get_active_conversation(
+		const GaimConvWindow *win);
 
 /**
  * Returns the list of conversations in the specified window.
@@ -414,7 +422,7 @@ GaimConversation *gaim_window_get_active_conversation(const GaimWindow *win);
  *
  * @return The list of conversations.
  */
-GList *gaim_window_get_conversations(const GaimWindow *win);
+GList *gaim_conv_window_get_conversations(const GaimConvWindow *win);
 
 /**
  * Returns a list of all windows.
@@ -430,7 +438,7 @@ GList *gaim_get_windows(void);
  *
  * @return The window if found, or @c NULL if not found.
  */
-GaimWindow *gaim_get_first_window_with_type(GaimConversationType type);
+GaimConvWindow *gaim_get_first_window_with_type(GaimConversationType type);
 
 /**
  * Returns the last window containing a conversation of the specified type.
@@ -439,7 +447,7 @@ GaimWindow *gaim_get_first_window_with_type(GaimConversationType type);
  *
  * @return The window if found, or @c NULL if not found.
  */
-GaimWindow *gaim_get_last_window_with_type(GaimConversationType type);
+GaimConvWindow *gaim_get_last_window_with_type(GaimConversationType type);
 
 /*@}*/
 
@@ -649,7 +657,7 @@ GString *gaim_conversation_get_history(const GaimConversation *conv);
  *
  * @return The conversation's parent window.
  */
-GaimWindow *gaim_conversation_get_window(const GaimConversation *conv);
+GaimConvWindow *gaim_conversation_get_window(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's IM-specific data.
@@ -660,9 +668,9 @@ GaimWindow *gaim_conversation_get_window(const GaimConversation *conv);
  *
  * @return The IM-specific data.
  */
-GaimIm *gaim_conversation_get_im_data(const GaimConversation *conv);
+GaimConvIm *gaim_conversation_get_im_data(const GaimConversation *conv);
 
-#define GAIM_IM(c) (gaim_conversation_get_im_data(c))
+#define GAIM_CONV_IM(c) (gaim_conversation_get_im_data(c))
 
 /**
  * Returns the specified conversation's chat-specific data.
@@ -673,9 +681,9 @@ GaimIm *gaim_conversation_get_im_data(const GaimConversation *conv);
  *
  * @return The chat-specific data.
  */
-GaimChat *gaim_conversation_get_chat_data(const GaimConversation *conv);
+GaimConvChat *gaim_conversation_get_chat_data(const GaimConversation *conv);
 
-#define GAIM_CHAT(c) (gaim_conversation_get_chat_data(c))
+#define GAIM_CONV_CHAT(c) (gaim_conversation_get_chat_data(c))
 
 /**
  * Sets extra data for a conversation.
@@ -744,7 +752,7 @@ GaimConversation *gaim_find_conversation_with_account(
  * Writes to a conversation window.
  *
  * This function should not be used to write IM or chat messages. Use
- * gaim_im_write() and gaim_chat_write() instead. Those functions will
+ * gaim_conv_im_write() and gaim_conv_chat_write() instead. Those functions will
  * most likely call this anyway, but they may do their own formatting,
  * sound playback, etc.
  *
@@ -757,8 +765,8 @@ GaimConversation *gaim_find_conversation_with_account(
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  *
- * @see gaim_im_write()
- * @see gaim_chat_write()
+ * @see gaim_conv_im_write()
+ * @see gaim_conv_chat_write()
  */
 void gaim_conversation_write(GaimConversation *conv, const char *who,
 							 const char *message, GaimMessageFlags flags,
@@ -805,7 +813,7 @@ void gaim_conversation_foreach(void (*func)(GaimConversation *conv));
  *
  * @return The parent conversation.
  */
-GaimConversation *gaim_im_get_conversation(const GaimIm *im);
+GaimConversation *gaim_conv_im_get_conversation(const GaimConvIm *im);
 
 /**
  * Sets the IM's buddy icon.
@@ -818,7 +826,7 @@ GaimConversation *gaim_im_get_conversation(const GaimIm *im);
  *
  * @see gaim_buddy_icon_set_data()
  */
-void gaim_im_set_icon(GaimIm *im, GaimBuddyIcon *icon);
+void gaim_conv_im_set_icon(GaimConvIm *im, GaimBuddyIcon *icon);
 
 /**
  * Returns the IM's buddy icon.
@@ -827,7 +835,7 @@ void gaim_im_set_icon(GaimIm *im, GaimBuddyIcon *icon);
  *
  * @return The buddy icon.
  */
-GaimBuddyIcon *gaim_im_get_icon(const GaimIm *im);
+GaimBuddyIcon *gaim_conv_im_get_icon(const GaimConvIm *im);
 
 /**
  * Sets the IM's typing state.
@@ -835,7 +843,7 @@ GaimBuddyIcon *gaim_im_get_icon(const GaimIm *im);
  * @param im    The IM.
  * @param state The typing state.
  */
-void gaim_im_set_typing_state(GaimIm *im, int state);
+void gaim_conv_im_set_typing_state(GaimConvIm *im, int state);
 
 /**
  * Returns the IM's typing state.
@@ -844,7 +852,7 @@ void gaim_im_set_typing_state(GaimIm *im, int state);
  *
  * @return The IM's typing state.
  */
-int gaim_im_get_typing_state(const GaimIm *im);
+int gaim_conv_im_get_typing_state(const GaimConvIm *im);
 
 /**
  * Starts the IM's typing timeout.
@@ -852,14 +860,14 @@ int gaim_im_get_typing_state(const GaimIm *im);
  * @param im      The IM.
  * @param timeout The timeout.
  */
-void gaim_im_start_typing_timeout(GaimIm *im, int timeout);
+void gaim_conv_im_start_typing_timeout(GaimConvIm *im, int timeout);
 
 /**
  * Stops the IM's typing timeout.
  *
  * @param im The IM.
  */
-void gaim_im_stop_typing_timeout(GaimIm *im);
+void gaim_conv_im_stop_typing_timeout(GaimConvIm *im);
 
 /**
  * Returns the IM's typing timeout.
@@ -868,7 +876,7 @@ void gaim_im_stop_typing_timeout(GaimIm *im);
  *
  * @return The timeout.
  */
-guint gaim_im_get_typing_timeout(const GaimIm *im);
+guint gaim_conv_im_get_typing_timeout(const GaimConvIm *im);
 
 /**
  * Sets the IM's time until it should send another typing notification.
@@ -876,7 +884,7 @@ guint gaim_im_get_typing_timeout(const GaimIm *im);
  * @param im  The IM.
  * @param val The time.
  */
-void gaim_im_set_type_again(GaimIm *im, time_t val);
+void gaim_conv_im_set_type_again(GaimConvIm *im, time_t val);
 
 /**
  * Returns the IM's time until it should send another typing notification.
@@ -885,21 +893,21 @@ void gaim_im_set_type_again(GaimIm *im, time_t val);
  *
  * @return The time.
  */
-time_t gaim_im_get_type_again(const GaimIm *im);
+time_t gaim_conv_im_get_type_again(const GaimConvIm *im);
 
 /**
  * Starts the IM's type again timeout.
  *
  * @param im      The IM.
  */
-void gaim_im_start_type_again_timeout(GaimIm *im);
+void gaim_conv_im_start_type_again_timeout(GaimConvIm *im);
 
 /**
  * Stops the IM's type again timeout.
  *
  * @param im The IM.
  */
-void gaim_im_stop_type_again_timeout(GaimIm *im);
+void gaim_conv_im_stop_type_again_timeout(GaimConvIm *im);
 
 /**
  * Returns the IM's type again timeout interval.
@@ -908,14 +916,14 @@ void gaim_im_stop_type_again_timeout(GaimIm *im);
  *
  * @return The type again timeout interval.
  */
-guint gaim_im_get_type_again_timeout(const GaimIm *im);
+guint gaim_conv_im_get_type_again_timeout(const GaimConvIm *im);
 
 /**
  * Updates the visual typing notification for an IM conversation.
  *
  * @param im The IM.
  */
-void gaim_im_update_typing(GaimIm *im);
+void gaim_conv_im_update_typing(GaimConvIm *im);
 
 /**
  * Writes to an IM.
@@ -926,8 +934,9 @@ void gaim_im_update_typing(GaimIm *im);
  * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  */
-void gaim_im_write(GaimIm *im, const char *who,
-				   const char *message, GaimMessageFlags flags, time_t mtime);
+void gaim_conv_im_write(GaimConvIm *im, const char *who,
+						const char *message, GaimMessageFlags flags,
+						time_t mtime);
 
 /**
  * Sends a message to this IM conversation.
@@ -935,7 +944,7 @@ void gaim_im_write(GaimIm *im, const char *who,
  * @param im      The IM.
  * @param message The message to send.
  */
-void gaim_im_send(GaimIm *im, const char *message);
+void gaim_conv_im_send(GaimConvIm *im, const char *message);
 
 /*@}*/
 
@@ -952,21 +961,21 @@ void gaim_im_send(GaimIm *im, const char *message);
  *
  * @return The parent conversation.
  */
-GaimConversation *gaim_chat_get_conversation(const GaimChat *chat);
+GaimConversation *gaim_conv_chat_get_conversation(const GaimConvChat *chat);
 
 /**
  * Sets the list of users in the chat room.
  *
  * @note Calling this function will not update the display of the users.
- *       Please use gaim_chat_add_user(), gaim_chat_add_users(),
- *       gaim_chat_remove_user(), and gaim_chat_remove_users() instead.
+ *       Please use gaim_conv_chat_add_user(), gaim_conv_chat_add_users(),
+ *       gaim_conv_chat_remove_user(), and gaim_conv_chat_remove_users() instead.
  *
  * @param chat  The chat.
  * @param users The list of users.
  *
  * @return The list passed.
  */
-GList *gaim_chat_set_users(GaimChat *chat, GList *users);
+GList *gaim_conv_chat_set_users(GaimConvChat *chat, GList *users);
 
 /**
  * Returns a list of users in the chat room.
@@ -975,7 +984,7 @@ GList *gaim_chat_set_users(GaimChat *chat, GList *users);
  *
  * @return The list of users.
  */
-GList *gaim_chat_get_users(const GaimChat *chat);
+GList *gaim_conv_chat_get_users(const GaimConvChat *chat);
 
 /**
  * Ignores a user in a chat room.
@@ -983,7 +992,7 @@ GList *gaim_chat_get_users(const GaimChat *chat);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void gaim_chat_ignore(GaimChat *chat, const char *name);
+void gaim_conv_chat_ignore(GaimConvChat *chat, const char *name);
 
 /**
  * Unignores a user in a chat room.
@@ -991,7 +1000,7 @@ void gaim_chat_ignore(GaimChat *chat, const char *name);
  * @param chat The chat.
  * @param name The name of the user.
  */
-void gaim_chat_unignore(GaimChat *chat, const char *name);
+void gaim_conv_chat_unignore(GaimConvChat *chat, const char *name);
 
 /**
  * Sets the list of ignored users in the chat room.
@@ -1001,7 +1010,7 @@ void gaim_chat_unignore(GaimChat *chat, const char *name);
  *
  * @return The list passed.
  */
-GList *gaim_chat_set_ignored(GaimChat *chat, GList *ignored);
+GList *gaim_conv_chat_set_ignored(GaimConvChat *chat, GList *ignored);
 
 /**
  * Returns the list of ignored users in the chat room.
@@ -1010,7 +1019,7 @@ GList *gaim_chat_set_ignored(GaimChat *chat, GList *ignored);
  *
  * @return The list of ignored users.
  */
-GList *gaim_chat_get_ignored(const GaimChat *chat);
+GList *gaim_conv_chat_get_ignored(const GaimConvChat *chat);
 
 /**
  * Returns the actual name of the specified ignored user, if it exists in
@@ -1026,8 +1035,8 @@ GList *gaim_chat_get_ignored(const GaimChat *chat);
  * @return The ignored user if found, complete with prefixes, or @c NULL
  *         if not found.
  */
-const char *gaim_chat_get_ignored_user(const GaimChat *chat,
-									   const char *user);
+const char *gaim_conv_chat_get_ignored_user(const GaimConvChat *chat,
+											const char *user);
 
 /**
  * Returns @c TRUE if the specified user is ignored.
@@ -1037,8 +1046,8 @@ const char *gaim_chat_get_ignored_user(const GaimChat *chat,
  *
  * @return @c TRUE if the user is in the ignore list; @c FALSE otherwise.
  */
-gboolean gaim_chat_is_user_ignored(const GaimChat *chat,
-								   const char *user);
+gboolean gaim_conv_chat_is_user_ignored(const GaimConvChat *chat,
+										const char *user);
 
 /**
  * Sets the chat room's topic.
@@ -1047,8 +1056,8 @@ gboolean gaim_chat_is_user_ignored(const GaimChat *chat,
  * @param who   The user that set the topic.
  * @param topic The topic.
  */
-void gaim_chat_set_topic(GaimChat *chat, const char *who,
-						 const char *topic);
+void gaim_conv_chat_set_topic(GaimConvChat *chat, const char *who,
+							  const char *topic);
 
 /**
  * Returns the chat room's topic.
@@ -1057,7 +1066,7 @@ void gaim_chat_set_topic(GaimChat *chat, const char *who,
  *
  * @return The chat's topic.
  */
-const char *gaim_chat_get_topic(const GaimChat *chat);
+const char *gaim_conv_chat_get_topic(const GaimConvChat *chat);
 
 /**
  * Sets the chat room's ID.
@@ -1065,7 +1074,7 @@ const char *gaim_chat_get_topic(const GaimChat *chat);
  * @param chat The chat.
  * @param id   The ID.
  */
-void gaim_chat_set_id(GaimChat *chat, int id);
+void gaim_conv_chat_set_id(GaimConvChat *chat, int id);
 
 /**
  * Returns the chat room's ID.
@@ -1074,7 +1083,7 @@ void gaim_chat_set_id(GaimChat *chat, int id);
  *
  * @return The ID.
  */
-int gaim_chat_get_id(const GaimChat *chat);
+int gaim_conv_chat_get_id(const GaimConvChat *chat);
 
 /**
  * Writes to a chat.
@@ -1085,8 +1094,9 @@ int gaim_chat_get_id(const GaimChat *chat);
  * @param flags   The flags.
  * @param mtime   The time the message was sent.
  */
-void gaim_chat_write(GaimChat *chat, const char *who,
-					 const char *message, GaimMessageFlags flags, time_t mtime);
+void gaim_conv_chat_write(GaimConvChat *chat, const char *who,
+						  const char *message, GaimMessageFlags flags,
+						  time_t mtime);
 
 /**
  * Sends a message to this chat conversation.
@@ -1094,7 +1104,7 @@ void gaim_chat_write(GaimChat *chat, const char *who,
  * @param chat    The chat.
  * @param message The message to send.
  */
-void gaim_chat_send(GaimChat *chat, const char *message);
+void gaim_conv_chat_send(GaimConvChat *chat, const char *message);
 
 /**
  * Adds a user to a chat.
@@ -1103,8 +1113,8 @@ void gaim_chat_send(GaimChat *chat, const char *message);
  * @param user      The user to add.
  * @param extra_msg An extra message to display with the join message.
  */
-void gaim_chat_add_user(GaimChat *chat, const char *user,
-						const char *extra_msg);
+void gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
+							 const char *extra_msg);
 
 /**
  * Adds a list of users to a chat.
@@ -1115,7 +1125,7 @@ void gaim_chat_add_user(GaimChat *chat, const char *user,
  * @param chat      The chat.
  * @param users     The list of users to add.
  */
-void gaim_chat_add_users(GaimChat *chat, GList *users);
+void gaim_conv_chat_add_users(GaimConvChat *chat, GList *users);
 
 /**
  * Renames a user in a chat.
@@ -1124,8 +1134,8 @@ void gaim_chat_add_users(GaimChat *chat, GList *users);
  * @param old_user The old username.
  * @param new_user The new username.
  */
-void gaim_chat_rename_user(GaimChat *chat, const char *old_user,
-						   const char *new_user);
+void gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
+								const char *new_user);
 
 /**
  * Removes a user from a chat, optionally with a reason.
@@ -1136,8 +1146,8 @@ void gaim_chat_rename_user(GaimChat *chat, const char *old_user,
  * @param user   The user that is being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
-void gaim_chat_remove_user(GaimChat *chat, const char *user,
-						   const char *reason);
+void gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user,
+								const char *reason);
 
 /**
  * Removes a list of users from a chat, optionally with a single reason.
@@ -1146,14 +1156,15 @@ void gaim_chat_remove_user(GaimChat *chat, const char *user,
  * @param users  The users that are being removed.
  * @param reason The optional reason given for the removal. Can be @c NULL.
  */
-void gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason);
+void gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users,
+								 const char *reason);
 
 /**
  * Clears all users from a chat.
  *
  * @param chat The chat.
  */
-void gaim_chat_clear_users(GaimChat *chat);
+void gaim_conv_chat_clear_users(GaimConvChat *chat);
 
 /**
  * Finds a chat with the specified chat ID.
@@ -1241,15 +1252,15 @@ const char *gaim_conv_placement_get_fnc_id(GaimConvPlacementFunc fnc);
  *
  * @param ops The UI operations structure.
  */
-void gaim_conversations_set_win_ui_ops(GaimWindowUiOps *ops);
+void gaim_conversations_set_win_ui_ops(GaimConvWindowUiOps *ops);
 
 /**
  * Returns the gaim window UI operations structure to be used in
  * new windows.
  *
- * @return A filled-out GaimWindowUiOps structure.
+ * @return A filled-out GaimConvWindowUiOps structure.
  */
-GaimWindowUiOps *gaim_conversations_get_win_ui_ops(void);
+GaimConvWindowUiOps *gaim_conversations_get_win_ui_ops(void);
 
 /*@}*/
 

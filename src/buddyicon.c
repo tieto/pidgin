@@ -154,7 +154,7 @@ gaim_buddy_icon_update(GaimBuddyIcon *icon)
 	conv = gaim_find_conversation_with_account(username, account);
 
 	if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-		gaim_im_set_icon(GAIM_IM(conv), icon);
+		gaim_conv_im_set_icon(GAIM_CONV_IM(conv), icon);
 }
 
 void

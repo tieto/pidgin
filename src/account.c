@@ -1450,7 +1450,7 @@ gaim_accounts_delete(GaimAccount *account)
 					}
 				}
 			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-				GaimBlistChat *c = (GaimBlistChat *)cnode;
+				GaimChat *c = (GaimChat *)cnode;
 
 				if (c->account == account)
 					gaim_blist_remove_chat(c);

@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_IMGSTORE_H_
-#define _GAIM_IMGSTORE_H_
+#ifndef _GAIM_CONV_IMGSTORE_H_
+#define _GAIM_CONV_IMGSTORE_H_
 
 /**
  * Stored image
@@ -85,4 +85,4 @@ void gaim_imgstore_unref(int id);
 }
 #endif
 
-#endif /* _GAIM_IMGSTORE_H_ */
+#endif /* _GAIM_CONV_IMGSTORE_H_ */

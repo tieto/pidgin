@@ -39,7 +39,7 @@ extern GSList *away_time_queue;
 /* Functions in dialogs.c */
 extern void show_confirm_del(GaimBuddy *);
 extern void show_confirm_del_group(GaimGroup *);
-extern void show_confirm_del_blist_chat(GaimBlistChat *);
+extern void show_confirm_del_blist_chat(GaimChat *);
 extern void show_confirm_del_contact(GaimContact *);
 
 /* Functions in gaimrc.c */

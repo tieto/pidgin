@@ -93,7 +93,7 @@ void handle_groupchat(JabberMessage *jm)
 		return;
 
 	if(jm->subject)
-		gaim_chat_set_topic(GAIM_CHAT(chat->conv), jid->resource, jm->subject);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource, jm->subject);
 
 	serv_got_chat_in(jm->js->gc, chat->id, jabber_get_resource(jm->from),
 			0, jm->xhtml ? jm->xhtml : jm->body, jm->sent);
@@ -326,7 +326,7 @@ void jabber_message_send(JabberMessage *jm)
 }
 
 int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
-		GaimImFlags flags)
+		GaimConvImFlags flags)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;

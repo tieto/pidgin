@@ -214,10 +214,10 @@ static int gaim_parse_clientauto (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_userinfo   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_motd       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chatnav_info     (aim_session_t *, aim_frame_t *, ...);
-static int gaim_chat_join        (aim_session_t *, aim_frame_t *, ...);
-static int gaim_chat_leave       (aim_session_t *, aim_frame_t *, ...);
-static int gaim_chat_info_update (aim_session_t *, aim_frame_t *, ...);
-static int gaim_chat_incoming_msg(aim_session_t *, aim_frame_t *, ...);
+static int gaim_conv_chat_join        (aim_session_t *, aim_frame_t *, ...);
+static int gaim_conv_chat_leave       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_conv_chat_info_update (aim_session_t *, aim_frame_t *, ...);
+static int gaim_conv_chat_incoming_msg(aim_session_t *, aim_frame_t *, ...);
 static int gaim_email_parseupdate(aim_session_t *, aim_frame_t *, ...);
 static int gaim_icon_error       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icon_parseicon   (aim_session_t *, aim_frame_t *, ...);
@@ -1363,10 +1363,10 @@ static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	static int id = 1;
 
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, 0x0001, gaim_parse_genericerr, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_conv_chat_join, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_conv_chat_leave, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_conv_chat_info_update, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_conv_chat_incoming_msg, 0);
 
 	aim_clientready(sess, fr->conn);
 
@@ -2156,7 +2156,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 	char *tmp;
-	GaimImFlags flags = 0;
+	GaimConvImFlags flags = 0;
 	gsize convlen;
 	GError *err = NULL;
 	struct buddyinfo *bi;
@@ -2169,7 +2169,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
-		flags |= GAIM_IM_AUTO_RESP;
+		flags |= GAIM_CONV_IM_AUTO_RESP;
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT)
 		bi->typingnot = TRUE;
@@ -3281,7 +3281,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_conv_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	int count, i;
 	aim_userinfo_t *info;
@@ -3299,12 +3299,12 @@ static int gaim_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		gaim_chat_add_user(GAIM_CHAT(c->cnv), info[i].sn, NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c->cnv), info[i].sn, NULL);
 
 	return 1;
 }
 
-static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_conv_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	int count, i;
 	aim_userinfo_t *info;
@@ -3322,12 +3322,12 @@ static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		gaim_chat_remove_user(GAIM_CHAT(c->cnv), info[i].sn, NULL);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c->cnv), info[i].sn, NULL);
 
 	return 1;
 }
 
-static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_conv_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	aim_userinfo_t *userinfo;
 	struct aim_chat_roominfo *roominfo;
@@ -3363,7 +3363,7 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_conv_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	va_list ap;
 	aim_userinfo_t *info;
@@ -4204,9 +4204,9 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 	return 0;
 }
 static void oscar_ask_direct_im(GaimConnection *gc, const char *name);
-static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimImFlags);
+static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimConvImFlags);
 
-static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimImFlags imflags) {
+static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags imflags) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	int ret = 0;
@@ -4217,7 +4217,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
 		ret = gaim_odc_send_im(od->sess, dim->conn, message, imflags);
-	} else if (imflags & GAIM_IM_IMAGES) {
+	} else if (imflags & GAIM_CONV_IM_IMAGES) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
 		ret = -ENOTCONN;
@@ -4242,7 +4242,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
 
-			if (imflags & GAIM_IM_AUTO_RESP)
+			if (imflags & GAIM_CONV_IM_AUTO_RESP)
 				args.flags |= AIM_IMFLAGS_AWAY;
 		}
 
@@ -5205,7 +5205,7 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 	while (bcs) {
 		count++;
 		b = (GaimConversation *)bcs->data;
-		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
+		if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
 			break;
 		bcs = bcs->next;
 		b = NULL;
@@ -5217,7 +5217,7 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
 	
-	c = find_oscar_chat(g, gaim_chat_get_id(GAIM_CHAT(b)));
+	c = find_oscar_chat(g, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 	if (c != NULL) {
 		if (od)
 			od->oscar_chats = g_slist_remove(od->oscar_chats, c);
@@ -5230,7 +5230,7 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 		g_free(c);
 	}
 	/* we do this because with Oscar it doesn't tell us we left */
-	serv_got_chat_left(g, gaim_chat_get_id(GAIM_CHAT(b)));
+	serv_got_chat_left(g, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 }
 
 static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
@@ -5243,7 +5243,7 @@ static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
 
 	while (bcs) {
 		b = (GaimConversation *)bcs->data;
-		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
+		if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
 			break;
 		bcs = bcs->next;
 		b = NULL;
@@ -5643,7 +5643,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
  */
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	GaimImFlags imflags = 0;
+	GaimConvImFlags imflags = 0;
 	GString *newmsg = g_string_new("");
 	GSList *images = NULL;
 	va_list ap;
@@ -5664,7 +5664,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Got DirectIM message from %s\n", sn);
 
 	if (isawaymsg)
-		imflags |= GAIM_IM_AUTO_RESP;
+		imflags |= GAIM_CONV_IM_AUTO_RESP;
 
 	/* message has a binary trailer */
 	if ((binary = gaim_strcasestr(msg, "<binary>"))) {
@@ -5728,7 +5728,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		/* set the flag if we caught any images */
 		if (images)
-			imflags |= GAIM_IM_IMAGES;
+			imflags |= GAIM_CONV_IM_IMAGES;
 	} else {
 		g_string_append_len(newmsg, msg, len);
 	}
@@ -5778,12 +5778,12 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *message, GaimImFlags imflags) {
+static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *message, GaimConvImFlags imflags) {
 	char *buf;
 	size_t len;
 	int ret;
 
-	if (imflags & GAIM_IM_IMAGES) {
+	if (imflags & GAIM_CONV_IM_IMAGES) {
 		GString *msg = g_string_new("");
 		GString *data = g_string_new("<BINARY>");
 		GData *attribs;
@@ -5853,7 +5853,7 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 	}
 
 	/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-	if (imflags & GAIM_IM_AUTO_RESP)
+	if (imflags & GAIM_CONV_IM_AUTO_RESP)
 		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 1);
 	else
 		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 0);

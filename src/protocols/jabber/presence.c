@@ -271,12 +271,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);
 			} else {
-				gaim_chat_remove_user(GAIM_CHAT(chat->conv), jid->resource,
+				gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
 						NULL);
 			}
 		} else {
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
-				gaim_chat_add_user(GAIM_CHAT(chat->conv), jid->resource,
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
 						NULL);
 		}
 		g_free(room_jid);

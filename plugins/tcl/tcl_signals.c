@@ -239,8 +239,8 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 							(unsigned long)((GaimBuddy *)node)->account);
 					break;
 				case GAIM_BLIST_CHAT_NODE:
-					g_string_printf(val, "chat {%s} %lu", ((GaimBlistChat *)node)->alias,
-							(unsigned long)((GaimBlistChat *)node)->account);
+					g_string_printf(val, "chat {%s} %lu", ((GaimChat *)node)->alias,
+							(unsigned long)((GaimChat *)node)->account);
 					break;
 				case GAIM_BLIST_OTHER_NODE:
 					g_string_printf(val, "other");

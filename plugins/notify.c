@@ -84,7 +84,7 @@ static GaimPlugin *my_plugin = NULL;
 static int notify(GaimConversation *conv, gboolean increment);
 static gboolean unnotify(GaimConversation *conv, gboolean reset);
 static int unnotify_cb(GtkWidget *widget, GaimConversation *conv);
-static void renotify(GaimWindow *gaimwin);
+static void renotify(GaimConvWindow *gaimwin);
 
 /* gtk widget callbacks for prefs panel */
 static void type_toggle_cb(GtkWidget *widget, gpointer data);
@@ -110,7 +110,7 @@ static void handle_urgent(GtkWidget *widget, gboolean add);
 static int
 notify(GaimConversation *conv, gboolean increment)
 {
-	GaimWindow *gaimwin = NULL;
+	GaimConvWindow *gaimwin = NULL;
 	GaimGtkWindow *gtkwin = NULL;
 	/*
 	Window focus_return;
@@ -139,7 +139,7 @@ notify(GaimConversation *conv, gboolean increment)
 	/* TODO need to test these different levels of having focus
 	 * only still need to test the window has focus, but tab doesn't one */
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ||
-			(has_focus && gaim_window_get_active_conversation(gaimwin) != conv) ||
+			(has_focus && gaim_conv_window_get_active_conversation(gaimwin) != conv) ||
 			!has_focus) {
 		if (increment) {
 			count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkwin->window), "notify-message-count"));
@@ -167,7 +167,7 @@ unnotify(GaimConversation *conv, gboolean reset)
 {
 	GaimConversation *active_conv = NULL;
 	GaimGtkWindow *gtkwin = NULL;
-	GaimWindow *gaimwin = NULL;
+	GaimConvWindow *gaimwin = NULL;
 	gint count;
 
 	if (conv == NULL)
@@ -175,7 +175,7 @@ unnotify(GaimConversation *conv, gboolean reset)
 
 	gaimwin = gaim_conversation_get_window(conv);
 	gtkwin = GAIM_GTK_WINDOW(gaimwin);
-	active_conv = gaim_window_get_active_conversation(gaimwin);
+	active_conv = gaim_conv_window_get_active_conversation(gaimwin);
 
 	/* This should mean that there is no notification on the window */
 	count = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count"));
@@ -211,12 +211,12 @@ unnotify_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static void
-renotify(GaimWindow *gaimwin)
+renotify(GaimConvWindow *gaimwin)
 {
 	GList *convs = NULL;
 
 
-	for (convs = gaim_window_get_conversations(gaimwin);
+	for (convs = gaim_conv_window_get_conversations(gaimwin);
 			 convs != NULL; convs = convs->next) {
 		GaimGtkWindow *gtkwin = NULL;
 		int count;
@@ -358,7 +358,7 @@ detach_signals(GaimConversation *conv)
 static void
 conv_created(GaimConversation *conv)
 {
-	GaimWindow *gaimwin = NULL;
+	GaimConvWindow *gaimwin = NULL;
 	GaimGtkWindow *gtkwin = NULL;
 
 	gaimwin = gaim_conversation_get_window(conv);
@@ -378,7 +378,7 @@ conv_created(GaimConversation *conv)
 static void
 chat_join(GaimConversation *conv)
 {
-	GaimWindow *gaimwin = NULL;
+	GaimConvWindow *gaimwin = NULL;
 	GaimGtkWindow *gtkwin = NULL;
 
 	gaimwin = gaim_conversation_get_window(conv);
@@ -399,7 +399,7 @@ chat_join(GaimConversation *conv)
 static void
 conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 {
-	GaimWindow *gaimwin = NULL;
+	GaimConvWindow *gaimwin = NULL;
 	GaimGtkWindow *gtkwin = NULL;
 	/*
 	gint count;

@@ -270,7 +270,7 @@ initiate_chat_cb(GaimConnection *gc, const char *passport)
 
 	swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id, "MSN Chat");
 
-	gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 					   gaim_account_get_username(account), NULL);
 }
 
@@ -485,7 +485,7 @@ msn_close(GaimConnection *gc)
 
 static int
 msn_send_im(GaimConnection *gc, const char *who, const char *message,
-			GaimImFlags flags)
+			GaimConvImFlags flags)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;

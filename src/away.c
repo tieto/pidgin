@@ -78,7 +78,7 @@ static void dequeue_message(GtkTreeIter *iter)
 				else
 					gaim_conversation_set_account(cnv, account);
 
-				gaim_im_write(GAIM_IM(cnv), NULL, qm->message,
+				gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, qm->message,
 						qm->flags, qm->tm);
 				g_free(qm->message);
 				g_free(qm);
@@ -118,7 +118,7 @@ void purge_away_queue(GSList **queue)
 		else
 			gaim_conversation_set_account(cnv, account);
 
-		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, qm->flags, qm->tm);
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, qm->message, qm->flags, qm->tm);
 
 		g_free(qm->message);
 		g_free(qm);

@@ -249,8 +249,8 @@ gaim_connection_disconnect(GaimConnection *gc)
 		 *     notification system.
 		 */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimWindow *win = (GaimWindow *)wins->data;
-			gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
+			GaimConvWindow *win = (GaimConvWindow *)wins->data;
+			gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
 									 GAIM_CONV_ACCOUNT_OFFLINE);
 		}
 
@@ -323,8 +323,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		 *     notification system.
 		 */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimWindow *win = (GaimWindow *)wins->data;
-			gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
+			GaimConvWindow *win = (GaimConvWindow *)wins->data;
+			gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
 

@@ -946,7 +946,7 @@ buddy_typing_cb(GaimConversation *conv, void *data)
 	{
 		GaimPounceEvent event;
 
-		event = (gaim_im_get_typing_state(GAIM_IM(conv)) == GAIM_TYPING
+		event = (gaim_conv_im_get_typing_state(GAIM_CONV_IM(conv)) == GAIM_TYPING
 				 ? GAIM_POUNCE_TYPING : GAIM_POUNCE_TYPING_STOPPED);
 
 		gaim_pounce_execute(account, name, event);

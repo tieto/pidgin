@@ -270,7 +270,7 @@ static void winprefs_set_dblist_ontop(GtkWidget *w) {
 
 static void winprefs_set_im_blink(GtkWidget *w) {
         gaim_prefs_set_bool(OPT_WINPREFS_IM_BLINK, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
-        wgaim_im_blink_state(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
+        wgaim_conv_im_blink_state(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
 }
 
 /*
@@ -294,7 +294,7 @@ gboolean plugin_load(GaimPlugin *plugin) {
         else
                 gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin_id, GAIM_CALLBACK(blist_create_cb), NULL);
 
-        wgaim_im_blink_state(gaim_prefs_get_bool(OPT_WINPREFS_IM_BLINK));
+        wgaim_conv_im_blink_state(gaim_prefs_get_bool(OPT_WINPREFS_IM_BLINK));
 
         gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
 
@@ -303,7 +303,7 @@ gboolean plugin_load(GaimPlugin *plugin) {
 
 gboolean plugin_unload(GaimPlugin *plugin) {
         blist_set_dockable(FALSE);
-        wgaim_im_blink_state(TRUE);
+        wgaim_conv_im_blink_state(TRUE);
         return TRUE;
 }
 

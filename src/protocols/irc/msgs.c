@@ -56,11 +56,11 @@ static char *irc_mask_userhost(const char *mask)
 
 static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 {
-	GList *users = gaim_chat_get_users(GAIM_CHAT(convo));
+	GList *users = gaim_conv_chat_get_users(GAIM_CONV_CHAT(convo));
 	char *message = g_strdup_printf("quit: %s", data[1]);
 
 	if (g_list_find_custom(users, data[0], (GCompareFunc)(strcmp)))
-		gaim_chat_remove_user(GAIM_CHAT(convo), data[0], message);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), data[0], message);
 
 	g_free(message);
 }
@@ -85,7 +85,7 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 
 	gc = gaim_account_get_connection(irc->account);
 	if (gc)
-		serv_got_im(gc, args[1], args[2], GAIM_IM_AUTO_RESP, time(NULL));
+		serv_got_im(gc, args[1], args[2], GAIM_CONV_IM_AUTO_RESP, time(NULL));
 }
 
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -124,7 +124,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 		return;
 
 	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], args[3] ? args[3] : "");
-	gaim_chat_write(GAIM_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
 
 	return;
@@ -240,17 +240,17 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!convo) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
 	}
-	gaim_chat_set_topic(GAIM_CHAT(convo), NULL, topic);
+	gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, topic);
 	/* If this is an interactive update, print it out */
 	if (!strcmp(name, "topic")) {
 		nick = irc_mask_nick(from);
 		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick, topic);
 		g_free(nick);
-		gaim_chat_write(GAIM_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
 		msg = g_strdup_printf(_("The topic for %s is: %s"), chan, topic);
-		gaim_chat_write(GAIM_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
 }
@@ -289,9 +289,9 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 		if (irc->nameconv) {
 			msg = g_strdup_printf("Users on %s: %s", args[1], names);
 			if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
-				gaim_chat_write(GAIM_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			else
-				gaim_im_write(GAIM_IM(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+				gaim_conv_im_write(GAIM_CONV_IM(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
 			g_free(irc->nameconv);
 			irc->nameconv = NULL;
@@ -314,7 +314,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			if (users != NULL) {
 				GList *l;
 
-				gaim_chat_add_users(GAIM_CHAT(convo), users);
+				gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users);
 
 				for (l = users; l != NULL; l = l->next)
 					g_free(l->data);
@@ -368,10 +368,10 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	convo = gaim_find_conversation_with_account(args[1], irc->account);
 	if (convo) {
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) /* does this happen? */
-			gaim_chat_write(GAIM_CHAT(convo), args[1], _("no such channel"),
+			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[1], _("no such channel"),
 					GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), args[1], _("User is not logged in"),
+			gaim_conv_im_write(GAIM_CONV_IM(convo), args[1], _("User is not logged in"),
 				      GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
@@ -392,7 +392,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 
 	convo = gaim_find_conversation_with_account(args[1], irc->account);
 	if (convo) {
-		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
@@ -408,7 +408,7 @@ void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from,
 	if (convo) {
 		/*g_slist_remove(irc->gc->buddy_chats, convo);
 		  gaim_conversation_set_account(convo, NULL);*/
-		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	}
 }
 
@@ -423,7 +423,7 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!convo)
 		return;
 
-	gaim_chat_write(GAIM_CHAT(convo), "", args[2], GAIM_MESSAGE_SYSTEM, time(NULL));
+	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", args[2], GAIM_MESSAGE_SYSTEM, time(NULL));
 }
 
 void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -526,7 +526,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	gaim_chat_add_user(GAIM_CHAT(convo), nick, userhost);
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost);
 	g_free(userhost);
 	g_free(nick);
 }
@@ -550,15 +550,15 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 
 	if (!gaim_utf8_strcasecmp(gaim_connection_get_display_name(gc), args[1])) {
 		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
 		/*g_slist_remove(irc->gc->buddy_chats, convo);
 		  gaim_conversation_set_account(convo, NULL);*/
-		/*g_list_free(gaim_chat_get_users(GAIM_CHAT(convo)));
-		  gaim_chat_set_users(GAIM_CHAT(convo), NULL);*/
+		/*g_list_free(gaim_conv_chat_get_users(GAIM_CONV_CHAT(convo)));
+		  gaim_conv_chat_set_users(GAIM_CONV_CHAT(convo), NULL);*/
 	} else {
 		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
-		gaim_chat_remove_user(GAIM_CHAT(convo), args[1], buf);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), args[1], buf);
 		g_free(buf);
 	}
 
@@ -579,7 +579,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 			return;
 		}
 		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], args[2] ? args[2] : "", nick);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	} else {					/* User		*/
 	}
@@ -603,15 +603,15 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	while (chats) {
-		GaimChat *chat = GAIM_CHAT(chats->data);
-		GList *users = gaim_chat_get_users(chat);
+		GaimConvChat *chat = GAIM_CONV_CHAT(chats->data);
+		GList *users = gaim_conv_chat_get_users(chat);
 
 		while (users) {
 			char *user = users->data;
 
 			if (!strcmp(nick, user)) {
-				gaim_chat_rename_user(chat, user, args[0]);
-				users = gaim_chat_get_users(chat);
+				gaim_conv_chat_rename_user(chat, user, args[0]);
+				users = gaim_conv_chat_get_users(chat);
 				break;
 			}
 			users = users->next;
@@ -680,10 +680,10 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
 		msg = g_strdup_printf(_("You have parted the channel%s%s"), *args[1] ? ": " : "", args[1]);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
-		gaim_chat_remove_user(GAIM_CHAT(convo), nick, args[1]);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, args[1]);
 	}
 	g_free(nick);
 }
@@ -726,9 +726,9 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 	g_strfreev(parts);
 	if (convo) {
 		if (gaim_conversation_get_type (convo) == GAIM_CONV_CHAT)
-			gaim_chat_write(GAIM_CHAT(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+			gaim_conv_im_write(GAIM_CONV_IM(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		gc = gaim_account_get_connection(irc->account);
 		if (!gc) {
@@ -773,7 +773,7 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	} else {
 		convo = gaim_find_conversation_with_account(args[0], irc->account);
 		if (convo)
-			serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(convo)), nick, 0, msg, time(NULL));
+			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else
 			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a PRIVMSG on %s, which does not exist\n", args[0]);
 	}

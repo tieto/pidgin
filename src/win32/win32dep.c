@@ -240,7 +240,7 @@ gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE d
 
 /* FlashWindowEx is only supported by Win98+ and WinNT5+. If its
    not supported we do it our own way */
-void wgaim_im_blink(GtkWidget *window) {
+void wgaim_conv_im_blink(GtkWidget *window) {
         if(!blink_turned_on)
                 return;
 	if(MyFlashWindowEx) {
@@ -265,7 +265,7 @@ void wgaim_im_blink(GtkWidget *window) {
 	}
 }
 
-void wgaim_im_blink_state(gboolean val) {
+void wgaim_conv_im_blink_state(gboolean val) {
         blink_turned_on = val;
 }
 

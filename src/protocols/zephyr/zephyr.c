@@ -367,7 +367,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *sendertmp;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - (ptr - notice.z_message);
-		GaimImFlags flags = 0;
+		GaimConvImFlags flags = 0;
 		if (len > 0) {
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
@@ -377,7 +377,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") &&
                             !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
-					flags |= GAIM_IM_AUTO_RESP;
+					flags |= GAIM_CONV_IM_AUTO_RESP;
 				serv_got_im(zgc, notice.z_sender, buf2, flags, time(NULL));
 			} else {
 				zephyr_triple *zt1, *zt2;
@@ -798,12 +798,12 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	return 0;
 }
 
-static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, GaimImFlags flags) {
+static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, GaimConvImFlags flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
 
-	if (flags & GAIM_IM_AUTO_RESP)
+	if (flags & GAIM_CONV_IM_AUTO_RESP)
 		sig = "Automated reply:";
 	else {
 		sig = ZGetVariable("zwrite-signature");

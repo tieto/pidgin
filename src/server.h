@@ -39,7 +39,7 @@ extern "C" {
 void serv_login(GaimAccount *);
 void serv_close(GaimConnection *);
 void serv_touch_idle(GaimConnection *);
-int  serv_send_im(GaimConnection *, const char *, const char *, GaimImFlags);
+int  serv_send_im(GaimConnection *, const char *, const char *, GaimConvImFlags);
 void serv_get_info(GaimConnection *, const char *);
 void serv_get_dir(GaimConnection *, const char *);
 void serv_set_idle(GaimConnection *, int);
@@ -81,7 +81,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 void serv_set_buddyicon(GaimConnection *gc, const char *filename);
 void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 GaimImFlags imflags, time_t mtime);
+				 GaimConvImFlags imflags, time_t mtime);
 void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type);
 void serv_finish_login(GaimConnection *gc);

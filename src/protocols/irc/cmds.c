@@ -40,9 +40,9 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
 	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
-		gaim_im_write(GAIM_IM(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_im_write(GAIM_CONV_IM(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	else
-		gaim_chat_write(GAIM_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
 
 	return 1;
@@ -113,7 +113,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 		action = g_strdup_printf("/me %s", args[0]);
 		if (action[strlen(action) - 1] == '\n')
 			action[strlen(action) - 1] = '\0';
-		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(convo)),
+		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 				 gaim_connection_get_display_name(gc),
 				 0, action, time(NULL));
 		g_free(action);
@@ -132,7 +132,7 @@ int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, cons
 		return 0;
 
 	if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) {
-		gaim_chat_write(GAIM_CHAT(convo), "", _("<B>Supported IRC Commands:</B><BR>"
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", _("<B>Supported IRC Commands:</B><BR>"
 							"AWAY INVITE JOIN KICK<BR>"
 							"ME MODE MSG NAMES<BR>"
 							"NICK OP DEOP OPERWALL<BR>"
@@ -141,7 +141,7 @@ int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, cons
 							"VOICE DEVOICE WALLOPS WHOIS<BR>"),
 				GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
-		gaim_im_write(GAIM_IM(convo), "", _("<B>Supported IRC Commands:</B><BR>"
+		gaim_conv_im_write(GAIM_CONV_IM(convo), "", _("<B>Supported IRC Commands:</B><BR>"
 						    "AWAY JOIN ME MODE<BR>"
 						    "MSG NICK OPERWALL PING<BR>"
 						    "QUERY QUIT QUOTE UMODE<BR>"
@@ -412,7 +412,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (args[1]) {
 		gc = gaim_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
-		gaim_im_write(GAIM_IM(convo), gaim_connection_get_display_name(gc),
+		gaim_conv_im_write(GAIM_CONV_IM(convo), gaim_connection_get_display_name(gc),
 			      args[1], GAIM_MESSAGE_SEND, time(NULL));
 	}
 
@@ -453,13 +453,13 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 		return 0;
 
 	if (!args[0]) {
-		topic = gaim_chat_get_topic (GAIM_CHAT(convo));
+		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(convo));
 
 		if (topic)
 			buf = g_strdup_printf(_("current topic is: %s"), topic);
 		else
 			buf = g_strdup(_("No topic is set"));
-		gaim_chat_write(GAIM_CHAT(convo), target, buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), target, buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
 		return 0;

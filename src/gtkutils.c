@@ -273,7 +273,7 @@ do_save_icon(GtkObject *obj, GaimConversation *c)
 		return;
 
 	if ((file = fopen(f, "w")) != NULL) {
-		GaimBuddyIcon *icon = gaim_im_get_icon(GAIM_IM(c));
+		GaimBuddyIcon *icon = gaim_conv_im_get_icon(GAIM_CONV_IM(c));
 		size_t len;
 		const void *data = gaim_buddy_icon_get_data(icon, &len);
 

@@ -258,7 +258,7 @@ void flush_last_auto_responses(GaimConnection *gc)
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
-				 GaimImFlags imflags)
+				 GaimConvImFlags imflags)
 {
 	GaimConversation *c;
 	int val = -EINVAL;
@@ -272,7 +272,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, imflags);
 
-	if (!(imflags & GAIM_IM_AUTO_RESP))
+	if (!(imflags & GAIM_CONV_IM_AUTO_RESP))
 		serv_touch_idle(gc);
 
 	if (gc->away &&
@@ -285,8 +285,8 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 		lar->sent = time(NULL);
 	}
 
-	if (c && gaim_im_get_type_again_timeout(GAIM_IM(c)))
-		gaim_im_stop_type_again_timeout(GAIM_IM(c));
+	if (c && gaim_conv_im_get_type_again_timeout(GAIM_CONV_IM(c)))
+		gaim_conv_im_stop_type_again_timeout(GAIM_CONV_IM(c));
 
 	return val;
 }
@@ -835,7 +835,7 @@ int find_queue_total_by_name(char *name)
  * sure to follow along, kids
  */
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 GaimImFlags imflags, time_t mtime)
+				 GaimConvImFlags imflags, time_t mtime)
 {
 	GaimConversation *cnv;
 	GaimMessageFlags msgflags;
@@ -892,9 +892,9 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * associated images.
 	 */
 	msgflags = GAIM_MESSAGE_RECV;
-	if (imflags & GAIM_IM_AUTO_RESP)
+	if (imflags & GAIM_CONV_IM_AUTO_RESP)
 		msgflags |= GAIM_MESSAGE_AUTO_RESP;
-	if (imflags & GAIM_IM_IMAGES)
+	if (imflags & GAIM_CONV_IM_IMAGES)
 		msgflags |= GAIM_MESSAGE_IMAGES;
 
 	/*
@@ -972,7 +972,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
-			gaim_im_write(GAIM_IM(cnv), NULL, message, msgflags, mtime);
+			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 		}
 
 		/*
@@ -1018,7 +1018,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, gaim_str_sub_away_formatters(tmpmsg, alias), GAIM_IM_AUTO_RESP);
+		serv_send_im(gc, name, gaim_str_sub_away_formatters(tmpmsg, alias), GAIM_CONV_IM_AUTO_RESP);
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
@@ -1032,7 +1032,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
-			gaim_im_write(GAIM_IM(cnv), NULL, gaim_str_sub_away_formatters(tmpmsg, alias),
+			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, gaim_str_sub_away_formatters(tmpmsg, alias),
 						  GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
 
 		g_free(tmpmsg);
@@ -1068,8 +1068,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
-			gaim_im_write(GAIM_IM(cnv), NULL, message, msgflags, mtime);
-			gaim_window_flash(gaim_conversation_get_window(cnv));
+			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
+			gaim_conv_window_flash(gaim_conversation_get_window(cnv));
 		}
 	}
 
@@ -1237,16 +1237,16 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 	GaimBuddy *b;
 	GaimConversation *cnv = gaim_find_conversation_with_account(name, gc->account);
-	GaimIm *im;
+	GaimConvIm *im;
 
 	if (!cnv)
 		return;
 
-	im = GAIM_IM(cnv);
+	im = GAIM_CONV_IM(cnv);
 
 	gaim_conversation_set_account(cnv, gc->account);
-	gaim_im_set_typing_state(im, state);
-	gaim_im_update_typing(im);
+	gaim_conv_im_set_typing_state(im, state);
+	gaim_conv_im_update_typing(im);
 
 	b = gaim_find_buddy(gc->account, name);
 
@@ -1265,26 +1265,26 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 	}
 
 	if (timeout > 0)
-		gaim_im_start_typing_timeout(im, timeout);
+		gaim_conv_im_start_typing_timeout(im, timeout);
 }
 
 void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
 	GaimConversation *c = gaim_find_conversation_with_account(name, gc->account);
-	GaimIm *im;
+	GaimConvIm *im;
 	GaimBuddy *b;
 
 	if (!c)
 		return;
 
-	im = GAIM_IM(c);
+	im = GAIM_CONV_IM(c);
 
 	if (im->typing_state == GAIM_NOT_TYPING)
 		return;
 
-	gaim_im_stop_typing_timeout(im);
-	gaim_im_set_typing_state(im, GAIM_NOT_TYPING);
-	gaim_im_update_typing(im);
+	gaim_conv_im_stop_typing_timeout(im);
+	gaim_conv_im_set_typing_state(im, GAIM_NOT_TYPING);
+	gaim_conv_im_update_typing(im);
 
 	b = gaim_find_buddy(gc->account, name);
 
@@ -1350,17 +1350,17 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 											   int id, const char *name)
 {
 	GaimConversation *conv;
-	GaimChat *chat;
+	GaimConvChat *chat;
 	GaimAccount *account;
 
 	account = gaim_connection_get_account(gc);
 
 	conv = gaim_conversation_new(GAIM_CONV_CHAT, account, name);
-	chat = GAIM_CHAT(conv);
+	chat = GAIM_CONV_CHAT(conv);
 
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
 
-	gaim_chat_set_id(chat, id);
+	gaim_conv_chat_set_id(chat, id);
 
 	/* TODO Move this to UI logging code! */
 	if (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") ||
@@ -1387,8 +1387,8 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		free(filename);
 	}
 
-	gaim_window_show(gaim_conversation_get_window(conv));
-	gaim_window_switch_conversation(gaim_conversation_get_window(conv),
+	gaim_conv_window_show(gaim_conversation_get_window(conv));
+	gaim_conv_window_switch_conversation(gaim_conversation_get_window(conv),
 									gaim_conversation_get_index(conv));
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-joined", conv);
@@ -1400,7 +1400,7 @@ void serv_got_chat_left(GaimConnection *g, int id)
 {
 	GSList *bcs;
 	GaimConversation *conv = NULL;
-	GaimChat *chat = NULL;
+	GaimConvChat *chat = NULL;
 	GaimAccount *account;
 
 	account = gaim_connection_get_account(g);
@@ -1408,9 +1408,9 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (GaimConversation *)bcs->data;
 
-		chat = GAIM_CHAT(conv);
+		chat = GAIM_CONV_CHAT(conv);
 
-		if (gaim_chat_get_id(chat) == id)
+		if (gaim_conv_chat_get_id(chat) == id)
 			break;
 
 		conv = NULL;
@@ -1435,7 +1435,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	GaimMessageFlags w;
 	GSList *bcs;
 	GaimConversation *conv = NULL;
-	GaimChat *chat = NULL;
+	GaimConvChat *chat = NULL;
 	char *buf;
 	char *buffy, *angel;
 	int plugin_return;
@@ -1443,9 +1443,9 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (GaimConversation *)bcs->data;
 
-		chat = GAIM_CHAT(conv);
+		chat = GAIM_CONV_CHAT(conv);
 
-		if (gaim_chat_get_id(chat) == id)
+		if (gaim_conv_chat_get_id(chat) == id)
 			break;
 
 		conv = NULL;
@@ -1470,7 +1470,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 								  "received-chat-msg", g->account,
 								  &angel, &buffy,
-								  gaim_chat_get_id(GAIM_CHAT(conv))));
+								  gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv))));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -1494,7 +1494,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	else
 		w = 0;
 
-	gaim_chat_write(chat, who, buf, w, mtime);
+	gaim_conv_chat_write(chat, who, buf, w, mtime);
 
 	g_free(angel);
 	g_free(buf);

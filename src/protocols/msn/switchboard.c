@@ -127,7 +127,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		return TRUE;
 
 	if (swboard->chat != NULL)
-		gaim_chat_remove_user(GAIM_CHAT(swboard->chat), user, NULL);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->chat), user, NULL);
 	else {
 		const char *username;
 		GaimConversation *conv;
@@ -188,13 +188,13 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 												 "MSN Chat");
 
-			gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 							   gaim_account_get_username(account), NULL);
 
 			gaim_conversation_destroy(conv);
 		}
 
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat), params[3], NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat), params[3], NULL);
 	}
 
 	return TRUE;
@@ -219,9 +219,9 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 											 "MSN Chat");
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 						   msn_user_get_passport(swboard->user), NULL);
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
 						   gaim_account_get_username(account), NULL);
 
 		msn_user_unref(swboard->user);
@@ -230,7 +230,7 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (swboard->chat != NULL)
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat), passport, NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat), passport, NULL);
 
 	swboard->total_users++;
 
@@ -287,7 +287,7 @@ out_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (swboard->chat != NULL)
-		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)));
+		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)));
 
 	msn_switchboard_destroy(swboard);
 
@@ -349,7 +349,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	}
 
 	if (swboard->chat != NULL)
-		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(swboard->chat)),
+		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)),
 						 servconn->msg_passport, 0, body, time(NULL));
 	else
 		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL));

@@ -63,30 +63,30 @@ static gint _mystrcmpwrapper(gconstpointer a, gconstpointer b)
 }
 
 /* this is slow, and different from the gaim_* version in that it (hopefully) won't add a user twice */
-static void yahoo_chat_add_users(GaimChat *chat, GList *newusers)
+static void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
 {
 	GList *users, *i, *j;
 
-	users = gaim_chat_get_users(chat);
+	users = gaim_conv_chat_get_users(chat);
 
 	for (i = newusers; i; i = i->next) {
 		j = g_list_find_custom(users, i->data, _mystrcmpwrapper);
 		if (j)
 			continue;
-		gaim_chat_add_user(chat, i->data, NULL);
+		gaim_conv_chat_add_user(chat, i->data, NULL);
 	}
 }
 
-static void yahoo_chat_add_user(GaimChat *chat, const char *user, const char *reason)
+static void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason)
 {
 	GList *users;
 
-	users = gaim_chat_get_users(chat);
+	users = gaim_conv_chat_get_users(chat);
 
 	if ((g_list_find_custom(users, user, _mystrcmpwrapper)))
 		return;
 
-	gaim_chat_add_user(chat, user, reason);
+	gaim_conv_chat_add_user(chat, user, reason);
 }
 
 static GaimConversation *yahoo_find_conference(GaimConnection *gc, const char *name)
@@ -218,7 +218,7 @@ void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt
 	if (who && room) {
 		c = yahoo_find_conference(gc, room);
 		if (c)
-			yahoo_chat_add_user(GAIM_CHAT(c), who, NULL);
+			yahoo_chat_add_user(GAIM_CONV_CHAT(c), who, NULL);
 	}
 }
 
@@ -245,7 +245,7 @@ void yahoo_process_conference_logoff(GaimConnection *gc, struct yahoo_packet *pk
 	if (who && room) {
 		c = yahoo_find_conference(gc, room);
 		if (c)
-			gaim_chat_remove_user(GAIM_CHAT(c), who, NULL);
+			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
 	}
 }
 
@@ -278,7 +278,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 			if (!c)
 				return;
 			msg = yahoo_codes_to_html(msg);
-			serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)), who, 0, msg, time(NULL));
+			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)), who, 0, msg, time(NULL));
 			g_free(msg);
 		}
 
@@ -376,12 +376,12 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (!c) {
 		c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 		if (topic)
-			gaim_chat_set_topic(GAIM_CHAT(c), NULL, topic);
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 		yd->in_chat = 1;
 		yd->chat_name = g_strdup(room);
-		gaim_chat_add_users(GAIM_CHAT(c), members);
+		gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
 	} else {
-		yahoo_chat_add_users(GAIM_CHAT(c), members);
+		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
 	g_list_free(members);
@@ -406,7 +406,7 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (who) {
 		GaimConversation *c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 		if (c)
-			gaim_chat_remove_user(GAIM_CHAT(c), who, NULL);
+			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
 
 	}
 }
@@ -582,7 +582,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
 			yahoo_packet_hash(pkt, 3, memarr[i]);
-			gaim_chat_add_user(GAIM_CHAT(c), memarr[i], NULL);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL);
 		}
 	}
 	yahoo_send_packet(yd, pkt);
@@ -599,7 +599,7 @@ static void yahoo_conf_invite(struct yahoo_data *yd, GaimConversation *c,
 	struct yahoo_packet *pkt;
 	GList *members;
 
-	members = gaim_chat_get_users(GAIM_CHAT(c));
+	members = gaim_conv_chat_get_users(GAIM_CONV_CHAT(c));
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -788,7 +788,7 @@ void yahoo_c_leave(GaimConnection *gc, int id)
 
 	if (id != YAHOO_CHAT_ID) {
 		yahoo_conf_leave(yd, gaim_conversation_get_name(c),
-			gaim_connection_get_display_name(gc), gaim_chat_get_users(GAIM_CHAT(c)));
+			gaim_connection_get_display_name(gc), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)));
 			yd->confs = g_slist_remove(yd->confs, c);
 	} else {
 		yahoo_chat_leave(yd, gaim_conversation_get_name(c), gaim_connection_get_display_name(gc));
@@ -813,12 +813,12 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what)
 
 	if (id != YAHOO_CHAT_ID) {
 		ret = yahoo_conf_send(yd, gaim_connection_get_display_name(gc),
-				gaim_conversation_get_name(c), gaim_chat_get_users(GAIM_CHAT(c)), what);
+				gaim_conversation_get_name(c), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)), what);
 	} else {
 		ret = yahoo_chat_send(yd, gaim_connection_get_display_name(gc),
 						gaim_conversation_get_name(c), what);
 		if (!ret)
-			serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
+			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)),
 					gaim_connection_get_display_name(gc), 0, what, time(NULL));
 	}
 	return ret;
@@ -863,7 +863,7 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 		id = yd->conf_id++;
 		c = serv_got_joined_chat(gc, id, room);
 		yd->confs = g_slist_prepend(yd->confs, c);
-		gaim_chat_set_topic(GAIM_CHAT(c), gaim_connection_get_display_name(gc), topic);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), gaim_connection_get_display_name(gc), topic);
 		yahoo_conf_join(yd, c, gaim_connection_get_display_name(gc), room, topic, members);
 		return;
 	} else {

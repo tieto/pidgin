@@ -376,7 +376,7 @@ gaim_away(GaimAccount *account, char *state, char *message, void *data)
 }
 
 static gboolean
-gaim_im_recv(GaimAccount *account, GaimConversation *conv, char **who,
+gaim_conv_im_recv(GaimAccount *account, GaimConversation *conv, char **who,
 			 char **what, int *flags, void *data)
 {
 	/* if message queuing while away is enabled, this event could be the first
@@ -436,7 +436,7 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(accounts_handle, "account-away",
 						plugin, GAIM_CALLBACK(gaim_away), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",
-						plugin, GAIM_CALLBACK(gaim_im_recv), NULL);
+						plugin, GAIM_CALLBACK(gaim_conv_im_recv), NULL);
 	gaim_signal_connect(conv_handle, "conversation-created",
 						plugin, GAIM_CALLBACK(gaim_new_conversation), NULL);
 

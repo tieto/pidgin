@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7673 2003-10-01 07:15:53Z chipx86 $
+ * $Id: gg.c 7685 2003-10-02 02:54:07Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -557,7 +557,7 @@ static void agg_close(GaimConnection *gc)
 	g_free(gc->proto_data);
 }
 
-static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, GaimImFlags flags)
+static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, GaimConvImFlags flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	gchar *imsg;

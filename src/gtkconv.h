@@ -203,7 +203,7 @@ struct _GaimGtkConversation
 	((GaimGtkConversation *)(conv)->ui_data)
 
 #define GAIM_IS_GTK_WINDOW(win) \
-	(gaim_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
+	(gaim_conv_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
 	(gaim_conversation_get_ui_ops(conv) == \
@@ -226,7 +226,7 @@ void gaim_gtk_conversations_init(void);
  *
  * @return The GTK window operations structure.
  */
-GaimWindowUiOps *gaim_gtk_conversations_get_win_ui_ops(void);
+GaimConvWindowUiOps *gaim_gtk_conversations_get_win_ui_ops(void);
 
 /**
  * Returns the UI operations structure for GTK conversations.
@@ -299,7 +299,7 @@ void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
  *
  * @return The GTK+ window at the location, if it exists, or @c NULL otherwise.
  */
-GaimWindow *gaim_gtkwin_get_at_xy(int x, int y);
+GaimConvWindow *gaim_gtkwin_get_at_xy(int x, int y);
 
 /**
  * Returns the index of the tab at the specified X, Y location in a notebook.
@@ -310,7 +310,7 @@ GaimWindow *gaim_gtkwin_get_at_xy(int x, int y);
  *
  * @return The index of the tab at the location.
  */
-int gaim_gtkconv_get_tab_at_xy(GaimWindow *win, int x, int y);
+int gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y);
 
 /**
  * Returns the index of the destination tab at the
@@ -325,7 +325,7 @@ int gaim_gtkconv_get_tab_at_xy(GaimWindow *win, int x, int y);
  *
  * @return The index of the tab at the location.
  */
-int gaim_gtkconv_get_dest_tab_at_xy(GaimWindow *win, int x, int y);
+int gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y);
 
 /*@}*/
 

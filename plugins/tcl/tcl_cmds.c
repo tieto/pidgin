@@ -261,7 +261,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	GaimBlistNode *node, *gnode, *bnode;
 	GaimAccount *account;
 	GaimBuddy *bud;
-	GaimBlistChat *cnode;
+	GaimChat *cnode;
 	int error, all = 0, count;
 
 	if (objc < 2) {
@@ -284,7 +284,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		if ((node = tcl_list_to_buddy(interp, count, elems)) == NULL)
 			return TCL_ERROR;
 		if (node->type == GAIM_BLIST_CHAT_NODE)
-			Tcl_SetStringObj(result, ((GaimBlistChat *)node)->alias, -1);
+			Tcl_SetStringObj(result, ((GaimChat *)node)->alias, -1);
 		else if (node->type == GAIM_BLIST_BUDDY_NODE)
 			Tcl_SetStringObj(result, (char *)gaim_get_buddy_alias((GaimBuddy *)node), -1);
 		return TCL_OK;
@@ -373,7 +373,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_DecrRefCount(tclcontactlist);
 					break;
 				case GAIM_BLIST_CHAT_NODE:
-					cnode = (GaimBlistChat *)node;
+					cnode = (GaimChat *)node;
 					if (!all && !gaim_account_is_connected(cnode->account))
 						continue;
 					tclbud = Tcl_NewListObj(0, NULL);
@@ -599,9 +599,9 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			break;
 		}
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
-			gaim_chat_write(GAIM_CHAT(convo), from, what, flags, time(NULL));
+			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, what, flags, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), from, what, flags, time(NULL));
+			gaim_conv_im_write(GAIM_CONV_IM(convo), from, what, flags, time(NULL));
 		break;
 	}
 

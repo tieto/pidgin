@@ -123,7 +123,7 @@ void *gaim_gtk_notify_uri(const char *uri);
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(GaimBuddy *);
-extern void alias_dialog_blist_chat(GaimBlistChat *);
+extern void alias_dialog_blist_chat(GaimChat *);
 extern void show_warn_dialog(GaimConnection *, char *);
 extern void show_im_dialog();
 extern void show_info_dialog();

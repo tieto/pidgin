@@ -358,7 +358,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 }
 
 static void
-do_remove_chat(GaimBlistChat *chat)
+do_remove_chat(GaimChat *chat)
 {
 	gaim_blist_remove_chat(chat);
 	gaim_blist_save();
@@ -440,7 +440,7 @@ void do_remove_group(GaimGroup *g)
 				}
 			}
 		} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-			GaimBlistChat *chat = (GaimBlistChat *)cnode;
+			GaimChat *chat = (GaimChat *)cnode;
 			cnode = cnode->next;
 			if(gaim_account_is_connected(chat->account))
 				gaim_blist_remove_chat(chat);
@@ -468,7 +468,7 @@ void show_confirm_del(GaimBuddy *b)
 	g_free(text);
 }
 
-void show_confirm_del_blist_chat(GaimBlistChat *chat)
+void show_confirm_del_blist_chat(GaimChat *chat)
 {
 	char *name = gaim_blist_chat_get_display_name(chat);
 	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
@@ -539,7 +539,7 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 		if (conv == NULL)
 			conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
 		else {
-			gaim_window_raise(gaim_conversation_get_window(conv));
+			gaim_conv_window_raise(gaim_conversation_get_window(conv));
 		}
 	}
 
@@ -1797,14 +1797,14 @@ void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 }
 
 static void
-alias_chat_cb(GaimBlistChat *chat, const char *new_alias)
+alias_chat_cb(GaimChat *chat, const char *new_alias)
 {
 	gaim_blist_alias_chat(chat, new_alias);
 	gaim_blist_save();
 }
 
 void
-alias_dialog_blist_chat(GaimBlistChat *chat)
+alias_dialog_blist_chat(GaimChat *chat)
 {
 	gaim_request_input(NULL, _("Alias Chat"), _("Alias chat"),
 					   _("Please enter an aliased name for this chat."),

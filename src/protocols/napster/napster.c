@@ -125,7 +125,7 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 }
 
 /* 205 - MSG_CLIENT_PRIVMSG */
-static int nap_send_im(GaimConnection *gc, const char *who, const char *message, GaimImFlags flags)
+static int nap_send_im(GaimConnection *gc, const char *who, const char *message, GaimConvImFlags flags)
 {
 
 	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
@@ -326,14 +326,14 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 401: /* MSG_CLIENT_PART */
 		c = nap_find_chat(gc, buf);
 		if (c)
-			serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(c)));
+			serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)));
 		break;
 
 	case 403: /* MSG_SERVER_PUBLIC */
 		res = g_strsplit(buf, " ", 3);
 		c = nap_find_chat(gc, res[0]);
 		if (c)
-			serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)), res[1], 0, res[2], time((time_t)NULL));
+			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)), res[1], 0, res[2], time((time_t)NULL));
 		g_strfreev(res);
 		break;
 
@@ -345,13 +345,13 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 405: /* MSG_SERVER_JOIN_ACK */
 		c = nap_find_chat(gc, buf);
 		if (!c)
-			serv_got_joined_chat(gc, gaim_chat_get_id(GAIM_CHAT(c)), buf);
+			serv_got_joined_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)), buf);
 		break;
 
 	case 407: /* MSG_SERVER_PART */
 		res = g_strsplit(buf, " ", 0);
 		c = nap_find_chat(gc, res[0]);
-		gaim_chat_remove_user(GAIM_CHAT(c), res[1], NULL);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), res[1], NULL);
 		g_strfreev(res);
 		break;
 
@@ -359,7 +359,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 408: /* MSG_SERVER_CHANNEL_USER_LIST */
 		res = g_strsplit(buf, " ", 4);
 		c = nap_find_chat(gc, res[0]);
-		gaim_chat_add_user(GAIM_CHAT(c), res[1], NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), res[1], NULL);
 		g_strfreev(res);
 		break;
 
@@ -370,7 +370,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		/* display the topic in the channel */
 		res = g_strsplit(buf, " ", 2);
 		c = nap_find_chat(gc, res[0]);
-		gaim_chat_set_topic(GAIM_CHAT(c), res[0], res[1]);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), res[0], res[1]);
 		g_strfreev(res);
 		break;
 
@@ -433,7 +433,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		buf3 = g_strdup_printf("/me %s", buf2);
 		g_free(buf2);
 		if ((c = nap_find_chat(gc, res[0]))) {
-			gaim_chat_write(GAIM_CHAT(c), res[1], buf3, GAIM_MESSAGE_NICK, time(NULL));
+			gaim_conv_chat_write(GAIM_CONV_CHAT(c), res[1], buf3, GAIM_MESSAGE_NICK, time(NULL));
 		}
 		g_free(buf3);
 		g_strfreev(res);
