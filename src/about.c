@@ -108,7 +108,7 @@ void show_about(GtkWidget *w, void *data)
 	str = g_strconcat(
 		"<FONT SIZE=\"3\">", _("Active Developers"), ":</FONT><BR>"
 		"  Rob Flynn (", _("maintainer"), ") "
-		"&lt;<A HREF=\"mailto:rob@marko.net\">gaim@robflynn.com</A>&gt;<BR>"
+		"&lt;<A HREF=\"mailto:gaim@robflynn.com\">gaim@robflynn.com</A>&gt;<BR>"
 		"  Sean Egan (", _("lead developer"), ") "
 		"&lt;<A HREF=\"mailto:sean.egan@binghamton.edu\">"
 		"bj91704@binghamton.edu</A>&gt;<BR>"
