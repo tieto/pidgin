@@ -906,6 +906,31 @@ gboolean gaim_prefs_load() {
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "Reading %s\n", filename);
 
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
+#ifndef _WIN32
+		g_free(filename);
+		g_error_free(error);
+
+		error = NULL;
+
+		/*
+		 * We're hard-coding /etc here, which may not be great, but for
+		 * now it works. This was requested by the Fedora guys for the
+		 * upcoming FC2 release.
+		 */
+		filename = g_build_filename("/etc", "gaim", "prefs.xml", NULL);
+
+		gaim_debug(GAIM_DEBUG_INFO, "prefs", "Reading %s\n", filename);
+
+		if (!g_file_get_contents(filename, &contents, &length, &error)) {
+			gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error reading prefs: %s\n",
+					error->message);
+			g_error_free(error);
+			g_free(filename);
+			prefs_is_loaded = TRUE;
+
+			return FALSE;
+		}
+#else /* _WIN32 */
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error reading prefs: %s\n",
 				error->message);
 		g_error_free(error);
@@ -913,6 +938,7 @@ gboolean gaim_prefs_load() {
 		prefs_is_loaded = TRUE;
 
 		return FALSE;
+#endif /* _WIN32 */
 	}
 
 	context = g_markup_parse_context_new(&prefs_parser, 0, NULL, NULL);
