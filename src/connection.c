@@ -350,7 +350,14 @@ gaim_connection_notice(GaimConnection *gc, const char *text)
 
 static gboolean disconnect_conn_cb(gpointer data)
 {
-	gaim_connection_disconnect(data);
+	GaimAccount *account = (GaimAccount *)data;
+	GaimConnection *gc;
+
+	gc = gaim_account_get_connection(account);
+
+	if (gc != NULL)
+		gaim_connection_disconnect(data);
+
 	return FALSE;
 }
 
@@ -367,7 +374,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
 
-	g_timeout_add(0, disconnect_conn_cb, gc);
+	g_timeout_add(0, disconnect_conn_cb, gaim_connection_get_account(gc));
 }
 
 void
