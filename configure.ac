@@ -234,34 +234,49 @@ else
 	x_incpath_add="-I$x_includes"
 fi
 
-dnl Check for startup notification
-PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
-[
-	AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
-	echo "Building with libstartup-notification"
-	enable_startup_notification=yes
-],
-[
-	echo "Building without libstartup-notification"
-	enable_startup_notification=no
-])
+dnl #######################################################################
+dnl # Check for startup notification
+dnl #######################################################################
+AC_ARG_ENABLE(startup-notification, [  --disable-startup-notification    compile without startup notification support],,enable_startup_notification=yes)
 
-AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
-AC_SUBST(STARTUP_NOTIFICATION_LIBS)
+if test "x$enable_startup_notification" = "xyes"; then
+	PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
+	[
+		AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
+		echo "Building with libstartup-notification"
+		enable_startup_notification=yes
+	],
+	[
+		echo "Building without libstartup-notification"
+		enable_startup_notification=no
+	])
+
+	AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
+	AC_SUBST(STARTUP_NOTIFICATION_LIBS)
+fi
 
 
-dnl Check for stuff needed by the evolution integration plugin.
+dnl #######################################################################
+dnl # Check for stuff needed by the evolution integration plugin.
+dnl #######################################################################
 build_gevo=no
+AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
 
-evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
-PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+if test "x$enable_gevolution" = "xyes"; then
 
-AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
-AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
+	evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
+	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+
+	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
+	AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
+
+fi
 
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
 
-dnl Check for XScreenSaver
+dnl #######################################################################
+dnl # Check for XScreenSaver
+dnl #######################################################################
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
 	LIBS="$LIBS $GTK_LIBS $x_libpath_add"
@@ -291,7 +306,9 @@ fi
 AC_SUBST(XSS_LIBS)
 
 
-dnl Check for X session management libs
+dnl #######################################################################
+dnl # Check for X session management libs
+dnl #######################################################################
 if test "x$enable_sm" = "xyes"; then
 	enable_sm=no
 	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
@@ -325,9 +342,9 @@ fi
 GC_TM_GMTOFF
 
 
-dnl
-dnl Perl stuff. Yeah.
-dnl
+dnl #######################################################################
+dnl # Check for Perl support
+dnl #######################################################################
 if test "$enable_perl" = yes ; then
 	AC_PATH_PROG(perlpath, perl)
 	AC_MSG_CHECKING(for Perl compile flags)
