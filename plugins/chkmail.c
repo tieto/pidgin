@@ -22,9 +22,7 @@ int mailport = 110;
 
 static void *handle = NULL;
 extern GtkWidget *blist;
-GtkWidget *maily;
-GtkWidget *vbox2;
-GtkWidget *yo;
+extern GtkWidget *buddies;
 
 GList *tmp;
 int lastnum = 0;
@@ -77,52 +75,88 @@ int num_msgs()
 	return 0;
 }
 
+void destroy_mail_list()
+{
+        GList *list;
+        GtkWidget *w;
+
+        list = GTK_TREE(buddies)->children;
+
+        while (list) {
+                w = (GtkWidget *)list->data;
+                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
+                        gtk_tree_remove_items(GTK_TREE(buddies), list);
+                        if (!list)
+                                break;
+                }
+                list = list->next;
+        }
+}
+
+
+void setup_mail_list()
+{
+	GList *list;
+	GtkWidget *w;
+	GtkWidget *item;
+	GtkWidget *tree;
+	gchar *buf;
+
+	list = GTK_TREE(buddies)->children;
+
+	while (list) {
+		w = (GtkWidget *)list->data;
+		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
+			gtk_tree_remove_items(GTK_TREE(buddies), list);
+			if (!list)
+				break;
+		}
+		list = list->next;
+	}
+
+	item = gtk_tree_item_new_with_label("Mail Server");
+	tree = gtk_tree_new();
+	gtk_widget_show(item);
+	gtk_widget_show(tree);
+	gtk_tree_append(GTK_TREE(buddies), item);
+	gtk_tree_item_set_subtree(GTK_TREE_ITEM(item), tree);
+	gtk_tree_item_expand(GTK_TREE_ITEM(item));
+
+	buf = g_malloc(BUF_LONG);
+
+	g_snprintf(buf, BUF_LONG, "%s (%d/%d)", mailhost, lastnum - orig, orig);
+	item = gtk_tree_item_new_with_label(buf);
+	g_free(buf);
+
+	gtk_tree_append(GTK_TREE(tree), item);
+	gtk_widget_show(item);
+}
+	
 void gaim_plugin_init(void *h) {
 	handle = h;
 	tmp = gtk_container_children(GTK_CONTAINER(blist));
 
-	maily = gtk_label_new("You have no new email");
-	vbox2 = (GtkWidget *)tmp->data;
-
-	yo = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(yo), GTK_SHADOW_IN );
-	gtk_widget_show(yo);
-
-	gtk_box_pack_start(GTK_BOX(vbox2), yo, FALSE, FALSE, 5);
-	gtk_box_reorder_child(GTK_BOX(vbox2), yo, 2);
-	gtk_container_add(GTK_CONTAINER(yo), maily);
-
-	gtk_widget_show(maily);
-
 	orig = num_msgs();
 	lastnum = orig;
 
+	gaim_signal_connect(handle, event_blist_update, setup_mail_list, NULL);
+	setup_mail_list();
+	
 	mytimer = gtk_timeout_add(30000, (GtkFunction)update_mail, NULL);
 }
 
 void update_mail () {
 	int newnum;
-	gchar *buf;
 
 	gtk_timeout_remove(mytimer);
 
 	newnum = num_msgs();
 
-	buf = g_malloc(BUF_LONG);
-
 	if ( (newnum >= lastnum) && (newnum > 0)) {
-		g_snprintf(buf, BUF_LONG, "You have %d new e-mail(s)", newnum - orig);
+		newnum = newnum - orig;
 	} else {
-		g_snprintf(buf, BUF_LONG, "You have no new email");
+		newnum = 0;
 	}
-
-	gtk_widget_destroy(maily);
-	maily = gtk_label_new(buf);
-	g_free(buf);
-        
-	gtk_container_add(GTK_CONTAINER(yo), maily);
-
-       	gtk_widget_show(maily);
 
 	if (newnum < lastnum) {
 		orig = 0;
@@ -130,14 +164,14 @@ void update_mail () {
 
 	lastnum = newnum;
 	mytimer = gtk_timeout_add(30000, (GtkFunction)update_mail, NULL);
+	setup_mail_list();
 }
 
 
 void gaim_plugin_remove() {
-	handle = NULL;
-	gtk_widget_hide(maily);
-	gtk_widget_destroy(yo);
 	gtk_timeout_remove(mytimer);
+	destroy_mail_list();
+	handle = NULL;
 }
 
 char *name() {
