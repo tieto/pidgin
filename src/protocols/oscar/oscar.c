@@ -5685,7 +5685,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	}
 
 	/* remove the trailing newline character */
-	if (ret)
+	if (ret && (strlen(ret) > 0))
 		ret[strlen(ret)-1] = '\0';
 	return ret;
 }
