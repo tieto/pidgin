@@ -1402,35 +1402,6 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 }
 
 /*
- * This function exists to work around some gross bugs in GtkTextView.  
- * Basically, we short circuit ctrl+a and ctrl+end because they make 
- * Gaim go boom.
- *
- * It's supposed to be fixed in gtk2.2.  You can view the bug report at 
- * http://bugzilla.gnome.org/show_bug.cgi?id=107939
- */
-static gboolean
-textview_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
-{
-	if (event->state & GDK_CONTROL_MASK)
-		switch (event->keyval) {
-			case 'a':
-				return TRUE;
-				break;
-
-			case GDK_Home:
-				return TRUE;
-				break;
-
-			case GDK_End:
-				return TRUE;
-				break;
-		}
-
-	return FALSE;
-}
-
-/*
  * NOTE:
  *   This guy just kills a single right click from being propagated any 
  *   further.  I  have no idea *why* we need this, but we do ...  It 
@@ -3586,11 +3557,6 @@ setup_im_pane(GaimConversation *conv)
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"),
 				25));
 
-	/* Connect the signal handlers. */
-	/* XXX - This first one should be removed eventually.  It exists to 
-	 * work around a gtk bug.  See the callback comments for more info. */
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
-					 G_CALLBACK(textview_key_pressed_cb), conv);
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
 							 G_CALLBACK(entry_key_pressed_cb_1),
 							 gtkconv->entry_buffer);

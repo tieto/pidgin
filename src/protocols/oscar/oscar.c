@@ -1,8 +1,9 @@
 /*
  * gaim
  *
- * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * libfaim code copyright 1998, 1999 Adam Fritzler <afritz@auk.cx>
+ * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ * Some code copyright (C) 2001-2003, Mark Doliner <thekingant a users,sourceforge,net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

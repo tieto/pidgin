@@ -58,7 +58,6 @@ struct _GtkIMHtml {
 	GtkSmileyTree *default_smilies;
 
 	gboolean show_smileys;
-	gboolean show_comments;
 
 	GtkWidget *tip_window;
 	char *tip;
