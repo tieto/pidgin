@@ -40,8 +40,6 @@
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 
-extern void schedule_blist_save(void);
-
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
@@ -658,8 +656,6 @@ void serv_set_permit_deny(GaimConnection *g)
 	 */
 	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_permit_deny)
 		prpl_info->set_permit_deny(g);
-	
-	schedule_blist_save();
 }
 
 

@@ -165,7 +165,7 @@ static gboolean blist_save_callback(gpointer data)
 	return FALSE;
 }
 
-void schedule_blist_save()
+static void schedule_blist_save()
 {
 	if (blist_save_timer != 0)
 		gaim_timeout_remove(blist_save_timer);

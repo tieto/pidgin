@@ -32,7 +32,6 @@
 #include "server.h"
 #include "util.h"
 #include "cmds.h"
-#include "privacy.h"
 
 #include "zephyr/zephyr.h"
 #include "internal.h"
@@ -692,51 +691,10 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
 				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, GAIM_TYPING);
-			else {
-				GSList* l;
-				gboolean in_deny;
-					 
-				switch (gc->account->perm_deny) {
-				case GAIM_PRIVACY_ALLOW_ALL: 
-					in_deny = 0; break;
-				case GAIM_PRIVACY_DENY_ALL: 
-					in_deny = 1; break;
-				case GAIM_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
-					in_deny = 1;
-					for(l=gc->account->permit;l!=NULL;l=l->next) {
-						if (!gaim_utf8_strcasecmp(stripped_sender, gaim_normalize(gc->account, (char *)l->data))) {
-							fprintf(stderr,"stripped sender %s l->data %sf\n",stripped_sender, (char *)l->data);
-							in_deny=0;
-							break;
-						} 
-					}
-					break;
-				case GAIM_PRIVACY_DENY_USERS: /* See if stripped_sender is in gc->account->deny and deny if so */ 
-					in_deny = 0;
-					for(l=gc->account->deny;l!=NULL;l=l->next) {
-						if (!gaim_utf8_strcasecmp(stripped_sender, gaim_normalize(gc->account, (char *)l->data))) {
-							fprintf(stderr,"stripped sender %s l->data %sf\n",stripped_sender, (char *)l->data);
-							in_deny=1;
-							break;
-						} 
-					}
-					break;
-				case GAIM_PRIVACY_ALLOW_BUDDYLIST: 
-					in_deny = 1;
-					if (gaim_find_buddy(gc->account,stripped_sender)!=NULL) {
-						in_deny = 0;
-					} 
-					break;
-				default: 
-					in_deny=0; break;
-				}
+			else 
+				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
-				if (!in_deny) {
-					serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
-				}
-			}
 				g_free(stripped_sender);
-
 			} else {
 				zephyr_triple *zt1, *zt2;
                                 gchar *send_inst_utf8;
@@ -1773,36 +1731,6 @@ static void zephyr_register_slash_commands()
 }
 
 
-static void
-zephyr_add_deny(GaimConnection *gc, const char *who)
-{
-	gaim_privacy_deny_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_deny(GaimConnection *gc, const char *who)
-{
-	gaim_privacy_deny_remove(gc->account,who,1);
-}
-
-static void
-zephyr_add_permit(GaimConnection *gc, const char *who)
-{
-	gaim_privacy_permit_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_permit(GaimConnection *gc, const char *who)
-{
-	gaim_privacy_permit_remove(gc->account,who,1);
-}
-
-static void
-zephyr_set_permit_deny(GaimConnection *gc)
-{
-	/* This doesn't have to do anything, since really, we can just check account->perm_deny when deciding whether to di */
-	return;
-}
 static int zephyr_resubscribe(GaimConnection *gc)
 {
         /* Resubscribe to the in-memory list of subscriptions and also
@@ -1911,11 +1839,11 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* add_buddies */
 	NULL,					/* remove_buddy */
 	NULL,					/* remove_buddies */
-	zephyr_add_permit, /* add_permit -- not useful, since anyone can zephyr you by default*/
-	zephyr_add_deny, /* XXX add_deny  -- maybe put an auto "I'm ignoring your zephyrs*/
-	zephyr_remove_permit, /* remove_permit -- not useful, see add permit */
-	zephyr_remove_deny, /* XXX remove deny -- remove above deny, */
-	zephyr_set_permit_deny, /* ??? set permit deny */
+	NULL, /* add_permit -- not useful, since anyone can zephyr you by default*/
+	NULL, /* XXX add deny  -- maybe put an auto "I'm ignoring your zephyrs*/
+	NULL, /* remove_permit -- not useful, see add permit */
+	NULL, /* XXX remove deny -- remove above deny, */
+	NULL, /* ??? set permit deny */
 	NULL,  /* --- warn  */
 	zephyr_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
