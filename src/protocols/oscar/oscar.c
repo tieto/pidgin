@@ -4724,7 +4724,7 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
-	ret->name = g_strdup("Oscar");
+	ret->name = g_strdup("AIM/ICQ");
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
