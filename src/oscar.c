@@ -46,7 +46,8 @@ static int inpa = -1;
 static int paspa = -1;
 struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
-int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE;
+int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
+		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
 
 GList *oscar_chats = NULL;
 
@@ -562,6 +563,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			/* libfaim won't tell us that we got this just yet */
 		} else if (rendtype == AIM_RENDEZVOUS_FILETRANSFER_GET) {
 			/* nor will it tell us this. but it's still there */
+		} else if (rendtype == AIM_RENDEZVOUS_VOICE) {
+			/* this one libfaim tells us unuseful info about  */
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);

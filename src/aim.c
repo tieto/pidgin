@@ -475,6 +475,12 @@ extern void show_debug(GtkObject *);
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_NLS
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+#endif
+
 #ifdef USE_APPLET
         init_applet_mgr(argc, argv);
 #elif defined USE_THEMES         
@@ -482,10 +488,6 @@ int main(int argc, char *argv[])
 #else
         gtk_init(&argc, &argv);
 #endif /* USE_THEMES */
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
 
         set_defaults();
         load_prefs();

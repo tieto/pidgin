@@ -686,8 +686,10 @@ void toc_callback( gpointer          data,
 				g_free(messages[i]);
 
 			accept_file_dialog(ft);
-		/*
 		} else if (!strcmp(uuid, VOICE_UID)) {
+			/* oh goody. voice over ip. fun stuff. */
+
+		/*
 		} else if (!strcmp(uuid, B_ICON_UID)) {
 		} else if (!strcmp(uuid, IMAGE_UID)) {
 		*/
