@@ -96,7 +96,7 @@ install:
 	$(CC) -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
 	rm -rf $@.base $@.def $@.exp junk.tmp
 
-plugins: iconaway.dll spellchk.dll
+plugins: iconaway.dll spellchk.dll autrecon.dll
 
 
 ##
