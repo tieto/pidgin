@@ -69,8 +69,10 @@ gaim_buddy_icon_new(GaimAccount *account, const char *username,
 
 	gaim_buddy_icon_set_data(icon, icon_data, icon_len);
 
-	gaim_buddy_icon_ref(icon);
-
+	/* We don't take a reference here. In fact we may want to check if we have
+	 * a reference (gaim_buddy_icon_set_data should have added one or more)
+	 * and destroy ourselves if we don't.
+	 */
 	return icon;
 }
 
@@ -87,28 +89,31 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 
 	if (icon->ref_count > 0)
 	{
-		gaim_buddy_icon_unref(icon);
+		/* If the ref count is greater than 0, then we weren't called from
+		 * gaim_buddy_icon_unref(). So we go through and ask everyone to
+		 * unref us. Then we return, since we know somewhere along the
+		 * line we got called recursively by one of the unrefs, and the
+		 * icon is already destroyed.
+		 */
+		account  = gaim_buddy_icon_get_account(icon);
+		username = gaim_buddy_icon_get_username(icon);
+
+		conv = gaim_find_conversation_with_account(username, account);
+		if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+			gaim_conv_im_set_icon(GAIM_CONV_IM(conv), NULL);
+
+		for (list = sl = gaim_find_buddies(account, username); sl != NULL;
+			 sl = sl->next)
+		{
+			GaimBuddy *buddy = (GaimBuddy *)sl->data;
+
+			gaim_buddy_set_icon(buddy, NULL);
+		}
+
+		g_slist_free(list);
 
 		return;
 	}
-
-	account  = gaim_buddy_icon_get_account(icon);
-	username = gaim_buddy_icon_get_username(icon);
-
-	conv = gaim_find_conversation_with_account(username, account);
-
-	for (list = sl = gaim_find_buddies(account, username); sl != NULL;
-		 sl = sl->next)
-	{
-		GaimBuddy *buddy = (GaimBuddy *)sl->data;
-
-		gaim_buddy_set_icon(buddy, NULL);
-	}
-
-	g_slist_free(list);
-
-	if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-		gaim_conv_im_set_icon(GAIM_CONV_IM(conv), NULL);
 
 	icon_cache = g_hash_table_lookup(account_cache,
 									 gaim_buddy_icon_get_account(icon));
