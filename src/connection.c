@@ -65,8 +65,6 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (gc->away_state != NULL)
 		g_free(gc->away_state);
 
-	connections = g_list_remove(connections, gc);
-
 	g_free(gc);
 }
 
@@ -119,12 +117,10 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 	gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
+	connections = g_list_remove(connections, gc);
+
 	gaim_event_broadcast(event_signoff, gc);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-
-	/* XXX Evil UI stuff!! */
-	do_away_menu();
-	do_proto_menu();
 
 	/*
 	 * XXX This is a hack! Remove this and replace it with a better event
@@ -140,6 +136,8 @@ gaim_connection_disconnect(GaimConnection *gc)
 	gaim_notify_close_with_handle(gc);
 
 	update_privacy_connections();
+
+	gaim_connection_destroy(gc);
 
 	/* XXX More UI stuff! */
 	if (connections != NULL)
