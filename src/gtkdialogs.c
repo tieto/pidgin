@@ -77,6 +77,18 @@ static struct developer developers[] = {
 	{NULL, NULL, NULL}
 };
 
+static struct developer patch_writers[] = {
+	{"Daniel 'datallah' Atallah",	NULL,	NULL},
+	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
+	{"Decklin Foster",				NULL,	NULL},
+	{"Gary 'grim' Kramlich",		NULL,	NULL},
+	{"Robert 'Robot101' McQueen",	NULL,	NULL},
+	{"Benjamin Miller",				NULL,	NULL},
+	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
+	{NULL, NULL, NULL}
+};
+
 static struct developer retired_developers[] = {
 	{"Adam Fritzler",		N_("former libfaim maintainer"), NULL},
 	{"Eric Warmenhoven",	N_("former lead developer"), "warmenhoven@yahoo.com"},
@@ -236,16 +248,17 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	/* Crazy Patch Writers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Crazy Patch Writers"));
-	g_string_append(str,
-					"  Daniel 'datallah' Atallah<BR>"
-					"  Ka-Hing 'javabsp' Cheung<BR>"
-					"  Felipe 'shx' Contreras<BR>"
-					"  Decklin Foster<BR>"
-					"  Gary 'grim' Kramlich<BR>"
-					"  Robert 'Robot101' McQueen<BR>"
-					"  Benjamin Miller<BR>"
-					"  Kevin 'SimGuy' Stange<BR>"
-					"<BR>");
+	for (i = 0; patch_writers[i].name != NULL; i++) {
+		if (patch_writers[i].email != NULL) {
+			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+					patch_writers[i].name,
+					patch_writers[i].email, patch_writers[i].email);
+		} else {
+			g_string_append_printf(str, "  %s<br/>",
+					patch_writers[i].name);
+		}
+	}
+	g_string_append(str, "<BR/>");
 
 	/* Retired Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",

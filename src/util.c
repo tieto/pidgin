@@ -1397,7 +1397,7 @@ gaim_markup_linkify(const char *text)
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
 	GString *ret = g_string_new("");
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
+	/* Assumes you have a buffer able to carry at least BUF_LEN * 2 bytes */
 
 	c = text;
 	while (*c) {
