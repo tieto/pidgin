@@ -1649,7 +1649,6 @@ static void incomingim_ch2_icqserverrelay_free(aim_session_t *sess, struct aim_i
 static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
 {
 	fu16_t hdrlen, anslen, msglen;
-	fu16_t msgtype;
 
 	hdrlen = aimbs_getle16(servdata);
 	aim_bstream_advance(servdata, hdrlen);
@@ -1657,8 +1656,8 @@ static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod
 	hdrlen = aimbs_getle16(servdata);
 	aim_bstream_advance(servdata, hdrlen);
 
-	msgtype = aimbs_getle16(servdata);
-	
+	args->info.rtfmsg.msgtype = aimbs_getle16(servdata);
+
 	anslen = aimbs_getle32(servdata);
 	aim_bstream_advance(servdata, anslen);
 
@@ -1670,9 +1669,6 @@ static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod
 
 	hdrlen = aimbs_getle32(servdata);
 	aim_bstream_advance(servdata, hdrlen);
-
-	/* XXX - This is such a hack. */
-	args->reqclass = AIM_CAPS_ICQRTF;
 
 	args->destructor = (void *)incomingim_ch2_icqserverrelay_free;
 
@@ -1824,9 +1820,10 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		args.port = aim_tlv_get16(list2, 0x0005, 1);
 
 	/*
-	 * Something to do with ft -- two bytes
+	 * Something to do with ft? -- two bytes
 	 * 0x0001 - "I want to send you this file"
 	 * 0x0002 - "I will accept this file from you"
+	 * 0x0002 - Also used in ICQ Lite Beta 4.0 URLs
 	 */
 	if (aim_tlv_gettlv(list2, 0x000a, 1))
 		;
@@ -1859,6 +1856,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 * Unknown -- no value
 	 *
 	 * Maybe means we should connect directly to transfer the file?
+	 * Also used in ICQ Lite Beta 4.0 URLs.  Also empty.
 	 */
 	if (aim_tlv_gettlv(list2, 0x000f, 1))
 		;
@@ -1880,7 +1878,8 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 	/*
 	 * This must be present in PROPOSALs, but will probably not
-	 * exist in CANCELs and ACCEPTs.
+	 * exist in CANCELs and ACCEPTs.  Also exists in ICQ Lite
+	 * Beta 4.0 URLs (AIM_CAPS_ICQSERVERRELAY).
 	 *
 	 * Service Data blocks are module-specific in format.
 	 */

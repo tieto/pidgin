@@ -2450,6 +2450,7 @@ static void accept_direct_im(struct ask_direct *d) {
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	gchar *tmp;
 	GaimConvImFlags flags = 0;
 	gsize convlen;
@@ -2457,10 +2458,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	struct buddyinfo *bi;
 	const char *iconfile;
 
-	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, userinfo->sn));
+	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
-		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, userinfo->sn)), bi);
+		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(account, userinfo->sn)), bi);
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
@@ -2482,7 +2483,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc))) && 
+	if ((iconfile = gaim_account_get_buddy_icon(account)) && 
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
 		FILE *file;
 		struct stat st;
@@ -2557,13 +2558,13 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	/*
-	 * If the message came from an ICQ user then escape any HTML, because
-	 * HTML should not be sent over ICQ as a means to format a message.
+	 * If the message is being sent to an ICQ user then escape any HTML,
+	 * because HTML should not be sent over ICQ as a means to format a message.
 	 * SIM is the only client we know of that sends HTML, everything else
 	 * (ie. official clients) use RTF.  Please let us know if this is
 	 * incorrect.
 	 */
-	if (isdigit(userinfo->sn[0])) {
+	if (isdigit(gaim_account_get_username(account)[0])) {
 		gchar *tmp2 = gaim_escape_html(tmp);
 		g_free(tmp);
 		tmp = tmp2;
@@ -2722,6 +2723,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 							  "risk."), 0, d, 2,
 							_("Connect"), G_CALLBACK(accept_direct_im),
 							_("Cancel"), G_CALLBACK(cancel_direct_im));
+	} else if (args->reqclass & AIM_CAPS_ICQSERVERRELAY) {
+		gaim_debug_error("oscar", "Got an ICQ Server Relay message of type %d\n", args->info.rtfmsg.msgtype);
 	} else {
 		gaim_debug_error("oscar",
 				   "Unknown reqclass %hu\n", args->reqclass);

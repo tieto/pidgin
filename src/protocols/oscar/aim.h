@@ -830,6 +830,7 @@ struct aim_incomingim_ch2_args {
 			struct aim_chat_roominfo roominfo;
 		} chat;
 		struct {
+			fu16_t msgtype;
 			fu32_t fgcolor;
 			fu32_t bgcolor;
 			const char *rtfmsg;
