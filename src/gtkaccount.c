@@ -677,7 +677,9 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox;
+	GtkWidget *vbox2;
 	GtkWidget *hbox;
+	GtkWidget *hbox2;
 	GtkWidget *button;
 	GtkWidget *label;
 
@@ -708,25 +710,35 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Buddy icon:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	dialog->buddy_icon_entry = gtk_image_new();
-	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry,
+					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->buddy_icon_entry);
 	gaim_set_accessible_label (dialog->buddy_icon_entry, label);
 	dialog->buddy_icon_path = NULL;
-	
-	button = gtk_button_new_with_mnemonic(_("_Browse"));
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
+	gtk_widget_show(vbox2);
+
+	hbox2 = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
+	gtk_widget_show(hbox2);
+
+	button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
+	gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buddy_icon_select_cb), dialog);
 	gtk_widget_show(button);
 
-	button = gtk_button_new_with_mnemonic(_("_Reset"));
+	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(buddy_icon_reset_cb), dialog);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
 	if (dialog->prpl_info != NULL) {
