@@ -2334,11 +2334,15 @@ void tabize()
 
 			imhtml = c->text;
 			win = c->window;
+			if (c->gc && c->gc->prpl->remove_convo)
+				(*c->gc->prpl->remove_convo)(c->gc, c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
 			gtk_widget_destroy(win);
+			if (c->gc && c->gc->prpl->insert_convo)
+				(*c->gc->prpl->insert_convo)(c->gc, c);
 
 			x = x->next;
 		}
@@ -2351,10 +2355,14 @@ void tabize()
 			GtkWidget *imhtml;
 
 			imhtml = c->text;
+			if (c->gc && c->gc->prpl->remove_convo)
+				(*c->gc->prpl->remove_convo)(c->gc, c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
+			if (c->gc && c->gc->prpl->insert_convo)
+				(*c->gc->prpl->insert_convo)(c->gc, c);
 
 			x = x->next;
 		}
