@@ -52,7 +52,8 @@ gchar *title_string = "(*) ";
 /* predefine some functions, less warnings */
 void options(GtkWidget *widget, gpointer data);
 void un_star(GtkWidget *widget, gpointer data);
-void un_star_window(GtkWidget *widget, gpointer data);
+/* this returns an int so that typing events don't get stopped here */
+int un_star_window(GtkWidget *widget, gpointer data);
 int counter (char *buf, int *length);
 /*string functions */
 void string_add(GtkWidget *widget);
@@ -209,10 +210,11 @@ void un_star(GtkWidget *widget, gpointer data) {
 	return;
 }
 
-void un_star_window(GtkWidget *widget, gpointer data) {
+int un_star_window(GtkWidget *widget, gpointer data) {
 	GtkWidget *parent = gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW);
 	un_star(parent, data);
-	return;
+	/* return 0 so that the event continues to propagate */
+	return 0;
 }
 
 /* This function returns the number in [ ]'s or 0 */
