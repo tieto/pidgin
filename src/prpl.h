@@ -360,27 +360,6 @@ GaimPlugin *gaim_find_prpl(GaimProtocol type);
 void show_got_added(GaimConnection *gc, const char *id,
 					const char *who, const char *alias, const char *msg);
 
-/**
- * Retrieves and sets the new buddy icon for a user.
- *
- * @param gc   The gaim connection.
- * @param who  The user.
- * @param data The icon data.
- * @param len  The length of @a data.
- */
-void set_icon_data(GaimConnection *gc, const char *who, void *data, int len);
-
-/**
- * Retrieves the buddy icon data for a user.
- *
- * @param gc  The gaim connection.
- * @param who The user.
- * @param len The returned length of the data.
- *
- * @return The buddy icon data.
- */
-void *get_icon_data(GaimConnection *gc, const char *who, int *len);
-
 #ifdef __cplusplus
 }
 #endif

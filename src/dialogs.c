@@ -832,9 +832,6 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 	GaimConversation *c;
 	GaimBuddy *b;
 	GaimGroup *g;
-	void *icon_data;
-	void *icon_data2;
-	int icon_len;
 
 	if (resp == GTK_RESPONSE_OK) {
 
@@ -852,15 +849,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 		serv_add_buddy(a->gc, who, g);
 
 		if (c != NULL)
-			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
-
-		icon_data = get_icon_data(a->gc, normalize(who), &icon_len);
-
-		if(icon_data) {
-			icon_data2 = g_memdup(icon_data, icon_len);
-			set_icon_data(a->gc, who, icon_data2, icon_len);
-			g_free(icon_data2);
-		}
+			gaim_buddy_icon_update(gaim_im_get_icon(GAIM_IM(c)));
 
 		gaim_blist_save();
 	}

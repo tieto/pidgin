@@ -980,7 +980,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (gc) {
+	if (gc != NULL) {
 		/* Still connected */
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -1051,6 +1051,9 @@ gaim_conversation_destroy(GaimConversation *conv)
 		}
 
 		g_slist_free(conv->u.im->images);
+
+		if (conv->u.im->icon != NULL)
+			gaim_buddy_icon_unref(conv->u.im->icon);
 
 		g_free(conv->u.im);
 
@@ -1570,6 +1573,31 @@ gaim_im_get_conversation(const GaimIm *im)
 	g_return_val_if_fail(im != NULL, NULL);
 
 	return im->conv;
+}
+
+void
+gaim_im_set_icon(GaimIm *im, GaimBuddyIcon *icon)
+{
+	g_return_if_fail(im != NULL);
+
+	if (im->icon == icon)
+		return;
+
+	if (im->icon != NULL)
+		gaim_buddy_icon_unref(im->icon);
+
+	im->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
+
+	gaim_conversation_update(gaim_im_get_conversation(im),
+							 GAIM_CONV_UPDATE_ICON);
+}
+
+GaimBuddyIcon *
+gaim_im_get_icon(const GaimIm *im)
+{
+	g_return_val_if_fail(im != NULL, NULL);
+
+	return im->icon;
 }
 
 void
@@ -2587,7 +2615,9 @@ gaim_conversations_init(void)
 {
 	void *handle = gaim_conversations_get_handle();
 
-	/* Register preferences */
+	/**********************************************************************
+	 * Register preferences
+	 **********************************************************************/
 
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
@@ -2617,7 +2647,9 @@ gaim_conversations_init(void)
 			update_titles_pref_cb, NULL);
 
 
-	/* Register signals */
+	/**********************************************************************
+	 * Register signals
+	 **********************************************************************/
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,

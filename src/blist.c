@@ -37,6 +37,7 @@
 struct gaim_buddy_list *gaimbuddylist = NULL;
 static struct gaim_blist_ui_ops *blist_ui_ops = NULL;
 
+
 /*****************************************************************************
  * Private Utility functions                                                 *
  *****************************************************************************/
@@ -492,6 +493,84 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 		ops->new_node((GaimBlistNode *)b);
 
 	return b;
+}
+
+static void
+write_buddy_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
+{
+	const void *data;
+	size_t len;
+	char *random;
+	char *filename;
+	char *dirname;
+	char *old_icon;
+	FILE *file = NULL;
+
+	data = gaim_buddy_icon_get_data(icon, &len);
+
+	random   = g_strdup_printf("%x", g_random_int());
+	filename = g_build_filename(gaim_user_dir(), "icons", random, NULL);
+	dirname  = g_build_filename(gaim_user_dir(), "icons", NULL);
+	old_icon = gaim_buddy_get_setting(buddy, "buddy_icon");
+
+	g_free(random);
+
+	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
+	{
+		gaim_debug_info("buddy icons", "Creating icon cache directory.\n");
+
+		if (mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
+		{
+			gaim_debug_error("buddy icons",
+							 "Unable to create directory %s: %s\n",
+							 dirname, strerror(errno));
+		}
+	}
+
+	g_free(dirname);
+
+	if ((file = fopen(filename, "wb")) != NULL)
+	{
+		fwrite(data, 1, len, file);
+		fclose(file);
+	}
+
+	if (old_icon != NULL)
+	{
+		unlink(old_icon);
+		g_free(old_icon);
+	}
+
+	gaim_buddy_set_setting(buddy, "buddy_icon", filename);
+	gaim_blist_save();
+
+	g_free(filename);
+}
+
+void
+gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
+{
+	g_return_if_fail(buddy != NULL);
+
+	if (buddy->icon == icon)
+		return;
+
+	if (buddy->icon != NULL)
+		gaim_buddy_icon_unref(buddy->icon);
+
+	buddy->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
+
+	write_buddy_icon(buddy, icon);
+
+	gaim_blist_update_buddy_icon(buddy);
+}
+
+GaimBuddyIcon *
+gaim_buddy_get_icon(const GaimBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return buddy->icon;
 }
 
 void gaim_blist_add_chat(GaimBlistChat *chat, GaimGroup *group, GaimBlistNode *node)
@@ -976,6 +1055,9 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 
 	if(buddy->timer > 0)
 		g_source_remove(buddy->timer);
+
+	if (buddy->icon != NULL)
+		gaim_buddy_icon_unref(buddy->icon);
 
 	ops->remove(gaimbuddylist, node);
 	g_hash_table_destroy(buddy->settings);

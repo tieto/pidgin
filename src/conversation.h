@@ -82,7 +82,8 @@ typedef enum
 	 */
 	GAIM_CONV_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
-	GAIM_CONV_UPDATE_AWAY      /**< The other user went away.                */
+	GAIM_CONV_UPDATE_AWAY,     /**< The other user went away.                */
+	GAIM_CONV_UPDATE_ICON      /**< The other user's buddy icon changed.     */
 
 } GaimConvUpdateType;
 
@@ -110,9 +111,11 @@ typedef enum
 	GAIM_MESSAGE_NICK      = 0x0020, /**< Contains your nick.   */
 	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.           */
 	GAIM_MESSAGE_WHISPER   = 0x0080  /**< Whispered message.    */
+
 } GaimMessageFlags;
 
 #include "account.h"
+#include "buddyicon.h"
 #include "server.h"
 
 /**
@@ -198,6 +201,8 @@ struct _GaimIm
 	guint  type_again_timeout;         /**< The type again timer handle. */
 
 	GSList *images;                    /**< A list of images in the IM.  */
+
+	GaimBuddyIcon *icon;               /**< The buddy icon.              */
 };
 
 /**
@@ -802,6 +807,28 @@ void gaim_conversation_foreach(void (*func)(GaimConversation *conv));
  * @return The parent conversation.
  */
 GaimConversation *gaim_im_get_conversation(const GaimIm *im);
+
+/**
+ * Sets the IM's buddy icon.
+ *
+ * This should only be called from within Gaim. You probably want to
+ * call gaim_buddy_icon_set_data().
+ *
+ * @param im   The IM.
+ * @param icon The buddy icon.
+ *
+ * @see gaim_buddy_icon_set_data()
+ */
+void gaim_im_set_icon(GaimIm *im, GaimBuddyIcon *icon);
+
+/**
+ * Returns the IM's buddy icon.
+ *
+ * @param im The IM.
+ *
+ * @return The buddy icon.
+ */
+GaimBuddyIcon *gaim_im_get_icon(const GaimIm *im);
 
 /**
  * Sets the IM's typing state.

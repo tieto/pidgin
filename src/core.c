@@ -84,6 +84,7 @@ gaim_core_init(const char *ui)
 	gaim_connections_init();
 	gaim_conversations_init();
 	gaim_blist_init();
+	gaim_buddy_icons_init();
 	gaim_privacy_init();
 	gaim_pounces_init();
 	gaim_proxy_init();
@@ -128,6 +129,7 @@ gaim_core_quit(void)
 	gaim_blist_uninit();
 	gaim_conversations_uninit();
 	gaim_connections_uninit();
+	gaim_buddy_icons_uninit();
 	gaim_accounts_uninit();
 
 	gaim_signals_uninit();

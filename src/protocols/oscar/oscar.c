@@ -28,6 +28,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "buddyicon.h"
 #include "conversation.h"
 #include "debug.h"
 #include "ft.h"
@@ -2387,8 +2388,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
 	} else if (args->reqclass & AIM_CAPS_VOICE) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
-		set_icon_data(gc, userinfo->sn, args->info.icon.icon,
-				args->info.icon.length);
+		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
+									  userinfo->sn, args->info.icon.icon,
+									  args->info.icon.length);
 	} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 		struct ask_direct *d = g_new0(struct ask_direct, 1);
 		char buf[256];
@@ -3512,7 +3514,8 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (iconlen > 0) {
 		char *b16;
 		GaimBuddy *b = gaim_find_buddy(gc->account, sn);
-		set_icon_data(gc, sn, icon, iconlen);
+		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
+									  sn, icon, iconlen);
 		b16 = tobase16(iconcsum, iconcsumlen);
 		if (b16) {
 			gaim_buddy_set_setting(b, "icon_checksum", b16);

@@ -1,0 +1,197 @@
+/**
+ * @file icon.h Buddy Icon API
+ * @ingroup core
+ *
+ * gaim
+ *
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+#ifndef _GAIM_ICON_H_
+#define _GAIM_ICON_H_
+
+typedef struct _GaimBuddyIcon GaimBuddyIcon;
+
+#include "account.h"
+
+struct _GaimBuddyIcon
+{
+	GaimAccount *account;  /**< The account the user is on.        */
+	char *username;        /**< The username the icon belongs to.  */
+
+	void  *data;           /**< The buddy icon data.               */
+	size_t len;            /**< The length of the buddy icon data. */
+
+	int ref_count;         /**< The buddy icon reference count.    */
+};
+
+/**************************************************************************/
+/** @name Buddy Icon API                                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a new buddy icon structure.
+ *
+ * @param account   The account the user is on.
+ * @param username  The username the icon belongs to.
+ * @param icon_data The buddy icon data.
+ * @param icon_len  The buddy icon length.
+ *
+ * @return The buddy icon structure.
+ */
+GaimBuddyIcon *gaim_buddy_icon_new(GaimAccount *account, const char *username,
+								   void *icon_data, size_t icon_len);
+
+/**
+ * Destroys a buddy icon structure.
+ *
+ * If the buddy icon's reference count is greater than 1, this will
+ * just decrease the reference count and return.
+ *
+ * @param icon The buddy icon structure to destroy.
+ */
+void gaim_buddy_icon_destroy(GaimBuddyIcon *icon);
+
+/**
+ * Increments the reference count on a buddy icon.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return @a icon.
+ */
+GaimBuddyIcon *gaim_buddy_icon_ref(GaimBuddyIcon *icon);
+
+/**
+ * Decrements the reference count on a buddy icon.
+ *
+ * If the reference count reaches 0, the icon will be destroyed.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return @a icon, or @c NULL if the reference count reached 0.
+ */
+GaimBuddyIcon *gaim_buddy_icon_unref(GaimBuddyIcon *icon);
+
+/**
+ * Updates every instance of this icon.
+ *
+ * @param icon The buddy icon.
+ */
+void gaim_buddy_icon_update(GaimBuddyIcon *icon);
+
+/**
+ * Sets the buddy icon's account.
+ *
+ * @param icon    The buddy icon.
+ * @param account The account.
+ */
+void gaim_buddy_icon_set_account(GaimBuddyIcon *icon, GaimAccount *account);
+
+/**
+ * Sets the buddy icon's username.
+ *
+ * @param icon     The buddy icon.
+ * @param username The username.
+ */
+void gaim_buddy_icon_set_username(GaimBuddyIcon *icon, const char *username);
+
+/**
+ * Sets the buddy icon's icon data.
+ *
+ * @param icon The buddy icon.
+ * @param data The buddy icon data.
+ * @param len  The length of the icon data.
+ */
+void gaim_buddy_icon_set_data(GaimBuddyIcon *icon, void *data, size_t len);
+
+/**
+ * Returns the buddy icon's account.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return The account.
+ */
+GaimAccount *gaim_buddy_icon_get_account(const GaimBuddyIcon *icon);
+
+/**
+ * Returns the buddy icon's username.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return The username.
+ */
+const char *gaim_buddy_icon_get_username(const GaimBuddyIcon *icon);
+
+/**
+ * Returns the buddy icon's data.
+ *
+ * @param icon The buddy icon.
+ * @param len  The returned icon length.
+ *
+ * @return The icon data.
+ */
+const void *gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Buddy Icon Subsystem API                                        */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Sets a buddy icon for a user.
+ *
+ * @param account   The account the user is on.
+ * @param username  The username of the user.
+ * @param icon_data The icon data.
+ * @param icon_len  The length of the icon data.
+ */
+void gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
+								   void *icon_data, size_t icon_len);
+
+/**
+ * Returns the buddy icon information for a user.
+ *
+ * @param account  The account the user is on.
+ * @param username The username of the user.
+ *
+ * @return The icon data if found, or @c NULL if not found.
+ */
+GaimBuddyIcon *gaim_buddy_icons_find(const GaimAccount *account,
+									 const char *username);
+
+/**
+ * Returns the buddy icon subsystem handle.
+ *
+ * @return The subsystem handle.
+ */
+void *gaim_buddy_icons_get_handle();
+
+/**
+ * Initializes the buddy icon subsystem.
+ */
+void gaim_buddy_icons_init();
+
+/**
+ * Uninitializes the buddy icon subsystem.
+ */
+void gaim_buddy_icons_uninit();
+
+/*@}*/
+
+#endif /* _GAIM_ICON_H_ */

@@ -52,6 +52,8 @@ CORESOURCES = \
 	accountopt.h \
 	blist.c \
 	blist.h \
+	buddyicon.c \
+	buddyicon.h \
 	connection.c \
 	connection.h \
 	conversation.c \

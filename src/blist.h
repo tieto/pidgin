@@ -36,6 +36,7 @@ typedef struct _GaimContact GaimContact;
 typedef struct _GaimBuddy GaimBuddy;
 
 #include "account.h"
+#include "buddyicon.h"
 
 /**************************************************************************/
 /* Enumerations                                                           */
@@ -96,6 +97,7 @@ struct _GaimBuddy {
 	int idle;                               /**< The time the buddy has been idle in minutes. */
 	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
+	GaimBuddyIcon *icon;                    /**< The buddy icon. */
 	GaimAccount *account;           /**< the account this buddy belongs to */
 	GHashTable *settings;                   /**< per-buddy settings from the XML buddy list, set by plugins and the likes. */
 	guint timer;							/**< The timer handle. */
@@ -262,8 +264,6 @@ void gaim_blist_update_buddy_evil(GaimBuddy *buddy, int warning);
  */
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy);
 
-
-
 /**
  * Renames a buddy in the buddy list.
  *
@@ -345,6 +345,28 @@ void gaim_blist_add_chat(GaimBlistChat *chat, GaimGroup *group, GaimBlistNode *n
  * @return           A newly allocated buddy
  */
 GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias);
+
+/**
+ * Sets a buddy's icon.
+ *
+ * This should only be called from within Gaim. You probably want to
+ * call gaim_buddy_icon_set_data().
+ *
+ * @param buddy The buddy.
+ * @param icon  The buddy icon.
+ *
+ * @see gaim_buddy_icon_set_data()
+ */
+void gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon);
+
+/**
+ * Returns a buddy's icon.
+ *
+ * @param buddy The buddy.
+ *
+ * @return The buddy icon.
+ */
+GaimBuddyIcon *gaim_buddy_get_icon(const GaimBuddy *buddy);
 
 /**
  * Adds a new buddy to the buddy list.

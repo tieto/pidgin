@@ -5019,10 +5019,14 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
 	}
-	else if(type == GAIM_CONV_UPDATE_ADD ||
-			type == GAIM_CONV_UPDATE_REMOVE) {
+	else if (type == GAIM_CONV_UPDATE_ADD ||
+			 type == GAIM_CONV_UPDATE_REMOVE) {
 
 		update_convo_add_button(conv);
+	}
+	else if (type == GAIM_CONV_UPDATE_ICON)
+	{
+		gaim_gtkconv_update_buddy_icon(conv);
 	}
 }
 
@@ -5226,8 +5230,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	GaimBuddy *buddy;
 
-	void *data;
-	int len, delay;
+	const void *data;
+	size_t len;
+	int delay;
 
 	GdkPixbuf *buf;
 
@@ -5265,10 +5270,12 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(file, &err);
 			g_free(file);
 		}
-	} else {
-		data = get_icon_data(gaim_conversation_get_gc(conv),
-				normalize(gaim_conversation_get_name(conv)),
-				&len);
+	}
+	else
+	{
+		GaimBuddyIcon *icon = gaim_im_get_icon(GAIM_IM(conv));
+
+		data = gaim_buddy_icon_get_data(icon, &len);
 
 		if (!data)
 			return;
