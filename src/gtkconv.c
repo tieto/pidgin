@@ -2156,8 +2156,7 @@ remove_icon(GaimGtkConversation *gtkconv)
 	g_return_if_fail(gtkconv != NULL);
 
 	if (gtkconv->u.im->icon != NULL)
-		gtk_container_remove(GTK_CONTAINER(gtkconv->bbox),
-							 gtkconv->u.im->icon->parent->parent);
+		gtk_widget_destroy(gtkconv->u.im->icon->parent->parent->parent);
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
@@ -3705,12 +3704,16 @@ setup_chat_pane(GaimConversation *conv)
 	 * lockups when typing text just as you type the character that would 
 	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
 	 */
+	gtkconv->entrybox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->entrybox, TRUE, TRUE, 0);
+	gtk_widget_show(gtkconv->entrybox);
+
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
@@ -3824,12 +3827,16 @@ setup_im_pane(GaimConversation *conv)
 	 * lockups when typing text just as you type the character that would
 	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
 	 */
+	gtkconv->entrybox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->entrybox, TRUE, TRUE, 0);
+	gtk_widget_show(gtkconv->entrybox);
+
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
@@ -5156,12 +5163,15 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	GdkPixbuf *buf;
 
+	GtkWidget *vbox;
 	GtkWidget *event;
 	GtkWidget *frame;
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	int sf = 0;
+
+	GaimButtonStyle button_type;
 
 	g_return_if_fail(conv != NULL);
 	g_return_if_fail(GAIM_IS_GTK_CONVERSATION(conv));
@@ -5263,11 +5273,24 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	g_object_unref(G_OBJECT(scale));
 
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/im/button_type");
+	if(button_type == GAIM_BUTTON_NONE) {
+		gtk_box_pack_start(GTK_BOX(gtkconv->entrybox), vbox, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtkconv->entrybox), vbox, 0);
+	} else {
+		gtk_box_pack_start(GTK_BOX(gtkconv->bbox), vbox, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), vbox, 0);
+	}
+
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame),
 							  (bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN));
-	gtk_box_pack_start(GTK_BOX(gtkconv->bbox), frame, FALSE, FALSE, 0);
-	gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), frame, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+
+
+	gtk_widget_show(vbox);
 	gtk_widget_show(frame);
 
 	event = gtk_event_box_new();
@@ -5738,6 +5761,7 @@ im_button_type_pref_cb(const char *name, GaimPrefType type,
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		setup_im_buttons(conv, gtk_widget_get_parent(gtkconv->send));
+		gaim_gtkconv_update_buddy_icon(conv);
 	}
 }
 
