@@ -26,6 +26,7 @@
 #include "blist.h"
 #include "conversation.h"
 #include "debug.h"
+#include "network.h"
 #include "prpl.h"
 
 #include "mdns.h"
@@ -45,6 +46,7 @@ typedef struct _RendezvousBuddy {
 #endif
 	gchar *firstandlast;
 	gchar *aim;
+	int ip[4];
 	int p2pjport;
 	int status;
 	int idle;
@@ -179,6 +181,23 @@ static void rendezvous_removeallfromlocal(GaimConnection *gc)
 	}
 }
 
+static void rendezvous_handle_rr_a(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
+{
+	RendezvousData *rd = gc->proto_data;
+	RendezvousBuddy *rb;
+	ResourceRecordRDataSRV *rdata;
+
+	rdata = rr->rdata;
+
+	rb = g_hash_table_lookup(rd->buddies, name);
+	if (rb == NULL) {
+		rb = g_malloc0(sizeof(RendezvousBuddy));
+		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
+	}
+
+	memcpy(rb->ip, rdata, 4);
+}
+
 static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
 	RendezvousData *rd = gc->proto_data;
@@ -278,15 +297,18 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 
 	gaim_debug_misc("rendezvous", "Parsing resource record with domain name %s\n", rr->name);
 
-	/*
-	 * XXX - Cache resource records from this function, if needed.
-	 * Use the TTL value of the rr to cause this data to expire, but let
-	 * the mdns_cache stuff handle that as much as possible.
-	 */
-
 	switch (rr->type) {
+		case RENDEZVOUS_RRTYPE_A: {
+			name = rendezvous_extract_name(rr->name);
+			if (name != NULL) {
+				rendezvous_handle_rr_a(gc, rr, name);
+				g_free(name);
+			}
+		} break;
+
 		case RENDEZVOUS_RRTYPE_NULL: {
-			if ((name = rendezvous_extract_name(rr->name)) != NULL) {
+			name = rendezvous_extract_name(rr->name);
+			if (name != NULL) {
 				if (rr->rdlength > 0) {
 					/* Data is a buddy icon */
 					gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc), name, rr->rdata, rr->rdlength);
@@ -298,7 +320,9 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 
 		case RENDEZVOUS_RRTYPE_PTR: {
 			gchar *rdata = rr->rdata;
-			if ((name = rendezvous_extract_name(rdata)) != NULL) {
+
+			name = rendezvous_extract_name(rdata);
+			if (name != NULL) {
 				if (rr->ttl > 0) {
 					/* Add them to our buddy list and request their icon */
 					rendezvous_addtolocal(gc, name, "Rendezvous");
@@ -312,14 +336,16 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 		} break;
 
 		case RENDEZVOUS_RRTYPE_TXT: {
-			if ((name = rendezvous_extract_name(rr->name)) != NULL) {
+			name = rendezvous_extract_name(rr->name);
+			if (name != NULL) {
 				rendezvous_handle_rr_txt(gc, rr, name);
 				g_free(name);
 			}
 		} break;
 
 		case RENDEZVOUS_RRTYPE_SRV: {
-			if ((name = rendezvous_extract_name(rr->name)) != NULL) {
+			name = rendezvous_extract_name(rr->name);
+			if (name != NULL) {
 				rendezvous_handle_rr_srv(gc, rr, name);
 				g_free(name);
 			}
@@ -455,17 +481,36 @@ static void rendezvous_send_icon(GaimConnection *gc)
 	g_free(rdata);
 }
 
+static int *rendezvous_get_ip_as_int_array(int fd)
+{
+	static int ret[4];
+	const char *ip, *nexttoken;
+	int i = 0;
+
+	ip = gaim_network_get_local_system_ip(fd);
+	nexttoken = strtok((char *)ip, ".");
+	while (nexttoken && i < 4) {
+		ret[i] = atoi(nexttoken);
+		nexttoken = strtok(NULL, ".");
+	}
+
+	return ret;
+}
+
 static void rendezvous_send_online(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const gchar *me;
 	gchar *myname, *mycomp;
+	unsigned char *myip;
 
 	me = gaim_account_get_username(account);
 	myname = g_strdup_printf("%s._presence._tcp.local", me);
 	mycomp = g_strdup_printf("%s.local", strchr(me, '@') + 1);
+	myip = rendezvous_get_ip_as_int_array(rd->fd);
 
+	mdns_advertise_a(rd->fd, mycomp, myip);
 	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", myname);
 	mdns_advertise_srv(rd->fd, myname, 5298, mycomp);
 
@@ -511,7 +556,7 @@ static void rendezvous_prpl_login(GaimAccount *account)
 	rendezvous_removeallfromlocal(gc);
 
 	gaim_connection_update_progress(gc, _("Connecting"), 1, RENDEZVOUS_CONNECT_STEPS);
-	rd->fd = mdns_establish_socket();
+	rd->fd = mdns_socket_establish();
 	if (rd->fd == -1) {
 		gaim_connection_error(gc, _("Unable to login to rendezvous"));
 		return;
@@ -537,8 +582,7 @@ static void rendezvous_prpl_close(GaimConnection *gc)
 	if (!rd)
 		return;
 
-	if (rd->fd >= 0)
-		close(rd->fd);
+	mdns_socket_close(rd->fd);
 
 	g_hash_table_destroy(rd->buddies);
 

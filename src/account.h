@@ -64,7 +64,6 @@ struct _GaimAccount
 	GHashTable *settings;       /**< Protocol-specific settings.          */
 	GHashTable *ui_settings;    /**< UI-specific settings.                */
 
-	char *ip;                   /**< The IP address for transfers.        */
 	GaimProxyInfo *proxy_info;  /**< Proxy information.  This will be set */
 								/*   to NULL when the account inherits    */
 								/*   proxy settings from global prefs.    */
@@ -249,15 +248,6 @@ void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
  */
 void gaim_account_set_auto_login(GaimAccount *account, const char *ui,
 								 gboolean value);
-
-/**
- * Sets the public IP address the account will use for such things
- * as file transfer.
- *
- * @param account The account.
- * @param ip      The IP address.
- */
-void gaim_account_set_public_ip(GaimAccount *account, const char *ip);
 
 /**
  * Sets the account's proxy information.
@@ -446,15 +436,6 @@ gboolean gaim_account_get_check_mail(const GaimAccount *account);
  */
 gboolean gaim_account_get_auto_login(const GaimAccount *account,
 									 const char *ui);
-
-/**
- * Returns the account's public IP address.
- *
- * @param account The account.
- *
- * @return The IP address.
- */
-const char *gaim_account_get_public_ip(const GaimAccount *account);
 
 /**
  * Returns the account's proxy information.

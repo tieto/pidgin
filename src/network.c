@@ -31,7 +31,7 @@
 #include "prefs.h"
 
 void
-gaim_network_set_local_ip(const char *ip)
+gaim_network_set_public_ip(const char *ip)
 {
 	g_return_if_fail(ip != NULL);
 
@@ -39,12 +39,9 @@ gaim_network_set_local_ip(const char *ip)
 }
 
 const char *
-gaim_network_get_local_ip(void)
+gaim_network_get_public_ip(void)
 {
 	const char *ip;
-
-	if (gaim_prefs_get_bool("/core/network/auto_ip"))
-		return NULL;
 
 	ip = gaim_prefs_get_string("/core/network/public_ip");
 
@@ -111,15 +108,21 @@ gaim_network_get_local_system_ip(int fd)
 const char *
 gaim_network_get_ip_for_account(const GaimAccount *account, int fd)
 {
-	if (account && (gaim_account_get_public_ip(account) != NULL))
-		return gaim_account_get_public_ip(account);
-	else if (gaim_network_get_local_ip() != NULL)
-		return gaim_network_get_local_ip();
-	else
-		return gaim_network_get_local_system_ip(fd);
+	const char *ip = NULL;
+
+	/* Check if the user specified an IP manually */
+	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
+		ip = gaim_network_get_public_ip();
+		if (ip != NULL)
+			return ip;
+	}
+
+	/* Just fetch the IP of the local system */
+	return gaim_network_get_local_system_ip(fd);
 }
 
-static int gaim_network_do_listen(unsigned short port)
+static int
+gaim_network_do_listen(unsigned short port)
 {
 #if HAVE_GETADDRINFO
 	int listenfd;
@@ -189,14 +192,16 @@ static int gaim_network_do_listen(unsigned short port)
 	return listenfd;
 }
 
-int gaim_network_listen(unsigned short port)
+int
+gaim_network_listen(unsigned short port)
 {
 	g_return_val_if_fail(port != 0, -1);
 
 	return gaim_network_do_listen(port);
 }
 
-int gaim_network_listen_range(unsigned short start, unsigned short end)
+int
+gaim_network_listen_range(unsigned short start, unsigned short end)
 {
 	int ret = -1;
 
@@ -217,7 +222,8 @@ int gaim_network_listen_range(unsigned short start, unsigned short end)
 	return ret;
 }
 
-short gaim_network_get_port_from_fd(int fd)
+unsigned short
+gaim_network_get_port_from_fd(int fd)
 {
 	struct sockaddr_in addr;
 	socklen_t len;

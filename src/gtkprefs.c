@@ -1050,7 +1050,7 @@ GtkWidget *chat_page() {
 
 static void network_ip_changed(GtkEntry *entry, gpointer data)
 {
-	gaim_prefs_set_string("/core/network/public_ip", gtk_entry_get_text(entry));
+	gaim_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
 GtkWidget *network_page() {
@@ -1083,9 +1083,9 @@ GtkWidget *network_page() {
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-	if (gaim_network_get_local_ip() != NULL)
+	if (gaim_network_get_public_ip() != NULL)
 		gtk_entry_set_text(GTK_ENTRY(entry),
-		                   gaim_network_get_local_ip());
+		                   gaim_network_get_public_ip());
 
 	gaim_set_accessible_label (entry, label);
 

@@ -77,15 +77,15 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
 	char *cmds[] = { "alias", "connect", "connection", "disconnect", "find",
-			 "handle", "isconnected", "list", "public_ip",
+			 "handle", "isconnected", "list",
 			 "protocol", "username", NULL };
 	enum { CMD_ACCOUNT_ALIAS, CMD_ACCOUNT_CONNECT, CMD_ACCOUNT_CONNECTION,
 	       CMD_ACCOUNT_DISCONNECT, CMD_ACCOUNT_FIND, CMD_ACCOUNT_HANDLE,
-	       CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST, CMD_ACCOUNT_PUBLIC_IP,
+	       CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST,
 	       CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_USERNAME } cmd;
 	char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
-	const char *alias, *ip;
+	const char *alias;
 	GList *cur;
 	GaimAccount *account;
 	int error;
@@ -187,17 +187,6 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
-		break;
-	case CMD_ACCOUNT_PUBLIC_IP:
-		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "account");
-			return TCL_ERROR;
-		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
-			return TCL_ERROR;
-		ip = gaim_account_get_public_ip(account);
-		Tcl_SetStringObj(result, ip != NULL ? (char *)ip : "", -1);
 		break;
 	case CMD_ACCOUNT_PROTOCOL:
 		if (objc != 3) {

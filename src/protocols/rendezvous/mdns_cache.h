@@ -39,7 +39,7 @@ void mdns_cache_add(const ResourceRecord *rr);
 /**
  *
  */
-void mdns_cache_remove(ResourceRecord *rr);
+void mdns_cache_remove(gchar *name, unsigned short type);
 
 /**
  *

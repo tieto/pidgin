@@ -60,6 +60,7 @@
 #define RENDEZVOUS_RRTYPE_NULL	10
 #define RENDEZVOUS_RRTYPE_PTR	12
 #define RENDEZVOUS_RRTYPE_TXT	16
+#define RENDEZVOUS_RRTYPE_AAAA	28
 #define RENDEZVOUS_RRTYPE_SRV	33
 #define RENDEZVOUS_RRTYPE_ALL	255
 
@@ -90,12 +91,16 @@ typedef struct _ResourceRecord {
 	void *rdata;
 } ResourceRecord;
 
+typedef unsigned char ResourceRecordRDataA;
+
 typedef struct _ResourceRecordRDataTXTNode {
 	char *name;
 	char *value;
 } ResourceRecordRDataTXTNode;
 
 typedef GSList ResourceRecordRDataTXT;
+
+typedef unsigned char ResourceRecordRDataAAAA;
 
 typedef struct _ResourceRecordRDataSRV {
 	unsigned int priority;
@@ -124,7 +129,16 @@ typedef struct _DNSPacket {
  * @return The file descriptor of the new socket, or -1 if
  *         there was an error establishing the socket.
  */
-int mdns_establish_socket();
+int mdns_socket_establish();
+
+
+/**
+ * Close a multicast socket.  This also clears the MDNS
+ * cache.
+ *
+ * @param The file descriptor of the multicast socket.
+ */
+void mdns_socket_close(int fd);
 
 
 /**
@@ -152,9 +166,11 @@ int mdns_send_dns(int fd, const DNSPacket *dns);
 int mdns_query(int fd, const char *domain, unsigned short type);
 
 int mdns_send_rr(int fd, ResourceRecord *rr);
+int mdns_advertise_a(int fd, const char *name, unsigned char *ip);
 int mdns_advertise_null(int fd, const char *name, const char *data, unsigned short rdlength);
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
 int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
+int mdns_advertise_aaaa(int fd, const char *name, unsigned char *ip);
 int mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target);
 
 /**

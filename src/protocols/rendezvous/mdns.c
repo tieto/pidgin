@@ -89,8 +89,10 @@ mdns_free_rr_rdata(unsigned short type, void *rdata)
 		return;
 
 	switch (type) {
+			case RENDEZVOUS_RRTYPE_A:
 			case RENDEZVOUS_RRTYPE_NULL:
 			case RENDEZVOUS_RRTYPE_PTR:
+			case RENDEZVOUS_RRTYPE_AAAA:
 				g_free(rdata);
 			break;
 
@@ -237,16 +239,24 @@ mdns_copy_rr_rdata(unsigned short type, const void *rdata, unsigned int rdlength
 		return NULL;
 
 	switch (type) {
+		case RENDEZVOUS_RRTYPE_A:
+			ret = g_memdup(rdata, rdlength);
+		break;
+
 		case RENDEZVOUS_RRTYPE_NULL:
 			ret = g_memdup(rdata, rdlength);
 		break;
 
 		case RENDEZVOUS_RRTYPE_PTR:
-			ret = g_memdup(rdata, rdlength);
+			ret = g_strdup(rdata);
 		break;
 
 		case RENDEZVOUS_RRTYPE_TXT:
 			ret = mdns_copy_rr_rdata_txt(rdata);
+		break;
+
+		case RENDEZVOUS_RRTYPE_AAAA:
+			ret = g_memdup(rdata, rdlength);
 		break;
 
 		case RENDEZVOUS_RRTYPE_SRV:
@@ -319,7 +329,7 @@ mdns_copy(const DNSPacket *dns)
 /******************************************/
 
 int
-mdns_establish_socket()
+mdns_socket_establish()
 {
 	int fd = -1;
 	struct sockaddr_in addr;
@@ -379,6 +389,15 @@ mdns_establish_socket()
 	}
 
 	return fd;
+}
+
+void
+mdns_socket_close(int fd)
+{
+	if (fd >= 0)
+		close(fd);
+
+	mdns_cache_remove_all();
 }
 
 /**
@@ -457,6 +476,10 @@ mdns_getlength_rr_rdata(unsigned short type, const void *rdata)
 	int rdlength = 0;
 
 	switch (type) {
+		case RENDEZVOUS_RRTYPE_A:
+			rdlength = 4;
+		break;
+
 		case RENDEZVOUS_RRTYPE_PTR:
 			rdlength = mdns_getlength_name(rdata);
 		break;
@@ -472,6 +495,10 @@ mdns_getlength_rr_rdata(unsigned short type, const void *rdata)
 					rdlength += 1 + strlen(node->value);
 			}
 		} break;
+
+		case RENDEZVOUS_RRTYPE_AAAA:
+			rdlength = 16;
+		break;
 
 		case RENDEZVOUS_RRTYPE_SRV:
 			rdlength = 6 + mdns_getlength_name(((const ResourceRecordRDataSRV *)rdata)->target);
@@ -580,6 +607,11 @@ mdns_put_rr(char *data, unsigned int datalen, unsigned int offset, const Resourc
 	i += util_put16(&data[offset + i], rr->rdlength);
 
 	switch (rr->type) {
+		case RENDEZVOUS_RRTYPE_A:
+			memcpy(&data[offset + i], rr->rdata, rr->rdlength);
+			i += rr->rdlength;
+		break;
+
 		case RENDEZVOUS_RRTYPE_NULL:
 			memcpy(&data[offset + i], rr->rdata, rr->rdlength);
 			i += rr->rdlength;
@@ -610,6 +642,11 @@ mdns_put_rr(char *data, unsigned int datalen, unsigned int offset, const Resourc
 				}
 			}
 		} break;
+
+		case RENDEZVOUS_RRTYPE_AAAA:
+			memcpy(&data[offset + i], rr->rdata, rr->rdlength);
+			i += rr->rdlength;
+		break;
 
 		case RENDEZVOUS_RRTYPE_SRV: {
 			ResourceRecordRDataSRV *srv = rr->rdata;
@@ -735,6 +772,37 @@ mdns_send_rr(int fd, ResourceRecord *rr)
 }
 
 int
+mdns_advertise_a(int fd, const char *name, unsigned char *ip)
+{
+	int ret;
+	ResourceRecord *rr;
+	ResourceRecordRDataA *rdata;
+	int i;
+
+	if ((name == NULL) || (strlen(name) > 255)) {
+		return -EINVAL;
+	}
+
+	rdata = g_malloc(4);
+	for (i = 0; i < 4; i++)
+		util_put8(&rdata[i], ip[i]);
+
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_A;
+	rr->class = 0x0001;
+	rr->ttl = 0x000000f0;
+	rr->rdlength = 4;
+	rr->rdata = mdns_copy_rr_rdata(rr->type, rdata, rr->rdlength);
+
+	ret = mdns_send_rr(fd, rr);
+
+	mdns_free_rr(rr);
+
+	return ret;
+}
+
+int
 mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short rdlength)
 {
 	int ret;
@@ -800,6 +868,37 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 	rr->class = 0x8001;
 	rr->ttl = 0x00001c20;
 	rr->rdlength = mdns_getlength_rr_rdata(rr->type, rdata);
+	rr->rdata = mdns_copy_rr_rdata(rr->type, rdata, rr->rdlength);
+
+	ret = mdns_send_rr(fd, rr);
+
+	mdns_free_rr(rr);
+
+	return ret;
+}
+
+int
+mdns_advertise_aaaa(int fd, const char *name, unsigned char *ip)
+{
+	int ret;
+	ResourceRecord *rr;
+	ResourceRecordRDataA *rdata;
+	int i;
+
+	if ((name == NULL) || (strlen(name) > 255)) {
+		return -EINVAL;
+	}
+
+	rdata = g_malloc(16);
+	for (i = 0; i < 16; i++)
+		util_put8(&rdata[i], ip[i]);
+
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_A;
+	rr->class = 0x0001;
+	rr->ttl = 0x000000f0;
+	rr->rdlength = 16;
 	rr->rdata = mdns_copy_rr_rdata(rr->type, rdata, rr->rdlength);
 
 	ret = mdns_send_rr(fd, rr);
@@ -1194,7 +1293,14 @@ mdns_read_rr(const char *data, unsigned int datalen, int *offset)
 	*offset += 2;
 
 	/* RDATA */
-	if (rr->type == RENDEZVOUS_RRTYPE_NULL) {
+	if (rr->type == RENDEZVOUS_RRTYPE_A) {
+		rr->rdata = mdns_read_rr_rdata_null(data, datalen, *offset, rr->rdlength);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
+		}
+
+	} else if (rr->type == RENDEZVOUS_RRTYPE_NULL) {
 		rr->rdata = mdns_read_rr_rdata_null(data, datalen, *offset, rr->rdlength);
 		if (rr->rdata == NULL) {
 			mdns_free_rr(rr);
@@ -1210,6 +1316,13 @@ mdns_read_rr(const char *data, unsigned int datalen, int *offset)
 	
 	} else if (rr->type == RENDEZVOUS_RRTYPE_TXT) {
 		rr->rdata = mdns_read_rr_rdata_txt(data, datalen, *offset, rr->rdlength);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
+		}
+
+	} else if (rr->type == RENDEZVOUS_RRTYPE_AAAA) {
+		rr->rdata = mdns_read_rr_rdata_null(data, datalen, *offset, rr->rdlength);
 		if (rr->rdata == NULL) {
 			mdns_free_rr(rr);
 			return NULL;
@@ -1298,11 +1411,6 @@ mdns_read(int fd)
 	/* For the flags, some bits must be 0 and some must be 1, the rest are ignored */
 	dns->header.flags = util_get16(&data[offset]); /* Flags (QR, OPCODE, AA, TC, RD, RA, Z, AD, CD, and RCODE */
 	offset += 2;
-	if ((dns->header.flags & 0x8000) == 0) {
-		/* QR should be 1 */
-		g_free(dns);
-		return NULL;
-	}
 	if ((dns->header.flags & 0x7800) != 0) {
 		/* OPCODE should be all 0's */
 		g_free(dns);
