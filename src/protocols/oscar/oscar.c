@@ -1252,7 +1252,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 			gaim_notify_error(gc, NULL, "DirectIM already open.", NULL);
 			g_free(data->who);
 			g_free(data);
-	return;
+			return;
 		}
 	}
 	dim = g_new0(struct oscar_direct_im, 1);
