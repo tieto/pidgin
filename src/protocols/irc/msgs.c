@@ -652,10 +652,10 @@ void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *fr
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	char *msg;
 
-	if (!args || !args[1] || !args[2] || !gc)
+	if (!args || !args[2] || !gc)
 		return;
 
-	msg = g_strdup_printf(_("Could not change nick:"), args[1]);
+	msg = g_strdup_printf(_("Could not change nick"));
 	gaim_notify_error(gc, _("Cannot change nick"), msg, args[2]);
 	g_free(msg);
 }
