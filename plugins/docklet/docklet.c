@@ -29,6 +29,7 @@
 /* includes */
 #include <gtk/gtk.h>
 #include "gtkplugin.h"
+#include "gtkaccount.h"
 #include "gaim.h"
 #include "sound.h"
 #include "prefs.h"
@@ -148,7 +149,7 @@ static void docklet_menu(GdkEventButton *event) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
 	gaim_new_item_from_stock(menu, _("File Transfers..."), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Accounts..."), GAIM_STOCK_ACCOUNTS, G_CALLBACK(account_editor), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Accounts..."), GAIM_STOCK_ACCOUNTS, G_CALLBACK(gaim_gtk_account_dialog_show), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);

@@ -144,6 +144,9 @@ void gaim_prefs_init() {
 
 	/* Sound */
 	gaim_prefs_add_none("/core/sound");
+	gaim_prefs_add_bool("/core/sound/use_sys_default", TRUE);
+	gaim_prefs_add_bool("/core/sound/use_esd", FALSE);
+	gaim_prefs_add_bool("/core/sound/use_arts", FALSE);
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 }
 
