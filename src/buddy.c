@@ -1086,6 +1086,9 @@ static void gaim_gtk_blist_new_list(struct gaim_buddy_list *blist)
 
 void gaim_gtk_blist_update_columns()
 {
+	if(!gtkblist)
+		return;
+
 	if (blist_options & OPT_BLIST_SHOW_ICONS) {
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
 		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
@@ -1637,6 +1640,7 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 	gtkblist->bbox = gtkblist->tipwindow = NULL;
 	protomenu = NULL;
 	awaymenu = NULL;
+	gtkblist = NULL;
 }
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
