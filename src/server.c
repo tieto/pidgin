@@ -904,7 +904,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	if (loggedin) {
 		if (!b->present == 1) {
 			struct gaim_conversation *c = gaim_find_conversation(b->name);
-			if (c) {
+			if (c && (im_options & OPT_IM_LOGON)) {
 				char *tmp = g_strdup_printf(_("%s logged in."), gaim_get_buddy_alias(b));
 				gaim_conversation_write(c, NULL, tmp, -1,
 							WFLAG_SYSTEM, time(NULL));
@@ -928,7 +928,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	} else {
 		if (b->present == 1) {
 			struct gaim_conversation *c = gaim_find_conversation(b->name);
-			if (c) {
+			if (c && (im_options & OPT_IM_LOGON)) {
 				char *tmp = g_strdup_printf(_("%s logged out."), gaim_get_buddy_alias(b));
 				gaim_conversation_write(c, NULL, tmp, -1,
 							WFLAG_SYSTEM, time(NULL));
