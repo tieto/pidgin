@@ -60,122 +60,121 @@ typedef struct
 
 static char home_dir[MAXPATHLEN];
 
-char *full_date()
-{
-	char *date;
-	time_t tme;
 
-	time(&tme);
-	date = ctime(&tme);
-	date[strlen(date) - 1] = '\0';
-	return date;
+/**************************************************************************
+ * Base16 Functions
+ **************************************************************************/
+unsigned char *
+gaim_base16_encode(const unsigned char *data, int length)
+{
+	int i;
+	unsigned char *ascii = NULL;
+
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(length > 0,   NULL);
+
+	ascii = g_malloc(length * 2 + 1);
+
+	for (i = 0; i < length; i++)
+		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
+
+	return ascii;
 }
 
-G_GNUC_CONST static gint badchar(char c)
+int
+gaim_base16_decode(const char *ascii, unsigned char **raw)
 {
-	switch (c) {
-	case ' ':
-	case ',':
-	case '(':
-	case ')':
-	case '\0':
-	case '\n':
-	case '<':
-	case '>':
-	case '"':
-	case '\'':
-		return 1;
-	default:
-		return 0;
-	}
-}
+	int len, i, accumulator = 0;
+	unsigned char *data;
 
+	g_return_val_if_fail(ascii != NULL, 0);
 
-gchar *sec_to_text(guint sec)
-{
-	guint daze, hrs, min;
-	char *ret = NULL;
+	len = strlen(ascii);
 
-	daze = sec / (60 * 60 * 24);
-	hrs = (sec % (60 * 60 * 24)) / (60 * 60);
-	min = (sec % (60 * 60)) / 60;
-	sec = min % 60;
+	g_return_val_if_fail(strlen(ascii) > 0, 0);
+	g_return_val_if_fail(len % 2 > 0,       0);
 
-	if (daze) {
-		if (hrs || min) {
-			if (hrs) {
-				if (min) {
-					ret = g_strdup_printf(
-						   "%d %s, %d %s, %d %s.",
-						   daze, ngettext("day","days",daze),
-						   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
-				} else {
-					ret = g_strdup_printf(
-						   "%d %s, %d %s.",
-						   daze, ngettext("day","days",daze), hrs, ngettext("hour","hours",hrs));
-				}
-			} else {
-				ret = g_strdup_printf(
-					   "%d %s, %d %s.",
-					   daze, ngettext("day","days",daze), min, ngettext("minute","minutes",min));
+	data = g_malloc(len / 2);
+
+	for (i = 0; i < len; i++)
+	{
+		if ((i % 2) == 0)
+			accumulator = 0;
+		else
+			accumulator <<= 4;
+
+		if (isdigit(ascii[i]))
+			accumulator |= ascii[i] - 48;
+		else
+		{
+			switch(ascii[i])
+			{
+				case 'a':  case 'A':  accumulator |= 10;  break;
+				case 'b':  case 'B':  accumulator |= 11;  break;
+				case 'c':  case 'C':  accumulator |= 12;  break;
+				case 'd':  case 'D':  accumulator |= 13;  break;
+				case 'e':  case 'E':  accumulator |= 14;  break;
+				case 'f':  case 'F':  accumulator |= 15;  break;
 			}
-		} else
-			ret = g_strdup_printf("%d %s.", daze, ngettext("day","days",daze));
-	} else {
-		if (hrs) {
-			if (min) {
-				ret = g_strdup_printf(
-					   "%d %s, %d %s.",
-					   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
-			} else {
-				ret = g_strdup_printf("%d %s.", hrs, ngettext("hour","hours",hrs));
-			}
-		} else {
-			ret = g_strdup_printf("%d %s.", min, ngettext("minute","minutes",min));
 		}
+
+		if (i % 2)
+			data[(i - 1) / 2] = accumulator;
 	}
 
-	return ret;
+	*raw = data;
+
+	return (len / 2);
 }
 
-
+/**************************************************************************
+ * Base64 Functions
+ **************************************************************************/
 static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
-char *gaim_base64_encode(const unsigned char *in, size_t inlen)
+unsigned char *
+gaim_base64_encode(const unsigned char *in, size_t inlen)
 {
 	char *out, *rv;
 
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(inlen > 0,  NULL);
+
 	rv = out = g_malloc((4 * (inlen + 1)) / 3 + 1);
 
-    for (; inlen >= 3; inlen -= 3)
-        {
-            *out++ = alphabet[in[0] >> 2];
-            *out++ = alphabet[((in[0] << 4) & 0x30) | (in[1] >> 4)];
-            *out++ = alphabet[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
-            *out++ = alphabet[in[2] & 0x3f];
-            in += 3;
-        }
-    if (inlen > 0)
-        {
-            unsigned char fragment;
+	for (; inlen >= 3; inlen -= 3)
+	{
+		*out++ = alphabet[in[0] >> 2];
+		*out++ = alphabet[((in[0] << 4) & 0x30) | (in[1] >> 4)];
+		*out++ = alphabet[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
+		*out++ = alphabet[in[2] & 0x3f];
+		in += 3;
+	}
 
-            *out++ = alphabet[in[0] >> 2];
-            fragment = (in[0] << 4) & 0x30;
-            if (inlen > 1)
-                fragment |= in[1] >> 4;
-            *out++ = alphabet[fragment];
-            *out++ = (inlen < 2) ? '=' : alphabet[(in[1] << 2) & 0x3c];
-            *out++ = '=';
-        }
-    *out = '\0';
+	if (inlen > 0)
+	{
+		unsigned char fragment;
+
+		*out++ = alphabet[in[0] >> 2];
+		fragment = (in[0] << 4) & 0x30;
+
+		if (inlen > 1)
+			fragment |= in[1] >> 4;
+
+		*out++ = alphabet[fragment];
+		*out++ = (inlen < 2) ? '=' : alphabet[(in[1] << 2) & 0x3c];
+		*out++ = '=';
+	}
+
+	*out = '\0';
 
 	return rv;
 }
 
-
-void gaim_base64_decode(const char *text, char **data, int *size)
+void
+gaim_base64_decode(const char *text, char **data, int *size)
 {
 	char *out = NULL;
 	char tmp = 0;
@@ -183,8 +182,8 @@ void gaim_base64_decode(const char *text, char **data, int *size)
 	gint32 tmp2 = 0;
 	int len = 0, n = 0;
 
-	if (!text || !data)
-		return;
+	g_return_if_fail(text != NULL);
+	g_return_if_fail(data != NULL);
 
 	c = text;
 
@@ -236,343 +235,42 @@ void gaim_base64_decode(const char *text, char **data, int *size)
 	out[len] = 0;
 
 	*data = out;
+
 	if (size)
 		*size = len;
 }
 
-/*
- * Converts raw data to a pretty, null-terminated base16 string.
- */
-unsigned char *gaim_base16_encode(const unsigned char *data, int length)
-{
-	int i;
-	unsigned char *ascii = NULL;
 
-	if (!data || !length)
-		return NULL;
-
-	ascii = g_malloc(length*2 + 1);
-
-	for (i=0; i<length; i++)
-		snprintf(&ascii[i*2], 3, "%02hhx", data[i]);
-
-	return ascii;
-}
-
-/*
- * Converts a null-terminated string of hexidecimal to raw data.
- */
-int gaim_base16_decode(const char *ascii, unsigned char **raw)
-{
-	int len, i, accumulator=0;
-	unsigned char *data;
-
-	if (!ascii || !(len = strlen(ascii)) || (len % 2))
-		return 0;
-
-	data = g_malloc(len/2);
-	for (i=0; i<len; i++) {
-		if (!(i % 2))
-			accumulator = 0;
-		else
-			accumulator = accumulator << 4;
-		if (isdigit(ascii[i]))
-			accumulator |= ascii[i]-48;
-		else switch(ascii[i]) {
-			case 'a':  case 'A':  accumulator|=10;  break;
-			case 'b':  case 'B':  accumulator|=11;  break;
-			case 'c':  case 'C':  accumulator|=12;  break;
-			case 'd':  case 'D':  accumulator|=13;  break;
-			case 'e':  case 'E':  accumulator|=14;  break;
-			case 'f':  case 'F':  accumulator|=15;  break;
-		}
-		if (i % 2)
-			data[(i-1)/2] = accumulator;
-	}
-
-	*raw = data;
-	return len/2;
-}
-
-char *gaim_normalize(const char *s)
-{
-	static char buf[BUF_LEN];
-	char *tmp;
-	int i, j;
-
-	g_return_val_if_fail((s != NULL), NULL);
-
-	strncpy(buf, s, BUF_LEN);
-	for (i=0, j=0; buf[j]; i++, j++) {
-		while (buf[j] == ' ')
-			j++;
-		buf[i] = buf[j];
-	}
-	buf[i] = '\0';
-
-	tmp = g_utf8_strdown(buf, -1);
-	g_snprintf(buf, sizeof(buf), "%s", tmp);
-	g_free(tmp);
-	tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
-	g_snprintf(buf, sizeof(buf), "%s", tmp);
-	g_free(tmp);
-
-	return buf;
-}
-
-char *date()
+/**************************************************************************
+ * Date/Time Functions
+ **************************************************************************/
+char *
+gaim_date(void)
 {
 	static char date[80];
 	time_t tme;
+
 	time(&tme);
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&tme));
+
 	return date;
 }
 
-/* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
-   or time */
-char *away_subs(const char *msg, const char *name)
+char *
+gaim_date_full(void)
 {
-	char *c;
-	static char cpy[BUF_LONG];
-	int cnt = 0;
-	time_t t = time(0);
-	struct tm *tme = localtime(&t);
-	char tmp[20];
+	char *date;
+	time_t tme;
 
-	cpy[0] = '\0';
-	c = (char *)msg;
-	while (*c) {
-		switch (*c) {
-		case '%':
-			if (*(c + 1)) {
-				switch (*(c + 1)) {
-				case 'n':
-					/* append name */
-					strcpy(cpy + cnt, name);
-					cnt += strlen(name);
-					c++;
-					break;
-				case 'd':
-					/* append date */
-					strftime(tmp, 20, "%m/%d/%Y", tme);
-					strcpy(cpy + cnt, tmp);
-					cnt += strlen(tmp);
-					c++;
-					break;
-				case 't':
-					/* append time */
-					strftime(tmp, 20, "%r", tme);
-					strcpy(cpy + cnt, tmp);
-					cnt += strlen(tmp);
-					c++;
-					break;
-				default:
-					cpy[cnt++] = *c;
-				}
-			}
-			break;
-		default:
-			cpy[cnt++] = *c;
-		}
-		c++;
-	}
-	cpy[cnt] = '\0';
-	return (cpy);
+	time(&tme);
+	date = ctime(&tme);
+	date[strlen(date) - 1] = '\0';
+
+	return date;
 }
 
-GSList *message_split(char *message, int limit)
-{
-	static GSList *ret = NULL;
-	int lastgood = 0, curgood = 0, curpos = 0, len = strlen(message);
-	gboolean intag = FALSE;
-
-	if (ret) {
-		GSList *tmp = ret;
-		while (tmp) {
-			g_free(tmp->data);
-			tmp = g_slist_remove(tmp, tmp->data);
-		}
-		ret = NULL;
-	}
-
-	while (TRUE) {
-		if (lastgood >= len)
-			return ret;
-
-		if (len - lastgood < limit) {
-			ret = g_slist_append(ret, g_strdup(&message[lastgood]));
-			return ret;
-		}
-
-		curgood = curpos = 0;
-		intag = FALSE;
-		while (curpos <= limit) {
-			if (isspace(message[curpos + lastgood]) && !intag)
-				curgood = curpos;
-			if (message[curpos + lastgood] == '<')
-				intag = TRUE;
-			if (message[curpos + lastgood] == '>')
-				intag = FALSE;
-			curpos++;
-		}
-
-		if (curgood) {
-			ret = g_slist_append(ret, g_strndup(&message[lastgood], curgood));
-			if (isspace(message[curgood + lastgood]))
-				lastgood += curgood + 1;
-			else
-				lastgood += curgood;
-		} else {
-			/* whoops, guess we have to fudge it here */
-			ret = g_slist_append(ret, g_strndup(&message[lastgood], limit));
-			lastgood += limit;
-		}
-	}
-}
-
-const gchar *gaim_home_dir()
-{
-#ifndef _WIN32
-	if(g_get_home_dir())
-		return g_get_home_dir();
-	else
-		return NULL;
-#else
-        return wgaim_data_dir();
-#endif
-}
-
-/* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
- * dir. Note that there is no trailing slash after .gaim. */
-gchar *gaim_user_dir()
-{
-	const gchar *hd = gaim_home_dir();
-        if(hd) {
-		strcpy( (char*)&home_dir, hd );
-		strcat( (char*)&home_dir, G_DIR_SEPARATOR_S ".gaim" );
-		return (gchar*)&home_dir;
-	}
-	else {
-   	        return NULL;
-	}
-}
-
-/*
- * rcg10312000 This could be more robust, but it works for my current
- *  goal: to remove those annoying <BR> tags.  :)
- * dtf12162000 made the loop more readable. i am a neat freak. ;) */
-void strncpy_nohtml(gchar *dest, const gchar *src, size_t destsize)
-{
-	gchar *ptr;
-	g_snprintf(dest, destsize, "%s", src);
-
-	while ((ptr = strstr(dest, "<BR>")) != NULL) {
-		/* replace <BR> with a newline. */
-		*ptr = '\n';
-		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
-	}
-}
-
-void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
-{
-	gchar *end = dest + destsize;
-
-	while (dest < end) {
-		if (*src == '\n' && dest < end - 5) {
-			strcpy(dest, "<BR>");
-			src++;
-			dest += 4;
-		} else if(*src == '\r') {
-			src++;
-		} else {
-			*dest++ = *src;
-			if (*src == '\0')
-				return;
-			else
-				src++;
-		}
-	}
-}
-
-
-/*
- * Like strncpy_withhtml (above), but malloc()'s the necessary space
- *
- * The caller is responsible for freeing the space pointed to by the
- * return value.
- */
-
-gchar *strdup_withhtml(const gchar *src)
-{
-	gchar *sp, *dest;
-	gulong destsize;
-
-	if(!src)
-		return NULL;
-
-	/*
-	 * All we need do is multiply the number of newlines by 3 (the
-	 * additional length of "<BR>" over "\n"), account for the
-	 * terminator, malloc the space and call strncpy_withhtml.
-	 */
-	for(destsize = 0, sp = (gchar *)src; (sp = strchr(sp, '\n')) != NULL; ++sp, ++destsize)
-		;
-	destsize *= 3;
-	destsize += strlen(src) + 1;
-	dest = g_malloc(destsize);
-	strncpy_withhtml(dest, src, destsize);
-
-	return(dest);
-}
-
-void strip_linefeed(gchar *text)
-{
-	int i, j;
-	gchar *text2 = g_malloc(strlen(text) + 1);
-
-	for (i = 0, j = 0; text[i]; i++)
-		if (text[i] != '\r')
-			text2[j++] = text[i];
-	text2[j] = '\0';
-
-	strcpy(text, text2);
-	g_free(text2);
-}
-
-char *add_cr(const char *text)
-{
-	char *ret = NULL;
-	int count = 0, i, j;
-
-	if (text[0] == '\n')
-		count++;
-	for (i = 1; i < strlen(text); i++)
-		if (text[i] == '\n' && text[i - 1] != '\r')
-			count++;
-
-	if (count == 0)
-		return g_strdup(text);
-
-	ret = g_malloc0(strlen(text) + count + 1);
-
-	i = 0; j = 0;
-	if (text[i] == '\n')
-		ret[j++] = '\r';
-	ret[j++] = text[i++];
-	for (; i < strlen(text); i++) {
-		if (text[i] == '\n' && text[i - 1] != '\r')
-			ret[j++] = '\r';
-		ret[j++] = text[i];
-	}
-
-	gaim_debug(GAIM_DEBUG_INFO, "add_cr", "got: %s, leaving with %s\n",
-			   text, ret);
-
-	return ret;
-}
-
-time_t get_time(int year, int month, int day, int hour, int min, int sec)
+time_t
+gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 {
 	struct tm tm;
 
@@ -582,227 +280,14 @@ time_t get_time(int year, int month, int day, int hour, int min, int sec)
 	tm.tm_hour = hour;
 	tm.tm_min = min;
 	tm.tm_sec = sec >= 0 ? sec : time(NULL) % 60;
+
 	return mktime(&tm);
 }
 
-/*
- * Like mkstemp() but returns a file pointer, uses a pre-set template,
- * uses the semantics of tempnam() for the directory to use and allocates
- * the space for the filepath.
- *
- * Caller is responsible for closing the file and removing it when done,
- * as well as freeing the space pointed-to by "path" with g_free().
- *
- * Returns NULL on failure and cleans up after itself if so.
- */
-static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 
-FILE *gaim_mkstemp(gchar **fpath)
-{
-	const gchar *tmpdir;
-#ifndef _WIN32
-	int fd;
-#endif
-	FILE *fp = NULL;
-
-	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
-		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
-#ifdef _WIN32
-			char* result = _mktemp( *fpath );
-			if( result == NULL )
-				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-						   "Problem creating the template\n");
-			else
-			{
-				if( (fp = fopen( result, "w+" )) == NULL ) {
-					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-							   "Couldn't fopen() %s\n", result);
-				}
-			}
-#else
-			if((fd = mkstemp(*fpath)) == -1) {
-				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-						   "Couldn't make \"%s\", error: %d\n",
-						   *fpath, errno);
-			} else {
-				if((fp = fdopen(fd, "r+")) == NULL) {
-					close(fd);
-					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-							   "Couldn't fdopen(), error: %d\n", errno);
-				}
-			}
-#endif
-			if(!fp) {
-				g_free(*fpath);
-				*fpath = NULL;
-			}
-		}
-	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-				   "g_get_tmp_dir() failed!");
-	}
-
-	return fp;
-}
-
-gboolean program_is_valid(const char *program) 
-{
-	GError *error = NULL;
-	char **argv; 
-	gchar *progname;
-	gboolean is_valid = FALSE;
-
-	if (program == NULL || *program == '\0') {
-		return FALSE;
-	}
-
-	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
-				   "Could not parse program '%s': %s\n",
-				   program, error->message);
-		g_error_free(error);
-		return FALSE;
-	}
-
-	if (argv == NULL) {
-		return FALSE;
-	}
-
-	progname = g_find_program_in_path(argv[0]);
-	is_valid = (progname != NULL);
-
-	g_strfreev(argv);
-	g_free(progname);
-	
-	return is_valid;
-}
-
-char *gaim_try_conv_to_utf8(const char *str)
-{
-	gsize converted;
-	char *utf8;
-
-	if (str == NULL) {
-		return NULL;
-	}
-
-	if (g_utf8_validate(str, -1, NULL)) {
-		return g_strdup(str);
-	}
-
-	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
-	if (utf8) 
-		return(utf8);
-	
-	g_free(utf8);
-	
-	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
-	if (utf8 && converted == strlen (str)) {
-		return(utf8);
-	} else if (utf8) {
-		g_free(utf8);
-	}
-
-	return(NULL);
-}
-
-char *gaim_getip_from_fd(int fd)
-{
-	struct sockaddr addr;
-	socklen_t namelen = sizeof(addr);
-
-	if (getsockname(fd, &addr, &namelen))
-		return NULL;
-
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
-}
-
-gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b) {
-	gchar *a_norm=NULL;
-	gchar *b_norm=NULL;
-	gint ret=-1;
-
-	if(!a && b)
-		return -1;
-	else if(!b && a)
-		return 1;
-	else if(!a && !b)
-		return 0;
-
-	if(!g_utf8_validate(a, -1, NULL) || !g_utf8_validate(b, -1, NULL)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "gaim_utf8_strcasecmp", "One or both parameters are invalid UTF8\n");
-		return ret;
-	}
-
-	a_norm = g_utf8_casefold(a, -1);
-	b_norm = g_utf8_casefold(b, -1);
-	ret = g_utf8_collate(a_norm, b_norm);
-	g_free(a_norm);
-	g_free(b_norm);
-	return ret;
-}
-
-gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar *replacement) {
-	gchar **split;
-	gchar *ret;
-
-	split = g_strsplit(string, delimiter, 0);
-	ret = g_strjoinv(replacement, split);
-	g_strfreev(split);
-
-	return ret;
-}
-
-const char *gaim_strcasestr(const char *haystack, const char *needle) {
-	size_t hlen, nlen;
-	const char *tmp, *ret;
-
-	g_return_val_if_fail(haystack != NULL, NULL);
-	g_return_val_if_fail(needle != NULL, NULL);
-
-	hlen = strlen(haystack);
-	nlen = strlen(needle);
-	tmp = haystack,
-	ret = NULL;
-
-	g_return_val_if_fail(hlen > 0, NULL);
-	g_return_val_if_fail(nlen > 0, NULL);
-
-	while (*tmp && !ret) {
-		if (!g_ascii_strncasecmp(needle, tmp, nlen))
-			ret = tmp;
-		else
-			tmp++;
-	}
-
-	return ret;
-}
-
-char *
-gaim_str_size_to_units(size_t size)
-{
-	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
-	float size_mag;
-	int size_index = 0;
-
-	if (size == -1) {
-		return g_strdup(_("Calculating..."));
-	}
-	else if (size == 0) {
-		return g_strdup(_("Unknown."));
-	}
-	else {
-		size_mag = (float)size;
-
-		while ((size_index < 4) && (size_mag > 1024)) {
-			size_mag /= 1024;
-			size_index++;
-		}
-
-		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
-	}
-}
-
+/**************************************************************************
+ * Markup Functions
+ **************************************************************************/
 gboolean
 gaim_markup_find_tag(const char *needle, const char *haystack,
 					 const char **start, const char **end, GData **attributes)
@@ -1386,6 +871,26 @@ gaim_markup_strip_html(const char *str)
 	return str2;
 }
 
+static gint
+badchar(char c)
+{
+	switch (c) {
+	case ' ':
+	case ',':
+	case '(':
+	case ')':
+	case '\0':
+	case '\n':
+	case '<':
+	case '>':
+	case '"':
+	case '\'':
+		return 1;
+	default:
+		return 0;
+	}
+}
+
 char *
 gaim_markup_linkify(const char *text)
 {
@@ -1595,6 +1100,497 @@ gaim_markup_linkify(const char *text)
 	return tmp;
 }
 
+
+/**************************************************************************
+ * Path/Filename Functions
+ **************************************************************************/
+const char *
+gaim_home_dir(void)
+{
+#ifndef _WIN32
+	if(g_get_home_dir())
+		return g_get_home_dir();
+	else
+		return NULL;
+#else
+	return wgaim_data_dir();
+#endif
+}
+
+/* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
+ * dir. Note that there is no trailing slash after .gaim. */
+char *
+gaim_user_dir(void)
+{
+	const gchar *hd = gaim_home_dir();
+
+	if(hd)
+	{
+		strcpy( (char*)&home_dir, hd );
+		strcat( (char*)&home_dir, G_DIR_SEPARATOR_S ".gaim" );
+
+		return (gchar*)&home_dir;
+	}
+
+	return NULL;
+}
+
+/*
+ * Like mkstemp() but returns a file pointer, uses a pre-set template,
+ * uses the semantics of tempnam() for the directory to use and allocates
+ * the space for the filepath.
+ *
+ * Caller is responsible for closing the file and removing it when done,
+ * as well as freeing the space pointed-to by "path" with g_free().
+ *
+ * Returns NULL on failure and cleans up after itself if so.
+ */
+static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
+
+FILE *
+gaim_mkstemp(char **fpath)
+{
+	const gchar *tmpdir;
+#ifndef _WIN32
+	int fd;
+#endif
+	FILE *fp = NULL;
+
+	g_return_val_if_fail(fpath != NULL, NULL);
+
+	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
+		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
+#ifdef _WIN32
+			char* result = _mktemp( *fpath );
+			if( result == NULL )
+				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+						   "Problem creating the template\n");
+			else
+			{
+				if( (fp = fopen( result, "w+" )) == NULL ) {
+					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+							   "Couldn't fopen() %s\n", result);
+				}
+			}
+#else
+			if((fd = mkstemp(*fpath)) == -1) {
+				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+						   "Couldn't make \"%s\", error: %d\n",
+						   *fpath, errno);
+			} else {
+				if((fp = fdopen(fd, "r+")) == NULL) {
+					close(fd);
+					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+							   "Couldn't fdopen(), error: %d\n", errno);
+				}
+			}
+#endif
+			if(!fp) {
+				g_free(*fpath);
+				*fpath = NULL;
+			}
+		}
+	} else {
+		gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+				   "g_get_tmp_dir() failed!");
+	}
+
+	return fp;
+}
+
+gboolean
+gaim_program_is_valid(const char *program)
+{
+	GError *error = NULL;
+	char **argv;
+	gchar *progname;
+	gboolean is_valid = FALSE;
+
+	g_return_val_if_fail(program != NULL,  FALSE);
+	g_return_val_if_fail(*program != '\0', FALSE);
+
+	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
+				   "Could not parse program '%s': %s\n",
+				   program, error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	if (argv == NULL) {
+		return FALSE;
+	}
+
+	progname = g_find_program_in_path(argv[0]);
+	is_valid = (progname != NULL);
+
+	g_strfreev(argv);
+	g_free(progname);
+
+	return is_valid;
+}
+
+char *
+gaim_fd_get_ip(int fd)
+{
+	struct sockaddr addr;
+	socklen_t namelen = sizeof(addr);
+
+	g_return_val_if_fail(fd != 0, NULL);
+
+	if (getsockname(fd, &addr, &namelen))
+		return NULL;
+
+	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+}
+
+
+/**************************************************************************
+ * String Functions
+ **************************************************************************/
+char *
+gaim_normalize(const char *s)
+{
+	static char buf[BUF_LEN];
+	char *tmp;
+	int i, j;
+
+	g_return_val_if_fail(s != NULL, NULL);
+
+	strncpy(buf, s, BUF_LEN);
+	for (i=0, j=0; buf[j]; i++, j++) {
+		while (buf[j] == ' ')
+			j++;
+		buf[i] = buf[j];
+	}
+	buf[i] = '\0';
+
+	tmp = g_utf8_strdown(buf, -1);
+	g_snprintf(buf, sizeof(buf), "%s", tmp);
+	g_free(tmp);
+	tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(buf, sizeof(buf), "%s", tmp);
+	g_free(tmp);
+
+	return buf;
+}
+
+/* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
+   or time */
+char *
+gaim_str_sub_away_formatters(const char *msg, const char *name)
+{
+	char *c;
+	static char cpy[BUF_LONG];
+	int cnt = 0;
+	time_t t;
+	struct tm *tme;
+	char tmp[20];
+
+	g_return_val_if_fail(msg  != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	t = time(NULL);
+	tme = localtime(&t);
+
+	cpy[0] = '\0';
+	c = (char *)msg;
+	while (*c) {
+		switch (*c) {
+		case '%':
+			if (*(c + 1)) {
+				switch (*(c + 1)) {
+				case 'n':
+					/* append name */
+					strcpy(cpy + cnt, name);
+					cnt += strlen(name);
+					c++;
+					break;
+				case 'd':
+					/* append date */
+					strftime(tmp, 20, "%m/%d/%Y", tme);
+					strcpy(cpy + cnt, tmp);
+					cnt += strlen(tmp);
+					c++;
+					break;
+				case 't':
+					/* append time */
+					strftime(tmp, 20, "%r", tme);
+					strcpy(cpy + cnt, tmp);
+					cnt += strlen(tmp);
+					c++;
+					break;
+				default:
+					cpy[cnt++] = *c;
+				}
+			}
+			break;
+		default:
+			cpy[cnt++] = *c;
+		}
+		c++;
+	}
+	cpy[cnt] = '\0';
+	return (cpy);
+}
+
+/*
+ * rcg10312000 This could be more robust, but it works for my current
+ *  goal: to remove those annoying <BR> tags.  :)
+ * dtf12162000 made the loop more readable. i am a neat freak. ;) */
+void
+gaim_strncpy_nohtml(char *dest, const char *src, size_t destsize)
+{
+	char *ptr;
+
+	g_return_if_fail(dest != NULL);
+	g_return_if_fail(src  != NULL);
+	g_return_if_fail(destsize > 0);
+
+	g_snprintf(dest, destsize, "%s", src);
+
+	while ((ptr = strstr(dest, "<BR>")) != NULL) {
+		/* replace <BR> with a newline. */
+		*ptr = '\n';
+		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
+	}
+}
+
+void
+gaim_strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
+{
+	gchar *end;
+
+	g_return_if_fail(dest != NULL);
+	g_return_if_fail(src  != NULL);
+	g_return_if_fail(destsize > 0);
+
+	end = dest + destsize;
+
+	while (dest < end) {
+		if (*src == '\n' && dest < end - 5) {
+			strcpy(dest, "<BR>");
+			src++;
+			dest += 4;
+		} else if(*src == '\r') {
+			src++;
+		} else {
+			*dest++ = *src;
+			if (*src == '\0')
+				return;
+			else
+				src++;
+		}
+	}
+}
+
+/*
+ * Like strncpy_withhtml (above), but malloc()'s the necessary space
+ *
+ * The caller is responsible for freeing the space pointed to by the
+ * return value.
+ */
+char *
+gaim_strdup_withhtml(const char *src)
+{
+	char *sp, *dest;
+	gulong destsize;
+
+	g_return_val_if_fail(src != NULL, NULL);
+
+	/*
+	 * All we need do is multiply the number of newlines by 3 (the
+	 * additional length of "<BR>" over "\n"), account for the
+	 * terminator, malloc the space and call strncpy_withhtml.
+	 */
+	for(destsize = 0, sp = (gchar *)src;
+		(sp = strchr(sp, '\n')) != NULL;
+		++sp, ++destsize)
+		;
+
+	destsize *= 3;
+	destsize += strlen(src) + 1;
+	dest = g_malloc(destsize);
+	gaim_strncpy_withhtml(dest, src, destsize);
+
+	return dest;
+}
+
+char *
+gaim_str_add_cr(const char *text)
+{
+	char *ret = NULL;
+	int count = 0, i, j;
+
+	g_return_val_if_fail(text != NULL, NULL);
+
+	if (text[0] == '\n')
+		count++;
+	for (i = 1; i < strlen(text); i++)
+		if (text[i] == '\n' && text[i - 1] != '\r')
+			count++;
+
+	if (count == 0)
+		return g_strdup(text);
+
+	ret = g_malloc0(strlen(text) + count + 1);
+
+	i = 0; j = 0;
+	if (text[i] == '\n')
+		ret[j++] = '\r';
+	ret[j++] = text[i++];
+	for (; i < strlen(text); i++) {
+		if (text[i] == '\n' && text[i - 1] != '\r')
+			ret[j++] = '\r';
+		ret[j++] = text[i];
+	}
+
+	gaim_debug_misc("gaim_str_add_cr", "got: %s, leaving with %s\n",
+					text, ret);
+
+	return ret;
+}
+
+void
+gaim_str_strip_linefeed(char *text)
+{
+	int i, j;
+	char *text2;
+
+	g_return_if_fail(text != NULL);
+
+	text2 = g_malloc(strlen(text) + 1);
+
+	for (i = 0, j = 0; text[i]; i++)
+		if (text[i] != '\r')
+			text2[j++] = text[i];
+	text2[j] = '\0';
+
+	strcpy(text, text2);
+	g_free(text2);
+}
+
+char *
+gaim_strreplace(const char *string, const char *delimiter,
+				const char *replacement)
+{
+	gchar **split;
+	gchar *ret;
+
+	g_return_val_if_fail(string      != NULL, NULL);
+	g_return_val_if_fail(delimiter   != NULL, NULL);
+	g_return_val_if_fail(replacement != NULL, NULL);
+
+	split = g_strsplit(string, delimiter, 0);
+	ret = g_strjoinv(replacement, split);
+	g_strfreev(split);
+
+	return ret;
+}
+
+const char *
+gaim_strcasestr(const char *haystack, const char *needle)
+{
+	size_t hlen, nlen;
+	const char *tmp, *ret;
+
+	g_return_val_if_fail(haystack != NULL, NULL);
+	g_return_val_if_fail(needle != NULL, NULL);
+
+	hlen = strlen(haystack);
+	nlen = strlen(needle);
+	tmp = haystack,
+	ret = NULL;
+
+	g_return_val_if_fail(hlen > 0, NULL);
+	g_return_val_if_fail(nlen > 0, NULL);
+
+	while (*tmp && !ret) {
+		if (!g_ascii_strncasecmp(needle, tmp, nlen))
+			ret = tmp;
+		else
+			tmp++;
+	}
+
+	return ret;
+}
+
+char *
+gaim_str_size_to_units(size_t size)
+{
+	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
+	float size_mag;
+	int size_index = 0;
+
+	if (size == -1) {
+		return g_strdup(_("Calculating..."));
+	}
+	else if (size == 0) {
+		return g_strdup(_("Unknown."));
+	}
+	else {
+		size_mag = (float)size;
+
+		while ((size_index < 4) && (size_mag > 1024)) {
+			size_mag /= 1024;
+			size_index++;
+		}
+
+		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
+	}
+}
+
+char *
+gaim_str_seconds_to_string(guint sec)
+{
+	guint daze, hrs, min;
+	char *ret = NULL;
+
+	daze = sec / (60 * 60 * 24);
+	hrs = (sec % (60 * 60 * 24)) / (60 * 60);
+	min = (sec % (60 * 60)) / 60;
+	sec = min % 60;
+
+	if (daze) {
+		if (hrs || min) {
+			if (hrs) {
+				if (min) {
+					ret = g_strdup_printf(
+						   "%d %s, %d %s, %d %s.",
+						   daze, ngettext("day","days",daze),
+						   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
+				} else {
+					ret = g_strdup_printf(
+						   "%d %s, %d %s.",
+						   daze, ngettext("day","days",daze), hrs, ngettext("hour","hours",hrs));
+				}
+			} else {
+				ret = g_strdup_printf(
+					   "%d %s, %d %s.",
+					   daze, ngettext("day","days",daze), min, ngettext("minute","minutes",min));
+			}
+		} else
+			ret = g_strdup_printf("%d %s.", daze, ngettext("day","days",daze));
+	} else {
+		if (hrs) {
+			if (min) {
+				ret = g_strdup_printf(
+					   "%d %s, %d %s.",
+					   hrs, ngettext("hour","hours",hrs), min, ngettext("minute","minutes",min));
+			} else {
+				ret = g_strdup_printf("%d %s.", hrs, ngettext("hour","hours",hrs));
+			}
+		} else {
+			ret = g_strdup_printf("%d %s.", min, ngettext("minute","minutes",min));
+		}
+	}
+
+	return ret;
+}
+
+/**************************************************************************
+ * URI/URL Functions
+ **************************************************************************/
 gboolean
 gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path)
@@ -1919,4 +1915,66 @@ gaim_url_fetch(const char *url, gboolean full,
 
 		cb(user_data, g_strdup(_("g003: Error opening connection.\n")), 0);
 	}
+}
+
+
+/**************************************************************************
+ * UTF8 String Functions
+ **************************************************************************/
+char *
+gaim_utf8_try_convert(const char *str)
+{
+	gsize converted;
+	char *utf8;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	if (g_utf8_validate(str, -1, NULL)) {
+		return g_strdup(str);
+	}
+
+	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
+	if (utf8)
+		return(utf8);
+
+	g_free(utf8);
+
+	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
+	if (utf8 && converted == strlen (str)) {
+		return(utf8);
+	} else if (utf8) {
+		g_free(utf8);
+	}
+
+	return(NULL);
+}
+
+int
+gaim_utf8_strcasecmp(const char *a, const char *b)
+{
+	char *a_norm = NULL;
+	char *b_norm = NULL;
+	int ret = -1;
+
+	if(!a && b)
+		return -1;
+	else if(!b && a)
+		return 1;
+	else if(!a && !b)
+		return 0;
+
+	if(!g_utf8_validate(a, -1, NULL) || !g_utf8_validate(b, -1, NULL))
+	{
+		gaim_debug_error("gaim_utf8_strcasecmp",
+						 "One or both parameters are invalid UTF8\n");
+		return ret;
+	}
+
+	a_norm = g_utf8_casefold(a, -1);
+	b_norm = g_utf8_casefold(b, -1);
+	ret = g_utf8_collate(a_norm, b_norm);
+	g_free(a_norm);
+	g_free(b_norm);
+
+	return ret;
 }

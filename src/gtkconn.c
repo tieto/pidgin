@@ -273,7 +273,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 
 	primary = g_strdup_printf(_("%s has been disconnected"),
 				gaim_account_get_username(gaim_connection_get_account(gc)));
-	secondary = g_strdup_printf("%s\n%s", full_date(),
+	secondary = g_strdup_printf("%s\n%s", gaim_date_full(),
 								text ? text : _("Reason Unknown."));
 	gaim_notify_error(NULL, _("Connection Error"), primary, secondary);
 	g_free(primary);

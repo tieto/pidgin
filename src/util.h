@@ -34,42 +34,10 @@
 extern "C" {
 #endif
 
-/**
- * Normalizes a string, so that it is suitable for comparison.
- *
- * The returned string will point to a static buffer, so if the
- * string is intended to be kept long-term, you <i>must</i>
- * g_strdup() it. Also, calling normalize() twice in the same line
- * will lead to problems.
- *
- * @param str The string to normalize.
- *
- * @return A pointer to the normalized version stored in a static buffer.
- */
-char *gaim_normalize(const char *str);
-
-/**
- * Converts a string to its base-64 equivalent.
- *
- * @param buf The data to convert.
- * @param len The length of the data.
- *
- * @return The base-64 version of @a str.
- *
- * @see frombase64()
- */
-char *gaim_base64_encode(const unsigned char *buf, size_t len);
-
-/**
- * Converts a string back from its base-64 equivalent.
- *
- * @param str     The string to convert back.
- * @param ret_str The returned, non-base-64 string.
- * @param ret_len The returned string length.
- *
- * @see tobase64()
- */
-void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
+/**************************************************************************/
+/** @name Base16 Functions                                                */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Converts a string to its base-16 equivalent.
@@ -95,6 +63,45 @@ unsigned char *gaim_base16_encode(const unsigned char *str, int len);
  */
 int gaim_base16_decode(const char *str, unsigned char **ret_str);
 
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Base64 Functions                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Converts a string to its base-64 equivalent.
+ *
+ * @param buf The data to convert.
+ * @param len The length of the data.
+ *
+ * @return The base-64 version of @a str.
+ *
+ * @see frombase64()
+ */
+unsigned char *gaim_base64_encode(const unsigned char *buf, size_t len);
+
+/**
+ * Converts a string back from its base-64 equivalent.
+ *
+ * @param str     The string to convert back.
+ * @param ret_str The returned, non-base-64 string.
+ * @param ret_len The returned string length.
+ *
+ * @see tobase64()
+ */
+void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Date/Time Functions                                             */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Returns the current local time in hour:minute:second form.
  *
@@ -105,17 +112,7 @@ int gaim_base16_decode(const char *str, unsigned char **ret_str);
  *
  * @see full_date()
  */
-char *date(void);
-
-/**
- * Converts seconds into a human-readable form.
- *
- * @param sec The seconds.
- *
- * @return A human-readable form, containing days, hours, minutes, and
- *         seconds.
- */
-char *sec_to_text(guint sec);
+char *gaim_date(void);
 
 /**
  * Returns the date and time in human-readable form.
@@ -127,92 +124,7 @@ char *sec_to_text(guint sec);
  *
  * @see date()
  */
-char *full_date(void);
-
-/**
- * Looks for %n, %d, or %t in a string, and replaces them with the
- * specified name, date, and time, respectively.
- *
- * The returned string is stored in a static buffer, so the result
- * should be g_strdup()'d if it's intended to be used for long.
- *
- * @param str  The string that may contain the special variables.
- * @param name The sender name.
- *
- * @return A new string where the special variables are expanded.
- */
-char *away_subs(const char *str, const char *name);
-
-/**`
- * Returns the user's home directory.
- *
- * @return The user's home directory.
- *
- * @see gaim_user_dir()
- */
-const gchar *gaim_home_dir(void);
-
-/**
- * Returns the gaim settings directory in the user's home directory.
- *
- * @return The gaim settings directory.
- *
- * @see gaim_home_dir()
- */
-char *gaim_user_dir(void);
-
-/**
- * Copies a string and replaces all HTML linebreaks with newline characters.
- *
- * @param dest     The destination string.
- * @param src      The source string.
- * @param dest_len The destination string length.
- *
- * @see strncpy_withhtml()
- * @see strdup_withhtml()
- */
-void strncpy_nohtml(gchar *dest, const gchar *src, size_t dest_len);
-
-/**
- * Copies a string and replaces all newline characters with HTML linebreaks.
- *
- * @param dest     The destination string.
- * @param src      The source string.
- * @param dest_len The destination string length.
- *
- * @see strncpy_nohtml()
- * @see strdup_withhtml()
- */
-void strncpy_withhtml(gchar *dest, const gchar *src, size_t dest_len);
-
-/**
- * Duplicates a string and replaces all newline characters from the
- * source string with HTML linebreaks.
- *
- * @param src The source string.
- *
- * @return The new string.
- *
- * @see strncpy_nohtml()
- * @see strncpy_withhtml()
- */
-gchar *strdup_withhtml(const gchar *src);
-
-/**
- * Ensures that all linefeeds have a matching carriage return.
- *
- * @param str The source string.
- *
- * @return The string with carriage returns.
- */
-char *add_cr(const char *str);
-
-/**
- * Strips all linefeeds from a string.
- *
- * @param str The string to strip linefeeds from.
- */
-void strip_linefeed(char *str);
+char *gaim_date_full(void);
 
 /**
  * Builds a time_t from the supplied information.
@@ -226,99 +138,16 @@ void strip_linefeed(char *str);
  *
  * @return A time_t.
  */
-time_t get_time(int year, int month, int day,
-				int hour, int min, int sec);
+time_t gaim_time_build(int year, int month, int day, int hour,
+					   int min, int sec);
 
-/**
- * Creates a temporary file and returns a file pointer to it.
- *
- * This is like mkstemp(), but returns a file pointer and uses a
- * pre-set template. It uses the semantics of tempnam() for the
- * directory to use and allocates the space for the file path.
- *
- * The caller is responsible for closing the file and removing it when
- * done, as well as freeing the space pointed to by @a path with
- * g_free().
- *
- * @param path The returned path to the temp file.
- *
- * @return A file pointer to the temporary file, or @c NULL on failure.
- */
-FILE *gaim_mkstemp(gchar **path);
+/*@}*/
 
-/**
- * Checks if the given program name is valid and executable.
- *
- * @parm program The file name of the application.
- *
- * @return True if the program is runable.
- */
-gboolean program_is_valid(const char *program);
 
-/**
- * Attempts to convert a string to UTF-8 from an unknown encoding.
- *
- * This function checks the locale and tries sane defaults.
- *
- * @param str The source string.
- *
- * @return The UTF-8 string, or @c NULL if it could not be converted.
- */
-char *gaim_try_conv_to_utf8(const char *str);
-
-/**
- * Returns the IP address from a socket file descriptor.
- *
- * @param fd The socket file descriptor.
- *
- * @return The IP address, or @c NULL on error.
- */
-char *gaim_getip_from_fd(int fd);
-
-/**
- * Compares two UTF-8 strings.
- *
- * @param a The first string.
- * @param b The second string.
- *
- * @return -1 if @a is less than @a b.
- *          0 if @a is equal to @a b.
- *          1 if @a is greater than @a b.
- */
-gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
-
-/**
- * Given a string, this replaces one substring with another
- * and returns a newly allocated string.
- *
- * @param string The string from which to replace stuff.
- * @param delimiter The substring you want replaced.
- * @param replacement The substring you want inserted in place
- *        of the delimiting substring.
- */
-gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,
-					   const gchar *replacement);
-
-/**
- * This is like strstr, except that it ignores ASCII case in
- * searching for the substring.
- *
- * @param haystack The string to search in.
- * @param needle   The substring to find.
- *
- * @return the location of the substring if found, or NULL if not
- */
-const char *gaim_strcasestr(const char *haystack, const char *needle);
-
-/**
- * Returns a string representing a filesize in the appropriate
- * units (MB, KB, GB, etc.)
- *
- * @param size The size
- *
- * @return The string in units form. This must be freed.
- */
-char *gaim_str_size_to_units(size_t size);
+/**************************************************************************/
+/** @name Markup Functions                                                */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Finds a HTML tag matching the given name.
@@ -396,6 +225,207 @@ char *gaim_markup_strip_html(const char *str);
  */
 char *gaim_markup_linkify(const char *str);
 
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Path/Filename Functions                                         */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the user's home directory.
+ *
+ * @return The user's home directory.
+ *
+ * @see gaim_user_dir()
+ */
+const gchar *gaim_home_dir(void);
+
+/**
+ * Returns the gaim settings directory in the user's home directory.
+ *
+ * @return The gaim settings directory.
+ *
+ * @see gaim_home_dir()
+ */
+char *gaim_user_dir(void);
+
+/**
+ * Creates a temporary file and returns a file pointer to it.
+ *
+ * This is like mkstemp(), but returns a file pointer and uses a
+ * pre-set template. It uses the semantics of tempnam() for the
+ * directory to use and allocates the space for the file path.
+ *
+ * The caller is responsible for closing the file and removing it when
+ * done, as well as freeing the space pointed to by @a path with
+ * g_free().
+ *
+ * @param path The returned path to the temp file.
+ *
+ * @return A file pointer to the temporary file, or @c NULL on failure.
+ */
+FILE *gaim_mkstemp(char **path);
+
+/**
+ * Checks if the given program name is valid and executable.
+ *
+ * @parm program The file name of the application.
+ *
+ * @return True if the program is runable.
+ */
+gboolean gaim_program_is_valid(const char *program);
+
+/**
+ * Returns the IP address from a socket file descriptor.
+ *
+ * @param fd The socket file descriptor.
+ *
+ * @return The IP address, or @c NULL on error.
+ */
+char *gaim_fd_get_ip(int fd);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name String Functions                                                */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Normalizes a string, so that it is suitable for comparison.
+ *
+ * The returned string will point to a static buffer, so if the
+ * string is intended to be kept long-term, you <i>must</i>
+ * g_strdup() it. Also, calling normalize() twice in the same line
+ * will lead to problems.
+ *
+ * @param str The string to normalize.
+ *
+ * @return A pointer to the normalized version stored in a static buffer.
+ */
+char *gaim_normalize(const char *str);
+
+/**
+ * Looks for %n, %d, or %t in a string, and replaces them with the
+ * specified name, date, and time, respectively.
+ *
+ * The returned string is stored in a static buffer, so the result
+ * should be g_strdup()'d if it's intended to be used for long.
+ *
+ * @param str  The string that may contain the special variables.
+ * @param name The sender name.
+ *
+ * @return A new string where the special variables are expanded.
+ */
+char *gaim_str_sub_away_formatters(const char *str, const char *name);
+
+/**
+ * Copies a string and replaces all HTML linebreaks with newline characters.
+ *
+ * @param dest     The destination string.
+ * @param src      The source string.
+ * @param dest_len The destination string length.
+ *
+ * @see gaim_strncpy_withhtml()
+ * @see gaim_strdup_withhtml()
+ */
+void gaim_strncpy_nohtml(char *dest, const char *src, size_t dest_len);
+
+/**
+ * Copies a string and replaces all newline characters with HTML linebreaks.
+ *
+ * @param dest     The destination string.
+ * @param src      The source string.
+ * @param dest_len The destination string length.
+ *
+ * @see gaim_strncpy_nohtml()
+ * @see gaim_strdup_withhtml()
+ */
+void gaim_strncpy_withhtml(gchar *dest, const gchar *src, size_t dest_len);
+
+/**
+ * Duplicates a string and replaces all newline characters from the
+ * source string with HTML linebreaks.
+ *
+ * @param src The source string.
+ *
+ * @return The new string.
+ *
+ * @see gaim_strncpy_nohtml()
+ * @see gaim_strncpy_withhtml()
+ */
+char *gaim_strdup_withhtml(const char *src);
+
+/**
+ * Ensures that all linefeeds have a matching carriage return.
+ *
+ * @param str The source string.
+ *
+ * @return The string with carriage returns.
+ */
+char *gaim_str_add_cr(const char *str);
+
+/**
+ * Strips all linefeeds from a string.
+ *
+ * @param str The string to strip linefeeds from.
+ */
+void gaim_str_strip_linefeed(char *str);
+
+/**
+ * Given a string, this replaces one substring with another
+ * and returns a newly allocated string.
+ *
+ * @param string The string from which to replace stuff.
+ * @param delimiter The substring you want replaced.
+ * @param replacement The substring you want inserted in place
+ *        of the delimiting substring.
+ */
+char *gaim_strreplace(const char *string, const char *delimiter,
+					  const char *replacement);
+
+/**
+ * This is like strstr, except that it ignores ASCII case in
+ * searching for the substring.
+ *
+ * @param haystack The string to search in.
+ * @param needle   The substring to find.
+ *
+ * @return the location of the substring if found, or NULL if not
+ */
+const char *gaim_strcasestr(const char *haystack, const char *needle);
+
+/**
+ * Returns a string representing a filesize in the appropriate
+ * units (MB, KB, GB, etc.)
+ *
+ * @param size The size
+ *
+ * @return The string in units form. This must be freed.
+ */
+char *gaim_str_size_to_units(size_t size);
+
+/**
+ * Converts seconds into a human-readable form.
+ *
+ * @param sec The seconds.
+ *
+ * @return A human-readable form, containing days, hours, minutes, and
+ *         seconds.
+ */
+char *gaim_str_seconds_to_string(guint sec);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name URI/URL Functions                                               */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Parses a URL, returning its host, port, and file path.
  *
@@ -424,6 +454,39 @@ void gaim_url_fetch(const char *url, gboolean full,
 					const char *user_agent, gboolean http11,
 					void (*cb)(void *, const char *, size_t),
 					void *data);
+
+/*@}*/
+
+
+/**************************************************************************
+ * UTF8 String Functions
+ **************************************************************************/
+/*@{*/
+
+/**
+ * Attempts to convert a string to UTF-8 from an unknown encoding.
+ *
+ * This function checks the locale and tries sane defaults.
+ *
+ * @param str The source string.
+ *
+ * @return The UTF-8 string, or @c NULL if it could not be converted.
+ */
+char *gaim_utf8_try_convert(const char *str);
+
+/**
+ * Compares two UTF-8 strings.
+ *
+ * @param a The first string.
+ * @param b The second string.
+ *
+ * @return -1 if @a is less than @a b.
+ *          0 if @a is equal to @a b.
+ *          1 if @a is greater than @a b.
+ */
+int gaim_utf8_strcasecmp(const char *a, const char *b);
+
+/*@}*/
 
 #ifdef __cplusplus
 }

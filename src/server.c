@@ -143,7 +143,7 @@ void serv_finish_login(GaimConnection *gc)
 	account = gaim_connection_get_account(gc);
 
 	if (gaim_account_get_user_info(account) != NULL) {
-		/* buf = strdup_withhtml(gc->user->user_info); */
+		/* buf = gaim_strdup_withhtml(gc->user->user_info); */
 		serv_set_info(gc, gaim_account_get_user_info(account));
 		/* g_free(buf); */
 	}
@@ -1018,7 +1018,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), GAIM_IM_AUTO_RESP);
+		serv_send_im(gc, name, gaim_str_sub_away_formatters(tmpmsg, alias), GAIM_IM_AUTO_RESP);
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
@@ -1026,13 +1026,13 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(away_subs(tmpmsg, alias));
+			qm->message = g_strdup(gaim_str_sub_away_formatters(tmpmsg, alias));
 			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
-			gaim_im_write(GAIM_IM(cnv), NULL, away_subs(tmpmsg, alias),
+			gaim_im_write(GAIM_IM(cnv), NULL, gaim_str_sub_away_formatters(tmpmsg, alias),
 						  GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
 
 		g_free(tmpmsg);
@@ -1378,9 +1378,9 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 			if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 				fprintf(fd,
 					_("<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"),
-					full_date());
+					gaim_date_full());
 			else
-				fprintf(fd, _("---- New Conversation @ %s ----\n"), full_date());
+				fprintf(fd, _("---- New Conversation @ %s ----\n"), gaim_date_full());
 
 			fclose(fd);
 		}

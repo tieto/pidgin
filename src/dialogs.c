@@ -878,7 +878,7 @@ void show_set_info(GaimConnection *gc)
 
 	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
 		buf = g_malloc(strlen(user_info) + 1);
-		strncpy_nohtml(buf, user_info, strlen(user_info) + 1);
+		gaim_strncpy_nohtml(buf, user_info, strlen(user_info) + 1);
 		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
 		gtk_text_buffer_set_text(buffer, buf, -1);
 		g_free(buf);

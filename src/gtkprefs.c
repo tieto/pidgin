@@ -1234,7 +1234,7 @@ static GList *get_available_browsers()
 	browsers = g_list_prepend(browsers, _("Manual"));
 
 	for (i = 0; i < num_possible_browsers; i++) {
-		if (program_is_valid(possible_browsers[i].command)) {
+		if (gaim_program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));

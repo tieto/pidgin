@@ -1476,7 +1476,7 @@ void parse_toc_buddy_list(GaimAccount *account, char *config)
 				break;
 			if (*c == 'g') {
 				char *utf8 = NULL;
-				utf8 = gaim_try_conv_to_utf8(c + 2);
+				utf8 = gaim_utf8_try_convert(c + 2);
 				if (utf8 == NULL) {
 					g_strlcpy(current, _("Invalid Groupname"), sizeof(current));
 				} else {
@@ -1497,7 +1497,7 @@ void parse_toc_buddy_list(GaimAccount *account, char *config)
 
 				g_strlcpy(nm, c + 2, sizeof(nm));
 				if (a) {
-					utf8 = gaim_try_conv_to_utf8(a);
+					utf8 = gaim_utf8_try_convert(a);
 					if (utf8 == NULL) {
 						gaim_debug(GAIM_DEBUG_ERROR, "toc blist",
 								   "Failed to convert alias for "

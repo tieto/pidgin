@@ -2259,7 +2259,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	/* strip_linefeed(tmp); */
+	/* gaim_str_strip_linefeed(tmp); */
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
 	g_free(tmp);
 
@@ -2559,7 +2559,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	for (numtoks=0; msg1[numtoks]; numtoks++);
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
-		strip_linefeed(msg1[i]);
+		gaim_str_strip_linefeed(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
 		if (err) {
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
@@ -3153,7 +3153,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 					asctime(localtime((time_t *)&userinfo->membersince)));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
-		gchar *itime = sec_to_text(userinfo->idletime*60);
+		gchar *itime = gaim_str_seconds_to_string(userinfo->idletime*60);
 		g_string_append_printf(text, _("Idle: <b>%s</b>"), itime);
 		g_free(itime);
 	} else
@@ -3175,7 +3175,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	final = away_subs(text->str, gaim_connection_get_display_name(gc));
+	final = gaim_str_sub_away_formatters(text->str, gaim_connection_get_display_name(gc));
 	g_string_free(text, TRUE);
 	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, final, NULL, NULL);
 	g_free(final);
@@ -3853,7 +3853,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	args.flags = msg->flags;
 	args.msglen = msg->msglen;
 	args.msg = msg->msg;
-	t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
+	t = gaim_time_build(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
 	incomingim_chan4(sess, fr->conn, NULL, &args, t);
 
 	return 1;
@@ -3884,27 +3884,27 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	g_snprintf(who, sizeof(who), "%u", info->uin);
 	buf = g_strdup_printf("<b>%s:</b> %s", _("UIN"), who);
-	if (info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
+	if (info->nick && info->nick[0] && (utf8 = gaim_utf8_try_convert(info->nick))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Nick"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
-	if (info->first && info->first[0] && (utf8 = gaim_try_conv_to_utf8(info->first))) {
+	if (info->first && info->first[0] && (utf8 = gaim_utf8_try_convert(info->first))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("First Name"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
-	if (info->last && info->last[0] && (utf8 = gaim_try_conv_to_utf8(info->last))) {
+	if (info->last && info->last[0] && (utf8 = gaim_utf8_try_convert(info->last))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Last Name"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
-	if (info->email && info->email[0] && (utf8 = gaim_try_conv_to_utf8(info->email))) {
+	if (info->email && info->email[0] && (utf8 = gaim_utf8_try_convert(info->email))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Email Address"), ":</b> <a href=\"mailto:", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
-			if (info->email2[i] && info->email2[i][0] && (utf8 = gaim_try_conv_to_utf8(info->email2[i]))) {
+			if (info->email2[i] && info->email2[i][0] && (utf8 = gaim_utf8_try_convert(info->email2[i]))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Email Address"), ":</b> <a href=\"mailto:", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
 			}
 		}
 	}
-	if (info->mobile && info->mobile[0] && (utf8 = gaim_try_conv_to_utf8(info->mobile))) {
+	if (info->mobile && info->mobile[0] && (utf8 = gaim_utf8_try_convert(info->mobile))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Mobile Phone"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
 	if (info->gender) {
@@ -3924,57 +3924,57 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		snprintf(age, sizeof(age), "%hhd", info->age);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Age"), ":</b> ", age, NULL);  g_free(tmp);
 	}
-	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = gaim_try_conv_to_utf8(info->personalwebpage))) {
+	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = gaim_utf8_try_convert(info->personalwebpage))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Personal Web Page"), ":</b> <a href=\"", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
 	}
-	if (info->info && info->info[0] && (utf8 = gaim_try_conv_to_utf8(info->info))) {
+	if (info->info && info->info[0] && (utf8 = gaim_utf8_try_convert(info->info))) {
 		tmp = buf;  buf = g_strconcat(tmp, "<hr><b>", _("Additional Information"), ":</b><br>", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
 	tmp = buf;  buf = g_strconcat(tmp, "<hr>\n", NULL);  g_free(tmp);
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Home Address"), ":</b>", NULL);  g_free(tmp);
-		if (info->homeaddr && info->homeaddr[0] && (utf8 = gaim_try_conv_to_utf8(info->homeaddr))) {
+		if (info->homeaddr && info->homeaddr[0] && (utf8 = gaim_utf8_try_convert(info->homeaddr))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Address"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->homecity && info->homecity[0] && (utf8 = gaim_try_conv_to_utf8(info->homecity))) {
+		if (info->homecity && info->homecity[0] && (utf8 = gaim_utf8_try_convert(info->homecity))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("City"), ":</b> ", utf8,  NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->homestate && info->homestate[0] && (utf8 = gaim_try_conv_to_utf8(info->homestate))) {
+		if (info->homestate && info->homestate[0] && (utf8 = gaim_utf8_try_convert(info->homestate))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("State"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->homezip && info->homezip[0] && (utf8 = gaim_try_conv_to_utf8(info->homezip))) {
+		if (info->homezip && info->homezip[0] && (utf8 = gaim_utf8_try_convert(info->homezip))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Zip Code"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Work Address"), ":</b>", NULL);  g_free(tmp);
-		if (info->workaddr && info->workaddr[0] && (utf8 = gaim_try_conv_to_utf8(info->workaddr))) {
+		if (info->workaddr && info->workaddr[0] && (utf8 = gaim_utf8_try_convert(info->workaddr))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Address"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workcity && info->workcity[0] && (utf8 = gaim_try_conv_to_utf8(info->workcity))) {
+		if (info->workcity && info->workcity[0] && (utf8 = gaim_utf8_try_convert(info->workcity))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("City"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workstate && info->workstate[0] && (utf8 = gaim_try_conv_to_utf8(info->workstate))) {
+		if (info->workstate && info->workstate[0] && (utf8 = gaim_utf8_try_convert(info->workstate))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("State"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workzip && info->workzip[0] && (utf8 = gaim_try_conv_to_utf8(info->workzip))) {
+		if (info->workzip && info->workzip[0] && (utf8 = gaim_utf8_try_convert(info->workzip))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Zip Code"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Work Information"), ":</b>", NULL);  g_free(tmp);
-		if (info->workcompany && info->workcompany[0] && (utf8 = gaim_try_conv_to_utf8(info->workcompany))) {
+		if (info->workcompany && info->workcompany[0] && (utf8 = gaim_utf8_try_convert(info->workcompany))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Company"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workdivision && info->workdivision[0] && (utf8 = gaim_try_conv_to_utf8(info->workdivision))) {
+		if (info->workdivision && info->workdivision[0] && (utf8 = gaim_utf8_try_convert(info->workdivision))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Division"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workposition && info->workposition[0] && (utf8 = gaim_try_conv_to_utf8(info->workposition))) {
+		if (info->workposition && info->workposition[0] && (utf8 = gaim_utf8_try_convert(info->workposition))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Position"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 		}
-		if (info->workwebpage && info->workwebpage[0] && (utf8 = gaim_try_conv_to_utf8(info->workwebpage))) {
+		if (info->workwebpage && info->workwebpage[0] && (utf8 = gaim_utf8_try_convert(info->workwebpage))) {
 			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Web Page"), ":</b> <a href=\"", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
 		}
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
@@ -4001,7 +4001,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
+	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_utf8_try_convert(info->nick))) {
 		g_snprintf(who, sizeof(who), "%u", info->uin);
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
@@ -4285,9 +4285,9 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		/* For ICQ send newlines as CR/LF, for AIM send newlines as <BR> */
 		if (isdigit(name[0]))
-			tmpmsg = add_cr(message);
+			tmpmsg = gaim_str_add_cr(message);
 		else
-			tmpmsg = strdup_withhtml(message);
+			tmpmsg = gaim_strdup_withhtml(message);
 		len = strlen(tmpmsg);
 
 		args.flags |= oscar_encoding_check(tmpmsg);
@@ -4405,7 +4405,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 			return;
 		}
 		
-		text_html = strdup_withhtml(text);
+		text_html = gaim_strdup_withhtml(text);
 		flags = oscar_encoding_check(text_html);
 		if (flags & AIM_IMFLAGS_UNICODE) {
 			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
@@ -4463,7 +4463,7 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 		return;
 	}
 
-	text_html = strdup_withhtml(text);
+	text_html = gaim_strdup_withhtml(text);
 	flags = oscar_encoding_check(text_html);
 	if (flags & AIM_IMFLAGS_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
@@ -4787,9 +4787,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
-					char *gname_utf8 = gaim_try_conv_to_utf8(gname);
+					char *gname_utf8 = gaim_utf8_try_convert(gname);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
-					char *alias_utf8 = gaim_try_conv_to_utf8(alias);
+					char *alias_utf8 = gaim_utf8_try_convert(alias);
 					GaimBuddy *buddy = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */
@@ -5377,7 +5377,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		}
 
 		if (userinfo != NULL) {
-			char *tstr = sec_to_text(time(NULL) - userinfo->onlinesince + 
+			char *tstr = gaim_str_seconds_to_string(time(NULL) - userinfo->onlinesince + 
 				(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
@@ -5419,7 +5419,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp1 = away_subs(tmp2, gaim_connection_get_display_name(gc));
+				tmp1 = gaim_str_sub_away_formatters(tmp2, gaim_connection_get_display_name(gc));
 				g_free(tmp2);
 				tmp = ret;
 				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp1, "\n", NULL);

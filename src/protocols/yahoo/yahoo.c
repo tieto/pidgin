@@ -675,7 +675,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 				msg = pair->value;
 
-				strip_linefeed(msg);
+				gaim_str_strip_linefeed(msg);
 				m = yahoo_codes_to_html(msg);
 				serv_got_im(gc, from, m, 0, tm);
 				g_free(m);
@@ -999,7 +999,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	const unsigned char *magic_ptr;
 
 	unsigned int  magic[64];
-	unsigned int  magic_work;
+	unsigned int  magic_work = 0;
 	unsigned int  value = 0;
 	
 	int x;

@@ -584,7 +584,7 @@ gaim_gtk_notify_uri(const char *uri)
 		}
 	}
 
-	if (!program_is_valid(command)) {
+	if (!gaim_program_is_valid(command)) {
 		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
 						command);
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);

@@ -1003,7 +1003,7 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	if (swboard == NULL)
 		return -EINVAL;
 
-	send = add_cr(message);
+	send = gaim_str_add_cr(message);
 
 	msg = msn_message_new();
 	msn_message_set_attr(msg, "X-MMS-IM-Format", "FN=Arial; EF=; CO=0; PF=0");

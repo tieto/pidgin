@@ -203,7 +203,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		g_free(irc->whois.channels);
 	}
 	if (irc->whois.idle) {
-		gchar *timex = sec_to_text(irc->whois.idle);
+		gchar *timex = gaim_str_seconds_to_string(irc->whois.idle);
 		g_string_append_printf(info, _("<b>Idle for:</b> %s<br>"), timex);
 		g_free(timex);
 		g_string_append_printf(info, "<b>%s:</b> %s", _("Online since"), ctime(&irc->whois.signon));

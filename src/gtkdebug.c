@@ -305,7 +305,7 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 		g_free(esc_s);
 
-		utf8_s = gaim_try_conv_to_utf8(s);
+		utf8_s = gaim_utf8_try_convert(s);
 		g_free(s);
 		s = utf8_s;
 

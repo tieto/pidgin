@@ -3923,10 +3923,10 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 					fprintf(fd,
 							_("<HR><BR><H3 Align=Center> "
 							"---- New Conversation @ %s ----</H3><BR>\n"),
-							full_date());
+							gaim_date_full());
 				else
 					fprintf(fd, _("---- New Conversation @ %s ----\n"),
-							full_date());
+							gaim_date_full());
 
 				fclose(fd);
 			}
