@@ -115,7 +115,8 @@ static void
 destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 					 GtkIMHtmlToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->font), FALSE);
+	if (widget != NULL)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->font), FALSE);
 
 	if (toolbar->font_dialog != NULL)
 	{
@@ -207,7 +208,8 @@ static void
 destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
+	if (widget != NULL)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
 
 	if (toolbar->fgcolor_dialog != NULL)
 	{
@@ -280,7 +282,8 @@ static void
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bgcolor), FALSE);
+	if (widget != NULL)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bgcolor), FALSE);
 
 	if (toolbar->bgcolor_dialog != NULL)
 	{
