@@ -2053,7 +2053,7 @@ email_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
 	GHashTable *table;
-	const char *from, *subject;
+	char *from, *subject;
 
 	if (strcmp(servconn->msg_passport, "Hotmail")) {
 		/* This isn't an official message. */
@@ -2073,11 +2073,14 @@ email_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	table = msn_message_get_hashtable_from_body(msg);
 
-	from    = g_hash_table_lookup(table, "From");
-	subject = g_hash_table_lookup(table, "Subject");
+	from    = gaim_mime_decode_field(g_hash_table_lookup(table, "From"));
+	subject = gaim_mime_decode_field(g_hash_table_lookup(table, "Subject"));
 
 	gaim_notify_email(gc, subject, from, msn_user_get_passport(session->user),
 					  session->passport_info.file, NULL, NULL);
+
+	g_free(from);
+	g_free(subject);
 
 	g_hash_table_destroy(table);
 
