@@ -3096,8 +3096,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 		} else if (gtk_imhtml_is_smiley (imhtml, c, &smilelen)) {
-			ws [wpos] = 0;
-			wpos = 0;
 			NEW_BIT (NEW_TEXT_BIT);
 			g_snprintf (ws, smilelen + 1, "%s", c);
 			wpos = smilelen + 1;
