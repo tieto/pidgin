@@ -82,7 +82,8 @@ static gint check_idle()
 	time(&t);
 
         gettimeofday(&lag_tv, NULL);
-	serv_send_im(current_user->username, LAGOMETER_STR, 1);
+	if (!(general_options & OPT_GEN_SHOW_LAGMETER))
+		serv_send_im(current_user->username, LAGOMETER_STR, 1);
 
 	if (report_idle != IDLE_GAIM)
                 return TRUE;
@@ -453,6 +454,8 @@ void serv_got_im(char *name, char *message, int away)
 	nname = g_strdup(normalize(name));
 
 	if (!strcasecmp(normalize(name), nname)) {
+	if (!(general_options & OPT_GEN_SHOW_LAGMETER))
+	{
 		if (!strcmp(message, LAGOMETER_STR)) {
 			struct timeval tv;
                         int ms;
@@ -467,7 +470,7 @@ void serv_got_im(char *name, char *message, int away)
 			g_free(nname);
                         return;
 		}
-
+	}
 	}
 	g_free(nname);
 	
