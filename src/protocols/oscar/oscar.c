@@ -3888,7 +3888,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(utf8))) {
+	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
 		g_snprintf(who, sizeof(who), "%lu", info->uin);
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
