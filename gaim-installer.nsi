@@ -121,6 +121,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "English"
 
   !insertmacro MUI_LANGUAGE "Bulgarian"
+  !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Czech"
   !insertmacro MUI_LANGUAGE "Danish"
   !insertmacro MUI_LANGUAGE "SimpChinese"
@@ -154,6 +155,7 @@ SetDateSave on
   !include "${GAIM_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "BULGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "CATALAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "CZECH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\czech.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "DANISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\danish.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "DUTCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
