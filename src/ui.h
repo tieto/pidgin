@@ -159,7 +159,6 @@ extern int docklet_count;
 /* Globals in away.c */
 extern struct away_message *awaymessage;
 extern struct away_message *default_away;
-extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *awayqueue;
 extern GtkListStore *awayqueuestore;

@@ -87,7 +87,8 @@ gint check_idle(gpointer data)
 		idle_time = t - gc->last_sent_time;
 
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
-		(idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
+		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
+		&& (!gc->is_auto_away)) {
 
 		if (!gc->away) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
@@ -101,7 +102,8 @@ gint check_idle(gpointer data)
 			set_default_away(NULL, (gpointer)g_slist_index(away_messages, default_away));
 		} else
 			gc->is_auto_away = 2;
-	} else if (gc->is_auto_away && idle_time < 60 * auto_away) {
+	} else if (gc->is_auto_away &&
+			idle_time < 60 * gaim_prefs_get_int("/core/away/mins_before_away")) {
 		if (gc->is_auto_away == 2) {
 			gc->is_auto_away = 0;
 			return TRUE;

@@ -363,7 +363,8 @@ static void gaimrc_read_away(FILE *f)
 		}
 		/* auto { time } { default message } */
 		else if (!strcmp(p->option, "auto")) {
-			auto_away = atoi(p->value[0]);
+			gaim_prefs_set_int("/core/away/mins_before_away",
+					atoi(p->value[0]));
 			default_away = g_slist_nth_data(away_messages, atoi(p->value[1]));
 		}
 	}
