@@ -154,13 +154,34 @@ static char *proto_name(int proto)
 		return "Unknown";
 }
 
+void regenerate_user_list()
+{
+	char *titles[4];
+	GList *u = aim_users;
+	struct aim_user *a;
+	int i;
+
+	if (!acctedit)
+		return;
+
+	gtk_clist_clear(GTK_CLIST(list));
+
+	while (u) {
+		a = (struct aim_user *)u->data;
+		titles[0] = a->username;
+		titles[1] = a->gc ? "Yes" : "No";
+		titles[2] = (a->options & OPT_USR_AUTO) ? "True" : "False";
+		titles[3] = proto_name(a->protocol);
+		i = gtk_clist_append(GTK_CLIST(list), titles);
+		gtk_clist_set_row_data(GTK_CLIST(list), i, a);
+		u = u->next;
+	}
+}
+
 static GtkWidget *generate_list()
 {
 	GtkWidget *win;
 	char *titles[4] = { "Screenname", "Currently Online", "Auto-login", "Protocol" };
-	GList *u = aim_users;
-	struct aim_user *a;
-	int i;
 
 	win = gtk_scrolled_window_new(0, 0);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win), GTK_POLICY_AUTOMATIC,
@@ -173,16 +194,7 @@ static GtkWidget *generate_list()
 	gtk_container_add(GTK_CONTAINER(win), list);
 	gtk_widget_show(list);
 
-	while (u) {
-		a = (struct aim_user *)u->data;
-		titles[0] = a->username;
-		titles[1] = a->gc ? "Yes" : "No";
-		titles[2] = (a->options & OPT_USR_AUTO) ? "True" : "False";
-		titles[3] = proto_name(a->protocol);
-		i = gtk_clist_append(GTK_CLIST(list), titles);
-		gtk_clist_set_row_data(GTK_CLIST(list), i, a);
-		u = u->next;
-	}
+	regenerate_user_list();
 
 	gtk_widget_show(win);
 	return win;

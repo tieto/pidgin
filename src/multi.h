@@ -94,6 +94,13 @@ struct proto_buddy_menu {
 	struct gaim_connection *gc;
 };
 
+struct proto_chat_entry {
+	char *label;
+	gboolean is_int;
+	int min;
+	int max;
+};
+
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 
@@ -104,6 +111,7 @@ void destroy_gaim_conn(struct gaim_connection *);
 struct gaim_connection *find_gaim_conn_by_name(char *);
 
 void account_editor(GtkWidget *, GtkWidget *);
+void regenerate_user_list();
 
 void account_online(struct gaim_connection *);
 void account_offline(struct gaim_connection *);

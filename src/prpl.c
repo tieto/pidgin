@@ -84,6 +84,7 @@ void load_protocol(proto_init pi, int size)
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 	if (regdialog)
 		gtk_widget_destroy(regdialog);
+	regenerate_user_list();
 }
 
 void unload_protocol(struct prpl *p)
@@ -105,6 +106,7 @@ void unload_protocol(struct prpl *p)
 	}
 	protocols = g_slist_remove(protocols, p);
 	g_free(p);
+	regenerate_user_list();
 }
 
 STATIC_PROTO_INIT
