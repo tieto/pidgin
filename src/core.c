@@ -202,14 +202,6 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 			/* XXX need to broadcast to UIs that plugin has been unloaded */
 		}
 		break;
-	case CUI_PLUGIN_RELOAD:
-		memcpy(&id, data, sizeof(id));
-		p = g_list_nth_data(plugins, id);
-		if (p) {
-			p = reload_plugin(p);
-			/* XXX need to broadcast to UIs that plugin has been reloaded */
-		}
-		break;
 	default:
 		debug_printf("unhandled plugin subtype %d\n", subtype);
 		break;

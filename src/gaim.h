@@ -60,7 +60,6 @@
 #define CUI_PLUGIN_LIST		1
 #define CUI_PLUGIN_LOAD		2
 #define CUI_PLUGIN_UNLOAD	3
-#define CUI_PLUGIN_RELOAD	4	/* this is redundant and may be removed */
 
 #define CUI_USER_LIST		1
 #define CUI_USER_ADD		2
