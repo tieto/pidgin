@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -17,7 +17,7 @@ static char rcsid_ZSendPacket_c[] =
     "$Zephyr: /mit/zephyr/src/lib/RCS/ZSendPacket.c,v 1.29 91/03/21 11:57:08 raeburn Exp $";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 #include <sys/socket.h>
 
 static int wait_for_hmack();

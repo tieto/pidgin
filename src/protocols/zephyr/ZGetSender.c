@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -12,11 +12,11 @@
  */
 /* $Header$ */
 
-#include <internal.h>
+#include "internal.h"
 
 #ifndef lint
 static const char rcsid_ZGetSender_c[] =
-    "$Id: ZGetSender.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+    "$Id: ZGetSender.c 9554 2004-04-24 09:02:28Z chipx86 $";
 #endif
 
 #include <pwd.h>

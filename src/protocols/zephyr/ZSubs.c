@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: seanegan $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -13,10 +13,10 @@
  */
 /* $Header$ */
 
-#include <internal.h>
+#include "internal.h"
 
 #ifndef lint
-static const char rcsid_ZSubscriptions_c[] = "$Id: ZSubs.c 3295 2002-05-28 08:40:48Z seanegan $";
+static const char rcsid_ZSubscriptions_c[] = "$Id: ZSubs.c 9554 2004-04-24 09:02:28Z chipx86 $";
 #endif
 
 static Code_t Z_Subscriptions __P((register ZSubscription_t *sublist,

@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology.
@@ -13,14 +13,14 @@
  */
 /* $Header$ */
 
-#include <internal.h>
+#include "internal.h"
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <utmp.h>
 
 #ifndef lint
 static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 8088 2003-11-11 07:08:13Z thekingant $";
+  "$Id: Zinternal.c 9554 2004-04-24 09:02:28Z chipx86 $";
 static const char copyright[] =
   "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif

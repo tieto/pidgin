@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -13,11 +13,11 @@
  */
 /* $Header$ */
 
-#include <internal.h>
+#include "internal.h"
 
 #ifndef lint
 static const char rcsid_ZRetrieveSubscriptions_c[] =
-    "$Id: ZRetSubs.c 8088 2003-11-11 07:08:13Z thekingant $";
+    "$Id: ZRetSubs.c 9554 2004-04-24 09:02:28Z chipx86 $";
 #endif
 
 static Code_t Z_RetSubs ();

@@ -4,7 +4,7 @@
  *	Created by:	John T. Kohl
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -16,7 +16,7 @@
 static char rcsid_ZSendRawList_c[] = "$Header$";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 
 Code_t ZSendRawList(notice, list, nitems)
     ZNotice_t *notice;

@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -16,7 +16,7 @@
 static char rcsid_ZOpenPort_c[] = "$Header$";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 #include <sys/socket.h>
 
 Code_t ZOpenPort(port)

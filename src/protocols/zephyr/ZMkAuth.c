@@ -4,18 +4,18 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: lschiere $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Id: ZMkAuth.c 9078 2004-02-27 19:25:27Z lschiere $ */
+/* $Id: ZMkAuth.c 9554 2004-04-24 09:02:28Z chipx86 $ */
 
-#include <internal.h>
+#include "internal.h"
 
 #ifndef lint
-static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 9078 2004-02-27 19:25:27Z lschiere $";
+static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 9554 2004-04-24 09:02:28Z chipx86 $";
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS

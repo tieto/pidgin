@@ -3,14 +3,14 @@
  *
  *      Created by:     Marc Horowitz
  *
- *      $Id: ZhmStat.c 2432 2001-10-03 19:38:28Z warmenhoven $
+ *      $Id: ZhmStat.c 9554 2004-04-24 09:02:28Z chipx86 $
  *
  *      Copyright (c) 1996 by the Massachusetts Institute of Technology.
  *      For copying and distribution information, see the file
  *      "mit-copyright.h". 
  */
 
-#include <internal.h>
+#include "internal.h"
 #include <sys/socket.h>
 
 #ifndef INADDR_LOOPBACK

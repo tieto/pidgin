@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -17,7 +17,7 @@ static char rcsid_ZParseNotice_c[] =
     "$Zephyr: /mit/zephyr/src/lib/RCS/ZParseNotice.c,v 1.22 91/03/29 03:34:46 raeburn Exp $";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 
 /* Assume that strlen is efficient on this machine... */
 #define next_field(ptr)	ptr += strlen (ptr) + 1

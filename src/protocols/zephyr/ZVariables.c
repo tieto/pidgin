@@ -17,7 +17,7 @@
 static char rcsid_ZVariables_c[] = "$Header$";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 #include "util.h"
 
 #include <ctype.h>

@@ -5,7 +5,7 @@
  *	Created by:	<Joe Random Hacker>
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -18,7 +18,7 @@
 static char rcsid_ZWaitForNotice_c[] = "$Zephyr$";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 #include <sys/socket.h>
 
 Code_t Z_WaitForNotice (notice, pred, arg, timeout)

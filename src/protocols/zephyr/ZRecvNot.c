@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: chipx86 $
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -16,7 +16,7 @@
 static char rcsid_ZReceiveNotice_c[] = "$Header$";
 #endif
 
-#include <internal.h>
+#include "internal.h"
 
 Code_t ZReceiveNotice(notice, from)
     ZNotice_t *notice;
