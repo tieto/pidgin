@@ -488,7 +488,7 @@ gint check_netscape(char *msg)
 
 	if (window && (((GdkWindowPrivate *) window)->destroyed == FALSE)) {
 
-		XSelectInput(gdk_display, ((GdkWindowPrivate *) window)->xwindow,
+		XSelectInput(gdk_display, GDK_WINDOW_XWINDOW(window),
 			     (PropertyChangeMask | StructureNotifyMask));
 
 
@@ -528,7 +528,7 @@ static void netscape_command(char *command)
 
 	if (window && (((GdkWindowPrivate *) window)->destroyed == FALSE)) {
 
-		XSelectInput(gdk_display, ((GdkWindowPrivate *) window)->xwindow,
+		XSelectInput(gdk_display, GDK_WINDOW_XWINDOW(window),
 			     (PropertyChangeMask | StructureNotifyMask));
 
 		mozilla_remote_obtain_lock(window);
