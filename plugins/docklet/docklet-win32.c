@@ -43,7 +43,7 @@
  */
 #define GAIM_SYSTRAY_HINT _("Gaim Instant Messaging Client")
 #define GAIM_SYSTRAY_DISCONN_HINT _("Gaim Instant Messaging Client - Signed off")
-#define GAIM_SYSTRAY_AWAY_HINT _("Gaim Instant Messaging Clienty- Away")
+#define GAIM_SYSTRAY_AWAY_HINT _("Gaim Instant Messaging Client - Away")
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 
 /*
