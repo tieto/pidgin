@@ -457,6 +457,8 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 		return;
 	}
 
+	debug_printf("Got icon for %s (length %d)\n", who, len);
+
 	id->data = g_memdup(data, len);
 	id->len = len;
 
