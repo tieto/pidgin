@@ -131,7 +131,6 @@ struct chat_connection {
 	char *show; /* AOL did something funny to us */
 	fu16_t exchange;
 	fu16_t instance;
-	int fd; /* this is redundant since we have the conn below */
 	aim_conn_t *conn;
 	int inpa;
 	int id;
@@ -802,51 +801,73 @@ static char *extract_name(const char *name) {
 	return tmp;
 }
 
-static struct chat_connection *find_oscar_chat(GaimConnection *gc, int id) {
-	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
-	struct chat_connection *c = NULL;
+static struct chat_connection *
+find_oscar_chat(GaimConnection *gc, int id)
+{
+	OscarData *od = (OscarData *)gc->proto_data;
+	GSList *cur;
+	struct chat_connection *cc;
 
-	while (g) {
-		c = (struct chat_connection *)g->data;
-		if (c->id == id)
-			break;
-		g = g->next;
-		c = NULL;
+	for (cur = od->oscar_chats; cur != NULL; cur = cur->next)
+	{
+		cc = (struct chat_connection *)cur->data;
+		if (cc->id == id)
+			return cc;
 	}
 
-	return c;
+	return NULL;
 }
 
-static struct chat_connection *find_oscar_chat_by_conn(GaimConnection *gc,
-							aim_conn_t *conn) {
-	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
-	struct chat_connection *c = NULL;
+static struct chat_connection *
+find_oscar_chat_by_conn(GaimConnection *gc, aim_conn_t *conn)
+{
+	OscarData *od = (OscarData *)gc->proto_data;
+	GSList *cur;
+	struct chat_connection *cc;
 
-	while (g) {
-		c = (struct chat_connection *)g->data;
-		if (c->conn == conn)
-			break;
-		g = g->next;
-		c = NULL;
+	for (cur = od->oscar_chats; cur != NULL; cur = cur->next)
+	{
+		cc = (struct chat_connection *)cur->data;
+		if (cc->conn == conn)
+			return cc;
 	}
 
-	return c;
+	return NULL;
 }
 
-static struct chat_connection *find_oscar_chat_by_conv(GaimConnection *gc,
-							GaimConversation *conv) {
-	GSList *g = ((OscarData *)gc->proto_data)->oscar_chats;
-	struct chat_connection *c = NULL;
+static struct chat_connection *
+find_oscar_chat_by_conv(GaimConnection *gc, GaimConversation *conv)
+{
+	OscarData *od = (OscarData *)gc->proto_data;
+	GSList *cur;
+	struct chat_connection *cc;
 
-	while (g) {
-		c = (struct chat_connection *)g->data;
-		if (c->conv == conv)
-			break;
-		g = g->next;
-		c = NULL;
+	for (cur = od->oscar_chats; cur != NULL; cur = cur->next)
+	{
+		cc = (struct chat_connection *)cur->data;
+		if (cc->conv == conv)
+			return cc;
 	}
 
-	return c;
+	return NULL;
+}
+
+static void
+oscar_chat_kill(GaimConnection *gc, struct chat_connection *cc)
+{
+	OscarData *od = (OscarData *)gc->proto_data;
+
+	/* Notify the conversation window that we've left the chat */
+	serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(cc->conv)));
+
+	/* Destroy the chat_connection */
+	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
+	if (cc->inpa > 0)
+		gaim_input_remove(cc->inpa);
+	aim_conn_kill(od->sess, &cc->conn);
+	g_free(cc->name);
+	g_free(cc->show);
+	g_free(cc);
 }
 
 /*****************************************************************************
@@ -1555,7 +1576,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				   "oscar callback for closed connection (1).\n");
 		return;
 	}
- 
+
 	od = (OscarData *)gc->proto_data;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
@@ -1592,23 +1613,23 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 						"invalid data was received on the oscar TCP stream\n");
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
-					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
-					GaimConversation *conv = gaim_find_chat(gc, c->id);
+					struct chat_connection *cc = find_oscar_chat_by_conn(gc, conn);
+					GaimConversation *conv = gaim_find_chat(gc, cc->id);
 					char *buf;
-					gaim_debug_info("oscar",
-							   "disconnected from chat room %s\n", c->name);
-					c->conn = NULL;
-					if (c->inpa > 0)
-						gaim_input_remove(c->inpa);
-					c->inpa = 0;
-					c->fd = -1;
-					aim_conn_kill(od->sess, &conn);
-					buf = g_strdup_printf(_("You have been disconnected from chat room %s."), c->name);
-					if (conv)
+
+					gaim_debug_info("oscar", "Lost connection "
+									"to chat room %s\n", cc->name);
+
+					buf = g_strdup_printf(_("You have lost your connection "
+											"to chat room %s."), cc->name);
+					if (conv != NULL)
 						gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
 					else
 						gaim_notify_error(gc, NULL, buf, NULL);
 					g_free(buf);
+
+					oscar_chat_kill(gc, cc);
+
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (od->cnpa > 0)
 						gaim_input_remove(od->cnpa);
@@ -2808,7 +2829,6 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon = g_new0(struct chat_connection, 1);
 		ccon->conn = tstconn;
 		ccon->gc = gc;
-		ccon->fd = -1;
 		ccon->name = g_strdup(redir->chat.room);
 		ccon->exchange = redir->chat.exchange;
 		ccon->instance = redir->chat.instance;
@@ -3262,7 +3282,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	if ((iconfile = gaim_account_get_buddy_icon(account)) && 
+	if ((iconfile = gaim_account_get_buddy_icon(account)) &&
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
 		FILE *file;
 		struct stat st;
@@ -4759,11 +4779,13 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug_info("oscar",
-			   "Disconnected.  Code is 0x%04x and msg is %s\n", code,
-				(msg != NULL ? msg : ""));
+	gaim_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
+					code, (msg != NULL ? msg : ""));
 
-	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
+	g_return_val_if_fail(fr       != NULL, 1);
+	g_return_val_if_fail(fr->conn != NULL, 1);
+
+	if (fr->conn->type == AIM_CONN_TYPE_BOS) {
 		if (code == 0x0001) {
 			gc->wants_to_die = TRUE;
 			gaim_connection_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
@@ -4771,6 +4793,22 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_connection_error(gc, _("You have been signed off for an unknown reason."));
 		}
 		od->killme = TRUE;
+	} else if (fr->conn->type == AIM_CONN_TYPE_CHAT) {
+		struct chat_connection *cc;
+		GaimConversation *conv;
+
+		cc = find_oscar_chat_by_conn(gc, fr->conn);
+		conv = gaim_find_chat(gc, cc->id);
+
+		if (conv != NULL)
+		{
+			gchar *buf;
+			buf = g_strdup_printf(_("You have been disconnected from chat "
+									"room %s."), cc->name);
+			gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
+			g_free(buf);
+		}
+		oscar_chat_kill(gc, cc);
 	}
 
 	return 1;
@@ -6484,42 +6522,20 @@ static void oscar_chat_invite(GaimConnection *gc, int id, const char *message, c
 			ccon->exchange, ccon->name, 0x0);
 }
 
-static void oscar_chat_leave(GaimConnection *gc, int id) {
-	OscarData *od = gc ? (OscarData *)gc->proto_data : NULL;
-	GSList *bcs = gc->buddy_chats;
-	GaimConversation *b = NULL;
-	struct chat_connection *c = NULL;
-	int count = 0;
+static void
+oscar_chat_leave(GaimConnection *gc, int id)
+{
+	GaimConversation *conv;
+	struct chat_connection *cc;
 
-	while (bcs) {
-		count++;
-		b = (GaimConversation *)bcs->data;
-		if (id == gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)))
-			break;
-		bcs = bcs->next;
-		b = NULL;
-	}
+	conv = gaim_find_chat(gc, id);
 
-	if (!b)
-		return;
+	g_return_if_fail(conv != NULL);
 
-	gaim_debug_info("oscar",
-			   "Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
+	gaim_debug_info("oscar", "Leaving chat room %s\n", conv->name);
 
-	c = find_oscar_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
-	if (c != NULL) {
-		if (od)
-			od->oscar_chats = g_slist_remove(od->oscar_chats, c);
-		if (c->inpa > 0)
-			gaim_input_remove(c->inpa);
-		if (gc && od->sess)
-			aim_conn_kill(od->sess, &c->conn);
-		g_free(c->name);
-		g_free(c->show);
-		g_free(c);
-	}
-	/* we do this because with Oscar it doesn't tell us we left */
-	serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
+	cc = find_oscar_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
+	oscar_chat_kill(gc, cc);
 }
 
 static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {

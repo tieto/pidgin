@@ -192,7 +192,7 @@ static int negchan_middle(aim_session_t *sess, aim_frame_t *fr)
 	if (aim_tlv_gettlv(tlvlist, 0x000b, 1))
 		msg = aim_tlv_getstr(tlvlist, 0x000b, 1);
 
-	if ((userfunc = aim_callhandler(sess, fr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR))) 
+	if ((userfunc = aim_callhandler(sess, fr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR)))
 		ret = userfunc(sess, fr, code, msg);
 
 	aim_tlvlist_free(&tlvlist);
