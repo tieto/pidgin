@@ -389,6 +389,10 @@ extern void show_debug(GtkObject *);
 void sighandler(int sig)
 {
 	switch (sig) {
+	case SIGHUP:
+		debug_printf("caught signal %d\n", sig);
+		signoff_all(NULL, NULL);
+		break;
 	case SIGSEGV:
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
 				"Please notify the gaim maintainers by reporting a bug at\n"
@@ -458,6 +462,7 @@ int main(int argc, char *argv[])
 #endif
 	signal(SIGHUP, sighandler);
 	signal(SIGINT, sighandler);
+	signal(SIGTERM, sighandler);
 	signal(SIGPIPE, SIG_IGN);
 #endif
 
