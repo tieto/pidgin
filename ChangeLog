@@ -21,8 +21,9 @@ version 0.69
 	* The right-click menu for conversation tabs now shows the tab icon
 	  and status, if tab icons are enabled. (Jesse Farmer)
 	* Chinese (Simplified) translation updated (Funda Wang)
+	* French translation updated (Eric Boumaour)
 	* Korean translation updated (Kyung-uk Son)
-	* Polish translation updated (Przemys?aw Su?ek, Krzysztof, and Emil)
+	* Polish translation updated (Przemys≈Çaw Su≈Çek, Krzysztof, and Emil)
 	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
 	  Rodrigues Collares Neto)
 	* Portuguese (Portugal) added (Duarte Henriques)
@@ -211,7 +212,7 @@ version 0.60 (04/04/2003):
 	* Tray icon plugin--replaces the old GNOME applet. You'll need 
 	  the panel Notification Area applet (aka system-tray-applet) 
 	  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert 
-	  McQueen, Nicol·s Lichtmaier, Kristian Rietveld, Ari Pollak &
+	  McQueen, Nicol√°s Lichtmaier, Kristian Rietveld, Ari Pollak &
 	  Patrick Aussems)
 	* Added GAIM::remove_event_handler and made set_info short
 	  circuitable in perl. (Thanks, Ryan McCabe)
@@ -251,7 +252,7 @@ version 0.60 (04/04/2003):
 
 	IRC:
 	* Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff,
-	  -- and other cool IRC enhancments. (Thanks, Jonas BirmÈ)
+	  -- and other cool IRC enhancments. (Thanks, Jonas Birm√©)
 	* IRC's /topic with no argument displays the current topic (Thanks, 
 	  Mark Doliner)
 	* DCC File Receive support for IRC.
@@ -297,7 +298,7 @@ version 0.60 (04/04/2003):
 	Other:
 	* Optionally uniquely colorize nicks in chats
 	* Add / Remove buddy menu item added to the chat users list
-	  (Thanks, Jonas BirmÈ)
+	  (Thanks, Jonas Birm√©)
 	* View log button in conversation toolbar (Thanks, Etan Reisner)
 	* Option to log IMs and Chats seperately. (Thanks, Etan
 	  Reisner)
