@@ -119,4 +119,10 @@ void gaim_gtk_blist_docklet_add();
 void gaim_gtk_blist_docklet_remove();
 void gaim_gtk_blist_update_columns();
 
+/**
+ * Useful for the buddy ticker
+ */
+GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b,
+		GaimStatusIconSize size);
+
 #endif /* _GAIM_GTK_LIST_H_ */

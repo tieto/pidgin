@@ -63,7 +63,6 @@ static gboolean gaim_gtk_blist_obscured = FALSE;
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(struct buddy *b);
-static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
 /***************************************************
@@ -749,7 +748,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 
 }
 
-static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size)
+GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size)
 {
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *scale = NULL;
@@ -1129,6 +1128,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+
+	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
