@@ -593,11 +593,8 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		 * In MSN, you can't send messages to yourself, so
 		 * we'll fake like we received it ;)
 		 */
-		gchar *fakemsg = gaim_escape_html(message);
 		serv_got_typing_stopped(gc, (char *)who);
-		serv_got_im(gc, who, fakemsg, flags,
-					time(NULL));
-		g_free(fakemsg);
+		serv_got_im(gc, who, message, flags, time(NULL));
 	}
 
 	return 1;
@@ -1069,7 +1066,8 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
-	char *send, *recv;
+	char *msgformat;
+	char *msgtext;
 
 	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
@@ -1078,23 +1076,21 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	if (swboard == NULL)
 		return -EINVAL;
 
-	send = gaim_str_add_cr(message);
+	msn_import_html(message, &msgformat, &msgtext);
 
 	msg = msn_message_new();
-	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
-	msn_message_set_body(msg, send);
+	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+	msn_message_set_body(msg, msgtext);
 
-	g_free(send);
+	g_free(msgformat);
+	g_free(msgtext);
 
 	msn_switchboard_send_msg(swboard, msg);
 
 	msn_message_destroy(msg);
 
-	recv = gaim_escape_html(message);
 	serv_got_chat_in(gc, id, gaim_account_get_username(account),
-					 0, recv, time(NULL));
-	g_free(recv);
+					 0, message, time(NULL));
 
 	return 0;
 }
