@@ -1335,7 +1335,8 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					scalable->add_to(scalable, imhtml, &iter);
 					scalable->scale(scalable, rect.width, rect.height);
 					imhtml->scalables = g_list_append(imhtml->scalables, scalable);
-					ws[wpos++] = '\n';
+                    ws[0] = '\n';
+                    ws[1] = NULL;
 					break;
 				case 27:	/* /FONT */
 					if (fonts) {
