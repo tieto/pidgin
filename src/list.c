@@ -799,7 +799,7 @@ void do_export(struct gaim_connection *g)
 		toc_build_config(g, buf, 8192 - 1, TRUE);
 		fprintf(f, "%s\n", buf);
 		fclose(f);
-		chmod(buf, S_IRUSR | S_IWUSR);
+		chmod(path, S_IRUSR | S_IWUSR);
 	} else {
 		debug_printf("unable to write %s\n", path);
 	}
