@@ -1560,6 +1560,15 @@ static void sound_page()
 	omenu = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
+	opt = gtk_menu_item_new_with_label("Console Beep");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_BEEP);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_BEEP) && !driver) driver = i;
+	i++;
+
 #ifdef ESD_SOUND
 	opt = gtk_menu_item_new_with_label("ESD");
 	gtk_signal_connect(GTK_OBJECT(opt), "activate",
@@ -1598,15 +1607,6 @@ static void sound_page()
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 	if ((sound_options & OPT_SOUND_NORMAL) && !driver) driver = i;
-	i++;
-
-	opt = gtk_menu_item_new_with_label("Console Beep");
-	gtk_signal_connect(GTK_OBJECT(opt), "activate",
-			   GTK_SIGNAL_FUNC(set_sound_driver), 
-			   (gpointer)OPT_SOUND_BEEP);
-	gtk_widget_show(opt);
-	gtk_menu_append(GTK_MENU(menu), opt);
-	if ((sound_options & OPT_SOUND_BEEP) && !driver) driver = i;
 	i++;
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
