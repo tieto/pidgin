@@ -112,10 +112,10 @@ msn_xbox.png		(xx)
 yahoo_angel.gif		o:-) O:-) 0:-)
 yahoo_angry.gif		X-( x-( X( x(
 yahoo_batting.gif	;;)
-yahoo_bigsmile.gif	:D :-D
+yahoo_bigsmile.gif	:D :-D :d :-d
 yahoo_blush.gif		:">
 yahoo_bye.gif		=;
-yahoo_clap.gif		=D>
+yahoo_clap.gif		=D> =d>
 yahoo_clown.gif		:o) :O) :0)
 yahoo_cry.gif		:(( :-((
 yahoo_devil.gif		>:)
@@ -123,13 +123,13 @@ yahoo_doh.gif		#-o #-O
 yahoo_drool.gif		=P~
 yahoo_eyebrow.gif	/:) /:-)
 yahoo_eyeroll.gif	8-|
-yahoo_glasses.gif	:-B
+yahoo_glasses.gif	:-B :-b
 yahoo_kiss.gif		:* :-*
 yahoo_laughloud.gif	:)) :-))
 yahoo_love.gif		:x :-x :X :-X
 yahoo_mean.gif		:> :->
 yahoo_neutral.gif	:| :-|
-yahoo_ooooh.gif		:O :-O
+yahoo_ooooh.gif		:O :-O :o :-o
 yahoo_question.gif	:-\ :-/
 yahoo_sad.gif		:( :-(
 yahoo_shhhh.gif		:-$
@@ -148,34 +148,34 @@ yahoo_worried.gif	:-s :-S
 # These are like supposed to be hidden.  I'm not hiding them
 yahoo_alien.gif		=:) =:-)
 yahoo_alien2.gif	>-)
-yahoo_beatup.gif	b-(
+yahoo_beatup.gif	b-( B-(
 yahoo_chicken.gif	~:>
-yahoo_coffee.gif	~o)
+yahoo_coffee.gif	~o) ~O)
 yahoo_cow.gif		3:-0 3:-O 3:-o
 yahoo_cowboy.gif	<):)
-yahoo_dance.gif		\:D/
+yahoo_dance.gif		\:D/ \:d/
 yahoo_flower.gif	@};-
-yahoo_frustrated.gif	:-L
-yahoo_ghost.gif		8-X
-yahoo_huggs.gif		>:D<
+yahoo_frustrated.gif	:-L :-l
+yahoo_ghost.gif		8-X 8-x
+yahoo_huggs.gif		>:D< >:d<
 yahoo_hypnotized.gif	@-)
 yahoo_idea.gif		*-:)
-yahoo_liar.gif		:^o
+yahoo_liar.gif		:^o :^O
 yahoo_monkey.gif	:(|)
 yahoo_moneyeyes.gif	$-)
 yahoo_peace.gif		:)>-
 yahoo_pig.gif		:@)
-yahoo_pray.gif		[-o<
+yahoo_pray.gif		[-o< [-O<
 yahoo_pumpkin.gif	(~~)
-yahoo_shame.gif		[-X
+yahoo_shame.gif		[-X [-x
 yahoo_flag.gif		**==
 yahoo_shamrock.gif	%%-
 yahoo_whistling.gif	:-"
 
 # These only work in a certain IMvironment
-yahoo_malefighter1.gif	o->
-yahoo_malefighter2.gif	o=>
-yahoo_femalefighter.gif	o-+
+yahoo_malefighter1.gif	o-> O->
+yahoo_malefighter2.gif	o=> O=>
+yahoo_femalefighter.gif	o-+ O-+
 yahoo_yingyang.gif	(%)
 
 # New in Yahoo 6
