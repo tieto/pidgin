@@ -287,8 +287,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	y = g_strndup(result, 16);
 
-	a1 = g_strdup_printf("%s:%s:%s:%s@%s", y, nonce, cnonce, jid->node,
-			jid->domain);
+	a1 = g_strdup_printf("%s:%s:%s", y, nonce, cnonce);
 
 	md5_init(&ctx);
 	md5_append(&ctx, a1, strlen(a1));
@@ -399,8 +398,6 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
 			g_string_append_printf(response, ",response=%s", auth_resp);
 			g_string_append_printf(response, ",charset=utf-8");
-			g_string_append_printf(response, ",authzid=\"%s@%s\"",
-					js->user->node, js->user->domain);
 
 			g_free(auth_resp);
 			g_free(cnonce);
