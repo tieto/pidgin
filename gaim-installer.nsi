@@ -58,20 +58,33 @@ Section "" ; (default section)
     ReadRegStr $R1 HKEY_LOCAL_MACHINE "SOFTWARE\gaim" "Version"
     ; Version key started with 0.60a3. Prior versions can't be 
     ; automaticlly uninstalled.
-    StrCmp $R1 "" uninstall_first_no_ver
+    StrCmp $R1 "" uninstall_error
       ; Version found - Read in uninstall string.
       ReadRegStr $R2 HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "UninstallString"
-      StrCmp $R2 "" uninstall_first_no_ver
+      StrCmp $R2 "" uninstall_error
         ; Have uninstall string.. go ahead and uninstall.
-	ExecWait '$R2 /S _?=$R0'
-	IfErrors "" cont_install
-        ; Errors occured
-        MessageBox MB_OK "Errors encountered while trying to uninstall previous version of Gaim, continuing installation.." IDOK
-	Goto cont_install
+	SetOverwrite on
+	; Need to copy uninstaller outside of the install dir so that when deleting
+	; the install dir we won't come across an in use binary.
+	CopyFiles /SILENT $R2 "$TEMP\gaim-uninst.exe"
+	SetOverwrite off
+	IfErrors uninstall_error uninstall_copy
+	uninstall_copy:
+	  ExecWait '"$TEMP\gaim-uninst.exe" /S _?=$R0'
+	  IfErrors exec_error exec_cont
+	  exec_cont:
+	    Delete "$TEMP\gaim-uninst.exe"
+	    Goto cont_install
+	  exec_error:
+	    Delete "$TEMP\gaim-uninst.exe"
 
-      uninstall_first_no_ver:
-        MessageBox MB_OK "Gaim already exists on this machine. Uninstall first then try again." IDOK
-        Quit
+      uninstall_error:
+	; In this case just wipe out previous Gaim install dir..
+	; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
+	; and versions 0.60 and lower did not correctly set the uninstall reg string 
+	; (the string was set in quotes)
+	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Gaim"
+	RMDir /r "$R0"
 
   cont_install:
   ; Check to see if GTK+ Runtime is installed.
@@ -108,7 +121,7 @@ Section "" ; (default section)
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "${GAIM_VERSION}"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
-  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "UninstallString" '"$INSTDIR\gaim-uninst.exe"'
+  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "UninstallString" "$INSTDIR\gaim-uninst.exe"
   ; Set App path to include GTK+ lib dir
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe" "" "$INSTDIR\gaim.exe"
   ; Concat GTK+ path and lib dir
