@@ -7,7 +7,10 @@
  */
 
 #include <faim/aim.h> 
+
+#ifndef _WIN32
 #include <sys/socket.h>
+#endif
 
 /*
  * Since not all implementations support MSG_WAITALL, define
@@ -18,7 +21,7 @@
  * take more for a badly fragmented packet.
  *
  */
-static int aim_recv(int fd, void *buf, size_t count)
+faim_internal int aim_recv(int fd, void *buf, size_t count)
 {
 #ifdef MSG_WAITALL
   return recv(fd, buf, count, MSG_WAITALL);
@@ -28,7 +31,7 @@ static int aim_recv(int fd, void *buf, size_t count)
   left = count;
 
   while (left) {
-    ret = read(fd, ((unsigned char *)buf)+cur, left);
+    ret = recv(fd, ((unsigned char *)buf)+cur, left, 0);
     if (ret == -1)
       return -1;
     if (ret == 0)

@@ -7,6 +7,10 @@
 
 #include <faim/aim.h>
 
+#ifndef _WIN32
+#include <sys/socket.h>
+#endif
+
 /*
  * Allocate a new tx frame.
  *
@@ -19,7 +23,7 @@
  * chan = channel for OSCAR, hdrtype for OFT
  *
  */
-faim_internal struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen)
+faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int chan, struct aim_conn_t *conn, int datalen)
 {
   struct command_tx_struct *new;
 
@@ -286,7 +290,7 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
    * since OFT allows us to do the data in a different write (yay!).
    */
   faim_mutex_lock(&cur->conn->active);
-  if ( (u_int)write(cur->conn->fd, curPacket, buflen) != buflen) {
+  if (send(cur->conn->fd, curPacket, buflen, 0) != buflen) {
     faim_mutex_unlock(&cur->conn->active);
     cur->sent = 1;
     aim_conn_kill(sess, &cur->conn);
@@ -294,7 +298,7 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
   }
 
   if ((cur->hdrtype == AIM_FRAMETYPE_OFT) && cur->commandlen) {
-    if (write(cur->conn->fd, cur->data, cur->commandlen) != cur->commandlen) {
+    if (send(cur->conn->fd, cur->data, cur->commandlen, 0) != (int)cur->commandlen) {
       /* 
        * Theres nothing we can do about this since we've already sent the 
        * header!  The connection is unstable.

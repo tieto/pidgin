@@ -60,7 +60,8 @@
 
 #ifdef _WIN32
 #define sleep Sleep
-#define strlen(x) (int)strlen(x)  /* win32 has a unsigned size_t */
+#define socklen_t int /* this must be a POSIXy thing */
+#define snprintf _snprintf /* I'm not sure whats wrong with Microsoft here */
 #endif
 
 #if defined(mach) && defined(__APPLE__)
@@ -73,7 +74,7 @@
 #define faim_shortfunc inline
 #endif
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WIN32_STATIC)
 /*
  * For a win32 DLL, we define WIN32_INDLL if this file
  * is included while compiling the DLL. If its not 
@@ -386,7 +387,7 @@ faim_internal struct aim_tlv_t *aim_createtlv(void);
 faim_internal int aim_freetlv(struct aim_tlv_t **oldtlv);
 faim_internal int aim_puttlv_16(u_char *, u_short, u_short);
 faim_internal int aim_puttlv_32(u_char *, u_short, u_long);
-faim_internal int aim_puttlv_str(u_char *buf, u_short t, u_short l, char *v);
+faim_internal int aim_puttlv_str(u_char *buf, u_short t, int l, char *v);
 faim_internal int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list);
 faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val);
 faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
@@ -400,7 +401,7 @@ faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list);
 faim_export int aim_get_command(struct aim_session_t *, struct aim_conn_t *);
 int aim_rxdispatch(struct aim_session_t *);
 
-u_long aim_debugconn_sendconnect(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_debugconn_sendconnect(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 int aim_logoff(struct aim_session_t *);
 
@@ -409,9 +410,9 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
 typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_register_callbacks(rxcallback_t *);
 
-u_long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
-u_long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
-u_long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
+faim_internal unsigned long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
+faim_internal unsigned long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
+faim_internal unsigned long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
 faim_internal struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
 
@@ -426,13 +427,14 @@ faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx
 faim_export unsigned long aim_sendredirect(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned short servid, char *ip, char *cookie);
 faim_export void aim_purge_rxqueue(struct aim_session_t *);
 faim_internal void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_internal int aim_recv(int fd, void *buf, size_t count);
 
 int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *command, ...);
 int aim_parse_missed_im(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
 faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn);
 
-faim_internal struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen);
+faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int chan, struct aim_conn_t *conn, int datalen);
 faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
 faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *, struct command_tx_struct *);
 #define aim_tx_enqueue(x, y) ((*(x->tx_enqueue))(x, y))
@@ -498,25 +500,25 @@ faim_export void aim_session_init(struct aim_session_t *);
 
 #define AIM_WARN_ANON                     0x01
 
-int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon);
-u_long aim_bos_nop(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
-u_long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
-u_long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);
-u_long aim_bos_setprofile(struct aim_session_t *, struct aim_conn_t *, char *, char *, unsigned int);
-u_long aim_bos_setgroupperm(struct aim_session_t *, struct aim_conn_t *, u_long);
-unsigned long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_reqrate(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_ackrateresp(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_setprivacyflags(struct aim_session_t *, struct aim_conn_t *, u_long);
-u_long aim_bos_reqpersonalinfo(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_reqservice(struct aim_session_t *, struct aim_conn_t *, u_short);
-unsigned long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
-unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
-u_long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon);
+faim_export unsigned long aim_bos_nop(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_setidle(struct aim_session_t *, struct aim_conn_t *, u_long);
+faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int, char *);
+faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);
+faim_export unsigned long aim_bos_setprofile(struct aim_session_t *, struct aim_conn_t *, char *, char *, unsigned short);
+faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *, struct aim_conn_t *, u_long);
+faim_export unsigned long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_reqrate(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_ackrateresp(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_setprivacyflags(struct aim_session_t *, struct aim_conn_t *, u_long);
+faim_export unsigned long aim_bos_reqpersonalinfo(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_reqservice(struct aim_session_t *, struct aim_conn_t *, u_short);
+faim_export unsigned long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
+faim_export unsigned long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 faim_internal struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
 faim_internal int aim_listenestablish(u_short);
@@ -552,7 +554,7 @@ faim_internal int aim_parse_outgoing_im_middle(struct aim_session_t *, struct co
 faim_export unsigned long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 faim_internal int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 faim_internal int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_parse_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+faim_internal int aim_parse_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 faim_internal int aim_parse_missedcall(struct aim_session_t *sess, struct command_rx_struct *command);
 
 faim_export struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);

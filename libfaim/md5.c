@@ -21,7 +21,7 @@
   ghost@aladdin.com
 
  */
-/*$Id: md5.c 751 2000-08-22 23:38:47Z warmenhoven $ */
+/*$Id: md5.c 899 2000-09-12 20:21:36Z warmenhoven $ */
 /*
   Independent implementation of MD5 (RFC 1321).
 
@@ -39,6 +39,7 @@
  */
 
 #include "md5.h"
+#include <string.h>
 
 #ifdef TEST
 /*

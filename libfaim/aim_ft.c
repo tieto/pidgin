@@ -1,12 +1,12 @@
 #include <faim/aim.h>
 
+#ifndef _WIN32
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/utsname.h> /* for aim_directim_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
-
-#include "config.h"
+#endif
 
 /* aim_msgcookies.c is mostly new. just look at the diff and replace yours, easiest. */
 
@@ -60,8 +60,6 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
   }
   case AIM_CONN_SUBTYPE_OFT_GETFILE: {
     struct aim_filetransfer_priv *priv;
-
-    priv->state = 0;
 
     priv = (struct aim_filetransfer_priv *)calloc(1, sizeof(struct aim_filetransfer_priv));
 
@@ -263,7 +261,7 @@ faim_export struct aim_conn_t *aim_directim_initiate(struct aim_session_t *sess,
   short port = 4443;
 
   struct hostent *hptr;
-  struct utsname myname;
+  char localhost[129];
 
   unsigned char cap[16];
   char d[4]; /* XXX: IPv6. *cough* */
@@ -279,10 +277,10 @@ faim_export struct aim_conn_t *aim_directim_initiate(struct aim_session_t *sess,
    * get our local IP
    */
 
-  if(uname(&myname) < 0)
+  if(gethostname(localhost, 128) < 0)
     return NULL;
 
-  if( (hptr = gethostbyname(myname.nodename)) == NULL)
+  if( (hptr = gethostbyname(localhost)) == NULL)
     return NULL;
 
   memcpy(&d, hptr->h_addr_list[0], 4); /* XXX: this probably isn't quite kosher, but it works */
@@ -307,7 +305,7 @@ faim_export struct aim_conn_t *aim_directim_initiate(struct aim_session_t *sess,
    * This cookie needs to be alphanumeric and NULL-terminated to be TOC-compatible.
    */
   for (i=0;i<7;i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, 0x30 + ((u_char) random() % 20));
+    curbyte += aimutil_put8(newpacket->data+curbyte, 0x30 + ((u_char) rand() % 20));
   curbyte += aimutil_put8(newpacket->data+curbyte, 0x00);
 
   /*
@@ -408,8 +406,10 @@ faim_export struct aim_conn_t *aim_directim_initiate(struct aim_session_t *sess,
    * allocate and set up our connection
    */
 
+#if 0
   i = fcntl(listenfd, F_GETFL, 0);
   fcntl(listenfd, F_SETFL, i | O_NONBLOCK);
+#endif
 
   newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS_OUT, NULL);
   if (!newconn) { 
@@ -646,7 +646,7 @@ faim_internal struct aim_fileheader_t *aim_getlisting(struct aim_session_t *sess
 
 faim_internal int aim_listenestablish(u_short portnum)
 {
-#if HAVE_GETADDRINFO
+#if defined(__linux__) /* XXX what other OS's support getaddrinfo? */
   int listenfd;
   const int on = 1;
   struct addrinfo hints, *res, *ressave;
@@ -678,8 +678,35 @@ faim_internal int aim_listenestablish(u_short portnum)
   }
   freeaddrinfo(ressave);
   return listenfd;
-#else
-  return -1;
+#else 
+  int listenfd;
+  const int on = 1;
+  struct sockaddr_in sockin;
+  
+  if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    perror("socket(listenfd)");
+    return -1;
+  } 
+  if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on) != 0)) {
+    perror("setsockopt(listenfd)");
+    close(listenfd);
+    return -1;
+  }
+  memset(&sockin, 0, sizeof(struct sockaddr_in));
+  sockin.sin_family = AF_INET;
+  sockin.sin_port = htons(portnum);
+  if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
+    perror("bind(listenfd)");
+    close(listenfd);
+    return -1;
+  }
+  if (listen(listenfd, 4) != 0) {
+    perror("listen(listenfd)");
+    close(listenfd);
+    return -1;
+  }
+
+  return listenfd;
 #endif
 }
 
@@ -699,7 +726,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
 
   faim_mutex_lock(&conn->active); /* gets locked down for the entirety */
 
-  if ( (hdrlen = read(conn->fd, hdrbuf1, 6)) < 6) {    
+  if ( (hdrlen = aim_recv(conn->fd, hdrbuf1, 6)) < 6) {    
     if(hdrlen < 0)
       perror("read");
     printf("faim: rend: read error (fd: %i) %02x%02x%02x%02x%02x%02x (%i)\n", conn->fd, hdrbuf1[0],hdrbuf1[1],hdrbuf1[0],hdrbuf1[0],hdrbuf1[0],hdrbuf1[0],hdrlen);
@@ -714,7 +741,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
   if (!(hdr = malloc(hdrlen)))
     return -1;
 
-  if (read(conn->fd, hdr, hdrlen) < hdrlen) {
+  if (aim_recv(conn->fd, hdr, hdrlen) < hdrlen) {
     perror("read");
     printf("faim: rend: read2 error\n");
     free(hdr);
@@ -756,7 +783,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
 	return 0;
       }
       
-      if (recv(conn->fd, msg, payloadlength, MSG_WAITALL) < payloadlength) {
+      if (aim_recv(conn->fd, msg, payloadlength) < payloadlength) {
 	perror("read");
 	printf("faim: rend: read3 error\n");
 	free(msg);
@@ -815,7 +842,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
     data = calloc(1, commandlen);
     memcpy(data, "01/01/1999 00:00      100 file.txt\r\n", commandlen);
 
-    if (write(conn->fd, data, commandlen) != commandlen) {
+    if (send(conn->fd, data, commandlen, 0) != commandlen) {
       perror("listing write error");
     }
     faim_mutex_unlock(&conn->active);
@@ -911,8 +938,8 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
 
     if(newoft->commandlen > 0) {
       int i;
-      bzero(newoft->data, newoft->commandlen);
-      for(i = 0; i < newoft->commandlen; i++)
+      memset(newoft->data, 0, newoft->commandlen);
+      for(i = 0; i < (signed)newoft->commandlen; i++)
 	newoft->data[i] = 0x30 + (i%10);
 
       //      memcpy(newoft->data, "This has been a Test\r\n-josh\r\n", newoft->commandlen);
@@ -994,7 +1021,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
     for(i = 0; i < fh->size; i++)
       c[i] = 0x30 + (i%10);
 
-    if ( (i = write(conn->fd, c, fh->size)) != fh->size ) {
+    if ( (i = send(conn->fd, c, fh->size, 0)) != fh->size ) {
       printf("whoopsy, didn't write it all...\n");
     }
 

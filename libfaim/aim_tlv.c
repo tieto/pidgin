@@ -349,7 +349,7 @@ faim_internal int aim_puttlv_32(u_char *buf, u_short t, u_long v)
   return curbyte;
 }
 
-faim_internal int aim_puttlv_str(u_char *buf, u_short t, u_short l, char *v)
+faim_internal int aim_puttlv_str(u_char *buf, u_short t, int l, char *v)
 {
   int curbyte;
   

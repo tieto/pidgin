@@ -47,7 +47,7 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess,
    *
    */
   for (i=0;i<8;i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) random());
+    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) rand());
 
   /*
    * Channel ID

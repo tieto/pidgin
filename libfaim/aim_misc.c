@@ -21,9 +21,9 @@
  *  time.  
  *
  */
-u_long aim_bos_setidle(struct aim_session_t *sess,
-		       struct aim_conn_t *conn, 
-		       u_long idletime)
+faim_export unsigned long aim_bos_setidle(struct aim_session_t *sess,
+					  struct aim_conn_t *conn, 
+					  u_long idletime)
 {
   return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
 }
@@ -57,9 +57,10 @@ u_long aim_bos_setidle(struct aim_session_t *sess,
  *
  *
  */
-u_long aim_bos_changevisibility(struct aim_session_t *sess,
-				struct aim_conn_t *conn, 
-				int changetype, char *denylist)
+faim_export unsigned long aim_bos_changevisibility(struct aim_session_t *sess,
+						   struct aim_conn_t *conn, 
+						   int changetype, 
+						   char *denylist)
 {
   struct command_tx_struct *newpacket;
   int packlen = 0;
@@ -134,9 +135,9 @@ u_long aim_bos_changevisibility(struct aim_session_t *sess,
  * XXX: I can't stress the TODO enough.
  *
  */
-u_long aim_bos_setbuddylist(struct aim_session_t *sess,
-			    struct aim_conn_t *conn, 
-			    char *buddy_list)
+faim_export unsigned long aim_bos_setbuddylist(struct aim_session_t *sess,
+					       struct aim_conn_t *conn, 
+					       char *buddy_list)
 {
   int i, j;
 
@@ -206,11 +207,11 @@ u_long aim_bos_setbuddylist(struct aim_session_t *sess,
  *
  * 
  */
-u_long aim_bos_setprofile(struct aim_session_t *sess,
-			  struct aim_conn_t *conn, 
-			  char *profile,
-			  char *awaymsg,
-			  unsigned int caps)
+faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
+					     struct aim_conn_t *conn, 
+					     char *profile,
+					     char *awaymsg,
+					     unsigned short caps)
 {
   struct command_tx_struct *newpacket;
   int i = 0, tmp, caplen;
@@ -253,15 +254,15 @@ u_long aim_bos_setprofile(struct aim_session_t *sess,
  * a bitwise OR of all the user classes you want to see you.
  *
  */
-u_long aim_bos_setgroupperm(struct aim_session_t *sess,
-			    struct aim_conn_t *conn, 
-			    u_long mask)
+faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *sess,
+					       struct aim_conn_t *conn, 
+					       u_long mask)
 {
   return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
 
-int aim_parse_bosrights(struct aim_session_t *sess,
-			struct command_rx_struct *command, ...)
+faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
+				      struct command_rx_struct *command, ...)
 {
   rxcallback_t userfunc = NULL;
   int ret=1;
@@ -307,8 +308,8 @@ int aim_parse_bosrights(struct aim_session_t *sess,
  * TODO: Dynamisize.
  *
  */
-u_long aim_bos_clientready(struct aim_session_t *sess,
-			   struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_clientready(struct aim_session_t *sess,
+					      struct aim_conn_t *conn)
 {
   u_char command_2[] = {
      /* placeholders for dynamic data */
@@ -318,7 +319,10 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
      0x00, 0x01,   
      0x00, 0x03, 
      0x00, 0x04, 
-     0x07, 0xda,  
+     0x06, 0x86, /* the good ones */
+#if 0
+     0x07, 0xda, /* DUPLE OF DEATH! */
+#endif
 
      0x00, 0x02, 
      0x00, 0x01,  
@@ -380,8 +384,8 @@ u_long aim_bos_clientready(struct aim_session_t *sess,
  *  Request Rate Information.
  * 
  */
-u_long aim_bos_reqrate(struct aim_session_t *sess,
-		       struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqrate(struct aim_session_t *sess,
+					  struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
 }
@@ -390,8 +394,8 @@ u_long aim_bos_reqrate(struct aim_session_t *sess,
  *  Rate Information Response Acknowledge.
  *
  */
-u_long aim_bos_ackrateresp(struct aim_session_t *sess,
-			   struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_ackrateresp(struct aim_session_t *sess,
+					      struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int packlen = 20, i=0;
@@ -407,7 +411,10 @@ u_long aim_bos_ackrateresp(struct aim_session_t *sess,
   i += aimutil_put16(newpacket->data+i, 0x0003);
   i += aimutil_put16(newpacket->data+i, 0x0004);
   i += aimutil_put16(newpacket->data+i, 0x0005);
-  
+
+  newpacket->commandlen = i;
+  newpacket->lock = 0;
+
   aim_tx_enqueue(sess, newpacket);
 
   return (sess->snac_nextid);
@@ -422,9 +429,9 @@ u_long aim_bos_ackrateresp(struct aim_session_t *sess,
  *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
-u_long aim_bos_setprivacyflags(struct aim_session_t *sess,
-			       struct aim_conn_t *conn, 
-			       u_long flags)
+faim_export unsigned long aim_bos_setprivacyflags(struct aim_session_t *sess,
+						  struct aim_conn_t *conn, 
+						  u_long flags)
 {
   return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
 }
@@ -436,14 +443,14 @@ u_long aim_bos_setprivacyflags(struct aim_session_t *sess,
  * because aparently it uses SNAC flags.
  *
  */
-u_long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
-			       struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqpersonalinfo(struct aim_session_t *sess,
+						  struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0001, 0x000e);
 }
 
-u_long aim_setversions(struct aim_session_t *sess,
-                               struct aim_conn_t *conn)
+faim_export unsigned long aim_setversions(struct aim_session_t *sess,
+					  struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int i;
@@ -497,6 +504,8 @@ u_long aim_setversions(struct aim_session_t *sess,
     i += aimutil_put16(newpacket->data+i, 0x0003); /* version */
   }
 #endif
+
+  newpacket->commandlen = i;
   newpacket->lock = 0;
   aim_tx_enqueue(sess, newpacket);
 
@@ -510,7 +519,7 @@ u_long aim_setversions(struct aim_session_t *sess,
  * Service request. 
  *
  */
-u_long aim_bos_reqservice(struct aim_session_t *sess,
+faim_export unsigned long aim_bos_reqservice(struct aim_session_t *sess,
 			  struct aim_conn_t *conn, 
 			  u_short serviceid)
 {
@@ -524,8 +533,8 @@ u_long aim_bos_reqservice(struct aim_session_t *sess,
  * the connection alive.  Its not real necessary.
  *
  */
-u_long aim_bos_nop(struct aim_session_t *sess,
-		   struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_nop(struct aim_session_t *sess,
+				      struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
 }
@@ -536,8 +545,8 @@ u_long aim_bos_nop(struct aim_session_t *sess,
  * Request BOS rights.
  *
  */
-u_long aim_bos_reqrights(struct aim_session_t *sess,
-			 struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqrights(struct aim_session_t *sess,
+					    struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0009, 0x0002);
 }
@@ -548,8 +557,8 @@ u_long aim_bos_reqrights(struct aim_session_t *sess,
  * Request Buddy List rights.
  *
  */
-u_long aim_bos_reqbuddyrights(struct aim_session_t *sess,
-			      struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqbuddyrights(struct aim_session_t *sess,
+						 struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0003, 0x0002);
 }
@@ -564,7 +573,7 @@ u_long aim_bos_reqbuddyrights(struct aim_session_t *sess,
  * returns -1 on error (couldn't alloc packet), next snacid on success.
  *
  */
-int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon)
+faim_export int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *destsn, int anon)
 {
   struct command_tx_struct *newpacket;
   int curbyte;
@@ -592,15 +601,13 @@ int aim_send_warning(struct aim_session_t *sess, struct aim_conn_t *conn, char *
   return (sess->snac_nextid++);
 }
 
-
-
 /*
  * aim_debugconn_sendconnect()
  *
  * For aimdebugd.  If you don't know what it is, you don't want to.
  */
-u_long aim_debugconn_sendconnect(struct aim_session_t *sess,
-				 struct aim_conn_t *conn)
+faim_export unsigned long aim_debugconn_sendconnect(struct aim_session_t *sess,
+						    struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEBUGCONN_CONNECT);
 }
@@ -617,9 +624,9 @@ u_long aim_debugconn_sendconnect(struct aim_session_t *sess,
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-u_long aim_genericreq_n(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			u_short family, u_short subtype)
+faim_internal unsigned long aim_genericreq_n(struct aim_session_t *sess,
+					     struct aim_conn_t *conn, 
+					     u_short family, u_short subtype)
 {
   struct command_tx_struct *newpacket;
 
@@ -638,9 +645,10 @@ u_long aim_genericreq_n(struct aim_session_t *sess,
  *
  *
  */
-u_long aim_genericreq_l(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			u_short family, u_short subtype, u_long *longdata)
+faim_internal unsigned long aim_genericreq_l(struct aim_session_t *sess,
+					     struct aim_conn_t *conn, 
+					     u_short family, u_short subtype, 
+					     u_long *longdata)
 {
   struct command_tx_struct *newpacket;
   u_long newlong;
@@ -664,9 +672,10 @@ u_long aim_genericreq_l(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-u_long aim_genericreq_s(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			u_short family, u_short subtype, u_short *shortdata)
+faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
+					     struct aim_conn_t *conn, 
+					     u_short family, u_short subtype, 
+					     u_short *shortdata)
 {
   struct command_tx_struct *newpacket;
   u_short newshort;
@@ -696,8 +705,8 @@ u_long aim_genericreq_s(struct aim_session_t *sess,
  * Request Location services rights.
  *
  */
-u_long aim_bos_reqlocaterights(struct aim_session_t *sess,
-			       struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqlocaterights(struct aim_session_t *sess,
+						  struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0002, 0x0002);
 }
@@ -708,8 +717,8 @@ u_long aim_bos_reqlocaterights(struct aim_session_t *sess,
  * Request ICBM parameter information.
  *
  */
-u_long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
-				struct aim_conn_t *conn)
+faim_export unsigned long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
+						   struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0004, 0x0004);
 }
@@ -717,8 +726,8 @@ u_long aim_bos_reqicbmparaminfo(struct aim_session_t *sess,
 /*
  * Add ICBM parameter? Huh?
  */
-unsigned long aim_addicbmparam(struct aim_session_t *sess,
-			       struct aim_conn_t *conn)
+faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
+					   struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int packlen = 10+16, i=0;

@@ -568,7 +568,7 @@ faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s
   aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
   aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
   /* XXX: should put caps here */
-  aim_addtlvtochain32(&tlvlist, (info->class)&AIM_CLASS_AOL?0x0010:0x000f, info->sessionlen);
+  aim_addtlvtochain32(&tlvlist, (unsigned short)((info->class)&AIM_CLASS_AOL?0x0010:0x000f), info->sessionlen);
   
   i += aim_writetlvchain(buf+i, buflen-i, &tlvlist);
   aim_freetlvchain(&tlvlist);

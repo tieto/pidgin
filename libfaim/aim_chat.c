@@ -68,7 +68,7 @@ faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess,
    * Generate a random message cookie 
    */
   for (i=0;i<8;i++)
-    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) random());
+    curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) rand());
 
   aim_cachecookie(sess, aim_mkcookie(newpacket->data+curbyte-8, AIM_COOKIETYPE_CHAT, NULL));
 

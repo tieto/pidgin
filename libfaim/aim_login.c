@@ -107,11 +107,11 @@ faim_export int aim_send_login (struct aim_session_t *sess,
   if (strlen(clientinfo->clientstring))
     curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0003, strlen(clientinfo->clientstring), clientinfo->clientstring);
 
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, clientinfo->major2);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, clientinfo->minor2);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, (unsigned short)clientinfo->major2);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, (unsigned short)clientinfo->major);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, (unsigned short)clientinfo->minor);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, (unsigned short)clientinfo->minor2);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, (unsigned short)clientinfo->build);
   
   curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
@@ -352,7 +352,7 @@ faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess,
     aim_addtlvtochain_str(&tlvlist, 0x0005, bosip, strlen(bosip));
     aim_addtlvtochain_str(&tlvlist, 0x0006, cookie, AIM_COOKIELEN);
     aim_addtlvtochain_str(&tlvlist, 0x0011, email, strlen(email));
-    aim_addtlvtochain16(&tlvlist, 0x0013, regstatus);
+    aim_addtlvtochain16(&tlvlist, 0x0013, (unsigned short)regstatus);
   }
 
   tx->commandlen = aim_writetlvchain(tx->data, tx->commandlen, &tlvlist);

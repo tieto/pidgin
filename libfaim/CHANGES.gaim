@@ -1,4 +1,10 @@
 
+Tue Sep 12 20:20:07 UTC 2000 EWarmenhoven
+	- Oscar works again. :)
+	- I'm updating to the latest libfaim. Everything should theoretically
+	  work, except some users (notably Solaris) may not be able to start
+	  Direct IM. Please tell me if you can't.
+
 Mon Sep  4 01:08:33 UTC 2000 EWarmenhoven
 	- libfaim updates, gaim updates.
 	- hopefully gaim/faim is much more stable now
