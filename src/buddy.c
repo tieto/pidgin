@@ -2324,17 +2324,21 @@ static gboolean configure_blist_window(GtkWidget *w, GdkEventConfigure *event, g
 	 * more likely to work correctly.                        - Robot101 */
 	gint x, y;
 
-	gtk_window_get_position(GTK_WINDOW(blist), &x, &y);
+	/* check for visibility because when we aren't visible, this will   *
+	 *  give us bogus (0,0) coordinates.                     - xOr      */
+	if (GTK_WIDGET_VISIBLE(blist)) {
+	  gtk_window_get_position(GTK_WINDOW(blist), &x, &y);
 
-	if (x != blist_pos.x ||
-	    y != blist_pos.y ||
-	    event->width != blist_pos.width ||
-	    event->height != blist_pos.height) {
-		blist_pos.x = x;
-		blist_pos.y = y;
-		blist_pos.width = event->width;
-		blist_pos.height = event->height;
-		save_prefs();
+	  if (x != blist_pos.x ||
+	      y != blist_pos.y ||
+	      event->width != blist_pos.width ||
+	      event->height != blist_pos.height) {
+	    blist_pos.x = x;
+	    blist_pos.y = y;
+	    blist_pos.width = event->width;
+	    blist_pos.height = event->height;
+	    save_prefs();
+	  }
 	}
 	return FALSE;
 }

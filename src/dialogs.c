@@ -405,7 +405,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	w->window = gtk_dialog_new_with_buttons("", GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "_Warn", GTK_RESPONSE_OK, NULL);
+	w->window = gtk_dialog_new_with_buttons("", GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 
@@ -689,7 +689,7 @@ void show_im_dialog()
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
 		info->gc = connections->data;
-		imdialog = gtk_dialog_new_with_buttons("Gaim - New Message", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
+		imdialog = gtk_dialog_new_with_buttons(_("Gaim - New Message"), blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
 						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(imdialog), 6);
@@ -787,7 +787,7 @@ void show_info_dialog()
 	g_free(filename);
 	info->gc = connections->data;
 
-	window = gtk_dialog_new_with_buttons("Gaim - Get User Info", blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
+	window = gtk_dialog_new_with_buttons(_("Gaim - Get User Info"), blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -1706,7 +1706,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	while (u) {
 		a = (struct aim_user *)u->data;
 		p = (struct prpl *)find_prpl(a->protocol);
-		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name:"Unknown");
+		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name:_("Unknown"));
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), a);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
@@ -2064,7 +2064,7 @@ void show_set_dir(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	g_snprintf(buf, sizeof(buf), "Setting Dir Info for %s:", gc->username);
+	g_snprintf(buf, sizeof(buf), _("Setting Dir Info for %s:"), gc->username);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
@@ -2249,7 +2249,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	g_snprintf(buf, sizeof(buf), "Changing password for %s:", gc->username);
+	g_snprintf(buf, sizeof(buf), _("Changing password for %s:"), gc->username);
 	label = gtk_label_new(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
@@ -2339,7 +2339,7 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_widget_show(vbox);
 
 	buf = g_malloc(256);
-	g_snprintf(buf, 256, "Changing info for %s:", tmp->username);
+	g_snprintf(buf, 256, _("Changing info for %s:"), tmp->username);
 	label = gtk_label_new(buf);
 	g_free(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
@@ -4075,7 +4075,7 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "system", tmp);
 	}
 	if ((fp = fopen(filename, "r")) == NULL) {
-		g_snprintf(buf, BUF_LONG, "Couldn't open log file %s.", filename);
+		g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
 		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 		return;
 	}
@@ -4195,9 +4195,9 @@ void show_log(char *nm)
 	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_log_win), NULL);
 	gtk_window_set_role(GTK_WINDOW(window), "log");
 	if (name)
-		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
+		g_snprintf(buf, BUF_LONG, _("Gaim - Conversations with %s"), name);
 	else
-		g_snprintf(buf, BUF_LONG, "Gaim - System Log");
+		g_snprintf(buf, BUF_LONG, _("Gaim - System Log"));
 	gtk_window_set_title(GTK_WINDOW(window), buf);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
@@ -4218,7 +4218,7 @@ void show_log(char *nm)
 		char *tmp = gaim_user_dir();
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, normalize(name));
 		if ((fp = fopen(filename, "r")) == NULL) {
-			g_snprintf(buf, BUF_LONG, "Couldn't open log file %s", filename);
+			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s"), filename);
 			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 			return;
 		}

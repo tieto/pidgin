@@ -26,6 +26,8 @@ src/conversation.c
 src/dialogs.c
 src/ft.c
 src/gaimrc.c
+src/gtkconv.c
+src/gtkutils.c
 src/html.c
 src/list.c
 src/log.c
