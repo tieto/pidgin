@@ -362,7 +362,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			return;
 		}
 		if (cnv != NULL) {
-			play_sound(RECEIVE);
+			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
+				play_sound(RECEIVE);
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
 		}
 
