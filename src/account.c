@@ -324,21 +324,29 @@ gaim_account_get_remember_password(const GaimAccount *account)
 	return account->remember_pass;
 }
 
+gboolean
+gaim_account_get_check_mail(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	return account->check_mail;
+}
+
 int
 gaim_account_get_int(const GaimAccount *account, const char *name,
 					 int default_value)
 {
 	GaimAccountSetting *setting;
 
-	g_return_val_if_fail(account != NULL, -1);
-	g_return_val_if_fail(name    != NULL, -1);
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
 
 	setting = g_hash_table_lookup(account->settings, name);
 
 	if (setting == NULL)
 		return default_value;
 
-	g_return_val_if_fail(setting->type == GAIM_PREF_INT, -1);
+	g_return_val_if_fail(setting->type == GAIM_PREF_INT, default_value);
 
 	return setting->value.integer;
 }
@@ -349,15 +357,15 @@ gaim_account_get_string(const GaimAccount *account, const char *name,
 {
 	GaimAccountSetting *setting;
 
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(name    != NULL, NULL);
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
 
 	setting = g_hash_table_lookup(account->settings, name);
 
 	if (setting == NULL)
 		return default_value;
 
-	g_return_val_if_fail(setting->type == GAIM_PREF_STRING, NULL);
+	g_return_val_if_fail(setting->type == GAIM_PREF_STRING, default_value);
 
 	return setting->value.string;
 }
@@ -368,15 +376,15 @@ gaim_account_get_bool(const GaimAccount *account, const char *name,
 {
 	GaimAccountSetting *setting;
 
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(name    != NULL, FALSE);
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
 
 	setting = g_hash_table_lookup(account->settings, name);
 
 	if (setting == NULL)
 		return default_value;
 
-	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, FALSE);
+	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, default_value);
 
 	return setting->value.bool;
 }

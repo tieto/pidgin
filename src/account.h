@@ -38,6 +38,7 @@ struct _GaimAccount
 	char *buddy_icon;           /**< The buddy icon.             */
 
 	gboolean remember_pass;     /**< Remember the password.      */
+	gboolean check_mail;        /**< Check for mail.             */
 
 	GaimProtocol protocol;      /**< The account protocol.       */
 
@@ -150,6 +151,14 @@ void gaim_account_set_connection(GaimAccount *account, GaimConnection *gc);
 void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
 
 /**
+ * Sets whether or not this account should check for mail.
+ *
+ * @param account The account.
+ * @param value   @c TRUE if it should check for mail.
+ */
+void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
+
+/**
  * Sets a protocol-specific integer setting for an account.
  *
  * @param account The account.
@@ -259,6 +268,15 @@ GaimConnection *gaim_account_get_connection(const GaimAccount *account);
  * @return @c TRUE if it should remember the password.
  */
 gboolean gaim_account_get_remember_password(const GaimAccount *account);
+
+/**
+ * Returns whether or not this account should check for mail.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if it should check for mail.
+ */
+gboolean gaim_account_get_check_mail(const GaimAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.
