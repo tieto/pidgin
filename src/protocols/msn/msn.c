@@ -41,8 +41,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static const char *msn_normalize(const GaimAccount *account, const char *str);
-
 typedef struct
 {
 	GaimConnection *gc;
@@ -57,29 +55,42 @@ typedef struct
 
 } MsnGetInfoData;
 
+static const char *
+msn_normalize(const GaimAccount *account, const char *str)
+{
+	static char buf[BUF_LEN];
+	char *tmp;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	g_snprintf(buf, sizeof(buf), "%s%s", str,
+			   (strchr(str, '@') ? "" : "@hotmail.com"));
+
+	tmp = g_utf8_strdown(buf, -1);
+	strncpy(buf, tmp, sizeof(buf));
+	g_free(tmp);
+
+	return buf;
+}
+
 static void
 msn_act_id(GaimConnection *gc, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	GaimAccount *account;
-	char *alias;
+	const char *alias;
 
 	session = gc->proto_data;
 	cmdproc = session->notification_conn->cmdproc;
 	account = gaim_connection_get_account(gc);
 
-	if (entry == NULL || *entry == '\0')
-		alias = g_strdup("");
-	else
-		alias = g_strdup(entry);
+	alias = (entry && *entry) ? entry : "";
 
 	if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
 	{
 		gaim_notify_error(gc, NULL,
 						  _("Your new MSN friendly name is too long."), NULL);
-
-		g_free(alias);
 
 		return;
 	}
@@ -87,8 +98,6 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	msn_cmdproc_send(cmdproc, "REA", "%s %s",
 					 gaim_account_get_username(account),
 					 gaim_url_encode(alias));
-
-	g_free(alias);
 }
 
 static void
@@ -102,7 +111,7 @@ msn_set_prp(GaimConnection *gc, const char *type, const char *entry)
 
 	if (entry == NULL || *entry == '\0')
 	{
-		msn_cmdproc_send(cmdproc, "PRP", "%s  ", type);
+		msn_cmdproc_send(cmdproc, "PRP", "%s", type);
 	}
 	else
 	{
@@ -188,7 +197,10 @@ close_mobile_page_cb(MsnMobileData *data, const char *entry)
 static void
 msn_show_set_friendly_name(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
+	GaimConnection *gc;
+
+	gc = (GaimConnection *) action->context;
+
 	gaim_request_input(gc, NULL, _("Set your friendly name."),
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
@@ -200,8 +212,11 @@ msn_show_set_friendly_name(GaimPluginAction *action)
 static void
 msn_show_set_home_phone(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	MsnSession *session = gc->proto_data;
+	GaimConnection *gc;
+	MsnSession *session;
+
+	gc = (GaimConnection *) action->context;
+	session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your home phone number."), NULL,
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
@@ -212,8 +227,11 @@ msn_show_set_home_phone(GaimPluginAction *action)
 static void
 msn_show_set_work_phone(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	MsnSession *session = gc->proto_data;
+	GaimConnection *gc;
+	MsnSession *session;
+
+	gc = (GaimConnection *) action->context;
+	session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your work phone number."), NULL,
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
@@ -224,8 +242,11 @@ msn_show_set_work_phone(GaimPluginAction *action)
 static void
 msn_show_set_mobile_phone(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	MsnSession *session = gc->proto_data;
+	GaimConnection *gc;
+	MsnSession *session;
+
+	gc = (GaimConnection *) action->context;
+	session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
@@ -236,7 +257,10 @@ msn_show_set_mobile_phone(GaimPluginAction *action)
 static void
 msn_show_set_mobile_pages(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
+	GaimConnection *gc;
+
+	gc = (GaimConnection *) action->context;
+
 	gaim_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
 			_("Do you want to allow or disallow people on "
 			  "your buddy list to send you MSN Mobile pages "
@@ -308,7 +332,7 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	swboard->chat = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
-			gaim_account_get_username(buddy->account), NULL);
+							gaim_account_get_username(buddy->account), NULL);
 }
 
 /**************************************************************************
@@ -339,7 +363,8 @@ msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 	else if (away_type != 0)
 		emblems[i++] = "away";
 
-	if (user == NULL) {
+	if (user == NULL)
+	{
 		emblems[0] = "offline";
 	}
 	else if (user->mobile)
@@ -365,7 +390,8 @@ msn_tooltip_text(GaimBuddy *b)
 {
 	char *text = NULL;
 
-	if (GAIM_BUDDY_IS_ONLINE(b)) {
+	if (GAIM_BUDDY_IS_ONLINE(b))
+	{
 		text = g_strdup_printf("\n<b>%s:</b> %s", _("Status"),
 							   msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
 	}
@@ -396,12 +422,12 @@ msn_actions(GaimPlugin *plugin, gpointer context)
 	GaimPluginAction *act;
 
 	act = gaim_plugin_action_new(_("Set Friendly Name"),
-			msn_show_set_friendly_name);
+								 msn_show_set_friendly_name);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
 	act = gaim_plugin_action_new(_("Set Home Phone Number"),
-			msn_show_set_home_phone);
+								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Set Work Phone Number"),
@@ -435,37 +461,40 @@ msn_buddy_menu(GaimBuddy *buddy)
 	GaimBlistNodeAction *act;
 
 	user = buddy->proto_data;
+
 	if (user != NULL)
 	{
 		if (user->mobile)
 		{
 			act = gaim_blist_node_action_new(_("Send to Mobile"),
-					show_send_to_mobile_cb, NULL);
+											 show_send_to_mobile_cb, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
-	if (g_ascii_strcasecmp(buddy->name, gaim_account_get_username(buddy->account)))
+	if (g_ascii_strcasecmp(buddy->name,
+						   gaim_account_get_username(buddy->account)))
 	{
 		act = gaim_blist_node_action_new(_("Initiate Chat"),
-				initiate_chat_cb, NULL);
+										 initiate_chat_cb, NULL);
 		m = g_list_append(m, act);
 	}
 
 	return m;
 }
 
-
 static GList *
 msn_blist_node_menu(GaimBlistNode *node)
 {
-	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+	if(GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
 		return msn_buddy_menu((GaimBuddy *) node);
-	} else {
+	}
+	else
+	{
 		return NULL;
 	}
 }
-
 
 static void
 msn_login(GaimAccount *account)
@@ -473,7 +502,7 @@ msn_login(GaimAccount *account)
 	GaimConnection *gc;
 	MsnSession *session;
 	const char *username;
-	const char *server;
+	const char *host;
 	gboolean http_method = FALSE;
 	int port;
 
@@ -495,16 +524,16 @@ msn_login(GaimAccount *account)
 
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "using http method\n");
 
-		server = "gateway.messenger.hotmail.com";
+		host = "gateway.messenger.hotmail.com";
 		port   = 80;
 	}
 	else
 	{
-		server = gaim_account_get_string(account, "server", MSN_SERVER);
-		port   = gaim_account_get_int(account,    "port",   MSN_PORT);
+		host = gaim_account_get_string(account, "server", MSN_SERVER);
+		port = gaim_account_get_int(account,    "port",   MSN_PORT);
 	}
 
-	session = msn_session_new(account, server, port);
+	session = msn_session_new(account, host, port);
 	session->http_method = http_method;
 	session->prpl = my_protocol;
 
@@ -551,27 +580,26 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			GaimConvImFlags flags)
 {
 	GaimAccount *account;
-	MsnSession *session;
-	MsnSwitchBoard *swboard;
 
 	account = gaim_connection_get_account(gc);
-	session = gc->proto_data;
-	swboard = msn_session_find_switch_with_passport(session, who);
 
 	if (g_ascii_strcasecmp(who, gaim_account_get_username(account)))
 	{
+		MsnSession *session;
+		MsnSwitchBoard *swboard;
 		MsnMessage *msg;
 		MsnUser *user;
 		char *msgformat;
 		char *msgtext;
 
+		session = gc->proto_data;
+		swboard = msn_session_find_switch_with_passport(session, who);
 		user = msn_user_new(session, who, NULL);
 
 		msn_import_html(message, &msgformat, &msgtext);
 
-		msg = msn_message_new();
+		msg = msn_message_new_plain(msgtext);
 		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
-		msn_message_set_body(msg, msgtext);
 
 		g_free(msgformat);
 		g_free(msgtext);
@@ -616,7 +644,6 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
-	MsnUser *user;
 
 	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
@@ -637,20 +664,16 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	if (swboard == NULL)
 		return 0;
 
-	user = msn_user_new(session, who, NULL);
-
 	msg = msn_message_new();
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
-	msn_message_set_charset(msg, NULL);
 	msn_message_set_flag(msg, 'U');
 	msn_message_set_attr(msg, "TypingUser",
 						 gaim_account_get_username(account));
-	msn_message_set_attr(msg, "User-Agent", NULL);
-	msn_message_set_body(msg, "\r\n");
+	msn_message_set_bin_data(msg, "\r\n", 2);
 
 	msn_switchboard_send_msg(swboard, msg);
 
-	msn_user_destroy(user);
+	msn_message_destroy(msg);
 
 	return MSN_TYPING_SEND_TIMEOUT;
 }
@@ -659,7 +682,7 @@ static void
 msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	MsnSession *session;
-	const char *away;
+	const char *status;
 
 	session = gc->proto_data;
 
@@ -672,37 +695,37 @@ msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 	if (msg != NULL)
 	{
 		gc->away = g_strdup("");
-		away = "AWY";
+		status = "AWY";
 	}
 	else if (state)
 	{
 		gc->away = g_strdup("");
 
 		if (!strcmp(state, _("Away From Computer")))
-			away = "AWY";
+			status = "AWY";
 		else if (!strcmp(state, _("Be Right Back")))
-			away = "BRB";
+			status = "BRB";
 		else if (!strcmp(state, _("Busy")))
-			away = "BSY";
+			status = "BSY";
 		else if (!strcmp(state, _("On The Phone")))
-			away = "PHN";
+			status = "PHN";
 		else if (!strcmp(state, _("Out To Lunch")))
-			away = "LUN";
+			status = "LUN";
 		else if (!strcmp(state, _("Hidden")))
-			away = "HDN";
+			status = "HDN";
 		else
 		{
 			g_free(gc->away);
 			gc->away = NULL;
-			away = "NLN";
+			status = "NLN";
 		}
 	}
 	else if (gc->is_idle)
-		away = "IDL";
+		status = "IDL";
 	else
-		away = "NLN";
+		status = "NLN";
 
-	msn_session_change_status(session, away);
+	msn_session_change_status(session, status);
 }
 
 static void
@@ -1069,37 +1092,35 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
+
 	swboard = msn_session_find_switch_with_id(session, id);
+	g_return_if_fail(swboard != NULL);
 
-	if (swboard == NULL)
-		return;
+	cmdproc = swboard->cmdproc;
 
-	msn_cmdproc_send(swboard->cmdproc, "CAL", "%s", who);
+	msn_cmdproc_send(cmdproc, "CAL", "%s", who);
 }
 
 static void
 msn_chat_leave(GaimConnection *gc, int id)
 {
-	GaimAccount *account;
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
-	account = gaim_connection_get_account(gc);
 	swboard = msn_session_find_switch_with_id(session, id);
+	g_return_if_fail(swboard != NULL);
 
-	if (swboard == NULL)
-	{
-		serv_got_chat_left(gc, id);
-		return;
-	}
+	cmdproc = swboard->servconn->cmdproc;
 
-	msn_cmdproc_send_quick(swboard->cmdproc, "OUT", NULL, NULL);
+	msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
 	msn_switchboard_destroy(swboard);
 
-	serv_got_chat_left(gc, id);
+	/* serv_got_chat_left(gc, id); */
 }
 
 static int
@@ -1121,9 +1142,8 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 
 	msn_import_html(message, &msgformat, &msgtext);
 
-	msg = msn_message_new();
+	msg = msn_message_new_plain(msgtext);
 	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
-	msn_message_set_body(msg, msgtext);
 
 	g_free(msgformat);
 	g_free(msgtext);
@@ -1132,8 +1152,8 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 
 	msn_message_destroy(msg);
 
-	serv_got_chat_in(gc, id, gaim_account_get_username(account),
-					 0, message, time(NULL));
+	serv_got_chat_in(gc, id, gaim_account_get_username(account), 0,
+					 message, time(NULL));
 
 	return 0;
 }
@@ -1210,11 +1230,13 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 		if (cmdproc->error)
 			return;
 
+#if 0
 		if (msn_users_get_count(msn_group_get_users(old_group)) <= 0)
 		{
 			msn_cmdproc_send(cmdproc, "RMG", "%d",
 							 msn_group_get_id(old_group));
 		}
+#endif
 	}
 }
 
@@ -1225,16 +1247,17 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnGroup *old_group;
+	const char *enc_new_group_name;
 
 	session = gc->proto_data;
 	cmdproc = session->notification_conn->cmdproc;
+	enc_new_group_name = gaim_url_encode(new_group_name);
 
 	if ((old_group = msn_groups_find_with_name(session->groups,
 											   old_group_name)) != NULL)
 	{
 		msn_cmdproc_send(cmdproc, "REG", "%d %s 0",
-						 msn_group_get_id(old_group),
-						 gaim_url_encode(new_group_name));
+						 msn_group_get_id(old_group), enc_new_group_name);
 
 		if (cmdproc->error)
 			return;
@@ -1243,8 +1266,7 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "ADG", "%s 0",
-						 gaim_url_encode(new_group_name));
+		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
 	}
 }
 
@@ -1261,46 +1283,38 @@ msn_buddy_free(GaimBuddy *b)
 static void
 msn_convo_closed(GaimConnection *gc, const char *who)
 {
-	GaimAccount *account;
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	MsnCmdProc *cmdproc;
 
-	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
-	swboard = msn_session_find_switch_with_passport(session, who);
 
-	if (swboard != NULL && swboard->chat == NULL)
+	swboard = msn_session_find_switch_with_passport(session, who);
+	g_return_if_fail(swboard != NULL);
+
+	cmdproc = swboard->servconn->cmdproc;
+
+	if (swboard->chat == NULL)
 	{
-		msn_cmdproc_send_quick(swboard->cmdproc, "BYE", "%s",
+		GaimAccount *account;
+
+		account = gaim_connection_get_account(gc);
+
+		msn_cmdproc_send_quick(cmdproc, "BYE", "%s",
 							   gaim_account_get_username(account));
 
 		msn_switchboard_destroy(swboard);
 	}
 }
 
-static const char *
-msn_normalize(const GaimAccount *account, const char *str)
-{
-	static char buf[BUF_LEN];
-	char *tmp;
-
-	g_return_val_if_fail(str != NULL, NULL);
-
-	g_snprintf(buf, sizeof(buf), "%s%s", str,
-			   (strchr(str, '@') ? "" : "@hotmail.com"));
-
-	tmp = g_utf8_strdown(buf, -1);
-	strncpy(buf, tmp, sizeof(buf));
-	g_free(tmp);
-
-	return buf;
-}
-
 static void
 msn_set_buddy_icon(GaimConnection *gc, const char *filename)
 {
-	MsnSession *session = (MsnSession *)gc->proto_data;
-	MsnUser *user = session->user;
+	MsnSession *session;
+	MsnUser *user;
+
+	session = gc->proto_data;
+	user = session->user;
 
 	msn_user_set_buddy_icon(user, filename);
 
@@ -1341,9 +1355,9 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
 		gaim_notify_formatted(info_data->gc, NULL,
-			_("Buddy Information"), NULL,
-			_("<html><body><b>Error retrieving profile</b></body></html>"),
-			  NULL, NULL);
+							  _("Buddy Information"), NULL,
+							  _("<html><body><b>Error retrieving profile</b></body></html>"),
+							  NULL, NULL);
 
 		return;
 	}
@@ -1411,15 +1425,16 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		has_info = TRUE;
 
 	/* Extract their Age and put it in */
-	found = gaim_markup_extract_info_field(stripped, stripped_len, s,"\tAge",
-			0, "\t", '\n', "Undisclosed", _("Age"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
+			"\tAge", 0, "\t", '\n', "Undisclosed", _("Age"), 0, NULL);
 
 	if (found)
 		has_info = TRUE;
 
 	/* Extract their Gender and put it in */
-	found = gaim_markup_extract_info_field(stripped, stripped_len, s,"\tGender",
-			6, "\t", '\n', "Undisclosed", _("Gender"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
+			"\tGender", 6, "\t", '\n', "Undisclosed", _("Gender"), 0,
+			NULL);
 
 	if (found)
 		has_info = TRUE;
@@ -1434,8 +1449,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their Location and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tLocation", 0, "\t", '\n', "Undisclosed", _("Location"),
-			0, NULL);
+			"\tLocation", 0, "\t", '\n', "Undisclosed", _("Location"), 0,
+			NULL);
 
 	if (found)
 		has_info = TRUE;
@@ -1494,8 +1509,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Check if they have Favorite Things */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Things", 1, "Hobbies and Interests", '\n', NULL,
-				_("Favorite Things"), 0, NULL);
+			"Favorite Things", 1, "Hobbies and Interests", '\n', NULL,
+			_("Favorite Things"), 0, NULL);
 
 	if (!found)
 	{
@@ -1507,8 +1522,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Things", 1, "My Homepage\tTake a look", '\n', NULL,
-				_("Favorite Things"), 0, NULL);
+				"Favorite Things", 1, "My Homepage\tTake a look", '\n',
+				NULL, _("Favorite Things"), 0, NULL);
 	}
 
 	if (!found)
@@ -1560,8 +1575,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract the last updated date and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tlast updated:", 1, "\n", '\n', NULL, _("Last Updated"),
-			0, NULL);
+			"\tlast updated:", 1, "\n", '\n', NULL, _("Last Updated"), 0,
+			NULL);
 
 	if (found)
 		has_info = TRUE;
@@ -1593,7 +1608,8 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		char primary[256];
 
 		g_snprintf(primary, sizeof(primary),
-				   _("User information for %s unavailable"), info_data->name);
+				   _("User information for %s unavailable"),
+				   info_data->name);
 		gaim_notify_error(info_data->gc, NULL, primary,
 						  _("The user's profile is empty."));
 	}
@@ -1618,8 +1634,8 @@ msn_get_info(GaimConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s", PROFILE_URL, name);
 
 	gaim_url_fetch(url, FALSE,
-				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)", TRUE,
-				   msn_got_info, data);
+				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
+				   TRUE, msn_got_info, data);
 
 	g_free(url);
 }
@@ -1768,8 +1784,8 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_bool_new(_("Use HTTP Method"), "http_method",
-										  FALSE);
+	option = gaim_account_option_bool_new(_("Use HTTP Method"),
+										  "http_method", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

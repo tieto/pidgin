@@ -40,11 +40,11 @@ typedef enum
 	MSN_SERVER_DC,
 	MSN_SERVER_HT
 
-} MsnServerType;
+} MsnServConnType;
 
 struct _MsnServConn
 {
-	MsnServerType type;
+	MsnServConnType type;
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 
@@ -70,7 +70,7 @@ struct _MsnServConn
 	void *data;
 };
 
-MsnServConn *msn_servconn_new(MsnSession *session, MsnServerType type);
+MsnServConn *msn_servconn_new(MsnSession *session, MsnServConnType type);
 
 void msn_servconn_destroy(MsnServConn *servconn);
 

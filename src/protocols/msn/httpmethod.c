@@ -60,7 +60,7 @@ http_poll(gpointer data)
 		{
 #if 0
 			gaim_debug_info("msn", "Polling server %s.\n",
-							servconn->http_data->gateway_ip);
+							servconn->http_data->gateway_host);
 #endif
 			msn_http_servconn_poll(servconn);
 		}
@@ -141,12 +141,12 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 		{
 			params = g_strdup_printf("Action=open&Server=%s&IP=%s",
 									 server_type,
-									 servconn->http_data->gateway_ip);
+									 servconn->http_data->gateway_host);
 		}
 		else
 		{
 			params = g_strdup_printf("Action=open&IP=%s",
-									 servconn->http_data->gateway_ip);
+									 servconn->http_data->gateway_host);
 		}
 	}
 	else
@@ -170,9 +170,9 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 		"%s",
 		((strcmp(server_type, "SB") == 0) && first
 		 ? "gateway.messenger.hotmail.com"
-		 : servconn->http_data->gateway_ip),
+		 : servconn->http_data->gateway_host),
 		params,
-		servconn->http_data->gateway_ip,
+		servconn->http_data->gateway_host,
 		(int)size,
 		buf);
 
@@ -186,11 +186,13 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 	s = 0;
 	needed = strlen(temp);
 
-	do {
+	do
+	{
 		res = write(servconn->fd, temp, needed);
 		if (res >= 0)
 			s += res;
-		else if (errno != EAGAIN) {
+		else if (errno != EAGAIN)
+		{
 			char *msg = g_strdup_printf("Unable to write to MSN server via HTTP (error %d)", errno);
 			gaim_connection_error(servconn->session->account->gc, msg);
 			g_free(msg);
@@ -234,9 +236,9 @@ msn_http_servconn_poll(MsnServConn *servconn)
 		"Content-Type: application/x-msn-messenger\r\n"
 		"Content-Length: 0\r\n"
 		"\r\n",
-		servconn->http_data->gateway_ip,
+		servconn->http_data->gateway_host,
 		servconn->http_data->session_id,
-		servconn->http_data->gateway_ip);
+		servconn->http_data->gateway_host);
 
 #if 0
 	gaim_debug_misc("msn", "Writing to HTTP: {%s}\n", temp);
@@ -273,7 +275,8 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	g_return_val_if_fail(error    != NULL, FALSE);
 
 #if 0
-	gaim_debug_info("msn", "parsing data {%s} from fd %d\n", buf, servconn->fd);
+	gaim_debug_info("msn", "parsing data {%s} from fd %d\n",
+					buf, servconn->fd);
 #endif
 	servconn->http_data->waiting_response = FALSE;
 
@@ -286,11 +289,12 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 
 	/* First, some tests to see if we have a full block of stuff. */
 	if (((strncmp(buf, "HTTP/1.1 200 OK\r\n", 17) != 0) &&
-	     (strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) != 0)) &&
-	    ((strncmp(buf, "HTTP/1.0 200 OK\r\n", 17) != 0) &&
-	     (strncmp(buf, "HTTP/1.0 100 Continue\r\n", 23) != 0)))
+		 (strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) != 0)) &&
+		((strncmp(buf, "HTTP/1.0 200 OK\r\n", 17) != 0) &&
+		 (strncmp(buf, "HTTP/1.0 100 Continue\r\n", 23) != 0)))
 	{
 		*error = TRUE;
+
 		return FALSE;
 	}
 
@@ -408,13 +412,14 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 		if (servconn->http_data->session_id != NULL)
 			g_free(servconn->http_data->session_id);
 
-		if (servconn->http_data->old_gateway_ip != NULL)
-			g_free(servconn->http_data->old_gateway_ip);
+		if (servconn->http_data->old_gateway_host != NULL)
+			g_free(servconn->http_data->old_gateway_host);
 
-		servconn->http_data->old_gateway_ip = servconn->http_data->gateway_ip;
+		servconn->http_data->old_gateway_host =
+			servconn->http_data->gateway_host;
 
 		servconn->http_data->session_id = session_id;
-		servconn->http_data->gateway_ip = gw_ip;
+		servconn->http_data->gateway_host = gw_ip;
 	}
 
 	g_free(headers);

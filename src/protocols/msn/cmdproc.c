@@ -120,7 +120,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
 	MsnServConn *servconn;
 	char *data;
-	size_t len;
+	gsize len;
 
 	g_return_if_fail(cmdproc != NULL);
 	g_return_if_fail(trans != NULL);
@@ -129,7 +129,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	msn_history_add(cmdproc->history, trans);
 
 	data = msn_transaction_to_string(trans);
-	
+
 	cmdproc->last_trans = g_strdup(data);
 
 	len = strlen(data);
@@ -167,7 +167,8 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 
 	servconn = cmdproc->servconn;
 
-	if (format != NULL) {
+	if (format != NULL)
+	{
 		va_start(arg, format);
 		params = g_strdup_vprintf(format, arg);
 		va_end(arg);
@@ -203,13 +204,24 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 
 	trans->command = g_strdup(command);
 
-	if (format != NULL) {
+	if (format != NULL)
+	{
 		va_start(arg, format);
 		trans->params = g_strdup_vprintf(format, arg);
 		va_end(arg);
 	}
 
 	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+void
+msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload,
+							int payload_len)
+{
+	g_return_if_fail(cmdproc             != NULL);
+	g_return_if_fail(cmdproc->payload_cb != NULL);
+
+	cmdproc->payload_cb(cmdproc, payload, payload_len);
 }
 
 void
@@ -225,23 +237,13 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (cb == NULL)
 	{
-		gaim_debug_warning("msn", "Unhandled content-type '%s': %s\n",
-						   msn_message_get_content_type(msg),
-						   msn_message_get_body(msg));
+		gaim_debug_warning("msn", "Unhandled content-type '%s'\n",
+						   msn_message_get_content_type(msg));
 
 		return;
 	}
 
 	cb(cmdproc, msg);
-}
-
-void
-msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload, int payload_len)
-{
-	g_return_if_fail(cmdproc             != NULL);
-	g_return_if_fail(cmdproc->payload_cb != NULL);
-
-	cmdproc->payload_cb(cmdproc, payload, payload_len);
 }
 
 void
@@ -305,7 +307,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 	{
 		gaim_debug_warning("msn", "Unhandled command '%s'\n",
-							cmd->command);
+						   cmd->command);
 
 		return;
 	}

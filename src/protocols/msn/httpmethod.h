@@ -29,8 +29,8 @@ typedef struct _MsnHttpMethodData MsnHttpMethodData;
 struct _MsnHttpMethodData
 {
 	char *session_id;
-	char *old_gateway_ip;
-	char *gateway_ip;
+	char *old_gateway_host;
+	char *gateway_host;
 	const char *server_type;
 
 	int timer;

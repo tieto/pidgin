@@ -99,7 +99,7 @@ msn_slp_session_send_message(MsnSlpSession *slpsession,
 
 	invite_msg = msn_message_new_msnslp();
 
-	msn_message_set_body(invite_msg, body);
+	msn_message_set_bin_data(invite_msg, body, strlen(body));
 
 	g_free(body);
 
@@ -166,7 +166,7 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 
 	account = slpsession->swboard->servconn->session->account;
 
-	body = msn_message_get_body(msg);
+	body = msn_message_get_bin_data(msg, NULL);
 
 	gaim_debug_misc("msn", "MSNSLP Message: {%s}\n", body);
 
@@ -329,7 +329,7 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 
 			new_msg = msn_message_new_msnslp();
 			msn_message_set_bin_data(new_msg, nil_body, 4);
-			new_msg->msnslp_footer.app_id = 1;
+			new_msg->msnslp_footer.value = 1;
 
 			msn_slp_session_send_msg(slpsession, new_msg);
 
@@ -362,20 +362,12 @@ send_msg_part(MsnSlpSession *slpsession, MsnMessage *msg)
 
 	if (slpsession->offset > 0)
 	{
-		if (msg->bin_content)
-		{
-			msn_message_set_bin_data(msg,
-				slpsession->orig_body + slpsession->offset,
-				msg->msnslp_header.length);
-		}
-		else
-		{
-			msn_message_set_body(msg,
-				slpsession->orig_body + slpsession->offset);
-		}
+		msn_message_set_bin_data(msg,
+			slpsession->orig_body + slpsession->offset,
+			msg->msnslp_header.length);
 	}
 
-	msg->msnslp_header.offset_1 = slpsession->offset;
+	msg->msnslp_header.offset = slpsession->offset;
 
 	msn_switchboard_send_msg(slpsession->swboard, msg);
 
@@ -397,6 +389,8 @@ send_msg_part(MsnSlpSession *slpsession, MsnMessage *msg)
 void
 msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 {
+	const void *temp;
+
 	g_return_if_fail(slpsession != NULL);
 	g_return_if_fail(msg != NULL);
 	g_return_if_fail(msg->msnslp_message);
@@ -415,29 +409,19 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 		slpsession->prev_msg_id = ++slpsession->base_id;
 
 	msg->msnslp_header.id = slpsession->prev_msg_id;
-	/*msg->msnslp_header.ack_session_id = rand() % 0xFFFFFF00;*/
-	msg->msnslp_header.ack_session_id = 0x1407C7DE;
+	/*msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;*/
+	msg->msnslp_header.ack_id = 0x1407C7DE;
 
 	msn_message_set_charset(msg, NULL);
 
 	if (msg->msnslp_header.session_id != 0)
-		msg->msnslp_footer.app_id = 1;
+		msg->msnslp_footer.value = 1;
 
-	if (msg->bin_content)
-	{
-		const void *temp;
+	temp = msn_message_get_bin_data(msg, &slpsession->orig_len);
 
-		temp = msn_message_get_bin_data(msg, &slpsession->orig_len);
+	slpsession->orig_body = g_memdup(temp, slpsession->orig_len);
 
-		slpsession->orig_body = g_memdup(temp, slpsession->orig_len);
-	}
-	else
-	{
-		slpsession->orig_body = g_strdup(msn_message_get_body(msg));
-		slpsession->orig_len  = strlen(slpsession->orig_body);
-	}
-
-	msg->msnslp_header.total_size_1 = slpsession->orig_len;
+	msg->msnslp_header.total_size = slpsession->orig_len;
 	msg->msnslp_header.length = slpsession->orig_len;
 
 	send_msg_part(slpsession, msg);

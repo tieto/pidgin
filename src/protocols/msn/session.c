@@ -24,7 +24,7 @@
 #include "notification.h"
 
 MsnSession *
-msn_session_new(GaimAccount *account, const char *server, int port)
+msn_session_new(GaimAccount *account, const char *host, int port)
 {
 	MsnSession *session;
 
@@ -32,9 +32,9 @@ msn_session_new(GaimAccount *account, const char *server, int port)
 
 	session = g_new0(MsnSession, 1);
 
-	session->account         = account;
-	session->dispatch_server = g_strdup(server);
-	session->dispatch_port   = port;
+	session->account       = account;
+	session->dispatch_host = g_strdup(host);
+	session->dispatch_port = port;
 
 	session->away_state = NULL;
 
@@ -58,8 +58,8 @@ msn_session_destroy(MsnSession *session)
 	if (session->connected)
 		msn_session_disconnect(session);
 
-	if (session->dispatch_server != NULL)
-		g_free(session->dispatch_server);
+	if (session->dispatch_host != NULL)
+		g_free(session->dispatch_host);
 
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
@@ -114,8 +114,8 @@ msn_session_connect(MsnSession *session)
 	session->notification_conn = msn_notification_new(session);
 
 	if (msn_notification_connect(session->notification_conn,
-									 session->dispatch_server,
-									 session->dispatch_port))
+								 session->dispatch_host,
+								 session->dispatch_port))
 	{
 		return TRUE;
 	}
@@ -129,13 +129,15 @@ msn_session_disconnect(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->connected);
 
-	while (session->switches != NULL) {
+	while (session->switches != NULL)
+	{
 		MsnSwitchBoard *board = (MsnSwitchBoard *)session->switches->data;
 
 		msn_switchboard_destroy(board);
 	}
 
-	if (session->notification_conn != NULL) {
+	if (session->notification_conn != NULL)
+	{
 		msn_servconn_destroy(session->notification_conn);
 		session->notification_conn = NULL;
 	}
@@ -208,7 +210,7 @@ msn_session_find_switch_with_passport(const MsnSession *session,
 	GList *l;
 	MsnSwitchBoard *swboard;
 
-	g_return_val_if_fail(session != NULL, NULL);
+	g_return_val_if_fail(session  != NULL, NULL);
 	g_return_val_if_fail(passport != NULL, NULL);
 
 	for (l = session->switches; l != NULL; l = l->next)
@@ -235,7 +237,8 @@ msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
 	g_return_val_if_fail(session != NULL, NULL);
 	g_return_val_if_fail(chat_id > 0, NULL);
 
-	for (l = session->switches; l != NULL; l = l->next) {
+	for (l = session->switches; l != NULL; l = l->next)
+	{
 		swboard = (MsnSwitchBoard *)l->data;
 
 		if (swboard->chat_id == chat_id)
@@ -253,7 +256,8 @@ msn_session_find_unused_switch(const MsnSession *session)
 
 	g_return_val_if_fail(session != NULL, NULL);
 
-	for (l = session->switches; l != NULL; l = l->next) {
+	for (l = session->switches; l != NULL; l = l->next)
+	{
 		swboard = (MsnSwitchBoard *)l->data;
 
 		if (!swboard->in_use)

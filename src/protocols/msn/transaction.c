@@ -34,9 +34,12 @@ msn_transaction_new(const char *command, const char *format, ...)
 
 	trans->command = g_strdup(command);
 
-	va_start(arg, format);
-	trans->params = g_strdup_vprintf(format, arg);
-	va_end(arg);
+	if (format != NULL)
+	{
+		va_start(arg, format);
+		trans->params = g_strdup_vprintf(format, arg);
+		va_end(arg);
+	}
 
 	/* trans->queue = g_queue_new(); */
 	

@@ -29,24 +29,21 @@ typedef struct _MsnMessage MsnMessage;
 
 typedef struct
 {
-	long session_id;
-	long id;
-	long offset_1;
-	long offset_2;
-	long total_size_1;
-	long total_size_2;
-	long length;
-	long flags;
-	long ack_session_id;
-	long ack_unique_id;
-	long ack_length_1;
-	long ack_length_2;
+	guint32 session_id;
+	guint32 id;
+	guint64 offset;
+	guint64 total_size;
+	guint32 length;
+	guint32 flags;
+	guint32 ack_id;
+	guint32 ack_sub_id;
+	guint64 ack_size;
 
 } MsnSlpHeader;
 
 typedef struct
 {
-	long app_id;
+	guint32 value;
 
 } MsnSlpFooter;
 
@@ -61,18 +58,12 @@ struct _MsnMessage
 	gboolean msnslp_ack_message;
 
 	char *passport;
-
-	unsigned int tid;
 	char flag;
-
-	size_t size;
-
-	gboolean bin_content;
 
 	char *content_type;
 	char *charset;
 	char *body;
-	size_t bin_len;
+	size_t body_len;
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
@@ -91,6 +82,8 @@ struct _MsnMessage
  * @return A new message.
  */
 MsnMessage *msn_message_new(void);
+
+MsnMessage *msn_message_new_plain(const char *message);
 
 /**
  * Creates a new, empty MSNSLP message.
@@ -113,10 +106,9 @@ MsnMessage *msn_message_new_msnslp_ack(MsnMessage *acked_msg);
  *
  * @param msg         The message.
  * @param payload     The payload.
- * @param payload_len The length payload.
+ * @param payload_len The length of the payload.
  */
-void msn_message_parse_payload(MsnMessage *msg,
-							   const char *payload,
+void msn_message_parse_payload(MsnMessage *msg, const char *payload,
 							   size_t payload_len);
 
 /**

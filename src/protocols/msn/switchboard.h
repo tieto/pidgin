@@ -159,8 +159,8 @@ gboolean msn_switchboard_is_invited(const MsnSwitchBoard *swboard);
  * Connects to a switchboard.
  *
  * @param swboard The switchboard.
- * @param host    The host.
- * @param port    The port.
+ * @param host    The switchboard server host.
+ * @param port    The switcbharod server port.
  *
  * @return @c TRUE if able to connect, or @c FALSE otherwise.
  */

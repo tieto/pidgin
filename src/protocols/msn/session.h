@@ -40,7 +40,7 @@ struct _MsnSession
 
 	guint protocol_ver;
 
-	char *dispatch_server;
+	char *dispatch_host;
 	int dispatch_port;
 
 	gboolean connected;
@@ -108,13 +108,13 @@ struct _MsnSession
  * Creates an MSN session.
  *
  * @param account The account.
- * @param server  The dispatch server.
- * @param port    The dispatch port.
+ * @param server  The dispatch server host.
+ * @param port    The dispatch server port.
  *
  * @return The new MSN session.
  */
 MsnSession *msn_session_new(GaimAccount *account,
-							const char *server, int port);
+							const char *host, int port);
 
 /**
  * Destroys an MSN session.

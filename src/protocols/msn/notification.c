@@ -196,10 +196,8 @@ static void
 cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	GaimAccount *account;
-	GaimConnection *gc;
 
 	account = cmdproc->session->account;
-	gc = gaim_account_get_connection(account);
 
 	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
 					 gaim_account_get_username(account));
@@ -237,7 +235,6 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSession *session;
 	GaimAccount *account;
 	GaimConnection *gc;
-	char outparams[MSN_BUF_LEN];
 
 	session = cmdproc->session;
 	account = session->account;
@@ -309,8 +306,6 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		md5_append(&st, (const md5_byte_t *)challenge, strlen(challenge));
 		md5_append(&st, (const md5_byte_t *)password, strlen(password));
 		md5_finish(&st, di);
-
-		g_snprintf(outparams, sizeof(outparams), "MD5 S ");
 
 		for (i = 0; i < 16; i++)
 			g_snprintf(buf + (i*2), 3, "%02x", di[i]);
@@ -417,8 +412,6 @@ msg_cmd_post(MsnCmdProc *cmdproc, char *payload, size_t len)
 static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
-
 	cmdproc->payload_cb  = msg_cmd_post;
 	cmdproc->servconn->payload_len = atoi(cmd->params[2]);
 	cmdproc->temp = g_strdup(cmd->params[0]);
@@ -431,9 +424,8 @@ static void
 chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimConnection *gc;
 	MsnTransaction *trans;
-	char buf[MSN_BUF_LEN];
+	char buf[33];
 	const char *challenge_resp;
 	const char *challenge_str;
 	md5_state_t st;
@@ -441,10 +433,10 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	int i;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
 
 	md5_init(&st);
-	md5_append(&st, (const md5_byte_t *)cmd->params[1], strlen(cmd->params[1]));
+	md5_append(&st, (const md5_byte_t *)cmd->params[1],
+			   strlen(cmd->params[1]));
 
 	if (session->protocol_ver >= 8)
 	{
@@ -550,8 +542,6 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	list     = params[0];
 	passport = params[1];
-
-	reason = "invalid user";
 
 	if (!strcmp(list, "FL"))
 		msg = g_strdup("Unable to add user on MSN");
@@ -711,7 +701,7 @@ fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	gc = cmdproc->session->account->gc;
 
-	serv_got_update(gc, (char *)cmd->params[0], 0, 0, 0, 0, 0);
+	serv_got_update(gc, cmd->params[0], 0, 0, 0, 0, 0);
 }
 
 static void
@@ -734,7 +724,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_users_find_with_passport(session->users, passport);
 
-	serv_got_alias(gc, (char *)passport, (char *)friend);
+	serv_got_alias(gc, passport, friend);
 
 	msn_user_set_name(user, friend);
 
@@ -1150,7 +1140,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_users_find_with_passport(session->users, passport);
 
-	serv_got_alias(gc, (char *)passport, (char *)friend);
+	serv_got_alias(gc, passport, friend);
 
 	msn_user_set_name(user, friend);
 
@@ -1173,14 +1163,22 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
-	serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
+	serv_got_update(gc, passport, 1, 0, 0, 0, status);
+}
+
+static void
+not_cmd_post(MsnCmdProc *cmdproc, char *payload, size_t len)
+{
+#if 0
+	gaim_debug_misc("msn", "Notification: {%s}\n", payload);
+#endif
 }
 
 static void
 not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->payload_cb  = NULL;
 	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
+	cmdproc->payload_cb = not_cmd_post;
 }
 
 static void
@@ -1277,12 +1275,14 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		if (group == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "msn",
-					   "Still don't have a group ID for %s while moving %s!\n",
-					   session->dest_group_name, passport);
+			gaim_debug_error("msn",
+							 "Still don't have a group ID for %s while moving %s!\n",
+							 session->dest_group_name, passport);
 
 			g_free(session->dest_group_name);
 			session->dest_group_name = NULL;
+
+			return;
 		}
 
 		g_free(session->dest_group_name);
@@ -1432,7 +1432,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			  "<head>\n"
 			  "<noscript>\n"
 			  "<meta http-equiv=\"Refresh\" content=\"0; "
-			        "url=http://www.hotmail.com\">\n"
+			  "url=http://www.hotmail.com\">\n"
 			  "</noscript>\n"
 			  "</head>\n\n",
 			  fd);
@@ -1465,9 +1465,9 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		if (fclose(fd))
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "msn",
-					   "Error closing temp passport file: %s\n",
-					   strerror(errno));
+			gaim_debug_error("msn",
+							 "Error closing temp passport file: %s\n",
+							 strerror(errno));
 
 			unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
@@ -1480,8 +1480,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			 */
 			char *tmp;
 
-			if ((tmp = g_strdup_printf("%s.html",
-					session->passport_info.file)) != NULL)
+			if ((tmp = g_strdup_printf("%s.html", session->passport_info.file)) != NULL)
 			{
 				if (rename(session->passport_info.file, tmp) == 0)
 				{
@@ -1534,9 +1533,9 @@ rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!msn_switchboard_connect(swboard, host, port))
 	{
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Unable to connect to switchboard on %s, port %d\n",
-				   host, port);
+		gaim_debug_error("msn",
+						 "Unable to connect to switchboard on %s, port %d\n",
+						 host, port);
 
 		g_free(host);
 
@@ -1697,9 +1696,12 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (count != 0)
 		{
-			const char *passport = msn_user_get_passport(session->user);
-			const char *file = session->passport_info.file;
+			const char *passport;
+			const char *file;
 			gchar *url;
+
+			passport = msn_user_get_passport(session->user);
+			file = session->passport_info.file;
 			while (*file && *file == '/')
 				++file;
 			url = g_strconcat ("file:///", file, 0);
@@ -1755,9 +1757,11 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (tmp != NULL)
 		subject = gaim_mime_decode_field(tmp);
 
-	if (from != NULL && subject != NULL)	
-		gaim_notify_email(gc, subject, from, msn_user_get_passport(session->user),
-						session->passport_info.file, NULL, NULL);
+	gaim_notify_email(gc,
+					  (subject != NULL ? subject : ""),
+					  (from != NULL ?  from : ""),
+					  msn_user_get_passport(session->user),
+					  session->passport_info.file, NULL, NULL);
 
 	if (from != NULL)
 		g_free(from);
@@ -1796,19 +1800,19 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			case 1:
 				minutes = atoi(g_hash_table_lookup(table, "Arg1"));
 				g_snprintf(buf, sizeof(buf), ngettext(
-						   "The MSN server will shut down for maintenance "
-						   "in %d minute. You will automatically be "
-						   "signed out at that time.  Please finish any "
-						   "conversations in progress.\n\nAfter the "
-						   "maintenance has been completed, you will be "
-						   "able to successfully sign in.",
-						   "The MSN server will shut down for maintenance "
-						   "in %d minutes. You will automatically be "
-						   "signed out at that time.  Please finish any "
-						   "conversations in progress.\n\nAfter the "
-						   "maintenance has been completed, you will be "
-						   "able to successfully sign in.", minutes),
-						   minutes);
+							"The MSN server will shut down for maintenance "
+							"in %d minute. You will automatically be "
+							"signed out at that time.  Please finish any "
+							"conversations in progress.\n\nAfter the "
+							"maintenance has been completed, you will be "
+							"able to successfully sign in.",
+							"The MSN server will shut down for maintenance "
+							"in %d minutes. You will automatically be "
+							"signed out at that time.  Please finish any "
+							"conversations in progress.\n\nAfter the "
+							"maintenance has been completed, you will be "
+							"able to successfully sign in.", minutes),
+						minutes);
 			default:
 				break;
 		}
@@ -1922,17 +1926,17 @@ msn_notification_init(void)
 
 	/* Register the message type callbacks. */
 	msn_table_add_msg_type(cbs_table,
-							"text/x-msmsgsprofile",
-							profile_msg);
+						   "text/x-msmsgsprofile",
+						   profile_msg);
 	msn_table_add_msg_type(cbs_table,
-							"text/x-msmsgsinitialemailnotification",
-							initial_email_msg);
+						   "text/x-msmsgsinitialemailnotification",
+						   initial_email_msg);
 	msn_table_add_msg_type(cbs_table,
-							"text/x-msmsgsemailnotification",
-							email_msg);
+						   "text/x-msmsgsemailnotification",
+						   email_msg);
 	msn_table_add_msg_type(cbs_table,
-							"application/x-msmsgssystemmessage",
-							system_msg);
+						   "application/x-msmsgssystemmessage",
+						   system_msg);
 }
 
 void

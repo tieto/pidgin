@@ -25,7 +25,7 @@
 typedef struct _MsnCmdProc MsnCmdProc;
 
 #include "session.h"
-#include "server.h"
+#include "servconn.h"
 #include "error.h"
 #include "command.h"
 #include "table.h"
@@ -69,7 +69,7 @@ void msn_cmdproc_queue_trans(MsnCmdProc *cmdproc,
 void msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 					  const char *format, ...);
 void msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
-					  const char *format, ...);
+							const char *format, ...);
 void msn_cmdproc_process_msg(MsnCmdProc *cmdproc,
 							 MsnMessage *msg);
 void msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command);

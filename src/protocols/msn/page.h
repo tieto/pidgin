@@ -25,7 +25,6 @@
 typedef struct _MsnPage MsnPage;
 
 #include "session.h"
-#include "user.h"
 
 /**
  * A page.
