@@ -441,8 +441,11 @@ static void oscar_login(struct aim_user *user) {
 	odata->create_exchange = 0;
 
 	debug_printf(_("Logging in %s\n"), user->username);
-	if (isdigit(*user->username))
+	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
+		/* this is odd but it's necessary for a proper do_import and do_export */
+		gc->protocol = PROTO_ICQ;
+	}
 
 	sess = g_new0(aim_session_t, 1);
 
