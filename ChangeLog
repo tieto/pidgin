@@ -1,6 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.45:
+	* New plugin event: event_chat_send_invite
 	* Major updates to the perl system (reread PERL-HOWTO and
 	  SIGNALS)
 	* Major updates to event_chat_* events for plugins (reread
