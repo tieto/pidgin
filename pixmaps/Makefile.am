@@ -28,13 +28,13 @@ EXTRA_DIST =	add.xpm				\
 		dt_icon.xpm			\
 		embarrassed.xpm			\
 		fontface.xpm			\
+		fontface2.xpm			\
 		free_icon.xpm			\
-		gaim.xpm				\
-		gnome_add.xpm		\
-		gnome_close.xpm		\
-		gnome_preferences.xpm	\
-		gnome_refresh.xpm	\
-		gnome_remove.xpm 	\
+		gaim.xpm			\
+		gnome_add.xpm			\
+		gnome_close.xpm			\
+		gnome_preferences.xpm		\
+		gnome_remove.xpm 		\
 		gnome/devil-connect.png		\
 		gnome/devil-offline.png		\
 		gnome/devil-online.png		\
@@ -56,6 +56,7 @@ EXTRA_DIST =	add.xpm				\
 		normal.xpm			\
 		offline.xpm			\
 		ok.xpm				\
+		oneeye.xpm			\
 		online.xpm			\
 		palette.xpm			\
 		peng_frown.xpm			\
@@ -63,6 +64,7 @@ EXTRA_DIST =	add.xpm				\
 		peng_wink.xpm			\
 		permadd.xpm			\
 		permdel.xpm			\
+		refresh.xpm			\
 		sad.xpm				\
 		save.xpm			\
 		scream.xpm			\
@@ -75,7 +77,9 @@ EXTRA_DIST =	add.xpm				\
 		smile_wink.xpm			\
 		speaker.xpm			\
 		strike.xpm			\
+		tb_search.xpm			\
 		think.xpm			\
+		tmp_send.xpm			\
 		tongue.xpm			\
 		underline.xpm			\
 		warn.xpm			\
