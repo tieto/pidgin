@@ -2288,7 +2288,7 @@ get_icon_scale_size(GdkPixbufAnimation *icon, GaimBuddyIconSpec *spec, int *widt
 
 		if(*height < spec->min_height)
 			*height = spec->min_height;
-		else if(*width  > spec->max_height)
+		else if(*height  > spec->max_height)
 			*height = spec->max_height;
 	}
 
@@ -6073,8 +6073,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
 	gaim_prefs_add_int("/gaim/gtk/conversations/button_type",
 					   GAIM_BUTTON_TEXT_IMAGE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
 
 
 	/* Conversations -> Chat */
@@ -6083,16 +6081,18 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
 
 	/* Conversations -> IM */
 	gaim_prefs_add_none("/gaim/gtk/conversations/im");
 
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/animate_buddy_icons", TRUE);
 
-	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 
 	/* Connect callbacks. */
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/escape_closes",
