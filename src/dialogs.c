@@ -1885,7 +1885,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 
 	if (b->account) {
 		gchar *tmp = strdup_withhtml(junk);
-		gaim_account_set_user_info(b->account, junk);
+		gaim_account_set_user_info(b->account, tmp);
 		g_free(tmp);
 		gc = b->account->gc;
 
