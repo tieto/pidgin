@@ -19,6 +19,9 @@
 #undef NEED_SOCKLEN_T
 #undef ZEPHYR_INT32
 #undef ZEPHYR_USES_KERBEROS
+#ifndef STATIC_PROTO_INIT
+#undef STATIC_PROTO_INIT
+#endif
 
 
 

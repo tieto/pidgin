@@ -1,0 +1,12 @@
+Makefile.in
+Makefile
+.deps
+.libs
+buddy.lo
+conn.lo
+libyahoo.la
+login.lo
+misc.lo
+outgoing.lo
+rxhandlers.lo
+yay.lo

@@ -241,16 +241,6 @@ void load_plugin(char *filename)
 	save_prefs();
 }
 
-char *gaim_plugin_init(GModule *mod)
-{
-	void (*asdf)(void *);
-	char *(*gem)();
-	g_module_symbol(mod, "do_stuff", (gpointer *)&asdf);
-	g_module_symbol(mod, "gem", (gpointer *)&gem);
-	asdf(gem);
-	return NULL;
-}
-
 void show_plugins(GtkWidget *w, gpointer data)
 {
 	/* most of this code was shamelessly stolen from Glade */

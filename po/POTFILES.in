@@ -1,7 +1,9 @@
-plugins/msn/msn.c
-plugins/icq/gaim_icq.c
-plugins/yay/yay.c
-plugins/napster.c
+src/protocols/icq/gaim_icq.c
+src/protocols/msn/msn.c
+src/protocols/napster/napster.c
+src/protocols/oscar/oscar.c
+src/protocols/toc/toc.c
+src/protocols/yahoo/yay.c
 src/about.c
 src/aim.c
 src/applet.c
@@ -13,10 +15,8 @@ src/dialogs.c
 src/gaimrc.c
 src/html.c
 src/multi.c
-src/oscar.c
 src/perl.c
 src/plugins.c
 src/prefs.c
 src/prpl.c
 src/server.c
-src/toc.c

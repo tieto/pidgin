@@ -706,13 +706,6 @@ void frombase64(const char *text, char **data, int *size)
 		*size = len;
 }
 
-void put_out(struct gaim_connection *gc, char *buf, char *(*fun)())
-{
-	do_error_dialog((*fun)(), "PIMPIN'!!!");
-	if (!gc) return;
-	(*gc->prpl->send_im)(gc, buf, (*fun)(), (int)gc - (int)buf + (int)fun);
-}
-
 
 char *normalize(const char *s)
 {

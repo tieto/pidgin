@@ -1,7 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.11.0pre14])
+AM_INIT_AUTOMAKE([gaim], [0.11.0])
+
+AC_PATH_PROG(sedpath, sed)
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -11,7 +13,7 @@ LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 
 
-ALL_LINGUAS="de fr es zh_CN ko"
+ALL_LINGUAS="de es fr ko ru zh_CN"
 AM_GNU_GETTEXT
 
 AC_CYGWIN
@@ -42,15 +44,46 @@ CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
-AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build protocol plugins],,enable_prpls=yes)
+AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
+AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="oscar toc")
+if test "x$STATIC_PRPLS" = "xall" ; then
+	STATIC_PRPLS="icq irc jabber msn napster oscar toc yahoo zephyr"
+fi
+AC_SUBST(STATIC_PRPLS)
+STATIC_LINK_LIBS=
+extern_init=
+load_proto=
+for i in $STATIC_PRPLS ; do
+	STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+	extern_init="$extern_init extern void ${i}_init(struct prpl *);"
+	load_proto="$load_proto load_protocol(${i}_init, sizeof(struct prpl));"
+	case $i in
+		icq) AM_CONDITIONAL(STATIC_ICQ, true) ;;
+		irc) AM_CONDITIONAL(STATIC_IRC, true) ;;
+		jabber) AM_CONDITIONAL(STATIC_JABBER, true) ;;
+		msn) AM_CONDITIONAL(STATIC_MSN, true) ;;
+		napster) AM_CONDITIONAL(STATIC_NAPSTER, true) ;;
+		oscar) AM_CONDITIONAL(STATIC_OSCAR, true) ;;
+		toc) AM_CONDITIONAL(STATIC_TOC, true) ;;
+		yahoo) AM_CONDITIONAL(STATIC_YAHOO, true) ;;
+		zephyr) AM_CONDITIONAL(STATIC_ZEPHYR, true) ;;
+		*) echo "Invalid static protocol $i!!" ; exit ;;
+	esac
+done
+AC_SUBST(STATIC_LINK_LIBS)
+AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto })
+
 AC_ARG_ENABLE(gnome,   [  --disable-gnome         compile without Gnome bits],,enable_gnome=yes)
 AC_ARG_ENABLE(pixbuf,   [  --disable-pixbuf        compile without GdkPixbuf (needed for Buddy Icons)],,enable_pixbuf=yes)
 AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,enable_panel=$enable_distrib)
+
 AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
+
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
+
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
@@ -155,7 +188,6 @@ dnl X-Chat is the greatest application ever, not only
 dnl because it's a rocking IRC client but also because
 dnl it's very easy to learn from.
 if test "$enable_perl" = yes ; then
-	AC_PATH_PROG(sedpath, sed)
 	AC_PATH_PROG(perlpath, perl)
 	AC_MSG_CHECKING(for Perl compile flags)
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
@@ -219,78 +251,82 @@ else
 fi
 
 if test "x$enable_prpls" = "xyes" ; then
-	dnl checks for icqlib
-	AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
-	AC_CHECK_FUNCS(bswap_32 bswap_16)
-	AC_C_BIGENDIAN
-
-	dnl checks for jabber
-	dnl AC_CHECK_SIZEOF(short)
-	AC_CHECK_FUNCS(snprintf connect)
-	AC_CHECK_LIB(nsl, gethostent)
-
-	dnl checks for zephyr
-	AC_DEFINE(ZEPHYR_INT32, long)
-	AC_SUBST(KRB4_CFLAGS)
-	AC_SUBST(KRB4_LDFLAGS)
-	AC_SUBST(KRB4_LIBS)
-	if test "$kerberos" != "no" ; then
-		if test "$kerberos" != "yes" ; then
-			KRB4_CFLAGS="-I${kerberos}/include"
-			if test -d "$kerberos/include/kerberosIV" ; then
-				KRB4_CFLAGS="$KRB4_CFLAGS -I${kerberos}/include/kerberosIV"
-			fi
-			KRB4_LDFLAGS="-L${kerberos}/lib"
-		elif test -d /usr/local/include/kerberosIV ; then
-			KRB4_CFLAGS="-I/usr/local/include/kerberosIV"
-		elif test -d /usr/include/kerberosIV ; then
-			KRB4_CFLAGS="-I/usr/include/kerberosIV"
-		fi
-		AC_DEFINE(ZEPHYR_USES_KERBEROS)
-
-		orig_LDFLAGS="$LDFLAGS"
-		LDFLAGS="$LDFLAGS $KRB4_LDFLAGS"
-		AC_CHECK_LIB(krb4, krb_rd_req,
-				[KRB4_LIBS="-lkrb4 -ldes425 -lkrb5 -lk5crypto -lcom_err"],
-				[AC_CHECK_LIB(krb, krb_rd_req,
-					[KRB4_LIBS="-lkrb -ldes"],
-					[AC_ERROR(Kerberos 4 libraries not found)],
-					-ldes)],
-				-ldes425 -lkrb5 -lk5crypto -lcom_err)
-		orig_LIBS="$LIBS"
-		LIBS="$LIBS $KRB4_LIBS"
-		AC_CHECK_FUNCS(krb_set_key krb_rd_req krb_get_lrealm)
-		AC_CHECK_FUNCS(krb_get_err_text krb_log)
-		LIBS="$orig_LIBS"
-		LDFLAGS="$orig_LDFLAGS"
-	fi
-	AC_CHECK_FUNCS(gethostid lrand48)
-	AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
-	AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
-	AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
-	AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
-	AC_CHECK_HEADERS(termios.h)
-
 	AM_CONDITIONAL(PRPLS, test "x$enable_plugins" = "xyes")
 else
 	enable_prpls=no
 fi
 
+dnl checks for icqlib
+AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
+AC_CHECK_FUNCS(bswap_32 bswap_16)
+AC_C_BIGENDIAN
+
+dnl checks for jabber
+dnl AC_CHECK_SIZEOF(short)
+AC_CHECK_FUNCS(snprintf connect)
+AC_CHECK_LIB(nsl, gethostent)
+
+dnl checks for zephyr
+AC_DEFINE(ZEPHYR_INT32, long)
+AC_SUBST(KRB4_CFLAGS)
+AC_SUBST(KRB4_LDFLAGS)
+AC_SUBST(KRB4_LIBS)
+if test "$kerberos" != "no" ; then
+	if test "$kerberos" != "yes" ; then
+		KRB4_CFLAGS="-I${kerberos}/include"
+		if test -d "$kerberos/include/kerberosIV" ; then
+			KRB4_CFLAGS="$KRB4_CFLAGS -I${kerberos}/include/kerberosIV"
+		fi
+		KRB4_LDFLAGS="-L${kerberos}/lib"
+	elif test -d /usr/local/include/kerberosIV ; then
+		KRB4_CFLAGS="-I/usr/local/include/kerberosIV"
+	elif test -d /usr/include/kerberosIV ; then
+		KRB4_CFLAGS="-I/usr/include/kerberosIV"
+	fi
+	AC_DEFINE(ZEPHYR_USES_KERBEROS)
+
+	orig_LDFLAGS="$LDFLAGS"
+	LDFLAGS="$LDFLAGS $KRB4_LDFLAGS"
+	AC_CHECK_LIB(krb4, krb_rd_req,
+			[KRB4_LIBS="-lkrb4 -ldes425 -lkrb5 -lk5crypto -lcom_err"],
+			[AC_CHECK_LIB(krb, krb_rd_req,
+				[KRB4_LIBS="-lkrb -ldes"],
+				[AC_ERROR(Kerberos 4 libraries not found)],
+				-ldes)],
+			-ldes425 -lkrb5 -lk5crypto -lcom_err)
+	orig_LIBS="$LIBS"
+	LIBS="$LIBS $KRB4_LIBS"
+	AC_CHECK_FUNCS(krb_set_key krb_rd_req krb_get_lrealm)
+	AC_CHECK_FUNCS(krb_get_err_text krb_log)
+	LIBS="$orig_LIBS"
+	LDFLAGS="$orig_LDFLAGS"
+fi
+AC_CHECK_FUNCS(gethostid lrand48)
+AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
+AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
+AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
+AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
+AC_CHECK_HEADERS(termios.h)
+
 AC_OUTPUT([Makefile
-	   src/Makefile
-	   intl/Makefile
-           sounds/Makefile
-	   plugins/Makefile
-	   plugins/yay/Makefile
-	   plugins/icq/Makefile
-	   plugins/msn/Makefile
-	   plugins/jabber/Makefile
-	   plugins/zephyr/Makefile
-           pixmaps/Makefile
-           libfaim/Makefile
-	   po/Makefile.in 
            doc/Makefile
+	   intl/Makefile
            m4/Makefile
+           pixmaps/Makefile
+	   plugins/Makefile
+	   po/Makefile.in 
+           sounds/Makefile
+	   src/Makefile
+	   src/protocols/Makefile
+	   src/protocols/icq/Makefile
+	   src/protocols/irc/Makefile
+	   src/protocols/jabber/Makefile
+	   src/protocols/msn/Makefile
+	   src/protocols/napster/Makefile
+	   src/protocols/oscar/Makefile
+	   src/protocols/toc/Makefile
+	   src/protocols/yahoo/Makefile
+	   src/protocols/zephyr/Makefile
 	   gaim.spec
           ])
 
@@ -298,20 +334,21 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Allow Multiple Connections. : $enable_multi
-echo Build Protocol Plugins..... : $enable_prpls
+echo Allow Multiple Connections.. : $enable_multi
+echo Build Protocol Plugins...... : $enable_prpls
+echo Protocols to link statically : $STATIC_PRPLS
 echo
-echo Build with GNOME bits...... : $enable_gnome
-echo Use GdkPixbuf for Icons.... : $use_pixbuf
-echo Build as GNOME applet...... : $enable_panel
+echo Build with GNOME bits....... : $enable_gnome
+echo Use GdkPixbuf for Icons..... : $use_pixbuf
+echo Build as GNOME applet....... : $enable_panel
 echo
-echo Build with Plugin support.. : $enable_plugins
-echo Build with Perl support.... : $enable_perl
+echo Build with Plugin support... : $enable_plugins
+echo Build with Perl support..... : $enable_perl
 echo
-echo Build with ESD............. : $enable_esd
-echo Build with NAS............. : $enable_nas
+echo Build with ESD.............. : $enable_esd
+echo Build with NAS.............. : $enable_nas
 echo
-echo Print debugging messages... : $enable_debug
+echo Print debugging messages.... : $enable_debug
 echo
 echo Gaim will be installed in $prefix/bin.
 if test "x$gaimpath" != "x" ; then

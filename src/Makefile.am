@@ -1,3 +1,5 @@
+SUBDIRS = protocols
+
 if GNOMEAPPLET
 bin_PROGRAMS = gaim_applet
 gaim_applet_SOURCES =	about.c \
@@ -16,7 +18,6 @@ gaim_applet_SOURCES =	about.c \
 			html.c \
 			idle.c \
 			multi.c \
-			oscar.c \
 			perl.c \
 			plugins.c \
 			prefs.c \
@@ -25,9 +26,8 @@ gaim_applet_SOURCES =	about.c \
 			server.c \
 			sound.c \
 			ticker.c \
-			toc.c \
 			util.c
-gaim_applet_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_applet_DEPENDENCIES = @LIBOBJS@
 gaim_applet_LDFLAGS = -export-dynamic
 gaim_applet_LDADD = @LDADD@ @LIBOBJS@
 else
@@ -48,7 +48,6 @@ gaim_SOURCES =	about.c \
 		html.c \
 		idle.c \
 		multi.c \
-		oscar.c \
 		perl.c \
 		plugins.c \
 		prefs.c \
@@ -57,17 +56,14 @@ gaim_SOURCES =	about.c \
 		server.c \
 		sound.c \
 		ticker.c \
-		toc.c \
 		util.c
-gaim_DEPENDENCIES = ../libfaim/libfaim.a @LIBOBJS@
+gaim_DEPENDENCIES = @LIBOBJS@
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
-# libfaim stuff. should be here instead of configure.in, since plugins/prpls shouldn't
-# rely on libfaim (the only file that should depend on it is oscar.c)
-CFLAGS += -I$(top_srcdir)/libfaim
-LIBS += ../libfaim/libfaim.a
+# Static protocols
+LIBS += $(STATIC_LINK_LIBS)
 
 # Perl stuff. plugins shouldn't need this either (right?)
 CFLAGS += $(PERL_CFLAGS)

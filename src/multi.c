@@ -211,17 +211,6 @@ static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
 	g_free(m);
 }
 
-void get_good(struct gaim_connection **gc)
-{
-	GSList *c = connections; *gc = NULL;
-	while (c) {
-		if (((struct gaim_connection *)c->data)->protocol < 2) {
-			*gc = c->data; return;
-		}
-		c = c->next;
-	}
-}
-
 static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, GtkWidget *box)
 {
 	GtkWidget *button;

@@ -28,9 +28,6 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/register.xpm"
 
-extern void toc_init(struct prpl *);
-extern void oscar_init(struct prpl *);
-
 GSList *protocols = NULL;
 
 static GtkWidget *regdialog = NULL;
@@ -110,11 +107,7 @@ void unload_protocol(struct prpl *p)
 	g_free(p);
 }
 
-void static_proto_init()
-{
-	load_protocol(toc_init, sizeof(struct prpl));
-	load_protocol(oscar_init, sizeof(struct prpl));
-}
+STATIC_PROTO_INIT
 
 static void des_win(GtkWidget *a, GtkWidget *b)
 {

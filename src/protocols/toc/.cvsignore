@@ -1,0 +1,6 @@
+Makefile.in
+Makefile
+.deps
+.libs
+libtoc.la
+toc.lo
