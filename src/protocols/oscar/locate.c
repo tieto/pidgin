@@ -241,8 +241,10 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 	if (userinfo->info != NULL) {
 		free(cur->info);
 		free(cur->info_encoding);
-		cur->info = (char *)malloc(userinfo->info_len);
-		memcpy(cur->info, userinfo->info, userinfo->info_len);
+		if (userinfo->info_len > 0) {
+			cur->info = (char *)malloc(userinfo->info_len);
+			memcpy(cur->info, userinfo->info, userinfo->info_len);
+		}
 		cur->info_encoding = strdup(userinfo->info_encoding);
 		cur->info_len = userinfo->info_len;
 	}
@@ -250,8 +252,10 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 	if (userinfo->away != NULL) {
 		free(cur->away);
 		free(cur->away_encoding);
-		cur->away = (char *)malloc(userinfo->away_len);
-		memcpy(cur->away, userinfo->away, userinfo->away_len);
+		if (userinfo->away_len > 0) {
+			cur->away = (char *)malloc(userinfo->away_len);
+			memcpy(cur->away, userinfo->away, userinfo->away_len);
+		}
 		cur->away_encoding = strdup(userinfo->away_encoding);
 		cur->away_len = userinfo->away_len;
 	}
