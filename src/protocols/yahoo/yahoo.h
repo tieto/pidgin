@@ -233,6 +233,9 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8);
  */
 char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8);
 
+/* previously-static functions, now needed for yahoo_profile.c */
+char *yahoo_tooltip_text(GaimBuddy *b);
+
 /* yahoo_profile.c */
 void yahoo_get_info(GaimConnection *gc, const char *name);
 

@@ -786,9 +786,7 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 					  (no_value_token && strncmp(p, no_value_token,
 												 strlen(no_value_token)))))
 	{
-		g_string_append(dest, "<b>");
-		g_string_append(dest, display_name);
-		g_string_append(dest, ":</b> ");
+		g_string_append_printf(dest, _("<b>%s:</b> "), display_name);
 
 		if (is_link)
 		{

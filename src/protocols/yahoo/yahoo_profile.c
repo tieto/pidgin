@@ -625,10 +625,11 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	const char *last_updated_string = NULL;
 	char *last_updated_utf8_string;
 	int lang, strid;
+	GaimBuddy *b;
 
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
-	/* we failed to grab the profile URL */
+	/* we failed to grab the profile URL. this should never happen */
 	if (url_text == NULL || strcmp(url_text, "") == 0) {
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
 			_("<html><body><b>Error retrieving profile</b></body></html>"),
@@ -677,15 +678,15 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		gaim_debug_info("yahoo", "detected profile lang = %s (%d)\n", profile_strings[strid].lang_string, lang);
 	}
 
-	/* At the moment we don't support profile pages with languages other than
-	 * English. The problem is, that every user may choose his/her own profile
-	 * language. This language has nothing to do with the preferences of the
-	 * user which looks at the profile
+	/* Every user may choose his/her own profile language, and this language
+	 * has nothing to do with the preferences of the user which looks at the
+	 * profile. We try to support all languages, but nothing is guaranteed.
 	 */
 	if (!p || profile_strings[strid].lang == XX) {
 		if (strstr(url_text, "was not found on this server.") == NULL && strstr(url_text, "Yahoo! Member Directory - User not found") == NULL) {
 			g_snprintf(buf, 1024, "<html><body>%s%s<a href=\"%s%s\">%s%s</a></body></html>",
-					_("<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"),
+					_("<b>Sorry, this profile seems to be in a language "
+					  "that is not supported at this time.</b><br><br>\n"),
 					_("If you wish to view this profile, you will need to visit this link in your web browser<br>"),
 					YAHOO_PROFILE_URL, info_data->name, YAHOO_PROFILE_URL, info_data->name);
 		} else {
@@ -759,8 +760,27 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 * true, since the Yahoo! ID will always be there */
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].yahoo_id_string, 2, "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL))
-		g_string_append_printf(s, "<b>%s:</b> %s<br>", _("Yahoo! ID"), info_data->name);
+		g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Yahoo! ID"), info_data->name);
 
+	/* Display the alias, idle time, and status message below the Yahoo! ID */
+	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc), info_data->name);
+	if (b) {
+		char *statustext = yahoo_tooltip_text(b);
+		if(b->alias && b->alias[0]) {
+			char *aliastext = g_markup_escape_text(b->alias, -1);
+			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
+			g_free(aliastext);
+		}
+		if (b->idle > 0) {
+			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
+			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"), idletime);
+			g_free(idletime);
+		}
+		if (statustext) {
+			g_string_append_printf(s, "%s<br>", statustext);
+			g_free(statustext);
+		}
+	}
 
 	/* extract their Email address and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].my_email_string, 5, "\n", 0,
@@ -845,9 +865,9 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
-	 * then we have none.  If we have one however, we'll need to check and see if
-	 * we have a second one.  If we have a second one, we have to check to see if
-	 * we have a third one.
+	 * then we have none.  If we have one however, we'll need to check and see
+	 * if we have a second one.  If we have a second one, we have to check to
+	 * see if we have a third one.
 	 */
 	p = !profile_strings[strid].no_cool_link_specified_string? NULL:
 		strstr(stripped,profile_strings[strid].no_cool_link_specified_string);
@@ -871,6 +891,12 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	/* extract the Last Updated date and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, last_updated_utf8_string, 0, "\n", '\n', NULL,
 			_("Last Updated"), 0, NULL);
+
+	/* put a link to the actual profile URL */
+	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
+	g_string_append_printf(s, "<a href=\"%s%s\">%s%s</a><br>",
+			YAHOO_PROFILE_URL, info_data->name,
+			YAHOO_PROFILE_URL, info_data->name);
 
 	/* finish off the html */
 	g_string_append(s, "</body></html>\n");

@@ -2474,7 +2474,7 @@ static char *yahoo_status_text(GaimBuddy *b)
  	}
 }
 
-static char *yahoo_tooltip_text(GaimBuddy *b)
+char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	struct yahoo_friend *f;
