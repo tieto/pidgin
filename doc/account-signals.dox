@@ -5,6 +5,7 @@
   @signal account-connecting
   @signal account-setting-info
   @signal account-set-info
+  @signal account-warned
  @endsignals
 
  <hr>
