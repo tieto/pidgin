@@ -117,22 +117,36 @@ static ssize_t jabber_oob_xfer_read(char **buffer, GaimXfer *xfer) {
 	return 0;
 }
 
-static void jabber_oob_xfer_cancel_recv(GaimXfer *xfer) {
+static void jabber_oob_xfer_recv_error(GaimXfer *xfer, const char *code) {
 	JabberOOBXfer *jox = xfer->data;
 	JabberIq *iq;
-	xmlnode *y;
+	xmlnode *y, *z;
 
 	iq = jabber_iq_new(jox->js, JABBER_IQ_ERROR);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	jabber_iq_set_id(iq, jox->iq_id);
 	y = xmlnode_new_child(iq->node, "error");
-	/* FIXME: need to handle other kinds of errors here */
-	xmlnode_set_attrib(y, "code", "406");
-	xmlnode_insert_data(y, "File Transfer Refused", -1);
-
+	xmlnode_set_attrib(y, "code", code);
+	if(!strcmp(code, "406")) {
+		z = xmlnode_new_child(y, "not-acceptable");
+		xmlnode_set_attrib(y, "type", "modify");
+		xmlnode_set_attrib(z, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+	} else if(!strcmp(code, "404")) {
+		z = xmlnode_new_child(y, "not-found");
+		xmlnode_set_attrib(y, "type", "cancel");
+		xmlnode_set_attrib(z, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+	}
 	jabber_iq_send(iq);
 
 	jabber_oob_xfer_free(xfer);
+}
+
+static void jabber_oob_xfer_recv_denied(GaimXfer *xfer) {
+	jabber_oob_xfer_recv_error(xfer, "406");
+}
+
+static void jabber_oob_xfer_recv_canceled(GaimXfer *xfer) {
+	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
 void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
@@ -170,8 +184,8 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 
 	gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
 	gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
-	gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_cancel_recv); /* XXX */
-	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_cancel_recv);
+	gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
+	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
 	gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 	gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 

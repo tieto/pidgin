@@ -1219,7 +1219,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roster_group_change,
 	jabber_roster_group_rename,
 	NULL,
-	NULL, /* convo_closed */ /* XXX: thread_ids */
+	NULL, /* convo_closed */
 	jabber_normalize,
 	NULL, /* set_buddy_icon */
 	NULL, /* remove_group */
