@@ -10,8 +10,8 @@ version 0.77cvs
 
 	Bug Fixes:
 	* TOC has been removed from the default build list. I do not support
-	  no one is making sure the updated code to keep it compiling actually
-	  works, and no one is fixing bugs in it. 
+	  it and no one is making sure the updated code to keep it compiling
+	  actually works, and no one is fixing bugs in it. 
 	* Save Conversation works again (Kevin Stange)
 	* The Clear button in privacy works (Robert Mibus)
 	* MSN error reporting works again (Stu Tomlinson)
