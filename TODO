@@ -273,7 +273,6 @@ IRC:
 	multi word remove messages
 	auto reply to /msg on away 
 	no list of people on /join 
-	display target of +b and +q (done)?
 
 Jabber:
 	Segfault on account creation, esp. on register new account
