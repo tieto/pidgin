@@ -122,7 +122,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 	if (!(tl = aim_readtlvchain(bs)) || !(datatlv = aim_gettlv(tl, 0x0001, 1))) {
 		if (tl)
-			aim_freetlvchain(tl);
+			aim_freetlvchain(&tl);
 		faimdprintf(sess, 0, "corrupt ICQ response\n");
 		return 0;
 	}
@@ -165,7 +165,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 			ret = userfunc(sess, rx);
 	}
 
-	aim_freetlvchain(tl);
+	aim_freetlvchain(&tl);
 
 	return ret;
 }
