@@ -71,8 +71,11 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 {
 	g_return_val_if_fail(log && log->logger, NULL);
-	if (log->logger->read)
-		return (log->logger->read)(log, flags);
+	if (log->logger->read) {
+		char *ret = (log->logger->read)(log, flags);
+		gaim_str_strip_linefeed(ret);
+		return ret;
+	}
 	return (_("<b><font color\"=red\">The logger has no read function</font></b>"));
 }
 
@@ -693,7 +696,6 @@ char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	*flags = 0;
 	if(strstr(read, "<BR>"))
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
-	gaim_str_strip_linefeed(read);
 	return read;
 }
 
