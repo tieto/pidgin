@@ -41,12 +41,6 @@ echo n | gettextize --copy --force;
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force;
 
-# we do this because autoconf defaults to installing to /usr/local
-# and aclocal defaults to only looking in /usr/share/aclocal
-if test -d /usr/local/share/aclocal ; then
-	export ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I /usr/local/share/aclocal"
-fi
-
 aclocal -I m4 $ACLOCAL_FLAGS;
 autoheader;
 automake --add-missing --copy;
