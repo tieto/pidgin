@@ -180,7 +180,7 @@ static void toc_login(GaimAccount *account)
 				gaim_account_get_string(account, "server", TOC_HOST),
 				gaim_account_get_int(account, "port", TOC_PORT),
 				toc_login_callback, gc) != 0 || !account->gc) {
-		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
+		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"),
 				gaim_account_get_string(account, "server", TOC_HOST));
 		gaim_connection_error(gc, buf);
 		return;
@@ -204,7 +204,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 
 	if (source == -1) {
 		/* we didn't successfully connect. tdt->toc_fd is valid here */
-		gaim_connection_error(gc, "Unable to connect.");
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 	tdt->toc_fd = source;
@@ -221,7 +221,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 
 	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
-		gaim_connection_error(gc, "Disconnected.");
+		gaim_connection_error(gc, _("Disconnected."));
 		return;
 	}
 	tdt->state = STATE_FLAPON;
@@ -557,7 +557,7 @@ static char *show_error_message()
                 break;
         case 977:
                 g_snprintf(buf, sizeof(buf), _("User has no directory information."));
-                /* g_snprintf(buf, sizeof(buf), "Language not supported."); */
+                /* g_snprintf(buf, sizeof(buf), _("Language not supported.")); */
                 break;
         case 978:
                 g_snprintf(buf, sizeof(buf), _("Country not supported."));

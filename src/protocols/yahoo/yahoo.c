@@ -894,7 +894,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	len = read(yd->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		gaim_connection_error(gc, "Unable to read");
+		gaim_connection_error(gc, _("Unable to read"));
 		return;
 	}
 
@@ -962,7 +962,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, "Unable to connect");
+		gaim_connection_error(gc, _("Unable to connect"));
 		return;
 	}
 
@@ -992,7 +992,7 @@ static void yahoo_login(GaimAccount *account) {
 	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
 			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
 			  yahoo_got_connected, gc) != 0) {
-		gaim_connection_error(gc, "Connection problem");
+		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
 

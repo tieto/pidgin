@@ -194,7 +194,7 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			return TRUE;
 		}
 
-		g_snprintf(buf, sizeof(buf), "MSN Error: %s\n",
+		g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
 				   msn_error_get_text(errnum));
 	}
 	else {

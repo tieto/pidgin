@@ -264,7 +264,7 @@ void gaim_status_load()
 		if (!away_messages) {
 			struct away_message *a = g_new0(struct away_message, 1);
 			g_snprintf(a->name, sizeof(a->name), _("Slightly less boring default"));
-			g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
+			g_snprintf(a->message, sizeof(a->message), "%s", _(BORING_DEFAULT_AWAY_MSG));
 			away_messages = g_slist_append(away_messages, a);
 		}
 		return;

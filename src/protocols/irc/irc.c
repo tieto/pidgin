@@ -1812,7 +1812,7 @@ irc_callback(gpointer data, gint source, GaimInputCondition condition)
 
 	i = read(idata->fd, buf, 1024);
 	if (i <= 0) {
-		gaim_connection_error(gc, "Read error");
+		gaim_connection_error(gc, _("Read error"));
 		return;
 	}
 
@@ -1871,7 +1871,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	idata = gc->proto_data;
 
 	if (source < 0) {
-		gaim_connection_error(gc, "Write error");
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 	idata->fd = source;
@@ -1899,7 +1899,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 				   gaim_account_get_password(account));
 
 		if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
-			gaim_connection_error(gc, "Write error");
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 	}
@@ -1912,7 +1912,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 		   (alias == NULL ? "gaim" : alias));
 
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
-		gaim_connection_error(gc, "Write error");
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 
@@ -1920,7 +1920,7 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 			   gaim_connection_get_display_name(gc));
 
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
-		gaim_connection_error(gc, "Write error");
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 

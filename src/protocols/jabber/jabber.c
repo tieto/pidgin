@@ -4184,7 +4184,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 			errmsg = xmlnode_get_data(xerr);
 			if (xmlnode_get_attrib(xerr, "code")) {
 				errcode = atoi(xmlnode_get_attrib(xerr, "code"));
-				g_snprintf(msg, sizeof(msg), "Error %d: %s", errcode, errmsg);
+				g_snprintf(msg, sizeof(msg), _("Error %d: %s"), errcode, errmsg);
 			} else
 				g_snprintf(msg, sizeof(msg), "%s", errmsg);
 			gaim_connection_error(GJ_GC(gjc), msg);

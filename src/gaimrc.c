@@ -366,7 +366,7 @@ static void gaimrc_read_away(FILE *f)
 	if (!away_messages) {
 		a = g_new0(struct away_message, 1);
 		g_snprintf(a->name, sizeof(a->name), _("boring default"));
-		g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
+		g_snprintf(a->message, sizeof(a->message), "%s", _(BORING_DEFAULT_AWAY_MSG));
 		away_messages = g_slist_append(away_messages, a);
 	}
 	gaim_status_sync();
@@ -1598,7 +1598,7 @@ static void set_defaults()
 	auto_away = 10;
 	a = g_new0(struct away_message, 1);
 	g_snprintf(a->name, sizeof(a->name), _("boring default"));
-	g_snprintf(a->message, sizeof(a->message), "%s", BORING_DEFAULT_AWAY_MSG);
+	g_snprintf(a->message, sizeof(a->message), "%s", _(BORING_DEFAULT_AWAY_MSG));
 	away_messages = g_slist_append(away_messages, a);
 	default_away = a;
 
