@@ -4488,6 +4488,7 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 		return;
 	}
 
+	text_html = strdup_withhtml(text);
 	flags = oscar_encoding_check(text_html);
 	if (flags & AIM_IMFLAGS_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
