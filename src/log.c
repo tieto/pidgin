@@ -339,20 +339,9 @@ static void xml_logger_write(GaimLog *log,
 
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
-		dir = g_build_filename(ud, "logs", NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
 		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(guy);
 
 		char *filename = g_build_filename(dir, date, NULL);
@@ -442,20 +431,9 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.html", localtime(&log->time));
 
-		dir = g_build_filename(ud, "logs", NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
 		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(guy);
 
 		filename = g_build_filename(dir, date, NULL);
@@ -584,20 +562,9 @@ static void txt_logger_write(GaimLog *log,
 		}
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
 
-		dir = g_build_filename(ud, "logs", NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
-		dir = g_build_filename(ud, "logs",
-				       prpl, guy, NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		g_free(dir);
 		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		g_free(guy);
 
 		filename = g_build_filename(dir, date, NULL);

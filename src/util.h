@@ -252,6 +252,19 @@ const gchar *gaim_home_dir(void);
 char *gaim_user_dir(void);
 
 /**
+ * Builds a complete path from the root, making any directories along
+ * the path which do not already exist.
+ * 
+ * @param path The path you wish to create.  Note that it must start
+ *        from the root or this function will fail.
+ * 
+ * @param mode Unix-style permissions for this directory.
+ * 
+ * @return 0 for success, nonzero on any error.
+ */
+int gaim_build_dir(char *path, int mode);
+
+/**
  * Creates a temporary file and returns a file pointer to it.
  *
  * This is like mkstemp(), but returns a file pointer and uses a

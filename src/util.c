@@ -22,6 +22,10 @@
  */
 #include "internal.h"
 
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
@@ -1181,6 +1185,51 @@ gaim_user_dir(void)
 	}
 
 	return NULL;
+}
+
+int gaim_build_dir (char *path, int mode)
+{
+	struct stat st;
+	char *dir, **components, delim[] = { G_DIR_SEPARATOR, '\0' };
+	int cur, len;
+
+	if (path == NULL || path[0] != G_DIR_SEPARATOR)
+		return -1;
+
+	dir = g_new0(char, strlen(path) + 1);
+	components = g_strsplit(path, delim, -1);
+	len = 0;
+	for (cur = 0; components[cur] != NULL; cur++) {
+		dir[len++] = G_DIR_SEPARATOR;
+		strcpy(dir + len, components[cur]);
+		len += strlen(components[cur]);
+		if (stat(dir, &st) == 0) {
+			if ((st.st_mode & S_IFMT) == S_IFDIR)
+				continue;
+			else {
+				gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "bad path: %s\n", path);
+				g_strfreev(components);
+				g_free(dir);
+				return -1;
+			}
+		} else if (errno != ENOENT) {
+			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "stat: %s\n", strerror(errno));
+			g_strfreev(components);
+			g_free(dir);
+			return -1;
+		}
+
+		if (mkdir(dir, mode) < 0) {
+			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "mkdir: %s\n", strerror(errno));
+			g_strfreev(components);
+			g_free(dir);
+			return -1;
+		}
+	}
+
+	g_strfreev(components);
+	g_free(dir);
+	return 0;
 }
 
 /*
