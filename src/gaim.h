@@ -465,6 +465,7 @@ extern int general_options;
 #define OPT_GEN_AUTO_AWAY         0x00800000
 #define OPT_GEN_ESC_CAN_CLOSE     0x01000000
 #define OPT_GEN_CTL_ENTER         0x02000000
+#define OPT_GEN_F2_TOGGLES        0x04000000
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME        0x00000001

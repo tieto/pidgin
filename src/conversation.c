@@ -470,6 +470,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->window, c);
 		}
+	} else if ((event->keyval == GDK_F2) && (general_options & OPT_GEN_F2_TOGGLES)) {
+		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
 	} else if (event->keyval == GDK_Return) {
 		if ((event->state & GDK_CONTROL_MASK) && (general_options & OPT_GEN_CTL_ENTER)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);

@@ -245,6 +245,7 @@ static void convo_page()
 	gaim_button(_("Escape closes window"), &general_options, OPT_GEN_ESC_CAN_CLOSE, box);
 	gaim_button(_("Control-{B/I/U/S} inserts HTML tags"), &general_options, OPT_GEN_CTL_CHARS, box);
 	gaim_button(_("Control-(number) inserts smileys"), &general_options, OPT_GEN_CTL_SMILEYS, box);
+	gaim_button(_("F2 toggles timestamp display"), &general_options, OPT_GEN_F2_TOGGLES, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
