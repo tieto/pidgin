@@ -283,9 +283,9 @@ struct client_info_s {
 #define AIM_CONN_TYPE_BOS		0x0002
 #define AIM_CONN_TYPE_ADS		0x0005
 #define AIM_CONN_TYPE_AUTH		0x0007
-#define AIM_CONN_TYPE_CHATNAV		0x000d
+#define AIM_CONN_TYPE_CHATNAV	0x000d
 #define AIM_CONN_TYPE_CHAT		0x000e
-#define AIM_CONN_TYPE_SEARCH		0x000f
+#define AIM_CONN_TYPE_SEARCH	0x000f
 #define AIM_CONN_TYPE_ICON		0x0010
 #define AIM_CONN_TYPE_EMAIL		0x0018
 
@@ -300,7 +300,7 @@ struct client_info_s {
 #define AIM_CONN_SUBTYPE_OFT_GETFILE	0x0002
 #define AIM_CONN_SUBTYPE_OFT_SENDFILE	0x0003
 #define AIM_CONN_SUBTYPE_OFT_BUDDYICON	0x0004
-#define AIM_CONN_SUBTYPE_OFT_VOICE	0x0005
+#define AIM_CONN_SUBTYPE_OFT_VOICE		0x0005
 
 /*
  * Status values returned from aim_conn_new().  ORed together.
@@ -354,19 +354,18 @@ typedef struct aim_frame_s {
 	fu8_t hdrtype; /* defines which piece of the union to use */
 	union {
 		struct { 
-			fu8_t type;
+			fu8_t channel;
 			flap_seqnum_t seqnum;     
 		} flap;
 		struct {
-			fu8_t magic[4]; /* ODC2 or OFT2 */
+			fu8_t magic[4];	/* ODC2 or OFT2 */
 			fu16_t hdrlen;
 			fu16_t type;
 		} rend;
 	} hdr;
-	aim_bstream_t data;	/* payload stream */
-	fu8_t handled;		/* 0 = new, !0 = been handled */
-	fu8_t nofree;		/* 0 = free data on purge, 1 = only unlink */
-	aim_conn_t *conn;	/* the connection it came in on... */
+	aim_bstream_t data;		/* payload stream */
+	aim_conn_t *conn;		/* the connection it came in on/is going out on */
+	fu8_t handled;			/* 0 = new, !0 = been handled */
 	struct aim_frame_s *next;
 } aim_frame_t;
 
@@ -472,18 +471,18 @@ typedef struct aim_session_s {
 } aim_session_t;
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
-#define AIM_ICQ_STATE_NORMAL		0x00000000
-#define AIM_ICQ_STATE_AWAY		0x00000001
-#define AIM_ICQ_STATE_DND		0x00000002
-#define AIM_ICQ_STATE_OUT		0x00000004
-#define AIM_ICQ_STATE_BUSY		0x00000010
-#define AIM_ICQ_STATE_CHAT		0x00000020
-#define AIM_ICQ_STATE_INVISIBLE		0x00000100
-#define AIM_ICQ_STATE_WEBAWARE		0x00010000
-#define AIM_ICQ_STATE_HIDEIP		0x00020000
-#define AIM_ICQ_STATE_BIRTHDAY		0x00080000
+#define AIM_ICQ_STATE_NORMAL			0x00000000
+#define AIM_ICQ_STATE_AWAY				0x00000001
+#define AIM_ICQ_STATE_DND				0x00000002
+#define AIM_ICQ_STATE_OUT				0x00000004
+#define AIM_ICQ_STATE_BUSY				0x00000010
+#define AIM_ICQ_STATE_CHAT				0x00000020
+#define AIM_ICQ_STATE_INVISIBLE			0x00000100
+#define AIM_ICQ_STATE_WEBAWARE			0x00010000
+#define AIM_ICQ_STATE_HIDEIP			0x00020000
+#define AIM_ICQ_STATE_BIRTHDAY			0x00080000
 #define AIM_ICQ_STATE_DIRECTDISABLED	0x00100000
-#define AIM_ICQ_STATE_ICQHOMEPAGE	0x00200000
+#define AIM_ICQ_STATE_ICQHOMEPAGE		0x00200000
 #define AIM_ICQ_STATE_DIRECTREQUIREAUTH	0x10000000
 #define AIM_ICQ_STATE_DIRECTCONTACTLIST	0x20000000
 

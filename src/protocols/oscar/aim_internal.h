@@ -110,11 +110,8 @@ faim_internal void aim_frame_destroy(aim_frame_t *);
 /* txqueue.c */
 faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8_t framing, fu16_t chan, int datalen);
 faim_internal int aim_tx_enqueue(aim_session_t *, aim_frame_t *);
-faim_internal flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *);
 faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *cur);
 faim_internal void aim_tx_cleanqueue(aim_session_t *, aim_conn_t *);
-
-/* XXX - What is this?   faim_internal int aim_tx_printqueue(aim_session_t *); */
 
 /*
  * Generic SNAC structure.  Rarely if ever used.

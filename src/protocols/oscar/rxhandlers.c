@@ -370,21 +370,21 @@ faim_internal int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 	maxf = sizeof(literals) / sizeof(literals[0]);
 	maxs = sizeof(literals[0]) / sizeof(literals[0][0]);
 
-	if (frame->hdr.flap.type == 0x02) {
+	if (frame->hdr.flap.channel == 0x02) {
 
 		family = aimbs_get16(&frame->data);
 		subtype = aimbs_get16(&frame->data);
 		
 		if ((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->hdr.flap.type], family, subtype, literals[family][subtype+1]);
+			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->hdr.flap.channel], family, subtype, literals[family][subtype+1]);
 		else
-			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->hdr.flap.type], family, subtype);
+			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->hdr.flap.channel], family, subtype);
 	} else {
 
-		if (frame->hdr.flap.type <= maxchannels)
-			faimdprintf(sess, 0, "bleck: channel %s (0x%02x)\n", channels[frame->hdr.flap.type], frame->hdr.flap.type);
+		if (frame->hdr.flap.channel <= maxchannels)
+			faimdprintf(sess, 0, "bleck: channel %s (0x%02x)\n", channels[frame->hdr.flap.channel], frame->hdr.flap.channel);
 		else
-			faimdprintf(sess, 0, "bleck: unknown channel 0x%02x\n", frame->hdr.flap.type);
+			faimdprintf(sess, 0, "bleck: unknown channel 0x%02x\n", frame->hdr.flap.channel);
 
 	}
 		
@@ -517,19 +517,19 @@ faim_export void aim_rxdispatch(aim_session_t *sess)
 			continue;
 
 		if (cur->hdrtype == AIM_FRAMETYPE_FLAP) {
-			if (cur->hdr.flap.type == 0x01) {
+			if (cur->hdr.flap.channel == 0x01) {
 				cur->handled = aim_callhandler_noparam(sess, cur->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, cur); /* XXX use consumenonsnac */
 				continue;
 
-			} else if (cur->hdr.flap.type == 0x02) {
+			} else if (cur->hdr.flap.channel == 0x02) {
 				if ((cur->handled = consumesnac(sess, cur)))
 					continue;
 
-			} else if (cur->hdr.flap.type == 0x04) {
+			} else if (cur->hdr.flap.channel == 0x04) {
 				cur->handled = negchan_middle(sess, cur);
 				continue;
 
-			} else if (cur->hdr.flap.type == 0x05) {
+			} else if (cur->hdr.flap.channel == 0x05) {
 
 			}
 

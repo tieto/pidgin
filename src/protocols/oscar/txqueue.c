@@ -30,8 +30,8 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 {
 	aim_frame_t *fr;
 
-	if (!conn) {
-		faimdprintf(sess, 0, "aim_tx_new: ERROR: no connection specified\n");
+	if (!sess || !conn) {
+		faimdprintf(sess, 0, "aim_tx_new: No session or no connection specified!\n");
 		return NULL;
 	}
 
@@ -48,23 +48,16 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 		}
 	}
 
-	if (!(fr = (aim_frame_t *)malloc(sizeof(aim_frame_t))))
+	if (!(fr = (aim_frame_t *)calloc(1, sizeof(aim_frame_t))))
 		return NULL;
-	memset(fr, 0, sizeof(aim_frame_t));
 
 	fr->conn = conn; 
-
 	fr->hdrtype = framing;
-
-	if (fr->hdrtype == AIM_FRAMETYPE_FLAP) {
-
-		fr->hdr.flap.type = chan;
-
-	} else if (fr->hdrtype == AIM_FRAMETYPE_OFT) {
-
+	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
+		fr->hdr.flap.channel = chan;
+	else if (fr->hdrtype == AIM_FRAMETYPE_OFT)
 		fr->hdr.rend.type = chan;
-
-	} else 
+	else 
 		faimdprintf(sess, 0, "tx_new: unknown framing\n");
 
 	if (datalen > 0) {
@@ -81,9 +74,22 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 	return fr;
 }
 
+/* 
+ * This increments the tx command count, and returns the seqnum
+ * that should be stamped on the next FLAP packet sent.  This is
+ * normally called during the final step of packet preparation
+ * before enqueuement (in aim_tx_enqueue()).
+ */
+static flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
+{
+	flap_seqnum_t ret;
+	
+	ret = ++conn->seqnum;
+
+	return ret;
+}
+
 /*
- * aim_tx_enqeue__queuebased()
- *
  * The overall purpose here is to enqueue the passed in command struct
  * into the outgoing (tx) queue.  Basically...
  *   1) Make a scope-irrelevent copy of the struct
@@ -115,9 +121,7 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
 		sess->queue_outgoing = fr;
 	else {
 		aim_frame_t *cur;
-
-		for (cur = sess->queue_outgoing; cur->next; cur = cur->next)
-			;
+		for (cur = sess->queue_outgoing; cur->next; cur = cur->next);
 		cur->next = fr;
 	}
 
@@ -125,8 +129,6 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
 }
 
 /*
- * aim_tx_enqueue__immediate()
- *
  * Parallel to aim_tx_enqueue__queuebased, however, this bypasses
  * the whole queue mess when you want immediate writes to happen.
  *
@@ -177,7 +179,7 @@ faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
 {
 	
 	/*
-	 * If we want to send a connection thats inprogress, we have to force
+	 * If we want to send on a connection that is inprogress, we have to force
 	 * them to use the queue based version. Otherwise, use whatever they
 	 * want.
 	 */
@@ -189,24 +191,6 @@ faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
 	return (*sess->tx_enqueue)(sess, fr);
 }
 
-/* 
- *  aim_get_next_txseqnum()
- *
- *   This increments the tx command count, and returns the seqnum
- *   that should be stamped on the next FLAP packet sent.  This is
- *   normally called during the final step of packet preparation
- *   before enqueuement (in aim_tx_enqueue()).
- *
- */
-faim_internal flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
-{
-	flap_seqnum_t ret;
-	
-	ret = ++conn->seqnum;
-
-	return ret;
-}
-
 static int aim_send(int fd, const void *buf, size_t count)
 {
 	int left, cur;
@@ -215,6 +199,7 @@ static int aim_send(int fd, const void *buf, size_t count)
 		int ret;
 
 		ret = send(fd, ((unsigned char *)buf)+cur, left, 0);
+
 		if (ret == -1)
 			return -1;
 		else if (ret == 0)
@@ -230,45 +215,38 @@ static int aim_send(int fd, const void *buf, size_t count)
 static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 {
 	int wrote = 0;
+
 	if (!bs || !conn || (count < 0))
 		return -EINVAL;
 
+	/* Make sure we don't send paste the end of the bs */
 	if (count > aim_bstream_empty(bs))
 		count = aim_bstream_empty(bs); /* truncate to remaining space */
 
 	if (count) {
+		/*
+		 * If we're sending a large direct IM (maybe it contains an 
+		 * image or something), then we want to break it up into chunks 
+		 * of 1024 and update the UI between sending each one.  This is 
+		 * kind of ugly.  Ideally, if the client wants to send a large 
+		 * amount of data it should just write to the fd directly--we're 
+		 * not multithreaded and this is just a stop-gap thingy.
+		 */
 		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && 
 		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
-			/* I strongly suspect that this is a horrible thing to do
-			 * and I feel really guilty doing it. */
 			const char *sn = aim_odc_getsn(conn);
 			aim_rxcallback_t userfunc;
+
 			while (count - wrote > 1024) {
 				wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
-				if ((userfunc=aim_callhandler(conn->sessv, conn, 
-								AIM_CB_FAM_SPECIAL, 
-								AIM_CB_SPECIAL_IMAGETRANSFER)))
-				  userfunc(conn->sessv, NULL, sn, 
-					   count-wrote>1024 ? ((double)wrote / count) : 1);
+				if ((userfunc=aim_callhandler(conn->sessv, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
+					userfunc(conn->sessv, NULL, sn, count-wrote>1024 ? ((double)wrote / count) : 1);
 			}
 		}
+
 		if (count - wrote) {
 			wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, count - wrote);
 		}
-
-	}
-
-	if (((aim_session_t *)conn->sessv)->debug >= 2) {
-		int i;
-		aim_session_t *sess = (aim_session_t *)conn->sessv;
-
-		faimdprintf(sess, 2, "\nOutgoing data: (%d bytes)", wrote);
-		for (i = 0; i < wrote; i++) {
-			if (!(i % 8)) 
-				faimdprintf(sess, 2, "\n\t");
-			faimdprintf(sess, 2, "0x%02x ", *(bs->data + bs->offset + i));
-		}
-		faimdprintf(sess, 2, "\n");
 	}
 
 	bs->offset += wrote;
@@ -278,33 +256,33 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 
 static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 {
-	aim_bstream_t obs;
-	fu8_t *obs_raw;
-	int payloadlen, err = 0, obslen;
+	aim_bstream_t bs;
+	fu8_t *bs_raw;
+	int payloadlen, err = 0, bslen;
 
 	payloadlen = aim_bstream_curpos(&fr->data);
 
-	if (!(obs_raw = malloc(6 + payloadlen)))
+	if (!(bs_raw = malloc(6 + payloadlen)))
 		return -ENOMEM;
 
-	aim_bstream_init(&obs, obs_raw, 6 + payloadlen);
+	aim_bstream_init(&bs, bs_raw, 6 + payloadlen);
 
 	/* FLAP header */
-	aimbs_put8(&obs, 0x2a);
-	aimbs_put8(&obs, fr->hdr.flap.type);
-	aimbs_put16(&obs, fr->hdr.flap.seqnum);
-	aimbs_put16(&obs, payloadlen);
+	aimbs_put8(&bs, 0x2a);
+	aimbs_put8(&bs, fr->hdr.flap.channel);
+	aimbs_put16(&bs, fr->hdr.flap.seqnum);
+	aimbs_put16(&bs, payloadlen);
 
 	/* payload */
 	aim_bstream_rewind(&fr->data);
-	aimbs_putbs(&obs, &fr->data, payloadlen);
+	aimbs_putbs(&bs, &fr->data, payloadlen);
 
-	obslen = aim_bstream_curpos(&obs);
-	aim_bstream_rewind(&obs);
-	if (aim_bstream_send(&obs, fr->conn, obslen) != obslen)
+	bslen = aim_bstream_curpos(&bs);
+	aim_bstream_rewind(&bs);
+	if (aim_bstream_send(&bs, fr->conn, bslen) != bslen)
 		err = -errno;
 	
-	free(obs_raw); /* XXX aim_bstream_free */
+	free(bs_raw); /* XXX aim_bstream_free */
 
 	fr->handled = 1;
 	fr->conn->lastactivity = time(NULL);
@@ -316,25 +294,27 @@ static int sendframe_rendezvous(aim_session_t *sess, aim_frame_t *fr)
 {
 	aim_bstream_t bs;
 	fu8_t *bs_raw;
-	int err = 0;
-	int totlen = 8 + aim_bstream_curpos(&fr->data);
+	int payloadlen, err = 0, bslen;
 
-	if (!(bs_raw = malloc(totlen)))
-		return -1;
+	payloadlen = aim_bstream_curpos(&fr->data);
 
-	aim_bstream_init(&bs, bs_raw, totlen);
+	if (!(bs_raw = malloc(8 + payloadlen)))
+		return -ENOMEM;
 
+	aim_bstream_init(&bs, bs_raw, 8 + payloadlen);
+
+	/* Rendezvous header */
 	aimbs_putraw(&bs, fr->hdr.rend.magic, 4);
-	aimbs_put16(&bs, 8 + fr->hdr.rend.hdrlen);
+	aimbs_put16(&bs, fr->hdr.rend.hdrlen);
 	aimbs_put16(&bs, fr->hdr.rend.type);
 
 	/* payload */
 	aim_bstream_rewind(&fr->data);
-	aimbs_putbs(&bs, &fr->data, totlen - 8);
+	aimbs_putbs(&bs, &fr->data, payloadlen);
 
+	bslen = aim_bstream_curpos(&bs);
 	aim_bstream_rewind(&bs);
-
-	if (aim_bstream_send(&bs, fr->conn, totlen) != totlen)
+	if (aim_bstream_send(&bs, fr->conn, bslen) != bslen)
 		err = -errno;
 
 	free(bs_raw); /* XXX aim_bstream_free */
@@ -351,6 +331,7 @@ faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)
 		return sendframe_flap(sess, fr);
 	else if (fr->hdrtype == AIM_FRAMETYPE_OFT)
 		return sendframe_rendezvous(sess, fr);
+
 	return -1;
 }
 
@@ -392,24 +373,18 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
 }
 
 /*
- *  aim_tx_purgequeue()
- *  
  *  This is responsable for removing sent commands from the transmit 
  *  queue. This is not a required operation, but it of course helps
  *  reduce memory footprint at run time!  
- *
  */
 faim_export void aim_tx_purgequeue(aim_session_t *sess)
 {
 	aim_frame_t *cur, **prev;
 
 	for (prev = &sess->queue_outgoing; (cur = *prev); ) {
-
 		if (cur->handled) {
 			*prev = cur->next;
-
 			aim_frame_destroy(cur);
-
 		} else
 			prev = &cur->next;
 	}
@@ -418,13 +393,12 @@ faim_export void aim_tx_purgequeue(aim_session_t *sess)
 }
 
 /**
- * aim_tx_cleanqueue - get rid of packets waiting for tx on a dying conn
- * @sess: session
- * @conn: connection that's dying
+ * Get rid of packets waiting for tx on a dying conn.  For now this 
+ * simply marks all packets as sent and lets them disappear without 
+ * warning.
  *
- * for now this simply marks all packets as sent and lets them
- * disappear without warning.
- *
+ * @param sess A session.
+ * @param conn Connection that's dying.
  */
 faim_internal void aim_tx_cleanqueue(aim_session_t *sess, aim_conn_t *conn)
 {
