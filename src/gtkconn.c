@@ -299,7 +299,7 @@ void away_on_login(const char *mesg)
 {
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimGtkBuddyList *gtkblist;
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 

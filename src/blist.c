@@ -34,8 +34,8 @@
 
 #define PATHSIZE 1024
 
-struct gaim_buddy_list *gaimbuddylist = NULL;
-static struct gaim_blist_ui_ops *blist_ui_ops = NULL;
+GaimBuddyList *gaimbuddylist = NULL;
+static GaimBlistUiOps *blist_ui_ops = NULL;
 
 
 /*****************************************************************************
@@ -82,7 +82,7 @@ static void _gaim_blist_hbuddy_free_key(struct _gaim_hbuddy *hb)
 
 static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gpointer data)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if (!ops)
@@ -147,9 +147,9 @@ static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
  * Public API functions                                                      *
  *****************************************************************************/
 
-struct gaim_buddy_list *gaim_blist_new()
+GaimBuddyList *gaim_blist_new()
 {
-	struct gaim_buddy_list *gbl = g_new0(struct gaim_buddy_list, 1);
+	GaimBuddyList *gbl = g_new0(GaimBuddyList, 1);
 
 	gbl->ui_ops = gaim_blist_get_ui_ops();
 
@@ -168,12 +168,12 @@ struct gaim_buddy_list *gaim_blist_new()
 }
 
 void
-gaim_set_blist(struct gaim_buddy_list *list)
+gaim_set_blist(GaimBuddyList *list)
 {
 	gaimbuddylist = list;
 }
 
-struct gaim_buddy_list *
+GaimBuddyList *
 gaim_get_blist(void)
 {
 	return gaimbuddylist;
@@ -181,28 +181,28 @@ gaim_get_blist(void)
 
 void  gaim_blist_show ()
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if (ops)
 		ops->show(gaimbuddylist);
 }
 
 void gaim_blist_destroy()
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if (ops)
 		ops->destroy(gaimbuddylist);
 }
 
 void  gaim_blist_set_visible (gboolean show)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if (ops)
 		ops->set_visible(gaimbuddylist, show);
 }
 
 void  gaim_blist_update_buddy_status (GaimBuddy *buddy, int status)
 {
-	struct gaim_blist_ui_ops *ops;
+	GaimBlistUiOps *ops;
 
 	if (buddy->uc == status)
 		return;
@@ -223,7 +223,7 @@ void  gaim_blist_update_buddy_status (GaimBuddy *buddy, int status)
 }
 
 static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
 
 	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
@@ -253,7 +253,7 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 }
 
 void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	gboolean do_something = FALSE;
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
@@ -287,7 +287,7 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 
 void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if(buddy->idle == idle)
 		return;
 
@@ -299,7 +299,7 @@ void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 
 void  gaim_blist_update_buddy_evil (GaimBuddy *buddy, int warning)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if(buddy->evil == warning)
 		return;
 
@@ -309,14 +309,14 @@ void  gaim_blist_update_buddy_evil (GaimBuddy *buddy, int warning)
 }
 
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy) {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	if(ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
 
 void  gaim_blist_rename_buddy (GaimBuddy *buddy, const char *name)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	g_free(buddy->name);
 	buddy->name = g_strdup(name);
 	if (ops)
@@ -325,7 +325,7 @@ void  gaim_blist_rename_buddy (GaimBuddy *buddy, const char *name)
 
 void gaim_blist_alias_chat(GaimBlistChat *chat, const char *alias)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 
 	g_free(chat->alias);
 
@@ -340,7 +340,7 @@ void gaim_blist_alias_chat(GaimBlistChat *chat, const char *alias)
 
 void  gaim_blist_alias_buddy (GaimBuddy *buddy, const char *alias)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
 
 	g_free(buddy->alias);
@@ -361,7 +361,7 @@ void  gaim_blist_alias_buddy (GaimBuddy *buddy, const char *alias)
 
 void  gaim_blist_server_alias_buddy (GaimBuddy *buddy, const char *alias)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
 
 	g_free(buddy->server_alias);
@@ -382,7 +382,7 @@ void  gaim_blist_server_alias_buddy (GaimBuddy *buddy, const char *alias)
 
 void gaim_blist_rename_group(GaimGroup *group, const char *name)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimGroup *dest_group;
 	GaimBlistNode *prev, *child, *next;
 	GSList *accts;
@@ -435,7 +435,7 @@ void gaim_blist_rename_group(GaimGroup *group, const char *name)
 GaimBlistChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
 {
 	GaimBlistChat *chat;
-	struct gaim_blist_ui_ops *ops;
+	GaimBlistUiOps *ops;
 
 	if(!components)
 		return NULL;
@@ -488,7 +488,7 @@ char *gaim_blist_chat_get_display_name(GaimBlistChat *chat)
 GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)
 {
 	GaimBuddy *b;
-	struct gaim_blist_ui_ops *ops;
+	GaimBlistUiOps *ops;
 
 	b = g_new0(GaimBuddy, 1);
 	b->account = account;
@@ -535,7 +535,7 @@ void gaim_blist_add_chat(GaimBlistChat *chat, GaimGroup *group, GaimBlistNode *n
 {
 	GaimBlistNode *n = node, *cnode = (GaimBlistNode*)chat;
 	GaimGroup *g = group;
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
 
 
@@ -614,7 +614,7 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 	GaimBlistNode *cnode, *bnode;
 	GaimGroup *g;
 	GaimContact *c;
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
 	struct _gaim_hbuddy *hb;
 
@@ -740,7 +740,7 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 
 GaimContact *gaim_contact_new()
 {
-	struct gaim_blist_ui_ops *ops;
+	GaimBlistUiOps *ops;
 	GaimContact *c = g_new0(GaimContact, 1);
 	((GaimBlistNode*)c)->type = GAIM_BLIST_CONTACT_NODE;
 
@@ -773,7 +773,7 @@ GaimGroup *gaim_group_new(const char *name)
 	GaimGroup *g = gaim_find_group(name);
 
 	if (!g) {
-		struct gaim_blist_ui_ops *ops;
+		GaimBlistUiOps *ops;
 		g= g_new0(GaimGroup, 1);
 		g->name = g_strdup(name);
 		g->totalsize = 0;
@@ -794,7 +794,7 @@ GaimGroup *gaim_group_new(const char *name)
 
 void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNode *node)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimGroup *g;
 	GaimBlistNode *gnode, *cnode, *bnode;
 	gboolean save = FALSE;
@@ -914,7 +914,7 @@ void gaim_blist_merge_contact(GaimContact *source, GaimContact *target)
 
 void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 {
-	struct gaim_blist_ui_ops *ops;
+	GaimBlistUiOps *ops;
 	GaimBlistNode *gnode = (GaimBlistNode*)group;
 	gboolean save = FALSE;
 
@@ -975,7 +975,7 @@ void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 
 void gaim_blist_remove_contact(GaimContact* contact)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 
 	GaimBlistNode *gnode, *cnode = (GaimBlistNode*)contact;
 
@@ -1002,7 +1002,7 @@ void gaim_blist_remove_contact(GaimContact* contact)
 
 void gaim_blist_remove_buddy (GaimBuddy *buddy)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 
 	GaimBlistNode *cnode, *node = (GaimBlistNode*)buddy;
 	GaimGroup *group;
@@ -1055,7 +1055,7 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 
 void  gaim_blist_remove_chat (GaimBlistChat *chat)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 
 	GaimBlistNode *gnode, *node = (GaimBlistNode*)chat;
 	GaimGroup *group;
@@ -1083,7 +1083,7 @@ void  gaim_blist_remove_chat (GaimBlistChat *chat)
 
 void  gaim_blist_remove_group (GaimGroup *group)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *node = (GaimBlistNode*)group;
 	GList *l;
 
@@ -1357,7 +1357,7 @@ GSList *gaim_group_get_accounts(GaimGroup *g)
 
 void gaim_blist_add_account(GaimAccount *account)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if(!gaimbuddylist)
@@ -1404,7 +1404,7 @@ void gaim_blist_add_account(GaimAccount *account)
 
 void gaim_blist_remove_account(GaimAccount *account)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if (!gaimbuddylist)
@@ -2278,7 +2278,7 @@ void
 gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
 							 const char *group, const char *alias)
 {
-	struct gaim_blist_ui_ops *ui_ops;
+	GaimBlistUiOps *ui_ops;
 
 	ui_ops = gaim_blist_get_ui_ops();
 
@@ -2289,7 +2289,7 @@ gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
 void
 gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group)
 {
-	struct gaim_blist_ui_ops *ui_ops;
+	GaimBlistUiOps *ui_ops;
 
 	ui_ops = gaim_blist_get_ui_ops();
 
@@ -2300,7 +2300,7 @@ gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group)
 void
 gaim_blist_request_add_group(void)
 {
-	struct gaim_blist_ui_ops *ui_ops;
+	GaimBlistUiOps *ui_ops;
 
 	ui_ops = gaim_blist_get_ui_ops();
 
@@ -2597,12 +2597,12 @@ int gaim_blist_get_group_online_count(GaimGroup *group) {
 }
 
 void
-gaim_blist_set_ui_ops(struct gaim_blist_ui_ops *ops)
+gaim_blist_set_ui_ops(GaimBlistUiOps *ops)
 {
 	blist_ui_ops = ops;
 }
 
-struct gaim_blist_ui_ops *
+GaimBlistUiOps *
 gaim_blist_get_ui_ops(void)
 {
 	return blist_ui_ops;

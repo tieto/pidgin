@@ -40,14 +40,16 @@ enum {
 typedef enum {
 	GAIM_STATUS_ICON_LARGE,
 	GAIM_STATUS_ICON_SMALL
+
 } GaimStatusIconSize;
+
 /**************************************************************************
  * @name Structures
  **************************************************************************/
 /**
  * Like, everything you need to know about the gtk buddy list
  */
-struct gaim_gtk_buddy_list {
+typedef struct {
 	GtkWidget *window;
 	GtkWidget *vbox;                /**< This is the vbox that everything gets packed into.  Your plugin might
 					   want to pack something in it itself.  Go, plugins! */
@@ -73,9 +75,10 @@ struct gaim_gtk_buddy_list {
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
-};
 
-#define GAIM_GTK_BLIST(list) ((struct gaim_gtk_buddy_list *)(list)->ui_data)
+} GaimGtkBuddyList;
+
+#define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
 #define GAIM_IS_GTK_BLIST(list) \
 	((list)->ui_ops == gaim_gtk_blist_get_ui_ops())
 
@@ -93,7 +96,7 @@ void gaim_gtk_blist_init(void);
  *
  * @return The GTK list operations structure.
  */
-struct gaim_blist_ui_ops *gaim_gtk_blist_get_ui_ops(void);
+GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
 
 /**
  * Returns the base image to represent the account, based on the currently selected theme
@@ -110,7 +113,7 @@ GdkPixbuf *create_prpl_icon(GaimAccount *account);
  *
  * @param list   This is the core list that gets updated from
  */
-void gaim_gtk_blist_refresh(struct gaim_buddy_list *list);
+void gaim_gtk_blist_refresh(GaimBuddyList *list);
 
 /**
  * Tells the buddy list to update its toolbar based on the preferences
@@ -139,7 +142,7 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
 
-typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, struct gaim_buddy_list *blist, GtkTreeIter group, GtkTreeIter *cur);
+typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur);
 
 extern GSList *gaim_gtk_blist_sort_methods;
 

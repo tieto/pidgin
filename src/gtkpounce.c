@@ -178,8 +178,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *sound;
-	struct gaim_buddy_list *blist;
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimBuddyList *blist;
+	GaimGtkBuddyList *gtkblist;
 	GaimPounceEvent events = GAIM_POUNCE_NONE;
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
@@ -918,8 +918,8 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 static void
 free_pounce(GaimPounce *pounce)
 {
-	struct gaim_buddy_list *blist;
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimBuddyList *blist;
+	GaimGtkBuddyList *gtkblist;
 
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();

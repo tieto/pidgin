@@ -574,7 +574,7 @@ void show_ee_dialog(int ee)
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimGtkBuddyList *gtkblist;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, GTK_ICON_SIZE_DIALOG);
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
@@ -647,7 +647,7 @@ void show_im_dialog()
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
 	GtkWidget *table;
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimGtkBuddyList *gtkblist;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	struct getuserinfo *info = NULL;
 
@@ -730,7 +730,7 @@ void show_info_dialog()
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	GtkWidget *table;
 	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
-	struct gaim_gtk_buddy_list *gtkblist;
+	GaimGtkBuddyList *gtkblist;
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 

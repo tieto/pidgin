@@ -28,6 +28,8 @@
 
 #include <glib.h>
 
+typedef struct _GaimBuddyList GaimBuddyList;
+typedef struct _GaimBlistUiOps GaimBlistUiOps;
 typedef struct _GaimBlistNode GaimBlistNode;
 
 typedef struct _GaimBlistChat GaimBlistChat;
@@ -41,25 +43,29 @@ typedef struct _GaimBuddy GaimBuddy;
 /**************************************************************************/
 /* Enumerations                                                           */
 /**************************************************************************/
-enum gaim_blist_node_type {
+typedef enum
+{
 	GAIM_BLIST_GROUP_NODE,
 	GAIM_BLIST_CONTACT_NODE,
 	GAIM_BLIST_BUDDY_NODE,
 	GAIM_BLIST_CHAT_NODE,
 	GAIM_BLIST_OTHER_NODE
-};
+
+} GaimBlistNodeType;
 
 #define GAIM_BLIST_NODE_IS_CHAT(n) ((n)->type == GAIM_BLIST_CHAT_NODE)
 #define GAIM_BLIST_NODE_IS_BUDDY(n) ((n)->type == GAIM_BLIST_BUDDY_NODE)
 #define GAIM_BLIST_NODE_IS_CONTACT(n) ((n)->type == GAIM_BLIST_CONTACT_NODE)
 #define GAIM_BLIST_NODE_IS_GROUP(n) ((n)->type == GAIM_BLIST_GROUP_NODE)
 
-enum gaim_buddy_presence_state {
+typedef enum
+{
 	GAIM_BUDDY_SIGNING_OFF = -1,
 	GAIM_BUDDY_OFFLINE = 0,
 	GAIM_BUDDY_ONLINE,
 	GAIM_BUDDY_SIGNING_ON
-};
+
+} GaimBuddyPresenceState;
 
 #define GAIM_BUDDY_IS_ONLINE(b) ((b)->account->gc && \
 		((b)->present == GAIM_BUDDY_ONLINE || \
@@ -74,12 +80,12 @@ enum gaim_buddy_presence_state {
  * A Buddy list node.  This can represent a group, a buddy, or anything else.  This is a base class for struct buddy and
  * struct group and for anything else that wants to put itself in the buddy list. */
 struct _GaimBlistNode {
-	enum gaim_blist_node_type type;        /**< The type of node this is       */
-	GaimBlistNode *prev;                   /**< The sibling before this buddy. */
-	GaimBlistNode *next;                   /**< The sibling after this buddy.  */
-	GaimBlistNode *parent;                 /**< The parent of this node        */
-	GaimBlistNode *child;                  /**< The child of this node         */
-	void          *ui_data;                /**< The UI can put data here.      */
+	GaimBlistNodeType type;             /**< The type of node this is       */
+	GaimBlistNode *prev;                /**< The sibling before this buddy. */
+	GaimBlistNode *next;                /**< The sibling after this buddy.  */
+	GaimBlistNode *parent;              /**< The parent of this node        */
+	GaimBlistNode *child;               /**< The child of this node         */
+	void          *ui_data;             /**< The UI can put data here.      */
 };
 
 /**
@@ -90,7 +96,7 @@ struct _GaimBuddy {
 	char *name;                             /**< The screenname of the buddy. */
 	char *alias;                            /**< The user-set alias of the buddy */
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
-	enum gaim_buddy_presence_state present;                            /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
+	GaimBuddyPresenceState present;         /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
 						    he has recently signed on */
 	int evil;                               /**< The warning level */
 	time_t signon;                          /**< The time the buddy signed on. */
@@ -144,12 +150,12 @@ struct _GaimBlistChat {
 /**
  * The Buddy List
  */
-struct gaim_buddy_list {
-	GaimBlistNode *root;                    /**< The first node in the buddy list */
-	GHashTable *buddies;			/**< Every buddy in this list */
-	struct gaim_blist_ui_ops *ui_ops;       /**< The UI operations for the buddy list */
+struct _GaimBuddyList {
+	GaimBlistNode *root;          /**< The first node in the buddy list */
+	GHashTable *buddies;          /**< Every buddy in this list */
+	GaimBlistUiOps *ui_ops;       /**< The UI operations for the buddy list */
 
-	void *ui_data;                          /**< UI-specific data. */
+	void *ui_data;                /**< UI-specific data. */
 };
 
 /**
@@ -158,17 +164,17 @@ struct gaim_buddy_list {
  * Any UI representing a buddy list must assign a filled-out gaim_window_ops
  * structure to the buddy list core.
  */
-struct gaim_blist_ui_ops
+struct _GaimBlistUiOps
 {
-	void (*new_list)(struct gaim_buddy_list *list); /**< Sets UI-specific data on a buddy list. */
+	void (*new_list)(GaimBuddyList *list); /**< Sets UI-specific data on a buddy list. */
 	void (*new_node)(GaimBlistNode *node);      /**< Sets UI-specific data on a node. */
-	void (*show)(struct gaim_buddy_list *list);     /**< The core will call this when its finished doing it's core stuff */
-	void (*update)(struct gaim_buddy_list *list,
+	void (*show)(GaimBuddyList *list);     /**< The core will call this when its finished doing it's core stuff */
+	void (*update)(GaimBuddyList *list,
 		       GaimBlistNode *node);            /**< This will update a node in the buddy list. */
-	void (*remove)(struct gaim_buddy_list *list,
+	void (*remove)(GaimBuddyList *list,
 		       GaimBlistNode *node);            /**< This removes a node from the list */
-	void (*destroy)(struct gaim_buddy_list *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
-	void (*set_visible)(struct gaim_buddy_list *list,
+	void (*destroy)(GaimBuddyList *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
+	void (*set_visible)(GaimBuddyList *list,
 			    gboolean show);             /**< Hides or unhides the buddy list */
 	void (*request_add_buddy)(GaimAccount *account, const char *username,
 							  const char *group, const char *alias);
@@ -188,21 +194,21 @@ extern "C" {
 /**
  * Creates a new buddy list
  */
-struct gaim_buddy_list *gaim_blist_new();
+GaimBuddyList *gaim_blist_new();
 
 /**
  * Sets the main buddy list.
  *
  * @return The main buddy list.
  */
-void gaim_set_blist(struct gaim_buddy_list *blist);
+void gaim_set_blist(GaimBuddyList *blist);
 
 /**
  * Returns the main buddy list.
  *
  * @return The main buddy list.
  */
-struct gaim_buddy_list *gaim_get_blist(void);
+GaimBuddyList *gaim_get_blist(void);
 
 /**
  * Shows the buddy list, creating a new one if necessary.
@@ -765,14 +771,14 @@ char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
  *
  * @param ops The ops struct.
  */
-void gaim_blist_set_ui_ops(struct gaim_blist_ui_ops *ops);
+void gaim_blist_set_ui_ops(GaimBlistUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used for the buddy list.
  *
  * @return The UI operations structure.
  */
-struct gaim_blist_ui_ops *gaim_blist_get_ui_ops(void);
+GaimBlistUiOps *gaim_blist_get_ui_ops(void);
 
 /*@}*/
 

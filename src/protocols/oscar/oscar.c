@@ -4879,7 +4879,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		GaimBlistNode *gnode, *cnode, *bnode;
 		GaimGroup *group;
 		GaimBuddy *buddy;
-		struct gaim_buddy_list *blist;
+		GaimBuddyList *blist;
 		GSList *cur;
 
 		/* Buddies */
