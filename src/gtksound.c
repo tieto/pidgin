@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #ifdef _WIN32
 #include <windows.h>

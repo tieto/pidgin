@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6820 2003-07-29 02:27:33Z lschiere $
+ * $Id: gg.c 6876 2003-08-05 10:55:04Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1362,7 +1362,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Gadu-Gadu Protocol Plugin"),
 	"Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

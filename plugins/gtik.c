@@ -609,7 +609,7 @@
 					    "Do not use the Gnome Stock Ticker for making investment decisions; it is for "
 					    "informational purposes only.");
 		desc.authors = g_strdup("Jayson Lorenzen, Jim Garrison, Rached Blili");
-		desc.url = g_strdup(WEBSITE);
+		desc.url = g_strdup(GAIM_WEBSITE);
 		return &desc;
 	}
 

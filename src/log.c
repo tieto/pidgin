@@ -13,8 +13,9 @@
 #include "prpl.h"
 #include "util.h"
 
+/* XXX CORE/UI */
+#include "gtkinternal.h"
 #include "gtkconv.h"
-
 #include "ui.h"
 
 GList *log_conversations = NULL;

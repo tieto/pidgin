@@ -80,7 +80,7 @@ static GaimPluginInfo info =
 	   "- It sends a message to people on your list immediately"
 	   " when they sign on"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                    /**< unload         */

@@ -29,6 +29,7 @@
 #include "plugin.h"
 #include "pounce.h"
 #include "prefs.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "sound.h"
 
@@ -73,9 +74,10 @@ gaim_core_init(const char *ui)
 	}
 
 	gaim_conversation_init();
+	gaim_privacy_init();
+	gaim_pounces_init();
 	gaim_proxy_init();
 	gaim_sound_init();
-	gaim_pounces_init();
 	gaim_xfers_init();
 
 	if (ops != NULL && ops->ui_init != NULL)

@@ -36,7 +36,7 @@
 #include "md5.h"
 
 /* XXX */
-#include "gaim.h"
+#include "gtkinternal.h"
 #include "ui.h"
 
 extern char *yahoo_crypt(const char *, const char *);
@@ -1466,7 +1466,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Yahoo Protocol Plugin"),
 	NULL,                                             /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

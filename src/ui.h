@@ -156,8 +156,6 @@ extern char fontxfld[256];
 extern int smiley_array[FACE_TOTAL];
 extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
-void build_allow_list();
-void build_block_list();
 
 /* Globals in session.c */
 extern gboolean session_managed;
@@ -198,7 +196,6 @@ extern void show_info_dialog();
 extern void show_add_buddy(GaimConnection *, char *, char *, char *);
 extern void show_add_chat(GaimAccount *, struct group *);
 extern void show_add_group(GaimConnection *);
-extern void show_add_perm(GaimConnection *, char *, gboolean);
 extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();
@@ -226,10 +223,6 @@ extern void show_rename_group(GtkWidget *, struct group *);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
-extern void update_privacy_connections();
-extern void show_privacy_options();
-extern void build_allow_list();
-extern void build_block_list();
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
 

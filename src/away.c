@@ -27,9 +27,9 @@
 #include "prpl.h"
 #include "util.h"
 
-/* XXX Until we can get rid of the message queue stuff... */
+/* XXX CORE/UI: Until we can get rid of the message queue stuff... */
 #include "gaim.h"
-
+#include "gtkinternal.h"
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtkprefs.h"

@@ -33,6 +33,7 @@
 #include "html.h"
 
 /* XXX */
+#include "gtkinternal.h"
 #include "gaim.h"
 #include "ui.h"
 #include "gtkutils.h"
@@ -2100,7 +2101,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("TOC Protocol Plugin"),
 	NULL,                                             /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

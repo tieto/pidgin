@@ -25,11 +25,12 @@
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
-#include "ui.h"
 #include "util.h"
 
 /* XXX */
+#include "gtkinternal.h"
 #include "gtkconv.h"
+#include "ui.h"
 
 const char *
 gaim_prpl_num_to_id(GaimProtocol protocol)

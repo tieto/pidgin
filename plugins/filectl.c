@@ -205,7 +205,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Allows you to control Gaim by entering commands in a file."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

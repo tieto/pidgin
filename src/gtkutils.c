@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #ifndef _WIN32
 # include <X11/Xlib.h>
@@ -434,6 +434,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_widget_show(menuitem);
 
 	label = gtk_label_new(str);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_label_set_pattern(GTK_LABEL(label), "_");
 	gtk_container_add(GTK_CONTAINER(menuitem), label);
 	gtk_widget_show(label);

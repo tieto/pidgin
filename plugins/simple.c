@@ -34,7 +34,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Tests to see that most things are working."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -240,7 +240,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Test to see that all events are working properly."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */

@@ -19,7 +19,7 @@
  *
  */
 
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "account.h"
 #include "conversation.h"
@@ -44,6 +44,7 @@
 #include "gtknotify.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
+#include "gtkprivacy.h"
 #include "gtkrequest.h"
 #include "gtksound.h"
 #include "gtkutils.h"
@@ -499,6 +500,7 @@ gaim_gtk_ui_init(void)
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
 	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
+	gaim_set_privacy_ui_ops(gaim_gtk_privacy_get_ui_ops());
 	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
 	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
 	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
@@ -507,6 +509,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_blist_init();
 	gaim_gtk_conversation_init();
 	gaim_gtk_pounces_init();
+	gaim_gtk_privacy_init();
 	gaim_gtk_xfers_init();
 }
 

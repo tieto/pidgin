@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "account.h"
 #include "debug.h"
@@ -234,7 +234,6 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 
 	gaim_setup(gc);
 
-	update_privacy_connections();
 	do_away_menu();
 	gaim_gtk_blist_update_protocol_actions();
 
@@ -247,7 +246,6 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc,
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 
-	update_privacy_connections();
 	do_away_menu();
 	gaim_gtk_blist_update_protocol_actions();
 

@@ -1237,7 +1237,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("MSN Protocol Plugin"),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

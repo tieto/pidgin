@@ -62,6 +62,7 @@ CORESOURCES = \
 	plugin.h \
 	pounce.c \
 	pounce.h \
+	privacy.c \
 	privacy.h \
 	proxy.c \
 	proxy.h \
@@ -116,6 +117,8 @@ gaim_SOURCES = \
 	gtkplugin.h \
 	gtkprefs.c \
 	gtkprefs.h \
+	gtkprivacy.c \
+	gtkprivacy.h \
 	gtkpounce.c \
 	gtkpounce.h \
 	gtkrequest.c \
@@ -159,7 +162,6 @@ AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-I$(top_srcdir) \
 	-I$(top_srcdir)/plugins \
 	$(AUDIOFILE_CFLAGS) \
 	$(AO_CFLAGS) \

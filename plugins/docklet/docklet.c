@@ -30,6 +30,7 @@
     - optional pop up notices when GNOME2's system-tray-applet supports it */
 
 #include "internal.h"
+#include "gtkinternal.h"
 
 #include "core.h"
 #include "debug.h"
@@ -502,7 +503,7 @@ static GaimPluginInfo info =
 	   "window. Also allows messages to be queued until the icon is "
 	   "clicked, similar to ICQ."),
 	"Robert McQueen <robot101@debian.org>",           /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

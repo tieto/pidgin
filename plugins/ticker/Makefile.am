@@ -19,7 +19,6 @@ endif
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS)

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #ifndef _WIN32
 # include <X11/Xlib.h>
@@ -47,6 +47,7 @@
 #include "gtkconv.h"
 #include "gtkimhtml.h"
 #include "gtkpounce.h"
+#include "gtkprivacy.h"
 #include "gtkutils.h"
 #include "stock.h"
 
@@ -515,12 +516,12 @@ warn_cb(GtkWidget *widget, GaimConversation *conv)
 static void
 block_cb(GtkWidget *widget, GaimConversation *conv)
 {
-	GaimConnection *gc;
+	GaimAccount *account;
 
-	gc = gaim_conversation_get_gc(conv);
+	account = gaim_conversation_get_account(conv);
 
-	if (gc != NULL)
-		show_add_perm(gc, (char *)gaim_conversation_get_name(conv), FALSE);
+	if (account != NULL && gaim_account_is_connected(account))
+		gaim_gtk_request_add_permit(account, gaim_conversation_get_name(conv));
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }

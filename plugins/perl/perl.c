@@ -93,6 +93,8 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "server.h"
 #include "sound.h"
 
+/* XXX CORE/UI */
+#include "gtkinternal.h"
 #include "ui.h"
 
 #ifndef call_pv
@@ -1399,7 +1401,7 @@ static GaimPluginInfo info =
 	N_("Provides support for loading perl plugins."), /**< summary        */
 	N_("Provides support for loading perl plugins."), /**< description    */
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	plugin_unload,                                    /**< unload         */

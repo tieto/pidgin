@@ -25,6 +25,7 @@
  * pluginized- Sean Egan, Summer 2002
  */
 #include "internal.h"
+#include "gtkinternal.h"
 
 #include "blist.h"
 #include "conversation.h"
@@ -316,7 +317,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("A horizontal scrolling version of the buddy list."),
 	"Syd Logan",                                      /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -27,7 +27,8 @@
 #include "prpl.h"
 #include "util.h"
 
-/* XXX */
+/* XXX CORE/UI */
+#include "gtkinternal.h"
 #include "ui.h"
 
 typedef struct

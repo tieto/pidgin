@@ -1,6 +1,6 @@
 /**
  * @file internal.h Internal definitions and includes
- * @ingroup gtkui
+ * @ingroup core
  *
  * gaim
  *
@@ -24,7 +24,7 @@
 #define _GAIM_INTERNAL_H_
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 #ifdef ENABLE_NLS
@@ -93,7 +93,6 @@
 # include <arpa/inet.h>
 # include <sys/un.h>
 # include <sys/utsname.h>
-# include <gdk/gdkx.h>
 # include <netdb.h>
 # include <signal.h>
 # include <unistd.h>
@@ -109,7 +108,6 @@
 
 #define PATHSIZE 1024
 
-#include <gtk/gtk.h>
 #include <glib.h>
 
 #ifdef _WIN32
@@ -117,6 +115,6 @@
 #endif
 
 
-#define WEBSITE "http://gaim.sourceforge.net/"
+#define GAIM_WEBSITE "http://gaim.sourceforge.net/"
 
 #endif /* _GAIM_INTERNAL_H_ */

@@ -23,7 +23,8 @@
 #include "sound.h"
 #include "prefs.h"
 
-/* XXX: this goes away when away messages become sane */
+/* XXX CORE/UI: this goes away when away messages become sane */
+#include "gtkinternal.h"
 #include "ui.h"
 
 

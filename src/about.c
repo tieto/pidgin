@@ -91,8 +91,8 @@ void show_about(GtkWidget *w, void *data)
 					  "Gtk+ and is licensed under the GPL.<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" WEBSITE "\">"
-				WEBSITE "</A><BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
+				"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" GAIM_WEBSITE "\">"
+				GAIM_WEBSITE "</A><BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"

@@ -43,7 +43,8 @@
 #include "aim.h"
 #include "md5.h"
 
-/* XXX */
+/* XXX CORE/UI */
+#include "gtkinternal.h"
 #include "gaim.h"
 #include "ui.h"
 
@@ -1073,7 +1074,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 		case 0x1c:
 			/* client too old */
-			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), WEBSITE);
+			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), GAIM_WEBSITE);
 			gaim_connection_error(gc, buf);
 			break;
 		default:
@@ -1208,7 +1209,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	if (in != '\n') {
 		char buf[256];
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), WEBSITE);
+			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
 							_("Gaim was Unable to get a valid AIM login hash."),
 							buf);
@@ -1238,7 +1239,7 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 
 	if (source < 0) {
 		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), WEBSITE);
+			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
 							_("Gaim was Unable to get a valid AIM login hash."),
 							buf);
@@ -1326,7 +1327,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(pos->modname);
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), WEBSITE);
+			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
 							_("Gaim was Unable to get a valid login hash."),
 							buf);
@@ -4261,7 +4262,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	int ret = 0;
 	GError *err = NULL;
 	const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
-	char *tmpmsg;
+	char *tmpmsg = NULL;
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
@@ -4887,7 +4888,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
 						gaim_privacy_permit_add(account, curitem->name);
-						build_allow_list();
 						export = TRUE;
 					}
 				}
@@ -4901,7 +4901,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
 						gaim_privacy_deny_add(account, curitem->name);
-						build_block_list();
 						export = TRUE;
 					}
 				}
@@ -6319,7 +6318,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("AIM/ICQ Protocol Plugin"),
 	NULL,                                             /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

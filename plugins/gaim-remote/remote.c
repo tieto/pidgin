@@ -1,4 +1,4 @@
-/*
+/**
  * Remote control plugin for Gaim
  *
  * Copyright (C) 2003 Christian Hammond.
@@ -22,6 +22,7 @@
  * @todo Make this a core plugin!
  */
 #include "internal.h"
+#include "gtkinternal.h"
 
 #ifndef _WIN32
 # include <sys/un.h>
@@ -718,7 +719,7 @@ static GaimPluginInfo info =
 	N_("Gives Gaim the ability to be remote-controlled through third-party "
 	   "applications or through the gaim-remote tool."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -78,7 +78,7 @@ static GaimPluginInfo info =
 	N_("Notifies in a conversation window when a buddy goes or returns from "
 	   "away or idle."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */

@@ -1,4 +1,4 @@
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "conversation.h"
 
@@ -78,7 +78,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Iconifies the buddy list and your conversations when you go away."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */

@@ -22,7 +22,6 @@ libnapster_la_SOURCES = $(NAPSTERSOURCES)
 endif
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
-	$(GTK_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)

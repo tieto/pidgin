@@ -19,6 +19,7 @@
  * 02111-1307, USA.
  */
 #include "internal.h"
+#include "gtkinternal.h"
 
 #include "debug.h"
 #include "prefs.h"
@@ -29,7 +30,7 @@
 
 #include "gstroke.h"
 
-#define GESTURES_PLUGIN_ID "gtk-X11-gestures"
+#define GESTURES_PLUGIN_ID "gtk-x11-gestures"
 
 static void
 stroke_close(GtkWidget *widget, void *data)
@@ -283,7 +284,7 @@ static GaimPluginInfo info =
 	   "Drag up and then to the right to switch to the next "
 	   "conversation."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -4400,7 +4400,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Jabber Protocol Plugin"),
 	NULL,                                             /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

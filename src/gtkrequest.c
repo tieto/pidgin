@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "debug.h"
 
@@ -193,8 +193,6 @@ text_to_stock(const char *text)
 	STOCK_ITEMIZE(_("Add"),     GTK_STOCK_ADD);
 	STOCK_ITEMIZE(_("Remove"),  GTK_STOCK_REMOVE);
 	STOCK_ITEMIZE(_("Save"),    GTK_STOCK_SAVE);
-	STOCK_ITEMIZE(_("Block"),   GAIM_STOCK_BLOCK);
-	STOCK_ITEMIZE(_("Unblock"), GTK_STOCK_REMOVE);
 
 	return text;
 }
@@ -365,6 +363,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 

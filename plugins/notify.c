@@ -51,7 +51,7 @@
  *  -Other random fixes and cleanups
  */
 
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "conversation.h"
 #include "debug.h"
@@ -850,7 +850,7 @@ static GaimPluginInfo info =
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu",
 	                                                  /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

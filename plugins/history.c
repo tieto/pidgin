@@ -1,7 +1,7 @@
 /* Puts last 4k of log in new conversations a la Everybuddy (and then
  * stolen by Trillian "Pro") */
 
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "conversation.h"
 #include "debug.h"
@@ -12,7 +12,7 @@
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
 
-#define HISTORY_PLUGIN_ID "core-history"
+#define HISTORY_PLUGIN_ID "gtk-history"
 
 #define HISTORY_SIZE (4 * 1024)
 
@@ -89,7 +89,7 @@ static GaimPluginInfo info =
 	N_("Shows recently logged conversations in new conversations."),
 	N_("When a new conversation is opened this plugin will insert the last XXX of the last conversation into the current conversation."),
 	"Sean Egan <bj91704@binghamton.edu>",
-	WEBSITE,
+	GAIM_WEBSITE,
 	plugin_load,
 	NULL,
 	NULL,

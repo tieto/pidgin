@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "account.h"
 #include "accountopt.h"
@@ -1741,8 +1741,10 @@ gaim_gtk_accounts_window_show(void)
 	GtkWidget *button;
 	int width, height;
 
-	if (accounts_window != NULL)
+	if (accounts_window != NULL) {
+		gdk_window_raise(accounts_window->window->window);
 		return;
+	}
 
 	accounts_window = dialog = g_new0(AccountsWindow, 1);
 

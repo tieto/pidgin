@@ -107,7 +107,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("When you are kicked offline, this reconnects you."), 
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

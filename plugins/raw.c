@@ -155,7 +155,7 @@ static GaimPluginInfo info =
 	N_("Lets you send raw input to text-based protocols (Jabber, MSN, IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
-	WEBSITE,
+	GAIM_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,

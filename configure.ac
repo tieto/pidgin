@@ -147,6 +147,7 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 
 AC_PATH_PROG(gaimpath, gaim)
 AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GLIB_CFLAGS)
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not

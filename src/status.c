@@ -21,9 +21,13 @@
 
 #include "status.h"
 #include "internal.h"
-#include "ui.h"
 #include "debug.h"
 #include "util.h"
+
+/* XXX CORE/UI */
+#include "gtkinternal.h"
+#include "ui.h"
+
 
 /* for people like myself who are too lazy to add an away msg :) */
 /* I don't know who "myself" is in this context.  The exclamation point

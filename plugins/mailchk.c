@@ -154,7 +154,7 @@ static GaimPluginInfo info =
 	N_("Checks for new local mail."),
 	N_("Checks for new local mail."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
-	WEBSITE,
+	GAIM_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,

@@ -486,7 +486,7 @@ static GaimPluginInfo info =
 	N_("IRC Protocol Plugin"),                        /**  summary        */
 	N_("The IRC Protocol Plugin that Sucks Less"),    /**  description    */
 	NULL,                                             /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

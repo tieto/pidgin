@@ -39,8 +39,6 @@
 #include "server.h"
 #include "util.h"
 
-#include "ui.h"
-
 /* XXX */
 #include "gaim.h"
 

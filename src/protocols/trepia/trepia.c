@@ -1354,7 +1354,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Trepia Protocol Plugin"),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */

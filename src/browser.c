@@ -25,7 +25,7 @@
  * their protocol.  Nifty.
  *
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include <gdk/gdkprivate.h>
 
