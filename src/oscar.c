@@ -1270,6 +1270,7 @@ void send_keepalive(gpointer d) {
 	if (USE_OSCAR) { /* keeping it open for TOC */
 		aim_flap_nop(gaim_sess, gaim_conn);
 	} else {
+		sflap_send("", 0, TYPE_KEEPALIVE);
 	}
 }
 

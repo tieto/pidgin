@@ -51,6 +51,9 @@ static GtkWidget *prefs = NULL;
 static GtkWidget *gaim_button(const char *, int *, int, GtkWidget *);
 static void prefs_build_general(GtkWidget *);
 static void prefs_build_connect(GtkWidget *);
+#ifdef USE_APPLET
+static void prefs_build_applet(GtkWidget *);
+#endif
 static void prefs_build_buddy(GtkWidget *);
 static void prefs_build_convo(GtkWidget *);
 static void prefs_build_sound(GtkWidget *);
@@ -191,11 +194,12 @@ static void connect_page()
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
+	GtkWidget *sep;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
-	prefdialog = gtk_frame_new(_("TOC Options"));
+	prefdialog = gtk_frame_new(_("Connection Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(connect_destroy), 0);
 
@@ -211,6 +215,12 @@ static void connect_page()
 
 	gaim_button(_("Use Oscar Protocol"), &general_options, OPT_GEN_USE_OSCAR, box);
 
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	gaim_button(_("Send Keep-Alive Packet (6 bytes/minute)"), &general_options, OPT_GEN_KEEPALIVE, box);
+
 	gtk_widget_show(prefdialog);
 }
 
@@ -219,7 +229,6 @@ static void toc_page()
 	GtkWidget *parent;
 	GtkWidget *box;
 	GtkWidget *label;
-	GtkWidget *sep;
 	GtkWidget *hbox;
 	GtkWidget *opt;
 	char buffer[1024];
@@ -350,10 +359,40 @@ static void oscar_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Send Keep-Alive Packet (6 bytes/minute)"), &general_options, OPT_GEN_KEEPALIVE, box);
+	label = gtk_label_new(_("No options currently (Isn't that sad)"));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
 
 	gtk_widget_show(prefdialog);
 }
+
+#ifdef USE_APPLET
+static void applet_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *sep;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Applet Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
+
+	gtk_widget_show(prefdialog);
+}
+#endif
 
 static void buddy_page()
 {
@@ -1753,6 +1792,9 @@ void show_prefs()
 
 	prefs_build_general(preftree);
 	prefs_build_connect(preftree);
+#ifdef USE_APPLET
+	prefs_build_applet(preftree);
+#endif
 	prefs_build_buddy(preftree);
 	prefs_build_convo(preftree);
 	prefs_build_sound(preftree);
@@ -1981,6 +2023,19 @@ void prefs_build_connect(GtkWidget *preftree)
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, oscar_page);
 }
+
+#ifdef USE_APPLET
+void prefs_build_applet(GtkWidget *preftree)
+{
+	GtkCTreeNode *parent, *node;
+	char *text[1];
+
+	text[0] = _("Applet");
+	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
+					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, applet_page);
+}
+#endif
 
 void prefs_build_buddy(GtkWidget *preftree)
 {

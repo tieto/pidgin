@@ -174,6 +174,9 @@ int toc_login(char *username, char *password)
 		   VOICE_UID);
 	sflap_send(buf2, -1, TYPE_DATA);
 
+	if (keepalv < 0)
+		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
+
         serv_finish_login();
 	return 0;
 }
