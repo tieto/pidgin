@@ -1,3 +1,10 @@
+version 0.67:
+	* Installer translations for: Dutch, French, German, Hungarian, 
+	  Portuguese (Brazilian), Serbian (Latin) and Simplified Chineese.
+	  Thanks to all of you who provided translations.
+	* Fixed move/resize bug in GTK+.
+	* The Buddy List can now be docked using Windows appbar features.
+
 version 0.66 (07/18/2003):
 	* Windows files join the source distribution.
 
