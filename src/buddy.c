@@ -64,6 +64,11 @@
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
 #include "pixmaps/export_small.xpm"
+#ifdef GAIM_PLUGINS
+#include "pixmaps/plugins_small.xpm"
+#endif
+#include "pixmaps/prefs_small.xpm"
+#include "pixmaps/search_small.xpm"
 #ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
 #endif
@@ -1795,7 +1800,7 @@ void show_buddy_list()
 
 	findmenu = gtk_menu_new();
 	gtk_widget_show(findmenu);
-	menuitem = gaim_new_item(menu, _("Search for Buddy"), NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Search for Buddy"), search_small_xpm, NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), findmenu);
 	gtk_widget_show(menuitem);
 	menuitem = gtk_menu_item_new_with_label(_("by Email"));
@@ -1826,10 +1831,10 @@ void show_buddy_list()
 	gtk_widget_show(menuitem);
 	gaim_seperator(menu);
 
-        gaim_new_item(menu, _("Preferences"), GTK_SIGNAL_FUNC(show_prefs));
+        gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm, GTK_SIGNAL_FUNC(show_prefs));
 
 #ifdef GAIM_PLUGINS
-        gaim_new_item(menu, _("Plugins"), GTK_SIGNAL_FUNC(show_plugins));
+        gaim_new_item_with_pixmap(menu, _("Plugins"), plugins_small_xpm, GTK_SIGNAL_FUNC(show_plugins));
 #endif
 #ifdef USE_PERL
 	perlmenu = gtk_menu_new();

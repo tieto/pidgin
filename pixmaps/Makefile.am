@@ -66,10 +66,13 @@ EXTRA_DIST =	add.xpm				\
 		peng_wink.xpm			\
 		permadd.xpm			\
 		permdel.xpm			\
+		plugins_small.xpm		\
+		prefs_small.xpm			\
 		refresh.xpm			\
 		sad.xpm				\
 		save.xpm			\
 		scream.xpm			\
+		search_small.xpm		\
 		signing_on.xpm			\
 		small.xpm			\
 		smile.xpm			\

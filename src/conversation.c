@@ -1300,7 +1300,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_widget_show(palette_p);
 
 	wood_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask, 
-	     &win->style->white, bold_xpm );
+	     &win->style->white, wood_xpm );
 	wood_p = gtk_pixmap_new(wood_i, mask);
 	gtk_widget_show(wood_p);
 	speaker_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
