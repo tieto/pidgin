@@ -36,9 +36,6 @@ extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 
-/* Functions in main.c */
-extern void do_quit();
-
 /* Functions in dialogs.c */
 extern void g_show_info_text(GaimConnection *, const char *, int, const char *, ...);
 extern void show_change_passwd(GaimConnection *);

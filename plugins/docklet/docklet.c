@@ -30,6 +30,7 @@
 /* includes */
 #include "internal.h"
 
+#include "core.h"
 #include "debug.h"
 #include "prefs.h"
 #include "sound.h"
@@ -180,7 +181,7 @@ static void docklet_menu() {
 			break;
 	}
 
-	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(do_quit), NULL, 0, 0, 0);
+	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, 0);
 
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());

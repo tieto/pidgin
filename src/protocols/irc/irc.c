@@ -27,6 +27,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "ft.h"
 #include "multi.h"
@@ -2311,7 +2312,7 @@ handle_command(GaimConnection *gc, const char *who, const char *in_what)
 	} else if (!g_ascii_strcasecmp(pdibuf, "QUIT")) {
 		char *reason = word_eol[2];
 		id->str = g_string_insert(id->str, 0, reason);
-		do_quit();
+		gaim_core_quit();
 	} else if (!g_ascii_strcasecmp(pdibuf, "VERSION")) {
 		g_snprintf(buf, sizeof(buf), "VERSION\r\n");
 		irc_write(id->fd, buf, strlen(buf));

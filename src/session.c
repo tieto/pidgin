@@ -26,9 +26,6 @@
 
 #include "debug.h"
 
-/* XXX */
-extern void do_quit();
-
 extern char *opt_rcfile_arg;
 
 #ifdef USE_SM
@@ -199,7 +196,7 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 void session_die(SmcConn conn, SmPointer data) {
 	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 			   "Received die\n");
-	do_quit();
+	gaim_core_quit();
 }
 
 void session_save_complete(SmcConn conn, SmPointer data) {

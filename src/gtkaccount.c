@@ -39,9 +39,6 @@
 
 #include "ui.h"
 
-/* XXX for do_quit() */
-#include "gaim.h"
-
 enum
 {
 	COLUMN_ICON,
@@ -1827,6 +1824,6 @@ gaim_gtk_accounts_window_hide(void)
 	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
 		mainwindow == NULL && gaim_connections_get_all() == NULL) {
 
-		do_quit();
+		gaim_core_quit();
 	}
 }

@@ -16,8 +16,6 @@ static time_t mtime;
 static void init_file();
 static void check_file();
 
-extern void do_quit();
-
 /* parse char * as if were word array */
 char *getarg(char *, int, int);
 
@@ -95,7 +93,7 @@ void run_commands() {
 		} else if (!strncasecmp(command, "back", 4)) {
 			do_im_back();
 		} else if (!strncasecmp(command, "quit", 4)) {
-			do_quit();
+			gaim_core_quit();
 		}
 		free(command);
 	}

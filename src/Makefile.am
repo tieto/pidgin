@@ -16,6 +16,7 @@ CORESOURCES = \
 	connection.h \
 	conversation.c \
 	conversation.h \
+	core.c \
 	core.h \
 	debug.c \
 	debug.h \

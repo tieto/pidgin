@@ -31,6 +31,7 @@
 #include <getopt.h>
 
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "prpl.h"
 
@@ -311,7 +312,7 @@ meta_handler(struct UI *ui, guchar subtype, gchar *data)
 			g_source_remove(ui->inpa);
 			g_free(ui);
 		}
-		do_quit();
+		gaim_core_quit();
 		break;
 	case CUI_META_DETACH:
 		uis = g_slist_remove(uis, ui);

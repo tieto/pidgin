@@ -1481,7 +1481,7 @@ auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
 		gpointer data)
 {
 	GtkWidget *hbox = data;
-	gboolean enabled = value;
+	gboolean enabled = (gboolean)value;
 
 	gtk_widget_set_sensitive(hbox, enabled);
 }

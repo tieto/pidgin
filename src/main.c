@@ -23,6 +23,7 @@
 
 #include "account.h"
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "ft.h"
 #include "log.h"
@@ -33,8 +34,6 @@
 #include "sound.h"
 #include "status.h"
 #include "util.h"
-
-//#include "gaim.h"
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
@@ -58,57 +57,6 @@
 
 #include "locale.h"
 #include <getopt.h>
-
-#if 0
-#ifdef GAIM_PLUGINS
-# ifndef _WIN32
-#  include <dlfcn.h>
-# endif
-#endif /* GAIM_PLUGINS */
-
-#include <gtk/gtk.h>
-#ifndef _WIN32
-#include <gdk/gdkx.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/un.h>
-#include <sys/wait.h>
-#endif /* !_WIN32 */
-#include <gdk/gdk.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "prpl.h"
-#include "sound.h"
-#include "gtksound.h"
-#include "gaim.h"
-#include "account.h"
-#include "prefs.h"
-#include "notify.h"
-#include "gtkaccount.h"
-#include "gtkblist.h"
-#include "gtkconn.h"
-#include "gtkdebug.h"
-#include "gtknotify.h"
-#include "gtkrequest.h"
-#include "gtksound.h"
-#if HAVE_SIGNAL_H
-#include <signal.h>
-#endif
-#include "locale.h"
-#include <getopt.h>
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-#endif
 
 extern void load_prefs();
 extern void load_pounces();
@@ -153,44 +101,6 @@ static int ignore_sig_list[] = {
 	-1
 };
 #endif
-
-STATIC_PROTO_INIT
-
-void do_quit()
-{
-	/* captain's log, stardate... */
-	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-
-	/* the self destruct sequence has been initiated */
-	gaim_event_broadcast(event_quit);
-
-	/* transmission ends */
-	gaim_connections_disconnect_all();
-
-	/* record what we have before we blow it away... */
-	gaim_prefs_sync();
-	gaim_accounts_sync();
-
-	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
-	gaim_plugins_destroy_all();
-
-	/* XXX */
-#if 0
-#ifdef USE_PERL
-	/* yup, perl too */
-	perl_end();
-#endif
-#endif
-
-#ifdef USE_SM
-	/* unplug */
-	session_end();
-#endif
-
-	/* and end it all... */
-	gtk_main_quit();
-}
-
 
 static guint snd_tmout = 0;
 static gboolean sound_timeout(gpointer data)
@@ -339,7 +249,7 @@ static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
 #endif
 		gtk_widget_hide(mainwindow);
 	} else
-		do_quit();
+		gaim_core_quit();
 }
 
 void show_login()
@@ -576,6 +486,63 @@ static void gaim_log_handler (const gchar    *domain,
 	g_log_default_handler(domain, flags, msg, user_data);
 }
 #endif /* _WIN32 */
+
+static void
+debug_init(void)
+{
+	gaim_set_debug_ui_ops(gaim_get_gtk_debug_ui_ops());
+	gaim_gtk_debug_init();
+}
+
+static void
+gaim_gtk_ui_init(void)
+{
+	/* Set the UI operation structures. */
+	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
+	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
+	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
+	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
+	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
+	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
+	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
+
+	gaim_gtk_prefs_init();
+	gaim_gtk_blist_init();
+	gaim_gtk_conversation_init();
+	gaim_gtk_pounces_init();
+	gaim_gtk_xfer_init();
+}
+
+static void
+gaim_gtk_quit(void)
+{
+	/* XXX? */
+
+	/* captain's log, stardate... */
+	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+
+#ifdef USE_SM
+	/* unplug */
+	session_end();
+#endif
+
+	/* and end it all... */
+	gtk_main_quit();
+}
+
+static GaimCoreUiOps core_ops =
+{
+	gaim_gtk_prefs_init,
+	debug_init,
+	gaim_gtk_ui_init,
+	gaim_gtk_quit
+};
+
+static GaimCoreUiOps *
+gaim_get_gtk_core_ui_ops(void)
+{
+	return &core_ops;
+}
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
@@ -833,36 +800,39 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	gaim_gtk_stock_init();
+
+	gaim_set_core_ui_ops(gaim_get_gtk_core_ui_ops());
+
+	if (!gaim_core_init(GAIM_GTK_UI)) {
+		fprintf(stderr,
+				"Initialization of the Gaim core failed. Dumping core.\n"
+				"Please report this!\n");
+		abort();
+	}
+
+#if 0
 	/* This has to be done before the debug stuff. */
 	gaim_gtk_stock_init();
-	
+
 	static_proto_init();
 
 	gaim_prefs_init();
-	gaim_gtk_prefs_init();
 
 	/* This kind of has to be here.. sucks, but it's important. */
-	gaim_set_debug_ui_ops(gaim_get_gtk_debug_ui_ops());
 	gaim_gtk_debug_init();
-
-	/* Set the UI operation structures. */
-	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
-	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
-	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
-	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
-	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
-	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
-	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
 
 	gaim_conversation_init();
 	gaim_proxy_init();
 	gaim_sound_init();
 	gaim_pounces_init();
 
+	gaim_gtk_prefs_init();
 	gaim_gtk_blist_init();
 	gaim_gtk_conversation_init();
 	gaim_gtk_pounces_init();
 	gaim_gtk_xfer_init();
+#endif
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
