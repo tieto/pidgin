@@ -32,14 +32,16 @@ typedef struct _MsnUsers MsnUsers;
  */
 struct _MsnUser
 {
-	MsnSession *session; /**< The MSN session.      */
+	MsnSession *session;    /**< The MSN session.        */
 
-	char *passport;      /**< The passport account. */
-	char *name;          /**< The friendly name.    */
+	char *passport;         /**< The passport account.   */
+	char *name;             /**< The friendly name.      */
 
-	int group_id;        /**< The group ID.         */
+	int group_id;           /**< The group ID.           */
 
-	size_t ref_count;    /**< The reference count.  */
+	size_t ref_count;       /**< The reference count.    */
+
+	GHashTable *clientinfo; /**< The client information. */
 };
 
 /**
@@ -141,6 +143,23 @@ const char *msn_user_get_name(const MsnUser *user);
 int msn_user_get_group_id(const MsnUser *user);
 
 /**
+ * Sets the client information for a user.
+ *
+ * @param user The user.
+ * @param info The client information.
+ */
+void msn_user_set_client_info(MsnUser *user, GHashTable *info);
+
+/**
+ * Returns the client information for a user.
+ *
+ * @param user The user.
+ *
+ * @return The client information.
+ */
+GHashTable *msn_user_get_client_info(const MsnUser *user);
+
+/**
  * Creates a new MsnUsers structure.
  *
  * @return A new MsnUsers structure.
@@ -169,7 +188,6 @@ void msn_users_add(MsnUsers *users, MsnUser *user);
  * @param user  The user.
  */
 void msn_users_remove(MsnUsers *users, MsnUser *user);
-
 
 /**
  * Finds a user with the specified passport.

@@ -69,6 +69,9 @@ msn_user_destroy(MsnUser *user)
 	if (user->session != NULL && user->session->users != NULL)
 		msn_users_remove(user->session->users, user);
 
+	if (user->clientinfo != NULL)
+		g_hash_table_destroy(user->clientinfo);
+
 	if (user->passport != NULL)
 		g_free(user->passport);
 
@@ -159,6 +162,26 @@ msn_user_get_group_id(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, -1);
 
 	return user->group_id;
+}
+
+void
+msn_user_set_client_info(MsnUser *user, GHashTable *info)
+{
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(info != NULL);
+
+	if (user->clientinfo != NULL)
+		g_hash_table_destroy(user->clientinfo);
+
+	user->clientinfo = info;
+}
+
+GHashTable *
+msn_user_get_client_info(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->clientinfo;
 }
 
 MsnUsers *

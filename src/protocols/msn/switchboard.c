@@ -26,6 +26,32 @@
 static GHashTable *switchboard_commands  = NULL;
 static GHashTable *switchboard_msg_types = NULL;
 
+/**************************************************************************
+ * Utility functions
+ **************************************************************************/
+static gboolean
+__send_clientinfo(MsnSwitchBoard *swboard)
+{
+	MsnMessage *msg;
+
+	msg = msn_message_new();
+	msn_message_set_content_type(msg, "text/x-clientinfo");
+	msn_message_set_charset(msg, NULL);
+	msn_message_set_attr(msg, "User-Agent", NULL);
+	msn_message_set_body(msg, MSN_CLIENTINFO);
+
+	if (!msn_switchboard_send_msg(swboard, msg)) {
+		msn_switchboard_destroy(swboard);
+
+		msn_message_destroy(msg);
+
+		return FALSE;
+	}
+
+	msn_message_destroy(msg);
+
+	return TRUE;
+}
 
 /**************************************************************************
  * Catch-all commands
@@ -60,7 +86,7 @@ __ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (swboard->chat != NULL)
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
 
-	return TRUE;
+	return __send_clientinfo(swboard);
 }
 
 static gboolean
@@ -159,7 +185,7 @@ __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 	}
 
-	return TRUE;
+	return __send_clientinfo(swboard);
 }
 
 static gboolean
@@ -277,6 +303,20 @@ __control_msg(MsnServConn *servconn, const MsnMessage *msg)
 	return TRUE;
 }
 
+static gboolean
+__clientinfo_msg(MsnServConn *servconn, const MsnMessage *msg)
+{
+	MsnSession *session = servconn->session;
+	MsnUser *user;
+	GHashTable *clientinfo;
+
+	user = msn_user_new(session, servconn->msg_passport, NULL);
+
+	clientinfo = msn_message_get_hashtable_from_body(msg);
+
+	return TRUE;
+}
+
 /**************************************************************************
  * Connect stuff
  **************************************************************************/
@@ -364,6 +404,8 @@ msn_switchboard_new(MsnSession *session)
 		msn_servconn_register_msg_type(servconn, "text/plain", __plain_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-msmsgscontrol",
 									   __control_msg);
+		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
+									   __clientinfo_msg);
 
 		/* Save these for future use. */
 		switchboard_commands  = servconn->commands;
