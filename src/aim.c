@@ -141,13 +141,10 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 		return;
 	}
 
-	if (!strlen(password)) {
-		do_error_dialog(_("Please enter your password"), _("Signon Error"));
-		return;
-	}
+	/* if there is more than one user of the same name, then fuck 
+	 * them, they just have to use the account editor to sign in 
+	 * the second one */
 
-	/* if there is more than one user of the same name, then fuck them, they just have
-	 * to use the account editor to sign in the second one */
 	u = find_user(username, -1);
 	if (!u)
 		u = new_user(username, DEFAULT_PROTO, OPT_USR_REM_PASS);

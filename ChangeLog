@@ -18,6 +18,8 @@ version 0.46:
 	* Redesigned Modify Account window (thanks Sean Egan)
 	* Add buddy dialog now lets you select which protocol
 	  to add the buddy to
+	* Attempting to sign on to accounts, from the main screen,  
+	  which do not require a password now functions properly.
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite
