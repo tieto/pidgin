@@ -125,6 +125,7 @@ static GList *irc_chat_join_info(GaimConnection *gc)
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Password:");
 	pce->identifier = "password";
+	pce->secret = TRUE;
 	m = g_list_append(m, pce);
 
 	return m;
