@@ -2715,19 +2715,19 @@ irc_init(struct prpl *ret)
 	ret->file_transfer_cancel =irc_file_transfer_cancel;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Server:");
+	puo->label = g_strdup(_("Server:"));
 	puo->def = g_strdup("irc.freenode.net");
 	puo->pos = USEROPT_SERV;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Port:");
+	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("6667");
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Encoding:");
+	puo->label = g_strdup(_("Encoding:"));
 	puo->def = g_strdup("ISO-8859-1");
 	puo->pos = USEROPT_CHARSET;
 	ret->user_opts = g_list_append(ret->user_opts, puo);

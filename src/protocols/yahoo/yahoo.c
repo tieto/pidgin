@@ -1358,13 +1358,13 @@ G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	ret->send_typing = yahoo_send_typing;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Pager Host:");
+	puo->label = g_strdup(_("Pager Host:"));
 	puo->def = g_strdup(YAHOO_PAGER_HOST);
 	puo->pos = USEROPT_PAGERHOST;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Pager Port:");
+	puo->label = g_strdup(_("Pager Port:"));
 	puo->def = g_strdup("5050");
 	puo->pos = USEROPT_PAGERPORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);

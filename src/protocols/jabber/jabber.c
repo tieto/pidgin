@@ -4221,7 +4221,7 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->file_transfer_cancel = jabber_file_transfer_cancel;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Port:");
+	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("5222");
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);

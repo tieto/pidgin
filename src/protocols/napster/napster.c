@@ -612,13 +612,13 @@ G_MODULE_EXPORT void napster_init(struct prpl *ret)
 	ret->keepalive = NULL;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Server:");
+	puo->label = g_strdup(_("Server:"));
 	puo->def = g_strdup(NAP_SERVER);
 	puo->pos = USEROPT_NAPSERVER;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Port:");
+	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("8888");
 	puo->pos = USEROPT_NAPPORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);

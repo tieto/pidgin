@@ -2399,13 +2399,13 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->buddy_free = msn_buddy_free;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Server:");
+	puo->label = g_strdup(_("Server:"));
 	puo->def = g_strdup(MSN_SERVER);
 	puo->pos = USEROPT_MSNSERVER;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Port:");
+	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("1863");
 	puo->pos = USEROPT_MSNPORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);

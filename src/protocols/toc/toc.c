@@ -1442,13 +1442,13 @@ G_MODULE_EXPORT void toc_init(struct prpl *ret)
 	ret->keepalive = toc_keepalive;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("TOC Host:");
+	puo->label = g_strdup(_("TOC Host:"));
 	puo->def = g_strdup("toc.oscar.aol.com");
 	puo->pos = USEROPT_AUTH;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("TOC Port:");
+	puo->label = g_strdup(_("TOC Port:"));
 	puo->def = g_strdup("9898");
 	puo->pos = USEROPT_AUTHPORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
@@ -1575,7 +1575,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		if (ft->files == 1) {
 			ft->file = fopen(ft->filename, "w");
 			if (!ft->file) {
-				buf = g_strdup_printf("Could not open %s for writing!", ft->filename);
+				buf = g_strdup_printf(_("Could not open %s for writing!"), ft->filename);
 				do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 				g_free(buf);
 				gaim_input_remove(ft->inpa);

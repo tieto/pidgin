@@ -508,8 +508,8 @@ void icq_init(struct prpl *ret) {
 	ret->keepalive = icq_keepalive;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Nick:");
-	puo->def = g_strdup("Gaim User");
+	puo->label = g_strdup(_("Nick:"));
+	puo->def = g_strdup(_("Gaim User"));
 	puo->pos = USEROPT_NICK;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
