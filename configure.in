@@ -104,7 +104,7 @@ CFLAGS="$CFLAGS $GTK_CFLAGS"
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
-	XSS_LIBS=""
+	XSS_LIBS="no"
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
 	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-lXss"],[],[-lX11 -lXext -lm])
