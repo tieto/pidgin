@@ -121,6 +121,37 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
+AC_ARG_WITH(dynamic_prpls,   [ --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],DYNAMIC_PRPLS="all")
+if test "x$DYNAMIC_PRPLS" = "xall" ; then
+	DYNAMIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
+fi
+AC_SUBST(DYNAMIC_PRPLS)
+for i in $DYNAMIC_PRPLS ; do
+	case $i in
+		gg)      dynamic_gg=yes ;;
+		irc)     dynamic_irc=yes ;;
+		jabber)  dynamic_jabber=yes ;;
+		msn)     dynamic_msn=yes ;;
+		napster) dynamic_napster=yes ;;
+		oscar)   dynamic_oscar=yes ;;
+		toc)     dynamic_toc=yes ;;
+		trepia)  dynamic_trepia=yes ;;
+		yahoo)   dynamic_yahoo=yes ;;
+		zephyr)  dynamic_zephyr=yes ;;
+		*)       echo "Invalid dynamic protocol $i!!" ; exit ;;
+	esac
+done
+AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
+AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
+AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
+AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
+AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
+AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
+AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
+AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
+AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
+AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
+
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
@@ -997,6 +1028,7 @@ echo
 echo Allow Multiple Connections.... : $enable_multi
 echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
+echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo
 echo UI Library.................... : GTK 2.x
 echo SSL Library/Libraries......... : $msg_ssl
