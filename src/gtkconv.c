@@ -4700,12 +4700,14 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 	if (gc == NULL) {
 		gtk_widget_set_sensitive(gtkconv->send, FALSE);
 
-		if (gaim_window_get_active_conversation(win) == conv) {
+		if (win != NULL && gaim_window_get_active_conversation(win) == conv) {
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, FALSE);
 		}
 	}
 	else {
-		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+		if (win != NULL) {
+			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+		}
 	}
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
