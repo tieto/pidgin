@@ -67,8 +67,12 @@ struct _MsnSession
 
 	} passport_info;
 
-	/* You have no idea how much I hate this. */
+	/* You have no idea how much I hate all that is below. */
 	GaimPlugin *prpl;
+
+	/* For moving buddies from one group to another. Ugh. */
+	gboolean moving_buddy;
+	gint dest_group_id;
 };
 
 /**

@@ -751,7 +751,51 @@ static void
 msn_group_buddy(struct gaim_connection *gc, const char *who,
 				const char *old_group, const char *new_group)
 {
-	
+	MsnSession *session = gc->proto_data;
+	char outparams[MSN_BUF_LEN];
+	gint *old_group_id, *new_group_id;
+
+	old_group_id = g_hash_table_lookup(session->group_ids, old_group);
+	new_group_id = g_hash_table_lookup(session->group_ids, new_group);
+
+	if (new_group_id == NULL) {
+		g_snprintf(outparams, sizeof(outparams), "%s 0",
+				   msn_url_encode(new_group));
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "ADG", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+			return;
+		}
+
+		/* I hate this. So much. */
+		session->moving_buddy = TRUE;
+		session->dest_group_id = *new_group_id;
+	}
+	else {
+		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
+				   who, who, *new_group_id);
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "ADD", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+			return;
+		}
+	}
+
+	if (old_group_id != NULL) {
+		g_snprintf(outparams, sizeof(outparams), "FL %s %d",
+				   who, *old_group_id);
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "REM", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+			return;
+		}
+	}
 }
 
 static void

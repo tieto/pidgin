@@ -362,6 +362,28 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
+__adg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSession *session = servconn->session;
+	gint *group_id;
+	char *group_name;
+
+	group_id = g_new(gint, 1);
+	*group_id = atoi(params[3]);
+
+	group_name = msn_url_decode(params[2]);
+
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Added group %s (id %d)\n",
+			   group_name, group_id);
+
+	g_hash_table_insert(session->group_ids, group_name, group_id);
+	g_hash_table_insert(session->group_names, group_id, g_strdup(group_name));
+
+	return TRUE;
+}
+
+static gboolean
 __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
@@ -710,6 +732,34 @@ __reg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	return TRUE;
 }
 
+static gboolean
+__rem_cmd(MsnServConn *servconn, const char *command, const char **params,
+		  size_t param_count)
+{
+	MsnSession *session = servconn->session;
+
+	/* I hate this. */
+	if (session->moving_buddy) {
+		struct gaim_connection *gc = session->account->gc;
+		const char *passport = params[3];
+		char outparams[MSN_BUF_LEN];
+
+		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
+				   passport, passport, session->dest_group_id);
+
+		session->moving_buddy = FALSE;
+		session->dest_group_id = 0;
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "ADD", outparams)) {
+			hide_login_progress(gc, _("Write error"));
+			signoff(gc);
+		}
+	}
+
+	return TRUE;
+}
+
 /**************************************************************************
  * Misc commands
  **************************************************************************/
@@ -1046,6 +1096,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 	if (notification_commands == NULL) {
 		/* Register the command callbacks. */
 		msn_servconn_register_command(notification, "ADD",       __add_cmd);
+		msn_servconn_register_command(notification, "ADG",       __adg_cmd);
 		msn_servconn_register_command(notification, "BLP",       __blp_cmd);
 		msn_servconn_register_command(notification, "BPR",       __blank_cmd);
 		msn_servconn_register_command(notification, "CHG",       __blank_cmd);
@@ -1064,7 +1115,8 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "QRY",       __blank_cmd);
 		msn_servconn_register_command(notification, "REA",       __rea_cmd);
 		msn_servconn_register_command(notification, "REG",       __reg_cmd);
-		msn_servconn_register_command(notification, "REM",       __blank_cmd);
+		msn_servconn_register_command(notification, "REM",       __rem_cmd);
+		msn_servconn_register_command(notification, "RMG",       __blank_cmd);
 		msn_servconn_register_command(notification, "RNG",       __rng_cmd);
 		msn_servconn_register_command(notification, "SYN",       __blank_cmd);
 		msn_servconn_register_command(notification, "URL",       __url_cmd);
