@@ -34,6 +34,7 @@
 #include "html.h"
 
 #include "yahoo.h"
+#include "yahoochat.h"
 #include "md5.h"
 
 /* XXX */
@@ -53,93 +54,9 @@ extern char *yahoo_crypt(const char *, const char *);
 
 #define YAHOO_PROTO_VER 0x0900
 
-enum yahoo_service { /* these are easier to see in hex */
-	YAHOO_SERVICE_LOGON = 1,
-	YAHOO_SERVICE_LOGOFF,
-	YAHOO_SERVICE_ISAWAY,
-	YAHOO_SERVICE_ISBACK,
-	YAHOO_SERVICE_IDLE, /* 5 (placemarker) */
-	YAHOO_SERVICE_MESSAGE,
-	YAHOO_SERVICE_IDACT,
-	YAHOO_SERVICE_IDDEACT,
-	YAHOO_SERVICE_MAILSTAT,
-	YAHOO_SERVICE_USERSTAT, /* 0xa */
-	YAHOO_SERVICE_NEWMAIL,
-	YAHOO_SERVICE_CHATINVITE,
-	YAHOO_SERVICE_CALENDAR,
-	YAHOO_SERVICE_NEWPERSONALMAIL,
-	YAHOO_SERVICE_NEWCONTACT,
-	YAHOO_SERVICE_ADDIDENT, /* 0x10 */
-	YAHOO_SERVICE_ADDIGNORE,
-	YAHOO_SERVICE_PING,
-	YAHOO_SERVICE_GROUPRENAME,
-	YAHOO_SERVICE_SYSMESSAGE = 0x14,
-	YAHOO_SERVICE_PASSTHROUGH2 = 0x16,
-	YAHOO_SERVICE_CONFINVITE = 0x18,
-	YAHOO_SERVICE_CONFLOGON,
-	YAHOO_SERVICE_CONFDECLINE,
-	YAHOO_SERVICE_CONFLOGOFF,
-	YAHOO_SERVICE_CONFADDINVITE,
-	YAHOO_SERVICE_CONFMSG,
-	YAHOO_SERVICE_CHATLOGON,
-	YAHOO_SERVICE_CHATLOGOFF,
-	YAHOO_SERVICE_CHATMSG = 0x20,
-	YAHOO_SERVICE_GAMELOGON = 0x28,
-	YAHOO_SERVICE_GAMELOGOFF,
-	YAHOO_SERVICE_GAMEMSG = 0x2a,
-	YAHOO_SERVICE_FILETRANSFER = 0x46,
-	YAHOO_SERVICE_NOTIFY = 0x4B,
-	YAHOO_SERVICE_AUTHRESP = 0x54,
-	YAHOO_SERVICE_LIST = 0x55,
-	YAHOO_SERVICE_AUTH = 0x57,
-	YAHOO_SERVICE_ADDBUDDY = 0x83,
-	YAHOO_SERVICE_REMBUDDY = 0x84
-};
-
-enum yahoo_status {
-	YAHOO_STATUS_AVAILABLE = 0,
-	YAHOO_STATUS_BRB,
-	YAHOO_STATUS_BUSY,
-	YAHOO_STATUS_NOTATHOME,
-	YAHOO_STATUS_NOTATDESK,
-	YAHOO_STATUS_NOTINOFFICE,
-	YAHOO_STATUS_ONPHONE,
-	YAHOO_STATUS_ONVACATION,
-	YAHOO_STATUS_OUTTOLUNCH,
-	YAHOO_STATUS_STEPPEDOUT,
-	YAHOO_STATUS_INVISIBLE = 12,
-	YAHOO_STATUS_CUSTOM = 99,
-	YAHOO_STATUS_IDLE = 999,
-	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
-	YAHOO_STATUS_TYPING = 0x16
-};
-#define YAHOO_STATUS_GAME 0x2 /* Games don't fit into the regular status model */
-
-struct yahoo_data {
-	int fd;
-	guchar *rxqueue;
-	int rxlen;
-	GHashTable *hash;
-	GHashTable *games;
-	int current_status;
-	gboolean logged_in;
-};
-
-struct yahoo_pair {
-	int key;
-	char *value;
-};
-
-struct yahoo_packet {
-	guint16 service;
-	guint32 status;
-	guint32 id;
-	GSList *hash;
-};
-
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
-static struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
+struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
 {
 	struct yahoo_packet *pkt = g_new0(struct yahoo_packet, 1);
 
@@ -150,7 +67,7 @@ static struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum ya
 	return pkt;
 }
 
-static void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value)
+void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value)
 {
 	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
@@ -314,7 +231,7 @@ static void yahoo_packet_dump(guchar *data, int len)
 #endif
 }
 
-static int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
+int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 {
 	int pktlen = yahoo_packet_length(pkt);
 	int len = YAHOO_PACKET_HDRLEN + pktlen;
@@ -345,7 +262,7 @@ static int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	return ret;
 }
 
-static void yahoo_packet_free(struct yahoo_packet *pkt)
+void yahoo_packet_free(struct yahoo_packet *pkt)
 {
 	while (pkt->hash) {
 		struct yahoo_pair *pair = pkt->hash->data;
@@ -917,6 +834,45 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
 		break;
+	case YAHOO_SERVICE_CONFINVITE:
+	case YAHOO_SERVICE_CONFADDINVITE:
+		yahoo_process_conference_invite(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CONFDECLINE:
+		yahoo_process_conference_decline(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CONFLOGON:
+		yahoo_process_conference_logon(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CONFLOGOFF:
+		yahoo_process_conference_logoff(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CONFMSG:
+		yahoo_process_conference_message(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATONLINE:
+		yahoo_process_chat_online(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATLOGOUT:
+		yahoo_process_chat_logout(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATGOTO:
+		yahoo_process_chat_goto(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATJOIN:
+		yahoo_process_chat_join(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATLEAVE: /* XXX is this right? */
+	case YAHOO_SERVICE_CHATEXIT:
+		yahoo_process_chat_exit(gc, pkt);
+		break;
+	case YAHOO_SERVICE_CHATINVITE: /* XXX never seen this one, might not do it right */
+	case YAHOO_SERVICE_CHATADDINVITE:
+		yahoo_process_chat_addinvite(gc, pkt);
+		break;
+	case YAHOO_SERVICE_COMMENT:
+		yahoo_process_chat_message(gc, pkt);
+		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -1030,6 +986,8 @@ static void yahoo_login(GaimAccount *account) {
 	yd->fd = -1;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
+	yd->confs = NULL;
+	yd->conf_id = 2;
 
 	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
 			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
@@ -1053,6 +1011,9 @@ static void yahoo_close(GaimConnection *gc) {
 	g_hash_table_destroy(yd->hash);
 	g_hash_table_foreach_remove(yd->games, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->games);
+
+	g_slist_free(yd->confs);
+
 	if (yd->fd >= 0)
 		close(yd->fd);
 
@@ -1116,6 +1077,26 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	default:
 		return _("Online");
 	}
+}
+
+static void yahoo_initiate_conference(GaimConnection *gc, const char *name)
+{
+	GHashTable *components;
+	struct yahoo_data *yd;
+	int id;
+
+	yd = gc->proto_data;
+	id = yd->conf_id;
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	g_hash_table_replace(components, g_strdup("room"),
+		g_strdup_printf("%s-%d", gaim_connection_get_display_name(gc), id));
+	g_hash_table_replace(components, g_strdup("topic"), g_strdup("Join my conference..."));
+	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
+	yahoo_c_join(gc, components);
+	g_hash_table_destroy(components);
+
+	yahoo_c_invite(gc, id, "Join my conference...", name);
 }
 
 static void yahoo_game(GaimConnection *gc, const char *name) {
@@ -1183,6 +1164,18 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 						  segfault and get the bug report. */
 	static char buf2[1024];
 
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Join in Chat");
+	pbm->callback = yahoo_chat_goto;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Initiate Conference");
+	pbm->callback = yahoo_initiate_conference;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
 	if (b->uc | YAHOO_STATUS_GAME) {
 		char *game = g_hash_table_lookup(yd->games, b->name);
 		char *room;
@@ -1192,11 +1185,11 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 			char *t;
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
-				return NULL;
+				return m;
 			while (*room && *room != '\t')          /* skip to the tab */
 				room++;
 			t = room++;                             /* room as now at the name */
-			while (*t != '\n')         
+			while (*t != '\n')
 				t++;                            /* replace the \n with a space */
 			*t = ' ';
 			g_snprintf(buf2, sizeof buf2, "%s", room);
@@ -1206,7 +1199,7 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 			m = g_list_append(m, pbm);
 		}
 	}
-	
+
 	return m;
 }
 
@@ -1399,6 +1392,14 @@ static void yahoo_keepalive(GaimConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+
+	if (!yd->chat_online)
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 109, gaim_connection_get_display_name(gc));
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
 }
@@ -1619,9 +1620,9 @@ static GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_YAHOO,
-	OPT_PROTO_MAIL_CHECK,
-	NULL,
-	NULL,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
+	NULL, /* user_splits */
+	NULL, /* protocol_options */
 	yahoo_list_icon,
 	yahoo_list_emblems,
 	yahoo_status_text,
@@ -1629,45 +1630,46 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_away_states,
 	yahoo_actions,
 	yahoo_buddy_menu,
-	NULL,
+	yahoo_c_info,
 	yahoo_login,
 	yahoo_close,
 	yahoo_send_im,
-	NULL,
+	NULL, /* set info */
 	yahoo_send_typing,
 	yahoo_get_info,
 	yahoo_set_away,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL, /* get_away */
+	NULL, /* set_dir */
+	NULL, /* get_dir */
+	NULL, /* dir_search */
 	yahoo_set_idle,
-	NULL,
+	NULL, /* change_passwd*/
 	yahoo_add_buddy,
-	NULL,
+	NULL, /* add_buddies */
 	yahoo_remove_buddy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL, /*remove_buddies */
+	NULL, /* add_permit */
+	NULL, /* add_dey */
+	NULL, /* rem_permit */
+	NULL, /* rem_deny */
+	NULL, /* set_permit_deny */
+	NULL, /* warn */
+	yahoo_c_join,
+	yahoo_c_invite,
+	yahoo_c_leave,
+	NULL, /* chat whisper */
+	yahoo_c_send,
 	yahoo_keepalive,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	NULL, /* register_user */
+	NULL, /* get_cb_info */
+	NULL, /* get_cb_away */
+	NULL, /* alias_buddy */
+	NULL, /* change group */
+	NULL, /* rename group */
+	NULL, /* buddy_free */
+	NULL, /* convo_closed */
+	NULL, /* normalize */
+	NULL /* set_buddy_icon */
 };
 
 static GaimPluginInfo info =

@@ -7,7 +7,9 @@ YAHOOSOURCES = \
 	crypt.c \
 	md5.h \
 	yahoo.h \
+	yahoochat.h \
 	yahoo.c \
+	yahoochat.c \
 	util.c
 
 AM_CFLAGS = $(st)
