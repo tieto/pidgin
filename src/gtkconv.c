@@ -5814,9 +5814,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/button_type",
 					   GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/raise_on_events", FALSE);
-	gaim_prefs_rename("/gaim/gtk/conversations/im/buton_type", "/gaim/gtk/conversations/button_type");
-	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/gaim/gtk/conversations/raise_on_events");
-	
+
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");

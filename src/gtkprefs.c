@@ -1701,8 +1701,6 @@ GtkWidget *sound_page() {
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
@@ -1732,13 +1730,22 @@ GtkWidget *sound_page() {
 
 	vbox = gaim_gtk_make_frame(ret, _("Sound Events"));
 
+	/* The following is an ugly hack to make the frame expand so the
+	 * sound events list is big enough to be usable */
+	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0,
+			GTK_PACK_START);
+	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent), vbox->parent, TRUE,
+			TRUE, 0, GTK_PACK_START);
+	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent->parent),
+			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
+
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
-	
+
 	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
 		char *pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
 					     gaim_gtk_sound_get_event_option(j));
@@ -1748,7 +1755,7 @@ GtkWidget *sound_page() {
 			g_free(pref);
 			continue;
 		}
-		
+
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
 				   0, gaim_prefs_get_bool(pref),
@@ -1777,7 +1784,7 @@ GtkWidget *sound_page() {
 							"active", 0,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-	
+
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes (_("Event"),
 							rend,
@@ -1797,20 +1804,20 @@ GtkWidget *sound_page() {
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
-	
+
 	button = gtk_button_new_with_label(_("Test"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-	
+
 	button = gtk_button_new_with_label(_("Reset"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-	
+
 	button = gtk_button_new_with_label(_("Choose..."));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
-	
+
 	return ret;
 }
 
@@ -2762,6 +2769,11 @@ void gaim_gtk_prefs_update_old() {
 
 	gaim_prefs_rename("/gaim/gtk/conversations/use_custom_font",
 					  "/gaim/gtk/conversations/send_formatting");
+
+	gaim_prefs_rename("/gaim/gtk/conversations/im/button_type",
+			"/gaim/gtk/conversations/button_type");
+	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events",
+			"/gaim/gtk/conversations/raise_on_events");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
