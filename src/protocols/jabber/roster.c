@@ -157,7 +157,11 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		name = xmlnode_get_attrib(item, "name");
 		ask = xmlnode_get_attrib(item, "ask");
 
-		jb = jabber_buddy_find(js, jid, TRUE);
+		if(!jid)
+			continue;
+
+		if(!(jb = jabber_buddy_find(js, jid, TRUE)))
+			continue;
 
 		if(!subscription)
 			jb->subscription = JABBER_SUB_NONE;
