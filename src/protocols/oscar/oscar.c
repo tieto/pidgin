@@ -291,13 +291,6 @@ static gboolean gaim_icon_timerfunc(gpointer data);
 /* prpl actions - remove this at some point */
 static void oscar_set_info(GaimConnection *gc, char *text);
 
-int ill_just_write_my_own_damn_round_function(double val) {
-	if ((val - (int)val) > 0.5)
-		return val+1;
-	else
-		return val;
-}
-
 static void gaim_free_name_data(struct name_data *data) {
 	g_free(data->name);
 	g_free(data->nick);
@@ -1841,7 +1834,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		free(b16);
 	}
 
-	serv_got_update(gc, info->sn, 1, ill_just_write_my_own_damn_round_function(info->warnlevel/10.0), signon, time_idle, type);
+	serv_got_update(gc, info->sn, 1, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
 
 	return 1;
 }
@@ -3183,7 +3176,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"%s\n"
 			"<hr>\n"),
 			info->sn, images(info->flags),
-			ill_just_write_my_own_damn_round_function(info->warnlevel/10.0),
+			(info->warnlevel/10.0) + 0.5,
 			onlinesince ? onlinesince : "",
 			membersince ? membersince : "",
 			idle ? idle : "");
@@ -3443,7 +3436,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	havenewmail = va_arg(ap, int);
 	va_end(ap);
 
-	if (emailinfo) {
+	if (emailinfo && gaim_account_get_check_mail(gc->account)) {
 		gchar *to = g_strdup_printf("%s@%s", gaim_account_get_username(gaim_connection_get_account(gc)), emailinfo->domain);
 		if (emailinfo->unread && havenewmail)
 			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
@@ -3632,7 +3625,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, ill_just_write_my_own_damn_round_function(newevil/10.0));
+	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
 
 	return 1;
 }
@@ -3646,7 +3639,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	gc->evil = ill_just_write_my_own_damn_round_function(info->warnlevel/10.0);
+	gc->evil = (info->warnlevel/10.0) + 0.5;
 
 	if (info->onlinesince)
 		gc->login_time_official = info->onlinesince;

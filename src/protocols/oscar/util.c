@@ -187,7 +187,8 @@ faim_export int aim_snlen(const char *sn)
 * This takes two screen names and compares them using the rules
 * on screen names for AIM/AOL.  Mainly, this means case and space
 * insensitivity (all case differences and spacing differences are
-* ignored).
+* ignored, with the exception that screen names can not start with 
+* a space).
 *
 * Return: 0 if equal
 *     non-0 if different
@@ -196,27 +197,18 @@ faim_export int aim_snlen(const char *sn)
 faim_export int aim_sncmp(const char *sn1, const char *sn2)
 {
 
-	if (aim_snlen(sn1) != aim_snlen(sn2))
-		return 1;
-
-	/* XXX - Should be able to only check if sn1 != '\0', right?  Is that faster? */
-	while ((*sn1 != '\0') && (*sn2 != '\0')) {
+	while (toupper(*sn1) == toupper(*sn2)) {
+		if (*sn1 == '\0')
+			return 0;
+		sn1++;
+		sn2++;
 		while (*sn2 == ' ')
 			*sn2++;
 		while (*sn1 == ' ')
 			*sn1++;
-		if (toupper(*sn1) != toupper(*sn2))
-			return 1;
-		sn1++;
-		sn2++;
 	}
 
-	/* Should both be NULL */
-	/* XXX - I think this check is not necessary, but I'm afeared to take it out */
-	if (*sn1 != *sn2)
-		return 1;
-
-	return 0;
+	return 1;
 }
 
 /* strsep Copyright (C) 1992, 1993 Free Software Foundation, Inc.
