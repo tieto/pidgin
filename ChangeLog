@@ -4,7 +4,7 @@ version 0.10.0:
 	* New Smiley Faces and Pixmaps added.
 	* Smiley faces now properly wrap in the conversation windows.
 	* Fixed 0-byte file segfault.
-
+	
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features
 	* French (fr), Spanish (es), Simplified Chinese (zh_CN), Korean (kr)

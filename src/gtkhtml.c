@@ -39,6 +39,10 @@
 #include "gaim.h"
 #include "gtkhtml.h"
 
+#include "pixmaps/aol_icon.xpm"
+#include "pixmaps/admin_icon.xpm"
+#include "pixmaps/free_icon.xpm"
+#include "pixmaps/dt_icon.xpm"
 #define MAX_SIZE                 7
 #define MIN_HTML_WIDTH_LINES     20
 #define MIN_HTML_HEIGHT_LINES    10
@@ -3220,7 +3224,30 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					title = 0;
 				else if (!strncasecmp(tag, "IMG", 3))
 				{
+					GdkPixmap *legend_i;
+					GdkBitmap *legend_m;
 
+					if (strstr(tag, "SRC=\"aol_icon.gif\"") != NULL)
+					{
+						legend_i = gdk_pixmap_create_from_xpm_d(GTK_WIDGET(html)->window, &legend_m, NULL, aol_icon_xpm);
+						gtk_html_add_pixmap(html, legend_i, 0, 0);
+					}
+
+					if (strstr(tag, "SRC=\"admin_icon.gif\"") != NULL)
+					{
+						legend_i = gdk_pixmap_create_from_xpm_d(GTK_WIDGET(html)->window, &legend_m, NULL, admin_icon_xpm);
+						gtk_html_add_pixmap(html, legend_i, 0, 0);
+					}
+					if (strstr(tag, "SRC=\"dt_icon.gif\"") != NULL)
+					{
+						legend_i = gdk_pixmap_create_from_xpm_d(GTK_WIDGET(html)->window, &legend_m, NULL, dt_icon_xpm);
+						gtk_html_add_pixmap(html, legend_i, 0, 0);
+					}
+					if (strstr(tag, "SRC=\"free_icon.gif\"") != NULL)
+					{
+						legend_i = gdk_pixmap_create_from_xpm_d(GTK_WIDGET(html)->window, &legend_m, NULL, free_icon_xpm);
+						gtk_html_add_pixmap(html, legend_i, 0, 0);
+					}
 				}
 				else if (!strcasecmp(tag, "H3"))
 				{
