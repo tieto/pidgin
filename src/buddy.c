@@ -47,6 +47,7 @@
 #include "pixmaps/no_icon.xpm"
 
 #include "pixmaps/away_small.xpm"
+#include "pixmaps/away_big.xpm"
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
@@ -80,7 +81,7 @@ static GtkWidget *editpane;
 static GtkWidget *buddypane;
 static GtkWidget *imchatbox;
 static GtkWidget *edittree;
-static GtkWidget *imbutton, *infobutton, *chatbutton;
+static GtkWidget *imbutton, *infobutton, *chatbutton, *awaybutton;
 static GtkWidget *addbutton, *groupbutton, *rembutton;
 
 GtkWidget *blist = NULL;
@@ -441,6 +442,7 @@ void update_button_pix()
 	adjust_pic(rembutton, _("Remove"), (gchar **)gnome_remove_xpm);
 
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+		adjust_pic(awaybutton, _("Chat"), (gchar **)away_big_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
 	        adjust_pic(infobutton, _("Info"), (gchar **)tb_search_xpm);
@@ -1500,6 +1502,32 @@ void chat_callback(GtkWidget *widget, GtkTree *tree)
 	join_chat();
 }
 
+static void away_callback(GtkWidget *widget, GtkTree *tree)
+{
+	GSList *awy = away_messages;
+	GtkWidget *menu;
+	GtkWidget *menuitem;
+
+	if (!awy)
+		return;
+
+	menu = gtk_menu_new();
+
+	while (awy) {
+		struct away_message *a = awy->data;
+
+		menuitem = gtk_menu_item_new_with_label(a->name);
+		gtk_menu_append(GTK_MENU(menu), menuitem);
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+				   GTK_SIGNAL_FUNC(do_away_message), a);
+		gtk_widget_show(menuitem);
+
+		awy = awy->next;
+	}
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 1, time(NULL));
+}
+
 struct group *find_group(struct gaim_connection *gc, char *group)
 {
 	struct group *g;
@@ -2455,6 +2483,7 @@ void build_imchat_box(gboolean on)
 		imbutton   = gtk_button_new_with_label(_("IM"));
 		infobutton = gtk_button_new_with_label(_("Info"));
 		chatbutton = gtk_button_new_with_label(_("Chat"));
+		awaybutton = gtk_button_new_with_label(_("Away"));
 
 		imchatbox  = gtk_hbox_new(TRUE, 10);
 
@@ -2463,25 +2492,30 @@ void build_imchat_box(gboolean on)
 			gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
 			gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
 			gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(awaybutton), GTK_RELIEF_NONE);
 		}
 
 		/* Put the buttons in the hbox */
 		gtk_widget_show(imbutton);
-		gtk_widget_show(chatbutton);
 		gtk_widget_show(infobutton);
+		gtk_widget_show(chatbutton);
+		gtk_widget_show(awaybutton);
 
 		gtk_box_pack_start(GTK_BOX(imchatbox), imbutton, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(imchatbox), infobutton, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(imchatbox), chatbutton, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(imchatbox), awaybutton, TRUE, TRUE, 0);
 		gtk_container_border_width(GTK_CONTAINER(imchatbox), 5);
 
 		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(im_callback), buddies);
 		gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback), buddies);
 		gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback), buddies);
+		gtk_signal_connect(GTK_OBJECT(awaybutton), "clicked", GTK_SIGNAL_FUNC(away_callback), buddies);
 
 		gtk_tooltips_set_tip(tips,infobutton, _("Information on selected Buddy"), "Penguin");
 		gtk_tooltips_set_tip(tips,imbutton, _("Send Instant Message"), "Penguin");
 		gtk_tooltips_set_tip(tips,chatbutton, _("Start/join a Buddy Chat"), "Penguin");
+		gtk_tooltips_set_tip(tips,awaybutton, _("Activate Away Message"), "Penguin");
 
 		gtk_box_pack_start(GTK_BOX(buddypane), imchatbox, FALSE, FALSE, 0);
 

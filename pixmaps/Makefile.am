@@ -12,6 +12,7 @@ EXTRA_DIST =	about_small.xpm			\
 		available-xa.xpm		\
 		available.xpm			\
 		away.xpm			\
+		away_big.xpm			\
 		away_icon.xpm			\
 		away_small.xpm			\
 		bgcolor.xpm			\
