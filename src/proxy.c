@@ -38,50 +38,6 @@
 #include "gaim.h"
 #include "proxy.h"
 
-/* this code is borrowed from cvs 1.10 */
-static int proxy_recv_line(int sock, char **resultp)
-{
-	int c;
-	char *result;
-	size_t input_index = 0;
-	size_t result_size = 80;
-
-	result = g_malloc(result_size);
-
-	while (1) {
-		char ch;
-		if (recv(sock, &ch, 1, 0) < 0)
-			debug_printf("recv() error from proxy server\n");
-		c = ch;
-
-		if (c == EOF) {
-			g_free(result);
-
-			/* It's end of file.  */
-			debug_printf("end of file from  server\n");
-		}
-
-		if (c == '\012')
-			break;
-
-		result[input_index++] = c;
-		while (input_index + 1 >= result_size) {
-			result_size *= 2;
-			result = (char *)g_realloc(result, result_size);
-		}
-	}
-
-	if (resultp)
-		*resultp = result;
-
-	/* Terminate it just for kicks, but we *can* deal with embedded NULs.  */
-	result[input_index] = '\0';
-
-	if (resultp == NULL)
-		g_free(result);
-	return input_index;
-}
-
 static int proxy_connect_none(char *host, unsigned short port)
 {
 	struct sockaddr_in sin;
@@ -118,7 +74,9 @@ static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, 
 	struct sockaddr_in sin;
 	int fd = -1;
 	char cmd[384];
-	char *inputline;
+	char inputline[8192];
+	int nlc = 0;
+	int pos = 0;
 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 
@@ -140,26 +98,23 @@ static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, 
 
 	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\n\r\n\r", host, port);
 
-	if (send(fd, cmd, strlen(cmd), 0) < 0)
+	if (send(fd, cmd, strlen(cmd), 0) < 0) {
+		close(fd);
 		return -1;
-	if (proxy_recv_line(fd, &inputline) < 0)
-		return -1;
+	}
+	while ((nlc != 2) && (read(fd, &inputline[pos++], 1) == 1)) {
+		if (inputline[pos-1] == '\n')
+			nlc++;
+		else if (inputline[pos-1] != '\r')
+			nlc = 0;
+	}
 
 	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING)) == 0) ||
 	     (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
-		while (strlen(inputline) > 1) {
-			free(inputline);
-			if (proxy_recv_line(fd, &inputline) < 0)
-				return -1;
-		}
-		free(inputline);
 		return fd;
 	}
 
-	free(inputline);
-
 	close(fd);
-
 	return -1;
 }
 
