@@ -16,10 +16,6 @@
 #include <faimconfig.h>
 #include <aim_cbtypes.h>
 
-#if !defined(FAIM_USEPTHREADS) && !defined(FAIM_USEFAKELOCKS) && !defined(FAIM_USENOPLOCKS)
-#error pthreads, fakelocks, or noplocks are currently required.
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -45,40 +41,6 @@ typedef unsigned short fu16_t;
 typedef unsigned long fu32_t;
 typedef fu32_t aim_snacid_t;
 typedef fu16_t flap_seqnum_t;
-
-#ifdef FAIM_USEPTHREADS
-#include <pthread.h>
-#define faim_mutex_t pthread_mutex_t 
-#define faim_mutex_init(x) pthread_mutex_init(x, NULL)
-#define faim_mutex_lock(x) pthread_mutex_lock(x)
-#define faim_mutex_unlock(x) pthread_mutex_unlock(x)
-#define faim_mutex_destroy(x) pthread_mutex_destroy(x)
-#elif defined(FAIM_USEFAKELOCKS)
-/*
- * For platforms without pthreads, we also assume
- * we're not linking against a threaded app.  Which
- * means we don't have to do real locking.  The 
- * macros below do nothing really.  They're a joke.
- * But they get it to compile.
- * 
- * XXX NOTE that locking hasn't really been tested in a long time,
- * and most code written after dec2000 --is not thread safe--.  You'll
- * want to audit locking use before you use less-than-library level
- * concurrency.
- *
- */
-#define faim_mutex_t fu8_t 
-#define faim_mutex_init(x) *x = 0
-#define faim_mutex_lock(x) while(*x != 0) {/* spin */}; *x = 1;
-#define faim_mutex_unlock(x) while(*x != 0) {/* spin spin spin */}; *x = 0;
-#define faim_mutex_destroy(x) while(*x != 0) {/* spiiiinnn */}; *x = 0;
-#elif defined(FAIM_USENOPLOCKS)
-#define faim_mutex_t fu8_t 
-#define faim_mutex_init(x)
-#define faim_mutex_lock(x)
-#define faim_mutex_unlock(x)
-#define faim_mutex_destroy(x)
-#endif
 
 /* Portability stuff (DMP) */
 
@@ -272,9 +234,8 @@ typedef struct aim_conn_s {
 	time_t lastactivity; /* time of last transmit */
 	int forcedlatency; 
 	void *handlerlist;
-	faim_mutex_t active; /* lock around read/writes */
-	faim_mutex_t seqnum_lock; /* lock around ->seqnum changes */
 	void *sessv; /* pointer to parent session */
+	void *inside; /* only accessible from inside libfaim */
 	struct aim_conn_s *next;
 } aim_conn_t;
 
@@ -352,7 +313,6 @@ typedef struct aim_session_s {
 
 	/* Connection information */
 	aim_conn_t *connlist;
-	faim_mutex_t connlistlock;
 
 	/*
 	 * Transmit/receive queues.
@@ -389,7 +349,6 @@ typedef struct aim_session_s {
 	 * XXX: Should these be per-connection? -mid
 	 */
 	void *snac_hash[FAIM_SNAC_HASH_SIZE];
-	faim_mutex_t snac_hash_locks[FAIM_SNAC_HASH_SIZE];
 	aim_snacid_t snacid_next;
 
 	struct {
@@ -486,9 +445,10 @@ faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t type, c
 faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v);
 faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps);
 faim_internal int aim_addtlvtochain_noval(aim_tlvlist_t **list, const fu16_t type);
+faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, struct aim_userinfo_s *ui);
 faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
 faim_internal int aim_counttlvchain(aim_tlvlist_t **list);
-faim_export int aim_sizetlvchain(aim_tlvlist_t **list);
+faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
 #endif /* FAIM_INTERNAL */
 
 /*
@@ -540,6 +500,7 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval);
 faim_export int aim_conn_addhandler(aim_session_t *, aim_conn_t *conn, u_short family, u_short type, aim_rxcallback_t newhandler, u_short flags);
 faim_export int aim_clearhandlers(aim_conn_t *conn);
 
+faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group);
 faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn);
 faim_export void aim_conn_close(aim_conn_t *deadconn);
 faim_export aim_conn_t *aim_newconn(aim_session_t *, int type, const char *dest);
@@ -571,6 +532,7 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
 #define AIM_WARN_ANON                     0x01
 
+faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_send_warning(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
 faim_export int aim_bos_nop(aim_session_t *, aim_conn_t *);
 faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
@@ -669,14 +631,49 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
 #define AIM_IMFLAGS_CUSTOMFEATURES 	0x0080 /* features field present */
 #define AIM_IMFLAGS_EXTDATA		0x0100
+#define AIM_IMFLAGS_CUSTOMCHARSET	0x0200 /* charset fields set */
+#define AIM_IMFLAGS_MULTIPART		0x0400 /* ->mpmsg section valid */
 
+/*
+ * Multipart message structures.
+ */
+typedef struct aim_mpmsg_section_s {
+	fu16_t charset;
+	fu16_t charsubset;
+	fu8_t *data;
+	fu16_t datalen;
+	struct aim_mpmsg_section_s *next;
+} aim_mpmsg_section_t;
+
+typedef struct aim_mpmsg_s {
+	int numparts;
+	aim_mpmsg_section_t *parts;
+} aim_mpmsg_t;
+
+faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm);
+faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, const fu8_t *data, fu16_t datalen);
+faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const char *ascii);
+faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, const fu16_t *unicode, fu16_t unicodelen);
+faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm);
+
+/*
+ * Arguments to aim_send_im_ext().
+ *
+ * This is really complicated.  But immensely versatile.
+ *
+ */
 struct aim_sendimext_args {
 
 	/* These are _required_ */
 	const char *destsn;
-	fu32_t flags;
+	fu32_t flags; /* often 0 */
+
+	/* Only required if not using multipart messages */
 	const char *msg;
 	int msglen;
+
+	/* Required if ->msg is not provided */
+	aim_mpmsg_t *mpmsg;
 
 	/* Only used if AIM_IMFLAGS_HASICON is set */
 	fu32_t iconlen;
@@ -686,16 +683,34 @@ struct aim_sendimext_args {
 	/* Only used if AIM_IMFLAGS_CUSTOMFEATURES is set */
 	fu8_t *features;
 	fu8_t featureslen;
+
+	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set and mpmsg not used */
+	fu16_t charset;
+	fu16_t charsubset;
 };
 
+/*
+ * This information is provided in the Incoming ICBM callback for
+ * Channel 1 ICBM's.  
+ *
+ * Note that although CUSTOMFEATURES and CUSTOMCHARSET say they
+ * are optional, both are always set by the current libfaim code.
+ * That may or may not change in the future.  It is mainly for
+ * consistency with aim_sendimext_args.
+ *
+ * Multipart messages require some explanation. If you want to use them,
+ * I suggest you read all the comments in im.c.
+ *
+ */
 struct aim_incomingim_ch1_args {
 
 	/* Always provided */
+	aim_mpmsg_t mpmsg;
+	fu32_t icbmflags; /* some flags apply only to ->msg, not all mpmsg */
+	
+	/* Only provided if message has a human-readable section */
 	char *msg;
 	int msglen;
-	fu32_t icbmflags;
-	fu16_t flag1;
-	fu16_t flag2;
 
 	/* Only provided if AIM_IMFLAGS_HASICON is set */
 	time_t iconstamp;
@@ -709,6 +724,10 @@ struct aim_incomingim_ch1_args {
 	/* Only provided if AIM_IMFLAGS_EXTDATA is set */
 	fu8_t extdatalen;
 	fu8_t *extdata;
+
+	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set */
+	fu16_t charset;
+	fu16_t charsubset;
 };
 
 struct aim_incomingim_ch2_args {

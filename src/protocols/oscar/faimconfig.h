@@ -40,31 +40,6 @@
 #define FAIM_LOGIN_PORT 5190
 
 /*
- * What type of synchronisation to use.
- * 
- * We don't actually use threads, but can use the POSIX mutex
- * in order to maintain thread safety.  You can use the fake locking
- * if you really don't like pthreads (which I don't) or if you don't
- * have it.
- *
- *   USEPTHREADS - Use POSIX mutecies
- *   USEFAKELOCKS - Use little stub spinners to help find locking bugs
- *   USENOPLOCKS - No-op out all synchro calls at compile time
- * 
- * Default: use noplocks by default.
- *
- * !!!NOTE: Even with USEPTHREADS turned on, libfaim is not fully thread
- *          safe.  It will still take some effort to add locking calls to
- *          the places that need them.  In fact, this feature in general
- *          is in danger of being officially deprecated and removed from 
- *          the code.
- *
- */
-#undef FAIM_USEPTHREADS
-#undef FAIM_USEFAKELOCKS
-#define FAIM_USENOPLOCKS
-
-/*
  * Size of the SNAC caching hash.
  *
  * Default: 16

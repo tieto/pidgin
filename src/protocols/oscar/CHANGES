@@ -1,6 +1,31 @@
 
 No release numbers
 ------------------
+ - Tue Sep 11 16:41:11 PDT 2001
+  - Fix chat invites.
+  - Keep faimtest from passing va_list's. That scares me.
+
+ - Tue Sep 11 04:42:28 PDT 2001
+  - Fix faim_internal/export confusion for the TLV functions
+  - Add aim_addtlvtochain_userinfo() (used by AP)
+  - Clean up ICBM Channel 1 parsing ever so slightly
+  - Add multipart message support in both directions, and some 
+      fun examples of it in faimtest.
+  - Yes, I'm insane.
+
+ - Mon Sep 10 06:15:43 PDT 2001
+  - Remove $Id line from md5.h. I really really hate those things.
+  - Remove all that locking crap. It never worked right anyway.
+  - Add conn->inside for things that should never ever be seen by clients
+  - Store supported groups list for each connection
+  - Support migrations.
+   - faimtest now theoretically supports doing this.  It happens so rarely
+       that it makes it difficult to test.  For more complicated clients, a
+       flag will have to be kept so that some things that happen during login
+       don't get triggered the second time around.  But faimtest doesn't have
+       such problems.
+  - Added some random commentary.
+
  - Sun Sep  9 03:01:28 PDT 2001
   - Three fixes in directim for gaim.  It works now. Yay.
 

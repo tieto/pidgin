@@ -127,6 +127,28 @@ struct aim_tool_version {
 	fu16_t toolversion;
 };
 
+/* 
+ * In SNACland, the terms 'family' and 'group' are synonymous -- the former
+ * is my term, the latter is AOL's.
+ */
+struct snacgroup {
+	fu16_t group;
+	struct snacgroup *next;
+};
+
+/*
+ * This is inside every connection.  But it is a void * to anything
+ * outside of libfaim.  It should remain that way.  It's called data
+ * abstraction.  Maybe you've heard of it.  (Probably not if you're a 
+ * libfaim user.)
+ * 
+ */
+typedef struct aim_conn_inside_s {
+	struct snacgroup *groups;
+} aim_conn_inside_t;
+
+faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group);
+
 faim_internal fu16_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len);
 faim_internal int aim_putcap(aim_bstream_t *bs, fu16_t caps);
 

@@ -43,7 +43,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * in libfaim.
  *
  */
-faim_export aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
+faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 	fu16_t type, length;
@@ -95,7 +95,7 @@ faim_export aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
  * should be removed before calling this.
  *
  */
-faim_export void aim_freetlvchain(aim_tlvlist_t **list)
+faim_internal void aim_freetlvchain(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 
@@ -124,7 +124,7 @@ faim_export void aim_freetlvchain(aim_tlvlist_t **list)
  * Returns the number of TLVs stored in the passed chain.
  *
  */
-faim_export int aim_counttlvchain(aim_tlvlist_t **list)
+faim_internal int aim_counttlvchain(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 	int count;
@@ -146,7 +146,7 @@ faim_export int aim_counttlvchain(aim_tlvlist_t **list)
  * write the passed TLV chain to a data buffer.
  *
  */
-faim_export int aim_sizetlvchain(aim_tlvlist_t **list)
+faim_internal int aim_sizetlvchain(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 	int size;
@@ -171,7 +171,7 @@ faim_export int aim_sizetlvchain(aim_tlvlist_t **list)
  * to the TLV chain.
  *
  */
-faim_export int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v)
+faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v)
 {
 	aim_tlvlist_t *newtlv, *cur;
 
@@ -212,7 +212,7 @@ faim_export int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, cons
  * Adds a two-byte unsigned integer to a TLV chain.
  *
  */
-faim_export int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t t, const fu16_t v)
+faim_internal int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t t, const fu16_t v)
 {
 	fu8_t v16[2];
 
@@ -230,7 +230,7 @@ faim_export int aim_addtlvtochain16(aim_tlvlist_t **list, const fu16_t t, const 
  * Adds a four-byte unsigned integer to a TLV chain.
  *
  */
-faim_export int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t t, const fu32_t v)
+faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t t, const fu32_t v)
 {
 	fu8_t v32[4];
 
@@ -261,7 +261,7 @@ faim_export int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t t, const 
  *      %AIM_CAPS_SENDFILE    Supports Send File functions
  *
  */
-faim_export int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps)
+faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps)
 {
 	fu8_t buf[16*16]; /* icky fixed length buffer */
 	aim_bstream_t bs;
@@ -271,6 +271,18 @@ faim_export int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, con
 	aim_putcap(&bs, caps);
 
 	return aim_addtlvtochain_raw(list, t, aim_bstream_curpos(&bs), buf);
+}
+
+faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, struct aim_userinfo_s *ui)
+{
+	fu8_t buf[1024]; /* bleh */
+	aim_bstream_t bs;
+
+	aim_bstream_init(&bs, buf, sizeof(buf));
+
+	aim_putuserinfo(&bs, ui);
+
+	return aim_addtlvtochain_raw(list, type, aim_bstream_curpos(&bs), buf);
 }
 
 /**
@@ -334,7 +346,7 @@ faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t t
  *
  * XXX clean this up, make better use of bstreams 
  */
-faim_export int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list)
+faim_internal int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list)
 {
 	int goodbuflen;
 	aim_tlvlist_t *cur;
@@ -372,7 +384,7 @@ faim_export int aim_writetlvchain(aim_bstream_t *bs, aim_tlvlist_t **list)
  * in a chain.
  *
  */
-faim_export aim_tlv_t *aim_gettlv(aim_tlvlist_t *list, const fu16_t t, const int n)
+faim_internal aim_tlv_t *aim_gettlv(aim_tlvlist_t *list, const fu16_t t, const int n)
 {
 	aim_tlvlist_t *cur;
 	int i;
@@ -400,7 +412,7 @@ faim_export aim_tlv_t *aim_gettlv(aim_tlvlist_t *list, const fu16_t t, const int
  * dynamic buffer and must be freed by the caller.
  *
  */
-faim_export char *aim_gettlv_str(aim_tlvlist_t *list, const fu16_t t, const int n)
+faim_internal char *aim_gettlv_str(aim_tlvlist_t *list, const fu16_t t, const int n)
 {
 	aim_tlv_t *tlv;
 	char *newstr;

@@ -202,9 +202,7 @@ faim_internal flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
 {
 	flap_seqnum_t ret;
 	
-	faim_mutex_lock(&conn->seqnum_lock);
 	ret = ++conn->seqnum;
-	faim_mutex_unlock(&conn->seqnum_lock);
 
 	return ret;
 }

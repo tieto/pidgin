@@ -20,11 +20,11 @@ faim_export char *aim_chat_getname(aim_conn_t *conn)
 	return (char *)conn->priv; /* yuck ! */
 }
 
+/* XXX get this into conn.c -- evil!! */
 faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 {
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur->type != AIM_CONN_TYPE_CHAT)
 			continue;
@@ -35,7 +35,6 @@ faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 		if (strcmp((char *)cur->priv, name) == 0)
 			break;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return cur;
 }

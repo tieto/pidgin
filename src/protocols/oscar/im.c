@@ -138,7 +138,8 @@ faim_export fu32_t aim_iconsum(const fu8_t *buf, int buflen)
  * supposed to be layed out. Most obviously, tlvlists should be used 
  * instead of writing out the bytes manually. 
  *
- * XXX support multipart
+ * XXX more precise verification that we never send SNACs larger than 8192
+ * XXX check SNAC size for multipart
  *
  */
 faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct aim_sendimext_args *args)
@@ -153,19 +154,40 @@ faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct ai
 	if (!sess || !conn || !args)
 		return -EINVAL;
 
-	if (!args->msg || (args->msglen <= 0))
-		return -EINVAL;
+	if (args->flags & AIM_IMFLAGS_MULTIPART) {
+		if (args->mpmsg->numparts <= 0)
+			return -EINVAL;
+	} else {
+		if (!args->msg || (args->msglen <= 0))
+			return -EINVAL;
 
-	if (args->msglen >= MAXMSGLEN)
-		return -E2BIG;
+		if (args->msglen >= MAXMSGLEN)
+			return -E2BIG;
+	}
 
-	msgtlvlen = 12 + args->msglen;
+	/* Painfully calculate the size of the message TLV */
+	msgtlvlen = 1 + 1; /* 0501 */
+
 	if (args->flags & AIM_IMFLAGS_CUSTOMFEATURES)
-		msgtlvlen += args->featureslen;
+		msgtlvlen += 2 + args->featureslen;
 	else
-		msgtlvlen += sizeof(deffeatures);
-		
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, args->msglen+512)))
+		msgtlvlen += 2 + sizeof(deffeatures);
+
+	if (args->flags & AIM_IMFLAGS_MULTIPART) {
+		aim_mpmsg_section_t *sec;
+
+		for (sec = args->mpmsg->parts; sec; sec = sec->next) {
+			msgtlvlen += 2 /* 0101 */ + 2 /* block len */;
+			msgtlvlen += 4 /* charset */ + sec->datalen;
+		}
+
+	} else {
+		msgtlvlen += 2 /* 0101 */ + 2 /* block len */;
+		msgtlvlen += 4 /* charset */ + args->msglen;
+	}
+
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, msgtlvlen+128)))
 		return -ENOMEM;
 
 	/* XXX should be optional */	
@@ -216,29 +238,50 @@ faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct ai
 		aimbs_putraw(&fr->data, deffeatures, sizeof(deffeatures));
 	}
 
-	aimbs_put16(&fr->data, 0x0101);
+	if (args->flags & AIM_IMFLAGS_MULTIPART) {
+		aim_mpmsg_section_t *sec;
 
-	/* 
-	 * Message block length.
-	 */
-	aimbs_put16(&fr->data, args->msglen + 0x04);
+		for (sec = args->mpmsg->parts; sec; sec = sec->next) {
+			aimbs_put16(&fr->data, 0x0101);
+			aimbs_put16(&fr->data, sec->datalen + 4);
+			aimbs_put16(&fr->data, sec->charset);
+			aimbs_put16(&fr->data, sec->charsubset);
+			aimbs_putraw(&fr->data, sec->data, sec->datalen);
+		}
 
-	/*
-	 * Character set.
-	 */
-	if (args->flags & AIM_IMFLAGS_UNICODE)
-		aimbs_put16(&fr->data, 0x0002);
-	else if (args->flags & AIM_IMFLAGS_ISO_8859_1)
-		aimbs_put16(&fr->data, 0x0003);
-	else
-		aimbs_put16(&fr->data, 0x0000);
+	} else {
 
-	aimbs_put16(&fr->data, 0x0000);
+		aimbs_put16(&fr->data, 0x0101);
 
-	/*
-	 * Message.  Not terminated.
-	 */
-	aimbs_putraw(&fr->data, args->msg, args->msglen);
+		/* 
+		 * Message block length.
+		 */
+		aimbs_put16(&fr->data, args->msglen + 0x04);
+
+		/*
+		 * Character set.
+		 */
+		if (args->flags & AIM_IMFLAGS_CUSTOMCHARSET) {
+
+			aimbs_put16(&fr->data, args->charset);
+			aimbs_put16(&fr->data, args->charsubset);
+
+		} else {
+			if (args->flags & AIM_IMFLAGS_UNICODE)
+				aimbs_put16(&fr->data, 0x0002);
+			else if (args->flags & AIM_IMFLAGS_ISO_8859_1)
+				aimbs_put16(&fr->data, 0x0003);
+			else
+				aimbs_put16(&fr->data, 0x0000);
+
+			aimbs_put16(&fr->data, 0x0000);
+		}
+
+		/*
+		 * Message.  Not terminated.
+		 */
+		aimbs_putraw(&fr->data, args->msg, args->msglen);
+	}
 
 	/*
 	 * Set the Request Acknowledge flag.  
@@ -304,13 +347,13 @@ faim_export int aim_send_im(aim_session_t *sess, aim_conn_t *conn, const char *d
 	args.msglen = strlen(msg);
 
 	/* Make these don't get set by accident -- they need aim_send_im_ext */
-	args.flags &= ~(AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_HASICON);
+	args.flags &= ~(AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_HASICON | AIM_IMFLAGS_MULTIPART);
 
 	return aim_send_im_ext(sess, conn, &args);
 }
 
 /*
- * This is also performance sensative. (If you can believe it...)
+ * This is also performance sensitive. (If you can believe it...)
  *
  */
 faim_export int aim_send_icon(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu32_t iconsum)
@@ -457,6 +500,277 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 }
 
 /*
+ * Ahh, the joys of nearly ridiculous over-engineering.
+ *
+ * Not only do AIM ICBM's support multiple channels.  Not only do they
+ * support multiple character sets.  But they support multiple character 
+ * sets / encodings within the same ICBM.
+ *
+ * These multipart messages allow for complex space savings techniques, which
+ * seem utterly unnecessary by today's standards.  In fact, there is only
+ * one client still in popular use that still uses this method: AOL for the
+ * Macintosh, Version 5.0.  Obscure, yes, I know.  
+ *
+ * In modern (non-"legacy") clients, if the user tries to send a character
+ * that is not ISO-8859-1 or ASCII, the client will send the entire message
+ * as UNICODE, meaning that every character in the message will occupy the
+ * full 16 bit UNICODE field, even if the high order byte would be zero.
+ * Multipart messages prevent this wasted space by allowing the client to
+ * only send the characters in UNICODE that need to be sent that way, and
+ * the rest of the message can be sent in whatever the native character 
+ * set is (probably ASCII).
+ *
+ * An important note is that sections will be displayed in the order that
+ * they appear in the ICBM.  There is no facility for merging or rearranging
+ * sections at run time.  So if you have, say, ASCII then UNICODE then ASCII,
+ * you must supply two ASCII sections with a UNICODE in the middle, and incur
+ * the associated overhead.
+ *
+ * Normally I would have laughed and given a firm 'no' to supporting this
+ * seldom-used feature, but something is attracting me to it.  In the future,
+ * it may be possible to abuse this to send mixed-media messages to other
+ * open source clients (like encryption or something) -- see faimtest for
+ * examples of how to do this.
+ *
+ * I would definitly recommend avoiding this feature unless you really
+ * know what you are doing, and/or you have something neat to do with it.
+ *
+ */
+faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm)
+{
+
+	memset(mpm, 0, sizeof(aim_mpmsg_t));
+
+	return 0;
+}
+
+static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+{
+	aim_mpmsg_section_t *sec; 
+	
+	if (!(sec = malloc(sizeof(aim_mpmsg_section_t))))
+		return -1;
+
+	sec->charset = charset;
+	sec->charsubset = charsubset;
+	sec->data = data;
+	sec->datalen = datalen;
+	sec->next = NULL;
+
+	if (!mpm->parts)
+		mpm->parts = sec;
+	else {
+		aim_mpmsg_section_t *cur;
+
+		for (cur = mpm->parts; cur->next; cur = cur->next)
+			;
+		cur->next = sec;
+	}
+
+	mpm->numparts++;
+
+	return 0;
+}
+
+faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, const fu8_t *data, fu16_t datalen)
+{
+	fu8_t *dup;
+
+	if (!(dup = malloc(datalen)))
+		return -1;
+	memcpy(dup, data, datalen);
+
+	if (mpmsg_addsection(sess, mpm, charset, charsubset, dup, datalen) == -1) {
+		free(dup);
+		return -1;
+	}
+
+	return 0;
+}
+
+/* XXX should provide a way of saying ISO-8859-1 specifically */
+faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const char *ascii)
+{
+	fu8_t *dup;
+
+	if (!(dup = strdup(ascii))) 
+		return -1;
+
+	if (mpmsg_addsection(sess, mpm, 0x0000, 0x0000, dup, strlen(ascii)) == -1) {
+		free(dup);
+		return -1;
+	}
+
+	return 0;
+}
+
+faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, const fu16_t *unicode, fu16_t unicodelen)
+{
+	fu8_t *buf;
+	aim_bstream_t bs;
+	int i;
+
+	if (!(buf = malloc(unicodelen * 2)))
+		return -1;
+
+	aim_bstream_init(&bs, buf, unicodelen * 2);
+
+	/* We assume unicode is in /host/ byte order -- convert to network */
+	for (i = 0; i < unicodelen; i++)
+		aimbs_put16(&bs, unicode[i]);
+
+	if (mpmsg_addsection(sess, mpm, 0x0002, 0x0000, buf, aim_bstream_curpos(&bs)) == -1) {
+		free(buf);
+		return -1;
+	}
+	
+	return 0;
+}
+
+faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
+{
+	aim_mpmsg_section_t *cur;
+
+	for (cur = mpm->parts; cur; ) {
+		aim_mpmsg_section_t *tmp;
+		
+		tmp = cur->next;
+		free(cur->data);
+		free(cur);
+		cur = tmp;
+	}
+	
+	mpm->numparts = 0;
+	mpm->parts = NULL;
+
+	return;
+}
+
+/*
+ * Start by building the multipart structures, then pick the first 
+ * human-readable section and stuff it into args->msg so no one gets
+ * suspicious.
+ *
+ */
+static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, struct aim_incomingim_ch1_args *args)
+{
+	static const fu16_t charsetpri[] = {
+		0x0000, /* ASCII first */
+		0x0003, /* then ISO-8859-1 */
+		0x0002, /* UNICODE as last resort */
+	};
+	static const int charsetpricount = 3;
+	int i;
+	aim_bstream_t mbs;
+	aim_mpmsg_section_t *sec;
+
+	aim_bstream_init(&mbs, data, len);
+
+	while (aim_bstream_empty(&mbs)) {
+		fu16_t msglen, flag1, flag2;
+		fu8_t *msgbuf;
+
+		aimbs_get8(&mbs); /* 01 */
+		aimbs_get8(&mbs); /* 01 */
+
+		/* Message string length, including character set info. */
+		msglen = aimbs_get16(&mbs);
+
+		/* Character set info */
+		flag1 = aimbs_get16(&mbs);
+		flag2 = aimbs_get16(&mbs);
+
+		/* Message. */
+		msglen -= 4;
+
+		/*
+		 * For now, we don't care what the encoding is.  Just copy
+		 * it into a multipart struct and deal with it later. However,
+		 * always pad the ending with a NULL.  This makes it easier
+		 * to treat ASCII sections as strings.  It won't matter for
+		 * UNICODE or binary data, as you should never read past
+		 * the specified data length, which will not include the pad.
+		 *
+		 * XXX There's an API bug here.  For sending, the UNICODE is
+		 * given in host byte order (aim_mpmsg_addunicode), but here
+		 * the received messages are given in network byte order.
+		 *
+		 */
+		msgbuf = aimbs_getstr(&mbs, msglen);
+		mpmsg_addsection(sess, &args->mpmsg, flag1, flag2, msgbuf, msglen);
+
+	} /* while */
+
+	args->icbmflags |= AIM_IMFLAGS_MULTIPART; /* always set */
+
+	/*
+	 * Clients that support multiparts should never use args->msg, as it
+	 * will point to an arbitrary section.
+	 *
+	 * Here, we attempt to provide clients that do not support multipart
+	 * messages with something to look at -- hopefully a human-readable
+	 * string.  But, failing that, a UNICODE message, or nothing at all.
+	 *
+	 * Which means that even if args->msg is NULL, it does not mean the
+	 * message was blank.
+	 *
+	 */
+	for (i = 0; i < charsetpricount; i++) {
+		for (sec = args->mpmsg.parts; sec; sec = sec->next) {
+
+			if (sec->charset != charsetpri[i])
+				continue;
+
+			/* Great. We found one.  Fill it in. */
+			args->charset = sec->charset;
+			args->charsubset = sec->charsubset;
+			args->icbmflags |= AIM_IMFLAGS_CUSTOMCHARSET;
+
+			/* Set up the simple flags */
+			if (args->charset == 0x0000)
+				; /* ASCII */
+			else if (args->charset == 0x0002)
+				args->icbmflags |= AIM_IMFLAGS_UNICODE;
+			else if (args->charset == 0x0003)
+				args->icbmflags |= AIM_IMFLAGS_ISO_8859_1;
+			else if (args->charset == 0xffff)
+				; /* no encoding (yeep!) */
+
+			if (args->charsubset == 0x0000)
+				; /* standard subencoding? */
+			else if (args->charsubset == 0x000b)
+				args->icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
+			else if (args->charsubset == 0xffff)
+				; /* no subencoding */
+#if 0
+			/* XXX this isn't really necesary... */	
+			if (	((args.flag1 != 0x0000) &&
+				 (args.flag1 != 0x0002) &&
+				 (args.flag1 != 0x0003) &&
+				 (args.flag1 != 0xffff)) ||
+				((args.flag2 != 0x0000) &&
+				 (args.flag2 != 0x000b) &&
+				 (args.flag2 != 0xffff))) {
+				faimdprintf(sess, 0, "icbm: **warning: encoding flags are being used! {%04x, %04x}\n", args.flag1, args.flag2);
+			}
+#endif
+
+			args->msg = sec->data;
+			args->msglen = sec->datalen;
+
+			return 0;
+		}
+	}
+
+	/* No human-readable sections found.  Oh well. */
+	args->charset = args->charsubset = 0xffff;
+	args->msg = NULL;
+	args->msglen = 0;
+
+	return 0;
+}
+
+/*
  *
  * This should use tlvlists, but doesn't for performance reasons.
  *
@@ -490,6 +804,8 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 	memset(&args, 0, sizeof(args));
 
+	aim_mpmsg_init(sess, &args.mpmsg);
+
 	/*
 	 * This used to be done using tlvchains.  For performance reasons,
 	 * I've changed it to process the TLVs in-place.  This avoids lots
@@ -522,58 +838,11 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			aim_bstream_advance(bs, args.featureslen);
 			args.icbmflags |= AIM_IMFLAGS_CUSTOMFEATURES;
 
-			aimbs_get8(bs); /* 01 */
-			aimbs_get8(bs); /* 01 */
-
-			/* Message string length, including flag words. */
-			args.msglen = aimbs_get16(bs);
-
-			/* Flag words. */
-			args.flag1 = aimbs_get16(bs);
-			if (args.flag1 == 0x0000)
-				; /* ASCII */
-			else if (args.flag1 == 0x0002)
-				args.icbmflags |= AIM_IMFLAGS_UNICODE;
-			else if (args.flag1 == 0x0003)
-				args.icbmflags |= AIM_IMFLAGS_ISO_8859_1;
-			else if (args.flag1 == 0xffff)
-				; /* no encoding (yeep!) */
-
-			args.flag2 = aimbs_get16(bs);
-			if (args.flag2 == 0x0000)
-				; /* standard subencoding? */
-			else if (args.flag2 == 0x000b)
-				args.icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
-			else if (args.flag2 == 0xffff)
-				; /* no subencoding */
-
-			/* XXX this isn't really necesary... */	
-			if (	((args.flag1 != 0x0000) &&
-				 (args.flag1 != 0x0002) &&
-				 (args.flag1 != 0x0003) &&
-				 (args.flag1 != 0xffff)) ||
-				((args.flag2 != 0x0000) &&
-				 (args.flag2 != 0x000b) &&
-				 (args.flag2 != 0xffff))) {
-				faimdprintf(sess, 0, "icbm: **warning: encoding flags are being used! {%04x, %04x}\n", args.flag1, args.flag2);
-			}
-
-			/* Message. */
-			args.msglen -= 4;
-			if (args.icbmflags & AIM_IMFLAGS_UNICODE) {
-				fu8_t *umsg;
-
-				/* Can't use getstr because of wide null */
-				umsg = aimbs_getraw(bs, args.msglen);
-				args.msg = malloc(args.msglen+2);
-				memcpy(args.msg, umsg, args.msglen);
-				args.msg[args.msglen] = '\0'; /* wide NULL */
-				args.msg[args.msglen+1] = '\0';
-
-				free(umsg);
-
-			} else
-				args.msg = aimbs_getstr(bs, args.msglen);
+			/*
+			 * The rest of the TLV contains one or more message
+			 * blocks...
+			 */
+			incomingim_ch1_parsemsgs(sess, bs->data + bs->offset /* XXX evil!!! */, length - 2 - 2 - args.featureslen, &args);
 
 		} else if (type == 0x0003) { /* Server Ack Requested */
 
@@ -618,8 +887,8 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, channel, userinfo, &args);
 
+	aim_mpmsg_free(sess, &args.mpmsg);
 	free(args.extdata);
-	free(args.msg);
 
 	return ret;
 }
@@ -730,7 +999,7 @@ static int incomingim_ch2_voice(aim_session_t *sess, aim_module_t *mod, aim_fram
 	/* XXX: implement all this */
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) 
-		ret = userfunc(sess, rx, 0x0002, userinfo, &args);
+		ret = userfunc(sess, rx, 0x0002, userinfo, args);
 
 	return ret;
 }
@@ -757,7 +1026,7 @@ static int incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_frame
 		args->info.chat.lang = aim_gettlv_str(list2, 0x000e, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, 0x0002, userinfo, &args);
+		ret = userfunc(sess, rx, 0x0002, userinfo, args);
 
 	/* XXX free_roominfo */
 	free(args->info.chat.roominfo.name);
@@ -808,7 +1077,7 @@ static int incomingim_ch2_getfile(aim_session_t *sess, aim_module_t *mod, aim_fr
 	memcpy(args->info.getfile.cookie, args->cookie, 8);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, 0x0002, userinfo, &args);
+		ret = userfunc(sess, rx, 0x0002, userinfo, args);
 
 	return ret;
 }

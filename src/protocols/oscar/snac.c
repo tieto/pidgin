@@ -22,10 +22,8 @@ faim_internal void aim_initsnachash(aim_session_t *sess)
 {
 	int i;
 
-	for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
+	for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++)
 		sess->snac_hash[i] = NULL;
-		faim_mutex_init(&sess->snac_hash_locks[i]);
-	}
 
 	return;
 }
@@ -68,10 +66,8 @@ faim_internal aim_snacid_t aim_newsnac(aim_session_t *sess, aim_snac_t *newsnac)
 
 	index = snac->id % FAIM_SNAC_HASH_SIZE;
 
-	faim_mutex_lock(&sess->snac_hash_locks[index]);
 	snac->next = (aim_snac_t *)sess->snac_hash[index];
 	sess->snac_hash[index] = (void *)snac;
-	faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
 	return snac->id;
 }
@@ -90,7 +86,6 @@ faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id)
 
 	index = id % FAIM_SNAC_HASH_SIZE;
 
-	faim_mutex_lock(&sess->snac_hash_locks[index]);
 	for (prev = (aim_snac_t **)&sess->snac_hash[index]; (cur = *prev); ) {
 		if (cur->id == id) {
 			*prev = cur->next;
@@ -98,7 +93,6 @@ faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id)
 		} else
 			prev = &cur->next;
 	}
-	faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
 	return cur;
 }
@@ -118,11 +112,8 @@ faim_internal void aim_cleansnacs(aim_session_t *sess, int maxage)
 		aim_snac_t *cur, **prev;
 		time_t curtime;
 
-		faim_mutex_lock(&sess->snac_hash_locks[i]);
-		if (!sess->snac_hash[i]) {
-			faim_mutex_unlock(&sess->snac_hash_locks[i]);
+		if (!sess->snac_hash[i])
 			continue;
-		}
 
 		curtime = time(NULL); /* done here in case we waited for the lock */
 
@@ -138,7 +129,6 @@ faim_internal void aim_cleansnacs(aim_session_t *sess, int maxage)
 			} else
 				prev = &cur->next;
 		}
-		faim_mutex_unlock(&sess->snac_hash_locks[i]);
 	}
 
 	return;

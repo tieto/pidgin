@@ -1,6 +1,6 @@
 
 /*
- *  aim_conn.c
+ * conn.c
  *
  * Does all this gloriously nifty connection handling stuff...
  *
@@ -14,6 +14,109 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif
+
+/*
+ * In OSCAR, every connection has a set of SNAC groups associated
+ * with it.  These are the groups that you can send over this connection
+ * without being guarenteed a "Not supported" SNAC error.  
+ *
+ * The grand theory of things says that these associations transcend 
+ * what libfaim calls "connection types" (conn->type).  You can probably
+ * see the elegance here, but since I want to revel in it for a bit, you 
+ * get to hear it all spelled out.
+ *
+ * So let us say that you have your core BOS connection running.  One
+ * of your modules has just given you a SNAC of the group 0x0004 to send
+ * you.  Maybe an IM destined for some twit in Greenland.  So you start
+ * at the top of your connection list, looking for a connection that 
+ * claims to support group 0x0004.  You find one.  Why, that neat BOS
+ * connection of yours can do that.  So you send it on its way.
+ *
+ * Now, say, that fellow from Greenland has friends and they all want to
+ * meet up with you in a lame chat room.  This has landed you a SNAC
+ * in the family 0x000e and you have to admit you're a bit lost.  You've
+ * searched your connection list for someone who wants to make your life
+ * easy and deliver this SNAC for you, but there isn't one there.
+ *
+ * Here comes the good bit.  Without even letting anyone know, particularly
+ * the module that decided to send this SNAC, and definitly not that twit
+ * in Greenland, you send out a service request.  In this request, you have
+ * marked the need for a connection supporting group 0x000e.  A few seconds
+ * later, you receive a service redirect with an IP address and a cookie in
+ * it.  Great, you say.  Now I have something to do.  Off you go, making
+ * that connection.  One of the first things you get from this new server
+ * is a message saying that indeed it does support the group you were looking
+ * for.  So you continue and send rate confirmation and all that.  
+ * 
+ * Then you remember you had that SNAC to send, and now you have a means to
+ * do it, and you do, and everyone is happy.  Except the Greenlander, who is
+ * still stuck in the bitter cold.
+ *
+ * Oh, and this is useful for building the Migration SNACs, too.  In the
+ * future, this may help convince me to implement rate limit mitigation
+ * for real.  We'll see.
+ *
+ * Just to make me look better, I'll say that I've known about this great
+ * scheme for quite some time now.  But I still haven't convinced myself
+ * to make libfaim work that way.  It would take a fair amount of effort,
+ * and probably some client API changes as well.  (Whenever I don't want
+ * to do something, I just say it would change the client API.  Then I 
+ * instantly have a couple of supporters of not doing it.)
+ *
+ * Generally, addgroup is only called by the internal handling of the
+ * server ready SNAC.  So if you want to do something before that, you'll
+ * have to be more creative.  That is done rather early, though, so I don't
+ * think you have to worry about it.  Unless you're me.  I care deeply
+ * about such inane things.
+ *
+ */
+faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group)
+{
+	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
+	struct snacgroup *sg;
+
+	if (!(sg = malloc(sizeof(struct snacgroup))))
+		return;
+
+	faimdprintf(aim_conn_getsess(conn), 1, "adding group 0x%04x\n", group);
+	sg->group = group;
+
+	sg->next = ins->groups;
+	ins->groups = sg;
+
+	return;
+}
+
+faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group)
+{
+	aim_conn_t *cur;
+
+	for (cur = sess->connlist; cur; cur = cur->next) {
+		aim_conn_inside_t *ins = (aim_conn_inside_t *)cur->inside;
+		struct snacgroup *sg;
+
+		for (sg = ins->groups; sg; sg = sg->next) {
+			if (sg->group == group)
+				return cur;
+		}
+	}
+
+	return NULL;
+}
+
+static struct snacgroup *connkill_snacgroups(struct snacgroup *sg)
+{
+
+	while (sg) {
+		struct snacgroup *tmp;
+
+		tmp = sg->next;
+		free(sg);
+		sg = tmp;
+	}
+
+	return NULL;
+}
 
 static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 {
@@ -38,6 +141,14 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	if ((*deadconn)->type == AIM_CONN_TYPE_RENDEZVOUS)
 		aim_conn_kill_rend(sess, *deadconn);
 
+	if ((*deadconn)->inside) {
+		aim_conn_inside_t *inside = (aim_conn_inside_t *)(*deadconn)->inside;
+
+		inside->groups = connkill_snacgroups(inside->groups);
+
+		free(inside);
+	}
+
 	free(*deadconn);
 	deadconn = NULL;
 
@@ -53,8 +164,6 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
  */
 static void aim_connrst(aim_session_t *sess)
 {
-
-	faim_mutex_init(&sess->connlistlock);
 
 	if (sess->connlist) {
 		aim_conn_t *cur = sess->connlist, *tmp;
@@ -93,8 +202,7 @@ static void aim_conn_init(aim_conn_t *deadconn)
 	deadconn->forcedlatency = 0;
 	deadconn->handlerlist = NULL;
 	deadconn->priv = NULL;
-	faim_mutex_init(&deadconn->active);
-	faim_mutex_init(&deadconn->seqnum_lock);
+	memset(deadconn->inside, 0, sizeof(aim_conn_inside_t));
 
 	return;
 }
@@ -113,6 +221,12 @@ static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
 	if (!(newconn = malloc(sizeof(aim_conn_t)))) 	
 		return NULL;
 	memset(newconn, 0, sizeof(aim_conn_t));
+
+	if (!(newconn->inside = malloc(sizeof(aim_conn_inside_t)))) {
+		free(newconn);
+		return NULL;
+	}
+	memset(newconn->inside, 0, sizeof(aim_conn_inside_t));
 
 	aim_conn_init(newconn);
 
@@ -168,8 +282,6 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
 
-	faim_mutex_destroy(&deadconn->active);
-	faim_mutex_destroy(&deadconn->seqnum_lock);
 	if (deadconn->fd >= 3)
 		close(deadconn->fd);
 	deadconn->fd = -1;
@@ -177,7 +289,6 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
 		aim_clearhandlers(deadconn);
 	if (deadconn->type == AIM_CONN_TYPE_RENDEZVOUS)
 		aim_conn_close_rend((aim_session_t *)deadconn->sessv, deadconn);
-
 
 	return;
 }
@@ -191,18 +302,18 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
  * specified session.  Returns the first connection of that
  * type found.
  *
+ * XXX except for RENDEZVOUS, all uses of this should be removed and
+ * use aim_conn_findbygroup() instead.
  */
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
 {
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if ((cur->type == type) && 
 				!(cur->status & AIM_CONN_STATUS_INPROGRESS))
 			break;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return cur;
 }
@@ -211,12 +322,10 @@ faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *sess, int type)
 {
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur->type == type)
 			break;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return cur;
 }
@@ -226,12 +335,10 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 {
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur->fd == fd)
 			break;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return cur;
 }
@@ -425,8 +532,6 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 	if (!(conn = aim_conn_getnext(sess)))
 		return NULL;
 
-	faim_mutex_lock(&conn->active);
-
 	conn->fd = src->fd;
 	conn->type = src->type;
 	conn->subtype = src->subtype;
@@ -438,7 +543,15 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 	conn->sessv = src->sessv;
 	aim_clonehandlers(sess, conn, src);
 
-	faim_mutex_unlock(&conn->active);
+	if (src->inside) {
+		/*
+		 * XXX should clone this section as well, but since currently
+		 * this function only gets called for some of that rendezvous
+		 * crap, and not on SNAC connections, its probably okay for
+		 * now. 
+		 *
+		 */
+	}
 
 	return conn;
 }
@@ -467,15 +580,12 @@ faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *d
 	if (!(connstruct = aim_conn_getnext(sess)))
 		return NULL;
 
-	faim_mutex_lock(&connstruct->active);
-
 	connstruct->sessv = (void *)sess;
 	connstruct->type = type;
 
 	if (!dest) { /* just allocate a struct */
 		connstruct->fd = -1;
 		connstruct->status = 0;
-		faim_mutex_unlock(&connstruct->active);
 		return connstruct;
 	}
 
@@ -503,12 +613,9 @@ faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *d
 		connstruct->fd = -1;
 		connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
 		free(host);
-		faim_mutex_unlock(&connstruct->active);
 		return connstruct;
 	} else
 		connstruct->fd = ret;
-
-	faim_mutex_unlock(&connstruct->active);
 
 	free(host);
 
@@ -528,12 +635,10 @@ faim_export int aim_conngetmaxfd(aim_session_t *sess)
 	int j;
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist, j = 0; cur; cur = cur->next) {
 		if (cur->fd > j)
 			j = cur->fd;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return j;
 }
@@ -551,14 +656,10 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_conn_t *cur;
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist; cur; cur = cur->next) {
-		if (cur == conn) {
-			faim_mutex_unlock(&sess->connlistlock);
+		if (cur == conn)
 			return 1;
-		}
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return 0;
 }
@@ -578,8 +679,6 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
  *    1  outgoing data pending (%NULL returned)
  *    2  incoming data pending (connection with pending data returned)
  *
- * XXX: we could probably stand to do a little courser locking here.
- *
  */ 
 faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout, int *status)
 {
@@ -587,23 +686,18 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 	fd_set fds, wfds;
 	int maxfd, i, haveconnecting = 0;
 
-	faim_mutex_lock(&sess->connlistlock);
 	if (!sess->connlist) {
-		faim_mutex_unlock(&sess->connlistlock);
 		*status = -1;
 		return NULL;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	FD_ZERO(&fds);
 	FD_ZERO(&wfds);
 
-	faim_mutex_lock(&sess->connlistlock);
 	for (cur = sess->connlist, maxfd = 0; cur; cur = cur->next) {
 		if (cur->fd == -1) {
 			/* don't let invalid/dead connections sit around */
 			*status = 2;
-			faim_mutex_unlock(&sess->connlistlock);
 			return cur;
 		} else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
 			FD_SET(cur->fd, &wfds);
@@ -614,7 +708,6 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 		if (cur->fd > maxfd)
 			maxfd = cur->fd;
 	}
-	faim_mutex_unlock(&sess->connlistlock);
 
 	/* 
 	 * If we have data waiting to be sent, return
@@ -636,14 +729,12 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 	} 
 
 	if ((i = select(maxfd+1, &fds, &wfds, NULL, timeout))>=1) {
-		faim_mutex_lock(&sess->connlistlock);
 		for (cur = sess->connlist; cur; cur = cur->next) {
 			if ((FD_ISSET(cur->fd, &fds)) || 
 					((cur->status & AIM_CONN_STATUS_INPROGRESS) && 
 					FD_ISSET(cur->fd, &wfds))) {
 				*status = 2;
-				faim_mutex_unlock(&sess->connlistlock);
-				return cur; /* XXX race condition here -- shouldnt unlock connlist */
+				return cur;
 			}
 		}
 		*status = 0; /* shouldn't happen */
@@ -651,8 +742,6 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 		*status = 0;
 	else
 		*status = i; /* can be 0 or -1 */
-
-	faim_mutex_unlock(&sess->connlistlock);
 
 	return NULL;  /* no waiting or error, return */
 }
@@ -677,10 +766,8 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 	if (!conn)
 		return -1;
 
-	faim_mutex_lock(&conn->active);
 	conn->forcedlatency = newval;
 	conn->lastactivity = 0; /* reset this just to make sure */
-	faim_mutex_unlock(&conn->active);
 
 	return 0;
 }

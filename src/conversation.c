@@ -1322,7 +1322,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 
-	if (!g_list_find(conversations, c))
+	if (!c->is_chat && !g_list_find(conversations, c))
+		return;
+
+	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
 
 	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));

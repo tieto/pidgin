@@ -382,6 +382,10 @@ faim_export int aim_gencookie(fu8_t *buf)
 
 /*
  * Send Server Ready.  (Non-client)
+ * 
+ * XXX If anyone cares, this should be made to use the conn-stored group
+ * system.
+ *
  */
 faim_export int aim_sendserverready(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -412,7 +416,6 @@ faim_export int aim_sendserverready(aim_session_t *sess, aim_conn_t *conn)
 	return 0;
 }
 
-
 /* 
  * Send service redirect.  (Non-Client)
  */
@@ -440,7 +443,13 @@ faim_export int aim_sendredirect(aim_session_t *sess, aim_conn_t *conn, fu16_t s
 	return 0;
 }
 
-
+/*
+ * See comments in conn.c about how the group associations are supposed
+ * to work, and how they really work.
+ *
+ * This info probably doesn't even need to make it to the client.
+ *
+ */
 static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_rxcallback_t userfunc;
@@ -451,8 +460,10 @@ static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	if (!(families = malloc(aim_bstream_empty(bs))))
 		return 0;
 
-	for (famcount = 0; aim_bstream_empty(bs); famcount++)
+	for (famcount = 0; aim_bstream_empty(bs); famcount++) {
 		families[famcount] = aimbs_get16(bs);
+		aim_conn_addgroup(rx->conn, families[famcount]);
+	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, famcount, families);
@@ -620,6 +631,114 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		return userfunc(sess, rx, newevil, &userinfo);
 
 	return 0;
+}
+
+/*
+ * How Migrations work.  
+ *
+ * The server sends a Server Pause message, which the client should respond to 
+ * with a Server Pause Ack, which contains the families it needs on this 
+ * connection. The server will send a Migration Notice with an IP address, and 
+ * then disconnect. Next the client should open the connection and send the 
+ * cookie.  Repeat the normal login process and pretend this never happened.
+ *
+ * The Server Pause contains no data.
+ *
+ */
+static int serverpause(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	aim_rxcallback_t userfunc;
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		return userfunc(sess, rx);
+
+	return 0;
+}
+
+/*
+ * It is rather important that aim_sendpauseack() gets called for the exact
+ * same connection that the Server Pause callback was called for, since
+ * libfaim extracts the data for the SNAC from the connection structure.
+ *
+ * Of course, if you don't do that, more bad things happen than just what
+ * libfaim can cause.
+ *
+ */
+faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn)
+{
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
+	struct snacgroup *sg;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1024)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0001, 0x000c, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0001, 0x000c, 0x0000, snacid);
+
+	/*
+	 * This list should have all the groups that the original 
+	 * Host Online / Server Ready said this host supports.  And 
+	 * we want them all back after the migration.
+	 */
+	for (sg = ins->groups; sg; sg = sg->next)
+		aimbs_put16(&fr->data, sg->group);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/*
+ * This is the final SNAC sent on the original connection during a migration.
+ * It contains the IP and cookie used to connect to the new server, and 
+ * optionally a list of the SNAC groups being migrated.
+ *
+ */
+static int migrate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	aim_rxcallback_t userfunc;
+	int ret = 0;
+	fu16_t groupcount, i;
+	aim_tlvlist_t *tl;
+	char *ip = NULL;
+	aim_tlv_t *cktlv;
+
+	/*
+	 * Apparently there's some fun stuff that can happen right here. The
+	 * migration can actually be quite selective about what groups it
+	 * moves to the new server.  When not all the groups for a connection
+	 * are migrated, or they are all migrated but some groups are moved
+	 * to a different server than others, it is called a bifurcated 
+	 * migration.
+	 *
+	 * Let's play dumb and not support that.
+	 *
+	 */
+	groupcount = aimbs_get16(bs);
+	for (i = 0; i < groupcount; i++) {
+		fu16_t group;
+
+		group = aimbs_get16(bs);
+
+		faimdprintf(sess, 0, "bifurcated migration unsupported -- group 0x%04x\n", group);
+	}
+
+	tl = aim_readtlvchain(bs);
+
+	if (aim_gettlv(tl, 0x0005, 1))
+		ip = aim_gettlv_str(tl, 0x0005, 1);
+
+	cktlv = aim_gettlv(tl, 0x0006, 1);
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, ip, cktlv ? cktlv->value : NULL);
+
+	aim_freetlvchain(&tl);
+	free(ip);
+
+	return ret;
 }
 
 static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
@@ -857,10 +976,14 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		return rateresp(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000a)
 		return ratechange(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x000b)
+		return serverpause(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000f)
 		return selfinfo(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0010)
 		return evilnotify(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0012)
+		return migrate(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0013)
 		return motd(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0018)

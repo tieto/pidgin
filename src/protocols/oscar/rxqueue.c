@@ -318,10 +318,8 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	 *   2 short -- Sequence number 
 	 *   4 short -- Number of data bytes that follow.
 	 */
-	faim_mutex_lock(&conn->active);
 	if (aim_bstream_recv(&flaphdr, conn->fd, 6) < 6) {
 		aim_conn_close(conn);
-		faim_mutex_unlock(&conn->active);
 		return -1;
 	}
 
@@ -334,15 +332,12 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	if (aimbs_get8(&flaphdr) != 0x2a) {
 		faimdprintf(sess, 0, "FLAP framing disrupted");
 		aim_conn_close(conn);
-		faim_mutex_unlock(&conn->active);
 		return -1;
 	}	
 
 	/* allocate a new struct */
-	if (!(newrx = (aim_frame_t *)malloc(sizeof(aim_frame_t)))) {
-		faim_mutex_unlock(&conn->active);
+	if (!(newrx = (aim_frame_t *)malloc(sizeof(aim_frame_t))))
 		return -1;
-	}
 	memset(newrx, 0, sizeof(aim_frame_t));
 
 	/* we're doing FLAP if we're here */
@@ -359,7 +354,6 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 
 		if (!(payload = (fu8_t *) malloc(payloadlen))) {
 			aim_frame_destroy(newrx);
-			faim_mutex_unlock(&conn->active);
 			return -1;
 		}
 
@@ -370,13 +364,11 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 			free(payload);
 			aim_frame_destroy(newrx);
 			aim_conn_close(conn);
-			faim_mutex_unlock(&conn->active);
 			return -1;
 		}
 	} else
 		aim_bstream_init(&newrx->data, NULL, 0);
 
-	faim_mutex_unlock(&conn->active);
 
 	aim_bstream_rewind(&newrx->data);
 
