@@ -809,20 +809,6 @@ GtkWidget *messages_page() {
 	return ret;
 }
 
-GtkWidget *hotkeys_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	vbox = gaim_gtk_make_frame (ret, _("Window Closing"));
-	gaim_gtk_prefs_checkbox(_("_Escape closes window"),
-			"/gaim/gtk/conversations/escape_closes", vbox);
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
 GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -2125,7 +2111,6 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c2, &c, notebook_page++);
-	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
@@ -2360,4 +2345,5 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
+	gaim_prefs_remove("/gaim/gtk/conversations/escape_closes");
 }

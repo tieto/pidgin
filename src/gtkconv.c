@@ -5632,18 +5632,6 @@ gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y)
 }
 
 static void
-escape_closes_pref_cb(const char *name, GaimPrefType type, gpointer value,
-					  gpointer data)
-{
-	if (value)
-		gtk_accel_map_change_entry(N_("<main>/Conversation/Close"),
-								   GDK_Escape, 0, TRUE);
-	else
-		gtk_accel_map_change_entry(N_("<main>/Conversation/Close"),
-								   GDK_W, GDK_CONTROL_MASK, TRUE);
-}
-
-static void
 close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 						gpointer data)
 {
@@ -5824,7 +5812,6 @@ gaim_gtk_conversations_init(void)
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_formatting", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
@@ -5866,8 +5853,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 
 	/* Connect callbacks. */
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/escape_closes",
-								escape_closes_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_formatting_toolbar",
