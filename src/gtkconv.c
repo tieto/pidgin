@@ -2183,7 +2183,7 @@ generate_send_as_items(struct gaim_window *win,
 		account = gaim_conversation_get_account(conv);
 
 
-		if (account->gc == NULL) {
+		if (account && (account->gc == NULL)) {
 			if (first_offline && found_online) {
 				menuitem = gtk_separator_menu_item_new();
 				gtk_widget_show(menuitem);

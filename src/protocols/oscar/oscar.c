@@ -4874,30 +4874,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				aim_ssi_setpresence(sess, tmp | 0x400);
 	} /* end adding buddies from local list to server list */
 
-	{ /* Check for maximum number of buddies */
-		GaimBlistNode *gnode,*bnode;
-		tmp = 0;
-		for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
-				struct buddy *b = (struct buddy *)bnode;
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				if(b->account == gc->account)
-					tmp++;
-			}
-		}
-
-		if (tmp > od->rights.maxbuddies) {
-			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
-							     "  Until you are below the limit, some buddies will not show up as online."), 
-							   od->rights.maxbuddies, tmp);
-			do_error_dialog(_("Maximum buddy list length exceeded."), dialog_msg, GAIM_WARNING);
-			g_free(dialog_msg);
-		}
-	}
-
 	/* Set our ICQ status */
 	if  (od->icq && !gc->away) {
 		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
@@ -4945,12 +4921,11 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 			default: { /* La la la */
 				gchar *buf;
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-						   "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."), (retval->name ? retval->name : _("(no name)")));
+				gaim_debug(GAIM_DEBUG_ERROR, "oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
+				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
 				do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR);
 				g_free(buf);
-				/* Should remove buddy from local list? */
+				/* XXX - Should remove buddy from local list */
 			} break;
 		}
 

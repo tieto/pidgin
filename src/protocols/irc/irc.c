@@ -1156,9 +1156,7 @@ irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct gaim_conversatio
 			if (*who == '+')
 				who++;
 			if (!gaim_utf8_strcasecmp(who, nick)) {
-				char *tmp = g_strdup(r->data);
-				gaim_chat_remove_user(chat, tmp, reason);
-				g_free(tmp);
+				gaim_chat_remove_user(chat, who, reason);
 				break;
 			}
 			r = r->next;
@@ -1792,9 +1790,7 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
 		if (*who == '+')
 			who++;
 		if (!gaim_utf8_strcasecmp(who, nick)) {
-			char *tmp = g_strdup(r->data);
-			gaim_chat_remove_user(chat, tmp, reason);
-			g_free(tmp);
+			gaim_chat_remove_user(chat, who, reason);
 			break;
 		}
 		r = r->next;
