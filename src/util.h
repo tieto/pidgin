@@ -183,6 +183,16 @@ const char *gaim_date_full(void);
 time_t gaim_time_build(int year, int month, int day, int hour,
 					   int min, int sec);
 
+/**
+ * Parses a timestamp in jabber or ISO8601 format and returns a time_t.
+ *
+ * @param timestamp The timestamp
+ * @param utc Assume UTC if no timezone specified
+ *
+ * @return A time_t.
+ */
+time_t gaim_str_to_time(const char *timestamp, gboolean utc);
+
 /*@}*/
 
 

@@ -427,6 +427,83 @@ gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 	return mktime(&tm);
 }
 
+time_t
+gaim_str_to_time(const char *timestamp, gboolean utc)
+{
+    struct tm t;
+    time_t retval = 0;
+    char buf[32];
+    char *c;
+    int tzoff = 0;
+
+    time(&retval);
+    localtime_r(&retval, &t);
+
+    snprintf(buf, sizeof(buf), "%s", timestamp);
+    c = buf;
+
+    /* 4 digit year */
+    if(!sscanf(c, "%04d", &t.tm_year)) return 0;
+    c+=4;
+    if(*c == '-')
+        c++;
+
+	t.tm_year -= 1900;
+
+	/* 2 digit month */
+	if(!sscanf(c, "%02d", &t.tm_mon)) return 0;
+	c+=2;
+	if(*c == '-')
+		c++;
+
+    t.tm_mon -= 1;
+
+
+    /* 2 digit day */
+    if(!sscanf(c, "%02d", &t.tm_mday)) return 0;
+    c+=2;
+    if(*c == 'T' || *c == '.') { /* we have more than a date, keep going */
+        c++; /* skip the "T" */
+
+        /* 2 digit hour */
+        if(sscanf(c, "%02d:%02d:%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3 ||
+				sscanf(c, "%02d%02d%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3) {
+            int tzhrs, tzmins;
+            c+=8;
+            if(*c == '.') /* dealing with precision we don't care about */
+                c += 4;
+
+            if((*c == '+' || *c == '-') &&
+                    sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
+                tzoff = tzhrs*60*60 + tzmins*60;
+                if(*c == '+')
+                    tzoff *= -1;
+            }
+
+			if(tzoff || utc) {
+
+#ifdef HAVE_TM_GMTOFF
+                tzoff += t.tm_gmtoff;
+#else
+#   ifdef HAVE_TIMEZONE
+                tzset();    /* making sure */
+                tzoff -= timezone;
+#   endif
+#endif
+			}
+        }
+    }
+
+	t.tm_isdst = -1;
+
+	retval = mktime(&t);
+
+    retval += tzoff;
+
+    return retval;
+}
+
+
 
 /**************************************************************************
  * Markup Functions

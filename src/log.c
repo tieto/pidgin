@@ -307,39 +307,13 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 		return NULL;
 	}
 	while ((filename = g_dir_read_name(dir))) {
-		if (gaim_str_has_suffix(filename, ext)) {
-			const char *l = filename;
-			struct tm time;
+		if (gaim_str_has_suffix(filename, ext) &&
+				strlen(filename) == 17 + strlen(ext)) {
 			GaimLog *log;
 			struct generic_logger_data *data;
-			char d[5];
+			time_t stamp = gaim_str_to_time(filename, FALSE);
 
-			strncpy(d, l, 4);
-			d[4] = '\0';
-			time.tm_year = atoi(d) - 1900;
-			l = l + 5;
-
-			strncpy(d, l, 2);
-			d[2] = '\0';
-			time.tm_mon = atoi(d) - 1;
-			l = l + 3;
-
-			strncpy(d, l, 2);
-			time.tm_mday = atoi(d);
-			l = l + 3;
-
-			strncpy(d, l, 2);
-			time.tm_hour = atoi(d);
-			l = l + 2;
-
-			strncpy(d, l, 2);
-			time.tm_min = atoi(d);
-			l = l + 2;
-
-			strncpy(d, l, 2);
-			time.tm_sec = atoi(d);
-			l = l + 2;
-			log = gaim_log_new(GAIM_LOG_IM, screenname, account, mktime(&time));
+			log = gaim_log_new(GAIM_LOG_IM, screenname, account, stamp);
 			log->logger = logger;
 			log->logger_data = data = g_new0(struct generic_logger_data, 1);
 			data->path = g_build_filename(path, filename, NULL);
@@ -524,36 +498,36 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
 
- 	if(log->type == GAIM_LOG_SYSTEM){
- 		strftime(date, sizeof(date), "%c", localtime(&time));
- 		fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
- 	} else {
- 		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
- 		if (type & GAIM_MESSAGE_SYSTEM)
- 			fprintf(data->file, "(%s)<b> %s</b><br/>\n", date, msg_fixed);
- 		else if (type & GAIM_MESSAGE_WHISPER)
- 			fprintf(data->file, "<font color=\"#6C2585\">(%s)<b> %s:</b></font> %s<br/>\n",
- 					date, from, msg_fixed);
- 		else if (type & GAIM_MESSAGE_AUTO_RESP) {
- 			if (type & GAIM_MESSAGE_SEND)
- 				fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
- 			else if (type & GAIM_MESSAGE_RECV)
- 				fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
- 		} else if (type & GAIM_MESSAGE_RECV) {
- 			if(gaim_message_meify(msg_fixed, -1))
- 				fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
- 						date, from, gc->prpl->info->name, msg_fixed);
- 			else
- 				fprintf(data->file, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
- 						date, from, gc->prpl->info->name, msg_fixed);
- 		} else if (type & GAIM_MESSAGE_SEND) {
- 			if(gaim_message_meify(msg_fixed, -1))
- 				fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
- 						date, from, gc->prpl->info->name, msg_fixed);
- 			else
- 				fprintf(data->file, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
- 						date, from, gc->prpl->info->name, msg_fixed);
- 		}
+	if(log->type == GAIM_LOG_SYSTEM){
+		strftime(date, sizeof(date), "%c", localtime(&time));
+		fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
+	} else {
+		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+		if (type & GAIM_MESSAGE_SYSTEM)
+			fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
+		else if (type & GAIM_MESSAGE_WHISPER)
+			fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
+					date, from, msg_fixed);
+		else if (type & GAIM_MESSAGE_AUTO_RESP) {
+			if (type & GAIM_MESSAGE_SEND)
+				fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+			else if (type & GAIM_MESSAGE_RECV)
+				fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+		} else if (type & GAIM_MESSAGE_RECV) {
+			if(gaim_message_meify(msg_fixed, -1))
+				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+						date, from, gc->prpl->info->name, msg_fixed);
+			else
+				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+						date, from, gc->prpl->info->name, msg_fixed);
+		} else if (type & GAIM_MESSAGE_SEND) {
+			if(gaim_message_meify(msg_fixed, -1))
+				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+						date, from, gc->prpl->info->name, msg_fixed);
+			else
+				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+						date, from, gc->prpl->info->name, msg_fixed);
+		}
 	}
 
 	g_free(msg_fixed);

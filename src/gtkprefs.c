@@ -206,8 +206,16 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
+#if 0 /* GTK_CHECK_VERSION(2,4,0) */
+	if(type == GAIM_PREF_INT)
+		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+	else if(type == GAIM_PREF_STRING)
+		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	dropdown = gtk_combo_box_new_with_model(model);
+#else
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
+#endif
 
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
 

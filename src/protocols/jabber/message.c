@@ -304,7 +304,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				if(timestamp)
-					jm->sent = str_to_time(timestamp);
+					jm->sent = gaim_str_to_time(timestamp, TRUE);
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE) {
 				const char *jid = xmlnode_get_attrib(child, "jid");

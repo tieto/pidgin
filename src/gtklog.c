@@ -301,15 +301,13 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
 	gtk_container_add (GTK_CONTAINER (sw), lv->treeview);
-
-	gtk_widget_set_size_request(lv->treeview, 170, 200);
 	populate_log_tree(lv);
 
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (log_select_cb),
 			  lv);
-		
+
 	/* Viewer ************/
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_add2(GTK_PANED(pane), vbox);

@@ -39,7 +39,12 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 {
 	JabberChat *chat = val;
 	xmlnode *presence = user_data;
-	char *chat_full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
+	char *chat_full_jid;
+
+	if(!chat->conv)
+		return;
+
+	chat_full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
 			chat->handle);
 
 	xmlnode_set_attrib(presence, "to", chat_full_jid);
