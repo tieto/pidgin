@@ -161,7 +161,7 @@ typedef enum
  *
  * Every protocol plugin initializes this structure. It is the gateway
  * between gaim and the protocol plugin.  Many of this callbacks can be
- * NULL.  If a callback must be implemented, it has a comment indicated so.
+ * NULL.  If a callback must be implemented, it has a comment indicating so.
  */
 struct _GaimPluginProtocolInfo
 {
