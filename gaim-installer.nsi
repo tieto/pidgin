@@ -95,6 +95,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "Italian"
   !insertmacro MUI_LANGUAGE "Bulgarian"
   !insertmacro MUI_LANGUAGE "Swedish"
+  !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;--------------------------------
 ;Translations
@@ -110,6 +111,7 @@ SetDateSave on
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\italian.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
 
 ;--------------------------------
 ;Data
@@ -125,6 +127,7 @@ SetDateSave on
   LicenseData /LANG=${LANG_ITALIAN}		"./COPYING"
   LicenseData /LANG=${LANG_BULGARIAN}		"./COPYING"
   LicenseData /LANG=${LANG_SWEDISH}		"./COPYING"
+  LicenseData /LANG=${LANG_TRADCHINESE}		"./COPYING"
 
 ;--------------------------------
 ;Reserve Files
