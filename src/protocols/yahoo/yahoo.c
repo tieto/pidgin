@@ -857,6 +857,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_MESSAGE:
 	case YAHOO_SERVICE_GAMEMSG:
+	case YAHOO_SERVICE_CHATMSG:
 		yahoo_process_message(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NEWMAIL:
