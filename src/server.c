@@ -937,14 +937,14 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 	b->history = g_string_new("");
 	g_snprintf(b->name, 80, "%s", name);
 	
-	if ((logging_options & OPT_LOG_ALL) || find_log_info(b->name)) {
+	if ((logging_options & OPT_LOG_CHATS) || find_log_info(b->name)) {
 		FILE *fd;
 		char *filename;
 
 		filename = (char *)malloc(100);
 		g_snprintf(filename, 100, "%s.chat", b->name);
 
-		fd = open_log_file(filename);
+		fd = open_log_file(filename, b->is_chat);
 		if (fd) {
 			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,

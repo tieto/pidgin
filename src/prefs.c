@@ -708,7 +708,8 @@ GtkWidget *logging_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Message Logs"));
-	gaim_button(_("_Log all conversations"), &logging_options_new, OPT_LOG_ALL, vbox);
+	gaim_button(_("_Log all Instant Messages"), &logging_options_new, OPT_LOG_CONVOS, vbox);
+	gaim_button(_("Log all c_hats"), &logging_options_new, OPT_LOG_CHATS, vbox);
 	gaim_button(_("Strip _HTML from logs"), &logging_options_new, OPT_LOG_STRIP_HTML, vbox);
 
 	vbox = make_frame (ret, _("System Logs"));
@@ -1615,7 +1616,7 @@ static void set_logging_options()
 	int option = logging_options ^ logging_options_new;
 	logging_options = logging_options_new;
 	
-	if (option & OPT_LOG_ALL)
+	if (option & OPT_LOG_CONVOS || option & OPT_LOG_CHATS)
 		update_log_convs();
 
 }

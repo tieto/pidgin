@@ -400,7 +400,7 @@ FILE *open_gaim_log_file(char *name, int *flag)
 	return fd;
 }
 
-FILE *open_log_file(char *name)
+FILE *open_log_file(char *name, int is_chat)
 {
 	struct stat st;
 	char realname[256];
@@ -408,7 +408,9 @@ FILE *open_log_file(char *name)
 	FILE *fd;
 	int flag = 0;
 
-	if (!(logging_options & OPT_LOG_ALL)) {
+	if (((is_chat == 2) && !(logging_options & OPT_LOG_INDIVIDUAL))
+		|| ((is_chat == 1) && !(logging_options & OPT_LOG_CHATS))
+		|| ((is_chat == 0) && !(logging_options & OPT_LOG_CONVOS))) {
 
 		l = find_log_info(name);
 		if (!l)
@@ -453,7 +455,7 @@ FILE *open_system_log_file(char *name)
 	int x;
 
 	if (name)
-		return open_log_file(name);
+		return open_log_file(name, 2);
 	else
 		return open_gaim_log_file("system", &x);
 }

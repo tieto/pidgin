@@ -811,7 +811,7 @@ static void gaimrc_read_options(FILE *f)
 		if (!read_logging) {
 			logging_options = 0;
 			if (general_options & OPT_GEN_LOG_ALL)
-				logging_options |= OPT_LOG_ALL;
+  				logging_options |= OPT_LOG_CONVOS | OPT_LOG_CHATS; 
 			if (general_options & OPT_GEN_STRIP_HTML)
 				logging_options |= OPT_LOG_STRIP_HTML;
 		}

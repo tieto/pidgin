@@ -184,13 +184,14 @@ extern guint misc_options;
 #define OPT_MISC_STEALTH_TYPING         0x00000010
 
 extern guint logging_options;
-#define OPT_LOG_ALL			0x00000001
+#define OPT_LOG_CONVOS			0x00000001
 #define OPT_LOG_STRIP_HTML		0x00000002
 #define OPT_LOG_BUDDY_SIGNON		0x00000004
 #define OPT_LOG_BUDDY_IDLE		0x00000008
 #define OPT_LOG_BUDDY_AWAY		0x00000010
 #define OPT_LOG_MY_SIGNON		0x00000020
 #define OPT_LOG_INDIVIDUAL		0x00000040
+#define OPT_LOG_CHATS			0x00000100
 
 extern guint blist_options;
 #define OPT_BLIST_APP_BUDDY_SHOW	0x00000001
@@ -413,7 +414,7 @@ extern void frombase64(const char *, char **, int *);
 extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
-extern FILE *open_log_file (char *);
+extern FILE *open_log_file (char *, int);
 extern char *sec_to_text(guint);
 extern struct aim_user *find_user(const char *, int);
 extern char *full_date();

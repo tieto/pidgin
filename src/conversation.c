@@ -168,10 +168,10 @@ struct conversation *new_conversation(char *name)
 	c = (struct conversation *)g_new0(struct conversation, 1);
 	g_snprintf(c->name, sizeof(c->name), "%s", name);
 
-	if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
+	if ((logging_options & OPT_LOG_CONVOS) || find_log_info(c->name)) {
 		FILE *fd;
 
-		fd = open_log_file(c->name);
+		fd = open_log_file(c->name, c->is_chat);
 		if (fd) {
 			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,
@@ -299,9 +299,14 @@ void update_log_convs()
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
 
-		if (c->log_button)
-			gtk_widget_set_sensitive(c->log_button,
-						 ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
+		if (c->log_button) {
+			if (c->is_chat)
+				gtk_widget_set_sensitive(c->log_button,
+						   ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
+			else
+				gtk_widget_set_sensitive(c->log_button,
+							 ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);
+		}
 
 		cnv = cnv->next;
 	}
@@ -312,10 +317,16 @@ void update_log_convs()
 		while (bcs) {
 			c = (struct conversation *)bcs->data;
 
-			if (c->log_button)
-				gtk_widget_set_sensitive(c->log_button,
-							 ((logging_options & OPT_LOG_ALL)) ? FALSE :
-							 TRUE);
+			if (c->log_button) {
+				if (c->is_chat)
+					gtk_widget_set_sensitive(c->log_button,
+					 		   ((logging_options & OPT_LOG_CHATS)) ? FALSE :
+							   TRUE);
+				else
+					gtk_widget_set_sensitive(c->log_button,
+								 ((logging_options & OPT_LOG_CONVOS)) ? FALSE :
+								 TRUE);
+			}
 
 			bcs = bcs->next;
 		}
@@ -1871,7 +1882,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			c->history = g_string_append(c->history, "<BR>\n");
 		}
 
-		if (!(flags & WFLAG_NOLOG) && ((logging_options & OPT_LOG_ALL) || find_log_info(c->name))) {
+		if (!(flags & WFLAG_NOLOG) && ((c->is_chat && (logging_options & OPT_LOG_CHATS))
+								               || (!c->is_chat && (logging_options & OPT_LOG_CONVOS))
+															 || find_log_info(c->name))) {
 			char *t1;
 			char nm[256];
 
@@ -1884,7 +1897,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				g_snprintf(nm, 256, "%s.chat", c->name);
 			else
 				g_snprintf(nm, 256, "%s", c->name);
-			fd = open_log_file(nm);
+			fd = open_log_file(nm, c->is_chat);
 			if (fd) {
 				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s\n", t1);
@@ -1991,7 +2004,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 
 		/* XXX this needs to be updated for the new length argument */
-		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
+		if ((c->is_chat && (logging_options & OPT_LOG_CHATS))
+				|| (!c->is_chat && (logging_options & OPT_LOG_CONVOS)) || find_log_info(c->name)) {
 			char *t1, *t2;
 			char *nm = g_malloc(256);
 			if (c->is_chat)
@@ -2006,7 +2020,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 				t1 = html_logize(buf);
 				t2 = html_logize(what);
 			}
-			fd = open_log_file(nm);
+			fd = open_log_file(nm, c->is_chat);
 			if (fd) {
 				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s%s\n", t1, t2);
@@ -2350,7 +2364,10 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	c->speaker = speaker;
 	c->speaker_p = speaker_p;
 
-	gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
+	if (c->is_chat)
+		gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
+	else
+		gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);		
 	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->underline, ((font_options & OPT_FONT_UNDERLINE)) ? FALSE : TRUE);
@@ -3248,7 +3265,8 @@ void set_convo_title(struct conversation *c)
 		gtk_notebook_set_tab_label_text(nb, gtk_notebook_get_nth_page(nb, index), text);
 	} else {
 		char buf[256];
-		if ((find_log_info(c->name)) || (logging_options & OPT_LOG_ALL))
+		if ((find_log_info(c->name)) || (c->is_chat && (logging_options & OPT_LOG_CHATS))
+				|| (!c->is_chat && (logging_options & OPT_LOG_CONVOS)))
 			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, text);
 		else
 			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, text);
