@@ -2833,12 +2833,12 @@ void show_find_email(struct gaim_connection *gc)
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 
-	button = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-
 	button = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_find_email), b);
+	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+
+	button = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(b->window);
