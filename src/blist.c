@@ -1179,11 +1179,18 @@ void gaim_blist_remove_contact(GaimContact *contact)
 	if (node->child) {
 		/*
 		 * If this contact has children then remove them.  When the last
-		 * buddy is removed from the contact, the contact is deleted.
+		 * buddy is removed from the contact, the contact is automatically
+		 * deleted.
 		 */
-		while (node->child) {
+		while (node->child->next) {
 			gaim_blist_remove_buddy((GaimBuddy*)node->child);
 		}
+		/*
+		 * Remove the last buddy and trigger the deletion of the contact.
+		 * It would probably be cleaner if contact-deletion was done after 
+		 * a timeout?  Or if it had to be done manually, like below?
+		 */
+		gaim_blist_remove_buddy((GaimBuddy*)node->child);
 	} else {
 		/* Remove the node from its parent */
 		if (gnode->child == node)
