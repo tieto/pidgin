@@ -1,4 +1,4 @@
-version 0.82cvs:
+version 0.82 (08/25/2004):
 	* Selecting away messages using the system tray icon works
 	  (Thanks François Gagné)
 	* Transparency plugin will save your settings again (Kevin Stange)
