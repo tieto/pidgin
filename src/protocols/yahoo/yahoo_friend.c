@@ -26,7 +26,7 @@
 
 #include "yahoo_friend.h"
 
-YahooFriend *yahoo_friend_new(void)
+static YahooFriend *yahoo_friend_new(void)
 {
 	YahooFriend *ret;
 
@@ -81,6 +81,35 @@ void yahoo_friend_set_ip(YahooFriend *f, const char *ip)
 const char *yahoo_friend_get_ip(YahooFriend *f)
 {
 	return f->ip;
+}
+
+void yahoo_friend_set_game(YahooFriend *f, const char *game)
+{
+	if (f->game)
+		g_free(f->game);
+
+	if (game)
+		f->game = g_strdup(game);
+	else
+		f->game = NULL;
+}
+
+const char *yahoo_friend_get_game(YahooFriend *f)
+{
+	return f->game;
+}
+
+void yahoo_friend_set_status_message(YahooFriend *f, char *msg)
+{
+	if (f->msg)
+		g_free(f->msg);
+
+	f->msg = msg;
+}
+
+const char *yahoo_friend_get_status_message(YahooFriend *f)
+{
+	return f->msg;
 }
 
 void yahoo_friend_free(gpointer p)

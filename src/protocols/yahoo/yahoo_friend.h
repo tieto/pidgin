@@ -42,12 +42,18 @@ typedef struct _YahooFriend {
 	gboolean bicon_have;
 } YahooFriend;
 
-YahooFriend *yahoo_friend_new(void);
+
 YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
 YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name);
 
 void yahoo_friend_set_ip(YahooFriend *f, const char *ip);
 const char *yahoo_friend_get_ip(YahooFriend *f);
+
+void yahoo_friend_set_game(YahooFriend *f, const char *game);
+const char *yahoo_friend_get_game(YahooFriend *f);
+
+void yahoo_friend_set_status_message(YahooFriend *f, char *msg);
+const char *yahoo_friend_get_status_message(YahooFriend *f);
 
 void yahoo_friend_free(gpointer p);
 

@@ -327,19 +327,14 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				f->idle = time(NULL);
 			else
 				f->idle = 0;
-			if (f->status != YAHOO_STATUS_CUSTOM) {
-				g_free(f->msg);
-				f->msg = NULL;
-			}
+			if (f->status != YAHOO_STATUS_CUSTOM)
+				yahoo_friend_set_status_message(f, NULL);
 
 			f->sms = 0;
 			break;
 		case 19: /* custom message */
-			if (f) {
-				if (f->msg)
-					g_free(f->msg);
-				f->msg = yahoo_string_decode(gc, pair->value, FALSE);
-			}
+			if (f)
+				yahoo_friend_set_status_message(f, yahoo_string_decode(gc, pair->value, FALSE));
 			break;
 		case 11: /* this is the buddy's session id */
 			break;
@@ -678,13 +673,10 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 		if (!f)
 			return; /* if they're not on the list, don't bother */
 
-		if (f->game) {
-			g_free(f->game);
-			f->game = NULL;
-		}
+		yahoo_friend_set_game(f, NULL);
 
 		if (*stat == '1') {
-			f->game = g_strdup(game);
+			yahoo_friend_set_game(f, game);
 			if (bud)
 				yahoo_update_status(gc, from, f);
 		}
@@ -2345,7 +2337,7 @@ static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 			emblems[i++] = "away";
 		if (f->sms)
 			emblems[i++] = "wireless";
-		if (f->game)
+		if (yahoo_friend_get_game(f))
 			emblems[i++] = "game";
 	}
 	*se = emblems[0];
@@ -2419,7 +2411,8 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 	GaimConnection *gc;
 
 	struct yahoo_data *yd;
-	char *game = NULL;
+	const char *game;
+	char *game2;
 	char *t;
 	char url[256];
 	YahooFriend *f;
@@ -2434,22 +2427,23 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 	if (!f)
 		return;
 
-	game = f->game;
+	game = yahoo_friend_get_game(f);
 	if (!game)
 		return;
 
-	t = game = g_strdup(strstr(game, "ante?room="));
-	while (*t != '\t')
+	t = game2 = g_strdup(strstr(game, "ante?room="));
+	while (*t && *t != '\t')
 		t++;
 	*t = 0;
-	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game);
+	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game2);
 	gaim_notify_uri(gc, url);
-	g_free(game);
+	g_free(game2);
 }
 
 static char *yahoo_status_text(GaimBuddy *b)
 {
 	YahooFriend *f = NULL;
+	const char *msg;
 
 	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
@@ -2463,9 +2457,9 @@ static char *yahoo_status_text(GaimBuddy *b)
 			return g_strdup(yahoo_get_status_string(f->status));
 		return NULL;
 	case YAHOO_STATUS_CUSTOM:
-		if (!f->msg)
+		if (!(msg = yahoo_friend_get_status_message(f)))
 			return NULL;
-		return g_markup_escape_text(f->msg, strlen(f->msg));
+		return g_markup_escape_text(msg, strlen(msg));
 
 	default:
 		return g_strdup(yahoo_get_status_string(f->status));
@@ -2489,9 +2483,9 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 			}
 			return NULL;
 		case YAHOO_STATUS_CUSTOM:
-			if (!f->msg)
+			if (!yahoo_friend_get_status_message(f))
 				return NULL;
-			status = g_strdup(f->msg);
+			status = g_strdup(yahoo_friend_get_status_message(f));
 			break;
 		default:
 			status = g_strdup(yahoo_get_status_string(f->status));
@@ -2583,13 +2577,10 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 			yahoo_ask_send_file_menu, NULL);
 	m = g_list_append(m, act);
 
-	if (f->game) {
-		char *game = f->game;
+	if (yahoo_friend_get_game(f)) {
+		const char *game = yahoo_friend_get_game(f);
 		char *room;
 		char *t;
-
-		if (!game)
-			return m;
 
 		if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
 			return m;
