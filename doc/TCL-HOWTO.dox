@@ -348,7 +348,8 @@ Note that for some signals (notably @c receiving-im-msg, @c sending-im-msg,
 and their chat counterparts), changes to the event arguments will
 change the message itself from Gaim's vantage.  For those signals
 whose return value is meaningful, returning a value from the Tcl event
+will return that value as it would in C.
 
 */
 
-// vim: syntax=c tw=75 et
+// vim: syntax=c tw=72 et
