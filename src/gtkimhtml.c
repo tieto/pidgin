@@ -376,8 +376,11 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
 	text = gtk_text_buffer_get_text(imhtml->text_buffer, &last, &end, FALSE);
 	str = g_string_append(str, text);
 	g_free(text);
-
-	gtk_clipboard_set_text(clipboard, str->str, str->len);
+	
+	if (!gtk_text_iter_equal(&start, &last);
+	gtk_clipboard_set_text(clipboard ? clipboard :  
+			       gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
+			       str->str, str->len);
 	g_string_free(str, TRUE);
 }
 
@@ -488,8 +491,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
-	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb),  
-			 gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD));
+	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
 
