@@ -377,6 +377,81 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 		gtk_widget_destroy(GTK_WIDGET(ui_handle));
 }
 
+static void *
+gaim_gtk_notify_uri(const char *uri)
+{
+#ifndef _WIN32
+	char *command = NULL;
+	GError *error = NULL;
+	const char *web_browser;
+
+	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
+
+	if (!strcmp(web_browser, "netscape")) {
+		command = g_strdup_printf("netscape \"%s\"", uri);
+	} else if (!strcmp(web_browser, "opera")) {
+		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
+		else
+			command = g_strdup_printf("opera \"%s\"", uri);
+	} else if (!strcmp(web_browser, "kfmclient")) {
+		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
+	} else if (!strcmp(web_browser, "galeon")) {
+		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+			command = g_strdup_printf("galeon -w \"%s\"", uri);
+		else
+			command = g_strdup_printf("galeon \"%s\"", uri);
+	} else if (!strcmp(web_browser, "mozilla")) {
+		command = g_strdup_printf("mozilla \"%s\"", uri);
+	} else if (!strcmp(web_browser, "custom")) {
+		const char *web_command;
+
+		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
+
+		if (web_command == NULL || *web_command == '\0') {
+			gaim_notify_error(NULL, NULL, _("Unable to open URL"),
+							  _("The 'Manual' browser command has been "
+								"chosen, but no command has been set."));
+			return NULL;
+		}
+
+		if (strstr(web_command, "%s"))
+			command = gaim_strreplace(web_command, "%s", uri);
+		else {
+			/*
+			 * There is no "%s" in the browser command.  Assume the user
+			 * wanted the URL tacked on to the end of the command.
+			 */
+			command = g_strdup_printf("%s %s", web_command, uri);
+		}
+	}
+
+	if (!gaim_program_is_valid(command)) {
+		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
+						command);
+		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		g_free(tmp);
+
+	} else if (!g_spawn_command_line_async(command, &error)) {
+		char *tmp = g_strdup_printf(
+				_("Error launching \"command\": %s"),
+				error->message);
+
+		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+
+		g_free(tmp);
+		g_error_free(error);
+	}
+
+	g_free(command);
+
+#else
+	ShellExecute(NULL, NULL, uri, NULL, ".\\", 0);
+#endif
+
+	return NULL;
+}
+
 static GaimNotifyUiOps ops =
 {
 	gaim_gtk_notify_message,

@@ -109,7 +109,6 @@ gaim_SOURCES = \
 	$(CORESOURCES) \
 	about.c \
 	away.c \
-	browser.c \
 	buddy_chat.c \
 	dialogs.c \
 	dnd-hints.c \

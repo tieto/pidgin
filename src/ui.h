@@ -118,9 +118,6 @@ extern void toggle_away_queue();
 extern void purge_away_queue(GSList**);
 extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
-/* Functions in browser.c */
-void *gaim_gtk_notify_uri(const char *uri);
-
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(GaimBuddy *);
 extern void alias_dialog_blist_chat(GaimChat *);
