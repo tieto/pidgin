@@ -1914,9 +1914,7 @@ gtk_imhtml_init (GtkIMHtml *imhtml)
 		{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT }
 	};
 
-	imhtml->default_font = gtk_imhtml_font_load (imhtml, NULL, FALSE, FALSE, 0);
-	if (imhtml->default_font == NULL)
-		g_warning ("GtkIMHtml: Could not load default font!");
+	imhtml->default_font = gdk_font_ref (GTK_WIDGET (imhtml)->style->font);
 	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
 	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
