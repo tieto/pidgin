@@ -2757,7 +2757,6 @@ void show_buddy_list()
 
 	menuitem = gaim_new_item(NULL, _("Help"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
-	gtk_menu_item_right_justify(GTK_MENU_ITEM(menuitem));
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	gaim_new_item_with_pixmap(menu, _("Online Help"), add_small_xpm, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
