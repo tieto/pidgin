@@ -454,7 +454,7 @@ trepia_visit_homepage(GaimBlistNode *node, gpointer data)
 
 	buddy = (GaimBuddy *) node;
 	gc = gaim_account_get_connection(buddy->account);
-	profile = b->proto_data;
+	profile = buddy->proto_data;
 	value = trepia_profile_get_homepage(profile);
 
 	if (value != NULL)
@@ -465,9 +465,10 @@ static GList *
 trepia_blist_node_menu(GaimBlistNode *node)
 {
 	GList *m = NULL;
-	GaimBlistNodeACtion *act;
+	GaimBlistNodeAction *act;
 
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		GaimBuddy *buddy = (GaimBuddy *) node;
 		TrepiaProfile *profile = buddy->proto_data;
 
 		if (trepia_profile_get_homepage(profile) != NULL) {
@@ -1207,59 +1208,58 @@ static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_BUDDY_ICON,
-	NULL,
-	NULL,
+	NULL,	/* user_splits */
+	NULL,	/* protocol_options */
 	trepia_list_icon,
 	trepia_list_emblems,
 	trepia_status_text,
 	trepia_tooltip_text,
-	NULL,
+	NULL,	/* away_states */
 	trepia_blist_node_menu,
-	NULL,
+	NULL,	/* chat_info */
 	trepia_login,
 	trepia_close,
 	trepia_send_im,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL,	/* set_info */
+	NULL,	/* send_typing */
+	NULL,	/* get_info */
+	NULL,	/* set_away */
+	NULL,	/* set_idle */
+	NULL,	/* change_passwd */
 	trepia_add_buddy,
-	NULL,
+	NULL,	/* add_buddies */
 	trepia_rem_buddy,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL,	/* remove_buddies */
+	NULL,	/* add_permit */
+	NULL,	/* add_deny */
+	NULL,	/* rem_permit */
+	NULL,	/* rem_deny */
+	NULL,	/* set_permit_deny */
+	NULL,	/* warn */
+	NULL,	/* join_chat */
+	NULL,	/* reject_chat */
+	NULL,	/* chat_invite */
+	NULL,	/* chat_leave */
+	NULL,	/* chat_whisper */
+	NULL,	/* chat_send */
+	NULL,	/* keepalive */
 	trepia_register_user,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL,	/* get_cb_info */
+	NULL,	/* get_cb_away */
+	NULL,	/* alias_buddy */
+	NULL,	/* group_buddy */
+	NULL,	/* rename_group */
 	trepia_buddy_free,
-	NULL,
-	NULL,
+	NULL,	/* convo_closed */
+	NULL,	/* normalize */
 	trepia_set_buddy_icon,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	NULL,	/* remove_group */
+	NULL,	/* get_cb_real_name */
+	NULL,	/* set_chat_topic */
+	NULL,	/* find_blist_chat */
+	NULL,	/* roomlist_get_list */
+	NULL,	/* roomlist_cancel */
+	NULL	/* roomlist_expand_category */
 };
 
 static GaimPluginInfo info =
