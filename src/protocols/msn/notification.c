@@ -1001,6 +1001,11 @@ __profile_msg(MsnServConn *servconn, const MsnMessage *msg)
 	MsnSession *session = servconn->session;
 	const char *value;
 
+	if (strcmp(servconn->msg_passport, "Hotmail")) {
+		/* This isn't an official message. */
+		return TRUE;
+	}
+
 	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
 		session->passport_info.kv = g_strdup(value);
 
@@ -1020,6 +1025,11 @@ __initial_email_msg(MsnServConn *servconn, const MsnMessage *msg)
 	struct gaim_connection *gc = session->account->gc;
 	GHashTable *table;
 	const char *unread;
+
+	if (strcmp(servconn->msg_passport, "Hotmail")) {
+		/* This isn't an official message. */
+		return TRUE;
+	}
 
 	table = msn_message_get_hashtable_from_body(msg);
 
@@ -1042,6 +1052,11 @@ __email_msg(MsnServConn *servconn, const MsnMessage *msg)
 	GHashTable *table;
 	const char *from, *subject;
 
+	if (strcmp(servconn->msg_passport, "Hotmail")) {
+		/* This isn't an official message. */
+		return TRUE;
+	}
+
 	table = msn_message_get_hashtable_from_body(msg);
 
 	from    = g_hash_table_lookup(table, "From");
@@ -1060,6 +1075,47 @@ __email_msg(MsnServConn *servconn, const MsnMessage *msg)
 	return TRUE;
 }
 
+static gboolean
+__system_msg(MsnServConn *servconn, const MsnMessage *msg)
+{
+	GHashTable *table;
+	const char *type_s;
+
+	if (strcmp(servconn->msg_passport, "Hotmail")) {
+		/* This isn't an official message. */
+		return TRUE;
+	}
+
+	table = msn_message_get_hashtable_from_body(msg);
+
+	if ((type_s = g_hash_table_lookup(table, "Type")) != NULL) {
+		int type = atoi(type_s);
+		char buf[MSN_BUF_LEN];
+
+		switch (type) {
+			case 1:
+				g_snprintf(buf, sizeof(buf),
+						   _("The MSN server will shut down for maintenance "
+							 "in %d minute(s). You will automatically be "
+							 "signed out at that time. Please finish any "
+						     "conversations in progress.\n\n"
+							 "After the maintenance has been completed, you "
+							 "will be able to successfully sign in."),
+						   atoi(g_hash_table_lookup(table, "Arg1")));
+
+			default:
+				break;
+		}
+
+		if (*buf != '\0') {
+			do_error_dialog(buf, NULL, GAIM_INFO);
+		}
+	}
+
+	g_hash_table_destroy(table);
+
+	return TRUE;
+}
 static gboolean
 __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
@@ -1152,6 +1208,9 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_msg_type(notification,
 									   "text/x-msmsgsemailnotification",
 									   __email_msg);
+		msn_servconn_register_msg_type(notification,
+									   "application/x-msmsgssystemmessage",
+									   __system_msg);
 
 		/* Save these for future use. */
 		notification_commands  = notification->commands;
