@@ -424,7 +424,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	GaimConnection *gc = gaim_account_get_connection(log->account);
 	char date[64];
 	struct generic_logger_data *data = log->logger_data;
-	if(data) {
+	if(!data) {
 		/* This log is new */
 		char *ud = gaim_user_dir();
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
