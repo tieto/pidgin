@@ -864,14 +864,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * it's nice to pass whether or not it was an auto-response. So if it
 	 * was an auto-response, we set the appropriate flag. This is just so
 	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway).
-	 * We also need to preserve the flag that tells the UI to look for the
-	 * associated images.
 	 */
 	msgflags = GAIM_MESSAGE_RECV;
 	if (imflags & GAIM_CONV_IM_AUTO_RESP)
 		msgflags |= GAIM_MESSAGE_AUTO_RESP;
-	if (imflags & GAIM_CONV_IM_IMAGES)
-		msgflags |= GAIM_MESSAGE_IMAGES;
 
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or

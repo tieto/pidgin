@@ -225,42 +225,20 @@ common_send(GaimConversation *conv, const char *message)
 						 gaim_conversation_get_name(conv), &sent);
 
 		if (sent != NULL && sent[0] != '\0') {
-			GaimConvImFlags imflags = 0;
 			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
-
-			if (im->images != NULL) {
-				imflags |= GAIM_CONV_IM_IMAGES;
-				msgflags |= GAIM_MESSAGE_IMAGES;
-			}
 
 			if (gc && gc->flags & GAIM_CONNECTION_HTML) {
 				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   sent, imflags);
+				                   sent, 0);
 			} else {
 				gchar *tmp = gaim_unescape_html(sent);
 				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   tmp, imflags);
+				                   tmp, 0);
 				g_free(tmp);
 			}
 
 			if ((err > 0) && (displayed != NULL))
 				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
-
-			if (im->images != NULL) {
-				GSList *tempy;
-				int image;
-
-				for (tempy = im->images;
-					 tempy != NULL;
-					 tempy = tempy->next) {
-
-					image = GPOINTER_TO_INT(tempy->data);
-					gaim_imgstore_unref(image);
-				}
-
-				g_slist_free(im->images);
-				im->images = NULL;
-			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
 							 gaim_conversation_get_account(conv),
@@ -982,21 +960,8 @@ gaim_conversation_destroy(GaimConversation *conv)
 	conversations = g_list_remove(conversations, conv);
 
 	if (conv->type == GAIM_CONV_IM) {
-		GSList *tempy;
-		int image;
-
 		gaim_conv_im_stop_typing_timeout(conv->u.im);
 		gaim_conv_im_stop_type_again_timeout(conv->u.im);
-
-		for (tempy = conv->u.im->images;
-			 tempy != NULL;
-			 tempy = tempy->next) {
-
-			image = GPOINTER_TO_INT(tempy->data);
-			gaim_imgstore_unref(image);
-		}
-
-		g_slist_free(conv->u.im->images);
 
 		if (conv->u.im->icon != NULL)
 			gaim_buddy_icon_unref(conv->u.im->icon);
