@@ -48,6 +48,7 @@ extern char *yahoo_crypt(const char *, const char *);
 
 #define YAHOO_PAGER_HOST "scs.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
+#define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 
 #define YAHOO_PROTO_VER 0x0900
 
@@ -1389,6 +1390,160 @@ static gboolean yahoo_unload_plugin(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
+{
+	char *stripped,*p;
+	char buf[1024];
+
+	/* we failed to grab the profile URL */
+	if (!url_text) {
+		g_show_info_text(NULL, NULL, 2,
+				"<html><body><b>Error retrieving profile</b></body></html>", NULL);
+		return;
+	}
+
+	/* we don't yet support the multiple link level of the warning page for
+	 * 'adult' profiles, not to mention the fact that yahoo wants you to be
+	 * logged in (on the website) to be able to view an 'adult' profile.  for
+	 * now, just tell them that we can't help them, and provide a link to the
+	 * profile if they want to do the web browser thing.
+	 */
+	p = strstr(url_text, "Adult Profiles Warning Message");
+	if (p) {
+		strcpy(buf, "<b>Sorry, profiles marked as containing adult content are ");
+		strcat(buf, "not supported at this time.</b><br><br>\n");
+		info_extract_field(url_text, buf, ".idname=", 0, "%26", 0, NULL,
+				"If you wish to view this profile, you will need to visit this link in your web browser",
+				1, YAHOO_PROFILE_URL);
+		strcat(buf, "</body></html>\n");
+		g_show_info_text(NULL, NULL, 2, buf, NULL);
+		return;
+	}
+
+	/* strip_html() doesn't strip out character entities like &nbsp; and &#183;
+	*/
+	while ((p = strstr(url_text, "&nbsp;")) != NULL) {
+		memmove(p, p + 6, strlen(p + 6));
+		url_text[strlen(url_text) - 6] = '\0';
+	}
+	while ((p = strstr(url_text, "&#183;")) != NULL) {
+		memmove(p, p + 6, strlen(p + 6));
+		url_text[strlen(url_text) - 6] = '\0';
+	}
+
+	/* nuke the nasty \r's */
+	while ((p = strchr(url_text, '\r')) != NULL) {
+		memmove(p, p + 1, strlen(p + 1));
+		url_text[strlen(url_text) - 1] = '\0';
+	}
+
+	/* nuke the html, it's easier than trying to parse the horrid stuff */
+	stripped = strip_html(url_text);
+
+	/* gonna re-use the memory we've already got for url_text */
+	strcpy(url_text, "<html><body>\n");
+
+	/* extract their Yahoo! ID and put it in */
+	info_extract_field(stripped, url_text, "Yahoo! ID:", 2, "\n", 0,
+			NULL, "Yahoo! ID", 0, NULL);
+
+	/* extract their Email address and put it in */
+	info_extract_field(stripped, url_text, "My Email", 5, "\n", 0,
+			"Private", "Email", 0, NULL);
+
+	/* extract the Nickname if it exists */
+	info_extract_field(stripped, url_text, "Nickname:", 1, "\n", '\n',
+			NULL, "Nickname", 0, NULL);
+
+	/* extract their RealName and put it in */
+	info_extract_field(stripped, url_text, "RealName:", 1, "\n", '\n',
+			NULL, "Real Name", 0, NULL);
+
+	/* extract their Location and put it in */
+	info_extract_field(stripped, url_text, "Location:", 2, "\n", '\n',
+			NULL, "Location", 0, NULL);
+
+	/* extract their Age and put it in */
+	info_extract_field(stripped, url_text, "Age:", 3, "\n", '\n',
+			NULL, "Age", 0, NULL);
+
+	/* extract their MaritalStatus and put it in */
+	info_extract_field(stripped, url_text, "MaritalStatus:", 3, "\n", '\n',
+			"No Answer", "Marital Status", 0, NULL);
+
+	/* extract their Gender and put it in */
+	info_extract_field(stripped, url_text, "Gender:", 3, "\n", '\n',
+			"No Answer", "Gender", 0, NULL);
+
+	/* extract their Occupation and put it in */
+	info_extract_field(stripped, url_text, "Occupation:", 2, "\n", '\n',
+			NULL, "Occupation", 0, NULL);
+
+	/* Hobbies, Latest News, and Favorite Quote are a bit different, since the
+	 * values can contain embedded newlines... but any or all of them can also
+	 * not appear.  The way we delimit them is to successively look for the next
+	 * one that _could_ appear, and if all else fails, we end the section by
+	 * looking for the 'Links' heading, which is the next thing to follow this
+	 * bunch.
+	 */
+	if (!info_extract_field(stripped, url_text, "Hobbies:", 1, "Latest News",
+				'\n', NULL, "Hobbies", 0, NULL))
+		if (!info_extract_field(stripped, url_text, "Hobbies:", 1, "Favorite Quote",
+					'\n', NULL, "Hobbies", 0, NULL))
+			info_extract_field(stripped, url_text, "Hobbies:", 1, "Links",
+					'\n', NULL, "Hobbies", 0, NULL);
+	if (!info_extract_field(stripped, url_text, "Latest News:", 1, "Favorite Quote",
+				'\n', NULL, "Latest News", 0, NULL))
+		info_extract_field(stripped, url_text, "Latest News:", 1, "Links",
+				'\n', NULL, "Latest News", 0, NULL);
+	info_extract_field(stripped, url_text, "Favorite Quote:", 0, "Links",
+			'\n', NULL, "Favorite Quote", 0, NULL);
+
+	/* Home Page will either be "No home page specified",
+	 * or "Home Page: " and a link. */
+	p = strstr(stripped, "No home page specified");
+	if (!p)
+		info_extract_field(stripped, url_text, "Home Page:", 1, " ", 0, NULL,
+				"Home Page", 1, NULL);
+
+	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
+	 * then we have none.  If we have one however, we'll need to check and see if
+	 * we have a second one.  If we have a second one, we have to check to see if
+	 * we have a third one.
+	 */
+	p = strstr(stripped,"No cool link specified");
+	if (!p)
+		if (info_extract_field(stripped, url_text, "Cool Link 1:", 1, " ", 0, NULL,
+					"Cool Link 1", 1, NULL))
+			if (info_extract_field(stripped, url_text, "Cool Link 2:", 1, " ", 0, NULL,
+						"Cool Link 2", 1, NULL))
+				info_extract_field(stripped, url_text, "Cool Link 3:", 1, " ", 0, NULL,
+						"Cool Link 3", 1, NULL);
+
+	/* see if Member Since is there, and if so, extract it. */
+	info_extract_field(stripped, url_text, "Member Since:", 1, "Last Updated:",
+			'\n', NULL, "Member Since", 0, NULL);
+
+	/* extract the Last Updated date and put it in */
+	info_extract_field(stripped, url_text, "Last Updated:", 1, "\n", '\n', NULL,
+			"Last Updated", 0, NULL);
+
+	/* finish off the html */
+	strcat(url_text, "</body></html>\n");
+	g_free(stripped);
+
+	/* show it to the user */
+	g_show_info_text(NULL, NULL, 2, url_text, NULL);
+}
+
+static void yahoo_get_info(GaimConnection *gc, const char *name)
+{
+	/* struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data; */
+	char url[256];
+	g_snprintf(url, sizeof url, "%s%s", YAHOO_PROFILE_URL, name);
+	grab_url(url, FALSE, yahoo_got_info, NULL);
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -1410,7 +1565,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_send_im,
 	NULL,
 	yahoo_send_typing,
-	NULL,
+	yahoo_get_info,
 	yahoo_set_away,
 	NULL,
 	NULL,

@@ -628,3 +628,49 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 	g_string_free(xhtml, TRUE);
 	g_string_free(plain, TRUE);
 }
+
+int info_extract_field(char *original, char *add_to, char *start_tok,
+		int skip, char *end_tok, char check_value, char *no_value_tok,
+		char *display_name, int islink, char *link_prefix)
+{
+	char *p, *q;
+	char buf[1024];
+	if (!original || !add_to || !start_tok ||
+			!end_tok || !display_name)
+		return 0;
+	p = strstr(original, start_tok);
+	if (p) {
+		p += strlen(start_tok) + skip;
+		if (!check_value || (*p != check_value)) {
+			q = strstr(p, end_tok);
+			if (q && (!no_value_tok ||
+						(no_value_tok && strncmp(p, no_value_tok, strlen(no_value_tok))))) {
+				strcat(add_to, "<b>");
+				strcat(add_to, display_name);
+				strcat(add_to, ":</b> ");
+				if (islink) {
+					strcat(add_to, "<br><a href=\"");
+					memcpy(buf, p, q-p);
+					buf[q-p] = '\0';
+					if (link_prefix)
+						strcat(add_to, link_prefix);
+					strcat(add_to, buf);
+					strcat(add_to, "\">");
+					if (link_prefix)
+						strcat(add_to, link_prefix);
+					strcat(add_to, buf);
+					strcat(add_to, "</a>");
+				} else {
+					memcpy(buf, p, q-p);
+					buf[q-p] = '\0';
+					strcat(add_to, buf);
+				}
+				strcat(add_to, "<br>\n");
+				return 1;
+			} else
+				return 0;
+		} else
+			return 0;
+	} else
+		return 0;
+}
