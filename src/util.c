@@ -346,7 +346,9 @@ gint linkify_text(char *text)
 }
 
 
-const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
+static const char alphabet[] =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	"0123456789+/";
 
 /* XXX Find bug */
 char *tobase64(const char *text)
