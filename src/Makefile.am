@@ -82,6 +82,7 @@ gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS)
 AM_CPPFLAGS = \
 	$(PERL_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
+	$(AUDIOFILE_CFLAGS) \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DDATADIR=\"$(datadir)\" \
