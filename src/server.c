@@ -1160,9 +1160,13 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 					 "chat-invited", account, who, name, message, data);
 
 	if (message != NULL)
+	{
+		char *escaped = g_markup_escape_text(message, -1);
 		g_snprintf(buf2, sizeof(buf2),
 				   _("%s has invited %s to the chat room %s:\n<b>%s</b>"),
-				   who, gaim_account_get_username(account), name, message);
+				   who, gaim_account_get_username(account), name, escaped);
+		g_free(escaped);
+	}
 	else
 		g_snprintf(buf2, sizeof(buf2),
 				   _("%s has invited %s to the chat room %s\n"),
