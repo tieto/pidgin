@@ -32,7 +32,6 @@
 #include "util.h"
 
 #define XPATCH BAD /* Because Kalla Said So */
-#define hash_func(key, data) serv_got_im(gc, key, data, 0, time(NULL), -1)
 
 /* XXX CUI: when this is done being split, the only things below should be things
  * both the core and the uis depend on e.g. the protocol definitions, etc, and
