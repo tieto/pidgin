@@ -150,25 +150,14 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 		gtk_imhtml_append_text(GTK_IMHTML(debug_win->entry), s, -1, 0);
 
 		g_free(s);
-
-#if 0
-		GtkTextBuffer *buffer;
-		GtkTextMark *endmark;
-		GtkTextIter end;
-
-		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(debug_win->entry));
-		endmark = gtk_text_buffer_get_mark(buffer, "end");
-
-		gtk_text_buffer_get_iter_at_mark(buffer, &end, endmark);
-		gtk_text_buffer_insert_with_tags(buffer, &end, s, -1);
-
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(debug_win->entry),
-										   endmark);
-#endif
 	}
 
-	if (opt_debug)
-		g_print("%s", arg_s);
+	if (opt_debug) {
+		if (category == NULL)
+			g_print("%s", arg_s);
+		else
+			g_print("%s: %s", arg_s);
+	}
 
 	g_free(arg_s);
 }
