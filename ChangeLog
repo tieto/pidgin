@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.72
+	* Added a search feature to conversations.
 	* Fixed a crash in the Add Chat dialog when selecting an
 	  account that doesn't support chats. Closes bug #821606.
 	* If SSL is not enabled, MSN will load, but error on connect.

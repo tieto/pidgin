@@ -66,6 +66,8 @@ struct _GtkIMHtml {
 
 	GList *scalables;
 	GdkRectangle old_rect;
+
+	gchar *search_string;
 };
 
 struct _GtkIMHtmlClass {
@@ -167,6 +169,9 @@ void gtk_imhtml_hr_free(GtkIMHtmlScalable *);
 void gtk_imhtml_hr_scale(GtkIMHtmlScalable *, int, int);
 void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 
+/* Search functions */
+gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text);
+void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
 
 #ifdef __cplusplus
 }

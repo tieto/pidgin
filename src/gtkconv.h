@@ -185,6 +185,7 @@ struct _GaimGtkConversation
 		GtkWidget *link;
 		GtkWidget *image;
 		GtkWidget *log;
+		GtkWidget *search;
 
 	} dialogs;
 

@@ -409,7 +409,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUB", "rise", -5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
-	
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
+
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
@@ -1763,4 +1764,58 @@ void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIt
 void gtk_imhtml_hr_free(GtkIMHtmlScalable *scale)
 {
 	g_free(scale);
+}
+
+gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
+{
+	GtkTextIter iter, start, end;
+	gboolean new_search = TRUE;
+
+	g_return_val_if_fail(imhtml != NULL, FALSE);
+	g_return_val_if_fail(text != NULL, FALSE);
+	
+	if (imhtml->search_string && !strcmp(text, imhtml->search_string))
+		new_search = FALSE;
+	 
+	
+	if (new_search) {
+		gtk_imhtml_search_clear(imhtml);
+		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+	} else {
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter,
+						 gtk_text_buffer_get_mark(imhtml->text_buffer, "search"));	
+	}
+	imhtml->search_string = g_strdup(text);
+
+	if (gtk_text_iter_forward_search(&iter, imhtml->search_string,
+					 GTK_TEXT_SEARCH_VISIBLE_ONLY,
+					 &start, &end, NULL)) {
+
+		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &start, 0, TRUE, 0, 0);
+		gtk_text_buffer_create_mark(imhtml->text_buffer, "search", &end, FALSE);
+		if (new_search) {
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "search", &iter, &end);
+			do 
+				gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "search", &start, &end);
+			while (gtk_text_iter_forward_search(&end, imhtml->search_string, GTK_TEXT_SEARCH_VISIBLE_ONLY,
+							      &start, &end, NULL));
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void gtk_imhtml_search_clear(GtkIMHtml *imhtml)
+{
+	GtkTextIter start, end;
+	
+	g_return_if_fail(imhtml != NULL);
+	
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
+
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "search", &start, &end);
+	if (imhtml->search_string)
+		g_free(imhtml->search_string);
+	imhtml->search_string = NULL;
 }

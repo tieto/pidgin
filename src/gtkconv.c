@@ -715,6 +715,82 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	conv_show_log(NULL, (char *)gaim_conversation_get_name(conv));
 }
 
+struct _search {
+	GaimGtkConversation *gtkconv;
+	GtkWidget *entry;
+};
+
+static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
+{
+	switch (resp) {
+	case GTK_RESPONSE_OK:
+		gtk_imhtml_search_find(s->gtkconv->imhtml, gtk_entry_get_text(GTK_ENTRY(s->entry)));
+		break;
+	case GTK_RESPONSE_CLOSE:
+		gtk_imhtml_search_clear(s->gtkconv->imhtml);
+		gtk_widget_destroy(s->gtkconv->dialogs.search);
+		s->gtkconv->dialogs.search = NULL;
+		g_free(s);
+		break;
+	}
+}
+
+static void
+menu_search_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
+	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GtkWidget *hbox, *vbox;
+	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+	GtkWidget *label, *entry;
+	struct _search *s;
+
+	if (gtkconv->dialogs.search)
+		return;
+	
+	gtkconv->dialogs.search = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkwin->window),
+							      GTK_DIALOG_DESTROY_WITH_PARENT,
+							      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, 
+							      GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
+	gtk_container_set_border_width (GTK_CONTAINER(gtkconv->dialogs.search), 6);
+	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(gtkconv->dialogs.search), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 6);
+	
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("<span weight='bold' size='larger'>Enter a search phrase\n</span>"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	label = gtk_label_new(_("Search term: "));
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+
+	s = g_malloc(sizeof(struct _search));
+	s->gtkconv = gtkconv;
+	s->entry = entry;
+	
+	gtk_dialog_set_default_response (GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "response", G_CALLBACK(do_search_cb), s);
+	
+	gtk_widget_show_all(gtkconv->dialogs.search);
+}
+
 static void
 menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -2837,7 +2913,8 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
-	{ N_("/Conversation/View _Log..."), NULL, menu_view_log_cb, 0, NULL },
+	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, NULL },
+	{ N_("/Conversation/Search..."), NULL, menu_search_cb, 0, "<StockItem>", GTK_STOCK_FIND },
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 
@@ -2916,7 +2993,7 @@ setup_menubar(GaimConvWindow *win)
 
 	gtkwin->menu.view_log =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-									N_("/Conversation/View Log..."));
+									N_("/Conversation/View Log"));
 	/* --- */
 
 	gtkwin->menu.add_pounce =
@@ -4246,6 +4323,9 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);
+
+	if (gtkconv->dialogs.search != NULL)
+		gtk_widget_destroy(gtkconv->dialogs.search);
 
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
