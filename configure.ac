@@ -36,10 +36,11 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(strdup strstr atexit)
 dnl Checks for getopt in standard library
-AC_CHECK_FUNCS(getopt_long , ,
-AC_LIBOBJ(getopt)
-AC_LIBOBJ(getopt1)) 
- 
+AC_CHECK_FUNCS(getopt_long,,
+[
+	AC_LIBOBJ(getopt)
+	AC_LIBOBJ(getopt1)
+])
 
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
