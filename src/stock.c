@@ -89,11 +89,16 @@ setup_stock()
 {
 	GtkIconFactory *icon_factory;
 	int i;
+	GtkWidget *win;
 
 	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
 
 	gtk_icon_factory_add_default(icon_factory);
+
+	/* Er, yeah, a hack, but it works. :) */
+	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_realize(win);
 
 	for (i = 0; i < stock_icon_count; i++) {
 		GdkPixbuf *pixbuf;
@@ -101,9 +106,10 @@ setup_stock()
 		gchar *filename;
 
 		if (stock_icons[i].dir == NULL) {
-			/* GTK+ Stock icon */
 
-			iconset = gtk_icon_factory_lookup_default(stock_icons[i].filename);
+			/* GTK+ Stock icon */
+			iconset = gtk_style_lookup_icon_set(gtk_widget_get_style(win),
+												stock_icons[i].filename);
 		}
 		else {
 			filename = find_file(stock_icons[i].dir, stock_icons[i].filename);
@@ -122,6 +128,8 @@ setup_stock()
 
 		gtk_icon_set_unref(iconset);
 	}
+
+	gtk_widget_destroy(win);
 
 	g_object_unref(G_OBJECT(icon_factory));
 }
