@@ -287,12 +287,13 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 		break;
 	case YAHOO_SERVICE_NEWCONTACT:
 		if (yahoo_makeint(pkt->msgtype) == 3) {
-			char **str_array = g_strsplit(pkt->content, ",,", 2);
+			char **str_array = g_strsplit(pkt->content, ",", 3);
 			if (sess->callbacks[YAHOO_HANDLE_BUDDYADDED].function)
 				(*sess->callbacks[YAHOO_HANDLE_BUDDYADDED].function)(sess,
 										     pkt->nick2,
 										     str_array[0],
-										     str_array[1]);
+										     atol(str_array[1]),
+										     str_array[2]);
 			g_strfreev(str_array);
 		} else
 			yahoo_parse_status(sess, pkt);
