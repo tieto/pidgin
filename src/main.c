@@ -59,11 +59,22 @@
 #include "locale.h"
 #include <getopt.h>
 
+#ifdef HAVE_STARTUP_NOTIFICATION
+# define SN_API_NOT_YET_FROZEN
+# include <libsn/sn-launchee.h>
+# include <gdk/gdkx.h>
+#endif
+
 extern void load_prefs();
 extern void load_pounces();
 
 static GtkWidget *name;
 static GtkWidget *pass;
+
+#ifdef HAVE_STARTUP_NOTIFICATION
+static SnLauncheeContext *sn_context = NULL;
+static SnDisplay *sn_display = NULL;
+#endif
 
 GtkWidget *mainwindow = NULL;
 
@@ -559,6 +570,42 @@ show_usage(int mode, const char *name)
 	}
 }
 
+#ifdef HAVE_STARTUP_NOTIFICATION
+static void
+sn_error_trap_push(SnDisplay *display, Display *xdisplay)
+{
+	gdk_error_trap_push();
+}
+
+static void
+sn_error_trap_pop(SnDisplay *display, Display *xdisplay)
+{
+	gdk_error_trap_pop();
+}
+
+static void
+startup_notification_complete(void)
+{
+	Display *xdisplay;
+
+	xdisplay = GDK_DISPLAY();
+	sn_display = sn_display_new(xdisplay,
+								sn_error_trap_push,
+								sn_error_trap_pop);
+	sn_context =
+		sn_launchee_context_new_from_environment(sn_display,
+												 DefaultScreen(xdisplay));
+
+	if (sn_context != NULL)
+	{
+		sn_launchee_context_complete(sn_context);
+		sn_launchee_context_unref(sn_context);
+
+		sn_display_unref(sn_display);
+	}
+}
+#endif /* HAVE_STARTUP_NOTIFICATION */
+
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 int gaim_main(HINSTANCE hint, int argc, char *argv[])
@@ -867,6 +914,10 @@ int main(int argc, char *argv[])
 		gaim_gtk_accounts_window_show();
 	} else if ((dologin_ret == -1) && !gaim_connections_get_all())
 		show_login();
+
+#ifdef HAVE_STARTUP_NOTIFICATION
+	startup_notification_complete();
+#endif
 
 	gtk_main();
 	gaim_sound_shutdown();

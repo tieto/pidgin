@@ -11,3 +11,4 @@ Icon=gaim.png
 Terminal=false
 Type=Application
 Categories=Application;Network;
+StartupNotify=true

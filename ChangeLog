@@ -8,6 +8,7 @@ version 0.71
 	* Massive core/UI splitting.
 	* Conversation API changes.
 	* SSL support can now be provided by third party plugins.
+	* Added startup notification support for window managers that support it.
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)

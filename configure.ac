@@ -173,6 +173,22 @@ else
 	x_incpath_add="-I$x_includes"
 fi
 
+dnl Check for startup notification
+PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
+[
+	AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
+	echo "Building with libstartup-notification"
+	enable_startup_notification=yes
+],
+[
+	echo "Building without libstartup-notification"
+	enable_startup_notification=no
+])
+
+AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
+AC_SUBST(STARTUP_NOTIFICATION_LIBS)
+
+
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
@@ -984,6 +1000,7 @@ echo Build with GtkSpell support... : $enable_gtkspell
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo Use X Session Management...... : $enable_sm
+echo Use startup notification.......: $enable_startup_notification
 echo
 echo Print debugging messages...... : $enable_debug
 echo
