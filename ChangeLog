@@ -27,6 +27,7 @@ version 0.60:
 	* Updated desktop and window icons (Thanks Robert McQueen)
 	* GTK2 Goodness:
 		- Preferences dialog
+		- SignOn Screen
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
 		- Buddy Icons
 		- IM Images
