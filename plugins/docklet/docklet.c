@@ -54,7 +54,6 @@
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
 static enum docklet_status status = offline;
-static enum docklet_status icon = offline;
 #ifdef _WIN32
 __declspec(dllimport) GSList *unread_message_queue;
 __declspec(dllimport) GSList *away_messages;
@@ -195,8 +194,13 @@ static void docklet_menu() {
 static gboolean
 docklet_blink_icon()
 {
+	static gboolean blinked = FALSE;
+	enum docklet_status icon = status;
+
+	blinked = !blinked;
+
 	if (status == online_pending) {
-		if (status == icon) {
+		if (blinked) {
 			/* last icon was the right one... let's change it */
 			icon = online;
 		} else {
@@ -204,7 +208,7 @@ docklet_blink_icon()
 			icon = online_pending;
 		}
 	} else if (status == away_pending) {
-		if (status == icon) {
+		if (blinked) {
 			/* last icon was the right one... let's change it */
 			icon = away;
 		} else {
@@ -213,6 +217,7 @@ docklet_blink_icon()
 		}
 	} else {
 		/* no messages, stop blinking */
+		blinked = FALSE;
 		return FALSE;
 	}
 
@@ -253,9 +258,8 @@ docklet_update_status()
 
 	/* update the icon if we changed status */
 	if (status != oldstatus) {
-		icon = status;
 		if (ui_ops->update_icon)
-			ui_ops->update_icon(icon);
+			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
 		if (status == online_pending || status == away_pending) {
@@ -295,7 +299,6 @@ docklet_clicked(int button_type)
 		case 1:
 			if (unread_message_queue) {
 				docklet_flush_queue();
-				g_idle_add(docklet_update_status, &handle);
 			} else {
 				gaim_gtk_blist_docklet_toggle();
 			}
@@ -323,7 +326,7 @@ docklet_embedded()
 
 	docklet_update_status();
 	if (ui_ops->update_icon)
-		ui_ops->update_icon(icon);
+		ui_ops->update_icon(status);
 }
 
 void
@@ -384,6 +387,14 @@ gaim_im_recv(GaimConnection *gc, char **who, char **what, void *data)
 	g_idle_add(docklet_update_status, &handle);
 }
 
+static void
+gaim_new_conversation(char *who, void *data)
+{
+	/* queue a callback here so if the queue is being
+	   flushed, we stop flashing. thanks javabsp. */
+	g_idle_add(docklet_update_status, &handle);
+}
+
 /* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
 }
 
@@ -394,9 +405,6 @@ static void gaim_buddy_away(GaimConnection *gc, char *who, void *data) {
 }
 
 static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_new_conversation(char *who, void *data) {
 } */
 
 /* plugin glue */
@@ -419,11 +427,11 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(plugin, event_connecting, gaim_connecting, NULL);
 	gaim_signal_connect(plugin, event_away, gaim_away, NULL);
 	gaim_signal_connect(plugin, event_im_recv, gaim_im_recv, NULL);
+	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL);
 /*	gaim_signal_connect(plugin, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(plugin, event_buddy_signoff, gaim_buddy_signoff, NULL);
 	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);
-	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL);
-	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); */
+	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL); */
 
 	gaim_prefs_add_none("/plugins/gtk/docklet");
 	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
@@ -439,6 +447,7 @@ plugin_unload(GaimPlugin *plugin)
 
 	/* XXX: do this while gaim has no other way to toggle the global mute */
 	gaim_gtk_sound_set_mute(FALSE);
+
 	docklet_remove_callbacks();
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin unloaded\n");
