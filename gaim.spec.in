@@ -74,7 +74,7 @@ make prefix=$RPM_BUILD_ROOT%{prefix} sysconfdir=$RPM_BUILD_ROOT%{sysconfdir} ins
 %files
 %defattr(-,root,root)
 %{prefix}/bin/gaim
-%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog
+%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog plugins/PERL-HOWTO HACKING
 %attr(755,root,root) %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
 %{prefix}/share/pixmaps/gaim.xpm

@@ -11,6 +11,22 @@
 	simply because you have friends on MSN Messenger that you don't want
 	to leave, this plugin is for you! :) 
 
+	Eric: Hey everybody, Rob and I really want to hear what you guys want
+	to see in gaim. Head over to http://sourceforge.net/projects/gaim and
+	leave a message in the Open Discussion forum. We've gotten a lot of
+	good ideas so far (most of them didn't make it into this release,
+	unfortunately).
+
+	If any of you want to test out your mad coding skills, I can think of
+	a few projects that would be incredibly useful. Send me or Rob an IM
+	and we'll let you know how you can help. And don't forget to read the
+	HACKING file to see how gaim's put together.
+
+	This is hopefully going to be the last prerelease; now that all the
+	protocols that we're going to be doing for 0.11.0 are available it's
+	mostly just going to be hacking on them and getting them in usable
+	condition before the final release. Don't forget to send us bug
+	reports ;)
 
 0.11.0-pre2 (12/04/2000):
 	Rob: I messed up.  Oh well, it's fixed.
