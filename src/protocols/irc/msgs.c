@@ -461,6 +461,8 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 		ib->flag = TRUE;
 	}
 
+	g_strfreev(nicks);
+
 	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
 }
 
@@ -690,7 +692,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 	if (sscanf(parts[1], "%lu", &oldstamp) != 1) {
 		msg = g_strdup(_("Error: invalid PONG from server"));
 	} else {
-		msg = g_strdup_printf(_("PING reply -- Lag: %d seconds"), time(NULL) - oldstamp);
+		msg = g_strdup_printf(_("PING reply -- Lag: %lu seconds"), time(NULL) - oldstamp);
 	}
 
 	convo = gaim_find_conversation_with_account(parts[0], irc->account);

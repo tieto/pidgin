@@ -1175,7 +1175,8 @@ struct aim_ssi_tmp {
 
 /* These build the actual SNACs and queue them to be sent */
 /* 0x0002 */ faim_export int aim_ssi_reqrights(aim_session_t *sess);
-/* 0x0005 */ faim_export int aim_ssi_reqdata(aim_session_t *sess, time_t localstamp, fu16_t localrev);
+/* 0x0004 */ faim_export int aim_ssi_reqdata(aim_session_t *sess);
+/* 0x0005 */ faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t localstamp, fu16_t localrev);
 /* 0x0007 */ faim_export int aim_ssi_enable(aim_session_t *sess);
 /* 0x0008 */ faim_export int aim_ssi_addmoddel(aim_session_t *sess);
 /* 0x0011 */ faim_export int aim_ssi_modbegin(aim_session_t *sess);

@@ -1134,17 +1134,26 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 }
 
 /*
- * Subtype 0x0004 - Request SSI Data.
- * XXX - If you don't have a timestamp and revision number?
- *
- * Note that the client should never increment the revision, only the server.
+ * Subtype 0x0004 - Request SSI Data when you don't have a timestamp and 
+ * revision number.
  * 
  */
+faim_export int aim_ssi_reqdata(aim_session_t *sess)
+{
+	aim_conn_t *conn;
 
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+		return -EINVAL;
+
+	/* Free any current data, just in case */
+	aim_ssi_freelist(sess);
+
+	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQDATA);
+}
 
 /*
- * Subtype 0x0005 - Request SSI Data.
- * XXX - If you have a timestamp and revision number?
+ * Subtype 0x0005 - Request SSI Data when you have a timestamp and revision 
+ * number.
  *
  * The data will only be sent if it is newer than the posted local
  * timestamp and revision.
@@ -1152,7 +1161,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
  * Note that the client should never increment the revision, only the server.
  * 
  */
-faim_export int aim_ssi_reqdata(aim_session_t *sess, time_t timestamp, fu16_t numitems)
+faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t timestamp, fu16_t numitems)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -1164,9 +1173,9 @@ faim_export int aim_ssi_reqdata(aim_session_t *sess, time_t timestamp, fu16_t nu
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+2)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_REQLIST, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_REQIFCHANGED, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_REQLIST, 0x0000, snacid);
+	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_REQIFCHANGED, 0x0000, snacid);
 	aimbs_put32(&fr->data, timestamp);
 	aimbs_put16(&fr->data, numitems);
 
@@ -1558,7 +1567,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 /*
  * Subtype 0x000f - SSI Data Unchanged.
  *
- * Response to aim_ssi_reqdata() if the server-side data is not newer than
+ * Response to aim_ssi_reqifchanged() if the server-side data is not newer than
  * posted local stamp/revision.
  *
  */

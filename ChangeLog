@@ -3,7 +3,6 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.67
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
-	* New Jabber vCard dialog.
 	* IRC protocol plugin rewritten (Ethan Blanton)
 	* Various dialog rewrites (Jabber vCard, Add Group, Alias Chat,
 	  Rename Group)

@@ -36,7 +36,7 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 	char *buf;
 
 	if (!convo)
-		return;
+		return 1;
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
 	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
@@ -163,7 +163,7 @@ int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 	convo = gaim_find_conversation_with_account(target, irc->account);
 	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
-		return;
+		return 0;
 
 	if (args[1])
 		buf = irc_format(irc, "vcn:", "KICK", target, args[0], args[1]);
@@ -191,10 +191,10 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 		else if (args[0])
 			buf = irc_format(irc, "vv", "MODE", args[0]);
 		else
-			return;
+			return 0;
 	} else if (!strcmp(cmd, "umode")) {
 		if (!args[0])
-			return;
+			return 0;
 		gc = gaim_account_get_connection(irc->account);
 		buf = irc_format(irc, "vnv", "MODE", gaim_connection_get_display_name(gc), args[0]);
 	}
@@ -276,7 +276,7 @@ int irc_cmd_op(struct irc_conn *irc, const char *cmd, const char *target, const 
 	irc_do_mode(irc, target, sign, ops);
 	g_free(ops);
 
-	return;
+	return 0;
 }
 
 int irc_cmd_part(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
@@ -308,7 +308,7 @@ int irc_cmd_ping(struct irc_conn *irc, const char *cmd, const char *target, cons
 		buf = irc_format(irc, "vn:", "PRIVMSG", args[0], stamp);
 		g_free(stamp);
 	} else {
-		stamp = g_strdup_printf("%s %d", target, time(NULL));
+		stamp = g_strdup_printf("%s %lu", target, time(NULL));
 		buf = irc_format(irc, "v:", "PING", stamp);
 		g_free(stamp);
 	}
@@ -419,13 +419,13 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 
 	convo = gaim_find_conversation_with_account(target, irc->account);
 	if (!convo || gaim_conversation_get_type(convo) != GAIM_CONV_CHAT)
-		return;
+		return 0;
 
 	if (!args[0]) {
 		topic = gaim_chat_get_topic (GAIM_CHAT(convo));
 
 		if (topic)
-			buf = g_strdup_printf("current topic is: %s", topic);
+			buf = g_strdup_printf(_("current topic is: %s"), topic);
 		else
 			buf = g_strdup(_("No topic is set"));
 		gaim_chat_write(GAIM_CHAT(convo), target, buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
@@ -446,7 +446,7 @@ int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, c
 	char *buf;
 
 	if (!args || !args[0])
-		return;
+		return 0;
 
 	if (!strcmp(cmd, "wallops"))
 		buf = irc_format(irc, "v:", "WALLOPS", args[0]);
@@ -503,4 +503,6 @@ static void irc_do_mode(struct irc_conn *irc, const char *target, const char *si
 		irc_send(irc, buf);
 		g_free(buf);
 	}
+
+	return;
 }

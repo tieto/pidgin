@@ -3732,7 +3732,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 #ifndef NOSSI
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: requesting ssi list\n");
 	aim_ssi_reqrights(sess);
-	aim_ssi_reqdata(sess, sess->ssi.timestamp, sess->ssi.numitems);
+	aim_ssi_reqdata(sess);
 #endif
 
 	aim_bos_reqlocaterights(sess, fr->conn);
@@ -4750,7 +4750,7 @@ static void oscar_rename_group(GaimConnection *g, const char *old_group, const c
 
 static gboolean gaim_ssi_rerequestdata(gpointer data) {
 	aim_session_t *sess = data;
-	aim_ssi_reqdata(sess, sess->ssi.timestamp, sess->ssi.numitems);
+	aim_ssi_reqdata(sess);
 	return FALSE;
 }
 

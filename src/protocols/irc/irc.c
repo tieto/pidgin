@@ -31,6 +31,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "blist.h"
+#include "util.h"
 #include "irc.h"
 
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
@@ -108,9 +109,6 @@ static GList *irc_away_states(GaimConnection *gc)
 
 static GList *irc_buddy_menu(GaimConnection *gc, const char *who)
 {
-	struct irc_conn *irc = gc->proto_data;
-	struct proto_buddy_menu *pbm;
-
 	return NULL;
 }
 
@@ -429,7 +427,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	irc_away_states,
 	NULL,
-	NULL, /*irc_buddy_menu,*/
+	irc_buddy_menu,
 	irc_chat_join_info,
 	irc_login,
 	irc_close,

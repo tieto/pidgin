@@ -38,7 +38,6 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string);
 char *irc_mirc2html(const char *string);
 
 static void irc_parse_error_cb(struct irc_conn *irc, char *input);
-static void irc_default_cb(struct irc_conn *irc, char *input);
 
 static char *irc_mirc_colors[16] = {
 	"white", "black", "blue", "dark green", "red", "brown", "purple",
@@ -72,6 +71,7 @@ static struct _irc_msg {
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
+	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/
 	{ "433", "vn:", irc_msg_nickused },	/* Nickname already in use	*/
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
 	{ "473", "nc:", irc_msg_inviteonly },	/* Tried to join invite-only	*/
@@ -269,7 +269,7 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 			gc = gaim_account_get_connection(irc->account);
 			if (!gc)
 				return NULL;
-			buf = g_strdup_printf(_("Reply time from %s: %d seconds"), from, time(NULL) - timestamp);
+			buf = g_strdup_printf(_("Reply time from %s: %lu seconds"), from, time(NULL) - timestamp);
 			gaim_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
 			g_free(buf);
 			return NULL;
