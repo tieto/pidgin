@@ -1017,6 +1017,11 @@ void im_callback(GtkWidget *w, struct conversation *b)
 		return;
 	}
 
+	if (*name == '@')
+		name++;
+	if (*name == '+')
+		name++;
+
 	c = find_conversation(name);
 
 	if (c != NULL) {
