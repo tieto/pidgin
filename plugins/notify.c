@@ -646,14 +646,14 @@ static void apply_options(int opt_chng) {
 						urgent_add(c);
 				}
 			} else {
-				//don't simply call unnotify(), because that will kill the msg counter
+				/* don't simply call unnotify(), because that will kill the msg counter */
 				urgent_remove(c);
 				quote_remove(gtkwin->window);
 				count_remove(gtkwin->window);
 				string_remove(gtkwin->window);
 			}
 		} else if (opts & STATE_IS_NOTIFIED) {
-			//add/remove the status that was changed
+			/* add/remove the status that was changed */
 			switch(opt_chng) {
 				case OPT_METHOD_COUNT:
 					if (notify_opts & OPT_METHOD_COUNT)

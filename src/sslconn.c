@@ -291,7 +291,7 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 
 	return (GaimSslConnection)ssl_data;
 #else
-	g_return_val_if_fail(gaim_ssl_is_supported(), -1);
+	return GINT_TO_POINTER(-1);
 #endif
 }
 
@@ -345,13 +345,13 @@ gaim_ssl_init(void)
 void
 gaim_ssl_uninit(void)
 {
+#ifdef HAVE_NSS
 	if (!_nss_initialized)
 		return;
 
-#ifdef HAVE_NSS
 	PR_Cleanup();
-#endif
 
 	_nss_initialized = FALSE;
 	_nss_methods     = NULL;
+#endif
 }

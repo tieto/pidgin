@@ -628,7 +628,7 @@ char *gaim_group_get_setting(GaimGroup *g, const char *key);
 void gaim_blist_chat_set_setting(GaimBlistChat *c, const char *key, const char *value);
 
 /**
- * Retrieves data from the XML buddy list set by gaim_chat_set_setting())
+ * Retrieves data from the XML buddy list set by gaim_blist_chat_set_setting())
  *
  * @param c      The chat to retrieve data from
  * @param key    The key to retrieve the data with

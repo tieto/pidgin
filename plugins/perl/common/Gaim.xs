@@ -78,8 +78,6 @@ CODE:
 
 void
 deinit()
-PREINIT:
-	GList *l;
 CODE:
 	gaim_perl_timeout_clear();
 

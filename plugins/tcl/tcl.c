@@ -363,4 +363,4 @@ static void tcl_init_plugin(GaimPlugin *plugin)
 	tcl_loader_info.exts = g_list_append(tcl_loader_info.exts, "tcl");
 }
 
-GAIM_INIT_PLUGIN(tcl, tcl_init_plugin, tcl_info);
+GAIM_INIT_PLUGIN(tcl, tcl_init_plugin, tcl_info)

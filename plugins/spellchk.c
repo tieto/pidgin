@@ -11,6 +11,12 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #define SPELLCHECK_PLUGIN_ID "gtk-spellcheck"
 
 enum {

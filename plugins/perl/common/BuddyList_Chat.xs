@@ -27,7 +27,7 @@ OUTPUT:
 	RETVAL
 
 void
-gaim_chat_set_setting(chat, key, value)
+gaim_blist_chat_set_setting(chat, key, value)
 	Gaim::BuddyList::Chat chat
 	const char *key
 	const char *value

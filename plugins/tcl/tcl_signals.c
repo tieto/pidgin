@@ -231,6 +231,9 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				case GAIM_BLIST_GROUP_NODE:
 					g_string_printf(val, "group {%s}", ((GaimGroup *)node)->name);
 					break;
+				case GAIM_BLIST_CONTACT_NODE:
+					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
+					break;
 				case GAIM_BLIST_BUDDY_NODE:
 					g_string_printf(val, "buddy {%s} %lu", ((GaimBuddy *)node)->name,
 							(unsigned long)((GaimBuddy *)node)->account);

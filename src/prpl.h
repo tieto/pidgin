@@ -91,7 +91,7 @@ typedef enum
  */
 typedef enum
 {
-	GAIM_IM_AUTO_RESP = 0x01,    /**< Auto response.    */
+	GAIM_IM_AUTO_RESP = 0x01    /**< Auto response.    */
 } GaimImFlags;
 
 /**
