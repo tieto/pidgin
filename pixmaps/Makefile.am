@@ -15,7 +15,7 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
 	penguin-offline.png penguin-online.png
 	
 if GNOMEAPPLET
-gaimpixmapdir = $(datadir)/pixmaps/gaim
+gaimpixmapdir = /usr/share/pixmaps/gaim
 gaimpixmap_DATA = aimicon.xpm penguin-connect.png \
 	penguin-offline.png penguin-online.png
 endif
