@@ -67,6 +67,7 @@ struct gaim_gtkxfer_dialog
 	GtkWidget *resume_button;
 	GtkWidget *remove_button;
 	GtkWidget *stop_button;
+	GtkWidget *close_button;
 };
 
 struct gaim_gtkxfer_ui_data
@@ -387,6 +388,12 @@ stop_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
 	gaim_xfer_cancel_local(dialog->selected_xfer);
 }
 
+static void
+close_button_cb(GtkButton *button, struct gaim_gtkxfer_dialog *dialog)
+{
+	gaim_gtkxfer_dialog_hide(dialog);
+}
+
 /**************************************************************************
  * Dialog Building Functions
  **************************************************************************/
@@ -693,6 +700,15 @@ gaim_gtkxfer_dialog_new(void)
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(stop_button_cb), dialog);
+
+	/* Close button */
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+	dialog->close_button = button;
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(close_button_cb), dialog);
 
 	return dialog;
 }
