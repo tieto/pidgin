@@ -97,8 +97,8 @@
 struct msn_xfer_data {
 	int inpa;
 
-	uint32_t cookie;
-	uint32_t authcookie;
+	guint32 cookie;
+	guint32 authcookie;
 
 	gboolean transferring;
 	gboolean do_cancel;
@@ -112,7 +112,7 @@ struct msn_xfer_data {
 
 struct msn_data {
 	int fd;
-	uint32_t trId;
+	guint32 trId;
 	int inpa;
 
 	char *rxqueue;

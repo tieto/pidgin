@@ -37,7 +37,7 @@ struct msn_switchboard {
 
 	char *sessid;
 	char *auth;
-	uint32_t trId;
+	guint32 trId;
 	int total;
 	char *user;
 	GSList *txqueue;

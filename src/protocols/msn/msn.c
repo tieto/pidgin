@@ -1345,7 +1345,7 @@ static void msn_file_transfer_out(struct gaim_connection *gc,
 	if (stat(name, &sb) == -1)
 		return;
 
-	mft->cookie = 1 + (uint32_t)(4294967295.0 * rand() / (RAND_MAX + 1.0));
+	mft->cookie = 1 + (guint32)(4294967295.0 * rand() / (RAND_MAX + 1.0));
 
 	g_snprintf(header, sizeof(header),
 		"MIME-Version: 1.0\r\n"
