@@ -1179,6 +1179,25 @@ void show_usage(int mode, char *name)
 }
 
 
+void set_first_user(char *name)
+{
+	struct aim_user *u;
+
+	u = find_user(name, -1);
+
+	if (!u) {		/* new user */
+		u = g_new0(struct aim_user, 1);
+		g_snprintf(u->username, sizeof(u->username), "%s", name);
+		u->protocol = DEFAULT_PROTO;
+		aim_users = g_list_prepend(aim_users, u);
+	} else {		/* user already exists */
+		aim_users = g_list_remove(aim_users, u);
+		aim_users = g_list_prepend(aim_users, u);
+	}
+	save_prefs();
+}
+
+
 /* <name> is a comma-separated list of names, or NULL
    if NULL and there is at least one user defined in .gaimrc, try to login.
    if not NULL, parse <name> into separate strings, look up each one in 
