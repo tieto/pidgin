@@ -925,26 +925,60 @@ static void gaimrc_read_options(FILE *f)
 			font_options = atoi(p->value[0]);
 
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold",
-								(font_options & OPT_FONT_BOLD));
+								font_options & OPT_FONT_BOLD);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic",
-								(font_options & OPT_FONT_ITALIC));
+								font_options & OPT_FONT_ITALIC);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline",
-								(font_options & OPT_FONT_UNDERLINE));
+								font_options & OPT_FONT_UNDERLINE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_strikethrough",
-								(font_options & OPT_FONT_STRIKE));
+								font_options & OPT_FONT_STRIKE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_font",
-								(font_options & OPT_FONT_FACE));
+								font_options & OPT_FONT_FACE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_size",
-								(font_options & OPT_FONT_SIZE));
+								font_options & OPT_FONT_SIZE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_fgcolor",
-								(font_options & OPT_FONT_FGCOL));
+								font_options & OPT_FONT_FGCOL);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_bgcolor",
-								(font_options & OPT_FONT_BGCOL));
+								font_options & OPT_FONT_BGCOL);
 
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
-			/* XXX: figure out the mapping between the options
-			 * and the new sound method option */
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/login",
+					sound_options & OPT_SOUND_LOGIN);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/logout",
+					sound_options & OPT_SOUND_LOGOUT);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/im_recv",
+					sound_options & OPT_SOUND_RECV);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/send_im",
+					sound_options & OPT_SOUND_SEND);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/first_im_recv",
+					sound_options & OPT_SOUND_FIRST_RCV);
+			gaim_prefs_set_bool("/core/sound/when_away",
+					sound_options & OPT_SOUND_WHEN_AWAY);
+			gaim_prefs_set_bool("/gaim/gtk/sound/silent_signon",
+					sound_options & OPT_SOUND_SILENT_SIGNON);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/join_chat",
+					sound_options & OPT_SOUND_CHAT_JOIN);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/chat_msg_recv",
+					sound_options & OPT_SOUND_CHAT_SAY);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/left_chat",
+					sound_options & OPT_SOUND_CHAT_PART);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/send_chat_msg",
+					sound_options & OPT_SOUND_CHAT_YOU_SAY);
+			gaim_prefs_set_bool("/gaim/gtk/sound/enabled/nick_said",
+					sound_options & OPT_SOUND_CHAT_NICK);
+			if(sound_options & OPT_SOUND_NAS) {
+				gaim_prefs_set_string("/gaim/gtk/sound/method", "nas");
+			} else if(!(sound_options & OPT_SOUND_NORMAL)) {
+				if(sound_options & OPT_SOUND_ESD)
+					gaim_prefs_set_string("/gaim/gtk/sound/method", "esd");
+				else if(sound_options & OPT_SOUND_ARTS)
+					gaim_prefs_set_string("/gaim/gtk/sound/method", "arts");
+				else if(sound_options & OPT_SOUND_CMD)
+					gaim_prefs_set_string("/gaim/gtk/sound/method", "custom");
+				else if(sound_options & OPT_SOUND_BEEP)
+					gaim_prefs_set_string("/gaim/gtk/sound/method", "beep");
+			}
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/core/conversations/away_back_on_send",
@@ -1058,13 +1092,6 @@ static void gaimrc_read_options(FILE *f)
 			gaim_prefs_set_string("/gaim/gtk/blist/sort_type", p->value[0]);
 		}
 
-	}
-
-	/* this is where we do bugs and compatibility stuff */
-	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_ESD
-					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD))) {
-		sound_options |= OPT_SOUND_NORMAL;
-		/* XXX: I don't think we need this anymore */
 	}
 
 	if (read_general) {
