@@ -682,7 +682,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i = 0;
 
-			maxrooms = va_arg(ap, u_char);
+			maxrooms = (u_char)va_arg(ap, u_int);
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 			va_end(ap);
