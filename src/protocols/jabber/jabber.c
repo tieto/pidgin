@@ -974,7 +974,7 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 
 	type = xmlnode_get_attrib(packet, "type");
 
-	if(!strcmp(type, "result")) {
+	if(type && !strcmp(type, "result")) {
 		gaim_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 	} else {
