@@ -7,3 +7,6 @@ Makefile
 *.dll
 *.def
 *.lib
+.*.swp
+.*.swo
+.todo.*
