@@ -4375,7 +4375,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_get_cb_info,
 	jabber_get_cb_away_msg,
 	jabber_alias_buddy,
-	NULL,
+	jabber_group_change,
 	jabber_rename_group,
 	NULL,
 	jabber_convo_closed,
