@@ -1286,8 +1286,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 		ir->timestamp = args->iconstamp;
 	}
 
-	/*if (gc->user->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {*/
-	if (gc->user->iconfile) {
+	if (gc->user->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
 		FILE *file;
 		struct stat st;
 
