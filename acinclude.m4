@@ -800,15 +800,9 @@ AC_DEFUN([AM_BINRELOC],
                           (default=enable when available)],
 		enable_binreloc=$enableval,enable_binreloc=auto)
 
-	AC_ARG_ENABLE(binreloc-threads,
-		[  --enable-binreloc-threads      compile binary relocation with threads support
-	                         (default=yes)],
-		enable_binreloc_threads=$enableval,enable_binreloc_threads=yes)
-
 	BINRELOC_CFLAGS=
 	BINRELOC_LIBS=
 	if test "x$enable_binreloc" = "xauto"; then
-		AC_CHECK_FILE([/proc/self/maps])
 		AC_CACHE_CHECK([whether everything is installed to the same prefix],
 			       [br_cv_valid_prefixes], [
 				if test "$bindir" = '${exec_prefix}/bin' -a "$sbindir" = '${exec_prefix}/sbin' -a \
@@ -826,8 +820,7 @@ AC_DEFUN([AM_BINRELOC],
 		       [if test "x$enable_binreloc" = "xyes"; then
 		       	       br_cv_binreloc=yes
 		       elif test "x$enable_binreloc" = "xauto"; then
-			       if test "x$br_cv_valid_prefixes" = "xyes" -a \
-			       	       "x$ac_cv_file__proc_self_maps" = "xyes"; then
+			       if test "x$br_cv_valid_prefixes" = "xyes"; then
 				       br_cv_binreloc=yes
 			       else
 				       br_cv_binreloc=no
@@ -839,29 +832,6 @@ AC_DEFUN([AM_BINRELOC],
 	if test "x$br_cv_binreloc" = "xyes"; then
 		BINRELOC_CFLAGS="-DENABLE_BINRELOC"
 		AC_DEFINE(ENABLE_BINRELOC,,[Use binary relocation?])
-		if test "x$enable_binreloc_threads" = "xyes"; then
-			AC_CHECK_LIB([pthread], [pthread_getspecific])
-		fi
-
-		AC_CACHE_CHECK([whether binary relocation should use threads],
-			       [br_cv_binreloc_threads],
-			       [if test "x$enable_binreloc_threads" = "xyes"; then
-					if test "x$ac_cv_lib_pthread_pthread_getspecific" = "xyes"; then
-						br_cv_binreloc_threads=yes
-					else
-						br_cv_binreloc_threads=no
-					fi
-			        else
-					br_cv_binreloc_threads=no
-				fi])
-
-		if test "x$br_cv_binreloc_threads" = "xyes"; then
-			BINRELOC_LIBS="-lpthread"
-			AC_DEFINE(BR_PTHREAD,1,[Include pthread support for binary relocation?])
-		else
-			BINRELOC_CFLAGS="$BINRELOC_CFLAGS -DBR_PTHREAD=0"
-			AC_DEFINE(BR_PTHREAD,0,[Include pthread support for binary relocation?])
-		fi
 	fi
 	AC_SUBST(BINRELOC_CFLAGS)
 	AC_SUBST(BINRELOC_LIBS)
