@@ -2170,6 +2170,7 @@ static gboolean gaim_blist_read(const char *filename) {
 	gaim_debug(GAIM_DEBUG_INFO, "blist import", "Finished reading %s\n",
 			   filename);
 
+	xmlnode_free(gaim);
 	return TRUE;
 }
 
