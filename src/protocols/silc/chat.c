@@ -101,15 +101,15 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	}
 
 	s = g_string_new("");
-	g_string_append_printf(s, "Channel Name:\t\t%s\n", channel->channel_name);
+	g_string_append_printf(s, _("Channel Name:\t\t%s\n"), channel->channel_name);
 	if (channel->user_list && silc_hash_table_count(channel->user_list))
-		g_string_append_printf(s, "User Count:\t\t%d\n",
+		g_string_append_printf(s, _("User Count:\t\t%d\n"),
 				       (int)silc_hash_table_count(channel->user_list));
 
 	silc_hash_table_list(channel->user_list, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
-			g_string_append_printf(s, "Channel Founder:\t%s\n",
+			g_string_append_printf(s, _("Channel Founder:\t%s\n"),
 					       chu->client->nickname);
 			break;
 		}
@@ -117,17 +117,17 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	silc_hash_table_list_reset(&htl);
 
 	if (channel->channel_key)
-		g_string_append_printf(s, "Channel Cipher:\t\t%s\n",
+		g_string_append_printf(s, _("Channel Cipher:\t\t%s\n"),
 				       silc_cipher_get_name(channel->channel_key));
 	if (channel->hmac)
-		g_string_append_printf(s, "Channel HMAC:\t\t%s\n",
+		g_string_append_printf(s, _("Channel HMAC:\t\t%s\n"),
 				       silc_hmac_get_name(channel->hmac));
 
 	if (channel->topic)
-		g_string_append_printf(s, "\nChannel Topic:\n\%s\n", channel->topic);
+		g_string_append_printf(s, _("\nChannel Topic:\n\t%s\n"), channel->topic);
 
 	if (channel->mode) {
-		g_string_append_printf(s, "\nChannel Modes:\n");
+		g_string_append_printf(s, _("\nChannel Modes:\n"));
 		silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
 		g_string_append_printf(s, tmp);
 		g_string_append_printf(s, "\n");
@@ -141,8 +141,8 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 		fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 		babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
 
-		g_string_append_printf(s, "\nFounder Key Fingerprint:\n%s\n\n", fingerprint);
-		g_string_append_printf(s, "Founder Key Babbleprint:\n%s", babbleprint);
+		g_string_append_printf(s, _("\nFounder Key Fingerprint:\n%s\n\n"), fingerprint);
+		g_string_append_printf(s, _("Founder Key Babbleprint:\n%s"), babbleprint);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
@@ -404,8 +404,8 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 		gaim_request_field_group_add_field(g, f);
 		gaim_request_fields(NULL, _("Channel Authentication"),
 				    _("Channel Authentication"), t, fields,
-				    "Add / Remove", G_CALLBACK(silcgaim_chat_chpk_cb),
-				    "OK", G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+				    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
+				    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
 		return;
 	}
 	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
@@ -442,8 +442,8 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 	gaim_request_field_list_set_multi_select(f, FALSE);
 	gaim_request_fields(NULL, _("Channel Authentication"),
 			    _("Channel Authentication"), t, fields,
-			    "Add / Remove", G_CALLBACK(silcgaim_chat_chpk_cb),
-			    "OK", G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+			    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
+			    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
 
 	silc_argument_payload_free(chpks);
 }
@@ -578,8 +578,8 @@ silcgaim_chat_prv(GaimBlistNode *node, gpointer data)
 		   _("Please enter the %s channel private group name and passphrase."),
 		   p->channel);
 	gaim_request_fields(NULL, _("Add Channel Private Group"), NULL, tmp, fields,
-			    "Add", G_CALLBACK(silcgaim_chat_prv_add),
-			    "Cancel", G_CALLBACK(silcgaim_chat_prv_cancel), p);
+			    _("Add"), G_CALLBACK(silcgaim_chat_prv_add),
+			    _("Cancel"), G_CALLBACK(silcgaim_chat_prv_cancel), p);
 }
 
 
