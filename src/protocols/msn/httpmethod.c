@@ -50,9 +50,10 @@ http_poll(gpointer data)
 {
 	MsnServConn *servconn = data;
 
+#if 0	
 	gaim_debug_info("msn", "Polling server %s.\n",
 					servconn->http_data->gateway_ip);
-
+#endif
 	msn_http_servconn_poll(servconn);
 
 	servconn->http_data->timer = 0;
@@ -82,10 +83,11 @@ size_t
 msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 						const char *server_type)
 {
-	size_t s;
+	size_t s, needed;
 	char *params;
 	char *temp;
 	gboolean first;
+	int res; /* result of the write operation */
 
 	g_return_val_if_fail(servconn != NULL, 0);
 	g_return_val_if_fail(buf      != NULL, 0);
@@ -143,7 +145,9 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 		"Content-Length: %d\r\n"
 		"\r\n"
 		"%s",
-		servconn->http_data->gateway_ip,
+		((strcmp(server_type, "SB") == 0) && first
+		 ? "gateway.messenger.hotmail.com"
+		 : servconn->http_data->gateway_ip),
 		params,
 		servconn->http_data->gateway_ip,
 		(int)size,
@@ -151,12 +155,26 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 
 	g_free(params);
 
-#if 0
-	gaim_debug_misc("msn", "Writing to HTTP: {%s}\n", temp);
+#if 1
+	gaim_debug_misc("msn", "Writing HTTP to fd %d: {%s}\n",
+					servconn->fd, temp);
 #endif
 
-	s = write(servconn->fd, temp, strlen(temp));
-
+	s = 0;
+	needed = strlen(temp);
+	
+	do {
+		res = write(servconn->fd, temp, needed);
+		if (res >= 0)
+			s += res;
+		else if (errno != EAGAIN) {
+			char *msg = g_strdup_printf("Unable to write to MSN server via HTTP (error %d)", errno);
+			gaim_connection_error(servconn->session->account->gc, msg);
+			g_free(msg);
+			return -1;
+		}
+	} while (s < needed);
+		 
 	g_free(temp);
 
 	servconn->http_data->waiting_response = TRUE;
@@ -234,6 +252,9 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	g_return_val_if_fail(ret_size != NULL, FALSE);
 	g_return_val_if_fail(error    != NULL, FALSE);
 
+#if 0	
+	gaim_debug_info("msn", "parsing data {%s} from fd %d\n", buf, servconn->fd);
+#endif	
 	servconn->http_data->waiting_response = FALSE;
 
 	gc = gaim_account_get_connection(servconn->session->account);
@@ -244,12 +265,12 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	*error    = FALSE;
 
 	/* First, some tests to see if we have a full block of stuff. */
-
-	if (strncmp(buf, "HTTP/1.1 200 OK\r\n", 17) != 0 &&
-		strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) != 0)
+	if (((strncmp(buf, "HTTP/1.1 200 OK\r\n", 17) != 0) &&
+	     (strncmp(buf, "HTTP/1.1 100 Continue\r\n", 23) != 0)) &&
+	    ((strncmp(buf, "HTTP/1.0 200 OK\r\n", 17) != 0) &&
+	     (strncmp(buf, "HTTP/1.0 100 Continue\r\n", 23) != 0)))
 	{
 		*error = TRUE;
-
 		return FALSE;
 	}
 

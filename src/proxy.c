@@ -196,11 +196,11 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 	if (condition & GAIM_WRITE_COND)
 		gaim_cond |= GAIM_INPUT_WRITE;
 
-	/*
+#if 0
 	gaim_debug(GAIM_DEBUG_MISC, "proxy",
 			   "CLOSURE: callback for %d, fd is %d\n",
 			   closure->result, g_io_channel_unix_get_fd(source));
-	*/
+#endif
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
 
@@ -225,11 +225,11 @@ gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_io_invoke, closure, gaim_io_destroy);
 
-	/*
+#if 0
 	gaim_debug(GAIM_DEBUG_MISC, "proxy",
 			   "CLOSURE: adding input watcher %d for fd %d\n",
 			   closure->result, source);
-	*/
+#endif
 
 	g_io_channel_unref(channel);
 	return closure->result;
@@ -937,6 +937,19 @@ http_uri_get_host(const char *uri)
 }
 #endif
 
+
+static void
+http_complete(struct PHB *phb, gint source)
+{
+	gaim_debug(GAIM_DEBUG_INFO, "http proxy", "proxy connection established\n");
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, source, GAIM_INPUT_READ);
+	g_free(phb->host);
+	g_free(phb);
+}
+
+
+/* read the response to the CONNECT request, if we are requesting a non-port-80 tunnel */
 static void
 http_canread(gpointer data, gint source, GaimInputCondition cond)
 {
@@ -981,15 +994,22 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else if(status!=200) {
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
-				   "Proxy server replied: (%s)\n", p);
-		close(source);
-		source=-1;
+				   "Proxy server replied with:\n%s\n", p);
+ 		close(source);
+		source = -1;
+		
+		if ( status == 403 /* Forbidden */ )
+			gaim_connection_error(phb->account->gc, _("Access denied: proxy server forbids port 80 tunnelling."));
+		else {
+			char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
+			gaim_connection_error(phb->account->gc, msg);
+			g_free(msg);
+		}
+		
+	} else {
+		http_complete(phb, source);
 	}
-
-	if(!phb->account || phb->account->gc)
-		phb->func(phb->data, source, GAIM_INPUT_READ);
-	g_free(phb->host);
-	g_free(phb);
+	
 	return;
 }
 
@@ -1022,22 +1042,24 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		g_free(phb);
 		return;
 	}
+
+	gaim_debug(GAIM_DEBUG_INFO, "proxy", "using CONNECT tunnelling for %s:%d\n", phb->host, phb->port);
 	request_len = g_snprintf(request, sizeof(request),
-							 "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n",
-							 phb->host, phb->port, phb->host, phb->port);
+				 "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n",
+				 phb->host, phb->port, phb->host, phb->port);
 
 	if (gaim_proxy_info_get_username(phb->gpi) != NULL) {
 		char *t1, *t2;
 		t1 = g_strdup_printf("%s:%s",
-							 gaim_proxy_info_get_username(phb->gpi),
-							 gaim_proxy_info_get_password(phb->gpi) ? 
-							 gaim_proxy_info_get_password(phb->gpi) : "");
+				     gaim_proxy_info_get_username(phb->gpi),
+				     gaim_proxy_info_get_password(phb->gpi) ? 
+				     gaim_proxy_info_get_password(phb->gpi) : "");
 		t2 = gaim_base64_encode(t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
 		request_len += g_snprintf(request + request_len,
-								  sizeof(request) - request_len,
-								  "Proxy-Authorization: Basic %s\r\n", t2);
+					  sizeof(request) - request_len,
+					  "Proxy-Authorization: Basic %s\r\n", t2);
 		g_free(t2);
 	}
 
@@ -1059,6 +1081,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
+	/* register the response handler for the CONNECT request */
 	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, http_canread, phb);
 }
 
@@ -1083,8 +1106,14 @@ proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			gaim_debug(GAIM_DEBUG_WARNING, "http proxy",
 					   "Connect would have blocked.\n");
-			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE,
-									   http_canwrite, phb);
+			
+			if (phb->port != 80) {
+				/* we need to do CONNECT first */
+				phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE,
+							   http_canwrite, phb);
+			} else {
+				http_complete(phb, fd);
+			}
 		} else {
 			close(fd);
 			return -1;

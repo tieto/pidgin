@@ -463,6 +463,8 @@ msn_login(GaimAccount *account)
 	{
 		http_method = TRUE;
 
+		gaim_debug(GAIM_DEBUG_INFO, "msn", "using http method\n");
+		
 		server = "gateway.messenger.hotmail.com";
 		port   = 80;
 	}
@@ -1661,12 +1663,10 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-#if 0
 	option = gaim_account_option_bool_new(_("Use HTTP Method"), "http_method",
 										  FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-#endif
 
 	my_protocol = plugin;
 

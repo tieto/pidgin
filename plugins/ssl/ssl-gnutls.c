@@ -88,7 +88,14 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	gnutls_transport_set_ptr(gnutls_data->session, GINT_TO_POINTER(source));
 
 	gaim_debug_info("gnutls", "Handshaking\n");
-	ret = gnutls_handshake(gnutls_data->session);
+
+	do
+	{
+		ret = gnutls_handshake(gnutls_data->session);
+	}
+	while ((ret == GNUTLS_E_AGAIN) || (ret == GNUTLS_E_INTERRUPTED));
+
+	gaim_debug_info("gnutls", "Handshake complete\n");
 
 	if (ret < 0)
 	{
@@ -127,10 +134,17 @@ ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
 	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
 	int s;
 
-	s = gnutls_record_recv(gnutls_data->session, data, len);
+	do
+	{
+		s = gnutls_record_recv(gnutls_data->session, data, len);
+	}
+	while ((s == GNUTLS_E_AGAIN) || (s == GNUTLS_E_INTERRUPTED));
 
 	if (s < 0)
+	{
+		gaim_debug_error("gnutls", "receive failed: %d\n", s);
 		s = 0;
+	}
 
 	return s;
 }
