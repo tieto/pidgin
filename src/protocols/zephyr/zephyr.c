@@ -320,10 +320,10 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
-			if ((b = find_buddy(zgc->account, user)) == NULL) {
+			if ((b = gaim_find_buddy(zgc->account, user)) == NULL) {
 				char *e = strchr(user, '@');
 				if (e) *e = '\0';
-				b = find_buddy(zgc->account, user);
+				b = gaim_find_buddy(zgc->account, user);
 			}
 			if (!b) {
 				free(user);
@@ -366,7 +366,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			buf2 = zephyr_to_html(buf);
 			g_free(buf);
 			if (!g_strcasecmp(notice.z_class, "MESSAGE") &&
-					!g_strcasecmp(notice.z_class_inst, "PERSONAL")) {
+                            !g_strcasecmp(notice.z_class_inst, "PERSONAL")) {
 				if (!g_strcasecmp(notice.z_message, "Automated reply:"))
 					away = TRUE;
 				else
@@ -375,7 +375,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			} else {
 				zephyr_triple *zt1, *zt2;
 				zt1 = new_triple(notice.z_class, notice.z_class_inst,
-								notice.z_recipient);
+                                                 notice.z_recipient);
 				zt2 = find_sub_by_triple(zt1);
 				if (!zt2) {
 					/* we shouldn't be subscribed to this message. ignore. */
@@ -402,7 +402,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 						send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);
 					}
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
-								buf2, time(NULL));
+                                                         buf2, time(NULL));
 					g_free(sendertmp);
 					g_free(send_inst);
 				}
@@ -569,13 +569,17 @@ static void process_anyone()
 {
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
-
+        struct group *g = gaim_group_new("Anyone");
+        struct buddy *b;
+        
 	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
 	if ((fd = fopen(filename, "r")) != NULL) {
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
-			if (buff[0])
-				add_buddy(zgc->account, "Anyone", buff, buff);
+			if (buff[0]) {
+                                b = gaim_buddy_new(zgc->account, buff, NULL);
+				gaim_blist_add_buddy(b, g, NULL);
+                        }
 		}
 		fclose(fd);
 	}

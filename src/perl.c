@@ -775,19 +775,17 @@ XS (XS_GAIM_user_info)
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
 	if (g_slist_find(connections, gc))
-		buddy = find_buddy(gc->account, SvPV(ST(1), junk));
+		buddy = gaim_find_buddy(gc->account, SvPV(ST(1), junk));
 
 	if (!buddy)
 		XSRETURN(0);
 	XST_mPV(0, buddy->name);
-	XST_mPV(1, get_buddy_alias(buddy));
+	XST_mPV(1, gaim_get_buddy_alias(buddy));
 	XST_mPV(2, buddy->present ? "Online" : "Offline");
 	XST_mIV(3, buddy->evil);
 	XST_mIV(4, buddy->signon);
 	XST_mIV(5, buddy->idle);
-	XST_mIV(6, buddy->uc);
-	XST_mIV(7, buddy->caps);
-	XSRETURN(8);
+	XSRETURN(6);
 }
 
 XS (XS_GAIM_write_to_conv)

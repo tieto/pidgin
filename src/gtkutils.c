@@ -390,3 +390,11 @@ gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	gtk_widget_set_sensitive(to_toggle, !sensitivity);
 }
 
+void gaim_separator(GtkWidget *menu)
+{
+	GtkWidget *menuitem;
+
+	menuitem = gtk_separator_menu_item_new();
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+}

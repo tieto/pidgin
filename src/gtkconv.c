@@ -447,7 +447,7 @@ add_cb(GtkWidget *widget, struct gaim_conversation *conv)
 
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
-	b    = find_buddy(gc->account, name);
+	b    = gaim_find_buddy(gc->account, name);
 
 	if (b != NULL)
 		show_confirm_del(gc, (char *)name);
@@ -656,7 +656,7 @@ menu_add_cb(GtkWidget *w, struct gaim_conversation *conv)
 
 	gc   = gaim_conversation_get_gc(conv);
 	name = g_object_get_data(G_OBJECT(w), "user_data");
-	b    = find_buddy(gc->account, name);
+	b    = gaim_find_buddy(gc->account, name);
 
 	if (b != NULL)
 		show_confirm_del(gc, name);
@@ -764,7 +764,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 		/* Added by Jonas <jonas@birme.se> */
 		if (gc) {
-			if (find_buddy(gc->account, who))
+			if (gaim_find_buddy(gc->account, who))
 				button = gtk_menu_item_new_with_label(_("Remove"));
 			else
 				button = gtk_menu_item_new_with_label(_("Add"));
@@ -2530,7 +2530,7 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	/* Now, um, just kind of all over the place. Huh? */
 
 	/* Add button */
-	if (find_buddy(gaim_conversation_get_account(conv),
+	if (gaim_find_buddy(gaim_conversation_get_gc(conv),
 				   gaim_conversation_get_name(conv)) == NULL) {
 		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
 										  GTK_STOCK_ADD, type);
@@ -3566,7 +3566,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	parent  = gtk_widget_get_parent(gtkconv->u.im->add);
 
-	if (find_buddy(gc->account, gaim_conversation_get_name(conv))) {
+	if (gaim_find_buddy(gc->account, gaim_conversation_get_name(conv))) {
 		gtkconv->u.im->add =
 			gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
 								 GTK_STOCK_REMOVE, type);

@@ -50,8 +50,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/irc/irc_icon.xpm"
-
 #define IRC_BUF_LEN 4096
 #define PDIWORDS 32
 
@@ -2426,10 +2424,10 @@ irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 	irc_write(idata->fd, buf, strlen(buf));
 }
 
-static char **
-irc_list_icon(int uc)
+static const char *
+irc_list_icon(struct gaim_account *a, struct buddy *b)
 {
-	return irc_icon_xpm;
+	return "irc";
 }
 
 static int 

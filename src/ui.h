@@ -32,6 +32,7 @@
 #include "core.h"
 #include "multi.h"
 #include "gtkconv.h"
+#include "pounce.h"
 #include "gtkft.h"
 #include "gtkutils.h"
 #include "stock.h"
@@ -211,23 +212,6 @@ struct away_message {
 	char message[2048];
 };
 
-/****************************
- * I thought I'd place these here by the same reasoning used above (for away_message)
- * This helps aleviate warnings from dialogs.c where the show_new_bp function references
- * buddy_pounce in the parameter list when ui.h doesn't know about buddy_pounce
- * **************************
- */
-struct buddy_pounce {
-        char name[80];
-        char message[2048];
-        char command[2048];
-        char sound[2048];
-        
-        char pouncer[80];
-        int protocol;
-
-        int options;
-};
 
 
 /* this is used for queuing messages received while away. This is really a UI function
@@ -261,6 +245,7 @@ struct smiley_theme {
 extern GList *log_conversations; /* this should be moved to conversations.c */
 extern GSList *away_messages; /* this should be moved to away.c */
 extern GtkWidget *mainwindow;
+extern int docklet_count;
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;
@@ -269,12 +254,6 @@ extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *awayqueue;
 extern GtkListStore *awayqueuestore;
-
-/* Globals in buddy.c */
-extern GtkWidget *buddies;
-extern GtkWidget *bpmenu;
-extern GtkWidget *blist;
-extern int docklet_count;
 
 /* Globals in buddy_chat.c */
 #if 0

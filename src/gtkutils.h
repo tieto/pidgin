@@ -108,4 +108,11 @@ GtkWidget *gaim_gtk_change_text(const char *text, GtkWidget *button,
  */
 void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
+/**
+ * Adds a seperator to a menu.
+ *
+ * @param menu   The menu to add a seperator to.
+ */
+void gaim_separator(GtkWidget *menu);
+
 #endif /* _GAIM_GTK_UTILS_H_ */

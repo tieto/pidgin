@@ -46,6 +46,8 @@ gaim_SOURCES =	about.c \
 		multi.c \
 		multi.h \
 		perl.c \
+		pounce.c \
+		pounce.h \
 		prefs.c \
 		proxy.c \
 		proxy.h \

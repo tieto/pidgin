@@ -2202,13 +2202,13 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 
 	if (g_slist_find(connections, gc)) {
 		struct oscar_data *od = gc->proto_data;
-		struct buddy *buddy = find_buddy(gc->account, data->name);
-		struct group *group = find_group_by_buddy(buddy);
+		struct buddy *buddy = gaim_find_buddy(gc->account, data->name);
+		struct group *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
 			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 			if (!aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 1);
+				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 1);
 		}
 	}
 }
@@ -2233,9 +2233,9 @@ static void gaim_auth_sendrequest(struct gaim_connection *gc, char *name) {
 	struct buddy *buddy;
 	gchar *dialog_msg, *nombre;
 
-	buddy = find_buddy(gc->account, name);
-	if (buddy && (get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", name, get_buddy_alias_only(buddy));
+	buddy = gaim_find_buddy(gc->account, name);
+	if (buddy && (gaim_get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", name, gaim_get_buddy_alias_only(buddy));
 	else
 		nombre = g_strdup(name);
 
@@ -2259,9 +2259,9 @@ static void gaim_auth_grant(struct name_data *data) {
 		struct buddy *buddy;
 		gchar message;
 		message = 0;
-		buddy = find_buddy(gc->account, data->name);
+		buddy = gaim_find_buddy(gc->account, data->name);
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-		show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
+		show_got_added(gc, NULL, data->name, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
 #else
 		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
 #endif
@@ -3948,13 +3948,10 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 static void oscar_get_away(struct gaim_connection *g, char *who) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	if (od->icq) {
-		struct buddy *budlight = find_buddy(g->account, who);
+		struct buddy *budlight = gaim_find_buddy(g->account, who);
 		if (budlight)
 			if ((budlight->uc & 0xffff0000) >> 16)
-				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
-				else
-					debug_printf("Error: Remote client does not support retrieval of status messages.\n");
+				aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 			else
 				debug_printf("Error: The user %s has no status message, therefore not requesting.\n", who);
 		else
@@ -4155,11 +4152,11 @@ static void oscar_add_buddy(struct gaim_connection *gc, const char *name) {
 	aim_add_buddy(od->sess, od->conn, name);
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
-		struct buddy *buddy = find_buddy(gc->account, name);
-		struct group *group = find_group_by_buddy(buddy);
+		struct buddy *buddy = gaim_find_buddy(gc->account, name);
+		struct group *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", name, group->name);
-			aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
+			aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 		}
 	}
 #endif
@@ -4182,11 +4179,11 @@ static void oscar_add_buddies(struct gaim_connection *gc, GList *buddies) {
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			struct buddy *buddy = find_buddy(gc->account, (const char *)buddies->data);
-			struct group *group = find_group_by_buddy(buddy);
+			struct buddy *buddy = gaim_find_buddy(gc->account, (const char *)buddies->data);
+			struct group *group = gaim_find_buddys_group(buddy);
 			if (buddy && group) {
 				debug_printf("ssi: adding buddy %s to group %s\n", (const char *)buddies->data, group->name);
-				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
+				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 			}
 			buddies = buddies->next;
 		}
@@ -4342,7 +4339,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					char *gname_utf8 = gaim_try_conv_to_utf8(gname);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
 					char *alias_utf8 = gaim_try_conv_to_utf8(alias);
-					struct buddy *buddy = find_buddy(gc->account, curitem->name);
+					struct buddy *buddy = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					free(alias);
 					if (buddy) {
@@ -4350,8 +4347,14 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						if (alias_utf8)
 							strcpy(buddy->alias, alias_utf8);
 					} else {
+						struct group *g;
+						buddy = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
+						
+						if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans"))))
+							g = gaim_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						
 						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
-						add_buddy(gc->account, (gname_utf8 ? gname_utf8 : "orphans"), curitem->name, alias_utf8);
+						gaim_blist_add_buddy(buddy, g, NULL);
 						tmp++;
 					}
 					free(gname_utf8);
@@ -4433,7 +4436,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						free(alias);
 					} else {
 						debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
-						aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
+						aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
 					}
 				}
 			}
@@ -4541,9 +4544,9 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: %s has given you permission to add him to your buddy list\n", sn);
 
-	buddy = find_buddy(gc->account, sn);
-	if (buddy && (get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	buddy = gaim_find_buddy(gc->account, sn);
+	if (buddy && (gaim_get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -4575,9 +4578,9 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: received authorization request from %s\n", sn);
 
-	buddy = find_buddy(gc->account, sn);
-	if (buddy && (get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	buddy = gaim_find_buddy(gc->account, sn);
+	if (buddy && (gaim_get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -4610,9 +4613,9 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
 
-	buddy = find_buddy(gc->account, sn);
-	if (buddy && (get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	buddy = gaim_find_buddy(gc->account, sn);
+	if (buddy && (gaim_get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -4641,9 +4644,9 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	buddy = find_buddy(gc->account, sn);
+	buddy = gaim_find_buddy(gc->account, sn);
 	debug_printf("ssi: %s added you to their buddy list\n", sn);
-	show_got_added(gc, NULL, sn, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
+	show_got_added(gc, NULL, sn, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
 
 	return 1;
 }
@@ -4799,8 +4802,41 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	return 0;
 }
 
-static char **oscar_list_icon(int uc) {
-	if (uc == 0)
+static const char *oscar_list_icon(struct gaim_account *a, struct buddy *b) {
+	if (!b) {
+		if (isdigit(a->username[0]))
+			return "icq";
+		else
+			return "aim";
+	}
+				
+	if (isdigit(b->name[0]))
+		return "icq";
+	return "aim";
+}
+
+static const char **oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	char *emblems[4] = {NULL,NULL,NULL,NULL};
+	int i = 0;
+
+	if (b->uc & UC_UNAVAILABLE) 
+		emblems[i++] = "away";
+	if (b->uc & UC_WIRELESS)
+		emblems[i++] = "wireless";
+	if (b->uc & UC_AOL)
+		emblems[i++] = "aol";
+	if (b->uc & UC_ADMIN)
+		emblems[i++] = "admin";
+	if (b->uc & UC_AB && i < 4)
+		emblems[i++] = "activebuddy";
+	*se = emblems[0];
+	*sw = emblems[1];
+	*nw = emblems[2];
+	*ne = emblems[3];
+}
+
+/*	if (uc == 0)
 		return (char **)icon_online_xpm;
 	if (uc & 0xffff0000) {
 		uc >>= 16;
@@ -4833,7 +4869,8 @@ static char **oscar_list_icon(int uc) {
 	if (uc & UC_NORMAL)
 		return (char **)free_icon_xpm;
 	return NULL;
-}
+*/
+
 
 /*
  * We have just established a socket with the other dude, so set up some handlers.
@@ -5016,12 +5053,9 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 	struct oscar_data *od = gc->proto_data;
 	od->evilhack = g_slist_append(od->evilhack, g_strdup(normalize(who)));
 	if (od->icq) {
-		struct buddy *budlight = find_buddy(gc->account, who);
+		struct buddy *budlight = gaim_find_buddy(gc->account, who);
 		if (budlight)
-			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
-				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
-				else {
+			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
 					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
 					g_show_info_text(gc, who, 2, dialog_msg, NULL);
@@ -5049,7 +5083,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	int at;
 
 	switch(gc->account->permdeny) {
-	case 1:
+	case 1: 
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, gc->username);
 		break;
 	case 2:
@@ -5185,7 +5219,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 		m = g_list_append(m, pbm);
 #endif
 	} else {
-		struct buddy *b = find_buddy(gc->account, who);
+		struct buddy *b = gaim_find_buddy(gc->account, who);
 
 		if (!b || (b->uc & UC_UNAVAILABLE)) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
@@ -5329,8 +5363,8 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 		for (curb=group->members; curb; curb=g_slist_next(curb)) {
 			struct buddy *buddy = curb->data;
 			if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
-				if (get_buddy_alias_only(buddy))
-					nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
+				if (gaim_get_buddy_alias_only(buddy))
+					nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
 				else
 					nombre = g_strdup_printf(" %s", buddy->name);
 				tmp = g_strdup_printf("%s<BR>%s", text, nombre);
@@ -5545,6 +5579,7 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->options = OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
 	ret->name = g_strdup("AIM/ICQ");
 	ret->list_icon = oscar_list_icon;
+	ret->list_emblems = oscar_list_emblems;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
 	ret->buddy_menu = oscar_buddy_menu;

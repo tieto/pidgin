@@ -48,6 +48,7 @@
 #include "gaim.h"
 #include "gtkimhtml.h"
 #include "prpl.h"
+#include "gtklist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -114,28 +115,6 @@ struct addperm {
 	GtkWidget *entry;
 	struct gaim_connection *gc;
 	gboolean permit;
-};
-
-struct addbp {
-	GtkWidget *window;
-	GtkWidget *nameentry;
-	GtkWidget *messentry;
-	GtkWidget *commentry;
-	GtkWidget *command;
-	GtkWidget *sendim;
-	GtkWidget *openwindow;
-	GtkWidget *popupnotify;
-	GtkWidget *p_signon;
-	GtkWidget *p_unaway;
-	GtkWidget *p_unidle;
-	GtkWidget *p_typing;
-	GtkWidget *save;
-	GtkWidget *menu;
-	GtkWidget *sound;
-	GtkWidget *soundentry;
-
-	struct gaim_account *account;
-	struct buddy_pounce *buddy_pounce;
 };
 
 struct findbyemail {
@@ -440,18 +419,18 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 
 void do_remove_buddy(struct buddy *b)
 {
-	struct group *g = find_group_by_buddy(b);
+	struct group *g = gaim_find_buddys_group(b);
 	struct gaim_conversation *c;
 	gchar *name = g_strdup(b->name); /* b->name is null after remove_buddy */
 
 	if (!b)
 		return;
 
-	g = find_group_by_buddy(b);
+	g = gaim_find_buddys_group(b);
 
 	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
 	serv_remove_buddy(b->account->gc, name, g->name);
-	remove_buddy(b);
+	gaim_blist_remove_buddy(b);
 	gaim_blist_save();
 
 	c = gaim_find_conversation(name);
@@ -464,7 +443,7 @@ void do_remove_buddy(struct buddy *b)
 
 void show_confirm_del(struct gaim_connection *gc, gchar *name)
 {
-	struct buddy *bd = find_buddy(gc->account, name);
+	struct buddy *bd = gaim_find_buddy(gc->account, name);
 	char *text;
 	if (!bd)
 		return;
@@ -639,7 +618,7 @@ void show_ee_dialog(int ee)
 		gtk_label_set_markup(GTK_LABEL(label), 
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
 	
-	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(blist), GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 	
@@ -689,7 +668,7 @@ void show_im_dialog()
 	if (!imdialog) {
 		info = g_new0(struct getuserinfo, 1);
 		info->gc = connections->data;
-		imdialog = gtk_dialog_new_with_buttons(_("Gaim - New Message"), blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL,
+		imdialog = gtk_dialog_new_with_buttons(_("New Message"), gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
 						       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(imdialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(imdialog), 6);
@@ -790,7 +769,7 @@ void show_info_dialog()
 	g_free(filename);
 	info->gc = connections->data;
 
-	window = gtk_dialog_new_with_buttons(_("Gaim - Get User Info"), blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL, 
+	window = gtk_dialog_new_with_buttons(_("Gaim - Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL, 
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -885,6 +864,8 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp, *who, *whoalias;
 	struct gaim_conversation *c;
+	struct buddy *b;
+	struct group *g;
 
 	if (resp == GTK_RESPONSE_OK) {
 
@@ -893,8 +874,10 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 		whoalias = gtk_entry_get_text(GTK_ENTRY(a->entry_for_alias));
 
 		c = gaim_find_conversation(who);
-
-		add_buddy(a->gc->account, grp, who, whoalias);
+		if (!(g = gaim_find_group(grp)))
+			g = gaim_group_new(grp);
+		b = gaim_buddy_new(a->gc->account, who, whoalias);
+		gaim_blist_add_buddy(b, g, NULL);
 		serv_add_buddy(a->gc, who);
 
 		if (c != NULL)
@@ -909,6 +892,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp;
+	struct group *g;
 
 	if (resp == GTK_RESPONSE_OK) {
 		grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
@@ -916,7 +900,8 @@ void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 		if (!a->gc)
 			a->gc = connections->data;
 
-		add_group(grp);
+		g = gaim_group_new(grp);
+		gaim_blist_add_group (g, NULL);
 		gaim_blist_save();
 	}
 
@@ -963,7 +948,7 @@ void show_add_group(struct gaim_connection *gc)
 	g_free(filename);
 	a->gc = gc;
 
-	a->window =  gtk_dialog_new_with_buttons(_("Gaim - Add Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
+	a->window =  gtk_dialog_new_with_buttons(_("Gaim - Add Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
@@ -1076,7 +1061,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	g_free(filename);
 
 	GAIM_DIALOG(a->window);
-	a->window = gtk_dialog_new_with_buttons(_("Gaim - Add Buddy"), blist ? GTK_WINDOW(blist) : NULL, GTK_DIALOG_MODAL,
+	a->window = gtk_dialog_new_with_buttons(_("Gaim - Add Buddy"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_MODAL,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
@@ -1617,383 +1602,6 @@ void show_privacy_options() {
 	gtk_widget_show(pwin);
 	
 }
-
-/*------------------------------------------------------------------------*/
-/*  The dialog for new buddy pounces                                      */
-/*------------------------------------------------------------------------*/
-
-
-void do_new_bp(GtkWidget *w, struct addbp *b)
-{
-	struct buddy_pounce *bp;
-	
-	if (strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
-		do_error_dialog(_("Please enter a buddy to pounce."), NULL, GAIM_ERROR);
-		return;
-	}
-
-        if(!b->buddy_pounce)
-		bp = g_new0(struct buddy_pounce, 1);
-	else
-		bp = b->buddy_pounce;
-
-	
-	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
-	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
-	g_snprintf(bp->command, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->commentry)));
-	g_snprintf(bp->sound, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->soundentry)));
-	g_snprintf(bp->pouncer, 80, "%s", b->account->username);
-
-	bp->protocol = b->account->protocol;
-
-	bp->options = 0;
-
-	if (GTK_TOGGLE_BUTTON(b->popupnotify)->active)
-		bp->options |= OPT_POUNCE_NOTIFY;
-
-	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
-		bp->options |= OPT_POUNCE_POPUP;
-
-	if (GTK_TOGGLE_BUTTON(b->sendim)->active)
-		bp->options |= OPT_POUNCE_SEND_IM;
-
-	if (GTK_TOGGLE_BUTTON(b->command)->active)
-		bp->options |= OPT_POUNCE_COMMAND;
-
-	if (GTK_TOGGLE_BUTTON(b->sound)->active)
-		bp->options |= OPT_POUNCE_SOUND;
-
-	if (GTK_TOGGLE_BUTTON(b->p_signon)->active)
-		bp->options |= OPT_POUNCE_SIGNON;
-
-	if (GTK_TOGGLE_BUTTON(b->p_unaway)->active)
-		bp->options |= OPT_POUNCE_UNAWAY;
-
-	if (GTK_TOGGLE_BUTTON(b->p_unidle)->active)
-		bp->options |= OPT_POUNCE_UNIDLE;
-	
-	if (GTK_TOGGLE_BUTTON(b->p_typing)->active)
-		bp->options |= OPT_POUNCE_TYPING;
-
-	if (GTK_TOGGLE_BUTTON(b->save)->active)
-		bp->options |= OPT_POUNCE_SAVE;
-
-	if(!b->buddy_pounce)
-		buddy_pounces = g_list_append(buddy_pounces, bp);
-
-	do_bp_menu();
-
-	destroy_dialog(NULL, b->window);
-
-	save_prefs();
-	g_free(b);
-}
-
-static void pounce_choose(GtkWidget *opt, struct addbp *b)
-{
-	struct gaim_account *account = g_object_get_data(G_OBJECT(opt), "gaim_account");
-	b->account = account;
-}
-
-static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
-{
-	GtkWidget *optmenu;
-	GtkWidget *menu;
-	GtkWidget *opt;
-	GSList *u = gaim_accounts;
-	struct gaim_account *account;
-	struct prpl *p;
-	int count = 0;
-	int place = 0;
-	char buf[2048];
-
-
-	optmenu = gtk_option_menu_new();
-
-	menu = gtk_menu_new();
-
-	while (u) {
-		account = (struct gaim_account *)u->data;
-		p = (struct prpl *)find_prpl(account->protocol);
-		g_snprintf(buf, sizeof buf, "%s (%s)", account->username, (p && p->name)?p->name:_("Unknown"));
-		opt = gtk_menu_item_new_with_label(buf);
-		g_object_set_data(G_OBJECT(opt), "gaim_account", account);
-		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-		gtk_widget_show(opt);
-
-		if (b->account == account) {
-			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
-			place = count;
-		}
-
-		count++;
-
-		u = u->next;
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), place);
-
-	b->menu = optmenu;
-
-	return optmenu;
-}
-
-
-void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, struct buddy_pounce *edit_bp)
-{
-	GtkWidget *label;
-	GtkWidget *bbox;
-	GtkWidget *vbox;
-	GtkWidget *button;
-	GtkWidget *frame;
-	GtkWidget *table;
-	GtkWidget *optmenu;
-	GtkWidget *sep;
-	GtkSizeGroup *sg;
-
-	struct addbp *b = g_new0(struct addbp, 1);
-	
-	if(edit_bp) {
-		b->buddy_pounce = edit_bp;
-		b->account = gaim_account_find(edit_bp->pouncer, edit_bp->protocol);
-	} else {
-		b->account = gc ? gc->account : gaim_accounts->data;
-		b->buddy_pounce = NULL;
-	}
-
-	GAIM_DIALOG(b->window);
-	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
-	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
-	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
-	gtk_widget_realize(b->window);
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(b->window), vbox);
-	gtk_widget_show(vbox);
-
-	/* <pounce type="who"> */
-	frame = gtk_frame_new(_("Pounce Who"));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-	gtk_widget_show(GTK_WIDGET(frame));
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
-	gtk_widget_show(table);
-
-	label = gtk_label_new(_("Account"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, .5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(label);
-
-	optmenu = pounce_user_menu(b, gc);
-	gtk_table_attach(GTK_TABLE(table), optmenu, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_widget_show(optmenu);
-
-	label = gtk_label_new(_("Buddy"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, .5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(label);
-
-	b->nameentry = gtk_entry_new();
-	gtk_table_attach(GTK_TABLE(table), b->nameentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	if (name !=NULL)
-		gtk_entry_set_text(GTK_ENTRY(b->nameentry), name);
-	else if(edit_bp)
-		gtk_entry_set_text(GTK_ENTRY(b->nameentry), edit_bp->name);
-	gtk_window_set_focus(GTK_WINDOW(b->window), b->nameentry);
-	gtk_widget_show(b->nameentry);
-	/* </pounce type="who"> */
-
-
-	/* <pounce type="when"> */
-	frame = gtk_frame_new(_("Pounce When"));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-	gtk_widget_show(GTK_WIDGET(frame));
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_widget_show(table);
-
-	b->p_signon = gtk_check_button_new_with_label(_("Pounce on sign on"));
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_signon),
-		                           (edit_bp->options & OPT_POUNCE_SIGNON) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
-	gtk_table_attach(GTK_TABLE(table), b->p_signon, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->p_signon);
-
-	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
-	if (away)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unaway), TRUE);
-	else if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unaway),
-					   (edit_bp->options & OPT_POUNCE_UNAWAY) ? TRUE : FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->p_unaway, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_widget_show(b->p_unaway);
-
-	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
-	if (idle)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unidle), TRUE);
-	else if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unidle),
-				           (edit_bp->options & OPT_POUNCE_UNIDLE) ? TRUE : FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->p_unidle);
-
-	b->p_typing = gtk_check_button_new_with_label(_("Pounce when buddy is typing to you"));
-	if (edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_typing),
-					   (edit_bp->options & OPT_POUNCE_TYPING) ? TRUE : FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->p_typing,1,2,1,2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_widget_show(b->p_typing);
-
-	/* </pounce type="when"> */
-
-	/* <pounce type="action"> */
-	frame = gtk_frame_new(_("Pounce Action"));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-	gtk_widget_show(GTK_WIDGET(frame));
-
-	table = gtk_table_new(4, 2, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
-	gtk_widget_show(table);
-
-	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window"));
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->openwindow),
-			                   (edit_bp->options & OPT_POUNCE_POPUP) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->openwindow, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->openwindow);
-
-	b->popupnotify = gtk_check_button_new_with_label(_("Popup Notification"));
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->popupnotify),
-					   (edit_bp->options & OPT_POUNCE_NOTIFY) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->popupnotify, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->popupnotify);
-
-	b->sendim = gtk_check_button_new_with_label(_("Send Message"));
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sendim),
-					   (edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
-	gtk_table_attach(GTK_TABLE(table), b->sendim, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->sendim);
-
-	b->messentry = gtk_entry_new();
-	gtk_table_attach(GTK_TABLE(table), b->messentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(b->messentry), "activate", G_CALLBACK(do_new_bp), b);
-	if(edit_bp) {
-		gtk_widget_set_sensitive(GTK_WIDGET(b->messentry),
-					(edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
-		gtk_entry_set_text(GTK_ENTRY(b->messentry), edit_bp->message);
-	}
-	gtk_widget_show(b->messentry);
-
-	g_signal_connect(GTK_OBJECT(b->sendim), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), b->messentry);
-
-	b->command = gtk_check_button_new_with_label(_("Execute command on pounce"));
-	gtk_table_attach(GTK_TABLE(table), b->command, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->command),
-					   (edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->command), FALSE);
-	gtk_widget_show(b->command);
-
-	b->commentry = gtk_entry_new();
-	gtk_table_attach(GTK_TABLE(table), b->commentry, 1, 2, 2, 3, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(b->commentry), "activate", G_CALLBACK(do_new_bp), b);
-	if(edit_bp) {
-		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), 
-					(edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
-		gtk_entry_set_text(GTK_ENTRY(b->commentry), edit_bp->command);
-	}
-	else
-		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), FALSE);
-	gtk_widget_show(b->commentry);
-	g_signal_connect(GTK_OBJECT(b->command), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), b->commentry);
-
-	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sound),
-					   (edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sound), FALSE);
-	gtk_table_attach(GTK_TABLE(table), b->sound, 0, 1, 3, 4, GTK_FILL, 0, 0, 0);
-	gtk_widget_show(b->sound);
-
-	b->soundentry = gtk_entry_new();
-	gtk_table_attach(GTK_TABLE(table), b->soundentry, 1, 2, 3, 4, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	g_signal_connect(GTK_OBJECT(b->soundentry), "activate", G_CALLBACK(do_new_bp), b);
-	if(edit_bp) {
-		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), 
-					(edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
-		gtk_entry_set_text(GTK_ENTRY(b->soundentry), edit_bp->sound);
-	} else 
-		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), FALSE);
-	gtk_widget_show(b->soundentry);
-	g_signal_connect(GTK_OBJECT(b->sound), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), b->soundentry);
-	/* </pounce type="action"> */
-
-	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation"));
-	gtk_container_set_border_width(GTK_CONTAINER(b->save), 7);
-	if(edit_bp)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->save),
-					   (edit_bp->options & OPT_POUNCE_SAVE) ? TRUE : FALSE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->save), FALSE);
-	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
-	gtk_widget_show(b->save);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-	
-	bbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
-	gtk_widget_show(bbox);
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
-	button = gaim_pixbuf_button_from_stock(_("_Save"), "gtk-execute", GAIM_BUTTON_HORIZONTAL);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_new_bp), b);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	button = gaim_pixbuf_button_from_stock(_("C_ancel"), "gtk-cancel", GAIM_BUTTON_HORIZONTAL);
-	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), b->window);
-	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-
-	gtk_widget_show(b->window);
-}
-
 
 
 /*------------------------------------------------------------------------*/
@@ -3379,100 +2987,6 @@ void show_font_dialog(struct gaim_conversation *c, GtkWidget *font)
 }
 
 /*------------------------------------------------------------------------*/
-/*  The dialog for import/export                                          */
-/*------------------------------------------------------------------------*/
-
-static void do_import_dialog(GtkWidget *w, gpointer data)
-{
-	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
-	if (file_is_dir(file, importdialog)) {
-		return;
-	}
-	if (g_slist_find(connections, importgc)) {
-		do_import(importgc->account, file);
-		gaim_blist_save();
-	}
-	destroy_dialog(NULL, importdialog);
-}
-
-static void set_import_gc(gpointer data, struct gaim_connection *gc)
-{
-	importgc = gc;
-}
-
-static void create_import_dropdown(GtkFileSelection *fs)
-{
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GSList *g = connections;
-	struct gaim_connection *c;
-	GtkWidget *optmenu;
-	GtkWidget *menu;
-	char buf[256];
-	GtkWidget *opt;
-
-	if (!connections)
-		return;
-	importgc = connections->data;
-	if (!connections->next)
-		return;
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(fs->action_area), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	optmenu = gtk_option_menu_new();
-	gtk_box_pack_end(GTK_BOX(hbox), optmenu, FALSE, FALSE, 5);
-	gtk_widget_show(optmenu);
-
-	label = gtk_label_new(_("Import to:"));
-	gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	menu = gtk_menu_new();
-
-	while (g) {
-		c = (struct gaim_connection *)g->data;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
-		opt = gtk_menu_item_new_with_label(buf);
-		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_import_gc), c);
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-		g = g->next;
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
-}
-
-void show_import_dialog()
-{
-	char *buf = g_malloc(BUF_LEN);
-	if (!importdialog) {
-		importdialog = gtk_file_selection_new(_("Gaim - Import Buddy List"));
-
-		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(importdialog));
-
-		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
-
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(importdialog), buf);
-		g_signal_connect(GTK_OBJECT(importdialog), "destroy",
-				   G_CALLBACK(destroy_dialog), importdialog);
-
-		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-				   "clicked", G_CALLBACK(do_import_dialog), NULL);
-		g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
-				   "clicked", G_CALLBACK(destroy_dialog), importdialog);
-
-		create_import_dropdown(GTK_FILE_SELECTION(importdialog));
-	}
-
-	g_free(buf);
-	gtk_widget_show(importdialog);
-	gdk_window_raise(importdialog->window);
-}
-
-/*------------------------------------------------------------------------*/
 /*  The dialog for new away messages                                      */
 /*------------------------------------------------------------------------*/
 
@@ -3811,7 +3325,7 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 		g_snprintf(b->alias, sizeof(b->alias), "%s", al);
 	else
 		b->alias[0] = '\0';
-	handle_buddy_rename(b, b->name);
+	gaim_blist_alias_buddy (b, al);
 	serv_alias_buddy(b);
 	gaim_blist_save();
 	destroy_dialog(aliasdlg, aliasdlg);
@@ -4363,11 +3877,10 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 			char *prevname;
 	
-			if ((orig = find_group(new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
+			if ((orig = gaim_find_group(new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
 				orig->members = g_slist_concat(orig->members, g->members);
-				handle_group_rename(orig, g->name);
+				gaim_blist_rename_group(orig, g->name);
 				groups = g_slist_remove(groups, g);
-				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
 				accts = gaim_group_get_accounts(g);
 				while(accts) {
 					struct gaim_account *account = accts->data;
@@ -4384,8 +3897,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 					accts = g_slist_remove(accts, accts->data);
 				}
 				g_snprintf(g->name, sizeof(g->name), "%s", new_name);
-				handle_group_rename(g, prevname);
-				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
+				gaim_blist_rename_group(g, prevname);
 				g_free(prevname);
 			}
 			gaim_blist_save();
@@ -4406,7 +3918,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	g_free(filename);
 
 	if (!rename_dialog) {
-		rename_dialog =  gtk_dialog_new_with_buttons(_("Gaim - Rename Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL,
+		rename_dialog =  gtk_dialog_new_with_buttons(_("Rename Group"), GTK_WINDOW(gtkblist->window), GTK_DIALOG_MODAL, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(rename_dialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(rename_dialog), 6);
@@ -4483,13 +3995,13 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 	}
 
 	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, b->name)) {
-		struct group *g = find_group_by_buddy(b);
+		struct group *g = gaim_find_buddys_group(b);
 		char *prevname = g_strdup(b->name);
 		if (g)
 			serv_remove_buddy(b->account->gc, b->name, g->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
 		serv_add_buddy(b->account->gc, b->name);
-		handle_buddy_rename(b, prevname);
+		gaim_blist_rename_buddy(b, prevname);
 		gaim_blist_save();
 		g_free(prevname);
 	}

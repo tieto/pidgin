@@ -13,7 +13,8 @@ ticker_la_SOURCES = \
 
 endif
 
-CFLAGS += $(DEBUG_CFLAGS)
+CFLAGS += $(DEBUG_CFLAGS) -DDATADIR=\"$(datadir)\"
+
 
 INCLUDES = \
 	-I$(top_srcdir) \

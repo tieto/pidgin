@@ -32,6 +32,7 @@
 #include "prpl.h"
 #include "gtkimhtml.h"
 #include "pixmaps/join.xpm"
+#include "gtklist.h"
 
 GtkWidget *imaway = NULL;
 
@@ -206,9 +207,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	GtkCellRenderer *renderer;
 	char *buf2;
 	char *buf;
-
-	if (!blist)
-		return;
 
 	if (!a)
 		return;

@@ -964,9 +964,9 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *bud
 {
 	struct buddy *b;
 
-	if ((b = find_buddy(gc->account, buddyname)) != NULL) {
+	if ((b = gaim_find_buddy(gc->account, buddyname)) != NULL) {
 		debug_printf("removing buddy [1]: %s\n", buddyname);
-		remove_buddy(b);
+		gaim_blist_remove_buddy(b);
 		gaim_blist_save();
 	}
 }
@@ -1519,7 +1519,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 			jc->b = cnv = serv_got_joined_chat(GJ_GC(gjc), i++, gjid->user);
 			jc->id = gaim_chat_get_id(GAIM_CHAT(jc->b));
 			jc->state = JCS_ACTIVE;
-		} else if ((b = find_buddy(GJ_GC(gjc)->account, buddy)) == NULL) {
+		} else if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddy)) == NULL) {
 			g_free(buddy);
 			gaim_jid_free(gjid);
 			return;
@@ -1624,7 +1624,7 @@ static void jabber_accept_add(struct jabber_add_permit *jap)
 		 * If we don't already have the buddy on *our* buddylist,
 		 * ask if we want him or her added.
 		 */
-		if(find_buddy(jap->gc->account, jap->user) == NULL) {
+		if(gaim_find_buddy(jap->gc->account, jap->user) == NULL) {
 			show_got_added(jap->gc, NULL, jap->user, NULL, NULL);
 		}
 	}
@@ -1771,14 +1771,19 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 * Add or remove a buddy?  Change buddy's alias or group?
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
-		if ((b = find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
+		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
+			struct buddy *b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name ? name : NULL);
+			struct group *g;
+			if (groupname) {
+				if (!(g = gaim_find_group(groupname)))
+					g = gaim_group_new(groupname);
+			} else
+				g = gaim_group_new(_("Buddies"));
 			debug_printf("adding buddy [4]: %s\n", buddyname);
-			b = add_buddy(GJ_GC(gjc)->account,
-					groupname ? groupname : _("Buddies"), buddyname,
-					name ? name : buddyname);
+			gaim_blist_add_buddy(b, g, NULL);
 			gaim_blist_save();
 		} else {
-			struct group *c_grp = find_group_by_buddy(b);
+			struct group *c_grp = gaim_find_buddys_group(b);
 
 			/*
 			 * If the buddy's in a new group or his/her alias is changed...
@@ -1792,9 +1797,9 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				/*
 				 * seems rude, but it seems to be the only way...
 				 */
-				remove_buddy(b);
-				b = add_buddy(GJ_GC(gjc)->account, groupname, buddyname,
-					name ? name : buddyname);
+				gaim_blist_remove_buddy(b);
+				b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name ? name : NULL);
+				gaim_blist_add_buddy(b, gaim_find_group(groupname), NULL);
 				gaim_blist_save();
 				if(present) {
 					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle,
@@ -1802,7 +1807,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				}
 			} else if(name != NULL && strcmp(b->alias, name)) {
 				g_snprintf(b->alias, sizeof(b->alias), "%s", name);
-				handle_buddy_rename(b, buddyname);
+				gaim_blist_rename_buddy(b, buddyname);
 				gaim_blist_save();
 			}
 		}
@@ -2494,7 +2499,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
 		xmlnode_put_attrib(y, "jid", realwho);
 
-		buddy = find_buddy(gc->account, realwho);
+		buddy = gaim_find_buddy(gc->account, realwho);
 
 		/*
 		 * See if there's an explict (new?) alias for the buddy or we can pull
@@ -2520,7 +2525,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		 */
 		if(group && group[0] != '\0') {
 			my_group = group;
-		} else if((buddy_group = find_group_by_buddy(buddy)) != NULL) {
+		} else if((buddy_group = gaim_find_buddys_group(buddy)) != NULL) {
 			my_group = buddy_group->name;
 		}
 
@@ -2762,8 +2767,11 @@ static void invisible_to_all_buddies(struct gaim_connection *gc, gboolean invisi
 		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, (gpointer) invisible);
 }
 
-static char **jabber_list_icon(int uc)
+static const char *jabber_list_icon(struct gaim_account *a, struct buddy *b)
 {
+	return "jabber";
+}
+/*
 	switch (uc) {
 	case UC_AWAY:
 		return available_away_xpm;
@@ -2778,7 +2786,7 @@ static char **jabber_list_icon(int uc)
 	default:
 		return available_xpm;
 	}
-}
+	}*/
 
 static GList *jabber_chat_info(struct gaim_connection *gc)
 {
@@ -2897,7 +2905,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 		jc->gjid = gjid;
 		jc->gc = gc;
 		((struct jabber_data *)gc->proto_data)->chats = g_slist_append(jcs, jc);
-		add_buddy(gc->account, _("Chats"), realwho, realwho);
+		//	add_buddy(gc->account, _("Chats"), realwho, realwho);
 	}
 
 	jc->state = JCS_PENDING;
@@ -3202,7 +3210,7 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 
 	if(b->uc == UC_ERROR)
 	{

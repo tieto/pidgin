@@ -47,8 +47,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/protocols/napster/napster.xpm"
-
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
@@ -554,9 +552,9 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 	}
 }
 
-static char** nap_list_icon(int uc)
+static const char* nap_list_icon(struct gaim_account *a, struct buddy *b)
 {
-	return napster_xpm;
+	return "napster";
 }
 
 static struct prpl *my_protocol = NULL;

@@ -272,6 +272,50 @@ static void toc_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
+static void toc_build_config(struct gaim_account *account, char *s, int len, gboolean show)
+{
+	GSList *grp = groups;
+	GSList *mem;
+	struct group *g;
+	struct buddy *b;
+	GSList *plist = account->permit;
+	GSList *dlist = account->deny;
+
+	int pos = 0;
+
+	if (!account->permdeny)
+		account->permdeny = 1;
+
+	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->permdeny);
+	while (len > pos && grp) {
+		g = (struct group *)grp->data;
+		if(gaim_group_on_account(g, account)) {
+			pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
+			mem = g->members;
+			while (len > pos && mem) {
+				b = (struct buddy *)mem->data;
+				if(b->account == account) {
+					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
+							(show && b->alias[0]) ? ":" : "",
+							(show && b->alias[0]) ? b->alias : "");
+				}
+				mem = mem->next;
+			}
+		}
+		grp = g_slist_next(grp);
+	}
+
+	while (len > pos && plist) {
+		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
+		plist = plist->next;
+	}
+
+	while (len > pos && dlist) {
+		pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
+		dlist = dlist->next;
+	}
+}
+
 static int escape_message(char *msg)
 {
 	char *c, *cpy;
@@ -1241,8 +1285,11 @@ static void toc_keepalive(struct gaim_connection *gc)
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
-static char **toc_list_icon(int uc)
+static const char *toc_list_icon(struct gaim_account *a, struct buddy *b)
 {
+	return "aim";
+}
+/*
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
 	if (uc & UC_AOL)
@@ -1256,7 +1303,7 @@ static char **toc_list_icon(int uc)
 	if (uc & UC_WIRELESS)
 		return (char **)wireless_icon_xpm;
 	return NULL;
-}
+	}*/
 
 static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 {
@@ -1286,7 +1333,6 @@ static void toc_add_permit(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
-	signoff_blocked(gc);
 }
 
 static void toc_add_deny(struct gaim_connection *gc, const char *who)
@@ -1297,7 +1343,6 @@ static void toc_add_deny(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
-	signoff_blocked(gc);
 }
 
 static void toc_set_permit_deny(struct gaim_connection *gc)
@@ -1363,7 +1408,6 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 		break;
 	}
 	toc_set_config(gc);
-	signoff_blocked(gc);
 }
 
 static void toc_rem_permit(struct gaim_connection *gc, const char *who)

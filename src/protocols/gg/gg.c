@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4941 2003-03-02 18:48:02Z faceprint $
+ * $Id: gg.c 4998 2003-03-10 05:30:31Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -278,7 +278,7 @@ static GList *agg_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 	static char buf[AGG_BUF_LEN];
 
 	if (!b) {
@@ -798,7 +798,9 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 		}
 
 		debug_printf("import_buddies_server_results: uin: %s\n", name);
-		if (!find_buddy(gc->account, name)) {
+		if (!gaim_find_buddy(gc->account, name)) {
+			struct buddy *b;
+			struct group *g;
 			/* Default group if none specified on server */
 			gchar *group = g_strdup("Gadu-Gadu");
 			if (strlen(data_tbl[5])) {
@@ -810,7 +812,10 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 				g_strfreev(group_tbl);
 			}
 			/* Add Buddy to our userlist */
-			add_buddy(gc->account, group, name, strlen(show) ? show : name);
+			if (!(g = gaim_find_group(group)))
+				g = gaim_group_new(group);
+			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
+			gaim_blist_add_buddy(b,g,NULL);
 			gaim_blist_save();
 			g_free(group);
 		}
@@ -1243,8 +1248,11 @@ static void agg_get_info(struct gaim_connection *gc, char *who)
 	}
 }
 
-static char **agg_list_icon(int uc)
+static const char *agg_list_icon(struct gaim_account *a, struct buddy *b)
 {
+	return "gadu-gadu";
+}
+#if 0
 	guint status;
 	if (uc == UC_UNAVAILABLE)
 		return (char **)gg_sunred_xpm;
@@ -1259,6 +1267,7 @@ static char **agg_list_icon(int uc)
 		return (char **)gg_sunwhitered_xpm;
 	return (char **)gg_sunyellow_xpm;
 }
+#endif
 
 static void agg_set_permit_deny_dummy(struct gaim_connection *gc)
 {

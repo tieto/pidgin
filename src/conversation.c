@@ -1163,9 +1163,9 @@ gaim_conversation_autoset_title(struct gaim_conversation *conv)
 	name = gaim_conversation_get_name(conv);
 
 	if (((im_options & OPT_IM_ALIAS_TAB) == OPT_IM_ALIAS_TAB) &&
-		account != NULL && ((b = find_buddy(account, name)) != NULL)) {
+		account != NULL && ((b = gaim_find_buddy(account, name)) != NULL)) {
 
-		text = get_buddy_alias(b);
+		text = gaim_get_buddy_alias(b);
 	}
 	else
 		text = name;
@@ -1416,11 +1416,10 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		!(account->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 		if (who == NULL) {
-			if ((flags & WFLAG_SEND)) {
-				b = find_buddy(account, account->gc->username);
-
-				if (b != NULL && strcmp(b->name, get_buddy_alias(b)))
-					who = get_buddy_alias(b);
+			if (flags & WFLAG_SEND) {
+				b = gaim_find_buddy(account, account->gc->username);
+				if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
+					who = gaim_get_buddy_alias(b);
 				else if (*account->alias)
 					who = account->alias;
 				else if (*account->gc->displayname)
@@ -1429,19 +1428,19 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 					who = account->gc->username;
 			}
 			else {
-				b = find_buddy(account, gaim_conversation_get_name(conv));
+				b = gaim_find_buddy(account, gaim_conversation_get_name(conv));
 
 				if (b != NULL)
-					who = get_buddy_alias(b);
+					who = gaim_get_buddy_alias(b);
 				else
 					who = gaim_conversation_get_name(conv);
 			}
 		}
 		else {
-			b = find_buddy(account, who);
+			b = gaim_find_buddy(account, who);
 
 			if (b != NULL)
-				who = get_buddy_alias(b);
+				who = gaim_get_buddy_alias(b);
 		}
 	}
 
@@ -2116,11 +2115,11 @@ conv_placement_by_group(struct gaim_conversation *conv)
 		struct group *grp = NULL;
 		GList *wins, *convs;
 
-		b = find_buddy(gaim_conversation_get_account(conv),
+		b = gaim_find_buddy(gaim_conversation_get_account(conv),
 					   gaim_conversation_get_name(conv));
 
 		if (b != NULL)
-			grp = find_group_by_buddy(b);
+			grp = gaim_find_buddys_group(b);
 
 		/* Go through the list of IMs and find one with this group. */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
@@ -2137,11 +2136,11 @@ conv_placement_by_group(struct gaim_conversation *conv)
 
 				conv2 = (struct gaim_conversation *)convs->data;
 
-				b2 = find_buddy(gaim_conversation_get_account(conv2),
+				b2 = gaim_find_buddy(gaim_conversation_get_account(conv2),
 								gaim_conversation_get_name(conv2));
 
 				if (b2 != NULL)
-					g2 = find_group_by_buddy(b2);
+					g2 = gaim_find_buddys_group(b2);
 
 				if (grp == g2) {
 					gaim_window_add_conversation(win2, conv);

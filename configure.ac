@@ -393,6 +393,8 @@ AC_OUTPUT([Makefile
 	   pixmaps/protocols/gg/Makefile
 	   pixmaps/smileys/Makefile
 	   pixmaps/smileys/default/Makefile
+	   pixmaps/status/Makefile
+	   pixmaps/status/default/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/gestures/Makefile

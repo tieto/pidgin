@@ -27,6 +27,7 @@
 #include "multi.h"
 #include "gaim.h"
 #include "conversation.h"
+#include "gtklist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -185,7 +186,7 @@ static void quit_acctedit(gpointer d)
 		acctedit = NULL;
 	}
 	treeview = NULL;
-	if (!d && !blist && !mainwindow && !connections)
+	if (!d && !gtkblist->window && !mainwindow && !connections)
 		do_quit();
 }
 
@@ -1334,9 +1335,7 @@ static void do_del_acct(struct gaim_account *account)
 			}
 		}
 		if(!g->members) {
-			ui_remove_group(g);
-			groups = g_slist_remove(groups, g);
-			g_free(g);
+			gaim_blist_remove_group(g);
 		}
 	}
 
@@ -1475,18 +1474,15 @@ struct signon_meter {
 };
 static GSList *meters = NULL;
 
-GtkWidget* create_meter_pixmap (GtkWidget *widget, struct gaim_connection *gc)
+GtkWidget* create_meter_pixmap (struct gaim_connection *gc)
 {
-	GdkPixmap *gdkpixmap;
-	GdkBitmap *mask;
-	GtkWidget *pixmap;
-
-	create_prpl_icon (widget, gc, &gdkpixmap, &mask);
-
-	pixmap = gtk_image_new_from_pixmap(gdkpixmap, mask);
-	gdk_pixmap_unref (gdkpixmap);
-	gdk_bitmap_unref (mask);
-	return pixmap;
+	GdkPixbuf *pb = create_prpl_icon(gc->account);
+	GdkPixbuf *scale = gdk_pixbuf_scale_simple(pb, 30,30,GDK_INTERP_BILINEAR);
+	GtkWidget *image =
+		gtk_image_new_from_pixbuf(scale);
+	g_object_unref(G_OBJECT(pb));
+	g_object_unref(G_OBJECT(scale));
+	return image;
 }
 
 static struct signon_meter *find_signon_meter(struct gaim_connection *gc)
@@ -1536,7 +1532,7 @@ void account_online(struct gaim_connection *gc)
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
-	show_buddy_list();
+	gaim_blist_show();
 
 	update_privacy_connections();
 	do_away_menu();
@@ -1552,7 +1548,6 @@ void account_online(struct gaim_connection *gc)
 								 GAIM_CONV_ACCOUNT_ONLINE);
 	}
 
-	redo_buddy_list();
 	gaim_setup(gc);
 
 	gc->account->connecting = FALSE;
@@ -1630,9 +1625,6 @@ void account_offline(struct gaim_connection *gc)
 				 gc->account, gc->account->gc, gc);
 	gc->account->gc = NULL;	/* wasn't that awkward? */
 
-	/* take these buddies out of the edit tree */
-	build_edit_tree();
-
 	if (!acctedit)
 		return;
 
@@ -1700,7 +1692,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	(*rows)++;
 	gtk_table_resize (table, *rows, 4);
 
-	graphic = create_meter_pixmap( widget , gc);
+	graphic = create_meter_pixmap(gc);
 
 	nest_vbox = gtk_vbox_new (FALSE, 0);
 
@@ -1901,7 +1893,9 @@ void signoff(struct gaim_connection *gc)
 	/* CONV XXX
 	convo_menu_remove(gc);
 	remove_icon_data(gc);
-	*/
+       	*/
+
+	gaim_blist_remove_account(gc->account);
 
 	/* core stuff */
 	/* remove this here so plugins get a sensible count of connections */
@@ -1920,7 +1914,6 @@ void signoff(struct gaim_connection *gc)
 	serv_close(gc);
 
 	/* more UI stuff */
-	redo_buddy_list();
 	do_away_menu();
 	do_proto_menu();
 
@@ -1941,7 +1934,7 @@ void signoff(struct gaim_connection *gc)
 		return;
 
 	destroy_all_dialogs();
-	destroy_buddy();
+	gaim_blist_destroy();
 
 	show_login();
 }

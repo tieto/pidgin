@@ -274,7 +274,7 @@ static void icq_acc_auth(struct icq_auth *iq)
 		icq_SendAuthMsg(iq->link, iq->uin);
 
 		g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
-		if (find_buddy(iq->gc->account, uin))
+		if (gaim_find_buddy(iq->gc->account, uin))
 			return;
 
 		iqnew = g_memdup(iq, sizeof(struct icq_auth));
@@ -441,8 +441,11 @@ static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	}
 }
 
-static char **icq_list_icon(int uc) {
-	guint status;
+static const char *icq_list_icon(struct gaim_account *a, struct buddy *b) {
+	return "icq";
+}
+
+/*	guint status;
 	if (uc == 0)
 		return icon_online_xpm;
 	status = uc >> 1;
@@ -459,7 +462,7 @@ static char **icq_list_icon(int uc) {
 	if (status & STATUS_INVISIBLE)
 		return NULL;
 	return icon_online_xpm;
-}
+	}*/
 
 static void icq_get_info(struct gaim_connection *gc, char *who) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;

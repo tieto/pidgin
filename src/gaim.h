@@ -28,6 +28,7 @@
 
 #include "core.h"
 #include "ui.h"
+#include "list.h"
 
 #define XPATCH BAD /* Because Kalla Said So */
 
@@ -236,6 +237,7 @@ extern guint blist_options;
 #define OPT_BLIST_GREY_IDLERS		0x00000400
 #define OPT_BLIST_BOTTOM_TAB		0X00000800
 #define OPT_BLIST_POPUP                 0x00001000
+#define OPT_BLIST_SHOW_ICONS            0x00002000 
 
 extern guint convo_options;
 #define OPT_CONVO_ENTER_SENDS		0x00000001
@@ -340,9 +342,6 @@ extern void do_quit();
 
 /* Functions in buddy.c */
 extern void signoff(struct gaim_connection *);
-extern void do_pounce(struct gaim_connection *, char *, int);
-void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
-					  GdkPixmap **pixmap, GdkBitmap **mask);
 
 /* Functions in buddy_chat.c */
 #if 0

@@ -50,6 +50,7 @@
 #include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
+#include "gtklist.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -74,6 +75,7 @@ GtkWidget *mainwindow = NULL;
 
 
 int opt_away = 0;
+int docklet_count = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
@@ -527,6 +529,7 @@ static int ui_main()
 	/* Set the UI operation structures. */
 	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
+	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
 
 	setup_stock();
 

@@ -61,9 +61,9 @@ G_MODULE_IMPORT GtkWidget *blist;
 
 void BuddyTickerDestroyWindow( GtkWidget *window );
 void BuddyTickerCreateWindow( void );
-void BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm );
+void BuddyTickerAddUser( char *name, char *alias, const char *pb);
 void BuddyTickerRemoveUser( char *name );
-void BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm );
+void BuddyTickerSetPixmap( char *name, const char *pb);
 void BuddyTickerClearList( void );
 void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
@@ -127,7 +127,7 @@ ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data 
 }
 
 void
-BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm )
+BuddyTickerAddUser( char *name, char *alias, const char *pb)
 {
 	TickerData *p;
 	GList *q;
@@ -157,7 +157,7 @@ BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm )
 	gtk_ticker_add( GTK_TICKER( ticker ), p->hbox );
 	gtk_widget_show_all( p->hbox );
 
-	BuddyTickerSetPixmap( name, pm, bm );
+	BuddyTickerSetPixmap(name, pb);
 
 	p->ebox = gtk_event_box_new();
 
@@ -202,11 +202,12 @@ BuddyTickerRemoveUser( char *name )
 }
 
 void
-BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
+BuddyTickerSetPixmap( char *name, const char *pb)
 {
 	GList *p;
 	TickerData *data;
-
+	char *file = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", pb, NULL);
+	
 	if ( userclose == TRUE )
 		return;
 	p = (GList *) BuddyTickerFindUser( name );
@@ -215,11 +216,11 @@ BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	else
 		return;
 	if ( data->pix == (GtkWidget *) NULL ) {
-		data->pix = gtk_image_new_from_pixmap( pm, bm );
+		data->pix = gtk_image_new_from_file(file);
 		gtk_box_pack_start_defaults( GTK_BOX( data->hbox ), data->pix );
 	} else {
 		gtk_widget_hide( data->pix );
-		gtk_image_set_from_pixmap(GTK_IMAGE(data->pix), pm, bm);
+		gtk_image_set_from_file(GTK_IMAGE(data->pix), file);
 	}
 	gtk_widget_show( data->pix );
 }
@@ -330,12 +331,10 @@ BuddyTickerClearList( void )
 
 void BuddyTickerShow()
 {
-	GdkPixmap *pm;
-	GdkBitmap *bm;
 	struct group *g;
 	struct buddy *b;
 	GSList *grps, *buds;
-	char **xpm;
+	const char *xpm;
 
 	for( grps = groups; grps; grps = grps->next ) {
 		g = (struct group *)grps->data;
@@ -344,36 +343,21 @@ void BuddyTickerShow()
 			if( b->present ) {
 				xpm = NULL;
 				if (b->account->gc->prpl->list_icon)
-					xpm = b->account->gc->prpl->list_icon(b->uc);
-				if (xpm == NULL)
-					xpm = (char **)no_icon_xpm;
-				pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-				BuddyTickerAddUser( b->name, get_buddy_alias(b), pm, bm );
-				gdk_pixmap_unref(pm);
-				if (bm)
-					gdk_bitmap_unref(bm);
+					xpm = b->account->gc->prpl->list_icon(b->account, b);
+				BuddyTickerAddUser( b->name, gaim_get_buddy_alias(b), xpm);
 			}
 		}
 	}
 }
 
 void signon_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc->account, who);
-	char **xpm = NULL;
-	
-	GdkPixmap *pm;
-	GdkBitmap *bm;
-	
+	struct buddy *b  = gaim_find_buddy(gc->account, who);
+	const char *xpm = NULL;
+       
 	if (gc->prpl->list_icon)
-		xpm = gc->prpl->list_icon(b->uc);
-	if (xpm == NULL)
-		xpm = (char **)no_icon_xpm;
-	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-		
-	BuddyTickerAddUser(who, get_buddy_alias(b), pm, bm);
-	gdk_pixmap_unref(pm);
-	if (bm)
-		gdk_bitmap_unref(bm);
+		xpm = gc->prpl->list_icon(b->account, b);
+	
+	BuddyTickerAddUser(who, gaim_get_buddy_alias(b), xpm);
 }
 
 void signoff_cb(struct gaim_connection *gc) {
@@ -389,21 +373,12 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 }
 
 void away_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc->account, who);
-	char **xpm = NULL;
-	
-	GdkPixmap *pm;
-	GdkBitmap *bm;
+	struct buddy *b  = gaim_find_buddy(gc->account, who);
+	const char *xpm = NULL;
 	
 	if (gc->prpl->list_icon)
-		xpm = gc->prpl->list_icon(b->uc);
-	if (xpm == NULL)
-		xpm = (char **)no_icon_xpm;
-	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-	BuddyTickerSetPixmap(who, pm, bm);
-	gdk_pixmap_unref(pm);
-	if (bm)
-		gdk_bitmap_unref(bm);
+		xpm = gc->prpl->list_icon(b->account, b);
+	BuddyTickerSetPixmap(who, xpm);
 }
 
 /*

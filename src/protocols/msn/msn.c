@@ -30,6 +30,7 @@
 #include "pixmaps/protocols/msn/msn_away.xpm"
 #include "pixmaps/protocols/msn/msn_occ.xpm"
 
+#define BUDDY_ALIAS_MAXLEN 388
 
 static struct prpl *my_protocol = NULL;
 
@@ -365,7 +366,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
 				ap->user, ap->friend, ap->gc->username);
 
-		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+		//	do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
@@ -536,10 +537,19 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 			while (md->fl) {
 				struct msn_buddy *mb = md->fl->data;
-				struct buddy *b = find_buddy(gc->account, mb->user);
+				struct buddy *b = gaim_find_buddy(gc->account, mb->user);
 				md->fl = g_slist_remove(md->fl, mb);
-				if(!b)
-					b = add_buddy(gc->account, _("Buddies"), mb->user, NULL);
+				if(!b) {
+					struct group *g;
+					printf("I'm adding %s now..\n", mb->user);
+					if (!(g = gaim_find_group(_("Buddies")))) {
+						printf("How could I not exitst!??!\n");
+						g = gaim_group_new(_("Buddies"));
+						gaim_blist_add_group(g, NULL);
+					}
+					b = gaim_buddy_new(gc->account, mb->user, NULL);
+					gaim_blist_add_buddy(b,g,NULL);
+				}
 				serv_got_alias(gc, mb->user, mb->friend);
 				g_free(mb->user);
 				g_free(mb->friend);
@@ -1580,8 +1590,11 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 	}
 }
 
-static char **msn_list_icon(int uc)
+static const char *msn_list_icon(struct gaim_account *a, struct buddy *b)
 {
+	return "msn";
+}
+/*
 	if (uc == 0)
 		return msn_online_xpm;
 	
@@ -1592,7 +1605,7 @@ static char **msn_list_icon(int uc)
 	
 	return msn_away_xpm;
 }
-
+*/
 static char *msn_get_away_text(int s)
 {
 	switch (s) {
@@ -1633,7 +1646,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 	static char buf[MSN_BUF_LEN];
 
 #if 0

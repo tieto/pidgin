@@ -20,6 +20,7 @@
  */
 
 #include "gaim.h"
+#include "gtkutils.h"
 #include "prpl.h"
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -590,6 +591,24 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 	/* Update the buddy icon for this user. */
 	conv = gaim_find_conversation(who);
 
+	/* XXX Buddy Icon should probalby be part of struct buddy instead of this weird global
+	 * linked list stuff. */
+
+	if (gaim_find_buddy(gc->account, who)) { 
+		/* This is one of our buddies, so we'll cache this icon for our buddy list */
+		
+		/* Because only OSCAR does buddy icons right now, I don't feel so bad doing nothing to
+		   save what protocol this is from. */
+		char *filename = g_build_filename(gaim_user_dir(), "icons", normalize(who), NULL);
+		FILE *file = NULL;
+
+		file = fopen(filename, "wb");
+		if (!file)
+			return;
+		fwrite(data, 1, len, file);
+		fclose(file);
+	}
+	
 	if (conv != NULL && gaim_conversation_get_gc(conv) == gc)
 		gaim_gtkconv_update_buddy_icon(conv);
 }
@@ -652,7 +671,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 {
 	char buf[BUF_LONG];
 	struct got_add *ga = g_new0(struct got_add, 1);
-	struct buddy *b = find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 
 	ga->gc = gc;
 	ga->who = g_strdup(who);

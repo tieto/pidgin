@@ -36,6 +36,7 @@
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include "gaim.h"
+#include "gtklist.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "sound.h"
@@ -551,7 +552,8 @@ GtkWidget *list_page() {
 	gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox);
 
 	vbox = make_frame (ret, _("Buddy Display"));
-	gaim_button(_("Show buddy type _icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox);
+	gaim_button(_("Show buddy _icons"), &blist_options, OPT_BLIST_SHOW_ICONS, vbox);
+	gaim_button(_("Show buddy t_ype icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox);
 	gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
 	gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
 	gaim_button(_("Grey i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
@@ -1949,8 +1951,7 @@ static void set_misc_option(GtkWidget *w, int option)
 	if (option == OPT_MISC_DEBUG)
 		show_debug();
 	else if(option == OPT_MISC_USE_SERVER_ALIAS) {
-		redo_buddy_list();
-		build_edit_tree();
+		/* XXX blist reset the aliases here */
 		gaim_conversation_foreach(gaim_conversation_autoset_title);
 	}
 }
@@ -1966,27 +1967,11 @@ static void set_logging_option(GtkWidget *w, int option)
 static void set_blist_option(GtkWidget *w, int option)
 {
 	blist_options ^= option;
-
-	if (!blist)
+	
+	if (!gtkblist)
 		return;
-
-	if (option == OPT_BLIST_NO_BUTTONS)
-		build_imchat_box(!(blist_options & OPT_BLIST_NO_BUTTONS));
-
-	if (option == OPT_BLIST_SHOW_GRPNUM)
-		update_num_groups();
-
-	if (option == OPT_BLIST_NO_MT_GRP)
-		toggle_show_empty_groups();
-
-	if ((option == OPT_BLIST_SHOW_BUTTON_XPM) || (option == OPT_BLIST_NO_BUTTONS))
-		update_button_pix();
-
-	if (option == OPT_BLIST_SHOW_PIXMAPS)
-		toggle_buddy_pixmaps();
-
-	if ((option == OPT_BLIST_GREY_IDLERS) || (option == OPT_BLIST_SHOW_IDLETIME))
-		update_idle_times();
+	
+	gaim_gtk_blist_refresh(gaimbuddylist);
 
 }
 
@@ -2309,8 +2294,8 @@ void dropdown_set(GObject *w, int *option)
 			gaim_gtkconv_update_tabs();
 		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
 			gaim_gtkconv_update_chat_button_style();
-	} else if (option == (int*)&blist_options) {
-		set_blist_tab();
+		//	} else if (option == (int*)&blist_options) {
+		//    set_blist_tab();
 	} else if (option == (int *)&conv_placement_option) {
 		gaim_conv_placement_set_active(conv_placement_option);
 	}

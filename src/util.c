@@ -45,6 +45,7 @@
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "gtklist.h"
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -815,7 +816,7 @@ void away_on_login(char *mesg)
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
 
-	if (!blist) {
+	if (!gtkblist->window) {
 		return;
 	}
 

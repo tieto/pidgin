@@ -50,6 +50,7 @@ struct buddy;
 #include "multi.h"
 #include "conversation.h"
 #include "ft.h"
+#include "privacy.h"
 
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1
@@ -157,30 +158,6 @@ struct gaim_callback {
 };
 #endif
 
-#define BUDDY_ALIAS_MAXLEN 388	/* because MSN names can be 387 characters */
-
-struct buddy {
-	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
-	char name[80];
-	char alias[BUDDY_ALIAS_MAXLEN];
-	char server_alias[BUDDY_ALIAS_MAXLEN];
-	int present;
-	int evil;
-	time_t signon;
-	time_t idle;
-        int uc;
-	guint caps; /* woohoo! */
-	void *proto_data; /* what a hack */
-	struct gaim_account *account; /* the connection it belongs to */
-	GHashTable *settings;
-};
-
-struct group {
-	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
-	char name[80];
-	GSList *members;
-};
-
 /* Globals in core.c */
 extern GSList *uis;
 extern GSList *groups;
@@ -190,32 +167,6 @@ extern int gaim_session;
 extern GList *plugins;
 extern GList *probed_plugins;
 extern GList *callbacks;
-
-/* Functions in buddy.c */
-extern struct buddy *find_buddy(struct gaim_account *, const char *);
-extern struct group *find_group(const char *);
-extern struct group *find_group_by_buddy(struct buddy *);
-extern struct buddy *add_buddy(struct gaim_account *, const char *, const char *, const char *);
-extern void remove_buddy(struct buddy *);
-extern struct group *add_group(const char *);
-extern void remove_group(struct group *);
-extern void toc_build_config(struct gaim_account *, char *, int len, gboolean);
-extern void parse_toc_buddy_list(struct gaim_account *, char *);
-extern void signoff_blocked(struct gaim_connection *);
-extern char* get_buddy_alias_only(struct buddy *);
-extern char* get_buddy_alias(struct buddy *);
-extern GSList *gaim_group_get_accounts(struct group *);
-extern gboolean gaim_group_on_account(struct group *, struct gaim_account *);
-extern void do_import(struct gaim_account *, const char *);
-extern void gaim_blist_load();
-extern void gaim_blist_save();
-extern gboolean gaim_privacy_permit_add(struct gaim_account *, const char *);
-extern gboolean gaim_privacy_permit_remove(struct gaim_account *, const char *);
-extern gboolean gaim_privacy_deny_add(struct gaim_account *, const char *);
-extern gboolean gaim_privacy_deny_remove(struct gaim_account *, const char *);
-extern void gaim_buddy_set_setting(struct buddy *, const char *, const char *);
-extern char *gaim_buddy_get_setting(struct buddy *, const char *);
-
 
 /* Functions in core.c */
 extern gint UI_write(struct UI *, guchar *, int);

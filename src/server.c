@@ -39,6 +39,8 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/tb_search.xpm"
 
+#include "pounce.h"
+
 void serv_login(struct gaim_account *account)
 {
 	struct prpl *p = find_prpl(account->protocol);
@@ -351,16 +353,19 @@ void serv_alias_buddy(struct buddy *b)
 }
 
 void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
-	struct buddy *b = find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(!b)
 		return;
 
-	if(alias)
-		g_snprintf(b->server_alias, sizeof(b->server_alias), "%s", alias);
-	else
-		b->server_alias[0] = '\0';
+	if (b->server_alias)
+		g_free(b->server_alias);
 
-	handle_buddy_rename(b, b->name);
+	if(alias)
+		b->server_alias = g_strdup(alias);
+	else
+	       b->server_alias = NULL;
+
+	//gaim_blist_rename_buddy(b, b->name);
 }
 
 /*
@@ -656,8 +661,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	if (gc->away) {
 		time_t t;
 		char *tmpmsg;
-		struct buddy *b = find_buddy(gc->account, name);
-		char *alias = b ? get_buddy_alias(b) : name;
+		struct buddy *b = gaim_find_buddy(gc->account, name);
+		char *alias = b ? gaim_get_buddy_alias(b) : name;
 		int row;
 		struct queued_away_response *qar;
 
@@ -845,14 +850,14 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type, guint caps)
 {
-	struct buddy *b = find_buddy(gc->account, name);
+	struct buddy *b = gaim_find_buddy(gc->account, name);
 
 	if (signon && (gc->prpl->options & OPT_PROTO_CORRECT_TIME)) {
 		char *tmp = g_strdup(normalize(name));
 		if (!g_strcasecmp(tmp, normalize(gc->username))) {
 			gc->evil = evil;
 			gc->correction_time = (signon - gc->login_time);
-			update_idle_times();
+			/*update_idle_times();*/
 		}
 		g_free(tmp);
 	}
@@ -866,11 +871,8 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	/* server with what's in our record.  We want to */
 	/* store things how THEY want it... */
 	if (strcmp(name, b->name)) {
-		char *who = g_strdup(b->name);
-		g_snprintf(b->name, sizeof(b->name), "%s", name);
-		handle_buddy_rename(b, who);
+		gaim_blist_rename_buddy(b, name);
 		gaim_blist_save();
-		g_free(who);
 	}
 
 	if (!b->idle && idle) {
@@ -883,8 +885,8 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
-	b->idle = idle;
-	b->evil = evil;
+	gaim_blist_update_buddy_idle(b, idle);
+	gaim_blist_update_buddy_evil(b, evil);
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
 		do_pounce(gc, b->name, OPT_POUNCE_UNAWAY);
@@ -895,15 +897,13 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 	}
 
-	b->uc = type;
-	if (caps)
-		b->caps = caps;
-
-	b->signon = signon;
+	gaim_blist_update_buddy_status(b, type);
+	
+	gaim_blist_update_buddy_presence(b, loggedin);
 
 	if (loggedin) {
 		if (!b->present) {
-			b->present = 1;
+			//b->present = 1;
 			do_pounce(gc, b->name, OPT_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
@@ -915,8 +915,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 		}
 		b->present = 0;
 	}
-
-	set_buddy(gc, b);
 }
 
 

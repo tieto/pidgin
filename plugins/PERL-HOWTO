@@ -101,19 +101,6 @@ GAIM::user_info(index, nick)
 		their warning level
 		signon time, in seconds since the epoch
 		idle time, in seconds (?)
-		user class, an integer with bit values
-			AOL		1
-			ADMIN		2
-			UNCONFIRMED	4
-			NORMAL		8
-			AWAY		16
-		their capabilites, an integer with bit values
-			BUDDYICON	1
-			VOICE		2
-			IMIMAGE		4
-			CHAT		8
-			GETFILE		16
-			SENDFILE	32
 	Since buddy lists are per-connection this goes through the connections
 	until it finds a matching buddy name.
 

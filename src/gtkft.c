@@ -567,7 +567,7 @@ gaim_gtkxfer_dialog_new(void)
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(window), 390, 400);
 #endif
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	//gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
 	gtk_widget_realize(window);
 

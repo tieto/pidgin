@@ -95,8 +95,8 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 			struct gaim_conversation *cnv;
 			struct buddy *b;
 
-			if ((b = find_buddy(gc->account, user)) != NULL)
-				username = get_buddy_alias(b);
+			if ((b = gaim_find_buddy(gc->account, user)) != NULL)
+				username = gaim_get_buddy_alias(b);
 			else
 				username = user;
 
@@ -105,7 +105,7 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 
 			if ((cnv = gaim_find_conversation(user)))
 				gaim_conversation_write(cnv, NULL, msgbuf, -1,
-										WFLAG_SYSTEM, time(NULL));
+							WFLAG_SYSTEM, time(NULL));
 
 			msn_kill_switch(ms);
 			return 0;

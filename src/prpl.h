@@ -179,8 +179,18 @@ struct prpl
 	struct gaim_plugin *plug;     /**< The base plugin structure. */
 	char *name;
 
-	/** Returns the XPM associated with the given user class. */
-	char **(* list_icon)(int);
+	/** 
+	 * Returns the base icon name for the given buddy and account.  
+	 * If buddy is NULL, it will return the name to use for the account's icon
+	 */
+	const char *(* list_icon)(struct gaim_account *account, struct buddy *buddy);
+
+	/**
+	 * Fills the four char**'s with string identifiers for "emblems" that the UI will
+	 * interpret and display as relevant
+	 */
+	void (* list_emblems)(struct buddy *buddy, char **se, char **sw, char **nw, char **ne);
+	
 	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)(struct gaim_connection *gc);
 	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
