@@ -2272,7 +2272,7 @@ msgstr ""
 
 #: src/gtkblist.c:1573 src/protocols/napster/napster.c:531
 msgid "Get Info"
-msgstr "Obtenir Dades"
+msgstr "Obtenir-ne Dades"
 
 #: src/protocols/napster/napster.c:545 src/protocols/oscar/oscar.c:5168
 #: src/protocols/toc/toc.c:1201
@@ -5171,7 +5171,7 @@ msgstr "Obtenir dades sobre el contacte seleccionat"
 
 #: src/gtkblist.c:1587
 msgid "Join a chat room"
-msgstr "Entrar a una converses"
+msgstr "Entrar a una conversa"
 
 #: src/gtkblist.c:1595
 msgid "Set an away message"
@@ -6826,7 +6826,7 @@ msgid ""
 "Your new warning level is %d%%"
 msgstr ""
 "%s acaba de ser avisat per %s.\n"
-"El seu nivell d'aletra és ara %d%%"
+"El seu nivell d'alerta és ara %d%%"
 
 #: src/server.c:1164
 msgid "an anonymous person"

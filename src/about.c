@@ -144,6 +144,7 @@ void show_about(GtkWidget *w, void *data)
 				_("<FONT SIZE=\"3\">Current Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_(""
+				"  <b>Catalan (ca)</b> - Robert Millan &lt;<a href=\"mailto: zeratul2@wanadoo.es\">zeratul2@wanadoo.es</a>&gt;<br>"
 				"  <b>Czech (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
 				"  <b>Danish (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
 				"  <b>German (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
