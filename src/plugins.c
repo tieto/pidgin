@@ -831,15 +831,15 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	case event_signoff:
 	case event_away:
 	case event_back:
-		g_snprintf(buf, sizeof buf, "%p", arg1);
+		g_snprintf(buf, sizeof buf, "%lu", (unsigned long)arg1);
 		break;
 	case event_im_recv:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
 			   *(char **)arg2 ? *(char **)arg2 : "(null)",
 			   *(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_im_send:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
 			   (char *)arg2, *(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_buddy_signon:
@@ -849,31 +849,33 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	case event_buddy_back:
 	case event_buddy_idle:
 	case event_buddy_unidle:
-		g_snprintf(buf, sizeof buf, "%p \"%s\"", arg1, (char *)arg2);
+		g_snprintf(buf, sizeof buf, "%lu \"%s\"", (unsigned long)arg1, (char *)arg2);
 		break;
 	case event_chat_invited:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" \"%s\" %s", (unsigned long)arg1,
 				(char *)arg2, (char *)arg3, arg4 ? (char *)arg4 : "");
 		break;
 	case event_chat_join:
 	case event_chat_buddy_join:
 	case event_chat_buddy_leave:
-		g_snprintf(buf, sizeof buf, "%p %d \"%s\"", arg1, (int)arg2, (char *)arg3);
+		g_snprintf(buf, sizeof buf, "%lu %d \"%s\"", (unsigned long)arg1,
+				(int)arg2, (char *)arg3);
 		break;
 	case event_chat_leave:
-		g_snprintf(buf, sizeof buf, "%p %d", arg1, (int)arg2);
+		g_snprintf(buf, sizeof buf, "%lu %d", (unsigned long)arg1, (int)arg2);
 		break;
 	case event_chat_recv:
 	case event_chat_send_invite:
-		g_snprintf(buf, sizeof buf, "%p %d \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu %d \"%s\" %s", (unsigned long)arg1,
 				(int)arg2, (char *)arg3, (char *)arg4);
 		break;
 	case event_chat_send:
-		g_snprintf(buf, sizeof buf, "%p %d %s", arg1, (int)arg2,
+		g_snprintf(buf, sizeof buf, "%lu %d %s", (unsigned long)arg1, (int)arg2,
 				*(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_warned:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" %d", arg1, arg2 ? (char *)arg2 : "", (int)arg3);
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" %d", (unsigned long)arg1,
+				arg2 ? (char *)arg2 : "", (int)arg3);
 		break;
 	case event_quit:
 		buf[0] = 0;
@@ -882,11 +884,11 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
 		break;
 	case event_im_displayed_sent:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
 				(char *)arg2, *(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_im_displayed_rcvd:
-		g_snprintf(buf, sizeof buf, "%p \"%s\" %s", arg1,
+		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
 				(char *)arg2, (char *)arg3 ? (char *)arg3 : "(null)");
 		break;
 	default:

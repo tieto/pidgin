@@ -60,6 +60,7 @@ extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
 #undef DEBUG
 #endif
 #include "gaim.h"
+#include "prpl.h"
 
 struct perlscript {
 	char *name;
@@ -302,7 +303,6 @@ XS (XS_GAIM_register)
 XS (XS_GAIM_get_info)
 {
 	int i = 0;
-	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -325,7 +325,8 @@ XS (XS_GAIM_get_info)
 		break;
 	case 2:
 		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mIV(i++, gc->protocol);
 			else
@@ -334,15 +335,18 @@ XS (XS_GAIM_get_info)
 		break;
 	case 3:
 		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mPV(i++, gc->username);
 			else
 				XST_mPV(i++, "");
 		}
+		break;
 	case 4:
 		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+			debug_printf("%lu %lu\n", connections->data, gc);
 			if (g_slist_find(connections, gc))
 				XST_mIV(i++, g_list_index(aim_users, gc->user));
 			else
@@ -367,6 +371,16 @@ XS (XS_GAIM_get_info)
 				XST_mIV(i++, u->protocol);
 				a = a->next;
 			}
+		}
+		break;
+	case 7:
+		{
+			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+			debug_printf("%lu %lu\n", connections->data, gc);
+			if (g_slist_find(connections, gc))
+				XST_mPV(i++, (*gc->prpl->name)());
+			else
+				XST_mPV(i++, "Unknown");
 		}
 		break;
 	default:
@@ -482,7 +496,6 @@ XS (XS_GAIM_command)
 		while (c) {
 			gc = (struct gaim_connection *)c->data;
 			serv_set_idle(gc, SvIV(ST(1)));
-			gc->is_idle = 1;
 			c = c->next;
 		}
 	} else if (!strncasecmp(command, "warn", 4)) {
@@ -687,7 +700,8 @@ XS (XS_GAIM_add_timeout_handler)
 	items = 0;
 
 	handler = g_new0(struct _perl_timeout_handlers, 1);
-	timeout = 1000 * atol(SvPV(ST(0), junk));
+	timeout = 1000 * SvIV(ST(0));
+	debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);

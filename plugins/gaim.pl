@@ -1,24 +1,30 @@
 GAIM::register("gaim test", "0.0.1", "goodbye", "");
 
 $ver = GAIM::get_info(0);
-$nam = GAIM::get_info(1);
-$pro = GAIM::get_info(2, $nam);
+@ids = GAIM::get_info(1);
 
-GAIM::print("Perl Says", "Gaim $ver, $nam using $pro");
+$msg = "Gaim $ver:";
+foreach $id (@ids) {
+	$pro = GAIM::get_info(7, $id);
+	$nam = GAIM::get_info(3, $id);
+	$msg .= "\n$nam using $pro";
+}
 
-GAIM::command("idle", 60000);
+GAIM::print("Perl Says", $msg);
 
-GAIM::add_event_handler("event_buddy_signon", "say_hello");
-GAIM::add_timeout_handler(600, "notify");
+GAIM::command("idle", 6000);
+
+GAIM::add_event_handler("event_buddy_signon", "echo_reply");
+GAIM::add_timeout_handler(60, "notify");
 
 sub echo_reply {
-	$args = @_;
-	$args =~ s/\"//g;
-	GAIM::print_to_conv($args, "Hello");
+	$args = $_[0];
+	$args =~ s/(.+) \"(.+)\"//;
+	GAIM::print_to_conv($1, $2, "Hello", 0);
 }
 
 sub notify {
-	GAIM::print("10 minutes", "gaim test has been loaded for 10 minutes");
+	GAIM::print("1 minute", "gaim test has been loaded for 1 minute");
 }
 
 sub goodbye {

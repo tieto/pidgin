@@ -45,6 +45,7 @@ GAIM::get_info(integer, ...)
 	4 - given a connection index, the index in the users list
 	5 - the list of names of users
 	6 - the list of protocols of the users
+	7 - given a connection index, the name of the protocol (as a string)
 
 GAIM::print(title, message)
 	This displays a nice little dialog window.

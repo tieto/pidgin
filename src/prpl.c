@@ -376,6 +376,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 			gtk_widget_show(gc->email_label);
 
 			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
+			gtk_window_set_focus(GTK_WINDOW(gc->email_win), close);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
 					close, 0, 0, 5);
 			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
@@ -405,6 +406,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 			gtk_widget_show(gc->email_label);
 
 			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
+			gtk_window_set_focus(GTK_WINDOW(gc->email_win), close);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
 					close, 0, 0, 5);
 			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
