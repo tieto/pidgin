@@ -189,7 +189,7 @@ static GtkWidget *generate_list()
 
 	list = gtk_clist_new_with_titles(4, titles);
 	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
-	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_MULTIPLE);
+	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_EXTENDED);
 	gtk_clist_column_titles_passive(GTK_CLIST(list));
 	gtk_container_add(GTK_CONTAINER(win), list);
 	gtk_widget_show(list);
