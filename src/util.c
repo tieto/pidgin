@@ -1170,3 +1170,14 @@ gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b) {
 	g_free(b_norm);
 	return ret;
 }
+
+gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar *replacement) {
+	gchar **split;
+	gchar *ret;
+
+	split = g_strsplit(string, delimiter, 0);
+	ret = g_strjoinv(replacement, split);
+	g_strfreev(split);
+
+	return ret;
+}

@@ -332,4 +332,15 @@ char *gaim_getip_from_fd(int fd);
  */
 gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
 
+/**
+ * Given a string, this replaces one substring with another
+ * and returns a newly allocated string.
+ *
+ * @param string The string from which to replace stuff.
+ * @param delimiter The substring you want replaced.
+ * @param replacement The substring you want inserted in place 
+ *        of the delimiting substring.
+ */
+gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar *replacement);
+
 #endif /* _GAIM_UTIL_H_ */

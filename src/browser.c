@@ -584,9 +584,6 @@ void open_url(GtkWidget *w, char *url)
 			break;
 
 		case BROWSER_MANUAL: {
-			char *space_free_url = NULL;
-			char *web_tmp = NULL;
-
 			if (!web_command[0]) {
 				gaim_notify_error(NULL, NULL,
 								  _("Unable to launch your browser because "
@@ -596,28 +593,12 @@ void open_url(GtkWidget *w, char *url)
 				return;
 			}
 
-			space_free_url = g_strdup(url);
-			g_strdelimit(space_free_url, " ", '+');
-			/*
 			if (strstr(web_command, "%s"))
-				command = g_strdup_printf(web_command, space_free_url);
-
-			Replaced the above with the following to avoid users
-			from entering more than one %s as part of the browser
-			command.
-			*/
-			web_tmp = strstr(web_command, "%s");
-			if(web_tmp)
-			{
-				if (strstr((web_tmp + 1), "%s"))
-					command = g_strdup_printf(web_command, space_free_url);
-				else
-					gaim_notify_error(NULL, NULL, _("Unable to launch your browser because the 'Manual' browser command has too many '%s'."), NULL);
-			}
+				command = gaim_strreplace(web_command, "%s", url);
 			else
-				command = g_strdup_printf("%s %s", web_command, space_free_url);
-			g_free(space_free_url);
-			g_free(web_tmp);
+				/* There is no "%s" in the browser command.  Assume the user
+				 * wanted the URL tacked on to the end of the command. */
+				command = g_strdup_printf("%s %s", web_command, url);
 		} break;
 	}
 
