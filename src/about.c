@@ -81,10 +81,9 @@ void show_about(GtkWidget *w, void *null)
 "GAIM is a client that supports AOL's Instant Messenger protocol\nwritten under the GTK\n" 
 "It is developed by:\n"
 "Rob Flynn <rflynn@blueridge.net> <IM: RobFlynn> (Maintainer)\n"
+"Eric Warmenhoven <warmenhoven@yahoo.com> <IM: EWarmenhoven> (GNOME Applet)\n"
 "Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
 "Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
-"\n"
-"A special thanks to Eric Warmenhoven for his gnome applet-goodness.\n"
 "\n"
 "Gaim is brought to you by a team of penguin pimps, the letter G, and beer.\n");
 

@@ -33,6 +33,7 @@
 #include <X11/Xatom.h>
 #endif
 
+#include "gaim.h"
 #include "gtkhtml.h"
 
 #define MAX_SIZE                 7
@@ -42,7 +43,6 @@
 #define SCROLL_TIME              100
 #define SCROLL_PIXELS            5
 #define KEY_SCROLL_PIXELS        10
-#define BUF_LONG				2048
 
 int font_sizes[] = { 80, 100, 120, 140, 200, 300, 400 };
 
@@ -1760,41 +1760,41 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 
 		if (hb != NULL)
 		{
-			/*
-			 * GtkWidget *menu, *button;
-			 * 
-			 * menu = gtk_menu_new();
-			 * 
-			 * if (web_browser == BROWSER_NETSCAPE) {
-			 * 
-			 * button = gtk_menu_item_new_with_label("Open URL in existing window");
-			 * gtk_signal_connect(GTK_OBJECT(button), "activate",
-			 * GTK_SIGNAL_FUNC(open_url), hb->url);
-			 * gtk_menu_append(GTK_MENU(menu), button);
-			 * gtk_widget_show(button);
-			 * 
-			 * }
-			 * 
-			 * 
-			 * button = gtk_menu_item_new_with_label("Open URL in new window");
-			 * gtk_signal_connect(GTK_OBJECT(button), "activate",
-			 * GTK_SIGNAL_FUNC(open_url_nw), hb->url);
-			 * gtk_menu_append(GTK_MENU(menu), button);
-			 * gtk_widget_show(button);
-			 * 
-			 * if (web_browser == BROWSER_NETSCAPE) {
-			 * 
-			 * button = gtk_menu_item_new_with_label("Add URL as bookmark");
-			 * gtk_signal_connect(GTK_OBJECT(button), "activate",
-			 * GTK_SIGNAL_FUNC(add_bookmark), hb->url);
-			 * gtk_menu_append(GTK_MENU(menu), button);
-			 * gtk_widget_show(button);
-			 * 
-			 * }
-			 * 
-			 * gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-			 * event->button, event->time);                 
-			 */
+			
+			  GtkWidget *menu, *button;
+			   
+			   menu = gtk_menu_new();
+			   
+			   if (web_browser == BROWSER_NETSCAPE) {
+			   
+			   button = gtk_menu_item_new_with_label("Open URL in existing window");
+			   gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(open_url), hb->url);
+			   gtk_menu_append(GTK_MENU(menu), button);
+			   gtk_widget_show(button);
+			   
+			   }
+			   
+			   
+			   button = gtk_menu_item_new_with_label("Open URL in new window");
+			   gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(open_url_nw), hb->url);
+			   gtk_menu_append(GTK_MENU(menu), button);
+			   gtk_widget_show(button);
+			   
+			   if (web_browser == BROWSER_NETSCAPE) {
+			   
+			   button = gtk_menu_item_new_with_label("Add URL as bookmark");
+			   gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(add_bookmark), hb->url);
+			   gtk_menu_append(GTK_MENU(menu), button);
+			   gtk_widget_show(button);
+			   
+			   }
+			   
+			   gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+			   event->button, event->time);                 
+			   
 		}
 	}
 

@@ -5,6 +5,7 @@ version 0.9.13 (03/27/2000):
 	* Double Log-Out Message Fixed
 	* GNOME compile error fixed
 	* Away Message Problem Fixed
+	* Fixed URL Right Click Menus
 
 version 0.9.12 (03/25/2000):
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
@@ -21,7 +22,7 @@ version 0.9.12 (03/25/2000):
 	* A lot of random, obscure bugs fixed
 	* All of the major and I believe all of the minor memory leaks are 
 	  now fixed
-	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me :))
+	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me)
 	
 version 0.9.11 (03/22/2000):
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
