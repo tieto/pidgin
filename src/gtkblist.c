@@ -2133,7 +2133,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtknode = node->ui_data;
 
 	if (node->child && GAIM_BLIST_NODE_IS_CONTACT(node) &&
-			((GaimContact*)node)->online > 1 && !gtknode->contact_expanded &&
+			(((GaimContact*)node)->online > 1 ||
+			 (gaim_blist_node_get_bool(node, "show_offline") &&
+			  ((GaimContact*)node)->currentsize > 1)) &&
+			!gtknode->contact_expanded &&
 			gaim_prefs_get_bool("/gaim/gtk/blist/auto_expand_contacts")) {
 		GtkTreeIter i;
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
@@ -3627,7 +3630,8 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 
 	if(buddy && (buddy->present != GAIM_BUDDY_OFFLINE ||
 			(gaim_account_is_connected(buddy->account) &&
-			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")))) {
+			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
+			gaim_blist_node_get_bool(node, "show_offline"))) {
 		GtkTreeIter iter;
 
 		if(!insert_node(list, node, &iter))
@@ -3680,7 +3684,8 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 	if(gtkparentnode->contact_expanded &&
 			(buddy->present != GAIM_BUDDY_OFFLINE ||
 			(gaim_account_is_connected(buddy->account) &&
-			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")))) {
+			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
+			gaim_blist_node_get_bool(node->parent, "show_offline"))) {
 		GtkTreeIter iter;
 
 		if(!insert_node(list, node, &iter))

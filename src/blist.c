@@ -1484,7 +1484,8 @@ void gaim_blist_add_account(GaimAccount *account)
 							ops->update(gaimbuddylist, bnode);
 						}
 					}
-					if(recompute) {
+					if(recompute ||
+							gaim_blist_node_get_bool(cnode, "show_offline")) {
 						gaim_contact_compute_priority_buddy((GaimContact*)cnode);
 						ops->update(gaimbuddylist, cnode);
 					}
@@ -2421,6 +2422,9 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 							}
 						}
 					}
+
+					g_hash_table_foreach(cnode->settings,
+							blist_print_cnode_settings, file);
 
 					fprintf(file, "\t\t\t</contact>\n");
 				} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
