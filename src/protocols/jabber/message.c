@@ -198,10 +198,12 @@ static void handle_groupchat_invite(JabberMessage *jm)
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	g_hash_table_replace(components, g_strdup("room"), jid->node);
-	g_hash_table_replace(components, g_strdup("server"), jid->node);
-	g_hash_table_replace(components, g_strdup("handle"), jm->js->user->node);
-	g_hash_table_replace(components, g_strdup("password"), jm->password);
+	g_hash_table_replace(components, g_strdup("room"), g_strdup(jid->node));
+	g_hash_table_replace(components, g_strdup("server"), g_strdup(jid->node));
+	g_hash_table_replace(components, g_strdup("handle"),
+			g_strdup(jm->js->user->node));
+	g_hash_table_replace(components, g_strdup("password"),
+			g_strdup(jm->password));
 
 	jabber_id_free(jid);
 	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
