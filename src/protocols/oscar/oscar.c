@@ -1147,7 +1147,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
 	g_free(tmp);
 
-	serv_got_update(gc, info->sn, 1, info->warnlevel/10, info->onlinesince,
+	serv_got_update(gc, info->sn, 1, info->warnlevel/10, time(NULL) - info->sessionlen,
 			time_idle, type, info->capabilities);
 
 	return 1;
@@ -1895,7 +1895,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gc->evil = info->warnlevel/10;
-	gc->correction_time = (info->onlinesince - gc->login_time);
+	/* gc->correction_time = (info->onlinesince - gc->login_time); */
 
 	return 1;
 }
