@@ -86,14 +86,13 @@ do_check(void)
 {
 	int last_check = gaim_prefs_get_int("/plugins/gtk/relnot/last_check");
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
-		const char *build;
-		char *url;
+		char *url = g_strdup_printf("http://gaim.sourceforge.net/version.php?version=%s&build=%s", gaim_core_get_version(),
 #ifdef _WIN32
-		build = "gaim-win32";
+				"gaim-win32"
 #else
-		build = "gaim";
+				"gaim"
 #endif
-		url = g_strdup_printf("http://gaim.sourceforge.net/version.php?version=%s&build=%s", gaim_core_get_version(), build);
+		);
 		gaim_url_fetch(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
 		gaim_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
 		g_free(url);
