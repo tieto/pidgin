@@ -2379,11 +2379,15 @@ void create_mess(GtkWidget *widget, struct create_away *ca)
 void create_away_mess(GtkWidget *widget, void *dummy)
 {
 	GtkWidget *bbox;
+	GtkWidget *hbox;
 	GtkWidget *titlebox;
 	GtkWidget *tbox;
 	GtkWidget *create;
 	GtkWidget *sw;
 	GtkWidget *label;
+	GtkWidget *cancel;
+	GtkWidget *frame;
+	GtkWidget *fbox;
 
         struct create_away *ca = g_new0(struct create_away, 1);
         
@@ -2394,8 +2398,14 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_signal_connect(GTK_OBJECT(ca->window),"delete_event",
 		           GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 
+	/* Set up our frame */
+
+	frame = gtk_frame_new(_("New away message"));
+
 	/* set up container boxes */
 	bbox = gtk_vbox_new(FALSE, 0);
+	fbox = gtk_vbox_new(FALSE, 0);
+	hbox = gtk_hbox_new(TRUE, 0);
 	titlebox = gtk_hbox_new(FALSE, 0);
 	tbox = gtk_vbox_new(FALSE, 0);
 
@@ -2423,27 +2433,41 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	/* make create button */
 	create = gtk_button_new_with_label (_("Create new message"));
-	gtk_box_pack_start(GTK_BOX(bbox), create, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), create, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(create), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
+	
+	/* create cancel button */
+	cancel = gtk_button_new_with_label(_("Cancel"));
+	gtk_box_pack_end(GTK_BOX(hbox), cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 
 	/* Checkbox for showing away msg */
 	ca->checkbx = gtk_check_button_new_with_label(_("Make away now"));
 
 	/* pack boxes where they belong */
-	gtk_box_pack_start(GTK_BOX(tbox), titlebox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(tbox), bbox, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(tbox), ca->checkbx, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(fbox), titlebox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(fbox), ca->checkbx, FALSE, FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
+	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
+	
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
 
 	/* let the world see what we have done. */
 	gtk_widget_show(label);
 	gtk_widget_show(create);
+	gtk_widget_show(cancel);
 	gtk_widget_show(ca->checkbx);
 	gtk_widget_show(ca->entry);
 	gtk_widget_show(titlebox);
+	gtk_widget_show(hbox);
 	gtk_widget_show(tbox);
 	gtk_widget_show(bbox);
-
+	gtk_widget_show(fbox);
+	gtk_widget_show(frame);
 
         gtk_widget_realize(ca->window);
         aol_icon(ca->window->window);
