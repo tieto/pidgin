@@ -53,6 +53,7 @@ struct _MsnSession
 	unsigned int trId;
 
 	gboolean http_method;
+	gint http_poll_timer;
 
 	MsnUsers *users;
 	MsnGroups *groups;

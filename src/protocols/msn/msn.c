@@ -271,7 +271,7 @@ initiate_chat_cb(GaimConnection *gc, const char *passport)
 	swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id, "MSN Chat");
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
-					   gaim_account_get_username(account), NULL);
+							gaim_account_get_username(account), NULL);
 }
 
 /**************************************************************************
@@ -478,6 +478,9 @@ msn_login(GaimAccount *account)
 	session->http_method = http_method;
 	session->prpl = my_protocol;
 
+	if (session->http_method)
+		msn_http_session_init(session);
+
 	gc->proto_data = session;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
@@ -499,6 +502,9 @@ static void
 msn_close(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
+
+	if (session->http_method)
+		msn_http_session_uninit(session);
 
 	msn_session_destroy(session);
 
@@ -1667,12 +1673,10 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-#if 0
 	option = gaim_account_option_bool_new(_("Use HTTP Method"), "http_method",
 										  FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-#endif
 
 	my_protocol = plugin;
 

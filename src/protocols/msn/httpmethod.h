@@ -37,9 +37,24 @@ struct _MsnHttpMethodData
 
 	gboolean virgin;
 	gboolean waiting_response;
+	gboolean dirty;
 
 	GList *queue;
 };
+
+/**
+ * Initializes the HTTP data for a session.
+ *
+ * @param session The session.
+ */
+void msn_http_session_init(MsnSession *session);
+
+/**
+ * Uninitializes the HTTP data for a session.
+ *
+ * @param session The session.
+ */
+void msn_http_session_uninit(MsnSession *session);
 
 /**
  * Writes data to the server using the HTTP connection method.

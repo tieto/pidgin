@@ -48,37 +48,59 @@ typedef struct
 static gboolean
 http_poll(gpointer data)
 {
-	MsnServConn *servconn = data;
+	MsnSession *session = data;
+	MsnServConn *servconn;
+	GList *l;
 
-	gaim_debug_info("msn", "Polling server %s.\n",
-					servconn->http_data->gateway_ip);
-	msn_http_servconn_poll(servconn);
+	for (l = session->servconns; l != NULL; l = l->next)
+	{
+		servconn = (MsnServConn *)l->data;
 
-	servconn->http_data->timer = 0;
+		if (servconn->http_data->dirty)
+		{
+			gaim_debug_info("msn", "Polling server %s.\n",
+							servconn->http_data->gateway_ip);
+			msn_http_servconn_poll(servconn);
+		}
+	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "msn", "Returning from http_poll\n");
-
-	return FALSE;
+	return TRUE;
 }
 
 static void
-stop_timer(MsnServConn *servconn)
+stop_timer(MsnSession *session)
 {
-	if (servconn->http_data->timer)
+	if (session->http_poll_timer)
 	{
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Stopping timer\n");
-		gaim_timeout_remove(servconn->http_data->timer);
-		servconn->http_data->timer = 0;
+		gaim_timeout_remove(session->http_poll_timer);
+		session->http_poll_timer = 0;
 	}
 }
 
 static void
-start_timer(MsnServConn *servconn)
+start_timer(MsnSession *session)
 {
-	stop_timer(servconn);
+	stop_timer(session);
 
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Starting timer\n");
-	servconn->http_data->timer = gaim_timeout_add(5000, http_poll, servconn);
+	session->http_poll_timer = gaim_timeout_add(5000, http_poll, session);
+}
+
+void
+msn_http_session_init(MsnSession *session)
+{
+	g_return_if_fail(session != NULL);
+
+	start_timer(session);
+}
+
+void
+msn_http_session_uninit(MsnSession *session)
+{
+	g_return_if_fail(session != NULL);
+
+	stop_timer(session);
 }
 
 size_t
@@ -180,10 +202,8 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 	g_free(temp);
 
 	servconn->http_data->waiting_response = TRUE;
-
 	servconn->http_data->virgin = FALSE;
-
-	stop_timer(servconn);
+	servconn->http_data->dirty = FALSE;
 
 	return s;
 }
@@ -226,8 +246,7 @@ msn_http_servconn_poll(MsnServConn *servconn)
 	g_free(temp);
 
 	servconn->http_data->waiting_response = TRUE;
-
-	stop_timer(servconn);
+	servconn->http_data->dirty = FALSE;
 
 	if (s <= 0)
 		gaim_connection_error(servconn->session->account->gc,
@@ -416,7 +435,7 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 		g_free(queue_data);
 	}
 	else
-		start_timer(servconn);
+		servconn->http_data->dirty = TRUE;
 
 	return TRUE;
 }
