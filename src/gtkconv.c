@@ -3197,8 +3197,15 @@ gaim_gtk_new_window(struct gaim_window *win)
 						   G_CALLBACK(switch_conv_cb), win);
 
 	/* Setup the tab drag and drop signals. */
+	gtk_widget_add_events(gtkwin->notebook,
+				GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+	g_signal_connect(G_OBJECT(gtkwin->notebook), "button_press_event",
+			 G_CALLBACK(notebook_press_cb), win);
+	g_signal_connect(G_OBJECT(gtkwin->notebook), "button_release_event",
+			 G_CALLBACK(notebook_release_cb), win);
+	
 	testidea = gtk_vbox_new(FALSE, 0);
-
+	
 	/* Setup the menubar. */
 	menubar = setup_menubar(win);
 	gtk_box_pack_start(GTK_BOX(testidea), menubar, FALSE, TRUE, 0);
