@@ -884,7 +884,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			}
 
 			if(new) {
-				debug_printf("Unresolved MSN RL entry");
+				debug_printf("Unresolved MSN RL entry\n");
 				ap = g_new0(struct msn_add_permit, 1);
 				ap->user = g_strdup(who);
 				ap->friend = g_strdup(friend);

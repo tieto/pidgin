@@ -1009,12 +1009,13 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	hbox = gtk_hbox_new(FALSE, 5);	
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
-	gtk_widget_show(hbox);
-	gaim_button(_("Hide Buddy Icons"), &im_options, OPT_IM_HIDE_ICONS, hbox);
+	gaim_button(_("Hide Buddy Icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
 	
-	gaim_button(_("Disable Buddy Icon Animation"), &im_options, OPT_IM_NO_ANIMATION, hbox);
+	gaim_button(_("Disable Buddy Icon Animation"), &im_options, OPT_IM_NO_ANIMATION, vbox);
 #endif
 
 	gtk_widget_show(prefdialog);
@@ -2724,6 +2725,9 @@ static void set_im_option(GtkWidget *w, int option)
 
 	if (option == OPT_IM_ALIAS_TAB)
 		set_convo_titles();
+
+	if (option == OPT_IM_NO_ANIMATION)
+		set_anim();
 
 	save_prefs();
 }

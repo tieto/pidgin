@@ -1156,11 +1156,12 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (info->flags & AIM_FLAG_AWAY)
 			type |= UC_UNAVAILABLE;
 	}
-
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
 		type = (info->icqinfo.status << 6);
-		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
+		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT) &&
+		      (info->icqinfo.status != AIM_ICQ_STATE_NORMAL)) {
 			type |= UC_UNAVAILABLE;
+		}
 	}
 
 	if (caps & AIM_CAPS_ICQ)
@@ -2618,6 +2619,7 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
 			gc->away = "";
 		} else {
+		  
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 		}
 	}

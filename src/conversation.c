@@ -3288,7 +3288,7 @@ void update_icon(struct conversation *c)
 	gtk_container_add(GTK_CONTAINER(event), c->icon);
 	gtk_widget_show(c->icon);
 	if(im_options & OPT_IM_NO_ANIMATION)
-		stop_anim(c->icon, c);		
+		stop_anim(NULL, c);		
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);
@@ -3307,6 +3307,18 @@ void set_hide_icons()
 	GList *c = conversations;
 	while (c) {
 		update_icon(c->data);
+		c = c->next;
+	}
+}
+
+void set_anim()
+{
+	GList *c = conversations;
+	while (c) {
+		if(im_options & OPT_IM_NO_ANIMATION)
+			stop_anim(NULL, c->data);
+		else 
+			start_anim(NULL, c->data);
 		c = c->next;
 	}
 }
