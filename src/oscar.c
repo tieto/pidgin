@@ -50,6 +50,8 @@
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
+#include "pixmaps/ok.xpm"
+#include "pixmaps/cancel.xpm"
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
@@ -65,7 +67,33 @@ struct oscar_data {
 	char *create_name;
 
 	GSList *oscar_chats;
+	GSList *direct_ims;
 };
+
+struct direct_im {
+	struct gaim_connection *gc;
+	char name[80];
+	struct conversation *cnv;
+	int watcher;
+	struct aim_conn_t *conn;
+};
+
+static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
+	GSList *d = od->direct_ims;
+	char *n = g_strdup(normalize(who));
+	struct direct_im *m = NULL;
+
+	while (d) {
+		m = (struct direct_im *)d->data;
+		if (!strcmp(n, normalize(m->name)))
+			break;
+		m = NULL;
+		d = d->next;
+	}
+
+	g_free(n);
+	return m;
+}
 
 struct chat_connection *find_oscar_chat(struct gaim_connection *gc, char *name) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
@@ -163,6 +191,11 @@ static int gaim_reportinterval   (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
+
+static int gaim_directim_initiate  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_incoming  (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_disconnect(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_directim_typing    (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static char *msgerrreason[] = {
 	"Invalid error",
@@ -628,6 +661,112 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 	return 1;
 }
 
+struct ask_direct {
+	GtkWidget *window;
+	struct gaim_connection *gc;
+	char *sn;
+	struct aim_directim_priv *priv;
+};
+
+static void cancel_direct_im(GtkWidget *w, struct ask_direct *d) {
+	gtk_widget_destroy(d->window);
+	g_free(d->sn);
+	g_free(d);
+}
+
+static void delete_direct_im(GtkWidget *w, struct direct_im *d) {
+	struct oscar_data *od = (struct oscar_data *)d->gc->proto_data;
+
+	od->direct_ims = g_slist_remove(od->direct_ims, d);
+	gdk_input_remove(d->watcher);
+	aim_conn_kill(od->sess, &d->conn);
+	g_free(d);
+}
+
+static void accept_direct_im(GtkWidget *w, struct ask_direct *d) {
+	struct gaim_connection *gc = d->gc;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim;
+
+	dim = find_direct_im(od, d->sn);
+	if (dim) {
+		gtk_widget_show(dim->cnv->window);
+		cancel_direct_im(w, d); /* 40 */
+		return;
+	}
+	dim = g_new0(struct direct_im, 1);
+	dim->gc = d->gc;
+	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
+
+	if ((dim->conn = aim_directim_connect(od->sess, od->conn, d->priv)) == NULL) {
+		g_free(dim);
+		cancel_direct_im(w, d);
+		return;
+	}
+
+	if (!(dim->cnv = find_conversation(d->sn))) dim->cnv = new_conversation(d->sn);
+	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
+			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
+
+	od->direct_ims = g_slist_append(od->direct_ims, dim);
+	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, dim->conn);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
+				gaim_directim_incoming, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
+				gaim_directim_disconnect, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
+				gaim_directim_typing, 0);
+
+	cancel_direct_im(w, d);
+}
+
+static void ask_direct_im(struct gaim_connection *gc, struct aim_userinfo_s *info,
+		struct aim_directim_priv *priv) {
+	struct ask_direct *d = g_new0(struct ask_direct, 1);
+	GtkWidget *window;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *hbox;
+	GtkWidget *button;
+	char buf[256];
+
+	d->gc = gc;
+	d->sn = g_strdup(info->sn);
+	d->priv = priv;
+
+	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_wmclass(GTK_WINDOW(window), "directim", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(window), 0, 0, 1);
+	gtk_window_set_title(GTK_WINDOW(window), _("Accept Direct IM?"));
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+	d->window = window;
+
+	box = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(window), box);
+	gtk_widget_show(box);
+
+	g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.", info->sn, gc->username);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(box), label, 0, 0, 5);
+	gtk_widget_show(label);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, 0, 0, 1);
+	gtk_widget_show(hbox);
+
+	button = picture_button(window, _("Accept"), ok_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(accept_direct_im), d);
+
+	button = picture_button(window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_direct_im), d);
+
+	gtk_widget_show(window);
+}
+
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
@@ -675,15 +814,20 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     userinfo->sn,
 					     msg);
 		} else if (rendtype & AIM_CAPS_SENDFILE) {
-			/* libfaim won't tell us that we got this just yet */
 		} else if (rendtype & AIM_CAPS_GETFILE) {
-			/* nor will it tell us this. but it's still there */
 		} else if (rendtype & AIM_CAPS_VOICE) {
-			/* this one libfaim tells us unuseful info about  */
 		} else if (rendtype & AIM_CAPS_BUDDYICON) {
-			/* bah */
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
-			/* DirectIM stuff */
+			struct aim_directim_priv *priv;
+
+			userinfo = va_arg(ap, struct aim_userinfo_s *);
+			priv = va_arg(ap, struct aim_directim_priv *);
+			va_end(ap);
+
+			debug_printf("%s received direct im request from %s (%s)\n",
+					gc->username, userinfo->sn, priv->ip);
+
+			ask_direct_im(gc, userinfo, priv);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -1150,10 +1294,15 @@ static char *oscar_name() {
 
 static void oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	if (away)
-		aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
-	else
-		aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
+	struct direct_im *dim = find_direct_im(odata, name);
+	if (dim) {
+		aim_send_im_direct(odata->sess, dim->conn, message);
+	} else {
+		if (away)
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
+		else
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
+	}
 }
 
 static void oscar_get_info(struct gaim_connection *g, char *name) {
@@ -1355,6 +1504,125 @@ static void oscar_away_msg(GtkObject *obj, char *who) {
 	serv_get_away_msg(gc, who);
 }
 
+static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct aim_directim_priv *priv;
+	struct aim_conn_t *newconn;
+	struct direct_im *dim;
+
+	va_start(ap, command);
+	newconn = va_arg(ap, struct aim_conn_t *);
+	va_end(ap);
+
+	priv = (struct aim_directim_priv *)newconn->priv;
+
+	debug_printf("DirectIM: initiate success to %s\n", priv->sn);
+	dim = find_direct_im(od, priv->sn);
+
+	dim->cnv = find_conversation(priv->sn);
+	if (!dim->cnv) dim->cnv = new_conversation(priv->sn);
+	gtk_signal_connect(GTK_OBJECT(dim->cnv->window), "destroy",
+			   GTK_SIGNAL_FUNC(delete_direct_im), dim);
+	gdk_input_remove(dim->watcher);
+	dim->conn = newconn;
+	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, dim->conn);
+	/* FIXME: print to screen that this is now direct */
+
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
+				gaim_directim_incoming, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMDISCONNECT,
+				gaim_directim_disconnect, 0);
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
+				gaim_directim_typing, 0);
+
+	return 1;
+}
+
+static int gaim_directim_incoming(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *sn = NULL, *msg = NULL;
+	struct aim_conn_t *conn;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+
+	va_start(ap, command);
+	conn = va_arg(ap, struct aim_conn_t *);
+	sn = va_arg(ap, char *);
+	msg = va_arg(ap, char *);
+	va_end(ap);
+
+	debug_printf("Got DirectIM message from %s\n", sn);
+
+	serv_got_im(gc, sn, msg, 0);
+
+	return 1;
+}
+
+static int gaim_directim_disconnect(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	struct aim_conn_t *conn;
+	char *sn;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim;
+
+	va_start(ap, command);
+	conn = va_arg(ap, struct aim_conn_t *);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	debug_printf("%s disconnected Direct IM.\n", sn);
+
+	dim = find_direct_im(od, sn);
+	od->direct_ims = g_slist_remove(od->direct_ims, dim);
+	gdk_input_remove(dim->watcher);
+	gtk_signal_disconnect_by_data(GTK_OBJECT(dim->cnv->window), dim);
+
+	/* FIXME: need to indicate no longer direct */
+
+	aim_conn_kill(sess, &conn);
+
+	return 1;
+}
+
+static int gaim_directim_typing(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *sn;
+
+	va_start(ap, command);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	/* I had to leave this. It's just too funny. It reminds me of my sister. */
+	debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
+
+	return 1;
+}
+
+static void oscar_direct_im(GtkObject *obj, char *who) {
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim;
+
+	dim = find_direct_im(od, who);
+	if (dim) {
+		gtk_widget_show(dim->cnv->window);
+		return;
+	}
+	dim = g_new0(struct direct_im, 1);
+	dim->gc = gc;
+	g_snprintf(dim->name, sizeof dim->name, "%s", who);
+	od->direct_ims = g_slist_append(od->direct_ims, dim);
+
+	dim->conn = aim_directim_initiate(od->sess, od->conn, NULL, who);
+	dim->watcher = gdk_input_add(dim->conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+					oscar_callback, dim->conn);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
+				gaim_directim_initiate, 0);
+}
+
 static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	GtkWidget *button;
 
@@ -1368,6 +1636,13 @@ static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	button = gtk_menu_item_new_with_label(_("Get Away Msg"));
 	gtk_signal_connect(GTK_OBJECT(button), "activate",
 			   GTK_SIGNAL_FUNC(oscar_away_msg), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label(_("Direct IM"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(oscar_direct_im), who);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
