@@ -1724,19 +1724,8 @@ void show_buddy_list()
 
         gaim_new_item(menu, "Preferences", GTK_SIGNAL_FUNC(show_prefs));
 
-#ifdef GAIM_PLUGINS
-	menu = gtk_menu_new();
+        gaim_new_item(menu, "Plugins", GTK_SIGNAL_FUNC(show_plugins));
 
-	menuitem = gaim_new_item(NULL, "Plugins", NULL);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
-	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
-
-	gaim_new_item(menu, "Load Plugin", GTK_SIGNAL_FUNC(load_plugin));
-	/* FIXME */
-	gaim_new_item(menu, "Remove Plugin", GTK_SIGNAL_FUNC(show_plugins));
-	gaim_new_item(menu, "Show Plugins", GTK_SIGNAL_FUNC(show_plugins));
-#endif
-	
 	menu = gtk_menu_new();
 
 	menuitem = gaim_new_item(NULL, "Help", NULL);

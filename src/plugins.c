@@ -61,14 +61,13 @@ static GtkWidget *config;
 
 /* --------------- Function Declarations --------------------- */
 
-       void load_plugin  (GtkWidget *, gpointer);
-       void unload_plugin(GtkWidget *, gpointer);
        void show_plugins (GtkWidget *, gpointer);
 
        void gaim_signal_connect   (void *, enum gaim_event, void *, void *);
        void gaim_signal_disconnect(void *, enum gaim_event, void *);
 
 static void destroy_plugins  (GtkWidget *, gpointer);
+static void load_plugin  (GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
 static void unload           (GtkWidget *, gpointer);
 static void list_clicked     (GtkWidget *, struct gaim_plugin *);
@@ -83,7 +82,7 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 	plugin_dialog = NULL;
 }
 
-void load_plugin(GtkWidget *w, gpointer data)
+static void load_plugin(GtkWidget *w, gpointer data)
 {
 	char *buf = g_malloc(BUF_LEN);
  
@@ -120,7 +119,7 @@ void load_plugin(GtkWidget *w, gpointer data)
 	gdk_window_raise(plugin_dialog->window);   
 }
 
-void load_which_plugin(GtkWidget *w, gpointer data) {
+static void load_which_plugin(GtkWidget *w, gpointer data) {
 	struct gaim_plugin *plug;
 	void (*gaim_plugin_init)();
 	char *(*cfunc)();
@@ -168,10 +167,6 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 		plug->description = NULL;
 
 	update_show_plugins();
-}
-
-void unload_plugin(GtkWidget *w, gpointer data) {
-	/* FIXME */
 }
 
 void show_plugins(GtkWidget *w, gpointer data) {
