@@ -129,19 +129,18 @@ dologin_named(const char *name)
 static void
 clean_pid(void)
 {
-#ifndef _WIN32
 	int status;
 	pid_t pid;
 
 	do {
 		pid = waitpid(-1, &status, WNOHANG);
 	} while (pid != 0 && pid != (pid_t)-1);
-	if(pid == (pid_t)-1 && errno != ECHILD) {
+
+	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
 		char errmsg[BUFSIZ];
 		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
-#endif
 }
 
 void
@@ -449,7 +448,9 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gchar *gaimrc, *accountsxml;
+#if HAVE_SIGNAL_H
 	char errmsg[BUFSIZ];
+#endif
 
 	struct option long_options[] = {
 		{"acct",     no_argument,       NULL, 'a'},
