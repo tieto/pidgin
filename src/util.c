@@ -127,7 +127,7 @@ gint linkify_text(char *text)
 	while (*c) {
 		if (!g_strncasecmp(c, "<A", 2)) {
 			while (1) {
-				if (!strncasecmp(c, "/A>", 3)) {
+				if (!g_strncasecmp(c, "/A>", 3)) {
 					break;
 				}
 				text[cnt++] = *c;

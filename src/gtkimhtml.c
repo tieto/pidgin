@@ -86,17 +86,18 @@ struct _GtkSmileyTree {
 	gchar **image;
 };
 
-static gchar* getcharset()
+static gchar*
+getcharset ()
 {
-	static gchar charset[64];
+	static gchar charset [64];
 #ifdef HAVE_LANGINFO_CODESET
-	gchar *ch = nl_langinfo(CODESET);
-	if (strncasecmp(ch, "iso-", 4) == 0)
-		g_snprintf(charset, sizeof(charset), "iso%s", ch + 4);
+	gchar *ch = nl_langinfo (CODESET);
+	if (!g_strncasecmp (ch, "iso-", 4))
+		g_snprintf (charset, sizeof (charset), "iso%s", ch + 4);
 	else
-		g_snprintf(charset, sizeof(charset), ch);
+		g_snprintf (charset, sizeof (charset), ch);
 #else
-	g_snprintf(charset, sizeof(charset), "iso8859-*");
+	g_snprintf (charset, sizeof (charset), "iso8859-*");
 #endif
 	return charset;
 }

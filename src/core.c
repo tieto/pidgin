@@ -35,6 +35,7 @@
 #include <signal.h>
 #include <getopt.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "gaim.h"
 
