@@ -4288,23 +4288,60 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	button_box_2 = gtk_vbox_new(FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
+
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box);
-	if (dispstyle == 2 || dispstyle == 0) {
-		pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-		pixmap = gtk_pixmap_new(pm, mask);
-		gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+	
+	switch(dispstyle) {
+		case 0:
+			/* Display just pixmap */
+			pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
+			pixmap = gtk_pixmap_new(pm, mask);
+			gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+			
+			gtk_widget_show(pixmap);
+			
+			gdk_pixmap_unref(pm);
+			gdk_bitmap_unref(mask);
+			break;
 
-		gtk_widget_show(pixmap);
+		case 1:
+			/* Display just label */
+			label = gtk_label_new(text);
+			gtk_widget_show(label);
+			gtk_box_pack_start(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
+			break;
 
-		gdk_pixmap_unref(pm);
-		gdk_bitmap_unref(mask);
-	}
+		case 2:
+			/* Display pixmap and label */
+			{
+				GtkWidget *button_box_top = gtk_vbox_new(FALSE, 0);
+				GtkWidget *button_box_bottom = gtk_vbox_new(FALSE, 0); 
+				
+				pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
+				pixmap = gtk_pixmap_new(pm, mask);
+				gtk_box_pack_end(GTK_BOX(button_box_top), pixmap, FALSE, FALSE, 0);
 
-	if (dispstyle == 2 || dispstyle == 1) {
-		label = gtk_label_new(text);
-		gtk_widget_show(label);
-		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
+				gtk_widget_show(pixmap);
+
+				gdk_pixmap_unref(pm);
+				gdk_bitmap_unref(mask);
+
+				label = gtk_label_new(text);
+				gtk_widget_show(label);
+				gtk_box_pack_start(GTK_BOX(button_box_bottom), label, FALSE, FALSE, 0);
+						
+				gtk_box_pack_start(GTK_BOX(button_box_2), button_box_top, TRUE,
+							TRUE, 0);
+				gtk_box_pack_start(GTK_BOX(button_box_2), button_box_bottom, TRUE,
+							TRUE, 0);
+				gtk_widget_show(button_box_top);
+				gtk_widget_show(button_box_bottom);
+			}
+			break;
+
+		default:
+			break;
 	}
 
 	gtk_tooltips_set_tip(button_tips, button, text, "Gaim");
