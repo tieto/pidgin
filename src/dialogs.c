@@ -714,24 +714,17 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	/* Set up window */
 	GAIM_DIALOG(ca->window);
 	gtk_widget_set_size_request(ca->window, -1, 250);
-	gtk_container_set_border_width(GTK_CONTAINER(ca->window), 6);
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
 	g_signal_connect(G_OBJECT(ca->window), "delete_event",
 			   G_CALLBACK(away_mess_destroy_ca), ca);
 
-	/*
-	 * This would be higgy... but I think it's pretty ugly  --Mark
-	 * If you want to use this, make sure you add the vbox to the hbox below
-	 */
-	/*
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 12);
 	gtk_container_add(GTK_CONTAINER(ca->window), hbox);
-	*/
 
 	vbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(ca->window), vbox);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	/* Away message title */
 	hbox = gtk_hbox_new(FALSE, 0);
