@@ -51,7 +51,9 @@ print"<tr bgcolor='#e0e0e0'><th>language</th><th style='background: #339933;'>tr
 foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
 	$po = $pos[$index];
-	$_ = `msgfmt --statistics $po -o /dev/null 2>&1`;
+	print STDERR "$po..." if($ARGV[0] eq '-v');
+	system("msgmerge $po.po gaim.pot -o $po.new 2>/dev/null");
+	$_ = `msgfmt --statistics $po.new -o /dev/null 2>&1`;
 	chomp;
 	if(/(\d+) translated messages/) { $trans = $1; }
 	if(/(\d+) fuzzy translations/) { $fuzz = $1; }
@@ -81,6 +83,8 @@ foreach $index (0 .. $#pos) {
 	printf "<img src='bar_y.gif' height='15' width='%0.0f' />", $gonep*2
 	unless $gonep*2 < 0.5;
 	print "</tr>\n";
+	unlink("$po.new");
+	print STDERR "done.\n" if($ARGV[0] eq '-v');
 }
 print "</table></td></tr></table>\n";
 print "Latest gaim.pot generated $now: <a href='gaim.pot'>gaim.pot</a><br />\n";
