@@ -570,7 +570,8 @@ void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *na
 		if (!b)
 			return;
 		
-		aim_chat_invite(g->oscar_sess, g->oscar_conn, name, message, 0x4, b->name, 0x1);
+		aim_chat_invite(g->oscar_sess, g->oscar_conn, name,
+				message ? message : "", 0x4, b->name, 0x0);
 	}
 }
 
