@@ -841,7 +841,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_PASSWORD) {
-		if (strcmp(buffer, "")) {
+		if (*buffer != '\0') {
 			if (data->in_proxy) {
 				gaim_proxy_info_set_password(data->proxy_info, buffer);
 			}
@@ -851,12 +851,18 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			}
 		}
 	}
-	else if (data->tag == TAG_ALIAS)
-		gaim_account_set_alias(data->account, buffer);
-	else if (data->tag == TAG_USERINFO)
-		gaim_account_set_user_info(data->account, buffer);
-	else if (data->tag == TAG_BUDDYICON)
-		gaim_account_set_buddy_icon(data->account, buffer);
+	else if (data->tag == TAG_ALIAS) {
+		if (*buffer != '\0')
+			gaim_account_set_alias(data->account, buffer);
+	}
+	else if (data->tag == TAG_USERINFO) {
+		if (*buffer != '\0')
+			gaim_account_set_user_info(data->account, buffer);
+	}
+	else if (data->tag == TAG_BUDDYICON) {
+		if (*buffer != '\0')
+			gaim_account_set_buddy_icon(data->account, buffer);
+	}
 	else if (data->tag == TAG_TYPE) {
 		if (data->in_proxy) {
 			if (!strcmp(buffer, "global"))
@@ -876,15 +882,15 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		}
 	}
 	else if (data->tag == TAG_HOST) {
-		if (data->in_proxy && strcmp(buffer, ""))
+		if (data->in_proxy && *buffer != '\0')
 			gaim_proxy_info_set_host(data->proxy_info, buffer);
 	}
 	else if (data->tag == TAG_PORT) {
-		if (data->in_proxy && strcmp(buffer, ""))
+		if (data->in_proxy && *buffer != '\0')
 			gaim_proxy_info_set_port(data->proxy_info, atoi(buffer));
 	}
 	else if (data->tag == TAG_SETTING) {
-		if (strcmp(buffer, "")) {
+		if (*buffer != '\0') {
 			if (data->setting_ui != NULL) {
 				if (data->setting_type == GAIM_PREF_STRING)
 					gaim_account_set_ui_string(data->account, data->setting_ui,
@@ -920,7 +926,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			gaim_proxy_info_destroy(data->proxy_info);
 			data->proxy_info = NULL;
 		}
-		else if (strcmp(buffer, "")) {
+		else if (*buffer != '\0') {
 			gaim_account_set_proxy_info(data->account, data->proxy_info);
 		}
 	}
