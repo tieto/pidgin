@@ -54,7 +54,7 @@ gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
 #define DIFF(a, b) (((a) > (b)) ? ((a) - (b)) : ((b) - (a)))
 #define COLOR_MOD  0x8000
-#define COLOR_DIFF (COLOR_MOD >> 8)
+#define COLOR_DIFF 0x80
 
 #define TYPE_TEXT     0
 #define TYPE_SMILEY   1
@@ -205,33 +205,30 @@ gtk_imhtml_realize (GtkWidget *widget)
 		(* GTK_WIDGET_CLASS (parent_class)->realize) (widget);
 
 	widget->style = gtk_style_attach (widget->style, widget->window);
-	gdk_window_set_events (imhtml->layout.bin_window,
-			       (gdk_window_get_events (imhtml->layout.bin_window)
+	gdk_window_set_events (GTK_LAYOUT (imhtml)->bin_window,
+			       (gdk_window_get_events (GTK_LAYOUT (imhtml)->bin_window)
 				| GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK
 				| GDK_POINTER_MOTION_MASK | GDK_EXPOSURE_MASK));
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	gdk_color_alloc (widget->style->colormap, imhtml->default_bg_color);
+	gdk_color_alloc (gtk_widget_get_colormap (widget), imhtml->default_bg_color);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window, imhtml->default_bg_color);
 }
 
 static gboolean
-similar_colors (GdkColor  bg,
+similar_colors (GdkColor *bg,
 		GdkColor *fg)
 {
-	bg.red = bg.pixel >> 16; fg->red = fg->pixel >> 16;
-	bg.green = (bg.pixel >> 8) & 0xff; fg->green = (fg->pixel >> 8) & 0xff;
-	bg.blue = bg.pixel & 0xff; fg->blue = fg->pixel & 0xff;
-	if ((DIFF (bg.red, fg->red) < COLOR_DIFF) &&
-	    (DIFF (bg.green, fg->green) < COLOR_DIFF) &&
-	    (DIFF (bg.blue, fg->blue) < COLOR_DIFF)) {
-		fg->red = (0xff00 - COLOR_MOD > bg.red) ?
-			bg.red + COLOR_MOD : bg.red - COLOR_MOD;
-		fg->green = (0xff00 - COLOR_MOD > bg.green) ?
-			bg.green + COLOR_MOD : bg.green - COLOR_MOD;
-		fg->blue = (0xff00 - COLOR_MOD > bg.blue) ?
-			bg.blue + COLOR_MOD : bg.blue - COLOR_MOD;
+	if ((DIFF (bg->red, fg->red) < COLOR_DIFF) &&
+	    (DIFF (bg->green, fg->green) < COLOR_DIFF) &&
+	    (DIFF (bg->blue, fg->blue) < COLOR_DIFF)) {
+		fg->red = (0xff00 - COLOR_MOD > bg->red) ?
+			bg->red + COLOR_MOD : bg->red - COLOR_MOD;
+		fg->green = (0xff00 - COLOR_MOD > bg->green) ?
+			bg->green + COLOR_MOD : bg->green - COLOR_MOD;
+		fg->blue = (0xff00 - COLOR_MOD > bg->blue) ?
+			bg->blue + COLOR_MOD : bg->blue - COLOR_MOD;
 		return TRUE;
 	}
 	return FALSE;
@@ -246,26 +243,27 @@ draw_text (GtkIMHtml        *imhtml,
 	GdkColormap *cmap;
 	GdkWindow *window = GTK_LAYOUT (imhtml)->bin_window;
 	gfloat xoff, yoff;
-	GdkGCValues bgv, fgv;
+	GdkColor *bg, *fg;
 
 	bit = line->bit;
 	gc = gdk_gc_new (window);
-	cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE);
+	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
 	xoff = GTK_LAYOUT (imhtml)->hadjustment->value;
 	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
 
 	if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
+		bg = bit->bg;
 	} else {
 		gdk_color_alloc (cmap, imhtml->default_bg_color);
 		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
+		bg = imhtml->default_bg_color;
 	}
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
 
 	if (!line->text) {
-		gdk_colormap_unref (cmap);
 		gdk_gc_unref (gc);
 		return;
 	}
@@ -275,9 +273,10 @@ draw_text (GtkIMHtml        *imhtml,
 		gdk_gc_set_foreground (gc, bit->back);
 		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
 				    gdk_string_width (bit->font, line->text), line->height);
+		bg = bit->back;
 	}
 
-	gdk_gc_get_values (gc, &bgv);
+	bg = gdk_color_copy (bg);
 
 	if (line->selected) {
 		gint width, x;
@@ -314,20 +313,24 @@ draw_text (GtkIMHtml        *imhtml,
 		GdkColor *tc = gtk_imhtml_get_color ("#0000a0");
 		gdk_color_alloc (cmap, tc);
 		gdk_gc_set_foreground (gc, tc);
+		fg = gdk_color_copy (tc);
 		gdk_color_free (tc);
 	} else if (bit->fore) {
 		gdk_color_alloc (cmap, bit->fore);
 		gdk_gc_set_foreground (gc, bit->fore);
+		fg = gdk_color_copy (bit->fore);
 	} else {
 		gdk_color_alloc (cmap, imhtml->default_fg_color);
 		gdk_gc_set_foreground (gc, imhtml->default_fg_color);
+		fg = gdk_color_copy (imhtml->default_fg_color);
 	}
 
-	gdk_gc_get_values (gc, &fgv);
-	if (similar_colors (bgv.foreground, &fgv.foreground)) {
-		gdk_color_alloc (cmap, &fgv.foreground);
-		gdk_gc_set_foreground (gc, &fgv.foreground);
+	if (similar_colors (bg, fg)) {
+		gdk_color_alloc (cmap, fg);
+		gdk_gc_set_foreground (gc, fg);
 	}
+	gdk_color_free (bg);
+	gdk_color_free (fg);
 
 	gdk_draw_string (window, bit->font, gc, line->x - xoff,
 			 line->y - yoff + line->ascent, line->text);
@@ -337,10 +340,9 @@ draw_text (GtkIMHtml        *imhtml,
 				    gdk_string_width (bit->font, line->text), 1);
 	if (bit->strike)
 		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
-				    line->y - yoff + line->ascent - (bit->font->ascent >> 1),
+				    line->y - yoff + line->ascent - (bit->font->ascent / 2),
 				    gdk_string_width (bit->font, line->text), 1);
 
-	gdk_colormap_unref (cmap);
 	gdk_gc_unref (gc);
 }
 
@@ -361,7 +363,7 @@ draw_img (GtkIMHtml        *imhtml,
 	xoff = GTK_LAYOUT (imhtml)->hadjustment->value;
 	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
 	gc = gdk_gc_new (window);
-	cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE);
+	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
 
 	if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
@@ -382,7 +384,6 @@ draw_img (GtkIMHtml        *imhtml,
 
 	gdk_draw_pixmap (window, gc, bit->pm, 0, 0, line->x - xoff, line->y - yoff + hoff, -1, -1);
 
-	gdk_colormap_unref (cmap);
 	gdk_gc_unref (gc);
 
 	return TRUE;
@@ -403,7 +404,7 @@ draw_line (GtkIMHtml        *imhtml,
 	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
 	bit = line->bit;
 	drawable = GTK_LAYOUT (imhtml)->bin_window;
-	cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE);
+	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
 	gc = gdk_gc_new (drawable);
 
 	if (bit->bg != NULL) {
@@ -422,7 +423,6 @@ draw_line (GtkIMHtml        *imhtml,
 	gdk_draw_rectangle (drawable, gc, TRUE, line->x - xoff, line->y - yoff + line_height / 2,
 			    line->width, line_height);
 
-	gdk_colormap_unref (cmap);
 	gdk_gc_unref (gc);
 
 	return TRUE;
@@ -690,7 +690,7 @@ get_position (struct line_info *chunk,
 	for (pos = text; *pos != '\0'; pos++) {
 		gint char_width = gdk_text_width (chunk->bit->font, pos, 1);
 		if ((width > total) && (width <= total + char_width)) {
-			if (width < total + (char_width >> 1))
+			if (width < total + (char_width / 2))
 				return pos;
 			else
 				return ++pos;
@@ -910,7 +910,7 @@ scroll_timeout (GtkIMHtml *imhtml)
 
 	imhtml->scroll_timer = 0;
 
-	gdk_window_get_pointer (imhtml->layout.bin_window, &x, &y, &mask);
+	gdk_window_get_pointer (GTK_LAYOUT (imhtml)->bin_window, &x, &y, &mask);
 
 	if (mask & GDK_BUTTON1_MASK) {
 		event.is_hint = 0;
@@ -953,7 +953,7 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 			imhtml->scroll_timer = gtk_timeout_add (100,
 								(GtkFunction) scroll_timeout,
 								imhtml);
-			diff = (yy < 0) ? (yy >> 1) : ((yy - height) >> 1);
+			diff = (yy < 0) ? (yy / 2) : ((yy - height) / 2);
 			gtk_adjustment_set_value (vadj,
 						  MIN (vadj->value + diff, vadj->upper - height + 20));
 		}
@@ -971,14 +971,15 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 			uw = (struct url_widget *) urls->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
-				gdk_window_set_cursor (imhtml->layout.bin_window, imhtml->hand_cursor);
+				gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window,
+						       imhtml->hand_cursor);
 				return TRUE;
 			}
 			urls = g_list_next (urls);
 		}
 	}
 
-	gdk_window_set_cursor (imhtml->layout.bin_window, imhtml->arrow_cursor);
+	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
 
 	return TRUE;
 }
@@ -1455,7 +1456,7 @@ new_line (GtkIMHtml *imhtml)
 				li = last->data;
 				diff = MIN_HEIGHT - li->height;
 				li->height = MIN_HEIGHT;
-				li->ascent += diff >> 1;
+				li->ascent += diff / 2;
 				last = g_list_next (last);
 			}
 			imhtml->llheight = MIN_HEIGHT;
@@ -1492,7 +1493,7 @@ backwards_update (GtkIMHtml    *imhtml,
 			if (ascent)
 				li->ascent = ascent;
 			else
-				li->ascent += diff >> 1;
+				li->ascent += diff / 2;
 			ls = g_list_next (ls);
 		}
 
@@ -1508,7 +1509,7 @@ backwards_update (GtkIMHtml    *imhtml,
 		if (ascent)
 			imhtml->llascent = ascent;
 		else
-			imhtml->llascent += diff >> 1;
+			imhtml->llascent += diff / 2;
 	}
 }
 
@@ -1860,7 +1861,7 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 	{ \
 		GdkColormap *cmap; \
 		GList *rev; \
-		cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE); \
+		cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml)); \
 		rev = g_list_last (newbits); \
 		while (rev) { \
 			GtkIMHtmlBit *bit = rev->data; \
@@ -1883,7 +1884,6 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 				gdk_color_alloc (cmap, bit->bg); \
 				rev = g_list_previous (rev); \
 			} \
-			gdk_colormap_unref (cmap); \
 		} \
 	}
 
