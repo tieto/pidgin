@@ -4657,13 +4657,24 @@ static void oscar_dir_search(GaimConnection *gc, const char *first, const char *
 
 static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
 	OscarData *od = (OscarData *)gc->proto_data;
+	GaimBuddy *b;
+
+	if (g == NULL) {
+		/* If we were called from oscar_add_buddies... */
+		b = gaim_find_buddy(gaim_connection_get_account(gc), name);
+		g = gaim_find_buddys_group(b);
+	} else
+		b = gaim_find_buddy_in_group(gaim_connection_get_account(gc), name, g);
 
 	if (!aim_snvalid(name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers.  The buddy will be removed from your buddy list."), name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), name);
 		gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
-		/* ABC - Remove from locate list! */
+
+		/* Remove from local list */
+		gaim_blist_remove_buddy(b);
+
 		return;
 	}
 
@@ -4671,15 +4682,14 @@ static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) 
 	aim_buddylist_addbuddy(od->sess, od->conn, name);
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
-		GaimBuddy *buddy = gaim_find_buddy(gc->account, name);
-		GaimGroup *group = gaim_find_buddys_group(buddy);
-		if (buddy && group) {
+		if (b && g) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
-					   "ssi: adding buddy %s to group %s\n", name, group->name);
-			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+					   "ssi: adding buddy %s to group %s\n", name, g->name);
+			aim_ssi_addbuddy(od->sess, b->name, g->name, gaim_get_buddy_alias_only(b), NULL, NULL, 0);
 		}
 	}
 #endif
+
 	if (od->icq)
 		aim_icq_getalias(od->sess, name);
 }
@@ -4694,7 +4704,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 			aim_buddylist_set(od->sess, od->conn, buf);
 			n = 0;
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", (char *)buddies->data);
+		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", (const char *)buddies->data);
 		buddies = buddies->next;
 	}
 	aim_buddylist_set(od->sess, od->conn, buf);
@@ -4730,9 +4740,7 @@ static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char 
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			gaim_debug(GAIM_DEBUG_INFO, "oscar",
-					   "ssi: deleting buddy %s from group %s\n", (char *)buddies->data, group);
-			aim_ssi_delbuddy(od->sess, buddies->data, group);
+			oscar_remove_buddy(gc, buddies->data, group);
 			buddies = buddies->next;
 		}
 	}
@@ -4847,9 +4855,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
+	GaimGroup *g;
+	GaimBuddy *b;
 	struct aim_ssi_item *curitem;
 	int tmp;
-	gboolean export = FALSE;
 	/* XXX - use these?
 	va_list ap;
 
@@ -4866,6 +4875,81 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Clean the buddy list */
 	aim_ssi_cleanlist(sess);
 
+	{ /* If not in server list then prune from local list */
+		GaimBlistNode *gnode, *cnode, *bnode;
+		GaimBuddyList *blist;
+		GSList *cur;
+
+		/* Buddies */
+		cur = NULL;
+		if ((blist = gaim_get_blist()) != NULL) {
+			for (gnode = blist->root; gnode; gnode = gnode->next) {
+				if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+					continue;
+				g = (GaimGroup *)gnode;
+				for (cnode = gnode->child; cnode; cnode = cnode->next) {
+					if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+						continue;
+					for (bnode = cnode->child; bnode; bnode = bnode->next) {
+						if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+							continue;
+						b = (GaimBuddy *)bnode;
+						if (b->account == gc->account) {
+							if (aim_ssi_itemlist_exists(sess->ssi.local, b->name)) {
+								/* If the buddy is an ICQ user then load his nickname */
+								const char *servernick = gaim_blist_node_get_string((GaimBlistNode*)b, "servernick");
+								if (servernick)
+									serv_got_alias(gc, b->name, servernick);
+
+								/* Store local alias on server */
+								char *alias = aim_ssi_getalias(sess->ssi.local, g->name, b->name);
+								if (!alias && b->alias && strlen(b->alias))
+									aim_ssi_aliasbuddy(sess, g->name, b->name, b->alias);
+								free(alias);
+							} else {
+								gaim_debug(GAIM_DEBUG_INFO, "oscar",
+										"ssi: removing buddy %s from local list\n", b->name);
+								/* We can't actually remove now because it will screw up our looping */
+								cur = g_slist_prepend(cur, b);
+							}
+						}
+					}
+				}
+			}
+		}
+		while (cur != NULL) {
+			b = cur->data;
+			cur = g_slist_remove(cur, b);
+			gaim_blist_remove_buddy(b);
+		}
+
+		/* Permit list */
+		if (gc->account->permit) {
+			for (cur=gc->account->permit; cur; cur=cur->next)
+				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
+					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+							"ssi: removing permit %s from local list\n", (const char *)cur->data);
+					gaim_privacy_permit_remove(account, cur->data, TRUE);
+					cur = gc->account->permit;
+				}
+		}
+
+		/* Deny list */
+		if (gc->account->deny) {
+			for (cur=gc->account->deny; cur; cur=cur->next)
+				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
+					gaim_debug(GAIM_DEBUG_INFO, "oscar",
+							"ssi: removing deny %s from local list\n", (const char *)cur->data);
+					gaim_privacy_deny_remove(account, cur->data, TRUE);
+					cur = gc->account->deny;
+				}
+		}
+		/* Presence settings (idle time visibility) */
+		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
+			if (!(tmp & 0x400))
+				aim_ssi_setpresence(sess, tmp | 0x400);
+	} /* end pruning buddies from local list */
+
 	/* Add from server list to local list */
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
 		if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
@@ -4876,19 +4960,18 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					char *gname_utf8 = gname ? gaim_utf8_try_convert(gname) : NULL;
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
 					char *alias_utf8 = alias ? gaim_utf8_try_convert(alias) : NULL;
-					GaimBuddy *buddy = gaim_find_buddy(gc->account, curitem->name);
+					b = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */
 					free(alias);
-					if (buddy) {
+					if (b) {
 						/* Get server stored alias */
 						if (alias_utf8) {
-							g_free(buddy->alias);
-							buddy->alias = g_strdup(alias_utf8);
+							g_free(b->alias);
+							b->alias = g_strdup(alias_utf8);
 						}
 					} else {
-						GaimGroup *g;
-						buddy = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
+						b = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
 
 						if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
 							g = gaim_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
@@ -4896,9 +4979,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						}
 
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
-								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
-						gaim_blist_add_buddy(buddy, NULL, g, NULL);
-						export = TRUE;
+								   "ssi: adding b %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
+						gaim_blist_add_buddy(b, NULL, g, NULL);
 					}
 					g_free(gname_utf8);
 					g_free(alias_utf8);
@@ -4918,7 +5000,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
 						gaim_privacy_permit_add(account, curitem->name, TRUE);
-						export = TRUE;
 					}
 				}
 			} break;
@@ -4931,7 +5012,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
 						gaim_privacy_deny_add(account, curitem->name, TRUE);
-						export = TRUE;
 					}
 				}
 			} break;
@@ -4946,7 +5026,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						if (od->icq && account->perm_deny == 0x03) {
 							serv_set_away(gc, "Invisible", "");
 						}
-						export = TRUE;
 					}
 				}
 			} break;
@@ -4956,76 +5035,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			} break;
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
-
-	/* If changes were made, then flush buddy list to file */
-	if (export)
-		gaim_blist_save();
-
-	{ /* Add from local list to server list */
-		GaimBlistNode *gnode, *cnode, *bnode;
-		GaimGroup *group;
-		GaimBuddy *buddy;
-		GaimBuddyList *blist;
-		GSList *cur;
-
-		/* Buddies */
-		if ((blist = gaim_get_blist()))
-			for (gnode = blist->root; gnode; gnode = gnode->next) {
-				if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
-					continue;
-				group = (GaimGroup *)gnode;
-				for (cnode = gnode->child; cnode; cnode = cnode->next) {
-					if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-						continue;
-					for (bnode = cnode->child; bnode; bnode = bnode->next) {
-						if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-							continue;
-						buddy = (GaimBuddy *)bnode;
-						if (buddy->account == gc->account) {
-							const char *servernick = gaim_blist_node_get_string((GaimBlistNode*)buddy, "servernick");
-							if (servernick)
-								serv_got_alias(gc, buddy->name, servernick);
-
-							if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
-								/* Store local alias on server */
-								char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
-								if (!alias && buddy->alias && strlen(buddy->alias))
-									aim_ssi_aliasbuddy(sess, group->name, buddy->name, buddy->alias);
-								free(alias);
-							} else {
-								gaim_debug(GAIM_DEBUG_INFO, "oscar",
-										"ssi: adding buddy %s from local list to server list\n", buddy->name);
-								oscar_add_buddy(gc, buddy->name, group);
-							}
-						}
-					}
-				}
-			}
-
-		/* Permit list */
-		if (gc->account->permit) {
-			for (cur=gc->account->permit; cur; cur=cur->next)
-				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
-							"ssi: adding permit %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_addpermit(sess, cur->data);
-				}
-		}
-
-		/* Deny list */
-		if (gc->account->deny) {
-			for (cur=gc->account->deny; cur; cur=cur->next)
-				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
-					gaim_debug(GAIM_DEBUG_INFO, "oscar",
-							"ssi: adding deny %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_adddeny(sess, cur->data);
-				}
-		}
-		/* Presence settings (idle time visibility) */
-		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
-			if (!(tmp & 0x400))
-				aim_ssi_setpresence(sess, tmp | 0x400);
-	} /* end adding buddies from local list to server list */
 
 	/* Set our ICQ status */
 	if  (od->icq && !gc->away) {

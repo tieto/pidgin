@@ -22,7 +22,6 @@
 #include "internal.h"
 
 #include "account.h"
-#include "debug.h"
 #include "privacy.h"
 #include "server.h"
 #include "util.h"
@@ -160,11 +159,8 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 	account->deny = g_slist_remove(account->deny, l->data);
 	g_free(l->data);
 
-	if (!local_only && gaim_account_is_connected(account)) {
-		gaim_debug(GAIM_DEBUG_INFO, "privacy",
-				   "Removing %s from server-side deny list\n", who);
+	if (!local_only && gaim_account_is_connected(account))
 		serv_rem_deny(gaim_account_get_connection(account), who);
-	}
 
 	gaim_blist_save();
 
