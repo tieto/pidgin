@@ -24,7 +24,6 @@
 #include "log.h"
 #include "multi.h"
 #include "notify.h"
-#include "pounce.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
@@ -1117,11 +1116,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	}
 
 	if (!b->idle && idle) {
-		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	} else if (b->idle && !idle) {
-		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
@@ -1129,13 +1126,10 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	gaim_blist_update_buddy_idle(b, idle);
 	gaim_blist_update_buddy_evil(b, evil);
 
-	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY_RETURN);
+	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
-	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
-		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_AWAY);
+	else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
-	}
 
 	gaim_blist_update_buddy_status(b, type);
 
@@ -1164,7 +1158,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 				}
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
-			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNON);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
@@ -1192,7 +1185,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			}
 			serv_got_typing_stopped(gc, name); /* obviously not typing */
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
-			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNOFF);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	}
@@ -1256,13 +1248,18 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 	b = gaim_find_buddy(gc->account, name);
 
-	gaim_signal_emit(gaim_conversations_get_handle(), "buddy-typing", cnv);
-
-	if (b != NULL) {
+	if (b != NULL)
+	{
 		if (state == GAIM_TYPING)
-			gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING);
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing", cnv);
+		}
 		else
-			gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING_STOPPED);
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing-stopped", cnv);
+		}
 	}
 
 	if (timeout > 0)
@@ -1290,7 +1287,10 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 	b = gaim_find_buddy(gc->account, name);
 
 	if (b != NULL)
-		gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING_STOPPED);
+	{
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "buddy-typing-stopped", c);
+	}
 }
 
 struct chat_invite_data {
@@ -1371,7 +1371,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		g_snprintf(filename, 100, "%s.chat", gaim_conversation_get_name(conv));
 
 		fd = open_log_file(filename, TRUE);
-		
+
 		if (fd) {
 			if (!gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 				fprintf(fd,

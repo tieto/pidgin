@@ -124,6 +124,7 @@ gaim_core_quit(void)
 	gaim_plugins_destroy_all();
 
 	gaim_ssl_uninit();
+	gaim_pounces_uninit();
 	gaim_blist_uninit();
 	gaim_conversations_uninit();
 	gaim_connections_uninit();

@@ -2731,6 +2731,11 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION));
 
+	gaim_signal_register(handle, "buddy-typing-stopped",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
+
 	gaim_signal_register(handle, "chat-buddy-joining",
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,

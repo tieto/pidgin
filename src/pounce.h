@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -255,7 +255,7 @@ void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 /*@}*/
 
 /**************************************************************************/
-/** @name Buddy Pounces API                                               */
+/** @name Buddy Pounce Subsystem API                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -271,11 +271,6 @@ void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 GaimPounce *gaim_find_pounce(const GaimAccount *pouncer,
 							 const char *pouncee, GaimPounceEvent events);
 
-
-/**
- * Initializes the pounces subsystem.
- */
-void gaim_pounces_init(void);
 
 /**
  * Loads the pounces.
@@ -314,6 +309,23 @@ void gaim_pounces_unregister_handler(const char *ui);
  * @return The list of buddy pounces.
  */
 GList *gaim_pounces_get_all(void);
+
+/**
+ * Returns the buddy pounce subsystem handle.
+ *
+ * @return The subsystem handle.
+ */
+void *gaim_pounces_get_handle(void);
+
+/**
+ * Initializes the pounces subsystem.
+ */
+void gaim_pounces_init(void);
+
+/**
+ * Uninitializes the pounces subsystem.
+ */
+void gaim_pounces_uninit(void);
 
 /*@}*/
 

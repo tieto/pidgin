@@ -1,10 +1,11 @@
 /**
  * @file pounce.c Buddy Pounce API
+ * @ingroup core
  *
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,9 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 #include "internal.h"
+#include "conversation.h"
 #include "debug.h"
 #include "pounce.h"
 
@@ -929,9 +930,74 @@ free_pounce_handler(gpointer user_data)
 	g_free(handler);
 }
 
+static void
+buddy_state_cb(GaimBuddy *buddy, GaimPounceEvent event)
+{
+	gaim_pounce_execute(buddy->account, buddy->name, event);
+}
+
+static void
+buddy_typing_cb(GaimConversation *conv, void *data)
+{
+	GaimAccount *account = gaim_conversation_get_account(conv);
+	const char *name     = gaim_conversation_get_name(conv);
+
+	if (gaim_find_buddy(account, name) != NULL)
+	{
+		GaimPounceEvent event;
+
+		event = (gaim_im_get_typing_state(GAIM_IM(conv)) == GAIM_TYPING
+				 ? GAIM_POUNCE_TYPING : GAIM_POUNCE_TYPING_STOPPED);
+
+		gaim_pounce_execute(account, name, event);
+	}
+}
+
+void *
+gaim_pounces_get_handle(void)
+{
+	static int pounce_handle;
+
+	return &pounce_handle;
+}
+
 void
 gaim_pounces_init(void)
 {
+	void *blist_handle = gaim_blist_get_handle();
+	void *conv_handle  = gaim_conversations_get_handle();
+	void *handle       = gaim_pounces_get_handle();
+
 	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, free_pounce_handler);
+
+	gaim_signal_connect(blist_handle, "buddy-idle",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_IDLE));
+	gaim_signal_connect(blist_handle, "buddy-unidle",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_IDLE));
+	gaim_signal_connect(blist_handle, "buddy-away",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_AWAY));
+	gaim_signal_connect(blist_handle, "buddy-back",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_AWAY_RETURN));
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_SIGNON));
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_POUNCE_SIGNOFF));
+
+	gaim_signal_connect(conv_handle, "buddy-typing",
+						handle, GAIM_CALLBACK(buddy_typing_cb), NULL);
+	gaim_signal_connect(conv_handle, "buddy-typing-stopped",
+						handle, GAIM_CALLBACK(buddy_typing_cb), NULL);
+}
+
+void
+gaim_pounces_uninit()
+{
+	gaim_signals_disconnect_by_handle(gaim_pounces_get_handle());
 }
