@@ -121,7 +121,7 @@ void do_quit()
 	save_prefs();
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
-	gaim_plugins_unload_all();
+	gaim_plugins_destroy_all();
 
 	/* XXX */
 #if 0

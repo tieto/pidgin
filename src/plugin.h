@@ -239,9 +239,15 @@ gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
 void gaim_plugins_set_search_paths(size_t count, char **paths);
 
 /**
- * Unloads all registered plugins.
+ * Unloads all loaded plugins.
  */
 void gaim_plugins_unload_all(void);
+
+
+/**
+ * Destroys all registered plugins.
+ */
+void gaim_plugins_destroy_all(void);
 
 /**
  * Probes for plugins in the registered module paths.

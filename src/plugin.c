@@ -493,6 +493,18 @@ gaim_plugins_unload_all(void)
 }
 
 void
+gaim_plugins_destroy_all(void)
+{
+#ifdef GAIM_PLUGINS
+
+	gaim_plugins_unload_all();
+
+	while (plugins != NULL)
+		gaim_plugin_destroy(plugins->data);
+
+#endif /* GAIM_PLUGINS */
+}
+void
 gaim_plugins_probe(const char *ext)
 {
 #ifdef GAIM_PLUGINS
