@@ -1650,8 +1650,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 	dnd_hints_hide_all();
 
-	dest_win    = gaim_gtkwin_get_at_xy(e->x_root, e->y_root);
-	dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
+	dest_win = gaim_gtkwin_get_at_xy(e->x_root, e->y_root);
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -1672,6 +1671,8 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 		return TRUE;
 	}
+
+	dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
 
 	/* Get the destination notebook. */
 	dest_notebook = GTK_NOTEBOOK(gtkwin->notebook);
@@ -3228,7 +3229,11 @@ gaim_gtk_destroy_window(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
 
+	gaim_gtk_set_state_lock(TRUE);
+
 	gtk_widget_destroy(gtkwin->window);
+
+	gaim_gtk_set_state_lock(FALSE);
 
 	g_free(gtkwin);
 	win->ui_data = NULL;

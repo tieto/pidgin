@@ -447,9 +447,6 @@ gaim_window_destroy(struct gaim_window *win)
 
 	ops = gaim_window_get_ops(win);
 
-	if (ops != NULL && ops->destroy_window != NULL)
-		ops->destroy_window(win);
-
 	for (node = g_list_first(gaim_window_get_conversations(win));
 		 node != NULL;
 		 node = g_list_next(node))
@@ -463,6 +460,9 @@ gaim_window_destroy(struct gaim_window *win)
 
 		node->data = NULL;
 	}
+
+	if (ops != NULL && ops->destroy_window != NULL)
+		ops->destroy_window(win);
 
 	g_list_free(gaim_window_get_conversations(win));
 
@@ -589,9 +589,8 @@ gaim_window_add_conversation(struct gaim_window *win,
 {
 	struct gaim_window_ops *ops;
 
-	if (win == NULL || conv == NULL) {
+	if (win == NULL || conv == NULL)
 		return -1;
-	}
 
 	if (gaim_conversation_get_window(conv) != NULL) {
 		gaim_window_remove_conversation(
@@ -607,13 +606,13 @@ gaim_window_add_conversation(struct gaim_window *win,
 	conv->conversation_pos = win->conversation_count - 1;
 
 	if (ops != NULL) {
+		conv->window = win;
+
 		if (ops->get_conversation_ops != NULL)
 			gaim_conversation_set_ops(conv, ops->get_conversation_ops());
 
 		if (ops->add_conversation != NULL)
 			ops->add_conversation(win, conv);
-
-		conv->window = win;
 	}
 
 	return win->conversation_count - 1;
