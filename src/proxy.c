@@ -1030,7 +1030,7 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 		if (phb->account == NULL ||
 			gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, source, GAIM_INPUT_READ);
 		}
 
 		g_free(phb->host);
@@ -1186,7 +1186,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 		if (phb->account == NULL ||
 			gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, source, GAIM_INPUT_READ);
 		}
 
 		g_free(phb->host);
@@ -1306,7 +1306,7 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		if (phb->account == NULL ||
 			gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, source, GAIM_INPUT_READ);
 		}
 
 		g_free(phb->host);
