@@ -357,12 +357,18 @@ jabber_login(GaimAccount *account)
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
 
-	if(!js->user->node) {
-		js->user->node = js->user->domain;
-		js->user->domain = g_strdup("jabber.org");
-	}
-	if(!js->user->resource)
+	if(!js->user->resource) {
+		char *me;
 		js->user->resource = g_strdup("Gaim");
+		if(!js->user->node) {
+			js->user->node = js->user->domain;
+			js->user->domain = g_strdup("jabber.org");
+		}
+		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
+				js->user->resource);
+		gaim_account_set_username(account, me);
+		g_free(me);
+	}
 
 	server = connect_server[0] ? connect_server : js->user->domain;
 
@@ -627,6 +633,19 @@ static void jabber_register_account(GaimAccount *account)
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
+
+	if(!js->user->resource) {
+		char *me;
+		js->user->resource = g_strdup("Gaim");
+		if(!js->user->node) {
+			js->user->node = js->user->domain;
+			js->user->domain = g_strdup("jabber.org");
+		}
+		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
+				js->user->resource);
+		gaim_account_set_username(account, me);
+		g_free(me);
+	}
 
 	server = connect_server[0] ? connect_server : js->user->domain;
 

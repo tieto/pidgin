@@ -293,8 +293,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
 		g_string_append_printf(response, ",response=%s", auth_resp);
 		g_string_append_printf(response, ",charset=utf-8");
-		g_string_append_printf(response, ",authzid=\"%s\"",
-				gaim_account_get_username(js->gc->account));
+		g_string_append_printf(response, ",authzid=\"%s@%s/%s\"",
+				js->user->node, js->user->domain, js->user->resource);
 
 		g_free(auth_resp);
 		g_free(cnonce);
