@@ -387,17 +387,19 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					/* If the person is in the default Realm, then strip the 
 					   Realm from the sender field */
 					sendertmp = g_strdup_printf("%s",notice.z_sender);
-					realmptr = strchr(sendertmp,'@');
-					realmptr++;
-					if (!g_strcasecmp(realmptr,ZGetRealm())) {
-						realmptr--;
-						sprintf(realmptr,"%c",'\0');
-						send_inst = g_strdup_printf("%s %s",sendertmp,
-									    notice.z_class_inst);
-								     
+					if (realmptr = strchr(sendertmp,'@')) {
+						realmptr++;
+						if (!g_strcasecmp(realmptr,ZGetRealm())) {
+							realmptr--;
+							sprintf(realmptr,"%c",'\0');
+							send_inst = g_strdup_printf("%s %s",sendertmp,
+										    notice.z_class_inst);
+						} else {
+							send_inst = g_strdup_printf("%s %s",notice.z_sender,
+										    notice.z_class_inst);
+						}
 					} else {
-						send_inst = g_strdup_printf("%s %s",notice.z_sender,
-									    notice.z_class_inst);
+						send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);
 					}
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
 								buf2, time(NULL));
@@ -512,16 +514,16 @@ static void process_zsubs()
 			if (buff[0]) {
 				triple = g_strsplit(buff, ",", 3);
 				if (triple[0] && triple[1] ) {
-					char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"),
-								    ZGetRealm());
+					/*					char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"), 
+										ZGetRealm());*/
+					char *tmp = g_strdup_printf("%s",ZGetSender());
 					char *atptr;
 					sub.zsub_class = triple[0];
 					sub.zsub_classinst = triple[1];
 					if(triple[2] == NULL) {
 						recip = g_malloc0(1);
 					} else if (!g_strcasecmp(triple[2], "%me%")) {
-						recip = g_strdup_printf("%s@%s", g_getenv("USER"),
-										ZGetRealm());
+						recip = g_strdup_printf("%s",ZGetSender());
 					} else if (!g_strcasecmp(triple[2], "*")) {
 						/* wildcard
 						 * form of class,instance,* */
@@ -586,7 +588,7 @@ static void zephyr_login(struct gaim_account *account)
 
 	if (zgc) {
 		do_error_dialog("Already logged in with Zephyr", "Because Zephyr uses your system username, you are unable to "
-                                "have multiple accounts on it when logged in as the same user.", GAIM_ERROR);
+				"have multiple accounts on it when logged in as the same user.", GAIM_ERROR);
 		return;
 	}
 
@@ -904,7 +906,7 @@ static void zephyr_join_chat(struct gaim_connection *gc, GList *data)
 	instname = data->next->data;
 	recip = data->next->next->data;
 	if (!g_strcasecmp(recip, "%me%"))
-		recip = g_getenv("USER");
+		recip = ZGetSender();
 
 	zt1 = new_triple(classname, instname, recip);
 	zt2 = find_sub_by_triple(zt1);
