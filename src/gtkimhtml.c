@@ -211,7 +211,7 @@ gtk_imhtml_realize (GtkWidget *widget)
 	gdk_window_set_events (GTK_LAYOUT (imhtml)->bin_window,
 			       (gdk_window_get_events (GTK_LAYOUT (imhtml)->bin_window)
 				| GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK
-				| GDK_POINTER_MOTION_MASK | GDK_EXPOSURE_MASK));
+				| GDK_POINTER_MOTION_MASK | GDK_EXPOSURE_MASK | GDK_LEAVE_NOTIFY_MASK));
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
@@ -1161,6 +1161,25 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 }
 
 static gint
+gtk_imhtml_leave_notify_event (GtkWidget        *widget,
+			       GdkEventCrossing *event)
+{
+	GtkIMHtml *imhtml = GTK_IMHTML (widget);
+
+	if (imhtml->tip_timer) {
+		gtk_timeout_remove (imhtml->tip_timer);
+		imhtml->tip_timer = 0;
+	}
+	if (imhtml->tip_window) {
+		gtk_widget_destroy (imhtml->tip_window);
+		imhtml->tip_window = NULL;
+	}
+	imhtml->tip_bit = NULL;
+
+	return TRUE;
+}
+
+static gint
 gtk_imhtml_button_press_event (GtkWidget      *widget,
 			       GdkEventButton *event)
 {
@@ -1337,6 +1356,7 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 	widget_class->expose_event  = gtk_imhtml_expose_event;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
 	widget_class->motion_notify_event = gtk_imhtml_motion_notify_event;
+	widget_class->leave_notify_event = gtk_imhtml_leave_notify_event;
 	widget_class->button_press_event = gtk_imhtml_button_press_event;
 	widget_class->button_release_event = gtk_imhtml_button_release_event;
 	widget_class->selection_get = gtk_imhtml_selection_get;
