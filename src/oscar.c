@@ -125,17 +125,21 @@ static void oscar_callback(gpointer data, gint source,
 					if (cnv) {
 						make_direct(cnv, FALSE, NULL, 0);
 					}
+					aim_conn_kill(gaim_sess, &conn);
 				} else if (conn->type = AIM_CONN_TYPE_CHAT) {
-					/* FIXME! we got kicked out of chat */
-				}
-				aim_conn_kill(gaim_sess, &conn);
-				if (!aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS)) {
+					struct chat_connection *c = find_oscar_chat(conn->priv);
+					if (c) {
+						struct conversation *cnv = find_chat(c->name);
+						char closebuf[128];
+						close_callback(NULL, cnv);
+						sprintf(closebuf, _("You have been disconnected from %s"), cnv->name);
+						do_error_dialog(closebuf, _("Disconnected"));
+					}
+				} else if (conn->type == AIM_CONN_TYPE_BOS) {
 					debug_print(_("major connection error\n"));
 					signoff();
 					hide_login_progress(_("Disconnected."));
-					aim_logoff(gaim_sess);
 					auth_failed();
-					gdk_input_remove(inpa);
 				}
 			}
 		}

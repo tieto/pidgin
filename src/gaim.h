@@ -397,7 +397,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 698 $"
+#define REVISION "gaim:$Revision: 704 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -538,6 +538,7 @@ extern void show_about(GtkWidget *, void *);
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
+extern struct conversation *find_chat(char *name);
 extern void chat_write(struct conversation *, char *, int, char *);
 extern void add_chat_buddy(struct conversation *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);

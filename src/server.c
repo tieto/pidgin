@@ -591,12 +591,12 @@ void serv_chat_leave(int id)
 					b->name, count);
 		debug_print(debug_buff);
 
-		aim_chat_leaveroom(gaim_sess, b->name);
+//		aim_chat_leaveroom(gaim_sess, b->name);
 		c = find_oscar_chat(b->name);
 		if (c != NULL) {
-			aim_conn_kill(gaim_sess, &c->conn);
 			oscar_chats = g_list_remove(oscar_chats, c);
 			gdk_input_remove(c->inpa);
+			aim_conn_kill(gaim_sess, &c->conn);
 			g_free(c->name);
 			g_free(c);
 		}

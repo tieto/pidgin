@@ -60,6 +60,23 @@ static void destroy_invite()
 }
 
 
+struct conversation *find_chat(char *name)
+{
+	char cuser[64];
+	struct conversation *c = NULL;
+	GList *cnv = buddy_chats;
+
+	strcpy(cuser, normalize(name));
+
+	while (cnv) {
+		c = (struct conversation *)cnv->data;
+		if (!strcasecmp(cuser, normalize(c->name))) {
+			return c;
+		}
+		cnv = cnv->next;
+	}
+	return NULL;
+}
 
 
 static void do_join_chat()
