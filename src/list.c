@@ -331,7 +331,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 	}
 }
 
-void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_import)
+void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 {
 	char *c;
 	char current[256];
@@ -352,8 +352,10 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				break;
 			if (*c == 'g') {
 				strncpy(current, c + 2, sizeof(current));
-				add_group(gc, current);
-				how_many++;
+				if (!find_group(gc, current)) {
+					add_group(gc, current);
+					how_many++;
+				}
 			} else if (*c == 'b' && !find_buddy(gc, c + 2)) {
 				char nm[80], sw[80], *tmp = c + 2;
 				int i = 0;
@@ -366,11 +368,11 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				while (*tmp)
 					sw[i++] = *tmp++;
 				sw[i] = '\0';
-				if (!find_buddy(gc, nm))
+				if (!find_buddy(gc, nm)) {
 					add_buddy(gc, current, nm, sw);
-				how_many++;
-
-				bud = g_list_append(bud, c + 2);
+					how_many++;
+					bud = g_list_append(bud, c + 2);
+				}
 			} else if (*c == 'p') {
 				GSList *d = gc->permit;
 				char *n;
@@ -383,9 +385,10 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 					d = d->next;
 				}
 				g_free(n);
-				if (!d)
+				if (!d) {
 					gc->permit = g_slist_append(gc->permit, name);
-				else
+					how_many++;
+				} else
 					g_free(name);
 			} else if (*c == 'd') {
 				GSList *d = gc->deny;
@@ -399,9 +402,10 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 					d = d->next;
 				}
 				g_free(n);
-				if (!d)
+				if (!d) {
 					gc->deny = g_slist_append(gc->deny, name);
-				else
+					how_many++;
+				} else
 					g_free(name);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
@@ -423,14 +427,8 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 		serv_set_permit_deny(gc);
 	}
 
-	/* perhaps the server dropped the buddy list, try importing from
-	   cache */
-
-	if (how_many == 0 && !from_do_import) {
-		do_import(gc, NULL);
-	} else if (gc && (bud_list_cache_exists(gc) == FALSE)) {
+	if (how_many != 0)
 		do_export(gc);
-	}
 }
 
 void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean show)
@@ -727,7 +725,7 @@ void do_import(struct gaim_connection *gc, char *filename)
 		return;
 	}
 
-	parse_toc_buddy_list(gc, buf, 1);
+	parse_toc_buddy_list(gc, buf);
 
 	fclose(f);
 
