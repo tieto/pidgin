@@ -1724,7 +1724,6 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 	tmp = stylize(buffer, BUF_LONG);
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 							   GTK_IMHTML_NO_COMMENTS |
-							   GTK_IMHTML_NO_NEWLINE |
 							   GTK_IMHTML_NO_SCROLL);
 	g_free(tmp);
 }
@@ -1974,7 +1973,6 @@ static void away_page()
 		tmp = stylize(buffer, BUF_LONG);
 		gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 								   GTK_IMHTML_NO_COMMENTS |
-								   GTK_IMHTML_NO_NEWLINE |
 								   GTK_IMHTML_NO_SCROLL);
 		g_free(tmp);
 	}

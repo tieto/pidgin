@@ -173,7 +173,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		buf = stylize(a->message, BUF_LONG);
 		gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, GTK_IMHTML_NO_TITLE |
 								  GTK_IMHTML_NO_COMMENTS |
-								  GTK_IMHTML_NO_NEWLINE |
 								  GTK_IMHTML_NO_SCROLL);
 		g_free(buf);
 
