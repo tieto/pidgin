@@ -2615,6 +2615,9 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 */
 	p = strstr(url_text, "Last Updated:");
 	if (!p) {
+		p = strstr(url_text, "Last Updated&nbsp;");
+	}
+	if (!p) {
 		g_snprintf(buf, 1024, "<html><body>%s%s<a href=\"%s%s\">%s%s</a></body></html>",
 				_("<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"),
 				_("If you wish to view this profile, you will need to visit this link in your web browser<br>"),
