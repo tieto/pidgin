@@ -1388,7 +1388,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 					jri->has_xhtml = has_xhtml;
 				}
 				jabber_track_convo_thread(gjc, from, thread_id);
-				if (gaim_find_conversation(from))
+				if (gaim_find_conversation_with_account(from, GJ_GC(gjc)->account))
 					serv_got_im(GJ_GC(gjc), from, m, flags,
 						time_sent, -1);
 				else {

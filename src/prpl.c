@@ -168,7 +168,7 @@ void set_icon_data(GaimConnection *gc, const char *who, void *data, int len)
 	id->len = len;
 
 	/* Update the buddy icon for this user. */
-	conv = gaim_find_conversation(realwho);
+	conv = gaim_find_conversation_with_account(realwho, gc->account);
 
 	/* XXX Buddy Icon should probalby be part of struct buddy instead of this weird global
 	 * linked list stuff. */

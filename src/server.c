@@ -267,7 +267,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	c = gaim_find_conversation(name);
+	c = gaim_find_conversation_with_account(name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, len, imflags);
@@ -1037,7 +1037,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 */
 		if (docklet_count &&
 		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
-		    !gaim_find_conversation(name)) {
+		    !gaim_find_conversation_with_account(name, gc->account)) {
 			/*
 			 * We're gonna queue it up and wait for the user to ask for
 			 * it... probably by clicking the docklet or windows tray icon.
@@ -1234,7 +1234,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state) {
 
 	struct buddy *b;
-	GaimConversation *cnv = gaim_find_conversation(name);
+	GaimConversation *cnv = gaim_find_conversation_with_account(name, gc->account);
 	GaimIm *im;
 
 	if (!cnv)
@@ -1263,7 +1263,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
-	GaimConversation *c = gaim_find_conversation(name);
+	GaimConversation *c = gaim_find_conversation_with_account(name, gc->account);
 	GaimIm *im;
 	struct buddy *b;
 

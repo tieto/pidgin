@@ -878,12 +878,10 @@ im_cb(GtkWidget *widget, GaimConversation *conv)
 
 	account = gaim_conversation_get_account(conv);
 
-	conv2 = gaim_find_conversation(name);
+	conv2 = gaim_find_conversation_with_account(name, account);
 
-	if (conv2 != NULL) {
+	if (conv2 != NULL)
 		gaim_window_raise(gaim_conversation_get_window(conv2));
-		gaim_conversation_set_account(conv2, account);
-	}
 	else
 		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, name);
 }
@@ -935,7 +933,7 @@ menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
 
 	account = gaim_conversation_get_account(conv);
 
-	conv2 = gaim_find_conversation(who);
+	conv2 = gaim_find_conversation_with_account(who, account);
 
 	if (conv2 != NULL)
 		gaim_window_show(gaim_conversation_get_window(conv2));
@@ -1053,7 +1051,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		GaimConversation *c;
 
-		if ((c = gaim_find_conversation(who)) == NULL)
+		if ((c = gaim_find_conversation_with_account(who, account)) == NULL)
 			c = gaim_conversation_new(GAIM_CONV_IM, account, who);
 		else
 			gaim_conversation_set_account(c, account);

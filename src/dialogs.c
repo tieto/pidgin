@@ -325,7 +325,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-	GaimConversation *c = gaim_find_conversation(who);
+	GaimConversation *c = gaim_find_conversation_with_account(who, gc->account);
 
 	struct warning *w = g_new0(struct warning, 1);
 	w->who = who;
@@ -392,12 +392,14 @@ do_remove_buddy(struct buddy *b)
 	struct group *g;
 	GaimConversation *c;
 	gchar *name;
+	GaimAccount *account;
 
 	if (!b)
 		return;
 
 	g = gaim_find_buddys_group(b);
-	name = g_strdup(b->name); /* b->name is null after remove_buddy */
+	name = g_strdup(b->name); /* b->name is a crasher after remove_buddy */
+	account = b->account;
 
 	gaim_debug(GAIM_DEBUG_INFO, "blist",
 			   "Removing '%s' from buddy list.\n", b->name);
@@ -405,7 +407,7 @@ do_remove_buddy(struct buddy *b)
 	gaim_blist_remove_buddy(b);
 	gaim_blist_save();
 
-	c = gaim_find_conversation(name);
+	c = gaim_find_conversation_with_account(name, account);
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
@@ -419,7 +421,7 @@ void do_remove_group(struct group *g)
 	while (b) {
 		if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
 			struct buddy *bd = (struct buddy *)b;
-			GaimConversation *c = gaim_find_conversation(bd->name);
+			GaimConversation *c = gaim_find_conversation_with_account(bd->name, bd->account);
 			if (gaim_account_is_connected(bd->account)) {
 				serv_remove_buddy(bd->account->gc, bd->name, g->name);
 				gaim_blist_remove_buddy(bd);
@@ -498,15 +500,12 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 
 		account = (info->gc ? info->gc->account : NULL);
 
-		conv = gaim_find_conversation(who);
+		conv = gaim_find_conversation_with_account(who, account);
 
 		if (conv == NULL)
 			conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
 		else {
 			gaim_window_raise(gaim_conversation_get_window(conv));
-
-			if (account)
-				gaim_conversation_set_account(conv, account);
 		}
 	}
 
@@ -791,7 +790,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 		grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry));
 		whoalias = gtk_entry_get_text(GTK_ENTRY(a->entry_for_alias));
 
-		c = gaim_find_conversation(who);
+		c = gaim_find_conversation_with_account(who, a->gc->account);
 		if (!(g = gaim_find_group(grp))) {
 			g = gaim_group_new(grp);
 			gaim_blist_add_group(g, NULL);

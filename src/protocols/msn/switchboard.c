@@ -93,7 +93,8 @@ static gboolean
 bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *user = params[0];
 
@@ -108,7 +109,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		struct buddy *b;
 		char buf[MSN_BUF_LEN];
 
-		if ((b = gaim_find_buddy(gc->account, user)) != NULL)
+		if ((b = gaim_find_buddy(account, user)) != NULL)
 			username = gaim_get_buddy_alias(b);
 		else
 			username = user;
@@ -130,7 +131,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 			}
 		}
 
-		if (*buf != '\0' && (conv = gaim_find_conversation(user)) != NULL) {
+		if (*buf != '\0' && (conv = gaim_find_conversation_with_account(user, account)) != NULL) {
 			gaim_conversation_write(conv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM,
 									time(NULL));
 		}
@@ -157,7 +158,7 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 		if (swboard->chat == NULL) {
 			GaimConversation *conv;
 
-			conv = gaim_find_conversation(msn_user_get_passport(swboard->user));
+			conv = gaim_find_conversation_with_account(msn_user_get_passport(swboard->user), account);
 
 			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 												 "MSN Chat");
@@ -188,7 +189,7 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (swboard->total_users == 2 && swboard->chat == NULL) {
 		GaimConversation *conv;
 
-		conv = gaim_find_conversation(msn_user_get_passport(swboard->user));
+		conv = gaim_find_conversation_with_account(msn_user_get_passport(swboard->user), account);
 
 		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 											 "MSN Chat");

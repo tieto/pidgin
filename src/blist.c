@@ -170,7 +170,9 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 
 static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimConversation *conv = gaim_find_conversation(buddy->name);
+	GaimConversation *conv;
+
+	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
 
 	if(buddy->present == GAIM_BUDDY_SIGNING_ON) {
 		buddy->present = GAIM_BUDDY_ONLINE;

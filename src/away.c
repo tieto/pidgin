@@ -70,7 +70,7 @@ static void dequeue_message(GtkTreeIter *iter)
 				if (g_list_index(gaim_accounts_get_all(), qm->account) >= 0)
 					account = qm->account;
 
-				cnv = gaim_find_conversation(name);
+				cnv = gaim_find_conversation_with_account(name, account);
 
 				if (!cnv)
 					cnv = gaim_conversation_new(GAIM_CONV_IM, account, qm->name);
@@ -88,7 +88,7 @@ static void dequeue_message(GtkTreeIter *iter)
 			}
 		}
 	}
-	
+
 	g_free(name);
 	/* In GTK 2.2, _store_remove actually returns whether iter is valid or not
 	 * after the remove, but in GTK 2.0 it is a void function. */
@@ -110,7 +110,7 @@ void purge_away_queue(GSList **queue)
 		if (g_list_index(gaim_accounts_get_all(), qm->account) >= 0)
 			account = qm->account;
 
-		cnv = gaim_find_conversation(qm->name);
+		cnv = gaim_find_conversation_with_account(qm->name, account);
 
 		if (!cnv)
 			cnv = gaim_conversation_new(GAIM_CONV_IM, account, qm->name);

@@ -475,8 +475,9 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
 	else 
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), sn);
-		
-	if ((cnv = gaim_find_conversation(sn)))
+
+	cnv = gaim_find_conversation_with_account(sn, gaim_connection_get_account(gc));
+	if (cnv)
 		gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	gaim_conversation_update_progress(cnv, 0);
@@ -1905,8 +1906,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 
 	dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
-	if (!(cnv = gaim_find_conversation(dim->name)))
-		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
+	cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
 
 	/* This is the best way to see if we're connected or not */
 	if (getpeername(source, &name, &name_len) == 0) {
@@ -5583,8 +5583,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "DirectIM: initiate success to %s\n", sn);
 	dim = find_direct_im(od, sn);
 
-	if (!(cnv = gaim_find_conversation(sn)))
-		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
+	cnv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
@@ -5622,9 +5621,8 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	while (gtk_events_pending())
 		gtk_main_iteration();
-	
-	if ((c = gaim_find_conversation(sn)))
-		gaim_conversation_update_progress(c, percent);
+
+	gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 				      oscar_callback, dim->conn);
 

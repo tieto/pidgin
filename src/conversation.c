@@ -137,11 +137,10 @@ find_nick(GaimConnection *gc, const char *message)
 static gboolean
 reset_typing(gpointer data)
 {
-	char *name = (char *)data;
-	GaimConversation *c = gaim_find_conversation(name);
+	GaimConversation *c = (GaimConversation *)data;
 	GaimIm *im;
 
-	if (!c)
+	if (!g_list_find(conversations, c))
 		return FALSE;
 
 	im = GAIM_IM(c);
@@ -1604,7 +1603,7 @@ gaim_im_start_typing_timeout(GaimIm *im, int timeout)
 	name = gaim_conversation_get_name(conv);
 
 	im->typing_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE,
-		timeout * 1000, reset_typing, g_strdup(name), g_free);
+		timeout * 1000, reset_typing, conv, NULL);
 }
 
 void

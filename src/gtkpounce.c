@@ -822,7 +822,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	account = gaim_pounce_get_pouncer(pounce);
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
-		conv = gaim_find_conversation(pouncee);
+		conv = gaim_find_conversation_with_account(pouncee, account);
 
 		if (conv == NULL)
 			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
@@ -853,7 +853,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 												   "message");
 
 		if (message != NULL) {
-			conv = gaim_find_conversation(pouncee);
+			conv = gaim_find_conversation_with_account(pouncee, account);
 
 			if (conv == NULL)
 				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
