@@ -25,7 +25,6 @@
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <aim.h>
 
 #ifdef USE_SCREENSAVER
 #include <X11/Xlib.h>

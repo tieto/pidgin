@@ -24,7 +24,6 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
-#include "aim.h"
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {

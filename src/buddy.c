@@ -40,7 +40,6 @@
 #include <gdk/gdkx.h>
 #include "prpl.h"
 #include "gaim.h"
-#include <aim.h>
 #include "pixmaps/login_icon.xpm"
 #include "pixmaps/logout_icon.xpm"
 #include "pixmaps/no_icon.xpm"
@@ -1203,41 +1202,6 @@ void do_bp_menu()
 
 	}
 
-}
-
-
-static char *caps_string(u_short caps)
-{
-	static char buf[BUF_LEN];
-	int count = 0, i = 0;
-	u_short bit = 1;
-	while (bit <= AIM_CAPS_SENDFILE) {
-		if (bit & caps) {
-			switch (bit) {
-			case AIM_CAPS_BUDDYICON:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sBuddy Icon"), count ? ", " : "");
-				break;
-			case AIM_CAPS_VOICE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sVoice"), count ? ", " : "");
-				break;
-			case AIM_CAPS_IMIMAGE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sIM Image"), count ? ", " : "");
-				break;
-			case AIM_CAPS_CHAT:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sChat"), count ? ", " : "");
-				break;
-			case AIM_CAPS_GETFILE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sGet File"), count ? ", " : "");
-				break;
-			case AIM_CAPS_SENDFILE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sSend File"), count ? ", " : "");
-				break;
-			}
-			count++;
-		}
-		bit <<= 1;
-	}
-	return buf;
 }
 
 

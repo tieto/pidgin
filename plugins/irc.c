@@ -38,7 +38,6 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
-#include "aim.h"
 #include "gnome_applet_mgr.h"
 
 #include "pixmaps/cancel.xpm"

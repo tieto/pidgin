@@ -30,7 +30,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
-#include <aim.h>
 #ifdef USE_SCREENSAVER
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -397,7 +396,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 
 
-void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon, time_t idle, int type, u_short caps)
+void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon, time_t idle, int type, gushort caps)
 {
         struct buddy *b = find_buddy(gc, name);
 	struct gaim_connection *g = find_gaim_conn_by_name(name);

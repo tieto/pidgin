@@ -24,7 +24,6 @@
 #include "multi.h"
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
-#include "aim.h"
 
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_preferences.xpm"

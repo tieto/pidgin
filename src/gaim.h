@@ -35,7 +35,6 @@
 #ifdef USE_GNOME
 #include <gnome.h>
 #endif
-#include "aim.h"
 #include "multi.h"
 
 
@@ -226,7 +225,7 @@ struct buddy {
 	time_t signon;
 	time_t idle;
         int uc;
-	u_short caps; /* woohoo! */
+	gushort caps; /* woohoo! */
 };
 
 struct buddy_show {
@@ -666,7 +665,7 @@ extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_send(struct gaim_connection *, int, char *);
 
 /* output from serv */
-extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, u_short);
+extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
 extern void serv_got_im(struct gaim_connection *, char *, char *, int);
 extern void serv_got_eviled(char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
