@@ -21,6 +21,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "gtkplugin.h"
+#include "debug.h"
+#include "prefs.h"
+
 #include <string.h>
 
 GtkWidget *
@@ -40,4 +43,28 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 		return NULL;
 
 	return ui_info->get_config_frame(plugin);
+}
+
+void
+gaim_gtk_plugins_save(void)
+{
+	GList *pl;
+	GList *files = NULL;
+	GaimPlugin *p;
+
+	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
+		p = pl->data;
+
+		if (p->info->type != GAIM_PLUGIN_PROTOCOL &&
+			p->info->type != GAIM_PLUGIN_LOADER) {
+
+			files = g_list_append(files, p->path);
+
+			gaim_debug(GAIM_DEBUG_INFO, "gtkplugin",
+					   "Adding %s to save list.\n", p->path);
+		}
+	}
+
+	gaim_prefs_set_string_list("/gaim/gtk/plugins/loaded", files);
+	g_list_free(files);
 }

@@ -58,4 +58,9 @@ struct _GaimGtkPluginUiInfo
  */
 GtkWidget *gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin);
 
+/**
+ * Saves all loaded plugins.
+ */
+void gaim_gtk_plugins_save(void);
+
 #endif /* _GAIM_GTK_PLUGIN_H_ */

@@ -1704,6 +1704,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_tree_path_free(path);
+
+	gaim_gtk_plugins_save();
 }
 
 static void
@@ -2811,6 +2813,7 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/logging/individual_logs", FALSE);
 
 	/* Plugins */
+	gaim_prefs_add_string_list("/gaim/gtk/plugins", NULL);
 	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
 
 	/* Smiley Themes */

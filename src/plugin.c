@@ -130,26 +130,6 @@ find_loader_for_plugin(const GaimPlugin *plugin)
 
 #endif /* GAIM_PLUGINS */
 
-static void
-update_plugin_prefs(void)
-{
-	GList *pl;
-	GList *files = NULL;
-	GaimPlugin *p;
-
-	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
-		p = pl->data;
-
-		if(p->info->type != GAIM_PLUGIN_PROTOCOL &&
-				p->info->type != GAIM_PLUGIN_LOADER) {
-			files = g_list_append(files, p->path);
-		}
-	}
-
-	gaim_prefs_set_string_list("/plugins/loaded", files);
-	g_list_free(files);
-}
-
 static gint
 compare_prpl(GaimPlugin *a, GaimPlugin *b)
 {
@@ -299,7 +279,6 @@ gaim_plugin_load(GaimPlugin *plugin)
 	}
 
 	loaded_plugins = g_list_append(loaded_plugins, plugin);
-	update_plugin_prefs();
 
 	plugin->loaded = TRUE;
 
@@ -321,7 +300,6 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	loaded_plugins = g_list_remove(loaded_plugins, plugin);
-	update_plugin_prefs();
 
 	g_return_val_if_fail(gaim_plugin_is_loaded(plugin), FALSE);
 
