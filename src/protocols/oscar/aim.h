@@ -457,7 +457,6 @@ typedef struct aim_session_s {
 	struct {
 		struct aim_userinfo_s *userinfo;
 		struct userinfo_node *request_queue;
-		struct userinfo_node *requested;
 		int waiting_for_response;
 	} locate;
 
