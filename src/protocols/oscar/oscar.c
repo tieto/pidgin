@@ -460,7 +460,7 @@ static void oscar_login(struct aim_user *user) {
 		gc->password[9] = 0;
 	} else {
 		gc->protocol = PROTO_TOC;
-		gc->flags |= OPT_CONN_HTML;
+		gc->flags |= OPT_CONN_HTML | OPT_CONN_SHOW_HTML;
 	}
 
 	sess = g_new0(aim_session_t, 1);

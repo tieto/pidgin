@@ -1073,8 +1073,8 @@ static void irc_login(struct aim_user *user)
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
 
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", gc->username);
-	gc->flags = OPT_CONN_HTML; /* this is bad. the reason for this is gtkimhtml doesn't
-				      understand the xchat escapes. so we translate. */
+	gc->flags = OPT_CONN_SHOW_HTML; /* this is bad. the reason for this is gtkimhtml doesn't
+					   understand the xchat escapes. so we translate. */
 
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 2, buf);

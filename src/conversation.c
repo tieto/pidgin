@@ -1592,7 +1592,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		g_snprintf(buf, BUF_LONG, "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>", what);
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, -1, 0);
 	} else {
-		if (c->gc->flags & OPT_CONN_HTML)
+		if (c->gc->flags & OPT_CONN_SHOW_HTML)
 			what = g_memdup(what, length == -1 ? strlen(what) + 1 : length);
 		else
 			what = escape_html(what, &length);

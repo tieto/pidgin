@@ -74,6 +74,7 @@ struct gaim_connection {
 };
 
 #define OPT_CONN_HTML		0x00000001
+#define OPT_CONN_SHOW_HTML	0x00000002
 
 struct proto_user_opt {
 	char *label;
