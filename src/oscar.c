@@ -1857,11 +1857,6 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	serv_got_chat_left(g, b->id);
 }
 
-static void oscar_chat_whisper(struct gaim_connection *g, int id, char *who, char *message) {
-	do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM. (The last message was not received.)",
-			"Gaim - Chat");
-}
-
 static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	struct aim_conn_t *cn; 
@@ -2337,7 +2332,7 @@ void oscar_init(struct prpl *ret) {
 	ret->join_chat = oscar_join_chat;
 	ret->chat_invite = oscar_chat_invite;
 	ret->chat_leave = oscar_chat_leave;
-	ret->chat_whisper = oscar_chat_whisper;
+	ret->chat_whisper = NULL;
 	ret->chat_send = oscar_chat_send;
 	ret->keepalive = oscar_keepalive;
 }
