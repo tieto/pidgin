@@ -365,7 +365,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 408: /* MSG_SERVER_CHANNEL_USER_LIST */
 		res = g_strsplit(buf, " ", 4);
 		c = nap_find_chat(gc, res[0]);
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), res[1], NULL);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), res[1], NULL, GAIM_CBFLAGS_NONE);
 		g_strfreev(res);
 		break;
 

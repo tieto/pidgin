@@ -56,10 +56,9 @@ static char *irc_mask_userhost(const char *mask)
 
 static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 {
-	GList *users = gaim_conv_chat_get_users(GAIM_CONV_CHAT(convo));
 	char *message = g_strdup_printf("quit: %s", data[1]);
 
-	if (g_list_find_custom(users, data[0], (GCompareFunc)(strcmp)))
+	if (gaim_conv_chat_find_user(GAIM_CONV_CHAT(convo), data[0]))
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), data[0], message);
 
 	g_free(message);
@@ -332,15 +331,26 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			irc->nameconv = NULL;
 		} else {
 			GList *users = NULL;
+			GList *flags = NULL;
 
 			while (*cur) {
+				GaimConvChatBuddyFlags f = GAIM_CBFLAGS_NONE;
 				end = strchr(cur, ' ');
 				if (!end)
 					end = cur + strlen(cur);
-				if (*cur == '@' || *cur == '%' || *cur == '+')
+				if (*cur == '@') {
+					f = GAIM_CBFLAGS_OP;
 					cur++;
+				} else if (*cur == '%') {
+					f = GAIM_CBFLAGS_HALFOP;
+					cur++;
+				} else if(*cur == '+') {
+					f = GAIM_CBFLAGS_VOICE;
+					cur++;
+				}
 				tmp = g_strndup(cur, end - cur);
 				users = g_list_append(users, tmp);
+				flags = g_list_append(flags, GINT_TO_POINTER(f));
 				cur = end;
 				if (*cur)
 					cur++;
@@ -349,12 +359,13 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			if (users != NULL) {
 				GList *l;
 
-				gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users);
+				gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, flags);
 
 				for (l = users; l != NULL; l = l->next)
 					g_free(l->data);
 
 				g_list_free(users);
+				g_list_free(flags);
 			}
 		}
 		g_free(names);
@@ -574,7 +585,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost);
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost, GAIM_CBFLAGS_NONE);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
 		ib->flag = TRUE;
@@ -632,6 +643,45 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], args[2] ? args[2] : "", nick);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
+		if(args[2]) {
+			GaimConvChatBuddyFlags newflag, flags;
+			char *mcur, *cur, *end, *user;
+			gboolean add = FALSE;
+			mcur = args[1];
+			cur = args[2];
+			while (*cur && *mcur) {
+				if ((*mcur == '+') || (*mcur == '-')) {
+					add = (*mcur == '+') ? TRUE : FALSE;
+					mcur++;
+					continue;
+				}
+				end = strchr(cur, ' ');
+				if (!end)
+					end = cur + strlen(cur);
+				user = g_strndup(cur, end - cur);
+				flags = gaim_conv_chat_user_get_flags(GAIM_CONV_CHAT(convo), user);
+				newflag = GAIM_CBFLAGS_NONE;
+				if (*mcur == 'o')
+					newflag = GAIM_CBFLAGS_OP;
+				else if (*mcur =='h')
+					newflag = GAIM_CBFLAGS_HALFOP;
+				else if (*mcur == 'v')
+					newflag = GAIM_CBFLAGS_VOICE;
+				if (newflag) {
+					if (add)
+						flags |= newflag;
+					else
+						flags &= ~newflag;
+					gaim_conv_chat_user_set_flags(GAIM_CONV_CHAT(convo), user, flags);
+				}
+				g_free(user);
+				cur = end;
+				if (*cur)
+					cur++;
+				if (*mcur)
+					mcur++;
+			}
+		}
 	} else {					/* User		*/
 	}
 	g_free(nick);
@@ -655,18 +705,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 
 	while (chats) {
 		GaimConvChat *chat = GAIM_CONV_CHAT(chats->data);
-		GList *users = gaim_conv_chat_get_users(chat);
-
-		while (users) {
-			char *user = users->data;
-
-			if (!strcmp(nick, user)) {
-				gaim_conv_chat_rename_user(chat, user, args[0]);
-				users = gaim_conv_chat_get_users(chat);
-				break;
-			}
-			users = users->next;
-		}
+		gaim_conv_chat_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}
 	g_free(nick);

@@ -199,6 +199,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberChat *chat;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
+	GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
 	GaimBuddy *b;
 	char *buddy_name;
 	int state = 0;
@@ -400,9 +401,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
 
+			if (!strcmp(role, "moderator"))
+				flags = GAIM_CBFLAGS_OP;
+			else if (!strcmp(role, "participant"))
+				flags = GAIM_CBFLAGS_VOICE;
+
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						real_jid);
+						real_jid, flags);
+			else
+				gaim_conv_chat_user_set_flags(GAIM_CONV_CHAT(chat->conv), jid->resource,
+						flags);
 		}
 		g_free(room_jid);
 	} else {

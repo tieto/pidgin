@@ -689,8 +689,6 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				g_free(stripped_sender);
 			} else {
 				zephyr_triple *zt1, *zt2;
-                                GList *gltmp;
-                                int found = 0;
                                 gchar *send_inst_utf8;
                                 
 				zt1 = new_triple(notice.z_class, notice.z_class_inst, notice.z_recipient);
@@ -722,18 +720,14 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
                                 gconv1 = gaim_find_conversation_with_account(zt2->name, zgc->account);
                                 gcc = gaim_conversation_get_chat_data(gconv1);
                                 
-                                for (gltmp = gaim_conv_chat_get_users(gcc); gltmp; gltmp = gltmp->next) {
-                                        if (!g_ascii_strcasecmp(gltmp->data, sendertmp))
-                                                found = 1;
-                                }
-                                if (!found) {
+                                if (!gaim_conv_chat_find_user(gcc, sendertmp)) {
                                         /* force interpretation in network byte order */
                                         unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
                                         gchar* ipaddr = g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], 
                                                                         (unsigned char)addrs[1], (unsigned char)addrs[2], 
                                                                         (unsigned char) addrs[3]);
                                         
-                                        gaim_conv_chat_add_user(gcc, sendertmp, ipaddr);
+                                        gaim_conv_chat_add_user(gcc, sendertmp, ipaddr, GAIM_CBFLAGS_NONE);
                                         g_free(ipaddr); /* fix memory leak? */
                                         
                                 }

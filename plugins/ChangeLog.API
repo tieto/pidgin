@@ -1,5 +1,28 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.81cvs
+	Conversation API:
+	* Changed: gaim_conv_chat_add_user() (added flags parameter)
+	gaim_conv_chat_add_users() now (added GList of flags parameter)
+	gaim_conv_chat_get_users() now returns a GList of GaimChatBuddy's
+	gaim_conv_chat_set_users() now expects a GList of GaimChatBuddy's
+	* Added: gaim_conv_chat_set_user_flags()
+	gaim_conv_chat_get_user_flags()
+	gaim_conv_chat_find_user()
+	gaim_conv_chat_cb_new()
+	gaim_conv_chat_cb_find()
+	gaim_conv_chat_cb_destroy()
+	gaim_conv_chat_cb_get_name()
+
+	Conversation UI ops:
+	* Added: chat_update_user()
+
+	Signals:
+	* Changed: chat-buddy-joining & chat-buddy-joined now include the user's flags
+	* Added: chat-buddy-flags for when user's flags change
+	gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT (required for the new
+	chat-buddy-flags signal)
+
 version 0.80 (07/15/2004):
 	Gaim API:
 	* Removed: PRPL numbers : gaim_account_set_protocol(),
@@ -10,7 +33,7 @@ version 0.80 (07/15/2004):
 	* Added: can_receive_file & send_file to the GaimPluginProtocolInfo struct
 
 	Signals:
-	* Changed "chat-invited" to also include the components hash table so 
+	* Changed "chat-invited" to also include the components hash table so
 	  plugins can use serv_join_chat when the signal is emitted.
 	* Added "chat-topic-changed" signal plugins know when a topic is changed.
 

@@ -116,12 +116,9 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 
 	for (i = 0; members[i]; i++) {
 		if (new_room) {
-			GList l;
 			/*if (!strcmp(members[i], gaim_connection_get_display_name(ycht->gc)))
 				continue;*/
-			l.data = members[i];
-			l.next = l.prev = NULL;
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), &l);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), members[i], NULL, GAIM_CBFLAGS_NONE);
 		} else {
 			yahoo_chat_add_user(GAIM_CONV_CHAT(c), members[i], NULL);
 		}

@@ -345,17 +345,27 @@ buddy_typing_cb(GaimConversation *conv, void *data)
 }
 
 static void
-chat_buddy_joining_cb(GaimConversation *conv, const char *user, void *data)
+chat_buddy_joining_cb(GaimConversation *conv, const char *user,
+					  GaimConvChatBuddyFlags flags, void *data)
 {
-	gaim_debug_misc("signals test", "chat-buddy-joining (%s, %s)\n",
-					gaim_conversation_get_name(conv), user);
+	gaim_debug_misc("signals test", "chat-buddy-joining (%s, %s, %d)\n",
+					gaim_conversation_get_name(conv), user, flags);
 }
 
 static void
-chat_buddy_joined_cb(GaimConversation *conv, const char *user, void *data)
+chat_buddy_joined_cb(GaimConversation *conv, const char *user,
+					 GaimConvChatBuddyFlags flags, void *data)
 {
-	gaim_debug_misc("signals test", "chat-buddy-joined (%s, %s)\n",
-					gaim_conversation_get_name(conv), user);
+	gaim_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d)\n",
+					gaim_conversation_get_name(conv), user, flags);
+}
+
+static void
+chat_buddy_flags_cb(GaimConversation *conv, const char *user,
+					GaimConvChatBuddyFlags oldflags, GaimConvChatBuddyFlags newflags, void *data)
+{
+	gaim_debug_misc("signals test", "chat-buddy-flags (%s, %s, %d, %d)\n",
+					gaim_conversation_get_name(conv), user, oldflags, newflags);
 }
 
 static void
@@ -376,10 +386,10 @@ chat_buddy_left_cb(GaimConversation *conv, const char *user,
 
 static void
 chat_inviting_user_cb(GaimConversation *conv, const char *name,
-					  const char *reason, void *data)
+					  char **reason, void *data)
 {
 	gaim_debug_misc("signals test", "chat-inviting-user (%s, %s, %s)\n",
-					gaim_conversation_get_name(conv), name, reason);
+					gaim_conversation_get_name(conv), name, *reason);
 }
 
 static void
@@ -529,6 +539,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(chat_buddy_joining_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-buddy-joined",
 						plugin, GAIM_CALLBACK(chat_buddy_joined_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-buddy-flags",
+						plugin, GAIM_CALLBACK(chat_buddy_flags_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-buddy-leaving",
 						plugin, GAIM_CALLBACK(chat_buddy_leaving_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-buddy-left",

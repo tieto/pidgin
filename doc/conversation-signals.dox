@@ -331,22 +331,41 @@ void (*buddy_typing)(GaimConversation *conv);
 
  @signaldef chat-buddy-joining
   @signalproto
-void (*chat_buddy_joining)(GaimConversation *conv, const char *name);
+void (*chat_buddy_joining)(GaimConversation *conv, const char *name,
+                           GaimConvChatBuddyFlags flags);
   @endsignalproto
   @signaldesc
    Emitted when a buddy is joining a chat, before the list of
    users in the chat updates to include the new user.
   @param conv The chat conversation.
   @param name The name of the user that is joining the conversation.
+  @param flags The flags of the user that is joining the conversation.
  @endsignaldef
 
  @signaldef chat-buddy-joined
   @signalproto
-void (*chat_buddy_joined)(GaimConversation *conv, const char *name);
+void (*chat_buddy_joined)(GaimConversation *conv, const char *name,
+                          GaimConvChatBuddyFlags flags);
   @endsignalproto
   @signaldesc
    Emitted when a buddy joined a chat, after the users list is updated.
   @param conv The chat conversation.
+  @param name The name of the user that has joined the conversation.
+  @param flags The flags of the user that has joined the conversation.
+ @endsignaldef
+
+ @signaldef chat-buddy-flags
+  @signalproto
+void (*chat_buddy_flags)(GaimConversation *conv, const char *name,
+                         GaimConvChatBuddyFlags oldflags,
+                         GaimConvChatBuddyFlags newflags);
+  @endsignalproto
+  @signaldesc
+   Emitted when a user in a chat changes flags.
+  @param conv The chat conversation.
+  @param name The name of the user.
+  @param oldflags The old flags.
+  @param newflags The new flags.
  @endsignaldef
 
  @signaldef chat-buddy-leaving

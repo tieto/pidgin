@@ -69,36 +69,24 @@ static void yahoo_chat_online(GaimConnection *gc)
 	yahoo_packet_free(pkt);
 }
 
-static gint _mystrcmpwrapper(gconstpointer a, gconstpointer b)
-{
-	return strcmp(a, b);
-}
-
 /* this is slow, and different from the gaim_* version in that it (hopefully) won't add a user twice */
 void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
 {
-	GList *users, *i, *j;
-
-	users = gaim_conv_chat_get_users(chat);
+	GList *i;
 
 	for (i = newusers; i; i = i->next) {
-		j = g_list_find_custom(users, i->data, _mystrcmpwrapper);
-		if (j)
+		if (gaim_conv_chat_find_user(chat, i->data))
 			continue;
-		gaim_conv_chat_add_user(chat, i->data, NULL);
+		gaim_conv_chat_add_user(chat, i->data, NULL, GAIM_CBFLAGS_NONE);
 	}
 }
 
 void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason)
 {
-	GList *users;
-
-	users = gaim_conv_chat_get_users(chat);
-
-	if ((g_list_find_custom(users, user, _mystrcmpwrapper)))
+	if (gaim_conv_chat_find_user(chat, user))
 		return;
 
-	gaim_conv_chat_add_user(chat, user, reason);
+	gaim_conv_chat_add_user(chat, user, reason, GAIM_CBFLAGS_NONE);
 }
 
 static GaimConversation *yahoo_find_conference(GaimConnection *gc, const char *name)
@@ -413,6 +401,10 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (room && (!c || gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) && members &&
 	   ((g_list_length(members) > 1) ||
 	     !g_ascii_strcasecmp(members->data, gaim_connection_get_display_name(gc)))) {
+		int i;
+		GList *flags = NULL;
+		for (i = 0; i < g_list_length(members); i++)
+			flags = g_list_append(flags, GINT_TO_POINTER(GAIM_CBFLAGS_NONE));
 		if (c && gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) {
 			/* this might be a hack, but oh well, it should nicely */
 			char *tmpmsg;
@@ -424,7 +416,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, flags);
 
 			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(c), "", tmpmsg, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -435,7 +427,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, flags);
 		}
 	} else if (c) {
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
@@ -600,7 +592,8 @@ static void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char
 
 	yahoo_packet_hash(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
-		yahoo_packet_hash(pkt, 3, (char *)w->data);
+		const char *name = gaim_conv_chat_cb_get_name(w->data);
+		yahoo_packet_hash(pkt, 3, name);
 	}
 
 	yahoo_packet_hash(pkt, 57, room);
@@ -626,8 +619,10 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 1, dn);
-	for (who = members; who; who = who->next)
-		yahoo_packet_hash(pkt, 53, (char *)who->data);
+	for (who = members; who; who = who->next) {
+		const char *name = gaim_conv_chat_cb_get_name(who->data);
+		yahoo_packet_hash(pkt, 53, name);
+	}
 	yahoo_packet_hash(pkt, 57, room);
 	yahoo_packet_hash(pkt, 14, msg2);
 	if (utf8)
@@ -663,7 +658,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
 			yahoo_packet_hash(pkt, 3, memarr[i]);
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE);
 		}
 	}
 	yahoo_send_packet(yd, pkt);
@@ -695,10 +690,11 @@ static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
 	yahoo_packet_hash(pkt, 58, msg?msg2:"");
 	yahoo_packet_hash(pkt, 13, "0");
 	for(; members; members = members->next) {
-		if (!strcmp(members->data, dn))
+		const char *name = gaim_conv_chat_cb_get_name(members->data);
+		if (!strcmp(name, dn))
 			continue;
-		yahoo_packet_hash(pkt, 52, (char *)members->data);
-		yahoo_packet_hash(pkt, 53, (char *)members->data);
+		yahoo_packet_hash(pkt, 52, name);
+		yahoo_packet_hash(pkt, 53, name);
 	}
 	yahoo_send_packet(yd, pkt);
 

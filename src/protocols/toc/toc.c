@@ -830,7 +830,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (in && (*in == 'T'))
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				gaim_conv_chat_add_user(chat, buddy, NULL);
+				gaim_conv_chat_add_user(chat, buddy, NULL, GAIM_CBFLAGS_NONE);
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
 				gaim_conv_chat_remove_user(chat, buddy, NULL);

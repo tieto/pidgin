@@ -4,6 +4,7 @@ version 0.81cvs:
 	New Features:
 	* The autorecon plugin will somewhat remember state information(Yosef
 	  Radchenko)
+	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
 
 	Bug Fixes:
 	* Long buddy lists with irc should cause flooding disconnects less

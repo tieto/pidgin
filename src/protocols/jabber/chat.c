@@ -261,15 +261,7 @@ void jabber_chat_free(JabberChat *chat)
 
 gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name)
 {
-	GList *m = gaim_conv_chat_get_users(GAIM_CONV_CHAT(conv));
-
-	while(m) {
-		if(!strcmp(m->data, name))
-			return TRUE;
-		m = m->next;
-	}
-
-	return FALSE;
+	return gaim_conv_chat_find_user(GAIM_CONV_CHAT(conv), name);
 }
 
 char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who)

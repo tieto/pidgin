@@ -272,7 +272,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		g_snprintf(buf, sizeof(buf), "%s@%s",
 			   client_entry->username, client_entry->hostname);
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo),
-					g_strdup(client_entry->nickname), buf);
+					g_strdup(client_entry->nickname), buf, GAIM_CBFLAGS_NONE);
 
 		break;
 
@@ -422,39 +422,47 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		break;
 
 	case SILC_NOTIFY_TYPE_CUMODE_CHANGE:
-		idtype = va_arg(va, int);
-		entry = va_arg(va, void *);
-		mode = va_arg(va, SilcUInt32);
-		client_entry2 = va_arg(va, SilcClientEntry);
-		channel = va_arg(va, SilcChannelEntry);
+		{
+			GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
+			idtype = va_arg(va, int);
+			entry = va_arg(va, void *);
+			mode = va_arg(va, SilcUInt32);
+			client_entry2 = va_arg(va, SilcClientEntry);
+			channel = va_arg(va, SilcChannelEntry);
 
-		convo = gaim_find_conversation_with_account(channel->channel_name,
-							    sg->account);
-		if (!convo)
+			convo = gaim_find_conversation_with_account(channel->channel_name,
+					sg->account);
+			if (!convo)
+				break;
+
+			if (idtype == SILC_ID_CLIENT)
+				name = ((SilcClientEntry)entry)->nickname;
+			else if (idtype == SILC_ID_SERVER)
+				name = ((SilcServerEntry)entry)->server_name;
+			else
+				name = ((SilcChannelEntry)entry)->channel_name;
+			if (!name)
+				break;
+
+			if (mode) {
+				silcgaim_get_chumode_string(mode, buf2, sizeof(buf2));
+				g_snprintf(buf, sizeof(buf),
+						_("<I>%s</I> set <I>%s's</I> modes to: %s"), name,
+						client_entry2->nickname, buf2);
+				if (mode & SILC_CHANNEL_UMODE_CHANFO)
+					flags |= GAIM_CBFLAGS_FOUNDER;
+				if (mode & SILC_CHANNEL_UMODE_CHANOP)
+					flags |= GAIM_CBFLAGS_OP;
+			} else {
+				g_snprintf(buf, sizeof(buf),
+						_("<I>%s</I> removed all <I>%s's</I> modes"), name,
+						client_entry2->nickname);
+			}
+			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), channel->channel_name,
+					buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+			gaim_conv_chat_user_set_flags(GAIM_CONV_CHAT(convo), client_entry2->nickname, flags);
 			break;
-
-		if (idtype == SILC_ID_CLIENT)
-			name = ((SilcClientEntry)entry)->nickname;
-		else if (idtype == SILC_ID_SERVER)
-			name = ((SilcServerEntry)entry)->server_name;
-		else
-			name = ((SilcChannelEntry)entry)->channel_name;
-		if (!name)
-			break;
-
-		if (mode) {
-			silcgaim_get_chumode_string(mode, buf2, sizeof(buf2));
-			g_snprintf(buf, sizeof(buf),
-				   _("<I>%s</I> set <I>%s's</I> modes to: %s"), name,
-				   client_entry2->nickname, buf2);
-		} else {
-			g_snprintf(buf, sizeof(buf),
-				   _("<I>%s</I> removed all <I>%s's</I> modes"), name,
-				   client_entry2->nickname);
 		}
-		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), channel->channel_name,
-				     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-		break;
 
 	case SILC_NOTIFY_TYPE_MOTD:
 		tmp = va_arg(va, char *);

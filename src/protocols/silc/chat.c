@@ -941,7 +941,7 @@ void silcgaim_chat_join_done(SilcClient client,
 	SilcUInt32 retry = SILC_PTR_TO_32(channel->context);
 	SilcHashTableList htl;
 	SilcChannelUser chu;
-	GList *users = NULL;
+	GList *users = NULL, *flags = NULL;
 	char tmp[256];
 
 	if (!clients && retry < 1) {
@@ -963,25 +963,17 @@ void silcgaim_chat_join_done(SilcClient client,
 	/* Add all users to channel */
 	silc_hash_table_list(channel->user_list, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		GaimConvChatBuddyFlags f = GAIM_CBFLAGS_NONE;
 		if (!chu->client->nickname)
 			continue;
 		chu->context = SILC_32_TO_PTR(sg->channel_ids);
 
-#if 0   /* XXX don't append mode char to nick because Gaim doesn't
-	   give a way to change it afterwards when mode changes. */
-		tmp2 = silc_client_chumode_char(chu->mode);
-		if (tmp2)
-			g_snprintf(tmp, sizeof(tmp), "%s%s", tmp2,
-				   chu->client->nickname);
-		else
-			g_snprintf(tmp, sizeof(tmp), "%s",
-				   chu->client->nickname);
-		silc_free(tmp2);
-
-		users = g_list_append(users, g_strdup(tmp));
-#else
+		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO)
+			f |= GAIM_CBFLAGS_FOUNDER;
+		if (chu->mode & SILC_CHANNEL_UMODE_CHANOP)
+			f |= GAIM_CBFLAGS_OP;
 		users = g_list_append(users, g_strdup(chu->client->nickname));
-#endif
+		flags = g_list_append(flags, GINT_TO_POINTER(f));
 
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
 			if (chu->client == conn->local_entry)
@@ -1000,8 +992,9 @@ void silcgaim_chat_join_done(SilcClient client,
 	}
 	silc_hash_table_list_reset(&htl);
 
-	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users);
+	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, flags);
 	g_list_free(users);
+	g_list_free(flags);
 
 	/* Set topic */
 	if (channel->topic)
