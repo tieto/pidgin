@@ -76,7 +76,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 
 	pw = getpwuid(getuid());
 	if (!pw) {
-		fprintf(stderr, "silc: %s\n", strerror(errno));
+		gaim_debug_error("silc", "silc: %s\n", strerror(errno));
 		return FALSE;
 	}
 
@@ -96,22 +96,22 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
 				if ((mkdir(filename, 0755)) == -1) {
-					fprintf(stderr, "Couldn't create `%s' directory\n", filename);
+					gaim_debug_error("silc", "Couldn't create '%s' directory\n", filename);
 					return FALSE;
 				}
 			} else {
-				fprintf(stderr, "Couldn't create `%s' directory due to a wrong uid!\n",
+				gaim_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
 					filename);
 				return FALSE;
 			}
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n", filename, strerror(errno));
 			return FALSE;
 		}
 	} else {
 		/* Check the owner of the dir */
 		if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
-			fprintf(stderr, "You don't seem to own `%s' directory\n",
+			gaim_debug_error("silc", "You don't seem to own '%s' directory\n",
 				filename);
 			return FALSE;
 		}
@@ -125,16 +125,17 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
 				if ((mkdir(servfilename, 0755)) == -1) {
-					fprintf(stderr, "Couldn't create `%s' directory\n", servfilename);
+					gaim_debug_error("silc", "Couldn't create '%s' directory\n", servfilename);
 					return FALSE;
 				}
 			} else {
-				fprintf(stderr, "Couldn't create `%s' directory due to a wrong uid!\n",
+				gaim_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
 					servfilename);
 				return FALSE;
 			}
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
+							 servfilename, strerror(errno));
 			return FALSE;
 		}
 	}
@@ -147,16 +148,17 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
 				if ((mkdir(clientfilename, 0755)) == -1) {
-					fprintf(stderr, "Couldn't create `%s' directory\n", clientfilename);
+					gaim_debug_error("silc", "Couldn't create '%s' directory\n", clientfilename);
 					return FALSE;
 				}
 			} else {
-				fprintf(stderr, "Couldn't create `%s' directory due to a wrong uid!\n",
+				gaim_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
 					clientfilename);
 				return FALSE;
 			}
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
+							 clientfilename, strerror(errno));
 			return FALSE;
 		}
 	}
@@ -169,16 +171,17 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		if (errno == ENOENT) {
 			if (pw->pw_uid == geteuid()) {
 				if ((mkdir(friendsfilename, 0755)) == -1) {
-					fprintf(stderr, "Couldn't create `%s' directory\n", friendsfilename);
+					gaim_debug_error("silc", "Couldn't create '%s' directory\n", friendsfilename);
 					return FALSE;
 				}
 			} else {
-				fprintf(stderr, "Couldn't create `%s' directory due to a wrong uid!\n",
+				gaim_debug_error("silc", "Couldn't create '%s' directory due to a wrong uid!\n",
 					friendsfilename);
 				return FALSE;
 			}
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
+							 friendsfilename, strerror(errno));
 			return FALSE;
 		}
 	}
@@ -198,16 +201,19 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 			silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     "", NULL, NULL, NULL, FALSE);
+					     (gc->account->password == NULL) ? "" : gc->account->password,
+						 NULL, NULL, NULL, FALSE);
+			stat(file_public_key, &st);
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
+							 file_public_key, strerror(errno));
 			return FALSE;
 		}
 	}
 
 	/* Check the owner of the public key */
 	if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
-		fprintf(stderr, "You don't seem to own your public key!?\n");
+		gaim_debug_error("silc", "You don't seem to own your public key!?\n");
 		return FALSE;
 	}
 
@@ -218,30 +224,33 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 			silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     "", NULL, NULL, NULL, FALSE);
+					     (gc->account->password == NULL) ? "" : gc->account->password,
+						 NULL, NULL, NULL, FALSE);
+			stat(file_private_key, &st);
 		} else {
-			fprintf(stderr, "%s\n", strerror(errno));
+			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
+							 file_private_key, strerror(errno));
 			return FALSE;
 		}
 	}
 
 	/* Check the owner of the private key */
 	if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
-		fprintf(stderr, "You don't seem to own your private key!?\n");
+		gaim_debug_error("silc", "You don't seem to own your private key!?\n");
 		return FALSE;
 	}
 
 	/* Check the permissions for the private key */
 	if ((st.st_mode & 0777) != 0600) {
-		fprintf(stderr, "Wrong permissions in your private key file `%s'!\n"
+		gaim_debug_warning("silc", "Wrong permissions in your private key file `%s'!\n"
 			"Trying to change them ... ", file_private_key);
 		if ((chmod(file_private_key, 0600)) == -1) {
-			fprintf(stderr,
+			gaim_debug_error("silc",
 				"Failed to change permissions for private key file!\n"
 				"Permissions for your private key file must be 0600.\n");
 			return FALSE;
 		}
-		fprintf(stderr, "Done.\n\n");
+		gaim_debug_warning("silc", "Done.\n\n");
 	}
 
 	return TRUE;

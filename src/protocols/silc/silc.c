@@ -278,8 +278,8 @@ silcgaim_login(GaimAccount *account)
 	/* Load SILC key pair */
 	if (!silc_load_key_pair(gaim_prefs_get_string("/plugins/prpl/silc/pubkey"),
 				gaim_prefs_get_string("/plugins/prpl/silc/privkey"),
-				"", &client->pkcs, &client->public_key,
-				&client->private_key)) {
+				(account->password == NULL) ? "" : account->password, &client->pkcs,
+				&client->public_key, &client->private_key)) {
 		gaim_connection_error(gc, ("Could not load SILC key pair"));
 		return;
 	}
@@ -318,21 +318,21 @@ silcgaim_close_final(gpointer *context)
 }
 
 static void
-silcgaim_close_convos(GaimConversation *convo)
-{
-	if (convo)
-		gaim_conversation_destroy(convo);
-}
-
-static void
 silcgaim_close(GaimConnection *gc)
 {
+	GList *l;
+	GaimConversation *conv;
 	SilcGaim sg = gc->proto_data;
 	if (!sg)
 		return;
 
-	/* Close all conversations */
-	gaim_conversation_foreach(silcgaim_close_convos);
+	/* Close all conversations for this connection */
+	for (l = gaim_get_conversations(); l; l = l->next)
+	{
+		conv = l->data;
+		if (gc == conv->account->gc)
+			gaim_conversation_destroy(conv);
+	}
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
@@ -729,6 +729,31 @@ silcgaim_view_motd(GaimPluginAction *action)
 			      sg->motd, NULL, NULL);
 }
 
+static void
+silcgaim_change_pass(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	gaim_account_request_change_password(gaim_connection_get_account(gc));
+}
+
+static void
+silcgaim_change_passwd(GaimConnection *gc, const char *old, const char *new)
+{
+	silc_change_private_key_passphrase(gaim_prefs_get_string("/plugins/prpl/silc/privkey"), old, new);
+}
+
+static void
+silcgaim_show_set_info(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
+}
+
+static void
+silcgaim_set_info(GaimConnection *gc, const char *text)
+{
+}
+
 static GList *
 silcgaim_actions(GaimPlugin *plugin, gpointer context)
 {
@@ -748,6 +773,14 @@ silcgaim_actions(GaimPlugin *plugin, gpointer context)
 
 	act = gaim_plugin_action_new(_("View Message of the Day"),
 			silcgaim_view_motd);
+	list = g_list_append(list, act);
+
+	act = gaim_plugin_action_new(_("Change Password..."),
+			silcgaim_change_pass);
+	list = g_list_append(list, act);
+
+	act = gaim_plugin_action_new(_("Set User Info..."),
+			silcgaim_show_set_info);
 	list = g_list_append(list, act);
 
 	return list;
@@ -893,8 +926,282 @@ GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 	}	
 }
 
+/********************************* Commands **********************************/
+
+static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	int id = 0;
+
+	gc = gaim_conversation_get_gc(conv);
+	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+
+	if (gc == NULL || id == 0)
+		return GAIM_CMD_RET_FAILED;
+
+	silcgaim_chat_leave(gc, id);
+
+	return GAIM_CMD_RET_OK;
+
+}
+
+static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	int id = 0;
+
+	gc = gaim_conversation_get_gc(conv);
+	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+
+	if (gc == NULL || id == 0)
+		return GAIM_CMD_RET_FAILED;
+
+	silcgaim_chat_set_topic(gc, id, args ? args[0] : NULL);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_chat_join(GaimConversation *conv,
+        const char *cmd, char **args, char **error)
+{
+	GHashTable *comp;
+
+	if(!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	comp = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+
+	g_hash_table_replace(comp, "channel", args[0]);
+	if(args[1])
+		g_hash_table_replace(comp, "passphrase", args[1]);
+
+	silcgaim_chat_join(gaim_conversation_get_gc(conv), comp);
+
+	g_hash_table_destroy(comp);
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_chat_list(GaimConversation *conv,
+        const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	gc = gaim_conversation_get_gc(conv);
+	gaim_roomlist_show_with_account(gaim_connection_get_account(gc));
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_whois(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	silcgaim_get_info(gc, args[0]);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_chat_invite(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	int id;
+	GaimConnection *gc;
+
+	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	silcgaim_chat_invite(gc, id, NULL, args[0]);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_msg(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	int ret;
+	GaimConnection *gc;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	ret = silcgaim_send_im(gc, args[0], args[1], GAIM_MESSAGE_SEND);
+
+	if (ret)
+		return GAIM_CMD_RET_OK;
+	else
+		return GAIM_CMD_RET_FAILED;
+}
+
+static GaimCmdRet silcgaim_cmd_query(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	int ret = 1;
+	GaimConversation *convo;
+	GaimConnection *gc;
+	GaimAccount *account;
+
+	if (!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	account = gaim_connection_get_account(gc);
+
+	convo = gaim_conversation_new(GAIM_CONV_IM, account, args[0]);
+
+	if (args[1]) {
+		ret = silcgaim_send_im(gc, args[0], args[1], GAIM_MESSAGE_SEND);
+		gaim_conv_im_write(GAIM_CONV_IM(convo), gaim_connection_get_display_name(gc),
+				args[1], GAIM_MESSAGE_SEND, time(NULL));
+	}
+
+	if (ret)
+		return GAIM_CMD_RET_OK;
+	else
+		return GAIM_CMD_RET_FAILED;
+}
+
+static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	sg = gc->proto_data;
+
+	if (sg == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	if (!sg->motd) {
+		gaim_notify_error(
+				gc, _("Message of the Day"), _("No Message of the Day available"),
+				_("There is no Message of the Day associated with this connection"));
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	gaim_notify_formatted(gc, _("Message of the Day"), _("Message of the Day"), NULL,
+			sg->motd, NULL, NULL);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_detach(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	sg = gc->proto_data;
+
+	if (sg == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	silc_client_command_call(sg->client, sg->conn, "DETACH");
+	sg->detaching = TRUE;
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet silcgaim_cmd_umode(GaimConversation *conv,
+		const char *cmd, char **args, char **error)
+{
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	gc = gaim_conversation_get_gc(conv);
+
+	if (gc == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	sg = gc->proto_data;
+
+	if (sg == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	silc_client_command_call(sg->client, sg->conn, NULL, "UMODE",
+			args[0], NULL);
+
+	return GAIM_CMD_RET_OK;
+}
+
 
 /************************** Plugin Initialization ****************************/
+
+static void
+silcgaim_register_commands(void)
+{
+	gaim_cmd_register("part", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_chat_part, _("part:  Leave the chat"));
+	gaim_cmd_register("leave", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_chat_part, _("leave:  Leave the chat"));
+	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
+			silcgaim_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"));
+	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
+			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
+			"prpl-silc", silcgaim_cmd_chat_join,
+			_("join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"));
+	gaim_cmd_register("list", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
+			silcgaim_cmd_chat_list, _("list:  List channels on this network"));
+	gaim_cmd_register("whois", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc",
+			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's informationc"));
+	gaim_cmd_register("invite", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_chat_invite,
+			_("invite &lt;nick&gt;:  Invite nick to join this channel"));
+	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_msg,
+			_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"));
+	gaim_cmd_register("query", "ws", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_query,
+			_("query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"));
+	gaim_cmd_register("motd", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_motd,
+			_("motd:  View the server's Message Of The Day"));
+	gaim_cmd_register("detach", "", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_detach,
+			_("detach:  Detach this session"));
+	gaim_cmd_register("umode", "w", GAIM_CMD_P_PRPL,
+			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcgaim_cmd_umode,
+			_("umode &lt;usermodes&gt;:  Set your user options"));
+}
 
 static GaimPluginPrefFrame *
 silcgaim_pref_frame(GaimPlugin *plugin)
@@ -968,12 +1275,12 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_login,
 	silcgaim_close,
 	silcgaim_send_im,
-	NULL,
+	silcgaim_set_info,
 	NULL,
 	silcgaim_get_info,
 	silcgaim_set_away,
 	silcgaim_idle_set,
-	NULL,
+	silcgaim_change_passwd,
 	silcgaim_add_buddy,
 	silcgaim_add_buddies,
 	silcgaim_remove_buddy,
@@ -1094,6 +1401,8 @@ init_plugin(GaimPlugin *plugin)
 	g_snprintf(tmp, sizeof(tmp), "%s/private_key.prv", silcgaim_silcdir());
 	gaim_prefs_add_string("/plugins/prpl/silc/privkey", tmp);
 	gaim_prefs_add_string("/plugins/prpl/silc/vcard", "");
+
+	silcgaim_register_commands();
 }
 
 GAIM_INIT_PLUGIN(silc, init_plugin, info);

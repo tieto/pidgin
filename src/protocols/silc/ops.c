@@ -653,7 +653,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				/* Find buddy by nickname */
 				b = gaim_find_buddy(sg->account, client_entry->nickname);
 				if (!b) {
-					fprintf(stderr, "WATCH for %s, unknown buddy",
+					gaim_debug_warning("silc", "WATCH for %s, unknown buddy",
 						client_entry->nickname);
 					break;
 				}

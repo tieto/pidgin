@@ -161,7 +161,8 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 static void
 silcgaim_chat_getinfo_menu(GaimBlistNode *node, gpointer data)
 {
-
+	GaimChat *chat = (GaimChat *)node;
+	silcgaim_chat_getinfo(chat->account->gc, chat->components);
 }
 
 

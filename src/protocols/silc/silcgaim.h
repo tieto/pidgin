@@ -33,6 +33,7 @@
 #include "util.h"
 #include "roomlist.h"
 #include "ft.h"
+#include "cmds.h"
 
 /* Default public and private key file names */
 #define SILCGAIM_PUBLIC_KEY_NAME "public_key.pub"
