@@ -100,7 +100,7 @@ gboolean irc_blist_timeout(struct irc_conn *irc)
 		return TRUE;
 	}
 
-	buf = irc_format(irc, "v:", "ISON", list);
+	buf = irc_format(irc, "vn", "ISON", list);
 	g_free(list);
 	irc_send(irc, buf);
 	g_free(buf);
