@@ -49,6 +49,8 @@ jabber_parser_element_start(GMarkupParseContext *context,
 				js->stream_id = g_strdup(attrib_values[i]);
 			}
 		}
+		if(js->protocol_version == JABBER_PROTO_0_9)
+			js->auth_type = JABBER_AUTH_IQ_AUTH;
 
 		if(js->state == JABBER_STREAM_INITIALIZING)
 			jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);

@@ -39,10 +39,13 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 {
 	JabberChat *chat = val;
 	xmlnode *presence = user_data;
-	char *chat_jid = key;
+	const char *chat_bare_jid = key;
+	char *chat_full_jid = g_strdup_printf("%s/%s", chat_bare_jid,
+			gaim_conv_chat_get_nick(GAIM_CONV_CHAT(chat->conv)));
 
-	xmlnode_set_attrib(presence, "to", chat_jid);
+	xmlnode_set_attrib(presence, "to", chat_full_jid);
 	jabber_send(chat->js, presence);
+	g_free(chat_full_jid);
 }
 
 void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, const char *msg) {

@@ -96,6 +96,11 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 
 static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
+	if(xmlnode_get_child(packet, "starttls")) {
+		if(jabber_process_starttls(js, packet))
+			return;
+	}
+
 	if(xmlnode_get_child(packet, "mechanisms")) {
 		jabber_auth_start(js, packet);
 	} else if(xmlnode_get_child(packet, "bind")) {
@@ -109,6 +114,13 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
 		jabber_iq_send(iq);
+	} else /* if(xmlnode_get_child_with_namespace(packet, "auth")) */ {
+		/* If we get an empty stream:features packet, or we explicitly get
+		 * an auth feature with namespace http://jabber.org/features/iq-auth
+		 * we should revert back to iq:auth authentication, even though we're
+		 * connecting to an XMPP server.  */
+		js->auth_type = JABBER_AUTH_IQ_AUTH;
+		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	}
 }
 
@@ -805,11 +817,10 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			gaim_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 6 : 3, JABBER_CONNECT_STEPS);
-			if(js->protocol_version == JABBER_PROTO_0_9)  {
-				if(js->registration)
-					jabber_register_start(js);
-				else
-					jabber_auth_start_old(js);
+			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
+				jabber_register_start(js);
+			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
+				jabber_auth_start_old(js);
 			}
 			break;
 		case JABBER_STREAM_REINITIALIZING:
@@ -1084,7 +1095,6 @@ static void jabber_password_change(GaimConnection *gc)
 
 static GList *jabber_actions(GaimConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
 
@@ -1094,13 +1104,13 @@ static GList *jabber_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-	if(js->protocol_version == JABBER_PROTO_0_9) {
+	/* if (js->protocol_options & CHANGE_PASSWORD) { */
 		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Change Password");
 		pam->callback = jabber_password_change;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
-	}
+	/* } */
 
 	return m;
 }

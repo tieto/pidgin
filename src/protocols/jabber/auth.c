@@ -32,27 +32,34 @@
 #include "util.h"
 #include "sslconn.h"
 
-
-void
-jabber_auth_start(JabberStream *js, xmlnode *packet)
+gboolean
+jabber_process_starttls(JabberStream *js, xmlnode *packet)
 {
-	xmlnode *mechs, *mechnode;
 	xmlnode *starttls;
-	xmlnode *auth;
-
-	gboolean digest_md5 = FALSE, plain=FALSE;
 
 	if((starttls = xmlnode_get_child(packet, "starttls"))) {
 		if(gaim_account_get_bool(js->gc->account, "use_tls", TRUE) &&
 						gaim_ssl_is_supported()) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return;
+			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
 			gaim_connection_error(js->gc, _("Server requires SSL for login"));
-			return;
+			return TRUE;
 		}
 	}
+
+	return FALSE;
+}
+
+void
+jabber_auth_start(JabberStream *js, xmlnode *packet)
+{
+	xmlnode *mechs, *mechnode;
+	xmlnode *auth;
+
+	gboolean digest_md5 = FALSE, plain=FALSE;
+
 
 	if(js->registration) {
 		jabber_register_start(js);

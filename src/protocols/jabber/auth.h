@@ -25,6 +25,7 @@
 #include "jabber.h"
 #include "xmlnode.h"
 
+gboolean jabber_process_starttls(JabberStream *js, xmlnode *packet);
 void jabber_auth_start(JabberStream *js, xmlnode *packet);
 void jabber_auth_start_old(JabberStream *js);
 void jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet);
