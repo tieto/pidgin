@@ -119,6 +119,7 @@ void show_about(GtkWidget *w, void *data)
 		"  Nathan 'faceprint' Walp (", _("developer"), ")<BR>"
 		"  Mark 'KingAnt' Doliner (", _("developer"), ")<BR>"
 		"  Ethan 'Paco-Paco' Blanton (", _("developer"), ")<br>"
+		"  Tim 'marv' Ringenbach (", _("developer"), ")<br>"
 		"  Luke 'LSchiere' Schierer (", _("support"), ")<BR>"
 		"<BR>", NULL);
 	gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
@@ -131,7 +132,6 @@ void show_about(GtkWidget *w, void *data)
 		"  Decklin Foster<BR>"
 		"  Etan 'deryni' Reisner<BR>"
 		"  Robert 'Robot101' McQueen<BR>"
-		"  Tim 'marv' Ringenbach<br>"
 		"  Kevin 'SimGuy' Stange<br>"
 		"  Stu 'nosnilmot' Tomlinson<br>"
 		"  Gary 'xgrimx' Kramlich<br>"
