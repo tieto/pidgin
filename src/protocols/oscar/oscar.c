@@ -99,7 +99,8 @@ static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE 
 /* static int caps_icq = AIM_CAPS_ICQ; */
 /* What does AIM_CAPS_ICQ actually mean? -SE */
 
-static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02};
+static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
+static fu8_t features_icq[] = {0x01, 0x06};
 
 struct oscar_data {
 	aim_session_t *sess;
@@ -3841,11 +3842,14 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		int len;
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
-		if (od->icq)
+		if (od->icq) {
+			args.features = features_icq;
+			args.featureslen = sizeof(features_icq);
 			args.flags |= AIM_IMFLAGS_OFFLINE;
-
-		args.features = gaim_features;
-		args.featureslen = sizeof(gaim_features);
+		} else {
+			args.features = features_aim;
+			args.featureslen = sizeof(features_aim);
+		}
 
 		while (h) {
 			ir = h->data;
@@ -3884,7 +3888,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			debug_printf("Sending Unicode IM\n");
 			args.charset = 0x0002;
-			args.charsubset = 0x0002;
+			args.charsubset = 0x0000;
 			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("Error converting a unicode message: %s\n", err->message);
@@ -3895,7 +3899,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
 			debug_printf("Sending ISO-8859-1 IM\n");
 			args.charset = 0x0003;
-			args.charsubset = 0x0003;
+			args.charsubset = 0x0000;
 			args.msg = g_convert(message, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("conversion error: %s\n", err->message);
