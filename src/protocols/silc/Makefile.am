@@ -8,7 +8,7 @@ AM_CFLAGS = $(st)
 
 libsilc_la_LDFLAGS = -module -avoid-version
 
-if STATIC_IRC
+if STATIC_SILC
 
 st = -DGAIM_STATIC_PRPL $(SILC_INCLUDES)
 noinst_LIBRARIES = libsilc.a
