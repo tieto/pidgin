@@ -640,8 +640,8 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 	int user_num;
 	int num_users;
 	const char *type;
-	const char *passport;
-	const char *friend;
+	const char *passport = NULL;
+	const char *friend = NULL;
 
 	type      = params[1];
 	user_num  = atoi(params[3]);
