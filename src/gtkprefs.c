@@ -1734,6 +1734,9 @@ update_plugin_list(void *data)
 				   1, plug->info->name ? _(plug->info->name) : plug->path,
 				   2, plug, -1);
 	}
+
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
+		                                   1, GTK_SORT_ASCENDING);
 }
 
 static GtkWidget *plugin_page ()
