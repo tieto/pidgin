@@ -156,7 +156,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	account = gaim_accounts_find(username, NULL);
 	if (!account) {
 		account = gaim_account_new(username, "prpl-oscar");
-		gaim_account_set_remember_password(account, TRUE);
+		gaim_account_set_remember_password(account, FALSE);
 		gaim_accounts_add(account);
 	}
 
