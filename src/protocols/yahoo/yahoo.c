@@ -1369,7 +1369,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *seed = NULL;
 	char *sn   = NULL;
 	GSList *l = pkt->hash;
-	int m = 1;
+	int m = 0;
 
 	
 	while (l) {
