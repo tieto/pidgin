@@ -34,6 +34,7 @@
 #include "yahoo.h"
 #include "yahoo_friend.h"
 
+
 typedef struct {
 	GaimConnection *gc;
 	char *name;
@@ -83,6 +84,13 @@ typedef struct profile_strings_node {
 } profile_strings_node_t;
 
 
+typedef enum profile_state {
+	PROFILE_STATE_DEFAULT,
+	PROFILE_STATE_NOT_FOUND,
+	PROFILE_STATE_UNKNOWN_LANGUAGE
+} profile_state_t;
+
+
 typedef struct {
 	YahooGetInfoData *info_data;
 	char *url_buffer;
@@ -92,6 +100,8 @@ typedef struct {
 	char *tooltip_text;
 	const profile_strings_node_t *strings;
 	const char *last_updated_string;
+	const char *title;
+	profile_state_t profile_state;
 } YahooGetInfoStepTwoData;
 
 
@@ -637,7 +647,8 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 	GaimBuddy *b;
 	YahooFriend *f;
 
-	g_string_printf(s, _("<b>%s:</b> %s<br>"), _("Yahoo! ID"), info_data->name);
+	g_string_printf(s, "<span style=\"font-size: larger\"><b>%s</b></span><br>",
+			info_data->name);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
 			info_data->name);
 
@@ -723,6 +734,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	int lang, strid;
 	struct yahoo_data *yd;
 	const profile_strings_node_t *strings = NULL;
+	const char *title;
+	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
 
 	if (!GAIM_CONNECTION_IS_VALID(info_data->gc)) {
 		g_free(info_data->name);
@@ -733,6 +746,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = info_data->gc->proto_data;
+	title = (yd->jp? _("Yahoo! Japan Profile") :
+					 _("Yahoo! Profile"));
 
 	/* Get the tooltip info string */
 	tooltip_text = yahoo_tooltip_info_text(info_data);
@@ -745,7 +760,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
+		gaim_notify_formatted(info_data->gc, NULL, title, NULL,
 				buf, NULL, NULL);
 
 		g_free(profile_url_text);
@@ -782,7 +797,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 				  "you will need to visit this link in your web browser"),
 				profile_url_text, profile_url_text);
 
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
+		gaim_notify_formatted(info_data->gc, NULL, title, NULL,
 				buf, NULL, NULL);
 
 		g_free(profile_url_text);
@@ -821,27 +836,10 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		if (!strstr(url_text, "Yahoo! Member Directory - User not found")
 				&& !strstr(url_text, "was not found on this server.")
 				&& !strstr(url_text, "\xb8\xf8\xb3\xab\xa5\xd7\xa5\xed\xa5\xd5\xa5\xa3\xa1\xbc\xa5\xeb\xa4\xac\xb8\xab\xa4\xc4\xa4\xab\xa4\xea\xa4\xde\xa4\xbb\xa4\xf3")) {
-			g_snprintf(buf, 1024, "<html><body>%s<b>%s</b><br><br>\n"
-						"%s<br><a href=\"%s\">%s</a></body></html>",
-					tooltip_text,
-					_("Sorry, this profile seems to be in a language "
-					  "that is not supported at this time."),
-					_("If you wish to view this profile, "
-					  "you will need to visit this link in your web browser"),
-					profile_url_text, profile_url_text);
+			profile_state = PROFILE_STATE_UNKNOWN_LANGUAGE;
 		} else {
-			g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
-					tooltip_text, _("Error retrieving profile"));
+			profile_state = PROFILE_STATE_NOT_FOUND;
 		}
-
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
-				buf, NULL, NULL);
-
-		g_free(profile_url_text);
-		g_free(tooltip_text);
-		g_free(info_data->name);
-		g_free(info_data);
-		return;
 	}
 
 #if PHOTO_SUPPORT
@@ -877,6 +875,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	info2_data->tooltip_text = tooltip_text;
 	info2_data->strings = strings;
 	info2_data->last_updated_string = last_updated_string;
+	info2_data->title = title;
+	info2_data->profile_state = profile_state;
 
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
@@ -913,6 +913,8 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	char *tooltip_text = info2_data->tooltip_text;
 	const profile_strings_node_t *strings = info2_data->strings;
 	const char *last_updated_string = info2_data->last_updated_string;
+	const char *title = info2_data->title;
+	profile_state_t profile_state = info2_data->profile_state;
 
 	/* We continue here from yahoo_got_info, as if nothing has happened */
 #endif /* PHOTO_SUPPORT */
@@ -925,33 +927,39 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	gaim_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* convert to utf8 */
-	p = g_convert(stripped, -1, "utf-8", strings->charset, NULL, NULL, NULL);
-	if (!p) {
-		p = g_locale_to_utf8(stripped, -1, NULL, NULL, NULL);
+	if (strings && strings->charset != XX) {
+		p = g_convert(stripped, -1, "utf-8", strings->charset,
+				NULL, NULL, NULL);
 		if (!p) {
-			p = g_convert(stripped, -1, "utf-8", "windows-1252", NULL, NULL, NULL);
+			p = g_locale_to_utf8(stripped, -1, NULL, NULL, NULL);
+			if (!p) {
+				p = g_convert(stripped, -1, "utf-8", "windows-1252",
+						NULL, NULL, NULL);
+			}
+		}
+		if (p) {
+			g_free(stripped);
+			stripped = gaim_utf8_ncr_decode(p);
+			stripped_len = strlen(stripped);
+			g_free(p);
 		}
 	}
-	if (p) {
-		g_free(stripped);
-		stripped = gaim_utf8_ncr_decode(p);
-		stripped_len = strlen(stripped);
-		g_free(p);
-		p = stripped;
-	}
-	/* FIXME need error dialog here */
+	p = NULL;
 
 	/* "Last updated" should also be converted to utf8 and with &nbsp; killed */
-	last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8",
-			strings->charset, NULL, NULL, NULL);
-	yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);
+	if (strings && strings->charset != XX) {
+		last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8",
+				strings->charset, NULL, NULL, NULL);
+		yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);
 
-	gaim_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
+		gaim_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
+	}
 
 	/* gonna re-use the memory we've already got for url_buffer */
 	/* no we're not */
 	s = g_string_sized_new(strlen(url_buffer));
-	g_string_append(s, "<html><body>\n");
+
+	if (profile_state == PROFILE_STATE_DEFAULT) {
 
 #if 0
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
@@ -961,9 +969,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 			NULL, _("Yahoo! ID"), 0, NULL))
 		;
 #endif
-
-	/* Put the Yahoo! ID, nickname, idle time, and status message in */
-	g_string_append(s, tooltip_text);
 
 #if PHOTO_SUPPORT
 
@@ -1117,29 +1122,66 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 			last_updated_utf8_string, 0, "\n", '\n', NULL,
 			_("Last Updated"), 0, NULL);
 
+	} /* if (profile_state == PROFILE_STATE_DEFAULT) */
+
+	if(!found)
+	{
+		g_string_append_printf(s, "<br><b>");
+		g_string_append_printf(s, _("User information for %s unavailable"),
+				info_data->name);
+		g_string_append_printf(s, "</b><br>");
+
+		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
+			g_string_append_printf(s, "%s<br><br>",
+					_("Sorry, this profile seems to be in a language "
+					  "that is not supported at this time."));
+
+		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
+			GaimBuddy *b = gaim_find_buddy
+					(gaim_connection_get_account(info_data->gc),
+							info_data->name);
+			YahooFriend *f = NULL;
+			if (b) {
+				/* Someone on the buddy list can be "not on server list",
+				 * in which case the user may or may not actually exist.
+				 * Hence this extra step.
+				 */
+				f = yahoo_friend_find(b->account->gc, b->name);
+			}
+			g_string_append_printf(s, "%s<br><br>",
+				f?  _("Could not retrieve the user's profile. "
+					  "This most likely is a temporary server-side problem. "
+					  "Please try again later."):
+					_("Could not retrieve the user's profile. "
+					  "This most likely means that the user does not exist; "
+					  "however, Yahoo! sometimes does fail to find a user's "
+					  "profile. If you know that the user exists, "
+					  "please try again later."));
+		
+		} else {
+			g_string_append_printf(s, "%s<br><br>",
+					_("The user's profile is empty."));
+		}
+	}
+
 	/* put a link to the actual profile URL */
 	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
 	g_string_append_printf(s, "<br><a href=\"%s\">%s</a><br>",
 			profile_url_text, profile_url_text);
 
-	/* finish off the html */
+	/* finish off the html at the end */
 	g_string_append(s, "</body></html>\n");
 	g_free(stripped);
 
-	if(found)
-	{
-		/* show it to the user */
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
-							  s->str, NULL, NULL);
-	}
-	else
-	{
-		char *primary;
-		primary = g_strdup_printf(_("User information for %s unavailable"), info_data->name);
-		gaim_notify_error(info_data->gc, NULL, primary,
-				_("The user's profile is empty."));
-		g_free(primary);
-	}
+	/* Put the Yahoo! ID, nickname, idle time, and status message in */
+	g_string_prepend(s, tooltip_text);
+
+	/* finish off the html at the beginning */
+	g_string_prepend(s, "<html><body>\n");
+
+	/* show it to the user */
+	gaim_notify_formatted(info_data->gc, NULL, title, NULL,
+						  s->str, NULL, NULL);
 
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);

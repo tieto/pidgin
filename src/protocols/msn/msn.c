@@ -72,7 +72,7 @@ typedef struct
 	GString *s;
 	char *photo_url_text;
 	char *tooltip_text;
-	gboolean has_info;
+	const char *title;
 
 } MsnGetInfoStepTwoData;
 
@@ -1142,9 +1142,21 @@ msn_remove_group(GaimConnection *gc, GaimGroup *group)
 static char *
 msn_tooltip_info_text(MsnGetInfoData *info_data) {
 	GString *s = g_string_sized_new(80); /* wild guess */
+	GString *name;
 	GaimBuddy *b;
+	const char *p;
 
-	g_string_printf(s, _("<b>%s:</b> %s<br>"), _("MSN ID"), info_data->name);
+	/* Try to not display the MSN screen name as an email address */
+	p = strrchr(info_data->name, '@');
+	if (p) {
+		name = g_string_new_len(info_data->name, p - info_data->name);
+		g_string_append_printf(name, "&#64;%s", p + 1);
+	} else { /* This should never happen */
+		name = g_string_new(info_data->name);
+	}
+	g_string_printf(s, "<span style=\"font-size: larger\"><b>%s</b></span><br>",
+			name->str);
+	g_string_free(name, TRUE);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
 			info_data->name);
 
@@ -1157,7 +1169,8 @@ msn_tooltip_info_text(MsnGetInfoData *info_data) {
 		}
 		if(b->server_alias) {
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
-			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Nickname"),
+			g_string_append_printf(s, _("<b>%s:</b> "), _("Nickname"));
+			g_string_append_printf(s, _("<font sml=\"msn\">%s</font><br>"),
 					nicktext);
 			g_free(nicktext);
 		}
@@ -1214,6 +1227,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	char *user_url = NULL;
 	gboolean found;
 	gboolean has_info = FALSE;
+	const char* title = NULL;
 	char *url_buffer;
 	GString *s;
 	int stripped_len;
@@ -1225,6 +1239,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	gaim_debug_info("msn", "In msn_got_info\n");
 
 	tooltip_text = msn_tooltip_info_text(info_data);
+	title = _("MSN Profile");
 
 	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
@@ -1232,7 +1247,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 				tooltip_text, _("Error retrieving profile"));
 
 		gaim_notify_formatted(info_data->gc, NULL,
-				_("Buddy Information"), NULL, buf, NULL, NULL);
+				title, NULL, buf, NULL, NULL);
 
 		g_free(tooltip_text);
 		return;
@@ -1470,12 +1485,33 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		has_info = TRUE;
 	}
 
-	if (found) {
-		/* put a link to the actual profile URL */
-		g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
-		g_string_append_printf(s, "<br><a href=\"%s%s\">%s%s</a><br>",
-				PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
+	if (!has_info)
+	{
+		/* MSN doesn't actually distinguish between "unknown member" and
+		 * a known member with an empty profile. Try to explain this fact.
+		 * Note that if we have a nonempty tooltip_text, we know the user
+		 * exists.
+		 */
+		char *p = strstr(url_buffer, "Unknown Member </TITLE>");
+		GaimBuddy *b = gaim_find_buddy
+				(gaim_connection_get_account(info_data->gc), info_data->name);
+		g_string_append_printf(s, "<br><b>%s</b><br>%s<br><br>",
+				_("Error retrieving profile"),
+				((p && b)?
+					_("The user has not created a public profile."):
+				 p? _("MSN reported not being able to find the user's profile. "
+					  "This either means that the user does not exist, "
+					  "or that the user exists "
+					  "but has not created a public profile."):
+					_("Gaim could not find "	/* This should never happen */
+					  "any information in the user's profile. "
+					  "The user most likely does not exist.")));
 	}
+
+	/* put a link to the actual profile URL */
+	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
+	g_string_append_printf(s, "<br><a href=\"%s%s\">%s%s</a><br>",
+			PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
 
 	/* Finish it off, and show it to them */
 	g_string_append(s, "</body></html>\n");
@@ -1490,7 +1526,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	info2_data->s = s;
 	info2_data->photo_url_text = photo_url_text;
 	info2_data->tooltip_text = tooltip_text;
-	info2_data->has_info = has_info;
+	info2_data->title = title;
 
 	/* Try to put the photo in there too, if there's one */
 	photo_url_text = msn_get_photo_url(url_text);
@@ -1515,7 +1551,7 @@ static void msn_got_photo(void *data, const char *url_text, size_t len)
 	GString *s = info2_data->s;
 	char *photo_url_text = info2_data->photo_url_text;
 	char *tooltip_text = info2_data->tooltip_text;
-	gboolean has_info = info2_data->has_info;
+	const char *title = info2_data->title;
 
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (data && url_text && len != 0) {
@@ -1537,28 +1573,9 @@ static void msn_got_photo(void *data, const char *url_text, size_t len)
 	/* We continue here from msn_got_info, as if nothing has happened */
 #endif
 
-	if (has_info)
-	{
-		g_string_prepend(s, tooltip_text);
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"),
-							  NULL, s->str, NULL, NULL);
-	}
-	else
-	{
-		char *p = strstr(url_buffer, "Unknown Member </TITLE>");
-
-		/* MSN doesn't actually distinguish between "unknown member" and
-		 * a known member with an empty profile. But if we say unknown
-		 * member, it is at least not worse than reading the actual page.
-		 */
-		g_string_printf(s, "<html><body>%s<b>%s</b><br></body></html>",
-				tooltip_text,
-				(p ? _("Error retrieving profile")
-				   : _("The user's profile is empty.")));
-
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
-				s->str, NULL, NULL);
-	}
+	g_string_prepend(s, tooltip_text);
+	gaim_notify_formatted(info_data->gc, NULL, title,
+						  NULL, s->str, NULL, NULL);
 
 	g_free(stripped);
 	g_free(url_buffer);
