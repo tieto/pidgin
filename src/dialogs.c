@@ -74,15 +74,6 @@ struct getuserinfo {
 	GaimConnection *gc;
 };
 
-struct set_info_dlg {
-	GtkWidget *window;
-	GtkWidget *menu;
-	GaimAccount *account;
-	GtkWidget *text;
-	GtkWidget *save;
-	GtkWidget *cancel;
-};
-
 struct linkdlg {
 	GtkWidget *ok;
 	GtkWidget *cancel;
@@ -410,101 +401,49 @@ void show_confirm_del_contact(GaimContact *c)
 	}
 }
 
-/*------------------------------------------------------------------------*/
-/*  The dialog for getting an error                                       */
-/*------------------------------------------------------------------------*/
-static void do_im(GtkWidget *dialog, int id, struct getuserinfo *info)
-{
-	const char *who;
-	GaimConversation *conv;
-	GaimAccount *account;
-
-	switch(id) {
-	case GTK_RESPONSE_OK:
-		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
-
-		if (!who || !*who) {
-			/* this shouldn't ever happen */
-			return;
-		}
-
-		account = (info->gc ? info->gc->account : NULL);
-
-		conv = gaim_find_conversation_with_account(who, account);
-
-		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
-		else
-			gaim_conv_window_raise(gaim_conversation_get_window(conv));
-		break;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_free(info);
-}
-
-static void do_info(GtkWidget *dialog, int id, struct getuserinfo *info)
-{
-	char *who;
-
-	switch(id) {
-	case GTK_RESPONSE_OK:
-		who = g_strdup(gaim_normalize(info->gc->account, gtk_entry_get_text(GTK_ENTRY(info->entry))));
-
-		if (!g_ascii_strcasecmp(who, "")) {
-			g_free(who);
-			return;
-		}
-
-		/* what do we want to do about this case? */
-		if (info->gc)
-			serv_get_info(info->gc, who);
-		g_free(who);
-		break;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_free(info);
-}
-
-void show_ee_dialog(int ee)
+static gboolean show_ee_dialog(const char *ee)
 {
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GaimGtkBuddyList *gtkblist;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, GTK_ICON_SIZE_DIALOG);
+	gchar *norm = gaim_strreplace(ee, "rocksmyworld", "");
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	label = gtk_label_new(NULL);
-	if (ee == 0)
+	if (!strcmp(norm, "zilding"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"purple\">Amazing!  Simply Amazing!</span>");
-	else if (ee == 1)
+	else if (!strcmp(norm, "robflynn"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#1f6bad\">Pimpin\' Penguin Style! *Waddle Waddle*</span>");
-	else if (ee == 2)
+	else if (!strcmp(norm, "flynorange"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me.  I'm so cute!</span>");
-	else if (ee == 3)
+	else if (!strcmp(norm, "ewarmenhoven"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"orange\">Now that's what I like!</span>");
-	else if (ee == 4)
+	else if (!strcmp(norm, "markster97"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"brown\">Ahh, and excellent choice!</span>");
-	else  if (ee == 5)
+	else if (!strcmp(norm, "seanegn"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#009900\">Everytime you click my name, an angel gets its wings.</span>");
-	else if (ee == 6)
+	else if (!strcmp(norm, "chipx86"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"red\">This sunflower seed taste like pizza.</span>");
-	else if (ee == 7)
+	else if (!strcmp(norm, "markdoliner"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey!  I was in that tumbleweed!</span>");
-	else
+	else if (!strcmp(norm, "lschiere"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
+	g_free(norm);
+
+	if (strlen(gtk_label_get_label(GTK_LABEL(label))) <= 0)
+		return FALSE;
 
 	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
@@ -525,6 +464,59 @@ void show_ee_dialog(int ee)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(window);
+	return TRUE;
+}
+
+static void do_im(GtkWidget *dialog, int id, struct getuserinfo *info)
+{
+	const char *who;
+	GaimConversation *conv;
+	GaimAccount *account;
+
+	switch(id) {
+	case GTK_RESPONSE_OK:
+		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
+
+		if (who && *who) {
+			account = (info->gc ? info->gc->account : NULL);
+
+			conv = gaim_find_conversation_with_account(who, account);
+
+			if (conv == NULL)
+				conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
+			else
+				gaim_conv_window_raise(gaim_conversation_get_window(conv));
+		}
+
+		break;
+	}
+
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+	g_free(info);
+}
+
+static void do_info(GtkWidget *dialog, int id, struct getuserinfo *info)
+{
+	char *who;
+	gboolean found = FALSE;
+
+	switch(id) {
+	case GTK_RESPONSE_OK:
+		who = g_strdup(gaim_normalize(info->gc->account, gtk_entry_get_text(GTK_ENTRY(info->entry))));
+
+		if (who && gaim_str_has_suffix(who, "rocksmyworld")) {
+			found = show_ee_dialog(who);
+		}
+
+		if (!found && who && *who && info->gc)
+			serv_get_info(info->gc, who);
+
+		g_free(who);
+		break;
+	}
+
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+	g_free(info);
 }
 
 static void
@@ -607,8 +599,7 @@ void show_im_dialog()
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_im), info);
 
 	gtk_widget_show_all(window);
-//	if (info->entry)
-		gtk_widget_grab_focus(GTK_WIDGET(info->entry));
+	gtk_widget_grab_focus(GTK_WIDGET(info->entry));
 }
 
 void show_info_dialog()
@@ -683,8 +674,7 @@ void show_info_dialog()
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
 
 	gtk_widget_show_all(window);
-//	if (info->entry)
-		gtk_widget_grab_focus(GTK_WIDGET(info->entry));
+	gtk_widget_grab_focus(GTK_WIDGET(info->entry));
 }
 
 
@@ -693,100 +683,6 @@ free_dialog(GtkWidget *w, void *data)
 {
 	g_free(data);
 }
-
-/*------------------------------------------------------------------------*/
-/*  The dialog for SET INFO / SET DIR INFO                                */
-/*------------------------------------------------------------------------*/
-
-void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
-{
-	gchar *junk;
-	GaimConnection *gc;
-
-	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
-
-	if (b->account) {
-		gaim_account_set_user_info(b->account, junk);
-		gc = b->account->gc;
-
-		if (gc)
-			serv_set_info(gc, gaim_account_get_user_info(b->account));
-	}
-	g_free(junk);
-	destroy_dialog(NULL, b->window);
-	g_free(b);
-}
-
-void show_set_info(GaimConnection *gc)
-{
-	GtkWidget *buttons;
-	GtkWidget *label;
-	GtkWidget *vbox;
-	GtkTextBuffer *buffer;
-	GtkWidget *frame;
-	gchar *buf;
-	GaimAccount *account;
-	const char *user_info;
-
-	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
-	account = gc->account;
-	b->account = account;
-
-	GAIM_DIALOG(b->window);
-	gtk_window_set_role(GTK_WINDOW(b->window), "set_info");
-	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Set User Info"));
-	g_signal_connect(G_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
-	gtk_widget_realize(b->window);
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(b->window), vbox);
-
-	buf = g_malloc(256);
-	g_snprintf(buf, 256, _("Changing info for %s:"),
-			   gaim_account_get_username(account));
-	label = gtk_label_new(buf);
-	g_free(buf);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
-
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-
-	b->text = gtk_text_view_new();
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD_CHAR);
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(b->text));
-
-	gtk_widget_set_size_request(b->text, 300, 200);
-
-	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
-		buf = g_malloc(strlen(user_info) + 1);
-		gaim_strncpy_nohtml(buf, user_info, strlen(user_info) + 1);
-		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
-		gtk_text_buffer_set_text(buffer, buf, -1);
-		g_free(buf);
-	}
-
-	gtk_container_add(GTK_CONTAINER(frame), b->text);
-	gtk_window_set_focus(GTK_WINDOW(b->window), b->text);
-
-	buttons = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
-
-	b->save = gaim_pixbuf_button_from_stock(_("Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_end(GTK_BOX(buttons), b->save, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(b->save), "clicked", G_CALLBACK(do_save_info), b);
-
-	b->cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(b->cancel), "clicked", G_CALLBACK(destroy_dialog), b->window);
-
-	gtk_widget_show_all(b->window);
-}
-
 
 /*------------------------------------------------------*/
 /* Link Dialog                                          */
@@ -1657,430 +1553,3 @@ alias_dialog_bud(GaimBuddy *b)
 						_("Cancel"), NULL,
 						b);
 }
-
-static gboolean dont_destroy(gpointer a, gpointer b, gpointer c)
-{
-	return TRUE;
-}
-
-static void do_save_log(GtkWidget *w, GtkWidget *filesel)
-{
-	const char *file;
-	char path[PATHSIZE];
-	char buf[BUF_LONG];
-	char error[BUF_LEN];
-	FILE *fp_old, *fp_new;
-	char filename[PATHSIZE];
-	char *name;
-	char *tmp;
-
-	name = g_object_get_data(G_OBJECT(filesel), "name");
-	tmp = gaim_user_dir();
-	g_snprintf(filename, PATHSIZE, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
-		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
-
-	file = (const char*)gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
-	strncpy(path, file, PATHSIZE - 1);
-	if (gaim_gtk_check_if_dir(path, GTK_FILE_SELECTION(filesel)))
-		return;
-
-	if ((fp_new = fopen(path, "w")) == NULL) {
-		g_snprintf(error, BUF_LONG,
-			   _("Couldn't write to %s."), path);
-		gaim_notify_error(NULL, NULL, error, strerror(errno));
-		return;
-	}
-
-	if ((fp_old = fopen(filename, "r")) == NULL) {
-		g_snprintf(error, BUF_LONG,
-			   _("Couldn't write to %s."), filename);
-		gaim_notify_error(NULL, NULL, error, strerror(errno));
-		fclose(fp_new);
-		return;
-	}
-
-	while (fgets(buf, BUF_LONG, fp_old))
-		fputs(buf, fp_new);
-	fclose(fp_old);
-	fclose(fp_new);
-
-	gtk_widget_destroy(filesel);
-
-	return;
-}
-
-static void show_save_log(GtkWidget *w, gchar *name)
-{
-	GtkWidget *filesel;
-	gchar buf[BUF_LEN];
-
-	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s%s", gaim_home_dir(),
-		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
-
-	filesel = gtk_file_selection_new(_("Save Log File"));
-	g_signal_connect(G_OBJECT(filesel), "delete_event",
-			   G_CALLBACK(destroy_dialog), filesel);
-
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), buf);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
-			   "clicked", G_CALLBACK(do_save_log), filesel);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
-			   "clicked", G_CALLBACK(destroy_dialog), filesel);
-	g_object_set_data(G_OBJECT(filesel), "name", name);
-
-	gtk_widget_realize(filesel);
-	gtk_widget_show(filesel);
-
-	return;
-}
-
-static void do_clear_log_file(struct view_log *view)
-{
-	gchar *filename, *buf;
-	char *tmp;
-
-	tmp = gaim_user_dir();
-	filename = g_strdup_printf("%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
-		   view ? gaim_normalize(NULL, view->name) : "system", view ? ".log" : "");
-
-	if ((remove(filename)) == -1) {
-		buf = g_strdup_printf(_("Couldn't remove file %s." ), filename);
-		gaim_notify_error(NULL, NULL, buf, strerror(errno));
-		g_free(buf);
-	}
-
-	g_free(filename);
-
-	if(view)
-		gtk_widget_destroy(view->window);
-}
-
-static void show_clear_log(GtkWidget *w, struct view_log *view)
-{
-	char *text;
-	void *clear_handle;
-
-	if ((view != NULL ) && (view->clear_handle != NULL))
-		return;
-
-	text = g_strdup_printf(_("You are about to remove the log file for %s.  Do you want to continue?"),
-						   view ? view->name : _("System Log"));
-	clear_handle = gaim_request_action(NULL, NULL, _("Remove Log"),
-											 text, -1, view, 2,
-											 _("Remove Log"),
-											 G_CALLBACK(do_clear_log_file),
-											 _("Cancel"), NULL);
-	if(view)
-		view->clear_handle = clear_handle;
-	g_free(text);
-}
-
-static void log_show_convo(struct view_log *view)
-{
-	gchar buf[BUF_LONG];
-	FILE *fp;
-	char filename[256];
-	int i=0;
-	GString *string;
-	guint block;
-
-	string = g_string_new("");
-
-	if (view->name) {
-		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(NULL, view->name));
-	} else {
-		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "system", tmp);
-	}
-	if ((fp = fopen(filename, "r")) == NULL) {
-		if (view->name) {
-			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
-			gaim_notify_error(NULL, NULL, buf, strerror(errno));
-		}
-		/* If the system log doesn't exist.. no message just show empty system log window.
-		   That way user knows that the log is empty :)
-		*/
-		return;
-	}
-
-	gtk_widget_set_sensitive(view->bbox, FALSE);
-	g_signal_handlers_disconnect_by_func(G_OBJECT(view->window),
-				      G_CALLBACK(destroy_dialog), view->window);
-	block = g_signal_connect(G_OBJECT(view->window), "delete_event",
-				   G_CALLBACK(dont_destroy), view->window);
-
-	fseek(fp, view->offset, SEEK_SET);
-	gtk_imhtml_clear(GTK_IMHTML(view->layout));
-	/*
-	while (gtk_events_pending())
-		gtk_main_iteration();
-	*/
-
-	while (fgets(buf, BUF_LONG, fp) && !strstr(buf, "---- New C")) {
-		i++;
-		if (strlen(buf) >= 5 && (!strncmp(buf + strlen(buf) - 5, "<BR>\n", 5)))
-			/* take off the \n */
-			buf[strlen(buf) - 1] = '\0';
-
-		/* don't lose the thirtieth line of conversation. thanks FeRD */
-		g_string_append(string, buf);
-
-		if (i == 30) {
-			gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
-			g_string_free(string, TRUE);
-			string = g_string_new("");
-			/* you can't have these anymore. if someone clicks on another item while one is
-			 * drawing, it will try to move to that item, and that causes problems here.
-			while (gtk_events_pending())
-				gtk_main_iteration();
-			*/
-			i = 0;
-		}
-
-	}
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), string->str, view->options);
-	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", view->options);
-
-	gtk_widget_set_sensitive(view->bbox, TRUE);
-	g_signal_handler_disconnect(G_OBJECT(view->window), block);
-	g_signal_connect(G_OBJECT(view->window), "delete_event",
-			   G_CALLBACK(destroy_dialog), view->window);
-	g_string_free(string, TRUE);
-	fclose(fp);
-}
-
-static void log_select_convo(GtkTreeSelection *sel, GtkTreeModel *model)
-{
-	GValue val = { 0, };
-	GtkTreeIter iter;
-
-	if(!gtk_tree_selection_get_selected(sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value(model, &iter, 1, &val);
-	log_show_convo(g_value_get_pointer(&val));
-}
-
-static void des_view_item(GtkObject *obj, struct view_log *view)
-{
-	if (view->name)
-		g_free(view->name);
-	if (view->clear_handle)
-		gaim_request_close(GAIM_REQUEST_ACTION, view->clear_handle);
-	g_free(view);
-}
-
-static void des_log_win(GObject *win, gpointer data)
-{
-	char *x = g_object_get_data(win, "log_window");
-	if (x)
-		g_free(x);
-	x = g_object_get_data(win, "name");
-	if (x)
-		g_free(x);
-}
-
-
-static void
-url_clicked_cb(GtkWidget *widget, const char *uri)
-{
-	gaim_notify_uri(NULL, uri);
-}
-
-void show_log(char *nm)
-{
-	gchar filename[256];
-	gchar buf[BUF_LONG];
-	FILE *fp;
-	GtkWidget *window;
-	GtkWidget *box;
-	GtkWidget *hbox;
-	GtkWidget *bbox;
-	GtkWidget *sw;
-	GtkWidget *layout;
-	GtkWidget *close_button;
-	GtkWidget *clear_button;
-	GtkWidget *save_button;
-	GtkListStore *list_store;
-	GtkWidget *tree_view;
-	GtkTreeSelection *sel = NULL;
-	GtkTreePath *path;
-	GtkWidget *item = NULL;
-	GtkWidget *last = NULL;
-	GtkWidget *frame;
-	struct view_log *view = NULL;
-	char *name = nm ? g_strdup(nm) : NULL;
-
-	int options;
-	guint block;
-	char convo_start[32];
-	long offset = 0;
-
-	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
-		options ^= GTK_IMHTML_NO_COLOURS;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
-		options ^= GTK_IMHTML_NO_FONTS;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
-		options ^= GTK_IMHTML_NO_SIZES;
-
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_object_set_data(G_OBJECT(window), "name", name);
-	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(des_log_win), NULL);
-	gtk_window_set_role(GTK_WINDOW(window), "log");
-	if (name)
-		g_snprintf(buf, BUF_LONG, _("Conversations with %s"), name);
-	else
-		g_snprintf(buf, BUF_LONG, _("System Log"));
-	gtk_window_set_title(GTK_WINDOW(window), buf);
-	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
-	block = g_signal_connect(G_OBJECT(window), "delete_event",
-				   G_CALLBACK(dont_destroy), window);
-	gtk_widget_realize(window);
-
-	layout = gtk_imhtml_new(NULL, NULL);
-	bbox = gtk_hbox_new(FALSE, 0);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(window), box);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 0);
-
-	if (name) {
-		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(NULL, name));
-		if ((fp = fopen(filename, "r")) == NULL) {
-			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
-			gaim_notify_error(NULL, NULL, buf, strerror(errno));
-			return;
-		}
-
-		list_store = gtk_list_store_new(2,
-				G_TYPE_STRING,
-				G_TYPE_POINTER);
-
-		tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store));
-
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
-
-		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree_view),
-				-1, "", gtk_cell_renderer_text_new(), "text", 0, NULL);
-
-		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-		g_signal_connect(G_OBJECT(sel), "changed",
-				G_CALLBACK(log_select_convo),
-				NULL);
-
-		frame = gtk_frame_new(_("Date"));
-		gtk_widget_show(frame);
-
-		sw = gtk_scrolled_window_new(NULL, NULL);
-		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
-		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), tree_view);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-		gtk_widget_set_size_request(sw, 220, 220);
-		gtk_container_add(GTK_CONTAINER(frame), sw);
-		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-
-		while (fgets(buf, BUF_LONG, fp)) {
-			if (strstr(buf, "---- New C")) {
-				int length;
-				char *temp = strchr(buf, '@');
-				GtkTreeIter iter;
-
-				if (temp == NULL || strlen(temp) < 2)
-					continue;
-
-				temp++;
-				length = strcspn(temp, "-");
-				if (length > 31) length = 31;
-
-				offset = ftell(fp);
-				g_snprintf(convo_start, length, "%s", temp);
-				gtk_list_store_append(list_store, &iter);
-				view = g_new0(struct view_log, 1);
-				view->options = options;
-				view->offset = offset;
-				view->name = g_strdup(name);
-				view->bbox = bbox;
-				view->window = window;
-				view->layout = layout;
-				gtk_list_store_set(list_store, &iter,
-						0, convo_start,
-						1, view,
-						-1);
-				g_signal_connect(G_OBJECT(window), "destroy",
-						   G_CALLBACK(des_view_item), view);
-				last = item;
-			}
-		}
-		fclose(fp);
-
-		path = gtk_tree_path_new_first();
-		gtk_tree_selection_select_path(sel, path);
-		gtk_tree_path_free(path);
-
-		g_object_unref(G_OBJECT(list_store));
-	}
-
-
-	g_signal_handler_disconnect(G_OBJECT(window), block);
-	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
-
-	frame = gtk_frame_new(_("Log"));
-	gtk_widget_show(frame);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_widget_set_size_request(sw, 390, 220);
-	gtk_container_add(GTK_CONTAINER(frame), sw);
-	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-
-	g_signal_connect(G_OBJECT(layout), "url_clicked",
-					 G_CALLBACK(url_clicked_cb), NULL);
-	gtk_container_add(GTK_CONTAINER(sw), layout);
-	gaim_setup_imhtml(layout);
-
-	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(bbox, FALSE);
-
-	close_button = gaim_pixbuf_button_from_stock(_("Close"), GTK_STOCK_CLOSE, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_end(GTK_BOX(bbox), close_button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(close_button), "clicked", G_CALLBACK(destroy_dialog), window);
-
-	clear_button = gaim_pixbuf_button_from_stock(_("Clear"), GTK_STOCK_CLEAR, GAIM_BUTTON_HORIZONTAL);
-	g_object_set_data(G_OBJECT(clear_button), "log_window", window);
-	gtk_box_pack_end(GTK_BOX(bbox), clear_button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(clear_button), "clicked", G_CALLBACK(show_clear_log), view);
-
-	save_button = gaim_pixbuf_button_from_stock(_("Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
-	gtk_box_pack_end(GTK_BOX(bbox), save_button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(save_button), "clicked", G_CALLBACK(show_save_log), name);
-
-	gtk_widget_show_all(window);
-
-	if (!name) {
-		view = g_new0(struct view_log, 1);
-		view->options = options;
-		view->name = NULL;
-		view->bbox = bbox;
-		view->window = window;
-		view->layout = layout;
-		log_show_convo(view);
-		g_signal_connect(G_OBJECT(layout), "destroy", G_CALLBACK(des_view_item), view);
-	}
-
-	gtk_widget_set_sensitive(bbox, TRUE);
-
-	return;
-}
-

@@ -802,7 +802,7 @@ void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
 }
 
 
-
+#if 0
 static void jabber_buddy_ask_send_file(GaimConnection *gc, const char *name)
 {
 	JabberStream *js = gc->proto_data;
@@ -825,6 +825,7 @@ static void jabber_buddy_ask_send_file(GaimConnection *gc, const char *name)
 
 	gaim_xfer_request(xfer);
 }
+#endif
 
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 		gboolean invisible)
