@@ -45,7 +45,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_get_xfer_ui_ops();
 
-	xfer->local_ip = gaim_xfers_get_ip_for_account(account);
+	xfer->local_ip = g_strdup(gaim_xfers_get_ip_for_account(account));
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -723,13 +723,13 @@ gaim_xfers_get_local_ip(void)
 	return ip;
 }
 
-char *
+const char *
 gaim_xfers_get_local_system_ip(void)
 {
 	struct hostent *host;
 	char localhost[129];
 	long unsigned add;
-	char ip[46];
+	static char ip[46];
 
 	if (gethostname(localhost, 128) < 0)
 		return NULL;
@@ -742,18 +742,18 @@ gaim_xfers_get_local_system_ip(void)
 
 	g_snprintf(ip, 11, "%lu", add);
 
-	return g_strdup(ip);
+	return ip;
 }
 
-char *
+const char *
 gaim_xfers_get_ip_for_account(const GaimAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
 	if (gaim_account_get_public_ip(account) != NULL)
-		return g_strdup(gaim_account_get_public_ip(account));
+		return gaim_account_get_public_ip(account);
 	else if (gaim_xfers_get_local_ip() != NULL)
-		return g_strdup(gaim_xfers_get_local_ip());
+		return gaim_xfers_get_local_ip();
 	else
 		return gaim_xfers_get_local_system_ip();
 }

@@ -486,12 +486,13 @@ const char *gaim_xfers_get_local_ip(void);
 /**
  * Returns the IP address of the local system.
  *
- * @note The returned IP address must be g_free()'d when no longer
- *       in use.
+ * @note The returned string is a pointer to a static buffer. If this
+ *       function is called twice, it may be important to make a copy
+ *       of the returned string.
  *
  * @return The local IP address.
  */
-char *gaim_xfers_get_local_system__ip(void);
+const char *gaim_xfers_get_local_system_ip(void);
 
 /**
  * Returns the IP address that should be used for the specified account.
@@ -507,11 +508,13 @@ char *gaim_xfers_get_local_system__ip(void);
  * @note The returned IP address must be g_free()'d when no longer
  *       in use.
  *
- * @param account The account the IP is going to be used with.
+ * @note The returned string is a pointer to a static buffer. If this
+ *       function is called twice, it may be important to make a copy
+ *       of the returned string.
  *
  * @return The local IP address to be used.
  */
-char *gaim_xfers_get_ip_for_account(const GaimAccount *account);
+const char *gaim_xfers_get_ip_for_account(const GaimAccount *account);
 
 /**
  * Initializes the file transfer subsystem.
