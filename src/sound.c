@@ -86,6 +86,29 @@ static void play_audio(char *data, int size)
         close(fd);
 }
 
+static void play_audio_file(char *file)
+{
+	/* here we can assume that we can write to /dev/audio */
+	char *buf;
+	struct stat info;
+	int fd = open(file, O_RDONLY);
+	if (fd <= 0) {
+		return;
+	}
+	fstat(fd, &info);
+	buf = malloc(info.st_size + 1);
+	read(fd, buf, 24);
+	read(fd, buf, info.st_size - 24);
+	close(fd);
+
+	fd = open("/dev/audio", O_WRONLY | O_EXCL);
+	if (fd < 0)
+		return;
+	write(fd, buf, info.st_size - 24);
+	free(buf);
+	close(fd);
+}
+
 static int can_play_audio()
 {
 	return check_dev("/dev/audio");
@@ -145,6 +168,16 @@ static int play_esd(unsigned char *data, int size)
 
         return 1;
 
+}
+
+static int play_esd_file(char *file)
+{
+	int esd_stat;
+	int fd = open(file, O_RDONLY);
+	if (fd <= 0)
+		return 0;
+	esd_stat = esd_play_file(NULL, file, 1);
+	return esd_stat;
 }
 
 static int can_play_esd()
@@ -239,6 +272,42 @@ static int can_play_nas()
 
 #endif
 
+void play_file(char *filename) {
+	int pid;
+
+#ifdef _WIN32
+	return;
+#endif
+
+	pid = fork();
+
+	if (pid < 0)
+		return;
+	else if (pid == 0) {
+		if (sound_options & OPT_SOUND_BEEP) {
+			printf("\a");
+			fflush(stdout);
+			_exit(0);
+		}
+
+#ifdef ESD_SOUND
+		if (play_esd_file(filename))
+			_exit(0);
+#endif
+
+		/* FIXME : NAS (does anyone use this?) */
+
+		if (can_play_audio()) {
+			play_audio_file(filename);
+			_exit(0);
+		}
+
+		_exit(0);
+	} else {
+		gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
+	}
+}
+
 void play(unsigned char *data, int size)
 {
         int pid;
@@ -289,78 +358,91 @@ void play(unsigned char *data, int size)
 
 extern int logins_not_muted;
 
-#ifdef USE_GNOME
-void gnome_play_sound(int sound)
-#else
 void play_sound(int sound)
-#endif
 {
 
 	switch(sound) {
 	case BUDDY_ARRIVE:
-		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted)
-			play(BuddyArrive, sizeof(BuddyArrive));
+		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted) {
+			if (sound_file[BUDDY_ARRIVE]) {
+				play_file(sound_file[BUDDY_ARRIVE]);
+			} else {
+				play(BuddyArrive, sizeof(BuddyArrive));
+			}
+		}
 		break;
 	case BUDDY_LEAVE:
-		if (sound_options & OPT_SOUND_LOGOUT)
-			play(BuddyLeave, sizeof(BuddyLeave));
-		break;
-	case SEND:
-		if (sound_options & OPT_SOUND_SEND)
-			play(Send, sizeof(Send));
+		if (sound_options & OPT_SOUND_LOGOUT) {
+			if (sound_file[BUDDY_LEAVE]) {
+				play_file(sound_file[BUDDY_LEAVE]);
+			} else {
+				play(BuddyLeave, sizeof(BuddyLeave));
+			}
+		}
 		break;
         case FIRST_RECEIVE:
-		if (sound_options & OPT_SOUND_FIRST_RCV)
-			play(Receive, sizeof(Receive));
+		if (sound_options & OPT_SOUND_FIRST_RCV) {
+			if (sound_file[FIRST_RECEIVE]) {
+				play_file(sound_file[FIRST_RECEIVE]);
+			} else {
+				play(Receive, sizeof(Receive));
+			}
+		}
 		break;
         case RECEIVE:
-		if (sound_options & OPT_SOUND_RECV)
-			play(Receive, sizeof(Receive));
+		if (sound_options & OPT_SOUND_RECV) {
+			if (sound_file[RECEIVE]) {
+				play_file(sound_file[RECEIVE]);
+			} else {
+				play(Receive, sizeof(Receive));
+			}
+		}
 		break;
-	case AWAY:
-		if (sound_options & OPT_SOUND_WHEN_AWAY)
-			play(Receive, sizeof(Receive));
+	case SEND:
+		if (sound_options & OPT_SOUND_SEND) {
+			if (sound_file[SEND]) {
+				play_file(sound_file[SEND]);
+			} else {
+				play(Send, sizeof(Send));
+			}
+		}
+		break;
+        case CHAT_JOIN:
+		if (sound_options & OPT_SOUND_CHAT_JOIN) {
+			if (sound_file[CHAT_JOIN]) {
+				play_file(sound_file[CHAT_JOIN]);
+			} else {
+				play(BuddyArrive, sizeof(BuddyArrive));
+			}
+		}
+		break;
+        case CHAT_LEAVE:
+		if (sound_options & OPT_SOUND_CHAT_PART) {
+			if (sound_file[CHAT_LEAVE]) {
+				play_file(sound_file[CHAT_LEAVE]);
+			} else {
+				play(BuddyLeave, sizeof(BuddyLeave));
+			}
+		}
+		break;
+        case CHAT_YOU_SAY:
+		if (sound_options & OPT_SOUND_CHAT_YOU_SAY) {
+			if (sound_file[CHAT_YOU_SAY]) {
+				play_file(sound_file[CHAT_YOU_SAY]);
+			} else {
+				play(Send, sizeof(Send));
+			}
+		}
+		break;
+        case CHAT_SAY:
+		if (sound_options & OPT_SOUND_CHAT_SAY) {
+			if (sound_file[CHAT_SAY]) {
+				play_file(sound_file[CHAT_SAY]);
+			} else {
+				play(Receive, sizeof(Receive));
+			}
+		}
 		break;
        }
 }
 
-#ifdef USE_GNOME
-
-#include <gnome.h>
-void play_sound(int sound)
-{
-
-	if (!(sound_options & OPT_SOUND_THROUGH_GNOME)) {
-		gnome_play_sound(sound);
-		return;
-	}
-
-	switch(sound) {
-	case BUDDY_ARRIVE:
-		if ((sound_options & OPT_SOUND_LOGIN) && logins_not_muted)
-			gnome_triggers_do("", "program", "gaim", "login", NULL);
-		break;
-	case BUDDY_LEAVE:
-		if (sound_options & OPT_SOUND_LOGOUT)
-			gnome_triggers_do("", "program", "gaim", "leave", NULL);
-		break;
-	case SEND:
-		if (sound_options & OPT_SOUND_SEND)
-			gnome_triggers_do("", "program", "gaim", "send", NULL);
-		break;
-        case FIRST_RECEIVE:
-		if (sound_options & OPT_SOUND_FIRST_RCV)
-			gnome_triggers_do("", "program", "gaim", "recv", NULL);
-		break;
-        case RECEIVE:
-		if (sound_options & OPT_SOUND_RECV)
-			gnome_triggers_do("", "program", "gaim", "recv", NULL);
-		break;
-	case AWAY:
-		if (sound_options & OPT_SOUND_WHEN_AWAY)
-			gnome_triggers_do("", "program", "gaim", "recv", NULL);
-		break;
-       }
-}
-
-#endif /* USE_GNOME */

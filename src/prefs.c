@@ -1305,14 +1305,44 @@ static void sound_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-#ifdef USE_GNOME
-	gaim_button(_("Sounds go through GNOME"), &sound_options, OPT_SOUND_THROUGH_GNOME, box);
-#endif
 	gaim_button(_("No sounds when you log in"), &sound_options, OPT_SOUND_SILENT_SIGNON, box);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, box);
 	gaim_button(_("Beep instead of playing sound"), &sound_options, OPT_SOUND_BEEP, box);
 
 	gtk_widget_show(prefdialog);
+}
+
+static GtkWidget *sndent[NUM_SOUNDS];
+
+static void sel_sound(GtkWidget *button, int snd) {
+	do_error_dialog("This isn't implemented yet! Ain't that a pisser? That's what you get for using CVS, I guess. So you have two options now: 1. Implement it yourself (this message should be pretty damn easy to find in the code), or 2. Hand-edit ~/.gaimrc. I suggest 2.", "Implement me!");
+}
+
+static void sound_entry(char *label, int opt, GtkWidget *box, int snd) {
+	GtkWidget *hbox;
+	GtkWidget *entry;
+	GtkWidget *button;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	gaim_button(label, &sound_options, opt, hbox);
+
+	button = gtk_button_new_with_label(_("Choose"));
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_sound), (void *)snd);
+	gtk_widget_show(button);
+
+	entry = gtk_entry_new();
+	gtk_entry_set_editable(GTK_ENTRY(entry), FALSE);
+	if (sound_file[snd])
+		gtk_entry_set_text(GTK_ENTRY(entry), sound_file[snd]);
+	else
+		gtk_entry_set_text(GTK_ENTRY(entry), "(default)");
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	sndent[snd] = entry;
+	gtk_widget_show(entry);
 }
 
 static void event_page()
@@ -1336,23 +1366,25 @@ static void event_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Sound when buddy logs in"), &sound_options, OPT_SOUND_LOGIN, box);
-	gaim_button(_("Sound when buddy logs out"), &sound_options, OPT_SOUND_LOGOUT, box);
+	sound_entry(_("Sound when buddy logs in"), OPT_SOUND_LOGIN, box, BUDDY_ARRIVE);
+	sound_entry(_("Sound when buddy logs out"), OPT_SOUND_LOGOUT, box, BUDDY_LEAVE);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	gaim_button(_("Sound when message is received"), &sound_options, OPT_SOUND_RECV, box);
-	gaim_button(_("Sound when message is first received"), &sound_options, OPT_SOUND_FIRST_RCV, box);
-	gaim_button(_("Sound when message is sent"), &sound_options, OPT_SOUND_SEND, box);
+	sound_entry(_("Sound when message is received"), OPT_SOUND_RECV, box, RECEIVE);
+	sound_entry(_("Sound when message is first received"), OPT_SOUND_FIRST_RCV, box, FIRST_RECEIVE);
+	sound_entry(_("Sound when message is sent"), OPT_SOUND_SEND, box, SEND);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	gaim_button(_("Sound in chat rooms when people enter/leave"), &sound_options, OPT_SOUND_CHAT_JOIN, box);
-	gaim_button(_("Sound in chat rooms when people talk"), &sound_options, OPT_SOUND_CHAT_SAY, box);
+	sound_entry(_("Sound in chat rooms when people enter"), OPT_SOUND_CHAT_JOIN, box, CHAT_JOIN);
+	sound_entry(_("Sound in chat rooms when people leave"), OPT_SOUND_CHAT_PART, box, CHAT_LEAVE);
+	sound_entry(_("Sound in chat rooms when you talk"), OPT_SOUND_CHAT_YOU_SAY, box, CHAT_YOU_SAY);
+	sound_entry(_("Sound in chat rooms when others talk"), OPT_SOUND_CHAT_SAY, box, CHAT_SAY);
 
 	gtk_widget_show(prefdialog);
 }

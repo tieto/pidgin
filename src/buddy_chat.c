@@ -340,12 +340,12 @@ void chat_write(struct conversation *b, char *who, int flag, char *message)
 		if (!strcasecmp(str, normalize(b->gc->username))) {
 			sprintf(debug_buff, "%s %s\n", normalize(who), normalize(b->gc->username));
 			debug_print(debug_buff);
-			if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
-				play_sound(SEND);
+			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
+				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
 		} else {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_SAY))
-				play_sound(RECEIVE);
+				play_sound(CHAT_SAY);
 			flag |= WFLAG_RECV;
 		}
 		g_free(str);
@@ -440,7 +440,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
         update_chat_list(b);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
-		play_sound(BUDDY_ARRIVE);
+		play_sound(CHAT_JOIN);
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("<B>%s entered the room.</B>"), name);
@@ -467,8 +467,8 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
                 names = names->next;
         }
 
-	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
-		play_sound(BUDDY_LEAVE);
+	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
+		play_sound(CHAT_LEAVE);
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("<B>%s left the room.</B>"), buddy);

@@ -34,13 +34,16 @@ distribsound_DATA = gaim.soundlist
 
 endif
 
-if GNOMEBITS
-
-bitssysconf = `@GNOME_CONFIG@ --sysconfdir`
-bitssounddir = $(bitssysconf)/sound/events
-bitssound_DATA = gaim.soundlist
-
-endif
+# we used to have gnome-configurable sound events, but now we can configure them
+# ourselves. isn't that lovely
+#
+#if GNOMEBITS
+#
+#bitssysconf = `@GNOME_CONFIG@ --sysconfdir`
+#bitssounddir = $(bitssysconf)/sound/events
+#bitssound_DATA = gaim.soundlist
+#
+#endif
 
 pixmapdir = $(datadir)/gnome/apps/Internet
 pixmap_DATA = gaim.desktop

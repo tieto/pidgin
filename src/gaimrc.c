@@ -52,6 +52,7 @@ int aim_port;
 char login_host[512];
 int login_port;
 char latest_ver[25];
+char *sound_file[NUM_SOUNDS];
 
 struct parse {
         char option[256];
@@ -149,6 +150,8 @@ static int gaimrc_parse_tag(FILE *f)
 		return 4;
 	} else if (!strcmp(tag, "chat")) {
 		return 5;
+	} else if (!strcmp(tag, "sound_files")) {
+		return 6;
 	}
 
 	return -1;
@@ -666,6 +669,49 @@ static void gaimrc_write_options(FILE *f)
 }
 
 
+static void gaimrc_read_sounds(FILE *f)
+{
+	int i;
+	char buf[2048];
+        struct parse *p;
+
+        buf[0] = 0;
+
+	for (i = 0; i < NUM_SOUNDS; i++)
+		sound_file[i] = NULL;
+        
+	while (buf[0] != '}') {
+		if (buf[0] == '#')
+			continue;
+		
+		if (!fgets(buf, sizeof(buf), f))
+			return;
+
+                p = parse_line(buf);
+                
+		sscanf(p->option, "sound%c", &i);
+		i -= 'A';
+		
+		if (p->value[0][0])
+			sound_file[i] = g_strdup(p->value[0]);
+		else
+			sound_file[i] = NULL;
+	}
+}
+
+static void gaimrc_write_sounds(FILE *f)
+{
+	int i;
+	fprintf(f, "sound_files {\n");
+	for (i = 0; i < NUM_SOUNDS; i++)
+		if (sound_file[i])
+			fprintf(f, "\tsound%c { %s }\n", i + 'A', sound_file[i]);
+		else
+			fprintf(f, "\tsound%c {  }\n", i + 'A');
+	fprintf(f, "}\n");
+}
+
+
 void set_defaults(int saveinfo)
 {
 	if (!saveinfo)
@@ -709,6 +755,9 @@ void set_defaults(int saveinfo)
 
 	if (!saveinfo)
 	{
+		int i;
+		for (i = 0; i < 7; i++)
+			sound_file[i] = NULL;
 		font_options = 0; 
         	sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
         	report_idle = IDLE_GAIM;
@@ -777,6 +826,9 @@ void load_prefs()
 				case 5:
 					gaimrc_read_chat(f);
 					break;
+				case 6:
+					gaimrc_read_sounds(f);
+					break;
 				default:
 					/* NOOP */
 					break;
@@ -803,6 +855,7 @@ void save_prefs()
 			fprintf(f, "# .gaimrc v%d\n", 3);
 			gaimrc_write_users(f);
 			gaimrc_write_options(f);
+			gaimrc_write_sounds(f);
 			gaimrc_write_away(f);
 #ifdef GAIM_PLUGINS
 			gaimrc_write_plugins(f);

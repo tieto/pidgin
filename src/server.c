@@ -144,7 +144,7 @@ void serv_get_info(char *name)
 	 * the buddy list/UI needs to be really changed before this gets fixed*/
 	struct gaim_connection *g = connections->data;
 
-	if (g->prpl && g->prpl->get_info)
+	if (g && g->prpl && g->prpl->get_info)
 		(*g->prpl->get_info)(g, name);
 }
 
@@ -153,7 +153,7 @@ void serv_get_away_msg(char *name)
 	/* FIXME: see the serv_get_info comment above :-P */
 	struct gaim_connection *g = connections->data;
 
-	if (g->prpl && g->prpl->get_info)
+	if (g && g->prpl && g->prpl->get_info)
 		(*g->prpl->get_away_msg)(g, name);
 }
 
@@ -162,7 +162,7 @@ void serv_get_dir(char *name)
 	/* FIXME: see the serv_get_info comment above :-P */
 	struct gaim_connection *g = connections->data;
 
-	if (g->prpl && g->prpl->get_dir)
+	if (g && g->prpl && g->prpl->get_dir)
 		(*g->prpl->get_dir)(g, name);
 }
 
@@ -172,7 +172,7 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 	/* FIXME */
 	struct gaim_connection *g = connections->data;
 
-	if (g->prpl && g->prpl->set_dir)
+	if (g && g->prpl && g->prpl->set_dir)
 		(*g->prpl->set_dir)(g, first, middle, last, maiden, city, state, country, web);
 }
 
@@ -182,7 +182,7 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 	/* FIXME */
 	struct gaim_connection *g = connections->data;
 
-	if (g->prpl && g->prpl->dir_search)
+	if (g && g->prpl && g->prpl->dir_search)
 		(*g->prpl->dir_search)(g, first, middle, last, maiden, city, state, country, email);
 }
 
@@ -277,7 +277,7 @@ void serv_set_permit_deny()
 {
 	/* FIXME */
 	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
+	if (g && g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
 		int at;
 		GList *list;
@@ -392,7 +392,7 @@ void serv_save_config()
 {
 	/* FIXME */
 	struct gaim_connection *g = connections->data;
-	if (g->protocol == PROTO_TOC) {
+	if (g && g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG);
 		char *buf2 = g_malloc(MSG_LEN);
 		serv_build_config(buf, BUF_LONG / 2, FALSE);
@@ -486,7 +486,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		}
 		if (cnv != NULL) {
 			if (sound_options & OPT_SOUND_WHEN_AWAY)
-				play_sound(AWAY);
+				play_sound(RECEIVE);
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL);
 		}
 

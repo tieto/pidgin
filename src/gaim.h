@@ -438,10 +438,14 @@ struct signon {
 
 #define BUDDY_ARRIVE 0
 #define BUDDY_LEAVE 1
-#define SEND 2
-#define RECEIVE 3
-#define FIRST_RECEIVE 4
-#define AWAY 5
+#define RECEIVE 2
+#define FIRST_RECEIVE 3
+#define SEND 4
+#define CHAT_JOIN 5
+#define CHAT_LEAVE 6
+#define CHAT_YOU_SAY 7
+#define CHAT_SAY 8
+#define NUM_SOUNDS 9
 
 
 #ifdef USE_APPLET
@@ -543,6 +547,9 @@ extern int sound_options;
 #define OPT_SOUND_CHAT_JOIN	 0x00000100
 #define OPT_SOUND_CHAT_SAY	 0x00000200
 #define OPT_SOUND_BEEP		 0x00000400
+#define OPT_SOUND_CHAT_PART      0x00000800
+#define OPT_SOUND_CHAT_YOU_SAY   0x00001000
+extern char *sound_file[NUM_SOUNDS];
 
 extern int font_options;
 #define OPT_FONT_BOLD		 0x00000001
