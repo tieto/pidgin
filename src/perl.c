@@ -588,6 +588,19 @@ extern void unload_perl_scripts(GtkWidget *w, gpointer d)
 
 extern void list_perl_scripts(GtkWidget *w, gpointer d)
 {
-	do_error_dialog("Implement me.", "FIXME");
+	GList *s = perl_list;
+	struct perlscript *p;
+	char buf[BUF_LONG * 4];
+	int at = 0;
+
+	at += g_snprintf(buf + at, sizeof(buf) - at, "Loaded scripts:\n");
+	while (s) {
+		p = (struct perlscript *)s->data;
+		at += g_snprintf(buf + at, sizeof(buf) - at, "%s\n", p->name);
+		s = s->next;
+	}
+
+	do_error_dialog(buf, _("Perl Scripts"));
 }
+
 #endif /* USE_PERL */
