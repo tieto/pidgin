@@ -2073,7 +2073,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 				/* we use a 2-pixel window border */
 				if (hb->x < 2)
 					hb->x = 2;
-				g_print("text = %s *** top = %d, bottom = %d, newline = %d\n", hb->text, hb->y - html->yoffset - hei - 6, hei + hei + 2, hb->newline);
+
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
 							hb->x, hb->y - html->yoffset - hei - 6,
 							hwidth - shift - hb->x + 1, hei + hei + 2);
