@@ -4,6 +4,7 @@
 
 #ifndef _WINTRANSPARENCY_H_
 #define _WINTRANSPARENCY_H_
+#include <windows.h>
 #include <gdk/gdkevents.h>
 
 extern int alpha;
