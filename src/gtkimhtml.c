@@ -67,6 +67,21 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 #define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
+enum {
+	TARGET_HTML,
+	TARGET_UTF8_STRING,
+	TARGET_COMPOUND_TEXT,
+	TARGET_STRING,
+	TARGET_TEXT
+};
+
+GtkTargetEntry selection_targets[] = {
+	{ "text/html", 0, TARGET_HTML },
+	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
+	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
+	{ "STRING", 0, TARGET_STRING },
+	{ "TEXT", 0, TARGET_TEXT}};
+
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
 {
@@ -351,57 +366,51 @@ static GtkIMHtmlCopyable *gtk_imhtml_copyable_new(GtkIMHtml *imhtml, GtkTextMark
 	return copy;
 }
 
-static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
-{
+static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
+	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
-	GtkTextIter start, end, smiley, last;
-	GString *str = g_string_new(NULL);
-	char *text;
-
-	GSList *copyables;
-	
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
-	
-	if (gtk_text_iter_equal(&start, &end))
-		return;
-	
-	gtk_text_iter_order(&start, &end);
-	last = start;
 
-	for (copyables = imhtml->copyables; copyables != NULL; copyables = copyables->next) {
-		GtkIMHtmlCopyable *copy = GTK_IMHTML_COPYABLE(copyables->data);
-		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &smiley, copy->mark);
-		if (gtk_text_iter_compare(&end, &smiley) < 0) {
-			break;
-		}
-		if (gtk_text_iter_compare(&last, &smiley) <= 0) {
-			text = gtk_text_buffer_get_text(imhtml->text_buffer, &last, &smiley, FALSE);
-			str = g_string_append(str, text);
-			str = g_string_append(str, copy->text);
-			last = smiley;
-			g_free(text);
-		}
+	char *text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+	if (info == TARGET_HTML) {
+		int len;
+		GString *str = g_string_new(NULL);
+		
+		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
+		str = g_string_append_unichar(str, 0xfeff);
+		str = g_string_append(str, text);
+		char *selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
+		gtk_selection_data_set (selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
+		g_string_free(str, TRUE);
+		g_free(text);
+		g_free(selection);
+	} else {
+		gtk_selection_data_set_text(selection_data, text, strlen(text));
 	}
-	text = gtk_text_buffer_get_text(imhtml->text_buffer, &last, &end, FALSE);
-	str = g_string_append(str, text);
-	g_free(text);
-	
-	if (!gtk_text_iter_equal(&start, &last))
-#ifdef _WIN32
-		gtk_clipboard_set_text(gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
-				       str->str, str->len);
-#endif
-		gtk_clipboard_set_text(clipboard ? clipboard :  
-				       gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
-				       str->str, str->len);
+}
 
-	g_string_free(str, TRUE);
+static void gtk_imhtml_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
+{
+}
+
+static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
+{
+	gtk_clipboard_set_with_owner(clipboard ? clipboard :  
+				     gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
+				     selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry), 
+				     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
+				     (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+
+	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
 }
 
 static gboolean button_release_cb(GtkIMHtml *imhtml, GdkEventButton event, gpointer the_foibles_of_man)
 {
+	GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (imhtml),
+							    GDK_SELECTION_PRIMARY);
+	gtk_text_buffer_remove_selection_clipboard (imhtml->text_buffer, clipboard);	
 	copy_clipboard_cb(imhtml, gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY));
 	return FALSE;
 }
@@ -538,6 +547,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->copyables = NULL;
 #endif
 	gtk_imhtml_set_editable(imhtml, FALSE);
+	
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -2279,16 +2289,17 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 {
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
-	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	GdkPixbuf *pixbuf = NULL;
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
-
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
+	
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	g_object_set_data(G_OBJECT(anchor), "text_tag", smiley);
+
 	annipixbuf = gtk_smiley_tree_image(imhtml, sml, smiley);
 	if(annipixbuf) {
-		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+	if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
 			if(pixbuf)
 				icon = gtk_image_new_from_pixbuf(pixbuf);
@@ -2330,28 +2341,48 @@ int span_compare_end(GtkIMHtmlFormatSpan *a, GtkIMHtmlFormatSpan *b)
  * needed.  After applying the start tags, add the end tags to the "closers" list, which is sorted by
  * location of ending tags.  These get applied in a similar fashion.  Finally, replace <, >, &, and "
  * with their HTML equivilent. */
-char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
+char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
 {
 	gunichar c;
 	GtkIMHtmlFormatSpan *sspan = NULL, *espan = NULL;
 	GtkTextIter iter, siter, eiter;
 	GList *starters = imhtml->format_spans;
-	GList *closers = NULL;;
+	GList *closers = NULL;
 	GString *str = g_string_new("");
 	g_list_sort_with_data(starters, (GCompareDataFunc)span_compare_begin, imhtml->text_buffer);
-	
-	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+
+	gtk_text_iter_order(start, end);
+	iter = *start;
+
 	
 	/* Initialize these to the end iter */
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &siter);
 	eiter = siter;
 
 	if (starters) {
-		sspan = (GtkIMHtmlFormatSpan*)starters->data;
-		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);
+		while (starters) {
+			GtkTextIter tagend;
+			sspan = (GtkIMHtmlFormatSpan*)starters->data;
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);
+			if (gtk_text_iter_compare(&siter, start) > 0)
+				break;
+			if (sspan->end)
+				gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &tagend, sspan->end);
+			if (sspan->end == NULL || gtk_text_iter_compare(&tagend, start) > 0) {
+				str = g_string_append(str, sspan->start_tag);
+				closers = g_list_append(closers, sspan);
+			}
+			sspan = (GtkIMHtmlFormatSpan*)starters->data;
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &siter, sspan->start);	
+			starters = starters->next;
+		}
+		if (!starters) {
+			gtk_text_buffer_get_end_iter(imhtml->text_buffer, &siter);
+			sspan = NULL;
+		}
 	}
 
-	while ((c = gtk_text_iter_get_char(&iter)) != 0) {
+	while ((c = gtk_text_iter_get_char(&iter)) != 0 && !gtk_text_iter_equal(&iter, end)) {
 		if (c == 0xFFFC) {
 			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
 			char *text = g_object_get_data(G_OBJECT(anchor), "text_tag");
@@ -2404,6 +2435,14 @@ char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
 		gtk_text_iter_forward_char(&iter);
 	}
 	return g_string_free(str, FALSE);
+}
+
+char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
+{
+	GtkTextIter start, end;
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
+	return gtk_imhtml_get_markup_range(imhtml, &start, &end);
 }
 
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml)

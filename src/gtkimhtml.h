@@ -219,6 +219,7 @@ void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text
 void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley);
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml);
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml);
+char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
 
