@@ -1478,7 +1478,9 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 	gtknode = node->ui_data;
 
-	if (node->child && GAIM_BLIST_NODE_IS_CONTACT(node) && ((GaimContact*)node)->online > 1 && !gtknode->contact_expanded) {
+	if (node->child && GAIM_BLIST_NODE_IS_CONTACT(node) &&
+			((GaimContact*)node)->online > 1 && !gtknode->contact_expanded &&
+			gaim_prefs_get_bool("/gaim/gtk/blist/auto_expand_contacts")) {
 		GtkTreeIter i;
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
 		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.  We'll draw the tip above
@@ -3779,6 +3781,25 @@ void gaim_gtk_blist_init(void)
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						&gtk_blist_handle, GAIM_CALLBACK(account_signon_cb),
 						NULL);
+
+	/* Initialize prefs */
+    gaim_prefs_add_none("/gaim/gtk/blist");
+	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
+    gaim_prefs_add_int("/gaim/gtk/blist/button_style", GAIM_BUTTON_TEXT_IMAGE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
+    gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
+    gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
+    gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
+    gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
+    gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
+    gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
+
 }
 
 

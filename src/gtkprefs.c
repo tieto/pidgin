@@ -858,6 +858,8 @@ GtkWidget *list_page() {
 			"/gaim/gtk/blist/show_idle_time", vbox);
 	prefs_checkbox(_("Dim i_dle buddies"),
 			"/gaim/gtk/blist/grey_idle_buddies", vbox);
+	prefs_checkbox(_("_Automatically expand contacts"),
+			"/gaim/gtk/blist/auto_expand_contacts", vbox);
 
 	gtk_widget_show_all(ret);
 
@@ -2710,23 +2712,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/browsers/new_window", FALSE);
 	gaim_prefs_add_string("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
-
-	/* Buddy List */
-	gaim_prefs_add_none("/gaim/gtk/blist");
-	gaim_prefs_add_int("/gaim/gtk/blist/button_style", GAIM_BUTTON_TEXT_IMAGE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
-	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
-	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
-	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
-	gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
-	gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
 
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
