@@ -883,7 +883,8 @@ GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *button, *close_checkbox, *icons_checkbox;
+	GtkWidget *close_checkbox, *icons_checkbox;
+	GtkWidget *tabs_checkbox, *same_checkbox;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -895,10 +896,8 @@ GtkWidget *conv_page() {
 
 	names = gaim_conv_placement_get_options();
 
-	label = prefs_dropdown_from_list(vbox, _("_Placement:"), GAIM_PREF_STRING,
-									 "/core/conversations/placement",
-									 names);
-
+	label = prefs_dropdown_from_list(vbox, _("_Placement:"),
+			GAIM_PREF_STRING, "/core/conversations/placement", names);
 	g_list_free(names);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
@@ -920,12 +919,18 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	button = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
+	tabs_checkbox = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
 
-	/* XXX: grey this out when the above is unchecked */
-	button = prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
+	same_checkbox = prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
 							"/core/conversations/combine_chat_im", vbox);
+
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(same_checkbox), FALSE);
+	}
+
+	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
 
 	close_checkbox = prefs_checkbox(_("Show _close button on tabs"),
 									"/gaim/gtk/conversations/close_on_tabs",
@@ -935,7 +940,7 @@ GtkWidget *conv_page() {
 		gtk_widget_set_sensitive(GTK_WIDGET(close_checkbox), FALSE);
 	}
 
-	g_signal_connect(G_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
 
 	icons_checkbox = prefs_checkbox(_("Show status _icons on tabs"),
@@ -946,7 +951,7 @@ GtkWidget *conv_page() {
 		gtk_widget_set_sensitive(GTK_WIDGET(icons_checkbox), FALSE);
 	}
 
-	g_signal_connect(G_OBJECT(button), "clicked",
+	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), icons_checkbox);
 
 	gtk_widget_show_all(ret);
