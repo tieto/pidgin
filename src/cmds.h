@@ -116,10 +116,10 @@ extern "C" {
  *                and any arguments it accpets (if it takes any arguments, otherwise no space), follow
  *                by a colon, two spaces, and a description of the command in sentence form. No slash
  *                before the command name.
- * @return A pointer to a GaimCmdId. This is only used for calling gaim_cmd_unregister, which frees it.
+ * @return A GaimCmdId. This is only used for calling gaim_cmd_unregister.
  *         Returns @c NULL on failure.
  */
-GaimCmdId *gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
+GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
                              const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr);
 
 /**
@@ -129,9 +129,9 @@ GaimCmdId *gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriorit
  * or something else that might go away. Normally this is called when the plugin
  * unloads itself.
  *
- * @param id The GaimCmdId to unregister. It is freed after being unregistered.
+ * @param id The GaimCmdId to unregister.
  */
-void gaim_cmd_unregister(GaimCmdId *id);
+void gaim_cmd_unregister(GaimCmdId id);
 
 /**
  * Do a command.

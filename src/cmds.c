@@ -50,21 +50,20 @@ static gint cmds_compare_func(const GaimCmd *a, const GaimCmd *b)
 	else return 0;
 }
 
-GaimCmdId *gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
+GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args, GaimCmdPriority p, GaimCmdFlag f,
                              const gchar *prpl_id, GaimCmdFunc func, const gchar *helpstr)
 {
-	GaimCmdId *id;
+	GaimCmdId id;
 	GaimCmd *c;
 
-	g_return_val_if_fail(cmd != NULL && *cmd != '\0', NULL);
-	g_return_val_if_fail(args != NULL, NULL);
-	g_return_val_if_fail(func != NULL, NULL);
+	g_return_val_if_fail(cmd != NULL && *cmd != '\0', 0);
+	g_return_val_if_fail(args != NULL, 0);
+	g_return_val_if_fail(func != NULL, 0);
 
-	id = g_new(GaimCmdId, 1);
-	*id = next_id++;
+	id = next_id++;
 
 	c = g_new0(GaimCmd, 1);
-	c->id = *id;
+	c->id = id;
 	c->cmd = g_strdup(cmd);
 	c->args = g_strdup(args);
 	c->priority = p;
@@ -90,7 +89,7 @@ static void gaim_cmd_free(GaimCmd *c)
 	g_free(c);
 }
 
-void gaim_cmd_unregister(GaimCmdId *id)
+void gaim_cmd_unregister(GaimCmdId id)
 {
 	GaimCmd *c;
 	GList *l;
@@ -98,10 +97,9 @@ void gaim_cmd_unregister(GaimCmdId *id)
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (c->id == *id) {
+		if (c->id == id) {
 			cmds = g_list_remove(cmds, c);
 			gaim_cmd_free(c);
-			g_free(id);
 			return;
 		}
 	}
