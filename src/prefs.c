@@ -95,18 +95,19 @@ GtkWidget *debugbutton = NULL;
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	int v;
 	
-	 prefs = NULL;
-	 for (v = 0; v < NUM_SOUNDS; v++) {
-		if (sound_file_new[v] && (sound_file_new[v] != sound_file[v]))
+	prefs = NULL;
+	for (v = 0; v < NUM_SOUNDS; v++) {
+		if (sound_file_new[v]) {
 			g_free(sound_file_new[v]);
-		sound_file_new[v] = NULL;
-	 }
-	 sound_entry = NULL;
-	 browser_entry = NULL;
-	 debugbutton=NULL;
-	 if(sounddialog)
+			sound_file_new[v] = NULL;
+		}
+	}
+	sound_entry = NULL;
+	browser_entry = NULL;
+	debugbutton=NULL;
+	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
-	 g_object_unref(G_OBJECT(prefs_away_store)); 	
+	g_object_unref(G_OBJECT(prefs_away_store)); 	
 }
 
 GtkWidget *preflabel;
@@ -187,7 +188,7 @@ static void apply_cb(GtkWidget *button, void *data)
 	for (r = 0; r < NUM_SOUNDS; r++) {
 		if (sound_file[r])
 			g_free(sound_file[r]);
-		sound_file[r] = sound_file_new[r];
+		sound_file[r] = g_strdup(sound_file_new[r]);
 	}
 	if (away_options != away_options_new)		
 		set_away_options();
@@ -871,9 +872,11 @@ static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 
 static void reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
-
 	/* This just resets a sound file back to default */
-	sound_file_new[sound_row_sel] = NULL;
+	if (sound_file_new[sound_row_sel]) {
+		g_free(sound_file_new[sound_row_sel]);
+		sound_file_new[sound_row_sel] = NULL;
+	}
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
 }
@@ -905,7 +908,7 @@ void do_select_sound(GtkWidget *w, int snd)
 
 	/* Let's just be safe */
 	if (sound_file_new[snd])
-		free(sound_file_new[snd]);
+		g_free(sound_file_new[snd]);
 
 	/* Set it -- and forget it */
 	sound_file_new[snd] = g_strdup(file);
