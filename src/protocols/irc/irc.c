@@ -914,7 +914,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 			char *errmsg1 = strrchr(text, ':');
 			g_snprintf(errmsg, sizeof(errmsg), "IRC Error %d", n);
 			if (errmsg)
-				do_error_dialog(errmsg, errmsg1+1, GAIM_ERROR);
+				do_error_dialog(errmsg, errmsg1 ? errmsg1+1 : NULL, GAIM_ERROR);
 		}
 		break;
 	}
