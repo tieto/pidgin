@@ -116,20 +116,24 @@ schedule_accounts_save()
 GaimAccount *
 gaim_account_new(const char *username, const char *protocol_id)
 {
-	GaimAccount *account;
+	GaimAccount *account = NULL;
 
 	g_return_val_if_fail(username    != NULL, NULL);
-	g_return_val_if_fail(protocol_id != NULL, NULL);
 
-	account = gaim_accounts_find_with_prpl_id(username, protocol_id);
+	if(protocol_id)
+		account = gaim_accounts_find_with_prpl_id(username, protocol_id);
 
 	if (account != NULL)
 		return account;
 
 	account = g_new0(GaimAccount, 1);
 
-	gaim_account_set_username(account,    username);
-	gaim_account_set_protocol_id(account, protocol_id);
+	gaim_account_set_username(account, username);
+
+	if(protocol_id)
+		gaim_account_set_protocol_id(account, protocol_id);
+	else
+		gaim_account_set_protocol(account, GAIM_PROTO_DEFAULT);
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
