@@ -5,6 +5,8 @@
 	Save Buddy Pounces 
 	Save Buddy Chats
 	Execute Command on Buddy Pounce
+	Hmm, fix <BODY BGCOLOR=""></BODY>  hehe. Doesnt seem to want to
+		work for me anymore.
 	Redesign the Foreground/Background color options under preferences.
 	Add ability to conersaton window to allow changing of foreground/
 		background colours per conversation window. 
