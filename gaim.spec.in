@@ -1,23 +1,23 @@
 %define name       @PACKAGE@
 %define version    @VERSION@
 %define release    1
-%define serial     1
 %define prefix     /usr
 %define sysconfdir /etc
 
-Summary:	A Gtk+ based multiprotocol instant messaging client
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
-Serial:		%{serial}
-License:	GPL
-Group:		Applications/Internet
-Vendor:		Pimpin' Penguins
-Url:		http://gaim.sf.net/
-Source:		%{name}-%{version}.tar.gz
-Packager:	Rob Flynn <rob@marko.net>
-BuildRoot:	/var/tmp/%{name}-%{version}-root
-Requires:	gtk2 >= 2.0.0
+Summary:    A Gtk+ based multiprotocol instant messaging client
+Name:       %{name}
+Version:    %{version}
+Release:    %{release}
+Epoch:      1
+License:    GPL
+Group:      Applications/Internet
+Vendor:     Pimpin' Penguins
+Url:        http://gaim.sf.net/
+Source:     %{name}-%{version}.tar.gz
+Packager:   Rob Flynn <rob@marko.net>
+BuildRoot:  /var/tmp/%{name}-%{version}-root
+Requires:   gtk2 >= 2.0.0
+Prefix:     %{prefix}
 
 %description
 Gaim allows you to talk to anyone using a variety of messaging 
@@ -37,27 +37,27 @@ Gaim is NOT affiliated with or endorsed by AOL.
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-artsc
 make
-if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
-mkdir -p $RPM_BUILD_ROOT%{prefix}
-make prefix=$RPM_BUILD_ROOT%{prefix} install
-make -C src mostlyclean-compile
 
 %install
+if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 
 %files
-%defattr(-,root,root)
-%{prefix}/bin/gaim
-%{prefix}/bin/gaim-remote
-%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README ChangeLog plugins/PERL-HOWTO HACKING
-%{prefix}/man/man1/gaim.1.*
-%attr(755,root,root) %{prefix}/lib/gaim/*
-%{prefix}/share/locale/*/*/*
-%{prefix}/share/pixmaps/gaim.png
-%{prefix}/share/pixmaps/gaim/*
-%{prefix}/share/pixmaps/gaim/dialogs/*
-%{prefix}/share/pixmaps/gaim/buttons/*
-%{prefix}/share/applications/gaim.desktop
+%defattr(-, root, root)
+
+%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS
+%doc doc/FAQ README ChangeLog plugins/PERL-HOWTO HACKING
+
+%attr(755, root, root) %{_libdir}/gaim/*
+
+%{_bindir}/*
+%{_mandir}/man1/gaim.1.*
+%{_datadir}/locale/*/*/*
+%{_datadir}/pixmaps/*
+%{_datadir}/pixmaps/gaim/*
+%{_datadir}/pixmaps/gaim/dialogs/*
+%{_datadir}/pixmaps/gaim/buttons/*
+%{_datadir}/applications/gaim.desktop
 
 %clean
 rm -r $RPM_BUILD_ROOT
