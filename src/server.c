@@ -291,6 +291,19 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	return val;
 }
 
+void serv_send_file(GaimConnection *gc, const char *name, const char *file)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info->send_file == NULL || file == NULL || name ==  NULL)
+		return;
+
+	prpl_info->send_file(gc, name, file);
+}
+
 void serv_get_info(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

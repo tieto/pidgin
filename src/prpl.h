@@ -313,6 +313,12 @@ struct _GaimPluginProtocolInfo
 	void (*remove_group)(GaimConnection *gc, const char *group);
 
 	char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who);
+
+	void (*ask_send_file)(GaimConnection *gc, const char *who);
+
+	void (*send_file)(GaimConnection *gc, const char *who, const char *file);
+
+	gboolean (*has_send_file)(GaimConnection *gc, const char *who);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
@@ -350,6 +356,23 @@ GaimProtocol gaim_prpl_id_to_num(const char *id);
  * @param type The protocol plugin;
  */
 GaimPlugin *gaim_find_prpl(GaimProtocol type);
+
+/**
+ * Ask the user to select a file to send to a user
+ *
+ * @param gc The Gaim Connection to send the file trough;
+ * @param name The screen name of the one we are sending the file;
+ */
+void gaim_prpl_ask_send_file (GaimConnection *gc, char *name);
+
+/**
+ * Checks if a given user supports file sends
+ *
+ * @param gc The Gaim Connection to send the file trough;
+ * @param name The screen name of the one we are sending the file;
+ * @return TRUE if we can send files to this user, FALSE otherwise.
+ */
+gboolean gaim_prpl_has_send_file (GaimConnection *gc, char *name);
 
 #ifdef __cplusplus
 }
