@@ -53,7 +53,7 @@ find_gettext
 if [ x$GETTEXT_TOOL == x ]; then
 	echo
 	echo "You do not have a version of gettext installed."
-	echo "Please download one from your locak package repository or"
+	echo "Please download one from your local package repository or"
 	echo "from ftp://ftp.gnu.org/pub/gnu/gettext/"
 	echo
 	exit 1
