@@ -843,7 +843,7 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 				hide_login_progress(GJ_GC(j), "unknown error");
 
 			xmlnode_free(p->x);
-			signoff(GJ_GC(j));
+			gjab_send_raw(j, "</stream:stream>");
 			return;
 		}
 		break;
