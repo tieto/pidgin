@@ -120,9 +120,17 @@ gaim_connection_connect(GaimConnection *gc)
 void
 gaim_connection_disconnect(GaimConnection *gc)
 {
+	GaimAccount *account;
 	GList *wins;
 
 	g_return_if_fail(gc != NULL);
+
+	account = gaim_connection_get_account(gc);
+
+	if (gaim_account_get_connection(account) != NULL) {
+		gaim_account_disconnect(account);
+		return;
+	}
 
 	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)

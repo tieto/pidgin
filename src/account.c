@@ -176,12 +176,16 @@ gaim_account_connect(GaimAccount *account)
 void
 gaim_account_disconnect(GaimAccount *account)
 {
+	GaimConnection *gc;
+
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	gaim_connection_disconnect(account->gc);
+	gc = gaim_account_get_connection(account);
 
-	account->gc = NULL;
+	gaim_account_set_connection(account, NULL);
+
+	gaim_connection_disconnect(gc);
 }
 
 void
