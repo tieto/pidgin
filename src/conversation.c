@@ -2048,7 +2048,7 @@ void show_conv(struct conversation *c)
 	c->sw = sw;
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_set_usize(sw, 320, 175);
+	gtk_widget_set_usize(sw, conv_size.width, conv_size.height);
 	gtk_widget_show(sw);
 
 	text = gtk_imhtml_new(NULL, NULL);
@@ -2090,10 +2090,8 @@ void show_conv(struct conversation *c)
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
-	if (display_options & OPT_DISP_CONV_BIG_ENTRY)
-		gtk_widget_set_usize(entry, 300, 50);
-	else
-		gtk_widget_set_usize(entry, 300, 25);
+	gtk_widget_set_usize(entry, conv_size.width - 20, conv_size.entry_height);
+
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),

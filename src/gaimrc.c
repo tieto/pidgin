@@ -48,6 +48,7 @@ int logging_options;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
+struct window_size conv_size, buddy_chat_size;
 char web_command[2048];
 char *sound_file[NUM_SOUNDS];
 char sound_cmd[2048];
@@ -664,6 +665,14 @@ static void gaimrc_read_options(FILE *f)
 			web_browser = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "web_command")) {
 			strcpy(web_command, p->value[0]);
+		} else if (!strcmp(p->option, "conv_size")) {
+			conv_size.width = atoi(p->value[0]);
+			conv_size.height = atoi(p->value[1]);
+			conv_size.entry_height = atoi(p->value[2]);
+		} else if (!strcmp(p->option, "buddy_chat_size")) {
+			buddy_chat_size.width = atoi(p->value[0]);
+			buddy_chat_size.height = atoi(p->value[1]);
+			buddy_chat_size.entry_height = atoi(p->value[2]);
 		} else if (!strcmp(p->option, "blist_pos")) {
 			blist_pos.x = atoi(p->value[0]);
 			blist_pos.y = atoi(p->value[1]);
@@ -705,6 +714,10 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d } { %d } { %d }\n",
 		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height,
 		blist_pos.xoff, blist_pos.yoff);
+	fprintf(f, "\tconv_size { %d } { %d } { %d }\n",
+		conv_size.width, conv_size.height, conv_size.entry_height);
+	fprintf(f, "\tbuddy_chat_size { %d } { %d } { %d }\n",
+		buddy_chat_size.width, buddy_chat_size.height, buddy_chat_size.entry_height);
 	fprintf(f, "}\n");
 }
 
@@ -787,7 +800,6 @@ void set_defaults(int saveinfo)
 	    OPT_DISP_SHOW_BUTTON_XPM |
 	    OPT_DISP_SHOW_SMILEY |
 	    OPT_DISP_COOL_LOOK |
-	    OPT_DISP_CONV_BIG_ENTRY |
 	    OPT_DISP_CONV_BUTTON_XPM |
 	    OPT_DISP_CHAT_BUTTON_TEXT;
 
@@ -808,10 +820,19 @@ void set_defaults(int saveinfo)
 		default_away = NULL;
 
 		g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+
 		blist_pos.width = 0;
 		blist_pos.height = 0;
 		blist_pos.x = 0;
 		blist_pos.y = 0;
+
+		conv_size.width = 320;
+		conv_size.height = 175;
+		conv_size.entry_height = 25;
+
+		buddy_chat_size.width = 320;
+		buddy_chat_size.height = 160;
+		buddy_chat_size.entry_height = 25;
 	}
 }
 

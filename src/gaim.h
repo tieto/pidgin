@@ -151,6 +151,13 @@ struct save_pos {
 };
 
 
+struct window_size {
+	int width;
+	int height;
+	int entry_height;
+};
+
+
 struct option_set {
         int *options;
         int option;
@@ -488,8 +495,8 @@ extern int display_options;
 #define OPT_DISP_NO_BUTTONS       0x00002000
 #define OPT_DISP_CONV_BUTTON_TEXT 0x00004000 
 #define OPT_DISP_CHAT_BUTTON_TEXT 0x00008000 
-#define OPT_DISP_CONV_BIG_ENTRY   0x00010000
-#define OPT_DISP_CHAT_BIG_ENTRY   0x00020000
+/* #define OPT_DISP_CONV_BIG_ENTRY   0x00010000 -- no longer used */
+/* #define OPT_DISP_CHAT_BIG_ENTRY   0x00020000 -- no longer used */
 #define OPT_DISP_NO_MT_GRP        0x00040000
 #define OPT_DISP_CONV_BUTTON_XPM  0x00080000
 #define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
@@ -552,6 +559,7 @@ extern GSList *away_time_queue;
 extern char sound_cmd[2048];
 extern char web_command[2048];
 extern struct save_pos blist_pos;
+extern struct window_size conv_size, buddy_chat_size;
 extern char latest_ver[25];
 
 /* Functions in about.c */

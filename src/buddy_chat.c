@@ -863,7 +863,7 @@ void show_new_buddy_chat(struct conversation *b)
 	b->sw = sw;
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_paned_pack1(GTK_PANED(hpaned), sw, TRUE, TRUE);
-	gtk_widget_set_usize(sw, 320, 160);
+	gtk_widget_set_usize(sw, buddy_chat_size.width, buddy_chat_size.height);
 	gtk_widget_show(sw);
 
 	text = gtk_imhtml_new(NULL, NULL);
@@ -935,10 +935,7 @@ void show_new_buddy_chat(struct conversation *b)
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(chatentry));
 	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 0);
-	if (display_options & OPT_DISP_CHAT_BIG_ENTRY)
-		gtk_widget_set_usize(chatentry, 320, 50);
-	else
-		gtk_widget_set_usize(chatentry, 320, 25);
+	gtk_widget_set_usize(chatentry, buddy_chat_size.width, buddy_chat_size.entry_height);
 	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
 	gtk_widget_show(chatentry);
 
