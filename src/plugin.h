@@ -402,7 +402,7 @@ void gaim_plugins_unregister_unload_notify_cb(void (*func)(GaimPlugin *,
 GaimPlugin *gaim_plugins_find_with_name(const char *name);
 
 /**
- * Finds a plugin with the specified filename.
+ * Finds a plugin with the specified filename (filename with a path).
  *
  * @param filename The plugin filename.
  *
@@ -411,9 +411,9 @@ GaimPlugin *gaim_plugins_find_with_name(const char *name);
 GaimPlugin *gaim_plugins_find_with_filename(const char *filename);
 
 /**
- * Finds a plugin with the specified base filename.
+ * Finds a plugin with the specified basename (filename without a path).
  *
- * @param basename The base plugin filename.
+ * @param basename The plugin basename.
  *
  * @return The plugin if found, or @c NULL if not found.
  */
