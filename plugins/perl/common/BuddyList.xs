@@ -81,8 +81,11 @@ groups()
 PREINIT:
 	GaimBlistNode *node;
 CODE:
-	for (node = gaim_get_blist()->root; node != NULL; node = node->next)
+	if (gaim_get_blist() != NULL)
 	{
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
-			"Gaim::BuddyList::Group")));
+		for (node = gaim_get_blist()->root; node != NULL; node = node->next)
+		{
+			XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
+				"Gaim::BuddyList::Group")));
+		}
 	}
