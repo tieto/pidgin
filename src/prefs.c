@@ -34,7 +34,6 @@
 #include <stdarg.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
-#include "gnome_applet_mgr.h"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/fontface2.xpm"
 #include "pixmaps/refresh.xpm"
@@ -50,9 +49,6 @@ static GtkWidget *prefs = NULL;
 
 static GtkWidget *gaim_button(const char *, int *, int, GtkWidget *);
 static void prefs_build_general(GtkWidget *);
-#ifdef USE_APPLET
-static void prefs_build_applet(GtkWidget *);
-#endif
 static void prefs_build_buddy(GtkWidget *);
 static void prefs_build_convo(GtkWidget *);
 static void prefs_build_sound(GtkWidget *);
@@ -156,34 +152,6 @@ static void general_page()
 	gtk_widget_show(prefdialog);
 }
 
-#ifdef USE_APPLET
-static void applet_page()
-{
-	GtkWidget *parent;
-	GtkWidget *box;
-	GtkWidget *label;
-	GtkWidget *sep;
-
-	parent = prefdialog->parent;
-	gtk_widget_destroy(prefdialog);
-
-	prefdialog = gtk_frame_new(_("Applet Options"));
-	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(prefdialog), box);
-	gtk_widget_show(box);
-
-	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
-
-	gtk_widget_show(prefdialog);
-}
-#endif
-
 static void buddy_page()
 {
 	GtkWidget *parent;
@@ -224,6 +192,7 @@ static void buddy_page()
 	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
 #ifdef USE_APPLET
 	gaim_button(_("Automatically show buddy list on sign on"), &general_options, OPT_GEN_APP_BUDDY_SHOW, box);
+	gaim_button(_("Display Buddy List near applet"), &general_options, OPT_GEN_NEAR_APPLET, box);
 #endif
 
 	gtk_widget_show(prefdialog);
@@ -1445,9 +1414,6 @@ void show_prefs()
 	gtk_widget_show(prefdialog);
 
 	prefs_build_general(preftree);
-#ifdef USE_APPLET
-	prefs_build_applet(preftree);
-#endif
 	prefs_build_buddy(preftree);
 	prefs_build_convo(preftree);
 	prefs_build_sound(preftree);
@@ -1662,19 +1628,6 @@ void prefs_build_general(GtkWidget *preftree)
 
 	gtk_ctree_select(GTK_CTREE(preftree), parent);
 }
-
-#ifdef USE_APPLET
-void prefs_build_applet(GtkWidget *preftree)
-{
-	GtkCTreeNode *parent, *node;
-	char *text[1];
-
-	text[0] = _("Applet");
-	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-					text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, applet_page);
-}
-#endif
 
 void prefs_build_buddy(GtkWidget *preftree)
 {

@@ -390,13 +390,14 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		
 	icon=gtk_pixmap_new(icon_offline_pm,icon_offline_bm);
 	
-	update_applet();
-	
 	vbox = gtk_vbox_new(FALSE,0);
 	
 	gtk_box_pack_start(GTK_BOX(vbox), icon, FALSE, TRUE, 0);
 	
 	status_label = gtk_label_new(_("Offline"));
+
+	update_applet();
+	
 	/*set this label's font*/
 	label_style = gtk_widget_get_style( status_label );
 	
