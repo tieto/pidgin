@@ -70,7 +70,7 @@ struct gaim_connection {
 	GtkWidget *status;
 
 	char *away;
-	gboolean is_auto_away;
+	int is_auto_away;
 };
 
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */

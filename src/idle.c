@@ -76,10 +76,15 @@ gint check_idle(struct gaim_connection *gc)
 				do_away_message(NULL, default_away);
 			else
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
-		}
-		gc->is_auto_away = TRUE;
+			gc->is_auto_away = 1;
+		} else
+			gc->is_auto_away = 2;
 	} else if (gc->is_auto_away && idle_time < 60 * auto_away) {
-		gc->is_auto_away = FALSE;
+		if (gc->is_auto_away == 2) {
+			gc->is_auto_away = 0;
+			return;
+		}
+		gc->is_auto_away = 0;
 		if (awaymessage == NULL) {
 			debug_printf("removing auto-away message for %s\n", gc->username);
 			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
