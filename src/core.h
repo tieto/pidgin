@@ -87,6 +87,10 @@ struct gaim_account {
 	int permdeny;
 };
 
+/* XXX Temporary, until we have better account-specific prefs. */
+#define GAIM_ACCOUNT_CHECK_MAIL(account) \
+	((account)->options & OPT_ACCT_MAIL_CHECK)
+
 struct UI {
 	GIOChannel *channel;
 	guint inpa;
