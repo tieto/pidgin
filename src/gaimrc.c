@@ -291,7 +291,12 @@ static void gaimrc_write_pounce(FILE *f)
 			b = (struct buddy_pounce *)pnc->data;
 
 			str1 = escape_text2(b->name);
-			str2 = escape_text2(b->message);
+			if (strlen(b->message))
+				str2 = escape_text2(b->message);
+			else {
+				str2 = malloc(1);
+				str2[0] = 0;
+			}
 			popup = b->popup;
 			sendim = b->sendim;
 
