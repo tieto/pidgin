@@ -43,7 +43,7 @@
 #include "aim.h"
 #include "proxy.h"
 
-#if USE_GNOME
+#if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
 #endif
@@ -62,7 +62,7 @@
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 static int gaim_caps = AIM_CAPS_CHAT |
-#if USE_GNOME
+#if USE_PIXBUF
 		       AIM_CAPS_BUDDYICON |
 #endif
 		       AIM_CAPS_GETFILE |
@@ -143,7 +143,7 @@ struct getfile_transfer {
 	long size;
 };
 
-#if USE_GNOME
+#if USE_PIXBUF
 struct icon_req {
 	char *user;
 	time_t timestamp;
@@ -522,7 +522,7 @@ static void oscar_close(struct gaim_connection *gc) {
 		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
 		g_free(n);
 	}
-#if USE_GNOME
+#if USE_PIXBUF
 	while (odata->hasicons) {
 		struct icon_req *n = odata->hasicons->data;
 		gdk_pixbuf_animation_unref(n->anim);
@@ -1593,7 +1593,7 @@ static int accept_getfile(gpointer w, struct ask_getfile *g) {
 }
 */
 
-#if USE_GNOME
+#if USE_PIXBUF
 static gboolean redraw_anim(gpointer data)
 {
 	int delay;
@@ -1663,7 +1663,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		args = va_arg(ap, struct aim_incomingim_ch1_args *);
 		va_end(ap);
 
-#if USE_GNOME
+#if USE_PIXBUF
 		if (args->icbmflags & AIM_IMFLAGS_HASICON) {
 			struct oscar_data *od = gc->proto_data;
 			struct icon_req *ir;
@@ -1725,7 +1725,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			*/
 		} else if (args->reqclass & AIM_CAPS_VOICE) {
 		} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
-#if USE_GNOME
+#if USE_PIXBUF
 			struct oscar_data *od = gc->proto_data;
 			GSList *h = od->hasicons;
 			struct icon_req *ir = NULL;
@@ -2439,7 +2439,7 @@ static void oscar_send_im(struct gaim_connection *gc, char *name, char *message,
 			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else {
 			int flags = AIM_IMFLAGS_ACK;
-#if USE_GNOME
+#if USE_PIXBUF
 			GSList *h = odata->hasicons;
 			struct icon_req *ir;
 			char *who = normalize(name);
@@ -3127,7 +3127,7 @@ static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new
 
 static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *c)
 {
-#if USE_GNOME
+#if USE_PIXBUF
 	struct oscar_data *od = gc->proto_data;
 	GSList *h = od->hasicons;
 	struct icon_req *ir = NULL;
@@ -3173,7 +3173,7 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 
 static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *c)
 {
-#if USE_GNOME
+#if USE_PIXBUF
 	struct oscar_data *od = gc->proto_data;
 	GSList *h = od->hasicons;
 	struct icon_req *ir = NULL;
