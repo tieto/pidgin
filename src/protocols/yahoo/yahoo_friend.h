@@ -45,6 +45,10 @@ typedef struct _YahooFriend {
 YahooFriend *yahoo_friend_new(void);
 YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
 YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name);
+
+void yahoo_friend_set_ip(YahooFriend *f, const char *ip);
+const char *yahoo_friend_get_ip(YahooFriend *f);
+
 void yahoo_friend_free(gpointer p);
 
 #endif /* _YAHOO_FRIEND_H_ */

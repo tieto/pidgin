@@ -71,6 +71,18 @@ YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name)
 	return f;
 }
 
+void yahoo_friend_set_ip(YahooFriend *f, const char *ip)
+{
+	if (f->ip)
+		g_free(f->ip);
+	f->ip = g_strdup(ip);
+}
+
+const char *yahoo_friend_get_ip(YahooFriend *f)
+{
+	return f->ip;
+}
+
 void yahoo_friend_free(gpointer p)
 {
 	YahooFriend *f = p;

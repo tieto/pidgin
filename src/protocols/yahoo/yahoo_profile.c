@@ -32,6 +32,7 @@
 #endif
 
 #include "yahoo.h"
+#include "yahoo_friend.h"
 
 typedef struct {
 	GaimConnection *gc;
@@ -634,6 +635,7 @@ static char *yahoo_remove_nonbreaking_spaces(char *str)
 static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 	GString *s = g_string_sized_new(80); /* wild guess */
 	GaimBuddy *b;
+	YahooFriend *f;
 
 	g_string_printf(s, _("<b>%s:</b> %s<br>"), _("Yahoo! ID"), info_data->name);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
@@ -656,6 +658,12 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			g_string_append_printf(s, "%s<br>", statustext);
 			g_free(statustext);
 		}
+		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
+			const char *ip;
+			if ((ip = yahoo_friend_get_ip(f)))
+				g_string_append_printf(s, _("<b>IP Address:</b> %s<br>"), ip);
+		}
+
 	}
 
 	return g_string_free(s, FALSE);

@@ -1828,13 +1828,27 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (base64) {
+		guint32 ip;
+		char *tmp2;
+		YahooFriend *f;
+
 		gaim_base64_decode(base64, &decoded, &len);
 		if (len) {
 			char *tmp = gaim_str_binary_to_ascii(decoded, len);
 			gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
 			g_free(tmp);
 		}
+
+		tmp2 = g_strndup(decoded, len); /* so its \0 terminated...*/
+		ip = strtol(tmp2, NULL, 10);
+		g_free(tmp2);
 		g_free(decoded);
+		tmp2 = g_strdup_printf("%u.%u.%u.%u", ip & 0xff, (ip >> 8) & 0xff, (ip >> 16) & 0xff,
+		                       (ip >> 24) & 0xff);
+		f = yahoo_friend_find(gc, who);
+		if (f)
+			yahoo_friend_set_ip(f, tmp2);
+		g_free(tmp2);
 	}
 }
 
