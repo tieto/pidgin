@@ -41,60 +41,65 @@ static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
 
 static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
-        HKEY hkey;
-        BOOL ret = FALSE;
-        int retv;
+	HKEY hkey;
+	BOOL ret = FALSE;
+	LONG retv;
 
-        if(ERROR_SUCCESS == RegOpenKeyEx(key, 
-                                         sub_key, 
-					 0,  KEY_QUERY_VALUE, &hkey)) {
-                if(ERROR_SUCCESS == (retv=RegQueryValueEx(hkey, val_name, 0, NULL, data, data_len)))
-                        ret = TRUE;
-                else
-                        printf("Could not read reg key '%s' subkey '%s' value: '%s'\nError: %u\n",
-                               ((key == HKEY_LOCAL_MACHINE) ? "HKLM" : (key == HKEY_CURRENT_USER) ? "HKCU" : "???"),
-                               sub_key, val_name, (UINT)GetLastError());
-                RegCloseKey(key);
-        }
-        else
-                printf("Could not open reg subkey: %s\nError: %u\n", sub_key, (UINT)GetLastError());
+	if (ERROR_SUCCESS == (retv = RegOpenKeyEx(key, sub_key, 0,
+					KEY_QUERY_VALUE, &hkey))) {
+		if (ERROR_SUCCESS == (retv = RegQueryValueEx(hkey, val_name,
+						NULL, NULL, data, data_len)))
+			ret = TRUE;
+		else {
+			TCHAR szBuf[80];
+
+			FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+					NULL, retv, 0,
+					(LPTSTR) &szBuf, sizeof(szBuf), NULL);
+
+			printf("Could not read reg key '%s' subkey '%s' value: '%s'\nError: (%ld) %s\n",
+					((key == HKEY_LOCAL_MACHINE) ? "HKLM" :
+					 (key == HKEY_CURRENT_USER) ? "HKCU" :
+					 "???"),
+					sub_key, val_name, retv, szBuf);
+		}
+		RegCloseKey(key);
+	}
+	else {
+		TCHAR szBuf[80];
+
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, retv, 0,
+				(LPTSTR) &szBuf, sizeof(szBuf), NULL);
+		printf("Could not open reg subkey: %s\nError: (%ld) %s\n",
+				sub_key, retv, szBuf);
+	}
 
         return ret;
 }
 
 static void dll_prep() {
-        char gtkpath[MAX_PATH];
-        char path[MAX_PATH];
-        DWORD plen = MAX_PATH;
-        int gotreg=FALSE;
+        char gtkpath[MAX_PATH + 1];
+        char path[MAX_PATH + 1];
+        DWORD plen;
+        BOOL gotreg = FALSE;
         HKEY hkey;
         HMODULE hmod;
 
+	plen = sizeof(gtkpath);
         if(!(gotreg = read_reg_string((hkey=HKEY_LOCAL_MACHINE), "SOFTWARE\\GTK\\2.0", "Path", (LPBYTE)&gtkpath, &plen)))
                 gotreg = read_reg_string((hkey=HKEY_CURRENT_USER), "SOFTWARE\\GTK\\2.0", "Path", (LPBYTE)&gtkpath, &plen);
 
         if(!gotreg)
                 return;
 
-        /* Determine GTK+ dll path .. */
-        if(!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath", (LPBYTE)&path, &plen)) {
-                char version[10];
-                char inst[10];
-                DWORD len = 10;
-
-                strcpy(path, gtkpath);
-                if(read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Version", (LPBYTE)&version, &len) &&
-                   read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Installer", (LPBYTE)&inst, &len)) {
-                        if(strcmp(version, "2.2.2") >= 0 &&
-                           strcmp(inst, "NSIS") == 0) {
-                                strcat(path, "\\bin");
-                        }
-                        else
-                                strcat(path, "\\lib");
-                }
-                else
-                        strcat(path, "\\lib");
-        }
+	/* this value is replaced during a successful RegQueryValueEx() */
+	plen = sizeof(path);
+	/* Determine GTK+ dll path .. */
+	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath",
+				(LPBYTE) &path, &plen)) {
+		strcpy(path, gtkpath);
+		strcat(path, "\\bin");
+	}
 
         printf("GTK+ path found: %s\n", path);
 
