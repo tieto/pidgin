@@ -2566,29 +2566,6 @@ static void irc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		*se = "offline";
 }
 
-static int 
-getlocalip(char *ip) /* Thanks, libfaim */
-{
-	struct hostent *hptr;
-	char localhost[129];
-	long unsigned add;
-	
-	/* XXX if available, use getaddrinfo() */
-	/* XXX allow client to specify which IP to use for multihomed boxes */
-	
-	if (gethostname(localhost, 128) < 0)
-		return -1;
-
-	if (!(hptr = gethostbyname(localhost)))
-		return -1;
-	
-	memcpy(&add, hptr->h_addr_list[0], 4);
-	add = htonl(add);
-	g_snprintf(ip, 11, "%lu", add);
-
-	return 0;
-}
-
 static void 
 dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 {
@@ -2851,6 +2828,7 @@ irc_start_chat(GaimConnection *gc, const char *who) {
 	int len;
 	struct sockaddr_in addr;
 	char buf[IRC_BUF_LEN];
+	const char *ip;
 	
 	/* Create a socket */
 	chat = g_new0 (struct dcc_chat, 1);
@@ -2869,7 +2847,10 @@ irc_start_chat(GaimConnection *gc, const char *who) {
 	len = sizeof (addr);
 	getsockname (chat->fd, (struct sockaddr *) &addr, &len);
 	chat->port = ntohs (addr.sin_port);
-	getlocalip(chat->ip_address);
+
+	ip = gaim_xfers_get_ip_for_account(gaim_connection_get_account(gc));
+	strncpy(chat->ip_address, ip, INET6_ADDRSTRLEN);
+
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_connected,
 				chat);
