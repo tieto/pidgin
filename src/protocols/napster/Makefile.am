@@ -1,6 +1,7 @@
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+libnapster_la_LDFLAGS = -avoid-version
 
 if STATIC_NAPSTER
 

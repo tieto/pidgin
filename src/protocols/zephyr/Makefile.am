@@ -2,7 +2,8 @@ pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src -I\$(top_srcdir)/src/protocols -DCONFDIR=\"$(confdir)\" $(KRB4_CFLAGS) $(st) $(DEBUG_CFLAGS)
 
-LIBS += $(KRB4_LDFLAGS) $(KRB4_LIBS)
+LIBS = @LIBS@ $(KRB4_LDFLAGS) $(KRB4_LIBS)
+libzephyr_la_LDFLAGS = 	-avoid-version
 
 if STATIC_ZEPHYR
 

@@ -3,6 +3,7 @@ EXTRA_DIST = xmltok_impl.c xmltok_ns.c
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+libjabber_la_LDFLAGS = 	-avoid-version
 
 if STATIC_JABBER
 

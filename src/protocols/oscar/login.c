@@ -783,16 +783,17 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 	aim_rxcallback_t userfunc;
 	int vercount;
 	fu8_t *versions;
+	int ret = 0;
 
 	vercount = aim_bstream_empty(bs)/4;
 	versions = aimbs_getraw(bs, aim_bstream_empty(bs));
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, vercount, versions);
+		ret = userfunc(sess, rx, vercount, versions);
 
 	free(versions);
 
-	return 0;
+	return ret;
 }
 
 /*

@@ -62,28 +62,10 @@ gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
-# UI stuff. We do this here so the PRPLs aren't forced to link with it
-LIBS += $(UI_LIBS)
-
-# Sound libs. Just for fun
-LIBS += $(SOUND_LIBS)
-
-# Static protocols
-LIBS += $(STATIC_LINK_LIBS)
-
-# Perl stuff. plugins shouldn't need this either (right?)
 CFLAGS += $(PERL_CFLAGS)
-LIBS += $(PERL_LIBS)
-
-# X screensaver extension
-LIBS += $(XSS_LIBS)
-
-# gettext stuff
-LIBS += $(INTLLIBS)
-
-# any other stuff
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS)
-LIBS += $(DEBUG_LIBS)
+
+LIBS = @LIBS@ $(UI_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_LIBS) $(INTLLIBS) $(DEBUG_LIBS)
 
 EXTRA_DIST =	applet.h \
 		convo.h \

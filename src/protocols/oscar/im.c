@@ -1575,6 +1575,9 @@ static int clienterr(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		 ret = userfunc(sess, rx, channel, sn, reason);
 
+	free(ck);
+	free(sn);
+
 	return ret;
 }
 
@@ -1584,6 +1587,7 @@ static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	fu16_t type;
 	fu8_t snlen, *ck;
 	char *sn;
+	int ret = 0;
 
 	ck = aimbs_getraw(bs, 8);
 	type = aimbs_get16(bs);
@@ -1591,12 +1595,12 @@ static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	sn = aimbs_getstr(bs, snlen);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, type, sn);
+		ret = userfunc(sess, rx, type, sn);
 
 	free(sn);
 	free(ck);
 
-	return 0;
+	return ret;
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
