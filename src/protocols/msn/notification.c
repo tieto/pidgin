@@ -421,7 +421,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
-		char *error;
+		const char *error;
 
 		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
 		{
@@ -883,7 +883,7 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnPermitAdd *pa;
 	GSList *sl;
 	const char *list, *passport, *group_id = NULL;
-	char *friend;
+	const char *friend;
 	char msg[MSN_BUF_LEN];
 
 	list     = params[1];
@@ -935,7 +935,7 @@ adg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnGroup *group;
 	MsnSession *session = servconn->session;
 	gint group_id;
-	char *group_name;
+	const char *group_name;
 
 	group_id = atoi(params[3]);
 
@@ -1554,7 +1554,7 @@ rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
-	char *friend;
+	const char *friend;
 
 	friend = gaim_url_decode(params[3]);
 
@@ -1570,7 +1570,7 @@ reg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSession *session = servconn->session;
 	MsnGroup *group;
 	int group_id;
-	char *group_name;
+	const char *group_name;
 
 	group_id = atoi(params[2]);
 

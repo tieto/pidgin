@@ -112,7 +112,7 @@ void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
  *
  * @see gaim_date_full()
  */
-char *gaim_date(void);
+const char *gaim_date(void);
 
 /**
  * Returns the date and time in human-readable form.
@@ -124,7 +124,7 @@ char *gaim_date(void);
  *
  * @see gaim_date()
  */
-char *gaim_date_full(void);
+const char *gaim_date_full(void);
 
 /**
  * Builds a time_t from the supplied information.
@@ -306,7 +306,7 @@ char *gaim_fd_get_ip(int fd);
  *
  * @return A pointer to the normalized version stored in a static buffer.
  */
-char *gaim_normalize(const char *str);
+const char *gaim_normalize(const char *str);
 
 /**
  * Looks for %n, %d, or %t in a string, and replaces them with the
@@ -320,7 +320,7 @@ char *gaim_normalize(const char *str);
  *
  * @return A new string where the special variables are expanded.
  */
-char *gaim_str_sub_away_formatters(const char *str, const char *name);
+const char *gaim_str_sub_away_formatters(const char *str, const char *name);
 
 /**
  * Copies a string and replaces all HTML linebreaks with newline characters.
@@ -462,8 +462,8 @@ void gaim_url_fetch(const char *url, gboolean full,
  * @param str The string to translate.
  *
  * @return The resulting string.
- */	
-char *gaim_url_decode(const char *str);
+ */
+const char *gaim_url_decode(const char *str);
 
 /**
  * Encodes a URL into an escaped string.
@@ -474,7 +474,7 @@ char *gaim_url_decode(const char *str);
  *
  * @return The resulting string.
  */
-char *gaim_url_encode(const char *str);
+const char *gaim_url_encode(const char *str);
 
 /*@}*/
 

@@ -244,7 +244,7 @@ gaim_base64_decode(const char *text, char **data, int *size)
 /**************************************************************************
  * Date/Time Functions
  **************************************************************************/
-char *
+const char *
 gaim_date(void)
 {
 	static char date[80];
@@ -256,7 +256,7 @@ gaim_date(void)
 	return date;
 }
 
-char *
+const char *
 gaim_date_full(void)
 {
 	char *date;
@@ -1249,7 +1249,7 @@ gaim_fd_get_ip(int fd)
 /**************************************************************************
  * String Functions
  **************************************************************************/
-char *
+const char *
 gaim_normalize(const char *s)
 {
 	static char buf[BUF_LEN];
@@ -1278,7 +1278,7 @@ gaim_normalize(const char *s)
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
    or time */
-char *
+const char *
 gaim_str_sub_away_formatters(const char *msg, const char *name)
 {
 	char *c;
@@ -1918,7 +1918,7 @@ gaim_url_fetch(const char *url, gboolean full,
 	}
 }
 
-char *
+const char *
 gaim_url_decode(const char *str)
 {
 	static char buf[BUF_LEN];
@@ -1955,7 +1955,7 @@ gaim_url_decode(const char *str)
 	return buf;
 }
 
-char *
+const char *
 gaim_url_encode(const char *str)
 {
 	static char buf[BUF_LEN];
@@ -2037,3 +2037,4 @@ gaim_utf8_strcasecmp(const char *a, const char *b)
 
 	return ret;
 }
+

@@ -3138,7 +3138,8 @@ static char *caps_string(guint caps)
 static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GString *text;
-	gchar *info_utf8 = NULL, *away_utf8 = NULL, *final = NULL;
+	gchar *info_utf8 = NULL, *away_utf8 = NULL;
+	const char *final = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -3450,7 +3451,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (b16) {
 			gaim_buddy_set_setting(b, "icon_checksum", b16);
 			gaim_blist_save();
-			free(b16);
+			g_free(b16);
 		}
 	}
 
@@ -4819,8 +4820,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_blist_add_buddy(buddy, NULL, g, NULL);
 						export = TRUE;
 					}
-					free(gname_utf8);
-					free(alias_utf8);
+					g_free(gname_utf8);
+					g_free(alias_utf8);
 				}
 			} break;
 
@@ -5381,12 +5382,12 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		}
 
 		if (userinfo != NULL) {
-			char *tstr = gaim_str_seconds_to_string(time(NULL) - userinfo->onlinesince + 
+			char *tstr = gaim_str_seconds_to_string(time(NULL) - userinfo->onlinesince +
 				(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
-			free(tmp);
-			free(tstr);
+			g_free(tmp);
+			g_free(tstr);
 		}
 
 		if ((bi != NULL) && (bi->ipaddr)) {
@@ -5397,22 +5398,22 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 							(bi->ipaddr & 0x000000ff));
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>IP Address:</b> "), tstr, "\n", NULL);
-			free(tmp);
-			free(tstr);
+			g_free(tmp);
+			g_free(tstr);
 		}
 
 		if ((userinfo != NULL) && (userinfo->capabilities)) {
 			char *caps = caps_string(userinfo->capabilities);
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
-			free(tmp);
+			g_free(tmp);
 		}
 
 		if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
 			gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
-			free(tmp);
+			g_free(tmp);
 			g_free(escaped);
 		}
 
@@ -5420,14 +5421,15 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
+				const char *tmp3;
 				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp1 = gaim_str_sub_away_formatters(tmp2, gaim_connection_get_display_name(gc));
+				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_connection_get_display_name(gc));
 				g_free(tmp2);
 				tmp = ret;
-				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp1, "\n", NULL);
-				free(tmp);
+				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
+				g_free(tmp);
 				g_free(away_utf8);
 			}
 		}

@@ -681,10 +681,11 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 
 		if(bnode->parent->parent != (GaimBlistNode*)g) {
 			hb = g_new(struct _gaim_hbuddy, 1);
-			hb->name = gaim_normalize(buddy->name);
+			hb->name = g_strdup(gaim_normalize(buddy->name));
 			hb->account = buddy->account;
 			hb->group = bnode->parent->parent;
 			g_hash_table_remove(gaimbuddylist->buddies, hb);
+			g_free(hb->name);
 			g_free(hb);
 		}
 
@@ -1033,10 +1034,11 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 	}
 
 
-	hb.name = gaim_normalize(buddy->name);
+	hb.name = g_strdup(gaim_normalize(buddy->name));
 	hb.account = buddy->account;
 	hb.group = ((GaimBlistNode*)buddy)->parent->parent;
 	g_hash_table_remove(gaimbuddylist->buddies, &hb);
+	g_free(hb.name);
 
 	if(buddy->timer > 0)
 		g_source_remove(buddy->timer);
@@ -1202,15 +1204,18 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	if (!name)
 		return NULL;
 
-	hb.name = gaim_normalize(name);
+	hb.name = g_strdup(gaim_normalize(name));
 	hb.account = account;
 
 	for(group = gaimbuddylist->root; group; group = group->next) {
 		hb.group = group;
-		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
+		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb))) {
+			g_free(hb.name);
 			return buddy;
+		}
 	}
 
+	g_free(hb.name);
 	return NULL;
 }
 
@@ -1218,6 +1223,7 @@ GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
 		GaimGroup *group)
 {
 	struct _gaim_hbuddy hb;
+	GaimBuddy *ret;
 
 	if (!gaimbuddylist)
 		return NULL;
@@ -1225,11 +1231,13 @@ GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
 	if (!name)
 		return NULL;
 
-	hb.name = gaim_normalize(name);
+	hb.name = g_strdup(gaim_normalize(name));
 	hb.account = account;
 	hb.group = (GaimBlistNode*)group;
 
-	return g_hash_table_lookup(gaimbuddylist->buddies, &hb);
+	ret = g_hash_table_lookup(gaimbuddylist->buddies, &hb);
+	g_free(hb.name);
+	return ret;
 }
 
 GSList *gaim_find_buddies(GaimAccount *account, const char *name)
@@ -1245,7 +1253,7 @@ GSList *gaim_find_buddies(GaimAccount *account, const char *name)
 	if (!name)
 		return NULL;
 
-	hb.name = gaim_normalize(name);
+	hb.name = g_strdup(gaim_normalize(name));
 	hb.account = account;
 
 	for(group = gaimbuddylist->root; group; group = group->next) {
@@ -1254,6 +1262,7 @@ GSList *gaim_find_buddies(GaimAccount *account, const char *name)
 			ret = g_slist_append(ret, buddy);
 	}
 
+	g_free(hb.name);
 	return ret;
 }
 
