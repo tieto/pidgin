@@ -25,6 +25,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtktextview.h>
 #include <gtk/gtktooltips.h>
+#include <gtk/gtkimage.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -134,9 +135,9 @@ struct _GtkIMHtmlScalable{
 
 typedef struct {
 	GtkIMHtmlScalable scalable;
-	GdkPixbuf *image;
-	GtkIMHtml *imhtml;
+	GtkImage *image;
 	GtkTextMark *mark;
+	gchar *filename;
 	int width;
 	int height;
 } gaim_im_image;
@@ -148,7 +149,7 @@ typedef struct {
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
 
-GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img);
+GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img, gchar *filename);
 
 void gaim_im_image_free(GtkIMHtmlScalable *);
 

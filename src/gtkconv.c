@@ -4136,11 +4136,11 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 			g_free(t2);
 		}
 
-		if(sml_attrib)
-			g_free(sml_attrib);
 		g_free(with_font_tag);
 		g_free(new_message);
 	}
+	if(sml_attrib)
+		g_free(sml_attrib);
 }
 
 static void

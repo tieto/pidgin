@@ -57,6 +57,9 @@ static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event
 static gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer user_data);
 
 static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data);
+
+static gboolean gaim_im_image_clicked(GtkWidget *w, GdkEvent *event, gaim_im_image *image);
+
 static gint gtk_imhtml_tip (gpointer data);
 
 
@@ -799,7 +802,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                         } \
                         if (url) { \
                                  texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL); \
-                                 g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), strdup(url)); \
+                                 g_signal_connect(G_OBJECT(texttag), "event", G_CALLBACK(tag_event), g_strdup(url)); \
                                  gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                                  texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, NULL); \
                                  g_object_set_data(G_OBJECT(texttag), "link_url", g_strdup(url)); \
@@ -1135,8 +1138,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 							} else {
 								imagepb = gdk_pixbuf_loader_get_pixbuf(load);
 								if (imagepb) {
-									scalable = gaim_im_image_new(imagepb);
+									scalable = gaim_im_image_new(imagepb, g_strdup(src));
 									NEW_BIT(NEW_SCALABLE_BIT);
+									g_object_unref(imagepb);
 								}
 							}
 
@@ -1421,18 +1425,19 @@ static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gp
 }
 
 /* GtkIMHtmlScalable, gaim_im_image, gaim_hr */
-GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img)
+GtkIMHtmlScalable *gaim_im_image_new(GdkPixbuf *img, gchar *filename)
 {
 	gaim_im_image *im_image = g_malloc(sizeof(gaim_im_image));
+	GtkImage *image = GTK_IMAGE(gtk_image_new_from_pixbuf(img));
 
 	GTK_IMHTML_SCALABLE(im_image)->scale = gaim_im_image_scale;
 	GTK_IMHTML_SCALABLE(im_image)->add_to = gaim_im_image_add_to;
 	GTK_IMHTML_SCALABLE(im_image)->free = gaim_im_image_free;
-	im_image->image = img;
+	im_image->image = image;
 	im_image->width = gdk_pixbuf_get_width(img);
 	im_image->height = gdk_pixbuf_get_height(img);
-	im_image->imhtml = NULL;
 	im_image->mark = NULL;
+	im_image->filename = filename;
 
 	return GTK_IMHTML_SCALABLE(im_image);
 }
@@ -1442,15 +1447,10 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 	gaim_im_image *image = (gaim_im_image *)scale;
 
 	if(image->width > width || image->height > height){
+		GdkPixbuf *old_image = gtk_image_get_pixbuf(image->image);
 		GdkPixbuf *new_image = NULL;
-		GtkTextIter start, end;
 		float factor;
 		int new_width = image->width, new_height = image->height;
-
-		gtk_text_buffer_get_iter_at_mark(image->imhtml->text_buffer, &start, image->mark);
-		end = start;
-		gtk_text_iter_forward_char(&end);
-		gtk_text_buffer_delete(image->imhtml->text_buffer, &start, &end);
 
 		if(image->width > width){
 			factor = (float)(width)/image->width;
@@ -1463,10 +1463,8 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 			new_width = new_width * factor;
 		}
 
-		gtk_text_buffer_get_iter_at_mark(image->imhtml->text_buffer, &start, image->mark);
-		new_image = gdk_pixbuf_scale_simple(image->image, new_width, new_height, GDK_INTERP_BILINEAR);
-		gtk_text_buffer_insert_pixbuf(image->imhtml->text_buffer, &start, new_image);
-
+		new_image = gdk_pixbuf_scale_simple(old_image, new_width, new_height, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(image->image, new_image);
 		g_object_unref(G_OBJECT(new_image));
 	}
 }
@@ -1474,18 +1472,26 @@ void gaim_im_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 void gaim_im_image_free(GtkIMHtmlScalable *scale)
 {
 	gaim_im_image *image = (gaim_im_image *)scale;
-
+/*
 	g_object_unref(image->image);
+*/
+	g_free(image->filename);
 	g_free(scale);
 }
 
 void gaim_im_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
 {
 	gaim_im_image *image = (gaim_im_image *)scale;
+	GtkWidget *box = gtk_event_box_new();
+	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 
-	image->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
-	gtk_text_buffer_insert_pixbuf(imhtml->text_buffer, iter, image->image);
-	image->imhtml = imhtml;
+	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
+
+	gtk_widget_show(GTK_WIDGET(image->image));
+	gtk_widget_show(box);
+
+	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), box, anchor);
+	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gaim_im_image_clicked), image);
 }
 
 GtkIMHtmlScalable *gaim_hr_new()
@@ -1520,4 +1526,107 @@ void gaim_hr_free(GtkIMHtmlScalable *scale)
 {
 /*	gtk_widget_destroy(((gaim_hr *)scale)->sep); */
 	g_free(scale);
+}
+
+static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
+{
+	const gchar *filename = gtk_file_selection_get_filename(sel);
+	gaim_im_image *image = g_object_get_data(G_OBJECT(sel), "gaim_im_image");
+	gchar *type = NULL;
+	GSList *formats = gdk_pixbuf_get_formats();
+	GError *error = NULL;
+
+	while(formats){
+		GdkPixbufFormat *format = formats->data;
+		gchar **extensions = gdk_pixbuf_format_get_extensions(format);
+		gpointer p = extensions;
+
+		while(gdk_pixbuf_format_is_writable(format) && extensions && extensions[0]){
+			gchar *fmt_ext = extensions[0];
+			const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
+
+			if(!strcmp(fmt_ext, file_ext)){
+				type = gdk_pixbuf_format_get_name(format);
+				break;
+			}
+
+			extensions++;
+		}
+
+		g_strfreev(p);
+
+		if(type)
+			break;
+
+		formats = formats->next;
+	}
+
+	/* If I can't find a valid type, I will just tell the user about it and then assume
+	   it's a png */
+	if(!type){
+		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Gaim was unable to guess the image type base on the file extension supplied.  Defaulting to PNG."));
+		type = g_strdup("png");
+	}
+
+	gdk_pixbuf_save(gtk_image_get_pixbuf(image->image), filename, type, &error, NULL);
+
+	if(error){
+		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Error saving image: %s"), error->message);
+		g_error_free(error);
+	}
+
+	g_slist_free(formats);
+	g_free(type);
+}
+
+static void gaim_im_image_save(GtkWidget *w, gaim_im_image *image)
+{
+	GtkWidget *sel = gtk_file_selection_new(_("Gaim - Save Image"));
+
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(sel), image->filename);
+	g_object_set_data(G_OBJECT(sel), "gaim_im_image", image);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sel)->ok_button), "clicked",
+					 G_CALLBACK(write_img_to_file), sel);
+
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(sel)->ok_button), "clicked",
+							 G_CALLBACK(gtk_widget_destroy), sel);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(sel)->cancel_button), "clicked",
+							 G_CALLBACK(gtk_widget_destroy), sel); 
+
+	gtk_widget_show(sel);
+}
+
+static gboolean gaim_im_image_clicked(GtkWidget *w, GdkEvent *event, gaim_im_image *image)
+{
+	GdkEventButton *event_button = (GdkEventButton *) event;
+
+	if (event->type == GDK_BUTTON_RELEASE) {
+		if(event_button->button == 3) {
+			GtkWidget *img, *item, *menu;
+			gchar *text = g_strdup_printf(_("_Save Image..."));
+			menu = gtk_menu_new();
+
+			/* buttons and such */
+			img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
+			item = gtk_image_menu_item_new_with_mnemonic(text);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gaim_im_image_save), image);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+			gtk_widget_show_all(menu);
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+							event_button->button, event_button->time);
+
+			g_free(text);
+			return TRUE;
+		}
+	}
+	if(event->type == GDK_BUTTON_PRESS && event_button->button == 3)
+		return TRUE; /* Clicking the right mouse button on a link shouldn't
+						be caught by the regular GtkTextView menu */
+	else
+		return FALSE; /* Let clicks go through if we didn't catch anything */
+
 }
