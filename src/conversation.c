@@ -230,7 +230,7 @@ common_send(GaimConversation *conv, const char *message)
 			gaim_conversations_get_handle(),
 			(type == GAIM_CONV_IM
 			 ? "displaying-im-msg" : "displaying-chat-msg"),
-			conv, &buffy));
+			gaim_conversation_get_account(conv), conv, &buffy));
 
 	if (buffy == NULL) {
 		g_free(buf2);
@@ -250,7 +250,7 @@ common_send(GaimConversation *conv, const char *message)
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 		(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		conv, buffy);
+		gaim_conversation_get_account(conv), conv, buffy);
 
 	if (type == GAIM_CONV_IM) {
 		GaimIm *im = GAIM_IM(conv);
@@ -2619,16 +2619,21 @@ gaim_conversations_init(void)
 
 	/* Register signals */
 	gaim_signal_register(handle, "displaying-im-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "displayed-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "sending-im-msg",
@@ -2657,16 +2662,21 @@ gaim_conversations_init(void)
 						 gaim_value_new_outgoing(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "displaying-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "displayed-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
+						 NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "sending-chat-msg",

@@ -31,7 +31,7 @@ static char *have_word(char *, int);
 static void substitute(char **, int, int, const char *);
 static GtkListStore *model;
 
-static void
+static gboolean
 substitute_words(GaimAccount *account, GaimConversation *conv,
 				 char **message, void *data)
 {
@@ -40,7 +40,7 @@ substitute_words(GaimAccount *account, GaimConversation *conv,
 	char *tmp;
 
 	if (message == NULL || *message == NULL)
-		return;
+		return FALSE;
 
 	l = num_words(*message);
 	for (i = 0; i < l; i++) {
@@ -69,6 +69,8 @@ substitute_words(GaimAccount *account, GaimConversation *conv,
 			} while(gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 		}
 	}
+
+	return FALSE;
 }
 
 static int buf_get_line(char *ibuf, char **buf, int *position, int len) {
@@ -382,9 +384,9 @@ plugin_load(GaimPlugin *plugin)
 
 	load_conf();
 
-	gaim_signal_connect(conv_handle, "sending-im-msg",
+	gaim_signal_connect(conv_handle, "displaying-im-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
-	gaim_signal_connect(conv_handle, "sending-chat-msg",
+	gaim_signal_connect(conv_handle, "displaying-chat-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
 
 	return TRUE;
