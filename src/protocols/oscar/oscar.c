@@ -1537,7 +1537,6 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 /* Hrmph. I don't know how to make this look better. --mid */
 static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
 	struct gaim_account *account = gc->account;
 	aim_conn_t *tstconn;
 	int i;
