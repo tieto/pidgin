@@ -1444,37 +1444,40 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	if (account->gc != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
-		!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
+			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
-		if (who == NULL) {
-			if (flags & WFLAG_SEND) {
-				b = gaim_find_buddy(account, account->gc->username);
-				if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
-					who = gaim_get_buddy_alias(b);
-				else if (*account->alias)
-					who = account->alias;
-				else if (*account->gc->displayname)
-					who = account->gc->displayname;
-				else
-					who = account->gc->username;
+			if (who == NULL) {
+				if (flags & WFLAG_SEND) {
+					b = gaim_find_buddy(account, account->gc->username);
+					if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
+						who = gaim_get_buddy_alias(b);
+					else if (*account->alias)
+						who = account->alias;
+					else if (*account->gc->displayname)
+						who = account->gc->displayname;
+					else
+						who = account->gc->username;
+				}
+				else {
+					b = gaim_find_buddy(account,
+										gaim_conversation_get_name(conv));
+
+					if (b != NULL)
+						who = gaim_get_buddy_alias(b);
+					else
+						who = gaim_conversation_get_name(conv);
+				}
 			}
 			else {
-				b = gaim_find_buddy(account, gaim_conversation_get_name(conv));
+				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
 					who = gaim_get_buddy_alias(b);
-				else
-					who = gaim_conversation_get_name(conv);
 			}
-		}
-		else {
-			b = gaim_find_buddy(account, who);
-
-			if (b != NULL)
-				who = gaim_get_buddy_alias(b);
 		}
 	}
 
