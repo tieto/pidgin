@@ -479,12 +479,15 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 		m = msg;
 		for (i = 0, j = 0; m[i]; i++) {
 			if (m[i] == 033) {
-				while (m[i] != 'm')
+				while (m[i] && (m[i] != 'm'))
 					i++;
+				if (!m[i])
+					i--;
 				continue;
 			}
 			msg[j++] = m[i];
 		}
+		msg[j] = 0;
 		serv_got_im(gc, from, msg, 0, tm);
 	} else if (pkt->status == 2) {
 		do_error_dialog(_("Your message did not get sent."), _("Gaim - Error"));
