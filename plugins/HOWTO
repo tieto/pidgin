@@ -1,0 +1,43 @@
+Ok, this howto is going to be really short and sweet and to the point.
+
+First off, before you do anything else, in all of the files for your plugin,
+put the lines
+
+#define GAIM_PLUGIN
+#include "gaim.h"
+
+I mean this. Without this, all kinds of things will not work correctly. If you
+really want to know exactly what this does, read ../src/gaim.h and learn. But
+if you don't want to do that, just know that it's important.
+
+Now that you've put that there, make sure gaim.h is in your include path.
+
+Ok, now you're ready to write the plugin.
+
+The only function that is required is gaim_plugin_init(). This gets called as
+soon as it gets loaded (sort of - man dlopen for more details). If your
+function never returns, it will crash gaim! If your plugin uses up all the
+memory in the system, it will crash gaim! Once your plugin gets loaded, it
+effectively becomes a part of gaim, and anything that goes wrong will look
+like it is a problem with gaim itself. I write bugfree code! :) Therefore, it
+is your problem, not mine.
+
+You can basically do anything you want in the plugin. You can make function
+calls, change public widgets, display new widgets, things like that. But the
+really need thing is you can do things at events. For example, when one of
+your buddies signs on, you can instantly send them a message. You can modify
+the incoming and outgoing text. You can do all kinds of crazy things. Whatever
+you want. Check out SIGNALS and CRAZY for more information and ideas.
+
+Plugins can share globals with gaim, but will not share with other plugins.
+This is so if you have a global variable GtkWidget *window in your plugin and
+J. Random Hacker also has the same name on a global variable, you won't be
+constantly overwriting each others' variables. Unfortunately, this also means
+that plugins will have difficulty working together. But then again, that's
+what shared memory is for.
+
+When your plugin gets unloaded, gaim will try to call gaim_plugin_remove(). It
+doesn't have to be there, but it's nice if, say, you create a window, and when
+the plugin gets unloaded, it removes the window.
+
+There are a few examples in this directory. Enjoy.

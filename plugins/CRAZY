@@ -1,0 +1,38 @@
+Figures out the other person's IP address if they also have the same
+plugin loaded.
+
+	This would be a really interesting and pretty useful plugin. It
+	could work possibly by sending  'hidden' text in the form of an
+	HTML tag or something, and if it receives the same hidden text,
+	it could then pass messages back  and forth to send and receive
+	the IP addresses.
+
+Perform extra HTML-highlighting and HTML-stripping
+
+	Ever get annoyed because gaim doesn't support some HTML markup?
+	Here's a work-around. (Although, if you're this determined, you
+	might as well just hack gaim and send us the patches ;-) .)
+
+Auto-reply
+
+	If someone sends you a message, immediately send them a message
+	back. Add fun things  to the message. Reverse their  text, then
+	send it back to them. Play with fonts and colors and HTML tags.
+	Really annoy the hell out of them. :-)
+
+Control gaim by monitoring a file
+
+	I have to admit, I blatently stole  this idea from LICQ. But it
+	is a really  interesting concept. What happens is it  watches a
+	certain file to see if it's empty or not. If it's not, it reads
+	the contents and executes any commands stored in there (such as
+	send a message to someone). This  can be nice for having remote
+	control of gaim.
+
+
+These are just some of the ideas I came up with in about ten minutes. A
+really nice thing about having plugins  is as long as your code doesn't
+segfault, you can keep testing and  debugging without having to restart
+gaim. Plus the plugins tend to be small, and quick and easy to compile,
+so development should be quick. Try to have FUN with these plugins :-).
+(BTW, dibs on the 'control by file' plugin. :-) .)

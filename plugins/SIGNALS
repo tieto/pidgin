@@ -1,0 +1,59 @@
+enum gaim_event {
+	event_signon = 0,
+	event_signoff,
+	event_im_recv,
+	event_im_send,
+	event_buddy_signon,
+	event_buddy_signoff,
+};
+
+To add a signal handler, call the fuction gaim_signal_connect with the
+following arguments:
+
+enum gaim_event, void *, void *
+
+The first arg is hopefully obvious.
+The second arg is a pointer to a function that takes various args
+	depending on which event you're dealing with.
+The third arg is any data you want to send to your function, as a final
+	argument.
+
+So here are the args that get passed to your functions in various events:
+
+event_signon:
+	char *name
+
+	'name' is your username. (Note that this can be returned through
+		other methods.)
+
+event_signoff:
+	(none)
+
+event_im_recv:
+	char **who, char **text
+
+	'who' is the username of the person who sent the message.
+	'text' is the actual strict text (with HTML tags and all) of the
+		message they sent.
+	
+	Note that you can modify these values. (You are encouraged to do so!)
+
+event_im_send:
+	char **who, char **text
+
+	'who' is the username of the person you're sending the message to.
+	'text' is the actual strict text (with HTML tags and all) of the
+		message you're sending.
+
+	Note that you can modify these values. (You are _not_ encouraged to
+		do so ;-) .)
+
+event_buddy_signon:
+	char *who
+	
+	'who' is who signed on.
+
+event_buddy_signoff:
+	char *who
+
+	'who' is who signed off.
