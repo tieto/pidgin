@@ -499,7 +499,7 @@ msn_login(GaimAccount *account)
 		msn_http_session_init(session);
 
 	gc->proto_data = session;
-	gc->flags |= GAIM_CONNECTION_HTML;
+	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_FORMATTING_WBFO;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
 

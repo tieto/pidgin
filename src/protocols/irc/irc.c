@@ -187,6 +187,7 @@ static void irc_login(GaimAccount *account)
 	int err;
 
 	gc = gaim_account_get_connection(account);
+	gc->flags |= GAIM_CONNECTION_NO_NEWLINES;
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		gaim_connection_error(gc, _("IRC nicks may not contain whitespace"));

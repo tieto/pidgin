@@ -696,7 +696,7 @@ int check_away_mess(struct create_away *ca, int type)
 		return 0;
 	}
 
-	msg = gtk_imhtml_get_text(GTK_IMHTML(ca->text));
+	msg = gtk_imhtml_get_text(GTK_IMHTML(ca->text), NULL, NULL);
 
 	if ((type <= 1) && ((msg == NULL) || (*msg == '\0'))) {
 		/* We shouldn't allow a blank message */

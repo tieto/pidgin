@@ -274,6 +274,11 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), color);
 			g_free(color);
 		}
+
+		if (gc->flags & GAIM_CONNECTION_FORMATTING_WBFO)
+			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), TRUE);
+		else
+			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), FALSE);
 	}
 }
 
@@ -282,6 +287,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimAccount *account;
+	GaimConnection *gc;
 	char *buf, *clean;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -297,20 +303,36 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 	if (strlen(clean) == 0) {
 		g_free(clean);
-		g_free(buf);
 		return;
 	}
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-		gaim_conv_im_send(GAIM_CONV_IM(conv), buf);
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
-		gaim_conv_chat_send(GAIM_CONV_CHAT(conv), buf);
+	gc = gaim_account_get_connection(account);
+	if (gc && (gc->flags & GAIM_CONNECTION_NO_NEWLINES)) {
+		char **bufs;
+		int i;
+
+		bufs = gtk_imhtml_get_markup_lines(GTK_IMHTML(gtkconv->entry));
+		for (i = 0; bufs[i]; i++) {
+			if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+				gaim_conv_im_send(GAIM_CONV_IM(conv), bufs[i]);
+			else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+				gaim_conv_chat_send(GAIM_CONV_CHAT(conv), bufs[i]);
+		}
+
+		g_strfreev(bufs);
+
+	} else {
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+			gaim_conv_im_send(GAIM_CONV_IM(conv), buf);
+		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+			gaim_conv_chat_send(GAIM_CONV_CHAT(conv), buf);
+	}
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))
 		gaim_conv_window_hide(gaim_conversation_get_window(conv));
 
-	g_free(buf);
 	g_free(clean);
+	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 	default_formatize(conv);
@@ -1289,15 +1311,21 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					conv->send_history->data =
 						gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 				}
-				
+
 				if (conv->send_history->next &&
 					conv->send_history->next->data) {
+					GtkTextIter iter;
+					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
 					conv->send_history = conv->send_history->next;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
+					/* this is mainly just a hack so the formatting at the
+					 * cursor gets picked up. */
+					gtk_text_buffer_get_end_iter(buffer, &iter);
+					gtk_text_buffer_move_mark_by_name(buffer, "insert", &iter);
 				}
 
 				return TRUE;
@@ -1309,12 +1337,18 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				if (conv->send_history->prev &&
 					conv->send_history->prev->data) {
+					GtkTextIter iter;
+					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
 					conv->send_history = conv->send_history->prev;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
+					/* this is mainly just a hack so the formatting at the
+					 * cursor gets picked up. */
+					gtk_text_buffer_get_end_iter(buffer, &iter);
+					gtk_text_buffer_move_mark_by_name(buffer, "insert", &iter);
 				}
 
 				return TRUE;
@@ -2329,7 +2363,7 @@ gray_stuff_out(GaimConversation *conv)
 		/* Deal with the toolbar */
 
 		if (gc->flags & GAIM_CONNECTION_HTML) {
-			buttons = -1;    /* Everything on */
+			buttons = GTK_IMHTML_ALL;    /* Everything on */
 			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
 				buttons &= ~GTK_IMHTML_IMAGE;
 			if (gc->flags & GAIM_CONNECTION_NO_BGCOLOR)
@@ -4499,6 +4533,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	if (flags & GAIM_MESSAGE_IMAGES)
 		gaim_gtk_find_images(message, &images);
 
+	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
+
 	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
 		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
 	else
@@ -4649,7 +4686,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options, images);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
+		//gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
 
 		conv->history = g_string_append(conv->history, buf);
 		conv->history = g_string_append(conv->history, new_message);

@@ -358,7 +358,9 @@ do_insert_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 	if (description == NULL)
 		description = url;
 
-	gtk_imhtml_insert_link(GTK_IMHTML(toolbar->imhtml), url, description);
+	gtk_imhtml_insert_link(GTK_IMHTML(toolbar->imhtml),
+	                       gtk_text_buffer_get_insert(GTK_IMHTML(toolbar->imhtml)->text_buffer),
+	                       url, description);
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
 
@@ -719,7 +721,7 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
-									   underline, toolbar);	
+									   underline, toolbar);
 }
 
 static void update_format_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar) {

@@ -60,22 +60,14 @@ typedef enum {
 	GTK_IMHTML_BACKCOLOR = 1 << 7,
 	GTK_IMHTML_LINK =      1 << 8,
 	GTK_IMHTML_IMAGE =     1 << 9,
-	GTK_IMHTML_SMILEY =    1 << 10
+	GTK_IMHTML_SMILEY =    1 << 10,
+	GTK_IMHTML_ALL =      -1
 } GtkIMHtmlButtons;
-
-typedef struct {
-	GtkTextMark *start;
-	GtkTextMark *end;
-	char *start_tag;
-	char *end_tag;
-	GtkTextBuffer *buffer;
-	GtkTextTag *tag;
-} GtkIMHtmlFormatSpan;
 
 struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
-	GtkTextMark *end;
+	GtkTextMark *scrollpoint;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
 	GdkCursor *text_cursor;
@@ -100,19 +92,21 @@ struct _GtkIMHtml {
 
 	gboolean editable;
 	GtkIMHtmlButtons format_functions;
+	gboolean wbfo;	/* Whole buffer formatting only. */
+
+	gint insert_offset;
 
 	struct {
-		GtkIMHtmlFormatSpan *bold;
-		GtkIMHtmlFormatSpan *italic;
-		GtkIMHtmlFormatSpan *underline;
-		GtkIMHtmlFormatSpan *forecolor;
-		GtkIMHtmlFormatSpan *backcolor;
-		GtkIMHtmlFormatSpan *fontface;
-		GtkIMHtmlFormatSpan *sizespan;
+		gboolean bold:1;
+		gboolean italic:1;
+		gboolean underline:1;
+		gchar *forecolor;
+		gchar *backcolor;
+		gchar *fontface;
 		int fontsize;
+		GtkTextTag *link;
 	} edit;
 	char *clipboard_string;
-	GList *format_spans;
 };
 
 struct _GtkIMHtmlClass {
@@ -204,11 +198,14 @@ void       gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name)
 #define    gtk_imhtml_append_text(x, y, z) \
  gtk_imhtml_append_text_with_images(x, y, z, NULL)
 
-GString*   gtk_imhtml_append_text_with_images (GtkIMHtml *imhtml,
+void gtk_imhtml_append_text_with_images (GtkIMHtml *imhtml,
 					       const gchar *text,
 					       GtkIMHtmlOptions options,
 					       GSList *images);
-
+void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
+                                    const gchar      *text,
+                                    GtkIMHtmlOptions  options,
+                                    GtkTextIter      *iter);
 void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
@@ -230,6 +227,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
 
 /* Editable stuff */
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
+void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo);
 void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons);
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *italic, gboolean *underline);
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
@@ -239,14 +237,19 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
-void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
+void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url);
+void gtk_imhtml_insert_link(GtkIMHtml *imhtml, GtkTextMark *mark, const char *url, const char *text);
 void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley);
+void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter);
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size);
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml);
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
-char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
+/* returns a null terminated array of pointers to null ternimated strings, each string for each line */
+/* g_strfreev() should be called on it */
+char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
+char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *stop);
 
 #ifdef __cplusplus
 }
