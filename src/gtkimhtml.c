@@ -40,6 +40,9 @@
 #include <langinfo.h>
 #include <locale.h>
 #endif
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -110,6 +113,55 @@ GtkTargetEntry link_drag_drop_targets[] = {
 	{"x-url/http", 0, DRAG_URL},
 	{"text/uri-list", 0, DRAG_URL},
 	{"_NETSCAPE_URL", 0, DRAG_URL}};
+
+#ifdef _WIN32
+/* Win32 clipboard format value, and functions to convert back and
+ * forth between HTML and the clipboard format.
+ */
+static UINT win_html_fmt;
+
+static gchar *
+clipboard_win32_to_html(char *clipboard) {
+    const char *begin, *end;
+	gchar *html;
+
+    begin = strstr(clipboard, "<!--StartFragment");
+    while(*begin++ != '>');
+	end = strstr(clipboard, "<!--EndFragment");
+	html = g_strstrip(g_strndup(begin, (end ? (end - begin) : strlen(begin))));
+}
+
+static gchar *
+clipboard_html_to_win32(char *html) {
+    int length;
+	gchar *ret;
+	GString *clipboard;
+
+    if (html == NULL)
+	    return NULL;
+
+	length = strlen(html);
+	clipboard = g_string_new ("Version:0.9\r\n");
+	g_string_append(clipboard, "StartHTML:0000000105\r\n");
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, g_strdup_printf("EndHTML:%010d\r\n", 143 + length));
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, "StartFragment:0000000105\r\n");
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, g_strdup_printf("EndFragment:%010d\r\n", 143 + length));
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, "<!--StartFragment-->");
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, html);
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	g_string_append(clipboard, "<!--EndFragment-->");
+	gaim_debug_info("html clipboard", "Length %d\n", clipboard->len);
+	ret = clipboard->str;
+	g_string_free(clipboard, FALSE);
+	return ret;
+}
+
+#endif
 
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
@@ -564,6 +616,26 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 	imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
 
+#ifdef _WIN32
+	/* We're going to still copy plain text, but let's toss the "HTML Format"
+	   we need into the windows clipboard now as well.	*/
+	HGLOBAL hdata;
+	gchar *clipboard = clipboard_html_to_win32(imhtml->clipboard_html_string);
+	gchar *buffer;
+	gint length = strlen(clipboard);
+	if(clipboard != NULL) {
+	    OpenClipboard(NULL);
+		hdata = GlobalAlloc(GMEM_MOVEABLE, length);
+		buffer = GlobalLock(hdata);
+        memcpy(buffer, clipboard, length);
+		GlobalUnlock(hdata);
+        SetClipboardData(win_html_fmt, hdata);
+		CloseClipboard();
+	}
+
+	gaim_debug_info("html clipboard", "clipboard set\n%s\n", (clipboard ? clipboard : "nothing"));
+#endif
+
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
 }
 
@@ -577,6 +649,37 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
+#ifdef _WIN32
+	/* If we're on windows, let's see if we can get data from the HTML Format
+	   clipboard before we try to paste from the GTK buffer */
+	HGLOBAL hdata;
+	DWORD err;
+	char *buffer;
+	if (IsClipboardFormatAvailable(win_html_fmt)) {
+	    OpenClipboard(NULL);
+		hdata = GetClipboardData(win_html_fmt);
+		if (hdata == NULL) {
+		    err = GetLastError();
+			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
+			CloseClipboard();
+			return;
+		}
+		buffer = GlobalLock(hdata);
+		if (buffer == NULL) {
+		    err = GetLastError();
+			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
+			CloseClipboard();
+			return;
+		}
+		text = clipboard_win32_to_html(buffer);
+		gaim_debug_info("html clipboard", "buffer\n%s\n", (buffer ? buffer : "nothing"));
+		GlobalUnlock(hdata);
+		CloseClipboard();
+
+		gaim_debug_info("html clipboard", "text\n%s\n", (text ? text : "nothing"));
+
+	} else
+#endif
 	if (selection_data->length < 0) {
 		text = gtk_clipboard_wait_for_text(clipboard);
 
@@ -600,11 +703,8 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
 	gtk_imhtml_insert_html_at_iter(imhtml, text, GTK_IMHTML_NO_NEWLINE, &iter);
 	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
-
 	g_free(text);
-
 }
-
 
 static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
@@ -835,6 +935,11 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->scalables = NULL;
 
 	gtk_imhtml_set_editable(imhtml, FALSE);
+
+#ifdef _WIN32
+	/* Register HTML Format as desired clipboard format */
+	win_html_fmt = RegisterClipboardFormat("HTML Format");
+#endif
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -2059,29 +2164,41 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						ws[0] = '\0'; wpos = 0;
 						/* NEW_BIT (NEW_TEXT_BIT); */
 						fonts = g_slist_remove (fonts, font);
-						oldfont = fonts->data;
+						if (fonts)
+						    oldfont = fonts->data;
 
-						if (font->size != oldfont->size)
-						    gtk_imhtml_font_set_size(imhtml, oldfont->size);
-						if (font->underline != oldfont->underline)
-						    gtk_imhtml_toggle_underline(imhtml);
-						if (oldfont->face == NULL || strcmp(font->face, oldfont->face) != 0)
-						{
-							g_free (font->face);
-						    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
+						if (!oldfont) {
+							gtk_imhtml_font_set_size(imhtml, 3);
+							if (font->underline)
+							    gtk_imhtml_toggle_underline(imhtml);
+							gtk_imhtml_toggle_fontface(imhtml, NULL);
+							gtk_imhtml_toggle_forecolor(imhtml, NULL);
+							gtk_imhtml_toggle_backcolor(imhtml, NULL);
 						}
-						if (oldfont->fore == NULL || strcmp(font->fore, oldfont->fore) != 0)
+						else
 						{
-							g_free (font->fore);
-						    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
+
+						    if (font->size != oldfont->size)
+							    gtk_imhtml_font_set_size(imhtml, oldfont->size);
+
+							if (font->underline != oldfont->underline)
+							    gtk_imhtml_toggle_underline(imhtml);
+
+							if (!oldfont->face || strcmp(font->face, oldfont->face) != 0)
+							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
+
+							if (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0)
+							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
+
+							if (!oldfont->back || strcmp(font->back, oldfont->back) != 0)
+						      gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
-						if (oldfont->back == NULL || strcmp(font->back, oldfont->back) != 0)
-						{
-							g_free (font->back);
-						    gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
-						}
-						if (font->sml)
-							g_free (font->sml);
+
+						g_free (font->face);
+						g_free (font->fore);
+						g_free (font->back);
+						g_free (font->sml);
+
 						g_free (font);
 					}
 					break;
