@@ -361,7 +361,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
-		char *msg, *skiphead, *utf, *final;
+		char *msg, *content, *skiphead, *utf, *final;
 		int len;
 
 		GET_NEXT(tmp);
@@ -382,11 +382,22 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	
 		}
 
+		content = strstr(msg, "Content-Type: ");
+		if (content) {
+			if (g_strncasecmp(content, "Content-Type: text/plain",
+					    strlen("Content-Type: text/plain"))) {
+				g_free(msg);
+				return;
+			}
+		}
+
 		skiphead = strstr(msg, "\r\n\r\n");
 		if (!skiphead || !skiphead[4]) {
 			g_free(msg);
 			return;
 		}
+		*skiphead = 0;
+		debug_printf("%s\n", msg);
 		skiphead += 4;
 		utf = utf8_to_str(skiphead);
 		len = MAX(strlen(utf) + 1, BUF_LEN);
