@@ -561,7 +561,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, char *new
 				g_free(tmp);
 			}
 		} else {
-			char *tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
+			tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 			if (aim_ssi_waitingforauth(od->sess->ssi.local, tmp, b->name))
 				oscar_string_append(str, newline, _("Status"), _("Not Authorized"));
 			else
@@ -570,7 +570,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, char *new
 	}
 
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		char *tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
@@ -588,8 +588,10 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, char *new
 	if ((b != NULL) && (b->name != NULL) && (g != NULL) && (g->name != NULL)) {
 		tmp = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
 		if (tmp != NULL) {
-			oscar_string_append(str, newline, _("Buddy Comment"), tmp);
+			char *tmp2 = g_markup_escape_text(tmp, strlen(tmp));
 			g_free(tmp);
+			oscar_string_append(str, newline, _("Buddy Comment"), tmp2);
+			g_free(tmp2);
 		}
 	}
 
@@ -2218,7 +2220,8 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
-	/* uncomment this when you're convinced it's right. remember, it's been wrong before.
+	/* uncomment this when you're convinced it's right. remember, it's been wrong before. */
+#if 0
 	if (offset > AIM_MAX_FILE_SIZE || len > AIM_MAX_FILE_SIZE) {
 		char *buf;
 		int i = 8;
@@ -2244,7 +2247,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_free(buf);
 		return 1;
 	}
-	*/
+#endif
 
 	pos = g_new0(struct pieceofcrap, 1);
 	pos->gc = sess->aux_data;
