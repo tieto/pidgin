@@ -21,10 +21,15 @@
  *
  */
 
+#define PHOTO_SUPPORT 1
+
 #include "internal.h"
 #include "debug.h"
 #include "notify.h"
 #include "util.h"
+#if PHOTO_SUPPORT
+#include "imgstore.h"
+#endif
 
 #include "yahoo.h"
 
@@ -75,6 +80,19 @@ typedef struct profile_strings_node {
 	char *cool_link_3_string;
 	char *dummy;
 } profile_strings_node_t;
+
+
+typedef struct {
+	YahooGetInfoData *info_data;
+	char *url_buffer;
+	GString *s;
+	char *photo_url_text;
+	char *profile_url_text;
+	char *tooltip_text;
+	const profile_strings_node_t *strings;
+	const char *last_updated_string;
+} YahooGetInfoStepTwoData;
+
 
 /* Strings to determine the profile "language" (more accurately "locale").
  * Strings in this list must be in the original charset in the profile.
@@ -613,20 +631,90 @@ static char *yahoo_remove_nonbreaking_spaces(char *str)
 	return str;
 }
 
+static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
+	GString *s = g_string_sized_new(80); /* wild guess */
+	GaimBuddy *b;
+
+	g_string_printf(s, _("<b>%s:</b> %s<br>"), _("Yahoo! ID"), info_data->name);
+	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
+			info_data->name);
+
+	if (b) {
+		char *statustext = yahoo_tooltip_text(b);
+		if(b->alias && b->alias[0]) {
+			char *aliastext = g_markup_escape_text(b->alias, -1);
+			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
+			g_free(aliastext);
+		}
+		if (b->idle > 0) {
+			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
+			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
+					idletime);
+			g_free(idletime);
+		}
+		if (statustext) {
+			g_string_append_printf(s, "%s<br>", statustext);
+			g_free(statustext);
+		}
+	}
+
+	return g_string_free(s, FALSE);
+}
+
+#if PHOTO_SUPPORT
+
+static char *yahoo_get_photo_url(const char *url_text, const char *name) {
+	GString *s = g_string_sized_new(strlen(name) + 8);
+	char *p;
+	char *it = NULL;
+
+	g_string_printf(s, " alt=\"%s\">", name);
+	p = strstr(url_text, s->str);
+
+	if (p) {
+		/* Search backwards for "http://". This is stupid, but it works. */
+		for (; !it && p > url_text; p -= 1) {
+			if (strncmp(p, "\"http://", 8) == 0) {
+				char *q;
+				p += 1; /* skip only the " */
+				q = strchr(p, '"');
+				if (q) {
+					it = g_strndup(p, q - p);
+				}
+			}
+		}
+	}
+
+	g_string_free(s, TRUE);
+	return it;
+}
+
+static void yahoo_got_photo(void *data, const char *url_text, size_t len);
+
+#endif /* PHOTO_SUPPORT */
+
 static void yahoo_got_info(void *data, const char *url_text, size_t len)
 {
 	YahooGetInfoData *info_data = (YahooGetInfoData *)data;
-	char *stripped, *p;
+	char *p;
 	char buf[1024];
+#if PHOTO_SUPPORT
+	YahooGetInfoStepTwoData *info2_data;
+	char *photo_url_text = NULL;
+#else
 	gboolean found = FALSE;
+	char *stripped;
+	int stripped_len;
+	char *last_updated_utf8_string = NULL;
+#endif
+	const char *last_updated_string = NULL;
 	char *url_buffer;
 	GString *s;
-	int stripped_len;
-	const char *last_updated_string = NULL;
-	char *last_updated_utf8_string;
+	char *tooltip_text = NULL;
+	char *profile_url_text = NULL;
 	int lang, strid;
-	GaimBuddy *b;
 	struct yahoo_data *yd;
+	const profile_strings_node_t *strings = NULL;
 
 	if (!GAIM_CONNECTION_IS_VALID(info_data->gc)) {
 		g_free(info_data->name);
@@ -637,34 +725,60 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = info_data->gc->proto_data;
-	
-	/* we failed to grab the profile URL. this should never happen */
-	if (url_text == NULL || strcmp(url_text, "") == 0) {
-		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
-			_("<html><body><b>Error retrieving profile</b></body></html>"),
-			  NULL, NULL);
 
+	/* Get the tooltip info string */
+	tooltip_text = yahoo_tooltip_info_text(info_data);
+	
+	/* We failed to grab the profile URL.  This is not expected to actually
+	 * happen except under unusual error conditions, as Yahoo is observed
+	 * to send back HTML, with a 200 status code.
+	 */
+	if (url_text == NULL || strcmp(url_text, "") == 0) {
+		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
+				tooltip_text, _("Error retrieving profile"));
+
+		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
+				buf, NULL, NULL);
+
+		g_free(profile_url_text);
+		g_free(tooltip_text);
 		g_free(info_data->name);
 		g_free(info_data);
 		return;
 	}
 
-	/* we don't yet support the multiple link level of the warning page for
+	/* Construct the correct profile URL */
+	s = g_string_sized_new(80); /* wild guess */
+	g_string_printf(s, "%s%s", (yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL),
+		info_data->name);
+	profile_url_text = g_string_free(s, FALSE);
+	s = NULL;
+
+	/* We don't yet support the multiple link level of the warning page for
 	 * 'adult' profiles, not to mention the fact that yahoo wants you to be
-	 * logged in (on the website) to be able to view an 'adult' profile.  for
+	 * logged in (on the website) to be able to view an 'adult' profile.  For
 	 * now, just tell them that we can't help them, and provide a link to the
 	 * profile if they want to do the web browser thing.
 	 */
 	p = strstr(url_text, "Adult Profiles Warning Message");
+	if (!p) {
+		p = strstr(url_text, "Adult Content Warning"); /* TITLE element */
+	}
 	if (p) {
-		g_snprintf(buf, 1024, "<html><body>%s%s<a href=\"%s%s\">%s%s</a></body></html>",
-				_("<b>Sorry, profiles marked as containing adult content are not supported at this time.</b><br><br>\n"),
-				_("If you wish to view this profile, you will need to visit this link in your web browser<br>"),
-				YAHOO_PROFILE_URL, info_data->name, YAHOO_PROFILE_URL, info_data->name);
+		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b><br><br>\n"
+					"%s<br><a href=\"%s\">%s</a></body></html>",
+				tooltip_text,
+				_("Sorry, profiles marked as containing adult content "
+				  "are not supported at this time."),
+				_("If you wish to view this profile, "
+				  "you will need to visit this link in your web browser"),
+				profile_url_text, profile_url_text);
 
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
 				buf, NULL, NULL);
 
+		g_free(profile_url_text);
+		g_free(tooltip_text);
 		g_free(info_data->name);
 		g_free(info_data);
 		return;
@@ -684,31 +798,47 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		for (strid = 0; profile_strings[strid].lang != XX; strid += 1) {
 			if (profile_strings[strid].lang == profile_langs[lang].lang) break;
 		}
+		strings = profile_strings + strid;
 		gaim_debug_info("yahoo", "detected profile lang = %s (%d)\n", profile_strings[strid].lang_string, lang);
 	}
 
 	/* Every user may choose his/her own profile language, and this language
 	 * has nothing to do with the preferences of the user which looks at the
 	 * profile. We try to support all languages, but nothing is guaranteed.
+	 * If we cannot determine the language, it means either (1) the profile
+	 * is written in an unsupported language, (2) our language support is
+	 * out of date, or (3) the user is not found.
 	 */
-	if (!p || profile_strings[strid].lang == XX) {
-		if (strstr(url_text, "was not found on this server.") == NULL && strstr(url_text, "Yahoo! Member Directory - User not found") == NULL) {
-			g_snprintf(buf, 1024, "<html><body>%s%s<a href=\"%s%s\">%s%s</a></body></html>",
-					_("<b>Sorry, this profile seems to be in a language "
-					  "that is not supported at this time.</b><br><br>\n"),
-					_("If you wish to view this profile, you will need to visit this link in your web browser<br>"),
-					YAHOO_PROFILE_URL, info_data->name, YAHOO_PROFILE_URL, info_data->name);
+	if (!p || strings->lang == XX) {
+		if (!strstr(url_text, "Yahoo! Member Directory - User not found")
+				&& !strstr(url_text, "was not found on this server.")
+				&& !strstr(url_text, "\xb8\xf8\xb3\xab\xa5\xd7\xa5\xed\xa5\xd5\xa5\xa3\xa1\xbc\xa5\xeb\xa4\xac\xb8\xab\xa4\xc4\xa4\xab\xa4\xea\xa4\xde\xa4\xbb\xa4\xf3")) {
+			g_snprintf(buf, 1024, "<html><body>%s<b>%s</b><br><br>\n"
+						"%s<br><a href=\"%s\">%s</a></body></html>",
+					tooltip_text,
+					_("Sorry, this profile seems to be in a language "
+					  "that is not supported at this time."),
+					_("If you wish to view this profile, "
+					  "you will need to visit this link in your web browser"),
+					profile_url_text, profile_url_text);
 		} else {
-			g_snprintf(buf, 1024, "<html><body><b>Error retrieving profile</b></body></html>");
+			g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
+					tooltip_text, _("Error retrieving profile"));
 		}
 
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
 				buf, NULL, NULL);
 
+		g_free(profile_url_text);
+		g_free(tooltip_text);
 		g_free(info_data->name);
 		g_free(info_data);
 		return;
 	}
+
+#if PHOTO_SUPPORT
+	photo_url_text = yahoo_get_photo_url(url_text, info_data->name);
+#endif
 
 	url_buffer = g_strdup(url_text);
 
@@ -725,10 +855,59 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 #endif
 
 	/* nuke the nasty \r's */
-	while ((p = strchr(url_buffer, '\r')) != NULL) {
-		memmove(p, p + 1, strlen(p + 1));
-		url_buffer[strlen(url_buffer) - 1] = '\0';
+	gaim_str_strip_cr(url_buffer);
+
+#if PHOTO_SUPPORT
+
+	/* Marshall the existing state */
+	info2_data = g_malloc(sizeof(YahooGetInfoStepTwoData));
+	info2_data->info_data = info_data;
+	info2_data->url_buffer = url_buffer;
+	info2_data->s = s;
+	info2_data->photo_url_text = photo_url_text;
+	info2_data->profile_url_text = profile_url_text;
+	info2_data->tooltip_text = tooltip_text;
+	info2_data->strings = strings;
+	info2_data->last_updated_string = last_updated_string;
+
+	/* Try to put the photo in there too, if there's one */
+	if (photo_url_text) {
+		/* User-uploaded photos use a different server that requires the Host
+		 * header, but Yahoo Japan will use the "chunked" content encoding if
+		 * we specify HTTP 1.1. So we have to specify 1.0 & fix gaim_url_fetch
+		 */
+		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, yahoo_got_photo,
+				info2_data);
+	} else {
+		/* Emulate a callback */
+		yahoo_got_photo(info2_data, NULL, 0);
 	}
+}
+
+static void yahoo_got_photo(void *data, const char *url_text, size_t len)
+{
+	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
+	gboolean found = FALSE;
+	int id = -1;
+
+	/* Temporary variables */
+	char *p = NULL;
+	char *stripped;
+	int stripped_len;
+	char *last_updated_utf8_string = NULL;
+
+	/* Unmarshall the saved state */
+	YahooGetInfoData *info_data = info2_data->info_data;
+	char *url_buffer = info2_data->url_buffer;
+	GString *s = info2_data->s;
+	char *photo_url_text = info2_data->photo_url_text;
+	char *profile_url_text = info2_data->profile_url_text;
+	char *tooltip_text = info2_data->tooltip_text;
+	const profile_strings_node_t *strings = info2_data->strings;
+	const char *last_updated_string = info2_data->last_updated_string;
+
+	/* We continue here from yahoo_got_info, as if nothing has happened */
+#endif /* PHOTO_SUPPORT */
 
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
 	stripped = gaim_markup_strip_html(url_buffer);
@@ -738,7 +917,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	gaim_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* convert to utf8 */
-	p = g_convert(stripped, -1, "utf-8", profile_strings[strid].charset, NULL, NULL, NULL);
+	p = g_convert(stripped, -1, "utf-8", strings->charset, NULL, NULL, NULL);
 	if (!p) {
 		p = g_locale_to_utf8(stripped, -1, NULL, NULL, NULL);
 		if (!p) {
@@ -755,7 +934,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	/* FIXME need error dialog here */
 
 	/* "Last updated" should also be converted to utf8 and with &nbsp; killed */
-	last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8", profile_strings[strid].charset, NULL, NULL, NULL);
+	last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8",
+			strings->charset, NULL, NULL, NULL);
 	yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);
 
 	gaim_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
@@ -765,79 +945,96 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	s = g_string_sized_new(strlen(url_buffer));
 	g_string_append(s, "<html><body>\n");
 
+#if 0
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].yahoo_id_string, 2, "\n", 0,
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->yahoo_id_string, 2, "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL))
-		g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Yahoo! ID"), info_data->name);
+		;
+#endif
 
-	/* Display the alias, idle time, and status message below the Yahoo! ID */
-	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc), info_data->name);
-	if (b) {
-		char *statustext = yahoo_tooltip_text(b);
-		if(b->alias && b->alias[0]) {
-			char *aliastext = g_markup_escape_text(b->alias, -1);
-			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
-			g_free(aliastext);
-		}
-		if (b->idle > 0) {
-			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
-			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"), idletime);
-			g_free(idletime);
-		}
-		if (statustext) {
-			g_string_append_printf(s, "%s<br>", statustext);
-			g_free(statustext);
+	/* Put the Yahoo! ID, nickname, idle time, and status message in */
+	g_string_append(s, tooltip_text);
+
+#if PHOTO_SUPPORT
+
+	/* Try to put the photo in there too, if there's one and is readable */
+	if (data && url_text && len != 0) {
+		if (strstr(url_text, "400 Bad Request")
+				|| strstr(url_text, "403 Forbidden")
+				|| strstr(url_text, "404 Not Found")) {
+
+			gaim_debug_info("yahoo", "Error getting %s: %s\n",
+					photo_url_text, url_text);
+		} else {
+			gaim_debug_info("yahoo", "%s is %d bytes\n", photo_url_text, len);
+			id = gaim_imgstore_add(url_text, len, NULL);
+			g_string_append_printf(s, "<img id=\"%d\"><br>", id);
 		}
 	}
 
+#endif /* PHOTO_SUPPORT */
+
 	/* extract their Email address and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].my_email_string, 5, "\n", 0,
-			profile_strings[strid].private_string, _("Email"), 0, NULL);
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->my_email_string, 5, "\n", 0,
+			strings->private_string, _("Email"), 0, NULL);
 
 	/* extract the Nickname if it exists */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Nickname:", 1, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			"Nickname:", 1, "\n", '\n',
 			NULL, _("Nickname"), 0, NULL);
 
 	/* extract their RealName and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].realname_string, 1, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->realname_string, 1, "\n", '\n',
 			NULL, _("Realname"), 0, NULL);
 
 	/* extract their Location and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].location_string, 2, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->location_string, 2, "\n", '\n',
 			NULL, _("Location"), 0, NULL);
 
 	/* extract their Age and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].age_string, 3, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->age_string, 3, "\n", '\n',
 			NULL, _("Age"), 0, NULL);
 
 	/* extract their MaritalStatus and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].maritalstatus_string, 3, "\n", '\n',
-			profile_strings[strid].no_answer_string, _("Marital Status"), 0, NULL);
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->maritalstatus_string, 3, "\n", '\n',
+			strings->no_answer_string, _("Marital Status"), 0, NULL);
 
 	/* extract their Gender and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].gender_string, 3, "\n", '\n',
-			profile_strings[strid].no_answer_string, _("Gender"), 0, NULL);
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->gender_string, 3, "\n", '\n',
+			strings->no_answer_string, _("Gender"), 0, NULL);
 
 	/* extract their Occupation and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].occupation_string, 2, "\n", '\n',
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->occupation_string, 2, "\n", '\n',
 			NULL, _("Occupation"), 0, NULL);
 
-	/* Hobbies, Latest News, and Favorite Quote are a bit different, since the
-	 * values can contain embedded newlines... but any or all of them can also
-	 * not appear.  The way we delimit them is to successively look for the next
-	 * one that _could_ appear, and if all else fails, we end the section by
-	 * looking for the 'Links' heading, which is the next thing to follow this
-	 * bunch.
+	/* Hobbies, Latest News, and Favorite Quote are a bit different, since
+	 * the values can contain embedded newlines... but any or all of them
+	 * can also not appear.  The way we delimit them is to successively
+	 * look for the next one that _could_ appear, and if all else fails,
+	 * we end the section by looking for the 'Links' heading, which is the
+	 * next thing to follow this bunch.  (For Yahoo Japan, we check for
+	 * the "Description" ("Self PR") heading instead of "Links".)
 	 */
 
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].hobbies_string, 1, profile_strings[strid].latest_news_string,
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->hobbies_string, 1, strings->latest_news_string,
 			'\n', NULL, _("Hobbies"), 0, NULL))
 	{
-		if (!gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].hobbies_string, 1, profile_strings[strid].favorite_quote_string,
+		if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
+				strings->hobbies_string, 1, strings->favorite_quote_string,
 				'\n', NULL, _("Hobbies"), 0, NULL))
 		{
-			found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].hobbies_string, 1, profile_strings[strid].links_string,
+			found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+					strings->hobbies_string, 1, strings->links_string,
 					'\n', NULL, _("Hobbies"), 0, NULL);
 		}
 		else
@@ -846,66 +1043,76 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	else
 		found = TRUE;
 
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].latest_news_string, 1, profile_strings[strid].favorite_quote_string,
+	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->latest_news_string, 1, strings->favorite_quote_string,
 			'\n', NULL, _("Latest News"), 0, NULL))
 	{
-		found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].latest_news_string, 1, profile_strings[strid].links_string,
+		found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+				strings->latest_news_string, 1, strings->links_string,
 				'\n', NULL, _("Latest News"), 0, NULL);
 	}
 	else
 		found = TRUE;
 
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].favorite_quote_string, 1, profile_strings[strid].links_string,
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			strings->favorite_quote_string, 1, strings->links_string,
 			'\n', NULL, _("Favorite Quote"), 0, NULL);
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link.
-	 * For non-English profiles, there might be no "Home Page:" string at all,
-	 * in which case we probably can do nothing about it.
+	 * For Yahoo! Japan, if there is no home page specified,
+	 * neither "No home page specified" nor "Home Page:" is shown.
 	 */
-	if (profile_strings[strid].home_page_string) {
-		p = !profile_strings[strid].no_home_page_specified_string? NULL:
-			strstr(stripped, profile_strings[strid].no_home_page_specified_string);
+	if (strings->home_page_string) {
+		p = !strings->no_home_page_specified_string? NULL:
+			strstr(stripped, strings->no_home_page_specified_string);
 		if(!p)
 		{
-			found |= gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].home_page_string, 1, "\n", 0, NULL,
+			found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+					strings->home_page_string, 1, "\n", 0, NULL,
 					_("Home Page"), 1, NULL);
 		}
 	}
 
-	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
-	 * then we have none.  If we have one however, we'll need to check and see
-	 * if we have a second one.  If we have a second one, we have to check to
-	 * see if we have a third one.
+	/* Cool Link {1,2,3} is also different.  If "No cool link specified"
+	 * exists, then we have none.  If we have one however, we'll need to
+	 * check and see if we have a second one.  If we have a second one,
+	 * we have to check to see if we have a third one.
 	 */
-	p = !profile_strings[strid].no_cool_link_specified_string? NULL:
-		strstr(stripped,profile_strings[strid].no_cool_link_specified_string);
+	p = !strings->no_cool_link_specified_string? NULL:
+		strstr(stripped,strings->no_cool_link_specified_string);
 	if (!p)
 	{
-		if (gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].cool_link_1_string, 1, "\n", 0, NULL,
+		if (gaim_markup_extract_info_field(stripped, stripped_len, s,
+				strings->cool_link_1_string, 1, "\n", 0, NULL,
 				_("Cool Link 1"), 1, NULL))
 		{
 			found = TRUE;
-			if (gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].cool_link_2_string, 1, "\n", 0, NULL,
+			if (gaim_markup_extract_info_field(stripped, stripped_len, s,
+					strings->cool_link_2_string, 1, "\n", 0, NULL,
 					_("Cool Link 2"), 1, NULL))
-							gaim_markup_extract_info_field(stripped, stripped_len, s, profile_strings[strid].cool_link_3_string, 1, "\n", 0, NULL,
+			{
+				gaim_markup_extract_info_field(stripped, stripped_len, s,
+						strings->cool_link_3_string, 1, "\n", 0, NULL,
 						_("Cool Link 3"), 1, NULL);
+			}
 		}
 	}
 
 	/* see if Member Since is there, and if so, extract it. */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, "Member Since:", 1, last_updated_utf8_string,
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			"Member Since:", 1, last_updated_utf8_string,
 			'\n', NULL, _("Member Since"), 0, NULL);
 
 	/* extract the Last Updated date and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s, last_updated_utf8_string, 0, "\n", '\n', NULL,
+	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+			last_updated_utf8_string, 0, "\n", '\n', NULL,
 			_("Last Updated"), 0, NULL);
 
 	/* put a link to the actual profile URL */
 	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
-	g_string_append_printf(s, "<a href=\"%s%s\">%s%s</a><br>",
-			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), info_data->name,
-			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), info_data->name);
+	g_string_append_printf(s, "<br><a href=\"%s\">%s</a><br>",
+			profile_url_text, profile_url_text);
 
 	/* finish off the html */
 	g_string_append(s, "</body></html>\n");
@@ -929,8 +1136,17 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);
 	g_string_free(s, TRUE);
+	g_free(profile_url_text);
+	g_free(tooltip_text);
 	g_free(info_data->name);
 	g_free(info_data);
+
+#if PHOTO_SUPPORT
+	g_free(photo_url_text);
+	g_free(info2_data);
+	if (id != -1)
+		gaim_imgstore_unref(id);
+#endif
 }
 
 void yahoo_get_info(GaimConnection *gc, const char *name)
