@@ -1,4 +1,4 @@
-SUBDIRS = protocols smileys status
+SUBDIRS = smileys status
 
 EXTRA_DIST = \
 		about_menu.png			\

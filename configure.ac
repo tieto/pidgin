@@ -399,15 +399,6 @@ AC_OUTPUT([Makefile
            doc/Makefile
 	   intl/Makefile
            pixmaps/Makefile
-	   pixmaps/protocols/Makefile
-           pixmaps/protocols/msn/Makefile
-           pixmaps/protocols/yahoo/Makefile
-	   pixmaps/protocols/oscar/Makefile
-	   pixmaps/protocols/napster/Makefile
-	   pixmaps/protocols/jabber/Makefile
-	   pixmaps/protocols/icq/Makefile
-	   pixmaps/protocols/irc/Makefile
-	   pixmaps/protocols/gg/Makefile
 	   pixmaps/smileys/Makefile
 	   pixmaps/smileys/default/Makefile
 	   pixmaps/status/Makefile
