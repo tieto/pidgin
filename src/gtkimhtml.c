@@ -98,9 +98,8 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 }
 
 
-gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
+void gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 {
-	/*
 	GSList *list = g_slist_append (NULL, tree);
 
 	while (list) {
@@ -115,8 +114,6 @@ gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 		}
 		g_free (t);
 	}
-	return TRUE;
-	*/
 }
 
 
@@ -130,12 +127,19 @@ enum {
 };
 static guint signals [LAST_SIGNAL] = { 0 };
 
+static gboolean
+gtk_smiley_tree_destroy_from_hash(gpointer key, gpointer value,
+		gpointer user_data)
+{
+	gtk_smiley_tree_destroy(value);
+	return TRUE;
+}
+
 static void
 gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
-
-	g_hash_table_foreach_remove(imhtml->smiley_data, (GHRFunc)gtk_smiley_tree_destroy, NULL);
+	g_hash_table_foreach_remove(imhtml->smiley_data, gtk_smiley_tree_destroy_from_hash, NULL);
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
