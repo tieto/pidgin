@@ -23,6 +23,8 @@
 #ifndef _GAIM_VALUE_H_
 #define _GAIM_VALUE_H_
 
+#include <glib.h>
+
 /**
  * Specific value types.
  */
