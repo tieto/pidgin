@@ -1531,7 +1531,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 	GaimGtkConversation *gtkconv = data;
 
 	if (!(event->state & GDK_CONTROL_MASK)) {
-		gtk_widget_grab_focus(gtkconv->entry);
+		if (event->type == GDK_KEY_RELEASE)
+			gtk_widget_grab_focus(gtkconv->entry);
+
 		gtk_widget_event(gtkconv->entry, (GdkEvent *)event);
 
 		return TRUE;
@@ -3596,6 +3598,8 @@ setup_chat_pane(GaimConversation *conv)
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
+						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gaim_setup_imhtml(gtkconv->imhtml);
 
@@ -3781,6 +3785,8 @@ setup_im_pane(GaimConversation *conv)
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
+						   G_CALLBACK(refocus_entry_cb), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
