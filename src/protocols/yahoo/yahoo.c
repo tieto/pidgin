@@ -47,6 +47,7 @@ extern char *yahoo_crypt(char *, char *);
 #include "pixmaps/status-away.xpm"
 #include "pixmaps/status-here.xpm"
 #include "pixmaps/status-idle.xpm"
+#include "pixmaps/status-game.xpm"
 
 #define YAHOO_DEBUG
 
@@ -92,7 +93,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_GAMELOGOFF,
 	YAHOO_SERVICE_GAMEMSG = 0x2a,
 	YAHOO_SERVICE_FILETRANSFER = 0x46,
-	YAHOO_SERVICE_TYPING = 0x4B, /* may have other uses too */
+	YAHOO_SERVICE_NOTIFY = 0x4B,
 	YAHOO_SERVICE_LIST = 0x55,
 	YAHOO_SERVICE_ADDBUDDY = 0x83,
 	YAHOO_SERVICE_REMBUDDY = 0x84
@@ -115,12 +116,14 @@ enum yahoo_status {
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
 	YAHOO_STATUS_TYPING = 0x16
 };
+#define YAHOO_STATUS_GAME 0x2 /* Games don't fit into the regular status model */
 
 struct yahoo_data {
 	int fd;
 	guchar *rxqueue;
 	int rxlen;
 	GHashTable *hash;
+	GHashTable *games;
 	int current_status;
 	gboolean logged_in;
 };
@@ -347,8 +350,9 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 	struct yahoo_packet *newpkt;
 	char *name = NULL;
 	int state = 0;
+	int gamestate = 0;
 	char *msg = NULL;
-
+	
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
@@ -390,10 +394,12 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 				serv_got_update(gc, name, 0, 0, 0, 0, 0, 0);
 				break;
 			}
+			if (g_hash_table_lookup(yd->games, name))
+				gamestate = YAHOO_STATUS_GAME;
 			if (state == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
+				serv_got_update(gc, name, 1, 0, 0, 0, gamestate, 0);
 			else
-				serv_got_update(gc, name, 1, 0, 0, 0, (state << 1) | UC_UNAVAILABLE, 0);
+				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate, 0);
 			if (state == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, name);
 				if (val) {
@@ -461,13 +467,14 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		do_export(gc);
 }
 
-static void yahoo_process_typing(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
 	char *msg = NULL;
 	char *from = NULL;
-	char *typing = NULL;
+	char *stat = NULL;
+	char *game = NULL;
 	GSList *l = pkt->hash;
-
+	struct yahoo_data *yd = (struct yahoo_data*) gc->proto_data;
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 4)
@@ -475,13 +482,38 @@ static void yahoo_process_typing(struct gaim_connection *gc, struct yahoo_packet
 		if (pair->key == 49)
 			msg = pair->value;
 		if (pair->key == 13)
-			typing = pair->value;
+			stat = pair->value;
+		if (pair->key == 14)
+			game = pair->value;
 		l = l->next;
 	}
-	if (*typing == '1')
-		serv_got_typing(gc, from, 0);
-	else
-		serv_got_typing_stopped(gc, from);
+	
+	if (!g_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
+		if (*stat == '1')
+			serv_got_typing(gc, from, 0);
+		else
+			serv_got_typing_stopped(gc, from);
+	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
+		struct buddy *bud = find_buddy(gc, from);
+		void *free1=NULL, *free2=NULL;
+		if (!bud)
+			debug_printf("%s is playing a game, and doesn't want you to know.\n");
+		if (*stat == '1') {
+			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
+				g_free(free1);
+				g_free(free2);
+			}
+			g_hash_table_insert (yd->games, g_strdup(from), g_strdup(game));
+			serv_got_update(gc, from, 1, 0, 0, 0, bud->uc | YAHOO_STATUS_GAME, 0);
+		} else {
+			if (g_hash_table_lookup_extended (yd->games, from, free1, free2)) {
+				g_free(free1);
+				g_free(free2);
+				g_hash_table_remove (yd->games, from);
+			}
+			serv_got_update(gc, from, 1, 0, 0, 0, bud->uc & ~YAHOO_STATUS_GAME, 0);
+		}
+	}
 }
 
 static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packet *pkt)
@@ -560,9 +592,9 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 		if (state == YAHOO_STATUS_AVAILABLE)
 			serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
 		else if (state == YAHOO_STATUS_IDLE)
-			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 1), 0);
+			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 2), 0);
 		else
-			serv_got_update(gc, name, 1, 0, 0, 0, (state << 1) | UC_UNAVAILABLE, 0);
+			serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE, 0);
 		if (state == YAHOO_STATUS_CUSTOM) {
 			gpointer val = g_hash_table_lookup(yd->hash, name);
 			if (val) {
@@ -613,10 +645,12 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
+	case YAHOO_SERVICE_GAMELOGON:
+	case YAHOO_SERVICE_GAMELOGOFF:
 		yahoo_process_status(gc, pkt);
 		break;
-	case YAHOO_SERVICE_TYPING:
-		yahoo_process_typing(gc, pkt);
+	case YAHOO_SERVICE_NOTIFY:
+		yahoo_process_notify(gc, pkt);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
 	case YAHOO_SERVICE_GAMEMSG:
@@ -742,6 +776,7 @@ static void yahoo_login(struct aim_user *user) {
 
 	yd->fd = -1;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
+	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
 	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "scs.yahoo.com", strlen("scs.yahoo.com"))) {
 		/* As of this morning, Yahoo is no longer supporting its server at scs.yahoo.com
@@ -775,6 +810,8 @@ static void yahoo_close(struct gaim_connection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->hash);
+	g_hash_table_foreach_remove(yd->games, yahoo_destroy_hash, NULL);
+	g_hash_table_destroy(yd->games);
 	if (yd->fd >= 0)
 		close(yd->fd);
 	if (yd->rxqueue)
@@ -787,11 +824,13 @@ static void yahoo_close(struct gaim_connection *gc) {
 
 static char **yahoo_list_icon(int uc)
 {
-	if ((uc >> 1) == YAHOO_STATUS_IDLE)
+	if ((uc >> 2) == YAHOO_STATUS_IDLE)
 		return status_idle_xpm;
-	else if (uc == 0)
-		return status_here_xpm;
-	return status_away_xpm;
+	else if (uc & UC_UNAVAILABLE)
+		return status_away_xpm;
+	else if (uc & YAHOO_STATUS_GAME)
+		return status_game_xpm;
+	return status_here_xpm;
 }
 
 static char *yahoo_get_status_string(enum yahoo_status a)
@@ -822,6 +861,22 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
+static void yahoo_game(struct gaim_connection *gc, char *name) {
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	char *game = g_hash_table_lookup(yd->games, name);
+	char *t;
+	char url[256];
+
+	if (!game)
+		return;
+	t = game = g_strdup(strstr(game, "ante?room="));
+	while (*t != '\t')
+		t++;
+	*t = 0;
+	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game);
+	open_url(NULL, url);
+	g_free(game);
+}
 static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
@@ -830,22 +885,45 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 	struct buddy *b = find_buddy(gc, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
 	static char buf[1024];
-
-	if (!(b->uc & UC_UNAVAILABLE))
-		return NULL;
-    if (b->uc >> 1 == YAHOO_STATUS_IDLE)
-        return NULL;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	if ((b->uc >> 1) != YAHOO_STATUS_CUSTOM)
-		g_snprintf(buf, sizeof buf, "Status: %s", yahoo_get_status_string(b->uc >> 1));
-	else
-		g_snprintf(buf, sizeof buf, "Custom Status: %s",
-			   (char *)g_hash_table_lookup(yd->hash, b->name));
-	pbm->label = buf;
-	pbm->callback = NULL;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	static char buf2[1024];
+	
+	if (b->uc & UC_UNAVAILABLE && b->uc >> 2 != YAHOO_STATUS_IDLE) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+			g_snprintf(buf, sizeof buf, 
+				   "Status: %s", yahoo_get_status_string(b->uc >> 2));
+		else
+			g_snprintf(buf, sizeof buf, "Custom Status: %s",
+				   (char *)g_hash_table_lookup(yd->hash, b->name));
+		pbm->label = buf;
+		pbm->callback = NULL;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	}
+	
+	if (b->uc | YAHOO_STATUS_GAME) {
+		char *game = g_hash_table_lookup(yd->games, b->name);
+		char *room;
+		if (!game)
+			return m;
+		if (game) {
+			char *t;
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
+				return NULL;
+			while (*room && *room != '\t')          /* skip to the tab */
+				room++;
+			t = room++;                             /* room as now at the name */
+			while (*t != '\n')         
+				t++;                            /* replace the \n with a space */
+			*t = ' ';
+			g_snprintf(buf2, sizeof buf2, "%s", room);
+			pbm->label = buf2;
+			pbm->callback = yahoo_game;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		}
+	}
 
 	return m;
 }
@@ -917,8 +995,7 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int 
 int yahoo_send_typing(struct gaim_connection *gc, char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_TYPING, YAHOO_STATUS_TYPING, 0);//x6431de4f);
-
+	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
 	yahoo_packet_hash(pkt, 49, "TYPING");
 	yahoo_packet_hash(pkt, 1, gc->displayname);
 	yahoo_packet_hash(pkt, 14, " ");
