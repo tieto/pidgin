@@ -1059,7 +1059,7 @@ static void nap_send_browse(GtkObject *w, char *who)
 static void nap_find_callback(GtkObject *w, GtkWidget *entry)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
-	gchar *search;
+	const gchar *search;
 	gchar buf[NAP_BUF_LEN];
 		
 	search = gtk_entry_get_text(GTK_ENTRY(entry));

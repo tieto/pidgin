@@ -1807,7 +1807,8 @@ static void regjcall(gpointer data, gint source, GdkInputCondition cond)
 
 static void jabber_do_new_user()
 {
-	char *name, *pass1, *pass2, *serv;
+	const char *name, *pass1, *pass2, *serv;
+	char *tmp;
 	char *user;
 
 	if (!newname || regjconn)
@@ -1833,7 +1834,9 @@ static void jabber_do_new_user()
 	}
 
 	user = g_strdup_printf("%s@%s/GAIM", name, serv);
-	regjconn = jab_new(user, pass1);
+	tmp = g_strdup(pass1);
+	regjconn = jab_new(user, tmp);
+	g_free(tmp);
 	g_free(user);
 
 	jab_state_handler(regjconn, regstate);

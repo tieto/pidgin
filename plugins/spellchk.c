@@ -321,7 +321,7 @@ static void save_list() {
 
 static void bad_changed() {
 	int row;
-	char *m;
+	const char *m;
 
 	if (GTK_CLIST(list)->selection)
 		row = (int) GTK_CLIST (list)->selection->data;
@@ -335,7 +335,7 @@ static void bad_changed() {
 
 static void good_changed() {
 	int row;
-	char *m;
+	const char *m;
 
 	if (GTK_CLIST(list)->selection)
 		row = (int) GTK_CLIST (list)->selection->data;

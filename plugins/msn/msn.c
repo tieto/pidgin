@@ -1279,7 +1279,7 @@ static void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
 	struct gaim_connection *gc = b->user->gc;
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
 	char buf[MSN_BUF_LEN - 1];
-	gchar *newname;
+	const gchar *newname;
 
 	newname = gtk_entry_get_text(GTK_ENTRY(b->entry));
 	

@@ -29,9 +29,14 @@
 
 #include <gtk/gtk.h>
 #include <string.h>
+#include <stdlib.h>
 #include "gaim.h"
 #include "prpl.h"
 #include "zephyr/zephyr.h"
+
+extern Code_t ZGetLocations(ZLocations_t *, int *);
+extern Code_t ZSetLocation(char *);
+extern Code_t ZUnsetLocation();
 
 typedef struct _zframe zframe;
 typedef struct _zephyr_triple zephyr_triple;
@@ -113,7 +118,7 @@ static void handle_unknown(ZNotice_t notice)
 }
 */
 
-static zephyr_triple *new_triple(char *c, char *i, char *r)
+static zephyr_triple *new_triple(const char *c, const char *i, const char *r)
 {
 	zephyr_triple *zt;
 	zt = g_new0(zephyr_triple, 1);
@@ -693,7 +698,7 @@ static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	ZNotice_t notice;
 	zephyr_triple *zt;
 	char *buf;
-	char *sig;
+	const char *sig;
 
 	zt = find_sub_by_id(id);
 	if (!zt)
@@ -730,7 +735,7 @@ static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {
 	ZNotice_t notice;
 	char *buf;
-	char *sig;
+	const char *sig;
 
 	if (away)
 		sig = "Automated reply:";
@@ -872,9 +877,9 @@ static void zephyr_join_chat(struct gaim_connection *gc, int id, char *nm)
 {
 	ZSubscription_t sub;
 	zephyr_triple *zt1, *zt2;
-	char *classname;
-	char *instname;
-	char *recip;
+	const char *classname;
+	const char *instname;
+	const char *recip;
 	char **splitted;
 
 	if (!nm) {
