@@ -1,4 +1,3 @@
-
 /*
  * gaim
  *
@@ -568,7 +567,7 @@ static void oscar_callback(gpointer data, gint source,
 					}
 					aim_conn_kill(odata->sess, &conn);
 				} else {
-					debug_printf("holy crap! generic connection error! %d\n",
+					debug_printf("holy crap! generic connection error! %hu\n",
 							conn->type);
 					aim_conn_kill(odata->sess, &conn);
 				}
@@ -834,14 +833,14 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			hide_login_progress(gc, _("Authentication Failed"));
 			break;
 		}
-		debug_printf("Login Error Code 0x%04x\n", info->errorcode);
+		debug_printf("Login Error Code 0x%04hx\n", info->errorcode);
 		debug_printf("Error URL: %s\n", info->errorurl);
 		od->killme = TRUE;
 		return 1;
 	}
 
 
-	debug_printf("Reg status: %d\n", info->regstatus);
+	debug_printf("Reg status: %hu\n", info->regstatus);
 	if (info->email) {
 		debug_printf("Email: %s\n", info->email);
 	} else {
@@ -959,7 +958,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	m[16] = '\0';
 	debug_printf("Sending hash: ");
 	for (x = 0; x < 16; x++)
-		debug_printf("%02x ", (unsigned char)m[x]);
+		debug_printf("%02hhx ", (unsigned char)m[x]);
 	debug_printf("\n");
 	gaim_input_remove(pos->inpa);
 	close(pos->fd);
@@ -1004,12 +1003,12 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int fd;
 
 	va_start(ap, fr);
-	offset = (fu32_t)va_arg(ap, unsigned long);
-	len = (fu32_t)va_arg(ap, unsigned long);
+	offset = va_arg(ap, fu32_t);
+	len = va_arg(ap, fu32_t);
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
-	debug_printf("offset: %d, len: %d, file: %s\n", offset, len, modname ? modname : "aim.exe");
+	debug_printf("offset: %lu, len: %lu, file: %s\n", offset, len, (modname ? modname : "aim.exe"));
 	if (len == 0) {
 		debug_printf("len is 0, hashing NULL\n");
 		aim_sendmemblock(sess, fr->conn, offset, len, NULL,
@@ -1300,7 +1299,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 		aim_sendcookie(sess, tstconn, redir->cookie);
-		break;
+	break;
+
 	case 0xd: /* ChatNav */
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
 		if (tstconn == NULL) {
@@ -1319,9 +1319,9 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 		aim_sendcookie(sess, tstconn, redir->cookie);
-		break;
-	case 0xe: /* Chat */
-		{
+	break;
+
+	case 0xe: { /* Chat */
 		struct chat_connection *ccon;
 
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, NULL);
@@ -1354,9 +1354,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 		aim_sendcookie(sess, tstconn, redir->cookie);
-		debug_printf("Connected to chat room %s exchange %d\n", ccon->name, ccon->exchange);
-		}
-		break;
+		debug_printf("Connected to chat room %s exchange %hu\n", ccon->name, ccon->exchange);
+	} break;
 
 	case 0x0018: { /* email */
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL, NULL))) {
@@ -1378,7 +1377,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	default: /* huh? */
-		debug_printf("got redirect for unknown service 0x%04x\n", redir->group);
+		debug_printf("got redirect for unknown service 0x%04hx\n", redir->group);
 		break;
 	}
 
@@ -1394,8 +1393,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int type = 0;
 	int caps = 0;
 	char *tmp;
-
 	va_list ap;
+
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
@@ -1803,7 +1802,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			file = fopen(gc->user->iconfile, "r");
 			if (file) {
 				int len = fread(buf, 1, st.st_size, file);
-				debug_printf("Sending buddy icon to %s (%d bytes, %d reported)\n",
+				debug_printf("Sending buddy icon to %s (%d bytes, %lu reported)\n",
 						userinfo->sn, len, st.st_size);
 				aim_send_icon(sess, userinfo->sn, buf, st.st_size,
 					      st.st_mtime, aim_iconsum(buf, st.st_size));
@@ -1840,7 +1839,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * that will happily send ISO-8859-1 without marking it as
 		 * such */
 		if (args->icbmflags & AIM_IMFLAGS_ISO_8859_1) {
-			debug_printf ("Received ISO-8859-1 IM\n");
+			debug_printf("Received ISO-8859-1 IM\n");
 		}
 
 		if (!args->msg || !args->msglen)
@@ -1854,7 +1853,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_CUSTOMCHARSET) {
-		debug_printf ("Custom character set: %d %d\n", args->charset, args->charsubset);
+		debug_printf("Custom character set: %hu %hu\n", args->charset, args->charsubset);
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
@@ -1875,10 +1874,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	if (!args)
 		return 0;
-	
-	debug_printf("rendezvous status %d (%s)\n", args->status, userinfo->sn);
 
-	
+	debug_printf("rendezvous status %hu (%s)\n", args->status, userinfo->sn);
+
 	if (args->status == AIM_RENDEZVOUS_CANCEL) {
 		struct oscar_file_transfer *oft;
 		if (!args->cookie)
@@ -1951,7 +1949,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_input_remove(oft->watcher);
 			aim_conn_kill(sess, &oft->conn);
 
-			debug_printf("sendfile: doing reverse connection to %s:%d\n", args->verifiedip, args->port);
+			debug_printf("sendfile: doing reverse connection to %s:%hu\n", args->verifiedip, args->port);
 
 			oft->conn = aim_accepttransfer(sess, od->conn,
 				userinfo->sn,
@@ -2021,7 +2019,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				userinfo->sn, gc->username);
 		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im);
 	} else {
-		debug_printf("Unknown reqclass %d\n", args->reqclass);
+		debug_printf("Unknown reqclass %hu\n", args->reqclass);
 	}
 
 	return 1;
@@ -2031,7 +2029,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
  * Next 2 functions are for when other people ask you for authorization
  */
 static void gaim_icq_authgrant(struct channel4_data *data) {
-	char message;
+	gchar message;
 	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
 	message = 0;
 	aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHGRANTED, &message);
@@ -2074,12 +2072,12 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	if (!args->type || !args->msg || !args->uin)
 		return 1;
-	
-	debug_printf("Received a channel 4 message of type %d.\n", args->type);
+
+	debug_printf("Received a channel 4 message of type 0x%02hhx.\n", args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
 	msg1 = g_strsplit(args->msg, "\376", 0);
-	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* AAA */
+	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* XXX - 10 is a guess */
 	for (i=0; msg1[i]; i++) {
 		strip_linefeed(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
@@ -2115,7 +2113,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct channel4_data *data = g_new(struct channel4_data, 1);
-				char *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason: %s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason: %s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
 				debug_printf("Received an authorization request from UIN %lu\n", args->uin);
 				data->gc = gc;
 				data->uin = g_strdup_printf("%lu", args->uin);
@@ -2126,21 +2124,21 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
-				char *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
 				do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_ERROR);
 				g_free(dialog_msg);
 			}
 		} break;
 
 		case 0x08: { /* Someone has granted you authorization */
-			char *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
+			gchar *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
 			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
 		} break;
 
 		case 0x0d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
 			if (i >= 6) {
-				char *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
+				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
 				do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
 				g_free(dialog_msg);
 			}
@@ -2148,7 +2146,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
-				char *dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), msg2[0], msg2[1], msg2[2], msg2[3], msg2[4], msg2[5]);
+				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), msg2[0], msg2[1], msg2[2], msg2[3], msg2[4], msg2[5]);
 				do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
 				g_free(dialog_msg);
 			}
@@ -2185,7 +2183,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} break;
 
 		default: {
-			debug_printf("Received a channel 4 message of unknown type (type 0x%02d).\n", args->type);
+			debug_printf("Received a channel 4 message of unknown type (type 0x%02hhx).\n", args->type);
 		} break;
 	}
 
@@ -2196,12 +2194,13 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 }
 
 static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
-	int channel, ret = 0;
+	fu16_t channel;
+	int ret = 0;
 	aim_userinfo_t *userinfo;
 	va_list ap;
 
 	va_start(ap, fr);
-	channel = va_arg(ap, int);
+	channel = va_arg(ap, fu16_t);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 
 	switch (channel) {
@@ -2224,7 +2223,7 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			debug_printf("ICBM received on unsupported channel (channel 0x%04d).", channel);
+			debug_printf("ICBM received on unsupported channel (channel 0x%04hx).", channel);
 		} break;
 	}
 
@@ -2240,10 +2239,10 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[1024];
 
 	va_start(ap, fr);
-	chan = (fu16_t)va_arg(ap, unsigned int);
+	chan = va_arg(ap, fu16_t);
 	userinfo = va_arg(ap, aim_userinfo_t *);
-	nummissed = (fu16_t)va_arg(ap, unsigned int);
-	reason = (fu16_t)va_arg(ap, unsigned int);
+	nummissed = va_arg(ap, fu16_t);
+	reason = va_arg(ap, fu16_t);
 	va_end(ap);
 
 	switch(reason) {
@@ -2252,8 +2251,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s because it was invalid.") :
-				   _("You missed %d messages from %s because they were invalid."),
+				   _("You missed %hu message from %s because it was invalid.") :
+				   _("You missed %hu messages from %s because they were invalid."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2262,8 +2261,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ?
-				   _("You missed %d message from %s because it was too large.") :
-				   _("You missed %d messages from %s because they were too large."),
+				   _("You missed %hu message from %s because it was too large.") :
+				   _("You missed %hu messages from %s because they were too large."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2272,8 +2271,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s because the rate limit has been exceeded.") :
-				   _("You missed %d messages from %s because the rate limit has been exceeded."),
+				   _("You missed %hu message from %s because the rate limit has been exceeded.") :
+				   _("You missed %hu messages from %s because the rate limit has been exceeded."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2282,8 +2281,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ?
-				   _("You missed %d message from %s because he/she was too evil.") : 
-				   _("You missed %d messages from %s because he/she was too evil."),
+				   _("You missed %hu message from %s because he/she was too evil.") : 
+				   _("You missed %hu messages from %s because he/she was too evil."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2292,8 +2291,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s because you are too evil.") :
-				   _("You missed %d messages from %s because you are too evil."),
+				   _("You missed %hu message from %s because you are too evil.") :
+				   _("You missed %hu messages from %s because you are too evil."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2301,8 +2300,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s for an unknown reason.") :
-				   _("You missed %d messages from %s for an unknown reason."),
+				   _("You missed %hu message from %s for an unknown reason.") :
+				   _("You missed %hu messages from %s for an unknown reason."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2332,7 +2331,7 @@ static char *gaim_icq_status(int state) {
 		return g_strdup_printf("Online");
 }
 
-static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, int reason, const char *cookie) {
+static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	switch (reason) {
@@ -2349,7 +2348,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, int r
 		} break;
 
 		default: {
-			debug_printf("Received an unknown rendezvous client auto-response from %s.  Type 0x%04x\n", who, reason);
+			debug_printf("Received an unknown rendezvous client auto-response from %s.  Type 0x%04hx\n", who, reason);
 		}
 
 	}
@@ -2357,7 +2356,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, int r
 	return 0;
 }
 
-static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, int reason, int state, char *msg) {
+static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reason, fu32_t state, char *msg) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	switch(reason) {
@@ -2396,7 +2395,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, int reason,
 		} break;
 
 		default: {
-			debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
+			debug_printf("Received an unknown client auto-response from %s.  Type 0x%04hx\n", who, reason);
 		} break;
 	} /* end of switch */
 
@@ -2409,18 +2408,18 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *who;
 
 	va_start(ap, fr);
-	chan = (fu16_t)va_arg(ap, unsigned int);
+	chan = va_arg(ap, fu16_t);
 	who = va_arg(ap, char *);
-	reason = (fu16_t)va_arg(ap, unsigned int);
+	reason = va_arg(ap, fu16_t);
 
 	if (chan == 0x0002) { /* File transfer declined */
 		char *cookie = va_arg(ap, char *);
 		return gaim_parse_clientauto_ch2(sess, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
-		int state = 0;
+		fu32_t state = 0;
 		char *msg = NULL;
 		if (reason == 0x0003) {
-			state = (int)va_arg(ap, fu32_t);
+			state = va_arg(ap, fu32_t);
 			msg = va_arg(ap, char *);
 		}
 		return gaim_parse_clientauto_ch4(sess, who, reason, state, msg);
@@ -2437,10 +2436,10 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *m;
 
 	va_start(ap, fr);
-	reason = (fu16_t)va_arg(ap, unsigned int);
+	reason = va_arg(ap, fu16_t);
 	va_end(ap);
 
-	debug_printf("snac threw error (reason 0x%04x: %s)\n", reason,
+	debug_printf("snac threw error (reason 0x%04hx: %s)\n", reason,
 			(reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
 
 	m = g_strdup_printf(_("SNAC threw error: %s\n"),
@@ -2460,7 +2459,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_file_transfer *oft;
 	
 	va_start(ap, fr);
-	reason = (fu16_t)va_arg(ap, unsigned int);
+	reason = va_arg(ap, fu16_t);
 	data = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2487,12 +2486,12 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 
 	va_start(ap, fr);
-	type1 = (fu16_t)va_arg(ap, unsigned int);
+	type1 = va_arg(ap, fu16_t);
 	sn = va_arg(ap, char *);
-	type2 = (fu16_t)va_arg(ap, unsigned int);
+	type2 = va_arg(ap, fu16_t);
 	va_end(ap);
 
-	debug_printf("Received an mtn from %s.  Type1 is 0x%04d and type2 is 0x%04d.\n", sn, type1, type2);
+	debug_printf("Received an mtn from %s.  Type1 is 0x%04hx and type2 is 0x%04hx.\n", sn, type1, type2);
 
 	switch (type2) {
 		case 0x0000: { /* Text has been cleared */
@@ -2522,7 +2521,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[1024];
 
 	va_start(ap, fr);
-	reason = (fu16_t)va_arg(ap, unsigned int);
+	reason = va_arg(ap, fu16_t);
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2635,7 +2634,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
-	infotype = (fu16_t)va_arg(ap, unsigned int);
+	infotype = va_arg(ap, fu16_t);
 	text_enc = va_arg(ap, char *);
 	text = va_arg(ap, char *);
 	text_len = va_arg(ap, int);
@@ -2655,7 +2654,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 		default:
 			utf8 = g_strdup(_("<I>Unable to display information because it was sent in an unknown encoding.</I>"));
-			debug_printf("Encountered an unknown encoding parsing userinfo\n");
+			debug_printf("Encountered an unknown encoding while parsing userinfo\n");
 		}
 	}
 
@@ -2683,7 +2682,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
-		idle = g_strdup_printf("Idle : <B>%d minutes</B>",
+		idle = g_strdup_printf("Idle : <B>%hu minutes</B>",
 					info->idletime);
 	} else
 		idle = g_strdup("Idle: <B>Active</B>");
@@ -2758,13 +2757,13 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buildbuf[150];
 
 	va_start(ap, fr);
-	id  = (fu16_t)va_arg(ap, unsigned int);
+	id  = va_arg(ap, fu16_t);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
 	aim_getbuildstring(buildbuf, sizeof(buildbuf));
 
-	debug_printf("MOTD: %s (%d)\n", msg ? msg : "Unknown", id);
+	debug_printf("MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
 	if (id < 4)
 		do_error_dialog(_("Your AIM connection may be lost."), NULL, GAIM_WARNING);
 
@@ -2778,7 +2777,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	type = (fu16_t)va_arg(ap, unsigned int);
+	type = va_arg(ap, fu16_t);
 
 	switch(type) {
 		case 0x0002: {
@@ -2786,16 +2785,15 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i;
 
-			maxrooms = (fu8_t)va_arg(ap, unsigned int);
+			maxrooms = va_arg(ap, fu8_t);
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
-			va_end(ap);
 
 			debug_printf("chat info: Chat Rights:\n");
-			debug_printf("chat info: \tMax Concurrent Rooms: %d\n", maxrooms);
+			debug_printf("chat info: \tMax Concurrent Rooms: %hhd\n", maxrooms);
 			debug_printf("chat info: \tExchange List: (%d total)\n", exchangecount);
 			for (i = 0; i < exchangecount; i++)
-				debug_printf("chat info: \t\t%d    %s\n", exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
+				debug_printf("chat info: \t\t%hu    %s\n", exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
 			while (odata->create_rooms) {
 				struct create_room *cr = odata->create_rooms->data;
 				debug_printf("creating room %s\n", cr->name);
@@ -2813,19 +2811,18 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			fu32_t createtime;
 
 			fqcn = va_arg(ap, char *);
-			instance = (fu16_t)va_arg(ap, unsigned int);
-			exchange = (fu16_t)va_arg(ap, unsigned int);
-			flags = (fu16_t)va_arg(ap, unsigned int);
+			instance = va_arg(ap, fu16_t);
+			exchange = va_arg(ap, fu16_t);
+			flags = va_arg(ap, fu16_t);
 			createtime = va_arg(ap, fu32_t);
-			maxmsglen = (fu16_t)va_arg(ap, unsigned int);
-			maxoccupancy = (fu16_t)va_arg(ap, unsigned int);
-			createperms = (fu8_t)va_arg(ap, int);
-			unknown = (fu16_t)va_arg(ap, unsigned int);
+			maxmsglen = va_arg(ap, fu16_t);
+			maxoccupancy = va_arg(ap, fu16_t);
+			createperms = va_arg(ap, fu8_t);
+			unknown = va_arg(ap, fu16_t);
 			name = va_arg(ap, char *);
 			ck = va_arg(ap, char *);
-			va_end(ap);
 
-			debug_printf("created room: %s %d %d %d %lu %d %d %d %d %s %s\n",
+			debug_printf("created room: %s %hu %hu %hu %lu %hu %hu %hhu %hu %s %s\n",
 					fqcn,
 					exchange, instance, flags,
 					createtime,
@@ -2835,10 +2832,12 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			}
 			break;
 		default:
-			va_end(ap);
-			debug_printf("chatnav info: unknown type (%04x)\n", type);
+			debug_printf("chatnav info: unknown type (%04hx)\n", type);
 			break;
 	}
+
+	va_end(ap);
+
 	return 1;
 }
 
@@ -2906,15 +2905,15 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	usercount= va_arg(ap, int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	roomdesc = va_arg(ap, char *);
-	unknown_c9 = (fu16_t)va_arg(ap, int);
-	creationtime = (fu32_t)va_arg(ap, unsigned long);
-	maxmsglen = (fu16_t)va_arg(ap, int);
-	unknown_d2 = (fu16_t)va_arg(ap, int);
-	unknown_d5 = (fu16_t)va_arg(ap, int);
-	maxvisiblemsglen = (fu16_t)va_arg(ap, int);
+	unknown_c9 = va_arg(ap, fu16_t);
+	creationtime = va_arg(ap, fu32_t);
+	maxmsglen = va_arg(ap, fu16_t);
+	unknown_d2 = va_arg(ap, fu16_t);
+	unknown_d5 = va_arg(ap, fu16_t);
+	maxvisiblemsglen = va_arg(ap, fu16_t);
 	va_end(ap);
 
-	debug_printf("inside chat_info_update (maxmsglen = %d, maxvislen = %d)\n",
+	debug_printf("inside chat_info_update (maxmsglen = %hu, maxvislen = %hu)\n",
 			maxmsglen, maxvisiblemsglen);
 
 	ccon->maxlen = maxmsglen;
@@ -2933,7 +2932,8 @@ static int gaim_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
-	msg  = va_arg(ap, char *);
+	msg = va_arg(ap, char *);
+	va_end(ap);
 
 	tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", msg);
@@ -2955,7 +2955,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	if (emailinfo) {
-		debug_printf("Got email info. webmail address for screenname@%s is %s,  new email: %hd,  number new: %d,  flag is %d, havenewmail is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag, havenewmail);
+		debug_printf("Got email info. webmail address for screenname@%s is %s,  new email: %hhu,  number new: %hu,  flag is %hu, havenewmail is %d\n", emailinfo->domain, emailinfo->url, emailinfo->unread, emailinfo->nummsgs, emailinfo->flag, havenewmail);
 		if (emailinfo->unread) {
 			if (havenewmail)
 				connection_has_mail(gc, emailinfo->nummsgs ? emailinfo->nummsgs : -1, NULL, NULL, emailinfo->url);
@@ -2975,7 +2975,7 @@ static int gaim_parse_msgack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn;
 
 	va_start(ap, fr);
-	type = (fu16_t)va_arg(ap, unsigned int);
+	type = va_arg(ap, fu16_t);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2987,29 +2987,29 @@ static int gaim_parse_msgack(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	static const char *codes[5] = {
 		"invalid",
-		 "change",
-		 "warning",
-		 "limit",
-		 "limit cleared",
+		"change",
+		"warning",
+		"limit",
+		"limit cleared",
 	};
 	va_list ap;
 	fu16_t code, rateclass;
 	fu32_t windowsize, clear, alert, limit, disconnect, currentavg, maxavg;
 
 	va_start(ap, fr); 
-	code = (fu16_t)va_arg(ap, unsigned int);
-	rateclass= (fu16_t)va_arg(ap, unsigned int);
-	windowsize = (fu32_t)va_arg(ap, unsigned long);
-	clear = (fu32_t)va_arg(ap, unsigned long);
-	alert = (fu32_t)va_arg(ap, unsigned long);
-	limit = (fu32_t)va_arg(ap, unsigned long);
-	disconnect = (fu32_t)va_arg(ap, unsigned long);
-	currentavg = (fu32_t)va_arg(ap, unsigned long);
-	maxavg = (fu32_t)va_arg(ap, unsigned long);
+	code = va_arg(ap, fu16_t);
+	rateclass= va_arg(ap, fu16_t);
+	windowsize = va_arg(ap, fu32_t);
+	clear = va_arg(ap, fu32_t);
+	alert = va_arg(ap, fu32_t);
+	limit = va_arg(ap, fu32_t);
+	disconnect = va_arg(ap, fu32_t);
+	currentavg = va_arg(ap, fu32_t);
+	maxavg = va_arg(ap, fu32_t);
 	va_end(ap);
 
-	debug_printf("rate %s (paramid 0x%04lx): curavg = %ld, maxavg = %ld, alert at %ld, "
-		     "clear warning at %ld, limit at %ld, disconnect at %ld (window size = %ld)\n",
+	debug_printf("rate %s (param ID 0x%04hx): curavg = %lu, maxavg = %lu, alert at %lu, "
+		     "clear warning at %lu, limit at %lu, disconnect at %lu (window size = %lu)\n",
 		     (code < 5) ? codes[code] : codes[0],
 		     rateclass,
 		     currentavg, maxavg,
@@ -3042,7 +3042,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
-	newevil = (fu16_t)va_arg(ap, unsigned int);
+	newevil = va_arg(ap, fu16_t);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
@@ -3137,9 +3137,9 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	params = va_arg(ap, struct aim_icbmparameters *);
 	va_end(ap);
 
-	/* evidently this crashes on solaris. i have no clue why
-	debug_printf("ICBM Parameters: maxchannel = %d, default flags = 0x%08lx, max msg len = %d, "
-			"max sender evil = %f, max receiver evil = %f, min msg interval = %ld\n",
+	/* XXX - evidently this crashes on solaris. i have no clue why
+	debug_printf("ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
+			"max sender evil = %f, max receiver evil = %f, min msg interval = %lu\n",
 			params->maxchan, params->flags, params->maxmsglen,
 			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
 			params->minmsginterval);
@@ -3166,7 +3166,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	fu32_t flags;
 
 	va_start(ap, fr);
-	maxsiglen = va_arg(ap, int);
+	maxsiglen = va_arg(ap, fu16_t);
 	va_end(ap);
 
 	debug_printf("locate rights: max sig len = %d\n", maxsiglen);
@@ -3200,11 +3200,11 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	maxbuddies = (fu16_t)va_arg(ap, unsigned int);
-	maxwatchers = (fu16_t)va_arg(ap, unsigned int);
+	maxbuddies = va_arg(ap, fu16_t);
+	maxwatchers = va_arg(ap, fu16_t);
 	va_end(ap);
 
-	debug_printf("buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
+	debug_printf("buddy list rights: Max buddies = %hu / Max watchers = %hu\n", maxbuddies, maxwatchers);
 
 	odata->rights.maxbuddies = (guint)maxbuddies;
 	odata->rights.maxwatchers = (guint)maxwatchers;
@@ -3219,11 +3219,11 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
-	maxpermits = (fu16_t)va_arg(ap, unsigned int);
-	maxdenies = (fu16_t)va_arg(ap, unsigned int);
+	maxpermits = va_arg(ap, fu16_t);
+	maxdenies = va_arg(ap, fu16_t);
 	va_end(ap);
 
-	debug_printf("BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
+	debug_printf("BOS rights: Max permit = %hu / Max deny = %hu\n", maxpermits, maxdenies);
 
 	odata->rights.maxpermits = (guint)maxpermits;
 	odata->rights.maxdenies = (guint)maxdenies;
@@ -3413,9 +3413,9 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_start(ap, fr);
 	msg = va_arg(ap, char *);
 	url = va_arg(ap, char *);
-	wid = (fu16_t)va_arg(ap, int);
-	hei = (fu16_t)va_arg(ap, int);
-	delay = (fu16_t)va_arg(ap, int);
+	wid = va_arg(ap, fu16_t);
+	hei = va_arg(ap, fu16_t);
+	delay = va_arg(ap, fu16_t);
 	va_end(ap);
 
 	serv_got_popup(msg, url, wid, hei);
@@ -3469,7 +3469,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
-	status = (fu16_t)va_arg(ap, unsigned int); /* status code of confirmation request */
+	status = va_arg(ap, fu16_t); /* status code of confirmation request */
 	va_end(ap);
 
 	debug_printf("account confirmation returned status 0x%04x (%s)\n", status,
@@ -3492,8 +3492,8 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_start(ap, fr);
 	change = va_arg(ap, int);
-	perms = (fu16_t)va_arg(ap, unsigned int);
-	err = (fu16_t)va_arg(ap, unsigned int);
+	perms = va_arg(ap, fu16_t);
+	err = va_arg(ap, fu16_t);
 	url = va_arg(ap, char *);
 	sn = va_arg(ap, char *);
 	email = va_arg(ap, char *);
@@ -3646,7 +3646,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		len = strlen(message);
 		args.flags |= check_encoding(message);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
-			debug_printf ("Sending Unicode IM\n");
+			debug_printf("Sending Unicode IM\n");
 			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("Error converting a unicode message: %s\n", err->message);
@@ -3655,7 +3655,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				 * IM now, but I'm not sure what to do */
 			}
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
-			debug_printf ("Sending ISO-8859-1 IM\n");
+			debug_printf("Sending ISO-8859-1 IM\n");
 			args.msg = g_convert(message, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 			if (err) {
 				debug_printf("conversion error: %s\n", err->message);
@@ -3664,7 +3664,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				len = strlen(message);
 				args.msg = g_convert(message, len, "UCS-2BE", "UTF8", NULL, &len, &err);
 				if (err) {
-					debug_printf ("Error in unicode fallback: %s\n", err->message);
+					debug_printf("Error in unicode fallback: %s\n", err->message);
 				}
 			}
 		} else {

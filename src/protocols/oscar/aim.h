@@ -2,7 +2,7 @@
  * Main libfaim header.  Must be included in client for prototypes/macros.
  *
  * "come on, i turned a chick lesbian; i think this is the hackish equivalent"
- *                                                -- Josh Meyer
+ *                                                -- Josh Myer
  *
  */
 
