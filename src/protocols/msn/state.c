@@ -36,10 +36,53 @@ static const char *away_text[] =
 	N_("Available")
 };
 
+void
+msn_change_status(MsnSession *session, MsnAwayType state)
+{
+	MsnCmdProc *cmdproc;
+	MsnUser *user;
+	MsnObject *msnobj;
+	const char *state_text;
+
+	cmdproc = session->notification->cmdproc;
+	user = session->user;
+	state_text = msn_state_get_text(state);
+
+	g_return_if_fail(session != NULL);
+
+	msnobj = msn_user_get_object(user);
+
+	if (msnobj == NULL)
+	{
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
+						 MSN_CLIENT_ID);
+	}
+	else
+	{
+		char *msnobj_str;
+
+		msnobj_str = msn_object_to_string(msnobj);
+
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
+						 MSN_CLIENT_ID, gaim_url_encode(msnobj_str));
+
+		g_free(msnobj_str);
+	}
+}
+
 const char *
 msn_away_get_text(MsnAwayType type)
 {
 	g_return_val_if_fail(type <= MSN_HIDDEN, NULL);
 
 	return _(away_text[type]);
+}
+
+const char *
+msn_state_get_text(MsnAwayType state)
+{
+	static char *status_text[] =
+	{ "NLN", "NLN", "BSY", "IDL", "BRB", "AWY", "PHN", "LUN", "HDN", "HDN" };
+
+	return status_text[state];
 }

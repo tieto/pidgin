@@ -27,6 +27,17 @@ typedef struct _MsnMessage MsnMessage;
 #include "session.h"
 #include "user.h"
 
+#include "command.h"
+#include "transaction.h"
+
+typedef enum
+{
+	MSN_MSG_NORMAL,
+	MSN_MSG_SLP_SB,
+	MSN_MSG_SLP_DC
+
+} MsnMsgType;
+
 typedef struct
 {
 	guint32 session_id;
@@ -54,27 +65,30 @@ struct _MsnMessage
 {
 	size_t ref_count;           /**< The reference count.       */
 
-	gboolean msnslp_message;
-	gboolean msnslp_ack_message;
+	MsnMsgType type;
 
-	char *passport;
+	gboolean msnslp_message;
+
+	char *remote_user;
 	char flag;
 
 	char *content_type;
 	char *charset;
 	char *body;
-	size_t body_len;
+	gsize body_len;
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
 
-	MsnMessage *acked_msg;
-
 	GHashTable *attr_table;
 	GList *attr_list;
-};
 
-#define MSN_MESSAGE(msg) ((MsnMessage *)(msg))
+	MsnCommand *cmd;
+	MsnTransaction *trans;
+
+	MsnTransCb ack_cb;
+	void *ack_data;
+};
 
 /**
  * Creates a new, empty message.
@@ -83,14 +97,14 @@ struct _MsnMessage
  */
 MsnMessage *msn_message_new(void);
 
-MsnMessage *msn_message_new_plain(const char *message);
-
 /**
  * Creates a new, empty MSNSLP message.
  *
  * @return A new MSNSLP message.
  */
 MsnMessage *msn_message_new_msnslp(void);
+
+MsnMessage *msn_message_new_plain(const char *message);
 
 /**
  * Creates a MSNSLP ack message.
@@ -102,7 +116,17 @@ MsnMessage *msn_message_new_msnslp(void);
 MsnMessage *msn_message_new_msnslp_ack(MsnMessage *acked_msg);
 
 /**
- * Parse the payload of a message.
+ * Creates a new message based off a command.
+ *
+ * @param session The MSN session.
+ * @param cmd     The command.
+ *
+ * @return The new message.
+ */
+MsnMessage *msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd);
+
+/**
+ * Parses the payload of a message.
  *
  * @param msg         The message.
  * @param payload     The payload.
@@ -146,7 +170,7 @@ MsnMessage *msn_message_unref(MsnMessage *msg);
  *
  * @return The payload data of the message.
  */
-char *msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size);
+char *msn_message_gen_payload(MsnMessage *msg, size_t *ret_size);
 
 /**
  * Sets the flag for an outgoing message.
@@ -165,6 +189,7 @@ void msn_message_set_flag(MsnMessage *msg, char flag);
  */
 char msn_message_get_flag(const MsnMessage *msg);
 
+#if 0
 /**
  * Sets the body of a message.
  *
@@ -181,7 +206,7 @@ void msn_message_set_body(MsnMessage *msg, const char *body);
  * @return The body of the message.
  */
 const char *msn_message_get_body(const MsnMessage *msg);
-
+#endif
 /**
  * Sets the binary content of the message.
  *
@@ -263,5 +288,14 @@ const char *msn_message_get_attr(const MsnMessage *msg, const char *attr);
  * @return The resulting hashtable.
  */
 GHashTable *msn_message_get_hashtable_from_body(const MsnMessage *msg);
+
+void msn_message_show_readable(MsnMessage *msg, const char *info,
+							   gboolean text_body);
+
+void msn_message_parse_slp_body(MsnMessage *msg, const char *body,
+								size_t len);
+
+char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
+
 
 #endif /* _MSN_MSG_H_ */

@@ -28,7 +28,6 @@ typedef struct _MsnTable MsnTable;
 #include "transaction.h"
 #include "msg.h"
 
-typedef void (*MsnTransCb)(MsnCmdProc *cmdproc, MsnCommand *cmd);
 typedef void (*MsnErrorCb)(MsnCmdProc *cmdproc, MsnTransaction *trans,
 						   int error);
 typedef void (*MsnMsgCb)(MsnCmdProc *cmdproc, MsnMessage *msg);

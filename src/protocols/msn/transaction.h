@@ -27,6 +27,8 @@ typedef struct _MsnTransaction MsnTransaction;
 #include "command.h"
 #include "cmdproc.h"
 
+typedef void (*MsnTransCb)(MsnCmdProc *cmdproc, MsnCommand *cmd);
+
 /**
  * A transaction. A command that will initiate the transaction.
  */
@@ -49,11 +51,15 @@ struct _MsnTransaction
 
 MsnTransaction *msn_transaction_new(const char *command,
 									const char *format, ...);
-
 void msn_transaction_destroy(MsnTransaction *trans);
 
 char *msn_transaction_to_string(MsnTransaction *trans);
+void msn_transaction_queue_cmd(MsnTransaction *trans, MsnCommand *cmd);
+void msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc);
 void msn_transaction_set_payload(MsnTransaction *trans,
 								 const char *payload, int payload_len);
+void msn_transaction_set_data(MsnTransaction *trans, void *data);
+void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
+							MsnTransCb cb, void *data);
 
 #endif /* _MSN_TRANSACTION_H */

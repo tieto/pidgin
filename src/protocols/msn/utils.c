@@ -314,3 +314,24 @@ msn_import_html(const char *html, char **attributes, char **message)
 	g_free(fontface);
 	g_free(msg);
 }
+
+void
+msn_parse_socket(const char *str, char **ret_host, int *ret_port)
+{
+	char *host;
+	char *c;
+	int port;
+
+	host = g_strdup(str);
+
+	if ((c = strchr(host, ':')) != NULL)
+	{
+		*c = '\0';
+		port = atoi(c + 1);
+	}
+	else
+		port = 1863;
+
+	*ret_host = host;
+	*ret_port = port;
+}

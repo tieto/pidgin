@@ -90,6 +90,47 @@ msn_transaction_to_string(MsnTransaction *trans)
 }
 
 void
+msn_transaction_queue_cmd(MsnTransaction *trans, MsnCommand *cmd)
+{
+	gaim_debug_info("msn", "queueing command.\n");
+	trans->pendent_cmd = cmd;
+	msn_command_ref(cmd);
+}
+
+void
+msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc)
+{
+	gaim_debug_info("msn", "unqueueing command.\n");
+	MsnCommand *cmd = trans->pendent_cmd;
+	g_return_if_fail(cmd != NULL);
+
+	msn_cmdproc_process_cmd(cmdproc, cmd);
+	msn_command_unref(cmd);
+
+	trans->pendent_cmd = NULL;
+}
+
+#if 0
+void
+msn_transaction_queue(MsnTransaction *trans, MsnTransaction *elem)
+{
+	if (trans->queue == NULL)
+		trans->queue = g_queue_new();
+
+	g_queue_push_tail(trans->queue, elem);
+}
+
+void
+msn_transaction_unqueue(MsnTransaction *trans, MsnCmdProc *cmdproc)
+{
+	MsnTransaction *elem;
+
+	while ((elem = g_queue_pop_head(trans->queue)) != NULL)
+		msn_cmdproc_send_trans(cmdproc, elem);
+}
+#endif
+
+void
 msn_transaction_set_payload(MsnTransaction *trans,
 							const char *payload, int payload_len)
 {
@@ -98,4 +139,27 @@ msn_transaction_set_payload(MsnTransaction *trans,
 
 	trans->payload = g_strdup(payload);
 	trans->payload_len = payload_len ? payload_len : strlen(trans->payload);
+}
+
+void
+msn_transaction_set_data(MsnTransaction *trans, void *data)
+{
+	g_return_if_fail(trans != NULL);
+
+	trans->data = data;
+}
+
+void
+msn_transaction_add_cb(MsnTransaction *trans, char *answer,
+					   MsnTransCb cb, void *data)
+{
+	g_return_if_fail(trans  != NULL);
+	g_return_if_fail(answer != NULL);
+
+	if (trans->callbacks == NULL)
+		trans->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+
+	g_hash_table_insert(trans->callbacks, answer, cb);
+
+	trans->data = data;
 }

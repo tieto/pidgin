@@ -44,4 +44,6 @@ void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
  */
 void msn_import_html(const char *html, char **attributes, char **message);
 
+void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
+
 #endif /* _MSN_UTILS_H_ */

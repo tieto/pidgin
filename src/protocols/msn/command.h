@@ -27,8 +27,10 @@ typedef struct _MsnCommand MsnCommand;
 #include "cmdproc.h"
 #include "transaction.h"
 
-/* typedef void (*MsnPayloadCb)(MsnCmdProc *cmdproc, MsnCommand *cmd, char
- * *payload, size_t len); */
+#if 1
+typedef void (*MsnPayloadCb)(MsnCmdProc *cmdproc, MsnCommand *cmd,
+							 char *payload, size_t len);
+#endif
 
 /**
  * A received command.
@@ -44,7 +46,11 @@ struct _MsnCommand
 	int ref_count;
 
 	MsnTransaction *trans;
-	/* MsnPayloadCb payload_cb; */
+
+	char *payload;
+	size_t payload_len;
+
+	MsnPayloadCb payload_cb;
 };
 
 MsnCommand *msn_command_from_string(const char *string);

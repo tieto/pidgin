@@ -20,9 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <glib.h>
-#include "internal.h"
 
-#include "blist.h"
 #include "msn.h"
 #include "accountopt.h"
 #include "msg.h"
@@ -32,10 +30,13 @@
 #include "session.h"
 #include "state.h"
 #include "utils.h"
+#include "multi.h"
 #include "util.h"
 
-#include "notification.h"
 #include "switchboard.h"
+#include "notification.h"
+#include "sync.h"
+#include "slplink.h"
 
 #define BUDDY_ALIAS_MAXLEN 387
 
@@ -82,7 +83,7 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	const char *alias;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 	account = gaim_connection_get_account(gc);
 
 	alias = (entry && *entry) ? entry : "";
@@ -91,7 +92,6 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	{
 		gaim_notify_error(gc, NULL,
 						  _("Your new MSN friendly name is too long."), NULL);
-
 		return;
 	}
 
@@ -107,7 +107,7 @@ msn_set_prp(GaimConnection *gc, const char *type, const char *entry)
 	MsnSession *session;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 
 	if (entry == NULL || *entry == '\0')
 	{
@@ -153,17 +153,15 @@ disable_msn_pages_cb(GaimConnection *gc)
 static void
 send_to_mobile(GaimConnection *gc, const char *who, const char *entry)
 {
-	MsnSession *session;
-	MsnServConn *servconn;
-	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
+	MsnSession *session;
+	MsnCmdProc *cmdproc;
 	MsnPage *page;
 	char *payload;
 	size_t payload_len;
 
 	session = gc->proto_data;
-	servconn = session->notification_conn;
-	cmdproc = servconn->cmdproc;	
+	cmdproc = session->notification->cmdproc;
 
 	page = msn_page_new();
 	msn_page_set_body(page, entry);
@@ -262,13 +260,13 @@ msn_show_set_mobile_pages(GaimPluginAction *action)
 	gc = (GaimConnection *) action->context;
 
 	gaim_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
-			_("Do you want to allow or disallow people on "
-			  "your buddy list to send you MSN Mobile pages "
-			  "to your cell phone or other mobile device?"),
-			-1, gc, 3,
-			_("Allow"), G_CALLBACK(enable_msn_pages_cb),
-			_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
-			_("Cancel"), NULL);
+						_("Do you want to allow or disallow people on "
+						  "your buddy list to send you MSN Mobile pages "
+						  "to your cell phone or other mobile device?"),
+						-1, gc, 3,
+						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
+						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
+						_("Cancel"), NULL);
 }
 
 static void
@@ -286,17 +284,17 @@ show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 	gc = gaim_account_get_connection(buddy->account);
 
 	session = gc->proto_data;
-	user = msn_users_find_with_passport(session->users, buddy->name);
+	user = msn_userlist_find_user(session->userlist, buddy->name);
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
 	data->passport = buddy->name;
 
 	gaim_request_input(gc, NULL, _("Send a mobile message."), NULL,
-			NULL, TRUE, FALSE, NULL,
-			_("Page"), G_CALLBACK(send_to_mobile_cb),
-			_("Close"), G_CALLBACK(close_mobile_page_cb),
-			data);
+					   NULL, TRUE, FALSE, NULL,
+					   _("Page"), G_CALLBACK(send_to_mobile_cb),
+					   _("Close"), G_CALLBACK(close_mobile_page_cb),
+					   data);
 }
 
 static void
@@ -306,33 +304,59 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	GaimConnection *gc;
 
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
 	MsnSwitchBoard *swboard;
-	MsnUser *user;
-	
+
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (GaimBuddy *) node;
 	gc = gaim_account_get_connection(buddy->account);
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
 
-	if ((swboard = msn_session_open_switchboard(session)) == NULL)
-		return;
+	swboard = msn_switchboard_new(session);
+	msn_switchboard_request(swboard);
+	msn_switchboard_request_add_user(swboard, buddy->name);
 
-	user = msn_user_new(session, buddy->name, NULL);
+	/* TODO: This might move somewhere else, after USR might be */
+	swboard->chat_id = session->conv_seq++;
+	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
+}
 
-	msn_switchboard_set_user(swboard, user);
+static void
+t_msn_xfer_init(GaimXfer *xfer)
+{
+	MsnSlpLink *slplink;
 
-	swboard->total_users = 1;
+	slplink = xfer->data;
 
-	session->last_chat_id++;
-	swboard->chat_id = session->last_chat_id;
-	swboard->chat = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
+	msn_slplink_request_ft(slplink, xfer);
+}
 
-	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
-							gaim_account_get_username(buddy->account), NULL);
+static void
+show_send_file_cb(GaimBlistNode *node, gpointer ignored)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	MsnSession *session;
+	MsnSlpLink *slplink;
+	GaimXfer *xfer;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+
+	gc = gaim_account_get_connection(buddy->account);
+	session = gc->proto_data;
+
+	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
+
+	slplink = msn_session_get_slplink(session, buddy->name);
+
+	xfer->data = slplink;
+
+	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+
+	gaim_xfer_request(xfer);
 }
 
 /**************************************************************************
@@ -460,6 +484,8 @@ msn_buddy_menu(GaimBuddy *buddy)
 	GList *m = NULL;
 	GaimBlistNodeAction *act;
 
+	g_return_val_if_fail(buddy != NULL, NULL);
+
 	user = buddy->proto_data;
 
 	if (user != NULL)
@@ -470,6 +496,11 @@ msn_buddy_menu(GaimBuddy *buddy)
 											 show_send_to_mobile_cb, NULL);
 			m = g_list_append(m, act);
 		}
+
+		act = gaim_blist_node_action_new(_("Send File"),
+											show_send_file_cb, NULL);
+
+		m = g_list_append(m, act);
 	}
 
 	if (g_ascii_strcasecmp(buddy->name,
@@ -522,7 +553,7 @@ msn_login(GaimAccount *account)
 	{
 		http_method = TRUE;
 
-		gaim_debug(GAIM_DEBUG_INFO, "msn", "using http method\n");
+		gaim_debug_info("msn", "using http method\n");
 
 		host = "gateway.messenger.hotmail.com";
 		port   = 80;
@@ -533,15 +564,14 @@ msn_login(GaimAccount *account)
 		port = gaim_account_get_int(account,    "port",   MSN_PORT);
 	}
 
-	session = msn_session_new(account, host, port);
-	session->http_method = http_method;
+	session = msn_session_new(account, host, port, http_method);
 	session->prpl = my_protocol;
 
 	if (session->http_method)
 		msn_http_session_init(session);
 
 	gc->proto_data = session;
-	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_FORMATTING_WBFO | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_FONTSIZE | GAIM_CONNECTION_NO_URLDESC;
+	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_FORMATTING_WBFO | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_FONTSIZE | GAIM_CONNECTION_NO_URLDESC;;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
 
@@ -551,26 +581,22 @@ msn_login(GaimAccount *account)
 	if (strcmp(username, gaim_account_get_username(account)))
 		gaim_account_set_username(account, username);
 
-	if (!msn_session_connect(session))
-	{
-		gaim_connection_error(gc, _("Unable to connect."));
-
-		return;
-	}
+	msn_session_connect(session);
 }
 
 static void
 msn_close(GaimConnection *gc)
 {
-	MsnSession *session = gc->proto_data;
+	MsnSession *session;
 
-	if (session != NULL)
-	{
-		if (session->http_method)
-			msn_http_session_uninit(session);
+	session = gc->proto_data;
 
-		msn_session_destroy(session);
-	}
+	g_return_if_fail(session != NULL);
+
+	if (session->http_method)
+		msn_http_session_uninit(session);
+
+	msn_session_destroy(session);
 
 	gc->proto_data = NULL;
 }
@@ -588,40 +614,31 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		MsnSession *session;
 		MsnSwitchBoard *swboard;
 		MsnMessage *msg;
-		MsnUser *user;
 		char *msgformat;
 		char *msgtext;
 
 		session = gc->proto_data;
-		swboard = msn_session_find_switch_with_passport(session, who);
-		user = msn_user_new(session, who, NULL);
+		swboard = msn_session_get_swboard(session, who);
 
 		msn_import_html(message, &msgformat, &msgtext);
-
 		msg = msn_message_new_plain(msgtext);
 		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
 
 		g_free(msgformat);
 		g_free(msgtext);
 
-		if (swboard != NULL)
+		swboard = msn_session_get_swboard(session, who);
+
+		if (!g_queue_is_empty(swboard->im_queue) ||
+			!swboard->user_joined)
 		{
-			msn_switchboard_send_msg(swboard, msg);
+			msn_switchboard_queue_msg(swboard, msg);
 		}
 		else
 		{
-			if ((swboard = msn_session_open_switchboard(session)) == NULL)
-			{
-				msn_message_destroy(msg);
-
-				return 1;
-			}
-
-			msn_switchboard_set_user(swboard, user);
 			msn_switchboard_send_msg(swboard, msg);
 		}
 
-		msn_user_destroy(user);
 		msn_message_destroy(msg);
 	}
 	else
@@ -630,7 +647,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		 * In MSN, you can't send messages to yourself, so
 		 * we'll fake like we received it ;)
 		 */
-		serv_got_typing_stopped(gc, (char *)who);
+		serv_got_typing_stopped(gc, who);
 		serv_got_im(gc, who, message, flags, time(NULL));
 	}
 
@@ -659,9 +676,12 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 		return MSN_TYPING_SEND_TIMEOUT;
 	}
 
-	swboard = msn_session_find_switch_with_passport(session, who);
+	swboard = msn_session_find_swboard(session, who);
 
 	if (swboard == NULL)
+		return 0;
+
+	if (!swboard->user_joined)
 		return 0;
 
 	msg = msn_message_new();
@@ -682,7 +702,7 @@ static void
 msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	MsnSession *session;
-	const char *status;
+	int status;
 
 	session = gc->proto_data;
 
@@ -695,37 +715,37 @@ msn_set_away(GaimConnection *gc, const char *state, const char *msg)
 	if (msg != NULL)
 	{
 		gc->away = g_strdup("");
-		status = "AWY";
+		status = MSN_AWAY;
 	}
 	else if (state)
 	{
 		gc->away = g_strdup("");
 
 		if (!strcmp(state, _("Away From Computer")))
-			status = "AWY";
+			status = MSN_AWAY;
 		else if (!strcmp(state, _("Be Right Back")))
-			status = "BRB";
+			status = MSN_BRB;
 		else if (!strcmp(state, _("Busy")))
-			status = "BSY";
+			status = MSN_BUSY;
 		else if (!strcmp(state, _("On The Phone")))
-			status = "PHN";
+			status = MSN_PHONE;
 		else if (!strcmp(state, _("Out To Lunch")))
-			status = "LUN";
+			status = MSN_LUNCH;
 		else if (!strcmp(state, _("Hidden")))
-			status = "HDN";
+			status = MSN_HIDDEN;
 		else
 		{
 			g_free(gc->away);
 			gc->away = NULL;
-			status = "NLN";
+			status = MSN_ONLINE;
 		}
 	}
 	else if (gc->is_idle)
-		status = "IDL";
+		status = MSN_IDLE;
 	else
-		status = "NLN";
+		status = MSN_ONLINE;
 
-	msn_session_change_status(session, status);
+	msn_change_status(session, status);
 }
 
 static void
@@ -738,228 +758,120 @@ msn_set_idle(GaimConnection *gc, int idle)
 	if (gc->away != NULL)
 		return;
 
-	msn_session_change_status(session, (idle ? "IDL" : "NLN"));
+	msn_change_status(session, (idle ? MSN_IDLE : MSN_ONLINE));
 }
 
 static void
 msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-	MsnGroup *msn_group = NULL;
+	MsnUserList *userlist;
 	const char *who;
-	GSList *l;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
 	who = msn_normalize(gc->account, name);
 
-	if (strchr(who, ' '))
-	{
-		/* This is a broken blist entry. */
-		return;
-	}
-
 	if (group != NULL)
-		msn_group = msn_groups_find_with_name(session->groups, group->name);
-
-	/* We should check if the user isn't alredy there. */
-	for (l = session->lists.forward; l != NULL; l = l->next)
-	{
-		MsnUser *user = l->data;
-
-		if (!gaim_utf8_strcasecmp(who, msn_user_get_passport(user)))
-		{
-			if (group == NULL)
-				break;
-			else if (msn_group != NULL)
-			{
-				/* Now we should check if it's in the group. */
-				if (g_list_find(user->group_ids,
-								GINT_TO_POINTER(msn_group->id)))
-					break;
-			}
-		}
-	}
-
-	if (l != NULL)
-		return;
-
-	if (msn_group != NULL)
-	{
-		msn_cmdproc_send(cmdproc, "ADD", "FL %s %s %d", who, who,
-						 msn_group_get_id(msn_group));
-	}
+		gaim_debug_info("msn", "msn_add_buddy: %s, %s\n", who, group->name);
 	else
+		gaim_debug_info("msn", "msn_add_buddy: %s\n", who);
+
+#if 0
+	/* Which is the max? */
+	if (session->fl_users_count >= 150)
 	{
-		msn_cmdproc_send(cmdproc, "ADD", "FL %s %s", who, who);
+		gaim_debug_info("msn", "Too many buddies\n");
+		/* Buddy list full */
+		/* TODO: gaim should be notifyied of this */
+		return;
 	}
+#endif
+	
+	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL,
+						   group ? group->name : NULL);
 }
 
 static void
 msn_rem_buddy(GaimConnection *gc, const char *who, const char *group_name)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-	MsnGroup *group;
-	GSList *l;
-
+	MsnUserList *userlist;
+	
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
 
-	if (strchr(who, ' '))
-	{
-		/* This is a broken blist entry. */
-		return;
-	}
-
-	group = msn_groups_find_with_name(session->groups, group_name);
-
-	/* We should check if the user is there. */
-	for (l = session->lists.forward; l != NULL; l = l->next)
-	{
-		MsnUser *user = l->data;
-
-		if (!gaim_utf8_strcasecmp(who, msn_user_get_passport(user)))
-		{
-			if (group_name == NULL)
-				break;
-			else if (group != NULL)
-			{
-				/* Now we should check if it's in the group. */
-				if (g_list_find(user->group_ids,
-								GINT_TO_POINTER(group->id)))
-					break;
-			}
-		}
-	}
-
-	if (l == NULL)
-		return;
-
-	if (group == NULL)
-	{
-		msn_cmdproc_send(cmdproc, "REM", "FL %s", who);
-	}
-	else
-	{
-		msn_cmdproc_send(cmdproc, "REM", "FL %s %d", who,
-						 msn_group_get_id(group));
-	}
+	msn_userlist_rem_buddy(userlist, who, MSN_LIST_FL, group_name);
 }
 
 static void
 msn_add_permit(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
+	MsnUserList *userlist;
+	MsnUser *user;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
+	user = msn_userlist_find_user(userlist, who);
 
-	if (!strchr(who, '@'))
-	{
-		char buf[MSN_BUF_LEN];
-
-		g_snprintf(buf, sizeof(buf),
-				   _("An MSN screen name must be in the form \"user@server.com\". "
-					 "Perhaps you meant %s@hotmail.com. No changes were made "
-					 "to your allow list."), who);
-
-		gaim_notify_error(gc, NULL, _("Invalid MSN screen name"), buf);
-		gaim_privacy_permit_remove(gc->account, who, TRUE);
-
-		return;
-	}
-
-	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcasecmp))
-	{
-		gaim_debug_info("msn", "Moving %s from BL to AL\n", who);
-		gaim_privacy_deny_remove(gc->account, who, TRUE);
-
-		msn_cmdproc_send(cmdproc, "REM", "BL %s", who);
-
-		if (cmdproc->error)
-			return;
-	}
-
-	msn_cmdproc_send(cmdproc, "ADD", "AL %s %s", who, who);
+	if (user->list_op & MSN_LIST_BL_OP)
+		msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
+	
+	msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
 }
 
 static void
 msn_add_deny(GaimConnection *gc, const char *who)
 {
-	MsnCmdProc *cmdproc;
 	MsnSession *session;
-
+	MsnUserList *userlist;
+	MsnUser *user;
+	
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
+	user = msn_userlist_find_user(userlist, who);
 
-	if (!strchr(who, '@'))
-	{
-		char buf[MSN_BUF_LEN];
-		g_snprintf(buf, sizeof(buf),
-				   _("An MSN screen name must be in the form \"user@server.com\". "
-					 "Perhaps you meant %s@hotmail.com. No changes were made "
-					 "to your block list."), who);
+	if (user->list_op & MSN_LIST_AL_OP)
+		msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
 
-		gaim_notify_error(gc, NULL, _("Invalid MSN screen name"), buf);
-
-		gaim_privacy_deny_remove(gc->account, who, TRUE);
-
-		return;
-	}
-
-	if (g_slist_find_custom(gc->account->permit, who, (GCompareFunc)strcmp))
-	{
-		gaim_debug(GAIM_DEBUG_INFO, "msn", "Moving %s from AL to BL\n", who);
-		gaim_privacy_permit_remove(gc->account, who, TRUE);
-
-		msn_cmdproc_send(cmdproc, "REM", "AL %s", who);
-
-		if (cmdproc->error)
-			return;
-	}
-
-	msn_cmdproc_send(cmdproc, "ADD", "BL %s %s", who, who);
+	msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
 }
 
 static void
 msn_rem_permit(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-
+	MsnUserList *userlist;
+	MsnUser *user;
+	
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
 
-	msn_cmdproc_send(cmdproc, "REM", "AL %s", who);
+	user = msn_userlist_find_user(userlist, who);
+	
+	msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
 
-	if (cmdproc->error)
-		return;
-
-	gaim_privacy_deny_add(gc->account, who, TRUE);
-
-	msn_cmdproc_send(cmdproc, "ADD", "BL %s %s", who, who);
+	if (user->list_op & MSN_LIST_RL_OP)
+		msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
 }
 
-static void
+void
 msn_rem_deny(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-
+	MsnUserList *userlist;
+	MsnUser *user;
+	
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	userlist = session->userlist;
 
-	msn_cmdproc_send(cmdproc, "REM", "BL %s", who);
+	user = msn_userlist_find_user(userlist, who);
 
-	if (cmdproc->error)
-		return;
+	msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
 
-	gaim_privacy_permit_add(gc->account, who, TRUE);
-
-	msn_cmdproc_send(cmdproc, "ADD", "AL %s %s", who, who);
+	if (user->list_op & MSN_LIST_RL_OP)
+		msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
 }
 
 static void
@@ -968,11 +880,10 @@ msn_set_permit_deny(GaimConnection *gc)
 	GaimAccount *account;
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	GSList *s, *t = NULL;
 
 	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 
 	if (account->perm_deny == GAIM_PRIVACY_ALLOW_ALL ||
 		account->perm_deny == GAIM_PRIVACY_DENY_USERS)
@@ -982,107 +893,6 @@ msn_set_permit_deny(GaimConnection *gc)
 	else
 	{
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
-	}
-
-	if (cmdproc->error)
-		return;
-
-	/*
-	 * This is safe because we'll always come here after we've gotten
-	 * the list off the server, and data is never removed. So if the
-	 * lengths are equal we don't know about anyone locally and so
-	 * there's no sense in going through them all.
-	 */
-	if (g_slist_length(gc->account->permit) ==
-		g_slist_length(session->lists.allow))
-	{
-		g_slist_free(session->lists.allow);
-		session->lists.allow = NULL;
-	}
-
-	if (g_slist_length(gc->account->deny) ==
-		g_slist_length(session->lists.block))
-	{
-		g_slist_free(session->lists.block);
-		session->lists.block = NULL;
-	}
-
-	if (session->lists.allow == NULL && session->lists.block == NULL)
-		return;
-
-	if (session->lists.allow != NULL)
-	{
-		for (s = g_slist_nth(gc->account->permit,
-							 g_slist_length(session->lists.allow));
-			 s != NULL;
-			 s = s->next)
-		{
-			char *who = s->data;
-
-			if (!strchr(who, '@'))
-			{
-				t = g_slist_append(t, who);
-				continue;
-			}
-
-			if (g_slist_find(session->lists.block, who))
-			{
-				t = g_slist_append(t, who);
-				continue;
-			}
-
-			msn_cmdproc_send(cmdproc, "ADD", "AL %s %s", who, who);
-
-			if (cmdproc->error)
-				return;
-		}
-
-		for (; t != NULL; t = t->next)
-			gaim_privacy_permit_remove(gc->account, t->data, TRUE);
-
-		if (t != NULL)
-			g_slist_free(t);
-
-		t = NULL;
-		g_slist_free(session->lists.allow);
-		session->lists.allow = NULL;
-	}
-
-	if (session->lists.block)
-	{
-		for (s = g_slist_nth(gc->account->deny,
-							 g_slist_length(session->lists.block));
-			 s != NULL;
-			 s = s->next)
-		{
-			char *who = s->data;
-
-			if (!strchr(who, '@'))
-			{
-				t = g_slist_append(t, who);
-				continue;
-			}
-
-			if (g_slist_find(session->lists.block, who))
-			{
-				t = g_slist_append(t, who);
-				continue;
-			}
-
-			msn_cmdproc_send(cmdproc, "ADD", "BL %s %s", who, who);
-
-			if (cmdproc->error)
-				return;
-		}
-
-		for (; t != NULL; t = t->next)
-			gaim_privacy_deny_remove(gc->account, t->data, TRUE);
-
-		if (t != NULL)
-			g_slist_free(t);
-
-		g_slist_free(session->lists.block);
-		session->lists.block = NULL;
 	}
 }
 
@@ -1099,7 +909,7 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 	swboard = msn_session_find_switch_with_id(session, id);
 	g_return_if_fail(swboard != NULL);
 
-	cmdproc = swboard->cmdproc;
+	cmdproc = swboard->servconn->cmdproc;
 
 	msn_cmdproc_send(cmdproc, "CAL", "%s", who);
 }
@@ -1112,6 +922,7 @@ msn_chat_leave(GaimConnection *gc, int id)
 	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
+
 	swboard = msn_session_find_switch_with_id(session, id);
 	g_return_if_fail(swboard != NULL);
 
@@ -1140,20 +951,21 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	if (swboard == NULL)
 		return -EINVAL;
 
-	msn_import_html(message, &msgformat, &msgtext);
+	if (swboard->ready)
+	{
+		msn_import_html(message, &msgformat, &msgtext);
 
-	msg = msn_message_new_plain(msgtext);
-	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+		msg = msn_message_new_plain(msgtext);
+		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+		msn_switchboard_send_msg(swboard, msg);
+		msn_message_destroy(msg);
 
-	g_free(msgformat);
-	g_free(msgtext);
+		g_free(msgformat);
+		g_free(msgtext);
 
-	msn_switchboard_send_msg(swboard, msg);
-
-	msn_message_destroy(msg);
-
-	serv_got_chat_in(gc, id, gaim_account_get_username(account), 0,
-					 message, time(NULL));
+		serv_got_chat_in(gc, id, gaim_account_get_username(account), 0,
+						 message, time(NULL));
+	}
 
 	return 0;
 }
@@ -1165,7 +977,7 @@ msn_keepalive(GaimConnection *gc)
 	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 
 	if (!session->http_method)
 		msn_cmdproc_send_quick(cmdproc, "PNG", NULL, NULL);
@@ -1176,68 +988,12 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 				const char *old_group_name, const char *new_group_name)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-	MsnGroup *old_group, *new_group;
-	MsnUser *user;
-	const char *friendly;
-
+	MsnUserList *userlist;
+	
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
-	old_group = msn_groups_find_with_name(session->groups, old_group_name);
-	new_group = msn_groups_find_with_name(session->groups, new_group_name);
+	userlist = session->userlist;
 
-	user = msn_users_find_with_passport(session->users, who);
-
-	if ((friendly = msn_user_get_name(user)) == NULL)
-		friendly = msn_user_get_passport(user);
-
-	if (old_group != NULL)
-		msn_user_remove_group_id(user, msn_group_get_id(old_group));
-
-	if (new_group == NULL)
-	{
-		msn_cmdproc_send(cmdproc, "ADG", "%s 0",
-						 gaim_url_encode(new_group_name));
-
-		if (cmdproc->error)
-			return;
-
-		/* I hate this. So much. */
-		session->moving_buddy    = TRUE;
-		session->dest_group_name = g_strdup(new_group_name);
-		session->old_group       = old_group;
-
-		session->moving_user =
-			msn_users_find_with_passport(session->users, who);
-
-		msn_user_ref(session->moving_user);
-	}
-	else
-	{
-		msn_cmdproc_send(cmdproc, "ADD", "FL %s %s %d",
-						 who, gaim_url_encode(friendly),
-						 msn_group_get_id(new_group));
-
-		if (cmdproc->error)
-			return;
-	}
-
-	if (old_group != NULL)
-	{
-		msn_cmdproc_send(cmdproc, "REM", "FL %s %d", who,
-						 msn_group_get_id(old_group));
-
-		if (cmdproc->error)
-			return;
-
-#if 0
-		if (msn_users_get_count(msn_group_get_users(old_group)) <= 0)
-		{
-			msn_cmdproc_send(cmdproc, "RMG", "%d",
-							 msn_group_get_id(old_group));
-		}
-#endif
-	}
+	msn_userlist_move_buddy(userlist, who, old_group_name, new_group_name);
 }
 
 static void
@@ -1246,37 +1002,23 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	MsnGroup *old_group;
+	int old_gid;
 	const char *enc_new_group_name;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 	enc_new_group_name = gaim_url_encode(new_group_name);
 
-	if ((old_group = msn_groups_find_with_name(session->groups,
-											   old_group_name)) != NULL)
+	old_gid = msn_userlist_find_group_id(session->userlist, old_group_name);
+
+	if (old_gid >= 0)
 	{
-		msn_cmdproc_send(cmdproc, "REG", "%d %s 0",
-						 msn_group_get_id(old_group), enc_new_group_name);
-
-		if (cmdproc->error)
-			return;
-
-		msn_group_set_name(old_group, new_group_name);
+		msn_cmdproc_send(cmdproc, "REG", "%d %s 0", old_gid,
+						 enc_new_group_name);
 	}
 	else
 	{
 		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
-	}
-}
-
-static void
-msn_buddy_free(GaimBuddy *b)
-{
-	if (b->proto_data != NULL)
-	{
-		msn_user_destroy(b->proto_data);
-		b->proto_data = NULL;
 	}
 }
 
@@ -1289,13 +1031,21 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 
 	session = gc->proto_data;
 
-	swboard = msn_session_find_switch_with_passport(session, who);
-	g_return_if_fail(swboard != NULL);
+	swboard = msn_session_find_swboard(session, who);
+
+	/*
+	 * Don't perform an assertion here. It swboard is NULL, then the
+	 * switchboard was either closed by the other party, or the person
+	 * is talking to himself.
+	 */
+	if (swboard == NULL)
+		return;
 
 	cmdproc = swboard->servconn->cmdproc;
 
-	if (swboard->chat == NULL)
+	if (swboard->current_users == 1)
 	{
+		/* This must happen on both IM's and Chat's, right? */
 		GaimAccount *account;
 
 		account = gaim_connection_get_account(gc);
@@ -1318,7 +1068,7 @@ msn_set_buddy_icon(GaimConnection *gc, const char *filename)
 
 	msn_user_set_buddy_icon(user, filename);
 
-	msn_session_change_status(session, session->away_state);
+	msn_change_status(session, session->state);
 }
 
 static void
@@ -1326,14 +1076,14 @@ msn_remove_group(GaimConnection *gc, const char *name)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	MsnGroup *group;
+	int group_id;
 
 	session = gc->proto_data;
-	cmdproc = session->notification_conn->cmdproc;
+	cmdproc = session->notification->cmdproc;
 
-	if ((group = msn_groups_find_with_name(session->groups, name)) != NULL)
+	if ((group_id = msn_userlist_find_group_id(session->userlist, name)) >= 0)
 	{
-		msn_cmdproc_send(cmdproc, "RMG", "%d", msn_group_get_id(group));
+		msn_cmdproc_send(cmdproc, "RMG", "%d", group_id);
 	}
 }
 
@@ -1355,9 +1105,9 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
 		gaim_notify_formatted(info_data->gc, NULL,
-							  _("Buddy Information"), NULL,
-							  _("<html><body><b>Error retrieving profile</b></body></html>"),
-							  NULL, NULL);
+				_("Buddy Information"), NULL,
+				_("<html><body><b>Error retrieving profile</b></body></html>"),
+				NULL, NULL);
 
 		return;
 	}
@@ -1644,6 +1394,7 @@ static gboolean msn_load(GaimPlugin *plugin)
 {
 	msn_notification_init();
 	msn_switchboard_init();
+	msn_sync_init();
 
 	return TRUE;
 }
@@ -1652,6 +1403,7 @@ static gboolean msn_unload(GaimPlugin *plugin)
 {
 	msn_notification_end();
 	msn_switchboard_end();
+	msn_sync_end();
 
 	return TRUE;
 }
@@ -1686,7 +1438,7 @@ static GaimPluginUiInfo prefs_info = {
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_MAIL_CHECK /* | OPT_PROTO_BUDDY_ICON */,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,
 	msn_list_icon,
@@ -1728,7 +1480,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	msn_group_buddy,
 	msn_rename_group,
-	msn_buddy_free,
+	NULL, /* msn_buddy_free */
 	msn_convo_closed,
 	msn_normalize,
 	msn_set_buddy_icon,

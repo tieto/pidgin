@@ -34,7 +34,7 @@ show_error(MsnServConn *servconn)
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
-
+	
 	gc = gaim_account_get_connection(servconn->session->account);
 	name = names[servconn->type];
 
@@ -58,12 +58,17 @@ show_error(MsnServConn *servconn)
 	}
 
 	if (servconn->type != MSN_SERVER_SB)
+	{
 		gaim_connection_error(gc, tmp);
+	}
 	else
 	{
-		GaimAccount *account = gaim_connection_get_account(gc);
-		char *primary = g_strdup_printf(_("MSN error for account %s"),
-										gaim_account_get_username(account));
+		GaimAccount *account;
+		char *primary;
+
+		account = gaim_connection_get_account(gc);
+		primary = g_strdup_printf(_("MSN error for account %s"),
+								  gaim_account_get_username(account));
 
 		gaim_notify_error(gc, NULL, primary, tmp);
 
@@ -116,7 +121,6 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	}
 
 	servconn->num = session->servconns_count++;
-	session->servconns = g_list_append(session->servconns, servconn);
 
 	return servconn;
 }
@@ -124,8 +128,6 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 void
 msn_servconn_destroy(MsnServConn *servconn)
 {
-	MsnSession *session;
-
 	g_return_if_fail(servconn != NULL);
 
 	if (servconn->processing)
@@ -134,15 +136,18 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
-	session = servconn->session;
-
-	session->servconns = g_list_remove(session->servconns, servconn);
-
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
-	msn_cmdproc_destroy(servconn->cmdproc);
+	if (servconn->http_data != NULL)
+		g_free(servconn->http_data);
 
+#if 0
+	if (servconn->rx_buf != NULL)
+		g_free(servconn->rx_buf);
+#endif
+
+	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
 }
 
@@ -163,6 +168,9 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 
 	if (session->http_method)
 	{
+		if (servconn->http_data->gateway_host != NULL)
+			g_free(servconn->http_data->gateway_host);
+			
 		servconn->http_data->gateway_host = g_strdup(host);
 	}
 
@@ -170,20 +178,20 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 						   servconn);
 
 	if (r == 0)
+	{
 		servconn->connected = TRUE;
-
-	return servconn->connected;
+		servconn->cmdproc->ready = TRUE;
+		return TRUE;
+	}
+	else
+		return FALSE;
 }
 
 void
 msn_servconn_disconnect(MsnServConn *servconn)
 {
-	MsnSession *session;
-
 	g_return_if_fail(servconn != NULL);
 	g_return_if_fail(servconn->connected);
-
-	session = servconn->session;
 
 	if (servconn->inpa > 0)
 	{
@@ -206,33 +214,27 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 		if (servconn->http_data->timer)
 			gaim_timeout_remove(servconn->http_data->timer);
-
-		g_free(servconn->http_data);
-		servconn->http_data = NULL;
 	}
 
 	servconn->rx_len = 0;
 	servconn->payload_len = 0;
 
+	servconn->connected = FALSE;
+	servconn->cmdproc->ready = FALSE;
+
 	if (servconn->disconnect_cb != NULL)
 		servconn->disconnect_cb(servconn);
-
-	servconn->connected = FALSE;
 }
 
 void
-msn_servconn_set_connect_cb(MsnServConn *servconn,
-							gboolean (*connect_cb)(MsnServConn *servconn))
+msn_servconn_set_connect_cb(MsnServConn *servconn, void (*connect_cb)(MsnServConn *))
 {
 	g_return_if_fail(servconn != NULL);
-
 	servconn->connect_cb = connect_cb;
 }
 
 void
-msn_servconn_set_disconnect_cb(MsnServConn *servconn,
-							   void (*disconnect_cb)(MsnServConn
-													 *servconn))
+msn_servconn_set_disconnect_cb(MsnServConn *servconn, void (*disconnect_cb)(MsnServConn *))
 {
 	g_return_if_fail(servconn != NULL);
 
@@ -256,17 +258,30 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	g_return_val_if_fail(servconn != NULL, 0);
 
-	if (servconn->session->http_method)
+	if (servconn->http_data == NULL)
+	{
+		switch (servconn->type)
+		{
+			case MSN_SERVER_NS:
+			case MSN_SERVER_SB:
+				ret = write(servconn->fd, buf, len);
+				break;
+			case MSN_SERVER_DC:
+				ret = write(servconn->fd, &buf, sizeof(len));
+				ret = write(servconn->fd, buf, len);
+				break;
+			default:
+				ret = write(servconn->fd, buf, len);
+				break;
+		}
+	}
+	else
 	{
 		ret = msn_http_servconn_write(servconn, buf, len,
 									  servconn->http_data->server_type);
 	}
-	else
-	{
-		ret = write(servconn->fd, buf, len);
-	}
 
-	if (ret < 0)
+	if (ret == -1)
 	{
 		servconn->cmdproc->error = MSN_ERROR_WRITE;
 		failed_io(servconn);
@@ -288,7 +303,6 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	buf[len] = '\0';
 
 	if (len <= 0)
 	{
@@ -299,8 +313,10 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len);
-	memcpy(servconn->rx_buf + servconn->rx_len, buf, len);
+	buf[len] = '\0';
+
+	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len + 1);
+	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
 
 	if (session->http_method)
@@ -387,13 +403,13 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		{
 			end = strstr(cur, "\r\n");
 
-			if (!end)
+			if (end == NULL)
 				/* The command is still not complete. */
 				break;
 
 			*end = '\0';
-			cur_len = end - cur + 2;
 			end += 2;
+			cur_len = end - cur;
 		}
 
 		servconn->rx_len -= cur_len;
@@ -407,11 +423,11 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		{
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
 		}
-	} while (servconn->connected && servconn->rx_len);
+	} while (servconn->connected && servconn->rx_len > 0);
 
 	if (servconn->connected)
 	{
-		if (servconn->rx_len)
+		if (servconn->rx_len > 0)
 			servconn->rx_buf = g_memdup(cur, servconn->rx_len);
 		else
 			servconn->rx_buf = NULL;
@@ -424,3 +440,89 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	g_free(old_rx_buf);
 }
+
+#if 0
+static int
+create_listener(int port)
+{
+	int fd;
+	const int on = 1;
+
+#if 0
+	struct addrinfo hints;
+	struct addrinfo *c, *res;
+	char port_str[5];
+
+	snprintf(port_str, sizeof(port_str), "%d", port);
+
+	memset(&hints, 0, sizeof(hints));
+
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(NULL, port_str, &hints, &res) != 0)
+	{
+		gaim_debug_error("msn", "Could not get address info: %s.\n",
+						 port_str);
+		return -1;
+	} 
+
+	for (c = res; c != NULL; c = c->ai_next)
+	{ 
+		fd = socket(c->ai_family, c->ai_socktype, c->ai_protocol);
+
+		if (fd < 0)
+			continue;
+
+		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+		if (bind(fd, c->ai_addr, c->ai_addrlen) == 0)
+			break;
+
+		close(fd);
+	}
+
+	if (c == NULL)
+	{
+		gaim_debug_error("msn", "Could not find socket: %s.\n", port_str);
+		return -1;
+	}
+
+	freeaddrinfo(res);
+#else
+	struct sockaddr_in sockin;
+
+	fd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (fd < 0)
+		return -1;
+
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0)
+	{
+		close(fd);
+		return -1;
+	}
+
+	memset(&sockin, 0, sizeof(struct sockaddr_in));
+	sockin.sin_family = AF_INET;
+	sockin.sin_port = htons(port);
+
+	if (bind(fd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0)
+	{
+		close(fd);
+		return -1;
+	}
+#endif
+
+	if (listen (fd, 4) != 0)
+	{
+		close (fd);
+		return -1;
+	}
+
+	fcntl(fd, F_SETFL, O_NONBLOCK);
+
+	return fd;
+}
+#endif

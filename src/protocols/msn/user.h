@@ -23,49 +23,44 @@
 #define _MSN_USER_H_
 
 typedef struct _MsnUser  MsnUser;
-typedef struct _MsnUsers MsnUsers;
 
 #include "session.h"
-#include "msnobject.h"
+#include "object.h"
+
+#include "userlist.h"
 
 /**
  * A user.
  */
 struct _MsnUser
 {
-	MsnSession *session;    /**< The MSN session.             */
+#if 0
+	MsnSession *session;    /**< The MSN session.               */
+#endif
+	MsnUserList *userlist;
 
-	char *passport;         /**< The passport account.        */
-	char *name;             /**< The friendly name.           */
+	char *passport;         /**< The passport account.          */
+	char *store_name;       /**< The name stored in the server. */
+	char *friendly_name;    /**< The friendly name.             */
 
 	struct
 	{
-		char *home;         /**< Home phone number.           */
-		char *work;         /**< Work phone number.           */
-		char *mobile;       /**< Mobile phone number.         */
+		char *home;         /**< Home phone number.             */
+		char *work;         /**< Work phone number.             */
+		char *mobile;       /**< Mobile phone number.           */
 
 	} phone;
 
-	gboolean authorized;    /**< Authorized to add this user. */
-	gboolean mobile;        /**< Signed up with MSN Mobile.   */
+	gboolean authorized;    /**< Authorized to add this user.   */
+	gboolean mobile;        /**< Signed up with MSN Mobile.     */
 
-	GList *group_ids;       /**< The group IDs.               */
+	GList *group_ids;       /**< The group IDs.                 */
 
-	size_t ref_count;       /**< The reference count.         */
+	MsnObject *msnobj;      /**< The user's MSN Object.         */
 
-	MsnObject *msnobj;      /**< The user's MSN Object.       */
+	GHashTable *clientcaps; /**< The client's capabilities.     */
 
-	GHashTable *clientcaps; /**< The client's capabilities.   */
-};
-
-/**
- * A collection of users.
- */
-struct _MsnUsers
-{
-	size_t count; /**< The number of users. */
-
-	GList *users; /**< The list of users.   */
+	int list_op;
 };
 
 /**************************************************************************/
@@ -76,14 +71,14 @@ struct _MsnUsers
 /**
  * Creates a new user structure.
  *
- * @param session  The MSN session.
- * @param passport The initial passport.
- * @param name     The initial friendly name.
+ * @param session      The MSN session.
+ * @param passport     The initial passport.
+ * @param stored_name  The initial stored name.
  *
  * @return A new user structure.
  */
-MsnUser *msn_user_new(MsnSession *session, const char *passport,
-					  const char *name);
+MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
+					  const char *store_name);
 
 /**
  * Destroys a user structure.
@@ -91,26 +86,6 @@ MsnUser *msn_user_new(MsnSession *session, const char *passport,
  * @param user The user to destroy.
  */
 void msn_user_destroy(MsnUser *user);
-
-/**
- * Increments the reference count on a user.
- *
- * @param user The user.
- *
- * @return @a user
- */
-MsnUser *msn_user_ref(MsnUser *user);
-
-/**
- * Decrements the reference count on a user.
- *
- * This will destroy the structure if the count hits 0.
- *
- * @param user The user.
- *
- * @return @a user, or @c NULL if the new count is 0.
- */
-MsnUser *msn_user_unref(MsnUser *user);
 
 /**
  * Sets the passport account for a user.
@@ -126,7 +101,15 @@ void msn_user_set_passport(MsnUser *user, const char *passport);
  * @param user The user.
  * @param name The friendly name.
  */
-void msn_user_set_name(MsnUser *user, const char *name);
+void msn_user_set_friendly_name(MsnUser *user, const char *name);
+
+/**
+ * Sets the store name for a user.
+ *
+ * @param user The user.
+ * @param name The store name.
+ */
+void msn_user_set_store_name(MsnUser *user, const char *name);
 
 /**
  * Sets the buddy icon for a local user.
@@ -217,16 +200,16 @@ const char *msn_user_get_passport(const MsnUser *user);
  *
  * @return The friendly name.
  */
-const char *msn_user_get_name(const MsnUser *user);
+const char *msn_user_get_friendly_name(const MsnUser *user);
 
 /**
- * Returns the group IDs for a user.
+ * Returns the store name for a user.
  *
  * @param user The user.
  *
- * @return The group IDs.
+ * @return The store name.
  */
-GList *msn_user_get_group_ids(const MsnUser *user);
+const char *msn_user_get_store_name(const MsnUser *user);
 
 /**
  * Returns the home phone number for a user.
@@ -272,62 +255,6 @@ MsnObject *msn_user_get_object(const MsnUser *user);
  * @return The client information.
  */
 GHashTable *msn_user_get_client_caps(const MsnUser *user);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name User List API                                                   */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Creates a new MsnUsers structure.
- *
- * @return A new MsnUsers structure.
- */
-MsnUsers *msn_users_new(void);
-
-/**
- * Destroys a users list.
- *
- * @param users The users list.
- */
-void msn_users_destroy(MsnUsers *users);
-
-/**
- * Adds a user to a users list.
- *
- * @param users The users list.
- * @param user  The user.
- */
-void msn_users_add(MsnUsers *users, MsnUser *user);
-
-/**
- * Removes a user from a users list.
- *
- * @param users The users list.
- * @param user  The user.
- */
-void msn_users_remove(MsnUsers *users, MsnUser *user);
-
-/**
- * Returns the number of users in a users list.
- *
- * @param users The users list.
- *
- * @return The number of users.
- */
-size_t msn_users_get_count(const MsnUsers *users);
-
-/**
- * Finds a user with the specified passport.
- *
- * @param users    A list of users.
- * @param passport The passport.
- *
- * @return The user if found, or @c NULL otherwise.
- */
-MsnUser *msn_users_find_with_passport(MsnUsers *users, const char *passport);
 
 /*@}*/
 

@@ -27,16 +27,15 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 #include "conversation.h"
 
 #include "msg.h"
-#include "msnslp.h"
-#include "servconn.h"
-#include "cmdproc.h"
 #include "user.h"
+
+#include "servconn.h"
 
 struct _MsnSwitchBoard
 {
+	MsnSession *session;
 	MsnServConn *servconn;
-	MsnCmdProc *cmdproc;
-	MsnUser *user;
+	char *im_user;
 
 	char *auth_key;
 	char *session_id;
@@ -44,21 +43,21 @@ struct _MsnSwitchBoard
 	gboolean invited;
 	gboolean destroying;
 
-	GaimConversation *chat;
+	GaimConversation *conv;
 
-	gboolean in_use;
-	gboolean joined;
+	gboolean ready; /* When it's actually usable */
+	/* gboolean in_use; */
 
+	int current_users;
 	int total_users;
-
-	gboolean msg;
-	int msglen;
+	GList *users;
 
 	int chat_id;
 
 	gboolean hidden;
 
-	MsnSlpSession *slp_session;
+	gboolean user_joined;
+	GQueue *im_queue;
 };
 
 /**
@@ -87,13 +86,14 @@ MsnSwitchBoard *msn_switchboard_new(MsnSession *session);
  */
 void msn_switchboard_destroy(MsnSwitchBoard *swboard);
 
+#if 0
 /**
  * Sets the user the switchboard is supposed to connect to.
  *
  * @param swboard The switchboard.
  * @param user    The user.
  */
-void msn_switchboard_set_user(MsnSwitchBoard *swboard, MsnUser *user);
+void msn_switchboard_set_user(MsnSwitchBoard *swboard, const char *user);
 
 /**
  * Returns the user the switchboard is supposed to connect to.
@@ -102,7 +102,8 @@ void msn_switchboard_set_user(MsnSwitchBoard *swboard, MsnUser *user);
  *
  * @return The user.
  */
-MsnUser *msn_switchboard_get_user(const MsnSwitchBoard *swboard);
+const char *msn_switchboard_get_user(MsnSwitchBoard *swboard);
+#endif
 
 /**
  * Sets the auth key the switchboard must use when connecting.
@@ -119,7 +120,7 @@ void msn_switchboard_set_auth_key(MsnSwitchBoard *swboard, const char *key);
  *
  * @return The auth key.
  */
-const char *msn_switchboard_get_auth_key(const MsnSwitchBoard *swboard);
+const char *msn_switchboard_get_auth_key(MsnSwitchBoard *swboard);
 
 /**
  * Sets the session ID the switchboard must use when connecting.
@@ -136,7 +137,7 @@ void msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id);
  *
  * @return The session ID.
  */
-const char *msn_switchboard_get_session_id(const MsnSwitchBoard *swboard);
+const char *msn_switchboard_get_session_id(MsnSwitchBoard *swboard);
 
 /**
  * Sets whether or not the user was invited to this switchboard.
@@ -153,7 +154,7 @@ void msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited);
  *
  * @return @c TRUE if invited, @c FALSE otherwise.
  */
-gboolean msn_switchboard_is_invited(const MsnSwitchBoard *swboard);
+gboolean msn_switchboard_is_invited(MsnSwitchBoard *swboard);
 
 /**
  * Connects to a switchboard.
@@ -166,21 +167,25 @@ gboolean msn_switchboard_is_invited(const MsnSwitchBoard *swboard);
  */
 gboolean msn_switchboard_connect(MsnSwitchBoard *swboard,
 								 const char *host, int port);
-
-/**
- * Disconnects from a switchboard.
- *
- * @param swboard The switchboard.
- */
 void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
+void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg);
+
+gboolean msn_switchboard_chat_leave(MsnSwitchBoard *swboard);
+gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
+
+void msn_switchboard_request(MsnSwitchBoard *swboard);
+void msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user);
+void msn_switchboard_queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg);
+void msn_switchboard_process_queue(MsnSwitchBoard *swboard);
 
 /**
- * Sends a message to a switchboard.
+ * Processes application/x-msnmsgrp2p messages.
  *
- * @param swboard The switchboard.
- * @param msg     The message to send.
+ * @param cmdproc The command processor.
+ * @param msg     The message.
  */
-void msn_switchboard_send_msg(MsnSwitchBoard *swboard,
-							  MsnMessage *msg);
+void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 #endif /* _MSN_SWITCHBOARD_H_ */

@@ -70,24 +70,30 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =			cmdproc.c \
 			command.c \
+			dispatch.c \
 			error.c \
 			group.c \
 			history.c \
 			httpmethod.c \
 			msg.c \
 			msn.c \
-			msnobject.c \
-			msnslp.c \
-			notification.c \
 			nexus.c \
+			notification.c \
+			object.c \
 			page.c \
 			servconn.c \
 			session.c \
+			slp.c \
+			slpcall.c \
+			slplink.c \
+			slpmsg.c \
+			slpsession.c \
 			state.c \
 			switchboard.c \
 			table.c \
 			transaction.c \
 			user.c \
+			userlist.c \
 			utils.c
 
 

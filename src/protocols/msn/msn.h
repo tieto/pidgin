@@ -36,10 +36,12 @@
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
-#include "server.h"
+#include "servconn.h"
 #include "sha.h"
 #include "sslconn.h"
 #include "util.h"
+
+#include "ft.h"
 
 /* XXX */
 #include "gaim.h"
@@ -110,5 +112,7 @@ typedef enum
 	 (MSN_CLIENT_ID_RESERVED_1 << 16) | \
 	 (MSN_CLIENT_ID_RESERVED_2 <<  8) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
+
+void msn_request_buddy_icon(GaimConnection *gc, const char *who);
 
 #endif /* _MSN_H_ */

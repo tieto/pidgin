@@ -30,10 +30,11 @@ typedef struct _MsnCmdProc MsnCmdProc;
 #include "command.h"
 #include "table.h"
 #include "history.h"
-#include "msg.h"
 
+#if 0
 typedef void (*MsnPayloadCb)(MsnCmdProc *cmdproc, char *payload,
 							 size_t len);
+#endif
 
 struct _MsnCmdProc
 {
@@ -49,13 +50,9 @@ struct _MsnCmdProc
 	char *last_trans;
 	
 	MsnTable *cbs_table;
-	MsnPayloadCb payload_cb;
+	/* MsnPayloadCb payload_cb; */
 
 	MsnHistory *history;
-
-	GSList *msg_queue;
-
-	char *temp;
 };
 
 MsnCmdProc *msn_cmdproc_new(MsnSession *session);
@@ -70,15 +67,16 @@ void msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 					  const char *format, ...);
 void msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 							const char *format, ...);
+
 void msn_cmdproc_process_msg(MsnCmdProc *cmdproc,
 							 MsnMessage *msg);
+void msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd);
 void msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command);
 void msn_cmdproc_process_payload(MsnCmdProc *cmdproc,
 								 char *payload, int payload_len);
 
-void msn_cmdproc_queue_message(MsnCmdProc *cmdproc, const char *command,
-								MsnMessage *msg);
+void msn_cmdproc_disconnect(MsnCmdProc *cmdproc);
 
-void msn_cmdproc_unqueue_message(MsnCmdProc *cmdproc, MsnMessage *msg);
+void msn_cmdproc_show_error(MsnCmdProc *cmdproc, int error);
 
 #endif /* _MSN_CMDPROC_H_ */

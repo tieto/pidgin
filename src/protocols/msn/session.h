@@ -24,19 +24,24 @@
 
 typedef struct _MsnSession MsnSession;
 
-#include "group.h"
-#include "nexus.h"
-#include "servconn.h"
 #include "sslconn.h"
+
+#include "notification.h"
 #include "switchboard.h"
 #include "user.h"
+#include "group.h"
 
+#include "cmdproc.h"
+#include "nexus.h"
+
+#include "userlist.h"
+#include "sync.h"
 
 struct _MsnSession
 {
 	GaimAccount *account;
 	MsnUser *user;
-	char *away_state;
+	int state;
 
 	guint protocol_ver;
 
@@ -45,28 +50,19 @@ struct _MsnSession
 
 	gboolean connected;
 
-	MsnServConn *notification_conn;
-
+	MsnNotification *notification;
 	MsnNexus *nexus;
 
 	gboolean http_method;
 	gint http_poll_timer;
 
-	MsnUsers *users;
-	MsnGroups *groups;
+	MsnUserList *userlist;
 
 	int servconns_count;
-	GList *servconns;
 	GList *switches;
+	GList *directconns;
 
-	struct
-	{
-		GSList *forward;
-		GSList *reverse;
-		GSList *allow;
-		GSList *block;
-
-	} lists;
+	int conv_seq;
 
 	struct
 	{
@@ -81,40 +77,27 @@ struct _MsnSession
 	} passport_info;
 
 	/* You have no idea how much I hate all that is below. */
+	/* shx: What? ;) */
+
 	GaimPlugin *prpl;
 
-	/* For MSNP8 and MSNP9. */
-	int num_users;
-	int total_users;
-	int num_groups;
-	int total_groups;
-	MsnUser *last_user_added;
+	MsnSync *sync;
 
-	/* For MSNP7 and lower. */
-	gboolean syncing_lists;
-	gboolean lists_synced;
-
-	/* For moving buddies from one group to another. Ugh. */
-	gboolean moving_buddy;
-	char *dest_group_name;
-	MsnUser *moving_user;
-	MsnGroup *old_group;
-
-	/* The last chat ID. */
-	int last_chat_id;
+	GList *slplinks;
 };
 
 /**
  * Creates an MSN session.
  *
  * @param account The account.
- * @param server  The dispatch server host.
+ * @param host    The dispatch server host.
  * @param port    The dispatch server port.
  *
  * @return The new MSN session.
  */
 MsnSession *msn_session_new(GaimAccount *account,
-							const char *host, int port);
+							const char *host, int port,
+							gboolean http_method);
 
 /**
  * Destroys an MSN session.
@@ -140,34 +123,6 @@ gboolean msn_session_connect(MsnSession *session);
 void msn_session_disconnect(MsnSession *session);
 
 /**
- * Opens a new switchboard connection.
- *
- * @param session The MSN session.
- *
- * @return The new switchboard connection.
- */
-MsnSwitchBoard *msn_session_open_switchboard(MsnSession *session);
-
-/**
- * Changes the status of the user.
- *
- * @param session The MSN session.
- * @param state   The new state.
- */
-gboolean msn_session_change_status(MsnSession *session, const char *state);
-
-/**
- * Finds a switch with the given passport.
- *
- * @param session  The MSN session.
- * @param passport The passport to search for.
- *
- * @return The switchboard, if found.
- */
-MsnSwitchBoard *msn_session_find_switch_with_passport(
-		const MsnSession *session, const char *passport);
-
-/**
  * Finds a switchboard with the given chat ID.
  *
  * @param session The MSN session.
@@ -178,13 +133,9 @@ MsnSwitchBoard *msn_session_find_switch_with_passport(
 MsnSwitchBoard *msn_session_find_switch_with_id(const MsnSession *session,
 												int chat_id);
 
-/**
- * Finds the first unused switchboard.
- *
- * @param session  The MSN session.
- *
- * @return The first unused, writable switchboard, if found.
- */
-MsnSwitchBoard *msn_session_find_unused_switch(const MsnSession *session);
+MsnSwitchBoard *msn_session_find_swboard(MsnSession *session,
+										 const char *username);
+MsnSwitchBoard *msn_session_get_swboard(MsnSession *session,
+										const char *username);
 
 #endif /* _MSN_SESSION_H_ */

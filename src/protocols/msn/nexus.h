@@ -3,7 +3,7 @@
 
 typedef struct _MsnNexus MsnNexus;
 
-#include "session.h"
+#include "nexus.h"
 
 struct _MsnNexus
 {

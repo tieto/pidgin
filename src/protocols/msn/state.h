@@ -42,6 +42,14 @@ typedef enum
 #define MSN_AWAY_TYPE(x)   (((x) >> 1) & 0x0F)
 
 /**
+ * Changes the status of the user.
+ *
+ * @param session The MSN session.
+ * @param state   The new state.
+ */
+void msn_change_status(MsnSession *session, MsnAwayType state);
+
+/**
  * Returns the string representation of an away type.
  *
  * @param type The away type.
@@ -49,5 +57,7 @@ typedef enum
  * @return The string representation of the away type.
  */
 const char *msn_away_get_text(MsnAwayType type);
+
+const char *msn_state_get_text(MsnAwayType state);
 
 #endif /* _MSN_STATE_H_ */

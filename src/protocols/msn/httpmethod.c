@@ -48,23 +48,31 @@ typedef struct
 static gboolean
 http_poll(gpointer data)
 {
-	MsnSession *session = data;
-	MsnServConn *servconn;
+	MsnSession *session;
 	GList *l;
 
-	for (l = session->servconns; l != NULL; l = l->next)
-	{
-		servconn = (MsnServConn *)l->data;
+	session = data;
 
-		if (servconn->http_data->dirty)
+	for (l = session->switches; l != NULL; l = l->next)
+	{
+		MsnSwitchBoard *swboard;
+
+		swboard = l->data;
+
+		g_return_val_if_fail(swboard->servconn->http_data != NULL, FALSE);
+
+		if (swboard->servconn->http_data->dirty)
 		{
 #if 0
 			gaim_debug_info("msn", "Polling server %s.\n",
 							servconn->http_data->gateway_host);
 #endif
-			msn_http_servconn_poll(servconn);
+			msn_http_servconn_poll(swboard->servconn);
 		}
 	}
+
+	if (session->notification->servconn->http_data->dirty)
+		msn_http_servconn_poll(session->notification->servconn);
 
 	return TRUE;
 }

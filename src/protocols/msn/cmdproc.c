@@ -22,13 +22,6 @@
 #include "msn.h"
 #include "cmdproc.h"
 
-typedef struct
-{
-	char *command;
-	MsnMessage *msg;
-
-} MsnQueueEntry;
-
 MsnCmdProc *
 msn_cmdproc_new(MsnSession *session)
 {
@@ -56,13 +49,6 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 
 	g_queue_free(cmdproc->txqueue);
 
-	while (cmdproc->msg_queue != NULL)
-	{
-		MsnQueueEntry *entry = cmdproc->msg_queue->data;
-
-		msn_cmdproc_unqueue_message(cmdproc, entry->msg);
-	}
-
 	msn_history_destroy(cmdproc->history);
 }
 
@@ -84,8 +70,6 @@ msn_cmdproc_queue_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	g_return_if_fail(cmdproc != NULL);
 	g_return_if_fail(trans   != NULL);
 
-	gaim_debug_info("msn", "Appending command to queue.\n");
-	
 	g_queue_push_tail(cmdproc->txqueue, trans);
 }
 
@@ -120,7 +104,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
 	MsnServConn *servconn;
 	char *data;
-	gsize len;
+	size_t len;
 
 	g_return_if_fail(cmdproc != NULL);
 	g_return_if_fail(trans != NULL);
@@ -218,19 +202,22 @@ void
 msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload,
 							int payload_len)
 {
-	g_return_if_fail(cmdproc             != NULL);
-	g_return_if_fail(cmdproc->payload_cb != NULL);
+	MsnCommand *last;
 
-	cmdproc->payload_cb(cmdproc, payload, payload_len);
+	g_return_if_fail(cmdproc != NULL);
+
+	last = cmdproc->last_cmd;
+	last->payload = g_memdup(payload, payload_len);
+	last->payload_len = payload_len;
+
+	if (last->payload_cb != NULL)
+		last->payload_cb(cmdproc, last, payload, payload_len);
 }
 
 void
 msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	MsnServConn *servconn;
 	MsnMsgCb cb;
-
-	servconn = cmdproc->servconn;
 
 	cb = g_hash_table_lookup(cmdproc->cbs_table->msgs,
 							 msn_message_get_content_type(msg));
@@ -249,14 +236,8 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 void
 msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSession *session;
-	MsnServConn *servconn;
-	MsnTransaction *trans = NULL;
 	MsnTransCb cb = NULL;
-	GSList *l, *l_next = NULL;
-
-	session = cmdproc->session;
-	servconn = cmdproc->servconn;
+	MsnTransaction *trans = NULL;
 
 	if (cmd->trId)
 		trans = msn_history_find(cmdproc->history, cmd->trId);
@@ -291,53 +272,37 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (cmdproc->cbs_table->async != NULL)
 		cb = g_hash_table_lookup(cmdproc->cbs_table->async, cmd->command);
 
-	if (cb == NULL && cmd->trId)
+	if (cb == NULL && trans != NULL)
 	{
-		if (trans != NULL)
-		{
-			cmd->trans = trans;
+		cmd->trans = trans;
 
-			if (trans->callbacks)
-				cb = g_hash_table_lookup(trans->callbacks, cmd->command);
-		}
+		if (trans->callbacks != NULL)
+			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 	}
 
 	if (cb != NULL)
+	{
 		cb(cmdproc, cmd);
+	}
 	else
 	{
 		gaim_debug_warning("msn", "Unhandled command '%s'\n",
 						   cmd->command);
-
-		return;
 	}
 
-	if (g_list_find(session->servconns, servconn) == NULL)
-		return;
+#if 1
+	/* TODO this is really ugly */
+	/* Since commands have not stored payload and we need it for pendent
+	 * commands at the time we process again the same command we will try
+	 * to read again the payload of payload_len size but we will actually
+	 * read sometime else, and reading from server syncronization goes to
+	 * hell. */
+	/* Now we store the payload in the command when we queue them :D */
 
-	/* Process all queued messages that are waiting on this command. */
-	for (l = cmdproc->msg_queue; l != NULL; l = l_next)
-	{
-		MsnQueueEntry *entry = l->data;
-		MsnMessage *msg;
-
-		l_next = l->next;
-
-		if (entry->command == NULL ||
-			!g_ascii_strcasecmp(entry->command, cmd->command))
-		{
-			msg = entry->msg;
-
-			msn_message_ref(msg);
-
-			msn_cmdproc_process_msg(cmdproc, msg);
-
-			msn_cmdproc_unqueue_message(cmdproc, entry->msg);
-
-			msn_message_destroy(msg);
-			entry->msg = NULL;
-		}
-	}
+	if (trans != NULL && trans->pendent_cmd != NULL)
+		if (cmdproc->ready)
+			msn_transaction_unqueue_cmd(trans, cmdproc);
+#endif
 }
 
 void
@@ -354,50 +319,29 @@ msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command)
 }
 
 void
-msn_cmdproc_queue_message(MsnCmdProc *cmdproc, const char *command,
-						  MsnMessage *msg)
+msn_cmdproc_show_error(MsnCmdProc *cmdproc, int error)
 {
-	MsnQueueEntry *entry;
+	GaimConnection *gc =
+		gaim_account_get_connection(cmdproc->session->account);
 
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(msg != NULL);
+	char *tmp;
 
-	entry          = g_new0(MsnQueueEntry, 1);
-	entry->msg     = msg;
-	entry->command = (command == NULL ? NULL : g_strdup(command));
+	tmp = NULL;
 
-	cmdproc->msg_queue = g_slist_append(cmdproc->msg_queue, entry);
-
-	msn_message_ref(msg);
-}
-
-void
-msn_cmdproc_unqueue_message(MsnCmdProc *cmdproc, MsnMessage *msg)
-{
-	MsnQueueEntry *entry = NULL;
-	GSList *l;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(msg != NULL);
-
-	for (l = cmdproc->msg_queue; l != NULL; l = l->next)
+	switch (error)
 	{
-		entry = l->data;
-
-		if (entry->msg == msg)
+		case MSN_ERROR_MISC:
+			tmp = _("Miscellaneous error"); break;
+		case MSN_ERROR_SIGNOTHER:
+			tmp = _("You have signed on from another location."); break;
+		case MSN_ERROR_SERVDOWN:
+			tmp = _("The MSN servers are going down temporarily."); break;
+		default:
 			break;
-
-		entry = NULL;
 	}
 
-	g_return_if_fail(entry != NULL);
-
-	msn_message_unref(msg);
-
-	cmdproc->msg_queue = g_slist_remove(cmdproc->msg_queue, entry);
-
-	if (entry->command != NULL)
-		g_free(entry->command);
-
-	g_free(entry);
+	if (tmp != NULL)
+	{
+		gaim_connection_error(gc, tmp);
+	}
 }

@@ -65,7 +65,6 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 {
 	MsnNexus *nexus;
 	MsnSession *session;
-	GaimConnection *gc;
 	char *username, *password;
 	char *request_str;
 	char *buffer = NULL;
@@ -76,9 +75,6 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
-
-	gc = gaim_account_get_connection(session->account);
-	g_return_if_fail(gc != NULL);
 
 	username =
 		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
@@ -118,7 +114,6 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
 	{
 		g_free(request_str);
-		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
 
 		return;
 	}
@@ -126,10 +121,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_free(request_str);
 
 	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
-	{
-		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
 		return;
-	}
 
 	gaim_ssl_close(gsc);
 
@@ -143,14 +135,10 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		location = strstr(buffer, "Location: ");
 		if (location == NULL)
 		{
-			gaim_connection_error(gc,
-				_("MSN Nexus server returned invalid redirect information."));
-
 			g_free(buffer);
 
 			return;
 		}
-
 		location = strchr(location, ' ') + 1;
 
 		if ((c = strchr(location, '\r')) != NULL)
@@ -209,7 +197,6 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 	else if (strstr(buffer, "HTTP/1.1 200 OK"))
 	{
-		MsnCmdProc *cmdproc;
 		char *base, *c;
 		char *login_params;
 
@@ -230,18 +217,9 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		}
 #endif
 
-		cmdproc = session->notification_conn->cmdproc;
 		base  = strstr(buffer, "Authentication-Info: ");
 
-		if (base == NULL)
-		{
-			gaim_debug(GAIM_DEBUG_ERROR, "msn",
-					   "Authentication information was not found. This did "
-					   "not just happen, but if it did, you're screwed. "
-					   "Report this.\n");
-
-			return;
-		}
+		g_return_if_fail(base != NULL);
 
 		base  = strstr(base, "from-PP='");
 		base += strlen("from-PP='");
@@ -249,7 +227,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 		login_params = g_strndup(base, c - base);
 
-		msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
+		msn_got_login_params(session, login_params);
 
 		g_free(login_params);
 

@@ -13,6 +13,8 @@ version 0.79cvs:
 	* Show timestamps now has a per-conversation option in addition
 	  to the global one, bringing it in line with the other conver-
 	  sation options (Stu Tomlinson).
+	* Added MSN buddy icons (Felipe Contreras)
+	* Added MSN file transfer (Felipe Contreras)
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze

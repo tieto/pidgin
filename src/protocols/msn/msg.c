@@ -22,38 +22,6 @@
 #include "msn.h"
 #include "msg.h"
 
-#define GET_NEXT(tmp) \
-	while (*(tmp) && *(tmp) != ' ' && *(tmp) != '\r') \
-		(tmp)++; \
-	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') (tmp)++; \
-	while (*(tmp) && *(tmp) == ' ') \
-		(tmp)++
-
-#define GET_NEXT_LINE(tmp) \
-	while (*(tmp) && *(tmp) != '\r') \
-		(tmp)++; \
-	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') (tmp)++
-
-
-#define msn_put16(buf, data) ( \
-		(*(buf) = (unsigned char)((data)>>8)&0xff), \
-		(*((buf)+1) = (unsigned char)(data)&0xff),  \
-		2)
-#define msn_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
-#define msn_put32(buf, data) ( \
-		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
-		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
-		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
-		(*((buf)+3) = (unsigned char)(data)&0xff), \
-		4)
-#define msn_get32(buf) ((((*(buf))<<24)&0xff000000) + \
-		(((*((buf)+1))<<16)&0x00ff0000) + \
-		(((*((buf)+2))<< 8)&0x0000ff00) + \
-		(((*((buf)+3)    )&0x000000ff)))
-
-
 MsnMessage *
 msn_message_new(void)
 {
@@ -107,27 +75,36 @@ msn_message_new_msnslp(void)
 	return msg;
 }
 
-MsnMessage *
-msn_message_new_msnslp_ack(MsnMessage *acked_msg)
+void
+msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {
-	MsnMessage *msg;
+	MsnSlpHeader header;
+	const char *tmp;
 
-	g_return_val_if_fail(acked_msg != NULL, NULL);
-	g_return_val_if_fail(acked_msg->msnslp_message, NULL);
+	tmp = body;
 
-	msg = msn_message_new_msnslp();
+	/* Import the header. */
+	memcpy(&header, tmp, sizeof(header));
+	tmp += sizeof(header);
 
-	msg->msnslp_ack_message = TRUE;
-	msg->acked_msg = msn_message_ref(acked_msg);
+	msg->msnslp_header.session_id = GUINT32_FROM_LE(header.session_id);
+	msg->msnslp_header.id         = GUINT32_FROM_LE(header.id);
+	msg->msnslp_header.offset     = GUINT64_FROM_LE(header.offset);
+	msg->msnslp_header.total_size = GUINT64_FROM_LE(header.total_size);
+	msg->msnslp_header.length     = GUINT32_FROM_LE(header.length);
+	msg->msnslp_header.flags      = GUINT32_FROM_LE(header.flags);
+	msg->msnslp_header.ack_id     = GUINT32_FROM_LE(header.ack_id);
+	msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
+	msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
+	
+	/* Import the body. */
+	/* msg->body_len = msg->msnslp_header.length; */
+	msg->body_len = len - (tmp - body);
+	
+	if (msg->body_len > 0)
+		msg->body = g_memdup(tmp, msg->body_len);
 
-	msg->msnslp_header.session_id  = acked_msg->msnslp_header.session_id;
-	msg->msnslp_header.total_size  = acked_msg->msnslp_header.total_size;
-	msg->msnslp_header.flags       = 0x02;
-	msg->msnslp_header.ack_id      = acked_msg->msnslp_header.id;
-	msg->msnslp_header.ack_sub_id  = acked_msg->msnslp_header.ack_id;
-	msg->msnslp_header.ack_size    = acked_msg->msnslp_header.total_size;
-
-	return msg;
+	tmp += msg->body_len;
 }
 
 void
@@ -136,33 +113,36 @@ msn_message_parse_payload(MsnMessage *msg,
 {
 	char *tmp_base, *tmp;
 	const char *content_type;
+	char *end;
+	char **elems, **cur, **tokens;
 
 	g_return_if_fail(payload != NULL);
 
-	tmp_base = tmp = g_memdup(payload, payload_len);
+	tmp_base = tmp = g_memdup(payload, payload_len + 1);
+	tmp[payload_len] = '\0';
 
-	/* Back to the parsination. */
-	while (*tmp != '\r')
+	/* Parse the attributes. */
+	end = strstr(tmp, "\r\n\r\n");
+	g_return_if_fail(end != NULL);
+	*end = '\0';
+
+	elems = g_strsplit(tmp, "\r\n", 0);
+
+	for (cur = elems; *cur != NULL; cur++)
 	{
-		char *key, *value, *c;
+		const char *key, *value;
 
-		key = tmp;
+		tokens = g_strsplit(*cur, ": ", 2);
 
-		GET_NEXT(tmp); /* Key */
+		key = tokens[0];
+		value = tokens[1];
 
-		value = tmp;
-
-		GET_NEXT_LINE(tmp); /* Value */
-
-		if ((c = strchr(key, ':')) != NULL)
-			*c = '\0';
-
-		if (!g_ascii_strcasecmp(key, "MIME-Version"))
+		if (!strcmp(key, "MIME-Version"))
 			continue;
 
-		if (!g_ascii_strcasecmp(key, "Content-Type"))
+		if (!strcmp(key, "Content-Type"))
 		{
-			char *charset;
+			char *charset, *c;
 
 			if ((c = strchr(value, ';')) != NULL)
 			{
@@ -178,11 +158,16 @@ msn_message_parse_payload(MsnMessage *msg,
 			msn_message_set_content_type(msg, value);
 		}
 		else
+		{
 			msn_message_set_attr(msg, key, value);
+		}
+
+		g_strfreev(tokens);
 	}
 
-	/* "\r\n" */
-	tmp += 2;
+	g_strfreev(elems);
+
+	tmp = end + 4;
 
 	/* Now we *should* be at the body. */
 	content_type = msn_message_get_content_type(msg);
@@ -200,9 +185,9 @@ msn_message_parse_payload(MsnMessage *msg,
 		tmp += sizeof(header);
 
 		msg->msnslp_header.session_id = GUINT32_FROM_LE(header.session_id);
-		msg->msnslp_header.id         = GUINT64_FROM_LE(header.id);
+		msg->msnslp_header.id         = GUINT32_FROM_LE(header.id);
 		msg->msnslp_header.offset     = GUINT64_FROM_LE(header.offset);
-		msg->msnslp_header.total_size = GUINT32_FROM_LE(header.total_size);
+		msg->msnslp_header.total_size = GUINT64_FROM_LE(header.total_size);
 		msg->msnslp_header.length     = GUINT32_FROM_LE(header.length);
 		msg->msnslp_header.flags      = GUINT32_FROM_LE(header.flags);
 		msg->msnslp_header.ack_id     = GUINT32_FROM_LE(header.ack_id);
@@ -230,8 +215,22 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 
 	g_free(tmp_base);
+}
 
-	/* Done! */
+MsnMessage *
+msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
+{
+	MsnMessage *msg;
+
+	g_return_val_if_fail(cmd != NULL, NULL);
+
+	msg = msn_message_new();
+
+	msg->remote_user = g_strdup(cmd->params[0]);
+	/* msg->size = atoi(cmd->params[2]); */
+	msg->cmd = cmd;
+
+	return msg;
 }
 
 void
@@ -246,6 +245,9 @@ msn_message_destroy(MsnMessage *msg)
 		return;
 	}
 
+	if (msg->remote_user != NULL)
+		g_free(msg->remote_user);
+
 	if (msg->body != NULL)
 		g_free(msg->body);
 
@@ -257,9 +259,6 @@ msn_message_destroy(MsnMessage *msg)
 
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
-
-	if (msg->msnslp_ack_message)
-		msn_message_unref(msg->acked_msg);
 
 	g_free(msg);
 }
@@ -284,7 +283,8 @@ msn_message_unref(MsnMessage *msg)
 
 	msg->ref_count--;
 
-	if (msg->ref_count == 0) {
+	if (msg->ref_count == 0) 
+	{
 		msn_message_destroy(msg);
 
 		return NULL;
@@ -294,7 +294,49 @@ msn_message_unref(MsnMessage *msg)
 }
 
 char *
-msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
+msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
+{
+	MsnSlpHeader header;
+
+	char *tmp, *base;
+	const void *body;
+	size_t len, body_len;
+
+	g_return_val_if_fail(msg != NULL, NULL);
+
+	len = MSN_BUF_LEN;
+
+	base = tmp = g_malloc(len + 1);
+
+	body = msn_message_get_bin_data(msg, &body_len);
+
+	header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);
+	header.id         = GUINT32_TO_LE(msg->msnslp_header.id);
+	header.offset     = GUINT64_TO_LE(msg->msnslp_header.offset);
+	header.total_size = GUINT64_TO_LE(msg->msnslp_header.total_size);
+	header.length     = GUINT32_TO_LE(msg->msnslp_header.length);
+	header.flags      = GUINT32_TO_LE(msg->msnslp_header.flags);
+	header.ack_id     = GUINT32_TO_LE(msg->msnslp_header.ack_id);
+	header.ack_sub_id = GUINT32_TO_LE(msg->msnslp_header.ack_sub_id);
+	header.ack_size   = GUINT64_TO_LE(msg->msnslp_header.ack_size);
+
+	memcpy(tmp, &header, 48);
+	tmp += 48;
+
+	if (body != NULL)
+	{
+		memcpy(tmp, body, body_len);
+		tmp += body_len;
+	}
+
+	if (ret_size != NULL)
+		*ret_size = tmp - base;
+	
+	return base;
+}
+
+char *
+msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 {
 	GList *l;
 	char *n, *base, *end;
@@ -349,9 +391,9 @@ msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
 		MsnSlpFooter footer;
 
 		header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);
-		header.id         = GUINT64_TO_LE(msg->msnslp_header.id);
+		header.id         = GUINT32_TO_LE(msg->msnslp_header.id);
 		header.offset     = GUINT64_TO_LE(msg->msnslp_header.offset);
-		header.total_size = GUINT32_TO_LE(msg->msnslp_header.total_size);
+		header.total_size = GUINT64_TO_LE(msg->msnslp_header.total_size);
 		header.length     = GUINT32_TO_LE(msg->msnslp_header.length);
 		header.flags      = GUINT32_TO_LE(msg->msnslp_header.flags);
 		header.ack_id     = GUINT32_TO_LE(msg->msnslp_header.ack_id);
@@ -364,6 +406,7 @@ msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
 		if (body != NULL)
 		{
 			memcpy(n, body, body_len);
+
 			n += body_len;
 		}
 
@@ -383,10 +426,10 @@ msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
 
 	if (ret_size != NULL)
 	{
-		*ret_size = n - base;
-
 		if (*ret_size > 1664)
 			*ret_size = 1664;
+
+		*ret_size = n - base;
 	}
 
 	return base;
@@ -452,10 +495,7 @@ msn_message_set_content_type(MsnMessage *msg, const char *type)
 	if (msg->content_type != NULL)
 		g_free(msg->content_type);
 
-	if (type != NULL)
-		msg->content_type = g_strdup(type);
-	else
-		msg->content_type = NULL;
+	msg->content_type = (type != NULL) ? g_strdup(type) : NULL;
 }
 
 const char *
@@ -474,10 +514,7 @@ msn_message_set_charset(MsnMessage *msg, const char *charset)
 	if (msg->charset != NULL)
 		g_free(msg->charset);
 
-	if (charset != NULL)
-		msg->charset = g_strdup(charset);
-	else
-		msg->charset = NULL;
+	msg->charset = (charset != NULL) ? g_strdup(charset) : NULL;
 }
 
 const char *
@@ -542,37 +579,135 @@ GHashTable *
 msn_message_get_hashtable_from_body(const MsnMessage *msg)
 {
 	GHashTable *table;
-	char *body, *s, *c;
+	const char *body;
+	char **elems, **cur, **tokens;
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
-	s = body = g_strdup(msn_message_get_bin_data(msg, NULL));
+	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	body = msn_message_get_bin_data(msg, NULL);
 
 	g_return_val_if_fail(body != NULL, NULL);
 
-	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	elems = g_strsplit(body, "\r\n", 0);
 
-	while (*s != '\r' && *s != '\0')
+	for (cur = elems; *cur != NULL; cur++)
 	{
-		char *key, *value;
+		if (**cur == '\0')
+			break;
 
-		key = s;
+		tokens = g_strsplit(*cur, ": ", 2);
 
-		GET_NEXT(s);
+		if (tokens[0] != NULL && tokens[1] != NULL)
+			g_hash_table_insert(table, tokens[0], tokens[1]);
 
-		value = s;
+		g_free(tokens);
+	}
 
-		GET_NEXT_LINE(s);
+	g_strfreev(elems);
 
-		if ((c = strchr(key, ':')) != NULL)
+	return table;
+}
+
+void
+msn_message_show_readable(MsnMessage *msg, const char *info,
+						  gboolean text_body)
+{
+	GString *str;
+	size_t body_len;
+	const char *body;
+	GList *l;
+
+	g_return_if_fail(msg != NULL);
+
+	str = g_string_new(NULL);
+
+	/* Standard header. */
+	if (msg->charset == NULL)
+	{
+		g_string_append_printf(str,
+				   "MIME-Version: 1.0\r\n"
+				   "Content-Type: %s\r\n",
+				   msg->content_type);
+	}
+	else
+	{
+		g_string_append_printf(str,
+				   "MIME-Version: 1.0\r\n"
+				   "Content-Type: %s; charset=%s\r\n",
+				   msg->content_type, msg->charset);
+	}
+
+	for (l = msg->attr_list; l; l = l->next)
+	{
+		char *key;
+		const char *value;
+
+		key = l->data;
+		value = msn_message_get_attr(msg, key);
+
+		g_string_append_printf(str, "%s: %s\r\n", key, value);
+	}
+
+	g_string_append(str, "\r\n");
+	
+	body = msn_message_get_bin_data(msg, &body_len);
+
+	if (msg->msnslp_message)
+	{
+		g_string_append_printf(str, "%u ", msg->msnslp_header.session_id);
+		g_string_append_printf(str, "%u ", msg->msnslp_header.id);
+		g_string_append_printf(str, "%llu ", msg->msnslp_header.offset);
+		g_string_append(str, "\r\n");
+		g_string_append_printf(str, "%llu ",
+							   msg->msnslp_header.total_size);
+		g_string_append_printf(str, "%u ", msg->msnslp_header.length);
+		g_string_append_printf(str, "%u ", msg->msnslp_header.flags);
+		g_string_append(str, "\r\n");
+		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_id);
+		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_sub_id);
+		g_string_append_printf(str, "%lld ", msg->msnslp_header.ack_size);
+		g_string_append(str, "\r\n");
+
+		if (body != NULL)
 		{
-			*c = '\0';
-
-			g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+			if (text_body)
+			{
+				g_string_append_len(str, body, body_len);
+				if (body[body_len - 1] == '\0')
+				{
+					str->len--;
+					g_string_append(str, " 0x00");
+				}
+				g_string_append(str, "\r\n");
+			}
+			else
+			{
+				int i;
+				for (i = 0; i < msg->body_len; i++)
+				{
+					g_string_append_printf(str, "%.2hhX ", body[i]);
+					if ((i % 16) == 15)
+						g_string_append(str, "\r\n");
+				}
+				g_string_append(str, "\r\n");
+			}
+		}
+		
+		g_string_append_printf(str, "%u ", msg->msnslp_footer.value);
+		g_string_append(str, "\r\n");
+	}
+	else
+	{
+		if (body != NULL)
+		{
+			g_string_append_len(str, body, body_len);
+			g_string_append(str, "\r\n");
 		}
 	}
 
-	g_free(body);
-
-	return table;
+	gaim_debug_info("msn", "Message %s:\n{%s}\n", info, str->str);
+	
+	g_string_free(str, TRUE);
 }

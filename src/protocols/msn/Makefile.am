@@ -8,6 +8,8 @@ MSNSOURCES = \
 	cmdproc.h \
 	command.c \
 	command.h \
+	directconn.c \
+	directconn.h \
 	error.c \
 	error.h \
 	group.c \
@@ -20,30 +22,42 @@ MSNSOURCES = \
 	msg.h \
 	msn.c \
 	msn.h \
-	msnobject.c \
-	msnobject.h \
-	msnslp.c \
-	msnslp.h \
-	nexus.c \
-	nexus.h \
 	notification.c \
 	notification.h \
+	nexus.c \
+	nexus.h \
+	object.c \
+	object.h \
 	page.c \
 	page.h \
 	servconn.c \
 	servconn.h \
 	session.c \
 	session.h \
+	slp.c \
+	slp.h \
+	slpcall.c \
+	slpcall.h \
+	slplink.c \
+	slplink.h \
+	slpmsg.c \
+	slpmsg.h \
+	slpsession.c \
+	slpsession.h \
 	state.c \
 	state.h \
 	switchboard.c \
 	switchboard.h \
-	table.c \
-	table.h \
+	sync.c \
+	sync.h \
 	transaction.c \
 	transaction.h \
+	table.c \
+	table.h \
 	user.c \
 	user.h \
+	userlist.c \
+	userlist.h \
 	utils.c \
 	utils.h
 

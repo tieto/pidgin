@@ -82,7 +82,10 @@ msn_command_destroy(MsnCommand *cmd)
 		msn_command_unref(cmd);
 		return;
 	}
-	
+
+	if (cmd->payload != NULL)
+		g_free(cmd->payload);
+
 	g_free(cmd->command);
 	g_strfreev(cmd->params);
 	g_free(cmd);

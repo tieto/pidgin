@@ -23,8 +23,11 @@
 #include "session.h"
 #include "notification.h"
 
+#include "slplink.h"
+
 MsnSession *
-msn_session_new(GaimAccount *account, const char *host, int port)
+msn_session_new(GaimAccount *account, const char *host, int port,
+				gboolean http_method)
 {
 	MsnSession *session;
 
@@ -35,17 +38,12 @@ msn_session_new(GaimAccount *account, const char *host, int port)
 	session->account       = account;
 	session->dispatch_host = g_strdup(host);
 	session->dispatch_port = port;
+	session->http_method   = http_method;
 
-	session->away_state = NULL;
+	session->notification = msn_notification_new(session);
+	session->userlist = msn_userlist_new(session);
 
-	session->users  = msn_users_new();
-	session->groups = msn_groups_new();
-
-#ifdef HAVE_SSL
 	session->protocol_ver = 9;
-#else
-	session->protocol_ver = 7;
-#endif
 
 	return session;
 }
@@ -61,26 +59,16 @@ msn_session_destroy(MsnSession *session)
 	if (session->dispatch_host != NULL)
 		g_free(session->dispatch_host);
 
+	if (session->notification != NULL)
+		msn_notification_destroy(session->notification);
+
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
 
-	while (session->lists.forward)
-	{
-		MsnUser *user = (MsnUser *)session->lists.forward->data;
+	while (session->slplinks != NULL)
+		msn_slplink_destroy(session->slplinks->data);
 
-		msn_user_destroy(user);
-
-		session->lists.forward = g_slist_remove(session->lists.forward, user);
-	}
-
-	if (session->lists.allow != NULL)
-		g_slist_free(session->lists.allow);
-
-	if (session->lists.block != NULL)
-		g_slist_free(session->lists.block);
-
-	msn_groups_destroy(session->groups);
-	msn_users_destroy(session->users);
+	msn_userlist_destroy(session->userlist);
 
 	if (session->passport_info.kv != NULL)
 		g_free(session->passport_info.kv);
@@ -94,8 +82,8 @@ msn_session_destroy(MsnSession *session)
 	if (session->passport_info.file != NULL)
 		g_free(session->passport_info.file);
 
-	if (session->away_state != NULL)
-		g_free(session->away_state);
+	if (session->sync != NULL)
+		msn_sync_destroy(session->sync);
 
 	if (session->nexus != NULL)
 		msn_nexus_destroy(session->nexus);
@@ -111,9 +99,7 @@ msn_session_connect(MsnSession *session)
 
 	session->connected = TRUE;
 
-	session->notification_conn = msn_notification_new(session);
-
-	if (msn_notification_connect(session->notification_conn,
+	if (msn_notification_connect(session->notification,
 								 session->dispatch_host,
 								 session->dispatch_port))
 	{
@@ -130,99 +116,31 @@ msn_session_disconnect(MsnSession *session)
 	g_return_if_fail(session->connected);
 
 	while (session->switches != NULL)
-	{
-		MsnSwitchBoard *board = (MsnSwitchBoard *)session->switches->data;
+		msn_switchboard_destroy(session->switches->data);
 
-		msn_switchboard_destroy(board);
-	}
-
-	if (session->notification_conn != NULL)
-	{
-		msn_servconn_destroy(session->notification_conn);
-		session->notification_conn = NULL;
-	}
+	if (session->notification != NULL)
+		msn_notification_disconnect(session->notification);
 }
+
+/* TODO: This must go away when conversation is redesigned */
 
 MsnSwitchBoard *
-msn_session_open_switchboard(MsnSession *session)
-{
-	MsnSwitchBoard *swboard;
-	MsnCmdProc *cmdproc;
-
-	g_return_val_if_fail(session != NULL, NULL);
-
-	cmdproc = session->notification_conn->cmdproc;
-
-	msn_cmdproc_send(cmdproc, "XFR", "%s", "SB");
-
-	if (cmdproc->error)
-		return NULL;
-
-	swboard = msn_switchboard_new(session);
-
-	return swboard;
-}
-
-gboolean
-msn_session_change_status(MsnSession *session, const char *state)
-{
-	MsnCmdProc *cmdproc;
-	MsnUser *user;
-	MsnObject *msnobj;
-
-	g_return_val_if_fail(session != NULL, FALSE);
-	g_return_val_if_fail(state   != NULL, FALSE);
-
-	user = session->user;
-	msnobj = msn_user_get_object(user);
-
-	if (state != session->away_state)
-	{
-		if (session->away_state != NULL)
-			g_free(session->away_state);
-
-		session->away_state = g_strdup(state);
-	}
-
-	cmdproc = session->notification_conn->cmdproc;
-
-	if (msnobj == NULL)
-	{
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state, MSN_CLIENT_ID);
-	}
-	else
-	{
-		char *msnobj_str = msn_object_to_string(msnobj);
-
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state, MSN_CLIENT_ID,
-						 gaim_url_encode(msnobj_str));
-
-		g_free(msnobj_str);
-	}
-
-	return TRUE;
-}
-
-MsnSwitchBoard *
-msn_session_find_switch_with_passport(const MsnSession *session,
-									  const char *passport)
+msn_session_find_swboard(MsnSession *session, const char *username)
 {
 	GList *l;
-	MsnSwitchBoard *swboard;
 
 	g_return_val_if_fail(session  != NULL, NULL);
-	g_return_val_if_fail(passport != NULL, NULL);
+	g_return_val_if_fail(username != NULL, NULL);
 
 	for (l = session->switches; l != NULL; l = l->next)
 	{
-		swboard = (MsnSwitchBoard *)l->data;
+		MsnSwitchBoard *swboard;
 
-		if (!swboard->hidden && !swboard->chat_id &&
-			!g_ascii_strcasecmp(passport,
-								msn_user_get_passport(swboard->user)))
-		{
-			return swboard;
-		}
+		swboard = l->data;
+
+		if (swboard->im_user != NULL)
+			if (!strcmp(username, swboard->im_user))
+				return swboard;
 	}
 
 	return NULL;
@@ -232,14 +150,15 @@ MsnSwitchBoard *
 msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
 {
 	GList *l;
-	MsnSwitchBoard *swboard;
 
 	g_return_val_if_fail(session != NULL, NULL);
-	g_return_val_if_fail(chat_id > 0, NULL);
+	g_return_val_if_fail(chat_id >= 0,    NULL);
 
 	for (l = session->switches; l != NULL; l = l->next)
 	{
-		swboard = (MsnSwitchBoard *)l->data;
+		MsnSwitchBoard *swboard;
+
+		swboard = l->data;
 
 		if (swboard->chat_id == chat_id)
 			return swboard;
@@ -249,20 +168,19 @@ msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
 }
 
 MsnSwitchBoard *
-msn_session_find_unused_switch(const MsnSession *session)
+msn_session_get_swboard(MsnSession *session, const char *username)
 {
-	GList *l;
 	MsnSwitchBoard *swboard;
 
-	g_return_val_if_fail(session != NULL, NULL);
+	swboard = msn_session_find_swboard(session, username);
 
-	for (l = session->switches; l != NULL; l = l->next)
+	if (swboard == NULL)
 	{
-		swboard = (MsnSwitchBoard *)l->data;
-
-		if (!swboard->in_use)
-			return swboard;
+		swboard = msn_switchboard_new(session);
+		msn_switchboard_request(swboard);
+		msn_switchboard_request_add_user(swboard, username);
+		swboard->im_user = g_strdup(username);
 	}
 
-	return NULL;
+	return swboard;
 }

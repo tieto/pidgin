@@ -23,22 +23,16 @@
 #include "user.h"
 
 MsnUser *
-msn_user_new(MsnSession *session, const char *passport, const char *name)
+msn_user_new(MsnUserList *userlist, const char *passport,
+			 const char *store_name)
 {
 	MsnUser *user;
 
-	user = msn_users_find_with_passport(session->users, passport);
+	user = g_new0(MsnUser, 1);
 
-	if (user == NULL)
-	{
-		user = g_new0(MsnUser, 1);
+	user->userlist = userlist;
 
-		user->session = session;
-
-		msn_user_set_passport(user, passport);
-
-		msn_users_add(session->users, user);
-	}
+	msn_user_set_passport(user, passport);
 
 	/*
 	 * XXX This seems to reset the friendly name from what it should be
@@ -49,8 +43,6 @@ msn_user_new(MsnSession *session, const char *passport, const char *name)
 		msn_user_set_name(user, name);
 #endif
 
-	msn_user_ref(user);
-
 	return user;
 }
 
@@ -58,15 +50,6 @@ void
 msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);
-
-	if (user->ref_count > 0) {
-		msn_user_unref(user);
-
-		return;
-	}
-
-	if (user->session != NULL && user->session->users != NULL)
-		msn_users_remove(user->session->users, user);
 
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
@@ -77,43 +60,25 @@ msn_user_destroy(MsnUser *user)
 	if (user->msnobj != NULL)
 		msn_object_destroy(user->msnobj);
 
-	if (user->passport != NULL) g_free(user->passport);
-	if (user->name     != NULL) g_free(user->name);
+	if (user->passport != NULL)
+		g_free(user->passport);
 
-	if (user->phone.home   != NULL) g_free(user->phone.home);
-	if (user->phone.work   != NULL) g_free(user->phone.work);
-	if (user->phone.mobile != NULL) g_free(user->phone.mobile);
+	if (user->friendly_name != NULL)
+		g_free(user->friendly_name);
+
+	if (user->store_name != NULL)
+		g_free(user->store_name);
+
+	if (user->phone.home != NULL)
+		g_free(user->phone.home);
+
+	if (user->phone.work != NULL)
+		g_free(user->phone.work);
+
+	if (user->phone.mobile != NULL)
+		g_free(user->phone.mobile);
 
 	g_free(user);
-}
-
-MsnUser *
-msn_user_ref(MsnUser *user)
-{
-	g_return_val_if_fail(user != NULL, NULL);
-
-	user->ref_count++;
-
-	return user;
-}
-
-MsnUser *
-msn_user_unref(MsnUser *user)
-{
-	g_return_val_if_fail(user != NULL, NULL);
-
-	if (user->ref_count <= 0)
-		return NULL;
-
-	user->ref_count--;
-
-	if (user->ref_count == 0) {
-		msn_user_destroy(user);
-
-		return NULL;
-	}
-
-	return user;
 }
 
 void
@@ -128,14 +93,25 @@ msn_user_set_passport(MsnUser *user, const char *passport)
 }
 
 void
-msn_user_set_name(MsnUser *user, const char *name)
+msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->name != NULL)
-		g_free(user->name);
+	if (user->friendly_name != NULL)
+		g_free(user->friendly_name);
 
-	user->name = g_strdup(name);
+	user->friendly_name = g_strdup(name);
+}
+
+void
+msn_user_set_store_name(MsnUser *user, const char *name)
+{
+	g_return_if_fail(user != NULL);
+
+	if (user->store_name != NULL)
+		g_free(user->store_name);
+
+	user->store_name = g_strdup(name);
 }
 
 void
@@ -148,24 +124,29 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 	g_return_if_fail(user != NULL);
 
 	if (filename == NULL || stat(filename, &st) == -1)
+	{
 		msn_user_set_object(user, NULL);
+	}
 	else if ((fp = fopen(filename, "rb")) != NULL)
 	{
 		unsigned char *buf;
 		SHA_CTX ctx;
-		size_t len;
+		gsize len;
 		char *base64;
 		unsigned char digest[20];
 
 		if (msnobj == NULL)
 		{
-			msnobj = msn_object_new();
+			msnobj = msn_object_new(TRUE);
+			msn_object_set_local(msnobj);
 			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
-			msn_object_set_location(msnobj, "TFR2C.tmp");
+			msn_object_set_location(msnobj, "TFR2C2.tmp");
 			msn_object_set_creator(msnobj, msn_user_get_passport(user));
 
 			msn_user_set_object(user, msnobj);
 		}
+		
+		msn_object_set_real_location(msnobj, filename);
 
 		buf = g_malloc(st.st_size);
 		len = fread(buf, 1, st.st_size, fp);
@@ -215,21 +196,38 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 }
 
 void
-msn_user_set_group_ids(MsnUser *user, GList *ids)
-{
-	g_return_if_fail(user != NULL);
-
-	user->group_ids = ids;
-}
-
-void
 msn_user_add_group_id(MsnUser *user, int id)
 {
+	MsnUserList *userlist;
+	GaimAccount *account;
+	GaimBuddy *b;
+	GaimGroup *g;
+	const char *passport;
+	const char *group_name;
+
 	g_return_if_fail(user != NULL);
 	g_return_if_fail(id > -1);
 
-	if (!g_list_find(user->group_ids, GINT_TO_POINTER(id)))
-		user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+	user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+
+	userlist = user->userlist;
+	account = userlist->session->account;
+	passport = msn_user_get_passport(user);
+	
+	group_name = msn_userlist_find_group_name(userlist, id);
+
+	g = gaim_find_group(group_name);
+
+	b = gaim_find_buddy_in_group(account, passport, g);
+
+	if (b == NULL)
+	{
+		b = gaim_buddy_new(account, passport, NULL);
+
+		gaim_blist_add_buddy(b, NULL, g, NULL);
+	}
+
+	b->proto_data = user;
 }
 
 void
@@ -240,6 +238,7 @@ msn_user_remove_group_id(MsnUser *user, int id)
 
 	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
 }
+
 void
 msn_user_set_home_phone(MsnUser *user, const char *number)
 {
@@ -282,6 +281,19 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 		msn_object_destroy(user->msnobj);
 
 	user->msnobj = obj;
+
+	if (user->list_op & MSN_LIST_FL_OP)
+	{
+		/* TODO: I think we need better buddy icon core functions */
+		GaimAccount *account;
+		const char *username;
+
+		account  = user->userlist->session->account;
+		username = msn_object_get_creator(obj);;
+
+		if (gaim_find_conversation_with_account(username, account) != NULL)
+			msn_request_buddy_icon(account->gc, username);
+	}
 }
 
 void
@@ -305,19 +317,19 @@ msn_user_get_passport(const MsnUser *user)
 }
 
 const char *
-msn_user_get_name(const MsnUser *user)
+msn_user_get_friendly_name(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->name;
+	return user->friendly_name;
 }
 
-GList *
-msn_user_get_group_ids(const MsnUser *user)
+const char *
+msn_user_get_store_name(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->group_ids;
+	return user->store_name;
 }
 
 const char *
@@ -358,81 +370,4 @@ msn_user_get_client_caps(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->clientcaps;
-}
-
-MsnUsers *
-msn_users_new(void)
-{
-	MsnUsers *users = g_new0(MsnUsers, 1);
-
-	return users;
-}
-
-void
-msn_users_destroy(MsnUsers *users)
-{
-	GList *l, *l_next = NULL;
-
-	g_return_if_fail(users != NULL);
-
-	for (l = users->users; l != NULL; l = l_next) {
-		l_next = l->next;
-
-		msn_user_destroy(l->data);
-
-		users->users = g_list_remove(users->users, l->data);
-	}
-
-	g_free(users);
-}
-
-void
-msn_users_add(MsnUsers *users, MsnUser *user)
-{
-	g_return_if_fail(users != NULL);
-	g_return_if_fail(user != NULL);
-
-	users->users = g_list_append(users->users, user);
-
-	users->count++;
-}
-
-void
-msn_users_remove(MsnUsers *users, MsnUser *user)
-{
-	g_return_if_fail(users != NULL);
-	g_return_if_fail(user  != NULL);
-
-	users->users = g_list_remove(users->users, user);
-
-	users->count--;
-}
-
-size_t
-msn_users_get_count(const MsnUsers *users)
-{
-	g_return_val_if_fail(users != NULL, 0);
-
-	return users->count;
-}
-
-MsnUser *
-msn_users_find_with_passport(MsnUsers *users, const char *passport)
-{
-	GList *l;
-
-	g_return_val_if_fail(users != NULL, NULL);
-	g_return_val_if_fail(passport != NULL, NULL);
-
-	for (l = users->users; l != NULL; l = l->next) {
-		MsnUser *user = (MsnUser *)l->data;
-
-		if (user->passport != NULL &&
-			!g_ascii_strcasecmp(passport, user->passport)) {
-
-			return user;
-		}
-	}
-
-	return NULL;
 }

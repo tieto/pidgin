@@ -22,22 +22,38 @@
 #ifndef _MSN_NOTIFICATION_H_
 #define _MSN_NOTIFICATION_H_
 
+typedef struct _MsnNotification MsnNotification;
+
 #include "session.h"
 #include "servconn.h"
+#include "cmdproc.h"
 
-/**
- * Initialize the variables for notifiaction server creation.
- */
+struct _MsnNotification
+{
+	MsnSession *session;
+	MsnCmdProc *cmdproc;
+	MsnServConn *servconn;
+
+	gboolean in_use;
+};
+
+#include "state.h"
+
+void msn_notification_end(void);
 void msn_notification_init(void);
 
-/**
- * Destroy the variables for notification server creation.
- */
-void msn_notification_end(void);
-
-MsnServConn *msn_notification_new(MsnSession *session);
-gboolean msn_notification_connect(MsnServConn *notification,
+void msn_notification_add_buddy(MsnNotification *notification,
+								const char *list, const char *who,
+								const char *store_name, int group_id);
+void msn_notification_rem_buddy(MsnNotification *notification,
+								const char *list, const char *who,
+								int group_id);
+MsnNotification *msn_notification_new(MsnSession *session);
+void msn_notification_destroy(MsnNotification *notification);
+gboolean msn_notification_connect(MsnNotification *notification,
 							  const char *host, int port);
-void msn_notification_disconnect(MsnServConn *notification);
+void msn_notification_disconnect(MsnNotification *notification);
+
+void msn_got_login_params(MsnSession *session, const char *login_params);
 
 #endif /* _MSN_NOTIFICATION_H_ */
