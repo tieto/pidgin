@@ -35,6 +35,7 @@
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"
+#include "md5.h"
 
 static GaimProxyInfo *global_proxy_info = NULL;
 
@@ -1132,7 +1133,14 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 	fcntl(source, F_SETFL, 0);
 
-	/* XXX does socks4 not support host name lookups by the proxy? */
+	/*
+	 * The socks4 spec doesn't include support for doing host name
+	 * lookups by the proxy.  Some socks4 servers do this via
+	 * extensions to the protocol.  Since we don't know if a
+	 * server supports this, it would need to be implemented
+	 * with an option, or some detection mechanism - in the
+	 * meantime, stick with plain old SOCKS4.
+	 */
 	if (!(hp = gethostbyname(phb->host))) {
 		close(source);
 
@@ -1279,10 +1287,10 @@ s5_sendconnect(gpointer data, gint source)
 	buf[3] = 0x03;		/* address type -- host name */
 	buf[4] = hlen;
 	memcpy(buf + 5, phb->host, hlen);
-	buf[5 + strlen(phb->host)] = phb->port >> 8;
-	buf[5 + strlen(phb->host) + 1] = phb->port & 0xff;
+	buf[5 + hlen] = phb->port >> 8;
+	buf[5 + hlen + 1] = phb->port & 0xff;
 
-	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
+	if (write(source, buf, (5 + hlen + 2)) < (5 + hlen + 2)) {
 		close(source);
 
 		try_connect(phb);
@@ -1316,6 +1324,141 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	s5_sendconnect(phb, source);
+}
+
+static void hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
+{
+	int i;
+	unsigned char Kxoripad[65];
+	unsigned char Kxoropad[65];
+	md5_state_t ctx;
+	int pwlen;
+	char * pwinput;
+	char md5buf[16];
+
+	pwinput=(char *)passwd;
+	pwlen=strlen(passwd);
+	if (pwlen>64) {
+		md5_init(&ctx);
+		md5_append(&ctx, (unsigned char *)passwd, strlen(passwd));
+		md5_finish(&ctx, (unsigned char *)md5buf);
+		pwinput=(char *)md5buf;
+		pwlen=16;
+	}
+
+	memset(Kxoripad,0,sizeof(Kxoripad));
+	memset(Kxoropad,0,sizeof(Kxoropad));
+	memcpy(Kxoripad,pwinput,pwlen);
+	memcpy(Kxoropad,pwinput,pwlen);
+	for (i=0;i<64;i++) {
+		Kxoripad[i]^=0x36;
+		Kxoropad[i]^=0x5c;
+	}
+	md5_init(&ctx);
+	md5_append(&ctx, Kxoripad, 64);
+	md5_append(&ctx, challenge, challen);
+	md5_finish(&ctx, (unsigned char *)Kxoripad);
+
+	md5_init(&ctx);
+	md5_append(&ctx, Kxoropad, 64);
+	md5_append(&ctx, Kxoripad, 16);
+	md5_finish(&ctx, response);
+}
+
+static void
+s5_readchap(gpointer data, gint source, GaimInputCondition cond)
+{
+	unsigned char buf[260];
+	unsigned char cmdbuf[20];
+	struct PHB *phb = data;
+
+	int navas, currentav;
+
+	gaim_input_remove(phb->inpa);
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Got CHAP response.\n");
+
+	if (read(source, cmdbuf, 2) < 2) {
+		close(source);
+
+		try_connect(phb);
+		return;
+	}
+
+	if (cmdbuf[0] != 0x01) {
+		close(source);
+
+		try_connect(phb);
+		return;
+	}
+
+	navas = cmdbuf[1];
+
+	for (currentav = 0; currentav < navas; currentav++) {
+		if (read(source, cmdbuf, 2) < 2) {
+			close(source);
+
+			try_connect(phb);
+			return;
+		}
+		if (read(source, buf, cmdbuf[1]) < cmdbuf[1]) {
+			close(source);
+
+			try_connect(phb);
+			return;
+		}
+		switch (cmdbuf[0]) {
+			case 0x00:
+				/* Did auth work? */
+				if (buf[0] == 0x00) {
+					/* Success */
+					return s5_sendconnect(phb, source);
+				} else {
+					/* Failure */
+					gaim_debug_warning("proxy", "socks5 CHAP authentication "
+									   "failed.  Disconnecting...");
+					close(source);
+
+					try_connect(phb);
+					return;
+				}
+				break;
+			case 0x03:
+				/* Server wants our credentials */
+				hmacmd5_chap(buf, cmdbuf[1],
+					gaim_proxy_info_get_password(phb->gpi),
+					buf + 4);
+				buf[0] = 0x01;
+				buf[1] = 0x01;
+				buf[2] = 0x04;
+				buf[3] = 0x10;
+				if (write(source, buf, 20) < 20) {
+					close(source);
+
+					try_connect(phb);
+					return;
+				}
+				break;
+			case 0x11:
+				/* Server wants to select an algorithm */
+				if (buf[0] != 0x85) {
+					/* Only currently support HMAC-MD5 */
+					gaim_debug_warning("proxy", "Server tried to select an "
+									   "algorithm that we did not advertise "
+									   "as supporting.  This is a violation "
+									   "of the socks5 CHAP specification.  "
+									   "Disconnecting...");
+					close(source);
+
+					try_connect(phb);
+					return;
+				}
+				break;
+		}
+	}
+	/* Fell through.  We ran out of CHAP events to process, but haven't
+	 * succeeded or failed authentication - there may be more to come.
+	 * If this is the case, come straight back here. */
+	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, s5_readchap, phb);
 }
 
 static void
@@ -1361,6 +1504,25 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		}
 
 		phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, s5_readauth, phb);
+	} else if (buf[1] == 0x03) {
+		unsigned int userlen;
+		userlen = strlen(gaim_proxy_info_get_username(phb->gpi));
+		buf[0] = 0x01;
+		buf[1] = 0x02;
+		buf[2] = 0x11;
+		buf[3] = 0x01;
+		buf[4] = 0x85;
+		buf[5] = 0x02;
+		buf[6] = userlen;
+		memcpy(buf + 7, gaim_proxy_info_get_username(phb->gpi), userlen);
+		if (write(source, buf, 7 + userlen) < 7 + userlen) {
+			close(source);
+
+			try_connect(phb);
+			return;
+		}
+
+		phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, s5_readchap, phb);
 	}
 	else {
 		s5_sendconnect(phb, source);
@@ -1394,10 +1556,11 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	buf[0] = 0x05;		/* SOCKS version 5 */
 
 	if (gaim_proxy_info_get_username(phb->gpi) != NULL) {
-		buf[1] = 0x02;	/* two methods */
+		buf[1] = 0x03;	/* three methods */
 		buf[2] = 0x00;	/* no authentication */
-		buf[3] = 0x02;	/* username/password authentication */
-		i = 4;
+		buf[3] = 0x03;	/* CHAP authentication */
+		buf[4] = 0x02;	/* username/password authentication */
+		i = 5;
 	}
 	else {
 		buf[1] = 0x01;

@@ -23,6 +23,7 @@ version 2.0.0
 	* Custom smileys for MSN (Irving Cordova)
 	* Entries in the text replacement plugin are now sorted alphabetically
 	  (Richard Laager)
+	* CHAP authentication support for SOCKS5 proxies (Malcolm Smith)
 
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
