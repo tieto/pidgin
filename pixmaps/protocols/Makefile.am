@@ -1,1 +1,1 @@
-SUBDIRS = gg icq msn yahoo oscar
+SUBDIRS = gg icq jabber msn napster yahoo oscar

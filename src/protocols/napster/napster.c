@@ -37,7 +37,7 @@
 #include "prpl.h"
 #include "gaim.h"
 #include "proxy.h"
-#include "pixmaps/napster.xpm"
+#include "pixmaps/protocols/napster.xpm"
 
 #define NAP_BUF_LEN 4096
 
