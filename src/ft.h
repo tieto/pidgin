@@ -41,6 +41,13 @@ typedef enum
 
 } GaimXferType;
 
+typedef enum
+{
+	GAIM_XFER_CANCEL_NOT = 0,
+	GAIM_XFER_CANCEL_LOCAL,
+	GAIM_XFER_CANCEL_REMOTE
+} GaimXferCancelType;
+
 /**
  * File transfer UI operations.
  *
@@ -89,6 +96,7 @@ struct _GaimXfer
 	size_t bytes_sent;            /**< The number of bytes sent.           */
 	size_t bytes_remaining;       /**< The number of bytes remaining.      */
 
+	GaimXferCancelType canceled;            /**< File Transfer is canceled.          */
 	gboolean completed;           /**< File Transfer is completed.         */
 
 	/* I/O operations. */
@@ -178,6 +186,15 @@ GaimXferType gaim_xfer_get_type(const GaimXfer *xfer);
  * @return The account.
  */
 GaimAccount *gaim_xfer_get_account(const GaimXfer *xfer);
+
+/**
+ * Returns true if the file transfer was canceled.
+ *
+ * @param xfer The file transfer.
+ *
+ * @return Whether or not the transfer was canceled.
+ */
+GaimXferCancelType gaim_xfer_is_canceled(const GaimXfer *xfer);
 
 /**
  * Returns the completed state for a file transfer.

@@ -184,6 +184,14 @@ gaim_xfer_get_account(const GaimXfer *xfer)
 	return xfer->account;
 }
 
+GaimXferCancelType
+gaim_xfer_is_canceled(const GaimXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, TRUE);
+
+	return xfer->canceled;
+}
+
 gboolean
 gaim_xfer_is_completed(const GaimXfer *xfer)
 {
@@ -274,6 +282,14 @@ gaim_xfer_get_remote_port(const GaimXfer *xfer)
 	g_return_val_if_fail(xfer != NULL, -1);
 
 	return xfer->remote_port;
+}
+
+static void
+gaim_xfer_set_canceled(GaimXfer *xfer, GaimXferCancelType canceled)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->canceled = canceled;
 }
 
 void
@@ -610,6 +626,8 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 
 	g_return_if_fail(xfer != NULL);
 
+	gaim_xfer_set_canceled(xfer, GAIM_XFER_CANCEL_LOCAL);
+
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
 		if (xfer->ops.cancel_send != NULL)
@@ -648,6 +666,8 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 	GaimXferUiOps *ui_ops;
 
 	g_return_if_fail(xfer != NULL);
+
+	gaim_xfer_set_canceled(xfer, GAIM_XFER_CANCEL_REMOTE);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{

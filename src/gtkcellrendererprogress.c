@@ -260,13 +260,10 @@ static void gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
 	GtkCellRendererProgress *cellprogress = (GtkCellRendererProgress *) cell;
 	
 	gint width, height;
-	gint x_offset, y_offset;
 	GtkStateType state;
 
-	gtk_cell_renderer_progress_get_size (cell, widget, cell_area,
-					   &x_offset, &y_offset,
-					   &width, &height);
-	
+	width = cell_area->width;
+	height = cell_area->height;
 	
 	if (GTK_WIDGET_HAS_FOCUS (widget))
 		state = GTK_STATE_ACTIVE;
@@ -282,15 +279,15 @@ static void gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
 		       window,
 		       GTK_STATE_NORMAL, GTK_SHADOW_IN, 
 		       NULL, widget, "trough",
-		       cell_area->x + x_offset + cell->xpad,
-		       cell_area->y + y_offset + cell->ypad,
+		       cell_area->x + cell->xpad,
+		       cell_area->y + cell->ypad,
 		       width - 1, height - 1);
 	gtk_paint_box (widget->style,
 		       window,
 		       state, GTK_SHADOW_OUT,
 		       NULL, widget, "bar",
-		       cell_area->x + x_offset + cell->xpad + 1,
-		       cell_area->y + y_offset + cell->ypad + 1,
+		       cell_area->x + cell->xpad + 1,
+		       cell_area->y + cell->ypad + 1,
 		       (width - 3) * cellprogress->progress,
 		       height - 3);
 }

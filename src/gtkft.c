@@ -204,8 +204,15 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 
 	gtk_label_set_text(GTK_LABEL(dialog->user_label), xfer->who);
 
-	gtk_label_set_text(GTK_LABEL(dialog->filename_label),
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
 					   gaim_xfer_get_filename(xfer));
+	} else {
+		char *tmp;
+		tmp = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+		gtk_label_set_text(GTK_LABEL(dialog->filename_label), tmp);
+		g_free(tmp);
+	}
 
 	gtk_label_set_text(GTK_LABEL(dialog->status_label), status);
 
@@ -251,8 +258,16 @@ update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 
 		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
-	}
-	else {
+	} else if (gaim_xfer_is_canceled(xfer)) {
+		gtk_widget_hide(dialog->stop_button);
+		gtk_widget_show(dialog->remove_button);
+
+		gtk_widget_set_sensitive(dialog->open_button,  FALSE);
+		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
+		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
+
+		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
+	} else {
 		gtk_widget_show(dialog->stop_button);
 		gtk_widget_hide(dialog->remove_button);
 
@@ -604,8 +619,8 @@ gaim_gtkxfer_dialog_new(void)
 	gtk_widget_show(checkbox);
 
 	/* "Download Details" arrow */
-	disclosure = gaim_disclosure_new(_("Show download details"),
-									 _("Hide download details"));
+	disclosure = gaim_disclosure_new(_("Show transfer details"),
+									 _("Hide transfer details"));
 	dialog->disclosure = disclosure;
 	gtk_box_pack_start(GTK_BOX(vbox2), disclosure, FALSE, FALSE, 0);
 	gtk_widget_show(disclosure);
@@ -746,6 +761,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	GaimXferType type;
 	GdkPixbuf *pixbuf;
 	char *size_str, *remaining_str;
+	char *lfilename;
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
@@ -768,14 +784,18 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 									GTK_ICON_SIZE_MENU, NULL);
 
 	gtk_list_store_append(dialog->model, &data->iter);
+	lfilename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
 					   COLUMN_PROGRESS, 0.0,
-					   COLUMN_FILENAME, gaim_xfer_get_filename(xfer),
+					   COLUMN_FILENAME, (type == GAIM_XFER_RECEIVE)
+					                     ? gaim_xfer_get_filename(xfer)
+							     : lfilename,
 					   COLUMN_SIZE, size_str,
 					   COLUMN_REMAINING, remaining_str,
 					   COLUMN_DATA, xfer,
 					   -1);
+	g_free(lfilename);
 
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(dialog->tree));
 
@@ -823,9 +843,9 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 								GaimXfer *xfer)
 {
 	GaimGtkXferUiData *data;
-#if 0
 	GdkPixbuf *pixbuf;
-#endif
+	gchar *status;
+
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
@@ -835,31 +855,42 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 	if (data == NULL)
 		return;
 
-	gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &data->iter);
 
-	g_free(data->name);
-	g_free(data);
+	if ((gaim_xfer_is_canceled(xfer) == GAIM_XFER_CANCEL_LOCAL) && (dialog->auto_clear)) {
+		gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &data->iter);
 
-	xfer->ui_data = NULL;
+		g_free(data->name);
+		g_free(data);
 
-	dialog->num_transfers--;
+		xfer->ui_data = NULL;
 
-	if (dialog->num_transfers == 0 && !dialog->keep_open)
-		gaim_gtkxfer_dialog_hide(dialog);
+		dialog->num_transfers--;
 
-#if 0
+		if (dialog->num_transfers == 0 && !dialog->keep_open)
+			gaim_gtkxfer_dialog_hide(dialog);
+
+		return;
+	}
+
 	data = GAIM_GTKXFER(xfer);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									GAIM_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
+	if (gaim_xfer_is_canceled(xfer) == GAIM_XFER_CANCEL_LOCAL)
+		status = _("Canceled");
+	else
+		status = _("Failed");
+
 	gtk_list_store_set(dialog->model, &data->iter,
-					   COLUMN_STATUS, pixbuf,
-					   -1);
+	                   COLUMN_STATUS, pixbuf,
+	                   COLUMN_REMAINING, status,
+	                   -1);
 
 	g_object_unref(pixbuf);
-#endif
+
+	update_buttons(dialog, xfer);
 }
 
 void
