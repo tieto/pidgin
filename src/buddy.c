@@ -178,9 +178,12 @@ static void gtk_blist_button_im_cb(GtkWidget *w, GtkTreeView *tv)
 		GaimBlistNode *node;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
-		if (GAIM_BLIST_NODE_IS_BUDDY(node)) 
+		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+			return;
+		}
 	}
+	show_im_dialog();
 }
 
 static void gtk_blist_button_info_cb(GtkWidget *w, GtkTreeView *tv)
