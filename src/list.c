@@ -244,6 +244,7 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 {
 	char *c;
 	char current[256];
+	GList *bud = NULL;
 
 
 	if (config != NULL) {
@@ -279,6 +280,7 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 				sw[i] = '\0';
 				if (!find_buddy(user, nm)) {
 					add_buddy(user, current, nm, sw);
+					bud = g_list_append(bud, c + 2);
 				}
 			} else if (*c == 'p') {
 				gaim_privacy_permit_add(user, c + 2);
@@ -296,6 +298,13 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 					user->permdeny = 1;
 			}
 		} while ((c = strtok(NULL, "\n")));
+
+		if(user->gc) {
+			if(bud)
+				serv_add_buddies(user->gc, bud);
+			serv_set_permit_deny(user->gc);
+		}
+		g_list_free(bud);
 	}
 }
 
