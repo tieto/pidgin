@@ -1,5 +1,10 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.28:
+	* Updated German Translation (thanks Daniel Seifert)
+	* Can change friendly name in MSN again
+	* Bug fixes
+
 version 0.11.0-pre15 (08/28/2001):
 	* MSN works again
 	* Fixed a little segfault when images are links
