@@ -52,6 +52,7 @@
 
 #define IRC_BUF_LEN 4096
 
+
 static int chat_id = 0;
 
 struct irc_channel { 
@@ -62,6 +63,12 @@ struct irc_channel {
 struct irc_data {
 	int fd;
 
+	int timer;
+
+	int totalblocks;
+	int recblocks;
+
+	GSList *templist;
 	GList *channels;
 };
 
@@ -86,6 +93,73 @@ void irc_join_chat( struct gaim_connection *gc, int id, char *name) {
 	
 	g_free(buf);
 }
+
+void irc_update_user (struct gaim_connection *gc, char *name, int status) {
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	struct irc_channel *u;
+	GSList *temp = idata->templist;
+
+	/* Loop through our list */
+	
+	while (temp) {
+		u = (struct irc_channel *)temp->data;
+		if (g_strcasecmp(u->name, name) == 0) {
+			u->id = status;
+			return;
+		}
+		
+		temp = g_slist_next(temp);
+	}
+	return;
+}
+
+void irc_request_buddy_update ( struct gaim_connection *gc ) {
+	struct irc_data *idata = (struct irc_data *)gc->proto_data;
+	GSList *grp = groups;
+	GList *person;
+	struct group *g;
+	struct buddy *b;
+	struct irc_channel *u;
+	gchar buf[IRC_BUF_LEN+1];
+
+	if (idata->templist != NULL)
+		return;
+
+	idata->recblocks = 0;
+	idata->totalblocks = 1;
+
+	/* Send the first part of our request */	
+	write(idata->fd, "ISON", 4);
+
+	/* Step through our list of groups */
+	while (grp) {
+		
+		g = (struct group *)grp->data;
+		person = g->members;
+
+		while (person) {
+			b = (struct buddy *)person->data;
+
+			/* We will store our buddy info here.  I know, this is cheap
+			 * but hey, its the exact same data structure.  Why should we
+			 * bother with making another one */
+			
+			u = g_new0(struct irc_channel, 1);
+			u->id = 0; /* Assume by default that they're offline */
+			u->name = strdup(b->name);
+
+			write(idata->fd, " ", 1);
+			write(idata->fd, u->name, strlen(u->name));
+			idata->templist = g_slist_append(idata->templist, u);
+
+			person = person->next;
+		}
+		
+		grp = g_slist_next(grp);
+	}
+	write(idata->fd, "\n", 1);
+}
+
 
 void irc_send_im( struct gaim_connection *gc, char *who, char *message, int away) {
 
@@ -374,6 +448,94 @@ void irc_callback ( struct gaim_connection * gc ) {
 		
 	}
 
+	/* Receive a list of users that are currently online */
+	
+	if (((strstr(buf, " 303 ")) && (!strstr(buf, "PRIVMSG")) &&
+	     (!strstr(buf, "NOTICE")))) {
+		gchar u_host[255];
+		gchar u_command[32];
+		gchar u_names[IRC_BUF_LEN + 1];
+		int j;
+
+		for (j = 0, i = 0; buf[i] != ' '; j++, i++) {
+			u_host[j] = buf[i];
+		}
+
+		u_host[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ' '; j++, i++) {
+			u_command[j] = buf[i];
+		}
+
+		u_command[j] = '\0'; i++;
+
+		for (j = 0; buf[i] != ':'; j++, i++) {
+			/* My Nick */
+		}
+		i++;
+		
+		strcpy(u_names, buf + i);
+	
+		buf2 = g_strsplit(u_names, " ", 0);
+		
+		/* Now that we've parsed the hell out of this big
+		 * mess, let's try to split up the names properly */
+
+		for (i = 0; buf2[i] != NULL; i++) {
+			/* If we have a name here then our buddy is online.  We should
+			 * update our temporary gslist accordingly.  When we achieve our maximum
+			 * list of names then we should force an update */
+
+			irc_update_user(gc, buf2[i], 1);
+		}
+		
+		/* Increase our received blocks counter */
+		idata->recblocks++;
+
+		/* If we have our total number of blocks */
+		if (idata->recblocks == idata->totalblocks) {
+			GSList *temp;
+			struct irc_channel *u;
+			
+			/* Let's grab our list of people and bring them all on or off line */
+			temp = idata->templist;
+			
+			/* Loop */
+			while (temp) {
+				
+				u = temp->data;		
+			
+				/* Tell Gaim to bring the person on or off line */
+				serv_got_update(u->name, u->id, 0, 0, 0, 0, 0);	
+			
+				/* Grab the next entry */
+				temp = g_slist_next(temp);
+			}
+		
+			/* And now, let's delete all of our entries */
+			temp = idata->templist;
+			while (temp) {
+				u = temp->data;
+				g_free(u->name);
+				temp = g_slist_remove(temp, u);
+			}
+			
+			/* Reset our list */
+			idata->totalblocks = 0;
+			idata->recblocks = 0;
+			
+			idata->templist = NULL;
+				
+			return;
+		}
+
+		/* And free our pointers */
+		g_strfreev (buf2);
+	
+		return;
+		
+	}
+
 	
 	if ( (strstr(buf, " JOIN ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
@@ -414,7 +576,6 @@ void irc_callback ( struct gaim_connection * gc ) {
 	
 			idata->channels = g_list_append(idata->channels, channel);
 
-			printf("Started channel with ID %d\n", chat_id);
 			serv_got_joined_chat(gc, chat_id, u_channel);	
 		} else {
 			struct conversation *convo = NULL;
@@ -622,6 +783,8 @@ void irc_close(struct gaim_connection *gc) {
 
 	gchar *buf = (gchar *)g_malloc(IRC_BUF_LEN);
 
+	gtk_timeout_remove(idata->timer);
+	
 	g_snprintf(buf, IRC_BUF_LEN, "QUIT :Download GAIM [www.marko.net/gaim]\n");
 	write(idata->fd, buf, strlen(buf));
 
@@ -724,7 +887,17 @@ void irc_login(struct aim_user *user) {
 	serv_finish_login(gc);
 	gaim_setup(gc);
 
+	if (bud_list_cache_exists(gc))
+		do_import(NULL, gc);
+	
+	
 	gc->inpa = gdk_input_add(idata->fd, GDK_INPUT_READ, irc_handler, gc);
+
+	/* We want to update our buddlist every 20 seconds */
+	idata->timer = gtk_timeout_add(20000, (GtkFunction)irc_request_buddy_update, gc);
+
+	/* But first, let's go ahead and check our list */
+	irc_request_buddy_update(gc);
 }
 
 struct prpl *irc_init() {
