@@ -408,7 +408,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 
 		g_snprintf(buf, sizeof(buf), "CAL %d %s\n", ++ms->trId, mx->user);
 		ms->txqueue = mx->what;
-		g_free(mx->user);
+		ms->user = mx->user;
 		g_free(mx);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
