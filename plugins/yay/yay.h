@@ -94,6 +94,9 @@ extern void (*yahoo_print)(struct yahoo_session *session, int level, const char 
 #define YAHOO_LOG_ERROR    1
 #define YAHOO_LOG_CRITICAL 0
 
+extern int (*yahoo_connector)(struct yahoo_session *session, const char *host, int port, gpointer data);
+int yahoo_connected(struct yahoo_session *session, gpointer data, int fd);
+
 typedef int (*yahoo_callback)(struct yahoo_session *session, ...);
 void yahoo_add_handler(struct yahoo_session *session, int type, yahoo_callback function);
 #define YAHOO_HANDLE_DISCONNECT   0

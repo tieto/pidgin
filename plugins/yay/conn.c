@@ -23,6 +23,7 @@
 
 void (*yahoo_socket_notify)(struct yahoo_session *, int, int, gboolean) = NULL;
 void (*yahoo_print)(struct yahoo_session *, int, const char *) = NULL;
+int (*yahoo_connector)(struct yahoo_session *, const char *, int, gpointer) = NULL;
 
 struct yahoo_session *yahoo_new()
 {
@@ -80,6 +81,41 @@ static int yahoo_connect_host(struct yahoo_session *sess, const char *host, int 
 	return fd;
 }
 
+int yahoo_connected(struct yahoo_session *session, gpointer data, int fd)
+{
+	struct yahoo_conn *conn = data;
+
+	if (fd < 0) {
+		YAHOO_PRINT(session, YAHOO_LOG_WARNING, "connect failed");
+		session->connlist = g_list_remove(session->connlist, conn);
+		g_free(conn);
+		return 0;
+	}
+
+	YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "connect succeeded");
+	conn->socket = fd;
+	conn->connected = TRUE;
+	if (conn->type == YAHOO_CONN_TYPE_AUTH) {
+		if (session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)
+			(*session->callbacks[YAHOO_HANDLE_AUTHCONNECT].function)(session);
+	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
+		if (session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)
+			(*session->callbacks[YAHOO_HANDLE_MAINCONNECT].function)(session);
+	} else if (conn->type == YAHOO_CONN_TYPE_DUMB) {
+		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "sending to buddy list host");
+		yahoo_write(session, conn, conn->txqueue, strlen(conn->txqueue));
+		g_free(conn->txqueue);
+		conn->txqueue = NULL;
+	}
+
+	if (yahoo_socket_notify)
+		(*yahoo_socket_notify)(session, conn->socket, YAHOO_SOCKET_READ, TRUE);
+	else
+		YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "yahoo_socket_notify not set up");
+
+	return 1;
+}
+
 struct yahoo_conn *yahoo_new_conn(struct yahoo_session *session, int type, const char *host, int port)
 {
 	struct yahoo_conn *conn;
@@ -90,6 +126,34 @@ struct yahoo_conn *yahoo_new_conn(struct yahoo_session *session, int type, const
 
 	conn = g_new0(struct yahoo_conn, 1);
 	conn->type = type;
+
+	if (yahoo_connector) {
+		const char *realhost = host;
+		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "Connecting using user-specified connect routine");
+		if (!host) {
+			switch (type) {
+				case YAHOO_CONN_TYPE_AUTH:
+					realhost = YAHOO_AUTH_HOST;
+					port = YAHOO_AUTH_PORT;
+					break;
+				case YAHOO_CONN_TYPE_MAIN:
+					realhost = YAHOO_PAGER_HOST;
+					port = YAHOO_PAGER_PORT;
+					break;
+				case YAHOO_CONN_TYPE_DUMB:
+					realhost = YAHOO_DATA_HOST;
+					port = YAHOO_DATA_PORT;
+					break;
+			}
+		}
+		if ((*yahoo_connector)(session, realhost, port, conn) < 0) {
+			YAHOO_PRINT(session, YAHOO_LOG_CRITICAL, "connect failed");
+			g_free(conn);
+			return NULL;
+		}
+		session->connlist = g_list_append(session->connlist, conn);
+		return conn;
+	}
 
 	if (host) {
 		conn->socket = yahoo_connect_host(session, host, port, &status);
