@@ -4275,7 +4275,6 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 {
 	const char *new_name;
 	struct group *g;
-	struct group *orig;
 
 	if (resp == GTK_RESPONSE_OK) {
 		new_name = gtk_entry_get_text(GTK_ENTRY(entry));

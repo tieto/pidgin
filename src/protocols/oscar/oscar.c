@@ -2911,7 +2911,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   (reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
 
 	m = g_strdup_printf(_("SNAC threw error: %s\n"),
-			reason < msgerrreasonlen ? gettext(msgerrreason[reason]) : _("Unknown error"));
+			reason < msgerrreasonlen ? _(msgerrreason[reason]) : _("Unknown error"));
 	do_error_dialog(m, NULL, GAIM_ERROR);
 	g_free(m);
 
@@ -2947,7 +2947,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Data is assumed to be the destination sn */
 	buf = g_strdup_printf(_("Your message to %s did not get sent:"), data);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
 	g_free(buf);
 
 	return 1;
@@ -2998,7 +2998,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	snprintf(buf, sizeof(buf), _("User information for %s unavailable:"), destn);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
 
 	return 1;
 }

@@ -1403,7 +1403,7 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	GAIM_DIALOG(window);
 	gtk_window_set_role(GTK_WINDOW(window), "popup");
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
+	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Popup"));
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 	g_signal_connect(G_OBJECT(window), "destroy",
 					 G_CALLBACK(des_popup), window);
