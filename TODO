@@ -76,7 +76,6 @@ IN GENERAL:
 	add ircproxy option to proxy preferences.
 	per-sn controls on how to compute idle time
 	self alias does not display in irc chat. (and maybe other chats)
-	have gaim -h show version number as well as help
 	adding and removing buddies needs cleaned up.
 		basically, add_buddy should be calling ui_add_buddy 
 		and serv_add_buddy as needed (require an extra arg to 
