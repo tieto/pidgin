@@ -657,7 +657,8 @@ void toc_callback( gpointer          data,
 	                for (i--; i >= 0; i--)
 	                        g_free(messages[i]);
                 
-			accept_file_dialog(ft);
+			if (totalsize) /* sanity check */
+				accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
 	                for (i=0; i<4; i++) {
