@@ -3421,12 +3421,19 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 						(tag, "BODY BGCOLOR", strlen("BODY BGCOLOR")))
 				{
 
+					char *d = tag;
 					/*
 					 * Ditch trailing \" 
 					 */
 					current = push_state(current);
-					tag[strlen(tag) - 1] = 0;
-					if (sscanf(tag + strlen("BODY BGCOLOR=\"#"), "%x", &colorv)
+					d += strlen("BODY BGCOLOR=");
+					if (*d == '\"')
+						d++;
+					if (*d == '#')
+						d++;
+					if (d[strlen(d) - 1] == '\"')
+						d[strlen(d) - 1] = 0;
+					if (sscanf(d, "%x", &colorv)
 						&& !(options & HTML_OPTION_NO_COLOURS))
 					{
 						current->bgcol = get_color(colorv, map);
