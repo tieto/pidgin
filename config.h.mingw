@@ -73,7 +73,7 @@
 /* #undef USE_APPLET */
 /* #undef USE_GNOME */
 /* #undef USE_PIXBUF */
-/* #undef USE_SCREENSAVER */
+#define USE_SCREENSAVER 1
 /* #undef NO_MULTI */
 /* #define DEBUG 1 */
 #define GAIM_PLUGINS 1

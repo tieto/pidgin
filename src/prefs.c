@@ -743,7 +743,11 @@ GtkWidget *away_page() {
 			   "None", IDLE_NONE,
 			   "Gaim Usage", IDLE_GAIM,
 #ifdef USE_SCREENSAVER
+#ifndef _WIN32
 			   "X Usage", IDLE_SCREENSAVER,
+#else
+			   "Windows Usage", IDLE_SCREENSAVER,
+#endif
 #endif
 			   NULL);
 	gtk_size_group_add_widget(sg, dd);

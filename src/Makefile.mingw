@@ -16,6 +16,7 @@ PERL_LIB_DIR :=		../../win32-dev/perl56
 PERL_INCLUDE :=         $(PERL_LIB_DIR)/CORE
 ASPELL_TOP :=		../../win32-dev/aspell-15
 GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.2
+IDLETRACKER_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
 ##
@@ -47,6 +48,7 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(INCLUDE_DIR)/win32 \
+			-I$(IDLETRACKER_TOP) \
 			-I$(GAIM_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
@@ -62,6 +64,7 @@ INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_SRC) \
+			-L$(IDLETRACKER_TOP) \
 			-L$(PERL_LIB_DIR) \
 			-L$(ASPELL_TOP)/lib \
 			-L$(GTKSPELL_TOP)/gtkspell
@@ -120,7 +123,7 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 
-DLL_LIBS = 		-lgtkspell \
+DLL_LIBS =		-lgtkspell \
 			-lgtk-win32-2.0 \
 			-lpango-1.0 \
 			-lglib-2.0 \
@@ -133,7 +136,9 @@ DLL_LIBS = 		-lgtkspell \
 			-liberty \
 			-lwinmm \
 			-lperl56 \
-			-laspell-15
+			-laspell-15 \
+			-lIdleTrac
+			
 
 
 EXE_LIBS = -lgaim -lglib-2.0
@@ -165,6 +170,8 @@ all: $(TARGET).exe $(TARGET).dll
 install:
 	cp $(GAIM_SRC)/gaim.exe $(GAIM_SRC)/gaim.dll $(GAIM_INSTALL_DIR)
 
+$(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll:
+	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw
 
 #
 # BUILD DLL
@@ -182,7 +189,7 @@ $(TARGET).exp: $(TARGET).base $(TARGET).def
 	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
 		--output-exp $(TARGET).exp --def $(TARGET).def
 
-$(TARGET).dll: $(HEADER_DEPS) $(DLL_OBJECTS) $(TARGET).exp
+$(TARGET).dll: $(HEADER_DEPS) $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
 	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
 
@@ -202,6 +209,7 @@ $(TARGET).exe: $(TARGET).lib $(EXE_OBJECTS)
 
 clean:
 	$(MAKE) -C $(GAIM_TOP)/sounds -f Makefile.mingw clean
+	$(MAKE) -C $(GAIM_SRC)/win32/IdleTracker -f Makefile.mingw clean
 	rm -rf *.o ./win32/*.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib

@@ -27,10 +27,14 @@
 #include <unistd.h>
 
 #ifdef USE_SCREENSAVER
+#ifndef _WIN32
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
+#else
+#include "IdleTracker.h"
+#endif
 #endif /* USE_SCREENSAVER */
 
 #include "multi.h"
@@ -43,7 +47,9 @@ gint check_idle(gpointer data)
 	struct gaim_connection *gc = data;
 	time_t t;
 #ifdef USE_SCREENSAVER
+#ifndef _WIN32
 	static XScreenSaverInfo *mit_info = NULL;
+#endif
 #endif
 	time_t idle_time;
 
@@ -57,6 +63,7 @@ gint check_idle(gpointer data)
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
+#ifndef _WIN32
 		int event_base, error_base;
 		if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
 			if (mit_info == NULL) {
@@ -66,6 +73,10 @@ gint check_idle(gpointer data)
 			idle_time = (mit_info->idle) / 1000;
 		} else
 			idle_time = 0;
+#else
+		/* IdleTracker monitors usage of all other apps by setting a hook function */
+		idle_time = (GetTickCount() - IdleTrackerGetLastTickCount()) / 1000;
+#endif
 	} else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;

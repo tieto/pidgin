@@ -13,6 +13,7 @@ GAIM_INSTALL_DIR = ./win32-install-dir
 GTK_TOP = ../win32-dev/gtk_2_0
 GTK_LIBS = $(GTK_TOP)/lib
 PERL_TOP = ../win32-dev/perl56
+IDLETRACKER_TOP = $(GAIM_SRC)/win32/IdleTracker
 OSCAR = $(GAIM_PROTOS)/oscar
 YAHOO = $(GAIM_PROTOS)/yahoo
 MSN = $(GAIM_PROTOS)/msn
@@ -41,6 +42,7 @@ NEEDED_DLLS = 		$(GTK_LIBS)/libgdk-win32-2.0-0.dll \
 			$(GTK_LIBS)/libpangowin32-1.0-0.dll \
 			$(GTK_LIBS)/libatk-1.0-0.dll \
 			$(PERL_TOP)/perl56.dll \
+			$(IDLETRACKER_TOP)/IdleTrac.dll
 
 # For Gtk 2.0.3
 #			$(GTK_LIBS)/libjpeg6b.dll \

@@ -164,6 +164,10 @@ void wgaim_init(void) {
 	if(putenv(newenv)<0)
 		debug_printf("putenv failed\n");
 	g_free(locale);
+
+	/* IdleTracker Initialization */
+	if(!IdleTrackerInit())
+		debug_printf("IdleTracker failed to initialize\n");
 }
 
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
