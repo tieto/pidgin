@@ -66,7 +66,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	/* gaim_debug_info("msn", "user=[%s], total=%d\n", user,
 	 * swboard->current_users); */
 
-	if (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT)
+	if ((swboard->conv != NULL) && (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
 	}
