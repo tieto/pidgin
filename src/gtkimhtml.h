@@ -214,7 +214,7 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
-
+void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley);
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
 

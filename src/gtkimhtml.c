@@ -2194,7 +2194,7 @@ void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text
 	imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 }
 
-void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *smiley)
+void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 {
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
@@ -2205,7 +2205,7 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *smiley)
 
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
 	g_object_set_data(G_OBJECT(anchor), "text_tag", smiley);
-	annipixbuf = gtk_smiley_tree_image(imhtml, NULL, smiley);
+	annipixbuf = gtk_smiley_tree_image(imhtml, sml, smiley);
 	if(annipixbuf) {
 		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);

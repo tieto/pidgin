@@ -1572,12 +1572,12 @@ void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	GtkTextMark *select_mark, *insert_mark;
-	GtkTextIter select_iter, insert_iter;
-
+	GaimProtocol protocol = gaim_account_get_protocol(gaim_conversation_get_account(c));
+	GaimPlugin *proto = gaim_find_prpl(protocol);
+	
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	
-	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), smiley_text);
+	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), proto->info->name, smiley_text);
 	
 	close_smiley_dialog(NULL, c);
 }

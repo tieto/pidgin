@@ -193,8 +193,10 @@ void load_smiley_theme(const char *file, gboolean load)
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			GaimConversation *conv = cnv->data;
 
-			if (GAIM_IS_GTK_CONVERSATION(conv))
+			if (GAIM_IS_GTK_CONVERSATION(conv)) {
 				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
+				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->entry);
+			}
 		}
 	}
 
