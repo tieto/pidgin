@@ -136,6 +136,8 @@ static void load_conf() {
 		}
 	}
 	g_free(ibuf);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
+	                                     0, GTK_SORT_ASCENDING);
 }
 
 

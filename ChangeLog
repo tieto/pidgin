@@ -15,12 +15,14 @@ version 2.0.0
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 	* If Gaim is exited with the buddy list hidden in the docklet, it will
 	  remain hidden when Gaim is started again (Scott Shedden)
-	* Contacts will auto-expand when dragging into the buddy list.
+	* Contacts will auto-expand when dragging into the buddy list
 	* SSL support for IRC connections (Daniel Atallah)
 	* Add a "Last Seen" field to tooltips for buddies in your buddy
 	  list (Richard Laager)
 	* Buddy icons in buddy list tooltips (Felipe Contreras)
-	* Custom smileys for MSN (maquina)
+	* Custom smileys for MSN (Irving Cordova)
+	* Entries in the text replacement plugin are now sorted alphabetically
+	  (Richard Laager)
 
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
