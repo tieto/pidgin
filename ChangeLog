@@ -13,6 +13,8 @@ version 0.58:
 	* Added helpful stuff to the Help menu.
 	* Self-aliasing from the account editor.
 	* Better selection in GtkIMHtml (Thanks Ben Miller)
+	* A warning when your OSCAR buddy list is too long
+	  (Thanks, Mark Doliner)
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
