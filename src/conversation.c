@@ -2018,13 +2018,13 @@ void convo_menu_remove(struct gaim_connection *gc)
 
 void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 {
+	if (gc)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, gc));
+
 	if (c->gc == gc)
 		return;
 
 	c->gc = gc;
-
-	if (gc)
-		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, gc));
 
 	update_buttons_by_protocol(c);
 
