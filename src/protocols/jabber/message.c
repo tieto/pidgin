@@ -452,7 +452,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	jm->events = JABBER_MESSAGE_EVENT_COMPOSING;
 	jm->to = g_strdup(who);
 
-	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
+	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
 
 	gaim_markup_html_to_xhtml(buf, &xhtml, &jm->body);
 	g_free(buf);
@@ -484,7 +484,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	jm->type = JABBER_MESSAGE_GROUPCHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
+	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
 
 	gaim_markup_html_to_xhtml(buf, &xhtml, &jm->body);
 	g_free(buf);
