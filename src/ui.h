@@ -340,8 +340,4 @@ extern void smiley_theme_probe();
 extern void load_smiley_theme(const char *file, gboolean load);
 extern GSList *get_proto_smileys(int protocol);
 
-/* Fucnctions in util.c */
-extern GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
-extern GtkWidget *gaim_new_item_from_stock(GtkWidget *, const char *, const char *, GtkSignalFunc, gpointer, guint, guint, char *);
-
 #endif /* _UI_H_ */

@@ -111,8 +111,34 @@ void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 /**
  * Adds a seperator to a menu.
  *
- * @param menu   The menu to add a seperator to.
+ * @param menu The menu to add a seperator to.
  */
 void gaim_separator(GtkWidget *menu);
+
+/**
+ * Creates a menu item.
+ *
+ * @param menu The menu to which to append the menu item.
+ * @param str  The title to use for the newly created menu item.
+ *
+ * @return The newly created menu item.
+ */
+GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);  
+
+/**
+ * Creates a menu item.
+ *
+ * @param menu       The menu to which to append the menu item.
+ * @param str        The title for the menu item.
+ * @param icon       An icon to place to the left of the menu item, or NULL for no icon.
+ * @param sf         A function to call when the menu item is activated.
+ * @param data       Data to pass to the signal function.
+ * @param accel_key  Something.
+ * @param accel_mods Something.
+ * @param mod        Something.
+ *
+ * @return The newly created menu item.
+ */
+GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod);
 
 #endif /* _GAIM_GTK_UTILS_H_ */

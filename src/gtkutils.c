@@ -402,6 +402,27 @@ void gaim_separator(GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 }
 
+GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
+{
+	GtkWidget *menuitem;
+	GtkWidget *label;
+
+	menuitem = gtk_menu_item_new();
+	if (menu)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show(menuitem);
+
+	label = gtk_label_new(str);
+	gtk_label_set_pattern(GTK_LABEL(label), "_");
+	gtk_container_add(GTK_CONTAINER(menuitem), label);
+	gtk_widget_show(label);
+/* FIXME: Go back and fix this 
+	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
+				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
+*/
+	return menuitem;
+}
+
 GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
@@ -442,26 +463,5 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 
 	gtk_widget_show_all(menuitem);
 
-	return menuitem;
-}
-
-GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
-{
-	GtkWidget *menuitem;
-	GtkWidget *label;
-
-	menuitem = gtk_menu_item_new();
-	if (menu)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	gtk_widget_show(menuitem);
-
-	label = gtk_label_new(str);
-	gtk_label_set_pattern(GTK_LABEL(label), "_");
-	gtk_container_add(GTK_CONTAINER(menuitem), label);
-	gtk_widget_show(label);
-/* FIXME: Go back and fix this 
-	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
-				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-*/
 	return menuitem;
 }
