@@ -77,7 +77,8 @@ do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 
 
 
-static void toolbar_cancel_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+static void toolbar_cancel_font(GtkWidget *widget, GdkEvent *event,
+								GtkIMHtmlToolbar *toolbar)
 {
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->font), FALSE);
@@ -106,7 +107,7 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 
 	g_free(fontname);
 
-	toolbar_cancel_font(NULL, toolbar);
+	toolbar_cancel_font(NULL, NULL, toolbar);
 }
 
 static void
@@ -144,12 +145,13 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
-		toolbar_cancel_font(NULL, toolbar);
+		toolbar_cancel_font(NULL, NULL, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void cancel_toolbar_fgcolor(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+static void cancel_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
+								   GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
 	gtk_widget_destroy(toolbar->fgcolor_dialog);
@@ -171,7 +173,7 @@ static void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtk_imhtml_toggle_forecolor(GTK_IMHTML(toolbar->imhtml), open_tag);
 
 	g_free(open_tag);
-	cancel_toolbar_fgcolor(NULL, toolbar);
+	cancel_toolbar_fgcolor(NULL, NULL, toolbar);
 }
 
 static void
@@ -201,14 +203,15 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
 	} else if (toolbar->fgcolor_dialog != NULL) {
-		cancel_toolbar_fgcolor(color, toolbar);
+		cancel_toolbar_fgcolor(color, NULL, toolbar);
 	} else {
 		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void cancel_toolbar_bgcolor(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+static void cancel_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
+								   GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bgcolor), FALSE);
 	gtk_widget_destroy(toolbar->bgcolor_dialog);
@@ -230,7 +233,7 @@ static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), open_tag);
 
 	g_free(open_tag);
-	cancel_toolbar_bgcolor(NULL, toolbar);
+	cancel_toolbar_bgcolor(NULL, NULL, toolbar);
 }
 
 static void
@@ -260,7 +263,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->bgcolor_dialog));
 	} else if (toolbar->bgcolor_dialog != NULL) {
-		cancel_toolbar_bgcolor(color, toolbar);
+		cancel_toolbar_bgcolor(color, NULL, toolbar);
 	} else {
 		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
 	}
