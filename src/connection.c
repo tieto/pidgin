@@ -102,7 +102,7 @@ gaim_connection_connect(GaimConnection *gc)
 
 	account = gaim_connection_get_account(gc);
 
-	if ((prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+	if (!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
 		gaim_account_get_password(account) == NULL) {
 

@@ -26,6 +26,7 @@
 #include "util.h"
 
 #include "gtkblist.h"
+#include "gtkrequest.h"
 #include "gtkutils.h"
 
 #include "ui.h"
@@ -238,8 +239,26 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 		kill_meter(meter, _("Done."));
 }
 
+static void request_pass_ok_cb(GaimConnection *gc, const char *entry)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+
+	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
+
+	gaim_connection_connect(gc);
+}
+
+static void request_pass_cancel_cb(GaimConnection *gc, const char *entry)
+{
+	gaim_connection_destroy(gc);
+}
+
 static void gaim_gtk_connection_request_pass(GaimConnection *gc)
 {
+	gaim_request_input(gc, NULL, _("Enter your password."), NULL, 
+		NULL, FALSE, TRUE,
+		_("OK"), G_CALLBACK(request_pass_ok_cb),
+		_("Cancel"), G_CALLBACK(request_pass_cancel_cb), gc);
 }
 
 static void gaim_gtk_connection_disconnected(GaimConnection *gc,

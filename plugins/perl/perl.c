@@ -739,7 +739,7 @@ XS (XS_GAIM_command)
 	if (!strncasecmp(command, "signon", 6)) {
 		int index = SvIV(ST(1));
 		if (g_list_nth_data(gaim_accounts_get_all(), index))
-		serv_login(g_list_nth_data(gaim_accounts_get_all(), index));
+		gaim_account_connect(g_list_nth_data(gaim_accounts_get_all(), index));
 	} else if (!strncasecmp(command, "signoff", 7)) {
 		GaimConnection *gc = (GaimConnection *)SvIV(ST(1));
 		if (g_list_find(gaim_connections_get_all(), gc))

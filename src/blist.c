@@ -348,7 +348,7 @@ struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *
 	return chat;
 }
 
-const char *gaim_chat_get_display_name(struct chat *chat)
+char *gaim_chat_get_display_name(struct chat *chat)
 {
 	char *name;
 
@@ -769,10 +769,11 @@ char *gaim_get_buddy_alias_only(struct buddy *b) {
 char *  gaim_get_buddy_alias (struct buddy *buddy)
 {
 	char *ret = gaim_get_buddy_alias_only(buddy);
-        if(!ret)
-                return buddy ? buddy->name : _("Unknown");
-        return ret;
 
+	if(!ret)
+		return buddy ? buddy->name : _("Unknown");
+
+	return ret;
 }
 
 struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)

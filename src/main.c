@@ -230,7 +230,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	const char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
-	if (!strlen(username)) {
+	if (*username == '\0') {
 		gaim_notify_error(NULL, NULL, _("Please enter your login."), NULL);
 		return;
 	}
@@ -246,7 +246,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 		gaim_account_set_remember_password(account, TRUE);
 	}
 
-	gaim_account_set_password(account, password);
+	gaim_account_set_password(account, (*password != '\0') ? password : NULL);
 
 	gaim_account_connect(account);
 }
@@ -271,7 +271,7 @@ static int dologin_named(char *name)
 			if (account) {	/* found a user */
 				if (gaim_account_get_remember_password(account)) {
 					retval = 0;
-					serv_login(account);
+					gaim_account_connect(account);
 				}
 			}
 		}
@@ -281,7 +281,7 @@ static int dologin_named(char *name)
 
 		if (gaim_account_get_remember_password(account)) {
 			retval = 0;
-			serv_login(account);
+			gaim_account_connect(account);
 		}
 	}
 

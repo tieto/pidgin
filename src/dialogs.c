@@ -457,7 +457,7 @@ void show_confirm_del(struct buddy *b)
 
 void show_confirm_del_chat(struct chat *chat)
 {
-	const char *name = gaim_chat_get_display_name(chat);
+	char *name = gaim_chat_get_display_name(chat);
 	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
 
 	gaim_request_action(NULL, NULL, _("Remove Chat"), text, -1, chat, 2,

@@ -53,7 +53,7 @@ void run_commands() {
 				free(arg1);
 			}
 			if (account) /* username found */
-				serv_login(account);
+				gaim_account_connect(account);
 		} else if (!strncasecmp(command, "signoff", 7)) {
 			struct gaim_connection *gc = NULL;
 			GSList *c = connections;

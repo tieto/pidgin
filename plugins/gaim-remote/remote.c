@@ -387,7 +387,7 @@ user_handler(struct UI *ui, guchar subtype, guchar *data)
 		memcpy(&id, data, sizeof(id));
 		account = g_list_nth_data(gaim_accounts_get_all(), id);
 		if (account)
-			serv_login(account);
+			gaim_account_connect(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
 	default:

@@ -296,7 +296,7 @@ struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *
  * @param chat    The chat
  * @return        The display name of the chat
  */
-const char *gaim_chat_get_display_name(struct chat *chat);
+char *gaim_chat_get_display_name(struct chat *chat);
 
 /**
  * Adds a new chat to the buddy list.
