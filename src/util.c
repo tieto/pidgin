@@ -57,6 +57,7 @@ typedef struct
 	gboolean sentreq;
 	gboolean newline;
 	gboolean startsaving;
+	gboolean has_explicit_data_len;
 	char *webdata;
 	unsigned long len;
 	unsigned long data_len;
@@ -2532,8 +2533,29 @@ static size_t
 parse_content_len(const char *data, size_t data_len)
 {
 	size_t content_len = 0;
+	const char *p = NULL;
 
-	sscanf(data, "Content-Length: %d", (int *)&content_len);
+	/* This is still technically wrong, since headers are case-insensitive
+	 * [RFC 2616, section 4.2], though this ought to catch the normal case.
+	 * Note: data is _not_ nul-terminated.
+	 */
+	if (data_len > 16) {
+		p = strncmp(data, "Content-Length: ", 16) == 0? data: NULL;
+		if (!p) {
+			p = g_strstr_len(data, data_len, "\nContent-Length: ");
+			if (p)
+				p += 1;
+		}
+	}
+
+	/* If we can find a Content-Length header at all, try to sscanf it.
+	 * Response headers should end with at least \r\n, so sscanf is safe,
+	 * if we make sure that there is indeed a \n in our header.
+	 */
+	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
+		sscanf(p, "Content-Length: %d", (int *)&content_len);
+		gaim_debug_misc("parse_content_len", "parsed %d\n", content_len);
+	}
 
 	return content_len;
 }
@@ -2543,6 +2565,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 {
 	GaimFetchUrlData *gfud = url_data;
 	char data;
+	gboolean got_eof = FALSE;
 
 	if (sock == -1)
 	{
@@ -2559,44 +2582,29 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 
 		if (gfud->user_agent)
 		{
-			if (gfud->http11)
-			{
-				g_snprintf(buf, sizeof(buf),
-						   "GET %s%s HTTP/1.1\r\n"
-						   "User-Agent: \"%s\"\r\n"
-						   "Host: %s\r\n\r\n",
-						   (gfud->full ? "" : "/"),
-						   (gfud->full ? gfud->url : gfud->website.page),
-						   gfud->user_agent, gfud->website.address);
-			}
-			else
-			{
-				g_snprintf(buf, sizeof(buf),
-						   "GET %s%s HTTP/1.0\r\n"
-						   "User-Agent: \"%s\"\r\n\r\n",
-						   (gfud->full ? "" : "/"),
-						   (gfud->full ? gfud->url : gfud->website.page),
-						   gfud->user_agent);
-			}
+			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
+			 * clients must know how to handle the "chunked" transfer encoding.
+			 * Gaim doesn't know how to handle "chunked", so should always send
+			 * the Host header regardless, to get around some observed problems
+			 */
+			g_snprintf(buf, sizeof(buf),
+					   "GET %s%s HTTP/%s\r\n"
+					   "User-Agent: %s\r\n"
+					   "Host: %s\r\n\r\n",
+					   (gfud->full ? "" : "/"),
+					   (gfud->full ? gfud->url : gfud->website.page),
+					   (gfud->http11 ? "1.1" : "1.0"),
+					   gfud->user_agent, gfud->website.address);
 		}
 		else
 		{
-			if (gfud->http11)
-			{
-				g_snprintf(buf, sizeof(buf),
-						   "GET %s%s HTTP/1.1\r\n"
-						   "Host: %s\r\n\r\n",
-						   (gfud->full ? "" : "/"),
-						   (gfud->full ? gfud->url : gfud->website.page),
-						   gfud->website.address);
-			}
-			else
-			{
-				g_snprintf(buf, sizeof(buf),
-						   "GET %s%s HTTP/1.0\r\n\r\n",
-						   (gfud->full ? "" : "/"),
-						   (gfud->full ? gfud->url : gfud->website.page));
-			}
+			g_snprintf(buf, sizeof(buf),
+					   "GET %s%s HTTP/%s\r\n"
+					   "Host: %s\r\n\r\n",
+					   (gfud->full ? "" : "/"),
+					   (gfud->full ? gfud->url : gfud->website.page),
+					   (gfud->http11 ? "1.1" : "1.0"),
+					   gfud->website.address);
 		}
 
 		gaim_debug_misc("gaim_url_fetch", "Request: %s\n", buf);
@@ -2644,6 +2652,8 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 					size_t content_len;
 					gfud->startsaving = TRUE;
 
+					gaim_debug_misc("gaim_url_fetch", "Response headers: '%*.*s'\n", gfud->len, gfud->len, gfud->webdata);
+
 					/* See if we can find a redirect. */
 					if (parse_redirect(gfud->webdata, gfud->len, sock, gfud))
 						return;
@@ -2655,6 +2665,10 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 					{
 						/* We'll stick with an initial 8192 */
 						content_len = 8192;
+					}
+					else
+					{
+						gfud->has_explicit_data_len = TRUE;
 					}
 
 					/* Out with the old... */
@@ -2674,9 +2688,26 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 
 			gfud->newline = FALSE;
 		}
+		else if (gfud->has_explicit_data_len && gfud->len == gfud->data_len)
+		{
+			got_eof = TRUE;
+		}
 	}
 	else if (errno != ETIMEDOUT)
 	{
+		got_eof = TRUE;
+	}
+	else
+	{
+		gaim_input_remove(gfud->inpa);
+		close(sock);
+
+		gfud->callback(gfud->user_data, NULL, 0);
+
+		destroy_fetch_url_data(gfud);
+	}
+
+	if (got_eof) {
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
 		gfud->webdata[gfud->len] = 0;
 
@@ -2685,15 +2716,6 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		gaim_input_remove(gfud->inpa);
 		close(sock);
 		gfud->callback(gfud->user_data, gfud->webdata, gfud->len);
-
-		destroy_fetch_url_data(gfud);
-	}
-	else
-	{
-		gaim_input_remove(gfud->inpa);
-		close(sock);
-
-		gfud->callback(gfud->user_data, NULL, 0);
 
 		destroy_fetch_url_data(gfud);
 	}
@@ -2707,6 +2729,10 @@ gaim_url_fetch(const char *url, gboolean full,
 {
 	int sock;
 	GaimFetchUrlData *gfud;
+
+	gaim_debug_info("gaim_url_fetch",
+			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
+			 url, full, user_agent, http11);
 
 	g_return_if_fail(url != NULL);
 	g_return_if_fail(cb  != NULL);
