@@ -392,11 +392,13 @@ void sighandler(int sig)
 	case SIGSEGV:
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
 				"Please notify the gaim maintainers by reporting a bug at\n"
-				WEBSITE "\n\n"
+				WEBSITE "bug.php3\n\n"
 				"Please make sure to specify what you were doing at the time,\n"
-				"and post the backtrace from the core file (if you do not know\n"
-				"how to get the backtrace, please IM either EWarmenhoven or\n"
-				"RobFlynn and they can instruct you).\n");
+				"and post the backtrace from the core file. If you do not know\n"
+				"how to get the backtrace, please get instructions at\n"
+				WEBSITE "gdb.shtml. If you need further\n"
+				"assistance, please IM either EWarmenhoven or or RobFlynn and\n"
+				"they can help you.\n");
 		abort();
 		break;
 	default:
