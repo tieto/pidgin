@@ -75,10 +75,10 @@ typedef struct
 
 typedef struct
 {
-    GaimAccount *account;
-    const char *default_chat_name;
+	GaimAccount *account;
+	const char *default_chat_name;
 
-    GtkWidget *window;
+	GtkWidget *window;
 	GtkWidget *account_menu;
 	GtkWidget *alias_entry;
 	GtkWidget *group_combo;
@@ -182,203 +182,178 @@ const double top_left_corner[25] = {
 
 
 static GdkPixbuf *
-get_pixbuf (GtkWidget *menu,
-	    int x,
-	    int y,
-	    int width,
-	    int height)
+get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 {
-  GdkPixbuf *dest, *src;
-  GdkScreen *screen = gtk_widget_get_screen (GTK_WIDGET(menu));
-  GdkWindow *root = gdk_screen_get_root_window (screen);
-  gint screen_height = gdk_screen_get_height (screen);
-  gint screen_width = gdk_screen_get_width (screen);
-  gint original_width = width;
-  gint original_height = height;
+	GdkPixbuf *dest, *src;
+	GdkScreen *screen = gtk_widget_get_screen (GTK_WIDGET(menu));
+	GdkWindow *root = gdk_screen_get_root_window (screen);
+	gint screen_height = gdk_screen_get_height (screen);
+	gint screen_width = gdk_screen_get_width (screen);
+	gint original_width = width;
+	gint original_height = height;
 
 #ifdef _WIN32
-  /* In Win32, GDK gets the workarea that isn't occupied by toolbars
-     (including the taskbar) and uses that region as the screen size.
-     GTK returns positions based on a screen size that ignores these
-     toolbars.  Since we want a pixmap with real X,Y coordinates, we
-     need to find out the offset from GTK's screen to GDK's screen,
-     and adjust the pixmaps we grab accordingly.  GDK will not deal
-     with toolbar position updates, so we're stuck restarting Gaim
-     if that happens. */
-  RECT *workarea = g_malloc(sizeof(RECT));
-  SystemParametersInfo(SPI_GETWORKAREA, 0, (void *)workarea, 0);
-  x += (workarea->left);
-  y += (workarea->top);
-  g_free(workarea);
+	/* In Win32, GDK gets the workarea that isn't occupied by toolbars
+	 * (including the taskbar) and uses that region as the screen size.
+	 * GTK returns positions based on a screen size that ignores these
+	 * toolbars.  Since we want a pixmap with real X,Y coordinates, we
+	 * need to find out the offset from GTK's screen to GDK's screen,
+	 * and adjust the pixmaps we grab accordingly.  GDK will not deal
+	 * with toolbar position updates, so we're stuck restarting Gaim
+	 * if that happens.
+	 */
+	RECT *workarea = g_malloc(sizeof(RECT));
+	SystemParametersInfo(SPI_GETWORKAREA, 0, (void *)workarea, 0);
+	x += (workarea->left);
+	y += (workarea->top);
+	g_free(workarea);
 #endif
 
-  if (x < 0)
-    {
-      width += x;
-      x = 0;
-    }
+	if (x < 0) {
+		width += x;
+		x = 0;
+	}
 
-  if (y < 0)
-    {
-      height += y;
-      y = 0;
-    }
+	if (y < 0) {
+		height += y;
+		y = 0;
+	}
 
-  if (x + width > screen_width)
-    {
-      width = screen_width - x;
-    }
+	if (x + width > screen_width) {
+		width = screen_width - x;
+	}
 
-  if (y + height > screen_height)
-    {
-      height = screen_height - y;
-    }
+	if (y + height > screen_height) {
+		height = screen_height - y;
+	}
 
-  if (width <= 0 || height <= 0)
-    return NULL;
+	if (width <= 0 || height <= 0)
+		return NULL;
 
-  dest = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8,
-                         original_width, original_height);
-  src = gdk_pixbuf_get_from_drawable (NULL, root, NULL, x, y, 0, 0,
-                                      width, height);
-  gdk_pixbuf_copy_area (src, 0, 0, width, height, dest, 0, 0);
+	dest = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+						  original_width, original_height);
+	src = gdk_pixbuf_get_from_drawable(NULL, root, NULL, x, y, 0, 0,
+									   width, height);
+	gdk_pixbuf_copy_area (src, 0, 0, width, height, dest, 0, 0);
 
-  g_object_unref (G_OBJECT (src));
+	g_object_unref (G_OBJECT (src));
 
-  return dest;
+	return dest;
 }
 
 static void
 shadow_paint(GaimGtkBuddyList *blist, GdkRectangle *area, enum side shadow)
 {
-  gint width, height;
-  GdkGC *gc = gtkblist->tipwindow->style->black_gc;
+	gint width, height;
+	GdkGC *gc = gtkblist->tipwindow->style->black_gc;
 
-  switch (shadow)
-    {
-      case EAST_SIDE:
-	if (gtkblist->east != NULL)
-	  {
-	    if (area)
-	      gdk_gc_set_clip_rectangle (gc, area);
+	switch (shadow) {
+		case EAST_SIDE:
+		if (gtkblist->east != NULL) {
+			if (area)
+				gdk_gc_set_clip_rectangle (gc, area);
 
-	    width = gdk_pixbuf_get_width (gtkblist->east);
-	    height = gdk_pixbuf_get_height (gtkblist->east);
+			width = gdk_pixbuf_get_width (gtkblist->east);
+			height = gdk_pixbuf_get_height (gtkblist->east);
 
-	    gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->east_shadow), gc,
-				gtkblist->east, 0, 0, 0, 0, width, height, GDK_RGB_DITHER_NONE,
-				0, 0);
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->east_shadow), gc,
+				gtkblist->east, 0, 0, 0, 0, width, height,
+				GDK_RGB_DITHER_NONE, 0, 0);
 
-	    if (area)
-	      gdk_gc_set_clip_rectangle (gc, NULL);
-	  }
-	break;
-      case SOUTH_SIDE:
-	if (blist->south != NULL)
-	  {
-	    if (area)
-	      gdk_gc_set_clip_rectangle (gc, area);
+			if (area)
+				gdk_gc_set_clip_rectangle (gc, NULL);
+		}
+		break;
 
-	    width = gdk_pixbuf_get_width (gtkblist->south);
-	    height = gdk_pixbuf_get_height (gtkblist->south);
-	    gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->south_shadow), gc, gtkblist->south,
-			    0, 0, 0, 0, width, height, GDK_RGB_DITHER_NONE, 0, 0);
+		case SOUTH_SIDE:
+		if (blist->south != NULL) {
+			if (area)
+				gdk_gc_set_clip_rectangle (gc, area);
 
-	    if (area)
-		    gdk_gc_set_clip_rectangle (gc, NULL);
-	  }
-	break;
-    default:
-	    break;
-    }
+			width = gdk_pixbuf_get_width (gtkblist->south);
+			height = gdk_pixbuf_get_height (gtkblist->south);
+
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->south_shadow), gc,
+				gtkblist->south, 0, 0, 0, 0, width, height,
+				GDK_RGB_DITHER_NONE, 0, 0);
+
+			if (area)
+			gdk_gc_set_clip_rectangle (gc, NULL);
+		}
+		break;
+	}
 }
 
 static void
-pixbuf_add_shadow (GdkPixbuf *pb,
-	           enum side shadow)
+pixbuf_add_shadow (GdkPixbuf *pb, enum side shadow)
 {
-  gint width, rowstride, height;
-  gint i;
-  guchar *pixels, *p;
+	gint width, rowstride, height;
+	gint i;
+	guchar *pixels, *p;
 
-  width = gdk_pixbuf_get_width (pb);
-  height = gdk_pixbuf_get_height (pb);
-  rowstride = gdk_pixbuf_get_rowstride (pb);
-  pixels = gdk_pixbuf_get_pixels (pb);
+	width = gdk_pixbuf_get_width (pb);
+	height = gdk_pixbuf_get_height (pb);
+	rowstride = gdk_pixbuf_get_rowstride (pb);
+	pixels = gdk_pixbuf_get_pixels (pb);
 
-  switch (shadow)
-    {
-      case EAST_SIDE:
-	if (height > 5)
-	  {
-	    for (i = 0; i < width; i++)
-	      {
-		gint j, k;
+	switch (shadow) {
+		case EAST_SIDE:
+		if (height > 5) {
+			for (i = 0; i < width; i++) {
+				gint j, k;
 
-		p = pixels + (i * rowstride);
-		for (j = 0, k = 0; j < 3 * width; j += 3, k++)
-		  {
-		    p[j] = (guchar) (p[j] * top_right_corner [i * width + k]);
-		    p[j + 1] = (guchar) (p[j + 1] * top_right_corner [i * width + k]);
-		    p[j + 2] = (guchar) (p[j + 2] * top_right_corner [i * width + k]);
-		  }
-	      }
+				p = pixels + (i * rowstride);
+				for (j = 0, k = 0; j < 3 * width; j += 3, k++) {
+					p[j] = (guchar) (p[j] * top_right_corner [i * width + k]);
+					p[j + 1] = (guchar) (p[j + 1] * top_right_corner [i * width + k]);
+					p[j + 2] = (guchar) (p[j + 2] * top_right_corner [i * width + k]);
+				}
+			}
 
-	    i = 5;
-	  }
-	else
-	  {
-	    i = 0;
-	  }
+			i = 5;
+		} else {
+			i = 0;
+		}
 
-	for (;i < height; i++)
-	  {
-	    gint j, k;
+		for (; i < height; i++) {
+			gint j, k;
 
-	    p = pixels + (i * rowstride);
-	    for (j = 0, k = 0; j < 3 * width; j += 3, k++)
-	      {
-		p[j] = (guchar) (p[j] * shadow_strip_l[width - 1 - k]);
-		p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[width - 1 - k]);
-		p[j + 2] = (guchar) (p[j + 2] * shadow_strip_l[width - 1 - k]);
-	      }
-	  }
-	break;
+			p = pixels + (i * rowstride);
+			for (j = 0, k = 0; j < 3 * width; j += 3, k++) {
+				p[j] = (guchar) (p[j] * shadow_strip_l[width - 1 - k]);
+				p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[width - 1 - k]);
+				p[j + 2] = (guchar) (p[j + 2] * shadow_strip_l[width - 1 - k]);
+			}
+		}
+		break;
 
-      case SOUTH_SIDE:
-	for (i = 0; i < height; i++)
-	  {
-	    gint j, k;
+		case SOUTH_SIDE:
+			for (i = 0; i < height; i++) {
+				gint j, k;
 
-	    p = pixels + (i * rowstride);
-	    for (j = 0, k = 0; j < 3 * height; j += 3, k++)
-	      {
-		p[j] = (guchar) (p[j] * bottom_left_corner[i * height + k]);
-		p[j + 1] = (guchar) (p[j + 1] * bottom_left_corner[i * height + k]);
-		p[j + 2] = (guchar) (p[j + 2] * bottom_left_corner[i * height + k]);
-	      }
+				p = pixels + (i * rowstride);
+				for (j = 0, k = 0; j < 3 * height; j += 3, k++) {
+					p[j] = (guchar) (p[j] * bottom_left_corner[i * height + k]);
+					p[j + 1] = (guchar) (p[j + 1] * bottom_left_corner[i * height + k]);
+					p[j + 2] = (guchar) (p[j + 2] * bottom_left_corner[i * height + k]);
+				}
 
-	    p = pixels + (i * rowstride) + 3 * height;
-	    for (j = 0, k = 0; j < (width * 3) - (6 * height); j += 3, k++)
-	      {
-		p[j] = (guchar) (p[j] * bottom_right_corner [i * height]);
-		p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner [i * height]);
-		p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner [i * height]);
-	      }
+				p = pixels + (i * rowstride) + 3 * height;
+				for (j = 0, k = 0; j < (width * 3) - (6 * height); j += 3, k++) {
+					p[j] = (guchar) (p[j] * bottom_right_corner [i * height]);
+					p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner [i * height]);
+					p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner [i * height]);
+				}
 
-	    p = pixels + (i * rowstride) + ((width * 3) - (3 * height));
-	    for (j = 0, k = 0; j < 3 * height; j += 3, k++)
-	      {
-		p[j] = (guchar) (p[j] * bottom_right_corner[i * height + k]);
-		p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner[i * height + k]);
-		p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner[i * height + k]);
-	      }
-	  }
-	break;
-
-      default:
-	break;
-    }
+				p = pixels + (i * rowstride) + ((width * 3) - (3 * height));
+				for (j = 0, k = 0; j < 3 * height; j += 3, k++) {
+					p[j] = (guchar) (p[j] * bottom_right_corner[i * height + k]);
+					p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner[i * height + k]);
+					p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner[i * height + k]);
+				}
+			}
+		break;
+	}
 }
 
 static gboolean
@@ -390,9 +365,9 @@ map_shadow_windows (gpointer data)
 	int x, y;
 
 	gtk_window_get_position(GTK_WINDOW(widget), &x, &y);
-	pixbuf = get_pixbuf (widget,
-			     x + widget->allocation.width, y,
-			     5, widget->allocation.height + 5);
+	pixbuf = get_pixbuf(widget,
+						x + widget->allocation.width, y,
+						5, widget->allocation.height + 5);
 	if (pixbuf != NULL)
 	{
 		pixbuf_add_shadow (pixbuf, EAST_SIDE);
@@ -479,9 +454,9 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 	/* don't save off-screen positioning */
 	if (x + event->width < 0 ||
-	    y + event->height < 0 ||
-	    x > gdk_screen_width() ||
-	    y > gdk_screen_height()) {
+		y + event->height < 0 ||
+		x > gdk_screen_width() ||
+		y > gdk_screen_height()) {
 
 		return FALSE; /* carry on normally */
 	}
@@ -1027,7 +1002,7 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	/* This ensures that the bottom buddy is visible, i.e. not scrolled off the alignment */
 	get_iter_from_node(node, &parent);
 	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent, 
-				      gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
+			  gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	/* Let the treeview draw so it knows where to scroll */
 	while (gtk_events_pending())
@@ -1314,7 +1289,7 @@ create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 				image = gtk_image_new_from_pixbuf(buf);
 				g_object_unref(G_OBJECT(buf));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
-							      image);
+											  image);
 				gtk_widget_show(image);
 				gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 				gtk_widget_show(menuitem);
@@ -1628,12 +1603,12 @@ parse_vcard(const char *vcard, GaimGroup *group)
 	return TRUE;
 }
 
-static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
-					     GdkDragContext *dc,
-					     GtkSelectionData *data,
-					     guint info,
-					     guint time,
-					     gpointer *null)
+static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
+											GdkDragContext *dc,
+											GtkSelectionData *data,
+											guint info,
+											guint time,
+											gpointer *null)
 {
 	if (data->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
 	{
@@ -1997,7 +1972,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		GtkTreeViewDropPosition position;
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget),
-						      x, y, &path, &position))
+											  x, y, &path, &position))
 			{
 				GtkTreeIter iter;
 				GaimBlistNode *node;
@@ -2044,8 +2019,8 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	pango_layout_set_width(layout, 300000);
 	style = gtkblist->tipwindow->style;
 
-	gtk_paint_flat_box (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-			    NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
+	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+					   NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
 #if GTK_CHECK_VERSION(2,2,0)
 	gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, pixbuf,
@@ -2187,7 +2162,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gdk_window_destroy (gtkblist->east_shadow);
 	}
 	gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
-					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
+										   GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
 	gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
 
@@ -2196,7 +2171,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gdk_window_destroy (gtkblist->south_shadow);
 	}
 	gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
-					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
+											GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
 	gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
 #endif
@@ -2310,9 +2285,9 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 	gaim_gtk_blist_tooltip_destroy();
 
 	if (gtkblist->mouseover_contact &&
-	    !((e->x > gtkblist->contact_rect.x) && (e->x < (gtkblist->contact_rect.x + gtkblist->contact_rect.width)) &&
-	      (e->y > gtkblist->contact_rect.y) && (e->y < (gtkblist->contact_rect.y + gtkblist->contact_rect.height)))) {
-		    gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
+		!((e->x > gtkblist->contact_rect.x) && (e->x < (gtkblist->contact_rect.x + gtkblist->contact_rect.width)) &&
+		 (e->y > gtkblist->contact_rect.y) && (e->y < (gtkblist->contact_rect.y + gtkblist->contact_rect.height)))) {
+			gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
 		gtkblist->mouseover_contact = NULL;
 	}
 }
@@ -2497,27 +2472,27 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			accounttext = g_markup_escape_text(b->account->username, -1);
 
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-				       "%s %s"  /* Account */
-				       "%s %s"  /* Contact Alias */
-				       "%s %s"  /* Alias */
-				       "%s %s"  /* Nickname */
-				       "%s %s"  /* Logged In */
-				       "%s %s"  /* Idle */
-				       "%s %s"  /* Warning */
-				       "%s"     /* Status */
-				       "%s",
-				       b->name,
-				       accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
-					   contactaliastext ? _("\n<b>Contact Alias:</b>") : "", contactaliastext ? contactaliastext : "",
-				       aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
-				       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
-				       loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
-				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
-				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-				       statustext ? statustext : "",
-				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
-				       !g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
-				       !g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
+					"%s %s"  /* Account */
+					"%s %s"  /* Contact Alias */
+					"%s %s"  /* Alias */
+					"%s %s"  /* Nickname */
+					"%s %s"  /* Logged In */
+					"%s %s"  /* Idle */
+					"%s %s"  /* Warning */
+					"%s"     /* Status */
+					"%s",
+					b->name,
+					accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
+					contactaliastext ? _("\n<b>Contact Alias:</b>") : "", contactaliastext ? contactaliastext : "",
+					aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
+					nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
+					loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
+					idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
+					b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
+					statustext ? statustext : "",
+					!g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
+					!g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
+					!g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
 
 		if(warning)
 			g_free(warning);
@@ -2825,11 +2800,11 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		text = g_strdup(esc);
 	} else {
 		text = g_strdup_printf("%s\n"
-				       "<span %s size='smaller'>%s%s%s</span>", esc,
-				       selected ? "" : "color='dim grey'",
-				       statustext != NULL ? statustext :  "",
-				       idletime != NULL ? idletime : "",
-				       warning != NULL ? warning : "");
+					"<span %s size='smaller'>%s%s%s</span>", esc,
+					selected ? "" : "color='dim grey'",
+					statustext != NULL ? statustext :  "",
+					idletime != NULL ? idletime : "",
+					warning != NULL ? warning : "");
 	}
 	if (idletime)
 		g_free(idletime);
@@ -3073,11 +3048,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_window_add_accel_group(GTK_WINDOW (gtkblist->window), accel_group);
 	g_object_unref(accel_group);
 	gtkblist->ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", accel_group);
-	gtk_item_factory_set_translate_func (gtkblist->ift,
-					     item_factory_translate_func,
-					     NULL, NULL);
+	gtk_item_factory_set_translate_func(gtkblist->ift,
+										item_factory_translate_func,
+										NULL, NULL);
 	gtk_item_factory_create_items(gtkblist->ift, sizeof(blist_menu) / sizeof(*blist_menu),
-				      blist_menu, NULL);
+								  blist_menu, NULL);
 	gaim_gtk_load_accels();
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 														G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
@@ -3114,11 +3089,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
-					       GDK_BUTTON1_MASK, ste, 3,
-					       GDK_ACTION_COPY);
+										   GDK_BUTTON1_MASK, ste, 3,
+										   GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
-					     dte, 5,
-					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
+										 dte, 5,
+										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
@@ -3132,18 +3107,18 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	column = gtk_tree_view_column_new ();
 
 	rend = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start (column, rend, FALSE);
-	gtk_tree_view_column_set_attributes (column, rend,
-					     "pixbuf", STATUS_ICON_COLUMN,
-					     "visible", STATUS_ICON_VISIBLE_COLUMN,
-					     NULL);
+	gtk_tree_view_column_pack_start(column, rend, FALSE);
+	gtk_tree_view_column_set_attributes(column, rend,
+										"pixbuf", STATUS_ICON_COLUMN,
+										"visible", STATUS_ICON_VISIBLE_COLUMN,
+										NULL);
 	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
-	gtk_tree_view_column_set_attributes (column, rend,
-					     "markup", NAME_COLUMN,
-					     NULL);
+	gtk_tree_view_column_set_attributes(column, rend,
+										"markup", NAME_COLUMN,
+										NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
@@ -3992,7 +3967,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_buddy");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
-	                         GDK_WINDOW_TYPE_HINT_DIALOG);
+							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
@@ -4313,13 +4288,13 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		}
 	}
 
-    if (data->account == NULL)
+	if (data->account == NULL)
 	{
 		gaim_notify_error(NULL, NULL,
 						  _("You are not currently signed on with any "
 							"protocols that have the ability to chat."), NULL);
 		return;
-    }
+	}
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -4336,7 +4311,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_chat");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
-	                         GDK_WINDOW_TYPE_HINT_DIALOG);
+							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
@@ -4369,7 +4344,7 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	gaim_set_accessible_label (data->account_menu, label);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
-    gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
+	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->entries_box, TRUE, TRUE, 0);
 
 	rebuild_addchat_entries(data);
@@ -4391,13 +4366,13 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
 
-    label = gtk_label_new(_("Group:"));
+	label = gtk_label_new(_("Group:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(data->sg, label);
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
-    data->group_combo = gtk_combo_new();
-    gtk_combo_set_popdown_strings(GTK_COMBO(data->group_combo), groups_tree());
+	data->group_combo = gtk_combo_new();
+	gtk_combo_set_popdown_strings(GTK_COMBO(data->group_combo), groups_tree());
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
 
 	if (group)
@@ -4576,14 +4551,14 @@ void gaim_gtk_blist_init(void)
 
 	/* Register our signals */
 	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
-			     gaim_marshal_VOID__POINTER, NULL, 1,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST));
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+						 GAIM_SUBTYPE_BLIST));
 
 	gaim_signal_register(gtk_blist_handle, "drawing-tooltip",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
-			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
 }
 
 void
@@ -4633,7 +4608,7 @@ create_prpl_icon(GaimAccount *account)
 
 
 /*********************************************************************
- * Buddy List sorting functions                                          *
+ * Buddy List sorting functions                                      *
  *********************************************************************/
 
 void gaim_gtk_blist_sort_method_reg(const char *id, const char *name, gaim_gtk_blist_sort_function func)
@@ -5130,3 +5105,4 @@ gaim_gtk_blist_update_plugin_actions(void)
 		}
 	}
 }
+
