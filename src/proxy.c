@@ -191,7 +191,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 	/* Are you alive? */
 	if(kill(req->dns_pid, 0) != 0) {
 		gaim_debug(GAIM_DEBUG_WARNING, "dns",
-				   "DNS child %s no longer exists\n", req->dns_pid);
+				   "DNS child %d no longer exists\n", req->dns_pid);
 		return -1;
 	}
 	
