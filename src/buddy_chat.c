@@ -374,6 +374,7 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
 		
 		/* Now we should fill out all of the names */ 
+		/* FIXME: Does this cause a leak? */
 		gtk_combo_set_popdown_strings(GTK_COMBO(inviteentry), generate_invite_user_names(b->gc));
 
 		if (display_options & OPT_DISP_COOL_LOOK) {
