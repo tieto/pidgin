@@ -1652,15 +1652,26 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp= g_getenv("HTTPPROXY")) != NULL) {
-			connecthost = tmp;
-			gaim_proxy_info_set_host(phb->gpi, connecthost);
-		}
+			char *proxyhost,*proxypath;
+			int proxyport;
 
-		if ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
-			(tmp = g_getenv("http_proxy_port")) != NULL ||
-			(tmp = g_getenv("HTTPPROXYPORT")) != NULL) {
-			connectport = atoi(tmp);
-			gaim_proxy_info_set_port(phb->gpi, connectport);
+			/* http_proxy-format: 
+			 * export http_proxy="http://your.proxy.server:port/" 
+			 */
+			if(gaim_url_parse(tmp, &proxyhost, &proxyport, &proxypath)) {
+				gaim_proxy_info_set_host(phb->gpi, proxyhost);
+				g_free(proxyhost);
+				g_free(proxypath);
+
+				/* only for backward compatibility */
+				if (proxyport == 80 && 
+				    ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
+				     (tmp = g_getenv("http_proxy_port")) != NULL ||
+				     (tmp = g_getenv("HTTPPROXYPORT")) != NULL))
+				    proxyport = atoi(tmp);
+				
+				gaim_proxy_info_set_port(phb->gpi, proxyport);
+			}
 		}
 
 		if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
