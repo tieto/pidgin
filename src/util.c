@@ -22,10 +22,6 @@
  */
 #include "internal.h"
 
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
@@ -508,79 +504,73 @@ gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 time_t
 gaim_str_to_time(const char *timestamp, gboolean utc)
 {
-    struct tm t;
-    time_t retval = 0;
-    char buf[32];
-    char *c;
-    int tzoff = 0;
+	struct tm *t;
+	time_t retval = 0;
+	char buf[32];
+	char *c;
+	int tzoff = 0;
 
-    time(&retval);
-    localtime_r(&retval, &t);
+	time(&retval);
+	t = localtime(&retval);
 
-    snprintf(buf, sizeof(buf), "%s", timestamp);
-    c = buf;
+	snprintf(buf, sizeof(buf), "%s", timestamp);
+	c = buf;
 
-    /* 4 digit year */
-    if(!sscanf(c, "%04d", &t.tm_year)) return 0;
-    c+=4;
-    if(*c == '-')
-        c++;
-
-	t.tm_year -= 1900;
-
-	/* 2 digit month */
-	if(!sscanf(c, "%02d", &t.tm_mon)) return 0;
-	c+=2;
-	if(*c == '-')
+	/* 4 digit year */
+	if (!sscanf(c, "%04d", &t->tm_year)) return 0;
+	c += 4;
+	if (*c == '-')
 		c++;
 
-    t.tm_mon -= 1;
+	t->tm_year -= 1900;
 
+	/* 2 digit month */
+	if (!sscanf(c, "%02d", &t->tm_mon)) return 0;
+	c += 2;
+	if (*c == '-')
+		c++;
 
-    /* 2 digit day */
-    if(!sscanf(c, "%02d", &t.tm_mday)) return 0;
-    c+=2;
-    if(*c == 'T' || *c == '.') { /* we have more than a date, keep going */
-        c++; /* skip the "T" */
+	t->tm_mon -= 1;
 
-        /* 2 digit hour */
-        if(sscanf(c, "%02d:%02d:%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3 ||
-				sscanf(c, "%02d%02d%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3) {
-            int tzhrs, tzmins;
-            c+=8;
-            if(*c == '.') /* dealing with precision we don't care about */
-                c += 4;
+	/* 2 digit day */
+	if (!sscanf(c, "%02d", &t->tm_mday)) return 0;
+	c += 2;
+	if (*c == 'T' || *c == '.') { /* we have more than a date, keep going */
+	c++; /* skip the "T" */
 
-            if((*c == '+' || *c == '-') &&
-                    sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
-                tzoff = tzhrs*60*60 + tzmins*60;
-                if(*c == '+')
-                    tzoff *= -1;
-            }
+	/* 2 digit hour */
+	if (sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 ||
+		sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3) {
+		int tzhrs, tzmins;
+		c += 8;
+		if (*c == '.') /* dealing with precision we don't care about */
+			c += 4;
+		if ((*c == '+' || *c == '-') &&
+			sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
+			tzoff = tzhrs*60*60 + tzmins*60;
+			if (*c == '+')
+				tzoff *= -1;
+			}
 
-			if(tzoff || utc) {
-
+			if (tzoff || utc) {
 #ifdef HAVE_TM_GMTOFF
-                tzoff += t.tm_gmtoff;
+				tzoff += t->tm_gmtoff;
 #else
-#   ifdef HAVE_TIMEZONE
-                tzset();    /* making sure */
-                tzoff -= timezone;
-#   endif
+#	ifdef HAVE_TIMEZONE
+				tzset();    /* making sure */
+				tzoff -= timezone;
+#	endif
 #endif
 			}
-        }
-    }
+		}
+	}
 
-	t.tm_isdst = -1;
+	t->tm_isdst = -1;
+	retval = mktime(t);
+	retval += tzoff;
 
-	retval = mktime(&t);
-
-    retval += tzoff;
-
-    return retval;
+	return retval;
 }
-
 
 
 /**************************************************************************
@@ -1919,14 +1909,14 @@ int gaim_build_dir (const char *path, int mode)
 		if(g_file_test(dir, G_FILE_TEST_IS_DIR)) {
 			continue;
 		} else if(g_file_test(dir, G_FILE_TEST_EXISTS)) {
-			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "bad path: %s\n", path);
+			gaim_debug_warning("build_dir", "bad path: %s\n", path);
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
 		}
 
 		if (mkdir(dir, mode) < 0) {
-			gaim_debug(GAIM_DEBUG_WARNING, "build_dir", "mkdir: %s\n", strerror(errno));
+			gaim_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
 			return -1;

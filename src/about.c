@@ -22,10 +22,12 @@
  */
 
 #include "internal.h"
+#include "gtkinternal.h"
+
+#include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 #include "stock.h"
-#include "gtkdialogs.h"
 
 /* XXX For WEBSITE */
 #include "gaim.h"
@@ -34,7 +36,7 @@ static GtkWidget *about = NULL;
 
 static void destroy_about()
 {
-	if (about)
+	if (about != NULL)
 		gtk_widget_destroy(about);
 	about = NULL;
 }
@@ -52,8 +54,10 @@ void show_about(GtkWidget *w, void *data)
 	GtkTextIter iter;
 	char *str, *labeltext;
 
-	if (about != NULL)
+	if (about != NULL) {
+		gtk_window_present(GTK_WINDOW(about));
 		return;
+	}
 
 	GAIM_DIALOG(about);
 	gtk_window_set_default_size(GTK_WINDOW(about), 450, -1);
