@@ -53,7 +53,7 @@
 #include <netinet/in.h>
 #include <sys/utsname.h> /* for aim_odc_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
-#include <sys/types.h> /* for UINT_MAX */
+#include <limits.h> /* for UINT_MAX */
 #define G_DIR_SEPARATOR '/'
 #endif
 
