@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.55\n"
+"Project-Id-Version: gaim 0.59\n"
 "POT-Creation-Date: 2002-06-25 00:10-0400\n"
 "PO-Revision-Date: 2002-03-23 20:32+0200\n"
 "Last-Translator: Tero Kuusela <teroajk@subdimension.com>\n"
@@ -19,9 +19,8 @@ msgstr "Tuttavakeskustelu"
 
 #: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
 #: plugins/chatlist.c:409
-#, fuzzy
 msgid "Gaim Chat"
-msgstr "Gaim - Ryhmäkeskustelu"
+msgstr "Gaim Ryhmäkeskustelu"
 
 #: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
 #: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
@@ -32,13 +31,12 @@ msgid "Close"
 msgstr "Sulje"
 
 #: plugins/chatlist.c:344
-#, fuzzy
 msgid "Chat Rooms"
-msgstr "Ryhmäkeskusteluvalinnat"
+msgstr "Keskusteluhuoneet"
 
 #: plugins/chatlist.c:363
 msgid "Refresh"
-msgstr ""
+msgstr "Päivitä"
 
 #. Put the buttons in the box
 #: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
@@ -56,51 +54,48 @@ msgstr "Poista"
 
 #: plugins/chatlist.c:388
 msgid "List of available chats"
-msgstr ""
+msgstr "Saatavilla olevien ryhmäkeskustelujen lista"
 
 #: plugins/chatlist.c:398
 msgid "List of subscribed chats"
-msgstr ""
+msgstr "Tilattujen ryhmäkeskustelujen lista"
 
 #: plugins/gtik.c:699
 msgid "Gnome Stock Ticker Properties"
-msgstr ""
+msgstr "Gnomen osakekurssisovelman asetukset"
 
 #: plugins/gtik.c:711
 msgid "Update Frequency in min"
-msgstr ""
+msgstr "Päivitystiheys minuuteissa"
 
 #: plugins/gtik.c:727
 msgid "Enter symbols delimited with \"+\" in the box below."
-msgstr ""
+msgstr "Kirjoita symbolit erotettuna \"+\"-merkillä alla olevaan laatikkoon."
 
 #. OUTPUT FORMAT and SCROLL DIRECTION
 #: plugins/gtik.c:737
 msgid "Check this box to display only symbols and price:"
-msgstr ""
+msgstr "Näytä vain symbolit ja hinta:"
 
 #: plugins/gtik.c:738
 msgid "Check this box to scroll left to right:"
-msgstr ""
+msgstr "Vieritä vasemmalta oikealle:"
 
 #: plugins/gtik.c:974
-#, fuzzy
 msgid "(No"
-msgstr "Ei"
+msgstr "(Ei"
 
 #: plugins/gtik.c:975
-#, fuzzy
 msgid "Change"
-msgstr "Kanava:"
+msgstr "Vaihda"
 
 #: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1919
-#, fuzzy
 msgid "Available"
-msgstr "Tavoittamattomissa"
+msgstr "Tavoitettavissa"
 
 #: src/protocols/gg/gg.c:72
 msgid "Available for friends only"
-msgstr ""
+msgstr "Tavoitettavissa vain ystäville"
 
 #: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
 #: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
@@ -109,16 +104,15 @@ msgstr "Poissa"
 
 #: src/protocols/gg/gg.c:74
 msgid "Away for friends only"
-msgstr ""
+msgstr "Poissa vain ystäville"
 
 #: src/protocols/gg/gg.c:75
-#, fuzzy
 msgid "Invisible"
-msgstr "Kutsu"
+msgstr "Näkymätön"
 
 #: src/protocols/gg/gg.c:76
 msgid "Invisible for friends only"
-msgstr ""
+msgstr "Näkymätön vain ystäville"
 
 #: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
 msgid "Unavailable"
@@ -416,7 +410,8 @@ msgstr "Kutsumanimeä ei annettu"
 msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
-msgstr "%s on pyytänyt DCC-keskustelua. Haluatko muodostaa suoran yhteyden?"
+msgstr ""
+"%s on pyytänyt DCC-keskustelua. Haluatko muodostaa suoran yhteyden?"
 
 #: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:315
 msgid "Unable to write"
@@ -455,16 +450,15 @@ msgstr "DCC-keskustelu"
 
 #: src/protocols/jabber/jabber.c:942
 msgid "Incorrect current password! Password NOT Changed!"
-msgstr ""
+msgstr "Väärä nykyinen salasana! Salasanaa EI vaihdettu!"
 
 #: src/protocols/jabber/jabber.c:943 src/protocols/jabber/jabber.c:948
-#, fuzzy
 msgid "Password Change Error!"
-msgstr "Gaim - Salasanan vaihto"
+msgstr "Virhe vaihdettaessa salasanaa!"
 
 #: src/protocols/jabber/jabber.c:947
 msgid "New password same as old password! Password NOT Changed!"
-msgstr ""
+msgstr "Uusi salasana sama kuin vanha salasana! Salasanaa EI vaihdettu!"
 
 #: src/protocols/jabber/jabber.c:1092
 msgid "Unknown"
@@ -486,20 +480,16 @@ msgstr "älä häiritse"
 #: src/protocols/jabber/jabber.c:1434
 #, c-format
 msgid "Error %s: %s"
-msgstr ""
+msgstr "Virhe %s: %s"
 
 #: src/protocols/jabber/jabber.c:1437
-#, fuzzy
 msgid "Unknown Error in presence"
-msgstr "Tuntematon virhekoodi."
+msgstr "Tuntematon virhe tavoitettavuudessa"
 
 #: src/protocols/jabber/jabber.c:1607
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add you to their buddy list."
-msgstr ""
-"\n"
-"\n"
-"Haluatko lisätä hänet tuttavalistallesi?"
+msgstr "Käyttäjä %s haluaa lisätä sinut tuttavalistalleen."
 
 #: src/protocols/jabber/jabber.c:1632
 msgid "No such user"
@@ -524,14 +514,12 @@ msgid "Unknown login error"
 msgstr "Tuntematon sisäänkirjautumisvirhe"
 
 #: src/protocols/jabber/jabber.c:2010
-#, fuzzy
 msgid "Password successfully changed."
-msgstr "Salasanan vaihto onnistui"
+msgstr "Salasanan vaihto onnistui."
 
 #: src/protocols/jabber/jabber.c:2012
-#, fuzzy
 msgid "Password Change"
-msgstr "Gaim - Salasanan vaihto"
+msgstr "Salasanan vaihto"
 
 #: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
 msgid "Connection lost"
@@ -557,9 +545,8 @@ msgid "Connecting"
 msgstr "Yhdistetään"
 
 #: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
-#, fuzzy
 msgid "Invalid Jabber I.D."
-msgstr "Epäkelpo nimi"
+msgstr "Epäkelpo Jabber I.D."
 
 #: src/protocols/jabber/jabber.c:2473
 msgid "Room:"
@@ -574,14 +561,12 @@ msgid "Handle:"
 msgstr "Kädensija:"
 
 #: src/protocols/jabber/jabber.c:2539
-#, fuzzy
 msgid "Chats"
-msgstr "Ryhmäkeskustelu"
+msgstr "Ryhmäkeskustelut"
 
 #: src/protocols/jabber/jabber.c:2854
-#, fuzzy
 msgid "View Error Msg"
-msgstr "Näytä loki"
+msgstr "Näytä virheviesti"
 
 #: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2865
 #: src/protocols/oscar/oscar.c:3606
@@ -590,7 +575,7 @@ msgstr "Hae poissaoloviesti"
 
 #: src/protocols/jabber/jabber.c:2882
 msgid "Remove From Roster"
-msgstr ""
+msgstr "Poista tuttavalistalta"
 
 #: src/protocols/jabber/jabber.c:3076
 msgid "Full Name"
@@ -700,167 +685,152 @@ msgstr "Aseta käyttäjätiedot"
 
 #: src/protocols/msn/msn.c:230
 msgid "Syntax Error (probably a Gaim bug)"
-msgstr ""
+msgstr "Syntaksivirhe (todennäköisesti ohjelmistovirhe Gaimissa)"
 
 #: src/protocols/msn/msn.c:233
 msgid "Invalid Parameter (probably a Gaim bug)"
-msgstr ""
+msgstr "Epäkelpo parametri (todennäköisesti ohjelmistovirhe Gaimissa)"
 
 #: src/protocols/msn/msn.c:236
-#, fuzzy
 msgid "Invalid User"
-msgstr "Epäkelpo nimi"
+msgstr "Epäkelpo käyttäjä"
 
 #: src/protocols/msn/msn.c:239
 msgid "Fully Qualified Domain Name missing"
-msgstr ""
+msgstr "Täysin kelvollinen verkkoalueen nimi puuttuu"
 
 #: src/protocols/msn/msn.c:242
 msgid "Already Login"
-msgstr ""
+msgstr "Olet jo kirjautuneena sisään"
 
 #: src/protocols/msn/msn.c:245
-#, fuzzy
 msgid "Invalid Username"
-msgstr "Epäkelpo nimi"
+msgstr "Epäkelpo käyttäjänimi"
 
 #: src/protocols/msn/msn.c:248
-#, fuzzy
 msgid "Invalid Friendly Name"
-msgstr "Epäkelpo nimi"
+msgstr "Epäkelpo tuttavanimi"
 
 #: src/protocols/msn/msn.c:251
 msgid "List Full"
-msgstr ""
+msgstr "Lista täynnä"
 
 #: src/protocols/msn/msn.c:254
 msgid "Already there"
-msgstr ""
+msgstr "Olet jo siellä"
 
 #: src/protocols/msn/msn.c:257
-#, fuzzy
 msgid "Not on list"
-msgstr "Yhteys kadotettu"
+msgstr "Ei listalla"
 
 #: src/protocols/msn/msn.c:260
 msgid "User is offline"
-msgstr ""
+msgstr "Käyttäjä on poissa linjoilta"
 
 #: src/protocols/msn/msn.c:263
 msgid "Already in the mode"
-msgstr ""
+msgstr "Olet jo kyseisessä tilassa"
 
 #: src/protocols/msn/msn.c:266
 msgid "Already in opposite list"
-msgstr ""
+msgstr "Olet jo vastakkaisessa listassa"
 
 #: src/protocols/msn/msn.c:269
+#, fuzzy
 msgid "Switchboard failed"
-msgstr ""
+msgstr "Kytkentä epäonnistui"
 
 #: src/protocols/msn/msn.c:272
 msgid "Notify Transfer failed"
-msgstr ""
+msgstr "Siirrosta tiedottaminen epäonnistui"
 
 #: src/protocols/msn/msn.c:276
 msgid "Required fields missing"
-msgstr ""
+msgstr "Vaadittuja kenttiä puuttuu"
 
 #: src/protocols/msn/msn.c:279
-#, fuzzy
 msgid "Not logged in"
-msgstr "%s kirjautui sisään."
+msgstr "Et ole kirjautuneena sisään."
 
 #: src/protocols/msn/msn.c:283
-#, fuzzy
 msgid "Internal server error"
-msgstr "Sisäinen virhe"
+msgstr "Sisäinen palvelinvirhe"
 
 #: src/protocols/msn/msn.c:286
 msgid "Database server error"
-msgstr ""
+msgstr "Tietokantapalvelimen virhe"
 
 #: src/protocols/msn/msn.c:289
-#, fuzzy
 msgid "File operation error"
-msgstr "sisäinen yhteysvirhe\n"
+msgstr "Tiedostotoiminnossa virhe"
 
 #: src/protocols/msn/msn.c:292
-#, fuzzy
 msgid "Memory allocation error"
-msgstr "merkittävä yhteysvirhe\n"
+msgstr "Muistin varaamisessa virhe"
 
 #: src/protocols/msn/msn.c:296
-#, fuzzy
 msgid "Server busy"
-msgstr "Palvelin:"
+msgstr "Palvelin on varattu"
 
 #: src/protocols/msn/msn.c:299
-#, fuzzy
 msgid "Server unavailable"
-msgstr "Tavoittamattomissa"
+msgstr "Palvelin on tavoittamattomissa"
 
 #: src/protocols/msn/msn.c:302
 msgid "Peer Notification server down"
-msgstr ""
+msgstr "Vastapään tiedottajapalvelin ei toiminnassa"
 
 #: src/protocols/msn/msn.c:305
-#, fuzzy
 msgid "Database connect error"
-msgstr "sisäinen yhteysvirhe\n"
+msgstr "Tietokantayhteysvirhe"
 
 #: src/protocols/msn/msn.c:308
 msgid "Server is going down (abandon ship)"
-msgstr ""
+msgstr "Palvelin on poistumassa toiminnasta (jättäkää laiva)"
 
 #: src/protocols/msn/msn.c:312
-#, fuzzy
 msgid "Error creating connection"
-msgstr "g003: Virhe avattaessa yhteyttä.\n"
+msgstr "Virhe luotaessa yhteyttä"
 
 #: src/protocols/msn/msn.c:318
 msgid "Session overload"
-msgstr ""
+msgstr "Istunnon ylikuormitus"
 
 #: src/protocols/msn/msn.c:321
 msgid "User is too active"
-msgstr ""
+msgstr "Käyttäjä on liian aktiivinen"
 
 #: src/protocols/msn/msn.c:324
-#, fuzzy
 msgid "Too many sessions"
-msgstr "Liian monta täsmäävyyttä."
+msgstr "Liian monta istuntoa"
 
 #: src/protocols/msn/msn.c:327
 msgid "Not expected"
-msgstr ""
+msgstr "Odottamaton"
 
 #: src/protocols/msn/msn.c:330
 msgid "Bad friend file"
-msgstr ""
+msgstr "Virheellinen tuttavatiedosto"
 
 #: src/protocols/msn/msn.c:334
-#, fuzzy
 msgid "Authentication failed"
-msgstr "Todennus epäonnistui."
+msgstr "Todennus epäonnistui"
 
 #: src/protocols/msn/msn.c:337
-#, fuzzy
 msgid "Not allowed when offline"
-msgstr "Ei ääniä kun kirjaudut sisään"
+msgstr "Ei sallittu kun poissa linjoilta"
 
 #: src/protocols/msn/msn.c:340
 msgid "Not accepting new users"
-msgstr ""
+msgstr "Ei ota vastaan uusia käyttäjiä"
 
 #: src/protocols/msn/msn.c:343
 msgid "User unverified"
-msgstr ""
+msgstr "Varmistamaton käyttäjä"
 
 #: src/protocols/msn/msn.c:346
-#, fuzzy
 msgid "Unknown Error Code"
-msgstr "Tuntematon virhekoodi."
+msgstr "Tuntematon virhekoodi"
 
 #: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
 #: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2114
@@ -870,7 +840,7 @@ msgstr "MSN-virhe"
 
 #: src/protocols/msn/msn.c:558
 msgid "A message may not have been received."
-msgstr ""
+msgstr "Viestiä ei ehkä ole saatu vastaan"
 
 #: src/protocols/msn/msn.c:813
 msgid "Gaim was unable to send a message"
@@ -879,93 +849,84 @@ msgstr "Gaim ei kyennyt lähettämään viestiä"
 #: src/protocols/msn/msn.c:917
 #, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr ""
+msgstr "Käyttäjä %s (%s) haluaa lisätä käyttäjän %s tuttavalistalleen."
 
 #: src/protocols/msn/msn.c:1074
 #, c-format
 msgid "The user %s (%s) wants to add you to their buddy list"
-msgstr ""
+msgstr "Käyttäjä %s (%s) haluaa lisätä sinut tuttavalistalleen"
 
 #: src/protocols/msn/msn.c:1175
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "Yhteytesi on katkennut. Olet kirjautunut sisään toisesta paikasta."
 
 #: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1679
-#, fuzzy
 msgid "Error reading from server"
-msgstr "Virhe luettaessa socketista."
+msgstr "Virhe luettaessa palvelimelta"
 
 #: src/protocols/msn/msn.c:1568
 msgid "Requesting to send password"
-msgstr ""
+msgstr "Pyydetään salasanan lähettämistä"
 
 #: src/protocols/msn/msn.c:1618
-#, fuzzy
 msgid "Unable to send password"
-msgstr "Ei kyetty lukemaan socketia"
+msgstr "Ei kyetty lähettämään salasanaa"
 
 #: src/protocols/msn/msn.c:1623
-#, fuzzy
 msgid "Password sent"
-msgstr "Salasana: "
+msgstr "Salasana lähetetty"
 
 #: src/protocols/msn/msn.c:1748
-#, fuzzy
 msgid "Unable to write to server"
-msgstr "Palvelimeen ei kyetty muodostamaan yhteyttä."
+msgstr "Palvelimelle ei kyetty kirjoittamaan"
 
 #: src/protocols/msn/msn.c:1754
-#, fuzzy
 msgid "Synching with server"
-msgstr "Rekisteröidy palvelimeen"
+msgstr "Synkronoidaan palvelimen kanssa"
 
 #: src/protocols/msn/msn.c:1920
 msgid "Away From Computer"
-msgstr ""
+msgstr "Poissa tietokoneelta"
 
 #: src/protocols/msn/msn.c:1921
 msgid "Be Right Back"
-msgstr ""
+msgstr "Tulen pian takaisin"
 
 #: src/protocols/msn/msn.c:1922
-#, fuzzy
 msgid "Busy"
-msgstr "Tuttava"
+msgstr "Varattu"
 
 #: src/protocols/msn/msn.c:1923
 msgid "On The Phone"
-msgstr ""
+msgstr "Puhelimessa"
 
 #: src/protocols/msn/msn.c:1924
 msgid "Out To Lunch"
-msgstr ""
+msgstr "Lounaalla"
 
 #: src/protocols/msn/msn.c:1925
-#, fuzzy
 msgid "Hidden"
-msgstr "Piilota kuvake"
+msgstr "Piilotettu"
 
 #: src/protocols/msn/msn.c:2041
 msgid "Reset friendly name"
-msgstr ""
+msgstr "Nollaa tuttavanimi"
 
 #: src/protocols/msn/msn.c:2114
 msgid "Friendly name too long."
-msgstr ""
+msgstr "Tuttavanimi liian pitkä."
 
 #: src/protocols/msn/msn.c:2129 src/protocols/msn/msn.c:2150
-#, fuzzy
 msgid "Set Friendly Name"
-msgstr "Sukunimi"
+msgstr "Aseta tuttavanimi"
 
 #: src/protocols/msn/msn.c:2130
-#, fuzzy
 msgid "Set Friendly Name:"
-msgstr "Näyttönimi: "
+msgstr "Aseta tuttavanimi: "
 
 #: src/protocols/msn/msn.c:2131
 msgid "Reset All Friendly Names"
-msgstr ""
+msgstr "Nollaa kaikki tuttavanimet"
 
 #: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "Invalid name"
@@ -1088,15 +1049,15 @@ msgid "Direct IM with %s established"
 msgstr "Suora pikaviesti %s:n kanssa muodostettu"
 
 #: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %lu has denied your request to add them to your contact list for "
 "the following reason:\n"
 "%s"
 msgstr ""
-"Käyttäjä %d on evännyt pyyntösi lisätä hänet tuttavalistallesi seuraavasta "
+"Käyttäjä %lu on evännyt pyyntösi lisätä hänet tuttavalistallesi seuraavasta "
 "syystä:\n"
-"\n"
+"%s"
 
 #: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
 msgid "No reason given."
@@ -1107,9 +1068,9 @@ msgid "Gaim - ICQ Authorization Denied"
 msgstr "Gaim - ICQ valtuutus evätty"
 
 #: src/protocols/oscar/oscar.c:1511 src/protocols/oscar/oscar.c:2463
-#, fuzzy, c-format
+#, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
-msgstr "Käyttäjä %d on hyväksynyt pyyntösi lisätä hänet tuttavalistallesi."
+msgstr "Käyttäjä %lu on hyväksynyt pyyntösi lisätä hänet tuttavalistallesi."
 
 #: src/protocols/oscar/oscar.c:1512 src/protocols/oscar/oscar.c:2464
 msgid "Gaim - ICQ Authorization Granted"
@@ -1144,7 +1105,8 @@ msgstr "Et saanut %d viestiä %s:lta koska taajuusraja ylittyi."
 #, c-format
 msgid ""
 "You missed %d messages from %s because the rate limit has been exceeded."
-msgstr "Et saanut %d viestiä %s:lta koska taajuusraja ylittyi."
+msgstr ""
+"Et saanut %d viestiä %s:lta koska taajuusraja ylittyi."
 
 #: src/protocols/oscar/oscar.c:1615
 #, c-format
@@ -1185,12 +1147,12 @@ msgstr "Gaim - Virhe"
 #: src/protocols/oscar/oscar.c:1703
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
-msgstr ""
+msgstr "<B>UIN:</B> %s<BR><B>Tila:</B> %s<BR><HR><BR>%s<BR>"
 
 #: src/protocols/oscar/oscar.c:1705
 #, c-format
 msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
-msgstr ""
+msgstr "<B>Tila:</B> %s<BR><HR><BR>%s<BR>"
 
 #: src/protocols/oscar/oscar.c:1734
 #, c-format
@@ -1350,11 +1312,12 @@ msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
 "%d.  Until you are below the limit, some buddies will not show up as online."
 msgstr ""
+"Maksimimäärä tuttavia tuttavalistallasi on %d ja sinulla on nyt %d. Jotkut "
+"tuttavat eivat näy olevan linjoilla ennen kuin alitat rajan."
 
 #: src/protocols/oscar/oscar.c:3195
-#, fuzzy
 msgid "Gaim - Warning"
-msgstr "Gaim - Varoita käyttäjää?"
+msgstr "Gaim - Varoitus"
 
 #: src/protocols/oscar/oscar.c:3213 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
@@ -1381,6 +1344,8 @@ msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
 "support sending status messages.</I><BR>"
 msgstr ""
+"<B>UIN:</B> %s<BR><B>Tila:</B> %s<BR><HR><BR><I>Vastapuolen ohjelma ei "
+"tue tilaviestien lähettämistä.</I><BR>"
 
 #: src/protocols/oscar/oscar.c:3575
 #, c-format
@@ -1388,11 +1353,12 @@ msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
 "</I><BR>"
 msgstr ""
+"<B>UIN:</B> %s<BR><B>Tila:</B> %s<BR><HR><BR><I>Käyttäjällä ei ole tilaviestia."
+"</I><BR>"
 
 #: src/protocols/oscar/oscar.c:3600
-#, fuzzy
 msgid "Get Status Msg"
-msgstr "Hae poissaoloviesti"
+msgstr "Hae tilaviesti"
 
 #: src/protocols/oscar/oscar.c:3613
 msgid "Direct IM"
@@ -1620,7 +1586,6 @@ msgid "About Gaim v%s"
 msgstr "Tietoja Gaimista v%s"
 
 #: src/about.c:135
-#, fuzzy
 msgid ""
 "Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
 "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
@@ -1628,8 +1593,10 @@ msgid ""
 "\n"
 "URL: "
 msgstr ""
-"Gaim on asiakassovellus joka tukee AOL:n pikaviestiprotokollaa. Se on \n"
-"ohjelmoitu käyttäen Gtk+:aa ja on lisensoitu GPL:n mukaisesti.\n"
+"Gaim on modulaarinen pikaviestinasiakassovellus, joka kykenee \n"
+"käyttämään AIM-, ICQ-, Yahoo!-, MSN-, IRC-, Jabber-, Napster-,\n"
+"Zephyr- ja Gadu-Gadu-protokollia yhtä aikaa. Se on ohjelmoitu \n"
+"käyttäen Gtk+:aa ja on lisensoitu GPL:n mukaisesti.\n"
 "\n"
 "URL: "
 
@@ -1639,6 +1606,9 @@ msgid ""
 "\n"
 "IRC: #gaim on irc.openprojects.net"
 msgstr ""
+"\n"
+"\n"
+"IRC: #gaim palvelimella irc.openprojects.net"
 
 #: src/about.c:147
 msgid ""
@@ -1663,7 +1633,7 @@ msgstr ""
 "Aktiiviset kehittäjät\n"
 "==============================\n"
 "Rob Flynn (ylläpitäjä) [ rob@marko.net ]\n"
-"Sean Egan (ohjelmoija)      [ bj91704@binghamton.edu ]\n"
+"Sean Egan (ohjelmoija) [ bj91704@binghamton.edu ]\n"
 "\n"
 "Villit korjausten kirjoittajat\n"
 "==============================\n"
@@ -1676,7 +1646,7 @@ msgstr ""
 "==============================\n"
 "Jim Duchek\n"
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (alkuperäinen tekijä)   [ markster@marko.net ]"
+"Mark Spencer (alkuperäinen tekijä) [ markster@marko.net ]"
 
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
@@ -1739,9 +1709,8 @@ msgid "Preferences"
 msgstr "Asetukset"
 
 #: src/aim.c:838 src/multi.c:1472
-#, fuzzy
 msgid "Auto-login"
-msgstr "Kirjaudu sisään automaattisesti"
+msgstr "Automaattinen sisäänkirjautuminen"
 
 #: src/applet.c:109
 msgid "Attempting to sign on...."
@@ -1958,14 +1927,12 @@ msgid "Help"
 msgstr "Ohje"
 
 #: src/buddy.c:2787
-#, fuzzy
 msgid "Online Help"
-msgstr "Linjoilla"
+msgstr "Tukea linjoilla"
 
 #: src/buddy.c:2788
-#, fuzzy
 msgid "Debug Window"
-msgstr "Näytä testausikkuna"
+msgstr "Testausikkuna"
 
 #: src/buddy.c:2789
 msgid "About Gaim"
@@ -2344,9 +2311,8 @@ msgid "User:"
 msgstr "Käyttäjä:"
 
 #: src/dialogs.c:777
-#, fuzzy
 msgid "Account:"
-msgstr "Käyttäjätili"
+msgstr "Käyttäjätili:"
 
 #. Finish up
 #: src/dialogs.c:826
@@ -2689,9 +2655,8 @@ msgid "g003: Error opening connection.\n"
 msgstr "g003: Virhe avattaessa yhteyttä.\n"
 
 #: src/module.c:106 src/module.c:112 src/module.c:122
-#, fuzzy
 msgid "Plugin Error"
-msgstr "Sisäänkirjautumisvirhe"
+msgstr "Liitännäisvirhe"
 
 #: src/multi.c:454
 msgid "Gaim - Load Buddy Icon"
@@ -2714,9 +2679,8 @@ msgid "Screenname:"
 msgstr "Näyttönimi:"
 
 #: src/multi.c:559
-#, fuzzy
 msgid "Alias:"
-msgstr "Alias"
+msgstr "Alias:"
 
 #: src/multi.c:569
 msgid "Protocol:"
@@ -2957,7 +2921,7 @@ msgstr "Selain"
 
 #: src/prefs.c:291
 msgid "Konqueror"
-msgstr ""
+msgstr "Konqueror"
 
 #: src/prefs.c:292
 msgid "Opera"
@@ -2969,7 +2933,7 @@ msgstr "Netscape"
 
 #: src/prefs.c:294
 msgid "Mozilla"
-msgstr ""
+msgstr "Mozilla"
 
 #: src/prefs.c:297
 msgid "Pop up new window by default"
@@ -2986,7 +2950,7 @@ msgstr "Galeon"
 #: src/prefs.c:307
 #, c-format
 msgid "Manual (%s for URL)"
-msgstr ""
+msgstr "Käyttöohje (URL:ksi %s)"
 
 #: src/prefs.c:376
 msgid "Proxy Options"
@@ -3082,7 +3046,7 @@ msgstr "Näytä kuvat painikkeissa"
 
 #: src/prefs.c:600
 msgid "Raise Buddy List on Signons and Signoffs"
-msgstr ""
+msgstr "Nosta tuttavalista sisään- ja uloskirjautumisten kohdalla"
 
 #: src/prefs.c:602
 msgid "Group Displays"
@@ -3090,7 +3054,7 @@ msgstr "Ryhmien näyttö"
 
 #: src/prefs.c:614
 msgid "Hide groups with no online buddies"
-msgstr "Piilota ryhmät joissa ei ole sisäänkirjautuneita tuttavia"
+msgstr "Piilota ryhmät joissa ei ole tuttavia linjoilla"
 
 #: src/prefs.c:620
 msgid "Show numbers in groups"
@@ -3137,9 +3101,8 @@ msgid "Escape closes window"
 msgstr "\"Escape\" sulkee ikkunan"
 
 #: src/prefs.c:686
-#, fuzzy
 msgid "Control-W closes window"
-msgstr "\"Escape\" sulkee ikkunan"
+msgstr "\"Control-W\" sulkee ikkunan"
 
 #: src/prefs.c:692
 msgid "Control-{B/I/U/S} inserts HTML tags"
@@ -3242,9 +3205,8 @@ msgid "Show logins in window"
 msgstr "Näytä sisäänkirjautumiset ikkunassa"
 
 #: src/prefs.c:969
-#, fuzzy
 msgid "Show aliases in tabs/titles/ticker"
-msgstr "Näytä aliakset välilehdissä/otsikoissa"
+msgstr "Näytä aliakset välilehdissä/otsikoissa/vierittimessä"
 
 #: src/prefs.c:970
 msgid "Hide window on send"
@@ -3498,7 +3460,7 @@ msgstr "Protokollavirhe"
 #: src/prpl.c:93
 #, c-format
 msgid "%s was using %s, which got removed. %s is now offline."
-msgstr "%s käytti %s:aa, joka poistettiin. %s on nyt poissa verkosta."
+msgstr "%s käytti %s:aa, joka poistettiin. %s on nyt poissa linjoilta."
 
 #: src/prpl.c:96
 msgid "Disconnect"
@@ -3521,12 +3483,11 @@ msgid "Open Mail"
 msgstr "Avaa sähköposti"
 
 #: src/prpl.c:570
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s on tehnyt %s:sta tuttavansa%s%s%s"
 
 #: src/prpl.c:578
-#, fuzzy
 msgid ""
 "\n"
 "\n"
@@ -3586,54 +3547,42 @@ msgid "More Info"
 msgstr "Lisää tietoja"
 
 #: src/sound.c:63
-#, fuzzy
 msgid "Buddy logs in"
-msgstr "Tuttavakuvake"
+msgstr "Tuttava kirjautuu sisään"
 
 #: src/sound.c:64
-#, fuzzy
 msgid "Buddy logs out"
-msgstr "Tuttavalista"
+msgstr "Tuttava kirjautuu ulos"
 
 #: src/sound.c:65
-#, fuzzy
 msgid "Message received"
-msgstr "Viestivirhe"
+msgstr "Viesti vastaanotettu"
 
 #: src/sound.c:66
 msgid "Message received begins conversation"
-msgstr ""
+msgstr "Vastaanotettu viesti aloittaa keskustelun"
 
 #: src/sound.c:67
-#, fuzzy
 msgid "Message sent"
-msgstr "Viestit"
+msgstr "Viesti lähetetty"
 
 #: src/sound.c:68
 msgid "Person enters chat"
-msgstr ""
+msgstr "Joku saapuu ryhmäkeskusteluun"
 
 #: src/sound.c:69
 msgid "Person leaves chat"
-msgstr ""
+msgstr "Joku poistuu ryhmäkeskustelusta"
 
 #: src/sound.c:70
 msgid "You talk in chat"
-msgstr ""
+msgstr "Sinä puhut ryhmäkeskustelussa"
 
 #: src/sound.c:71
 msgid "Others talk in chat"
-msgstr ""
+msgstr "Muut puhuvat ryhmäkeskustelussa"
 
 #: src/sound.c:74
 msgid "Someone says your name in chat"
-msgstr ""
+msgstr "Joku sanoo nimesi ryhmäkeskustelussa"
 
-#~ msgid "Enable sounds"
-#~ msgstr "Ota äänet käyttöön"
-
-#~ msgid "KFM"
-#~ msgstr "KFM"
-
-#~ msgid "Manual"
-#~ msgstr "Manuaalinen"
