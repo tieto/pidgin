@@ -7194,7 +7194,7 @@ static void oscar_show_set_info(GaimPluginAction *action)
 static void oscar_show_set_info_icqurl(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_notify_uri(gc, "http://www.icq.com/whitepages/user_details.php");
+	gaim_notify_uri(gc, "http://www.icq.com/whitepages/user_details.php", TRUE);
 }
 
 static void oscar_change_pass(GaimPluginAction *action)
@@ -7208,14 +7208,14 @@ static void oscar_show_chpassurl(GaimPluginAction *action)
 	GaimConnection *gc = (GaimConnection *) action->context;
 	OscarData *od = gc->proto_data;
 	gchar *substituted = gaim_strreplace(od->sess->authinfo->chpassurl, "%s", gaim_account_get_username(gaim_connection_get_account(gc)));
-	gaim_notify_uri(gc, substituted);
+	gaim_notify_uri(gc, substituted, TRUE);
 	g_free(substituted);
 }
 
 static void oscar_show_imforwardingurl(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
+	gaim_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1", TRUE);
 }
 
 static void oscar_set_icon(GaimConnection *gc, const char *iconfile)

@@ -78,7 +78,7 @@ typedef struct
 							  const char *title, const char *primary,
 							  const char *secondary, const char *text,
 							  GCallback cb, void *user_data);
-	void *(*notify_uri)(const char *uri);
+	void *(*notify_uri)(const char *uri, gboolean trusted);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
@@ -202,14 +202,15 @@ void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
 /**
  * Opens a URI or somehow presents it to the user.
  *
- * @param handle The plugin or connection handle.
- * @param uri    The URI to display or go to.
+ * @param handle  The plugin or connection handle.
+ * @param uri     The URI to display or go to.
+ * @param trusted The source of the URI is trusted.
  *
  * @return A UI-specific handle, if any. This may only be presented if
  *         the UI code displays a dialog instead of a webpage, or something
  *         similar.
  */
-void *gaim_notify_uri(void *handle, const char *uri);
+void *gaim_notify_uri(void *handle, const char *uri, gboolean trusted);
 
 /**
  * Closes a notification.

@@ -183,7 +183,7 @@ void *gaim_notify_userinfo(GaimConnection *gc, const char *who, const char *titl
 }
 
 void *
-gaim_notify_uri(void *handle, const char *uri)
+gaim_notify_uri(void *handle, const char *uri, gboolean trusted)
 {
 	GaimNotifyUiOps *ops;
 
@@ -197,7 +197,7 @@ gaim_notify_uri(void *handle, const char *uri)
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_URI;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_uri(uri);
+		info->ui_handle = ops->notify_uri(uri, trusted);
 
 		handles = g_list_append(handles, info);
 

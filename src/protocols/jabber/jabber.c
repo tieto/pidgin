@@ -571,7 +571,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			if((url = xmlnode_get_child(x, "url"))) {
 				char *href;
 				if((href = xmlnode_get_data(url))) {
-					gaim_notify_uri(NULL, href);
+					gaim_notify_uri(NULL, href, TRUE);
 					g_free(href);
 					js->gc->wants_to_die = TRUE;
 					jabber_connection_schedule_close(js);

@@ -1,3 +1,6 @@
+version 2.0.0:
+	* MSN open email bug fixed.
+
 version 1.0.2 (10/20/2004):
 	* Updated GTK+ to 2.4.10 (rev b)
 	  This revision updates glib to 2.4.7 and pango to 1.6.0, fixing the
