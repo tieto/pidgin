@@ -411,19 +411,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
         char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
 
-#ifdef GAIM_PLUGINS
-	GList *c = callbacks;
-	struct gaim_callback *g;
-	void (*function)(char *, char *, void *);
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_chat_buddy_join && g->function != NULL) {
-			function = g->function;
-			(*function)(b->name, name, g->data);
-		}
-		c = c->next;
-	}
-#endif
+	plugin_event(event_chat_buddy_join, b->name, name, 0);
         b->in_room = g_list_append(b->in_room, name);
 
         update_chat_list(b);
@@ -445,19 +433,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
         GList *names = b->in_room;
 	char tmp[BUF_LONG];
 
-#ifdef GAIM_PLUGINS
-	GList *c = callbacks;
-	struct gaim_callback *g;
-	void (*function)(char *, char *, void *);
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_chat_buddy_leave && g->function != NULL) {
-			function = g->function;
-			(*function)(b->name, buddy, g->data);
-		}
-		c = c->next;
-	}
-#endif
+	plugin_event(event_chat_buddy_leave, b->name, buddy, 0);
 
         while(names) {
                 if (!strcasecmp((char *)names->data, buddy)) {

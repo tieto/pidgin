@@ -530,3 +530,107 @@ void gaim_signal_disconnect(void *handle, enum gaim_event which, void *func) {
 }
 
 #endif /* GAIM_PLUGINS */
+
+void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
+#ifdef GAIM_PLUGINS
+	GList *c = callbacks;
+	struct gaim_callback *g;
+
+	sprintf(debug_buff, "callback %d\n", event);
+	debug_print(debug_buff);
+
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event && g->function != NULL) {
+			switch(event) {
+
+			/* no args */
+			case event_signon:
+			case event_signoff:
+			case event_away:
+			case event_back:
+			case event_blist_update:
+			case event_quit:
+				{
+					void (*function)(void *) = g->function;
+					(*function)(g->data);
+				}
+				break;
+
+			/* char **, char ** */
+			case event_im_recv:
+				{
+					void (*function)(char **, char **, void *) = g->function;
+					(*function)(arg1, arg2, g->data);
+				}
+				break;
+
+			/* char *, char ** */
+			case event_im_send:
+				{
+					void (*function)(char *, char **, void *) = g->function;
+					(*function)(arg1, arg2, g->data);
+				}
+				break;
+
+			/* char * */
+			case event_buddy_signon:
+			case event_buddy_signoff:
+			case event_buddy_away:
+			case event_buddy_back:
+			case event_chat_join:
+			case event_chat_leave:
+				{
+					void (*function)(char *, void *) = g->function;
+					(*function)(arg1, g->data);
+				}
+				break;
+
+			/* char *, char *, char * */
+			case event_chat_invited:
+			case event_chat_recv:
+			case event_chat_send:
+				{
+					void (*function)(char *, char *, char *, void *) = g->function;
+					(*function)(arg1, arg2, arg3, g->data);
+				}
+				break;
+
+			/* char *, char * */
+			case event_chat_buddy_join:
+			case event_chat_buddy_leave:
+				{
+					void (*function)(char *, char *, void *) = g->function;
+					(*function)(arg1, arg2, g->data);
+				}
+				break;
+
+			/* char *, int */
+			case event_warned:
+				{
+					void (*function)(char *, int, void *) = g->function;
+					(*function)(arg1, (int)arg2, g->data);
+				}
+				break;
+
+			/* int */
+			case event_error:
+				{
+					void (*function)(int, void *) = g->function;
+					(*function)((int)arg1, g->data);
+				}
+				break;
+
+			default:
+				sprintf(debug_buff, "unknown event %d\n", event);
+				debug_print(debug_buff);
+				break;
+			}
+		}
+		c = c->next;
+	}
+#endif /* GAIM_PLUGINS */
+#ifdef USE_PERL
+	/* FIXME : AIM::event_handler */
+#endif
+}

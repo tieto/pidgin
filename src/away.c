@@ -62,21 +62,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 
         serv_set_away(NULL);
 	awaymessage = NULL;
-#ifdef GAIM_PLUGINS
-	{
-		GList *c = callbacks;
-		struct gaim_callback *g;
-		void (*function)(void *);
-		while (c) {
-			g = (struct gaim_callback *)c->data;
-			if (g->event == event_back && g->function != NULL) { 
-				function = g->function;
-				(*function)(g->data);
-			}
-			c = c->next;
-		}
-	}
-#endif
+	plugin_event(event_back, 0, 0, 0);
 }
 
 void do_away_message(GtkWidget *w, struct away_message *a)
@@ -176,21 +162,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         serv_set_away(buf2);
         g_free(buf2);
 	gtk_widget_show(imaway);
-#ifdef GAIM_PLUGINS
-	{
-		GList *c = callbacks;
-		struct gaim_callback *g;
-		void (*function)(void *);
-		while (c) {
-			g = (struct gaim_callback *)c->data;
-			if (g->event == event_away && g->function != NULL) { 
-				function = g->function;
-				(*function)(g->data);
-			}
-			c = c->next;
-		}
-	}
-#endif
+	plugin_event(event_away, 0, 0, 0);
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)

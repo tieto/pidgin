@@ -512,19 +512,7 @@ void show_error_dialog(char *d)
 	char buf[256];
 	char buf2[32];
 
-#ifdef GAIM_PLUGINS
-	GList *c = callbacks;
-	struct gaim_callback *g;
-	void (*function)(int, void *);
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_error && g->function != NULL) {
-			function = g->function;
-			(*function)(no, g->data);
-		}
-		c = c->next;
-	}
-#endif
+	plugin_event(event_error, (void *)no, 0, 0);
 
 	if (USE_OSCAR)
 		w = d + 4;

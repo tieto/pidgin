@@ -92,22 +92,12 @@ void cancel_logon(void)
 #else
 #ifdef GAIM_PLUGINS
 	GList *c;
-	struct gaim_callback *g;
 	struct gaim_plugin *p;
-	void (*function)(void *);
 	void (*gaim_plugin_remove)();
 	char *error;
 
 	/* first we tell those who have requested it we're quitting */
-	c = callbacks;
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_quit && g->function != NULL) {
-			function = g->function;
-			(*function)(g->data);
-		}
-		c = c->next;
-	}
+	plugin_event(event_quit, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
 	c = plugins;
@@ -240,21 +230,7 @@ void gaim_setup() {
 			NULL);
 #endif /* USE_APPLET */
 
-#ifdef GAIM_PLUGINS
-	 {
-		GList *c = callbacks;
-		struct gaim_callback *g;
-		void (*function)(void *);
-		while (c) {
-			g = (struct gaim_callback *)c->data;
-			if (g->event == event_signon && g->function != NULL) {
-				function = g->function;
-				(*function)(g->data);
-			}
-			c = c->next;
-		}
-	 }
-#endif /* GAIM_PLUGINS */
+	plugin_event(event_signon, 0, 0, 0);
 
 	 running = FALSE;
 	 return;

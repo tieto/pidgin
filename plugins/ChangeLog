@@ -6,6 +6,16 @@ version 0.10.0:
 	This makes things like #ifdef USE_APPLET and #ifdef USE_PERL much more
 	reliable. (#include "config.h" in order to get all the #defines)
 
+	The internals of gaim plugin events got modified slightly. It should
+	have no effect on existing plugins or the way plugins are made. The
+	change was to make my life easier adding perl. It should also make
+	adding new plugin events even easier than before (though I doubt that
+	any more will ever be added).
+
+	event_buddy_away was being triggered every blist_update for every away
+	buddy. This got fixed, but now when you sign on, event_buddy_away may
+	be called before event_buddy_signon. Not that it should matter much.
+
 version 0.9.20:
 	It's 3 am the night before finals, it's obviously a good time to hack
 	gaim.

@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 775 $"
+#define REVISION "gaim:$Revision: 790 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -733,14 +733,15 @@ GtkRequisition gnome_buddy_get_dimentions();
 extern void play_sound(int);
 
 
-#ifdef GAIM_PLUGINS
 /* Functions in plugins.c */
+#ifdef GAIM_PLUGINS
 extern void show_plugins(GtkWidget *, gpointer);
 extern void load_plugin (char *);
 extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
 extern void gaim_plugin_unload(void *);
 #endif
+extern void plugin_event(enum gaim_event, void *, void *, void *);
 
 /* Functions in prefs.c */
 extern void debug_print( char * chars );

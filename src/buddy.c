@@ -281,19 +281,7 @@ void signoff()
 {
 	GList *mem;
 
-#ifdef GAIM_PLUGINS
-	GList *c = callbacks;
-	struct gaim_callback *g;
-	void (*function)(void *);
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_signoff && g->function != NULL) {
-			function = g->function;
-			(*function)(g->data);
-		}
-		c = c->next;
-	}
-#endif
+	plugin_event(event_signoff, 0, 0, 0);
 
         while(groups) {
 		mem = ((struct group *)groups->data)->members;
@@ -958,22 +946,12 @@ void do_quit()
 {
 #ifdef GAIM_PLUGINS
 	GList *c;
-	struct gaim_callback *g;
 	struct gaim_plugin *p;
-	void (*function)(void *);
 	void (*gaim_plugin_remove)();
 	char *error;
 
 	/* first we tell those who have requested it we're quitting */
-	c = callbacks;
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_quit && g->function != NULL) {
-			function = g->function;
-			(*function)(g->data);
-		}
-		c = c->next;
-	}
+	plugin_event(event_quit, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
 	c = plugins;
@@ -1403,20 +1381,7 @@ void set_buddy(struct buddy *b)
 		/* this check should also depend on whether they left,
 		 * and signed on again before they got erased */
                 if (!GTK_WIDGET_VISIBLE(b->item) || b->present == 1) {
-#ifdef GAIM_PLUGINS
-			GList *c = callbacks;
-			struct gaim_callback *g;
-			void (*function)(char *, void *);
-			while (c) {
-				g = (struct gaim_callback *)c->data;
-				if (g->event == event_buddy_signon &&
-						g->function != NULL) {
-					function = g->function;
-					(*function)(b->name, g->data);
-				}
-				c = c->next;
-			}
-#endif
+			plugin_event(event_buddy_signon, b->name, 0, 0);
 			
 			play_sound(BUDDY_ARRIVE);
 			b->present = 2;
@@ -1474,20 +1439,6 @@ void set_buddy(struct buddy *b)
                 if (!b->log_timer) {
                         gtk_widget_hide(b->pix);
                         if (b->uc & UC_UNAVAILABLE) {
-#ifdef GAIM_PLUGINS
-				GList *c = callbacks;
-				struct gaim_callback *g;
-				void (*function)(char *, void *);
-				while (c) {
-					g = (struct gaim_callback *)c->data;
-					if (g->event == event_buddy_away &&
-							g->function != NULL) {
-						function = g->function;
-						(*function)(b->name, g->data);
-					}
-					c = c->next;
-				}
-#endif
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)away_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
@@ -1568,20 +1519,7 @@ void set_buddy(struct buddy *b)
 
 	} else {
 		if (GTK_WIDGET_VISIBLE(b->item)) {
-#ifdef GAIM_PLUGINS
-			GList *c = callbacks;
-			struct gaim_callback *g;
-			void (*function)(char *, void *);
-			while (c) {
-				g = (struct gaim_callback *)c->data;
-				if (g->event == event_buddy_signoff &&
-						g->function != NULL) {
-					function = g->function;
-					(*function)(b->name, g->data);
-				}
-				c = c->next;
-			}
-#endif
+			plugin_event(event_buddy_signoff, b->name, 0, 0);
 			play_sound(BUDDY_LEAVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)logout_icon_xpm);

@@ -57,6 +57,11 @@ struct perlscript {
 	char *shutdowncallback; /* bleh */
 };
 
+struct _perl_event_handlers {
+	char *event_type;
+	char *handler_name;
+}
+
 struct _perl_timeout_handlers {
 	char *handler_name;
 	gint iotag;
@@ -64,6 +69,7 @@ struct _perl_timeout_handlers {
 
 static GList *perl_list = NULL; /* should probably extern this at some point */
 static GList *perl_timeout_handlers = NULL;
+static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
 /* dealing with gaim */
@@ -83,8 +89,7 @@ XS(XS_AIM_print_to_conv); /* send message to someone */
 XS(XS_AIM_print_to_chat); /* send message to chat room */
 
 /* handler commands */
-XS(XS_AIM_add_message_handler); /* when people talk */
-XS(XS_AIM_add_command_handler); /* when servers talk */
+XS(XS_AIM_add_event_handler); /* when servers talk */
 XS(XS_AIM_add_timeout_handler); /* figure it out */
 
 void xs_init()
@@ -172,8 +177,7 @@ void perl_init()
 	newXS ("AIM::print_to_conv", XS_AIM_print_to_conv, "AIM");
 	newXS ("AIM::print_to_chat", XS_AIM_print_to_chat, "AIM");
 
-	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM");
-	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM");
+	newXS ("AIM::add_event_handler", XS_AIM_add_event_handler, "AIM");
 	newXS ("AIM::add_timeout_handler", XS_AIM_add_timeout_handler, "AIM");
 }
 
@@ -181,6 +185,7 @@ void perl_end()
 {
 	struct perlscript *scp;
 	struct _perl_timeout_handlers *thn;
+	struct _perl_event_handlers *ehn;
 
 	while (perl_list) {
 		scp = perl_list->data;
@@ -199,6 +204,14 @@ void perl_end()
 		gtk_timeout_remove(thn->iotag);
 		g_free(thn->handler_name);
 		g_free(thn);
+	}
+
+	while (perl_event_handlers) {
+		ehn = perl_event_handlers->data;
+		perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
+		g_free(ehn->event_type);
+		g_free(ehn->handler_name);
+		g_free(ehn);
 	}
 
 	if (my_perl != NULL) {
@@ -432,14 +445,105 @@ XS (XS_AIM_print_to_chat)
 	serv_chat_send(c->id, what);
 }
 
-XS (XS_AIM_add_message_handler)
+static char *event_name(enum gaim_event event)
 {
-	/* FIXME */
+	static char buf[128];
+	switch(event) {
+		case event_signon:
+			sprintf(buf, "event_signon");
+			break;
+		case event_signoff:
+			sprintf(buf, "event_signoff");
+			break;
+		case event_away:
+			sprintf(buf, "event_away");
+			break;
+		case event_back:
+			sprintf(buf, "event_back");
+			break;
+		case event_im_recv:
+			sprintf(buf, "event_im_recv");
+			break;
+		case event_im_send:
+			sprintf(buf, "event_im_send");
+			break;
+		case event_buddy_signon:
+			sprintf(buf, "event_buddy_signon");
+			break;
+		case event_buddy_signoff:
+			sprintf(buf, "event_buddy_signoff");
+			break;
+		case event_buddy_away:
+			sprintf(buf, "event_buddy_away");
+			break;
+		case event_buddy_back:
+			sprintf(buf, "event_buddy_back");
+			break;
+		case event_blist_update:
+			sprintf(buf, "event_blist_update");
+			break;
+		case event_chat_invited:
+			sprintf(buf, "event_chat_invited");
+			break;
+		case event_chat_join:
+			sprintf(buf, "event_chat_join");
+			break;
+		case event_chat_leave:
+			sprintf(buf, "event_chat_leave");
+			break;
+		case event_chat_buddy_join:
+			sprintf(buf, "event_chat_buddy_join");
+			break;
+		case event_chat_buddy_leave:
+			sprintf(buf, "event_chat_buddy_leave");
+			break;
+		case event_chat_recv:
+			sprintf(buf, "event_chat_recv");
+			break;
+		case event_chat_send:
+			sprintf(buf, "event_chat_send");
+			break;
+		case event_warned:
+			sprintf(buf, "event_warned");
+			break;
+		case event_error:
+			sprintf(buf, "event_error");
+			break;
+		case event_quit:
+			sprintf(buf, "event_quit");
+			break;
+		default:
+			sprintf(buf, "event_unknown");
+			break;
+	}
 }
 
-XS (XS_AIM_add_command_handler)
+int perl_event(enum gaim_event event, char *args)
 {
-	/* FIXME */
+	GList *handler;
+	struct _perl_event_handlers *data;
+
+	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
+		data = handler->data;
+		if (!strcmp(event_name(event), data->event_type))
+			execute_perl(args);
+	}
+
+	return 0;
+}
+
+XS (XS_AIM_add_event_handler)
+{
+	int junk;
+	struct _perl_event_handlers *handler;
+	dXSARGS;
+	items = 0;
+
+	handler = g_new0(struct _perl_event_handlers, 1);
+	handler->event_type = g_strdup(SvPV(ST(0), junk));
+	handler->handler_name = g_strdup(SvPV(ST(1), junk));
+	perl_event_handlers = g_list_append(perl_event_handlers, handler);
+	XSRETURN_EMPTY;
 }
 
 static int perl_timeout(struct _perl_timeout_handlers *handler)

@@ -586,21 +586,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		strcpy(buf, buf2);
 	}
 
-#ifdef GAIM_PLUGINS
 	{
-		GList *ca = callbacks;
-		struct gaim_callback *g;
-		void (*function)(char *, char **, void *);
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
-		while (ca) {
-			g = (struct gaim_callback *)(ca->data);
-			if (g->event == evnt && g->function != NULL) {
-				function = g->function;
-				(*function)(c->name, &buffy, g->data);
-			}
-			ca = ca->next;
-		}
+		plugin_event(evnt, c->name, &buffy, 0);
 		if (!buffy) {
 			g_free(buf2);
 			return;
@@ -608,7 +597,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		g_snprintf(buf, limit, "%s", buffy);
 		g_free(buffy);
 	}
-#endif
         
 	if (!c->is_chat) {
 		buf3 = g_strdup(buf);
