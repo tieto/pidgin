@@ -27,7 +27,7 @@ gaim_applet_SOURCES =	about.c \
 			sound.c \
 			ticker.c \
 			util.c
-gaim_applet_DEPENDENCIES = @LIBOBJS@
+gaim_applet_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_applet_LDFLAGS = -export-dynamic
 gaim_applet_LDADD = @LDADD@ @LIBOBJS@
 else
@@ -57,7 +57,7 @@ gaim_SOURCES =	about.c \
 		sound.c \
 		ticker.c \
 		util.c
-gaim_DEPENDENCIES = @LIBOBJS@
+gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
