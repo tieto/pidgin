@@ -208,6 +208,74 @@ static void toc_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
+static int escape_message(char *msg)
+{
+	char *c, *cpy;
+	int cnt = 0;
+	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
+	if (strlen(msg) > BUF_LEN) {
+		debug_printf("Warning:  truncating message to 2048 bytes\n");
+		msg[2047] = '\0';
+	}
+
+	cpy = g_strdup(msg);
+	c = cpy;
+	while (*c) {
+		switch (*c) {
+		case '$':
+		case '[':
+		case ']':
+		case '(':
+		case ')':
+		case '#':
+			msg[cnt++] = '\\';
+			/* Fall through */
+		default:
+			msg[cnt++] = *c;
+		}
+		c++;
+	}
+	msg[cnt] = '\0';
+	g_free(cpy);
+	return cnt;
+}
+
+static int escape_text(char *msg)
+{
+	char *c, *cpy;
+	int cnt = 0;
+	/* Assumes you have a buffer able to cary at least BUF_LEN * 4 bytes */
+	if (strlen(msg) > BUF_LEN) {
+		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
+		msg[2047] = '\0';
+	}
+
+	cpy = g_strdup(msg);
+	c = cpy;
+	while (*c) {
+		switch (*c) {
+		case '\n':
+			msg[cnt++] = '<';
+			msg[cnt++] = 'B';
+			msg[cnt++] = 'R';
+			msg[cnt++] = '>';
+			break;
+		case '{':
+		case '}':
+		case '\\':
+		case '"':
+			msg[cnt++] = '\\';
+			/* Fall through */
+		default:
+			msg[cnt++] = *c;
+		}
+		c++;
+	}
+	msg[cnt] = '\0';
+	g_free(cpy);
+	return cnt;
+}
+
 static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 {
 	int len;
@@ -1080,7 +1148,8 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
 {
 	char buf2[BUF_LEN * 2];
-	g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
+	escape_text(message);
+	g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, normalize(who), message);
 	sflap_send(g, buf2, -1, TYPE_DATA);
 }
 

@@ -530,7 +530,6 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 
 	gtk_editable_delete_text(GTK_EDITABLE(b->entry), 0, -1);
 
-	escape_text(buf);	/* it's ok to leave this here because oscar can't whisper */
 	serv_chat_whisper(b->gc, b->id, who, buf);
 
 	g_snprintf(buf2, sizeof(buf2), "%s->%s", b->gc->username, who);

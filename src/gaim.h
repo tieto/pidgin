@@ -616,9 +616,7 @@ extern gint check_idle(struct gaim_connection *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);
-extern int escape_text(char *);
 extern char *escape_text2(const char *);
-extern int escape_message(char *msg);
 extern char *tobase64(const char *);
 extern void frombase64(const char *, char **, int *);
 extern gint clean_pid(gpointer);
