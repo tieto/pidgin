@@ -180,8 +180,8 @@ struct conversation *new_conversation(char *name)
 	conversations = g_list_append(conversations, c);
 	show_conv(c);
 	update_icon(c);
-	update_smilies(c);
 	update_checkbox(c);
+	update_smilies(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -2365,6 +2365,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	update_icon(c);
 	update_checkbox(c);
+	update_smilies(c);
 }
 
 void update_buttons_by_protocol(struct conversation *c)
