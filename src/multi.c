@@ -238,6 +238,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		titles[3] = proto_name(u->protocol);
 		i = gtk_clist_append(GTK_CLIST(list), titles);
 		gtk_clist_set_row_data(GTK_CLIST(list), i, u);
+		aim_users = g_list_append(aim_users, u);
 	}
 	save_prefs();
 }
