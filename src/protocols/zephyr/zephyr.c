@@ -837,15 +837,15 @@ static GList *zephyr_chat_info(struct gaim_connection *gc) {
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Class:");
-	m = g_list_append(m, NULL);
+	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Instance:");
-	m = g_list_append(m, NULL);
+	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("Recipient:");
-	m = g_list_append(m, NULL);
+	m = g_list_append(m, pce);
 
 	return m;
 }
