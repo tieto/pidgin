@@ -698,7 +698,7 @@ static void
 handle_topic(struct gaim_connection *gc, char *text)
 {
 	struct gaim_conversation *c;
-	char *po = strchr(text, ' ');
+	char *po = strchr(text, ' '), *buf;
 
 	if (!po)
 		return;
@@ -707,12 +707,12 @@ handle_topic(struct gaim_connection *gc, char *text)
 	po += 2;
 
 	if ((c = irc_find_chat(gc, text))) {
-		char buf[IRC_BUF_LEN];
+                po = irc_recv_convert(gc, po);
 		gaim_chat_set_topic(GAIM_CHAT(c), NULL, po);
-		g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
-			   text, po);
-
+		buf = g_strdup_printf(_("<B>%s has changed the topic to: %s</B>"), text, po);
 		gaim_conversation_write(c, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+                g_free(buf);
+                g_free(po);
 	}
 }
 
