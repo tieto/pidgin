@@ -217,6 +217,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 {
 	GaimGtkConversation *gtkconv;
 	GaimConvWindow *win = gaim_conversation_get_window(conv);
+	gboolean saveheight;
 
 	if (!GTK_WIDGET_VISIBLE(w))
 		return FALSE;
@@ -225,6 +226,9 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		return FALSE;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	/* we only save the new height if the formatting toolbar visibility matches the pref */
+	saveheight = (gtkconv->show_formatting_toolbar == gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
 
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the tab bar
 	 * will fit, but then I don't want new windows taking up the entire screen.  I check to see if there is only one
@@ -235,7 +239,8 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		if (w == gtkconv->sw && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
-			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
+			if (saveheight)
+				gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
 		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
@@ -245,7 +250,8 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 		if (w == gtkconv->sw && (gaim_conv_window_get_conversation_count(win) == 1))
 		{
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
-			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
+			if (saveheight)
+				gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
 		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
