@@ -54,6 +54,7 @@ XSLoader::load('Gaim', $VERSION);
 # Preloaded methods go here.
 
 1;
+__END__
 
 =head1 NAME
 
