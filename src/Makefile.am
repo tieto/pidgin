@@ -28,6 +28,7 @@ gaim_SOURCES =	about.c \
 		gtkimhtml.c \
 		gtkimhtml.h \
 		gtkutils.c \
+		gtkutils.h \
 		html.c \
 		idle.c \
 		list.c \
