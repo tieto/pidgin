@@ -12,6 +12,7 @@
 extern void wgaim_systray_init(void);
 extern void wgaim_created_blistwin( GtkWidget *blist );
 extern void wgaim_created_loginwin( GtkWidget *loginwin );
+extern void wgaim_created_backwin( GtkWidget *backwin );
 extern void wgaim_systray_cleanup(void);
 
 #endif /* _SYSTRAY_H_ */
