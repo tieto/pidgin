@@ -17,6 +17,7 @@
 #include <arpa/nameser.h>
 #include <resolv.h>
 #include <sys/time.h>
+#include <time.h>
 
 #include "xmlparse.h"
 #ifdef HAVE_CONFIG_H
