@@ -287,7 +287,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 void do_rem_away_mess(gchar *name)
 {
-	struct away_message *a;
+	struct away_message *a = NULL;
 	struct away_message *default_away = NULL;
 	const char *default_away_name;
 	GSList *l;
@@ -300,7 +300,7 @@ void do_rem_away_mess(gchar *name)
 	}
 	g_free(name);
 
-	if (l == NULL) {
+	if (l == NULL || a == NULL) {
 		/* Could not find away message! */
 		return;
 	}
