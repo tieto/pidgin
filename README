@@ -127,7 +127,8 @@ GdkPixbuf.
 
 For ICQ, it supports nearly everything that the old ICQ plugin supported,
 which isn't much. To use Oscar for ICQ, enter your ICQ UIN as the
-screenname. The default host/port will work.
+screenname. The default host/port will work. You'll need to use a different
+client to register a new ICQ account if you don't have one yet.
 
 
 Yahoo (Eric)
@@ -161,7 +162,9 @@ ICQ (Eric)
 ===
 
 The ICQ plugin is deprecated and will probably be removed soon. The
-protocol only marginally works. You should use Oscar for ICQ.
+protocol only marginally works. You should use Oscar for ICQ. You'll
+need a different client to register an ICQ account if you don't have
+one yet.
 
 
 Jabber (Eric)
@@ -172,7 +175,8 @@ transport already subscribed Gaim will use it (you can't add or remove
 transports though). In order to use a server other than jabber.org, set
 your username to include the server, e.g. warmenhoven@mycompany.com. This
 is the actual format of the Jabber ID anyway; Jabber is email with online
-notification.
+notification. You'll need to use a different client to register a Jabber
+account if you don't have one yet.
 
 
 Napster (Rob)
@@ -203,4 +207,6 @@ Gadu-Gadu (Eric)
 I really shouldn't be taking credit for Gadu-Gadu, I'm just the person who
 commits the patches that Arkadiusz Miskiewicz gives me. Gadu-Gadu is an IM
 system most similar to ICQ that is quite popular in Poland. It can manage
-your server-side buddy list through the Protocol Actions menu.
+your server-side buddy list through the Protocol Actions menu. You'll need
+to use a different client to register a new account if you don't have one
+yet.
