@@ -471,13 +471,33 @@ static void irc_file_transfer_do(struct gaim_connection *gc, struct irc_file_tra
 }
 
 
+void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
+		struct irc_file_transfer *ift = data;
+		struct irc_data *id = (struct irc_data *)ift->gc->proto_data;
+		struct sockaddr_in addr;
+		int len = sizeof(addr);
+		
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(ift->port);
+		addr.sin_addr.s_addr = INADDR_ANY;
+
+		ift->fd = accept(ift->fd, (struct sockaddr *)&addr, &len);
+		if (!ift->fd) {
+				/* FIXME: Handle this gracefully XXX */
+				printf("Something bad happened here, bubba!");
+				return;
+		}
+		
+		if (transfer_out_do(ift->xfer, ift->fd, 0)) {
+				gaim_input_remove(ift->watcher);
+				ift->watcher = 0;
+		}
+}
+
 void dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
 		struct irc_file_transfer *ift = data;
 
 		ift->fd = source;
-
-		printf("WELL, we should be doing something then, should we not?\n");
-
 		irc_file_transfer_do(ift->gc, ift);
 }
 
@@ -1975,11 +1995,19 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 		struct irc_data *id = (struct irc_data *)gc->proto_data;
 		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
+		char *localip = (char *)malloc(12);
+
+		if (getlocalip(localip) == -1) {
+				free(localip);
+				return;
+		} 
 
 		ift->type = IFT_SENDFILE_OUT;
 		ift->sn = g_strdup(destsn);
 		ift->gc = gc;
+		snprintf(ift->ip, sizeof(ift->ip), "%s", localip);
 		id->file_transfers = g_slist_append(id->file_transfers, ift);
+
 		ift->xfer = transfer_out_add(gc, ift->sn);
 }
 
@@ -2010,7 +2038,7 @@ static void irc_file_transfer_data_chunk(struct gaim_connection *gc, struct file
 	pos = htonl(ift->cur);
 	write(ift->fd, (char *)&pos, 4);
 
-	printf("Cheap-O Progress Bar (%s) %d of %d: %2.0f\%\n", ift->name, ift->cur, ift->len, ((float)ift->cur/(float)ift->len) * 100);
+//	printf("Cheap-O Progress Bar (%s) %d of %d: %2.0f\%\n", ift->name, ift->cur, ift->len, ((float)ift->cur/(float)ift->len) * 100);
 }
 
 static void irc_file_transfer_cancel (struct gaim_connection *gc, struct file_transfer *xfer) {
@@ -2054,6 +2082,33 @@ static void irc_file_transfer_done(struct gaim_connection *gc, struct file_trans
 	g_free(ift);
 }
 
+static void irc_file_transfer_out (struct gaim_connection *gc, struct file_transfer *xfer, const char *name, int totfiles, int totsize) {
+	struct irc_data *id = (struct irc_data *)gc->proto_data;
+	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
+	struct sockaddr_in addr;
+	char buf[IRC_BUF_LEN];
+	int len;
+	
+	
+	ift->fd = socket (AF_INET, SOCK_STREAM, 0);
+	addr.sin_family = AF_INET;
+	addr.sin_port = 0;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	bind (ift->fd, (struct sockaddr *) &addr, sizeof(addr));
+	listen(ift->fd, 1);
+
+	len = sizeof(addr);
+	getsockname (ift->fd, (struct sockaddr *) &addr, &len);
+
+	ift->port = ntohs(addr.sin_port);
+
+	ift->watcher = gaim_input_add (ift->fd, GAIM_INPUT_READ, dcc_send_callback, ift);
+
+	snprintf(buf, sizeof(buf), "\001DCC SEND %s %s %d %d\001\n", name, ift->ip, ift->port, totsize);
+	printf("Trying: %s\n", buf);
+	irc_send_im (gc, ift->sn, buf, -1, 0);
+}
+
 static void irc_file_transfer_in(struct gaim_connection *gc,
 				struct file_transfer *xfer, int offset) {
 
@@ -2063,8 +2118,6 @@ static void irc_file_transfer_in(struct gaim_connection *gc,
 	char *ip = (char *)malloc(32);
 
 	ift->xfer = xfer;
-	printf("You, I should be getting a file or some shit, hehe\n");
-	printf("Connecting to: %s %d\n", ift->ip, ift->port);
 	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
 }
 
@@ -2131,13 +2184,11 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
-/*
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("DCC Send");
 	pbm->callback = irc_ask_send_file;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-*/	
 
 	return m;
 }
@@ -2166,7 +2217,7 @@ void irc_init(struct prpl *ret)
 	ret->buddy_menu = irc_buddy_menu;
 	ret->chat_invite = irc_chat_invite;
 	ret->convo_closed = irc_convo_closed;
-	ret->file_transfer_out = NULL; /* Implement me */
+	ret->file_transfer_out = irc_file_transfer_out; 
 	ret->file_transfer_in = irc_file_transfer_in;
 	ret->file_transfer_data_chunk = irc_file_transfer_data_chunk;
 	ret->file_transfer_done = irc_file_transfer_done;
