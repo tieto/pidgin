@@ -199,7 +199,7 @@ text_to_stock(const char *text)
 	return text;
 }
 
-void *
+static void *
 gaim_gtk_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
 					   gboolean multiline, gboolean masked,
@@ -323,7 +323,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	return data;
 }
 
-void *
+static void *
 gaim_gtk_request_choice(const char *title, const char *primary,
 						const char *secondary, unsigned int default_value,
 						const char *ok_text, GCallback ok_cb,
@@ -333,7 +333,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	return NULL;
 }
 
-void *
+static void *
 gaim_gtk_request_action(const char *title, const char *primary,
 						const char *secondary, unsigned int default_action,
 						void *user_data, size_t action_count, va_list actions)
@@ -424,7 +424,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	return data;
 }
 
-void *
+static void *
 gaim_gtk_request_fields(const char *title, const char *primary,
 						const char *secondary, GaimRequestFields *fields,
 						const char *ok_text, GCallback ok_cb,
@@ -804,7 +804,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	return data;
 }
 
-void
+static void
 gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 {
 	GaimGtkRequestData *data = (GaimGtkRequestData *)ui_handle;
