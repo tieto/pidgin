@@ -430,7 +430,7 @@ fi
 if test "x$enable_gtk2" = "xyes" ; then
 	echo Use GdkPixbuf for Buddy Icons. : yes
 else
-	echo Use GdkPixbuf for Buddy Icons. : $enable_pixbuf
+	echo Use GdkPixbuf for Buddy Icons. : $use_pixbuf
 fi
 echo
 echo Build with Plugin support..... : $enable_plugins
