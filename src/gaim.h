@@ -183,6 +183,7 @@ enum gaim_event {
 	event_buddy_back,
 	event_buddy_idle,
 	event_buddy_unidle,
+	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
 	event_chat_leave,
@@ -232,6 +233,7 @@ struct buddy_show {
 	GtkWidget *item;
 	GtkWidget *pix;
 	GtkWidget *label;
+	GtkWidget *idle;
 	char *name;
 	char *show;
 	GSList *connlist;
@@ -594,6 +596,7 @@ extern void build_imchat_box(gboolean);
 extern void do_quit();
 extern void update_chat_button_pix();
 extern void update_im_button_pix();
+extern void update_idle_times();
 
 /* Functions in html.c */
 extern char *fix_url(char *);

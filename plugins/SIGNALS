@@ -11,6 +11,7 @@ enum gaim_event {
 	event_buddy_back,
 	event_buddy_idle,
 	event_buddy_unidle,
+	event_blist_update,
 	event_chat_invited,
 	event_chat_join,
 	event_chat_leave,
@@ -129,6 +130,11 @@ event_buddy_unidle:
 	struct gaim_connection *gc, char *who
 
 	'who' is who is no longer idle.
+
+event_blist_update:
+	(none)
+
+	called when the idle times are updated in the buddy list
 
 event_chat_invited:
 	struct gaim_connection *gc, char *who, char *room, char *message

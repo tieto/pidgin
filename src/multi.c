@@ -535,6 +535,8 @@ static void del_acct(GtkWidget *w, gpointer d)
 	if (row != -1) {
 		u = g_list_nth_data(aim_users, row);
 		if (u) {
+			if (u->gc)
+				signoff(u->gc);
 			aim_users = g_list_remove(aim_users, u);
 			save_prefs();
 		}

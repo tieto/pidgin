@@ -576,8 +576,6 @@ int main(int argc, char *argv[])
 	if (general_options & OPT_GEN_DEBUG)
 		show_debug(NULL);
 
-	gdk_threads_enter();
-
 #ifdef USE_PERL
 	perl_init();
 	perl_autoload();
@@ -627,7 +625,6 @@ int main(int argc, char *argv[])
         gtk_main();
         
 #endif /* USE_APPLET */
-	gdk_threads_leave();
         
 	return 0;
 	

@@ -1353,6 +1353,10 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gtk_box_pack_start(GTK_BOX(box), b->label, TRUE, TRUE, 1);
 	gtk_widget_show(b->label);
 
+	b->idle = gtk_label_new("");
+	gtk_box_pack_start(GTK_BOX(box), b->idle, FALSE, FALSE, 1);
+	gtk_widget_show(b->idle);
+
 	gs->members = g_slist_insert(gs->members, b, pos);
 	return b;
 }
@@ -1416,6 +1420,58 @@ static int log_timeout(struct buddy_show *b) {
 	return FALSE;
 }
 
+static void update_idle_time(struct buddy_show *bs) {
+	char idlet[16];
+	time_t t;
+	int ihrs, imin;
+	struct buddy *b;
+	GSList *c;
+
+	time(&t);
+	if (g_slist_length(bs->connlist) == 1) {
+		b = find_buddy(bs->connlist->data, bs->name);
+		if (!b) return;
+		ihrs = (t - b->idle) / 3600; imin = ((t - b->idle) / 60) % 60;
+
+		if (ihrs)
+			g_snprintf(idlet, sizeof idlet, "(%d:%02d)", ihrs, imin);
+		else
+			g_snprintf(idlet, sizeof idlet, "(%d)", imin);
+
+		gtk_widget_hide(bs->idle);
+		if (b->idle)
+			gtk_label_set(GTK_LABEL(bs->idle), idlet);
+		else
+			gtk_label_set(GTK_LABEL(bs->idle), "");
+		if (display_options & OPT_DISP_SHOW_IDLETIME)
+			gtk_widget_show(bs->idle);
+	} else {
+		/* FIXME */
+	}
+}
+
+void update_idle_times() {
+	GSList *grp = shows;
+	GSList *mem;
+	struct buddy_show *b;
+	struct group_show *g;
+	struct buddy *bud;
+	time_t t;
+	char idlet[16];
+	int ihrs, imin;
+
+	while (grp) {
+		g = (struct group_show *)grp->data;
+		mem = g->members;
+		while (mem) {
+			b = (struct buddy_show *)mem->data;
+			update_idle_time(b);
+			mem = mem->next;
+		}
+		grp = grp->next;
+	}
+}
+
 void set_buddy(struct gaim_connection *gc, struct buddy *b)
 {
 	struct group *g = find_group_by_buddy(gc, b->name);
@@ -1424,6 +1480,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	char **xpm = NULL;
+
 	if (b->present) {
 		if ((gs = find_group_show(g->name)) == NULL)
 			gs = new_group_show(g->name);
@@ -1460,6 +1517,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 		}
+		update_idle_time(bs);
 	} else {
 		play_sound(BUDDY_LEAVE);
 		gs = find_group_show(g->name);
