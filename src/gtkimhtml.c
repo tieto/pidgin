@@ -414,7 +414,8 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 			}
 			return FALSE;
 			break;
-			
+
+#ifdef LAY_OFF_MY_FRIGGIN_KEYBINDINGS
 		case 'f':
 		case 'F':
 			/*set_toggle(gtkconv->toolbar.font,
@@ -423,6 +424,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 			
 			return TRUE;
 			break;
+#endif /* this doesn't even DO anything */
 			
 		case 'i':
 		case 'I':
