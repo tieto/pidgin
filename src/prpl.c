@@ -137,45 +137,68 @@ static void rem_win(GtkWidget *a, GtkWidget *b)
 	gtk_widget_destroy(b);
 }
 
-void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
+struct doaskstruct {
+	void (*yesfunc)(gpointer);
+	void (*nofunc)(gpointer);
+	gpointer data;
+};
+
+static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
+{
+	switch (resp) 
+		{
+		case GTK_RESPONSE_YES:
+			if (doask->yesfunc)
+				doask->yesfunc(doask->data);
+			break;
+		case GTK_RESPONSE_NO:
+		case GTK_RESPONSE_DELETE_EVENT:
+			if (doask->nofunc)
+				doask->nofunc(doask->data);
+			break;
+		}
+	g_free(doask);
+}
+
+
+void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont)
 {
 	GtkWidget *window;
-	GtkWidget *vbox;
-	GtkWidget *label;
 	GtkWidget *hbox;
-	GtkWidget *button;
+	GtkWidget *label;
+	char labeltext[1024 * 2];
+	char filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	struct doaskstruct *doask = g_new0(struct doaskstruct, 1);
 
-	GAIM_DIALOG(window);
-	gtk_window_set_wmclass(GTK_WINDOW(window), "accept", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
-	gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
-	gtk_widget_realize(window);
-	if (dont)
-		gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(dont), data);
+	doask->yesfunc = doit;
+	doask->nofunc  = dont;
+	doask->data    = data;
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(window), vbox);
+	g_free(filename);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	label = gtk_label_new(text);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, yestext, GTK_RESPONSE_YES, notext, GTK_RESPONSE_NO, NULL);
+	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
+	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_ask_callback), doask);
+	
+	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
+
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	
+	g_snprintf(labeltext, sizeof(labeltext), "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s", prim, sec ? sec : "");
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), labeltext);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	button = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
-
-	button = picture_button(window, _("Accept"), ok_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	if (dont)
-		gtk_object_set_user_data(GTK_OBJECT(button), data);
-	if (doit)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(doit), data);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(rem_win), window);
-
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	
 	gtk_widget_show_all(window);
 }
 
@@ -562,7 +585,7 @@ struct got_add {
 	char *alias;
 };
 
-static void dont_add(gpointer x, struct got_add *ga)
+static void dont_add(struct got_add *ga)
 {
 	g_free(ga->who);
 	if (ga->alias)
@@ -570,10 +593,11 @@ static void dont_add(gpointer x, struct got_add *ga)
 	g_free(ga);
 }
 
-static void do_add(gpointer x, struct got_add *ga)
+static void do_add(struct got_add *ga)
 {
 	if (g_slist_find(connections, ga->gc))
 		show_add_buddy(ga->gc, ga->who, NULL, ga->alias);
+	dont_add(ga);
 }
 
 void show_got_added(struct gaim_connection *gc, const char *id,
@@ -598,7 +622,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 	if (find_buddy(gc, ga->who))
 		do_error_dialog(buf, NULL, GAIM_INFO);
 	else
-		do_ask_dialog(buf, ga, do_add, dont_add);
+		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add);
 }
 
 static GtkWidget *regdlg = NULL;

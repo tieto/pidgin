@@ -1919,7 +1919,7 @@ static void cancel_callback(gpointer a, struct file_transfer *ft) {
 	}
 }
 
-static void toc_accept_ft(gpointer a, struct ft_request *fr) {
+static void toc_accept_ft(struct ft_request *fr) {
 	GtkWidget *window;
 	char buf[BUF_LEN];
 
@@ -1947,9 +1947,10 @@ static void toc_accept_ft(gpointer a, struct ft_request *fr) {
 				   GTK_SIGNAL_FUNC(toc_get_file), ft);
 
 	gtk_widget_show(window);
+	toc_reject_ft(ft);
 }
 
-static void toc_reject_ft(gpointer a, struct ft_request *ft) {
+static void toc_reject_ft(struct ft_request *ft) {
 	g_free(ft->user);
 	g_free(ft->filename);
 	g_free(ft->ip);
@@ -1980,5 +1981,5 @@ static void accept_file_dialog(struct ft_request *ft) {
 	} else {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
-	do_ask_dialog(buf, ft, toc_accept_ft, toc_reject_ft);
+	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft);
 }

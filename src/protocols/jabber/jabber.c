@@ -1599,7 +1599,7 @@ static void jabber_accept_deny_add(struct jabber_add_permit *jap, const char *ty
 /*
  * Callback from "accept" in do_ask_dialog() invoked by jabber_handles10n()
  */
-static void jabber_accept_add(gpointer w, struct jabber_add_permit *jap)
+static void jabber_accept_add(struct jabber_add_permit *jap)
 {
 	jabber_accept_deny_add(jap, "subscribed");
 	/*
@@ -1616,7 +1616,7 @@ static void jabber_accept_add(gpointer w, struct jabber_add_permit *jap)
 /*
  * Callback from "deny/cancel" in do_ask_dialog() invoked by jabber_handles10n()
  */
-static void jabber_deny_add(gpointer w, struct jabber_add_permit *jap)
+static void jabber_deny_add(struct jabber_add_permit *jap)
 {
 	jabber_accept_deny_add(jap, "unsubscribed");
 	g_free(jap->user);
@@ -1645,7 +1645,7 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 
 		jap->gjc = gjc;
 		jap->user = g_strdup(Jid);
-		do_ask_dialog(msg, jap, jabber_accept_add, jabber_deny_add);
+		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add);
 
 		g_free(msg);
 		xmlnode_free(g);	/* Never needed it here anyway */

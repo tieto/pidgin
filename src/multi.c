@@ -971,7 +971,7 @@ static void del_acct(GtkWidget *w, gpointer d)
 			return;
 
 		g_snprintf(buf, sizeof(buf), _("Are you sure you want to delete %s?"), u->username);
-		do_ask_dialog(buf, u, do_del_acct, NULL);
+		do_ask_dialog(buf, NULL, u, _("Delete"), do_del_acct, _("Cancel"), NULL);
 		l = l->next;
 	}
 }

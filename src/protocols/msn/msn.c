@@ -835,7 +835,7 @@ struct msn_add_permit {
 	char *friend;
 };
 
-static void msn_accept_add(gpointer w, struct msn_add_permit *map)
+static void msn_accept_add(struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -850,24 +850,25 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 	map->gc->permit = g_slist_append(map->gc->permit, map->user);
 	build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
 	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
-	*(map->user) = 0;
+	g_free(map->user);
+	g_free(map->friend);
+	g_free(map);
 }
 
-static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
+static void msn_cancel_add(struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	if (*(map->user)) {
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			hide_login_progress(map->gc, "Write error");
-			signoff(map->gc);
-			return;
-		}
-		map->gc->deny = g_slist_append(map->gc->deny, map->user);
-		build_block_list();
+	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(map->gc, "Write error");
+		signoff(map->gc);
+		return;
 	}
+	map->gc->deny = g_slist_append(map->gc->deny, map->user);
+	build_block_list();
+	
 	
 	g_free(map->user);
 	g_free(map->friend);
@@ -913,7 +914,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
 				ap->user, ap->friend, ap->gc->username);
 
-		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
+		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
@@ -1068,7 +1069,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->gc = gc;
                          
 		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
-				do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
+				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add);
 			}
 		    }
 			

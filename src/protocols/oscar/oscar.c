@@ -1455,7 +1455,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static void cancel_direct_im(gpointer w, struct ask_direct *d) {
+static void cancel_direct_im(struct ask_direct *d) {
 	debug_printf("Freeing DirectIM prompts.\n");
 
 	g_free(d->sn);
@@ -1687,7 +1687,7 @@ static void oscar_cancel_transfer(struct gaim_connection *gc,
 	g_free(oft);
 }
 
-static int accept_direct_im(gpointer w, struct ask_direct *d) {
+static int accept_direct_im(struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
@@ -1698,7 +1698,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 
 	dim = find_direct_im(od, d->sn);
 	if (dim) {
-		cancel_direct_im(w, d); /* 40 */
+		cancel_direct_im(d); /* 40 */
 		return TRUE;
 	}
 	dim = g_new0(struct direct_im, 1);
@@ -1708,7 +1708,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	dim->conn = aim_directim_connect(od->sess, d->sn, NULL, d->cookie);
 	if (!dim->conn) {
 		g_free(dim);
-		cancel_direct_im(w, d);
+		cancel_direct_im(d);
 		return TRUE;
 	}
 
@@ -1731,11 +1731,11 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	if (dim->conn->fd < 0) {
 		aim_conn_kill(od->sess, &dim->conn);
 		g_free(dim);
-		cancel_direct_im(w, d);
+		cancel_direct_im(d);
 		return TRUE;
 	}
 
-	cancel_direct_im(w, d);
+	cancel_direct_im(d);
 
 	return TRUE;
 }
@@ -1929,7 +1929,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
 				userinfo->sn, gc->username);
-		do_ask_dialog(buf, d, accept_direct_im, cancel_direct_im);
+		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im);
 	} else {
 		debug_printf("Unknown reqclass %d\n", args->reqclass);
 	}
@@ -1940,25 +1940,23 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 /*
  * Next 2 functions are for when other people ask you for authorization
  */
-static void gaim_icq_authgrant(gpointer w, struct channel4_data *data) {
+static void gaim_icq_authgrant(struct channel4_data *data) {
 	char message;
 	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
 	message = 0;
 	aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHGRANTED, &message);
 	show_got_added(data->gc, NULL, data->uin, NULL, NULL);
 	g_free(data->uin);
-	data->uin = NULL;
+	g_free(data);
 }
 
-static void gaim_icq_authdeny(gpointer w, struct channel4_data *data) {
-	if (data->uin) {
-		gchar *message;
-		struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
-		message = g_strdup_printf("No reason given.");
-		aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHDENIED, message);
-		g_free(data->uin);
-		g_free(message);
-	}
+static void gaim_icq_authdeny(struct channel4_data *data) {
+	gchar *message;
+	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
+	message = g_strdup_printf("No reason given.");
+	aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHDENIED, message);
+	g_free(data->uin);
+	g_free(message);
 	g_free(data);
 }
 
@@ -1968,22 +1966,25 @@ static void gaim_icq_authdeny(gpointer w, struct channel4_data *data) {
 static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
 	struct channel4_data *data = g_new(struct channel4_data, 1);
 	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
-	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason:\n\n%s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
+	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason:", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
 	debug_printf("Received an authorization request from UIN %lu\n", uin);
 	data->gc = gc;
 	data->uin = g_strdup_printf("%lu", uin);
-	do_ask_dialog(dialog_msg, data, gaim_icq_authgrant, gaim_icq_authdeny);
+	do_ask_dialog(dialog_msg, (msg && strlen(msg) > 6) ? msg+6 : _("No reason given."), data, _("Authorize"), gaim_icq_authgrant, _("Deny"), gaim_icq_authdeny);
 	g_free(dialog_msg);
 }
 
 /*
  * Next 2 functions are for when someone sends you contacts
  */
-static void gaim_icq_contactadd(gpointer w, struct channel4_data *data) {
+static void gaim_icq_contactadd(struct channel4_data *data) {
 	show_add_buddy(data->gc, data->uin, NULL, data->nick);
+	free(data->uin);
+	free(data->nick);
+	g_free(data);
 }
 
-static void gaim_icq_contactdontadd(gpointer w, struct channel4_data *data) {
+static void gaim_icq_contactdontadd(struct channel4_data *data) {
 	free(data->uin);
 	free(data->nick);
 	g_free(data);
@@ -2050,11 +2051,11 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					num = num*10 + text[0][i]-48;
 				for (i=0; i<num; i++) {
 					struct channel4_data *data = g_new(struct channel4_data, 1);
-					gchar *message = g_strdup_printf("ICQ user %lu has sent you a contact: %s (%s)\nDo you want to add this contact to your contact list?", args->uin, text[i*2+2], text[i*2+1]);
+					gchar *message = g_strdup_printf(_("ICQ user %lu has sent you a contact: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
 					data->gc = gc;
 					data->uin = g_strdup(text[i*2+2]);
 					data->nick = g_strdup(text[i*2+1]);
-					do_ask_dialog(message, data, gaim_icq_contactadd, gaim_icq_contactdontadd);
+					do_ask_dialog(message, "Do you want to add this contact to your Buddy List?", data, _("Add"), gaim_icq_contactadd, _("Deny"), gaim_icq_contactdontadd);
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -4323,11 +4324,11 @@ struct ask_do_dir_im {
 	struct gaim_connection *gc;
 };
 
-static void oscar_cancel_direct_im(gpointer obj, struct ask_do_dir_im *data) {
+static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 	g_free(data);
 }
 
-static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
+static void oscar_direct_im(struct ask_do_dir_im *data) {
 	struct gaim_connection *gc = data->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
@@ -4366,10 +4367,8 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
 	data->who = who;
 	data->gc = gc;
-	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."
-					" Doing this will let them see your IP address, and may be"
-					" a security risk. Do you wish to continue?"), who);
-	do_ask_dialog(buf, data, oscar_direct_im, oscar_cancel_direct_im);
+	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
+	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im);
 }
 
 static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {

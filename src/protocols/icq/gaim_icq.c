@@ -246,20 +246,21 @@ struct icq_auth {
 	struct gaim_connection *gc;
 };
 
-static void icq_den_auth(gpointer x, struct icq_auth *iq)
+static void icq_den_auth(struct icq_auth *iq)
 {
 	g_free(iq->nick);
 	g_free(iq);
 }
 
-static void icq_add_after_auth(gpointer x, struct icq_auth *iq)
+static void icq_add_after_auth(struct icq_auth *iq)
 {
 	char uin[16];
 	g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
 	show_add_buddy(iq->gc, uin, NULL, iq->nick);
+	icq_den_auth(iq);
 }
 
-static void icq_acc_auth(gpointer x, struct icq_auth *iq)
+static void icq_acc_auth(struct icq_auth *iq)
 {
 	char msg[1024];
 	char uin[16];
@@ -275,7 +276,8 @@ static void icq_acc_auth(gpointer x, struct icq_auth *iq)
 	iqnew->nick = g_strdup(iq->nick);
 
 	g_snprintf(msg, sizeof(msg), "Add %ld to your buddy list?", iq->uin);
-	do_ask_dialog(msg, iqnew, icq_add_after_auth, icq_den_auth);
+	do_ask_dialog(msg, NULL, iqnew, _("Add"), icq_add_after_auth, _("Cancel"), icq_den_auth);
+	icq_den_auth(iq);
 }
 
 static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
@@ -292,7 +294,7 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
 			nick, first ? first : "", first && last ? " " : "", last ? last : "",
 			(first || last) && email ? ", " : "", email ? email : "");
-	do_ask_dialog(msg, iq, icq_acc_auth, icq_den_auth);
+	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth);
 }
 
 static void icq_login(struct aim_user *user) {

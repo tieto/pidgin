@@ -443,7 +443,7 @@ static void irc_got_im(struct gaim_connection *gc, char *who, char *what, int fl
 	g_string_free(str, TRUE);
 }
 
-static void dcc_chat_cancel(void *, struct dcc_chat *);
+static void dcc_chat_cancel(struct dcc_chat *);
 
 void
 dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
@@ -473,7 +473,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 		convo = new_conversation (chat->nick);
 		write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
 			       time ((time_t) NULL), -1);
-		dcc_chat_cancel (NULL,chat);
+		dcc_chat_cancel (chat);
 	}
 }
 
@@ -1107,18 +1107,11 @@ static void handle_privmsg(struct gaim_connection *gc, char *to, char *nick, cha
 	}
 }
 
-static void dcc_chat_init(gpointer obj, struct dcc_chat *data) {
-	struct dcc_chat * chat = g_new0(struct dcc_chat, 1);
-	
-	memcpy(chat, data, sizeof(struct dcc_chat));  /* we have to make a new one
-						       * because the old one get's freed by
-						       * dcc_chat_cancel. */
-
-	printf("ONE MORE TIME: %s:%d\n", chat->ip_address, chat->port);
-	proxy_connect(chat->ip_address, chat->port, dcc_chat_callback, chat);
+static void dcc_chat_init(struct dcc_chat *data) {
+	proxy_connect(data->ip_address, data->port, dcc_chat_callback, data);
 }
 
-static void dcc_chat_cancel(gpointer obj, struct dcc_chat *data){
+static void dcc_chat_cancel(struct dcc_chat *data){
 	if (find_dcc_chat(data->gc, data->nick)) {
 		dcc_chat_list = g_slist_remove(dcc_chat_list, data); 
 		gaim_input_remove (data->inpa);
@@ -1133,7 +1126,7 @@ static void irc_convo_closed(struct gaim_connection *gc, char *who)
 	if (!dchat)
 		return;
 
-	dcc_chat_cancel(NULL, dchat);
+	dcc_chat_cancel(dchat);
 }
 
 static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
@@ -1172,9 +1165,8 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		printf("DCC CHAT DEBUG CRAP: %s\n", dccchat->ip_address);
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
-		g_snprintf(ask, sizeof(ask), _("%s has requested a DCC chat.  "
-					       "Would you like to establish the direct connection?"), nick);
-		do_ask_dialog(ask, dccchat, dcc_chat_init, dcc_chat_cancel);
+		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
+		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel);
 	}
 
 
@@ -2124,7 +2116,7 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 	addr.sin_addr.s_addr = INADDR_ANY;
 	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
 	if (!chat->fd) {
-		dcc_chat_cancel (NULL,chat);
+		dcc_chat_cancel (chat);
 		convo = new_conversation (chat->nick);
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
@@ -2300,7 +2292,7 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	chat->gc = gc;
 	g_snprintf (chat->nick, sizeof (chat->nick), "%s", who);
 	if (chat->fd < 0)  {
-		dcc_chat_cancel (NULL,chat);
+		dcc_chat_cancel (chat);
 		return;
 	}
 	addr.sin_family = AF_INET;

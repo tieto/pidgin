@@ -78,8 +78,8 @@ struct file_transfer {
 
 
 
-static int ft_choose_file(gpointer a, struct file_transfer *xfer);
-static void ft_cancel(gpointer w, struct file_transfer *xfer);
+static int ft_choose_file(struct file_transfer *xfer);
+static void ft_cancel(struct file_transfer *xfer);
 static void ft_delete(struct file_transfer *xfer);
 static void ft_callback(gpointer data, gint source, GaimInputCondition condition);
 static void ft_nextfile(struct file_transfer *xfer);
@@ -144,7 +144,7 @@ struct file_transfer *transfer_in_add(struct gaim_connection *gc,
 		buf = newmsg;
 	}
 
-	do_ask_dialog(buf, xfer, ft_choose_file, ft_cancel);
+	do_ask_dialog(buf, NULL, xfer, _("Accept"), ft_choose_file, _("Cancel"), ft_cancel);
 	g_free(buf);
 
 	return xfer;
@@ -156,7 +156,7 @@ struct file_transfer *transfer_out_add(struct gaim_connection *gc,
 	struct file_transfer *xfer = ft_new(FILE_TRANSFER_TYPE_SEND, gc,
 			who);
 
-	ft_choose_file(NULL, xfer);
+	ft_choose_file(xfer);
 
 	return xfer;
 }
@@ -164,7 +164,7 @@ struct file_transfer *transfer_out_add(struct gaim_connection *gc,
 /* We canceled the transfer, either by declining the initial
  * confirmation dialog or canceling the file dialog.
  */
-static void ft_cancel(gpointer w, struct file_transfer *xfer)
+static void ft_cancel(struct file_transfer *xfer)
 {
 	/* Make sure we weren't aborted while waiting for
 	 * confirmation from the user.
@@ -367,7 +367,7 @@ int transfer_get_file_info(struct file_transfer *xfer, int *size,
 	return 0;
 }
 
-static int ft_choose_file(gpointer a, struct file_transfer *xfer)
+static int ft_choose_file(struct file_transfer *xfer)
 {
 	char *curdir = g_get_current_dir(); /* should be freed */
 	char *initstr;
