@@ -11,7 +11,7 @@
 !define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa ser atualizado.$\rFavor instalar a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
 
 ; License Page
-!define GAIM_LICENSE_BUTTON                      "Próximo >"
+!define GAIM_LICENSE_BUTTON                      "Avançar >"
 !define GAIM_LICENSE_BOTTOM_TEXT         "$(^Name) é distribuído sob a licença GPL. Esta licença é disponibilizada aqui apenas para fins informativos. $_CLICK" 
 
 ; Components Page
