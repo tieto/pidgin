@@ -735,18 +735,14 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 
 static void un_alias(GtkWidget *a, struct buddy *b)
 {
-	struct group *g = find_group_by_buddy(b->gc, b->name);
-	struct group_show *gs = find_group_show(g->name);
-	struct buddy_show *bs = NULL;
-	GtkCTreeNode *node = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
 	g_snprintf(b->show, sizeof(b->show), "%s", b->name);
-	gtk_ctree_node_set_text(GTK_CTREE(edittree), node, 0, b->name);
+	/* passing b->show as the previous name seems to be the (current)
+	 * way to get the bs->lable changed for that buddy. However, this
+	 * function should do everything that needs to be done
+	 */
+	handle_buddy_rename(b, b->show); /* make me a sammich! */
 	serv_alias_buddy(b);
-	if (gs)
-		bs = find_buddy_show(gs, b->name);
-	if (bs)
-		gtk_label_set(GTK_LABEL(bs->label), b->name);
-	do_export(b->gc);
+
 }
 
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
