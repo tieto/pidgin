@@ -2850,7 +2850,7 @@ void do_export(GtkWidget *w, void *dummy)
 {
         FILE *f;
 	gint show_dialog = (int) dummy;
-        char *buf = g_malloc(BUF_LONG);
+        char *buf = g_malloc(BUF_LONG * 2);
         char *file;
 	char path[PATHSIZE];
 
