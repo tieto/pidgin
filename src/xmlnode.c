@@ -224,7 +224,6 @@ char *
 xmlnode_get_data(xmlnode *node)
 {
 	GString *str = NULL;
-	char *ret = NULL;
 	xmlnode *c;
 
 	g_return_val_if_fail(node != NULL, NULL);
@@ -238,17 +237,14 @@ xmlnode_get_data(xmlnode *node)
 		}
 	}
 
-	if(str) {
-		ret = str->str;
-		g_string_free(str, FALSE);
-	}
+	if (str == NULL)
+		return NULL;
 
-	return ret;
+	return g_string_free(str, FALSE);
 }
 
 static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 {
-	char *ret;
 	GString *text = g_string_new("");
 	xmlnode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
@@ -311,11 +307,10 @@ static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting,
 	if(tab)
 		g_free(tab);
 
-	ret = text->str;
 	if(len)
 		*len = text->len;
-	g_string_free(text, FALSE);
-	return ret;
+
+	return g_string_free(text, FALSE);
 }
 
 char *xmlnode_to_str(xmlnode *node, int *len) {
