@@ -413,7 +413,7 @@ void serv_add_buddies(GaimConnection *gc, GList *buddies)
 		/* Make a list of what the groups each buddy is in */
 		for (cur = buddies; cur != NULL; cur = cur->next) {
 			GaimBlistNode *node = cur->data;
-			groups = g_list_append(groups, node->parent);
+			groups = g_list_append(groups, node->parent->parent);
 		}
 
 		if (prpl_info->add_buddies)
@@ -580,7 +580,7 @@ void serv_rename_group(GaimConnection *gc, const char *old_name,
 			/* Make a list of what the groups each buddy is in */
 			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
 				GaimBlistNode *node = cur->data;
-				groups = g_list_append(groups, node->parent);
+				groups = g_list_append(groups, node->parent->parent);
 			}
 
 			serv_remove_buddies(gc, moved_buddies, groups);

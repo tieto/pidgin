@@ -5547,11 +5547,12 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 	int n=0;
 
 	while (buddies) {
+		GaimBuddy *buddy = buddies->data;
 		if (n > MSG_LEN - 18) {
 			aim_buddylist_set(od->sess, od->conn, buf);
 			n = 0;
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", (const char *)buddies->data);
+		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", buddy->name);
 		buddies = buddies->next;
 	}
 	aim_buddylist_set(od->sess, od->conn, buf);
