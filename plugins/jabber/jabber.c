@@ -212,6 +212,7 @@ static void gjab_stop(gjconn j)
 	close(j->fd);
 	j->fd = -1;
 	XML_ParserFree(j->parser);
+	j->parser = NULL;
 }
 
 static int gjab_getfd(gjconn j)
@@ -326,7 +327,7 @@ static void gjab_recv(gjconn j)
 
 	if ((len = read(j->fd, buf, sizeof(buf) - 1))) {
 		buf[len] = '\0';
-		debug_printf("input: %s\n", buf);
+		debug_printf("input (len %d): %s\n", len, buf);
 		XML_Parse(j->parser, buf, len, 0);
 	} else if (len <= 0) {
 		STATE_EVT(JCONN_STATE_OFF)
