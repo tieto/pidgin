@@ -1271,11 +1271,11 @@ void do_quit()
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
 
+	signoff_all();
 #ifdef GAIM_PLUGINS
 	/* then we remove everyone in a mass suicide */
 	remove_all_plugins();
 #endif
-	signoff_all();
 	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 #ifdef USE_PERL
 	perl_end();
