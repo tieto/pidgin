@@ -865,9 +865,14 @@ gaim_gtk_blist_show_join_chat(void)
 	gtk_container_add(GTK_CONTAINER(vbox), data->entries_box);
 	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
 
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next)
+	{
+		gc = c->data;
 
-	data->account =
-		gaim_connection_get_account(gaim_connections_get_all()->data);
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)
+			break;
+	}
+	data->account =	gaim_connection_get_account(gc);
 	rebuild_joinchat_entries(data);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
