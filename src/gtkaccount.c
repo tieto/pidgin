@@ -547,10 +547,10 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		char *filename = g_build_filename(dirname, random, NULL);
 		pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		if (!error && (prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
-			(width <= prpl_info->icon_spec.min_width ||
-			 width >= prpl_info->icon_spec.max_width ||
-			 height <= prpl_info->icon_spec.min_height ||
-			 height >= prpl_info->icon_spec.max_height))
+			(width < prpl_info->icon_spec.min_width ||
+			 width > prpl_info->icon_spec.max_width ||
+			 height < prpl_info->icon_spec.min_height ||
+			 height > prpl_info->icon_spec.max_height))
 		{
 			int new_width = gdk_pixbuf_get_width(pixbuf);
 			int new_height = gdk_pixbuf_get_height(pixbuf);
