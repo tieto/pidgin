@@ -62,7 +62,8 @@ PIXMAPS_DIALOGS =	$(GAIM_PIXMAPS)/gaim_error.png \
 			$(GAIM_PIXMAPS)/gaim_warning.png \
 			$(GAIM_PIXMAPS)/gaim_question.png
 
-PIXMAPS_MENUS =	$(GAIM_PIXMAPS)/insert-image-small.png
+PIXMAPS_MENUS =	$(GAIM_PIXMAPS)/insert-image-small.png \
+			$(GAIM_PIXMAPS)/about_menu.png
 
 PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/accounts.png \

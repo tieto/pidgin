@@ -1,5 +1,7 @@
 SUBDIRS = protocols
-EXTRA_DIST = accounts.png \
+EXTRA_DIST = 
+		about_menu.png \
+		accounts.png \
 		add.xpm				\
 		angel.xpm			\
 		arrow_down.xpm			\
@@ -87,7 +89,7 @@ gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png
 
 gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
-gaimmenupix_DATA = insert-image-small.png
+gaimmenupix_DATA = insert-image-small.png about_menu.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png
