@@ -55,6 +55,7 @@ EXTRA_DIST =	ab.xpm				\
 		gnomeicu-offline.xpm		\
 		gnomeicu-online.xpm		\
 		group.xpm			\
+		image_icon.xpm			\
 		import_small.xpm		\
 		irc_icon.xpm			\
 		italic.xpm			\
