@@ -2380,8 +2380,8 @@ is_amp_escape (const gchar *string,
 		*replace = '®';
 		*length = 5;
 	} else if (*(string + 1) == '#') {
-		gint pound = 0;
-		if (sscanf (string, "&#%d;", &pound) == 1) {
+		guint pound = 0;
+		if (sscanf (string, "&#%u;", &pound) == 1) {
 			if (*(string + 3 + (gint)log10 (pound)) != ';')
 				return FALSE;
 			*replace = (gchar)pound;
