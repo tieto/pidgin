@@ -1,5 +1,5 @@
 # Gaim Danish translation
-# Copyright (C) 2003, ???
+# Copyright (C) 2003, Morten Brix Pedersen <morten@wtf.dk>
 #
 # This file is distributed under the same license as the Gaim package.
 #
