@@ -1,7 +1,5 @@
 /*
- *  aim_im.c
- *
- *  The routines for sending/receiving Instant Messages.
+ *  Family 0x0004 - Routines for sending/receiving Instant Messages.
  *
  *  Note the term ICBM (Inter-Client Basic Message) which blankets
  *  all types of genericly routed through-server messages.  Within
@@ -10,7 +8,8 @@
  *  what would commonly be called an "instant message".  Channel 2
  *  is used for negotiating "rendezvous".  These transactions end in
  *  something more complex happening, such as a chat invitation, or
- *  a file transfer.
+ *  a file transfer.  Channel 4 is used for various ICQ messages.  
+ *  Examples are normal messages, URLs, and old-style authorization.
  *
  *  In addition to the channel, every ICBM contains a cookie.  For
  *  standard IMs, these are only used for error messages.  However,
@@ -36,6 +35,8 @@
  *  0501 0003 0101 0201 01       WinAIM 2.0.847, 2.1.1187, 3.0.1464, 
  *                                      4.3.2229, 4.4.2286
  *  0501 0004 0101 0102 0101     WinAIM 4.1.2010, libfaim (right here)
+ *  0501 0003 0101 02            WinAIM 5
+ *  0501 0001 01                 iChat x.x
  *  0501 0001 0101 01            AOL v6.0, CompuServe 2000 v6.0, any
  *                                      TOC client
  *
@@ -194,7 +195,6 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 		msgtlvlen += 4 /* charset */ + args->msglen;
 	}
 
-
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, msgtlvlen+128)))
 		return -ENOMEM;
 
@@ -314,6 +314,8 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 
 	/*
 	 * Set the I HAVE A REALLY PURTY ICON flag.
+	 * XXX - This should really only be sent on initial 
+	 * IMs and when you change your icon.
 	 */
 	if (args->flags & AIM_IMFLAGS_HASICON) {
 		aimbs_put16(&fr->data, 0x0008);
@@ -326,6 +328,7 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 
 	/*
 	 * Set the Buddy Icon Requested flag.
+	 * XXX - Everytime?  Surely not...
 	 */
 	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
 		aimbs_put16(&fr->data, 0x0009);
@@ -1345,6 +1348,10 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 			args.icbmflags |= AIM_IMFLAGS_BUDDYREQ;
 
+		} else if (type == 0x000b) { /* Non-direct connect typing notification */
+
+			args.icbmflags |= AIM_IMFLAGS_TYPINGNOT;
+
 		} else if (type == 0x0017) {
 
 			args.extdatalen = length;
@@ -2069,6 +2076,82 @@ static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	return ret;
 }
 
+/*
+ * Send a mini typing notification (mtn) packet.  This is supported by winaim 5 and up.
+ */
+faim_export int aim_mtn_send(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0002)))
+		return -EINVAL;
+
+	if (!sn)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+11+strlen(sn)+2)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0014, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0014, 0x0000, snacid);
+
+	/*
+	 * 8 days of light
+	 * Er, that is to say, 8 bytes of 0's
+	 */
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_put16(&fr->data, 0x0000);
+
+	/*
+	 * Type 1 (should be 0x0001 for mtn)
+	 */
+	aimbs_put16(&fr->data, type1);
+
+	/*
+	 * Dest sn
+	 */
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
+
+	/*
+	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
+	 */
+	aimbs_put16(&fr->data, type2);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/*
+ * Receive a mini typing notification (mtn) packet.  This is supported by winaim5 and up.
+ */
+static int mtn_receive(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	char *sn;
+	fu8_t snlen;
+	fu16_t type1, type2;
+
+	aim_bstream_advance(bs, 8); /* Unknown - All 0's */
+	type1 = aimbs_get16(bs);
+	snlen = aimbs_get8(bs);
+	sn = aimbs_getstr(bs, snlen);
+	type2 = aimbs_get16(bs);
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx, type1, sn, type2);
+
+	free(sn);
+
+	return ret;
+}
+
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
@@ -2084,6 +2167,8 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		return clientautoresp(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000c)
 		return msgack(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x0014)
+		return mtn_receive(sess, mod, rx, snac, bs);
 
 	return 0;
 }

@@ -70,16 +70,17 @@
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
 #define UC_WIRELESS	0x40
+#define UC_TYPINGNOT	0x80
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
-/* What does AIM_CAPS_ICQ actually mean? -SE */
-/*   static int caps_icq = AIM_CAPS_ICQ; */
 
 /* Set AIM caps, because Gaim can still do them over ICQ and 
  * Winicq doesn't mind. */
 static int caps_icq = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
+/* static int caps_icq = AIM_CAPS_ICQ; */
+/* What does AIM_CAPS_ICQ actually mean? -SE */
 
 static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02};
 
@@ -269,6 +270,7 @@ static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_parse_mtn        (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locaterights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_buddyrights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locerr     (aim_session_t *, aim_frame_t *, ...);
@@ -708,6 +710,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOK, AIM_CB_LOK_ERROR, gaim_parse_searcherror, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOK, 0x0003, gaim_parse_searchreply, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_msgerr, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MTN, gaim_parse_mtn, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
@@ -1186,7 +1189,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 				type |= UC_WIRELESS;
 	}
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
-		type = (info->icqinfo.status << 7);
+		type = (info->icqinfo.status << 16);
 		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT) &&
 		      (info->icqinfo.status != AIM_ICQ_STATE_NORMAL)) {
 			type |= UC_UNAVAILABLE;
@@ -1404,6 +1407,12 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	} else
 		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
+
+	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
+		struct buddy *b = find_buddy(gc, userinfo->sn);
+		if (b)
+			b->uc |= UC_TYPINGNOT;
+	}
 
 	strip_linefeed(tmp);
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL), -1);
@@ -1824,6 +1833,41 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
+
+	return 1;
+}
+
+static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	fu16_t type1, type2;
+	char *sn;
+
+	va_start(ap, fr);
+	type1 = (fu16_t)va_arg(ap, unsigned int);
+	sn = va_arg(ap, char *);
+	type2 = (fu16_t)va_arg(ap, unsigned int);
+	va_end(ap);
+
+	debug_printf("Received an mtn from %s.  Type1 is 0x%04d and type2 is 0x%04d.\n", sn, type1, type2);
+
+	switch (type2) {
+		case 0x0000: { /* Text has been cleared */
+			serv_got_typing_stopped(gc, sn);
+		} break;
+
+		case 0x0001: { /* Paused typing */
+			serv_got_typing_stopped(gc, sn);
+		} break;
+
+		case 0x0002: { /* Typing */
+			serv_got_typing(gc, sn, 0);
+		} break;
+
+		default: {
+			printf("Received unknown typing notification type.\n");
+		} break;
+	}
 
 	return 1;
 }
@@ -2413,6 +2457,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	*/
 
 	/* Maybe senderwarn and recverwarn should be user preferences... */
+	params->flags = 0x0000000b;
 	params->maxmsglen = 8000;
 	params->minmsginterval = 0;
 
@@ -2591,16 +2636,16 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * an info window because the name will _not_ be in od->evilhack.  For getting 
 	 * only the away message the contact's UIN is put in od->evilhack. */
 	if ((budlight = find_buddy(gc, who))) {
-		if ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
+		if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
 			if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
 				g_show_info_text(gc, who, 0, buf, NULL);
 			else {
-				char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><BR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
 				free(state_msg);
 			}
 		} else {
-			char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+			char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 			g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, NULL);
 			free(state_msg);
 		}
@@ -2726,9 +2771,17 @@ static void oscar_keepalive(struct gaim_connection *gc) {
 static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
-	if (!dim)
-		return 0;
-	aim_send_typing(odata->sess, dim->conn, typing);
+	if (dim)
+		aim_send_typing(odata->sess, dim->conn, typing);
+	else {
+		struct buddy *b = find_buddy(gc, name);
+		if (b && (b->uc & UC_TYPINGNOT)) {
+			if (typing)
+				aim_mtn_send(odata->sess, 0x0001, name, 0x0002);
+			else
+				aim_mtn_send(odata->sess, 0x0001, name, 0x0000);
+		}
+	}
 	return 0;
 }
 static void oscar_ask_direct_im(struct gaim_connection *gc, char *name);
@@ -2825,9 +2878,9 @@ static void oscar_get_away(struct gaim_connection *g, char *who) {
 	if (odata->icq) {
 		struct buddy *budlight = find_buddy(g, who);
 		if (budlight)
-			if ((budlight->uc & 0xff80) >> 7)
+			if ((budlight->uc & 0xffff0000) >> 16)
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_send_im_ch2_geticqmessage(odata->sess, who, (budlight->uc & 0xff80) >> 7);
+					aim_send_im_ch2_geticqmessage(odata->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else
 					debug_printf("Error: Remote client does not support retrieval of status messages.\n");
 			else
@@ -3026,7 +3079,7 @@ static void oscar_add_buddies(struct gaim_connection *g, GList *buddies) {
 							sns[tmp] = (char *)((struct buddy*)curbud->data)->name;
 							tmp++;
 						}
-					aim_ssi_addbuddies(odata->sess, odata->conn, ((struct group*)curgrp->data)->name, sns, tmp);
+					aim_ssi_addbuddies(odata->sess, odata->conn, ((struct group*)curgrp->data)->name, (const char**)sns, tmp);
 					free(sns);
 				}
 			}
@@ -3448,8 +3501,8 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 static char **oscar_list_icon(int uc) {
 	if (uc == 0)
 		return (char **)icon_online_xpm;
-	if (uc & 0xff80) {
-		uc >>= 7;
+	if (uc & 0xffff0000) {
+		uc >>= 16;
 		if (uc & AIM_ICQ_STATE_INVISIBLE)
 			return icon_offline_xpm;
 		if (uc & AIM_ICQ_STATE_CHAT)
@@ -3654,18 +3707,18 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 	if (od->icq) {
 		struct buddy *budlight = find_buddy(gc, who);
 		if (budlight)
-			if ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
+			if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
 				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xff80) >> 7);
+					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else {
-					char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
 					g_show_info_text(gc, who, 2, dialog_msg, NULL);
 					free(state_msg);
 					free(dialog_msg);
 				}
 			else {
-				char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
 				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message.</I><BR>"), who, state_msg);
 				g_show_info_text(gc, who, 2, dialog_msg, NULL);
 				free(state_msg);
@@ -3813,7 +3866,7 @@ static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to delete a permit\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_delpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_PERMIT);
+			aim_ssi_delpord(od->sess, od->conn, (const char **) &who, 1, AIM_SSI_TYPE_PERMIT);
 	}
 }
 
@@ -3825,7 +3878,7 @@ static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to delete a deny\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_delpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_DENY);
+			aim_ssi_delpord(od->sess, od->conn, (const char **) &who, 1, AIM_SSI_TYPE_DENY);
 	}
 }
 

@@ -168,6 +168,17 @@ struct client_info_s {
 	  "en", \
 }
 
+#define CLIENTINFO_AIM_5_0_2938 { \
+	  "AOL Instant Messenger, version 5.0.2938/WIN32", \
+	  0x0109, \
+	  0x0005, \
+	  0x0000, \
+	  0x0000, \
+	  0x0b7a, \
+	  "us", \
+	  "en", \
+}
+
 #define CLIENTINFO_ICQ_4_65_3281 { \
 	"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85", \
 	0x010a, \
@@ -715,6 +726,7 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_CUSTOMCHARSET	0x0200 /* charset fields set */
 #define AIM_IMFLAGS_MULTIPART		0x0400 /* ->mpmsg section valid */
 #define AIM_IMFLAGS_OFFLINE		0x0800 /* send to offline user */
+#define AIM_IMFLAGS_TYPINGNOT		0x1000 /* typing notification */
 
 /*
  * Multipart message structures.
@@ -883,6 +895,8 @@ faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, co
 faim_export int aim_send_im_ch2_geticqmessage(aim_session_t *sess, const char *sn, int type);
 faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize);
 faim_export int aim_send_im_ch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
+
+faim_export int aim_mtn_send(aim_session_t *sess, fu16_t type1, char *sn, fu16_t type2);
 
 faim_export aim_conn_t *aim_getfile_initiate(aim_session_t *sess, aim_conn_t *conn, const char *destsn);
 faim_export int aim_oft_getfile_request(aim_session_t *sess, aim_conn_t *conn, const char *name, int size);
@@ -1072,7 +1086,7 @@ faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list);
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char **sn, unsigned int num);
 faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
+faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, const char **gn, unsigned int num);
 faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, const char **sn, unsigned int num, fu16_t type);
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn, char *sn);
 faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn);

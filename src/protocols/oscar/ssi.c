@@ -416,7 +416,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 			char *newgroup;
 			newgroup = (char*)malloc(strlen("Unknown")*sizeof(char));
 			strcpy(newgroup, "Unknown");
-			aim_ssi_addgroups(sess, conn, &newgroup, 1);
+			aim_ssi_addgroups(sess, conn, (const char**)&newgroup, 1);
 		}
 	}
 
@@ -581,7 +581,7 @@ faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn)
  * @param num The number of groups names you are adding (size of the sn array).
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num)
+faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, const char **gn, unsigned int num)
 {
 	struct aim_ssi_item *parentgroup, **newitems;
 	fu16_t i;
@@ -714,7 +714,7 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
 
 	/* Look up the new parent group */
 	if (!(groups[1] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, newgn, AIM_SSI_TYPE_GROUP))) {
-		aim_ssi_addgroups(sess, conn, &newgn, 1);
+		aim_ssi_addgroups(sess, conn, (const char**)&newgn, 1);
 		if (!(groups[1] = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, newgn, AIM_SSI_TYPE_GROUP))) {
 			free(groups);
 			return -ENOMEM;
