@@ -195,6 +195,7 @@ faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	int bslen;
+	struct aim_icq_info *info;
 
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
@@ -222,6 +223,13 @@ faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin)
 	aimbs_putle32(&fr->data, atoi(uin));
 
 	aim_tx_enqueue(sess, fr);
+
+	/* Keep track of this request and the ICQ number and request ID */
+	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+	info->reqid = snacid;
+	info->uin = atoi(uin);
+	info->next = sess->icq_info;
+	sess->icq_info = info;
 
 	return 0;
 }
@@ -509,7 +517,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		} /* End switch statement */
 
 		if (!(snac->flags & 0x0001)) {
-			if (cmd != 0x104)
+			if (subtype != 0x0104)
 				if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO)))
 					ret = userfunc(sess, rx, info);
 
