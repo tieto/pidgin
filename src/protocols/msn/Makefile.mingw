@@ -77,6 +77,7 @@ C_SRC =			dispatch.c \
 			msnobject.c \
 			msnslp.c \
 			notification.c \
+			nexus.c \
 			page.c \
 			servconn.c \
 			session.c \

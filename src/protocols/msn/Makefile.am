@@ -21,6 +21,8 @@ MSNSOURCES = \
 	msnobject.h \
 	msnslp.c \
 	msnslp.h \
+	nexus.c \
+	nexus.h \
 	notification.c \
 	notification.h \
 	page.c \

@@ -24,12 +24,13 @@
 
 typedef struct _MsnSession MsnSession;
 
-#include "sslconn.h"
-
+#include "group.h"
+#include "nexus.h"
 #include "servconn.h"
+#include "sslconn.h"
 #include "switchboard.h"
 #include "user.h"
-#include "group.h"
+
 
 struct _MsnSession
 {
@@ -47,16 +48,11 @@ struct _MsnSession
 	MsnServConn *dispatch_conn;
 	MsnServConn *notification_conn;
 
+	MsnNexus *nexus;
+
 	unsigned int trId;
 
 	gboolean http_method;
-
-	char *ssl_url;
-	char *ssl_login_host;
-	char *ssl_login_path;
-	char *ssl_login_params;
-	GHashTable *ssl_challenge_data;
-	GaimSslConnection *ssl_conn;
 
 	MsnUsers *users;
 	MsnGroups *groups;
