@@ -54,7 +54,7 @@ extern char *yahoo_crypt(const char *, const char *);
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 
-#define YAHOO_PROTO_VER 0x0900
+#define YAHOO_PROTO_VER 0x000b
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
