@@ -345,7 +345,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	request_str = g_strdup_printf(
 		"GET %s HTTP/1.1\r\n"
 		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s,pwd=%s,"
-		"lc=%s,id=%s,tw=%s,fs=%s,ct=%s,kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
+		"lc=%s,id=%s,tw=%s,fs=%s,ru=%s,ct=%s,kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
 		"User-Agent: MSMSGS\r\n"
 		"Host: %s\r\n"
 		"Connection: Keep-Alive\r\n"
@@ -358,6 +358,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "id"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "tw"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "fs"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ru"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ct"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kpp"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kv"),
