@@ -67,6 +67,7 @@ typedef struct
 
 	GaimAccount *account;
 	GaimProtocol protocol;
+	char *protocol_id;
 
 	GString *buffer;
 
@@ -134,10 +135,11 @@ gaim_account_destroy(GaimAccount *account)
 	if (account->gc != NULL)
 		gaim_connection_destroy(account->gc);
 
-	if (account->username  != NULL) g_free(account->username);
-	if (account->alias     != NULL) g_free(account->alias);
-	if (account->password  != NULL) g_free(account->password);
-	if (account->user_info != NULL) g_free(account->user_info);
+	if (account->username    != NULL) g_free(account->username);
+	if (account->alias       != NULL) g_free(account->alias);
+	if (account->password    != NULL) g_free(account->password);
+	if (account->user_info   != NULL) g_free(account->user_info);
+	if (account->protocol_id != NULL) g_free(account->protocol_id);
 
 	g_hash_table_destroy(account->settings);
 
@@ -546,6 +548,7 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		GList *l;
 		GaimPlugin *plugin;
 
+		data->protocol_id = g_strdup(buffer);
 		data->protocol = -1;
 
 		for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
@@ -561,8 +564,12 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			}
 		}
 	}
-	else if (data->tag == TAG_NAME)
+	else if (data->tag == TAG_NAME) {
 		data->account = gaim_account_new(buffer, data->protocol);
+		data->account->protocol_id = data->protocol_id;
+
+		data->protocol_id = NULL;
+	}
 	else if (data->tag == TAG_PASSWORD) {
 		gaim_account_set_password(data->account, buffer);
 		gaim_account_set_remember_password(data->account, TRUE);
@@ -706,16 +713,11 @@ __write_setting(gpointer key, gpointer value, gpointer user_data)
 static void
 gaim_accounts_write(FILE *fp, GaimAccount *account)
 {
-	GaimPlugin *plugin;
 	const char *password, *alias, *user_info, *buddy_icon;
 	char *esc;
 
-	plugin = gaim_find_prpl(gaim_account_get_protocol(account));
-
 	fprintf(fp, " <account>\n");
-	fprintf(fp, "  <protocol>%s</protocol>\n",
-			(plugin != NULL && plugin->info != NULL && plugin->info->id != NULL
-			 ? plugin->info->id : "unknown"));
+	fprintf(fp, "  <protocol>%s</protocol>\n", account->protocol_id);
 	esc = g_markup_escape_text(gaim_account_get_username(account), -1);
 	fprintf(fp, "  <name>%s</name>\n", esc);
 	g_free(esc);

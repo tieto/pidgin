@@ -41,6 +41,7 @@ struct _GaimAccount
 	gboolean check_mail;        /**< Check for mail.             */
 
 	GaimProtocol protocol;      /**< The account protocol.       */
+	char *protocol_id;          /**< The ID of the protocol.     */
 
 	GaimConnection *gc;         /**< The connection handle.      */
 
