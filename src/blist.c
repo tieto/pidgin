@@ -23,6 +23,7 @@
 #include "blist.h"
 #include "conversation.h"
 #include "debug.h"
+#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
 #include "privacy.h"
@@ -345,6 +346,33 @@ struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *
 		ops->new_node((GaimBlistNode *)chat);
 
 	return chat;
+}
+
+const char *gaim_chat_get_display_name(struct chat *chat)
+{
+	char *name;
+
+	if(chat->alias){
+		 name = g_strdup(chat->alias);
+	}
+	else{
+		 GList *parts;
+		 GaimPlugin *prpl;
+		 GaimPluginProtocolInfo *prpl_info;
+		 struct proto_chat_entry *pce;
+
+		 prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
+		 prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+		 parts = prpl_info->chat_info(chat->account->gc);
+
+		 pce = parts->data;
+		 name = g_markup_escape_text(g_hash_table_lookup(chat->components,
+														 pce->identifier), -1);
+		 g_list_free(parts);
+	}
+
+	return name;
 }
 
 struct buddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)

@@ -291,6 +291,14 @@ void gaim_blist_rename_group(struct group *group, const char *name);
 struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components);
 
 /**
+ * Gets the alias of the chat, or the chat name if the alias does not exist
+ *
+ * @param chat    The chat
+ * @return        The display name of the chat
+ */
+const char *gaim_chat_get_display_name(struct chat *chat);
+
+/**
  * Adds a new chat to the buddy list.
  *
  * The chat will be inserted right after node or appended to the end
