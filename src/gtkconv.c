@@ -418,7 +418,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 			strcpy(buf, buf2);
 		}
 
-		if ((font_options & OPT_FONT_FGCOL) || gtkconv->has_fg) {
+		if (font_options & OPT_FONT_FGCOL) {
 			g_snprintf(buf2, limit,
 					   "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
 					   gtkconv->fg_color.red   / 256,
@@ -427,12 +427,12 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 			strcpy(buf, buf2);
 		}
 
-		if ((font_options & OPT_FONT_BGCOL) || gtkconv->has_bg) {
+		if (font_options & OPT_FONT_BGCOL) {
 			g_snprintf(buf2, limit,
 					   "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
-					   gtkconv->fg_color.red   / 256,
-					   gtkconv->fg_color.green / 256,
-					   gtkconv->fg_color.blue  / 256, buf);
+					   gtkconv->bg_color.red   / 256,
+					   gtkconv->bg_color.green / 256,
+					   gtkconv->bg_color.blue  / 256, buf);
 			strcpy(buf, buf2);
 		}
 	}
@@ -3301,6 +3301,9 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 		gtkconv->tooltips = gtk_tooltips_new();
 
+		/* Setup the foreground and background colors */
+		gaim_gtkconv_update_font_colors(conv);
+
 		if (conv_type == GAIM_CONV_CHAT) {
 			gtkconv->u.chat = g_malloc0(sizeof(struct gaim_gtk_chat_pane));
 
@@ -4594,6 +4597,21 @@ gaim_gtkconv_update_font_buttons(void)
 			gtk_widget_set_sensitive(gtkconv->toolbar.underline,
 									 (!(font_options & OPT_FONT_UNDERLINE)));
 	}
+}
+
+void
+gaim_gtkconv_update_font_colors(struct gaim_conversation *conv)
+{
+	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	
+		gtkconv->fg_color.red = fgcolor.red;
+		gtkconv->fg_color.blue = fgcolor.blue;
+		gtkconv->fg_color.green = fgcolor.green;
+
+		gtkconv->bg_color.red = bgcolor.red;
+		gtkconv->bg_color.blue = bgcolor.blue;
+		gtkconv->bg_color.green = bgcolor.green;
+
 }
 
 void

@@ -3125,7 +3125,6 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->fg_color = text_color;
-	gtkconv->has_fg = TRUE;
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">",
 			   text_color.red / 256,
 			   text_color.green / 256,
@@ -3156,7 +3155,6 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->bg_color = text_color;
-	gtkconv->has_bg = TRUE;
 	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">",
 			   text_color.red / 256,
 			   text_color.green / 256,

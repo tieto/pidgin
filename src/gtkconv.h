@@ -107,8 +107,6 @@ struct gaim_gtk_conversation
 {
 	gboolean make_sound;
 	gboolean has_font;
-	gboolean has_fg;
-	gboolean has_bg;
 	char fontface[128];
 	GdkColor fg_color;
 	GdkColor bg_color;
@@ -251,6 +249,12 @@ void gaim_gtkconv_set_anim(void);
  * preferences.
  */
 void gaim_gtkconv_update_font_buttons(void);
+
+/**
+ * Updates the font colors of each conversation to the new colors
+ * chosen in the prefs dialog.
+ */
+void gaim_gtkconv_update_font_colors(struct gaim_conversation *conv);
 
 /**
  * Updates the tab positions on all conversation windows to reflect any

@@ -2069,6 +2069,7 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 		destroy_colorsel(NULL, (void *)0);
 		update_color(NULL, pref_bg_picture);
 	}
+	gaim_conversation_foreach(gaim_gtkconv_update_font_colors);
 }
 
 void update_color(GtkWidget *w, GtkWidget *pic)
