@@ -268,19 +268,20 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		pair->key = strtol(key, NULL, 10);
 		accept = x; /* if x is 0 there was no key, so don't accept it */
 
-		if (accept)
-			value = g_malloc(len - pos + 1);
-		x = 0;
-		while (pos + 1 < len) {
-			if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
-				break;
-			if (accept)
-				value[x++] = data[pos++];
+		if (len - pos + 1 <= 0) {
+			/* Truncated. Garbage or something. */
+			accept = 0;
 		}
-		if (accept)
-			value[x] = 0;
-		pos += 2;
+
 		if (accept) {
+			value = g_malloc(len - pos + 1);
+			x = 0;
+			while (pos + 1 < len) {
+				if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
+					break;
+				value[x++] = data[pos++];
+			}
+			value[x] = 0;
 			pair->value = g_strdup(value);
 			g_free(value);
 			pkt->hash = g_slist_append(pkt->hash, pair);
@@ -288,6 +289,11 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		} else {
 			g_free(pair);
 		}
+		pos += 2;
+
+		/* Skip over garbage we've noticed in the mail notifications */
+		if (data[0] == '9' && data[pos] == 0x01)
+			pos++;
 	}
 }
 
