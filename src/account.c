@@ -313,9 +313,7 @@ gaim_account_set_check_mail(GaimAccount *account, gboolean value)
 {
 	g_return_if_fail(account != NULL);
 
-	account->check_mail = value;
-
-	schedule_accounts_save();
+	gaim_account_set_bool(account, "check-mail", value);
 }
 
 void
@@ -581,7 +579,7 @@ gaim_account_get_check_mail(const GaimAccount *account)
 {
 	g_return_val_if_fail(account != NULL, FALSE);
 
-	return account->check_mail;
+	return gaim_account_get_bool(account, "check-mail", FALSE);
 }
 
 gboolean
