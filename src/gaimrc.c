@@ -555,10 +555,13 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 {
 	char *c;
 	int nl = 1, i;
-	if (u->options & OPT_USR_REM_PASS)
-		fprintf(f, "\t\tident { %s } { %s }\n", u->username, u->password);
-	else
+
+	if (u->options & OPT_USR_REM_PASS) {
+		fprintf(f, "\t\tident { %s } { %s }\n", u->username, (c = escape_text2(u->password)));
+		free(c);
+	} else {
 		fprintf(f, "\t\tident { %s } {  }\n", u->username);
+	}
 	fprintf(f, "\t\tuser_info {");
 	c = u->user_info;
 	while (*c) {
@@ -972,12 +975,15 @@ static void gaimrc_read_proxy(FILE *f)
 
 static void gaimrc_write_proxy(FILE *f)
 {
+	char *str;
+
 	fprintf(f, "proxy {\n");
 	fprintf(f, "\thost { %s }\n", proxyhost);
 	fprintf(f, "\tport { %d }\n", proxyport);
 	fprintf(f, "\ttype { %d }\n", proxytype);
 	fprintf(f, "\tuser { %s }\n", proxyuser);
-	fprintf(f, "\tpass { %s }\n", proxypass);
+	fprintf(f, "\tpass { %s }\n", (str = escape_text2(proxypass)));
+	free(str);
 	fprintf(f, "}\n");
 }
 
