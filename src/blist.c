@@ -687,9 +687,12 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 			g_free(hb);
 		}
 
-		if(!bnode->parent->child)
+		if(!bnode->parent->child) {
 			gaim_blist_remove_contact((GaimContact*)bnode->parent);
-
+		} else {
+			gaim_contact_compute_priority_buddy((GaimContact*)bnode->parent);
+			ops->update(gaimbuddylist, bnode->parent);
+		}
 	}
 
 	if(node && GAIM_BLIST_NODE_IS_BUDDY(node)) {
