@@ -1343,7 +1343,7 @@ gaim_find_conversation(GaimConversationType type,
 		c = (GaimConversation *)cnv->data;
 		name2 = gaim_normalize(NULL, gaim_conversation_get_name(c));
 
-		if ((type == gaim_conversation_get_type(c)) &&
+		if (((type == GAIM_CONV_ANY) || (type == gaim_conversation_get_type(c))) &&
 				!gaim_utf8_strcasecmp(name1, name2))
 			break;
 
@@ -1373,7 +1373,7 @@ gaim_find_conversation_with_account(GaimConversationType type,
 		c = (GaimConversation *)cnv->data;
 		name2 = gaim_normalize(account, gaim_conversation_get_name(c));
 
-		if ((type == gaim_conversation_get_type(c)) &&
+		if (((type == GAIM_CONV_ANY) || (type == gaim_conversation_get_type(c))) &&
 				(account == gaim_conversation_get_account(c)) &&
 				!gaim_utf8_strcasecmp(name1, name2)) {
 
