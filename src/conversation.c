@@ -259,7 +259,8 @@ common_send(GaimConversation *conv, const char *message)
 
 		buffy = g_strdup(buf);
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
-						 conv, &buffy);
+						 gaim_conversation_get_account(conv),
+						 gaim_conversation_get_name(conv), &buffy);
 
 		if (buffy != NULL) {
 			int imflags = 0;
@@ -392,7 +393,8 @@ common_send(GaimConversation *conv, const char *message)
 			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
-							 conv, buffy);
+							 gaim_conversation_get_account(conv),
+							 gaim_conversation_get_name(conv), buffy);
 
 			g_free(buffy);
 		}
@@ -401,13 +403,15 @@ common_send(GaimConversation *conv, const char *message)
 		buffy = g_strdup(buf);
 
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-chat-msg",
-						 conv, &buffy);
+						 gaim_conversation_get_account(conv), &buffy,
+						 gaim_chat_get_id(GAIM_CHAT(conv)));
 
 		if (buffy != NULL) {
 			err = serv_chat_send(gc, gaim_chat_get_id(GAIM_CHAT(conv)), buffy);
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
-							 conv, buf);
+							 gaim_conversation_get_account(conv), buf,
+							 gaim_chat_get_id(GAIM_CHAT(conv)));
 
 			g_free(buffy);
 		}
@@ -2621,22 +2625,22 @@ gaim_conversations_init(void)
 	gaim_signal_register(handle, "displayed-im-msg",
 						 gaim_marshal_VOID__POINTER_POINTER);
 	gaim_signal_register(handle, "sending-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
 	gaim_signal_register(handle, "sent-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
 	gaim_signal_register(handle, "received-im-msg",
-			gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER);
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER);
 
 	gaim_signal_register(handle, "displaying-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER);
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_UINT);
 	gaim_signal_register(handle, "displayed-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT);
 	gaim_signal_register(handle, "sending-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT);
 	gaim_signal_register(handle, "sent-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER);
+						 gaim_marshal_VOID__POINTER_POINTER_UINT);
 	gaim_signal_register(handle, "received-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER);
+				gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT);
 
 	gaim_signal_register(handle, "conversation-switching",
 						 gaim_marshal_VOID__POINTER_POINTER);

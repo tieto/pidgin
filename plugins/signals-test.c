@@ -175,31 +175,32 @@ displayed_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
 }
 
 static gboolean
-sending_im_msg_cb(GaimConversation *conv, char **buffer, void *data)
+sending_im_msg_cb(GaimAccount *account, char *recipient, char **buffer, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sending-im-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), *buffer);
+			   "sending-im-msg (%s, %s, %s)\n",
+			   gaim_account_get_username(account), recipient,
+			   *buffer);
 
 	return FALSE;
 }
 
 static void
-sent_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+sent_im_msg_cb(GaimAccount *account, const char *recipient, const char *buffer, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sent-im-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), buffer);
+			   "sent-im-msg (%s, %s, %s)\n",
+			   gaim_account_get_username(account),
+			   recipient, buffer);
 }
 
 static gboolean
-received_im_msg_cb(GaimAccount *account, GaimConversation *conv,
-				   char **sender, char **buffer, int *flags, void *data)
+received_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
+				   int *flags, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "received-im-msg (%s, %s, %s, %s, %d)\n",
-			   gaim_account_get_username(account),
-			   gaim_conversation_get_name(conv), *sender, *buffer, *flags);
+			   "received-im-msg (%s, %s, %s, %d)\n",
+			   gaim_account_get_username(account), *sender, *buffer, *flags);
 
 	return FALSE;
 }
@@ -223,31 +224,30 @@ displayed_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
 }
 
 static gboolean
-sending_chat_msg_cb(GaimConversation *conv, char **buffer, void *data)
+sending_chat_msg_cb(GaimAccount *account, char **buffer, int id, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sending-chat-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), *buffer);
+			   "sending-chat-msg (%s, %s, %d)\n",
+			   gaim_account_get_username(account), *buffer, id);
 
 	return FALSE;
 }
 
 static void
-sent_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+sent_chat_msg_cb(GaimAccount *account, const char *buffer, int id, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sent-chat-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), buffer);
+			   "sent-chat-msg (%s, %s, %d)\n",
+			   gaim_account_get_username(account), buffer, id);
 }
 
 static gboolean
-received_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
-					 char **sender, char **buffer, void *data)
+received_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
+					 int id, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "received-chat-msg (%s, %s, %s, %s)\n",
-			   gaim_account_get_username(account),
-			   gaim_conversation_get_name(conv), *sender, *buffer);
+			   "received-chat-msg (%s, %s, %s, %s, %d)\n",
+			   gaim_account_get_username(account), *sender, *buffer, id);
 
 	return FALSE;
 }

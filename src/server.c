@@ -858,8 +858,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		plugin_return = GPOINTER_TO_INT(
 			gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-									  "received-im-msg",
-									  cnv, &angel, &buffy, &flags));
+									  "received-im-msg", gc->account,
+									  &angel, &buffy, &flags));
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -1472,8 +1472,9 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-								  "received-chat-msg",
-								  conv, &angel, &buffy));
+								  "received-chat-msg", g->account,
+								  &angel, &buffy,
+								  gaim_chat_get_id(GAIM_CHAT(conv))));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
