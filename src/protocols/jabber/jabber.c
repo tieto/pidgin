@@ -1038,7 +1038,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roster_group_rename,
 	NULL,
 	NULL, /* convo_closed */ /* XXX: thread_ids */
-	NULL /* normalize */
+	jabber_normalize /* normalize */
 };
 
 static GaimPluginInfo info =

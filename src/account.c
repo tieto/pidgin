@@ -1526,12 +1526,12 @@ gaim_accounts_find_with_prpl_num(const char *name, GaimProtocol protocol)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	who = g_strdup(gaim_normalize(name));
+	who = g_strdup(gaim_normalize(NULL, name));
 
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = (GaimAccount *)l->data;
 
-		if (!strcmp(gaim_normalize(gaim_account_get_username(account)), who)) {
+		if (!strcmp(gaim_normalize(NULL, gaim_account_get_username(account)), who)) {
 			if (protocol != -1) {
 				if (gaim_account_get_protocol(account) == protocol)
 					break;
@@ -1557,12 +1557,12 @@ gaim_accounts_find(const char *name, const char *protocol_id)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	who = g_strdup(gaim_normalize(name));
+	who = g_strdup(gaim_normalize(NULL, name));
 
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = (GaimAccount *)l->data;
 
-		if (!strcmp(gaim_normalize(gaim_account_get_username(account)), who) &&
+		if (!strcmp(gaim_normalize(NULL, gaim_account_get_username(account)), who) &&
 			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
 
 			break;

@@ -1792,10 +1792,10 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), info->sn))
 		gaim_connection_set_display_name(gc, info->sn);
 
-	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(info->sn));
+	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
-		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(info->sn)), bi);
+		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, info->sn)), bi);
 	}
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
@@ -1839,7 +1839,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			while (cur && aim_sncmp((char *)cur->data, info->sn))
 				cur = cur->next;
 			if (!cur) {
-				od->requesticon = g_slist_append(od->requesticon, strdup(gaim_normalize(info->sn)));
+				od->requesticon = g_slist_append(od->requesticon, strdup(gaim_normalize(gc->account, info->sn)));
 				if (od->icontimer)
 					g_source_remove(od->icontimer);
 				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
@@ -1865,7 +1865,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0);
 
-	g_hash_table_remove(od->buddyinfo, gaim_normalize(info->sn));
+	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 
 	return 1;
 }
@@ -2161,10 +2161,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	struct buddyinfo *bi;
 	const char *iconfile;
 
-	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(userinfo->sn));
+	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, userinfo->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
-		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(userinfo->sn)), bi);
+		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, userinfo->sn)), bi);
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
@@ -4193,7 +4193,7 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 		GSList *list;
 		for (list=gc->account->deny; (list && aim_sncmp(name, list->data)); list=list->next);
 		if (!list) {
-			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(name));
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, name));
 			if (bi && bi->typingnot) {
 				if (typing == GAIM_TYPING)
 					aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
@@ -4230,10 +4230,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		struct stat st;
 		gsize len;
 
-		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(name));
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, name));
 		if (!bi) {
 			bi = g_new0(struct buddyinfo, 1);
-			g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(name)), bi);
+			g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, name)), bi);
 		}
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
@@ -5364,7 +5364,7 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
-	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->name));
+	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
 	gchar *tmp = NULL, *ret = g_strdup("");
 
@@ -5462,7 +5462,7 @@ static char *oscar_status_text(GaimBuddy *b) {
 		else
 			ret = g_strdup(_("Away"));
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
-		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->name));
+		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 		if (bi->availmsg)
 			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 	} else {

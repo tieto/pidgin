@@ -5,7 +5,7 @@
  *
  *	$Source$
  *	$Author: faceprint $
- *	$Id: zephyr.h 5500 2003-04-15 04:18:00Z faceprint $
+ *	$Id: zephyr.h 7838 2003-10-14 05:07:39Z faceprint $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
@@ -89,7 +89,7 @@ typedef struct _ZNotice_t {
     int			z_authent_len;
     char		*z_ascii_authent;
     char		*z_class;
-    char		*z_class_inst;
+    const char	*z_class_inst;
     char		*z_opcode;
     char		*z_sender;
     const char		*z_recipient;
@@ -161,7 +161,7 @@ Code_t ZFormatSmallNotice ZP((ZNotice_t*, ZPacket_t, int*, Z_AuthProc));
 Code_t ZFormatRawNoticeList ZP((ZNotice_t *notice, char *list[], int nitems,
 				char **buffer, int *ret_len));
 Code_t ZLocateUser ZP((char *, int *, Z_AuthProc));
-Code_t ZRequestLocations ZP((char *, ZAsyncLocateData_t *,
+Code_t ZRequestLocations ZP((const char *, ZAsyncLocateData_t *,
 			     ZNotice_Kind_t, Z_AuthProc));
 Code_t ZhmStat ZP((struct in_addr *, ZNotice_t *));
 Code_t ZInitialize ZP((void));

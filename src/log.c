@@ -47,11 +47,11 @@ struct log_conversation *find_log_info(const char *name)
 	struct log_conversation *l;
 
 
-	strcpy(pname, gaim_normalize(name));
+	strcpy(pname, gaim_normalize(NULL, name));
 
 	while (lc) {
 		l = (struct log_conversation *)lc->data;
-		if (!gaim_utf8_strcasecmp(pname, gaim_normalize(l->name))) {
+		if (!gaim_utf8_strcasecmp(pname, gaim_normalize(NULL, l->name))) {
 			g_free(pname);
 			return l;
 		}
@@ -215,7 +215,7 @@ FILE *open_log_file(const char *name, int is_chat)
 		return fd;
 	}
 
-	g_snprintf(realname, sizeof(realname), "%s.log", gaim_normalize(name));
+	g_snprintf(realname, sizeof(realname), "%s.log", gaim_normalize(NULL, name));
 	fd = open_gaim_log_file(realname, &flag);
 
 	if (fd && flag) {	/* is a new file */

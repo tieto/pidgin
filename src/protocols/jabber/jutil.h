@@ -22,6 +22,8 @@
 #ifndef _GAIM_JABBER_JID_H_
 #define _GAIM_JABBER_JID_H_
 
+#include "account.h"
+
 
 typedef struct _JabberID {
 	char *node;
@@ -37,5 +39,7 @@ char *jabber_get_bare_jid(const char *jid);
 
 time_t str_to_time(const char *timestamp);
 const char *jabber_get_state_string(int state);
+
+const char *jabber_normalize(const GaimAccount *account, const char *in);
 
 #endif /* _GAIM_JABBER_JID_H_ */

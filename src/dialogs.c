@@ -553,7 +553,7 @@ static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
 	char *who;
 
 	if (resp == GTK_RESPONSE_OK) {
-		who = g_strdup(gaim_normalize(gtk_entry_get_text(GTK_ENTRY(info->entry))));
+		who = g_strdup(gaim_normalize(info->gc->account, gtk_entry_get_text(GTK_ENTRY(info->entry))));
 
 		if (!g_ascii_strcasecmp(who, "")) {
 			g_free(who);
@@ -966,7 +966,7 @@ void show_log_dialog(GaimConversation *c)
 			GTK_FILE_SELECTION(gtkconv->dialogs.log));
 
 		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log",
-				   gaim_home_dir(), gaim_normalize(c->name));
+				   gaim_home_dir(), gaim_normalize(c->account, c->name));
 		g_object_set_data(G_OBJECT(gtkconv->dialogs.log), "dialog_type",
 								 "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.log),
@@ -1893,7 +1893,7 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	name = g_object_get_data(G_OBJECT(filesel), "name");
 	tmp = gaim_user_dir();
 	g_snprintf(filename, PATHSIZE, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
-		   name ? gaim_normalize(name) : "system", name ? ".log" : "");
+		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
 
 	file = (const char*)gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	strncpy(path, file, PATHSIZE - 1);
@@ -1931,7 +1931,7 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	gchar buf[BUF_LEN];
 
 	g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s%s", gaim_home_dir(),
-		   name ? gaim_normalize(name) : "system", name ? ".log" : "");
+		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
 
 	filesel = gtk_file_selection_new(_("Save Log File"));
 	g_signal_connect(G_OBJECT(filesel), "delete_event",
@@ -1960,7 +1960,7 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 
 	tmp = gaim_user_dir();
 	g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
-		   name ? gaim_normalize(name) : "system", name ? ".log" : "");
+		   name ? gaim_normalize(NULL, name) : "system", name ? ".log" : "");
 
 	if ((remove(filename)) == -1) {
 		g_snprintf(buf, 256, _("Couldn't remove file %s." ), filename);
@@ -2029,7 +2029,7 @@ static void log_show_convo(struct view_log *view)
 
 	if (view->name) {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(view->name));
+		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(NULL, view->name));
 	} else {
 		char *tmp = gaim_user_dir();
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "system", tmp);
@@ -2205,7 +2205,7 @@ void show_log(char *nm)
 
 	if (name) {
 		char *tmp = gaim_user_dir();
-		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(name));
+		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, gaim_normalize(NULL, name));
 		if ((fp = fopen(filename, "r")) == NULL) {
 			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
 			gaim_notify_error(NULL, NULL, buf, strerror(errno));

@@ -372,7 +372,7 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 	g_return_if_fail(pouncee != NULL);
 	g_return_if_fail(events  != GAIM_POUNCE_NONE);
 
-	norm_pouncee = g_strdup(gaim_normalize(pouncee));
+	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
 
 	for (l = gaim_pounces_get_all(); l != NULL; l = l_next)
 	{
@@ -381,7 +381,7 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_normalize(gaim_pounce_get_pouncee(pounce)),
+			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
 								  norm_pouncee))
 		{
 			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
@@ -411,7 +411,7 @@ gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
 	g_return_val_if_fail(pouncee != NULL, NULL);
 	g_return_val_if_fail(events  != GAIM_POUNCE_NONE, NULL);
 
-	norm_pouncee = g_strdup(pouncee);
+	norm_pouncee = g_strdup(gaim_normalize(pouncer, pouncee));
 
 	for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
 	{
@@ -419,7 +419,7 @@ gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_normalize(gaim_pounce_get_pouncee(pounce)),
+			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
 								  norm_pouncee))
 		{
 			break;

@@ -4,7 +4,7 @@
  *	Created by:	Marc Horowitz
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: faceprint $
  *
  *	Copyright (c) 1990,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -15,11 +15,11 @@
 #include <internal.h>
 
 #ifndef lint
-static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 7838 2003-10-14 05:07:39Z faceprint $";
 #endif
 
 Code_t ZRequestLocations(user, zald, kind, auth)
-     char *user;
+     const char *user;
      register ZAsyncLocateData_t *zald;
      ZNotice_Kind_t kind;	/* UNSAFE, UNACKED, or ACKED */
      Z_AuthProc auth;

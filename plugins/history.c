@@ -24,7 +24,7 @@ static void historize(GaimConversation *c)
 	struct stat st;
 	FILE *fd;
 	char *userdir = g_strdup(gaim_user_dir());
-	char *logfile = g_strdup_printf("%s.log", gaim_normalize(name));
+	char *logfile = g_strdup_printf("%s.log", gaim_normalize(c->account, name));
 	char *path = g_build_filename(userdir, "logs", logfile, NULL);
 	char buf[HISTORY_SIZE+1];
 	char *tmp, *tmp2;

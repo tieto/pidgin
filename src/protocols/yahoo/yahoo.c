@@ -859,7 +859,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 {
 	struct yahoo_packet *pack;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *name = gaim_normalize(gaim_account_get_username(account));
+	const char *name = gaim_normalize(account, gaim_account_get_username(account));
 	const char *pass = gaim_account_get_password(account);
 	struct yahoo_data *yd = gc->proto_data;
 
@@ -977,7 +977,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 {
 	struct yahoo_packet *pack = NULL;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *name = gaim_normalize(gaim_account_get_username(account));
+	const char *name = gaim_normalize(account, gaim_account_get_username(account));
 	const char *pass = gaim_account_get_password(account);
 	struct yahoo_data *yd = gc->proto_data;
 
@@ -1721,7 +1721,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, gaim_normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
@@ -1752,8 +1752,8 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
 
-	yahoo_packet_hash(pkt, 0, gaim_normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
-	yahoo_packet_hash(pkt, 1, gaim_normalize(gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash(pkt, 0, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_packet_hash(pkt, 6, yd->auth);
 	yahoo_send_packet(yd, pkt);
 

@@ -1250,30 +1250,43 @@ gaim_fd_get_ip(int fd)
  * String Functions
  **************************************************************************/
 const char *
-gaim_normalize(const char *s)
+gaim_normalize(const GaimAccount *account, const char *s)
 {
-	static char buf[BUF_LEN];
-	char *tmp;
-	int i, j;
+	GaimPlugin *prpl = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	g_return_val_if_fail(s != NULL, NULL);
+	if(account)
+		prpl = gaim_find_prpl(gaim_account_get_protocol(account));
 
-	strncpy(buf, s, BUF_LEN);
-	for (i=0, j=0; buf[j]; i++, j++) {
-		while (buf[j] == ' ')
-			j++;
-		buf[i] = buf[j];
+	if(prpl)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->normalize) {
+		return prpl_info->normalize(account, s);
+	} else {
+		static char buf[BUF_LEN];
+		char *tmp;
+		int i, j;
+
+		g_return_val_if_fail(s != NULL, NULL);
+
+		strncpy(buf, s, BUF_LEN);
+		for (i=0, j=0; buf[j]; i++, j++) {
+			while (buf[j] == ' ')
+				j++;
+			buf[i] = buf[j];
+		}
+		buf[i] = '\0';
+
+		tmp = g_utf8_strdown(buf, -1);
+		g_snprintf(buf, sizeof(buf), "%s", tmp);
+		g_free(tmp);
+		tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
+		g_snprintf(buf, sizeof(buf), "%s", tmp);
+		g_free(tmp);
+
+		return buf;
 	}
-	buf[i] = '\0';
-
-	tmp = g_utf8_strdown(buf, -1);
-	g_snprintf(buf, sizeof(buf), "%s", tmp);
-	g_free(tmp);
-	tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
-	g_snprintf(buf, sizeof(buf), "%s", tmp);
-	g_free(tmp);
-
-	return buf;
 }
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,

@@ -183,3 +183,14 @@ char *jabber_get_bare_jid(const char *jid)
 	else
 		return g_strdup(jid);
 }
+
+const char *jabber_normalize(const GaimAccount *account, const char *in)
+{
+	static char buf[2048]; /* maximum legal length of a jabber jid */
+	char *tmp;
+
+	tmp = jabber_get_bare_jid(in);
+	g_snprintf(buf, sizeof(buf), "%s", tmp);
+	g_free(tmp);
+	return buf;
+}

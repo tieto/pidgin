@@ -634,7 +634,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		else
 			password = g_strdup(gaim_account_get_password(gc->account));
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
-			   AUTH_HOST, AUTH_PORT, gaim_normalize(username),
+			   AUTH_HOST, AUTH_PORT, gaim_normalize(gc->account, username),
 			   roast_password(password), LANGUAGE, REVISION);
 		g_free(password);
 		if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
@@ -702,7 +702,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			tdt->state = STATE_ONLINE;
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
 				   AUTH_HOST, AUTH_PORT,
-				   gaim_normalize(gaim_account_get_username(gc->account)),
+				   gaim_normalize(gc->account, gaim_account_get_username(gc->account)),
 				   roast_password(gaim_account_get_password(gc->account)),
 				   LANGUAGE, REVISION);
 			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
@@ -779,8 +779,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		} else
 			time_idle = 0;
 
-		tmp = g_strdup(gaim_normalize(gaim_account_get_username(gc->account)));
-		if (!strcmp(tmp, gaim_normalize(c)))
+		tmp = g_strdup(gaim_normalize(gc->account, gaim_account_get_username(gc->account)));
+		if (!strcmp(tmp, gaim_normalize(gc->account, c)))
 			gaim_connection_set_display_name(gc, c);
 		g_free(tmp);
 
@@ -1067,7 +1067,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 		g_free(buf1);
 		return -E2BIG;
 	}
-	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", gaim_normalize(name), buf1, 
+	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", gaim_normalize(gc->account, name), buf1,
 						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
 #else
@@ -1091,7 +1091,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 		return -E2BIG;
 	}
 
-	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", gaim_normalize(name), buf1, 
+	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", gaim_normalize(gc->account, name), buf1, 
 						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? "auto" : ""));
 	g_free(buf1);
 #endif
@@ -1111,18 +1111,18 @@ static void toc_set_config(GaimConnection *gc)
 	g_free(buf);
 }
 
-static void toc_get_info(GaimConnection *g, const char *name)
+static void toc_get_info(GaimConnection *gc, const char *name)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, MSG_LEN, "toc_get_info %s", gaim_normalize(name));
-	sflap_send(g, buf, -1, TYPE_DATA);
+	g_snprintf(buf, MSG_LEN, "toc_get_info %s", gaim_normalize(gc->account, name));
+	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
-static void toc_get_dir(GaimConnection *g, const char *name)
+static void toc_get_dir(GaimConnection *gc, const char *name)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", gaim_normalize(name));
-	sflap_send(g, buf, -1, TYPE_DATA);
+	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", gaim_normalize(gc->account, name));
+	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
 static void toc_set_dir(GaimConnection *g, const char *first, const char *middle, const char *last,
@@ -1184,55 +1184,56 @@ static void toc_change_passwd(GaimConnection *g, const char *orig, const char *n
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_add_buddy(GaimConnection *g, const char *name, GaimGroup *group)
+static void
+toc_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", gaim_normalize(name));
-	sflap_send(g, buf, -1, TYPE_DATA);
-	toc_set_config(g);
+	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", gaim_normalize(gc->account, name));
+	sflap_send(gc, buf, -1, TYPE_DATA);
+	toc_set_config(gc);
 }
 
-static void toc_add_buddies(GaimConnection *g, GList *buddies)
+static void toc_add_buddies(GaimConnection *gc, GList *buddies)
 {
 	char buf[BUF_LEN * 2];
 	int n;
 
 	n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 	while (buddies) {
-		if (strlen(gaim_normalize(buddies->data)) + n + 32 > MSG_LEN) {
-			sflap_send(g, buf, -1, TYPE_DATA);
+		if (strlen(gaim_normalize(gc->account, buddies->data)) + n + 32 > MSG_LEN) {
+			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(buddies->data));
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddies->data));
 		buddies = buddies->next;
 	}
-	sflap_send(g, buf, -1, TYPE_DATA);
+	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
-static void toc_remove_buddy(GaimConnection *g, const char *name, const char *group)
+static void toc_remove_buddy(GaimConnection *gc, const char *name, const char *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", gaim_normalize(name));
-	sflap_send(g, buf, -1, TYPE_DATA);
-	toc_set_config(g);
+	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", gaim_normalize(gc->account, name));
+	sflap_send(gc, buf, -1, TYPE_DATA);
+	toc_set_config(gc);
 }
 
-static void toc_remove_buddies(GaimConnection *g, GList *buddies, const char *group)
+static void toc_remove_buddies(GaimConnection *gc, GList *buddies, const char *group)
 {
 	char buf[BUF_LEN * 2];
 	int n;
 
 	n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
 	while (buddies) {
-		if (strlen(gaim_normalize(buddies->data)) + n + 32 > MSG_LEN) {
-			sflap_send(g, buf, -1, TYPE_DATA);
+		if (strlen(gaim_normalize(gc->account, buddies->data)) + n + 32 > MSG_LEN) {
+			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(buddies->data));
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", gaim_normalize(gc->account, buddies->data));
 		buddies = buddies->next;
 	}
-	sflap_send(g, buf, -1, TYPE_DATA);
-	toc_set_config(g);
+	sflap_send(gc, buf, -1, TYPE_DATA);
+	toc_set_config(gc);
 }
 
 static void toc_set_idle(GaimConnection *g, int time)
@@ -1289,12 +1290,12 @@ static void toc_join_chat(GaimConnection *g, GHashTable *data)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_chat_invite(GaimConnection *g, int id, const char *message, const char *name)
+static void toc_chat_invite(GaimConnection *gc, int id, const char *message, const char *name)
 {
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id,
-			message ? message : "", gaim_normalize(name));
-	sflap_send(g, buf, -1, TYPE_DATA);
+			message ? message : "", gaim_normalize(gc->account, name));
+	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
 static void toc_chat_leave(GaimConnection *g, int id)
@@ -1324,13 +1325,13 @@ static void toc_chat_leave(GaimConnection *g, int id)
 	}
 }
 
-static void toc_chat_whisper(GaimConnection *g, int id, const char *who, const char *message)
+static void toc_chat_whisper(GaimConnection *gc, int id, const char *who, const char *message)
 {
 	char *buf1, *buf2;
 	buf1 = escape_text(message);
-	buf2 = g_strdup_printf("toc_chat_whisper %d %s \"%s\"", id, gaim_normalize(who), buf1);
+	buf2 = g_strdup_printf("toc_chat_whisper %d %s \"%s\"", id, gaim_normalize(gc->account, who), buf1);
 	g_free(buf1);
-	sflap_send(g, buf2, -1, TYPE_DATA);
+	sflap_send(gc, buf2, -1, TYPE_DATA);
 	g_free(buf2);
 }
 
@@ -1411,7 +1412,7 @@ static void toc_add_permit(GaimConnection *gc, const char *who)
 	char buf2[BUF_LEN * 2];
 	if (gc->account->perm_deny != 3)
 		return;
-	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", gaim_normalize(who));
+	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", gaim_normalize(gc->account, who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1421,7 +1422,7 @@ static void toc_add_deny(GaimConnection *gc, const char *who)
 	char buf2[BUF_LEN * 2];
 	if (gc->account->perm_deny != 4)
 		return;
-	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", gaim_normalize(who));
+	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", gaim_normalize(gc->account, who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1458,7 +1459,7 @@ static void toc_set_permit_deny(GaimConnection *gc)
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
 		list = gc->account->permit;
 		while (list) {
-			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", gaim_normalize(list->data));
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", gaim_normalize(gc->account, list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
 				sflap_send(gc, buf2, -1, TYPE_DATA);
 				at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
@@ -1476,7 +1477,7 @@ static void toc_set_permit_deny(GaimConnection *gc)
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
 		list = gc->account->deny;
 		while (list) {
-			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", gaim_normalize(list->data));
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", gaim_normalize(gc->account, list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
 				sflap_send(gc, buf2, -1, TYPE_DATA);
 				at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");

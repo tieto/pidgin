@@ -1293,6 +1293,8 @@ gaim_get_chats(void)
 	return chats;
 }
 
+
+/* This is deprecated, right? */
 GaimConversation *
 gaim_find_conversation(const char *name)
 {
@@ -1302,12 +1304,12 @@ gaim_find_conversation(const char *name)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(gaim_normalize(name));
+	cuser = g_strdup(gaim_normalize(NULL, name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
 
-		if (!gaim_utf8_strcasecmp(cuser, gaim_normalize(gaim_conversation_get_name(c))))
+		if (!gaim_utf8_strcasecmp(cuser, gaim_normalize(NULL, gaim_conversation_get_name(c))))
 			break;
 
 		c = NULL;
@@ -1328,13 +1330,13 @@ gaim_find_conversation_with_account(const char *name,
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(gaim_normalize(name));
+	cuser = g_strdup(gaim_normalize(account, name));
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (GaimConversation *)cnv->data;
 
 		if (!gaim_utf8_strcasecmp(cuser,
-								  gaim_normalize(gaim_conversation_get_name(c))) &&
+								  gaim_normalize(account, gaim_conversation_get_name(c))) &&
 			account == gaim_conversation_get_account(c)) {
 
 			break;
@@ -1839,11 +1841,11 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 		char *str;
 		const char *disp;
 
-		str = g_strdup(gaim_normalize(who));
+		str = g_strdup(gaim_normalize(account, who));
 		disp = gaim_connection_get_display_name(gc);
 
-		if (!gaim_utf8_strcasecmp(str, gaim_normalize(gaim_account_get_username(account))) ||
-			(disp && !gaim_utf8_strcasecmp(str, gaim_normalize(disp)))) {
+		if (!gaim_utf8_strcasecmp(str, gaim_normalize(account, gaim_account_get_username(account))) ||
+			(disp && !gaim_utf8_strcasecmp(str, gaim_normalize(account, disp)))) {
 
 			flags |= GAIM_MESSAGE_SEND;
 		}

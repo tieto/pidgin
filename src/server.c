@@ -1093,9 +1093,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
 				   OPT_PROTO_CORRECT_TIME)) {
 
-		char *tmp = g_strdup(gaim_normalize(name));
+		char *tmp = g_strdup(gaim_normalize(account, name));
 		if (!gaim_utf8_strcasecmp(tmp,
-				gaim_normalize(gaim_account_get_username(account)))) {
+				gaim_normalize(account, gaim_account_get_username(account)))) {
 
 			gc->evil = evil;
 			gc->login_time_official = signon;

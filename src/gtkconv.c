@@ -2819,7 +2819,7 @@ save_convo(GtkWidget *save, GaimConversation *c)
 	window = gtk_file_selection_new(_("Gaim - Save Conversation"));
 
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log",
-			   gaim_home_dir(), gaim_normalize(c->name));
+			   gaim_home_dir(), gaim_normalize(c->account, c->name));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 			"gaim_conversation", c);

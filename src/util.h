@@ -302,11 +302,12 @@ char *gaim_fd_get_ip(int fd);
  * g_strdup() it. Also, calling normalize() twice in the same line
  * will lead to problems.
  *
- * @param str The string to normalize.
+ * @param account  The account the string belongs to.
+ * @param str      The string to normalize.
  *
  * @return A pointer to the normalized version stored in a static buffer.
  */
-const char *gaim_normalize(const char *str);
+const char *gaim_normalize(const GaimAccount *account, const char *str);
 
 /**
  * Looks for %n, %d, or %t in a string, and replaces them with the

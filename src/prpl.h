@@ -306,7 +306,7 @@ struct _GaimPluginProtocolInfo
 
 	void (*convo_closed)(GaimConnection *, const char *who);
 
-	char *(*normalize)(const char *);
+	const char *(*normalize)(const GaimAccount *, const char *);
 
 	void (*set_buddy_icon)(GaimConnection *, const char *filename);
 
