@@ -30,6 +30,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
+#include <gdk/gdkx.h>
 #endif /* USE_SCREENSAVER */
 
 #include "multi.h"
@@ -42,7 +43,6 @@ gint check_idle(struct gaim_connection *gc)
 	time_t t;
 #ifdef USE_SCREENSAVER
 	static XScreenSaverInfo *mit_info = NULL;
-	static Display *d = NULL;
 #endif
 	time_t idle_time;
 
@@ -56,11 +56,12 @@ gint check_idle(struct gaim_connection *gc)
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
-		if (d || (d = XOpenDisplay((char *)NULL))) {
+		int event_base, error_base;
+		if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
 			if (mit_info == NULL) {
 				mit_info = XScreenSaverAllocInfo();
 			}
-			XScreenSaverQueryInfo(d, DefaultRootWindow(d), mit_info);
+			XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
 			idle_time = (mit_info->idle) / 1000;
 		} else
 			idle_time = 0;

@@ -169,17 +169,18 @@ if test "x$enable_xss" = "xyes" ; then
 	if test \! "$XSS_LIBS" = "no"; then
 		AC_TRY_COMPILE([
 #include <X11/extensions/scrnsaver.h>
-				],[],[],[
+				],[],[enable_xss=no],[
 				AC_DEFINE(USE_SCREENSAVER)
-				AC_SUBST(XSS_LIBS)
 				])
 	else
 	       XSS_LIBS=""
+	       enable_xss=no
 	fi
 else
 	XSS_LIBS=""
+	enable_xss=no
 fi
-
+AC_SUBST(XSS_LIBS)
 
 
 
@@ -344,6 +345,8 @@ echo Build as GNOME applet....... : $enable_panel
 echo
 echo Build with Plugin support... : $enable_plugins
 echo Build with Perl support..... : $enable_perl
+echo
+echo Use XScreenSaver Extension.. : $enable_xss
 echo
 echo Build with ESD.............. : $enable_esd
 echo Build with NAS.............. : $enable_nas
