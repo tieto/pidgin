@@ -14,7 +14,12 @@ destroy_timeout_handler(GaimPerlTimeoutHandler *handler)
 {
 	timeout_handlers = g_list_remove(timeout_handlers, handler);
 
-	g_free(handler->name);
+	if (handler->callback != NULL)
+		SvREFCNT_dec(handler->callback);
+
+	if (handler->data != NULL)
+		SvREFCNT_dec(handler->data);
+
 	g_free(handler);
 }
 
@@ -22,9 +27,6 @@ static void
 destroy_signal_handler(GaimPerlSignalHandler *handler)
 {
 	signal_handlers = g_list_remove(signal_handlers, handler);
-
-	if (handler->instance != NULL)
-		SvREFCNT_dec(handler->instance);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -45,9 +47,9 @@ perl_timeout_cb(gpointer data)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);
-	XPUSHs((SV *)handler->args);
+	XPUSHs((SV *)handler->data);
 	PUTBACK;
-	call_pv(handler->name, G_EVAL | G_SCALAR);
+	call_sv(handler->callback, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
 	PUTBACK;
@@ -133,8 +135,7 @@ find_signal_handler(GaimPlugin *plugin, void *instance, const char *signal)
 }
 
 void
-gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, const char *func,
-					  void *args)
+gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback, SV *data)
 {
 	GaimPerlTimeoutHandler *handler;
 
@@ -146,11 +147,14 @@ gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, const char *func,
 
 	handler = g_new0(GaimPerlTimeoutHandler, 1);
 
-	handler->plugin = plugin;
-	handler->name = g_strdup(func);
-	handler->args = args;
+	handler->plugin   = plugin;
+	handler->callback = (callback != NULL && callback != &PL_sv_undef
+						 ? newSVsv(callback) : NULL);
+	handler->data     = (data != NULL && data != &PL_sv_undef
+						 ? newSVsv(data) : NULL);
 
 	timeout_handlers = g_list_append(timeout_handlers, handler);
+
 	handler->iotag = g_timeout_add(seconds * 1000, perl_timeout_cb, handler);
 }
 
