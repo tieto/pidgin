@@ -1,9 +1,9 @@
-EXTRA_DIST =  msn_angel.xpm \ 
-	msn_angry.xpm \ 
-	msn_bat.xpm \ 
-	msn_beer.xpm \ 
-	msn_boy.xpm \ 
-	msn_brheart.xpm \ 
+EXTRA_DIST = 	msn_angel.xpm \
+	msn_angry.xpm \
+	msn_bat.xpm \
+	msn_beer.xpm \
+	msn_boy.xpm \
+	msn_brheart.xpm \
 	msn_cake.xpm \
 	msn_cat.xpm \
 	msn_clock.xpm \
