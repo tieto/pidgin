@@ -358,6 +358,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		}
 	} else {
 		char *buf, *buf2;
+		char *send_inst;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - (ptr - notice.z_message);
 		int away;
@@ -386,8 +387,11 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 						zt2->open = TRUE;
 						serv_got_joined_chat(zgc, zt2->id, zt2->name);
 					}
-					serv_got_chat_in(zgc, zt2->id, notice.z_sender, FALSE,
-								buf2, time((time_t)NULL));
+					send_inst = g_strdup_printf("%s %s", notice.z_sender,
+								    notice.z_class_inst);
+					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
+								buf2, time(NULL));
+					g_free(send_inst);
 				}
 				free_triple(zt1);
 			}
@@ -495,17 +499,37 @@ static void process_zsubs()
 			if (buff[0]) {
 				triple = g_strsplit(buff, ",", 3);
 				if (triple[0] && triple[1] && triple[2]) {
+					char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"),
+								    ZGetRealm());
+					char *atptr;
 					sub.zsub_class = triple[0];
 					sub.zsub_classinst = triple[1];
 					if (!g_strcasecmp(triple[2], "%me%")) {
 						recip = g_strdup_printf("%s@%s", g_getenv("USER"),
 										ZGetRealm());
 					} else if (!g_strcasecmp(triple[2], "*")) {
-						/* wildcard */
-						recip = g_strdup_printf("@%s", ZGetRealm());
+						/* wildcard
+						 * form of class,instance,* */
+						recip = g_malloc0(1);
+					} else if (!g_strcasecmp(triple[2], tmp)) {
+						/* form of class,instance,aatharuv@ATHENA.MIT.EDU */
+						recip = g_strdup(triple[2]);
+					} else if ((atptr = strchr(triple[2], '@')) != NULL) {
+						/* form of class,instance,*@ANDREW.CMU.EDU
+						 * class,instance,@ANDREW.CMU.EDU
+						 * If realm is local realm, blank recipient, else
+						 * @REALM-NAME
+						 */
+						char *realmat = g_strdup_printf("@%s", ZGetRealm());
+						if (!g_strcasecmp(atptr, realmat))
+							recip = g_malloc0(1);
+						else
+							recip = g_strdup(atptr);
+						g_free(realmat);
 					} else {
 						recip = g_strdup(triple[2]);
 					}
+					g_free(tmp);
 					sub.zsub_recipient = recip;
 					if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
 						debug_printf("Zephyr: Couldn't subscribe to %s, %s, "
@@ -574,7 +598,7 @@ static void zephyr_login(struct aim_user *user)
 	process_zsubs();
 
 	nottimer = g_timeout_add(100, check_notify, NULL);
-	loctimer = g_timeout_add(2000, check_loc, NULL);
+	loctimer = g_timeout_add(20000, check_loc, NULL);
 }
 
 static void write_zsubs()
