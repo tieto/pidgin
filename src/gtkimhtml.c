@@ -24,6 +24,7 @@
 #endif
 #include "gtkimhtml.h"
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -1000,21 +1001,10 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	return str;
 }
 
-void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
-					GtkAdjustment    *hadj,
-	GtkAdjustment    *vadj){}
-
-void       gtk_imhtml_set_defaults     (GtkIMHtml            *imhtml,
-					PangoFontDescription *font,
-					GdkColor             *fg_color,
-	GdkColor             *bg_color){}
-
 void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 	GtkIMHtmlImage    handler){}
 
-void 	   gtk_imhtml_init_smileys     (GtkIMHtml *imhtml){}
 void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml){}
-void       gtk_imhtml_reset_smileys   (GtkIMHtml        *imhtml){}
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 	gboolean          show){}
 
@@ -1031,5 +1021,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	gtk_text_buffer_delete(imhtml->text_buffer, &start, &end);
 }
 
-void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml){}
+void gtk_imhtml_page_up (GtkIMHtml *imhtml)
+{
+
+}
 void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml){}

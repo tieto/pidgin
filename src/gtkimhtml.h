@@ -78,11 +78,6 @@ void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
 					GtkAdjustment    *hadj,
 					GtkAdjustment    *vadj);
 
-void       gtk_imhtml_set_defaults     (GtkIMHtml            *imhtml,
-					PangoFontDescription *font,
-					GdkColor             *fg_color,
-					GdkColor             *bg_color);
-
 void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 					GtkIMHtmlImage    handler);
 
@@ -91,11 +86,7 @@ void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
 					gchar            *text,
 					gchar            *path);
 
-void 	   gtk_imhtml_init_smileys     (GtkIMHtml *imhtml);
-
 void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml);
-
-void       gtk_imhtml_reset_smileys   (GtkIMHtml        *imhtml);
 
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 					gboolean          show);

@@ -1326,7 +1326,6 @@ GtkWidget *away_message_page() {
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), away_text);
 	gaim_setup_imhtml(away_text);
-	gtk_imhtml_set_defaults(GTK_IMHTML(away_text), NULL, NULL, NULL);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (away_message_sel),
