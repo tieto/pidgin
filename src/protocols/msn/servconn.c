@@ -336,10 +336,8 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t size)
 {
 	g_return_val_if_fail(servconn != NULL, 0);
 
-#if 0
 	gaim_debug(GAIM_DEBUG_MISC, "msn", "C: %s%s", buf,
 			   (*(buf + size - 1) == '\n' ? "" : "\n"));
-#endif
 
 	return write(servconn->fd, buf, size);
 }

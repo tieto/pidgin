@@ -46,6 +46,9 @@ send_clientcaps(MsnSwitchBoard *swboard)
 	msn_message_set_body(msg, MSN_CLIENTINFO);
 
 	if (!msn_switchboard_send_msg(swboard, msg)) {
+		gaim_debug_warning("msn",
+						   "Unable to send clientcaps. "
+						   "Disconnecting from switchboard.\n");
 		msn_switchboard_destroy(swboard);
 
 		msn_message_destroy(msg);
@@ -110,7 +113,7 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 #endif
 
-	return FALSE;
+	return TRUE;
 }
 
 static gboolean
@@ -634,13 +637,14 @@ gboolean
 msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 {
 	char *buf;
+	size_t len;
 	int ret;
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);
 
 	msn_message_set_transaction_id(msg, ++swboard->trId);
-	buf = msn_message_build_string(msg);
+	buf = msn_message_to_string(msg, &len);
 
 	g_return_val_if_fail(buf != NULL, FALSE);
 
@@ -653,7 +657,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 		return TRUE;
 	}
 
-	ret = msn_servconn_write(swboard->servconn, buf, strlen(buf));
+	ret = msn_servconn_write(swboard->servconn, buf, len);
 
 	g_free(buf);
 

@@ -298,7 +298,7 @@ msn_message_unref(MsnMessage *msg)
 }
 
 char *
-msn_message_build_string(const MsnMessage *msg)
+msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 {
 	GList *l;
 	char *msg_start;
@@ -332,7 +332,7 @@ msn_message_build_string(const MsnMessage *msg)
 
 	len = strlen(buf) + msg->size + 1;
 
-	str = g_new0(char, len);
+	str = g_new0(char, len + 1);
 
 	g_strlcpy(str, buf, len);
 
@@ -433,6 +433,9 @@ msn_message_build_string(const MsnMessage *msg)
 					   "do not match!\n", msg->size, strlen(msg_start));
 		}
 	}
+
+	if (ret_size != NULL)
+		*ret_size = len - 1;
 
 	return str;
 }

@@ -133,11 +133,12 @@ MsnMessage *msn_message_unref(MsnMessage *msg);
 /**
  * Converts a message to a string.
  *
- * @param msg The message.
+ * @param msg      The message.
+ * @param ret_size The returned size of the string.
  *
  * @return The string representation of a message.
  */
-char *msn_message_build_string(const MsnMessage *msg);
+char *msn_message_to_string(const MsnMessage *msg, size_t *ret_size);
 
 /**
  * Returns TRUE if the message is outgoing.
