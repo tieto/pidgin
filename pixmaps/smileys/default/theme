@@ -4,102 +4,102 @@ Icon=smile.png
 Author=Penguin Pimps
 
 [default]
-! luke.png          	C:-) C:)
-! oneeye.png        	O-)
-! crazy.png         	>:) >:-)
-! mrt.png           	:-o))) :-O)))
-! download.png      	8-|)
-! farted.png        	:-]
-smile.png        	:) :-)
-sad.png           	:( :-(
-wink.png          	;) ;-)
-tongue.png        	:-P :-p
-scream.png        	=-O =-o
-kiss.png          	:-*
-yell.png          	>:o >:O
-cool.png          	8-)
-moneymouth.png    	:-$
-burp.png          	:-!
-embarrassed.png   	:-[
-cry.png           	:'(
-think.png         	:-/ :-\
-crossedlips.png   	:-X :-x
-bigsmile.png      	:-D :-d
-angel.png         	O:-)
+! luke.png			C:-) C:)
+! oneeye.png		O-)
+! crazy.png			>:) >:-)
+! mrt.png			:-o))) :-O)))
+! download.png		8-|)
+! farted.png		:-]
+smile.png			:) :-)
+sad.png				:( :-(
+wink.png			;) ;-)
+tongue.png			:-P :-p
+scream.png			=-O =-o
+kiss.png			:-*
+yell.png			>:o	>:O
+cool.png			8-)
+moneymouth.png		:-$
+burp.png			:-!
+embarrassed.png		:-[
+cry.png				:'(
+think.png			:-/	:-\
+crossedlips.png		:-X	:-x
+bigsmile.png		:-D	:-d
+angel.png			O:-)
 
 [MSN]
-msn_angel.png      	(a) (A)
-msn_angry.png      	:-@ :@
-msn_bat.png        	:-[ :[
-msn_beer.png       	(B) (b)
+msn_angel.png		(a)	(A)
+msn_angry.png		:-@	:@
+msn_bat.png			:-[	:[
+msn_beer.png		(B)	(b)
 msn_bowl.png		(||)
-msn_boy.png        	(Z) (z)
-msn_brheart.png    	(U) (u)
-msn_cake.png       	(^)
-msn_car.png		(car)
-msn_cat.png        	(@)
+msn_boy.png			(Z)	(z)
+msn_brheart.png		(U)	(u)
+msn_cake.png		(^)
+msn_car.png			(car)
+msn_cat.png			(@)
 msn_cellphone.png	(mp)
-msn_clock.png      	(o) (O)
-msn_coffee.png     	(C) (c)
+msn_clock.png		(o)	(O)
+msn_coffee.png		(C)	(c)
 msn_coins.png		(mo)
 msn_computer.png	(co)
-msn_cry.png        	:'( :`(
-msn_deadflower.png 	(W) (w)
-msn_devil.png      	(6)
-msn_dog.png        	(&)
-msn_donttell.png        :-#
-msn_drink.png      	(D) (d)
-msn_email.png      	(e) (E)
-msn_embarrassed.png	:$ :-$
-msn_eyeroll.png         8-)
-msn_film.png       	(~)
-msn_flower.png     	(F) (f)
-msn_gift.png       	(g) (G)
-msn_girl.png       	(X) (x)
-msn_handcuffs.png  	(%)
-msn_heart.png      	(L) (l)
-msn_hot.png        	(H) (h)
-msn_icon.png       	(M) (m)
-msn_idea.png       	(I) (i)
+msn_cry.png			:'(	:`(
+msn_deadflower.png	(W)	(w)
+msn_devil.png		(6)
+msn_dog.png			(&)
+msn_donttell.png	:-#
+msn_drink.png		(D)	(d)
+msn_email.png		(e)	(E)
+msn_embarrassed.png	:$	:-$
+msn_eyeroll.png		8-)
+msn_film.png		(~)
+msn_flower.png		(F)	(f)
+msn_gift.png		(g)	(G)
+msn_girl.png		(X)	(x)
+msn_handcuffs.png	(%)
+msn_heart.png		(L)	(l)
+msn_hot.png			(H)	(h)
+msn_icon.png		(M)	(m)
+msn_idea.png		(I)	(i)
 msn_island.png		(ip)
-msn_kiss.png       	(K) (k)
-msn_laugh.png      	:-D :-d :d :D :-> :>
+msn_kiss.png		(K)	(k)
+msn_laugh.png		:-D	:-d	:d	:D	:->	:>
 msn_lightning.png	(li)
 msn_nerd.png		8-|
-msn_neutral.png    	:-| :|
-msn_note.png       	(8)
-msn_ooooh.png      	:-O :O :-o :o
-msn_party.png           <:o) <:O)
-msn_phone.png      	(T) (t)
-msn_photo.png	   	(P) (p)
+msn_neutral.png		:-|	:|
+msn_note.png		(8)
+msn_ooooh.png		:-O	:O	:-o	:o
+msn_party.png		<:o)	<:O)
+msn_phone.png		(T)	(t)
+msn_photo.png		(P)	(p)
 msn_pizza.png		(pi)
 msn_plane.png		(ap)
 msn_plate.png		(pl)
-msn_question.png   	(?)
-msn_rainbow.png    	(r) (R)
-msn_run.png        	({)
-msn_runback.png    	(})
-msn_sad.png	   	:-( :( :-<
-msn_sarcastic.png       ^o) ^O)
-msn_secret.png          :-*
+msn_question.png	(?)
+msn_rainbow.png		(r)	(R)
+msn_run.png			({)
+msn_runback.png		(})
+msn_sad.png			:-(	:(	:-<
+msn_sarcastic.png	^o)	^O)
+msn_secret.png		:-*
 msn_sheep.png		(bah)
-msn_sick.png            +o( +O(
-msn_sleep.png      	(S) (s)
-msn_sleepy.png          |-)
-msn_smiley.png    	:-) :)
+msn_sick.png		+o(	+O(
+msn_sleep.png		(S)	(s)
+msn_sleepy.png		|-)
+msn_smiley.png		:-)	:)
 msn_snail.png		(sn)
 msn_soccer.png		(so)
-msn_star.png       	(*)
+msn_star.png		(*)
 msn_stormy.png		(st)
-msn_sun.png		(#)
-msn_teeth.png           8o| 8O|
-msn_think.png           *-)
-msn_thumbdown.png 	(N) (n)
-msn_thumbup.png   	(Y) (y)
-msn_tongue.png   	:-P :P :-p :p
+msn_sun.png			(#)
+msn_teeth.png		8o|	8O|
+msn_think.png		*-)
+msn_thumbdown.png	(N)	(n)
+msn_thumbup.png		(Y)	(y)
+msn_tongue.png		:-P	:P	:-p	:p
 msn_umbrella.png	(um)
-msn_weird.png     	:-S :-s :s :S
-msn_wink.png       	;) ;-) :S-
+msn_weird.png		:-S	:-s	:s	:S
+msn_wink.png		;)	;-)	:S-
 
 [Yahoo]
 yahoo_angel.gif		o:) o:-) O:-) O:) 0:-)
