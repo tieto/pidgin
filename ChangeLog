@@ -6,6 +6,7 @@ version 0.46:
 	  (thanks to Nathan Walp and Ben Miller)
 	* Better applet icon drawing (thanks to Ari Pollak)
 	* An extraordinary number of bug fixes
+	* Updated Korean translation
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite
