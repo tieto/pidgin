@@ -499,7 +499,25 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
 
 typedef int (*aim_rxcallback_t)(aim_session_t *, aim_frame_t *, ...);
 
-/* aim_login.c */
+struct aim_clientrelease {
+	char *name;
+	fu32_t build;
+	char *url;
+	char *info;
+};
+
+struct aim_authresp_info {
+	char *sn;
+	fu16_t errorcode;
+	char *errorurl;
+	fu16_t regstatus;
+	char *email;
+	char *bosip;
+	fu8_t *cookie;
+	struct aim_clientrelease latestrelease;
+	struct aim_clientrelease latestbeta;
+};
+
 faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);

@@ -555,16 +555,10 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	aim_conn_t *bosconn = NULL;
-	char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
-	fu8_t *cookie = NULL;
-	int errorcode = 0, regstatus = 0;
-	int latestbuild = 0, latestbetabuild = 0;
-	char *latestrelease = NULL, *latestbeta = NULL;
-	char *latestreleaseurl = NULL, *latestbetaurl = NULL;
-	char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
+	struct aim_authresp_info *info;
 	int i; char *host; int port;
 	struct aim_user *user;
+	aim_conn_t *bosconn;
 
 	struct gaim_connection *gc = sess->aux_data;
         struct oscar_data *od = gc->proto_data;
@@ -573,30 +567,13 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		atoi(user->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
 
 	va_start(ap, fr);
-	sn = va_arg(ap, char *);
-	errorcode = va_arg(ap, int);
-	errurl = va_arg(ap, char *);
-	regstatus = va_arg(ap, int);
-	email = va_arg(ap, char *);
-	bosip = va_arg(ap, char *);
-	cookie = va_arg(ap, unsigned char *);
-
-	latestrelease = va_arg(ap, char *);
-	latestbuild = va_arg(ap, int);
-	latestreleaseurl = va_arg(ap, char *);
-	latestreleaseinfo = va_arg(ap, char *);
-
-	latestbeta = va_arg(ap, char *);
-	latestbetabuild = va_arg(ap, int);
-	latestbetaurl = va_arg(ap, char *);
-	latestbetainfo = va_arg(ap, char *);
-
+	info = va_arg(ap, struct aim_authresp_info *);
 	va_end(ap);
 
-	debug_printf("inside auth_resp (Screen name: %s)\n", sn);
+	debug_printf("inside auth_resp (Screen name: %s)\n", info->sn);
 
-	if (errorcode || !bosip || !cookie) {
-		switch (errorcode) {
+	if (info->errorcode || !info->bosip || !info->cookie) {
+		switch (info->errorcode) {
 		case 0x05:
 			/* Incorrect nick/password */
 			hide_login_progress(gc, _("Incorrect nickname or password."));
@@ -620,26 +597,20 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			hide_login_progress(gc, _("Authentication Failed"));
 			break;
 		}
-		debug_printf("Login Error Code 0x%04x\n", errorcode);
-		debug_printf("Error URL: %s\n", errurl);
+		debug_printf("Login Error Code 0x%04x\n", info->errorcode);
+		debug_printf("Error URL: %s\n", info->errorurl);
 		od->killme = TRUE;
 		return 1;
 	}
 
 
-	debug_printf("Reg status: %2d\n", regstatus);
-	if (email) {
-		debug_printf("Email: %s\n", email);
+	debug_printf("Reg status: %d\n", info->regstatus);
+	if (info->email) {
+		debug_printf("Email: %s\n", info->email);
 	} else {
 		debug_printf("Email is NULL\n");
 	}
-	debug_printf("BOSIP: %s\n", bosip);
-	if (latestbeta)
-		debug_printf("Latest WinAIM beta version %s, build %d, at %s (%s)\n",
-				latestbeta, latestbetabuild, latestbetaurl, latestbetainfo);
-	if (latestrelease)
-		debug_printf("Latest WinAIM released version %s, build %d, at %s (%s)\n",
-				latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo);
+	debug_printf("BOSIP: %s\n", info->bosip);
 	debug_printf("Closing auth connection...\n");
 	aim_conn_kill(sess, &fr->conn);
 
@@ -676,13 +647,13 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
-	for (i = 0; i < (int)strlen(bosip); i++) {
-		if (bosip[i] == ':') {
-			port = atoi(&(bosip[i+1]));
+	for (i = 0; i < (int)strlen(info->bosip); i++) {
+		if (info->bosip[i] == ':') {
+			port = atoi(&(info->bosip[i+1]));
 			break;
 		}
 	}
-	host = g_strndup(bosip, i);
+	host = g_strndup(info->bosip, i);
 	bosconn->status |= AIM_CONN_STATUS_INPROGRESS;
 	bosconn->fd = proxy_connect(host, port, oscar_bos_connect, gc);
 	g_free(host);
@@ -691,8 +662,9 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->killme = TRUE;
 		return 0;
 	}
-	aim_sendcookie(sess, bosconn, cookie);
+	aim_sendcookie(sess, bosconn, info->cookie);
 	gaim_input_remove(gc->inpa);
+
 	return 1;
 }
 

@@ -370,15 +370,11 @@ static int aim_encode_password(const char *password, fu8_t *encoded)
 static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_tlvlist_t *tlvlist;
-	int ret = 0;
 	aim_rxcallback_t userfunc;
-	char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
-	unsigned char *cookie = NULL;
-	int errorcode = 0, regstatus = 0;
-	int latestbuild = 0, latestbetabuild = 0;
-	char *latestrelease = NULL, *latestbeta = NULL;
-	char *latestreleaseurl = NULL, *latestbetaurl = NULL;
-	char *latestreleaseinfo = NULL, *latestbetainfo = NULL;
+	struct aim_authresp_info info;
+	int ret = 0;
+
+	memset(&info, 0, sizeof(info));
 
 	/*
 	 * Read block of TLVs.  All further data is derived
@@ -391,8 +387,8 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 */
 	memset(sess->sn, 0, sizeof(sess->sn));
 	if (aim_gettlv(tlvlist, 0x0001, 1)) {
-		sn = aim_gettlv_str(tlvlist, 0x0001, 1);
-		strncpy(sess->sn, sn, sizeof(sess->sn));
+		info.sn = aim_gettlv_str(tlvlist, 0x0001, 1);
+		strncpy(sess->sn, info.sn, sizeof(sess->sn));
 	}
 
 	/*
@@ -400,15 +396,15 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * have an error url.
 	 */
 	if (aim_gettlv(tlvlist, 0x0008, 1)) 
-		errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
+		info.errorcode = aim_gettlv16(tlvlist, 0x0008, 1);
 	if (aim_gettlv(tlvlist, 0x0004, 1))
-		errurl = aim_gettlv_str(tlvlist, 0x0004, 1);
+		info.errorurl = aim_gettlv_str(tlvlist, 0x0004, 1);
 
 	/*
 	 * BOS server address.
 	 */
 	if (aim_gettlv(tlvlist, 0x0005, 1))
-		bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
+		info.bosip = aim_gettlv_str(tlvlist, 0x0005, 1);
 
 	/*
 	 * Authorization cookie.
@@ -418,8 +414,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 
 		tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
 
-		if ((cookie = malloc(tmptlv->length)))
-			memcpy(cookie, tmptlv->value, tmptlv->length);
+		info.cookie = tmptlv->value;
 	}
 
 	/*
@@ -427,7 +422,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 *   Not available for ICQ logins.
 	 */
 	if (aim_gettlv(tlvlist, 0x0011, 1))
-		email = aim_gettlv_str(tlvlist, 0x0011, 1);
+		info.email = aim_gettlv_str(tlvlist, 0x0011, 1);
 
 	/*
 	 * The registration status.  (Not real sure what it means.)
@@ -442,47 +437,44 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 *
 	 */
 	if (aim_gettlv(tlvlist, 0x0013, 1))
-		regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
+		info.regstatus = aim_gettlv16(tlvlist, 0x0013, 1);
 
 	if (aim_gettlv(tlvlist, 0x0040, 1))
-		latestbetabuild = aim_gettlv32(tlvlist, 0x0040, 1);
+		info.latestbeta.build = aim_gettlv32(tlvlist, 0x0040, 1);
 	if (aim_gettlv(tlvlist, 0x0041, 1))
-		latestbetaurl = aim_gettlv_str(tlvlist, 0x0041, 1);
+		info.latestbeta.url = aim_gettlv_str(tlvlist, 0x0041, 1);
 	if (aim_gettlv(tlvlist, 0x0042, 1))
-		latestbetainfo = aim_gettlv_str(tlvlist, 0x0042, 1);
+		info.latestbeta.info = aim_gettlv_str(tlvlist, 0x0042, 1);
 	if (aim_gettlv(tlvlist, 0x0043, 1))
-		latestbeta = aim_gettlv_str(tlvlist, 0x0043, 1);
+		info.latestbeta.name = aim_gettlv_str(tlvlist, 0x0043, 1);
 	if (aim_gettlv(tlvlist, 0x0048, 1))
 		; /* no idea what this is */
 
 	if (aim_gettlv(tlvlist, 0x0044, 1))
-		latestbuild = aim_gettlv32(tlvlist, 0x0044, 1);
+		info.latestrelease.build = aim_gettlv32(tlvlist, 0x0044, 1);
 	if (aim_gettlv(tlvlist, 0x0045, 1))
-		latestreleaseurl = aim_gettlv_str(tlvlist, 0x0045, 1);
+		info.latestrelease.url = aim_gettlv_str(tlvlist, 0x0045, 1);
 	if (aim_gettlv(tlvlist, 0x0046, 1))
-		latestreleaseinfo = aim_gettlv_str(tlvlist, 0x0046, 1);
+		info.latestrelease.info = aim_gettlv_str(tlvlist, 0x0046, 1);
 	if (aim_gettlv(tlvlist, 0x0047, 1))
-		latestrelease = aim_gettlv_str(tlvlist, 0x0047, 1);
+		info.latestrelease.name = aim_gettlv_str(tlvlist, 0x0047, 1);
 	if (aim_gettlv(tlvlist, 0x0049, 1))
 		; /* no idea what this is */
 
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003))) {
-		/* XXX return as a struct? */
-		ret = userfunc(sess, rx, sn, errorcode, errurl, regstatus, email, bosip, cookie, latestrelease, latestbuild, latestreleaseurl, latestreleaseinfo, latestbeta, latestbetabuild, latestbetaurl, latestbetainfo);
-	}
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
+		ret = userfunc(sess, rx, &info);
 
-	free(sn);
-	free(bosip);
-	free(errurl);
-	free(email);
-	free(cookie);
-	free(latestrelease);
-	free(latestreleaseurl);
-	free(latestbeta);
-	free(latestbetaurl);
-	free(latestreleaseinfo);
-	free(latestbetainfo);
+	free(info.sn);
+	free(info.bosip);
+	free(info.errorurl);
+	free(info.email);
+	free(info.latestrelease.name);
+	free(info.latestrelease.url);
+	free(info.latestrelease.info);
+	free(info.latestbeta.name);
+	free(info.latestbeta.url);
+	free(info.latestbeta.info);
 
 	aim_freetlvchain(&tlvlist);
 
