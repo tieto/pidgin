@@ -2402,8 +2402,11 @@ void g_show_info_text(struct gaim_connection *gc, const char *who, int away, con
 	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, -1, options);
 
 	va_start(ap, info);
-	while ((more_info = va_arg(ap, char *)) != NULL)
-		 gtk_imhtml_append_text(GTK_IMHTML(b->text), more_info, -1, options);
+	while ((more_info = va_arg(ap, char *)) != NULL) {
+		gchar *linkifyinated = linkify_text(more_info);
+		gtk_imhtml_append_text(GTK_IMHTML(b->text), linkifyinated, -1, options);
+		g_free(linkifyinated);
+	}
 	va_end(ap);
 
 	if (away)
