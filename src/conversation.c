@@ -949,8 +949,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				toggle_font(c->font, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
-			case 'c':
-			case 'C':
+			case 'k':
+			case 'K':
 				quiet_set(c->fgcolorbtn,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->fgcolorbtn)));
 				toggle_fg_color(c->fgcolorbtn, c);
