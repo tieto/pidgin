@@ -85,18 +85,11 @@ gaim_connection_destroy(GaimConnection *gc)
 	g_free(gc);
 }
 
-static void request_pass_ok_cb(GaimConnection *gc, const char *entry)
+static void request_pass_ok_cb(GaimAccount *account, const char *entry)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
-
 	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
 
-	gaim_connection_connect(gc);
-}
-
-static void request_pass_cancel_cb(GaimConnection *gc, const char *entry)
-{
-	gaim_connection_destroy(gc);
+	gaim_account_connect(account);
 }
 
 
@@ -130,7 +123,8 @@ gaim_connection_connect(GaimConnection *gc)
 		gaim_request_input(gc, NULL, _("Please enter your password"), NULL, 
 						   NULL, FALSE, TRUE,
 						   _("OK"), G_CALLBACK(request_pass_ok_cb),
-						   _("Cancel"), G_CALLBACK(request_pass_cancel_cb), gc);
+						   _("Cancel"), NULL, account);
+		gaim_connection_destroy(gc);
 
 		return;
 	}

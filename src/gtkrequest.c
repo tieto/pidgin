@@ -79,7 +79,7 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		((GaimRequestInputCb)data->cbs[id])(data->user_data, value);
-	else
+	else if (data->cbs[1] != NULL)
 		((GaimRequestInputCb)data->cbs[1])(data->user_data, value);
 
 	gaim_request_close(GAIM_REQUEST_INPUT, data);

@@ -175,7 +175,6 @@ gaim_account_connect(GaimAccount *account)
 	GaimConnection *gc;
 
 	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(!gaim_account_is_connected(account), NULL);
 
 	if (gaim_account_get_connection(account) != NULL)
 		return NULL;
