@@ -3291,6 +3291,7 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 	GaimConnection *gc;
 	GaimGtkConversation *gtkconv;
 	GaimGtkImPane *gtkim;
+	GaimButtonStyle button_type;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
@@ -3371,6 +3372,13 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	gaim_gtkconv_update_buttons_by_protocol(conv);
 
+	/* Check if the buttons should be visible or not */
+	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/im/button_type");
+	if (button_type == GAIM_BUTTON_NONE)
+		gtk_widget_hide(gtkconv->bbox);
+	else
+		gtk_widget_show(gtkconv->bbox);
+
 	g_signal_connect(G_OBJECT(gtkim->warn), "clicked",
 					 G_CALLBACK(warn_cb), conv);
 	g_signal_connect(G_OBJECT(gtkim->block), "clicked",
@@ -3391,6 +3399,7 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 	GaimConnection *gc;
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
+	GaimButtonStyle button_type;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
@@ -3449,6 +3458,13 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 	gtk_box_reorder_child(GTK_BOX(parent), gtkchat->invite, 3);
 
 	gaim_gtkconv_update_buttons_by_protocol(conv);
+
+	/* Check if the buttons should be visible or not */
+	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/chat/button_type");
+	if (button_type == GAIM_BUTTON_NONE)
+		gtk_widget_hide(gtkconv->bbox);
+	else
+		gtk_widget_show(gtkconv->bbox);
 
 	/* Callbacks */
 	g_signal_connect(G_OBJECT(gtkchat->invite), "clicked",

@@ -1012,6 +1012,7 @@ GtkWidget *im_page() {
 			_("Pictures"), GAIM_BUTTON_IMAGE,
 			_("Text"), GAIM_BUTTON_TEXT,
 			_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+			_("None"), GAIM_BUTTON_NONE,
 			NULL);
 
 	gtk_size_group_add_widget(sg, widge);
@@ -1063,6 +1064,7 @@ GtkWidget *chat_page() {
 			_("Pictures"), GAIM_BUTTON_IMAGE,
 			_("Text"), GAIM_BUTTON_TEXT,
 			_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+			_("None"), GAIM_BUTTON_NONE,
 			NULL);
 
 	gtk_size_group_add_widget(sg, dd);
