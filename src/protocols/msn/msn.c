@@ -954,8 +954,10 @@ msn_chat_leave(GaimConnection *gc, int id)
 	MsnSwitchBoard *swboard = msn_session_find_switch_with_id(session, id);
 	char buf[6];
 
-	if (swboard == NULL)
+	if (swboard == NULL) {
+		serv_got_chat_left(gc, id);
 		return;
+	}
 
 	strcpy(buf, "OUT\r\n");
 
