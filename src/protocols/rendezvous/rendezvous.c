@@ -599,60 +599,7 @@ static void rendezvous_prpl_set_away(GaimConnection *gc, const char *state, cons
 
 static GaimPlugin *my_protocol = NULL;
 
-static GaimPluginProtocolInfo prpl_info =
-{
-	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_NO_PASSWORD | OPT_PROTO_BUDDY_ICON,
-	NULL,
-	NULL,
-	rendezvous_prpl_list_icon,
-	rendezvous_prpl_list_emblems,
-	rendezvous_prpl_status_text,
-	rendezvous_prpl_tooltip_text,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	rendezvous_prpl_login,
-	rendezvous_prpl_close,
-	rendezvous_prpl_send_im,
-	NULL,
-	NULL,
-	NULL,
-	rendezvous_prpl_set_away,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+static GaimPluginProtocolInfo prpl_info;
 
 static GaimPluginInfo info =
 {
@@ -687,20 +634,31 @@ static void init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 	char hostname[255];
 
+	prpl_info.api_version	= GAIM_PRPL_API_VERSION;
+	prpl_info.options		= OPT_PROTO_NO_PASSWORD | OPT_PROTO_BUDDY_ICON;
+	prpl_info.list_icon		= rendezvous_prpl_list_icon;
+	prpl_info.list_emblems	= rendezvous_prpl_list_emblems;
+	prpl_info.status_text	= rendezvous_prpl_status_text;
+	prpl_info.tooltip_text	= rendezvous_prpl_tooltip_text;
+	prpl_info.login			= rendezvous_prpl_login;
+	prpl_info.close			= rendezvous_prpl_close;
+	prpl_info.send_im		= rendezvous_prpl_send_im;
+	prpl_info.set_away		= rendezvous_prpl_set_away;
+
 	if (gethostname(hostname, 255) != 0) {
 		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
 	}
 
 	/* Try to avoid making this configurable... */
-	split = gaim_account_user_split_new(_("Host Name"), hostname, '@');
+	split = gaim_account_user_split_new(_("Host name"), hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_string_new(_("First Name"), "first", "Gaim");
+	option = gaim_account_option_string_new(_("First name"), "first", "Gaim");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_string_new(_("Last Name"), "last", _("User"));
+	option = gaim_account_option_string_new(_("Last name"), "last", _("User"));
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

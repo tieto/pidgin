@@ -36,6 +36,14 @@
  * One Eyed Willie.
  */
 
+/*
+ * XXX - Store data for NULL ResourceRecords so that rr->rdata contains
+ * both the length and the data. This length will always be equal to
+ * rr->rdlength... but it fits in more with the rest of the code.
+ * rr->rdata should not need a separate length value to determine
+ * how many bytes it will take.
+ */
+
 #include "internal.h"
 #include "debug.h"
 

@@ -24,7 +24,6 @@
  */
 
 #include "internal.h"
-#include "debug.h"
 
 #include "mdns.h"
 #include "mdns_cache.h"
@@ -59,7 +58,6 @@ mdns_cache_add(const ResourceRecord *rr)
 
 	mdns_cache_remove(rr->name, rr->type);
 
-	printf("caching %d\n", rr->type);
 	new = mdns_copy_rr(rr);
 	rrs = g_slist_prepend(rrs, new);
 }
@@ -94,12 +92,10 @@ mdns_cache_respond(int fd, const Question *q)
 	ResourceRecord *cur;
 
 	g_return_if_fail(q != NULL);
-	printf("query for q->type=%d, q->name=%s\n", q->type, q->name);
 
 	for (slist = rrs; slist != NULL; slist = slist->next) {
 		cur = slist->data;
 		if (((q->type == RENDEZVOUS_RRTYPE_ALL) || (q->type == cur->type)) && (!strcmp(q->name, cur->name))) {
-			printf("responding to cur->type=%d, cur->name=%s\n", cur->type, cur->name);
 			mdns_send_rr(fd, cur);
 		}
 	}
