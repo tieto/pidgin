@@ -96,13 +96,14 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
- * @param portnum The port number to bind to, or 0, to let the core decide.
- *                By default, the core will let the kernel pick one at random,
- *                but users are allowed to specify a range.
- *
+ * @param start The port number to bind to, or 0 to let the core decide.
+ *              By default, the core will let the kernel pick one at random,
+ *              but users are allowed to specify a range.
+ * @param end The highest possible port in the range of ports to listen on,
+ *            or 0 to let the core decide.
  * @return The file descriptor of the listening socket.
  */
-int gaim_network_listen(short portnum);
+int gaim_network_listen(short start, short end);
 
 /**
  * Gets a port number from a file descriptor.

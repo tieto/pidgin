@@ -197,15 +197,15 @@ static int gaim_network_do_listen(short portnum)
 	return listenfd;
 }
 
-int gaim_network_listen(short portnum)
+int gaim_network_listen(short start, short end)
 {
-	int ret = 0, start, end;
+	int ret = 0;
 
-	if (!gaim_prefs_get_bool("/core/network/ports_range_use") || portnum)
-		return gaim_network_do_listen(portnum);
-
-	start = gaim_prefs_get_int("/core/network/ports_range_start");
-	end = gaim_prefs_get_int("/core/network/ports_range_end");
+	if (gaim_prefs_get_bool("/core/network/ports_range_use") ||
+		(start > end) || (start < 1024) || (end < 1024)) {
+		start = gaim_prefs_get_int("/core/network/ports_range_start");
+		end = gaim_prefs_get_int("/core/network/ports_range_end");
+	}
 
 	for (; start <= end; start++) {
 		ret = gaim_network_do_listen(start);
