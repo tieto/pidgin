@@ -570,7 +570,9 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	if (user_is_there(user, list_id, group_id))
 	{
 		list = lists[list_id];
+#if 0
 		gaim_debug_error("msn", "User '%s' is already there: %s\n", who, list);
+#endfi
 		return;
 	}
 
