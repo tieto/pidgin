@@ -399,7 +399,7 @@ gaim_gtkdialogs_ee(const char *ee)
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, GTK_ICON_SIZE_DIALOG);
+	GtkWidget *img;
 	gchar *norm = gaim_strreplace(ee, "rocksmyworld", "");
 
 	label = gtk_label_new(NULL);
@@ -447,6 +447,7 @@ gaim_gtkdialogs_ee(const char *ee)
 
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, gtk_icon_size_from_name(GAIM_ICON_SIZE_DIALOG_COOL));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

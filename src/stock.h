@@ -78,8 +78,9 @@
 /*@}*/
 
 /**
- * For getting the icon size for the logo
+ * For using icons that aren't one of the default GTK_ICON_SIZEs
  */
+#define GAIM_ICON_SIZE_DIALOG_COOL "gaim-icon-size-dialog-cool"
 #define GAIM_ICON_SIZE_LOGO        "gaim-icon-size-logo"
 
 /**
