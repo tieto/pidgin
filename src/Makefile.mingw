@@ -14,6 +14,8 @@ GAIM_TOP :=		..
 GAIM_SRC :=		.
 PERL_LIB_DIR :=		../../win32-dev/perl56
 PERL_INCLUDE :=         $(PERL_LIB_DIR)/CORE
+ASPELL_TOP :=		../../win32-dev/aspell-15
+GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.2
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
 ##
@@ -53,12 +55,16 @@ INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(PERL_INCLUDE)
+			-I$(PERL_INCLUDE) \
+			-I$(ASPELL_TOP)/include \
+			-I$(GTKSPELL_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_SRC) \
-			-L$(PERL_LIB_DIR)
+			-L$(PERL_LIB_DIR) \
+			-L$(ASPELL_TOP)/lib \
+			-L$(GTKSPELL_TOP)/gtkspell
 
 
 ##
@@ -114,7 +120,8 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 
-DLL_LIBS = 		-lgtk-win32-2.0 \
+DLL_LIBS = 		-lgtkspell \
+			-lgtk-win32-2.0 \
 			-lpango-1.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
@@ -125,7 +132,8 @@ DLL_LIBS = 		-lgtk-win32-2.0 \
 			-lws2_32 \
 			-liberty \
 			-lwinmm \
-			-lperl56
+			-lperl56 \
+			-laspell-15
 
 
 EXE_LIBS = -lgaim -lglib-2.0
