@@ -316,7 +316,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	gc = gaim_account_get_connection(account);
 
 	passport = msn_user_get_passport(user);
-	store = msn_user_get_friendly_name(user);
+	store = msn_user_get_store_name(user);
 
 	if (list_op & MSN_LIST_FL_OP)
 	{
