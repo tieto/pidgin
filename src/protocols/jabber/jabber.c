@@ -4191,15 +4191,15 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->rename_group = jabber_rename_group;
 
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Connect Server:"));
-	puo->def = g_strdup("");
-	puo->pos = USEROPT_CONN_SERVER;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("5222");
 	puo->pos = USEROPT_PORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup(_("Connect Server:"));
+	puo->def = g_strdup("");
+	puo->pos = USEROPT_CONN_SERVER;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	my_protocol = ret;
