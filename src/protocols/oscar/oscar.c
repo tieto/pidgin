@@ -5745,7 +5745,7 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 		text = tmp;
 	}
 
-	tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them in the \"Edit Buddies\" pane and selecting \"Re-request authorization.\""), text);
+	tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them and clicking \"Re-request authorization.\""), text);
 	g_free(text);
 	text = tmp;
 	g_show_info_text(gc, gc->username, 2, text, NULL);
