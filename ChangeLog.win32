@@ -1,3 +1,7 @@
+version 0.83:
+	* The "Start Gaim on Windows starup" setting is preserved
+	  when Gaim is reinstalled (Daniel Atallah)
+
 version 0.82 (08/26/2004):
 	* Selecting away messages using the system tray icon works
 	  (Thanks François Gagné)
