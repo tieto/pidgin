@@ -914,6 +914,7 @@ permit = NULL;
 					d = d->next;
 				}
 				g_free(n);
+				g_free(name);
 				if (!d)
 				permit = g_list_append(permit, name);
 			} else if (*c == 'd') {

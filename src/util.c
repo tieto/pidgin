@@ -936,6 +936,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	return button;
 }
 
+static GtkTooltips *tips = NULL;
 GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short showtext)
 {
 	GtkWidget *button;
@@ -944,9 +945,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short show
 	GdkPixmap *pm;
 	GtkWidget *pixmap;
 	GtkWidget *label;
-	GtkTooltips *tips;	
 	
-	tips = gtk_tooltips_new();
+	if (!tips) tips = gtk_tooltips_new();
 	button = gtk_button_new();
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
