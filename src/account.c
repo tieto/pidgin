@@ -312,6 +312,10 @@ parse_settings(xmlnode *node, GaimAccount *account)
 			continue;
 
 		str_type = xmlnode_get_attrib(child, "type");
+		if (str_type == NULL)
+			/* Ignore this setting */
+			continue;
+
 		if (!strcmp(str_type, "string"))
 			type = GAIM_PREF_STRING;
 		else if (!strcmp(str_type, "int"))

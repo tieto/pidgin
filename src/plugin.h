@@ -367,7 +367,7 @@ void *gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
 /**
  * Add a new directory to search for plugins
  *
- * @param paths The new search path.
+ * @param path The new search path.
  */
 void gaim_plugins_add_search_path(const char *path);
 

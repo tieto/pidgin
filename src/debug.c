@@ -51,12 +51,12 @@ gaim_debug_vargs(GaimDebugLevel level, const char *category,
 
 	if (debug_enabled) {
 		gchar *arg_s, *ts_s;
-		gboolean timestamps;
 
 		arg_s = g_strdup_vprintf(format, args);
 
-		timestamps = gaim_prefs_get_bool("/core/debug/timestamps");;
-		if ((category != NULL) && (timestamps)) {
+		if ((category != NULL) &&
+			(gaim_prefs_exists("/core/debug/timestamps")) &&
+			(gaim_prefs_get_bool("/core/debug/timestamps"))) {
 			gchar mdate[64];
 
 			time_t mtime = time(NULL);

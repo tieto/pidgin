@@ -513,4 +513,3 @@ gaim_gtk_debug_get_handle() {
 
 	return &handle;
 }
-

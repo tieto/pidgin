@@ -78,6 +78,8 @@ gaim_core_init(const char *ui)
 	/* Initialize all static protocols. */
 	static_proto_init();
 
+	gaim_plugins_probe(NULL);
+
 	if (ops != NULL)
 	{
 		if (ops->ui_prefs_init != NULL)
@@ -136,7 +138,7 @@ gaim_core_quit(void)
 	gaim_prefs_uninit();
 	gaim_sound_uninit();
 
-	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
+	gaim_debug_info("main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
 
 	ops = gaim_core_get_ui_ops();

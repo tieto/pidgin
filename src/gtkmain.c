@@ -75,6 +75,7 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
+/* TODO: Get this out of here? */
 int docklet_count = 0;
 
 #if HAVE_SIGNAL_H
@@ -588,6 +589,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	/*
+	 * We're done piddling around with command line arguments.
+	 * Fire up this baby.
+	 */
+
+	gaim_debug_set_enabled(debug_enabled);
+
 #ifdef _WIN32
 	wgaim_init(hint);
 #endif
@@ -607,11 +615,6 @@ int main(int argc, char *argv[])
 				"Please report this!\n");
 		abort();
 	}
-
-	gaim_debug_set_enabled(debug_enabled);
-
-	/* TODO: Do this in gaim_core_init() instead of here */
-	gaim_plugins_probe(NULL);
 
 	/* TODO: Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */
 	gaimrc = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
