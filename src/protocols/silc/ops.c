@@ -1330,7 +1330,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			buffer_length = va_arg(vp, SilcUInt32);
 			if (!server_stats || !buffer_length) {
 				gaim_notify_error(gc, _("Server Statistics"),
-						_("No server statisitics available"), NULL);
+						_("No server statistics available"), NULL);
 				break;
 			}
 			silc_buffer_set(&buf, server_stats, buffer_length);
