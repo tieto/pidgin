@@ -1180,12 +1180,8 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		}
 		else if (event->keyval == 'z') {
 			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-			
-#ifndef _WIN32
-			XIconifyWindow(GDK_DISPLAY(),
-						   GDK_WINDOW_XWINDOW(gtkwin->window->window),
-						   ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
-#endif
+
+			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
 		}
 		else if (event->keyval == '[') {
 			gaim_window_switch_conversation(win,
@@ -3923,7 +3919,10 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc = gaim_conversation_get_gc(conv);
 
-	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
+		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
+	else
+		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	if(gc)
 		sml_attrib = g_strdup_printf("sml=\"%s\"", gc->prpl->name);
