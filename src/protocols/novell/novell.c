@@ -30,6 +30,7 @@
 #include "request.h"
 #include "network.h"
 #include "privacy.h"
+#include "status.h"
 #include "version.h"
 
 #define DEFAULT_PORT			8300
@@ -2917,21 +2918,78 @@ novell_status_text(GaimBuddy * buddy)
 
 	return NULL;
 }
-#if 0
+
+/*
+ * TODO: Someone that uses this protocol needs to verify
+ *       that these are correct and work.
+ *
+ * Before the status rewrite, Novell had the following
+ * user-setable statuses: Available, Away, Busy, Appear
+ * Offline and GAIM_AWAY_CUSTOM.  Are all of those taken
+ * care of with the statuses below?
+ */
 static GList *
-novell_away_states(GaimConnection * gc)
+novell_status_types(GaimAccount *account)
 {
-	GList *m = NULL;
+	GList *status_types = NULL;
+	GaimStatusType *type;
 
-	m = g_list_append(m, _("Available"));
-	m = g_list_append(m, _("Away"));
-	m = g_list_append(m, _("Busy"));
-	m = g_list_append(m, _("Appear Offline"));
-	m = g_list_append(m, GAIM_AWAY_CUSTOM);
+	g_return_val_if_fail(account != NULL, NULL);
 
-	return m;
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	/* TODO: Do we need both an "online" and an "available" state? */
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "available", _("Available"), TRUE, TRUE, TRUE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, TRUE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, TRUE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "appearoffline", _("Appear Offline"), TRUE, TRUE, TRUE);
+	status_types = g_list_append(status_types, type);
+
+	return status_types;
 }
 
+static void
+novell_set_status(GaimAccount *account, GaimStatus *status)
+{
+	gboolean connected;
+	GaimStatusType *type;
+	int primitive;
+
+	connected = gaim_account_is_connected(account);
+	type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(type);
+
+	/*
+	 * We don't have any independent statuses, so we don't need to
+	 * do anything when a status is deactivated (because another
+	 * status is about to be activated).
+	 */
+	if (!gaim_status_is_active(status))
+		return;
+
+	if (primitive != GAIM_STATUS_OFFLINE && !connected) {
+		gaim_account_connect(account);
+	} else if (primitive == GAIM_STATUS_OFFLINE && connected) {
+		gaim_account_disconnect(account);
+	} else {
+		if (!connected)
+			return;
+
+		/* TODO: Need to do the same stuff that novell_set_away does here */
+	}
+}
+
+#if 0
 static void
 novell_set_away(GaimConnection * gc, const char *state, const char *msg)
 {
@@ -3003,6 +3061,7 @@ novell_set_away(GaimConnection * gc, const char *state, const char *msg)
 		g_free(text);
 }
 #endif
+
 static void
 novell_add_permit(GaimConnection *gc, const char *who)
 {
@@ -3410,7 +3469,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_list_emblems,		/* list_emblems */
 	novell_status_text,			/* status_text */
 	novell_tooltip_text,		/* tooltip_text */
-	/*novell_away_states*/NULL,			/* away_states */
+	novell_status_types,		/* status_types */
 	novell_blist_node_menu,		/* blist_node_menu */
 	NULL,						/* chat_info */
 	NULL,						/* chat_info_defaults */
@@ -3420,7 +3479,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* set_info */
 	novell_send_typing,			/* send_typing */
 	novell_get_info,			/* get_info */
-	/*novell_set_away*/ NULL,			/* set_away */
+	novell_set_status,			/* set_status */
 	novell_set_idle,			/* set_idle */
 	NULL,						/* change_passwd */
 	novell_add_buddy,			/* add_buddy */
