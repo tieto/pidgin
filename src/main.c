@@ -501,8 +501,9 @@ gaim_gtk_ui_init(void)
 	gaim_privacy_set_ui_ops(gaim_gtk_privacy_get_ui_ops());
 	gaim_request_set_ui_ops(gaim_gtk_request_get_ui_ops());
 	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
-       	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
+	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
 
+	gaim_gtk_stock_init();
 	gaim_gtk_prefs_init();
 	gaim_gtk_blist_init();
 	gaim_gtk_conversations_init();
@@ -759,8 +760,7 @@ int main(int argc, char *argv[])
 	   }
 	 */
 
-	gtk_set_locale();
-	gui_check=gtk_init_check(&argc, &argv);
+	gui_check = gtk_init_check(&argc, &argv);
 
 	/* scan command-line options */
 	opterr = 1;
@@ -816,15 +816,14 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-#if GTK_CHECK_VERSION(2,2,0)
-	if(! gui_check) {
-	    const char *display_name_arg = gdk_get_display_arg_name ();
-	    g_warning ("cannot open display: %s", display_name_arg ? display_name_arg : " ");
-	    return 1;
-	}
-#endif
+	if (!gui_check) {
+		char *display = gdk_get_display();
 
-	gaim_gtk_stock_init();
+		g_warning("cannot open display: %s", display ? display : "unset");
+		g_free(display);
+
+		return 1;
+	}
 
 #ifdef _WIN32
         wgaim_init(hint);

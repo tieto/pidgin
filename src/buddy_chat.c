@@ -30,10 +30,6 @@
 #include "gtkutils.h"
 #include "ui.h"
 
-#ifdef _WIN32
-# include "wspell.h"
-#endif
-
 static GList *chatentries = NULL;
 static GtkWidget *joinchat = NULL;
 static GtkWidget *jc_vbox = NULL;

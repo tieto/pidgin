@@ -30,13 +30,6 @@
 #include "stock.h"
 #include "ui.h"
 
-#ifdef USE_GTKSPELL
-# include <gtkspell/gtkspell.h>
-# ifdef _WIN32
-#  include "wspell.h"
-# endif
-#endif
-
 typedef struct
 {
 	GaimRequestType type;
@@ -307,10 +300,8 @@ gaim_gtk_request_input(const char *title, const char *primary,
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
 
-#ifdef USE_GTKSPELL
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-			gtkspell_new_attach(GTK_TEXT_VIEW(entry), NULL, NULL);
-#endif
+			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 		gtk_container_add(GTK_CONTAINER(sw), entry);
 
@@ -648,14 +639,11 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 						gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview),
 													GTK_WRAP_WORD_CHAR);
 
-#ifdef USE_GTKSPELL
 						if (gaim_prefs_get_bool(
 								"/gaim/gtk/conversations/spellcheck"))
 						{
-							gtkspell_new_attach(GTK_TEXT_VIEW(textview),
-												NULL, NULL);
+							gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(textview));
 						}
-#endif
 
 						gtk_container_add(GTK_CONTAINER(widget), textview);
 						gtk_widget_show(textview);

@@ -38,16 +38,8 @@
 
 #include "ui.h"
 
-#ifdef USE_GTKSPELL
-# include <gtkspell/gtkspell.h>
-#endif
-
 /* XXX */
 #include "gaim.h"
-
-#ifdef _WIN32
-# include "wspell.h"
-#endif
 
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GList *dialogwindows = NULL;
@@ -871,10 +863,10 @@ void show_set_info(GaimConnection *gc)
 
 	b->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD_CHAR);
-#ifdef USE_GTKSPELL
+
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gtkspell_new_attach(GTK_TEXT_VIEW(b->text), NULL, NULL);
-#endif
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(b->text));
+
 	gtk_widget_set_size_request(b->text, 300, 200);
 
 	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
@@ -1517,10 +1509,8 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	ca->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
-#ifdef USE_GTKSPELL
- 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gtkspell_new_attach(GTK_TEXT_VIEW(ca->text), NULL, NULL);
-#endif
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
 
 	gtk_container_add(GTK_CONTAINER(frame), ca->text);
 

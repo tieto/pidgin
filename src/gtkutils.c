@@ -30,6 +30,13 @@
 # endif
 #endif /*_WIN32*/
 
+#ifdef USE_GTKSPELL
+# include <gtkspell/gtkspell.h>
+# ifdef _WIN32
+#  include "wspell.h"
+# endif
+#endif
+
 #include <gdk/gdkkeysyms.h>
 
 #include "debug.h"
@@ -44,10 +51,6 @@
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 #include "ui.h"
-
-#ifdef _WIN32
-#include "wspell.h"
-#endif
 
 guint accels_save_timer = 0;
 
@@ -1029,7 +1032,9 @@ char *stylize(const gchar *text, int length)
 	return buf;
 }
 
-void gaim_gtk_find_images(const char *message, GSList **list) {
+void
+gaim_gtk_find_images(const char *message, GSList **list)
+{
 	GData *attribs;
 	const char *tmp, *start, *end;
 
@@ -1078,6 +1083,25 @@ void gaim_gtk_find_images(const char *message, GSList **list) {
 
 		gdk_pixbuf_loader_close(loader, NULL);
 	}
+}
+
+void
+gaim_gtk_setup_gtkspell(GtkTextView *textview)
+{
+#ifdef USE_GTKSPELL
+	GError *error = NULL;
+	char *locale = NULL;
+
+	g_return_if_fail(textview != NULL);
+	g_return_if_fail(GTK_IS_TEXT_VIEW(textview));
+
+	if (gtkspell_new_attach(textview, locale, &error) == NULL && error)
+	{
+		gaim_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
+						   error->message);
+		g_error_free(error);
+	}
+#endif /* USE_GTKSPELL */
 }
 
 void

@@ -273,6 +273,16 @@ gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
 void gaim_gtk_find_images(const char *message, GSList **list);
 
 /**
+ * Sets up GtkSpell for the given GtkTextView, reporting errors
+ * if encountered.
+ *
+ * This does nothing if Gaim is not compiled with GtkSpell support.
+ *
+ * @param textview The textview widget to setup spellchecking for.
+ */
+void gaim_gtk_setup_gtkspell(GtkTextView *textview);
+
+/**
  * Stylizes the specified text using HTML, according to the current
  * font options.
  *
@@ -290,8 +300,8 @@ char *stylize(const gchar *text, int len);
  * Save menu accelerators callback
  */
 void gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
-														 GdkModifierType arg2, GClosure *arg3,
-														 gpointer data);
+							 GdkModifierType arg2, GClosure *arg3,
+							 gpointer data);
 
 /**
  * Save menu accelerators

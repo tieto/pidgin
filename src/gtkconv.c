@@ -27,6 +27,9 @@
 
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
+# ifdef _WIN32
+#  include "wspell.h"
+# endif
 #endif
 
 #include <gdk/gdkkeysyms.h>
@@ -57,10 +60,6 @@
 
 /* XXX */
 #include "gaim.h"
-
-#ifdef _WIN32
-# include "wspell.h"
-#endif
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
@@ -3652,10 +3651,8 @@ setup_chat_pane(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 					 G_CALLBACK(entry_key_pressed_cb_2), conv);
 
-#ifdef USE_GTKSPELL
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gtkspell_new_attach(GTK_TEXT_VIEW(gtkconv->entry), NULL, NULL);
-#endif
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 
 	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
@@ -3757,10 +3754,8 @@ setup_im_pane(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
 					 G_CALLBACK(delete_text_cb), conv);
 
-#ifdef USE_GTKSPELL
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gtkspell_new_attach(GTK_TEXT_VIEW(gtkconv->entry), NULL, NULL);
-#endif
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 
 	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
@@ -5895,7 +5890,7 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if (value)
-			gtkspell_new_attach(GTK_TEXT_VIEW(gtkconv->entry), NULL, NULL);
+			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 		else {
 			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
 			gtkspell_detach(spell);

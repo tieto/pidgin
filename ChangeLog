@@ -13,6 +13,7 @@ version 0.73cvs:
 	* The border on the close buttons on inactive tabs are no longer shown,
 	  thanks to a fix used by Galeon.
 	* Compatible with autoconf 2.58.
+	* Cleaned up gtkspell-related code (Robert McQueen)
 	* Changed the parameters for the received-chat-msg signal.
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
