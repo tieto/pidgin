@@ -3131,6 +3131,9 @@ static char *caps_string(guint caps)
 			case AIM_CAPS_SECUREIM:
 				tmp = _("Security Enabled");
 				break;
+			case AIM_CAPS_VIDEO:
+				tmp = _("Video Chat");
+				break;
 			default:
 				tmp = NULL;
 				break;
