@@ -151,7 +151,6 @@ void do_ask_cancel_by_handle(GModule *handle)
 	debug_printf("%d dialogs to search\n", g_slist_length(d));
 
 	while (d) {
-		GSList *cur = d;
 		struct doaskstruct *doask = d->data;
 
 		d = d->next;

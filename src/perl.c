@@ -66,8 +66,11 @@
 #undef group
 
 /* perl module support */
-extern void xs_init _((void));
-extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
+#ifdef OLD_PERL
+extern void boot_DynaLoader _((CV * cv));
+#else
+extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
+#endif
 
 #undef _
 #ifdef DEBUG
@@ -130,14 +133,19 @@ XS(XS_GAIM_add_timeout_handler); /* figure it out */
 /* play sound */
 XS(XS_GAIM_play_sound); /*play a sound*/
 
-void xs_init()
+static void
+#ifdef OLD_PERL
+xs_init()
+#else
+xs_init(pTHX)
+#endif
 {
 	char *file = __FILE__;
 
 	/* This one allows dynamic loading of perl modules in perl
            scripts by the 'use perlmod;' construction*/
 	newXS ("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
-	
+
 	/* load up all the custom Gaim perl functions */
 		newXS ("GAIM::register", XS_GAIM_register, "GAIM");
 	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
@@ -255,7 +263,7 @@ void perl_unload_file(struct gaim_plugin *plug) {
 
 	GList *pl = perl_list;
 
-	debug_printf("Unloading %s\n", plug->handle);
+	debug_printf("Unloading %s\n", plug->path);
 	while (pl) {
 		scp = pl->data;
 		if (scp->plug == plug) {
@@ -304,7 +312,7 @@ void perl_unload_file(struct gaim_plugin *plug) {
 int perl_load_file(char *script_name)
 {
 	char *atmp[2] = { script_name, NULL }; /* see execute_perl --et */
-	struct gaim_plugin *plug;
+	struct gaim_plugin *plug = NULL;
 	GList *p = probed_plugins;
 	GList *s;
 	struct perlscript *scp;
@@ -348,7 +356,7 @@ int perl_load_file(char *script_name)
 	return ret;
 }
 
-struct gaim_plugin *probe_perl(const char *filename) {
+struct gaim_plugin *probe_perl(char *filename) {
 
 	/* XXX This woulld be much faster if I didn't create a new
 	 *     PerlInterpreter every time I probed a plugin */
@@ -488,9 +496,9 @@ XS (XS_GAIM_register)
 	char *name, *ver, *callback, *unused; /* exactly like X-Chat, eh? :) */
 	unsigned int junk;
 	struct perlscript *scp;
-	struct gaim_plugin *plug;
+	struct gaim_plugin *plug = NULL;
 	GList *pl = plugins;
-	
+
 	dXSARGS;
 	items = 0;
 
@@ -881,7 +889,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 
 	GList *handler;
 	struct _perl_event_handlers *data;
-	SV *handler_return;
+	int handler_return;
 	int i=0; /* necessary counter variable? --et */
 
 	switch (event) {
@@ -1090,6 +1098,7 @@ XS (XS_GAIM_remove_event_handler)
 	struct _perl_event_handlers *ehn;
 	GList *cur = perl_event_handlers;
 	dXSARGS;
+	items = 0;
 
 	while (cur) {
 		GList *next = cur->next;
@@ -1147,7 +1156,7 @@ XS (XS_GAIM_add_timeout_handler)
 	if (p) {
 		handler = g_new0(struct _perl_timeout_handlers, 1);
 		timeout = 1000 * SvIV(ST(1));
-		debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
+		debug_printf("Adding timeout for %ld seconds.\n", timeout/1000);
 		handler->plug = plug;
 		handler->handler_name = g_strdup(SvPV(ST(2), junk));
 		handler->handler_args = g_strdup(SvPV(ST(3), junk));
@@ -1163,6 +1172,8 @@ XS (XS_GAIM_play_sound)
 {
 	int id;
 	dXSARGS;
+
+	items = 0;
 
 	id = SvIV(ST(0));
 

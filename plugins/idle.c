@@ -12,7 +12,6 @@
 #include "multi.h"
 #include "gaim.h"
 #include <sys/time.h>
-#include "pixmaps/ok.xpm"
 
 static struct gaim_connection *gc = NULL;
 

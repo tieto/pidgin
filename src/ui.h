@@ -467,7 +467,7 @@ extern void cancel_fgcolor(GtkWidget *widget, struct conversation *c);
 extern void cancel_bgcolor(GtkWidget *widget, struct conversation *c);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
-extern void show_add_link(GtkWidget *,struct conversation *);
+extern void show_insert_link(GtkWidget *,struct conversation *);
 extern void show_smiley_dialog(struct conversation *, GtkWidget *);
 extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
@@ -538,6 +538,8 @@ extern void play_file(char *);
 
 /* Functions in themes.c */
 extern void smiley_themeize(GtkWidget *);
+extern void smiley_theme_probe();
+extern struct smiley_theme *load_smiley_theme(const char *file, gboolean load);
 
 /* Fucnctions in util.c */
 extern GtkWidget *gaim_pixmap(char *, char *);

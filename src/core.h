@@ -216,7 +216,7 @@ extern int perl_load_file(char *);
 extern void perl_unload_file(struct gaim_plugin *);
 extern void unload_perl_scripts();
 extern void list_perl_scripts();
-extern struct gaim_plugin *probe_perl(const char *);
+extern struct gaim_plugin *probe_perl(char *);
 #endif
 
 /* Functions in plugins.c */

@@ -1,4 +1,4 @@
-/* $Id: libgg.c 4216 2002-11-29 12:48:01Z lschiere $ */
+/* $Id: libgg.c 4552 2003-01-11 19:59:27Z seanegan $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -72,7 +72,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 4216 2002-11-29 12:48:01Z lschiere $";
+= "$Id: libgg.c 4552 2003-01-11 19:59:27Z seanegan $";
 
 #endif 
 
@@ -99,6 +99,8 @@ static inline unsigned long fix32(unsigned long x)
  *
  * dla maszyn big-endianowych zamienia kolejno¶æ bajtów w ,,short''ach.
  */
+
+/* not currently used
 static inline unsigned short fix16(unsigned short x)
 {
 #ifndef WORDS_BIGENDIAN
@@ -109,6 +111,7 @@ static inline unsigned short fix16(unsigned short x)
                  ((x & (unsigned short) 0xff00U) >> 8));
 #endif
 }
+*/
 
 #ifndef _WIN32
 /*

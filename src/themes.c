@@ -23,6 +23,9 @@
 #include "ui.h"
 #include "gtkimhtml.h"
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include "gaim.h"
 
 struct smiley_list {
 	char *sml;
@@ -52,11 +55,10 @@ void smiley_themeize(GtkWidget *imhtml)
 	}
 }
 
-struct smiley_theme *load_smiley_theme(char *file, gboolean load)
+struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = fopen(file, "r");
 	char buf[256];
-	char sml[16];
 	char *i;
 	struct smiley_theme *theme=NULL;
 	struct smiley_list *list = NULL;
@@ -84,7 +86,6 @@ struct smiley_theme *load_smiley_theme(char *file, gboolean load)
 			GSList *already_freed = NULL;
 			struct smiley_list *wer = current_smiley_theme->list;
 			while (wer) {
-				char *nds = !strcmp(wer->sml, "default") ? NULL : wer->sml;
 				GSList *already_freed = NULL;
 				while (wer->smileys) {
 					GtkIMHtmlSmiley *uio = wer->smileys->data;
@@ -205,7 +206,7 @@ void smiley_theme_probe()
 				 * We set the second argument to FALSE so that it doesn't load
 				 * the theme yet.
 				 */
-				if (smile = load_smiley_theme(path, FALSE)) {
+				if ((smile = load_smiley_theme(path, FALSE))) {
 					smiley_themes = g_slist_append(smiley_themes, smile);
 				}
 				g_free(path);

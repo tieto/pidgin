@@ -73,7 +73,7 @@ libzephyr_la_LDFLAGS = -module -avoid-version
 
 if STATIC_ZEPHYR
 
-st = -DSTATIC
+st = -DSTATIC -Dlint
 noinst_LIBRARIES = libzephyr.a
 libzephyr_a_SOURCES = $(ZEPHYRSOURCES)
 libzephyr_a_CFLAGS  = $(AM_CFLAGS)
@@ -81,7 +81,7 @@ libzephyr_a_LIBADD  = $(ZEPHYRLIBS)
 
 else
 
-st =
+st = -Dlint
 pkg_LTLIBRARIES = libzephyr.la
 libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
 libzephyr_la_LIBADD  = $(ZEPHYRLIBS)

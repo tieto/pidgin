@@ -240,6 +240,16 @@ if test "$enable_perl" = yes ; then
 	dnl This is almost definitely wrong, but in case there's
 	dnl something I'm missing, I'll leave it in.
 	AC_CHECK_FUNCS(Perl_eval_pv)
+
+	AC_MSG_CHECKING(for old perl)
+	PERL_OLD=`$perlpath -e 'if($]<5.006){printf"yes\n";}else{printf"no\n";}'`
+
+	if test "$PERL_OLD" = "yes"; then
+		AC_DEFINE(OLD_PERL, 1, [Define if old perl is installed.])
+		AC_MSG_RESULT(yes)
+	else
+		AC_MSG_RESULT(no)
+	fi
 else
 	PERL_CFLAGS=
 	PERL_LIBS=

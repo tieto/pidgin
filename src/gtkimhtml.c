@@ -238,6 +238,7 @@ void tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg
 	}
 }
 
+/* this isn't used yet
 static void
 gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
@@ -265,6 +266,8 @@ gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
+*/
+
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,

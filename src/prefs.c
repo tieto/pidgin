@@ -200,7 +200,7 @@ GtkWidget *interface_page() {
 
 static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
-	char *filename;
+	const char *filename;
 	GValue val = { 0, };
 	
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
@@ -217,7 +217,6 @@ GtkWidget *theme_page() {
 	GSList *themes = smiley_themes;
 	GtkTreeIter iter;
 	GtkWidget *view;
-	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
