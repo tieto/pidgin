@@ -3313,7 +3313,10 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 	char *chatname;
 	gboolean invisible = FALSE;
 
-	gc->away = NULL; /* never send an auto-response */
+	if (gc->away) {
+		g_free(gc->away);
+		gc->away = NULL;
+	}
 
 	x = xmlnode_new_tag("presence");
 
@@ -3325,7 +3328,7 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 			xmlnode_insert_cdata(y, "away", -1);
 			y = xmlnode_insert_tag(x, "status");
 			xmlnode_insert_cdata(y, message, -1);
-			gc->away = "";
+			gc->away = g_strdup(message);
 		} else {
 			/* Gaim wants us to not be away */
 			/* but for Jabber, we can just send presence with no other information. */
@@ -3337,21 +3340,22 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 		} else if (!strcmp(state, "Chatty")) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "chat", -1);
+			gc->away = g_strdup("");
 		} else if (!strcmp(state, "Away")) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "away", -1);
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else if (!strcmp(state, "Extended Away")) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "xa", -1);
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else if (!strcmp(state, "Do Not Disturb")) {
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "dnd", -1);
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else if (!strcmp(state, "Invisible")) {
 			xmlnode_put_attrib(x, "type", "invisible");
-			gc->away = "";
+			gc->away = g_strdup("");
 			invisible = TRUE;
 		}
 	}

@@ -1186,15 +1186,19 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 	int service;
 	char s[4];
 
-	gc->away = NULL;
+	if (gc->away) {
+		g_free(gc->away);
+		gc->away = NULL;
+	}
 
 	if (msg) {
 		yd->current_status = YAHOO_STATUS_CUSTOM;
-		gc->away = "";
+		gc->away = g_strdup(msg);
 	} else if (state) {
-		gc->away = "";
+		gc->away = g_strdup("");
 		if (!strcmp(state, "Available")) {
 			yd->current_status = YAHOO_STATUS_AVAILABLE;
+			g_free(gc->away);
 			gc->away = NULL;
 		} else if (!strcmp(state, "Be Right Back")) {
 			yd->current_status = YAHOO_STATUS_BRB;
@@ -1222,6 +1226,7 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 			} else {
 				yd->current_status = YAHOO_STATUS_AVAILABLE;
 			}
+			g_free(gc->away);
 			gc->away = NULL;
 		}
 	} else if (gc->is_idle) {

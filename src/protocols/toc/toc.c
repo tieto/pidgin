@@ -189,6 +189,7 @@ static void toc_login(struct aim_user *user)
 	gc = new_gaim_conn(user);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	gc->flags |= OPT_CONN_HTML;
+	gc->flags |= OPT_CONN_AUTO_RESP;
 
 	g_snprintf(buf, sizeof buf, "Looking up %s",
 		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
@@ -1037,9 +1038,10 @@ static void toc_dir_search(struct gaim_connection *g, const char *first, const c
 static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 {
 	char buf[BUF_LEN * 2];
-	if (g->away)
+	if (g->away) {
 		g_free (g->away);
-	g->away = NULL;
+		g->away = NULL;
+	}
 	if (message) {
 		char *tmp = g_malloc(strlen(message) * 4 + 1);
 		strcpy(tmp, message);

@@ -843,12 +843,15 @@ static GList *zephyr_buddy_menu(struct gaim_connection *gc, char *who)
 
 static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
-	if (gc->away)
+	if (gc->away) {
 		g_free(gc->away);
-	gc->away = NULL;
-	if (!g_strcasecmp(state, "Hidden"))
+		gc->away = NULL;
+	}
+
+	if (!g_strcasecmp(state, "Hidden")) {
 		ZSetLocation(EXPOSE_OPSTAFF);
-	else if (!g_strcasecmp(state, "Online"))
+		gc->away = g_strdup("");
+	} else if (!g_strcasecmp(state, "Online"))
 		ZSetLocation(get_exposure_level());
 	else /* state is GAIM_AWAY_CUSTOM */ if (msg)
 		gc->away = g_strdup(msg);

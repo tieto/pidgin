@@ -397,33 +397,35 @@ static void icq_rem_buddy(struct gaim_connection *gc, char *who, char *group) {
 static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
-	if (gc->away)
+	if (gc->away) {
+		g_free(gc->away);
 		gc->away = NULL;
+	}
 
 	if (!strcmp(state, "Online"))
 		icq_ChangeStatus(id->link, STATUS_ONLINE);
 	else if (!strcmp(state, "Away")) {
 		icq_ChangeStatus(id->link, STATUS_AWAY);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Do Not Disturb")) {
 		icq_ChangeStatus(id->link, STATUS_DND);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Not Available")) {
 		icq_ChangeStatus(id->link, STATUS_NA);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Occupied")) {
 		icq_ChangeStatus(id->link, STATUS_OCCUPIED);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Free For Chat")) {
 		icq_ChangeStatus(id->link, STATUS_FREE_CHAT);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Invisible")) {
 		icq_ChangeStatus(id->link, STATUS_INVISIBLE);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 		if (msg) {
 			icq_ChangeStatus(id->link, STATUS_NA);
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else {
 			icq_ChangeStatus(id->link, STATUS_ONLINE);
 		}

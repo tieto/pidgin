@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4269 2002-12-11 02:09:43Z lschiere $
+ * $Id: gg.c 4326 2002-12-21 19:33:54Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -194,32 +194,35 @@ static void agg_set_away(struct gaim_connection *gc, char *state, char *msg)
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	int status = gd->own_status;
 
-	if (gc->away)
+	if (gc->away) {
+		g_free(gc->away);
 		gc->away = NULL;
+	}
 
 	if (!g_strcasecmp(state, AGG_STATUS_AVAIL))
 		status = GG_STATUS_AVAIL;
-	else if (!g_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS))
+	else if (!g_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS)) {
 		status = GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK;
-	else if (!g_strcasecmp(state, AGG_STATUS_BUSY)) {
+		gc->away = g_strdup("");
+	} else if (!g_strcasecmp(state, AGG_STATUS_BUSY)) {
 		status = GG_STATUS_BUSY;
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!g_strcasecmp(state, AGG_STATUS_BUSY_FRIENDS)) {
 		status =  GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK;
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE)) {
 		status = GG_STATUS_INVISIBLE;
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE_FRIENDS)) {
 		status = GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK;
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!g_strcasecmp(state, AGG_STATUS_NOT_AVAIL)) {
 		status = GG_STATUS_NOT_AVAIL;
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!g_strcasecmp(state, GAIM_AWAY_CUSTOM)) {
 		if (msg) {
 			status = GG_STATUS_BUSY;
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else
 			status = GG_STATUS_AVAIL;
 

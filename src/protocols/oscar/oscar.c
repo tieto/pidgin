@@ -626,6 +626,7 @@ static void oscar_login(struct aim_user *user) {
 	} else {
 		gc->protocol = PROTO_TOC;
 		gc->flags |= OPT_CONN_HTML;
+		gc->flags |= OPT_CONN_AUTO_RESP;
 	}
 	odata->supports_tn = g_hash_table_new(g_str_hash, g_str_equal);
 
@@ -3634,9 +3635,10 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 				_("You have probably requested to set your away message before the login procedure completed.  "
 				  "You remain in a \"present\" state; try setting it again when you are fully connected."), GAIM_ERROR);
 	
-	if (gc->away)
+	if (gc->away) {
 		g_free(gc->away);
-	gc->away = NULL;
+		gc->away = NULL;
+	}
 
 	if (!message) {
 		aim_bos_setprofile(od->sess, od->conn, NULL, "", caps_aim);
@@ -3661,33 +3663,35 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od, const char *state, const char *message)
 {
 
-	if (gc->away)
+	if (gc->away) {
+		g_free(gc->away);
 		gc->away = NULL;
+	}
 
 	if (!strcmp(state, "Online"))
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 	else if (!strcmp(state, "Away")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Do Not Disturb")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Not Available")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Occupied")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Free For Chat")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, "Invisible")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
-		gc->away = "";
+		gc->away = g_strdup("");
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 	 	if (message) {
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-			gc->away = "";
+			gc->away = g_strdup("");
 		} else {
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 		}

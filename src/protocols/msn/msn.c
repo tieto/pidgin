@@ -1881,13 +1881,16 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 	char buf[MSN_BUF_LEN];
 	char *away;
 
-	gc->away = NULL;
+	if (gc->away) {
+		g_free(gc->away);
+		gc->away = NULL;
+	}
 
 	if (msg) {
-		gc->away = "";
+		gc->away = g_strdup("");
 		away = "AWY";
 	} else if (state) {
-		gc->away = "";
+		gc->away = g_strdup("");
 
 		if (!strcmp(state, _("Away From Computer")))
 			away = "AWY";
@@ -1902,6 +1905,7 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 		else if (!strcmp(state, _("Hidden")))
 			away = "HDN";
 		else {
+			g_free(gc->away);
 			gc->away = NULL;
 			away = "NLN";
 		}

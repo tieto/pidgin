@@ -89,6 +89,8 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	gc->groups = NULL;
 	gc->permit = NULL;
 	gc->deny = NULL;
+	gc->away = NULL;
+	gc->away_state = NULL;
 
 	connections = g_slist_append(connections, gc);
 
@@ -134,6 +136,8 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		g_free(g->data);
 		g = g_slist_remove(g, g->data);
 	}
+	g_free(gc->away);
+	g_free(gc->away_state);
 	g_free(gc);
 
 	if (!connections && mainwindow)

@@ -232,6 +232,12 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
 	if (gc && gc->prpl && gc->prpl->set_away) {
 		char *buf = NULL;
+
+		if (gc->away_state) {
+			g_free(gc->away_state);
+			gc->away_state = NULL;
+		}
+
 		if (message) {
 			buf = g_malloc(strlen(message) + 1);
 			if (gc->flags & OPT_CONN_HTML)
@@ -241,6 +247,10 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 		}
 
 		gc->prpl->set_away(gc, state, buf);
+
+		if (gc->away && state) {
+			gc->away_state = g_strdup(state);
+		}
 
 		plugin_event(event_away, gc, state, buf);
 
@@ -671,10 +681,15 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 		}
 
-		/* regardless of whether we queue it or not, we should send an auto-response. That is,
-		 * of course, unless the horse.... no wait. */
-		if ((away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away) ||
-				((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
+		/* regardless of whether we queue it or not, we should send an auto-response.
+		 * that is, of course, unless the horse.... no wait. don't autorespond if:
+		 *  - it's not supported on this connection
+		 *  - or it's disabled
+		 *  - or the away message is empty
+		 *  - or we're not idle and the 'only auto respond if idle' pref is set
+		 */
+		if (!(gc->flags & OPT_CONN_AUTO_RESP) || (away_options & OPT_AWAY_NO_AUTO_RESP) ||
+		      !strlen(gc->away) || ((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
 			g_free(name);
 			g_free(message);
 			return;

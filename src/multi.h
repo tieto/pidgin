@@ -59,6 +59,7 @@ struct gaim_connection {
 	char displayname[128];
 	char password[32];
 	guint keepalive;
+
 	/* stuff needed for per-connection idle times */
 	guint idle_timer;
 	time_t login_time;
@@ -66,14 +67,19 @@ struct gaim_connection {
 	int is_idle;
 	time_t correction_time;
 
-	char *away;
-	int is_auto_away;
+	char *away;		/* set by protos, is NULL when not away, or set *
+				 * to "" or a custom message when away */
+	char *away_state;	/* updated by serv_set_away, keeps the last set *
+				 * away type */
+	int is_auto_away;	/* used by idle.c */
 
-	int evil;
-	gboolean wants_to_die; /* defaults to FALSE */
+	int evil;		/* warning level for AIM (why is this here?) */
+	gboolean wants_to_die;	/* defaults to FALSE */
 };
 
 #define OPT_CONN_HTML		0x00000001
+/* set this flag on a gc if you want serv_got_im to autoreply when away */
+#define OPT_CONN_AUTO_RESP	0x00000002
 
 struct proto_user_opt {
 	char *label;
