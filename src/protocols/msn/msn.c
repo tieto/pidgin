@@ -763,7 +763,7 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 	char buf[MSN_BUF_LEN];
 
 	if (*(map->user)) {
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trID, map->user, url_encode(map->friend));
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(map->gc, "Write error");
 			signoff(map->gc);
