@@ -2991,12 +2991,11 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 					gc->permdeny = 1;
 			}
 		} while ((c = strtok(NULL, "\n")));
-#if 0
-		fprintf(stdout, "Sending message '%s'\n", buf);
-#endif
 
-		if (bud != NULL)
+		if (bud != NULL) {
 			serv_add_buddies(gc, bud);
+			g_list_free(bud);
+		}
 		serv_set_permit_deny(gc);
 	}
 
@@ -3025,11 +3024,11 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 		gc->permdeny = 1;
 
 	pos += g_snprintf(&s[pos], len - pos, "m %d\n", gc->permdeny);
-	while (grp) {
+	while (len > pos && grp) {
 		g = (struct group *)grp->data;
 		pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
 		mem = g->members;
-		while (mem) {
+		while (len > pos && mem) {
 			b = (struct buddy *)mem->data;
 			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
 					  (show && strcmp(b->name, b->show)) ? ":" : "",
@@ -3039,12 +3038,12 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 		grp = g_slist_next(grp);
 	}
 
-	while (plist) {
+	while (len > pos && plist) {
 		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
 		plist = plist->next;
 	}
 
-	while (dlist) {
+	while (len > pos && dlist) {
 		pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
 		dlist = dlist->next;
 	}

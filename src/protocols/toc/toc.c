@@ -221,20 +221,21 @@ static int sflap_send(struct gaim_connection *gc, char *buf, int olen, int type)
 		 * so we just return here like everything went through fine */
 		return 0;
 
-	/* One _last_ 2048 check here!  This shouldn't ever
-	   * get hit though, hopefully.  If it gets hit on an IM
-	   * It'll lose the last " and the message won't go through,
-	   * but this'll stop a segfault. */
-	if (strlen(buf) > (MSG_LEN - sizeof(hdr))) {
-		debug_printf("message too long, truncating\n");
-		buf[MSG_LEN - sizeof(hdr) - 3] = '"';
-		buf[MSG_LEN - sizeof(hdr) - 2] = '\0';
-	}
-
 	if (olen < 0)
 		len = escape_message(buf);
 	else
 		len = olen;
+
+	/* One _last_ 2048 check here!  This shouldn't ever
+	   * get hit though, hopefully.  If it gets hit on an IM
+	   * It'll lose the last " and the message won't go through,
+	   * but this'll stop a segfault. */
+	if (len > MSG_LEN) {
+		debug_printf("message too long, truncating\n");
+		buf[MSG_LEN - 1] = '\0';
+		len = MSG_LEN;
+	}
+
 	hdr.ast = '*';
 	hdr.type = type;
 	hdr.seqno = htons(tdt->seqno++ & 0xffff);
@@ -759,10 +760,11 @@ static int toc_send_im(struct gaim_connection *gc, char *name, char *message, in
 
 static void toc_set_config(struct gaim_connection *gc)
 {
-	char buf[MSG_LEN], snd[BUF_LEN * 2];
-	toc_build_config(gc, buf, MSG_LEN, FALSE);
+	char *buf = g_malloc(MSG_LEN), snd[BUF_LEN * 2];
+	toc_build_config(gc, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
 	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
+	g_free(buf);
 }
 
 static void toc_get_info(struct gaim_connection *g, char *name)
