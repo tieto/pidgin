@@ -33,6 +33,9 @@
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
+#include "pixmaps/tb_redo.xpm"
+#include "pixmaps/tb_undo.xpm"
+#include "pixmaps/tb_refresh.xpm"
 
 #define LOGIN_STEPS 5
 
@@ -164,7 +167,7 @@ static GtkWidget *generate_list()
 
 	list = gtk_clist_new_with_titles(4, titles);
 	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
-	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_BROWSE);
+	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_MULTIPLE);
 	gtk_clist_column_titles_passive(GTK_CLIST(list));
 	gtk_container_add(GTK_CONTAINER(win), list);
 	gtk_widget_show(list);
@@ -500,14 +503,17 @@ static void add_acct(GtkWidget *w, gpointer d)
 
 static void mod_acct(GtkWidget *w, gpointer d)
 {
+	GList *l = GTK_CLIST(list)->selection;
 	int row = -1;
 	struct aim_user *u;
-	if (GTK_CLIST(list)->selection)
-		row = (int)GTK_CLIST(list)->selection->data;
-	if (row != -1) {
-		u = g_list_nth_data(aim_users, row);
-		if (u)
-			show_acct_mod(u);
+	while (l) {
+		row = (int)l->data;
+		if (row != -1) {
+			u = g_list_nth_data(aim_users, row);
+			if (u)
+				show_acct_mod(u);
+		}
+		l = l->next;
 	}
 }
 
@@ -597,11 +603,11 @@ static void do_pass_dlg(struct aim_user *u)
 
 static void acct_signin(GtkWidget *w, gpointer d)
 {
+	GList *l = GTK_CLIST(list)->selection;
 	int row = -1;
 	struct aim_user *u;
-	if (GTK_CLIST(list)->selection)
-		row = (int)GTK_CLIST(list)->selection->data;
-	if (row != -1) {
+	while (l) {
+		row = (int)l->data;
 		u = g_list_nth_data(aim_users, row);
 		if (!u->gc) {
 			if (!u->password[0]) {
@@ -617,6 +623,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 			u->gc->wants_to_die = TRUE;
 			signoff(u->gc);
 		}
+		l = l->next;
 	}
 }
 
@@ -633,20 +640,36 @@ static void do_del_acct(gpointer w, struct aim_user *u)
 
 static void del_acct(GtkWidget *w, gpointer d)
 {
+	GList *l = GTK_CLIST(list)->selection;
 	char buf[8192];
 	int row = -1;
 	struct aim_user *u;
-	if (GTK_CLIST(list)->selection)
-		row = (int)GTK_CLIST(list)->selection->data;
-	if (row == -1)
-	return;
+	while (l) {
+		row = (int)l->data;
+		u = g_list_nth_data(aim_users, row);
+		if (!u)
+			return;
 
-	u = g_list_nth_data(aim_users, row);
-	if (!u)
-		return;
+		g_snprintf(buf, sizeof(buf), _("Are you sure you want to delete %s?"), u->username);
+		do_ask_dialog(buf, u, do_del_acct, NULL);
+		l = l->next;
+	}
+}
 
-	g_snprintf(buf, sizeof(buf), _("Are you sure you want to delete %s?"), u->username);
-	do_ask_dialog(buf, u, do_del_acct, NULL);
+static void sel_auto(gpointer w, gpointer d)
+{
+	GList *l = aim_users;
+	struct aim_user *u;
+	int i = 0; /* faster than doing g_list_index each time */
+	while (l) {
+		u = l->data;
+		l = l->next;
+		if (u->options & OPT_USR_AUTO)
+			gtk_clist_select_row(GTK_CLIST(list), i, -1);
+		else
+			gtk_clist_unselect_row(GTK_CLIST(list), i, -1);
+		i++;
+	}
 }
 
 void account_editor(GtkWidget *w, GtkWidget *W)
@@ -654,7 +677,8 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	/* please kill me */
 	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *list;
+	GtkWidget *vbox2;
+	GtkWidget *sw;
 	GtkWidget *button;	/* used for many things */
 
 	if (acctedit) {
@@ -674,8 +698,29 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(acctedit), vbox);
 
-	list = generate_list();
-	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+
+	sw = generate_list();
+
+	vbox2 = gtk_vbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
+
+	button = picture_button2(acctedit, _("Select All"), tb_refresh_xpm, 2);
+	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
+	gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
+				  GTK_SIGNAL_FUNC(gtk_clist_select_all), GTK_OBJECT(list));
+
+	button = picture_button2(acctedit, _("Select Autos"), tb_redo_xpm, 2);
+	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(sel_auto), NULL);
+
+	button = picture_button2(acctedit, _("Select None"), tb_undo_xpm, 2);
+	gtk_box_pack_start(GTK_BOX(vbox2), button, TRUE, TRUE, 0);
+	gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
+				  GTK_SIGNAL_FUNC(gtk_clist_unselect_all), GTK_OBJECT(list));
+
+	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);

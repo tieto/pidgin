@@ -119,7 +119,10 @@ EXTRA_DIST =	about_small.xpm			\
 		status-idle.xpm			\
 		strike.xpm			\
 		tb_forward.xpm			\
+		tb_redo.xpm			\
+		tb_refresh.xpm			\
 		tb_search.xpm			\
+		tb_undo.xpm			\
 		think.xpm			\
 		tmp_send.xpm			\
 		tongue.xpm			\
