@@ -177,11 +177,8 @@ common_send(GaimConversation *conv, const char *message)
 
 	conv->send_history = g_list_prepend(first, NULL);
 
-	if ((gc->flags & GAIM_CONNECTION_HTML) &&
-		gaim_prefs_get_bool("/core/conversations/send_urls_as_links")) {
-
+	if (gc->flags & GAIM_CONNECTION_HTML)
 		displayed = gaim_markup_linkify(message);
-	}
 	else
 		displayed = g_strdup(message);
 
@@ -2611,7 +2608,6 @@ gaim_conversations_init(void)
 
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
-	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
 	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
 	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);

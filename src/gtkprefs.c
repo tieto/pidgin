@@ -888,10 +888,6 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-#if 0 /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("Send _URLs as links"),
-				  "/core/conversations/send_urls_as_links", vbox);
-#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 

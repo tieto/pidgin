@@ -879,8 +879,6 @@ static void gaimrc_read_options(FILE *f)
 					general_options & OPT_GEN_ENTER_SENDS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/raise_on_events",
 					general_options & OPT_GEN_POPUP_WINDOWS);
-			gaim_prefs_set_bool("/core/conversations/send_urls_as_links",
-					general_options & OPT_GEN_SEND_LINKS);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
 					general_options & OPT_GEN_DEBUG);
 #ifndef _WIN32
@@ -995,8 +993,6 @@ static void gaimrc_read_options(FILE *f)
 			convo_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/enter_sends",
 					convo_options & OPT_CONVO_ENTER_SENDS);
-			gaim_prefs_set_bool("/core/conversations/send_urls_as_links",
-					convo_options & OPT_CONVO_SEND_LINKS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/spellcheck",
 					convo_options & OPT_CONVO_CHECK_SPELLING);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/html_shortcuts",
