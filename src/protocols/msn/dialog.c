@@ -88,7 +88,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	data->group = g_strdup(group_name);
 	data->gc    = gc;
 
-	msg = g_strdup_printf(_("Buddy list syncronization issue in %s (%s)"),
+	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
 						  gaim_account_get_username(account),
 						  gaim_account_get_protocol_name(account));
 

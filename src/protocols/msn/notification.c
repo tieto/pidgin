@@ -1233,7 +1233,7 @@ msn_notification_init(void)
 
 	cbs_table = msn_table_new();
 
-	/* Syncronous */
+	/* Synchronous */
 	msn_table_add_cmd(cbs_table, "CHG", "CHG", chg_cmd);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "ADD", "ADD", add_cmd);
@@ -1254,7 +1254,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "RMG", "RMG", rmg_cmd);
 	msn_table_add_cmd(cbs_table, "XFR", "XFR", xfr_cmd);
 
-	/* Asyncronous */
+	/* Asynchronous */
 	msn_table_add_cmd(cbs_table, NULL, "IPG", ipg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NOT", not_cmd);

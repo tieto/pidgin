@@ -319,7 +319,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/* Since commands have not stored payload and we need it for pendent
 	 * commands at the time we process again the same command we will try
 	 * to read again the payload of payload_len size but we will actually
-	 * read sometime else, and reading from server syncronization goes to
+	 * read sometime else, and reading from server synchronization goes to
 	 * hell. */
 	/* Now we store the payload in the command when we queue them :D */
 
