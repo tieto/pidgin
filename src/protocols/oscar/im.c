@@ -1828,8 +1828,10 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	/*
 	 * Invitation message / chat description.
 	 */
-	if (aim_tlv_gettlv(list2, 0x000c, 1))
+	if (aim_tlv_gettlv(list2, 0x000c, 1)) {
 		args.msg = aim_tlv_getstr(list2, 0x000c, 1);
+		args.msglen = aim_tlv_getlength(list2, 0x000c, 1);
+	}
 
 	/*
 	 * Character set.

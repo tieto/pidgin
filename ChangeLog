@@ -6,6 +6,10 @@ version 0.83:
 	* View Chat log available from the interface (Daniel Atallah)
 	* Ability to receive offline messages in character encodings
 	  other than ASCII (thanks to Nick Sukharev)
+	* File transfer status messages printed to conversation
+	  windows (Dave West)
+	* Display file transfer messages when someone sends you a file
+	  over AIM (Dave West)
 
 	Bug Fixes:
 	* Compile with gtk 2.5.x (Gary Kramlich)

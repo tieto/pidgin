@@ -785,6 +785,32 @@ faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, const fu16_t type, 
 }
 
 /**
+ * Get the length of the data of the nth TLV in the given TLV chain.
+ *
+ * @param list Source chain.
+ * @param type Requested TLV type.
+ * @param nth Index of TLV of type to get.
+ * @return The length of the data in this TLV, or -1 if the TLV could not be
+ *         found.  Unless -1 is returned, this value will be 2 bytes.
+ */
+faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, const fu16_t type, const int nth)
+{
+	aim_tlvlist_t *cur;
+	int i;
+
+	for (cur = list, i = 0; cur; cur = cur->next) {
+		if (cur && cur->tlv) {
+			if (cur->tlv->type == type)
+				i++;
+			if (i >= nth)
+				return cur->tlv->length;
+		}
+	}
+
+	return -1;
+}
+
+/**
  * Retrieve the data from the nth TLV in the given TLV chain as a string.
  *
  * @param list Source TLV chain.

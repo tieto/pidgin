@@ -352,6 +352,8 @@ static gchar *oscar_encoding_extract(const char *encoding)
 	gchar *ret = NULL;
 	char *begin, *end;
 
+	g_return_val_if_fail(encoding != NULL, NULL);
+
 	/* Make sure encoding begins with charset= */
 	if (strncmp(encoding, "text/aolrtf; charset=", 21))
 		return NULL;
@@ -3281,29 +3283,47 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	GaimConnection *gc;
+	GaimAccount *account;
 	OscarData *od;
-	const char *username;
+	const char *username = NULL;
+	char *message = NULL;
 
 	g_return_val_if_fail(sess != NULL, 0);
 	g_return_val_if_fail(sess->aux_data != NULL, 0);
 
 	gc = sess->aux_data;
+	account = gaim_connection_get_account(gc);
 	od = gc->proto_data;
-	username = gaim_account_get_username(gaim_connection_get_account(gc));
+	username = gaim_account_get_username(account);
 
-	if (!args)
+	if (args == NULL)
 		return 0;
 
-	gaim_debug_misc("oscar",
-			   "rendezvous with %s, status is %hu\n",
-			   userinfo->sn, args->status);
+	gaim_debug_misc("oscar", "rendezvous with %s, status is %hu\n",
+					userinfo->sn, args->status);
+
+	if (args->msg != NULL)
+	{
+		if (args->encoding != NULL)
+		{
+			char *encoding = NULL;
+			encoding = oscar_encoding_extract(args->encoding);
+			message = oscar_encoding_to_utf8(encoding, args->msg, args->msglen);
+			g_free(encoding);
+		} else {
+			if (g_utf8_validate(args->msg, args->msglen, NULL))
+				message = g_strdup(args->msg);
+		}
+	}
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
 		char *name;
 		GHashTable *components;
 
-		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange || !args->msg)
+		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange) {
+			g_free(message);
 			return 1;
+		}
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 				g_free);
 		name = extract_name(args->info.chat.roominfo.name);
@@ -3312,7 +3332,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		serv_got_chat_invite(gc,
 				     name ? name : args->info.chat.roominfo.name,
 				     userinfo->sn,
-				     args->msg,
+				     message,
 				     components);
 		if (name)
 			g_free(name);
@@ -3333,6 +3353,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					gaim_debug_warning("oscar",
 							   "IP for a proxy server was given.  Gaim "
 							   "does not support this yet.\n");
+				g_free(message);
 				return 1;
 			}
 
@@ -3355,6 +3376,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			xfer->remote_port = args->port;
 			gaim_xfer_set_filename(xfer, args->info.sendfile.filename);
 			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
+			gaim_xfer_set_message(xfer, message);
 
 			/* Create the oscar-specific data */
 			oft_info = aim_oft_createinfo(od->sess, args->cookie, userinfo->sn, args->clientip, xfer->remote_port, 0, 0, NULL);
@@ -3370,11 +3392,6 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_xfer_set_request_denied_fnc(xfer, oscar_xfer_cancel_recv);
 			gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
 			gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack_recv);
-
-			/*
-			 * XXX - Should do something with args->msg, args->encoding, and args->language
-			 *       probably make it apply to all ch2 messages.
-			 */
 
 			/* Keep track of this transfer for later */
 			od->file_transfers = g_slist_append(od->file_transfers, xfer);
@@ -3402,8 +3419,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	} else if (args->reqclass & AIM_CAPS_GETFILE) {
 	} else if (args->reqclass & AIM_CAPS_TALK) {
 	} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
-		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
-									  userinfo->sn, args->info.icon.icon,
+		gaim_buddy_icons_set_for_user(account, userinfo->sn,
+									  args->info.icon.icon,
 									  args->info.icon.length);
 	} else if (args->reqclass & AIM_CAPS_DIRECTIM) {
 		/* Consider moving all this into a helper func in the direct im block way up there */
@@ -3415,6 +3432,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			/* TODO: do something about this, after figuring out what it means */
 			gaim_debug_info("oscar",
 					   "directim kill blocked (%s)\n", userinfo->sn);
+			g_free(message);
 			return 1;
 		}
 
@@ -3457,6 +3475,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		gaim_debug_error("oscar",
 				   "Unknown reqclass %hu\n", args->reqclass);
 	}
+
+	g_free(message);
 
 	return 1;
 }

@@ -1453,13 +1453,13 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "chat-invited", account, who, name, message, data);
 
-	if (message)
+	if (message != NULL)
 		g_snprintf(buf2, sizeof(buf2),
-				   _("User '%s' invites %s to buddy chat room: '%s'\n%s"),
+				   _("%s has invited %s to the chat room %s:\n<b>%s</b>"),
 				   who, gaim_account_get_username(account), name, message);
 	else
 		g_snprintf(buf2, sizeof(buf2),
-				   _("User '%s' invites %s to buddy chat room: '%s'\n"),
+				   _("%s has invited %s to the chat room %s\n"),
 				   who, gaim_account_get_username(account), name);
 
 	cid->gc = gc;

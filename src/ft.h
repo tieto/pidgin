@@ -87,6 +87,7 @@ struct _GaimXfer
 	char *who;                    /**< The person on the other end of the
 	                                   transfer.                           */
 
+	char *message;                /**< A message sent with the request     */
 	char *filename;               /**< The name sent over the network.     */
 	char *local_filename;         /**< The name on the local hard drive.   */
 	size_t size;                  /**< The size of the file.               */
@@ -331,6 +332,14 @@ unsigned int gaim_xfer_get_remote_port(const GaimXfer *xfer);
  * @param completed The completed state.
  */
 void gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed);
+
+/**
+ * Sets the filename for the file transfer.
+ *
+ * @param xfer     The file transfer.
+ * @param message The message.
+ */
+void gaim_xfer_set_message(GaimXfer *xfer, const char *message);
 
 /**
  * Sets the filename for the file transfer.

@@ -50,6 +50,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_xfers_get_ui_ops();
+	xfer->message = NULL;
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -259,9 +260,14 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 				      size_buf);
 		g_free(size_buf);
 
+		if (xfer->message != NULL)
+			serv_got_im(gaim_account_get_connection(xfer->account),
+								 xfer->who, xfer->message, 0, time(NULL));
+
 		gaim_request_accept_cancel(xfer, NULL, buf, NULL, 0, xfer,
 					   G_CALLBACK(gaim_xfer_choose_file),
 					   G_CALLBACK(cancel_recv_cb));
+
 		g_free(buf);
 	} else
 		gaim_xfer_choose_file(xfer);
@@ -521,6 +527,19 @@ gaim_xfer_set_completed(GaimXfer *xfer, gboolean completed)
 
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
+}
+
+void
+gaim_xfer_set_message(GaimXfer *xfer, const char *message)
+{
+	g_return_if_fail(xfer != NULL);
+
+	g_free(xfer->message);
+
+	if (message != NULL)
+		xfer->message = g_strdup(message);
+	else
+		xfer->message = NULL;
 }
 
 void

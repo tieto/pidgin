@@ -818,6 +818,7 @@ struct aim_incomingim_ch2_args {
 	fu16_t port;
 	fu16_t errorcode;
 	const char *msg; /* invite message or file description */
+	fu16_t msglen;
 	const char *encoding;
 	const char *language;
 	union {
@@ -1380,6 +1381,7 @@ typedef struct aim_tlvlist_s {
 
 /* TLV handling functions */
 faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, fu16_t type, const int nth);
+faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, fu16_t type, const int nth);
 faim_internal char *aim_tlv_getstr(aim_tlvlist_t *list, const fu16_t type, const int nth);
 faim_internal fu8_t aim_tlv_get8(aim_tlvlist_t *list, const fu16_t type, const int nth);
 faim_internal fu16_t aim_tlv_get16(aim_tlvlist_t *list, const fu16_t type, const int nth);
