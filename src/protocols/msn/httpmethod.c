@@ -118,8 +118,7 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 	g_return_val_if_fail(size      > 0,    0);
 	g_return_val_if_fail(servconn->http_data != NULL, 0);
 
-	if (servconn->http_data->waiting_response ||
-		servconn->http_data->queue != NULL)
+	if (servconn->http_data->waiting_response)
 	{
 		MsnHttpQueueData *queue_data = g_new0(MsnHttpQueueData, 1);
 
