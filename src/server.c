@@ -402,7 +402,8 @@ void serv_set_permit_deny()
 			sflap_send(buf, -1, TYPE_DATA);
 			break;
 		case DENY_SOME:
-			/* FIXME! This still doesn't work */
+			/* you'll still see people as being online, but they won't see you, and you
+			 * won't get updates for them. that's why i thought this was broken. */
 			at = g_snprintf(buf, sizeof(buf), "toc_add_deny");
 			list = deny;
 			while (list) {
