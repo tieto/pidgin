@@ -11,6 +11,8 @@ MSNSOURCES = \
 	error.h \
 	group.c \
 	group.h \
+	httpmethod.c \
+	httpmethod.h \
 	msg.c \
 	msg.h \
 	msn.c \

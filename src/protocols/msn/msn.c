@@ -446,6 +446,7 @@ msn_login(GaimAccount *account)
 	MsnSession *session;
 	const char *username;
 	const char *server;
+	gboolean http_method = FALSE;
 	int port;
 
 	gc = gaim_account_get_connection(account);
@@ -458,10 +459,21 @@ msn_login(GaimAccount *account)
 		return;
 	}
 
-	server = gaim_account_get_string(account, "server", MSN_SERVER);
-	port   = gaim_account_get_int(account,    "port",   MSN_PORT);
+	if (gaim_account_get_bool(account, "http_method", FALSE))
+	{
+		http_method = TRUE;
+
+		server = "gateway.messenger.hotmail.com";
+		port   = 80;
+	}
+	else
+	{
+		server = gaim_account_get_string(account, "server", MSN_SERVER);
+		port   = gaim_account_get_int(account,    "port",   MSN_PORT);
+	}
 
 	session = msn_session_new(account, server, port);
+	session->http_method = http_method;
 	session->prpl = my_protocol;
 
 	gc->proto_data = session;
@@ -1623,6 +1635,13 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_int_new(_("Port"), "port", 1863);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
+
+#if 0
+	option = gaim_account_option_bool_new(_("Use HTTP Method"), "http_method",
+										  FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+#endif
 
 	my_protocol = plugin;
 

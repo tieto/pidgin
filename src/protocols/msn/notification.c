@@ -1863,6 +1863,9 @@ rng_cmd(MsnServConn *servconn, const char *command, const char **params,
 	else
 		port = 1863;
 
+	if (session->http_method)
+		port = 80;
+
 	swboard = msn_switchboard_new(session);
 
 	user = msn_user_new(session, params[4], NULL);
@@ -1924,6 +1927,9 @@ xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 
 		msn_switchboard_set_auth_key(swboard, params[4]);
+
+		if (session->http_method)
+			port = 80;
 
 		if (!msn_switchboard_connect(swboard, host, port)) {
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
@@ -2182,6 +2188,9 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 	msn_servconn_set_server(notification, server, port);
 	msn_servconn_set_connect_cb(notification, connect_cb);
 	msn_servconn_set_failed_read_cb(notification, failed_read_cb);
+
+	if (session->http_method)
+		notification->http_data->server_type = "NS";
 
 	if (notification_commands == NULL) {
 		/* Register the command callbacks. */

@@ -22,6 +22,7 @@
 #include "msn.h"
 #include "session.h"
 #include "dispatch.h"
+#include "notification.h"
 
 MsnSession *
 msn_session_new(GaimAccount *account, const char *server, int port)
@@ -103,12 +104,23 @@ msn_session_connect(MsnSession *session)
 
 	session->connected = TRUE;
 
-	session->dispatch_conn = msn_dispatch_new(session,
-											  session->dispatch_server,
-											  session->dispatch_port);
+	if (session->http_method)
+	{
+		session->notification_conn =
+			msn_notification_new(session, "gateway.messenger.hotmail.com", 80);
 
-	if (msn_servconn_connect(session->dispatch_conn))
-		return TRUE;
+		if (msn_servconn_connect(session->notification_conn))
+			return TRUE;
+	}
+	else
+	{
+		session->dispatch_conn = msn_dispatch_new(session,
+												  session->dispatch_server,
+												  session->dispatch_port);
+
+		if (msn_servconn_connect(session->dispatch_conn))
+			return TRUE;
+	}
 
 	return FALSE;
 }

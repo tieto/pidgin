@@ -48,6 +48,8 @@ struct _MsnSession
 
 	unsigned int trId;
 
+	gboolean http_method;
+
 	char *ssl_url;
 	char *ssl_login_host;
 	char *ssl_login_path;

@@ -459,6 +459,9 @@ msn_switchboard_new(MsnSession *session)
 	msn_servconn_set_connect_cb(servconn, connect_cb);
 	msn_servconn_set_failed_read_cb(servconn, failed_read_cb);
 
+	if (session->http_method)
+		swboard->servconn->http_data->server_type = "SB";
+
 	servconn->data = swboard;
 
 	session->switches = g_list_append(session->switches, swboard);

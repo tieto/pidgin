@@ -27,6 +27,7 @@
 typedef struct _MsnServConn MsnServConn;
 
 #include "msg.h"
+#include "httpmethod.h"
 
 typedef gboolean (*MsnServConnCommandCb)(MsnServConn *servconn,
 										 const char *cmd, const char **params,
@@ -49,6 +50,8 @@ struct _MsnServConn
 	MsnSession *session;
 
 	gboolean connected;
+
+	MsnHttpMethodData *http_data;
 
 	char *server;
 	int port;
