@@ -56,7 +56,7 @@
 
 static struct gaim_gtk_buddy_list *gtkblist = NULL;
 
-/* Docklet nonsense */
+/* part of the best damn Docklet code this side of Tahiti */
 static gboolean gaim_gtk_blist_obscured = FALSE;
 
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
@@ -69,12 +69,67 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
  *              Callbacks                          *
  ***************************************************/
 
-static void gaim_gtk_blist_destroy_cb()
+static gboolean gtk_blist_delete_cb(GtkWidget *w, GdkEventAny *event, gpointer data)
 {
 	if (docklet_count)
 		gaim_blist_set_visible(FALSE);
 	else
 		do_quit();
+
+	/* we handle everything, event should not propogate further */
+	return TRUE;
+}
+
+static gboolean gtk_blist_save_prefs_cb(gpointer data)
+{
+	save_prefs();
+
+	/* only run once */
+	return FALSE;
+}
+
+static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, gpointer data)
+{
+	/* unfortunately GdkEventConfigure ignores the window gravity, but  *
+	 * the only way we have of setting the position doesn't. we have to *
+	 * call get_position and get_size because they do pay attention to  *
+	 * the gravity. this is inefficient and I agree it sucks, but it's  *
+	 * more likely to work correctly.                        - Robot101 */
+	gint x, y;
+
+	/* check for visibility because when we aren't visible, this will   *
+	 * give us bogus (0,0) coordinates.                      - xOr      */
+	if (GTK_WIDGET_VISIBLE(w)) {
+		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
+
+		if (x != blist_pos.x ||
+		    y != blist_pos.y ||
+		    event->width != blist_pos.width ||
+		    event->height != blist_pos.height) {
+			blist_pos.x = x;
+			blist_pos.y = y;
+			blist_pos.width = event->width;
+			blist_pos.height = event->height;
+
+			if (!g_main_context_find_source_by_user_data(NULL, &gtk_blist_save_prefs_cb)) {
+				g_timeout_add(5000, gtk_blist_save_prefs_cb, &gtk_blist_save_prefs_cb);
+			}
+		}
+	}
+
+	/* continue to handle event normally */
+	return FALSE;
+}
+
+static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
+{
+	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
+		gaim_gtk_blist_obscured = TRUE;
+	else
+		gaim_gtk_blist_obscured = FALSE;
+
+	/* continue to handle event normally */
+	return FALSE;
 }
 
 static void gtk_blist_menu_info_cb(GtkWidget *w, struct buddy *b)
@@ -885,6 +940,31 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	return text;
 }
 
+static void gaim_gtk_blist_restore_position()
+{
+	/* if the window exists, is hidden, we're saving positions, and the position is sane... */
+	if(gtkblist && gtkblist->window &&
+	   !GTK_WIDGET_VISIBLE(gtkblist->window) &&
+	   blist_options & OPT_BLIST_SAVED_WINDOWS &&
+	   blist_pos.width != 0) {
+		/* ...check position is on screen... */
+		if (blist_pos.x >= gdk_screen_width())
+			blist_pos.x = gdk_screen_width() - 100;
+		else if (blist_pos.x < 0)
+			blist_pos.x = 100;
+		
+		if (blist_pos.y >= gdk_screen_height())
+			blist_pos.y = gdk_screen_height() - 100;
+		else if (blist_pos.y < 0)
+			blist_pos.y = 100;
+		
+		/* ...and move it back. */
+		gtk_window_move(GTK_WINDOW(gtkblist->window), blist_pos.x, blist_pos.y);
+		gtk_window_resize(GTK_WINDOW(gtkblist->window), blist_pos.width, blist_pos.height);
+	}
+}
+
+
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
@@ -940,12 +1020,17 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtkblist = GAIM_GTK_BLIST(list);
 
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_gravity(GTK_WINDOW(gtkblist->window), GDK_GRAVITY_NORTH_WEST);
+	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
-	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gaim_gtk_blist_destroy_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "visibility_notify_event", G_CALLBACK(gtk_blist_visibility_cb), NULL);
+	gtk_widget_add_events(gtkblist->window, GDK_VISIBILITY_NOTIFY_MASK);
 
 	/******************************* Menu bar *************************************/
 	ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", NULL);
@@ -1063,6 +1148,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
+	gaim_gtk_blist_restore_position();
 	gtk_widget_show_all(gtkblist->window);
 
 	gtk_tree_view_set_expander_column(GTK_TREE_VIEW(gtkblist->treeview), GTK_TREE_VIEW_COLUMN(expcol));
@@ -1357,7 +1443,11 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
 {
+	if (!(gtkblist && gtkblist->window))
+		return;
+
 	if (show) {
+		gaim_gtk_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
 	} else {
 		if (!connections || docklet_count) {
@@ -1375,20 +1465,23 @@ void gaim_gtk_blist_docklet_toggle() {
 	/* Useful for the docklet plugin and also for the win32 tray icon*/
 	/* This is called when one of those is clicked--it will show/hide the 
 	   buddy list/login window--depending on which is active */
-	if (connections && gtkblist) {
-		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
-		} else {
+	if (connections) {
+		if (gtkblist && gtkblist->window) {
+			if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+				gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
+			} else {
 #if _WIN32
-			wgaim_systray_maximize(gtkblist->window);
+				wgaim_systray_maximize(gtkblist->window);
 #endif
-			gaim_blist_set_visible(TRUE);
+				gaim_blist_set_visible(TRUE);
+			}
+		} else {
+			/* we're logging in or something... do nothing */
+			/* or should I make the blist? */
+			debug_printf("docklet_toggle called with connections but no blist!\n");
 		}
-	} else if (connections) {
-		/* we're logging in or something... do nothing */
-		debug_printf("docklet_toggle called with connections but no blist!\n");
-	} else {
-		if (mainwindow && GTK_WIDGET_VISIBLE(mainwindow)) {
+	} else if (mainwindow) {
+		if (GTK_WIDGET_VISIBLE(mainwindow)) {
 			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
 				gtk_window_present(GTK_WINDOW(mainwindow));
 			} else {
@@ -1403,6 +1496,8 @@ void gaim_gtk_blist_docklet_toggle() {
 #endif
 			show_login();
 		}
+	} else {
+		show_login();
 	}
 }
 
@@ -1417,8 +1512,10 @@ void gaim_gtk_blist_docklet_remove()
 	if (!docklet_count) {
 		if (connections) {
 			gaim_blist_set_visible(TRUE);
-		} else if(gtkblist && gtkblist->window) {
-			gtk_window_present(GTK_WINDOW(gtkblist->window));
+		} else if (mainwindow) {
+			gtk_window_present(GTK_WINDOW(mainwindow));
+		} else {
+			show_login();
 		}
 	}
 }

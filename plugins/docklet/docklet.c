@@ -224,8 +224,6 @@ static void docklet_update_icon() {
 	}
 
 	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-
-	debug_printf("Tray Icon: updated icon to '%s'\n", icon_name);
 }
 
 static gboolean docklet_blink_icon() {
@@ -297,7 +295,7 @@ static gboolean docklet_update_status() {
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
-	debug_printf("Tray Icon:embedded\n");
+	debug_printf("Tray Icon: embedded\n");
 	gaim_gtk_blist_docklet_add();
 }
 
