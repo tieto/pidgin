@@ -795,7 +795,9 @@ Function VerifyDir
     StrLen $2 $0
     ; IfFileExists "C:" on xp returns true and on win2k returns false
     ; So we're done in such a case..
-    StrCmp $2 "2" loop_done
+    IntCmp $2 2 loop_done
+    ; GetParent of "C:" returns ""
+    IntCmp $2 0 loop_done
     Goto Loop
 
   loop_done:
