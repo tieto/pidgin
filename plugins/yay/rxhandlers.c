@@ -260,6 +260,12 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			yahoo_write(session, conn, conn->txqueue, strlen(conn->txqueue));
 			g_free(conn->txqueue);
 			conn->txqueue = NULL;
+		} else if (conn->type == YAHOO_CONN_TYPE_PROXY) {
+			char buf[1024];
+			g_snprintf(buf, sizeof(buf), "CONNECT %s:%d HTTP/1.1\r\n\r\n",
+					YAHOO_PAGER_HOST, YAHOO_PAGER_PORT);
+			YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
+			yahoo_write(session, conn, buf, strlen(buf));
 		}
 
 		return;
@@ -312,12 +318,39 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		while (read(socket, &buf[pos++], 1) == 1);
 		if (pos == 1) {
 			g_free(buf);
+			yahoo_close(session, conn);
 			YAHOO_PRINT(session, YAHOO_LOG_WARNING, "error reading from listserv");
 			return;
 		}
 		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
 		YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "closing buddy list host connnection");
 		yahoo_close(session, conn);
+		g_free(buf);
+	} else if (conn->type == YAHOO_CONN_TYPE_PROXY) {
+		char *buf = g_malloc0(5000);
+		int nlc = 0;
+		while ((nlc != 2) && (read(socket, &buf[pos++], 1) == 1))
+			if (buf[pos-1] == '\n')
+				nlc++;
+		if (pos == 1) {
+			g_free(buf);
+			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_ERROR, "error reading from proxy");
+			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+			return;
+		}
+		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, buf);
+		if (!strncasecmp(buf, HTTP_GOODSTRING1, strlen(HTTP_GOODSTRING1)) ||
+		    !strncasecmp(buf, HTTP_GOODSTRING2, strlen(HTTP_GOODSTRING2))) {
+			conn->type = YAHOO_CONN_TYPE_MAIN;
+			YAHOO_PRINT(session, YAHOO_LOG_NOTICE, "proxy connected successfully");
+			CALLBACK(session, YAHOO_HANDLE_MAINCONNECT);
+		} else {
+			yahoo_close(session, conn);
+			YAHOO_PRINT(session, YAHOO_LOG_ERROR, "proxy could not connect");
+			CALLBACK(session, YAHOO_HANDLE_DISCONNECT);
+		}
+		g_free(buf);
 	}
 }
 

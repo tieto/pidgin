@@ -39,9 +39,13 @@ struct yahoo_conn {
 	char *txqueue;
 };
 
-#define YAHOO_CONN_TYPE_AUTH 1
-#define YAHOO_CONN_TYPE_MAIN 2
-#define YAHOO_CONN_TYPE_DUMB 3
+#define YAHOO_CONN_TYPE_AUTH  1
+#define YAHOO_CONN_TYPE_MAIN  2
+#define YAHOO_CONN_TYPE_DUMB  3
+#define YAHOO_CONN_TYPE_PROXY 4
+
+#define HTTP_GOODSTRING1 "HTTP/1.0 200 Connection established"
+#define HTTP_GOODSTRING2 "HTTP/1.1 200 Connection established"
 
 char *yahoo_urlencode(const char *);
 struct yahoo_conn *yahoo_new_conn(struct yahoo_session *, int, const char *, int);

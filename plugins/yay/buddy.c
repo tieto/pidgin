@@ -56,7 +56,10 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 		return 0;
 	}
 
-	send = g_strconcat("GET /config/set_buddygrp?.bg=", grp,
+	send = g_strconcat("GET ",
+			session->proxy_type ? "http://" : "",
+			session->proxy_type ? YAHOO_DATA_HOST : "",
+			"/config/set_buddygrp?.bg=", grp,
 			"&.src=bl&.cmd=a&.bdl=", bdy,
 			"&.id=", id,
 			"&.l=", usr,
@@ -119,7 +122,10 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 		return 0;
 	}
 
-	send = g_strconcat("GET /config/set_buddygrp?.bg=", grp,
+	send = g_strconcat("GET ",
+			session->proxy_type ? "http://" : "",
+			session->proxy_type ? YAHOO_DATA_HOST : "",
+			"/config/set_buddygrp?.bg=", grp,
 			"&.src=bl&.cmd=d&.bdl=", bdy,
 			"&.id=", id,
 			"&.l=", usr,

@@ -34,6 +34,9 @@
 
 struct yahoo_session;
 
+#define YAHOO_PROXY_NONE 0
+#define YAHOO_PROXY_HTTP 1
+
 #define YAHOO_AUTH_HOST "msg.edit.yahoo.com"
 #define YAHOO_AUTH_PORT 80
 #define YAHOO_PAGER_HOST "cs.yahoo.com"
@@ -58,6 +61,7 @@ enum yahoo_status {
 };
 
 struct yahoo_session *yahoo_new();
+void yahoo_set_proxy(struct yahoo_session *session, int proxy_type, char *proxy_host, int proxy_port);
 int yahoo_connect(struct yahoo_session *session, const char *host, int port);
 int yahoo_send_login(struct yahoo_session *session, const char *name, const char *password);
 int yahoo_major_connect(struct yahoo_session *session, const char *host, int port);
@@ -119,6 +123,10 @@ struct yahoo_group {
 struct yahoo_session {
 	void *user_data;
 	struct callback callbacks[YAHOO_HANDLE_MAX];
+
+	int proxy_type;
+	char *proxy_host;
+	int proxy_port;
 
 	char *name;
 

@@ -48,6 +48,9 @@
 
 #include "pixmaps/cancel.xpm"
 
+#define USEROPT_HTTPHOST 0
+#define USEROPT_HTTPPORT 1
+
 struct conn {
 	int socket;
 	int type;
@@ -345,6 +348,17 @@ static void yahoo_login(struct aim_user *user) {
 	yd->current_status = YAHOO_STATUS_AVAILABLE;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 
+	if (user->proto_opt[USEROPT_HTTPHOST][0]) {
+		char *finalproxy;
+		if (user->proto_opt[USEROPT_HTTPPORT][0])
+			yahoo_set_proxy(yd->sess, YAHOO_PROXY_HTTP,
+					user->proto_opt[USEROPT_HTTPHOST],
+					atoi(user->proto_opt[USEROPT_HTTPPORT]));
+		else
+			yahoo_set_proxy(yd->sess, YAHOO_PROXY_HTTP,
+					user->proto_opt[USEROPT_HTTPHOST], 8080);
+	}
+
 	set_login_progress(gc, 1, "Connecting");
 
 	if (!yahoo_connect(yd->sess, NULL, 0)) {
@@ -625,6 +639,73 @@ static GList *yahoo_actions() {
 	return m;
 }
 
+static void yahoo_print_option(GtkEntry *entry, struct aim_user *user) {
+	int entrynum;
+
+	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_HTTPHOST) {
+		g_snprintf(user->proto_opt[USEROPT_HTTPHOST],
+				sizeof(user->proto_opt[USEROPT_HTTPHOST]),
+				"%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_HTTPPORT) {
+		g_snprintf(user->proto_opt[USEROPT_HTTPPORT],
+				sizeof(user->proto_opt[USEROPT_HTTPPORT]),
+				"%s", gtk_entry_get_text(entry));
+	}
+}
+
+static void yahoo_user_opts(GtkWidget *book, struct aim_user *user) {
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("Yahoo Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("HTTP Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_HTTPHOST);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
+	if (user->proto_opt[USEROPT_HTTPHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_HTTPHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_HTTPHOST]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("HTTP Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_HTTPPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(yahoo_print_option), user);
+	if (user->proto_opt[USEROPT_HTTPPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_HTTPPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_HTTPPORT]);
+	}
+	gtk_widget_show(entry);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Yahoo_init(struct prpl *ret) {
@@ -636,7 +717,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->actions = yahoo_actions;
 	ret->do_action = yahoo_do_action;
 	ret->buddy_menu = yahoo_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = yahoo_user_opts;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->send_im = yahoo_send_im;

@@ -34,6 +34,16 @@ struct yahoo_session *yahoo_new()
 	return sess;
 }
 
+void yahoo_set_proxy(struct yahoo_session *session, int proxy_type, char *proxy_host, int proxy_port)
+{
+	if (!session || !proxy_type || !proxy_host)
+		return;
+
+	session->proxy_type = proxy_type;
+	session->proxy_host = g_strdup(proxy_host);
+	session->proxy_port = proxy_port;
+}
+
 static int yahoo_connect_host(struct yahoo_session *sess, const char *host, int port, int *statusret)
 {
 	struct sockaddr_in sa;
@@ -83,6 +93,12 @@ struct yahoo_conn *yahoo_new_conn(struct yahoo_session *session, int type, const
 
 	if (host) {
 		conn->socket = yahoo_connect_host(session, host, port, &status);
+	} else if (session->proxy_type) {
+		YAHOO_PRINT(session, YAHOO_LOG_DEBUG, "connecting to proxy");
+		conn->socket = yahoo_connect_host(session, session->proxy_host,
+				session->proxy_port, &status);
+		if (type == YAHOO_CONN_TYPE_MAIN)
+			conn->type = YAHOO_CONN_TYPE_PROXY;
 	} else {
 		switch (type) {
 			case YAHOO_CONN_TYPE_AUTH:
@@ -230,6 +246,8 @@ int yahoo_delete(struct yahoo_session *session)
 {
 	if (!session)
 		return 0;
+	if (session->proxy_host)
+		g_free(session->proxy_host);
 	g_free(session);
 	return 0;
 }
