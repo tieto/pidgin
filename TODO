@@ -13,10 +13,8 @@ gtk2/new prefs
 	resize blist doesn't work on some systems.
 	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
 		smiles and links do not.
-	replace legend in info dialog with link to status icons page
 	buddy ticker stays arou+nd when you sign off - showing the 
 		buddies who were online
-	need a close button on conversations for when its tabed if nothing else. [ROB]
 	text like <font color=blah>with only some text</font> being colored causes the whole line to be colored. 
 	lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
 	on away tab, if you set the time between responces, you 
