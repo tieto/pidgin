@@ -195,8 +195,8 @@ static int proxy_connect_socks4(char *host, unsigned short port,
 
 	packet[0] = 4;
 	packet[1] = 1;
-	packet[2] = (((unsigned short)htons(port)) >> 8);
-	packet[3] = (((unsigned short)htons(port)) & 0xff);
+	packet[2] = port >> 8;
+	packet[3] = port & 0xff;
 	packet[4] = (unsigned char)(hp->h_addr_list[0])[0];
 	packet[5] = (unsigned char)(hp->h_addr_list[0])[1];
 	packet[6] = (unsigned char)(hp->h_addr_list[0])[2];
@@ -219,6 +219,7 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 	unsigned char buf[512];
 	struct sockaddr_in sin;
 	struct hostent *hp;
+	int hlen = strlen(host);
 
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
 
@@ -263,10 +264,10 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 	buf[1] = 0x01;		/* CONNECT */
 	buf[2] = 0x00;		/* reserved */
 	buf[3] = 0x03;		/* address type -- host name */
-	buf[4] = strlen(host);
-	memcpy(buf + 5, host, strlen(host));
-	buf[5 + strlen(host)] = htons(port) >> 8;
-	buf[5 + strlen(host) + 1] = htons(port) & 0xff;
+	buf[4] = hlen;
+	memcpy(buf + 5, host, hlen);
+	buf[5 + strlen(host)] = port >> 8;
+	buf[5 + strlen(host) + 1] = port & 0xff;
 
 	if (write(fd, buf, (5 + strlen(host) + 2)) < (5 + strlen(host) + 2)) {
 		close(fd);
