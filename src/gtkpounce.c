@@ -835,7 +835,7 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next)
 	{
 		pounce = (GaimPounce *)bp->data;
-		buddy = gaim_pounce_get_pouncee(pounce);
+		buddy = gaim_buddy_get_contact_alias(gaim_find_buddy(gaim_pounce_get_pouncer(pounce), gaim_pounce_get_pouncee(pounce)));
 
 		/* Check if account is online, if not skip it */
 		if (!gaim_account_is_connected(pounce->pouncer))
