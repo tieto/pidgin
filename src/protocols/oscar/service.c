@@ -547,7 +547,7 @@ faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_GEN)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_BOS)))
 		return -EINVAL;
 
 	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
