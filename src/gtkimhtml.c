@@ -1228,6 +1228,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 							} else if (isdigit (*size)) {
 								sscanf (size, "%hd", &font->size);
 							}
+							if (font->size > 100)
+								font->size = 100;
 						} else if (oldfont)
 							font->size = oldfont->size;
 						g_free(size);
