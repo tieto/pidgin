@@ -97,6 +97,8 @@ CORESOURCES = \
 	signals.h \
 	status.c \
 	status.h \
+	stringref.c \
+	stringref.h \
 	sound.c \
 	sound.h \
 	sslconn.c \
