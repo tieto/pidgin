@@ -22,12 +22,11 @@
 #ifndef _GAIMMULTI_H_
 #define _GAIMMULTI_H_
 
-#include <gtk/gtk.h>
 #include "gaim.h"
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
-	int edittype;
+	int edittype; /* CUI: this is ui-specific and should be removed */
 
 	/* we need to do either oscar or TOC */
 	/* we make this as an int in case if we want to add more protocols later */
@@ -58,7 +57,7 @@ struct gaim_connection {
 	int options; /* same as aim_user options */
 	guint keepalive;
 	/* stuff needed for per-connection idle times */
-	guint idle_timer;
+	guint idle_timer; /* CUI: we need to figure out what to do about idle reporting */
 	time_t login_time;
 	time_t lastsent;
 	int is_idle;
@@ -74,10 +73,6 @@ struct gaim_connection {
 
 	int evil;
 	gboolean wants_to_die; /* defaults to FALSE */
-
-	/* email notification (MSN and Yahoo) */
-	GtkWidget *email_win;
-	GtkWidget *email_label;
 };
 
 struct proto_user_opt {
@@ -107,7 +102,6 @@ struct aim_user *new_user(const char *, int, int);
 struct gaim_connection *new_gaim_conn(struct aim_user *);
 void destroy_gaim_conn(struct gaim_connection *);
 
-void account_editor(GtkWidget *, GtkWidget *);
 void regenerate_user_list();
 
 void account_online(struct gaim_connection *);

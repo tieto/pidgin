@@ -895,6 +895,9 @@ extern void open_url(GtkWidget *, char *);
 extern void open_url_nw(GtkWidget *, char *);
 extern void add_bookmark(GtkWidget *, char *);
 
+/* Functions in multi.c */
+extern void account_editor(GtkWidget *, GtkWidget *);
+
 /* fucntions in ticker.c */
 void SetTickerPrefs();
 void BuddyTickerSignOff();
