@@ -638,10 +638,7 @@ draw_img (GtkIMHtml        *imhtml,
 	gc = gdk_gc_new (window);
 	cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
 	
-	if (line->selected) {
-		gdk_color_alloc (cmap, imhtml->default_hl_color);
-		gdk_gc_set_foreground(gc, imhtml->default_hl_color);
-	} else if (bit->bg != NULL) {
+	if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
 	} else {
@@ -651,11 +648,14 @@ draw_img (GtkIMHtml        *imhtml,
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
 
-	if (bit->back != NULL) {
-		gdk_color_alloc (cmap, bit->back);
-		gdk_gc_set_foreground (gc, bit->back);
+	if (line->selected) {
+		gdk_color_alloc (cmap, imhtml->default_hl_color);
+		gdk_gc_set_foreground(gc, imhtml->default_hl_color);
 		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
 				    width, line->height);
+	} else if (bit->back != NULL) {
+		gdk_color_alloc (cmap, bit->back);
+		gdk_gc_set_foreground (gc, bit->back);
 	}
 
 	if (bit->bm) {
@@ -2179,29 +2179,27 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		/* If the font didn't load, we change some of the xlfds one by one
 		 * to get the closest we can.  */
 		if (!ret_font) {
-			if (!useregenc &&
-			    (!italics || italicsind == 2) && 
-			    !usebold && !usesize) {
-				useregenc = TRUE;
-				usebold = TRUE;
-				italicsind = 0;
-				usesize = TRUE;
-				if (names && !names[nameind++]) {
-					ret_font = gdk_font_ref(default_font);
-					break;
-				}
-			}	
-			if (useregenc)
+			if (useregenc) {
 				useregenc = FALSE;
-			else if (usesize) {
-				useregenc = TRUE;        
-				usesize = FALSE;
 			} else if (italics && italicsind != 2) {
 				useregenc = TRUE;
 				italicsind++;
-			} else if (usebold) {
+			} else if (bold && usebold) {
 				useregenc = TRUE;
+				italicsind=0;
 				usebold = FALSE;
+			} else if (usesize) {
+				useregenc = TRUE;        
+				italicsind = 0;
+				usebold = TRUE;
+				usesize = FALSE;
+				} else if (names && names[nameind++]) {
+				useregenc = TRUE;        
+				italicsind = 0;
+				usebold = TRUE;
+				usesize = TRUE;
+			} else {
+				ret_font = gdk_font_ref(default_font);
 			}
 		}
 		g_strfreev (names);

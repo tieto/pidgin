@@ -212,7 +212,7 @@ static int aim_ssi_freelist(aim_session_t *sess)
  */
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 {
-	int i, num;
+	int num;
 	struct aim_ssi_item *cur, **items;
 
 	for (cur=sess->ssi.items, num=0; cur; cur=cur->next)
@@ -853,7 +853,7 @@ faim_export int aim_ssi_deldenies(aim_session_t *sess, aim_conn_t *conn, char **
  */
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny) {
 	struct aim_ssi_item *cur, *tmp;
-	fu16_t i, j;
+	fu16_t j;
 	aim_tlv_t *tlv;
 
 	if (!sess || !conn)

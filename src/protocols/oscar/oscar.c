@@ -2768,7 +2768,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Delete the buddy list */
 	if (odata->icq) {
 		aim_ssi_deletelist(sess, fr->conn);
-		return;
+		return 1;
 	}
 
 	/* Activate SSI */
