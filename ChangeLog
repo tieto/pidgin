@@ -6,6 +6,8 @@ version 0.59
 	  that crashed Gaim.  In the process: found and
 	  eliminated some memory leaks.
 	* Fixed a significant applet leak
+	* Can now change Jabber password on server (Thanks,
+	  Nathan Walp)
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)

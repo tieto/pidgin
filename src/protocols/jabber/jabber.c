@@ -214,7 +214,8 @@ static gjconn gjab_new(char *user, char *pass, void *priv)
 		pool_free(p);	/* no need for this anymore! */
 		return (NULL);
 	}
-	gjc->pass = pstrdup(p, pass);
+
+	gjc->pass = strdup(pass);
 
 	gjc->state = JCONN_STATE_OFF;
 	gjc->was_connected = 0;
@@ -232,6 +233,7 @@ static void gjab_delete(gjconn gjc)
 		return;
 
 	gjab_stop(gjc);
+	free(gjc->pass);
 	pool_free(gjc->p);
 }
 
@@ -703,6 +705,46 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, char *buddyname
 	}
 }
 
+static void jabber_change_passwd(struct gaim_connection *gc, char *old, char *new)
+{
+	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+
+	if(strcmp(old, gjc->pass))
+	{
+		do_error_dialog(_("Incorrect current password! Password NOT Changed!"),
+			_("Password Change Error!"));
+	}
+	else if(!strcmp(old, new))
+	{
+		do_error_dialog(_("New password same as old password! Password NOT Changed!"),
+			_("Password Change Error!"));
+	}
+	else
+	{
+		xmlnode x, y, z;
+		char *id;
+
+		x = jutil_iqnew(JPACKET__SET, NS_REGISTER);
+		xmlnode_put_attrib(x, "to", gjc->user->server);
+		y = xmlnode_get_tag(x, "query");
+		z = xmlnode_insert_tag(y, "username");
+		xmlnode_insert_cdata(z, gjc->user->user, -1);
+		z = xmlnode_insert_tag(y, "password");
+		xmlnode_insert_cdata(z, new, -1);
+
+		id = gjab_getid(gjc);
+		xmlnode_put_attrib(x, "id", id);
+
+		free(gjc->pass);
+		gjc->pass = strdup(new);
+
+		g_hash_table_insert(gjc->queries, g_strdup(id), g_strdup("change_password"));
+
+		gjab_send(gjc, x);
+		xmlnode_free(x);
+	}
+}
+	
 /*
  * keep track of away msg same as yahoo plugin
  */
@@ -1551,6 +1593,11 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 						 * way the user always gets some kind of response.
 						 */
 						jabber_handlevcard(gjc, NULL, from);
+					} else if(!strcmp((char *) val, "change_password")) {
+					   char buf[BUF_LONG];
+					   sprintf(buf,_("Password successfully changed."));
+
+					   do_error_dialog(buf, _("Password Change"));
 					}
 				}
 			}
@@ -3127,9 +3174,9 @@ static void jabber_do_action(struct gaim_connection *gc, char *act)
 	/*
 	} else if (!strcmp(act, _("Set Dir Info"))) {
 		show_set_dir(gc);
+	 */
 	} else if (!strcmp(act, _("Change Password"))) {
 		show_change_passwd(gc);
-	 */
 	}
 }
 
@@ -3140,8 +3187,8 @@ static GList *jabber_actions()
 	m = g_list_append(m, _("Set User Info"));
 	/*
 	m = g_list_append(m, _("Set Dir Info"));
-	m = g_list_append(m, _("Change Password"));
 	 */
+	m = g_list_append(m, _("Change Password"));
 
 	return m;
 }
@@ -3172,7 +3219,7 @@ void jabber_init(struct prpl *ret)
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;
 	ret->set_idle = jabber_set_idle;
-	ret->change_passwd = NULL;
+	ret->change_passwd = jabber_change_passwd;
 	ret->add_buddy = jabber_add_buddy;
 	ret->add_buddies = NULL;
 	ret->remove_buddy = jabber_remove_buddy;
