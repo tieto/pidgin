@@ -82,6 +82,8 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	fu8_t *cookie8, *cookie16;
 	int tmp, havenewmail = 0; /* Used to tell the client we have _new_ mail */
 
+	char *alertitle = NULL, *alerturl = NULL;
+
 	cookie8 = aimbs_getraw(bs, 8); /* Possibly the code used to log you in to mail? */
 	cookie16 = aimbs_getraw(bs, 16); /* Mail cookie sent above */
 
@@ -126,8 +128,11 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	new->domain = aim_tlv_getstr(tlvlist, 0x0082, 1);
 	new->flag = aim_tlv_get16(tlvlist, 0x0084, 1);
 
+	alertitle = aim_tlv_getstr(tlvlist, 0x0005, 1);
+	alerturl  = aim_tlv_getstr(tlvlist, 0x000d, 1);
+	
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, new, havenewmail);
+		ret = userfunc(sess, rx, new, havenewmail, alertitle, alerturl + 2);
 
 	aim_tlvlist_free(&tlvlist);
 

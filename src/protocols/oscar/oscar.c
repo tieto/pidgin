@@ -3394,10 +3394,13 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct aim_emailinfo *emailinfo;
 	int havenewmail;
+	char *alertitle, *alerturl;
 
 	va_start(ap, fr);
 	emailinfo = va_arg(ap, struct aim_emailinfo *);
 	havenewmail = va_arg(ap, int);
+	alertitle = va_arg(ap, char*);
+	alerturl  = va_arg(ap, char*);
 	va_end(ap);
 
 	if (emailinfo && gaim_account_get_check_mail(gc->account)) {
@@ -3406,6 +3409,14 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
 		g_free(to);
 	}
+	
+	if (alertitle) {
+		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Got an alert '%s' %s\n", alertitle, alerturl);
+		g_free(alertitle);
+	} 
+	if (alerturl)
+		g_free(alerturl);
+
 
 	return 1;
 }
