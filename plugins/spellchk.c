@@ -96,7 +96,7 @@ static void load_conf() {
 	words = NULL;
 
 	buf = malloc(1000);
-	snprintf(buf, 1000, "%s/.gaim/dict", getenv("HOME"));
+	snprintf(buf, 1000, "%s/.gaim/dict", gaim_home_dir());
 	fh = open(buf, O_RDONLY, 0600);
 	if (fh == -1) {
 		fh = open(buf, O_TRUNC | O_WRONLY | O_CREAT, 0600);
@@ -290,7 +290,7 @@ static void save_list() {
 	char buf[512];
 	char *a, *b;
 
-	snprintf(buf, sizeof buf, "%s/.gaim/dict", getenv("HOME"));
+	snprintf(buf, sizeof buf, "%s/.gaim/dict", gaim_home_dir());
 	fh = open(buf, O_TRUNC | O_WRONLY | O_CREAT, 0600);
 	if (fh != 1) {
 		while (gtk_clist_get_text(GTK_CLIST(list), i, 0, &a)) {
