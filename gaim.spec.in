@@ -10,7 +10,7 @@ Name:		%{name}
 Version:	%{version}
 Release:	%{release}
 Serial:		%{serial}
-Copyright:	GPL
+License:	GPL
 Group:		Applications/Internet
 Vendor:		Pimpin' Penguins
 Url:		http://gaim.sf.net/
@@ -56,10 +56,8 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %{prefix}/share/pixmaps/gaim.png
 %{prefix}/share/pixmaps/gaim/*
 %{prefix}/share/pixmaps/gaim/dialogs/*
-%{prefix}/share/pixmaps/gaim/dialogs/*
 %{prefix}/share/pixmaps/gaim/buttons/*
-
-%{prefix}/share/gnome/apps/Internet/gaim.desktop
+%{prefix}/share/applications/gaim.desktop
 
 %clean
 rm -r $RPM_BUILD_ROOT
