@@ -2022,9 +2022,38 @@ gaim_statuses_load(void)
 }
 
 static xmlnode *
+gaim_substatus_get_as_xmlnode(GaimStatusSavedSub *substatus)
+{
+	xmlnode *node, *child;
+
+	node = xmlnode_new("substatus");
+
+	child = xmlnode_new("account");
+	xmlnode_set_attrib(node, "protocol",
+					   gaim_account_get_protocol_id(substatus->account));
+	xmlnode_insert_data(child,
+						gaim_account_get_username(substatus->account), -1);
+	xmlnode_insert_child(node, child);
+
+	child = xmlnode_new("state");
+	xmlnode_insert_data(child, substatus->type->id, -1);
+	xmlnode_insert_child(node, child);
+
+	if (substatus->message != NULL)
+	{
+		child = xmlnode_new("message");
+		xmlnode_insert_data(child, substatus->message, -1);
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
+static xmlnode *
 gaim_status_get_as_xmlnode(GaimStatusSaved *status)
 {
 	xmlnode *node, *child;
+	GList *cur;
 
 	node = xmlnode_new("status");
 	xmlnode_set_attrib(node, "name", status->title);
@@ -2037,7 +2066,11 @@ gaim_status_get_as_xmlnode(GaimStatusSaved *status)
 	xmlnode_insert_data(child, status->message, -1);
 	xmlnode_insert_child(node, child);
 
-	/* TODO: Add substatuses to the tree */
+	for (cur = status->substatuses; cur != NULL; cur = cur->next)
+	{
+		child = gaim_substatus_get_as_xmlnode(cur->data);
+		xmlnode_insert_child(node, child);
+	}
 
 	return node;
 }
