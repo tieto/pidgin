@@ -1,6 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw \
-		trayicon-win32.c
+		Makefile.mingw
 
 plugindir = $(libdir)/gaim
 
