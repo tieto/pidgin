@@ -81,6 +81,7 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 	GaimAccount *account;
 	GHashTable *icon_cache;
 	const char *username;
+	GSList *sl, *list;
 
 	g_return_if_fail(icon != NULL);
 
@@ -95,6 +96,16 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 	username = gaim_buddy_icon_get_username(icon);
 
 	conv = gaim_find_conversation_with_account(username, account);
+
+	for (list = sl = gaim_find_buddies(account, username); sl != NULL;
+		 sl = sl->next)
+	{
+		GaimBuddy *buddy = (GaimBuddy *)sl->data;
+
+		gaim_buddy_set_icon(buddy, NULL);
+	}
+
+	g_slist_free(list);
 
 	if (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 		gaim_conv_im_set_icon(GAIM_CONV_IM(conv), NULL);
@@ -157,8 +168,8 @@ gaim_buddy_icon_update(GaimBuddyIcon *icon)
 	account  = gaim_buddy_icon_get_account(icon);
 	username = gaim_buddy_icon_get_username(icon);
 
-	for (list =sl = gaim_find_buddies(account, username); sl != NULL;
-			sl = sl->next)
+	for (list = sl = gaim_find_buddies(account, username); sl != NULL;
+		 sl = sl->next)
 	{
 		GaimBuddy *buddy = (GaimBuddy *)sl->data;
 
@@ -302,7 +313,19 @@ gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
 	g_return_if_fail(account  != NULL);
 	g_return_if_fail(username != NULL);
 
-	gaim_buddy_icon_new(account, username, icon_data, icon_len);
+	if (icon_data == NULL || icon_len == 0)
+	{
+		GaimBuddyIcon *buddy_icon;
+
+		buddy_icon = gaim_buddy_icons_find(account, username);
+
+		if (buddy_icon != NULL)
+			gaim_buddy_icon_destroy(buddy_icon);
+	}
+	else
+	{
+		gaim_buddy_icon_new(account, username, icon_data, icon_len);
+	}
 }
 
 GaimBuddyIcon *
