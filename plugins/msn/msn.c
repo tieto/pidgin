@@ -1074,6 +1074,41 @@ static void msn_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
+static char *msn_get_away_text(int s)
+{
+	switch (s)
+	{
+		case MSN_BUSY :
+			return "Busy";
+		case MSN_BRB :
+			return "Be right back";
+		case MSN_AWAY :
+			return "Away from the computer";
+		case MSN_PHONE :
+			return "On the phone";
+		case MSN_LUNCH :
+			return "Out to lunch";
+		default:
+			return NULL;
+	}
+}
+			
+static void msn_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+{
+	struct buddy *b = find_buddy(gc, who);
+	char buf[MSN_BUF_LEN];
+	GtkWidget *button;
+
+	if (!(b->uc >> 5))
+		return;
+
+	g_snprintf(buf, MSN_BUF_LEN, "Status: %s", msn_get_away_text(b->uc >> 5));
+	
+	button = gtk_menu_item_new_with_label(buf);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);	
+}
+
 static char **msn_list_icon(int uc)
 {
 	if (uc == UC_UNAVAILABLE)
@@ -1091,7 +1126,7 @@ void msn_init(struct prpl *ret)
 	ret->protocol = PROTO_MSN;
 	ret->name = msn_name;
 	ret->list_icon = msn_list_icon;
-	ret->buddy_menu = NULL;
+	ret->buddy_menu = msn_buddy_menu;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
 	ret->close = msn_close;
