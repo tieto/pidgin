@@ -1026,7 +1026,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					       G_STRUCT_OFFSET(GtkIMHtmlClass, buttons_update),
 					       NULL,
 					       0,
-					       g_cclosure_marshal_VOID__POINTER,
+					       g_cclosure_marshal_VOID__INT,
 					       G_TYPE_NONE, 1,
 					       G_TYPE_INT);
 	signals[TOGGLE_FORMAT] = g_signal_new("format_function_toggle",
@@ -1035,8 +1035,8 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					      G_STRUCT_OFFSET(GtkIMHtmlClass, toggle_format),
 					      NULL,
 					      0,
-					      g_cclosure_marshal_VOID__POINTER,
-					      G_TYPE_NONE, 1, 
+					      g_cclosure_marshal_VOID__INT,
+					      G_TYPE_NONE, 1,
 					      G_TYPE_INT);
 	signals[CLEAR_FORMAT] = g_signal_new("format_function_clear",
 					      G_TYPE_FROM_CLASS(gobject_class),
