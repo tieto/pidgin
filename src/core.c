@@ -408,7 +408,7 @@ static gint open_socket()
 	gint fd;
 
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
-		umask(0177);
+		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
 		g_snprintf(saddr.sun_path, 108, "%s/gaim_%s.%d",
 				g_get_tmp_dir(), g_get_user_name(), getpid());
@@ -418,6 +418,7 @@ static gint open_socket()
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
 					"Failed to assign %s to a socket (Error: %s)",
 					saddr.sun_path, strerror(errno));
+		umask(m);
 	} else
 		g_log(NULL, G_LOG_LEVEL_CRITICAL, "Unable to open socket: %s", strerror(errno));
 	return fd;
