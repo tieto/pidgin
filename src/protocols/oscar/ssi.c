@@ -8,7 +8,6 @@
  * This is entirely too complicated.
  * You don't know the half of it.
  *
- * XXX - Make sure moving buddies from group to group moves the buddy in the server list also
  * XXX - Test for memory leaks
  * XXX - Better parsing of rights, and use the rights info to limit adds
  *
@@ -603,6 +602,68 @@ faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn
 
 	/* Free the array of pointers to each of the new items */
 	free(newitems);
+
+	/* Begin sending SSI SNACs */
+	aim_ssi_dispatch(sess, conn);
+
+	return 0;
+}
+
+faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn, char *sn)
+{
+	struct aim_ssi_item **groups, *buddy, *cur;
+	fu16_t i;
+
+	if (!sess || !conn || !oldgn || !newgn || !sn)
+		return -EINVAL;
+
+	/* Look up the buddy */
+	if (!(buddy = get_ssi_item(sess->ssi.items, sn, AIM_SSI_TYPE_BUDDY)))
+		return -ENOMEM;
+
+	/* Allocate an array of pointers to the two groups */
+	if (!(groups = (struct aim_ssi_item **)malloc(2*sizeof(struct aim_ssi_item *))))
+		return -ENOMEM;
+
+	/* Look up the old parent group */
+	if (!(groups[0] = get_ssi_item(sess->ssi.items, oldgn, AIM_SSI_TYPE_GROUP))) {
+		free(groups);
+		return -ENOMEM;
+	}
+
+	/* Look up the new parent group */
+	if (!(groups[1] = get_ssi_item(sess->ssi.items, newgn, AIM_SSI_TYPE_GROUP))) {
+		free(groups);
+		return -ENOMEM;
+	}
+
+	/* Send the delete item SNAC */
+	aim_ssi_addmoddel(sess, conn, &buddy, 1, AIM_CB_SSI_DEL);
+
+	/* Put the buddy in the new group */
+	buddy->gid = groups[1]->gid;
+
+	/* Assign a new buddy ID#, because the new group might already have a buddy with this ID# */
+	buddy->bid = 0;
+	do {
+		buddy->bid += 0x0001;
+		for (cur=sess->ssi.items, i=0; ((cur) && (!i)); cur=cur->next)
+			if ((cur->bid == buddy->bid) && (cur->gid == buddy->gid) && (cur->type == AIM_SSI_TYPE_BUDDY) && (cur->name) && aim_sncmp(cur->name, buddy->name))
+				i=1;
+	} while (i);
+
+	/* Rebuild the additional data in the two parent groups */
+	aim_ssi_rebuildgroup(sess, conn, groups[0]);
+	aim_ssi_rebuildgroup(sess, conn, groups[1]);
+
+	/* Send the add item SNAC */
+	aim_ssi_addmoddel(sess, conn, &buddy, 1, AIM_CB_SSI_ADD);
+
+	/* Send the mod item SNAC */
+	aim_ssi_addmoddel(sess, conn, groups, 2, AIM_CB_SSI_MOD);
+
+	/* Free the temporary array */
+	free(groups);
 
 	/* Begin sending SSI SNACs */
 	aim_ssi_dispatch(sess, conn);

@@ -2727,6 +2727,15 @@ static void oscar_add_buddies(struct gaim_connection *g, GList *buddies) {
 	}
 }
 
+static void oscar_move_buddy(struct gaim_connection *g, char *name, char *old_group, char *new_group) {
+	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	if (!odata->icq)
+		if (odata->sess->ssi.received_data) {
+			aim_ssi_movebuddy(odata->sess, odata->conn, old_group, new_group, name);
+			debug_printf("ssi: moved buddy %s from group %s to group %s\n", name, old_group, new_group);
+		}
+}
+
 static void oscar_remove_buddy(struct gaim_connection *g, char *name, char *group) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (odata->icq) {
@@ -3611,6 +3620,7 @@ void oscar_init(struct prpl *ret) {
 	ret->change_passwd = oscar_change_passwd;
 	ret->add_buddy = oscar_add_buddy;
 	ret->add_buddies = oscar_add_buddies;
+	ret->group_buddy = oscar_move_buddy;
 	ret->remove_buddy = oscar_remove_buddy;
 	ret->remove_buddies = oscar_remove_buddies;
 	ret->add_permit = oscar_add_permit;
