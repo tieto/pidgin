@@ -405,6 +405,10 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 	gtk_widget_grab_focus(GTK_WIDGET(b->entry));
 
 	serv_set_idle(0);
+
+	if ((general_options & OPT_GEN_BACK_ON_IM) && awaymessage != NULL) {
+		do_im_back();
+	}
 }
 
 

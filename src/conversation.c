@@ -510,7 +510,7 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	if (c->makesound && (sound_options & OPT_SOUND_SEND))
 		play_sound(SEND);
 
-	if (awaymessage != NULL) {
+	if ((general_options & OPT_GEN_BACK_ON_IM) && awaymessage != NULL) {
 		do_im_back();
 	}
 

@@ -393,6 +393,7 @@ void build_prefs()
         gaim_button(_("Save some window size/positions"), &general_options, OPT_GEN_SAVED_WINDOWS, genbox);
         gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, genbox);
 	gaim_button(_("Automagically highlight misspelled words"), &general_options, OPT_GEN_CHECK_SPELLING, genbox);
+	gaim_button(_("Sending messages removes away status"), &general_options, OPT_GEN_BACK_ON_IM, genbox);
 	if (!dw && (general_options & OPT_GEN_DEBUG))
 		general_options = general_options ^ OPT_GEN_DEBUG;
         debugbutton = gaim_button(_("Enable debug mode"), &general_options, OPT_GEN_DEBUG, genbox);
