@@ -218,14 +218,18 @@ void gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data)
 {
 	GdkRectangle rect;
+	int xminus;
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
 	if(widget->old_rect.width != rect.width || widget->old_rect.height != rect.height){
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
+		xminus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(widget)) +
+		         gtk_text_view_get_right_margin(GTK_TEXT_VIEW(widget));
+
 		while(iter){
 			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(iter->data);
-			scale->scale(scale, rect.width, rect.height);
+			scale->scale(scale, rect.width - xminus, rect.height);
 
 			iter = iter->next;
 		}
@@ -1919,18 +1923,24 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					break;
 				case 26:        /* HR */
 				case 42:        /* HR (opt) */
+				{
+					int minus;
+
 					ws[wpos++] = '\n';
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
 					scalable = gtk_imhtml_hr_new();
 					gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 					scalable->add_to(scalable, imhtml, iter);
-					scalable->scale(scalable, rect.width, rect.height);
+					minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
+					        gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
+					scalable->scale(scalable, rect.width - minus, rect.height);
 					imhtml->scalables = g_list_append(imhtml->scalables, scalable);
 					ws[0] = '\0'; wpos = 0;
 					ws[wpos++] = '\n';
 
 					break;
+				}
 				case 27:	/* /FONT */
 					if (fonts && !imhtml->wbfo) {
 						GtkIMHtmlFontDetail *font = fonts->data;
