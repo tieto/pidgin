@@ -65,21 +65,29 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	if (slpmsg->msg != NULL)
 	{
+		/* Something is pointing to this slpmsg, so we should remove that
+		 * pointer to prevent a crash. */
+		/* Ex: a user goes offline and after that we receive an ACK */
+
+		gaim_debug_info("msn", "Unlink slpmsg callbacks.\n");
+
+		slpmsg->msg->ack_cb = NULL;
+		slpmsg->msg->ack_data = NULL;
+
+#if 0
 		MsnTransaction *trans;
 
 		trans = slpmsg->msg->trans;
 
 		if (trans != NULL)
 		{
-			/* Something is pointing to this slpmsg, so we should remove that
-			 * pointer to prevent a crash. */
-
 			if (trans->callbacks != NULL && trans->has_custom_callbacks)
 				g_hash_table_destroy(trans->callbacks);
 			
 			trans->callbacks = NULL;
 			trans->data = NULL;
 		}
+#endif
 	}
 
 	slplink->slp_msgs =

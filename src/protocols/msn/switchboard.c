@@ -529,7 +529,8 @@ msg_ack (MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msg = cmd->trans->data;
 
-	msg->ack_cb(msg->ack_data);
+	if (msg->ack_cb != NULL)
+		msg->ack_cb(msg->ack_data);
 
 	msn_message_unref(msg);
 }
