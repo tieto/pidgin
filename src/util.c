@@ -2587,21 +2587,29 @@ gaim_url_encode(const char *str)
 	return buf;
 }
 
-/* lifted from http://www.oreillynet.com/pub/a/network/excerpt/spcookbook_chap03/index3.html */
+/* Originally lifted from
+ * http://www.oreillynet.com/pub/a/network/excerpt/spcookbook_chap03/index3.html
+ * ... and slightly modified to be a bit more rfc822 compliant
+ * ... and modified a bit more to make domain checking rfc1035 compliant
+ *     with the exception permitted in rfc1101 for domains to start with digit
+ *     but not completely checking to avoid conflicts with IP addresses
+ */
 gboolean
 gaim_email_is_valid(const char *address)
 {
-	int count = 0;
 	const char *c, *domain;
 	static char *rfc822_specials = "()<>@,;:\\\"[]";
 
-	/* first we validate the name portion (name@domain) */
+	/* first we validate the name portion (name@domain) (rfc822)*/
 	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
 			while (*++c) {
+				if (*c == '\\') {
+					if (*c++ && *c < 127 && *c != '\n' && *c != '\r') continue;
+					else return FALSE;
+				}
 				if (*c == '\"') break;
-				if (*c == '\\' && (*++c == ' ')) continue;
-				if (*c <= ' ' || *c >= 127) return FALSE;
+				if (*c < ' ' || *c >= 127) return FALSE;
 			}
 			if (!*c++) return FALSE;
 			if (*c == '@') break;
@@ -2612,21 +2620,25 @@ gaim_email_is_valid(const char *address)
 		if (*c <= ' ' || *c >= 127) return FALSE;
 		if (strchr(rfc822_specials, *c)) return FALSE;
 	}
-	if (c == address || *(c - 1) == '.') return FALSE;
+	/* strictly we should return false if (*(c - 1) == '.') too, but I think
+	 * we should permit user.@domain type addresses - they do work :) */
+	if (c == address) return FALSE;
 
-	/* next we validate the domain portion (name@domain) */
+	/* next we validate the domain portion (name@domain) (rfc1035 & rfc1011) */
 	if (!*(domain = ++c)) return FALSE;
 	do {
-		if (*c == '.') {
-			if (c == domain || *(c - 1) == '.') return FALSE;
-			count++;
-		}
-		if (*c <= ' ' || *c >= 127) return FALSE;
-		if (strchr(rfc822_specials, *c)) return FALSE;
+		if (*c == '.' && (c == domain || *(c - 1) == '.' || *(c - 1) == '-'))
+			return FALSE;
+		if (*c == '-' && *(c - 1) == '.') return FALSE;
+		if ((*c < '0' && *c != '-' && *c != '.') || (*c > '9' && *c < 'A') ||
+			(*c > 'Z' && *c < 'a') || (*c > 'z')) return FALSE;
 	} while (*++c);
 
-	return (count >= 1 ? TRUE : FALSE);
+	if (*(c - 1) == '-') return FALSE;
+
+	return ((c - domain) > 3 ? TRUE : FALSE);
 }
+
 
 /**************************************************************************
  * UTF8 String Functions
