@@ -88,10 +88,8 @@ void silcgaim_verify_public_key(SilcClient client, SilcClientConnection conn,
 				SilcSKEPKType pk_type,
 				SilcVerifyPublicKey completion, void *context);
 GList *silcgaim_buddy_menu(GaimBuddy *buddy);
-void silcgaim_add_buddy(GaimConnection *gc, const char *name, GaimGroup *grp);
-void silcgaim_add_buddies(GaimConnection *gc, GList *buddies);
-void silcgaim_remove_buddy(GaimConnection *gc, const char *name,
-			   const char *group);
+void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
+void silcgaim_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
 void silcgaim_buddy_keyagr_request(SilcClient client,
 				   SilcClientConnection conn,
 				   SilcClientEntry client_entry,
