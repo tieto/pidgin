@@ -845,13 +845,13 @@ msgstr "메시지를 보낼 수 없습니다"
 
 #: src/protocols/msn/msn.c:917
 #, c-format
-msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr "%s님이 당신을 자신의 목록에 추가하고 싶어합니다."
+#msgid "The user %s (%s) wants to add %s to his or her buddy list."
+#msgstr "%s님이 당신을 자신의 목록에 추가하고 싶어합니다."
 
 #: src/protocols/msn/msn.c:1074
 #, c-format
-msgid "The user %s (%s) wants to add you to their buddy list"
-msgstr "%s님이 당신을 자신의 목록에 추가하고 싶어합니다."
+#msgid "The user %s (%s) wants to add you to their buddy list"
+#msgstr "%s님이 당신을 자신의 목록에 추가하고 싶어합니다."
 
 #: src/protocols/msn/msn.c:1175
 msgid "You have been disconnected. You have signed on from another location."
