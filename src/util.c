@@ -1073,7 +1073,7 @@ void translate_blt(FILE *src_fp, char *dest)
 char *stylize(gchar *text, int length)
 {
 	gchar *buf;
-	char tmp[length];
+	char *tmp = g_malloc(length);
 
 	buf = g_malloc(length);
 	g_snprintf(buf, length, "%s", text);
@@ -1120,6 +1120,7 @@ char *stylize(gchar *text, int length)
 		strcpy(buf, tmp);
 	}
 
+	g_free(tmp);
 	return buf;
 }
 
