@@ -1453,22 +1453,22 @@ static char *caps_string(u_short caps)
 		if (bit & caps) {
 			switch (bit) {
 			case AIM_CAPS_BUDDYICON:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sBuddy Icon"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sBuddy Icon"), count ? ", " : "");
 				break;
 			case AIM_CAPS_VOICE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sVoice"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sVoice"), count ? ", " : "");
 				break;
 			case AIM_CAPS_IMIMAGE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sIM Image"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sIM Image"), count ? ", " : "");
 				break;
 			case AIM_CAPS_CHAT:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sChat"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sChat"), count ? ", " : "");
 				break;
 			case AIM_CAPS_GETFILE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sGet File"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sGet File"), count ? ", " : "");
 				break;
 			case AIM_CAPS_SENDFILE:
-				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sSend File"), count ? "," : "");
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sSend File"), count ? ", " : "");
 				break;
 			}
 			count++;
@@ -1533,7 +1533,7 @@ void set_buddy(struct buddy *b)
 		} else
 			caps[0] = '\0';
 		
-                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s\n%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, caps);
+                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s%s%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, ((b->idle) ? "\n" : ""), caps);
 
 		gtk_tooltips_set_tip(tips, GTK_WIDGET(b->item), infotip, "");
 
