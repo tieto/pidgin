@@ -1557,7 +1557,6 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	GtkWidget *bbox;
 	GtkWidget *dbox;
 	GtkWidget *disclosure;
-	GtkWidget *sep;
 	GtkWidget *button;
 
 	if (accounts_window != NULL && account != NULL &&
@@ -1640,11 +1639,6 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	/** Setup the bottom frames. */
 	add_protocol_options(dialog, dbox);
 	add_proxy_options(dialog, dbox);
-
-	/* Separator... */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(main_vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
@@ -2228,7 +2222,6 @@ gaim_gtk_accounts_window_show(void)
 	GtkWidget *vbox;
 	GtkWidget *bbox;
 	GtkWidget *sw;
-	GtkWidget *sep;
 	GtkWidget *button;
 	int width, height;
 
@@ -2265,11 +2258,6 @@ gaim_gtk_accounts_window_show(void)
 	sw = create_accounts_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
-
-	/* Separator... */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();

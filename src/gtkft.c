@@ -610,7 +610,6 @@ gaim_gtkxfer_dialog_new(void)
 	GtkWidget *vbox1, *vbox2;
 	GtkWidget *bbox;
 	GtkWidget *sw;
-	GtkWidget *sep;
 	GtkWidget *button;
 	GtkWidget *disclosure;
 	GtkWidget *table;
@@ -680,11 +679,6 @@ gaim_gtkxfer_dialog_new(void)
 	g_signal_connect(G_OBJECT(disclosure), "toggled",
 					 G_CALLBACK(toggle_details_cb), dialog);
 #endif
-
-	/* Separator */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox2), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* The table of information. */
 	table = make_info_table(dialog);

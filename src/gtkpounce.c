@@ -350,7 +350,6 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	GtkWidget *button;
 	GtkWidget *frame;
 	GtkWidget *table;
-	GtkWidget *sep;
 	GtkSizeGroup *sg;
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
@@ -617,11 +616,6 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 		_("Sav_e this pounce after activation"));
 
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->save_pounce, FALSE, FALSE, 0);
-
-	/* Separator... */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox1), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Now the button box! */
 	bbox = gtk_hbutton_box_new();

@@ -379,7 +379,6 @@ gaim_gtk_status_window_show(void)
 	GtkWidget *bbox;
 	GtkWidget *button;
 	GtkWidget *list;
-	GtkWidget *sep;
 	GtkWidget *vbox;
 	GtkWidget *win;
 	int width, height;
@@ -413,11 +412,6 @@ gaim_gtk_status_window_show(void)
 	/* List of saved status states */
 	list = create_saved_status_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
-
-	/* Separator... */
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
