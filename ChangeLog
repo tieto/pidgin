@@ -23,6 +23,7 @@ version 0.78cvs
 	* Updated and standardized blist signals (Gary Kramlich)
 	* More doxygen fixes (Jonathan Champ)
 	* Copy/paste encoding fixes (Joe Marcus Clarke)
+	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
 
 version 0.77 (04/22/2004):
 	New Features:
