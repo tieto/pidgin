@@ -345,6 +345,14 @@ void  gaim_blist_remove_group (struct group *group)
 		child = child->next;
 		gaim_blist_remove_buddy((struct buddy*)n);
 	}
+
+	if(node->parent->child == node)
+		node->parent->child = node->next;
+	if (node->prev)
+		node->prev->next = node->next;
+	if (node->next)
+		node->next->prev = node->prev;
+
 	ops->remove(gaimbuddylist, node);
 	g_free(group->name);
 	g_free(group);
