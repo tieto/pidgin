@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-10-07 01:24-0700\n"
+"POT-Creation-Date: 2000-10-09 11:11-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1041,19 +1041,19 @@ msgstr "Ese tipo de texto no existe"
 msgid "About..."
 msgstr "Sobre..."
 
-#: src/gtkhtml.c:1384
+#: src/gtkhtml.c:1385
 msgid "HTML Link:"
 msgstr "Dirección:"
 
-#: src/gtkhtml.c:1797
+#: src/gtkhtml.c:1798
 msgid "Open URL in existing window"
 msgstr "Abrir dirección en ventana existente"
 
-#: src/gtkhtml.c:1806
+#: src/gtkhtml.c:1807
 msgid "Open URL in new window"
 msgstr "Abrir dirección en nueva ventana"
 
-#: src/gtkhtml.c:1814
+#: src/gtkhtml.c:1815
 msgid "Add URL as bookmark"
 msgstr "Agregar dirección como favorito"
 

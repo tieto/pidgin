@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.20\n"
-"POT-Creation-Date: 2000-10-07 01:24-0700\n"
+"POT-Creation-Date: 2000-10-09 11:11-0700\n"
 "PO-Revision-Date: 2000-06-13 22:26-0700\n"
 "Last-Translator: Seb Carpe\n"
 "MIME-Version: 1.0\n"
@@ -1042,19 +1042,19 @@ msgstr "Cette fonte n'existe pas."
 msgid "About..."
 msgstr "A Propos..."
 
-#: src/gtkhtml.c:1384
+#: src/gtkhtml.c:1385
 msgid "HTML Link:"
 msgstr "Lien HTML:"
 
-#: src/gtkhtml.c:1797
+#: src/gtkhtml.c:1798
 msgid "Open URL in existing window"
 msgstr "Ouvrir l'URL dans une fenêtre existante"
 
-#: src/gtkhtml.c:1806
+#: src/gtkhtml.c:1807
 msgid "Open URL in new window"
 msgstr "Ouvrir l'URL dans une nouvelle fenêtre"
 
-#: src/gtkhtml.c:1814
+#: src/gtkhtml.c:1815
 msgid "Add URL as bookmark"
 msgstr "Ajouter l'URL aux favoris/bookmarks"
 

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.9.19\n"
-"POT-Creation-Date: 2000-10-07 01:24-0700\n"
+"POT-Creation-Date: 2000-10-09 11:11-0700\n"
 "PO-Revision-Date: 2000-06-17 17:55+08\n"
 "Last-Translator: hashao <hashao@china.com>\n"
 "Language-Team: Simplified Chinese <zh@li.org>\n"
@@ -1038,19 +1038,19 @@ msgstr "字型不存在"
 msgid "About..."
 msgstr "关于……"
 
-#: src/gtkhtml.c:1384
+#: src/gtkhtml.c:1385
 msgid "HTML Link:"
 msgstr "超文本连接："
 
-#: src/gtkhtml.c:1797
+#: src/gtkhtml.c:1798
 msgid "Open URL in existing window"
 msgstr "在已有的窗口内打开 URL"
 
-#: src/gtkhtml.c:1806
+#: src/gtkhtml.c:1807
 msgid "Open URL in new window"
 msgstr "新建窗口打开 URL"
 
-#: src/gtkhtml.c:1814
+#: src/gtkhtml.c:1815
 msgid "Add URL as bookmark"
 msgstr "把 URL 加入书签"
 

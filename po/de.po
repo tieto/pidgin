@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.19\n"
-"POT-Creation-Date: 2000-10-07 01:24-0700\n"
+"POT-Creation-Date: 2000-10-09 11:11-0700\n"
 "PO-Revision-Date: 2000-06-07 22:42+0000\n"
 "Last-Translator: Marcel Becker <MBeckerHH1@aol.com>\n"
 "Language-Team: German <de@li.org>\n"
@@ -1042,19 +1042,19 @@ msgstr "Schriftart existiert nicht"
 msgid "About..."
 msgstr "Über..."
 
-#: src/gtkhtml.c:1384
+#: src/gtkhtml.c:1385
 msgid "HTML Link:"
 msgstr "HTML-Link"
 
-#: src/gtkhtml.c:1797
+#: src/gtkhtml.c:1798
 msgid "Open URL in existing window"
 msgstr "URL in bestehendem Fenster öffnen."
 
-#: src/gtkhtml.c:1806
+#: src/gtkhtml.c:1807
 msgid "Open URL in new window"
 msgstr "URL in neuem Fenstern öffnen."
 
-#: src/gtkhtml.c:1814
+#: src/gtkhtml.c:1815
 msgid "Add URL as bookmark"
 msgstr "URL als Bookmark hinzufügen"
 

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-10-07 01:24-0700\n"
+"POT-Creation-Date: 2000-10-09 11:11-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1039,19 +1039,19 @@ msgstr "글꼴이 없습니다"
 msgid "About..."
 msgstr "...에 대하여"
 
-#: src/gtkhtml.c:1384
+#: src/gtkhtml.c:1385
 msgid "HTML Link:"
 msgstr "HTML 연결:"
 
-#: src/gtkhtml.c:1797
+#: src/gtkhtml.c:1798
 msgid "Open URL in existing window"
 msgstr "현재 창에서 URL 열기"
 
-#: src/gtkhtml.c:1806
+#: src/gtkhtml.c:1807
 msgid "Open URL in new window"
 msgstr "새 창에서 URL 열기"
 
-#: src/gtkhtml.c:1814
+#: src/gtkhtml.c:1815
 msgid "Add URL as bookmark"
 msgstr "즐겨찾기에 URL 더하기"
 

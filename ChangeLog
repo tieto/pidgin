@@ -1,6 +1,8 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.10.3:
+version 0.10.3 (10/09/2000):
+	* Segfault when viewing user info fixed
+	* libdb problem fixed
 
 version 0.10.2 (10/07/2000):
 	* A few fixes to the URL parser.
