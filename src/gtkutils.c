@@ -328,7 +328,7 @@ gaim_gtk_save_icon_dialog(GtkObject *obj, GaimConversation *conv)
 		return;
 	}
 
-	gtkconv->u.im->save_icon = gtk_file_selection_new(_("Gaim - Save Icon"));
+	gtkconv->u.im->save_icon = gtk_file_selection_new(_("Save Icon"));
 
 	gtk_file_selection_hide_fileop_buttons(
 		GTK_FILE_SELECTION(gtkconv->u.im->save_icon));

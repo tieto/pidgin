@@ -1097,9 +1097,9 @@ choose_file(GaimXfer *xfer)
 	cur_dir = g_get_current_dir();
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
-		data->filesel = gtk_file_selection_new(_("Gaim - Open..."));
+		data->filesel = gtk_file_selection_new(_("Open..."));
 	else
-		data->filesel = gtk_file_selection_new(_("Gaim - Save As..."));
+		data->filesel = gtk_file_selection_new(_("Save As..."));
 
 	if (gaim_xfer_get_filename(xfer) == NULL)
 		init_str = g_strdup_printf("%s" G_DIR_SEPARATOR_S, cur_dir);

@@ -56,13 +56,13 @@ struct _GaimGtkWindow
 		GtkWidget *get_info;
 		GtkWidget *invite;
 
+		GtkWidget *insert_link;
+		GtkWidget *insert_image;
+
 		GtkWidget *warn;
 		GtkWidget *block;
 		GtkWidget *add;
 		GtkWidget *remove;
-
-		GtkWidget *insert_link;
-		GtkWidget *insert_image;
 
 		GtkWidget *logging;
 		GtkWidget *sounds;

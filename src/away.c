@@ -205,7 +205,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	if (strlen(a->name))
 		gtk_window_set_title(GTK_WINDOW(imaway), a->name);
 	else
-		gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
+		gtk_window_set_title(GTK_WINDOW(imaway), _("Away!"));
 	g_signal_connect(G_OBJECT(imaway), "destroy",
 			G_CALLBACK(do_im_back), imaway);
 	gtk_widget_realize(imaway);

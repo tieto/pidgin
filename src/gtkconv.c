@@ -481,17 +481,30 @@ static void
 add_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimAccount *account;
-	GaimBuddy *b;
 	const char *name;
+	GaimConversationType type;
 
 	account = gaim_conversation_get_account(conv);
 	name    = gaim_conversation_get_name(conv);
-	b       = gaim_find_buddy(account, name);
+	type    = gaim_conversation_get_type(conv);
 
-	if (b != NULL)
-		show_confirm_del(b);
-	else if (account != NULL && gaim_account_is_connected(account))
-		gaim_blist_request_add_buddy(account, (char *)name, NULL, NULL);
+	if (GAIM_CONV_IM(conv)) {
+		GaimBuddy *b;
+
+		b = gaim_find_buddy(account, name);
+		if (b != NULL)
+			show_confirm_del(b);
+		else if (account != NULL && gaim_account_is_connected(account))
+			gaim_blist_request_add_buddy(account, (char *)name, NULL, NULL);
+	} else if (GAIM_CONV_CHAT(conv)) {
+		GaimChat *c;
+
+		c = gaim_blist_find_chat(account, name);
+		if (c != NULL)
+			show_confirm_del_blist_chat(c);
+		else if (account != NULL && gaim_account_is_connected(account))
+			gaim_blist_request_add_chat(account, NULL, NULL);
+	}
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
@@ -606,7 +619,7 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 
 		/* Create the new dialog. */
 		invite_dialog = gtk_dialog_new_with_buttons(
-			_("Gaim - Invite Buddy Into Chat Room"),
+			_("Invite Buddy Into Chat Room"),
 			GTK_WINDOW(gtkwin->window),
 			GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -2077,39 +2090,36 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		gtk_widget_show(gtkwin->menu.view_log);
-
-		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE) {
-			gtk_widget_show(gtkwin->menu.insert_image);
-			gtk_widget_set_sensitive(gtkconv->toolbar.image, TRUE);
-
-		}
-		else {
-			gtk_widget_hide(gtkwin->menu.insert_image);
-			gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
-		}
-
 		gtk_widget_show(gtkwin->menu.add_pounce);
 		gtk_widget_show(gtkwin->menu.get_info);
+		gtk_widget_hide(gtkwin->menu.invite);
+
+		gtk_widget_show(gtkwin->menu.insert_image);
+		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE)
+			gtk_widget_set_sensitive(gtkwin->menu.insert_image, TRUE);
+		else
+			gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
+
 		gtk_widget_show(gtkwin->menu.warn);
+		if (gc && prpl_info->warn != NULL)
+			gtk_widget_set_sensitive(gtkwin->menu.warn, TRUE);
+		else
+			gtk_widget_set_sensitive(gtkwin->menu.warn, FALSE);
+
 		gtk_widget_show(gtkwin->menu.block);
 
 		if (gaim_find_buddy(gaim_conversation_get_account(conv),
 				    gaim_conversation_get_name(conv)) == NULL) {
-
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
 			gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
-		}
-		else {
+		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
 			gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
-
 		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
-
-		gtk_widget_hide(gtkwin->menu.invite);
 
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
@@ -2122,32 +2132,29 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		}
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		gtk_widget_hide(gtkwin->menu.view_log);
+		gtk_widget_hide(gtkwin->menu.add_pounce);
+		gtk_widget_hide(gtkwin->menu.get_info);
 		gtk_widget_show(gtkwin->menu.invite);
 
-		gtk_widget_hide(gtkwin->menu.view_log);
 		gtk_widget_hide(gtkwin->menu.insert_image);
 		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 
-		gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
-
-		gtk_widget_hide(gtkwin->menu.add_pounce);
-		gtk_widget_hide(gtkwin->menu.get_info);
 		gtk_widget_hide(gtkwin->menu.warn);
 		gtk_widget_hide(gtkwin->menu.block);
 
 		if (gaim_find_chat(gaim_conversation_get_gc(conv),
 				   gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv))) == NULL) {
-
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
-		}
-		else {
+			gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
+		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
+			gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
-
-		gtk_widget_set_sensitive(gtkwin->menu.add,    FALSE);
-		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
@@ -2860,7 +2867,7 @@ save_convo(GtkWidget *save, GaimConversation *c)
 	char buf[BUF_LONG];
 	GtkWidget *window;
 
-	window = gtk_file_selection_new(_("Gaim - Save Conversation"));
+	window = gtk_file_selection_new(_("Save Conversation"));
 
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log",
 			   gaim_home_dir(), gaim_normalize(c->account, c->name));
@@ -2879,44 +2886,44 @@ static GtkItemFactoryEntry menu_items[] =
 	/* Conversation menu */
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
 
-	{ N_("/Conversation/_New Conversation..."), NULL, menu_new_conv_cb,
-	  0, "<StockItem>", GTK_STOCK_NEW },
+	{ N_("/Conversation/New _Instant Message..."), "<CTL>I", menu_new_conv_cb,
+	  0, "<StockItem>", GAIM_STOCK_IM },
 
-        { "/Conversation/sep0", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>" },
 
+	{ N_("/Conversation/Find..."), NULL, menu_find_cb, 0, "<StockItem>", GTK_STOCK_FIND },
+	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, NULL },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
-	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, NULL },
-	{ N_("/Conversation/Find..."), NULL, menu_find_cb, 0, "<StockItem>", GTK_STOCK_FIND },
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 		0, NULL },
-	{ N_("/Conversation/A_lias..."), NULL, menu_alias_cb, 0,
-	  "<StockItem>", GAIM_STOCK_EDIT },
-	{ N_("/Conversation/_Get Info..."), NULL, menu_get_info_cb, 0,
+	{ N_("/Conversation/_Get Info"), NULL, menu_get_info_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INFO },
+	{ N_("/Conversation/_Warn..."), NULL, menu_warn_cb, 0,
+	  "<StockItem>", GAIM_STOCK_WARN },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INVITE },
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
-	  "<StockItem>", GAIM_STOCK_LINK },
-	{ N_("/Conversation/Insert _Image..."), NULL, menu_insert_image_cb, 0,
-	  "<StockItem>", GAIM_STOCK_IMAGE },
-
-	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
-
-	{ N_("/Conversation/_Warn..."), NULL, menu_warn_cb, 0,
-	  "<StockItem>", GAIM_STOCK_WARN },
+	{ N_("/Conversation/A_lias..."), NULL, menu_alias_cb, 0,
+	  "<StockItem>", GAIM_STOCK_EDIT },
 	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
 	  "<StockItem>", GAIM_STOCK_BLOCK },
 	{ N_("/Conversation/_Add..."), NULL, menu_add_remove_cb, 0,
 	  "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Conversation/_Remove..."), NULL, menu_add_remove_cb, 0,
 	  "<StockItem>", GTK_STOCK_REMOVE },
+
+	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
+
+	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
+	  "<StockItem>", GAIM_STOCK_LINK },
+	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
+	  "<StockItem>", GAIM_STOCK_IMAGE },
 
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>" },
 
@@ -2982,7 +2989,7 @@ setup_menubar(GaimConvWindow *win)
 
 	gtkwin->menu.get_info =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-									N_("/Conversation/Get Info..."));
+									N_("/Conversation/Get Info"));
 
 	gtkwin->menu.invite =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,

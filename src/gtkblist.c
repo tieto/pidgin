@@ -712,14 +712,14 @@ static void gaim_gtk_blist_add_chat_cb()
 	if(gtk_tree_selection_get_selected(sel, NULL, &iter)){
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (GAIM_BLIST_NODE_IS_BUDDY(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent->parent);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent->parent, NULL);
 		if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_CHAT(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent, NULL);
 		else if (GAIM_BLIST_NODE_IS_GROUP(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node, NULL);
 	}
 	else {
-		gaim_blist_request_add_chat(NULL, NULL);
+		gaim_blist_request_add_chat(NULL, NULL, NULL);
 	}
 }
 
@@ -3514,7 +3514,8 @@ add_chat_check_account_func(GaimAccount *account)
 }
 
 void
-gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group)
+gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
+								const char *alias)
 {
 	GaimGtkAddChatData *data;
     GaimGtkBuddyList *gtkblist;
@@ -3620,6 +3621,8 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group)
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
 	data->alias_entry = gtk_entry_new();
+	if (alias != NULL)
+		gtk_entry_set_text(GTK_ENTRY(data->alias_entry), alias);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
 
 	rowbox = gtk_hbox_new(FALSE, 5);

@@ -2081,7 +2081,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 
 	if (buddy != NULL)
 	{
-		gaim_notify_info(NULL, NULL, _("Gaim - Information"), buffer);
+		gaim_notify_info(NULL, NULL, _("Information"), buffer);
 	}
 	else
 	{
