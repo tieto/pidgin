@@ -25,15 +25,45 @@
 
 #include "proxy.h"
 
+#define GAIM_SSL_DEFAULT_PORT 443
+
+typedef struct _GaimSslConnection GaimSslConnection;
+
+typedef void (*GaimSslInputFunction)(gpointer, GaimSslConnection *,
+									 GaimInputCondition);
+
+struct _GaimSslConnection
+{
+	char *host;
+	int port;
+	void *user_data;
+	GaimSslInputFunction input_func;
+
+	int fd;
+	int inpa;
+
+	void *private_data;
+};
+
+/**
+ * SSL implementation operations structure.
+ *
+ * Every SSL implementation must provide one of these and register it.
+ */
+typedef struct
+{
+	gboolean (*init)(void);
+	void (*uninit)(void);
+	GaimInputFunction connect_cb;
+	void (*close)(GaimSslConnection *gsc);
+	size_t (*read)(GaimSslConnection *gsc, void *data, size_t len);
+	size_t (*write)(GaimSslConnection *gsc, const void *data, size_t len);
+
+} GaimSslOps;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define GAIM_SSL_DEFAULT_PORT 443
-
-typedef void *GaimSslConnection;
-typedef void (*GaimSslInputFunction)(gpointer, GaimSslConnection *,
-									 GaimInputCondition);
 
 /**************************************************************************/
 /** @name SSL API                                                         */
@@ -97,6 +127,20 @@ size_t gaim_ssl_write(GaimSslConnection *gsc, const void *buffer, size_t len);
 /** @name Subsystem API                                                   */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Sets the current SSL operations structure.
+ *
+ * @param ops The SSL operations structure to assign.
+ */
+void gaim_ssl_set_ops(GaimSslOps *ops);
+
+/**
+ * Returns the current SSL operations structure.
+ *
+ * @return The SSL operations structure.
+ */
+GaimSslOps *gaim_ssl_get_ops(void);
 
 /**
  * Initializes the SSL subsystem.

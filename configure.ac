@@ -388,6 +388,8 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 		nss_manual_check="no"
 	fi
 
+	enable_nss="no"
+
 	if test "x$nss_manual_check" = "xno"; then
 		PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes", [])
 
@@ -399,6 +401,7 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
 			msg_ssl="yes (Mozilla NSS)"
+			enable_nss="yes"
 		else
 			nss_manual_check="yes"
 		fi
@@ -572,6 +575,8 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 				else
 					msg_ssl="yes (Mozilla NSS)"
 				fi
+
+				enable_nss="yes"
 			else
 				NSS_CFLAGS=""
 				NSPR_CFLAGS=""
@@ -590,11 +595,16 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 	AC_SUBST(NSS_LIBS)
 fi
 
+AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
+
 dnl #
 dnl # Check for GNUTLS if it's specified or if NSS failed.
 dnl #
 if test "x$msg_ssl" = "xno" -o "x$enable_gnutls" != "xno"; then
+
+	enable_gnutls="no"
 	prefix=`eval echo $prefix`
+
 	AC_ARG_WITH(gnutls-includes,
 		[  --with-gnutls-includes=PREFIX   Location of GNUTLS includes.],
 		[ with_gnutls_includes="$withval" ],
@@ -651,6 +661,8 @@ if test "x$msg_ssl" = "xno" -o "x$enable_gnutls" != "xno"; then
 			AC_DEFINE(HAVE_SSL)
 			msg_ssl="yes (GNUTLS)"
 			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
+
+			enable_gnutls="yes"
 		else
 			GNUTLS_CFLAGS=""
 			GNUTLS_LIBS=""
@@ -666,6 +678,8 @@ fi
 
 AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
+
+AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 
 dnl Check for Tcl
 if test "$enable_tcl" = yes; then

@@ -4,6 +4,8 @@ EXTRA_DIST = \
 		getopt1.c \
 		Makefile.mingw \
 		win_gaim.c \
+		ssl-nss.c \
+		ssl-gnutls.c \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
@@ -42,6 +44,14 @@ EXTRA_DIST = \
 		win32/nsis/translations/trad-chinese.nsh
 
 SUBDIRS = protocols
+
+if USE_NSS
+SSLSOURCES = ssl-nss.c
+endif
+
+if USE_GNUTLS
+SSLSOURCES = ssl-gnutls.c
+endif
 
 CORESOURCES = \
 	account.c \
@@ -94,7 +104,8 @@ CORESOURCES = \
 	util.c \
 	util.h \
 	value.c \
-	value.h
+	value.h \
+	$(SSLSOURCES)
 
 bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES = \
@@ -165,7 +176,8 @@ gaim_LDADD = \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
-	$(NSS_LIBS)
+	$(NSS_LIBS) \
+	$(GNUTLS_LIBS)
 
 gaim_remote_SOURCES = \
 	gaim-remote.c
@@ -185,4 +197,5 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
-	$(NSS_CFLAGS)
+	$(NSS_CFLAGS) \
+	$(GNUTLS_CFLAGS)

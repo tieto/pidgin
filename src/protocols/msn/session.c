@@ -39,7 +39,7 @@ msn_session_new(GaimAccount *account, const char *server, int port)
 	session->users  = msn_users_new();
 	session->groups = msn_groups_new();
 
-#ifdef HAVE_NSS
+#ifdef HAVE_SSL
 	session->protocol_ver = 9;
 #else
 	session->protocol_ver = 7;
