@@ -2377,6 +2377,11 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					 * font-family
 					 * font-size
 					 * text-decoration: underline
+					 *
+					 * TODO:
+					 * background-color
+					 * font-style
+					 * font-weight
 					 */
 					{
 						gchar *style, *color, *background, *family, *size;

@@ -2066,7 +2066,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		gboolean scaled, gboolean greyed)
 {
-	GdkPixbuf *buf, *ret;
+	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
 	GaimBuddyIcon *icon;
 	const char *data;
@@ -2111,13 +2111,22 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		if (scaled) {
 			ret = gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
 			g_object_unref(G_OBJECT(buf));
-		} else
-			ret = buf;
+		} else {
+			GaimAccount *account = gaim_buddy_get_account(buddy);
+			int scale_width, scale_height;
+			GaimPluginProtocolInfo *prpl_info = NULL;
 
-		return ret;
+			if(account && account->gc)
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
+			gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec : NULL, &scale_width, &scale_height);
+
+			ret = gdk_pixbuf_scale_simple(buf,scale_width,scale_height, GDK_INTERP_BILINEAR);
+			g_object_unref(G_OBJECT(buf));
+		}
 	}
 
-	return NULL;
+	return ret;
 }
 
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, GaimBlistNode *node)

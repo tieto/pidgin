@@ -2353,33 +2353,6 @@ update_tab_icon(GaimConversation *conv)
 	}
 }
 
-static void
-get_icon_scale_size(GdkPixbufAnimation *icon, GaimBuddyIconSpec *spec, int *width, int *height)
-{
-	*width = gdk_pixbuf_animation_get_width(icon);
-	*height = gdk_pixbuf_animation_get_height(icon);
-
-	/* this should eventually get smarter about preserving the aspect
-	 * ratio when scaling, but gimmie a break, I just woke up */
-	if(spec && spec->scale_rules & GAIM_ICON_SCALE_DISPLAY) {
-		if(*width < spec->min_width)
-			*width = spec->min_width;
-		else if(*width > spec->max_width)
-			*width = spec->max_width;
-
-		if(*height < spec->min_height)
-			*height = spec->min_height;
-		else if(*height  > spec->max_height)
-			*height = spec->max_height;
-	}
-
-	/* and now for some arbitrary sanity checks */
-	if(*width > 100)
-		*width = 100;
-	if(*height > 100)
-		*height = 100;
-}
-
 static gboolean
 redraw_icon(gpointer data)
 {
@@ -2410,7 +2383,7 @@ redraw_icon(gpointer data)
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
-	get_icon_scale_size(gtkconv->u.im->anim, prpl_info ? &prpl_info->icon_spec :
+	gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec :
 			NULL, &scale_width, &scale_height);
 
 	/* this code is ugly, and scares me */
@@ -5443,7 +5416,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			start_anim(NULL, conv);
 	}
 
-	get_icon_scale_size(gtkconv->u.im->anim, prpl_info ? &prpl_info->icon_spec :
+	gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec :
 			NULL, &scale_width, &scale_height);
 	scale = gdk_pixbuf_scale_simple(buf,
 				MAX(gdk_pixbuf_get_width(buf) * scale_width /

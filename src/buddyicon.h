@@ -29,6 +29,7 @@ typedef struct _GaimBuddyIcon GaimBuddyIcon;
 
 #include "account.h"
 #include "blist.h"
+#include "prpl.h"
 
 struct _GaimBuddyIcon
 {
@@ -237,6 +238,18 @@ void gaim_buddy_icons_init();
  * Uninitializes the buddy icon subsystem.
  */
 void gaim_buddy_icons_uninit();
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Buddy Icon Helper API                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Gets display size for a buddy icon
+ */
+void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height);
 
 /*@}*/
 

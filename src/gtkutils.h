@@ -366,5 +366,10 @@ gboolean gaim_running_gnome(void);
  */
 void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who);
 
+/**
+ * Convenience wrapper for gaim_buddy_icon_get_scale_size
+ */
+void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, int *width, int *height);
+
 
 #endif /* _GAIM_GTKUTILS_H_ */

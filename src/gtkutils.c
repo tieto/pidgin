@@ -1603,3 +1603,17 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 	}
 	g_list_free(files);
 }
+
+void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, int *width, int *height)
+{
+	*width = gdk_pixbuf_get_width(buf);
+	*height = gdk_pixbuf_get_height(buf);
+
+	gaim_buddy_icon_get_scale_size(spec, width, height);
+
+	/* and now for some arbitrary sanity checks */
+	if(*width > 100)
+		*width = 100;
+	if(*height > 100)
+		*height = 100;
+}

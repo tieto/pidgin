@@ -451,3 +451,21 @@ gaim_buddy_icons_uninit()
 {
 	g_hash_table_destroy(account_cache);
 }
+
+void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height)
+{
+	/* this should eventually get smarter about preserving the aspect
+	 * ratio when scaling, but gimmie a break, I just woke up */
+	if(spec && spec->scale_rules & GAIM_ICON_SCALE_DISPLAY) {
+		if(*width < spec->min_width)
+			*width = spec->min_width;
+		else if(*width > spec->max_width)
+			*width = spec->max_width;
+
+		if(*height < spec->min_height)
+			*height = spec->min_height;
+		else if(*height  > spec->max_height)
+			*height = spec->max_height;
+	}
+}
+
