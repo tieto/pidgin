@@ -2954,7 +2954,7 @@ static void gtk_html_add_text(GtkHtml * html,
 
 
 	if (url != NULL) {
-		fore = get_color(3355647, gdk_window_get_colormap(html->html_area);
+		fore = get_color(3355647, gdk_window_get_colormap(html->html_area));
 	}
 
 	hb = g_new0(GtkHtmlBit, 1);
