@@ -378,8 +378,9 @@ static void send_file_callback(gpointer data, gint source,
 		return;
 	}
 
-	if (ntohs(fhdr.hdrtype) != 0xc12) {
-		sprintf(debug_buff, "%s decided to cancel.\n", ft->user);
+	if (fhdr.hdrtype != 0xc12) {
+		sprintf(debug_buff, "%s decided to cancel. (%x)\n", ft->user,
+				fhdr.hdrtype);
 		debug_print(debug_buff);
 		fclose(ft->f);
 		close(ft->fd);
