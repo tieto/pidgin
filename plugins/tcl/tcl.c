@@ -158,6 +158,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	struct stat st;
 	FILE *fp;
 	char *buf, *cur;
+	const char *next;
 	int len, found = 0, err = 0, nelems;
 	gboolean status = FALSE;
 
@@ -170,11 +171,11 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	len = st.st_size;
 
 	buf = g_malloc(len + 1);
-	
-	cur = buf;	
+
+	cur = buf;
 	while (fgets(cur, (int) buf - (buf - cur), fp)) {
 		cur += strlen(cur);
-		if (feof(fp)) 
+		if (feof(fp))
 			break;
 	}
 
@@ -191,9 +192,9 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	cur = buf;
+	next = buf;
 	do {
-		if (Tcl_ParseCommand(interp, cur, len, 0, &parse) == TCL_ERROR) {
+		if (Tcl_ParseCommand(interp, next, len, 0, &parse) == TCL_ERROR) {
 			gaim_debug(GAIM_DEBUG_ERROR, "tcl", "parse error in %s: %s\n", plugin->path,
 				   Tcl_GetString(Tcl_GetObjResult(interp)));
 			err = 1;
@@ -210,8 +211,8 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 				/* We'll continue parsing the file, just in case */
 			}
 		}
-		len -= (parse.commandStart + parse.commandSize) - cur;
-		cur = parse.commandStart + parse.commandSize;
+		len -= (parse.commandStart + parse.commandSize) - next;
+		next = parse.commandStart + parse.commandSize;
 		Tcl_FreeParse(&parse);
 	} while (len);
 

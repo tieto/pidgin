@@ -1,4 +1,4 @@
-/* $Id: libgg.c 10742 2004-08-25 03:09:08Z thekingant $ */
+/* $Id: libgg.c 11554 2004-12-11 00:06:06Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -70,7 +70,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 10742 2004-08-25 03:09:08Z thekingant $";
+= "$Id: libgg.c 11554 2004-12-11 00:06:06Z thekingant $";
 
 #endif 
 
@@ -658,7 +658,7 @@ void gg_logoff(struct gg_session *sess)
  *
  * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
  */
-int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message)
+int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const char *message)
 {
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_send_message(%p, %d, %u, %p)\n", sess, msgclass, recipient, message);
 
@@ -680,7 +680,7 @@ int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, cons
  *
  * numer sekwencyjny wiadomo¶ci lub -1 w przypadku b³êdu.
  */
-int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, const unsigned char *format, int formatlen)
+int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const char *message, const unsigned char *format, int formatlen)
 {
 	struct gg_send_msg s;
 

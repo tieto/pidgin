@@ -759,7 +759,7 @@ plugin_load(GaimPlugin *plugin)
 {
 #ifndef _WIN32
 	GIOChannel *channel;
-	char *buf;
+	char *buf = NULL;
 
 	if ((UI_fd = open_socket(&buf)) < 0) {
 		gaim_notify_error(NULL, NULL, _("Unable to open socket"), buf);

@@ -214,10 +214,5 @@ faim_internal int aim_rates_delparam(aim_session_t *, aim_conn_t *);
 
 faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...);
 
-#ifndef FAIM_INTERNAL_INSANE
-#define printf() printf called inside libfaim
-#define sprintf() unbounded sprintf used inside libfaim
-#endif
-
 #endif /* __AIM_INTERNAL_H__ */
 #endif /* FAIM_INTERNAL */

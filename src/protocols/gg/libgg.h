@@ -1,4 +1,4 @@
-/* $Id: libgg.h 10742 2004-08-25 03:09:08Z thekingant $ */
+/* $Id: libgg.h 11554 2004-12-11 00:06:06Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -163,8 +163,8 @@ void gg_logoff(struct gg_session *sess);
 int gg_write(struct gg_session *sess, const char *buf, int length);
 int gg_change_status(struct gg_session *sess, int status);
 int gg_change_status_descr(struct gg_session *sess, int status, const char *descr);
-int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message);
-int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, const unsigned char *format, int formatlen);
+int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const char *message);
+int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const char *message, const unsigned char *format, int formatlen);
 int gg_ping(struct gg_session *sess);
 int gg_userlist_request(struct gg_session *sess, char type, const char *request);
 
@@ -272,7 +272,7 @@ struct gg_event {
                         uin_t sender;
 			int msgclass;
 			time_t time;
-                        unsigned char *message;
+                        char *message;
                 } msg;
                 struct gg_notify_reply *notify;
 		struct {			/* @notify60 informacja o li¶cie kontaktów -- GG_EVENT_NOTIFY60 */

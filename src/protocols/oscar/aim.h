@@ -502,7 +502,7 @@ faim_export int aim_debugconn_sendconnect(aim_session_t *sess, aim_conn_t *conn)
 
 faim_export int aim_logoff(aim_session_t *);
 
-#if !defined(FAIM_INTERNAL) || defined(FAIM_INTERNAL_INSANE)
+#if !defined(FAIM_INTERNAL)
 /* the library should never call aim_conn_kill */
 faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
 #endif
