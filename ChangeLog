@@ -1,9 +1,16 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.65:
-	* Massive internal core/ui splitting
 	* Russian translation updated (Dzmitry Chekmarou)
+	* Danish translation updated (Morten Brix Pedersen)
+	* Hungarian translation updated (Zoltan Sutto)
+	* Italian translation updated (Claudio Satriano)
+	* zh_CN.po updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Massive internal core/ui splitting
 	* New account dialog.
+	* preferences moved to ~/.gaim/prefs.xml
+	* account information moved to ~/.gaim/accounts.xml
 	* Added Trepia support.
 
 version 0.64 (05/29/2003):
