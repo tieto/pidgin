@@ -668,6 +668,10 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 	}
 	read(pos->conn->fd, m, 16);
 	m[16] = '\0';
+	debug_printf("Sending hash: ");
+	for (x = 0; x < 16; x++)
+		debug_printf("%02x ", (unsigned char)m[x]);
+	debug_printf("\n");
 	gdk_input_remove(pos->inpa);
 	close(pos->conn->fd);
 	aim_conn_kill(od->sess, &pos->conn);
