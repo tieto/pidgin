@@ -1211,7 +1211,7 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			/* Ensure we have a friendly name set. */
 			msn_user_set_name(user, friend);
 
-			tokens = (group_nums ? g_strsplit(group_nums, ",", -1) : "");
+			tokens = g_strsplit((group_nums ? group_nums : ""), ",", -1);
 
 			gaim_debug_misc("msn", "Fetching group IDs from '%s'\n",
 							group_nums);
