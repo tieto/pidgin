@@ -88,6 +88,7 @@ EXTRA_DIST =	add.xpm				\
 		smile_wink.xpm			\
 		speaker.xpm			\
 		strike.xpm			\
+		tb_forward.xpm			\
 		tb_search.xpm			\
 		think.xpm			\
 		tmp_send.xpm			\

@@ -385,7 +385,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	} else {
 		if (c->is_direct) {
 			if (!USE_OSCAR) {
-				/* FIXME */
+				/* Direct IM TOC FIXME */
 			} else {
 				gdk_input_remove(c->watcher);
 				sprintf(debug_buff, "Closing DirectIM conversation (%p)\n", c->conn);

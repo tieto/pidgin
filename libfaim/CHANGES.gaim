@@ -1,4 +1,9 @@
 
+Sat Sep  2 12:32:44 UTC 2000 EWarmenhoven
+	- Modified chat handling a bit so that if we've signed off, we don't
+	  try to kill the chat connection when the window is closed. This
+	  should get rid of a couple segfaults.
+
 Sat Sep  2 02:35:34 UTC 2000 EWarmenhoven
 	- very good news. the very-long-message DOS against libfaim was fixed.
 	  libfaim users can now send and receive Very Long Messages. GtkHTML

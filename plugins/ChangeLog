@@ -10,7 +10,8 @@ version 0.10.0:
 	have no effect on existing plugins or the way plugins are made. The
 	change was to make my life easier adding perl. It should also make
 	adding new plugin events even easier than before (though I doubt that
-	any more will ever be added).
+	any more will ever be added). Also, events are printed to the debug
+	window.
 
 	event_buddy_away was being triggered every blist_update for every away
 	buddy. This got fixed, but now when you sign on, event_buddy_away may
@@ -22,6 +23,9 @@ version 0.10.0:
 	add it. It gets passed a char *, the name of the person who the
 	conversation is with. This gets triggered when a new conversation
 	window is created, in case you couldn't figure it out on your own.
+
+	event_blist_update wasn't being called if you weren't reporting idle
+	time or if you were idle. This got fixed.
 
 version 0.9.20:
 	It's 3 am the night before finals, it's obviously a good time to hack

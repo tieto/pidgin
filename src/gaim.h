@@ -294,6 +294,9 @@ struct conversation {
         GList *ignored;
         int id;
 	GtkWidget *list;
+	GtkWidget *send;
+	GtkWidget *whisper;
+	GtkWidget *invite;
 	GtkWidget *close;
 
 	/* something to distinguish */
@@ -403,7 +406,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 840 $"
+#define REVISION "gaim:$Revision: 844 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -504,6 +507,7 @@ extern int display_options;
 #define OPT_DISP_IGN_WHITE       0x00001000
 #define OPT_DISP_NO_BUTTONS      0x00002000
 #define OPT_DISP_CONV_SHOW_TEXT	 0x00004000 
+#define OPT_DISP_CHAT_SHOW_TEXT	 0x00008000 
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
@@ -556,6 +560,7 @@ extern void show_new_buddy_chat(struct conversation *);
 extern void setup_buddy_chats();
 extern void build_imchat_box(gboolean);
 extern void do_quit();
+extern void update_chat_button_pix();
 
 
 

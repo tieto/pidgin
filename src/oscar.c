@@ -47,7 +47,7 @@
 static int inpa = -1;
 static int paspa = -1;
 static int cnpa = -1;
-struct aim_session_t *gaim_sess;
+struct aim_session_t *gaim_sess = NULL;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
@@ -260,6 +260,7 @@ void oscar_close() {
 	inpa = -1;
 	aim_logoff(gaim_sess);
 	g_free(gaim_sess);
+	gaim_sess = NULL;
 	debug_print(_("Signed off.\n"));
 }
 

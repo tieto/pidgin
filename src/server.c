@@ -37,7 +37,6 @@ extern int gaim_caps;
 static int idle_timer = -1;
 static time_t lastsent = 0;
 static time_t login_time = 0;
-static struct timeval lag_tv;
 static int is_idle = 0;
 
 int correction_time = 0;
@@ -84,9 +83,9 @@ static gint check_idle()
         /* Not idle, really...  :) */
         update_all_buddies();
 
+	plugin_event(event_blist_update, 0, 0, 0);
+        
 	time(&t);
-
-        gettimeofday(&lag_tv, NULL);
 
 	if (report_idle != IDLE_GAIM)
                 return TRUE;
@@ -100,8 +99,6 @@ static gint check_idle()
 		is_idle = 1;
         }
 
-	plugin_event(event_blist_update, 0, 0, 0);
-        
 	return TRUE;
 
 }
@@ -143,7 +140,7 @@ void serv_send_im(char *name, char *message, int away)
 	struct conversation *cnv = find_conversation(name);
 	if (cnv && cnv->is_direct) {
 		if (!USE_OSCAR) {
-			/* FIXME */
+			/* Direct IM TOC FIXME */
 		} else {
 			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
 			debug_print(debug_buff);
@@ -264,7 +261,7 @@ void serv_change_passwd(char *orig, char *new) {
 		sflap_send(buf, strlen(buf), TYPE_DATA);
 		g_free(buf);
 	} else {
-		/* FIXME */
+		/* Oscar change_passwd FIXME */
 	}
 }
 
@@ -565,7 +562,8 @@ void serv_chat_leave(int id)
 		if (c != NULL) {
 			oscar_chats = g_list_remove(oscar_chats, c);
 			gdk_input_remove(c->inpa);
-			aim_conn_kill(gaim_sess, &c->conn);
+			if (gaim_sess)
+				aim_conn_kill(gaim_sess, &c->conn);
 			g_free(c->name);
 			g_free(c);
 		}
@@ -1015,7 +1013,7 @@ void serv_do_imimage(GtkWidget *w, char *name) {
 	if (!cnv) cnv = new_conversation(name);
 
 	if (!USE_OSCAR) {
-		/* FIXME */
+		/* Direct IM TOC FIXME */
 	} else {
 		oscar_do_directim(name);
 	}
@@ -1024,7 +1022,7 @@ void serv_do_imimage(GtkWidget *w, char *name) {
 void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *conn, int watcher)
 {
 	if (!USE_OSCAR) {
-		/* FIXME */
+		/* Direct IM TOC FIXME */
 	} else {
 		struct conversation *cnv = find_conversation(name);
 		if (!cnv) cnv = new_conversation(name);

@@ -33,6 +33,11 @@
 
 #include "convo.h"
 
+#include "pixmaps/tmp_send.xpm"
+#include "pixmaps/close.xpm"
+#include "pixmaps/tb_search.xpm"
+
+#include "pixmaps/tb_forward.xpm"
 #include "pixmaps/join.xpm"
 #include "pixmaps/cancel.xpm"
 
@@ -109,7 +114,7 @@ void join_chat()
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, FALSE, TRUE);
-		gtk_widget_show(joinchat);
+		gtk_widget_realize(joinchat);
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
@@ -517,6 +522,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *vpaned;
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
+	gboolean dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
@@ -525,15 +531,18 @@ void show_new_buddy_chat(struct conversation *b)
 	hpaned = gtk_hpaned_new();
 
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+	gtk_widget_realize(win);
 
-	close = gtk_button_new_with_label(_("Close"));
-	invite_btn = gtk_button_new_with_label(_("Invite"));
-	whisper = gtk_button_new_with_label(_("Whisper"));
-        send = gtk_button_new_with_label(_("Send"));
+	dispstyle = (display_options & OPT_DISP_CHAT_SHOW_TEXT) ? TRUE : FALSE;
 
-        im = gtk_button_new_with_label(_("IM"));
-        ignore = gtk_button_new_with_label(_("Ignore"));
-        info = gtk_button_new_with_label(_("Info"));
+	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
+	invite_btn = picture_button2(win, _("Invite"), join_xpm, dispstyle);
+	whisper = picture_button2(win, _("Whisper"), tb_forward_xpm, dispstyle);
+        send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
+
+        im = picture_button2(win, _("IM"), tmp_send_xpm, FALSE);
+        ignore = picture_button2(win, _("Ignore"), close_xpm, FALSE);
+        info = picture_button2(win, _("Info"), tb_search_xpm, FALSE);
 
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
@@ -666,6 +675,9 @@ void show_new_buddy_chat(struct conversation *b)
 	b->smiley_dialog = NULL;
 	b->link_dialog = NULL;
 	b->log_dialog = NULL;
+	b->send = send;
+	b->whisper = whisper;
+	b->invite = invite_btn;
 	b->close = close;
 	sprintf(b->fontface, "%s", fontface);
 	b->hasfont = 0;
@@ -741,4 +753,35 @@ void setup_buddy_chats()
 
         }
 
+}
+
+static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm)
+{
+	gboolean dispstyle = (display_options & OPT_DISP_CHAT_SHOW_TEXT) ? TRUE : FALSE;
+	GtkWidget *parent = button->parent;
+	gtk_widget_destroy(button);
+	button = picture_button2(win, text, xpm, dispstyle);
+	gtk_box_pack_start(GTK_BOX(parent), button, TRUE, TRUE, 5);
+	gtk_widget_show(button);
+	return button;
+}
+
+void update_chat_button_pix()
+{
+	GList *bcs = buddy_chats;
+	struct conversation *c;
+
+	while (bcs) {
+		c = (struct conversation *)bcs->data;
+		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm);
+		c->whisper = change_text(c->window, _("Whisper"), c->whisper, tb_forward_xpm);
+		c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm);
+		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm);
+		gtk_object_set_user_data(GTK_OBJECT(c->close), c);
+		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->invite), "clicked", GTK_SIGNAL_FUNC(invite_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback),c);
+		bcs = bcs->next;
+	}
 }

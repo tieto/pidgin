@@ -703,6 +703,7 @@ static void chat_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, box);
+	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CHAT_SHOW_TEXT, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_CHAT, box);
 
 	gtk_widget_show(prefdialog);
@@ -1627,6 +1628,8 @@ void set_display_option(GtkWidget *w, int *option)
 	if (blist) build_imchat_box(!(display_options & OPT_DISP_NO_BUTTONS));
 
 	if (blist) update_button_pix();
+
+	update_chat_button_pix();
 
 #ifdef USE_APPLET
 	update_pixmaps();
