@@ -380,9 +380,14 @@ void pressed_ticker(char *buddy)
 	}
 }
 
-void pressed_alias(GtkWidget *widget, struct buddy_show *b)
+void pressed_alias_bs(GtkWidget *widget, struct buddy_show *b)
 {
-	alias_dialog(b);
+	alias_dialog_bs(b);
+}
+
+void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
+{
+	alias_dialog_bud(b);
 }
 
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
@@ -423,7 +428,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_alias), b);
+				   GTK_SIGNAL_FUNC(pressed_alias_bs), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -478,7 +483,7 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 {
 	struct group *g = find_group_by_buddy(b->gc, b->name);
 	struct group_show *gs = find_group_show(g->name);
-	struct buddy_show *bs;
+	struct buddy_show *bs = NULL;
 	GtkCTreeNode *node = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
 	g_snprintf(b->show, sizeof(b->show), "%s", b->name);
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), node, 0, b->name);
@@ -520,14 +525,11 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 			       event->button, event->time);
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
-		struct group *g = find_group_by_buddy(b->gc, b->name);
-		struct group_show *gs = find_group_show(g->name);
-		struct buddy_show *bs = find_buddy_show(gs, b->name);
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(pressed_alias), bs);
+				   GTK_SIGNAL_FUNC(pressed_alias_bud), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
