@@ -4321,8 +4321,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 		gtk_widget_set_style(gtkconv->tab_label, style);
 		g_object_unref(G_OBJECT(style));
 
-		if(type == GAIM_CONV_UPDATE_TYPING &&
-				conv == gaim_window_get_active_conversation(win)) {
+		if(conv == gaim_window_get_active_conversation(win)) {
 			update_typing_icon(conv);
 		}
 
