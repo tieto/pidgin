@@ -5,28 +5,34 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Tore Lundqvist <tlt@mima.x.se>, 2003.
-;;  Version 2
+;;  Author: Kalle Kotte <xake@telia.com>, 2005.
+;;  Version 3
 ;;
 
-; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"$\"GTK+ runtime environment$\" saknas eller behöver uppgraderas$\rInstallera v${GTK_VERSION} eller högre av GTK+."
+; Make sure to update the GAIM_MACRO_LANGUAGEFILE_END macro in
+; langmacros.nsh when updating this file
+
+; Startup Checks
+!define INSTALLER_IS_RUNNING			"Installationsprogrammet körs redan."
+!define GAIM_IS_RUNNING			"En instans av Giam körs redan. Avsluta Gaim och försök igen."
+!define GTK_INSTALLER_NEEDED			"Körmiljön GTK+ är antingen inte installerat eller behöver uppgraderas.$\rVar god installera v${GTK_VERSION} eller högre av GTK+-körmiljön."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Nästa >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) är utgiven med GPL (GNU General Public License). Licensen visas här endast för att informera. $_CLICK"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) är utgivet under GPL. Licensen finns tillgänglig här för infromationssyften enbart. $_CLICK"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Gaim-snabbmeddelandeklient (obligatorisk)"
-!define GTK_SECTION_TITLE			"GTK+ Runtime Environment (obligatorisk)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+teman"
+!define GAIM_SECTION_TITLE			"Gaim Snabbmeddelandeklient (obligatorisk)"
+!define GTK_SECTION_TITLE			"GTK+-körmiljö (obligatorisk)"
+!define GTK_THEMES_SECTION_TITLE		"GTK+-teman"
 !define GTK_NOTHEME_SECTION_TITLE		"Inget tema"
 !define GTK_WIMP_SECTION_TITLE		"Wimp-tema"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve-tema"
+!define GTK_BLUECURVE_SECTION_TITLE	"Bluecurve-tema"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue-tema"
-!define GAIM_SECTION_DESCRIPTION		"Gaims känrfiler och DLL:er"
-!define GTK_SECTION_DESCRIPTION		"En GUI-verktygsuppsättning för flera olika plattformar som Gaim behöver."
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+teman kan ändra känslan av och utseendet på GTK+applikationer."
-!define GTK_NO_THEME_DESC			"Installera inte något GTK+tema"
+!define GAIM_SECTION_DESCRIPTION		"Gaims kärnfiler och DLL:er"
+!define GTK_SECTION_DESCRIPTION		"En GUI-verktygsuppsättning för flera olika plattformar som Gaim använder."
+!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+-teman kan ändra känslan av och utseendet på GTK+-applikationer."
+!define GTK_NO_THEME_DESC			"Installera inte något GTK+-tema"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) ett GTK-tema som smälter bra in i Windows-miljön."
 !define GTK_BLUECURVE_THEME_DESC		"The Bluecurve-tema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue-tema."
