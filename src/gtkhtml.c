@@ -169,6 +169,8 @@ static gint html_bit_is_onscreen(GtkHtml * html, GtkHtmlBit * hb);
 static void draw_cursor(GtkHtml * html);
 static void undraw_cursor(GtkHtml * html);
 
+static int get_line_height(GtkHtml *, GtkHtmlBit *);
+
 static GtkWidgetClass *parent_class = NULL;
 
 GtkType gtk_html_get_type(void)
@@ -1822,21 +1824,27 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 	return TRUE;
 }
 
-
 static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 {
 	int mypos,
 	  epos,
-	  spos;
+	  spos,
+	  max_height;
 	GdkGC *gc = html->gc;
 	int shift;
 	GtkStateType selected_state;
 	GtkWidget *widget = GTK_WIDGET(html);
 	GdkRectangle area;
+	GList *hbits;
+	GtkHtmlBit *hbit;
 
 	if (html->frozen > 0)
 		return;
 
+	hbits = html->html_bits;
+	
+	hbits = g_list_find(hbits, hb);
+	
 	if (hb->type == HTML_BIT_TEXT)
 	{
 
@@ -2048,9 +2056,19 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			/*end my stuff*/
 
 
-			if (hb->text && hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
-				int hwidth, hheight;
-				int hei = gdk_text_height(hb->font, "C", 1);
+				
+
+			if (hb->text && hb->back != NULL && selected_state != GTK_STATE_SELECTED)
+			{
+				int hwidth, hheight, hei;
+				if (hbits->prev)
+				{
+					hbit = hbits->prev->data;
+					if (hbit->newline)
+						hei = get_line_height(html, hb);
+				}
+				else
+					hei = get_line_height(html, hb);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
@@ -2089,7 +2107,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	}
 	else if (hb->type == HTML_BIT_SEP)
 	{
-
 		gdk_draw_line(html->html_area, gc, hb->x + 2,
 					  hb->y - html->yoffset - (hb->height / 2 - 1),
 					  hb->x + hb->width,
@@ -4328,4 +4345,28 @@ void gtk_html_thaw(GtkHtml * html)
 			expose_html(html, &area, TRUE);
 		}
 	}
+}
+
+static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
+{
+	int height, max_height = 0;
+	GList *hbits = html->html_bits;
+	GtkHtmlBit *hbit;
+
+	hbits = g_list_find(hbits, start);
+
+	while (TRUE)
+	{
+		hbit = hbits->data;	
+		if (hbit->font)
+			height = gdk_text_height(hbit->font, "C", 1);	
+
+		if (max_height < height)
+			max_height = height;
+		if (hbit->newline)
+			break;
+		hbits = hbits->next;
+	}
+
+	return max_height;
 }
