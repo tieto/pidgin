@@ -7,9 +7,11 @@ if PLUGINS
 plugin_LTLIBRARIES = docklet.la
 
 docklet_la_SOURCES = \
+	docklet.h \
 	docklet.c \
 	eggtrayicon.h \
-	eggtrayicon.c
+	eggtrayicon.c \
+	trayicon-x11.c
 
 endif
 
