@@ -2284,7 +2284,9 @@ gtk_imhtml_init_smileys (GtkIMHtml *imhtml)
 	gtk_imhtml_associate_smiley (imhtml, ":-P", tongue_xpm);
 
 	gtk_imhtml_associate_smiley (imhtml, "=-O", scream_xpm);
+	gtk_imhtml_associate_smiley (imhtml, "=-o", scream_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ":-*", kiss_xpm);
+	gtk_imhtml_associate_smiley (imhtml, ">:O", yell_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ">:o", yell_xpm);
 	gtk_imhtml_associate_smiley (imhtml, "8-)", smile8_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ":-$", moneymouth_xpm);
@@ -2296,6 +2298,7 @@ gtk_imhtml_init_smileys (GtkIMHtml *imhtml)
 	gtk_imhtml_associate_smiley (imhtml, ":-\\", think_xpm);
 
 	gtk_imhtml_associate_smiley (imhtml, ":-X", crossedlips_xpm);
+	gtk_imhtml_associate_smiley (imhtml, ":-x", crossedlips_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ":-D", bigsmile_xpm);
 	gtk_imhtml_associate_smiley (imhtml, ":-d", bigsmile_xpm);
 	gtk_imhtml_associate_smiley (imhtml, "O:-)", angel_xpm);
