@@ -645,7 +645,7 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.icon_spec.min_height	= 0;
 	prpl_info.icon_spec.max_width	= 0;
 	prpl_info.icon_spec.max_height	= 0;
-	prpl_info.icon_spec.stretch		= 0;
+	prpl_info.icon_spec.scale_rules	= 0;
 	prpl_info.list_icon				= rendezvous_prpl_list_icon;
 	prpl_info.list_emblems			= rendezvous_prpl_list_emblems;
 	prpl_info.status_text			= rendezvous_prpl_status_text;
