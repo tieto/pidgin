@@ -573,7 +573,7 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		g_free(read);
 		return minus_header;
 	}
-	return g_strdup(_("<font color=\"red\"><b>Could not read file: %s</b></font>"));
+	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
 static void html_logger_create(GaimLog *log)
@@ -761,7 +761,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		g_free(minus_header);
 		return minus_header2;
 	}
-        return g_strdup(_("<font color=\"red\"><b>Could not read file: %s</b></font>"));
+	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
 static void txt_logger_create(GaimLog *log)
